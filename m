@@ -1,155 +1,116 @@
-Return-Path: <linux-kernel+bounces-326719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA3ED976C25
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:30:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C9B0976C24
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:30:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61E1D1F2325D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:30:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1712A1F2271E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:30:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26DDF1A76C3;
-	Thu, 12 Sep 2024 14:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E179F1B12F0;
+	Thu, 12 Sep 2024 14:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hdbztSQ1"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aNCGov2V";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3EKcb1I7"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970741AAE0A
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 14:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9FE1A288;
+	Thu, 12 Sep 2024 14:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726151443; cv=none; b=fihqc+apM63p+FQNyuUr8UE7VROTphlQcjhB0JYA8Em6W9i1HtZclJcw3Y55fJdLTR8PaCKEb2zsPJWYPR8gtF2XRgQy6z3CbEuU2Q61hTTJfs7nDE5QVVulSZ+2BE5HtatKxmt0IdwUImwbusZfoUZ5mecwqhnIHSOZW8BPQaw=
+	t=1726151436; cv=none; b=qDRNHy0rcK2bOtcUzgZ2Ww1NOhDfK5Cnw+RuVfSt8FmM+UxsKh8ec5YN1lD7bskQKLXc021NkYw/uFyA/SFQV0DURnjjnZa7bHjcTGyJyDArFQOHzyQHrwp0CSx4ESGVasJSTdMiF9FrG98KvDBwdxBLGg5VJNGpDjIV80FWeUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726151443; c=relaxed/simple;
-	bh=wvkjHwU6VB0mY7Omi2CVeXTzMbkbTdHLFiIfkNgBpC8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GUHfMeyjftpDfigVHitS6qqpsmq3p08ctZfJg5QgBaDoFBoNXdTYFoKqMTIiEPHxrDTynVG8l3Pkpw2UGx9pPokvuVf5n4DML6wHy5vOdhFtm0BJHezG5k0HcyLFn+e42kwpIVZLme/N2Nhxrp5xpwRJVf2G89UHaILgkTHHNzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hdbztSQ1; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726151440;
+	s=arc-20240116; t=1726151436; c=relaxed/simple;
+	bh=c9BNPsL77m1gQNF1oxGnA6X84UuD3I9ZPTkZK7KMHYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dyn5aRvjbEaiVk3itkgkqLUkY9pNprGDVHL+vNhfE7yUeRsXUjQigogslkf5/30hZ1Xikg7rRG/LTvZ74wNjPuUzohJVl3OAyFDwIUGez/jOWvpLZ7NXUc2AKc1fyr379xprzq/HlYgFn3iOvejlqdfbH3Bi0MTD80Ba8MrCMRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aNCGov2V; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3EKcb1I7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 12 Sep 2024 16:30:29 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1726151431;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=FYwbxEfzgjP484q7GbXtyYhGMfu3fb71XeJefeAuTQU=;
-	b=hdbztSQ1doVooGS59R9RM18E8vnLWleqOrE0B5Jbm87avN2WYEHhinHDPPsR0HnkJwVp7S
-	gxXwf0jTkJD3K1ARiez4ULMW9v0LYaNazjSMQLUiD9zZGSpkvhufn45GShPtNWZEYMC1Zc
-	opQXC2QfMPBPEKRklyop6a/Zju5IH+8=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-10-MJ2cdXznNH6C01rolW5f_Q-1; Thu, 12 Sep 2024 10:30:39 -0400
-X-MC-Unique: MJ2cdXznNH6C01rolW5f_Q-1
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2f5086e692cso9188001fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:30:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726151437; x=1726756237;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FYwbxEfzgjP484q7GbXtyYhGMfu3fb71XeJefeAuTQU=;
-        b=uV35dmDnRoRKwctIdJWp/c2Bt/EEBxuzECvrxUoK3XvwP1QUSZqYz7uN4WjLQCbGIW
-         nfYlSmjYNJYci/VTTBgt/qc+520LDyaVc0Qq1bJoPNy6AW1ofc98kA28BZBszO3dCNib
-         ZJsv7cg3Lcoi08WvL/WyoYylzHsj7tpBghFH1pLmQ/Yyk1r3gdRZqYGaJzYv+TP6mf49
-         lXYap+j/9bhvWQdK5EXRlTiaDDh2fQmEZWu+qBmT1uVR6WzllD3E8JlGrhl8/aLMULE8
-         jInrtxsDAM3rZRPWOM0URhJ78I7NIJEcx4GumJMTSe9CUjyDG1uaZS5cwzmGl0z4ox30
-         lAAA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8icCstS68vYEN6vgGdgsEcQChXk/VlSYXpaP61/JOS7D7Fz6vRoSvk10ZlMKTQXk1VMNRNWbEgox4ors=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb7aanT3wmPo25yxQGgcdrXnYdpTWv5TgOWNP3Nru/uPO0mvNx
-	gsDFgIfRe0z/S9HlR59xMylDERGw5NsseYaDymBFIPpfRESP/ziCvVe+uy/cFMGOqjPv2cExTzv
-	4f/ZXid9VakurmNMQH/wHBwPHkesRbUelaSJTXUHxGz3roRU+Qs2ovoBow6jjrO9VZyTNHIYhls
-	yYvLMgEgwMkA/3Qq+AL+lK4NJ9Wrq47d3WSYkj
-X-Received: by 2002:a2e:b889:0:b0:2f7:8d3f:11fc with SMTP id 38308e7fff4ca-2f78d3f12efmr10488841fa.31.1726151436924;
-        Thu, 12 Sep 2024 07:30:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHbg6QnIMTU4ODqKcSnlXW0968zPimhFSBfAuTm7uncIIqVoFMKCU+SvrhTex8/e0gr3QExhr8Cf7ntxBLUD8Q=
-X-Received: by 2002:a2e:b889:0:b0:2f7:8d3f:11fc with SMTP id
- 38308e7fff4ca-2f78d3f12efmr10488301fa.31.1726151435583; Thu, 12 Sep 2024
- 07:30:35 -0700 (PDT)
+	bh=YMoxcCQIasVaG6BJNCbOIJ88x2l5R7R9pyvVhbXBFnc=;
+	b=aNCGov2VgbjIooThREsfzPjpq3/+0RsA2TGGPjCizETv00FQWtsB4EGS1kZ+srN0bM6mvT
+	Kl1EfcYeaHZVa4zl76A1cpSVEGu2T/WYZA0mqljxyu8N8fYTxJFhcahR713Hhc47HYRNI3
+	G5AdSUP8ncjj/IaLqxfZCnJCdtHk1MifeZ632iTp33zIfDGI8f7Q3oLp9aCWGzdYDnwum+
+	eUOg6lA4h6wbSOKSZBv1R+jdutsZKNbPs96R5keQU0Ku+Sp76kjaQvuIVjl9Wj52ADoA7v
+	RyyKfKM9ipabZNUsjP/Xj8X30AVKi5gPM1XawjaY+7rUECH/aLjD4GvSzEaSeg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1726151431;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YMoxcCQIasVaG6BJNCbOIJ88x2l5R7R9pyvVhbXBFnc=;
+	b=3EKcb1I7TH/mpczaBA3bRNietzZphMO2D0yDuHkW49ln5odOfqWdI3pNwB2EaH8n3LlaRC
+	O2NsyIyIY+oop/Dw==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Breno Leitao <leitao@debian.org>
+Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	Jakub Kicinski <kuba@kernel.org>, andrii@kernel.org, ast@kernel.org,
+	syzbot <syzbot+08811615f0e17bc6708b@syzkaller.appspotmail.com>,
+	bpf@vger.kernel.org, daniel@iogearbox.net, davem@davemloft.net,
+	eddyz87@gmail.com, haoluo@google.com, hawk@kernel.org,
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev,
+	netdev@vger.kernel.org, sdf@fomichev.me, song@kernel.org,
+	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+Subject: Re: [PATCH net-net] tun: Assign missing bpf_net_context.
+Message-ID: <20240912143029.x5iudw-g@linutronix.de>
+References: <000000000000adb970061c354f06@google.com>
+ <20240702114026.1e1f72b7@kernel.org>
+ <20240703122758.i6lt_jii@linutronix.de>
+ <20240703120143.43cc1770@kernel.org>
+ <20240912-simple-fascinating-mackerel-8fe7c0@devvm32600>
+ <20240912122847.x70_LgN_@linutronix.de>
+ <20240912-hypnotic-messy-leopard-f1d2b0@leitao>
+ <9a2a1cce-8d92-4d10-87ea-4cdf1934d5fb@linux.dev>
+ <20240912-organic-spoonbill-of-discourse-ad2e6e@leitao>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822202805.6379-1-stuart.w.hayes@gmail.com>
- <20240822202805.6379-4-stuart.w.hayes@gmail.com> <83f39f2d-7237-4880-83e3-1c3afc62087d@siemens.com>
- <448875be-59e1-48a5-8a3c-cc45fff196ca@gmail.com>
-In-Reply-To: <448875be-59e1-48a5-8a3c-cc45fff196ca@gmail.com>
-From: David Jeffery <djeffery@redhat.com>
-Date: Thu, 12 Sep 2024 10:30:23 -0400
-Message-ID: <CA+-xHTEMM09PXgWyKX4h48diUxxGnSSrDowh5Gt=Y+EVhHL-_Q@mail.gmail.com>
-Subject: Re: [PATCH v8 3/4] driver core: shut down devices asynchronously
-To: stuart hayes <stuart.w.hayes@gmail.com>
-Cc: Jan Kiszka <jan.kiszka@siemens.com>, linux-kernel@vger.kernel.org, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Martin Belanger <Martin.Belanger@dell.com>, "Oliver O'Halloran" <oohall@gmail.com>, 
-	Daniel Wagner <dwagner@suse.de>, Keith Busch <kbusch@kernel.org>, Lukas Wunner <lukas@wunner.de>, 
-	Jeremy Allison <jallison@ciq.com>, Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>, 
-	Sagi Grimberg <sagi@grimberg.me>, linux-nvme@lists.infradead.org, 
-	Nathan Chancellor <nathan@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240912-organic-spoonbill-of-discourse-ad2e6e@leitao>
 
-On Tue, Sep 10, 2024 at 8:14=E2=80=AFPM stuart hayes <stuart.w.hayes@gmail.=
-com> wrote:
->
-...
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index b69b82da8837..52d64b419c01 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -4832,6 +4832,13 @@ static void shutdown_one_device_async(void *data, =
-async_cookie_t cookie)
->   {
->         struct device *dev =3D data;
->
-> +       /*
-> +        * Sanity check to prevent shutdown hang in case a parent or supp=
-lier
-> +        * is in devices_kset list in the wrong order
-> +        */
-> +       if (dev->p->shutdown_after > cookie)
-> +               dev->p->shutdown_after =3D cookie - 1;
-> +
->         async_synchronize_cookie_domain(dev->p->shutdown_after + 1, &sd_d=
-omain);
->
->         shutdown_one_device(dev);
+On 2024-09-12 07:19:54 [-0700], Breno Leitao wrote:
+> Hello Vadim,
+> 
+> On Thu, Sep 12, 2024 at 02:32:55PM +0100, Vadim Fedorenko wrote:
+> > On 12/09/2024 14:17, Breno Leitao wrote:
+> > > @@ -72,6 +73,7 @@ static netdev_tx_t netkit_xmit(struct sk_buff *skb, struct net_device *dev)
+> > >   	struct net_device *peer;
+> > >   	int len = skb->len;
+> > > +	bpf_net_ctx = bpf_net_ctx_set(&__bpf_net_ctx);
+> > >   	rcu_read_lock();
+> > 
+> > Hi Breno,
+> > 
+> > looks like bpf_net_ctx should be set under rcu read lock...
+> 
+> Why exactly?
+> 
+> I saw in some examples where bpf_net_ctx_set() was set inside the
+> rcu_read_lock(), but, I was not able to come up with justification to do
+> the same. Would you mind elaborating why this might be needed inside the
+> lock?
 
-While the race window is really small, there is a potential race with
-this fixup. It's possible for the shutdown operation to write a new
-value to shutdown_after in the time between the if check and
-shutdown_after being re-read and used in the
-async_synchronize_cookie_domain call. Such a race would allow a too
-high value to be used.
+It might have been done due to simpler nesting or other reasons but
+there is no requirement to do this under RCU protection. The assignment
+and cleanup is always performed task-local.
 
-Instead, could do something like:
+> Thanks for the review,
+> --breno
 
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -4833,8 +4833,12 @@ static void shutdown_one_device(struct device *dev)
- static void shutdown_one_device_async(void *data, async_cookie_t cookie)
- {
-        struct device *dev =3D data;
-+       async_cookie_t wait =3D dev->p->shutdown_after + 1;
-
--       async_synchronize_cookie_domain(dev->p->shutdown_after + 1, &sd_dom=
-ain);
-+       if (wait > cookie)
-+               wait =3D cookie;
-+
-+       async_synchronize_cookie_domain(wait, &sd_domain);
-
-        shutdown_one_device(dev);
- }
-
-This reads the shutdown_after value once and avoids the race window
-where its value being changed on another CPU could still cause a
-potential deadlock.
-
+Sebastian
 
