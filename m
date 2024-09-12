@@ -1,118 +1,134 @@
-Return-Path: <linux-kernel+bounces-327222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1678977289
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:02:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDA3097728B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:03:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47F871F233BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:02:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D3501F23773
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FB31C1724;
-	Thu, 12 Sep 2024 20:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6977B1C0DEA;
+	Thu, 12 Sep 2024 20:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lanZPK0C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ERdrurjv"
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 254EA13DBBE;
-	Thu, 12 Sep 2024 20:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40A81A3052
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726171365; cv=none; b=mBtMj2vB+R8doVrMNpZ5zsHExRJEC7R7LcGmguowpo9oCqKHEDoWGih74viGhqm/GK4OXTMVNUy/p2fcQOKstwQbWQLSwHojI5e10fJErI0bqZxqGK4JD246yBhudhFqvl/7Aykd9ZnJMB5NESXgy39gNxcLMMxgpxMw39YzuN0=
+	t=1726171433; cv=none; b=f1IFPEkHyiGv1ZyXBsrRj2yKAp8weq/m1Zu7QSvJTVT11tRlp9OeVK5EWRvlJAMLqXXA1TvWYWNjp1F9A2m6xtkWUl0Xu3k/IJn/ZgAasc0P3NEEvQ0xntXX22oPAaYmxiLP6HFE2ahEonIjALExwKDjUHs8ds5z7oEJks5+g/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726171365; c=relaxed/simple;
-	bh=72sCiwcLGNLodmSGvD+gbRkHtOWi0verapOuz0ioxV4=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=gepAHQS79YjViUCPYKXVZZwioCFGHZmZbhQ3+vpa5CspHjoeYqqGG4a4mD9AMcUk1T0/W0Um+yOdUxZc8Lq5V2GpIb8GrFRCx6N99ltBdeI2pEs5HXDCaMWglxcwWjBMyWUQ7INxYDuATUcnD/lMVhNzr6S0UdC2iWKcV5KI5Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lanZPK0C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8086BC4CEC3;
-	Thu, 12 Sep 2024 20:02:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726171364;
-	bh=72sCiwcLGNLodmSGvD+gbRkHtOWi0verapOuz0ioxV4=;
-	h=Date:From:To:List-Id:Cc:In-Reply-To:References:Subject:From;
-	b=lanZPK0CZSY6Z7NP9JdI9UYannUTXaM3wq1djEB+GI2uRdES/9XqLB+qY5++GszvM
-	 drGIaFpfAzBUX0cI0GJtPYrKz48WchYtJt//o01sE2rTLRNacfYNheYA38Qw+cZ3Ho
-	 VdXOY0gy0Jw1NrWEUtAvwLhIFWew78UhOe5HS7H7S1ygvLrLYpYS8BIT6KkQdBYkXZ
-	 vCdCMxgFPyHUGqpEQ/lWZ6pbHesxqum0wQYHDtUKfcG0hIot4Z+Txn5ynn5QwhqGhS
-	 kuYTmp+gSmrY5ywrbj4YxAWElgzxFOAWTpwe4BRNATyi7LFNVP0Shy9rISjIvBVG+Q
-	 gK1z80D+lAiaw==
-Date: Thu, 12 Sep 2024 15:02:43 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1726171433; c=relaxed/simple;
+	bh=Z5N0iDAv7oS2kzYBkNiUHqo7E1DaTd02v/B+mHVEyBo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZWg573CLBRyv5mO2OXQDbta2gHrDzXkhWSEbIhWvR1nWNZ1jRQT61IM7M8wx8ucMn84FWUKG0kPaG2G2NFzVogiHVOPsMeI7Js1Jed0ddeGd5/gr3WcNd23mBFuRsBbZ4amtqyW0KH9UAYLxAsK+U3rfox0lz9eyuFPbogPzS8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ERdrurjv; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-82521c46feaso7261939f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:03:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1726171431; x=1726776231; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2ZUw7ImOz/xW0/vF8QPIU2FDaMoIZ6FEl1tTbL5Zu9c=;
+        b=ERdrurjvJQOd9bLbI3Z66F985Yj+84zy50A5qvxTumF8efXTbCQA85XxMD0LruEewI
+         SY2clBeNfVCD5N4+1PUOMMYDNJxmCz4HJ/NLTD6Sn7rc+jKO5eZR7ctP9R5i9ZZFthgI
+         UwXO0brYLo50wgrAXRup86LHuhIiNpTUv7cVs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726171431; x=1726776231;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2ZUw7ImOz/xW0/vF8QPIU2FDaMoIZ6FEl1tTbL5Zu9c=;
+        b=EWAQKfkat73YoqebEuV22xevHEaE/bdJeF9Ic64suamCVFtEO4OZBK3pHzfH0EptSf
+         wetuzuJVqyK43oSjjGVlrj343DoX7mQ7Tk0OEe8w9dHk1LP9p9/M0P7eLa+YhytyfBCp
+         fhL8ojthK2wsr09t0ZKxqS5HBZmzQnSBzsg7La2qvLFFAA1r8iKZOltCmwE/F1OGyXc7
+         FT9xdUXECD8aI1Dj4NOjJXENCXwqv2UyAynTvaROmdvXl4nDG9WNoQxwzDImz2SgbtRj
+         BEIGx02hbRU3DqRlDZabKTjrONGV7IK3hhav895vZY0ho4mT0cvNkrfs6Mnm87sV93qw
+         7wFg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/A4HIEC+J+Vp0N0LfO3hkiCTaJYs3UlHw9us1CHowISqdV66lbQvvp3wRjuCR4+Jkgkg6TwQ4MEMe2p4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5cAiHQCK9njjJmkuGUzZ0eym5qroaNBtzRKwe7ScnkcgY0hmh
+	PmsEjWVkUScexKyAd4n4mbtsL1WJ9ixeUDJo//7IX8Hk2Nla+DEPcut6l8slttI=
+X-Google-Smtp-Source: AGHT+IHroUZ0nDZDhbbhK4odPskHEvFmnGVJNutX2nw+ZRszt1sOQ+0M+D/Yf225WpVv4rad/FDvxg==
+X-Received: by 2002:a05:6602:6c13:b0:82a:a76a:1779 with SMTP id ca18e2360f4ac-82d376d86a4mr91464739f.8.1726171430823;
+        Thu, 12 Sep 2024 13:03:50 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d35f433d4asm774136173.17.2024.09.12.13.03.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Sep 2024 13:03:49 -0700 (PDT)
+Message-ID: <b64402ad-4c0d-4f5f-939b-4be1a7855e4a@linuxfoundation.org>
+Date: Thu, 12 Sep 2024 14:03:49 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Arturs Artamonovs <arturs.artamonovs@analog.com>
-Cc: Arturs Artamonovs <Arturs.Artamonovs@analog.com>, soc@kernel.org, 
- adsp-linux@analog.com, Olof Johansson <olof@lixom.net>, 
- Catalin Marinas <catalin.marinas@arm.com>, 
- Andi Shyti <andi.shyti@kernel.org>, Greg Malysa <greg.malysa@timesys.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Will Deacon <will@kernel.org>, 
- linux-serial@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 
- Thomas Gleixner <tglx@linutronix.de>, linux-gpio@vger.kernel.org, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, 
- Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Nathan Barrett-Morrison <nathan.morrison@timesys.com>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>, 
- Utsav Agarwal <Utsav.Agarwal@analog.com>, Jiri Slaby <jirislaby@kernel.org>
-In-Reply-To: <20240912-test-v1-18-458fa57c8ccf@analog.com>
-References: <20240912-test-v1-0-458fa57c8ccf@analog.com>
- <20240912-test-v1-18-458fa57c8ccf@analog.com>
-Message-Id: <172617136354.581910.4890193401475528436.robh@kernel.org>
-Subject: Re: [PATCH 18/21] dt-bindings: serial: adi,uart4: add adi,uart4
- driver documentation
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH for-next] pm: cpupower: rename raw_pylibcpupower.i
+To: "John B. Wyatt IV" <jwyatt@redhat.com>
+Cc: Min-Hua Chen <minhuadotchen@gmail.com>, Thomas Renninger
+ <trenn@suse.com>, Shuah Khan <shuah@kernel.org>,
+ John Kacur <jkacur@redhat.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20240912125030.19809-1-minhuadotchen@gmail.com>
+ <5785527a-b259-42ba-989e-978d2e72ff35@linuxfoundation.org>
+ <ZuMmqAmr62ErjqHc@rhfedora>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <ZuMmqAmr62ErjqHc@rhfedora>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-On Thu, 12 Sep 2024 19:25:03 +0100, Arturs Artamonovs wrote:
-> Add serial driver bindings.
+On 9/12/24 11:36, John B. Wyatt IV wrote:
+> On Thu, Sep 12, 2024 at 10:31:19AM -0600, Shuah Khan wrote:
+>> On 9/12/24 06:50, Min-Hua Chen wrote:
+>>> This RFC patch is actually bug report. All *.i file will be
+>>> removed by 'make mrproper', including raw_pylibcpupower.i, added
+>>> by commit: 338f490e07bc ("pm:cpupower: Add SWIG bindings files for libcpupower")
+>>>
+>>> We can reproduce the error by performing the following command:
+>>> cd linux-next
+>>> make mrproper
+>>> cd tools/power/cpupower/bindings/python
+>>> make
+>>>
+>>> We will get an error message:
+>>> make: *** No rule to make target 'raw_pylibcpupower.i', needed by 'raw_pylibcpupower_wrap.c'.  Stop.
+>>>
+>>> Renaming the raw_pylibcpupower.i is just a workaround to fix the
+>>> issue above.
+>>
+>> I need a non-rfc patch for this. Please send a proper patch
+>> I can pull in once John has a chance to review this.
 > 
-> Signed-off-by: Arturs Artamonovs <Arturs.Artamonovs@analog.com>
-> Signed-off-by: Utsav Agarwal <Utsav.Agarwal@analog.com>
-> Co-developed-by: Nathan Barrett-Morrison <nathan.morrison@timesys.com>
-> Signed-off-by: Nathan Barrett-Morrison <nathan.morrison@timesys.com>
-> Co-developed-by: Greg Malysa <greg.malysa@timesys.com>
-> Signed-off-by: Greg Malysa <greg.malysa@timesys.com>
-> ---
->  .../devicetree/bindings/serial/adi,uart.yaml       | 85 ++++++++++++++++++++++
->  1 file changed, 85 insertions(+)
+
+How and when is raw_pylibcpupower.i generated? This looks
+like a pre-processor output.
+
+
+> I have reviewed and tested and this. I am good with it being a stopgap.
+
+I am okay with the stopgap, but I do want i explore other solutions.
+> 
+> Please send the non-rfc patch.
+> 
+> Thank you for reporting and sending a patch for this Min-Hua.
+> 
+> Reviewed-by: John B. Wyatt IV <jwyatt@redhat.com>
+> Reviewed-by: John B. Wyatt IV <sageofredondo@gmail.com>
+> Tested-by: John B. Wyatt IV <jwyatt@redhat.com>
+> Tested-by: John B. Wyatt IV <sageofredondo@gmail.com>
 > 
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/serial/adi,uart.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
- 	 $id: http://devicetree.org/schemas/serial/adi,uart4.yaml
- 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/serial/adi,uart.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240912-test-v1-18-458fa57c8ccf@analog.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+thanks,
+-- Shuah
 
 
