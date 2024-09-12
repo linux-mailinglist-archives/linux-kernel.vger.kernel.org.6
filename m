@@ -1,128 +1,82 @@
-Return-Path: <linux-kernel+bounces-325805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38F98975E69
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 03:18:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A8E5975E67
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 03:17:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C1471C21FE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:18:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02168282BE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014B626ACC;
-	Thu, 12 Sep 2024 01:18:02 +0000 (UTC)
-Received: from mail03.siengine.com (mail03.siengine.com [43.240.192.165])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A14224DC;
+	Thu, 12 Sep 2024 01:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Ft5pEczb"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A042E3EB;
-	Thu, 12 Sep 2024 01:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.240.192.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3548F5684;
+	Thu, 12 Sep 2024 01:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726103881; cv=none; b=uJ/2nM8/P/YCHGTDvfEJoQGX7TOqusBrUUEqhcNCrYzv46lF1jxCk2PXSebBiY4fw4uHLz5ZLMFK9Ea3HPfg0TMK7AQ6ArxwIFKWZBofmKTB+UbhyzpZ8xkHKniUBm2v6W+wOF45gxR14boFE+243bY7ivb7AkeWDBPGwBijSyM=
+	t=1726103867; cv=none; b=Or6kR/4cbyHAt2sbrN96vvC92lD2b9I9Nt49JrhCuEop/goNNR7wkZUWzhkjKz0I5bmY1ALxWZRKYFtfJE7cJnpToXey6Soh4aE2BrdFuPO/tVloyeXKbvtCXawTA0jEgVa9FzHWFYJ5AuS87XTmsYf5wUMlhsb1JZssKemQKeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726103881; c=relaxed/simple;
-	bh=i1ejyxt5d3OQ5H0dIINkfbDNH7V+lEU49m2JmIKFnAw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=bybHg7xFMuiw+bvJkQi0orFN50Ejn9xyUMowftpTOsnX63dgvIeK9ldseztf3mrZ5XVJWpOMtKgVVmVYV8WolRhRqfnJLyynGyUYQwmRtdhxwJwfAkuaWKwKxCBRnODrl+RdSBjWSH3PMY5FFRJNSRyCq5fLdt+hPSyhFvce7gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com; spf=pass smtp.mailfrom=siengine.com; arc=none smtp.client-ip=43.240.192.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siengine.com
-Received: from dsgsiengine01.siengine.com ([10.8.1.61])
-	by mail03.siengine.com with ESMTPS id 48C1H9WF065468
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 12 Sep 2024 09:17:09 +0800 (+08)
-	(envelope-from kimriver.liu@siengine.com)
-Received: from SEEXMB03-2019.siengine.com (SEEXMB03-2019.siengine.com [10.8.1.33])
-	by dsgsiengine01.siengine.com (SkyGuard) with ESMTPS id 4X400N0xpCz7ZMtV;
-	Thu, 12 Sep 2024 09:17:08 +0800 (CST)
-Received: from SEEXMB05-2019.siengine.com (10.8.1.153) by
- SEEXMB03-2019.siengine.com (10.8.1.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.11; Thu, 12 Sep 2024 09:17:08 +0800
-Received: from SEEXMB03-2019.siengine.com (10.8.1.33) by
- SEEXMB05-2019.siengine.com (10.8.1.153) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.9; Thu, 12 Sep 2024 09:17:08 +0800
-Received: from SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe]) by
- SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe%16]) with mapi id
- 15.02.1544.011; Thu, 12 Sep 2024 09:17:08 +0800
-From: =?gb2312?B?TGl1IEtpbXJpdmVyL8H1vfC60w==?= <kimriver.liu@siengine.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC: "jarkko.nikula@linux.intel.com" <jarkko.nikula@linux.intel.com>,
-        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
-        "jsd@semihalf.com" <jsd@semihalf.com>,
-        "andi.shyti@kernel.org"
-	<andi.shyti@kernel.org>,
-        "linux-i2c@vger.kernel.org"
-	<linux-i2c@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v9] i2c: designware: fix controller is holding SCL low
- while ENABLE bit is disabled
-Thread-Topic: [PATCH v9] i2c: designware: fix controller is holding SCL low
- while ENABLE bit is disabled
-Thread-Index: AQHbBCZ5inqGZkJh9EaW81yTfE/+vrJSI/eAgAACKwCAATDBgA==
-Date: Thu, 12 Sep 2024 01:17:08 +0000
-Message-ID: <8115db78c21b4fb587be1dcfcbfd8d4d@siengine.com>
-References: <69401183add8f79ee98b84c91983204df753a3e6.1726043461.git.kimriver.liu@siengine.com>
- <ZuGs8Vbd9zYuNo_U@smile.fi.intel.com> <ZuGuwhPvxbY5OqNg@smile.fi.intel.com>
-In-Reply-To: <ZuGuwhPvxbY5OqNg@smile.fi.intel.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1726103867; c=relaxed/simple;
+	bh=K7lqwu5/HwHabgvhMNiMucTtxvF7EkAn5b8VYSPPiA4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=elQcqhScnROpo18keCXM+trPk55vO6uBui3fRsxlL01qVmNvwdEbjerrOvALTAw1HbwSIqx0wtJQDqb2DzQ7D7WVeNXIo7SOpWNCg83bd6QWbYRGSRFrbiCIZLFEx95uKXbtAYrTbOKJUcsvaORbY3xZMFcxGrdwcxLOiFiaFOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Ft5pEczb; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=dWE8SDpOBXJhnTjfTGnZ6pwcgWm4AvR5qq6d537BBPM=; b=Ft5pEczbdportTpEeDrznKRqzn
+	N40nYyBPtprdjFUsOuhTaagbNLAN/2Ixz57xq5IQG1IOoat2aL71Lko1Owln/xcLCFmPjd+GbdgDs
+	gWlVmlnGvvQLFiUu9deAMYrx7KsGKuSXHV9lM6gS0OcPsdWip/FQXAeDpux5mvEULk2s=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1soYSh-007GkL-FH; Thu, 12 Sep 2024 03:17:31 +0200
+Date: Thu, 12 Sep 2024 03:17:31 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Divya Koppera <divya.koppera@microchip.com>,
+	arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
+	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: microchip_t1: Cable Diagnostics for
+ lan887x
+Message-ID: <e2a7854f-6b36-4582-96af-97f952b6658f@lunn.ch>
+References: <20240909114339.3446-1-divya.koppera@microchip.com>
+ <20240911155912.1c36cf3c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-DKIM-Results: [10.8.1.61]; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:mail03.siengine.com 48C1H9WF065468
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911155912.1c36cf3c@kernel.org>
 
-SGkgQW5keQ0KDQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IEFuZHkgU2hl
-dmNoZW5rbyA8YW5kcml5LnNoZXZjaGVua29AbGludXguaW50ZWwuY29tPiANCj5TZW50OiAyMDI0
-xOo51MIxMcjVIDIyOjUzDQo+VG86IExpdSBLaW1yaXZlci/B9b3wutMgPGtpbXJpdmVyLmxpdUBz
-aWVuZ2luZS5jb20+DQo+Q2M6IGphcmtrby5uaWt1bGFAbGludXguaW50ZWwuY29tOyBtaWthLndl
-c3RlcmJlcmdAbGludXguaW50ZWwuY29tOyBqc2RAc2VtaWhhbGYuY29tOyBhbmRpLnNoeXRpQGtl
-cm5lbC5vcmc7IGxpbnV4LWkyY0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtl
-cm5lbC5vcmcNCj5TdWJqZWN0OiBSZTogW1BBVENIIHY5XSBpMmM6IGRlc2lnbndhcmU6IGZpeCBj
-b250cm9sbGVyIGlzIGhvbGRpbmcgU0NMIGxvdyB3aGlsZSBFTkFCTEUgYml0IGlzIGRpc2FibGVk
-DQoNCj5PbiBXZWQsIFNlcCAxMSwgMjAyNCBhdCAwNTo0NTowNVBNICswMzAwLCBBbmR5IFNoZXZj
-aGVua28gd3JvdGU6DQo+PiBPbiBXZWQsIFNlcCAxMSwgMjAyNCBhdCAwNDozOTo0NVBNICswODAw
-LCBLaW1yaXZlciBMaXUgd3JvdGU6DQoNCj5GV0lXLCBiZWxvdyBhcmUgdGhlIGZpeGVzDQo+DQo+
-Li4uDQo+DQo+PiA+ICsvKg0KPj4gPiArICogVGhpcyBmdW5jdGlvbnMgd2FpdHMgY29udHJvbGxl
-ciBpZGxpbmcgYmVmb3JlIGRpc2FibGluZyBJMkMNCj4+ID4gKyAqIFdoZW4gdGhlIGNvbnRyb2xs
-ZXIgaXMgbm90IGluIHRoZSBJRExFIHN0YXRlLA0KPj4gPiArICogTVNUX0FDVElWSVRZIGJpdCAo
-SUNfU1RBVFVTWzVdKSBpcyBzZXQuDQo+PiA+ICsgKiBWYWx1ZXM6DQo+PiA+ICsgKiAweDEgKEFD
-VElWRSk6IENvbnRyb2xsZXIgbm90IGlkbGUNCj4+ID4gKyAqIDB4MCAoSURMRSk6IENvbnRyb2xs
-ZXIgaXMgaWRsZQ0KPj4gPiArICogVGhlIGZ1bmN0aW9uIGlzIGNhbGxlZCBhZnRlciByZXR1cm5p
-bmcgdGhlIGVuZCBvZiB0aGUgY3VycmVudCB0cmFuc2Zlcg0KPj4gPiArICogUmV0dXJuczoNCj4+
-IA0KPj4gPiArICogUmV0dXJuIDAgYXMgY29udHJvbGxlciBJRExFDQo+PiA+ICsgKiBSZXR1cm4g
-YSBuZWdhdGl2ZSBlcnJubyBhcyBjb250cm9sbGVyIEFDVElWRQ0KPg0KPiAqIEZhbHNlIHdoZW4g
-Y29udHJvbGxlciBpcyBpbiBJRExFIHN0YXRlLg0KPiAqIFRydWUgd2hlbiBjb250cm9sbGVyIGlz
-IGluIEFDVElWRSBzdGF0ZS4NCj4NCj4+IEJ1dCB3aHkgbm9uLWJvb2xlYW4gYWdhaW4/DQo+PiAN
-Cj4+ID4gKyAqLw0KPj4gPiArc3RhdGljIGludCBpMmNfZHdfaXNfY29udHJvbGxlcl9hY3RpdmUo
-c3RydWN0IGR3X2kyY19kZXYgKmRldikNCj4NCj5zdGF0aWMgYm9vbCBpMmNfZHdfaXNfY29udHJv
-bGxlcl9hY3RpdmUoc3RydWN0IGR3X2kyY19kZXYgKmRldikNCj4NCj4+ID4gK3sNCj4+ID4gKwl1
-MzIgc3RhdHVzOw0KPj4gPiArDQo+PiA+ICsJcmVnbWFwX3JlYWQoZGV2LT5tYXAsIERXX0lDX1NU
-QVRVUywgJnN0YXR1cyk7DQo+PiA+ICsJaWYgKCEoc3RhdHVzICYgRFdfSUNfU1RBVFVTX01BU1RF
-Ul9BQ1RJVklUWSkpDQo+PiA+ICsJCXJldHVybiAwOw0KPg0KPgkJcmV0dXJuIGZhbHNlOw0KPg0K
-Pj4gPiArCXJldHVybiByZWdtYXBfcmVhZF9wb2xsX3RpbWVvdXQoZGV2LT5tYXAsIERXX0lDX1NU
-QVRVUywgc3RhdHVzLA0KPj4gPiArCQkJIShzdGF0dXMgJiBEV19JQ19TVEFUVVNfTUFTVEVSX0FD
-VElWSVRZKSwNCj4+ID4gKwkJCTExMDAsIDIwMDAwKTsNCj4NCj4JCQkxMTAwLCAyMDAwMCkgIT0g
-MDsNCj4NCj5BbHRlcm5hdGl2ZWx5DQo+DQo+CWludCByZXQ7DQo+CS4uLg0KPg0KPglyZXQgPSBy
-ZWdtYXBfcmVhZF9wb2xsX3RpbWVvdXQoZGV2LT5tYXAsIERXX0lDX1NUQVRVUywgc3RhdHVzLA0K
-PgkJCQkgICAgICAgIShzdGF0dXMgJiBEV19JQ19TVEFUVVNfTUFTVEVSX0FDVElWSVRZKSwNCj4J
-CQkJICAgICAgIDExMDAsIDIwMDAwKTsNCj4JaWYgKHJldCkNCj4JCXJldHVybiB0cnVlOw0KPg0K
-PglyZXR1cm4gZmFsc2U7DQo+DQo+IChBbHNvIG1pbmQgaW5kZW50YXRpb24gaW4gX3JlYWRfcG9s
-bF90aW1lb3V0KCkgbGluZXMuKQ0KPg0KPj4gPiArfQ0KDQpTb3JyeS4NClRoYW5rcyBmb3IgeW91
-ciBzdWdnZXN0aW9ucyBhbmQgc2NoZW1lLCBJIHdpbGwgdXBkYXRlIGluIHBhdGNoIHYxMCB0b2Rh
-eS4NCg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQpCZXN0IFJl
-Z2FyZHMNCktpbXJpdmVyIExpdQ0KDQo=
+On Wed, Sep 11, 2024 at 03:59:12PM -0700, Jakub Kicinski wrote:
+> On Mon, 9 Sep 2024 17:13:39 +0530 Divya Koppera wrote:
+> > Add support for cable diagnostics in lan887x PHY.
+> > Using this we can diagnose connected/open/short wires and
+> > also length where cable fault is occurred.
+> 
+> Hi Andrew, is this one in your review queue by any chance? :)
+
+
+Sorry, fell through the cracks.
+
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
+
 
