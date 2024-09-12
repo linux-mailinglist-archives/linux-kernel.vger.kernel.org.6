@@ -1,118 +1,83 @@
-Return-Path: <linux-kernel+bounces-325821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 746F6975EA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 03:47:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 448E4975EAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 03:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7D641C2280F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:47:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77B2A1C22737
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5669224DC;
-	Thu, 12 Sep 2024 01:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LWFWYkPw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFAD32837B;
+	Thu, 12 Sep 2024 01:52:46 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8F253AC
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 01:47:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190AF46426
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 01:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726105664; cv=none; b=mb5si/aYNXErOtFDFCXTzLc06F3OGKOl2BuGRUb35H7CrfBlephihsh3TSIFgPaT1prSsVX5IaJQGyEEruARdE1etCMc0JEPhSmdxJ2+CRfKPkaHJHsml9oBWvUDpqwRYzL5JeILbVryT6AuoXwfcPnhpMJsJ0htHB0TZ/QQ08w=
+	t=1726105966; cv=none; b=VV/64xPTM7tQRXZN987DK8hPDx7rvlzFplH5rdj01x3lKvnj4e9vbC/w+6wEBesxfbFhwCIEYx6hizGl83qUUqoNHXKi6JqxIvqjDq6WDBYpWqxdG086vGDA/S/OdsoKh7G7Jzimh0Jv7+tPDMnGe7jM2VG93SwpjFc7zocPnFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726105664; c=relaxed/simple;
-	bh=4kxuS1AIBSnin27g8FmmDst9UMdWeGBb4Oz2BIvY9Ag=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u6qmxGQZ1vyuHALNTEhYU92IHED+GbdcvlT9CTBS+98kLNJxDo6ec9ZbZxe4S5WeH29AVBejF1DJ3v8gsvPtseerqwbM73WkjRMTl6QHmEo0Sukpi3uv/pSlmVauJdxq6zmWLS5CGNODzaGMgF2vS8PYImK/jpBksXZQ9HO4vDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LWFWYkPw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726105661;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4kxuS1AIBSnin27g8FmmDst9UMdWeGBb4Oz2BIvY9Ag=;
-	b=LWFWYkPwzDjbst+pCOd24kPxBzGGYi6k7c0BjmAvDzFKW1tyCr+voa6+AIqvyRUpMYQoYa
-	5z2Zre8tBoY3jRg/0gTM9Ogzvs0Y6+JjyZFS0CEX36AI++OCE9/TjjCGJl/oddtCmDeKO8
-	MaVaUI+bcCwf6Cfqo0OJBUmmEJSwA4g=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-459-V5KU5a2iNqSSs7PLyy55Fw-1; Wed, 11 Sep 2024 21:47:40 -0400
-X-MC-Unique: V5KU5a2iNqSSs7PLyy55Fw-1
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2d8a4fab0d7so610305a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 18:47:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726105659; x=1726710459;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4kxuS1AIBSnin27g8FmmDst9UMdWeGBb4Oz2BIvY9Ag=;
-        b=uMdkQLPAperW2R2Ws9LdJsKDM7KpmIa3tI6XW3+sRXup1+9vVGlRdwbjg8vCEY1Myu
-         LfVbYJMh+PNj57Y86N6aGACvwGHw3gar2QT/CuoQCYpyhXxouQpCiIyg4FzSnPz5aXLI
-         dzSLViI5U7g1u4q22aiX2UdcwZZVbCgD8jgN3AQelQgt/ouDdO9xtWqMxyQ1NZUJ6s8i
-         bAhYOiL4brWiPcLg8J3Bh26GaFYu/GRM94WbnJCgQwiNF3TmOuW/SNLwbvNMhD5mG/HN
-         AndtqCyZ+1C4ph+ys/P/Xl6mlDNCRhg7Ba87aU2LdA+CoKoZm3q+UVdModu/B4ogIW22
-         pbHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTO/FAf1QiRbIPfZ8tWu1e0U/1DR5Y1IlnRulbxcCkxLp+2E1wauW++uD5aWYwOVl518ioGcJOzB8nwFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxR8XMcx6PorCMGyIylnq8iAUwvODw6wzMJ1SPUForyRFI9n6M
-	3WW/1N81Dq+P9tqCB5RItffKI6s/PluMjrC0fA9SNdUVzmfWaim/H1edQZvQZltJPUES7K21gSN
-	BjGuseuE/qDFl8dip7owhpjKwPO+1BEbt2GF3Y+EHpvLgIbOFS2Qo+QaOOJnprefaKo5+IO/nRn
-	AK2pGO1Z4VO51uBVzGkikytepo0UKJE4Og/ilnMJR00VyHStA=
-X-Received: by 2002:a17:90a:ce01:b0:2cf:fe5d:ea12 with SMTP id 98e67ed59e1d1-2db9ffb8564mr1569277a91.24.1726105658723;
-        Wed, 11 Sep 2024 18:47:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFxZKczFGfKFB53IOYqTjQPUNWxQs4r/wv0X/MYrSTF/VVDx6dP+mE0uScujlc+dYqOeR2GSx9/J6bta8HjgRw=
-X-Received: by 2002:a17:90a:ce01:b0:2cf:fe5d:ea12 with SMTP id
- 98e67ed59e1d1-2db9ffb8564mr1569247a91.24.1726105658261; Wed, 11 Sep 2024
- 18:47:38 -0700 (PDT)
+	s=arc-20240116; t=1726105966; c=relaxed/simple;
+	bh=JeRXXPgn+TRl4Iq4SQ1scfIOIxwla4oOGj+VaLfBKIc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Hz5H5Lo1T9d9JSmaoCeDBlvCBZvw5gopvztbZi9SQD12JqdVk2MrbN4wq9SwkzctiQm1Iwf87lyiKV9XfHNnl92fYwLXaovDoHuS0e4Eh+mep39Q4cOedCEqSSXb7ys7veCjZOKyX9Ta+02N5b3sWMwkxyZdBmW0/KYdEzhatrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4X40nG5CmLz20nDL;
+	Thu, 12 Sep 2024 09:52:34 +0800 (CST)
+Received: from dggpeml500003.china.huawei.com (unknown [7.185.36.200])
+	by mail.maildlp.com (Postfix) with ESMTPS id 634E81401F1;
+	Thu, 12 Sep 2024 09:52:41 +0800 (CST)
+Received: from huawei.com (10.44.142.84) by dggpeml500003.china.huawei.com
+ (7.185.36.200) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 12 Sep
+ 2024 09:52:41 +0800
+From: Yu Liao <liaoyu15@huawei.com>
+To: <alexander.deucher@amd.com>
+CC: <liaoyu15@huawei.com>, <xiexiuqi@huawei.com>,
+	<linux-kernel@vger.kernel.org>, <amd-gfx@lists.freedesktop.org>,
+	<sunpeng.li@amd.com>, <harry.wentland@amd.com>
+Subject: [PATCH] drm/amd/display: remove unneeded semicolon
+Date: Thu, 12 Sep 2024 09:48:50 +0800
+Message-ID: <20240912014850.1016005-1-liaoyu15@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909020138.1245873-1-lulu@redhat.com> <20240910032825-mutt-send-email-mst@kernel.org>
- <85fb3a90-fbf4-4925-8b53-197f3faa574d@oracle.com> <20240911150013-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20240911150013-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Date: Thu, 12 Sep 2024 09:47:24 +0800
-Message-ID: <CACGkMEsrpAXz-opeJMkPC7h-3H3POGppZk7_Ke+mO3nyG5y7iQ@mail.gmail.com>
-Subject: Re: [RESEND PATCH v1 0/7]vhost: Add support of kthread API
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Mike Christie <michael.christie@oracle.com>, Cindy Lu <lulu@redhat.com>, 
-	linux-kernel@vger.kernel.org, virtualization@lists.linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpeml500003.china.huawei.com (7.185.36.200)
 
-On Thu, Sep 12, 2024 at 3:02=E2=80=AFAM Michael S. Tsirkin <mst@redhat.com>=
- wrote:
->
-> On Wed, Sep 11, 2024 at 11:20:30AM -0500, Mike Christie wrote:
-> > If people are ok with something similar as in this patchset where
-> > we have both vhost_tasks and kthreads, then I can send something.
->
->
-> It would be better, as you say, to modify the vhost_task code so it can
-> emulate the kthread behavior. However, given that apparently some users
-> are unhappy, what you describe would be a good stopgap solution
-> until we have that.
->
-> The main difficulty seems to be to describe what the
-> behaviour is, exactly, so userspace can make informed
-> decisions on what to use.
+Remove unneeded semicolon.
 
-Exactly.
+Signed-off-by: Yu Liao <liaoyu15@huawei.com>
+---
+ drivers/gpu/drm/amd/display/dc/dml2/dml2_utils.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks
-
->
-> --
-> MST
->
+diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml2_utils.c b/drivers/gpu/drm/amd/display/dc/dml2/dml2_utils.c
+index 92238ff333a4..7595355281c2 100644
+--- a/drivers/gpu/drm/amd/display/dc/dml2/dml2_utils.c
++++ b/drivers/gpu/drm/amd/display/dc/dml2/dml2_utils.c
+@@ -421,7 +421,7 @@ unsigned int dml2_calc_max_scaled_time(
+ 
+ void dml2_extract_writeback_wm(struct dc_state *context, struct display_mode_lib_st *dml_core_ctx)
+ {
+-	int i, j = 0;;
++	int i, j = 0;
+ 	struct mcif_arb_params *wb_arb_params = NULL;
+ 	struct dcn_bw_writeback *bw_writeback = NULL;
+ 	enum mmhubbub_wbif_mode wbif_mode = PACKED_444_FP16; /*for now*/
+-- 
+2.33.0
 
 
