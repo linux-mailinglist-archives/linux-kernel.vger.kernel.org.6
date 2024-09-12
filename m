@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-326602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A64D976A9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:30:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A179A976AA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F6351C239A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:30:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E9602834E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55B71AB6FD;
-	Thu, 12 Sep 2024 13:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 103D61AD27A;
+	Thu, 12 Sep 2024 13:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="li2ZfkfZ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TTxTuZ3D"
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="rEZRq1ss";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="omVDyfQP"
 Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC73720E3
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258E81A0BEE
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:30:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726147848; cv=none; b=OoXQiV9/o0WIupPE50f2A6ngfzheOFsfmTJqEO1GJy59/kimCcFNaq2IfdGbUsP5/UYFOhiGLclQBGN5STQu0auyEi9+Su0x0zPxdfbY09PynM3S2MCHb84Ue8XDnXyiRCrDUctk7CSOm/czNR3wMi1KGsgdkceNCVpJBDmBOi8=
+	t=1726147850; cv=none; b=dWm9Fv5d4Dj94eoACv97XLSv+ictVAYTWSOz51kgFz00FPgl2KXC5HNTEDkCjhmCB5xzI7XBT6cRQNukVDs03b4VBls1Qkz/J46Q4nkX9Fka/av8zbDpFEh6F+B8J8hLlvOmxy4XIyPmfp7ShfBapf2GxxHkEGdjulU4iNFQoaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726147848; c=relaxed/simple;
-	bh=9x3rmCbI8W50P9KO2ikEU7FhfmqMsJfCwGRXUZz9Y3I=;
+	s=arc-20240116; t=1726147850; c=relaxed/simple;
+	bh=o6UqXQnfrAI5lPpgHSFkYycMXhQQ1ysYNKfzj0CGNUY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qpkGY/6R4h1Pfl9883DJ/V4/fXllNBASBOEWy/jVb1f7S88Gt2Rct177lByZG9KijuAXuqPLi/aqa6EpoUh9eifMrrNAyhNOyJSboPopjISrYqHntjMjKtsjvIZ0duu/l9z3tggm0iZdnTrxgOgJoGC5SZ7azYVghIQg3hlun9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=li2ZfkfZ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TTxTuZ3D; arc=none smtp.client-ip=103.168.172.146
+	 MIME-Version; b=PJodcqHOo+iW4BiY2v/WgtihlMu6zlixLp+D8nnUPTLtXCMoc3aVBy7hAuhXQGzlnKRzeclsOpAiuZCjGwH7Wh/KeacS3Em3Q+yyV65HjL7e5TW8z8Dc4t975rEAMfx7Es9TxWYo+DfAO//Z+qJKw1183qXftfFnhU+3SFb52n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=rEZRq1ss; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=omVDyfQP; arc=none smtp.client-ip=103.168.172.146
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.phl.internal (Postfix) with ESMTP id CA7951380550;
-	Thu, 12 Sep 2024 09:30:45 -0400 (EDT)
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfout.phl.internal (Postfix) with ESMTP id 496A5138056D;
+	Thu, 12 Sep 2024 09:30:47 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Thu, 12 Sep 2024 09:30:45 -0400
+  by phl-compute-11.internal (MEProxy); Thu, 12 Sep 2024 09:30:47 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
 	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1726147845; x=
-	1726234245; bh=MMbGuK3N/1jRODTwbn0Vkonn552Hd2+afxq5dkrI7T4=; b=l
-	i2ZfkfZ9EU4iayMQjq6m133nIerz6kgi5vketw/kwMvhuavZ7po6bJRqvqM2bTr6
-	A77xMQ4G609+NGZUfwyzNx0PHtDHm8yhUGYriy5tAbFRvtBEJnq5YajAV9ULKAV4
-	DUo4oBedXknVzTYUgURjUAPa/IV1IG3FqYUfIjFRTfb3V9pUZQK5sbPQGELJ13OI
-	P+pOrSF0z0saue1skSlDlkl1qr22aBRwQ5MlunWzWqf+dBVfk1LLtu3QOlXzH9Au
-	nq9rCLk7DfaGtYqerJW+JJm8108MFpGAFzomNVkx9XhREYdafhy3XKkApGhmVpho
-	k9QSTPP+OS15LRzsV83MA==
+	:reply-to:subject:subject:to:to; s=fm1; t=1726147847; x=
+	1726234247; bh=hOL3pXdPLkPf7uAd5iia3Mmqf1qjh1jea0RIAuKN/g0=; b=r
+	EZRq1ss/tDmMaOQ6AbIHQB+Gjh3RC/amDsWQNwyRCUUJkYs8cwd6r9uqRWT3brPI
+	kRBg0f6nwM53Z4VGZwT91I/gMsL8xZkn9GAwYP4Z3CP/8uv+yRyhfONDnlecBDer
+	8oqWLWvc1O1cQPNwG2KfxzXB7hENIz9H7IaU3IH2BjWdz0/9Vqoty4m9Fj9PqdJs
+	rnygEWeu3gjICME5y0OdKsLt/7TU5Gwzvsc+Z9+bny57+WwpM9ePJRCDgL72wSQG
+	i2qQhsMj0+rDNq+Q+FYaPBuYtMvXYH9rqXzacJRAmiV2L+DpEAUOEZwMAP9wfhuw
+	rnMRy5WztGnL29uJjYBAA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726147845; x=
-	1726234245; bh=MMbGuK3N/1jRODTwbn0Vkonn552Hd2+afxq5dkrI7T4=; b=T
-	TxTuZ3D97S4v5JaLa8enNraahmqu1yvTZ7zMpJoBc0ILwa8vKLrF4LpZAKKbm6UG
-	Z0GMu/Y1yvPv3h1Mj/4yittuzXoWMTPw1fBoXtFL2oV+W07JDCUqywwAo6EW1Bpn
-	FviIf3IIL/YxW/79gnOhRwhgZKtnUwqPI7NdIfIMjbEYruIelFzHo/P+g6oyhATS
-	B4Z6yY5eHpn4PLtRPxKTCfnGKmUazOm/EBdFrHKUKgUTS8g33i6hxMnpAqaCzBOb
-	NfShalZhCcK/LSYQ+S/B69iE7TF96jy+WZ8F1eOL7vBJMNdNdQku4O46HiQ4EGip
-	hRh17clZYMCCg3MVIfAXA==
-X-ME-Sender: <xms:Be3iZir4dBIaXI6hMDWmAT_eNhrLyOhbxzkXHfgjz1Pf5ynOx1ALQg>
-    <xme:Be3iZgqCcW0q9_8lpnhYxILqcEbjEW0iBe91EjrJIuMlkJzGNKNx6um6lwNPPFg53
-    qKFdhdyPo06Hr7N0QA>
-X-ME-Received: <xmr:Be3iZnOywRjiV8_AtYv735-dRvY26yugGeVGh4-oXHVvAJ4E6qhXXkjUXpvoTZABGEL8f2XT37ajDt7Ki3tr5BzygJ6pxyCDbbr90Nj-gfkFoQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejfedgieejucetufdoteggodetrfdotf
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726147847; x=
+	1726234247; bh=hOL3pXdPLkPf7uAd5iia3Mmqf1qjh1jea0RIAuKN/g0=; b=o
+	mVDyfQPh1PCuoMseNNefo4yI/Ov460TBQAz0Ccpb9bJFPwR+dadqrhmC3cwFP2Og
+	nSpqX+bkR9qzywZP90KC9ucNIWR23LIQGgRLDntbjCCB1H7bd5AoGx4KZcFY8gNV
+	amALtsdEYqOZzU0xqHFzF7E7/HQIzp7ltDYpRBiEaHK50n4Dye7rxHmfpLTDrFoi
+	rW1FBinzI4wzhg8T0UHJDYfr3onehLO9QU06ecDx9zZUn8PWW+PPjF4qWD3EcdL6
+	x9mLhiTE8JmANi+ohHO0m2eXfUfWE4voOmKGOWEzfV4Xxj/5CNorLAUk0YwKNSQu
+	BUnfrXO1DEJjpGAmGgliA==
+X-ME-Sender: <xms:B-3iZuS3dD348nXz1mLkVBAvKpWXN06Kv7peNvn9JXmofQb-dbWdwQ>
+    <xme:B-3iZjxAD442D_UzytPETyz2r8QhDZx3ytac31Q6JsLIZ_7K-TqoddtUydSmgdFUq
+    if7pXKOPjoEmvLxgOs>
+X-ME-Received: <xmr:B-3iZr2Z5GYbTf2yY4qp1PYU_HnFrrte1fkk4yhqUxW4YrFvrom2XdSggmr_VdV3jg_XgXyhtJwyxitt76K8q2O8ovZP6ijVO8NHSqLHNWHfVg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejfedgieeiucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
     rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevuf
     ffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefvrghkrghshhhiucfurghkrghm
@@ -75,20 +75,20 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejfedgieejucetufdoteggod
     pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigudefleegqdguvghvvg
     hlsehlihhsthhsrdhsohhurhgtvghfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinhhu
     gidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:Be3iZh65sxEMcf0MSPQufEuN3JD1SE_gCR2WQp0NjDMhSo9iSdjtNw>
-    <xmx:Be3iZh6KwukkDLSCbn9m1Zw4QjkwoXSba9zVTC1N2AczHPdN_yfqbQ>
-    <xmx:Be3iZhhfeihr1jmDcFjgtlr-6g19f7kb9D__tv3iL4__Sa168ucg5Q>
-    <xmx:Be3iZr6eRxonjhPSWaaMycKBvWSMzNLrA-EJLayu2nJFd4UqLP-IGQ>
-    <xmx:Be3iZhF9_Upu_Ys5oIeszivNosbvcG4sAGAkACxOiuNHj5bGrCzgi4IT>
+X-ME-Proxy: <xmx:B-3iZqCvlBaDWG8owQgPjbWxyjhUjj9piAw7ofcFm31BVJU1WACtEg>
+    <xmx:B-3iZnhL3BYCpNdC1BYqdTRj-Km9anHgXNE6zI6NxmLzGKmp6zffwA>
+    <xmx:B-3iZmqOIMsBcMpRsbzlUSDN0gn4UFebqtY7wVMk_9J5BDQLgYoo7g>
+    <xmx:B-3iZqhwJWXiSBfk5ATQQV20lUgsf2X-8P3bPAl-sUGUyMw4syL9jQ>
+    <xmx:B-3iZqtPaPKlZ0qcpZoHXY3nY7UqKDG39GXVQR3WDWNWv5TDVzrTllQk>
 Feedback-ID: ie8e14432:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 12 Sep 2024 09:30:44 -0400 (EDT)
+ 12 Sep 2024 09:30:46 -0400 (EDT)
 From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 To: linux1394-devel@lists.sourceforge.net
 Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 1/5] Revert "firewire: core: use mutex to coordinate concurrent calls to flush completions"
-Date: Thu, 12 Sep 2024 22:30:34 +0900
-Message-ID: <20240912133038.238786-2-o-takashi@sakamocchi.jp>
+Subject: [PATCH 2/5] Revert "firewire: core: move workqueue handler from 1394 OHCI driver to core function"
+Date: Thu, 12 Sep 2024 22:30:35 +0900
+Message-ID: <20240912133038.238786-3-o-takashi@sakamocchi.jp>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240912133038.238786-1-o-takashi@sakamocchi.jp>
 References: <20240912133038.238786-1-o-takashi@sakamocchi.jp>
@@ -100,129 +100,162 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This reverts commit d9605d67562505e27dcc0f71af418118d3db91e5, since this
-commit is on the following reverted changes.
+This reverts commit 767bfb9ef27ebf760290d9f8bc303828b018c312. It appears
+that the call of ohci_flush_iso_completions() in the work item scheduled
+by hardIRQ of 1394 OHCI for any isochronous context changes the timing to
+queue events in the view of user space application.
 
 Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 ---
- drivers/firewire/core-iso.c | 11 ++---------
- drivers/firewire/ohci.c     | 37 +++++++++++++++++++++++--------------
- include/linux/firewire.h    |  1 -
- 3 files changed, 25 insertions(+), 24 deletions(-)
+ drivers/firewire/core-iso.c | 26 ++++++++++++---------
+ drivers/firewire/core.h     |  5 +++++
+ drivers/firewire/ohci.c     | 45 +++++++++++++++++++++++++++++++++++--
+ 3 files changed, 64 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/firewire/core-iso.c b/drivers/firewire/core-iso.c
-index 1405d2e9cb2c..9f41c78878ad 100644
+index 9f41c78878ad..f2394f3ed194 100644
 --- a/drivers/firewire/core-iso.c
 +++ b/drivers/firewire/core-iso.c
-@@ -157,7 +157,6 @@ struct fw_iso_context *fw_iso_context_create(struct fw_card *card,
+@@ -131,13 +131,6 @@ size_t fw_iso_buffer_lookup(struct fw_iso_buffer *buffer, dma_addr_t completed)
+ 	return 0;
+ }
+ 
+-static void flush_completions_work(struct work_struct *work)
+-{
+-	struct fw_iso_context *ctx = container_of(work, struct fw_iso_context, work);
+-
+-	fw_iso_context_flush_completions(ctx);
+-}
+-
+ struct fw_iso_context *fw_iso_context_create(struct fw_card *card,
+ 		int type, int channel, int speed, size_t header_size,
+ 		fw_iso_callback_t callback, void *callback_data)
+@@ -156,7 +149,6 @@ struct fw_iso_context *fw_iso_context_create(struct fw_card *card,
+ 	ctx->header_size = header_size;
  	ctx->callback.sc = callback;
  	ctx->callback_data = callback_data;
- 	INIT_WORK(&ctx->work, flush_completions_work);
--	mutex_init(&ctx->flushing_completions_mutex);
+-	INIT_WORK(&ctx->work, flush_completions_work);
  
  	trace_isoc_outbound_allocate(ctx, channel, speed);
  	trace_isoc_inbound_single_allocate(ctx, channel, header_size);
-@@ -174,8 +173,6 @@ void fw_iso_context_destroy(struct fw_iso_context *ctx)
- 	trace_isoc_inbound_multiple_destroy(ctx);
- 
- 	ctx->card->driver->free_iso_context(ctx);
--
--	mutex_destroy(&ctx->flushing_completions_mutex);
- }
- EXPORT_SYMBOL(fw_iso_context_destroy);
- 
-@@ -229,7 +226,7 @@ EXPORT_SYMBOL(fw_iso_context_queue_flush);
+@@ -226,15 +218,29 @@ EXPORT_SYMBOL(fw_iso_context_queue_flush);
   * to process the context asynchronously, fw_iso_context_schedule_flush_completions() is available
   * instead.
   *
-- * Context: Process context due to mutex_trylock().
-+ * Context: Process context.
+- * Context: Process context.
++ * Context: Process context. May sleep due to disable_work_sync().
   */
  int fw_iso_context_flush_completions(struct fw_iso_context *ctx)
  {
-@@ -237,11 +234,7 @@ int fw_iso_context_flush_completions(struct fw_iso_context *ctx)
++	int err;
++
+ 	trace_isoc_outbound_flush_completions(ctx);
  	trace_isoc_inbound_single_flush_completions(ctx);
  	trace_isoc_inbound_multiple_flush_completions(ctx);
  
--	scoped_cond_guard(mutex_try, /* nothing to do */, &ctx->flushing_completions_mutex) {
--		return ctx->card->driver->flush_iso_completions(ctx);
--	}
--
--	return 0;
-+	return ctx->card->driver->flush_iso_completions(ctx);
+-	return ctx->card->driver->flush_iso_completions(ctx);
++	might_sleep();
++
++	// Avoid dead lock due to programming mistake.
++	if (WARN_ON_ONCE(current_work() == &ctx->work))
++		return 0;
++
++	disable_work_sync(&ctx->work);
++
++	err = ctx->card->driver->flush_iso_completions(ctx);
++
++	enable_work(&ctx->work);
++
++	return err;
  }
  EXPORT_SYMBOL(fw_iso_context_flush_completions);
  
+diff --git a/drivers/firewire/core.h b/drivers/firewire/core.h
+index 96ae366889e0..0ae2c84ecafe 100644
+--- a/drivers/firewire/core.h
++++ b/drivers/firewire/core.h
+@@ -159,6 +159,11 @@ int fw_iso_buffer_alloc(struct fw_iso_buffer *buffer, int page_count);
+ int fw_iso_buffer_map_dma(struct fw_iso_buffer *buffer, struct fw_card *card,
+ 			  enum dma_data_direction direction);
+ 
++static inline void fw_iso_context_init_work(struct fw_iso_context *ctx, work_func_t func)
++{
++	INIT_WORK(&ctx->work, func);
++}
++
+ 
+ /* -topology */
+ 
 diff --git a/drivers/firewire/ohci.c b/drivers/firewire/ohci.c
-index b182998a77f4..02ff0363d3ad 100644
+index 02ff0363d3ad..3a911cfb5ff3 100644
 --- a/drivers/firewire/ohci.c
 +++ b/drivers/firewire/ohci.c
-@@ -166,6 +166,7 @@ struct iso_context {
- 	struct context context;
- 	void *header;
- 	size_t header_length;
-+	unsigned long flushing_completions;
- 	u32 mc_buffer_bus;
- 	u16 mc_completed;
- 	u16 last_timestamp;
-@@ -3578,23 +3579,31 @@ static void ohci_flush_queue_iso(struct fw_iso_context *base)
- static int ohci_flush_iso_completions(struct fw_iso_context *base)
- {
- 	struct iso_context *ctx = container_of(base, struct iso_context, base);
-+	int ret = 0;
- 
--	// Note that tasklet softIRQ is not used to process isochronous context anymore.
--	context_tasklet((unsigned long)&ctx->context);
-+	if (!test_and_set_bit_lock(0, &ctx->flushing_completions)) {
-+		// Note that tasklet softIRQ is not used to process isochronous context anymore.
-+		context_tasklet((unsigned long)&ctx->context);
- 
--	switch (base->type) {
--	case FW_ISO_CONTEXT_TRANSMIT:
--	case FW_ISO_CONTEXT_RECEIVE:
--		if (ctx->header_length != 0)
--			flush_iso_completions(ctx, FW_ISO_CONTEXT_COMPLETIONS_CAUSE_FLUSH);
--		return 0;
--	case FW_ISO_CONTEXT_RECEIVE_MULTICHANNEL:
--		if (ctx->mc_completed != 0)
--			flush_ir_buffer_fill(ctx);
--		return 0;
--	default:
--		return -ENOSYS;
-+		switch (base->type) {
-+		case FW_ISO_CONTEXT_TRANSMIT:
-+		case FW_ISO_CONTEXT_RECEIVE:
-+			if (ctx->header_length != 0)
-+				flush_iso_completions(ctx, FW_ISO_CONTEXT_COMPLETIONS_CAUSE_FLUSH);
-+			break;
-+		case FW_ISO_CONTEXT_RECEIVE_MULTICHANNEL:
-+			if (ctx->mc_completed != 0)
-+				flush_ir_buffer_fill(ctx);
-+			break;
-+		default:
-+			ret = -ENOSYS;
-+		}
-+
-+		clear_bit_unlock(0, &ctx->flushing_completions);
-+		smp_mb__after_atomic();
+@@ -1182,6 +1182,47 @@ static void context_tasklet(unsigned long data)
  	}
-+
-+	return ret;
  }
  
- static const struct fw_card_driver ohci_driver = {
-diff --git a/include/linux/firewire.h b/include/linux/firewire.h
-index 19e8c5f9537c..f815d12deda0 100644
---- a/include/linux/firewire.h
-+++ b/include/linux/firewire.h
-@@ -512,7 +512,6 @@ union fw_iso_callback {
- struct fw_iso_context {
- 	struct fw_card *card;
- 	struct work_struct work;
--	struct mutex flushing_completions_mutex;
- 	int type;
- 	int channel;
- 	int speed;
++static void ohci_isoc_context_work(struct work_struct *work)
++{
++	struct fw_iso_context *base = container_of(work, struct fw_iso_context, work);
++	struct iso_context *isoc_ctx = container_of(base, struct iso_context, base);
++	struct context *ctx = &isoc_ctx->context;
++	struct descriptor *d, *last;
++	u32 address;
++	int z;
++	struct descriptor_buffer *desc;
++
++	desc = list_entry(ctx->buffer_list.next, struct descriptor_buffer, list);
++	last = ctx->last;
++	while (last->branch_address != 0) {
++		struct descriptor_buffer *old_desc = desc;
++
++		address = le32_to_cpu(last->branch_address);
++		z = address & 0xf;
++		address &= ~0xf;
++		ctx->current_bus = address;
++
++		// If the branch address points to a buffer outside of the current buffer, advance
++		// to the next buffer.
++		if (address < desc->buffer_bus || address >= desc->buffer_bus + desc->used)
++			desc = list_entry(desc->list.next, struct descriptor_buffer, list);
++		d = desc->buffer + (address - desc->buffer_bus) / sizeof(*d);
++		last = find_branch_descriptor(d, z);
++
++		if (!ctx->callback(ctx, d, last))
++			break;
++
++		if (old_desc != desc) {
++			// If we've advanced to the next buffer, move the previous buffer to the
++			// free list.
++			old_desc->used = 0;
++			guard(spinlock_irqsave)(&ctx->ohci->lock);
++			list_move_tail(&old_desc->list, &ctx->buffer_list);
++		}
++		ctx->last = last;
++	}
++}
++
+ /*
+  * Allocate a new buffer and add it to the list of free buffers for this
+  * context.  Must be called with ohci->lock held.
+@@ -3128,6 +3169,7 @@ static struct fw_iso_context *ohci_allocate_iso_context(struct fw_card *card,
+ 	ret = context_init(&ctx->context, ohci, regs, callback);
+ 	if (ret < 0)
+ 		goto out_with_header;
++	fw_iso_context_init_work(&ctx->base, ohci_isoc_context_work);
+ 
+ 	if (type == FW_ISO_CONTEXT_RECEIVE_MULTICHANNEL) {
+ 		set_multichannel_mask(ohci, 0);
+@@ -3582,8 +3624,7 @@ static int ohci_flush_iso_completions(struct fw_iso_context *base)
+ 	int ret = 0;
+ 
+ 	if (!test_and_set_bit_lock(0, &ctx->flushing_completions)) {
+-		// Note that tasklet softIRQ is not used to process isochronous context anymore.
+-		context_tasklet((unsigned long)&ctx->context);
++		ohci_isoc_context_work(&base->work);
+ 
+ 		switch (base->type) {
+ 		case FW_ISO_CONTEXT_TRANSMIT:
 -- 
 2.43.0
 
