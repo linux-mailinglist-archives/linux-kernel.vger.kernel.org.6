@@ -1,95 +1,76 @@
-Return-Path: <linux-kernel+bounces-326250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A53397657E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:26:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B6DF976580
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:26:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0AC7285387
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:26:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18A891F27D05
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625D019CC05;
-	Thu, 12 Sep 2024 09:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632E119C57E;
+	Thu, 12 Sep 2024 09:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Wr0YNEn1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="T4MUvHoe";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eQXdIOm0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ctc0istA"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dSYHG4wG"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52BB18FDC8
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E7919341C
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726133195; cv=none; b=Xt/dzPAMSvfkcWQvf/GzU3SqMki3ntc6/rumcu76WmHEaSFnmwAKpvwjl7PKoQHJBONG8+ry4/R/w3UPEYIGZDhgOt6FvKLJgZNxvLu89uB95j9G35GEbR03r3IXhmiia/LGcDybC8WTfBSFk0yYnd+QNAND1NqxJo/1BCxjrSE=
+	t=1726133207; cv=none; b=VnA9MCbOh1IQXImF4NHOAudQEussk7ndMnQmqcEGqPHqSuV1MAaa1pgv6YWmSrv2jKr4k3dDARz+1r1l+xNqRCPQaQ2602SGfePpRmTuc6nX0Bz2AtebTQeqZHubLF42P0cPQZKk64xJbiqvKYkJutG0agQIlp4PzZI3/Wtz6yM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726133195; c=relaxed/simple;
-	bh=kYYCEt7FwZbXSlE7nVBbR/1SLU2ypju0LSE7VQvzfWY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jpZp9991x8nDnoTxv+WV4hGDkdB5LM8CgNcHgr9JKQdZQ1rseTG5OUO0MW3qVd+8+pP9f8OdfIEub6RP6Y37+5tpi8ukCktkhF44U+fymYF374AOwZkAzmQ6wrTag/K/g84ldPgoR/68ft3JXdFBH5HcAVPLCoqeJ8LE/9E/cvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Wr0YNEn1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=T4MUvHoe; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eQXdIOm0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ctc0istA; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id CCAB41F76C;
-	Thu, 12 Sep 2024 09:26:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726133192; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=+gfKavm6hNALa+fgSv1tQpvY/oFh7dPR7Rl3fsR1mJ4=;
-	b=Wr0YNEn1D8DaRyqh8vBN3awAZkSXLKS/rR41arkM10FePh3vcxzRobqRcX7ABJhYW/F2YV
-	rRorEHHtK5UrWwxeI2XVoewGv2WyY0z3UdcGFeXTq7akqMjM52NJDs2LcfYqusMBoc6iaP
-	mHl7eRlvUk+XuHdPfoCPYI+3PkgQzNA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726133192;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=+gfKavm6hNALa+fgSv1tQpvY/oFh7dPR7Rl3fsR1mJ4=;
-	b=T4MUvHoeTO/JWTYdmuLGI781fGPDjeg8h06vxaxCAzo8RBhSdIgljHl980+Fu2DoHA43tY
-	3kg/SYS01Pz5taCA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=eQXdIOm0;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ctc0istA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726133191; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=+gfKavm6hNALa+fgSv1tQpvY/oFh7dPR7Rl3fsR1mJ4=;
-	b=eQXdIOm0l1eXf2/lvI98N5U6C95wXi7coGUqsPX029iZp0hJZS4zNmXukdsIFat0vRADVz
-	zcJ5aS7g3cO0LSU2vkYGf5D/Dsasbr9X1EIBOCKGa5X2Ss8Edo6F+q7r3B8pl3OCnRKmOY
-	enaXr9w9JZRt1LCK6U1n/X+sumVwUlU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726133191;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=+gfKavm6hNALa+fgSv1tQpvY/oFh7dPR7Rl3fsR1mJ4=;
-	b=ctc0istADgJ+F91W/wajHiq2luCHCSSOHvNXII/w0cfgQy84KZg8NCXIyz62QXo6C94OGd
-	CWqd1dLl9WbWRcDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 869E913A73;
-	Thu, 12 Sep 2024 09:26:31 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id OY0VH8ez4maSIQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 12 Sep 2024 09:26:31 +0000
-Message-ID: <988bb389-13e6-4465-ab37-3ed94ecee9be@suse.de>
-Date: Thu, 12 Sep 2024 11:26:31 +0200
+	s=arc-20240116; t=1726133207; c=relaxed/simple;
+	bh=p7Jh2lUNcJKRMJOe/H+uSUDeDw6CZg7Esbe+YpuKkas=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=JMo/FAEkVHt/9N3+OOugIIMHC+iUtN1DV4i3y3PlFXJoyngRhZLYZJbh7V7sKCNKBISNn02puzDBCI6KKgZh8s3bnEvBXaV+OjtF3Lwz939CPsOuKEl70WiVzmxZYU056IIAijseDr6PA42A8gMvwRpnsFodPFk+wjautHPVrtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dSYHG4wG; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cb8dac900so6391915e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 02:26:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726133204; x=1726738004; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/uRShjiG4yggmkzU8PcqDWZaN4MiVvMygjJPwQCLJlQ=;
+        b=dSYHG4wGpsXfDZJoUiAtcA95uQvzLarGSZ/WYjbUvjkX83rHg1QeP4VkcPutXEw0/Y
+         ywhy/9jBAnEN1Kw2WsS29QnNgWCYk9OCHuMzL0hLGL515+R31D9i7nO/YaVIWbwQt0zi
+         596iPbl8LfuMgVH3yDDrZQifpu7TuM8E0XQJ7AhKkGMJJ1e8A6Pfh8xlJzWQy19hWETb
+         ldZdTzarxe3lgnPfZujNg7pKF66HDXVxJxi9UR4p+1XiXHbIzJe18T6D6Hvg0cD8F/Sl
+         vLf31LWFIt33hSsJoylFnUlpUHbNQBx0XkgqXtMqi5gSKKN8Tnrn3J7eMDbfbiLONi5+
+         Tufw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726133204; x=1726738004;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=/uRShjiG4yggmkzU8PcqDWZaN4MiVvMygjJPwQCLJlQ=;
+        b=sL9UTNrtu7363rGOIHqQFG49GnkraqVIC8Hf4K6bmuB/R3Sg8I3cF+KGOg3bcObYJ5
+         WYGcnDay8/0d9XhS96wf4Hr+1BSx0zSy6uUKrSWfMfZGxPM06Y7bxncdVCf1bK03n5sx
+         LmVyeldImK7nzsNW5h2DA4ySlW4ROIXrlQr0r5wS0+BqH1kTKS5SzAVdvr5bC5rYiDAw
+         Zs5lXCfXnsrEtiTrEykKNaMT910j4OQ0blm/qxKOEhsML4SirS74zyXKZq1RF3x1NezV
+         qWijJWlDN10vglw6xC3BVR6i0b8FrxDyJfsrzC76RayGrP5FX5HR9cfPKpm8vZDEvABg
+         dYDg==
+X-Forwarded-Encrypted: i=1; AJvYcCWSrGlQ1nuPnKPlIR8p6I9Ki4q4NH40zXsNKZwIv2gRl2FE+AagbSu5QttXQxK6txDgiiqWvM/Qif+8SDs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxt0yKEh5GVUuEjMN52tChCacRQZTwobK+SXLewRhu1H+1yFMxg
+	5U4jBrXP3hSshZxibW0px0O3E3GDLP0BNRYvcqEDp3l9P/esxIt0aSqQN1dNCtMAbImUYHEE3AB
+	5
+X-Google-Smtp-Source: AGHT+IGH+u+aLztbk+Cab3S2ln2z2Tfx1XqtBVLcdLhlsQ/ZJ/HNq5/ylhTEEgTeESqGC2kj06Bhew==
+X-Received: by 2002:a05:600c:5249:b0:42c:d74b:eb26 with SMTP id 5b1f17b1804b1-42cdb5486e9mr18231925e9.21.1726133203625;
+        Thu, 12 Sep 2024 02:26:43 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:1e79:4ce1:c7be:8add? ([2a01:e0a:982:cbb0:1e79:4ce1:c7be:8add])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cb0642f99sm165276565e9.40.2024.09.12.02.26.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Sep 2024 02:26:43 -0700 (PDT)
+Message-ID: <2781e0a7-5ad5-4d93-bbca-55729cc4fe13@linaro.org>
+Date: Thu, 12 Sep 2024 11:26:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,196 +78,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/gma500: replace drm_detect_hdmi_monitor() with
- drm_display_info.is_hdmi
-To: Jani Nikula <jani.nikula@linux.intel.com>,
- Tejas Vipin <tejasvipin76@gmail.com>, Laurent.pinchart@ideasonboard.com,
- patrik.r.jakobsson@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, airlied@gmail.com, daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240911180650.820598-1-tejasvipin76@gmail.com>
- <b0f77fcc-5d84-4727-9a17-9d1f1e2c5b76@suse.de> <87o74ti7g5.fsf@intel.com>
- <87ldzxi71s.fsf@intel.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <87ldzxi71s.fsf@intel.com>
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 0/3] amlogic SoC's power-domains fixes
+To: George Stark <gnstark@salutedevices.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, kernel@salutedevices.com
+References: <20240710223214.2348418-1-gnstark@salutedevices.com>
+ <26ab17bb-1b2e-4144-8a34-696a92328f52@salutedevices.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <26ab17bb-1b2e-4144-8a34-696a92328f52@salutedevices.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: CCAB41F76C
-X-Spam-Level: 
-X-Spamd-Result: default: False [-5.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_TO(0.00)[linux.intel.com,gmail.com,ideasonboard.com,kernel.org,ffwll.ch];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,intel.com:email]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -5.01
-X-Spam-Flag: NO
 
-Hi
+Hi,
 
-Am 12.09.24 um 10:56 schrieb Jani Nikula:
-> On Thu, 12 Sep 2024, Jani Nikula <jani.nikula@linux.intel.com> wrote:
->> On Thu, 12 Sep 2024, Thomas Zimmermann <tzimmermann@suse.de> wrote:
->>> Hi
->>>
->>> Am 11.09.24 um 20:06 schrieb Tejas Vipin:
->>>> Replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi since
->>>> monitor HDMI information is available after EDID is parsed. Additionally
->>>> rewrite the code the code to have fewer indentation levels.
->>> The problem is that the entire logic is outdated. The content
->>> of cdv_hdmi_detect() should go into cdv_hdmi_get_modes(), the detect_ctx
->>> callback should be set to drm_connector_helper_detect_from_ddc() and
->>> cdv_hdmi_detect() should be deleted. The result is that ->detect_ctx
->>> will detect the presence of a display and ->get_modes will update EDID
->>> and other properties.
->> I guess I didn't get the memo on this one.
+On 11/09/2024 23:56, George Stark wrote:
+> Hello Neil
+> 
+> Please take a look at this series. It's 2 months already since ack
+
+I'll take patch 3 after patch 2 is applied on thermal tree.
+
+Daniel could you take patch 2 ?
+
+Thanks,
+Neil
+
+> 
+> On 7/11/24 01:32, George Stark wrote:
+>> Here's some fixes to the bindings and device tree related to Amlogic A1 SoC.
+>> The SoC provides dedicated power domain for for almost all periphery.
 >>
->> What's the problem with reading the EDID at detect? The subsequent
->> drm_edid_connector_add_modes() called from .get_modes() does not need to
->> read the EDID again.
-> Moreover, in this case .detect() only detects digital displays as
-> reported by EDID. If you postpone that to .get_modes(), the probe helper
-> will still report connected, and invent non-EDID fallback modes. The
-> behaviour changes.
-
-The change in behavior is intentional, because the current test seems 
-arbitrary. Does the driver not work with analog outputs?
-
-Best regards
-Thomas
-
->
->> I think it should be fine to do incremental refactors like the patch at
->> hand (modulo some issues I mention below).
-> Another issue in the patch is that it should also change .get_modes() to
-> not read the EDID again, but just call drm_edid_connector_add_modes().
->
-> BR,
-> Jani.
->
->> BR,
->> Jani.
+>> Changes in v2:
+>>    dt-bindings: spi: amlogic,a1-spifc: make power-domains required
+>>      - drop the patch
+>>    dt-bindings: thermal: amlogic,thermal: add optional power-domains
+>>      - drop required conditional
+>>      - rewrite commit message
+>>    dt-bindings: i2c: amlogic,meson6-i2c: add optional power-domains
+>>      - add RvB: Neil Armstrong <neil.armstrong@linaro.org>
+>>      - add RvB: Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+>>    arm64: dts: meson: a1: bind power domain to temperature sensor
+>>      - add RvB: Neil Armstrong <neil.armstrong@linaro.org>
+>>    previous version [1]
 >>
+>> [1] https://lore.kernel.org/lkml/20240708194808.1819185-3-gnstark@salutedevices.com/T/#m398c283b369108c5c557e68b7a1ada9abf3e5cba
 >>
->>> Do you have  a device for testing such a change?
->>>
->>> Best regards
->>> Thomas
->>>
->>>> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
->>>> ---
->>>> Changes in v2:
->>>>       - Use drm_edid instead of edid
->>>>
->>>> Link to v1: https://lore.kernel.org/all/20240910051856.700210-1-tejasvipin76@gmail.com/
->>>> ---
->>>>    drivers/gpu/drm/gma500/cdv_intel_hdmi.c | 24 +++++++++++++-----------
->>>>    1 file changed, 13 insertions(+), 11 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
->>>> index 2d95e0471291..701f8bbd5f2b 100644
->>>> --- a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
->>>> +++ b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
->>>> @@ -128,23 +128,25 @@ static enum drm_connector_status cdv_hdmi_detect(
->>>>    {
->>>>    	struct gma_encoder *gma_encoder = gma_attached_encoder(connector);
->>>>    	struct mid_intel_hdmi_priv *hdmi_priv = gma_encoder->dev_priv;
->>>> -	struct edid *edid = NULL;
->>>> +	const struct drm_edid *drm_edid;
->>>> +	int ret;
->>>>    	enum drm_connector_status status = connector_status_disconnected;
->>>>    
->>>> -	edid = drm_get_edid(connector, connector->ddc);
->>>> +	drm_edid = drm_edid_read_ddc(connector, connector->ddc);
->> Just drm_edid_read() is enough when you're using connector->ddc.
+>> George Stark (3):
+>>    dt-bindings: i2c: amlogic,meson6-i2c: add optional power-domains
+>>    dt-bindings: thermal: amlogic,thermal: add optional power-domains
+>>    arm64: dts: meson: a1: bind power domain to temperature sensor
 >>
->>>> +	ret = drm_edid_connector_update(connector, drm_edid);
->>>>    
->>>>    	hdmi_priv->has_hdmi_sink = false;
->>>>    	hdmi_priv->has_hdmi_audio = false;
->>>> -	if (edid) {
->>>> -		if (edid->input & DRM_EDID_INPUT_DIGITAL) {
->>>> -			status = connector_status_connected;
->>>> -			hdmi_priv->has_hdmi_sink =
->>>> -						drm_detect_hdmi_monitor(edid);
->>>> -			hdmi_priv->has_hdmi_audio =
->>>> -						drm_detect_monitor_audio(edid);
->>>> -		}
->>>> -		kfree(edid);
->>>> +	if (ret)
->> This error path leaks the EDID.
+>>   Documentation/devicetree/bindings/i2c/amlogic,meson6-i2c.yaml  | 3 +++
+>>   Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml | 3 +++
+>>   arch/arm64/boot/dts/amlogic/meson-a1.dtsi                      | 1 +
+>>   3 files changed, 7 insertions(+)
 >>
->>>> +		return status;
->>>> +
->>>> +	if (drm_edid_is_digital(drm_edid)) {
->>>> +		status = connector_status_connected;
->>>> +		hdmi_priv->has_hdmi_sink = connector->display_info.is_hdmi;
->>>> +		hdmi_priv->has_hdmi_audio = connector->display_info.has_audio;
->>>>    	}
->>>> +	drm_edid_free(drm_edid);
->>>> +
->>>>    	return status;
->>>>    }
->>>>    
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+>> -- 
+>> 2.25.1
+>>
+> 
 
 
