@@ -1,80 +1,52 @@
-Return-Path: <linux-kernel+bounces-326742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E744C976C73
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:45:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B86BD976C7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:46:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE71E281580
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:45:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A03B285F38
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A721B9858;
-	Thu, 12 Sep 2024 14:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4FF81B12F2;
+	Thu, 12 Sep 2024 14:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H8/iSK80"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="USnakRW0"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B9719C554;
-	Thu, 12 Sep 2024 14:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD01D53365
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 14:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726152302; cv=none; b=n/TzPhiopRzROBn5lOFvEzZXsRhaFVL6kPcqcWnFwQSYe7sc9iEw3+6RMSkoa87n9q822FbHuSAgF0wgdYApauTmwwOVZhyDzTfTJb1ykxutnJ5CXdjA38otoKNm3T1EW7BTlBX2TuKypO7L+ByBP13xz0H37OAzLwiIt7hiv+U=
+	t=1726152320; cv=none; b=BcoFYTpbcQQ6DujifRoWw8WkDa+DFIrySCwahH6vv369aUBH3vIixeyzO2MwuEILeRlH84DbrLEIiXYqpJJAnjOs+ySoXwKXk3DFe7WX5sdexOvEiNHpZS0hTDjbkRSSvDBHp4HwTjb43e6cX+0DIV34EEGa1DBQ21b7kxhnDOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726152302; c=relaxed/simple;
-	bh=OoCVxY+UyBsd7hQhwjtSIvbxU0H/X7QgOk7aNI2FNlA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=VtZWo68bCH76wIgLuM/S5cL+iTGgXmZ7ynQ6AfRcbCQHosvlr45VdnNE/gwxAtVvzZCNujlsi6itEAU5vM9R9IDHBFuuZleFCu9r8srfgGmemLJkmLZgZp/AoaLl1Lec6cZ6jZXb+F7HKjIiBVeaXolYu656OkOVXD8dzenlGXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H8/iSK80; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cb57f8b41so12065895e9.0;
-        Thu, 12 Sep 2024 07:45:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726152299; x=1726757099; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8DvJH9T+GARTJc/xZ32XfwCd/eQ9HgrjmZYLyaD3YQ0=;
-        b=H8/iSK80S4svGRCQ04rFlLBIs54VBNwvZcn6RoGGbTuX74aE9NUFUJ6ZRtRUxIj3kU
-         W08Xu3WaSgf8ECouhsHtJ755T0VlJdw7in0zsdocpLd0FuUzcVkM4PXe0sMsB+GLRu2u
-         5PrhQY0ZvTnMAAdBi0qoC1oQDm4EdXPQ1UBa/BUdcGQIVhxJcDBApOSVTbgSVQjYn95J
-         tRZBmI3C/WWvnGpO+IkPZNrOQq1ivYNpcPeW8+Sg0N0MQAhI0zrr6quEy5LaM3QlUWtq
-         YSVhXCkluQYSI/Q5DKed+2U66htADYJpZZmBiVYX3urhe9FprY2JeSfV3+nwiRoPeNZv
-         t5KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726152299; x=1726757099;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8DvJH9T+GARTJc/xZ32XfwCd/eQ9HgrjmZYLyaD3YQ0=;
-        b=niTIcCCtbOhDJEGUEipBgz4Ja9b7qcEJ4UE93ZmLNh4PPqys+bkOPlXRlD6/+NTm6u
-         Tccu9udSuUx53dG7Au3AZxIjKV92A6eQqNy9NvbxdIvt7xuXmGcfy8wv/JI4DDmK7MFL
-         7kCjwQY303x3A5wcDKGO41Lxz+pmCCsmMz9frIr6QRRqf/5iuyMXsvM9aXI66+O6Gm+/
-         IP+rrIwjj+gFNPjisRTJ4SbbACmC92Acgq1zXnwBb2Yy7jMWJoriumi7qQjv2c5OBuxp
-         GuNXKrbp9Ops9VMkgBvaBy8XeP8QBTfgq17hBBnLqEPnTPCzAct5CluMJxzJlkKMcZcH
-         tx2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUeCqbyHjQSeABPYJr2L0lXe8jOfzGyBPLissqNZ9MsG6lIX0XAPVI1NGrOpMjA59S8YYhuNp1TlHNucfc=@vger.kernel.org, AJvYcCXSH7J9p1RyQyZIOgrEAUWYCQJvVdJ021V9Ys4GgG7vrt+LDgawJ6kH2TPLZtvzXysidCuj7414Svl0yfqrN1c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwNdULpevDkRJsk0wWF0PRDoFi8LrtOdPJrC5iIa/mNIAU4KB/
-	51Di1aD1tJS4ngt+svk2lCQHhAwPmjbzCvDjX9XJZbaGShAcl5QK
-X-Google-Smtp-Source: AGHT+IE7/+KbvjyDtDww2TnU/fgs3cYgIf8LCVqZiRkkY4lpwUWmwI+I9g8/8f4mhbJiYx97aotJCw==
-X-Received: by 2002:a05:600c:6b15:b0:426:59fe:ac27 with SMTP id 5b1f17b1804b1-42cdb673849mr31883895e9.26.1726152298494;
-        Thu, 12 Sep 2024 07:44:58 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb8b7fcsm176962995e9.47.2024.09.12.07.44.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 07:44:57 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Kalle Valo <kvalo@kernel.org>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	linux-wireless@vger.kernel.org,
-	ath12k@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] wifi: mac80211: make read-only array svc_id static const
-Date: Thu, 12 Sep 2024 15:44:56 +0100
-Message-Id: <20240912144456.591494-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1726152320; c=relaxed/simple;
+	bh=VISv8cauLqco3i0yU3WE+qBEYcD8Yqy+TzLEZjfI2aA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=DnYHE+8E8ARewL+aduwPxVqrGrlHNKpTQiyeeSBQ8KJkdbId/B+lK1iBkAHovc60GPQHYSGmQyf867GbSOvJ3bsXn87ZIfWWYIIYlrffrbP5/F91K7pRYTQQRpEpL3U5ZbHeQAZIBW1ckW9zfOTjD4IPAWbJjDRIdDcqGXn6lVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=USnakRW0; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9446560002;
+	Thu, 12 Sep 2024 14:45:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1726152316;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VjOJC+EL99w5X5JPK4o+U/Y7d6sfgViwqZhRV6zOAXs=;
+	b=USnakRW0P3+On5tsLuyinvtacjPXpy8jk6m6vSK0e9hSSGrgC5lcDcREmd4Lqoj8nI+3xG
+	n/cZZ9kaXMaUIyuErJkrf/yDZ/rNcXrbQ3D7fGivoB7fwF2MEjLCLvYt3veMIrGYtl9nzB
+	3GzEv+7HW8OCkKfb8qkwKi3MFAc49As76BSSN0CGJOnPWJvp1HN1Y9eticXFeRxAKCZC53
+	1/wveso1Z8q39B29mOimsDEwOcQLSpYC1LsRSUjBdQ/JPWWMTmwjmrAkaM1/QYu4UJOn2r
+	W6+QSGOD1st0q/K2CZjNWmJ/guX6Kkl2R8rNxAlZPs9mkmxi26feUs+l+6mIAg==
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+Date: Thu, 12 Sep 2024 16:44:56 +0200
+Subject: [PATCH 1/3] drm/vkms: Switch to dynamic allocation for connector
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,36 +54,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240912-b4-vkms-allocated-v1-1-29abbaa14af9@bootlin.com>
+References: <20240912-b4-vkms-allocated-v1-0-29abbaa14af9@bootlin.com>
+In-Reply-To: <20240912-b4-vkms-allocated-v1-0-29abbaa14af9@bootlin.com>
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
+ =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
+ Haneen Mohammed <hamohammed.sa@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Melissa Wen <melissa.srw@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>
+Cc: thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org, Louis Chauvet <louis.chauvet@bootlin.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2025;
+ i=louis.chauvet@bootlin.com; h=from:subject:message-id;
+ bh=VISv8cauLqco3i0yU3WE+qBEYcD8Yqy+TzLEZjfI2aA=;
+ b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBm4v55KfOcgsvimu2ERpNMHzA47HInyittFEgRR
+ VDvWFM3DuGJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZuL+eQAKCRAgrS7GWxAs
+ 4j/UD/4hQ/weYoMyUBLTN8U6NVvM4pvYx0eSMoehZRzPgxwhhR3D3EY32zadogiYdvftp9aWpin
+ 45/OGfmnpOjPvC03b5oxWpEiu9JRi5/yKzlxR7smvvxTKhoPZYHrgr0jBlFEBFPfk5CDWvN/5i+
+ qvRaI4F/Yu5kgUnNhSEzBwVmddS9jQNeCmGIAMJv3J0+ttDS+yIDPaCHFlyNu+0hgvWgWaGm9yw
+ 8dOzZ+MGwo2VBZrxGSg1i6vtHBONUK+w0h5KKBHQWLNrGr+x81IwqU+3S+a95y15od2JlkQtLLy
+ 1Lm7LlXXNGCZpUhthutXrDE/wBOq/T9rgCEDqPCjeO2jtuOISk7fFhXqGC03MFFprocf4JJHNuk
+ DY+rYvNWJj9ie7HIM+Y5fW2G/CUdXro2c2ttixYOYZhHMrh0UR8eL0o/OTE/ZiUiLGOABdj83Ik
+ WwW7be/XZESwR3EZB+ARwE48cScO3D8qCO4cHsJfAbEYrR3yauoL/oyZOI12QFjueOuPreQbPJz
+ BvUr31ITHrYzO+iPnApjPz094BUSoy5wAFxSETfZ7qXkQNY0XCkFD/XFwEeWdqayW0LNn0oa+YS
+ niTtXjr8Mpf5FyJ7uwafs3MqtFd/utBcTZOzHB+aSOQp7AExKT4cc6rvSf4jqs32EqLirPulpoP
+ et/l8QiVuM28kxQ==
+X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
+ fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-Don't populate the read-only array svc_id on the stack at run time,
-instead make it static const.
+A specific allocation for the connector is not strictly necessary
+at this point, but in order to implement dynamic configuration of
+VKMS (configFS), it will be easier to have one allocation per
+connector.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 ---
- drivers/net/wireless/ath/ath12k/wmi.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/vkms/vkms_drv.h    | 1 -
+ drivers/gpu/drm/vkms/vkms_output.c | 9 ++++++++-
+ 2 files changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath12k/wmi.c b/drivers/net/wireless/ath/ath12k/wmi.c
-index 2cd3ff9b0164..190439ad7f23 100644
---- a/drivers/net/wireless/ath/ath12k/wmi.c
-+++ b/drivers/net/wireless/ath/ath12k/wmi.c
-@@ -7284,9 +7284,11 @@ static int ath12k_connect_pdev_htc_service(struct ath12k_base *ab,
- 					   u32 pdev_idx)
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+index dac063f11dcd751865cc79d3c2466d113b8e79c7..938f369dba7ab82b55c656ac6ccf2dfe5a11f9e6 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.h
++++ b/drivers/gpu/drm/vkms/vkms_drv.h
+@@ -99,7 +99,6 @@ struct vkms_crtc_state {
+ struct vkms_output {
+ 	struct drm_crtc crtc;
+ 	struct drm_encoder encoder;
+-	struct drm_connector connector;
+ 	struct drm_writeback_connector wb_connector;
+ 	struct hrtimer vblank_hrtimer;
+ 	ktime_t period_ns;
+diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
+index 2226ba1972f3ff51483abacac45ee8914be0c94a..a0331181ab0e369d711aee0974df4859844c6549 100644
+--- a/drivers/gpu/drm/vkms/vkms_output.c
++++ b/drivers/gpu/drm/vkms/vkms_output.c
+@@ -31,7 +31,7 @@ int vkms_output_init(struct vkms_device *vkmsdev)
  {
- 	int status;
--	u32 svc_id[] = { ATH12K_HTC_SVC_ID_WMI_CONTROL,
--			 ATH12K_HTC_SVC_ID_WMI_CONTROL_MAC1,
--			 ATH12K_HTC_SVC_ID_WMI_CONTROL_MAC2 };
-+	static const u32 svc_id[] = {
-+		ATH12K_HTC_SVC_ID_WMI_CONTROL,
-+		ATH12K_HTC_SVC_ID_WMI_CONTROL_MAC1,
-+		ATH12K_HTC_SVC_ID_WMI_CONTROL_MAC2
-+	};
- 	struct ath12k_htc_svc_conn_req conn_req = {};
- 	struct ath12k_htc_svc_conn_resp conn_resp = {};
+ 	struct vkms_output *output = &vkmsdev->output;
+ 	struct drm_device *dev = &vkmsdev->drm;
+-	struct drm_connector *connector = &output->connector;
++	struct drm_connector *connector;
+ 	struct drm_encoder *encoder = &output->encoder;
+ 	struct drm_crtc *crtc = &output->crtc;
+ 	struct vkms_plane *primary, *overlay, *cursor = NULL;
+@@ -62,6 +62,13 @@ int vkms_output_init(struct vkms_device *vkmsdev)
+ 		}
+ 	}
  
++	connector = drmm_kzalloc(dev, sizeof(*connector), GFP_KERNEL);
++	if (!connector) {
++		DRM_ERROR("Failed to allocate connector\n");
++		ret = -ENOMEM;
++		goto err_connector;
++	}
++
+ 	ret = drmm_connector_init(dev, connector, &vkms_connector_funcs,
+ 				  DRM_MODE_CONNECTOR_VIRTUAL, NULL);
+ 	if (ret) {
+
 -- 
-2.39.2
+2.44.2
 
 
