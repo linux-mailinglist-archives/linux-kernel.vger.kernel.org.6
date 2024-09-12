@@ -1,111 +1,135 @@
-Return-Path: <linux-kernel+bounces-326713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 323A9976C12
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:28:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18B80976C16
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:29:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF5221F2890E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:28:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AD5E1C23EBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2C71B1507;
-	Thu, 12 Sep 2024 14:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="doL6O8Zu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B010C1AE845;
+	Thu, 12 Sep 2024 14:29:16 +0000 (UTC)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B1D15D5D9;
-	Thu, 12 Sep 2024 14:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58281A4E7C;
+	Thu, 12 Sep 2024 14:29:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726151270; cv=none; b=dtcRnfDTLe4JNtgrjHeJKgj8rCShX82M2OlZkezAYLZH+oPRsaFDTFL1FzRSvuQzmPzGwHf7OsRU2Z4gbOg227FEBUBJ0aTnovXvNqh4yEIvlyWrzc1z3B0bhVT8BjGMwhuPFknpWsbp0VScaKHnHE+wrvH/dHgvBDm7p6KUshU=
+	t=1726151356; cv=none; b=XuxX9dNIt+8bMP7MbfVgNWHjbnGlGRc+SilQU22GL8DJ1CYZP1rOmbhQdwtex5g6HoN95W/g5rKEhFCyvwVCMtcwnwiwB0jPnWHWwddHyPcSFW9I51YKGnaWqFDcoHExqAk4VxNuqp59rIjUbjLkSsuwqO60/5HILB14AkeJgZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726151270; c=relaxed/simple;
-	bh=R9iNhmLdXJrD0HXJ+V9I+UW/8WxZygjTlvhQcx+VNh8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=i/2Tt43uXJDjpIJfjStK6+4TslYIqhf45PwUbLGQ1Pk1OUZjyB1NDyysIvhuOQfET0qZQOXhAhBlmZ6kopB7U2RAf9aUyhj8IHTSvzQfTMFH6O6Ga+bc/d+gU8QOJlChxbEidwSkgK1Wo3FerFD18Ij6OHO/Nq0rWO6ujKdplLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=doL6O8Zu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CE64C4CEC3;
-	Thu, 12 Sep 2024 14:27:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726151269;
-	bh=R9iNhmLdXJrD0HXJ+V9I+UW/8WxZygjTlvhQcx+VNh8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=doL6O8Zua35rWE3YInz4yJsiZIQP37eMOlxYBt7UPYKJMSfqhlGJGK6QA7ChHomld
-	 SffZVF6mGJqCf8LfEdL7YgdhLGLAwDRH+s5HeBURtWF8BAc4VSEwJbKRIrEnwDHTw3
-	 +VwNobzfIibnQnsC43cXGDYYE7Q0yNFnFJmsFgnZnVy4ulUDaUl99ngq3iR6ogB2SO
-	 lUVcd7+LTW00J3nZsmMfVAo+aXc2/c1mH5mcdyXYGdXuTNsnd6wb9c69kRsjgfkPr9
-	 QVe5mF29qWEfBjY3OQbjUIj0tzhdhH7utyhVXJTRBLVbl3boUz99XPbTqbNgM/OHuX
-	 6gfwb91cixAYg==
+	s=arc-20240116; t=1726151356; c=relaxed/simple;
+	bh=AiewB2nyHhDhsCafWFsV1VNzT9dDxzWOrcgwaYLm81s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bfv+5M2YP40a76upUdAfFwrMw2cbfcVrUXukzqJXT1SkDe4JDIhL+MYn6QUYIlRNtjiOjilYDnBPDs6CjvZeF9tBlQ30myyvX2dJOkW2tl+9Ca3aZihK1CwbmQhQJ1giZoNte3lDpBINrk8iFl4Xx1ug+BSC2k9tQwvz24ogaxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a8d64b27c45so164652466b.3;
+        Thu, 12 Sep 2024 07:29:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726151353; x=1726756153;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4ojlwVPNe7KlSzk6swI2y1+uEfsmH3zHy4IiUElclC0=;
+        b=KCnGaE/27FvU+FBot/fOWYywyV7LMaoCbdspOCBmof/wM5QPIT0z5UmqhWzBbrmSji
+         XkqN9S1+vMOar728rkzR+tV5zcqzY7b1Hl+gK2vm9UVnxxNqdkH5FsjwcGjhmq44gxtE
+         Ak/A+3Ykw6tZkmLPeD5npceTLmBBrgChdoTcsYKvcr/jKXme6kloi+QopompAJLHGLNB
+         DSeK6KMqF352372htwbtWfHxP1Nq4FDRVxF1nBIga8FBpCguYHY8RWG/cPa1Wmlcw0PS
+         E6+b9yBSTxSpFwdopscUtkaspFyln6Ovkxdz8zIRKmAiLWbnVIPCTO9zNPU2VKcfkNap
+         tWUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+/4IjrMlD4oBXHv1qBPuHqzp8E2hIXCtVEoa2xhw0pwDkq0twZBrGm8oq1ktRih6xRuj5IFl8Dbo=@vger.kernel.org, AJvYcCU37um6A+SElhJ69giGAilCPxVZHd8mlrldWxE6bB1VAWe+BOeK9mBFqp59jcN3DfYt0y6PZ14I/5SFowf4@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7ixGN+9txyP7ZkG0u0K/f7BQguTQFzYFD3ljyPG3ynkYy6AJV
+	4ScMrRKoNXgTtCN/ujINibRyYQwUg1ap7qMwmWjI5nXNXWJ7tn5v
+X-Google-Smtp-Source: AGHT+IHNDDf/Q8uWvQAGDtFVftOcPwKOzxFnfjPmpTmeeCiD52hd3Vd9S9TsRJFtVvbr7CyIHyR95A==
+X-Received: by 2002:a17:907:e21b:b0:a86:842a:104a with SMTP id a640c23a62f3a-a9029636efbmr290362266b.57.1726151352792;
+        Thu, 12 Sep 2024 07:29:12 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-001.fbsv.net. [2a03:2880:30ff:1::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d65c8asm754656466b.215.2024.09.12.07.29.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 07:29:12 -0700 (PDT)
+Date: Thu, 12 Sep 2024 07:29:09 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Usama Arif <usamaarif642@gmail.com>, linux-efi@vger.kernel.org,
+	kexec@lists.infradead.org, ebiederm@xmission.com, bhe@redhat.com,
+	vgoyal@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, linux-kernel@vger.kernel.org, rmikey@meta.com,
+	gourry@gourry.net
+Subject: Re: [RFC] efi/tpm: add efi.tpm_log as a reserved region in
+ 820_table_firmware
+Message-ID: <20240912-sapphire-koala-of-focus-918cff@leitao>
+References: <20240911104109.1831501-1-usamaarif642@gmail.com>
+ <CAMj1kXFVyQEwBTf2bG8yBXUktM16dzrcPH-Phz_toAsCK-NfMA@mail.gmail.com>
+ <2542182d-aa79-4705-91b6-fa593bacffa6@gmail.com>
+ <CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
+ <20240912-wealthy-gabby-tamarin-aaba3c@leitao>
+ <CAMj1kXHh-Kov8c1pto0LJL6debugz1og6GFMYCwvfu+RiQGreA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 12 Sep 2024 17:27:45 +0300
-Message-Id: <D44DK087Y80R.25CNND6WHJ7EE@kernel.org>
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Sergey Shtylyov" <s.shtylyov@omp.ru>, "Roman Smirnov"
- <r.smirnov@omp.ru>, "David Howells" <dhowells@redhat.com>, "Herbert Xu"
- <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
- "Andrew Zaborowski" <andrew.zaborowski@intel.com>
-Cc: <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: Re: [PATCH v2] KEYS: prevent NULL pointer dereference in
- find_asymmetric_key()
-X-Mailer: aerc 0.18.2
-References: <20240910111806.65945-1-r.smirnov@omp.ru>
- <D42N9ASJJSUD.EG094MFWZA4Q@kernel.org>
- <84d6b0fa-4948-fe58-c766-17f87c2a2dba@omp.ru>
- <D43HG3PEBR4I.2INNPVZIT19ZZ@kernel.org>
- <8774f6a2-9bec-b699-6b68-63a26019c5b3@omp.ru>
-In-Reply-To: <8774f6a2-9bec-b699-6b68-63a26019c5b3@omp.ru>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMj1kXHh-Kov8c1pto0LJL6debugz1og6GFMYCwvfu+RiQGreA@mail.gmail.com>
 
-On Thu Sep 12, 2024 at 4:51 PM EEST, Sergey Shtylyov wrote:
-> On 9/11/24 4:18 PM, Jarkko Sakkinen wrote:
-> [...]
->
-> >>>> In find_asymmetric_key(), if all NULLs are passed in id_{0,1,2} para=
-meters
-> >>>> the kernel will first emit WARN and then have an oops because id_2 g=
-ets
-> >>>> dereferenced anyway.
-> >>>>
-> >>>> Found by Linux Verification Center (linuxtesting.org) with Svace sta=
-tic
-> >>>> analysis tool.
-> >>>
-> >>> Weird, I recall that I've either sent a patch to address the same sit=
-e
-> >>> OR have commented a patch with similar reasoning. Well, it does not
-> >>> matter, I think it this makes sense to me.
-> >>>
-> >>> You could further add to the motivation that given the panic_on_warn
-> >>> kernel command-line parameter, it is for the best limit the scope and
-> >>> use of the WARN-macro.
-> >>
-> >>    I don't understand what you mean -- this version of the patch keeps
-> >> the WARN_ON() call, it just moves that call, so that the duplicate id_=
-{0,1,2}
-> >> checks are avoided...
-> >=20
-> > I overlooked the code change (my bad sorry). Here's a better version of
-> > the first paragraph:
-> >=20
-> > "find_asymmetric_keys() has nullity checks of id_0 and id_1 but ignores
-> > validation for id_2. Check nullity also for id_2."
->
->    Hm, what about WARN_ON(!id_0 && !id_1 && !id_2) -- it used to check al=
-l
-> the pointers, right? I think our variant was closer to reality... :-)
+On Thu, Sep 12, 2024 at 03:10:43PM +0200, Ard Biesheuvel wrote:
+> On Thu, 12 Sept 2024 at 15:03, Breno Leitao <leitao@debian.org> wrote:
+> > On Thu, Sep 12, 2024 at 12:51:57PM +0200, Ard Biesheuvel wrote:
+> > > I don't see how this could be an EFI bug, given that it does not deal
+> > > with E820 tables at all.
+> >
+> > I want to back up a little bit and make sure I am following the
+> > discussion.
+> >
+> > From what I understand from previous discussion, we have an EFI bug as
+> > the root cause of this issue.
+> >
+> > This happens because the EFI does NOT mark the EFI TPM event log memory
+> > region as reserved (EFI_RESERVED_TYPE).
+> 
+> Why do you think EFI should use EFI_RESERVED_TYPE in this case?
+> 
+> The EFI spec is very clear that EFI_RESERVED_TYPE really shouldn't be
+> used for anything by EFI itself. It is quite common for EFI
+> configuration tables to be passed as EfiRuntimeServicesData (SMBIOS),
+> EfiBootServicesData (ESRT) or EFiAcpiReclaim (ACPI tables).
+> 
+> Reserved memory is mostly for memory that even the firmware does not
+> know what it is for, i.e., particular platform specific uses.
+> 
+> In general, it is up to the OS to ensure that EFI configuration tables
+> that it cares about should be reserved in the correct way.
 
-Right (lazy validation, first null ignores rest)
+Thanks for the explanation.
 
-BR, Jarkko
+So, if I understand what you meant here, the TPM event log memory range
+shouldn't be listed as a memory region in EFI memory map (as passed by
+the firmware to the OS).
+
+Hence, this is not a EFI firmware bug, but a OS/Kernel bug.
+
+Am I correct with the statements above?
+
+Another question, looking at the Spec[1] it says:
+
+	If the ACPI TPM2 table contains the address and size of the Platform Firmware TCG log,
+	firmware “pins” the memory associated with the Platform Firmware TCG log, and reports
+	this memory as “Reserved” memory via the INT 15h/E820 interface
+
+
+What is the 'firmware' in the statement above, that says that reports
+the memory as reserved? (Is it libstub?!)
+
+Thank you so much for guiding us here,
+--breno
+
+[1] https://trustedcomputinggroup.org/wp-content/uploads/PC-ClientPlatform_Profile_for_TPM_2p0_Systems_v49_161114_public-review.pdf
 
