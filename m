@@ -1,121 +1,115 @@
-Return-Path: <linux-kernel+bounces-326672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 248A1976B8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:07:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFC37976B90
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:07:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E25F9289AF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:07:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4666BB24377
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA601AD26E;
-	Thu, 12 Sep 2024 14:06:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2311A7262;
+	Thu, 12 Sep 2024 14:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="knqMA+wh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kycrAe3w"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666001AD24D;
-	Thu, 12 Sep 2024 14:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAED01AD255;
+	Thu, 12 Sep 2024 14:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726149964; cv=none; b=ZRX9j72idRUI3sK8jRf9Rqt7q5eAMMecCvQFCnyiW7SfeWrSgbToq9n30ZSz+2b2AYikdA5gaqQhHUzxdILexVDgkes5p2xaoDCIWsCmUEx7gy50ic7EkFFq24086z7EeJRApVYO7cjYhQrKOnsTpFExqe0ms9Pv5YoG0wFKLOA=
+	t=1726150019; cv=none; b=TPJdr0sWSEDMXF0Daif17C2HWitrQ6XXKDgSukRhg27BZDZqBgPKTi1iFdasfytZZO0a2aTf+mE9QIO6l/TcWwnpxUHaMdesQfg1KOEYhA7pvdCdQS9KlE4OmcE9OY9/mVng9qRjEO/fU0y6cloDJ9TY5sl6wiPMU0/4mjdGKns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726149964; c=relaxed/simple;
-	bh=WoTZyIHrJjlfxGW93PZ+yOu/QfOQLw3D21hwcUP9KdA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=huBkm+WSBmlLjeIJX5WWtY9L6nTHe61scXOedkWSJF4KHmEJCJyysLcVRT90kvOnLyZUYe3/Ku9V3vU4jOLZZI2CfT2xXp86SYAZGqYB0G78Z20n77ftLBDyhklbsBFrQvOmww3v4UbGoUIZ5VOteyXVAl7/zbWhdMhSRW3RYto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=knqMA+wh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00C16C4CEC3;
-	Thu, 12 Sep 2024 14:06:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726149964;
-	bh=WoTZyIHrJjlfxGW93PZ+yOu/QfOQLw3D21hwcUP9KdA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=knqMA+whITnJ+OH4n2sjAeO2q+FI48jPuDOf5+REuybUD8XzVNW3f1xQ8KvzOpQ9j
-	 CWo2cD5U+1QW7gCfxga5syXpWVxvp+2eOg++Inxj93lHRaVZf95vYOh997syTNdqZI
-	 rPkJZa4BgR8QjTZ/XoioRdlHYQotW4a/8oQl18zwociSmYceqVefOQgw2XidX9UOGB
-	 TH4Uecwm5VWBDiCfFr4RtGHUTjuocFZtQ/+Oo4F6JdPJMfZsf8KjixDZd5jmgTj3Go
-	 cLtTXB8pUk2mYB4m3q0UerAfUDx9vH9/e7xFKxW8Zz54/Z/VyY9+oiaM15N6WIsKpq
-	 YV+vXeyfyvjtg==
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f7528f4658so9862191fa.3;
-        Thu, 12 Sep 2024 07:06:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWIaf3ZTQokCYL9JwXJJ6dnJRzkkJQVw6ys0PD2O93N8j6swYtYvZzGslrAI66MSC6g2TcMCspOJ+M=@vger.kernel.org, AJvYcCXIhvfg++8jA6G8vJTMK+FA7ceqcYuGw4pyIYTe59o/1I/+ydXSevSs0oeG2ytOaH8SfvQhLQaZucz2OYd3@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB54cfWL04yaLu9E8TDGlqZlnqF61GZr62kWFYblWhxhwY88Pz
-	e+UW3R+jzKrKgH8QYIU2RvvUkxXi/1YkyDOdlyl3wLKcUD2pQxrDPADYtg1hDyviBy/Hbv0BrhG
-	frl2GvjswyKlprnKlU/+tCU4HWrE=
-X-Google-Smtp-Source: AGHT+IFMsEZDeFz4sbFkQuhnyEESr6pin/nTPXVyorAnmtEnZ4xszs/8JjoTuGO1Mj8SPV0ZXY9LFKY9RcSzFUchjws=
-X-Received: by 2002:a2e:4e02:0:b0:2f3:f111:9bc4 with SMTP id
- 38308e7fff4ca-2f787f4f44bmr13758301fa.43.1726149961641; Thu, 12 Sep 2024
- 07:06:01 -0700 (PDT)
+	s=arc-20240116; t=1726150019; c=relaxed/simple;
+	bh=yh55Fja5imKCEj5s0pmPR0AD0iVtKIlI4pm7KKVPpQ4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Dglpdxr680EuRwg7Byi1XfGz4fZ/vB5Z6zNfYD5gEt8Qjuw3KAfUW2895nZZgI5t+SdP9SPdiYsFfvMb9JGLNgQjGn6ybUQfC8K/dTIBFqEN/Ropieg/dgbNzoWyPLwBYueUc9ijZ1VaXYDcg2pv97kooat+OuNArflDXFE88SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kycrAe3w; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a8d6d0fe021so158265966b.1;
+        Thu, 12 Sep 2024 07:06:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726150016; x=1726754816; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PtFTlJ4LGeILm8e/R3yARNqYPoho3QSOqPGen2YyTwc=;
+        b=kycrAe3wPBTU4aedxwubPihLwb8YM+ovAF8xSbpVaC5gSGN/XJMB267nkFW4t4wAXy
+         r2JkMjbE90Wu+xtbxNELPFcI6nI6y7NLjaDXjfndKNBV2Yuf7PAbz+ETtEVPyeZzIjna
+         +tdVMrBEpleoS6+egNpR1zZjEcZyziPTRtQCPDXaxfMvvgYnCtf5dLY7eBmcbXC+dLcd
+         95MCJW5fpw03TOysqEZAnEjH0PzG4Nj6Jc99wpFFpcxAHC/95x4zR7Kjd6NXQJ5pMt17
+         278ihkxsjMqVGsXLjHTMFlOW7s7SUvlZSg412GCKFVstUgj5BsNcp0Bm6BdfTPjgKJ4A
+         R1og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726150016; x=1726754816;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PtFTlJ4LGeILm8e/R3yARNqYPoho3QSOqPGen2YyTwc=;
+        b=mGoP8FStJBmHFiyVN2G2MWeAFsf7wnU028RZQNIzcr+/Xh6lHKNqCb65newrIHnhUI
+         AI4I3SOg4o4YzdZ8p7BfqTsix72CATwuub2sbVd2QnT/6OirfaES5IDib5MgKmkwcAaF
+         9cFRqF3P217lsZFOBiYRfzVuWXbuGr9K3Tz96UOBS9osDcimmD3u/FtSa5dIY+Lh2FWe
+         vU+dOya81w7f1bJvGExNDEDKWVd7y5lItRUcOiUo6FY6r8tqrywUBXtTcNBr7QL5fx9B
+         Gxu6w2SKuQ3LdMFpseJxNQoN3/mNf0/WeQm2UUTsvPfWU/XzgdMU5MTZbltYc4ieuBVl
+         NA6w==
+X-Forwarded-Encrypted: i=1; AJvYcCWMaJTCSfoPPG9VTZCEnVkIEdVU7NuO8OX0oWzllpMlkyn8uHJuDsSqKh0r+Drhh+vG/DYYVTQr5VFdzis=@vger.kernel.org, AJvYcCWxkFSnvEjlyd/GpnlH4Fxs/Sized86Xbr15q7enyuLA2fF4SGwyaP8RhEUvM+0uu52JeyqBJ1sLXkHc9A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAZ+xR1WjM+5wOQ6jgRlQ3Os7MAblhIhzb44ZxzUxJa7s6EG9e
+	m1x6Ue5ahDnmIEvPPMgOChbXBdAmyyEa3EYqunePXgQrm1xhOa2J4fESzg==
+X-Google-Smtp-Source: AGHT+IG86/ezpoTWZehl1uQOzFPn+8Pv8fA8YkWez5k4yzj+CUblwK3M/AZq3cj6uF0/AKBUktvPSQ==
+X-Received: by 2002:a17:906:fe09:b0:a7a:b070:92c6 with SMTP id a640c23a62f3a-a9029617408mr302056966b.50.1726150013566;
+        Thu, 12 Sep 2024 07:06:53 -0700 (PDT)
+Received: from tom-HP-ZBook-Fury-15-G7-Mobile-Workstation.station (net-188-217-48-58.cust.vodafonedsl.it. [188.217.48.58])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25a258a3sm748268466b.89.2024.09.12.07.06.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 07:06:52 -0700 (PDT)
+From: Tommaso Merciai <tomm.merciai@gmail.com>
+To: 
+Cc: linuxfancy@googlegroups.com,
+	sakari.ailus@linux.intel.com,
+	laurent.pinchart@ideasonboard.com,
+	tomm.merciai@gmail.com,
+	julien.massot@collabora.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] media: i2c: max96714/max96717
+Date: Thu, 12 Sep 2024 16:06:47 +0200
+Message-Id: <20240912140649.1243602-1-tomm.merciai@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911104109.1831501-1-usamaarif642@gmail.com>
- <CAMj1kXFVyQEwBTf2bG8yBXUktM16dzrcPH-Phz_toAsCK-NfMA@mail.gmail.com>
- <2542182d-aa79-4705-91b6-fa593bacffa6@gmail.com> <CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
- <20240912-wealthy-gabby-tamarin-aaba3c@leitao> <CAMj1kXHh-Kov8c1pto0LJL6debugz1og6GFMYCwvfu+RiQGreA@mail.gmail.com>
- <6b2cc4c4-4354-4b29-bc73-c1384b90dfc6@gmail.com>
-In-Reply-To: <6b2cc4c4-4354-4b29-bc73-c1384b90dfc6@gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 12 Sep 2024 16:05:50 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXG1hbiafKRyC5qM1Vj5X7x-dmLndqqo2AYnHMRxDz-80w@mail.gmail.com>
-Message-ID: <CAMj1kXG1hbiafKRyC5qM1Vj5X7x-dmLndqqo2AYnHMRxDz-80w@mail.gmail.com>
-Subject: Re: [RFC] efi/tpm: add efi.tpm_log as a reserved region in 820_table_firmware
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: Breno Leitao <leitao@debian.org>, linux-efi@vger.kernel.org, kexec@lists.infradead.org, 
-	ebiederm@xmission.com, bhe@redhat.com, vgoyal@redhat.com, tglx@linutronix.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	rmikey@meta.com, gourry@gourry.net
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 12 Sept 2024 at 15:55, Usama Arif <usamaarif642@gmail.com> wrote:
->
->
->
-> On 12/09/2024 14:10, Ard Biesheuvel wrote:
-> > Does the below help at all?
-> >
-> > --- a/drivers/firmware/efi/tpm.c
-> > +++ b/drivers/firmware/efi/tpm.c
-> > @@ -60,7 +60,7 @@ int __init efi_tpm_eventlog_init(void)
-> >         }
-> >
-> >         tbl_size = sizeof(*log_tbl) + log_tbl->size;
-> > -       memblock_reserve(efi.tpm_log, tbl_size);
-> > +       efi_mem_reserve(efi.tpm_log, tbl_size);
-> >
-> >         if (efi.tpm_final_log == EFI_INVALID_TABLE_ADDR) {
-> >                 pr_info("TPM Final Events table not present\n");
->
-> Unfortunately not. efi_mem_reserve updates e820_table, while kexec looks at /sys/firmware/memmap
-> which is e820_table_firmware.
->
-> arch_update_firmware_area introduced in the RFC patch does the same thing as efi_mem_reserve does at
-> its end, just with e820_table_firmware instead of e820_table.
-> i.e. efi_mem_reserve does:
->         e820__range_update(addr, size, E820_TYPE_RAM, E820_TYPE_RESERVED);
->         e820__update_table(e820_table);
->
-> while arch_update_firmware_area does:
->         e820__range_update_firmware(addr, size, E820_TYPE_RAM, E820_TYPE_RESERVED);
->         e820__update_table(e820_table_firmware);
->
+Hi All,
+This patchset add missing HAS_EVENTS flags to max96714/max96717 drivers.
 
-Shame.
+"If HAS_DEVNODE is set, and there are controls, then HAS_EVENTS
+must be set and you have to be able to (un)subscribe to events.
+Because the controls can be exposed to userspace via a v4l-subdevX device, and
+userspace has to be able to subscribe to control events so that it is
+notified when the control changes value."
 
-Using efi_mem_reserve() is appropriate here in any case, but I guess
-kexec on x86 needs to be fixed to juggle the EFI memory map, memblock
-table, and 3 (!) versions of the E820 table in the correct way
-(e820_table, e820_table_kexec and e820_table_firmware)
+References:
+ - https://www.spinics.net/lists/linux-media/msg220721.html
 
-Perhaps we can put this additional logic in x86's implementation of
-efi_arch_mem_reserve()? AFAICT, all callers of efi_mem_reserve() deal
-with configuration tables produced by the firmware that may not be
-reserved correctly if kexec looks at e820_table_firmware[] only.
+Regards,
+Tommaso
+
+Tommaso Merciai (2):
+  media: i2c: max96714: add HAS_EVENTS support
+  media: i2c: max96717: add HAS_EVENTS support
+
+ drivers/media/i2c/max96714.c | 6 +++++-
+ drivers/media/i2c/max96717.c | 6 +++++-
+ 2 files changed, 10 insertions(+), 2 deletions(-)
+
+-- 
+2.34.1
+
 
