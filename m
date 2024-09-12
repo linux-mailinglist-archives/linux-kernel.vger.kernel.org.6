@@ -1,148 +1,139 @@
-Return-Path: <linux-kernel+bounces-326122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B0E3976327
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:44:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7409976333
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:45:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB4352811A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:44:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA0831C22FFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B602C194C75;
-	Thu, 12 Sep 2024 07:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1699519005A;
+	Thu, 12 Sep 2024 07:45:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="oYPi3yEW"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28911186E58
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="qSGMdRyF"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151E318E03D;
+	Thu, 12 Sep 2024 07:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726126927; cv=none; b=QVB37R+KTM6mIOcCPfYqDBpviayBUj0wnz7zJ1fAdp45GLrz+g7+P1GRU5xvpkalywzYrX2PFpspqprDPAIhYRkvQ0mfQzrGT2MZHk6aK+Xofk/1VUxAwyBlLH4TuXRj2Fx7Imf11d6zI33WPlNj5LN/UN1GLBH7KrMQCvjpE/M=
+	t=1726127106; cv=none; b=TFOgu3YhsbF0T7xmw5aSG/3GT1ZxPFF0anF1FlS5vJMBFl9PfJhkUjcQoDP14SDBJY/T/pAPNe6OA3ARZIEfKCi+/IuEYoOklZy67+q/xDQtqx4Jsh+3r/cpXWI42bGkc3JBfq5Zx+N3PIHx+ZgjhK6jvnedFzo6rsJUmYf+8pE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726126927; c=relaxed/simple;
-	bh=GacUQPvdrMKq+g2ClNt84vpiiMzQHenj3R48vgJKUsU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UxzSqKhykMhrKeiAeyxq84wvbtQsMcccjsLc1h1qlQw0WONipzG7r7/2CIos7rBbFxq4MALHWMxewndqO6JY2AFJ6AAUQMxqgxeygKintgCRa8FNztIL99UqJgoiSWSTeg/7IMa9X/Xmi9vDZiudMZtb2HrFSGIuNeBgSdYYK+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=oYPi3yEW; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1726126921; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=U3zpUFdb+C2ZY/A+Fe1YciE/MRfJO397mZ/cfuh02Kk=;
-	b=oYPi3yEWIJEOp1klxHNTKgy6ScC1Ja/l+SfPBqqil9dJu+28mirX8US6TtUAMozq+AbwsrXiwQIQrM5Yoe6CHlQcCn5WhDIuGjLOkl42z8vxw+ItA+6D4c0/7tZ+UpgQ0w+UZDPZCW4KMchyzB6DBSlt5zB/M4qlTtTikHAb/o4=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WEqd5Ck_1726126917)
-          by smtp.aliyun-inc.com;
-          Thu, 12 Sep 2024 15:42:01 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [PATCH] erofs: restrict pcluster size limitations
-Date: Thu, 12 Sep 2024 15:41:56 +0800
-Message-ID: <20240912074156.2925394-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1726127106; c=relaxed/simple;
+	bh=Xu6sHgDKfgjbkEDyE3lLSibg39hwTKnEOVkCaHjK/cE=;
+	h=From:To:Subject:Date:Message-Id; b=IOJhiw3gTidcoWTRJQMPSJqqUrtALUDTIqGGAY3AAeXpcpTqpDdvMahdWkatNTJqsnaelNxLq0Y4PYti9bx8cQ4U/0t9EIplH4kGfrX63nkvH50Tubir41q7vi8L8nqC60WR2MZpx+Zkeky7m4hQ31obUx33M19gaAc8UEGmIf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=qSGMdRyF; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1173)
+	id A01E220B9A9C; Thu, 12 Sep 2024 00:45:04 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A01E220B9A9C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1726127104;
+	bh=jPfdFXZMhBELWCsu42PbhhsboZKB4K+0hkhbL/v0eZc=;
+	h=From:To:Subject:Date:From;
+	b=qSGMdRyF9DMPGqyStHV94plqd897WMSZn7iqv12xpXjMjiYpO3TpJB8JB+fC/4oZK
+	 oaJL98B4vOUD1+hHio+A+Zz6bRi01GKX14ccEn4yreK1cfjbSXsW/+vr6Qx9jpOYC0
+	 DtigHJ9C3VysAXg/w5SJ8CxjwOddb3ULFjy2Nvu8=
+From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+To: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	shradhagupta@linux.microsoft.com,
+	ahmed.zaki@intel.com,
+	ernis@linux.microsoft.com,
+	colin.i.king@gmail.com,
+	linux-hyperv@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] net: mana: Add get_link and get_link_ksettings in ethtool
+Date: Thu, 12 Sep 2024 00:44:43 -0700
+Message-Id: <1726127083-28538-1-git-send-email-ernis@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Error out if {en,de}encoded size of a pcluster is unsupported:
-  Maximum supported encoded size (of a pcluster):  1 MiB
-  Maximum supported decoded size (of a pcluster): 12 MiB
+Add support for the ethtool get_link and get_link_ksettings
+operations. Display standard port information using ethtool.
 
-Users can still choose to use supported large configurations (e.g.,
-for archival purposes), but there may be performance penalties in
-low-memory scenarios compared to smaller pclusters.
+Before the change:
+$ethtool enP30832s1
+>No data available
 
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+After the change:
+$ethtool enP30832s1
+>Settings for enP30832s1:
+        Supported ports: [  ]
+        Supported link modes:   Not reported
+        Supported pause frame use: No
+        Supports auto-negotiation: Yes
+        Supported FEC modes: Not reported
+        Advertised link modes:  Not reported
+        Advertised pause frame use: No
+        Advertised auto-negotiation: Yes
+        Advertised FEC modes: Not reported
+        Speed: Unknown!
+        Duplex: Full
+        Auto-negotiation: on
+        Port: Direct Attach Copper
+        PHYAD: 0
+        Transceiver: internal
+        Link detected: yes
+
+Signed-off-by: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
+Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+Reviewed-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
 ---
- fs/erofs/erofs_fs.h |  5 ++++-
- fs/erofs/zmap.c     | 42 ++++++++++++++++++++----------------------
- 2 files changed, 24 insertions(+), 23 deletions(-)
+ .../ethernet/microsoft/mana/mana_ethtool.c    | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/fs/erofs/erofs_fs.h b/fs/erofs/erofs_fs.h
-index 6c0c270c42e1..c8f2ae845bd2 100644
---- a/fs/erofs/erofs_fs.h
-+++ b/fs/erofs/erofs_fs.h
-@@ -288,9 +288,12 @@ struct erofs_dirent {
- 
- #define EROFS_NAME_LEN      255
- 
--/* maximum supported size of a physical compression cluster */
-+/* maximum supported encoded size of a physical compressed cluster */
- #define Z_EROFS_PCLUSTER_MAX_SIZE	(1024 * 1024)
- 
-+/* maximum supported decoded size of a physical compressed cluster */
-+#define Z_EROFS_PCLUSTER_MAX_DSIZE	(12 * 1024 * 1024)
-+
- /* available compression algorithm types (for h_algorithmtype) */
- enum {
- 	Z_EROFS_COMPRESSION_LZ4		= 0,
-diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
-index 403af6e31d5b..e980e29873a5 100644
---- a/fs/erofs/zmap.c
-+++ b/fs/erofs/zmap.c
-@@ -687,32 +687,30 @@ int z_erofs_map_blocks_iter(struct inode *inode, struct erofs_map_blocks *map,
- 	int err = 0;
- 
- 	trace_erofs_map_blocks_enter(inode, map, flags);
--
--	/* when trying to read beyond EOF, leave it unmapped */
--	if (map->m_la >= inode->i_size) {
-+	if (map->m_la >= inode->i_size) {	/* post-EOF unmapped extent */
- 		map->m_llen = map->m_la + 1 - inode->i_size;
- 		map->m_la = inode->i_size;
- 		map->m_flags = 0;
--		goto out;
--	}
--
--	err = z_erofs_fill_inode_lazy(inode);
--	if (err)
--		goto out;
--
--	if ((vi->z_advise & Z_EROFS_ADVISE_FRAGMENT_PCLUSTER) &&
--	    !vi->z_tailextent_headlcn) {
--		map->m_la = 0;
--		map->m_llen = inode->i_size;
--		map->m_flags = EROFS_MAP_MAPPED | EROFS_MAP_FULL_MAPPED |
--				EROFS_MAP_FRAGMENT;
--		goto out;
-+	} else {
-+		err = z_erofs_fill_inode_lazy(inode);
-+		if (!err) {
-+			if ((vi->z_advise & Z_EROFS_ADVISE_FRAGMENT_PCLUSTER) &&
-+			    !vi->z_tailextent_headlcn) {
-+				map->m_la = 0;
-+				map->m_llen = inode->i_size;
-+				map->m_flags = EROFS_MAP_MAPPED |
-+					EROFS_MAP_FULL_MAPPED | EROFS_MAP_FRAGMENT;
-+			} else {
-+				err = z_erofs_do_map_blocks(inode, map, flags);
-+			}
-+		}
-+		if (!err && (map->m_flags & EROFS_MAP_ENCODED) &&
-+		    unlikely(map->m_plen > Z_EROFS_PCLUSTER_MAX_SIZE ||
-+			     map->m_llen > Z_EROFS_PCLUSTER_MAX_DSIZE))
-+			err = -EOPNOTSUPP;
-+		if (err)
-+			map->m_llen = 0;
- 	}
--
--	err = z_erofs_do_map_blocks(inode, map, flags);
--out:
--	if (err)
--		map->m_llen = 0;
- 	trace_erofs_map_blocks_exit(inode, map, flags, err);
+diff --git a/drivers/net/ethernet/microsoft/mana/mana_ethtool.c b/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
+index 146d5db1792f..c2716d6cad36 100644
+--- a/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
++++ b/drivers/net/ethernet/microsoft/mana/mana_ethtool.c
+@@ -369,6 +369,24 @@ static int mana_set_channels(struct net_device *ndev,
  	return err;
  }
+ 
++static int mana_get_link_ksettings(struct net_device *ndev,
++				   struct ethtool_link_ksettings *cmd)
++{
++	cmd->base.duplex = DUPLEX_FULL;
++	cmd->base.autoneg = AUTONEG_ENABLE;
++	cmd->base.port = PORT_DA;
++
++	ethtool_link_ksettings_zero_link_mode(cmd, supported);
++	ethtool_link_ksettings_zero_link_mode(cmd, advertising);
++
++	ethtool_link_ksettings_add_link_mode(cmd, supported,
++					     Autoneg);
++	ethtool_link_ksettings_add_link_mode(cmd, advertising,
++					     Autoneg);
++
++	return 0;
++}
++
+ const struct ethtool_ops mana_ethtool_ops = {
+ 	.get_ethtool_stats	= mana_get_ethtool_stats,
+ 	.get_sset_count		= mana_get_sset_count,
+@@ -380,4 +398,6 @@ const struct ethtool_ops mana_ethtool_ops = {
+ 	.set_rxfh		= mana_set_rxfh,
+ 	.get_channels		= mana_get_channels,
+ 	.set_channels		= mana_set_channels,
++	.get_link_ksettings	= mana_get_link_ksettings,
++	.get_link		= ethtool_op_get_link,
+ };
 -- 
-2.43.5
+2.34.1
 
 
