@@ -1,95 +1,116 @@
-Return-Path: <linux-kernel+bounces-325849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4F44975EF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:37:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D7B8975EF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:38:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23A371C220C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:37:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B01091C22209
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC6641C89;
-	Thu, 12 Sep 2024 02:37:48 +0000 (UTC)
-Received: from cmccmta2.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF32250EC
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 02:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CDA626CB;
+	Thu, 12 Sep 2024 02:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="XTczgsIE"
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45547250EC;
+	Thu, 12 Sep 2024 02:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726108668; cv=none; b=U1WzirCwWTs+v0ohKfL4hKJlVGysBEp5pB+I8froK2ct+HTF5lD/jx+9YUf4kbUMUvP8P/2t/FP1dhZU0QLosN1LsGWgUNeC7Lf376F7ykHgdmw25tckAIlyos+ceAB7+u1xMqYdyPY18ietKnpncLCXoHatay/p7i1bkfskPS0=
+	t=1726108712; cv=none; b=FwI9kNDPgvcrmjnCS5LyHuyap5FU6yX3ejbeuzYUXzM0pu9GqojSm4STy1r1CUTyhcw8k5/UA/hCjvmoJg6yNLKiWYkbmr7SxHuh87oIWZ7y+9Fm4EV5hpIckmfPy3XH1sT9mrGjsVyBMNHO+xdS3PJG7Hz0AnQQhjvJ4gtC9Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726108668; c=relaxed/simple;
-	bh=+ptdzpifG3s/EVqlN1yvgkhX8LXvZiKhDKNDZ9kgIJ8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A9vMXIgh+iDPRP3A0HQqoT0gHuYR2z7v4+1XhR+X/xlze1vegfDUGcmgIArhn8elLlEYhRsnTGro/sJ8fOA3nYX+IbPELdwE0W+1aPIY3MHt+kNyj++gFK6CflOb18pV3/efpzAdXEyDc8I0t0m1mjg2Z62h5uFmBTwxWdhrxHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app06-12006 (RichMail) with SMTP id 2ee666e253f4c76-f2538;
-	Thu, 12 Sep 2024 10:37:41 +0800 (CST)
-X-RM-TRANSID:2ee666e253f4c76-f2538
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.97])
-	by rmsmtp-syy-appsvr09-12009 (RichMail) with SMTP id 2ee966e253f5c6d-fb26f;
-	Thu, 12 Sep 2024 10:37:41 +0800 (CST)
-X-RM-TRANSID:2ee966e253f5c6d-fb26f
-From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
-To: liucong2@kylinos.cn
-Cc: linux-kernel@vger.kernel.org,
-	brho@google.com,
-	tj@kernel.org,
-	akpm@linux-foundation.org,
-	zhang jiao <zhangjiao2@cmss.chinamobile.com>
-Subject: [PATCH] tools/Makefile: Add kvm_stat_clean target.
-Date: Thu, 12 Sep 2024 10:37:39 +0800
-Message-Id: <20240912023739.13726-1-zhangjiao2@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1726108712; c=relaxed/simple;
+	bh=U1oQ8yV2876PbJ1l87fAYYB5li3P/vajQPSAI368Zec=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sO1i7bdNWvUD/u4pYDJ7G/MMohQpRUjn/eh4xEmLdcVBsBBTQAmRWe86IJWWsknZ1B9FzeLF7nD+YNbKA8c8IAtntnWsp1OzkcRZQLDrHtYcsWBvP+vRsRBAFikaxq/JQp+3BzJnoiLobWdCwk36K53DBhoDiLos42xM1m4ETCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=XTczgsIE; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1726108706;
+	bh=+pRg9X4n7TVLk4pJltxMi594tN+w+P/Lvm16g3XG4LU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=XTczgsIESkLqCDl6+PXig9KDrrVBh6568anOox/JcvGJ74DOi97qJDxuxSZ71ELtG
+	 GwNZpvqgAaBadgn2EkFRnvBo0z6+0ySbrfUvJlLBrm+iZYKfP7M9Stw3TtSYo4/jOf
+	 RDlG4Ji3lbwIDHybKtptTaM/TKq8CxSg+/toLZQE=
+X-QQ-mid: bizesmtp90t1726108703t4wrs7qk
+X-QQ-Originating-IP: WA3jwlK+hZurhA4Tg3wzuZx/vI63xq+b6Mf+xnbk/es=
+Received: from [10.20.53.89] ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 12 Sep 2024 10:38:21 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 15563347605386470238
+Message-ID: <DBEFAD22C49AAFC6+58debc20-5281-4ae7-a418-a4b232be9458@uniontech.com>
+Date: Thu, 12 Sep 2024 10:38:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 1/4] riscv: dts: starfive: add assigned-clock* to
+ limit frquency
+To: Conor Dooley <conor.dooley@microchip.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: stable@vger.kernel.org, gregkh@linuxfoundation.org, sashal@kernel.org,
+ william.qiu@starfivetech.com, emil.renner.berthing@canonical.com,
+ xingyu.wu@starfivetech.com, walker.chen@starfivetech.com, robh@kernel.org,
+ hal.feng@starfivetech.com, kernel@esmil.dk, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, richardcochran@gmail.com,
+ netdev@vger.kernel.org
+References: <D200DC520B462771+20240909074645.1161554-1-wangyuli@uniontech.com>
+ <20240909-fidgeting-baggage-e9ef9fab9ca4@wendy>
+ <ac72665f-0138-4951-aa90-d1defebac9ca@linaro.org>
+ <20240909-wrath-sway-0fe29ff06a22@wendy>
+From: WangYuli <wangyuli@uniontech.com>
+Autocrypt: addr=wangyuli@uniontech.com; keydata=
+ xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
+ IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
+ qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
+ 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
+ 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
+ VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
+ DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
+ o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
+In-Reply-To: <20240909-wrath-sway-0fe29ff06a22@wendy>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
 
-Run make kvm_stat can create kvm_stat.1 file.
-Add kvm_stat_clean for rm it.
+On 2024/9/9 19:17, Conor Dooley wrote:
+> [6.6] in the subject and Sasha/Greg/stable list on CC, so I figure it is
+> for stable, yeah. Only one of these patches is a "fix", and not really a
+> functional one, so I would like to know why this stuff is being
+> backported. I think under some definition of "new device IDs and quirks"
+> it could be suitable, but it'd be a looser definition than I personally
+> agree with!
+These submissions will help to ensure a more stable behavior for the 
+RISC-V devices involved on the Linux-6.6.y kernel,and as far as I can 
+tell,they won't introduce any new issues (please correct me if I'm wrong).
+> Oh, and also, the 4 patches aren't threaded - you should fix that
 
-Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
----
- tools/Makefile | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+I apologize for my ignorance about the correct procedure...
 
-diff --git a/tools/Makefile b/tools/Makefile
-index 278d24723b74..97de2514f967 100644
---- a/tools/Makefile
-+++ b/tools/Makefile
-@@ -215,12 +215,15 @@ freefall_clean:
- build_clean:
- 	$(call descend,build,clean)
- 
-+kvm_stat_clean:
-+	$(call descend,kvm/kvm_stat,clean)
-+
- clean: acpi_clean counter_clean cpupower_clean hv_clean firewire_clean \
- 		perf_clean selftests_clean turbostat_clean bootconfig_clean spi_clean usb_clean virtio_clean \
- 		mm_clean bpf_clean iio_clean x86_energy_perf_policy_clean tmon_clean \
- 		freefall_clean build_clean libbpf_clean libsubcmd_clean \
- 		gpio_clean objtool_clean leds_clean wmi_clean pci_clean firmware_clean debugging_clean \
- 		intel-speed-select_clean tracing_clean thermal_clean thermometer_clean thermal-engine_clean \
--		sched_ext_clean
-+		sched_ext_clean kvm_stat_clean
- 
- .PHONY: FORCE
+For instance,for these four commits,I first used 'git format-patch -4' 
+to create four consecutive .patch files,and then used 'git send-email 
+--annotate --cover-letter --thread ./*.patch' to send them,but the 
+result wasn't as expected...
+
+I'm not sure where the problem lies...
+
+> WangYuli.
+QAQ
 -- 
-2.33.0
-
-
-
+WangYuli
 
