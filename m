@@ -1,118 +1,134 @@
-Return-Path: <linux-kernel+bounces-327158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3D1F977148
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:18:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD21597714D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:18:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD82928C887
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:17:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B93A1C20D40
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D6581BFE0D;
-	Thu, 12 Sep 2024 19:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA7F1C2431;
+	Thu, 12 Sep 2024 19:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WHyMOkit"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z0+7Y9IY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6442E188592
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 19:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949801BF7F2
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 19:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726168282; cv=none; b=b7AIedTh98Ti6aFNX/JVk4U7YlvbPTHzlnsomxK/PwP5a7GWgmhp+NX8Gnc88T1FZ3Hf8DOt/UaeEzN1PMuT+jegnPur2Kv6fX1Ct6+J7N4I8H0KqdCwlxw7sN3xRk1d8wKj+16yh90+KW3W/LkM78kpE5Jlcwh0qFnCDor+pu4=
+	t=1726168333; cv=none; b=eOZGJ/CgDV4dr9MpIwV2fz7fq/t2kkKOnSKnisxXqn4TvnJ1NT/N3Nkt9Nd96SVyrJmcMbQDBKPzt5mdmPsXYhDF/lTgXmXeQKgMLnW9fX4EVoXAWm6MXHn0mH7kLd57ct7PyqG2mYkuu5uO2yYlwlU4jflACpYib7fKu4991UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726168282; c=relaxed/simple;
-	bh=9pxMsq3kin+w7i0XPqkWPMNX75/Iai09DK3wFfzOpDk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EI1T2j+TFQONUlDvCyCxkwoe26ofa8iVGM5NzCMpgaDd/E/jxwp+IUQ1XpiqHm0G7j35aArl1eYDN7s8o2y+Dff2nepiArwh/lSiNH4X8x8wk+gaLsow0vXUzORC9cPKJ+ZB4bl4tkM+SkTeqtMd4Yni/5vyqyheDbpwnaKusHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WHyMOkit; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a8b155b5e9eso181707266b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 12:11:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726168279; x=1726773079; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Sl3/RAaMWaN7KZUdljkIsdyNaNAnnUZU/wp9mRU9gvs=;
-        b=WHyMOkitHswvnuZTeGmGTPqShXCjqGrj66Cc3pUZZpNKuaS5u8zo+azfAt3cxiEWnS
-         WhBSMPLdJUUmM/N9mYBBHnP9fmqvrQT9Y/pu0fDWhb0gGvi3cmU3dhJOeifs3uXJH03j
-         MFXQxbp5r21tkli7kf70sGXDjhCICorWLgd+VtW9HkcBG28bmBxrpHqU00E6bwAVEXeN
-         e284g/r7Pu2WY3FZ8bhyUgUMmLSfPF1H1bcO8aX3HOYwJOL0/iX0Vt/QqTH5J6RYMaIR
-         5+F4lltdWUEEGz6/b2LRZtjyQqpySZRxcORD446EEF5YDST6pFAiMp3WjmfkE3zMiw33
-         xCeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726168279; x=1726773079;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sl3/RAaMWaN7KZUdljkIsdyNaNAnnUZU/wp9mRU9gvs=;
-        b=q4qFsXlEWvj4K/jxwGq3xWdepQifqiwcarXA475lMHlJmWDKDuNCrTRmV8UJnh/H7h
-         pErjm3blVHgW21diq8lOxkAJelCh00x5zgJmi68gJZP8fIGh6kQPWh2LydfSpEAp2lX2
-         G3IP1z9sdg6sGP75RYtT/XC0LGTHdt1f1TNhbPH/Bza22zPi7wqAaDO46jptYMLTp1CD
-         N7n4nbE5cceFFVvZhtjOXnuu0l1kM+eXfVFxqT9IBXMwqjjHEKd1sWMgjBKjRGbCzyS1
-         BckV0AjOD3yvuFKrlIePOQUFgI02ktMVbzVGyG7cUmx/ou68jhe/k+qRmHZp1Rr+brlb
-         4u+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXFxUXjiPBi8MutsNBXXJc8MRqyIVBbGqEJQcYyMpETzD55qh93f5EDZl05OON3eUenuvDNeXU/iXTvT98=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTFJLtVnIc+KXL1izwZRO1PpMIWtEYFGHVls6TughitkbECZei
-	j4hTzbUYVdPsbCL80k7oVToCh3KBM/fSPIrL0uHRyXFt/g4o7Yll
-X-Google-Smtp-Source: AGHT+IHcNFOerQ/D4yBwRvRNcqzJx7r0UcshDu8UsLrFetoBEvuzw+gxeLM+VCafpwaT0zaK4PgpqA==
-X-Received: by 2002:a17:907:948c:b0:a71:ddb8:9394 with SMTP id a640c23a62f3a-a902961794emr374570166b.40.1726168278335;
-        Thu, 12 Sep 2024 12:11:18 -0700 (PDT)
-Received: from ?IPV6:2003:c7:8f2a:8557:476b:8cfa:99ee:514e? (p200300c78f2a8557476b8cfa99ee514e.dip0.t-ipconnect.de. [2003:c7:8f2a:8557:476b:8cfa:99ee:514e])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d7360f398sm418431166b.5.2024.09.12.12.11.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Sep 2024 12:11:18 -0700 (PDT)
-Message-ID: <6141d6af-a959-41af-b612-33c8f4e16645@gmail.com>
-Date: Thu, 12 Sep 2024 21:11:17 +0200
+	s=arc-20240116; t=1726168333; c=relaxed/simple;
+	bh=/M2IpRl+lu/5oIFubP5jWUgw0bkkbDFTr2zLK16691M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DD0mCkht8J3HY+px2oxzBtHYBGaIrsHsjBk5C2VpudYY/5v5sBC8BitTkyq+VretldwBoC0Cl+zeP7FHApvB+lYMqmui75BEX4zFflOINYidiu5gtm8AgAatiZN0pUhnMb+Tlj03nRxnnwiuDKZ++Rv8Th3piwXpqTL5iUaxsAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z0+7Y9IY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726168329;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yvbR9pTYN0+0VwKrLy9DuxNd8JvV1gwfKMo7AQzTn/Q=;
+	b=Z0+7Y9IYqU4zn4YW+bSM/Bwiku5ZQkpCaBv84JwGCWk/MUDPB0ET49ulTYizoUtcoxoEwq
+	oZxlsc3xjMKjV+QBEOC0eshKb32NxB7muGDMZZqYgPz2GrX4rlk7kWxwDQS59V8aaP0JDB
+	2A7/1kqRH/9TUvaLoOf9RlAssIFJHY0=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-5-BGHi3n3UNGmz565UDixh6w-1; Thu,
+ 12 Sep 2024 15:12:06 -0400
+X-MC-Unique: BGHi3n3UNGmz565UDixh6w-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B41A41955D4E;
+	Thu, 12 Sep 2024 19:12:03 +0000 (UTC)
+Received: from [192.168.37.1] (unknown [10.22.48.7])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 217F81955D4C;
+	Thu, 12 Sep 2024 19:11:57 +0000 (UTC)
+From: Benjamin Coddington <bcodding@redhat.com>
+To: Chuck Lever III <chuck.lever@oracle.com>
+Cc: Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>,
+ Amir Goldstein <amir73il@gmail.com>, Neil Brown <neilb@suse.de>,
+ Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
+ Jonathan Corbet <corbet@lwn.net>, Andreas Gruenbacher <agruenba@redhat.com>,
+ Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>,
+ Joseph Qi <joseph.qi@linux.alibaba.com>, Al Viro <viro@zeniv.linux.org.uk>,
+ Jan Kara <jack@suse.cz>, Alexander Ahring Oder Aring <aahringo@redhat.com>,
+ Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+ Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+ linux-doc@vger.kernel.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ gfs2@lists.linux.dev, ocfs2-devel@lists.linux.dev
+Subject: Re: [PATCH v1 0/4] Fixup NLM and kNFSD file lock callbacks
+Date: Thu, 12 Sep 2024 15:11:55 -0400
+Message-ID: <B51C0776-FF71-4A11-8813-57DD396AF68B@redhat.com>
+In-Reply-To: <D0E3A915-E146-46C9-A64E-1B6CC2C631F4@oracle.com>
+References: <cover.1726083391.git.bcodding@redhat.com>
+ <244954CF-C177-406C-9CAC-6F62D65C94DE@oracle.com>
+ <E2E16098-2A6E-4300-A17A-FA7C2E140B23@redhat.com>
+ <D0E3A915-E146-46C9-A64E-1B6CC2C631F4@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: vt6655: mac.h: Fix possible precedence issue in
- macros
-To: =?UTF-8?Q?Dominik_Karol_Pi=C4=85tkowski?=
- <dominik.karol.piatkowski@protonmail.com>, gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240911180149.14474-1-dominik.karol.piatkowski@protonmail.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <20240911180149.14474-1-dominik.karol.piatkowski@protonmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On 9/11/24 20:02, Dominik Karol Piątkowski wrote:
-> It is safer to put macro arguments in parentheses. This way, accidental
-> operator precedence issues can be avoided.
-> 
-> Signed-off-by: Dominik Karol Piątkowski <dominik.karol.piatkowski@protonmail.com>
-> ---
->   drivers/staging/vt6655/mac.h | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/vt6655/mac.h b/drivers/staging/vt6655/mac.h
-> index acf931c3f5fd..a33af2852227 100644
-> --- a/drivers/staging/vt6655/mac.h
-> +++ b/drivers/staging/vt6655/mac.h
-> @@ -537,9 +537,9 @@
->   
->   /*---------------------  Export Macros ------------------------------*/
->   
-> -#define VT6655_MAC_SELECT_PAGE0(iobase) iowrite8(0, iobase + MAC_REG_PAGE1SEL)
-> +#define VT6655_MAC_SELECT_PAGE0(iobase) iowrite8(0, (iobase) + MAC_REG_PAGE1SEL)
->   
-> -#define VT6655_MAC_SELECT_PAGE1(iobase) iowrite8(1, iobase + MAC_REG_PAGE1SEL)
-> +#define VT6655_MAC_SELECT_PAGE1(iobase) iowrite8(1, (iobase) + MAC_REG_PAGE1SEL)
->   
->   #define MAKEWORD(lb, hb) \
->   	((unsigned short)(((unsigned char)(lb)) | (((unsigned short)((unsigned char)(hb))) << 8)))
+On 12 Sep 2024, at 14:17, Chuck Lever III wrote:
 
+>> On Sep 12, 2024, at 11:06 AM, Benjamin Coddington <bcodding@redhat.com> wrote:
+>>
+>> On 12 Sep 2024, at 10:01, Chuck Lever III wrote:
+>>
+>>> For the NFSD and exportfs hunks:
+>>>
+>>> Acked-by: Chuck Lever <chuck.lever@oracle.com <mailto:chuck.lever@oracle.com>>
+>>>
+>>> "lockd: introduce safe async lock op" is in v6.10. Does this
+>>> series need to be backported to v6.10.y ? Should the series
+>>> have "Fixes: 2dd10de8e6bc ("lockd: introduce safe async lock
+>>> op")" ?
+>>
+>> Thanks Chuck! Probably yes, if we want notifications fixed up there.  It
+>> should be sufficient to add this to the signoff area for at least the first
+>> three (and fourth for cleanup):
+>>
+>> Cc: <stable@vger.kernel.org> # 6.10.x
+>
+> 2dd10de8e6bc landed in v6.7.
+>
+> I suppose that since v6.10.y is likely to be closed by
+> the time this series is applied upstream, this tag might
+> be confusing.
+>
+> Thus Fixes: 2dd10de8e6bc and a plain Cc: stable should
+> work best. Then whichever stable kernel is open when your
+> fixes are merged upstream will automatically get fixed.
 
-Tested-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+So you want "Fixes: 2dd10de8e6bc" on all these patches?  Fixing the problem
+requires all of the first three patches together.  My worry is that a
+"Fixes" on each implies a complete fix within that patch, so its really not
+appropriate.
+
+The stable-kernel-rules.rst documentation says for a series, the Cc: stable
+tag should be suffient to request dependencies within the series, so that's
+why I suggested it for the version you requested.
+
+What exactly would you like to see?  I am happy to send a 2nd version.
+
+Ben
+
 
