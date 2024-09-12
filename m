@@ -1,243 +1,187 @@
-Return-Path: <linux-kernel+bounces-326514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F43797694B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:42:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9BDF976951
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40A50285187
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:42:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65192285474
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3351A4E6D;
-	Thu, 12 Sep 2024 12:42:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C1B1A4E84;
+	Thu, 12 Sep 2024 12:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="ViX02ETU"
-Received: from mout.perfora.net (mout.perfora.net [74.208.4.196])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NBvOjOA1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26681A303C;
-	Thu, 12 Sep 2024 12:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53CA71A3058
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 12:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726144925; cv=none; b=UoeiuKDr75uiPzNo+Bg5lDAMAE+BUyQeSMrOZfGs40QCO3U+75IP8QQa8XZVJ++L31Vjcqcn8WG7vLhkvcFv9j9Qlx0X/ZIt1rdnxd4egwL+4PavABsb5j+GQnUKHslNdgtD2OAhfZwCR0OpI24+0ezTjDtCGXDVmlP+ulgmrok=
+	t=1726144961; cv=none; b=dOVjQwZDtzmoP7HOfLGDybm8H/zq4luC/5IqwabH8+TQSl3q29K4sFhisLxVKfQJUFwnzqeFwB9Lhfo3bJH1cfqAbbVHWXZJpEWTkXiGDyp0fAMhnRpJKbjb/xSQXQXqKGfMmlwjZM4TV2d14EuwhC+wbI2KS8xTjapw8lrmqO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726144925; c=relaxed/simple;
-	bh=D1uDsvTbaqu1HrfHJ2Vd8lkZ3tUN2jkcWKugSRK1ikM=;
+	s=arc-20240116; t=1726144961; c=relaxed/simple;
+	bh=VYq4xvU4yXtQJ3rBOR+LudQqXvYNFmbEy4t22IVlRrw=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i1i95HNOnam/1xjcvWbMD9lNsWAx0MP3WJ7iwXwxqnpF3pHIa9R9MP60l1QyEWJchAQ6WdF9/EgtmdhOV199FlkZANdqdMsuesVuQDrrdkHo+kO20OF7th2D39Cd0eN486FlecJxcLRpDzEClhDJFi9TLEr3HrySEB8VotER3jI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=ViX02ETU; arc=none smtp.client-ip=74.208.4.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
-	s=s1-ionos; t=1726144909; x=1726749709; i=parker@finest.io;
-	bh=fBbkcOl0VMdsHvC9YylJScXU+R8oqCgwbE9yHAKhiVg=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=ViX02ETUlEqaWkwtrBelv/RrhRbr3u6gqzbzSjkvAiA47eLMqOZESybaJtAt82xY
-	 lZJnwjvr/jcaSmNNY2exuTS2c9SiZ1Kr/PoURyzgxrJEBBu9tTQQqUcsn0B4v0yp6
-	 TOcO8BGGlRzFjs0FPsfWHh59IjQiWkj8e9bbd9nO3s+2OZMruW2ZijrT+NIXXhaim
-	 eTwJq0OTpaTkGnV7zcOhhOVik2uBHP1ZGY9S5fBHtGcvaUWhNdGocFdV+giEfN7NG
-	 L/xelWKpBaWfROdUcyV+M72whH8+SBJkBd5rJ4pwL6YA6KAGGibOXMXUlF68yen7O
-	 wm5sgiQoTPdCb6kebw==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from SWDEV2.connecttech.local ([98.159.241.229]) by
- mrelay.perfora.net (mreueus004 [74.208.5.2]) with ESMTPSA (Nemesis) id
- 1N7yr1-1rt28E0VEJ-0101Zs; Thu, 12 Sep 2024 14:41:49 +0200
-Date: Thu, 12 Sep 2024 08:41:47 -0400
-From: Parker Newman <parker@finest.io>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Parker Newman <pnewman@connecttech.com>, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>
-Subject: Re: [PATCH v2 00/13] serial: 8250_exar: Clean up the driver
-Message-ID: <20240912084147.6af5ac12@SWDEV2.connecttech.local>
-In-Reply-To: <ZuICvRjM4TqozL_X@smile.fi.intel.com>
-References: <20240503171917.2921250-1-andriy.shevchenko@linux.intel.com>
-	<20240503143303.15bf82bc@SWDEV2.connecttech.local>
-	<Ztr5u2wEt8VF1IdI@black.fi.intel.com>
-	<20240906095141.021318c8@SWDEV2.connecttech.local>
-	<ZtsQrFgH86AkKgPp@smile.fi.intel.com>
-	<20240906103354.0bf5f3b7@SWDEV2.connecttech.local>
-	<ZtsU0nfAFssevmmz@smile.fi.intel.com>
-	<20240906143851.21c97ef9@SWDEV2.connecttech.local>
-	<Zt7IonZIYgBqjvy7@smile.fi.intel.com>
-	<20240911133848.2cbb1834@SWDEV2.connecttech.local>
-	<ZuICvRjM4TqozL_X@smile.fi.intel.com>
-Organization: Connect Tech Inc.
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=q0ziSqQ+pn3xtPDn94FlJy1kc3AFIlVaxSDkFaIleebnaES/xeEC4H9Sc6N2gxLIJlRsoR6Ggy/eTRgPQOVM2IsOtx9WEQUoqNBx4GrQ4vUje+skm3qcvRcfK51tl8WMQPpVl4C6XPYx1v10JMZP/XcXVnW0CyjBE1KbNA3F0MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NBvOjOA1; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726144958;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w8nfejZavA0hL03c+N7MeOGb8mfUCS+H6+ty6eZ3ps4=;
+	b=NBvOjOA1VCgAN4EJvV2VF6Dz225zYB6BeELMW8AQnA4pIv/yCKS8AZN6fPkHKYjHIe1n3c
+	yQVrCFY4T6lEsEkjB5GCX1ta8wjdy/NuHys+213dbnAYZ9aeXHkzxZKFZOohRBbfQKMebw
+	vWCWNFbzL/gh9nY1xJs9dfX/4VhF52Q=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-495-rxDHA49kMuao0rrkCfThxA-1; Thu, 12 Sep 2024 08:42:37 -0400
+X-MC-Unique: rxDHA49kMuao0rrkCfThxA-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-374bb2f100fso430676f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 05:42:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726144956; x=1726749756;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w8nfejZavA0hL03c+N7MeOGb8mfUCS+H6+ty6eZ3ps4=;
+        b=nc0rPycj/oL9ao054pXE/iXXJ/msIyZNpjtdxsIzCidxwlXj56yfl7qm9uw/YO3JcX
+         HpPlgx2fT1A3JLWfa2UGHecQkKnnYShSYrGIZJ4L+9MnR0nApmyV2wl0SIIaPNln6qa6
+         bxB5cUdVQDRVCk/UMAT8PrcIWj/lJwXhzAIDwlb5X0pqKizNXsaRveLjZ8aIJ7n8cfUv
+         trx5kj1jKjQ4r1gsfPYgxbe+XYV7fRLrwPo3g1cuPiZt3Jq21hcbsjm0jZxsivsi/0wj
+         W0Mrk6h7eD0q/vZlw1f3NOkhUFxtYO7+GuvjaSutOm+tjcc9J2ktgszgh845cmN3rdbk
+         2S/g==
+X-Forwarded-Encrypted: i=1; AJvYcCV5ULWndKnvAU4/zWtn+MPED1p/HPRG1diZ5Vyv+22qe0F03AMLC9c3uWSJifcT/cJaBL6rUeVzrhjp1As=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6ZbJv/kBwTM3M8mtMJjMjD0A1X+/V7bg0v/3axvSpwR9ibo1k
+	0BQtG03ICYHr2DFVy8Nrwx4Ss6+h6+VZIccpnTtSpdeqPopyl7lnqwj4mRq2Q0IN4OSyyTCKFP+
+	R3q6ZtFy4b0NmUAiH+dSnsOcKcGvSlQP/JCk8hDeZqe7OIHf8YDtxR5ZY1lt5fA==
+X-Received: by 2002:a5d:42cb:0:b0:371:88e5:6d34 with SMTP id ffacd0b85a97d-378c2cd5f09mr1419773f8f.7.1726144955751;
+        Thu, 12 Sep 2024 05:42:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGMyehhqSAF1+7J1WexqM4IbLvLeTZtyCqD7Mk4Ku3Jw3VzVKKstGlTStD3RLALeuMBNY5dpQ==
+X-Received: by 2002:a5d:42cb:0:b0:371:88e5:6d34 with SMTP id ffacd0b85a97d-378c2cd5f09mr1419735f8f.7.1726144955123;
+        Thu, 12 Sep 2024 05:42:35 -0700 (PDT)
+Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cb1e3a5fdsm159348345e9.48.2024.09.12.05.42.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 05:42:34 -0700 (PDT)
+Date: Thu, 12 Sep 2024 14:42:33 +0200
+From: Igor Mammedov <imammedo@redhat.com>
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Shiju Jose
+ <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
+ <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
+ <linux-kernel@vger.kernel.org>, <qemu-arm@nongnu.org>,
+ <qemu-devel@nongnu.org>
+Subject: Re: [PATCH v8 06/13] acpi/ghes: add support for generic error
+ injection via QAPI
+Message-ID: <20240912144233.675d6b63@imammedo.users.ipa.redhat.com>
+In-Reply-To: <20240911163436.00004738@Huawei.com>
+References: <cover.1723793768.git.mchehab+huawei@kernel.org>
+	<2c8970b5d54d17b601dc65d778cc8b5fb288984b.1723793768.git.mchehab+huawei@kernel.org>
+	<20240819145136.0452ff2b@imammedo.users.ipa.redhat.com>
+	<20240825052923.715f88bc@sal.lan>
+	<20240911152132.65a7a219@imammedo.users.ipa.redhat.com>
+	<20240911163436.00004738@Huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:O+X3c3mUes4o50eMtLFzGJcNgPinrqwicO1KsP1DsYP7OAXJFJe
- yuUrkhKnyXT04BLbLcJ0GICS+5l28ougLK+V9G0TU9irUUZw8M/qqHuuSSmPdXEdSEJY2YL
- eLYE1ywhySMob0F6+I4FZaEu6eXsbS6X/rVv6U9tR0bbT0EpEL/2vPvaC8AX5I8rUEipk+M
- EexBiJ8kkGIuLCnPE6dlA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:aShr8j0d03k=;U/gcWrVSCjzHlunSSPJlLx9pW1b
- XZQb6+jgZGUy8q3XH13HUhK9sY6CvwfTNGYUsntqys2PIYrZoMkxaL8QyUpy5bJYUesprdiWw
- QnT50ASSmE5KknylEIUTOkRzBPlh8CD8xQvXxj4xyiuIfzY/t6qwDfIUrrDOucA/a0s+wax8q
- sDZLSqsZuzBq4Pabzw694CLZS9nopBfiJ4neLbMMZmypL5PKeUQwWmw49qAs/Tn6UyoTBgrVA
- YEqdTG7aY6Hx+htCJNZo8x9J8n5sb9jDCdpidYWG8isZpQ31JzdAQfIRMCBa/5J3JP09l/XXo
- 4fxP4Ql6zeZSlopqFp4QvwwFDPq92OuUK+95kRYnxbizpuQQygY7HMfdxINCBc9A4FSDOTj+m
- 26PUNsSfSpWAWa+v6fshjeQ63HKeQER3/B2qH1dY59K3IYEtNYIXkS6Z1QXlrngf54BAmJQT1
- FLVJ5llOAPRGRbDFY7pSun0MroFGH613Pzi1J3t2ZZhxO1k4wFKwB7tEdY9R+3Y7CN71VZWc7
- Xe0hzXTTFEXHp5cOZ65cGJ9UnTqLm8TqQ+MhUji0uGfvhKERMp90uU2ZdZAONvD+uS/6oEkLu
- nqLZ2foK+uom4A2/LNuUYmYBRS45keLimyTjyJAlWrTEMtMP/57ZfZz6Ug99WeCtI46a4MROL
- pzewSC6KL7X8XJehYGxlQkoX3t7ymZhScc9+PRDynUCpYGCk0z2U6keFEeMtas5rQdhDFwbJS
- tGc6PrSFQ+kdFqxeUOiAHK+rDfS60+tEA==
 
-On Wed, 11 Sep 2024 23:51:09 +0300
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+On Wed, 11 Sep 2024 16:34:36 +0100
+Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
 
-> On Wed, Sep 11, 2024 at 01:38:48PM -0400, Parker Newman wrote:
-> > On Mon, 9 Sep 2024 13:06:26 +0300
-> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > > On Fri, Sep 06, 2024 at 02:38:51PM -0400, Parker Newman wrote:
-> > > > On Fri, 6 Sep 2024 17:42:26 +0300
-> > > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > > > > On Fri, Sep 06, 2024 at 10:33:54AM -0400, Parker Newman wrote:
-> > > > > > On Fri, 6 Sep 2024 17:24:44 +0300
-> > > > > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > > > > > > On Fri, Sep 06, 2024 at 09:51:41AM -0400, Parker Newman wrot=
-e:
-> > > > > > > > On Fri, 6 Sep 2024 15:46:51 +0300
-> > > > > > > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > > > > > > > > On Fri, May 03, 2024 at 02:33:03PM -0400, Parker Newman =
-wrote:
->
-> ...
->
-> > > > > > > > > Sorry for blast from the past, but I have some instersti=
-ng information
-> > > > > > > > > for you. We now have spi-gpio and 93c46 eeprom drivers a=
-vailable to be
-> > > > > > > > > used from others via software nodes, can you consider up=
-dating your code
-> > > > > > > > > to replace custom bitbanging along with r/w ops by the i=
-nstantiating the
-> > > > > > > > > respective drivers?
-> > > > > > > >
-> > > > > > > > Hi Andy,
-> > > > > > > > The Exar UARTs don't actually use MPIO/GPIO for the EEPROM=
-.
-> > > > > > > > They have a dedicated "EEPROM interface" which is accessed=
- by the
-> > > > > > > > REGB (0x8E) register. It is a very simple bit-bang interfa=
-ce though,
-> > > > > > > > one bit per signal.
-> > > > > > > >
-> > > > > > > > I guess in theory I could either add  GPIO wrapper to togg=
-le these bits
-> > > > > > > > and use the spi-gpio driver but I am not sure if that real=
-ly improves things?
-> > > > > > > > Maybe using the spi-bitbang driver directly is more approp=
-riate?
-> > > > > > > > What do you think?
-> > > > > > >
-> > > > > > > Yes, spi-bitbang seems better in this case.
-> > > > > >
-> > > > > > I will try to make some time to implement this... Or if someon=
-e else from the
-> > > > > > community wants to take this on in the mean time I am certainl=
-y happy to test
-> > > > > > and help out!
-> > > > >
-> > > > > Sure, I shared this thought due to having lack of time to look m=
-yself,
-> > > > > but I prepared the above mentioned drivers to make them work in =
-this case.
-> > > > > (If you are curios, see the Git history for the last few release=
-s with
-> > > > >  --author=3D"Andy Shevchenko")
-> > > > >
-> > > >
-> > > > Looking into it a bit more I think we could just use the eeprom_93=
-cx6
-> > > > driver without any SPI layer. Just need to add simple register_rea=
-d()
-> > > > and register_write() functions to read/write the REB register.
-> > > >
-> > > > That should be a pretty easy change to make, I can try to make tha=
-t
-> > > > change soon unless anyone has any objections to that method?
-> > >
-> > > Thank you, this is pretty wonderful news!
-> > >
-> >
-> > I have this mostly working however there is one issue. The eeprom_93cx=
-6
-> > driver doesn't seem to discard the "dummy bit" the 93C46 EEPROM output=
-s
-> > between the writing of the op-code/address to the EEPROM and the readi=
-ng
-> > of the data from the EEPROM.
-> >
-> > More info can be found on page 6 of the AT93C46 datasheet. I see simil=
-ar
-> > notes in other 93C46/93C56/93C66 datasheets.
-> > Link: https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-5193-SEEP=
-ROM-AT93C46D-Datasheet.pdf
-> >
-> > In summary the read operation for the AT93C46 EEPROM is:
-> > Write to EEPROM :	110[A5-A0]	(9 bits)
-> > Read from EEPROM: 	0[D15-D0]	(17 bits)
-> >
-> > Where 110 is the READ OpCode, [A5-A0] is the address to read from,
-> > 0 is a "dummy bit" and then [D15-D0] is the actual data.
-> >
-> > I am seeing the "correct" values being read from the EEPROM when using=
- the
-> > eeprom_93cx6 driver but they are all shifted right by one because the
-> > dummy 0 bit is not being discarded.
-> >
-> > The confusing part is the eeprom_93cx6 driver has behaved the same sin=
-ce
-> > at least 2009 and half a dozen or so other drivers use it. I am not su=
-re
-> > if they just work around and/or live with this bug or if they have
-> > different HW that handles the extra dummy bit?
->
-> I briefly looked at a few users and it seems to me:
-> 1) either the Atmel chip has different HW protocol;
-> 2) or all of them handle that in HW transparently to SW.
+> On Wed, 11 Sep 2024 15:21:32 +0200
+> Igor Mammedov <imammedo@redhat.com> wrote:
+>=20
+> > On Sun, 25 Aug 2024 05:29:23 +0200
+> > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> >  =20
+> > > Em Mon, 19 Aug 2024 14:51:36 +0200
+> > > Igor Mammedov <imammedo@redhat.com> escreveu:
+> > >    =20
+> > > > > +        read_ack =3D 1;
+> > > > > +        cpu_physical_memory_write(read_ack_start_addr,
+> > > > > +                                  &read_ack, (uint64_t));       =
+=20
+> > > > we don't do this for SEV so, why are you setting it to 1 here?     =
+=20
+> > >=20
+> > > According with:
+> > > https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#gen=
+eric-hardware-error-source-version-2-ghesv2-type-10
+> > >=20
+> > >    "These are the steps the OS must take once detecting an error from=
+ a particular GHESv2 error source:
+> > >=20
+> > >     OSPM detects error (via interrupt/exception or polling the block =
+status)
+> > >=20
+> > >     OSPM copies the error status block
+> > >=20
+> > >     OSPM clears the block status field of the error status block
+> > >=20
+> > >     OSPM acknowledges the error via Read Ack register. For example:
+> > >=20
+> > >         OSPM reads the Read Ack register =E2=80=93> X
+> > >=20
+> > >         OSPM writes =E2=80=93> (( X & ReadAckPreserve) | ReadAckWrite=
+)"
+> > >=20
+> > >=20
+> > > So, basically the guest OS takes some time to detect that an error
+> > > is raised. When it detects, it needs to mark that the error was
+> > > handled.   =20
+> >=20
+> > what you are doing here by setting read_ack =3D 1,
+> > is making ack on behalf of OSPM when OSPM haven't handled existing erro=
+r yet.
+> >=20
+> > Essentially making HW/FW do the job of OSPM. That looks wrong to me.
+> > From HW/FW side read_ack register should be thought as read-only. =20
+>=20
+> It's not read-only because HW/FW has to clear it so that HW/FW can detect
+> when the OSPM next writes it.
 
-The 3 Exar cards I have handy actually use the ST M93C46 version but looki=
-ng
-through our BOMs I see AT/CAT/ST used on various cards over the years.
+By readonly, I've meant that hw shall not do above mentioned write
+(bad phrasing on my side).
 
-Looking at the READ timing diagrams in the Atmel and ST datasheets it look=
-s
-like the dummy bit should actually be clocked out on the last address bit
-clock cycle. If this were so it would be ignored naturally.
+>=20
+> Agreed this write to 1 looks wrong, but the one a few lines further down =
+(to zero
+> it) is correct.
 
-This may just be a quirk of the Exar HW. All Exar code I have looked at
-manually discards the dummy bit.
+yep, hw should clear register.
+It would be better to so on OSPM ACK, but alas we can't intercept that,
+so the next option would be to do that at the time when we add a new error =
+block
 
-> > I am hesitant to "fix" the eeprom_93cx6 driver and potentially break t=
-he
-> > other users of it. I could add a flag to the eeprom_93cx6 struct to wo=
-rk
-> > around this issue... Unless anyone else has some ideas or input?
->
-> In my opinion the 93c46 needs an additional configuration setting (in th=
-e
-> respective data structure) and some code to implement what you need here=
-.
-
-I see the eeprom_93xx46 driver has the QUIRK_EXTRA_READ_CYCLE quirk to sol=
-ve
-this issue. I could add something similar.
-
-> But yes, let's wait a bit for other opinions...
->
+>=20
+> My bug a long time back I think.
+>=20
+> Jonathan
+>=20
+> >  =20
+> > >=20
+> > > IMO, this is needed, independently of the notification mechanism.
+> > >=20
+> > > Regards,
+> > > Mauro
+> > >    =20
+> >=20
+> >  =20
+>=20
 
 
