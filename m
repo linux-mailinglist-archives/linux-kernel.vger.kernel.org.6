@@ -1,380 +1,222 @@
-Return-Path: <linux-kernel+bounces-326877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06E62976DFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:41:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10BD4976E03
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0212283E85
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:41:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85B181F255ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893391BA29D;
-	Thu, 12 Sep 2024 15:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848781BB6B3;
+	Thu, 12 Sep 2024 15:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jp6nNyYQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WBATCGF9"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD6344C8F;
-	Thu, 12 Sep 2024 15:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EA21BB6B7
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726155683; cv=none; b=bhQBGlZFPsLyZXxuKCvGqDJbUvGKvnWDN3VqM0CDWUgXJBQRs9I8jKj5PJeHG5gA1yHjYck94A6Cjgno4bSm1Gqri93hvOHrNUA4smWBkU/bMqkQcoCEsaNr+mQTh2JZzZoflfP7OwPHdlwBI3Piu6oI1LbtYfG21fHH/er8IpE=
+	t=1726155689; cv=none; b=NifxqPdP+hyLO4uVFPPS5qIJ+OGb01Kkq1pfPe13atnMjK8Z58jOakb551ltZQOk7CeX1C/hy4uYLKx57bj5KX5+qvxlDgKbjFkJuOK/bL+vEvJKh5bf2YH83sU+lZZ1b+4ae59J6L5z2jYde4yQmb31kKWcVF0sfoj/I64CbVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726155683; c=relaxed/simple;
-	bh=kJ8Y1GlbSsEi+QgmVgv9O5lTIb7Or9rp1itTMj9ZTAE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M9Xk4NwaZchK/04WvQ+9fOByXMFsdbb7BDWIO5NnX9fffeAtHRtlGWL3mKeczFQg7usFyHdMi7MXnojn2phSnXBzsdfuFnjquKgkzNHudut9Mfuqs079K9iBQPfDbUQMx2Ex2rwrcHjcShtfTmF60l2H0G3G3o+PioTgnYTbM+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jp6nNyYQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2384C4CEC3;
-	Thu, 12 Sep 2024 15:41:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726155683;
-	bh=kJ8Y1GlbSsEi+QgmVgv9O5lTIb7Or9rp1itTMj9ZTAE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jp6nNyYQxLkh5oeX6pXx1gUqu+EDxO0wbRkOu/b2tdIe1YPQEduS6dq/I8vUg/9u8
-	 j0uWCzUtjL7bsYRT2ZERJi27kJ1VD1N46c8q65kHlxHIeVJwhAUbounua0nOXVYMlL
-	 qeMPx6PtUaHNt3MlOA7SCZiFo/nHKz47mRap0HOnsjE5pqdP8nqHOnSx8twM2SLEid
-	 CP5TcqooWISYP8jzUYU6ky2+3zA8XUtWoX4atQmi1iwCoyED1gxEsCqCKjtE3/vgmL
-	 AmGYnWhNL0iup7hR/uoNud9pcOXWGrkxigT8RxhfeqyChG+mvXG5PS1Mb/CW1Ocom0
-	 toKk/g7cnguzQ==
-Message-ID: <84e09f0c-10d7-4648-b243-32f18974e417@kernel.org>
-Date: Thu, 12 Sep 2024 17:41:19 +0200
+	s=arc-20240116; t=1726155689; c=relaxed/simple;
+	bh=MMgC/aqt9wcmvoZXDiJlIZxFtdta8SZFDTKjqp2m56M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nbVh+bBmC5JVIbYk02nP1A7R2H3/JjQillyULTOVh1s4WvkNSDFyPiOrZe+2N3BAmaacNrEs7kinBrDS07MsI7nJK7dPe3Ei2S3tQmn88xJe657rTVXGYC8fON5MH7oH8YWYG2RzQmCVH90FC+R+IC/nJm2CL9sJKgr0o6cGkdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WBATCGF9; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20551eeba95so10901115ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:41:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726155687; x=1726760487; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UX3TDD1wg3fmZECxkbsHACOqCzp6B1JzxKfaMLm2U8M=;
+        b=WBATCGF9aV8eYt7r+resZHnANpxsPqlyuzjCm270745ZZErhABeSDdyyYCCVKi2Q1w
+         OP63+9l/EeaBbQjZZtFLrudMg/1QufBvDxmzz4nGzPQZm9+Ss4E6ZQKITHn4/9tfXCP0
+         CoyiJhAdQ8UQQL77Gce20jGRctPQRtL+EtBwGRQc2Bf0cNWahzScJGDZHnS5P128MZsD
+         1ydkVZKj9T31gzVQ0o9st9BCiRen7TEOz02HUjhAR7J38/9fD6OvBlt7ZFRGzPVzw1OK
+         nnDn/aSFLTlxAFXPdet9eTR2tV3EjWCyXSVFOvYpYB4Ip/qwHCI6aojk5hzVrrrheFzH
+         CHRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726155687; x=1726760487;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UX3TDD1wg3fmZECxkbsHACOqCzp6B1JzxKfaMLm2U8M=;
+        b=EnMyMAVTi1uhTWijXwGBJsFSBoUm660dcrKnhSle4bD8Uf4IIQVbaUIvQ6LXsewAju
+         jN87b3BgWiCHbkpz+BU9iGligoZmssB4bET2CvX4gGPWH7BRcd+qxvk9gjfCif/5+Ubb
+         XtQFU8Ft3POG5QGsOcJ1B/TjkSegTy47WDvK0iYlpgnsnNc+r3qJF8PbX/fR8xYfZmqp
+         UxA0EjvnL8Vdv/dQfrZMRqZC5cOsUeC33/EDE7gdLUNlTYyckkuugEOpwIqKJ4Anm1I6
+         EkoDfnTCzjGekLG8iSSPYVerdoJC4iy83eodfHktbnjZyjsQDuNXu+yc59HgtcEn6LR5
+         8EbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV05hTCeO1q/+1/8p7rsQKEPtGnYnHd2l6ycjxooIVdR2YbUou5XAfjwb2anLB1tUjmmbRaPQmE9rzTC2E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN02HvA2MuRJlQKZ8dKsiDfLBnzs9kwl8Y2M1eOcWzPQCSfpiv
+	0Qw/MoUTKOwIjcAgITeptlHlIS4ACNutiIvN1BumD6/eUuoRez4PFju2F0vhld0=
+X-Google-Smtp-Source: AGHT+IFagW7EpGoI8wKxQY38cWVqzvg3XfqIXD61efl4qhGkGiSohPvpLEyd4ziYpx5dvCOQgOsAAQ==
+X-Received: by 2002:a17:903:32c3:b0:206:ca91:1dd6 with SMTP id d9443c01a7336-2076e315569mr46690225ad.9.1726155687450;
+        Thu, 12 Sep 2024 08:41:27 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:a82e:e104:d822:3d3c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076afdd672sm15667935ad.156.2024.09.12.08.41.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 08:41:26 -0700 (PDT)
+Date: Thu, 12 Sep 2024 09:41:23 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Jens Wiklander <jens.wiklander@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v9 6/7] remoteproc: stm32: Create sub-functions to
+ request shutdown and release
+Message-ID: <ZuMLo2+an1sxdYlt@p14s>
+References: <20240830095147.3538047-1-arnaud.pouliquen@foss.st.com>
+ <20240830095147.3538047-7-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V10] cgroup/rstat: Avoid flushing if there is an ongoing
- root flush
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: tj@kernel.org, cgroups@vger.kernel.org, shakeel.butt@linux.dev,
- hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com,
- kernel-team@cloudflare.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, mfleming@cloudflare.com
-References: <172547884995.206112.808619042206173396.stgit@firesoul>
- <CAJD7tkak0yZNh+ZQ0FRJhmHPmC5YmccV4Cs+ZOk9DCp4s1ECCA@mail.gmail.com>
- <f957dbe3-d669-40b7-8b90-08fa40a3c23d@kernel.org>
- <CAJD7tkYv8oDsPkVrUkmBrUxB02nEi-Suf=arsd5g4gM7tP2KxA@mail.gmail.com>
- <afa40214-0196-4ade-9c10-cd78d0588c02@kernel.org>
- <CAJD7tkZ3-BrnMoEQAu_gfS-zfFMAu4SeFvGFj1pNiZwGdtrmwQ@mail.gmail.com>
-Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <CAJD7tkZ3-BrnMoEQAu_gfS-zfFMAu4SeFvGFj1pNiZwGdtrmwQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830095147.3538047-7-arnaud.pouliquen@foss.st.com>
 
+On Fri, Aug 30, 2024 at 11:51:46AM +0200, Arnaud Pouliquen wrote:
+> To prepare for the support of TEE remoteproc, create sub-functions
+> that can be used in both cases, with and without remoteproc TEE support.
+> 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+>  drivers/remoteproc/stm32_rproc.c | 84 +++++++++++++++++++-------------
+>  1 file changed, 51 insertions(+), 33 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
+> index 8c7f7950b80e..79c638936163 100644
+> --- a/drivers/remoteproc/stm32_rproc.c
+> +++ b/drivers/remoteproc/stm32_rproc.c
+> @@ -209,6 +209,54 @@ static int stm32_rproc_mbox_idx(struct rproc *rproc, const unsigned char *name)
+>  	return -EINVAL;
+>  }
+>  
+> +static void stm32_rproc_request_shutdown(struct rproc *rproc)
+> +{
+> +	struct stm32_rproc *ddata = rproc->priv;
+> +	int err, dummy_data, idx;
+> +
+> +	/* Request shutdown of the remote processor */
+> +	if (rproc->state != RPROC_OFFLINE && rproc->state != RPROC_CRASHED) {
+> +		idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_SHUTDOWN);
+> +		if (idx >= 0 && ddata->mb[idx].chan) {
+> +			/* A dummy data is sent to allow to block on transmit. */
+> +			err = mbox_send_message(ddata->mb[idx].chan,
+> +						&dummy_data);
 
+When refactoring functions, please do not change the inner code.  Here
+@dummy_data was introduced.  Making changes, even small ones, makes it really
+hard to review your work.  I'm pretty sure we talked about that before.
 
-On 10/09/2024 20.55, Yosry Ahmed wrote:
-> [..]
->>
->>>>>> +       /*
->>>>>> +        * Check if ongoing flusher is already taking care of this.  Descendant
->>>>>> +        * check is necessary due to cgroup v1 supporting multiple root's.
->>>>>> +        */
->>>>>> +       ongoing = READ_ONCE(cgrp_rstat_ongoing_flusher);
->>>>>> +       if (ongoing && cgroup_is_descendant(cgrp, ongoing))
->>>>>> +               return false;
->>>>>
->>>>> Why did we drop the agreed upon method of waiting until the flushers
->>>>> are done? This is now a much more intrusive patch which makes all
->>>>> flushers skip if a root is currently flushing. This causes
->>>>> user-visible problems and is something that I worked hard to fix. I
->>>>> thought we got good results with waiting for the ongoing flusher as
->>>>> long as it is a root? What changed?
->>>>>
->>>>
->>>> I disagree with the idea of waiting until the flusher is done.
->>>> As Shakeel have pointed out before, we don't need accurate stats.
->>>> This caused issues and 'completions' complicated the code too much.
->>>
->>> I think Shakeel was referring specifically to the flush in the reclaim
->>> path. I don't think this statement holds for all cgroup flushers,
->>> especially those exposed to userspace.
->>>
->>
->> My userspace readers (of /sys/fs/cgroup/*/*/memory.stat) are primarily
->> cadvisor and systemd, which doesn't need this accuracy.
->>
->> Can you explain your userspace use-case that need this accuracy?
+> +			if (err < 0)
+> +				dev_warn(&rproc->dev, "warning: remote FW shutdown without ack\n");
+> +		}
+> +	}
+> +}
+> +
+> +static int stm32_rproc_release(struct rproc *rproc)
+> +{
+> +	struct stm32_rproc *ddata = rproc->priv;
+> +	unsigned int err = 0;
+> +
+> +	/* To allow platform Standby power mode, set remote proc Deep Sleep. */
+> +	if (ddata->pdds.map) {
+> +		err = regmap_update_bits(ddata->pdds.map, ddata->pdds.reg,
+> +					 ddata->pdds.mask, 1);
+> +		if (err) {
+> +			dev_err(&rproc->dev, "failed to set pdds\n");
+> +			return err;
+> +		}
+> +	}
+> +
+> +	/* Update coprocessor state to OFF if available. */
+> +	if (ddata->m4_state.map) {
+> +		err = regmap_update_bits(ddata->m4_state.map,
+> +					 ddata->m4_state.reg,
+> +					 ddata->m4_state.mask,
+> +					 M4_STATE_OFF);
+> +		if (err) {
+> +			dev_err(&rproc->dev, "failed to set copro state\n");
+> +			return err;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int stm32_rproc_prepare(struct rproc *rproc)
+>  {
+>  	struct device *dev = rproc->dev.parent;
+> @@ -519,17 +567,9 @@ static int stm32_rproc_detach(struct rproc *rproc)
+>  static int stm32_rproc_stop(struct rproc *rproc)
+>  {
+>  	struct stm32_rproc *ddata = rproc->priv;
+> -	int err, idx;
+> +	int err;
+>  
+> -	/* request shutdown of the remote processor */
+> -	if (rproc->state != RPROC_OFFLINE && rproc->state != RPROC_CRASHED) {
+> -		idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_SHUTDOWN);
+> -		if (idx >= 0 && ddata->mb[idx].chan) {
+> -			err = mbox_send_message(ddata->mb[idx].chan, "detach");
+> -			if (err < 0)
+> -				dev_warn(&rproc->dev, "warning: remote FW shutdown without ack\n");
+> -		}
+> -	}
+> +	stm32_rproc_request_shutdown(rproc);
+>  
+>  	err = stm32_rproc_set_hold_boot(rproc, true);
+>  	if (err)
+> @@ -541,29 +581,7 @@ static int stm32_rproc_stop(struct rproc *rproc)
+>  		return err;
+>  	}
+>  
+> -	/* to allow platform Standby power mode, set remote proc Deep Sleep */
+> -	if (ddata->pdds.map) {
+> -		err = regmap_update_bits(ddata->pdds.map, ddata->pdds.reg,
+> -					 ddata->pdds.mask, 1);
+> -		if (err) {
+> -			dev_err(&rproc->dev, "failed to set pdds\n");
+> -			return err;
+> -		}
+> -	}
+> -
+> -	/* update coprocessor state to OFF if available */
+> -	if (ddata->m4_state.map) {
+> -		err = regmap_update_bits(ddata->m4_state.map,
+> -					 ddata->m4_state.reg,
+> -					 ddata->m4_state.mask,
+> -					 M4_STATE_OFF);
+> -		if (err) {
+> -			dev_err(&rproc->dev, "failed to set copro state\n");
+> -			return err;
+> -		}
+> -	}
+> -
+> -	return 0;
+> +	return stm32_rproc_release(rproc);
+>  }
+>  
+>  static void stm32_rproc_kick(struct rproc *rproc, int vqid)
+> -- 
+> 2.25.1
 > 
-> 
-> Please look at the commit log of this patch [1] that removed
-> stats_flush_ongoing (the one in Fixes).
-> 
-> [1]https://lore.kernel.org/lkml/20231129032154.3710765-6-yosryahmed@google.com/
-> 
-
-I think I understand the inaccuracy concern now.  So, it is the 2 second
-periodic flush that is the concern.  That can cause up-to 2 seconds old
-data to be read by userspace, when read contend with ongoing root
-flusher (if it doesn't wait for the flush).  I agree, that 2 sec old
-data is too inaccurate.
-
-I'm coding V11 that will "wait_for_flush" in the userspace call paths.
-
->>
->>
->> I assume you are primarily focused on memory.stat?
->> Can we slack on accuracy for io.stat and cpu.stat?
-> 
-> 
-> I feel like this will eventually also cause problems as it is a
-> user-visible change, but I can't tell for sure.
-> 
->>
->>
->> Detail: reading cpu.stat already waits on the ongoing flusher by always
->> taking the lock (as it use lock to protect other things).  This
->> indirectly created what you are asking for... If your userspace program
->> first reads cpu.stat, then it will serve as a barrier that waits for the
->> ongoing flusher.
-> 
-> 
-> Making userspace programs read cpu.stat before memory.stat to get the
-> correct flushing behavior is certainly not the way to address this
-> imo.
-> 
->>
->>
->> Could we have a sysctl that enabled "accurate" cgroup rstat reading?
->> As most users don't need this high accuracy.
-> 
-> 
-> I did a lot of testing of flushing latency in the commit I referred to
-> above, you'll find numbers there. I think the problem for you mainly
-> comes from having 12 kswapd threads flushing the root, they compete
-> among one another as well as with userspace reads. Shakeel's patch
-> should address this, and honestly I think the longer-term approach
-> should be to eliminate all in-kernel flushers [2], rather than making
-> all flushers inaccurate.
-> 
-
-I like the idea of eliminate all in-kernel flushers.
-Until someone works on that I will use my patch in production as I need
-to fix the production issues ASAP.
-
-> [2]https://lore.kernel.org/lkml/CAJD7tkaBfWWS32VYAwkgyfzkD_WbUUbx+rrK-Cc6OT7UN27DYA@mail.gmail.com/
-> 
->>
->>
->>
->>>>
->>>> When multiple (12) kswapd's are running, then waiting for ongoing
->>>> flusher will cause us to delay all other kswapd threads, for on my
->>>> production system approx 24 ms (see attached prod graph).
->>>> Matt (Cc) is currently[1] looking into page alloc failures that are
->>>> happening across the fleet, when NIC RX packets as those allocs are
->>>> GFP_ATOMIC.  So, basically kswapd isn't reclaiming memory fast enough on
->>>> our systems, which could be related to this flush latency.  (Quick calc,
->>>> prod server RX 1,159,695 pps, thus in 24 ms period 27,832 packets are
->>>> handled, that exceed RX ring size 1024).
->>>>
->>>>     [1]
->>>> https://lore.kernel.org/all/CAGis_TWzSu=P7QJmjD58WWiu3zjMTVKSzdOwWE8ORaGytzWJwQ@mail.gmail.com/
->>>>
->>>> For this reason, I don't want to have code that waits for ongoing
->>>> flushers to finish.  This is why I changed the code.
->>>
->>> My understanding was that the previous versions solved most of the
->>> problem. However, if it's not enough and we need to completely skip
->>> the flush, then I don't think this patch is the right way to go. This
->>> affects all flushers, not just the reclaim path, and not even just the
->>> memcg flushers. Waiting for ongoing flushers was a generic approach
->>> that should work for all flushers, but completely skipping the flush
->>> is not.
->>>
->>
->> IMHO waiting for ongoing flushers was not a good idea, as it caused
->> other issues. Letting 11 other kswapd wait 24 ms for a single kswapd
->> thread was not good for our production systems.
-> 
-> 
-> If it takes one kswapd thread 24 ms to flush the stats, then that's
-> the raw flush time. If all 12 kswapd threads started at different
-> times they would all spend 24 ms flushing anyway, so waiting for the
-> ongoing flusher is not a regression or a newly introduced delay. The
-> ongoing flusher mechanism rather tries to optimize this by avoiding
-> the lock contention and waiting for the ongoing flusher rather than
-> competing on the lock and redoing some of the work.
->
-
-We are observing kswapd isn't running "fast-enough" in production (e.g.
-when packet process using GFP_ATOMIC alloc are starting to fail).  Thus,
-I really don't want to delay 11 other kswapd threads, by waiting on a
-flush, I really prefer to skip the flush, such that they can do the much
-needed memory reclaim work.
-
->>
->>
->> I need remind people that "completely skipping the flush" due to ongoing
->> flusher have worked well for us before kernel v6.8 (before commit
->> 7d7ef0a4686a). So, I really don't see skipping the flush, when there is
->> an ongoing flusher is that controversial.
-> 
-> 
-> Skipping the flush was introduced in v5.15 as part of aa48e47e3906
-> ("memcg: infrastructure to flush memcg stats"). Before then, reading
-> the stats from userspace was as accurate as possible. When we moved to
-> a kernel with that commit we noticed the regression. So it wasn't
-> always the case that userspace reads were inaccurate or did not flush.
-> 
->>
->>
->> I think it is controversial to *wait* for the ongoing flusher as that
->> IMHO defeats the whole purpose of having an ongoing flusher...
-> 
-> 
-> The point of having an ongoing flusher is to avoid reacquiring the
-> lock after they are done, and checking all the percpu trees again for
-> updates, which would be a waste of work and unnecessary contention on
-> the lock. It's definitely an improvement over directly competing over
-> the lock, yet it doesn't sacrifice accuracy.
-> 
->>
->> then we could just have a normal mutex lock if we want to wait.
-> 
-> 
-> I am not against using a mutex as I mentioned before. If there are
-> concerns about priority inversions we can add a timeout as we
-> discussed. The ongoing flusher mechanism is similar in principle to a
-> mutex, the advantage is that whoever holds the lock does not sleep, so
-> it gets the flush done faster and waiters wake up faster.
-> 
-
-My plan is to lower contention on this rstat lock "enough" (e.g. with
-this patch), which should make it safer to switch to a mutex.
-
->>
->>
->>> If your problem is specifically the flush in the reclaim path, then
->>> Shakeel's patch to replace that flush with the ratelimited version
->>> should fix your problem. It was already merged into mm-stable (so
->>> headed toward v6.11 AFAICT).
->>>
->>>>
->>>>
->>>>> You also never addressed my concern here about 'ongoing' while we are
->>>>> accessing it, and never responded to my question in v8 about expanding
->>>>> this to support non-root cgroups once we shift to a mutex.
->>>>>
->>>>
->>>> I don't think we should expand this to non-root cgroups.  My production
->>>> data from this V10 shows we don't need this for non-root cgroups.
->>>
->>> Right, because you are concerned with the flush in the kswapd path
->>> specifically. This patch touches affects much more than that.
->>>
->>
->> It is not only the flush in the kswapd path that concerns me.
->> My other concern is userspace cadvisor that periodically reads ALL the
->> .stat files on the system and creates flush spikes (every minute).  When
->> advisor collides with root-cgroup flush (either 2 sec periodic or
->> kswapd) then bad interactions happens in prod.
-> 
-> 
-> I believe the problem here is the kswapd flushers competing with
-> cadvisor userspace read. I don't think the periodic flusher that runs
-> every 2s colliding with the cadvisor reader that runs every minute
-> would really cause a problem. Also both of these paths should not be
-> latency sensitive anyway. So again, Shakeel's patch should help here.
-> 
-> Did you check if Shakeel's patch fixes your problem?
-> 
-
-I will also try out Shakeel's patch. This will hide the specific
-contention issue until something starves the kthread that does the
-periodic 2 second flush (for 2 periods). In production we are seeing
-kthreads getting starved longer than 20 seconds.  This often happens in
-connection with OOM killer. This recreates the kswapd lock contention
-situation at a very unfortunate point in time.  Thus, it makes sense to
-have this ongoing flusher lock contention protection in place.
-
-BTW, there is still a mem_cgroup_flush_stats() remaining in
-zswap_shrinker_count(), that we might still hit, after Shakeel's patch.
-And a direct call to do_flush_stats() in obj_cgroup_may_zswap().
-
->>
->>
->>>>
->>>>
->>>>> I don't appreciate the silent yet drastic change made in this version
->>>>> and without addressing concerns raised in previous versions. Please
->>>>> let me know if I missed something.
->>>>>
->>>>
->>>> IMHO we needed a drastic change, because patch was getting too
->>>> complicated, and my production experiments showed that it was no-longer
->>>> solving the contention issue (due to allowing non-root cgroups to become
->>>> ongoing).
->>>
->>> I thought we agreed to wait for the ongoing flusher to complete, but
->>> only allow root cgroups to become the ongoing flusher (at least
->>> initially). Not sure what changed.
->>>
->>
->> Practical implementation (with completions) and production experiments
->> is what changed my mind. Thus, I no-longer agree that waiting for the
->> ongoing flusher to complete is the right solution.
-> 
-> 
-> My understanding based on [1] was that the ongoing flusher mechanism
-> with only root flushers fixed the problem, but maybe you got more data
-> afterward.
-> 
-
-[1] is V8 (that allowed ongoing flusher below level 2) which production
-experience from that shows that we need to confine ongoing flusher to
-being the root cgroup only.  (This already worked in V2).  The V9
-production experience shows that using 'completions' caused issues and
-implementing this race free is very hard.
-
-
-> [1] https://lore.kernel.org/lkml/ee0f7d29-1385-4799-ab4b-6080ca7fd74b@kernel.org/
-> 
->>
->>
->>
->>>>
->>>> Production servers with this V10 patch applied shows HUGE improvements.
->>>> Let me grab a graf showing level-0 contention events being reduced from
->>>> 1360 event/sec to 0.277 events/sec.  I had to change to a log-scale graf
->>>> to make improvement visible.  The wait-time is also basically gone.  The
->>>> improvements are so convincing and highly needed, that we are going to
->>>> deploy this improvement.  I usually have a very strong upstream first
->>>> principle, but we simply cannot wait any-longer for a solution to this
->>>> production issue.
->>>
->>> Of course there is a huge improvement, you are completely skipping the
->>> flush :) You are gaining a lot of performance but you'll also lose
->>> something, there is no free lunch here. This may be an acceptable
->>> tradeoff for the reclaim path, but definitely not for all flushers.
->>>
->>
->> To move forward, can you please list the flushers that cannot accept
->> this trade off?
->> Then I can exclude these in the next version.
-> 
-> 
-> I am not sure which flushers would be problematic, I have seen
-> problems with the memcg userspace readers, but this doesn't mean it's
-> the only source of problems. There is also a flush in the zswap path
-> for charging that may be affected, but we discussed moving that to a
-> completely different approach to avoid the flush.
-> 
-> I am against skipping the flush for all cases with exceptions. What
-> Shakeel did was the opposite and the less controversial approach, skip
-> the flush only for the reclaim path because it's the one we observed
-> causing problems.
-> 
-
-I've coded a V11 that reduce the places we skip-the-flush on contention,
-and wait-for-flush in all the userspace reader cases.
-
---Jesper
 
