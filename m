@@ -1,222 +1,146 @@
-Return-Path: <linux-kernel+bounces-326878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10BD4976E03
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:41:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA65A976E05
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:42:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85B181F255ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:41:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 088881C22BE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848781BB6B3;
-	Thu, 12 Sep 2024 15:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6A71B9B24;
+	Thu, 12 Sep 2024 15:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WBATCGF9"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VVcj/0SI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EA21BB6B7
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F40D126BF9;
+	Thu, 12 Sep 2024 15:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726155689; cv=none; b=NifxqPdP+hyLO4uVFPPS5qIJ+OGb01Kkq1pfPe13atnMjK8Z58jOakb551ltZQOk7CeX1C/hy4uYLKx57bj5KX5+qvxlDgKbjFkJuOK/bL+vEvJKh5bf2YH83sU+lZZ1b+4ae59J6L5z2jYde4yQmb31kKWcVF0sfoj/I64CbVE=
+	t=1726155723; cv=none; b=YML7EDr6Q+taREzYtZcLO57AkUSgp6Kg+H1kbB8x3k/fvVk8qpyw7uaTQ9+CLMbMxUmWxaIPZJDuosysI9dmeTJjLEhyAxudWNJjSKnFcDty7e/230dguDTkTskz/965i3d91R6eo8jz+OcjQsaQIEQxG3t87bz6tOCgfWUr+So=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726155689; c=relaxed/simple;
-	bh=MMgC/aqt9wcmvoZXDiJlIZxFtdta8SZFDTKjqp2m56M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nbVh+bBmC5JVIbYk02nP1A7R2H3/JjQillyULTOVh1s4WvkNSDFyPiOrZe+2N3BAmaacNrEs7kinBrDS07MsI7nJK7dPe3Ei2S3tQmn88xJe657rTVXGYC8fON5MH7oH8YWYG2RzQmCVH90FC+R+IC/nJm2CL9sJKgr0o6cGkdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WBATCGF9; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20551eeba95so10901115ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:41:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726155687; x=1726760487; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UX3TDD1wg3fmZECxkbsHACOqCzp6B1JzxKfaMLm2U8M=;
-        b=WBATCGF9aV8eYt7r+resZHnANpxsPqlyuzjCm270745ZZErhABeSDdyyYCCVKi2Q1w
-         OP63+9l/EeaBbQjZZtFLrudMg/1QufBvDxmzz4nGzPQZm9+Ss4E6ZQKITHn4/9tfXCP0
-         CoyiJhAdQ8UQQL77Gce20jGRctPQRtL+EtBwGRQc2Bf0cNWahzScJGDZHnS5P128MZsD
-         1ydkVZKj9T31gzVQ0o9st9BCiRen7TEOz02HUjhAR7J38/9fD6OvBlt7ZFRGzPVzw1OK
-         nnDn/aSFLTlxAFXPdet9eTR2tV3EjWCyXSVFOvYpYB4Ip/qwHCI6aojk5hzVrrrheFzH
-         CHRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726155687; x=1726760487;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UX3TDD1wg3fmZECxkbsHACOqCzp6B1JzxKfaMLm2U8M=;
-        b=EnMyMAVTi1uhTWijXwGBJsFSBoUm660dcrKnhSle4bD8Uf4IIQVbaUIvQ6LXsewAju
-         jN87b3BgWiCHbkpz+BU9iGligoZmssB4bET2CvX4gGPWH7BRcd+qxvk9gjfCif/5+Ubb
-         XtQFU8Ft3POG5QGsOcJ1B/TjkSegTy47WDvK0iYlpgnsnNc+r3qJF8PbX/fR8xYfZmqp
-         UxA0EjvnL8Vdv/dQfrZMRqZC5cOsUeC33/EDE7gdLUNlTYyckkuugEOpwIqKJ4Anm1I6
-         EkoDfnTCzjGekLG8iSSPYVerdoJC4iy83eodfHktbnjZyjsQDuNXu+yc59HgtcEn6LR5
-         8EbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV05hTCeO1q/+1/8p7rsQKEPtGnYnHd2l6ycjxooIVdR2YbUou5XAfjwb2anLB1tUjmmbRaPQmE9rzTC2E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN02HvA2MuRJlQKZ8dKsiDfLBnzs9kwl8Y2M1eOcWzPQCSfpiv
-	0Qw/MoUTKOwIjcAgITeptlHlIS4ACNutiIvN1BumD6/eUuoRez4PFju2F0vhld0=
-X-Google-Smtp-Source: AGHT+IFagW7EpGoI8wKxQY38cWVqzvg3XfqIXD61efl4qhGkGiSohPvpLEyd4ziYpx5dvCOQgOsAAQ==
-X-Received: by 2002:a17:903:32c3:b0:206:ca91:1dd6 with SMTP id d9443c01a7336-2076e315569mr46690225ad.9.1726155687450;
-        Thu, 12 Sep 2024 08:41:27 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:a82e:e104:d822:3d3c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076afdd672sm15667935ad.156.2024.09.12.08.41.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 08:41:26 -0700 (PDT)
-Date: Thu, 12 Sep 2024 09:41:23 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Jens Wiklander <jens.wiklander@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	op-tee@lists.trustedfirmware.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v9 6/7] remoteproc: stm32: Create sub-functions to
- request shutdown and release
-Message-ID: <ZuMLo2+an1sxdYlt@p14s>
-References: <20240830095147.3538047-1-arnaud.pouliquen@foss.st.com>
- <20240830095147.3538047-7-arnaud.pouliquen@foss.st.com>
+	s=arc-20240116; t=1726155723; c=relaxed/simple;
+	bh=itpT31jkLmdvvohf3458b3/YdZyoT0XRFQhv27nwFb8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EwV5kehp525PV7bmYgkjw2Xv00IMs/kC4XO5Y0B1Ci3IEN26L+iGjygqK39SQDBVfMk62oa8zZbWGwqcKmqdCmcWj9hyd9q1HSVkFRiOCNeK1pMg2+7lTUGFOzW7h1Q75s3+Qmyz7XziMr2l6PReW1CkAphRiezLG0ZCU3RXdaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VVcj/0SI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F24F8C4AF09;
+	Thu, 12 Sep 2024 15:42:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726155723;
+	bh=itpT31jkLmdvvohf3458b3/YdZyoT0XRFQhv27nwFb8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VVcj/0SIq2kouuIHC9V7tR0fCaZqZgQ6HwpHfd/pL0w25jH/pApuYmHeqjcfgZ660
+	 GX4FTy7Gf4et3kdEgoosu2+9fM4d98kEXpmCEzRDmAjGVFhkwmuJkqioAfhtDqjPdw
+	 LxPDg4wqJMadUQJHFel5e5RKejP7l66esf4eNmHb7gAGAQQlIeoF9MSE5oHTBMJCaS
+	 oVCPGABA1tID+BUkNvbO2kWBdoLRvYGt1j/AYVruJ9dNLl2ozhlc7oucovL9Yizzc7
+	 enP6W+ckTdj3aPngu896TURBJLggLFetdpO1ZSuNiTHveLrb2UpCLGvDV5/xcz0cj2
+	 FjJOmNB2PryqQ==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-277dd69d6d6so1079522fac.0;
+        Thu, 12 Sep 2024 08:42:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXCvbSDBja2i4Z2XyXRp6UQsjY0yE0d7hsG8snr1x6K3eFGS6S9u3spmnn6XXhw8NoE5TePppmhmQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpvGmr6uuog4a81GH4T5pJLEqOqTLkA+xw6Hsi/9pGYmyQDvSv
+	csq3NLljc1VGhYCXxrp3pHxgY3SKZ5x6MHsqOdK2WMlnVjuDpOj0sd9yS7Gvt0bR0fgm4hj0aIH
+	0DAXRMspea9auvhy1lIfeuFOxA+U=
+X-Google-Smtp-Source: AGHT+IGDoeGEGPkbquL90K+0EPUlHdEKEz0aCGOlch8RVj96bj7GrqW4L2AmP/Bl//N+GfB14ibdvwqoHhD4XXXNi4Q=
+X-Received: by 2002:a05:6871:6a8:b0:277:fa33:a19f with SMTP id
+ 586e51a60fabf-27c3ea11b7bmr1612963fac.10.1726155722261; Thu, 12 Sep 2024
+ 08:42:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240830095147.3538047-7-arnaud.pouliquen@foss.st.com>
+References: <480f2140-ea59-4e1d-a68d-18cbcec10941@arm.com>
+In-Reply-To: <480f2140-ea59-4e1d-a68d-18cbcec10941@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 12 Sep 2024 17:41:51 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0h_AFNe2ZynDseE7N_5U9DV4NnLEhw9w=ErGuBswfpWow@mail.gmail.com>
+Message-ID: <CAJZ5v0h_AFNe2ZynDseE7N_5U9DV4NnLEhw9w=ErGuBswfpWow@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq/schedutil: Only bind threads if needed
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pm <linux-pm@vger.kernel.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Qais Yousef <qyousef@layalina.io>, 
+	Juri Lelli <juri.lelli@redhat.com>, Ingo Molnar <mingo@redhat.com>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Pierre Gondois <pierre.gondois@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 30, 2024 at 11:51:46AM +0200, Arnaud Pouliquen wrote:
-> To prepare for the support of TEE remoteproc, create sub-functions
-> that can be used in both cases, with and without remoteproc TEE support.
-> 
-> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+On Thu, Sep 12, 2024 at 3:53=E2=80=AFPM Christian Loehle
+<christian.loehle@arm.com> wrote:
+>
+> Remove the unconditional binding of sugov kthreads to the affected CPUs
+> if the cpufreq driver indicates that updates can happen from any CPU.
+> This allows userspace to set affinities to either save power (waking up
+> bigger CPUs on HMP can be expensive) or increasing performance (by
+> letting the utilized CPUs run without preemption of the sugov kthread).
+>
+> Without this patch the behavior of sugov threads will basically be a
+> boot-time dice roll on which CPU of the PD has to handle all the
+> cpufreq updates. With the recent decreases of update filtering these
+> two basic problems become more and more apparent:
+> 1. The wake_cpu might be idle and we are waking it up from another
+> CPU just for the cpufreq update. Apart from wasting power, the exit
+> latency of it's idle state might be longer than the sugov threads
+> running time, essentially delaying the cpufreq update unnecessarily.
+> 2. We are preempting either the requesting or another busy CPU of the
+> PD, while the update could be done from a CPU that we deem less
+> important and pay the price of an IPI and two context-switches.
+>
+> The change is essentially not setting PF_NO_SETAFFINITY on
+> dvfs_possible_from_any_cpu, no behavior change if userspace doesn't
+> touch affinities.
+
+I'd like to hear from Viresh on this.
+
+> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
 > ---
->  drivers/remoteproc/stm32_rproc.c | 84 +++++++++++++++++++-------------
->  1 file changed, 51 insertions(+), 33 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/stm32_rproc.c b/drivers/remoteproc/stm32_rproc.c
-> index 8c7f7950b80e..79c638936163 100644
-> --- a/drivers/remoteproc/stm32_rproc.c
-> +++ b/drivers/remoteproc/stm32_rproc.c
-> @@ -209,6 +209,54 @@ static int stm32_rproc_mbox_idx(struct rproc *rproc, const unsigned char *name)
->  	return -EINVAL;
->  }
->  
-> +static void stm32_rproc_request_shutdown(struct rproc *rproc)
-> +{
-> +	struct stm32_rproc *ddata = rproc->priv;
-> +	int err, dummy_data, idx;
+>  kernel/sched/cpufreq_schedutil.c | 6 +++++-
+>  kernel/sched/syscalls.c          | 3 +++
+>  2 files changed, 8 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_sche=
+dutil.c
+> index 43111a515a28..466fb79e0b81 100644
+> --- a/kernel/sched/cpufreq_schedutil.c
+> +++ b/kernel/sched/cpufreq_schedutil.c
+> @@ -683,7 +683,11 @@ static int sugov_kthread_create(struct sugov_policy =
+*sg_policy)
+>         }
+>
+>         sg_policy->thread =3D thread;
+> -       kthread_bind_mask(thread, policy->related_cpus);
+> +       if (policy->dvfs_possible_from_any_cpu)
+> +               set_cpus_allowed_ptr(thread, policy->related_cpus);
+> +       else
+> +               kthread_bind_mask(thread, policy->related_cpus);
 > +
-> +	/* Request shutdown of the remote processor */
-> +	if (rproc->state != RPROC_OFFLINE && rproc->state != RPROC_CRASHED) {
-> +		idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_SHUTDOWN);
-> +		if (idx >= 0 && ddata->mb[idx].chan) {
-> +			/* A dummy data is sent to allow to block on transmit. */
-> +			err = mbox_send_message(ddata->mb[idx].chan,
-> +						&dummy_data);
+>         init_irq_work(&sg_policy->irq_work, sugov_irq_work);
+>         mutex_init(&sg_policy->work_lock);
+>
+> diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
+> index c62acf509b74..7d4a4edfcfb9 100644
+> --- a/kernel/sched/syscalls.c
+> +++ b/kernel/sched/syscalls.c
+> @@ -1159,6 +1159,9 @@ int dl_task_check_affinity(struct task_struct *p, c=
+onst struct cpumask *mask)
+>         if (!task_has_dl_policy(p) || !dl_bandwidth_enabled())
+>                 return 0;
+>
+> +       if (dl_entity_is_special(&p->dl))
+> +               return 0;
+> +
 
-When refactoring functions, please do not change the inner code.  Here
-@dummy_data was introduced.  Making changes, even small ones, makes it really
-hard to review your work.  I'm pretty sure we talked about that before.
+Care to explain this particular piece?
 
-> +			if (err < 0)
-> +				dev_warn(&rproc->dev, "warning: remote FW shutdown without ack\n");
-> +		}
-> +	}
-> +}
-> +
-> +static int stm32_rproc_release(struct rproc *rproc)
-> +{
-> +	struct stm32_rproc *ddata = rproc->priv;
-> +	unsigned int err = 0;
-> +
-> +	/* To allow platform Standby power mode, set remote proc Deep Sleep. */
-> +	if (ddata->pdds.map) {
-> +		err = regmap_update_bits(ddata->pdds.map, ddata->pdds.reg,
-> +					 ddata->pdds.mask, 1);
-> +		if (err) {
-> +			dev_err(&rproc->dev, "failed to set pdds\n");
-> +			return err;
-> +		}
-> +	}
-> +
-> +	/* Update coprocessor state to OFF if available. */
-> +	if (ddata->m4_state.map) {
-> +		err = regmap_update_bits(ddata->m4_state.map,
-> +					 ddata->m4_state.reg,
-> +					 ddata->m4_state.mask,
-> +					 M4_STATE_OFF);
-> +		if (err) {
-> +			dev_err(&rproc->dev, "failed to set copro state\n");
-> +			return err;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int stm32_rproc_prepare(struct rproc *rproc)
->  {
->  	struct device *dev = rproc->dev.parent;
-> @@ -519,17 +567,9 @@ static int stm32_rproc_detach(struct rproc *rproc)
->  static int stm32_rproc_stop(struct rproc *rproc)
->  {
->  	struct stm32_rproc *ddata = rproc->priv;
-> -	int err, idx;
-> +	int err;
->  
-> -	/* request shutdown of the remote processor */
-> -	if (rproc->state != RPROC_OFFLINE && rproc->state != RPROC_CRASHED) {
-> -		idx = stm32_rproc_mbox_idx(rproc, STM32_MBX_SHUTDOWN);
-> -		if (idx >= 0 && ddata->mb[idx].chan) {
-> -			err = mbox_send_message(ddata->mb[idx].chan, "detach");
-> -			if (err < 0)
-> -				dev_warn(&rproc->dev, "warning: remote FW shutdown without ack\n");
-> -		}
-> -	}
-> +	stm32_rproc_request_shutdown(rproc);
->  
->  	err = stm32_rproc_set_hold_boot(rproc, true);
->  	if (err)
-> @@ -541,29 +581,7 @@ static int stm32_rproc_stop(struct rproc *rproc)
->  		return err;
->  	}
->  
-> -	/* to allow platform Standby power mode, set remote proc Deep Sleep */
-> -	if (ddata->pdds.map) {
-> -		err = regmap_update_bits(ddata->pdds.map, ddata->pdds.reg,
-> -					 ddata->pdds.mask, 1);
-> -		if (err) {
-> -			dev_err(&rproc->dev, "failed to set pdds\n");
-> -			return err;
-> -		}
-> -	}
-> -
-> -	/* update coprocessor state to OFF if available */
-> -	if (ddata->m4_state.map) {
-> -		err = regmap_update_bits(ddata->m4_state.map,
-> -					 ddata->m4_state.reg,
-> -					 ddata->m4_state.mask,
-> -					 M4_STATE_OFF);
-> -		if (err) {
-> -			dev_err(&rproc->dev, "failed to set copro state\n");
-> -			return err;
-> -		}
-> -	}
-> -
-> -	return 0;
-> +	return stm32_rproc_release(rproc);
->  }
->  
->  static void stm32_rproc_kick(struct rproc *rproc, int vqid)
-> -- 
-> 2.25.1
-> 
+>         /*
+>          * Since bandwidth control happens on root_domain basis,
+>          * if admission test is enabled, we only admit -deadline
+> --
 
