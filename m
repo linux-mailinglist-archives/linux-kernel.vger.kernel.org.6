@@ -1,80 +1,55 @@
-Return-Path: <linux-kernel+bounces-326392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BD569767C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:26:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 824D197678C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:21:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7B1F281BC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:26:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B55241C219A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13131BF7FB;
-	Thu, 12 Sep 2024 11:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iMt/9VHS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AFF31B29C9;
+	Thu, 12 Sep 2024 11:16:52 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA2361BF335;
-	Thu, 12 Sep 2024 11:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B735A1A2844;
+	Thu, 12 Sep 2024 11:16:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726139846; cv=none; b=Myxsxv3MpNYmtflcuFPcSr61wxn0mfEuY8ZlfZ3x8URBuTGHwZeD2s5j6EewBf4rYVNo0JcBbGC8QkSsIQo6yrfO9C4yY4BfykyWycvzBMxzrQwa8+ftAY68AV8xsC4Wcd4RN44BJgu2PvVktqdnhmdXqZvcik3Vb5X15tbVMgE=
+	t=1726139812; cv=none; b=jQezZSDhb08eJdaFG+duk0FPyrNq52GmRWcnKmfwJhJPJZ7Bb5L4MfGKDV8ddKRoGRtva2bcOS4V3fSlr6YUs5uQo28TwwoxwoRyXOLPLJX4KzE6z5WcZew62FpAtnVrjKCEeIvyS/a4SxC5qS/gDbmsk1R9Ak9QsKnv0sp6F6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726139846; c=relaxed/simple;
-	bh=HzFyylaMePR5bS7VyKQApbkFy4MWvNmh8/Ifgo8KsU0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X3k83cql+lGRLfEG2mznFjbvqmxe2GBmSacn8UrcLCoAa81N0pdiByeY+QUZOZl8GOoBQa1ewTZFSbWl7UtD3OyVfnaClBhtJdQ7DwRx+MfCR5z2s5ODNeB0B4/I01s6n9RIPLDKTqlcr6e8kG0iZw+Vmui3SzpDEhPnFc/A5Ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iMt/9VHS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFE14C4CEC5;
-	Thu, 12 Sep 2024 11:17:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726139845;
-	bh=HzFyylaMePR5bS7VyKQApbkFy4MWvNmh8/Ifgo8KsU0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iMt/9VHSYIlDpVGdX26n1N0CdVrTRm10It8Sa8NMHcf+17B/DEKPd5jcRIQstDF5l
-	 y/zknkTz0QWWnnaDNoU/w5MrYILx1JHP+V4tz9u84Cewb0+/xN0X7Xobu9RYdt4sE3
-	 8QSp8DqCuKUgnnC5JLgioLFGolGO2jWjErhnFWAI64U90eRPEY/a80PM1URWvna2tv
-	 EjnP1bBa2i6W+ZV7YFLYJDEIpcKOoFD0i83H5rqEd6sFjATC3qHX2bD88Wi/OivMQx
-	 jvCqxXIec8J/zMqtF5Uhjik7uSRXJU4fi3neuttBSeo6DVEN/1c89HG77KYw9oQArh
-	 FWiOq1isCI2iQ==
-From: Leon Romanovsky <leon@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Keith Busch <kbusch@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	"Zeng, Oak" <oak.zeng@intel.com>,
-	Chaitanya Kulkarni <kch@nvidia.com>
-Cc: Leon Romanovsky <leonro@nvidia.com>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	=?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org,
-	linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [RFC v2 21/21] nvme-pci: don't allow mapping of bvecs with offset
-Date: Thu, 12 Sep 2024 14:15:56 +0300
-Message-ID: <63cdbb87e1b08464705fa343b65e561eb3abd5f9.1726138681.git.leon@kernel.org>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <cover.1726138681.git.leon@kernel.org>
-References: <cover.1726138681.git.leon@kernel.org>
+	s=arc-20240116; t=1726139812; c=relaxed/simple;
+	bh=vw9yiwxx9WwFswjBvcRlbnaUkK6twTO7OIHipUuj1xU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=cPU48VcyMEqwi0Ui+R3J2DuCEJBtOY7S94IFeadrIVXBrPetQiHkDv+aT6RzGONF7KwzPghtoM5j3ds9b6YEIXEoQ0dXeQtAmHEDGxp/9WlJmlWd5FMOrP++y7iR56KrvyYVJAl6YMuSjmhxuWwdQ53AeuWaQk76EgzGv1NgtMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4X4FHN1fMLzyRjp;
+	Thu, 12 Sep 2024 19:16:00 +0800 (CST)
+Received: from kwepemd100011.china.huawei.com (unknown [7.221.188.204])
+	by mail.maildlp.com (Postfix) with ESMTPS id 12F1718010B;
+	Thu, 12 Sep 2024 19:16:47 +0800 (CST)
+Received: from M910t.huawei.com (10.110.54.157) by
+ kwepemd100011.china.huawei.com (7.221.188.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 12 Sep 2024 19:16:45 +0800
+From: Changbin Du <changbin.du@huawei.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
+	<namhyung@kernel.org>
+CC: Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
+ Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, "Liang,
+ Kan" <kan.liang@linux.intel.com>, <linux-perf-users@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Changbin Du <changbin.du@huawei.com>
+Subject: [PATCH] perf buildid-cache: recognize vdso when adding files
+Date: Thu, 12 Sep 2024 19:16:23 +0800
+Message-ID: <20240912111623.2213105-1-changbin.du@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,31 +57,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd100011.china.huawei.com (7.221.188.204)
 
-From: Leon Romanovsky <leonro@nvidia.com>
+Identify vdso by file name matching. The vdso objects have name
+as vdso[32,64].so[.dbg].
 
-It is a hack, but direct DMA works now.
+$ perf buildid-cache -a /work/linux/arch/x86/entry/vdso/vdso64.so.dbg
 
-Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+Without this change, added vdso using above command actually will never
+be used.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Changbin Du <changbin.du@huawei.com>
+
 ---
- drivers/nvme/host/pci.c | 3 +++
- 1 file changed, 3 insertions(+)
+This patch is separated from the series "perf: Support searching local
+debugging vdso or specify vdso path in cmdline".
+---
+ tools/perf/builtin-buildid-cache.c | 32 +++++++++++++++++++++++++++++-
+ 1 file changed, 31 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 881cbf2c0cac..1872fa91ac76 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -791,6 +791,9 @@ static blk_status_t nvme_map_data(struct nvme_dev *dev, struct request *req,
- 			return BLK_STS_RESOURCE;
+diff --git a/tools/perf/builtin-buildid-cache.c b/tools/perf/builtin-buildid-cache.c
+index b0511d16aeb6..08de05e2aaae 100644
+--- a/tools/perf/builtin-buildid-cache.c
++++ b/tools/perf/builtin-buildid-cache.c
+@@ -172,6 +172,36 @@ static int build_id_cache__add_kcore(const char *filename, bool force)
+ 	return 0;
+ }
  
- 		rq_for_each_bvec(bv, req, iter) {
-+			if (bv.bv_offset != 0)
-+				goto out_free;
++static bool filename_is_vdso(const char *filename)
++{
++	bool is_vdso = false;
++	char *fname, *bname;
++	static const char * const vdso_names[] = {
++		"vdso.so", "vdso32.so", "vdso64.so", "vdsox32.so"
++	};
 +
- 			dma_addr = dma_map_bvec(dev->dev, &bv, rq_dma_dir(req), 0);
- 			if (dma_mapping_error(dev->dev, dma_addr))
- 				goto out_free;
++	fname = strdup(filename);
++	if (!fname) {
++		pr_err("no memory\n");
++		return false;
++	}
++
++	bname = basename(fname);
++	if (!bname)
++		goto out;
++
++	for (unsigned int i = 0; i < ARRAY_SIZE(vdso_names); i++) {
++		if (strstarts(bname, vdso_names[i])) {
++			is_vdso = true;
++			break;
++		}
++	}
++
++out:
++	free(fname);
++	return is_vdso;
++}
++
+ static int build_id_cache__add_file(const char *filename, struct nsinfo *nsi)
+ {
+ 	char sbuild_id[SBUILD_ID_SIZE];
+@@ -189,7 +219,7 @@ static int build_id_cache__add_file(const char *filename, struct nsinfo *nsi)
+ 
+ 	build_id__sprintf(&bid, sbuild_id);
+ 	err = build_id_cache__add_s(sbuild_id, filename, nsi,
+-				    false, false);
++				    false, filename_is_vdso(filename));
+ 	pr_debug("Adding %s %s: %s\n", sbuild_id, filename,
+ 		 err ? "FAIL" : "Ok");
+ 	return err;
 -- 
-2.46.0
+2.34.1
 
 
