@@ -1,153 +1,82 @@
-Return-Path: <linux-kernel+bounces-325822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DC7C975EA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 03:50:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4086F975EAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 03:52:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1EA4B22061
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:50:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B2DF1C22786
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C105C2BAE3;
-	Thu, 12 Sep 2024 01:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212EF2BB1B;
+	Thu, 12 Sep 2024 01:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G/x/IqfD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="Q5A+Vg9x"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2920D3C24;
-	Thu, 12 Sep 2024 01:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E94257D;
+	Thu, 12 Sep 2024 01:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726105833; cv=none; b=HluRq2uIDUQuuuxyrcNWTJdCR7XdF3qZx9Wu3+SNOxpfBCKW8IBfjtcAU65qus2hcGK10yTj/UfxVMaVccY76rW+XAXT9/lIcW/9RG3s5AzQGUz9qph97jumHDDltslgm5eKl8W4cpYcqpRP7nB+ExfK4AKe7OCPbIbHcmrf1nA=
+	t=1726105948; cv=none; b=alXTMmqzQF/GKrfvXK8jYxZ+GpnaAFAYmxlPv7YjkWr8CFjoOPxubouHy3g4IdMfqosLJx9uiX4pvb4m9R+kOUGT2w+WYGSFRcq0sYlITHFh38j4D8Q4l3Wp+AtYRhJEDjTstAjay9nPbWKc3bEnJSe2Vi/7nZH86M5mGgT476o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726105833; c=relaxed/simple;
-	bh=9OVqqAv6azPMpQbxz5bBWG47JD8uqRQOMbjn4mGcBcI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NAJu+wnyjEB+deVsG2MQpXU6u+4OIUldtoLfCSDiqveJ9nEqDiKrvND+mOSlSV21mjhfKwXghBwGUvamr0Sjjfm3fJXg7AStAvWet6/ZR1XvNxRGl+INYXm0alxFPhzh0AyqxYgElkp54Zj7Xsl0YjUD7n96EKF3t1U3ghKIUA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G/x/IqfD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33058C4CEC5;
-	Thu, 12 Sep 2024 01:50:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726105832;
-	bh=9OVqqAv6azPMpQbxz5bBWG47JD8uqRQOMbjn4mGcBcI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=G/x/IqfDAS7YhHrh7/Som2V2v9TIhFh602Mojlt5UUhfa5czPnOYbk+EFXvvJtUJc
-	 ZiS3JrOLbvq3X8bga8h4ej/I2I/yqt89JpAPD/EvsE4OLBcNzMY++dinxUki2ml7fK
-	 EcvIkJ/dvpCZ4P0NHgjh86hoWYG5bjmN/xEVkjSEvK3N0Ezx6Dp+QAB+K97d9w7IG+
-	 mfKGOrNqMqxauUgzgra45WlPnD/oFHer2rzvIJDMvFouNk9MsFXT+2M10oMdbVhvMJ
-	 ZRNAz2zAwis+4dF3uadek9ilUFyKusyd4HLPO5NXxRVgkPLFe6tvR1n/ks1bFzVGqP
-	 U/0xQATTDHZoQ==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53654e2ed93so525852e87.0;
-        Wed, 11 Sep 2024 18:50:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUuKnWqRubbT6w6tX8Lzxz8GehG44PUhyAEeZu36tFZHBaCJduOqprFeADA1jeYutOQO32PwTRxZamR4N8=@vger.kernel.org, AJvYcCXqhVyD7fu2H3IGaGqmeYBgObILC/mCgvhEqXhILmbsOp9BCR65Vtq7vVtUgjz+Le82ABgPKdOY1Qxqsg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywr1+HHw/Wr1meHCZnjAZC1OH6Cy5gALqU/4bCQhYKgoq4eRmjR
-	+xm55Pcn1tlEmvfISt3t7VV8vtEm7WcEizgN4gYXVNUHuD0wfvOIEJVuMwHY9Tkkw7EqhyW+Jiw
-	of3BIWqDaKW+6Am3rdizBRXHroLM=
-X-Google-Smtp-Source: AGHT+IFex/jQ4IJlZS+WQhG16wf7bTblOsEqF8t6ad154optg/TouEhO8MVfuPocfrp4cIs2w79gCCnVgtNQ8QN7mqM=
-X-Received: by 2002:a05:6512:b03:b0:536:53c2:8179 with SMTP id
- 2adb3069b0e04-53678feb22dmr651075e87.37.1726105830863; Wed, 11 Sep 2024
- 18:50:30 -0700 (PDT)
+	s=arc-20240116; t=1726105948; c=relaxed/simple;
+	bh=KOHru+WDJgBP+lLpgOajPKUPOkGltXyKZvX+5Qs0kKw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Tg0COvkYYy0GgnJ4cGvQXgx7+CAGxybE7gcQ0oivLV7PH5SOZrF1Xx3nZxIJSOy71SlBEzsKXxafbi7SZAptZ2HIjATcz8/RFoh+JkORg1LFXy++gSOuTH73jbJWEDaxO6/Cnu16W7Jyj67iacAnqNboFqC6i0g4saH8kePVwKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=Q5A+Vg9x; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1726105943;
+	bh=1GeFB29HWhumDKOdV+Pt4PnPumW3p49ZFqKR/fUZIws=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date;
+	b=Q5A+Vg9xklu9nGYZwwkrRoivoF07C5SpEOD7nQh1keYfvyWHQAMfi+ne5k7vYwaw0
+	 w8SWXZa5JQr+BbbPvwM3zVXLVdUxQhgAhA8l+g39H5QO2gAyDU8C7IgBkKDo1nkm3E
+	 OfWIhzwEN+LY70Pjo0xQuT1KS2ddh5R1kLB/OyRghSC5+4/Vs0x4bDcNFYnfBzFcxz
+	 GUvLGSfn1MF3+3TV4Xq58EsKFKm+kLsMIou9PpooLmLyixdI92llR8wLhNJznKAfWb
+	 nNbAeJ2NxBFwCpbf13S93dID4Dl2A3ml0G6ELXruHz7EWRf6bpZEOMH6F5HgjwTypU
+	 VEJMJkvGmUSfQ==
+Received: from [127.0.1.1] (ppp118-210-89-8.adl-adc-lon-bras32.tpg.internode.on.net [118.210.89.8])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id E1FD3650D6;
+	Thu, 12 Sep 2024 09:52:21 +0800 (AWST)
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: patrick@stwcx.xyz, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
+ Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+Cc: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240910080951.3568594-1-Delphine_CC_Chiu@wiwynn.com>
+References: <20240910080951.3568594-1-Delphine_CC_Chiu@wiwynn.com>
+Subject: Re: [PATCH v2] ARM: dts: aspeed: yosemite4: Enable watchdog2
+Message-Id: <172610594183.699144.11293347477612952253.b4-ty@codeconstruct.com.au>
+Date: Thu, 12 Sep 2024 11:22:21 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911101810.1d5dde08@canb.auug.org.au> <CAK7LNASLc=ik9QdX4K_XuN=cg+1VcUBk-y5EnQEtOG+qOWaY=Q@mail.gmail.com>
- <ZuGZNLHkUm+MOYpk@oracle.com>
-In-Reply-To: <ZuGZNLHkUm+MOYpk@oracle.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 12 Sep 2024 10:49:53 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQTS9mk7q4Z1f7W+z4WOGT_hfOY87_Xe1=Sw99fyoMj4g@mail.gmail.com>
-Message-ID: <CAK7LNAQTS9mk7q4Z1f7W+z4WOGT_hfOY87_Xe1=Sw99fyoMj4g@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the kbuild tree
-To: Kris Van Hees <kris.van.hees@oracle.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-On Wed, Sep 11, 2024 at 10:21=E2=80=AFPM Kris Van Hees <kris.van.hees@oracl=
-e.com> wrote:
->
-> On Wed, Sep 11, 2024 at 06:38:19PM +0900, Masahiro Yamada wrote:
-> > On Wed, Sep 11, 2024 at 9:18???AM Stephen Rothwell <sfr@canb.auug.org.a=
-u> wrote:
-> > >
-> > > Hi all,
-> > >
-> > > After merging the kbuild tree, today's linux-next build (x86_64
-> > > allmodconfig) failed like this:
-> > >
-> > > make[3]: *** Deleting file 'modules.builtin.ranges'
-> > > /bin/sh: 1: scripts/generate_builtin_ranges.awk: not found
-> > > make[3]: *** [scripts/Makefile.vmlinux:47: modules.builtin.ranges] Er=
-ror 127
-> > > make[2]: *** [Makefile:1157: vmlinux] Error 2
-> > > make[2]: *** Waiting for unfinished jobs....
-> > > make[1]: *** [Makefile:224: __sub-make] Error 2
-> > > make: *** [Makefile:224: __sub-make] Error 2
-> > > Command exited with non-zero status 2
-> > >
-> > > Caused by commit
-> > >
-> > >   04b15cdd611a ("kbuild: generate offset range data for builtin modul=
-es")
-> > >
-> > > I do not have gawk installed - I do have mawk installed (as awk).  Do=
-es
-> > > this script actually need gawk, or will just plain awk suffice?
->
-> The scripts does need gawk because other flavours like mawk do not have t=
-he
-> features that the scripts depend on.
->
-> > >
-> > > I have installed gawk.
-> > >
-> >
-> >
-> > This is what I was worried about.
-> >
-> > As Documentation/process/changes.rst was modified in that commit,
-> > it specifically requires GNU AWK.
-> >
-> > Anyway, you were able to fix the build error
-> > by installing /usr/bin/gawk.
-> >
-> > If a distro installs gawk somewhere else,
-> > (/usr/local/bin/gawk, for example), it is a problem.
-> > The shebang "#!/usr/bin/gawk -f" will not work.
-> > "#!/usr/bin/env gawk -f" will not work either.
-> >
-> > More people may start complaining about it.
->
-> For the generator script, passing it as a script explicitly to gawk would
-> work because then the regular PATH search will apply, i.e.
->
->         gawk -f scripts/generate_builtin_ranges.awk <args>
->
-> The scripts/verify_builtin_ranges.awk script can be invoked the same way,
-> or simply as an executable script if gawk is installed in the standard pl=
-ace.
->
->
-> Other utilities that are executed during the kernel build seem to depend
-> on being found using the PATH, so perhaps changing the recipe in the make=
-file
-> to use gawk -f <script> <args> would be an acceptable solution?
->
->         Kris
+On Tue, 10 Sep 2024 16:09:50 +0800, Delphine CC Chiu wrote:
+> Enable watchdog2 setting for yosemite4 system.
+> 
+> 
 
+Thanks, I've applied this to be picked up through the BMC tree.
 
-I think it is better.
+[1/1] ARM: dts: aspeed: yosemite4: Enable watchdog2
+      commit: 38534704e809d3f253ba131ae1ee8dfb79969166
 
+--
+Andrew Jeffery <andrew@codeconstruct.com.au>
 
---=20
-Best Regards
-Masahiro Yamada
 
