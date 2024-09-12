@@ -1,150 +1,252 @@
-Return-Path: <linux-kernel+bounces-326131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92106976377
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:52:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0D5097637D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:52:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A62128655C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:52:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 643A32865A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DB118E030;
-	Thu, 12 Sep 2024 07:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D42188A00;
+	Thu, 12 Sep 2024 07:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="DWi3/Xmp";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="SwxBjU3G"
-Received: from a7-49.smtp-out.eu-west-1.amazonses.com (a7-49.smtp-out.eu-west-1.amazonses.com [54.240.7.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fDsrMbZU"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE3B36C;
-	Thu, 12 Sep 2024 07:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364E318890E
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726127556; cv=none; b=o4Q0zB3NnUdMj/XJlTqIQclgLo2/3RPXlGAsxwKIzl/zzvvraUEBgSR247eMbd+gpHgijZUN9VrGtRC3U4KmtMPp0pZAxyiPrjpOB4u5955wQblAea9Y3DaEWQ95dKuIdx6hNzcVMDTKr/OY7rBrfM90vUI5fQtCPOOcEybeDbk=
+	t=1726127566; cv=none; b=U7gB85O6mwhhlB9jowR42PQxXubJk4/k6ISVm7Qw7qQ0r7cBanaHri1v5EFTzs3IFjlv0Ec+GdHh/UDQ92o5c7SiVFBXkSxW6D3BjOvkjtTkmXzx4VT0nnAk7ySEUvQXwLIo4tcyVLxfY0CJm/A0+uNnsfWX7y95ZrCMkDqwwTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726127556; c=relaxed/simple;
-	bh=K3pm6X6uxgABerMke/w7Hi/s9E6MlhMLw0RxpeXXuic=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lLqa4pOms63Xn2B4gGmI+jcG+hYGlc+HTM9P7vMQqi/UaqgP6INhsAQXTIUsJxth740fKK8rQo2qyOQABOviExRU96ocolhMqbG9ssK16o426BultkV31JBsK2pkQhbz7Y/S+lY0hmph5iyIDcne9gvdzBuGtMyexHZDC4aQF/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=DWi3/Xmp; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=SwxBjU3G; arc=none smtp.client-ip=54.240.7.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1726127552;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=K3pm6X6uxgABerMke/w7Hi/s9E6MlhMLw0RxpeXXuic=;
-	b=DWi3/XmpM4dXcSRy3WBYeEz09HFUYETrYfN+9K+6AUsDhtV7qg7Q9s/cT+IIG6Xs
-	Xq9gdTBnDXUGedB3w4BemQNyZwGMtqk0PwIKu9ooE9m1yhriwwaqRDVYu2Dh4Ph2T+0
-	SEBmSKAl4DU2yj05P/CtjdLPe477qK5b1j3H4aeXyBQhbiQoVvOaD5ndkDidxNCK9l7
-	UrRuxDgtfLH2u67qNJZL0qblDMhtuWD708LUYjk2oXZ1V7gLK36qitqqTYudd4Z4xb8
-	Z1ir5etzgpW8f2di9Y4oFdMBbF6egCNiNfkmCq+YpokKrksWABGBka7JX0LQXTmjrrH
-	wOTu+vmRCg==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1726127552;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
-	bh=K3pm6X6uxgABerMke/w7Hi/s9E6MlhMLw0RxpeXXuic=;
-	b=SwxBjU3Go+S1KILudUPzbepP9EQyOQNFAnh/cV1AWFJqOeJbwG0Hrkmh9HUdeBmz
-	TFb6ClOlhBj+5uLPurfx5LCPJf/5bqyI6mNBG1qmRDmzgpCRVexmBhSt7lpcjcpTbvL
-	WBuVEvh/J1RN8E9i8WGhbu39Cnr46CiQqe6EFymo=
-Message-ID: <01020191e5383829-7eb375ea-ee17-419e-b173-30df46f61863-000000@eu-west-1.amazonses.com>
-Date: Thu, 12 Sep 2024 07:52:32 +0000
+	s=arc-20240116; t=1726127566; c=relaxed/simple;
+	bh=KpZ/OBjQ952uyEtwlzqLtUdjSueYLObXbMJk3aHGCPo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=awsBKAFcSB/tIwzUnhktJCYEqnyr4OC7VTTZR/gmqWwwdSVfnFayUkSbicsKDNJcuUB18gvhBu8vMHmWWhPI6A/lYxFle1XSfB2XnHKQiazBfPTAZNCLUP2BWoQvF0v4Brd6iM6fDm0zxb3lBnHTQwoYc+4JjBUvHZUKRmPTsR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fDsrMbZU; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5365a9574b6so946349e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 00:52:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726127563; x=1726732363; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eTkWSFh0slefdYYlB8sOq3Alq45nxHEpvtMyVah6e0Q=;
+        b=fDsrMbZULkh5Ouv2B2W+/c/cD8HBjgKcNwaU+WIm3X5FPRCth0WR/ZwRrRRgra7lpV
+         qEV3qy8DQuMrVc+3ggfDKSa7mEWje7ASCxrKqsWwtsYVmQLfnfb14oB8OJxfBdD+mNX8
+         hndtfPmaeAKY7rP+CWgfwx9RZWKkhGv7qkomotadNrjnqQj8uEWqFgNzq+uHSy35OfAF
+         7O9M2Sb3QvFYzhDmH45zzxkhLebUYyAh8TebXGxtnkDlAsF6LvBy9LpRzmVHducVvNrE
+         eMBZaEICv98zFJ8t+X9rSMN8ke5Sv+gzLbTmYP/boe9tiRCu72j+7HcqqqdZKwEv85Mw
+         /upA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726127563; x=1726732363;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eTkWSFh0slefdYYlB8sOq3Alq45nxHEpvtMyVah6e0Q=;
+        b=YpOtohCw2aa2ZS/XY3CZLOkROngGwkJrm/lVJjP8GM+SmM/KYnaS7NpcsHALegM3ls
+         4Y/m9BddVOgZhP++DU1e3rv0oq2NHiA0kjx0zDkDmSaZqo27inHex8komZFlmpUhnxEk
+         pKEgJrRg0jq9XPNlXaWZVP3erZOFfkITBfYMkSBJtizy9TWt+cGm1hbKdUb5tK8YQmDM
+         0fqDAa3RE2oXpUiVsuxAszBxlcRxFGNuo+JAsVpAAPH1NrUWvwfol8ZbjJqpNCECa1VV
+         8MAMWu0TGj2IRVDqnhYYhy9Uo8GGDgUnxyMPgJdeZZqB7OPUTcDb70NsQ+FQut8sIvf0
+         Ry/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUDmGCsGBVffjBiJwAf4ht6gMf8vnfOdUeti947BNgLOmJz9iXn1pF+oOccvjoHeSLmXdRMuKKZYDehTLw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFfAEty8rAezBMkaPkeF5YmjSpCLOr5RP6z6QEhII8OeiFiPsQ
+	4k4sYru/iXEHnoyBTM7kEzy0EXijkkRzDmILZaryCncMytuqJ8bUdYMVUIa15kw=
+X-Google-Smtp-Source: AGHT+IFreFJR91Jk0jO+3GaqJhwxC3JIon4VS/a8wOCAEnO6MaGHHHfffcWsljomGO5+V5BT8hHE/w==
+X-Received: by 2002:a05:6512:4029:b0:52c:9ae0:beed with SMTP id 2adb3069b0e04-53678fec4fcmr1533271e87.52.1726127562565;
+        Thu, 12 Sep 2024 00:52:42 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f8caba6sm1832730e87.169.2024.09.12.00.52.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 00:52:42 -0700 (PDT)
+Date: Thu, 12 Sep 2024 10:52:40 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Mahadevan <quic_mahap@quicinc.com>
+Cc: robdclark@gmail.com, quic_abhinavk@quicinc.com, sean@poorly.run, 
+	marijn.suijten@somainline.org, airlied@gmail.com, daniel@ffwll.ch, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, swboyd@chromium.org, 
+	konrad.dybcio@linaro.org, danila@jiaxyga.com, bigfoot@classfun.cn, 
+	neil.armstrong@linaro.org, mailingradian@gmail.com, quic_jesszhan@quicinc.com, 
+	andersson@kernel.org, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_kalyant@quicinc.com, quic_jmadiset@quicinc.com, quic_vpolimer@quicinc.com
+Subject: Re: [PATCH 2/5] dt-bindings: display/msm: Document the DPU for
+ SA8775P
+Message-ID: <73tpotwk5xotzpbbikzx2jx5re2i3g5w2ze3zqm2yrqcrt3ncx@oyid2nlcu65l>
+References: <20240912071437.1708969-1-quic_mahap@quicinc.com>
+ <20240912071437.1708969-3-quic_mahap@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: mediatek: mt8395-genio-1200-evk: Enable GPU
-To: Pablo Sun <pablo.sun@mediatek.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org
-References: <20240910143245.5282-1-pablo.sun@mediatek.com>
- <01020191e04d4237-204596e1-6cc1-491c-a60f-de3917af7d42-000000@eu-west-1.amazonses.com>
- <2fd45240-a341-806b-f336-78d0595a8031@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <2fd45240-a341-806b-f336-78d0595a8031@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
-X-SES-Outgoing: 2024.09.12-54.240.7.49
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912071437.1708969-3-quic_mahap@quicinc.com>
 
-Il 11/09/24 12:35, Pablo Sun ha scritto:
-> Hi Angelo,
+On Thu, Sep 12, 2024 at 12:44:34PM GMT, Mahadevan wrote:
+> Document the DPU for Qualcomm SA8775P platform.
+
+Please fix errors reported by DT tools before submission.
+
 > 
-> Thanks for the review,
+> Signed-off-by: Mahadevan <quic_mahap@quicinc.com>
+> ---
+>  .../display/msm/qcom,sa8775p-dpu.yaml         | 120 ++++++++++++++++++
+>  1 file changed, 120 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/msm/qcom,sa8775p-dpu.yaml
 > 
-> On 9/11/24 16:57, AngeloGioacchino Del Regno wrote:
-> 
-> [snip]
-> 
->>> +/* for GPU SRAM */
->>> +&mt6359_vsram_others_ldo_reg {
->>> +    regulator-always-on;
->>
->> No, that's not good. Like that, the GPU VSRAM will be subject to current leakage.
->>
->> Remove the regulator-always-on property.
->> The right way of doing that is to add the vgpu to the mfg0's domain supply and
->> vsram to mfg1; that way all of the GPU regulators will be off at PM suspend time.
-> 
-> Thanks for pointing this out, I'll send v2 to fix this.
-> 
->>>   &mt6359codec {
->>>       mediatek,mic-type-0 = <1>; /* ACC */
->>>       mediatek,mic-type-1 = <3>; /* DCC */
->>> @@ -839,8 +851,8 @@ regulators {
->>>               mt6315_7_vbuck1: vbuck1 {
->>>                   regulator-compatible = "vbuck1";
->>>                   regulator-name = "Vgpu";
->>> -                regulator-min-microvolt = <300000>;
->>> -                regulator-max-microvolt = <1193750>;
->>> +                regulator-min-microvolt = <546000>;
->>
->> I'm okay with this constraint but are you sure that MTK-SVS won't go any lower 
->> than 0.546V?
-> 
-> I'll see if I could confirm the maximum voltage drop that may be lowered by mtk-svs 
-> for MT8395. There are 3 constraints that I am aware of:
-> 
-> - capability of Vgpu buck: 0.3V-1.193V
-> - sign-off voltage of the EVK board: 0.6V to 1.2V
-> - recommended operating voltage of MT8395 DVDD_GPU: 0.546V to 0.787V
-> 
-> For the device tree of the board, would you recommend set the regulator voltage 
-> constraints in narrower range (because it's safer to keep in recommended operating 
-> conditions), or in a wider range (leaving the check to driver software for 
-> potential power saving?)
+> diff --git a/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-dpu.yaml b/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-dpu.yaml
+> new file mode 100644
+> index 000000000000..4e1bf5ffa2ed
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-dpu.yaml
+> @@ -0,0 +1,120 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/msm/qcom,sa8775p-dpu.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Technologies, Inc. SA8775P Display DPU
+> +
+> +maintainers:
+> +  - Mahadevan <quic_mahap@quicinc.com>
+> +
+> +$ref: /schemas/display/msm/dpu-common.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,sa8775p-dpu
+> +
+> +  reg:
+> +    items:
+> +      - description: Address offset and size for mdp register set
+> +      - description: Address offset and size for vbif register set
+> +
+> +  reg-names:
+> +    items:
+> +      - const: mdp
+> +      - const: vbif
+> +
+> +  clocks:
+> +    items:
+> +      - description: Display hf axi
+
+AXI
+
+> +      - description: Display ahb
+
+AHB
+
+> +      - description: Display lut
+> +      - description: Display core
+> +      - description: Display vsync
+> +
+> +  clock-names:
+> +    items:
+> +      - const: bus
+> +      - const: iface
+> +      - const: lut
+> +      - const: core
+> +      - const: vsync
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - clocks
+> +  - clock-names
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,sa8775p-dispcc.h>
+> +    #include <dt-bindings/clock/qcom,gcc-sa8775p.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/interconnect/qcom,sa8775p.h>
+> +    #include <dt-bindings/power/qcom,rpmhpd.h>
+> +
+> +    display-controller@ae01000 {
+> +        compatible = "qcom,sa8775p-dpu";
+> +        reg = <0 0x0ae01000 0 0x8f000>,
+> +              <0 0x0aeb0000 0 0x2008>;
+> +        reg-names = "mdp", "vbif";
+> +
+> +        clocks = <&gcc GCC_DISP_HF_AXI_CLK>,
+> +                 <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>,
+> +                 <&dispcc0 MDSS_DISP_CC_MDSS_MDP_LUT_CLK>,
+> +                 <&dispcc0 MDSS_DISP_CC_MDSS_MDP_CLK>,
+> +                 <&dispcc0 MDSS_DISP_CC_MDSS_VSYNC_CLK>;
+> +        clock-names = "bus",
+> +                      "iface",
+> +                      "lut",
+> +                      "core",
+> +                      "vsync";
+> +
+> +        assigned-clocks = <&dispcc0 MDSS_DISP_CC_MDSS_VSYNC_CLK>;
+> +        assigned-clock-rates = <19200000>;
+> +        operating-points-v2 = <&mdss0_mdp_opp_table>;
+> +        power-domains = <&rpmhpd RPMHPD_MMCX>;
+> +
+> +        interrupt-parent = <&mdss0>;
+> +        interrupts = <0>;
+
+empty line
+
+> +        ports {
+> +            #address-cells = <1>;
+> +            #size-cells = <0>;
+
+empty line
+
+> +            port@0 {
+> +                reg = <0>;
+> +                dpu_intf0_out: endpoint {
+> +                    remote-endpoint = <&mdss0_dp0_in>;
+> +                };
+> +            };
+> +        };
+> +
+> +        mdss0_mdp_opp_table: opp-table {
+> +            compatible = "operating-points-v2";
+> +
+> +            opp-375000000 {
+> +                opp-hz = /bits/ 64 <375000000>;
+> +                required-opps = <&rpmhpd_opp_svs_l1>;
+> +            };
+> +
+> +            opp-500000000 {
+> +                opp-hz = /bits/ 64 <500000000>;
+> +                required-opps = <&rpmhpd_opp_nom>;
+> +            };
+> +
+> +            opp-575000000 {
+> +                opp-hz = /bits/ 64 <575000000>;
+> +                required-opps = <&rpmhpd_opp_turbo>;
+> +            };
+> +
+> +            opp-650000000 {
+> +                opp-hz = /bits/ 64 <650000000>;
+> +                required-opps = <&rpmhpd_opp_turbo_l1>;
+> +            };
+> +        };
+> +    };
+> +...
+> -- 
+> 2.34.1
 > 
 
-The range should match the target device's Vin constraints; in this case, it
-should be no lower than the minimum working voltage of the Vgpu-in of the Mali IP.
-
-The drivers will be responsible of setting the lowest possible voltage for
-enhanced efficiency (power saving), taking into account the fused chip quality bits
-(in this case, the MediaTek SVS driver!).
-
-You should, at this point, check the constraints of SVS, as in, given a reference
-voltage (in this case, located in the GPU OPP table, the voltage associated with
-the lowest frequency of the GPU), what is the maximum voltage *subtraction* that
-SVS will do on the VGPU?
-
-After the subtraction, may this voltage be lower than 0.546V? :-)
-
-Cheers,
-Angelo
-
-> Thanks
-> 
-> 
-
-
-
+-- 
+With best wishes
+Dmitry
 
