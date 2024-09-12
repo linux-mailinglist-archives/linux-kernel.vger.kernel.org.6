@@ -1,130 +1,227 @@
-Return-Path: <linux-kernel+bounces-327077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B63B79770CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:28:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 822A09770BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:24:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AFA828B34A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:28:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD0F9B25E2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367FD1C2336;
-	Thu, 12 Sep 2024 18:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2121C68B2;
+	Thu, 12 Sep 2024 18:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lutdFXnC"
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fK1Pb8cG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391231C232D;
-	Thu, 12 Sep 2024 18:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023031C2457;
+	Thu, 12 Sep 2024 18:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726165512; cv=none; b=WfhcMFiJhi/zoLqDhzMy9XXmeg6FwIeMnJiLnV314j7RkUGQPxh6laIddcS5mAMuiiag3I7e7JHF2MCuslAKWV2naq/m3CW2pyIilaKb0vg2OjC93lQaxpMvS96gFLhMkX0L+XFTPhtxNM3W5hF8kbBUKpvZjrl/E6dPX2hedk8=
+	t=1726165218; cv=none; b=JC58Sc6GlBB+8TKDQUHvFKb7nAkMwjLOfxiSdEUcnbYidpkJxb7ftf7JQ148nOcpnvuYLFRN7DAWAubn+rlGt0lOKBpqbDcirwTSBBhM8cekjx6nH6K4SRwtfvVZyTIYh5Jydk5GUBr1+o1ilIZH3hQvpOUaZ6sFn6H+NKkaWBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726165512; c=relaxed/simple;
-	bh=jVd9hTU+tTo4IQnI6aBD225bmU0kWr+KD0+mSTh8xH0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UUp/Ym94yN1BkgcldN6EoE431p3c1mxZU6tYs09AWISc8WZM2I+QPU8pS8JqZ37w8RGxMxt122CwMWXGZV0f+4hLh7zvYivIlnr5BLX1xCmavvDWCACRoRLHT/EL1pyFXaeBNrdzdJrhpeuRHaAgGbu4+0/BbNv5BXSvNPPM5fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lutdFXnC; arc=none smtp.client-ip=209.85.161.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5e19b16568cso46632eaf.3;
-        Thu, 12 Sep 2024 11:25:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726165510; x=1726770310; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b02XjPec5tCJcHnp3AtruWaD0f5QC1gXUlOd8uxHCeY=;
-        b=lutdFXnCNIlW3sW5Y/xXDJke6EjTOOIaGB4PU0y9VQOAxC7P+iHI/fjHKC/EhLeQzk
-         B65svPZ9FibEGzXgAOcjjGtngvn3GBuUbTPugEEkKVif96QpQjUJ51ph8rHEDdLrZ75p
-         mLdKb58SQ+dLZCUpyTXz5DTa6rfHRZY226gPzWDp1oijld5RkkJjq83ItWe2+0Yp258f
-         fRCvmjdscatdhC2bMMbn2uZHbd9bQzZu6Di1lOCy7JOO5a9wme+YD+Io2LdqaUZZifWN
-         j2oF7OGi9LdhJy5+IvZKcuCgFJsLLNj98QHVaPAdmK9+xkG4ssrC4lTO3OXIYW0SC7u+
-         Tchg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726165510; x=1726770310;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b02XjPec5tCJcHnp3AtruWaD0f5QC1gXUlOd8uxHCeY=;
-        b=IlKNnZ5SOf1RwK3CrO3VfSsjGKG2gLl2qDDTPvxjfxEe7hqn1AxDo+5lY/iVjPNcWt
-         uDm2XIAKi1V2z1UNMP7K1dd9qoUndI8et/DuHVGnukOQd3KU18348brFPATfdVn+i0W+
-         qZUbrrxLGcTsrZHFKR7nH4SSV62ibfuGw3Mgs5H7MS1pje56wCCnInr9VkFC8rNtox3O
-         FOTsf0gfkbl+lWOKC8yF3sX1w4/P3sNfD0Q09BhdzpRi/UglnUxjIpmxpBtu8Fh+Dco7
-         Dcrj3kuIyzoR41tOoknnaGGXX3c/Guod1XtvjDRxSWfL7YX6dXONRMt1IDkOvcVgpBJ4
-         WCCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjj7fATUDOivGK5tqPNDhy4W6QcBDWuJxPnyBVDTn99aHv8LuNQEuuSbmgUQ6ekhxGzC4hLRYyo8CcmLf5@vger.kernel.org, AJvYcCXkD8+MBAkm4F6j3sSmXjqzlyISwwPgsfFkR5W+ZcrWtLCzgEuIB2qJF85kY9Ph4gqRWSYUZnrb@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp+ga4NITJqUQoSK5rN0y8DCtXu2Mcfud/Mk2XXIEpZW8sDF1q
-	ZMLYVB9gVg9NaIGGGEvFJEOBsfonk8EPTVelG8TExh7OCqw3RSv8215I2ck0SuKY0ZgncZ1m6Di
-	VgnXcXDmOkOjgh+0CMJ4d2lg2Y8s=
-X-Google-Smtp-Source: AGHT+IFH8ql+MLyyOOQSThGtbnUb/CeABolkIrQuSzx3A3cBj6WodG1ullF4+rC5DNHCvcP+wTAztJXpjqnffERLl5I=
-X-Received: by 2002:a05:6358:71c9:b0:1b1:a8fb:4600 with SMTP id
- e5c5f4694b2df-1bc3966ac5cmr38751155d.19.1726165509894; Thu, 12 Sep 2024
- 11:25:09 -0700 (PDT)
+	s=arc-20240116; t=1726165218; c=relaxed/simple;
+	bh=aZKeGq4p5ipcsfiHoGVqu/Fn0FE33lt6G4aL/LyS4+0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=hFEDv+QuBxQI0VrhrCWM5k5YST1ijIj+W7Ek1/7vZZ8JFS4Ms86p3bRHEigXdkYU43PA6izPJZhqsme+nIt+YVipPZ5KSb/JKkYnJiE0ruo5RPY3TodnD/Hn9bBRsFkYWld+EirjdxKxSRHB8PJ7/uQm5AouvpNyNmD0iJVjyc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fK1Pb8cG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0F8A2C4DE0D;
+	Thu, 12 Sep 2024 18:20:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726165216;
+	bh=aZKeGq4p5ipcsfiHoGVqu/Fn0FE33lt6G4aL/LyS4+0=;
+	h=From:Date:Subject:References:In-Reply-To:List-Id:To:Cc:Reply-To:
+	 From;
+	b=fK1Pb8cG3z+/8jCD4Mx4QxLB2vLsDp7cG37wm+XmXsYjUIffIMwGIL8/mAL7q6K9d
+	 XKTWOIKPPQRk4EsWs/55sfQJgYY7vdD7f2yJF2VLk3YtC6DYQSz3E/xSNsHvutGuok
+	 GObHbJ+mgfV3e6TBGFgrCh7RnDRwMqiI0ILPg8qTfuWlNfaRCTj2V04EgEDdozfAQ+
+	 OZvLp4naGYz6DqDGAemV1taZpFZqMl1x5pp1WGbzV0FQHIs46lm0VJ/lTbiaY1v6gu
+	 j9LJJvQZkj1EMHeIbsd0AfTSEcR4R15imLc9RlnlGbDNVmZguJf6AicsvkNZ0kCMuZ
+	 GsJu3myD73mlg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F27EEE240;
+	Thu, 12 Sep 2024 18:20:16 +0000 (UTC)
+From: Arturs Artamonovs via B4 Relay <devnull+arturs.artamonovs.analog.com@kernel.org>
+Date: Thu, 12 Sep 2024 19:24:59 +0100
+Subject: [PATCH 14/21] dt-bindings: pinctrl: adi,adsp-pinctrl: add bindings
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <172547884995.206112.808619042206173396.stgit@firesoul>
- <CAJD7tkak0yZNh+ZQ0FRJhmHPmC5YmccV4Cs+ZOk9DCp4s1ECCA@mail.gmail.com>
- <f957dbe3-d669-40b7-8b90-08fa40a3c23d@kernel.org> <CAJD7tkYv8oDsPkVrUkmBrUxB02nEi-Suf=arsd5g4gM7tP2KxA@mail.gmail.com>
- <afa40214-0196-4ade-9c10-cd78d0588c02@kernel.org> <CAJD7tkZ3-BrnMoEQAu_gfS-zfFMAu4SeFvGFj1pNiZwGdtrmwQ@mail.gmail.com>
- <84e09f0c-10d7-4648-b243-32f18974e417@kernel.org> <CAJD7tkYY5sipMU+w8ygPTGKfjvdMh_e0=FtxYkO9BG5VpF+QUA@mail.gmail.com>
- <CAKEwX=PTA0OxisvY12Wa95s5KqzvQTXe1rZ7nw29nP+wR2dxkA@mail.gmail.com> <CAJD7tkbMph337XbBTbWfF8kp_fStP3-rN77vfR5tcn2+wYfJPQ@mail.gmail.com>
-In-Reply-To: <CAJD7tkbMph337XbBTbWfF8kp_fStP3-rN77vfR5tcn2+wYfJPQ@mail.gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Thu, 12 Sep 2024 11:24:59 -0700
-Message-ID: <CAKEwX=PcK=kJG-yxaoTYvJGNwQ=eTGo1m=ZraqYy1SyLDs9Asw@mail.gmail.com>
-Subject: Re: [PATCH V10] cgroup/rstat: Avoid flushing if there is an ongoing
- root flush
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Jesper Dangaard Brouer <hawk@kernel.org>, tj@kernel.org, cgroups@vger.kernel.org, 
-	shakeel.butt@linux.dev, hannes@cmpxchg.org, lizefan.x@bytedance.com, 
-	longman@redhat.com, kernel-team@cloudflare.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, mfleming@cloudflare.com, 
-	joshua.hahnjy@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240912-test-v1-14-458fa57c8ccf@analog.com>
+References: <20240912-test-v1-0-458fa57c8ccf@analog.com>
+In-Reply-To: <20240912-test-v1-0-458fa57c8ccf@analog.com>
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Greg Malysa <greg.malysa@timesys.com>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Utsav Agarwal <Utsav.Agarwal@analog.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Thomas Gleixner <tglx@linutronix.de>, 
+ Andi Shyti <andi.shyti@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+ Olof Johansson <olof@lixom.net>, soc@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
+ linux-serial@vger.kernel.org, 
+ Arturs Artamonovs <arturs.artamonovs@analog.com>, adsp-linux@analog.com, 
+ Arturs Artamonovs <Arturs.Artamonovs@analog.com>, 
+ Nathan Barrett-Morrison <nathan.morrison@timesys.com>
+X-Mailer: b4 0.15-dev-7be4f
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726165513; l=3857;
+ i=arturs.artamonovs@analog.com; s=20240909; h=from:subject:message-id;
+ bh=8cIHFW2VHjXFP2WdC7ohf0MOYH4XA2BareGL3V29WFU=;
+ b=fK46p873AmYdSJ17NDk9Nq0m1iWXpEzwV7H2MptZzhNyghpOJrlmoWDjpnQS17mhBhGwihE3U
+ SVtUZ+iSYzCB+MHGX3zfxt3/UF5DP84N3NJOWd5Mmeie3LXzznZn1XN
+X-Developer-Key: i=arturs.artamonovs@analog.com; a=ed25519;
+ pk=UXODIid/MrmBXvqkX4PeEfetDaNAw9xKMINHIc5oZCk=
+X-Endpoint-Received: by B4 Relay for arturs.artamonovs@analog.com/20240909
+ with auth_id=206
+X-Original-From: Arturs Artamonovs <arturs.artamonovs@analog.com>
+Reply-To: arturs.artamonovs@analog.com
 
-On Thu, Sep 12, 2024 at 10:28=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com=
-> wrote:
->
-> >
-> > I'm not, but Joshua from my team is working on it :)
->
-> Great, thanks for letting me know!
+From: Arturs Artamonovs <arturs.artamonovs@analog.com>
 
-FWIW, I think the zswap_shrinker_count() path is fairly trivial to
-take care of :)  We only need the stats itself, and you don't even
-need any tree traversal tbh - technically it is most accurate to track
-zswap memory usage of the memcg itself - one atomic counter per
-zswap_lruvec_struct should suffice.
+Add PINCTRL driver bindings.
 
-obj_cgroup_may_zswap() could be more troublesome - we need the entire
-subtree data to make the decision, at each level :) How about this:
+Signed-off-by: Arturs Artamonovs <Arturs.Artamonovs@analog.com>
+Co-developed-by: Nathan Barrett-Morrison <nathan.morrison@timesys.com>
+Signed-off-by: Nathan Barrett-Morrison <nathan.morrison@timesys.com>
+Co-developed-by: Greg Malysa <greg.malysa@timesys.com>
+Signed-off-by: Greg Malysa <greg.malysa@timesys.com>
+---
+ .../bindings/pinctrl/adi,adsp-pinctrl.yaml         | 83 ++++++++++++++++++++++
+ include/dt-bindings/pinctrl/adi-adsp.h             | 19 +++++
+ 2 files changed, 102 insertions(+)
 
-1. Add a per-memcg counter to track zswap memory usage.
+diff --git a/Documentation/devicetree/bindings/pinctrl/adi,adsp-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/adi,adsp-pinctrl.yaml
+new file mode 100644
+index 0000000000000000000000000000000000000000..073442b4f680bf536f631b4c17a1d3195c2233d6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/adi,adsp-pinctrl.yaml
+@@ -0,0 +1,83 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/adi,adsp-pinctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Analog Devices Pinmuxing Control for SC5XX Processor Family
++
++maintainers:
++  - Arturs Artamonovs <arturs.artamonovs@analog.com>
++  - Utsav Agarwal <Utsav.Agarwal@analog.com>
++
++description: |
++  Pinmuxing Control Driver for Configuring Processor Pins/Pads
++
++properties:
++  compatible:
++    enum:
++      - adi,adsp-pinctrl
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 1
++
++  reg:
++    maxItems: 1
++
++  "adi,port-sizes":
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++    maxItems: 9
++    description: Space delimited integer list denoting number of pins per port
++      Ports A-I exist, so this is up to 9 items long
++
++  "adi,no-drive-strength":
++    type: boolean
++    description: Indicate missing drive strength registers
++
++  "adi,no-pull-up-down":
++    type: boolean
++    description: Indicate missing pull up/down enable registers
++
++patternProperties:
++  '-pins$':
++    type: object
++    additionalProperties: false
++
++    properties:
++      pins:
++        type: object
++        description: |
++          A pinctrl node should contain a pin property, specifying the actual
++          pins to use.
++
++        properties:
++          pinmux:
++            $ref: /schemas/types.yaml#/definitions/uint32-array
++            description: |
++              pinmux is used to specify which of the available functionalities
++              for a given pin are actually used.
++
++        additionalProperties: false
++
++required:
++  - compatible
++  - "#address-cells"
++  - "#size-cells"
++  - reg
++  - "adi,port-sizes"
++
++additionalProperties: false
++
++examples:
++  - |
++    pinctrl0: pinctrl@31004600 {
++      compatible = "adi,adsp-pinctrl";
++      #address-cells = <1>;
++      #size-cells = <1>;
++      reg = <0x31004600 0x400>;
++      adi,port-sizes = <16 16 16 16 16 16 16 16 7>;
++    };
++
+diff --git a/include/dt-bindings/pinctrl/adi-adsp.h b/include/dt-bindings/pinctrl/adi-adsp.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..dc5b86a0d9190acdd242a6ba4972c3aac7a61821
+--- /dev/null
++++ b/include/dt-bindings/pinctrl/adi-adsp.h
+@@ -0,0 +1,19 @@
++/* SPDX-License-Identifier: GPL-2.0*/
++/*
++ * Macros for populating pinmux properties on the pincontroller
++ *
++ * Copyright 2022-2024 - Analog Devices Inc.
++ */
++
++#ifndef DT_BINDINGS_PINCTRL_ADI_ADSP_H
++#define DT_BINDINGS_PINCTRL_ADI_ADSP_H
++
++#define ADI_ADSP_PINFUNC_GPIO     0
++#define ADI_ADSP_PINFUNC_ALT0     1
++#define ADI_ADSP_PINFUNC_ALT1     2
++#define ADI_ADSP_PINFUNC_ALT2     3
++#define ADI_ADSP_PINFUNC_ALT3     4
++
++#define ADI_ADSP_PINMUX(port, pin, func) ((((port - 'A')*16 + pin) << 8) + func)
++
++#endif
 
-2. At obj_cgroup_may_zswap() time, the logic is unchanged - we
-traverse the tree from current memcg to root memcg, grabbing the
-memcg's counter and check for usage.
+-- 
+2.25.1
 
-3. At obj_cgroup_charge_zswap() time, we have to perform another
-upward traversal again, to increment the counters. Would this be too
-expensive?
 
-We still need the whole obj_cgroup charging spiel, for memory usage
-purposes, but this should allow us to remove the MEMCG_ZSWAP_B.
-Similarly, another set of counters can be introduced to remove
-MEMCG_ZSWAPPED...
-
-Yosry, Joshua, how do you feel about this design? Step 3 is the part
-where I'm least certain about, but it's the only way I can think of
-that would avoid any flushing action. You have to pay the price of
-stat updates at *some* point :)
 
