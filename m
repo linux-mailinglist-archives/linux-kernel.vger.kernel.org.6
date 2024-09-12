@@ -1,145 +1,131 @@
-Return-Path: <linux-kernel+bounces-326350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61F009766F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:52:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F1B976707
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:54:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28D76285C21
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:52:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 616A21C20AEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447F819F10C;
-	Thu, 12 Sep 2024 10:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ndfrSPSx"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8983D1A0BD3;
+	Thu, 12 Sep 2024 10:54:02 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1AA615D5D9;
-	Thu, 12 Sep 2024 10:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D46B15D5D9;
+	Thu, 12 Sep 2024 10:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726138330; cv=none; b=MvGWLZyZdtOHBONOVpEp6hwArFXlTAowJHE5UDMJTJLKF11CGfVANbaqGDMYWkqbs/W5CiQpab0JSVkgZ6V6CxMmzZBF7HhZ5SuvUYDe/4RoU7vTIcfDOhNfRxgmDqo7Kyw2l7pvcjhYbO/hOHf6Gz0wuLMKhMGIqTyj9AcN328=
+	t=1726138442; cv=none; b=S2AXU3xekDNTgJ/BrDkAo+uZwJ5LZ+0jeVpvsgHhI73Tyvln+CgrBp2slKwxImvsPb61KRDzG0MNWxkrqEKPUjyqZVJ96FyjrjtiiPSfgZa6hynNEDkC79hO5KbOADsxJXeStm9FZM6lMnxwnSkCzltJEzByucH+RRNv7z078+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726138330; c=relaxed/simple;
-	bh=cL7uDEElOY41qr+HGq/ZTZuOKa90vTrMzKP6ssUHDo8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LH8adWL3v4IaCLr+t0D5shmQx7WdAmb1fGgRLKtJMKti7WT1p5E5yJT700g3N2m370Z3To7zXV6STTkAXOkGGIaNPi1uFR/PbkWcfgZc56UEStA4986Jo14TrKktNYUbbDaREKns3VbhFENfx+O2YdYfrR5avgMRD40f5EUXq9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ndfrSPSx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11DC7C4AF0B;
-	Thu, 12 Sep 2024 10:52:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726138330;
-	bh=cL7uDEElOY41qr+HGq/ZTZuOKa90vTrMzKP6ssUHDo8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ndfrSPSxz6CIkfBnsZKsrLlkbnBVpmiUM/EvG5sOGBufIIwTXIRtz5tV4MsB2bYKd
-	 6Sq0TAK3Ogs+1vUs5qw97+xgE6EoiDTCty5hiem7qYtG+H4GtT7HDcGb3gHWoX+A8O
-	 6jwwHBr0qm4PNfnqRJHI5WC1/T11knKSPzCCaG4rMmr7QjyZKgoDiobXcO92kDoeaK
-	 7Jb/pcEq9QtqblEhdDgRM6iWktevtEVcl4vbf9xD0idyZ+DFpEhO9ese7m3oNCHb2D
-	 jXn78HUk+pwAzD5S71PtFmVVpqfBRn7su0BvsE57aXhgIHBltn6j61AezeOG25/D9o
-	 HKNX6fWNTDqcw==
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f66423686bso7729321fa.3;
-        Thu, 12 Sep 2024 03:52:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVQoiZEhVo33jNr46ObCLeTKtkAQ+2gmGukNzvWS2bmtS8CKx1MeOEwHSKxbR818LJ/i996JmM7aliGBpM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFkwj5tlLGi89qWVYRHQdQRgKNXC3sZVFF0erfuALI8P7Cmh+0
-	0ITA0KJ4itY3MG+vuJhaOJEganhUVqQwI7ZGc6QJPegBTntOIwKExDJctPgtTKzn4VmUTtwkQ3z
-	kMDpCpY+tnLQGC0dNfJK5wrvbkYo=
-X-Google-Smtp-Source: AGHT+IG0RDOWZFcmijfEe36WItqbt0+VFYUSSIJCGg1H644oMA2zxoliUoqq9tnW8It6Ov5SLYGgsg4NMXktN5CT4as=
-X-Received: by 2002:a05:651c:2104:b0:2f3:ad82:53fd with SMTP id
- 38308e7fff4ca-2f787f2d6b7mr12658091fa.28.1726138328401; Thu, 12 Sep 2024
- 03:52:08 -0700 (PDT)
+	s=arc-20240116; t=1726138442; c=relaxed/simple;
+	bh=p/e83P9WYk3m3KBV4mYnrlxzhIZufzNwL5TA3046OjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wssc+QCGsELjR6I2FLEUchW//FNHbrg/AU+wImdq2RhB/Y7DUROKxzIcinZwCwAqr4le9yxZ0RqT+1/fOHiIxnNHte3idUnLIHernjr3pTsMMBmxI9/KKDjD9XnJqxzyadY0epHx+kTxr/Dl94A0WgwQcPZaZ6Dl0zuhaHWHeZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67C3EC4CEC3;
+	Thu, 12 Sep 2024 10:53:51 +0000 (UTC)
+Date: Thu, 12 Sep 2024 11:53:49 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Arnd Bergmann <arnd@arndb.de>, guoren <guoren@kernel.org>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	"David S . Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	shuah <shuah@kernel.org>, Christoph Hellwig <hch@infradead.org>,
+	Michal Hocko <mhocko@suse.com>,
+	"Kirill A. Shutemov" <kirill@shutemov.name>,
+	Chris Torek <chris.torek@gmail.com>,
+	Linux-Arch <linux-arch@vger.kernel.org>,
+	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-abi-devel@lists.sourceforge.net
+Subject: Re: [PATCH RFC v3 1/2] mm: Add personality flag to limit address to
+ 47 bits
+Message-ID: <ZuLIPZId9aHcAY2j@arm.com>
+References: <20240905-patches-below_hint_mmap-v3-0-3cd5564efbbb@rivosinc.com>
+ <20240905-patches-below_hint_mmap-v3-1-3cd5564efbbb@rivosinc.com>
+ <9fc4746b-8e9d-4a75-b966-e0906187e6b7@app.fastmail.com>
+ <CAJF2gTTVX9CFM3oRZZP3hGExwVwA_=n1Lrq_0DQKWA+-ZbOekg@mail.gmail.com>
+ <f23b18c6-1856-4b59-9ba3-59809b425c81@app.fastmail.com>
+ <Ztrq8PBLJ3QuFJz7@arm.com>
+ <oshwto46wbbgneiayj63umllyozm3c4267rvpszqzaopwnt2l7@6mxl5vydtons>
+ <ZuDoExckq21fePoe@ghost>
+ <ZuHfp0_tAQhaymdy@arm.com>
+ <ZuKHpFB+uWuJe2xm@ghost>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911104109.1831501-1-usamaarif642@gmail.com>
- <CAMj1kXFVyQEwBTf2bG8yBXUktM16dzrcPH-Phz_toAsCK-NfMA@mail.gmail.com> <2542182d-aa79-4705-91b6-fa593bacffa6@gmail.com>
-In-Reply-To: <2542182d-aa79-4705-91b6-fa593bacffa6@gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 12 Sep 2024 12:51:57 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
-Message-ID: <CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
-Subject: Re: [RFC] efi/tpm: add efi.tpm_log as a reserved region in 820_table_firmware
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: linux-efi@vger.kernel.org, kexec@lists.infradead.org, 
-	ebiederm@xmission.com, bhe@redhat.com, vgoyal@redhat.com, tglx@linutronix.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	leitao@debian.org, rmikey@meta.com, gourry@gourry.net
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZuKHpFB+uWuJe2xm@ghost>
 
-On Thu, 12 Sept 2024 at 12:23, Usama Arif <usamaarif642@gmail.com> wrote:
->
->
->
-> On 11/09/2024 12:51, Ard Biesheuvel wrote:
-> > On Wed, 11 Sept 2024 at 12:41, Usama Arif <usamaarif642@gmail.com> wrot=
-e:
-> >>
-> >> Looking at the TPM spec [1]
-> >>
-> >> If the ACPI TPM2 table contains the address and size of the Platform
-> >> Firmware TCG log, firmware =E2=80=9Cpins=E2=80=9D the memory associate=
-d with the
-> >> Platform FirmwareTCG log, and reports this memory as =E2=80=9CReserved=
-=E2=80=9D memory
-> >> via the INT 15h/E820 interface.
-> >>
-> >> It looks like the firmware should pass this as reserved in e820 memory
-> >> map. However, it doesn't seem to. The firmware being tested on is:
-> >> dmidecode -s bios-version
-> >> edk2-20240214-2.el9
-> >>
-> >> When this area is not reserved, it comes up as usable in
-> >> /sys/firmware/memmap. This means that kexec, which uses that memmap
-> >> to find usable memory regions, can select the region where efi.tpm_log
-> >> is and overwrite it and relocate_kernel.
-> >>
-> >> Having a fix in firmware can be difficult to get through. As a seconda=
-ry
-> >> fix, this patch marks that region as reserved in e820_table_firmware i=
-f it
-> >> is currently E820_TYPE_RAM so that kexec doesn't use it for kernel seg=
-ments.
-> >>
-> >> [1] https://trustedcomputinggroup.org/wp-content/uploads/PC-ClientPlat=
-form_Profile_for_TPM_2p0_Systems_v49_161114_public-review.pdf
-> >>
-> >> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> >
-> > I would expect the EFI memory map to E820 conversion implemented in
-> > the EFI stub to take care of this.
-> >
->
-> So I have been making a prototype with EFI stub, and the unfinished versi=
-on is looking like a
-> horrible hack.
->
-> The only way to do this in libstub is to pass log_tbl all the way from ef=
-i_retrieve_tcg2_eventlog
-> to efi_stub_entry and from there to setup_e820.
-> While going through the efi memory map and converting it to e820 table in=
- setup_e820, you have to check
-> if log_tbl falls in any of the ranges and if the range is E820_TYPE_RAM. =
-If that condition is satisfied,
-> then you have to split that range into 3. i.e. the E820_TYPE_RAM range be=
-fore tpm_log, the tpm_log
-> E820_TYPE_RESERVED range, and the E820_TYPE_RAM range after. There are no=
- helper functions, so this
-> splitting involves playing with a lot of pointers, and it looks quite ugl=
-y. I believe doing this
-> way is more likely to introduce bugs.
->
-> If we are having to compensate for an EFI bug, would it make sense to do =
-it in the way done
-> in RFC and do it in kernel rather than libstub? It is simple and very lik=
-ely to be bug free.
->
+On Wed, Sep 11, 2024 at 11:18:12PM -0700, Charlie Jenkins wrote:
+> Opting-in to the higher address space is reasonable. However, it is not
+> my preference, because the purpose of this flag is to ensure that
+> allocations do not exceed 47-bits, so it is a clearer ABI to have the
+> applications that want this guarantee to be the ones setting the flag,
+> rather than the applications that want the higher bits setting the flag.
 
-I don't see how this could be an EFI bug, given that it does not deal
-with E820 tables at all.
+Yes, this would be ideal. Unfortunately those applications don't know
+they need to set a flag in order to work.
+
+A slightly better option is to leave the default 47-bit at the kernel
+ABI level and have the libc/dynamic loader issue the prctl(). You can
+control the default with environment variables if needed.
+
+We do something similar in glibc for arm64 MTE. When MTE is enabled, the
+top byte of an allocated pointer contains the tag that must not be
+corrupted. We left the decision to the C library via the
+glibc.mem.tagging tunable (Android has something similar via the app
+manifest). An app can change the default if it wants but if you run with
+old glibc or no environment variable to say otherwise, the default would
+be safe. Distros can set the environment to be the maximum range by
+default if they know the apps included have been upgraded and tested.
+
+-- 
+Catalin
 
