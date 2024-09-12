@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-326206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AE5F9764ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:51:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C62469764EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:51:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE5A31F24A8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:51:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DAE3282B69
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFE91922D7;
-	Thu, 12 Sep 2024 08:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C11192587;
+	Thu, 12 Sep 2024 08:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z2TBpeNb"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sgq2vzHJ"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6842719005A
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DF5339BC
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726131083; cv=none; b=lBq2Vz3mRUdQV/1HIGHFbYI0wGSisYRgEFf9yu9GdBZIN/GOLaiWB52AMT4lnKpYe/82uWlACfHXtASSx0XJ8gWGAimWtZ5Wiwule3SoFQyKarnZaZ/tRsUYp3uYLBhQqF3ZhqmZshf+xuu7EkCMAWVGktJR2BVr+fiHwrGpRRc=
+	t=1726131104; cv=none; b=YoT1lRGVevskzqp+Lb/rfAFDDEmM5lW852DpkoXrWFjf/PYwVKCS9AUkzPhNPNuM28JcbIOIR0QDcqGhR9vFo2xcsvrTrnWw7J1KP1I+2xZfb0mNkHIg4NL5qkJ5NowUEcj9/fQNEVFuZs6hcnu89K6pWSD6MPcYpEFzFGG+6To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726131083; c=relaxed/simple;
-	bh=Oqpf6WxrvhQNA4h2zZSOyiF1FFl+HVlkz3Sk47rCQfQ=;
+	s=arc-20240116; t=1726131104; c=relaxed/simple;
+	bh=ZW9q90WrD+G0PAKw9e8G1vmoJHNTZdJBVRRsoqphIxg=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=jC6alheXEl6TbsKy8dm24fg8YI8T2LmPDOmJgGxUUN+9gJ7FDwx+2pWh7b2hdQ1W5uqdby18HU/dGnMRMnK8828Xka2K4B86g5xBQH1niHq7wm5n6ntyTVJHwhrXqv/Pe7v6WT6BV3gjWre17vCWqSZOJlDyQ3+nwKxFg4h5EHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z2TBpeNb; arc=none smtp.client-ip=209.85.221.42
+	 Content-Disposition; b=ej/o3zHa7tZJ2qlq33JhYfdoNxD4+aGQvweFEFNkcn7KLtShXMKXM5XThzTm1LabDuId++XO+kGZmd0bTF1en8f7f2RXcxVIMYpkX6ZKLayOtTwdzkfBBL3r38aA0TviVXIqbUw+7eXHWdJMfoBmIRYv0AwBpyfY4NSHETnKsSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Sgq2vzHJ; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-374c3eef39eso443380f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 01:51:21 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cd46f3a26so5269905e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 01:51:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726131080; x=1726735880; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1726131101; x=1726735901; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=8XjXALdKFm1l8dDisZb/hkbZwF++A+4h5dCECeJO6Cg=;
-        b=z2TBpeNbRdd3p6Lv7R/3jZj3CsQ1oAerqK8tln44K6iS2tKujELfNGp39njS9RP6/U
-         0eWCohtejIR27hP2l+9tUCR70/GQ54MoMqs4Pz1w237+ZJ9AU9nChb43KOQKOv0YMmbF
-         SEAlLNA5nB/MwiVqrBDvv1M9njT/PVP7oAtUSjnpdlrjvej6e5k/3vOOKQAAcwO9zmsd
-         WFVEGY5Fhe0lhagsnbwB9PF+gs6IAP0BGSd4FBxUJIBBJynYeG27WSFBKx2lvxNXzUxo
-         7s9x/T8wbhQ46Xs5ptJhvC6HUR0KmVaVIcMaYdOvmdaC3ZTn6MlGfqUz6R5qdr8n4mrE
-         wyIA==
+        bh=81XtS8l9mSMS4c/2nDpcx8nr5/0qweJ+8RlF2VnBxMA=;
+        b=Sgq2vzHJYTzK/jIvF0o/jECGn4rrANu9qf8tpT3BA7R2fiIESfKEa/XzjSwgiWwqAR
+         SvBEqot6obIjZ4ViCWs/PR7qci7vmtrx7wMOp7TbeESAzW1hku38lJ9wAXsZd5Sw9uMF
+         yODQ4KWaR3rzh/wMW2kv5qu7rZ9tH4fqGviyMkbwC/Fx7v4smwZBavNHmcoXBT9WnEt0
+         /UdlaaCp52KigrdWpR22PRi8IkpGOO05v4JUYx4IPxu59VwhuMM4VN2Bpgu0zbXG9d3K
+         +LCIt65C2QHTqdn+o9QfB8k6iUoRrti3BZifQ7bPk1ofPqyPC82o0aQNpB6yw0+0mcet
+         fPxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726131080; x=1726735880;
+        d=1e100.net; s=20230601; t=1726131101; x=1726735901;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8XjXALdKFm1l8dDisZb/hkbZwF++A+4h5dCECeJO6Cg=;
-        b=RNEeihoSdBnz4FdlPMPOWF4GPnX7tDEjlCDa1J2KHiwSab3fj9gEoOaDH3U/9hmqTC
-         D9QkHJvioiQ4MHXRv1nV/ZjRINpKYDivyfRytj7V6fIhMN+pQMDHvAg7IFwtFdWkWa2L
-         ZhfyUGvN9GlrbExzg04w1KB5gmeKG0Ko5zoQAc2xKCiKkNdKXGjrIl3RXC5I2eiCtlRQ
-         vIsuI75kIX38rh1KfQBtAZOfwcm74cGMxMY2UDMKF5IVi7P1vHrPf8usF+fvwy2I513I
-         XbwP8LWf6uy/DkLynvxu0AFjV+Lw8VELdySCGA//ibuYAGRnTTt4zWKVWxlmO7hdAsb1
-         SvGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmG0SzxJ5NK27I6ChHFpZKcO7hojV4ZcmTuWrokZfRDS5gRSj8tsE7HkpTi5jqfoDq4T8i/O5RwzhiikA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw47jgBq1oTL4NLyWnZVOgPm8LY/bKET586f/JGBKUl5CYMoi2P
-	C/PXHl5hMf5/FGim00yzo5DS4TDPZwNNNsfgr7tM7Ux1Fg3bo2H5WLH41DIbuFA=
-X-Google-Smtp-Source: AGHT+IHLHcB/HCgQjKnUW7bwjv1XmnDSqMuyvP2XcLeTnW9k2A9PadCFA/1sq6R/1Xv5W3/sfWKXWg==
-X-Received: by 2002:a5d:5582:0:b0:371:8319:4dcc with SMTP id ffacd0b85a97d-378c2cd5da5mr1059565f8f.2.1726131079586;
-        Thu, 12 Sep 2024 01:51:19 -0700 (PDT)
+        bh=81XtS8l9mSMS4c/2nDpcx8nr5/0qweJ+8RlF2VnBxMA=;
+        b=G3rTRFan2D3PF64ToOsJ0vixtIUjzph0zFJE18PV3H6gxpamud/g5z35UKmzBJbZef
+         GCO+K32ckfTq6612cIGmKq5Pt4gDvMM8FURqTHGGuZ5lwWVsEHGCndD4tfDbtbViJlBk
+         z2pz07Lt2HC4QBn4HQygOfTXzGNZAhn6mZOWjopJ/labtk8AYe1sL9YpZRrTRG4x4aw1
+         Gso8kWJJBh24mSr2AdDgsvE3ww/E30VCHualxL4nlyJa9VLBfYPJ4bvS2kwqq1kUutJG
+         0JD06TWpMcVgKwWb0SydaJ1yGwONLqcYF2e/18/acziJhoErV7HeMkpokZt3bq4aF/uv
+         TkYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjDyMF0+3M0sJTX7+jjQ1xwOzZGAPQpoFcoaBrtQQxR3ILGpw+kS3U/m4sfQuPKrG2wxb5859Nk2ubius=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXQ6N1a+FAcCFBb8CvwM86IddfoYgF8WyFGTaJ52iAEFmscv7v
+	VOulvzj94UddW+lBJ/E7xrtCTnRl4QKfgtFcbTaTrNv3oyXlD6CVpFUn6OfWTzA=
+X-Google-Smtp-Source: AGHT+IGMgDiKAbBW7n/kM+sVyZkco74cXOo2c6V3865Igi3TJeLceEdfuNeJlBvdLqEo3zo9Zo5mkQ==
+X-Received: by 2002:a05:600c:3ba4:b0:426:6e86:f82 with SMTP id 5b1f17b1804b1-42cdb57ecbemr15170135e9.22.1726131101129;
+        Thu, 12 Sep 2024 01:51:41 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d365fsm13753381f8f.82.2024.09.12.01.51.18
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37895675c56sm14168144f8f.57.2024.09.12.01.51.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 01:51:19 -0700 (PDT)
-Date: Thu, 12 Sep 2024 11:51:14 +0300
+        Thu, 12 Sep 2024 01:51:40 -0700 (PDT)
+Date: Thu, 12 Sep 2024 11:51:31 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Mark Brown <broonie@kernel.org>, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] ALSA: control: prevent some integer overflow issues
-Message-ID: <0f03d569-9804-4617-a806-f0e5c32399fb@stanley.mountain>
+To: Julien Massot <julien.massot@collabora.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] media: i2c: max96717: clean up on error in
+ max96717_subdev_init()
+Message-ID: <23251b8e-c148-44ef-bc9b-f39cecc4fb12@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,60 +85,33 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-I believe the this bug affects 64bit systems as well, but analyzing this
-code is easier if we assume that we're on a 32bit system.  The problem is
-in snd_ctl_elem_add() where we do:
+Call v4l2_ctrl_handler_free() to clean up from v4l2_ctrl_handler_init().
 
-sound/core/control.c
-  1669          private_size = value_sizes[info->type] * info->count;
-  1670          alloc_size = compute_user_elem_size(private_size, count);
-                                                                  ^^^^^
-count is info->owner.  It's a non-zero u32 that comes from the user via
-snd_ctl_elem_add_user().  So the math in compute_user_elem_size() could
-have an integer overflow resulting in a smaller than expected size.
-
-  1671
-  1672          guard(rwsem_write)(&card->controls_rwsem);
-  1673          if (check_user_elem_overflow(card, alloc_size))
-
-The math is check_user_elem_overflow() can also overflow.  Additionally,
-large positive values are cast to negative and thus do not exceed
-max_user_ctl_alloc_size so they are treated as valid.  It should be the
-opposite, where negative sizes are invalid.
-
-  1674                  return -ENOMEM;
-
-Fixes: 2225e79b9b03 ("ALSA: core: reduce stack usage related to snd_ctl_new()")
+Fixes: 50f222455793 ("media: i2c: add MAX96717 driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- sound/core/control.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+From static analysis.  Not tested.
 
-diff --git a/sound/core/control.c b/sound/core/control.c
-index 4f55f64c42e1..f36af27e68d5 100644
---- a/sound/core/control.c
-+++ b/sound/core/control.c
-@@ -1397,9 +1397,9 @@ struct user_element {
- };
+ drivers/media/i2c/max96717.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/i2c/max96717.c b/drivers/media/i2c/max96717.c
+index 4e85b8eb1e77..9259d58ba734 100644
+--- a/drivers/media/i2c/max96717.c
++++ b/drivers/media/i2c/max96717.c
+@@ -697,8 +697,10 @@ static int max96717_subdev_init(struct max96717_priv *priv)
+ 	priv->pads[MAX96717_PAD_SOURCE].flags = MEDIA_PAD_FL_SOURCE;
  
- // check whether the addition (in bytes) of user ctl element may overflow the limit.
--static bool check_user_elem_overflow(struct snd_card *card, ssize_t add)
-+static bool check_user_elem_overflow(struct snd_card *card, size_t add)
- {
--	return (ssize_t)card->user_ctl_alloc_size + add > max_user_ctl_alloc_size;
-+	return size_add(card->user_ctl_alloc_size, add) > max_user_ctl_alloc_size;
- }
+ 	ret = media_entity_pads_init(&priv->sd.entity, 2, priv->pads);
+-	if (ret)
+-		return dev_err_probe(dev, ret, "Failed to init pads\n");
++	if (ret) {
++		dev_err_probe(dev, ret, "Failed to init pads\n");
++		goto err_free_ctrl;
++	}
  
- static int snd_ctl_elem_user_info(struct snd_kcontrol *kcontrol,
-@@ -1593,7 +1593,7 @@ static int snd_ctl_elem_init_enum_names(struct user_element *ue)
- 
- static size_t compute_user_elem_size(size_t size, unsigned int count)
- {
--	return sizeof(struct user_element) + size * count;
-+	return size_add(sizeof(struct user_element), size_mul(size, count));
- }
- 
- static void snd_ctl_elem_user_free(struct snd_kcontrol *kcontrol)
+ 	ret = v4l2_subdev_init_finalize(&priv->sd);
+ 	if (ret) {
 -- 
 2.45.2
 
