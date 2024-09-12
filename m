@@ -1,150 +1,116 @@
-Return-Path: <linux-kernel+bounces-327208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA7ED97725D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:48:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD23F97726F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:51:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6107E1F25494
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:48:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEAC81C23C6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 428841D45E3;
-	Thu, 12 Sep 2024 19:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C161BFE1A;
+	Thu, 12 Sep 2024 19:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="R3pxgM5d"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nYaTIce1"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9940C1C0DF0;
-	Thu, 12 Sep 2024 19:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25982188001;
+	Thu, 12 Sep 2024 19:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726170026; cv=none; b=NuAB80l2OTPk2wuaLZUrRfbzQjdZPAswJNi/Hqx1F+pf0YV1YOUJ75tyKntuKx+xQ/UbnbBoyZqnzHMQ3dth2ak7HDTzBkWgBHNsGA2G9rn55xhxksuvStoH/TPK+Knj7n4DZXKB4O6UttcuCaUbAQvaVRon02/J2AIUkYxV/TM=
+	t=1726170355; cv=none; b=lC6EKDKzx4QPviQIJpVm0Vih/hcVXMiumyQXHBs6JKdVIoBoe5yG7Zx/KEU5ZvRBBvztH2F/vzHZw7Wp+j+MAOBhuZTw+GIjcUsWpWudX0gG34QUu2Hm4G6B68p6U8vKkgOVn60Hiz8eKuul+8neO3SWEWMstpMjHQ/hQDN+0dY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726170026; c=relaxed/simple;
-	bh=prnyaP8xdPvgf7lPSdgoOnTFSQEEfdLilloaJUXm1RE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=d8H3J7DM9tfjMjm8R9XjYGaX0C9ZODgPS9zhYkkYFfCqpAcmuK97ecHJFqh2M3PBexj27HnT1eq9nzWqEBVJUo4rVa4RlqIKi3xMKS89stsy63wn0q7ZV5Xk6hWi2ixidU6Be1PNLthJIjeOCdZG2+RIopLKJ7CUv+qxCf4cil0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=R3pxgM5d; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48CHtE53009379;
-	Thu, 12 Sep 2024 19:39:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IHuzCQGYpXyTPH0RihFbQD623zcQRcB8CUdC3cqWdMA=; b=R3pxgM5dNh9T2Az8
-	PZ5ac24L2Q8WQ/2fKUD/e/lochroPqS9LGXSO1VmS1fyup/qE+XRUPYUt4seyEum
-	P82YhN689vuOSeFV3Er0e1JvIoh8/cSEmjeDUHztrw2sJyqVv2i22TC/wqS6sBZf
-	W1d+vrhDiD4du2Idr2ppYi4i3MMLWEiivJu9VMcGcYSvw+pBtYQBVUqEfxoovTkJ
-	XYfRRLZayzK8+6wHQTr9IvC7cKepQSmbrR6pMhnJnBwnTWP1NSlZ+nE19fjAvj+t
-	NzO8OeZfTtbu9v/bB4gnZQ9r+g9pq7RGzXqXKHWmcbCFDXxFT0Brsh1fsU6sV9as
-	IrPD/Q==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy6peeyj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Sep 2024 19:39:56 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48CJdubu006060
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Sep 2024 19:39:56 GMT
-Received: from hu-wcheng-lv.qualcomm.com (10.49.16.6) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 12 Sep 2024 12:39:55 -0700
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-To: <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
-        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <tiwai@suse.com>, <krzk+dt@kernel.org>,
-        <pierre-louis.bossart@linux.intel.com>, <Thinh.Nguyen@synopsys.com>,
-        <bgoswami@quicinc.com>, <robh@kernel.org>,
-        <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        Wesley Cheng
-	<quic_wcheng@quicinc.com>
-Subject: [PATCH v27 32/32] ASoC: usb: Rediscover USB SND devices on USB port add
-Date: Thu, 12 Sep 2024 12:39:35 -0700
-Message-ID: <20240912193935.1916426-33-quic_wcheng@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240912193935.1916426-1-quic_wcheng@quicinc.com>
-References: <20240912193935.1916426-1-quic_wcheng@quicinc.com>
+	s=arc-20240116; t=1726170355; c=relaxed/simple;
+	bh=/R0pXirOzwJZmGKJOLgCddS1t8nplUTSfuiwa5CVbS8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Aerut20Tt+Z7tct+5TCUBIenr9aAttBUmw8X/3f/zSqKlTJRcPDVMmNE50865mGKFa5txEQ31KK+LJIALxeuXSMC3uFmIUXWuL5lb3MCgASH+D8s8Go2+74pvDcP7lMYiOJgveVmgUR0jIBhgAYvgH3QFAHO1UFowMjqT1eK0p0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nYaTIce1; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-718f28f77f4so1261296b3a.1;
+        Thu, 12 Sep 2024 12:45:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726170353; x=1726775153; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uSdO8RSbMs44j1H6G+dzfYRIDRqi5dt9sRxSxgubzu4=;
+        b=nYaTIce1fSYZ34/NkzM98KCt1GWFS+UN4sGozuCdOPBk8g+tHEwg33vUxCyuTcS3N1
+         0ceUYqCjKkXK1yS9PRRxcUzYdrqOhhkAFPCthD324JS+w2h0OAudbS9ss0O6iXWSx4UY
+         PhZaTYYltj2zsCVpKjtFWOerkEi6RqlEz0ouwXokHzzSV5yMoIAmTg829Ese1si3WDQT
+         5IB8DnQv5oe2RV7MDApzwL8N16I858THBFE4SL9lWT842/5+K5RcwiqsoP2fK9K9u86h
+         OGmrEO4LOfMAMfKqaM1FxuyjRRlLtjqC1HXQ0b89DCw+5Nterr/acQ8vdmbttOTQbzTN
+         rO6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726170353; x=1726775153;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uSdO8RSbMs44j1H6G+dzfYRIDRqi5dt9sRxSxgubzu4=;
+        b=PEdvsSnBCNiPSfn/7hXOQIgUxppG3I/+mgfOFfRXAYs3vB4nq8f0I9PTqGOihgWryE
+         WiXQaTj1YjCwAfZFzcrtEen32jRHoqdBzpwl01H77mjFyn+SnLYrpJRHCr8PGl+aNKOD
+         HmM+/ZU6AAdOnRaYbRfRTY7fFRNNMjeivL0VxKfUlzVCwSAxAYJp38bwzJ3xkm9VkY0B
+         bdAs9ZTKv6eha8+LgIsO++ptHpa0RKZLDk6awKVEm0Na99i0lIurhD98TmNwzIX9Rj8l
+         3P+DRsLBwhI1KGcD+8vIC3/C/uDB8bQK1hNiDVHxp910EfN0pqSF9ozIYqyFv541CFC6
+         Gxvg==
+X-Forwarded-Encrypted: i=1; AJvYcCVr/3n/MlxFJRm+69rBC/j4I7hN9RoKZQXgTy1h99JIoFKT6k68TEgiE1FzM9tJ4kaywI8WK/buvPGseeA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhseqQnDRVPZCioQjoLo/c3nP9RalLe57mmgIP0Z0hR/FrIU6k
+	ReTUqYt+2wbj0NEqtLDKxwDaRHh1si0DIyArqSIytPRgmtx7PGJZoSYD51/I9Aw6z44Raefk1RJ
+	X2ZaYUw6bt6tTj02YLDp4uvRCI9E=
+X-Google-Smtp-Source: AGHT+IHKH6rubc5bszysFyN/+dOoARVsJ2z8te8iybKycrCFJobGOy5Etl6v/DFKqtfrQv2HGaoZAXDrVKFJhQH6/js=
+X-Received: by 2002:a05:6a00:2e11:b0:710:bd4b:8b96 with SMTP id
+ d2e1a72fcca58-719262077e3mr6264905b3a.28.1726170353359; Thu, 12 Sep 2024
+ 12:45:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ogiyPitW642ue2kmpSl3oPFemrvuiZ_P
-X-Proofpoint-GUID: ogiyPitW642ue2kmpSl3oPFemrvuiZ_P
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- bulkscore=0 lowpriorityscore=0 mlxlogscore=999 spamscore=0 phishscore=0
- impostorscore=0 suspectscore=0 mlxscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409120144
+References: <CAHaCkmfFt1oP=r28DDYNWm3Xx5CEkzeu7NEstXPUV+BmG3F1_A@mail.gmail.com>
+ <CAHaCkmddrR+sx7wQeKh_8WhiYc0ymTyX5j1FB5kk__qTKe2z3Q@mail.gmail.com> <20240912083746.34a7cd3b@kernel.org>
+In-Reply-To: <20240912083746.34a7cd3b@kernel.org>
+From: Jesper Juhl <jesperjuhl76@gmail.com>
+Date: Thu, 12 Sep 2024 21:45:17 +0200
+Message-ID: <CAHaCkmekKtgdVhm7RFp0jo_mfjsJgAMY738wG0LPdgLZN6kq4A@mail.gmail.com>
+Subject: Re: igc: Network failure, reboot required: igc: Failed to read reg 0xc030!
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, 
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-In case the USB backend device has not been initialized/probed, USB SND
-device connections can still occur.  When the USB backend is eventually
-made available, previous USB SND device connections are not communicated to
-the USB backend.  Call snd_usb_rediscover_devices() to generate the connect
-callbacks for all USB SND devices connected.  This will allow for the USB
-backend to be updated with the current set of devices available.
+> Would you be able to decode the stack trace? It may be helpful
+> to figure out which line of code this is:
+>
+>  igc_update_stats+0x8a/0x6d0 [igc
+> 22e0a697bfd5a86bd5c20d279bfffd
+> 131de6bb32]
 
-The chip array entries are all populated and removed while under the
-register_mutex, so going over potential race conditions:
+Of course. Just tell me what to do.
 
-Thread#1:
-  q6usb_component_probe()
-    --> snd_soc_usb_add_port()
-      --> snd_usb_rediscover_devices()
-        --> mutex_lock(register_mutex)
+- Jesper
 
-Thread#2
-  --> usb_audio_disconnect()
-    --> mutex_lock(register_mutex)
-
-So either thread#1 or thread#2 will complete first.  If
-
-Thread#1 completes before thread#2:
-  SOC USB will notify DPCM backend of the device connection.  Shortly
-  after, once thread#2 runs, we will get a disconnect event for the
-  connected device.
-
-Thread#2 completes before thread#1:
-  Then during snd_usb_rediscover_devices() it won't notify of any
-  connection for that particular chip index.
-
-Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
----
- sound/soc/soc-usb.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/sound/soc/soc-usb.c b/sound/soc/soc-usb.c
-index f88ccf90df32..3457bb51a0a1 100644
---- a/sound/soc/soc-usb.c
-+++ b/sound/soc/soc-usb.c
-@@ -252,6 +252,8 @@ void snd_soc_usb_add_port(struct snd_soc_usb *usb)
- 	mutex_lock(&ctx_mutex);
- 	list_add_tail(&usb->list, &usb_ctx_list);
- 	mutex_unlock(&ctx_mutex);
-+
-+	snd_usb_rediscover_devices();
- }
- EXPORT_SYMBOL_GPL(snd_soc_usb_add_port);
- 
+On Thu, 12 Sept 2024 at 17:37, Jakub Kicinski <kuba@kernel.org> wrote:
+>
+> On Thu, 12 Sep 2024 15:03:14 +0200 Jesper Juhl wrote:
+> > It just happened again.
+> > Same error message, but different stacktrace:
+>
+> Hm, I wonder if it's power management related or the device just goes
+> sideways for other reasons. The crashes are in accessing statistics
+> and the relevant function doesn't resume the device. But then again,
+> it could just be that stats reading is the most common control path
+> operation.
+>
+> Hopefully the Intel team can help.
+>
+> Would you be able to decode the stack trace? It may be helpful
+> to figure out which line of code this is:
+>
+>   igc_update_stats+0x8a/0x6d0 [igc
+> 22e0a697bfd5a86bd5c20d279bfffd131de6bb32]
 
