@@ -1,80 +1,78 @@
-Return-Path: <linux-kernel+bounces-326207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C62469764EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:51:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A6BD9764F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DAE3282B69
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:51:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAA4D1C20ADB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C11192587;
-	Thu, 12 Sep 2024 08:51:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7661922F7;
+	Thu, 12 Sep 2024 08:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sgq2vzHJ"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dHNnCAO4"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6DF5339BC
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E26190662
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726131104; cv=none; b=YoT1lRGVevskzqp+Lb/rfAFDDEmM5lW852DpkoXrWFjf/PYwVKCS9AUkzPhNPNuM28JcbIOIR0QDcqGhR9vFo2xcsvrTrnWw7J1KP1I+2xZfb0mNkHIg4NL5qkJ5NowUEcj9/fQNEVFuZs6hcnu89K6pWSD6MPcYpEFzFGG+6To=
+	t=1726131143; cv=none; b=ZLklcLgJ5rAU1ARfNwUKUS45o6blGWxFVLMWEJf7fX9j8Cypqe958Pb2DxbiCPE62JlKivm1/Ynx6B6TO890VR/uOh5C2oyOEkryIz1JrYQ5XTio2Z/ABHZA5Yw7KWEsZjNX0e4+sNY0McPa/R8e/Vcf8lwsTQcbOlX+uRLnZps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726131104; c=relaxed/simple;
-	bh=ZW9q90WrD+G0PAKw9e8G1vmoJHNTZdJBVRRsoqphIxg=;
+	s=arc-20240116; t=1726131143; c=relaxed/simple;
+	bh=+Uv1yRx1t/nh3AdvtaBsQpatvoFp9YWwQHVWraJdMZU=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ej/o3zHa7tZJ2qlq33JhYfdoNxD4+aGQvweFEFNkcn7KLtShXMKXM5XThzTm1LabDuId++XO+kGZmd0bTF1en8f7f2RXcxVIMYpkX6ZKLayOtTwdzkfBBL3r38aA0TviVXIqbUw+7eXHWdJMfoBmIRYv0AwBpyfY4NSHETnKsSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Sgq2vzHJ; arc=none smtp.client-ip=209.85.128.44
+	 Content-Disposition; b=E05XnsyxK+yOLOZivK+BQ7HzmDXdOZ+FVeNGrFsOsX+ysAlvEKI9hLRh6Kqw9ao9mkLcmXlhkzeR8/2Czs0Ja6hUEUZHDlzTbjhZCwTzOyi0cQlM0XZ7Ry3twbJpH72fM3NMds4Fl57kn0UIq7iITKBVPmFkYape0woV92nU6jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dHNnCAO4; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cd46f3a26so5269905e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 01:51:42 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cb6f3a5bcso7472365e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 01:52:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726131101; x=1726735901; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1726131140; x=1726735940; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=81XtS8l9mSMS4c/2nDpcx8nr5/0qweJ+8RlF2VnBxMA=;
-        b=Sgq2vzHJYTzK/jIvF0o/jECGn4rrANu9qf8tpT3BA7R2fiIESfKEa/XzjSwgiWwqAR
-         SvBEqot6obIjZ4ViCWs/PR7qci7vmtrx7wMOp7TbeESAzW1hku38lJ9wAXsZd5Sw9uMF
-         yODQ4KWaR3rzh/wMW2kv5qu7rZ9tH4fqGviyMkbwC/Fx7v4smwZBavNHmcoXBT9WnEt0
-         /UdlaaCp52KigrdWpR22PRi8IkpGOO05v4JUYx4IPxu59VwhuMM4VN2Bpgu0zbXG9d3K
-         +LCIt65C2QHTqdn+o9QfB8k6iUoRrti3BZifQ7bPk1ofPqyPC82o0aQNpB6yw0+0mcet
-         fPxA==
+        bh=Jfx4IHYM/f9TvrOy+r/MT0ESdhaPDLWNq6uOUg30aAY=;
+        b=dHNnCAO4zhZC+qsMBiIoDyxScRAY6ZFWHKAeJJZrHWQWIegYrqq7DZA4plol5xZALa
+         oStXpSsG3TCBOAQ/5x2lXzz6rI5nIVc38cbamWqhS86GaxUyti4G9tXUh06gyKQrIdFT
+         VidwLHdWyRDA88uZWxkCdU/Cc0W0AiPN2/VHGEIT3S03qJ1L3kNxM7JxH+RW7y8QmDf8
+         bDryWOEcHgMATg54uRn1hWFWoMZ62eeG04nwQaA9+ULqWxffK20RaZhhA3gZXVqgU5Ac
+         hZ8lFshApIV5bF5mqYUCbT05a6oPnD3+Wtl17D/8z5ti1gFNzEYY+eyO6CaeDqEc79Sq
+         Bp7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726131101; x=1726735901;
+        d=1e100.net; s=20230601; t=1726131140; x=1726735940;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=81XtS8l9mSMS4c/2nDpcx8nr5/0qweJ+8RlF2VnBxMA=;
-        b=G3rTRFan2D3PF64ToOsJ0vixtIUjzph0zFJE18PV3H6gxpamud/g5z35UKmzBJbZef
-         GCO+K32ckfTq6612cIGmKq5Pt4gDvMM8FURqTHGGuZ5lwWVsEHGCndD4tfDbtbViJlBk
-         z2pz07Lt2HC4QBn4HQygOfTXzGNZAhn6mZOWjopJ/labtk8AYe1sL9YpZRrTRG4x4aw1
-         Gso8kWJJBh24mSr2AdDgsvE3ww/E30VCHualxL4nlyJa9VLBfYPJ4bvS2kwqq1kUutJG
-         0JD06TWpMcVgKwWb0SydaJ1yGwONLqcYF2e/18/acziJhoErV7HeMkpokZt3bq4aF/uv
-         TkYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjDyMF0+3M0sJTX7+jjQ1xwOzZGAPQpoFcoaBrtQQxR3ILGpw+kS3U/m4sfQuPKrG2wxb5859Nk2ubius=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXQ6N1a+FAcCFBb8CvwM86IddfoYgF8WyFGTaJ52iAEFmscv7v
-	VOulvzj94UddW+lBJ/E7xrtCTnRl4QKfgtFcbTaTrNv3oyXlD6CVpFUn6OfWTzA=
-X-Google-Smtp-Source: AGHT+IGMgDiKAbBW7n/kM+sVyZkco74cXOo2c6V3865Igi3TJeLceEdfuNeJlBvdLqEo3zo9Zo5mkQ==
-X-Received: by 2002:a05:600c:3ba4:b0:426:6e86:f82 with SMTP id 5b1f17b1804b1-42cdb57ecbemr15170135e9.22.1726131101129;
-        Thu, 12 Sep 2024 01:51:41 -0700 (PDT)
+        bh=Jfx4IHYM/f9TvrOy+r/MT0ESdhaPDLWNq6uOUg30aAY=;
+        b=QHVB+DeJLSkQs66+tjAesCPUk2b71a0aIay6eEWhxAj86fJG2+kEdRO602CKBrlPrU
+         UEDkhRYpIP3HEd0MVi0QyPhVx6PphzzwJBkVqm9X+w6DmxyEzRrYcPjkwuX3tjLVaWlj
+         KAXUg2TelWUa8gzwsItb9mxZ09wnqhXHSKnQr9DSxIPt8VfAt1cWM4+IN+g9Pz/Rhrd9
+         8Eft9wSUoFqPwYOywaFXzsbrGNm9gO+gVXe0xMAybnlXHeRp6m+CQRpSHXC5GZRSYpxv
+         qqz6405v9Cv78gsceXggVN+Gx3M+1xKgAsHHt8MfMY1TuVZ8UPlLKpba7u2ff6Aw3jMQ
+         JXwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX3TneeCaMOp2nzcmykgjCtMGJr5sH0xkf8R8/LE3tGbJT6BoTDCRATuXYCjImNvFRNHmDlq3l0WtqllTI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyksmouPzgsmA3EvhT/mBOE0yPtcFEM5Y3EFdWjPzx0b4s6zHoG
+	Xuy38heYnjSE7wmXfdp2Qn/ap//QVhA5IdoLU0gT2gbEuU6Zd/Y0++UJunpeM0NCIiKhe57ldIt
+	B
+X-Google-Smtp-Source: AGHT+IE3JvQVI8H7Az2p7xH5qjI8YDyhtJ3aO9BUYYnl2AM0k/tr5zbW/XahZ19yePpZcAyKjxL+wA==
+X-Received: by 2002:a05:600c:35d2:b0:42c:b555:43dd with SMTP id 5b1f17b1804b1-42cdb5112eamr20411895e9.3.1726131140394;
+        Thu, 12 Sep 2024 01:52:20 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37895675c56sm14168144f8f.57.2024.09.12.01.51.40
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cc01a8ee7sm86851825e9.0.2024.09.12.01.52.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 01:51:40 -0700 (PDT)
-Date: Thu, 12 Sep 2024 11:51:31 +0300
+        Thu, 12 Sep 2024 01:52:20 -0700 (PDT)
+Date: Thu, 12 Sep 2024 11:52:16 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Julien Massot <julien.massot@collabora.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: David Howells <dhowells@redhat.com>
+Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] media: i2c: max96717: clean up on error in
- max96717_subdev_init()
-Message-ID: <23251b8e-c148-44ef-bc9b-f39cecc4fb12@stanley.mountain>
+Subject: [PATCH] netfs: remove some unnecessary code in netfs_read_gaps()
+Message-ID: <df691112-1114-431a-8c71-09d1656f0771@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,33 +83,37 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-Call v4l2_ctrl_handler_free() to clean up from v4l2_ctrl_handler_init().
+We can remove the "sink" initialization and the check for NULL.  It was
+already checked for NULL ealier.
 
-Fixes: 50f222455793 ("media: i2c: add MAX96717 driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
-From static analysis.  Not tested.
+ fs/netfs/buffered_read.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
- drivers/media/i2c/max96717.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/i2c/max96717.c b/drivers/media/i2c/max96717.c
-index 4e85b8eb1e77..9259d58ba734 100644
---- a/drivers/media/i2c/max96717.c
-+++ b/drivers/media/i2c/max96717.c
-@@ -697,8 +697,10 @@ static int max96717_subdev_init(struct max96717_priv *priv)
- 	priv->pads[MAX96717_PAD_SOURCE].flags = MEDIA_PAD_FL_SOURCE;
+diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
+index c40e226053cc..9f96844205b1 100644
+--- a/fs/netfs/buffered_read.c
++++ b/fs/netfs/buffered_read.c
+@@ -481,7 +481,7 @@ static int netfs_read_gaps(struct file *file, struct folio *folio)
+ 	struct address_space *mapping = folio->mapping;
+ 	struct netfs_folio *finfo = netfs_folio_info(folio);
+ 	struct netfs_inode *ctx = netfs_inode(mapping->host);
+-	struct folio *sink = NULL;
++	struct folio *sink;
+ 	struct bio_vec *bvec;
+ 	unsigned int from = finfo->dirty_offset;
+ 	unsigned int to = from + finfo->dirty_len;
+@@ -540,8 +540,7 @@ static int netfs_read_gaps(struct file *file, struct folio *folio)
  
- 	ret = media_entity_pads_init(&priv->sd.entity, 2, priv->pads);
--	if (ret)
--		return dev_err_probe(dev, ret, "Failed to init pads\n");
-+	if (ret) {
-+		dev_err_probe(dev, ret, "Failed to init pads\n");
-+		goto err_free_ctrl;
-+	}
+ 	netfs_read_to_pagecache(rreq);
  
- 	ret = v4l2_subdev_init_finalize(&priv->sd);
- 	if (ret) {
+-	if (sink)
+-		folio_put(sink);
++	folio_put(sink);
+ 
+ 	ret = netfs_wait_for_read(rreq);
+ 	if (ret == 0) {
 -- 
 2.45.2
 
