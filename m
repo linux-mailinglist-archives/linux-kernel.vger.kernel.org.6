@@ -1,83 +1,153 @@
-Return-Path: <linux-kernel+bounces-325824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 448E4975EAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 03:52:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DC7C975EA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 03:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77B2A1C22737
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:52:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1EA4B22061
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFAD32837B;
-	Thu, 12 Sep 2024 01:52:46 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C105C2BAE3;
+	Thu, 12 Sep 2024 01:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G/x/IqfD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190AF46426
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 01:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2920D3C24;
+	Thu, 12 Sep 2024 01:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726105966; cv=none; b=VV/64xPTM7tQRXZN987DK8hPDx7rvlzFplH5rdj01x3lKvnj4e9vbC/w+6wEBesxfbFhwCIEYx6hizGl83qUUqoNHXKi6JqxIvqjDq6WDBYpWqxdG086vGDA/S/OdsoKh7G7Jzimh0Jv7+tPDMnGe7jM2VG93SwpjFc7zocPnFc=
+	t=1726105833; cv=none; b=HluRq2uIDUQuuuxyrcNWTJdCR7XdF3qZx9Wu3+SNOxpfBCKW8IBfjtcAU65qus2hcGK10yTj/UfxVMaVccY76rW+XAXT9/lIcW/9RG3s5AzQGUz9qph97jumHDDltslgm5eKl8W4cpYcqpRP7nB+ExfK4AKe7OCPbIbHcmrf1nA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726105966; c=relaxed/simple;
-	bh=JeRXXPgn+TRl4Iq4SQ1scfIOIxwla4oOGj+VaLfBKIc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Hz5H5Lo1T9d9JSmaoCeDBlvCBZvw5gopvztbZi9SQD12JqdVk2MrbN4wq9SwkzctiQm1Iwf87lyiKV9XfHNnl92fYwLXaovDoHuS0e4Eh+mep39Q4cOedCEqSSXb7ys7veCjZOKyX9Ta+02N5b3sWMwkxyZdBmW0/KYdEzhatrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4X40nG5CmLz20nDL;
-	Thu, 12 Sep 2024 09:52:34 +0800 (CST)
-Received: from dggpeml500003.china.huawei.com (unknown [7.185.36.200])
-	by mail.maildlp.com (Postfix) with ESMTPS id 634E81401F1;
-	Thu, 12 Sep 2024 09:52:41 +0800 (CST)
-Received: from huawei.com (10.44.142.84) by dggpeml500003.china.huawei.com
- (7.185.36.200) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 12 Sep
- 2024 09:52:41 +0800
-From: Yu Liao <liaoyu15@huawei.com>
-To: <alexander.deucher@amd.com>
-CC: <liaoyu15@huawei.com>, <xiexiuqi@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <amd-gfx@lists.freedesktop.org>,
-	<sunpeng.li@amd.com>, <harry.wentland@amd.com>
-Subject: [PATCH] drm/amd/display: remove unneeded semicolon
-Date: Thu, 12 Sep 2024 09:48:50 +0800
-Message-ID: <20240912014850.1016005-1-liaoyu15@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1726105833; c=relaxed/simple;
+	bh=9OVqqAv6azPMpQbxz5bBWG47JD8uqRQOMbjn4mGcBcI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NAJu+wnyjEB+deVsG2MQpXU6u+4OIUldtoLfCSDiqveJ9nEqDiKrvND+mOSlSV21mjhfKwXghBwGUvamr0Sjjfm3fJXg7AStAvWet6/ZR1XvNxRGl+INYXm0alxFPhzh0AyqxYgElkp54Zj7Xsl0YjUD7n96EKF3t1U3ghKIUA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G/x/IqfD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33058C4CEC5;
+	Thu, 12 Sep 2024 01:50:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726105832;
+	bh=9OVqqAv6azPMpQbxz5bBWG47JD8uqRQOMbjn4mGcBcI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=G/x/IqfDAS7YhHrh7/Som2V2v9TIhFh602Mojlt5UUhfa5czPnOYbk+EFXvvJtUJc
+	 ZiS3JrOLbvq3X8bga8h4ej/I2I/yqt89JpAPD/EvsE4OLBcNzMY++dinxUki2ml7fK
+	 EcvIkJ/dvpCZ4P0NHgjh86hoWYG5bjmN/xEVkjSEvK3N0Ezx6Dp+QAB+K97d9w7IG+
+	 mfKGOrNqMqxauUgzgra45WlPnD/oFHer2rzvIJDMvFouNk9MsFXT+2M10oMdbVhvMJ
+	 ZRNAz2zAwis+4dF3uadek9ilUFyKusyd4HLPO5NXxRVgkPLFe6tvR1n/ks1bFzVGqP
+	 U/0xQATTDHZoQ==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53654e2ed93so525852e87.0;
+        Wed, 11 Sep 2024 18:50:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUuKnWqRubbT6w6tX8Lzxz8GehG44PUhyAEeZu36tFZHBaCJduOqprFeADA1jeYutOQO32PwTRxZamR4N8=@vger.kernel.org, AJvYcCXqhVyD7fu2H3IGaGqmeYBgObILC/mCgvhEqXhILmbsOp9BCR65Vtq7vVtUgjz+Le82ABgPKdOY1Qxqsg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr1+HHw/Wr1meHCZnjAZC1OH6Cy5gALqU/4bCQhYKgoq4eRmjR
+	+xm55Pcn1tlEmvfISt3t7VV8vtEm7WcEizgN4gYXVNUHuD0wfvOIEJVuMwHY9Tkkw7EqhyW+Jiw
+	of3BIWqDaKW+6Am3rdizBRXHroLM=
+X-Google-Smtp-Source: AGHT+IFex/jQ4IJlZS+WQhG16wf7bTblOsEqF8t6ad154optg/TouEhO8MVfuPocfrp4cIs2w79gCCnVgtNQ8QN7mqM=
+X-Received: by 2002:a05:6512:b03:b0:536:53c2:8179 with SMTP id
+ 2adb3069b0e04-53678feb22dmr651075e87.37.1726105830863; Wed, 11 Sep 2024
+ 18:50:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpeml500003.china.huawei.com (7.185.36.200)
+References: <20240911101810.1d5dde08@canb.auug.org.au> <CAK7LNASLc=ik9QdX4K_XuN=cg+1VcUBk-y5EnQEtOG+qOWaY=Q@mail.gmail.com>
+ <ZuGZNLHkUm+MOYpk@oracle.com>
+In-Reply-To: <ZuGZNLHkUm+MOYpk@oracle.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 12 Sep 2024 10:49:53 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQTS9mk7q4Z1f7W+z4WOGT_hfOY87_Xe1=Sw99fyoMj4g@mail.gmail.com>
+Message-ID: <CAK7LNAQTS9mk7q4Z1f7W+z4WOGT_hfOY87_Xe1=Sw99fyoMj4g@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the kbuild tree
+To: Kris Van Hees <kris.van.hees@oracle.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Remove unneeded semicolon.
+On Wed, Sep 11, 2024 at 10:21=E2=80=AFPM Kris Van Hees <kris.van.hees@oracl=
+e.com> wrote:
+>
+> On Wed, Sep 11, 2024 at 06:38:19PM +0900, Masahiro Yamada wrote:
+> > On Wed, Sep 11, 2024 at 9:18???AM Stephen Rothwell <sfr@canb.auug.org.a=
+u> wrote:
+> > >
+> > > Hi all,
+> > >
+> > > After merging the kbuild tree, today's linux-next build (x86_64
+> > > allmodconfig) failed like this:
+> > >
+> > > make[3]: *** Deleting file 'modules.builtin.ranges'
+> > > /bin/sh: 1: scripts/generate_builtin_ranges.awk: not found
+> > > make[3]: *** [scripts/Makefile.vmlinux:47: modules.builtin.ranges] Er=
+ror 127
+> > > make[2]: *** [Makefile:1157: vmlinux] Error 2
+> > > make[2]: *** Waiting for unfinished jobs....
+> > > make[1]: *** [Makefile:224: __sub-make] Error 2
+> > > make: *** [Makefile:224: __sub-make] Error 2
+> > > Command exited with non-zero status 2
+> > >
+> > > Caused by commit
+> > >
+> > >   04b15cdd611a ("kbuild: generate offset range data for builtin modul=
+es")
+> > >
+> > > I do not have gawk installed - I do have mawk installed (as awk).  Do=
+es
+> > > this script actually need gawk, or will just plain awk suffice?
+>
+> The scripts does need gawk because other flavours like mawk do not have t=
+he
+> features that the scripts depend on.
+>
+> > >
+> > > I have installed gawk.
+> > >
+> >
+> >
+> > This is what I was worried about.
+> >
+> > As Documentation/process/changes.rst was modified in that commit,
+> > it specifically requires GNU AWK.
+> >
+> > Anyway, you were able to fix the build error
+> > by installing /usr/bin/gawk.
+> >
+> > If a distro installs gawk somewhere else,
+> > (/usr/local/bin/gawk, for example), it is a problem.
+> > The shebang "#!/usr/bin/gawk -f" will not work.
+> > "#!/usr/bin/env gawk -f" will not work either.
+> >
+> > More people may start complaining about it.
+>
+> For the generator script, passing it as a script explicitly to gawk would
+> work because then the regular PATH search will apply, i.e.
+>
+>         gawk -f scripts/generate_builtin_ranges.awk <args>
+>
+> The scripts/verify_builtin_ranges.awk script can be invoked the same way,
+> or simply as an executable script if gawk is installed in the standard pl=
+ace.
+>
+>
+> Other utilities that are executed during the kernel build seem to depend
+> on being found using the PATH, so perhaps changing the recipe in the make=
+file
+> to use gawk -f <script> <args> would be an acceptable solution?
+>
+>         Kris
 
-Signed-off-by: Yu Liao <liaoyu15@huawei.com>
----
- drivers/gpu/drm/amd/display/dc/dml2/dml2_utils.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml2_utils.c b/drivers/gpu/drm/amd/display/dc/dml2/dml2_utils.c
-index 92238ff333a4..7595355281c2 100644
---- a/drivers/gpu/drm/amd/display/dc/dml2/dml2_utils.c
-+++ b/drivers/gpu/drm/amd/display/dc/dml2/dml2_utils.c
-@@ -421,7 +421,7 @@ unsigned int dml2_calc_max_scaled_time(
- 
- void dml2_extract_writeback_wm(struct dc_state *context, struct display_mode_lib_st *dml_core_ctx)
- {
--	int i, j = 0;;
-+	int i, j = 0;
- 	struct mcif_arb_params *wb_arb_params = NULL;
- 	struct dcn_bw_writeback *bw_writeback = NULL;
- 	enum mmhubbub_wbif_mode wbif_mode = PACKED_444_FP16; /*for now*/
--- 
-2.33.0
+I think it is better.
 
+
+--=20
+Best Regards
+Masahiro Yamada
 
