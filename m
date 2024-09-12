@@ -1,101 +1,124 @@
-Return-Path: <linux-kernel+bounces-326311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DCE0976667
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:07:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12AB4976681
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:11:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC0271C22C36
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:07:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC2C91F2427C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC7319F429;
-	Thu, 12 Sep 2024 10:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C4D1A3A8B;
+	Thu, 12 Sep 2024 10:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K48XCpxE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="ESZemDJh"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1581B19F404;
-	Thu, 12 Sep 2024 10:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718EB1A3AB4
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 10:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726135660; cv=none; b=BnBBZBNwq2Ui7yq3zba2wRrHSeEFya9sTqYVQzoVAS99esF/NH0NxlqGUggmTIeev9rCteqjV7qeP01ZHWbnYhySYCZI3Ly5VepQxJqyo3f8wa6Yj1s9V9A+G9zZwaCLO1Up5njA+/G+7s/8V/W1bXvMTkIUCQMRp+8UtxeWWvo=
+	t=1726135719; cv=none; b=kaLzEFnuHZVUitPCvqB01ANxRGn9j53ojLgsy6qIW9Uw+N/TRm4I5kNqx4wJvx7si7pULbmNXwFEC5nUY9A2eQcl/bn/SKSvPJYLflLBj8mXR6hsS55EwoQv58QYjCybtD1UZItRmREWkXEUcaUEn6n1kp94yXjmwIjSmA6Wyw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726135660; c=relaxed/simple;
-	bh=IpdC1qHf35nRG6qUjgDllXwIwjChqVrshS7gOGlNxCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PdKc15De0Ui0fk2m9jr9EQuV7w9hErQBYTL8KPWl6RhVucgEZ+Lp0wUFbDOzDgvBLccFPY7EyMsuRZV1k6lE72islnX3jBxWioPNnw5PkVaDEMTd76bJTiA9fl70TZ9KnRNwnISGKZ+7JTsLTZb2xLDXh1sHR9lWDpAA01KX6vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K48XCpxE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7194C4CEC3;
-	Thu, 12 Sep 2024 10:07:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726135659;
-	bh=IpdC1qHf35nRG6qUjgDllXwIwjChqVrshS7gOGlNxCk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K48XCpxEBtS3sCUM32a2hL29xTUoKht3NYuzmOq/4grw8ydiTrinOYO/kFGu+xyLz
-	 I+8FSSXQMEVaSYYHKtnR91/4vrZLCuKKFGfi1oXHR63EQZ8McOhZ8vt5vsVwU0INT6
-	 3tifCnKVxu5JL1tourN6tczzGgBI0qwwWilMxlOOOPCs5rNNm6douO2FT5OkNHg5qk
-	 QcLd1zEu3GCunannyrXiV2rOvoRh2ECgVeLAOOExb4vtguFq+eCerN3ZnKlP/sjUhL
-	 LYdtJXE+3UZsjeZbon2gun4DlRaw/OUlBL0Tu+s7LbGOMkmF7fH9GBU+LGLeCvsI57
-	 FXwyA//Yt594Q==
-Date: Thu, 12 Sep 2024 12:07:31 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Benjamin Coddington <bcodding@redhat.com>
-Cc: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, 
-	Amir Goldstein <amir73il@gmail.com>, Neil Brown <neilb@suse.de>, Trond Myklebust <trondmy@kernel.org>, 
-	Anna Schumaker <anna@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Andreas Gruenbacher <agruenba@redhat.com>, Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>, 
-	Joseph Qi <joseph.qi@linux.alibaba.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, Alexander Ahring Oder Aring <aahringo@redhat.com>, 
-	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, gfs2@lists.linux.dev, ocfs2-devel@lists.linux.dev
-Subject: Re: [PATCH v1 0/4] Fixup NLM and kNFSD file lock callbacks
-Message-ID: <20240912-zuspielen-selektiert-01ef380e0c1b@brauner>
-References: <cover.1726083391.git.bcodding@redhat.com>
+	s=arc-20240116; t=1726135719; c=relaxed/simple;
+	bh=s/eB0UYTC1AYEEH3VudRQLi/msdkh7jY0S2zgb5pk80=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Q9sXN/CrqPaZCOSXH98Xv/P65wOF+2n6OmmCqefCgTCvWeK6CEQmPtMEkf+sjz4BH1PbTftRz8Rfk4I3biyc4IGuqCNgGTRRGAMCWkZkICLSPZ8chY4qWOJGhrWljYf6K9Q6Nb7YqUiypFoiaWW5O8qvhBzDNKWdEwNrhZou+G4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=ESZemDJh; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20696938f86so6371505ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 03:08:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1726135718; x=1726740518; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6mXBwSKozkxlqlprwr3kG9JlKq4geePGoujrr2DPc0I=;
+        b=ESZemDJh6wcHZ24cPeu6kffi6G91KixdQD9FFfPtRLjr4n2lZYtJWO1/jb5y6q1XeR
+         aCIPD1RWZ0OmqDGfP1UO8nOvrK/pKUpqj4QAzrmquTF8/ckZP2pSsqVjWxOQZ2jUSdsN
+         9sXRbxrVwnOTUuEeD8xdET4hxh10fkAD8hnWw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726135718; x=1726740518;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6mXBwSKozkxlqlprwr3kG9JlKq4geePGoujrr2DPc0I=;
+        b=vdVafzgfqu7H4STqccBpys8ON/GGu76YqRMaM5sSYZki1qzF5hlw54AK3Oc6A2Bnc7
+         HeDpGD+PXzcZcL6OQLF9XiZTCzqPr5i1TpjVfL32I4dSTmIi7UARQM2+7D5UYwqTLl9w
+         26Yit5bzVO1nYj+D6tAaJbIzgOr2o5RNOOz7wWOApIxuhOZSvM3I1glc1GOJZOtV2Pf4
+         u9w39nDsEqxOoC8g6JmZa9Mt06zpHCjCTGA25RIdJLsEth9ykj/fouCurr1TDd4oaiqR
+         6tkpCZElaVc1vpsk8S9x3xsW88aZ3fNysAzhuB62QBTLaE2uIcpPoRDwmRiH3OnHEgoT
+         C6uw==
+X-Forwarded-Encrypted: i=1; AJvYcCVXb6S8D+Y8o/2Y78JNFNV4GULqIc+rkmsMi9JdAiklhnn0YeYGBnwfcDrdyVCQ7mN5nuJC7v5omC6cJ5o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkUEWULSec0rKse6fT4WTFy/RUwi0RXOKwTPm3u1EPkYiIHgVA
+	L3i9zSMgf0arUmLlMfw73gbFCfp+KDjAzPB7iXmuHx73J7BQFZTJ7x0saH8AhyI=
+X-Google-Smtp-Source: AGHT+IFSoMMNdhMqFLlbog9Rk12cky6TPNTKRafsz+QCYUczoZ8xRY18wAqCAs4kv3WrpdOHoCl8Fg==
+X-Received: by 2002:a17:903:4484:b0:202:5af:47fc with SMTP id d9443c01a7336-2076e347ef2mr23829015ad.13.1726135717792;
+        Thu, 12 Sep 2024 03:08:37 -0700 (PDT)
+Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076afe9da3sm11583795ad.239.2024.09.12.03.08.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 03:08:37 -0700 (PDT)
+From: Joe Damato <jdamato@fastly.com>
+To: netdev@vger.kernel.org
+Cc: mkarsten@uwaterloo.ca,
+	kuba@kernel.org,
+	skhawaja@google.com,
+	sdf@fomichev.me,
+	bjorn@rivosinc.com,
+	amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com,
+	Joe Damato <jdamato@fastly.com>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-rdma@vger.kernel.org (open list:MELLANOX MLX4 core VPI driver),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [RFC net-next v3 9/9] mlx4: Add support for napi storage to RX CQs
+Date: Thu, 12 Sep 2024 10:07:17 +0000
+Message-Id: <20240912100738.16567-10-jdamato@fastly.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240912100738.16567-1-jdamato@fastly.com>
+References: <20240912100738.16567-1-jdamato@fastly.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cover.1726083391.git.bcodding@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 11, 2024 at 03:42:56PM GMT, Benjamin Coddington wrote:
-> Last year both GFS2 and OCFS2 had some work done to make their locking more
-> robust when exported over NFS.  Unfortunately, part of that work caused both
-> NLM (for NFS v3 exports) and kNFSD (for NFSv4.1+ exports) to no longer send
-> lock notifications to clients.
-> 
-> This in itself is not a huge problem because most NFS clients will still
-> poll the server in order to acquire a conflicted lock, but now that I've
-> noticed it I can't help but try to fix it because there are big advantages
-> for setups that might depend on timely lock notifications, and we've
-> supported that as a feature for a long time.
-> 
-> Its important for NLM and kNFSD that they do not block their kernel threads
-> inside filesystem's file_lock implementations because that can produce
-> deadlocks.  We used to make sure of this by only trusting that
-> posix_lock_file() can correctly handle blocking lock calls asynchronously,
-> so the lock managers would only setup their file_lock requests for async
-> callbacks if the filesystem did not define its own lock() file operation.
-> 
-> However, when GFS2 and OCFS2 grew the capability to correctly
-> handle blocking lock requests asynchronously, they started signalling this
-> behavior with EXPORT_OP_ASYNC_LOCK, and the check for also trusting
-> posix_lock_file() was inadvertently dropped, so now most filesystems no
-> longer produce lock notifications when exported over NFS.
-> 
-> I tried to fix this by simply including the old check for lock(), but the
-> resulting include mess and layering violations was more than I could accept.
-> There's a much cleaner way presented here using an fop_flag, which while
-> potentially flag-greedy, greatly simplifies the problem and grooms the
+Use netif_napi_add_storage to assign per-NAPI storage when initializing
+RX CQ NAPIs.
 
-It's fine. I've explicitly added the fop_flags so that stuff like this
-we would not want to put into f->f_mode can live there.
+Presently, struct napi_storage only has support for two fields used for
+RX, so there is no need to support them with TX CQs, yet.
 
-> way for future uses by both filesystems and lock managers alike.
+Signed-off-by: Joe Damato <jdamato@fastly.com>
+---
+ drivers/net/ethernet/mellanox/mlx4/en_cq.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/mellanox/mlx4/en_cq.c b/drivers/net/ethernet/mellanox/mlx4/en_cq.c
+index 461cc2c79c71..6943268e8256 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/en_cq.c
++++ b/drivers/net/ethernet/mellanox/mlx4/en_cq.c
+@@ -156,7 +156,8 @@ int mlx4_en_activate_cq(struct mlx4_en_priv *priv, struct mlx4_en_cq *cq,
+ 		break;
+ 	case RX:
+ 		cq->mcq.comp = mlx4_en_rx_irq;
+-		netif_napi_add(cq->dev, &cq->napi, mlx4_en_poll_rx_cq);
++		netif_napi_add_storage(cq->dev, &cq->napi, mlx4_en_poll_rx_cq,
++				       cq_idx);
+ 		netif_napi_set_irq(&cq->napi, irq);
+ 		napi_enable(&cq->napi);
+ 		netif_queue_set_napi(cq->dev, cq_idx, NETDEV_QUEUE_TYPE_RX, &cq->napi);
+-- 
+2.25.1
+
 
