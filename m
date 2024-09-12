@@ -1,112 +1,111 @@
-Return-Path: <linux-kernel+bounces-326355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 623B3976719
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:59:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DE3797671C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03004285121
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:59:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0DE01C23293
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A55A19F436;
-	Thu, 12 Sep 2024 10:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0548919F419;
+	Thu, 12 Sep 2024 11:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Rw3XyZgH"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vguxJ7Yf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA2A01917E9
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 10:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C397DA81;
+	Thu, 12 Sep 2024 11:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726138785; cv=none; b=H2Fhikabq3t/u9BbvsrFofUsUOei4mmm8M7xuShcyacKMyRmvDO3+AydNx+DlKbYj69RTYEvAhtO7/ZPQcQZMmn6hkrr8gI0diHYbiS2IOTn+fw8XMWwVRmcG8DUxoqFMovth0YpIlw0dh3IAFVeFE8qU0MsCggvRLfNz/XGUGE=
+	t=1726138878; cv=none; b=AMLYQ487P6wS3NEH25h8sJghm15iDzPVYTp/fvtpL/7DOBKgRAdLNrll7gtp8GAnYFx84BtdvbXDfpD4lVoomoRJp+92dSGj039s9RdLba6ehOZM4ut1CFkZ0edLXe1rcGpMC8k90Ut31DqBi03of6msHRFdlT/rkR3wCJBV1Fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726138785; c=relaxed/simple;
-	bh=VZZ7uZM82VLdy3ctQk1FXMl3TZiKwSrNvb8gGxaGNm0=;
+	s=arc-20240116; t=1726138878; c=relaxed/simple;
+	bh=fXQcQtrV0+Va2dCrpxf845jeSK2LMbLalbklwUSo7Tw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mBGrb3gSEvHPwbu8S+wDfxvs0vKv873SRE4P1JsVwqGlhR3H5hPyMZqk9LVu6RB2ci0rTeB8tkB3xZ5/WXxVuxTBdtP423U+hUfBIT/R9zGVe3k8VbTkIhnVyM25RC+Hp3VS5vHSadBZpLLxVyXj1oUmaGZno2pcsHyg+ZPZwB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Rw3XyZgH; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4663F40E0081;
-	Thu, 12 Sep 2024 10:59:41 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id AjzXOd9xJtGB; Thu, 12 Sep 2024 10:59:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1726138777; bh=4CW4dS8LJjFe3/o+6RYr7BQ1B8c7f0qe+Qtwyr8k9Dg=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=foHyStYxhCC7CPwfRWTNYeQIyNxhq/Yc4A8NXJCKdo0v3gvfoCgZPCIycjhw+i58E2wnEnW4TiGK922SR33pAtbybNZRXOD4ffbXYmKx2r00FUmWjfsOWxkG4XP5LVffgT4rnTfCfnEwl2RQKoaXuzsesCAkKTexDY0pbp5r2XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vguxJ7Yf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58EFCC4CEC3;
+	Thu, 12 Sep 2024 11:01:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1726138877;
+	bh=fXQcQtrV0+Va2dCrpxf845jeSK2LMbLalbklwUSo7Tw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Rw3XyZgHiyj5Hn7OnetUSFY/wlbZSflqRCCnoX9/y7pcQq5U/p0h3Q0xp5xxBa1PH
-	 NTGJznBj+pS6JDmnXbVyQSs0n76sn9l9+wMp2a98zMx157uQKesdilG2ytJk4hUTah
-	 Wemfa+JvoudDOA3U1qs7hyj99EVCj2eDA82E/++E5n5hcijUgjU9hu/qcNY7CdqRLw
-	 9YAGGh1yCwsXbSslGplI/A9a5iTKH8lvTJHR73WUqhvFYMtsAdATXuNj36amTwJRrH
-	 TtaA/qaXFqgs8lblTEsyziOuHYArB23hIfQ7px0eM3hVVE+KwdIdkQxAKacVOtRWG8
-	 tyTd3BcixoLL0mTWfN3uVFMJT5l2l6VDXv0zVpy+P4FeYn/vdCidUl/C61Z5O6Qcip
-	 klVTfGTNWguvHsUkHNfV8rzPcYuhTG0gTNlmSjrhsWPSAfEYchCRwUOFPfNgGGD7UH
-	 sGu7pFLzSkg4wIgQrX8vgifcTMr5LeKvoyJVswsILufMYThI9XAYMPS9r7lWFDTaFv
-	 UEKW8cyZGsHAfuUOkzFzRiviE/pSe41tscTqJ7XyiFLzIh1qPpGCMG0lEopIsa8c0H
-	 HzwGszbJwNolxhMc4E3nlnPR1PeDFc6keYDsKccw1+Rr1tQUsIK0KiqkokAotzYW/H
-	 ihW5YcNNQSbocJtZF6p3i8wE=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E6A9A40E0288;
-	Thu, 12 Sep 2024 10:59:18 +0000 (UTC)
-Date: Thu, 12 Sep 2024 12:59:18 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc: x86@kernel.org, Andreas Herrmann <aherrmann@suse.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Chen Yu <yu.c.chen@intel.com>, Len Brown <len.brown@intel.com>,
-	Radu Rendec <rrendec@redhat.com>,
-	Pierre Gondois <Pierre.Gondois@arm.com>, Pu Wen <puwen@hygon.cn>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Will Deacon <will@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Ricardo Neri <ricardo.neri@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/4] cacheinfo: Allocate memory during CPU hotplug if
- not done from the primary CPU
-Message-ID: <20240912105918.GBZuLJhtVBHKK54KFD@fat_crate.local>
-References: <20240905060036.5655-1-ricardo.neri-calderon@linux.intel.com>
- <20240905060036.5655-3-ricardo.neri-calderon@linux.intel.com>
- <20240911140844.GFZuGkbHQ_E-K5LW1q@fat_crate.local>
- <20240911233410.GA7043@ranerica-svr.sc.intel.com>
+	b=vguxJ7YfhP6ntceJ2F89PLgmk976qLE7NK0UYdRiLaWmaT6u2u1WnC+MuaGJW6juJ
+	 ibzIv3VtQMKns2MxjjNr1Bjw/4Mn9E6+oSWUQPqaf2hmhKgEO5ygdXnViKS7nRsq9g
+	 /KP/0Zl2ynIAlOQSmxudQGwqbjRY2X2GhMfDZ7mY=
+Date: Thu, 12 Sep 2024 13:01:14 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Chun-Yi Lee <joeyli.kernel@gmail.com>
+Cc: Justin Sanders <justin@coraid.com>, Jens Axboe <axboe@kernel.dk>,
+	Pavel Emelianov <xemul@openvz.org>,
+	Kirill Korotaev <dev@openvz.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Nicolai Stange <nstange@suse.com>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Chun-Yi Lee <jlee@suse.com>
+Subject: Re: [PATCH v2] aoe: fix the potential use-after-free problem in more
+ places
+Message-ID: <2024091202-frivolous-reimburse-3639@gregkh>
+References: <20240912102935.31442-1-jlee@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240911233410.GA7043@ranerica-svr.sc.intel.com>
+In-Reply-To: <20240912102935.31442-1-jlee@suse.com>
 
-On Wed, Sep 11, 2024 at 04:34:10PM -0700, Ricardo Neri wrote:
-> Yes, both patches address issues during CPU hotplug (both NULL-pointer
-> dereference). However, IHMO, they are separate issues. Patch 1/4 fixes
-> a missing allocation check. Patch 2/4 causes the allocation to happen in
-> case early allocation is not used.
+On Thu, Sep 12, 2024 at 06:29:35PM +0800, Chun-Yi Lee wrote:
+> For fixing CVE-2023-6270, f98364e92662 ("aoe: fix the potential
+> use-after-free problem in aoecmd_cfg_pkts") makes tx() calling dev_put()
+> instead of doing in aoecmd_cfg_pkts(). It avoids that the tx() runs
+> into use-after-free.
 > 
-> If I did not convince you, I am happy to merge together patches 1 and 2.
+> Then Nicolai Stange found more places in aoe have potential use-after-free
+> problem with tx(). e.g. revalidate(), aoecmd_ata_rw(), resend(), probe()
+> and aoecmd_cfg_rsp(). Those functions also use aoenet_xmit() to push
+> packet to tx queue. So they should also use dev_hold() to increase the
+> refcnt of skb->dev.
+> 
+> Link: https://nvd.nist.gov/vuln/detail/CVE-2023-6270
+> Fixes: f98364e92662 ("aoe: fix the potential use-after-free problem in aoecmd_cfg_pkts")
+> Reported-by: Nicolai Stange <nstange@suse.com>
+> Signed-off-by: Chun-Yi Lee <jlee@suse.com>
+> ---
+> 
 
-Well, what is easier to handle by stable and/or backporters: one patch or two
-patches fixing two very similar CPU hotplug isuses in cacheinfo?
+Hi,
 
-IOW, what is the benefit in having two patches instead of one?
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
--- 
-Regards/Gruss,
-    Boris.
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-https://people.kernel.org/tglx/notes-about-netiquette
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
