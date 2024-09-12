@@ -1,133 +1,106 @@
-Return-Path: <linux-kernel+bounces-326948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9C06976EEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:42:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 138C1976EEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:43:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C2A71F262BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:42:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C6CCB21F17
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:43:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDDC1B372E;
-	Thu, 12 Sep 2024 16:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDBCE1AE87F;
+	Thu, 12 Sep 2024 16:43:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="puq01Qub"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="foLVDVI9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ECE213E02E
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 16:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FE913D531;
+	Thu, 12 Sep 2024 16:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726159325; cv=none; b=kvvPtNGfiRGFwOZhklUOIRAxL7j+Jn3Zwsx8w2BpQKXh8Lwa1PKIejMOtFU6D8beH2Lz5+M5FbiyQI8UEO252WWSgJ8w3NfkvH9y/u+heeZkKhJ7vzX6H9fV2Pj8jkB3+RLuRG/yJ5JW8REp8Ifzr2klJ9f9AxE9utLrqUj3CCM=
+	t=1726159380; cv=none; b=deQqAhVNI9Eobg0iI25mivO6q6i5dJbMcdvz1z1VLLt3abSAA2qa5RjJU0WQR2Pkpw31QngcL6OIPRBCKodFQRGk5faOxSFkZmSinUaKEx64H4foUOqXJKcmn5GI+RVAr4alwjEX20q0T9HKX8Unxlh9AjpCSOLQ9b2f5a/yAVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726159325; c=relaxed/simple;
-	bh=M8+PBkR1oiKaZ9r0U3hmulmioggnq2eSV2q1S5zMC+0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=PBhSBeDKbaLXg2XaIZlzgnrDnKvHUemPJW+EqDL+TMrbiYe2T5UxoxvhJFG6Rwa3SuBMWmjJAGhWQ0UnpN83dIYmll6W8cmjAjmSL614sXWXXYWkJNVGpo9d1+NX3GD/ardO4F0RaaN1/1AaCiSVztTcqx7/qwlBoG3m3od3j9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=puq01Qub; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-718f200ae10so1955648b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:42:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726159324; x=1726764124; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rSoCh08e7KyIe42FqcDSlKyKAmA7DtL1wDAOqCxQHdc=;
-        b=puq01QuboNfVOMxf7e40McHTV1agOhvOPvYu4amy84DKXsolLOj0kiGsw92X48S+At
-         1dKE/gfouabJlqwYyK57WLzEYFBvxNikSRGIylKyftfIlt6qUJ4mdG2bCVQTbgOLjOx3
-         SPrNUvkWUDosFjJjqOiJ6TrlG85rGl2vsfnZYYsLrBlfxLGmjwoW1cs/JKhAzeav70CO
-         ngoTt7zPuA5KdDDJJangv9hdmKO6D6OB3+eqQCpFM3TR/MEJgsBss/DvM8N+F9LtYGnn
-         J/EqYpgJvqEWob6Rog5cwaOEqXJN2f5jJZrQJqjnD8KUxrz9KtGEgfn3PaKE/TMKkAvp
-         pjXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726159324; x=1726764124;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rSoCh08e7KyIe42FqcDSlKyKAmA7DtL1wDAOqCxQHdc=;
-        b=TM0HR17eozFx3IiwSf3prV5mPJMH7oSHCz7YzRHas34/TOWy/eQP7Owlroj0BiVANB
-         xpN8oeARpnZlxaYxpPLFHD+Rg5KxfyN+DfFLz5sRdMG6ybzgtdFbBf/XYBpOIEYIT44m
-         EhIHEyJdTwjjuQNsiVf550eQLlx2hQH7Yu38CbcB+3XM8ON1pvyGUhp0mJ3ApO3naJ0u
-         QXU7/ZgcNkwUMEuFsMt+mUMKlb6PTB2NuOf4usgWlYJtb8fp3poAwFbfyMLxMHiGtaOE
-         eqgstNLLnvO04cMU+EVGVSQannfhXTTioV6OC/yXnjDb6e/jjIQUYtiL7Bb+Rcd4cseo
-         Uecw==
-X-Forwarded-Encrypted: i=1; AJvYcCXpDc5gPw/TNQcJCLMKaQ+aBcQIdl4ZgThRzumA4tb2H0rd3LezlDuKgcms1taZH+FvkNytXPd0oZYqdsA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOq+3s1s4y4Jevmgmm2wsPcbqTlKqlL5HHvxyhCHqoZg7jCbgo
-	MdxkdP3ixTkHyRJQx0kusFAgDdTbMcIVWPPo4R7R2rCOjnQejtbbDqS4RH7DKJ+G8maOobv0v6H
-	jQw==
-X-Google-Smtp-Source: AGHT+IHkyO/EL/QePhqc2gP93gRsoRCw7q0rkAv7kqtImZ/C3jpRgKOYW4ykEt82kgck1ZXLgTMrSjCLuEQ=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:81c2:b0:714:24bf:eaee with SMTP id
- d2e1a72fcca58-7192606cea9mr9155b3a.2.1726159323719; Thu, 12 Sep 2024 09:42:03
- -0700 (PDT)
-Date: Thu, 12 Sep 2024 09:42:02 -0700
-In-Reply-To: <CABgObfZ5ssWK=Beu7t+7RqyZGMiY2zbmAKPy_Sk0URDZ9zbhJA@mail.gmail.com>
+	s=arc-20240116; t=1726159380; c=relaxed/simple;
+	bh=Dy1qB/XUHzJb3yDZ0ZEhR9UA1RtJzn1qcAKojgpMbkA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=TGCQY7BplZ5BG0rdqlweTvkinYUqDwLFpVqDZ0kEAOo0xfpS9pH40J6jKFzXrcsAd589YIdCJ2o6TFPRTi0+ZxRl1DObFkhGOMy8vVN9L9OofbhnSQSL+qbrJ/Lhv3gO8L4O4z9Ib6puCrGZoAaX2JMoUoWmDHoQ85mUv7YOee0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=foLVDVI9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9D61C4CEC3;
+	Thu, 12 Sep 2024 16:42:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726159379;
+	bh=Dy1qB/XUHzJb3yDZ0ZEhR9UA1RtJzn1qcAKojgpMbkA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=foLVDVI9AfPDYA7d331pQScZys3QViy8YFispaPcU94eac/Sgv2vXRAHw1aa91TmF
+	 WqmhP/DSK9gYpPMhCwzb24+r3ZEk0YWgFaxwHD+gwLtfcEuBLJwH2tCvzC6pmxGpSg
+	 Fzbd4DFAE1jEALXiXBT9009s153vbvLb5qKnTLTKYS84ufgQ704/AGduQm58TD/Buc
+	 9hqsFw1kI8SKNNBS8KyZSpldbBrIuauznVrnWSzOcloDRxmheGB7v3YqqbbqNPJ2b7
+	 kXs2AFn32HeLqtabc1MkSrtqVxTFd4rtD2mqzHiFOtINLZcq5lXxwasLg+QAhlfnri
+	 Po/AkqBgaKd2A==
+From: Mark Brown <broonie@kernel.org>
+To: claudiu.beznea@tuxon.dev, lgirdwood@gmail.com, perex@perex.cz, 
+ tiwai@suse.com, nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, 
+ Andrei Simion <andrei.simion@microchip.com>
+Cc: alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240911122909.133399-1-andrei.simion@microchip.com>
+References: <20240911122909.133399-1-andrei.simion@microchip.com>
+Subject: Re: [PATCH 0/3] Improvements for mchp-pdmc
+Message-Id: <172615937761.64859.1968686198308301512.b4-ty@kernel.org>
+Date: Thu, 12 Sep 2024 17:42:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-26-rick.p.edgecombe@intel.com> <05cf3e20-6508-48c3-9e4c-9f2a2a719012@redhat.com>
- <cd236026-0bc9-424c-8d49-6bdc9daf5743@intel.com> <CABgObfbyd-a_bD-3fKmF3jVgrTiCDa3SHmrmugRji8BB-vs5GA@mail.gmail.com>
- <df05e4fe-a50b-49a8-9ea0-2077cb061c44@intel.com> <CABgObfZ5ssWK=Beu7t+7RqyZGMiY2zbmAKPy_Sk0URDZ9zbhJA@mail.gmail.com>
-Message-ID: <ZuMZ2u937xQzeA-v@google.com>
-Subject: Re: [PATCH 25/25] KVM: x86: Add CPUID bits missing from KVM_GET_SUPPORTED_CPUID
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Xiaoyao Li <xiaoyao.li@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	kvm@vger.kernel.org, kai.huang@intel.com, isaku.yamahata@gmail.com, 
-	tony.lindgren@linux.intel.com, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-99b12
 
-On Thu, Sep 12, 2024, Paolo Bonzini wrote:
-> On Thu, Sep 12, 2024 at 4:45=E2=80=AFPM Xiaoyao Li <xiaoyao.li@intel.com>=
- wrote:
-> > > KVM is not going to have any checks, it's only going to pass the
-> > > CPUID to the TDX module and return an error if the check fails
-> > > in the TDX module.
-> >
-> > If so, new feature can be enabled for TDs out of KVM's control.
-> >
-> > Is it acceptable?
->=20
-> It's the same as for non-TDX VMs, I think it's acceptable.
+On Wed, 11 Sep 2024 15:29:06 +0300, Andrei Simion wrote:
+> This patch set is intended to enhance the functionality and maintainability
+> of the mchp-pdmc driver:
+> - Enhances performance by refining maxburst logic.
+> - Introduces a name for better identification and management.
+> - Ensures controls remain intact when streams start/finish,
+>   returning -EBUSY if the controller is busy.
+> 
+> [...]
 
-No?  IIUC, it's not the same.
+Applied to
 
-E.g. KVM doesn't yet support CET, and while userspace can enumerate CET sup=
-port
-to VMs all it wants, guests will never be able to set CR4.CET and thus can'=
-t
-actually enable CET.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-IIUC, the proposal here is to allow userspace to configure the features tha=
-t are
-exposed _and enabled_ for a TDX VM without any enforcement from KVM.
+Thanks!
 
-CET might be a bad example because it looks like it's controlled by TDCS.XF=
-AM, but
-presumably there are other CPUID-based features that would actively enable =
-some
-feature for a TDX VM.
+[1/3] ASoC: atmel: mchp-pdmc: Improve maxburst calculation for better performance
+      commit: 8f0280c84607afe122788e508a171ba163d71be6
+[2/3] ASoC: atmel: mchp-pdmc: Add snd_soc_dai_driver name
+      commit: e6b95bdc1e333e14e4fdf71fd4e8962429d9b6cd
+[3/3] ASoC: atmel: mchp-pdmc: Retain Non-Runtime Controls
+      (no commit info)
 
-For HYPERVISOR and TSC_DEADLINE_TIMER, I would much prefer to fix those KVM=
- warts,
-and have already posted patches[1][2] to do exactly that.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-With those out of the way, are there any other CPUID-based features that KV=
-M
-supports, but doesn't advertise?  Ignore MWAIT, it's a special case and isn=
-'t
-allowed in TDX VMs anyways.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-[1] https://lore.kernel.org/all/20240517173926.965351-34-seanjc@google.com
-[2] https://lore.kernel.org/all/20240517173926.965351-35-seanjc@google.com
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
