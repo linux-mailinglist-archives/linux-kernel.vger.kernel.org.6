@@ -1,131 +1,101 @@
-Return-Path: <linux-kernel+bounces-325846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 680C9975EE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:30:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31C93975EEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:32:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91E50B234DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:30:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9E61281ABE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE29C4AED1;
-	Thu, 12 Sep 2024 02:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H8/l9Jml"
-Received: from mail-yb1-f193.google.com (mail-yb1-f193.google.com [209.85.219.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0681041C89;
+	Thu, 12 Sep 2024 02:32:32 +0000 (UTC)
+Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00653A8E4;
-	Thu, 12 Sep 2024 02:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2466746BF;
+	Thu, 12 Sep 2024 02:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726108196; cv=none; b=srvQypltVXEb1vmxjfND+wZjwKaFA+K//hh5LL1DddoOpgC5xae72d9rRxrOoTOILdZtBGFqpMDOFf+UjKNPNfbEswf44/UOXfexxZGsT8lrd2xTIz41a/SVBpRcQsf9KCNnKX02kSTgHownmy/o3vBiV2kCNqaZOPviNqWiVwk=
+	t=1726108351; cv=none; b=KsUSw5aCNmK8pZAtUW2JyAaR/bQUbfBKeqVWqpQpQ8TaKqtMx471ZruobVkxgxuMS3TeE8fcjJEmecSI2xQAvGx1gHoEyc4T9bLd3NdoSWvPIX68qUQDupT7VqyCvcnKBNXNabJdvfDoFkSNn1qI1FoT9FngGzcLyXQkkeNFXWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726108196; c=relaxed/simple;
-	bh=t08umSXdAuGeBddaW526nzG0WyKi1PzANkSvIgym6lo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PkaPBfLQgLoJ24Dhe8jDFnF2L9EbMjdOVvr1X1zXB/yiz0kMxMl349l1mVMZf7GKj8qEuZU/InzE4OD/VC7cmg5alfaQhFOs/yE3E/PSxUjmJupFtjZRNK0QEPIjUtfcYAY8T9do9hVMDdhSS+RRSqsG5EPOX+FJSUeenj5tCmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H8/l9Jml; arc=none smtp.client-ip=209.85.219.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f193.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso541873276.0;
-        Wed, 11 Sep 2024 19:29:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726108194; x=1726712994; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mWRMmHm+FfWDYa8yX01QI6M1EYeU0fnEELtdBrM9ofw=;
-        b=H8/l9JmliZTmlC+we2Zfp06Lp2UrmFOGlS6F54zAgPWgBjyn+sjEPnakdWsOz/1X/E
-         H2DH3SNIxl9jMvawXRBTZdZz3FJQRTukVtdyaGGHodE1nGCoDp41BJ/PdnKjFwmmxsSF
-         YTrHH5LXojpqTUm7vBEBvxNJF9p2/VLq2aLxqy0vJg7hxIsvYd7KeAz0B5FmXRt8KNVG
-         0wwz9szRDZ++sKQS6KUkUrO44x5pVw8Rx9S2v2xAaTxFQQKWBo4RQosADh8Rud+wqlSl
-         4Y1oiNnx1CwJlKiWk8aVH63Cr4AVBkRTYljydCndolO5fqmcA2UYlAwWWLb51QMuZqX6
-         XQRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726108194; x=1726712994;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mWRMmHm+FfWDYa8yX01QI6M1EYeU0fnEELtdBrM9ofw=;
-        b=safbRqW3fhqRXoCDMFhRPS99pNZdktiAoslR1Kz8E4EYo89OnTMunwwWM9sI+A+Kx8
-         7xx54GiJCM8losy+/dKwYQ+kqCnj1AFBvDjgMLNp71+fDSsB4LaUZJU0ANaz/v4oH6Jd
-         dsVE0MVjCX8YM001GzaYsSfusgAeXrzM9wQa/u5Glt+iFCFs7te4/4mPfl6oTpVdgAkf
-         Htu+CkvsnICIqL66R+caOnKD06dde37dXMZR9B6BBCUV1L8Yku1UduIt/93e04mci1xS
-         hn3jzHXAjbp1N0Y9wJZzQc4cBMftmDAHmujMNGbzAz2tqOs6DoOrtdkffSTIvQYAySW1
-         0mCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVuJQXwISg8SS14x8FQby0LeewyCUOFU3sW7t9KYUOvZka6rtSuW7o10frYPu1SpHF1hIMku1Q5@vger.kernel.org, AJvYcCXGcHXeULT2RABVOhGeMLzpBTgDgE+jsAgKfI8obY3SBj0RvAG9RIYX0FLB1v8BLspuCDZN6Iul5qSvmIE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiyHR37bLxSYdaHUyBmJYWEVMVJ1nLFAtLU4ptvVFzjIHsn/9C
-	YzWayl9PptRceG3rppXn7plUbnMp9uxw2HLns9mYo8G4Iu4X+IDpRsDa0WEu7e30I9FejEL+DCp
-	0PO/kf1E7jGhy0trsvjPuMKrDAMk=
-X-Google-Smtp-Source: AGHT+IExPuoKunfojdj2czxk8KU+K07L0H57eNKlbS8wQqYKtiU+V90C/1MT/sEzKtMGaP4J/Nqfdiu31017kjeWy/M=
-X-Received: by 2002:a05:6902:1149:b0:e11:82fb:70c with SMTP id
- 3f1490d57ef6-e1d9dc6624bmr1844103276.51.1726108193657; Wed, 11 Sep 2024
- 19:29:53 -0700 (PDT)
+	s=arc-20240116; t=1726108351; c=relaxed/simple;
+	bh=ZmUjudHiyuEWMBzCozWoAuZie6RwccvbeHh4MzHt5nM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=R/9lMNEM/YjbH5WOy3ZS3pVXVa7c5woYqV9iAZPfaUoNvjA/Uvt2+MnPs10J/3Jli8SBWpwlRlo9RwlqQwmwLedjU8KM7uHoA+tf/BHPMUvo2pPnHjgKgG078oCKJUzerpQgqOchhAuJhXTyZaMIkUTi7N4bFzIefkw7KPc2les=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=101.71.155.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from amadeus-Vostro-3710.lan (unknown [IPV6:240e:3b3:2c02:fc40::1])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id 8786E7E0187;
+	Thu, 12 Sep 2024 10:30:22 +0800 (CST)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: bigfoot@classfun.cn
+Cc: amadeus@jmu.edu.cn,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	dsimic@manjaro.org,
+	heiko@sntech.de,
+	jonas@kwiboo.se,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v3 3/3] arm64: dts: rockchip: add dts for Ariaboard Photonicat RK3568
+Date: Thu, 12 Sep 2024 10:30:18 +0800
+Message-Id: <20240912023018.23986-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240911122809.1789778-5-bigfoot@classfun.cn>
+References: <20240911122809.1789778-5-bigfoot@classfun.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909071652.3349294-1-dongml2@chinatelecom.cn>
- <20240909071652.3349294-7-dongml2@chinatelecom.cn> <ZuFP9EAu4MxlY7k0@shredder.lan>
-In-Reply-To: <ZuFP9EAu4MxlY7k0@shredder.lan>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Thu, 12 Sep 2024 10:30:01 +0800
-Message-ID: <CADxym3ZUx7v38YU6DpAxLU_PSOqHTpvz3qyvE4B3UhSHR2K67w@mail.gmail.com>
-Subject: Re: [PATCH net-next v3 06/12] net: vxlan: make vxlan_snoop() return
- drop reasons
-To: Ido Schimmel <idosch@nvidia.com>
-Cc: kuba@kernel.org, aleksander.lobakin@intel.com, horms@kernel.org, 
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
-	dsahern@kernel.org, dongml2@chinatelecom.cn, amcohen@nvidia.com, 
-	gnault@redhat.com, bpoirier@nvidia.com, b.galvani@gmail.com, 
-	razor@blackwall.org, petrm@nvidia.com, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCHkNDVkkeTRgYQk0dSR9OQlYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJT0seQUgZSEFJGEtJQR0YT0tBQUpZV1kWGg8SFR0UWUFZT0tIVUpLSUJDQ0
+	xVSktLVUtZBg++
+X-HM-Tid: 0a91e411456003a2kunm8786e7e0187
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PDY6Thw6TjI0Ti0jLUMKNRE4
+	OAkaCUJVSlVKTElNSktDSUlISU1JVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
+	Sx5BSBlIQUkYS0lBHRhPS0FBSllXWQgBWUFKQkxLNwY+
 
-On Wed, Sep 11, 2024 at 4:08=E2=80=AFPM Ido Schimmel <idosch@nvidia.com> wr=
-ote:
->
-> On Mon, Sep 09, 2024 at 03:16:46PM +0800, Menglong Dong wrote:
-> > @@ -1447,7 +1448,7 @@ static bool vxlan_snoop(struct net_device *dev,
-> >
-> >       /* Ignore packets from invalid src-address */
-> >       if (!is_valid_ether_addr(src_mac))
-> > -             return true;
-> > +             return SKB_DROP_REASON_VXLAN_INVALID_SMAC;
->
-> [...]
->
-> > diff --git a/include/net/dropreason-core.h b/include/net/dropreason-cor=
-e.h
-> > index 98259d2b3e92..1b9ec4a49c38 100644
-> > --- a/include/net/dropreason-core.h
-> > +++ b/include/net/dropreason-core.h
-> > @@ -94,6 +94,8 @@
-> >       FN(TC_RECLASSIFY_LOOP)          \
-> >       FN(VXLAN_INVALID_HDR)           \
-> >       FN(VXLAN_VNI_NOT_FOUND)         \
-> > +     FN(VXLAN_INVALID_SMAC)          \
->
-> Since this is now part of the core reasons, why not name it
-> "INVALID_SMAC" so that it could be reused outside of the VXLAN driver?
-> For example, the bridge driver has the exact same check in its receive
-> path (see br_handle_frame()).
->
+Hi Junhao,
 
-Yeah, I checked the br_handle_frame() and it indeed does
-the same check.
+> ...
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/rockchip/rk3568-photonicat.dts
+> ...
 
-I'll rename it to INVALID_SMAC for general usage.
+> +	rfkill-modem {
+> +		compatible = "rfkill-gpio";
+> +		label = "M.2 USB Modem";
+> +		radio-type = "wwan";
+> +		reset-gpios = <&gpio0 RK_PB0 GPIO_ACTIVE_LOW>;
+> +		shutdown-gpios = <&gpio4 RK_PC4 GPIO_ACTIVE_HIGH>;
+> +	};
 
-Thanks!
-Menglong Dong
-> > +     FN(VXLAN_ENTRY_EXISTS)          \
-> >       FN(IP_TUNNEL_ECN)               \
-> >       FNe(MAX)
+gpio0 RK_PB0 conflicts with xin32k, please add:
+
+&xin32k {
+	pinctrl-names = "default";
+	pinctrl-0 = <&clk32k_out1>;
+};
+
+> +	vccin_5v: regulator-5v0-vcc-in {
+> +	vcc_sysin: regulator-5v0-vcc-sysin {
+> +	vcc_syson: regulator-5v0-vcc-syson {
+> +	vcc5v0_usb30_otg0: regulator-5v0-vcc-usb-host {
+
+obviously (
+
+-- 
+2.25.1
+
 
