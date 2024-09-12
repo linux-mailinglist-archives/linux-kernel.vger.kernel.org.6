@@ -1,110 +1,299 @@
-Return-Path: <linux-kernel+bounces-326610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8C24976AB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:33:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D71976ABD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:34:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD46E1C23A7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:33:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 446F81C23980
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9191AD24D;
-	Thu, 12 Sep 2024 13:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753181AD9CF;
+	Thu, 12 Sep 2024 13:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vWDCZLBo";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5ZcLv+eZ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GjORBQBE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 204A71AD24B;
-	Thu, 12 Sep 2024 13:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91F6F1AC459;
+	Thu, 12 Sep 2024 13:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726147994; cv=none; b=r8QbSvE0j5eBmVVMXClfjKe8dHGlWCZzMbjq7b6xNFyhWa/CG6pZS5qE/67e0/JbZ43toSsc6x2IUxCsHrs1T4PZfd2nrQhMNcGHbBdzYHxbOxwqR6FTe+CDo9NEPPXtQufoQyDJEHtnNl5kGUuYSebBMKsSo1iErmHP1wcxl4o=
+	t=1726148009; cv=none; b=EmqjuNnTWk8joQYsgFqllxHJBaGsdqm8GTJkx5PH7UTUKJlMwdqZOJPA2NDFcu7NPHGfv4CUBmO0yNPKQO0WgGMB71YZXbWiMaUZSNs1Tjo3i8oAkBUjq/fZCYhF+xBX7HFJCe7mvECh6AxAiR7Mm83ZPlLEwmS3sJ6MJp8e/eI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726147994; c=relaxed/simple;
-	bh=GV0Fdo2Is2cceJnMIRCU/HwZ4RwMK7CsdKEDfCZ/Zho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UCs53B0rvrdhaG5Rutyxye1dG7E1W7uHCAILJXz9+qOyjUm8LMjra1EVvYLcRi7Xv4vZLIGz/Vygab2ERcs6Y4e8eHTDpf209D8wB6HwmKvRTm8NccEOScaxqqmtHxxmE0bwPe+l4ukpCaNtRftEXZOMoHojUhd2mw+hgP3oOrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vWDCZLBo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5ZcLv+eZ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 12 Sep 2024 15:33:09 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1726147991;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bPIj4LbieZJBuxjh5Jx+ca6REHim7dniHBvSpYMnuKA=;
-	b=vWDCZLBovROAOg1ErEUQ0T5/r+gkVdAVcGSfDbna/2j1GBBObw6e/fsfBn1CYVWODBFscA
-	Wv2SJmcTAGGCNfhopNusJx/imIMuliaeLnk7ChtxyovDY+03AfIMTzpKUHsF07DtodEPOL
-	ZbqAKJ3Et/SOUtjxxflZAwOOY2v+2mwkTDQ4P/naqfp634kyI1pjTYGhfS5/Dtxh8cPlCE
-	d8FXj9FYnrlmURZTw1+hN0vrrMXhXn4VAYNjeAAMTHZ3G5Wo+sI8is/QXVVSKnoEWhgfVg
-	17Vd11PJUReaWEi2i7wHQ0Lk3VzREh+XEfrAFCPe5p3RK4eSnAApORF7X3rDSw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1726147991;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bPIj4LbieZJBuxjh5Jx+ca6REHim7dniHBvSpYMnuKA=;
-	b=5ZcLv+eZXD+PTliTm8osGNBI7yRBpVVrT7++LbbN6PpHzmh6rw4FBYN3dP8UI91vpjEHyy
-	viFKS1KAT0NuC3Ag==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Breno Leitao <leitao@debian.org>
-Cc: Jakub Kicinski <kuba@kernel.org>, andrii@kernel.org, ast@kernel.org,
-	syzbot <syzbot+08811615f0e17bc6708b@syzkaller.appspotmail.com>,
-	bpf@vger.kernel.org, daniel@iogearbox.net, davem@davemloft.net,
-	eddyz87@gmail.com, haoluo@google.com, hawk@kernel.org,
-	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
-	linux-kernel@vger.kernel.org, martin.lau@linux.dev,
-	netdev@vger.kernel.org, sdf@fomichev.me, song@kernel.org,
-	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Subject: Re: [PATCH net-net] tun: Assign missing bpf_net_context.
-Message-ID: <20240912133309.FA7Uul13@linutronix.de>
-References: <000000000000adb970061c354f06@google.com>
- <20240702114026.1e1f72b7@kernel.org>
- <20240703122758.i6lt_jii@linutronix.de>
- <20240703120143.43cc1770@kernel.org>
- <20240912-simple-fascinating-mackerel-8fe7c0@devvm32600>
- <20240912122847.x70_LgN_@linutronix.de>
- <20240912-hypnotic-messy-leopard-f1d2b0@leitao>
+	s=arc-20240116; t=1726148009; c=relaxed/simple;
+	bh=6z4sL3Q2vQ51GAFjH66UWeYKoPy1VOkfSaBNtywE1Xo=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=hM9Q20+0BtbCvzzyjP6jKKaFDRScHETK4zi7yayeAErtzJaY0B6PXHvwa7hEdZnXAW62x5/hVqunzJlzzs9QL/MZavGXVChgwCSOeULb+Kyrb+IogcuM7MiQ26x5sI3DfEGYeTCpF1Eo8rzWXUZkXF/glBQABt/i4aVUuXI7NEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GjORBQBE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1897C4CEC3;
+	Thu, 12 Sep 2024 13:33:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726148009;
+	bh=6z4sL3Q2vQ51GAFjH66UWeYKoPy1VOkfSaBNtywE1Xo=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=GjORBQBE6PrefR1ukxkFRq8fCKYQLz7MQAugI9bYv3iHYjJTDrcxvjCn0+n/MwQ1C
+	 oy4MO9V4f60+vdb/68f59wN1mskL1gmRKM84z30TpT2HehHmG+J9yAkJM/zfnFtohv
+	 lFc1d6JqKOQ1gj2zqc/wahsaqQNzP/qFcoW+ffxK1rU25wD08k4tDl9BTbiOcsgFTD
+	 9CYtjt+ZW5wDzNbIDshILMD9Yz4lMNS51y+bzTt8j6vc8MdtW+1Pdub0m2D1ZJrHV0
+	 5hXrHwcC4TzAEapvhtJRjiSeM++6xIIOrJzncMjrB4PXD3VUQdOkw5kL5zxDBc9Pl8
+	 78EE0WLd3/+lQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240912-hypnotic-messy-leopard-f1d2b0@leitao>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 12 Sep 2024 16:33:25 +0300
+Message-Id: <D44CEEGVNROC.2X84S94NHI7K3@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <keyrings@vger.kernel.org>,
+ <linux-crypto@vger.kernel.org>, <zohar@linux.ibm.com>,
+ <linux-integrity@vger.kernel.org>, <torvalds@linux-foundation.org>,
+ "Roberto Sassu" <roberto.sassu@huawei.com>
+Subject: Re: [PATCH v3 02/14] rsa: add parser of raw format
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Roberto Sassu" <roberto.sassu@huaweicloud.com>, <dhowells@redhat.com>,
+ <dwmw2@infradead.org>, <herbert@gondor.apana.org.au>, <davem@davemloft.net>
+X-Mailer: aerc 0.18.2
+References: <20240911122911.1381864-1-roberto.sassu@huaweicloud.com>
+ <20240911122911.1381864-3-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20240911122911.1381864-3-roberto.sassu@huaweicloud.com>
 
-On 2024-09-12 06:17:55 [-0700], Breno Leitao wrote:
-> Hello Sabastian,
-Hi Breno,
+On Wed Sep 11, 2024 at 3:28 PM EEST, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+>
+> Parse the RSA key with RAW format if the ASN.1 parser returns an error, t=
+o
+> avoid passing somehow the key format as parameter.
+>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> ---
+>  crypto/rsa.c                  | 14 ++++--
+>  crypto/rsa_helper.c           | 83 ++++++++++++++++++++++++++++++++++-
+>  include/crypto/internal/rsa.h |  6 +++
+>  3 files changed, 97 insertions(+), 6 deletions(-)
+>
+> diff --git a/crypto/rsa.c b/crypto/rsa.c
+> index d9be9e86097e..66d42974d47d 100644
+> --- a/crypto/rsa.c
+> +++ b/crypto/rsa.c
+> @@ -272,8 +272,11 @@ static int rsa_set_pub_key(struct crypto_akcipher *t=
+fm, const void *key,
+>  	rsa_free_mpi_key(mpi_key);
+> =20
+>  	ret =3D rsa_parse_pub_key(&raw_key, key, keylen);
+> -	if (ret)
+> -		return ret;
+> +	if (ret) {
+> +		ret =3D rsa_parse_pub_key_raw(&raw_key, key, keylen);
+> +		if (ret)
+> +			return ret;
+> +	}
+> =20
+>  	mpi_key->e =3D mpi_read_raw_data(raw_key.e, raw_key.e_sz);
+>  	if (!mpi_key->e)
+> @@ -311,8 +314,11 @@ static int rsa_set_priv_key(struct crypto_akcipher *=
+tfm, const void *key,
+>  	rsa_free_mpi_key(mpi_key);
+> =20
+>  	ret =3D rsa_parse_priv_key(&raw_key, key, keylen);
+> -	if (ret)
+> -		return ret;
+> +	if (ret) {
+> +		ret =3D rsa_parse_priv_key_raw(&raw_key, key, keylen);
+> +		if (ret)
+> +			return ret;
+> +	}
+> =20
+>  	mpi_key->d =3D mpi_read_raw_data(raw_key.d, raw_key.d_sz);
+>  	if (!mpi_key->d)
+> diff --git a/crypto/rsa_helper.c b/crypto/rsa_helper.c
+> index 94266f29049c..40a17ebc972f 100644
+> --- a/crypto/rsa_helper.c
+> +++ b/crypto/rsa_helper.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/export.h>
+>  #include <linux/err.h>
+>  #include <linux/fips.h>
+> +#include <linux/mpi.h>
+>  #include <crypto/internal/rsa.h>
+>  #include "rsapubkey.asn1.h"
+>  #include "rsaprivkey.asn1.h"
+> @@ -148,6 +149,42 @@ int rsa_get_qinv(void *context, size_t hdrlen, unsig=
+ned char tag,
+>  	return 0;
+>  }
+> =20
 
-> > This origins in netkit_xmit(). If my memory serves me, then Daniel told
-> > me that netkit is not doing any redirect and therefore does not need
-> > "this". This must have been during one of the first "designs"/ versions. 
-> 
-> Right, I've seen several crashes related to this, and in all of them it
-> is through netkit_xmit() -> netkit_run() ->  bpf_prog_run()
+/*
+ * Please, document me.
+ */
+> +typedef int (*rsa_get_func)(void *, size_t, unsigned char,
+> +			    const void *, size_t);
+> +
+> +static int rsa_parse_key_raw(struct rsa_key *rsa_key,
+> +			     const void *key, unsigned int key_len,
+> +			     rsa_get_func *func, int n_func)
+> +{
+> +	unsigned int nbytes, len =3D key_len;
+> +	const void *key_ptr =3D key;
+> +	int ret, i;
+> +
+> +	for (i =3D 0; i < n_func; i++) {
+> +		if (key_len < 2)
+> +			return -EINVAL;
+> +
+> +		ret =3D mpi_key_length(key_ptr, len, NULL, &nbytes);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		key_ptr +=3D 2;
+> +		key_len -=3D 2;
+> +
+> +		if (key_len < nbytes)
+> +			return -EINVAL;
+> +
+> +		ret =3D func[i](rsa_key, 0, 0, key_ptr, nbytes);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		key_ptr +=3D nbytes;
+> +		key_len -=3D nbytes;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  /**
+>   * rsa_parse_pub_key() - decodes the BER encoded buffer and stores in th=
+e
+>   *                       provided struct rsa_key, pointers to the raw ke=
+y as is,
+> @@ -157,7 +194,7 @@ int rsa_get_qinv(void *context, size_t hdrlen, unsign=
+ed char tag,
+>   * @key:	key in BER format
+>   * @key_len:	length of key
+>   *
+> - * Return:	0 on success or error code in case of error
+> + * Return:	0 on success or error code in case of error.
+>   */
+>  int rsa_parse_pub_key(struct rsa_key *rsa_key, const void *key,
+>  		      unsigned int key_len)
+> @@ -166,6 +203,27 @@ int rsa_parse_pub_key(struct rsa_key *rsa_key, const=
+ void *key,
+>  }
+>  EXPORT_SYMBOL_GPL(rsa_parse_pub_key);
+> =20
+> +/**
+> + * rsa_parse_pub_key_raw() - parse the RAW key and store in the provided=
+ struct
+> + *                           rsa_key, pointers to the raw key as is, so =
+that
+> + *                           the caller can copy it or MPI parse it, etc=
+.
+> + *
+> + * @rsa_key:	struct rsa_key key representation
+> + * @key:	key in RAW format
+> + * @key_len:	length of key
+> + *
+> + * Return:	0 on success or error code in case of error.
+> + */
+> +int rsa_parse_pub_key_raw(struct rsa_key *rsa_key, const void *key,
+> +			  unsigned int key_len)
+> +{
+> +	rsa_get_func pub_func[] =3D {rsa_get_n, rsa_get_e};
+> +
+> +	return rsa_parse_key_raw(rsa_key, key, key_len,
+> +				 pub_func, ARRAY_SIZE(pub_func));
+> +}
+> +EXPORT_SYMBOL_GPL(rsa_parse_pub_key_raw);
+> +
+>  /**
+>   * rsa_parse_priv_key() - decodes the BER encoded buffer and stores in t=
+he
+>   *                        provided struct rsa_key, pointers to the raw k=
+ey
+> @@ -176,7 +234,7 @@ EXPORT_SYMBOL_GPL(rsa_parse_pub_key);
+>   * @key:	key in BER format
+>   * @key_len:	length of key
+>   *
+> - * Return:	0 on success or error code in case of error
+> + * Return:	0 on success or error code in case of error.
+>   */
+>  int rsa_parse_priv_key(struct rsa_key *rsa_key, const void *key,
+>  		       unsigned int key_len)
+> @@ -184,3 +242,24 @@ int rsa_parse_priv_key(struct rsa_key *rsa_key, cons=
+t void *key,
+>  	return asn1_ber_decoder(&rsaprivkey_decoder, rsa_key, key, key_len);
+>  }
+>  EXPORT_SYMBOL_GPL(rsa_parse_priv_key);
+> +
+> +/**
+> + * rsa_parse_priv_key_raw() - parse the RAW key and store in the provide=
+d struct
+> + *                            rsa_key, pointers to the raw key as is, so=
+ that
+> + *                            the caller can copy it or MPI parse it, et=
+c.
 
-Looking at this again, NETKIT_REDIRECT invokes skb_do_redirect() which
-is accessing the per-CPU variables/ context from the very first day.
-So I must have misunderstood something.
+This belongs after the parameters, here a one-liner would be a better
+choice:
 
-> > If you are saying, that this is possible then something must be done.
-> > Either assign a context or reject the bpf program.
-> 
-> If we want to assign a context, do you meant something like the
-> following?
+https://www.kernel.org/doc/Documentation/kernel-doc-nano-HOWTO.txt
 
-Yes, correct. And I think that we do want the context here.
-Feel free to add
-  Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-if you post.
+Try to avoid "etc" in documentation because then I have no choice than
+stop reading your documentation and read source code instead.
 
-Sebastian
+Just enumerate everything that makes sense, no aim for perfection but
+it is like a stamp that I tried my best, and then we will refine the
+description.
+
+"etc" in the documentation encompasses also all the future changes,
+which does not encourage accuracy :-) Imcompleteness is less of a
+devil than entropy, or at least that is how I weight these matters.
+
+> + *
+> + * @rsa_key:	struct rsa_key key representation
+> + * @key:	key in RAW format
+> + * @key_len:	length of key
+> + *
+> + * Return:	0 on success or error code in case of error.
+> + */
+> +int rsa_parse_priv_key_raw(struct rsa_key *rsa_key, const void *key,
+> +			   unsigned int key_len)
+> +{
+> +	rsa_get_func priv_func[] =3D {rsa_get_n, rsa_get_e, rsa_get_d};
+> +
+> +	return rsa_parse_key_raw(rsa_key, key, key_len,
+> +				 priv_func, ARRAY_SIZE(priv_func));
+> +}
+> +EXPORT_SYMBOL_GPL(rsa_parse_priv_key_raw);
+> diff --git a/include/crypto/internal/rsa.h b/include/crypto/internal/rsa.=
+h
+> index e870133f4b77..7141e806ceea 100644
+> --- a/include/crypto/internal/rsa.h
+> +++ b/include/crypto/internal/rsa.h
+> @@ -50,8 +50,14 @@ struct rsa_key {
+>  int rsa_parse_pub_key(struct rsa_key *rsa_key, const void *key,
+>  		      unsigned int key_len);
+> =20
+> +int rsa_parse_pub_key_raw(struct rsa_key *rsa_key, const void *key,
+> +			  unsigned int key_len);
+> +
+>  int rsa_parse_priv_key(struct rsa_key *rsa_key, const void *key,
+>  		       unsigned int key_len);
+> =20
+> +int rsa_parse_priv_key_raw(struct rsa_key *rsa_key, const void *key,
+> +			   unsigned int key_len);
+> +
+>  extern struct crypto_template rsa_pkcs1pad_tmpl;
+>  #endif
+
+
+BR, Jarkko
 
