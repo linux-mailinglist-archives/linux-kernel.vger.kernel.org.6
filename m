@@ -1,78 +1,96 @@
-Return-Path: <linux-kernel+bounces-326896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C04976E3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:53:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 098A5976E40
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:55:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3503B23DD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:53:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A76E31F22BA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FA71BA292;
-	Thu, 12 Sep 2024 15:53:45 +0000 (UTC)
-Received: from fgw21-7.mail.saunalahti.fi (fgw21-7.mail.saunalahti.fi [62.142.5.82])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1075A1AD25F;
+	Thu, 12 Sep 2024 15:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SzGGV718"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE00199948
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F62044C8F;
+	Thu, 12 Sep 2024 15:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726156425; cv=none; b=oOaFN/r6Cy6NrdCfr7bNgIKgscY83dAuGEmdxU8k4aaZQqWZ/FWvrHtR1dOLUXurehrpeB9zjJ+32BKZPgRkWbEYuEQhW+LbYjXNGSTrtwNwdSq2MzMUqfRbo2mEL9UrLJt7xS0CxgEyos1yAbIES5gxD1685G5tq9Cbl6Yja2M=
+	t=1726156518; cv=none; b=YxgUtJC2/otBpdAEVSiBzjErMtWUSKf2dPveo6MyHAT/I2WqtFWxjSbflYBQ6h1rigCdpa1iZ1z3ltetKRWapXmB1ZMVI4bVXqYSE58jabT2+xeTzfucsqZLzKgeHo7vwc/sbRyHyEnYQOeWJNHKMKWgAv3FBHQSeSZkXdhKxMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726156425; c=relaxed/simple;
-	bh=H3Fhj71qw/sn6U0lOBAG0Po7bRVCrYtJ9cdxwhKoiIo=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oZ9tYOyZd/yFGiMUPelsNKrEQjOH65UhouAEPMoIqunbyZXbiRkxWTs6Ggav8ni950kdfPUvx++NcsaLCTbKcyWDJ3hgrjA4Xx788xHvF4/XmEEkl5MrVivOUIyXIz8Ya/aWuFWPOEbToth7/qrTEpQB7ol3MBJex6RfZ++xBAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-25-87.elisa-laajakaista.fi [88.113.25.87])
-	by fgw23.mail.saunalahti.fi (Halon) with ESMTP
-	id 293b1902-711f-11ef-9150-005056bdfda7;
-	Thu, 12 Sep 2024 18:53:33 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 12 Sep 2024 18:53:32 +0300
-To: Pawel Laszczak <pawell@cadence.com>
-Cc: "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"peter.chen@kernel.org" <peter.chen@kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH] usb: xhci: fix loss of data on Cadence xHC
-Message-ID: <ZuMOfHp9j_6_3-WC@surfacebook.localdomain>
-References: <20240905065716.305332-1-pawell@cadence.com>
- <PH7PR07MB9538584F3C0AD11119403F11DD9D2@PH7PR07MB9538.namprd07.prod.outlook.com>
- <PH7PR07MB9538734A9BC4FA56E34998EEDD9D2@PH7PR07MB9538.namprd07.prod.outlook.com>
+	s=arc-20240116; t=1726156518; c=relaxed/simple;
+	bh=PQTvgANQm6FTPs3J4TXoQ2MpQbQk9ogAXoCk4kd5jNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AFSQDQ2QloAHxFuO1xxmmRgD9SlrqpTXMoL2nBV0z72fy4gMJ4tJTjObaHI7HeZqX+fbnEoC2lMUgZGOYE644k3hcc3gm6aJ6PIM+w3ee1lcq1WfYw/4hFxiCGjgN2L9FMGaSgVCV7bfK9fYrrNxPglfSMjer48i2201Wm6BUQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SzGGV718; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E7EDC4CEC3;
+	Thu, 12 Sep 2024 15:55:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726156518;
+	bh=PQTvgANQm6FTPs3J4TXoQ2MpQbQk9ogAXoCk4kd5jNo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SzGGV718qeuCyCvA0EXsWWAC/yi9i038vfM9B2rFM48dpHV/LguGvj097cReTexZe
+	 wuq12QfjXkgnAZbFHQ43muJ0fN2+ANYTrCTWezJpqLJhA1/CeTSPLdHttuWpbwmIy5
+	 xbRQ3SA3S+H22OPa1ejWAfYS0OJgdNABIio4JQnVsnWmnRTJTh4Sw3RcfV2t11X19/
+	 /Fk83zDeCmqWI+EAFuj0aPr7k8BJ5TbGwlqJ1ajgtASe/IYrQlVWsWisncYJtk7hQH
+	 +JJjt1ePlr0iUcrsiTYGOiZvbLa/Njq6P5Hc6vx+HlaSQuUh9Zyloa+U3+Qaj4jIFy
+	 fECMgwyauCzoQ==
+Date: Thu, 12 Sep 2024 17:55:13 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, Jean Delvare <jdelvare@suse.com>
+Subject: Re: [PATCH v1 08/12] i2c: isch: Use read_poll_timeout()
+Message-ID: <zuijrzur6htcg4dhccfydl4gb4rj62jq5co4ege6fkggaceesg@3kkujnlrgbye>
+References: <20240911154820.2846187-1-andriy.shevchenko@linux.intel.com>
+ <20240911154820.2846187-9-andriy.shevchenko@linux.intel.com>
+ <pwvhzkxeniutopyxczvimkau3elchfy5x32cimlqwjnmqjzv42@zpojd2lxs3o4>
+ <ZuMKUnY58Blm7UX-@surfacebook.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <PH7PR07MB9538734A9BC4FA56E34998EEDD9D2@PH7PR07MB9538.namprd07.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZuMKUnY58Blm7UX-@surfacebook.localdomain>
 
-Thu, Sep 05, 2024 at 07:06:48AM +0000, Pawel Laszczak kirjoitti:
-> Please ignore this patch. I send it again with correct version in subject.
+On Thu, Sep 12, 2024 at 06:35:46PM GMT, Andy Shevchenko wrote:
+> Thu, Sep 12, 2024 at 09:29:38AM +0200, Andi Shyti kirjoitti:
+> 
+> ...
+> 
+> > > -		sch_io_wr8(priv, SMBHSTSTS, temp);
+> > > +		sch_io_wr8(priv, SMBHSTSTS, temp & 0x0f);
+> > 
+> > there is still a dev_dbg() using temp. To be on the safe side, do
+> > we want to do a "temp &= 0x0f" after the read_poll_timeout?
+> 
+> Isn't it even better that we have more information in the debug output?
 
-It seems it's in Mathias' tree, never the less, see also below.
+I think not, because:
 
-...
+ 1. It's information that we don't need, and we intentionally
+    discard in every check. If we print a value we ignore, we
+    risk providing incorrect information.
 
-> >+#define PCI_DEVICE_ID_CADENCE				0x17CD
+ 2. It’s more future-proof. In future development, cleanups,
+    refactorings, or copy-paste, temp can be used as is
+    without needing to continuously & it with 0xf. This
+    avoids unnecessary operations being repeated later on.
 
-First of all this is misleadig as this is VENDOR_ID, second, there is official
-ID constant for Cadence in pci_ids.h.
+ 3. It maintains the original design.
 
-#define PCI_VENDOR_ID_CDNS              0x17cd
+In any case, these are small details, and the patch is already
+good as it is.
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks,
+Andi
 
