@@ -1,106 +1,113 @@
-Return-Path: <linux-kernel+bounces-327368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 736F49774AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:04:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 234FB9774AD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D1DA1F25327
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:04:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C86101F25554
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8091C243E;
-	Thu, 12 Sep 2024 23:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F6C1C2DC5;
+	Thu, 12 Sep 2024 23:05:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VDWFgz9v"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JMj3nCq4"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E1918891D;
-	Thu, 12 Sep 2024 23:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC48E18891D;
+	Thu, 12 Sep 2024 23:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726182261; cv=none; b=N9TCMmDdSz7+eO/MhVqfP+LYVxswecZ7GWT2cwnuITZWjqyBK5mZgkgyphn6uul8eSycBc7OH31soiq2Czaj2TsR27kvLFdywXrLU9L44SV+uoONJhN9a1yn2TjBfMsuz0FX1uIFEVWFcFCAG3GdqIv4/KhLs4Na9/ISrBQvYdw=
+	t=1726182358; cv=none; b=MIc0W7NqbHQ0VAapAAB438rnuvbFIAtGgsut/1iqq/K4MzUUoBZR4H4BK4NR2fVXNCZk8CGQbbC0nJvY1j1hfJuairf1lwLyGDs+MveUipbWcmJHl3Lrmeky6UpuM2sGBcX9/qAlEparL1WBYfJGcPXKRrl7g9sp8QC6PiizU/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726182261; c=relaxed/simple;
-	bh=TbW3PVVOenw1xoeKf0LmKcMMzULyit6y23Gk7zGQuJo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MuqEIVA1qGL/iO6wOoQ/rIVa1Rm1SI3iF1tE4G6ucG9PMDFd4yrA/r50DohvaFzm+eOvgcu5PaYrBR3QrGy9+NaaZZV79Lf87l0va3p3GTUppJ92MsmNWokC9ULiWQ2ID1qkiIHVCoHtMYekQ1wFDISt1dMwiIeWTeyTnkrlbXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VDWFgz9v; arc=none smtp.client-ip=209.85.219.49
+	s=arc-20240116; t=1726182358; c=relaxed/simple;
+	bh=efAx2aTTySDk5VWnEt50L8ui2mTe7AkT6AseDeCQd0k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t49CnT3AnT9R+8VcouTLIAvLR+IrdblHUX95YtHH/0+M1rDauA9MrsWMNqo7bD3IpCU2EyHtS3VLk6wf6fYrm5zKtqFbtbpt+wlvv+4M7veL6eD6uQlaTY+/Bzin8kvCQk8lS+0LyaEijEs1SDijteeUwxMG1FE5AxQj7leEJRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JMj3nCq4; arc=none smtp.client-ip=209.85.219.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6c34fb4f65eso2696926d6.0;
-        Thu, 12 Sep 2024 16:04:19 -0700 (PDT)
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e1a989bd17aso403517276.1;
+        Thu, 12 Sep 2024 16:05:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726182259; x=1726787059; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TbW3PVVOenw1xoeKf0LmKcMMzULyit6y23Gk7zGQuJo=;
-        b=VDWFgz9vUmVZIr/DYp+JngYsfFNQSc/BCmHBI2J/MpHV9QlfyPjJ4JKWknDLgYF0OX
-         U9GiuJAyNbBSbkTlB2mXCkl8oT5CWMQE0K6TuNK7NHJAaA6UnZ+sdtVxeOdCj9isSQkH
-         YsXcIgVc5iVawArNWbqVdfxdu2h8eagSnvFFA/zJ473kntXxZwG7TUCvaUflUpvmxcv6
-         QoduEH2bV5iBbUq1Gta6Gii3YgrrYu0Ucej44fOM00pj4ClyTcp6YCT4FQRGeSQWfjfS
-         X4LyN6rHq0FccYU7WW7QHLw6IQtaBz/5izK2sFzFGjgMzKb2r4n3F1AUwGM/kWz/BJ8l
-         hvpw==
+        d=gmail.com; s=20230601; t=1726182356; x=1726787156; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ytNTZ/l/035qb2aZcPOAkgUE1o+hf0sj4BV0CbX6Wws=;
+        b=JMj3nCq4iXeFPccAuNCZa/HTD4OrCI26C+4wdPGP31Emb1AihJs0Ogr+DfVVZrm5xN
+         lim3eKmUq88+hYulnW81PfzGCYGMRLTRtU2c4TtqKjOC2vX1cKBirADyjpj6m2DHK8Md
+         MKex3+kwMqPqGWP+7gTRjWwGEcFqGWGBrfUiYnxcp5CptikWrlQrnPBUZH5suAOvjxgd
+         ohSbHyvMnZMMXoTCWErI5uDQzry1x0vsnYf7BxR0TNcqinRHBlxUFjpDETSQLfAQM2ga
+         bXgftrAuz3YC6OvdRPl7NyjrZ7lv7Of7uo3Zh9VWSXobUpTFcGY/ldGOgpPGFdhqT8Bt
+         DMCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726182259; x=1726787059;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TbW3PVVOenw1xoeKf0LmKcMMzULyit6y23Gk7zGQuJo=;
-        b=fuyexWO+Yt0h7yeZSYPMLXnSslcpdwl0Az3JBjpamxuzRLU4q6U3+qb4h/x6pCPKWj
-         r+O01qfoY7hKgpAhnv6sJF2OarPnlQwKJNfmoHUkPjjoVRjNb3kpyPnSV21HZgix47++
-         feDHJ5r/Uh/HGftTvLYPZUQ63gD/WMwmXqQGC4a95MTm7pM/+uuIVFceL37yMq/KbYh6
-         1TSjMrY0esq41gUEJr50jQLFvYmGOTZMtOa2I/SEBIY9YUxLmVUqzRnOz8oZdNSolQzW
-         ZJEw3SNI6l8KVMy5khI+wdCNfgNAxLVgU14SkGZdlAeGnWNnidcR4VAQM5njuSbfe7yH
-         b76g==
-X-Forwarded-Encrypted: i=1; AJvYcCXCCAKg51qZa6NT0RJEwUg7Le27I2tPsWLiM4CZ3MTFaXV/gGVx70yEoRTnHaKZPYwhAnqbVscj@vger.kernel.org, AJvYcCXWso5uN9eOVk1cXDfGfJT69wiwe4ROBfoSUF9GqRO8vreNma2WGHrGca8LAukRr5HIyAruwuW6nREfeN4g@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/+cJhl8yL7xq1F6+E5qVC11EQ/WN3Yg2gU3wHtDrZoIW65GHG
-	vs3hFzI3yZx7YfhcxfTnywb4P/OdGO2ijPsov9XkPp3qGELy/gBZ4NfghXHQV28I/PXr5k6MzA/
-	e8lBU8iUWq7TZRXbf6zP+AHJHy6Y=
-X-Google-Smtp-Source: AGHT+IEBoIFqglXjOGxm1oG8UaGjX9AjpAULwz49PK4uRew9iXsgCf1fkjksL4FHBlMw9CU99BPhXya3XqchHbXUek4=
-X-Received: by 2002:a05:6214:4a02:b0:6c5:688a:63c4 with SMTP id
- 6a1803df08f44-6c57e0d898fmr11578736d6.51.1726182258573; Thu, 12 Sep 2024
- 16:04:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726182356; x=1726787156;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ytNTZ/l/035qb2aZcPOAkgUE1o+hf0sj4BV0CbX6Wws=;
+        b=kVJpqfUadDtj8cztOh4HR8pjFmsbqpENb+eaGeZXhsGfsf51e2I/C17vxMRpYIzfg3
+         jLH9ML5slFFXGLO55Lj6+/Y0wPY56GpIrLa7kRKJ+1eAbdCIaCiOBsB4oXwINmR5RBx7
+         6X3YM9rKyqHDiuZJWqtAeuGQEIQGZD1Y3C7FQPWOAAqAyg0NLbqRbK7Plrnlklx2f3Pj
+         +WNKwv4AwrXbRYqtVnCF1UmRvHVC1tZm9GdXMhIXvAAsTDsdfGRQ1HgRmeeJyPUhpKZm
+         Dc7pQQcjwg14CT5R+DiAaTpIdIgIbt1KZ2vHqZl6RZHsoIXKkwOFLfRHC/1dCSb3DYfQ
+         eRMA==
+X-Forwarded-Encrypted: i=1; AJvYcCWphPhS1LoVQ8+G8YV7xGAgcecj2PThxMbrRI/MQg7zwMfIM7HcjiF0OULzfhJBO8A8owfb+y+8dhIPTz8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP0PoaDn5WlGnKsbPFkJrSrEwW8NibHNixDFIryj+ra9v0WM7v
+	oaUqAKNSlp8iiTbBzLIsUxZoz63Cij0HQSFLO6q8et3Yxv/Gh3KU
+X-Google-Smtp-Source: AGHT+IGDey+1wZBDSvml3qWvmvBpp2/zK+EbaxR0w54uSBd1VYIpjNltS9ERQSpriYCHNcHax43nkg==
+X-Received: by 2002:a05:6902:843:b0:e13:e674:553c with SMTP id 3f1490d57ef6-e1db00a6af8mr797164276.7.1726182355610;
+        Thu, 12 Sep 2024 16:05:55 -0700 (PDT)
+Received: from localhost (fwdproxy-nha-000.fbsv.net. [2a03:2880:25ff::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e1d7ba04b65sm1215388276.22.2024.09.12.16.05.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 16:05:55 -0700 (PDT)
+From: Daniel Zahka <daniel.zahka@gmail.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] ethtool: rss: fix rss key initialization warning
+Date: Thu, 12 Sep 2024 16:05:30 -0700
+Message-ID: <20240912230531.3116582-1-daniel.zahka@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <172547884995.206112.808619042206173396.stgit@firesoul>
- <CAJD7tkak0yZNh+ZQ0FRJhmHPmC5YmccV4Cs+ZOk9DCp4s1ECCA@mail.gmail.com>
- <f957dbe3-d669-40b7-8b90-08fa40a3c23d@kernel.org> <CAJD7tkYv8oDsPkVrUkmBrUxB02nEi-Suf=arsd5g4gM7tP2KxA@mail.gmail.com>
- <afa40214-0196-4ade-9c10-cd78d0588c02@kernel.org> <CAJD7tkZ3-BrnMoEQAu_gfS-zfFMAu4SeFvGFj1pNiZwGdtrmwQ@mail.gmail.com>
- <84e09f0c-10d7-4648-b243-32f18974e417@kernel.org> <CAJD7tkYY5sipMU+w8ygPTGKfjvdMh_e0=FtxYkO9BG5VpF+QUA@mail.gmail.com>
- <CAKEwX=PTA0OxisvY12Wa95s5KqzvQTXe1rZ7nw29nP+wR2dxkA@mail.gmail.com>
- <CAJD7tkbMph337XbBTbWfF8kp_fStP3-rN77vfR5tcn2+wYfJPQ@mail.gmail.com>
- <CAKEwX=PcK=kJG-yxaoTYvJGNwQ=eTGo1m=ZraqYy1SyLDs9Asw@mail.gmail.com> <CAJD7tkYhOphYbNnwkZfJykii7kAR6PRvZ0pv7R=zhG0vCjxh4A@mail.gmail.com>
-In-Reply-To: <CAJD7tkYhOphYbNnwkZfJykii7kAR6PRvZ0pv7R=zhG0vCjxh4A@mail.gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Thu, 12 Sep 2024 16:04:07 -0700
-Message-ID: <CAKEwX=NQmNpFNf=8OLSWVp-JsRPgo90n4DR68k0Y6+nFUfXw4Q@mail.gmail.com>
-Subject: Re: [PATCH V10] cgroup/rstat: Avoid flushing if there is an ongoing
- root flush
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Jesper Dangaard Brouer <hawk@kernel.org>, tj@kernel.org, cgroups@vger.kernel.org, 
-	shakeel.butt@linux.dev, hannes@cmpxchg.org, lizefan.x@bytedance.com, 
-	longman@redhat.com, kernel-team@cloudflare.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, mfleming@cloudflare.com, 
-	joshua.hahnjy@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 12, 2024 at 11:51=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com=
-> wrote:
->
-> Do you mean per-lruvec or per-memcg?
+This warning is emitted when a driver does not default populate an rss
+key when one is not provided from userspace. Some devices do not
+support individual rss keys per context. For these devices, it is ok
+to leave the key zeroed out in ethtool_rxfh_context. Do not warn on
+zeroed key when ethtool_ops.rxfh_per_ctx_key == 0.
 
-Ah yeah ignore that part. I was originally thinking of adding a
-per-lruvec zswap atomic counter just to fix zswap shrinker, but now
-we'll need 2 atomic counters per-memcg to replace MEMCG_ZSWAP_B and
-MEMCG_ZSWAPPED. The zswap_shrinker_count() will also use these two new
-counters too. My apologies for the confusions...
+Signed-off-by: Daniel Zahka <daniel.zahka@gmail.com>
+---
+ net/ethtool/ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/ethtool/ioctl.c b/net/ethtool/ioctl.c
+index 65cfe76dafbe..8c4979b8f4f3 100644
+--- a/net/ethtool/ioctl.c
++++ b/net/ethtool/ioctl.c
+@@ -1504,7 +1504,7 @@ static noinline_for_stack int ethtool_set_rxfh(struct net_device *dev,
+ 			ret = ops->create_rxfh_context(dev, ctx, &rxfh_dev,
+ 						       extack);
+ 			/* Make sure driver populates defaults */
+-			WARN_ON_ONCE(!ret && !rxfh_dev.key &&
++			WARN_ON_ONCE(!ret && !rxfh_dev.key && ops->rxfh_per_ctx_key &&
+ 				     !memchr_inv(ethtool_rxfh_context_key(ctx),
+ 						 0, ctx->key_size));
+ 		} else if (rxfh_dev.rss_delete) {
+-- 
+2.43.5
+
 
