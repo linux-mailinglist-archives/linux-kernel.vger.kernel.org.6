@@ -1,107 +1,204 @@
-Return-Path: <linux-kernel+bounces-325764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 813D9975DE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:17:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7469B975DEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:19:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 202A8B216A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:17:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB0A0B22241
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:19:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD13E53AC;
-	Thu, 12 Sep 2024 00:17:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BC74685;
+	Thu, 12 Sep 2024 00:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eqTCxzI5"
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="gRzu1Mh8"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E891877;
-	Thu, 12 Sep 2024 00:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A79210E6
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 00:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726100250; cv=none; b=tgQwUvvzZRGx4IVtybpoIMIv04kHdshSiiP9w0Ne7cwWPulQcosKu2imvhkHrivV67NhzZASWCfB6tSf1xv9tHZ6AUxHhbLP8PxgEY6pZ3m7DdACkKZqn1GngEu1a5RUsJ59KupaVYoadcVdairESunSyZidK6bjN+RCZLkpdRU=
+	t=1726100354; cv=none; b=jYMvngsaprIXCCEX1ROr7Ysr7T4E+kjDYhaIHNxDFixgeLGxw1gNUqTUnaS4WOUHyB+VwGiZ33PKaBkc14KlDWKxZXJEy+BTLqYeWclEuaBAZQJpqL9DdWBcX+vjfI6h3HclYeUqDbEH1E1ZjKhqH1ZzhjwlEr4Xc2DyNvl9RqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726100250; c=relaxed/simple;
-	bh=YZHMhqK6IvNbneE7mkJUhxiiA4ltQmGRXyb2p52vTZs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AqzwqfllCV9IIKNGX6k/f6mPvgu8Snd10QfOfKL1L6i2+045qgEN59FkW7Psue1jOYVT+COCXbeTHEtjpBCsmLTZPINwgfrjBGaXDfc33jzaneQ/2uJcdDMQU2C2Axv9LNU874eBWiGuk5wuVAGbfzPPnn8Lzvqp9Nfayypd04U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eqTCxzI5; arc=none smtp.client-ip=209.85.217.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-49be785fa29so740904137.1;
-        Wed, 11 Sep 2024 17:17:28 -0700 (PDT)
+	s=arc-20240116; t=1726100354; c=relaxed/simple;
+	bh=ZV7EiUt+oFZWV9GAgXCDECc9OFcGvXiV90IO8l+SI1o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s22Ua5Qfdub+KYPq73NRm7UP9eD/jZaNPVCwscKnieDF7NM29OwljbQsOw4iKRMmzON5Il+EA3DN/cwfGS/1FUAp68go/iaeFchUi0ZI45e8DsIPkAnX5K+iL04vqk2+fTKX3xuBrqI416PN7guyz8ILc8kbl/ZJ96r8wCTxwa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=gRzu1Mh8; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71788bfe60eso253392b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 17:19:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726100248; x=1726705048; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YZHMhqK6IvNbneE7mkJUhxiiA4ltQmGRXyb2p52vTZs=;
-        b=eqTCxzI5LxOD/E3kRqKWOw8544DWygBajRLOCOb5Onu6nvCfYhUUZJU57Y9QE1tSeV
-         j7NtbiiQHrhc89DrDFYsn0msw/7MHF4H+L3rdRLu+pAgdoyS0Qs612GGy6bZEsk2UFPH
-         V+M1/pLqQtvbc+ZxE7ffjRt9zCaKOsCq8mQUFkHf/QLWpT0sUlF5zxt9V2u26FHhnEyu
-         UH8n+Sjz2PYeXabAwdI0Khd4nfiP3S1uJ80G2KxISWvxF49N23utyV9KNM4Gnv/M2t6O
-         Rg7+lY12Vk8IIgWzu6UR/P5FSZL76eZVGCCnqul7FI6+p4izTQqrHwfflwIOiD1MUZfr
-         um7A==
+        d=broadcom.com; s=google; t=1726100352; x=1726705152; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=hT5rKHWAKJsST0zNJdthdY4KzorwGIDHgWoONGiVWAE=;
+        b=gRzu1Mh8EHJGzTCm7qa7cXuG6Xd60EAMYDFg05rgrYHXvTz0YMGHZyjOjMyjQhUE14
+         R5DqikbcV7g//8XWFpUg0tjFRPW+YW63bVtKwahrUZC2YKkbykLgdQxrFEo0dfqzicHA
+         4UuR+eK45mhAHpO1yVojgv4cg9zguVBxbAuKs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726100248; x=1726705048;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YZHMhqK6IvNbneE7mkJUhxiiA4ltQmGRXyb2p52vTZs=;
-        b=wWFCjXOA/RdEmgWv9HN9u3MKD3CzSLjciqevgQWT+4AAb7jdzhtQt9QvOJgwR01ZEx
-         nv4gF/I8pwluVr4KkMfX6LDbh1OM0/6QpkpCkZlBMrwQMYuKM7igqCQyr43CA+GMpCsm
-         iIzkra/WSRybhEEda4tpvNmaozfOkTdk9eGDrI6fU3CnQ7SWbuDZgsLkQx21kEL1D2af
-         l5OzhmU3E/sqmdQDyrN84GLXvZ8hMYfsFqNVZTjoYBdZRAXwo25VDQZ/6OdlXRMKufhG
-         vc0Pc7sRNn/adDtaA3iTdDsArpxH5ti/NZc6IFgC0g3rI4zZ03j+5Q69wJ7FPvcrZTah
-         XJaw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/yB6ZRiiNQSOT4fOsr7/iVuLr/Qxk3B3NYWFzYph4wvTe/ywxFmhm8HVM0SQCwicnu3CXjJBsXHVj@vger.kernel.org, AJvYcCWyqAk7Kqsm46ucZQTwWDJrIS9O2zl1Q4U7eOnodYvscRVZBVCfdwA76L8rnto/fGi6140UmaXu4hggvORKdA==@vger.kernel.org, AJvYcCXq3DlUE+am2TktOdaJgL6RcRs2quHGkJAyAeIYSHN4zITKGlhQX0pxCqhr8g8YcfYNVMu91pLlQA8rl/Eu@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZgxDSAa/sux5gTTFeSA13eghi6LWl2BveM+qEZIu7rRqdPDA+
-	hIF3FzUXc/KhYEMqb3imXTIV4gtjWMnRIIaBppM0vTWoNHNGwh3lu/a+4d0coCNVnSsKTj9vkUC
-	TRuCNeeqpVjHV7e+2XwBiYk0DP8zr8pJ3
-X-Google-Smtp-Source: AGHT+IEkh27HxdqVER7tRynhKIYr3KL/M1tG+CpPDUb6YOmsaK/NZ+iJaz5OLyB1yhoOkN3XQOsXgEpR3NTbHxQ2ZHI=
-X-Received: by 2002:a05:6102:32cd:b0:498:cbd8:286 with SMTP id
- ada2fe7eead31-49d4213d904mr860202137.3.1726100247709; Wed, 11 Sep 2024
- 17:17:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726100352; x=1726705152;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hT5rKHWAKJsST0zNJdthdY4KzorwGIDHgWoONGiVWAE=;
+        b=XKgYnbheDCyo6d8XX0rwzjmO3PuzZ/9AdYPzv/joT2TGySYgdogKmKAEqFH64iTrf8
+         ZZfAZfm/rhZGgnR8dDd5v2Tnhc+ML+itmP9ZaFhSaRrZ7Ko6TmZqGyOoGcPbf4qKJXdR
+         JChuxMN1DoPgDh4ROFdZamtIAKFTZL5zkxot+u69OLVBCX/ryIDqBHCmHnciKEq+JnBQ
+         reCyop1/2YBVFJS8DomNjy23OqDDGmcH/lylnK16tjhP56/SFbkl7cVd8Bj+J8pbGLxO
+         RyEwjxkKFtid5V4BUrNWGcTsmgypiPFRNfwAfilzOciL/7Xhb9F1+y4gHMc2/u3E+X3k
+         sDtw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZXOsfCkDVY3cINkSo0+5johhjEGRsjjfj2Y/zjToMV6hVUEEE8U3geHYXFXxeXby9w9Y70aUb5nrjaxI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywz/e1xSM9t4CZHaDJo646T7sBG6FkR5EdSeHmPmcRL4guy0GyU
+	WRgEa3+uZsbv2LUR5SCSTUHM49w25qqL1Q6NqAoEMfL7jp0S95H9O/UMf1Xkcg==
+X-Google-Smtp-Source: AGHT+IEDlAjql4w6kcMMqnDMEb2ESUSgOgqccxHLAcOgtoRwe1nfCwDQ5h4BZa646f6hzxZK8UzBLg==
+X-Received: by 2002:a05:6a00:6704:b0:714:3a4b:f78f with SMTP id d2e1a72fcca58-719261e1580mr1131648b3a.20.1726100351396;
+        Wed, 11 Sep 2024 17:19:11 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db1fba421dsm578767a12.5.2024.09.11.17.19.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Sep 2024 17:19:10 -0700 (PDT)
+Message-ID: <fb68e9ab-06b1-43b9-906a-9c1e83bee2c7@broadcom.com>
+Date: Wed, 11 Sep 2024 17:19:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906195720.40315-1-dennis.lamerice@gmail.com> <200ce66b-845f-4f20-8838-619646f5f44d@gmail.com>
-In-Reply-To: <200ce66b-845f-4f20-8838-619646f5f44d@gmail.com>
-From: Dennis Lam <dennis.lamerice@gmail.com>
-Date: Wed, 11 Sep 2024 20:17:16 -0400
-Message-ID: <CAGZfcd=MZbt94__wek3v5e5DUfLZbgZ2uyw6i+gRWRXXrbDX3A@mail.gmail.com>
-Subject: Re: [PATCH] docs:fs:fixed some spelling mistakes in the bcachefs
- coding style page
-To: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-Cc: kent.overstreet@linux.dev, corbet@lwn.net, linux-bcachefs@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tty: rp2: Fix reset with non forgiving PCIe host bridges
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-serial@vger.kernel.org, Kevin Cernekee <cernekee@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, John Ogness <john.ogness@linutronix.de>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ "open list:TTY LAYER AND SERIAL DRIVERS" <linux-kernel@vger.kernel.org>
+References: <20240906225435.707837-1-florian.fainelli@broadcom.com>
+ <CA+-6iNxYwyfATMUq+nJfH_a08tdx_HT3k_d0fNS8f8-khghTfQ@mail.gmail.com>
+ <2bb3a405-cb6b-4033-99f4-ecd25ffc095d@broadcom.com>
+ <CA+-6iNzFb_dn8cv_OkniWPEGZHrwtgwBkuJizn4icy-d9xPKOQ@mail.gmail.com>
+ <d4ba49bf-60fa-4c5e-a1a8-52b1668b3d30@broadcom.com>
+ <CA+-6iNyS45YOHuVRcnPrMk4NOdrDZLAX=k8NBF_HwA41m4LbvQ@mail.gmail.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <CA+-6iNyS45YOHuVRcnPrMk4NOdrDZLAX=k8NBF_HwA41m4LbvQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 11, 2024 at 4:03=E2=80=AFPM Carlos Bilbao
-<carlos.bilbao.osdev@gmail.com> wrote:
->
-> Hello,
->
-> On 9/6/24 14:57, Dennis Lam wrote:
-> > ---
->
->
-> Change the subject, it needs spaces to be readable:
->
-> "docs: fs: fixed spelling mistakes [...]"
->
-> Also, you need a body in the commit which includes an explanation of what
-> the patch does (even if it is almost the same as the Subject) and your
-> signature. See: https://docs.kernel.org/process/submitting-patches.html
->
+On 9/11/24 15:44, Jim Quinlan wrote:
+> On Wed, Sep 11, 2024 at 6:19 PM Florian Fainelli
+> <florian.fainelli@broadcom.com> wrote:
+>>
+>> On 9/11/24 15:16, Jim Quinlan wrote:
+>>> On Wed, Sep 11, 2024 at 6:01 PM Florian Fainelli
+>>> <florian.fainelli@broadcom.com> wrote:
+>>>>
+>>>> On 9/11/24 14:47, Jim Quinlan wrote:
+>>>>> On Fri, Sep 6, 2024 at 6:54 PM Florian Fainelli
+>>>>> <florian.fainelli@broadcom.com> wrote:
+>>>>>>
+>>>>>> The write to RP2_GLOBAL_CMD followed by an immediate read of
+>>>>>> RP2_GLOBAL_CMD in rp2_reset_asic() is intented to flush out the write,
+>>>>>> however by then the device is already in reset and cannot respond to a
+>>>>>> memory cycle access.
+>>>>>>
+>>>>>> On platforms such as the Raspberry Pi 4 and others using the
+>>>>>> pcie-brcmstb.c driver, any memory access to a device that cannot respond
+>>>>>> is met with a fatal system error, rather than being substituted with all
+>>>>>> 1s as is usually the case on PC platforms.
+>>>>>>
+>>>>>> Swapping the delay and the read ensures that the device has finished
+>>>>>> resetting before we attempt to read from it.
+>>>>>>
+>>>>>> Fixes: 7d9f49afa451 ("serial: rp2: New driver for Comtrol RocketPort 2 cards")
+>>>>>> Suggested-by: Jim Quinlan <james.quinlan@broadcom.com>
+>>>>>> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+>>>>>> ---
+>>>>>>     drivers/tty/serial/rp2.c | 2 +-
+>>>>>>     1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/drivers/tty/serial/rp2.c b/drivers/tty/serial/rp2.c
+>>>>>> index 4132fcff7d4e..8bab2aedc499 100644
+>>>>>> --- a/drivers/tty/serial/rp2.c
+>>>>>> +++ b/drivers/tty/serial/rp2.c
+>>>>>> @@ -577,8 +577,8 @@ static void rp2_reset_asic(struct rp2_card *card, unsigned int asic_id)
+>>>>>>            u32 clk_cfg;
+>>>>>>
+>>>>>>            writew(1, base + RP2_GLOBAL_CMD);
+>>>>>> -       readw(base + RP2_GLOBAL_CMD);
+>>>>>>            msleep(100);
+>>>>>> +       readw(base + RP2_GLOBAL_CMD);
+>>>>>
+>>>>> Since the assumed purpose of the readw() was to flush the writew(),
+>>>>> would it make sense to add a barrier after the writew()?
+>>>>
+>>>> AFAICT there is one which is implied within the name, as it is not a
+>>>> _relaxed() variant. Did you mean a different sort of barrier to be used?
+>>>
+>>> Not sure.  The __raw_writew() is followed by __io_aw(), which is a
+>>> no-op on arm64.  I don't know arm64 well enough to know if a follow-up
+>>> barrier is needed.
+>>
+>> By definition all of the {read,write}{b,w,l,q} do include an adequate
+>> barrier
+> I do see this in the kernel, e.g. altera_edac.c, pci-hyperv.c,
+> oxu210hp-hcd.c, etc:
+> 
+>          write[lw](..);
+>          wmb();
+> 
+> All I am saying is that the definition of writew() for arm64 has no
+> explicit barrier *after* it makes the __raw_writew() call, since its
+> __io_aw() call is a no-op.  I really don't know if this matters, just
+> wanted to mention it.
 
-Thanks for the response, I'll be sure to send a new better formatted patch.
+Not having the documentation for this peripheral, not sure TBH.
 
-Dennis
+As far as the drivers you quoted given the __io_bw() does include a 
+barrier, it would appear that the barrier after is possibly redundant, 
+or is based upon a misunderstanding of which side of the write the 
+barrier must be on, or maybe they are actually necessary, but 
+undocumented as such..
+-- 
+Florian
 
