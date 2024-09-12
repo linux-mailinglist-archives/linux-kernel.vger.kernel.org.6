@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-327139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46CE0977131
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:12:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2FA0977130
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:12:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE1A61F24ABC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:12:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B414B24FB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5BB71C3307;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79F31C4604;
 	Thu, 12 Sep 2024 19:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="oYp7gIuU"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2050.outbound.protection.outlook.com [40.107.212.50])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Z5qqy9Hr"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2057.outbound.protection.outlook.com [40.107.220.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61B51C2DC3
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 19:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13311C2453
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 19:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.57
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726168169; cv=fail; b=Nh25lH3pgbFRfk2L8eFTN4zTNI8mBnpEbvdaLTowhMcDntOy1rnsevsJR3dlwbZjwroUEBEmPGvnlk9xuTw9dfQbTIaAv3VIoOgbwiXEXMkvPN7cBAI0s7Lk5uAWAhLCgRooE4lYN50RuAfwRDWYoUxy6B8SF+7SaNokCH4LZto=
+	t=1726168169; cv=fail; b=VzslhAtWozuSYfawhZlDaMjpd4uHlp1F8LP8rPl4OkB8maqUeBN1zo7hfkexZSoAYX+8+/3OGD1G9SnYJgkCwboBt3LSG4SgqbhIAmEsokzzM3+2k+2rU2ukUOba0xrrB7hPRBCXcAEqGwzkoNAS8NtZEQiLvYh/nQrOUHxEZBQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1726168169; c=relaxed/simple;
-	bh=T+VL+ljamoy7YE1sXKH9gNIJDwnuFNsJuNJgCPorlPY=;
+	bh=6/Q8CHbmjdqrbS5JeONL3pZJ/vC7izSPsfv1e2BnI60=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tPhf/4xNtFvxsXw0u5jjhoqq0w+rWZ0zSicCJBHm/oorm4pqn9YkjeekKFq1DJUFS48tox58QCgdVZeB8iZKefSAS+cWSRUyefPKcUGaMVOyvezRPQLQaiBwRObV+HGpn1CK6+eg9OlZ2jsLtD7fQDmo+JZhQpMzpcIms56h5C4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=oYp7gIuU; arc=fail smtp.client-ip=40.107.212.50
+	 MIME-Version:Content-Type; b=QkbE2hsHYW37UAzohmCQMUIinUovsjkUoNatpA+mTAx6MQZtuJ0ol7ozsC0flivbms5xmMAF5bA8IxbawDwR+sECLVEGllys4475EVr1k+4ixHM7sGw5bXBv4uvSsh4PqPfDq/2RuQ317CnTJIbFPU43gc2ygfhBWQxnxQWDoB4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Z5qqy9Hr; arc=fail smtp.client-ip=40.107.220.57
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KY8KVMYUg2Ijfonm83cVHFMUNNPntGfjbHJeEj1J7cDmmluEEtWU5z5dICSinX7OK2iS/4PscKtL3hMEMCDk1I7Oqx84OfLt8xgzEFy57aVea2PSedmfd9p3hr1YM83pnd13ItxAO2dnQu2TgTszO2K2UzA7IYB59qYzo4BmZUidHYI+l4v6dffYolE+ZUI1n6iPSNiN6OW2cJ383fJYJxagB0MdsKN46WPHtl8MDXrhCotqY0tIQ7tXJDbtTT0i5jY0HqbBR/h33jbMLuD2GQrR6g5VVzefDNdv3moR+E/ql6TyeKsvAu1wRTLFQfm6e6+iARPsVP3Hr2Sa8gRGxQ==
+ b=AxxDuq6DftiqHbuUsbcdHnHpmbmKYPSnqBGmBzSL3uwtWEAT4JR4b6yN8M/bRQH+5+bTCh/2VgXy/8evWVuS7dMeDuiUEdIerTN4r/6H2iH2qijjmUV5MViAaEtlVdTH0eeWMNByc90YdrJC1Hfj/rdMYfoZLW9PF/KFCKTqsRG8NkeLLuRavLFnCbnNO0hXiGnGlykvuSzVE2e6zamVoFmf7wB8M5wPBrx0J2JNET7ZM2Qubl4RC66FdYsZ3/6dVsPZ9XcY+bRHiXpLXibhHZt/HXGaep0TITWTdj3NqYVjUZoOO4s2E2Q+T0OcyaCMDaJ7bx4p5DIPqHYTMjZ/ow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xWSFNn3vnwrNfAAfGapu4lnlBsrHG79DNWoMncBmQIA=;
- b=rJx+TrvxFbEhTRFIGypZTNNxWgxuuJo6sQUwOA6XuVPqFl7D9ZFWhLlnCOYWIDkUZrQNshcT1iUOW4LURLsn8ZytjlEUqfdqZJ0FCH7E8L7dSiPa0rHuLW7CqwLJgWjXE/p7ZpMlTmZAsrLslIhNoNTl2ZkOD/1xwts84Ahx2Ok6CBT798q3LU2Wpl+1VI01wQRsc+d7dv15+dE69MHhMfdPbiT7CDp4lbbAqYaJGS64fJ70NCcRjhchZAvvxrt5eZXpQWDOT+bzc/WqOJxPo+B8WI9Ysn0pG0fxQGThwuraWIvs22fQ4UDdDGilWqa9AO/lzh9RBHW6Cyv53b0tHw==
+ bh=VJE842/DQH7Y18Kn+8BUpUlPdP/4L2y9ssRAkX4APlc=;
+ b=crvzgXUAy2GXSMM5vh1mSweMDSZt8wtiIQ0vbo36qmlEFj2ZWB57qiD39AaWL+ECyLUDdZ5W5So5sH5LIsk6/n1MvNCIX8rwQaIEbn+ljaTVbmYfYJdNfFqN2jRJB/8hHE6SAqb7Zt8df0yYzpa6CQKLEEdFdq9m+u/HjqrMrmL4e3FLn6p4nT9l8C0k+5c1YXJOQlkVW5GJ2QUNXOe46+8jSWGks3CBuKiQ98R23E5rI7CnI7vd1CCaqijl6+mU47QamVZ8dSAbrsl9xw9QNuggE27TGmsE8H45PF3Lx1u6ZJO5gVxCdawOKxe2G5NBN0jVcG5FuN+zcPX8JmFCVg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xWSFNn3vnwrNfAAfGapu4lnlBsrHG79DNWoMncBmQIA=;
- b=oYp7gIuUQXvyXuV9yTKV2t41Bg3tllANs+asY9KgeIiiwWCnpcGSXiK8QdPCF2RgyDqa7qpIzoQtw2vdP+3AtX5akB0Gf82KA3T/nLNrdtmQ+UjHc8bpCKfEthYoP8/cwU9QxYU4wO/tPQc1NCEtnmeWvPgK46xVY97+Sqh1krE=
-Received: from MW4P222CA0007.NAMP222.PROD.OUTLOOK.COM (2603:10b6:303:114::12)
- by PH0PR12MB8051.namprd12.prod.outlook.com (2603:10b6:510:26d::19) with
+ bh=VJE842/DQH7Y18Kn+8BUpUlPdP/4L2y9ssRAkX4APlc=;
+ b=Z5qqy9Hr/DIMduC2VzmyGg3+EjziAO12Hi1sb72OXRilfzKCDtzwlG+7Sqrcl5KkT/eVmM3JY6mMroqtuhtdQ10ABzAVBiDuPZiclDpipuWo1jx4lmuog7eNU81LW0Y42dmptZMp6XEk6Ae5WFoH8QYvzoO/16Dakzixp3fGIcg=
+Received: from BY3PR10CA0016.namprd10.prod.outlook.com (2603:10b6:a03:255::21)
+ by MW6PR12MB8758.namprd12.prod.outlook.com (2603:10b6:303:23d::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.17; Thu, 12 Sep
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Thu, 12 Sep
  2024 19:09:21 +0000
-Received: from SJ1PEPF00002313.namprd03.prod.outlook.com
- (2603:10b6:303:114:cafe::3a) by MW4P222CA0007.outlook.office365.com
- (2603:10b6:303:114::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24 via Frontend
- Transport; Thu, 12 Sep 2024 19:09:20 +0000
+Received: from SJ1PEPF00002314.namprd03.prod.outlook.com
+ (2603:10b6:a03:255:cafe::a4) by BY3PR10CA0016.outlook.office365.com
+ (2603:10b6:a03:255::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.26 via Frontend
+ Transport; Thu, 12 Sep 2024 19:09:21 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,13 +62,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF00002313.mail.protection.outlook.com (10.167.242.167) with Microsoft
+ SJ1PEPF00002314.mail.protection.outlook.com (10.167.242.168) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
  15.20.7918.13 via Frontend Transport; Thu, 12 Sep 2024 19:09:20 +0000
 Received: from tiny.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 12 Sep
- 2024 14:09:16 -0500
+ 2024 14:09:17 -0500
 From: David Kaplan <david.kaplan@amd.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
@@ -76,9 +76,9 @@ To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	<mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
 	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
 CC: <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 17/34] x86/bugs: Restructure srso mitigation
-Date: Thu, 12 Sep 2024 14:08:40 -0500
-Message-ID: <20240912190857.235849-18-david.kaplan@amd.com>
+Subject: [RFC PATCH 18/34] Documentation/x86: Document the new attack vector controls
+Date: Thu, 12 Sep 2024 14:08:41 -0500
+Message-ID: <20240912190857.235849-19-david.kaplan@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240912190857.235849-1-david.kaplan@amd.com>
 References: <20240912190857.235849-1-david.kaplan@amd.com>
@@ -94,299 +94,264 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002313:EE_|PH0PR12MB8051:EE_
-X-MS-Office365-Filtering-Correlation-Id: 428a0f20-7e8a-4098-e854-08dcd35e681e
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002314:EE_|MW6PR12MB8758:EE_
+X-MS-Office365-Filtering-Correlation-Id: bbbc636c-230c-46e3-dc37-08dcd35e6861
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|82310400026|36860700013;
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026|7416014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?cn21mzChDELdJMOcAfa/SKfZqOIo+n8Zj2L0ywc1u4HnhdvEo6aPpSf20Cl8?=
- =?us-ascii?Q?vCIM7Yt3xFSgE1v2IA5oni7pMz/YB0vkIgrXJW5+/0sZQnBOxOtY3mwzr4z9?=
- =?us-ascii?Q?u13VIVhaz3iKn+g+Zd1yhv7YO7Uj6ehpHJhj/CBBGCHysBUl7D/AyAbgURHB?=
- =?us-ascii?Q?BmXmCQE3rTSQCSaKALmXGGFl+IoBPS728vgjaQwSKAmbmfCw8VNF2659Fn0m?=
- =?us-ascii?Q?/bFKxrpfZdzf/it9ORqGTZwknYHFApr5NzBj24GhwLbhIxsVC78eCEW/miqX?=
- =?us-ascii?Q?w+h1kRIvb5MnqRsCEEyTcF5XtqW0kqzr+l+PCLywmHJDnf8KzwIr4TGLmOBF?=
- =?us-ascii?Q?4W/PlH+T2JdOREsYuRJXvixHotnymAlWjYlc0KjPTTKulSCCl8r866ASpZJs?=
- =?us-ascii?Q?7KaM7kmatSs3Ztoo8vWiH7TdwifCivLolOo7GT3Ado9SiMymMjLi2BFbbqHP?=
- =?us-ascii?Q?GMHwO8QF9jYLxEOiKkYTncSFqbA13FjtUT3Umr7toOPJMXg86D0bJd9J2GBO?=
- =?us-ascii?Q?V+yHPw3STd9WxhxAPX5klK2PxOBfwQ67/Uk/eh0YG8S2uQpMEm8aq7/76Iuo?=
- =?us-ascii?Q?xlBG1PBrwMJ5c3uW4FgHB8Z23iN/YunkQUag31l3Mww/CM9BEqUS0toqyn5z?=
- =?us-ascii?Q?m5EI/8Jc5ZzGQNXksRZOpQTRr7LRb2RPTZhsWL/vViYD/XE9XvL+zWh7z7wV?=
- =?us-ascii?Q?XptLRoRk9NkpfXQZTWJxmFtPHaedwQlWFhntpEg7Q7FWunZcLwIpKVIFhBdA?=
- =?us-ascii?Q?KWKFAJhOv6t1sQmKuxkADmdLx5Or4mboHgBA77kYbA+0pJ4ORMjEYa25goSU?=
- =?us-ascii?Q?ejSrJD386RnK1FhA8E5muAuLbgCt/QQEwo7M1LCXr/txlj0XSHmms4sNFCUI?=
- =?us-ascii?Q?Vm+DouHMxrGhcyvkq69yT0nDCxbysvpmHAgdh0YeOXxsk78G9rf5JrMOhjYg?=
- =?us-ascii?Q?XSS741rQdYjMtjLKIprMUFHJk49Up1VhmJkRaLvhvwyQyVkjGJgYIUVbt2iI?=
- =?us-ascii?Q?AVR8vBbPFLIyng2Gy58LdjpPObk6VfreprEezYAq0yS7C3c6mA3PxYCMcc72?=
- =?us-ascii?Q?v6/VHkN2bszFPMRIljuPisgSQE7y49KUfTHbc0Re38x9ClxVpZyPNfOWN0Z7?=
- =?us-ascii?Q?4LglponqFLgAcQLEM9gijHiNfx0hDjzrB0FxHO2F8tKf+N+yixVQR6inPP0U?=
- =?us-ascii?Q?BfzU5fsrnJC/c5FIq8bPKkdWXe24mzwdt2b+/DW2/BsBM76RUbUw9qn+B+0D?=
- =?us-ascii?Q?Rl+2IyafJMzth53Jnrrz34TArCTCx1QKpwerL4LYHYtuozy2uanaQgqK5laO?=
- =?us-ascii?Q?0BNQ2u3O1D2b7tP9ozGAtF6R3SsKHF7kNQQ5cqxKT+qrJ87aOlhKCbX0/Zy9?=
- =?us-ascii?Q?AW3Arw4lxOg6kZ9vUthj7v8VYEslIG/AnyB7nbhQ5qoK8URvNb6cYZ3ONLm2?=
- =?us-ascii?Q?BLWZEBdHi6NkS/q4Vjcq7RYj1n9UOTds?=
+	=?us-ascii?Q?HJEyNV+64EKzc4VCR7VItCExQ697JPg0VftlXijd0vBEhdmPyc1ffgRnPtT8?=
+ =?us-ascii?Q?cRQWnqKz0iUdZh9NmEI7nbw0GLIX/RqB1lLGSZxsOa8r+m3QWwEzGwNEFIUs?=
+ =?us-ascii?Q?QHw10MTaqShUzxlNHSOIZ/pxSXM0kOm96BBnZa4lEMysUBKbaJ9Sg4h4VW35?=
+ =?us-ascii?Q?RvFkNGeIjo0WHSzk/ro9aBjmN2S1/MG5ed1d/VlVTJbsxMarYrStiWMb7qxQ?=
+ =?us-ascii?Q?qNkmx79zRbfA5/MEPURROUUi4embwh2dSaev9XozQc457f1kbEAYAJ048jvT?=
+ =?us-ascii?Q?TOV4D9cv94rYsOyJp9ym7mS9E6xS5u4Qs+KmaLXtoaqVS8MgshsVZp5r3PCO?=
+ =?us-ascii?Q?QqY/PNBeMBaAK9REbbqZdHZf1+vC8OtHCsezMIYzZ+Rla+Q8ErbXdSsZ2Z7a?=
+ =?us-ascii?Q?QxJoInySAHU0O2dpIAHSPPSSUyJuOW2cuX3r5LZPejCGxygVgMqUybxNkQIV?=
+ =?us-ascii?Q?ugWEZK75gzfVIAdqEKkqQzN5s9VC8TSw6joE31cGbNmsH+ATKlZ1x6DQJ0km?=
+ =?us-ascii?Q?wug/wvjeKERJGyDGyloyAs7joIuSDOGEGooMbV8honQ8+m73llYnnHdbxBe7?=
+ =?us-ascii?Q?552NHUHHzxVkvuirx6CzsC1Iok/a/f93AmR5cghLt/CzI7h+GT0p2GvPTCOZ?=
+ =?us-ascii?Q?K6lxh5p8l0bhj9O6cWey/97o3qJrEaB/l+HkrEWhx0sFH76qQVJCvdiisS6q?=
+ =?us-ascii?Q?gjeJj/KreVXKkF+3oI9qiNf+c3jBJP1KMISDIyKOdoQKl3JYIWhW8yaM1uts?=
+ =?us-ascii?Q?LPPZNQ5Dtr27nJDcSGkEKq0Rdhjky6z/uHHbpTxF0uwdOt0dz2EpT8g77T1i?=
+ =?us-ascii?Q?8U8WJuPL3pX7wQa/+KpYtCD1PNAy2FIXG0l3wyPOoKulZr6BeadW6IC2+Nvp?=
+ =?us-ascii?Q?KrjRcAwAeWauGETuBSPJjvO4bZLfEF+DG0lIuffwE9Ueoe5qRpoewPI61wyZ?=
+ =?us-ascii?Q?6Ec94Kcqp9bsu/XTEyDh1ZfBmKihw7irZZSmfrDH5B2iBhBI5ejnaB9VUaWZ?=
+ =?us-ascii?Q?636kVjfsbdseFKq3jwPDfCm75KznL0UdFUTRzxNSmjjSntDkArji3aWsbalI?=
+ =?us-ascii?Q?vlDLAsVkbgmBLg/COnrrEo87obOHUZa3SLfW273XIwpf+p4oeXbP6AiDnR7F?=
+ =?us-ascii?Q?jktPoEbU+5TSQnrKK0wBoaBnL44l1zAcqT1e2UjqDMzzhDAVSVMnHC8AmAs5?=
+ =?us-ascii?Q?pHr3M2C+tWjoW96WeRpbTiUphoh5bAvx+CPBe5U1mMAYVRDUL8l6RWM1NaG8?=
+ =?us-ascii?Q?4zW/ebkXXZMYsQZrYTDoPZdZ9IArevDCdIez5pxMApJ9smqC5aYBrOEYL0B+?=
+ =?us-ascii?Q?ekF5dEBlhGub/9WZOgcpdM8mw144DcaHaeN8/r/NTDjMWnymUFe46Q/qxQPl?=
+ =?us-ascii?Q?z3hftiRrWFH+iBrdkBRKGjOc19sob8CZVgMdvH5RFBYqDLpWRe1M8L2n8J1q?=
+ =?us-ascii?Q?lCLUtvSyzanj3FNkpn+a2hPxPpSCn4vv?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026)(7416014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2024 19:09:20.5447
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2024 19:09:20.9054
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 428a0f20-7e8a-4098-e854-08dcd35e681e
+X-MS-Exchange-CrossTenant-Network-Message-Id: bbbc636c-230c-46e3-dc37-08dcd35e6861
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002313.namprd03.prod.outlook.com
+	SJ1PEPF00002314.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8051
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8758
 
-Restructure srso to use select/update/apply functions to create
-consistent vulnerability handling.  Like with retbleed, the command line
-options directly select mitigations which can later be modified.
+Document the 5 new attack vector command line options, how they
+interact with existing vulnerability controls, and recommendations on
+when they can be disabled.
+
+Note that while mitigating against untrusted userspace requires both
+mitigate_user_kernel and mitigate_user_user, these are kept separate.
+The kernel can control what code executes inside of it and that may
+affect the risk associated with vulnerabilities especially if new kernel
+mitigations are implemented.  The same isn't typically true of userspace.
+
+In other words, the risk associated with user_user or guest_guest
+attacks is unlikely to change over time.  While the risk associated with
+user_kernel or guest_host attacks may change.  Therefore, these controls
+are separated.
 
 Signed-off-by: David Kaplan <david.kaplan@amd.com>
 ---
- arch/x86/kernel/cpu/bugs.c | 136 ++++++++++++++++++-------------------
- 1 file changed, 68 insertions(+), 68 deletions(-)
+ .../hw-vuln/attack_vector_controls.rst        | 172 ++++++++++++++++++
+ Documentation/admin-guide/hw-vuln/index.rst   |   1 +
+ 2 files changed, 173 insertions(+)
+ create mode 100644 Documentation/admin-guide/hw-vuln/attack_vector_controls.rst
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index ba10aa37d949..334fd2c5251d 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -84,6 +84,8 @@ static void __init srbds_select_mitigation(void);
- static void __init srbds_apply_mitigation(void);
- static void __init l1d_flush_select_mitigation(void);
- static void __init srso_select_mitigation(void);
-+static void __init srso_update_mitigation(void);
-+static void __init srso_apply_mitigation(void);
- static void __init gds_select_mitigation(void);
- static void __init gds_apply_mitigation(void);
- static void __init bhi_select_mitigation(void);
-@@ -200,11 +202,6 @@ void __init cpu_select_mitigations(void)
- 	rfds_select_mitigation();
- 	srbds_select_mitigation();
- 	l1d_flush_select_mitigation();
--
--	/*
--	 * srso_select_mitigation() depends and must run after
--	 * retbleed_select_mitigation().
--	 */
- 	srso_select_mitigation();
- 	gds_select_mitigation();
- 	bhi_select_mitigation();
-@@ -220,6 +217,7 @@ void __init cpu_select_mitigations(void)
- 	taa_update_mitigation();
- 	mmio_update_mitigation();
- 	rfds_update_mitigation();
-+	srso_update_mitigation();
- 
- 	spectre_v1_apply_mitigation();
- 	spectre_v2_apply_mitigation();
-@@ -232,6 +230,7 @@ void __init cpu_select_mitigations(void)
- 	mmio_apply_mitigation();
- 	rfds_apply_mitigation();
- 	srbds_apply_mitigation();
-+	srso_apply_mitigation();
- 	gds_apply_mitigation();
- 	bhi_apply_mitigation();
- }
-@@ -2637,6 +2636,7 @@ early_param("l1tf", l1tf_cmdline);
- 
- enum srso_mitigation {
- 	SRSO_MITIGATION_NONE,
-+	SRSO_MITIGATION_AUTO,
- 	SRSO_MITIGATION_UCODE_NEEDED,
- 	SRSO_MITIGATION_SAFE_RET_UCODE_NEEDED,
- 	SRSO_MITIGATION_MICROCODE,
-@@ -2645,14 +2645,6 @@ enum srso_mitigation {
- 	SRSO_MITIGATION_IBPB_ON_VMEXIT,
- };
- 
--enum srso_mitigation_cmd {
--	SRSO_CMD_OFF,
--	SRSO_CMD_MICROCODE,
--	SRSO_CMD_SAFE_RET,
--	SRSO_CMD_IBPB,
--	SRSO_CMD_IBPB_ON_VMEXIT,
--};
--
- static const char * const srso_strings[] = {
- 	[SRSO_MITIGATION_NONE]			= "Vulnerable",
- 	[SRSO_MITIGATION_UCODE_NEEDED]		= "Vulnerable: No microcode",
-@@ -2663,8 +2655,7 @@ static const char * const srso_strings[] = {
- 	[SRSO_MITIGATION_IBPB_ON_VMEXIT]	= "Mitigation: IBPB on VMEXIT only"
- };
- 
--static enum srso_mitigation srso_mitigation __ro_after_init = SRSO_MITIGATION_NONE;
--static enum srso_mitigation_cmd srso_cmd __ro_after_init = SRSO_CMD_SAFE_RET;
-+static enum srso_mitigation srso_mitigation __ro_after_init = SRSO_MITIGATION_AUTO;
- 
- static int __init srso_parse_cmdline(char *str)
- {
-@@ -2672,15 +2663,15 @@ static int __init srso_parse_cmdline(char *str)
- 		return -EINVAL;
- 
- 	if (!strcmp(str, "off"))
--		srso_cmd = SRSO_CMD_OFF;
-+		srso_mitigation = SRSO_MITIGATION_NONE;
- 	else if (!strcmp(str, "microcode"))
--		srso_cmd = SRSO_CMD_MICROCODE;
-+		srso_mitigation = SRSO_MITIGATION_MICROCODE;
- 	else if (!strcmp(str, "safe-ret"))
--		srso_cmd = SRSO_CMD_SAFE_RET;
-+		srso_mitigation = SRSO_MITIGATION_SAFE_RET;
- 	else if (!strcmp(str, "ibpb"))
--		srso_cmd = SRSO_CMD_IBPB;
-+		srso_mitigation = SRSO_MITIGATION_IBPB;
- 	else if (!strcmp(str, "ibpb-vmexit"))
--		srso_cmd = SRSO_CMD_IBPB_ON_VMEXIT;
-+		srso_mitigation = SRSO_MITIGATION_IBPB_ON_VMEXIT;
- 	else
- 		pr_err("Ignoring unknown SRSO option (%s).", str);
- 
-@@ -2696,12 +2687,16 @@ static void __init srso_select_mitigation(void)
- 
- 	if (!boot_cpu_has_bug(X86_BUG_SRSO) ||
- 	    cpu_mitigations_off() ||
--	    srso_cmd == SRSO_CMD_OFF) {
-+	    srso_mitigation == SRSO_MITIGATION_NONE) {
- 		if (boot_cpu_has(X86_FEATURE_SBPB))
- 			x86_pred_cmd = PRED_CMD_SBPB;
- 		return;
- 	}
- 
-+	/* Default mitigation */
-+	if (srso_mitigation == SRSO_MITIGATION_AUTO)
-+		srso_mitigation = SRSO_MITIGATION_SAFE_RET;
+diff --git a/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst b/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst
+new file mode 100644
+index 000000000000..4f77e1e69090
+--- /dev/null
++++ b/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst
+@@ -0,0 +1,172 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
- 	if (has_microcode) {
- 		/*
- 		 * Zen1/2 with SMT off aren't vulnerable after the right
-@@ -2713,29 +2708,59 @@ static void __init srso_select_mitigation(void)
- 			setup_force_cpu_cap(X86_FEATURE_SRSO_NO);
- 			return;
- 		}
--
--		if (retbleed_mitigation == RETBLEED_MITIGATION_IBPB) {
--			srso_mitigation = SRSO_MITIGATION_IBPB;
--			goto out;
--		}
- 	} else {
- 		pr_warn("IBPB-extending microcode not applied!\n");
- 		pr_warn(SRSO_NOTICE);
- 
--		/* may be overwritten by SRSO_CMD_SAFE_RET below */
--		srso_mitigation = SRSO_MITIGATION_UCODE_NEEDED;
-+		/* Fall-back to Safe-RET */
-+		srso_mitigation = SRSO_MITIGATION_SAFE_RET_UCODE_NEEDED;
- 	}
- 
--	switch (srso_cmd) {
--	case SRSO_CMD_MICROCODE:
--		if (has_microcode) {
--			srso_mitigation = SRSO_MITIGATION_MICROCODE;
--			pr_warn(SRSO_NOTICE);
--		}
-+	switch (srso_mitigation) {
-+	case SRSO_MITIGATION_MICROCODE:
-+		pr_warn(SRSO_NOTICE);
-+		break;
++Attack Vector Controls
++======================
 +
-+	case SRSO_MITIGATION_SAFE_RET:
-+	case SRSO_MITIGATION_SAFE_RET_UCODE_NEEDED:
-+		if (!IS_ENABLED(CONFIG_MITIGATION_SRSO))
-+			pr_err("WARNING: kernel not compiled with MITIGATION_SRSO.\n");
- 		break;
++Attack vector controls provide a simple method to configure only the mitigations
++for CPU vulnerabilities which are relevant given the intended use of a system.
++Administrators are encouraged to consider which attack vectors are relevant and
++disable all others in order to recoup system performance.
++
++When new relevant CPU vulnerabilities are found, they will be added to these
++attack vector controls so administrators will likely not need to reconfigure
++their command line parameters as mitigations will continue to be correctly
++applied based on the chosen attack vector controls.
++
++Attack Vectors
++--------------
++
++There are 5 sets of attack-vector mitigations currently supported by the kernel:
++
++#. :ref:`user_kernel` (mitigate_user_kernel= )
++#. :ref:`user_user` (mitigate_user_user= )
++#. :ref:`guest_host` (mitigate_guest_host= )
++#. :ref:`guest_guest` (mitigate_guest_guest=)
++#. :ref:`cross_thread` (mitigate_cross_thread= )
++
++Each control may either be specified as 'off' or 'on'.
++
++.. _user_kernel:
++
++User-to-Kernel
++^^^^^^^^^^^^^^
++
++The user-to-kernel attack vector involves a malicious userspace program
++attempting to leak kernel data into userspace by exploiting a CPU vulnerability.
++The kernel data involved might be limited to certain kernel memory, or include
++all memory in the system, depending on the vulnerability exploited.
++
++If no untrusted userspace applications are being run, such as with single-user
++systems, consider disabling user-to-kernel mitigations.
++
++Note that the CPU vulnerabilities mitigated by Linux have generally not been
++shown to be exploitable from browser-based sandboxes.  User-to-kernel
++mitigations are therefore mostly relevant if unknown userspace applications may
++be run by untrusted users.
++
++*mitigate_user_kernel defaults to 'on'*
++
++.. _user_user:
++
++User-to-User
++^^^^^^^^^^^^
++
++The user-to-user attack vector involves a malicious userspace program attempting
++to influence the behavior of another unsuspecting userspace program in order to
++exfiltrate data.  The vulnerability of a userspace program is based on the
++program itself and the interfaces it provides.
++
++If no untrusted userspace applications are being run, consider disabling
++user-to-user mitigations.
++
++Note that because the Linux kernel contains a mapping of all physical memory,
++preventing a malicious userspace program from leaking data from another
++userspace program requires mitigating user-to-kernel attacks as well for
++complete protection.
++
++*mitigate_user_user defaults to 'on'*
++
++.. _guest_host:
++
++Guest-to-Host
++^^^^^^^^^^^^^
++
++The guest-to-host attack vector involves a malicious VM attempting to leak
++hypervisor data into the VM.  The data involved may be limited, or may
++potentially include all memory in the system, depending on the vulnerability
++exploited.
++
++If no untrusted VMs are being run, consider disabling guest-to-host mitigations.
++
++*mitigate_guest_host defaults to 'on' if KVM support is present*
++
++.. _guest_guest:
++
++Guest-to-Guest
++^^^^^^^^^^^^^^
++
++The guest-to-guest attack vector involves a malicious VM attempting to influence
++the behavior of another unsuspecting VM in order to exfiltrate data.  The
++vulnerability of a VM is based on the code inside the VM itself and the
++interfaces it provides.
++
++If no untrusted VMs, or only a single VM is being run, consider disabling
++guest-to-guest mitigations.
++
++Similar to the user-to-user attack vector, preventing a malicious VM from
++leaking data from another VM requires mitigating guest-to-host attacks as well
++due to the Linux kernel phys map.
++
++*mitigate_guest_guest defaults to 'on' if KVM support is present*
++
++.. _cross_thread:
++
++Cross-Thread
++^^^^^^^^^^^^
++
++The cross-thread attack vector involves a malicious userspace program or
++malicious VM either observing or attempting to influence the behavior of code
++running on the SMT sibling thread in order to exfiltrate data.
++
++Many cross-thread attacks can only be mitigated if SMT is disabled, which will
++result in reduced CPU core count and reduced performance.  Enabling mitigations
++for the cross-thread attack vector may result in SMT being disabled, depending
++on the CPU vulnerabilities detected.
++
++*mitigate_cross_thread defaults to 'off'*
++
++Interactions with command-line options
++--------------------------------------
++
++The global 'mitigations=off' command line takes precedence over all attack
++vector controls and will disable all mitigations.
++
++Vulnerability-specific controls (e.g. "retbleed=off") take precedence over all
++attack vector controls.  Mitigations for individual vulnerabilities may be
++turned on or off via their command-line options regardless of the attack vector
++controls.
++
++Summary of attack-vector mitigations
++------------------------------------
++
++When a vulnerability is mitigated due to an attack-vector control, the default
++mitigation option for that particular vulnerability is used.  To use a different
++mitigation, please use the vulnerability-specific command line option.
++
++The table below summarizes which vulnerabilities are mitigated when different
++attack vectors are enabled and assuming the CPU is vulnerable.
++
++=============== ============== ============ ============= ============== ============
++Vulnerability   User-to-Kernel User-to-User Guest-to-Host Guest-to-Guest Cross-Thread
++=============== ============== ============ ============= ============== ============
++BHI                   X                           X
++GDS                   X              X            X              X
++L1TF                                              X                       (Note 1)
++MDS                   X              X            X              X        (Note 1)
++MMIO                  X              X            X              X        (Note 1)
++Meltdown              X
++Retbleed              X                           X                       (Note 2)
++RFDS                  X              X            X              X
++Spectre_v1            X
++Spectre_v2            X                           X
++Spectre_v2_user                      X                           X
++SRBDS                 X              X            X              X
++SRSO                  X                           X
++SSB (Note 3)
++TAA                   X              X            X              X        (Note 1)
++=============== ============== ============ ============= ============== ============
++
++Notes:
++   1 --  Disables SMT if cross-thread mitigations are selected and CPU is vulnerable
++
++   2 --  Disables SMT if cross-thread mitigations are selected, CPU is vulnerable,
++   and STIBP is not supported
++
++   3 --  Speculative store bypass is always enabled by default (no kernel
++   mitigation applied) unless overridden with spec_store_bypass_disable option
++
++When an attack-vector is disabled (e.g., *mitigate_user_kernel=off*), all
++mitigations for the vulnerabilities listed in the above table are disabled,
++unless mitigation is required for a different enabled attack-vector or a
++mitigation is explicitly selected via a vulnerability-specific command line
++option.
+diff --git a/Documentation/admin-guide/hw-vuln/index.rst b/Documentation/admin-guide/hw-vuln/index.rst
+index ff0b440ef2dc..1add4a0baeb0 100644
+--- a/Documentation/admin-guide/hw-vuln/index.rst
++++ b/Documentation/admin-guide/hw-vuln/index.rst
+@@ -9,6 +9,7 @@ are configurable at compile, boot or run time.
+ .. toctree::
+    :maxdepth: 1
  
--	case SRSO_CMD_SAFE_RET:
--		if (IS_ENABLED(CONFIG_MITIGATION_SRSO)) {
-+	case SRSO_MITIGATION_IBPB:
-+		if (!IS_ENABLED(CONFIG_MITIGATION_IBPB_ENTRY))
-+			pr_err("WARNING: kernel not compiled with MITIGATION_IBPB_ENTRY.\n");
-+		break;
-+
-+	case SRSO_MITIGATION_IBPB_ON_VMEXIT:
-+		if (!IS_ENABLED(CONFIG_MITIGATION_SRSO))
-+			pr_err("WARNING: kernel not compiled with MITIGATION_SRSO.\n");
-+		break;
-+	default:
-+		break;
-+	}
-+}
-+
-+static void __init srso_update_mitigation(void)
-+{
-+	/* If retbleed is using IBPB, that works for SRSO as well */
-+	if (retbleed_mitigation == RETBLEED_MITIGATION_IBPB)
-+		srso_mitigation = SRSO_MITIGATION_IBPB;
-+
-+	pr_info("%s\n", srso_strings[srso_mitigation]);
-+}
-+
-+static void __init srso_apply_mitigation(void)
-+{
-+	if (!boot_cpu_has_bug(X86_BUG_SRSO) ||
-+	     srso_mitigation == SRSO_MITIGATION_NONE) {
-+		if (boot_cpu_has(X86_FEATURE_SBPB))
-+			x86_pred_cmd = PRED_CMD_SBPB;
-+		return;
-+	}
-+	switch (srso_mitigation) {
-+	case SRSO_MITIGATION_SAFE_RET:
-+	case SRSO_MITIGATION_SAFE_RET_UCODE_NEEDED:
- 			/*
- 			 * Enable the return thunk for generated code
- 			 * like ftrace, static_call, etc.
-@@ -2750,42 +2775,17 @@ static void __init srso_select_mitigation(void)
- 				setup_force_cpu_cap(X86_FEATURE_SRSO);
- 				x86_return_thunk = srso_return_thunk;
- 			}
--			if (has_microcode)
--				srso_mitigation = SRSO_MITIGATION_SAFE_RET;
--			else
--				srso_mitigation = SRSO_MITIGATION_SAFE_RET_UCODE_NEEDED;
--		} else {
--			pr_err("WARNING: kernel not compiled with MITIGATION_SRSO.\n");
--		}
--		break;
--
--	case SRSO_CMD_IBPB:
--		if (IS_ENABLED(CONFIG_MITIGATION_IBPB_ENTRY)) {
--			if (has_microcode) {
--				setup_force_cpu_cap(X86_FEATURE_ENTRY_IBPB);
--				srso_mitigation = SRSO_MITIGATION_IBPB;
--			}
--		} else {
--			pr_err("WARNING: kernel not compiled with MITIGATION_IBPB_ENTRY.\n");
--		}
--		break;
--
--	case SRSO_CMD_IBPB_ON_VMEXIT:
--		if (IS_ENABLED(CONFIG_MITIGATION_SRSO)) {
--			if (!boot_cpu_has(X86_FEATURE_ENTRY_IBPB) && has_microcode) {
--				setup_force_cpu_cap(X86_FEATURE_IBPB_ON_VMEXIT);
--				srso_mitigation = SRSO_MITIGATION_IBPB_ON_VMEXIT;
--			}
--		} else {
--			pr_err("WARNING: kernel not compiled with MITIGATION_SRSO.\n");
--                }
- 		break;
-+	case SRSO_MITIGATION_IBPB:
-+			setup_force_cpu_cap(X86_FEATURE_ENTRY_IBPB);
-+			break;
-+	case SRSO_MITIGATION_IBPB_ON_VMEXIT:
-+			setup_force_cpu_cap(X86_FEATURE_IBPB_ON_VMEXIT);
-+			break;
- 	default:
--		break;
-+			break;
- 	}
- 
--out:
--	pr_info("%s\n", srso_strings[srso_mitigation]);
- }
- 
- #undef pr_fmt
++   attack_vector_controls
+    spectre
+    l1tf
+    mds
 -- 
 2.34.1
 
