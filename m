@@ -1,149 +1,387 @@
-Return-Path: <linux-kernel+bounces-325975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D37179760A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:55:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 209C19760DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:59:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D9061C22C06
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 05:55:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8965281994
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 05:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEDB188927;
-	Thu, 12 Sep 2024 05:55:25 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3BF18BB81;
+	Thu, 12 Sep 2024 05:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="hyDPEtRC"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF67918734F
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 05:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FC8195980
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 05:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726120525; cv=none; b=r3lmmqu60mn4xzUuVIdykZYbhgYXerBBrYjp9xT/PoO5NsMwO3es/wT+xzzwHNFQsMJn6PvjRDP6fBJOa7zGVR//rWxj4CMc3FNekP3lY2MptHJeY5WFA9JUM4j7F3GHIPVYUBRHaOgHWqIBFe+lUkDpNMrHtRgnFR12PEsd0CY=
+	t=1726120577; cv=none; b=qMj26jbBJv/j9U7muFCCuoCxAi+uNFj2iBWJC6l0XG5bYHKneO/8Ryunv/5Wx5h3sp51PxD6qG9HPzhzp52Ard8qrVQswiMD2om4/gObJzfomHtFrrLt5TNfjV+fJ6pz1h/P84i5wtX+Xx1QKjwOQhvQYLMqGzFJe4QdwPfr9l0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726120525; c=relaxed/simple;
-	bh=PApkvqJXVEUNrwVkteCTy1JePFsPgV32jO/HlEaSDJ4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=VsXrjxCnLbhAH5n4AsuzGD9DB5JL7poNJH/9oOV2VbqAFbftOo1RcRFdzR2GX5x0py/FOJLU97O8Li2jfmWSyZ1uUscHho6PjklVpmOvTNiCwV1cI9jNjPmPMEDSEJMqI3B+5TdIVgw9m3Qp3jTlZWrxBKhlRqEqgYk8eW/87bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39d28a70743so8266485ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 22:55:23 -0700 (PDT)
+	s=arc-20240116; t=1726120577; c=relaxed/simple;
+	bh=2MZb8AJQZs0wG05Wps2DKInawqFPfqgCL1L5PflC7B4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=qbZDLmAopPgCveX3+5Yf5eKaHc/c4B2Ns+j8zQGgnOKCyWMXcQ3lMzcflB4eBrYcUzPY/nh1hzI1iccwtXxs3XhKTiP15A77yKmtMURx68QSKbtIkxHXpo0i7/xV7f0yna/IWSbMXLtZy+lzyX7nBtv3l8s0xXnZHWQj5fJfAZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=hyDPEtRC; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2068a7c9286so6959485ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 22:56:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1726120575; x=1726725375; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lZGiXXErbLpwtJqQgRszC/20gA32B7VjfeYUlTIyz2Y=;
+        b=hyDPEtRC1YSt8HY3ToJaylrg4hdczZZ7pciTOXe+yihIExv3zUrO8PnhsYZbWaRyMA
+         vHbQFClUH8soXWFxs1mFaHU5YqJ61s+BSVUu84mqvPNaMgeIOUXTbx/W6yQPlvgSU+as
+         3KEU2sKqXGjI3HBAHWUmZVOKie3tji/kp3kkK2itynJ9XFrRNWy8Odton1NaE79ODav7
+         iUPTYb8YC/THRXe04ylG9vB+MIknaT30hCo0bX5xaeW7D41oBOfZbSn+P4HpTeRTJ0rs
+         I3n6S60AuXHDo0CBJ41Xe50BQBzby8JPLIureTLUQWFWKUIF9WXtuLvDMX34OTpppE5S
+         XyEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726120523; x=1726725323;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zefzmfyJk8t8yJT5t/jigSUzYtXEsJyalJWIcKH+4Uo=;
-        b=u5l0VwP8eue87VOd6vyh+s3sGU2pebjs1MNcAqifsmGGPY7x/jVDhBBfgUDZpTfTTL
-         2829rWN3Fko6xA4P73aMv/Yb8lkhY3iL4O6URq/3NsTGMixVur8uXtedoJEe+jKAYdnW
-         +4G6FTcqrUHzvUOk3squ9wXIcOkgh++rA+9SBPqiYI9mJXpcNtUiLWh21Fl1g0Gtje/E
-         40Gs/MOmlPLW97X4F08gm42teVmoZ6z/oCQfM1tNxIfB6O0f3lJUtIacCdo6H66hMhq2
-         zV2kMRJLTTqj7sjbvwJSkt2BGpFcHpsxzMUxBnpdUgkLLhg+vnR+IspQyuv3GlheddpQ
-         YaSA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzW1Q6fxZMEDk7LZ63z2Ae8A/nCsUDtBThVNtMna3f71sMlIutCqx01mw5H/KvMNiPKpX+aIvL7MLEPYk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwT5MDb5VWZUoVNAJX37JA7dZB/qW4/s6HnNDvjoHoX3XhxieqO
-	OEc/Xo/iDwxzkkOrz7jteMkt3qphXm5RxzTI3rf3/qO4fb4sOH0XPnjaFqgCi5wU5FPvMbSxzWm
-	pNEkIcVFRXhokifJaTxxMRLeKLjSML8FC82yldBF1LepRfvlB1CoHjSE=
-X-Google-Smtp-Source: AGHT+IHKPoAnfLthhAIuluDrpEV1nrIA2EDTF3BxQ6SRlol9/JoP6cWnQbOeqYC4Rwce5LCyoGQWlLmNbAZKujsUG1oqxhYdp9l4
+        d=1e100.net; s=20230601; t=1726120575; x=1726725375;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lZGiXXErbLpwtJqQgRszC/20gA32B7VjfeYUlTIyz2Y=;
+        b=jk+pHMRxR7X92ZBi+15ZYJNGkcVNZBVWijqKYcyvjEiq02d3JE5H5eAqcHdBu1UUBO
+         Cikvckk0S/M+ivqQ83f0/euoKKla2HmnJBDnl3+QNcudfvc397QErqUeoYO4wdO47ZUR
+         b+2Xbkm1uQJJV/RaGELoZyaV+kKTUAzAuIVpAlUUcZfxmOlBn/tPR+psnqJOb+zgaEI4
+         UmsH7xpLpXt7/X4mnKvesNjCILPz7ZiR1tW9yH1MX2RBFPJkPW03rsdklcaicr3Y7cEq
+         uJ1tD/sqDbeWpngqcxefscj5c9IUue1yhr7pLS7RbFugP4SG4oFVXmBedABTIh9fBosR
+         Vuog==
+X-Forwarded-Encrypted: i=1; AJvYcCWmStnRNdfZRxPPjkVyZcZl+2LtSBdOnsWko0oZBCbhvGtiDwDo32Z6VQpcDkqm1s2VwZQMHuVh9/oymUg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhE8cyK/FT1B0jubM4TxxJ84Mr8hFiYKCF/u0rqjpQ63KHQC3C
+	WtojQXEGdYtN0uda6bS6ZOmi5uOxYwpcIG5EXUP9IiXibpBIyWYLX887KOrYQZM=
+X-Google-Smtp-Source: AGHT+IEP6KKwUZUW8OkMBb/fzUUdV4ELJioR4iSAdt1JCFUkRDRHnlZjxlI1+ScQqzaBoVsDlqO0MA==
+X-Received: by 2002:a17:902:e852:b0:205:8407:6321 with SMTP id d9443c01a7336-2076e32e467mr26718025ad.9.1726120574663;
+        Wed, 11 Sep 2024 22:56:14 -0700 (PDT)
+Received: from charlie.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076afe99b6sm7870465ad.209.2024.09.11.22.56.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 22:56:13 -0700 (PDT)
+From: Charlie Jenkins <charlie@rivosinc.com>
+Date: Wed, 11 Sep 2024 22:55:22 -0700
+Subject: [PATCH v10 14/14] riscv: Add ghostwrite vulnerability
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c5:b0:39f:325f:78e6 with SMTP id
- e9e14a558f8ab-3a0845a0d55mr13801545ab.0.1726120522992; Wed, 11 Sep 2024
- 22:55:22 -0700 (PDT)
-Date: Wed, 11 Sep 2024 22:55:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009ce1970621e5c01f@google.com>
-Subject: [syzbot] [ntfs3?] kernel panic: stack is corrupted in do_raw_spin_lock
-From: syzbot <syzbot+3659c2af3c190d9e5548@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240911-xtheadvector-v10-14-8d3930091246@rivosinc.com>
+References: <20240911-xtheadvector-v10-0-8d3930091246@rivosinc.com>
+In-Reply-To: <20240911-xtheadvector-v10-0-8d3930091246@rivosinc.com>
+To: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, 
+ Samuel Holland <samuel.holland@sifive.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
+ Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>, 
+ Andy Chiu <andy.chiu@sifive.com>, Jessica Clarke <jrtc27@jrtc27.com>, 
+ Andrew Jones <ajones@ventanamicro.com>
+Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+ linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ Charlie Jenkins <charlie@rivosinc.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9377; i=charlie@rivosinc.com;
+ h=from:subject:message-id; bh=2MZb8AJQZs0wG05Wps2DKInawqFPfqgCL1L5PflC7B4=;
+ b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ9qjptiFMw5nP9trcGhyZOLbtRZvpOqP7b6X2+nx55Y4v
+ 1rzq847HaUsDGIcDLJiiiw81xqYW+/olx0VLZsAM4eVCWQIAxenAEzkRikjw8kZu9hvVjGoXk3b
+ vvRgabHQ1BfzTnhorbhbdZajvjUkTp7hf/4B+f1yv02/VcdquBxsSyl53Xbll6Ms+zxRa+/jDSu
+ DWAE=
+X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
+ fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
 
-Hello,
+Follow the patterns of the other architectures that use
+GENERIC_CPU_VULNERABILITIES for riscv to introduce the ghostwrite
+vulnerability and mitigation. The mitigation is to disable all vector
+which is accomplished by clearing the bit from the cpufeature field.
 
-syzbot found the following issue on:
+Ghostwrite only affects thead c9xx CPUs that impelment xtheadvector, so
+the vulerability will only be mitigated on these CPUs.
 
-HEAD commit:    d1f2d51b711a Merge tag 'clk-fixes-for-linus' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15b32797980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fc7fa3453562e8b
-dashboard link: https://syzkaller.appspot.com/bug?extid=3659c2af3c190d9e5548
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13b32797980000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/9e90e1655cd2/disk-d1f2d51b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4e83e072c038/vmlinux-d1f2d51b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f9da7a0ffce5/bzImage-d1f2d51b.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/b141e72fbe37/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3659c2af3c190d9e5548@syzkaller.appspotmail.com
-
-loop0: detected capacity change from 0 to 4096
-Kernel panic - not syncing: stack-protector: Kernel stack is corrupted in: do_raw_spin_lock+0x36c/0x370
-CPU: 0 UID: 0 PID: 6983 Comm: syz.0.762 Not tainted 6.11.0-rc6-syzkaller-00326-gd1f2d51b711a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- panic+0x349/0x860 kernel/panic.c:354
- __stack_chk_fail+0x15/0x20 kernel/panic.c:827
- do_raw_spin_lock+0x36c/0x370
- spin_lock include/linux/spinlock.h:351 [inline]
- inode_wait_for_writeback+0x8d/0x290 fs/fs-writeback.c:1529
- evict+0x502/0x950 fs/inode.c:701
- ntfs_fill_super+0x3e27/0x4730 fs/ntfs3/super.c:1467
- get_tree_bdev+0x3f7/0x570 fs/super.c:1635
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3472
- do_mount fs/namespace.c:3812 [inline]
- __do_sys_mount fs/namespace.c:4020 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa489b7e69a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fa48a8b5e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007fa48a8b5ef0 RCX: 00007fa489b7e69a
-RDX: 0000000020000080 RSI: 000000002001f740 RDI: 00007fa48a8b5eb0
-RBP: 0000000020000080 R08: 00007fa48a8b5ef0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 000000002001f740
-R13: 00007fa48a8b5eb0 R14: 000000000001f70e R15: 00000000200000c0
- </TASK>
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ arch/riscv/Kconfig.errata            | 11 ++++++++
+ arch/riscv/errata/thead/errata.c     | 28 ++++++++++++++++++
+ arch/riscv/include/asm/bugs.h        | 22 +++++++++++++++
+ arch/riscv/include/asm/errata_list.h |  3 +-
+ arch/riscv/kernel/Makefile           |  2 ++
+ arch/riscv/kernel/bugs.c             | 55 ++++++++++++++++++++++++++++++++++++
+ arch/riscv/kernel/cpufeature.c       |  9 +++++-
+ drivers/base/cpu.c                   |  3 ++
+ include/linux/cpu.h                  |  1 +
+ 9 files changed, 132 insertions(+), 2 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/arch/riscv/Kconfig.errata b/arch/riscv/Kconfig.errata
+index 2acc7d876e1f..e318119d570d 100644
+--- a/arch/riscv/Kconfig.errata
++++ b/arch/riscv/Kconfig.errata
+@@ -119,4 +119,15 @@ config ERRATA_THEAD_PMU
+ 
+ 	  If you don't know what to do here, say "Y".
+ 
++config ERRATA_THEAD_GHOSTWRITE
++	bool "Apply T-Head Ghostwrite errata"
++	depends on ERRATA_THEAD && RISCV_ISA_XTHEADVECTOR
++	default y
++	help
++	  The T-Head C9xx cores have a vulnerability in the xtheadvector
++	  instruction set. When this errata is enabled, the CPUs will be probed
++	  to determine if they are vulnerable and disable xtheadvector.
++
++	  If you don't know what to do here, say "Y".
++
+ endmenu # "CPU errata selection"
+diff --git a/arch/riscv/errata/thead/errata.c b/arch/riscv/errata/thead/errata.c
+index f5120e07c318..5cc008ab41a8 100644
+--- a/arch/riscv/errata/thead/errata.c
++++ b/arch/riscv/errata/thead/errata.c
+@@ -10,6 +10,7 @@
+ #include <linux/string.h>
+ #include <linux/uaccess.h>
+ #include <asm/alternative.h>
++#include <asm/bugs.h>
+ #include <asm/cacheflush.h>
+ #include <asm/cpufeature.h>
+ #include <asm/dma-noncoherent.h>
+@@ -142,6 +143,31 @@ static bool errata_probe_pmu(unsigned int stage,
+ 	return true;
+ }
+ 
++static bool errata_probe_ghostwrite(unsigned int stage,
++				    unsigned long arch_id, unsigned long impid)
++{
++	if (!IS_ENABLED(CONFIG_ERRATA_THEAD_GHOSTWRITE))
++		return false;
++
++	/*
++	 * target-c9xx cores report arch_id and impid as 0
++	 *
++	 * While ghostwrite may not affect all c9xx cores that implement
++	 * xtheadvector, there is no futher granularity than c9xx. Assume
++	 * vulnerable for this entire class of processors when xtheadvector is
++	 * enabled.
++	 */
++	if (arch_id != 0 || impid != 0)
++		return false;
++
++	if (stage != RISCV_ALTERNATIVES_EARLY_BOOT)
++		return false;
++
++	ghostwrite_set_vulnerable();
++
++	return true;
++}
++
+ static u32 thead_errata_probe(unsigned int stage,
+ 			      unsigned long archid, unsigned long impid)
+ {
+@@ -155,6 +181,8 @@ static u32 thead_errata_probe(unsigned int stage,
+ 	if (errata_probe_pmu(stage, archid, impid))
+ 		cpu_req_errata |= BIT(ERRATA_THEAD_PMU);
+ 
++	errata_probe_ghostwrite(stage, archid, impid);
++
+ 	return cpu_req_errata;
+ }
+ 
+diff --git a/arch/riscv/include/asm/bugs.h b/arch/riscv/include/asm/bugs.h
+new file mode 100644
+index 000000000000..e294b15bf78e
+--- /dev/null
++++ b/arch/riscv/include/asm/bugs.h
+@@ -0,0 +1,22 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Interface for managing mitigations for riscv vulnerabilities.
++ *
++ * Copyright (C) 2024 Rivos Inc.
++ */
++
++#ifndef __ASM_BUGS_H
++#define __ASM_BUGS_H
++
++/* Watch out, ordering is important here. */
++enum mitigation_state {
++	UNAFFECTED,
++	MITIGATED,
++	VULNERABLE,
++};
++
++void ghostwrite_set_vulnerable(void);
++void ghostwrite_enable_mitigation(void);
++enum mitigation_state ghostwrite_get_state(void);
++
++#endif /* __ASM_BUGS_H */
+diff --git a/arch/riscv/include/asm/errata_list.h b/arch/riscv/include/asm/errata_list.h
+index 7c8a71a526a3..6e426ed7919a 100644
+--- a/arch/riscv/include/asm/errata_list.h
++++ b/arch/riscv/include/asm/errata_list.h
+@@ -25,7 +25,8 @@
+ #ifdef CONFIG_ERRATA_THEAD
+ #define	ERRATA_THEAD_MAE 0
+ #define	ERRATA_THEAD_PMU 1
+-#define	ERRATA_THEAD_NUMBER 2
++#define	ERRATA_THEAD_GHOSTWRITE 2
++#define	ERRATA_THEAD_NUMBER 3
+ #endif
+ 
+ #ifdef __ASSEMBLY__
+diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
+index 06d407f1b30b..d7a54e34178e 100644
+--- a/arch/riscv/kernel/Makefile
++++ b/arch/riscv/kernel/Makefile
+@@ -113,3 +113,5 @@ obj-$(CONFIG_COMPAT)		+= compat_vdso/
+ obj-$(CONFIG_64BIT)		+= pi/
+ obj-$(CONFIG_ACPI)		+= acpi.o
+ obj-$(CONFIG_ACPI_NUMA)	+= acpi_numa.o
++
++obj-$(CONFIG_GENERIC_CPU_VULNERABILITIES) += bugs.o
+diff --git a/arch/riscv/kernel/bugs.c b/arch/riscv/kernel/bugs.c
+new file mode 100644
+index 000000000000..0c19691b4cd5
+--- /dev/null
++++ b/arch/riscv/kernel/bugs.c
+@@ -0,0 +1,55 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2024 Rivos Inc.
++ */
++
++#include <linux/cpu.h>
++#include <linux/device.h>
++#include <linux/sprintf.h>
++
++#include <asm/bugs.h>
++#include <asm/vendor_extensions/thead.h>
++
++static enum mitigation_state ghostwrite_state;
++
++void ghostwrite_set_vulnerable(void)
++{
++	ghostwrite_state = VULNERABLE;
++}
++
++/*
++ * Vendor extension alternatives will use the value set at the time of boot
++ * alternative patching, thus this must be called before boot alternatives are
++ * patched (and after extension probing) to be effective.
++ */
++void ghostwrite_enable_mitigation(void)
++{
++	if (IS_ENABLED(CONFIG_RISCV_ISA_XTHEADVECTOR) &&
++	    ghostwrite_state == VULNERABLE && !cpu_mitigations_off()) {
++		disable_xtheadvector();
++		ghostwrite_state = MITIGATED;
++	}
++}
++
++enum mitigation_state ghostwrite_get_state(void)
++{
++	return ghostwrite_state;
++}
++
++ssize_t cpu_show_ghostwrite(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	if (IS_ENABLED(CONFIG_RISCV_ISA_XTHEADVECTOR)) {
++		switch (ghostwrite_state) {
++		case UNAFFECTED:
++			return sprintf(buf, "Not affected\n");
++		case MITIGATED:
++			return sprintf(buf, "Mitigation: xtheadvector disabled\n");
++		case VULNERABLE:
++			fallthrough;
++		default:
++			return sprintf(buf, "Vulnerable\n");
++		}
++	} else {
++		return sprintf(buf, "Not affected\n");
++	}
++}
+diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+index 56b5054b8f86..1f4329bb8a9d 100644
+--- a/arch/riscv/kernel/cpufeature.c
++++ b/arch/riscv/kernel/cpufeature.c
+@@ -17,6 +17,7 @@
+ #include <linux/of.h>
+ #include <asm/acpi.h>
+ #include <asm/alternative.h>
++#include <asm/bugs.h>
+ #include <asm/cacheflush.h>
+ #include <asm/cpufeature.h>
+ #include <asm/hwcap.h>
+@@ -867,7 +868,13 @@ static int __init riscv_fill_hwcap_from_ext_list(unsigned long *isa2hwcap)
+ 		riscv_fill_vendor_ext_list(cpu);
+ 	}
+ 
+-	if (has_xtheadvector_no_alternatives() && has_thead_homogeneous_vlenb() < 0) {
++	/*
++	 * Execute ghostwrite mitigation immediately after detecting extensions
++	 * to disable xtheadvector if necessary.
++	 */
++	if (ghostwrite_get_state() == VULNERABLE) {
++		ghostwrite_enable_mitigation();
++	} else if (has_xtheadvector_no_alternatives() && has_thead_homogeneous_vlenb() < 0) {
+ 		pr_warn("Unsupported heterogeneous vlenb detected, vector extension disabled.\n");
+ 		disable_xtheadvector();
+ 	}
+diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
+index fdaa24bb641a..a7e511849875 100644
+--- a/drivers/base/cpu.c
++++ b/drivers/base/cpu.c
+@@ -599,6 +599,7 @@ CPU_SHOW_VULN_FALLBACK(retbleed);
+ CPU_SHOW_VULN_FALLBACK(spec_rstack_overflow);
+ CPU_SHOW_VULN_FALLBACK(gds);
+ CPU_SHOW_VULN_FALLBACK(reg_file_data_sampling);
++CPU_SHOW_VULN_FALLBACK(ghostwrite);
+ 
+ static DEVICE_ATTR(meltdown, 0444, cpu_show_meltdown, NULL);
+ static DEVICE_ATTR(spectre_v1, 0444, cpu_show_spectre_v1, NULL);
+@@ -614,6 +615,7 @@ static DEVICE_ATTR(retbleed, 0444, cpu_show_retbleed, NULL);
+ static DEVICE_ATTR(spec_rstack_overflow, 0444, cpu_show_spec_rstack_overflow, NULL);
+ static DEVICE_ATTR(gather_data_sampling, 0444, cpu_show_gds, NULL);
+ static DEVICE_ATTR(reg_file_data_sampling, 0444, cpu_show_reg_file_data_sampling, NULL);
++static DEVICE_ATTR(ghostwrite, 0444, cpu_show_ghostwrite, NULL);
+ 
+ static struct attribute *cpu_root_vulnerabilities_attrs[] = {
+ 	&dev_attr_meltdown.attr,
+@@ -630,6 +632,7 @@ static struct attribute *cpu_root_vulnerabilities_attrs[] = {
+ 	&dev_attr_spec_rstack_overflow.attr,
+ 	&dev_attr_gather_data_sampling.attr,
+ 	&dev_attr_reg_file_data_sampling.attr,
++	&dev_attr_ghostwrite.attr,
+ 	NULL
+ };
+ 
+diff --git a/include/linux/cpu.h b/include/linux/cpu.h
+index bdcec1732445..6a0a8f1c7c90 100644
+--- a/include/linux/cpu.h
++++ b/include/linux/cpu.h
+@@ -77,6 +77,7 @@ extern ssize_t cpu_show_gds(struct device *dev,
+ 			    struct device_attribute *attr, char *buf);
+ extern ssize_t cpu_show_reg_file_data_sampling(struct device *dev,
+ 					       struct device_attribute *attr, char *buf);
++extern ssize_t cpu_show_ghostwrite(struct device *dev, struct device_attribute *attr, char *buf);
+ 
+ extern __printf(4, 5)
+ struct device *cpu_device_create(struct device *parent, void *drvdata,
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+-- 
+2.45.0
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
