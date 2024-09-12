@@ -1,111 +1,224 @@
-Return-Path: <linux-kernel+bounces-326536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 250959769A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:53:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B27F9769AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E03A9285D64
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:53:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A44E61F24908
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:53:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E908D1A4F1A;
-	Thu, 12 Sep 2024 12:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB471A4E7A;
+	Thu, 12 Sep 2024 12:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X88/05e6"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JBe7SGXr";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sUAssYPp";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JBe7SGXr";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="sUAssYPp"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99A31A0BFA;
-	Thu, 12 Sep 2024 12:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF9E19F424
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 12:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726145592; cv=none; b=Pk8B+Cgn73N4y7Uw+k+P8jtEZ4dU2SEjKZScuyk4FvHfMOmklwBn4qHPCfd9IM4If95EGtrYAwPFs9BzbZnhOK0uE1irxEsec8mT8YzrDxQz8WUTLTn9wg9y/+an0l+fEVC8QH/IkdqnapgoBIrPEazGGfUZgiZiT7DtiOheEw8=
+	t=1726145616; cv=none; b=aqZ81ZUhYQjAKIiU62U6EwPtgp3t4zSL7uzCLTdiakk6FrGB/uXsfLMaDJSxecebWaAHE51MKwvc2V8T/pgPsZ1Yyv+XVfuMq3PQKDrhJ+UR5y2RwRZIPyhujjH6dD63Ws/UUqT8THeutFdC5hIb3xgUXHpcmTPbGhDGT6PDZ+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726145592; c=relaxed/simple;
-	bh=VC7BSoXNLgSQgEMoDUEnlowTpaY1dtOnnAYVz/6VlWI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b4h3VYUhVarzpiKrVBjVLnn+o6VyFrZS6jhhSKsFyUGjY9gMJcLa2YpEdpnxH4KglRjPX59Vm7CAX9REghCPpMMRpG/o71ACgTBqKGefFy19RDf7ryVONJCHBjnIRpeR1xpxEhrZ8ZDc+oPUdavYdbbuN94CnptpU8awrKqK1Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X88/05e6; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cbe624c59so7484705e9.3;
-        Thu, 12 Sep 2024 05:53:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726145588; x=1726750388; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cRV3JeZPMlo2rd2LhDPamjdsBHnBryS6wiApphTr87M=;
-        b=X88/05e6dYUTXQe7FTIrkYv8+Lqacl04AtfcsK+kz6szHQ+mt60ZwBUp76i+gyzfAy
-         tvqC780ZAJzsFLP2QN4YovzosbCsDVbJwAIYEIMy67Mand3udsJQDxdp3el2knr2pw7a
-         Xe/Ye2oyGRyPrzqRZDNV0OSGWaIU0npRI0JoQxMG70WDabvmEHzrqtLNvmgKLxEVGF4s
-         zYVIQvJzdrPX4ysacuV71Ukybd24ABPcumSNCpqRhzm8PIab3w6z0MIyvVgtqiQOM4kG
-         z0bMQdfpVkRcM1vx2rIvbvmMyCT9FLvcU0fYHVXCVcMBsgVSUVX9jIZWmUTAIrgs8XmK
-         QqgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726145588; x=1726750388;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cRV3JeZPMlo2rd2LhDPamjdsBHnBryS6wiApphTr87M=;
-        b=Rmx/mw4iBba/0+N0phCAsGvhgCcPpXOdcAyTicvXbWTy0D0+SwpfHEBY9fyD4jR70Y
-         4NQvfyFDT17v8bIk2Ka5+C/jQ8TTh3ht2QuUXp+OEc5aSBAAvz6JbRG9sw4L/EhRzxoi
-         Ee9Vm8OdkxLvd93fGfBMjqA1qXYaqIhNfEiFbiyxCyjWqatpH8/KmHbntZaeGa5DbFrG
-         0cMckLSLcOIgCV5pOh3pyk+xE0+abAAKYLDhtSwUQc0Knqf8BIk+UGOQhs52QiT79yqs
-         TEMQqhOr1qiXorrTdg8IivqOGivaOVoIxqpWSPnv8sYEfxJ0iGiFE5MAyeJP9FHamtLh
-         FfyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWNT4nMTUyNJoRv07FM9odPnj2nHZvZVmVcRuEceFoM7kflelT3vbuFWGpz0o+4tKUJTDOeOrEqA65eKo6@vger.kernel.org, AJvYcCWay+doQuIzhpAT1QnFnjqXyVe2s1lIbeOz+s3sObhHozU4WbT7LWPSdD7VKG3poDtsv7cHsiBpWbErVlSXjcc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUiqgIq04U2wmf/tnaYSRK3yg2xfGgcqxx+7O26T6YzTYx71fM
-	ByHvggamROq4OcJMh6N7ny1xV5n/nDS8V9BQ6lnoDPX12UbTT5vL
-X-Google-Smtp-Source: AGHT+IFWw7o5Wcq89wSOXhtivCssyEbH4tqhg5lcaHIq3y7GNp22/Wfx+KnDNLGUn2oBZ6CVdMP2tA==
-X-Received: by 2002:a05:600c:450a:b0:42c:b63e:fe8f with SMTP id 5b1f17b1804b1-42cdb547eaemr20493005e9.13.1726145587939;
-        Thu, 12 Sep 2024 05:53:07 -0700 (PDT)
-Received: from void.void ([141.226.9.101])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cae056541sm176176045e9.25.2024.09.12.05.53.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 05:53:07 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Michael Hennerich <Michael.Hennerich@analog.com>,
-	Sebastian Reichel <sre@kernel.org>
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] power: supply: Fix a typo
-Date: Thu, 12 Sep 2024 15:52:51 +0300
-Message-ID: <20240912125303.44118-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1726145616; c=relaxed/simple;
+	bh=2S+Gg8rE1QXJFtKbFaRimkG5aVj+2ljz5zLpx2TKPaU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=umee9y7BimRNdz2MT6PlL1WiDkG3WYOSCJiFrYVdC9oJqFhp6Yx76VHi5rX9G15Dc4/gxTVc0Uf/IZoBYscawmN2NlLGDt5m5FkUIc6HbK4JKzxSyQRwhSkqSaqcRvkDX2DNPgSzyNto2t85kz/eu+J7VmYO1dKbQb3a0L+i75w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JBe7SGXr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sUAssYPp; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JBe7SGXr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=sUAssYPp; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from kitsune.suse.cz (unknown [10.100.12.127])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 79AA71FB74;
+	Thu, 12 Sep 2024 12:53:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726145612; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XpD/X77lqA2X1MwBp8e+ur8KLx0SrQSGDLfeVcHTiUI=;
+	b=JBe7SGXrxt6QxAQ4dTBgjo9UuvN9TZq6EDfhbhKFeM37XVq+76Mt5DgWn1FPP7rGnesQAr
+	MrLuxVez1HSlM3rkAmLO9efpH6EBjXmD6HdboCD/Vh2t3MXxwklyXaJZwSezIVq/VJiyXt
+	RCEkadWYFlVUcgFnhV2biH64DCLDuTI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726145612;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XpD/X77lqA2X1MwBp8e+ur8KLx0SrQSGDLfeVcHTiUI=;
+	b=sUAssYPpOAzlZyM8ayyp7s5Wo30orVV8PcrUmsFHyaD8UudIvNRo9chcON4TAiiAtm1VOw
+	2pCXTLhk+2U8UwAg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726145612; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XpD/X77lqA2X1MwBp8e+ur8KLx0SrQSGDLfeVcHTiUI=;
+	b=JBe7SGXrxt6QxAQ4dTBgjo9UuvN9TZq6EDfhbhKFeM37XVq+76Mt5DgWn1FPP7rGnesQAr
+	MrLuxVez1HSlM3rkAmLO9efpH6EBjXmD6HdboCD/Vh2t3MXxwklyXaJZwSezIVq/VJiyXt
+	RCEkadWYFlVUcgFnhV2biH64DCLDuTI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726145612;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XpD/X77lqA2X1MwBp8e+ur8KLx0SrQSGDLfeVcHTiUI=;
+	b=sUAssYPpOAzlZyM8ayyp7s5Wo30orVV8PcrUmsFHyaD8UudIvNRo9chcON4TAiiAtm1VOw
+	2pCXTLhk+2U8UwAg==
+Date: Thu, 12 Sep 2024 14:53:31 +0200
+From: Michal =?iso-8859-1?Q?Such=E1nek?= <msuchanek@suse.de>
+To: Morten Rasmussen <morten.rasmussen@arm.com>
+Cc: Yicong Yang <yangyicong@huawei.com>, yangyicong@hisilicon.com,
+	Pierre Gondois <pierre.gondois@arm.com>,
+	linuxppc-dev@lists.ozlabs.org, bp@alien8.de,
+	dave.hansen@linux.intel.com, mingo@redhat.com,
+	linux-arm-kernel@lists.infradead.org, mpe@ellerman.id.au,
+	peterz@infradead.org, tglx@linutronix.de, sudeep.holla@arm.com,
+	will@kernel.org, catalin.marinas@arm.com, x86@kernel.org,
+	linux-kernel@vger.kernel.org, dietmar.eggemann@arm.com,
+	gregkh@linuxfoundation.org, rafael@kernel.org,
+	jonathan.cameron@huawei.com, prime.zeng@hisilicon.com,
+	linuxarm@huawei.com, xuwei5@huawei.com, guohanjun@huawei.com
+Subject: Re: [PATCH v5 3/4] arm64: topology: Support SMT control on ACPI
+ based system
+Message-ID: <20240912125331.GZ26466@kitsune.suse.cz>
+References: <00e6110a-462a-c117-0292-e88b57d27a05@huawei.com>
+ <3947cb79-3199-4cd6-b784-51a245084581@arm.com>
+ <1a7b5ac7-f040-672f-07a0-d7f3dc170c88@huawei.com>
+ <6c05e39c-41f3-451c-b119-7b8662c1ceee@arm.com>
+ <7f722af2-2969-aae5-1fb5-68d353eb95b9@huawei.com>
+ <277bd093-422b-4301-92a3-d0a58eb41af5@arm.com>
+ <10082e64-b00a-a30b-b9c5-1401a54f6717@huawei.com>
+ <Ztqp-SUinu8C9a-P@R5WKVNH4JW>
+ <bb2bd7f4-e0ea-a771-7960-e35949ec9e03@huawei.com>
+ <ZuLXlOe0CyiH5eXd@R5WKVNH4JW>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZuLXlOe0CyiH5eXd@R5WKVNH4JW>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-8.30 / 50.00];
+	REPLY(-4.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.996];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_ZERO(0.00)[0];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[25];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Spam-Score: -8.30
+X-Spam-Flag: NO
 
-Fix a typo in comments.
+Hello,
 
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
----
- drivers/power/supply/adp5061.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Sep 12, 2024 at 01:59:16PM +0200, Morten Rasmussen wrote:
+> On Fri, Sep 06, 2024 at 04:36:30PM +0800, Yicong Yang wrote:
+> > On 2024/9/6 15:06, Morten Rasmussen wrote:
+> > > Hi Yicong,
+> > > 
+> > > On Thu, Sep 05, 2024 at 08:02:20PM +0800, Yicong Yang wrote:
+> > >> On 2024/9/5 16:34, Pierre Gondois wrote:
+> > >>> Hello Yicong,
+> > >>>
+> > >>> If a platform has CPUs with:
+> > >>> - 1 thread
+> > >>> - X (!= 1) threads
+> > >>> Then I think that the asymmetry is not detected
+> > >>
+> > >> Ah ok, I only handle the case where there are several thread numbers except no SMT CPUs in the
+> > >> system. For this case I was thinking we don't need to handle this since there's only one kind
+> > >> of SMT core in the system, control should works fine for the SMT CPU clusters and we may not
+> > >> care about the CPUs with no SMT.
+> > >>
+> > >> Below code should handle the case if we initialize the max_smt_thread_num to 0. I also
+> > >> reword the warning messages to match the fact. For heterogeneous SMT topology we still
+> > >> support control SMT by on/off toggle but not fully support setting the thread number.
+> > >>
+> > >> 	int max_smt_thread_num = 0;
+> > >> 	[...]
+> > >> 	/*
+> > >> 	 * This should be a short loop depending on the number of heterogeneous
+> > >> 	 * CPU clusters. Typically on a homogeneous system there's only one
+> > >> 	 * entry in the XArray.
+> > >> 	 */
+> > >> 	xa_for_each(&hetero_cpu, hetero_id, entry) {
+> > >> 		/*
+> > >> 		 * If max_smt_thread_num has been initialized and doesn't match
+> > >> 		 * the thread number of this entry, then the system has
+> > >> 		 * heterogeneous SMT topology.
+> > >> 		 */
+> > >> 		if (entry->thread_num != max_smt_thread_num && max_smt_thread_num)
+> > >> 			pr_warn_once("Heterogeneous SMT topology is partly supported by SMT control\n");
+> > > 
+> > > What does 'partly supported' mean here?
+> > > 
+> > > If the SMT control doesn't work as intended for this topology, I don't
+> > > think it should be enabled for it.
+> > > 
+> > 
+> > The /sys/devices/system/cpu/smt/control supports 2 kind of controls [1]
+> > (a) enable/disable SMT entirely by writing on/off
+> > (b) enable/disable SMT partially by writing a valid thread number (CONFIG_SMT_NUM_THREADS_DYNAMIC)
+> > 
+> > We assume 3 kind of SMT topology:
+> > 1. homogeneous SMT topology, all the CPUs support SMT or not
+> > 2.1 heterogeneous SMT topology, part of CPU clusters have SMT and others not. Clusters support SMT
+> >     have the same SMT thread number
+> > 2.2 heterogeneous SMT topology, part of CPU clusters have SMT and the thread number may differs
+> >     (e.g. cluster 1 is of SMT 2 and cluster 2 is of SMT 4. not sure there's such a real system)
+> > 
+> > For any of above SMT topology, control (a) should work as expected. When enabling SMT by writing "on"
+> > the SMT is disabled for those CPU clusters who have SMT. Same for disabling SMT by writing "off".
+> > But control (b) may not work for case 2.2 since the SMT thread number is not the same across
+> > the system.
+> > 
+> > For this series alone we won't met this since CONFIG_SMT_NUM_THREADS_DYNAMIC is not enabled.
+> > So control (b) only supports write 1/max_thread which behaves same as write off/on and will
+> > work as intended for all the 3 cases. As discussed Pierre will add support for
+> >  CONFIG_SMT_NUM_THREADS_DYNAMIC since thunderX2 is a symmetric SMT4 machine and
+> > CONFIG_SMT_NUM_THREADS_DYNAMIC would be useful. We thought a warning should be useful
+> > if running on a system of case 2.2.
+> 
+> Thanks for explaining the situation.
+> 
+> So IIUC, for case 2.2 there will be _no_ failures if someone writes a
+> value different from 1 or max_threads?
+> 
+> The SMT control code can handle that max_threads isn't the correct
+> number of threads for all cores in the system?
 
-diff --git a/drivers/power/supply/adp5061.c b/drivers/power/supply/adp5061.c
-index dac9875d993c..458fd3024373 100644
---- a/drivers/power/supply/adp5061.c
-+++ b/drivers/power/supply/adp5061.c
-@@ -590,7 +590,7 @@ static int adp5061_get_property(struct power_supply *psy,
- 	case POWER_SUPPLY_PROP_VOLTAGE_AVG:
- 		/*
- 		 * This property is used to set the VWEAK threshold
--		 * bellow this value, weak charge mode is entered
-+		 * below this value, weak charge mode is entered
- 		 * above this value, fast chargerge mode is entered
- 		 */
- 		return adp5061_get_vweak_th(st, val);
--- 
-2.46.0
+Hello,
 
+I suppose a number can be interpreted as 'up to this number'. If that's
+what the user wanted is another question, on a hypothetical heterogenous
+system with different number of threads in different CPUs it is
+questionalble what this achieves.
+
+Arguably once such system is found and the desired configurations
+undestood this can be expanded to handle them.
+
+Thanks
+
+Michal
 
