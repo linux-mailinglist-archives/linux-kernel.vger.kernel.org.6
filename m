@@ -1,156 +1,242 @@
-Return-Path: <linux-kernel+bounces-327048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D88897702F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:14:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EE70977008
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 803151C21BD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:14:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11A5A287E31
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B991BF81D;
-	Thu, 12 Sep 2024 18:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8011C1AB0;
+	Thu, 12 Sep 2024 18:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="TtrXhOo3"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gkSySwmY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E251A156F44
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 18:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324AC1C0DCB;
+	Thu, 12 Sep 2024 18:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726164842; cv=none; b=e86C0zrrCq2N4/mBkeKngr4VJlrhisD3lH5DGUs2PmC3Ksj+VDQlyuEROIunqHD4UlwwhZcApdneWSmFGw16BkNFNzA7ievuWrbh+THGY0nuq9DiH84+u1HRpFRRlxdOzLFG9xuNcdqZ7L4lOWlKAw8EM4LFpThbnmZbNbcwYtI=
+	t=1726164299; cv=none; b=MXzWbj6EivnXiT3NYgph0WiEJ+Qclja3QLYC7O+S7y5WBkb5xdJFEC9nItOiNLhIS5+EqbeVZSfFr3DNC74/E51zYT54WTrljQX30yM/dAxEldbKbavJDbe4fh0JxO0XIrLMpnJuXuoujmFXLhInjLO/jyewt51GDDSXMhunAeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726164842; c=relaxed/simple;
-	bh=fdpCU+YyvgCSDSVeREV+L9RKobSp5F+iDyQvOOsJLcM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VH/QUIXd/lrnCcj4Dq7/8SXuiYfnt8dhmeYImggzRGhxm95ADyq681bgjtGL1W5E28qUdoCP6ZjTi+vXgGZYvIBt02lnmr40B3FdPDMff+KZ91X0o3Uuw4rKLcMLbjl96Py2jl3wo9ELOXb3ZW3Zu/NeVcEHwNTciMYIZM5mUbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=TtrXhOo3; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f77be8ffecso15672911fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 11:14:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1726164839; x=1726769639; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=epRzpdGMMw2gAPymSIGzQUTWoaWQrSuwK9G/di8knkI=;
-        b=TtrXhOo3teY1dxpJVBLqWVAS27g/Su8km2Ntj11hyeBnvLHs4ClD+2pI4fjUuyYxdZ
-         +r4AYsK3VPmQxoYTdo3zolQu/bxtMwg93HfiKeyDA1970sp50Vl6yev1FUlTTIySMnro
-         uu8d+eDvnKFpYoyJRDmGxLTi29hRaj9F3P630=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726164839; x=1726769639;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=epRzpdGMMw2gAPymSIGzQUTWoaWQrSuwK9G/di8knkI=;
-        b=HsGbg7IV0jUkJ0ktOVIwAV3QFbXk2S/NC6nWLrmcWf9hk9182V8smpPd1Ka5iUTYb6
-         E4ogL8Jgc7AysXjh7NS3RffftEulKhsTTRTX951ZirJknpwQUv93+/Jn5UNxDQfIYWTE
-         ZPBLriLEs6nICCRbabfQkkUc3f6mEPTxcP/KsqculNkqZKVIZ4U3Rv5xeHY2hrdwdgDs
-         uC1C6JbSPXtYgKAxqY4hogJ3p9fQROfGoWCPOb5rlTSbkQb37I1+rJfO6AuVLBD9dFOZ
-         rYarbQ9jmRtAS0Sl6vUmhrdedF8UXXK7W7EtkhmUTGn7YWgcA2t8Kj5Uz+JVXyuT4CGw
-         HoAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUucKMVGV7EqmhfyxQzGIkW01+X++rg10DhNTvresq8gBGMTobw9kPprVPj5umACuhP59VuUm+eU1Y8HU0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyylWHAuhUA0QLKksaVQmNyb3Pk9hkqW7qL+3JFjzFBV0itm3ww
-	HBKE9xNeUqpXGS69DkgcLF5SNo+ZS8YqsLKMKOMUarYc/2FSJTZmSY6hWc31XrQ=
-X-Google-Smtp-Source: AGHT+IGlaXcWL6q+hkJae3s/jYwseEFn0HziOG9Qk04yVzZqLiRLFOVMz1Ka5wsVpSlVqYvPjKuSKg==
-X-Received: by 2002:a05:6512:3c9c:b0:52c:e3bd:c708 with SMTP id 2adb3069b0e04-53678fab54amr2222970e87.10.1726164838147;
-        Thu, 12 Sep 2024 11:13:58 -0700 (PDT)
-Received: from LQ3V64L9R2.homenet.telecomitalia.it (host-79-23-194-51.retail.telecomitalia.it. [79.23.194.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25c72ed3sm776374366b.135.2024.09.12.11.13.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 11:13:57 -0700 (PDT)
-Date: Thu, 12 Sep 2024 20:13:55 +0200
-From: Joe Damato <jdamato@fastly.com>
-To: Michael Chan <michael.chan@broadcom.com>
-Cc: netdev@vger.kernel.org, Pavan Chebbi <pavan.chebbi@broadcom.com>,
-	Michael Chan <mchan@broadcom.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next] tg3: Link IRQs to NAPI instances
-Message-ID: <ZuMvY6_MolZYMT9m@LQ3V64L9R2.homenet.telecomitalia.it>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Michael Chan <michael.chan@broadcom.com>, netdev@vger.kernel.org,
-	Pavan Chebbi <pavan.chebbi@broadcom.com>,
-	Michael Chan <mchan@broadcom.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20240912155830.14688-1-jdamato@fastly.com>
- <CACKFLimO60wNu3VggJ+cs9K2SBfMBtATCFxZ+3J1Hy3dbfLOCg@mail.gmail.com>
+	s=arc-20240116; t=1726164299; c=relaxed/simple;
+	bh=Lk+V5/yzZoVIGzDqm4NYAZ6qI13eEq+3/+2cSjHu8KM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tT634ha+wiImuz96qzcbKaiUOcKxa+DuRQ8OWIt9J1SJ+ZOEGAowuXjGFjjAAxhJC8eyCQ5MCdCbLElKfI+7FYPZps6G0768J3OyPFuOTE0kQJJAms08Wx0o4DIoa4Zdf0p7zlD8+3O+qBitbLRdJrkWmX2FIqHr4iGldf13sVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gkSySwmY; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726164298; x=1757700298;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=Lk+V5/yzZoVIGzDqm4NYAZ6qI13eEq+3/+2cSjHu8KM=;
+  b=gkSySwmYPG/E5qxtNKjcRWtNzBim/ib5haDLFhlZb/5/HfQrjjgYFr7K
+   HoQlXBiCMxGsxjciDJipM1QfJp8yoLWQje9xHO+yQM80H7rc0A08BKzsC
+   KKPPBqWIEtlVBfUP8hycGOlrqA3BEVV5tzk9dJSa9kjroFkZ5iVgAPYp9
+   /WVESY/6gYgLSxhELCIu2ESY9ncyw7o3m82hqnZrJTtvu5EvIN6eNmBBs
+   ZYZMr/SkK8DG/poyRAykHE+HfGcSfK9OShc9T9NJU9p9Z/rkbuG0xrA7F
+   Ij6V2EvTC6wDegOpzozXGr/6rwmH5PWnQrrwNFkmwXDwBauhR4C1sw40m
+   w==;
+X-CSE-ConnectionGUID: R1xKRkneQ9ebQfNDERKsvQ==
+X-CSE-MsgGUID: bhYwNXmfQAuZ1+gr4/MFUg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="24976600"
+X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
+   d="scan'208";a="24976600"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 11:04:53 -0700
+X-CSE-ConnectionGUID: TB/Bt/BMQkmtJ3R+1Gm8VQ==
+X-CSE-MsgGUID: /BCwMR2cQHO3xRk2xcoBWQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
+   d="scan'208";a="67724618"
+Received: from b04f130c85c0.jf.intel.com (HELO rchatre-desk1.jf.intel.com) ([10.165.154.99])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 11:04:52 -0700
+From: Reinette Chatre <reinette.chatre@intel.com>
+To: fenghua.yu@intel.com,
+	shuah@kernel.org,
+	tony.luck@intel.com,
+	peternewman@google.com,
+	babu.moger@amd.com,
+	ilpo.jarvinen@linux.intel.com
+Cc: maciej.wieczor-retman@intel.com,
+	reinette.chatre@intel.com,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V2 07/13] selftests/resctrl: Only support measured read operation
+Date: Thu, 12 Sep 2024 11:13:56 -0700
+Message-ID: <491d5a951751dd74ccb84e175f6dd457dbed5c31.1726164080.git.reinette.chatre@intel.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <cover.1726164080.git.reinette.chatre@intel.com>
+References: <cover.1726164080.git.reinette.chatre@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACKFLimO60wNu3VggJ+cs9K2SBfMBtATCFxZ+3J1Hy3dbfLOCg@mail.gmail.com>
 
-On Thu, Sep 12, 2024 at 11:04:02AM -0700, Michael Chan wrote:
-> On Thu, Sep 12, 2024 at 8:58 AM Joe Damato <jdamato@fastly.com> wrote:
-> >
-> > Link IRQs to NAPI instances with netif_napi_set_irq. This information
-> > can be queried with the netdev-genl API.
-> >
-> > Compare the output of /proc/interrupts for my tg3 device with the output of
-> > netdev-genl after applying this patch:
-> >
-> > $ cat /proc/interrupts | grep eth0 | cut -f1 --delimiter=':'
-> >  331
-> >  332
-> >  333
-> >  334
-> >  335
-> >
-> > $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-> >                          --dump napi-get --json='{"ifindex": 2}'
-> >
-> > [{'id': 149, 'ifindex': 2, 'irq': 335},
-> >  {'id': 148, 'ifindex': 2, 'irq': 334},
-> >  {'id': 147, 'ifindex': 2, 'irq': 333},
-> >  {'id': 146, 'ifindex': 2, 'irq': 332},
-> >  {'id': 145, 'ifindex': 2, 'irq': 331}]
-> >
-> > Signed-off-by: Joe Damato <jdamato@fastly.com>
-> > ---
-> >  drivers/net/ethernet/broadcom/tg3.c | 10 +++++++++-
-> >  1 file changed, 9 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
-> > index 378815917741..c187b13ab3e6 100644
-> > --- a/drivers/net/ethernet/broadcom/tg3.c
-> > +++ b/drivers/net/ethernet/broadcom/tg3.c
-> > @@ -7393,6 +7393,14 @@ static int tg3_poll(struct napi_struct *napi, int budget)
-> >         return work_done;
-> >  }
-> >
-> > +static void tg3_napi_set_irq(struct tg3 *tp)
-> > +{
-> > +       int i;
-> > +
-> > +       for (i = 0; i < tp->irq_cnt; i++)
-> > +               netif_napi_set_irq(&tp->napi[i].napi, tp->napi[i].irq_vec);
-> 
-> Looks good, but why not just add netif_napi_set_irq() to the existing
-> loop in tg3_napi_init()?  It will reduce the lines of code a bit.
-> Thanks.
+The CMT, MBM, and MBA tests rely on a benchmark to generate
+memory traffic. By default this is the "fill_buf" benchmark that
+can be replaced via the "-b" command line argument.
 
-I made a separate function because:
-  - tg3_napi_init would need two calls (once for i=0, and once in
-    the loop), and
-  - tg3_napi_init and tg3_napi_enable are separated in the driver,
-    so I figured I'd separate the IRQ linking, too.
+The original intent of the "-b" command line parameter was
+to replace the default "fill_buf" benchmark, but the implementation
+also exposes an alternative use case where the "fill_buf" parameters
+itself can be modified. One of the parameters to "fill_buf" is the
+"operation" that can be either "read" or "write" and indicates
+whether the "fill_buf" should use "read" or "write" operations on the
+allocated buffer.
 
-Can you let me know if you want me to submit a v2 which modifies
-tg3_napi_init instead?
+While replacing "fill_buf" default parameters is technically possible,
+replacing the default "read" parameter with "write" is not supported
+because the MBA and MBM tests only measure "read" operations. The
+"read" operation is also most appropriate for the CMT test that aims
+to use the benchmark to allocate into the cache.
+
+Avoid any potential inconsistencies between test and measurement by
+removing code for unsupported "write" operations to the buffer.
+Ignore any attempt from user space to enable this unsupported test
+configuration, instead always use read operations.
+
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+---
+Changes since V1:
+- New patch.
+---
+ tools/testing/selftests/resctrl/fill_buf.c    | 28 ++-----------------
+ tools/testing/selftests/resctrl/resctrl.h     |  2 +-
+ .../testing/selftests/resctrl/resctrl_tests.c |  5 +++-
+ tools/testing/selftests/resctrl/resctrl_val.c |  5 ++--
+ 4 files changed, 9 insertions(+), 31 deletions(-)
+
+diff --git a/tools/testing/selftests/resctrl/fill_buf.c b/tools/testing/selftests/resctrl/fill_buf.c
+index 854f0108d8e6..e4f1cea317f1 100644
+--- a/tools/testing/selftests/resctrl/fill_buf.c
++++ b/tools/testing/selftests/resctrl/fill_buf.c
+@@ -88,18 +88,6 @@ static int fill_one_span_read(unsigned char *buf, size_t buf_size)
+ 	return sum;
+ }
+ 
+-static void fill_one_span_write(unsigned char *buf, size_t buf_size)
+-{
+-	unsigned char *end_ptr = buf + buf_size;
+-	unsigned char *p;
+-
+-	p = buf;
+-	while (p < end_ptr) {
+-		*p = '1';
+-		p += (CL_SIZE / 2);
+-	}
+-}
+-
+ void fill_cache_read(unsigned char *buf, size_t buf_size, bool once)
+ {
+ 	int ret = 0;
+@@ -114,15 +102,6 @@ void fill_cache_read(unsigned char *buf, size_t buf_size, bool once)
+ 	*value_sink = ret;
+ }
+ 
+-static void fill_cache_write(unsigned char *buf, size_t buf_size, bool once)
+-{
+-	while (1) {
+-		fill_one_span_write(buf, buf_size);
+-		if (once)
+-			break;
+-	}
+-}
+-
+ unsigned char *alloc_buffer(size_t buf_size, int memflush)
+ {
+ 	void *buf = NULL;
+@@ -151,7 +130,7 @@ unsigned char *alloc_buffer(size_t buf_size, int memflush)
+ 	return buf;
+ }
+ 
+-int run_fill_buf(size_t buf_size, int memflush, int op)
++int run_fill_buf(size_t buf_size, int memflush)
+ {
+ 	unsigned char *buf;
+ 
+@@ -159,10 +138,7 @@ int run_fill_buf(size_t buf_size, int memflush, int op)
+ 	if (!buf)
+ 		return -1;
+ 
+-	if (op == 0)
+-		fill_cache_read(buf, buf_size, false);
+-	else
+-		fill_cache_write(buf, buf_size, false);
++	fill_cache_read(buf, buf_size, false);
+ 
+ 	free(buf);
+ 
+diff --git a/tools/testing/selftests/resctrl/resctrl.h b/tools/testing/selftests/resctrl/resctrl.h
+index 51f5f4b25e06..ba1ce1b35699 100644
+--- a/tools/testing/selftests/resctrl/resctrl.h
++++ b/tools/testing/selftests/resctrl/resctrl.h
+@@ -142,7 +142,7 @@ int perf_event_open(struct perf_event_attr *hw_event, pid_t pid, int cpu,
+ unsigned char *alloc_buffer(size_t buf_size, int memflush);
+ void mem_flush(unsigned char *buf, size_t buf_size);
+ void fill_cache_read(unsigned char *buf, size_t buf_size, bool once);
+-int run_fill_buf(size_t buf_size, int memflush, int op);
++int run_fill_buf(size_t buf_size, int memflush);
+ int initialize_mem_bw_imc(void);
+ int measure_mem_bw(const struct user_params *uparams,
+ 		   struct resctrl_val_param *param, pid_t bm_pid,
+diff --git a/tools/testing/selftests/resctrl/resctrl_tests.c b/tools/testing/selftests/resctrl/resctrl_tests.c
+index bee4123a5a9b..60627dbae20a 100644
+--- a/tools/testing/selftests/resctrl/resctrl_tests.c
++++ b/tools/testing/selftests/resctrl/resctrl_tests.c
+@@ -265,13 +265,16 @@ int main(int argc, char **argv)
+ 			ksft_exit_fail_msg("Out of memory!\n");
+ 		uparams.benchmark_cmd[1] = span_str;
+ 		uparams.benchmark_cmd[2] = "1";
+-		uparams.benchmark_cmd[3] = "0";
+ 		/*
++		 * Third parameter was previously used for "operation"
++		 * (read/write) of which only (now default) "read"/"0"
++		 * works.
+ 		 * Fourth parameter was previously used to indicate
+ 		 * how long "fill_buf" should run for, with "false"
+ 		 * ("fill_buf" will keep running until terminated)
+ 		 * the only option that works.
+ 		 */
++		uparams.benchmark_cmd[3] = NULL;
+ 		uparams.benchmark_cmd[4] = NULL;
+ 		uparams.benchmark_cmd[5] = NULL;
+ 	}
+diff --git a/tools/testing/selftests/resctrl/resctrl_val.c b/tools/testing/selftests/resctrl/resctrl_val.c
+index 5331354aaf64..8b5973c5e934 100644
+--- a/tools/testing/selftests/resctrl/resctrl_val.c
++++ b/tools/testing/selftests/resctrl/resctrl_val.c
+@@ -622,8 +622,8 @@ int measure_mem_bw(const struct user_params *uparams,
+  */
+ static void run_benchmark(int signum, siginfo_t *info, void *ucontext)
+ {
+-	int operation, ret, memflush;
+ 	char **benchmark_cmd;
++	int ret, memflush;
+ 	size_t span;
+ 	FILE *fp;
+ 
+@@ -643,9 +643,8 @@ static void run_benchmark(int signum, siginfo_t *info, void *ucontext)
+ 		/* Execute default fill_buf benchmark */
+ 		span = strtoul(benchmark_cmd[1], NULL, 10);
+ 		memflush =  atoi(benchmark_cmd[2]);
+-		operation = atoi(benchmark_cmd[3]);
+ 
+-		if (run_fill_buf(span, memflush, operation))
++		if (run_fill_buf(span, memflush))
+ 			fprintf(stderr, "Error in running fill buffer\n");
+ 	} else {
+ 		/* Execute specified benchmark */
+-- 
+2.46.0
+
 
