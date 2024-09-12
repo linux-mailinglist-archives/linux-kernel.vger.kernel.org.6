@@ -1,160 +1,221 @@
-Return-Path: <linux-kernel+bounces-327248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC4039772D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:44:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DEB8A9772D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:45:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 746A01F24B31
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:44:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F5191F22A32
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:45:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27D31C1AB5;
-	Thu, 12 Sep 2024 20:44:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wFlx9HxJ"
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D4B1BFE12
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DE11C1AAA;
+	Thu, 12 Sep 2024 20:45:02 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F081BF816
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726173844; cv=none; b=nESi8tiRPQu3XDgBHSmobssYlSmxCqO1Yv+tRBdFh6/3U/gWg/7QisauoUVwljCaQ5U7bpHOEORWI/IAwoO/qHKXxWZQ9LvAhrQYGd7f717WKZSz04/C86zi+e4/gBLHRD+zrTVR63fli/EGDXVkZTqqbLMTeTbV8HT924ohIfE=
+	t=1726173902; cv=none; b=L+VaC7tyd6iX7OTpFvyhApd+/QvxI9odrG36ZpVXfq2DIE4sqZZcG8iEgtAH39P10WKx4jRA9NETR7C6Xg9B5tXowVTXoRi+WJdYi7HcXaM3HeRxX1ikHKvadMotmOb8VeDtLYJxq6hEq0qU/JVItXD7axAj0P4PIm4/tmTb9q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726173844; c=relaxed/simple;
-	bh=POeMZyrSzWfT0c/EFYH4aVeVC1H3dWbv5VrEhXmoxgw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q3SK1vHrLXssgmGg8etp2uBM/Ni3cKcOQhKSEAXsAMVYfgM6dWWoCwG+wM23JCb+ZF76xXxgA9x6xaDEanjVe1pr1ROKWe/MvsoQsFryNjHQKOO3VgbVMEtYa366vAXWeGdJAfKDhbFq35O2u8vRpgykbpLuXs8ZFAFvQ0jO6SY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wFlx9HxJ; arc=none smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-49bc44e52d0so513926137.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:44:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726173841; x=1726778641; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7DjwiIxMiUHr1M6b4I5f9AEu55zXyA3J0twzo/v710c=;
-        b=wFlx9HxJS6WhEJjtnpyuDRH6cxGr+0GWzT35/x2kDdCv9W2k4A7/T3uzsAHFgjNkQ+
-         TdAEI9ebLq91wjS8R2Ot8kKSRmHf93bwVmU/KoLBDP4Q5x72t/Z51T9rLT7wn9DueLSU
-         D0hGu/BRwlcdn6CMokng56PFRoSakH9BmsO2Ik9R4WabwzyEGdC/a4hOlCZJcxKpVih4
-         EPIJcTzVkUqF7+WFPr5icBgxt7mDRWTcFX6m/Jc3xAoBb6lfVA5TD+1w89bqIZGEY+CE
-         ljHVZpjgLB9UnclbR2aCe0r9k7cKmWV6f2slht/jUIRBOgtvkYeHP441A3ht5vSoAaK6
-         ykmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726173841; x=1726778641;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7DjwiIxMiUHr1M6b4I5f9AEu55zXyA3J0twzo/v710c=;
-        b=AeLhVv4y8ydNvzdvWLKrs6xQC2aKn4Ar7eoln43ARPbYp+9g5OPBC20TPJW6gPNTIk
-         JNaFaWgP3hoIw5ov04EgQ1F64WpuEmr7hGxxQiN5IZsfLsbkSRBB8VCsYXr0Sn5T8wzY
-         vTet2evLCMcT9mgpV+fTkM3hbOX0Ye55Yoj5VoxatTCyitX9XFk2ACrngYHLS1g2lknQ
-         lRHeEOhl00jEQreHr73aEC7Fxw4nhMUVZ32Mh37EjWakYo1c8D2axw5HWS817hYUUvT1
-         6wU1UFhSvEIgD1VxLuXi7Z3i468RSd+SKS75IvtPafgDiuZ7fJjSHM8c/S316S9BgtJy
-         hZTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKEGS0ikJxue7+M+fcDhyb5s9j3kEiHo0Miw05MghBKFOOYUbgoQPUIeIaN9y36sNBNrT/G2hVaSSbqz4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSkxoaxXd38FmJhB2MNdIT8DuvRYqtaeHuTT1mMS3zNS9pFDHN
-	f5stmNV7X4ixlq3WqOenKe2/zdxbpq9ZUZY4S2oIdQ9c533dfqTRvQh5tRY0+3R6jL49yU4GYy5
-	cxOoM743aIszztfI59Hm0NmnCux/JhB9gqdK6
-X-Google-Smtp-Source: AGHT+IHCLGoDTbD9LAUphE9SPUrx3KUcIqiqyoGvbi+stviqZGZ5BDOXy0oCRC9AnOS0a9EEOZIMy5Ntm4L7cGK4dJE=
-X-Received: by 2002:a05:6102:a48:b0:49b:e7d7:3e1b with SMTP id
- ada2fe7eead31-49d41468125mr4919245137.3.1726173840757; Thu, 12 Sep 2024
- 13:44:00 -0700 (PDT)
+	s=arc-20240116; t=1726173902; c=relaxed/simple;
+	bh=X53vx+eQ70p0sQHV18a4CL+JbJJhKFp68RPM7zJLQ2E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rgmdt8+aNUns9jWNsv9+p9jyzZoSxBVMQ9Wq9FnXeEEd29/6eJmuV1rH1ZcTtasQf8CfeJ5faJYOIl7A6BjnXwNLYyBHc3jH7b5NIPxebIfvFiTjUUS1iGYb4TuIWlCFunn7pUgIxI6Zb3i9ejLacurp9S+ZFPJmNKe3T7+zhbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EA0C613D5;
+	Thu, 12 Sep 2024 13:45:21 -0700 (PDT)
+Received: from [192.168.2.132] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F253B3F64C;
+	Thu, 12 Sep 2024 13:44:49 -0700 (PDT)
+Message-ID: <f83d9e8d-af07-4ce4-81aa-e29fae5762b3@arm.com>
+Date: Thu, 12 Sep 2024 22:44:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909-strncpy-net-caif-chnl_net-c-v1-1-438eb870c155@google.com>
- <20240910093751.GA572255@kernel.org>
-In-Reply-To: <20240910093751.GA572255@kernel.org>
-From: Justin Stitt <justinstitt@google.com>
-Date: Thu, 12 Sep 2024 13:43:49 -0700
-Message-ID: <CAFhGd8qQ_e_rh1xQqAnaAZmA7R+ftRGjprxGp+njoqg_FGMCSw@mail.gmail.com>
-Subject: Re: [PATCH] caif: replace deprecated strncpy with strscpy_pad
-To: Simon Horman <horms@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/24] sched/uclamg: Handle delayed dequeue
+To: Luis Machado <luis.machado@arm.com>, Mike Galbraith <efault@gmx.de>,
+ Peter Zijlstra <peterz@infradead.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>,
+ Hongyan Xia <hongyan.xia2@arm.com>, mingo@redhat.com, juri.lelli@redhat.com,
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com, linux-kernel@vger.kernel.org, kprateek.nayak@amd.com,
+ wuyun.abel@bytedance.com, youssefesmat@chromium.org, tglx@linutronix.de
+References: <CAKfTPtDO3n-4mcr2Sk-uu0ZS5xQnagdicQmaBh-CyrndPLM8eQ@mail.gmail.com>
+ <aa81d37e-ad9c-42c6-a104-fe8496c5d907@arm.com>
+ <c49ef5fe-a909-43f1-b02f-a765ab9cedbf@arm.com>
+ <CAKfTPtCNUvWE_GX5LyvTF-WdxUT=ZgvZZv-4t=eWntg5uOFqiQ@mail.gmail.com>
+ <a9a45193-d0c6-4ba2-a822-464ad30b550e@arm.com>
+ <20240905145354.GP4723@noisy.programming.kicks-ass.net>
+ <20240906104525.GG4928@noisy.programming.kicks-ass.net>
+ <8d0d01b9-a430-49cc-93a5-67b4d68aa35c@arm.com>
+ <20240910140524.GH4723@noisy.programming.kicks-ass.net>
+ <52ca4cea-8f65-434e-af17-e4bf664d9488@arm.com>
+ <20240911084528.GJ4723@noisy.programming.kicks-ass.net>
+ <4fde8f26a9aeaeafda15b81bbb17b0ffc96941f0.camel@gmx.de>
+ <6df12fde-1e0d-445f-8f8a-736d11f9ee41@arm.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <6df12fde-1e0d-445f-8f8a-736d11f9ee41@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 12/09/2024 14:58, Luis Machado wrote:
+> On 9/11/24 10:10, Mike Galbraith wrote:
+>> On Wed, 2024-09-11 at 10:45 +0200, Peter Zijlstra wrote:
+>>> On Wed, Sep 11, 2024 at 09:35:16AM +0100, Luis Machado wrote:
 
-On Tue, Sep 10, 2024 at 2:37=E2=80=AFAM Simon Horman <horms@kernel.org> wro=
-te:
->
-> On Mon, Sep 09, 2024 at 04:39:28PM -0700, Justin Stitt wrote:
-> > strncpy() is deprecated for use on NUL-terminated destination strings [=
-1] and
-> > as such we should prefer more robust and less ambiguous string interfac=
-es.
-> >
-> > Towards the goal of [2], replace strncpy() with an alternative that
-> > guarantees NUL-termination and NUL-padding for the destination buffer.
->
-> Hi Justin,
->
-> I am curious to know why the _pad variant was chosen.
+[...]
 
-I chose the _pad variant as it matches the behavior of strncpy in this
-context, ensuring minimal functional change. I think the point you're
-trying to get at is that the net_device should be zero allocated to
-begin with -- rendering all thus NUL-padding superfluous. I have some
-questions out of curiosity: 1) do all control paths leading here
-zero-allocate the net_device struct? and 2) does it matter that this
-private data be NUL-padded (I assume not).
+> Ok, I seem to have narrowed this down to scheduler class switching. In particular
+> switched_from_fair.
+> 
+> Valentin's patch (75b6499024a6c1a4ef0288f280534a5c54269076
+> sched/fair: Properly deactivate sched_delayed task upon class change) introduced
+> finish_delayed_dequeue_entity, which takes care of cleaning up the state of delayed-dequeue
+> tasks during class change. Things work fine (minus delayed task accounting) up to this point.
+> 
+> When Peter introduced his patch to do h_nr_delayed accounting, we modified
+> finish_delayed_dequeue_entity to also call clear_delayed, instead of simply
+> zeroing se->sched_delayed.
+> 
+> The call to clear_delayed decrements the rq's h_nr_delayed, and it gets used elsewhere
+> to cleanup the state of delayed-dequeue tasks, in order to share some common code.
+> 
+> With that said, my testing on Android shows that when we hit switched_from_fair during
+> switching sched classes (due to some RT task), we're in a state where...
+> 
+> 1 - We already called into dequeue_entities for this delayed task.
+> 2 - We tested true for the !task_sleep && !task_delayed condition.
+> 3 - se->sched_delayed is true, so h_nr_delayed == 1.
+> 4 - We carry on executing the rest of dequeue_entities and decrement the rq's h_nr_running by 1.
+> 
+> In switched_from_fair, after the above events, we call into finish_delayed_dequeue_entity -> clear_delayed
+> and do yet another decrement to the rq's h_nr_delayed, now potentially making it negative. As
+> a consequence, we probably misuse the negative value and adjust the frequencies incorrectly. I
+> think this is the issue I'm seeing.
+> 
+> It is worth pointing out that even with the Android setup, things only go bad when there is enough
+> competition and switching of classes (lots of screen events etc).
+> 
+> My suggestion of a fix (below), still under testing, is to inline the delayed-dequeue and the lag zeroing
+> cleanup within switched_from_fair instead of calling finish_delayed_dequeue_entity. Or maybe
+> drop finish_delayed_dequeue_entity and inline its contents into its callers.
+> 
+> The rest of Peter's patch introducing h_nr_delayed seems OK as far as I could test.
+> 
+> 
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index f993ac282a83..f8df2f8d2e11 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -13168,7 +13168,9 @@ static void switched_from_fair(struct rq *rq, struct task_struct *p)
+>                  * related to sched_delayed being true and that wasn't done
+>                  * due to the generic dequeue not using DEQUEUE_DELAYED.
+>                  */
+> -               finish_delayed_dequeue_entity(&p->se);
+> +               p->se.sched_delayed = 0;
+> +               if (sched_feat(DELAY_ZERO) && p->se.vlag > 0)
+> +                       p->se.vlag = 0;
+>                 p->se.rel_deadline = 0;
+>                 __block_task(rq, p);
+>         }
 
-With all that being said, I'd be happy to send a v2 using the regular
-strscpy variant if needed.
+I could recreate this on QEMU with:
 
->
-> > Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#st=
-rncpy-on-nul-terminated-strings [1]
-> > Link: https://github.com/KSPP/linux/issues/90 [2]
-> > Link: https://manpages.debian.org/testing/linux-manual-4.8/strscpy.9.en=
-.html
-> > Cc: Kees Cook <keescook@chromium.org>
-> > Cc: linux-hardening@vger.kernel.org
-> > Signed-off-by: Justin Stitt <justinstitt@google.com>
-> > ---
-> > Note: build-tested only.
-> > ---
-> >  net/caif/chnl_net.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/net/caif/chnl_net.c b/net/caif/chnl_net.c
-> > index 47901bd4def1..ff37dceefa26 100644
-> > --- a/net/caif/chnl_net.c
-> > +++ b/net/caif/chnl_net.c
-> > @@ -347,7 +347,7 @@ static int chnl_net_init(struct net_device *dev)
-> >       struct chnl_net *priv;
-> >       ASSERT_RTNL();
-> >       priv =3D netdev_priv(dev);
-> > -     strncpy(priv->name, dev->name, sizeof(priv->name));
-> > +     strscpy_pad(priv->name, dev->name);
-> >       INIT_LIST_HEAD(&priv->list_field);
-> >       return 0;
-> >  }
-> >
-> > ---
-> > base-commit: bc83b4d1f08695e85e85d36f7b803da58010161d
-> > change-id: 20240909-strncpy-net-caif-chnl_net-c-a505e955e697
-> >
-> > Best regards,
-> > --
-> > Justin Stitt <justinstitt@google.com>
-> >
-> >
+@@ -5473,6 +5473,7 @@ static void clear_delayed(struct sched_entity *se)
+        for_each_sched_entity(se) {
+                struct cfs_rq *cfs_rq = cfs_rq_of(se);
+                cfs_rq->h_nr_delayed--;
++               BUG_ON((int)cfs_rq->h_nr_delayed < 0);
+                if (cfs_rq_throttled(cfs_rq))
+                        break;
+        }
+running:
 
-I appreciate the review.
+  # while(true); do chrt -rr -p 50 $$; chrt -o -p 0 $$; done
 
-Thanks
-Justin
+in one shell and:
+
+  # hackbench
+
+in another.
+
+[  318.490522] ------------[ cut here ]------------
+[  318.490969] kernel BUG at kernel/sched/fair.c:5476!
+[  318.491411] Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+[  318.491964] CPU: 3 UID: 0 PID: 68053 Comm: chrt Not tainted 6.11.0-rc1-00066-g2e05f6c71d36-dirty #23
+[  318.492604] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.4
+[  318.494192] RIP: 0010:switched_from_fair+0x67/0xe0
+[  318.494899] Code: ff ff c6 85 d1 00 00 00 00 48 85 db 75 0e eb 1c 48 8b 9b 98 00 00 00 48 85 db 74 10 48 8b 0
+[  318.496491] RSP: 0018:ffffb1154bc63e20 EFLAGS: 00010097
+[  318.496991] RAX: 0000000000000001 RBX: ffff92668844e200 RCX: ffff9266fddadea8
+[  318.497681] RDX: ffff926684213e00 RSI: ffff9266fddadea8 RDI: ffff92668844e608
+[  318.498339] RBP: ffff92668844e180 R08: ffff92668106c44c R09: ffff92668119c0b8
+[  318.498940] R10: ffff926681f42000 R11: ffffffffb1e155d0 R12: ffff9266fddad640
+[  318.499525] R13: ffffb1154bc63ed8 R14: 0000000000000078 R15: ffff9266fddad640
+[  318.500234] FS:  00007f68f52bf740(0000) GS:ffff9266fdd80000(0000) knlGS:0000000000000000
+[  318.500837] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  318.501261] CR2: 00007f68f53afdd0 CR3: 0000000006a58002 CR4: 0000000000370ef0
+[  318.501798] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  318.502385] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  318.502919] Call Trace:
+[  318.503118]  <TASK>
+[  318.503284]  ? die+0x32/0x90
+[  318.503508]  ? do_trap+0xd8/0x100
+[  318.503770]  ? switched_from_fair+0x67/0xe0
+[  318.504085]  ? do_error_trap+0x60/0x80
+[  318.504374]  ? switched_from_fair+0x67/0xe0
+[  318.504652]  ? exc_invalid_op+0x53/0x70
+[  318.504995]  ? switched_from_fair+0x67/0xe0
+[  318.505270]  ? asm_exc_invalid_op+0x1a/0x20
+[  318.505588]  ? switched_from_fair+0x67/0xe0
+[  318.505929]  check_class_changed+0x2a/0x80
+[  318.506236]  __sched_setscheduler+0x1f3/0x920
+[  318.506526]  do_sched_setscheduler+0xfd/0x1c0
+[  318.506867]  ? do_sys_openat2+0x7c/0xc0
+[  318.507141]  __x64_sys_sched_setscheduler+0x1a/0x30
+[  318.507462]  do_syscall_64+0x9e/0x1a0
+[  318.507722]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[  318.508127] RIP: 0033:0x7f68f53c3719
+[  318.508369] Code: 08 89 e8 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 8
+[  318.509941] RSP: 002b:00007fff8d920578 EFLAGS: 00000246 ORIG_RAX: 0000000000000090
+[  318.511178] RAX: ffffffffffffffda RBX: 00007fff8d920610 RCX: 00007f68f53c3719
+[  318.512105] RDX: 00007fff8d92058c RSI: 0000000000000002 RDI: 0000000000000103
+[  318.512676] RBP: 0000000000000103 R08: 0000000000000000 R09: 0000000000000000
+[  318.513296] R10: 1999999999999999 R11: 0000000000000246 R12: 0000000000000002
+[  318.513917] R13: 0000000000000002 R14: 0000000000000032 R15: 0000000000000103
+[  318.514617]  </TASK>
+[  318.514861] Modules linked in:
+[  318.515132] ---[ end trace 0000000000000000 ]---
+[  318.515466] RIP: 0010:switched_from_fair+0x67/0xe0
+[  318.515942] Code: ff ff c6 85 d1 00 00 00 00 48 85 db 75 0e eb 1c 48 8b 9b 98 00 00 00 48 85 db 74 10 48 8b 0
+[  318.517411] RSP: 0018:ffffb1154bc63e20 EFLAGS: 00010097
+[  318.517819] RAX: 0000000000000001 RBX: ffff92668844e200 RCX: ffff9266fddadea8
+[  318.518354] RDX: ffff926684213e00 RSI: ffff9266fddadea8 RDI: ffff92668844e608
+[  318.518946] RBP: ffff92668844e180 R08: ffff92668106c44c R09: ffff92668119c0b8
+[  318.519527] R10: ffff926681f42000 R11: ffffffffb1e155d0 R12: ffff9266fddad640
+[  318.520138] R13: ffffb1154bc63ed8 R14: 0000000000000078 R15: ffff9266fddad640
+[  318.520684] FS:  00007f68f52bf740(0000) GS:ffff9266fdd80000(0000) knlGS:0000000000000000
+[  318.521350] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  318.521745] CR2: 00007f68f53afdd0 CR3: 0000000006a58002 CR4: 0000000000370ef0
+[  318.522306] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  318.522896] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  318.523388] note: chrt[68053] exited with irqs disabled
+
+With your proposed fix the issue goes away.
+
+Tested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+
+
+
+
 
