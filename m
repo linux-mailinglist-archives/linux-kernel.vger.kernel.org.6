@@ -1,189 +1,511 @@
-Return-Path: <linux-kernel+bounces-326808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2BD0976D34
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:11:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7386A976D3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:12:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F2471F22502
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:11:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 982051C23E18
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:12:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C392F1BD4F6;
-	Thu, 12 Sep 2024 15:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5FB1BDA91;
+	Thu, 12 Sep 2024 15:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l1d/yQWC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="il+MZ1Ic"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7D71B983D;
-	Thu, 12 Sep 2024 15:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEEF1BB6B5;
+	Thu, 12 Sep 2024 15:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726153815; cv=none; b=djJGQvnE0sFy46BHO6zu0fCV3Y09/rX0eS1Gwu0alWEJZ5fpiYwb9wdtPT2qfwNgm1oKIvNjyBou+kmpuCtUxRt8G3sbARfz5LnVwfCn5q2kvtcwC3XrfTA03X0zFM+7vTgezyn/W5AiOQetm5Pl+TMCFesRPHWbX4PkPq6Xsj0=
+	t=1726153829; cv=none; b=J9sm6CrHZ2Q21sxt0j5C5br2ZTPkcHLYTirKs5WhVnW4hwOHlSRwvqPkyagOyj1gc3oNTlHWA7HHcuf0KOQLMXTwk79vtQGo/HkEZrqIWUQAJFqd6PDEtEUSUYpzTcCTctXkxVrdE2hqXcI7Cun6wEuJJWGw0oYDX6GLlbsmq9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726153815; c=relaxed/simple;
-	bh=JYaRKeJmGRnsdkv3DZQuO4sB8FqXsYsH2vHflN4Nz3A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rHSqQuW3YzNw+lRsbeI27RpVPS73/D2cCVkDPl1MtKhMk6aNheXOouNdN5t5xaelgxPKGD1SDB2b6bhACDbCtQ6mCCh4RB9YBDsMZgxvN8COhz7n9SvU9yQnNE40WMpoodecflzgatUWBgBBKESnJ1wmC0NfHwpSmmvZ8tGRkNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l1d/yQWC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B2BFC4CEC3;
-	Thu, 12 Sep 2024 15:10:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726153815;
-	bh=JYaRKeJmGRnsdkv3DZQuO4sB8FqXsYsH2vHflN4Nz3A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=l1d/yQWCP1JcgRT4SCOEfHenA1VpO0whsgQnb024PPqBsn1BxwJiNene6g77udo8E
-	 9TRBUuDo/1Nk5h9Qkw+fY8E9gb44ONfD6tMZ1O9CsArVKeWf2YqEd/ovzRdVxqUBRf
-	 daMIXerJvf8NhYUmZcDKROC68sqeKRbxXJhisTB/Hq8E+2kV3h+SzbRMtEtokwV08X
-	 58n8zTG5hz+vveu83s9yRk6at6G0mMWxva5OoWDKIdiQkBBO0XJQzvqTj7H4m1x4gX
-	 pmv4ucF261YSBAXKg13P2t8BDR9mcxrzT5lWQN7/VL8VxLEdKzgC70+uNk7ppBQANf
-	 cIDlGbhxbo4uQ==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Florent Revest <revest@chromium.org>
-Cc: linux-trace-kernel@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	bpf <bpf@vger.kernel.org>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Guo Ren <guoren@kernel.org>,
-	linux-arch@vger.kernel.org
-Subject: [PATCH v14 11/19] bpf: Enable kprobe_multi feature if CONFIG_FPROBE is enabled
-Date: Fri, 13 Sep 2024 00:10:08 +0900
-Message-Id: <172615380883.133222.6617351174325139337.stgit@devnote2>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <172615368656.133222.2336770908714920670.stgit@devnote2>
-References: <172615368656.133222.2336770908714920670.stgit@devnote2>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1726153829; c=relaxed/simple;
+	bh=WFCEiEx9rmYI/Ru6Mrp556KRJvQVjj0d6TdUq840A8c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hAK0taC/V9xGAcRzdUpWX9IP3IKHTpfBFGLXgs3hyG89isJkQytsaQCfcfRJ0kstPWSM61cBx+lw58HHHXuGwbIyQuESUGmVIPw2b9JENcp8ttJccjbK7e/ZwKkUY97Yi6TmrOnWwLWMpnNe3A/m1xWpVCMrNvcRvg64ZFnOjaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=il+MZ1Ic; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1726153818;
+	bh=WFCEiEx9rmYI/Ru6Mrp556KRJvQVjj0d6TdUq840A8c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=il+MZ1Ichdkk1lXP84H6CXUjkKStMKlYDj3LC4/xJuS5bLLoAX/b8cKs38m6OwXfp
+	 VHHKZMQ8QW/N6w25oO3aFTWniul78CD59UP5dHsi1Dq9tUd+NgP8Uk99XxkdjFqSqZ
+	 Y++6uPtQzhyNk73wL2s35cu/smAZLxT4AbqnFPuvYqIi6o1cTXgAsm/kHyiA2eWnr7
+	 KP7lApiafLe/qOyCZrwTa0pOxY2rXUV71R0DdfZbL53w26x340vKMzYH9Qqe1t8NQR
+	 RqlTRquqw3IVRF0qmOXEwPxBpENAVRM8+7z8Vft212wpD7g1liuJ905D0YWPjkx0Ve
+	 z9S9bkHqJclgw==
+Received: from localhost (unknown [37.167.110.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 60AE717E35CC;
+	Thu, 12 Sep 2024 17:10:16 +0200 (CEST)
+Date: Thu, 12 Sep 2024 17:10:10 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
+ <christian.koenig@amd.com>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v5 1/4] drm/panthor: introduce job cycle and timestamp
+ accounting
+Message-ID: <20240912171010.5d6fd24b@collabora.com>
+In-Reply-To: <unnhhn4dzqs56wsme7lyrlwf373xd6gqydfwvkqmv7gkzz6dfy@pbmsoynwp5rx>
+References: <20240903202541.430225-1-adrian.larumbe@collabora.com>
+	<20240903202541.430225-2-adrian.larumbe@collabora.com>
+	<20240904094915.1d92661d@collabora.com>
+	<unnhhn4dzqs56wsme7lyrlwf373xd6gqydfwvkqmv7gkzz6dfy@pbmsoynwp5rx>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Thu, 12 Sep 2024 16:03:37 +0100
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-Enable kprobe_multi feature if CONFIG_FPROBE is enabled. The pt_regs is
-converted from ftrace_regs by ftrace_partial_regs(), thus some registers
-may always returns 0. But it should be enough for function entry (access
-arguments) and exit (access return value).
+> Hi Boris, thanks for the remarks,
+>=20
+> On 04.09.2024 09:49, Boris Brezillon wrote:
+> > On Tue,  3 Sep 2024 21:25:35 +0100
+> > Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
+> >  =20
+> > > Enable calculations of job submission times in clock cycles and wall
+> > > time. This is done by expanding the boilerplate command stream when r=
+unning
+> > > a job to include instructions that compute said times right before an=
+ after
+> > > a user CS.
+> > >=20
+> > > A separate kernel BO is created per queue to store those values. Jobs=
+ can
+> > > access their sampled data through a slots buffer-specific index diffe=
+rent
+> > > from that of the queue's ringbuffer. The reason for this is saving me=
+mory
+> > > on the profiling information kernel BO, since the amount of simultane=
+ous
+> > > profiled jobs we can write into the queue's ringbuffer might be much
+> > > smaller than for regular jobs, as the former take more CSF instructio=
+ns.
+> > >=20
+> > > This commit is done in preparation for enabling DRM fdinfo support in=
+ the
+> > > Panthor driver, which depends on the numbers calculated herein.
+> > >=20
+> > > A profile mode mask has been added that will in a future commit allow=
+ UM to
+> > > toggle performance metric sampling behaviour, which is disabled by de=
+fault
+> > > to save power. When a ringbuffer CS is constructed, timestamp and cyc=
+ling
+> > > sampling instructions are added depending on the enabled flags in the
+> > > profiling mask.
+> > >=20
+> > > A helper was provided that calculates the number of instructions for a
+> > > given set of enablement mask, and these are passed as the number of c=
+redits
+> > > when initialising a DRM scheduler job.
+> > >=20
+> > > Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
+> > > ---
+> > >  drivers/gpu/drm/panthor/panthor_device.h |  22 ++
+> > >  drivers/gpu/drm/panthor/panthor_sched.c  | 327 ++++++++++++++++++++-=
+--
+> > >  2 files changed, 305 insertions(+), 44 deletions(-)
+> > >=20
+> > > diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/d=
+rm/panthor/panthor_device.h
+> > > index e388c0472ba7..a48e30d0af30 100644
+> > > --- a/drivers/gpu/drm/panthor/panthor_device.h
+> > > +++ b/drivers/gpu/drm/panthor/panthor_device.h
+> > > @@ -66,6 +66,25 @@ struct panthor_irq {
+> > >  	atomic_t suspended;
+> > >  };
+> > > =20
+> > > +/**
+> > > + * enum panthor_device_profiling_mode - Profiling state
+> > > + */
+> > > +enum panthor_device_profiling_flags {
+> > > +	/** @PANTHOR_DEVICE_PROFILING_DISABLED: Profiling is disabled. */
+> > > +	PANTHOR_DEVICE_PROFILING_DISABLED =3D 0,
+> > > +
+> > > +	/** @PANTHOR_DEVICE_PROFILING_CYCLES: Sampling job cycles. */
+> > > +	PANTHOR_DEVICE_PROFILING_CYCLES =3D BIT(0),
+> > > +
+> > > +	/** @PANTHOR_DEVICE_PROFILING_TIMESTAMP: Sampling job timestamp. */
+> > > +	PANTHOR_DEVICE_PROFILING_TIMESTAMP =3D BIT(1),
+> > > +
+> > > +	/** @PANTHOR_DEVICE_PROFILING_ALL: Sampling everything. */
+> > > +	PANTHOR_DEVICE_PROFILING_ALL =3D
+> > > +	PANTHOR_DEVICE_PROFILING_CYCLES |
+> > > +	PANTHOR_DEVICE_PROFILING_TIMESTAMP,
+> > > +};
+> > > +
+> > >  /**
+> > >   * struct panthor_device - Panthor device
+> > >   */
+> > > @@ -162,6 +181,9 @@ struct panthor_device {
+> > >  		 */
+> > >  		struct page *dummy_latest_flush;
+> > >  	} pm;
+> > > +
+> > > +	/** @profile_mask: User-set profiling flags for job accounting. */
+> > > +	u32 profile_mask;
+> > >  };
+> > > =20
+> > >  /**
+> > > diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/dr=
+m/panthor/panthor_sched.c
+> > > index c426a392b081..b087648bf59a 100644
+> > > --- a/drivers/gpu/drm/panthor/panthor_sched.c
+> > > +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+> > > @@ -93,6 +93,9 @@
+> > >  #define MIN_CSGS				3
+> > >  #define MAX_CSG_PRIO				0xf
+> > > =20
+> > > +#define NUM_INSTRS_PER_CACHE_LINE		(64 / sizeof(u64))
+> > > +#define MAX_INSTRS_PER_JOB			32
+> > > +
+> > >  struct panthor_group;
+> > > =20
+> > >  /**
+> > > @@ -476,6 +479,18 @@ struct panthor_queue {
+> > >  		 */
+> > >  		struct list_head in_flight_jobs;
+> > >  	} fence_ctx;
+> > > +
+> > > +	/** @profiling_info: Job profiling data slots and access informatio=
+n. */
+> > > +	struct {
+> > > +		/** @slots: Kernel BO holding the slots. */
+> > > +		struct panthor_kernel_bo *slots;
+> > > +
+> > > +		/** @slot_count: Number of jobs ringbuffer can hold at once. */
+> > > +		u32 slot_count;
+> > > +
+> > > +		/** @profiling_seqno: Index of the next available profiling inform=
+ation slot. */
+> > > +		u32 profiling_seqno; =20
+> >=20
+> > Nit: no need to repeat profiling as it's under the profiling_info
+> > struct. I would simply name that one 'seqno'.
+> >  =20
+> > > +	} profiling_info; =20
+> >=20
+> > s/profiling_info/profiling/ ?
+> >  =20
+> > >  };
+> > > =20
+> > >  /**
+> > > @@ -661,6 +676,18 @@ struct panthor_group {
+> > >  	struct list_head wait_node;
+> > >  };
+> > > =20
+> > > +struct panthor_job_profiling_data {
+> > > +	struct {
+> > > +		u64 before;
+> > > +		u64 after;
+> > > +	} cycles;
+> > > +
+> > > +	struct {
+> > > +		u64 before;
+> > > +		u64 after;
+> > > +	} time;
+> > > +};
+> > > +
+> > >  /**
+> > >   * group_queue_work() - Queue a group work
+> > >   * @group: Group to queue the work for.
+> > > @@ -774,6 +801,12 @@ struct panthor_job {
+> > > =20
+> > >  	/** @done_fence: Fence signaled when the job is finished or cancell=
+ed. */
+> > >  	struct dma_fence *done_fence;
+> > > +
+> > > +	/** @profile_mask: Current device job profiling enablement bitmask.=
+ */
+> > > +	u32 profile_mask;
+> > > +
+> > > +	/** @profile_slot: Job profiling information index in the profiling=
+ slots BO. */
+> > > +	u32 profiling_slot; =20
+> >=20
+> > Nit: we tend to group fields together under sub-structs, so I'd say:
+> >=20
+> > 	struct {
+> > 		u32 mask; // or flags
+> > 		u32 slot;
+> > 	} profiling;
+> >  =20
+> > >  };
+> > > =20
+> > >  static void
+> > > @@ -838,6 +871,7 @@ static void group_free_queue(struct panthor_group=
+ *group, struct panthor_queue *
+> > > =20
+> > >  	panthor_kernel_bo_destroy(queue->ringbuf);
+> > >  	panthor_kernel_bo_destroy(queue->iface.mem);
+> > > +	panthor_kernel_bo_destroy(queue->profiling_info.slots);
+> > > =20
+> > >  	/* Release the last_fence we were holding, if any. */
+> > >  	dma_fence_put(queue->fence_ctx.last_fence);
+> > > @@ -1982,8 +2016,6 @@ tick_ctx_init(struct panthor_scheduler *sched,
+> > >  	}
+> > >  }
+> > > =20
+> > > -#define NUM_INSTRS_PER_SLOT		16
+> > > -
+> > >  static void
+> > >  group_term_post_processing(struct panthor_group *group)
+> > >  {
+> > > @@ -2815,65 +2847,211 @@ static void group_sync_upd_work(struct work_=
+struct *work)
+> > >  	group_put(group);
+> > >  }
+> > > =20
+> > > -static struct dma_fence *
+> > > -queue_run_job(struct drm_sched_job *sched_job)
+> > > +struct panthor_job_ringbuf_instrs {
+> > > +	u64 buffer[MAX_INSTRS_PER_JOB];
+> > > +	u32 count;
+> > > +};
+> > > +
+> > > +struct panthor_job_instr {
+> > > +	u32 profile_mask;
+> > > +	u64 instr;
+> > > +};
+> > > +
+> > > +#define JOB_INSTR(__prof, __instr) \
+> > > +	{ \
+> > > +		.profile_mask =3D __prof, \
+> > > +		.instr =3D __instr, \
+> > > +	}
+> > > +
+> > > +static void
+> > > +copy_instrs_to_ringbuf(struct panthor_queue *queue,
+> > > +		       struct panthor_job *job,
+> > > +		       struct panthor_job_ringbuf_instrs *instrs)
+> > > +{
+> > > +	ssize_t ringbuf_size =3D panthor_kernel_bo_size(queue->ringbuf);
+> > > +	u32 start =3D job->ringbuf.start & (ringbuf_size - 1);
+> > > +	ssize_t size, written;
+> > > +
+> > > +	/*
+> > > +	 * We need to write a whole slot, including any trailing zeroes
+> > > +	 * that may come at the end of it. Also, because instrs.buffer had
+> > > +	 * been zero-initialised, there's no need to pad it with 0's
+> > > +	 */
+> > > +	instrs->count =3D ALIGN(instrs->count, NUM_INSTRS_PER_CACHE_LINE);
+> > > +	size =3D instrs->count * sizeof(u64);
+> > > +	written =3D min(ringbuf_size - start, size);
+> > > +
+> > > +	memcpy(queue->ringbuf->kmap + start, instrs->buffer, written);
+> > > +
+> > > +	if (written < size)
+> > > +		memcpy(queue->ringbuf->kmap,
+> > > +		       &instrs->buffer[(ringbuf_size - start)/sizeof(u64)],
+> > > +		       size - written);
+> > > +}
+> > > +
+> > > +struct panthor_job_cs_params {
+> > > +	u32 profile_mask;
+> > > +	u64 addr_reg; u64 val_reg;
+> > > +	u64 cycle_reg; u64 time_reg;
+> > > +	u64 sync_addr; u64 times_addr;
+> > > +	u64 cs_start; u64 cs_size;
+> > > +	u32 last_flush; u32 waitall_mask;
+> > > +};
+> > > +
+> > > +static void
+> > > +get_job_cs_params(struct panthor_job *job, struct panthor_job_cs_par=
+ams *params)
+> > >  {
+> > > -	struct panthor_job *job =3D container_of(sched_job, struct panthor_=
+job, base);
+> > >  	struct panthor_group *group =3D job->group;
+> > >  	struct panthor_queue *queue =3D group->queues[job->queue_idx];
+> > >  	struct panthor_device *ptdev =3D group->ptdev;
+> > >  	struct panthor_scheduler *sched =3D ptdev->scheduler;
+> > > -	u32 ringbuf_size =3D panthor_kernel_bo_size(queue->ringbuf);
+> > > -	u32 ringbuf_insert =3D queue->iface.input->insert & (ringbuf_size -=
+ 1);
+> > > -	u64 addr_reg =3D ptdev->csif_info.cs_reg_count -
+> > > -		       ptdev->csif_info.unpreserved_cs_reg_count;
+> > > -	u64 val_reg =3D addr_reg + 2;
+> > > -	u64 sync_addr =3D panthor_kernel_bo_gpuva(group->syncobjs) +
+> > > -			job->queue_idx * sizeof(struct panthor_syncobj_64b);
+> > > -	u32 waitall_mask =3D GENMASK(sched->sb_slot_count - 1, 0);
+> > > -	struct dma_fence *done_fence;
+> > > -	int ret;
+> > > =20
+> > > -	u64 call_instrs[NUM_INSTRS_PER_SLOT] =3D {
+> > > +	params->addr_reg =3D ptdev->csif_info.cs_reg_count -
+> > > +			   ptdev->csif_info.unpreserved_cs_reg_count;
+> > > +	params->val_reg =3D params->addr_reg + 2;
+> > > +	params->cycle_reg =3D params->addr_reg;
+> > > +	params->time_reg =3D params->val_reg;
+> > > +
+> > > +	params->sync_addr =3D panthor_kernel_bo_gpuva(group->syncobjs) +
+> > > +			    job->queue_idx * sizeof(struct panthor_syncobj_64b);
+> > > +	params->times_addr =3D panthor_kernel_bo_gpuva(queue->profiling_inf=
+o.slots) +
+> > > +			     (job->profiling_slot * sizeof(struct panthor_job_profiling_d=
+ata));
+> > > +	params->waitall_mask =3D GENMASK(sched->sb_slot_count - 1, 0);
+> > > +
+> > > +	params->cs_start =3D job->call_info.start;
+> > > +	params->cs_size =3D job->call_info.size;
+> > > +	params->last_flush =3D job->call_info.latest_flush;
+> > > +
+> > > +	params->profile_mask =3D job->profile_mask;
+> > > +}
+> > > +
+> > > +static void
+> > > +prepare_job_instrs(const struct panthor_job_cs_params *params,
+> > > +		   struct panthor_job_ringbuf_instrs *instrs)
+> > > +{
+> > > +	const struct panthor_job_instr instr_seq[] =3D {
+> > >  		/* MOV32 rX+2, cs.latest_flush */
+> > > -		(2ull << 56) | (val_reg << 48) | job->call_info.latest_flush,
+> > > +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_DISABLED,
+> > > +			  (2ull << 56) | (params->val_reg << 48) | params->last_flush),
+> > > =20
+> > >  		/* FLUSH_CACHE2.clean_inv_all.no_wait.signal(0) rX+2 */
+> > > -		(36ull << 56) | (0ull << 48) | (val_reg << 40) | (0 << 16) | 0x233,
+> > > +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_DISABLED,
+> > > +			  (36ull << 56) | (0ull << 48) | (params->val_reg << 40) | (0 << =
+16) | 0x233),
+> > > +
+> > > +		/* MOV48 rX:rX+1, cycles_offset */
+> > > +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_CYCLES,
+> > > +			  (1ull << 56) | (params->cycle_reg << 48) |
+> > > +			  (params->times_addr +
+> > > +			   offsetof(struct panthor_job_profiling_data, cycles.before))),
+> > > +		/* STORE_STATE cycles */
+> > > +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_CYCLES,
+> > > +			  (40ull << 56) | (params->cycle_reg << 40) | (1ll << 32)),
+> > > +		/* MOV48 rX:rX+1, time_offset */
+> > > +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_TIMESTAMP,
+> > > +			  (1ull << 56) | (params->time_reg << 48) |
+> > > +			  (params->times_addr +
+> > > +			   offsetof(struct panthor_job_profiling_data, time.before))),
+> > > +		/* STORE_STATE timer */
+> > > +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_TIMESTAMP,
+> > > +			  (40ull << 56) | (params->time_reg << 40) | (0ll << 32)),
+> > > =20
+> > >  		/* MOV48 rX:rX+1, cs.start */
+> > > -		(1ull << 56) | (addr_reg << 48) | job->call_info.start,
+> > > -
+> > > +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_DISABLED,
+> > > +			  (1ull << 56) | (params->addr_reg << 48) | params->cs_start),
+> > >  		/* MOV32 rX+2, cs.size */
+> > > -		(2ull << 56) | (val_reg << 48) | job->call_info.size,
+> > > -
+> > > +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_DISABLED,
+> > > +			  (2ull << 56) | (params->val_reg << 48) | params->cs_size),
+> > >  		/* WAIT(0) =3D> waits for FLUSH_CACHE2 instruction */
+> > > -		(3ull << 56) | (1 << 16),
+> > > -
+> > > +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_DISABLED, (3ull << 56) | (1 << =
+16)),
+> > >  		/* CALL rX:rX+1, rX+2 */
+> > > -		(32ull << 56) | (addr_reg << 40) | (val_reg << 32),
+> > > +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_DISABLED,
+> > > +			  (32ull << 56) | (params->addr_reg << 40) | (params->val_reg << =
+32)),
+> > > +
+> > > +		/* MOV48 rX:rX+1, cycles_offset */
+> > > +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_CYCLES,
+> > > +			  (1ull << 56) | (params->cycle_reg << 48) |
+> > > +			  (params->times_addr +
+> > > +			   offsetof(struct panthor_job_profiling_data, cycles.after))),
+> > > +		/* STORE_STATE cycles */
+> > > +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_CYCLES,
+> > > +			  (40ull << 56) | (params->cycle_reg << 40) | (1ll << 32)),
+> > > +
+> > > +		/* MOV48 rX:rX+1, time_offset */
+> > > +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_TIMESTAMP,
+> > > +			  (1ull << 56) | (params->time_reg << 48) |
+> > > +			  (params->times_addr +
+> > > +			   offsetof(struct panthor_job_profiling_data, time.after))),
+> > > +		/* STORE_STATE timer */
+> > > +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_TIMESTAMP,
+> > > +			  (40ull << 56) | (params->time_reg << 40) | (0ll << 32)),
+> > > =20
+> > >  		/* MOV48 rX:rX+1, sync_addr */
+> > > -		(1ull << 56) | (addr_reg << 48) | sync_addr,
+> > > -
+> > > +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_DISABLED,
+> > > +			  (1ull << 56) | (params->addr_reg << 48) | params->sync_addr),
+> > >  		/* MOV48 rX+2, #1 */
+> > > -		(1ull << 56) | (val_reg << 48) | 1,
+> > > -
+> > > +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_DISABLED,
+> > > +			  (1ull << 56) | (params->val_reg << 48) | 1),
+> > >  		/* WAIT(all) */
+> > > -		(3ull << 56) | (waitall_mask << 16),
+> > > -
+> > > +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_DISABLED,
+> > > +			  (3ull << 56) | (params->waitall_mask << 16)),
+> > >  		/* SYNC_ADD64.system_scope.propage_err.nowait rX:rX+1, rX+2*/
+> > > -		(51ull << 56) | (0ull << 48) | (addr_reg << 40) | (val_reg << 32) =
+| (0 << 16) | 1,
+> > > -
+> > > +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_DISABLED,
+> > > +			  (51ull << 56) | (0ull << 48) | (params->addr_reg << 40) |
+> > > +			  (params->val_reg << 32) | (0 << 16) | 1),
+> > >  		/* ERROR_BARRIER, so we can recover from faults at job
+> > >  		 * boundaries.
+> > >  		 */
+> > > -		(47ull << 56),
+> > > +		JOB_INSTR(PANTHOR_DEVICE_PROFILING_DISABLED, (47ull << 56)),
+> > > +	};
+> > > +	u32 pad;
+> > > +
+> > > +	/* NEED to be cacheline aligned to please the prefetcher. */
+> > > +	static_assert(sizeof(instrs->buffer) % 64 =3D=3D 0,
+> > > +		      "panthor_job_ringbuf_instrs::buffer is not aligned on a cach=
+eline");
+> > > +
+> > > +	/* Make sure we have enough storage to store the whole sequence. */
+> > > +	static_assert(ALIGN(ARRAY_SIZE(instr_seq), NUM_INSTRS_PER_CACHE_LIN=
+E) <=3D
+> > > +		      ARRAY_SIZE(instrs->buffer),
+> > > +		      "instr_seq vs panthor_job_ringbuf_instrs::buffer size mismat=
+ch"); =20
+> >=20
+> > We probably want to catch situations where instrs->buffer has gone
+> > bigger than needed (say we found a way to drop instructions), so I
+> > would turn the '<=3D' condition into an '=3D=3D'. =20
+>=20
+> I did this but it's triggering the static assert, because the instr_seq a=
+rray has 19 elements,
+> which when aligned to NUM_INSTRS_PER_CACHE_LINE (8 I think) renders 24, s=
+till less than the
+> 32 slots in instrs->buffer. Having a slightly oversized instrs.buffer arr=
+ay isn't a problem
+> though because instrs.count is being used when copying them into the ring=
+buffer, so I think
+> leaving this assert as an <=3D should be alright.=20
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Acked-by: Florent Revest <revest@chromium.org>
----
- Changes in v9:
-  - Avoid wasting memory for bpf_kprobe_multi_pt_regs when
-    CONFIG_HAVE_PT_REGS_TO_FTRACE_REGS_CAST=y
----
- kernel/trace/bpf_trace.c |   27 ++++++++++++++-------------
- 1 file changed, 14 insertions(+), 13 deletions(-)
-
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index cdba9981b048..deb629f4a510 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -2605,7 +2605,7 @@ struct bpf_session_run_ctx {
- 	void *data;
- };
- 
--#if defined(CONFIG_FPROBE) && defined(CONFIG_DYNAMIC_FTRACE_WITH_REGS)
-+#ifdef CONFIG_FPROBE
- struct bpf_kprobe_multi_link {
- 	struct bpf_link link;
- 	struct fprobe fp;
-@@ -2628,6 +2628,13 @@ struct user_syms {
- 	char *buf;
- };
- 
-+#ifndef CONFIG_HAVE_PT_REGS_TO_FTRACE_REGS_CAST
-+static DEFINE_PER_CPU(struct pt_regs, bpf_kprobe_multi_pt_regs);
-+#define bpf_kprobe_multi_pt_regs_ptr()	this_cpu_ptr(&bpf_kprobe_multi_pt_regs)
-+#else
-+#define bpf_kprobe_multi_pt_regs_ptr()	(NULL)
-+#endif
-+
- static int copy_user_syms(struct user_syms *us, unsigned long __user *usyms, u32 cnt)
- {
- 	unsigned long __user usymbol;
-@@ -2822,7 +2829,7 @@ static u64 bpf_kprobe_multi_entry_ip(struct bpf_run_ctx *ctx)
- 
- static int
- kprobe_multi_link_prog_run(struct bpf_kprobe_multi_link *link,
--			   unsigned long entry_ip, struct pt_regs *regs,
-+			   unsigned long entry_ip, struct ftrace_regs *fregs,
- 			   bool is_return, void *data)
- {
- 	struct bpf_kprobe_multi_run_ctx run_ctx = {
-@@ -2834,6 +2841,7 @@ kprobe_multi_link_prog_run(struct bpf_kprobe_multi_link *link,
- 		.entry_ip = entry_ip,
- 	};
- 	struct bpf_run_ctx *old_run_ctx;
-+	struct pt_regs *regs;
- 	int err;
- 
- 	if (unlikely(__this_cpu_inc_return(bpf_prog_active) != 1)) {
-@@ -2844,6 +2852,7 @@ kprobe_multi_link_prog_run(struct bpf_kprobe_multi_link *link,
- 
- 	migrate_disable();
- 	rcu_read_lock();
-+	regs = ftrace_partial_regs(fregs, bpf_kprobe_multi_pt_regs_ptr());
- 	old_run_ctx = bpf_set_run_ctx(&run_ctx.session_ctx.run_ctx);
- 	err = bpf_prog_run(link->link.prog, regs);
- 	bpf_reset_run_ctx(old_run_ctx);
-@@ -2860,15 +2869,11 @@ kprobe_multi_link_handler(struct fprobe *fp, unsigned long fentry_ip,
- 			  unsigned long ret_ip, struct ftrace_regs *fregs,
- 			  void *data)
- {
--	struct pt_regs *regs = ftrace_get_regs(fregs);
- 	struct bpf_kprobe_multi_link *link;
- 	int err;
- 
--	if (!regs)
--		return 0;
--
- 	link = container_of(fp, struct bpf_kprobe_multi_link, fp);
--	err = kprobe_multi_link_prog_run(link, get_entry_ip(fentry_ip), regs, false, data);
-+	err = kprobe_multi_link_prog_run(link, get_entry_ip(fentry_ip), fregs, false, data);
- 	return is_kprobe_session(link->link.prog) ? err : 0;
- }
- 
-@@ -2878,13 +2883,9 @@ kprobe_multi_link_exit_handler(struct fprobe *fp, unsigned long fentry_ip,
- 			       void *data)
- {
- 	struct bpf_kprobe_multi_link *link;
--	struct pt_regs *regs = ftrace_get_regs(fregs);
--
--	if (!regs)
--		return;
- 
- 	link = container_of(fp, struct bpf_kprobe_multi_link, fp);
--	kprobe_multi_link_prog_run(link, get_entry_ip(fentry_ip), regs, true, data);
-+	kprobe_multi_link_prog_run(link, get_entry_ip(fentry_ip), fregs, true, data);
- }
- 
- static int symbols_cmp_r(const void *a, const void *b, const void *priv)
-@@ -3145,7 +3146,7 @@ int bpf_kprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *pr
- 	kvfree(cookies);
- 	return err;
- }
--#else /* !CONFIG_FPROBE || !CONFIG_DYNAMIC_FTRACE_WITH_REGS */
-+#else /* !CONFIG_FPROBE */
- int bpf_kprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *prog)
- {
- 	return -EOPNOTSUPP;
-
+The whole point is to have a buffer that's the right size, rather than
+bigger than needed. So I'd suggest changing the MAX_INSTRS definition
+to make it 24 instead.
 
