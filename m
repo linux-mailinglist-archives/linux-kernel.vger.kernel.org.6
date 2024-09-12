@@ -1,127 +1,266 @@
-Return-Path: <linux-kernel+bounces-326721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF8FF976C30
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:32:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 006E5976C31
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:32:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66904B21DF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:32:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 229DA1C23426
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6A61B12E3;
-	Thu, 12 Sep 2024 14:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6961B86C7;
+	Thu, 12 Sep 2024 14:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QpwwYNHj"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KwirBg3x"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7CC1E529;
-	Thu, 12 Sep 2024 14:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 219511B5808
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 14:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726151551; cv=none; b=SM1HgJUHqvVolMitNQU5oUzc368zWE2HA/UU9rlsWXDquurPBrwRraVWX5QnPAUSY0zVJl8DHiHvPmD3ijVpiRTtmKVEcnW1wk2el3YxvZkDglEGzcKvH0dUtnPpy7uDjoqfokMumw6EXpPw1SuanTUxuZh5btW6ohXgfw/MKlU=
+	t=1726151555; cv=none; b=PowZFH5VIifra/PPoq9dxI3D1AeH2X830LhHhTHRs/GAJ19uBg/d3REx1REllsdYyH4ZaY52JQ7R9Ru9pySuO8e09WTcZoilZeJAGB+WHkddVcTRk9F7Y6Cu1OaBF8e7/mpP8KrXSoKBna3mlqhxayW+hqm5gFQKtLJSSEBCGHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726151551; c=relaxed/simple;
-	bh=ZIgxOBr+LUIwGxzcvReySLBimnbVG06Bj6Le94EFSB0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WIDo/zzkQ5rN6QQctfVYI7pnmni5K/ji/n4xK0WNEawp5kn+I6Z6FXPKMAYuIFQZ93JP24LaxtON9sbp14Du2vSsMRFkeCexpVxFdBZTiPJ+mXj/LEJ1TWKv5GTZbNrj036sSzq1zdjmP/ihygRXN2Nhn96vhUyT3I5KQSKtuUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QpwwYNHj; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9018103214so148285866b.3;
-        Thu, 12 Sep 2024 07:32:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726151549; x=1726756349; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k/NO/bp2BRcv2Ga7qjyhvuGGI4Z4xlhL5eAhxJZku/w=;
-        b=QpwwYNHjc8OQYUo/CZtZf4OJMeDS2fTfZA9bCe+5IwA8Bu+97Mhs6OyhhzcLlSXYNq
-         oOBcZbHJDF83QiG+5m7K8RINzW7r2KxwlnlyCGaRQgT0QdprKYfI4wv6lTOHbZBvVHR9
-         U6v1BaagbsrgdVnTgEj8VXnsw2mZpqxgK4jQUBgb6+7axS9cfiUUhERV17ftXamwiM6/
-         SNtKMO++ZR3Akz2txvtF2k0gDvqt0+h1yp8mfd8TMr44Q7osCC1ExrV+Y8PTP55Kgadj
-         bhVusipiK1w1qt0xtB6Trrq2QAGEHciu0TnKtaDzjepKmeHKgMAHTd/ZQLwhyWuDdy6X
-         Wu2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726151549; x=1726756349;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k/NO/bp2BRcv2Ga7qjyhvuGGI4Z4xlhL5eAhxJZku/w=;
-        b=qg3llCzAhw+dNvkOyY+hRxYUuVXMHQuvpP7CBD2BozURxIdzZ3SRx1kUYCwz2jN94L
-         TyPd9A3u/XslrkpA8gNIOzHDitLsg1BneCV+FZl20E8XYIivXlZ8qA842H8HRD/uZi+5
-         gn9+e6Xj/blMMo75JWq7DglloXZ7hkuY9Auzy1U6mmf2DbNneRxHrrUbNNyTwV+aGw0g
-         OhAi5SyG7BvkAI3CLcn+eoK5YBkWUQIHg8zKfq4cHCFCrBwz+n2xESrsWhQ5IPPSc5Vt
-         GO1eeAjpx2LcxEZ5LG59E7KTNeoi6s0w/JplcdjBXjTvoUsYQHmXewlrf8VrYyuIgdH6
-         N0Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCWJzWcod7xEBVxTTptoRb3HvoHa62NzHoumaC9ysI6Lb/XbJXzl1IcgBWKDzCaOoNvFi5oMIsZq8HTOL7K+@vger.kernel.org, AJvYcCWx/pkEwhZz65X2RA3lXHADbtnt4q7OBQ/f+QGGjAAMb+Fa8uqsQ9XFlPkTM40bGh8W1PfdkWvwiefH@vger.kernel.org, AJvYcCXGo8Gmh3cXxFbNL2jgn1tsSmd8QePrlLSZoT9IXoKHC9tAsoXGVrhVu9fBplBbVDDv0GLT4Y3Z+ox0/s7BlVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIjfAQpMPuolLasY3E328dhgeOXm7lyQ9ipgd3YC54LpZJY8bX
-	Lpw42xRVff9PT78Trr5X7H4s7coPzKl2IFPYjSkSQQ4NZ3SSoCuDZKUy2Uv19Q7nK+CxKcgGJr3
-	O+25Gr3A6lfdJ1lvrvRsc7fxqKOlNpvz2
-X-Google-Smtp-Source: AGHT+IGG+K9zRodKUyfIcrPD5dp8LwlvFqoWeZdZW/MIZ6JugJ94+A0FVDfNXHFrnZeogLuol/sR6GVprkIXZV3N8Ug=
-X-Received: by 2002:a17:907:e2e5:b0:a8b:154b:7640 with SMTP id
- a640c23a62f3a-a90294acf95mr271319766b.37.1726151548277; Thu, 12 Sep 2024
- 07:32:28 -0700 (PDT)
+	s=arc-20240116; t=1726151555; c=relaxed/simple;
+	bh=/BodiEc17S7/DIKU24Ru/icx3qMyKYq6tY0b5ObeCwg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FFG8+HEGr5ZVJ6obve54aY090NxzYOtHcrOH0EROYv/ZLo4APO10c+tNGAUBHJUhzqm0PoGBiWtJYetmElLjqE6hEw0UCsKBWMwpz9/atY+A4IgniyU5fT0IuYR51nvwpGCZDb7EeOt3OE29CaryQjk2tTupfiJ6G3ubave+YN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KwirBg3x; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726151553;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fsC+O+qEG3gI8UEDV23eqD3HgN4VSLaEw4QvzDQykuc=;
+	b=KwirBg3xCs8IkD1XcOtcdACmfBD0lITtwJwQVUzXI3zSoRmOvP8U4JaBHxItZY6d/zSHxb
+	Ti9q7ZqQ3Bp47olP59Vy/grrQ0JTu9F71nxuViGLTUvs+vQwn+AbnymKIkN8ZWsSm7UPjS
+	Zwm8Fp1iaRwXqjn/00KBolWW13yXbLI=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-278-53mrhI3nOXez2cl8446n9g-1; Thu,
+ 12 Sep 2024 10:32:29 -0400
+X-MC-Unique: 53mrhI3nOXez2cl8446n9g-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B0FE1193E8E4;
+	Thu, 12 Sep 2024 14:32:27 +0000 (UTC)
+Received: from gerbillo.redhat.com (unknown [10.45.224.160])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 66CE7196BCBD;
+	Thu, 12 Sep 2024 14:32:15 +0000 (UTC)
+From: Paolo Abeni <pabeni@redhat.com>
+To: torvalds@linux-foundation.org
+Cc: kuba@kernel.org,
+	davem@davemloft.net,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Networking for v6.11-rc8
+Date: Thu, 12 Sep 2024 16:32:05 +0200
+Message-ID: <20240912143205.15347-1-pabeni@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <a0fdf90803ab44508aa07f9190af5e00272231df.1704545258.git.christophe.jaillet@wanadoo.fr>
- <z5qdyk2onwohenaclbflb7jlfn3wadafjpxsxzpvkmax75mpvg@vhhasuuutjzh> <CAMj1kXFH+zB_YuUS+vaEpguhuVGLYbQw55VNDCxnBfSPe6b-nw@mail.gmail.com>
-In-Reply-To: <CAMj1kXFH+zB_YuUS+vaEpguhuVGLYbQw55VNDCxnBfSPe6b-nw@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 12 Sep 2024 17:31:51 +0300
-Message-ID: <CAHp75VeRNg+Sbyk9nA6nASatP4apzSXCPrNaJ_ZvsnXhAbyw0g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] i2c: synquacer: Fix an error handling path in synquacer_i2c_probe()
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Andi Shyti <andi.shyti@kernel.org>, 
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Wolfram Sang <wsa@kernel.org>, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	linux-i2c@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Thu, Sep 12, 2024 at 1:23=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> wr=
-ote:
-> On Mon, 6 May 2024 at 11:03, Andi Shyti <andi.shyti@kernel.org> wrote:
-> > On Sat, Jan 06, 2024 at 01:48:24PM +0100, Christophe JAILLET wrote:
-> > > If an error occurs after the clk_prepare_enable() call, it should be =
-undone
-> > > by a corresponding clk_disable_unprepare() call, as already done in t=
-he
-> > > remove() function.
-> > >
-> > > As devm_clk_get() is used, we can switch to devm_clk_get_enabled() to
-> > > handle it automatically and fix the probe.
-> > >
-> > > Update the remove() function accordingly and remove the now useless
-> > > clk_disable_unprepare() call.
-> > >
-> > > Fixes: 0d676a6c4390 ("i2c: add support for Socionext SynQuacer I2C co=
-ntroller")
-> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> >
-> > Applied to i2c/i2c-host-fixes.
->
-> These patches should be reverted: ACPI boot on SynQuacer based systems
-> now fails with
->
-> [    6.206022] synquacer_i2c SCX0003:00: error -ENOENT: failed to get
-> and enable clock
-> [    6.235762] synquacer_i2c SCX0003:00: probe with driver
-> synquacer_i2c failed with error -2
->
-> as in this case, there is no clock to enable, and the clock rate is
-> specified in the PRP0001 device node.
+Hi Linus!
 
-Wouldn't simply moving to _optional fix the issue?
+The following changes since commit d759ee240d3c0c4a19f4d984eb21c36da76bc6ce:
 
+  Merge tag 'net-6.11-rc7' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2024-09-05 17:08:01 -0700)
 
---=20
-With Best Regards,
-Andy Shevchenko
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.11-rc8
+
+for you to fetch changes up to 3e705251d998c9688be0e7e0526c250fec24d233:
+
+  net: netfilter: move nf flowtable bpf initialization in nf_flow_table_module_init() (2024-09-12 15:41:03 +0200)
+
+----------------------------------------------------------------
+There is a recently notified BT regression with no fix yet. I
+*think* such fix will not land in the next week.
+
+Including fixes from netfilter.
+
+Current release - regressions:
+
+  - core: tighten bad gso csum offset check in virtio_net_hdr
+
+  - netfilter: move nf flowtable bpf initialization in nf_flow_table_module_init()
+
+  - eth: ice: stop calling pci_disable_device() as we use pcim
+
+  - eth: fou: fix null-ptr-deref in GRO.
+
+Current release - new code bugs:
+
+  - hsr: prevent NULL pointer dereference in hsr_proxy_announce()
+
+Previous releases - regressions:
+
+  - hsr: remove seqnr_lock
+
+  - netfilter: nft_socket: fix sk refcount leaks
+
+  - mptcp: pm: fix uaf in __timer_delete_sync
+
+  - phy: dp83822: fix NULL pointer dereference on DP83825 devices
+
+  - eth: revert "virtio_net: rx enable premapped mode by default"
+
+  - eth: octeontx2-af: Modify SMQ flush sequence to drop packets
+
+Previous releases - always broken:
+
+  - eth: mlx5: fix bridge mode operations when there are no VFs
+
+  - eth: igb: Always call igb_xdp_ring_update_tail() under Tx lock
+
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+----------------------------------------------------------------
+Asbjørn Sloth Tønnesen (1):
+      netlink: specs: mptcp: fix port endianness
+
+Benjamin Poirier (1):
+      net/mlx5: Fix bridge mode operations when there are no VFs
+
+Carolina Jubran (3):
+      net/mlx5: Explicitly set scheduling element and TSAR type
+      net/mlx5: Add missing masks and QoS bit masks for scheduling elements
+      net/mlx5: Verify support for scheduling element and TSAR type
+
+Edward Adam Davis (1):
+      mptcp: pm: Fix uaf in __timer_delete_sync
+
+Eric Dumazet (1):
+      net: hsr: remove seqnr_lock
+
+Florian Westphal (2):
+      netfilter: nft_socket: fix sk refcount leaks
+      netfilter: nft_socket: make cgroupsv2 matching work with namespaces
+
+Jacky Chou (1):
+      net: ftgmac100: Enable TX interrupt to avoid TX timeout
+
+Jacob Keller (1):
+      ice: fix accounting for filters shared by multiple VSIs
+
+Jakub Kicinski (4):
+      Merge branch 'revert-virtio_net-rx-enable-premapped-mode-by-default'
+      Merge tag 'mlx5-fixes-2024-09-09' of git://git.kernel.org/pub/scm/linux/kernel/git/saeed/linux
+      Merge branch '100GbE' of git://git.kernel.org/pub/scm/linux/kernel/git/tnguy/net-queue
+      Merge branch 'selftests-mptcp-misc-small-fixes'
+
+Jeongjun Park (1):
+      net: hsr: prevent NULL pointer dereference in hsr_proxy_announce()
+
+Jiawen Wu (1):
+      net: libwx: fix number of Rx and Tx descriptors
+
+Kory Maincent (1):
+      MAINTAINERS: Add ethtool pse-pd to PSE NETWORK DRIVER
+
+Lorenzo Bianconi (1):
+      net: netfilter: move nf flowtable bpf initialization in nf_flow_table_module_init()
+
+Maher Sanalla (1):
+      net/mlx5: Update the list of the PCI supported devices
+
+Martyna Szapar-Mudlaw (1):
+      ice: Fix lldp packets dropping after changing the number of channels
+
+Matthieu Baerts (NGI0) (3):
+      selftests: mptcp: join: restrict fullmesh endp on 1st sf
+      selftests: mptcp: include lib.sh file
+      selftests: mptcp: include net_helper.sh file
+
+Michal Schmidt (1):
+      ice: fix VSI lists confusion when adding VLANs
+
+Muhammad Usama Anjum (1):
+      fou: fix initialization of grc
+
+Naveen Mamindlapalli (1):
+      octeontx2-af: Modify SMQ flush sequence to drop packets
+
+Paolo Abeni (1):
+      Merge tag 'nf-24-09-12' of git://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf
+
+Przemek Kitszel (1):
+      ice: stop calling pci_disable_device() as we use pcim
+
+Sean Anderson (2):
+      selftests: net: csum: Fix checksums for packets with non-zero padding
+      net: dpaa: Pad packets to ETH_ZLEN
+
+Shahar Shitrit (2):
+      net/mlx5e: Add missing link modes to ptys2ethtool_map
+      net/mlx5e: Add missing link mode to ptys2ext_ethtool_map
+
+Sriram Yagnaraman (1):
+      igb: Always call igb_xdp_ring_update_tail() under Tx lock
+
+Tomas Paukrt (1):
+      net: phy: dp83822: Fix NULL pointer dereference on DP83825 devices
+
+Wei Fang (1):
+      dt-bindings: net: tja11xx: fix the broken binding
+
+Willem de Bruijn (1):
+      net: tighten bad gso csum offset check in virtio_net_hdr
+
+Xiaoliang Yang (1):
+      net: dsa: felix: ignore pending status of TAS module when it's disabled
+
+Xuan Zhuo (3):
+      Revert "virtio_net: rx remove premapped failover code"
+      Revert "virtio_net: big mode skip the unmap check"
+      virtio_net: disable premapped mode by default
+
+ .../devicetree/bindings/net/nxp,tja11xx.yaml       | 62 ++++++++++----
+ Documentation/netlink/specs/mptcp_pm.yaml          |  1 -
+ MAINTAINERS                                        |  1 +
+ drivers/net/dsa/ocelot/felix_vsc9959.c             | 11 ++-
+ drivers/net/ethernet/faraday/ftgmac100.h           |  2 +-
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.c     |  9 +-
+ drivers/net/ethernet/intel/ice/ice_lib.c           | 15 ++--
+ drivers/net/ethernet/intel/ice/ice_main.c          |  2 -
+ drivers/net/ethernet/intel/ice/ice_switch.c        |  4 +-
+ drivers/net/ethernet/intel/igb/igb_main.c          | 17 +++-
+ drivers/net/ethernet/marvell/octeontx2/af/rvu.h    |  3 +-
+ .../net/ethernet/marvell/octeontx2/af/rvu_nix.c    | 59 +++++++++++---
+ .../net/ethernet/mellanox/mlx5/core/en_ethtool.c   | 10 +++
+ .../net/ethernet/mellanox/mlx5/core/esw/legacy.c   |  4 +-
+ drivers/net/ethernet/mellanox/mlx5/core/esw/qos.c  | 51 +++++++-----
+ drivers/net/ethernet/mellanox/mlx5/core/main.c     |  1 +
+ drivers/net/ethernet/mellanox/mlx5/core/qos.c      |  7 ++
+ drivers/net/ethernet/wangxun/libwx/wx_type.h       |  6 +-
+ drivers/net/phy/dp83822.c                          | 35 +++++---
+ drivers/net/virtio_net.c                           | 95 +++++++++++-----------
+ include/linux/mlx5/mlx5_ifc.h                      | 10 ++-
+ include/linux/virtio_net.h                         |  3 +-
+ net/hsr/hsr_device.c                               | 39 ++++-----
+ net/hsr/hsr_forward.c                              |  4 +-
+ net/hsr/hsr_main.h                                 |  6 +-
+ net/hsr/hsr_netlink.c                              |  2 +-
+ net/ipv4/fou_core.c                                |  4 +-
+ net/mptcp/pm_netlink.c                             | 13 ++-
+ net/netfilter/nf_flow_table_core.c                 |  6 ++
+ net/netfilter/nf_flow_table_inet.c                 |  2 +-
+ net/netfilter/nft_socket.c                         | 48 +++++++++--
+ tools/testing/selftests/net/lib/csum.c             | 16 +++-
+ tools/testing/selftests/net/mptcp/Makefile         |  2 +
+ tools/testing/selftests/net/mptcp/mptcp_join.sh    |  4 +-
+ 34 files changed, 364 insertions(+), 190 deletions(-)
+
 
