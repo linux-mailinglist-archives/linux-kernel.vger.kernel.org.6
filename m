@@ -1,58 +1,69 @@
-Return-Path: <linux-kernel+bounces-326544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 810BB9769C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:57:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B97CF9769CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 037E7B2522B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:57:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79514284875
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46FAE1AAE0A;
-	Thu, 12 Sep 2024 12:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C21FF1AC456;
+	Thu, 12 Sep 2024 12:57:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s9fH4SmL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bvlv0HDy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1651A76AE
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 12:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F801A4E85;
+	Thu, 12 Sep 2024 12:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726145835; cv=none; b=KX/kXUY/7ALr+M/s6yOrlUtxo42WJ2F2JAGFvsLbTOkUHGIOvK8wr46NGPk6FYA67YGZJA9J6eViuyzgFYYBoGT3HzH7xxw2afC75ec9z4RM3LANBXfgTPERR8rHzoHsE23Ka5+fGlL8k9Vn5YmRu/STYmt3mL9oeMgKuTpb9Vk=
+	t=1726145839; cv=none; b=l6zhQGSDuK80SOwBr0+kWmO+9RmKy/krRzd4uSCopYJtmV5WGLy8ozpOV5Zn+US9+7XvF/ZdwPs0YCmZ4x7VlixZNIE5tK8PywabyNZnJBA9WQt/9khtN7cfAXFFYPGfByFdO2nH1DilHe3ur1P8zYnbb+ohruCMf9OX/QROMnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726145835; c=relaxed/simple;
-	bh=avGWA2O9kXOrFmKKVVyhXbciHslv8AE0WYrUS4wqn2M=;
+	s=arc-20240116; t=1726145839; c=relaxed/simple;
+	bh=p7nGimO1GKfTwPQf1MdOhdY3Sb1Jkm8Wrmgi6DDC3pA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=COyEwa8KXh+kXY8Re1pI+KXxcytotP5X0jI1ex0QnFA/QH3saUlJK5pjoc2qK2hii+9NllYroEAywKGN0hTwc2PhNHpzDtdCWFzzkodN92u5XSFL/M2nyYegft2Km/s4DVMr20h0n0yEtJEpvMrQitzC2FQ3B8LYz9b3gC9R5+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s9fH4SmL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02BA9C4CED2;
-	Thu, 12 Sep 2024 12:57:13 +0000 (UTC)
+	 MIME-Version:Content-Type; b=NHHEc2ObIyGFRybcVFNWH2tZbHOQ8QLqmbKEHlGdwxYdmcP9Pczdn1THPe8T414QluQfwBYreKspMMRJT1DAD0GAVUFsbvd3/drgEld2YPMQqzl56Ak22w7/ISzdcNHL0mdsn+He9rJndvH0aQk39MYUA1n/9V50AeeZ9AlfVYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bvlv0HDy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8324C4CEC4;
+	Thu, 12 Sep 2024 12:57:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726145835;
-	bh=avGWA2O9kXOrFmKKVVyhXbciHslv8AE0WYrUS4wqn2M=;
+	s=k20201202; t=1726145838;
+	bh=p7nGimO1GKfTwPQf1MdOhdY3Sb1Jkm8Wrmgi6DDC3pA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=s9fH4SmLRMnsvH/5ZFOU+xO6keGY6ZyZox8BJXnivTWvCl2eAgvdreuS/KxRP37aD
-	 190A6Uq+aUYs1ZZf4+iny9YBNzKUx1fGZPXCg913QTv5Ef59JHwa9EuvKx+uUgRBG/
-	 qR4kCZuGNK8HDOuuU4o+9/upeB2MIW5grPOzPysgUUeF365JpANgWjCdCFAXdi4/oQ
-	 pJ/IYGja4vGrbs/UZ3zYNdsClvnJ38TGzLhbHR70u18kpfifkkCzc6XoEv9ZCgS+7a
-	 v7OnIOYPMEa94XCPlevxDalUW7wvnEf8NlWpCZnkKoCfBPpeB1586sTRs0Fe76WtGp
-	 4YqqUSCV5UYMw==
+	b=bvlv0HDy2btq73DZGGGQnMVyGQica/rGdoPAkg6mOi4jCLpa7SBhqjjjf4+kjUIsV
+	 17yJPvfLbilqGDzThDOy7t+Nt9daU8cM5ExqQHRwEcLnlCiRRFaJgTj+XLYlp4YN1o
+	 1z0Y3UlcGYPjEzpkTUjOJdaZ0eeBYhckPnW6FWkZvnUjkmTC0D6ZOg6CpiNyLS+Ix3
+	 6Yz9vtcFODWICzOP4NS3wbfsnpttscWklL7R2FmW0YiNooPyvjXE7P4gcdLN8aR4f+
+	 2nlwaPyqviWkQ+Avb1V2dgfxzUTwboSXD8hwSaAYzBxKf5A3/zqSXLBUF3V1h79i7T
+	 jgQv3HnUrfZhg==
 From: Will Deacon <will@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Min-Hua Chen <minhuadotchen@gmail.com>
-Cc: kernel-team@android.com,
+To: Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jingyi Wang <quic_jingyw@quicinc.com>
+Cc: catalin.marinas@arm.com,
+	kernel-team@android.com,
 	Will Deacon <will@kernel.org>,
+	quic_tengfan@quicinc.com,
 	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: hibernate: Fix warning for cast from restricted gfp_t
-Date: Thu, 12 Sep 2024 13:57:07 +0100
-Message-Id: <172614173906.4012598.8637645731591720864.b4-ty@kernel.org>
+	iommu@lists.linux.dev,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	quic_tingweiz@quicinc.com,
+	quic_aiquny@quicinc.com,
+	Zhenhua Huang <quic_zhenhuah@quicinc.com>
+Subject: Re: [PATCH v2] dt-bindings: arm-smmu: Add compatible for QCS8300 SoC
+Date: Thu, 12 Sep 2024 13:57:08 +0100
+Message-Id: <172614192441.4013779.6322517245790684641.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20240910232507.313555-1-minhuadotchen@gmail.com>
-References: <20240910232507.313555-1-minhuadotchen@gmail.com>
+In-Reply-To: <20240911-qcs8300_smmu_binding-v2-1-f53dd9c047ba@quicinc.com>
+References: <20240911-qcs8300_smmu_binding-v2-1-f53dd9c047ba@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,20 +73,17 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Wed, 11 Sep 2024 07:25:05 +0800, Min-Hua Chen wrote:
-> This patch fixes the following warning by adding __force
-> to the cast:
-> arch/arm64/kernel/hibernate.c:410:44: sparse: warning: cast from restricted gfp_t
-> 
-> No functional change intended.
+On Wed, 11 Sep 2024 15:18:54 +0800, Jingyi Wang wrote:
+> Qualcomm QCS8300 SoC includes apps smmu that implements arm,mmu-500, which
+> is used to translate device-visible virtual addresses to physical
+> addresses. Add compatible for it.
 > 
 > 
-> [...]
 
-Applied to arm64 (for-next/misc), thanks!
+Applied to will (for-joerg/arm-smmu/bindings), thanks!
 
-[1/1] arm64: hibernate: Fix warning for cast from restricted gfp_t
-      https://git.kernel.org/arm64/c/ecdd16df4564
+[1/1] dt-bindings: arm-smmu: Add compatible for QCS8300 SoC
+      https://git.kernel.org/will/c/4638a0474d34
 
 Cheers,
 -- 
