@@ -1,97 +1,143 @@
-Return-Path: <linux-kernel+bounces-327291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71D15977381
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:17:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D348B977392
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0CE4B2176A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:17:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B2181F24EC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2624F1B9853;
-	Thu, 12 Sep 2024 21:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF0A1C2439;
+	Thu, 12 Sep 2024 21:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cutMD+02"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b="Mpmiq3co"
+Received: from mail.flyingcircus.io (mail.flyingcircus.io [212.122.41.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4277A548E0;
-	Thu, 12 Sep 2024 21:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722BB18BB80;
+	Thu, 12 Sep 2024 21:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.122.41.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726175868; cv=none; b=n3vt9TJ9kkTWF8G+lLZcV9wSX5rdw71kG1M9zjcTqCJ5pE7yd6HL8zm77sLC87+vwmx1c5LdPKb1RSkmRDqlf1GxLy1ZjV0zSVMbNGbe+5mLEO3GUgtNGHQPPixXyHWDhv5jM92Tescwk172bDw64vBhyyO83GidcP00SJC7Q5Q=
+	t=1726176488; cv=none; b=KZ6ch7XRX5iy/Xv/d65gM5cRZeroZOP0h8WR1dddw8gf93H6WcrsjUN6+Yz2rwWDniDOdZJcEbT1rXxklYapym4Tp9BGy2GnLMGYwyVXLrY7xB9U8Rnzc3zNu6H2slsc+7o6zCRiFvo2QTE2/iWfQlPWODSZFTnCoy7C4tZCVBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726175868; c=relaxed/simple;
-	bh=gZWNDE4UdCE0UdmMR0zKoXdwa7nrr07TzGQ71siE410=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HsctHmEMKSTaEj0dv87VbYWRrIX3KRPzXll+x8/OPSpmVqklMMqM1UdSNotTmQv0q1mVbZVsz1i4rH6AA7VskxQ6rF/Wa2I6sswNWe6qfblpLwFreGVDt32R8UfSIv/MRkoJZHbbfrGrBlw0Qil+r1/LvseDyCuuyd06LehMUBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cutMD+02; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2055136b612so19568665ad.0;
-        Thu, 12 Sep 2024 14:17:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726175865; x=1726780665; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SCcpbDG2pXlWL7N2ScI52jDb3w6apDJe4uAGoy/8sh8=;
-        b=cutMD+02Z5eJ3oSRTe82DwioJ0o35nvSHl2lh1t8TfALJclQD8ZQ9Og4qoVj4W8Vix
-         W617kBRmGZAuo/MtuxZuej62T7/B4kvUBB5OlikUzk9y9ZpAAzwwDQg/nRRzRfkh30a4
-         cpLYEB83ohknyCrLOtBFkY/UWs52jWJfLFGb9NkJSAkMZVB/ANbSa8lDhsKxmmkCBi3M
-         UpEID0nzGNOKGLEwXDdsV8NZXc/SeEdSeyOPv5VEim2FcSZW9IRT1yq84g5p1Z1jXdK5
-         WLaK/I0P9JqC60g14ZRNOmBjleCIywq5Dvyxo6kJ0n0I70HYWB5++90flw56PbNqcTZ+
-         lkKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726175865; x=1726780665;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SCcpbDG2pXlWL7N2ScI52jDb3w6apDJe4uAGoy/8sh8=;
-        b=xJIQ5hO8STORou5MtONmV5gWmBQOY71YMvdofqyatKviqjZwwgXvSGuJ68Ure9ZU2x
-         v4vUjSfKxssG3m5eFMTnLjVsBaXc/GRxytmuZpDuTxUwgOoUVHRrnpGquwjezODX2uFA
-         vulTnivd6DkSrOlzTJOARfrq+C8K0UlG82wLN3FHyFiP4/8Ewfcs+PCTtfwmuoNmaD9N
-         BNqVdWTS+mFK0igShREsGe5Vy2C8bFDflUfSx4iwQQ9azvsxVVD89ACCafqyxJJ/7hvD
-         JYJAY3Uv8jA9WdJHilieySm88WnHZjP5kFKlegpxLPfvT+W0ZzZK2H4eL8Idar9Kv1WB
-         DJOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW2C1dbOTX/RaKcP6ao0tcW1/c0UnIjDHv85KRJTk+eiPb9ZFMyG0+wNO4XDKa0cSql9CW2+xH/AF4zji0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNQetm/5cErVDnk01SmJsz4s0LrPqzCnSfamhPDDuPLQqeOeHi
-	oQzb4BbKNyTmT6Cza5dL0uodD/Y0uUZ1yO+tBhd/hvK7Hxb9oeMUD820Ow==
-X-Google-Smtp-Source: AGHT+IEhBa1zNEvuSpKN0xwf+4TJa8Rd975bNw2dHYqIzXAlFHn330jM9y+vUpbDjz0pXweXE9MnIw==
-X-Received: by 2002:a17:903:2b04:b0:203:a22f:6b09 with SMTP id d9443c01a7336-2076e334c05mr66647675ad.13.1726175865566;
-        Thu, 12 Sep 2024 14:17:45 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076afe918bsm18111515ad.184.2024.09.12.14.17.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 14:17:44 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 12 Sep 2024 14:17:44 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jean Delvare <jdelvare@suse.com>
-Subject: Re: [PATCH v1 1/1] hwmon: (sht21) Use %*ph to print small buffer
-Message-ID: <b6411703-b9cd-4127-8681-2e5e77024af6@roeck-us.net>
-References: <20240911194627.2885506-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1726176488; c=relaxed/simple;
+	bh=RTKdlsvETPxqXxjU7Rd93X4kyI4i83Yt+XK3zkX09p8=;
+	h=From:Content-Type:Mime-Version:Subject:Message-Id:Date:Cc:To; b=mnDRJEwJYgwSugi6l/nLRZZAZwkdx2eRvV4g3ZkKGYBVWxuHoyC3U4sfHdOE0PPWX67vR5nnKf5IW7HN3eezafKWqeS/eM7xuAPOWEAVtBN4sk6ppKsWqE0zNFoNueKP7E7ZllKaPQ1hLB0cI4zHhxusvjhDGXmiELnANUC0ZFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io; spf=pass smtp.mailfrom=flyingcircus.io; dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b=Mpmiq3co; arc=none smtp.client-ip=212.122.41.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flyingcircus.io
+From: Christian Theune <ct@flyingcircus.io>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flyingcircus.io;
+	s=mail; t=1726175937;
+	bh=RTKdlsvETPxqXxjU7Rd93X4kyI4i83Yt+XK3zkX09p8=;
+	h=From:Subject:Date:Cc:To;
+	b=Mpmiq3cofaB5rbLbLbuVBsRAlNFsqRTeXxL4W1BX8XPw/xWWQ5UDy3y47Te6V9Epu
+	 2zDs/cQdphkBs69kuP8ASTUB23zi+3SsQen8Z/a5oQmOtJK7F4EzIc4Sm9rmFM33Z+
+	 ZL1soSGZ9MBkX7BUV+Y4k0WmaPIc70TYE6M4Tb3s=
+Content-Type: text/plain;
+	charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240911194627.2885506-1-andriy.shevchenko@linux.intel.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Known and unfixed active data loss bug in MM + XFS with large folios
+ since Dec 2021 (any kernel from 6.1 upwards)
+Message-Id: <A5A976CB-DB57-4513-A700-656580488AB6@flyingcircus.io>
+Date: Thu, 12 Sep 2024 23:18:34 +0200
+Cc: torvalds@linux-foundation.org,
+ axboe@kernel.dk,
+ Daniel Dao <dqminh@cloudflare.com>,
+ Dave Chinner <david@fromorbit.com>,
+ willy@infradead.org,
+ clm@meta.com,
+ regressions@lists.linux.dev,
+ regressions@leemhuis.info
+To: linux-mm@kvack.org,
+ "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+ linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Wed, Sep 11, 2024 at 10:46:27PM +0300, Andy Shevchenko wrote:
-> Use %*ph format to print small buffer as hex string.
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Hello everyone,
 
-Applied.
+I=E2=80=99d like to raise awareness about a bug causing data loss =
+somewhere in MM interacting with XFS that seems to have been around =
+since Dec 2021 =
+(https://github.com/torvalds/linux/commit/6795801366da0cd3d99e27c37f020a8f=
+16714886).
 
-Thanks,
-Guenter
+We started encountering this bug when upgrading to 6.1 around June 2023 =
+and we have had at least 16 instances with data loss in a fleet of 1.5k =
+VMs.
+
+This bug is very hard to reproduce but has been known to exist as a =
+=E2=80=9Cfluke=E2=80=9D for a while already. I have invested a number of =
+days trying to come up with workloads to trigger it quicker than that =
+stochastic =E2=80=9Conce every few weeks in a fleet of 1.5k machines", =
+but it eludes me so far. I know that this also affects Facebook/Meta as =
+well as Cloudflare who are both running newer kernels (at least 6.1, =
+6.6, and 6.9) with the above mentioned patch reverted. I=E2=80=99m from =
+a much smaller company and seeing that those guys are running with this =
+patch reverted (that now makes their kernel basically an =
+untested/unsupported deviation from the mainline) smells like =
+desparation. I=E2=80=99m with a much smaller team and company and I=E2=80=99=
+m wondering why this isn=E2=80=99t tackled more urgently from more hands =
+to make it shallow (hopefully).
+
+The issue appears to happen mostly on nodes that are running some kind =
+of database or specifically storage-oriented load. In our case we see =
+this happening with PostgreSQL and MySQL. Cloudflare IIRC saw this with =
+RocksDB load and Meta is talking about nfsd load.
+
+I suspect low memory (but not OOM low) / pressure and maybe swap =
+conditions seem to increase the chance of triggering it - but I might be =
+completely wrong on that suspicion.
+
+There is a bug report I started here back then: =
+https://bugzilla.kernel.org/show_bug.cgi?id=3D217572 and there have been =
+discussions on the XFS list: =
+https://lore.kernel.org/lkml/CA+wXwBS7YTHUmxGP3JrhcKMnYQJcd6=3D7HE+E1v-guk=
+01L2K3Zw@mail.gmail.com/T/ but ultimately this didn=E2=80=99t receive =
+sufficient interested to keep it moving forward and I ran out of steam. =
+Unfortunately we can=E2=80=99t be stuck on 5.15 forever and other kernel =
+developers correctly keep pointing out that we should be updating, but =
+that isn=E2=80=99t an option as long as this time bomb still exists.
+
+Jens pointed out that Meta's findings and their notes on the revert =
+included "When testing nfsd on top of v5.19, we hit lockups in =
+filemap_read(). These ended up being because the xarray for the files =
+being read had pages from other files mixed in."
+
+XFS is known to me and admired for the very high standards they =
+represent regarding testing and avoiding data loss but ultimately that =
+doesn=E2=80=99t matter if we=E2=80=99re going to be stuck with this bug =
+forever.
+
+I=E2=80=99m able to help funding efforts, help creating a reproducer, =
+generally donate my time (not a kernel developer myself) and even =
+provide access to machines that did see the crash (but don=E2=80=99t =
+carry customer data), but I=E2=80=99m not making any progress or getting =
+any traction here.
+
+Jens encouraged me to raise the visibility in this way - so that=E2=80=99s=
+ what I=E2=80=99m trying here.
+
+Please help.
+
+In appreciation of all the hard work everyone is putting in and with =
+hugs and love,
+Christian
+
+--=20
+Christian Theune =C2=B7 ct@flyingcircus.io =C2=B7 +49 345 219401 0
+Flying Circus Internet Operations GmbH =C2=B7 https://flyingcircus.io
+Leipziger Str. 70/71 =C2=B7 06108 Halle (Saale) =C2=B7 Deutschland
+HR Stendal HRB 21169 =C2=B7 Gesch=C3=A4ftsf=C3=BChrer: Christian Theune, =
+Christian Zagrodnick
+
 
