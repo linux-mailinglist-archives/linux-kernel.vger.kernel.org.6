@@ -1,248 +1,93 @@
-Return-Path: <linux-kernel+bounces-326493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33D5697690D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:23:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67A459768F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:18:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE0FB1F22202
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:23:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 290FF28501B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B01A1A3AA5;
-	Thu, 12 Sep 2024 12:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="fZaSnBl7"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F631A2650;
+	Thu, 12 Sep 2024 12:18:36 +0000 (UTC)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6961A38C1;
-	Thu, 12 Sep 2024 12:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D0919992A;
+	Thu, 12 Sep 2024 12:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726143793; cv=none; b=t/83P32FIFbCn+yJQR+7EcTrMHPVL7yocW9A9FnOovudzf9OcDoHJk22cOM5CAcKkjdAsfkumXIzi2dxdXM/e+zQJTpEglszLKTzbSjFjL91f9pqdIy8SdtEHsK8hXTZvG19tLdCNDvhsrVE+tktE/96h433XvEpVmxFqf+GoLA=
+	t=1726143516; cv=none; b=uoOIE8FQoKFtsldrc9lxcWIRqU0fNtfnbgEt8r9qUqGBsDH7yOz/5EW1yc5HRCjudD/esPxndybp5izCIRhrb0KqmuJfhQK7zZmr0UG/onMmldIna71BNsptrx4IteGe3xI+682YKSB8PXPbA4kOiSkOyvno/ZnAcUAlXvOFKt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726143793; c=relaxed/simple;
-	bh=KG+zUz0hUF7CRByKiUI2Dj8yjs9oPaRciDf6IGtjWSE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=crhsXbmK2vdfGeTrAT7/9ToQIxx4zApHq2WCp7fC7etfrqxe02IP/7bW9AGtm58gbUwCri37GiWbAKeKwQqmvrUeIqJC8Z/IcoCbrs5xYOTGWTmYAwfKOn513pUnRuNG4lRCu4DnOsZnEJaYZPMcpHFwhiCjWgCSNai0h7uqrwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=fZaSnBl7; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48C91FUm002705;
-	Thu, 12 Sep 2024 14:22:30 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	SX+Z/DatuVOcDHpJ/jFHPxVB42dtQCJyNR16/NC58QE=; b=fZaSnBl74lzunzAF
-	+jqIqbFcr5PAcucscpLRFjnGD1y9emHTGZR3q7udJamzqfI2FQEDrL/XcZARoNfs
-	IiLG2s8bJq9+2JgiHxXdriQNH+vZ0yS3gGYaJSa5vsQCus4glL/vCfHOmw2KVFsm
-	7LoK+ni7jJkZT0yQTpU7CChrGgkcVDBf1TO0//68UytbLCJNhsIZl/yAsDFMUDTe
-	RCuvoV7ypfxNbIjLGofOQA2QN1VXEuI5oeLUK8UPA0KPN6OR1lcx3EMzNz10I6KQ
-	qtIxmi9e+1Y5rvmlqYzTvNtWJwIVY8GV4y1JGFVSb9xKzbjeuVISHdty71gkCzBh
-	/jlYew==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 41h1sgkr1h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Sep 2024 14:22:29 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 5826A4008F;
-	Thu, 12 Sep 2024 14:20:53 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 7F3DB2721DF;
-	Thu, 12 Sep 2024 14:18:38 +0200 (CEST)
-Received: from [10.48.86.208] (10.48.86.208) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 12 Sep
- 2024 14:18:37 +0200
-Message-ID: <e3e4a4e6-d0ac-455e-9854-d93bdb13f272@foss.st.com>
-Date: Thu, 12 Sep 2024 14:18:17 +0200
+	s=arc-20240116; t=1726143516; c=relaxed/simple;
+	bh=r3zxlM4VUHNbjP2euPsbiwCGlILtmoLXaiv2W4eRKTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nCRndsCqqMLZYrIV9dos2kMN3zooAb/07B0uLaweBDYryDvV9iRqFcFI9YMTG0gjN3YZk5JmqifvyY1NNBIwP3mRKrvxtpkAUqHdQzC3UmvyzMd7esDV5ljPnJ9ByTUnpdCcsjPXtxk/vHmzLIjgS0N603EfGpf3h4CFdauffMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8d56155f51so112426666b.2;
+        Thu, 12 Sep 2024 05:18:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726143513; x=1726748313;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sG37F+BnEO0H/LIYsBFWUXBHGgaywY3AQMTmtrOCdqA=;
+        b=gzJefGGD2AAcOaryTZRvZoF+0L3XsgIK3DfcfP0lU6L2Hw/p8JxgxA4uwBUzztScXv
+         Na0Wu6THzrAVwAp3FOXizIgCvEYpFyg9tIO299RNDUr7wQv9XnfZqQ7J8I0j7a05e4Ro
+         GTwMz9CvBOBsA1eA/mdm8Rcy/yJNBwR6N9FwSNBT24DS1wX6q/YmmTHxKIzroOnHSIYl
+         80GKCbXIL8Qs+2v/H1DhJ95hglg/A+oX7oZx/I/3/o7sNJpFVxRXLhUZZbXjP25WTGUa
+         z2a/qybMlA5wqgWckW0wmxSRxSvicGTu60FQjJ6Ix4Nh+MAfa54GRd9tUsLUXZdHEO6c
+         3WCA==
+X-Forwarded-Encrypted: i=1; AJvYcCWBEtu/AP07PUqIPfmDsHDZJl62W7HZOa/dNWGJI5rnPSVbfbj2unM+NLZ0h8BGDoVITQ4NlzrY0rJAY6I=@vger.kernel.org, AJvYcCWnl6Uet3ZAqBTjy44uwZ10gsv1A6RiQ37jA5Vx4VdxspwGC7ie6orOCc9SUv2NXGICguPnLAbr@vger.kernel.org, AJvYcCXa3dDUhvh7MMD5OXqXUAQMtaMzCPmebFenJD/2+MMaQO8D1esdmSGgRptpX3W8Vd1/4BWAef0bhIeAOuDVXDJ/@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWwEyXN69LkpuP3yVZCd1b8a8nRYWaGAypKq1PVegNqcEGSKER
+	szPrp5xuIoLyWkJCoMp8C+aJ1FHROO5X+wJJlPQIBxKSJ3pcH1t0CH8zcg==
+X-Google-Smtp-Source: AGHT+IH+q4gdBuX+ZUYgVOKXM+tfBQAypJi9lq6OeZ8F6i9PxYgHK5Bv2YpyZsNuwjMyXa9Pz9wuow==
+X-Received: by 2002:a17:907:980f:b0:a86:7ba9:b061 with SMTP id a640c23a62f3a-a90296715c0mr225128966b.64.1726143512016;
+        Thu, 12 Sep 2024 05:18:32 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-009.fbsv.net. [2a03:2880:30ff:9::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25ced17asm750185966b.170.2024.09.12.05.18.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 05:18:31 -0700 (PDT)
+Date: Thu, 12 Sep 2024 05:18:29 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: fw@strlen.de, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, rbc@meta.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org
+Subject: Re: [PATCH nf-next v5 0/2] netfilter: Make IP_NF_IPTABLES_LEGACY
+ selectable
+Message-ID: <20240912-omniscient-imposing-lynx-2bf5ac@leitao>
+References: <20240909084620.3155679-1-leitao@debian.org>
+ <20240911-weightless-maize-ferret-5c23e1@devvm32600>
+ <ZuIVIDubGwLMh1RS@calendula>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] media: verisilicon: add WebP decoding support
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil
-	<hverkuil-cisco@xs4all.nl>,
-        Fritz Koenig <frkoenig@chromium.org>,
-        Sebastian
- Fricke <sebastian.fricke@collabora.com>,
-        Daniel Almeida
-	<daniel.almeida@collabora.com>,
-        Benjamin Gaignard
-	<benjamin.gaignard@collabora.com>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20240911135011.161217-1-hugues.fruchet@foss.st.com>
- <20240911135011.161217-3-hugues.fruchet@foss.st.com>
- <1d02cbe2797053c69ba9d7adb9c666ca221407e0.camel@collabora.com>
- <01020191e2672cd9-0b3804cc-def2-4dfb-aa44-8eddbd5e99fb-000000@eu-west-1.amazonses.com>
-Content-Language: en-US
-From: Hugues FRUCHET <hugues.fruchet@foss.st.com>
-In-Reply-To: <01020191e2672cd9-0b3804cc-def2-4dfb-aa44-8eddbd5e99fb-000000@eu-west-1.amazonses.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZuIVIDubGwLMh1RS@calendula>
 
-Hi Nicolas,
-
-Thanks for reviewing.
-
-GStreamer changes are provided through this merge request: 
-https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/7505
-
-Code:
-https://gitlab.freedesktop.org/gstreamer/gstreamer/-/commit/138ecfac54ce85b273a26ff6f0fefe3998f8d436?merge_request_iid=7505
-
-
-
-On 9/11/24 20:44, Nicolas Dufresne wrote:
-> Le mercredi 11 septembre 2024 à 13:58 -0400, Nicolas Dufresne a écrit :
->> Hi Hugues,
->>
->> Le mercredi 11 septembre 2024 à 15:50 +0200, Hugues Fruchet a écrit :
->>> Add WebP picture decoding support to VP8 stateless decoder.
->>
->> Unless when its obvious, the commit message should explain what is being
->> changed.
->>
->>>
->>> Signed-off-by: Hugues Fruchet <hugues.fruchet@foss.st.com>
->>> ---
->>>   drivers/media/platform/verisilicon/hantro_g1_regs.h    | 1 +
->>>   drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c | 7 +++++++
->>>   2 files changed, 8 insertions(+)
->>>
->>> diff --git a/drivers/media/platform/verisilicon/hantro_g1_regs.h b/drivers/media/platform/verisilicon/hantro_g1_regs.h
->>> index c623b3b0be18..e7d4db788e57 100644
->>> --- a/drivers/media/platform/verisilicon/hantro_g1_regs.h
->>> +++ b/drivers/media/platform/verisilicon/hantro_g1_regs.h
->>> @@ -232,6 +232,7 @@
->>>   #define     G1_REG_DEC_CTRL7_DCT7_START_BIT(x)		(((x) & 0x3f) << 0)
->>>   #define G1_REG_ADDR_STR					0x030
->>>   #define G1_REG_ADDR_DST					0x034
->>> +#define G1_REG_ADDR_DST_CHROMA				0x038
->>>   #define G1_REG_ADDR_REF(i)				(0x038 + ((i) * 0x4))
->>>   #define     G1_REG_ADDR_REF_FIELD_E			BIT(1)
->>>   #define     G1_REG_ADDR_REF_TOPC_E			BIT(0)
->>> diff --git a/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c b/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
->>> index 851eb67f19f5..c6a7584b716a 100644
->>> --- a/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
->>> +++ b/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
->>> @@ -427,6 +427,11 @@ static void cfg_buffers(struct hantro_ctx *ctx,
->>>   
->>>   	dst_dma = hantro_get_dec_buf_addr(ctx, &vb2_dst->vb2_buf);
->>>   	vdpu_write_relaxed(vpu, dst_dma, G1_REG_ADDR_DST);
->>> +
->>> +	if (hdr->flags & V4L2_VP8_FRAME_FLAG_WEBP)
->>> +		vdpu_write_relaxed(vpu, dst_dma +
->>> +				   ctx->dst_fmt.height * ctx->dst_fmt.width,
->>
->> I'm not really not fan of that type of formula using padded width/height. Not
->> sure if its supported already, but if we have foreign buffers with a bigger
->> bytesperline, the IP may endup overwriting the luma. Please use the per-plane
->> bytesperline, we have v4l2-common to help with that when needed.
->>> +				   G1_REG_ADDR_DST_CHROMA);
-
-OK, I'll check that.
-
->>
->> I have a strong impression this patch is incomplete (not generic enough). The
->> documentation I have indicates that the resolution range for WebP can be
->> different for different synthesis. See swreg54 (0xd8), if bit 19 is set, then it
->> can support 16K x 16K resolution. There is no other way around that then
->> signalling explicitly at the format level that this is webp, since otherwise you
->> can't know from userspace and can't enumerate the different resolution. I'm
->> curious what is the difference at bitstream level, would be nice to clarify too.
-
-See below WebP image details.
-
+On Thu, Sep 12, 2024 at 12:09:36AM +0200, Pablo Neira Ayuso wrote:
+> On Wed, Sep 11, 2024 at 08:25:52AM -0700, Breno Leitao wrote:
+> > Hello,
+> > 
+> > On Mon, Sep 09, 2024 at 01:46:17AM -0700, Breno Leitao wrote:
+> > > These two patches make IP_NF_IPTABLES_LEGACY and IP6_NF_IPTABLES_LEGACY
+> > > Kconfigs user selectable, avoiding creating an extra dependency by
+> > > enabling some other config that would select IP{6}_NF_IPTABLES_LEGACY.
+> > 
+> > Any other feedback regarding this change? This is technically causing
+> > user visible regression and blocks us from rolling out recent kernels.
 > 
-> I've also found that when the PP is used, you need to fill some extended
-> dimension (SWREG92) with the missing bit of the width/height, as the dimension
-> don't fit the usual register.
-> 
+> What regressions? This patch comes with no Fixes: tag.
 
-Yes there are additional registers to set in postproc for large image > 
-3472x4672 and image input bitstream larger than 16777215 bytes.
-I have not tested such large images for now.
-Additionally I don't have postproc support on STM32MP25.
-Anyway I can guard for those limits in code...
-
-> More notes, I noticed that WebP supports having a second frame for the alpha,
-> similar to WebM Alpha, for that we expect 2 requests, so no issue on this front.
-> WebP Loss-less is a completely different codec, and should have its own format.
-> 
-> I think overall, from my read of the spec, that its normal VP8, but the
-> resolution will exceed the normal one. We also can't always enable WebP, since
-> it will break references.
-> 
-> Nicolas
-> 
-
-As far as I have understood & tested, WebP is just an encapsulation of 
-VP8 video chunk:
-  * Webp image RIFF header
-  *
-  * 52 49 46 46 f6 00 00 00 57 45 42 50 56 50 38 20  RIFF....WEBPVP8
-  * ea 00 00 00 90 09 00 9d 01 2a 30 00 30 00 3e 35  .........*0.0.>5
-  *           | \______/ \______/
-  *           |       |         \__VP8 startcode
-  *           |        \__VP8 frame_tag
-  *           |
-  *            \__End of WebP RIFF header: 20 bytes, then VP8 chunk
-
-At least for lossy WebP.
-
-There are two others WebP formats which are loss-less WebP and animated 
-WebP but untested on my side, I don't even know if those formats are 
-supported by the hardware IP.
-
->>
->> On GStreamer side, the formats are entirely seperate, image/webp vs video/x-vp8
->> are the mime types. Seems a lot safe to keep these two as seperate formats. They
->> can certainly share the same stateless frame structure, with the additional flag
->> imho.
->>
->> Nicolas
-
-Really very few changes needed on VP8 codebase to support WebP. On my 
-opinion it doesn't need a fork of codec for that, hence just the minor 
-addition of "WebP"  signaling on uAPI see GStreamer limited changes in 
-VP8 codebase to support WebP:
-https://gitlab.freedesktop.org/gstreamer/gstreamer/-/commit/138ecfac54ce85b273a26ff6f0fefe3998f8d436?merge_request_iid=7505
-
->>
->>>   }
->>>   
->>>   int hantro_g1_vp8_dec_run(struct hantro_ctx *ctx)
->>> @@ -471,6 +476,8 @@ int hantro_g1_vp8_dec_run(struct hantro_ctx *ctx)
->>>   		reg |= G1_REG_DEC_CTRL0_SKIP_MODE;
->>>   	if (hdr->lf.level == 0)
->>>   		reg |= G1_REG_DEC_CTRL0_FILTERING_DIS;
->>> +	if (hdr->flags & V4L2_VP8_FRAME_FLAG_WEBP)
->>> +		reg |= G1_REG_DEC_CTRL0_WEBP_E;
->>>   	vdpu_write_relaxed(vpu, reg, G1_REG_DEC_CTRL0);
->>>   
->>>   	/* Frame dimensions */
->>
-> 
-
-BR,
-Hugues.
+Sorry, I should have said "This is technically causing user lack of
+flexibility when configuring the kernel"
 
