@@ -1,203 +1,119 @@
-Return-Path: <linux-kernel+bounces-326158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E668976413
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:11:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC717976414
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:11:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F63F1F24A78
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:11:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29D2D1C209CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE10190482;
-	Thu, 12 Sep 2024 08:11:24 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BAA219005A;
+	Thu, 12 Sep 2024 08:11:39 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3608618A6A9
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A0236C
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726128683; cv=none; b=pHkcuhg5q+ywcbmD1Vs10QvzrW3jqNb2twlodDIxXtdH8wr5KCGPJcks47kZrfl4/qubMx+xFS4Vh6uZDjelYky7Absv5Dsa4hNmNBN4z7JgzF1EXvZgFxgjd0wlukYQ0a+fozDuo/XoNBNRQZ0PIF+Ud/WLOvsHHIEXZE+t1Pk=
+	t=1726128698; cv=none; b=iZ8mxxxAZBDEZjyEyb3l70uJtoJXlzVomn3l0HvOLagbJk8LdUPcMPEl04KwEODb4opzk5gMqRnqcpLB9WZYrmOuCZSWocopY+PQQv9igemJXOS35Ve6AWDNfffJoAe710LA5QNLu7U+qWUQ3mh8I93/upuRmY4VpxzJg0WmSn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726128683; c=relaxed/simple;
-	bh=46sDEFtjw9rDmzGTjxtbVXFeGbK0ohD6ptPEvJdi/oQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=IPV/LhW1M7Yh+m8cBSjl8xf+B17gQo3QhKjK1CTd3e5fsx493rkC7gGxNIHQZ/2EwbJhhZaRt4iw9bM+Iv0npN4FrqK9wPGHkBOwqLnzdAVxRQA779LhquOd4iri+vZmS4n6TIgZIvlcHycMnQp8PBDZjrE0JPJWP4v4+WzqXz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a04eef8ed2so11798045ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 01:11:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726128681; x=1726733481;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IU1L0a8Eh52z552lgQRfW8oNgA34UsiZf+K+o63Sxic=;
-        b=X3YgFiXtUyWJc3CvzTyWbw2RW0SpqqFIOYesOCBYNoiRK5msviDF2/p2oyrDRfRVcA
-         saB25q6j9P54cCCa4AdFllfqMo27Ovvnyq+SWf/aYaU3XdoG7XlVjcN+8b5SPnrTNe+/
-         mJhjNPWrOe2kVBfdqJHvyzvtNzBKnbulaExv8OGyu7Qb3Ls5Xdf8zQAVY877n5HZm26Q
-         gRRgrnXsqE3hmzPCb8/I4PgBhNh+U5rfLA1ZfW5/YNwV0utGWDNcdx6KeBviPo04oe0D
-         YH5eRsNY+9u3nOyM5sGfW46hoN7cW6KcIe7hQ8RLaUzABEhq1+/wg6Jrg4vMx4aqDs7C
-         uz9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWBLdqw7zXt2ELFCqPlPnelzohOSyb0atjuNDiq5TNNCpm3R0KIcty8Bt8SJOt0V7s3LfzXYVXejNTuGbw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDPKQf6Z5EYXN4snyYFD0AwWyG3e/FyRmDWa7jT8DGNdTSubR0
-	p9bMmT5iN7KlwSscDL7uSWbeWJUg+kxdSdNpB40SIXMQu+8pN53fTHo6Ssi7O1TT2w+6FBgv3y4
-	XDM8CmitQFoJLz/k+TtYtdM1ujI6oUJteKmXf89OfVF9UNKbPwps+7Ls=
-X-Google-Smtp-Source: AGHT+IGkq9UVtDYhjtSVER9h4ux/q++b9QvF78WL4PNKcS/8MzRPHacy3Qpym8XA2D8kWJn9l6LX2pCEtIAfWG65s5pDw2s7Awu1
+	s=arc-20240116; t=1726128698; c=relaxed/simple;
+	bh=uyN5q2Z9kiKtNZW64JTbvLZ6TpvQNmRMZD8tW5a2L/w=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hZHVcNkSGj+9d+7gm8rZhRFJIVyjy5m5pyk06gkUd2MRo39aeCprYj6OtaR8MTUrMnMaqPKmIAQU1rffGbHPnRy/ov97UQkUTPRAWqCRZQ4ZY2RtfgJGMicfdsyn7suB5xHwiYo1J6e7IKJHi2aC1ipy6wwp/LVZ4C0n4i9kfxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1soevI-0006ZC-94; Thu, 12 Sep 2024 10:11:28 +0200
+Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1soevH-007Kvs-5D; Thu, 12 Sep 2024 10:11:27 +0200
+Received: from pza by lupine with local (Exim 4.96)
+	(envelope-from <p.zabel@pengutronix.de>)
+	id 1soevH-0002Eh-0I;
+	Thu, 12 Sep 2024 10:11:27 +0200
+Message-ID: <9a4377fe27d8eb940399e452b68fb5a6d678929f.camel@pengutronix.de>
+Subject: Re: [PATCH v5 0/9] reset: amlogic: move audio reset drivers out of
+ CCF
+From: Philipp Zabel <p.zabel@pengutronix.de>
+To: Jerome Brunet <jbrunet@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman
+ <khilman@baylibre.com>, Martin Blumenstingl
+ <martin.blumenstingl@googlemail.com>, Jiucheng Xu <jiucheng.xu@amlogic.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org,
+  linux-kernel@vger.kernel.org
+Date: Thu, 12 Sep 2024 10:11:27 +0200
+In-Reply-To: <20240910-meson-rst-aux-v5-0-60be62635d3e@baylibre.com>
+References: <20240910-meson-rst-aux-v5-0-60be62635d3e@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:19c9:b0:39d:3043:1f2f with SMTP id
- e9e14a558f8ab-3a0849098b0mr21621755ab.14.1726128681250; Thu, 12 Sep 2024
- 01:11:21 -0700 (PDT)
-Date: Thu, 12 Sep 2024 01:11:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e2058e0621e7a637@google.com>
-Subject: [syzbot] [virt?] KCSAN: data-race in virtqueue_disable_cb /
- vring_interrupt (4)
-From: syzbot <syzbot+8a02104389c2e0ef5049@syzkaller.appspotmail.com>
-To: eperezma@redhat.com, jasowang@redhat.com, linux-kernel@vger.kernel.org, 
-	mst@redhat.com, syzkaller-bugs@googlegroups.com, 
-	virtualization@lists.linux.dev, xuanzhuo@linux.alibaba.com
-Content-Type: text/plain; charset="UTF-8"
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hello,
+On Di, 2024-09-10 at 18:32 +0200, Jerome Brunet wrote:
+> This patchset follows the discussion about having reset driver in the
+> clock tree [1]. Ideally those should reside in the reset part of tree.
+>=20
+> Also the code of the amlogic reset driver is very similar between the 2
+> trees and could use the same driver code.
+>=20
+> This patcheset alignes the reset drivers present in the reset and clock
+> then adds support for the reset driver of audio clock controller found in
+> the g12 and sm1 SoC family to the reset tree, using the auxiliary bus.
+>=20
+> The infrastructure put in place is meant to be generic enough so we may
+> eventually also move the reset drivers in the meson8b and aoclk clock
+> controllers.
+>=20
+> This was tested on sm1 vim3l and gxl aml-s905x-cc.
+>=20
+> Changes since v4 [6]:
+>  * Fix Kconfig depends and select as reported by Philipp and
+>    and 0-day robot.
+>=20
+> Changes since v3 [5]:
+>  * Drop pltf/platform as suggested
+>=20
+> Changes since v2 [4]:
+>  * Fix undefined read access of the reset register
+>  * Fix Kconfig symbol description
+>=20
+> Changes since v1 [3]:
+>  * Fixes formatting errors reported by Stephen.
+>  * Changed parameters type to unsigned
+>  * Fix usage of ops passed as parameters, previously ignored.
+>  * Return 0 instead of an error if reset support is absent
+>    to properly decouple from the clock and have a weak
+>    dependency
+>  * Split the platform and auxiliary modules in 2 distinct modules
+>    to fix the COMPILE_TEST error reported by ktest robot.
+>=20
+> Change since RFC [2]:
+>  * Move the aux registration helper out of clock too.
 
-syzbot found the following issue on:
+Thank you,
 
-HEAD commit:    7c6a3a65ace7 minmax: reduce min/max macro expansion in ato..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1608e49f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1e7d02549be622b2
-dashboard link: https://syzkaller.appspot.com/bug?extid=8a02104389c2e0ef5049
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/a1f7496fa21f/disk-7c6a3a65.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f423739e51a9/vmlinux-7c6a3a65.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b65a0f38cbd7/bzImage-7c6a3a65.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8a02104389c2e0ef5049@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KCSAN: data-race in virtqueue_disable_cb / vring_interrupt
-
-write to 0xffff88810285ef52 of 1 bytes by interrupt on cpu 0:
- vring_interrupt+0x12b/0x180 drivers/virtio/virtio_ring.c:2591
- __handle_irq_event_percpu+0x95/0x490 kernel/irq/handle.c:158
- handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
- handle_irq_event+0x64/0xf0 kernel/irq/handle.c:210
- handle_edge_irq+0x16d/0x5b0 kernel/irq/chip.c:831
- generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
- handle_irq arch/x86/kernel/irq.c:247 [inline]
- call_irq_handler arch/x86/kernel/irq.c:259 [inline]
- __common_interrupt+0x58/0xe0 arch/x86/kernel/irq.c:285
- common_interrupt+0x7c/0x90 arch/x86/kernel/irq.c:278
- asm_common_interrupt+0x26/0x40 arch/x86/include/asm/idtentry.h:693
- __preempt_count_dec_and_test arch/x86/include/asm/preempt.h:94 [inline]
- __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:160 [inline]
- _raw_spin_unlock_irq+0x2f/0x50 kernel/locking/spinlock.c:202
- process_one_work kernel/workqueue.c:3200 [inline]
- process_scheduled_works+0x43b/0x9a0 kernel/workqueue.c:3312
- worker_thread+0x526/0x6e0 kernel/workqueue.c:3389
- kthread+0x1d1/0x210 kernel/kthread.c:389
- ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-read to 0xffff88810285ef52 of 1 bytes by interrupt on cpu 1:
- virtqueue_disable_cb_split drivers/virtio/virtio_ring.c:892 [inline]
- virtqueue_disable_cb+0x92/0x180 drivers/virtio/virtio_ring.c:2446
- start_xmit+0x14b/0x1260 drivers/net/virtio_net.c:3034
- __netdev_start_xmit include/linux/netdevice.h:4913 [inline]
- netdev_start_xmit include/linux/netdevice.h:4922 [inline]
- xmit_one net/core/dev.c:3580 [inline]
- dev_hard_start_xmit+0x119/0x3f0 net/core/dev.c:3596
- sch_direct_xmit+0x1b0/0x580 net/sched/sch_generic.c:343
- __dev_xmit_skb net/core/dev.c:3809 [inline]
- __dev_queue_xmit+0xf3d/0x1fe0 net/core/dev.c:4389
- dev_queue_xmit include/linux/netdevice.h:3105 [inline]
- neigh_hh_output include/net/neighbour.h:526 [inline]
- neigh_output include/net/neighbour.h:540 [inline]
- ip_finish_output2+0x73d/0x8b0 net/ipv4/ip_output.c:235
- ip_finish_output+0x11a/0x2a0 net/ipv4/ip_output.c:323
- NF_HOOK_COND include/linux/netfilter.h:303 [inline]
- ip_output+0xab/0x170 net/ipv4/ip_output.c:433
- dst_output include/net/dst.h:450 [inline]
- ip_local_out net/ipv4/ip_output.c:129 [inline]
- __ip_queue_xmit+0xbcc/0xbf0 net/ipv4/ip_output.c:535
- ip_queue_xmit+0x38/0x50 net/ipv4/ip_output.c:549
- __tcp_transmit_skb+0x15b0/0x1970 net/ipv4/tcp_output.c:1466
- tcp_transmit_skb net/ipv4/tcp_output.c:1484 [inline]
- tcp_write_xmit+0x1273/0x31c0 net/ipv4/tcp_output.c:2829
- __tcp_push_pending_frames+0x6a/0x1a0 net/ipv4/tcp_output.c:3014
- tcp_push_pending_frames include/net/tcp.h:2106 [inline]
- tcp_data_snd_check net/ipv4/tcp_input.c:5707 [inline]
- tcp_rcv_established+0xa12/0xef0 net/ipv4/tcp_input.c:6141
- tcp_v4_do_rcv+0x662/0x740 net/ipv4/tcp_ipv4.c:1911
- tcp_v4_rcv+0x1b25/0x1ee0 net/ipv4/tcp_ipv4.c:2346
- ip_protocol_deliver_rcu+0x370/0x720 net/ipv4/ip_input.c:205
- ip_local_deliver_finish+0x17d/0x210 net/ipv4/ip_input.c:233
- NF_HOOK include/linux/netfilter.h:314 [inline]
- ip_local_deliver+0xec/0x1d0 net/ipv4/ip_input.c:254
- dst_input include/net/dst.h:460 [inline]
- ip_sublist_rcv_finish net/ipv4/ip_input.c:580 [inline]
- ip_list_rcv_finish net/ipv4/ip_input.c:631 [inline]
- ip_sublist_rcv+0x55a/0x640 net/ipv4/ip_input.c:639
- ip_list_rcv+0x25e/0x290 net/ipv4/ip_input.c:674
- __netif_receive_skb_list_ptype net/core/dev.c:5704 [inline]
- __netif_receive_skb_list_core+0x4f0/0x520 net/core/dev.c:5752
- __netif_receive_skb_list net/core/dev.c:5804 [inline]
- netif_receive_skb_list_internal+0x4e4/0x660 net/core/dev.c:5896
- gro_normal_list include/net/gro.h:515 [inline]
- napi_complete_done+0x1cb/0x450 net/core/dev.c:6247
- virtqueue_napi_complete drivers/net/virtio_net.c:694 [inline]
- virtnet_poll+0x1b73/0x1fd0 drivers/net/virtio_net.c:2826
- __napi_poll+0x63/0x3c0 net/core/dev.c:6772
- napi_poll net/core/dev.c:6841 [inline]
- net_rx_action+0x3a1/0x7f0 net/core/dev.c:6963
- handle_softirqs+0xc3/0x280 kernel/softirq.c:554
- __do_softirq kernel/softirq.c:588 [inline]
- invoke_softirq kernel/softirq.c:428 [inline]
- __irq_exit_rcu kernel/softirq.c:637 [inline]
- irq_exit_rcu+0x3e/0x90 kernel/softirq.c:649
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0x37/0x80 arch/x86/kernel/apic/apic.c:1043
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-
-value changed: 0x00 -> 0x01
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 UID: 0 PID: 31238 Comm: syz.2.3839 Not tainted 6.11.0-rc7-syzkaller-00021-g7c6a3a65ace7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+regards
+Philipp
 
