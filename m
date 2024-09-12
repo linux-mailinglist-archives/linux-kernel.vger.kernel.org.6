@@ -1,166 +1,142 @@
-Return-Path: <linux-kernel+bounces-326205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DDCB9764EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:51:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AE5F9764ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:51:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C02871C23066
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:51:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE5A31F24A8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3BD2191F6E;
-	Thu, 12 Sep 2024 08:50:57 +0000 (UTC)
-Received: from hop.stappers.nl (hop.stappers.nl [141.105.120.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFE91922D7;
+	Thu, 12 Sep 2024 08:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z2TBpeNb"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 160511A28D;
-	Thu, 12 Sep 2024 08:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.105.120.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6842719005A
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726131057; cv=none; b=VPIZMrlNordo7kjzFfLvsse68sI59p1pMh/3KOtXfw7vuTRGeqMD6UsakN0KO7//hNo2Z7sadt9gDaqxp6lEmGqUrOrezufDnAD8NiPRR5lcvhTMO4KA/EzSe+3K1ToFfMCJBv/g1+s4WhjN8xrlY0n4vhD2mZZUCWVXiJaB+9k=
+	t=1726131083; cv=none; b=lBq2Vz3mRUdQV/1HIGHFbYI0wGSisYRgEFf9yu9GdBZIN/GOLaiWB52AMT4lnKpYe/82uWlACfHXtASSx0XJ8gWGAimWtZ5Wiwule3SoFQyKarnZaZ/tRsUYp3uYLBhQqF3ZhqmZshf+xuu7EkCMAWVGktJR2BVr+fiHwrGpRRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726131057; c=relaxed/simple;
-	bh=c8HyqOidXdqkjfP+IvUGSpv3WS5hePUxpBdEbOgNNXw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oenRgkbw0u15pTdl4kUuiuHp5f6ZYJTr8l/FR+vfk1xQNSbrGyzQwCOOdTAfVmOjDyWlNGC/7l/vMHonz7ULyfDvNPij3n1cmHnP8wNvrgU8mpkw36ebiS1wwxoF3KsD7iq7ZKM/lwSV8fqThLGfdnBea7bcOqBbfnn+UdAUIRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stappers.nl; spf=pass smtp.mailfrom=stappers.nl; arc=none smtp.client-ip=141.105.120.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stappers.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stappers.nl
-Received: from gpm.stappers.nl (gpm.stappers.nl [82.168.249.201])
-	by hop.stappers.nl (Postfix) with ESMTP id 476252000E;
-	Thu, 12 Sep 2024 08:50:45 +0000 (UTC)
-Received: by gpm.stappers.nl (Postfix, from userid 1000)
-	id AC09330417C; Thu, 12 Sep 2024 10:50:13 +0200 (CEST)
-Date: Thu, 12 Sep 2024 10:50:12 +0200
-From: Geert Stappers <stappers@stappers.nl>
-To: Ayush Singh <ayush@beagleboard.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>,
-	Ayush Singh <ayushdevel1325@gmail.com>, fabien.parent@linaro.org,
-	d-gole@ti.com, lorforlinux@beagleboard.org,
-	jkridner@beagleboard.org, robertcnelson@beagleboard.org,
-	Andrew Davis <afd@ti.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>, Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 8/8] addon_boards: mikrobus: Add GPS3 Click
-Message-ID: <ZuKrRJUwBrcV8ffq@gpm.stappers.nl>
-References: <20240911-mikrobus-dt-v1-0-3ded4dc879e7@beagleboard.org>
- <20240911-mikrobus-dt-v1-8-3ded4dc879e7@beagleboard.org>
- <2024091149-vocalize-composite-6e48@gregkh>
- <44039255-159a-4284-abd8-a0f558ad006d@gmail.com>
- <2024091151-unworldly-dance-9a80@gregkh>
- <097159c7-1602-4e32-8e6f-9cd023d62238@beagleboard.org>
- <419bf74e-74cb-46ca-95d0-03b3bab3948d@de.bosch.com>
- <2024091211-bladder-runner-2d75@gregkh>
- <8072c698-93b0-4d3a-a970-e276243f82c4@beagleboard.org>
+	s=arc-20240116; t=1726131083; c=relaxed/simple;
+	bh=Oqpf6WxrvhQNA4h2zZSOyiF1FFl+HVlkz3Sk47rCQfQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jC6alheXEl6TbsKy8dm24fg8YI8T2LmPDOmJgGxUUN+9gJ7FDwx+2pWh7b2hdQ1W5uqdby18HU/dGnMRMnK8828Xka2K4B86g5xBQH1niHq7wm5n6ntyTVJHwhrXqv/Pe7v6WT6BV3gjWre17vCWqSZOJlDyQ3+nwKxFg4h5EHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z2TBpeNb; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-374c3eef39eso443380f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 01:51:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726131080; x=1726735880; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8XjXALdKFm1l8dDisZb/hkbZwF++A+4h5dCECeJO6Cg=;
+        b=z2TBpeNbRdd3p6Lv7R/3jZj3CsQ1oAerqK8tln44K6iS2tKujELfNGp39njS9RP6/U
+         0eWCohtejIR27hP2l+9tUCR70/GQ54MoMqs4Pz1w237+ZJ9AU9nChb43KOQKOv0YMmbF
+         SEAlLNA5nB/MwiVqrBDvv1M9njT/PVP7oAtUSjnpdlrjvej6e5k/3vOOKQAAcwO9zmsd
+         WFVEGY5Fhe0lhagsnbwB9PF+gs6IAP0BGSd4FBxUJIBBJynYeG27WSFBKx2lvxNXzUxo
+         7s9x/T8wbhQ46Xs5ptJhvC6HUR0KmVaVIcMaYdOvmdaC3ZTn6MlGfqUz6R5qdr8n4mrE
+         wyIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726131080; x=1726735880;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8XjXALdKFm1l8dDisZb/hkbZwF++A+4h5dCECeJO6Cg=;
+        b=RNEeihoSdBnz4FdlPMPOWF4GPnX7tDEjlCDa1J2KHiwSab3fj9gEoOaDH3U/9hmqTC
+         D9QkHJvioiQ4MHXRv1nV/ZjRINpKYDivyfRytj7V6fIhMN+pQMDHvAg7IFwtFdWkWa2L
+         ZhfyUGvN9GlrbExzg04w1KB5gmeKG0Ko5zoQAc2xKCiKkNdKXGjrIl3RXC5I2eiCtlRQ
+         vIsuI75kIX38rh1KfQBtAZOfwcm74cGMxMY2UDMKF5IVi7P1vHrPf8usF+fvwy2I513I
+         XbwP8LWf6uy/DkLynvxu0AFjV+Lw8VELdySCGA//ibuYAGRnTTt4zWKVWxlmO7hdAsb1
+         SvGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmG0SzxJ5NK27I6ChHFpZKcO7hojV4ZcmTuWrokZfRDS5gRSj8tsE7HkpTi5jqfoDq4T8i/O5RwzhiikA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw47jgBq1oTL4NLyWnZVOgPm8LY/bKET586f/JGBKUl5CYMoi2P
+	C/PXHl5hMf5/FGim00yzo5DS4TDPZwNNNsfgr7tM7Ux1Fg3bo2H5WLH41DIbuFA=
+X-Google-Smtp-Source: AGHT+IHLHcB/HCgQjKnUW7bwjv1XmnDSqMuyvP2XcLeTnW9k2A9PadCFA/1sq6R/1Xv5W3/sfWKXWg==
+X-Received: by 2002:a5d:5582:0:b0:371:8319:4dcc with SMTP id ffacd0b85a97d-378c2cd5da5mr1059565f8f.2.1726131079586;
+        Thu, 12 Sep 2024 01:51:19 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d365fsm13753381f8f.82.2024.09.12.01.51.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 01:51:19 -0700 (PDT)
+Date: Thu, 12 Sep 2024 11:51:14 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Mark Brown <broonie@kernel.org>, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] ALSA: control: prevent some integer overflow issues
+Message-ID: <0f03d569-9804-4617-a806-f0e5c32399fb@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8072c698-93b0-4d3a-a970-e276243f82c4@beagleboard.org>
+X-Mailer: git-send-email haha only kidding
 
-On Thu, Sep 12, 2024 at 01:47:18PM +0530, Ayush Singh wrote:
-> On 9/12/24 13:09, Greg Kroah-Hartman wrote:
-> > On Thu, Sep 12, 2024 at 09:29:01AM +0200, Dirk Behme wrote:
-> > > On 12.09.2024 09:16, Ayush Singh wrote:
-> > > > On 9/12/24 01:34, Greg Kroah-Hartman wrote:
-> > > > > On Wed, Sep 11, 2024 at 09:26:06PM +0530, Ayush Singh wrote:
-> > > > > > On 9/11/24 20:28, Greg Kroah-Hartman wrote:
-> > > > > > > >     addon_boards/mikrobus/Makefile         |  1 +
-> > > > > > > >     addon_boards/mikrobus/mikroe-1714.dtso | 28
-> > > > > > > > ++++++++++++++++++++++++++++
-> > > > > > > Odd top-level directory for the kernel, are you sure this is correct?
-> > > > > > I am open to moving them to a more suitable location if we have one.
-> > > > 
-> > > > So here are the directories where dtso files currently go:
-> > > > ❯ find . -type f -name "*.dtso" -printf "%h\n" | sort -u
-> > > > 
-> > > > 
-> > > > Out of these, `drivers/of` and `drivers/of/unittest-data` contain
-> > > > unittest dtso, so probably not the place.
-> > > > 
-> > > > And the `arch/arm` and `arch/arm64` are for arch specific stuff.
-> > > > MikroBUS is supported in RISC-V boards as well (BeagleV-Ahead). So
-> > > > probably not the correct location either.
-> > > > 
-> > > > Maybe something like `arch/common/addon_boards` would be better?
-> > > Whats about
-> > > 
-> > > drivers/misc/mikrobus/mikrobus.rs
-> > > drivers/misc/mikrobus/mikroe-1714.dtso
-> > > drivers/misc/mikrobus/mikroe-5761-i2c.dtso
-> > 
-> > Exactly, put them where the drivers are, like clk and of does.
-> > 
-> > thanks,
-> > greg k-h
-> 
-> 
-> So I am writing a more thorough reply in the driver questions,
+I believe the this bug affects 64bit systems as well, but analyzing this
+code is easier if we assume that we're on a 32bit system.  The problem is
+in snd_ctl_elem_add() where we do:
 
-As I did read it,
-is it not "driver questions" but about "location of new files"
-and "bus versus device"
+sound/core/control.c
+  1669          private_size = value_sizes[info->type] * info->count;
+  1670          alloc_size = compute_user_elem_size(private_size, count);
+                                                                  ^^^^^
+count is info->owner.  It's a non-zero u32 that comes from the user via
+snd_ctl_elem_add_user().  So the math in compute_user_elem_size() could
+have an integer overflow resulting in a smaller than expected size.
 
+  1671
+  1672          guard(rwsem_write)(&card->controls_rwsem);
+  1673          if (check_user_elem_overflow(card, alloc_size))
 
-> but essentially, the driver is not actually required for using the
-> overlay based approach for mikroBUS addon boards. Initially, the driver
-> was not supposed to be included in the patch series at all. But I was
-> not able to find a way to use a GPIO nexus node [0] without having a
-> platform driver attached to the node.
-> 
-> In fact, if the GPIO nexus node is not required (like in the case of
-> weather click), there is no need to even have a mikrobus-connector
-> node in dt, let alone a driver.
-> 
-> So to answer why it probably should not go in the driver directory,
-> the driver for the connector, actually does not register the mikrobus
-> addon board. And if there is a way to have GPIO nexus node without
-> having a platform driver attached to the node, then it should probably
-> be removed.
-> 
-> The reason why the overlay based approach was suggested was because
-> previous approaches could not do board stacking (having chain of
-> mikrobus connector -> grove connector addon board -> grove board). So
-> as you can see, it is beneficial to have grove board overlays compiled
-> even in a board without any grove connectors because of stacking.
+The math is check_user_elem_overflow() can also overflow.  Additionally,
+large positive values are cast to negative and thus do not exceed
+max_user_ctl_alloc_size so they are treated as valid.  It should be the
+opposite, where negative sizes are invalid.
 
-Please be explicite about file location.
+  1674                  return -ENOMEM;
 
-And please elaborate on "bus" in mikrobus.
+Fixes: 2225e79b9b03 ("ALSA: core: reduce stack usage related to snd_ctl_new()")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ sound/core/control.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-
-Make it possible that your audience gets a completere picture.
-
-
-And for plan B: How important is this patch to the patch serie?
-
-
-Groeten
-Geert Stappers
-
-[0]: https://devicetree-specification.readthedocs.io/en/v0.3/devicetree-basics.html#nexus-nodes-and-specifier-mapping
+diff --git a/sound/core/control.c b/sound/core/control.c
+index 4f55f64c42e1..f36af27e68d5 100644
+--- a/sound/core/control.c
++++ b/sound/core/control.c
+@@ -1397,9 +1397,9 @@ struct user_element {
+ };
+ 
+ // check whether the addition (in bytes) of user ctl element may overflow the limit.
+-static bool check_user_elem_overflow(struct snd_card *card, ssize_t add)
++static bool check_user_elem_overflow(struct snd_card *card, size_t add)
+ {
+-	return (ssize_t)card->user_ctl_alloc_size + add > max_user_ctl_alloc_size;
++	return size_add(card->user_ctl_alloc_size, add) > max_user_ctl_alloc_size;
+ }
+ 
+ static int snd_ctl_elem_user_info(struct snd_kcontrol *kcontrol,
+@@ -1593,7 +1593,7 @@ static int snd_ctl_elem_init_enum_names(struct user_element *ue)
+ 
+ static size_t compute_user_elem_size(size_t size, unsigned int count)
+ {
+-	return sizeof(struct user_element) + size * count;
++	return size_add(sizeof(struct user_element), size_mul(size, count));
+ }
+ 
+ static void snd_ctl_elem_user_free(struct snd_kcontrol *kcontrol)
 -- 
-Silence is hard to parse
+2.45.2
+
 
