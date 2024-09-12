@@ -1,123 +1,87 @@
-Return-Path: <linux-kernel+bounces-327423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 497B39775CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:57:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17BB79775D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:59:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1EEF1F2439A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:57:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9003B229DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C3E1C32FA;
-	Thu, 12 Sep 2024 23:57:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229541C3F10;
+	Thu, 12 Sep 2024 23:59:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DB5QJf12"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NnSIsPMX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E53019F425;
-	Thu, 12 Sep 2024 23:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A7C191F8F;
+	Thu, 12 Sep 2024 23:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726185444; cv=none; b=OBnMj3sd5cAE5wRjYMaOAE/2cODPpzgyn8NCqVgtwcemyULwYOX5KGJg269d3sgO/2F/8VEWILu1b/3jaoMGjFTMBpU3Gkwe4SlxmF2/DHa5y52SsVbvf3ZxWiIK5uUmFXSFCn1URl07rtjWeUqrlEtcNlf9CjVed0r04OyFr1k=
+	t=1726185561; cv=none; b=GFXmK2Xh/Wbr0r/OjdiHmO5BCJqgYdsMgkP2Z1CJhe9OFkDkfZ/U5a51Dcy/xkXO7SIl11aGG908LCBndZHKppMw2juPdh+dZCYtnlwUFlZ2xqtNCnuXMv0Q8obxzqI9AwFwVUeGxzda601f9tqY1Zg76CKng7cElrupWI/fcSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726185444; c=relaxed/simple;
-	bh=AsfRcrtObUzG0G02vJhdYtWyZnOhJwTlNYYrFWc+CCg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=t+w6Ife6yazdgoq+BnGWBkARSSo39/qvknF0RJf6+qbJ/F5Lpu9HYKVUjmjLRGHYivg9XI1RlkBzbQoPTaLj1Op+miXl8kALOjh89bVwzS38OC7qoifJT/i/FnMS0mUM/DqHDnjbMXI4UCzVU3pPiOZQS0JLvF8nO0fvIFLPAVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DB5QJf12; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A48FDC4CEC3;
-	Thu, 12 Sep 2024 23:57:23 +0000 (UTC)
+	s=arc-20240116; t=1726185561; c=relaxed/simple;
+	bh=e/9rbe4DitFlkIbJi18NYfvmIAV/APL6FYVEP0JqCpE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Uo1aZltvPEQpjEzZczv5jfE/6BZJtbvoo8q3vChXp9XYYq2NGUW9TEUC/oaTrXortSWj6Y/WjBL8FKb+kArDWCQVVxI9zFD/w0mS4U31oqVSox9zRSjuh593do0OtAxlNU1K5o7GnQL6FnTyTqyfBZJSM+cYdU8Lbw7T7aN3x/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NnSIsPMX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAE32C4CEC3;
+	Thu, 12 Sep 2024 23:59:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726185444;
-	bh=AsfRcrtObUzG0G02vJhdYtWyZnOhJwTlNYYrFWc+CCg=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=DB5QJf121WmloINNRr9CXjIgZovlOpNsyCUdEDkRtBvHlpbjiOg+OLyfS4aN7OJLM
-	 uZyVKHNHSiTKIG85yxti+1Oc+bdYYzDWVnglbPFWJm7wtlYUH/I8cdiX28mpcC711l
-	 LKesPT/n/vJiP1zbHGp/y86uMjT42cJihoFOtOKLkUKT6u4/p5EbOKagxW+XF9YRy3
-	 vhY/iCfDkarlUXIaaqLXYoy7xbjXXo5+2Z+x7HsAb+N/cRxva7cAxRT35j8V8j//L4
-	 MWZdSfiCdOEi1G63TwuWlEh1fnbUedVmOjolwTZfw/3oAWZU6k/NBZKoNppwO+ZxtB
-	 YakCukUmSRc6A==
+	s=k20201202; t=1726185561;
+	bh=e/9rbe4DitFlkIbJi18NYfvmIAV/APL6FYVEP0JqCpE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=NnSIsPMXh5wrA/4Ja8GTy2t+Qs5i+/3bz7QmUzkYsnDf+VxbuifMhRuoD0gNVSRP5
+	 AVVC9oLZr4x0aeKWsnc9vLcuTKPHeywQ57KHNVHmMmFnS9UmbIOKff2FER8wbr50Zf
+	 gu9CqVrw7pRzn0Wytl0/Be9e7m+56rgqa8twTwi2q9KUPNhXcZJ9V34dPNoMB1aDMB
+	 e52oqAohctYiASCU7JZxXSEIqY+kcc/QYpdpk+8X8WS3Hov5sJQ+LzSeK5QHVZSGQQ
+	 ijkmoF1u/OcrlaFR4L2PNwZQmSqRXFTRpFlv0KiZ2JPMbok9ssvt0YmMH1H/4qxp10
+	 useMbCYdM2EtQ==
+Date: Thu, 12 Sep 2024 16:59:19 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Oliver Neukum <oneukum@suse.com>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCHv2 net] usbnet: fix cyclical race on disconnect with work
+ queue
+Message-ID: <20240912165919.22ad693c@kernel.org>
+In-Reply-To: <bb1cbc3d-fc46-4d0f-90b3-39b25f5bc58e@suse.com>
+References: <20240905134811.35963-1-oneukum@suse.com>
+	<20240910154405.641a459f@kernel.org>
+	<bb1cbc3d-fc46-4d0f-90b3-39b25f5bc58e@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 13 Sep 2024 02:57:20 +0300
-Message-Id: <D44PO3WW3R6S.1VSJQ4AYFJW04@kernel.org>
-To: "Sergey Shtylyov" <s.shtylyov@omp.ru>, "Roman Smirnov"
- <r.smirnov@omp.ru>, "David Howells" <dhowells@redhat.com>, "Herbert Xu"
- <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
- "Andrew Zaborowski" <andrew.zaborowski@intel.com>
-Cc: <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: Re: [PATCH v2] KEYS: prevent NULL pointer dereference in
- find_asymmetric_key()
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-X-Mailer: aerc 0.18.2
-References: <20240910111806.65945-1-r.smirnov@omp.ru>
- <D42N9ASJJSUD.EG094MFWZA4Q@kernel.org>
- <84d6b0fa-4948-fe58-c766-17f87c2a2dba@omp.ru>
- <D43HG3PEBR4I.2INNPVZIT19ZZ@kernel.org>
- <8774f6a2-9bec-b699-6b68-63a26019c5b3@omp.ru>
- <D44DK087Y80R.25CNND6WHJ7EE@kernel.org>
- <dbc7249a-7bf5-7e5f-7204-d368c052023c@omp.ru>
-In-Reply-To: <dbc7249a-7bf5-7e5f-7204-d368c052023c@omp.ru>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu Sep 12, 2024 at 8:36 PM EEST, Sergey Shtylyov wrote:
-> On 9/12/24 5:27 PM, Jarkko Sakkinen wrote:
-> [...]
->
-> >>>>>> In find_asymmetric_key(), if all NULLs are passed in id_{0,1,2} pa=
-rameters
-> >>>>>> the kernel will first emit WARN and then have an oops because id_2=
- gets
-> >>>>>> dereferenced anyway.
-> >>>>>>
-> >>>>>> Found by Linux Verification Center (linuxtesting.org) with Svace s=
-tatic
-> >>>>>> analysis tool.
-> >>>>>
-> >>>>> Weird, I recall that I've either sent a patch to address the same s=
-ite
-> >>>>> OR have commented a patch with similar reasoning. Well, it does not
-> >>>>> matter, I think it this makes sense to me.
-> >>>>>
-> >>>>> You could further add to the motivation that given the panic_on_war=
-n
-> >>>>> kernel command-line parameter, it is for the best limit the scope a=
-nd
-> >>>>> use of the WARN-macro.
-> >>>>
-> >>>>    I don't understand what you mean -- this version of the patch kee=
-ps
-> >>>> the WARN_ON() call, it just moves that call, so that the duplicate i=
-d_{0,1,2}
-> >>>> checks are avoided...
-> >>>
-> >>> I overlooked the code change (my bad sorry). Here's a better version =
-of
-> >>> the first paragraph:
-> >>>
-> >>> "find_asymmetric_keys() has nullity checks of id_0 and id_1 but ignor=
-es
-> >>> validation for id_2. Check nullity also for id_2."
-> >>
-> >>    Hm, what about WARN_ON(!id_0 && !id_1 && !id_2) -- it used to check=
- all
-> >> the pointers, right? I think our variant was closer to reality... :-)
-> >=20
-> > Right (lazy validation, first null ignores rest)
->
->    No, contrariwise: since we use && and !, first non-NULL would ignore t=
-he rest.
+On Thu, 12 Sep 2024 11:37:14 +0200 Oliver Neukum wrote:
+> > barriers? They make it seem like we're doing something clever
+> > with memory ordering, while really we're just depending on normal
+> > properties of the tasklet/timer/work APIs.  
+> 
+> Good question. I added this because they are used in usbnet_defer_kevent()
+> which can be used in hard irq context. Are you saying I should check
+> whether this is actually needed?
 
-Oops correct :-/
+I am slightly bolder, I'm saying that my reading of the code is 
+that it is in fact not needed :)
+We build our "proof of correctness" on tasklet/timer/work APIs
+which already provide all necessary barriers.
 
-BR, Jarkko
+> > FTR disable_work_sync() would work nicely here but it'd be
+> > a PITA for backports.  
+> 
+> So should I use it?
+
+Up to you. It'd avoid work rescheduling but the backport would
+be a pain, and off top of my head timer doesn't have a disable
+so we'd still need the flag.
 
