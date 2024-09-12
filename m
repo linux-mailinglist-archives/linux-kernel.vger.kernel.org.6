@@ -1,119 +1,248 @@
-Return-Path: <linux-kernel+bounces-326979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B764976F64
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:14:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1889A976F6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:15:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E9F81C23A7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:14:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AD0A1F217EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39261C1746;
-	Thu, 12 Sep 2024 17:13:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ADE91BE858;
+	Thu, 12 Sep 2024 17:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ww89bcac"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d6a1m6UN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F72E1BF7FD;
-	Thu, 12 Sep 2024 17:13:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868AF13C9C4;
+	Thu, 12 Sep 2024 17:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726161190; cv=none; b=bIzXqv95Dnl0r+l1sW6MG6Q+HVqFi8iu3vJnhZdNGdwFmetrGcN02D8bipBmo2Bh5hkt7xRqfpCN9kpO/FX5pv4hpPDtUt8XX+m2Uj+X1WVHcpxqqahTzAwLrpC7K6OHHpFkHTu77/4KYEH0AuQ1reZzLYj3vNv8cxr8klMPtkI=
+	t=1726161350; cv=none; b=tVL7yVuHKGQtk7xIHJUArej79K7Z9o4C+HjjYMC3oGZaJ45dsozjFA1Bfb1JjrSOxlNqfyfk1YVBWPqCcsuQjw0vA+vKey+dETwmfECwQ2bzi0qaPDsnuG8iOkAqTEtyFZ/3Mt9fBhJJplc1w2op66EEqpBWAvcvC4UTf5oYS5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726161190; c=relaxed/simple;
-	bh=Uh2MxIxQ/yGhdh3W/Q1aIvKCfw9Pnc/lIfCxLrWsy4s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YPX80l/dSsD/TcWe9wxv2Vg3JSqWDN10FtNjRo9ypYnVYCdD0HeOwY1w1pZ268+OwKWTVu09Nih8pYFTH0cgwPa3Fh374QrR+tTdkL/gaowUGAaCNopiYtsvWafpr4nnKmXfwwzXD6jvY7CgT/F0iBf9QYB48wYgM3Zifc8lrac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ww89bcac; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81A20C4CEC4;
-	Thu, 12 Sep 2024 17:13:09 +0000 (UTC)
+	s=arc-20240116; t=1726161350; c=relaxed/simple;
+	bh=F2KHOAwtI2liyPV9p1o+B/TcQTeoG/9OurOUzOITgCY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mLrkGLuHZ7BlJMCqm+soP/TMhVXaHnqBe0sYz/ZAYXUcckcTDaV2Ui22DxOtB1BYiqYYiIJxNUYZexJaw34IDJJxI+jxJ04Q4V2wPc0kh80k2cKqMhTifawC3InimGR3xx4ZzKOERZPPnrz6ygR2EdXp2oq4VXTnO3ixnYdh8CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d6a1m6UN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FF58C4CEC3;
+	Thu, 12 Sep 2024 17:15:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726161189;
-	bh=Uh2MxIxQ/yGhdh3W/Q1aIvKCfw9Pnc/lIfCxLrWsy4s=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Ww89bcac5RMM9LfT5E/Z5uGSK/+90DPIRmLBZUx6j3iXShdS0pjEDs2vRwKor0zWl
-	 9o8AsmRiUUbYDijvRS6VnOsKVjmxmhlRdsPt54iwbTlsVEipFOBQ9Ay7954RVN86i6
-	 Cb6cL/y29QnEQGJZ8/0Rs/5X/kXAheyHtSp0pvWVIThgpKSCjcDJXt31tc5mMx4qR2
-	 SUsYztGc5+b+bCZh4hzNela0vG+Uj2/wAmxOXjocYcLUkzlUJ9OvzpSDReHIwVejg8
-	 LKpPbCUGIYzWlyCPwv2K+ga3fV8+tK9h1YBlDzKafO6jh3EqxMSgZUG+aBsu70Ojf1
-	 JJBvdVNwoX/BA==
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f75c56f16aso17485691fa.0;
-        Thu, 12 Sep 2024 10:13:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUDFXlpWNnJ/rvuL4aidgM743FjTHF0EC6Z3bFHAfHyMMFbfuwVJzt7TZ7ZMXZpDtUpp0F+8htHLoEk@vger.kernel.org, AJvYcCVt6VWLmNAM/IjqmYS42UJS3kZW+FdWEc2iStqMNj2QFuIJNd7LoDedGqdc8YuZNX4GDGhdsVh0@vger.kernel.org, AJvYcCX9+uiGmEUGigOJsJHc1Au7qjVZN3bCDS0BVdYnvYyLaPW8gcpP3Ys+xjEACfQTRRb+GAl9I4WwX4SFGEYx@vger.kernel.org, AJvYcCXw9ILgpbzwZFISSNQaYjluPG082ROQYvW1Qde5lzO5jt1w2uk03cmVgQGuFAirq/a5eJzsROfP4gbsEV2Gbbs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkEiklvmsY+TP2YAqe2LeSJeCzP0m3ftYqMAAazu+TWBf/IWmI
-	LuY4cucLsdJ+Q9r33S1xIb7MPDig86sgqtWvpVzy0LIn1oo1dT4jp0lTpH0pHbdvYkUdfKElKXD
-	jkw0bRSLkukLXsvqYN/eH6lbeW/k=
-X-Google-Smtp-Source: AGHT+IGIUFkqvWaSQ8T5GIp3f+JiV+Kxa64xAgUUR7OTFLlYkfi4JdHSKeXIy5ianI3Ta2mcOwvpikk+DcC65vzXGog=
-X-Received: by 2002:a05:651c:b0f:b0:2f1:a4a0:86a1 with SMTP id
- 38308e7fff4ca-2f787ddf3e0mr22206901fa.20.1726161187917; Thu, 12 Sep 2024
- 10:13:07 -0700 (PDT)
+	s=k20201202; t=1726161350;
+	bh=F2KHOAwtI2liyPV9p1o+B/TcQTeoG/9OurOUzOITgCY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d6a1m6UN8+Mc8aa6OvJQtkMkFtlC/An2ncY7bN/TbuccIworuRnicIdjj5P5hqc+R
+	 /7ZoY3Eq2dlhOeP1Qmd3MvKhDPnsK3oHckYnwNW78m8BHlfI1CvAMY9fiIv9cnBU3b
+	 T1XWuFt3kWODI8xkFitIi8m9f8ssXfdUdEMDxuuc2x1oFTwudoqhqIM5Cyml/T0rqV
+	 7SBIMn5ZF5iiCOfe3hAwcT7Niwk4azuxQDgYn6dTX7TM8PKn+8q7STiPQuKjGVe4xt
+	 k9llevAIEppG9KN+L2mN3LLzcXvEhCs4NeOzImt+bhhAiVa1Wlys6Ocq33ox9cgftZ
+	 VzzzCIMgWVHcg==
+Date: Thu, 12 Sep 2024 18:15:44 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	peterlin@andestech.com, dminus@andestech.com,
+	conor.dooley@microchip.com, conor+dt@kernel.org,
+	ycliang@andestech.com, jassisinghbrar@gmail.com, robh@kernel.org,
+	krzk+dt@kernel.org, andersson@kernel.org,
+	mathieu.poirier@linaro.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v1 2/5] dt-bindings: mailbox: add binding for Microchip
+ IPC mailbox driver
+Message-ID: <20240912-wired-skirt-a758f0e1507c@spud>
+References: <20240912170025.455167-1-valentina.fernandezalanis@microchip.com>
+ <20240912170025.455167-3-valentina.fernandezalanis@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912104630.1868285-2-ardb+git@google.com> <5ed76217-c30e-4b9a-9462-0dbd859b2a79@wanadoo.fr>
-In-Reply-To: <5ed76217-c30e-4b9a-9462-0dbd859b2a79@wanadoo.fr>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 12 Sep 2024 19:12:56 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEYpD4LdZ9jQebyViWW98ogX7=tKzQNLNZxdBUORgpnQg@mail.gmail.com>
-Message-ID: <CAMj1kXEYpD4LdZ9jQebyViWW98ogX7=tKzQNLNZxdBUORgpnQg@mail.gmail.com>
-Subject: Re: [PATCH] i2c/synquacer: Deal with optional PCLK correctly
-To: "Marion & Christophe JAILLET" <christophe.jaillet@wanadoo.fr>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-i2c@vger.kernel.org, stable@vger.kernel.org, 
-	Andi Shyti <andi.shyti@kernel.org>, Andy Shevchenko <andy.shevchenko@gmail.com>, 
-	Wolfram Sang <wsa@kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	Kernel Janitors <kernel-janitors@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="YivsFDfHFtw+N+Us"
+Content-Disposition: inline
+In-Reply-To: <20240912170025.455167-3-valentina.fernandezalanis@microchip.com>
+
+
+--YivsFDfHFtw+N+Us
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 12 Sept 2024 at 19:11, Marion & Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
->
-> (trying to merge t and cc fields from Ard's and Andy's messages)
->
->
-> Le 12/09/2024 =C3=A0 12:46, Ard Biesheuvel a =C3=A9crit :
-> > From: Ard Biesheuvel <ardb@kernel.org>
-> >
-> > ACPI boot does not provide clocks and regulators, but instead, provides
-> > the PCLK rate directly, and enables the clock in firmware. So deal
-> > gracefully with this.
-> >
-> > Fixes: 55750148e559 ("i2c: synquacer: Fix an error handling path in syn=
-quacer_i2c_probe()")
->
-> Hi,
->
-> If that matters, I'm not sure that the Fixes tag is correct.
->
-> IIUC, either it is a new functionally that is added (now it works with
-> ACPI...), or if considered as a fix, then I think that it is linked to
-> commit 0d676a6c4390 ("i2c: add support for Socionext SynQuacer I2C
-> controller").
->
-> I don't think that 55750148e559 introduced a regression. The issue seems
-> to be there since the beginning. Agreed?
->
+On Thu, Sep 12, 2024 at 06:00:22PM +0100, Valentina Fernandez wrote:
+> Add a dt-binding for the Microchip Inter-Processor Communication (IPC)
+> mailbox controller.
 
-No.
+Before anyone else gets here, there's an erroneous "driver" in $subject
+:)
 
-The original code used IS_ERR_OR_NULL() to explicitly permit the case
-where no clock exists at all.
+> Signed-off-by: Valentina Fernandez <valentina.fernandezalanis@microchip.c=
+om>
+> ---
+>  .../bindings/mailbox/microchip,sbi-ipc.yaml   | 115 ++++++++++++++++++
+>  1 file changed, 115 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/microchip,s=
+bi-ipc.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.=
+yaml b/Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.yaml
+> new file mode 100644
+> index 000000000000..dc2cbd5eb28f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.yaml
+> @@ -0,0 +1,115 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mailbox/microchip,sbi-ipc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Microchip Inter-processor communication (IPC) mailbox controller
+> +
+> +maintainers:
+> +  - Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+> +
+> +description:
+> +  The Microchip Inter-processor Communication (IPC) facilitates
+> +  message passing between processors using an interrupt signaling
+> +  mechanism.
+> +  This SBI interface is compatible with the Mi-V Inter-hart
+> +  Communication (IHC) IP.
+> +  The microchip,sbi-ipc compatible string is inteded for use by software
+> +  running in supervisor privileged mode (s-mode). The SoC-specific
+> +  compatibles are inteded for use by the SBI implementation in machine
+> +  mode (m-mode).
 
-This has worked fine with ACPI boot for many years before this fix was appl=
-ied.
+And it might be worth me pointing out to the !riscv folks that "SBI
+implementation in machine mode" means that the
+"microchip,miv-ihc-rtl-v2" compatible is intended for use by firmware
+only.
 
-> If yes, then it may be needed to backport it in older kernels too.
->
+Cheers,
+Conor.
 
-No, it used to work. The fix is what broke ACPI boot.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - microchip,sbi-ipc
+> +      - microchip,miv-ihc-rtl-v2
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    minItems: 1
+> +    maxItems: 5
+> +
+> +  interrupt-names:
+> +    minItems: 1
+> +    maxItems: 5
+> +
+> +  "#mbox-cells":
+> +    description:
+> +      For the SBI "device", the cell represents the global "logical" cha=
+nnel IDs.
+> +      The meaning of channel IDs are platform firmware dependent. The
+> +      SoC-specific compatibles are intended for use by the SBI implement=
+ation,
+> +      rather than s-mode software. There the cell would represent the ph=
+ysical
+> +      channel and do not vary depending on platform firmware.
+> +    const: 1
+> +
+> +  microchip,ihc-chan-disabled-mask:
+> +    description:
+> +      Represents the enable/disable state of the bi-directional IHC chan=
+nels
+> +      within the MIV-IHC IP configuration. The mask is a 16-bit value, b=
+ut only
+> +      the first 15 bits are utilized.Each of the bits corresponds to
+> +      one of the 15 IHC channels.
+> +      A bit set to '1' indicates that the corresponding channel is disab=
+led,
+> +      and any read or write operations to that channel will return zero.
+> +      A bit set to '0' indicates that the corresponding channel is enabl=
+ed
+> +      and will be accessible through its dedicated address range registe=
+rs.
+> +      The remaining bit of the 16-bit mask is reserved and should be ign=
+ored.
+> +      The actual enable/disable state of each channel is determined by t=
+he
+> +      IP block=E2=80=99s configuration.
+> +    $ref: /schemas/types.yaml#/definitions/uint16
+> +    default: 0
+> +
+> +required:
+> +  - compatible
+> +  - interrupts
+> +  - interrupt-names
+> +  - "#mbox-cells"
+> +
+> +additionalProperties: false
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: microchip,sbi-ipc
+> +    then:
+> +      properties:
+> +        reg: false
+> +    else:
+> +      required:
+> +        - reg
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: microchip,miv-ihc-rtl-v2
+> +    then:
+> +      properties:
+> +        interrupt-names:
+> +          items:
+> +            pattern: "^hart-[0-5]+$"
+> +
+> +examples:
+> +  - |
+> +    mailbox {
+> +      compatible =3D "microchip,sbi-ipc";
+> +      interrupt-parent =3D <&plic>;
+> +      interrupts =3D <180>, <179>, <178>;
+> +      interrupt-names =3D "hart-1", "hart-2", "hart-3";
+> +      #mbox-cells =3D <1>;
+> +    };
+> +  - |
+> +    mailbox@50000000 {
+> +      compatible =3D "microchip,miv-ihc-rtl-v2";
+> +      microchip,ihc-chan-disabled-mask=3D  /bits/ 16 <0>;
+> +      reg =3D <0x50000000 0x1C000>;
+> +      interrupt-parent =3D <&plic>;
+> +      interrupts =3D <180>, <179>, <178>;
+> +      interrupt-names =3D "hart-1", "hart-2", "hart-3";
+> +      #mbox-cells =3D <1>;
+> +    };
+> --=20
+> 2.34.1
+>=20
 
---=20
-Ard.
+--YivsFDfHFtw+N+Us
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuMhwAAKCRB4tDGHoIJi
+0ueGAQCjRtgOUFPYCV/NiX1IBYJRwc+sQaTW3AN/213MKFEm9gD9ELhr1G0y3nvJ
+A9fm9nCT5PQy4F0MwaegNptVjGbC+Qo=
+=L4tD
+-----END PGP SIGNATURE-----
+
+--YivsFDfHFtw+N+Us--
 
