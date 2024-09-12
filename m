@@ -1,137 +1,159 @@
-Return-Path: <linux-kernel+bounces-326529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B366A976993
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:51:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FD8E9769A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:52:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A8C6B21C15
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:51:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C32CE1C22758
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD981A4E7C;
-	Thu, 12 Sep 2024 12:51:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1C51A76DD;
+	Thu, 12 Sep 2024 12:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PaqTGese"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="hQ+9/jWR"
+Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6370C1E49F;
-	Thu, 12 Sep 2024 12:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33B31898E3
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 12:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726145461; cv=none; b=opZlApTqg14H51iswR65PfVkHWVLm1v7nFOiZDXTXaJB1CiveUoZa+Q7JQfom91912nM7M6c5lgQEqmAMtvx/NSKDSF6frAJ8vwvZhuwOdPN0/cV9nCKK/48DUrBuLN1QK661+f8t8A5myzgmh85Oq2ob0XmpodcZoJHbcCzFx8=
+	t=1726145504; cv=none; b=KSnDzai++0pbFI6akw82IJYa90IQwPDYVZ/JL92DRFSDaBFWEcC19levoB9W94RQjuYq9lcNgLxvJBz99h9L5bg9tRg6nMRX/oNc8uS2ovIR+VMovxQgkxSxJjZhhZ00/+2hVSuRo17yuLjJfJTinB/H2dTPnRHz12PCSzVjnVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726145461; c=relaxed/simple;
-	bh=rhGAFJLZdYULWmqugAH5q22T7v2IoB+sN5c6zKJc6ts=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PqytJ6MDGxgBdEcw+bfQGSoKLscr+j6FyPCIjDpVlbJyx4HE2C30KLqocgLGMVIx6n6gQJfqbq2TCNIRTWRkdQRUlppF0PPI8QrPFXpUG+EKQoJrQfh1BxlfJ7NJnLiKCm3AiSxgp8sbJik8Q+cLOHr5pAE1FxhtPh+2pXdFVIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PaqTGese; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7b0c9bbddb4so654588a12.3;
-        Thu, 12 Sep 2024 05:50:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726145459; x=1726750259; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qbl1iaUR2c4V+S7jU/mCx2/ogYw3sZGuzOxETHSFsSA=;
-        b=PaqTGeseY5RzNvbJJkjP5jlAz401rahZhQ6q5F7tRY/+iFPNowxetB5XYEY70W8DQP
-         a72srwk3DBKXovsWzfp4PBn8ZvFKR69+sOtZ9vzcqqIhCm/VQNtGBoUAjSIgX/u8TZHE
-         nFfvtQLNYNLIMBeSOM+/Hkpzcy24IfB6CRfVwUlh5Bj/t60b26laVp/6hrh0YI2Axq4p
-         skJmIDqqDvsik6xjONr/b35QDXjXWoGHEDshyOqvQZVFOxSLBURE/J0saicjAx9l5OU5
-         +xcqcoGtR3G9X5Z4pedAwl1kxyidCJ0J1po2K+hyD4pbXv+wewNK98L8nZ3KyiVNShtX
-         CeKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726145459; x=1726750259;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Qbl1iaUR2c4V+S7jU/mCx2/ogYw3sZGuzOxETHSFsSA=;
-        b=PTGWwPHWnVaytj/z0DqtqBJg60jNb35f9T+iSSM4koXMg128hiyXI7CvrNCF3o8E2b
-         sGLKBtQxe8Ou9qktDPj1uaGpC+HwK+90/kHX236FGBQd36GRVbM+/hIPSjCks1z4/evu
-         g3Kv0D679F9ypAt6zRcOAWnOSf8jvaX8HBMUmlA546eYTeuXo75v5G6wFRJB5V72lXRB
-         vQQa36Ccxdmg+5JpGkHM0reBFu1ab28Efuf2U2ktatMmmPd0ISaEW2B73g23MFPcgCy6
-         Z+PVggHoV/c5H9oa00+Jf1QtLg71wshggB1RqtYFYzyeWMwuLAcjEHdsraz6c0bDtdH+
-         q9QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnwpS8Kx/nHHYrTsmg8ZifXwQvIAkUzIYM6vqpuP0KGK6L0KtMPbPM7dDWhgUGCsCBi7X2S57EKvA=@vger.kernel.org, AJvYcCWwHU9gNuqPcMvLSDXCg88i7Y1bTe8oKd6nurvhHGpgbcN0NCW/qz/D+vSlg3GuwV0FYxJFZwinuzWiWeQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA64rbdkrt5t3E7Y3/fyBiNpMUmtLfi//8MOZO8XfglGWHdJH7
-	w+QOzc2N+UfjfsjSCfQ4wN3QnDPuYkHiKGhXE2lUZFpCpOAE4SZu
-X-Google-Smtp-Source: AGHT+IHSbW/nMzRUM6QhfvnsskqRV7tmDumVfuk+/7jl7+fnHIG6pfyTOXR3vpBb6JLSKFQn/vzQsQ==
-X-Received: by 2002:a05:6a20:e608:b0:1c8:b255:486a with SMTP id adf61e73a8af0-1cf761f9aa8mr3526683637.35.1726145458472;
-        Thu, 12 Sep 2024 05:50:58 -0700 (PDT)
-Received: from localhost.localdomain (111-240-84-197.dynamic-ip.hinet.net. [111.240.84.197])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc10fa99sm12477739a91.39.2024.09.12.05.50.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 05:50:58 -0700 (PDT)
-From: Min-Hua Chen <minhuadotchen@gmail.com>
-To: Thomas Renninger <trenn@suse.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"John B. Wyatt IV" <jwyatt@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Cc: Min-Hua Chen <minhuadotchen@gmail.com>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH for-next] pm: cpupower: rename raw_pylibcpupower.i
-Date: Thu, 12 Sep 2024 20:50:28 +0800
-Message-ID: <20240912125030.19809-1-minhuadotchen@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726145504; c=relaxed/simple;
+	bh=+s4cuWV9FCCV9kiSXQStJDVMi0ZGdbkjYyuMGpZLoOo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pnI6R0HXVbfRmQm/e8ApAt+KuRU0F6pB6lQpG7lm5B4ybzTekujH/41HCsfD9Pha2rnK0VbZgw7L/PCn7/p1+tlJ7PulNxIp9HdxT322NgpAT6z+MRtbYkc9CnClDPrkv0yvoIeWWRqMlafIGf2uk46qWY0t+0I0RMnhjn/90Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=hQ+9/jWR; arc=none smtp.client-ip=84.16.66.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X4HPg4kqyzFTL;
+	Thu, 12 Sep 2024 14:51:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1726145495;
+	bh=MzPZaWCk9rvJ+Krjp/BYLyr4/9IRkRBCVaUs47HsSns=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hQ+9/jWRLB6fSjcbjyJ3ZgZVtnDYdvGoFn+QSDDoakC0TJ69jaA4gLd4qOLT/it9C
+	 tiv9FfMHRA9QPK01WiUD8ekW4ySx3aGif2Y7zK/TbJjRC7fp9/IO5IfiBN9QPP/7mI
+	 ilAhkYql4sFyiQK1syEp15heZnGiMbVlmMHAukCY=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4X4HPf1L79zPxq;
+	Thu, 12 Sep 2024 14:51:34 +0200 (CEST)
+Date: Thu, 12 Sep 2024 14:51:24 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] landlock: Signal scoping support
+Message-ID: <20240912.eix6ith8Zuxa@digikod.net>
+References: <cover.1725657727.git.fahimitahera@gmail.com>
+ <20240911.BieLu8DooJiw@digikod.net>
+ <ZuIynFIRt475uBP5@tahera-OptiPlex-5000>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZuIynFIRt475uBP5@tahera-OptiPlex-5000>
+X-Infomaniak-Routing: alpha
 
-This RFC patch is actually bug report. All *.i file will be
-removed by 'make mrproper', including raw_pylibcpupower.i, added
-by commit: 338f490e07bc ("pm:cpupower: Add SWIG bindings files for libcpupower")
+On Wed, Sep 11, 2024 at 06:15:24PM -0600, Tahera Fahimi wrote:
+> On Wed, Sep 11, 2024 at 08:17:04PM +0200, Mickaël Salaün wrote:
+> > We should also have the same tests as for scoped_vs_unscoped variants.
+> Hi, 
+> 
+> Thanks for the review, I will add them soon.
+> > I renamed them from the abstract unix socket patch series, please take a
+> > look:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
+> Wonderful! Thank you :)
+> 
+> > I'll send more reviews tomorrow and I'll fix most of them in my -next
+> > branch (WIP), except for the hook_file_send_sigiotask tests and these
+> > scoped_vs_unscoped variants that you should resolve.
+> I will keep an eye on reviews. What parts of hook_file_send_sigiotask
+> would need changes?
 
-We can reproduce the error by performing the following command:
-cd linux-next
-make mrproper
-cd tools/power/cpupower/bindings/python
-make
+The file_send_sigiotask hook was not fully covered.  It's OK now, I
+reworked this test to fix that with four variants.
 
-We will get an error message:
-make: *** No rule to make target 'raw_pylibcpupower.i', needed by 'raw_pylibcpupower_wrap.c'.  Stop.
+You still need to work on the scoped_vs_unscoped tests for signaling
+though.
 
-Renaming the raw_pylibcpupower.i is just a workaround to fix the
-issue above.
-
-Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
----
- tools/power/cpupower/bindings/python/Makefile                 | 4 ++--
- .../python/{raw_pylibcpupower.i => raw_pylibcpupower.if}      | 0
- 2 files changed, 2 insertions(+), 2 deletions(-)
- rename tools/power/cpupower/bindings/python/{raw_pylibcpupower.i => raw_pylibcpupower.if} (100%)
-
-diff --git a/tools/power/cpupower/bindings/python/Makefile b/tools/power/cpupower/bindings/python/Makefile
-index dc09c5b66ead..de872a1b80d3 100644
---- a/tools/power/cpupower/bindings/python/Makefile
-+++ b/tools/power/cpupower/bindings/python/Makefile
-@@ -20,13 +20,13 @@ _raw_pylibcpupower.so: raw_pylibcpupower_wrap.o
- raw_pylibcpupower_wrap.o: raw_pylibcpupower_wrap.c
- 	$(CC) -fPIC -c raw_pylibcpupower_wrap.c $(PY_INCLUDE)
- 
--raw_pylibcpupower_wrap.c: raw_pylibcpupower.i
-+raw_pylibcpupower_wrap.c: raw_pylibcpupower.if
- ifeq ($(HAVE_SWIG),0)
- 	$(error "swig was not found. Make sure you have it installed and in the PATH to generate the bindings.")
- else ifeq ($(HAVE_PYCONFIG),0)
- 	$(error "python-config was not found. Make sure you have it installed and in the PATH to generate the bindings.")
- endif
--	swig -python raw_pylibcpupower.i
-+	swig -python raw_pylibcpupower.if
- 
- # Will only clean the bindings folder; will not clean the actual cpupower folder
- clean:
-diff --git a/tools/power/cpupower/bindings/python/raw_pylibcpupower.i b/tools/power/cpupower/bindings/python/raw_pylibcpupower.if
-similarity index 100%
-rename from tools/power/cpupower/bindings/python/raw_pylibcpupower.i
-rename to tools/power/cpupower/bindings/python/raw_pylibcpupower.if
--- 
-2.43.0
-
+> 
+> > On Fri, Sep 06, 2024 at 03:30:02PM -0600, Tahera Fahimi wrote:
+> > > This patch series adds scoping mechanism for signals.
+> > > Closes: https://github.com/landlock-lsm/linux/issues/8
+> > > 
+> > > Problem
+> > > =======
+> > > 
+> > > A sandboxed process is currently not restricted from sending signals
+> > > (e.g. SIGKILL) to processes outside the sandbox since Landlock has no
+> > > restriction on signals(see more details in [1]).
+> > > 
+> > > A simple way to apply this restriction would be to scope signals the
+> > > same way abstract unix sockets are restricted.
+> > > 
+> > > [1]https://lore.kernel.org/all/20231023.ahphah4Wii4v@digikod.net/
+> > > 
+> > > Solution
+> > > ========
+> > > 
+> > > To solve this issue, we extend the "scoped" field in the Landlock
+> > > ruleset attribute structure by introducing "LANDLOCK_SCOPED_SIGNAL"
+> > > field to specify that a ruleset will deny sending any signals from
+> > > within the sandbox domain to its parent(i.e. any parent sandbox or
+> > > non-sandbox processes).
+> > > 
+> > > Example
+> > > =======
+> > > 
+> > > Create a sansboxed shell and pass the character "s" to LL_SCOPED:
+> > > LL_FD_RO=/ LL_FS_RW=. LL_SCOPED="s" ./sandboxer /bin/bash
+> > > Try to send a signal(like SIGTRAP) to a process ID <PID> through:
+> > > kill -SIGTRAP <PID>
+> > > The sandboxed process should not be able to send the signal.
+> > > 
+> > > Previous Versions
+> > > =================
+> > > v3:https://lore.kernel.org/all/cover.1723680305.git.fahimitahera@gmail.com/
+> > > v2:https://lore.kernel.org/all/cover.1722966592.git.fahimitahera@gmail.com/
+> > > v1:https://lore.kernel.org/all/cover.1720203255.git.fahimitahera@gmail.com/
+> > > 
+> > > Tahera Fahimi (6):
+> > >   landlock: Add signal scoping control
+> > >   selftest/landlock: Signal restriction tests
+> > >   selftest/landlock: Add signal_scoping_threads test
+> > >   selftest/landlock: Test file_send_sigiotask by sending out-of-bound
+> > >     message
+> > >   sample/landlock: Support sample for signal scoping restriction
+> > >   landlock: Document LANDLOCK_SCOPED_SIGNAL
+> > > 
+> > >  Documentation/userspace-api/landlock.rst      |  22 +-
+> > >  include/uapi/linux/landlock.h                 |   3 +
+> > >  samples/landlock/sandboxer.c                  |  17 +-
+> > >  security/landlock/fs.c                        |  17 +
+> > >  security/landlock/fs.h                        |   6 +
+> > >  security/landlock/limits.h                    |   2 +-
+> > >  security/landlock/task.c                      |  59 +++
+> > >  .../selftests/landlock/scoped_signal_test.c   | 371 ++++++++++++++++++
+> > >  .../testing/selftests/landlock/scoped_test.c  |   2 +-
+> > >  9 files changed, 486 insertions(+), 13 deletions(-)
+> > >  create mode 100644 tools/testing/selftests/landlock/scoped_signal_test.c
+> > > 
+> > > -- 
+> > > 2.34.1
+> > > 
+> 
+> 
 
