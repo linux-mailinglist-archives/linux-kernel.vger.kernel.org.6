@@ -1,182 +1,199 @@
-Return-Path: <linux-kernel+bounces-326591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84E21976A80
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:26:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EED95976A82
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 312CE1F235EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:26:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43A88B24CAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:27:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA451AD271;
-	Thu, 12 Sep 2024 13:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FFE1B12C2;
+	Thu, 12 Sep 2024 13:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="F7l0i4qe";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="F7l0i4qe"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kWEiVs3h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1961AD241;
-	Thu, 12 Sep 2024 13:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918D31AB6FA;
+	Thu, 12 Sep 2024 13:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726147566; cv=none; b=XlGmQLebxOgGpMcNt2wk1OMplUIo/raCmQtlo4wkkKmlcmJunl4lmmcIRfZPTJcoJ72kQ7+EqG+G42pSfSQBHJ4QhtBO8hLsmcGB5lz3fHrA6zn6FV2CNZupgqsJ+PLogUIdlx5C4/zzGDHDnbfITtu0+QHxHsCyNTjfQ+VjLcE=
+	t=1726147593; cv=none; b=OaJlf3IPDzmrrHYt8QMnHN2gKc6YkHbqg4s3TFiDeNTNpHQZcQIFksroUX++IwQ6ue1sA3KOXGR1WptLzMNNBmWhYaubieTHWAJ6kI4ODbTpo3CVLNEpmDIdwL2PGAodc54PBdnAlRT1Y79yAUeEbWvcHtBainvU/lWReuRlvhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726147566; c=relaxed/simple;
-	bh=kwRh1esz7VeQ7gbJNWGtqcN88SglDE5yRSb/KPxUqBY=;
+	s=arc-20240116; t=1726147593; c=relaxed/simple;
+	bh=56VNRP9yirKGQXM7dVRaf/DDmXDW3ejUxVpTMGF5LIo=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=FaUWA4PZn+4eMZeq43y18+ebaqZse8AbGmzliqyVdwBHycCm/AFPJqYj2zVmcSUPcnJtKOaE1YB4Gv8H59BEYq3QnlMFwXxXygP1QkQkZ0t7jgvhiC0QhFxViXp28Evem4QUZHjaDQY1DBkA7IhVRVB8KmcuIc71gPktPZWOU3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=F7l0i4qe; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=F7l0i4qe; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1726147563;
-	bh=kwRh1esz7VeQ7gbJNWGtqcN88SglDE5yRSb/KPxUqBY=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=F7l0i4qeFlQoFFpSdEaf2wx4dj7Uw+zt2i3F9XiAx4DmChSlOpdAipb+WzT2VVCTF
-	 uJSQM1Tfp+g+8E9AjENkZdrtRfHZRKdf6YEamNKr7a6n4mAzoOvyIjBuvcMdjX32YK
-	 xNperrr8aK6M27LU9imXDek8KhRzv6GA2sqZ5a04=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 621681286B75;
-	Thu, 12 Sep 2024 09:26:03 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id nk-URM0lINK2; Thu, 12 Sep 2024 09:26:03 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1726147563;
-	bh=kwRh1esz7VeQ7gbJNWGtqcN88SglDE5yRSb/KPxUqBY=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=F7l0i4qeFlQoFFpSdEaf2wx4dj7Uw+zt2i3F9XiAx4DmChSlOpdAipb+WzT2VVCTF
-	 uJSQM1Tfp+g+8E9AjENkZdrtRfHZRKdf6YEamNKr7a6n4mAzoOvyIjBuvcMdjX32YK
-	 xNperrr8aK6M27LU9imXDek8KhRzv6GA2sqZ5a04=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 782B212869D8;
-	Thu, 12 Sep 2024 09:26:02 -0400 (EDT)
-Message-ID: <c47b129aeb95094aace5b174fc6d81bf0a7ecfbf.camel@HansenPartnership.com>
-Subject: Re: [regression] significant delays when secureboot is enabled
- since 6.10
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>, Roberto Sassu
-	 <roberto.sassu@huaweicloud.com>, Linux regressions mailing list
-	 <regressions@lists.linux.dev>
-Cc: keyrings@vger.kernel.org, "linux-integrity@vger.kernel.org"
-	 <linux-integrity@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Pengyu Ma <mapengyu@gmail.com>
-Date: Thu, 12 Sep 2024 09:26:01 -0400
-In-Reply-To: <D44C19QB8IK1.OMUJP7N91HRN@kernel.org>
-References: <0b4a5a86-a9f6-42d1-a9ba-ec565b336d3a@leemhuis.info>
-	 <92fbcc4c252ec9070d71a6c7d4f1d196ec67eeb0.camel@huaweicloud.com>
-	 <D42LZPLE8HR3.2UTNOI9CYZPIR@kernel.org>
-	 <D42M6OE94RLT.6EZSZLBTX437@kernel.org>
-	 <663d272617d1aead08077ad2b72929cbc226372a.camel@HansenPartnership.com>
-	 <D42N17MFTEDM.3E6IK034S26UT@kernel.org>
-	 <f554031343039883068145f9f4777277e490dc05.camel@huaweicloud.com>
-	 <10ae7b8592af7bacef87e493e6d628a027641b8d.camel@HansenPartnership.com>
-	 <D44C19QB8IK1.OMUJP7N91HRN@kernel.org>
+	 Content-Type:MIME-Version; b=Myinsjb9Uafb4MXzHcTPBMSOE+QfTxjKbrH0l8kXWCEvCMS4JuqC9kw8cvQ8oEfp0IHR49I2k8KMxDemDtCOJrV+X5BccY/oz0tBmE9iOpAeeOE9xUh4Dy12i+9PEflrYjZeZq0OXnQ+lb1VXDG+ZKQVXBfC1l7XcI3WQOrxQOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kWEiVs3h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35EB7C4CEC3;
+	Thu, 12 Sep 2024 13:26:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726147590;
+	bh=56VNRP9yirKGQXM7dVRaf/DDmXDW3ejUxVpTMGF5LIo=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=kWEiVs3h1mpiBd5bY8DCyYVYD1BBokDBMnL2hFLX9jXXrdQ+bVshHpf2plBZ1LKW7
+	 JYLFjktvdzjJiePlKmacLMExMg92ggWDOX1kMcdFNZIwmDReySGUyMeEIbswCsOcie
+	 MwLmPgVPJMCB3Q4mFvdYxKI8ILnl1sHFXYLVX8n89k5vzE2U1ua+VLuZoKSvYuq9VQ
+	 Kyup2t2M5cU+F5Bfw1LwPJ7zguEP7CnQ+fEOV4aKCTGvnMGUzfydOyz+378U0QG+7j
+	 r6ncsf0ZS3R7piuRsBZB/OHehBZgGnKeG/NGsYojg1GC0Y8c/tRx9nnFt3CHVP0GxU
+	 8KTOYGbV/pFog==
+Message-ID: <284fd6a654eaec5a45b78c9ee88cde7b543e2278.camel@kernel.org>
+Subject: Re: [PATCH] timekeeping: move multigrain ctime floor handling into
+ timekeeper
+From: Jeff Layton <jlayton@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>, John Stultz <jstultz@google.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Thomas Gleixner
+ <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel test
+ robot <oliver.sang@intel.com>
+Date: Thu, 12 Sep 2024 09:26:27 -0400
+In-Reply-To: <b71c161a-8b43-400e-8c61-caac80e685a8@app.fastmail.com>
+References: <20240911-mgtime-v1-1-e4aedf1d0d15@kernel.org>
+	 <CANDhNCpmZO1LTCDXzi-GZ6XkvD5w3ci6aCj61-yP6FJZgXj2RA@mail.gmail.com>
+	 <d6fe52c2-bc9e-424f-a44e-cfc3f4044443@app.fastmail.com>
+	 <e4d922c8d0a06de08b91844860c76936bd5fa03a.camel@kernel.org>
+	 <1484d32b-ab0f-48ff-998a-62feada58300@app.fastmail.com>
+	 <c9ed7670a0b35b212991b7ce4735cb3dfaae1fda.camel@kernel.org>
+	 <b71c161a-8b43-400e-8c61-caac80e685a8@app.fastmail.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
+ n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
+ egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
+ T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
+ 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
+ YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
+ VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
+ cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
+ CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
+ LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
+ MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
+ gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
+ 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
+ R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
+ rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
+ ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
+ Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
+ lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
+ iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
+ QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
+ YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
+ wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
+ LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
+ 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
+ c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
+ LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
+ TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
+ 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
+ xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
+ +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
+ Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
+ BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
+ N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
+ naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
+ RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
+ FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
+ 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
+ P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
+ aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
+ T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
+ dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
+ 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
+ kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
+ uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
+ AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
+ FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
+ 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
+ sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
+ qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
+ sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
+ IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
+ UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
+ dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
+ EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
+ apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
+ M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
+ dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
+ 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
+ jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
+ flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
+ BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
+ AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
+ 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
+ HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
+ 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
+ uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
+ DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
+ CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
+ Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
+ AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
+ aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
+ f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-On Thu, 2024-09-12 at 16:16 +0300, Jarkko Sakkinen wrote:
-> On Wed Sep 11, 2024 at 3:21 PM EEST, James Bottomley wrote:
-> > On Wed, 2024-09-11 at 10:53 +0200, Roberto Sassu wrote:
-[...]
-> > > I made few measurements. I have a Fedora 38 VM with TPM
-> > > passthrough.
-> > > 
-> > > Kernels: 6.11-rc2+ (guest), 6.5.0-45-generic (host)
-> > > 
-> > > QEMU:
-> > > 
-> > > rc  qemu-kvm                                          1:4.2-
-> > > 3ubuntu6.27
-> > > ii  qemu-system-x86                                   1:6.2+dfsg-
-> > > 2ubuntu6.22
-> > > 
-> > > 
-> > > TPM2_PT_MANUFACTURER:
-> > >   raw: 0x49465800
-> > >   value: "IFX"
-> > > TPM2_PT_VENDOR_STRING_1:
-> > >   raw: 0x534C4239
-> > >   value: "SLB9"
-> > > TPM2_PT_VENDOR_STRING_2:
-> > >   raw: 0x36373000
-> > >   value: "670"
-> > > 
-> > > 
-> > > No HMAC:
-> > > 
-> > > # tracer: function_graph
-> > > #
-> > > # CPU  DURATION                  FUNCTION CALLS
-> > > # |     |   |                     |   |   |   |
-> > >  0)               |  tpm2_pcr_extend() {
-> > >  0)   1.112 us    |    tpm_buf_append_hmac_session();
-> > >  0) # 6360.029 us |    tpm_transmit_cmd();
-> > >  0) # 6415.012 us |  }
-> > > 
-> > > 
-> > > HMAC:
-> > > 
-> > > # tracer: function_graph
-> > > #
-> > > # CPU  DURATION                  FUNCTION CALLS
-> > > # |     |   |                     |   |   |   |
-> > >  1)               |  tpm2_pcr_extend() {
-> > >  1)               |    tpm2_start_auth_session() {
-> > >  1) * 36976.99 us |      tpm_transmit_cmd();
-> > >  1) * 84746.51 us |      tpm_transmit_cmd();
-> > >  1) # 3195.083 us |      tpm_transmit_cmd();
-> > >  1) @ 126795.1 us |    }
-> > >  1)   2.254 us    |    tpm_buf_append_hmac_session();
-> > >  1)   3.546 us    |    tpm_buf_fill_hmac_session();
-> > >  1) * 24356.46 us |    tpm_transmit_cmd();
-> > >  1)   3.496 us    |    tpm_buf_check_hmac_response();
-> > >  1) @ 151171.0 us |  }
-> > 
-> > Well, unfortunately, that tells us that it's the TPM itself that's
-> > taking the time processing the security overhead.  The ordering of
-> > the commands in tpm2_start_auth_session() shows
-> > 
-> >  37ms for context restore of null key
-> >  85ms for start session with encrypted salt
-> >   3ms to flush null key
-> > -----
-> > 125ms
-> > 
-> > If we context save the session, we'd likely only bear a single 37ms
-> > cost to restore it (replacing the total 125ms).  However, there's
-> > nothing we can do about the extend execution going from 6ms to
-> > 24ms, so I could halve your current boot time with security enabled
-> > (it's currently 149ms, it would go to 61ms, but it's still 10x
-> > slower than the unsecured extend at 6ms)
-> > 
-> > James
-> 
-> I'll hold for better benchmarks.
+On Thu, 2024-09-12 at 13:17 +0000, Arnd Bergmann wrote:
+> On Thu, Sep 12, 2024, at 11:34, Jeff Layton wrote:
+> > On Thu, 2024-09-12 at 10:01 +0000, Arnd Bergmann wrote:
+> > > On Wed, Sep 11, 2024, at 20:43, Jeff Layton wrote:
+> > >=20
+> > > That way you avoid the atomic64_try_cmpxchg()
+> > > inode_set_ctime_current(), making that case faster,
+> > > and avoid all overhead in coarse_ctime() unless you
+> > > use both types during the same tick.
+> > >=20
+> >=20
+> > With the current code we only get a fine grained timestamp iff:
+> >=20
+> > 1/ the timestamps have been queried (a'la I_CTIME_QUERIED)
+> > 2/ the current coarse-grained or floor time would not show a change in
+> > the ctime
+> >=20
+> > If we do what you're suggesting above, as soon as one task sets the
+> > flag, anyone calling current_time() will end up getting a brand new
+> > fine-grained timestamp, even when the current floor time would have
+> > been fine.
+>=20
+> Right, I forgot about this part of your work, the=20
+> I_CTIME_QUERIED logic definitely has to stay.
+>=20
+> > That means a lot more calls into ktime_get_real_ts64(), at least until
+> > the timer ticks, and would probably mean a lot of extra journal
+> > transactions, since those timestamps would all be distinct from one
+> > another and would need to go to disk more often.
+>=20
+> I guess some of that overhead would go away if we just treated
+> tk_xtime() as the floor value without an additional cache,
+> and did the comparison against inode->i_ctime inside of
+> a new ktime_get_real_ts64_newer_than(), but there is still the
+> case of a single inode getting updated a lot, and it would
+> break the ordering of updates between inodes.
+>=20
 
-Well, yes, I'd like to see this for a variety of TPMs.
+Yes, and the breaking of ordering is why we had to revert the last set,
+so that's definitely no good.
 
-This one clearly shows it's the real time wait for the TPM (since it
-dwarfs the CPU time calculation there's not much optimization we can do
-on the kernel end).  The one thing that's missing in all of this is
-what was the TPM?  but even if it's an outlier that's really bad at
-crypto what should we do?  We could have a blacklist that turns off the
-extend hmac (or a whitelist that turns it on), but we can't simply say
-too bad you need a better TPM.
+I think your suggestion about using a tuple of the sequence and the
+delta should work. The trick is that we need to do the fetch and the
+cmpxchg of the floor tuple inside the read_seqcount loop. Zeroing it
+out can be done with write_once(). If we get a spurious update to the
+floor while zeroing then it's no big deal since everything would just
+loop and do it again.
 
-James
+I'll plan to hack something together later today and see how it does.
 
+Thanks for the help so far!
+--=20
+Jeff Layton <jlayton@kernel.org>
 
