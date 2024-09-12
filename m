@@ -1,67 +1,73 @@
-Return-Path: <linux-kernel+bounces-327162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4960977156
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:19:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58FB0977154
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:19:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E6B81F24DA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:19:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F78E1F24E38
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2341C32E5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458B01C32E4;
 	Thu, 12 Sep 2024 19:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="LmAG0Uum"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF991C2DC2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 198081C0DF2;
 	Thu, 12 Sep 2024 19:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726168393; cv=none; b=hhOWVWxYBRd5TUz4sooaNGNeH7wj5WBLpGzB9fWsr5KJeNFIZ7JBYpbiHwrklCpmyIZ+N0CGySzlmJkNuRTc0Z0hFH1/wVzOnkOSSKVE9rvIL4OEmuApYRmA3QtZHytXkFKHjvx4mYki9CQBlt5xkz4XEGY0oYqu3KEav4rNCWE=
+	t=1726168392; cv=none; b=Cyw1EdJe9cBFE6NZpUP26Wtv2K8XHk27Dw4w6V/RJCNNeBbm3z/ud66IfLr1wxOwkXkFu+gvnA/AJGiMus85WTnEcp8fvOk6Hu/GS3tDHU8MlkEzDVW28kxF5UWQyB1sqU0T2y/t1ITkqokCUUUoBboSdi2cECjiS9/2CWeRgb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726168393; c=relaxed/simple;
-	bh=yHFRb8bX8hM6uJBLmW2HEQiO92SILpa8Lwpt0NwK9mE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=hTOgVGy54u0NLwQeZTpeBy/Xc1hpy6U9AK/GrvQKfaWEWofhquH//3sM7LqVHhnEeoJgwuvPK3SLTPj+ht3AZP9vqqwMnk1Prjv0xQhysN8c58w2Zvct3p/LGRjszRLwKroBgf0ojXumHqnQpp6w4KWfybhVnBTZZnwGuOmyuaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=LmAG0Uum; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 249AF60007;
-	Thu, 12 Sep 2024 19:13:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1726168388;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3XbDAFIYWOpDf3ZnvtGpz/tr6vdDYFyvODcLblGyUz4=;
-	b=LmAG0Uumy+pzxdRemWcJZnhzrBS14qCGI9iW4PzzjlsYJcExHrzujLCwEsmAnCuOVInMbw
-	FSe+CBAo4PN2BGOcTdmtQDqnKs8qdqzK0SynIEDSp+riEDU11YgWN/YI+KoFLENLrn9GZH
-	Pvj19z6zwrNlgf8GDsckrz8VKZs+mPHQUi8KL7LovTME5NSETwHpq++Mmca9+M1ROeyaA1
-	RnkVy/N/vCPILCQcIw+ZQky8EMsb6+cx/kBVwWI8HkN0c1/pVmHjC9AuO2rb3cuydUG6yX
-	QKUE4PLQ3Z11IEYw+L87bFfyE7xS4ZTpbOmBCF76f624Fkr3KAd5Vv4WlbtyDQ==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
-Cc: Hugh Dickins <hughd@google.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
-  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org,  kernel-dev@igalia.com,  Daniel Rosenberg
- <drosen@google.com>,  smcv@collabora.com,  Christoph Hellwig <hch@lst.de>,
-  Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH v4 06/10] libfs: Export generic_ci_ dentry functions
-In-Reply-To: <20240911144502.115260-7-andrealmeid@igalia.com>
- (=?utf-8?Q?=22Andr=C3=A9?=
-	Almeida"'s message of "Wed, 11 Sep 2024 11:44:58 -0300")
-References: <20240911144502.115260-1-andrealmeid@igalia.com>
-	<20240911144502.115260-7-andrealmeid@igalia.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
-Date: Thu, 12 Sep 2024 15:13:05 -0400
-Message-ID: <87r09ok7ni.fsf@mailhost.krisman.be>
+	s=arc-20240116; t=1726168392; c=relaxed/simple;
+	bh=WRju272pTZ7NhkWxRs310l0StzvgQIROwLsQfYUxzYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FWBcigABLI91WcXx2gBNeZcbdnCqg6E3D6vCfIdlHXznW8llKnjW6Rd+Li5JQ+VCkFSB1qDzU5spOciJ3aIbEj6bywn4UFnCuza1CjeTeMld7/SJ8PRTb+7ZY/1aYMpqXSv5hYIOTXryYRzTI0EL4gL5FFQQOH49t8MJcBsp9pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8a897bd4f1so13014166b.3;
+        Thu, 12 Sep 2024 12:13:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726168389; x=1726773189;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5g7HdhRWtGfViUDG8qP5vBJy6BU5ARrq9CLb0k5rVYQ=;
+        b=gqeaw8T8P6mG+26/A8tFHJf2WWo47LCvaW8KbKrTyO6ub8UhiQ6LBhjjQPESUM+ABg
+         liM5bAQl7kWm7IeesXpDaB298sPer/wu+KoufE7hi8qdKB3uAYTDlOjT1wyHmRlGNr1m
+         gRP//1Ba1Ne1SYo/0+cXY0BSjJWaiaISNLCcNCWFugThScPoDpPtfuTsxi9Y/xwZaE+M
+         KLywFBRff1xMJqDmg/hSuzdjrodwYm0HV2VcRpipckzgy/YqD/ASdzOx+XOs5xN/BNsb
+         tRCCuX8lQIDvabL2HxelLQUAkujbzRe6Cn9DqvkFv04OMPyAqOKc1dKU6WBBl35Bq4IA
+         evxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUL8b7xiwnKeOup0fLF2wsvRM0wwUQpdJ2JDQTttyeCMZCcbL+wZwenbIeZpUQWRABTCpwFF0Tg@vger.kernel.org, AJvYcCUhNAHA8Qe3CGHd/fbiG/XpeX1aYBM6bCjr3am3MgjS8cOKhGf8HHkuSqyepXuVRXeAF6PGLCXiomszf88=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVVzLm6UPksaHp4ArWH/OB7f/U4ALHLAQxRoRZP/djnKv0eCII
+	bhw1zw6OrLU0BD14jrsrVG2jT1fYa7SnLnsKpId7ZLBrdrKG8TFu
+X-Google-Smtp-Source: AGHT+IE0vWwcjZwVgBj4i9N5XnLPwLYvJcD93FlB/F/gpm94SJuKTney/6WPiFYHCW0wudiWgQ87xQ==
+X-Received: by 2002:a17:906:478c:b0:a86:8863:2bf0 with SMTP id a640c23a62f3a-a9048044a0bmr7346966b.48.1726168388390;
+        Thu, 12 Sep 2024 12:13:08 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-112.fbsv.net. [2a03:2880:30ff:70::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d259f56f6sm767484566b.81.2024.09.12.12.13.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 12:13:07 -0700 (PDT)
+Date: Thu, 12 Sep 2024 12:13:05 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Maksym Kutsevol <max@kutsevol.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 2/2] netcons: Add udp send fail statistics to
+ netconsole
+Message-ID: <20240912-optimistic-tourmaline-snail-1e5aac@leitao>
+References: <20240912173608.1821083-1-max@kutsevol.com>
+ <20240912173608.1821083-2-max@kutsevol.com>
+ <20240912-honest-industrious-skua-9902c3@leitao>
+ <CAO6EAnWOrzOhHNURLct1tsxLL_gaNT+nWttTk4oPcD66h-xAZg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,94 +75,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: gabriel@krisman.be
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAO6EAnWOrzOhHNURLct1tsxLL_gaNT+nWttTk4oPcD66h-xAZg@mail.gmail.com>
 
-Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
+On Thu, Sep 12, 2024 at 01:58:12PM -0400, Maksym Kutsevol wrote:
+> Hey Breno,
+> Thanks for looking into this.
+> 
+> On Thu, Sep 12, 2024 at 1:49 PM Breno Leitao <leitao@debian.org> wrote:
+> >
+> > Hello Maksym,
+> >
+> > Thanks for the patch, it is looking good. A few nits:
+> >
+> > On Thu, Sep 12, 2024 at 10:28:52AM -0700, Maksym Kutsevol wrote:
+> > > +/**
+> > > + * netpoll_send_udp_count_errs - Wrapper for netpoll_send_udp that counts errors
+> > > + * @nt: target to send message to
+> > > + * @msg: message to send
+> > > + * @len: length of message
+> > > + *
+> > > + * Calls netpoll_send_udp and classifies the return value. If an error
+> > > + * occurred it increments statistics in nt->stats accordingly.
+> > > + * Only calls netpoll_send_udp if CONFIG_NETCONSOLE_DYNAMIC is disabled.
+> > > + */
+> > > +static void netpoll_send_udp_count_errs(struct netconsole_target *nt, const char *msg, int len)
+> > > +{
+> > > +     int result = netpoll_send_udp(&nt->np, msg, len);
+> >
+> > Would you get a "variable defined but not used" type of eror if
+> > CONFIG_NETCONSOLE_DYNAMIC is disabled?
+> >
+> Most probably yes, I'll check. If so, I'll add __maybe_unused in the
+> next iteration.
+> 
+> > > +
+> > > +     if (IS_ENABLED(CONFIG_NETCONSOLE_DYNAMIC)) {
+> > > +             if (result == NET_XMIT_DROP) {
+> > > +                     u64_stats_update_begin(&nt->stats.syncp);
+> > > +                     u64_stats_inc(&nt->stats.xmit_drop_count);
+> > > +                     u64_stats_update_end(&nt->stats.syncp);
+> > > +             } else if (result == -ENOMEM) {
+> > > +                     u64_stats_update_begin(&nt->stats.syncp);
+> > > +                     u64_stats_inc(&nt->stats.enomem_count);
+> > > +                     u64_stats_update_end(&nt->stats.syncp);
+> > > +             }
+> > > +     }
+> >
+> > Would this look better?
+> >
+> >         if (IS_ENABLED(CONFIG_NETCONSOLE_DYNAMIC)) {
+> >                 u64_stats_update_begin(&nt->stats.syncp);
+> >
+> >                 if (result == NET_XMIT_DROP)
+> >                         u64_stats_inc(&nt->stats.xmit_drop_count);
+> >                 else if (result == -ENOMEM)
+> >                         u64_stats_inc(&nt->stats.enomem_count);
+> >                 else
+> >                         WARN_ONCE(true, "invalid result: %d\n", result)
+> >
+> >                 u64_stats_update_end(&nt->stats.syncp);
+> >         }
+> >
+> 1. It will warn on positive result
+> 2. If the last `else` is removed, it attempts locking when the result
+> is positive, so I'd not do it this way.
 
-> Export generic_ci_ dentry functions so they can be used by
-> case-insensitive filesystems that need something more custom than the
-> default one set by `struct generic_ci_dentry_ops`.
->
-> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
-> ---
-> Changes from v3:
-> - New patch
-> ---
->  fs/libfs.c         | 8 +++++---
->  include/linux/fs.h | 3 +++
->  2 files changed, 8 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/libfs.c b/fs/libfs.c
-> index 838524314b1b..c09254ecdcdd 100644
-> --- a/fs/libfs.c
-> +++ b/fs/libfs.c
-> @@ -1783,8 +1783,8 @@ bool is_empty_dir_inode(struct inode *inode)
->   *
->   * Return: 0 if names match, 1 if mismatch, or -ERRNO
->   */
-> -static int generic_ci_d_compare(const struct dentry *dentry, unsigned in=
-t len,
-> -				const char *str, const struct qstr *name)
-> +int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
-> +			 const char *str, const struct qstr *name)
->  {
->  	const struct dentry *parent;
->  	const struct inode *dir;
-> @@ -1827,6 +1827,7 @@ static int generic_ci_d_compare(const struct dentry=
- *dentry, unsigned int len,
->=20=20
->  	return utf8_strncasecmp(dentry->d_sb->s_encoding, name, &qstr);
->  }
-> +EXPORT_SYMBOL(generic_ci_d_compare);
->=20=20
->  /**
->   * generic_ci_d_hash - generic d_hash implementation for casefolding fil=
-esystems
-> @@ -1835,7 +1836,7 @@ static int generic_ci_d_compare(const struct dentry=
- *dentry, unsigned int len,
->   *
->   * Return: 0 if hash was successful or unchanged, and -EINVAL on error
->   */
-> -static int generic_ci_d_hash(const struct dentry *dentry, struct qstr *s=
-tr)
-> +int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str)
->  {
->  	const struct inode *dir =3D READ_ONCE(dentry->d_inode);
->  	struct super_block *sb =3D dentry->d_sb;
-> @@ -1850,6 +1851,7 @@ static int generic_ci_d_hash(const struct dentry *d=
-entry, struct qstr *str)
->  		return -EINVAL;
->  	return 0;
->  }
-> +EXPORT_SYMBOL(generic_ci_d_hash);
->=20=20
->  static const struct dentry_operations generic_ci_dentry_ops =3D {
->  	.d_hash =3D generic_ci_d_hash,
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 937142950dfe..4cd86d36c03d 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3386,6 +3386,9 @@ extern int generic_ci_match(const struct inode *par=
-ent,
->  			    const struct qstr *folded_name,
->  			    const u8 *de_name, u32 de_name_len);
->  bool generic_ci_validate_strict_name(struct inode *dir, struct qstr *nam=
-e);
-> +int generic_ci_d_hash(const struct dentry *dentry, struct qstr *str);
-> +int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
-> +			 const char *str, const struct qstr *name);
+Correct. We could replace the WARN_ONCE(true, ..) by
+WARN_ONCE(result,..), but this might look worse.
 
-guard these with:
+Let's keep the way you proposed.
 
-#if IS_ENABLED(CONFIG_UNICODE)
-#endif
+Other than that, the patch looks good.
 
+Thanks
 
->=20=20
->  static inline bool sb_has_encoding(const struct super_block *sb)
->  {
-
---=20
-Gabriel Krisman Bertazi
 
