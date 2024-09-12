@@ -1,93 +1,104 @@
-Return-Path: <linux-kernel+bounces-325947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5392097601C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:43:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 620A097601E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:45:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE1A5B2247F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:43:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1615A1F23A58
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1BB1885AD;
-	Thu, 12 Sep 2024 04:43:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9F0188917;
+	Thu, 12 Sep 2024 04:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="S4xAefH2"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFC8A47
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 04:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="poKFwwib"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E04188907;
+	Thu, 12 Sep 2024 04:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726116196; cv=none; b=IcokpLGljL66wPBqfN0nPXecmgIS+aY9psoX5LxwSFc2/9XLumWAUfekyl0P6KKsdEkGhjCrTJBnDx0AbMZAJwH8shJMcZ9+18tMg8PFN/BqzU3gP5mtmB8j3NwJ3bre1jtcJWaE85a+z9mNntcwAFP6BmEssXSBdkOqZJQWXi8=
+	t=1726116307; cv=none; b=bCzaSOfXi3WRjW5mNcNz/7qGA6y5bMqJ3z2Pi6KZ5bi67SLrTCCRTXwaH5RN4LSJ7oBafGH32cTFLN95yB0se5a+nKIiMEyZfAVqbicPjhPDtNpSB3OxIXNfk6vxGz6O0uJNDi3A9wTaUTuvN1bvKKWip8f+K/BniBuH1MQH+f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726116196; c=relaxed/simple;
-	bh=6Ydd8hYQ1veO1ghv2CSyamJtHmIaLU6XmKYs6l1JDiE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=S2h9IstK41k6/phqQnxTFFTN37KlZ4btA82R7NqMZDvrCOGwLI2XF5Exi6pnTnMF3fI4f8PMYW90H47q9wLCfx9YWuKnqsfhqnQ9nn84bUm5elR0jOz+skrNbHRLGCtyp29JTD3YL/FBNVRdJICbjZm7wOsBnQnqcSbdSW9zuHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=S4xAefH2; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=Y7fdCnqs5b3VnAoZWKrjPkiMNl58Ftcb2DcpAcXLHeg=;
-	b=S4xAefH2NIYAnnWpjrb0LnyqxL1lWGgoZWhkdXVOP2w5DynW7pvJLKkddWGJFK
-	Jqt3oo+vv9GikwnTQmTDetqwTUK3aDEmukjkcCxSXfUsyYYW92wp57EnDhtACk44
-	K1YCihvAWUnx6oFImuZVA0okHLYD5ETBYvBFC3tO8dSCg=
-Received: from localhost (unknown [120.26.85.94])
-	by gzga-smtp-mta-g3-1 (Coremail) with SMTP id _____wCHLfhAceJmmrkbAA--.2293S2;
-	Thu, 12 Sep 2024 12:42:41 +0800 (CST)
-Date: Thu, 12 Sep 2024 12:42:40 +0800
-From: Qianqiang Liu <qianqiang.liu@163.com>
-To: suravee.suthikulpanit@amd.com, will@kernel.org
-Cc: vasant.hegde@amd.com, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Should the return value of the rlookup_amd_iommu be checked?
-Message-ID: <ZuJxQKseMZjTjqdt@iZbp1asjb3cy8ks0srf007Z>
+	s=arc-20240116; t=1726116307; c=relaxed/simple;
+	bh=gtVEsIARHEIiguHv4gLh++VT4qhf9uwonDgcHKUX4ys=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=UFtHY+zHTCHAKyXg3O0z4W66NDFy4S9cxXjAB6mpvK0GJw2aVsS8OVQ870SmwsVGQEGQF8zOMlPGZo3y5iaNgmMYXL5ZruMAmSLpDhN1mdz7Y4EMr5tjzw6Ysz5goPlMGSFT8G8br5pkPWpN9Ebwb/6dAoh7hxhXtUTdSRs8Iy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=poKFwwib; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726116301;
+	bh=/flF3ej84KcIchlKhd618cIfXh9oVVq3n1ETpKUYZjI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=poKFwwib5Lmwrl00cXvkxBBQfuim5zTeU5mWY5hIkE7CzGigKj0d8ecoHjahqUntS
+	 KIwCJbGbIpLpOTnJf2WHX+OJm4s33b53zKooDIXxYiTD7mWE5ia6sxz+igbBGFs+To
+	 fwFDn377i5/8WXFG8JMddRfDsszJHkgphnFsXlbZ4Guu9+MHLaJEPyiw5NvExpMwll
+	 ZNQqiSg2wTPC7gluJDwo9AQy0Csb8YQ9L8yLBwKJrdYRij3FOsRlXHMQ93hUMs96O9
+	 2QEYNpr+eDHSCd4bQXKlvu+yDkkyYKo8k3q337SYUP7TbxVrfZDcNpn1GDNC+Ry6p1
+	 xfgrj4NXQ8dqA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X44cD1CbLz4x0K;
+	Thu, 12 Sep 2024 14:45:00 +1000 (AEST)
+Date: Thu, 12 Sep 2024 14:44:59 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+Cc: ARM <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the sound-asoc tree
+Message-ID: <20240912144459.634e3e09@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-CM-TRANSID:_____wCHLfhAceJmmrkbAA--.2293S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrtw17JF1kGr4UXrW7XFyUAwb_yoWfGFX_ur
-	ySvFy8Ww4rAw4UArWjqFn3Xr95Gw18ZFZY934rKF95Gw1Sqa1UuFWDXr42vrZ7GwnrJFn5
-	Jrn5J3ZxGF9xujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUepMKtUUUUU==
-X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiLwVYamVOGR9W6QAAsK
+Content-Type: multipart/signed; boundary="Sig_/OrvdbKrwX_7JCjPqqz/BXhf";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi,
+--Sig_/OrvdbKrwX_7JCjPqqz/BXhf
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I reviewed the following code:
+Hi all,
 
-1592 void amd_iommu_update_and_flush_device_table(struct protection_domain *domain)
-1593 {
-1594 	struct iommu_dev_data *dev_data;
-1595 
-1596 	list_for_each_entry(dev_data, &domain->dev_list, list) {
-1597 		struct amd_iommu *iommu = rlookup_amd_iommu(dev_data->dev); <-
-1598 
-1599 		set_dte_entry(iommu, dev_data); <-
-1600 		clone_aliases(iommu, dev_data->dev);
-1601 	}
-1602 
-1603 	list_for_each_entry(dev_data, &domain->dev_list, list)
-1604 		device_flush_dte(dev_data);
-1605 
-1606 	domain_flush_complete(domain);
-1607 }
+The following commit is also in the arm-soc tree as a different commit
+(but the same patch):
 
-The "rlookup_amd_iommu" function may return NULL, and the "set_dte_entry" function
-will call "get_dev_table" which will dereference the NULL pointer.
+  7817eb1ad353 ("ASoC: dt-bindings: cirrus,cs4271: Convert to dtschema")
 
-Is this an issue that may cause panic? Or will "rlookup_amd_iommu" function never
-return NULL?
+This is commit
 
--- 
-Best,
-Qianqiang Liu
+  cf700e558e1d ("ASoC: dt-bindings: cirrus,cs4271: Convert to dtschema")
 
+from the arm-soc tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/OrvdbKrwX_7JCjPqqz/BXhf
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbiccsACgkQAVBC80lX
+0GzM0Af/Yk51Mhtwg2Cb3rdEFZRT4EO53QgdAKiWAbV4CwynpQYxS9C6IfVqNUxT
+NqMAd6yK8IS9gAW6rMmyrpmc1eRfX1HBgowpro2deko/m/c9wgpw9OT3CfrKFNu/
+/aWsimTSWB7xIe2OnaH/OR1UEGQgoOcIPcipF3pRkSGDRDiDZUYhxwKIu6377VnC
+jL1odRJPn794vZiZIynp1SpIngRm095Wh+DsEnTOF12CRRpi60avbJj3YepQdpFf
+FyDcEahcR+3YXjbglOpBzagdrj+iPPYsKSpvggoNQKy+9Ndg5a4wYyz36No3Nn3b
+GPJ3ydKCqQSmPE+VLG732JU+1wUt2g==
+=w1DB
+-----END PGP SIGNATURE-----
+
+--Sig_/OrvdbKrwX_7JCjPqqz/BXhf--
 
