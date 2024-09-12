@@ -1,135 +1,165 @@
-Return-Path: <linux-kernel+bounces-327272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 519E0977334
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:59:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54407977337
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 994F8B24939
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:59:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFCA41F22883
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B301F1C1AC9;
-	Thu, 12 Sep 2024 20:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C0A1C1ACC;
+	Thu, 12 Sep 2024 20:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="12qgrbfr"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="ReM/YMkp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PYGH24lp"
+Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9151F15098A
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:59:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0565B13CFB7;
+	Thu, 12 Sep 2024 20:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726174747; cv=none; b=lE111NpLmZtTBTqhB31Y4K4/NjID2vtniv9tHc6mucHMZe9wnijorgftxZFMEicLwhpLbK9hNHx7EtyrlAeDJvMyZgg8nd1DlMwhJIXztO4amoyOP0BEo3b80+MO8FeYp5YQefbc/cFJG1uPXxUULZemPYwZqvgE7LuO+flFS0c=
+	t=1726174763; cv=none; b=dhaJPGHGb6Ieel/kdVBBkYgut5+aryBOMkffLESIQ38mY0KUKb6hAYHKt5xGhPuoahotMQPztyuM/Oc35GTWRlhyrBz7X5GsEJIC+rsyNuZPmXfJx6LUm3sA4Lfn0Bv+ImrE2gdt0yV1vn4pZgR1NfFU9qNtPOT8sZqK7N9ZbjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726174747; c=relaxed/simple;
-	bh=BGo4YnBtJLBzALgGPXw2885jarBIn/OgobqfXJlzQZQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lZL7qGjyAY06EOVWi4gewHWTJdbfeFAe/KJo0xHGDLbaUP5jaZoZ/z4b+tEFtl6guswQfd0meB3LZj75wSjJ9FrNWE5EC3PVkfZeFo1icEgba6O8ghiz9+fSTUQo28uXJUQhUhM631j39oRtgig9VcQLKMX8UZVaXVO1tgYEXGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=12qgrbfr; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4582a5b495cso22791cf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:59:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726174744; x=1726779544; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fsCx7PNwUKDs1VgbiUw0bQvBD47bWmKcNmPPKYW0TEU=;
-        b=12qgrbfrttf0OYZuqi6cXwLR8/+GLqh4g74C50/WZTePue6idYRzsnbJ4EaZCz62uy
-         Y06BE0k6sGucB9kX3nU/EfeMYuJfzGxPzb9OITmkPOhcmKWBTbMmzRTIkrupDbFIdebd
-         NKUnrt5HdCAJNLzh7rnPcxCz2ZpzOcaAtqn3QKxrXKHxOHl1A2DSCatlhzgw5qB0Iqtb
-         vEBYyW4+gjmFBO+fvoHAH18UazZMgDMxQ6KMp+jkxz8Gt93Ic1J8+0F3Qfe13F7eZ7g2
-         ca9dARo2gPcfmm7gnQJf+KhQiHYHrQIKFNsIu+MK25nM+/3UjH2/Ize02UhRlE9eWXeC
-         zFCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726174744; x=1726779544;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fsCx7PNwUKDs1VgbiUw0bQvBD47bWmKcNmPPKYW0TEU=;
-        b=wswjpXkUpiDeLxoNOUSmuJp81i7ri9hNyv353xjwMAEw73fQf6CwDeEE0ufP6m4vrk
-         8kaorNMQyuj8t4Fq/k9pk43lzkib+S0Y4FbSAG4gaQ2r5cqqer+fliR2xdPhRyLAbVT6
-         1v6DyeumXIMLGfcPys/ETHQbydkf7dgJLzBBKl0C/gRbO3KGqW+BnF7jyje1BqljcDfw
-         ZG7swRLTaSxjGq6nZsI/UMMazqN4fvKSF5GQJvTHthxQDv/Q/h8KX231CMkfE63A5K6B
-         blHzKfOhJK/YJ762gFBHDt1Xw0GZegV6L2XQ8esUEzkTq1JHIxLPhUqPYyqbPDOpgZqP
-         URwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWY/5l/efPa80OdomNPdwyrvot7Tgu8sqvrJG7wAeYlVjUChUsu0A374sJQVWSs7V0rKEStzzrdwDA5NFA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJgcuefTO93KzNVMQkzvE4N1kci8T4/ZGGO/6PH0YWdyTEd5ZZ
-	pvzCYWwjHewP9tge1Q/IJkzKMAh5+pt5BTk618LRl60+nZtydk8+dichGOtprf3+ijnpbUhIzKI
-	OXw6OTMcz11VaMQnkIhJyX8eTxKPQHsirMigO
-X-Google-Smtp-Source: AGHT+IGJ2peUmYzPvc/ly/d/Ex14Yi8y3LliEmED5bKrPQbZs3ROv8z0RY2viWsWeA+pvalyZNjXSH9Ak/Cat2QudqE=
-X-Received: by 2002:ac8:57d0:0:b0:447:eaaa:c852 with SMTP id
- d75a77b69052e-45864547dedmr4206811cf.23.1726174744257; Thu, 12 Sep 2024
- 13:59:04 -0700 (PDT)
+	s=arc-20240116; t=1726174763; c=relaxed/simple;
+	bh=qr1Df2OoDZPLJ69NWzli/7RsKLfj4rBzJ3FhmLOg1hs=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=bwmrm1uCAz8ddPr0q5fWwrxiE/HrqKQ/v9zjyYONPzLZdeA+h3JXcq1cQeV76Ei/Bxv9I9Aj4pJSamvzO/Y3my6HFsTOKZXBTeUccdISiqIbZw/QcqGt4d6t/1f8S3oDS4duK8OYX6NMKlsfc30KMwqVrOTh90PsvPXrHsyc1HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=ReM/YMkp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PYGH24lp; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 47F3B114012B;
+	Thu, 12 Sep 2024 16:59:21 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-09.internal (MEProxy); Thu, 12 Sep 2024 16:59:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1726174761;
+	 x=1726261161; bh=z9RyMeYnaCpJjL5NRxfd4gM6cPZLEzjGh1sm47Fz4fU=; b=
+	ReM/YMkpzLgrnxitYaJbJI8wvFkkU+WBRml2AmADWw/xJIdcrYBQcZqESacdPqLZ
+	PBS7b/qKuvxCAchFgu6AfJ2ihfqDoj6mefKm1BGVeXzLcecSEJd3D7BUpAtCVAZw
+	2QsZ0cWbTWY2LK5oSWro6Fo8c4uxjiVFmh8QFU8FSZsp28AKI6vZ0DnxgXrzoYzI
+	nSA03gxElsAMAmErBJ3jTIYlm7bWg7CzGTUN3km1mR/bE5v7LmgiEiXkH3WppAf3
+	1vZEeElRMGQIXKYn7oBNPV8ECYREJmdwkmI7bv+VvAPmrEkFumLA3Qr/AzrdGcad
+	/E/vU36AUR6YRSiOQAMAhA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726174761; x=
+	1726261161; bh=z9RyMeYnaCpJjL5NRxfd4gM6cPZLEzjGh1sm47Fz4fU=; b=P
+	YGH24lpXVjiOxGgkZlx51jOtPc475IvnJkaUSJ30/969MismK00XfaOOZssIj0+B
+	m8pWKPctI1Fl4oYF7lfP/UsqHvYuz6/mFNKLIMDraLFQFi1H6vp6wjd1SDsfnDQI
+	0JurWsYizqj+/HXa8vC4kr2WmjYqrkRVlwJTl0Adi50jkmbGT2vG7sZ6lJH90tEp
+	RXbjKOVjWmOJ27VvIpQYlJhj53Idbfk6lyMRWq9E9rS/2yK/VBH1KSuxQQVPOf7P
+	GcAe5Uy44aHQ7pFQUgURC9SmfbRPfZ/f2cREZf73iWOsWyiabPFZR2/fbtd/S6yw
+	wxpjbYcj4RCk0I+ZTbIsg==
+X-ME-Sender: <xms:KVbjZtAeprkZeyYcuyzTRRu5Vb_EaC4d6T7nNY2o98CyKF6a9PwWfw>
+    <xme:KVbjZrgaIFvIQ0dxG2XAKZLCatYNwvx1BwsZEcPPfcB-te5wfYzgjeetHJ8jOo6Zt
+    4gUzyhD6hOL8cS9f2A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejfedgudehkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredt
+    jeenucfhrhhomhepfdflihgrgihunhcujggrnhhgfdcuoehjihgrgihunhdrhigrnhhgse
+    hflhihghhorghtrdgtohhmqeenucggtffrrghtthgvrhhnpeejheefuddvtdfggfdvffek
+    teehhfelgfdvvedvkeeuffefkeehheegvefhveetjeenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjihgrgihunhdrhigrnhhgsehflhihghho
+    rghtrdgtohhmpdhnsggprhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhrtg
+    hpthhtohepthhssghoghgvnhgusegrlhhphhgrrdhfrhgrnhhkvghnrdguvgdprhgtphht
+    thhopegthhgvnhhhuhgrtggriheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrfh
+    grvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrvghshhdrkhhumhgrrhes
+    lhhinhgrrhhordhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidrug
+    gvpdhrtghpthhtoheplhhoohhnghgrrhgthheslhhishhtshdrlhhinhhugidruggvvhdp
+    rhgtphhtthhopehkvhhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
+    hinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    lhhinhhugidqmhhiphhssehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:KVbjZokIrc3L0xm36htY1eEFyXuC3F_Z-TxQCwXCmq1BlKg3M-axJQ>
+    <xmx:KVbjZnwkh_lkFc5d-d77ZOllCysaaR1jOqhFz5DZvi6hU2pW-cECHg>
+    <xmx:KVbjZiS15Q-P5hCAfA-QJH8EtwbWTsgTqIJii7Jer02l4sf286lFyQ>
+    <xmx:KVbjZqYUo9u-vOMzqbVAHc-MNPNYF-numoMTXGGza8SiYyZgz9V85A>
+    <xmx:KVbjZnLYc_nRyVRP3_dfJowA1Uyk5CWcfKVF6h2KEm2UJntAErRXEFgj>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 072B31C20065; Thu, 12 Sep 2024 16:59:21 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815173903.4172139-21-samitolvanen@google.com>
- <20240815173903.4172139-37-samitolvanen@google.com> <alpine.LSU.2.21.2408301114000.1124@pobox.suse.cz>
- <CABCJKucCWfeC0yL6Q2ZcBfef0tMd9L_gmHRJt-cUYkg_4PDtnA@mail.gmail.com>
- <599892ec-3cf5-4349-984b-7c94f2ba5687@suse.com> <CABCJKuer=O3FnLJNGMg2+-HxFJFUrccTuuHt5OiMpRsAJBvBsg@mail.gmail.com>
- <2b2d4953-d2a3-4ea2-98a4-078901cfbda3@proton.me>
-In-Reply-To: <2b2d4953-d2a3-4ea2-98a4-078901cfbda3@proton.me>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Thu, 12 Sep 2024 13:58:25 -0700
-Message-ID: <CABCJKue-YtCQWinad2GW7uJuVN-ZSUmRYttK_PUurJOR51Urgg@mail.gmail.com>
-Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved
- structure fields
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Petr Pavlu <petr.pavlu@suse.com>, Miroslav Benes <mbenes@suse.cz>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, Neal Gompa <neal@gompa.dev>, 
-	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Date: Thu, 12 Sep 2024 21:59:00 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Huacai Chen" <chenhuacai@kernel.org>, "Xuerui Wang" <kernel@xen0n.name>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Viresh Kumar" <viresh.kumar@linaro.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
+Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ kvm@vger.kernel.org
+Message-Id: <4f631f4a-eeb8-4b57-8424-4f5e970f0b69@app.fastmail.com>
+In-Reply-To: <20240912-iocsr-v2-2-e88f75b37da4@flygoat.com>
+References: <20240912-iocsr-v2-0-e88f75b37da4@flygoat.com>
+ <20240912-iocsr-v2-2-e88f75b37da4@flygoat.com>
+Subject: Re: [PATCH v2 2/4] LoongArch: cpu-probe: Move IOCSR probing out of
+ cpu_probe_common
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Benno,
 
-On Thu, Sep 12, 2024 at 11:08=E2=80=AFAM Benno Lossin <benno.lossin@proton.=
-me> wrote:
->
-> On 12.09.24 18:06, Sami Tolvanen wrote:
-> >
-> > I thought about this a bit and I wonder if we need a separate
-> > mechanism for that, or is it sufficient to just #define any additional
-> > hidden values you want to add instead of including them in the enum?
-> >
-> >   enum e {
-> >       A,
-> >       B,
-> >   #define C (B + 1)
-> >   #define D (C + 1)
-> >   };
-> >
-> >
-> > Do you see any issues with this approach? I think Clang would complain
-> > about this with -Wassign-enum, but I'm not sure if we even enable that
-> > in the kernel, and as long as you don't overflow the underlying type,
-> > which is a requirement for not breaking the ABI anyway, it should be
-> > fine.
->
-> Rust has problems with `#define`-style enums, because bindgen (the tool
-> that generates definitions for Rust to be able to call C code) isn't
-> able to convert them to Rust enums.
->
-> So if you can come up with an approach that allows you to continue to
-> use C enums instead of `#define`, we would appreciate that, since it
-> would make our lives a lot easier.
 
-That's an interesting point. Is the problem that you cannot assign
-arbitrary values to the Rust enum that bindgen generates, or is using
-a #define the problem? We could probably just make the hidden enum
-values visible to bindgen only if needed.
+=E5=9C=A82024=E5=B9=B49=E6=9C=8812=E6=97=A5=E4=B9=9D=E6=9C=88 =E4=B8=8B=E5=
+=8D=889:55=EF=BC=8CJiaxun Yang=E5=86=99=E9=81=93=EF=BC=9A
+[...]
+> +
+> +	if (c->options & LOONGARCH_CPU_IOCSR)
+> +		return;
+Oops, typo here, there should be a not :-(
 
-Sami
+Huacai, if the series is ok for you please fix this when applying
+the patch. I only tested against NEMU so didn't catch this :-(
+
+Thanks
+- Jiaxun
+
+> +
+> +	*vendor =3D iocsr_read64(LOONGARCH_IOCSR_VENDOR);
+> +	*cpuname =3D iocsr_read64(LOONGARCH_IOCSR_CPUNAME);
+> +
+> +	if (!__cpu_full_name[cpu])
+> +		__cpu_full_name[cpu] =3D cpu_full_name;
+> +
+> +	config =3D iocsr_read32(LOONGARCH_IOCSR_FEATURES);
+> +	if (config & IOCSRF_CSRIPI)
+> +		c->options |=3D LOONGARCH_CPU_CSRIPI;
+> +	if (config & IOCSRF_EXTIOI)
+> +		c->options |=3D LOONGARCH_CPU_EXTIOI;
+> +	if (config & IOCSRF_FREQSCALE)
+> +		c->options |=3D LOONGARCH_CPU_SCALEFREQ;
+> +	if (config & IOCSRF_FLATMODE)
+> +		c->options |=3D LOONGARCH_CPU_FLATMODE;
+> +	if (config & IOCSRF_EIODECODE)
+> +		c->options |=3D LOONGARCH_CPU_EIODECODE;
+> +	if (config & IOCSRF_AVEC)
+> +		c->options |=3D LOONGARCH_CPU_AVECINT;
+> +	if (config & IOCSRF_VM)
+> +		c->options |=3D LOONGARCH_CPU_HYPERVISOR;
+>  }
+>=20
+>  #ifdef CONFIG_64BIT
+>
+> --=20
+> 2.46.0
+
+--=20
+- Jiaxun
 
