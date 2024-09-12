@@ -1,73 +1,71 @@
-Return-Path: <linux-kernel+bounces-326074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DED1D976225
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:06:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9171B976245
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:09:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8BC72858D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:06:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B619E1F2422F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9DA918BBA7;
-	Thu, 12 Sep 2024 07:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECCE18BC07;
+	Thu, 12 Sep 2024 07:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="osuaPkQv"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="owuQHHL6"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C9218B486;
-	Thu, 12 Sep 2024 07:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521E5189BB8;
+	Thu, 12 Sep 2024 07:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726124796; cv=none; b=nopTV9Drj66VjhPnghnbjSBRkxwYRlx9O+S7gQuO76G6lDvDwAbfqpkZt1tAO7eOD8gjkbohuahqkdtf3iAGEYKNdE7j+z2yGE3HMBXR81mjfrqEX3X6yODbVaJgAgjVSkwkgi6tsHWmKQoQPXRSLZH0wEZe6TLDVwsCSb9dFIA=
+	t=1726124986; cv=none; b=M7dLLVwv1xD8pFq3E4RerRbYNVnFjfAuDhmzlBTtBashOb16goDMlOoass2HuFTFvX9Rb/kvgthJcuzSS/dRhisG18bHRzYgUr21penBQjEYkmlAZpyqUv54SIbaU01ToH0TrvOYcTJViwXG0cr0Np60W3IsHj6UcVdavogtVn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726124796; c=relaxed/simple;
-	bh=DyqjTxdmYcFRSYwExFXfjsQE7FVLZXqc5JIFWYRLrsw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NaSYWNjlysSmSY7i57alZWgWN2X+ibgSG+oLRL2x7sugGaLy1lAJTZ0HiNxMeVoNlpE73nQpvzm3pEX53pHjgicU9A4l2nF85/pejl+uDYndJpJVlPro2WCOgsPTMPZ9TQ0+E65dmGOyPDPrTve8263Lm2NDw+7R4OumBwYJ4sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=osuaPkQv; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 87d92ab070d511ef8b96093e013ec31c-20240912
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=ycm75bx+ikCTXSypBlYTHLgbMqzoqeOexBSyfGPPesE=;
-	b=osuaPkQvNj7XijnxIkR/uGQ46o7WCL6Zjr5O8BPLwPrgCtBPXxUyNW6hTeosT58VeS+jF+uTPWuDCjXm0lIUYLQfIyaGCfMjLd1qgPEPlh/dOV/5fd0gsTMdDXy2cTWaQvOIk8rhliuG2nx4kTZjLli1ZecJUQBAbPfkZ8tkZ+g=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:24c1b322-027d-4827-9f9f-cc0a1be61951,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:5343d8bf-d7af-4351-93aa-42531abf0c7b,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 87d92ab070d511ef8b96093e013ec31c-20240912
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
-	(envelope-from <pablo.sun@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1999240759; Thu, 12 Sep 2024 15:06:28 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Thu, 12 Sep 2024 15:06:26 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Thu, 12 Sep 2024 15:06:26 +0800
-From: Pablo Sun <pablo.sun@mediatek.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	Pablo Sun <pablo.sun@mediatek.com>
-Subject: [PATCH v2] arm64: dts: mediatek: mt8395-genio-1200-evk: Enable GPU
-Date: Thu, 12 Sep 2024 15:06:24 +0800
-Message-ID: <20240912070624.25540-1-pablo.sun@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1726124986; c=relaxed/simple;
+	bh=nlaQUDijimhZ9ltftznidmZfhgbG8UmY758gUKku/xU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=iP/dLopCVJWuD6a6CW/KFrA/7leYapBWLUPVAOv7rNylCjk8G0VgcLpCYqT6Xlxgdn033bltq/SgBQf8crrPI02qIlN7sYrZQJqPZ/+xrtp+nn+XRo20tZyVePLNimQbLQsruAKPNu6PCBiFXcljhDI+GyvnTDHMY6RWD/W3Yas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=owuQHHL6; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
+	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=lZoL+rXRiYfw+HVYvj6ZQhn5B0gneZ/cg43LQpgeFv4=; b=owuQHHL6yKnS6GeJlrVYnrSz9y
+	fqW4b/tanXe5SrnMxBXWbRqmGDm/5XoKmYJ+814bxYe4g+eNJNPUbxd56yAra2vJ55jP9EcdCBzT3
+	VoHcruwALhiyS0vAYJ6FFdjClgPX2kgIHS0NPfxGB+bx3h+BTEqPuvIeNElXInUDdri3XQsE10Ari
+	yp5lx5znJcj79X/7+T07C9lkdGD5hEDT1phvIQKzWUdwh6nuQ6+JY+Ytm7HGkZRpODe8YDD4Tj/WK
+	PvJ/Py8ClUoezyr5LodWcv28R94R6zgNDVV+g856i5gWI2KV8CMIzEl5/fIXoWvr2PJbD6du5jGfN
+	swDnl/uw==;
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <esben@geanix.com>)
+	id 1sodxV-000Lls-0i; Thu, 12 Sep 2024 09:09:41 +0200
+Received: from [185.17.218.86] (helo=localhost)
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <esben@geanix.com>)
+	id 1sodxU-0009KH-10;
+	Thu, 12 Sep 2024 09:09:40 +0200
+From: Esben Haabendal <esben@geanix.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,  linux-rtc@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] rtc: isl12022: Add alarm support
+In-Reply-To: <20240911122417388bd35c@mail.local> (Alexandre Belloni's message
+	of "Wed, 11 Sep 2024 14:24:17 +0200")
+References: <20240910-rtc-isl12022-alarm-irq-v1-0-d875cedc997f@geanix.com>
+	<20240910-rtc-isl12022-alarm-irq-v1-2-d875cedc997f@geanix.com>
+	<202409101939448128973d@mail.local> <87mske7gaw.fsf@geanix.com>
+	<20240911122417388bd35c@mail.local>
+Date: Thu, 12 Sep 2024 09:09:40 +0200
+Message-ID: <87h6almjpn.fsf@geanix.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,96 +73,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-MTK: N
+X-Authenticated-Sender: esben@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27395/Wed Sep 11 10:32:20 2024)
 
-Enable the Mali Valhall GPU on Genio 1200 EVK by providing regulator
-supply settingsi to gpu and mfg1, and enable the GPU node.
+Alexandre Belloni <alexandre.belloni@bootlin.com> writes:
 
-In addition, set the GPU related regulator voltage range:
+> On 11/09/2024 10:20:07+0200, Esben Haabendal wrote:
+>> Alexandre Belloni <alexandre.belloni@bootlin.com> writes:
+>> > On 10/09/2024 12:27:11+0200, Esben Haabendal wrote:
+>> 
+>> >> +static int isl12022_rtc_read_alarm(struct device *dev,
+>> >> +				   struct rtc_wkalrm *alarm)
+>> >> +{
+>> >> +	struct rtc_time *const tm = &alarm->time;
+>> >> +	struct isl12022 *isl12022 = dev_get_drvdata(dev);
+>> >> +	struct regmap *regmap = isl12022->regmap;
+>> >> +	uint8_t buf[ISL12022_ALARM_SECTION_LEN];
+>> >> +	int ret, yr, i;
+>> >> +
+>> >> +	ret = regmap_bulk_read(regmap, ISL12022_ALARM_SECTION,
+>> >> +			       buf, sizeof(buf));
+>> >> +	if (ret) {
+>> >> +		dev_err(dev, "%s: reading ALARM registers failed\n",
+>> >> +			__func__);
+>> >
+>> > I don't really like those error messages because there is nothing the
+>> > user can actually do apart from trying again and this bloats the
+>> > kernel.
+>> 
+>> Ok. Maybe keep it as dev_dbg() then?
+>
+> This is fine, there are other I didn't point out.
 
-1. Set the recommended input voltage range of DVDD_GPU to (0.546V-0.787V),
-   based on Table 5-3 of MT8395 Application Processor Datasheet.
-   The regulator mt6315_7_vbuck1("Vgpu") connects to the DVDD_GPU input.
-   Note that the minimum voltage in SoC eFuse data, which is read by
-   MTK-SVS to adjust the regulator voltage, does not go below
-   the recommended operating voltage in the datasheet.
+Ok. I will change all of these type of error messages to dev_dbg. No problem.
 
-2. Set the input voltage of DVDD_SRAM_GPU, supplied by
-   mt6359_vsram_others_ldo_reg, to 0.75V, the recommended typical
-   operating voltage in MT8395 Application Processor Datasheet.
+>> >> +	isl12022->rtc = rtc;
+>> >>  
+>> >>  	rtc->ops = &isl12022_rtc_ops;
+>> >>  	rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
+>> >>  	rtc->range_max = RTC_TIMESTAMP_END_2099;
+>> >>  
+>> >> +	if (client->irq > 0) {
+>> >> +		ret = isl12022_setup_irq(isl12022, client->irq);
+>> >
+>> > You can't do this in probe, the RTC lifecycle is longer than the linux
+>> > system. Or said differently: "oh no, my linux has rebooted and now I
+>> > lost my future alarm" ;)
+>> 
+>> Oh.
+>> 
+>> We do need to setup the irq here, so I assume you mean I need to drop
+>> the part of _setup_irq() that clears alarm registers.
+>
+> Yes, this is the main problematic part. The other one being disabling
+> the IRQ output when in battery backup mode as this will surely prevent
+> wakeup of some devices.
 
-This patch is tested by enabling CONFIG_DRM_PANFROST and
-on Genio 1200 EVK it probed with following dmesg:
+I know. I did this on purpose, as I don't have a setup where I can test
+wakeup, so I thought it was better to start out without this instead of
+shipping something that is most likely broken.
 
-```
-panfrost 13000000.gpu: clock rate = 700000092
-panfrost 13000000.gpu: mali-g57 id 0x9093 major 0x0 minor 0x1 status 0x0
-panfrost 13000000.gpu: features: 00000000,000019f7,
-					   issues: 00000001,80000400
-panfrost 13000000.gpu: Features: L2:0x07120206 Shader:0x00000000
-					   Tiler:0x00000809 Mem:0x301
-					   MMU:0x00002830 AS:0xff JS:0x7
-panfrost 13000000.gpu: shader_present=0x50045 l2_present=0x1
-[drm] Initialized panfrost 1.2.0 for 13000000.gpu on minor 0
-```
+If I leave IRQ output from RTC chip enabled during battery backup mode,
+I assume I have to add working suspend/resume also. Or do you just want
+me to flip the bit?
 
-Signed-off-by: Pablo Sun <pablo.sun@mediatek.com>
----
- .../dts/mediatek/mt8395-genio-1200-evk.dts    | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+>> And I guess we need to enable irq in probe as well. At least if/when an
+>> alarm is set. I think it should be safe to enable irq unconditionally in
+>> _probe()...
+>
+> I guess you mean requesting the interrupt on the SoC side.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts b/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-index a06610fff8ad..4f7d66d6d785 100644
---- a/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-@@ -194,6 +194,11 @@ eth_phy0: eth-phy0@1 {
- 	};
- };
- 
-+&gpu {
-+	mali-supply = <&mt6315_7_vbuck1>;
-+	status = "okay";
-+};
-+
- &i2c0 {
- 	clock-frequency = <400000>;
- 	pinctrl-0 = <&i2c0_pins>;
-@@ -337,6 +342,10 @@ &mfg0 {
- 	domain-supply = <&mt6315_7_vbuck1>;
- };
- 
-+&mfg1 {
-+	domain-supply = <&mt6359_vsram_others_ldo_reg>;
-+};
-+
- &mmc0 {
- 	status = "okay";
- 	pinctrl-names = "default", "state_uhs";
-@@ -407,6 +416,12 @@ &mt6359_vrf12_ldo_reg {
- 	regulator-always-on;
- };
- 
-+/* for GPU SRAM */
-+&mt6359_vsram_others_ldo_reg {
-+	regulator-min-microvolt = <750000>;
-+	regulator-max-microvolt = <750000>;
-+};
-+
- &mt6359codec {
- 	mediatek,mic-type-0 = <1>; /* ACC */
- 	mediatek,mic-type-1 = <3>; /* DCC */
-@@ -839,8 +854,8 @@ regulators {
- 			mt6315_7_vbuck1: vbuck1 {
- 				regulator-compatible = "vbuck1";
- 				regulator-name = "Vgpu";
--				regulator-min-microvolt = <300000>;
--				regulator-max-microvolt = <1193750>;
-+				regulator-min-microvolt = <546000>;
-+				regulator-max-microvolt = <787000>;
- 				regulator-enable-ramp-delay = <256>;
- 				regulator-allowed-modes = <0 1 2>;
- 			};
--- 
-2.45.2
+Yes.
 
+> Enabling the RTC interrupt should be left untouched in the probe.
+
+Ok, so if/when an alarm is already set before probe, do application need
+to enable it using RTC_AIE_ON?
+
+/Esben
 
