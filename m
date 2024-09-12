@@ -1,115 +1,95 @@
-Return-Path: <linux-kernel+bounces-326856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42EBE976DBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:27:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 494EA976DC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:28:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBECBB23A9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:27:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF2AD1F29E63
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6BF61BB684;
-	Thu, 12 Sep 2024 15:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C0F1B654F;
+	Thu, 12 Sep 2024 15:28:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="n0pCXTZ9"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="277TqTKd"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1D21B9B33
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC9B548E0;
+	Thu, 12 Sep 2024 15:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726154803; cv=none; b=A4IH31WEDTE5jFiH5FakY04UaeGKxnt1zjYfz1Lt4KNk1uJ1JRrZSfMFxPCbs13w+YIy5/ofMGD3SaFbR2ThL7dee+JMxqA53K8iQSlH4wqXDXidB2odSZyIR0z6GcG7VHGyqDRSo7M5O5vbnrm2FrPWu3ByHWXGv+UvPZ1C9Gs=
+	t=1726154896; cv=none; b=PzPwTO4NqBOu9ddtuRWJLp7sG+Kvr3iUYHR02dBo8MqPxnaHSsgF+GaqAlTxtRHUWKXLbJjZ3ceIBy6g6p837R8ibNUYb4j1Qip6HRyMRnHwYSn64j1Ujdlkn2osuUMTXbOPDTdLox5zeIDl0uA2MyMV7z3y2G7nV49iXerW8T8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726154803; c=relaxed/simple;
-	bh=NKleTICc0uMNXV+uSqzUKeNAhOpKOaLVEKAQqBNY/Ho=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XzFxgNpiR8VDUC0Svc0QCFJGbqq+2Ku9RxmLuCdBCC9Hcj8l5xLXLQAC+4Dnn9Wy3yb/j0fX3nN+KjjlWFQUES/ymgCtcuZmy3geI6tqkOilKXpOxDd9FuppmzIjpwN3IleXrkgxekvXwYLupV2Skb3o1T3Sm3VpTClncN5k3iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=n0pCXTZ9; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6c3552ce7faso9153186d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:26:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1726154801; x=1726759601; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=f7mKFNRTjjADvwf1aB253Jo1v/0MMVkR0nsmT+lRjwc=;
-        b=n0pCXTZ9R5rixccQ0sYLNyFAkA/F8gAFh84j6NRrPDV+w0ToFBZ0uAkERuvCWRdP6K
-         DPjj0oc8YvThDFxM/SqBDJGJm5kEm0dzLx4RTrAWRoXAFoZm2400X7m1CfCSKN1PfrK3
-         cLq41qBKciBwYx/y+qdT4OlLBcLKUrffwW9wQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726154801; x=1726759601;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=f7mKFNRTjjADvwf1aB253Jo1v/0MMVkR0nsmT+lRjwc=;
-        b=q5a7S3GmmJWKCmTm66I7SHdj2YJQx0mJWsiNbTt/rGYX0riCkcIh897w4dLm8eV5Zr
-         rBQPy5QrR4CWNTJpTbiERWergO+lqpuDRzw2FZXncdDPBQ8boqmx+NiSQZC6HfUM2+nS
-         QdHyRFX5SjXbHAuTPeJxZ9E/XeiTPDqmHH1IzJiVoehw9R/AC8kMnsf0pQlW1GQ52iOU
-         AlNvtPf1301McS0FJwwLjPtQ4dWgc2wbAQNXTiSAXCxJnolaGR23b2pULnZnQhG2mHSf
-         29r+0/zDP9gkhA6CKE7jxcceOZ/FMFZPrlc9SZrvG9XxJiKfNim7iv1YvHoAIZeA4yF2
-         CdDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUulwewHudb9XPCUEm1Uh1LMPvhQ10d5uoqhMFY1/eFDB10T/qBdJGus/rnCehVCE4zGQ62dx7vswBF1nc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2wKQfcEojQ/6mPekIetIlyE+uRcj/wE61VFMUlj4AP7lAjpJS
-	Qlr/FeTZhC+DmP4KGJy3OItPUHQrkX0N8J/2ZFnmNQWHiD5HzCELSqWfKgPAzQ==
-X-Google-Smtp-Source: AGHT+IGchvvlGNJOgyNzd+nGz4P624xph6cEj7rU2+N8kSWMwUA5os9jZO8OZ32oNgHPjsbZb/wcFw==
-X-Received: by 2002:a05:6214:5d05:b0:6c5:50c1:befc with SMTP id 6a1803df08f44-6c573b21fd7mr45928266d6.20.1726154800674;
-        Thu, 12 Sep 2024 08:26:40 -0700 (PDT)
-Received: from localhost (112.49.199.35.bc.googleusercontent.com. [35.199.49.112])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6c53474d749sm55476786d6.92.2024.09.12.08.26.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Sep 2024 08:26:39 -0700 (PDT)
-From: Joshua Pius <joshuapius@chromium.org>
-X-Google-Original-From: Joshua Pius <joshuapius@google.com>
-To: alsa-devel@alsa-project.org
-Cc: Joshua Pius <joshuapius@google.com>,
-	Joshua Pius <joshuapius@chromium.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Karol Kosik <k.kosik@outlook.com>,
-	"Steven 'Steve' Kendall" <skend@chromium.org>,
-	linux-sound@vger.kernel.org,
+	s=arc-20240116; t=1726154896; c=relaxed/simple;
+	bh=pYgVyTrj3EPheRBKGvDhoJnds5qSV20clSUzKPNw1pg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DAsxfuJWxQEDwaYxf4yg7VRBjYX/M6DS8wMM2oexGvcI5lppXdDMMU5UHHgI5PHOuYqPEUug8WJnIG5X2TCD9vhvWL0Q8bMtZgrdO6jqUwVJK+N7gfvIb2hlscBZwWjkL5ti5s0Yq8ergFyY4Jxj4AdofePbPWcTYr10hqqNx8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=277TqTKd; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=tI9kvm+HnL0YeKQzBOoR82/5uRh5sxlcs29HkgCcm5k=; b=277TqTKd44LFt0BzPGWBTBMSUs
+	nmstv4sSYViFUCJyQIqZ0mqKChc4mtzucuy/nVDesMQ4x+eareEfPyz58LTuQiTlql9k4lUFOwTQw
+	laGG4SOW/CPOM3ieCB1pmQ7e2rzMIi3tQuMxqalvd1lmOY5hFWiMiZOWsQcPllNqbpaI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1soljm-007JqQ-Rv; Thu, 12 Sep 2024 17:28:02 +0200
+Date: Thu, 12 Sep 2024 17:28:02 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, bryan.whitehead@microchip.com,
+	UNGLinuxDriver@microchip.com, linux@armlinux.org.uk,
+	maxime.chevallier@bootlin.com, rdunlap@infradead.org,
+	Steen.Hegelund@microchip.com, daniel.machon@microchip.com,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: usb-audio: Add logitech Audio profile quirk
-Date: Thu, 12 Sep 2024 15:26:28 +0000
-Message-ID: <20240912152635.1859737-1-joshuapius@google.com>
-X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
+Subject: Re: [PATCH net-next V2 4/5] net: lan743x: Implement phylink pcs
+Message-ID: <cbc505ca-3df0-4139-87a1-db603f9f426a@lunn.ch>
+References: <20240911161054.4494-1-Raju.Lakkaraju@microchip.com>
+ <20240911161054.4494-5-Raju.Lakkaraju@microchip.com>
+ <c6e36569-e3a8-4962-ac85-2fd7d35ab5d1@lunn.ch>
+ <ZuKP6XcWTSk0SUn4@HYD-DK-UNGSW21.microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZuKP6XcWTSk0SUn4@HYD-DK-UNGSW21.microchip.com>
 
-Specify shortnames for the following Logitech Devices: Rally bar, Rally
-bar mini, Tap, MeetUp and Huddle.
+> > Also, am i reading this correct. C22 transfers will go out a
+> > completely different bus to C45 transfers when there is an SFP?
+> 
+> No. You are correct.
+> This LAN743x driver support following chips
+> 1. LAN7430 - C22 only with GMII/RGMII I/F
+> 2. LAN7431 - C22 only with MII I/F
 
-Signed-off-by: Joshua Pius <joshuapius@chromium.org>
----
- sound/usb/card.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Fine, simple, not a problem.
 
-diff --git a/sound/usb/card.c b/sound/usb/card.c
-index 778de9244f1e..9c411b82a218 100644
---- a/sound/usb/card.c
-+++ b/sound/usb/card.c
-@@ -384,6 +384,12 @@ static const struct usb_audio_device_name usb_audio_names[] = {
- 	/* Creative/Toshiba Multimedia Center SB-0500 */
- 	DEVICE_NAME(0x041e, 0x3048, "Toshiba", "SB-0500"),
- 
-+	/* Logitech Audio Devices */
-+	DEVICE_NAME(0x046d, 0x0867, "Logitech, Inc.", "Logi-MeetUp"),
-+	DEVICE_NAME(0x046d, 0x0874, "Logitech, Inc.", "Logi-Tap-Audio"),
-+	DEVICE_NAME(0x046d, 0x087c, "Logitech, Inc.", "Logi-Huddle"),
-+	DEVICE_NAME(0x046d, 0x0898, "Logitech, Inc.", "Logi-RB-Audio"),
-+	DEVICE_NAME(0x046d, 0x08d2, "Logitech, Inc.", "Logi-RBM-Audio"),
- 	DEVICE_NAME(0x046d, 0x0990, "Logitech, Inc.", "QuickCam Pro 9000"),
- 
- 	DEVICE_NAME(0x05e1, 0x0408, "Syntek", "STK1160"),
--- 
-2.46.0.598.g6f2099f65c-goog
+> 3. PCI11010/PCI11414 - C45 with RGMII or SGMII/1000Base-X/2500Base-X
+>    If SFP enable, then XPCS's C45 PCS access
+>    If SGMII only enable, then SGMII (PCS) C45 access
 
+Physically, there are two MDIO busses? There is an external MDIO bus
+with two pins along side the RGMII/SGMII pins? And internally, there
+is an MDIO bus to the PCS block?
+
+Some designs do have only one bus, the internal PCS uses address X on
+the bus and you are simply not allowed to put an external device at
+that address.
+
+But from my reading of the code, you have two MDIO busses, so you need
+two Linux MDIO busses.
+
+	Andrew
 
