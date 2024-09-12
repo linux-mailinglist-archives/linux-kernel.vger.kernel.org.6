@@ -1,144 +1,176 @@
-Return-Path: <linux-kernel+bounces-326507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D421E976936
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:31:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57D26976940
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:36:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 129EF1C2093A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:31:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A2001C22D40
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496C31A303C;
-	Thu, 12 Sep 2024 12:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5C51A7058;
+	Thu, 12 Sep 2024 12:36:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Swn5fGTI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YZJwDmzk"
-Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Nlf+ARJf"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0556DA47;
-	Thu, 12 Sep 2024 12:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4932519F42D;
+	Thu, 12 Sep 2024 12:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726144297; cv=none; b=qZtXRFx8fupGaaVWv1H0SSB98wUjHDHvC9IinNRwfdPjxG+WqWilbUF0m74P665rZwD0wtN94tBiZAZ5I1TC/i/YHdpJS9UFfPBECYctt3rnj6tG74iE18VTWLBPt/IEdG4f9U44dQ25dPvc1UxLWh5Nryiv9dMVg781+BmB3WA=
+	t=1726144598; cv=none; b=Luuvlwn5VgyFQZFRqDf7dJrhTDsJUWvhDZqnTbPBhg1dqMJvrsNxtOMFrUXks/uJwef8grkLcne+2L2mlSmvWjN3+dpSAtGmy1SU+asY5TLdUVknuMp0bTdSwYZA3SMVEMS1Yn0pxFqUCqyvTbynYApUUjlerT/BZZiNPdaT5UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726144297; c=relaxed/simple;
-	bh=q5zGyhNSihhxXuYK0xTUhIyVadAALCa6grEnzu24Ex8=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=mMZNP46lqum29YxoaKZ4hmHQdh5UNaj0sDxTjlPbPLryag33TTC16JZy9X/bYfaUCRjaI0BmpteimMBdBjSyUaZmyklTBNQsgPGpEdncueIaM581ym0nnpQVjs0h5cdc9O2utcRLRidfC2PRyJYCXvUf+pu2hhclhmG9xiffM58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Swn5fGTI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YZJwDmzk; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 253251140128;
-	Thu, 12 Sep 2024 08:31:35 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Thu, 12 Sep 2024 08:31:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1726144295;
-	 x=1726230695; bh=CnvwBBotXnuqrnDpPxLojv5OlDxpU/UsyUOZLrNkPpY=; b=
-	Swn5fGTIrC5/YGFiMe4txbDpad41NofRv5qT/S4IN5j4TYOYibKeYBLrrgUsKjZM
-	gkwdas1PG5bHlxt1cbMKo7KvGeBeztd/hxDNOgWVgMpZv7WlMz3nopGc0AvDsGy1
-	3P7JRRwQYWE2D4FrDNn6lefVTFgd+L0/eJoaxYclILDJt+SqyPa7Jf2tI8B6RC23
-	HJohteQcIqXKxMDTtZLuQel4ZY+Wc9rM32UjTZ0lmW7Ho+KkC7uTPyaumMV47Vmw
-	gX2wHBwBOrKV2IB8ROLQ9ut3xVd2R1zwBJJOuTvgJMvDBi6w+qGxqFVj5+MZi/+a
-	qjk3E3Jnxrr/3iw6uIbgHg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726144295; x=
-	1726230695; bh=CnvwBBotXnuqrnDpPxLojv5OlDxpU/UsyUOZLrNkPpY=; b=Y
-	ZJwDmzkr25ocJySYeKXQBqQqXjkZpp2VohupTJKfpd5upAUpvPku5rudrIiD15yW
-	k7UKTkfpCwrP+TLP7N5O1Eryc23VRfR4GuDXTvPbr9/pHyIQQ/wcq0J1YLw4Jhgf
-	O1ngbiRV7ANk4n33c8PtbtpwANX0++InIpTiG/+U4Ma/vGxEHXRgAbjf8bQMMv3O
-	2wWUSxN+L4CPbj+cNqRjrBwpaYTEMN3fmjj2vE/dN9VemWMrqitf5MNmM/xvGAX+
-	TqNXhG8QBDB5Kg+k2CI25SDORhgBv2h45E9B7ua0Hx4qDOm1hsadDkDpkBGHo6rE
-	ZNuLmC5VHyzBAecx0pNoA==
-X-ME-Sender: <xms:Jt_iZms40TSd42vyMcg0kWimiD55OmvIyP5njuecJBmYHBpB_Ucf-w>
-    <xme:Jt_iZrdDX4pgzASpowuh8pXLOB3QwASAhWe_RDkorq7xAnwiEN9PXP19HfYKMqnWg
-    diXukNyFShFNzNEQlw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejfedgheegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepjedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhtuhhrqhhuvghtthgvsegsrgihlh
-    hisghrvgdrtghomhdprhgtphhtthhopehsfhhrsegtrghnsgdrrghuuhhgrdhorhhgrdgr
-    uhdprhgtphhtthhopehssghohigusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlih
-    hnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdp
-    rhgtphhtthhopeholhhofheslhhigihomhdrnhgvthdprhgtphhtthhopehlihhnuhigqd
-    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhig
-    qdhnvgigthesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:Jt_iZhyXepdSNvl1MKuN5tNcTUcyn0IjU-7rxUiUcHMxt4s4AMVaiQ>
-    <xmx:Jt_iZhPrqH1VJphYQkOyxZnpxLAxbECagT0_3qSrEIeJDoxRvjML5A>
-    <xmx:Jt_iZm_t5q-3NpfdDM17LUzL-djzwYEi2Of0tVcCezJFpTj-crHABg>
-    <xmx:Jt_iZpVu3wPocytywoWxoi3v4UfXSt8Hs0gmBx8c995XJN3rdeZ3Cg>
-    <xmx:J9_iZmyOeWcz1_sFMq_e3IP35L7BGZi7WNhBnRHnq4em8ld8p5nIi-mz>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 9B5E7222006F; Thu, 12 Sep 2024 08:31:34 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1726144598; c=relaxed/simple;
+	bh=e0+ULRJe/0UPjAGbqFTaPDEPJA7zDqYn2Tg68Qzn/vc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=cOpclnd5fqxqdVSc4n+j2JFELZreESlgcQ9rjnTFHCGWBEtUjSvJvnj2/ZAGK6L6n1VxAiWitWN8CV0Lee2wtX7gycAKutQbtV0A0w6w7su8zjnlCAUgQQB9ZHi33RhxvB5RaskDyomFncJ/vqpcgjSx5jU2YDOURn3/2DjJ49A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Nlf+ARJf; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48C9XnPZ002414;
+	Thu, 12 Sep 2024 14:36:09 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	ycOodbDvrhisx/5OptdgsTR2uHOjLnY6oXa5ZUn9Ewk=; b=Nlf+ARJfan7qvNcb
+	wKVmVHjIjlPE/OfQkt/x0tPUVrVc01CZD/nD1x/z0K88NJB9IYu2B8bexiQhqytm
+	apcdr+HAidJPid4giMBZlfsI++fIwgMAuho4nBq+6zEgLbzDOtisqTKe7eQcxELO
+	SZl4MGZ63X/LuKq4Jd4BeftUCAhgXiJfND07sGHUGTPRm/50dozk48ZQuTs0Pb69
+	ed0ZLdHeQVTosEIK7b3Ua9bPY6Zq6MoGRAU3IOEsuf3KFKhttMFzexx+GcbBjNoL
+	Ea54M6iiPL/gZok/R137I9XT7v5pSw2DPq/zrMOqbizMXUyAfLSSnyA7VoO2wDpO
+	8Vyydg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 41gyaakyu1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Sep 2024 14:36:09 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id AC36D4004C;
+	Thu, 12 Sep 2024 14:34:49 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0198B269E16;
+	Thu, 12 Sep 2024 14:32:43 +0200 (CEST)
+Received: from [10.48.86.208] (10.48.86.208) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 12 Sep
+ 2024 14:32:42 +0200
+Message-ID: <7869d6b4-6b6e-4fb6-95d9-bbe497caeceb@foss.st.com>
+Date: Thu, 12 Sep 2024 14:32:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 12 Sep 2024 12:31:14 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Stephen Rothwell" <sfr@canb.auug.org.au>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>
-Cc: "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- linux-next <linux-next@vger.kernel.org>, "Olof Johansson" <olof@lixom.net>,
- ARM <linux-arm-kernel@lists.infradead.org>
-Message-Id: <a69d050c-598a-48ae-8d39-a050e4ae0ef3@app.fastmail.com>
-In-Reply-To: <1bd91561-73dd-454e-91ab-49fce29eecb0@app.fastmail.com>
-References: <20240912105349.0453d06b@canb.auug.org.au>
- <20240912105551.6e3a33d2@canb.auug.org.au>
- <1bd91561-73dd-454e-91ab-49fce29eecb0@app.fastmail.com>
-Subject: Re: linux-next: duplicate patch in the clk tree
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] media: uapi: add WebP VP8 frame flag
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>,
+        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Hans Verkuil
+	<hverkuil-cisco@xs4all.nl>,
+        Fritz Koenig <frkoenig@chromium.org>,
+        Sebastian
+ Fricke <sebastian.fricke@collabora.com>,
+        Daniel Almeida
+	<daniel.almeida@collabora.com>,
+        Andrzej Pietrasiewicz
+	<andrzej.p@collabora.com>,
+        Benjamin Gaignard
+	<benjamin.gaignard@collabora.com>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20240911135011.161217-1-hugues.fruchet@foss.st.com>
+ <20240911135011.161217-2-hugues.fruchet@foss.st.com>
+ <01020191e212f333-703af7d0-fc68-4f47-b55c-6c0c3de6708a-000000@eu-west-1.amazonses.com>
+Content-Language: en-US
+From: Hugues FRUCHET <hugues.fruchet@foss.st.com>
+In-Reply-To: <01020191e212f333-703af7d0-fc68-4f47-b55c-6c0c3de6708a-000000@eu-west-1.amazonses.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Thu, Sep 12, 2024, at 12:14, Arnd Bergmann wrote:
-> On Thu, Sep 12, 2024, at 00:55, Stephen Rothwell wrote:
->> Hi all,
+Hi Nicolas,
+
+Thanks for reviewing.
+
+On 9/11/24 19:12, Nicolas Dufresne wrote:
+> Hi Hugues,
+> 
+> Le mercredi 11 septembre 2024 à 15:50 +0200, Hugues Fruchet a écrit :
+>> Add a flag indicating that VP8 bitstream is a WebP picture.
+> 
+> Sounds like there should be some code changes in GStreamer that you haven't
+> disclosed. Mind sharing how this new uAPI is used ? I would also expect this
+> commit message to give more insight on what is special about WebP that makes
+> this flag required.
+
+
+GStreamer changes here:
+https://gitlab.freedesktop.org/gstreamer/gstreamer/-/commit/138ecfac54ce85b273a26ff6f0fefe3998f8d436?merge_request_iid=7505
+
+Verisilicon datasheet is not explicit on why WebP must be signaled to 
+hardware but WebP decoding fails if not.
+Seems to me that such a simple addition on an already existing flag is 
+something acceptable and preferable to the development of a new complete 
+uAPI for WebP decoding.
+
+> 
+> I would also need some more API or documentation that explain how we can
+> differentiate a upstream decoder that is capable of WebP decoding from one that
+> does not. I wonder if it would not have been better to define a new format ?
+> That being said, I haven't looked at all in the specification and only rely on
+> your cover letter and patch series.
+> 
+> Nicolas
+
+
+> 
 >>
->> [just cc'ing the arm-soc contacts]
+>> Signed-off-by: Hugues Fruchet <hugues.fruchet@foss.st.com>
+>> ---
+>>   .../userspace-api/media/v4l/ext-ctrls-codec-stateless.rst      | 3 +++
+>>   include/uapi/linux/v4l2-controls.h                             | 1 +
+>>   2 files changed, 4 insertions(+)
 >>
->> On Thu, 12 Sep 2024 10:53:49 +1000 Stephen Rothwell 
->> <sfr@canb.auug.org.au> wrote:
->>>
->>> Hi all,
->>> 
->>> The following commit is also in the arm-soc tree as a different commit
->>> (but the same patch):
->>> 
->>>   706ae6446494 ("clk: fixed-rate: add devm_clk_hw_register_fixed_rate_parent_data()")
->>> 
->>> This is commit
->>> 
->>>   f579278d690c ("clk: fixed-rate: add devm_clk_hw_register_fixed_rate_parent_data()")
->>> 
->>> in the arm-soc tree.
->
-> Right, this unfortunately has to stay in the soc tree as a dependency
-> of the ep93xx driver.
+>> diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst b/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst
+>> index 0da635691fdc..bb08aacddc9c 100644
+>> --- a/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst
+>> +++ b/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst
+>> @@ -1062,6 +1062,9 @@ FWHT Flags
+>>       * - ``V4L2_VP8_FRAME_FLAG_SIGN_BIAS_ALT``
+>>         - 0x20
+>>         - Sign of motion vectors when the alt frame is referenced.
+>> +    * - ``V4L2_VP8_FRAME_FLAG_WEBP``
+>> +      - 0x40
+>> +      - Indicates that this frame is a WebP picture.
+>>   
+>>   .. c:type:: v4l2_vp8_entropy_coder_state
+>>   
+>> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+>> index 974fd254e573..e41b62f2cb2b 100644
+>> --- a/include/uapi/linux/v4l2-controls.h
+>> +++ b/include/uapi/linux/v4l2-controls.h
+>> @@ -1897,6 +1897,7 @@ struct v4l2_vp8_entropy_coder_state {
+>>   #define V4L2_VP8_FRAME_FLAG_MB_NO_SKIP_COEFF	0x08
+>>   #define V4L2_VP8_FRAME_FLAG_SIGN_BIAS_GOLDEN	0x10
+>>   #define V4L2_VP8_FRAME_FLAG_SIGN_BIAS_ALT	0x20
+>> +#define V4L2_VP8_FRAME_FLAG_WEBP		0x40
+>>   
+>>   #define V4L2_VP8_FRAME_IS_KEY_FRAME(hdr) \
+>>   	(!!((hdr)->flags & V4L2_VP8_FRAME_FLAG_KEY_FRAME))
+> 
 
-I figured out now that this was originally merged into
-my tree as a shared dependency and I accidentally turned
-that into a separate commit. I've fixed it up now, using the
-commit from the clk tree.
-
-      Arnd
+BR,
+Hugues.
 
