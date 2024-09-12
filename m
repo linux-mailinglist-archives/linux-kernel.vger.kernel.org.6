@@ -1,49 +1,65 @@
-Return-Path: <linux-kernel+bounces-325995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37B249760EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:03:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8C159760F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:07:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EC16B22126
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:03:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45FB3B219C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1983518891C;
-	Thu, 12 Sep 2024 06:03:27 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A96AE1898EE;
+	Thu, 12 Sep 2024 06:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="Dut6C6Eb"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 414AA2D7BF;
-	Thu, 12 Sep 2024 06:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2EF5028C;
+	Thu, 12 Sep 2024 06:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726121006; cv=none; b=VzJ2q1RMXY0UXluDmcY0DFTzlnE34D5MED/+DuJ0csb6yOj9iNaHdtxjRblfCPoNGE6yWdO611uapaabqRrPOLJP066mTiJvMmE2gbnrdwnJfh4wmmeFofLuSGvA0j0L58J+m3EscCXHCLqY6+AF/U6KxkJ5aha7CJ5w05Zxelc=
+	t=1726121206; cv=none; b=OPFLUE/o6e+3T2Tb2pvD9KtIFWj+a8m24fO3ZKe3qtrP6Svz8Lsx/QLYhit8BOT+8waWYyirCcr/CBu1rT7obiDjRmf+FIoB0LPFX3Uu4KD+91WDgbjFS4adXSHvLoPCoZc3z71duEe33djb1EbtuoSrRFVF2RVBxoWcRrWLb5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726121006; c=relaxed/simple;
-	bh=uUUR3dtE4Kf4BXkkIJjOT8bDWswo2vCLF3eTJUx2644=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UyQVK59n4kIbNHuZQtpVkGddHwM7pLTBn0uCOaabgaQmYVbGVGS1hSN7HrI/A6qftuEgBFRwzsGMIzdpN0iq2k8ZP7GuGgH5ABSjBeOi7NVl/zDo9j0vaAN8tF3AWCQ2NDYJCaG51iivI8qAmcJM7YqIPSGqV7uICqCcjuiODGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-	(envelope-from <fw@strlen.de>)
-	id 1socv5-0004rn-1K; Thu, 12 Sep 2024 08:03:07 +0200
-Date: Thu, 12 Sep 2024 08:03:07 +0200
-From: Florian Westphal <fw@strlen.de>
-To: En-Wei Wu <en-wei.wu@canonical.com>
-Cc: steffen.klassert@secunet.com, herbert@gondor.apana.org.au,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kai.heng.feng@canonical.com,
-	chia-lin.kao@canonical.com, anthony.wong@canonical.com,
-	kuan-ying.lee@canonical.com, chris.chiu@canonical.com
-Subject: Re: [PATCH ipsec] xfrm: avoid using skb->mac_len to decide if mac
- header is shown
-Message-ID: <20240912060307.GA18251@breakpoint.cc>
-References: <20240912033807.214238-1-en-wei.wu@canonical.com>
+	s=arc-20240116; t=1726121206; c=relaxed/simple;
+	bh=mN+R3ToxhkuxGdCM/aq45jOkr3+/T3AE3qU1LI66plA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=jzmRXal8z/FS1sfw8Qup1byplC0/gc7oOYZw9jEmrBrC/jquKyBFPHpxyYC9B+fhgHy7ukc/9DffURjhgcqEg4g35mvteZa3fI4825PtWjgc8FXVTcv/RUPoAsA9bIwtybif42DJ3GslkHkjG9JO7prdRJT7TJMocmsWKrQUwlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=Dut6C6Eb; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
+	From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=3xlRzXI9yb+oNIsqCP0Wa4u5a4LZve9QqMy4C7Th5mc=; b=Dut6C6EbXHKl46S1QMOW38R/r8
+	3ekj8fbSVpa3M/4/NfVU0/L2n4YksdJhPe6RCzswqcuWg3XU0BC0sZSZebL3LtKud0noRiobvGk3s
+	s/vCZiFAoEpUs3s3m9eG2GLI2hq9hOkVu+/Pyiz7KuUe6mkob8ueP+ie3hXBRJSLcpskkGSmRSJDN
+	qrau35IL7NHMtOaOM/vu6KRhLjNPt0bgnC3Zh6h5EfMCiahs5z3wgoDQcFxfm3fN4JbbCQ9+0fccb
+	D2WcU7+AMLG+HPRlw3XBvisLeOAhLALpq8oK72eukqxOqnZIqQZ9rgtSG88tBc821hJ2S4hROU7Jq
+	VRGE9A6w==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1socoG-001u5Y-2v;
+	Thu, 12 Sep 2024 14:06:19 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 12 Sep 2024 14:06:18 +0800
+Date: Thu, 12 Sep 2024 14:06:18 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: x86@kernel.org, linux-crypto@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
+	linux-fscrypt@vger.kernel.org, linux-scsi@vger.kernel.org,
+	bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+	ubizjak@gmail.com, davem@davemloft.net
+Subject: Re: [PATCH RESEND v2 02/19] crypto: testmgr: Include
+ <linux/prandom.h> instead of <linux/random.h>
+Message-ID: <ZuKE2sffS3wddU3-@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,45 +68,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240912033807.214238-1-en-wei.wu@canonical.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20240909075641.258968-3-ubizjak@gmail.com>
+X-Newsgroups: apana.lists.os.linux.cryptoapi,apana.lists.os.linux.kernel,apana.lists.os.linux.scsi
 
-En-Wei Wu <en-wei.wu@canonical.com> wrote:
-> When we use Intel WWAN with xfrm, our system always hangs after
-> browsing websites for a few seconds. The error message shows that
-> it is a slab-out-of-bounds error:
+Uros Bizjak <ubizjak@gmail.com> wrote:
+> Substitute the inclusion of <linux/random.h> header with
+> <linux/prandom.h> to allow the removal of legacy inclusion
+> of <linux/prandom.h> from <linux/random.h>.
 > 
-> The reason is that the eth_hdr(skb) inside the if statement evaluated
-> to an unexpected address with skb->mac_header = ~0U (indicating there
-> is no MAC header). The unreliability of skb->mac_len causes the if
-> statement to become true even if there is no MAC header inside the
-> skb data buffer.
-> 
-> Replace the skb->mac_len in the if statement with the more reliable macro
-> skb_mac_header_was_set(skb) fixes this issue.
-> 
-> Fixes: b3284df1c86f ("xfrm: remove input2 indirection from xfrm_mode")
-
-No, that just moved code around.
-
-> Signed-off-by: En-Wei Wu <en-wei.wu@canonical.com>
+> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> Cc: Herbert Xu <herbert@gondor.apana.org.au>
+> Cc: "David S. Miller" <davem@davemloft.net>
 > ---
->  net/xfrm/xfrm_input.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/xfrm/xfrm_input.c b/net/xfrm/xfrm_input.c
-> index 749e7eea99e4..93b261340105 100644
-> --- a/net/xfrm/xfrm_input.c
-> +++ b/net/xfrm/xfrm_input.c
-> @@ -251,7 +251,7 @@ static int xfrm4_remove_tunnel_encap(struct xfrm_state *x, struct sk_buff *skb)
->  
->  	skb_reset_network_header(skb);
->  	skb_mac_header_rebuild(skb);
-> -	if (skb->mac_len)
-> +	if (skb_mac_header_was_set(skb))
->  		eth_hdr(skb)->h_proto = skb->protocol;
+> crypto/testmgr.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I think you will need to check both, else you restore the bug fixed in
-87cdf3148b11 ("xfrm: Verify MAC header exists before overwriting
-eth_hdr(skb)->h_proto").
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
