@@ -1,145 +1,154 @@
-Return-Path: <linux-kernel+bounces-326861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA343976DD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:32:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0B47976DD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:33:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB32C1C237F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:32:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46838B2159C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:33:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166FE1B5EC6;
-	Thu, 12 Sep 2024 15:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b="ADnssp9F"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A161B5EC6;
+	Thu, 12 Sep 2024 15:33:02 +0000 (UTC)
+Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEEC44C8F;
-	Thu, 12 Sep 2024 15:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726155166; cv=pass; b=DqT3Tvus+ClDEbP395QOGJtS9lU14HWNsPQ+u1bUGJX57JwggW4lBH8ry8y+n6nRK66WEcfYvciq8yMjNRjE5mWfNyz09dvvkXXkky7Q8Al6zyrVF5kEQVsbyDrutaZ8VL7DRO3KhZFbQZ6T6ldcnQj85WWUGZZGBwmzKSEleA8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726155166; c=relaxed/simple;
-	bh=YV9YcH/288vAjtNfsh/90bu+74L4xPu9n7Huwp4eayU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=H5apPPptgdrrHAtNKkQdu9ynazAyG3SxXWdEAHmTl8Ipx+/h8LdNmSYBfVwViqsFzbsuZDry16z/+dVGHeqJyUyqGVa+YRHsxHJBFoXey9wBx/02QPanzWVqEuXA7CXk+dtiJALYLD3zznRu4iGWTNV4s5ZjpWmCRIJW6KIOIp4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b=ADnssp9F; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1726155160; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=kscO4jdLhxvHd6mk64ppAKG54LVWJIwn5WsMtgRzjyamuKm+0ixWqlJdImjL5Y2E3kOyC5nFaCqp/T2BvQjPErnu7W65niRQNRdmwv3VOE3PFgAesnRDnGMg1bkgb/tmcpGiIt7FQ8EK6bUDh9uFkMKmcfjVIK/oiU31ylMLpas=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1726155160; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=YV9YcH/288vAjtNfsh/90bu+74L4xPu9n7Huwp4eayU=; 
-	b=eWtSmILYgIo+nqXPJxUq4g4kJE3pz/8ce3XD0sUY4Wn5lg3KR3oeVGe0Eu09XPt+XVs2DbgnvuAs1F9Uj7/CtIllWj/jTfvkUjzvCABKll07oOeHRIB+t81GjXnIhTDnWy5KbDbS847cZrO/PajaNPxylkGNsNllD7c2N/Ci6wE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=martyn.welch@collabora.com;
-	dmarc=pass header.from=<martyn.welch@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726155160;
-	s=zohomail; d=collabora.com; i=martyn.welch@collabora.com;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=YV9YcH/288vAjtNfsh/90bu+74L4xPu9n7Huwp4eayU=;
-	b=ADnssp9F6hO1o9podZiITeDZ9Qd/+EOSwCCU3vZEPl4g5bNaOQHgcvNs7YSwdfm3
-	Uv/vb2YBiN5rKu1GiQZ4p2wVYUVJrCInIKCZPPP82vKhkVtzn8UvKTHE7qBwI5MMOJ3
-	HeCE7zoOzXQm9XVlgqsYLwf/B76mgETSYGMN2QVU=
-Received: by mx.zohomail.com with SMTPS id 1726155158140886.7487074473904;
-	Thu, 12 Sep 2024 08:32:38 -0700 (PDT)
-Message-ID: <a5f3b6c7029c9d431e28a8ba4ed886a1cf67fff9.camel@collabora.com>
-Subject: Re: linux-next: build warning after merge of the rpmsg tree
-From: Martyn Welch <martyn.welch@collabora.com>
-To: Jassi Brar <jassisinghbrar@gmail.com>, Stephen Rothwell
-	 <sfr@canb.auug.org.au>
-Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier	
- <mathieu.poirier@linaro.org>, Andrew Davis <afd@ti.com>, Hari Nagalla	
- <hnagalla@ti.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>,  Linux Next Mailing List
- <linux-next@vger.kernel.org>, arnd@kernel.org
-Date: Thu, 12 Sep 2024 16:32:34 +0100
-In-Reply-To: <CABb+yY07P0zs6nT2CrZ+TnO+2XxZKYUfEjyRj2wwn+zAx9T0iQ@mail.gmail.com>
-References: <20240822142603.3608a26d@canb.auug.org.au>
-	 <20240828150900.7ffd7588@canb.auug.org.au>
-	 <20240906183621.6c630b7f@canb.auug.org.au>
-	 <12e1eda76baaa67109da3798b1b184b4a94531e6.camel@collabora.com>
-	 <20240912183408.36acc6dd@canb.auug.org.au>
-	 <CABb+yY07P0zs6nT2CrZ+TnO+2XxZKYUfEjyRj2wwn+zAx9T0iQ@mail.gmail.com>
-Organization: Collabora Ltd.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.53.2-1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3CB126BF9
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.84
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726155182; cv=none; b=rNk/7vXrq12MHbLMvuxtQ6jvhdFOKUySZN5G+jWPVEiKBT5jCuL/J9Xi+c5ydBD1ZDhUwZ+Ezow0LQMy3ciYkl2XllGgjIeIWr81q48RQZsHoc3aE7I43aFfN0GHD65ma/IqJNoKHdDP03qiT5O1VPAW9g5vLuNppIndYhTPE/w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726155182; c=relaxed/simple;
+	bh=cNYPBVr/teqVwfz8xwf6ff2IRxwpQtJ3I2/wzzi9T40=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SC5Q/iyypNCqFYWuB4luklIsH8wCgyA5HoJxoypBafBmmW3e5tsixZVeM6mVxJ2IhxS5nczgbjt8DHv7rFLSQV/TYZyqOlxF4Az1obm+5AbIsmzqrq1TXnAx+R5pojXmMBNcQ1mjVjawBX5z43mKs6qWrGHu4lq83kuzi0EB9D4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-25-87.elisa-laajakaista.fi [88.113.25.87])
+	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
+	id 4431e80b-711c-11ef-b409-005056bd6ce9;
+	Thu, 12 Sep 2024 18:32:49 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 12 Sep 2024 18:32:48 +0300
+To: Kimriver Liu <kimriver.liu@siengine.com>
+Cc: jarkko.nikula@linux.intel.com, andriy.shevchenko@linux.intel.com,
+	mika.westerberg@linux.intel.com, jsd@semihalf.com,
+	andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10] i2c: designware: fix controller is holding SCL low
+ while ENABLE bit is disabled
+Message-ID: <ZuMJoHWLU1FIznZR@surfacebook.localdomain>
+References: <cd5f6b0a57adf6fdff7bf3c24cb319bf778d61d6.1726121009.git.kimriver.liu@siengine.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cd5f6b0a57adf6fdff7bf3c24cb319bf778d61d6.1726121009.git.kimriver.liu@siengine.com>
 
-On Thu, 2024-09-12 at 09:15 -0500, Jassi Brar wrote:
-> On Thu, Sep 12, 2024 at 3:34=E2=80=AFAM Stephen Rothwell
-> <sfr@canb.auug.org.au> wrote:
-> >=20
-> > Hi all,
-> >=20
-> > On Fri, 06 Sep 2024 09:58:23 +0100 Martyn Welch
-> > <martyn.welch@collabora.com> wrote:
-> > >=20
-> > > On Fri, 2024-09-06 at 18:36 +1000, Stephen Rothwell wrote:
-> > > >=20
-> > > > On Wed, 28 Aug 2024 15:09:00 +1000 Stephen Rothwell
-> > > > <sfr@canb.auug.org.au> wrote:
-> > > > >=20
-> > > > > On Thu, 22 Aug 2024 14:26:03 +1000 Stephen Rothwell
-> > > > > <sfr@canb.auug.org.au> wrote:
-> > > > > >=20
-> > > > > > After merging the rpmsg tree, today's linux-next build
-> > > > > > (x86_64
-> > > > > > allmodconfig) produced this warning:
-> > > > > >=20
-> > > > > > WARNING: unmet direct dependencies detected for
-> > > > > > OMAP2PLUS_MBOX
-> > > > > > =C2=A0 Depends on [n]: MAILBOX [=3Dy] && (ARCH_OMAP2PLUS ||
-> > > > > > ARCH_K3)
-> > > > > > =C2=A0 Selected by [m]:
-> > > > > > =C2=A0 - TI_K3_M4_REMOTEPROC [=3Dm] && REMOTEPROC [=3Dy] && (AR=
-CH_K3
-> > > > > > || COMPILE_TEST [=3Dy])
-> > > > > >=20
-> > > > > > Probably introduced by commit
-> > > > > >=20
-> > > > > > =C2=A0 ebcf9008a895 ("remoteproc: k3-m4: Add a remoteproc drive=
-r
-> > > > > > for M4F subsystem")
-> > > > >=20
-> > > > > I am still seeing this warning.
-> > > >=20
-> > > > I am still getting this warning.
-> > >=20
-> > > I believe this is the required fix, but I believe it's waiting
-> > > for
-> > > review/merging:
-> > >=20
-> > > https://lore.kernel.org/all/010201919d8b298f-dd1585dd-7c4d-4865-9483-=
-ff6cd7399a90-000000@eu-west-1.amazonses.com/
-> >=20
-> > I am still getting this warning.
-> >=20
-> =C2=A0This
-> https://lore.kernel.org/lkml/20240909203825.1666947-1-arnd@kernel.org/T/#=
-u
-> =C2=A0 seems like a more complete solution.
->=20
-> I am ok if it goes through TI or another tree.
->=20
-> Acked-by: Jassi Brar <jassisinghbrar@gmail.com>
+Thu, Sep 12, 2024 at 02:11:12PM +0800, Kimriver Liu kirjoitti:
+> It was observed that issuing ABORT bit (IC_ENABLE[1]) will not
+> work when IC_ENABLE is already disabled.
+> 
+> Check if ENABLE bit (IC_ENABLE[0]) is disabled when the controller
+> is holding SCL low. If ENABLE bit is disabled, the software need
+> to enable it before trying to issue ABORT bit. otherwise,
+> the controller ignores any write to ABORT bit.
+> 
+> These kernel logs show up whenever an I2C transaction is
+> attempted after this failure.
+> i2c_designware e95e0000.i2c: timeout waiting for bus ready
+> i2c_designware e95e0000.i2c: timeout in disabling adapter
+
+> The patch can be fix the controller cannot be disabled while
+> SCL is held low in ENABLE bit is already disabled.
+
+There are English words but a complete nonsense together.
+
+  Fix the condition when controller cannot be disabled while SCL
+  is held low and ENABLE bit is already disabled.
+
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
+
+...
+
+> +		if (!(enable & DW_IC_ENABLE_ENABLE)) {
+> +			regmap_write(dev->map, DW_IC_ENABLE, DW_IC_ENABLE_ENABLE);
+> +			/*
+> +			 * Wait 10 times the signaling period of the highest I2C
+> +			 * transfer supported by the driver (for 400KHz this is
+> +			 * 25us) to ensure the I2C ENABLE bit is already set
+> +			 * as described in the DesignWare I2C databook.
+> +			 */
+> +			fsleep(DIV_ROUND_CLOSEST_ULL(10 * MICRO, t->bus_freq_hz));
+
+> +			/* Keep ENABLE bit is already set before Setting ABORT.*/
+
+			/* Set ENABLE bit before setting ABORT */
 
 
-That solution works for me.
+> +			enable |= DW_IC_ENABLE_ENABLE;
+> +		}
 
-Martyn
+...
+
+> +/*
+> + * This functions waits controller idling before disabling I2C
+
+s/functions/function/
+
+> + * When the controller is not in the IDLE state,
+> + * MST_ACTIVITY bit (IC_STATUS[5]) is set.
+> + * Values:
+> + * 0x1 (ACTIVE): Controller not idle
+> + * 0x0 (IDLE): Controller is idle
+> + * The function is called after returning the end of the current transfer
+> + * Returns:
+> + * False when controller is in IDLE state.
+> + * True when controller is in ACTIVE state.
+> + */
+> +static bool i2c_dw_is_controller_active(struct dw_i2c_dev *dev)
+> +{
+> +	u32 status;
+> +
+> +	regmap_read(dev->map, DW_IC_STATUS, &status);
+> +	if (!(status & DW_IC_STATUS_MASTER_ACTIVITY))
+> +		return false;
+> +
+> +	return regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
+> +				       !(status & DW_IC_STATUS_MASTER_ACTIVITY),
+> +					1100, 20000) != 0;
+
+	return regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
+					!(status & DW_IC_STATUS_MASTER_ACTIVITY),
+					1100, 20000) != 0;
+
+(in the second line replaced 7 spaces by a single TAB to fix the indentation)
+
+> +}
+
+...
+
+> +	/*
+> +	 * This happens rarely (~1:500) and is hard to reproduce. Debug trace
+> +	 * showed that IC_STATUS had value of 0x23 when STOP_DET occurred,
+> +	 * if disable IC_ENABLE.ENABLE immediately that can result in
+> +	 * IC_RAW_INTR_STAT.MASTER_ON_HOLD holding SCL low. Check if
+> +	 * controller is still ACTIVE before disabling I2C.
+> +	 */
+> +	if (i2c_dw_is_controller_active(dev))
+> +		dev_err(dev->dev, "controller active\n");
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
