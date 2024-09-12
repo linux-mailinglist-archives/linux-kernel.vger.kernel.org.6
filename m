@@ -1,250 +1,133 @@
-Return-Path: <linux-kernel+bounces-326498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15D5297691A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:26:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1551097691D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:28:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A41E1C2369A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:26:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92B4A1F23655
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CEF71A4AD0;
-	Thu, 12 Sep 2024 12:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271F61A4E78;
+	Thu, 12 Sep 2024 12:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DAIo6FX4"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="AAdVE0CB";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="cZQ5IMM7"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A466C1A42BF;
-	Thu, 12 Sep 2024 12:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491881A0BEE
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 12:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726143977; cv=none; b=tUVBWedX7GYrJxnS51Y+uOnkeOkKIBlxKeaddZmPoIy8uzo85lalvH+9Tgu7eA0xxAhAXGLiYz4KnySGgxI51tnihr45f6Pokz0kwcMNPn3GSSGuBROqaBD/CXW7RRzXgC/wjRCSgPqWAU+hAINoSl/O0n8N//khFa4r2qLy0m0=
+	t=1726144088; cv=none; b=qMX4VNvpXw3H03iLeFP/WBX59grHfmP12p19/5hjYm3PL9scS+G1sx+kFI7JNGDI0YRH4sFF429ofjwnpPCYDahgINUEcFBFyBqDtGeOIkVoFIXQN3n6zHa41W3vPXiTkTs8LFfqfC969WJooWeWibVbj6z1OwbfhqyaNjky2u8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726143977; c=relaxed/simple;
-	bh=ToH+zDipXfwGo55Mq7g/S+uks3jDKxJpxp5vDDOfpm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nRLZzsBU40mvYjqyEXOV/DXRxt0ADchZ1Gzod2K1QlD4lBYRN1j3nzekUrlyXh4ZBDXlNvmDi2+cQXXu3+t/EpZbpnTa5cyd62b6C/YbCmQyxRXZL0qcTiePRoQoGa33JyUWbBPM6Tsr98jNA1qUC0gvzAgdUDa7JeqHttwBzRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DAIo6FX4; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DB2D1240008;
-	Thu, 12 Sep 2024 12:26:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1726143966;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cKfjkFcEX6DpYDNLmxhtvKu4kYY/HQvZ1XsMqtB65BM=;
-	b=DAIo6FX4aSo9YeZTODrzC/lgN4cpQzn9Gjg6Za31O/AygEO41xqMN1oxy3LTcbMckcV+eU
-	QVzB06T7VVQWkauGca+CZChhV3RqTNnNC5bCsx1oU76m8axl6HwaQRWjX1JM5p7MxnsFOl
-	kEaeERK9AwTjgRGKI5gvsCdkcnK1qnuZwpQqfU68LN9ARCPGs5E6Vx7+6bvo2K1GhfhgAf
-	51/u0mG3YmEGNPpbZbIFGEEQcbLaTU2nSZyuAP4ZRVOaH/Vbf95mTIQJWZcC9EzUP8aRDC
-	f60CIuJdFNWz6UvZwVqYnC4BnkipfBfc54mnVNAXsdOD9J36I/9xqlHg55GGwA==
-Date: Thu, 12 Sep 2024 14:26:03 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>,
-	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-Subject: Re: [PATCH 1/4] dt-bindings: rtc: add schema for NXP S32G2/S32G3 SoCs
-Message-ID: <2024091212260302903af7@mail.local>
-References: <20240911070028.127659-1-ciprianmarian.costea@oss.nxp.com>
- <20240911070028.127659-2-ciprianmarian.costea@oss.nxp.com>
- <20240911-racism-playmaker-71cb87d1260f@spud>
- <62ba70ca-429e-476c-bb7b-78f743574a68@oss.nxp.com>
+	s=arc-20240116; t=1726144088; c=relaxed/simple;
+	bh=9ZjnxTfWpjA1p4zlfI33l+DzUXnH6P+5rE0W9WBIxOs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=HXlYWPBGAlUozzgOubRZT4WXjCYMULUGVIkdy6dIK1+OcGgzBtYxIa4Gd1+qb90gQIm6bHWIe6NApFnTwprY0JYQQbbybrbOE0GDzZbWXZNc8ulcJiY7+n5Vr3n5WozHgbpdug6QS142WXNr/5mp1htJiAnXC1QUjsi448cQHGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=AAdVE0CB; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=cZQ5IMM7; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1726144086;
+	bh=9ZjnxTfWpjA1p4zlfI33l+DzUXnH6P+5rE0W9WBIxOs=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=AAdVE0CB6ztaej2NjLWMuVFfb6OO2Y+Kdl/dGNBOjZCV/TNYh+ARWTRoHcT2Faqpg
+	 vMDKUPr4HrgZYdR95dEm42ppafoPM1NXE5aK5scdSuyuDhocrYXogt/HRVbkJ/MlQL
+	 yUMz3L1aDn4dhujn5awfVtwmOQYhskI3t1nEmqFc=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 2EF1E1286B75;
+	Thu, 12 Sep 2024 08:28:06 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id pNQr286WJefl; Thu, 12 Sep 2024 08:28:06 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1726144085;
+	bh=9ZjnxTfWpjA1p4zlfI33l+DzUXnH6P+5rE0W9WBIxOs=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=cZQ5IMM770InZlyQTl/BVP2feJT63s5tz6Xlc5LfMYjzPY/vuZotfONtKQpj2TEZw
+	 igF4o7D6uchL1NKkZ1iqhSgl/QmOEnZNZT4LMLyvGV4gRkIufV2bCjIwrDq6UD2cHi
+	 aoTzxzO2OrfRbMD6+/WksiC9n8Npvh9i0C2Jd9bE=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 228DE1285DB2;
+	Thu, 12 Sep 2024 08:28:05 -0400 (EDT)
+Message-ID: <86e6659bc8dd135491dc34bdb247caf05d8d2ad8.camel@HansenPartnership.com>
+Subject: Re: [PATCH RFC 3/3] tsm: Add TVM Measurement Sample Code
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Cedric Xing <cedric.xing@intel.com>, Dan Williams
+ <dan.j.williams@intel.com>,  Samuel Ortiz <sameo@rivosinc.com>, Lukas
+ Wunner <lukas@wunner.de>, Dionna Amalie Glaze <dionnaglaze@google.com>,
+ Qinkun Bao <qinkun@google.com>, Mikko Ylinen
+ <mikko.ylinen@linux.intel.com>, Kuppuswamy Sathyanarayanan
+ <sathyanarayanan.kuppuswamy@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev
+Date: Thu, 12 Sep 2024 08:28:02 -0400
+In-Reply-To: <20240907-tsm-rtmr-v1-3-12fc4d43d4e7@intel.com>
+References: <20240907-tsm-rtmr-v1-0-12fc4d43d4e7@intel.com>
+	 <20240907-tsm-rtmr-v1-3-12fc4d43d4e7@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <62ba70ca-429e-476c-bb7b-78f743574a68@oss.nxp.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-On 12/09/2024 13:50:25+0300, Ciprian Marian Costea wrote:
-> On 9/11/2024 9:21 PM, Conor Dooley wrote:
-> > On Wed, Sep 11, 2024 at 10:00:25AM +0300, Ciprian Costea wrote:
-> > > From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> > > 
-> > > This patch adds the dt-bindings for NXP S32G2/S32G3 SoCs RTC driver.
-> > > 
-> > > Signed-off-by: Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>
-> > > Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> > > Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> > > ---
-> > >   .../devicetree/bindings/rtc/nxp,s32g-rtc.yaml | 79 +++++++++++++++++++
-> > >   1 file changed, 79 insertions(+)
-> > >   create mode 100644 Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml b/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
-> > > new file mode 100644
-> > > index 000000000000..8f78bce6470a
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/rtc/nxp,s32g-rtc.yaml
-> > > @@ -0,0 +1,79 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/rtc/nxp,s32g-rtc.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: NXP S32G2/S32G3 Real Time Clock (RTC)
-> > > +
-> > > +maintainers:
-> > > +  - Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
-> > > +  - Ciprian Marian Costea <ciprianmarian.costea@nxp.com>
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    const: nxp,s32g-rtc
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +  interrupts:
-> > > +    maxItems: 1
-> > > +
-> > > +  nxp,clksel:
-> > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > +    description:
-> > > +      Input clock selector. Choose between 0-SIRC and 2-FIRC.
-> > > +      The reason for these IDs not being consecutive is because
-> > > +      they are hardware coupled.
-> > > +    enum:
-> > > +      - 0  # SIRC
-> > > +      - 2  # FIRC
-> > 
-> > Could you please explain why, given both clocks must be provided by
-> > the hardware for there to be a choice, why choosing between them is a
-> > property of the hardware?
-> > 
+On Sat, 2024-09-07 at 23:56 -0500, Cedric Xing wrote:
+> This sample kernel module demonstrates how to make MRs accessible to
+> user mode
+> through TSM.
 > 
-> Hello Conor,
+> Once loaded, this module registers a virtual measurement provider
+> with the TSM
+> core and will result in the directory tree below.
 > 
-> Thanks for your review.
-> 
-> According to RTC module's clocking scheme for S32G2/S32G3 SoCs, it has three
-> potential clock sources to select between:
->   1. FIRC:
->     - fast clock - ~48 MHz output
->     - chosen by default because it is proven to be more reliable (e.g:
-> temperature drift).
->   2. SIRC:
->     - slow clock - ~32 kHz output
->     - When in Standby mode, SIRC_CLK is the only available clock for RTC.
-> This is important because RTC module is used as a wakeup source from Suspend
-> to RAM on S32G2/S32G3 SoC. Therefore, a temporary switch to SIRC clock is
-> performed when entering Suspend to RAM.
-> 
->   3. EXT_CLK:
->     - has not been tested/validated for those SoCs within NXP's downstream
-> Linux. Therefore, I did not treat it, nor mention it, for the moment.
-> 
-> Now to answer your question, all above clocks are entering a RTCC[CLKSEL]
-> (RTCC - RTC Control Register) mux. Therefore, a selection can be made,
-> according to one's needs.
-> 
+> /sys/kernel/tsm/
+> └── measurement-example
+>     ├── config_mr
+>     ├── full_report
+>     ├── report_digest
+>     ├── rtmr0
+>     │   ├── append_event
+>     │   ├── digest
+>     │   ├── event_log
+>     │   └── hash_algo
+>     ├── rtmr1
+>     │   ├── append_event
+>     │   ├── digest
+>     │   ├── event_log
+>     │   └── hash_algo
+>     ├── static_mr
+>     └── user_data
 
-Then should this mux be registered in the CCF so you can use the usual
-clock node properties?
+I'm not sure this is the best structure to apply to logs with multiple
+banks (hash algorithms).  There needs to be a way to get the same
+registers measurement for each bank, but the log should sit above that
+(appending should extend all active banks)
 
-> I will add a shorter version of above information in the bindings
-> documentation in the V2 of this patchset.
-> 
-> > > +
-> > > +  nxp,dividers:
-> > > +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> > > +    description:
-> > > +      An array of two u32 elements, the former encoding DIV512,
-> > > +      the latter encoding DIV32. These are dividers that can be enabled
-> > > +      individually, or cascaded. Use 0 to disable the respective divider,
-> > > +      and 1 to enable it.
-> > 
-> > Please explain to me what makes this a property of the hardware and how
-> > someone would go about choosing the divider settings for their hardware.
-> > 
-> 
-> As per hardware RTC module clocking scheme, the output of the clock mux can
-> be optionally divided by a combination of 512 and 32 (via other two input
-> cascaded muxes) to give various count periods for different clock sources.
-> 
-> With respect to choosing the divider settings for custom hardware, it
-> depends on the clock source being selected and the desired rollover time.
-> For example, on S32G2 or S32G3 SoC based boards, using FIRC (~48-51 MHz)
-> with DIV512 enabled results in a rollover time of aprox. 13 hours.
-> 
-> > > +    items:
-> > > +      - description: div512
-> > > +      - description: div32
-> > > +
-> > > +  clocks:
-> > > +    maxItems: 3
-> > 
-> > I'd rather you provided an explicit items list here, explaining what
-> > each of the tree clocks do.
-> > 
-> > Cheers,
-> > Conor.
-> > 
-> 
-> I will add such information in the V2 of this patchset.
-> 
-> Regards,
-> Ciprian
-> 
-> > > +
-> > > +  clock-names:
-> > > +    items:
-> > > +      - const: ipg
-> > > +      - const: sirc
-> > > +      - const: firc
-> > > +
-> > > +required:
-> > > +  - clock-names
-> > > +  - clocks
-> > > +  - compatible
-> > > +  - interrupts
-> > > +  - nxp,clksel
-> > > +  - nxp,dividers
-> > > +  - reg
-> > > +
-> > > +additionalProperties: false
-> > > +
-> > > +examples:
-> > > +  - |
-> > > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > > +    #include <dt-bindings/interrupt-controller/irq.h>
-> > > +
-> > > +    rtc0: rtc@40060000 {
-> > > +        compatible = "nxp,s32g-rtc";
-> > > +        reg = <0x40060000 0x1000>;
-> > > +        interrupts = <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>;
-> > > +        clocks = <&clks 54>,
-> > > +                 <&clks 55>,
-> > > +                 <&clks 56>;
-> > > +        clock-names = "ipg", "sirc", "firc";
-> > > +        nxp,clksel = <2>;
-> > > +        nxp,dividers = <1 0>;
-> > > +    };
-> > > -- 
-> > > 2.45.2
-> > > 
-> 
+How about
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+/sys/kernel/tsm/
+└──<measurement type>
+   ├──reg0
+   │   ├── <log format>
+   │   │   ├── append_event
+   │   │   └── event_log
+   │   ├── <hash algo>  
+   │  ...  └── digest
+   ...
+
+That way it supports multiple log formats (would be the job of the log
+extender to ensure compatibility) and multiple banks.
+
+James
+
 
