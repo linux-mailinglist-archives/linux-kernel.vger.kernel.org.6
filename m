@@ -1,155 +1,143 @@
-Return-Path: <linux-kernel+bounces-326922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07F8C976E8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:17:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7156976E8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:17:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 253B11C237AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:17:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8EA61C23A33
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F501448ED;
-	Thu, 12 Sep 2024 16:17:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBD6B15250F;
+	Thu, 12 Sep 2024 16:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CohGfKAQ"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VR32OBzf"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35BE23A1DB;
-	Thu, 12 Sep 2024 16:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3543B13E02E
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 16:17:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726157823; cv=none; b=TsrQmFebsPiFQG/V3kK/NbHHE37duypC2jJ9Jo0LJTBooGYI/oRs/lSXGkPNl2vzg9VK6I24vBXKzoy2T10zS5bPF9cIp4HokB/NS6KF0n4RXC+rTm+MJxB+lj2IrfOeOjuHL4RYnzSVUFeYasFBQo5oq2Bv23k60U4Duvnbjhs=
+	t=1726157861; cv=none; b=d0rDC+E1+PtcdLPN0acbFTU0WS56nYWm2ZbCl7oDrwErh+pOH7LhQC95mJIx0J17E063h+USA3tyPTQywsx/47LU/27TuirrK0GGMscUfrQ/DLAh5JfiBu2TC3IH8261iZEViqsWEbn+MIVGHtTPsPl5q73I/DiZsLjBDXK29Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726157823; c=relaxed/simple;
-	bh=KPL4usSEfGXF9z36Si2YIBFeBHEgXy9QBXsAgjvg144=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iz3lskNqPI4nQhJ2YUer1i8fI6zO+mEgvtqNLL/vrR6uciBPpP8xShqCA4JRoLF5Vo7WSx9jjUMpy5oWz1jL4MhwT5WAWGcDeqQLvEpFi1Gr/hIpHs72cTvtBj4prZ/5Tjw93xzmF2ft2izhCS0FN23cx3xEQOxN++LNL+InYfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CohGfKAQ; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53659c8d688so865716e87.1;
-        Thu, 12 Sep 2024 09:17:01 -0700 (PDT)
+	s=arc-20240116; t=1726157861; c=relaxed/simple;
+	bh=sqOCBmz0NeGoOmrLe8YUpkiZEdcp2a6gTbuVlBFKGwY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=O+IGVZDshuUegEdTqDAe1JvFNboQvxIp7iV94j31gJwmYsOu1Dde08PzQbhek170cuaJlYcb/MmI7R1/q5tB2NzM2a2c8cQCFmi/hVx94f/A+rw5imrnNTW86b98JtRswtbYEvTjoZL9OCHzQg9zDlCyRZqqXx9T0T4T41XgEk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VR32OBzf; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e178e745c49so1636859276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:17:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726157820; x=1726762620; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5Z9pxM0QZQaCqTjsL5zddkA5S0In18CVD5PAyOkUHsI=;
-        b=CohGfKAQXf3FSqmyB6qg22ZqlLQNmVHbny8b0qkdXfvdd9WIceU+4SA0BsUx3hdk7j
-         q3Sdc7L994bmsB8spTtQtJNoMz0LGRYzvz8U/08Oq36theImOGLVIuVKGZc/0KNGw2Qc
-         3bdxrGDHEwevH3ZMZhwRSFgYKBdhn51IcDM24nYQGA4Dj2RGCS0VH8LtfnVfp7VrxYZE
-         aB5Fum8RjorY5QBb+Ez9TR45/eS8gzUhlfpkgTW32HUcLVJnYyiS3ANlEiy2ORwfF3Ra
-         aDSTniWpcY6VOOdf7XlE5gb6djXnUarYb01mV2wMw9SH/6i5ToihPffOZKMF32NJ78ub
-         AAug==
+        d=google.com; s=20230601; t=1726157858; x=1726762658; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CHc8H+AgFlKGz9oROxRBwufdfanAh7CzUD+9HRa3+GA=;
+        b=VR32OBzfvOz14JfapTbYgxzaKPXvxL4zmrESNKyDBn2w+18hrpsigrgpGkQSDSfYWz
+         PtidutRCuzrgeAbnHx9A7FtYBc6XoAYICw/6H1Mp6fZjpEdNglJMZua35Fr1PayQPI3s
+         FNiKE+7PjIm/1O4FfmpBq7h2/kEI1LXdOE94nDAXk5POKEBFYeUJ8BLCVnDrBje6rltd
+         fw+zGuEFHHkKK8TmFFURBrvN7XCobigjWrJ5+vRbgNT8954d3iMDfV5RiuU/pdJWG1Ia
+         jBvePS4ndx+YpN3UQepo2vnjTY059gQP6iQ5ifMWtLbaYuNymdRrk4V+djX+F40LaamI
+         LqDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726157820; x=1726762620;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5Z9pxM0QZQaCqTjsL5zddkA5S0In18CVD5PAyOkUHsI=;
-        b=Esm+lTW5kDm3nQI+pF//+MsNdxgYg392YqK94Af3TolrJ4LESBuROFhhhK8jczsQIh
-         m+vQyZKN3B9sqUcImALdqbgHzwO1akB7C2ulLgHz/yM1z1pv06DSRo80yB011QbcYUvI
-         qBbhLlJY1HmkUKlfc3EOw/9os5hGXdBsXKAKadhBWEALugKDGnH8v/36WZ/ajPfbNQT4
-         SS6b+hcRjQvd6qj9bDdNC4oLfW1Q5oWkg4JsQ/uprj61aCML1xWltI/HHWvAqsapn1Om
-         2n6jwWHFk7/qnGpy+kikaBabbMrChZSqxHeNWeir1pXQ390+AzcLm5h+LvPEwr1mVO7/
-         TI4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUSP/r1tcOE2rO0XgRUd+9zgbRy/QxSZZatHr/0/U79BGug4HJodGmyavE5P2vPP4th4QHlJjEDWZGgoIc=@vger.kernel.org, AJvYcCWTpnLiznFAw48QNcqEKxIp+hKb1VkU2cMxGXN/G/oR+fbe0oQkcu1l8DG24oKXt9MEx03n@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3hAyOdbqKAOyS5Kwm6vo+Qh+Z9dZ2Q+FKzK5uXEQ+UmqVbzvQ
-	FCFRVv6wOg4NP70WzZGJEg3K9rsI2UXJt3ItBKsMNYyV1D2zadzn
-X-Google-Smtp-Source: AGHT+IEomOPKKKft4loCx4UNN5cjJQ2CmyG0CFHvRGhTZ1s58ae5HTOdGICveqT0uJyyrLVNgP7UhA==
-X-Received: by 2002:a05:6512:3051:b0:52f:441:bdd6 with SMTP id 2adb3069b0e04-5366b7d4cdcmr3587600e87.0.1726157819969;
-        Thu, 12 Sep 2024 09:16:59 -0700 (PDT)
-Received: from pc636 (host-90-235-20-248.mobileonline.telia.com. [90.235.20.248])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f90d523sm1959552e87.272.2024.09.12.09.16.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 09:16:58 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Thu, 12 Sep 2024 18:16:56 +0200
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Uladzislau Rezki <urezki@gmail.com>, Vlastimil Babka <vbabka@suse.cz>,
-	RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v2] rcu/kvfree: Add kvfree_rcu_barrier() API
-Message-ID: <ZuMT-IpkBCGYzIIL@pc636>
-References: <20240820155935.1167988-1-urezki@gmail.com>
- <34ec01ee-a015-45bb-90ce-2c2af4ac9dbf@paulmck-laptop>
- <ZuFmWuUK8POsihzf@pc636>
- <cdab7aec-0f03-48ab-b162-28c4a2f198eb@paulmck-laptop>
+        d=1e100.net; s=20230601; t=1726157858; x=1726762658;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CHc8H+AgFlKGz9oROxRBwufdfanAh7CzUD+9HRa3+GA=;
+        b=liHLmAgk1um5rBVpdMydJfJgjXPdXF49ZZCUJTgNrcaeyEA8neSntT89G4bhs/Srik
+         aWwISFcVe2FPrSMiMnK1lpbqA3YBqG0PRt0Nf5teelMHqAV4cn5bXFuqFj0i7ng87lbV
+         zfes/uqdirEJ2hrv3RwWkDFCqeFnPmKdZefxSLiTuFG3Vb77bzj7oI94Mmgxo92Rhlah
+         WyTMmN2uA9oZs+3CXxlbKgEgDQIp3JuoQGTa3Y/+Wqgf78VHlHNEk+du4g/YY21HCPcy
+         CPuMTs/JDtv9vsq2wv1HyEi4iletUj6ro95Zl/Wh6ZlB+zFk8skvTfl0Q4ENERhsN5Em
+         FF5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVLZIEmcmDDA27bDuf+jp62nK9xZiOevIDYXn21Pf1f5YuzJws42TxkOIqxS5HZ2mzDJaUENdBlRYViWyM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEGgrDEEqnXTM4wY83u21+gVImnc6d+Yoxs2FAgKPObmUACXBX
+	IHwRTbS69WOc3kDjB6FXAvmc4fGRUWeSDumhgi2BSNGNv/0rT9cr3w8Vmj7zOn/SEP8VpWrUZCC
+	/uQ==
+X-Google-Smtp-Source: AGHT+IEJVscKJvuinHeLuj6Vk0WsuDDxtUgSvi9YqWgJNhdyRuKGPX9aioKoGnIVhZDgsM2BQvZ5JjUQZqU=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a25:86c4:0:b0:e11:5e94:17dc with SMTP id
+ 3f1490d57ef6-e1d9dbd0464mr4681276.5.1726157858129; Thu, 12 Sep 2024 09:17:38
+ -0700 (PDT)
+Date: Thu, 12 Sep 2024 09:17:36 -0700
+In-Reply-To: <20240912-75f992936cd9878d0e507498@orel>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cdab7aec-0f03-48ab-b162-28c4a2f198eb@paulmck-laptop>
+Mime-Version: 1.0
+References: <20240911204158.2034295-1-seanjc@google.com> <20240911204158.2034295-5-seanjc@google.com>
+ <20240912-75f992936cd9878d0e507498@orel>
+Message-ID: <ZuMUIPIu5iRuxLCC@google.com>
+Subject: Re: [PATCH v2 04/13] KVM: selftests: Assert that vcpu_{g,s}et_reg()
+ won't truncate
+From: Sean Christopherson <seanjc@google.com>
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Anup Patel <anup@brainfault.org>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
+	Claudio Imbrenda <imbrenda@linux.ibm.com>, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	James Houghton <jthoughton@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Wed, Sep 11, 2024 at 03:39:19AM -0700, Paul E. McKenney wrote:
-> On Wed, Sep 11, 2024 at 11:43:54AM +0200, Uladzislau Rezki wrote:
-> > On Tue, Sep 10, 2024 at 08:42:54AM -0700, Paul E. McKenney wrote:
-> > > On Tue, Aug 20, 2024 at 05:59:35PM +0200, Uladzislau Rezki (Sony) wrote:
-> > > > Add a kvfree_rcu_barrier() function. It waits until all
-> > > > in-flight pointers are freed over RCU machinery. It does
-> > > > not wait any GP completion and it is within its right to
-> > > > return immediately if there are no outstanding pointers.
-> > > > 
-> > > > This function is useful when there is a need to guarantee
-> > > > that a memory is fully freed before destroying memory caches.
-> > > > For example, during unloading a kernel module.
-> > > > 
-> > > > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> > > > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> > > 
-> > > As a follow-on patch, once kvfree_rcu_barrier() is accepted into
-> > > mainline, should we add a call to kvfree_rcu_barrier() to the
-> > > rcu_barrier_throttled() function in kernel/rcu/tree.c?
-> > > 
-> > > This would allow the do_rcu_barrier module parameter to be used to clear
-> > > out kfree_rcu() as well as call_rcu() work.  This would be useful to
-> > > people running userspace benchmarks that cause the kernel to do a lot
-> > > of kfree_rcu() calls.  Always good to avoid messing up the results from
-> > > the current run due to deferred work from the previous run.  Even better
-> > > would be to actually account for the deferred work, but do_rcu_barrier
-> > > can help with that as well.  ;-)
-> > > 
-> > > Thoughts?
-> > >
-> > Makes sense. To be make sure that all objects are flushed. And as you
-> > mentioned it is good to have it for benchmarking as a return to a baseline
-> > point.
+On Thu, Sep 12, 2024, Andrew Jones wrote:
+> On Wed, Sep 11, 2024 at 01:41:49PM GMT, Sean Christopherson wrote:
+> > Assert that the the register being read/written by vcpu_{g,s}et_reg() is
+> > no larger than a uint64_t, i.e. that a selftest isn't unintentionally
+> > truncating the value being read/written.
 > > 
-> > One issue is probably a "name" which would be common for both:
+> > Ideally, the assert would be done at compile-time, but that would limit
+> > the checks to hardcoded accesses and/or require fancier compile-time
+> > assertion infrastructure to filter out dynamic usage.
 > > 
-> > rcu_barrier()
-> > kvfree_rcu_barrier()
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > ---
+> >  tools/testing/selftests/kvm/include/kvm_util.h | 4 ++++
+> >  1 file changed, 4 insertions(+)
 > > 
-> > i mean /sys/module/rcutree/parameters/do_rcu_barrier. From how i
-> > would see it, it is supposed to trigger just rcu_barrier() API.
+> > diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
+> > index 429a7f003fe3..80230e49e35f 100644
+> > --- a/tools/testing/selftests/kvm/include/kvm_util.h
+> > +++ b/tools/testing/selftests/kvm/include/kvm_util.h
+> > @@ -683,6 +683,8 @@ static inline uint64_t vcpu_get_reg(struct kvm_vcpu *vcpu, uint64_t id)
+> >  	uint64_t val;
+> >  	struct kvm_one_reg reg = { .id = id, .addr = (uint64_t)&val };
+> >  
+> > +	TEST_ASSERT(KVM_REG_SIZE(id) <= sizeof(val), "Reg %lx too big", id);
+> > +
+> >  	vcpu_ioctl(vcpu, KVM_GET_ONE_REG, &reg);
+> >  	return val;
+> >  }
+> > @@ -690,6 +692,8 @@ static inline void vcpu_set_reg(struct kvm_vcpu *vcpu, uint64_t id, uint64_t val
+> >  {
+> >  	struct kvm_one_reg reg = { .id = id, .addr = (uint64_t)&val };
+> >  
+> > +	TEST_ASSERT(KVM_REG_SIZE(id) <= sizeof(val), "Reg %lx too big", id);
+> > +
+> >  	vcpu_ioctl(vcpu, KVM_SET_ONE_REG, &reg);
+> >  }
+> >  
+> > -- 
+> > 2.46.0.598.g6f2099f65c-goog
+> >
 > 
-> One approach would be to keep the old functionality, but create
-> a new sysfs variable that does both.  Except that to avoid code
-> duplication, we would likely end up with both actually doing
-> both.
+> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 > 
-> Another approach is to rename the sysfs variable.  This might
-> work if there are not too many people using it.  Might.  ;-)
-> 
-> Other approaches?
-> 
-Maybe just rename from/to: do_rcu_barrier -> do_barrier? Probably this
-would be the best, but as you noted, there might be users :)
+> Shouldn't patches 3 and 4 come before patch 2 in this series?
 
-To be safe, we can add kvfree_rcu_barrier() to the rcu_barrier_throttled() and  
-document that it does both now!
+Ideally, yes, but for this patch, it gets weird because the output param of
+vcpu_reg_get() isn't actually restricted to a 64-bit value prior to patch 2.
+E.g. if this patch were merged without that rework, then the assert would be
+confusing and arguably flat out wrong.
 
---
-Uladzislau Rezki
+As for the hack-a-fix, I deliberately ordered it after patch 2 so that it would
+be easier for others to (try to) reproduce the bug.  I have no objection to
+swapping 2 and 3 in the next version.
 
