@@ -1,131 +1,107 @@
-Return-Path: <linux-kernel+bounces-325828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B688975EBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:06:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B628975EC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:09:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCF051F23ACD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:06:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 024AA28598B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF25B3A8E4;
-	Thu, 12 Sep 2024 02:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SN/OXxpH"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661AD3CF58;
+	Thu, 12 Sep 2024 02:09:21 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4069D24211;
-	Thu, 12 Sep 2024 02:06:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BD66FBF;
+	Thu, 12 Sep 2024 02:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726106789; cv=none; b=elii5kHUVTSaEuTq1JR9lt674Wua5XGsBKJI3aoTSGDujxvaO+aismQx5He4Hqug9PFXk4SpFVyvys9iQlbyxyPUlTrcYqKGI2peQRE+mWAbC4ScNeib6ZY7BzmwxOB5eDXnLuBYnUSAhw2zLRzRBcvG/iNiSanBCPcG33pCofE=
+	t=1726106961; cv=none; b=kCRNFvKKIRYWQQEdCu9jQ8HYCbOc7WOwWCN4ESwJeoDXY+tzSrVQBTTtr6byI0SK4+33IJi4fkxfvSeMStWrZH5lQO7p1UBsv2lMpYE7KoqCdUPEe3vUCUMLvwihXjoTagTHL2hZA3EJq2Du2YKPFf3HEZBmypNuKmN1q1hpJqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726106789; c=relaxed/simple;
-	bh=LxfaDtmUeDEJ2tSU+e8KFxk0LzzOIsxgrteLLAHVnT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=KxM+JBpRugiWli6wA07WkjRBhelJVOZnOQhACGAtJETWdWf00eqd9uRkhZf7BWQMIVQXr+hB3p2FptZovu3/DvKh8THsgura4JonYNb5mopbrKqSaQJFEixbC1Oqtwu6QkMG4TovySkDsxBoaOUTOi5i+eZcgro4rgPhs6Rx5BY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=SN/OXxpH; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726106780;
-	bh=7EY64P4Wz6Bj+ihgN1jy4vBFG87DVZX4iYu1S5XrSyA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=SN/OXxpH0p8EUgjeRIMTdOzBJXevKHsGVYJ4XFxGKg22TGIRWPUhHhfiJN3MJcO5B
-	 z9NXr+FvFlruZd2kJj0PlZIGXO5FFG36oMH5urPKrE9dp7fvn4Fm/PHv+MHAz9xGNv
-	 TEq/B38eUO8y9I5v19HDV+rYKLiYZy3kq8SOTjYB6j4YLJGHqzfKdIHH7RFwaxSdJP
-	 rUq5UhFmA2dkBT9T32Ss8I8K/gyCiYfxCMPQADg9qN0tdwC6R5ptJVkOf0u+jgSnt+
-	 XciEOTtpDfQClzjdTGHHayK+12RQE16xBJ5uFNuhBWEpcCNDIIb+GhTvUI73R9bWd9
-	 UjUJU90KiXnnA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X4158336Xz4x21;
-	Thu, 12 Sep 2024 12:06:19 +1000 (AEST)
-Date: Thu, 12 Sep 2024 12:06:19 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Leon Romanovsky <leon@kernel.org>
-Cc: Networking <netdev@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Saeed Mahameed <saeedm@nvidia.com>, Yevgeny
- Kliteynik <kliteyn@nvidia.com>, Yishai Hadas <yishaih@nvidia.com>
-Subject: linux-next: manual merge of the net-next tree with the mlx5-next
- tree
-Message-ID: <20240912120619.38fa7556@canb.auug.org.au>
+	s=arc-20240116; t=1726106961; c=relaxed/simple;
+	bh=V5+gNunt16oUkcf+NPsxyEcEVV/pBevZJ7IRqjTAZb4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bg+BNifg1A0oH7O6RngdVkq8PeCl3Tkz+Jn94fSZNLYHAfQD65f4bJx/hGBiCevGYZl2/R4Dv0nb6PTmi7NDpyXSSTG++47NHAfd9LhjZLRxT+vYjmHISlMkXpCrKtRPa8zZYkbHRrohu+Mn/qyB0V+avivh6YiEFD03ksgvG7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-03 (Coremail) with SMTP id rQCowACHjdkpTeJmNeLlAg--.8164S2;
+	Thu, 12 Sep 2024 10:08:45 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: marcan@marcan.st,
+	sven@svenpeter.dev,
+	alyssa@rosenzweig.io,
+	linus.walleij@linaro.org,
+	joey.gouly@arm.com,
+	stan@corellium.com,
+	maz@kernel.org,
+	akpm@linux-foundation.org
+Cc: asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH RESEND] pinctrl: check devm_kasprintf() returned value
+Date: Thu, 12 Sep 2024 10:08:40 +0800
+Message-Id: <20240912020840.1763252-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/yAsEKALhRxOwIVMB0Th_wGg";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowACHjdkpTeJmNeLlAg--.8164S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKFW7ZFW5Ww13ZF1fGF4xXrb_yoWDGFb_Ca
+	y8urZ7Jry8CFn8urW7tw13ZFy0ka15JFyvqrnagFW3Cry5Xr4UJrWkurn8Gw48W3s5JFyD
+	trykZrWrXw1UCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbSkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
+	0_Cr1UM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJV
+	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
+	0VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28Icx
+	kI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
+	xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42
+	IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY
+	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
+	CY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU122NtUUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
---Sig_/yAsEKALhRxOwIVMB0Th_wGg
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+devm_kasprintf() can return a NULL pointer on failure but this returned
+value is not checked. Fix this lack and check the returned value.
 
-Hi all,
+Found by code review.
 
-Today's linux-next merge of the net-next tree got a conflict in:
+Cc: stable@vger.kernel.org
+Fixes: a0f160ffcb83 ("pinctrl: add pinctrl/GPIO driver for Apple SoCs")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/pinctrl/pinctrl-apple-gpio.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-  include/linux/mlx5/mlx5_ifc.h
+diff --git a/drivers/pinctrl/pinctrl-apple-gpio.c b/drivers/pinctrl/pinctrl-apple-gpio.c
+index 3751c7de37aa..f861e63f4115 100644
+--- a/drivers/pinctrl/pinctrl-apple-gpio.c
++++ b/drivers/pinctrl/pinctrl-apple-gpio.c
+@@ -474,6 +474,9 @@ static int apple_gpio_pinctrl_probe(struct platform_device *pdev)
+ 	for (i = 0; i < npins; i++) {
+ 		pins[i].number = i;
+ 		pins[i].name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "PIN%u", i);
++		if (!pins[i].name)
++			return -ENOMEM;
++
+ 		pins[i].drv_data = pctl;
+ 		pin_names[i] = pins[i].name;
+ 		pin_nums[i] = i;
+-- 
+2.25.1
 
-between commit:
-
-  c772a2c69018 ("net/mlx5: Add IFC related stuff for data direct")
-
-from the mlx5-next tree and commit:
-
-  34c626c3004a ("net/mlx5: Added missing mlx5_ifc definition for HW Steerin=
-g")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/linux/mlx5/mlx5_ifc.h
-index 65bbf535b365,b6f8e3834bd3..000000000000
---- a/include/linux/mlx5/mlx5_ifc.h
-+++ b/include/linux/mlx5/mlx5_ifc.h
-@@@ -313,7 -315,7 +315,8 @@@ enum=20
-  	MLX5_CMD_OP_MODIFY_VHCA_STATE             =3D 0xb0e,
-  	MLX5_CMD_OP_SYNC_CRYPTO                   =3D 0xb12,
-  	MLX5_CMD_OP_ALLOW_OTHER_VHCA_ACCESS       =3D 0xb16,
- +	MLX5_CMD_OPCODE_QUERY_VUID                =3D 0xb22,
-+ 	MLX5_CMD_OP_GENERATE_WQE                  =3D 0xb17,
-  	MLX5_CMD_OP_MAX
-  };
- =20
-
---Sig_/yAsEKALhRxOwIVMB0Th_wGg
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbiTJsACgkQAVBC80lX
-0GwXngf+I5zGCibJDVdqJObnIZJkTTXe44xICnDpKm2rvF9TASWStLrdzzl173k0
-kLaFEWNHDL9EG/u5mDFbGSU9jE1k9GEmhJvy1UvQKfXTC9MyUo5LhvF4XIWh7bjQ
-U5YBbNgMrCy3S5mR6Hp4YnWifVTI97AL/XsgwIKysAoCl/GdDuBiBwm+bHBzHUrS
-1S2MgV7LlSMcQuZom9KZJO1fBp/CSgYtV3O2TSpQCgM8TTJaobg3aSgonQl+P6ZJ
-JTBrdUtOtSTTMYn/B65cLFEbZeItU4TyG21uwLGjm7ExHnAZW8rjzpRIe2ezmJOY
-OrRBeVMA2F5kCctkOKERijjmFVIw/Q==
-=UNJw
------END PGP SIGNATURE-----
-
---Sig_/yAsEKALhRxOwIVMB0Th_wGg--
 
