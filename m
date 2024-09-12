@@ -1,97 +1,76 @@
-Return-Path: <linux-kernel+bounces-327241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 831D29772BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:31:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EFD79772BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:32:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B66651C23E50
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:31:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB6A81F24E23
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E5B1BF81C;
-	Thu, 12 Sep 2024 20:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0701BF7F9;
+	Thu, 12 Sep 2024 20:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kOiDMmpI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Me/xbB+k"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7091013CFB7;
-	Thu, 12 Sep 2024 20:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDB413CFB7;
+	Thu, 12 Sep 2024 20:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726173094; cv=none; b=Dcx7tw7bUKAjcLsghpqypgv+ErysInJco+JNkQkYPywkKmEuv7CAPGU9LTy4b9rINaVRux8H2Qf2YiRgdEqYCaAVYaOBUeunO/c7AdBJAgVkZsEUnXJRRjngi9k/PkOKXkW23SbgsD3yb73+J40YC8s5tDIih1eLPq5P5pyuEto=
+	t=1726173124; cv=none; b=VktSKlVJy3V9e+dUbaJc+rPkQpl+d0dmqAj0KVNpMmNZHorEN5YoSB7+7b/NWs890pdWFVDSbtNoSTCs/cLXRbCLghTEZB3vC4TXmsOlh8xC7i1uIkNVPU6GtEQ8+RT+ZeNqrfiayi7fjXvnsTUPL0kY6UNnUNA67TbNGoWZRIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726173094; c=relaxed/simple;
-	bh=T8U1b6wp7ibIw+njMfMHoCAqw5G8qqefpz2hppJxRUU=;
+	s=arc-20240116; t=1726173124; c=relaxed/simple;
+	bh=TbyE6YLUJEXuDAtJP201235txoxOj26ezN6mlc7lzcM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KNzCurUdSwp+thqo1NdN2Rgbh3B5m3JYQzSPWZGk4RXIs6fKGk1OYjeOad0zKgXsee8i0rtF5Mq0rBIpMmtlqbZylPc4q0omexbyrGEaIC+72r29+cHjmMgyxDZrrvy7uuo0hQ4Zfr/Bvh/Bf8iaLCUmar5gBuCwiNtR2EWbipg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kOiDMmpI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA2B3C4CEC3;
-	Thu, 12 Sep 2024 20:31:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=TyZivVYUk6HxJMjx6NAoHP8zHbaVOzMGJAJ4yO/lJcXiGdt0wXaH9cJpUjQPcGDLGRzSi+GV1T8U/K4/wq7ghIq/zhbVxbIRT5kWc/3r4Tinrav2QwMhViIHMLjdhV/srqLxZHxIXi1TIidiACa8IQcJd3UbZ8PXPvZIgGzfxzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Me/xbB+k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C78DAC4CEC3;
+	Thu, 12 Sep 2024 20:32:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726173094;
-	bh=T8U1b6wp7ibIw+njMfMHoCAqw5G8qqefpz2hppJxRUU=;
+	s=k20201202; t=1726173123;
+	bh=TbyE6YLUJEXuDAtJP201235txoxOj26ezN6mlc7lzcM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kOiDMmpINwcXPW7ctic3yrgfkP+q6JH3vrPATY9CW5RefBK+soiEQrZ4Vd+aSmUzp
-	 QiafSnqo0RF8HWEua4j+AOXHEYs4oQ299wU1ekXduP8xlyWNAYn6B8WdTkSV+35MtQ
-	 uOc2eK+vs6ohAw1912wpw/NQUzCUASwL1nyu2q8lLqGBhr6VRNxa61dBHqFCrmvj/C
-	 vcEiXeU6Mde9PU9gGXwIITxght+cKiELqyGn1yKUKM5sUDA5UoZq9zwzWi2H+vrsnb
-	 YLkub8mMsQK2+GWxCTrzDCot4roQOjoYjXpYyuS0WpDSuWKt+mmGKInh4k2PTaZji1
-	 3N4rNUn6ZMPig==
-Date: Thu, 12 Sep 2024 15:31:32 -0500
+	b=Me/xbB+kWP3eP/hVjN4j2Z+4jLqw58b6rExLPMbPlYWsgTcwvTkCLBHUzqwn85vJv
+	 VZicjLsWLmMVr0Y0Wd3PqMgEGMKAd/WQNvLzatKBY6xzAThiV1o88yYajQoPGrGWOb
+	 MkscFq9EOzhxZHu4Yl5ZgqnAEHTulhmfNYGj3Cp9WeebksoxsPss2+1EAmZmCX5UgG
+	 ibUvdxn1iNH6nw49BuPtZR/csmSNfOsUh0H3xEWkH+D3sgJNXxN18kYNgvfCnQNTIN
+	 rpvb5VxM3wU748I+wGO3zlcHpiMUeOsm9ZE65XkKDe+kS97JgywTpe0XeTj37RJ89b
+	 OioCkRCQzaWJQ==
+Date: Thu, 12 Sep 2024 15:32:02 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Saravana Kannan <saravanak@google.com>, chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Johan Hovold <johan@kernel.org>, devicetree@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Benson Leung <bleung@chromium.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	linux-arm-kernel@lists.infradead.org, Wolfram Sang <wsa@kernel.org>,
-	Jiri Kosina <jikos@kernel.org>, linux-i2c@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v7 02/10] of: base: Add
- for_each_child_of_node_with_prefix()
-Message-ID: <172617309153.737512.5462269215203973657.robh@kernel.org>
-References: <20240911072751.365361-1-wenst@chromium.org>
- <20240911072751.365361-3-wenst@chromium.org>
+To: Miquel =?iso-8859-1?Q?Sabat=E9_Sol=E0?= <mikisabate@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	saravanak@google.com
+Subject: Re: [PATCH v2] drivers/of: Improve documentation for match_string
+Message-ID: <172617312190.738061.4164864853737783773.robh@kernel.org>
+References: <20240911204938.9172-1-mikisabate@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240911072751.365361-3-wenst@chromium.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240911204938.9172-1-mikisabate@gmail.com>
 
 
-On Wed, 11 Sep 2024 15:27:40 +0800, Chen-Yu Tsai wrote:
-> There are cases where drivers would go through child device nodes and
-> operate on only the ones whose node name starts with a given prefix.
+On Wed, 11 Sep 2024 22:49:38 +0200, Miquel Sabaté Solà wrote:
+> The description of the function now explicitly states that it's
+> an *exact* match for the given string (i.e. not a submatch). It also
+> better states all the possible return values.
 > 
-> Provide a helper for these users. This will mainly be used in a
-> subsequent patch that implements a hardware component prober for I2C
-> busses.
-> 
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> Signed-off-by: Miquel Sabaté Solà <mikisabate@gmail.com>
 > ---
-> Changes since v6:
-> - Changed helper name to "for_each_child_of_node_with_prefix()"
-> Changes since v5:
-> - New patch
-> ---
->  drivers/of/base.c  | 35 +++++++++++++++++++++++++++++++++++
->  include/linux/of.h |  9 +++++++++
->  2 files changed, 44 insertions(+)
+>  drivers/of/property.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
 > 
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Applied, thanks!
 
 
