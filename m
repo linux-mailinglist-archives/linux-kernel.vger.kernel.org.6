@@ -1,248 +1,247 @@
-Return-Path: <linux-kernel+bounces-326796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B74C3976D0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:08:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8431976D09
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAF7E1C23878
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:08:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D85C91C23743
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 108E61B9845;
-	Thu, 12 Sep 2024 15:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C615A1B373C;
+	Thu, 12 Sep 2024 15:08:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jk2LDje/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oCNG4ldg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C69D1ACDE3;
-	Thu, 12 Sep 2024 15:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726153695; cv=fail; b=f12Q4o6BxnQVQy9zSMksj9wGhwAsmq//b5vWHaOMZ3kLj6ucDBepyCqi6ZLfkIJhYJOomwdBHeR02Bk4+UmLTk7CbZ1u+rWU6Rcb+rFh6drDkjEFM5txx/OlO2/eua8Vqx2HTsf0F+D/lXm/FRC9Ru1V8owzMuXZrwL18CjXvlI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726153695; c=relaxed/simple;
-	bh=PmFqFW/JxxTmx5Z/CBpg8f7a8Y00p3B6rVqVqywee0k=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=qh+t7wC/rvK1SQzaP1JnjCExJib4TCxz5pm7dgXC/jkpf9qxHfSpWRX8fRac6L+AVmGslbjalTpf592jjf/jU+oEm7VDZxsZfLhEIi6C+BoInV8WttnM52mzakVl9xoJ6KOIOPSEhesk4pof252m15XroALGT1ATldD74Ypfwmk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jk2LDje/; arc=fail smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726153693; x=1757689693;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=PmFqFW/JxxTmx5Z/CBpg8f7a8Y00p3B6rVqVqywee0k=;
-  b=Jk2LDje/GwKboR78w8Qc623IMEf3sL+LO/uUwrDLIMoIab4X3tdA6xU7
-   kGfnVQlbdPpuZPygz0nIn7V4S0sE1RNXdUZJFaLPz0m8F6i8P7R95H494
-   Zpj8TxjgEaStSmIOzFdwNnaqM4DhAwcIdpmhJiszDUGyXlu416WnG4cao
-   ROcW5cXW8uhbI+tAT/O6E5jsfITjgs2ukpM60sZK3A4S8ygABdKP3FrDa
-   zyNTZW3kYC/JHsiGVU7E3H4+Azke+KLyTpVunopSx0Xyc7B3ZWR0l3paH
-   kbcI1ow2LYMCxU6W1nGxBguxni9oZrR09jSxkiRL86yuDiGplVhk+zNOA
-   Q==;
-X-CSE-ConnectionGUID: jfhZVvlRRbar8Wj5TVQerg==
-X-CSE-MsgGUID: 0/G42TuLSVm1B+G8x2s9Bw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="35606772"
-X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
-   d="scan'208";a="35606772"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 08:07:59 -0700
-X-CSE-ConnectionGUID: QAHDoyOIQrisp6TGpHCoOA==
-X-CSE-MsgGUID: c0C1QSU9TJW+kxUUIzLWIg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
-   d="scan'208";a="67575747"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Sep 2024 08:07:57 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 12 Sep 2024 08:07:55 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 12 Sep 2024 08:07:48 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 12 Sep 2024 08:07:48 -0700
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (104.47.74.46) by
- edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 12 Sep 2024 08:07:45 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=y+q8VXZHCBfHV4wX275Mvjf4MTtioo3mOGgXpxt6gW5bzXb9k64K5z9jnUJMdgm6P9Zp38EgGqt5YhZePTiKRjxel1EGs9kwUm9PfWfYGHyvOFoY/vDlWoJvSR3w5VRU6CuB2UJN2wu6S3Xob4bAJZvjgjbYbDkLKxISujAHPTicWMuqzQs3mMhqy2EHqv+rEH8e5Tq7owqfVPl+a5rLeYaOzXVHnk79JfLjrfpXtZ7JQjnTHQhnsta02mjgN9FFyQZS5pXlM/OEVMehRqonG2jor0B6uSeHJQVaIqWYhGTobcENDhE7amm/UOHELCHNcO7iOKiRuHeYY9RF9k8FUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PmFqFW/JxxTmx5Z/CBpg8f7a8Y00p3B6rVqVqywee0k=;
- b=NacSOAqrqqC7pALbzpm+kzTMvLzFo7I795gUsWAHaychxGDFCS6KO/YBWKyXPqUbUKyii9+02xWSAp8+vrpkzTIQJhzIk5NXfVLxZUgfU2rpIqVkE7cOCOpO76pbL6LDXolTz/IBeqGpZdtONbO0dPr50X3OqrtHY82NpUnALVdHIB5gk5UwA0jRkt5b0zriZCfRJzg1a2c0/YMDvEGeyqHye1jA3T2ZQuzd+iTkwHb5O/z9C/GK/5Ev/m6N1IZa9xixOjQfevEuXwaZ1X6B6Y/tTeDQJraf8x8XjrAWknodRj7gSPXDNzloIPmsWtcqBA5nyjfwGvR7XVVtHOYO4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
- by PH0PR11MB5880.namprd11.prod.outlook.com (2603:10b6:510:143::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.18; Thu, 12 Sep
- 2024 15:07:41 +0000
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9%5]) with mapi id 15.20.7939.017; Thu, 12 Sep 2024
- 15:07:39 +0000
-From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To: "Li, Xiaoyao" <xiaoyao.li@intel.com>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"seanjc@google.com" <seanjc@google.com>, "Huang, Kai" <kai.huang@intel.com>,
-	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
-	"tony.lindgren@linux.intel.com" <tony.lindgren@linux.intel.com>
-Subject: Re: [PATCH 25/25] KVM: x86: Add CPUID bits missing from
- KVM_GET_SUPPORTED_CPUID
-Thread-Topic: [PATCH 25/25] KVM: x86: Add CPUID bits missing from
- KVM_GET_SUPPORTED_CPUID
-Thread-Index: AQHa7QnThnZIMHm/AkW0hgwbYo+0yrJRemKAgAJ7zwCAAGp1gIAAEEkA
-Date: Thu, 12 Sep 2024 15:07:39 +0000
-Message-ID: <c2b1da5ac7641b1c9ff80dc288f0420e7aa43950.camel@intel.com>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
-	 <20240812224820.34826-26-rick.p.edgecombe@intel.com>
-	 <05cf3e20-6508-48c3-9e4c-9f2a2a719012@redhat.com>
-	 <cd236026-0bc9-424c-8d49-6bdc9daf5743@intel.com>
-	 <CABgObfbyd-a_bD-3fKmF3jVgrTiCDa3SHmrmugRji8BB-vs5GA@mail.gmail.com>
-In-Reply-To: <CABgObfbyd-a_bD-3fKmF3jVgrTiCDa3SHmrmugRji8BB-vs5GA@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.44.4-0ubuntu2 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|PH0PR11MB5880:EE_
-x-ms-office365-filtering-correlation-id: 03d0593e-e044-4515-7824-08dcd33ca499
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?THR0UXphcFY4Q2tmWUxydis1Q3c5QW1YdlU2Z0xsQVdWZWx4RFZQZFNGUHcw?=
- =?utf-8?B?R1lDM3RvbjB0SVQyYXF4d1QyeWdQK2kyajBYN2hZTFI3MUUwN2pTT0E2Y1d0?=
- =?utf-8?B?UnJRSjlSaDNDT2lzVzF4NWIrY0dkSTBkcDU2d1VWN1c3NW1XSUt4cEZJa0d6?=
- =?utf-8?B?VGlEU0tmbmJOUGVxMzlwbjZQN0YyazA2OEJLMWhCV2NDWVVja3JEaU52dXhj?=
- =?utf-8?B?bHRRUW54MXVqamVFZUc2eUkyK2FCYzRmaVhuVURNWGh0SlpubmlUM2srUXFG?=
- =?utf-8?B?bEMwYkZ6QURBd1pMU1J5UjFjMkttanFORU1aK3BVQUhQOG13WlFad055Rko4?=
- =?utf-8?B?bjdWcDE2bHhCaGozNE1QWXN2QXNyNnNwU0NzTm53MTRGYXVPT0h3REF2NTVQ?=
- =?utf-8?B?OUFIRFJQd0gvQlMzU2xtM2ZLR2p5dEZDVkt0aC94Qmo2RFpWbTRCOHFXTkFu?=
- =?utf-8?B?TlpmNXBDZGJvYUpvd1pLRGVCNS8weFZqajdFci9rcS9wNTBFNUx1MW9sUkdY?=
- =?utf-8?B?Q2F0NlJraGRpZjBuelByRnJaUStYWTJJK0YyWFRMcXpDZS9FRktUOTJCVHl5?=
- =?utf-8?B?dkxZTGUwSHNTbkZHTkd0WnZKTDl1ZmJMV3pIZXg1eTM4NEFMOHB3bjIzNTJD?=
- =?utf-8?B?RjkvV05JWi9xNnlmK3ZuUEw3Vyt0OExsYlU1YnhodVJXcVcybjBKVmhLa3g4?=
- =?utf-8?B?OWptWGRoR3lWeGl4cDBZcjlRTEJ5RHViVFFYUUlqZS92NHROUTdnNDloeTBR?=
- =?utf-8?B?Q2tkNHVYcmtkTC9qUEh2TkM2MHlCTXYvdmRsSURFOElNQXliM0pYVVBqeFQx?=
- =?utf-8?B?K1RzbjNTS2hXczlET21oaWxIb3JGWVQvcGVySWw0MGR4SW83WG9LU05yajBp?=
- =?utf-8?B?OGcveGRyajg2S3ZOelBFSkl0SDd2UkVyWGtIK1BwMFhpeDVxeUl3Mk9lZWor?=
- =?utf-8?B?UVVFVFRSMTZQSFFyUW0zU013cnhndVNQTDQvZk45VnJyNG52VmloT3Fid2d2?=
- =?utf-8?B?ekR1NEZQakw4eXh6Y1JaWkxPc2ExdTNRWHN2STJLOERBNDlCRERaeDhXZEVr?=
- =?utf-8?B?SlExYUllcUFlV0s1NGtWd3U3NEFFRUZSbGtnMksrSDhvS3J4TDUyOGVBYkhY?=
- =?utf-8?B?bFB3a3BCTlVqOTZPQ1BOM2FLVkpVa0Z5UnVDVXg3bk1vVDEwODdRaFdYWk8r?=
- =?utf-8?B?UnNkc2VtNlBiVXNoT1FlVUpEYVh2enJ4TXdlVWVPQ1RFVmhacmduOCttMi9l?=
- =?utf-8?B?NjRiRjcxdUN5YnRCekZFdkFBMEd4Uno2RVh0ZUZGY083V2J4T04zYWFGY0ZN?=
- =?utf-8?B?bUNWMzk2NlFkYjJ0MUhia3BwMlJScE1URkR1ZC84WWdyTkNwQjRtamFYTTlF?=
- =?utf-8?B?eW1yb3BvWE1ISVNkWEd5Smc2OW9PTjlXQzlHWnNQbXlKU0lQdXFHeEhJaW1p?=
- =?utf-8?B?amxNV3orV29mMkNFbXRNV1Z6Q21KU2hmSTQyc1JmeG1TVmtsc1FacUkzMFYy?=
- =?utf-8?B?bjJDQWUxT0J5VGVrNWNQK2Zvc3FlNlljTFExWlRKMjBTa0JNa1M5U3dTWWx0?=
- =?utf-8?B?SlhUS1BPZk9RcWVER25ZVTdTUk40cGpLMWxRT3UrVXJPM1NrZ1Y5eHlEcUZw?=
- =?utf-8?B?WWRZSnZUdzFidVpZV1lrdlJtdDhxYThZWmtsWTlDYUw1R1A0dzM5WGRqVE9r?=
- =?utf-8?B?aFZsRGFyTXViTU5vbEtDSk1rNUFudmNpUlBCWHJJL0lvbk1CQjNGcUNHS0x4?=
- =?utf-8?B?OXZmYkcxaVc3b3M2WkNVL1pEUUtSOXRqMis2aldyMjNsaG1UQmljNmhkLzhW?=
- =?utf-8?B?SnMyVEpCL3RYVDMwMk94ejA1V0FMY1JmZDlBSzRFOTdGUHA2cU82ZzZxK01x?=
- =?utf-8?B?dk5TZkZ1V291YncvaTQ2c2o1ZWRXZi9ZK0ExVmowRjNyYlE9PQ==?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?aG1VY0YxWmRwODJrTldFV1BCYWdtTWw5TG9oVkRyRUExeUI1S1hMWWpnUldP?=
- =?utf-8?B?M0ZWbmNsUXZ4bDNBeTFIZTBqYzdiVkJGNlZrbVlwaVNiTHA0ZmU4L1BtenYx?=
- =?utf-8?B?dEpBd3dIRTdINzIwdSs3UzlwMk1yNnJ0RENBelY4MzBZQVp0UXhIZFJiN0E3?=
- =?utf-8?B?MnhvanZDM29yV25Kb0FEOEVRNXpCQXdrVDV6ZGEzZ29DVEkzeER2QkhKVldX?=
- =?utf-8?B?Y25SRktmTlFYN0MyV2Qwb1QrYncyRk5SUUF0eDAvQW9lc0o5VjlHMWhqNzZO?=
- =?utf-8?B?a1Q1dVlTeUZvWE1xMHIwbjRLb242MkJ4b0wya0E3T0EyeGs5bjZoaGYvbkFN?=
- =?utf-8?B?S1ZzK0hmSlFYTFd4Ri9kVFN4eU9MWVQzQWd5YTBDK1dzZG90MnVERU94cjl2?=
- =?utf-8?B?K09PVHVnV29sMmVNaUUxRjg5c3lGdFBlYXlFZ1RQVkhoTkpwbWVRTjJGVUpD?=
- =?utf-8?B?ZlVsUm0yL3hDTS9oZEpmQ2xBZ05GVHV1SFJvZ0RwcXhMc0hWWG8xSUpQOEhQ?=
- =?utf-8?B?V1kzaEJlQkNwTWFRdkNSelNVaGhqemNuL1JXY1BlRW15ajZvWENwREZTVExL?=
- =?utf-8?B?cEJWR2FIcFZxb2NQdEcrY3dPQlE1eU9uNGxyaElEVFRTdHJieFI0STFFRFZl?=
- =?utf-8?B?S3ZWc1hiMERSN1RlZlhhTjVvOW00b3NDV1hFRWJjVU1Oem1Ob3UwU2JRUFlV?=
- =?utf-8?B?bC9zWUdpazBPTkdCdE1rQ0lzQjNyWVJxMEpzSWYwZFNZR3BGelZ0RXIyZmFh?=
- =?utf-8?B?RHRSUDRhRWdsY251MDZLMGE3dnhtaERlRE5ldk1pVkN2VGY3UzI1NU1NODhi?=
- =?utf-8?B?YW9qRGl0cXdTd3ZWdmZvMTNsRDBJRDZBYkZmV2RjcjBOVjFTWW1LSEhRdW5K?=
- =?utf-8?B?MkxBazNBRGE1VmFlaEhaTHpRdDRsUFpPYkxEMU9LV0NTOVNkbUplQjh0RWU4?=
- =?utf-8?B?dEJsUHY1RnM3YXFSdjZTTGJTNGlVVTFQbE1uVThjRER4N0d0VlgwKzRRZkEr?=
- =?utf-8?B?VU1zaURsakNWbWlnWHdwenRCVGlwWjc4eU9XV25sdjRCbHV0UmhpbjZwdWhB?=
- =?utf-8?B?b0dwMVJDNHZsMng4eCtSU2FPM2RjSGZKUDhPdjZ6cFhLYUpqVEl0c0ExZDY2?=
- =?utf-8?B?OUNnWnRYSHgrQk1rQ1JVLzdNZGpzNlA4RWpXYUs1QlZwZ3h5U0JZOWM2M29u?=
- =?utf-8?B?NDNNK2ExUXFCd1UxU0luYkpxcnJQVlErdlBQZEpjRm84U3ZCcjdiMGIvQk5j?=
- =?utf-8?B?RzhSTUJiVWlpRGc5WUpyNmkrNDlhUTUvMkRpSHRsTVdXUWVueHVBNGZCNjI3?=
- =?utf-8?B?SEU1UVlPYW1oSjFGOTZYVUtuM0RQcG1Ub0VCT293VkliOUwwOHVCZ2pxYXh0?=
- =?utf-8?B?QjgwUHkxZ1Y1L0kybWlHZlNQc2xLZ3dBSkhNbndWSGRpMGdTMUxiL1RMQjVq?=
- =?utf-8?B?UVFjSm9UNmlVaHZXeWd5MHlCSERwNFJzQ3lkV1hiRVRqcHFmZUtHVFZENXh6?=
- =?utf-8?B?R2REZGYvOGNoemwwS1VRM0Y5ZUcrTmlWd2l2N1FHK3pRR1ViQTZjMnRndkVR?=
- =?utf-8?B?UHV2UWp5YXNzOEhnSG1KdS94Y0cxaFpWL2NyKzkyWmQxRzJWV2pMdGZTRTNj?=
- =?utf-8?B?UEgwTXNWbE1NTm5PYk54ZlJraTBPczV4L08yL1BMdm9ucDNLUjdsdklWWjZz?=
- =?utf-8?B?bk9qOXczRG14OTdRdzljM3JMMnVNM1c4dVh2K3BxUFVhRnRqMnc3Z0o4SEkv?=
- =?utf-8?B?WDVETW55TFF2SmYxbEFkUGVuRldwZkM4dFlRUjNXTk9XTVZJdkcwTHptdlNz?=
- =?utf-8?B?QUdjL0szMzg3a2xseHluM0xJaWRVcDBzZGtrS0EvMDBGcFVyNUxXZ3kvTmhp?=
- =?utf-8?B?OGxDT3h2czRCRTdvRkN2Z29OQmVnSjFwN1hveFlCZ3RRVjlwM29wK3VtUmtx?=
- =?utf-8?B?aDllNHpqYzlIU0ZlMUI1ZDRaamR0Zk9CMWlZdVBkQjl1MmRlNkw2UC9WRUgx?=
- =?utf-8?B?VkZ3bUdPbUkvVlFaYWJCcnZJZkdjWW1iL2R3ZU8rcUlBQklCNjdLSUc0T3d5?=
- =?utf-8?B?TzBlRmxJWWpRaFdISFNlNUxNVWZacmM2aFk0Ky9UU01MeHdYbHkxU2RObFhR?=
- =?utf-8?B?NW80ckRKU2k1eGQvRGorNU5zd1JqbEx6cnpsYXJzaXFsN2xPaFVBRnNXSzVF?=
- =?utf-8?B?Q2c9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3EE031EB85251E4EAFA51C2D8C72C39C@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF5D18EFF3;
+	Thu, 12 Sep 2024 15:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726153694; cv=none; b=QdPenp6kN7bD1sC2jojT7B02gjeAlXJACUwr9c6TR5Ywwx6O4lRIhP/sFX9p+4MfbXYhrm6xI0R68ReWTFKIleQoukQUxcZzV3q6Jq34zv2jTxsmsnRFiBgl4P2eh0iaaWSRLDsB0fyxDb3rq9E81ZAB2U5i1KTo/B1FBsHacKk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726153694; c=relaxed/simple;
+	bh=d1BX0b2TE/IDP66A92f7CdUTq3nc1QKZ2uuKh0zE2Z8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=mcB7qmtEEB5+MKVKPOA7Ico7kQYdm2F5Pl5i1TaOIBihPgtvziYCql5ZyuHtXVdlZxoi9qXhdaWRoTMFuBmZzkEd1km5wv+48RlC6O3SaoovkLNOABandW8y+CJq3kvjq2bH2C20kYP102lrM+zTD6QczeF+5wSdPbjrBQEdRzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oCNG4ldg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACC92C4CEC3;
+	Thu, 12 Sep 2024 15:08:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726153693;
+	bh=d1BX0b2TE/IDP66A92f7CdUTq3nc1QKZ2uuKh0zE2Z8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=oCNG4ldgQHBLOyCvcUNzcX++WhkAdciHXdwqFfafuKr/7MEhA+r5xLVPGiOJpd/Yc
+	 U8CWRivn04IQFfMfio9A/iM5hbGyzfgpGKrabefl1mo1I7r3bnn2h8hlBK1NH2QfgX
+	 KX/zUDUIRqCpa8hW0H7X4Yw5dwuK6mxrA3hwbkGcn441jxXvr6+cN58h9ozo+YxU97
+	 mYkdPrkiG/pEBos/oIiaP6cLwRYERbcx5ExU55WRIw70WXeq3hRzR2E99HHN/e2xb8
+	 kpzLhLxO2h98dkUsTrCGfHYzttKNbqYuLBk2YmW3RWEldVNCudQ9NbEAxfdF9aca7c
+	 2yvRd2Oiw1/Gw==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Florent Revest <revest@chromium.org>
+Cc: linux-trace-kernel@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	bpf <bpf@vger.kernel.org>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Guo Ren <guoren@kernel.org>,
+	linux-arch@vger.kernel.org
+Subject: [PATCH v14 00/19] tracing: fprobe: function_graph: Multi-function graph and fprobe on fgraph
+Date: Fri, 13 Sep 2024 00:08:06 +0900
+Message-Id: <172615368656.133222.2336770908714920670.stgit@devnote2>
+X-Mailer: git-send-email 2.34.1
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 03d0593e-e044-4515-7824-08dcd33ca499
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Sep 2024 15:07:39.2734
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: duj/g7JAKtp/s1sQ3Xys5YQi2t2SCRGsB1iKqQAf7IUYyzTsuocRzYKH8r6bftZ7jO629eHiPgOI6r87fct5bDmrPQ/0wCLw14XrmjLGAaI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5880
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-T24gVGh1LCAyMDI0LTA5LTEyIGF0IDE2OjA5ICswMjAwLCBQYW9sbyBCb256aW5pIHdyb3RlOg0K
-PiANCj4gPiBUaGUgcHJvYmxlbSBpcywgVERYIG1vZHVsZSBhbmQgdGhlIGhhcmR3YXJlIGFsbG93
-IHRoZXNlIGJpdHMgYmUNCj4gPiBjb25maWd1cmVkIGZvciBURCBndWVzdCwgYnV0IEtWTSBkb2Vz
-bid0IGFsbG93LiBJdCBsZWFkcyB0byB1c2VycyBjYW5ub3QNCj4gPiBjcmVhdGUgYSBURCB3aXRo
-IHRoZXNlIGJpdHMgb24uDQo+IA0KPiBLVk0gaXMgbm90IGdvaW5nIHRvIGhhdmUgYW55IGNoZWNr
-cywgaXQncyBvbmx5IGdvaW5nIHRvIHBhc3MgdGhlDQo+IENQVUlEIHRvIHRoZSBURFggbW9kdWxl
-IGFuZCByZXR1cm4gYW4gZXJyb3IgaWYgdGhlIGNoZWNrIGZhaWxzDQo+IGluIHRoZSBURFggbW9k
-dWxlLg0KDQpPay4gDQoNCj4gDQo+IEtWTSBjYW4gaGF2ZSBhIFREWC1zcGVjaWZpYyB2ZXJzaW9u
-IG9mIEtWTV9HRVRfU1VQUE9SVEVEX0NQVUlELCBzbw0KPiB0aGF0IHdlIGNhbiBrZWVwIGEgdmFy
-aWFudCBvZiB0aGUgImdldCBzdXBwb3J0ZWQgYml0cyBhbmQgcGFzcyB0aGVtDQo+IHRvIEtWTV9T
-RVRfQ1BVSUQyIiBsb2dpYywgYnV0IHRoYXQncyBpdC4NCg0KQ2FuIHlvdSBjbGFyaWZ5IHdoYXQg
-eW91IG1lYW4gaGVyZSB3aGVuIHlvdSBzYXkgVERYLXNwZWNpZmljIHZlcnNpb24gb2YNCktWTV9H
-RVRfU1VQUE9SVEVEX0NQVUlEPw0KDQpXZSBoYXZlIHR3byB0aGluZ3Mga2luZCBvZiBsaWtlIHRo
-YXQgaW1wbGVtZW50ZWQgaW4gdGhpcyBzZXJpZXM6DQoxLiBLVk1fVERYX0dFVF9DUFVJRCwgd2hp
-Y2ggcmV0dXJucyB0aGUgQ1BVSUQgYml0cyBhY3R1YWxseSBzZXQgaW4gdGhlIFREDQoyLiBLVk1f
-VERYX0NBUEFCSUxJVElFUywgd2hpY2ggcmV0dXJucyBDUFVJRCBiaXRzIHRoYXQgVERYIG1vZHVs
-ZSBhbGxvd3MgZnVsbA0KY29udHJvbCBvdmVyIChpLmUuIHdoYXQgd2UgaGF2ZSBiZWVuIGNhbGxp
-bmcgZGlyZWN0bHkgY29uZmlndXJhYmxlIENQVUlEIGJpdHMpDQoNCktWTV9URFhfR0VUX0NQVUlE
-LT5LVk1fU0VUX0NQVUlEMiBraW5kIG9mIHdvcmtzIGxpa2UNCktWTV9HRVRfU1VQUE9SVEVEX0NQ
-VUlELT5LVk1fU0VUX0NQVUlEMiwgc28gSSB0aGluayB0aGF0IGlzIHdoYXQgeW91IG1lYW4sIGJ1
-dA0KanVzdCB3YW50IHRvIGNvbmZpcm0uDQoNCldlIGNhbid0IGdldCB0aGUgbmVlZGVkIGluZm9y
-bWF0aW9uIChmaXhlZCBiaXRzLCBldGMpIHRvIGNyZWF0ZSBhIFREWA0KS1ZNX0dFVF9TVVBQT1JU
-RURfQ1BVSUQgdG9kYXkgZnJvbSB0aGUgVERYIG1vZHVsZSwgc28gd2Ugd291bGQgaGF2ZSB0byBl
-bmNvZGUgaXQNCmludG8gS1ZNLiBUaGlzIHdhcyBOQUtlZCBieSBTZWFuIGF0IHNvbWUgcG9pbnQu
-IFdlIGhhdmUgc3RhcnRlZCBsb29raW5nIGludG8NCmV4cG9zaW5nIHRoZSBuZWVkZWQgaW5mbyBp
-biB0aGUgVERYIG1vZHVsZSwgYnV0IGl0IGlzIGp1c3Qgc3RhcnRpbmcuDQo=
+Hi,
+
+Here is the 14th version of the series to re-implement the fprobe on
+function-graph tracer. The previous version is;
+
+https://lore.kernel.org/all/172398527264.293426.2050093948411376857.stgit@devnote2/
+
+This version is based on trace-v6.11-rc6.
+
+I dropped already committed bugfix patch, also add RISC-V support of
+ftrace_regs APIs(ftrace_regs_get_return_address() and ftrace_partial_regs()).
+
+Overview
+--------
+This series rewrites the fprobe on this function-graph.
+The purposes of this change are;
+
+ 1) Remove dependency of the rethook from fprobe so that we can reduce
+   the return hook code and shadow stack.
+
+ 2) Make 'ftrace_regs' the common trace interface for the function
+   boundary.
+
+1) Currently we have 2(or 3) different function return hook codes,
+ the function-graph tracer and rethook (and legacy kretprobe).
+ But since this  is redundant and needs double maintenance cost,
+ I would like to unify those. From the user's viewpoint, function-
+ graph tracer is very useful to grasp the execution path. For this
+ purpose, it is hard to use the rethook in the function-graph
+ tracer, but the opposite is possible. (Strictly speaking, kretprobe
+ can not use it because it requires 'pt_regs' for historical reasons.)
+
+2) Now the fprobe provides the 'pt_regs' for its handler, but that is
+ wrong for the function entry and exit. Moreover, depending on the
+ architecture, there is no way to accurately reproduce 'pt_regs'
+ outside of interrupt or exception handlers. This means fprobe should
+ not use 'pt_regs' because it does not use such exceptions.
+ (Conversely, kprobe should use 'pt_regs' because it is an abstract
+  interface of the software breakpoint exception.)
+
+This series changes fprobe to use function-graph tracer for tracing
+function entry and exit, instead of mixture of ftrace and rethook.
+Unlike the rethook which is a per-task list of system-wide allocated
+nodes, the function graph's ret_stack is a per-task shadow stack.
+Thus it does not need to set 'nr_maxactive' (which is the number of
+pre-allocated nodes).
+Also the handlers will get the 'ftrace_regs' instead of 'pt_regs'.
+Since eBPF mulit_kprobe/multi_kretprobe events still use 'pt_regs' as
+their register interface, this changes it to convert 'ftrace_regs' to
+'pt_regs'. Of course this conversion makes an incomplete 'pt_regs',
+so users must access only registers for function parameters or
+return value. 
+
+Design
+------
+Instead of using ftrace's function entry hook directly, the new fprobe
+is built on top of the function-graph's entry and return callbacks
+with 'ftrace_regs'.
+
+Since the fprobe requires access to 'ftrace_regs', the architecture
+must support CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS and
+CONFIG_HAVE_FTRACE_GRAPH_FUNC, which enables to call function-graph
+entry callback with 'ftrace_regs', and also
+CONFIG_HAVE_FUNCTION_GRAPH_FREGS, which passes the ftrace_regs to
+return_to_handler.
+
+All fprobes share a single function-graph ops (means shares a common
+ftrace filter) similar to the kprobe-on-ftrace. This needs another
+layer to find corresponding fprobe in the common function-graph
+callbacks, but has much better scalability, since the number of
+registered function-graph ops is limited.
+
+In the entry callback, the fprobe runs its entry_handler and saves the
+address of 'fprobe' on the function-graph's shadow stack as data. The
+return callback decodes the data to get the 'fprobe' address, and runs
+the exit_handler.
+
+The fprobe introduces two hash-tables, one is for entry callback which
+searches fprobes related to the given function address passed by entry
+callback. The other is for a return callback which checks if the given
+'fprobe' data structure pointer is still valid. Note that it is
+possible to unregister fprobe before the return callback runs. Thus
+the address validation must be done before using it in the return
+callback.
+
+Download
+--------
+This series can be applied against the ftrace/for-next branch in
+linux-trace tree.
+
+This series can also be found below branch.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/mhiramat/linux.git/log/?h=topic/fprobe-on-fgraph
+
+Thank you,
+
+---
+
+Masami Hiramatsu (Google) (19):
+      tracing: Add a comment about ftrace_regs definition
+      tracing: Rename ftrace_regs_return_value to ftrace_regs_get_return_value
+      function_graph: Pass ftrace_regs to entryfunc
+      function_graph: Replace fgraph_ret_regs with ftrace_regs
+      function_graph: Pass ftrace_regs to retfunc
+      fprobe: Use ftrace_regs in fprobe entry handler
+      fprobe: Use ftrace_regs in fprobe exit handler
+      tracing: Add ftrace_partial_regs() for converting ftrace_regs to pt_regs
+      tracing: Add ftrace_fill_perf_regs() for perf event
+      tracing/fprobe: Enable fprobe events with CONFIG_DYNAMIC_FTRACE_WITH_ARGS
+      bpf: Enable kprobe_multi feature if CONFIG_FPROBE is enabled
+      ftrace: Add CONFIG_HAVE_FTRACE_GRAPH_FUNC
+      fprobe: Rewrite fprobe on function-graph tracer
+      tracing: Fix function timing profiler to initialize hashtable
+      tracing/fprobe: Remove nr_maxactive from fprobe
+      selftests: ftrace: Remove obsolate maxactive syntax check
+      selftests/ftrace: Add a test case for repeating register/unregister fprobe
+      Documentation: probes: Update fprobe on function-graph tracer
+      fgraph: Skip recording calltime/rettime if it is not nneeded
+
+
+ Documentation/trace/fprobe.rst                     |   42 +
+ arch/arm64/Kconfig                                 |    2 
+ arch/arm64/include/asm/ftrace.h                    |   47 +
+ arch/arm64/kernel/asm-offsets.c                    |   12 
+ arch/arm64/kernel/entry-ftrace.S                   |   32 +
+ arch/arm64/kernel/ftrace.c                         |   20 +
+ arch/loongarch/Kconfig                             |    4 
+ arch/loongarch/include/asm/ftrace.h                |   32 -
+ arch/loongarch/kernel/asm-offsets.c                |   12 
+ arch/loongarch/kernel/ftrace_dyn.c                 |   10 
+ arch/loongarch/kernel/mcount.S                     |   17 -
+ arch/loongarch/kernel/mcount_dyn.S                 |   14 
+ arch/powerpc/Kconfig                               |    1 
+ arch/powerpc/include/asm/ftrace.h                  |   15 
+ arch/powerpc/kernel/trace/ftrace.c                 |    2 
+ arch/powerpc/kernel/trace/ftrace_64_pg.c           |   10 
+ arch/riscv/Kconfig                                 |    3 
+ arch/riscv/include/asm/ftrace.h                    |   43 +
+ arch/riscv/kernel/ftrace.c                         |   17 +
+ arch/riscv/kernel/mcount.S                         |   24 -
+ arch/s390/Kconfig                                  |    3 
+ arch/s390/include/asm/ftrace.h                     |   39 +
+ arch/s390/kernel/asm-offsets.c                     |    6 
+ arch/s390/kernel/mcount.S                          |    9 
+ arch/x86/Kconfig                                   |    4 
+ arch/x86/include/asm/ftrace.h                      |   37 +
+ arch/x86/kernel/ftrace.c                           |   50 +-
+ arch/x86/kernel/ftrace_32.S                        |   15 
+ arch/x86/kernel/ftrace_64.S                        |   17 -
+ include/linux/fprobe.h                             |   57 +-
+ include/linux/ftrace.h                             |  136 ++++
+ kernel/trace/Kconfig                               |   23 +
+ kernel/trace/bpf_trace.c                           |   19 -
+ kernel/trace/fgraph.c                              |   96 ++-
+ kernel/trace/fprobe.c                              |  638 ++++++++++++++------
+ kernel/trace/ftrace.c                              |   10 
+ kernel/trace/trace.h                               |    6 
+ kernel/trace/trace_fprobe.c                        |  147 ++---
+ kernel/trace/trace_functions_graph.c               |   10 
+ kernel/trace/trace_irqsoff.c                       |    6 
+ kernel/trace/trace_probe_tmpl.h                    |    2 
+ kernel/trace/trace_sched_wakeup.c                  |    6 
+ kernel/trace/trace_selftest.c                      |   11 
+ lib/test_fprobe.c                                  |   51 --
+ samples/fprobe/fprobe_example.c                    |    4 
+ .../test.d/dynevent/add_remove_fprobe_repeat.tc    |   19 +
+ .../ftrace/test.d/dynevent/fprobe_syntax_errors.tc |    4 
+ 47 files changed, 1167 insertions(+), 617 deletions(-)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe_repeat.tc
+
+--
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
