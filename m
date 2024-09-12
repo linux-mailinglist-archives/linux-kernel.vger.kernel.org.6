@@ -1,111 +1,194 @@
-Return-Path: <linux-kernel+bounces-325809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 554AB975E7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 03:28:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC01A975E85
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 03:30:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F310A1F2334F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:28:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A7971F234FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A81A2A1CA;
-	Thu, 12 Sep 2024 01:28:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888E72BB1B;
+	Thu, 12 Sep 2024 01:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nmcfUz2y"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jXRl7uD1"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92DAC2209B;
-	Thu, 12 Sep 2024 01:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658482D7BF;
+	Thu, 12 Sep 2024 01:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726104481; cv=none; b=WLUBIXqeiNCgaotwr4oJxdeplUGy3FNixUTnBs0ACnon0erie4hJHqG2E24TDH9QdnWpKroFzOpuSVCJfeHdw/W31Lo3L13vj2DbDBfbYm3J4Htoxbz4W6hQl3HLl937N7Hz30d+DO9AylsHjeA7aCFqtpaumI3HwBfbD49g2Ik=
+	t=1726104606; cv=none; b=rKSiJTD9fb5iryIvnVjqWz/RuGB4iVrRYpOThXDYe0JE+wHoBxiHPuhED8gsdqMEHIbFoUxL8qcfeK9xF748Jjv5vGF3Sqt8YKhFbui6xXDah+uvLJ0JhNqVo9RCQiHNitKO2GOmq0kZdMeYHKAUKc52EmCMOhpO8iDG2C8QFZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726104481; c=relaxed/simple;
-	bh=LnnSKYc2m+WkeoNBRLKr0nQho3GZx9CIG8/4QlzRX54=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Te7syyWUAthEiXsLkPdDivZhdVTXWcIt35uPseQgxaY+rNhW64OoyqBewncvoA1ZE0OobWwbHSUMv6lDEIO4wp+ag0LN4N0MST5Yslf8HaY+Np9V63Epvcw8kWprB5ATVQnDS3dl4QwVusWoH8RV/7C4BX9UIdi2vD1hOX0HVc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nmcfUz2y; arc=none smtp.client-ip=209.85.219.50
+	s=arc-20240116; t=1726104606; c=relaxed/simple;
+	bh=YnBG6MVQuPnj+84wi6UszEipgdwYiSRRUWpmwlFpoa0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TWdJCaiqstz4omCbNBDnB7I+byuAjvsg5PY1yolvQZe5xBEG1sfzRc3mO92pFZnvK/pWhTk2iSlBF2CSolcMevA3LM/J5W1zVa2iBDPvLMRc3wWJg11hGKbDOIa69iCauBi+k1NsxCY99TwTNLp0/F1c116/FcYGnvASw5B3Vys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jXRl7uD1; arc=none smtp.client-ip=209.85.128.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6c3603292abso3989336d6.1;
-        Wed, 11 Sep 2024 18:27:59 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6d5a4615a56so3962247b3.0;
+        Wed, 11 Sep 2024 18:30:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726104478; x=1726709278; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uxvlmWpHHF/4iIZjIKJfqtc9ShKcPmj8i6+oHT5mO60=;
-        b=nmcfUz2y23jMqRdVFNpcZSrJHdmrHnAAyQv1p49zKER5iOEy2UcEbkv862cF79HP0k
-         stNk1ihNaWR8UIbaSsVT7W7LBcg8zMh5dNXRWR1Eaqc1xqrwxSMmZaoXH2CSAQHmH5EW
-         b2thabChP6HnSzQ+HEOKEKWfcNK1+Z0aE1rom/JPKdXWHPrWzhNEuK2CiEfit5OiQNIJ
-         BBMiVM+ZMUi7TrJ4Mc8xblQ2kXi7mN2phI2DahXt9GwsDj8YM24ii6Vk7mDFu1f6Ce4H
-         b0EmuG8eYna+4fHJUDWUnpCloLm3gfvHMce1o4GTk5HRP5hon2BPfuczRc6tBZfFVNpi
-         KMKA==
+        d=gmail.com; s=20230601; t=1726104604; x=1726709404; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Oc4A9PUbXEgnIX4R83UKro/vj2MRuKfr14pnn04li2E=;
+        b=jXRl7uD1w7STv5GII17vZRkbCc4QVINffhTqlwsOKQv86t+YBKtEQUNDGg6dWO/qLh
+         EtMqYlhMo2oqGlfSBvsexNTwtWCtJu3BJzSFgMqu3b4wCHnKXc4eLahnvhCHvI4Xflgw
+         Erorwm/3mKxvG1WNHBhUSpUPU86GDZ4JSJ0lUQhnkcFiXFZUGTGAw9qMD9Tk/zSxeIq8
+         6o++oAnjVPIQROyRjA8BF7w8G2tOsIQptoMpT/hrRIZ88SX4H1gMImNZVq0Ah7+QUXtV
+         1pgp3ypSKsPa5KykcShpuw2W4aYQVSsTH4DaZq61yLxLA4U4mHX35ER3yFA6HOUm96gY
+         FfJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726104478; x=1726709278;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uxvlmWpHHF/4iIZjIKJfqtc9ShKcPmj8i6+oHT5mO60=;
-        b=nmmNwXHsUPbACDoPvcLAbaTd4LV/wNQliUdKCqzg5Mh5KM/E/6A4b2ZNG2btGvCx0v
-         iutZ7EqTLs7oghiDRitE3WNJLSZlfP/v8RoZ9WvgyP/hmz/5iScYQpHgNQEjrawdpgFb
-         RHSu5n74DuFfoZ3FypcMmjTbtk56BmPmNW0/ny8yg6bJgZHvPGaMks7/pNobqBGhuTQr
-         prjjxiz5fkkkrcmHeWirr2wwIB7G2BBMCD83pDe90rPqBsf+hi3hU3DmeUoKIXKWMMxJ
-         CCX6R+ipFhtyeYW6n0ZO1dbdi9VN4KNgJcKxURiij4QgBOmg6YMpZz0UQPJLf04jEuNV
-         CtrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUdjDSJ6iUmxK5lcxjWBlbshrnJnyDPVJBDZlIbtSGnHUwgKLnhKwkWsyv0dNGEBz6tWBrrSw2oXnd9d0cQ@vger.kernel.org, AJvYcCWZHGTjJzpwCzRoyHmx7cCKND/nYlfoEUpGbbWmem98GEih7qwbdD9dGD/O9H2Nh+IYyYXvvFxudk8=@vger.kernel.org, AJvYcCXI5Urq6tLB66SZOJkGZ8NY9wE4wkyKPYiI6bF2XBsg81Rp8tjCb0MO6KA1kX2Nevi7iAZAqbzMsJL8l5A/2Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOJHim0S3QtIVuM5Ru0ZKyBQAO7uB97RPS9vAs5x8I3uOJBrai
-	3QlnYOT0Y0M/g4phr5+grcT6Fq1KB4JPI9/YZbiJcdb9JZKzlliX
-X-Google-Smtp-Source: AGHT+IHoHzzjeziPJcHDiK8w5Pq233wdQWa6xsGvXYWmafUPotT+cxLFnpSKH97ZV6G/H/HsYTfEUA==
-X-Received: by 2002:a05:6214:469a:b0:6b7:4712:c878 with SMTP id 6a1803df08f44-6c573582536mr19814406d6.41.1726104478357;
-        Wed, 11 Sep 2024 18:27:58 -0700 (PDT)
-Received: from localhost.localdomain (d24-150-189-55.home.cgocable.net. [24.150.189.55])
-        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6c53474d8e2sm47898186d6.87.2024.09.11.18.27.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 18:27:58 -0700 (PDT)
-From: Dennis Lam <dennis.lamerice@gmail.com>
-To: dhowells@redhat.com,
-	jlayton@kernel.org,
-	corbet@lwn.net
-Cc: netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dennis Lam <dennis.lamerice@gmail.com>
-Subject: [PATCH] docs: filesystems: corrected grammar of netfs page
-Date: Wed, 11 Sep 2024 21:25:51 -0400
-Message-ID: <20240912012550.13748-2-dennis.lamerice@gmail.com>
-X-Mailer: git-send-email 2.46.0
+        d=1e100.net; s=20230601; t=1726104604; x=1726709404;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Oc4A9PUbXEgnIX4R83UKro/vj2MRuKfr14pnn04li2E=;
+        b=UL0YEvkcagCCYwH3G072UNxDK+XFlCuWhInqVhJWEbBbSdbRlSYfehohI1IbrjPeqn
+         ZULmHWPijbP42GO8biBczSKIA3+7PqEFibOMscLMSBr3L2i39+oaE/N3OLAwL3QSE4jc
+         ywLiMbSGbqTL1nw0LWfQdVH4vh/llRq+Ssk+f3osDgv9mT8pSb7shvWro288VWm/NPzj
+         q0GU3I8qqNFA67PD+f6BI+AvcipcJ6UOWgy1o6r2Xmg7mCMxEfUVBD3pkOjmwa7X/OSj
+         NUWmcY51AhAVkDHZCw/U8yQ9YiuLtLW9aP02wgA7AUzXiTwFRmtjn9fAr1ChcVSgC04k
+         QDuw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4UcAEA+yT8hVVyMhyjIOz5XXhzmngxBPGWU+EiK8PH8ovWqSsFXxF5s2suIdqyYmtnY2hp+Flo2u5Lv2J5swYag==@vger.kernel.org, AJvYcCV9T7hfeDEF7wBmRScRJ734yOrZ5kqNvTg/I6ezyTnguPNVjOFIKdm+FFrmorv4asCtb/dbUeMF4T1212g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzMClhfoh/5amVoo0OOBxX1yIw/eo+Mm+yWk+/6jxGuTK/PNtI
+	zQgQw4Klb7fXUPDUv0fi8e60ToP1QNLdt24etdvYY5kaM45t334IBByF8AKcb1OOvkV6zrWobeT
+	60Cc5yIwgrxZKv0AfnPhAu3869Ug=
+X-Google-Smtp-Source: AGHT+IE+H6DHvC/Mz6o8AEsnRfwB7c8j0ptt/UcEiR7jTWtefm/c4gfpAtbee+sa6fjJl3dc9A/cpPflbhKSqZA/0aw=
+X-Received: by 2002:a05:690c:2a46:b0:6d1:f545:4ae6 with SMTP id
+ 00721157ae682-6dbb6b13b7emr12410537b3.16.1726104604212; Wed, 11 Sep 2024
+ 18:30:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <ZuH8qhuZB6mr9JvR@x1>
+In-Reply-To: <ZuH8qhuZB6mr9JvR@x1>
+From: Howard Chu <howardchu95@gmail.com>
+Date: Wed, 11 Sep 2024 18:29:53 -0700
+Message-ID: <CAH0uvog5akiwUp+28w5u7+-j_fYvQLWahJ6YvEzWjdCz3Ky9Wg@mail.gmail.com>
+Subject: Re: perf trace: substruct BTF based pretty printing
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Alan Maguire <alan.maguire@oracle.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Namhyung Kim <namhyung@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fixed the word "aren't" to "isn't" based on singular word "bufferage".
+Hello Arnaldo,
 
-Signed-off-by: Dennis Lam <dennis.lamerice@gmail.com>
----
- Documentation/filesystems/netfs_library.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Sep 11, 2024 at 1:25=E2=80=AFPM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> Hi Howard,
+>
+>         Not really a requirement on you to do work, just a some notes to
+> add to our discussion/experiment on using BTF to pretty print syscall
+> (and tracepoints/whatever) arguments:
+>
+> root@number:~# perf trace -e setitimer -p 5444 |& head -5
+>      0.000 ( 0.017 ms): Xwayland/5444 setitimer(value: (struct __kernel_o=
+ld_itimerval){})                   =3D 0
+>      0.050 ( 0.004 ms): Xwayland/5444 setitimer(value: (struct __kernel_o=
+ld_itimerval){})                   =3D 0
+>      0.142 ( 0.005 ms): Xwayland/5444 setitimer(value: (struct __kernel_o=
+ld_itimerval){})                   =3D 0
+>      0.174 ( 0.004 ms): Xwayland/5444 setitimer(value: (struct __kernel_o=
+ld_itimerval){})                   =3D 0
+>      0.293 ( 0.004 ms): Xwayland/5444 setitimer(value: (struct __kernel_o=
+ld_itimerval){})                   =3D 0
 
-diff --git a/Documentation/filesystems/netfs_library.rst b/Documentation/filesystems/netfs_library.rst
-index 4cc657d743f7..f0d2cb257bb8 100644
---- a/Documentation/filesystems/netfs_library.rst
-+++ b/Documentation/filesystems/netfs_library.rst
-@@ -116,7 +116,7 @@ The following services are provided:
-  * Handle local caching, allowing cached data and server-read data to be
-    interleaved for a single request.
- 
-- * Handle clearing of bufferage that aren't on the server.
-+ * Handle clearing of bufferage that isn't on the server.
- 
-  * Handle retrying of reads that failed, switching reads from the cache to the
-    server as necessary.
--- 
-2.46.0
+First glance, yes this is a substruct, but we should be able to
+collect those substruct data in BPF, since it is substruct, not
+substruct pointer. It seems to be the same -p problem we discussed
+here:
 
+Before:
+```
+perf $ perf trace -e open -p 3792392
+         ? (         ):  ... [continued]: open())
+                       =3D -1 ENOENT (No such file or directory)
+         ? (         ):  ... [continued]: open())
+                       =3D -1 ENOENT (No such file or directory)
+```
+
+We can see there's no output.
+
+After:
+```
+perf $ perf trace -e open -p 3792392
+     0.000 ( 0.123 ms): a.out/3792392 open(filename: "DINGZHEN",
+flags: WRONLY)                             =3D -1 ENOENT (No such file
+or directory)
+  1000.398 ( 0.116 ms): a.out/3792392 open(filename: "DINGZHEN",
+flags: WRONLY)                             =3D -1 ENOENT (No such file
+or directory)
+```
+
+I will test and fix it later.
+
+Thanks,
+Howard
+
+> root@number:~# strace -e setitimer -p 5444 |& head -5
+> strace: Process 5444 attached
+> setitimer(ITIMER_REAL, {it_interval=3D{tv_sec=3D0, tv_usec=3D5000}, it_va=
+lue=3D{tv_sec=3D0, tv_usec=3D5000}}, NULL) =3D 0
+> setitimer(ITIMER_REAL, {it_interval=3D{tv_sec=3D0, tv_usec=3D0}, it_value=
+=3D{tv_sec=3D0, tv_usec=3D0}}, NULL) =3D 0
+> setitimer(ITIMER_REAL, {it_interval=3D{tv_sec=3D0, tv_usec=3D5000}, it_va=
+lue=3D{tv_sec=3D0, tv_usec=3D5000}}, NULL) =3D 0
+> setitimer(ITIMER_REAL, {it_interval=3D{tv_sec=3D0, tv_usec=3D0}, it_value=
+=3D{tv_sec=3D0, tv_usec=3D0}}, NULL) =3D 0
+> root@number:~#
+> root@number:~#
+> root@number:~# grep -w value /sys/kernel/tracing/events/syscalls/sys_ente=
+r_rseq/format
+> root@number:~# grep -w value /sys/kernel/tracing/events/syscalls/sys_ente=
+r_setitimer/format
+>         field:struct __kernel_old_itimerval * value;    offset:24;      s=
+ize:8; signed:0;
+> print fmt: "which: 0x%08lx, value: 0x%08lx, ovalue: 0x%08lx", ((unsigned =
+long)(REC->which)), ((unsigned long)(REC->value)), ((unsigned long)(REC->ov=
+alue))
+> root@number:~# pahole __kernel_old_itimerval
+> struct __kernel_old_itimerval {
+>         struct __kernel_old_timeval it_interval;         /*     0    16 *=
+/
+>         struct __kernel_old_timeval it_value;            /*    16    16 *=
+/
+>
+>         /* size: 32, cachelines: 1, members: 2 */
+>         /* last cacheline: 32 bytes */
+> };
+>
+> root@number:~# pahole -E __kernel_old_itimerval
+> struct __kernel_old_itimerval {
+>         struct __kernel_old_timeval {
+>                 /* typedef __kernel_long_t */ long int           tv_sec; =
+                /*     0     8 */
+>                 /* typedef __kernel_long_t */ long int           tv_usec;=
+                /*     8     8 */
+>         } it_interval; /*     0    16 */
+>         struct __kernel_old_timeval {
+>                 /* typedef __kernel_long_t */ long int           tv_sec; =
+                /*    16     8 */
+>                 /* typedef __kernel_long_t */ long int           tv_usec;=
+                /*    24     8 */
+>         } it_value; /*    16    16 */
+>
+>         /* size: 32, cachelines: 1, members: 2 */
+>         /* last cacheline: 32 bytes */
+> };
+>
+> root@number:~#
 
