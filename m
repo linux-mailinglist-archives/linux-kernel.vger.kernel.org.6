@@ -1,294 +1,573 @@
-Return-Path: <linux-kernel+bounces-326556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1C919769EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:04:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 699479769F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:05:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3449CB22470
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:04:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2814D283801
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADEAD1A4F1F;
-	Thu, 12 Sep 2024 13:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2D01AD266;
+	Thu, 12 Sep 2024 13:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="D7pzEc/p"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012001.outbound.protection.outlook.com [52.101.66.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KIKkwQ73"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732C01A2554;
-	Thu, 12 Sep 2024 13:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726146187; cv=fail; b=K+UaBdki4mLYXzVYdLFIJcYVjnsK4NBv4bQOSJPo5o6Ea1F6dAtys9ANVNRdOrhV6yEETmbzS+tbUUWnaHrYhPgoZdPD1jDq0SbfdV4xX3+CEbY4uETuKguwc26FuFfJKVLqFFL4q6DnT6m826yvNZxc5Dp8uVImN1X1JcfGh/g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726146187; c=relaxed/simple;
-	bh=s6u4GqkJcciYCOqqaPHrdCc0cU1Iifvd7ZvAwVmIIWk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=eX+TNY1FZTdWmiNq8otMGXrM/QpYGjVCsq7YAFE6jBRnbbSmrzm1dItw71GFcmIToQA/QLz+5vdzoIbXm53uStu24EBaAERL/ezdseab/trjtze1UWeYrjjCHYENUUCjcnR5wqvzrAyJgTTj0LGv5DSCPhMVsymNNCxbREA5I5E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=D7pzEc/p; arc=fail smtp.client-ip=52.101.66.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OpnKUJ02CZmyS64RSYaCxEKzXwbW39bxMM0UP2EzRRBeNkw80PBJeCiUcbezxIVaq+9B3VeyI/uOfLc1LHDmFCO/5R97JQwxC+gVr06cO3dY0LcmxVZDgvb0w/XeBGR4hCXThmyn38TMghXGz0iTe2iQZaEG/trKC/16PBU2doQg9mUqZMYKXSfzxWVlT413m9gIbT8iPRKDpeHOylB/TiIDfBTxnNFf8kXxz4GVgF0PrZTyZUv2VyWllrJfH6Q55d93FzI1e40baoAreGegAyUJ/7W3lwbP0odX5glOiPZsgNru61c84E703QPUrXa+eTJy4RkhUAdMgwHbn1QdpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=D1MW5Raa1wXIi4OHEVAE6eJfcXKvTNtVnwoYRd45f7Q=;
- b=IaHgVS1Ch34gpjxqjsEnkEHJKjz1tXzsbyIu5MAODfxOkBmk158LRTtZ22YmXPjXHeX7lQ76ZYbkl/qrh2mixfVzMh6FViqchrE3O0ZO7bUyT79y/WLymcNUlN8+YGTOsOiSJ0xhMTZ4o6UfcafE3ryvHHiDfVdy0VBlmecYvxdlM8zluFnKN1zcv5b6Ml8Wf/HwW9WLc9CNsGa6g9Tk3W9oxTNJ08wlgd8j/v9XDp5hiMA+GQvsnccoFRxcBMfle/TTdGs0ANdOqHWJljYBX9uwPbbzKhlKRkAsZMZ7DsHO5D+YgAqUiIy4S9v4K5SJ+Ps5pmSukVHNMZi6N5tGwg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=D1MW5Raa1wXIi4OHEVAE6eJfcXKvTNtVnwoYRd45f7Q=;
- b=D7pzEc/pKH4zM57Vfh5kae13Xq4eicrKzV2m8dedhVzwg4jS8Ti4FKNxjeio4z4uscsx5Oc8LBThjaFN1gms3eMw+X8kHxwsLGvGCgO2RR8APR0+1z5EQXyPsY1mNEZwBDGbgsBPa47q75ebyxEAuvTyUyrhTaNqMO3gaUtI6x1eiyOUemAb+blmy7mjzgiABMuiQ9SuOn9Geos0MNVzlwCh4kcC6hfnFSEpyiEUGePEt/acw0UALLsnSyJVp14057cUbr7oNQXFw7NxMhxg40beySfJYkM2UcpVBNfmWXeex9F+gM0M0U5e5BpGEd1lwanYn3aV5m8tCoMkh2bIcw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from DU0PR04MB9251.eurprd04.prod.outlook.com (2603:10a6:10:352::15)
- by PAWPR04MB9911.eurprd04.prod.outlook.com (2603:10a6:102:38b::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.23; Thu, 12 Sep
- 2024 13:03:01 +0000
-Received: from DU0PR04MB9251.eurprd04.prod.outlook.com
- ([fe80::708f:69ee:15df:6ebd]) by DU0PR04MB9251.eurprd04.prod.outlook.com
- ([fe80::708f:69ee:15df:6ebd%7]) with mapi id 15.20.7939.022; Thu, 12 Sep 2024
- 13:03:01 +0000
-Message-ID: <2d870984-fd5b-469b-8157-ca5ad52a0e01@oss.nxp.com>
-Date: Thu, 12 Sep 2024 16:02:57 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: rtc: add schema for NXP S32G2/S32G3 SoCs
-To: Conor Dooley <conor.dooley@microchip.com>
-Cc: Conor Dooley <conor@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- NXP S32 Linux Team <s32@nxp.com>,
- Bogdan-Gabriel Roman <bogdan-gabriel.roman@nxp.com>,
- Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-References: <20240911070028.127659-1-ciprianmarian.costea@oss.nxp.com>
- <20240911070028.127659-2-ciprianmarian.costea@oss.nxp.com>
- <20240911-racism-playmaker-71cb87d1260f@spud>
- <62ba70ca-429e-476c-bb7b-78f743574a68@oss.nxp.com>
- <20240912-immersion-obvious-81a2a0c7a9cb@wendy>
-Content-Language: en-US
-From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-In-Reply-To: <20240912-immersion-obvious-81a2a0c7a9cb@wendy>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM9P193CA0017.EURP193.PROD.OUTLOOK.COM
- (2603:10a6:20b:21e::22) To DU0PR04MB9251.eurprd04.prod.outlook.com
- (2603:10a6:10:352::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07151A2554;
+	Thu, 12 Sep 2024 13:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726146234; cv=none; b=l8hqk+W97En3lwq8J/bLA48mpedCjdx3PG/iPSOjnfpgMMzQ+nCrkft7lv7PeD+oo191PWZkxotSCRA5bSY/E3IWkq3TglhygcKsSZpIvuxlJ+qCFaxPeW6lqkfPrDT4gQ1m7YOWe6TllA7AgQi3+xMVlnzMvSsnoidCJURrk34=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726146234; c=relaxed/simple;
+	bh=jW7d1X/m4IzPhpi4nrQtvRPGQ1KFpUC6Nx/4YDamfAA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JwJKsJDbcQYNFndAco9ISuFTGfPGEe/5Ocnd7kTgiarQhIcP2/T9JI+IDcZY0IYUoUSnKtoscNQ9vaLf8cRU4374biOpLah/2ussRpJiZUOxJh5Dge/k4BX8CsPVQdC4cpycWgoa+XE9oizAqV8v+5u+q6q3an5YsggafA91rkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KIKkwQ73; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-206bd1c6ccdso9384755ad.3;
+        Thu, 12 Sep 2024 06:03:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726146231; x=1726751031; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=J7Sn8fS66RL2Pu4Em49WuzL8kjfR01dE0Rpd4rEfMxw=;
+        b=KIKkwQ73KVEQu2GA9mULFTZWiDr+vEyFD5bzCZR2a34e/6YN+TH4xPIYRTx2bXNAes
+         tPLdVc51m8+K1T9yOyTWIaN0ietxD59p+rY/qoA1Loha7hfk6pgfesTt3wMv7wHWKhFo
+         zcp+Dr4ht/YKxhBdDv8iRIanHDXlTqch9TwVVNP7nNJTjmA0UjwaGBjLE6U5uszFp9WF
+         tquhCtKL0YQsnx/HHzSjRhXbPHM1yDJQh4Z8cmQe1aY0B7j5KWdxGiisPk8DR2aYkHiY
+         fM42fSPvPRcaZ0YYv/AWtLuVl2DEvXuqI+Z4d+NdoqQFmmb58mmR+sICtweVn5k//Vr0
+         /Zvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726146231; x=1726751031;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J7Sn8fS66RL2Pu4Em49WuzL8kjfR01dE0Rpd4rEfMxw=;
+        b=T9BeeXy15uIWj6US6s8thwh7hUpycl489PFbZZQRKHHeo3l/5gwRX7hpquedq30viK
+         /uH1HwPEMXcy2Chzjhwo3pmVsBSWWGeShYzAcxoJfslPw6XFSLfUfPtygEEzxcNWIWzf
+         xYdOo+brHP638cZSgVqBxB/6sanp5S7lRT42Sop54vDh5NHtTcIWDLoB8PhjY0Iwd/bn
+         PgRJjAiF3HDubRjhKi/GOSy4QizbipOofUtPxkBfmmqVNbbtKcQR1L6NuFk0phrpwEsk
+         nZA9awgiCvGZBwqyVV2WOGaFCUC55pV9l33/AspDdm7LjAFHk7X+VsHzcHZT6cwH55NZ
+         nhhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzXQpeB5hpkQGILnh1OgwKtwrHlmHqGLZ1Dk/1YaUdVU4ekOVPUagX076EE30uHlogG8yPHnoaVo0ACd0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXdg/wFKzeTyepaR4BY0K1tWA0M2lVH/KcmLKMaB+xY7vmr3Rm
+	YrLm+ffq5JrlTH4f45kkneZe7OYVICdTG8a4sXc+bUpxgrN4e75F4oXK/BhR3Se1QHJyVcaRk58
+	WuX/+UI9AOiMVQKbjlCP8qdnRieOlWFlNmBg=
+X-Google-Smtp-Source: AGHT+IGpH1f39n5ul6U0TJX9hRF9wPjQebgfoOv4GFqQNyAhR+6QEg3RR/FtE+3dQpWj8vLbzaMfUqXyY/RXKUBriJA=
+X-Received: by 2002:a17:903:2306:b0:203:74fe:4ee0 with SMTP id
+ d9443c01a7336-2076e44dff7mr32020355ad.53.1726146230691; Thu, 12 Sep 2024
+ 06:03:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR04MB9251:EE_|PAWPR04MB9911:EE_
-X-MS-Office365-Filtering-Correlation-Id: 915e04a0-fdeb-4247-24ae-08dcd32b3b5d
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?clFlT0VkR3NGbXBCOFp5UC9ybDBtVUJrSW0wYkx3MGZkdkxFMlRrdEZ6Z2U5?=
- =?utf-8?B?dERsakdxR2xMc2J0NWdSczJpRytIQWRqdUZ6ZUhhUWxHVmdrWHBCdlR5Rzds?=
- =?utf-8?B?WkNFTTB6WDVMUGowSVh4aVJ6cS9DNWpUYVk3UUhnOFZWNHZQKzZhdTNFY1lt?=
- =?utf-8?B?MlJUbkd1UXdtdk5KM0lOeHQrWE9wT1VpS3MyOENNbzFUQjFFQk1aZnRrWThR?=
- =?utf-8?B?WnJsQ2I4Zi9qdkJkYkh2UktOWnNpbElWWHJZai8xbW9CakxtdFRJUlh1SlFy?=
- =?utf-8?B?c3JCajVFbHFzOUkvOWxCZmJncW1MOVVkMWdmTEZKQUZKTEtkNC9VT2JMTVkr?=
- =?utf-8?B?ZnNsQWFLYitUM3l2cjJveVVzRnA4dnIvcjJSanF5Z1h2T0JoNzhpR3MxTDFC?=
- =?utf-8?B?azdCRHkzU24yMWgrNUdSS01BVkN6RlN4RGc2WFJIYlRjQThQeG5JV1BYNkVp?=
- =?utf-8?B?ZEMwYUVGdDRGUHNLNnNEUjljcFFudmVxM2graWxTd3V1aTBOaXNTZy9TR29s?=
- =?utf-8?B?eTNUa2FyeWFlc0JMUitxN05kbWcxRjgzaElIQmQrOVZucVcxaW9DZXlLUlJm?=
- =?utf-8?B?emtaQitURUdxeXdwTjN3RWZxdmp6L01PL3BBTEVIS0tKanBBaytVVGR6S1JT?=
- =?utf-8?B?RlZOSGQ2ZVByT24xN2pLVjFnRVhoRzZpUUVEZGtpZ0NWNzRsdE1zOUtXNXkv?=
- =?utf-8?B?MnlBL3hxWW5DTHovaUh3U2N4T1Q0Vko5ZTJxejIzbXRpQ2RObXlHdXF5TEV0?=
- =?utf-8?B?eFM3STQ5czBWdVRZK0dRYWFVV09NeDMzZ2JvMStJc2luVy94dWRSM1Z6cnF5?=
- =?utf-8?B?VldCYjZla0pxaTJvVVBpVy81SDFGV0RqSzJIdjA4WTNrZlNITXN0Rk9FcDY2?=
- =?utf-8?B?Sk41bnZGcjRhMUZKUnBkQlNxa1F5NnpmWURkZWREQmFlWUxaL3hsWTIrem43?=
- =?utf-8?B?cUxUenV4aFVqSjhzSlAvNlpwNTBrMEtoWjFqM21CNllyRlRQSHE4NW0xS3V6?=
- =?utf-8?B?TkhpSUlpUkM1bTdWL09GeDB6cDZlN2ZJTTgvelNkWnJLU3Y4YlRpS3JoTkEy?=
- =?utf-8?B?R3d2MS9QTExRdjJVY0VIQUpiWURrWG1vOVVsY0hiV0Y1eEJib0dJZHMxZ3ll?=
- =?utf-8?B?dHBpMUh4NWdzNThWbW14OFkzZ3FKSDFtSTgzRnZwMmVNdHByYjA0aEZKOU5W?=
- =?utf-8?B?ejJOS0kzNEo0amdYdk1BbHVDdUFTQUp1S2VVMk9hWVpNYmxrV1pnOHVXbGw1?=
- =?utf-8?B?WmhxN0VMdG4zenFtZFRlajlyQlFQZ0ptTFloM2UvRE1vUlhQRmtRNFV0UjNL?=
- =?utf-8?B?YTIyVlhEZzlUS09LLy93b1dHKzBheFJkWnc4TTRDMTJEZldyY05abE9FV2lr?=
- =?utf-8?B?d0V1OW4wd1VKMUlEZml5NlNtNXF0aTFDQmZWWVcyVmpKY0lpR1RObENmN0sy?=
- =?utf-8?B?ajlVVFhYWlBjNWxxUVVUWmJQaC9mVWZHNkYvZXBKbnJLUll0c245NlhPcVkx?=
- =?utf-8?B?RUVWT00rOThPU3B3SGxXdHVmNWF6WUI0dEprd3p6OENrbjFvNWpBcTkyUXhs?=
- =?utf-8?B?akxPR2NGSkcxWjQ5RnFvMEtXbUN6aHN1SXpHYUtlOEZSZXdpT2REaHFDVHlP?=
- =?utf-8?B?QXJZNnRpUG1GMlk5YmhVU1pWeGZWcFV0b3loaS9WOFF1Y1NJZE03Vm1mSU9k?=
- =?utf-8?B?V3JpbmVhTGJTdGhiQmFwaGh1Y3IwbjFqS0EreElBWjRpSlZoamNwSzlCWkZi?=
- =?utf-8?B?bUU0b1d6MWNFUjA3Q2NiaUpWeXJucWtuS0JHMDR5ZERWK3A4ZEdEV3dkT2NH?=
- =?utf-8?B?RDFFY0dCenJVNnVhMEpuUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9251.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NEd4Q2FCRlFiZE9MVlRwZ3c5amsyRmlRUXVzS1dKNnZmZGFwU0d3cUVHRHdy?=
- =?utf-8?B?YlZEN3lONlE1UFlOQzB2RTVJaW9JbE5icWIvMytNdWp4UXowOStSMFVWNHlq?=
- =?utf-8?B?L3BpOEd1V09nTzhjRHBHOGR6d2tmSU16QWJMcGRWRlZzcHJnZmlScTNham14?=
- =?utf-8?B?L3crTXNQa0w0TzZUWDBHK1hqcHlZa2tVVmdaWE1IaUpEd3VqckNjTTFpS0FQ?=
- =?utf-8?B?SktVbGpyME1ha21TZDEwU3VQbk1NR3oxVFlZTVZZT2pkQ2hUMjJGRkFKWGVK?=
- =?utf-8?B?QlB2NTIrWXF0TitTZUNHSS8wVDI3L3RMSEhzNWt2MmRJY0ZBS21HRXBHZDFF?=
- =?utf-8?B?OUdFbXJCSnBhR2dzcDNGZG1xZ1FiS3VaS0Mzbi9SRVcyNVh6bks2TjRrTkdS?=
- =?utf-8?B?RlFDOGlUQnVtSTNsYWtWdGlsSVNFQ056WU9TdUFjU2t6MDVBUlN3WHc0dWVl?=
- =?utf-8?B?Wk9QbGVUSHJudzNxa1dtMHVpUDdHbWNUZXRNRlFzNVhQS0czT0c3OWFQRXQw?=
- =?utf-8?B?alY5Wm83TW83Mzd2WmdiNGVWWG93UzlzbTk3bEU3Kzl2M0JBMVZZRm0xdTl5?=
- =?utf-8?B?WGNOTFZ6WENSU1ppeWJ5SmVOUlByUnNhR2R4WXVLUVQ4dlhQVmV4bHkveFBU?=
- =?utf-8?B?YlE3a0Fvdlp4UGg0OXg0encyY0ExdnhVQXltU1lPR3gvcjNsVXprbVFIYUVV?=
- =?utf-8?B?QW50ZDUrWkdWMDlhcGZuLzJsTFdmeHQvSkQ0QklIeUFkRDVXM2hEWVR4ZEw4?=
- =?utf-8?B?cmU3UTc4bHR5YTB0T1F1eHNySXZ4L3hzUmdPN1BSbktXQlNrSXlnL3BmZC9l?=
- =?utf-8?B?c3BFNXc3Q0lJRmluZnZobTdvWXM0MFNHdW1kNWlpeUh5TjlaaWpaOTlqUWsy?=
- =?utf-8?B?a25kVnRXTjhJbFRRK3NNUjdldTdwZ244dUVFZXRZY0pyeDJLdnZBaWo5MTF5?=
- =?utf-8?B?eVNYUmxJRVZpN2FCRFFQSzhGSnVYVGRHbDdIUE9EWTZISmZRaVVOdldXU2p4?=
- =?utf-8?B?dTBKZ0haUkxITFllcDR0M0RDTmhZNmdvQm01eGhnZmJtc1c2WnpSMWJhR0hr?=
- =?utf-8?B?WXdKS0dkY2ZKRjZ1cXAySWIxbU40dzZNc2FGOWVXTW1LY1loclBGL1Fmcmo5?=
- =?utf-8?B?MEcyNzlnVm94djhYSnFLejJ3WEJadG9wL0hWZlZaMHpqV3BaVDFycVhyb0RD?=
- =?utf-8?B?Zmxvekx5c0ZIQll4eVlVNnVVbGd3Y3R6S2hzejZlRS9oazlTSDJ3LzFnNGVv?=
- =?utf-8?B?Y1cybEV0b2ZEUW9iOFNuSVNIVVEvd0dDb2gzSXNEZllDVGIvamVHNklQTWl3?=
- =?utf-8?B?aWFUcXF3VFhDalIrUzBYelVSQU94ZmRpT2NlNlo5L09vWHU3b3ZLRFlvOWJO?=
- =?utf-8?B?cFV0WStKTlp0Qy9FcEJDNWlDbXViUktqYWQzbE15bTgzbjBjQW1PWThXVHFP?=
- =?utf-8?B?TEpqc0FtemJXL29zNWVLZGZtZlhkODNST1VaUFJKa1YyUitSZjl1NTFJQklT?=
- =?utf-8?B?MkhPQlJ4SWhjQ2UyZmtQOUJBWUNQMnFRQmZBd3hnZEFYL3NzQVBiTnpkSDBy?=
- =?utf-8?B?OWFWclMzK1BPQWdDandZeVQ0YXB3L01wWjEyWFVDWnQ2MHZ2cGljckl2dXRD?=
- =?utf-8?B?bkYwcTIzbjVuejRDQnkvWnhhTEVsR1d1KzBSaHp1S3lQSi9uYTlPWXZ0aTFE?=
- =?utf-8?B?SzllRGFGTHV5VVFDWVVGdVQ5ZDRGK0pvRWJJZzdSd2RaQWVkS1BHMnU3MGxJ?=
- =?utf-8?B?SGxKSDdjZkNsQ3Fyb2FaQlR4dVV3VXg4SVIwaGl5Szk5MEwwbE1DTnMrdy9O?=
- =?utf-8?B?Zzgvdkg2dGsxT1dnakY5eXJ3c3VMMytJR0RRK3Rkd0NpSGh2K2NlZVdDWmli?=
- =?utf-8?B?U1RnMTZWRnFreVN3L0JxcllaL3psRnBjQ3B3TFZKazVYOExqeXd4eVkwZFd5?=
- =?utf-8?B?N0tTTjQraVppLzlzdnRPYThyN0lRbjRiQStIVThXbGdJb2FPa0JFc2Q1WndJ?=
- =?utf-8?B?VFJ5dHNqUURaN3lha2kyaVlnYWgyTU1BdURIbTk2UmhndTBpVkdwU2gxSURP?=
- =?utf-8?B?RXk5NTdmWkYzOC9ZU3dpM3lnYXhCc3h5RG1sSU1yL0F0ajBublpNNXpMZW05?=
- =?utf-8?B?dVlEWVBqMndzSEhZNktObXRhNEJsZnMySmJNa2RYZVlJaW55UE1wZjAxbVpn?=
- =?utf-8?Q?6cZogud4SS4QU9yeRj3j/Us=3D?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 915e04a0-fdeb-4247-24ae-08dcd32b3b5d
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9251.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2024 13:03:01.4787
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XC0F+14Vol1EwO1dG/31TbmAux5MWmnL6JXT7B+3MM9/fV+Rq/DV/06NliQWJ4XWKvonS44l/YDVrZ7zGvd70U4HcnTJRPZbXKyZhl2Tli0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR04MB9911
+References: <CAHaCkmfFt1oP=r28DDYNWm3Xx5CEkzeu7NEstXPUV+BmG3F1_A@mail.gmail.com>
+In-Reply-To: <CAHaCkmfFt1oP=r28DDYNWm3Xx5CEkzeu7NEstXPUV+BmG3F1_A@mail.gmail.com>
+From: Jesper Juhl <jesperjuhl76@gmail.com>
+Date: Thu, 12 Sep 2024 15:03:14 +0200
+Message-ID: <CAHaCkmddrR+sx7wQeKh_8WhiYc0ymTyX5j1FB5kk__qTKe2z3Q@mail.gmail.com>
+Subject: Re: igc: Network failure, reboot required: igc: Failed to read reg 0xc030!
+To: netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>, 
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/12/2024 2:27 PM, Conor Dooley wrote:
-> On Thu, Sep 12, 2024 at 01:50:25PM +0300, Ciprian Marian Costea wrote:
->> On 9/11/2024 9:21 PM, Conor Dooley wrote:
->>> On Wed, Sep 11, 2024 at 10:00:25AM +0300, Ciprian Costea wrote:
->>>> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
-> 
->>>> +  nxp,clksel:
->>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>> +    description:
->>>> +      Input clock selector. Choose between 0-SIRC and 2-FIRC.
->>>> +      The reason for these IDs not being consecutive is because
->>>> +      they are hardware coupled.
->>>> +    enum:
->>>> +      - 0  # SIRC
->>>> +      - 2  # FIRC
->>>
->>> Could you please explain why, given both clocks must be provided by
->>> the hardware for there to be a choice, why choosing between them is a
->>> property of the hardware?
->>>
->>
->>
->> According to RTC module's clocking scheme for S32G2/S32G3 SoCs, it has three
->> potential clock sources to select between:
->>    1. FIRC:
->>      - fast clock - ~48 MHz output
->>      - chosen by default because it is proven to be more reliable (e.g:
->> temperature drift).
->>    2. SIRC:
->>      - slow clock - ~32 kHz output
->>      - When in Standby mode, SIRC_CLK is the only available clock for RTC.
->> This is important because RTC module is used as a wakeup source from Suspend
->> to RAM on S32G2/S32G3 SoC. Therefore, a temporary switch to SIRC clock is
->> performed when entering Suspend to RAM.
->>
->>    3. EXT_CLK:
->>      - has not been tested/validated for those SoCs within NXP's downstream
->> Linux. Therefore, I did not treat it, nor mention it, for the moment.
->>
->> Now to answer your question, all above clocks are entering a RTCC[CLKSEL]
->> (RTCC - RTC Control Register) mux. Therefore, a selection can be made,
->> according to one's needs.
-> 
-> Given both clocks must be provided, what is the benefit of using the
-> slow clock outside of standby mode? Why would someone not just always
-> use the fast clock outside of standby and slow in standby?
-> 
+Hi again
 
-Hello Conor,
+It just happened again.
+Same error message, but different stacktrace:
 
-I cannot find any benefit of using the slow clock outside of standby 
-mode. Hence, I see the reasons for removing CLKSEL support and 
-defaulting to a static configuration.
+[ 7739.335650] igc 0000:0c:00.0 eno1: PCIe link lost, device now detached
+[ 7739.335656] ------------[ cut here ]------------
+[ 7739.335657] igc: Failed to read reg 0xc030!
+[ 7739.335675] WARNING: CPU: 8 PID: 274 at
+drivers/net/ethernet/intel/igc/igc_main.c:6752 igc_rd32+0x88/0xa0
+[igc]
+[ 7739.335683] Modules linked in: snd_usb_audio snd_usbmidi_lib
+snd_ump snd_rawmidi snd_seq_device mc vfat fat amd_atl intel_rapl_msr
+intel_rapl_common eeepc_wmi kvm_amd asus_wmi iwlmvm pla
+tform_profile kvm mac80211 snd_hda_codec_hdmi crct10dif_pclmul
+crc32_pclmul polyval_clmulni snd_hda_intel libarc4 polyval_generic
+gf128mul snd_intel_dspcfg ghash_clmulni_intel snd_intel_sdw
+_acpi sha512_ssse3 snd_hda_codec btusb sha256_ssse3 btrtl iwlwifi
+sha1_ssse3 snd_hda_core btintel aesni_intel snd_hwdep btbcm i8042
+btmtk crypto_simd snd_pcm cryptd sparse_keymap cfg80211 s
+p5100_tco bluetooth serio snd_timer wmi_bmof rapl igc ccp pcspkr
+k10temp i2c_piix4 snd ptp soundcore rfkill pps_core mousedev joydev
+gpio_amdpt gpio_generic mac_hid i2c_dev crypto_user dm_m
+od loop nfnetlink ip_tables x_tables ext4 crc32c_generic crc16 mbcache
+jbd2 hid_generic usbhid amdgpu amdxcp i2c_algo_bit drm_ttm_helper ttm
+drm_exec gpu_sched drm_suballoc_helper nvme drm_
+buddy crc32c_intel drm_display_helper nvme_core xhci_pci
+xhci_pci_renesas cec nvme_auth
+[ 7739.335733]  video wmi
+[ 7739.335735] CPU: 8 PID: 274 Comm: kworker/8:4 Not tainted
+6.10.9-arch1-2 #1 a989aa0dc21f9aeaff91174d1be29ed5a93040b7
+[ 7739.335737] Hardware name: ASUS System Product Name/ROG STRIX
+X670E-E GAMING WIFI, BIOS 2007 04/12/2024
+[ 7739.335738] Workqueue: events igc_watchdog_task [igc]
+[ 7739.335743] RIP: 0010:igc_rd32+0x88/0xa0 [igc]
+[ 7739.335746] Code: 48 c7 c6 30 d9 77 c1 e8 56 1a 11 d2 48 8b bd 28
+ff ff ff e8 fa 06 a4 d1 84 c0 74 c5 89 de 48 c7 c7 58 d9 77 c1 e8 48
+a5 38 d1 <0f> 0b eb b3 83 c8 ff e9 47 54 3d d2 66 6
+6 2e 0f 1f 84 00 00 00 00
+[ 7739.335747] RSP: 0018:ffff9a1a00b63dc0 EFLAGS: 00010286
+[ 7739.335749] RAX: 0000000000000000 RBX: 000000000000c030 RCX: 0000000000000027
+[ 7739.335749] RDX: ffff8c059dc219c8 RSI: 0000000000000001 RDI: ffff8c059dc219c0
+[ 7739.335750] RBP: ffff8bf6884dcce8 R08: 0000000000000000 R09: ffff9a1a00b63c40
+[ 7739.335751] R10: ffff8c059d7fffa8 R11: 0000000000000003 R12: 0000000000000000
+[ 7739.335752] R13: 0000000000000000 R14: ffff8bf6884c1bc0 R15: 000000000000c030
+[ 7739.335753] FS:  0000000000000000(0000) GS:ffff8c059dc00000(0000)
+knlGS:0000000000000000
+[ 7739.335754] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 7739.335755] CR2: 00007979dad8e000 CR3: 000000024393a000 CR4: 0000000000f50ef0
+[ 7739.335756] PKRU: 55555554
+[ 7739.335756] Call Trace:
+[ 7739.335758]  <TASK>
+[ 7739.335759]  ? igc_rd32+0x88/0xa0 [igc
+db016c4dcf218e02fb0350dc28f6cc3c425bfd00]
+[ 7739.335762]  ? __warn.cold+0x8e/0xe8
+[ 7739.335764]  ? igc_rd32+0x88/0xa0 [igc
+db016c4dcf218e02fb0350dc28f6cc3c425bfd00]
+[ 7739.335768]  ? report_bug+0xff/0x140
+[ 7739.335771]  ? handle_bug+0x3c/0x80
+[ 7739.335773]  ? exc_invalid_op+0x17/0x70
+[ 7739.335774]  ? asm_exc_invalid_op+0x1a/0x20
+[ 7739.335778]  ? igc_rd32+0x88/0xa0 [igc
+db016c4dcf218e02fb0350dc28f6cc3c425bfd00]
+[ 7739.335781]  igc_update_stats+0x8a/0x6d0 [igc
+db016c4dcf218e02fb0350dc28f6cc3c425bfd00]
+[ 7739.335784]  igc_watchdog_task+0x9e/0x2b0 [igc
+db016c4dcf218e02fb0350dc28f6cc3c425bfd00]
+[ 7739.335787]  ? srso_alias_return_thunk+0x5/0xfbef5
+[ 7739.335789]  process_one_work+0x17b/0x330
+[ 7739.335792]  worker_thread+0x2e2/0x410
+[ 7739.335794]  ? __pfx_worker_thread+0x10/0x10
+[ 7739.335795]  kthread+0xcf/0x100
+[ 7739.335797]  ? __pfx_kthread+0x10/0x10
+[ 7739.335799]  ret_from_fork+0x31/0x50
+[ 7739.335801]  ? __pfx_kthread+0x10/0x10
+[ 7739.335803]  ret_from_fork_asm+0x1a/0x30
+[ 7739.335806]  </TASK>
+[ 7739.335807] ---[ end trace 0000000000000000 ]---
 
-On the other hand, having the CLKSEL mux support implemented and 
-available would help if RTC external clock would want to be added, as 
-the RTC hardware module supports it.
+Unloading the igc module (`rmmod igc`) and attempting to reload it
+(`modprobe igc`) results in:
 
->> I will add a shorter version of above information in the bindings
->> documentation in the V2 of this patchset.
->>
->>>> +
->>>> +  nxp,dividers:
->>>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
->>>> +    description:
->>>> +      An array of two u32 elements, the former encoding DIV512,
->>>> +      the latter encoding DIV32. These are dividers that can be enabled
->>>> +      individually, or cascaded. Use 0 to disable the respective divider,
->>>> +      and 1 to enable it.
->>>
->>> Please explain to me what makes this a property of the hardware and how
->>> someone would go about choosing the divider settings for their hardware.
->>>
->>
->> As per hardware RTC module clocking scheme, the output of the clock mux can
->> be optionally divided by a combination of 512 and 32 (via other two input
->> cascaded muxes) to give various count periods for different clock sources.
->>
->> With respect to choosing the divider settings for custom hardware, it
-> 
-> What do you mean by "custom" hardware? I assume that you mean on a per
-> board basis?
+[ 8470.524688] igc 0000:0c:00.0 eno1: PHC removed
+[ 8479.089035] Intel(R) 2.5G Ethernet Linux Driver
+[ 8479.089038] Copyright(c) 2018 Intel Corporation.
+[ 8479.089074] igc 0000:0c:00.0: enabling device (0000 -> 0002)
+[ 8479.089157] igc 0000:0c:00.0: PCIe PTM not supported by PCIe bus/controller
+[ 8479.089267] igc 0000:0c:00.0 (unnamed net_device) (uninitialized):
+PCIe link lost, device now detached
+[ 8479.089271] ------------[ cut here ]------------
+[ 8479.089272] igc: Failed to read reg 0x10!
+[ 8479.089278] WARNING: CPU: 18 PID: 8068 at
+drivers/net/ethernet/intel/igc/igc_main.c:6752 igc_rd32+0x88/0xa0
+[igc]
+[ 8479.089287] Modules linked in: igc(+) snd_usb_audio snd_usbmidi_lib
+snd_ump snd_rawmidi snd_seq_device mc vfat fat amd_atl intel_rapl_msr
+intel_rapl_common eeepc_wmi kvm_amd asus_wmi iwl
+mvm platform_profile kvm mac80211 snd_hda_codec_hdmi crct10dif_pclmul
+crc32_pclmul polyval_clmulni snd_hda_intel libarc4 polyval_generic
+gf128mul snd_intel_dspcfg ghash_clmulni_intel snd_in
+tel_sdw_acpi sha512_ssse3 snd_hda_codec btusb sha256_ssse3 btrtl
+iwlwifi sha1_ssse3 snd_hda_core btintel aesni_intel snd_hwdep btbcm
+i8042 btmtk crypto_simd snd_pcm cryptd sparse_keymap cfg
+80211 sp5100_tco bluetooth serio snd_timer wmi_bmof rapl ccp pcspkr
+k10temp i2c_piix4 snd ptp soundcore rfkill pps_core mousedev joydev
+gpio_amdpt gpio_generic mac_hid i2c_dev crypto_user d
+m_mod loop nfnetlink ip_tables x_tables ext4 crc32c_generic crc16
+mbcache jbd2 hid_generic usbhid amdgpu amdxcp i2c_algo_bit
+drm_ttm_helper ttm drm_exec gpu_sched drm_suballoc_helper nvme d
+rm_buddy crc32c_intel drm_display_helper nvme_core xhci_pci
+xhci_pci_renesas cec nvme_auth
+[ 8479.089347]  video wmi [last unloaded: igc]
+[ 8479.089351] CPU: 18 PID: 8068 Comm: modprobe Tainted: G        W
+      6.10.9-arch1-2 #1 a989aa0dc21f9aeaff91174d1be29ed5a93040b7
+[ 8479.089354] Hardware name: ASUS System Product Name/ROG STRIX
+X670E-E GAMING WIFI, BIOS 2007 04/12/2024
+[ 8479.089355] RIP: 0010:igc_rd32+0x88/0xa0 [igc]
+[ 8479.089362] Code: 48 c7 c6 30 d9 77 c1 e8 56 1a 11 d2 48 8b bd 28
+ff ff ff e8 fa 06 a4 d1 84 c0 74 c5 89 de 48 c7 c7 58 d9 77 c1 e8 48
+a5 38 d1 <0f> 0b eb b3 83 c8 ff e9 47 54 3d d2 66 6
+6 2e 0f 1f 84 00 00 00 00
+[ 8479.089364] RSP: 0018:ffff9a1a0bcf78d0 EFLAGS: 00010282
+[ 8479.089366] RAX: 0000000000000000 RBX: 0000000000000010 RCX: 0000000000000027
+[ 8479.089367] RDX: ffff8c059e1219c8 RSI: 0000000000000001 RDI: ffff8c059e1219c0
+[ 8479.089369] RBP: ffff8bf6ff5aece8 R08: 0000000000000000 R09: ffff9a1a0bcf7750
+[ 8479.089370] R10: ffff8c059d7fffa8 R11: 0000000000000003 R12: ffff8bf682b530c8
+[ 8479.089371] R13: ffff8bf6ff5ae9e0 R14: ffff8bf6ff5ae000 R15: ffff8bf6ff5aece8
+[ 8479.089372] FS:  0000725733590740(0000) GS:ffff8c059e100000(0000)
+knlGS:0000000000000000
+[ 8479.089374] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[ 8479.089375] CR2: 00007ffd756fc798 CR3: 000000017c168000 CR4: 0000000000f50ef0
+[ 8479.089377] PKRU: 55555554
+[ 8479.089378] Call Trace:
+[ 8479.089379]  <TASK>
+[ 8479.089380]  ? igc_rd32+0x88/0xa0 [igc
+db016c4dcf218e02fb0350dc28f6cc3c425bfd00]
+[ 8479.089385]  ? __warn.cold+0x8e/0xe8
+[ 8479.089389]  ? igc_rd32+0x88/0xa0 [igc
+db016c4dcf218e02fb0350dc28f6cc3c425bfd00]
+[ 8479.089394]  ? report_bug+0xff/0x140
+[ 8479.089398]  ? handle_bug+0x3c/0x80
+[ 8479.089401]  ? exc_invalid_op+0x17/0x70
+[ 8479.089402]  ? asm_exc_invalid_op+0x1a/0x20
+[ 8479.089407]  ? igc_rd32+0x88/0xa0 [igc
+db016c4dcf218e02fb0350dc28f6cc3c425bfd00]
+[ 8479.089412]  igc_get_invariants_base+0x9a/0x270 [igc
+db016c4dcf218e02fb0350dc28f6cc3c425bfd00]
+[ 8479.089419]  igc_probe+0x2cd/0x8e0 [igc
+db016c4dcf218e02fb0350dc28f6cc3c425bfd00]
+[ 8479.089425]  local_pci_probe+0x42/0x90
+[ 8479.089429]  pci_device_probe+0xbd/0x290
+[ 8479.089431]  ? srso_alias_return_thunk+0x5/0xfbef5
+[ 8479.089433]  ? sysfs_do_create_link_sd+0x6e/0xe0
+[ 8479.089437]  really_probe+0xdb/0x340
+[ 8479.089439]  ? pm_runtime_barrier+0x54/0x90
+[ 8479.089443]  ? __pfx___driver_attach+0x10/0x10
+[ 8479.089445]  __driver_probe_device+0x78/0x110
+[ 8479.089447]  driver_probe_device+0x1f/0xa0
+[ 8479.089450]  __driver_attach+0xba/0x1c0
+[ 8479.089452]  bus_for_each_dev+0x8c/0xe0
+[ 8479.089455]  bus_add_driver+0x112/0x1f0
+[ 8479.089458]  driver_register+0x72/0xd0
+[ 8479.089460]  ? __pfx_igc_init_module+0x10/0x10 [igc
+db016c4dcf218e02fb0350dc28f6cc3c425bfd00]
+[ 8479.089466]  do_one_initcall+0x58/0x310
+[ 8479.089470]  do_init_module+0x60/0x220
+[ 8479.089473]  init_module_from_file+0x89/0xe0
+[ 8479.089478]  idempotent_init_module+0x121/0x320
+[ 8479.089482]  __x64_sys_finit_module+0x5e/0xb0
+[ 8479.089484]  do_syscall_64+0x82/0x190
+[ 8479.089489]  ? srso_alias_return_thunk+0x5/0xfbef5
+[ 8479.089490]  ? vfs_read+0x159/0x370
+[ 8479.089494]  ? srso_alias_return_thunk+0x5/0xfbef5
+[ 8479.089495]  ? syscall_exit_to_user_mode+0x72/0x200
+[ 8479.089498]  ? srso_alias_return_thunk+0x5/0xfbef5
+[ 8479.089499]  ? do_syscall_64+0x8e/0x190
+[ 8479.089502]  ? srso_alias_return_thunk+0x5/0xfbef5
+[ 8479.089503]  ? srso_alias_return_thunk+0x5/0xfbef5
+[ 8479.089505]  ? syscall_exit_to_user_mode+0x72/0x200
+[ 8479.089506]  ? srso_alias_return_thunk+0x5/0xfbef5
+[ 8479.089508]  ? do_syscall_64+0x8e/0x190
+[ 8479.089510]  ? srso_alias_return_thunk+0x5/0xfbef5
+[ 8479.089511]  ? handle_mm_fault+0x1f0/0x300
+[ 8479.089514]  ? srso_alias_return_thunk+0x5/0xfbef5
+[ 8479.089516]  ? do_user_addr_fault+0x36c/0x620
+[ 8479.089519]  ? srso_alias_return_thunk+0x5/0xfbef5
+[ 8479.089520]  ? srso_alias_return_thunk+0x5/0xfbef5
+[ 8479.089522]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[ 8479.089525] RIP: 0033:0x725732f261fd
+[ 8479.089540] Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e
+fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24
+08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d e3 f
+a 0c 00 f7 d8 64 89 01 48
+[ 8479.089541] RSP: 002b:00007ffd756ff778 EFLAGS: 00000246 ORIG_RAX:
+0000000000000139
+[ 8479.089543] RAX: ffffffffffffffda RBX: 000065534c46cc10 RCX: 0000725732f261fd
+[ 8479.089544] RDX: 0000000000000004 RSI: 000065531d908c03 RDI: 0000000000000003
+[ 8479.089545] RBP: 00007ffd756ff830 R08: 0000725732ff6b20 R09: 00007ffd756ff7c0
+[ 8479.089546] R10: 000065534c46d3d0 R11: 0000000000000246 R12: 000065531d908c03
+[ 8479.089547] R13: 0000000000040000 R14: 000065534c46cd20 R15: 000065534c46d850
+[ 8479.089550]  </TASK>
+[ 8479.089551] ---[ end trace 0000000000000000 ]---
+[ 8518.483297] igc 0000:0c:00.0: probe with driver igc failed with error -13
 
-Indeed, I was considering the same S32G2 or S32G3 SoC but on different 
-boards/different scenarios. I just wanted to expose the ability to reach 
-lower frequencies by using those available hardware divisors.
-
-> 
->> depends on the clock source being selected and the desired rollover time.
->> For example, on S32G2 or S32G3 SoC based boards, using FIRC (~48-51 MHz)
->> with DIV512 enabled results in a rollover time of aprox. 13 hours.
-> 
-> So a different user of the same board might want a different rollover
-> time? If so, this doesn't really seem like something that should be
-> controlled from devicetree.
-> 
-> Cheers,
-> Conor.
-
-I understand your point, indeed it does not seem to fit the devicetree, 
-but maybe exposing them via sysfs would be a better approach. I will 
-remove these bindings for now and consider an alternative, in V2 of this 
-patchset.
+Kind regards,
+ Jesper Juhl
 
 
-Regards,
-Ciprian
-
+On Wed, 11 Sept 2024 at 17:10, Jesper Juhl <jesperjuhl76@gmail.com> wrote:
+>
+> Hi there
+>
+> Over the past couple of months I've occasionally observed my machine
+> loosing its ethernet connection.
+>
+> It usually only happens after I've been using the machine for a couple
+> of hours and it only happens around 3-4 times per month.
+> Every time (previously) I've just rebooted the machine and then things
+> were fine when it came back up, but the last time it happened I took a
+> look at 'dmesg' to see if there was a clue and I found this:
+>
+> [   11.474412] igc 0000:0c:00.0 eno1: NIC Link is Up 2500 Mbps Full
+> Duplex, Flow Control: RX/TX
+> [   11.475554] igc 0000:0c:00.0 eno1: Force mode currently not supported
+> [   14.363040] usbcore: registered new interface driver snd-usb-audio
+> [   15.934429] igc 0000:0c:00.0 eno1: NIC Link is Up 2500 Mbps Full
+> Duplex, Flow Control: RX/TX
+> [   37.250435] systemd-journald[569]: Time jumped backwards, rotating.
+> [   38.593498] warning: `kdeconnectd' uses wireless extensions which
+> will stop working for Wi-Fi 7 hardware; use nl80211
+> [  352.786791] usb 3-2: new high-speed USB device number 7 using xhci_hcd
+> [15656.628279] igc 0000:0c:00.0 eno1: PCIe link lost, device now detached
+> [15656.628287] ------------[ cut here ]------------
+> [15656.628287] igc: Failed to read reg 0xc030!
+> [15656.628306] WARNING: CPU: 2 PID: 2383 at
+> drivers/net/ethernet/intel/igc/igc_main.c:6752 igc_rd32+0x88/0xa0
+> [igc]
+> [15656.628313] Modules linked in: snd_usb_audio snd_usbmidi_lib
+> snd_ump snd_rawmidi snd_seq_device mc vfat fat amd_atl intel_rapl_msr
+> intel_rapl_common kvm_amd iwlmvm eeepc_wmi asus_nb_wmi
+> kvm asus_wmi crct10dif_pclmul platform_profile mac80211
+> snd_hda_codec_hdmi crc32_pclmul snd_hda_intel polyval_clmulni libarc4
+> polyval_generic snd_intel_dspcfg gf128mul snd_intel_sdw_acpi bt
+> usb ghash_clmulni_intel snd_hda_codec btrtl iwlwifi sha512_ssse3
+> btintel sha256_ssse3 snd_hda_core sha1_ssse3 btbcm aesni_intel
+> snd_hwdep btmtk crypto_simd i8042 snd_pcm cryptd cfg80211 spa
+> rse_keymap bluetooth sp5100_tco snd_timer serio wmi_bmof rapl pcspkr
+> k10temp ccp igc i2c_piix4 snd ptp soundcore rfkill joydev pps_core
+> mousedev gpio_amdpt gpio_generic mac_hid i2c_dev cryp
+> to_user loop dm_mod nfnetlink ip_tables x_tables ext4 crc32c_generic
+> crc16 mbcache jbd2 hid_generic usbhid amdgpu amdxcp i2c_algo_bit
+> drm_ttm_helper ttm drm_exec gpu_sched drm_suballoc_help
+> er nvme drm_buddy drm_display_helper crc32c_intel nvme_core xhci_pci
+> xhci_pci_renesas cec
+> [15656.628364]  video nvme_auth wmi
+> [15656.628368] CPU: 2 PID: 2383 Comm: btop Not tainted 6.10.8-arch1-1
+> #1 a95ab4cbeff058332c57c6b7bbc94a2b00a74ca7
+> [15656.628370] Hardware name: ASUS System Product Name/ROG STRIX
+> X670E-E GAMING WIFI, BIOS 2007 04/12/2024
+> [15656.628371] RIP: 0010:igc_rd32+0x88/0xa0 [igc]
+> [15656.628374] Code: 48 c7 c6 30 f9 7e c1 e8 56 3a 27 d3 48 8b bd 28
+> ff ff ff e8 ba 26 ba d2 84 c0 74 c5 89 de 48 c7 c7 58 f9 7e c1 e8 48
+> c5 4e d2 <0f> 0b eb b3 83 c8 ff e9 47 74 53 d3 66 6
+> 6 2e 0f 1f 84 00 00 00 00
+> [15656.628375] RSP: 0018:ffffb74248adf338 EFLAGS: 00010286
+> [15656.628377] RAX: 0000000000000000 RBX: 000000000000c030 RCX: 0000000000000027
+> [15656.628378] RDX: ffff97821d9219c8 RSI: 0000000000000001 RDI: ffff97821d9219c0
+> [15656.628379] RBP: ffff9773078cece8 R08: 0000000000000000 R09: ffffb74248adf1b8
+> [15656.628379] R10: ffff97821d7fffa8 R11: 0000000000000003 R12: 0000000000000000
+> [15656.628380] R13: 0000000000000000 R14: ffff97731260abc0 R15: 000000000000c030
+> [15656.628381] FS:  00007113194006c0(0000) GS:ffff97821d900000(0000)
+> knlGS:0000000000000000
+> [15656.628382] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [15656.628383] CR2: 00007e621ecb2000 CR3: 00000001153b6000 CR4: 0000000000f50ef0
+> [15656.628384] PKRU: 55555554
+> [15656.628385] Call Trace:
+> [15656.628387]  <TASK>
+> [15656.628388]  ? igc_rd32+0x88/0xa0 [igc
+> 22e0a697bfd5a86bd5c20d279bfffd131de6bb32]
+> [15656.628391]  ? __warn.cold+0x8e/0xe8
+> [15656.628393]  ? igc_rd32+0x88/0xa0 [igc
+> 22e0a697bfd5a86bd5c20d279bfffd131de6bb32]
+> [15656.628398]  ? report_bug+0xff/0x140
+> [15656.628400]  ? console_unlock+0x84/0x130
+> [15656.628402]  ? handle_bug+0x3c/0x80
+> [15656.628404]  ? exc_invalid_op+0x17/0x70
+> [15656.628405]  ? asm_exc_invalid_op+0x1a/0x20
+> [15656.628408]  ? igc_rd32+0x88/0xa0 [igc
+> 22e0a697bfd5a86bd5c20d279bfffd131de6bb32]
+> [15656.628411]  ? igc_rd32+0x88/0xa0 [igc
+> 22e0a697bfd5a86bd5c20d279bfffd131de6bb32]
+> [15656.628414]  igc_update_stats+0x8a/0x6d0 [igc
+> 22e0a697bfd5a86bd5c20d279bfffd131de6bb32]
+> [15656.628417]  igc_get_stats64+0x85/0x90 [igc
+> 22e0a697bfd5a86bd5c20d279bfffd131de6bb32]
+> [15656.628420]  dev_get_stats+0x5d/0x130
+> [15656.628422]  rtnl_fill_stats+0x3b/0x130
+> [15656.628425]  rtnl_fill_ifinfo.isra.0+0x779/0x1520
+> [15656.628426]  ? nla_reserve_64bit+0x30/0x40
+> [15656.628430]  rtnl_dump_ifinfo+0x4af/0x650
+> [15656.628438]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [15656.628439]  ? kmalloc_reserve+0x62/0xf0
+> [15656.628442]  rtnl_dumpit+0x1c/0x60
+> [15656.628444]  netlink_dump+0x347/0x3b0
+> [15656.628449]  __netlink_dump_start+0x1eb/0x310
+> [15656.628451]  ? __pfx_rtnl_dump_ifinfo+0x10/0x10
+> [15656.628452]  rtnetlink_rcv_msg+0x2aa/0x3f0
+> [15656.628454]  ? __pfx_rtnl_dumpit+0x10/0x10
+> [15656.628456]  ? __pfx_rtnl_dump_ifinfo+0x10/0x10
+> [15656.628457]  ? __pfx_rtnetlink_rcv_msg+0x10/0x10
+> [15656.628459]  netlink_rcv_skb+0x50/0x100
+> [15656.628463]  netlink_unicast+0x240/0x370
+> [15656.628465]  netlink_sendmsg+0x21b/0x470
+> [15656.628468]  __sys_sendto+0x201/0x210
+> [15656.628473]  __x64_sys_sendto+0x24/0x30
+> [15656.628474]  do_syscall_64+0x82/0x190
+> [15656.628476]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [15656.628477]  ? syscall_exit_to_user_mode+0x72/0x200
+> [15656.628479]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [15656.628480]  ? do_syscall_64+0x8e/0x190
+> [15656.628482]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [15656.628483]  ? seq_read_iter+0x208/0x460
+> [15656.628485]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [15656.628486]  ? update_curr+0x26/0x1f0
+> [15656.628488]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [15656.628489]  ? reweight_entity+0x1c4/0x260
+> [15656.628490]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [15656.628492]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [15656.628493]  ? task_tick_fair+0x40/0x420
+> [15656.628494]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [15656.628495]  ? sched_use_asym_prio+0x66/0x90
+> [15656.628496]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [15656.628497]  ? sched_balance_trigger+0x14c/0x340
+> [15656.628499]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [15656.628500]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [15656.628501]  ? rcu_accelerate_cbs+0x7a/0x80
+> [15656.628503]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [15656.628504]  ? __note_gp_changes+0x18b/0x1a0
+> [15656.628506]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [15656.628507]  ? note_gp_changes+0x6c/0x80
+> [15656.628508]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [15656.628509]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [15656.628510]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [15656.628511]  ? __rseq_handle_notify_resume+0xa6/0x490
+> [15656.628514]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [15656.628515]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [15656.628517] RIP: 0033:0x71131b12a8e4
+> [15656.628531] Code: 7d e8 89 4d d4 e8 fc 49 f7 ff 44 8b 4d d0 4c 8b
+> 45 c8 89 c3 44 8b 55 d4 8b 7d e8 b8 2c 00 00 00 48 8b 55 d8 48 8b 75
+> e0 0f 05 <48> 3d 00 f0 ff ff 77 34 89 df 48 89 45 e
+> 8 e8 49 4a f7 ff 48 8b 45
+> [15656.628532] RSP: 002b:00007113193ff0b0 EFLAGS: 00000293 ORIG_RAX:
+> 000000000000002c
+> [15656.628533] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000071131b12a8e4
+> [15656.628534] RDX: 0000000000000014 RSI: 00007113193ff180 RDI: 0000000000000003
+> [15656.628535] RBP: 00007113193ff0f0 R08: 00007113193ff140 R09: 000000000000000c
+> [15656.628536] R10: 0000000000000000 R11: 0000000000000293 R12: 00007113193ff270
+> [15656.628536] R13: 00007113193ff180 R14: 00007113193ffca8 R15: 00007113193ff780
+> [15656.628539]  </TASK>
+> [15656.628540] ---[ end trace 0000000000000000 ]---
+>
+> I tried reloading the 'igc' module, but that didn't resolve the issue
+> - then I rebooted as usual and everything was fine again.
+>
+> My NIC is (from `lspci -vvv`):
+> 0c:00.0 Ethernet controller: Intel Corporation Ethernet Controller
+> I225-V (rev 03)
+>        DeviceName: Intel 2.5G LAN
+>        Subsystem: ASUSTeK Computer Inc. Device 87d2
+>        Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop-
+> ParErr- Stepping- SERR- FastB2B- DisINTx+
+>        Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort-
+> <TAbort- <MAbort- >SERR- <PERR- INTx-
+>        Latency: 0, Cache Line Size: 64 bytes
+>        Interrupt: pin A routed to IRQ 36
+>        IOMMU group: 19
+>        Region 0: Memory at 80100000 (32-bit, non-prefetchable) [size=1M]
+>        Region 3: Memory at 80200000 (32-bit, non-prefetchable) [size=16K]
+>        Capabilities: [40] Power Management version 3
+>                Flags: PMEClk- DSI+ D1- D2- AuxCurrent=0mA
+> PME(D0+,D1-,D2-,D3hot+,D3cold+)
+>                Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=1 PME-
+>        Capabilities: [50] MSI: Enable- Count=1/1 Maskable+ 64bit+
+>                Address: 0000000000000000  Data: 0000
+>                Masking: 00000000  Pending: 00000000
+>        Capabilities: [70] MSI-X: Enable+ Count=5 Masked-
+>                Vector table: BAR=3 offset=00000000
+>                PBA: BAR=3 offset=00002000
+>        Capabilities: [a0] Express (v2) Endpoint, IntMsgNum 0
+>                DevCap: MaxPayload 512 bytes, PhantFunc 0, Latency L0s
+> <512ns, L1 <64us
+>                        ExtTag- AttnBtn- AttnInd- PwrInd- RBE+ FLReset+
+> SlotPowerLimit 0W TEE-IO-
+>                DevCtl: CorrErr+ NonFatalErr+ FatalErr+ UnsupReq+
+>                        RlxdOrd+ ExtTag- PhantFunc- AuxPwr- NoSnoop+ FLReset-
+>                        MaxPayload 128 bytes, MaxReadReq 512 bytes
+>                DevSta: CorrErr- NonFatalErr- FatalErr- UnsupReq-
+> AuxPwr+ TransPend-
+>                LnkCap: Port #1, Speed 5GT/s, Width x1, ASPM L1, Exit
+> Latency L1 <4us
+>                        ClockPM- Surprise- LLActRep- BwNot- ASPMOptComp+
+>                LnkCtl: ASPM L1 Enabled; RCB 64 bytes, LnkDisable- CommClk+
+>                        ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
+>                LnkSta: Speed 5GT/s, Width x1
+>                        TrErr- Train- SlotClk+ DLActive- BWMgmt- ABWMgmt-
+>                DevCap2: Completion Timeout: Range ABCD, TimeoutDis+
+> NROPrPrP- LTR+
+>                         10BitTagComp- 10BitTagReq- OBFF Not Supported,
+> ExtFmt- EETLPPrefix-
+>                         EmergencyPowerReduction Not Supported,
+> EmergencyPowerReductionInit-
+>                         FRS- TPHComp- ExtTPHComp-
+>                         AtomicOpsCap: 32bit- 64bit- 128bitCAS-
+>                DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis-
+>                         AtomicOpsCtl: ReqEn-
+>                         IDOReq- IDOCompl- LTR+ EmergencyPowerReductionReq-
+>                         10BitTagReq- OBFF Disabled, EETLPPrefixBlk-
+>                LnkCtl2: Target Link Speed: 5GT/s, EnterCompliance- SpeedDis-
+>                         Transmit Margin: Normal Operating Range,
+> EnterModifiedCompliance- ComplianceSOS-
+>                         Compliance Preset/De-emphasis: -6dB
+> de-emphasis, 0dB preshoot
+>                LnkSta2: Current De-emphasis Level: -6dB,
+> EqualizationComplete- EqualizationPhase1-
+>                         EqualizationPhase2- EqualizationPhase3-
+> LinkEqualizationRequest-
+>                         Retimer- 2Retimers- CrosslinkRes: unsupported
+>        Capabilities: [100 v2] Advanced Error Reporting
+>                UESta:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt-
+> UnxCmplt- RxOF- MalfTLP-
+>                        ECRC- UnsupReq- ACSViol- UncorrIntErr-
+> BlockedTLP- AtomicOpBlocked- TLPBlockedErr-
+>                        PoisonTLPBlocked- DMWrReqBlocked- IDECheck-
+> MisIDETLP- PCRC_CHECK- TLPXlatBlocked-
+>                UEMsk:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt-
+> UnxCmplt- RxOF- MalfTLP-
+>                        ECRC- UnsupReq- ACSViol- UncorrIntErr-
+> BlockedTLP- AtomicOpBlocked- TLPBlockedErr-
+>                        PoisonTLPBlocked- DMWrReqBlocked- IDECheck-
+> MisIDETLP- PCRC_CHECK- TLPXlatBlocked-
+>                UESvrt: DLP+ SDES+ TLP- FCP+ CmpltTO- CmpltAbrt-
+> UnxCmplt- RxOF+ MalfTLP+
+>                        ECRC- UnsupReq- ACSViol- UncorrIntErr+
+> BlockedTLP- AtomicOpBlocked- TLPBlockedErr-
+>                        PoisonTLPBlocked- DMWrReqBlocked- IDECheck-
+> MisIDETLP- PCRC_CHECK- TLPXlatBlocked-
+>                CESta:  RxErr- BadTLP- BadDLLP- Rollover- Timeout-
+> AdvNonFatalErr- CorrIntErr- HeaderOF-
+>                CEMsk:  RxErr- BadTLP- BadDLLP- Rollover- Timeout-
+> AdvNonFatalErr+ CorrIntErr- HeaderOF-
+>                AERCap: First Error Pointer: 14, ECRCGenCap+ ECRCGenEn-
+> ECRCChkCap+ ECRCChkEn-
+>                        MultHdrRecCap- MultHdrRecEn- TLPPfxPres- HdrLogCap-
+>                HeaderLog: 40001001 0000000f 8020000c 8020000c
+>        Capabilities: [140 v1] Device Serial Number a0-36-bc-ff-ff-ac-b3-b6
+>        Capabilities: [1c0 v1] Latency Tolerance Reporting
+>                Max snoop latency: 0ns
+>                Max no snoop latency: 0ns
+>        Capabilities: [1f0 v1] Precision Time Measurement
+>                PTMCap: Requester+ Responder- Root-
+>                PTMClockGranularity: 4ns
+>                PTMControl: Enabled- RootSelected-
+>                PTMEffectiveGranularity: Unknown
+>        Capabilities: [1e0 v1] L1 PM Substates
+>                L1SubCap: PCI-PM_L1.2- PCI-PM_L1.1+ ASPM_L1.2-
+> ASPM_L1.1+ L1_PM_Substates+
+>                L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2- ASPM_L1.1-
+>                L1SubCtl2:
+>        Kernel driver in use: igc
+>
+> My distribution is Arch Linux.
+>
+> My motherboard is a ASUS X670E-E running a AMD 7950X CPU and using 64G
+> of RAM at EXPO 6000 speed.
+>
+> My kernel is: 6.10.9-arch1-1 #1 SMP PREEMPT_DYNAMIC Mon, 09 Sep 2024
+> 02:38:45 +0000 x86_64 GNU/Linux
+>
+> I'm connected to a 2.5GiB/sec switch that doesn't seem to have any
+> problems serving other machines when this happens.
+>
+> I can provide further hardware details upon request, just let me know
+> what info you need.
+> I'm perfectly willing to try custom kernels and/or patches, just let
+> me know what you need me to try/build/test.
+>
+> Kind regards,
+>  Jesper Juhl
 
