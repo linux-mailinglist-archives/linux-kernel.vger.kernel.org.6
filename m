@@ -1,84 +1,130 @@
-Return-Path: <linux-kernel+bounces-326363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10E19976733
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:10:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40AD9976734
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:10:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DEDB1C22FBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:10:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 739291C22728
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2D51A0BE9;
-	Thu, 12 Sep 2024 11:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rWu9BMRM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5471A0BD5;
+	Thu, 12 Sep 2024 11:10:23 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6899E18E043;
-	Thu, 12 Sep 2024 11:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D137E1A08C4;
+	Thu, 12 Sep 2024 11:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726139408; cv=none; b=gY08smx/6EKkmtVJ0I3SZDQm2RwyrRScS1lyrfC+vHAIebek3rotkriEOkdq3wWohma3R0r3XYrlKnyhhknDEO0iaect54YEigcxdj1MfsbCNME98Rpqzy4FSKsdS8P/OFVpTmQro3ET2X4iB3KpuNcygu3kWMAL/qO1N7j0zNQ=
+	t=1726139423; cv=none; b=R0im5MJXJwvCAoZC/nHaz1g762AqqH/AfpUFio0zVMylYZUvKoVTiDZGtUWp82/00U2e8jaY4alBX7ugvIwFFZQmn66CREYibiFwBNotqtwGXwf4aBLLpkK12LBU0vV1zHa7AewW3M9g4W+wT4ZDT4dr1vpV/Wip8D1rehmxPg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726139408; c=relaxed/simple;
-	bh=oy3t622oJ9y+zBSmV8Hg+lcYB3qkvoxDjsisvYrdppE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e8Uz9artYbDn1ay0Cq7WOSd5aLn+DswXfYdwrAp3VCSaGS9Uladi1DgY3MQCk4GB7r1MucWKbj8OdoB2ebsR1f/HpwjF9N9KbO/4nx1Ha3wep/o0OzE61YRwDzjeXQSGkvTMnpDE96mM4kcrAVWmM8EqGYATAPphuE222Oegohc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rWu9BMRM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B658CC4CEC3;
-	Thu, 12 Sep 2024 11:10:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726139407;
-	bh=oy3t622oJ9y+zBSmV8Hg+lcYB3qkvoxDjsisvYrdppE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rWu9BMRMIZdrUo2PalQuBsGnB+9JnFSU/DqQw6d9z+BjowPoVlwKvlQ/25LdoOXk5
-	 BudvONRc8oDogUUf7qK/Nk7tPlMY37qPhxWo/eru6X+51QDh8TE8xRJMALvetLfNVo
-	 gVfmVmelDJTNGhk0ABnRWNodtoIeYLJ8mDYSvwWKJnh6ktNRc1HKV1HBFeohpSUzgS
-	 zzZMvGikWzmqOJm8A6Kh6gA1lX0PCu5uo/WykBE1L4AbUGwuSJH7pDbua1Vo08ct93
-	 2CR1zhYTkytu/6Yf69DUnQcsN8uYSWp3/TUVLmezR7ybPK2agEXYgzp690DtURzEW1
-	 bgvBWt9n5+fdA==
-Date: Thu, 12 Sep 2024 12:10:03 +0100
-From: Simon Horman <horms@kernel.org>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	thomas.petazzoni@bootlin.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH net-next v2] Documentation: networking: Fix missing PSE
- documentation and grammar issues
-Message-ID: <20240912111003.GI572255@kernel.org>
-References: <20240912090550.743174-1-kory.maincent@bootlin.com>
+	s=arc-20240116; t=1726139423; c=relaxed/simple;
+	bh=L3MUCMKtkTguWF9pBToUYcRy9e1ieedTm1iuky8Pw6Y=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=nirHP20INJsrAkkmJ1RHmtq22TeCakb+V26qhn++ZpbxykCnYCTZug3Co6+fy1GneO3LZdznC+JrrMlw6OYLa/VJSzcuOVkF1plq88ACEcnWyYKFp+WJTxSpmZbbBA9zIIXKguVTQ6Dx8ONyqPiWIzPjX6QsgKMZWw7uTykvBGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4X4F8W64g6z20lDc;
+	Thu, 12 Sep 2024 19:10:03 +0800 (CST)
+Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id E2B3214013B;
+	Thu, 12 Sep 2024 19:10:10 +0800 (CST)
+Received: from kwepemd100011.china.huawei.com (7.221.188.204) by
+ kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 12 Sep 2024 19:10:10 +0800
+Received: from kwepemd100011.china.huawei.com ([7.221.188.204]) by
+ kwepemd100011.china.huawei.com ([7.221.188.204]) with mapi id 15.02.1258.034;
+ Thu, 12 Sep 2024 19:10:10 +0800
+From: duchangbin <changbin.du@huawei.com>
+To: Adrian Hunter <adrian.hunter@intel.com>
+CC: duchangbin <changbin.du@huawei.com>, Peter Zijlstra
+	<peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, "Arnaldo Carvalho de
+ Melo" <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Nathan
+ Chancellor <nathan@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
+	<jolsa@kernel.org>, "Ian Rogers" <irogers@google.com>, "Liang, Kan"
+	<kan.liang@linux.intel.com>, "Nick Desaulniers" <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>, "Wanghui (OS Kernel Lab,
+ Beijing)" <hw.huiwang@huawei.com>
+Subject: Re: [PATCH v6 8/8] perf buildid-cache: recognize vdso when adding
+ files
+Thread-Topic: [PATCH v6 8/8] perf buildid-cache: recognize vdso when adding
+ files
+Thread-Index: AQHa3jimIYtCUWpsdU+ECcILatWtFrJSACMAgAJL8QA=
+Date: Thu, 12 Sep 2024 11:10:10 +0000
+Message-ID: <953cc060c1a24e36abf797918824d13e@huawei.com>
+References: <20240725021549.880167-1-changbin.du@huawei.com>
+ <20240725021549.880167-9-changbin.du@huawei.com>
+ <68f29f30-f0f8-4cda-a99a-68f51838dcd7@intel.com>
+In-Reply-To: <68f29f30-f0f8-4cda-a99a-68f51838dcd7@intel.com>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-imapappendstamp: kwepemd100011.china.huawei.com (15.02.1258.034)
+x-ms-exchange-messagesentrepresentingtype: 1
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <674352206418F4468498DA60930A32B9@huawei.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240912090550.743174-1-kory.maincent@bootlin.com>
 
-On Thu, Sep 12, 2024 at 11:05:50AM +0200, Kory Maincent wrote:
-> Fix a missing end of phrase in the documentation. It describes the
-> ETHTOOL_A_C33_PSE_ACTUAL_PW attribute, which was not fully explained.
-> 
-> Also, fix grammar issues by using simple present tense instead of
-> present continuous.
-> 
-> Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
-> ---
-> 
-> Change in v2:
-> - Add grammar issue fixes.
-
-Thanks for the update.
-
-Reviewed-by: Simon Horman <horms@kernel.org>
+T24gV2VkLCBTZXAgMTEsIDIwMjQgYXQgMTE6MDU6MjBBTSArMDMwMCwgQWRyaWFuIEh1bnRlciB3
+cm90ZToNCj4gT24gMjUvMDcvMjQgMDU6MTUsIENoYW5nYmluIER1IHdyb3RlOg0KPiA+IElkZW50
+aWZ5IHZkc28gYnkgZmlsZSBuYW1lIG1hdGNoaW5nLiBUaGUgdmRzbyBvYmplY3RzIGhhdmUgbmFt
+ZQ0KPiA+IGFzIHZkc29bMzIsNjRdLnNvWy5kYmddLg0KPiA+IA0KPiA+ICQgcGVyZiBidWlsZGlk
+LWNhY2hlIC1hIC93b3JrL2xpbnV4L2FyY2gveDg2L2VudHJ5L3Zkc28vdmRzbzY0LnNvLmRiZw0K
+PiA+IA0KPiA+IFdpdGhvdXQgdGhpcyBjaGFuZ2UsIGFkZGluZyB2ZHNvIHVzaW5nIGFib3ZlIGNv
+bW1hbmQgYWN0dWFsbHkgd2lsbCBuZXZlcg0KPiA+IGJlIHVzZWQuDQo+ID4gDQo+ID4gU2lnbmVk
+LW9mZi1ieTogQ2hhbmdiaW4gRHUgPGNoYW5nYmluLmR1QGh1YXdlaS5jb20+DQo+IA0KPiBBIGNv
+dXBsZSBvZiBjb21tZW50cywgYnV0IGFkZHJlc3MgdGhvc2UgdGhlbiBhZGQ6DQo+IA0KPiBSZXZp
+ZXdlZC1ieTogQWRyaWFuIEh1bnRlciA8YWRyaWFuLmh1bnRlckBpbnRlbC5jb20+DQo+IA0KPiA+
+IC0tLQ0KPiA+ICB0b29scy9wZXJmL2J1aWx0aW4tYnVpbGRpZC1jYWNoZS5jIHwgMjYgKysrKysr
+KysrKysrKysrKysrKysrKysrKy0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDI1IGluc2VydGlvbnMo
+KyksIDEgZGVsZXRpb24oLSkNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvdG9vbHMvcGVyZi9idWls
+dGluLWJ1aWxkaWQtY2FjaGUuYyBiL3Rvb2xzL3BlcmYvYnVpbHRpbi1idWlsZGlkLWNhY2hlLmMN
+Cj4gPiBpbmRleCBiMDUxMWQxNmFlYjYuLjhlZGVhOTA0NGE2NSAxMDA2NDQNCj4gPiAtLS0gYS90
+b29scy9wZXJmL2J1aWx0aW4tYnVpbGRpZC1jYWNoZS5jDQo+ID4gKysrIGIvdG9vbHMvcGVyZi9i
+dWlsdGluLWJ1aWxkaWQtY2FjaGUuYw0KPiA+IEBAIC0xNzIsNiArMTcyLDMwIEBAIHN0YXRpYyBp
+bnQgYnVpbGRfaWRfY2FjaGVfX2FkZF9rY29yZShjb25zdCBjaGFyICpmaWxlbmFtZSwgYm9vbCBm
+b3JjZSkNCj4gPiAgCXJldHVybiAwOw0KPiA+ICB9DQo+ID4gIA0KPiA+ICtzdGF0aWMgYm9vbCBm
+aWxlbmFtZV9pc192ZHNvKGNvbnN0IGNoYXIgKmZpbGVuYW1lKQ0KPiA+ICt7DQo+ID4gKwljaGFy
+ICpmbmFtZSwgKmJuYW1lOw0KPiA+ICsJc3RhdGljIGNvbnN0IGNoYXIgKiBjb25zdCB2ZHNvX25h
+bWVzW10gPSB7DQo+ID4gKwkJInZkc28uc28iLCAidmRzbzMyLnNvIiwgInZkc282NC5zbyIsICJ2
+ZHNveDMyLnNvIg0KPiA+ICsJfTsNCj4gPiArDQo+ID4gKwlmbmFtZSA9IHN0cmR1cChmaWxlbmFt
+ZSk7DQo+ID4gKwlpZiAoIWZuYW1lKSB7DQo+ID4gKwkJcHJfZXJyKCJubyBtZW1lbW9yeVxuIik7
+DQo+IA0KPiBtZW1lbW9yeSAtPiBtZW1vcnkNCj4NCmZpeGVkLg0KDQo+ID4gKwkJcmV0dXJuIGZh
+bHNlOw0KPiA+ICsJfQ0KPiANCj4gZm5hbWUgaXMgbmV2ZXIgZnJlZWQuDQo+IA0KZml4ZWQuDQoN
+Cj4gPiArDQo+ID4gKwlibmFtZSA9IGJhc2VuYW1lKGZuYW1lKTsNCj4gPiArCWlmICghYm5hbWUp
+DQo+ID4gKwkJcmV0dXJuIGZhbHNlOw0KPiA+ICsNCj4gPiArCWZvciAodW5zaWduZWQgaW50IGkg
+PSAwOyBpIDwgQVJSQVlfU0laRSh2ZHNvX25hbWVzKTsgaSsrKSB7DQo+IA0KPiAndW5zaWduZWQn
+IGlzIHVubmVjZXNzYXJ5DQo+IA0KVGhpcyBpcyByZXF1aXJlZCB0byBzdXByZXNzIHRoaXMgZXJy
+b3IuDQplcnJvcjogY29tcGFyaXNvbiBvZiBpbnRlZ2VyIGV4cHJlc3Npb25zIG9mIGRpZmZlcmVu
+dCBzaWduZWRuZXNzOiDigJhpbnTigJkgYW5kIOKAmGxvbmcgdW5zaWduZWQgaW504oCZDQoNCj4g
+PiArCQlpZiAoIXN0cm5jbXAoYm5hbWUsIHZkc29fbmFtZXNbaV0sIHN0cmxlbih2ZHNvX25hbWVz
+W2ldKSkpDQo+IA0KPiBVc2Ugc3Ryc3RhcnRzKCkNCj4gDQpva2F5Lg0KDQo+ID4gKwkJCXJldHVy
+biB0cnVlOw0KPiA+ICsJfQ0KPiA+ICsJcmV0dXJuIGZhbHNlOw0KPiA+ICt9DQo+ID4gKw0KPiA+
+ICBzdGF0aWMgaW50IGJ1aWxkX2lkX2NhY2hlX19hZGRfZmlsZShjb25zdCBjaGFyICpmaWxlbmFt
+ZSwgc3RydWN0IG5zaW5mbyAqbnNpKQ0KPiA+ICB7DQo+ID4gIAljaGFyIHNidWlsZF9pZFtTQlVJ
+TERfSURfU0laRV07DQo+ID4gQEAgLTE4OSw3ICsyMTMsNyBAQCBzdGF0aWMgaW50IGJ1aWxkX2lk
+X2NhY2hlX19hZGRfZmlsZShjb25zdCBjaGFyICpmaWxlbmFtZSwgc3RydWN0IG5zaW5mbyAqbnNp
+KQ0KPiA+ICANCj4gPiAgCWJ1aWxkX2lkX19zcHJpbnRmKCZiaWQsIHNidWlsZF9pZCk7DQo+ID4g
+IAllcnIgPSBidWlsZF9pZF9jYWNoZV9fYWRkX3Moc2J1aWxkX2lkLCBmaWxlbmFtZSwgbnNpLA0K
+PiA+IC0JCQkJICAgIGZhbHNlLCBmYWxzZSk7DQo+ID4gKwkJCQkgICAgZmFsc2UsIGZpbGVuYW1l
+X2lzX3Zkc28oZmlsZW5hbWUpKTsNCj4gPiAgCXByX2RlYnVnKCJBZGRpbmcgJXMgJXM6ICVzXG4i
+LCBzYnVpbGRfaWQsIGZpbGVuYW1lLA0KPiA+ICAJCSBlcnIgPyAiRkFJTCIgOiAiT2siKTsNCj4g
+PiAgCXJldHVybiBlcnI7DQo+IA0KPiANCg0KLS0gDQpDaGVlcnMsDQpDaGFuZ2JpbiBEdQ0K
 
