@@ -1,167 +1,277 @@
-Return-Path: <linux-kernel+bounces-327224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C89F97728F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:05:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5591977294
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DFA11C22494
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:05:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 523BF1F23D1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777D31C1724;
-	Thu, 12 Sep 2024 20:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7253E1C1747;
+	Thu, 12 Sep 2024 20:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YmQIWbI9"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I9jtY1yO"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A4B1A3052
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF0F1C0DC2
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726171547; cv=none; b=B2FRhtqwOh1EHeu5j4PtCseboh+9SS83RRlZ2MjitiTEfcMr8nhDcykjH6qac6hWmMysWpcFgLsVSemG4Hla5FA7P2cANda4fJj8FxH31gFdl3rsmv3uMRVZamLdm+2YvfEpYOOKk7HtfgZQP29LMatXoGdx+8c1dQ2L4ayAsxI=
+	t=1726171907; cv=none; b=ERUYBzC/M4Nz6yHaqUPhT/vcxuoALvuJLU5fX97+qNbKakZvT2X3uPq5R3JRO7i0jC+4zhLa+oAkFITuGCOCFh2R1e/DdyJfOaLjv6sGQdr1tU72D6AeyFYqYZVnrEQZpWBDpBkdTvsk3awR0l8pRkdj+anklHfaVxJ19Pq1oJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726171547; c=relaxed/simple;
-	bh=zgVFGLKcvsfnGJiJdgrGdKWJuix6jbiZzKyiHN3clf0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qPJsQ0oFYzQlJs5KnjQTBmZQftawv8TRkbe3xV2UhJbT5Z7fFJAt1TysMXFSOEMKpznyPhcTL3klsM8/8xZm6RAFmV5GFfuC6WgjLL3yZYtZadhOKdN4wl9kQfxgawbmNztwHqUrm95AfzXCPSpA+lmC1FQw/8zjdjXPgmUKq6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YmQIWbI9; arc=none smtp.client-ip=209.85.216.74
+	s=arc-20240116; t=1726171907; c=relaxed/simple;
+	bh=UJqNS1sQlDFx7uFfVyI2YODeieASNHMm3BFxoDZQvXE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Vc/FmAibFF0tXRggoP31VIHN7FbEj4G3PbuxlVLewpug2YA335deUEBQaLUPPEC6Oe3FNwZwGznhMzIa51wj/NzLDzfcBzI2mLMrzzp46xUdBBZO5q5s8VTmDg8nYaKcrUR8/CpGnagumEqCH5a7Rl7hvvnvehITBBzSPFlveX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I9jtY1yO; arc=none smtp.client-ip=209.85.167.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2d8b3af9e61so1568322a91.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:05:46 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5356aa9a0afso341535e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:11:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726171546; x=1726776346; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=fnnjrlSetIbQ77vTIX4XItRIWsi2rxf02mpUNlAPpck=;
-        b=YmQIWbI97wgABO+GqgWJ7XMiY9/CGbBe/9xIwKUz27Ea6y3uyU5WGZlx+R+S1FotXo
-         Aei2SflW7WkconSAOn+f9KjSR/8l8Pl4Ix8LWEoIp7TeR04rIVB8LY7QjGw9LP5pd6am
-         WJFyI5oYK/VBYjMezQOnrrzjVmTiifU3dYXP+3rdRGqHiUd5aD1wXAIg+K3FDawnf4+i
-         SACvAFPY40QrscIryoTNhFEVzWLKL/eMJabpv3q4lf90OMCDnYmHrEC8jAVYsrzY52w5
-         jFwkf23lV710yKESQQ8syXYNPPqRnv2QObGatwqqxls1xnsztm+Fw7LwEviIXdGd0gJO
-         6r/w==
+        d=google.com; s=20230601; t=1726171904; x=1726776704; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ghtPS207NvckaCt/apvapTKHq1IN7cyfERE9Mcp7DmM=;
+        b=I9jtY1yOFA+SX1Ww/QhBD0Fo4H3UJvFCwivDmoQct/Y4Oiw1nzNnRiVbi7k9g8lBix
+         6gSsmAe65em8X49ycRTJQQDIWQGSE/bTHMFZLxWD/6i80n6qxSUUc209QXNBOq+eLt7u
+         Aa6BLxRCODOmltjeGnuF4s1T211GJkLCJlbV1dynEbg7SS2xkhAKwTXEIBZ8jXLV6kFO
+         tntP9KpxrPyRAsTXO/sZx5ijyutEzyrfXfWMwqRYIpiU1t9GB6cWdk334gjxjNsZbSlv
+         puCOvP+qURAzwCte/e21Duj/g4KsmNigILXKoUYW9EX2N2THHrRfg2NvZZeFzbY9Xm3k
+         Xuag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726171546; x=1726776346;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fnnjrlSetIbQ77vTIX4XItRIWsi2rxf02mpUNlAPpck=;
-        b=eMPMlqioEaS2CKLVZPCYPP48pklXhMSQCGPJsL10i87KIl4iffMlKMGbf41oOOg5iE
-         cmC447tAFgqZI2QN6uRZAvJgx5svKS33nDuS4ouD4HyWiOi7ojj321VockyFupubQkcu
-         goaZ8InIzD9kFDRnDQZ6l8OJWGIqOU0d1tE/DolBb38Nx035rmJSOTvX+botdJSysbdk
-         BxiibksFzV6sY0T1dFkheyT5Hmi3aypmmSMYH0qoseOc7d8n17U+cl+hF+wtRVlMD0ox
-         Ros9mTSmwUyiasz4/afZDn8G1OIE/G39Tq0rjkRLZ0kexRxdA1lfLDWadwsdnLjOJ6BI
-         Gv6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVxW7Nmb3qzcTxOThE4mXg5qr7mLIfnmS7aIWo4D6gxb4rJNjZSchUCnEkGns2bGt5/FxOXwJnNKC2Rc3E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlEBPrSUQUlUw3jlFopWNXcGqkvGY2kLi00JllXTaUt7ju22Pb
-	kBejXZ3ONPXuTLzXXVLX0ZpMvj7gWRNMbXzRJQnsUXB213lgu79A0e24jgyPceN0X1GT1X4ecbK
-	okg==
-X-Google-Smtp-Source: AGHT+IGMbV565ZUceOdGGm+YNdFHzG/XNLZao6v/FtV6YMEzbuF+laauyv9Oc3FC1PC6/WerO4BWUeVoybg=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:d791:b0:2d8:7c76:45d7 with SMTP id
- 98e67ed59e1d1-2dba0061767mr25737a91.4.1726171545428; Thu, 12 Sep 2024
- 13:05:45 -0700 (PDT)
-Date: Thu, 12 Sep 2024 13:05:43 -0700
-In-Reply-To: <feefa9d1-f266-414f-bb7b-b770ef0d8ec6@zytor.com>
+        d=1e100.net; s=20230601; t=1726171904; x=1726776704;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ghtPS207NvckaCt/apvapTKHq1IN7cyfERE9Mcp7DmM=;
+        b=ConOk3N8tYYujIqq8ZQApOq4zY8xP6HnEn6KDU9vvZTJB+OosfamftFkt/c6RRa72c
+         cNpRj3vYkYHw33d+3N+q7M7xpH0jMh6JB+u7dL9L+0nbfvERNakpAgez1wZLoxcmTWwC
+         xL8ssnDzl+z2NXH/abE2S8QAcXyfa/U0gqexw4TomtUNulSDrLfhQVMx4hZe3gfZr30u
+         SJmZjH/S/zFohkexbk/nyVzObaW31gcvjgx/HSKZ/+BqWwYHbYoMbnG+cJ53Bxu8G/Cd
+         6wIM7xp8RdxiCFPCXn36NTv2VgvCUv2TmyHDzkd6nL3n7yHj0dNOJbhXJQgV9KO+iHKZ
+         rXjg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGKnQaBVyXYAqcW10a3OzmJhnZDtXQlaIBWn7hOrtUBVZoRb17K1BimMLOV+oYVfpiWQ2Q1BDV0X8TRbw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbHr9JhCSLx2HpIp3m3hKs62O30cfn0CYD5o8KKKaK0rBVr5T3
+	+spBPLMdE9L7R1jATXPE63rnUlgyRYw29MWidOlJ5E9f9+9a6TiBWdOUd7ye2+o1ZuUqc58magO
+	+eqMsSPrm1Y6+zXsSvdvW2ppSh26bQgDTlj2uPbpkAZ6Ch3bdHv99og==
+X-Google-Smtp-Source: AGHT+IE0g9pILN6JNTa4rYDhmz1UMSQyASnBYwEoC5a6WnlJcA/809n641w5RmtLn7xXUJFmVPvn3+uADZc1oT6ddC8=
+X-Received: by 2002:ac2:4bc9:0:b0:536:5509:8857 with SMTP id
+ 2adb3069b0e04-5367fecbfb1mr396114e87.21.1726171902952; Thu, 12 Sep 2024
+ 13:11:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240207172646.3981-1-xin3.li@intel.com> <20240207172646.3981-8-xin3.li@intel.com>
- <ZiJzFsoHR41Sd8lE@chao-email> <ZmoT0jaX_3Ww3Uzu@google.com> <feefa9d1-f266-414f-bb7b-b770ef0d8ec6@zytor.com>
-Message-ID: <ZuNJlzXntREQVb3n@google.com>
-Subject: Re: [PATCH v2 07/25] KVM: VMX: Set intercept for FRED MSRs
-From: Sean Christopherson <seanjc@google.com>
-To: Xin Li <xin@zytor.com>
-Cc: Chao Gao <chao.gao@intel.com>, Xin Li <xin3.li@intel.com>, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, pbonzini@redhat.com, corbet@lwn.net, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, shuah@kernel.org, 
-	vkuznets@redhat.com, peterz@infradead.org, ravi.v.shankar@intel.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20240912-mgtime-v2-1-54db84afb7a7@kernel.org>
+In-Reply-To: <20240912-mgtime-v2-1-54db84afb7a7@kernel.org>
+From: John Stultz <jstultz@google.com>
+Date: Thu, 12 Sep 2024 13:11:31 -0700
+Message-ID: <CANDhNCrpkTfe6BRVNf1ihhGALbPBBhOs1PCPxA4MDHa1+=sEbQ@mail.gmail.com>
+Subject: Re: [PATCH v2] timekeeping: move multigrain timestamp floor handling
+ into timekeeper
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@kernel.org>, 
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel test robot <oliver.sang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 05, 2024, Xin Li wrote:
-> On 6/12/2024 2:32 PM, Sean Christopherson wrote:
-> > On Fri, Apr 19, 2024, Chao Gao wrote:
-> > > On Wed, Feb 07, 2024 at 09:26:27AM -0800, Xin Li wrote:
-> > > > Add FRED MSRs to the valid passthrough MSR list and set FRED MSRs intercept
-> > > > based on FRED enumeration.
-> > 
-> > This needs a *much* more verbose explanation.  It's pretty darn obvious _what_
-> > KVM is doing, but it's not at all clear _why_ KVM is passing through FRED MSRs.
-> > E.g. why is FRED_SSP0 not included in the set of passthrough MSRs?
-> > 
-> > > > static void vmx_vcpu_config_fred_after_set_cpuid(struct kvm_vcpu *vcpu)
-> > > > {
-> > > > 	struct vcpu_vmx *vmx = to_vmx(vcpu);
-> > > > +	bool fred_enumerated;
-> > > > 
-> > > > 	kvm_governed_feature_check_and_set(vcpu, X86_FEATURE_FRED);
-> > > > +	fred_enumerated = guest_can_use(vcpu, X86_FEATURE_FRED);
-> > > > 
-> > > > -	if (guest_can_use(vcpu, X86_FEATURE_FRED)) {
-> > > > +	if (fred_enumerated) {
-> > > > 		vm_entry_controls_setbit(vmx, VM_ENTRY_LOAD_IA32_FRED);
-> > > > 		secondary_vm_exit_controls_setbit(vmx,
-> > > > 						  SECONDARY_VM_EXIT_SAVE_IA32_FRED |
-> > > > @@ -7788,6 +7793,16 @@ static void vmx_vcpu_config_fred_after_set_cpuid(struct kvm_vcpu *vcpu)
-> > > > 						    SECONDARY_VM_EXIT_SAVE_IA32_FRED |
-> > > > 						    SECONDARY_VM_EXIT_LOAD_IA32_FRED);
-> > > > 	}
-> > > > +
-> > > > +	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_RSP0, MSR_TYPE_RW, !fred_enumerated);
-> > > > +	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_RSP1, MSR_TYPE_RW, !fred_enumerated);
-> > > > +	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_RSP2, MSR_TYPE_RW, !fred_enumerated);
-> > > > +	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_RSP3, MSR_TYPE_RW, !fred_enumerated);
-> > > > +	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_STKLVLS, MSR_TYPE_RW, !fred_enumerated);
-> > > > +	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_SSP1, MSR_TYPE_RW, !fred_enumerated);
-> > > > +	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_SSP2, MSR_TYPE_RW, !fred_enumerated);
-> > > > +	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_SSP3, MSR_TYPE_RW, !fred_enumerated);
-> > > > +	vmx_set_intercept_for_msr(vcpu, MSR_IA32_FRED_CONFIG, MSR_TYPE_RW, !fred_enumerated);
-> > > 
-> > > Use a for-loop here? e.g.,
-> > > 	for (i = MSR_IA32_FRED_RSP0; i <= MSR_IA32_FRED_CONFIG; i++)
-> > 
-> > Hmm, I'd prefer to keep the open coded version.  It's not pretty, but I don't
-> > expect this to have much, if any, maintenance cost.  And using a loop makes it
-> > harder to both understand _exactly_ what's happening, and to search for relevant
-> > code.  E.g. it's quite difficult to see that FRED_SSP0 is still intercepted (see
-> > my comment regarding the changelog).
-> 
-> 
-> I owe you an explanation; I have been thinking about figuring out a way
-> to include FRED SSP0 in the FRED KVM patch set...
-> 
-> MSR_IA32_FRED_SSP0 is an alias of the CET MSR_IA32_PL0_SSP and likely to
-> be used in the same way as FRED RSP0, i.e., host FRED SSP0 _should_ be
-> restored in arch_exit_to_user_mode_prepare().  However as of today Linux
-> has no plan to utilize kernel shadow stack thus no one cares host FRED
-> SSP0 (no?).  But lets say anyway it is host's responsibility to manage
-> host FRED SSP0, then KVM only needs to take care of guest FRED SSP0
-> (just like how KVM should handle guest FRED RSP0) even before the
-> supervisor shadow stack feature is advertised to guest.
+On Thu, Sep 12, 2024 at 11:02=E2=80=AFAM Jeff Layton <jlayton@kernel.org> w=
+rote:
+>
+> The kernel test robot reported a performance hit in some will-it-scale
+> tests due to the multigrain timestamp patches.  My own testing showed
+> about a 7% drop in performance on the pipe1_threads test, and the data
+> showed that coarse_ctime() was slowing down current_time().
 
-Heh, I'm not sure what your question is, or if there even is a question.  KVM
-needs to context switch FRED SSP0 if FRED is exposed to the guest, but presumably
-that will be done through XSAVE state?  If that's the long term plan, I would
-prefer to focus on merging CET virtualization first, and then land FRED virtualization
-on top so that KVM doesn't have to carry intermediate code to deal with the aliased
-MSR.
+So, you provided some useful detail about why coarse_ctime() was slow
+in your reply earlier, but it would be good to preserve that in the
+commit message here.
 
-Ugh, but what happens if a CPU (or the host kernel) supports FRED but not CET SS?
-Or is that effectively an illegal combination?
 
-> Another question is should KVM handle userspace request to set/get FRED
-> SSP0?  IMO, it should be part of CET state management.
+> Move the multigrain timestamp floor tracking word into timekeeper.c. Add
+> two new public interfaces: The first fills a timespec64 with the later
+> of the coarse-grained clock and the floor time, and the second gets a
+> fine-grained time and tries to swap it into the floor and fills a
+> timespec64 with the result.
+>
+> The first function returns an opaque cookie that is suitable for passing
+> to the second, which will use it as the "old" value in the cmpxchg.
 
-Yes, KVM needs to allow userspace to get/set FRED SSP0.  In general, KVM needs to
-allow reads/writes to MSRs even if they can be saved/restored through some other
-means.  In most cases, including this one, it's a moot point, because KVM needs
-to have the necessary code anyways, e.g. if KVM encounters a RDMSR/WRMSR while
-emulating.
+The cookie usage isn't totally clear to me right off.  It feels a bit
+more subtle then I'd expect.
+
+
+> diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+> index 5391e4167d60..bb039c9d525e 100644
+> --- a/kernel/time/timekeeping.c
+> +++ b/kernel/time/timekeeping.c
+> @@ -114,6 +114,13 @@ static struct tk_fast tk_fast_raw  ____cacheline_ali=
+gned =3D {
+>         .base[1] =3D FAST_TK_INIT,
+>  };
+>
+> +/*
+> + * This represents the latest fine-grained time that we have handed out =
+as a
+> + * timestamp on the system. Tracked as a monotonic ktime_t, and converte=
+d to the
+> + * realtime clock on an as-needed basis.
+> + */
+> +static __cacheline_aligned_in_smp atomic64_t mg_floor;
+> +
+
+So I do really like this general approach of having an internal floor
+value combined with special coarse/fine grained assessors that work
+with the floor, so we're not impacting the normal hotpath logic
+(basically I was writing up a suggestion to this effect to the thread
+with Arnd when I realized you had follow up patch in my inbox).
+
+
+>  static inline void tk_normalize_xtime(struct timekeeper *tk)
+>  {
+>         while (tk->tkr_mono.xtime_nsec >=3D ((u64)NSEC_PER_SEC << tk->tkr=
+_mono.shift)) {
+> @@ -2394,6 +2401,76 @@ void ktime_get_coarse_real_ts64(struct timespec64 =
+*ts)
+>  }
+>  EXPORT_SYMBOL(ktime_get_coarse_real_ts64);
+>
+> +/**
+> + * ktime_get_coarse_real_ts64_mg - get later of coarse grained time or f=
+loor
+> + * @ts: timespec64 to be filled
+> + *
+> + * Adjust floor to realtime and compare it to the coarse time. Fill
+> + * @ts with the latest one. Returns opaque cookie suitable to pass
+> + * to ktime_get_real_ts64_mg.
+> + */
+> +u64 ktime_get_coarse_real_ts64_mg(struct timespec64 *ts)
+> +{
+> +       struct timekeeper *tk =3D &tk_core.timekeeper;
+> +       u64 floor =3D atomic64_read(&mg_floor);
+> +       ktime_t f_real, offset, coarse;
+> +       unsigned int seq;
+> +
+> +       WARN_ON(timekeeping_suspended);
+> +
+> +       do {
+> +               seq =3D read_seqcount_begin(&tk_core.seq);
+> +               *ts =3D tk_xtime(tk);
+> +               offset =3D *offsets[TK_OFFS_REAL];
+> +       } while (read_seqcount_retry(&tk_core.seq, seq));
+> +
+> +       coarse =3D timespec64_to_ktime(*ts);
+> +       f_real =3D ktime_add(floor, offset);
+> +       if (ktime_after(f_real, coarse))
+> +               *ts =3D ktime_to_timespec64(f_real);
+> +       return floor;
+> +}
+> +EXPORT_SYMBOL_GPL(ktime_get_coarse_real_ts64_mg);
+
+Generally this looks ok to me.
+
+
+> +/**
+> + * ktime_get_real_ts64_mg - attempt to update floor value and return res=
+ult
+> + * @ts:                pointer to the timespec to be set
+> + * @cookie:    opaque cookie from earlier call to ktime_get_coarse_real_=
+ts64_mg()
+> + *
+> + * Get a current monotonic fine-grained time value and attempt to swap
+> + * it into the floor using @cookie as the "old" value. @ts will be
+> + * filled with the resulting floor value, regardless of the outcome of
+> + * the swap.
+> + */
+
+Again this cookie argument usage and the behavior of this function
+isn't very clear to me.
+
+> +void ktime_get_real_ts64_mg(struct timespec64 *ts, u64 cookie)
+> +{
+> +       struct timekeeper *tk =3D &tk_core.timekeeper;
+> +       ktime_t offset, mono, old =3D (ktime_t)cookie;
+> +       unsigned int seq;
+> +       u64 nsecs;
+> +
+> +       WARN_ON(timekeeping_suspended);
+> +
+> +       do {
+> +               seq =3D read_seqcount_begin(&tk_core.seq);
+> +
+> +               ts->tv_sec =3D tk->xtime_sec;
+> +               mono =3D tk->tkr_mono.base;
+> +               nsecs =3D timekeeping_get_ns(&tk->tkr_mono);
+> +               offset =3D *offsets[TK_OFFS_REAL];
+> +       } while (read_seqcount_retry(&tk_core.seq, seq));
+> +
+> +       mono =3D ktime_add_ns(mono, nsecs);
+> +       if (atomic64_try_cmpxchg(&mg_floor, &old, mono)) {
+> +               ts->tv_nsec =3D 0;
+> +               timespec64_add_ns(ts, nsecs);
+> +       } else {
+> +               *ts =3D ktime_to_timespec64(ktime_add(old, offset));
+> +       }
+> +
+> +}
+> +EXPORT_SYMBOL(ktime_get_real_ts64_mg);
+
+
+So initially I was expecting this to look something like (sorry for
+the whitespace damage here):
+{
+    do {
+        seq =3D read_seqcount_begin(&tk_core.seq);
+        ts->tv_sec =3D tk->xtime_sec;
+        mono =3D tk->tkr_mono.base;
+        nsecs =3D timekeeping_get_ns(&tk->tkr_mono);
+        offset =3D *offsets[TK_OFFS_REAL];
+    } while (read_seqcount_retry(&tk_core.seq, seq));
+
+    mono =3D ktime_add_ns(mono, nsecs);
+    do {
+        old =3D atomic64_read(&mg_floor);
+        if (floor >=3D mono)
+            break;
+    } while(!atomic64_try_cmpxchg(&mg_floor, old, mono);
+    ts->tv_nsec =3D 0;
+    timespec64_add_ns(ts, nsecs);
+}
+
+Where you read the tk data, atomically update the floor (assuming it's
+not in the future) and then return the finegrained value, not needing
+to manage a cookie value.
+
+But instead, it seems like if something has happened since the cookie
+value was saved (another cpu getting a fine grained timestamp), your
+ktime_get_real_ts64_mg() will fall back to returning the same coarse
+grained time saved to the cookie, as if no time had past?
+
+It seems like that could cause problems:
+
+cpu1                                     cpu2
+--------------------------------------------------------------------------
+                                         t2a =3D ktime_get_coarse_real_ts64=
+_mg
+t1a =3D ktime_get_coarse_real_ts64_mg()
+t1b =3D ktime_get_real_ts64_mg(t1a)
+
+                                         t2b =3D ktime_get_real_ts64_mg(t2a=
+)
+
+Where t2b will seem to be before t1b, even though it happened afterwards.
+
+
+thanks
+-john
 
