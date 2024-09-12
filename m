@@ -1,39 +1,64 @@
-Return-Path: <linux-kernel+bounces-326395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D5E9767D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:28:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D2C49767D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:28:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E90EB222BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:28:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BD3DB2256A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534821A2853;
-	Thu, 12 Sep 2024 11:22:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033EE19F43A;
-	Thu, 12 Sep 2024 11:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EC01A42B2;
+	Thu, 12 Sep 2024 11:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SbMlHKaJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F62A19F43A
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 11:22:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726140149; cv=none; b=aVGhSO4VUKTNLQCqiHxa3mCExiEvPmH9RYwOMCJlQ8ns7l8oXTbYMmpBGtgtw0xFKrCd6MleBjWsf3wMIDMmATbRvYMQeFookszctFD3wREqUhwMNywOUMmgCbT9jCx9y6C1ujtF04zii56m7dOk8vK/ASOwpMSmfDSdv/TIFqU=
+	t=1726140158; cv=none; b=ccQXCiFlvO1Wv4A8sgAqof2FQDeKx2Q8yDyRmLeGgytAGedQJagTtbIkiX/nYX8wnHEx4EvNVxk5EBDIERAnga+jiqWnzewruowMW0u36XPh6kJ5KCpeKIvmLSe0Yyj8XMTguMLawDZZUeuOsl3X4hpgNQFAIGNExc3CxkP3LK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726140149; c=relaxed/simple;
-	bh=WkMmrR2PMxTc+mNjIBBn0lHsWo61UePSvPPcS/l2WUI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SmQ1C3U490qc/gvri33hNVapn+5qUkxM5YvMgL8Npq2m5L8Q2Y/Vgh34mCXpP8J0iG/JxQ4/+WqBNo1yUrmFjULL9uLP1m6VdKLNLpeebJqySFqaJNMVtBS5XxNuxO05knXFcsl3VhwULbcMhLbIB/17VM+IasdPNcyBCH0Rx9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 53CC8DA7;
-	Thu, 12 Sep 2024 04:22:55 -0700 (PDT)
-Received: from [10.1.32.61] (e127648.arm.com [10.1.32.61])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 798AA3F64C;
-	Thu, 12 Sep 2024 04:22:23 -0700 (PDT)
-Message-ID: <7d755a55-31ab-4538-aee4-f88e04dfb6cb@arm.com>
-Date: Thu, 12 Sep 2024 12:22:21 +0100
+	s=arc-20240116; t=1726140158; c=relaxed/simple;
+	bh=QCP4AJW1JaH+8hd8JK1O6YZA3Brj57hPM3FVDUPpbmk=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=m+HT882tMbIkKNTGgXPrzgS3XFht0i64s+aEpiHK7wfp0jFEC12KVCCvJfQD6EIgtpQawqeKmDAe7Rg8xyDLliEIdZqS1uD3uadXbwjxGZOo+acIr5X2/fIJ2EV2DEksDQMDh3e7uxOgFbvaCRXaXcRrV6GgxuNazSY+csjZcTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SbMlHKaJ; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726140157; x=1757676157;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=QCP4AJW1JaH+8hd8JK1O6YZA3Brj57hPM3FVDUPpbmk=;
+  b=SbMlHKaJKPb3RkjPssh2XkAkQUkePv0t19UDNuP4FgZIDeUEUTsPrq78
+   GgA4+YB8TIfZuaSRnOuFTkhp4jmtnBY/EDZQisq5BkI47eDsY+vyf523v
+   Szn5m6RlJ+h06nk2MgosH3KOnxA39/+a5FKKzWmADIIecQOyigpLnQ4oJ
+   JhsGY1wtujc+O9b114nYjxGv11dTK/knpyi5YMA5y2yMB+Gx1vBH9QfJo
+   1raBUvq0beumzP18hmKamRoXh/l/QurkSC+yuQGXdicZ7fAcyslX0tYAN
+   ygbwX79p7j6e1fOYub1/craayfxAE6M4FzwQ2D4U+IgQgdF9pjgl8QVod
+   Q==;
+X-CSE-ConnectionGUID: PObkLNg+S2CD7h5Y41TJ7g==
+X-CSE-MsgGUID: PEjJYJW2Qe2Dzm2Om3Mm6A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="35575303"
+X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
+   d="scan'208";a="35575303"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 04:22:35 -0700
+X-CSE-ConnectionGUID: xohJ6hctR+W48kSoxFT5Mw==
+X-CSE-MsgGUID: EDwLMJCnSgGiUkvmSpO/+A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
+   d="scan'208";a="72463031"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.239.20]) ([10.124.239.20])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 04:22:33 -0700
+Message-ID: <71f61d8a-9188-4e67-88ca-e5b48a91e6b5@linux.intel.com>
+Date: Thu, 12 Sep 2024 19:22:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,132 +66,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [RFC PATCH] TEST: cpufreq: intel_pstate: sysfs iowait_boost_cap
-To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- rafael@kernel.org, peterz@infradead.org
-Cc: juri.lelli@redhat.com, mingo@redhat.com, dietmar.eggemann@arm.com,
- vschneid@redhat.com, vincent.guittot@linaro.org, Johannes.Thumshirn@wdc.com,
- adrian.hunter@intel.com, ulf.hansson@linaro.org, bvanassche@acm.org,
- andres@anarazel.de, asml.silence@gmail.com, linux-block@vger.kernel.org,
- io-uring@vger.kernel.org, qyousef@layalina.io, dsmythies@telus.net,
- axboe@kernel.dk
-References: <20240905092645.2885200-1-christian.loehle@arm.com>
- <20240905092645.2885200-7-christian.loehle@arm.com>
+Cc: baolu.lu@linux.intel.com, David Woodhouse <dwmw2@infradead.org>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Kevin Tian <kevin.tian@intel.com>, Klaus Jensen <its@irrelevant.dk>,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev
+Subject: Re: [PATCH 5/6] iommu: init pasid array while doing domain_replace
+ and iopf is active
+To: Joel Granados <j.granados@samsung.com>
+References: <20240904-jag-iopfv8-v1-0-e3549920adf3@samsung.com>
+ <20240904-jag-iopfv8-v1-5-e3549920adf3@samsung.com>
+ <CGME20240905033408eucas1p2ad508d4f3377f4daa38f28bf6c3d1118@eucas1p2.samsung.com>
+ <c2e765a8-d935-42db-bd22-c12e7960f2f0@linux.intel.com>
+ <20240911105657.iesajd4d5va3wc5y@joelS2.panther.com>
+ <b7a68539-3a3c-4cd9-922b-bfb9db8e7e0b@linux.intel.com>
+ <20240912082512.ydzmmlwpvkcukbt2@joelS2.panther.com>
 Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20240905092645.2885200-7-christian.loehle@arm.com>
-Content-Type: text/plain; charset=UTF-8
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240912082512.ydzmmlwpvkcukbt2@joelS2.panther.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-For non-HWP systems, rework iowait boost to be linear and add
-the sysfs knob iowait_boost_cap to limit the maximum boost in
-8 steps.
+On 2024/9/12 16:25, Joel Granados wrote:
+>   /**
+>    * iommu_attach_group_handle - Attach an IOMMU domain to an IOMMU group
+>    * @domain: IOMMU domain to attach
+> diff --git i/drivers/iommu/iommufd/fault.c w/drivers/iommu/iommufd/fault.c
+> index ea7f1bf64892..51cb70465b87 100644
+> --- i/drivers/iommu/iommufd/fault.c
+> +++ w/drivers/iommu/iommufd/fault.c
+> @@ -189,8 +189,15 @@ static int iommufd_init_pasid_array(struct iommu_domain *domain,
+>   	if (!handle)
+>   		return -ENOMEM;
+>   	handle->idev = idev;
+> +	handle->handle.domain = domain;
+> +
+> +	mutex_lock(&group->mutex);
+> +	ret = xa_insert(&group->pasid_array, IOMMU_NO_PASID, handle, GFP_KERNEL);
+> +	mutex_unlock(&group->mutex);
+> +
+> +	if (ret == -EBUSY)
+> +		ret = 0;
+>   
+> -	ret = iommu_init_pasid_array(domain, group, &handle->handle);
+>   	if (ret)
+>   		kfree(handle);
 
-I don't see a good way to translate this to HWP, as the
-boost applied isn't as static as it is for non-HWP, but there
-is already the dynamic_hwp_boost sysfs to enable/disable
-completely.
+This is supposed to be done automatically when an iopf capable domain is
+attached to or replaced with a device. Please refer to
+iommufd_fault_domain_attach_dev() and
+iommufd_fault_domain_replace_dev().
 
-Signed-off-by: Christian Loehle <christian.loehle@arm.com>
----
- drivers/cpufreq/intel_pstate.c | 39 ++++++++++++++++++++++++++++++++--
- 1 file changed, 37 insertions(+), 2 deletions(-)
+Is there anything preventing this from happening?
 
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index c0278d023cfc..6882d8c74e61 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -183,6 +183,7 @@ struct global_params {
- 	bool turbo_disabled;
- 	int max_perf_pct;
- 	int min_perf_pct;
-+	unsigned int iowait_boost_cap;
- };
- 
- /**
-@@ -1444,6 +1445,30 @@ static ssize_t store_min_perf_pct(struct kobject *a, struct kobj_attribute *b,
- 	return count;
- }
- 
-+static ssize_t store_iowait_boost_cap(struct kobject *a, struct kobj_attribute *b,
-+				  const char *buf, size_t count)
-+{
-+	unsigned int input;
-+	int ret;
-+
-+	ret = sscanf(buf, "%u", &input);
-+	if (ret != 1)
-+		return -EINVAL;
-+
-+	mutex_lock(&intel_pstate_driver_lock);
-+
-+	if (!intel_pstate_driver) {
-+		mutex_unlock(&intel_pstate_driver_lock);
-+		return -EAGAIN;
-+	}
-+
-+	global.iowait_boost_cap = clamp_t(int, input, 0, 8);
-+
-+	mutex_unlock(&intel_pstate_driver_lock);
-+
-+	return count;
-+}
-+
- static ssize_t show_hwp_dynamic_boost(struct kobject *kobj,
- 				struct kobj_attribute *attr, char *buf)
- {
-@@ -1497,6 +1522,7 @@ static ssize_t store_energy_efficiency(struct kobject *a, struct kobj_attribute
- 
- show_one(max_perf_pct, max_perf_pct);
- show_one(min_perf_pct, min_perf_pct);
-+show_one(iowait_boost_cap, iowait_boost_cap);
- 
- define_one_global_rw(status);
- define_one_global_rw(no_turbo);
-@@ -1506,6 +1532,7 @@ define_one_global_ro(turbo_pct);
- define_one_global_ro(num_pstates);
- define_one_global_rw(hwp_dynamic_boost);
- define_one_global_rw(energy_efficiency);
-+define_one_global_rw(iowait_boost_cap);
- 
- static struct attribute *intel_pstate_attributes[] = {
- 	&status.attr,
-@@ -1562,6 +1589,9 @@ static void __init intel_pstate_sysfs_expose_params(void)
- 		rc = sysfs_create_file(intel_pstate_kobject, &energy_efficiency.attr);
- 		WARN_ON(rc);
- 	}
-+
-+	rc = sysfs_create_file(intel_pstate_kobject, &iowait_boost_cap.attr);
-+	WARN_ON(rc);
- }
- 
- static void __init intel_pstate_sysfs_remove(void)
-@@ -2322,18 +2352,23 @@ static void intel_pstate_update_util(struct update_util_data *data, u64 time,
- 		if (delta_ns > TICK_NSEC) {
- 			cpu->iowait_boost = ONE_EIGHTH_FP;
- 		} else if (cpu->iowait_boost >= ONE_EIGHTH_FP) {
--			cpu->iowait_boost <<= 1;
-+			cpu->iowait_boost += ONE_EIGHTH_FP;
- 			if (cpu->iowait_boost > int_tofp(1))
- 				cpu->iowait_boost = int_tofp(1);
- 		} else {
- 			cpu->iowait_boost = ONE_EIGHTH_FP;
- 		}
-+		if (cpu->iowait_boost > global.iowait_boost_cap * ONE_EIGHTH_FP)
-+			cpu->iowait_boost = global.iowait_boost_cap * ONE_EIGHTH_FP;
- 	} else if (cpu->iowait_boost) {
- 		/* Clear iowait_boost if the CPU may have been idle. */
- 		if (delta_ns > TICK_NSEC)
- 			cpu->iowait_boost = 0;
--		else
-+		else {
- 			cpu->iowait_boost >>= 1;
-+			if (cpu->iowait_boost < ONE_EIGHTH_FP)
-+				cpu->iowait_boost = 0;
-+		}
- 	}
- 	cpu->last_update = time;
- 	delta_ns = time - cpu->sample.time;
--- 
-2.25.1
+Thanks,
+baolu
 
