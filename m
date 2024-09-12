@@ -1,147 +1,114 @@
-Return-Path: <linux-kernel+bounces-326453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FA22976892
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:03:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B298D976897
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:05:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C534B2854AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:03:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ADB0283C20
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94911A0BEC;
-	Thu, 12 Sep 2024 12:03:31 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08681A0BFF;
+	Thu, 12 Sep 2024 12:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hxkWB3D2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0KjfqOQ7"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C267719F439;
-	Thu, 12 Sep 2024 12:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05CB18E043;
+	Thu, 12 Sep 2024 12:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726142611; cv=none; b=PgnV7aeNnaYfB/TTcuvgWddBgI9qmQfz+2p1EvaT4rxefxZvfAlyBscjituCh3Fqec7AZfkkQzZyzSZsxxuKwQNg+XcVXwD9z2NTDfXHdtTJfzR3JOucfqWB+nfE3ZhoJlkr635vU5lKNk1NjrMsZtU24uBJoKYYM5jsWRKvfJ8=
+	t=1726142700; cv=none; b=Iw283SwBTkDmEjdMVtl1yXVCCP6c1xo9DRZGkEcEgLulUTFapfBlc1zSanHbvQS+xYlmKobWKcM5EAc/T3UJQJKy94yxB3onBAj83HLyeetbPTvLB5G6k8OyadpkvTRFGURMIaN2uZYxawh6nc31u+uj9kmz5nij9+OGdEmAvLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726142611; c=relaxed/simple;
-	bh=PmK/9VGzrQ8nN9Lz3umqK/QSUuwJUIZunJsJ4CuYJCg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kb32lK8UOBgRrCoe5LB2RtDrcA1gWlSqEe3S8Mi1jt33KemVz7VjZ9ubnSSbHNyIiULFgDuFSaz42JfKmPkg9DzCb8dL2mF16FLpufnBbfvj64tMnpzdtIg7KH85HIuGtd3EMKDy2++F7yTIlMLIDtWTZKfYIjgZXCBJfoCi1TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4X4GKC4fpfzyRTF;
-	Thu, 12 Sep 2024 20:02:39 +0800 (CST)
-Received: from kwepemd100011.china.huawei.com (unknown [7.221.188.204])
-	by mail.maildlp.com (Postfix) with ESMTPS id 82F2A140361;
-	Thu, 12 Sep 2024 20:03:26 +0800 (CST)
-Received: from M910t.huawei.com (10.110.54.157) by
- kwepemd100011.china.huawei.com (7.221.188.204) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Thu, 12 Sep 2024 20:03:25 +0800
-From: Changbin Du <changbin.du@huawei.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
-	<namhyung@kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
- Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, "Liang,
- Kan" <kan.liang@linux.intel.com>, <linux-perf-users@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Changbin Du <changbin.du@huawei.com>
-Subject: [PATCH v2] perf buildid-cache: recognize vdso when adding files
-Date: Thu, 12 Sep 2024 20:03:03 +0800
-Message-ID: <20240912120303.2294175-1-changbin.du@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726142700; c=relaxed/simple;
+	bh=6ElcBIC1Y6mHAxXIoF87OEMWWuDZBtobn02T4HnDMxg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=KrE3/HfVPBmLC+gaANLqcQ26mrN1AV/qDaD8UNqlUj/bCbEkihJWCmAJMxRYSpI9wdERv0HUltMC2hPgVADkTJCceFFcRBCGK+rKSnYFE25VMA1LmloN/ejCRi3i4oORHjwbb/MIGq/N//VsnhG85F0xwq4ke3Pvr2HsNI8n9m0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hxkWB3D2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0KjfqOQ7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1726142696;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WLNJKXffC/1phJTPsnafjkuYY3WKkcoBWZ0khVj1ZB0=;
+	b=hxkWB3D2zLwUGMX2nBNuyHLr9iWimli81ahfEisFMAjSrd8i0UIvly55mCxwQzV29bJwa3
+	ldhTs72yUVH+e9Ou6pdvKs2oUBOVBUV/1Ly0ohZuA+KbVULH3aqDKoP5Bdxqngo3qbZK+h
+	X+aJpF1n/IdA2CojUNPWa8MNG0liKk3i87gFAPrtcSOIO9BDo8pSRN4PqrA3TykD4hHfbi
+	Z8+Fd9+haYdLaEx0h3+Ya2I+SVByTsRo4qor27bAoiXr7nnl0fS+oDo/MIcJfmtKFtuQbO
+	w2lKetCeLuYyMdnXRMQ6F2vhJvTfsjU3ShSosld0LpaOeedG5lqqUpz9U+2lbQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1726142696;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WLNJKXffC/1phJTPsnafjkuYY3WKkcoBWZ0khVj1ZB0=;
+	b=0KjfqOQ7lpk6fVTk18oPVqg88aCGQbD1u8b3QTMfe0BGK+/Mw90lQDKnOBXpCZpL4051Ud
+	vKfV6YYL32yGN0Dw==
+To: Jinjie Ruan <ruanjinjie@huawei.com>, Richard Cochran
+ <richardcochran@gmail.com>
+Cc: bryan.whitehead@microchip.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, anna-maria@linutronix.de,
+ frederic@kernel.org, UNGLinuxDriver@microchip.com, mbenes@suse.cz,
+ jstultz@google.com, andrew@lunn.ch, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next v3 1/2] posix-timers: Check timespec64 before call
+ clock_set()
+In-Reply-To: <ea351ea0-5095-d7ae-5592-ec3bd45c771c@huawei.com>
+References: <20240909074124.964907-1-ruanjinjie@huawei.com>
+ <20240909074124.964907-2-ruanjinjie@huawei.com>
+ <Zt8SFUpFp7JDkNbM@hoboy.vegasvil.org>
+ <ea351ea0-5095-d7ae-5592-ec3bd45c771c@huawei.com>
+Date: Thu, 12 Sep 2024 14:04:55 +0200
+Message-ID: <874j6l9ixk.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd100011.china.huawei.com (7.221.188.204)
 
-Identify vdso by file name matching. The vdso objects have name
-as vdso[32,64].so[.dbg].
+On Thu, Sep 12 2024 at 10:53, Jinjie Ruan wrote:
 
-$ perf buildid-cache -a /work/linux/arch/x86/entry/vdso/vdso64.so.dbg
+> On 2024/9/9 23:19, Richard Cochran wrote:
+>> On Mon, Sep 09, 2024 at 03:41:23PM +0800, Jinjie Ruan wrote:
+>>> diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
+>>> index 1cc830ef93a7..34deec619e17 100644
+>>> --- a/kernel/time/posix-timers.c
+>>> +++ b/kernel/time/posix-timers.c
+>>> @@ -1137,6 +1137,9 @@ SYSCALL_DEFINE2(clock_settime, const clockid_t, which_clock,
+>>>  	if (get_timespec64(&new_tp, tp))
+>>>  		return -EFAULT;
+>>>  
+>>> +	if (!timespec64_valid(&new_tp))
+>>> +		return -ERANGE;
+>> 
+>> Why not use timespec64_valid_settod()?
+>
+> There was already checks in following code, so it is not necessary to
+> check NULL or timespec64_valid() in ptp core and its drivers, only the
+> second patch is needed.
+>
+> 169 int do_sys_settimeofday64(const struct timespec64 *tv, const struct
+> timezone *tz)
+>  170 {
+>  171 >-------static int firsttime = 1;
+>  172 >-------int error = 0;
+>  173
+>  174 >-------if (tv && !timespec64_valid_settod(tv))
+>  175 >------->-------return -EINVAL;
 
-Without this change, added vdso using above command actually will never
-be used.
+How does this code validate timespecs for clock_settime(clockid) where
+clockid != CLOCK_REALTIME?
 
-Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
-Tested-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Changbin Du <changbin.du@huawei.com>
+Thanks,
 
----
-This patch is separated from the series "perf: Support searching local
-debugging vdso or specify vdso path in cmdline".
-
-v2: also update build_id_cache__update_file().
----
- tools/perf/builtin-buildid-cache.c | 34 ++++++++++++++++++++++++++++--
- 1 file changed, 32 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/builtin-buildid-cache.c b/tools/perf/builtin-buildid-cache.c
-index b0511d16aeb6..69f43460d007 100644
---- a/tools/perf/builtin-buildid-cache.c
-+++ b/tools/perf/builtin-buildid-cache.c
-@@ -172,6 +172,36 @@ static int build_id_cache__add_kcore(const char *filename, bool force)
- 	return 0;
- }
- 
-+static bool filename_is_vdso(const char *filename)
-+{
-+	bool is_vdso = false;
-+	char *fname, *bname;
-+	static const char * const vdso_names[] = {
-+		"vdso.so", "vdso32.so", "vdso64.so", "vdsox32.so"
-+	};
-+
-+	fname = strdup(filename);
-+	if (!fname) {
-+		pr_err("no memory\n");
-+		return false;
-+	}
-+
-+	bname = basename(fname);
-+	if (!bname)
-+		goto out;
-+
-+	for (unsigned int i = 0; i < ARRAY_SIZE(vdso_names); i++) {
-+		if (strstarts(bname, vdso_names[i])) {
-+			is_vdso = true;
-+			break;
-+		}
-+	}
-+
-+out:
-+	free(fname);
-+	return is_vdso;
-+}
-+
- static int build_id_cache__add_file(const char *filename, struct nsinfo *nsi)
- {
- 	char sbuild_id[SBUILD_ID_SIZE];
-@@ -189,7 +219,7 @@ static int build_id_cache__add_file(const char *filename, struct nsinfo *nsi)
- 
- 	build_id__sprintf(&bid, sbuild_id);
- 	err = build_id_cache__add_s(sbuild_id, filename, nsi,
--				    false, false);
-+				    false, filename_is_vdso(filename));
- 	pr_debug("Adding %s %s: %s\n", sbuild_id, filename,
- 		 err ? "FAIL" : "Ok");
- 	return err;
-@@ -323,7 +353,7 @@ static int build_id_cache__update_file(const char *filename, struct nsinfo *nsi)
- 
- 	if (!err)
- 		err = build_id_cache__add_s(sbuild_id, filename, nsi, false,
--					    false);
-+					    filename_is_vdso(filename));
- 
- 	pr_debug("Updating %s %s: %s\n", sbuild_id, filename,
- 		 err ? "FAIL" : "Ok");
--- 
-2.34.1
-
+        tglx
 
