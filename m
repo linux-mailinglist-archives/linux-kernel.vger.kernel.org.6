@@ -1,260 +1,292 @@
-Return-Path: <linux-kernel+bounces-326249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40C24976579
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:25:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A53397657E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:26:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6AE01F27090
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:25:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0AC7285387
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA88419CC3F;
-	Thu, 12 Sep 2024 09:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625D019CC05;
+	Thu, 12 Sep 2024 09:26:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RzqD2cIX"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Wr0YNEn1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="T4MUvHoe";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eQXdIOm0";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ctc0istA"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376CC19CC28
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52BB18FDC8
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726133104; cv=none; b=OsmjzPWd4LZ6QMpqRIQ9HFn+2Aeusv1BTZLf3VHIYMKGHav6McUpaZ7HBbxMu1DEqvLaBcLq1vhwcPyK4imhtUtYKv3tSodxdGav5tPChrl25xbdy2wfULGrt/hX7tSF3IYT6IJ5m2KvhGZRtdsGaUkQQji1WekJcMeJmcf7j14=
+	t=1726133195; cv=none; b=Xt/dzPAMSvfkcWQvf/GzU3SqMki3ntc6/rumcu76WmHEaSFnmwAKpvwjl7PKoQHJBONG8+ry4/R/w3UPEYIGZDhgOt6FvKLJgZNxvLu89uB95j9G35GEbR03r3IXhmiia/LGcDybC8WTfBSFk0yYnd+QNAND1NqxJo/1BCxjrSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726133104; c=relaxed/simple;
-	bh=VEkaN2FTgKRjhRt2edSnxa3PFRmoc+uhzmCMz3xbYNE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tekHb6ctQbalIl9Rjyk6GFa2PPtX716irIG4b8r3oD2Le2gjEQSUHKQ44JRTd/FuyjtLxvr3zikp8wj3nKV2H7PaO+QAavaDov4qRKtvfNmvWWso4w4I6jNohHUVN2UKG3Lszi2pXudsbqaRcVAhDivGfiouNiTUn85EFbQq4xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RzqD2cIX; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-374c6187b6eso623894f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 02:25:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726133100; x=1726737900; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=V436iQY1F+axNsCXYOuUL7LDutALszGT+Yz3FD3PgZU=;
-        b=RzqD2cIX/4ctoglvCljQYlH4RMtFaQd0Lb+dy2aZsVvKp4spdzyq1SiGtAvX3p0Nw7
-         ukNhiwdzHIu4LKVtuLXHB2NBn0yPIBy9JV/fEBv5kw7qrx3CgyIS1GLKuwNXAcX4Epdl
-         N/NvyeVIG0BkleDy68JkqiCTW4AaE4anqurPoK6NeDv9btoxIAjQsHSbfhA1sEVi9ai+
-         XqVYklpCYaM4O5Lq1MO4HpS+/aq+lawt7LWNjs+MSVhiuHa1X+vj2L3iqpp/P2pXMa3f
-         n3OmCpgNA9BTughNO8ML1nWV+v/wRsBLQ06KHZfD9HJxpj7mZp5u9Gn2lUF/PepW/QU1
-         naQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726133100; x=1726737900;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V436iQY1F+axNsCXYOuUL7LDutALszGT+Yz3FD3PgZU=;
-        b=vQDm7VEgRPm9zAnL3h46B+4OtbeMLAZXsQsWmNPWzLG34T8cTZS532Q68S3GfKkbqN
-         c4Cejc385jcObk8NI4LeeQ+ROvdAn0Y4oWgRNREQOaG1LptBuoOUorytxFI9MpAUosFC
-         Mf3HGzKFWZ2rTA6gaSm91n0oqvZgtw8Dycp+x/gaioYmBuPoqrmSlb1VVefHKa2Sz6v9
-         DSGqrIIa/NUb5ALQ02cKniksak+jvVD62dudawg+GyN+ahSnhL/Mr+oNYbqTnb7wRa2L
-         kjl8iIePyCdWHdKAc/CnkXvohEhr/o0oWUpf/Q9sq3lypsGKNyOb8OOUwWADAwKixV4i
-         MzgA==
-X-Forwarded-Encrypted: i=1; AJvYcCWj+fCVyKcxQOiFgrp74158o7wLG4tcrKYxKXTJ+ly2dWHQiUf6Nj7OK9Khmz39Oq9ckVizKPPo3BSJ8IA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzgfPciaA2jp7xNCZ9bvYpQrZ357blf8SxKnfAEqqubRRIQkI6a
-	dmp+gZMzI2h7Lo43UuocEzPqLxm5iOaPmIueP/oy4m7Cf39yruQ8+T72YiJZ05U=
-X-Google-Smtp-Source: AGHT+IESQpf/ctf5OSUT7sMoKWqy8Vweyv1KSdUoUfllVs0RqCkznDBDoCjvEDzLS1ARP7gn/dWpVg==
-X-Received: by 2002:a5d:4e10:0:b0:374:cea0:7d3d with SMTP id ffacd0b85a97d-378c2d622c0mr1153745f8f.53.1726133099561;
-        Thu, 12 Sep 2024 02:24:59 -0700 (PDT)
-Received: from myrica ([2.221.137.100])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cb3aa820esm142557315e9.12.2024.09.12.02.24.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 02:24:58 -0700 (PDT)
-Date: Thu, 12 Sep 2024 10:25:19 +0100
-From: Jean-Philippe Brucker <jean-philippe@linaro.org>
-To: "Xing, Cedric" <cedric.xing@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Samuel Ortiz <sameo@rivosinc.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Dionna Amalie Glaze <dionnaglaze@google.com>,
-	Qinkun Bao <qinkun@google.com>,
-	Mikko Ylinen <mikko.ylinen@linux.intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev,
-	suzuki.poulose@arm.com, sami.mujawar@arm.com
-Subject: Re: [PATCH RFC 0/3] tsm: Unified Measurement Register ABI for TVMs
-Message-ID: <20240912092519.GA4892@myrica>
-References: <20240907-tsm-rtmr-v1-0-12fc4d43d4e7@intel.com>
- <20240910170959.GA213064@myrica>
- <f6b0a1d2-c730-4b20-a8f3-afd9a7cf822a@intel.com>
+	s=arc-20240116; t=1726133195; c=relaxed/simple;
+	bh=kYYCEt7FwZbXSlE7nVBbR/1SLU2ypju0LSE7VQvzfWY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jpZp9991x8nDnoTxv+WV4hGDkdB5LM8CgNcHgr9JKQdZQ1rseTG5OUO0MW3qVd+8+pP9f8OdfIEub6RP6Y37+5tpi8ukCktkhF44U+fymYF374AOwZkAzmQ6wrTag/K/g84ldPgoR/68ft3JXdFBH5HcAVPLCoqeJ8LE/9E/cvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Wr0YNEn1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=T4MUvHoe; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eQXdIOm0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ctc0istA; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id CCAB41F76C;
+	Thu, 12 Sep 2024 09:26:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726133192; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+gfKavm6hNALa+fgSv1tQpvY/oFh7dPR7Rl3fsR1mJ4=;
+	b=Wr0YNEn1D8DaRyqh8vBN3awAZkSXLKS/rR41arkM10FePh3vcxzRobqRcX7ABJhYW/F2YV
+	rRorEHHtK5UrWwxeI2XVoewGv2WyY0z3UdcGFeXTq7akqMjM52NJDs2LcfYqusMBoc6iaP
+	mHl7eRlvUk+XuHdPfoCPYI+3PkgQzNA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726133192;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+gfKavm6hNALa+fgSv1tQpvY/oFh7dPR7Rl3fsR1mJ4=;
+	b=T4MUvHoeTO/JWTYdmuLGI781fGPDjeg8h06vxaxCAzo8RBhSdIgljHl980+Fu2DoHA43tY
+	3kg/SYS01Pz5taCA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=eQXdIOm0;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ctc0istA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726133191; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+gfKavm6hNALa+fgSv1tQpvY/oFh7dPR7Rl3fsR1mJ4=;
+	b=eQXdIOm0l1eXf2/lvI98N5U6C95wXi7coGUqsPX029iZp0hJZS4zNmXukdsIFat0vRADVz
+	zcJ5aS7g3cO0LSU2vkYGf5D/Dsasbr9X1EIBOCKGa5X2Ss8Edo6F+q7r3B8pl3OCnRKmOY
+	enaXr9w9JZRt1LCK6U1n/X+sumVwUlU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726133191;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=+gfKavm6hNALa+fgSv1tQpvY/oFh7dPR7Rl3fsR1mJ4=;
+	b=ctc0istADgJ+F91W/wajHiq2luCHCSSOHvNXII/w0cfgQy84KZg8NCXIyz62QXo6C94OGd
+	CWqd1dLl9WbWRcDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 869E913A73;
+	Thu, 12 Sep 2024 09:26:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id OY0VH8ez4maSIQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 12 Sep 2024 09:26:31 +0000
+Message-ID: <988bb389-13e6-4465-ab37-3ed94ecee9be@suse.de>
+Date: Thu, 12 Sep 2024 11:26:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/gma500: replace drm_detect_hdmi_monitor() with
+ drm_display_info.is_hdmi
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+ Tejas Vipin <tejasvipin76@gmail.com>, Laurent.pinchart@ideasonboard.com,
+ patrik.r.jakobsson@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, airlied@gmail.com, daniel@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240911180650.820598-1-tejasvipin76@gmail.com>
+ <b0f77fcc-5d84-4727-9a17-9d1f1e2c5b76@suse.de> <87o74ti7g5.fsf@intel.com>
+ <87ldzxi71s.fsf@intel.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <87ldzxi71s.fsf@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <f6b0a1d2-c730-4b20-a8f3-afd9a7cf822a@intel.com>
+X-Rspamd-Queue-Id: CCAB41F76C
+X-Spam-Level: 
+X-Spamd-Result: default: False [-5.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_TO(0.00)[linux.intel.com,gmail.com,ideasonboard.com,kernel.org,ffwll.ch];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	TAGGED_RCPT(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,intel.com:email]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -5.01
+X-Spam-Flag: NO
 
-On Tue, Sep 10, 2024 at 11:01:59PM -0500, Xing, Cedric wrote:
-> On 9/10/2024 12:09 PM, Jean-Philippe Brucker wrote:
-> > Hi Cedric,
-> > 
-> > On Sat, Sep 07, 2024 at 11:56:18PM -0500, Cedric Xing wrote:
-> > > Patch 2 introduces event log support for RTMRs, addressing the fact that the
-> > > standalone values of RTMRs, which represent the cumulative digests of
-> > > sequential events, are not fully informative on their own.
-> > 
-> > Would each event_log include the events that firmware wrote before Linux?
-> No. The log format proposed here is textual and incompatible with TCG2 log
-> format.
-> 
-> The proposed log format is based on the CoCo event log -
-> https://github.com/confidential-containers/guest-components/issues/495.
-> 
-> > I'm wondering how this coexists with /sys/firmware/acpi/tables/data/CCEL.
-> The proposed log will take over after booting to Linux. The `SYNC` line in
-> the log captures the RTMR value before it, which can be used to verify CCEL
-> left off by the virtual firmware.
-> 
-> > Maybe something like: CCEL only contains pre-Linux events. The TSM driver
-> > parses CCEL (using a format specific to the arch, for example TCG2),
-> > separates the events by MR and produces event_log files in
-> > /sys/kernel/tsm/, possibly in a different format like CEL-TLV. Is that
-> > what you envision for TDX?
-> > 
-> CCEL will be pre-Linux only. Given the proposed format is incompatible with
-> TCG2 format, I don't think those 2 logs will be merged. But if we get any
-> success in this new log format, we may influence the UEFI/OVMF community to
-> adopt this new format in future.
-> 
-> We have evaluated both TCG2 and CEL formats but arrived in this new format
-> because we'd like to support ALL applications. And the only sane way I could
-> figure out is to separate the log into 2 layers - an application specific
-> semantics layer (a contract between the application and the verifier), and
-> an application agnostic storage layer (implemented by the kernel). The
-> common problem of TCG2 and CEL is that the event/content tag/type dictates
-> which part of the event data/content to hash, meaning the kernel must
-> understand an event record before hashing it. And that has prevented an
-> application agnostic storage design.
-> 
-> Anyway, this new log can be encapsulated in both CEL-JSON (like what systemd
-> is doing today) and TCG2 (using the EV_ACTION event type) formats. Please
-> see the CoCo issue (link given above) for more details.
+Hi
 
-Thank you for the explanation. In our case I'm guessing we'd then have a
-userspace library to:
+Am 12.09.24 um 10:56 schrieb Jani Nikula:
+> On Thu, 12 Sep 2024, Jani Nikula <jani.nikula@linux.intel.com> wrote:
+>> On Thu, 12 Sep 2024, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+>>> Hi
+>>>
+>>> Am 11.09.24 um 20:06 schrieb Tejas Vipin:
+>>>> Replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi since
+>>>> monitor HDMI information is available after EDID is parsed. Additionally
+>>>> rewrite the code the code to have fewer indentation levels.
+>>> The problem is that the entire logic is outdated. The content
+>>> of cdv_hdmi_detect() should go into cdv_hdmi_get_modes(), the detect_ctx
+>>> callback should be set to drm_connector_helper_detect_from_ddc() and
+>>> cdv_hdmi_detect() should be deleted. The result is that ->detect_ctx
+>>> will detect the presence of a display and ->get_modes will update EDID
+>>> and other properties.
+>> I guess I didn't get the memo on this one.
+>>
+>> What's the problem with reading the EDID at detect? The subsequent
+>> drm_edid_connector_add_modes() called from .get_modes() does not need to
+>> read the EDID again.
+> Moreover, in this case .detect() only detects digital displays as
+> reported by EDID. If you postpone that to .get_modes(), the probe helper
+> will still report connected, and invent non-EDID fallback modes. The
+> behaviour changes.
 
-1. read the CCEL (from multiple FW interfaces unfortunately: ACPI,
-   devicetree, maybe EFI)
-2. read each event_log from your proposed interface
-3. collate everything into a single log, using eg. CEL-CBOR, and send it
-   to the verifier.
+The change in behavior is intentional, because the current test seems 
+arbitrary. Does the driver not work with analog outputs?
 
-There may be some value in having the kernel TSM module do all of this,
-but userspace seems like the right place for this sort of complexity,
-especially the log format conversion.
+Best regards
+Thomas
 
-> 
-> > I ask because I've been looking into this interface for Arm CCA, and
-> > having unified event logs available somewhere in /sys/kernel/confg/tsm
-> > would be very convenient for users (avoids having to parse and convert
-> > different /sys/firmware interfaces along with Linux event logs). I would
-> > have put a single event_log in /sys/kernel/config/tsm/report/ but
-> > splitting it by MR should work too.
-> > 
-> We have considered one global log vs. per-MR logs. In fact, a global log is
-> equivalent to the concatenation of all per-MR logs. We've adopted the per-MR
-> approach to keep the log optional - i.e., an RTMR can be extended directly
-> (by writing to its `digest` attribute) without a log.
-> 
-> With regard to the location of the MR tree, we picked sysfs because the MRs
-> (and associated logs) are global and fit more into the semantics of sysfs
-> than configfs. Dan W. and I are also considering moving both report/ and
-> measurement/ trees into securityfs. It'll be highly appreciated if you (and
-> Alex, and everyone) can share your insights.
+>
+>> I think it should be fine to do incremental refactors like the patch at
+>> hand (modulo some issues I mention below).
+> Another issue in the patch is that it should also change .get_modes() to
+> not read the EDID again, but just call drm_edid_connector_add_modes().
+>
+> BR,
+> Jani.
+>
+>> BR,
+>> Jani.
+>>
+>>
+>>> Do you have  a device for testing such a change?
+>>>
+>>> Best regards
+>>> Thomas
+>>>
+>>>> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+>>>> ---
+>>>> Changes in v2:
+>>>>       - Use drm_edid instead of edid
+>>>>
+>>>> Link to v1: https://lore.kernel.org/all/20240910051856.700210-1-tejasvipin76@gmail.com/
+>>>> ---
+>>>>    drivers/gpu/drm/gma500/cdv_intel_hdmi.c | 24 +++++++++++++-----------
+>>>>    1 file changed, 13 insertions(+), 11 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
+>>>> index 2d95e0471291..701f8bbd5f2b 100644
+>>>> --- a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
+>>>> +++ b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
+>>>> @@ -128,23 +128,25 @@ static enum drm_connector_status cdv_hdmi_detect(
+>>>>    {
+>>>>    	struct gma_encoder *gma_encoder = gma_attached_encoder(connector);
+>>>>    	struct mid_intel_hdmi_priv *hdmi_priv = gma_encoder->dev_priv;
+>>>> -	struct edid *edid = NULL;
+>>>> +	const struct drm_edid *drm_edid;
+>>>> +	int ret;
+>>>>    	enum drm_connector_status status = connector_status_disconnected;
+>>>>    
+>>>> -	edid = drm_get_edid(connector, connector->ddc);
+>>>> +	drm_edid = drm_edid_read_ddc(connector, connector->ddc);
+>> Just drm_edid_read() is enough when you're using connector->ddc.
+>>
+>>>> +	ret = drm_edid_connector_update(connector, drm_edid);
+>>>>    
+>>>>    	hdmi_priv->has_hdmi_sink = false;
+>>>>    	hdmi_priv->has_hdmi_audio = false;
+>>>> -	if (edid) {
+>>>> -		if (edid->input & DRM_EDID_INPUT_DIGITAL) {
+>>>> -			status = connector_status_connected;
+>>>> -			hdmi_priv->has_hdmi_sink =
+>>>> -						drm_detect_hdmi_monitor(edid);
+>>>> -			hdmi_priv->has_hdmi_audio =
+>>>> -						drm_detect_monitor_audio(edid);
+>>>> -		}
+>>>> -		kfree(edid);
+>>>> +	if (ret)
+>> This error path leaks the EDID.
+>>
+>>>> +		return status;
+>>>> +
+>>>> +	if (drm_edid_is_digital(drm_edid)) {
+>>>> +		status = connector_status_connected;
+>>>> +		hdmi_priv->has_hdmi_sink = connector->display_info.is_hdmi;
+>>>> +		hdmi_priv->has_hdmi_audio = connector->display_info.has_audio;
+>>>>    	}
+>>>> +	drm_edid_free(drm_edid);
+>>>> +
+>>>>    	return status;
+>>>>    }
+>>>>    
 
-I agree with Dan about keeping report/ in configfs. It would be nice to
-have both in the same place, but no strong opinion.
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
-> 
-> > As Alex I believe we need more similarity between the interfaces of static
-> > and runtime measurements, because verifiers may benefit from an event log
-> > of static measurements. For example Arm could have a configuration like
-> > this:
-> > 
-> >    struct tsm_measurement_register arm_cca_mrs[] = {
-> > 	{ MR_(rim) | TSM_MR_F_R | TSM_MR_F_LOG, HA },
-> >    	{ MR_(rem0) | TSM_MR_F_R | TSM_MR_F_X | TSM_MR_F_LOG, HA },
-> >    	...
-> >    	{ MR_(rem3) | TSM_MR_F_R | TSM_MR_F_X | TSM_MR_F_LOG, HA },
-> >    };
-> > 
-> > Here rim is a static measurement of the initial VM state, impossible to
-> > extend but could have an event log. rem0-3 are runtime measurements,
-> > extensible by firmware and then Linux. None of the digests can be written
-> > directly, only extended and read with calls to the upper layer. The tree
-> > would be:
-> > 
-> >    /sys/kernel/config/tsm/
-> >    ├── rim
-> >    │   ├── digest
-> >    │   ├── event_log
-> >    │   └── hash_algo
-> >    ├── rem0
-> >    │   ├── digest
-> >    │   ├── append_event
-> >    │   ├── event_log
-> >    │   └── hash_algo
-> >    ...
-> >    ├── rem3
-> >    │   ├── digest
-> >    │   ├── append_event
-> >    │   ├── event_log
-> >    │   └── hash_algo
-> >    └── report/$name
-> >        ├── inblob
-> >        └── outblob
-> > 
-> I see. The desired/missing feature here I think is to allow a CC guest
-> driver to supply an "initial log".
-
-Yes, although that would only be necessary if this new interface is able
-to include the pre-Linux events in the log, otherwise the event_log for
-static measurements here wouldn't contain anything.
-
-If firmware events aren't included in this new interface, then presenting
-static measurements doesn't seem useful for Arm CCA, since by definition
-they can't be extended. In my example I added 'digest' files only because
-our interface allows to read them directly from the upper layer, but the
-normal way to obtain digests is through /sys/kernel/config/tsm/report/,
-where outblob contains all digests, signed by the platform. So for CCA the
-tree would look more like:
-
-    /sys/kernel/config/tsm/
-    ├── rem0
-    │   ├── append_event
-    │   ├── event_log
-    │   └── hash_algo
-    ...
-    ├── rem3
-    │   ├── append_event
-    │   ├── event_log
-    │   └── hash_algo
-    └── report/$name
-        ├── inblob
-        └── outblob
-
-But I understand other archs could have a use for presenting the static
-measurements here, in which case presenting them in their own dir with a
-fine-grained selection of files like you suggest below would make sense.
-
-Thanks,
-Jean
-
-> I can define a LOG bit, which if set,
-> will make the MR its own dir with `hash_algo` and `event_log`. And if X is
-> also set, then `append_event` will appear as well. Does this sound like what
-> Alex and you are looking for?
-> 
-> -Cedric
 
