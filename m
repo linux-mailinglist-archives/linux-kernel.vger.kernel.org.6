@@ -1,143 +1,168 @@
-Return-Path: <linux-kernel+bounces-326411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17FB6976802
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:38:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF00976803
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:39:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88979B219D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:38:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EC1C2839FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9224819599C;
-	Thu, 12 Sep 2024 11:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FFE9190079;
+	Thu, 12 Sep 2024 11:39:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="latU+9OM"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BFgoCJvO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFBB29CF6;
-	Thu, 12 Sep 2024 11:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16CC288BD;
+	Thu, 12 Sep 2024 11:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726141113; cv=none; b=dIs29dMcHrlDV/FBlOeI25+GuJUQZfEeOvS+k05uvcRZrez7c/l1Qqepvdb4uTEn0mt3t31VA5ISqxRrOXZ+HljdCaWcAzYaWxBot9qMFf4bEDqvbIdog0vIX+syq72HUh0s9R4mAGMv/3M/xDpvMkHgfYjas8Ovu7pW77qncrw=
+	t=1726141191; cv=none; b=Ij3kOuUaYoW70vwy50hABQHOeEM/IloQxi4KFUexocVKk/dEzAhTnmo+y7aktSjGFmIlZUCIDi7/KlZECCUHR/vHHPpOrz6DGRg4esJp4kjWQ0AM+bnjy/Ub1OXsPwXS7NYy9CZdKZbLCFpq7c7ud4agBwAS2CCczbv9VZj9+qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726141113; c=relaxed/simple;
-	bh=hilndm36269LUYBh4eirr0Z179Ugs3I2OsaZrmx0zB4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=O8xqDGQ2+FN1Rl9t1v5+Z2cPe6V67b2g1mf4BAsLzhNinLWNpPSliUzFmjUZLwA5tqp9URSbJHlnlXxN7+Ow6nlpp0/Ve5wPTqcywRoZlfPnd15E7lIKgFsnWEBos1w6doCHPM9IAtDnjbi54hiW2lG7kfc0ivGoLRnJxBqivYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=latU+9OM; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 81acf11e70fb11efb66947d174671e26-20240912
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=zMl5165Nco4nnPRdvUh/bXbQdA86zHrP4M9QbnMQj9k=;
-	b=latU+9OMDNRD3zIVStiqfee1ZoKpvQIhRs60H1Ip3llZ0jB1FR5hR73iXp0c5pItX8/PDlS++5TUPfsW5wQIqSSJkpGMv3a58Y6/wYPAQ+0eeu8+PIsoN8i2d9lgNnhXP4loYUcZNHqmiDOfiNAxFEmovOyKM7U36zYs/ceeDDY=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:23332369-de2a-4755-a624-3b43f97f1cfb,IP:0,U
-	RL:25,TC:0,Content:1,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:26
-X-CID-META: VersionHash:6dc6a47,CLOUDID:3006e9b6-8c4d-4743-b649-83c6f3b849d4,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:4|-5,EDM:-3,IP:ni
-	l,URL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,
-	LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 81acf11e70fb11efb66947d174671e26-20240912
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
-	(envelope-from <pablo.sun@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1815120095; Thu, 12 Sep 2024 19:38:18 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- MTKMBS14N2.mediatek.inc (172.21.101.76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Thu, 12 Sep 2024 19:38:12 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkmbs11n1.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
- Transport; Thu, 12 Sep 2024 19:38:12 +0800
-Message-ID: <30184391-12a6-c095-7862-35c7677b0ede@mediatek.com>
-Date: Thu, 12 Sep 2024 19:38:10 +0800
+	s=arc-20240116; t=1726141191; c=relaxed/simple;
+	bh=T7L5DaGqzTOTtAvvzaHbnlKPp7RFKeCBqLlFYkwSqLw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gg8lp/9sMkUOeAu0Ejfg4LxmJpGSWMX3QfMbnPC/QU0/OJ8sfEboewUZ/946yTghZtN4FGN39LZYZBVkk3JJx5AKeh7Z/CTfe8/4Yja4GoVss3LrCXD63EONiF05CdFSgXEky3ABHHLLdd8qfMxdda+U0jplaCePLoPibio6g0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BFgoCJvO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2FD2C4CEC3;
+	Thu, 12 Sep 2024 11:39:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726141190;
+	bh=T7L5DaGqzTOTtAvvzaHbnlKPp7RFKeCBqLlFYkwSqLw=;
+	h=From:Date:Subject:To:Cc:From;
+	b=BFgoCJvOJyY3bOglFn+ZWACYg8QtpwGdz8pOmQIFdE74BGNSBRZXNsZoGc/3TT7wU
+	 pIYxqLan4KPTOpjpP3inHAEGVz5vjDDn23KuJSrIa2Gh7FVzJBuV/k/LXxPe3+Q0ni
+	 UxSRctHpb+A+bzBZ+GJFLciS/UxrF1oD6HIA+Uxzva1OvjsWjmYuzEnkHwAmN8qAdl
+	 PXIKZxopbrVwRHXv18u1bl6aaU4/E4iCrt+rscPGfyPRH/fJ0geN15PGYk7hcwJJ9i
+	 nRCqVzomZ99TqboGrk3OaOACn4KrFWa9imbTwv9SKXuf5FYeqltPTWHPlOB0xPjzD4
+	 G8Evs7cywhkEQ==
+From: Mark Brown <broonie@kernel.org>
+Date: Thu, 12 Sep 2024 12:39:35 +0100
+Subject: [PATCH v2] KVM: arm64: Constrain the host to the maximum shared
+ SVE VL with pKVM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] arm64: dts: mediatek: mt8395-genio-1200-evk: Enable GPU
-Content-Language: en-US
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, "Rob
- Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
-References: <20240910143245.5282-1-pablo.sun@mediatek.com>
- <01020191e04d4237-204596e1-6cc1-491c-a60f-de3917af7d42-000000@eu-west-1.amazonses.com>
- <2fd45240-a341-806b-f336-78d0595a8031@mediatek.com>
- <01020191e5383829-7eb375ea-ee17-419e-b173-30df46f61863-000000@eu-west-1.amazonses.com>
-From: Pablo Sun <pablo.sun@mediatek.com>
-In-Reply-To: <01020191e5383829-7eb375ea-ee17-419e-b173-30df46f61863-000000@eu-west-1.amazonses.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--9.398400-8.000000
-X-TMASE-MatchedRID: VfovoVrt/oYNtKv7cnNXnSa1MaKuob8P2r3/CX4MlKCqvcIF1TcLYIKO
-	HgdS51oIY8pnlWhODINRVnZsGmIphSw+COFH6OKxioK033WJkCk4m0JsW63IXBKCZ+Q6yB8qy7F
-	bVebgF6C5u9/qS1btcB+SaFrhL/iTQjr0vbZGNcuWLCkl1lq7B0Crr/LkAQ46+3n3Z6rbGhNjy0
-	xoWgR6JLEwnnFnQnmnUNHYJMizeW5f2oN5IGbAjgXysW33GYMpfkXv6w7OOZIKM+BgluLK4HJZ1
-	Ae+gMbqAZ/Skj4ls4+Rk6XtYogiau9c69BWUTGwVnRXm1iHN1bEQdG7H66TyMdRT5TQAJnA0heq
-	/DjysoVjrbuJifCzbU4niEfXGAFbP/pFwct6g8CeqD9WtJkSIw==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--9.398400-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	1049EF671E4F33D3EAD7E1E3BDF8DDDA43F8B73B2326C84DD876E49E57F162052000:8
+Message-Id: <20240912-kvm-arm64-limit-guest-vl-v2-1-dd2c29cb2ac9@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAPbS4mYC/42NTQ6CMBBGr0Jm7ZiWFAmuvIdhQcsUJvxmio2Gc
+ HcrJ3D5XvK9b4dAwhTgnu0gFDnwMifILxm4vpk7Qm4TQ65yoyqtcIgTNjLdDI488Ybdi8KGccS
+ 28LZRrnSutJDmq5Dn95l+1ol7Dtsin/Mp6p/9Ixo1aixM642yVeG9fQwkM43XRTqoj+P4AoWw2
+ gjBAAAA
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ James Morse <james.morse@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Fuad Tabba <tabba@google.com>
+Cc: Dave Martin <Dave.Martin@arm.com>, linux-arm-kernel@lists.infradead.org, 
+ kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4033; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=T7L5DaGqzTOTtAvvzaHbnlKPp7RFKeCBqLlFYkwSqLw=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBm4tMBhIe/LyjljX9tuBWlDKk4ejJQHl0QK9VwvpLj
+ RdUeHXiJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZuLTAQAKCRAk1otyXVSH0IdqB/
+ 4gXr5PVu25pExDRTo3+OAEvKWTRTw/ws6HXCW3rva49UeNE2tmd+L2YNmgFAG6FI8kzDofraRBM2GG
+ +fzc+m+LBymMfeYGHklB+aqfJoHbA7l+9YvehpcWE3LaNEpAgzko5Q6I8lPl/mZHe1A94WsFNPCtS4
+ UOmAqc4Lzzv+xMT7qTpL82zmc1HGD4ltyzxY2Pv9OQry5CXAdoZ478qOyq6khV0Q/yZyMs4CpYMKsH
+ n5MwpGNqRxJlAoCnk899KSVkD6mV6g6waZ/x/+8epabahAKZ4Oae6UNcc6+OPxqSMXnn9oXPz9JCN0
+ Z9WCmy2EdR4M6ffd2/BEwbQu5q7afS
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Hi Angelo,
+When pKVM saves and restores the host floating point state on a SVE system
+it programs the vector length in ZCR_EL2.LEN to be whatever the maximum VL
+for the PE is but uses a buffer allocated with kvm_host_sve_max_vl, the
+maximum VL shared by all PEs in the system. This means that if we run on a
+system where the maximum VLs are not consistent we will overflow the buffer
+on PEs which support larger VLs.
 
-On 9/12/24 15:52, AngeloGioacchino Del Regno wrote:
-[snip]
->>
-> 
-> The range should match the target device's Vin constraints; in this 
-> case, it
-> should be no lower than the minimum working voltage of the Vgpu-in of 
-> the Mali IP.
-> 
-> The drivers will be responsible of setting the lowest possible voltage for
-> enhanced efficiency (power saving), taking into account the fused chip 
-> quality bits
-> (in this case, the MediaTek SVS driver!).
-> 
-> You should, at this point, check the constraints of SVS, as in, given a 
-> reference
-> voltage (in this case, located in the GPU OPP table, the voltage 
-> associated with
-> the lowest frequency of the GPU), what is the maximum voltage 
-> *subtraction* that
-> SVS will do on the VGPU?
-> 
-> After the subtraction, may this voltage be lower than 0.546V? :-)
+Since the host will not currently attempt to make use of non-shared VLs fix
+this by explicitly setting the EL2 VL to be the maximum shared VL when we
+save and restore. This will enforce the limit on host VL usage. Should we
+wish to support asymmetric VLs this code will need to be updated along with
+the required changes for the host, patches have previously been posted:
 
-Thanks for the clear explanation. While there are no explicit constraint 
-in the maximum voltage subtraction in the SVS driver, I have
-confirmed that the fuse data of MT8395 is written in a way that the SVS
-driver would never go lower than the minimum recommended operating
-voltage of DVDD_GPU in the datasheet[1], which supplies power to the 
-Mali IP.
+  https://lore.kernel.org/r/20240730-kvm-arm64-fix-pkvm-sve-vl-v6-0-cae8a2e0bd66@kernel.org
 
-I have sent patch v2 to remove the always-on property and add a note
-about the fuse(eFuse) data in [2].
+Fixes: b5b9955617bc ("KVM: arm64: Eagerly restore host fpsimd/sve state in pKVM")
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+Changes in v2:
+- Update all places where we constrain the host VL, not just those where
+  we save and restore host state.
+- The value written to the register is 0 based, not 1 based.
+- Link to v1: https://lore.kernel.org/r/20240910-kvm-arm64-limit-guest-vl-v1-1-54df40b95ffb@kernel.org
+---
+ arch/arm64/kvm/hyp/include/hyp/switch.h |  2 +-
+ arch/arm64/kvm/hyp/nvhe/hyp-main.c      | 12 +++++++-----
+ 2 files changed, 8 insertions(+), 6 deletions(-)
 
+diff --git a/arch/arm64/kvm/hyp/include/hyp/switch.h b/arch/arm64/kvm/hyp/include/hyp/switch.h
+index f59ccfe11ab9..c2cfb4d6dc92 100644
+--- a/arch/arm64/kvm/hyp/include/hyp/switch.h
++++ b/arch/arm64/kvm/hyp/include/hyp/switch.h
+@@ -339,7 +339,7 @@ static inline void __hyp_sve_save_host(void)
+ 	struct cpu_sve_state *sve_state = *host_data_ptr(sve_state);
+ 
+ 	sve_state->zcr_el1 = read_sysreg_el1(SYS_ZCR);
+-	write_sysreg_s(ZCR_ELx_LEN_MASK, SYS_ZCR_EL2);
++	write_sysreg_s(sve_vq_from_vl(kvm_host_sve_max_vl) - 1, SYS_ZCR_EL2);
+ 	__sve_save_state(sve_state->sve_regs + sve_ffr_offset(kvm_host_sve_max_vl),
+ 			 &sve_state->fpsr,
+ 			 true);
+diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+index f43d845f3c4e..dd1c6aa907a2 100644
+--- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
++++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+@@ -33,7 +33,7 @@ static void __hyp_sve_save_guest(struct kvm_vcpu *vcpu)
+ 	 */
+ 	sve_cond_update_zcr_vq(vcpu_sve_max_vq(vcpu) - 1, SYS_ZCR_EL2);
+ 	__sve_save_state(vcpu_sve_pffr(vcpu), &vcpu->arch.ctxt.fp_regs.fpsr, true);
+-	write_sysreg_s(ZCR_ELx_LEN_MASK, SYS_ZCR_EL2);
++	write_sysreg_s(sve_vq_from_vl(kvm_host_sve_max_vl) - 1, SYS_ZCR_EL2);
+ }
+ 
+ static void __hyp_sve_restore_host(void)
+@@ -45,10 +45,11 @@ static void __hyp_sve_restore_host(void)
+ 	 * the host. The layout of the data when saving the sve state depends
+ 	 * on the VL, so use a consistent (i.e., the maximum) host VL.
+ 	 *
+-	 * Setting ZCR_EL2 to ZCR_ELx_LEN_MASK sets the effective length
+-	 * supported by the system (or limited at EL3).
++	 * Note that this constrains the PE to the maximum shared VL
++	 * that was discovered, if we wish to use larger VLs this will
++	 * need to be revisited.
+ 	 */
+-	write_sysreg_s(ZCR_ELx_LEN_MASK, SYS_ZCR_EL2);
++	write_sysreg_s(sve_vq_from_vl(kvm_host_sve_max_vl) - 1, SYS_ZCR_EL2);
+ 	__sve_restore_state(sve_state->sve_regs + sve_ffr_offset(kvm_host_sve_max_vl),
+ 			    &sve_state->fpsr,
+ 			    true);
+@@ -479,7 +480,8 @@ void handle_trap(struct kvm_cpu_context *host_ctxt)
+ 	case ESR_ELx_EC_SVE:
+ 		cpacr_clear_set(0, CPACR_ELx_ZEN);
+ 		isb();
+-		sve_cond_update_zcr_vq(ZCR_ELx_LEN_MASK, SYS_ZCR_EL2);
++		sve_cond_update_zcr_vq(sve_vq_from_vl(kvm_host_sve_max_vl) - 1,
++				       SYS_ZCR_EL2);
+ 		break;
+ 	case ESR_ELx_EC_IABT_LOW:
+ 	case ESR_ELx_EC_DABT_LOW:
 
-[1]: 
-https://mediatek-marketing.files.svdcdn.com/production/documents/MTK_MT8395_Application-Processor-Datasheet_v1.8.pdf?dm=1724252510
-[2]: https://lkml.org/lkml/2024/9/12/285
+---
+base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+change-id: 20240910-kvm-arm64-limit-guest-vl-d5fba0c7cc7b
 
-Many thanks,
-Pablo
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
+
 
