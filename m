@@ -1,125 +1,210 @@
-Return-Path: <linux-kernel+bounces-325972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D91597609C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:53:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C9FA97609E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:53:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F3A9B22147
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 05:53:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 402CE1C22C87
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 05:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863D8188929;
-	Thu, 12 Sep 2024 05:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038FF188929;
+	Thu, 12 Sep 2024 05:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ltWNoQLX"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="gyZVwFje"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB77663CB;
-	Thu, 12 Sep 2024 05:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6870F18734F;
+	Thu, 12 Sep 2024 05:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726120377; cv=none; b=oBLazwfrz8sEVMmWJapOg8JrEX8+CsYTaQp4YMvgEQrVjlxlPeE0wFBsZeI1lo2kxR2+y+GiBpTAGuJ2Vnqd5vBXZD+j7LQyRnfaUN0QmKMZkZGAxgfctYRlKAEwgSzfRUP+6js+IwH9ewyYQapSX2U/K/xR03OhoMzgYUrSMrY=
+	t=1726120394; cv=none; b=hZY62Tk7XrLqoIXVfbPTta0eF5ZjIJGfipTmQGlbjsj2fQjmbuCqMLScz27UjV6QPXLyBqMMKhwxXaXKiOEk7xlsLuxSpIQHYlKMCQDcgfxUrqaxmzpkkdTWWPl+EmH/PmtkfbRz8I1sUbfatnRzoz5Yh4WZuAu70tAcv3PoBXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726120377; c=relaxed/simple;
-	bh=cyf1Hb2C/+172elhulghuDprDeDW/q6iLjvvVCDRM3k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FrFKVsxYq2Xvokq3RWJrpnMTfxuEZFHUtF/bKCWUeGSO//lyi3ZIh0fYQ10JNcg5KyNS0Jo5qT7AjjJXwFPn10QdndzkXw6NA+VRBEy/qOsZ/rDo+AHySxLUpBbi1VOKxwTPG5p79qOXdPcJdRkHqwEXrtT2jKaveQk4PFtli6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ltWNoQLX; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20551e2f1f8so6077505ad.2;
-        Wed, 11 Sep 2024 22:52:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726120375; x=1726725175; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cyf1Hb2C/+172elhulghuDprDeDW/q6iLjvvVCDRM3k=;
-        b=ltWNoQLXUZM1tdFQ7MjRu1A/qEih3feZ6k9KL2EKBevOfokIlHIIH+pI/8RnhY7lcl
-         a70gQa+6qCJi+UCGQSvGigjRHY2SUHgmbpq4EDUJObx9g5YhNNtqRTPm0XuP/YdquTDr
-         ROMlo15rV5fZem6UUXDbB0PbgC/p1gJOVncHLo88lJ+WJf+Rq5Z+16NAF7/keNSlKTk3
-         j32k3NroGton6/9yKKPfnHHsagtw5Smme7hnBcuyrykjufCYz9QFYT2+GmnFw/i/udI8
-         XBl0Rz9adRpo7Wxllha/dGf2UDRI15N0jveiLAPjunj9m6wYoqav/CmMzngD0IaSUE6w
-         MHQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726120375; x=1726725175;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cyf1Hb2C/+172elhulghuDprDeDW/q6iLjvvVCDRM3k=;
-        b=Vbwdq3lRm0fH+PDGaOKNTKGs3vkFM2FKZOTkZ5rzX5ra/lEaYeoh51FK/KDxmA8bms
-         NH0c1HcY8UiPEnLVTePye3A+b6V1DBlKZHokeRJ3vsJSKIobPR8DS/HUZrY0D1BBRjEa
-         Y1bPj+Ml3A9q4hEhSbOlJMfgpGf4xKosWX7jdhNY9qxYtca79fkHuUpHq/tWf6pcs/AQ
-         UesxvAyYBGCG0lFdhgYgBBfe+31Xt1z4Zu5carHljP1MIfel2NPuBlXl3ur2RE/1IOa2
-         hxdNhk53Ph99SW32v5P9Ud9dLPv11Rf4cthImSH+c7jE7V2tURKXK8YfZps+e8pIyuc9
-         e9AQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2y1YZATM203Td9ONTipdLWTMWCth6sNItj4kdTl3q4Aqybvvx/mKMSFhW+T5Sq99HBppYqLMgkDFPUeo=@vger.kernel.org, AJvYcCX5i0WWQINygN4uKyRJe1AxfbiQmWUYaHxkfTkw1s7zmwa42pOBwFHHuEp4AgGFEE0X32pVoyNa+nd1@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3mUdElPh1g7fj0TZpNBhbL/Um8v/pYPhfavJon0vYmkmFbODt
-	XPbrQcMkc40JL+QNJCDnr+jCFfx5szYwKIkhaJaK/OlgZ1Ctot7p1ixa1pqESn/k6XoKWlyL3tO
-	A/0+y6U9KGaozK5zPHnNVn4/pdxxHcLWGxAw=
-X-Google-Smtp-Source: AGHT+IHTZBq7WQxTCuoatyBiiOKHG7oXH+KbJERrM2Lth84TKU6yGz3+BeSN/yGNB7IcRHa0JUAbWO2todjO7Xitf5c=
-X-Received: by 2002:a17:903:2302:b0:207:20c5:42c with SMTP id
- d9443c01a7336-2076e40be2dmr29349775ad.45.1726120374758; Wed, 11 Sep 2024
- 22:52:54 -0700 (PDT)
+	s=arc-20240116; t=1726120394; c=relaxed/simple;
+	bh=Fj803a2p2tqHCoJLXf/JVgw1IkW+vM9oKjVEVcTUJLA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gfhDxtV0TSG66vfnNSNhn42Yt0aWmA6WfBoGR8Vf4M4/djVKNAyboc8PU/5cYBHGYSIWhP/q/sfWF10JRe7TvNPZoLiuXk9vk3EMf+TM+L+lQGGoTbPCPcowWl1P8cujc19IsqFYuQzsDaqcIUyhU0hYnYEdh7F4NXPL/WAmKK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=gyZVwFje; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1726120382; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=aepF7/rGU6XtSbhvVJaOvMNUxq2U/U86JXfpLh+6OnY=;
+	b=gyZVwFjeXPNGIXYsLus0i6lsEJvHwWUyhndOdg4i6trLX6xNhTcmu2nvs2dpcjtNpyAbqfVU+r4U6nqFS9RS5o53h1mD/YCuSv/ihPFL5LOEHfEfyxiLUV+veQjzhdxwO19U3jWZiY5jgwo2knFy/iXoHAiDjGmV28tfLqaX65M=
+Received: from 30.221.129.22(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WEqJXnw_1726120381)
+          by smtp.aliyun-inc.com;
+          Thu, 12 Sep 2024 13:53:01 +0800
+Message-ID: <c4ac09e2-bb70-4a1f-8c5e-00e11dbb4d0f@linux.alibaba.com>
+Date: Thu, 12 Sep 2024 13:53:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911051716.6572-4-ki.chiang65@gmail.com> <20240911093828.58129593@foxbook>
-In-Reply-To: <20240911093828.58129593@foxbook>
-From: Kuangyi Chiang <ki.chiang65@gmail.com>
-Date: Thu, 12 Sep 2024 13:52:48 +0800
-Message-ID: <CAHN5xi235kgU8Xd0VYw6r5NeieCM8uqWjgPnLSP1haAFqgcFsw@mail.gmail.com>
-Subject: Re: [PATCH 0/3] xhci: Some improvement for Etron xHCI host
-To: =?UTF-8?Q?Micha=C5=82_Pecio?= <michal.pecio@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, mathias.nyman@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC V3 1/1] ocfs2: reserve space for inline xattr before
+ attaching reflink tree
+To: Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>,
+ akpm <akpm@linux-foundation.org>
+Cc: junxiao.bi@oracle.com, rajesh.sivaramasubramaniom@oracle.com,
+ ocfs2-devel@lists.linux.dev, stable@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240912050656.877264-1-gautham.ananthakrishna@oracle.com>
+Content-Language: en-US
+From: Joseph Qi <joseph.qi@linux.alibaba.com>
+In-Reply-To: <20240912050656.877264-1-gautham.ananthakrishna@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
 
-Thank you for the review.
 
-Micha=C5=82 Pecio <michal.pecio@gmail.com> =E6=96=BC 2024=E5=B9=B49=E6=9C=
-=8811=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=883:38=E5=AF=AB=E9=81=93=
-=EF=BC=9A
->
-> Hi,
->
-> I have some Etron controller (forgot which one) but I'm not using it
-> because it crashes ("dies") all the time under my workloads.
->
-> I suppose I could try your patches if I find a moment for it.
->
-> I'm aware of one more bug which affects my Etron: if an error occurs
-> on an isochronous TD, two events are generated: first the error, then
-> "success", even if the error is on the final TRB (the common case).
-> Then the "success" causes "TRB DMA not part of current TD" warning.
-> I suspect that all Etron chips are the same. This should be easily
-> reproducible by unpligging an audio/video device while streaming.
+On 9/12/24 1:06 PM, Gautham Ananthakrishna wrote:
+> One of our customers reported a crash and a corrupted ocfs2 filesystem.
+> The crash was due to the detection of corruption. Upon troubleshooting,
+> the fsck -fn output showed the below corruption
+> 
+> [EXTENT_LIST_FREE] Extent list in owner 33080590 claims 230 as the next free chain record,
+> but fsck believes the largest valid value is 227.  Clamp the next record value? n
+> 
+> The stat output from the debugfs.ocfs2 showed the following corruption
+> where the "Next Free Rec:" had overshot the "Count:" in the root metadata
+> block.
+> 
+>         Inode: 33080590   Mode: 0640   Generation: 2619713622 (0x9c25a856)
+>         FS Generation: 904309833 (0x35e6ac49)
+>         CRC32: 00000000   ECC: 0000
+>         Type: Regular   Attr: 0x0   Flags: Valid
+>         Dynamic Features: (0x16) HasXattr InlineXattr Refcounted
+>         Extended Attributes Block: 0  Extended Attributes Inline Size: 256
+>         User: 0 (root)   Group: 0 (root)   Size: 281320357888
+>         Links: 1   Clusters: 141738
+>         ctime: 0x66911b56 0x316edcb8 -- Fri Jul 12 06:02:30.829349048 2024
+>         atime: 0x66911d6b 0x7f7a28d -- Fri Jul 12 06:11:23.133669517 2024
+>         mtime: 0x66911b56 0x12ed75d7 -- Fri Jul 12 06:02:30.317552087 2024
+>         dtime: 0x0 -- Wed Dec 31 17:00:00 1969
+>         Refcount Block: 2777346
+>         Last Extblk: 2886943   Orphan Slot: 0
+>         Sub Alloc Slot: 0   Sub Alloc Bit: 14
+>         Tree Depth: 1   Count: 227   Next Free Rec: 230
+>         ## Offset        Clusters       Block#
+>         0  0             2310           2776351
+>         1  2310          2139           2777375
+>         2  4449          1221           2778399
+>         3  5670          731            2779423
+>         4  6401          566            2780447
+>         .......          ....           .......
+>         .......          ....           .......
+> 
+> The issue was in the reflink workfow while reserving space for inline xattr.
+> The problematic function is ocfs2_reflink_xattr_inline(). By the time this
+> function is called the reflink tree is already recreated at the destination
+> inode from the source inode. At this point, this function reserves space
+> space inline xattrs at the destination inode without even checking if there
+> is space at the root metadata block. It simply reduces the l_count from 243
+> to 227 thereby making space of 256 bytes for inline xattr whereas the inode
+> already has extents beyond this index (in this case upto 230), thereby causing
+> corruption.
+> 
+> The fix for this is to reserve space for inline metadata before the at the
+> destination inode before the reflink tree gets recreated. The customer has
+> verified the fix.
+> 
+> Fixes: ef962df057aa ("ocfs2: xattr: fix inlined xattr reflink")
+> Cc: stable@vger.kernel.org
+> 
+> Signed-off-by: Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>
 
-Hmm, I don't encounter this problem.
+Reviewed-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+> ---
+>  fs/ocfs2/refcounttree.c | 26 ++++++++++++++++++++++++--
+>  fs/ocfs2/xattr.c        | 11 +----------
+>  2 files changed, 25 insertions(+), 12 deletions(-)
+> 
+> diff --git a/fs/ocfs2/refcounttree.c b/fs/ocfs2/refcounttree.c
+> index 3f80a56d0d60..05105d271fc8 100644
+> --- a/fs/ocfs2/refcounttree.c
+> +++ b/fs/ocfs2/refcounttree.c
+> @@ -25,6 +25,7 @@
+>  #include "namei.h"
+>  #include "ocfs2_trace.h"
+>  #include "file.h"
+> +#include "symlink.h"
+>  
+>  #include <linux/bio.h>
+>  #include <linux/blkdev.h>
+> @@ -4155,8 +4156,9 @@ static int __ocfs2_reflink(struct dentry *old_dentry,
+>  	int ret;
+>  	struct inode *inode = d_inode(old_dentry);
+>  	struct buffer_head *new_bh = NULL;
+> +	struct ocfs2_inode_info *oi = OCFS2_I(inode);
+>  
+> -	if (OCFS2_I(inode)->ip_flags & OCFS2_INODE_SYSTEM_FILE) {
+> +	if (oi->ip_flags & OCFS2_INODE_SYSTEM_FILE) {
+>  		ret = -EINVAL;
+>  		mlog_errno(ret);
+>  		goto out;
+> @@ -4182,6 +4184,26 @@ static int __ocfs2_reflink(struct dentry *old_dentry,
+>  		goto out_unlock;
+>  	}
+>  
+> +	if ((oi->ip_dyn_features & OCFS2_HAS_XATTR_FL) &&
+> +	    (oi->ip_dyn_features & OCFS2_INLINE_XATTR_FL)) {
+> +		/*
+> +		 * Adjust extent record count to reserve space for extended attribute.
+> +		 * Inline data count had been adjusted in ocfs2_duplicate_inline_data().
+> +		 */
+> +		struct ocfs2_inode_info *new_oi = OCFS2_I(new_inode);
+> +
+> +		if (!(new_oi->ip_dyn_features & OCFS2_INLINE_DATA_FL) &&
+> +		    !(ocfs2_inode_is_fast_symlink(new_inode))) {
+> +			struct ocfs2_dinode *new_di = new_bh->b_data;
+> +			struct ocfs2_dinode *old_di = old_bh->b_data;
+> +			struct ocfs2_extent_list *el = &new_di->id2.i_list;
+> +			int inline_size = le16_to_cpu(old_di->i_xattr_inline_size);
+> +
+> +			le16_add_cpu(&el->l_count, -(inline_size /
+> +					sizeof(struct ocfs2_extent_rec)));
+> +		}
+> +	}
+> +
+>  	ret = ocfs2_create_reflink_node(inode, old_bh,
+>  					new_inode, new_bh, preserve);
+>  	if (ret) {
+> @@ -4189,7 +4211,7 @@ static int __ocfs2_reflink(struct dentry *old_dentry,
+>  		goto inode_unlock;
+>  	}
+>  
+> -	if (OCFS2_I(inode)->ip_dyn_features & OCFS2_HAS_XATTR_FL) {
+> +	if (oi->ip_dyn_features & OCFS2_HAS_XATTR_FL) {
+>  		ret = ocfs2_reflink_xattrs(inode, old_bh,
+>  					   new_inode, new_bh,
+>  					   preserve);
+> diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
+> index 3b81213ed7b8..a9f716ec89e2 100644
+> --- a/fs/ocfs2/xattr.c
+> +++ b/fs/ocfs2/xattr.c
+> @@ -6511,16 +6511,7 @@ static int ocfs2_reflink_xattr_inline(struct ocfs2_xattr_reflink *args)
+>  	}
+>  
+>  	new_oi = OCFS2_I(args->new_inode);
+> -	/*
+> -	 * Adjust extent record count to reserve space for extended attribute.
+> -	 * Inline data count had been adjusted in ocfs2_duplicate_inline_data().
+> -	 */
+> -	if (!(new_oi->ip_dyn_features & OCFS2_INLINE_DATA_FL) &&
+> -	    !(ocfs2_inode_is_fast_symlink(args->new_inode))) {
+> -		struct ocfs2_extent_list *el = &new_di->id2.i_list;
+> -		le16_add_cpu(&el->l_count, -(inline_size /
+> -					sizeof(struct ocfs2_extent_rec)));
+> -	}
+> +
+>  	spin_lock(&new_oi->ip_lock);
+>  	new_oi->ip_dyn_features |= OCFS2_HAS_XATTR_FL | OCFS2_INLINE_XATTR_FL;
+>  	new_di->i_dyn_features = cpu_to_le16(new_oi->ip_dyn_features);
 
->
-> Considering how utterly broken this hardware is, I think it could be
-> more efficient to have a single "Etron host" quirk. These bugs are
-> so stupid that it seems unlikely that any of Etron quirks would ever
-> be reused on other hardware. Of course it should still use "general"
-> quirks when applicable, such as "broken streams", which it does IIRC.
->
-
-Ok, I will use one quirk XHCI_ETRON_HOST for these workarounds in the
-next patch revision.
-
-> Regards,
-> Michal
-
-Thanks,
-Kuangyi Chiang
 
