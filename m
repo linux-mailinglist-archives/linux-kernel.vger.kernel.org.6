@@ -1,87 +1,80 @@
-Return-Path: <linux-kernel+bounces-327003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED543976FB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:39:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2584B976FB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:39:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7713AB2455F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:39:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 585F81C23DDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:39:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358E11BFDE5;
-	Thu, 12 Sep 2024 17:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59AAC1BFDF5;
+	Thu, 12 Sep 2024 17:39:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="i4b0atWb"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RqaS7sMy"
+Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF041BD01E
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 17:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3FF1BF7F8
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 17:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726162750; cv=none; b=MOoP0xRL3jVVtpms+dLxoPD7WKMfcKfWIqsdLnUy2+nm4muMdE1LXyvSWXNOua8VhvZ0yp9vlr8wPM6x5XjHu0JezTkjM1lv75gVMpHSknkWO+3v/WnYoWkqQaKXPPOccZUZRYPEHhKmKy8yfEWxQOjoBl/V8dupug8sOmur7xk=
+	t=1726162751; cv=none; b=rZrpzT/9ra7q8i5DbDzr02/jI/TTVkXaRq0CRII+/dxc8zPnRRiNwfdu6Uleji1vO1FcwH0B42rj7J2ouBp5EOLlljATrxVEX/e9R0O0+oLRLr3MudpA9quCxakAZbz7Lp9iRe0qL9WbLb7zh55oDjCA8f7F1nPMJjJICe2sKSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726162750; c=relaxed/simple;
-	bh=trPHxilhW2oQjHu87GszVwwwDkweNgsvTDl73YHBlYM=;
+	s=arc-20240116; t=1726162751; c=relaxed/simple;
+	bh=0j+r3D4/vHRDqFdTBnrhpTncxEtjKeJFxIg/Fe+um0k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=p0LEiOGHhJ8EhBPqnnmQeBmCMgiOHvoX1xlh9nMzy24Be0/koxgn1+zOzxVRDncDzfw34YOgkUVm9k+6acaq09SKt5PuPXXIh3kP8XLNw+eMAbagFujxqUQtjpd2PyvJGxZDP2qdegk0tF1+1nFq26hGORscGLP6UrTTnIBjLO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=i4b0atWb; arc=none smtp.client-ip=209.85.166.178
+	 MIME-Version; b=Gq9iHreiMNuF938Qpifq+DAoq2LnKhYdaFpaQq5say+LXFz1OdwLhauyz+hocut46F2gBTvHRfs1xHqKFbvzzIyWP/6uMbafur801YgbZLSX2ACxrsQn+z8TUP0EHLIguzNVbP5Vn1Pnl6NOzeCme1fsgVIIt75toB/NocILQNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RqaS7sMy; arc=none smtp.client-ip=209.85.166.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3a0220c2c6bso5546725ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 10:39:08 -0700 (PDT)
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a043390078so5742045ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 10:39:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1726162747; x=1726767547; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1726162749; x=1726767549; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Sf/bniYlfRZYtTAiPueeb667UzLVb/sHpgqtAEqZ4pY=;
-        b=i4b0atWb4UH/DYTK80I8JccIpQUzFG8s8vX71cSawAuw6p6hOXOZ7jQOrVIN6DITpv
-         GqlUX5XYVMjXPIzu73kU9jsPQBxN3j80omSu5zLpcpDWQB7rEmjpwMR38oSIWVxl99Yt
-         CbGlv+FrswpNvaTbjyWDQEWW3hA97nQVQ2tTM=
+        bh=RYt+A7Qz0DxrKrXBCekZqUkGqVOmvoE4JK6g0PIC+r4=;
+        b=RqaS7sMydEkCYOirmNM7Whci/GTagfhO2yq4vhK5viG6xyd6gubbCr8W8H82GTx+RP
+         GG75kX3nweaodVvlQWZcNNttBSDQAuj1aLigluu27a9tAFab3zvxdtCCzeTltO5fa8sk
+         vA7gA/2GQayUeFs0JwDLYUzCsBrNUGn4x2cm8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726162747; x=1726767547;
+        d=1e100.net; s=20230601; t=1726162749; x=1726767549;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Sf/bniYlfRZYtTAiPueeb667UzLVb/sHpgqtAEqZ4pY=;
-        b=ruT/nm83UvwT3/29bbNchXKs690ICO1yFzHhoyXYHaBOGCU4e4Uvn904qX5Q4nQJ3D
-         GjLbG3lK94KbCc1nu6pgWd+/rTnfiSd44lfmiwYkI8+10OV4rC2KfQ0B9QKVqfHAcXma
-         bJUkUBfGqRbU2Y1prVnC2YcaW2Zas8iLAZ+ZdJf5NsGLNDlnd1mog66Coi+y0uFr3T1j
-         EtmBd5Ofsj0jtzg+RrWhO9Ui1ZutJki+UoybhundQpYsG2Zv9OQfA0yh0+QkJChoURyt
-         mSzI7fKmwZY3EAUOf5TadvXVk9smbaH/V4q6xVrD7VTh5kiqAI5P9MBwe6lU57lR8nK0
-         f76w==
-X-Forwarded-Encrypted: i=1; AJvYcCUmu4fG/u6s4lTC8Z+NTZzhsOVAXKlBoRRhZ0f/1J5N073X61zyTbu1KLwSrul8wpUrK7DgaRIpZgl6b7w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLms2FhreWMFBsGgiFjmKe1qKUM3dOi2it1ppMQPuE6c/WyaY2
-	1Zq2rwy43q948c+UIxm9SD1KVoynlnYDqFY4uO6En1nofgECXfaE/3r+mPs74Q==
-X-Google-Smtp-Source: AGHT+IExDtgB/Ne9u3i8tSQpAY6TV0WOITGF0nQgTQhik+IHprM4Ev1fywxaGsBdNhJ6OdksXiIa1g==
-X-Received: by 2002:a05:6e02:164f:b0:39b:330b:bb25 with SMTP id e9e14a558f8ab-3a0848f7e52mr36649725ab.12.1726162747309;
-        Thu, 12 Sep 2024 10:39:07 -0700 (PDT)
+        bh=RYt+A7Qz0DxrKrXBCekZqUkGqVOmvoE4JK6g0PIC+r4=;
+        b=dBHY6/y5ZlaWBltIJdGniqIdsPKp6jTCdCf7ugefKftATdFwxc0B9H9Dr7ZtlSCdTZ
+         NAzvDEF5hCxMw0rfHEDA/QrtE91uY7qf95z92/Y1vIiY6ysQwSx9JS0Nh+fc0Ap5RkNP
+         NCNQW+52EOD9pv9cXwLbQjQO6zhkeoJtBYitXW//JOH/CB/i06/UfSQ178YqTrEzN7tf
+         cmlQse94tyiL0HFx7a5bEJv3Yfn6ceQlEtpVGALy7S4DXO8Tw/zPwbr4bohBatQfk+Gm
+         0KL5Yoo4jwv0qt/yGffIH2cBpodGOTAzgS3k4aAzARhmwj0vPi0P8xH9YQkFp6Nq2Ghl
+         oS6A==
+X-Forwarded-Encrypted: i=1; AJvYcCXI20aoJJoMQhG7DHjMzv3rtDiSy5hXuat9B8ryRjIqa36t1dHfSs2WuevVi/DtHj9FVnWl/GROq1sOhLE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNNvUkeZAiGQ7Bv6WJ96kGs8Ul+G8+w2U1YyhAP/3HmccBsNLs
+	g6LFF6I4TzJPOMubwM6sxHNns9Tkq5p2+IegXIlIJKuIi5qZITBTKQXr9VkIXw==
+X-Google-Smtp-Source: AGHT+IEqzTdHtHBgFzNgHRzsE01wHflT3gH7y3dm6Xqs8f94BX69hzCdMeg7I8pPaKSZ66QnBGr95A==
+X-Received: by 2002:a05:6e02:1d01:b0:3a0:4e2b:9ab9 with SMTP id e9e14a558f8ab-3a0848ac8efmr41082335ab.5.1726162749028;
+        Thu, 12 Sep 2024 10:39:09 -0700 (PDT)
 Received: from rrangel920.bld.corp.google.com (h24-56-189-226.arvdco.broadband.dynamic.tds.net. [24.56.189.226])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a05900e618sm32570135ab.55.2024.09.12.10.39.06
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a05900e618sm32570135ab.55.2024.09.12.10.39.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 10:39:06 -0700 (PDT)
+        Thu, 12 Sep 2024 10:39:08 -0700 (PDT)
 From: Raul E Rangel <rrangel@chromium.org>
 To: linux-serial@vger.kernel.org
 Cc: pmladek@suse.com,
 	rafael.j.wysocki@intel.com,
 	ribalda@chromium.org,
 	Raul E Rangel <rrangel@chromium.org>,
-	Adrian Ratiu <adrian.ratiu@collabora.com>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Xiongwei Song <xiongwei.song@windriver.com>,
-	linux-doc@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] Documentation: kernel-parameters: Add uartclk to console=uart
-Date: Thu, 12 Sep 2024 11:36:19 -0600
-Message-ID: <20240912113616.1.Ic8770cb6e660110359b245808105e5310d3fa528@changeid>
+Subject: [PATCH 2/3] earlycon: Print a notice when uartclk is unknown
+Date: Thu, 12 Sep 2024 11:36:20 -0600
+Message-ID: <20240912113616.2.Id2235082fc6c2d238789dfc3ee923492e9ed7387@changeid>
 X-Mailer: git-send-email 2.46.0.662.g92d0881bb0-goog
 In-Reply-To: <20240912173901.3969597-1-rrangel@chromium.org>
 References: <20240912173901.3969597-1-rrangel@chromium.org>
@@ -93,47 +86,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The console=uartXXXXX parameter is just an alias for earlycon=uartXXXX.
-This means it also accepts the uartclk parameter.
+When trying to construct an earlycon=uart parameter it's hard to debug
+why it's not working.  In my specific case it was because the default
+uartclk earlycon assumes doesn't match my hardware. This change adds a
+notice so that the user is made aware of that this assumption is being
+made. This should hopefully lead to them adding a <uartclk> option to
+their earlycon parameter.
+
+Booting with `console=uart,mmio32,0xfedc9000,115200n8`:
+[    0.000000] earlycon: uart: Unknown uartclk, assuming 1843200hz
+[    0.000000] earlycon: uart0 at MMIO32 0x00000000fedc9000 (options '115200n8')
 
 Signed-off-by: Raul E Rangel <rrangel@chromium.org>
 
 ---
 
- Documentation/admin-guide/kernel-parameters.txt | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ drivers/tty/serial/earlycon.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index bc1036e73bc0b4..cd3d44db60457d 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -788,20 +788,16 @@
- 			Documentation/networking/netconsole.rst for an
- 			alternative.
+diff --git a/drivers/tty/serial/earlycon.c b/drivers/tty/serial/earlycon.c
+index ab9af37f6cda35..5a8fe0cb3b1986 100644
+--- a/drivers/tty/serial/earlycon.c
++++ b/drivers/tty/serial/earlycon.c
+@@ -145,8 +145,12 @@ static int __init register_earlycon(char *buf, const struct earlycon_id *match)
+ 		buf = NULL;
  
--		uart[8250],io,<addr>[,options]
--		uart[8250],mmio,<addr>[,options]
--		uart[8250],mmio16,<addr>[,options]
--		uart[8250],mmio32,<addr>[,options]
-+		uart[8250],io,<addr>[,options[,uartclk]]
-+		uart[8250],mmio,<addr>[,options[,uartclk]]
-+		uart[8250],mmio16,<addr>[,options[,uartclk]]
-+		uart[8250],mmio32,<addr>[,options[,uartclk]]
- 		uart[8250],0x<addr>[,options]
- 			Start an early, polled-mode console on the 8250/16550
- 			UART at the specified I/O port or MMIO address,
- 			switching to the matching ttyS device later.
--			MMIO inter-register address stride is either 8-bit
--			(mmio), 16-bit (mmio16), or 32-bit (mmio32).
--			If none of [io|mmio|mmio16|mmio32], <addr> is assumed
--			to be equivalent to 'mmio'. 'options' are specified in
--			the same format described for ttyS above; if unspecified,
--			the h/w is not re-initialized.
-+
-+			See the documentation for earlycon=uart
+ 	spin_lock_init(&port->lock);
+-	if (!port->uartclk)
++	if (!port->uartclk) {
+ 		port->uartclk = BASE_BAUD * 16;
++		if (early_console_dev.baud)
++			pr_notice("%s: Unknown uartclk, assuming %dhz",
++				  match->name, port->uartclk);
++	}
+ 	if (port->mapbase)
+ 		port->membase = earlycon_map(port->mapbase, 64);
  
- 		hvc<n>	Use the hypervisor console device <n>. This is for
- 			both Xen and PowerPC hypervisors.
 -- 
 2.46.0.662.g92d0881bb0-goog
 
