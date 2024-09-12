@@ -1,84 +1,102 @@
-Return-Path: <linux-kernel+bounces-327165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16A1497715F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:20:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C26C8977162
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D464F283DC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:20:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FBD4B2586A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:20:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 527BB1C5787;
-	Thu, 12 Sep 2024 19:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E021C57B9;
+	Thu, 12 Sep 2024 19:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="H6ekai0d"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UyUIJvQ6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8CB1C0DFB;
-	Thu, 12 Sep 2024 19:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C271BF800;
+	Thu, 12 Sep 2024 19:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726168493; cv=none; b=jCdVnNWRyBADEMBMUXbfGWMizD4MrQC1Juqeo0P0khlVazBWRqUjhA2XU2i6xmmzu3gQBcqgMmk87FC66rO246+ugJwvJvI+L+xy9RH5gpDDXlSB/TdGPdtk/MxAEZaj8zOHE+7iMNa61gyQ666BZ5W2lmkQNP/7JNawgzGpQr4=
+	t=1726168531; cv=none; b=rxsMUJH4MRJwBA/sNwM1WEMNgMYXAAOV2KUHecv9WSLbNivzT1XXIQbFHT8Ljgvcatd/zIoZfFkNOoL+uW0+8xrfvKg0JcRzT1e9AXewx3XvmOajPtomtBK86S78FJi42eH9502/mqre1Oy29+xUYl/Q/JbJ4oApaL5091VHgyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726168493; c=relaxed/simple;
-	bh=wPY4AP8DwLB6OTSALMG4kFcvVAucDG8lugkbZ0LgPQs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=HRoPDfpCJMaf7FyM9NWa3hy4lhcHi4Jbui329H6LFM1FYPu44QWQZcs4yLEDkTb6HgWJ/rDO5h/XxEbh22/SvphMM8QShrmKNGsB+ipajIloGXc6nzP8gdmbkRv2BtpZ33D9QwQNaFxTV4oI38ojJi4ls33VEB2o1QcsdLWm0HM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=H6ekai0d; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B6D1BE0003;
-	Thu, 12 Sep 2024 19:14:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1726168490;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wPY4AP8DwLB6OTSALMG4kFcvVAucDG8lugkbZ0LgPQs=;
-	b=H6ekai0ddLoj8G/qRIlluOFjuB9XS+Rwj8m3t/rK3g3lOQ+c5QU+9ZBQioLkhX+RQyyta+
-	vpOGxsrtAsZ+1VfjsuQL9Pvk6FQHpLnOPQNXNOZu+rgypvBz1XeyjxwAyZp2VUqZCGH3FX
-	AfZDzBPh+I8b2wq0Tuw3ULihG6EhL6FG6byI+HayWr53+ep6V7GGytmt4ohrdSYxvdI46c
-	fss5ZsUdYHa9xxoAX0ZYTqQZ3ZM/hJRaDZ1DRZ5hJtcWyV/387+UJqxcU67QNWl+i2fuf1
-	rOhpwo7pOENPEim7ereSluWkjoKERM04QWRIhRU46iuGnjzhweIx6i/xWTjw2w==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
-Cc: Hugh Dickins <hughd@google.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
-  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org,  kernel-dev@igalia.com,  Daniel Rosenberg
- <drosen@google.com>,  smcv@collabora.com,  Christoph Hellwig <hch@lst.de>,
-  Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH v4 02/10] ext4: Use generic_ci_validate_strict_name helper
-In-Reply-To: <20240911144502.115260-3-andrealmeid@igalia.com>
- (=?utf-8?Q?=22Andr=C3=A9?=
-	Almeida"'s message of "Wed, 11 Sep 2024 11:44:54 -0300")
-References: <20240911144502.115260-1-andrealmeid@igalia.com>
-	<20240911144502.115260-3-andrealmeid@igalia.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
-Date: Thu, 12 Sep 2024 15:14:47 -0400
-Message-ID: <87frq4k7ko.fsf@mailhost.krisman.be>
+	s=arc-20240116; t=1726168531; c=relaxed/simple;
+	bh=i6kW9q1FHc0MK5mlEKOQt7m4/OzA6jKbkts9pxUqLvo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sA0ctSvLs9mwKuiaEckPCybEsjTgDX/jGcOh63mgmkVpv+T07D2BwJk6ifIueGYz6iqNoqAGsGzB6QJAIY4eOLA33pKfXxjIBEbUxgtjZKJQv56KXDBRRtLlNSB3UkcItL5/umgaO6wVtPRgoARHVgTVrTObXRoaOzBLGjnwU+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UyUIJvQ6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBC91C4CEC3;
+	Thu, 12 Sep 2024 19:15:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726168530;
+	bh=i6kW9q1FHc0MK5mlEKOQt7m4/OzA6jKbkts9pxUqLvo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UyUIJvQ6aut9qz0sLZEygKSScs314XKsCiaTQ7kDwXrbthFUD158wY8afRYBGwCEb
+	 DWD0lvtREkHJS7kIVFhO5ylH5XEWkomZWAsmF3wcX5q8tBzwdEdhJPjCa8+6cdzPTB
+	 5KXHFWFtg/OYm+6jt+Beh3vv7J+qgpy1mRxM7HHiaXUhWTjvZg8RkzuFemkOhe8yhl
+	 O8FbrkaF92slnDKAzEElH2nb+5W41aNqON4q3V1OjQRQfGrBxj7zGElA7z2dmU4J7T
+	 RDqEV1mGiVZuaSSpafXYymBCYkhq/UKB2YeZlUPz2YYZrdidy6oY4hJz+ziKnjeeWq
+	 zF82CGf9U1OIA==
+Date: Thu, 12 Sep 2024 16:15:25 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] perf vdso: Missed put on 32-bit dsos
+Message-ID: <ZuM9zc71XXXZ3eRZ@x1>
+References: <20240912182757.762369-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: gabriel@krisman.be
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912182757.762369-1-irogers@google.com>
 
-Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
+On Thu, Sep 12, 2024 at 11:27:57AM -0700, Ian Rogers wrote:
+> If the dso type doesn't match then NULL is returned but the dso should
+> be put first.
 
-> Use the helper function to check the requirements for casefold
-> directories using strict encoding.
+I guess we can add:
 
-Reviewed-by: Gabriel Krisman Bertazi <krisman@suse.de>
+Fixes: f649ed80f3cabbf1 ("perf dsos: Tidy reference counting and locking")
 
---=20
-Gabriel Krisman Bertazi
+?
+
+- Arnaldo
+ 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/util/vdso.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/vdso.c b/tools/perf/util/vdso.c
+> index 1b6f8f6db7aa..c12f5d8c4bf6 100644
+> --- a/tools/perf/util/vdso.c
+> +++ b/tools/perf/util/vdso.c
+> @@ -308,8 +308,10 @@ static struct dso *machine__find_vdso(struct machine *machine,
+>  		if (!dso) {
+>  			dso = dsos__find(&machine->dsos, DSO__NAME_VDSO,
+>  					 true);
+> -			if (dso && dso_type != dso__type(dso, machine))
+> +			if (dso && dso_type != dso__type(dso, machine)) {
+> +				dso__put(dso);
+>  				dso = NULL;
+> +			}
+>  		}
+>  		break;
+>  	case DSO__TYPE_X32BIT:
+> -- 
+> 2.46.0.662.g92d0881bb0-goog
 
