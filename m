@@ -1,114 +1,171 @@
-Return-Path: <linux-kernel+bounces-326518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02D00976954
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:43:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AF60976956
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:44:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 759A6B23A15
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:43:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 679C0B2453F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9598A19F42D;
-	Thu, 12 Sep 2024 12:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678C61A42DA;
+	Thu, 12 Sep 2024 12:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZSXlP5+v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mFfh1/y/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAC0119E962;
-	Thu, 12 Sep 2024 12:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9486619F42D;
+	Thu, 12 Sep 2024 12:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726144987; cv=none; b=pyHrzXqDRvSL4uii+uUjWaJHwixGL3PWt3J1e1BbecQhgZiaFOAg9bvngGR/iVwqd8HOqed0pKAyxKZ2zzgrMLpFih5k7uVUr8ZxJbCs/LYX0eodKH73mzHmHKMM8ymcjx/oMJ9CmE+HuOc48IvjWm0c1QmEwVHoQqFbbFixEl0=
+	t=1726145033; cv=none; b=C9B3cFGw8/vb15yYDFAlYza7uTIWZTg503Zufyx52zf6uudNbuSaK/hPEE5swEO0WEALk0iUAegSvZX3S7BYnTzrFa7izPI2XoDJb6xsJ8GrevU8TVn7q61Qm1q9BpFnSvwgnUkfC/z5vkwm+9ZC6j6BJcNEux/+qRtBEerM/RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726144987; c=relaxed/simple;
-	bh=VgxqEB5xRdGv/PMzmA6ig3YYUuVJHLkIf1/nT766Db8=;
+	s=arc-20240116; t=1726145033; c=relaxed/simple;
+	bh=IDkxlvm6XZtP/KDhyz89G+TMnQ4CIX8A9FuQEJL5VmU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q46CRKFHHmvpK1lpO+423uKdHrLO6/32VQkRv4PiZBqQ4xFKIvSxZ04m2OUQcu+32A2oncW9+nW6x41EoEWWDXI/zzUsKh2JjVGVez6EnEe1/2N74WmB/T6J391pIjBI0FSYydjF+S3juwUxgqnvTtb3kolqGIsUQYf6C5WfH3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZSXlP5+v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A94AC4CEC3;
-	Thu, 12 Sep 2024 12:43:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726144986;
-	bh=VgxqEB5xRdGv/PMzmA6ig3YYUuVJHLkIf1/nT766Db8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZSXlP5+vzgY4RfmG9bZ6o/uhf4j4Qcq6lOMdoEdFDOyaazqxqc83n6Hsp1ACDrugp
-	 oKZ6uDbAORvtCiSvHIyfX+0RZyenijyyk/dA4z8eNDQS3RzOmbo2oOeRMG9gCmaSE9
-	 8IAPSe3/9XKO+BWi0Q7snmY/e73iGv9oWjfKk6IzM6hC61MPS5wLNrZpGtulw6CGVG
-	 VUYlGiWdUHgyz72pwnCAim/1NZ+ztpWvIJABisyYuF529jEgstD80BTiYxtQarRxKP
-	 5Q9CBky1vszxnHeDbqZ+svV4zJkRIGzF4Q7Io3W0jlPW7TA/00Qd9I7DMHXQK5eQda
-	 92OOVMsgA7IAQ==
-Date: Thu, 12 Sep 2024 14:43:01 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel test robot <oliver.sang@intel.com>
-Subject: Re: [PATCH] timekeeping: move multigrain ctime floor handling into
- timekeeper
-Message-ID: <20240912-gaspreis-einmal-50609ecfcd2d@brauner>
-References: <20240911-mgtime-v1-1-e4aedf1d0d15@kernel.org>
- <20240912-korallen-rasant-d612bd138207@brauner>
- <8de7cfc4958a739f3ce9dd3699a1a53fbb9dd074.camel@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=u8ZF4SimLevwc4p0IG1tbcp8JUCRhRMejLxdA4pJvZrg7rwzjj+F+FA9jcwzCG+7npcacq5IT/9qvfJFV07irgT5AstgOGjFLusq3rLLMQr3SAiT8wb/OVSfu2raywGkeql9DuNSfNr9tKd95llC7hJAkUWaJ/z7vdIU8dGiVNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mFfh1/y/; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726145032; x=1757681032;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=IDkxlvm6XZtP/KDhyz89G+TMnQ4CIX8A9FuQEJL5VmU=;
+  b=mFfh1/y/ySrxEKXmtrlSFx10yGWWwDsU2IkAuM6BVNURPF6yRcFRwLPv
+   ExwgWAdMnFmzPaRpHEWe1InXa5+Rmzp7rPJCv0GdDhf/R6/AaxSbXzsdm
+   dNPDJujqrDghq9zhtBZ3GrEMCJdZl8heeguYvqt3KZY14h0sS0CwsMiHq
+   M6204FPIu6z16PIu0nXQ9zjhmMMIS60byVqsMDZbfkutfcOTxLf0ndyER
+   BnbqFo5uYCflZjK2s8eSB4YVM+MAAshdZKJyAfJSZg+nB9plVEoQeAlbK
+   tz7Y0jB69JAPx+ra02xeUw0peWWkvJiLv0jgPX5qiynGNvmku/x4udy5d
+   w==;
+X-CSE-ConnectionGUID: cZ0QDl8HQESlh+6a7tNdVQ==
+X-CSE-MsgGUID: 9y4KksxgQZO/9wqGB5cfCQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="25189029"
+X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
+   d="scan'208";a="25189029"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 05:43:51 -0700
+X-CSE-ConnectionGUID: op32tmxCSjatLMdfJRaPeQ==
+X-CSE-MsgGUID: QRSUhwtVTfGvAHGGi5e5Cg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
+   d="scan'208";a="67988731"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by orviesa006.jf.intel.com with SMTP; 12 Sep 2024 05:43:48 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Thu, 12 Sep 2024 15:43:46 +0300
+Date: Thu, 12 Sep 2024 15:43:46 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: "Christian A. Ehrhardt" <lk@c--e.de>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Anurag Bijea <icaliberdev@gmail.com>,
+	Christian Heusel <christian@heusel.eu>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Jameson Thies <jthies@google.com>,
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Subject: Re: [PATCH v5] usb: typec: ucsi: Fix busy loop on ASUS VivoBooks
+Message-ID: <ZuLiAsliEq66XjYP@kuha.fi.intel.com>
+References: <20240912074132.722855-1-lk@c--e.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8de7cfc4958a739f3ce9dd3699a1a53fbb9dd074.camel@kernel.org>
+In-Reply-To: <20240912074132.722855-1-lk@c--e.de>
 
-On Thu, Sep 12, 2024 at 08:39:32AM GMT, Jeff Layton wrote:
-> On Thu, 2024-09-12 at 14:31 +0200, Christian Brauner wrote:
-> > On Wed, Sep 11, 2024 at 08:56:56AM GMT, Jeff Layton wrote:
-> > > The kernel test robot reported a performance regression in some
-> > > will-it-scale tests due to the multigrain timestamp patches. The data
-> > > showed that coarse_ctime() was slowing down current_time(), which is
-> > > called frequently in the I/O path.
-> > > 
-> > > Add ktime_get_coarse_real_ts64_with_floor(), which returns either the
-> > > coarse time or the floor as a realtime value. This avoids some of the
-> > > conversion overhead of coarse_ctime(), and recovers some of the
-> > > performance in these tests.
-> > > 
-> > > The will-it-scale pipe1_threads microbenchmark shows these averages on
-> > > my test rig:
-> > > 
-> > > 	v6.11-rc7:			83830660 (baseline)
-> > > 	v6.11-rc7 + mgtime series:	77631748 (93% of baseline)
-> > > 	v6.11-rc7 + mgtime + this:	81620228 (97% of baseline)
-> > > 
-> > > Reported-by: kernel test robot <oliver.sang@intel.com>
-> > > Closes: https://lore.kernel.org/oe-lkp/202409091303.31b2b713-oliver.sang@intel.com
-> > > Suggested-by: Arnd Bergmann <arnd@kernel.org>
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > > ---
-> > > Arnd suggested moving this into the timekeeper when reviewing an earlier
-> > > version of this series, and that turns out to be better for performance.
-> > > 
-> > > I'm not sure how this should go in (if acceptable). The multigrain
-> > > timestamp patches that this would affect are in Christian's tree, so
-> > > that may be best if the timekeeper maintainers are OK with this
-> > > approach.
-> > 
-> > We will need this as otherwise we can't really merge the multigrain
-> > timestamp work with known performance regressions?
+On Thu, Sep 12, 2024 at 09:41:32AM +0200, Christian A. Ehrhardt wrote:
+> If the busy indicator is set, all other fields in CCI should be
+> clear according to the spec. However, some UCSI implementations do
+> not follow this rule and report bogus data in CCI along with the
+> busy indicator. Ignore the contents of CCI if the busy indicator is
+> set.
 > 
-> Yes, I think we'll need something here. Arnd suggested an alternative
-> way to do this that might be even better. I'm not 100% sure that it'll
-> work though since the approach is a bit different.
+> If a command timeout is hit it is possible that the EVENT_PENDING
+> bit is cleared while connector work is still scheduled which can
+> cause the EVENT_PENDING bit to go out of sync with scheduled connector
+> work. Check and set the EVENT_PENDING bit on entry to
+> ucsi_handle_connector_change() to fix this.
 > 
-> I'd still like to see this go in for v6.12, so what I'd probably prefer
-> is to take this patch initially (with the variable name change that
-> John suggested), and then we can work on the alternative approach in
-> the meantime
+> Finally, check UCSI_CCI_BUSY before the return code of ->sync_control.
+> This ensures that the command is cancelled even if ->sync_control
+> returns an error (most likely -ETIMEDOUT).
 > 
-> Would that be acceptable?
+> Reported-by: Anurag Bijea <icaliberdev@gmail.com>
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219108
+> Bisected-by: Christian Heusel <christian@heusel.eu>
+> Tested-by: Anurag Bijea <icaliberdev@gmail.com>
+> Fixes: de52aca4d9d5 ("usb: typec: ucsi: Never send a lone connector change ack")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Christian A. Ehrhardt <lk@c--e.de>
 
-It would be ok with me but we should get a nodd from the time keeper folks.
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+
+> ---
+>  V1 -> V2: Split out the ucsi_acpi.c part
+>  V2 -> V3: Dropped the ucsi_acpi.c part due to conflicts
+>  V3 -> V4: Additional fix for command cancelling
+>  V4 -> V5: Rebased onto usb-next
+> 
+>  drivers/usb/typec/ucsi/ucsi.c | 18 ++++++++++++------
+>  1 file changed, 12 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
+> index 35dce4057c25..e0f3925e401b 100644
+> --- a/drivers/usb/typec/ucsi/ucsi.c
+> +++ b/drivers/usb/typec/ucsi/ucsi.c
+> @@ -38,6 +38,10 @@
+>  
+>  void ucsi_notify_common(struct ucsi *ucsi, u32 cci)
+>  {
+> +	/* Ignore bogus data in CCI if busy indicator is set. */
+> +	if (cci & UCSI_CCI_BUSY)
+> +		return;
+> +
+>  	if (UCSI_CCI_CONNECTOR(cci))
+>  		ucsi_connector_change(ucsi, UCSI_CCI_CONNECTOR(cci));
+>  
+> @@ -103,15 +107,13 @@ static int ucsi_run_command(struct ucsi *ucsi, u64 command, u32 *cci,
+>  		return -EINVAL;
+>  
+>  	ret = ucsi->ops->sync_control(ucsi, command);
+> -	if (ret)
+> -		return ret;
+> -
+> -	ret = ucsi->ops->read_cci(ucsi, cci);
+> -	if (ret)
+> -		return ret;
+> +	if (ucsi->ops->read_cci(ucsi, cci))
+> +		return -EIO;
+>  
+>  	if (*cci & UCSI_CCI_BUSY)
+>  		return ucsi_run_command(ucsi, UCSI_CANCEL, cci, NULL, 0, false) ?: -EBUSY;
+> +	if (ret)
+> +		return ret;
+>  
+>  	if (!(*cci & UCSI_CCI_COMMAND_COMPLETE))
+>  		return -EIO;
+> @@ -1197,6 +1199,10 @@ static void ucsi_handle_connector_change(struct work_struct *work)
+>  
+>  	mutex_lock(&con->lock);
+>  
+> +	if (!test_and_set_bit(EVENT_PENDING, &ucsi->flags))
+> +		dev_err_once(ucsi->dev, "%s entered without EVENT_PENDING\n",
+> +			     __func__);
+> +
+>  	command = UCSI_GET_CONNECTOR_STATUS | UCSI_CONNECTOR_NUMBER(con->num);
+>  
+>  	ret = ucsi_send_command_common(ucsi, command, &con->status,
+> -- 
+> 2.43.0
+
+-- 
+heikki
 
