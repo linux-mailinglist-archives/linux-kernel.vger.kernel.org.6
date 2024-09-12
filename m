@@ -1,311 +1,161 @@
-Return-Path: <linux-kernel+bounces-326180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D21F976465
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:25:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 101DE976469
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:26:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E15E5B24AF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:25:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42B911C23243
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15BD61917C0;
-	Thu, 12 Sep 2024 08:25:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D860191499;
+	Thu, 12 Sep 2024 08:26:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LZ1Ju8vj"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="tYPBDwtJ"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970DC339BC
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D199189525
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726129524; cv=none; b=PcQenM9rAmLonGVzmb43cSVbg1w0iN25kkeX4o00+yMtSi1OPOofTRAaTziBrUEhc6/DqD+RW9aiL97hsW9zC84RM4WyWAb5oJR5ksnyJLDFiZ8tx9LFabf0YbI0V2IciMvEEzZ6XE1Fx6tkgRkgpIweCurUJLpHfxJDy9oClOU=
+	t=1726129596; cv=none; b=b+IEM6nDACzF4xaSHEXeeS5jfs84TXCbf7edDFQRMgRUlOO90zZU+xoit6eCz8DF9zPctkAWIUiSra9KjOMF/bMweWOMjU9o9TdcPLhFKX9NInqz3iuLRVbie9eygK8egf5V8XWqrxJ6gU4nRf7rG2MCkch5v2IqQoffnuvUdgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726129524; c=relaxed/simple;
-	bh=MKy/9tghYKa19Qryp4SxU/qnpAH3k2uZkEgWRU4oCAQ=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=h9tR1R5ddbG3cJdOcEtMeghXtYojAJb+mD7iTMj1PtqWymJko8Ynd20q92ZjyMW0oE/+cqjODiwL/Ia/hg74C2pYr8BglHPlPbc6uZX/rjPVCjx6TcPeVCNtvokiEZlNec2B/9BcA9ERKQee+styoxeE4eA4EqFVBfqJ7UdkbXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LZ1Ju8vj; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240912082518euoutp0156ac513117e504155470a9f19ed66cec~0cablhX8M0229102291euoutp01N
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:25:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240912082518euoutp0156ac513117e504155470a9f19ed66cec~0cablhX8M0229102291euoutp01N
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1726129518;
-	bh=5gP0HL0ZgmHvRmsDVrWRCzhrW97FfQ2q5HSxCEk8Vm4=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=LZ1Ju8vj+oJiQR1lnPrjx094zhnvn4+WBbb4sYjjfM7LcJ3VFBqvgcwtHeMjgvIRK
-	 XkGYEJqgXaQcB34jREHQA+hjp119+SuMM+u5AA2Y69Nu6x2PsPMr9WGVfBmDnmREMu
-	 DPuGxiJehWeOJXxqnWHmSbW8QOAksMXb2Hl479Ao=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240912082518eucas1p2835505abbd20f8d69c1616fabac4e682~0cabSDvUH2861728617eucas1p2p;
-	Thu, 12 Sep 2024 08:25:18 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id 51.D0.09620.E65A2E66; Thu, 12
-	Sep 2024 09:25:18 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240912082517eucas1p243ac7848411b0a8a202783941d2b6246~0caas5QRj2863828638eucas1p2m;
-	Thu, 12 Sep 2024 08:25:17 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240912082517eusmtrp16dc3541ee8fa3482f29f1980be1c0f3b~0caar86__3085630856eusmtrp15;
-	Thu, 12 Sep 2024 08:25:17 +0000 (GMT)
-X-AuditID: cbfec7f5-d31ff70000002594-de-66e2a56e46ff
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 72.38.19096.D65A2E66; Thu, 12
-	Sep 2024 09:25:17 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240912082517eusmtip19a1b6a9358973d02c3b417768b52464c~0caaXtpUR1562015620eusmtip1H;
-	Thu, 12 Sep 2024 08:25:17 +0000 (GMT)
-Received: from localhost (106.110.32.44) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Thu, 12 Sep 2024 09:25:16 +0100
-Date: Thu, 12 Sep 2024 10:25:12 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-CC: David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Jason
-	Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, Klaus Jensen
-	<its@irrelevant.dk>, <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
-Subject: Re: [PATCH 5/6] iommu: init pasid array while doing domain_replace
- and iopf is active
-Message-ID: <20240912082512.ydzmmlwpvkcukbt2@joelS2.panther.com>
+	s=arc-20240116; t=1726129596; c=relaxed/simple;
+	bh=o/ln/aXyOD2d1hjJn0jEzWVVubVN3NXyarbBzfDg7GU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fE7zDdzk/vSqV6Sh2QznnecHNOnBbzf2sd2GtjcnwuLERcA3eqc8my4J4A6ybXWu0FjVDZzb7gIYU/POq3PsLVfvcxuEHnrp8ZDeUek0vNGyTCDSbqB8C44lxc4qBHQBCfMiSAtWGAO0OKj0Tp7m1CVkiCUUslXRGQ1tVfFKUaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=tYPBDwtJ; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.205] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 48C8Pu1f2814428
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 12 Sep 2024 01:25:56 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 48C8Pu1f2814428
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024081601; t=1726129557;
+	bh=0yim0rQSzhYo8awdQQw/2+HjwgI94XKe+wa2uSleBWo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tYPBDwtJq5PRjiiuznjlqN4YGJ3mLm2BTFXXKo62NEYgyHVhsvhg6fGSN1qTiuJfT
+	 assCNF3DvlxkEF+uZ0h8nB+qyzWjvsokMDIL4H6oMqlvJZkN2LcbCOgxCr6iY6nZdA
+	 uDkn6uTCwUX7Sm3GkaAD6m+/rxDwJq+LcBG2eU9llR7MDK1cGIz5/AzsfKvi7zRLHF
+	 84kl3EmFbvi89IzYpEHYqDnMutokN8QFBNyaGOZeb6ueVsGe2wrIXpJAhWyym8aWaI
+	 qWPtg7X97PzBybntI0nz/X7Z68LbYXMht2pU2acmuUkfI/1NsbQNz4HdFL/3232tlw
+	 8JOqtHCx0l83A==
+Message-ID: <e9376635-f578-41df-9e14-e4cc6def848a@zytor.com>
+Date: Thu, 12 Sep 2024 01:25:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <b7a68539-3a3c-4cd9-922b-bfb9db8e7e0b@linux.intel.com>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKKsWRmVeSWpSXmKPExsWy7djP87p5Sx+lGUydIWixeeJWNouJKycz
-	W/z6YmGx/+A3VouZM04wWnTO3sBusfTtVnaLy7vmsFkc/PCE1aLljqkDl8eTg/OYPNbMW8Po
-	sXmFlsfiPS+ZPM7tOM/usWlVJ5vHvJOBHi82z2T0+LxJzmPr59ssAVxRXDYpqTmZZalF+nYJ
-	XBlXFu9kLVimV/HrtVcD41S1LkZODgkBE4n/vU+Zuhi5OIQEVjBKPJr5nhHC+cIoMeHlFxYI
-	5zOjxLOlF5lgWrbteMAOkVjOKLFkyXM2uKqPG5cwQzibGSVaPiwFGsbBwSKgKrF/iyBIN5uA
-	jsT5N3eYQWwRAXWJpsa9YM3MAhuZJOb+OwyWEBZIkJj59wwTSC+vgIPE6+NWIGFeAUGJkzOf
-	sIDYzEBzFuz+xAZSwiwgLbH8HweIySngLLHsTBrEnYoSXxffY4GwayVObbkF9qaEwHxOifv3
-	ZzFDJFwkdizZywphC0u8Or6FHcKWkTg9uYcFomEyo8T+fx/YIZzVjBLLGr9Cg8JaouXKE6gO
-	R4m+z91gN0sI8EnceCsIcSefxKRt05khwrwSHW1CENVqEqvvvWGZwKg8C8lns5B8NgvhswWM
-	zKsYxVNLi3PTU4uN81LL9YoTc4tL89L1kvNzNzECU9bpf8e/7mBc8eqj3iFGJg7GQ4wSHMxK
-	IryT2B6lCfGmJFZWpRblxxeV5qQWH2KU5mBREudVTZFPFRJITyxJzU5NLUgtgskycXBKNTB5
-	JDxUWH98onCp+f//PV++xLwIfvrxw78XX82vzAnNnsj1q0XD/43M0r6qb9u4Dj++YBSVz5Mx
-	89D2yzvOPRS1vbTFcuHLHr7tK9l3vr2l9zBbvULtsHa29deuX1YN16/NuVB3Pd1aXzNQU2Ma
-	x4Mz4UoPpm2QXrPtzP3ff0NvR7OUd+tmv8iTrt8tEfR7M9vHMEerFmf29uarUzN4s8691hK+
-	9CLlQ436fyW7pkd5s3mjk87u9++8YW0q098bEKlaEiTrx5jywsPoRGKR5NJv+bUMTFNYWcTW
-	qO3k2s6dFKJ7T6i2452gcEf//TtecUzbgzfNzWnk59kg+Hzy5NBFrHcVtDbeT158Qt+weosS
-	S3FGoqEWc1FxIgBv+ZNiyAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrIIsWRmVeSWpSXmKPExsVy+t/xu7q5Sx+lGZy/qGGxeeJWNouJKycz
-	W/z6YmGx/+A3VouZM04wWnTO3sBusfTtVnaLy7vmsFkc/PCE1aLljqkDl8eTg/OYPNbMW8Po
-	sXmFlsfiPS+ZPM7tOM/usWlVJ5vHvJOBHi82z2T0+LxJzmPr59ssAVxRejZF+aUlqQoZ+cUl
-	tkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehlXFu9kLVimV/HrtVcD41S1
-	LkZODgkBE4ltOx6wdzFycQgJLGWUmLTlKStEQkZi45erULawxJ9rXWwQRR8ZJVa8/MIM4Wxm
-	lHj/6glLFyMHB4uAqsT+LYIgDWwCOhLn39xhBrFFBNQlmhr3gjUzC2xkkrhxrokJJCEskCAx
-	8+8ZJpBeXgEHidfHrSBmfmKSuP70DRtIDa+AoMTJmSDzOYGadSQW7P7EBlLPLCAtsfwfB4jJ
-	KeAssexMGsSdihJfF99jgbBrJT7/fcY4gVF4FpJBs5AMmoUwaAEj8ypGkdTS4tz03GIjveLE
-	3OLSvHS95PzcTYzAuN127OeWHYwrX33UO8TIxMF4iFGCg1lJhHcS26M0Id6UxMqq1KL8+KLS
-	nNTiQ4ymwICYyCwlmpwPTBx5JfGGZgamhiZmlgamlmbGSuK8bFfOpwkJpCeWpGanphakFsH0
-	MXFwSjUwuQe7PM++dvGKycdFBtGd93yeBP+MD2jfnG4w1+NMfUj5iqcTLHa+Sbdql7DbenTZ
-	3Smfk7b6ukbcqJDapsK1PsFG32q1rVNJYnJPzocEfSuRrybLVZbtY17x5RujWuvJl/tPMf8S
-	sZsvuuK91iROH68VPQuS9NXadz5bG9CmtoJrLdfCEBOBX+tut2/fm2Pw1WrzNs87SZ4Lv4u9
-	mv9l49HOixPzfTznP+C405i5T3nzj9cvdip2Ft7t3/gq2syYPWHbbT/Ovr1/8qU//H//PHiK
-	2bVS+Zvczw/nHPK9xfo3YLHAqd/nf+dW7w8Or2tMi3Do2PU1uM+mNm1r+O107zRdH1nuWc/v
-	uF0PVeO+qMRSnJFoqMVcVJwIACsqfYFkAwAA
-X-CMS-MailID: 20240912082517eucas1p243ac7848411b0a8a202783941d2b6246
-X-Msg-Generator: CA
-X-RootMTR: 20240905033408eucas1p2ad508d4f3377f4daa38f28bf6c3d1118
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240905033408eucas1p2ad508d4f3377f4daa38f28bf6c3d1118
-References: <20240904-jag-iopfv8-v1-0-e3549920adf3@samsung.com>
-	<20240904-jag-iopfv8-v1-5-e3549920adf3@samsung.com>
-	<CGME20240905033408eucas1p2ad508d4f3377f4daa38f28bf6c3d1118@eucas1p2.samsung.com>
-	<c2e765a8-d935-42db-bd22-c12e7960f2f0@linux.intel.com>
-	<20240911105657.iesajd4d5va3wc5y@joelS2.panther.com>
-	<b7a68539-3a3c-4cd9-922b-bfb9db8e7e0b@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] x86/fred: Clear the WFE bit in missing-ENDBRANCH
+ #CP
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+        hpa@zytor.com, andrew.cooper3@citrix.com
+References: <20240911231929.2632698-1-xin@zytor.com>
+ <20240912075714.GT4723@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <20240912075714.GT4723@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 12, 2024 at 12:21:53PM +0800, Baolu Lu wrote:
-> On 9/11/24 6:56 PM, Joel Granados wrote:
-> > On Thu, Sep 05, 2024 at 11:30:05AM +0800, Baolu Lu wrote:
-> >> On 9/4/24 9:17 PM, Joel Granados via B4 Relay wrote:
-> >>> From: Joel Granados<j.granados@samsung.com>
-> >>>
-> >>> iommu_report_device_fault expects a pasid array to have an
-> >>> iommu_attach_handle when a fault is detected.
-> >> The iommu_attach_handle is expected only when an iopf-capable domain is
-> >> attached to the device or PASID. The iommu_report_device_fault() treats
-> >> it as a fault when a fault occurs, but no iopf-capable domain is
-> >> attached.
-> >>
-> >>> Add this handle when the
-> >>> replacing hwpt has a valid iommufd fault object. Remove it when we
-> >>> release ownership of the group.
-> >> The iommu_attach_handle is managed by the caller (iommufd here for
-> >> example). Therefore, before iommu_attach_handle tries to attach a domain
-> >> to an iopf-capable device or pasid, it should allocate the handle and
-> >> pass it to the domain attachment interfaces.
-> > What do you mean here?
-> > 1. Do you want to move the iommufd_init_pasid_array call up to
-> > iommufd_hwpt_replace_device?
-> > 2. Do you want to move it further up to iommufd_device_do_replace?
+On 9/12/2024 12:57 AM, Peter Zijlstra wrote:
+> On Wed, Sep 11, 2024 at 04:19:29PM -0700, Xin Li (Intel) wrote:
 > 
-> I'm having trouble understanding the need for iommu_init_pasid_array()
-> in the core.
+>> +static void ibt_clear_fred_wfe(struct pt_regs *regs)
+>> +{
+>> +	if (cpu_feature_enabled(X86_FEATURE_FRED))
+>> +		regs->fred_cs.wfe = 0;
+>> +}
+>> +
+>>   static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
+>>   {
+>>   	if ((error_code & CP_EC) != CP_ENDBR) {
+>> @@ -90,6 +107,7 @@ static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
+>>   
+>>   	if (unlikely(regs->ip == (unsigned long)&ibt_selftest_noendbr)) {
+>>   		regs->ax = 0;
+>> +		ibt_clear_fred_wfe(regs);
+>>   		return;
+>>   	}
+>>   
+>> @@ -97,6 +115,7 @@ static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
+>>   	if (!ibt_fatal) {
+>>   		printk(KERN_DEFAULT CUT_HERE);
+>>   		__warn(__FILE__, __LINE__, (void *)regs->ip, TAINT_WARN, regs, NULL);
+>> +		ibt_clear_fred_wfe(regs);
+>>   		return;
+>>   	}
+>>   	BUG();
+> 
+> So, why not clear the bit the moment we know this is CP_ENDBR?
+> 
+> In the fatal case, we'll hit that BUG and die anyway, nobody cares about
+> the tracker state in that case.
 
-The iommu_init_pasid_array function is there because I needed to access
-struct iommu_group->pasid_array. The struct declaration for iommu_group
-is in the core (drivers/iommu/iommu.c), so I thought that the function
-to modify a member of that struct would go in core also.
+I did think about it, but preferred to leave it as in BUG().
 
-To move all the logic into iommufd_init_pasid_array in iommufd, we would
-need to move the iommu_group struct (include/linux/iommu.h?). Here is a
-proposed patch that would make that happen (and removes
-iommu_init_pasid_array). What do you think?
+But as you have asked, will change unless someone else disagrees with a
+good reason :)
 
+> 
+> diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
+> index d2c732a34e5d..fde4bdd25a73 100644
+> --- a/arch/x86/kernel/cet.c
+> +++ b/arch/x86/kernel/cet.c
+> @@ -88,6 +88,8 @@ static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
+>   		return;
+>   	}
+>   
+> +	ibt_clear_fred_wfe(regs);
+> +
+>   	if (unlikely(regs->ip == (unsigned long)&ibt_selftest_noendbr)) {
+>   		regs->ax = 0;
+>   		return;
+> 
 
-diff --git i/drivers/iommu/iommu-priv.h w/drivers/iommu/iommu-priv.h
-index 493e501badc7..de5b54eaa8bf 100644
---- i/drivers/iommu/iommu-priv.h
-+++ w/drivers/iommu/iommu-priv.h
-@@ -38,9 +38,6 @@ void iommu_device_unregister_bus(struct iommu_device *iommu,
- struct iommu_attach_handle *iommu_attach_handle_get(struct iommu_group *group,
- 						    ioasid_t pasid,
- 						    unsigned int type);
--int iommu_init_pasid_array(struct iommu_domain *domain,
--			   struct iommu_group *group,
--			   struct iommu_attach_handle *handle);
- int iommu_attach_group_handle(struct iommu_domain *domain,
- 			      struct iommu_group *group,
- 			      struct iommu_attach_handle *handle);
-diff --git i/drivers/iommu/iommu.c w/drivers/iommu/iommu.c
-index 64ae1cf571aa..83bc0bfd7bb0 100644
---- i/drivers/iommu/iommu.c
-+++ w/drivers/iommu/iommu.c
-@@ -44,24 +44,6 @@ static unsigned int iommu_def_domain_type __read_mostly;
- static bool iommu_dma_strict __read_mostly = IS_ENABLED(CONFIG_IOMMU_DEFAULT_DMA_STRICT);
- static u32 iommu_cmd_line __read_mostly;
- 
--struct iommu_group {
--	struct kobject kobj;
--	struct kobject *devices_kobj;
--	struct list_head devices;
--	struct xarray pasid_array;
--	struct mutex mutex;
--	void *iommu_data;
--	void (*iommu_data_release)(void *iommu_data);
--	char *name;
--	int id;
--	struct iommu_domain *default_domain;
--	struct iommu_domain *blocking_domain;
--	struct iommu_domain *domain;
--	struct list_head entry;
--	unsigned int owner_cnt;
--	void *owner;
--};
--
- struct group_device {
- 	struct list_head list;
- 	struct device *dev;
-@@ -3498,33 +3480,6 @@ iommu_attach_handle_get(struct iommu_group *group, ioasid_t pasid, unsigned int
- }
- EXPORT_SYMBOL_NS_GPL(iommu_attach_handle_get, IOMMUFD_INTERNAL);
- 
--/**
-- * iommu_init_pasid_array - Initialize pasid array in the domain group
-- *
-- * Returns 0 on success. Error code on failure
-- *
-- * An IOMMU_NO_PASID element is *NOT* replaced if there is one already there.
-- */
--int iommu_init_pasid_array(struct iommu_domain *domain,
--			   struct iommu_group *group,
--			   struct iommu_attach_handle *handle)
--{
--	int ret;
--
--	if (handle)
--		handle->domain = domain;
--
--	mutex_lock(&group->mutex);
--	ret = xa_insert(&group->pasid_array, IOMMU_NO_PASID, handle, GFP_KERNEL);
--	mutex_unlock(&group->mutex);
--
--	if (ret == -EBUSY)
--		ret = 0;
--
--	return ret;
--}
--EXPORT_SYMBOL_NS_GPL(iommu_init_pasid_array, IOMMUFD_INTERNAL);
--
- /**
-  * iommu_attach_group_handle - Attach an IOMMU domain to an IOMMU group
-  * @domain: IOMMU domain to attach
-diff --git i/drivers/iommu/iommufd/fault.c w/drivers/iommu/iommufd/fault.c
-index ea7f1bf64892..51cb70465b87 100644
---- i/drivers/iommu/iommufd/fault.c
-+++ w/drivers/iommu/iommufd/fault.c
-@@ -189,8 +189,15 @@ static int iommufd_init_pasid_array(struct iommu_domain *domain,
- 	if (!handle)
- 		return -ENOMEM;
- 	handle->idev = idev;
-+	handle->handle.domain = domain;
-+
-+	mutex_lock(&group->mutex);
-+	ret = xa_insert(&group->pasid_array, IOMMU_NO_PASID, handle, GFP_KERNEL);
-+	mutex_unlock(&group->mutex);
-+
-+	if (ret == -EBUSY)
-+		ret = 0;
- 
--	ret = iommu_init_pasid_array(domain, group, &handle->handle);
- 	if (ret)
- 		kfree(handle);
- 
-diff --git i/include/linux/iommu.h w/include/linux/iommu.h
-index bd722f473635..c34aa737aeb2 100644
---- i/include/linux/iommu.h
-+++ w/include/linux/iommu.h
-@@ -31,8 +31,25 @@
-  */
- #define IOMMU_PRIV	(1 << 5)
- 
-+struct iommu_group {
-+	struct kobject kobj;
-+	struct kobject *devices_kobj;
-+	struct list_head devices;
-+	struct xarray pasid_array;
-+	struct mutex mutex;
-+	void *iommu_data;
-+	void (*iommu_data_release)(void *iommu_data);
-+	char *name;
-+	int id;
-+	struct iommu_domain *default_domain;
-+	struct iommu_domain *blocking_domain;
-+	struct iommu_domain *domain;
-+	struct list_head entry;
-+	unsigned int owner_cnt;
-+	void *owner;
-+};
-+
- struct iommu_ops;
--struct iommu_group;
- struct bus_type;
- struct device;
- struct iommu_domain;
-
-
-
--- 
-
-Joel Granados
 
