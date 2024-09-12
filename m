@@ -1,118 +1,112 @@
-Return-Path: <linux-kernel+bounces-325815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F077975E92
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 03:33:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 125EC975E94
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 03:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 918911C22786
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:33:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F7ECB22250
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0D72BB09;
-	Thu, 12 Sep 2024 01:33:30 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6862A1D6;
+	Thu, 12 Sep 2024 01:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JHF/XXra"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684115684;
-	Thu, 12 Sep 2024 01:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4AB3D64;
+	Thu, 12 Sep 2024 01:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726104810; cv=none; b=cfq75SxBPEPCpJWLSqjq8Ar8UHLUbp3/PN4DdRGLpiYGBIGeiNWmIenfmwrMZA/yH2xWkBxNpgwgJVtTxqjHAQXNzjUWSxSzH3VSDhHzOR6h2c8QyJItEdnYSPDQimfSQYlX73KGDTiCH3tql4qR1+bn0IIvtHRH0TfuUN8l/9E=
+	t=1726105125; cv=none; b=cQngmYKQCYIgcvpIiesXa+YxylmrHDlvYmuyUkXzV8Qj9y0Y6dXSzjOFDXnx4W1x9XQIXOuf4ad8QWTw31D1Ew2wVY3Fy7ecLY/DJBE8UAOcyV5rX97EFBRXsvzeAVbQmMgzX+O0DdsxqVbrrfO38c0R12/jHUsSvSVHBOe9MiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726104810; c=relaxed/simple;
-	bh=jHmJWTrEqPsqScYuqYapWqJNq9LsR2bNW6C0fjjRqJc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XZiFcrNAoJPSOVzs6Na6QIbvqenvelelvOaodDyC7BVFOp2wLZOB92etf0y2eZPdVCsOBUpe/Y8z4p/fC1KjgFIzMjCcQj7Z0wz7xsU0A6LqaIDe8W73DtBcuCR9JuxZwvE2nE5BGzTnewCnXoDSKR7ODO+jMXTHBcaEPP10Eu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4X40Ls0Tsyz4f3kvP;
-	Thu, 12 Sep 2024 09:33:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 555221A172E;
-	Thu, 12 Sep 2024 09:33:25 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP4 (Coremail) with SMTP id gCh0CgDnHMnjROJmEMNLBA--.2713S2;
-	Thu, 12 Sep 2024 09:33:25 +0800 (CST)
-Message-ID: <83cea8c6-d2f8-42f2-990e-80412ebf296e@huaweicloud.com>
-Date: Thu, 12 Sep 2024 09:33:23 +0800
+	s=arc-20240116; t=1726105125; c=relaxed/simple;
+	bh=b3jY11fyglhhGGVft3uT9dWXgiMVMg28tki55Q4JNNw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lqCm/hT8lhPzJU2cfuXEo8RF4XfQ2hsn79qoYp8vAo4f/icmc/gosaDp8YvSq2SuSYTY2zyEuFVMtcQoYx6An2DWDqs1yCns72GmLf4hM/mDRhZh8M6Qvy4cHggGEbqzgIbWyDZbDFWwd1Bm1yGRmbmghuJKvrZvzslM87kgczU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JHF/XXra; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7d50532d335so244630a12.1;
+        Wed, 11 Sep 2024 18:38:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726105123; x=1726709923; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CI73LHVrHO8ZosFntwKU/shmWq1q4tipQPf9Cc1aomI=;
+        b=JHF/XXrapa2LWjHM8NyHOTH4ZP4XXYl9emDQQ4HdolUcGM5yDwpDes9b1vOz7WDIAY
+         xyp4301WJrz+TaqAJgdCq5mdl18jkN9puFgJI87Q4yV7+4FQHgYvZZxuxErl27VgY9/p
+         ch9/Pq4LxGouuDxY/IsAJhtocOnzbLV7xUJRH4LmMEU6b1liikR53nZaG/5wcScG16Le
+         cM8S/j3uqM3f27/jDDqz8XXn+N+x6+eU1QGRUCr7tiRH0RyOUaE3cSM2V0XnmEPEwpX4
+         j6WIUPEu1Bzhyk2xx5azqua/4u973mWUT/M9BEvJxfCusbZIXGXmk9j99emZZZcRxlnF
+         8BfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726105123; x=1726709923;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CI73LHVrHO8ZosFntwKU/shmWq1q4tipQPf9Cc1aomI=;
+        b=oY/Ph9V2R+0B+q5ZTaYgEVZ78J9ggYgqNBNEJVqMpJGX5h+IRsy2aPpNFoD6rYhsue
+         iCPel2A1XhBGkalMpSHL3DP9r5KUYxQ8MNPXIusVfjwjdVTkk5G/6rQhvcYiCfVXxk4B
+         0iyKz1oIVj7lUWGSXsg1UVKuF283NyM4oEe4+g6dwc7a4VFs+87or5xNKjth9OpPVmfD
+         cmBdrGzb8ZPGqI/StGUzfu6PlfAehbZrumYs14TEfjfO0PL1sQpkCGQfL8Pscrf6LwfA
+         4hECUrJwR3/vxCCghitSZnpwl2AxuH/ri4blaAgJCYXAqLsrpRjMdJ8a0B4rSjJfDaB+
+         CFAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOOQedFH96eOKxd6ncH40JVnB1vrOsm3Hb+p1BHxmyol91NTgkfdiGOQx2tI4owtUYHvJV1mGjP7p7Ew==@vger.kernel.org, AJvYcCUV77yGcVuLe6ndYcVw2pkPGIwYEaQ74XdD9uwp0WqzlZ/r2ikYsVhJ5vYKyufSuJYTj3IeWd5k9/AhRURl@vger.kernel.org
+X-Gm-Message-State: AOJu0YwElfDQb1lOru1m5KuU81cCUdbMhzHPazvvLFRznMFT2GjQOWhQ
+	IcON5I35lnaTWNaa+4nsMJxNU8TvKiG5bgDP+mOt4/78cr9/3JHIADMRSii9oClZY92jY75DDQC
+	zabFdRGX90TLt8ZLw2+rWa8vbkXrSd1QpxUApBg==
+X-Google-Smtp-Source: AGHT+IHoLTqhsbCq4mLfUg4DaQaWrqPGNO4amFDEOjdmJ/JbcYai+vsyXTUN4SjcSkbz0S4zt/2GNnYotNBSqpjlxu8=
+X-Received: by 2002:a17:90a:17e3:b0:2d8:a731:7db0 with SMTP id
+ 98e67ed59e1d1-2dba00681a7mr1195367a91.35.1726105122908; Wed, 11 Sep 2024
+ 18:38:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] cgroup: fix deadlock caused by cgroup_mutex and
- cpu_hotplug_lock
-To: Tejun Heo <tj@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>
-Cc: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Chen Ridong <chenridong@huawei.com>, martin.lau@linux.dev, ast@kernel.org,
- daniel@iogearbox.net, andrii@kernel.org, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@google.com, haoluo@google.com, jolsa@kernel.org,
- lizefan.x@bytedance.com, hannes@cmpxchg.org, bpf@vger.kernel.org,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240817093334.6062-1-chenridong@huawei.com>
- <20240817093334.6062-2-chenridong@huawei.com>
- <kz6e3oadkmrl7elk6z765t2hgbcqbd2fxvb2673vbjflbjxqck@suy4p2mm7dvw>
- <07501c67-3b18-48e3-8929-e773d8d6920f@huaweicloud.com>
- <ZuC0A98pxYc3TODM@google.com> <ZuC3femqBNufgX1D@slm.duckdns.org>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <ZuC3femqBNufgX1D@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgDnHMnjROJmEMNLBA--.2713S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7GFWDJry3tw4DGw4UXryUtrb_yoWDurb_W3
-	92vr1DC3yUGFW5uw1qkFZ3WFWxXrZY9r1DX34DJwnrWw1Yyr43CryDXFy3X3Z8WFWrJrnI
-	gF90q34qvasrZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbx8YFVCjjxCrM7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_JFC_Wr1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AK
-	xVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_Wryl
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jIks
-	gUUUUU=
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+References: <20240818072729.33511-1-vishnuocv@gmail.com> <CABxCQKtfFttYVpfZE0jsjt=xgO4EJ0vNeb4Wf-==xOr3XnKnxQ@mail.gmail.com>
+ <nycvar.YFH.7.76.2409111418330.31206@cbobk.fhfr.pm>
+In-Reply-To: <nycvar.YFH.7.76.2409111418330.31206@cbobk.fhfr.pm>
+From: Vishnu Sankar <vishnuocv@gmail.com>
+Date: Thu, 12 Sep 2024 10:38:05 +0900
+Message-ID: <CABxCQKu57UY9q5z8a_1Adb8pyGQwMrFYv0+vRL==YTo-v-fOzQ@mail.gmail.com>
+Subject: Re: [PATCH] Adding Support for Thinkpad X12 Gen 2 Kbd Portfolio with
+ 0x61AE as PID
+To: Jiri Kosina <jikos@kernel.org>
+Cc: bentiss@kernel.org, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mpearson-lenovo@squebb.ca, vsankar@lenovo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Thank you for the acceptance.
+
+On Wed, Sep 11, 2024 at 9:18=E2=80=AFPM Jiri Kosina <jikos@kernel.org> wrot=
+e:
+>
+> On Tue, 10 Sep 2024, Vishnu Sankar wrote:
+>
+> > Do we have any feedback or comments about this patch?
+>
+> Sorry, this slipped in between cracks.
+>
+> Now applied, thanks.
+>
+> --
+> Jiri Kosina
+> SUSE Labs
+>
 
 
+--=20
 
-On 2024/9/11 5:17, Tejun Heo wrote:
-> On Tue, Sep 10, 2024 at 09:02:59PM +0000, Roman Gushchin wrote:
-> ...
->>>> By that reasoning any holder of cgroup_mutex on system_wq makes system
->>>> susceptible to a deadlock (in presence of cpu_hotplug_lock waiting
->>>> writers + cpuset operations). And the two work items must meet in same
->>>> worker's processing hence probability is low (zero?) with less than
->>>> WQ_DFL_ACTIVE items.
->>
->> Right, I'm on the same page. Should we document then somewhere that
->> the cgroup mutex can't be locked from a system wq context?
->>
->> I think thus will also make the Fixes tag more meaningful.
-> 
-> I think that's completely fine. What's not fine is saturating system_wq.
-> Anything which creates a large number of concurrent work items should be
-> using its own workqueue. If anything, workqueue needs to add a warning for
-> saturation conditions and who are the offenders.
-> 
-> Thanks.
-> 
+Regards,
 
-I will add a patch do document that.
-Should we modify WQ_DFL_ACTIVE(256 now)? Maybe 1024 is acceptable?
-
-Best regards,
-Ridong
-
+      Vishnu Sankar
+     +817015150407 (Japan)
 
