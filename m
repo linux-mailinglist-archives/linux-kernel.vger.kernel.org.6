@@ -1,155 +1,138 @@
-Return-Path: <linux-kernel+bounces-326763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 673BC976CA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:50:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D23A976CAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0CB5B25379
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:50:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B314281110
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DD831B3F3A;
-	Thu, 12 Sep 2024 14:50:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB80F1B9839;
+	Thu, 12 Sep 2024 14:50:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ak6oMl/v"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WMypD5tI"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A491B1509;
-	Thu, 12 Sep 2024 14:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01391B6541;
+	Thu, 12 Sep 2024 14:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726152610; cv=none; b=VDos/bLQnRK1Meh5w/KRh7GnKpSk25noThd5exs+ekdG7qfYGuwWU8JKGBLdCvkDLSExJG8n5uGs6YX0+nlHxFdV4Qff6p6HH+NYm8/KHmhYUAEmth7UaN5bciJLT/l0+gYubY1FQodu4mh51mx5feWboC6kMrM2NE0hG+8FD2s=
+	t=1726152648; cv=none; b=Ls+hFxubGu3Rmhx38f9LqnZW/1MSZSVtgJlRxfDy8G5DUvD1UCSeBJZexfaWf0GGH/e6zu5/T9z5o3i2AgggfwFevS45EUSLNrtyN0BEgIivEsTd8wsqydUzDy87YBAP5GJYuXrYXMV9g5ASFDknSyc1xPpcPgyizmJ4mH5JLEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726152610; c=relaxed/simple;
-	bh=+BgwN9MX/60QTjD/VU3ATqHjFLnavWPc01LGHnKtKoI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iLNugDwzRJQVH/L7JR5DQQmc3aX0XRBv14uvcjaQhvEKTchovAFdsw6K7X1gSEvPDuN2s/6UFyjQ0tug+wleFT9O5IEkGG3lsaupcOIQMN3DZ1Kqar5YOKpWZUpb5GPmFrsJp/gWhBRySR66Aoh8izfLfUSGuuBX3dqd3HKzsjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ak6oMl/v; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726152609; x=1757688609;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=+BgwN9MX/60QTjD/VU3ATqHjFLnavWPc01LGHnKtKoI=;
-  b=Ak6oMl/vsLp0gPZCD/bPIMcct635j+MVdpMBM6vxzPVZGBjz0uAK9sub
-   Bh/pSYwhqDpgx7xP/YPQAK6HVG0/scRPYdsBpRCK0k1tbYiLNzVe4SCOF
-   jiDK3Y9v1FhDITjPx6+OTCa1kn56Oc4mfjeoJqvupEsZRwHL5DKekNw9q
-   ihUuQLpWFHkgEImFmofs59MTJucRes6+jyMQZLU+XZzRt2CcFfvNbyu65
-   4H5XqP6wmgg1tmQfV3g7Q9K11rqEFU3cBweLftLL9Q6KqZL73ZWkozfV1
-   dDSuYqIXYoJ/mn8nt0JO2UpiBciHsZuEFcBxxCBsUMWluYeH/pTmx1JPB
-   g==;
-X-CSE-ConnectionGUID: bQKdu7ZhSlKkuA20qhIMdQ==
-X-CSE-MsgGUID: vftxy1OWSPqLU4WS5NSN5Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="47526685"
-X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
-   d="scan'208";a="47526685"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 07:50:08 -0700
-X-CSE-ConnectionGUID: zW8AD8+SRZGJXfRd47DaFQ==
-X-CSE-MsgGUID: WFazzlTnRPGa3QkjIV4lJA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
-   d="scan'208";a="68038468"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by orviesa006.jf.intel.com with ESMTP; 12 Sep 2024 07:50:09 -0700
-From: kan.liang@linux.intel.com
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org
-Cc: tglx@linutronix.de,
-	hpa@zytor.com,
-	sfr@canb.auug.org.au,
-	steven.price@arm.com,
-	Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH] perf: Fix topology_sibling_cpumask check warning on ARM
-Date: Thu, 12 Sep 2024 07:50:25 -0700
-Message-Id: <20240912145025.1574448-1-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.38.1
+	s=arc-20240116; t=1726152648; c=relaxed/simple;
+	bh=ayH+utA3EDdkSrZkZF7fyyNHjV7s38pbI+F2Y0qcPcg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CHmnz0DSoUkVzd+R77R3qA7v67N6khPm+66EfRC83ocV1KvqbtU//iFegsILG/BT4m/XQKSpDVJer6X6cg6gJUXfhwOFnaKZrX69XU/MGeqdKsOG3dGc18T0cb7vDTrnEN/Oopuxyvbq5sLSkS7VsrPJvgqCb/TiwylC98e/9Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WMypD5tI; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2d8abac30ddso883670a91.0;
+        Thu, 12 Sep 2024 07:50:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726152646; x=1726757446; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=L/1O0y+ZcovBucCacZFimGopfgJW1W3kqGSazoLLM6M=;
+        b=WMypD5tIjLay3GelBlWTePeOOzIjjPqODk+JPF66k0Lx3owPwkoOfnnOwnS+CceqBd
+         vFJiD7zFk7I6tbfMxq2nMJbi6ImScTWUHxVUOQd4YVVYHZNFgh9zVbpRTuosr1Ocflm4
+         qufz+lD7bw6TXfdJ/SLvY60yfwKN9MeZXvpb9wuRkIHPVc7UOa6Asvifd9GYTQZ82Js/
+         tkkaIkndiWlbFJ+PiywNoFOJU4MKNM2u1YnO8fGOx4jiYLW4gBC2bCOQ38Ud6iGv1Fcd
+         AtkOg2+gX/Fu1uEw7K6a3p4lBkug4FzAwpAZW3MDszGtqHMwnJ+P3Fh7jcdyPQuBueso
+         PDyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726152646; x=1726757446;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L/1O0y+ZcovBucCacZFimGopfgJW1W3kqGSazoLLM6M=;
+        b=i5hvSOL5wjvl2AZb3b6ODHMSTd+rJ0HVcbOI7ECcyzwuKuJdn1k6cFuPepeh8GJ/hG
+         AJAMXHrWYOxdVKpN5vN4is/d2GhQsuro8hw+MmJ3CS47T6/uRlh424ulv0FolXM+ifc3
+         OYUAXC7F17RJhZ/NsJ4aeOvDVcqb4pZFca8hCgQnf1v0xxoeG9XII4KOUYfIoUqCEEML
+         0vguiiuYQwlPE0kjcKG6E6abNvbdM3vPr7dwXY+ip4JXci416lvMMR9eyjwGoJb/QzFm
+         M5LBcL5aYuno1yBTOpMi+tGwbhUki6cvgc1ZWRzxhDHY7JiAQk83mk3LEUvWDSaLDPgA
+         hQhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7V2WU1SgWdb24lHbNUDLSar5tYnEYlDu8O7e/M/BPNWtIYqnByjk7l7en/TjD5LVwbBXHuNKLb91z@vger.kernel.org, AJvYcCVvwLxgxrvGIaEFD92XUIZj/oPLauL0Ut8reyaBRbvQnv/KL4MosOTtoeHdq4t3tIBA9Q/ERsOU/tIjIsg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAOUCylKfVNm75IQt967Hk0L7ak1DCZskZUrmjJDkEgo8HfbYu
+	R9G/bRTAnszXlqQCiZiAsKGJWCaG5nEnjxxNhV9SS/wHKImaWJtz
+X-Google-Smtp-Source: AGHT+IFjcRQsP50gGkz963RmfFpuknI+lDTIV0qWQ9uuKZptDHcTYTXmrlSqWc2zir8P9uH9bkiq2g==
+X-Received: by 2002:a17:90a:9308:b0:2da:d766:1925 with SMTP id 98e67ed59e1d1-2dba007f632mr3535363a91.37.1726152645657;
+        Thu, 12 Sep 2024 07:50:45 -0700 (PDT)
+Received: from embed-PC.myguest.virtualbox.org ([106.222.232.184])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc040397sm12678925a91.25.2024.09.12.07.50.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 07:50:44 -0700 (PDT)
+Date: Thu, 12 Sep 2024 20:20:34 +0530
+From: Abhishek Tamboli <abhishektamboli9@gmail.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: stern@rowland.harvard.edu, usb-storage@lists.one-eyed-alien.net,
+	linux-usb@vger.kernel.org, skhan@linuxfoundation.org,
+	dan.carpenter@linaro.org, rbmarliere@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: storage: ene_ub6250: Fix right shift warnings
+Message-ID: <ZuL/um0Pcm8o3Gox@embed-PC.myguest.virtualbox.org>
+References: <e72cc56a-3066-4cb8-848d-bfe27a48c095@suse.com>
+ <ZqkpOQIjcBSAg8rC@embed-PC.myguest.virtualbox.org>
+ <5d7870b0-6b63-430b-8885-2509b33dc78a@suse.com>
+ <804a6d40-73a4-4af6-944b-95e9324d7429@rowland.harvard.edu>
+ <Zqp8vbbIC8E/XrQY@embed-PC.myguest.virtualbox.org>
+ <b35a344a-018b-44ae-975a-7767a3d5b6ec@rowland.harvard.edu>
+ <f5d4711f-9b4a-457c-b68c-c2e9aefbe4a8@suse.com>
+ <890e0ed1-25c3-414e-9e8e-f5925fe8c778@rowland.harvard.edu>
+ <ZuI5nptdk+BcXh+R@embed-PC.myguest.virtualbox.org>
+ <2024091228-bootie-name-4867@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024091228-bootie-name-4867@gregkh>
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Thu, Sep 12, 2024 at 07:06:45AM +0200, Greg KH wrote:
+> On Thu, Sep 12, 2024 at 06:15:18AM +0530, Abhishek Tamboli wrote:
+> > Hi Alan,
+> > On Thu, Aug 01, 2024 at 10:51:35AM -0400, Alan Stern wrote:
+> > > On Thu, Aug 01, 2024 at 08:54:18AM +0200, 'Oliver Neukum' via USB Mass Storage on Linux wrote:
+> > > > 
+> > > > 
+> > > > On 31.07.24 20:19, Alan Stern wrote:
+> > > > > On Wed, Jul 31, 2024 at 11:34:45PM +0530, Abhishek Tamboli wrote:
+> > > > > > On Wed, Jul 31, 2024 at 10:04:33AM -0400, Alan Stern wrote:
+> > > > 
+> > > > Hi,
+> > > > 
+> > > > I should make my reasoning clearer.
+> > > > 
+> > > > > > > Replacing the variable with a constant won't make much difference.  The
+> > > > > > > compiler will realize that bl_len has a constant value and will generate
+> > > > > > > appropriate code anyway.  I think just changing the type is a fine fix.
+> > > > 
+> > > > While that is absolutely true, it kind of removes the reason for the patch
+> > > > in the first place. The code gcc generates is unlikely to be changed.
+> > > > 
+> > > > We are reacting to a warning an automatic tool generates. That is a good thing.
+> > > > We should have clean code. The question is how we react to such a report.
+> > > > It just seems to me that if we fix such a warning, the code should really be clean
+> > > > after that. Just doing the minimum that will make the checker shut up is
+> > > > no good.
+> > > 
+> > > With this fix, the code seems clean to me.  It may not be as short as 
+> > > possible, but it's clean.
+> > 
+> > I noticed that the patch has not yet been pulled into linux-next, 
+> > even though it has been acked-by you for over a month. Is there 
+> > anything else I need to do on my end?
+> 
+> Yes, please resend it, it is long gone from my review queue, sorry.
+No problem, I will resend it.
 
-The below warning is triggered when building with arm
-multi_v7_defconfig.
-
-kernel/events/core.c: In function 'perf_event_setup_cpumask':
-kernel/events/core.c:14012:13: warning: the comparison will always
-evaluate as 'true' for the address of 'thread_sibling' will never be
-NULL [-Waddress]
-14012 |         if (!topology_sibling_cpumask(cpu)) {
-
-The perf_event_init_cpu() may be invoked at the early boot stage, while
-the topology_*_cpumask hasn't been initialized yet. The check is to
-specially handle the case, and initialize the perf_online_<domain>_masks
-on the boot CPU.
-X86 uses a per-cpu cpumask pointer, which could be NULL at the early
-boot stage. However, ARM uses a global variable, which never be NULL.
-
-Use perf_online_mask as an indicator instead. Only initialize the
-perf_online_<domain>_masks when perf_online_mask is empty.
-
-Fix a typo as well.
-
-Fixes: 4ba4f1afb6a9 ("perf: Generic hotplug support for a PMU with a scope")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/lkml/20240911153854.240bbc1f@canb.auug.org.au/
-Reported-by: Steven Price <steven.price@arm.com>
-Closes: https://lore.kernel.org/lkml/1835eb6d-3e05-47f3-9eae-507ce165c3bf@arm.com/
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- kernel/events/core.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 7a028474caef..20e97c1aa4d6 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -13954,21 +13954,19 @@ static void perf_event_setup_cpumask(unsigned int cpu)
- 	struct cpumask *pmu_cpumask;
- 	unsigned int scope;
- 
--	cpumask_set_cpu(cpu, perf_online_mask);
--
- 	/*
- 	 * Early boot stage, the cpumask hasn't been set yet.
- 	 * The perf_online_<domain>_masks includes the first CPU of each domain.
--	 * Always uncondifionally set the boot CPU for the perf_online_<domain>_masks.
-+	 * Always unconditionally set the boot CPU for the perf_online_<domain>_masks.
- 	 */
--	if (!topology_sibling_cpumask(cpu)) {
-+	if (cpumask_empty(perf_online_mask)) {
- 		for (scope = PERF_PMU_SCOPE_NONE + 1; scope < PERF_PMU_MAX_SCOPE; scope++) {
- 			pmu_cpumask = perf_scope_cpumask(scope);
- 			if (WARN_ON_ONCE(!pmu_cpumask))
- 				continue;
- 			cpumask_set_cpu(cpu, pmu_cpumask);
- 		}
--		return;
-+		goto end;
- 	}
- 
- 	for (scope = PERF_PMU_SCOPE_NONE + 1; scope < PERF_PMU_MAX_SCOPE; scope++) {
-@@ -13983,6 +13981,8 @@ static void perf_event_setup_cpumask(unsigned int cpu)
- 		    cpumask_any_and(pmu_cpumask, cpumask) >= nr_cpu_ids)
- 			cpumask_set_cpu(cpu, pmu_cpumask);
- 	}
-+end:
-+	cpumask_set_cpu(cpu, perf_online_mask);
- }
- 
- int perf_event_init_cpu(unsigned int cpu)
--- 
-2.38.1
-
+Thanks,
+Abhishek
 
