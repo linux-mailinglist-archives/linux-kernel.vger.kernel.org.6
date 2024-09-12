@@ -1,76 +1,39 @@
-Return-Path: <linux-kernel+bounces-326251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B6DF976580
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:26:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E0CA976583
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:28:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18A891F27D05
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:26:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 977042867AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:28:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632E119C57E;
-	Thu, 12 Sep 2024 09:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dSYHG4wG"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4E7919341C
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9577D19C562;
+	Thu, 12 Sep 2024 09:28:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2AD1190063;
+	Thu, 12 Sep 2024 09:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726133207; cv=none; b=VnA9MCbOh1IQXImF4NHOAudQEussk7ndMnQmqcEGqPHqSuV1MAaa1pgv6YWmSrv2jKr4k3dDARz+1r1l+xNqRCPQaQ2602SGfePpRmTuc6nX0Bz2AtebTQeqZHubLF42P0cPQZKk64xJbiqvKYkJutG0agQIlp4PzZI3/Wtz6yM=
+	t=1726133285; cv=none; b=LupWoU3tUgLOAgzMN+JeauHo+iNK3nmKo31BDsXkVJS2e3WO5v0JDA4nDrtxvQlgLULefmP0p0D7pBELrlTV91uFsBdTXzeiIFMHobOApj8pwLnhRVvVAeqSW2B+TyIuJBn390ZNPKRC4B3qADuff6YlBfgq0xaTkt5ShFJQVgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726133207; c=relaxed/simple;
-	bh=p7Jh2lUNcJKRMJOe/H+uSUDeDw6CZg7Esbe+YpuKkas=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=JMo/FAEkVHt/9N3+OOugIIMHC+iUtN1DV4i3y3PlFXJoyngRhZLYZJbh7V7sKCNKBISNn02puzDBCI6KKgZh8s3bnEvBXaV+OjtF3Lwz939CPsOuKEl70WiVzmxZYU056IIAijseDr6PA42A8gMvwRpnsFodPFk+wjautHPVrtg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dSYHG4wG; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cb8dac900so6391915e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 02:26:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726133204; x=1726738004; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/uRShjiG4yggmkzU8PcqDWZaN4MiVvMygjJPwQCLJlQ=;
-        b=dSYHG4wGpsXfDZJoUiAtcA95uQvzLarGSZ/WYjbUvjkX83rHg1QeP4VkcPutXEw0/Y
-         ywhy/9jBAnEN1Kw2WsS29QnNgWCYk9OCHuMzL0hLGL515+R31D9i7nO/YaVIWbwQt0zi
-         596iPbl8LfuMgVH3yDDrZQifpu7TuM8E0XQJ7AhKkGMJJ1e8A6Pfh8xlJzWQy19hWETb
-         ldZdTzarxe3lgnPfZujNg7pKF66HDXVxJxi9UR4p+1XiXHbIzJe18T6D6Hvg0cD8F/Sl
-         vLf31LWFIt33hSsJoylFnUlpUHbNQBx0XkgqXtMqi5gSKKN8Tnrn3J7eMDbfbiLONi5+
-         Tufw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726133204; x=1726738004;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/uRShjiG4yggmkzU8PcqDWZaN4MiVvMygjJPwQCLJlQ=;
-        b=sL9UTNrtu7363rGOIHqQFG49GnkraqVIC8Hf4K6bmuB/R3Sg8I3cF+KGOg3bcObYJ5
-         WYGcnDay8/0d9XhS96wf4Hr+1BSx0zSy6uUKrSWfMfZGxPM06Y7bxncdVCf1bK03n5sx
-         LmVyeldImK7nzsNW5h2DA4ySlW4ROIXrlQr0r5wS0+BqH1kTKS5SzAVdvr5bC5rYiDAw
-         Zs5lXCfXnsrEtiTrEykKNaMT910j4OQ0blm/qxKOEhsML4SirS74zyXKZq1RF3x1NezV
-         qWijJWlDN10vglw6xC3BVR6i0b8FrxDyJfsrzC76RayGrP5FX5HR9cfPKpm8vZDEvABg
-         dYDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWSrGlQ1nuPnKPlIR8p6I9Ki4q4NH40zXsNKZwIv2gRl2FE+AagbSu5QttXQxK6txDgiiqWvM/Qif+8SDs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt0yKEh5GVUuEjMN52tChCacRQZTwobK+SXLewRhu1H+1yFMxg
-	5U4jBrXP3hSshZxibW0px0O3E3GDLP0BNRYvcqEDp3l9P/esxIt0aSqQN1dNCtMAbImUYHEE3AB
-	5
-X-Google-Smtp-Source: AGHT+IGH+u+aLztbk+Cab3S2ln2z2Tfx1XqtBVLcdLhlsQ/ZJ/HNq5/ylhTEEgTeESqGC2kj06Bhew==
-X-Received: by 2002:a05:600c:5249:b0:42c:d74b:eb26 with SMTP id 5b1f17b1804b1-42cdb5486e9mr18231925e9.21.1726133203625;
-        Thu, 12 Sep 2024 02:26:43 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:1e79:4ce1:c7be:8add? ([2a01:e0a:982:cbb0:1e79:4ce1:c7be:8add])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cb0642f99sm165276565e9.40.2024.09.12.02.26.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Sep 2024 02:26:43 -0700 (PDT)
-Message-ID: <2781e0a7-5ad5-4d93-bbca-55729cc4fe13@linaro.org>
-Date: Thu, 12 Sep 2024 11:26:42 +0200
+	s=arc-20240116; t=1726133285; c=relaxed/simple;
+	bh=EPXa/NnVK8uQjh00WPL84+pNBcw20vQC/zILNvMMWEQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UXHjEpVSaoU93TE9F3a2iW+CPitMWXMv07fjuIsbBqiTFpdVzJWuEbKsWZMQrAvOIc/fQEUkE6f8XjZx1j1GH1jmc9levIitwEHRYzPMYSaocEC+YPcdKh/w97CXVb7nOyLOSyci/4sFJ9a9DUDAAtTqSewrB8A1tLHHdhk5veQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 750F2DA7;
+	Thu, 12 Sep 2024 02:28:31 -0700 (PDT)
+Received: from [10.1.34.27] (e122027.cambridge.arm.com [10.1.34.27])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A43B23F64C;
+	Thu, 12 Sep 2024 02:27:58 -0700 (PDT)
+Message-ID: <1e3bf62e-87cb-4ac0-a97e-48eb392b95c9@arm.com>
+Date: Thu, 12 Sep 2024 10:27:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,93 +41,175 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2 0/3] amlogic SoC's power-domains fixes
-To: George Stark <gnstark@salutedevices.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, kernel@salutedevices.com
-References: <20240710223214.2348418-1-gnstark@salutedevices.com>
- <26ab17bb-1b2e-4144-8a34-696a92328f52@salutedevices.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <26ab17bb-1b2e-4144-8a34-696a92328f52@salutedevices.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v4 07/43] arm64: RME: Check for RME support at KVM init
+To: Gavin Shan <gshan@redhat.com>, kvm@vger.kernel.org, kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun <alpergun@google.com>
+References: <20240821153844.60084-1-steven.price@arm.com>
+ <20240821153844.60084-8-steven.price@arm.com>
+ <8e17105a-8732-46df-8f3e-01a168558231@redhat.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <8e17105a-8732-46df-8f3e-01a168558231@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi,
+Hi Gavin,
 
-On 11/09/2024 23:56, George Stark wrote:
-> Hello Neil
+On 12/09/2024 09:49, Gavin Shan wrote:
+> On 8/22/24 1:38 AM, Steven Price wrote:
+>> Query the RMI version number and check if it is a compatible version. A
+>> static key is also provided to signal that a supported RMM is available.
+>>
+>> Functions are provided to query if a VM or VCPU is a realm (or rec)
+>> which currently will always return false.
+>>
+>> Signed-off-by: Steven Price <steven.price@arm.com>
+>> ---
+>> Changes since v2:
+>>   * Drop return value from kvm_init_rme(), it was always 0.
+>>   * Rely on the RMM return value to identify whether the RSI ABI is
+>>     compatible.
+>> ---
+>>   arch/arm64/include/asm/kvm_emulate.h | 17 +++++++++
+>>   arch/arm64/include/asm/kvm_host.h    |  4 ++
+>>   arch/arm64/include/asm/kvm_rme.h     | 56 ++++++++++++++++++++++++++++
+>>   arch/arm64/include/asm/virt.h        |  1 +
+>>   arch/arm64/kvm/Makefile              |  3 +-
+>>   arch/arm64/kvm/arm.c                 |  6 +++
+>>   arch/arm64/kvm/rme.c                 | 50 +++++++++++++++++++++++++
+>>   7 files changed, 136 insertions(+), 1 deletion(-)
+>>   create mode 100644 arch/arm64/include/asm/kvm_rme.h
+>>   create mode 100644 arch/arm64/kvm/rme.c
+>>
 > 
-> Please take a look at this series. It's 2 months already since ack
-
-I'll take patch 3 after patch 2 is applied on thermal tree.
-
-Daniel could you take patch 2 ?
-
-Thanks,
-Neil
-
+> [...]
 > 
-> On 7/11/24 01:32, George Stark wrote:
->> Here's some fixes to the bindings and device tree related to Amlogic A1 SoC.
->> The SoC provides dedicated power domain for for almost all periphery.
->>
->> Changes in v2:
->>    dt-bindings: spi: amlogic,a1-spifc: make power-domains required
->>      - drop the patch
->>    dt-bindings: thermal: amlogic,thermal: add optional power-domains
->>      - drop required conditional
->>      - rewrite commit message
->>    dt-bindings: i2c: amlogic,meson6-i2c: add optional power-domains
->>      - add RvB: Neil Armstrong <neil.armstrong@linaro.org>
->>      - add RvB: Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
->>    arm64: dts: meson: a1: bind power domain to temperature sensor
->>      - add RvB: Neil Armstrong <neil.armstrong@linaro.org>
->>    previous version [1]
->>
->> [1] https://lore.kernel.org/lkml/20240708194808.1819185-3-gnstark@salutedevices.com/T/#m398c283b369108c5c557e68b7a1ada9abf3e5cba
->>
->> George Stark (3):
->>    dt-bindings: i2c: amlogic,meson6-i2c: add optional power-domains
->>    dt-bindings: thermal: amlogic,thermal: add optional power-domains
->>    arm64: dts: meson: a1: bind power domain to temperature sensor
->>
->>   Documentation/devicetree/bindings/i2c/amlogic,meson6-i2c.yaml  | 3 +++
->>   Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml | 3 +++
->>   arch/arm64/boot/dts/amlogic/meson-a1.dtsi                      | 1 +
->>   3 files changed, 7 insertions(+)
->>
->> -- 
->> 2.25.1
->>
+>> diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
+>> new file mode 100644
+>> index 000000000000..418685fbf6ed
+>> --- /dev/null
+>> +++ b/arch/arm64/kvm/rme.c
+>> @@ -0,0 +1,50 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2023 ARM Ltd.
+>> + */
+>> +
+>> +#include <linux/kvm_host.h>
+>> +
+>> +#include <asm/rmi_cmds.h>
+>> +#include <asm/virt.h>
+>> +
+>> +static int rmi_check_version(void)
+>> +{
+>> +    struct arm_smccc_res res;
+>> +    int version_major, version_minor;
+>> +    unsigned long host_version = RMI_ABI_VERSION(RMI_ABI_MAJOR_VERSION,
+>> +                             RMI_ABI_MINOR_VERSION);
+>> +
+>> +    arm_smccc_1_1_invoke(SMC_RMI_VERSION, host_version, &res);
+>> +
+>> +    if (res.a0 == SMCCC_RET_NOT_SUPPORTED)
+>> +        return -ENXIO;
+>> +
+>> +    version_major = RMI_ABI_VERSION_GET_MAJOR(res.a1);
+>> +    version_minor = RMI_ABI_VERSION_GET_MINOR(res.a1);
+>> +
+>> +    if (res.a0 != RMI_SUCCESS) {
+>> +        kvm_err("Unsupported RMI ABI (v%d.%d) host supports v%d.%d\n",
+>> +            version_major, version_minor,
+>> +            RMI_ABI_MAJOR_VERSION,
+>> +            RMI_ABI_MINOR_VERSION);
+> 
+> This message is perhaps something like below since a range of versions
+> can be
+> supported by one particular RMM release.
+> 
+>     kvm_err("Unsupported RMI ABI v%d.%d. Host supports v%ld.%ld -
+> v%ld.%ld\n",
+>             RMI_ABI_MAJOR_VERSION, RMI_ABI_MINOR_VERSION,
+>             RMI_ABI_VERSION_GET_MAJOR(res.a1),
+> RMI_ABI_VERSION_GET_MINOR(res.a1),
+>             RMI_ABI_VERSION_GET_MAJOR(res.a2),
+> RMI_ABI_VERSION_GET_MINOR(res.a2));
+> 
+>> +        return -ENXIO;
+>> +    }
+>> +
+>> +    kvm_info("RMI ABI version %d.%d\n", version_major, version_minor);
+>> +
+> 
+> We probably need to print the requested version, instead of the lower
+> implemented
+> version, if I'm correct. At present, both of them have been fixed to
+> v1.0 and we
+> don't have a problem though.
+
+The RSI_VERSION command is somewhat complex. The RMM returns both a
+"higher revision" and a "lower revision". The higher revision is the
+highest interface revision supported by the RMM - and not especially
+useful at least for the moment when Linux is only aiming for v1.0. So
+we're currently just reporting the "lower revision" in the outputs.
+
+There are three possibilities explained in the spec:
+
+a) The RMM is compatible (status code is RSI_SUCCESS). From the spec
+"The lower revision is equal to the requested revision". So this last
+print will indeed output the requested revision.
+
+b) The RMM doesn't support the requested revision, it supports an older
+revision. In this case "The lower revision is the highest interface
+revision which is both less than the requested revision and
+supported by the RMM". Of course when we're requesting v1.0 this
+situation should never occur, but generally we'd expect to negotiate the
+lower revision if possible so this is the useful information to output.
+
+c) The RMM does not support the requested revision, it supports a newer
+revision. From the spec "The lower revision is equal to the higher
+revision". So there's no point outputting both.
+
+So situation (b) is the only case where the higher revision is
+interesting. But it's only useful in a situation like:
+
+ * Linux supports v1.1 and v2.0 (and maybe v1.0).
+ * Linux prefers v1.1 over v2.0 (and v2.0 over v1.0).
+ * Linux therefore requests v1.1.
+ * The RMM supports v1.0 and v2.0 (but not v1.1) and so returns failure.
+ * lower revision: v1.0
+ * higher revision: v2.0
+
+Linux can then use the higher revision field to detect that it can try
+again with v2.0.
+
+My expectation is that newer revisions will be preferred and so Linux
+will always start by requesting the newest revision it supports (so
+"higher revision" will be irrelevant). But it's there so we can support
+a scenario like above.
+
+We could output the higher revision just for information, a form of
+"hey, your RMM is newer than Linux" - but I'm not sure I see the point.
+
+Steve
+
+>         kvm_info("RMI ABI version v%d.%d\n", RMI_ABI_MAJOR_VERSION,
+> RMI_ABI_MINOR_VERSION);
+> 
+>> +    return 0;
+>> +}
+>> +
+> 
+> Thanks,
+> Gavin
 > 
 
 
