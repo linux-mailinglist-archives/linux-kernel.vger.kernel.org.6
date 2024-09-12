@@ -1,172 +1,286 @@
-Return-Path: <linux-kernel+bounces-327252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 042969772DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:47:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F6D09772E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:47:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 367D21C23F93
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:47:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F188D28605E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDFCE1C174B;
-	Thu, 12 Sep 2024 20:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F141C172E;
+	Thu, 12 Sep 2024 20:47:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2eiThzkk"
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tkrEAY8k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00621C0DEB
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F269A1C1AC5
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726174056; cv=none; b=DmwbTLm+mkjrInG3rNvgUd3C17wTHUC7UeMrL132mmuZmh4Z48u662yOEpKSr1Ifbxg7+0SZXU3VTK0oXoSVcJLa1W7GTQYZbTbeuTOW2MljIc+7gDKnOnb03zOmKrHRPkBcy3jvW/hnzJ3jbTDMWfwanzUDdg602vs6Kitn4vw=
+	t=1726174060; cv=none; b=CSXVqGBFiFf/lPX2HbWrCQbtD6gYiNU9Vq9XtXprScvNwgigbrev08OyJaboX5kznTkrYLKf9tIfaWezR305xNZeh22Ff7qPhsPAZ55IXSvXUQYaVE/Pp2w+GcU5oDUkM/OpOuJ2pCJ0pcJdZ8VzgZ3jLtBqypZVXIyDPcMNmmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726174056; c=relaxed/simple;
-	bh=YVOONdyMDfAAPT3E8i8vp3i+ah2xetTTBd9LCjlO3Ko=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iWQQLjFEJDOcTwcA4TYIaMhXqBmRs1FhTlgmu0Wc5iiOqpveArMdXyyWQ0F0Sz6c3Pb2UqHrgs6hXTmHc4TDhJfVo4b8z1I+3PqLnmvZMxp2hkl4tJ2L/8VmFwtSMMh+ChI6dYNF0h7TaNoCreGlxmpJ1d7PK9FJSA/q6ZH/Vsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2eiThzkk; arc=none smtp.client-ip=209.85.217.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-49bcb3d0d6fso395684137.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:47:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726174053; x=1726778853; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EW6ORuO6UAIknL/dRfg0azJ4PmYS1WR3P3nm1fuxNAU=;
-        b=2eiThzkkVdTBfRG2fQ4tQhgYOyjOkxV6cQc4kxjoeWiIW84RHisbJWR21QsqCU5z1S
-         x7ySv3GdC5aBq7qccu4AXKD+ArIYXi4dU5Eyh+s43lMn2j5kiwnEJsUtN9ady+QOJDKR
-         Bm5RH/9mOQT+w/cNif+u/NZc7b6s3A2dsZ2kKwOscfLTmtYoUMaAnhq2NBiGlLX5gCNH
-         4ZoheI1yfgcmaprwyNITmst1SP3O8bU4CttVBuhMMi1zG4zRZ5Kdv5hAHe2oGq1/6Dhp
-         VMCizoduj8H47z1QH4NOYfEsoHLXYpO7Zmdp5yCqqzXi7au8fqIRz0zN1EWGj7YXi6gy
-         Mx0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726174053; x=1726778853;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EW6ORuO6UAIknL/dRfg0azJ4PmYS1WR3P3nm1fuxNAU=;
-        b=lOAwMLJY0nAkZrUKsnE4kEdhKYHdGf9eSthiey6BEQH+ruuuIVKDVKyTi2n5d/KaWA
-         FdOP6mBE/kFX8dZfLWuWwfu+U6w0sAYgo66tT/CC6x/IW+d2UtKn75eIPnp9b6NeGAP0
-         Gw31xoqdFXhcX1zUR7CXp79dW4RHcdwtRuF2XRCpqms8ZixtoO2ugRArt5vPdPK3segH
-         2mJ/7EBuyVcUlFUVhAwokqKl0VAc1ycGEB2IcV1b9FTCS0RMrSIdbYBlY5yhNbSEW4OB
-         DzpFeXUsjwd8CZEx/hITFfHQXJNTkXAzwtCykhmYXT1OWSsYQsRiXrpoySr+k0BUum9Z
-         l5Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCXVcKE0IozDFtpO7/6KjQqncmTAejgSK5ninDxfq19vrBXgFnC3Dl/taJXV3l0qoSw8olUkXVaokBt/ndE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNMM87BHidE6nYgK2UIXfa49TN4M4nnKefiABZK7EMn6cD+Jyt
-	qeZQAWnmKhXZaBTgNgRFkr3hz6rcJRyI9ucfCOy8tLX2SD9X+3v01EIuCc8nn7MOMRVE1CEbvAj
-	62E37hYqyRSyhp1qAfpud2XevXWSyR9aa4ZXw
-X-Google-Smtp-Source: AGHT+IENltP/J2FRcSH0t6JFPlpXTtj8oHiZ0wN117RfOO9nTGm+9hN4pJU4dEgwVrAW+FqPGfO3010PigbLkApwA3E=
-X-Received: by 2002:a05:6102:c92:b0:49b:eae3:bdae with SMTP id
- ada2fe7eead31-49d414806a4mr3292598137.9.1726174053304; Thu, 12 Sep 2024
- 13:47:33 -0700 (PDT)
+	s=arc-20240116; t=1726174060; c=relaxed/simple;
+	bh=ZtSD5K0e6Z+ns0W+5JedcbhZtsHEZvKpK6AXhvJswYs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LpoKW8chCRJeDJx3oWRVKtuACiEaD1fAY5dh0SKMIwnuca2OPVx1NyfZeLz8VcI0+w9G36R+Y313mJT7HJYp9QtadwQkd6qdUqv3gxWOuBZ2F2bGqrKLkZh7qjra2te3IxnTpiYJiZDtUlOGXiyqIv4Uk6lpDGpPiFn+ZDyWP20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tkrEAY8k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63177C4CEC3;
+	Thu, 12 Sep 2024 20:47:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726174059;
+	bh=ZtSD5K0e6Z+ns0W+5JedcbhZtsHEZvKpK6AXhvJswYs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tkrEAY8k0IwA4k4V1KF662ZibemcHq1JMzUspGoTSqHJZ9UVENG+H8vnNERdib6qZ
+	 iBDcOo5CueZQeouNeFXDz5jmmxP0kDh1hwb+jQyWj5YuiNK+0q3fWmCWph/aEcdgBy
+	 /h69/xs0IOzb0RZxEK/GaCnao1csSbKZ5AiwJAY0xIRmFAQ6TGBr32/kYh19HG7DqT
+	 xs0pqpVm3F1mRo31iEM4ui5vGjnEB8CY+YJfJQCO44uCrKWc7qhR3ep9eODOAUKDHs
+	 Ipc3KLpd+oanu9ZCtdNJ7ePg3XQUPs4R4BRxziqUfY+XOhCO2993n52HQgFL13U2Ln
+	 gI2lvcVX4SQ6w==
+Message-ID: <c501c5d3-d715-4ac5-98be-35d23ad1cfbe@kernel.org>
+Date: Thu, 12 Sep 2024 22:47:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909-strncpy-net-caif-chnl_net-c-v1-1-438eb870c155@google.com>
- <20240910093751.GA572255@kernel.org> <CAFhGd8qQ_e_rh1xQqAnaAZmA7R+ftRGjprxGp+njoqg_FGMCSw@mail.gmail.com>
-In-Reply-To: <CAFhGd8qQ_e_rh1xQqAnaAZmA7R+ftRGjprxGp+njoqg_FGMCSw@mail.gmail.com>
-From: Justin Stitt <justinstitt@google.com>
-Date: Thu, 12 Sep 2024 13:47:22 -0700
-Message-ID: <CAFhGd8r2PO9qLej9okVpwcfL2Kz5oCahdnzEVRpCJVm+b5g-Bw@mail.gmail.com>
-Subject: Re: [PATCH] caif: replace deprecated strncpy with strscpy_pad
-To: Simon Horman <horms@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/tidss: Add MIT license along with GPL-2.0
+To: Devarsh Thakkar <devarsht@ti.com>
+Cc: jyri.sarha@iki.fi, tomi.valkeinen@ideasonboard.com, airlied@gmail.com,
+ daniel@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, praneeth@ti.com, nm@ti.com, vigneshr@ti.com,
+ r-ravikumar@ti.com, j-choudhary@ti.com, grandmaster@al2klimov.de,
+ caihuoqing@baidu.com, ahalaney@redhat.com, cai.huoqing@linux.dev,
+ colin.i.king@gmail.com, javierm@redhat.com, dmitry.baryshkov@linaro.org,
+ geert+renesas@glider.be, laurent.pinchart@ideasonboard.com,
+ u.kleine-koenig@pengutronix.de, robh@kernel.org, sam@ravnborg.org,
+ simona.vetter@ffwll.ch, ville.syrjala@linux.intel.com,
+ wangxiaojun11@huawei.com, yuanjilin@cdjrlc.com, yuehaibing@huawei.com
+References: <20240912171142.3241719-1-devarsht@ti.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20240912171142.3241719-1-devarsht@ti.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 12, 2024 at 1:43=E2=80=AFPM Justin Stitt <justinstitt@google.co=
-m> wrote:
->
-> Hi,
->
-> On Tue, Sep 10, 2024 at 2:37=E2=80=AFAM Simon Horman <horms@kernel.org> w=
-rote:
-> >
-> > On Mon, Sep 09, 2024 at 04:39:28PM -0700, Justin Stitt wrote:
-> > > strncpy() is deprecated for use on NUL-terminated destination strings=
- [1] and
-> > > as such we should prefer more robust and less ambiguous string interf=
-aces.
-> > >
-> > > Towards the goal of [2], replace strncpy() with an alternative that
-> > > guarantees NUL-termination and NUL-padding for the destination buffer=
-.
-> >
-> > Hi Justin,
-> >
-> > I am curious to know why the _pad variant was chosen.
->
-> I chose the _pad variant as it matches the behavior of strncpy in this
-> context, ensuring minimal functional change. I think the point you're
-> trying to get at is that the net_device should be zero allocated to
-> begin with -- rendering all thus NUL-padding superfluous. I have some
-> questions out of curiosity: 1) do all control paths leading here
-> zero-allocate the net_device struct? and 2) does it matter that this
-> private data be NUL-padded (I assume not).
->
-> With all that being said, I'd be happy to send a v2 using the regular
-> strscpy variant if needed.
+On 9/12/24 7:11 PM, Devarsh Thakkar wrote:
+> Modify license to include dual licensing as GPL-2.0-only OR MIT license for
+> tidss display driver. This allows other operating system ecosystems such as
+> Zephyr and also the commercial firmwares to refer and derive code from this
+> display driver in a more permissive manner.
+> 
+> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
 
-I just saw [1] so let's go with that, obviously.
+My only contribution to this driver was through DRM refactorings,
+but anyways:
 
->
-> >
-> > > Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#=
-strncpy-on-nul-terminated-strings [1]
-> > > Link: https://github.com/KSPP/linux/issues/90 [2]
-> > > Link: https://manpages.debian.org/testing/linux-manual-4.8/strscpy.9.=
-en.html
-> > > Cc: Kees Cook <keescook@chromium.org>
-> > > Cc: linux-hardening@vger.kernel.org
-> > > Signed-off-by: Justin Stitt <justinstitt@google.com>
-> > > ---
-> > > Note: build-tested only.
-> > > ---
-> > >  net/caif/chnl_net.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/net/caif/chnl_net.c b/net/caif/chnl_net.c
-> > > index 47901bd4def1..ff37dceefa26 100644
-> > > --- a/net/caif/chnl_net.c
-> > > +++ b/net/caif/chnl_net.c
-> > > @@ -347,7 +347,7 @@ static int chnl_net_init(struct net_device *dev)
-> > >       struct chnl_net *priv;
-> > >       ASSERT_RTNL();
-> > >       priv =3D netdev_priv(dev);
-> > > -     strncpy(priv->name, dev->name, sizeof(priv->name));
-> > > +     strscpy_pad(priv->name, dev->name);
-> > >       INIT_LIST_HEAD(&priv->list_field);
-> > >       return 0;
-> > >  }
-> > >
-> > > ---
-> > > base-commit: bc83b4d1f08695e85e85d36f7b803da58010161d
-> > > change-id: 20240909-strncpy-net-caif-chnl_net-c-a505e955e697
-> > >
-> > > Best regards,
-> > > --
-> > > Justin Stitt <justinstitt@google.com>
-> > >
-> > >
->
-> I appreciate the review.
->
-> Thanks
-> Justin
+Acked-by: Danilo Krummrich <dakr@kernel.org>
 
-[1]: https://lore.kernel.org/all/20240911015228.1555779-1-kuba@kernel.org/
-
-Thanks
-Justin
+> ---
+>   drivers/gpu/drm/tidss/Makefile            | 2 +-
+>   drivers/gpu/drm/tidss/tidss_crtc.c        | 2 +-
+>   drivers/gpu/drm/tidss/tidss_crtc.h        | 2 +-
+>   drivers/gpu/drm/tidss/tidss_dispc.c       | 2 +-
+>   drivers/gpu/drm/tidss/tidss_dispc.h       | 2 +-
+>   drivers/gpu/drm/tidss/tidss_dispc_regs.h  | 2 +-
+>   drivers/gpu/drm/tidss/tidss_drv.c         | 2 +-
+>   drivers/gpu/drm/tidss/tidss_drv.h         | 2 +-
+>   drivers/gpu/drm/tidss/tidss_encoder.c     | 2 +-
+>   drivers/gpu/drm/tidss/tidss_encoder.h     | 2 +-
+>   drivers/gpu/drm/tidss/tidss_irq.c         | 2 +-
+>   drivers/gpu/drm/tidss/tidss_irq.h         | 2 +-
+>   drivers/gpu/drm/tidss/tidss_kms.c         | 2 +-
+>   drivers/gpu/drm/tidss/tidss_kms.h         | 2 +-
+>   drivers/gpu/drm/tidss/tidss_plane.c       | 2 +-
+>   drivers/gpu/drm/tidss/tidss_plane.h       | 2 +-
+>   drivers/gpu/drm/tidss/tidss_scale_coefs.c | 2 +-
+>   drivers/gpu/drm/tidss/tidss_scale_coefs.h | 2 +-
+>   18 files changed, 18 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/tidss/Makefile b/drivers/gpu/drm/tidss/Makefile
+> index 312645271014..c67ff32d02e1 100644
+> --- a/drivers/gpu/drm/tidss/Makefile
+> +++ b/drivers/gpu/drm/tidss/Makefile
+> @@ -1,4 +1,4 @@
+> -# SPDX-License-Identifier: GPL-2.0
+> +# SPDX-License-Identifier: GPL-2.0 OR MIT
+>   
+>   tidss-y := tidss_crtc.o \
+>   	tidss_drv.o \
+> diff --git a/drivers/gpu/drm/tidss/tidss_crtc.c b/drivers/gpu/drm/tidss/tidss_crtc.c
+> index 94f8e3178df5..43dfbead9fa9 100644
+> --- a/drivers/gpu/drm/tidss/tidss_crtc.c
+> +++ b/drivers/gpu/drm/tidss/tidss_crtc.c
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0
+> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+>   /*
+>    * Copyright (C) 2018 Texas Instruments Incorporated - https://www.ti.com/
+>    * Author: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> diff --git a/drivers/gpu/drm/tidss/tidss_crtc.h b/drivers/gpu/drm/tidss/tidss_crtc.h
+> index 040d1205496b..da03873e2ef0 100644
+> --- a/drivers/gpu/drm/tidss/tidss_crtc.h
+> +++ b/drivers/gpu/drm/tidss/tidss_crtc.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
+>   /*
+>    * Copyright (C) 2018 Texas Instruments Incorporated - https://www.ti.com/
+>    * Author: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
+> index 1ad711f8d2a8..3321a1c731b1 100644
+> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
+> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0
+> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+>   /*
+>    * Copyright (C) 2016-2018 Texas Instruments Incorporated - https://www.ti.com/
+>    * Author: Jyri Sarha <jsarha@ti.com>
+> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.h b/drivers/gpu/drm/tidss/tidss_dispc.h
+> index 086327d51a90..e6e4396a0d63 100644
+> --- a/drivers/gpu/drm/tidss/tidss_dispc.h
+> +++ b/drivers/gpu/drm/tidss/tidss_dispc.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
+>   /*
+>    * Copyright (C) 2018 Texas Instruments Incorporated - https://www.ti.com/
+>    * Author: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> diff --git a/drivers/gpu/drm/tidss/tidss_dispc_regs.h b/drivers/gpu/drm/tidss/tidss_dispc_regs.h
+> index 13feedfe5d6d..6e27b6d444ab 100644
+> --- a/drivers/gpu/drm/tidss/tidss_dispc_regs.h
+> +++ b/drivers/gpu/drm/tidss/tidss_dispc_regs.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
+>   /*
+>    * Copyright (C) 2016-2018 Texas Instruments Incorporated - https://www.ti.com/
+>    * Author: Jyri Sarha <jsarha@ti.com>
+> diff --git a/drivers/gpu/drm/tidss/tidss_drv.c b/drivers/gpu/drm/tidss/tidss_drv.c
+> index d15f836dca95..b060e420ddec 100644
+> --- a/drivers/gpu/drm/tidss/tidss_drv.c
+> +++ b/drivers/gpu/drm/tidss/tidss_drv.c
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0
+> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+>   /*
+>    * Copyright (C) 2018 Texas Instruments Incorporated - https://www.ti.com/
+>    * Author: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> diff --git a/drivers/gpu/drm/tidss/tidss_drv.h b/drivers/gpu/drm/tidss/tidss_drv.h
+> index d7f27b0b0315..d4209234f59c 100644
+> --- a/drivers/gpu/drm/tidss/tidss_drv.h
+> +++ b/drivers/gpu/drm/tidss/tidss_drv.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
+>   /*
+>    * Copyright (C) 2018 Texas Instruments Incorporated - https://www.ti.com/
+>    * Author: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> diff --git a/drivers/gpu/drm/tidss/tidss_encoder.c b/drivers/gpu/drm/tidss/tidss_encoder.c
+> index 17a86bed8054..9749fbc0e056 100644
+> --- a/drivers/gpu/drm/tidss/tidss_encoder.c
+> +++ b/drivers/gpu/drm/tidss/tidss_encoder.c
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0
+> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+>   /*
+>    * Copyright (C) 2018 Texas Instruments Incorporated - https://www.ti.com/
+>    * Author: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> diff --git a/drivers/gpu/drm/tidss/tidss_encoder.h b/drivers/gpu/drm/tidss/tidss_encoder.h
+> index 3e561d6b1e83..85db3835a335 100644
+> --- a/drivers/gpu/drm/tidss/tidss_encoder.h
+> +++ b/drivers/gpu/drm/tidss/tidss_encoder.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
+>   /*
+>    * Copyright (C) 2018 Texas Instruments Incorporated - https://www.ti.com/
+>    * Author: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> diff --git a/drivers/gpu/drm/tidss/tidss_irq.c b/drivers/gpu/drm/tidss/tidss_irq.c
+> index 604334ef526a..51939744695a 100644
+> --- a/drivers/gpu/drm/tidss/tidss_irq.c
+> +++ b/drivers/gpu/drm/tidss/tidss_irq.c
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0
+> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+>   /*
+>    * Copyright (C) 2018 Texas Instruments Incorporated - https://www.ti.com/
+>    * Author: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> diff --git a/drivers/gpu/drm/tidss/tidss_irq.h b/drivers/gpu/drm/tidss/tidss_irq.h
+> index b512614d5863..cbfd684ecd26 100644
+> --- a/drivers/gpu/drm/tidss/tidss_irq.h
+> +++ b/drivers/gpu/drm/tidss/tidss_irq.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
+>   /*
+>    * Copyright (C) 2018 Texas Instruments Incorporated - https://www.ti.com/
+>    * Author: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> diff --git a/drivers/gpu/drm/tidss/tidss_kms.c b/drivers/gpu/drm/tidss/tidss_kms.c
+> index f371518f8697..05afd57b9128 100644
+> --- a/drivers/gpu/drm/tidss/tidss_kms.c
+> +++ b/drivers/gpu/drm/tidss/tidss_kms.c
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0
+> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+>   /*
+>    * Copyright (C) 2018 Texas Instruments Incorporated - https://www.ti.com/
+>    * Author: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> diff --git a/drivers/gpu/drm/tidss/tidss_kms.h b/drivers/gpu/drm/tidss/tidss_kms.h
+> index 632d79f5983f..69b6bca14550 100644
+> --- a/drivers/gpu/drm/tidss/tidss_kms.h
+> +++ b/drivers/gpu/drm/tidss/tidss_kms.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
+>   /*
+>    * Copyright (C) 2018 Texas Instruments Incorporated - https://www.ti.com/
+>    * Author: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> diff --git a/drivers/gpu/drm/tidss/tidss_plane.c b/drivers/gpu/drm/tidss/tidss_plane.c
+> index a5d86822c9e3..37ffaea15c73 100644
+> --- a/drivers/gpu/drm/tidss/tidss_plane.c
+> +++ b/drivers/gpu/drm/tidss/tidss_plane.c
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0
+> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+>   /*
+>    * Copyright (C) 2018 Texas Instruments Incorporated - https://www.ti.com/
+>    * Author: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> diff --git a/drivers/gpu/drm/tidss/tidss_plane.h b/drivers/gpu/drm/tidss/tidss_plane.h
+> index e933e158b617..3e00bc853813 100644
+> --- a/drivers/gpu/drm/tidss/tidss_plane.h
+> +++ b/drivers/gpu/drm/tidss/tidss_plane.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
+>   /*
+>    * Copyright (C) 2018 Texas Instruments Incorporated - https://www.ti.com/
+>    * Author: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> diff --git a/drivers/gpu/drm/tidss/tidss_scale_coefs.c b/drivers/gpu/drm/tidss/tidss_scale_coefs.c
+> index c2b84fea89a5..686ea63e0f45 100644
+> --- a/drivers/gpu/drm/tidss/tidss_scale_coefs.c
+> +++ b/drivers/gpu/drm/tidss/tidss_scale_coefs.c
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0
+> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+>   /*
+>    * Copyright (C) 2018 Texas Instruments Incorporated - https://www.ti.com/
+>    * Author: Jyri Sarha <jsarha@ti.com>
+> diff --git a/drivers/gpu/drm/tidss/tidss_scale_coefs.h b/drivers/gpu/drm/tidss/tidss_scale_coefs.h
+> index 9c560d0fdac0..4689109fe560 100644
+> --- a/drivers/gpu/drm/tidss/tidss_scale_coefs.h
+> +++ b/drivers/gpu/drm/tidss/tidss_scale_coefs.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 OR MIT */
+>   /*
+>    * Copyright (C) 2018 Texas Instruments Incorporated - https://www.ti.com/
+>    * Author: Jyri Sarha <jsarha@ti.com>
 
