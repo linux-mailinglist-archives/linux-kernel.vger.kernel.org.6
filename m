@@ -1,123 +1,345 @@
-Return-Path: <linux-kernel+bounces-326234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 244F497654A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:14:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BA55976550
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:16:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF1151F22F2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:14:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9922EB228FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004AB1A28D;
-	Thu, 12 Sep 2024 09:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02ED1925BC;
+	Thu, 12 Sep 2024 09:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ttsande.rs header.i=@ttsande.rs header.b="aKp9M5ip"
-Received: from mail-4317.proton.ch (mail-4317.proton.ch [185.70.43.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E303188A01
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.17
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WXifMMw2"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A319D18BBBD
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726132470; cv=none; b=LQyVgVi6RzVw5xUYm0lF+S+AON4+fup3opFXXPU0hSSHmbsED8Fm86UqDStG7YqWpk6B9NWZqiAPIv6ETOoEUV2R0EygB/XZGi65ANtUM6Y50SzPNLr1Uo9LtbWzKbD3BaEwOTe0qz9jyRaPdwlLjo4F5XWip5eu1xSVskmN0as=
+	t=1726132584; cv=none; b=Tdw40aU4qDsXu+aDOo1T7SZz8WZdCjyQlBvcr4uZjMLwkxxYe8iA0Oh+04budlZhMgMhSuKm3wDtCxh1RfISc2RJtwyjO1orQiI7IMgZ0XAHIqVJPc/UkwbM+F70nALouzj5IQsmfTd50ceFr50mHEKvY63evSpsPtwj4p16Vf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726132470; c=relaxed/simple;
-	bh=wR7KyTTlrcBgeT3DEYjx1z7krjjOgwV0BSM23Gt8to4=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=kz/EjjOFMtgCvbYCTyNa4cs69KktJVqZaMhNaBOpPhQulW95mtmxe64xbNQubJeKHFafAqU3ScEjM5BYjP0CLOPjdBZlyaUd4JbwLdnmfwtIarXbk/pyb/E4vpb41pbkeFttmFZl97L4rs6WZntMrRuhiXUoQXVVC5dYfXS1QCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ttsande.rs; spf=pass smtp.mailfrom=ttsande.rs; dkim=pass (2048-bit key) header.d=ttsande.rs header.i=@ttsande.rs header.b=aKp9M5ip; arc=none smtp.client-ip=185.70.43.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ttsande.rs
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ttsande.rs
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ttsande.rs;
-	s=protonmail; t=1726132460; x=1726391660;
-	bh=UasRgKsHucgEdP6i8Yd5Stdu2vUTHCovW7vAHe0aNJE=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=aKp9M5ipcoDu6di/KOLeBIATKsg2Qk+gOJPTIGN8FGZmwvP1K+X5mTWu7Qc2QR/1n
-	 1wClzjDgMVslm9fdJsvwiyRgJzo5q3IcBwXmImj7DBs5C+3B2lqBLR1v2e/u2euaTC
-	 WWFIvhcGz4I0t4Ue6GXi0LoiQhLL1WKJufIZxBWGChh0S+5d5T2eY8lOsnn5MnmZL2
-	 KWfZfwA7B1g2vq+GYkH1SOIgGvtpfl/BoUtAWZURotOKzrdoYbifwZrY7ePKdU26z+
-	 ISPsRCUpMdOpqcge3iEhcVxiG9/EkspAy9+W9JSWPF/lqERxKNs8hBRF9F5M8+DqTv
-	 Mu++rb614/uDA==
-Date: Thu, 12 Sep 2024 09:14:14 +0000
-To: jdelvare@suse.com, linux@roeck-us.net, linux-hwmon@vger.kernel.org
-From: Matthew Sanders <m@ttsande.rs>
-Cc: linux-kernel@vger.kernel.org, ppwaskie@kernel.org
-Subject: [PATCH] hwmon: Fix WARN_ON() always called from devm_hwmon_device_unregister()
-Message-ID: <20240912091401.4101-1-m@ttsande.rs>
-Feedback-ID: 116677769:user:proton
-X-Pm-Message-ID: 43e44de0c65e9b70e98738a0aad12dd0e65fcde2
+	s=arc-20240116; t=1726132584; c=relaxed/simple;
+	bh=kt/XulNNeQyUKDboXSEW4SyQbkWmmU4ZPuEXsNl4G9E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=BVsI+VsmWOfgNpgoVgTV8megbVesxQRKl6Muu7e17n7bc3zcp41/IIT9RR5FvWeVEnzBFoD6D6jzEYTEVUQwtDzkOdjTnsYwW/vTimoPulLOgSo8ssVDuRiWcPTzKLyq04mxapxvq3KsJRgK+vPcM28KzzQvr7xNtgNm1g5BwAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WXifMMw2; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version:
+	Content-Type; bh=xW3u8po0Cnl9re6zuoev3DC+Hw1S3qz8t+ZT6zWK0us=;
+	b=WXifMMw2YhTA/jMAzUwIdkcCrXUdiSt4BpoI6FAwqpnSmJUTzCsvP+mP/WwG8m
+	goDVLTJvtTjpS7zDijprZ2g7EY8t7nwUs1HFad7gQyhITBAuyKeI57tXUakoiWSL
+	KIG+EncHh4Vnzv9fdZFrxBc61eUlWo6Vad+d03jssrE5I=
+Received: from localhost (unknown [101.132.132.191])
+	by gzga-smtp-mta-g3-0 (Coremail) with SMTP id _____wD33ysSseJmxNkCAQ--.28066S2;
+	Thu, 12 Sep 2024 17:14:58 +0800 (CST)
+From: Xavier <xavier_qy@163.com>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	Xavier <xavier_qy@163.com>
+Subject: [PATCH v1] sched/eevdf: Reduce the computation frequency of avg_vruntime
+Date: Thu, 12 Sep 2024 17:14:54 +0800
+Message-Id: <20240912091454.801033-1-xavier_qy@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD33ysSseJmxNkCAQ--.28066S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Gw4xKr1kXFW7CF4UuFyrCrg_yoWfCw4rpF
+	WUXayxtr40qr1qvr4kJr9rWF9xGr95G3y2gFyvyayIyws8K3s8tFyaqFW7tF1Ykr4kCFy7
+	ArW0qrW7Cr47KrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piHa0PUUUUU=
+X-CM-SenderInfo: 50dyxvpubt5qqrwthudrp/1tbiZQJREGXAoO+TPQABsj
 
-devm_hwmon_device_unregister() only takes parent of a devres-managed
-hwmon device as an argument. This always fails, as devres can't find
-the hwmon device it needs to unregister with the parent device alone.
-Without this patch, the WARN_ON() in devm_hwmon_device_unregister() will
-always be displayed unconditionally:
+The current code subtracts the value of curr from avg_vruntime and avg_load
+during runtime. Then, every time avg_vruntime() is called, it adds the
+value of curr to the avg_vruntime and avg_load. Afterward, it divides these
+and adds min_vruntime to obtain the actual avg_vruntime.
 
-[    7.969746] WARNING: CPU: 1 PID: 224 at drivers/hwmon/hwmon.c:1205 devm_=
-hwmon_device_unregister+0x28/0x30
+Analysis of the code indicates that avg_vruntime only changes significantly
+during update_curr(), update_min_vruntime(), and when tasks are enqueued or
+dequeued. Therefore, it is sufficient to recalculate and store avg_vruntime
+only in these specific scenarios. This optimization ensures that accessing
+avg_vruntime() does not necessitate a recalculation each time, thereby
+enhancing the efficiency of the code.
 
-This patch adds an extra argument to devm_hwmon_device_unregister(), a
-pointer to a hwmon device which was previously registered to the
-parent using devres.
+There is no need to subtract curr’s load from avg_load during runtime.
+Instead, we only need to calculate the incremental change and update
+avg_vruntime whenever curr’s time is updated.
 
-There aren't any drivers which currently make use of this function, so
-any existing users of devm_hwmon_* shouldn't require any changes as a
-result of this patch.
+To better represent their functions, rename the original avg_vruntime and
+avg_load to tot_vruntime and tot_load, respectively, which more accurately
+describes their roles in the computation.
+
+Signed-off-by: Xavier <xavier_qy@163.com>
 ---
- drivers/hwmon/hwmon.c | 6 ++++--
- include/linux/hwmon.h | 2 +-
- 2 files changed, 5 insertions(+), 3 deletions(-)
+ kernel/sched/fair.c  | 101 +++++++++++++++++++++++--------------------
+ kernel/sched/sched.h |   3 +-
+ 2 files changed, 56 insertions(+), 48 deletions(-)
 
-diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
-index a362080d41fa..84945a276320 100644
---- a/drivers/hwmon/hwmon.c
-+++ b/drivers/hwmon/hwmon.c
-@@ -1199,10 +1199,12 @@ static int devm_hwmon_match(struct device *dev, voi=
-d *res, void *data)
-  * devm_hwmon_device_unregister - removes a previously registered hwmon de=
-vice
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 9057584ec06d..308d4bc3f40d 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -606,8 +606,8 @@ static inline s64 entity_key(struct cfs_rq *cfs_rq, struct sched_entity *se)
+  * Which we track using:
   *
-  * @dev: the parent device of the device to unregister
-+ * @hwdev: the hwmon device to unregister
+  *                    v0 := cfs_rq->min_vruntime
+- * \Sum (v_i - v0) * w_i := cfs_rq->avg_vruntime
+- *              \Sum w_i := cfs_rq->avg_load
++ * \Sum (v_i - v0) * w_i := cfs_rq->tot_vruntime
++ *              \Sum w_i := cfs_rq->tot_load
+  *
+  * Since min_vruntime is a monotonic increasing variable that closely tracks
+  * the per-task service, these deltas: (v_i - v), will be in the order of the
+@@ -617,14 +617,29 @@ static inline s64 entity_key(struct cfs_rq *cfs_rq, struct sched_entity *se)
+  *
+  * As measured, the max (key * weight) value was ~44 bits for a kernel build.
   */
--void devm_hwmon_device_unregister(struct device *dev)
-+void devm_hwmon_device_unregister(struct device *dev, struct device *hwdev=
-)
++static inline void avg_vruntime_update(struct cfs_rq *cfs_rq)
++{
++	s64	tot_vruntime = cfs_rq->tot_vruntime;
++
++	/* sign flips effective floor / ceiling */
++	if (cfs_rq->tot_load) {
++		if (tot_vruntime < 0)
++			tot_vruntime -= (cfs_rq->tot_load - 1);
++		cfs_rq->avg_vruntime = div_s64(tot_vruntime, cfs_rq->tot_load);
++	} else {
++		cfs_rq->avg_vruntime = cfs_rq->tot_vruntime;
++	}
++}
++
+ static void
+ avg_vruntime_add(struct cfs_rq *cfs_rq, struct sched_entity *se)
  {
--=09WARN_ON(devres_release(dev, devm_hwmon_release, devm_hwmon_match, dev))=
-;
-+=09WARN_ON(devres_release(dev, devm_hwmon_release, devm_hwmon_match,
-+=09=09=09       hwdev));
+ 	unsigned long weight = scale_load_down(se->load.weight);
+ 	s64 key = entity_key(cfs_rq, se);
+ 
+-	cfs_rq->avg_vruntime += key * weight;
+-	cfs_rq->avg_load += weight;
++	cfs_rq->tot_vruntime += key * weight;
++	cfs_rq->tot_load += weight;
++	avg_vruntime_update(cfs_rq);
  }
- EXPORT_SYMBOL_GPL(devm_hwmon_device_unregister);
-=20
-diff --git a/include/linux/hwmon.h b/include/linux/hwmon.h
-index e94314760aab..2434c6fc17a7 100644
---- a/include/linux/hwmon.h
-+++ b/include/linux/hwmon.h
-@@ -481,7 +481,7 @@ devm_hwmon_device_register_with_info(struct device *dev=
-,
- =09=09=09=09const struct attribute_group **extra_groups);
-=20
- void hwmon_device_unregister(struct device *dev);
--void devm_hwmon_device_unregister(struct device *dev);
-+void devm_hwmon_device_unregister(struct device *dev, struct device *hwdev=
-);
-=20
- int hwmon_notify_event(struct device *dev, enum hwmon_sensor_types type,
- =09=09       u32 attr, int channel);
---=20
-2.46.0
-
+ 
+ static void
+@@ -633,17 +648,29 @@ avg_vruntime_sub(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ 	unsigned long weight = scale_load_down(se->load.weight);
+ 	s64 key = entity_key(cfs_rq, se);
+ 
+-	cfs_rq->avg_vruntime -= key * weight;
+-	cfs_rq->avg_load -= weight;
++	cfs_rq->tot_vruntime -= key * weight;
++	cfs_rq->tot_load -= weight;
++	avg_vruntime_update(cfs_rq);
++}
++
++static inline
++void avg_vruntime_update_for_curr(struct cfs_rq *cfs_rq, s64 delta)
++{
++	struct sched_entity *curr = cfs_rq->curr;
++	unsigned long weight = scale_load_down(curr->load.weight);
++
++	cfs_rq->tot_vruntime += delta * weight;
++	avg_vruntime_update(cfs_rq);
+ }
+ 
+ static inline
+-void avg_vruntime_update(struct cfs_rq *cfs_rq, s64 delta)
++void avg_vruntime_update_for_minv(struct cfs_rq *cfs_rq, s64 delta)
+ {
+ 	/*
+-	 * v' = v + d ==> avg_vruntime' = avg_runtime - d*avg_load
++	 * v' = v + d ==> avg_runtime' = tot_runtime - d*tot_load
+ 	 */
+-	cfs_rq->avg_vruntime -= cfs_rq->avg_load * delta;
++	cfs_rq->tot_vruntime -= cfs_rq->tot_load * delta;
++	avg_vruntime_update(cfs_rq);
+ }
+ 
+ /*
+@@ -652,25 +679,7 @@ void avg_vruntime_update(struct cfs_rq *cfs_rq, s64 delta)
+  */
+ u64 avg_vruntime(struct cfs_rq *cfs_rq)
+ {
+-	struct sched_entity *curr = cfs_rq->curr;
+-	s64 avg = cfs_rq->avg_vruntime;
+-	long load = cfs_rq->avg_load;
+-
+-	if (curr && curr->on_rq) {
+-		unsigned long weight = scale_load_down(curr->load.weight);
+-
+-		avg += entity_key(cfs_rq, curr) * weight;
+-		load += weight;
+-	}
+-
+-	if (load) {
+-		/* sign flips effective floor / ceiling */
+-		if (avg < 0)
+-			avg -= (load - 1);
+-		avg = div_s64(avg, load);
+-	}
+-
+-	return cfs_rq->min_vruntime + avg;
++	return cfs_rq->min_vruntime + cfs_rq->avg_vruntime;
+ }
+ 
+ /*
+@@ -725,18 +734,10 @@ static void update_entity_lag(struct cfs_rq *cfs_rq, struct sched_entity *se)
+  */
+ static int vruntime_eligible(struct cfs_rq *cfs_rq, u64 vruntime)
+ {
+-	struct sched_entity *curr = cfs_rq->curr;
+-	s64 avg = cfs_rq->avg_vruntime;
+-	long load = cfs_rq->avg_load;
++	s64 total = cfs_rq->tot_vruntime;
++	long load = cfs_rq->tot_load;
+ 
+-	if (curr && curr->on_rq) {
+-		unsigned long weight = scale_load_down(curr->load.weight);
+-
+-		avg += entity_key(cfs_rq, curr) * weight;
+-		load += weight;
+-	}
+-
+-	return avg >= (s64)(vruntime - cfs_rq->min_vruntime) * load;
++	return total >= (s64)(vruntime - cfs_rq->min_vruntime) * load;
+ }
+ 
+ int entity_eligible(struct cfs_rq *cfs_rq, struct sched_entity *se)
+@@ -752,7 +753,7 @@ static u64 __update_min_vruntime(struct cfs_rq *cfs_rq, u64 vruntime)
+ 	 */
+ 	s64 delta = (s64)(vruntime - min_vruntime);
+ 	if (delta > 0) {
+-		avg_vruntime_update(cfs_rq, delta);
++		avg_vruntime_update_for_minv(cfs_rq, delta);
+ 		min_vruntime = vruntime;
+ 	}
+ 	return min_vruntime;
+@@ -822,7 +823,6 @@ RB_DECLARE_CALLBACKS(static, min_vruntime_cb, struct sched_entity,
+  */
+ static void __enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ {
+-	avg_vruntime_add(cfs_rq, se);
+ 	se->min_vruntime = se->vruntime;
+ 	rb_add_augmented_cached(&se->run_node, &cfs_rq->tasks_timeline,
+ 				__entity_less, &min_vruntime_cb);
+@@ -832,7 +832,6 @@ static void __dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ {
+ 	rb_erase_augmented_cached(&se->run_node, &cfs_rq->tasks_timeline,
+ 				  &min_vruntime_cb);
+-	avg_vruntime_sub(cfs_rq, se);
+ }
+ 
+ struct sched_entity *__pick_root_entity(struct cfs_rq *cfs_rq)
+@@ -1157,6 +1156,7 @@ static void update_curr(struct cfs_rq *cfs_rq)
+ {
+ 	struct sched_entity *curr = cfs_rq->curr;
+ 	s64 delta_exec;
++	s64 vdelta_exec;
+ 
+ 	if (unlikely(!curr))
+ 		return;
+@@ -1165,8 +1165,10 @@ static void update_curr(struct cfs_rq *cfs_rq)
+ 	if (unlikely(delta_exec <= 0))
+ 		return;
+ 
+-	curr->vruntime += calc_delta_fair(delta_exec, curr);
++	vdelta_exec = calc_delta_fair(delta_exec, curr);
++	curr->vruntime += vdelta_exec;
+ 	update_deadline(cfs_rq, curr);
++	avg_vruntime_update_for_curr(cfs_rq, vdelta_exec);
+ 	update_min_vruntime(cfs_rq);
+ 
+ 	if (entity_is_task(curr))
+@@ -3794,6 +3796,8 @@ static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
+ 		avruntime = avg_vruntime(cfs_rq);
+ 		if (!curr)
+ 			__dequeue_entity(cfs_rq, se);
++
++		avg_vruntime_sub(cfs_rq, se);
+ 		update_load_sub(&cfs_rq->load, se->load.weight);
+ 	}
+ 	dequeue_load_avg(cfs_rq, se);
+@@ -3824,6 +3828,8 @@ static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
+ 		if (!curr)
+ 			__enqueue_entity(cfs_rq, se);
+ 
++		avg_vruntime_add(cfs_rq, se);
++
+ 		/*
+ 		 * The entity's vruntime has been adjusted, so let's check
+ 		 * whether the rq-wide min_vruntime needs updated too. Since
+@@ -5190,7 +5196,6 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ 	 * EEVDF: placement strategy #1 / #2
+ 	 */
+ 	if (sched_feat(PLACE_LAG) && cfs_rq->nr_running) {
+-		struct sched_entity *curr = cfs_rq->curr;
+ 		unsigned long load;
+ 
+ 		lag = se->vlag;
+@@ -5247,9 +5252,7 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ 		 *
+ 		 *   vl_i = (W + w_i)*vl'_i / W
+ 		 */
+-		load = cfs_rq->avg_load;
+-		if (curr && curr->on_rq)
+-			load += scale_load_down(curr->load.weight);
++		load = cfs_rq->tot_load;
+ 
+ 		lag *= load + scale_load_down(se->load.weight);
+ 		if (WARN_ON_ONCE(!load))
+@@ -5327,6 +5330,8 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ 	update_stats_enqueue_fair(cfs_rq, se, flags);
+ 	if (!curr)
+ 		__enqueue_entity(cfs_rq, se);
++
++	avg_vruntime_add(cfs_rq, se);
+ 	se->on_rq = 1;
+ 
+ 	if (cfs_rq->nr_running == 1) {
+@@ -5397,6 +5402,8 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
+ 	update_entity_lag(cfs_rq, se);
+ 	if (se != cfs_rq->curr)
+ 		__dequeue_entity(cfs_rq, se);
++
++	avg_vruntime_sub(cfs_rq, se);
+ 	se->on_rq = 0;
+ 	account_entity_dequeue(cfs_rq, se);
+ 
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 4c36cc680361..57f07c56ecda 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -596,8 +596,9 @@ struct cfs_rq {
+ 	unsigned int		idle_nr_running;   /* SCHED_IDLE */
+ 	unsigned int		idle_h_nr_running; /* SCHED_IDLE */
+ 
++	s64			tot_vruntime;
+ 	s64			avg_vruntime;
+-	u64			avg_load;
++	u64			tot_load;
+ 
+ 	u64			exec_clock;
+ 	u64			min_vruntime;
+-- 
+2.45.2
 
 
