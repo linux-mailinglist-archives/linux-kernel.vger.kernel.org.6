@@ -1,140 +1,192 @@
-Return-Path: <linux-kernel+bounces-326641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B83D976B33
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:51:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0605B976B34
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:52:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E4B51C2365D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:51:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C2112829A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149431AD255;
-	Thu, 12 Sep 2024 13:51:51 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75661ABEC3;
+	Thu, 12 Sep 2024 13:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cXDfnSpa"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E7BF1A0BD4;
-	Thu, 12 Sep 2024 13:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1AB19FA91
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726149110; cv=none; b=i5g2GSqvNnLlOGboZKUfGZq3v5ib9eGKcjxlIJ8+CnLCzZEBofmfqGzlAqqqBSIbSjRXthtWBSGZHakxOf9qhp28fnuvKZVo1KPsSvObSZd+xBJG7n7sGuVEZkIMVg3+62V68NZplQjs3da7JdzXDU14Sym4KLDPxyXUqCtaBi8=
+	t=1726149161; cv=none; b=c/oMsTj108uHjtpYRQVRAF5T1zpFtpqVOTJp6b7INryfkFEAAhwuD8TI+WVgezHz9uD97pVMUnXJYgu4IoIhakswSM2dDYV9emWex906L9+eOVjpyUS6YJCFVGvDk1OXV2sK7Yulh1qdgKQEfnt6kwtm+gDNDjgiXdbpljWo0eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726149110; c=relaxed/simple;
-	bh=qzHvcMNowk6NzrnJnzjlLOM0xR+661lK3QZTiFzxQc0=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=cezc3LNYIg3pXDIYllHma2ukaGt5Kg04lAHGO8XYu6+Awpxs6UwOG/7J0ukJ2a2JTB1CSZaZ9D/ZCOSWzsFsgU19OsbvkKfTNO174h7R5uOcmg6Lw5ATjS1oFqTV1W0Fhy7QvFNwa9nJGTzFYC0D35KvDMaggsd9yUTGd6dCp14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from [192.168.1.106] (31.173.87.196) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Thu, 12 Sep
- 2024 16:51:35 +0300
-Subject: Re: [PATCH v2] KEYS: prevent NULL pointer dereference in
- find_asymmetric_key()
-To: Jarkko Sakkinen <jarkko@kernel.org>, Roman Smirnov <r.smirnov@omp.ru>,
-	David Howells <dhowells@redhat.com>, Herbert Xu
-	<herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
-	Andrew Zaborowski <andrew.zaborowski@intel.com>
-CC: <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-References: <20240910111806.65945-1-r.smirnov@omp.ru>
- <D42N9ASJJSUD.EG094MFWZA4Q@kernel.org>
- <84d6b0fa-4948-fe58-c766-17f87c2a2dba@omp.ru>
- <D43HG3PEBR4I.2INNPVZIT19ZZ@kernel.org>
-From: Sergey Shtylyov <s.shtylyov@omp.ru>
-Organization: Open Mobile Platform
-Message-ID: <8774f6a2-9bec-b699-6b68-63a26019c5b3@omp.ru>
-Date: Thu, 12 Sep 2024 16:51:34 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+	s=arc-20240116; t=1726149161; c=relaxed/simple;
+	bh=847eTLZW0MfM6fAAiLbEcfeHHCOcPEU+ymVhnn3BG5I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N0IeXhUXorF5K7a+gaioMekSWjpJ7HMaUmJvqcNN2DPYRwAk3Q5fPEiS3rsXgI8i+q5nGaputxkTu6M8KVADjpbWisqgWYWefhui2xbqhKZ8PmxcUjd5Qoz4f+EqQP0DYE8p3mhwjhwGBwJuzw3Rlb331YLGtjU6JaLeQqyf/xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cXDfnSpa; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726149158;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bUGx0nxNlp6Ya2u4chOzdjTNWM8SNP7+zCSMGBl0LSw=;
+	b=cXDfnSpaAW/RA5vBYC2FBgIrYu5MYjtxn6g6JsFUDsXq1ERLz738YmJuDQfQDvUO02MCqK
+	XBaiCMqAR3j1yYSTUcWuepM2VJO8OuBN/Yu3RyLN/FPXyQUuLiqk+cn3WO63RkrxQtVe8W
+	APm9fZsk2aESdjAyFywlHdCYw+Ig4qA=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-390-af8rAeMVPYm2tU_d7rK_IQ-1; Thu, 12 Sep 2024 09:52:37 -0400
+X-MC-Unique: af8rAeMVPYm2tU_d7rK_IQ-1
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5becd2ca7e7so926270a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 06:52:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726149156; x=1726753956;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bUGx0nxNlp6Ya2u4chOzdjTNWM8SNP7+zCSMGBl0LSw=;
+        b=bl4XHHXljHOUPT/wZESadYrptCZJMUAwrjAI7ckTlyWy5FiiUBhAnzzzJzyEege9Rw
+         WOX2r+SfZYcu3dCdT3uHHx8QxZUL6+UkSk3mW2XWevmd6bGVC0wklb4nVHeULHQCZFIV
+         dpakeWdIFRr9W1TpUb86M5recr7CCoXwibQa+w3kNhJEos6Zvj3ED/587JiSuMhG9fAm
+         u8mCrmOrdfnD7k7KYaWcvHQMRDUKA4Z1+OJr4WAJ8gK/56gAXph8JVK83qNs0dL1d26r
+         1hEt5QgWhwwmkJ43JPfnEdNGRenOcMAnVwFG2C+jQSWZrX//rtVhpk61kdhkgY5Ew540
+         dXmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFvu0RxEekbUfhQZsmK/A4rIbEMME5I5LLHBKdTnjoG77p5wrExEgEAfmiy1lDgYqLDDsK3rxqggGgIfQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxz5Bzn/zvnjsSCD3XfQlmQZpdm/HAoF8HEw9XHTBR8L/vojXB/
+	N8IzGCi6nRhEgPaf7eTrEKSGjKBRnXLwySLvd4m/daNNWa7xGx7HVvSlDiXPNReZVArs3d2X/pe
+	NBkV/ub8EBxjycU8QhC1ePu7tNP84bfyMCfp05QEcrz/41AYalTudzyoE9wdAyA==
+X-Received: by 2002:a05:6402:27c7:b0:5c2:7699:92ef with SMTP id 4fb4d7f45d1cf-5c414387344mr3595184a12.16.1726149155968;
+        Thu, 12 Sep 2024 06:52:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGUIaRkkEE7PI8ImUPDTHW8ksRiH/DOysbU4BTFTMACkOClQFBX7Xr2CoNq6fzXKdFBReixSQ==
+X-Received: by 2002:a05:6402:27c7:b0:5c2:7699:92ef with SMTP id 4fb4d7f45d1cf-5c414387344mr3595144a12.16.1726149155453;
+        Thu, 12 Sep 2024 06:52:35 -0700 (PDT)
+Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd41c36sm6596555a12.2.2024.09.12.06.52.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Sep 2024 06:52:35 -0700 (PDT)
+Message-ID: <2b847413-f8ee-436c-a635-f5a36253e953@redhat.com>
+Date: Thu, 12 Sep 2024 15:52:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <D43HG3PEBR4I.2INNPVZIT19ZZ@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] iio: imu: kmx61: Drop most likely fake ACPI ID
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>
+References: <20240911213110.2893562-1-andriy.shevchenko@linux.intel.com>
+Content-Language: en-US, nl
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20240911213110.2893562-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.1, Database issued on: 09/12/2024 13:36:58
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 59
-X-KSE-AntiSpam-Info: Lua profiles 187710 [Sep 12 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.1.5
-X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 34 0.3.34
- 8a1fac695d5606478feba790382a59668a4f0039
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {relay has no DNS name}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.87.196 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.87.196 in (user)
- dbl.spamhaus.org}
-X-KSE-AntiSpam-Info:
-	d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;31.173.87.196:7.1.2;omp.ru:7.1.1
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.87.196
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 59
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 09/12/2024 13:41:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 9/12/2024 10:54:00 AM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On 9/11/24 4:18 PM, Jarkko Sakkinen wrote:
-[...]
+Hi,
 
->>>> In find_asymmetric_key(), if all NULLs are passed in id_{0,1,2} parameters
->>>> the kernel will first emit WARN and then have an oops because id_2 gets
->>>> dereferenced anyway.
->>>>
->>>> Found by Linux Verification Center (linuxtesting.org) with Svace static
->>>> analysis tool.
->>>
->>> Weird, I recall that I've either sent a patch to address the same site
->>> OR have commented a patch with similar reasoning. Well, it does not
->>> matter, I think it this makes sense to me.
->>>
->>> You could further add to the motivation that given the panic_on_warn
->>> kernel command-line parameter, it is for the best limit the scope and
->>> use of the WARN-macro.
->>
->>    I don't understand what you mean -- this version of the patch keeps
->> the WARN_ON() call, it just moves that call, so that the duplicate id_{0,1,2}
->> checks are avoided...
+On 9/11/24 11:31 PM, Andy Shevchenko wrote:
+> The commit in question does not proove that ACPI ID exists.
+> Quite likely it was a cargo cult addition while doint that
+> for DT-based enumeration.  Drop most likely fake ACPI ID.
 > 
-> I overlooked the code change (my bad sorry). Here's a better version of
-> the first paragraph:
+> Googling for KMX61021L gives no useful results in regard to DSDT.
+> Moreover, the official vendor ID in the registry for Kionix is KIOX.
 > 
-> "find_asymmetric_keys() has nullity checks of id_0 and id_1 but ignores
-> validation for id_2. Check nullity also for id_2."
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-   Hm, what about WARN_ON(!id_0 && !id_1 && !id_2) -- it used to check all
-the pointers, right? I think our variant was closer to reality... :-)
+Thanks, patch looks good to me:
 
-[...]
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-> BR, Jarkko
+Regards,
 
-MBR, Sergey
+Hans
+
+
+
+> ---
+>  drivers/iio/imu/kmx61.c | 25 +++----------------------
+>  1 file changed, 3 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/iio/imu/kmx61.c b/drivers/iio/imu/kmx61.c
+> index c61c012e25bb..2af772775b68 100644
+> --- a/drivers/iio/imu/kmx61.c
+> +++ b/drivers/iio/imu/kmx61.c
+> @@ -7,12 +7,13 @@
+>   * IIO driver for KMX61 (7-bit I2C slave address 0x0E or 0x0F).
+>   */
+>  
+> -#include <linux/module.h>
+>  #include <linux/i2c.h>
+> -#include <linux/acpi.h>
+>  #include <linux/interrupt.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+>  #include <linux/pm.h>
+>  #include <linux/pm_runtime.h>
+> +
+>  #include <linux/iio/iio.h>
+>  #include <linux/iio/sysfs.h>
+>  #include <linux/iio/events.h>
+> @@ -1217,16 +1218,6 @@ static irqreturn_t kmx61_trigger_handler(int irq, void *p)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> -static const char *kmx61_match_acpi_device(struct device *dev)
+> -{
+> -	const struct acpi_device_id *id;
+> -
+> -	id = acpi_match_device(dev->driver->acpi_match_table, dev);
+> -	if (!id)
+> -		return NULL;
+> -	return dev_name(dev);
+> -}
+> -
+>  static struct iio_dev *kmx61_indiodev_setup(struct kmx61_data *data,
+>  					    const struct iio_info *info,
+>  					    const struct iio_chan_spec *chan,
+> @@ -1293,8 +1284,6 @@ static int kmx61_probe(struct i2c_client *client)
+>  
+>  	if (id)
+>  		name = id->name;
+> -	else if (ACPI_HANDLE(&client->dev))
+> -		name = kmx61_match_acpi_device(&client->dev);
+>  	else
+>  		return -ENODEV;
+>  
+> @@ -1496,13 +1485,6 @@ static const struct dev_pm_ops kmx61_pm_ops = {
+>  	RUNTIME_PM_OPS(kmx61_runtime_suspend, kmx61_runtime_resume, NULL)
+>  };
+>  
+> -static const struct acpi_device_id kmx61_acpi_match[] = {
+> -	{"KMX61021", 0},
+> -	{}
+> -};
+> -
+> -MODULE_DEVICE_TABLE(acpi, kmx61_acpi_match);
+> -
+>  static const struct i2c_device_id kmx61_id[] = {
+>  	{ "kmx611021" },
+>  	{}
+> @@ -1513,7 +1495,6 @@ MODULE_DEVICE_TABLE(i2c, kmx61_id);
+>  static struct i2c_driver kmx61_driver = {
+>  	.driver = {
+>  		.name = KMX61_DRV_NAME,
+> -		.acpi_match_table = kmx61_acpi_match,
+>  		.pm = pm_ptr(&kmx61_pm_ops),
+>  	},
+>  	.probe		= kmx61_probe,
+
 
