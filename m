@@ -1,124 +1,144 @@
-Return-Path: <linux-kernel+bounces-326883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70772976E10
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:44:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20013976E13
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:45:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 325AE2817D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:44:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6EF128221E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:45:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CBE11BB6BE;
-	Thu, 12 Sep 2024 15:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAAF91BA86F;
+	Thu, 12 Sep 2024 15:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AmQvjpqN"
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VehWAvBS"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E058A1B12F6
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF041B4C21
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726155861; cv=none; b=NEDc7LsaURPQD3ONH5xNzM7bGwwU07/26cp8XNx8/diY3D9PMjmLj/nh+yaXpiDm8xblVvn3PZ+qiC1i5u6bw3q6/g9FDytv1m+X7zTcuRq+S+8TbVTPX8y4Sr8Jw4GWhn9qBCMk1IfjitNiZGHE8ObJivuvq15CFol+oFQKtDM=
+	t=1726155900; cv=none; b=ZdETfMyuiKZLK86bRGAAi5JjSab1c5UlMPBioFzeJF+9adSMYTRAFvKLzw9bCUccdtR5vwq09E78tDL/J/PjgQ99W6n2lhbHJQMtrS8JAilhyAftX5YuTW5ALxHOqsvMBeL3bBcJT6Q3HOhz5BZLJLUKuEuR8e2eX9DOvRRiyOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726155861; c=relaxed/simple;
-	bh=BIjqRB8ExX3XEMpofICKrApiJn7b9V8WKKgZqm8th1E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gInv8Rox+iHyHfo7bC270LDiw9N1jX6S5bwzkg3J5NQX0lSvFEboP1uYWebn0OsoHf+sk49Asf2n+rkfVcUj7lhLG9SwjSMb7GZa1A08ZBFxhL7mVIVqCjuzpwnrKt47fzyg3DSVd+sEEiNREnzvBF/YK3RYydZL3ZtiOsxJyw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AmQvjpqN; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-82a151a65b8so54726039f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:44:19 -0700 (PDT)
+	s=arc-20240116; t=1726155900; c=relaxed/simple;
+	bh=0Q4daddME1ZWVBbmR9Rv5khcgp9FUk7H1xTRNZQAhO0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mqMok+CA86PrYRskNvWZ7u3JjyNgdw5i0cP2+LPLo3yIj98Zchgsfh02ME+pqwVBYVdPvN/1PNng7TjACKS79XfO++KWi88EGhTXcjhJV/2g9hgThbTUFwPawG5biiIdX/bs9eq6FWl7Up1+//C3sLPAvh/Vo6b3OLSUhtZ+4gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VehWAvBS; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7db233cef22so690690a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:44:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1726155859; x=1726760659; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/xzJmJZir7SNhkzAEWBQK9iRI0VrPUIlmQ6Tc4M2oLs=;
-        b=AmQvjpqNmPR7LdgktraFhKwjMaKI7xK/bIYoZcJEPdP+pHhaBFaCQGc3LusAHeOVgg
-         fEsVP11BOjWDg24O4oqgG/sp9hTbhjDsPbXvwCOKPBMh41M+wqQWBTH3V6lfq4w0knNA
-         RfOM/VhcC2XbViSKixDvycIvxVT/6Y7X/49aU=
+        d=chromium.org; s=google; t=1726155897; x=1726760697; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=c1KFFXITdKh/UNVDhGRYZ7z1/sXibi1fC5DJLFmUObI=;
+        b=VehWAvBS3DFFsHgyykpAxpflpYIYu5A7pLQPu6XU8y+FiyNaCc0A6PthyzbyiQPxT5
+         3hsd7wfmrC/zhBjdLwValjiSiETdJzDzDg6UOCEp+NLgNg9E4ud1etvJM7PpMYklNayM
+         4ZRNHldY0BXJGJe+yprn0c/sX6s0UzH0GcIZw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726155859; x=1726760659;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/xzJmJZir7SNhkzAEWBQK9iRI0VrPUIlmQ6Tc4M2oLs=;
-        b=PVdT9xtYIn+pyHbAkUVF5F2HhBblneG6EJLpsgbz+XAnKUf1nIUN1HKch1EFjDVqVK
-         LMVWKgPcBERfrtvCugZXD8mI6VNFE61Tg/efDTsBIZLcL+wgeAADdVJGmFAYm6azeajo
-         sh0scsIBHaE4XzgdJsgyAkzRW22vZ/sT1qdRvxPvf+VPrRKjPtS/n39XoEmIZMjhNYD0
-         /FL1lvmKCJtbQLXCp2hShM+NFeMPzfN6sS/wcG1bYD386UY0D/AWqWjiawRrnEpcdtG2
-         YlShMVmUFxH/C5jT1lbdv0NfpK0nfwuuvKMucylXK7ySDZ4CnnpQ4cA93UB1IZ/IUzx4
-         dvbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlsce5Aq/gPWK+5eoHYLgXIWje+1rla2Zd2pExQXaNXWr89csN2z2UdfvfOuLlWfNy32Op6Q/Q9DOHzZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaIxmpe6SsmaNmP4IbL34nJ/yx3wc+/eUR8RabV/WQZJFPrEpK
-	sKCnSNsjHtAub69XJyacli8AeFoMxMX+wPZjjAM3H57neDMUOO5JHxIg6Y+9bqs=
-X-Google-Smtp-Source: AGHT+IG6esSlE2W6kArjZrA67ckcdnIzOt6LyndGjqyPFo8xbm61PKfZ5ht422I2fxHXzRSn5KH60g==
-X-Received: by 2002:a05:6602:2d93:b0:82c:bdec:1c0e with SMTP id ca18e2360f4ac-82d1f8b3d81mr497735339f.2.1726155858844;
-        Thu, 12 Sep 2024 08:44:18 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d35f8ed815sm654814173.142.2024.09.12.08.44.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Sep 2024 08:44:18 -0700 (PDT)
-Message-ID: <a9ae7dc4-275d-43c3-bf4c-b0090cb6bb12@linuxfoundation.org>
-Date: Thu, 12 Sep 2024 09:44:17 -0600
+        d=1e100.net; s=20230601; t=1726155897; x=1726760697;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c1KFFXITdKh/UNVDhGRYZ7z1/sXibi1fC5DJLFmUObI=;
+        b=ikWvLvso3Ez/jbWVtvb6SgIHMrnhDpmMYzQ7AkWS9atDm89cuyzNLDCmOMfU9MxrfG
+         yaeei2XuACsMHpsPb024GiDwuJmbYPxKkPuw4InOETaLMMpQ9qeThWVBKkQVQ/TOx2xn
+         MCFGQyLC45KHZeGJOBXHvq92m8MvW3mUTAfwumkWdCnldgNorgjXN+uuBnDLpi6pUkOI
+         VTmqt+jT+GNVFvQDOw5rHspwi52woC0xWnzpMo8nr1E0WsYzk9gDex2StiID+Awc11w2
+         lv+67suPbR6xlGkbYQSebgPzsVGYKTr1G1Yfe0C9iQxp/ZIMsqOCMJHPmHC5CWyXeB7a
+         9I7A==
+X-Forwarded-Encrypted: i=1; AJvYcCW6hIdc7ODFXftc2/O+tOByPp2hcg0uxAoQsndTnbkcMEpX2NZ7OhUNRZiEVWJw1SNzPAc5Q0LFFwY/EEU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZaFUE7GKlgU7sh9YbXj/+A5sM/a1F2o63uokayw4yYloWhtZ8
+	KeWwDacl+uKDjn+9kBMoVNOf9FxkTwPGL5XIeMSY9k9mCxeujwJrRGbxJUYXfQ==
+X-Google-Smtp-Source: AGHT+IGceJb5ON2QNnGfniNjs+7jlg3UmQfUeN5Y/7jmG/+KHg45rsa/zeM5LdGm1y6Xl8ZubgzSaw==
+X-Received: by 2002:a05:6a21:10a:b0:1cf:6629:f42a with SMTP id adf61e73a8af0-1cf76253369mr4671233637.42.1726155897269;
+        Thu, 12 Sep 2024 08:44:57 -0700 (PDT)
+Received: from treapking.tpe.corp.google.com ([2401:fa00:1:10:8638:897f:b6cd:8c44])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7190909235csm4751353b3a.134.2024.09.12.08.44.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 08:44:56 -0700 (PDT)
+From: Pin-yen Lin <treapking@chromium.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Pin-yen Lin <treapking@chromium.org>
+Subject: [PATCH] arm64: dts: mt8192-asurada-spherion: Add Synaptics trackpad support
+Date: Thu, 12 Sep 2024 23:44:29 +0800
+Message-ID: <20240912154451.3447081-1-treapking@chromium.org>
+X-Mailer: git-send-email 2.46.0.662.g92d0881bb0-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] kselftests: mm: Fix wrong __NR_userfaultfd value
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>,
- John Hubbard <jhubbard@nvidia.com>, David Hildenbrand <david@redhat.com>
-Cc: kernel@collabora.com, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240912103151.1520254-1-usama.anjum@collabora.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240912103151.1520254-1-usama.anjum@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9/12/24 04:31, Muhammad Usama Anjum wrote:
-> The value of __NR_userfaultfd was changed to 282 when
-> asm-generic/unistd.h was included. It makes the test to fail every time
-> as the correct number of this syscall on x86_64 is 323. Fix the header
-> to asm/unistd.h.
-> 
+Some spherion variants use Synaptics trackpad at address 0x2c in the
+I2C2 bus with the generic HID-over-i2c driver, and this cannot be
+distinguished from the firmware compatible string.
 
-"please elaborate every time" - I just built on my x86_64 and built
-just fine. I am not saying this isn't a problem, it is good to
-understand why and how it is failing before making the change.
+Support both trackpads in the same devicetree by moving the trackpad
+pinctrl property to i2c2 and adding the node for Synaptics trackpad.
 
-> Fixes: a5c6bc590094 ("selftests/mm: remove local __NR_* definitions")
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-> ---
->   tools/testing/selftests/mm/pagemap_ioctl.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/mm/pagemap_ioctl.c b/tools/testing/selftests/mm/pagemap_ioctl.c
-> index fc90af2a97b80..bcc73b4e805c6 100644
-> --- a/tools/testing/selftests/mm/pagemap_ioctl.c
-> +++ b/tools/testing/selftests/mm/pagemap_ioctl.c
-> @@ -15,7 +15,7 @@
->   #include <sys/ioctl.h>
->   #include <sys/stat.h>
->   #include <math.h>
-> -#include <asm-generic/unistd.h>
-> +#include <asm/unistd.h>
->   #include <pthread.h>
->   #include <sys/resource.h>
->   #include <assert.h>
+Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+---
 
-Also please generate a series with these two patches with cover-letter.
+ .../boot/dts/mediatek/mt8192-asurada-spherion-r0.dts  | 11 +++++++++++
+ arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi      |  4 +---
+ 2 files changed, 12 insertions(+), 3 deletions(-)
 
-thanks,
--- Shuah
+diff --git a/arch/arm64/boot/dts/mediatek/mt8192-asurada-spherion-r0.dts b/arch/arm64/boot/dts/mediatek/mt8192-asurada-spherion-r0.dts
+index 29aa87e93888..8c485c3ced2c 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8192-asurada-spherion-r0.dts
++++ b/arch/arm64/boot/dts/mediatek/mt8192-asurada-spherion-r0.dts
+@@ -79,3 +79,14 @@ headset-codec {
+ &touchscreen {
+ 	compatible = "elan,ekth3500";
+ };
++
++&i2c2 {
++	/* synaptics touchpad */
++	trackpad@2c {
++		compatible = "hid-over-i2c";
++		reg = <0x2c>;
++		hid-descr-addr = <0x20>;
++		interrupts-extended = <&pio 15 IRQ_TYPE_LEVEL_LOW>;
++		wakeup-source;
++	};
++};
+diff --git a/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi b/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi
+index 08d71ddf3668..8dda8b63765b 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8192-asurada.dtsi
+@@ -335,14 +335,12 @@ &i2c2 {
+ 	clock-frequency = <400000>;
+ 	clock-stretch-ns = <12600>;
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&i2c2_pins>;
++	pinctrl-0 = <&i2c2_pins>, <&trackpad_pins>;
+ 
+ 	trackpad@15 {
+ 		compatible = "elan,ekth3000";
+ 		reg = <0x15>;
+ 		interrupts-extended = <&pio 15 IRQ_TYPE_LEVEL_LOW>;
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&trackpad_pins>;
+ 		vcc-supply = <&pp3300_u>;
+ 		wakeup-source;
+ 	};
+-- 
+2.46.0.662.g92d0881bb0-goog
+
 
