@@ -1,156 +1,192 @@
-Return-Path: <linux-kernel+bounces-326152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D88649763DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:04:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90BB09763DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:04:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 915DE2851F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:04:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B44D81C20C59
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8D518F2DD;
-	Thu, 12 Sep 2024 08:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D41218FDC3;
+	Thu, 12 Sep 2024 08:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WMj64vR/"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Xtfg0Jvo"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16541189BA5
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E1318FDAA
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726128240; cv=none; b=o02f82BSNufO/24+JIVT+m5uvcbiqSWJeTBBqRCSVaCLDyvlkrS0dvShFnfvd4uEt1SkgQesd/nd9nSk2T5v7NhTH8NUXU72UbReTQV2c27h8IPRSq0UeET8cJ8euoKlsxvaE5F1vCbujKBB3C3UGcCM8ufLa6XFpo5YkU2qEik=
+	t=1726128258; cv=none; b=nAD3NmzLyQ+m0J8GX0S7GFXt2Ncb4lvmdp3Ggjv47SUYqKmZV/P5XDnsjdBTO9Ivew0tRUqNMGkK57CLGDhp6HKVZ4SWiC6FDFVp0ct/Oz/QAo2GvWURbhTtmqHmgRXsOtHrx6ByKfhnOsZciQgq/DvDLiA5Zflo/rt9QptIR04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726128240; c=relaxed/simple;
-	bh=AlXxuP1UObQBFKY+VptOImAhmc7gEv6X/O7Zb8Ya0II=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Jxh+dzSbepTJIFwcKEYlPHASCazh7ooSl4fqMyKeOKKmaIZnYD1Hwjl6G4e5UPXkG+24AVHGMAOz02D+3aT/Y1p8pZs3HmEat5kzBWjSBkQVMx/zhUp4S7mwo04GjXCMpiIKraImG6y5SC+1763ApLQTKsmpLiz7FjZRLsehTQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WMj64vR/; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48BMdOZb025206;
-	Thu, 12 Sep 2024 08:03:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	oYpDSObymtP5trr0Dg3dxQpCaFYppzt85CDjuduwHw4=; b=WMj64vR/seYiXMx8
-	nXRJ085pVG5oNXnL+JMhlh/DUT4v/J1X8uk2AjD/ylvQz0heepRoK4QwibbmaFYw
-	RNuqMwvu0Tk9s1NQoHR3jYNwc20WwtaKXmO7h8aNK7Yp8lXGc3fg3SxtnsXf9u85
-	ZlW2/xJ4ldWDtCPlS6dLx5ghAzidnKEsLdCaJInbYleJIppYlJU3ERLjO0VDpfa7
-	fUyXBg3lD/pf1hnUAlFthQf+c5lwtu+sUjFZYyo3IRq0jspQXIp+SKzYVkNhaZlw
-	F2hA1JUhN6oy5DKaM3kngv+ADL7pwDKU2aUFsrT+PXd+kR1oqfPTrzpG8rti5ChU
-	rW/Abw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gefyt16t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Sep 2024 08:03:41 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48C83eC9025017;
-	Thu, 12 Sep 2024 08:03:40 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gefyt16p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Sep 2024 08:03:40 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48C5jH8K003122;
-	Thu, 12 Sep 2024 08:03:40 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41h15u6rhg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Sep 2024 08:03:40 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48C83cX18651188
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 12 Sep 2024 08:03:38 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 74D4A20043;
-	Thu, 12 Sep 2024 08:03:38 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D26562004B;
-	Thu, 12 Sep 2024 08:03:33 +0000 (GMT)
-Received: from [9.43.115.177] (unknown [9.43.115.177])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 12 Sep 2024 08:03:33 +0000 (GMT)
-Message-ID: <f4dcb6b4-2da8-4355-9d89-8b41af30214d@linux.ibm.com>
-Date: Thu, 12 Sep 2024 13:33:31 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v2] kexec/crash: no crash update when kexec in
- progress
-To: Baoquan He <bhe@redhat.com>
-Cc: akpm@linux-foundation.org, Hari Bathini <hbathini@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>, kexec@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        x86@kernel.org, Sachin P Bappalige <sachinpb@linux.vnet.ibm.com>
-References: <20240911112111.108056-1-sourabhjain@linux.ibm.com>
- <ZuGnH5R+FOC481V3@MiWiFi-R3L-srv>
-Content-Language: en-US
-From: Sourabh Jain <sourabhjain@linux.ibm.com>
-In-Reply-To: <ZuGnH5R+FOC481V3@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: tq5vb7peLAjR_5_8qxwGwQdcYnON-O-e
-X-Proofpoint-ORIG-GUID: Gdw-KrRH0ymkfw_x-UoPGfWRmIMBalgj
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1726128258; c=relaxed/simple;
+	bh=DZz6BPm5Y8g79lftloZDX6D22Au7imvIxsJZijxch6c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sdrGTdZI7+Eso4miLjWu6kkSTUDFej9Ph9sOepep5cal/SDxUNRxbrQESPRGMS6OPS1y3uAlJ/dj0qD8deDzyySxG666DiYoXpQHmtwO4FPyPu9TCLn4FV5ZQpUrC0/YMg6tWb7nLTtjSrEnLbdhoV0EtDKitlbyrBBXpS84tDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Xtfg0Jvo; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c25554ec1eso820010a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 01:04:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1726128255; x=1726733055; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TBJ2+XdUW/qafjoJnmA9ma/Xf9l2jCrkQ02M3zdM7sU=;
+        b=Xtfg0Jvodg73B8YY4wiev9zXoagpyjbY1kwhdbm63cneygzsVzDYWvjdhTexvr0uwf
+         F+5yAjQbqAZFacJOr/VbxT5UH+JxmGNXXcKlaWCqmrDLhbiNq23wHaPJV874QShs64rr
+         svQ9lqpNoE5kcb5+DiO32wRywtfocoaYDE/XgvLxSy8OSN3r3JyJqaH3HZHdZBEzCrAI
+         sRHesEBfccUtfXq0oZCdeU8o+uPIeUablN9vQLIxdG53ZgMOnu3ndmAjmcLM5TtQntEF
+         r6+AIX6bSDfqNkrlG0K5xxZV8IlRoEnvqFG9Cf+Gp/59frinoG106b8Vrm8JfddJ5oPh
+         HLzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726128255; x=1726733055;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TBJ2+XdUW/qafjoJnmA9ma/Xf9l2jCrkQ02M3zdM7sU=;
+        b=QFtCM02s/6a3nYWnXxhUr6JVVi39kY8eda5qQneq/Ayy9vE/lZw8E28FWZDFVER65t
+         8ttPM8jPu841qUwDuCDagSkAwvQzFMZouT3ibYu7hS2v7w1Kj/9DIJxvYBpQe8Bmy3xc
+         cI8YU6fU5ibAbzgmMn5g3sdwRSjnBbF6FR4JCfIIkcTlT+lOiAFRbsQywvjEZOsM5ggl
+         tJCBPMxdNsahwxcGnnfw3Mec7XIribbnlhP57y52WRva+lx8n8EnaI21dxugI9hBBcmt
+         hArCOx7eiCmbZLy8xrcUmoFSE7OFJV5Y/a6qQTgfI9PHkNa2N5Hvzygxxffo8AhPyuK3
+         Earg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzCKwIR3YAkWFGQx2ljEj9siCJxgqOo2DV8IOnkvBWJrecHGSmInEbauKWF8g13j4ueWR6B7WpvNoHOP4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxhRyVOUyj6YU0Jt65X2qJWgBePvSi6HFwK9ZrwSYb51aLlSEp
+	A5w+NGLU+HqMXkwvbdsys4lQ6uWg0gKQ/PR9rqgX7bZ/WrK7VxE18zkQUBtJphg=
+X-Google-Smtp-Source: AGHT+IF/rJztx9gqu2mmKHo36afM3kDLZPJkVPeDslFK1r3K2IZksYBImDJOHrN8xF8lPscvyhwlwg==
+X-Received: by 2002:a05:6402:1e8f:b0:5c3:c548:bb25 with SMTP id 4fb4d7f45d1cf-5c413e4d2eamr2008032a12.23.1726128254287;
+        Thu, 12 Sep 2024 01:04:14 -0700 (PDT)
+Received: from ?IPV6:2a10:bac0:b000:75b8:97eb:f4c4:420c:463b? ([2a10:bac0:b000:75b8:97eb:f4c4:420c:463b])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd468casm6214095a12.33.2024.09.12.01.04.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Sep 2024 01:04:13 -0700 (PDT)
+Message-ID: <2a2dd102-2ad9-4bbd-a5f7-5994de3870ae@suse.com>
+Date: Thu, 12 Sep 2024 11:04:12 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-11_02,2024-09-09_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- lowpriorityscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501
- adultscore=0 clxscore=1011 spamscore=0 bulkscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409120055
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/25] KVM: TDX: Initialize KVM supported capabilities
+ when module setup
+To: Xiaoyao Li <xiaoyao.li@intel.com>, Nikolay Borisov
+ <nik.borisov@suse.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org
+Cc: kai.huang@intel.com, isaku.yamahata@gmail.com,
+ tony.lindgren@linux.intel.com, linux-kernel@vger.kernel.org
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-11-rick.p.edgecombe@intel.com>
+ <caa4407a-b838-4e1b-bb3d-87518f3de66b@suse.com>
+ <aa764aad-1736-459f-896e-4f43bfe8b18d@intel.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <aa764aad-1736-459f-896e-4f43bfe8b18d@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello Baoquan,
 
-On 11/09/24 19:50, Baoquan He wrote:
-> On 09/11/24 at 04:51pm, Sourabh Jain wrote:
->> The following errors are observed when kexec is done with SMT=off on
->> powerpc.
->>
->> [  358.458385] Removing IBM Power 842 compression device
->> [  374.795734] kexec_core: Starting new kernel
->> [  374.795748] kexec: Waking offline cpu 1.
->> [  374.875695] crash hp: kexec_trylock() failed, elfcorehdr may be inaccurate
->> [  374.935833] kexec: Waking offline cpu 2.
->> [  375.015664] crash hp: kexec_trylock() failed, elfcorehdr may be inaccurate
->> snip..
->> [  375.515823] kexec: Waking offline cpu 6.
->> [  375.635667] crash hp: kexec_trylock() failed, elfcorehdr may be inaccurate
->> [  375.695836] kexec: Waking offline cpu 7.
->>
->> To avoid kexec kernel boot failure on PowerPC, all the present CPUs that
->> are offline are brought online during kexec. For more information, refer
->> to commit e8e5c2155b00 ("powerpc/kexec: Fix orphaned offline CPUs across
->> kexec"). Bringing the CPUs online triggers the crash hotplug handler,
->> crash_handle_hotplug_event(), to update the kdump image. Since the
->> system is on the kexec kernel boot path and the kexec lock is held, the
->> crash_handle_hotplug_event() function fails to acquire the same lock to
->> update the kdump image, resulting in the error messages mentioned above.
->>
->> To fix this, return from crash_handle_hotplug_event() without printing
->> the error message if kexec is in progress.
->>
->> The same applies to the crash_check_hotplug_support() function. Return
->> 0 if kexec is in progress because kernel is not in a position to update
->> the kdump image.
-> LGTM, thanks.
->
-> Acked-by: Baoquan he <bhe@redhat.com>
 
-Thank you for the Ack!
+On 5.09.24 г. 16:36 ч., Xiaoyao Li wrote:
+> On 9/4/2024 7:58 PM, Nikolay Borisov wrote:
+>>
+>>
+>> On 13.08.24 г. 1:48 ч., Rick Edgecombe wrote:
+>>> From: Xiaoyao Li <xiaoyao.li@intel.com>
+>>>
+>>> While TDX module reports a set of capabilities/features that it
+>>> supports, what KVM currently supports might be a subset of them.
+>>> E.g., DEBUG and PERFMON are supported by TDX module but currently not
+>>> supported by KVM.
+>>>
+>>> Introduce a new struct kvm_tdx_caps to store KVM's capabilities of TDX.
+>>> supported_attrs and suppported_xfam are validated against fixed0/1
+>>> values enumerated by TDX module. Configurable CPUID bits derive from TDX
+>>> module plus applying KVM's capabilities (KVM_GET_SUPPORTED_CPUID),
+>>> i.e., mask off the bits that are configurable in the view of TDX module
+>>> but not supported by KVM yet.
+>>>
+>>> KVM_TDX_CPUID_NO_SUBLEAF is the concept from TDX module, switch it to 0
+>>> and use KVM_CPUID_FLAG_SIGNIFCANT_INDEX, which are the concept of KVM.
+>>>
+>>> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
+>>> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+>>> ---
+>>> uAPI breakout v1:
+>>>   - Change setup_kvm_tdx_caps() to use the exported 'struct tdx_sysinfo'
+>>>     pointer.
+>>>   - Change how to copy 'kvm_tdx_cpuid_config' since 'struct tdx_sysinfo'
+>>>     doesn't have 'kvm_tdx_cpuid_config'.
+>>>   - Updates for uAPI changes
+>>> ---
+>>>   arch/x86/include/uapi/asm/kvm.h |  2 -
+>>>   arch/x86/kvm/vmx/tdx.c          | 81 +++++++++++++++++++++++++++++++++
+>>>   2 files changed, 81 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/arch/x86/include/uapi/asm/kvm.h 
+>>> b/arch/x86/include/uapi/asm/kvm.h
+>>> index 47caf508cca7..c9eb2e2f5559 100644
+>>> --- a/arch/x86/include/uapi/asm/kvm.h
+>>> +++ b/arch/x86/include/uapi/asm/kvm.h
+>>> @@ -952,8 +952,6 @@ struct kvm_tdx_cmd {
+>>>       __u64 hw_error;
+>>>   };
+>>> -#define KVM_TDX_CPUID_NO_SUBLEAF    ((__u32)-1)
+>>> -
+>>>   struct kvm_tdx_cpuid_config {
+>>>       __u32 leaf;
+>>>       __u32 sub_leaf;
+>>> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+>>> index 90b44ebaf864..d89973e554f6 100644
+>>> --- a/arch/x86/kvm/vmx/tdx.c
+>>> +++ b/arch/x86/kvm/vmx/tdx.c
+>>> @@ -31,6 +31,19 @@ static void __used tdx_guest_keyid_free(int keyid)
+>>>       ida_free(&tdx_guest_keyid_pool, keyid);
+>>>   }
+>>> +#define KVM_TDX_CPUID_NO_SUBLEAF    ((__u32)-1)
+>>> +
+>>> +struct kvm_tdx_caps {
+>>> +    u64 supported_attrs;
+>>> +    u64 supported_xfam;
+>>> +
+>>> +    u16 num_cpuid_config;
+>>> +    /* This must the last member. */
+>>> +    DECLARE_FLEX_ARRAY(struct kvm_tdx_cpuid_config, cpuid_configs);
+>>> +};
+>>> +
+>>> +static struct kvm_tdx_caps *kvm_tdx_caps;
+>>> +
+>>>   static int tdx_get_capabilities(struct kvm_tdx_cmd *cmd)
+>>>   {
+>>>       const struct tdx_sysinfo_td_conf *td_conf = &tdx_sysinfo->td_conf;
+>>> @@ -131,6 +144,68 @@ int tdx_vm_ioctl(struct kvm *kvm, void __user 
+>>> *argp)
+>>>       return r;
+>>>   }
+>>> +#define KVM_SUPPORTED_TD_ATTRS (TDX_TD_ATTR_SEPT_VE_DISABLE)
+>>
+>> Why isn't TDX_TD_ATTR_DEBUG added as well?
+> 
+> Because so far KVM doesn't support all the features of a DEBUG TD for 
+> userspace. e.g., KVM doesn't provide interface for userspace to 
+> read/write private memory of DEBUG TD.
 
-My understanding is that this patch will go upstream via the linux-next 
-tree, as it is based on 
-https://lore.kernel.org/all/20240902034708.88EC1C4CEC2@smtp.kernel.org/ 
-which is already part of the linux-next master branch. - Sourabh Jain
+But this means that you can't really run a TDX with SEPT_VE_DISABLE 
+disabled for debugging purposes, so perhaps it might be necessary to 
+rethink the condition allowing SEPT_VE_DISABLE to be disabled. Without 
+the debug flag and SEPT_VE_DISABLE disabled the code refuses to start 
+the VM, what if one wants to debug some SEPT issue by having an oops 
+generated inside the vm ?
+
+> 
+>> <snip>
+> 
+> 
 
