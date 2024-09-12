@@ -1,87 +1,130 @@
-Return-Path: <linux-kernel+bounces-326290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2D1297660B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:50:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FF78976615
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:55:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21C9B1C2128F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:50:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA15FB2224C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9047919E990;
-	Thu, 12 Sep 2024 09:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B75DC19F11F;
+	Thu, 12 Sep 2024 09:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="mwfNYX3e"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356041922D5;
-	Thu, 12 Sep 2024 09:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Bw/rSeVg"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468C2184558;
+	Thu, 12 Sep 2024 09:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726134631; cv=none; b=nl0K3mL1gZrEcZ/zwhM9EAVMMBfJTalC6tdJNJ/LinqyO2sJY653AaAKAVpILjL6qDTKDuMD/1HXOhVjO5m0u0W5OrJRrMNy3UjRVN+jzUALPOUZgqqzcGJpJ3r9UMBnGKlT1a4Bx28XFwya5/GcpRkyWewLvSpFLje68eTArRo=
+	t=1726134913; cv=none; b=Y7eR1fL5n8XZyOZ8teBTiubJ+JqYTeAmKGBKJsoANOFxU8yuKPemHiHFK16pKDfMV3SLRqoBbDKzJwzhMVo2NuY4tku9rKUrlBxRoqsl/umKwnbd8Ptj61E6iLD1+u1y5YHc7PxW2D7z3WrAK6gnR5vOLzNd/MUAzxCOs2C4tqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726134631; c=relaxed/simple;
-	bh=zvPOZDENo7xXnJCwzrirfJ6o9e+VQjNkKoR8Xs4s22E=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NVItk0N+0gGhoQ0elFPYhVqXaOI4KUBRSkSQt59ZUA04ZUFNLJP6P+w9i3DiQ3xFbWFVUvK8x/5XfFu61fg/zfrmWlgb0KagEzTqW5iM4Sn/n2CVjK4LFETRnbBL0IK+/6PLIRotmMDLRjPxN7j11gFbpPwnGn6whdmKKnJseJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=mwfNYX3e; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=6Ovib7cydWeepEU+5tt1A7eGUfsqnSXxIzT+y6rDnaE=;
-	b=mwfNYX3eOZ11uC/ZpA9ZyOy8O4sqrRIflY/5m+laiYpYUcUy1fR7fMUgbwdN6F
-	VbvAmPdtoy5gZYeLor72G01ZvPrcjCsoRB1AVgdwGX476TzYosixPbI8XM0ZnD6e
-	tbAkbwx7VOXC7tWBjqtzlRiv2sC9hj7Qdrfatcp8OziAE=
-Received: from localhost (unknown [58.243.42.99])
-	by gzsmtp3 (Coremail) with SMTP id sigvCgCH+YlVueJmaxWAAA--.15844S2;
-	Thu, 12 Sep 2024 17:50:13 +0800 (CST)
-Date: Thu, 12 Sep 2024 17:50:12 +0800
-From: Qianqiang Liu <qianqiang.liu@163.com>
-To: benato.denis96@gmail.com
-Cc: jagathjog1996@gmail.com, jic23@kernel.org, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: There is a potential buffer overflow issue in bmi323
-Message-ID: <ZuK5VH179B4j0jjm@thinkpad.>
+	s=arc-20240116; t=1726134913; c=relaxed/simple;
+	bh=ak0oM6R+aQCqIdmgcyfTd+zaQr3ycIgnJT5Jwb25V3E=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ayz1s7bdq2J0jHlXB1YGewi+dBCQHi8s2rp98AE87W2lAEltX9i5g88FRgGsZLwTp0ZGZc2SC2XFp4rw7pLeKuXvBHWMVa3UJtNg/ima0xEmbjjshiWSu9DH0WBhmPf1Qcn6WV2LNfrWC7Er0Y5u+hWjP5hrqG6jnz6q7aVufCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Bw/rSeVg; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1726134911; x=1757670911;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=ak0oM6R+aQCqIdmgcyfTd+zaQr3ycIgnJT5Jwb25V3E=;
+  b=Bw/rSeVg4FseKxC1JOcViq2rbRgfJ+wgTZMAXiPykNzu5hQnBEg+iBnC
+   B25/qHAOVbERORX/n/eBNrtxuof797RaI4Um2FfHlh57SNMmqI1xHcRWe
+   fj2w/ptZLezD8A39mCKXbA7Xr1tiJjz5FhMYaubKh+RZ5LZES56lhkaIu
+   cs4bff9BdhNnzybAWZzESWguGY9TLpED5gcyMK60wEcfEHf10vrnZmrqb
+   1/ICX9fMgeTp3vlbteoZNM08Bx1U8mXxXthyzh1OwQHWMUJ4A6Ds+bule
+   jG2xpYRQ2b63BIvcKyGVwDj1YHVjA5ryHIcG7TS6yhJWUz7KqbZF2xzb7
+   w==;
+X-CSE-ConnectionGUID: T/B5t8f4R/WLMPbvf6HuCg==
+X-CSE-MsgGUID: PI/UPcP3QuiZ0PEyxZoDhw==
+X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
+   d="scan'208";a="34843216"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Sep 2024 02:55:09 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 12 Sep 2024 02:54:44 -0700
+Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Thu, 12 Sep 2024 02:54:41 -0700
+From: Andrei Simion <andrei.simion@microchip.com>
+To: <claudiu.beznea@tuxon.dev>
+CC: <alexandre.belloni@bootlin.com>, <alsa-devel@alsa-project.org>,
+	<andrei.simion@microchip.com>, <broonie@kernel.org>,
+	<codrin.ciubotariu@microchip.com>, <lgirdwood@gmail.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-sound@vger.kernel.org>, <nicolas.ferre@microchip.com>,
+	<perex@perex.cz>, <tiwai@suse.com>
+Subject: Re: [PATCH 3/3] ASoC: atmel: mchp-pdmc: Retain Non-Runtime Controls
+Date: Thu, 12 Sep 2024 12:53:38 +0300
+Message-ID: <20240912095337.41507-1-andrei.simion@microchip.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <ae7a3386-5e11-4d9b-84a5-8e6a79c91c52@tuxon.dev>
+References: <ae7a3386-5e11-4d9b-84a5-8e6a79c91c52@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-CM-TRANSID:sigvCgCH+YlVueJmaxWAAA--.15844S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7GrWxtrWDKFy3Kw18Zw43Jrb_yoWxAFg_Cr
-	nav3s7Jw4Fka13Jr1Fkr17Xw4j9FWDKFWxGF1xC3WrAFy2va17Gw4kZFZFg3ykurZ7Cr1U
-	CF18AF4xGFyrujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUef9N3UUUUU==
-X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiLxZYamVOGSaplAAAsi
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi,
+>>  struct mchp_pdmc {
+>>  	struct mic_map channel_mic_map[MCHP_PDMC_MAX_CHANNELS];
+>> +	spinlock_t busy_lock;		/* lock protecting busy */
+>>  	struct device *dev;
+>>  	struct snd_dmaengine_dai_dma_data addr;
+>>  	struct regmap *regmap;
+>> @@ -124,6 +126,7 @@ struct mchp_pdmc {
+>>  	int mic_no;
+>>  	int sinc_order;
+>>  	bool audio_filter_en;
+>> +	u8 busy:1;
 
-I reviewed the following code in drivers/iio/imu/bmi323/bmi323_core.c:
+> Can the spinlock and busy flag be replaced by an atomic variable?
 
-2245         for (unsigned int i = 0; i < ARRAY_SIZE(bmi323_ext_reg_savestate); i++) { <-
-2246                 ret = bmi323_write_ext_reg(data, bmi323_reg_savestate[i], <-
-2247						savestate->reg_settings[i]);
-2248                 if (ret) {
-2249                         dev_err(data->dev,
-2250                                 "Error writing bmi323 external reg 0x%x: %d\n",
-2251                                 bmi323_reg_savestate[i], ret);
-2252                         return ret;
-2253                 }
-2254         }
+I will use atomic_t variable with atomic_set and atomic_read.
+I will do a test and send V2.
 
-The array size of the "bmi323_ext_reg_savestate" is twelve, and the
-array size of "bmi323_reg_savestate" is nine.
+>>  };
+>>
+>>  static const char *const mchp_pdmc_sinc_filter_order_text[] = {
+>> @@ -167,10 +170,19 @@ static int mchp_pdmc_sinc_order_put(struct snd_kcontrol *kcontrol,
+>>  		return -EINVAL;
+>>
+>>  	val = snd_soc_enum_item_to_val(e, item[0]) << e->shift_l;
+>> -	if (val == dd->sinc_order)
+>> +
+>> +	spin_lock(&dd->busy_lock);
+>> +	if (dd->busy) {
+>> +		spin_unlock((&dd->busy_lock));
 
-Is it possible that "bmi323_reg_savestate" may have buffer overflow
-issue?
+> You can remove () around (&dd->busy_lock). Valid for the rest of occurrences.
 
--- 
-Best,
-Qianqiang Liu
+OK. Got it!
+
+>> +		return -EBUSY;
+>> +	}
+>> +	if (val == dd->sinc_order) {
+>> +		spin_unlock((&dd->busy_lock));
+>>  		return 0;
+>> +	}
+>>
+>>  	dd->sinc_order = val;
+>> +	spin_unlock((&dd->busy_lock));
+>>
+>>  	return 1;
+>>  }
 
 
