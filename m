@@ -1,106 +1,227 @@
-Return-Path: <linux-kernel+bounces-325964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 535E097604B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:22:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 833DA976051
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:27:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F6031C22B3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 05:22:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19A221F23532
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 05:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1CC18891A;
-	Thu, 12 Sep 2024 05:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2056518892E;
+	Thu, 12 Sep 2024 05:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="JJ6Nvmy9"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JlDq3dDc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A89846D;
-	Thu, 12 Sep 2024 05:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5035928F4;
+	Thu, 12 Sep 2024 05:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726118517; cv=none; b=khJBYmPHcevQ2MklqICEZfxYx745DxJL58Ok8vaqEBQj2yo677W12+zhYtoDUA1qQIsYzAuKelNtI+KvY4evIEn6G2gUz1sfb3oeRHQmdJMghRolbZPy9c89aVF2uVg45XnP9nvs+iU59oX+K0RasutvZ9omyMrZ9tWhiJIc8a0=
+	t=1726118833; cv=none; b=rXAMZPNvskossW9DAju5Bcdj27LznpJ01XCylzjsQuYtcu2Hjm6opGcQmHLzN48D4HA+eC1lMH5vrbnJ1q9IHYWqRYFoJ4JltoaJIXCfgN25zHw2x4uHSyUI9RChNQQ+2Ao4IhkxyVDAKjvF5EMB75kBFGdTZTfcncf7Z8YtPeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726118517; c=relaxed/simple;
-	bh=FvwI3m0rM8ZYeRK2nXdJVSDhmMdutUqwiqySPAtD3sI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=CAkDzOOAo7NV40TCd1skRxWQYFr4/eBAHDUQo9ZYQjp+e+tVRigR71w4IwseI9O9qVsQWu0FNDZYhYdRZ+lxP1Wxjv9dFD68SUrc6NUN1nbsWr1qonT4BHuFGqsJtbWF7j+5MxtcSh8BcprVbWe5HLbc6tc5145g/HXOoT2PLRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=JJ6Nvmy9; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726118512;
-	bh=nVCohKEAwkvAHf/tQ851c+bKnKzo1Jw3O3NqEpgemDs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=JJ6Nvmy97SnShBNHbm9m3tMneJu8FsWBIwkVoAqcgPKUheAtkPbLPgC0x5RtfK9sR
-	 vHW7MV6NOX9d55JKMNOQgTtwsGfSV6TOm1JUBUlpMgOHi5LASLelBauKmoLa7dgRgZ
-	 PswU11sBW1sXSO/LaiC6clcUaUVQ3DyHXJEvZopBWTWYGOjfa6cTRRKC/kuHom5+wI
-	 1+agTorQyW2kgTNgD2wsTLjq57fUWQ1T3knA7Fq/sK4tRLys3mfjqBTgl/+qWOwQcw
-	 mW7PS23ZzLQm5sCSIfRvdcrGf15NS9/CICWDcDQzFgY5eNVhq5JFijYF8BdWx+b2wX
-	 nb1b0jSyUlbmw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X45Ql6g79z4wnw;
-	Thu, 12 Sep 2024 15:21:50 +1000 (AEST)
-Date: Thu, 12 Sep 2024 15:21:50 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Wim Van Sebroeck <wim@iguana.be>, Olof Johansson <olof@lixom.net>, Arnd
- Bergmann <arnd@arndb.de>
-Cc: ARM <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the watchdog tree
-Message-ID: <20240912152150.1db4cec7@canb.auug.org.au>
+	s=arc-20240116; t=1726118833; c=relaxed/simple;
+	bh=7eh51Scz69ixvcvPbWXHztOiazCKgp5VwmoMmo0IOAE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nr4TIgZ/0U2CxNukIlAIHKlSf7tENOYaHWmBih3ZKuZpymQIxjaCKjG0+IaL4WSmJsziiGAYD4lMZ3h+Vmqxgf06/fjZVHMvqs6UEp40b/5aiQaavjYnAtLruAu+NgKVkDc/NDjaid6ZZTWAXT09QPK9QfmrhvAjZyis1tVg5Gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JlDq3dDc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E212C4CEC3;
+	Thu, 12 Sep 2024 05:27:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1726118832;
+	bh=7eh51Scz69ixvcvPbWXHztOiazCKgp5VwmoMmo0IOAE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JlDq3dDcZjTc0lYUdf1YAK7Ic40SMrul8b7V8NDqoZk7tWG9xvT02YjBVjap64wpI
+	 Nk3PO+KezY8SHJ497JcuxGqDrIVgc6CbCRdZxG1MmBCUa9Z/u3VZ1HZFdOfDon3D54
+	 /+V7AUhCpp8Bd21meNOigYyhsLVACY+XF3khqs6Q=
+Date: Thu, 12 Sep 2024 07:27:09 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Serge Semin <fancer.lancer@gmail.com>
+Cc: Viresh Kumar <vireshk@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Maciej Sosnowski <maciej.sosnowski@intel.com>,
+	Haavard Skinnemoen <haavard.skinnemoen@atmel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Jiri Slaby <jirislaby@kernel.org>, dmaengine@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] dmaengine: dw: Fix XFER bit set, but channel not
+ idle error
+Message-ID: <2024091200-clubhouse-royal-44f3@gregkh>
+References: <20240911184710.4207-1-fancer.lancer@gmail.com>
+ <20240911184710.4207-3-fancer.lancer@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/SZ1tyPRS+4HXO5RphA0jglZ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911184710.4207-3-fancer.lancer@gmail.com>
 
---Sig_/SZ1tyPRS+4HXO5RphA0jglZ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Sep 11, 2024 at 09:46:10PM +0300, Serge Semin wrote:
+> If a client driver gets to use the DW DMAC engine device tougher
+> than usual, with occasional DMA-transfers termination and restart, then
+> the next error can be randomly spotted in the system log:
+> 
+> > dma dma0chan0: BUG: XFER bit set, but channel not idle!
+> 
+> For instance that happens in case of the 8250 UART port driver handling
+> the looped back high-speed traffic (in my case > 1.5Mbaud) by means of the
+> DMA-engine interface.
+> 
+> The error happens due to the two-staged nature of the DW DMAC IRQs
+> handling procedure and due to the critical section break in the meantime.
+> In particular in case if the DMA-transfer is terminated and restarted:
+> 1. after the IRQ-handler submitted the tasklet but before the tasklet
+>    started handling the DMA-descriptors in dwc_scan_descriptors();
+> 2. after the XFER completion flag was detected in the
+>    dwc_scan_descriptors() method, but before the dwc_complete_all() method
+>    is called
+> the error denoted above is printed due to the overlap of the last transfer
+> completion and the new transfer execution stages.
+> 
+> There are two places need to be altered in order to fix the problem.
+> 1. Clear the IRQs in the dwc_chan_disable() method. That will prevent the
+>    dwc_scan_descriptors() method call in case if the DMA-transfer is
+>    restarted in the middle of the two-staged IRQs-handling procedure.
+> 2. Move the dwc_complete_all() code to being executed inseparably (in the
+>    same atomic section) from the DMA-descriptors scanning procedure. That
+>    will prevent the DMA-transfer restarts after the DMA-transfer completion
+>    was spotted but before the actual completion is executed.
+> 
+> Fixes: 69cea5a00d31 ("dmaengine/dw_dmac: Replace spin_lock* with irqsave variants and enable submission from callback")
+> Fixes: 3bfb1d20b547 ("dmaengine: Driver for the Synopsys DesignWare DMA controller")
+> Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+> ---
+>  drivers/dma/dw/core.c | 54 ++++++++++++++++++++-----------------------
+>  1 file changed, 25 insertions(+), 29 deletions(-)
+> 
+> diff --git a/drivers/dma/dw/core.c b/drivers/dma/dw/core.c
+> index af1871646eb9..fbc46cbfe259 100644
+> --- a/drivers/dma/dw/core.c
+> +++ b/drivers/dma/dw/core.c
+> @@ -143,6 +143,12 @@ static inline void dwc_chan_disable(struct dw_dma *dw, struct dw_dma_chan *dwc)
+>  	channel_clear_bit(dw, CH_EN, dwc->mask);
+>  	while (dma_readl(dw, CH_EN) & dwc->mask)
+>  		cpu_relax();
+> +
+> +	dma_writel(dw, CLEAR.XFER, dwc->mask);
+> +	dma_writel(dw, CLEAR.BLOCK, dwc->mask);
+> +	dma_writel(dw, CLEAR.SRC_TRAN, dwc->mask);
+> +	dma_writel(dw, CLEAR.DST_TRAN, dwc->mask);
+> +	dma_writel(dw, CLEAR.ERROR, dwc->mask);
+>  }
+>  
+>  /*----------------------------------------------------------------------*/
+> @@ -259,34 +265,6 @@ dwc_descriptor_complete(struct dw_dma_chan *dwc, struct dw_desc *desc,
+>  	dmaengine_desc_callback_invoke(&cb, NULL);
+>  }
+>  
+> -static void dwc_complete_all(struct dw_dma *dw, struct dw_dma_chan *dwc)
+> -{
+> -	struct dw_desc *desc, *_desc;
+> -	LIST_HEAD(list);
+> -	unsigned long flags;
+> -
+> -	spin_lock_irqsave(&dwc->lock, flags);
+> -	if (dma_readl(dw, CH_EN) & dwc->mask) {
+> -		dev_err(chan2dev(&dwc->chan),
+> -			"BUG: XFER bit set, but channel not idle!\n");
+> -
+> -		/* Try to continue after resetting the channel... */
+> -		dwc_chan_disable(dw, dwc);
+> -	}
+> -
+> -	/*
+> -	 * Submit queued descriptors ASAP, i.e. before we go through
+> -	 * the completed ones.
+> -	 */
+> -	list_splice_init(&dwc->active_list, &list);
+> -	dwc_dostart_first_queued(dwc);
+> -
+> -	spin_unlock_irqrestore(&dwc->lock, flags);
+> -
+> -	list_for_each_entry_safe(desc, _desc, &list, desc_node)
+> -		dwc_descriptor_complete(dwc, desc, true);
+> -}
+> -
+>  /* Returns how many bytes were already received from source */
+>  static inline u32 dwc_get_sent(struct dw_dma_chan *dwc)
+>  {
+> @@ -303,6 +281,7 @@ static void dwc_scan_descriptors(struct dw_dma *dw, struct dw_dma_chan *dwc)
+>  	struct dw_desc *child;
+>  	u32 status_xfer;
+>  	unsigned long flags;
+> +	LIST_HEAD(list);
+>  
+>  	spin_lock_irqsave(&dwc->lock, flags);
+>  	status_xfer = dma_readl(dw, RAW.XFER);
+> @@ -341,9 +320,26 @@ static void dwc_scan_descriptors(struct dw_dma *dw, struct dw_dma_chan *dwc)
+>  			clear_bit(DW_DMA_IS_SOFT_LLP, &dwc->flags);
+>  		}
+>  
+> +		/*
+> +		 * No more active descriptors left to handle. So submit the
+> +		 * queued descriptors and finish up the already handled ones.
+> +		 */
+> +		if (dma_readl(dw, CH_EN) & dwc->mask) {
+> +			dev_err(chan2dev(&dwc->chan),
+> +				"BUG: XFER bit set, but channel not idle!\n");
+> +
+> +			/* Try to continue after resetting the channel... */
+> +			dwc_chan_disable(dw, dwc);
+> +		}
+> +
+> +		list_splice_init(&dwc->active_list, &list);
+> +		dwc_dostart_first_queued(dwc);
+> +
+>  		spin_unlock_irqrestore(&dwc->lock, flags);
+>  
+> -		dwc_complete_all(dw, dwc);
+> +		list_for_each_entry_safe(desc, _desc, &list, desc_node)
+> +			dwc_descriptor_complete(dwc, desc, true);
+> +
+>  		return;
+>  	}
+>  
+> -- 
+> 2.43.0
+> 
+> 
 
-Hi all,
+Hi,
 
-The following commits are also in the arm-soc tree as different commits
-(but the same patches):
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-  369afb28a856 ("wdt: ts72xx: add DT support for ts72xx")
-  ba60f951a098 ("dt-bindings: watchdog: Add Cirrus EP93x")
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-These are commits
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
 
-  07933ff8d919 ("wdt: ts72xx: add DT support for ts72xx")
-  ad39ab18fd06 ("dt-bindings: watchdog: Add Cirrus EP93x")
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
-in the arm-soc-tree.
+thanks,
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/SZ1tyPRS+4HXO5RphA0jglZ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbiem4ACgkQAVBC80lX
-0GzqnQf+IXoJcnxH7UlcUu9zf4juPNHx22Td0s4lGBT4hK2yQf/nErqDP36Hkdon
-CugufE99hEwqOGw1GhPjCcDL1bxjoz2UlHVbWMUKJ/L5Oq4StvCuIukuNDFA/9p8
-75AeriXJcIxgl1mP2LsAatDRb0rPfCQn7sxtU/qWUZl5BZsmGr1OSGRChMFgs7WV
-lR2bjfUnzESjJjCdO36lJlx7gOEKFtHSkT8eZjekcOSIoej+Bjol2khboV2dw0ci
-/3DPw0F6FndJXWxk1Fm77Z9gVJ/svPe1PLXFLT8MqO0DVY79rJkfrpFYPFwSevbB
-oJxEDOKIzt/kvukoKjERaPhfI9noWQ==
-=5RD3
------END PGP SIGNATURE-----
-
---Sig_/SZ1tyPRS+4HXO5RphA0jglZ--
+greg k-h's patch email bot
 
