@@ -1,40 +1,41 @@
-Return-Path: <linux-kernel+bounces-326182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3318397646B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:26:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D02FB97646C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8F5B1F24C1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:26:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 942782856C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71A4190682;
-	Thu, 12 Sep 2024 08:26:44 +0000 (UTC)
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE33C190463;
+	Thu, 12 Sep 2024 08:26:53 +0000 (UTC)
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBC61922D3
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:26:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E715191F6E
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726129604; cv=none; b=t6Ru3IYyowUFp8Ki5mZdSanU04OL1dIOFiHgAYT26r19H0+ZD2AyFiY9WoKVEII30IFMXSjsm8muzRseUl1WfyCSukw5bN0dVG/rbpn+sNCfv79zz+QBMNbGPxTKX1Rsyjymiw6c1e0FpCD1PVMrdDTXRYvmoRJB9p6NMCu24YY=
+	t=1726129613; cv=none; b=n7o1d2RwBfzZLccnsWf7ofpgTNZbJnPwIAFlTefbJcUkxue6J84DgNslYptxv2JdiPtTnjk45t+zP5N8+FkcGZem7k4qWEyyXZyXe44AOl1LCpD8XEonLRA4zsjkGZPFd95pzcpqFNzmR3pGIWXI7PVSajjTVcVC1xwHU3oMn8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726129604; c=relaxed/simple;
-	bh=hCFSunO1LzHT/PsLWhX5UeOxc2oCBszZgiFEgpndPvQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vau0IZuu+EfL9Kz73NPrLwFZH7BQbRPSWmx2hm1Bvw83u1tIr3NQLWVtEzazHNtjPYo1ACNbHD+se1rVz+K+nhH6qVpCc+myCco7mNrVF5r4xPo91yrX+gIHV+iqimhHeFPf+mTlQzGqQ8mDXlRDFCcAQAcs3s88aP89K0rgZVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=54.243.244.52
+	s=arc-20240116; t=1726129613; c=relaxed/simple;
+	bh=2I443DEUkoLhYdUuxOL4QIIgvjyS+mjd4++lsKfJqp8=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OwKEThgj2he/J1ju6nFN3DKWiCQFubSylf3gIdKXJ4peIPw0XlSTwIRyTjbs2HQa1LOAW2AxQde+u9rXYlqNH+qGamG3DLbKe01lWUyRu5vEgWOd9j2fwrrIqzKk7mibMh4mNrZoDyqn+IZleRxBYLeRv7uqvGCObpFOE+egglA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=54.254.200.128
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shingroup.cn
-X-QQ-mid: bizesmtpsz3t1726129530tb5gy2u
-X-QQ-Originating-IP: Xr0oQPFvbsRAicqeAiZPlplsFVjUVuZkr2XlG4+yueg=
+X-QQ-mid: bizesmtpsz3t1726129533t9pgnd9
+X-QQ-Originating-IP: tkWPz5UWQyJUHZmLTf8Iyz5rhCyS445T/fPWfgyOab8=
 Received: from HX09040029.powercore.com.cn ( [180.171.104.254])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 12 Sep 2024 16:25:26 +0800 (CST)
+	id ; Thu, 12 Sep 2024 16:25:32 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 4008263070620092588
+X-BIZMAIL-ID: 16748915590400865990
 From: Luming Yu <luming.yu@shingroup.cn>
 To: linuxppc-dev@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org,
@@ -43,11 +44,12 @@ To: linuxppc-dev@lists.ozlabs.org,
 	christophe.leroy@csgroup.eu,
 	jialong.yang@shingroup.cn,
 	luming.yu@gmail.com
-Cc: Luming Yu <luming.yu@shingroup.cn>
-Subject: [PATCH 1/2] powerpc/entry: convert to common and generic entry
-Date: Thu, 12 Sep 2024 16:24:58 +0800
-Message-ID: <B4ABABEA5F13B86A+20240912082500.1469-1-luming.yu@shingroup.cn>
+Subject: [PATCH 2/2] powerpc/entry: entry clean up for common entry
+Date: Thu, 12 Sep 2024 16:24:59 +0800
+Message-ID: <50B10485E86A3208+20240912082500.1469-2-luming.yu@shingroup.cn>
 X-Mailer: git-send-email 2.42.0.windows.2
+In-Reply-To: <20240912082500.1469-1-luming.yu@shingroup.cn>
+References: <20240912082500.1469-1-luming.yu@shingroup.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,153 +62,189 @@ Feedback-ID: bizesmtpsz:shingroup.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
 
 From: Yu Luming <luming.yu@gmail.com>
 
-convert powerpc entry code in syscall and fault to use syscall_work
-and irqentry_state as well as common calls from generic entry infrastructure.
+clean up do_syscall_trace_enter/leave and do_seccomp
 
-Signed-off-by: Luming Yu <luming.yu@shingroup.cn>
+ Signed-off-by: Luming Yu <luming.yu@shingroup.cn>
 ---
- arch/powerpc/Kconfig                   | 1 +
- arch/powerpc/include/asm/hw_irq.h      | 5 +++++
- arch/powerpc/include/asm/processor.h   | 6 ++++++
- arch/powerpc/include/asm/syscall.h     | 5 +++++
- arch/powerpc/include/asm/thread_info.h | 1 +
- arch/powerpc/kernel/syscall.c          | 6 +++++-
- arch/powerpc/mm/fault.c                | 5 +++++
- 7 files changed, 28 insertions(+), 1 deletion(-)
+ arch/powerpc/kernel/interrupt.c     |   5 -
+ arch/powerpc/kernel/ptrace/ptrace.c | 141 ----------------------------
+ 2 files changed, 146 deletions(-)
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index e21f72bcb61f..e94e7e4bfd40 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -202,6 +202,7 @@ config PPC
- 	select GENERIC_IRQ_SHOW_LEVEL
- 	select GENERIC_PCI_IOMAP		if PCI
- 	select GENERIC_PTDUMP
-+        select GENERIC_ENTRY
- 	select GENERIC_SMP_IDLE_THREAD
- 	select GENERIC_TIME_VSYSCALL
- 	select GENERIC_VDSO_TIME_NS
-diff --git a/arch/powerpc/include/asm/hw_irq.h b/arch/powerpc/include/asm/hw_irq.h
-index 317659fdeacf..a3d591784c95 100644
---- a/arch/powerpc/include/asm/hw_irq.h
-+++ b/arch/powerpc/include/asm/hw_irq.h
-@@ -216,6 +216,11 @@ static inline bool arch_irqs_disabled(void)
- 	return arch_irqs_disabled_flags(arch_local_save_flags());
- }
+diff --git a/arch/powerpc/kernel/interrupt.c b/arch/powerpc/kernel/interrupt.c
+index 7fe704946e96..609ba48034de 100644
+--- a/arch/powerpc/kernel/interrupt.c
++++ b/arch/powerpc/kernel/interrupt.c
+@@ -296,11 +296,6 @@ notrace unsigned long syscall_exit_prepare(unsigned long r3,
+ 		regs->gpr[3] = r3;
+ 	}
  
-+/*common entry*/
-+static __always_inline bool regs_irqs_disabled(struct pt_regs *regs)
-+{
-+	return arch_irqs_disabled();
-+}
- static inline void set_pmi_irq_pending(void)
- {
- 	/*
-diff --git a/arch/powerpc/include/asm/processor.h b/arch/powerpc/include/asm/processor.h
-index b2c51d337e60..1292282f8b0e 100644
---- a/arch/powerpc/include/asm/processor.h
-+++ b/arch/powerpc/include/asm/processor.h
-@@ -383,6 +383,12 @@ int validate_sp(unsigned long sp, struct task_struct *p);
- int validate_sp_size(unsigned long sp, struct task_struct *p,
- 		     unsigned long nbytes);
+-	if (unlikely(ti_flags & _TIF_SYSCALL_DOTRACE)) {
+-		do_syscall_trace_leave(regs);
+-		ret |= _TIF_RESTOREALL;
+-	}
+-
+ 	local_irq_disable();
+ 	ret = interrupt_exit_user_prepare_main(ret, regs);
  
-+/*for common entry*/
-+static __always_inline bool on_thread_stack(void)
-+{
-+	return validate_sp(current_stack_pointer, current);
-+}
-+
+diff --git a/arch/powerpc/kernel/ptrace/ptrace.c b/arch/powerpc/kernel/ptrace/ptrace.c
+index 727ed4a14545..6cd180bc36ab 100644
+--- a/arch/powerpc/kernel/ptrace/ptrace.c
++++ b/arch/powerpc/kernel/ptrace/ptrace.c
+@@ -21,9 +21,6 @@
+ #include <asm/switch_to.h>
+ #include <asm/debug.h>
+ 
+-#define CREATE_TRACE_POINTS
+-#include <trace/events/syscalls.h>
+-
+ #include "ptrace-decl.h"
+ 
  /*
-  * Prefetch macros.
-  */
-diff --git a/arch/powerpc/include/asm/syscall.h b/arch/powerpc/include/asm/syscall.h
-index 3dd36c5e334a..0e94806c7bfe 100644
---- a/arch/powerpc/include/asm/syscall.h
-+++ b/arch/powerpc/include/asm/syscall.h
-@@ -119,4 +119,9 @@ static inline int syscall_get_arch(struct task_struct *task)
- 	else
- 		return AUDIT_ARCH_PPC64;
- }
-+
-+static inline bool arch_syscall_is_vdso_sigreturn(struct pt_regs *regs)
-+{
-+	return false;
-+}
- #endif	/* _ASM_SYSCALL_H */
-diff --git a/arch/powerpc/include/asm/thread_info.h b/arch/powerpc/include/asm/thread_info.h
-index 47e226032f9c..c52ca3aaebb5 100644
---- a/arch/powerpc/include/asm/thread_info.h
-+++ b/arch/powerpc/include/asm/thread_info.h
-@@ -58,6 +58,7 @@ struct thread_info {
- 	unsigned int	cpu;
- #endif
- 	unsigned long	local_flags;		/* private flags for thread */
-+	unsigned long	syscall_work;
- #ifdef CONFIG_LIVEPATCH_64
- 	unsigned long *livepatch_sp;
- #endif
-diff --git a/arch/powerpc/kernel/syscall.c b/arch/powerpc/kernel/syscall.c
-index 77fedb190c93..cbf0510ed10e 100644
---- a/arch/powerpc/kernel/syscall.c
-+++ b/arch/powerpc/kernel/syscall.c
-@@ -3,6 +3,7 @@
- #include <linux/compat.h>
- #include <linux/context_tracking.h>
- #include <linux/randomize_kstack.h>
-+#include <linux/entry-common.h>
- 
- #include <asm/interrupt.h>
- #include <asm/kup.h>
-@@ -131,7 +132,7 @@ notrace long system_call_exception(struct pt_regs *regs, unsigned long r0)
- 		 * and the test against NR_syscalls will fail and the return
- 		 * value to be used is in regs->gpr[3].
- 		 */
--		r0 = do_syscall_trace_enter(regs);
-+		syscall_enter_from_user_mode(regs, r0);
- 		if (unlikely(r0 >= NR_syscalls))
- 			return regs->gpr[3];
- 
-@@ -185,5 +186,8 @@ notrace long system_call_exception(struct pt_regs *regs, unsigned long r0)
- 	 */
- 	choose_random_kstack_offset(mftb());
- 
-+	/*common entry*/
-+	syscall_exit_to_user_mode(regs);
-+
+@@ -195,144 +192,6 @@ long arch_ptrace(struct task_struct *child, long request,
  	return ret;
  }
-diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
-index 9e49ede2bc1c..64c6eb06ebe8 100644
---- a/arch/powerpc/mm/fault.c
-+++ b/arch/powerpc/mm/fault.c
-@@ -23,6 +23,7 @@
- #include <linux/mman.h>
- #include <linux/mm.h>
- #include <linux/interrupt.h>
-+#include <linux/entry-common.h>
- #include <linux/highmem.h>
- #include <linux/extable.h>
- #include <linux/kprobes.h>
-@@ -569,15 +570,19 @@ NOKPROBE_SYMBOL(___do_page_fault);
- static __always_inline void __do_page_fault(struct pt_regs *regs)
- {
- 	long err;
-+	irqentry_state_t state = irqentry_enter(regs);
  
- 	err = ___do_page_fault(regs, regs->dar, regs->dsisr);
- 	if (unlikely(err))
- 		bad_page_fault(regs, err);
-+	irqentry_exit(regs, state);
- }
+-#ifdef CONFIG_SECCOMP
+-static int do_seccomp(struct pt_regs *regs)
+-{
+-	if (!test_thread_flag(TIF_SECCOMP))
+-		return 0;
+-
+-	/*
+-	 * The ABI we present to seccomp tracers is that r3 contains
+-	 * the syscall return value and orig_gpr3 contains the first
+-	 * syscall parameter. This is different to the ptrace ABI where
+-	 * both r3 and orig_gpr3 contain the first syscall parameter.
+-	 */
+-	regs->gpr[3] = -ENOSYS;
+-
+-	/*
+-	 * We use the __ version here because we have already checked
+-	 * TIF_SECCOMP. If this fails, there is nothing left to do, we
+-	 * have already loaded -ENOSYS into r3, or seccomp has put
+-	 * something else in r3 (via SECCOMP_RET_ERRNO/TRACE).
+-	 */
+-	if (__secure_computing(NULL))
+-		return -1;
+-
+-	/*
+-	 * The syscall was allowed by seccomp, restore the register
+-	 * state to what audit expects.
+-	 * Note that we use orig_gpr3, which means a seccomp tracer can
+-	 * modify the first syscall parameter (in orig_gpr3) and also
+-	 * allow the syscall to proceed.
+-	 */
+-	regs->gpr[3] = regs->orig_gpr3;
+-
+-	return 0;
+-}
+-#else
+-static inline int do_seccomp(struct pt_regs *regs) { return 0; }
+-#endif /* CONFIG_SECCOMP */
+-
+-/**
+- * do_syscall_trace_enter() - Do syscall tracing on kernel entry.
+- * @regs: the pt_regs of the task to trace (current)
+- *
+- * Performs various types of tracing on syscall entry. This includes seccomp,
+- * ptrace, syscall tracepoints and audit.
+- *
+- * The pt_regs are potentially visible to userspace via ptrace, so their
+- * contents is ABI.
+- *
+- * One or more of the tracers may modify the contents of pt_regs, in particular
+- * to modify arguments or even the syscall number itself.
+- *
+- * It's also possible that a tracer can choose to reject the system call. In
+- * that case this function will return an illegal syscall number, and will put
+- * an appropriate return value in regs->r3.
+- *
+- * Return: the (possibly changed) syscall number.
+- */
+-long do_syscall_trace_enter(struct pt_regs *regs)
+-{
+-	u32 flags;
+-
+-	flags = read_thread_flags() & (_TIF_SYSCALL_EMU | _TIF_SYSCALL_TRACE);
+-
+-	if (flags) {
+-		int rc = ptrace_report_syscall_entry(regs);
+-
+-		if (unlikely(flags & _TIF_SYSCALL_EMU)) {
+-			/*
+-			 * A nonzero return code from
+-			 * ptrace_report_syscall_entry() tells us to prevent
+-			 * the syscall execution, but we are not going to
+-			 * execute it anyway.
+-			 *
+-			 * Returning -1 will skip the syscall execution. We want
+-			 * to avoid clobbering any registers, so we don't goto
+-			 * the skip label below.
+-			 */
+-			return -1;
+-		}
+-
+-		if (rc) {
+-			/*
+-			 * The tracer decided to abort the syscall. Note that
+-			 * the tracer may also just change regs->gpr[0] to an
+-			 * invalid syscall number, that is handled below on the
+-			 * exit path.
+-			 */
+-			goto skip;
+-		}
+-	}
+-
+-	/* Run seccomp after ptrace; allow it to set gpr[3]. */
+-	if (do_seccomp(regs))
+-		return -1;
+-
+-	/* Avoid trace and audit when syscall is invalid. */
+-	if (regs->gpr[0] >= NR_syscalls)
+-		goto skip;
+-
+-	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
+-		trace_sys_enter(regs, regs->gpr[0]);
+-
+-	if (!is_32bit_task())
+-		audit_syscall_entry(regs->gpr[0], regs->gpr[3], regs->gpr[4],
+-				    regs->gpr[5], regs->gpr[6]);
+-	else
+-		audit_syscall_entry(regs->gpr[0],
+-				    regs->gpr[3] & 0xffffffff,
+-				    regs->gpr[4] & 0xffffffff,
+-				    regs->gpr[5] & 0xffffffff,
+-				    regs->gpr[6] & 0xffffffff);
+-
+-	/* Return the possibly modified but valid syscall number */
+-	return regs->gpr[0];
+-
+-skip:
+-	/*
+-	 * If we are aborting explicitly, or if the syscall number is
+-	 * now invalid, set the return value to -ENOSYS.
+-	 */
+-	regs->gpr[3] = -ENOSYS;
+-	return -1;
+-}
+-
+-void do_syscall_trace_leave(struct pt_regs *regs)
+-{
+-	int step;
+-
+-	audit_syscall_exit(regs);
+-
+-	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
+-		trace_sys_exit(regs, regs->result);
+-
+-	step = test_thread_flag(TIF_SINGLESTEP);
+-	if (step || test_thread_flag(TIF_SYSCALL_TRACE))
+-		ptrace_report_syscall_exit(regs, step);
+-}
+-
+ void __init pt_regs_check(void);
  
- DEFINE_INTERRUPT_HANDLER(do_page_fault)
- {
-+	irqentry_state_t state = irqentry_enter(regs);
- 	__do_page_fault(regs);
-+	irqentry_exit(regs, state);
- }
- 
- #ifdef CONFIG_PPC_BOOK3S_64
+ /*
 -- 
 2.42.0.windows.2
 
