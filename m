@@ -1,49 +1,57 @@
-Return-Path: <linux-kernel+bounces-326932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0F07976EAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:28:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4780E976EAF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:29:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69D65B244F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:28:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 966A1B24292
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843091537A4;
-	Thu, 12 Sep 2024 16:28:15 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2273813F012;
-	Thu, 12 Sep 2024 16:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6384C1531C0;
+	Thu, 12 Sep 2024 16:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="NYns5o2K"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080D113D625;
+	Thu, 12 Sep 2024 16:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726158495; cv=none; b=WzJk0enC9LznbRJKDqcesoBNAsXbxk49hgoc0/kKRAXgRnEEc9fH0XjzPl+xWxEUSghW0G5C9MjGWfsXwfDetZn0Gv/ZY7t699dUFRHfNTKH/wvLxbrxs3KGfoSqQFS6BMIXZNgEeZUvTYncTVuDlgH6Cx335KX9Cegwl2konUQ=
+	t=1726158566; cv=none; b=HVpQaGjma4ktyEdBZ12a9jS5R8Vixp7rvIwtVH7xfoNbAARXP5er0FDdDfYYaL2CeYx8OpQ1LZT/T3u5kfG9kwib0LlUFmTWJwPiUtcCXaJrpkX3TM34eLbdUxcXBjU4qSMJL9Ld12ZcpCxqqXSMk7qxEQFplMwI8wbJVWN9isY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726158495; c=relaxed/simple;
-	bh=2YFXpCZAIRY/rDziLrdBOLPJ0aD2RQUVA/kubNfHmRc=;
+	s=arc-20240116; t=1726158566; c=relaxed/simple;
+	bh=PluGaKUymZawE8kpYzl/FgA5QAW2GSiFGKjNfkPXRvQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KFm7LzXoG31yOTHZ106bV+FhCnY9wlCPW/vgpKZSO0y9lbDJbr+IgIYGSS+Uy9AHBHEnhC4VWnbh6PV7Eq/WIbZLjt3mauEOYYvP2W1ETOS4+LIWj/HTG8KqxaY44JVFqPUulHQnqaG9SR9G8ar5dYx1wRZi+8akp6PY4TKbQ+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10AAEC4CEC4;
-	Thu, 12 Sep 2024 16:28:11 +0000 (UTC)
-Date: Thu, 12 Sep 2024 17:28:09 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Yury Khrustalev <yury.khrustalev@arm.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH RFC 1/2] binfmt_elf: Wire up AT_HWCAP3 at AT_HWCAP4
-Message-ID: <ZuMWmfiwuVQrK64a@arm.com>
-References: <20240906-arm64-elf-hwcap3-v1-0-8df1a5e63508@kernel.org>
- <20240906-arm64-elf-hwcap3-v1-1-8df1a5e63508@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BostE0uC2sohHuNTE6bqcSq4sMtgxlAnfhOz2gOMqjMLiYcvbhLKnTp2O1qZbsd5LvFFUet6rSzlHz+WHXNKLpeC5VBhAHjjQcUGbN+CGWXVij6z979eBaM6Fh3h2RX28QGw6Hyyrwe5c79teFOeFPGbc7LeqCQgBVa2J7KUswA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=NYns5o2K; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=RP6DPM0iIVkE6rUikh5M9EXqW46ewLE58uqbat4mqfI=;
+	b=NYns5o2KwXRpUVQtjHzcnQtiSMZHdGkqjjjNH1AXw+y+02U1RvpL44jPObSquS
+	aKjsADw2ARH6b6y/zKhr1cguoe71IHq9QczvtlctJpS64M+MTjw1GyO92WmQVJcL
+	GmRDWgrwQ9/z9pf0bZ7wTeTWl8V7C3QCFmrqC3YRkNFH4=
+Received: from localhost (unknown [58.243.42.99])
+	by gzga-smtp-mta-g2-2 (Coremail) with SMTP id _____wDXv1ytFuNmwAzFGw--.9282S2;
+	Fri, 13 Sep 2024 00:28:29 +0800 (CST)
+Date: Fri, 13 Sep 2024 00:28:28 +0800
+From: Qianqiang Liu <qianqiang.liu@163.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	Chris Snook <chris.snook@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew@lunn.ch>, kernel@collabora.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] net: ethernet: ag71xx: Remove dead code
+Message-ID: <ZuMWrJwTSUj4nqpc@thinkpad.>
+References: <20240911135828.378317-1-usama.anjum@collabora.com>
+ <ZuHfcDLty0IULwdY@pengutronix.de>
+ <CANn89i+xYSEw0OX_33=+R0uTPCRgH+kWMEVsjh=ec2ZHMPsKEw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,69 +60,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240906-arm64-elf-hwcap3-v1-1-8df1a5e63508@kernel.org>
+In-Reply-To: <CANn89i+xYSEw0OX_33=+R0uTPCRgH+kWMEVsjh=ec2ZHMPsKEw@mail.gmail.com>
+X-CM-TRANSID:_____wDXv1ytFuNmwAzFGw--.9282S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Gr1UWFWkuFWDCryfZr1xuFg_yoWxurc_Ww
+	s5CayrGr1UJrWF934kAF1SvFs8t3y7JFWkWw1UtwsxWFnxZa95XayfXas3Jan3Xws7CFnr
+	AFy5Jwn2vrW2vjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU8na93UUUUU==
+X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiRRFYamXAo4G4-wAAsm
 
-On Fri, Sep 06, 2024 at 12:05:24AM +0100, Mark Brown wrote:
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index 19fa49cd9907..32e45e65de8f 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -257,6 +257,12 @@ create_elf_tables(struct linux_binprm *bprm, const struct elfhdr *exec,
->  	NEW_AUX_ENT(AT_RANDOM, (elf_addr_t)(unsigned long)u_rand_bytes);
->  #ifdef ELF_HWCAP2
->  	NEW_AUX_ENT(AT_HWCAP2, ELF_HWCAP2);
-> +#endif
-> +#ifdef ELF_HWCAP3
-> +	NEW_AUX_ENT(AT_HWCAP3, ELF_HWCAP3);
-> +#endif
-> +#ifdef ELF_HWCAP4
-> +	NEW_AUX_ENT(AT_HWCAP3, ELF_HWCAP4);
+Hi Eric,
 
-s/HWCAP3/HWCAP4/ for the last line.
+> I do not see any credits given to  Qianqiang Liu, who is desperate to get his
+> first linux patch...
+> 
+> https://lore.kernel.org/netdev/20240910152254.21238-1-qianqiang.liu@163.com/
 
->  #endif
->  	NEW_AUX_ENT(AT_EXECFN, bprm->exec);
->  	if (k_platform) {
-> diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-> index 28a3439f163a..9365f48598a1 100644
-> --- a/fs/binfmt_elf_fdpic.c
-> +++ b/fs/binfmt_elf_fdpic.c
-> @@ -620,6 +620,12 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
->  	NEW_AUX_ENT(AT_HWCAP,	ELF_HWCAP);
->  #ifdef ELF_HWCAP2
->  	NEW_AUX_ENT(AT_HWCAP2,	ELF_HWCAP2);
-> +#endif
-> +#ifdef ELF_HWCAP3
-> +	NEW_AUX_ENT(AT_HWCAP3,	ELF_HWCAP3);
-> +#endif
-> +#ifdef ELF_HWCAP3
-> +	NEW_AUX_ENT(AT_HWCAP4,	ELF_HWCAP4);
+Yes, you are right! I'm a kernel newbie.
+But Linux is a FOSS software, and anyone can contribute, right?
+Actually, I have two patches that were merged into the linux-next branch:
 
-Same here with the ifdef.
-
->  #endif
->  	NEW_AUX_ENT(AT_PAGESZ,	PAGE_SIZE);
->  	NEW_AUX_ENT(AT_CLKTCK,	CLOCKS_PER_SEC);
-> diff --git a/fs/compat_binfmt_elf.c b/fs/compat_binfmt_elf.c
-> index 8f0af4f62631..0a219e26692a 100644
-> --- a/fs/compat_binfmt_elf.c
-> +++ b/fs/compat_binfmt_elf.c
-> @@ -80,6 +80,21 @@
->  #define	ELF_HWCAP2		COMPAT_ELF_HWCAP2
->  #endif
->  
-> +#ifdef	COMPAT_ELF_HWCAP3
-> +#undef	ELF_HWCAP3
-> +#define	ELF_HWCAP3		COMPAT_ELF_HWCAP3
-> +#endif
-> +
-> +#ifdef	COMPAT_ELF_HWCAP3
-> +#undef	ELF_HWCAP3
-> +#define	ELF_HWCAP3		COMPAT_ELF_HWCAP3
-> +#endif
-
-Duplicate hunk.
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=93497752dfed196b41d2804503e80b9a04318adb
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=cd0920ebab6bce93ac5054d621c0633f6a4d640b
 
 -- 
-Catalin
+Best,
+Qianqiang Liu
+
 
