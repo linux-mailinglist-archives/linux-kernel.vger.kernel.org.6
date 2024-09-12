@@ -1,125 +1,123 @@
-Return-Path: <linux-kernel+bounces-326235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 439C197654F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:16:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 244F497654A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:14:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D4B52851A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:16:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF1151F22F2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6703119C554;
-	Thu, 12 Sep 2024 09:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004AB1A28D;
+	Thu, 12 Sep 2024 09:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NhrXTs7U"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=ttsande.rs header.i=@ttsande.rs header.b="aKp9M5ip"
+Received: from mail-4317.proton.ch (mail-4317.proton.ch [185.70.43.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990B719006A;
-	Thu, 12 Sep 2024 09:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E303188A01
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726132567; cv=none; b=CRt6SRCxzmEhRE4MRQgwKRvTZLjiOg1AgnMHoQpVXGI8bNZ/4pk4lKlo/1oCpYNTqyMK62myWhi+fvR9R6ZseVUVysBTB/6tD1O1UUP1Y3M2rBIgZr7bUASOqPtDXGFFgW7U9XXPv81IPDdSNo/lqAwDnFqg7gs/hNOYZgstvYo=
+	t=1726132470; cv=none; b=LQyVgVi6RzVw5xUYm0lF+S+AON4+fup3opFXXPU0hSSHmbsED8Fm86UqDStG7YqWpk6B9NWZqiAPIv6ETOoEUV2R0EygB/XZGi65ANtUM6Y50SzPNLr1Uo9LtbWzKbD3BaEwOTe0qz9jyRaPdwlLjo4F5XWip5eu1xSVskmN0as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726132567; c=relaxed/simple;
-	bh=HFV0R5b3uDVmqv74AJdL7hBc1Nmt1AKrQ971bMO5i+U=;
-	h=From:To:Cc:Date:Subject:Message-ID:MIME-Version:Content-Type; b=tERlfe+p+Kutrss4yBZo0CqwosqEC+kh70kF31kgjoIy2A/vIfOxuvV/Qufi+WqID8Hm/rIVaCTW0eluadnS7Ydu/98YXD/QFNUL4LthZkbq6vRpHEfNQGeYd2sj9RpAjoLzIzASwvIHB0bDr3aRaGPCP7urFd6KKBOjMb6ADFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NhrXTs7U; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726132561; x=1757668561;
-  h=from:to:cc:date:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=HFV0R5b3uDVmqv74AJdL7hBc1Nmt1AKrQ971bMO5i+U=;
-  b=NhrXTs7UtCqqOaPps9Kc/zRZ0bLCFAGhBuQLB22GeGYhRdyUnX+/2dfq
-   wTBmRF1T0aj4QKn4IYyf6mK98zB5lG0mX6iBPk1xBsr7JWebVNANi3RQ/
-   QiBvRDhB9VXzUDpMtniIQ0kBCcIcg18yPVSHQkl4iWPYNQqHdXkO5JWuV
-   NL+DFWUU00+O3Q8NM40B6HUDA/ykOiXgNt+1iSWW4clHeBFDAUdy/lOGV
-   fKVcLwK/Gi/AY/KflqQt6D4fBPb+gGXS0cXWAjqI8kspkNubixlma919C
-   wRMvR0AyKAwXZjCSDtxX0dBuZcoh5CovgEX8OTrXVCG7LDYUWCFrCkdf+
-   Q==;
-X-CSE-ConnectionGUID: eHpTxqFAQRy0wSlDfr59CA==
-X-CSE-MsgGUID: kNwuZn3IT3a0SXIvqZQcQg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="27889172"
-X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
-   d="scan'208";a="27889172"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 02:16:01 -0700
-X-CSE-ConnectionGUID: uQ+oGi+rTom0YMZ3SoevjQ==
-X-CSE-MsgGUID: 5CILX96cSfqqdm2W++Y/9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
-   d="scan'208";a="67569972"
-Received: from johunt-mobl9.ger.corp.intel.com (HELO localhost) ([10.245.245.21])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 02:15:59 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, PDx86 <platform-driver-x86@vger.kernel.org>, Hans de Goede <hdegoede@redhat.com>, Andy Shevchenko <andy@kernel.org>
-Date: Thu, 12 Sep 2024 12:14:14 +0300
-Subject: [GIT PULL] platform-drivers-x86 for v6.11-7
-Message-ID: <pdx86-pr-20240912121414-1198713421@linux.intel.com>
+	s=arc-20240116; t=1726132470; c=relaxed/simple;
+	bh=wR7KyTTlrcBgeT3DEYjx1z7krjjOgwV0BSM23Gt8to4=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=kz/EjjOFMtgCvbYCTyNa4cs69KktJVqZaMhNaBOpPhQulW95mtmxe64xbNQubJeKHFafAqU3ScEjM5BYjP0CLOPjdBZlyaUd4JbwLdnmfwtIarXbk/pyb/E4vpb41pbkeFttmFZl97L4rs6WZntMrRuhiXUoQXVVC5dYfXS1QCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ttsande.rs; spf=pass smtp.mailfrom=ttsande.rs; dkim=pass (2048-bit key) header.d=ttsande.rs header.i=@ttsande.rs header.b=aKp9M5ip; arc=none smtp.client-ip=185.70.43.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ttsande.rs
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ttsande.rs
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ttsande.rs;
+	s=protonmail; t=1726132460; x=1726391660;
+	bh=UasRgKsHucgEdP6i8Yd5Stdu2vUTHCovW7vAHe0aNJE=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=aKp9M5ipcoDu6di/KOLeBIATKsg2Qk+gOJPTIGN8FGZmwvP1K+X5mTWu7Qc2QR/1n
+	 1wClzjDgMVslm9fdJsvwiyRgJzo5q3IcBwXmImj7DBs5C+3B2lqBLR1v2e/u2euaTC
+	 WWFIvhcGz4I0t4Ue6GXi0LoiQhLL1WKJufIZxBWGChh0S+5d5T2eY8lOsnn5MnmZL2
+	 KWfZfwA7B1g2vq+GYkH1SOIgGvtpfl/BoUtAWZURotOKzrdoYbifwZrY7ePKdU26z+
+	 ISPsRCUpMdOpqcge3iEhcVxiG9/EkspAy9+W9JSWPF/lqERxKNs8hBRF9F5M8+DqTv
+	 Mu++rb614/uDA==
+Date: Thu, 12 Sep 2024 09:14:14 +0000
+To: jdelvare@suse.com, linux@roeck-us.net, linux-hwmon@vger.kernel.org
+From: Matthew Sanders <m@ttsande.rs>
+Cc: linux-kernel@vger.kernel.org, ppwaskie@kernel.org
+Subject: [PATCH] hwmon: Fix WARN_ON() always called from devm_hwmon_device_unregister()
+Message-ID: <20240912091401.4101-1-m@ttsande.rs>
+Feedback-ID: 116677769:user:proton
+X-Pm-Message-ID: 43e44de0c65e9b70e98738a0aad12dd0e65fcde2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+devm_hwmon_device_unregister() only takes parent of a devres-managed
+hwmon device as an argument. This always fails, as devres can't find
+the hwmon device it needs to unregister with the parent device alone.
+Without this patch, the WARN_ON() in devm_hwmon_device_unregister() will
+always be displayed unconditionally:
 
-Here is a platform-drivers-x86 fixes PR for v6.11.
+[    7.969746] WARNING: CPU: 1 PID: 224 at drivers/hwmon/hwmon.c:1205 devm_=
+hwmon_device_unregister+0x28/0x30
 
-Fixes:
-- asus-wmi: Disable OOBE that interferes with backlight control
-- panasonic-laptop: Two fixes to SINF array handling
+This patch adds an extra argument to devm_hwmon_device_unregister(), a
+pointer to a hwmon device which was previously registered to the
+parent using devres.
 
-Regards, i.
+There aren't any drivers which currently make use of this function, so
+any existing users of devm_hwmon_* shouldn't require any changes as a
+result of this patch.
+---
+ drivers/hwmon/hwmon.c | 6 ++++--
+ include/linux/hwmon.h | 2 +-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
+index a362080d41fa..84945a276320 100644
+--- a/drivers/hwmon/hwmon.c
++++ b/drivers/hwmon/hwmon.c
+@@ -1199,10 +1199,12 @@ static int devm_hwmon_match(struct device *dev, voi=
+d *res, void *data)
+  * devm_hwmon_device_unregister - removes a previously registered hwmon de=
+vice
+  *
+  * @dev: the parent device of the device to unregister
++ * @hwdev: the hwmon device to unregister
+  */
+-void devm_hwmon_device_unregister(struct device *dev)
++void devm_hwmon_device_unregister(struct device *dev, struct device *hwdev=
+)
+ {
+-=09WARN_ON(devres_release(dev, devm_hwmon_release, devm_hwmon_match, dev))=
+;
++=09WARN_ON(devres_release(dev, devm_hwmon_release, devm_hwmon_match,
++=09=09=09       hwdev));
+ }
+ EXPORT_SYMBOL_GPL(devm_hwmon_device_unregister);
+=20
+diff --git a/include/linux/hwmon.h b/include/linux/hwmon.h
+index e94314760aab..2434c6fc17a7 100644
+--- a/include/linux/hwmon.h
++++ b/include/linux/hwmon.h
+@@ -481,7 +481,7 @@ devm_hwmon_device_register_with_info(struct device *dev=
+,
+ =09=09=09=09const struct attribute_group **extra_groups);
+=20
+ void hwmon_device_unregister(struct device *dev);
+-void devm_hwmon_device_unregister(struct device *dev);
++void devm_hwmon_device_unregister(struct device *dev, struct device *hwdev=
+);
+=20
+ int hwmon_notify_event(struct device *dev, enum hwmon_sensor_types type,
+ =09=09       u32 attr, int channel);
+--=20
+2.46.0
 
 
-The following changes since commit d34af755a533271f39cc7d86e49c0e74fde63a37:
-
-  platform/x86/amd: pmf: Make ASUS GA403 quirk generic (2024-09-03 17:31:08 +0300)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-v6.11-7
-
-for you to fetch changes up to d6de45e3c6f3713d3825d3e2860c11d24e0f941f:
-
-  platform/x86: asus-wmi: Disable OOBE experience on Zenbook S 16 (2024-09-10 15:43:58 +0300)
-
-----------------------------------------------------------------
-platform-drivers-x86 for v6.11-7
-
-Fixes:
-- asus-wmi: Disable OOBE that interferes with backlight control
-- panasonic-laptop: Two fixes to SINF array handling
-
-The following is an automated shortlog grouped by driver:
-
-asus-wmi:
- -  Disable OOBE experience on Zenbook S 16
-
-panasonic-laptop:
- -  Allocate 1 entry extra in the sinf array
- -  Fix SINF array out of bounds accesses
-
-----------------------------------------------------------------
-Bas Nieuwenhuizen (1):
-      platform/x86: asus-wmi: Disable OOBE experience on Zenbook S 16
-
-Hans de Goede (2):
-      platform/x86: panasonic-laptop: Fix SINF array out of bounds accesses
-      platform/x86: panasonic-laptop: Allocate 1 entry extra in the sinf array
-
- drivers/platform/x86/asus-wmi.c            | 10 ++++++
- drivers/platform/x86/panasonic-laptop.c    | 58 ++++++++++++++++++++++++------
- include/linux/platform_data/x86/asus-wmi.h |  1 +
- 3 files changed, 58 insertions(+), 11 deletions(-)
 
