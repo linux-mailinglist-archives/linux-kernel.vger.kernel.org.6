@@ -1,106 +1,108 @@
-Return-Path: <linux-kernel+bounces-326928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E617C976EA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:25:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05868976EA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:25:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEB0828639C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:25:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB2E228679D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D78D1509B4;
-	Thu, 12 Sep 2024 16:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE0D14C5AF;
+	Thu, 12 Sep 2024 16:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DrHu0hsJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="xhwaB4d/"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AE81448C1;
-	Thu, 12 Sep 2024 16:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F72126C0E
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 16:25:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726158295; cv=none; b=EykMHXPbTwtV16roSRRoxD4GVxULkzCHPJKUQV4hlqcjqWccCf4X2/A/Tb3lvuseyUpYVV6HDOfvJgKbvle1LlibgG6HdW5UPr64MTpzwlgMSGhbJEaQ5F5GhPObA15a+kDyDuyqNr8YV6ar8X1cBptHiZ5CACFsv4/N2MXA6dU=
+	t=1726158348; cv=none; b=NAsIXsObobUmT/005r1AdYxauDGmxGVmVA7zaWjzp0Ezda6rT1B0U0hnPpXPfwjfgNzN14KfZsKaT3I5Dzfxp2yDlZwKkTU5IYuqCwp7IHZ2eH4xfyIDjyZCVvaWZaf+/Nm5o/SiT0niirQCEs48GXZlsCz2oueBaHL7cyC286I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726158295; c=relaxed/simple;
-	bh=CHEVBjIBBe7uiVAfeq59Zm3quIP3T9dxsy24PDWRhAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kPy9UfJy8kBaw2bqmErL5jIl0u+/BOD0eXsVvo/UT7UnsSUxUi7uw47rl8QIqNJObyX4r3vEZjwZlduTxYufboAhrALSWK3vJd4kIn7MY9bw7u/2k6gbIQ2rTm569fPEg58ct4XTYitAJqzcs6PWtqw25Lit8ILljzE5/oOsJsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DrHu0hsJ; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726158293; x=1757694293;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=CHEVBjIBBe7uiVAfeq59Zm3quIP3T9dxsy24PDWRhAY=;
-  b=DrHu0hsJBvp6/9fjVfApWAKIpowdSUBjAd2eEpN4mb0CovmqX1a09EGm
-   D6GcVxeHTvZ5yLy73YQ0uZYstRb3z34biL9FCGduYDbKvv32u2i7A7FtH
-   Dbf5X5GBoEQcR2D+FmjzBEjpAu2CuaS+5aYj4Qy0ZrC0xr0qenvIUksCJ
-   qLLGCayPVjrW+unRfdvFI9b1yuWBTujtySyfT7d0VPG6/79BDXYM5Et1e
-   5U2VGVeyjrEg5sADptjrhwGhht1LDP+mMLGZCKpC0uBovOjXG2l2kr/nE
-   p8s/+0bsh0xzoBIUjCk0b6gi8pRAb1t2q9hn6xZpWIM4oUDqqw0gjr6CK
-   Q==;
-X-CSE-ConnectionGUID: favFiimUTVafdXY+Noh3pQ==
-X-CSE-MsgGUID: dTVMRuZDQXGn+hjTTq9B3Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="25220812"
-X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
-   d="scan'208";a="25220812"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 09:24:53 -0700
-X-CSE-ConnectionGUID: OQsqQzHLQxCnxvy+2i4sKA==
-X-CSE-MsgGUID: OuV2X7C9REi0ZHRY43coRQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
-   d="scan'208";a="67465615"
-Received: from merlinax-mobl.amr.corp.intel.com (HELO desk) ([10.125.147.150])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 09:24:52 -0700
-Date: Thu, 12 Sep 2024 09:24:40 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Jon Kohler <jon@nutanix.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, X86 ML <x86@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	"kvm @ vger . kernel . org" <kvm@vger.kernel.org>,
-	chao.gao@intel.com
-Subject: Re: [PATCH] x86/bhi: avoid hardware mitigation for
- 'spectre_bhi=vmexit'
-Message-ID: <20240912162440.be23sgv5v5ojtf3q@desk>
-References: <20240912141156.231429-1-jon@nutanix.com>
- <20240912151410.bazw4tdc7dugtl6c@desk>
- <070B4F7E-5103-4C1B-B901-01CE7191EB9A@nutanix.com>
+	s=arc-20240116; t=1726158348; c=relaxed/simple;
+	bh=elQpcKGYpob27gMaQ5smQ9bcEmPe2L9QQJC6Li0fA2Y=;
+	h=Date:Subject:CC:From:To:Message-ID; b=gB4CVO2GSIprsWixuX0Rf8a/WLvYe7yeDu7OwNy57D7/F7GMWgIjooe5I5A4cTIJepBBw9bhkvjGBp/12b4wU3xq13Cm+5dNzWb23NTc8MP3Ui52vLQyUz4xW6ABkJoaDFCb6Ndhl03VQ8CoSOpxd/KF7wPIaBkDkOdeqA3Yvls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=xhwaB4d/; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-6e7b121be30so918087a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:25:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1726158345; x=1726763145; darn=vger.kernel.org;
+        h=message-id:to:from:cc:subject:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4QILesIw2jO/jv8xws5YIjHNnjamw3bXH4diaHqXW30=;
+        b=xhwaB4d/8ReD7tI+iKSUmxmc31xCrqMQD8+yC6gtrMw6brHOW4nvBgYRUhVY5pnS+S
+         Lm4cjlC8XaDif+VbV74qhKqAXbeA3LmxIPJ7ypscNCu0iQ+YjBD5nSQqkdVT8IL4uMCT
+         ch180NL9p5P8pf2/vYjnDI6UZT66rUJjLDWtsipycZd0RHgzlNMLPBXCZdwyVjCPBVU9
+         ee0wXZfNHIxzWPFErU1+ex8maVPZrtytNnCyMcj/kd1+tLne/ej8YQywo86ZxbfMVz8P
+         XnekbvjSYMoUX086KfSmFLr6ovzTjsmvwnyWbh72XrlcKLWHBqjrokAqidTunRFJrXI0
+         rsFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726158345; x=1726763145;
+        h=message-id:to:from:cc:subject:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4QILesIw2jO/jv8xws5YIjHNnjamw3bXH4diaHqXW30=;
+        b=MJGOHzCgkMUhnDUqOP3VkPexaB7+qeSsAw9nF0xHuip8vfBEnvxke6ba0V6AltnFy2
+         fgHUSaUbCd6VW80RXRIKrXFo1H44WLBB7krSnwK/Bmlqzr7jGjF3V7/oMbSSKmRuHN2l
+         BYZkP4kxlt05JGpw3oGeIqDuA0kOduXbaFyiyDbKM6jZxgSMBbqydK8T0VDeZUqEoSyH
+         YZatOOHX2HB9MeAfvzD6yGU5mVD1+hsgyIxeucGL7/WyJePX7Ybgurl9tvOLZKhv3j2w
+         P/DCEud+Dm4saYmcP3X/d7H0l7FW21JKupqA3qW91YFnowTqkxjfNtb8lMNywORyuUKI
+         5jSg==
+X-Forwarded-Encrypted: i=1; AJvYcCVliquHGLWUXNZdrIecXirGsH4cu3+TenrSC5vaB75BIhkFxQgXnz5FLyTnn8A+4IZyVja4z5rCdsqW00U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9wiT2nYsulgMcFbSrIxAI1LMsHUlK9HnH/sctReX9frQLDSIk
+	JZ+FRSpuTMPkYZDWtEiWzuZTL9UsmK6baBMnizTS3PF56cPt1E+KdWqkk9H8qNxBDRM+uIyMDUT
+	a
+X-Google-Smtp-Source: AGHT+IEEf6iT3JV53GFjFR8pXoISHJUM3Kt/EUI8UQxiP6hXee0eeD1F6ANvQcR2UhfoNqUnoEFChQ==
+X-Received: by 2002:a17:902:e804:b0:205:88bf:bfe9 with SMTP id d9443c01a7336-2076e348076mr42857005ad.15.1726158344810;
+        Thu, 12 Sep 2024 09:25:44 -0700 (PDT)
+Received: from localhost ([192.184.165.199])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076b0096e9sm16037235ad.254.2024.09.12.09.25.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 09:25:44 -0700 (PDT)
+Date: Thu, 12 Sep 2024 09:25:44 -0700 (PDT)
+X-Google-Original-Date: Thu, 12 Sep 2024 09:25:42 PDT (-0700)
+Subject: [GIT PULL] RISC-V Fixes for 6.11-rc8
+CC:         linux-riscv@lists.infradead.org,        linux-kernel@vger.kernel.org
+From: Palmer Dabbelt <palmer@rivosinc.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Message-ID: <mhng-61f22aea-eea4-4ed5-a803-92fa9df853cd@palmer-ri-x1c9>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <070B4F7E-5103-4C1B-B901-01CE7191EB9A@nutanix.com>
 
-On Thu, Sep 12, 2024 at 03:44:38PM +0000, Jon Kohler wrote:
-> > It is only worth implementing the long sequence in VMEXIT_ONLY mode if it is
-> > significantly better than toggling the MSR.
-> 
-> Thanks for the pointer! I hadn’t seen that second sequence. I’ll do measurements on
-> three cases and come back with data from an SPR system.
-> 1. as-is (wrmsr on entry and exit)
-> 2. Short sequence (as a baseline)
-> 3. Long sequence
+The following changes since commit 1ff95eb2bebda50c4c5406caaf201e0fcb24cc8f:
 
-I wonder if virtual SPEC_CTRL feature introduced in below series can
-provide speedup, as it can replace the MSR toggling with faster VMCS
-operations:
+  riscv: Fix RISCV_ALTERNATIVE_EARLY (2024-09-03 07:57:55 -0700)
 
-  https://lore.kernel.org/kvm/20240410143446.797262-1-chao.gao@intel.com/
+are available in the Git repository at:
 
-Adding Chao for their opinion.
+  git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv-for-linus-6.11-rc8
+
+for you to fetch changes up to 7c1e5b9690b0e14acead4ff98d8a6c40f2dff54b:
+
+  riscv: Disable preemption while handling PR_RISCV_CTX_SW_FENCEI_OFF (2024-09-10 20:38:46 -0700)
+
+----------------------------------------------------------------
+RISC-V Fixes for 6.11-rc8
+
+* Two fixes for smp_processor_id() calls in preemptible sections: one if
+  the perf driver, and one in the fence.i prctl.
+
+----------------------------------------------------------------
+Alexandre Ghiti (1):
+      drivers: perf: Fix smp_processor_id() use in preemptible code
+
+Charlie Jenkins (1):
+      riscv: Disable preemption while handling PR_RISCV_CTX_SW_FENCEI_OFF
+
+ arch/riscv/mm/cacheflush.c   | 12 ++++++------
+ drivers/perf/riscv_pmu_sbi.c |  7 ++++++-
+ 2 files changed, 12 insertions(+), 7 deletions(-)
 
