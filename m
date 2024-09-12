@@ -1,138 +1,203 @@
-Return-Path: <linux-kernel+bounces-326254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D81F97658B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:29:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29C60976591
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D62661F24B7E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:29:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A9A01C22D81
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6157C19C554;
-	Thu, 12 Sep 2024 09:29:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271F5190059;
+	Thu, 12 Sep 2024 09:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J2mJ1WJQ"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="bNDX62q1"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140B61922C0
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:29:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0980918BB9E
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726133351; cv=none; b=uesmjwUNrf+Qg1v0An3t26kB7yvRKdyG8MkEfBB7ROnm9kast8mLgKi2nNgVfMIXyBrIZAPkydh2fcj8E++BkJ6SPWs8m/2UMhtiWHEMOQRwfWjt4HiRBSLbl6huf/rtzg4+2kmtSlLsSAKb9H09ojo6fC2DkX5Yqq/S/WiU+C0=
+	t=1726133419; cv=none; b=foitzW0xV2SD9504DB3sENxyLh5v8rDLOI8vuNeQasSo2ZeeBWXdQjpyxQN4SAFysMCKuteFg1Ytm8XdcSYc/BlDEznweZYfzgXFtnLubbupd+9fKeJb8E1Ra2VgsQIJdHzHzFyF+tFRSD10j5aKFPn51Qo94PUx6u+UFpb8kDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726133351; c=relaxed/simple;
-	bh=f1LgvUXrqwLz/Z4q62FxAV/qtsloeO9ZWMMYuuVqxOM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hUwgkT4CKmVY6tBRwKQ6rKk7agG+9A8PuwkPCN6xUGUNeqdWcY+I3rcUep7TaOX+6yoNNe7to/6XfnaWn2S4/PdC4Kw0FbRxc8y6mAcAhEcHdaBbMhwFn5rkD2aGrYK1Ea/BJ/ySb2yr+DoqXq1kOW9q5Uk+mTrmVbFvXWiiIhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J2mJ1WJQ; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-374c4c6cb29so698003f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 02:29:09 -0700 (PDT)
+	s=arc-20240116; t=1726133419; c=relaxed/simple;
+	bh=KZxJrp/4zRno6SwdoxgSOJBiS3CoMj6Z1p4Kj1HTwHY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S+irlqQPZB08LwcwQ9LspNTH37IbTfQ2UIhNm/TZTKnS4h7VFJ0x3B6FEv5ayd6mp2pdaMR7Tbn+pRNyihLyxRrGEkfFwLWU3B6GczXsrAqHRA6ZJaQINcvKNvbl0DZ347QZyvEtRmD14J7awi/CyyVU10gpB0zFwthCjZ1E1cY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=bNDX62q1; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-6bce380eb96so497919a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 02:30:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726133348; x=1726738148; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wp9jPxe8dbEyJ5HtUVcWqEzQO64+7gaLQ5RI1SB1IH0=;
-        b=J2mJ1WJQ9XprVcRx2GseUQBCqQ5rtefft/XEVK0VtWG5AOAvfjNMBvo4eAhLnW4sBb
-         oMMPE0tjNRl7nEHNVISd9a8aYcygYirJvKZmSPPZscYNdoH+Lg+yUhcaN4rZgXjh0wQ3
-         n4AoqvCgs5EhmAhLW+QIlmtSieLgL9EYhcE2b5koOpmNHGdgiVSjvotVHMp4H5C98CgN
-         oOIJ/1Z7bWjYEFbnjJ+riPmZbtVlraXKTu1Q5SL1LmnaBP87nLXBRg3HFW2dp2G/woET
-         NuwJhXTrkcYz8+xWWe7CAjCK4hJeJmAmagAhEaSqgbFBVQUNZFbJ+iOhKgN8kX97ZIL0
-         tJ3A==
+        d=bytedance.com; s=google; t=1726133417; x=1726738217; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ae1rrTLdcInpIDAaqOOlwPE8rza0PubUwEN95o/QYrw=;
+        b=bNDX62q1HvNZpzWO5bvqN7FueD6UOkGpEoIOLNxZJAwwpijCSFCcVVo7ebbhj2OStO
+         vhctRzcZOLVZE0Z+PxiZlWc14HIVdtdgfBiTxaeCiOR+NqbeWVuu7xVcRgo6y+4eR9eF
+         1w0VK+RWlmh47LsXLgyz9/RT4eQauIoGEMLNpPg/PZaXVEuzb++gGRBS0lHDR0cbJBK9
+         ZVeyOM+2MhH1Ocvh8uEtVoCwbDQq2Xj4je8ToE7OdX/sdjcNNyuZMqkZlSmRKP2qzdLU
+         XaZEfqELtnTsaKm+0g6ioO996DDiKePPeOKJ/dn9mORR9wx148bfcnIUeSC+J2xAugid
+         T4oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726133348; x=1726738148;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wp9jPxe8dbEyJ5HtUVcWqEzQO64+7gaLQ5RI1SB1IH0=;
-        b=FDQ53MGHiS7PsOqnbM4Zkr83bBTWKWI0xb1prWn1ZlgVUAxeUrc3BMLV4hEv0CDbMS
-         hhRuLwNXXk5Nj8KKlQS+80PTXVuhLN3OqPLPuUhZpNgYNp+vYS5JqV/I9v4VLVjJJzgC
-         nRKSrWd1v2NQ0BA/3sVdTvm6uCYYZrUlI7hI6GwMnxa4/JNdwzl6PvS7LGmg8wYWn52O
-         aeAnGrHKmq4PwM65kOp51ABtVRl8blE0U2bje1JrpR2Y8hvu/C8HXDrv19fJgQf1jS5x
-         sH2WNLjZmvrdn1dISUFWMGQ4wjdI7D/NpjvUGjDjerN52E7XBLk2csRFbp4LfK0VY6Nj
-         Bejg==
-X-Forwarded-Encrypted: i=1; AJvYcCXwmDvsFwTRJtD/P3ecsGNqvSRQRU4MZ5TAMoBSrguGa6g2KkJDkhSmU3QMOqiV0EDhKp332Mwd8NQ4Nr4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0r9xGYTlQlMxDOpPZbMqTnEoAaN3iy0WqRLco6sTDYXf23UDj
-	9V6vB5QkuQ0AK9HbgAuRn1TZfyAXudP4pRWP2BWX3lm5xQDRZElydeEsutASUu9FvbrqbRgA4dr
-	i
-X-Google-Smtp-Source: AGHT+IEgyiSK927zXIsO2K8ws+WuFo5rdGvLrwD1Uebv/Pcw7+ODrUZYJsEs7zuDgKzW3jgL4jxagg==
-X-Received: by 2002:a5d:4945:0:b0:374:c160:269e with SMTP id ffacd0b85a97d-378c2cf5617mr1780563f8f.22.1726133347751;
-        Thu, 12 Sep 2024 02:29:07 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956652ddsm13911677f8f.29.2024.09.12.02.29.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 02:29:07 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: ukleinek@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
- conor+dt@kernel.org, khilman@baylibre.com, jbrunet@baylibre.com, 
- martin.blumenstingl@googlemail.com, hkallweit1@gmail.com, 
- George Stark <gnstark@salutedevices.com>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-amlogic@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, kernel@salutedevices.com
-In-Reply-To: <20240710234116.2370655-1-gnstark@salutedevices.com>
-References: <20240710234116.2370655-1-gnstark@salutedevices.com>
-Subject: Re: (subset) [PATCH v4 0/3] pwm: meson: add pwm support for A1
-Message-Id: <172613334685.3721802.3816923810532224075.b4-ty@linaro.org>
-Date: Thu, 12 Sep 2024 11:29:06 +0200
+        d=1e100.net; s=20230601; t=1726133417; x=1726738217;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ae1rrTLdcInpIDAaqOOlwPE8rza0PubUwEN95o/QYrw=;
+        b=Q/ngtsj7/QLSokoYqE7DGiicBtBMClrhI8l+BFzrIsetw5e8ybcD2JavwrJX6wrH4s
+         dQB41QdjGUQWXgrCXRz8nFSGzvJynPUIoPvop/5G4Gf4wUhC6oHJOq/68dOjCPhU9MO7
+         /wefyoIecB6TnZl5/rzINpUoht1q3OdLlJijD6/uTOexpTZQjLkHnCzLc3VJr9TxcdHW
+         jsROXnmvB2zamcpq0lphfiFWwOPSu4sTLnIziqJ4D1kyO281KWmhvfJC1b+m2ShBNqvM
+         j8YCxAvN5fU6pCZKXRieOZMbU2QgD5PpR93VA9r45hHDMxP8vDF5WDIpncHlzvzV27Ed
+         pD9w==
+X-Gm-Message-State: AOJu0Yw2RgOkQXIj1JR4+gCjGZ7FdjglL7O2nVi4Xz5GwGzovc5OIRo8
+	c+uHUxsj8/RqVq84ZzfoXbEDVPQzazqLBvAy8xei17kmZ3+OULNCQIFZwcpie/U=
+X-Google-Smtp-Source: AGHT+IFJCCHYcScGtt9lkjkAEywijnfIDFZg65ZPBIHqm1dzEPdlJO7/znVrMR8ooIQDztKe568nrw==
+X-Received: by 2002:a05:6a21:6b0a:b0:1cf:509c:496b with SMTP id adf61e73a8af0-1cf761e553bmr3124497637.38.1726133417121;
+        Thu, 12 Sep 2024 02:30:17 -0700 (PDT)
+Received: from [10.4.59.158] ([139.177.225.242])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2db043c0672sm9995203a91.22.2024.09.12.02.30.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Sep 2024 02:30:16 -0700 (PDT)
+Message-ID: <7782bc62-a09f-465a-aa43-8179542ecc02@bytedance.com>
+Date: Thu, 12 Sep 2024 17:30:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 10/14] mm: page_vma_mapped_walk: map_pte() use
+ pte_offset_map_rw_nolock()
+Content-Language: en-US
+To: Muchun Song <muchun.song@linux.dev>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ david@redhat.com, hughd@google.com, willy@infradead.org, vbabka@kernel.org,
+ akpm@linux-foundation.org, rppt@kernel.org, vishal.moola@gmail.com,
+ peterx@redhat.com, ryan.roberts@arm.com, christophe.leroy2@cs-soprasteria.com
+References: <20240904084022.32728-1-zhengqi.arch@bytedance.com>
+ <20240904084022.32728-11-zhengqi.arch@bytedance.com>
+ <d373689b-a3f2-4c45-b291-85c58289f044@linux.dev>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <d373689b-a3f2-4c45-b291-85c58289f044@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi,
 
-On Thu, 11 Jul 2024 02:41:13 +0300, George Stark wrote:
-> Add support for Amlogic meson A1 SoC family PWM
+
+On 2024/9/5 20:07, Muchun Song wrote:
 > 
-> Changes in v2:
->   add patch with optional power-domains to pwm bindings;
->   fix syntax in a1 bindigns patch:
->   - use enum over const for amlogic,meson-a1-pwm beacuse adding more devices here
->     are expected
->   - leave only base compatible amlogic,meson-s4-pwm in check section
->   dt_binding_check and dtbs_check run ok now;
->   previous version: [1]
 > 
-> [...]
+> On 2024/9/4 16:40, Qi Zheng wrote:
+>> In the caller of map_pte(), we may modify the pvmw->pte after acquiring
+>> the pvmw->ptl, so convert it to using pte_offset_map_rw_nolock(). At
+>> this time, the pte_same() check is not performed after the pvmw->ptl 
+>> held,
+>> so we should get pmdval and do pmd_same() check to ensure the 
+>> stability of
+>> pvmw->pmd.
+>>
+>> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
+>> ---
+>>   mm/page_vma_mapped.c | 24 ++++++++++++++++++++----
+>>   1 file changed, 20 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/mm/page_vma_mapped.c b/mm/page_vma_mapped.c
+>> index ae5cc42aa2087..f1d73fd448708 100644
+>> --- a/mm/page_vma_mapped.c
+>> +++ b/mm/page_vma_mapped.c
+>> @@ -13,9 +13,11 @@ static inline bool not_found(struct 
+>> page_vma_mapped_walk *pvmw)
+>>       return false;
+>>   }
+>> -static bool map_pte(struct page_vma_mapped_walk *pvmw, spinlock_t 
+>> **ptlp)
+>> +static bool map_pte(struct page_vma_mapped_walk *pvmw, pmd_t *pmdvalp,
+>> +            spinlock_t **ptlp)
+>>   {
+>>       pte_t ptent;
+>> +    pmd_t pmdval;
+>>       if (pvmw->flags & PVMW_SYNC) {
+>>           /* Use the stricter lookup */
+>> @@ -25,6 +27,7 @@ static bool map_pte(struct page_vma_mapped_walk 
+>> *pvmw, spinlock_t **ptlp)
+>>           return !!pvmw->pte;
+>>       }
+>> +again:
+>>       /*
+>>        * It is important to return the ptl corresponding to pte,
+>>        * in case *pvmw->pmd changes underneath us; so we need to
+>> @@ -32,10 +35,11 @@ static bool map_pte(struct page_vma_mapped_walk 
+>> *pvmw, spinlock_t **ptlp)
+>>        * proceeds to loop over next ptes, and finds a match later.
+>>        * Though, in most cases, page lock already protects this.
+>>        */
+>> -    pvmw->pte = pte_offset_map_nolock(pvmw->vma->vm_mm, pvmw->pmd,
+>> -                      pvmw->address, ptlp);
+>> +    pvmw->pte = pte_offset_map_rw_nolock(pvmw->vma->vm_mm, pvmw->pmd,
+>> +                         pvmw->address, &pmdval, ptlp);
+>>       if (!pvmw->pte)
+>>           return false;
+>> +    *pmdvalp = pmdval;
+>>       ptent = ptep_get(pvmw->pte);
+>> @@ -69,6 +73,12 @@ static bool map_pte(struct page_vma_mapped_walk 
+>> *pvmw, spinlock_t **ptlp)
+>>       }
+>>       pvmw->ptl = *ptlp;
+>>       spin_lock(pvmw->ptl);
+>> +
+>> +    if (unlikely(!pmd_same(pmdval, pmdp_get_lockless(pvmw->pmd)))) {
+>> +        spin_unlock(pvmw->ptl);
+> 
+> Forgot to clear pvmw->ptl? Or how about moving the assignment for it
+> to the place where the pmd_same check is successful?
+> 
+>> +        goto again;
+>> +    }
+>> +
+> 
+> Maybe here is the right place to assign pvmw->ptl.
 
-Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v6.13/arm64-dt)
+Right, will do in the v4.
 
-[3/3] arm64: dts: meson: a1: add definitions for meson PWM
-      https://git.kernel.org/amlogic/c/b7e5f4bb555ba1d4fdad6f94eb6ab9f8d9c63597
-
-These changes has been applied on the intermediate git tree [1].
-
-The v6.13/arm64-dt branch will then be sent via a formal Pull Request to the Linux SoC maintainers
-for inclusion in their intermediate git branches in order to be sent to Linus during
-the next merge window, or sooner if it's a set of fixes.
-
-In the cases of fixes, those will be merged in the current release candidate
-kernel and as soon they appear on the Linux master branch they will be
-backported to the previous Stable and Long-Stable kernels [2].
-
-The intermediate git branches are merged daily in the linux-next tree [3],
-people are encouraged testing these pre-release kernels and report issues on the
-relevant mailing-lists.
-
-If problems are discovered on those changes, please submit a signed-off-by revert
-patch followed by a corrective changeset.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-
--- 
-Neil
-
+> 
+> Muchun,
+> Thanks.
+> 
+>>       return true;
+>>   }
+>> @@ -278,7 +288,7 @@ bool page_vma_mapped_walk(struct 
+>> page_vma_mapped_walk *pvmw)
+>>               step_forward(pvmw, PMD_SIZE);
+>>               continue;
+>>           }
+>> -        if (!map_pte(pvmw, &ptl)) {
+>> +        if (!map_pte(pvmw, &pmde, &ptl)) {
+>>               if (!pvmw->pte)
+>>                   goto restart;
+>>               goto next_pte;
+>> @@ -307,6 +317,12 @@ bool page_vma_mapped_walk(struct 
+>> page_vma_mapped_walk *pvmw)
+>>           if (!pvmw->ptl) {
+>>               pvmw->ptl = ptl;
+>>               spin_lock(pvmw->ptl);
+>> +            if (unlikely(!pmd_same(pmde, 
+>> pmdp_get_lockless(pvmw->pmd)))) {
+>> +                pte_unmap_unlock(pvmw->pte, pvmw->ptl);
+>> +                pvmw->ptl = NULL;
+>> +                pvmw->pte = NULL;
+>> +                goto restart;
+>> +            }
+>>           }
+>>           goto this_pte;
+>>       } while (pvmw->address < end);
+> 
 
