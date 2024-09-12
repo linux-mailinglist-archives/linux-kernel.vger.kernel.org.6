@@ -1,196 +1,136 @@
-Return-Path: <linux-kernel+bounces-326062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEAB197620F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:02:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EE3A976215
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 915FB284AC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:02:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEFE1284CAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE4618BBA5;
-	Thu, 12 Sep 2024 07:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87711189BBF;
+	Thu, 12 Sep 2024 07:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="KlIInfdY"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Hjt9hwpZ"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175041885A0
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732F5188930
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726124548; cv=none; b=lKaLQYG12T/xs/5Khs0WD7DW/aFYcweujf5auRR4Dswjn6pABshtqIbPohisTQIUbS57PKbIJaVHnQ7GbwcCNQPxkX+94N4lKyJDKRPlc5P0gLysZUtclEC+ilwJBuOV3uMkCz3y/TEcqiWAr8vrt+oCHT0cHeUXJgsixMEPMnQ=
+	t=1726124663; cv=none; b=aX4JG7+8sKug1hJg2dw/6VNHvEurlZ8HCIVmbHcQrVhfGfrRqR/j7aE7wgfkFkw49pQID7MhvoiTdFQ4vV1gIOdsYcnS3/YFiTi8e76ZxD5KyiFyQTGjILv/6RxLURlUP7QBqFLVorTBBIKUPgUrGnaLIm+sSRnn7wqEsk6o4iM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726124548; c=relaxed/simple;
-	bh=lDzL+/bkYxaNRuuGM0blmhB5eknPwvACk7Gzegus+NU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZOcK/O2HaVOEl1ObaWE2CuFOBONe8b6igGd/OZmdW5UCB80Nf4jIkpYm1jsAMI2ZF2aN1hKKbLZ6vW+cGJmmhJfN4uSqXmUC07ECco13H3yTiYydqV43eO/hZTqnN7AGxeSZCyoPGB5nI36HH6Y3giPJ+bW4EQkm4ltCTkmn9fU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=KlIInfdY; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com [209.85.208.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 0359B3F164
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:02:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1726124543;
-	bh=1CKMTCTTm7jqXVJcpUxDxIfDKzM8XfvNoAgn0SaBro4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=KlIInfdYocxaSNQQq5/ctVcVAT8fUjJXDlXF2JuJNp3wpjsV+I7lMAq5hjWUPRp5a
-	 STWrxzgFArT3leI8GKRSaikEHIU95ZCmISr6uGu3L/w5U/IC22KKhCrQdu9pB/6LBh
-	 EK5Cp+MNxFUIL+KmB2+KQ+HekkTsmpymEo9EHuDiH98EQAwvAxfxsqnzvzk3y9EB+i
-	 48A4SPNb9UXoFZXjLQNBpTWg1vGe32kiYSc/HPqh+M1rILQZAtRFJAihdj5TdpTIOi
-	 lADCEtSZHCRZ0oxsVPV15TfHPLvOtbVnMFyu/crtYgf1SLDq+1XVZ/YeIT47s4vF6X
-	 5v5pdzJnwqn0w==
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2f661aaceadso4548591fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 00:02:22 -0700 (PDT)
+	s=arc-20240116; t=1726124663; c=relaxed/simple;
+	bh=tUAsn1X2dcWD50h91S23iq2IzM5QBO32GU2FcCo2tWI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DeCU+FFIK86zDcu826y/iS+sCn01NC52RiPg160zB5K0f8MoVM11R+oKHemcMoE3+HZP6QIAj25F6GR6kmUE15TIcvhpslWnU2OQIAxiyJFq/XuErQwWQi2YahYKH69Mv4GOtGyHTwk3c5FnElhlxsBtjeuIOv6BvV1lVFAxsEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Hjt9hwpZ; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-39f37a5a091so2237565ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 00:04:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1726124661; x=1726729461; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mnHs7mT9NKBlwnpVU7v4uMjDewpTnDWqdqOj9+bDc2k=;
+        b=Hjt9hwpZpab5Kkz5rE8Z86Y7vo64fyUsIxch7FxgLSb9AveBlkzyhaRV5ixqZfrRo/
+         vj1XusbzgxMOrXVb9SS7Oy/dp05f4Q5a35cisVjh3U2A5HTXdSMjuVq3PrIoSU6I8XUL
+         GV+oUeJaLU9nJgVhAE24ib5fj3jLbuSbknrec=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726124542; x=1726729342;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1CKMTCTTm7jqXVJcpUxDxIfDKzM8XfvNoAgn0SaBro4=;
-        b=jvDxefwBbRZ1cpNvJsKhzfb875OXP2m2Q/tscBg8u8XIBKOzRserR/ePEZCL3ywdy7
-         A1KwCCniSfSMRG7i5JHhs8SVSVYt00Jt46KnSs+drUgQwYCEkVsna3oR8CQWKeU15J19
-         T5yKBHTyrdl7USPdYaLY0zfhFz+Vvw5ysKlmMgQLjLuO5JgNBGsBaB7+73DpXc0itvUb
-         FtvEbVxUF8TVaIzPStcToID3Ka3M3LzdzGXLoO1QhtKPbo2HYk5UHb8mW3+ddOlXkW1O
-         GW/KoTBA1/x6KdNWRp1HVHpcKC7paFoWF/CV0cI6V5FG43IOTDLAsrX+yInX96b9fNX4
-         snDA==
-X-Forwarded-Encrypted: i=1; AJvYcCXb3zxlwQBYhlccokCjxwcTaqjPjqoRfKjUNatC/v4CP3LkN5SvFJm2MRGjDe4evByG+/Dh0t+OyVcgJAw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+EhZmaG343PkHn2wEbfdCMj4b5AR8B8wBHueqefL6pLRjrrUg
-	ymo+rUg1+A4zVXGxpRk9tqtBnT9223TPKgLMw8sM2bXc2qs4uIqRyJbDR/fbmzrYFxmUCV8aWVu
-	MxPtad11EjCob5ecNr/CAdBLZcGrPNreopy7KpPrJiiyL+vHrrZdJVq37wJfMXEQZE8hsA2gs10
-	XomUOqnG4kZkaN0swyVJaIMRgCa0XxGh5KZ7g+ttBjfyB6fhThvlEG
-X-Received: by 2002:a05:6512:334d:b0:536:7a24:8e82 with SMTP id 2adb3069b0e04-5367a24908emr533433e87.13.1726124541973;
-        Thu, 12 Sep 2024 00:02:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEuwOtWwPuErUCydeoa2yBkKx7aUuc0DgfJKxXEK5w5XG0mdKRr+ESyjKNT9pgNj/ndfRUhOjPcEeAtHU54puA=
-X-Received: by 2002:a05:6512:334d:b0:536:7a24:8e82 with SMTP id
- 2adb3069b0e04-5367a24908emr533415e87.13.1726124541340; Thu, 12 Sep 2024
- 00:02:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726124661; x=1726729461;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mnHs7mT9NKBlwnpVU7v4uMjDewpTnDWqdqOj9+bDc2k=;
+        b=ZedtbhXO4bw5u42If8tUyeDRdeGGtXRRK+YyVxWfgNPyQu5TqB/tK5gnr8m3sTZZPD
+         CPG1RwjS8HoOcnAkt8j0nJuqBkqcubtByaerIqSLwxNRz9VuyPf/svIIskwpeYYHTmOA
+         w3gBw5eSKGRO8kw2zuNek9H75zh8djFtqaRy8OKsXBN8Li2BTmMihHl4YwR0I8IPConL
+         bacocX2nTqIjwhNgn17g2imPLlRppl3ZcCBWCoEhJL/F7uhrBeZPNt613covTs01VQdh
+         u6nU9W7I+gvxNt+c1s3oQJ6sV451k9YdlZ+zp+mVNqhuCv55ZZAEWLxIAhiV1pdMbGN+
+         jUrw==
+X-Gm-Message-State: AOJu0YzYKV4V0hXrCYq0w+rthXnSg/Um4++y/cAAfVTJpt/+k7c+vkKo
+	LxUVUJLcZxpC2jPVI1G76o5mWd+oXA4lYOuAWXhmEFYZl3Z/MOxL1We7I4luUA==
+X-Google-Smtp-Source: AGHT+IGyajUA7y7CenDctbUoYm/R/mWCWIe7jbasJKOZ9QslobbAVgC18iR8uAZtY+C2kNNey1Mlag==
+X-Received: by 2002:a05:6e02:1948:b0:39d:2a84:869f with SMTP id e9e14a558f8ab-3a0848f9672mr14689445ab.6.1726124661369;
+        Thu, 12 Sep 2024 00:04:21 -0700 (PDT)
+Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:2fb2:d683:de5d:c3cb])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db1fbb5a23sm1101543a12.31.2024.09.12.00.04.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 00:04:20 -0700 (PDT)
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Minchan Kim <minchan@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	Sergey Senozhatsky <senozhatsky@chromium.org>
+Subject: [PATCHv4 0/6] zram: optimal post-processing target selection
+Date: Thu, 12 Sep 2024 16:02:15 +0900
+Message-ID: <20240912070413.4179924-1-senozhatsky@chromium.org>
+X-Mailer: git-send-email 2.46.0.598.g6f2099f65c-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911190516.GA644336@bhelgaas> <319e5419-3b12-4672-9f51-f90c5e142e29@amd.com>
- <fa504022-acb3-4930-b6b8-87a8dcb912c3@amd.com>
-In-Reply-To: <fa504022-acb3-4930-b6b8-87a8dcb912c3@amd.com>
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Date: Thu, 12 Sep 2024 15:02:08 +0800
-Message-ID: <CAAd53p4ZpCF0GpGhzUx_7V8M2+YCsxgMz8CePPGG_fBTG0JzZA@mail.gmail.com>
-Subject: Re: [PATCH] PCI/PM: Put devices to low power state on shutdown
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, bhelgaas@google.com, 
-	mika.westerberg@linux.intel.com, linux-pci@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kaihengfeng@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 12, 2024 at 3:38=E2=80=AFAM Mario Limonciello
-<mario.limonciello@amd.com> wrote:
->
-> On 9/11/2024 14:16, Mario Limonciello wrote:
-> > On 9/11/2024 14:05, Bjorn Helgaas wrote:
-> >> On Fri, Jul 12, 2024 at 02:24:11PM +0800, Kai-Heng Feng wrote:
-> >>> Some laptops wake up after poweroff when HP Thunderbolt Dock G4 is
-> >>> connected.
-> >>>
-> >>> The following error message can be found during shutdown:
-> >>> pcieport 0000:00:1d.0: AER: Correctable error message received from
-> >>> 0000:09:04.0
-> >>> pcieport 0000:09:04.0: PCIe Bus Error: severity=3DCorrectable,
-> >>> type=3DData Link Layer, (Receiver ID)
-> >>> pcieport 0000:09:04.0:   device [8086:0b26] error
-> >>> status/mask=3D00000080/00002000
-> >>> pcieport 0000:09:04.0:    [ 7] BadDLLP
-> >>>
-> >>> Calling aer_remove() during shutdown can quiesce the error message,
-> >>> however the spurious wakeup still happens.
-> >>>
-> >>> The issue won't happen if the device is in D3 before system shutdown,=
- so
-> >>> putting device to low power state before shutdown to solve the issue.
-> >>>
-> >>> I don't have a sniffer so this is purely guesswork, however I believe
-> >>> putting device to low power state it's the right thing to do.
-> >>
-> >> My objection here is that we don't have an explanation of why this
-> >> should matter or a pointer to any spec language about this situation,
-> >> so it feels a little bit random.
-> >>
-> >> I suppose the problem wouldn't happen if AER interrupts were disabled?
-> >> We already do disable them in aer_suspend(), but maybe that's not used
-> >> in the shutdown path?
-> >>
-> >> My understanding is that .shutdown() should turn off device interrupts
-> >> and stop DMA.  So maybe we need an aer_shutdown() that disables
-> >> interrupts?
-> >>
-> >
-> > IMO I see this commit as two problems with the same solution.
-> >
-> > I don't doubt that cleaning up AER interrupts in the shutdown path woul=
-d
-> > help AER messages, but you really don't "want" devices to be in D0 when
-> > the system is "off" because even if the system is off some rails are
-> > still active and the device might still be powered.
-> >
-> > A powered device could cause interrupts (IE a spurious wakeup).
->
-> It's a bit of a stretch, but ACPI 7.4.2.5 and 7.4.2.6 are the closest
-> corollary to a spec I can find.
->
-> "Devices states are compatible with the current Power Resource states.
-> In other words, all devices are in the D3 state when the system state is
-> S4."
+Problem:
+--------
+Both recompression and writeback perform a very simple linear scan
+of all zram slots in search for post-processing (writeback or
+recompress) candidate slots.  This often means that we pick the
+worst candidate for pp (post-processing), e.g. a 48 bytes object for
+writeback, which is nearly useless, because it only releases 48
+bytes from zsmalloc pool, but consumes an entire 4K slot in the
+backing device.  Similarly, recompression of an 48 bytes objects
+is unlikely to save more memory that recompression of a 3000 bytes
+object.  Both recompression and writeback consume constrained
+resources (CPU time, batter, backing device storage space) and
+quite often have a (daily) limit on the number of items they
+post-process, so we should utilize those constrained resources in
+the most optimal way.
 
-In addition to that, vendor collected the wave form from the device,
-Windows put the device to D3 while Linux kept the device in D0, and
-that asserted one of the PCIe interrupt line to cause system wakeup.
+Solution:
+---------
+This patch reworks the way we select pp targets.  We, quite clearly,
+want to sort all the candidates and always pick the largest, be it
+recompression or writeback.  Especially for writeback, because the
+larger object we writeback the more memory we release.  This series
+introduces concept of pp buckets and pp scan/selection.
 
-Kai-Heng
+The scan step is a simple iteration over all zram->table entries,
+just like what we currently do, but we don't post-process a candidate
+slot immediately.  Instead we assign it to a PP (post-processing)
+bucket.  PP bucket is, basically, a list which holds pp candidate
+slots that belong to the same size class.  PP buckets are 64 bytes
+apart, slots are not strictly sorted within a bucket there is a
+64 bytes variance.
 
->
-> https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/07_Power_and_Performance_Mg=
-mt/oem-supplied-system-level-control-methods.html
->
-> >
-> >>> Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D219036
-> >>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> >>> ---
-> >>>   drivers/pci/pci-driver.c | 8 ++++++++
-> >>>   1 file changed, 8 insertions(+)
-> >>>
-> >>> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-> >>> index af2996d0d17f..4c6f66f3eb54 100644
-> >>> --- a/drivers/pci/pci-driver.c
-> >>> +++ b/drivers/pci/pci-driver.c
-> >>> @@ -510,6 +510,14 @@ static void pci_device_shutdown(struct device *d=
-ev)
-> >>>       if (drv && drv->shutdown)
-> >>>           drv->shutdown(pci_dev);
-> >>> +    /*
-> >>> +     * If driver already changed device's power state, it can mean t=
-he
-> >>> +     * wakeup setting is in place, or a workaround is used. Hence
-> >>> keep it
-> >>> +     * as is.
-> >>> +     */
-> >>> +    if (!kexec_in_progress && pci_dev->current_state =3D=3D PCI_D0)
-> >>> +        pci_prepare_to_sleep(pci_dev);
-> >>> +
-> >>>       /*
-> >>>        * If this is a kexec reboot, turn off Bus Master bit on the
-> >>>        * device to tell it to not continue to do DMA. Don't touch
-> >>> --
-> >>> 2.43.0
-> >>>
-> >
->
+The select step simply iterates over pp buckets from highest to lowest
+and picks all candidate slots a particular buckets contains.  So this
+gives us sorted candidates (in linear time) and allows us to select
+most optimal (largest) candidates for post-processing first.
+
+v3..v4:
+-- do not reset pp_in_progress of another context. I'm such a muppet.
+
+Sergey Senozhatsky (6):
+  zram: introduce ZRAM_PP_SLOT flag
+  zram: permit only one post-processing operation at a time
+  zram: rework recompress target selection strategy
+  zram: rework writeback target selection strategy
+  zram: do not mark idle slots that cannot be idle
+  zram: reshuffle zram_free_page() flags operations
+
+ Documentation/admin-guide/blockdev/zram.rst |   2 +
+ drivers/block/zram/zram_drv.c               | 327 ++++++++++++++++----
+ drivers/block/zram/zram_drv.h               |   2 +
+ 3 files changed, 269 insertions(+), 62 deletions(-)
+
+--
+2.46.0.598.g6f2099f65c-goog
+
 
