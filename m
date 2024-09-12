@@ -1,131 +1,131 @@
-Return-Path: <linux-kernel+bounces-326333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FC389766AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:25:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAF3C9766B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:28:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88BA7B21C85
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:25:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19BEA1C23229
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2802D19F13D;
-	Thu, 12 Sep 2024 10:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B37819F42D;
+	Thu, 12 Sep 2024 10:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t7FqY+Fv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GoU7zJiT"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836FD1E51D;
-	Thu, 12 Sep 2024 10:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBF319F131
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 10:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726136742; cv=none; b=O41NiAwpM4/diSIc4CGiBiXm3UBc/v9un3ty0wg+oIduPzXy8siOlzt2SMbR6SmVJ66rt6o2r/N6VF1Q7Ux5fWlu0470Owgu09gmmkMAGB0tm9cS5+raL8epzSN0Zb3eijwkJAgcoJyEvgIfrWT7MAYVzOWVd24jh7Ala25rVsg=
+	t=1726136904; cv=none; b=iZ2lcTIXh55nhmaVH2DPOcW4bgMtgpy2S5C5N66h8kLD3NrXcZPPzYN4G5m2EOilGmSKqX+hRBosxUZyr3Clo4nvN7k+K4Me2mNIMmioHv6uM5iperwU0PaowH/HSilkJSivIJPe5ZV9Xiwr7EI4P4JkB1Q4ThlBUg3P5hqA9+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726136742; c=relaxed/simple;
-	bh=oXbbTjOHGHmZtZvnO4Qfes2ALZT/UJIHdI3bDDQzfLQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=unTuLXDgz1erUvRG8ZHhAoTuNm0hl+73cEyyZZRKf3IyDFBcV2NYbPEF18npPnNN11TwXxESRG7txg/NGbskbBiqXHY9efEjQKzyH+h0bhdBvRT/Qrh7MzQpK7S7wA7zIE1psCB3CkoyMTnafu5ySc3OexRe2InKM8uau1Ndncc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t7FqY+Fv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97D2FC4CEC3;
-	Thu, 12 Sep 2024 10:25:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726136741;
-	bh=oXbbTjOHGHmZtZvnO4Qfes2ALZT/UJIHdI3bDDQzfLQ=;
-	h=From:Date:Subject:To:Cc:From;
-	b=t7FqY+FvUxu5OXhh7crKNG3iZ69w6gsY11E4Fc4nnFrRyZP3v72IrJDFe786PvFXN
-	 yaMuaf6O+ecwbn5MM1NAxHZtFEBtmy4wp0D4QHEXxaXvj2dQIlzAvYdY77pai42aHL
-	 9ykfpxzIwQvOWWcQFQMzUXOoWXJIknJLTvK6IS5vLpzMCbLCpz+CgPfbe6yJOI4/oA
-	 +3VZagcKlzkWs609XgXKeknvjAhbiJAg0juPYMte6VqTL+KjMD1PDnES/nBMWgj+Wu
-	 ECfm+prS4CL5x5sLfpqOV1pAXGJtpin7+tlfC+YvtihO1jF/LoTMTx+dvZyDT7r44g
-	 s2/gzx7wmzc5g==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Thu, 12 Sep 2024 12:25:29 +0200
-Subject: [PATCH net-next] memory-provider: fix compilation issue without
- SYSFS
+	s=arc-20240116; t=1726136904; c=relaxed/simple;
+	bh=PAV4FkicyGirycpFelMM9rAtqpx8O1P09tyQ5d3LSJ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wu9Gvt+TtoMGw9LnqXcLyMbNh5cLpYu8GKVL8Ytr+GvJK/o5Dtw/6O5u5ZLCLyYFioJW2XTlZtNskMo28DkEdX9igfxblxXeEX5iGYWuojjeuGu0zcOC4T6MSAvuiNAHonWxDrfa7ybxH8UES3B7+5qsXpRwAxeyy6GqCoNJhcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GoU7zJiT; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a8a789c4fc5so317844566b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 03:28:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1726136901; x=1726741701; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4hMMIAeIq6ngig/u7/oyMUwjRb0NTBFMbk8f4JUhPjk=;
+        b=GoU7zJiTkURHDqOs9GOycv0scs5DDKa/Tf7MkI15PEx2W6aqqZflWOZtpfaU3lfk4e
+         N8hPnbjKGwJXLHOcpHO7xNYKnsfLeMJkKIVyO8nqDMzM05JyK9tP7pDYZXzAvcDN6wfq
+         dlfPGNC3neO0fx0DwDPnqm1+FISI0VNuDzPX4My8fzXgljIn5vmJyVXLpPT36HrN/YNN
+         sTXtQuSm3LGbu68eBzFTcn4aCBbD9c3kzMpYEJFEy17rrCJr7oKSxDBEiWXRvwnMomKi
+         re0MyVBpwrx1N1P4RpJZe2E9OIIuB4p04faHL5Z53z9TJ4oueM31+59WycQYKgrWxhFQ
+         ImfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726136901; x=1726741701;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4hMMIAeIq6ngig/u7/oyMUwjRb0NTBFMbk8f4JUhPjk=;
+        b=fHsgmVsWRI0FuOyzQfePj+V8sGMs7xk4NxN3hCiC4+BPpWSj7SliN83dKtPARBIKgD
+         h2B9kVbw1Y6m86w0GkeH0P/IOyOMnuxkE4V84EyksCFFUu99NtBBCWdkZg6XmAXSHK0h
+         EHaocVp7oDsIoOGhbImBdQmUST0bDSqNeDzRBYRH8KcltvszjaElAVX+CCRTXL5JP7Rq
+         giTrv/Vm+noTd1tyBrA2w7E5lHdwTGiInKI6SWfXm8EhtOtWs5nxOn0AJZOYSLVlMoWG
+         vXtWB1xUGGLuVDsUSza+0vcK0N1CcUs4QbB+HIth41SZ6P+m0qoJZS6Pe+RLf8d1nzp7
+         2ycw==
+X-Forwarded-Encrypted: i=1; AJvYcCWHgO3kkEYm/RKUlJ3y28yDIvuLjd7Qwdpyu15WzEyEyr/ExMBoF75OPRfIeMkHKH8IHb2WwndSPaL21XY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuyRWY9nv0+LJCJDjd9Y3RhhO1bj26LE4QD4KRNlatDYHU1cDQ
+	WIdepCITqIiBrYm2ePxrU/Da0TjIgeKuLNF3zVd6biMptn0+z9kpoPLB4IVTyno=
+X-Google-Smtp-Source: AGHT+IEewD5Ol7roADv6Jj0UYR3y7brfrq1xLM2ZFdqn9+fQwDXCvDx/TUxbpqTHHJAxgNiQXUxpWw==
+X-Received: by 2002:a17:907:7ea7:b0:a8a:cc5a:7f30 with SMTP id a640c23a62f3a-a902a8c26ffmr254441166b.25.1726136900343;
+        Thu, 12 Sep 2024 03:28:20 -0700 (PDT)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25835d87sm729255566b.6.2024.09.12.03.28.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Sep 2024 03:28:20 -0700 (PDT)
+Message-ID: <5625ef4f-324d-4bc9-ac5f-2374d29a0543@suse.com>
+Date: Thu, 12 Sep 2024 12:28:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240912-net-next-fix-get_netdev_rx_queue_index-v1-1-d73a1436be8c@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAJjB4mYC/zWNwQrCMBBEf6Xs2YUkFqH9FZEQm7HdS9QkLYHSf
- +8ieJjDG5g3OxVkQaGx2yljkyLvpGAvHU1LSDNYojI543ozWMcJVdMqv6TxjOq1iNh8bv67YoW
- XFNE4WHPto30ONxdIZZ8MHfyO7vR30OM4TmV5KWuCAAAA
-To: mptcp@lists.linux.dev, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Kaiyuan Zhang <kaiyuanz@google.com>, 
- Mina Almasry <almasrymina@google.com>, 
- Willem de Bruijn <willemb@google.com>, 
- Pavel Begunkov <asml.silence@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1752; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=oXbbTjOHGHmZtZvnO4Qfes2ALZT/UJIHdI3bDDQzfLQ=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBm4sGib91L7eitagSjw9kzYEQxKTG4nYn9I3RM0
- ZQGJMyTVQuJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZuLBogAKCRD2t4JPQmmg
- cy/zEACpAeui9HGTi1xdx8pVB8E+XEFoUDJUe31hBfp+Nx7GDqwWDHYqOTxyN50HA7vX/H4/K2h
- djQAXjz62oMzcvKiE7HnQMRi5vBQ4MRCmRR8AO0A8dowTrZXWYnnk1gKX1mt8iiMr02Jl5lBU3M
- iLivXq3dcrGyh9/fWKx89ZVZ3X0U88oYgjAjwurtjTfCungTHwbdpDcO/kBqmnoqLzHBrZqalu5
- 8RERGJlG9gvUR1L1s92iYujaMQk8qd9e85bIkXFO+nmpe4uiqhit/iiUpHLfO731iBcvAA6DWxU
- Mb19OPpLtu+/tBBVJj6swvaOn/fg2nuVF4uj8hvHTnZEetq7btHOKhJZNXxze1QDInWFUmIjpEU
- 1rbe7PjHAeXsAogJWaE+rxvxC2SNpwGjZ2SiKlXdwciNpGFC5b5wBt9TCiZtpkkCLIaOr1/fP+J
- Vva9D1jNWF8qvLPHZbUUdL7PqJsV3UC6C08byd1GDWTsDQ68fgpm/Z8o5pzGI2AU31FbQB0iGg6
- BH5InEpyH7MDBbTNV+x9Pa+0w8QTFovsy7Ph2YluH+MhSOJBbYXyq26Ccq1g/+rKNR84UeCB4xB
- c1UWnZvjIcPtHDu1dG2vP8ei2pzNzxgoU/d2D7LZ+C7S6euNE2iHdkpbHNtNDM9WHDVD9ZNQDn3
- dGN8srlZ9HhXrIg==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 14/19] gendwarfksyms: Add symbol versioning
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
+ Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>,
+ Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <20240815173903.4172139-35-samitolvanen@google.com>
+ <286b1cc5-1757-4f0a-bb66-0875f4608c7e@suse.com>
+ <CABCJKudJR13PJgjr9-5Ff9Dzmb7=pSx7JWM5qTyR8oYRdtSDDA@mail.gmail.com>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <CABCJKudJR13PJgjr9-5Ff9Dzmb7=pSx7JWM5qTyR8oYRdtSDDA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-When CONFIG_SYSFS is not set, the kernel fails to compile:
+On 9/11/24 18:03, Sami Tolvanen wrote:
+> On Wed, Sep 11, 2024 at 3:08 AM Petr Pavlu <petr.pavlu@suse.com> wrote:
+>> On 8/15/24 19:39, Sami Tolvanen wrote:
+>> More importantly, it made me think which names are included in the CRC
+>> calculation and which ones are omitted.
+>>
+>> If I'm looking correctly, names of structs, enums and enumerators make
+>> it into the calculation. On the other hand, names of struct members,
+>> function parameters and exports (functions/variables) are missing.
+>>
+>> I think the names of struct members and function parameters should be
+>> added as well. If the code changes 'struct A { int cols; int rows; }' to
+>> 'struct A { int rows; int cols; }' then that should be recognized as
+>> a different API/ABI. The same applies to function parameters.
+> 
+> I did leave out member names because typically renaming a member
+> doesn't change the ABI, but you're right, it might help capture these
+> types of changes where fields with identical types are reordered for
+> some reason. I'll add names.
+> 
+>> I'm not sure about export names. I would probably include them as well,
+>> if only for consistency.
+> 
+> I would rather leave out the symbol names to have consistent CRCs
+> between symbols that have identical types. Or is there an actual
+> benefit in including the symbol name in the CRC? The names are already
+> rather explicitly involved when symbol versions are checked.
 
-     net/core/page_pool_user.c:368:45: error: implicit declaration of function 'get_netdev_rx_queue_index' [-Werror=implicit-function-declaration]
-      368 |                 if (pool->slow.queue_idx == get_netdev_rx_queue_index(rxq)) {
-          |                                             ^~~~~~~~~~~~~~~~~~~~~~~~~
+Ok with me. I can't think of a strong argument to do it one way or the
+other.
 
-When CONFIG_SYSFS is not set, get_netdev_rx_queue_index() is not defined
-as well. In this case, page_pool_check_memory_provider() cannot check
-the memory provider, and a success answer can be returned instead.
-
-Fixes: 0f9214046893 ("memory-provider: dmabuf devmem memory provider")
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- net/core/page_pool_user.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/net/core/page_pool_user.c b/net/core/page_pool_user.c
-index 48335766c1bf..a98c0a76b33f 100644
---- a/net/core/page_pool_user.c
-+++ b/net/core/page_pool_user.c
-@@ -353,6 +353,7 @@ void page_pool_unlist(struct page_pool *pool)
- int page_pool_check_memory_provider(struct net_device *dev,
- 				    struct netdev_rx_queue *rxq)
- {
-+#ifdef CONFIG_SYSFS
- 	struct net_devmem_dmabuf_binding *binding = rxq->mp_params.mp_priv;
- 	struct page_pool *pool;
- 	struct hlist_node *n;
-@@ -372,6 +373,9 @@ int page_pool_check_memory_provider(struct net_device *dev,
- 	}
- 	mutex_unlock(&page_pools_lock);
- 	return -ENODATA;
-+#else
-+	return 0;
-+#endif
- }
- 
- static void page_pool_unreg_netdev_wipe(struct net_device *netdev)
-
----
-base-commit: 3cfb5aa10cb78571e214e48a3a6e42c11d5288a1
-change-id: 20240912-net-next-fix-get_netdev_rx_queue_index-a1034d1b962a
-
-Best regards,
--- 
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
-
+-- Petr
 
