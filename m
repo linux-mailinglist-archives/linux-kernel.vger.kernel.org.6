@@ -1,158 +1,213 @@
-Return-Path: <linux-kernel+bounces-326136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A11DD976389
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:54:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D0B7976346
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C4DC28360D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:54:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 315E11C22FBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749DE18E052;
-	Thu, 12 Sep 2024 07:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B5518DF90;
+	Thu, 12 Sep 2024 07:48:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="NALpd13s"
-Received: from forward502b.mail.yandex.net (forward502b.mail.yandex.net [178.154.239.146])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ILOn3MUG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365ED18E367
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2220615C3;
+	Thu, 12 Sep 2024 07:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726127662; cv=none; b=JrPqgGvwBRQLySEweo9t34qVQ3+14MihIwi875umg4gkhAnfO33dfQguEzRatyjQdwgKaP5sFgWbZUM7uvmQT7vOzW9yCvkYWtdGna8Fa0UltQbcRZUOyghSbu0selgmL7CVI98JEfap2lbcbaaaZpFWoZ5HrUrlT0TZ3Dl5ZOk=
+	t=1726127308; cv=none; b=DEmsmr+lMhRGjbreiL+apwlLLbW74ZG/xjryQIXZToh/P3u+ph9wRMifv1NEJnwh6XkhmgvEhG+nI0uFkBt96DVjxzghG3o6K3T/GKDAXh1cv8vS4OVFMItCCfLk8szLSedboiNZ3url0luPZJdaywVo9zEIP1aW8tME6ADj1qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726127662; c=relaxed/simple;
-	bh=AkS9o1mzi8Q+pcXht/mtnYrxRcMGJnj7+Lcvl6idrLo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Wl+9TIUAcvq6mcRClvcD9kt98jil8q7A7/5e2LpykcoHKO0ecEhUt0/c1Rt+J/YX3S2PKg1J+lROEMT0sh5G0rYBM72cP1b6TOzMOL8V0xAznf5iycM0ISfW7DhrXhNFCQBlKb2V3vJrjDw0xNbN0ggMCwgLFRgnYBX2/I/L1vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=NALpd13s; arc=none smtp.client-ip=178.154.239.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
-Received: from mail-nwsmtp-smtp-production-main-39.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-39.sas.yp-c.yandex.net [IPv6:2a02:6b8:c08:f220:0:640:b85:0])
-	by forward502b.mail.yandex.net (Yandex) with ESMTPS id 6CE5C5F910;
-	Thu, 12 Sep 2024 10:47:45 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-39.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id hlePcT2HfSw0-7x6aZtJL;
-	Thu, 12 Sep 2024 10:47:44 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
-	t=1726127264; bh=AkS9o1mzi8Q+pcXht/mtnYrxRcMGJnj7+Lcvl6idrLo=;
-	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
-	b=NALpd13s354dAGPoSAQcz888gO54sy7gbyildAvb5sejmolOeCZ7JBqCRx6+lx7BH
-	 Abb/xnj/R+NUi84YI6b9oDCUscB4d+DXRIiDlWmWmoDCpJKjvq4Sd9wEKcE+UqmWUm
-	 mG8Tz6epkElAaPWMKXKeFcL+L31b6+Fib0IKqEJ0=
-Authentication-Results: mail-nwsmtp-smtp-production-main-39.sas.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
-Message-ID: <93d6379423ab2cdaee66ba8f7d37d3ed85157479.camel@maquefel.me>
-Subject: Re: [PATCH v12 02/38] ARM: ep93xx: add regmap aux_dev
-From: Nikita Shubin <nikita.shubin@maquefel.me>
-To: Stephen Boyd <sboyd@kernel.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Linus Walleij
- <linus.walleij@linaro.org>,  Nikita Shubin via B4 Relay
- <devnull+nikita.shubin.maquefel.me@kernel.org>, Thierry Reding
- <thierry.reding@gmail.com>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
- <u.kleine-koenig@pengutronix.de>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-kernel@vger.kernel.org
-Date: Thu, 12 Sep 2024 10:47:44 +0300
-In-Reply-To: <080600661d43e4c39ea4b20b05e3e141.sboyd@kernel.org>
-References: <20240909-ep93xx-v12-0-e86ab2423d4b@maquefel.me>
-	 <20240909-ep93xx-v12-2-e86ab2423d4b@maquefel.me>
-	 <080600661d43e4c39ea4b20b05e3e141.sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 
+	s=arc-20240116; t=1726127308; c=relaxed/simple;
+	bh=o7YZ5R5ikHnxGwwWzt//sosmSE0QWYPasAHL1+K8Jo8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TemBCm23CKOQZv1UIRaq136aANvth0/i5Ovzse9CFo7X8gwx/tFZ7hGv2TXY0HjfBehxUq6XwhgFwY6FPcMfw7iwx0ClUMu39CotqnnlBsgLLQGOndMKlF/+Ss503tz0ZHIlXroYZ3d0fkyXz2OJ3epmvwW5p0bnyNBjCr0TP8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ILOn3MUG; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726127307; x=1757663307;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=o7YZ5R5ikHnxGwwWzt//sosmSE0QWYPasAHL1+K8Jo8=;
+  b=ILOn3MUGt2EF0vzKpBbbaS5b3vQ2pBY5fwrgCul0wwpNwMzQ5zXVpbn4
+   TUgJgW8xBMqnkOZQS3SsoXOKCQyRV9lCk9oRu2+caGINVXwrLVZfn/Prl
+   4mhDih+Q5UK2i5tpPTynvERX+wj5T2hDoo+yeIwa8o8PwNcdldTM5cxXD
+   0+Rti4Tracy4h9qZ3ctTAK8EHiviWYQMggbbBboW1GjFS5yfhBIj0Eazm
+   pmcDHZWtlFoRHJOXQekAOs20r8TRRINCZ8i3D8YEi59F6t2ORY/slhC8a
+   Ehgig+H8D4Zrl6IJmGOV9tH1gtTwdEzdu4Xvo2QtGsCmmJBJJlP4RpUQQ
+   w==;
+X-CSE-ConnectionGUID: ua7AgBrHSh+VdRxVgQJOUQ==
+X-CSE-MsgGUID: 47qI3wC5Ste1ULP+LQtaXg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="28740906"
+X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
+   d="scan'208";a="28740906"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 00:48:26 -0700
+X-CSE-ConnectionGUID: gXKpiGR/RweT09NKGn0rXQ==
+X-CSE-MsgGUID: 2x0Y9fuMQ66afoUYLucpoA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
+   d="scan'208";a="67455410"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.224.38]) ([10.124.224.38])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 00:48:23 -0700
+Message-ID: <cd236026-0bc9-424c-8d49-6bdc9daf5743@intel.com>
+Date: Thu, 12 Sep 2024 15:48:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 25/25] KVM: x86: Add CPUID bits missing from
+ KVM_GET_SUPPORTED_CPUID
+To: Paolo Bonzini <pbonzini@redhat.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+ kvm@vger.kernel.org
+Cc: kai.huang@intel.com, isaku.yamahata@gmail.com,
+ tony.lindgren@linux.intel.com, linux-kernel@vger.kernel.org
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-26-rick.p.edgecombe@intel.com>
+ <05cf3e20-6508-48c3-9e4c-9f2a2a719012@redhat.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <05cf3e20-6508-48c3-9e4c-9f2a2a719012@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello Stephen !
+On 9/11/2024 1:52 AM, Paolo Bonzini wrote:
+> On 8/13/24 00:48, Rick Edgecombe wrote:
+>> Originally, the plan was to filter the directly configurable CPUID bits
+>> exposed by KVM_TDX_CAPABILITIES, and the final configured bit values
+>> provided by KVM_TDX_GET_CPUID. However, several issues were found with
+>> this. Both the filtering done with KVM_TDX_CAPABILITIES and
+>> KVM_TDX_GET_CPUID had the issue that the get_supported_cpuid() provided
+>> default values instead of supported masks for multi-bit fields (i.e. 
+>> those
+>> encoding a multi-bit number).
+>>
+>> For KVM_TDX_CAPABILITIES, there was also the problem of bits that are
+>> actually supported by KVM, but missing from get_supported_cpuid() for one
+>> reason or another. These include X86_FEATURE_MWAIT, X86_FEATURE_HT and
+>> X86_FEATURE_TSC_DEADLINE_TIMER. This is currently worked around in 
+>> QEMU by
+>> adjusting which features are expected. 
 
-On Wed, 2024-09-11 at 15:46 -0700, Stephen Boyd wrote:
-> Quoting Nikita Shubin via B4 Relay (2024-09-09 01:10:27)
-> > diff --git a/include/linux/soc/cirrus/ep93xx.h
-> > b/include/linux/soc/cirrus/ep93xx.h
-> > index 56fbe2dc59b1..a27447971302 100644
-> > --- a/include/linux/soc/cirrus/ep93xx.h
-> > +++ b/include/linux/soc/cirrus/ep93xx.h
-> > @@ -3,6 +3,18 @@
-> > =C2=A0#define _SOC_EP93XX_H
-> > =C2=A0
-> > =C2=A0struct platform_device;
-> > +struct regmap;
-> > +struct spinlock_t;
-> > +
-> > +enum ep93xx_soc_model {
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 EP93XX_9301_SOC,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 EP93XX_9307_SOC,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 EP93XX_9312_SOC,
-> > +};
-> > +
-> > +#include <linux/auxiliary_bus.h>
-> > +#include <linux/compiler_types.h>
-> > +#include <linux/container_of.h>
-> > =C2=A0
-> > =C2=A0#define EP93XX_CHIP_REV_D0=C2=A0=C2=A0=C2=A0=C2=A0 3
-> > =C2=A0#define EP93XX_CHIP_REV_D1=C2=A0=C2=A0=C2=A0=C2=A0 4
-> > @@ -10,6 +22,20 @@ struct platform_device;
-> > =C2=A0#define EP93XX_CHIP_REV_E1=C2=A0=C2=A0=C2=A0=C2=A0 6
-> > =C2=A0#define EP93XX_CHIP_REV_E2=C2=A0=C2=A0=C2=A0=C2=A0 7
-> > =C2=A0
-> > +struct ep93xx_regmap_adev {
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct auxiliary_device adev;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct regmap *map;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 void __iomem *base;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spinlock_t *lock;
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 void (*write)(struct regmap *map,=
- spinlock_t *lock,
-> > unsigned int reg,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int val);
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 void (*update_bits)(struct regmap=
- *map, spinlock_t *lock,
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 unsigned int reg, unsigned int mask,
-> > unsigned int val);
-> > +};
->=20
-> Why can't the single 'struct regmap' be passed as the auxiliary
-> device's
-> platform_data? The lock could be put into the regmap locking routines
-> and the write/update_bits would be standard regmap API calls. Doing
-> that
-> would make the auxiliary device driver simpler because it wouldn't
-> depend on this struct.
->=20
-> The device name could encode the SoC number as well so the auxiliary
-> device driver could match different names and do different things.
+I'm not sure what issuee/problem can be worked around in QEMU.
 
-Unfortunately ep93xx sw locked register are trickier than they appear
-at first glance:
+QEMU doesn't expect these bit are reported by KVM as supported for TDX. 
+QEMU just accepts the result reported by KVM.
 
-```
-+ * Logic safeguards are included to condition the control signals for
-+ * power connection to the matrix to prevent part damage. In addition,
-a
-+ * software lock register is included that must be written with 0xAA
-+ * before each register write to change the values of the four switch
-+ * matrix control registers.
-```
+The problem is, TDX module and the hardware allow these bits be 
+configured for TD guest, but KVM doesn't allow. It leads to users cannot 
+create a TD with these bits on.
 
-- only a few registers are sw locked, so we are not using lock's
-everywhere only when it is really needed
-- lock is cleared on any write to this register, so we must ensure we
-are performing 2 write operations, first writing 0xaa, second the
-protected register itself under a single lock
-- luckily we can read without clearing the lock
+QEMU cannot work around this problem.
 
-That's why we have such a funny ep93xx_regmap_update_bits() with forced
-update_bits.
+>> Some of these are going to be 
+>> added
+>> to get_supported_cpuid(), and that is probably the right long term fix.
+> 
+> There are several cases here:
+> 
+> - MWAIT is hidden because it's hard to virtualize its C-state parameters
+> 
+> - HT is hidden because it depends on the topology, and cannot be added 
+> blindly.
+> 
+> - TSC_DEADLINE_TIMER is queried with KVM_CHECK_EXTENSION for historical 
+> reasons
+> 
+> There are basically two kinds of userspace:
+> 
+> - those that fetch KVM_GET_SUPPORED_CPUID and pass it blindly to 
+> KVM_SET_CPUID2.  These mostly work, though they may miss a feature or 
+> three (e.g. the TSC deadline timer).
+> 
+> - those that know each bit and make an informed decision on what to 
+> enable; for those, KVM_GET_SUPPORTED_CPUID is just guidance.
+> 
+> Because of this, KVM_GET_SUPPORTED_CPUID doesn't return bits that are 
+> one; it returns a mix of:
+> 
+> - maximum supported values (e.g. CPUID[7,0].EAX)
+> 
+> - values from the host (e.g. FMS or model name)
+> 
+> - supported features
+> 
+> It's an awfully defined API but it is easier to use than it sounds (some 
+> of the quirks are being documented in 
+> Documentation/virt/kvm/x86/errata.rst and 
+> Documentation/virt/kvm/x86/api.rst).  The idea is that, if userspace 
+> manages individual CPUID bits, it already knows what can be one anyway.
+> 
+> This is the kind of API that we need to present for TDX, even if the 
+> details on how to get the supported CPUID are different.  Not because 
+> it's a great API, but rather because it's a known API.
 
-It was discussed in detail a five iteration ago or so with Andy
-Shevchenko, when he was reviewing clk and pinctrl (and thank you once
-again Andy).
+However there are differences for TDX. For legacy VMs, the result of 
+KVM_GET_SUPPORTED_CPUID isn't used to filter the input of KVM_SET_CPUID2.
+
+But for TDX, it needs to filter the input of KVM_TDX_VM_INIT.CPUID[] 
+because TDX module only allows the bits that are reported as 
+configurable to be set to 1.
+
+> The difference between this and KVM_GET_SUPPORTED_CPUID are small, but 
+> the main one is X86_FEATURE_HYPERVISOR (I am not sure whether to make it 
+> different with respect to X86_FEATURE_TSC_DEADLINE_TIMER; leaning 
+> towards no).
+> 
+> We may also need a second ioctl specifically to return the fixed-1 bits. 
+>   Asking Xiaoyao for input with regard to what he'd like to have in QEMU.
+
+With current designed API, QEMU can only know which bits are 
+configurable before KVM_TDX_VM_INIT, i.e., which bits can be set to 1 or 
+0 freely.
+
+For other bits not reported as configurable, QEMU can know the exact 
+value of them via KVM_TDX_GET_CPUID, after KVM_TDX_VM_INIT and before 
+TD's running. With it, QEMU can validate the return value is matched 
+with what QEMU wants to set that determined by users input. If not 
+matched, QEMU can provide some warnings like what for legacy VMs:
+
+   - TDX doesn't support requested feature: CPUID.01H.ECX.tsc-deadline 
+[bit 24]
+   - TDX forcibly sets features: CPUID.01H:ECX.hypervisor [bit 31]
+
+If there are ioctls to report the fixed0 bits and fixed1 bits for TDX, 
+QEMU can validate the user's configuration earlier.
+
+>> +    entry = kvm_find_cpuid_entry2((*cpuid)->entries, (*cpuid)->nent, 
+>> 0x0, 0);
+>> +    if (WARN_ON(!entry))
+>> +        goto err;
+>> +    /* Fixup of maximum basic leaf */
+>> +    entry->eax |= 0x000000FF;
+>> +
+>> +    entry = kvm_find_cpuid_entry2((*cpuid)->entries, (*cpuid)->nent, 
+>> 0x1, 0);
+>> +    if (WARN_ON(!entry))
+>> +        goto err;
+>> +    /* Fixup of FMS */
+>> +    entry->eax |= 0x0fff3fff;
+>> +    /* Fixup of maximum logical processors per package */
+>> +    entry->ebx |= 0x00ff0000;
+>> +
+> 
+> I see now why you could blindly AND things in patch 24.
+> 
+> However, the right mode of operation is still to pick manually which 
+> bits to AND.
+> 
+> Paolo
+> 
 
 
