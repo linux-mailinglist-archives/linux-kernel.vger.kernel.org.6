@@ -1,221 +1,177 @@
-Return-Path: <linux-kernel+bounces-326924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39749976E92
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:20:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CBD0976E94
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:21:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A68EEB23999
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:20:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E1A81C239EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC0D1448DC;
-	Thu, 12 Sep 2024 16:20:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8554A1509B4;
+	Thu, 12 Sep 2024 16:20:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dfi8BGAT"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KrpT/EZt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C0C3A1DB
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 16:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BF4126C0E
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 16:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726158012; cv=none; b=bjd/R2SY17HDxQF+9Fd2bhvRPb6R/FawSpiHScmCeOdN6LxgoNx6s78fVJiZLoq+agIm8xS09IRSJwamQ8gvYSyh5OK1oA/gesNmrdaa+cG/7jsVvykgB5JAZF05Hb0Bx76Y2irBEu3Bg4tUiBJ/2PGykxwnlXPKvsdfWpm9+Mo=
+	t=1726158058; cv=none; b=q+4pg9xQYvgctFALkUBF8dNrkR08Nx6UQ1cdzrjDPiEUlXktXC4m24YTQD/3X2wJg+0OhwQkSl5+RU4xnuL6c3ucZeMumEo8ZrU2/EfNmxjtfWzj8fOA+SgxyBsP6mqKgQTPj0+AhuMg0Yc5ucKiVtyvS8so5KxdZPllbKenw1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726158012; c=relaxed/simple;
-	bh=LHDJEmLRoL2bN59BLYZGDznBzTtrOKAaxXkvUvwYTKA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZACv9cWYoyJ7Pu2oVGc0qjnFWmbkNLRfAgyCjut24uglOMDW8ANxIQf2VFUysrULo9x0HQgD5ZlGhyhT1BG7Pj9CYt2CXqJsxl3aX32b6cBJIxkvT58uNLuGdhtHx5zWVtwRtwU328bq1NseM3dYFVu9RyH7CNVraHKa6m5wZtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dfi8BGAT; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-70f645a30dcso615000a34.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:20:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726158008; x=1726762808; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=z3DzjyWHe+KYuHiwnIK8txC0+pHIorBSqWuc7NX4qB8=;
-        b=Dfi8BGAT512BekSUHBdw5OtrEl8BdprMzk/VBKsR2oBvwX0/V3QbaDBtUH2wl5ule9
-         7xc6zqehlV4e6UZInUhOoxWBGeVh5mZZb00GN9yRf9RI52ooT5AbNODysM8V/3KH+xKv
-         E5k1ia9X9OznzlcPtu3SHm6kBY35BVjTNDk4YWquxZ6qSkoG8fzPCnXJyZu3DX3WHGXm
-         UdFBi8FvBWUAc8uQF0rAPEtV8uIqU0SVzuYpr8P0GHque0nm+yM2huCLHN+FgYfGqKKc
-         QfQ8MjxTyAppBm5eJB7nUB7lgq67aMa1OyC/VEVACwyg0JX26RpU1FlNrlTK2ZeACjsh
-         F9wA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726158008; x=1726762808;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z3DzjyWHe+KYuHiwnIK8txC0+pHIorBSqWuc7NX4qB8=;
-        b=V/JWDzkBuzm8JlD7rhzOmSBEDfcoEMp4e9TAVRZc/pzRgQNyJHCVdENPrMAlcMowy5
-         4LbWASqCWwQm5tPZD0N0UHdrT1/21ZjsWGKw4qzQmcJfl+5Ur3pNWSZ5/v5rQOcBmUJr
-         H9fypVxrytoqyAvfhU/M5ZZz6sQrQxiTkMGl9VgpwYRgAx9REYSJ+6VGbZu8x9jXrmKP
-         m/0goBWY6A3MKoAgdRqRMVsA91gvSZyXVexQDHi8hmAN49DHCrfF2ZqNzD7OJ+scalel
-         /vbxGouG0Cn1gSkhK5L+2327jX37TsRdCg3SQg9f4K5yzpoznlZtpuW2h121XZ5Katuf
-         EyvA==
-X-Forwarded-Encrypted: i=1; AJvYcCXdgSLbyGSAecWBkXIlI4Jh1DJ9ob40yYlLiGwTd3lxws02MawIb5Wd8nJBG6yX6tepAWpGNZJj+mdWWyQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLM/RxIAuzStiDTcc4gSuXPUwPcBQBJJOWHr00XCwl+9Plhx4S
-	J7q0XMtAvqJjuAaDW+xEA/DbaHMPUL63oMZuafx4fQDE+upWSq2w
-X-Google-Smtp-Source: AGHT+IGysuELHgg3OfLGsAwGsKNT+nuiEZGuvh0MVUp5JoZbZ2h+iNnwhYBGFOJN8z2/hdrBjyxDjg==
-X-Received: by 2002:a05:6830:6606:b0:710:f797:984b with SMTP id 46e09a7af769-711094c9180mr2533120a34.32.1726158007973;
-        Thu, 12 Sep 2024 09:20:07 -0700 (PDT)
-Received: from [192.168.1.224] (syn-067-048-091-116.res.spectrum.com. [67.48.91.116])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-710d9dd6f97sm2742836a34.74.2024.09.12.09.20.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Sep 2024 09:20:07 -0700 (PDT)
-Message-ID: <754401e6-b6a5-4393-ad9b-ffe113e33a72@gmail.com>
-Date: Thu, 12 Sep 2024 11:20:05 -0500
+	s=arc-20240116; t=1726158058; c=relaxed/simple;
+	bh=61FjxYnFqoZjOQnqRNBNaBrHVxuHKhvfYWTDzANo+5E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TsaCgZ/Dt9TCypomsLoassIjx6Yodej1hYe5FVOOYn4JXtge0HrJ4RO/4oa1cuteSKwl7+/0gjRhR/3ND9yHxIQgB06xt880wV8aZzEqr5d5Hrp4On277HLFjXR8HOKvpDb+VOtLCDvUmpjZ1KdQDZS/y1r4Cytn0k/hOEn5s2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KrpT/EZt; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726158055;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ig6fjTDvlYtMVYhCJ7RrIH/6U1AxI1tHu5V3SG2FN9M=;
+	b=KrpT/EZtsjf3gV+z3aXt+IVlZoRtvbTeI0q7lO0njDTh2xRkZOKKsyWN1wqZiyBvkcudTB
+	LnJKfyux4AP5aixAb1pes0kAjGEKc6LpRyvTf1DbDXqXV0vRJfUX/1jQIH5VSGIROCLrZR
+	D2XMlwx9C+OCa6LmrGFJ8J3zKRf5kxA=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-568-V78Nc_s2NjqbgP2OY2heiA-1; Thu,
+ 12 Sep 2024 12:20:52 -0400
+X-MC-Unique: V78Nc_s2NjqbgP2OY2heiA-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 107A61955F3C;
+	Thu, 12 Sep 2024 16:20:49 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.62])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 959B61956052;
+	Thu, 12 Sep 2024 16:20:42 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 12 Sep 2024 18:20:37 +0200 (CEST)
+Date: Thu, 12 Sep 2024 18:20:29 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCHv3 1/7] uprobe: Add support for session consumer
+Message-ID: <20240912162028.GD27648@redhat.com>
+References: <20240909074554.2339984-1-jolsa@kernel.org>
+ <20240909074554.2339984-2-jolsa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 3/4] driver core: shut down devices asynchronously
-To: David Jeffery <djeffery@redhat.com>
-Cc: Jan Kiszka <jan.kiszka@siemens.com>, linux-kernel@vger.kernel.org,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J . Wysocki" <rafael@kernel.org>,
- Martin Belanger <Martin.Belanger@dell.com>,
- Oliver O'Halloran <oohall@gmail.com>, Daniel Wagner <dwagner@suse.de>,
- Keith Busch <kbusch@kernel.org>, Lukas Wunner <lukas@wunner.de>,
- Jeremy Allison <jallison@ciq.com>, Jens Axboe <axboe@fb.com>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
- linux-nvme@lists.infradead.org, Nathan Chancellor <nathan@kernel.org>
-References: <20240822202805.6379-1-stuart.w.hayes@gmail.com>
- <20240822202805.6379-4-stuart.w.hayes@gmail.com>
- <83f39f2d-7237-4880-83e3-1c3afc62087d@siemens.com>
- <448875be-59e1-48a5-8a3c-cc45fff196ca@gmail.com>
- <CA+-xHTEMM09PXgWyKX4h48diUxxGnSSrDowh5Gt=Y+EVhHL-_Q@mail.gmail.com>
-Content-Language: en-US
-From: stuart hayes <stuart.w.hayes@gmail.com>
-In-Reply-To: <CA+-xHTEMM09PXgWyKX4h48diUxxGnSSrDowh5Gt=Y+EVhHL-_Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909074554.2339984-2-jolsa@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-
-
-On 9/12/2024 9:30 AM, David Jeffery wrote:
-> On Tue, Sep 10, 2024 at 8:14 PM stuart hayes <stuart.w.hayes@gmail.com> wrote:
->>
-> ...
->> diff --git a/drivers/base/core.c b/drivers/base/core.c
->> index b69b82da8837..52d64b419c01 100644
->> --- a/drivers/base/core.c
->> +++ b/drivers/base/core.c
->> @@ -4832,6 +4832,13 @@ static void shutdown_one_device_async(void *data, async_cookie_t cookie)
->>    {
->>          struct device *dev = data;
->>
->> +       /*
->> +        * Sanity check to prevent shutdown hang in case a parent or supplier
->> +        * is in devices_kset list in the wrong order
->> +        */
->> +       if (dev->p->shutdown_after > cookie)
->> +               dev->p->shutdown_after = cookie - 1;
->> +
->>          async_synchronize_cookie_domain(dev->p->shutdown_after + 1, &sd_domain);
->>
->>          shutdown_one_device(dev);
-> 
-> While the race window is really small, there is a potential race with
-> this fixup. It's possible for the shutdown operation to write a new
-> value to shutdown_after in the time between the if check and
-> shutdown_after being re-read and used in the
-> async_synchronize_cookie_domain call. Such a race would allow a too
-> high value to be used.
-> 
-> Instead, could do something like:
-> 
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -4833,8 +4833,12 @@ static void shutdown_one_device(struct device *dev)
->   static void shutdown_one_device_async(void *data, async_cookie_t cookie)
->   {
->          struct device *dev = data;
-> +       async_cookie_t wait = dev->p->shutdown_after + 1;
-> 
-> -       async_synchronize_cookie_domain(dev->p->shutdown_after + 1, &sd_domain);
-> +       if (wait > cookie)
-> +               wait = cookie;
+On 09/09, Jiri Olsa wrote:
+>
+>  static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
+>  {
+>  	struct uprobe_consumer *uc;
+>  	int remove = UPROBE_HANDLER_REMOVE;
+> -	bool need_prep = false; /* prepare return uprobe, when needed */
+> +	struct return_consumer *ric = NULL;
+> +	struct return_instance *ri = NULL;
+>  	bool has_consumers = false;
+>
+>  	current->utask->auprobe = &uprobe->arch;
+>
+>  	list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
+>  				 srcu_read_lock_held(&uprobes_srcu)) {
+> +		__u64 cookie = 0;
+>  		int rc = 0;
+>
+>  		if (uc->handler) {
+> -			rc = uc->handler(uc, regs);
+> -			WARN(rc & ~UPROBE_HANDLER_MASK,
+> +			rc = uc->handler(uc, regs, &cookie);
+> +			WARN(rc < 0 || rc > 2,
+>  				"bad rc=0x%x from %ps()\n", rc, uc->handler);
+>  		}
+>
+> -		if (uc->ret_handler)
+> -			need_prep = true;
+> -
+> +		/*
+> +		 * The handler can return following values:
+> +		 * 0 - execute ret_handler (if it's defined)
+> +		 * 1 - remove uprobe
+> +		 * 2 - do nothing (ignore ret_handler)
+> +		 */
+>  		remove &= rc;
+>  		has_consumers = true;
 > +
-> +       async_synchronize_cookie_domain(wait, &sd_domain);
-> 
->          shutdown_one_device(dev);
->   }
-> 
-> This reads the shutdown_after value once and avoids the race window
-> where its value being changed on another CPU could still cause a
-> potential deadlock.
-> 
+> +		if (rc == 0 && uc->ret_handler) {
 
-Good point. Really that sanity check shouldn't be needed at all.  But... maybe it
-would be better to just not change the shutdown_after on any device that's
-already been scheduled for shutdown... this would work regardless of why the supplier
-and consumer devices are in the wrong order on the devices_kset list, and would still
-work if supplier/consumer devices don't get reordered for some reason other than
-the devlink being sync_state only in the future.  Plus, it's a bit simpler.
+should we enter this block if uc->handler == NULL?
 
-How does this look?
+> +			/*
+> +			 * Preallocate return_instance object optimistically with
+> +			 * all possible consumers, so we allocate just once.
+> +			 */
+> +			if (!ri) {
+> +				ri = alloc_return_instance(uprobe->consumers_cnt);
+
+This doesn't look right...
+
+Suppose we have a single consumer C1, so uprobe->consumers_cnt == 1 and
+alloc_return_instance() allocates return_instance with for a single consumer,
+so that only ri->consumers[0] is valid.
+
+Right after that uprobe_register()->consumer_add() adds another consumer
+C2 with ->ret_handler != NULL.
+
+On the next iteration return_consumer_next() will return the invalid addr
+== &ri->consumers[1].
+
+perhaps this needs krealloc() ?
+
+> +				if (!ri)
+> +					return;
+
+Not sure we should simply return if kzalloc fails... at least it would be better
+to clear current->utask->auprobe.
+
+> +	if (ri && !remove)
+> +		prepare_uretprobe(uprobe, regs, ri); /* put bp at return */
+> +	else
+> +		kfree(ri);
+
+Well, if ri != NULL then remove is not possible, afaics... ri != NULL means
+that at least one ->handler() returned rc = 0, thus "remove" must be zero.
+
+So it seems you can just do
+
+	if (ri)
+		prepare_uretprobe(...);
 
 
-diff --git a/drivers/base/base.h b/drivers/base/base.h
-index ea18aa70f151..f818a0251bb7 100644
---- a/drivers/base/base.h
-+++ b/drivers/base/base.h
-@@ -105,6 +105,8 @@ struct driver_private {
-   * @dead - This device is currently either in the process of or has been
-   *	removed from the system. Any asynchronous events scheduled for this
-   *	device should exit without taking any action.
-+ * @shutdown_scheduled - asynchronous shutdown of the device has already
-+ * 	been scheduled
-   *
-   * Nothing outside of the driver core should ever touch these fields.
-   */
-@@ -120,6 +122,7 @@ struct device_private {
-  	async_cookie_t shutdown_after;
-  	struct device *device;
-  	u8 dead:1;
-+	u8 shutdown_scheduled:1;
-  };
-  #define to_device_private_parent(obj)	\
-  	container_of(obj, struct device_private, knode_parent)
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index b69b82da8837..bd6bc4a3dc15 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -4888,6 +4888,8 @@ void device_shutdown(void)
-  
-  		cookie = async_schedule_domain(shutdown_one_device_async,
-  					       dev, &sd_domain);
-+		dev->p->shutdown_scheduled = 1;
-+
-  		/*
-  		 * Ensure parent & suppliers wait for this device to shut down
-  		 */
-@@ -4898,8 +4900,18 @@ void device_shutdown(void)
-  
-  		idx = device_links_read_lock();
-  		list_for_each_entry_rcu(link, &dev->links.suppliers, c_node,
--				device_links_read_lock_held())
--			link->supplier->p->shutdown_after = cookie;
-+				device_links_read_lock_held()) {
-+			/*
-+			 * Only update cookie if device shutdown hasn't
-+			 * already been scheduled. Some supplier/consumer
-+			 * devices (sync_state only) aren't reordered on
-+			 * devices_kset list and don't need this, and setting
-+			 * this could result in a circular dependency if the
-+			 * supplier shutdown has already been scheduled.
-+			 */
-+			if (!link->supplier->p->shutdown_scheduled)
-+				link->supplier->p->shutdown_after = cookie;
-+		}
-  		device_links_read_unlock(idx);
-  		put_device(dev);
-  
+Didn't read other parts of your patch yet ;)
+
+Oleg.
+
 
