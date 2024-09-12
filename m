@@ -1,151 +1,107 @@
-Return-Path: <linux-kernel+bounces-327092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E86889770ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:51:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 934619770EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:51:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C10EB228D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:51:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1026CB22BFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1882BAE3;
-	Thu, 12 Sep 2024 18:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FLhn2ytt"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D1A1B654F;
+	Thu, 12 Sep 2024 18:51:45 +0000 (UTC)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314001714CC
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 18:51:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E549B13D530
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 18:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.40.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726167066; cv=none; b=XkoCDUgllEt2ZtekJlgUpGojUkvqx99roDzg/oSzlqRBzG5En6s8p//vN2G1bdcItkxlT4kMTr4DaEQOFt5hxhRD4wHi2sKrWwJ156fY7kuQXTek3e5/bagDkp6DBTHURT5CamPrybhA1ix6agsdFiclMY7ajdIw96uonS4TGdU=
+	t=1726167104; cv=none; b=mL4xA02jJIdFltfKh5EnwND0C8OPB2PLgfVS1gn4OgZ4Zpl9s+zWN3oT9xxNcjpksQ6H/zmmEOvfWDSiovHxWmpzD5x6SbBixmmfpV8kdLZGnTxUFUBdxh4dXWsVIBKtqxKGxUszPFHrA7NTZaeV3txTAUP1CiqQ0kglvGOuXKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726167066; c=relaxed/simple;
-	bh=2A/QfAynXKpV+8FU25VEKx2tUcXyN85QQTyRvY+ivQA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QwcyePmm36Du8YjNc2EBJxOMyCMuwpCx1c3M0pPNXczOTYuW6hSdmXvYMYo6f1fWUtg2CAVxQYT2JW1wQJQTwUb42rGcCR0eSzJx/gx9W5Jzh/YgKDjm6hkCY+UT9KNDpdxRsMUaV/mjuA0oSPB/7TGzxDwdV+mQ6wPjwh7uJZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FLhn2ytt; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53658f30749so1559063e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 11:51:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726167063; x=1726771863; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o7bWKO38Qf894pq8zFNg+EuWT5DdQohpoosxwSmJBDM=;
-        b=FLhn2ytt/EJ6sGiJf2ZdZ54z850+eY3AsQMYNg2bOexynzA5ppZ/6VdEVHFvVtFRe/
-         cyqd/k1o7kX1FMtiVwanSRi6m+yGuaoMEYoznUCBh4vON7mjPpBueOfus1pAU21WCZBR
-         GRxEPZxsBEEaPN/hTJ/9pyQMUXPAgkxZG5CKKps+Wf1LneLikPJfjLd2sZLVUHY7SUMt
-         HZy3twS4hDRTRjN02axBCttku8sDbhpAlq/2AoLS1qt0jgGJ3lFZlyzZEI4Xk60kGkgh
-         tpQyFFXRks8I7tOdWJaPvjzXuaJxbkFm9PTKXZs4xVvWXuCG6/GLp3WXblMgqIGkjrM2
-         TVDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726167063; x=1726771863;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o7bWKO38Qf894pq8zFNg+EuWT5DdQohpoosxwSmJBDM=;
-        b=mInHxTnn8AtdT63Pt8uYvFYt3i9x3AtBDQ2LJgTp2IscwpO8CJWWcYRkIjpDpcka5P
-         wFzop+CDuWrMjHAI+rDeFNPcCNsIRtemCUwnL6f3HKClltmo+rAzxTDaAAEL95JMHcYP
-         V87vDJCW2zfyZtEOicr8YX1kaPtKrwe6jH7DgAE8V/FnchvKccAKmPGlE63IKDbv+l9u
-         Jp6+4ltZBCihHC+kX9xWTx2lpXNMSoEdaLbDDFH1PY3riDhx1oWDuW2+5WD7/dG/NK0G
-         1TzgG7mQ74WLXfk2uO6e+YpexJjx5D63pdYNyOd3OtoQ9TJgz8C2tPaHQ/wrCTSlrT3j
-         j4Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCWw/tyeFvoaILwHCtY77xAp0PSHEerRdH8coRolC9+Y0MLHMLuEKX2ri0Egd7PiSdVm8dD6sWFLhWLRxyw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBZRsybtOhiJlwk8DF6qwfAu5793KNRzG2ng06uD89dTECNaRM
-	IhhD6+pWTKUFW7C8hxlourxuSkgj3w8T3lxE9FwpcvIC+hnXAHK7CETxlNxpqpkI3FSAKxm3cDq
-	JNPe9wRwyyVkLj7mhQsUGgD8fYftrI1/WsYWA
-X-Google-Smtp-Source: AGHT+IGbsQyMnaE2mOrQPBKLZNE9IHxt090oc8KlhsXnAdhsVXdMcywgStpHdkAnRMuzThus9L/uQOrGK/gKgUNwOw8=
-X-Received: by 2002:a05:6512:b23:b0:52e:f99e:5dd1 with SMTP id
- 2adb3069b0e04-53678feb480mr2327014e87.47.1726167062504; Thu, 12 Sep 2024
- 11:51:02 -0700 (PDT)
+	s=arc-20240116; t=1726167104; c=relaxed/simple;
+	bh=X405vKpajqLpEgidAx2nmx+uo0oSPArWretG9DItQ0g=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=DcDz5mh3VBen/ikZ1/CnQ+jslcwLjQJcvI47J2Pwk0e2UzguFyAezDkbb4VtyXyOmjg/7YHs+y/VNPT2yhniUikUDCp//oUqMs6YMKNyUYkXBVl6cnMcHHMfe+qSq52DjauuOx49YXzfyGS5mqBFnFEUvYEC2DYI/LkqLJG7n3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=195.201.40.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id C951363CF3DA;
+	Thu, 12 Sep 2024 20:51:39 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id fdg0EdIOomSn; Thu, 12 Sep 2024 20:51:39 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 272D263CF3E9;
+	Thu, 12 Sep 2024 20:51:39 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id oxJZREg1ixr5; Thu, 12 Sep 2024 20:51:39 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 0C51863CF3DA;
+	Thu, 12 Sep 2024 20:51:39 +0200 (CEST)
+Date: Thu, 12 Sep 2024 20:51:38 +0200 (CEST)
+From: Richard Weinberger <richard@nod.at>
+To: Tiwei Bie <tiwei.btw@antgroup.com>
+Cc: anton ivanov <anton.ivanov@cambridgegreys.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, 
+	linux-um <linux-um@lists.infradead.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
+Message-ID: <78364371.37121.1726167098936.JavaMail.zimbra@nod.at>
+In-Reply-To: <20240828135140.1015940-1-tiwei.btw@antgroup.com>
+References: <20240828135140.1015940-1-tiwei.btw@antgroup.com>
+Subject: Re: [PATCH] um: Fix the return value of elf_core_copy_task_fpregs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <172547884995.206112.808619042206173396.stgit@firesoul>
- <CAJD7tkak0yZNh+ZQ0FRJhmHPmC5YmccV4Cs+ZOk9DCp4s1ECCA@mail.gmail.com>
- <f957dbe3-d669-40b7-8b90-08fa40a3c23d@kernel.org> <CAJD7tkYv8oDsPkVrUkmBrUxB02nEi-Suf=arsd5g4gM7tP2KxA@mail.gmail.com>
- <afa40214-0196-4ade-9c10-cd78d0588c02@kernel.org> <CAJD7tkZ3-BrnMoEQAu_gfS-zfFMAu4SeFvGFj1pNiZwGdtrmwQ@mail.gmail.com>
- <84e09f0c-10d7-4648-b243-32f18974e417@kernel.org> <CAJD7tkYY5sipMU+w8ygPTGKfjvdMh_e0=FtxYkO9BG5VpF+QUA@mail.gmail.com>
- <CAKEwX=PTA0OxisvY12Wa95s5KqzvQTXe1rZ7nw29nP+wR2dxkA@mail.gmail.com>
- <CAJD7tkbMph337XbBTbWfF8kp_fStP3-rN77vfR5tcn2+wYfJPQ@mail.gmail.com> <CAKEwX=PcK=kJG-yxaoTYvJGNwQ=eTGo1m=ZraqYy1SyLDs9Asw@mail.gmail.com>
-In-Reply-To: <CAKEwX=PcK=kJG-yxaoTYvJGNwQ=eTGo1m=ZraqYy1SyLDs9Asw@mail.gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Thu, 12 Sep 2024 11:50:26 -0700
-Message-ID: <CAJD7tkYhOphYbNnwkZfJykii7kAR6PRvZ0pv7R=zhG0vCjxh4A@mail.gmail.com>
-Subject: Re: [PATCH V10] cgroup/rstat: Avoid flushing if there is an ongoing
- root flush
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: Jesper Dangaard Brouer <hawk@kernel.org>, tj@kernel.org, cgroups@vger.kernel.org, 
-	shakeel.butt@linux.dev, hannes@cmpxchg.org, lizefan.x@bytedance.com, 
-	longman@redhat.com, kernel-team@cloudflare.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, mfleming@cloudflare.com, 
-	joshua.hahnjy@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF130 (Linux)/8.8.12_GA_3809)
+Thread-Topic: Fix the return value of elf_core_copy_task_fpregs
+Thread-Index: VafjHGNkbF6XAN0sHcypTXWfv3/Q1g==
 
-On Thu, Sep 12, 2024 at 11:25=E2=80=AFAM Nhat Pham <nphamcs@gmail.com> wrot=
-e:
->
-> On Thu, Sep 12, 2024 at 10:28=E2=80=AFAM Yosry Ahmed <yosryahmed@google.c=
-om> wrote:
-> >
-> > >
-> > > I'm not, but Joshua from my team is working on it :)
-> >
-> > Great, thanks for letting me know!
->
-> FWIW, I think the zswap_shrinker_count() path is fairly trivial to
-> take care of :)  We only need the stats itself, and you don't even
-> need any tree traversal tbh - technically it is most accurate to track
-> zswap memory usage of the memcg itself - one atomic counter per
-> zswap_lruvec_struct should suffice.
+----- Urspr=C3=BCngliche Mail -----
+> Von: "Tiwei Bie" <tiwei.btw@antgroup.com>
+> An: "richard" <richard@nod.at>, "anton ivanov" <anton.ivanov@cambridgegre=
+ys.com>, "Johannes Berg"
+> <johannes@sipsolutions.net>
+> CC: "linux-um" <linux-um@lists.infradead.org>, "linux-kernel" <linux-kern=
+el@vger.kernel.org>, "Tiwei Bie"
+> <tiwei.btw@antgroup.com>
+> Gesendet: Mittwoch, 28. August 2024 15:51:40
+> Betreff: [PATCH] um: Fix the return value of elf_core_copy_task_fpregs
 
-Do you mean per-lruvec or per-memcg?
+> This function is expected to return a boolean value, which should be
+> true on success and false on failure.
+>=20
+> Fixes: d1254b12c93e ("uml: fix x86_64 core dump crash")
+> Signed-off-by: Tiwei Bie <tiwei.btw@antgroup.com>
+> ---
+> arch/um/kernel/process.c | 3 ++-
+> 1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/um/kernel/process.c b/arch/um/kernel/process.c
+> index be2856af6d4c..3cc2b663aa78 100644
+> --- a/arch/um/kernel/process.c
+> +++ b/arch/um/kernel/process.c
+> @@ -291,7 +291,8 @@ unsigned long __get_wchan(struct task_struct *p)
+> int elf_core_copy_task_fpregs(struct task_struct *t, elf_fpregset_t *fpu)
+> {
+> =09int cpu =3D current_thread_info()->cpu;
+> +=09int pid =3D userspace_pid[cpu];
+>=20
+> -=09return save_i387_registers(userspace_pid[cpu], (unsigned long *) fpu)=
+;
+> +=09return save_i387_registers(pid, (unsigned long *) fpu) =3D=3D 0;
 
->
-> obj_cgroup_may_zswap() could be more troublesome - we need the entire
-> subtree data to make the decision, at each level :) How about this:
->
-> 1. Add a per-memcg counter to track zswap memory usage.
->
-> 2. At obj_cgroup_may_zswap() time, the logic is unchanged - we
-> traverse the tree from current memcg to root memcg, grabbing the
-> memcg's counter and check for usage.
->
-> 3. At obj_cgroup_charge_zswap() time, we have to perform another
-> upward traversal again, to increment the counters. Would this be too
-> expensive?
->
-> We still need the whole obj_cgroup charging spiel, for memory usage
-> purposes, but this should allow us to remove the MEMCG_ZSWAP_B.
-> Similarly, another set of counters can be introduced to remove
-> MEMCG_ZSWAPPED...
->
-> Yosry, Joshua, how do you feel about this design? Step 3 is the part
-> where I'm least certain about, but it's the only way I can think of
-> that would avoid any flushing action. You have to pay the price of
-> stat updates at *some* point :)
+Why a new local variable?
 
-In (2) obj_cgroup_may_zswap, the upward flush should get cheaper
-because we avoid the stats flush, we just read an atomic counter
-instead.
-
-In (3) obj_cgroup_charge_zswap(), we will do an upward traversal and
-atomic update. In a lot of cases this can be cheaper than the flush we
-avoid, but we'd need to measure it with different hierarchies to be
-sure. Keep in mind that if we consume_obj_stock() is not successful
-and we fallback to obj_cgroup_charge_pages(), and we already do an
-upward traversal. So it may be just fine to do the upward traversal.
-
-So I think the plan sounds good. We just need some perf testing to
-make sure (3) does not introduce regressions.
+Thanks,
+//richard
 
