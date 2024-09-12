@@ -1,167 +1,252 @@
-Return-Path: <linux-kernel+bounces-326387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D5A29767AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:24:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29DC79767BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:25:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2666F1F27D04
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:24:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E257C281D75
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BAC1BD031;
-	Thu, 12 Sep 2024 11:17:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 937251BE841;
+	Thu, 12 Sep 2024 11:17:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S/4StBwI"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nlvOBuDs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7FA1BCA06;
-	Thu, 12 Sep 2024 11:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BC621BE22A;
+	Thu, 12 Sep 2024 11:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726139831; cv=none; b=Uz5LsYIUZFLrLWbnU0TgJXYrcYlMCZrkrpwV+XKaewWDGWbcTc1B7IiUKupgawyr+5MHFs/89ad16pt4GhgEGlStjIMYsFg8gqhKHZPzRXLGTMZscCrLpz18RJ/iqMqEW+6++7szZT3cjSVeQ8XnVwpfvKS0DnoiSm8mjwveEIE=
+	t=1726139838; cv=none; b=Yp2CRKRUKMzsm7tAyyJ+A51DoxKyYnknfSdcmVAJ+Yh+/wyqeD0fYDHvdLfFFM9yfORmZCUbiI7EhXE/i9ocfVr2w9+WFiEQWjh0uIOcFjQpn3RbzFvs69zpS+ikF+PJ0skGBoHNOB/tl0igNwRN4xYU62Spa483Lh9GdTF50Io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726139831; c=relaxed/simple;
-	bh=j5fuxxpav+uZ74ZBA2z9B31IZX3q+Gdm+A/u+8VumTY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WpvqnSxxL10pI61/ITadSo+CyfuVIv3qmdBKESvZ/Sy9eSkVDgjhVv/5puoCM7lv6Bqt/jl+I1xkSbOeiSriyJOYlav8/g/xZ2HLynFo92lqNPFk2xWisWAcICKM2Qb6zwr2z59nnUc4aJIW76SCIM9n6YJBmeBPFip4k7J7LvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S/4StBwI; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a8d24f98215so127132966b.1;
-        Thu, 12 Sep 2024 04:17:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726139828; x=1726744628; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=udqUp2dBMuH8FikDBmFuVSTqfSs+UwH1MG42wpMB/w0=;
-        b=S/4StBwIzgbmWdUYU6Z/jn15Au0nK5iiey1J+lGyHpa1ShfhhZjs8u1CtZFiMBftEG
-         LYsfLMzA7veV82iSj2NTRwuwi+/q2JTEWqNlZmgoDSxYKwuGS6UGWoQhRnu6OnU+JQw4
-         6S+tsEH65dnJI3PJk7tfTKI1rw+vuv3IWD7TcseZzT86F5rW//rcnb4tQBbWlE5V2BHe
-         qaqEaqnV1KFm5bY1ZiQbOr22lGgzVq20eY9V6qW0P2cFzFgICxUsMQZHxIbL5UZl7GOv
-         XcW+KiVd5sW/huTEPX4xIhOhBNmFImDnTwOFPAO7kHxasMCZAZG0Z9zHNIr7u8skSkXT
-         /kpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726139828; x=1726744628;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=udqUp2dBMuH8FikDBmFuVSTqfSs+UwH1MG42wpMB/w0=;
-        b=G3ygRubIymDNXuEficdIkCwal+Uy6uFUxvB0bsDQV++4ZrWgqNbtjnsxPcTaIrfpJ4
-         0rDK7Qfyg/Zq4AELvjOvvSIKT0wsJFY+miDYkK4oC0tjOxmx1CDJ+NL+a2/wFb1R4moO
-         sl1K6GI2L7Jo7MCVx7os95nM25hbfm1mnQ1kYB6p5AOZlYlT1p0xAbq2k5TkVbr6xZx9
-         kXGdjmLQcDEDKETAJz7E0Sdtj0iJLmMF7gloHkkHoct4dsk2OAoUuhrUO0zKL9+r/P+o
-         YhXUgcKiyTuRg8HeW2izwdYQgO80ZCvdh+7uOcoHTqRkY6iuo3xblyYj9jBNE8ZlIkyZ
-         XcMw==
-X-Forwarded-Encrypted: i=1; AJvYcCXghI+wJtDpAyymlU+8X/Jzphlwra5798QCInlHQSF6ufreyOqGo5UFv0+pmftRqY0yxIO3VPK0qcfa5O4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4nvYC7LKxl+SUvzckTFT4NX+aXZl4YTPsESQ+9uwPbklv0aZF
-	0jO5E8H6PGP28y0cksMBEmgj4t3fgRCqDHRQY9edCJdTqdtztnF1
-X-Google-Smtp-Source: AGHT+IG8eEbLacNT0/CFp+OSUG23KZhYQVEMcQQAWrhz2GEG2iBTsKC89UtLDqZKQLHhu8M12nUMBA==
-X-Received: by 2002:a17:907:724c:b0:a86:8863:2bf0 with SMTP id a640c23a62f3a-a90296c42fdmr233020366b.48.1726139827591;
-        Thu, 12 Sep 2024 04:17:07 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::6:5725])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25953275sm733979466b.70.2024.09.12.04.17.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Sep 2024 04:17:07 -0700 (PDT)
-Message-ID: <542e0a32-5dfd-4894-b08b-f4cdc49705bc@gmail.com>
-Date: Thu, 12 Sep 2024 12:17:06 +0100
+	s=arc-20240116; t=1726139838; c=relaxed/simple;
+	bh=ASKEujshUwUAQKq7+qtYTggR4rpjzptS8JkTy/cZSEM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EPA2wPk0mtEHqbHc8AdkLDU2V7akfVwvO6AphdnwS1gv3KkMl40WkMYXVau1k3BXEr53CPzgiPlw9NMrt6xy/6Eor+gecIPW8SzWCprTHMGdh1t4cvfQb1N/UCuVXqcT0swNv2X21ogyzU+t43b35Be760CpqI0CyhYlzzz6Y+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nlvOBuDs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF1F8C4CEC5;
+	Thu, 12 Sep 2024 11:17:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726139838;
+	bh=ASKEujshUwUAQKq7+qtYTggR4rpjzptS8JkTy/cZSEM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nlvOBuDsUhk42rm1aN38HY8iYcNeevzjnrJW42FM3qKLjNwUjR3iCgiXX+eR6O5AG
+	 VA9JPJIsRDoJ0Sxt7rZrc11tUxJtCcRP67ykNKltP1HEb5Cl8iqkCzHgj2cvA/Wlcx
+	 NsqV0R9Vrch1GImU+BPyTy2m3Mh7+xTBzszts4NY8k9cgB1VnH80wegyzZHsvSuQkF
+	 WKDmz8DLYcveuCB87d1XfE2nmY54fNoHrSZBaC9A681AJYUjtLlwqmq6ypO46/gz3R
+	 xvtTZ9VsIVBCRPILOxAeucTt3FRX1Ja8w9YgpNPGJwiwcUBFFkFT1oZNGO217ff79G
+	 T34w5rvn3G4VA==
+Date: Thu, 12 Sep 2024 13:17:10 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, Jann Horn <jannh@google.com>, 
+	Liam Howlett <liam.howlett@oracle.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	linux-trace-kernel@vger.kernel.org, peterz@infradead.org, oleg@redhat.com, rostedt@goodmis.org, 
+	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jolsa@kernel.org, paulmck@kernel.org, willy@infradead.org, 
+	akpm@linux-foundation.org, linux-mm@kvack.org, mjguzik@gmail.com, 
+	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] uprobes: add speculative lockless
+ VMA-to-inode-to-uprobe resolution
+Message-ID: <20240912-urenkel-umorientieren-c27ce893af09@brauner>
+References: <20240906051205.530219-1-andrii@kernel.org>
+ <20240906051205.530219-3-andrii@kernel.org>
+ <CAG48ez2G1Pf_RRRT0av=6r_4HcLZu6QMgveepk-ENo=PkaZC1w@mail.gmail.com>
+ <CAEf4Bzb+ShZqcj9EKQB8U9tyaJ1LoOpRxd24v76FuPJP-=dkNg@mail.gmail.com>
+ <CAJuCfpEhCm3QoZqemO=bX0snO16fxOssMWzLsiewkioiRV_aOA@mail.gmail.com>
+ <CAEf4Bzbh_HWuHEZqHZ7MHFLtp+jFf2yiCWyd-RqY-hvm09d5Ow@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] efi/tpm: add efi.tpm_log as a reserved region in
- 820_table_firmware
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-efi@vger.kernel.org, kexec@lists.infradead.org,
- ebiederm@xmission.com, bhe@redhat.com, vgoyal@redhat.com,
- tglx@linutronix.de, dave.hansen@linux.intel.com, x86@kernel.org,
- linux-kernel@vger.kernel.org, leitao@debian.org, rmikey@meta.com,
- gourry@gourry.net
-References: <20240911104109.1831501-1-usamaarif642@gmail.com>
- <CAMj1kXFVyQEwBTf2bG8yBXUktM16dzrcPH-Phz_toAsCK-NfMA@mail.gmail.com>
- <2542182d-aa79-4705-91b6-fa593bacffa6@gmail.com>
- <CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4Bzbh_HWuHEZqHZ7MHFLtp+jFf2yiCWyd-RqY-hvm09d5Ow@mail.gmail.com>
 
-
-
-On 12/09/2024 11:51, Ard Biesheuvel wrote:
-> On Thu, 12 Sept 2024 at 12:23, Usama Arif <usamaarif642@gmail.com> wrote:
->>
->>
->>
->> On 11/09/2024 12:51, Ard Biesheuvel wrote:
->>> On Wed, 11 Sept 2024 at 12:41, Usama Arif <usamaarif642@gmail.com> wrote:
->>>>
->>>> Looking at the TPM spec [1]
->>>>
->>>> If the ACPI TPM2 table contains the address and size of the Platform
->>>> Firmware TCG log, firmware “pins” the memory associated with the
->>>> Platform FirmwareTCG log, and reports this memory as “Reserved” memory
->>>> via the INT 15h/E820 interface.
->>>>
->>>> It looks like the firmware should pass this as reserved in e820 memory
->>>> map. However, it doesn't seem to. The firmware being tested on is:
->>>> dmidecode -s bios-version
->>>> edk2-20240214-2.el9
->>>>
->>>> When this area is not reserved, it comes up as usable in
->>>> /sys/firmware/memmap. This means that kexec, which uses that memmap
->>>> to find usable memory regions, can select the region where efi.tpm_log
->>>> is and overwrite it and relocate_kernel.
->>>>
->>>> Having a fix in firmware can be difficult to get through. As a secondary
->>>> fix, this patch marks that region as reserved in e820_table_firmware if it
->>>> is currently E820_TYPE_RAM so that kexec doesn't use it for kernel segments.
->>>>
->>>> [1] https://trustedcomputinggroup.org/wp-content/uploads/PC-ClientPlatform_Profile_for_TPM_2p0_Systems_v49_161114_public-review.pdf
->>>>
->>>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
->>>
->>> I would expect the EFI memory map to E820 conversion implemented in
->>> the EFI stub to take care of this.
->>>
->>
->> So I have been making a prototype with EFI stub, and the unfinished version is looking like a
->> horrible hack.
->>
->> The only way to do this in libstub is to pass log_tbl all the way from efi_retrieve_tcg2_eventlog
->> to efi_stub_entry and from there to setup_e820.
->> While going through the efi memory map and converting it to e820 table in setup_e820, you have to check
->> if log_tbl falls in any of the ranges and if the range is E820_TYPE_RAM. If that condition is satisfied,
->> then you have to split that range into 3. i.e. the E820_TYPE_RAM range before tpm_log, the tpm_log
->> E820_TYPE_RESERVED range, and the E820_TYPE_RAM range after. There are no helper functions, so this
->> splitting involves playing with a lot of pointers, and it looks quite ugly. I believe doing this
->> way is more likely to introduce bugs.
->>
->> If we are having to compensate for an EFI bug, would it make sense to do it in the way done
->> in RFC and do it in kernel rather than libstub? It is simple and very likely to be bug free.
->>
+On Tue, Sep 10, 2024 at 01:58:10PM GMT, Andrii Nakryiko wrote:
+> On Tue, Sep 10, 2024 at 9:32 AM Suren Baghdasaryan <surenb@google.com> wrote:
+> >
+> > On Mon, Sep 9, 2024 at 2:29 PM Andrii Nakryiko
+> > <andrii.nakryiko@gmail.com> wrote:
+> > >
+> > > On Mon, Sep 9, 2024 at 6:13 AM Jann Horn <jannh@google.com> wrote:
+> > > >
+> > > > On Fri, Sep 6, 2024 at 7:12 AM Andrii Nakryiko <andrii@kernel.org> wrote:
+> > > > > Given filp_cachep is already marked SLAB_TYPESAFE_BY_RCU, we can safely
+> > > > > access vma->vm_file->f_inode field locklessly under just rcu_read_lock()
+> > > >
+> > > > No, not every file is SLAB_TYPESAFE_BY_RCU - see for example
+> > > > ovl_mmap(), which uses backing_file_mmap(), which does
+> > > > vma_set_file(vma, file) where "file" comes from ovl_mmap()'s
+> > > > "realfile", which comes from file->private_data, which is set in
+> > > > ovl_open() to the return value of ovl_open_realfile(), which comes
+> > > > from backing_file_open(), which allocates a file with
+> > > > alloc_empty_backing_file(), which uses a normal kzalloc() without any
+> > > > RCU stuff, with this comment:
+> > > >
+> > > >  * This is only for kernel internal use, and the allocate file must not be
+> > > >  * installed into file tables or such.
+> > > >
+> > > > And when a backing_file is freed, you can see on the path
+> > > > __fput() -> file_free()
+> > > > that files with FMODE_BACKING are directly freed with kfree(), no RCU delay.
+> > >
+> > > Good catch on FMODE_BACKING, I didn't realize there is this exception, thanks!
+> > >
+> > > I think the way forward would be to detect that the backing file is in
+> > > FMODE_BACKING and fall back to mmap_lock-protected code path.
+> > >
+> > > I guess I have the question to Liam and Suren, do you think it would
+> > > be ok to add another bool after `bool detached` in struct
+> > > vm_area_struct (guarded by CONFIG_PER_VMA_LOCK), or should we try to
+> > > add an extra bit into vm_flags_t? The latter would work without
+> > > CONFIG_PER_VMA_LOCK, but I don't know what's acceptable with mm folks.
+> > >
+> > > This flag can be set in vma_set_file() when swapping backing file and
+> > > wherever else vma->vm_file might be set/updated (I need to audit the
+> > > code).
+> >
+> > I understand that this would work but I'm not very eager to leak
+> > vm_file attributes like FMODE_BACKING into vm_area_struct.
+> > Instead maybe that exception can be avoided? Treating all vm_files
 > 
-> I don't see how this could be an EFI bug, given that it does not deal
-> with E820 tables at all.
+> I agree, that would be best, of course. It seems like [1] was an
+> optimization to avoid kfree_rcu() calls, not sure how big of a deal it
+> is to undo that, given we do have a use case that calls for it now.
+> Let's see what Christian thinks.
 
+Do you just mean?
 
-EFI passes memory descriptors to libstub, libstub converts it to e820.
+diff --git a/fs/file_table.c b/fs/file_table.c
+index 7ce4d5dac080..03e58b28e539 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -68,7 +68,7 @@ static inline void file_free(struct file *f)
+        put_cred(f->f_cred);
+        if (unlikely(f->f_mode & FMODE_BACKING)) {
+                path_put(backing_file_user_path(f));
+-               kfree(backing_file(f));
++               kfree_rcu(backing_file(f));
+        } else {
+                kmem_cache_free(filp_cachep, f);
+        }
 
-I believe the right behaviour should be that EFI creates an EFI_RESERVED_TYPE region for 
-that TPM log memory. Then libstub would automatically convert that EFI_RESERVED_TYPE
-to E820_TYPE_RESERVED in setup_e820 [1].
+Then the only thing you can do with FMODE_BACKING is to skip it. I think
+that should be fine since backing files right now are only used by
+overlayfs and I don't think the kfree_rcu() will be a performance issue.
 
-[1] https://elixir.bootlin.com/linux/v6.10.9/source/drivers/firmware/efi/libstub/x86-stub.c#L573
-
-
-
-
-
+> 
+> > equally as RCU-safe would be a much simpler solution. I see that this
+> > exception was introduced in [1] and I don't know if this was done for
+> > performance reasons or something else. Christian, CCing you here to
+> > please clarify.
+> >
+> > [1] https://lore.kernel.org/all/20231005-sakralbau-wappnen-f5c31755ed70@brauner/
+> >
+> > >
+> > > >
+> > > > So the RCU-ness of "struct file" is an implementation detail of the
+> > > > VFS, and you can't rely on it for ->vm_file unless you get the VFS to
+> > > > change how backing file lifetimes work, which might slow down some
+> > > > other workload, or you find a way to figure out whether you're dealing
+> > > > with a backing file without actually accessing the file.
+> > > >
+> > > > > +static struct uprobe *find_active_uprobe_speculative(unsigned long bp_vaddr)
+> > > > > +{
+> > > > > +       const vm_flags_t flags = VM_HUGETLB | VM_MAYEXEC | VM_MAYSHARE;
+> > > > > +       struct mm_struct *mm = current->mm;
+> > > > > +       struct uprobe *uprobe;
+> > > > > +       struct vm_area_struct *vma;
+> > > > > +       struct file *vm_file;
+> > > > > +       struct inode *vm_inode;
+> > > > > +       unsigned long vm_pgoff, vm_start;
+> > > > > +       int seq;
+> > > > > +       loff_t offset;
+> > > > > +
+> > > > > +       if (!mmap_lock_speculation_start(mm, &seq))
+> > > > > +               return NULL;
+> > > > > +
+> > > > > +       rcu_read_lock();
+> > > > > +
+> > > > > +       vma = vma_lookup(mm, bp_vaddr);
+> > > > > +       if (!vma)
+> > > > > +               goto bail;
+> > > > > +
+> > > > > +       vm_file = data_race(vma->vm_file);
+> > > >
+> > > > A plain "data_race()" says "I'm fine with this load tearing", but
+> > > > you're relying on this load not tearing (since you access the vm_file
+> > > > pointer below).
+> > > > You're also relying on the "struct file" that vma->vm_file points to
+> > > > being populated at this point, which means you need CONSUME semantics
+> > > > here, which READ_ONCE() will give you, and something like RELEASE
+> > > > semantics on any pairing store that populates vma->vm_file, which
+> > > > means they'd all have to become something like smp_store_release()).
+> > >
+> > > vma->vm_file should be set in VMA before it is installed and is never
+> > > modified afterwards, isn't that the case? So maybe no extra barrier
+> > > are needed and READ_ONCE() would be enough.
+> > >
+> > > >
+> > > > You might want to instead add another recheck of the sequence count
+> > > > (which would involve at least a read memory barrier after the
+> > > > preceding patch is fixed) after loading the ->vm_file pointer to
+> > > > ensure that no one was concurrently changing the ->vm_file pointer
+> > > > before you do memory accesses through it.
+> > > >
+> > > > > +       if (!vm_file || (vma->vm_flags & flags) != VM_MAYEXEC)
+> > > > > +               goto bail;
+> > > >
+> > > > missing data_race() annotation on the vma->vm_flags access
+> > >
+> > > ack
+> > >
+> > > >
+> > > > > +       vm_inode = data_race(vm_file->f_inode);
+> > > >
+> > > > As noted above, this doesn't work because you can't rely on having RCU
+> > > > lifetime for the file. One *very* ugly hack you could do, if you think
+> > > > this code is so performance-sensitive that you're willing to do fairly
+> > > > atrocious things here, would be to do a "yes I am intentionally doing
+> > > > a UAF read and I know the address might not even be mapped at this
+> > > > point, it's fine, trust me" pattern, where you use
+> > > > copy_from_kernel_nofault(), kind of like in prepend_copy() in
+> > > > fs/d_path.c, and then immediately recheck the sequence count before
+> > > > doing *anything* with this vm_inode pointer you just loaded.
+> > > >
+> > > >
+> > >
+> > > yeah, let's leave it as a very unfortunate plan B and try to solve it
+> > > a bit cleaner.
+> > >
+> > >
+> > > >
+> > > > > +       vm_pgoff = data_race(vma->vm_pgoff);
+> > > > > +       vm_start = data_race(vma->vm_start);
+> > > > > +
+> > > > > +       offset = (loff_t)(vm_pgoff << PAGE_SHIFT) + (bp_vaddr - vm_start);
+> > > > > +       uprobe = find_uprobe_rcu(vm_inode, offset);
+> > > > > +       if (!uprobe)
+> > > > > +               goto bail;
+> > > > > +
+> > > > > +       /* now double check that nothing about MM changed */
+> > > > > +       if (!mmap_lock_speculation_end(mm, seq))
+> > > > > +               goto bail;
+> > > > > +
+> > > > > +       rcu_read_unlock();
+> > > > > +
+> > > > > +       /* happy case, we speculated successfully */
+> > > > > +       return uprobe;
+> > > > > +bail:
+> > > > > +       rcu_read_unlock();
+> > > > > +       return NULL;
+> > > > > +}
 
