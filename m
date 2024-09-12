@@ -1,140 +1,196 @@
-Return-Path: <linux-kernel+bounces-326073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDB48976223
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:06:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEAB197620F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:02:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F10341C23401
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:06:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 915FB284AC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B38C18CBEE;
-	Thu, 12 Sep 2024 07:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE4618BBA5;
+	Thu, 12 Sep 2024 07:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="oesJpYl1"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="KlIInfdY"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6AC18D64F;
-	Thu, 12 Sep 2024 07:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 175041885A0
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726124756; cv=none; b=juEjg4XC3orLTm6rir+SJ8qSBTJktkX3MDrcXSYsqPynv5IDvXjRu/jpKED5HxJU7ALZJGcEQtKB6yuEvhp3dpKqo2UoG0giP80BeaXecCovX9tRNYBZzZxvEGqH8MG55bSNavr5OuEfnjJ8VGcCHBdQq9ECZp7gbMdwnFk1/Ds=
+	t=1726124548; cv=none; b=lKaLQYG12T/xs/5Khs0WD7DW/aFYcweujf5auRR4Dswjn6pABshtqIbPohisTQIUbS57PKbIJaVHnQ7GbwcCNQPxkX+94N4lKyJDKRPlc5P0gLysZUtclEC+ilwJBuOV3uMkCz3y/TEcqiWAr8vrt+oCHT0cHeUXJgsixMEPMnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726124756; c=relaxed/simple;
-	bh=jfC1FvSAZQRxLqykAKguyf2O9rPCVwccAocswSihxcg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ag0xUePw8t4i7bACptGyT/pwiZ/r4qPrbxFDYP9EKREmnbC5KNZwfVDmFSWpcMAwQI3FHo9nIyH777RhShrawTDsfaUXPnXoBD8eM7/8+XVcnbVUaj/ddfc3Qnopc6R0keYfSKuJ5CgXvVEOvMUng7FEjKO1wvis5yd3K1LqgaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=oesJpYl1; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1726124754; x=1757660754;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jfC1FvSAZQRxLqykAKguyf2O9rPCVwccAocswSihxcg=;
-  b=oesJpYl1E4Mtem3aFuBDQ3X8nQvqUyvpngqQ5bs/iErTX4gGW7kaSaBM
-   ZGecM712JoaHXWPBqfdtRopBYu9mrjtXju7dFtNUse3Ctf0SEdE60SSxj
-   cfkq3cGJCBPTzkNnY/KUibK5dk7h7LPSUIWq0dE1KDGqG1fCg/R5IKytb
-   /KQq4BdwMujuO1S72hS3mvYFx9dxZ8414lsdzCBi7xEAH8hEh6UcjSnxe
-   NOl/GuTMpG4nLhcfNsF3azJK30aaMn8qPQQ2BQUu0nxE1+GsTC0HV9Olv
-   MaifhHCIkGp5o1A7966PEEwlhp9t64OhV38SUPtAwEA9FURT/aXzyEvKX
-   g==;
-X-CSE-ConnectionGUID: Zqffe1M+SWCcMURK/0Nsgw==
-X-CSE-MsgGUID: vD6UNw6/TYSN8Trr5dGMBw==
-X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
-   d="scan'208";a="34836728"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Sep 2024 00:05:53 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
- chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 12 Sep 2024 00:05:22 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex02.mchp-main.com
- (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Thu, 12 Sep 2024 00:05:22 -0700
-Date: Thu, 12 Sep 2024 12:31:33 +0530
-From: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-CC: Andrew Lunn <andrew@lunn.ch>, Raju Lakkaraju
-	<Raju.Lakkaraju@microchip.com>, <netdev@vger.kernel.org>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <bryan.whitehead@microchip.com>,
-	<UNGLinuxDriver@microchip.com>, <linux@armlinux.org.uk>,
-	<rdunlap@infradead.org>, <Steen.Hegelund@microchip.com>,
-	<daniel.machon@microchip.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next V2 5/5] net: lan743x: Add Support for 2.5G SFP
- with 2500Base-X Interface
-Message-ID: <ZuKRzWTi2lIbBl0/@HYD-DK-UNGSW21.microchip.com>
-References: <20240911161054.4494-1-Raju.Lakkaraju@microchip.com>
- <20240911161054.4494-6-Raju.Lakkaraju@microchip.com>
- <82067738-f569-448b-b5d8-7111bef2a8e9@lunn.ch>
- <20240911220138.30575de5@fedora.home>
+	s=arc-20240116; t=1726124548; c=relaxed/simple;
+	bh=lDzL+/bkYxaNRuuGM0blmhB5eknPwvACk7Gzegus+NU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZOcK/O2HaVOEl1ObaWE2CuFOBONe8b6igGd/OZmdW5UCB80Nf4jIkpYm1jsAMI2ZF2aN1hKKbLZ6vW+cGJmmhJfN4uSqXmUC07ECco13H3yTiYydqV43eO/hZTqnN7AGxeSZCyoPGB5nI36HH6Y3giPJ+bW4EQkm4ltCTkmn9fU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=KlIInfdY; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com [209.85.208.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 0359B3F164
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:02:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1726124543;
+	bh=1CKMTCTTm7jqXVJcpUxDxIfDKzM8XfvNoAgn0SaBro4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=KlIInfdYocxaSNQQq5/ctVcVAT8fUjJXDlXF2JuJNp3wpjsV+I7lMAq5hjWUPRp5a
+	 STWrxzgFArT3leI8GKRSaikEHIU95ZCmISr6uGu3L/w5U/IC22KKhCrQdu9pB/6LBh
+	 EK5Cp+MNxFUIL+KmB2+KQ+HekkTsmpymEo9EHuDiH98EQAwvAxfxsqnzvzk3y9EB+i
+	 48A4SPNb9UXoFZXjLQNBpTWg1vGe32kiYSc/HPqh+M1rILQZAtRFJAihdj5TdpTIOi
+	 lADCEtSZHCRZ0oxsVPV15TfHPLvOtbVnMFyu/crtYgf1SLDq+1XVZ/YeIT47s4vF6X
+	 5v5pdzJnwqn0w==
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2f661aaceadso4548591fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 00:02:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726124542; x=1726729342;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1CKMTCTTm7jqXVJcpUxDxIfDKzM8XfvNoAgn0SaBro4=;
+        b=jvDxefwBbRZ1cpNvJsKhzfb875OXP2m2Q/tscBg8u8XIBKOzRserR/ePEZCL3ywdy7
+         A1KwCCniSfSMRG7i5JHhs8SVSVYt00Jt46KnSs+drUgQwYCEkVsna3oR8CQWKeU15J19
+         T5yKBHTyrdl7USPdYaLY0zfhFz+Vvw5ysKlmMgQLjLuO5JgNBGsBaB7+73DpXc0itvUb
+         FtvEbVxUF8TVaIzPStcToID3Ka3M3LzdzGXLoO1QhtKPbo2HYk5UHb8mW3+ddOlXkW1O
+         GW/KoTBA1/x6KdNWRp1HVHpcKC7paFoWF/CV0cI6V5FG43IOTDLAsrX+yInX96b9fNX4
+         snDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXb3zxlwQBYhlccokCjxwcTaqjPjqoRfKjUNatC/v4CP3LkN5SvFJm2MRGjDe4evByG+/Dh0t+OyVcgJAw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+EhZmaG343PkHn2wEbfdCMj4b5AR8B8wBHueqefL6pLRjrrUg
+	ymo+rUg1+A4zVXGxpRk9tqtBnT9223TPKgLMw8sM2bXc2qs4uIqRyJbDR/fbmzrYFxmUCV8aWVu
+	MxPtad11EjCob5ecNr/CAdBLZcGrPNreopy7KpPrJiiyL+vHrrZdJVq37wJfMXEQZE8hsA2gs10
+	XomUOqnG4kZkaN0swyVJaIMRgCa0XxGh5KZ7g+ttBjfyB6fhThvlEG
+X-Received: by 2002:a05:6512:334d:b0:536:7a24:8e82 with SMTP id 2adb3069b0e04-5367a24908emr533433e87.13.1726124541973;
+        Thu, 12 Sep 2024 00:02:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEuwOtWwPuErUCydeoa2yBkKx7aUuc0DgfJKxXEK5w5XG0mdKRr+ESyjKNT9pgNj/ndfRUhOjPcEeAtHU54puA=
+X-Received: by 2002:a05:6512:334d:b0:536:7a24:8e82 with SMTP id
+ 2adb3069b0e04-5367a24908emr533415e87.13.1726124541340; Thu, 12 Sep 2024
+ 00:02:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <20240911220138.30575de5@fedora.home>
+References: <20240911190516.GA644336@bhelgaas> <319e5419-3b12-4672-9f51-f90c5e142e29@amd.com>
+ <fa504022-acb3-4930-b6b8-87a8dcb912c3@amd.com>
+In-Reply-To: <fa504022-acb3-4930-b6b8-87a8dcb912c3@amd.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Date: Thu, 12 Sep 2024 15:02:08 +0800
+Message-ID: <CAAd53p4ZpCF0GpGhzUx_7V8M2+YCsxgMz8CePPGG_fBTG0JzZA@mail.gmail.com>
+Subject: Re: [PATCH] PCI/PM: Put devices to low power state on shutdown
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, bhelgaas@google.com, 
+	mika.westerberg@linux.intel.com, linux-pci@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, kaihengfeng@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The 09/11/2024 22:01, Maxime Chevallier wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> 
-> On Wed, 11 Sep 2024 19:31:01 +0200
-> Andrew Lunn <andrew@lunn.ch> wrote:
-> 
-> > > @@ -3359,6 +3362,7 @@ static int lan743x_phylink_create(struct lan743x_adapter *adapter)
-> > >     lan743x_phy_interface_select(adapter);
-> > >
-> > >     switch (adapter->phy_interface) {
-> > > +   case PHY_INTERFACE_MODE_2500BASEX:
-> > >     case PHY_INTERFACE_MODE_SGMII:
-> > >             __set_bit(PHY_INTERFACE_MODE_SGMII,
-> > >                       adapter->phylink_config.supported_interfaces);
+On Thu, Sep 12, 2024 at 3:38=E2=80=AFAM Mario Limonciello
+<mario.limonciello@amd.com> wrote:
+>
+> On 9/11/2024 14:16, Mario Limonciello wrote:
+> > On 9/11/2024 14:05, Bjorn Helgaas wrote:
+> >> On Fri, Jul 12, 2024 at 02:24:11PM +0800, Kai-Heng Feng wrote:
+> >>> Some laptops wake up after poweroff when HP Thunderbolt Dock G4 is
+> >>> connected.
+> >>>
+> >>> The following error message can be found during shutdown:
+> >>> pcieport 0000:00:1d.0: AER: Correctable error message received from
+> >>> 0000:09:04.0
+> >>> pcieport 0000:09:04.0: PCIe Bus Error: severity=3DCorrectable,
+> >>> type=3DData Link Layer, (Receiver ID)
+> >>> pcieport 0000:09:04.0:   device [8086:0b26] error
+> >>> status/mask=3D00000080/00002000
+> >>> pcieport 0000:09:04.0:    [ 7] BadDLLP
+> >>>
+> >>> Calling aer_remove() during shutdown can quiesce the error message,
+> >>> however the spurious wakeup still happens.
+> >>>
+> >>> The issue won't happen if the device is in D3 before system shutdown,=
+ so
+> >>> putting device to low power state before shutdown to solve the issue.
+> >>>
+> >>> I don't have a sniffer so this is purely guesswork, however I believe
+> >>> putting device to low power state it's the right thing to do.
+> >>
+> >> My objection here is that we don't have an explanation of why this
+> >> should matter or a pointer to any spec language about this situation,
+> >> so it feels a little bit random.
+> >>
+> >> I suppose the problem wouldn't happen if AER interrupts were disabled?
+> >> We already do disable them in aer_suspend(), but maybe that's not used
+> >> in the shutdown path?
+> >>
+> >> My understanding is that .shutdown() should turn off device interrupts
+> >> and stop DMA.  So maybe we need an aer_shutdown() that disables
+> >> interrupts?
+> >>
 > >
-> > I _think_ you also need to set the PHY_INTERFACE_MODE_2500BASEX bit in
-> > phylink_config.supported_interfaces if you actually support it.
-> 
-> It's actually being set a bit below. However that raises the
-> question of why.
-> 
-> On the variant that don't have this newly-introduced SFP support but do
-> have sgmii support (!is_sfp_support_en && is_sgmii_en), can this chip
-> actually support 2500BaseX ?
+> > IMO I see this commit as two problems with the same solution.
+> >
+> > I don't doubt that cleaning up AER interrupts in the shutdown path woul=
+d
+> > help AER messages, but you really don't "want" devices to be in D0 when
+> > the system is "off" because even if the system is off some rails are
+> > still active and the device might still be powered.
+> >
+> > A powered device could cause interrupts (IE a spurious wakeup).
+>
+> It's a bit of a stretch, but ACPI 7.4.2.5 and 7.4.2.6 are the closest
+> corollary to a spec I can find.
+>
+> "Devices states are compatible with the current Power Resource states.
+> In other words, all devices are in the D3 state when the system state is
+> S4."
 
-Yes. 
-PCI11010/PCI11414 chip's PCS support SGMII/2500Baxe-X I/F at 2.5Gpbs
-We need to over clocking at a bit rate of 3.125 Gbps for 2.5Gbps event SGMII
-I/F
+In addition to that, vendor collected the wave form from the device,
+Windows put the device to D3 while Linux kept the device in D0, and
+that asserted one of the PCIe interrupt line to cause system wakeup.
 
-From data sheet:
-"The SGMII interface also supports over clocking at a bit rate of 3.125 Gbps for an effective 2.5 Gbps data rate. 10 and
-100 Mbps modes are also scaled up by 2.5x but are most likely not useful."
+Kai-Heng
 
-> 
-> If so, is there a point in getting a different default interface
-> returned from lan743x_phy_interface_select() depending on wether or not
-> there's SFP support ?
-
-Yes.
-
-This LAN743x driver support following chips
- 1. LAN7430 - GMII I/F
- 2. LAN7431 - MII I/F
- 3. PCI11010/PCI11414 - RGMII or SGMII/1000Base-X/2500Base-X
-
-> 
-> Maxime
-> 
-
--- 
-Thanks,                                                                         
-Raju
+>
+> https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/07_Power_and_Performance_Mg=
+mt/oem-supplied-system-level-control-methods.html
+>
+> >
+> >>> Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D219036
+> >>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> >>> ---
+> >>>   drivers/pci/pci-driver.c | 8 ++++++++
+> >>>   1 file changed, 8 insertions(+)
+> >>>
+> >>> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+> >>> index af2996d0d17f..4c6f66f3eb54 100644
+> >>> --- a/drivers/pci/pci-driver.c
+> >>> +++ b/drivers/pci/pci-driver.c
+> >>> @@ -510,6 +510,14 @@ static void pci_device_shutdown(struct device *d=
+ev)
+> >>>       if (drv && drv->shutdown)
+> >>>           drv->shutdown(pci_dev);
+> >>> +    /*
+> >>> +     * If driver already changed device's power state, it can mean t=
+he
+> >>> +     * wakeup setting is in place, or a workaround is used. Hence
+> >>> keep it
+> >>> +     * as is.
+> >>> +     */
+> >>> +    if (!kexec_in_progress && pci_dev->current_state =3D=3D PCI_D0)
+> >>> +        pci_prepare_to_sleep(pci_dev);
+> >>> +
+> >>>       /*
+> >>>        * If this is a kexec reboot, turn off Bus Master bit on the
+> >>>        * device to tell it to not continue to do DMA. Don't touch
+> >>> --
+> >>> 2.43.0
+> >>>
+> >
+>
 
