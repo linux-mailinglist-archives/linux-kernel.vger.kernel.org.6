@@ -1,41 +1,75 @@
-Return-Path: <linux-kernel+bounces-326298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2846976620
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:56:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 031BE976614
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:55:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B70D285474
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:56:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5D711F24BEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1C419F404;
-	Thu, 12 Sep 2024 09:55:49 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E56E19F132;
-	Thu, 12 Sep 2024 09:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E180719E998;
+	Thu, 12 Sep 2024 09:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DSaWVKtG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9183A18F2CB
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726134948; cv=none; b=Tq3iQqbxhl5HxD1+9brirBJ2Wl+fwqW6i2Iu3TG0zsImDFRvmsLJ1Tp4GM0D7yebmST0X8rPxqSb/e6jstYR75Oq4hjyhR2Ovc1apzHBVvwF8tMD/KHL/hTvcV70pl7GCyH6FVqDg2wgYv6rR88J2eFNxBq1MUSAyl7gCyVZ1XI=
+	t=1726134901; cv=none; b=lEJh8jIU8djZeZ+x+VonIQTgpq1hsMBW6yQRB2gJYOo7sYL5OfBIpWr+v2X7LtjTH3HS0QldPQKAqMZyyUhjfOtY+wqCF7VFi8YYCjayfeTbP3I30zbypkQtiwErXnHn2evqV586Xfr79eK+d1BlXa1k1/BCm8VwpUTyRsk9tb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726134948; c=relaxed/simple;
-	bh=VOCJPqVsl9L8Gqzs0YlXeTB4sByDOT3XB7vXD9+LNik=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZcQ05afCyZ7iEcO+eOS8mzDNZunL0dpINF9AGtx/a9zHoxwM6dayAy336hZA+h0kuXzhAzDM0fVdsmLgvAlblGIQ3IlQ/q2aDhMN/76OrEN21jIVYpABmqg+Og2NJuNlWmIkK9jdF8cudForVPami3sppaClhs4kg1Rkh5gpOEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1sogY3-0001w9-00; Thu, 12 Sep 2024 11:55:35 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id D70FFC014D; Thu, 12 Sep 2024 11:54:41 +0200 (CEST)
-Date: Thu, 12 Sep 2024 11:54:41 +0200
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: torvalds@linux-foundation.org
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] MIPS changes for v6.12
-Message-ID: <ZuK6YZHRIcriY+Ys@alpha.franken.de>
+	s=arc-20240116; t=1726134901; c=relaxed/simple;
+	bh=B/wFxdm9PsJbzGZDqv6XoIZHBVQVLzCBB0wOe9zejBc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SC9Sn+uPMdzAwVisL67631yhGszjWLxDhql/K0yhQVgMyNpoislYI8K+NtixCujegNKQjEJI4jOkHds30slvoU+LjidevJWgPLAjpuZciZ9i7iHS22Nq5TzMgyresGTfa8wFULtyoteTjao07MGp0aOnX09bX9sRhXSnek/zqiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DSaWVKtG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726134898;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rqxoiqw+842QliGENKyve7P0iOszesu17qVHDOSZ6q4=;
+	b=DSaWVKtGQnkvzRGhvY1hl24hx3dJAotsFWP5/+otZ9qHrZP+2y4r2n3SaT299vSVOp1cEC
+	yjhje5/GoZzNDgaheXpgLGLJBMSdc9rx9xk5fpVvROaQneazb4+MeXwmW1iCO/MHJwuoHu
+	clpKsPXyUyi5IyBdjL/hBYK+XNv+vQE=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-70-9kmFCzvVMbmuyadkSLFFog-1; Thu,
+ 12 Sep 2024 05:54:53 -0400
+X-MC-Unique: 9kmFCzvVMbmuyadkSLFFog-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F26A81958B3E;
+	Thu, 12 Sep 2024 09:54:50 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.58])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6D03B19560AB;
+	Thu, 12 Sep 2024 09:54:47 +0000 (UTC)
+Date: Thu, 12 Sep 2024 17:54:43 +0800
+From: Baoquan He <bhe@redhat.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>,
+	Sourabh Jain <sourabhjain@linux.ibm.com>
+Cc: Petr Tesarik <petr.tesarik@suse.com>,
+	Hari Bathini <hbathini@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Eric DeVolder <eric.devolder@oracle.com>,
+	"open list:KEXEC" <kexec@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Petr Tesarik <ptesarik@suse.com>, stable@kernel.org
+Subject: Re: [PATCH 1/1] kexec_file: fix elfcorehdr digest exclusion when
+ CONFIG_CRASH_HOTPLUG=y
+Message-ID: <ZuK6Y1+Z5x4Hvt4P@MiWiFi-R3L-srv>
+References: <20240805150750.170739-1-petr.tesarik@suse.com>
+ <871q2oy6eb.fsf@email.froward.int.ebiederm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,60 +78,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <871q2oy6eb.fsf@email.froward.int.ebiederm.org>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-The following changes since commit 5be63fc19fcaa4c236b307420483578a56986a37:
+Hi Eric,
 
-  Linux 6.11-rc5 (2024-08-25 19:07:11 +1200)
+On 08/16/24 at 07:54am, Eric W. Biederman wrote:
+> Petr Tesarik <petr.tesarik@suse.com> writes:
+> 
+> > From: Petr Tesarik <ptesarik@suse.com>
+> >
+> > Fix the condition to exclude the elfcorehdr segment from the SHA digest
+> > calculation.
+> >
+> > The j iterator is an index into the output sha_regions[] array, not into
+> > the input image->segment[] array. Once it reaches image->elfcorehdr_index,
+> > all subsequent segments are excluded. Besides, if the purgatory segment
+> > precedes the elfcorehdr segment, the elfcorehdr may be wrongly included in
+> > the calculation.
+> 
+> I would rather make CONFIG_CRASH_HOTPLUG depend on broken.
+> 
+> The hash is supposed to include everything we depend upon so when
+> a borken machine corrupts something we can detect that corruption
+> and not attempt to take a crash dump.
+> 
+> The elfcorehdr is definitely something that needs to be part of the
+> hash.
+> 
+> So please go back to the drawing board and find a way to include the
+> program header in the hash even with CONFIG_CRASH_HOTPLUG.
 
-are available in the Git repository at:
+Thanks for checking this and adding your advice, and sorry for late
+reply.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git/ tags/mips_6.12
+It's me who suggested Eric DeVolder not adding elfcorehdr into kdump
+kernel iamge hash during reviewing his patch. I need explain this if
+people has concern. When I suggested this, what I considered are:
 
-for you to fetch changes up to 439667fb943cfea46d7bde5c7b29c89efec3cbc7:
+1) The code change will be much simpler. As you can see, later Eric
+   DeVolder's patchset experienced rounds of reviewing and finally
+   merged. Below is his final round:
 
-  mips: Remove posix_types.h include from sigcontext.h (2024-08-29 10:46:00 +0200)
+   - [PATCH v28 0/8] crash: Kernel handling of CPU and memory hot un/plug
 
-----------------------------------------------------------------
-- use devm_clk_get_enabled() helper
-- prototype fixes
-- cleanup unused stuff
+2) The efficiency will be improved very much relative to adding
+   elfcorehdr to the entire hash. When cpu/mem hotplug triggered,
+   we only touch elfcorehdr area, but don't need access the entire
+   loading segments.
 
-----------------------------------------------------------------
-Gaosheng Cui (6):
-      MIPS: Remove unused function dump_au1000_dma_channel() in dma.c
-      mips/jazz: remove unused jazz_handle_int() declaration
-      MIPS: MT: Remove unused function mips_mt_regdump()
-      MIPS: Remove unused declarations in asm/cmp.h
-      MIPS: Remove unused mips_display/_scroll_message() declarations
-      MIPS: dec: prom: Remove unused unregister_prom_console() declaration
+3) The elfcorehdr size is very tiny relative to kernel image and initrd.
+   E.g on x86, it's less than 1M, which is tiny relative to dozens of 
+   kernel image and initrd.
 
-Vincent Legoll (2):
-      MIPS: ralink: Fix missing `plat_time_init` prototype
-      MIPS: ralink: Fix missing `get_c0_perfcount_int` prototype
+Surely, adding all loading segments into hash is the best. While
+attracted by above benefits, I tend to not add for the time being. I am
+open to this, if anyone has concern about the security and is interested
+in the adding as a kernel project practice in the future, it's welcomed.
 
-Wu Bo (2):
-      bus: bt1-axi: change to use devm_clk_get_enabled() helper
-      bus: bt1-apb: change to use devm_clk_get_enabled() helper
+Here I'd like to request comment from Sourabh since he and other IBM dev 
+added the support to ppc too. Different than generic ARCH, IBM dev can
+be seen as a end user, maybe we can hear how they evaluate the balance
+between the risk and benefit.
 
-Xi Ruoyao (1):
-      mips: Remove posix_types.h include from sigcontext.h
+Thanks
+Baoquan
 
- arch/mips/alchemy/common/dma.c                 | 23 --------
- arch/mips/include/asm/cmp.h                    |  8 ---
- arch/mips/include/asm/dec/prom.h               |  1 -
- arch/mips/include/asm/mach-au1x00/au1000_dma.h |  1 -
- arch/mips/include/asm/mips-boards/generic.h    |  3 -
- arch/mips/include/asm/mips_mt.h                |  2 -
- arch/mips/include/uapi/asm/sigcontext.h        |  1 -
- arch/mips/jazz/setup.c                         |  2 -
- arch/mips/kernel/mips-mt.c                     | 77 --------------------------
- arch/mips/ralink/irq-gic.c                     |  1 +
- arch/mips/ralink/timer-gic.c                   |  2 +
- drivers/bus/bt1-apb.c                          | 23 +-------
- drivers/bus/bt1-axi.c                          | 23 +-------
- 13 files changed, 6 insertions(+), 161 deletions(-)
-
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
 
