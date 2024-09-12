@@ -1,97 +1,116 @@
-Return-Path: <linux-kernel+bounces-327346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F175F977476
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:41:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F5C2977477
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 946CE1F24896
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:41:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 557E51F25238
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617001C2DB3;
-	Thu, 12 Sep 2024 22:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D6391B6543;
+	Thu, 12 Sep 2024 22:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VC11qvXD"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FAEsd//y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C93F2C80;
-	Thu, 12 Sep 2024 22:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8672C1B78E3;
+	Thu, 12 Sep 2024 22:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726180895; cv=none; b=lfLWfq7k/Hep3hYuEosUzHZ9+9i/K/kMnJOl5ny08kk/balAqjy6zO9JwnbUY26ge9uHeaIETlaCrgZNaDFIAl0WgfSwKAeR82lX3Q05MQis5lgNjny66/UYAjwvBvmzTDRQ8unrVUdBiTX3bb2pEgRNs9uG31BubvZ8FQoWu/U=
+	t=1726180930; cv=none; b=XKwHo/f8RTTVOSoMcqWh+pB4ht0Q/YH8x8CUx7PMV6wnR3eaZDW4jYbMhSPw0904dGctERKy9+42HhDQ55775P8HYbKCm3vb2juH9KHFPfzJvnyg64pP4UFwRIePeJdwhaPktRQQomTNHs8xpfZlDPbJflQwJ8veDKGsdB0lM7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726180895; c=relaxed/simple;
-	bh=ry685pCesqwnQyQwb7R0SLL97lPXl0XqBdap+QpkJ7E=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=KogJ9HNt4/f6SwZYLD3PjtNFWXCzTaujrI7ubyQ7fA0CxH/iPwD9K5m1BCNX98l21wNnDERSlTZQJ4Sf3vyhPZVd4GkzUwtPN/2P14KxFezVi6zpR5KCFxWECHPV+k3+ZG9CMVbbl88S7gy+jgnFEpST7enDoyOaEMqlDgv6nrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VC11qvXD; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726180886;
-	bh=Zk9Se9BwKB2NiXWGx4kZzHV/ArCAmfaCoNnyOjlh4/8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=VC11qvXDVAgr5iFNakul/aQ42VPjSOYr7JaaDo1qMujbP+b0kTp65pHdWh7Q3zgHC
-	 YkpQQBrKAzHUGeipDJrlZZB4ZPXrjZaatjCRv7lyc6QJtIr1eIIxlTD7Z7ofeIoKZF
-	 ayWmM7EeNAXBGxdkallmR4p0eVo6tcfXWqKS81UZDrPBewKyjc4kP3nnMvnTdLPGwa
-	 w7xTmuX3EmehmD+j4TTQKM6geAD+QCpxSFjH+vnYvO9wOSMuoSryz/M1j+OlL36sDE
-	 TcuWN9cDk2WJEN/16t0i4VQ153v7h+WCbQsB6LBoXrOpc5SdK4NQzQwhdtL61EmXBq
-	 65TBdjUfrnxJw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X4XVG13thz4x8c;
-	Fri, 13 Sep 2024 08:41:25 +1000 (AEST)
-Date: Fri, 13 Sep 2024 08:41:24 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Huacai Chen <chenhuacai@loongson.cn>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the loongarch tree
-Message-ID: <20240913084124.169218d9@canb.auug.org.au>
+	s=arc-20240116; t=1726180930; c=relaxed/simple;
+	bh=X+6Xu4NNqWDxPKJ6AcwJ2eFnPCO1uaHbjM5L6myz/ss=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eTmiRyE5VO1NeECGiEhKotgRuAAyS6rsb6ntyrisEEg7E/aY1PmygeH+egMP3bI6oQ2nalK7Ie9orvBtkn0ssNgUVs7vjfkARm2Ucy23MB+nFIkXs7w+lgCWvTdhz4QjToUwCTu/4F+JXDYgWOZTvRNQpDu54jSWwAfg7CSFdus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FAEsd//y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96E97C4CEC3;
+	Thu, 12 Sep 2024 22:42:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726180929;
+	bh=X+6Xu4NNqWDxPKJ6AcwJ2eFnPCO1uaHbjM5L6myz/ss=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FAEsd//y/9lSbOUKcpZuoRbgsq0uJzRO/NV9ODD6tHsATJH4xLDhn8q0herB3BZuR
+	 soWJh1eVSD9ZAinXz6KTT0eRBxDdzEXQTN8N5GePDfjNyLo37iI8maJuUfycKBMv8k
+	 88RW54FhroqmjRYVwi1H/7N5YGJOmAGecVsKCEp/DasFngkc1uLpGpN4GaPl+IaI0/
+	 GXQ+yXWkRG1LelbzmNK+9nTCMpUhdolFx2nUW6rGtgR0Z54WLc5ya5VafKZNxOsNCc
+	 cTjSayFi6mFsCriX4l5rgGpyIqL0yqOceNny/EcE9YdRA2iBiYAhCMGEpoB/Mzt/35
+	 WDc2mGiJRTEVg==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH] perf symbol: Do not fixup end address of labels
+Date: Thu, 12 Sep 2024 15:42:08 -0700
+Message-ID: <20240912224208.3360116-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.46.0.662.g92d0881bb0-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/OCv.9m4YOVwee2jF90+qbKp";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/OCv.9m4YOVwee2jF90+qbKp
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+When it loads symbols from an ELF file, it loads label symbols which is
+0 size.  Sometimes it has the same address with other symbols and might
+shadow the original symbols because it fixes up the size of the symbol.
 
-Hi all,
+For example, in my system __do_softirq is shadowed and only accepts the
+__softirqentry_text_start instead.  But it should accept __do_softirq.
 
-Commit
+  $ readelf -sW vmlinux | grep -e __do_softirq -e __softirqentry_text_start
+  105089: ffffffff82000000   814 FUNC    GLOBAL DEFAULT    1 __do_softirq
+  111954: ffffffff82000000     0 NOTYPE  GLOBAL DEFAULT    1 __softirqentry_text_start
 
-  357da696640e ("LoongArch: KVM: Add irqfd support")
+  $ perf annotate --stdio __do_softirq
+  Error:
+  The perf.data data has no samples!
 
-is missing a Signed-off-by from its committer.
+  $ perf annotate --stdio __softirqentry_text_start | head
+   Percent |	Source code & Disassembly of vmlinux for cycles (26 samples, percent: local period)
+  ---------------------------------------------------------------------------------------------------
+           : 0                0xffffffff82000000 <__softirqentry_text_start>:
+      0.00 :   ffffffff82000000:        nopl    (%rax,%rax)
+     30.77 :   ffffffff82000005:        pushq   %rbp
+      3.85 :   ffffffff82000006:        movq    %rsp, %rbp
+      0.00 :   ffffffff82000009:        pushq   %r15
+      3.85 :   ffffffff8200000b:        pushq   %r14
+      3.85 :   ffffffff8200000d:        pushq   %r13
+      0.00 :   ffffffff8200000f:        pushq   %r12
 
---=20
-Cheers,
-Stephen Rothwell
+We can ignore NOTYPE symbols in the symbols__fixup_end() so that it can
+pick the __do_softirq() in choose_best_symbol().  This should be fine
+since most symbols have either STT_FUNC or STT_OBJECT.
 
---Sig_/OCv.9m4YOVwee2jF90+qbKp
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+ tools/perf/util/symbol.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+index ea0da3f46f10b756..a445035f7dd7ed88 100644
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -262,7 +262,7 @@ void symbols__fixup_end(struct rb_root_cached *symbols, bool is_kallsyms)
+ 		 * like in:
+ 		 *   ffffffffc1937000 T hdmi_driver_init  [snd_hda_codec_hdmi]
+ 		 */
+-		if (prev->end == prev->start) {
++		if (prev->end == prev->start && prev->type != STT_NOTYPE) {
+ 			const char *prev_mod;
+ 			const char *curr_mod;
+ 
+-- 
+2.46.0.662.g92d0881bb0-goog
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbjbhQACgkQAVBC80lX
-0GzGiwf/Zz31oNtZEampuIzhjXwj+jW1oIA1MDQ0UlrfcyN+j922vLT1pLU0cNum
-Bc1Oy6O+++rbmTFtv3DR4NI8N5oOxfXaJqNdfjRpESJ7yH33Pit45gCT4jhxyJVH
-EDmJLyEbo38VGzzBezLKUxqDj8tyILCCjq6qRqsPU1WffoUBC4tyZTdsxHDfpjh4
-wkjWN5s+ofgxtERWv1zJOj+KsNKgYnh7m2gn364M70rsGZEICi3X1rrXBSLNyorQ
-DQXfIJGKakAzPzVoG27YV4anxuiai0nUwC7b1EyUbIAkVv8cWPEkEPQ7cMQgER2F
-vMR3PbquHb5lIL6rS3JYqiV/KiOvFQ==
-=0rB1
------END PGP SIGNATURE-----
-
---Sig_/OCv.9m4YOVwee2jF90+qbKp--
 
