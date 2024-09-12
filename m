@@ -1,138 +1,162 @@
-Return-Path: <linux-kernel+bounces-326987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCCCD976F84
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:28:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBC90976F9E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:37:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85DE71F243BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:28:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED8281C23C6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4451BF7FB;
-	Thu, 12 Sep 2024 17:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C32B1BB691;
+	Thu, 12 Sep 2024 17:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="e5aDD70e"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	dkim=pass (2048-bit key) header.d=kutsevol-com.20230601.gappssmtp.com header.i=@kutsevol-com.20230601.gappssmtp.com header.b="gUPUzZ1C"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56F41BF7E3
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 17:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B583188CCA
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 17:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726162114; cv=none; b=UWyPmZhSMmHBO/O2Y8x+cEo113Qg8BDKogq1GvTAtHroKyU982TJ3HtqBzwFOzH5BmN41vKKwHFOQwGgR5gmylR4uCB/0ip0bomTYJZqQ5vyGjenzolYU5/Ew7vsun9ruP/SmeaKLIm7oA9Br1n8Bw/rTyuG0v71EsIaabkX7rQ=
+	t=1726162625; cv=none; b=n8rWoxj3Bvg5Ci2nU1GJ9MlhxpwoSNZd5I4/SWaJ9SsOREXg3ZkzQoopMsGoYXzf7Z56fq9YEttkZqZKN6KV8k9lSOm5uwq52YRE9vAixwwz67KGf34QRT2x9hgTp5GAIL0v168Ew0eqLm8MgVD0zhcvdb0TIyqXQ9rsmKGZrbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726162114; c=relaxed/simple;
-	bh=ZTp6DLZUohZE4ziOp5AQg/Ka4jQALIcTMbEk9b5B9VE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OqU5h5mN0mReCJ1jJ2acfU9L8BXJe7WAnD8uRAasWqdLByM2GIdFleF0Z8bDrt2Y880qeTd/+d0DeIE2bGhBorM9e+D3SvyjRKZARqaKKh0dLnoPxeGkSNbc9qWzY48TR+C4EAu6p6L5Q8/4HKB+nOxTMStbZw1PtTnc5KpaM0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=e5aDD70e; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3a043390078so5701045ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 10:28:32 -0700 (PDT)
+	s=arc-20240116; t=1726162625; c=relaxed/simple;
+	bh=PVTyuqOVvCFzOUDK9Tn5EdThlcDl9bLWiPrCn58va4U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RL5xGDNgKPRvnxWGlkbqE1rgQg62johA5cG8E6AvZZNwlBMgY1ht+UsibhbceuDGx9YIrQ9aM90pHQSIVcsRPSKGUsrZNGur5GcLmCC9cM+PlNFQs/qm8rZqbhbI7tnjrAdAwc++UY4bBBVAvmPelZuhHHPd9mGX6JeiylI/Ol0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kutsevol.com; spf=none smtp.mailfrom=kutsevol.com; dkim=pass (2048-bit key) header.d=kutsevol-com.20230601.gappssmtp.com header.i=@kutsevol-com.20230601.gappssmtp.com header.b=gUPUzZ1C; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kutsevol.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=kutsevol.com
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-710d77380cdso640924a34.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 10:37:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1726162112; x=1726766912; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ojQdylEuR/edm6P0t3l0EQbjxi/mFjIvSyby4tAxelQ=;
-        b=e5aDD70ez4t5hO3hAMV2FHo9sCHjuEDnYo47hwKPm/uX3i/AM5sGOCZVE5zesl1fMZ
-         /Uu/hDyzUr5e1Jh8tPA74+kqZgF8AQGATNMIjD5enPjLmTlI/mRgvq81PGjCTDD3nePk
-         VImZndYHH9oqvR9AvjtWcAqKG0CQjJSgmU8vY=
+        d=kutsevol-com.20230601.gappssmtp.com; s=20230601; t=1726162623; x=1726767423; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vOtRJrcxw3dtqnfY3QlAGbA9nOsusxHIxdHYZ/jMLnU=;
+        b=gUPUzZ1C72WGEoxJcwEOLYrHvt2XNgVJfQ07UliaQVB2bCCdY811Jv3rxLPVYdwDu7
+         1b72JhktAu4tbP7icWc5oDe5JhurPg/joBRE2twRpxyeo80bcof5EHdsoG72v2tPUp4Q
+         3yfNuSKYGFi835R4DcAhHk+1eVWf+iC2hNtU3LLKn7xeJJG05YeBuTd9knjV9NR0klTA
+         YcRf3AenAl6AGxjwf5scvCySrWWUVun6HucX5CtoEqfGDLIiEWDJfhecjVlojyh8AtJ6
+         axXcb1T7fpHKe+WxehoyKi4gjLrgQp8QTvISpKOwsp0EZMC101xnsg7H5Q3L0SDxhLe3
+         638w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726162112; x=1726766912;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ojQdylEuR/edm6P0t3l0EQbjxi/mFjIvSyby4tAxelQ=;
-        b=K1zxMdvIMbW8RV+O3jQsefvNySrPTQ5wzFxDIgYHtdScBNKfoxzjXJddX67BWRTwGN
-         ow27Bez/aiLHrHKbqyK34joKXoJPSTpn5hW8WO47sO7jQmQ+mCGj+6RZdcYiU10ma4TZ
-         OpR74cnvnYYEq3YAeI+xz56pp4F94HZET52QOoILm/rmoqVKitnBH3WzLkBHqxqBpqTv
-         ueNL57CSZu/ExPtDuzmvlXEneQ+pFNgFz6hGj1+XwDxCNreDZiaqd7bTKMUQpJHWOXm0
-         keb4863STrcYEEUw/9CMSSpzp73csk+PQrvhX06TrIDUR5x1Wpkt0LFHJa5VixRbRQAL
-         O5jg==
-X-Forwarded-Encrypted: i=1; AJvYcCWzHARWkLXAopSmcVTw/gL3UupNkLxU7zsOR1l+FTyUUlKzbV8bjbnCK5bV9wwIwxcC6W3SH18EgQyGemw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdP2aKRm8RLMPv4mkjcK3GT0Ws5HW1vXmTNXBdVFSXoaDjZNPw
-	emxgNvCZ2pZqwTla/NP8I0jJ1wvXAGELuqXU9ibce8GpGc0lfP9vTyw4xNIf6SU=
-X-Google-Smtp-Source: AGHT+IEyBc3XdFgDxw7hY6Gd9nsgNpNQtOKxJT4r9NCaxxvWyYvBogxI7FkBep7jhm5pjtRdduYOtg==
-X-Received: by 2002:a05:6e02:164f:b0:39b:330b:bb25 with SMTP id e9e14a558f8ab-3a0848f7e52mr36208285ab.12.1726162111590;
-        Thu, 12 Sep 2024 10:28:31 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a065816d89sm22413055ab.79.2024.09.12.10.28.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Sep 2024 10:28:31 -0700 (PDT)
-Message-ID: <35f21581-71f3-4234-9b03-dd3e3bda664f@linuxfoundation.org>
-Date: Thu, 12 Sep 2024 11:28:30 -0600
+        d=1e100.net; s=20230601; t=1726162623; x=1726767423;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vOtRJrcxw3dtqnfY3QlAGbA9nOsusxHIxdHYZ/jMLnU=;
+        b=r8ZyNYp+O3ik8tcn4ITZEWJBpArqD2o9F/vCn1AitQnrioueeJSF+9+jX+Zj9tz1Xk
+         r4FceEFL6dyhHm1I9jq/+H24HYaNkT9/bZawjiJj1RHAQvCUnLY0csGfVCnXEnouEF7S
+         XWuGIJYlaAJRz0W5acGEMJCsXvOGj580pCEnj3OhJWwzdspUvp1pPiAqK97HcfTh6qw9
+         qyn55vWHXvA6yRcuKoA04UN3OoNFQrj2/i5A7n04rQo7X3+hkL+iDSres9IpV8eruQZq
+         CXFJMkmzEy5FYTSoDcDwqt7FYpaxdMfr02pyE0HG3YhUgMncW4wH3iKv8zHMfbh1tYk8
+         +2nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0p7cX0QNXHKlCucyFUw3qIUQ8fyd1d+uRTFG0QhZh32gRcFQfAWIxnpZFXBlRSwnIpIc8cET4NYCcsag=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPD+WpwPqNbPjtu+R6Prb27j6wXJe01NML+rd3g7p9JfeUPCm6
+	FCmTzzFjB4+xZiZflZd3YI+meOOOJuMpfNsTaV4j6KSe/AZj3ZkJfxsEDxcyWPk=
+X-Google-Smtp-Source: AGHT+IFuJFPYZKz2lBRgAmDoR4knbI5REkie9iGjp3ZmQl7NVnWQuED7nT2O2sgZCjPhkrwXzU9mRw==
+X-Received: by 2002:a05:6358:60cc:b0:1b8:6074:b53 with SMTP id e5c5f4694b2df-1bb14e31b2amr243669755d.10.1726162623037;
+        Thu, 12 Sep 2024 10:37:03 -0700 (PDT)
+Received: from devbig254.ash8.facebook.com (fwdproxy-ash-000.fbsv.net. [2a03:2880:20ff::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c534773619sm56605626d6.106.2024.09.12.10.37.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 10:37:02 -0700 (PDT)
+From: Maksym Kutsevol <max@kutsevol.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Breno Leitao <leitao@debian.org>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Maksym Kutsevol <max@kutsevol.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v3 1/2] netpoll: Make netpoll_send_udp return status instead of void
+Date: Thu, 12 Sep 2024 10:28:51 -0700
+Message-ID: <20240912173608.1821083-1-max@kutsevol.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] kselftests: mm: Fail the test if userfaultfd syscall
- isn't found
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>
-Cc: kernel@collabora.com, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240912103151.1520254-1-usama.anjum@collabora.com>
- <20240912103151.1520254-2-usama.anjum@collabora.com>
- <3b700650-159d-45ad-91a3-59fca3019766@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <3b700650-159d-45ad-91a3-59fca3019766@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 9/12/24 10:10, Shuah Khan wrote:
-> On 9/12/24 04:31, Muhammad Usama Anjum wrote:
->> The userfaultfd is enabled in the config fragment of mm selftest suite.
->> It must always be present. If it isn't present, we should throw error
->> and not just skip. This would have helped us catch the test breakage.
-> 
-> Please elaborate on this to help understand the what breakage was
-> missed.
-> 
-> Also this commit log doesn't look right to me. syscall() could
-> fail for any reason. Do you mean to see skip is incorrect in this
-> error leg? Please see comments below.
-> 
->> Adding this now to catch the future breakages.
->>
->> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->> ---
->>   tools/testing/selftests/mm/pagemap_ioctl.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/tools/testing/selftests/mm/pagemap_ioctl.c b/tools/testing/selftests/mm/pagemap_ioctl.c
->> index bcc73b4e805c6..d83dda8edf62c 100644
->> --- a/tools/testing/selftests/mm/pagemap_ioctl.c
->> +++ b/tools/testing/selftests/mm/pagemap_ioctl.c
->> @@ -95,7 +95,7 @@ int init_uffd(void)
->>       uffd = syscall(__NR_userfaultfd, O_CLOEXEC | O_NONBLOCK | UFFD_USER_MODE_ONLY);
->>       if (uffd == -1)
->> -        return uffd;
->> +        ksft_exit_fail_perror("Userfaultfd syscall failed");
-> 
-> This looks wrong to me - Is missing config the only reason this syscall
-> would fail?
+netpoll_send_udp can return if send was successful.
+It will allow client code to be aware of the send status.
 
-It should still skip if __NR_userfaultfd isn't supported on a release
-or an architecture.
+Possible return values are the result of __netpoll_send_skb (cast to int)
+and -ENOMEM. This doesn't cover the case when TX was not successful
+instantaneously and was scheduled for later, __netpoll__send_skb returns
+success in that case.
 
-The real problem seems to be in main():
+Signed-off-by: Maksym Kutsevol <max@kutsevol.com>
+---
+Changelog:
 
-if (init_uffd())
-                 ksft_exit_pass();
+ v3: No changes, resend.
 
+ v2: No changes, resend.
+  * https://lore.kernel.org/netdev/20240828214524.1867954-1-max@kutsevol.com/
+ v1:
+  * https://lore.kernel.org/netdev/20240824215130.2134153-1-max@kutsevol.com/
 
-Why is this ksft_exit_pass()? Looks like further investigation is
-necessary to understand the problem and fix.
+ include/linux/netpoll.h | 2 +-
+ net/core/netpoll.c      | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-thanks,
--- Shuah
+diff --git a/include/linux/netpoll.h b/include/linux/netpoll.h
+index cd4e28db0cbd..b1ba8d6331a5 100644
+--- a/include/linux/netpoll.h
++++ b/include/linux/netpoll.h
+@@ -56,7 +56,7 @@ static inline void netpoll_poll_disable(struct net_device *dev) { return; }
+ static inline void netpoll_poll_enable(struct net_device *dev) { return; }
+ #endif
+ 
+-void netpoll_send_udp(struct netpoll *np, const char *msg, int len);
++int netpoll_send_udp(struct netpoll *np, const char *msg, int len);
+ void netpoll_print_options(struct netpoll *np);
+ int netpoll_parse_options(struct netpoll *np, char *opt);
+ int __netpoll_setup(struct netpoll *np, struct net_device *ndev);
+diff --git a/net/core/netpoll.c b/net/core/netpoll.c
+index ca52cbe0f63c..4719db36ff25 100644
+--- a/net/core/netpoll.c
++++ b/net/core/netpoll.c
+@@ -390,7 +390,7 @@ netdev_tx_t netpoll_send_skb(struct netpoll *np, struct sk_buff *skb)
+ }
+ EXPORT_SYMBOL(netpoll_send_skb);
+ 
+-void netpoll_send_udp(struct netpoll *np, const char *msg, int len)
++int netpoll_send_udp(struct netpoll *np, const char *msg, int len)
+ {
+ 	int total_len, ip_len, udp_len;
+ 	struct sk_buff *skb;
+@@ -414,7 +414,7 @@ void netpoll_send_udp(struct netpoll *np, const char *msg, int len)
+ 	skb = find_skb(np, total_len + np->dev->needed_tailroom,
+ 		       total_len - len);
+ 	if (!skb)
+-		return;
++		return -ENOMEM;
+ 
+ 	skb_copy_to_linear_data(skb, msg, len);
+ 	skb_put(skb, len);
+@@ -490,7 +490,7 @@ void netpoll_send_udp(struct netpoll *np, const char *msg, int len)
+ 
+ 	skb->dev = np->dev;
+ 
+-	netpoll_send_skb(np, skb);
++	return (int)netpoll_send_skb(np, skb);
+ }
+ EXPORT_SYMBOL(netpoll_send_udp);
+ 
+
+base-commit: bf73478b539b4a13e0b4e104c82fe3c2833db562
+-- 
+2.43.5
+
 
