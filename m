@@ -1,85 +1,81 @@
-Return-Path: <linux-kernel+bounces-326528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A088197698A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:50:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B366A976993
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:51:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2C251C210B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:50:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A8C6B21C15
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFA61A4E80;
-	Thu, 12 Sep 2024 12:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD981A4E7C;
+	Thu, 12 Sep 2024 12:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="enYq9NjR"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PaqTGese"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550E11A2628;
-	Thu, 12 Sep 2024 12:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6370C1E49F;
+	Thu, 12 Sep 2024 12:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726145400; cv=none; b=Ug8BgF4+KhJwGpmJTNA3coi2V8VLgeMBMf4kcBMas4di0uKQIOaj2hHdhYvkakdRhmeAKL+xhrv1vDIqbnr5qIhevEUkvD9tJ7Od/B356UwfWDF/SlUJs/jE25jC4vJHifDdjITc4kAS+eXx0MO+LaaBGim3y17Cf3wvRC7iD/s=
+	t=1726145461; cv=none; b=opZlApTqg14H51iswR65PfVkHWVLm1v7nFOiZDXTXaJB1CiveUoZa+Q7JQfom91912nM7M6c5lgQEqmAMtvx/NSKDSF6frAJ8vwvZhuwOdPN0/cV9nCKK/48DUrBuLN1QK661+f8t8A5myzgmh85Oq2ob0XmpodcZoJHbcCzFx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726145400; c=relaxed/simple;
-	bh=/r1meR3OD22lCHhrentm3sSSOvpaOvQAWYGgS5cs9zA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nTf6oCKZ8sSTIrz5R4XeVzfiYmUqSY6SLRCsScbbQCzM92SdUaPvR1j4y6gxTR9lLt4LVDkNIyR4X3Hx2dQsSnxZPIUmAojuizvnOG4fLWxoeRq3P1BbAm4x+/ZG9AoiyMxo8Njm0Ep+42reecsPbC7bGyMiQZGT4F7Ccqz3hDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=enYq9NjR; arc=none smtp.client-ip=209.85.128.41
+	s=arc-20240116; t=1726145461; c=relaxed/simple;
+	bh=rhGAFJLZdYULWmqugAH5q22T7v2IoB+sN5c6zKJc6ts=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PqytJ6MDGxgBdEcw+bfQGSoKLscr+j6FyPCIjDpVlbJyx4HE2C30KLqocgLGMVIx6n6gQJfqbq2TCNIRTWRkdQRUlppF0PPI8QrPFXpUG+EKQoJrQfh1BxlfJ7NJnLiKCm3AiSxgp8sbJik8Q+cLOHr5pAE1FxhtPh+2pXdFVIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PaqTGese; arc=none smtp.client-ip=209.85.215.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cb0f28bfbso8082865e9.1;
-        Thu, 12 Sep 2024 05:49:59 -0700 (PDT)
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7b0c9bbddb4so654588a12.3;
+        Thu, 12 Sep 2024 05:50:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726145397; x=1726750197; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1726145459; x=1726750259; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3rp8VVpH/dfJ3MmMbT8/Q3u0ccTN+30a/lu2S0UiEGQ=;
-        b=enYq9NjRlxSLb6B29cmnwnhfDVSfoVQKLisxUtIO1Zu22etoL/fCw2c8WyxBJVqkdS
-         2qyjls+WQzjqUByKZFd4B+JBJuSanV61lou+Hr9mrH1Q4d4UjD5GogUiWaRKn/LoLz7S
-         mcgoMRb0wDYUgwCOnKBIhvBqBH96bP15uoF9LFC7zEtyuNsg4zD42AOMvemR59yILnpg
-         Wr3hA9TtyvGLWa3ko6cqp/GhmtTTPQaBf1OmADueL/2bXJAehux49hgfxoEEuisPu/ot
-         I4KomRsZB3a7j1uawAB7pcbd2ko5EU+ixVN9aGEzxymeHxyHcUEnVf9SH8BeO1ocTe0C
-         sqCw==
+        bh=Qbl1iaUR2c4V+S7jU/mCx2/ogYw3sZGuzOxETHSFsSA=;
+        b=PaqTGeseY5RzNvbJJkjP5jlAz401rahZhQ6q5F7tRY/+iFPNowxetB5XYEY70W8DQP
+         a72srwk3DBKXovsWzfp4PBn8ZvFKR69+sOtZ9vzcqqIhCm/VQNtGBoUAjSIgX/u8TZHE
+         nFfvtQLNYNLIMBeSOM+/Hkpzcy24IfB6CRfVwUlh5Bj/t60b26laVp/6hrh0YI2Axq4p
+         skJmIDqqDvsik6xjONr/b35QDXjXWoGHEDshyOqvQZVFOxSLBURE/J0saicjAx9l5OU5
+         +xcqcoGtR3G9X5Z4pedAwl1kxyidCJ0J1po2K+hyD4pbXv+wewNK98L8nZ3KyiVNShtX
+         CeKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726145397; x=1726750197;
+        d=1e100.net; s=20230601; t=1726145459; x=1726750259;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=3rp8VVpH/dfJ3MmMbT8/Q3u0ccTN+30a/lu2S0UiEGQ=;
-        b=bHWtfcXY6JLs8pZ9wTdNdQeQ9A3FSCVuSa+i4GirkQ/Jm9tR79tBudzW+voKtMT315
-         ajrd+j92iXlJn58/Do8e4gacTvEMHVSF9uT5ZyWq5e2nBbhjOMCMrP7dYc+cKk1jGbSf
-         j09aQmluzeEJ7gaW6sDMLNQQfO7BupOFJQFt/i1Omyes8BLAOGehGDX/7MOsUHqgAqfv
-         WXV2HBjuHGb+zUkhNtP/sqd5ewCgfffCIRdBnnwnXHPwhJ1lF25GxFAJ9dRYK+5xa93+
-         GbuHH7EMK7eyWXlkairICKDiYThvXJ8auXht7dPU9v/UBpClLc6ViRJ2VSwf+/5V513O
-         QbiA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1sWuQRrbgFKrYbN/4GE8EXrCTHHOTXIe9Np/xtvbPA8Sm1/n8xrFgpkdpA+uFV/qrvW5NP4Ygb7/Wb+SaElY=@vger.kernel.org, AJvYcCWGRpqXC70bLpohTfche80C0BAkJfW53sumwJ1haMhR7KbWPdtFa9V/SeNuxDdH0ODKNI/R6IOhusp2pqtP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx68u4pufOFAhQDQ1nTnl8OWurOzP2RMdeL9DlM3yH4kyNIn6++
-	0jeZhOFASZ7+ym/L4CoAD/ZqzoqSZ3uu2hlwdhHyeyKNLntLfNOmzzq7tDrH
-X-Google-Smtp-Source: AGHT+IHvi+LdQatFb0FXKtNS+8padGl4YLk4uDGuOprj1zEkd8AriHOoq/BcAdcDtYHdudFTCHDnHA==
-X-Received: by 2002:a05:600c:3581:b0:42c:c401:6d67 with SMTP id 5b1f17b1804b1-42cdb4e6966mr20929535e9.6.1726145396696;
-        Thu, 12 Sep 2024 05:49:56 -0700 (PDT)
-Received: from void.void ([141.226.9.101])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cb5affb16sm148200105e9.37.2024.09.12.05.49.55
+        bh=Qbl1iaUR2c4V+S7jU/mCx2/ogYw3sZGuzOxETHSFsSA=;
+        b=PTGWwPHWnVaytj/z0DqtqBJg60jNb35f9T+iSSM4koXMg128hiyXI7CvrNCF3o8E2b
+         sGLKBtQxe8Ou9qktDPj1uaGpC+HwK+90/kHX236FGBQd36GRVbM+/hIPSjCks1z4/evu
+         g3Kv0D679F9ypAt6zRcOAWnOSf8jvaX8HBMUmlA546eYTeuXo75v5G6wFRJB5V72lXRB
+         vQQa36Ccxdmg+5JpGkHM0reBFu1ab28Efuf2U2ktatMmmPd0ISaEW2B73g23MFPcgCy6
+         Z+PVggHoV/c5H9oa00+Jf1QtLg71wshggB1RqtYFYzyeWMwuLAcjEHdsraz6c0bDtdH+
+         q9QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWnwpS8Kx/nHHYrTsmg8ZifXwQvIAkUzIYM6vqpuP0KGK6L0KtMPbPM7dDWhgUGCsCBi7X2S57EKvA=@vger.kernel.org, AJvYcCWwHU9gNuqPcMvLSDXCg88i7Y1bTe8oKd6nurvhHGpgbcN0NCW/qz/D+vSlg3GuwV0FYxJFZwinuzWiWeQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA64rbdkrt5t3E7Y3/fyBiNpMUmtLfi//8MOZO8XfglGWHdJH7
+	w+QOzc2N+UfjfsjSCfQ4wN3QnDPuYkHiKGhXE2lUZFpCpOAE4SZu
+X-Google-Smtp-Source: AGHT+IHSbW/nMzRUM6QhfvnsskqRV7tmDumVfuk+/7jl7+fnHIG6pfyTOXR3vpBb6JLSKFQn/vzQsQ==
+X-Received: by 2002:a05:6a20:e608:b0:1c8:b255:486a with SMTP id adf61e73a8af0-1cf761f9aa8mr3526683637.35.1726145458472;
+        Thu, 12 Sep 2024 05:50:58 -0700 (PDT)
+Received: from localhost.localdomain (111-240-84-197.dynamic-ip.hinet.net. [111.240.84.197])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadc10fa99sm12477739a91.39.2024.09.12.05.50.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 05:49:56 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: linux-pwm@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] pwm: stm32: Fix a typo
-Date: Thu, 12 Sep 2024 15:49:34 +0300
-Message-ID: <20240912124944.43284-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.46.0
+        Thu, 12 Sep 2024 05:50:58 -0700 (PDT)
+From: Min-Hua Chen <minhuadotchen@gmail.com>
+To: Thomas Renninger <trenn@suse.com>,
+	Shuah Khan <shuah@kernel.org>,
+	"John B. Wyatt IV" <jwyatt@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Cc: Min-Hua Chen <minhuadotchen@gmail.com>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH for-next] pm: cpupower: rename raw_pylibcpupower.i
+Date: Thu, 12 Sep 2024 20:50:28 +0800
+Message-ID: <20240912125030.19809-1-minhuadotchen@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,28 +84,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fix a typo in comments.
+This RFC patch is actually bug report. All *.i file will be
+removed by 'make mrproper', including raw_pylibcpupower.i, added
+by commit: 338f490e07bc ("pm:cpupower: Add SWIG bindings files for libcpupower")
 
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+We can reproduce the error by performing the following command:
+cd linux-next
+make mrproper
+cd tools/power/cpupower/bindings/python
+make
+
+We will get an error message:
+make: *** No rule to make target 'raw_pylibcpupower.i', needed by 'raw_pylibcpupower_wrap.c'.  Stop.
+
+Renaming the raw_pylibcpupower.i is just a workaround to fix the
+issue above.
+
+Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
 ---
- drivers/pwm/pwm-stm32.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/power/cpupower/bindings/python/Makefile                 | 4 ++--
+ .../python/{raw_pylibcpupower.i => raw_pylibcpupower.if}      | 0
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+ rename tools/power/cpupower/bindings/python/{raw_pylibcpupower.i => raw_pylibcpupower.if} (100%)
 
-diff --git a/drivers/pwm/pwm-stm32.c b/drivers/pwm/pwm-stm32.c
-index f85eb41cb084..eb24054f9729 100644
---- a/drivers/pwm/pwm-stm32.c
-+++ b/drivers/pwm/pwm-stm32.c
-@@ -222,7 +222,7 @@ static int stm32_pwm_capture(struct pwm_chip *chip, struct pwm_device *pwm,
+diff --git a/tools/power/cpupower/bindings/python/Makefile b/tools/power/cpupower/bindings/python/Makefile
+index dc09c5b66ead..de872a1b80d3 100644
+--- a/tools/power/cpupower/bindings/python/Makefile
++++ b/tools/power/cpupower/bindings/python/Makefile
+@@ -20,13 +20,13 @@ _raw_pylibcpupower.so: raw_pylibcpupower_wrap.o
+ raw_pylibcpupower_wrap.o: raw_pylibcpupower_wrap.c
+ 	$(CC) -fPIC -c raw_pylibcpupower_wrap.c $(PY_INCLUDE)
  
- 		scale = max_arr / min(max_arr, raw_prd);
- 	} else {
--		scale = priv->max_arr; /* bellow resolution, use max scale */
-+		scale = priv->max_arr; /* below resolution, use max scale */
- 	}
+-raw_pylibcpupower_wrap.c: raw_pylibcpupower.i
++raw_pylibcpupower_wrap.c: raw_pylibcpupower.if
+ ifeq ($(HAVE_SWIG),0)
+ 	$(error "swig was not found. Make sure you have it installed and in the PATH to generate the bindings.")
+ else ifeq ($(HAVE_PYCONFIG),0)
+ 	$(error "python-config was not found. Make sure you have it installed and in the PATH to generate the bindings.")
+ endif
+-	swig -python raw_pylibcpupower.i
++	swig -python raw_pylibcpupower.if
  
- 	if (psc && scale > 1) {
+ # Will only clean the bindings folder; will not clean the actual cpupower folder
+ clean:
+diff --git a/tools/power/cpupower/bindings/python/raw_pylibcpupower.i b/tools/power/cpupower/bindings/python/raw_pylibcpupower.if
+similarity index 100%
+rename from tools/power/cpupower/bindings/python/raw_pylibcpupower.i
+rename to tools/power/cpupower/bindings/python/raw_pylibcpupower.if
 -- 
-2.46.0
+2.43.0
 
 
