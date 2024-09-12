@@ -1,171 +1,152 @@
-Return-Path: <linux-kernel+bounces-326054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDFCD9761DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:53:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 60D5F976202
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A18FF1F234C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:53:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 179801F24171
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721A318BBBC;
-	Thu, 12 Sep 2024 06:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE0818C337;
+	Thu, 12 Sep 2024 06:57:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bUbEoL8y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="AR7MExp4"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B755B10FF;
-	Thu, 12 Sep 2024 06:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCDB18BC3A;
+	Thu, 12 Sep 2024 06:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726124010; cv=none; b=ZzjKkk5rZQ1qczakBCNCtLZsu3n/AE84zdSDJxQv7nP5EYKFPCTFHMDak4oWY1mSJyz+pVOGqutNe7g0d85s8jHEE0FL/ohGOzoCXNMCwEy8PROiVMT+gW3mP6hIFnwu+aDxB3fw1rV5t/ADJvsthrMkBhKUHXVyJBXn4V1zen4=
+	t=1726124272; cv=none; b=Rwuwmmn6UvA9lTOFh/MRKumGVX8fDvOsvCCCEKcrbYMGu5RtupIyTQAmgEA/UsYfN3t7i8d9n1ncDbNOtYLXOr3q61g5og0AiYZmYYfhqb2bkLhARwmDo716M0u6LuRuu6J00vEDewqmR4sf3kioJWwseQAharnTjPnvNKLxBY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726124010; c=relaxed/simple;
-	bh=x1z6am5b0jOeS5/RmI9p91PrHTnNU3+NkzsNXV+rKQs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r06ztzIgdEBGurq9U5zW71aCdHYEvYLHZB6DqQnnO0QPZXqMhTYAkFfMMS6Wxur2Z3oVu84KHMo61SNl5vPGu9nY6gYxmUFNXYrceKIrHwB+Y4Gp/LF4HDPPuGUvcOFZ7qmQ2FyW4uF0LHFsIXCa2No6NXcINpBuXgSTKZ7tRE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bUbEoL8y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A233AC4CECD;
-	Thu, 12 Sep 2024 06:53:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726124010;
-	bh=x1z6am5b0jOeS5/RmI9p91PrHTnNU3+NkzsNXV+rKQs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bUbEoL8y6t1LgtuRraiS0oWdU0B1FnwzQZi5OK23+cdv0oDdNDT10e8jDF30PVGKp
-	 EpC9xx5gKrcPPT75ycE+Wykd/BwVMm/e7vRxkIJTi4q+Mx2BThaa+timlFoR07AaOM
-	 EiBUJ6uVHdhTvqpIxrILKO1UA38wMskjmS2hbANs=
-Date: Thu, 12 Sep 2024 08:53:27 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: "Christian A. Ehrhardt" <lk@c--e.de>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Anurag Bijea <icaliberdev@gmail.com>,
-	Christian Heusel <christian@heusel.eu>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Jameson Thies <jthies@google.com>,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Subject: Re: [PATCH] usb: typec: ucsi: Fix busy loop on ASUS VivoBooks
-Message-ID: <2024091215-mullets-praying-375b@gregkh>
-References: <20240912054433.721651-1-lk@c--e.de>
+	s=arc-20240116; t=1726124272; c=relaxed/simple;
+	bh=5+bIPMEoA1yR7Xwl0KRUCi7BMbclI9D7vD34OylTPuQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AaiuKuF2TOAHUMIH/RYfRuO47myddY4LS6de8EBJHAbPw+LG6UJAu8yrD2QwHuep5sTqUmUbGUBKKn5LUQGp/AmYtEnGI/GbsKUxXLHkWcQZPTDuRWCIcK9ne75hVdk+3HedXFuLa1A1wt7q7+ZEc3KalwnRwM354xbrvIF01/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=AR7MExp4; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1726124270; x=1757660270;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5+bIPMEoA1yR7Xwl0KRUCi7BMbclI9D7vD34OylTPuQ=;
+  b=AR7MExp4/pGgv4JMg+448kZ3CuRd8ENIkIqI94B42MuBOJ2Mz+dwqqu9
+   9o8HzgAI73ED15wVGf1DBUfLM0tyT+ZnzjDD+uXhsqsmN95YOQSH+lqXj
+   9rcw31Kan2mLsp2lpIPUwAMTbMkEVIYRx/CqdK2lUt6AqC6mE7tdDO2Hb
+   KI9vODp9E6TI5IZApAfQYDgRjHQhke+iA0eWfDnABNg56HxDNqJ3zGZNL
+   uQGOmkY/ruCWfEbb7keZ39WEvYCZruiO8zWkiepbeswDh89YS+gRNLhoO
+   usxR7f4Ti4vuWEsbfSXO1vmMYCSPWkPMMX0HGZzV3q5Plpx0Kme+CYZtN
+   w==;
+X-CSE-ConnectionGUID: CUekk07YRKqJfpKvVdTizw==
+X-CSE-MsgGUID: WVzQ85OpRauNniz+ATj5yA==
+X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
+   d="scan'208";a="31575821"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Sep 2024 23:57:49 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.87.72) by
+ chn-vm-ex02.mchp-main.com (10.10.87.72) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 11 Sep 2024 23:57:19 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Wed, 11 Sep 2024 23:57:18 -0700
+Date: Thu, 12 Sep 2024 12:23:29 +0530
+From: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>, <netdev@vger.kernel.org>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <bryan.whitehead@microchip.com>,
+	<UNGLinuxDriver@microchip.com>, <linux@armlinux.org.uk>,
+	<maxime.chevallier@bootlin.com>, <rdunlap@infradead.org>,
+	<Steen.Hegelund@microchip.com>, <daniel.machon@microchip.com>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next V2 4/5] net: lan743x: Implement phylink pcs
+Message-ID: <ZuKP6XcWTSk0SUn4@HYD-DK-UNGSW21.microchip.com>
+References: <20240911161054.4494-1-Raju.Lakkaraju@microchip.com>
+ <20240911161054.4494-5-Raju.Lakkaraju@microchip.com>
+ <c6e36569-e3a8-4962-ac85-2fd7d35ab5d1@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <20240912054433.721651-1-lk@c--e.de>
+In-Reply-To: <c6e36569-e3a8-4962-ac85-2fd7d35ab5d1@lunn.ch>
 
-On Thu, Sep 12, 2024 at 07:44:33AM +0200, Christian A. Ehrhardt wrote:
-> If the busy indicator is set, all other fields in CCI should be
-> clear according to the spec. However, some UCSI implementations do
-> not follow this rule and report bogus data in CCI along with the
-> busy indicator. Ignore the contents of CCI if the busy indicator is
-> set.
+Hi Andrew,
+
+The 09/11/2024 19:26, Andrew Lunn wrote:
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
 > 
-> If a command timeout is hit it is possible that the EVENT_PENDING
-> bit is cleared while connector work is still scheduled which can
-> cause the EVENT_PENDING bit to go out of sync with scheduled connector
-> work. Check and set the EVENT_PENDING bit on entry to
-> ucsi_handle_connector_change() to fix this.
+> > +static int pci11x1x_pcs_read(struct mii_bus *bus, int addr, int devnum,
+> > +                          int regnum)
+> > +{
+> > +     struct lan743x_adapter *adapter = bus->priv;
+> > +
+> > +     if (addr)
+> > +             return -EOPNOTSUPP;
+> > +
+> > +     return lan743x_sgmii_read(adapter, devnum, regnum);
+> > +}
 > 
-> Finally, check UCSI_CCI_BUSY before the return code of ->sync_control.
-> This ensures that the command is cancelled even if ->sync_control
-> returns an error (most likely -ETIMEDOUT).
+> >  static int lan743x_mdiobus_init(struct lan743x_adapter *adapter)
+> >  {
+> > +     struct dw_xpcs *xpcs;
+> >       u32 sgmii_ctl;
+> >       int ret;
+> >
+> > @@ -3783,8 +3823,17 @@ static int lan743x_mdiobus_init(struct lan743x_adapter *adapter)
+> >                                 "SGMII operation\n");
+> >                       adapter->mdiobus->read = lan743x_mdiobus_read_c22;
+> >                       adapter->mdiobus->write = lan743x_mdiobus_write_c22;
+> > -                     adapter->mdiobus->read_c45 = lan743x_mdiobus_read_c45;
+> > -                     adapter->mdiobus->write_c45 = lan743x_mdiobus_write_c45;
+> > +                     if (adapter->is_sfp_support_en) {
+> > +                             adapter->mdiobus->read_c45 =
+> > +                                     pci11x1x_pcs_read;
+> > +                             adapter->mdiobus->write_c45 =
+> > +                                     pci11x1x_pcs_write;
 > 
-> Reported-by: Anurag Bijea <icaliberdev@gmail.com>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219108
-> Bisected-by: Christian Heusel <christian@heusel.eu>
-> Tested-by: Anurag Bijea <icaliberdev@gmail.com>
-> Fixes: de52aca4d9d5 ("usb: typec: ucsi: Never send a lone connector change ack")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Christian A. Ehrhardt <lk@c--e.de>
+> As you can see, the naming convention is to put the bus transaction
+> type on the end. So please name these pci11x1x_pcs_read_c45...
+
+Accpeted. I will fix
+
+> 
+> Also, am i reading this correct. C22 transfers will go out a
+> completely different bus to C45 transfers when there is an SFP?
+
+No. You are correct.
+This LAN743x driver support following chips
+1. LAN7430 - C22 only with GMII/RGMII I/F
+2. LAN7431 - C22 only with MII I/F
+3. PCI11010/PCI11414 - C45 with RGMII or SGMII/1000Base-X/2500Base-X
+   If SFP enable, then XPCS's C45 PCS access
+   If SGMII only enable, then SGMII (PCS) C45 access
+
+> 
+> If there are two physical MDIO busses, please instantiate two Linux
+> MDIO busses.
+> 
+
+XPCS driver is doing.
+Am i miss anything there?
+
+>     Andrew
+> 
 > ---
->  NOTE: Rebased onto usb-next.
-> 
->  drivers/usb/typec/ucsi/ucsi.c | 18 ++++++++++++------
->  1 file changed, 12 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-> index 35dce4057c25..e0f3925e401b 100644
-> --- a/drivers/usb/typec/ucsi/ucsi.c
-> +++ b/drivers/usb/typec/ucsi/ucsi.c
-> @@ -38,6 +38,10 @@
->  
->  void ucsi_notify_common(struct ucsi *ucsi, u32 cci)
->  {
-> +	/* Ignore bogus data in CCI if busy indicator is set. */
-> +	if (cci & UCSI_CCI_BUSY)
-> +		return;
-> +
->  	if (UCSI_CCI_CONNECTOR(cci))
->  		ucsi_connector_change(ucsi, UCSI_CCI_CONNECTOR(cci));
->  
-> @@ -103,15 +107,13 @@ static int ucsi_run_command(struct ucsi *ucsi, u64 command, u32 *cci,
->  		return -EINVAL;
->  
->  	ret = ucsi->ops->sync_control(ucsi, command);
-> -	if (ret)
-> -		return ret;
-> -
-> -	ret = ucsi->ops->read_cci(ucsi, cci);
-> -	if (ret)
-> -		return ret;
-> +	if (ucsi->ops->read_cci(ucsi, cci))
-> +		return -EIO;
->  
->  	if (*cci & UCSI_CCI_BUSY)
->  		return ucsi_run_command(ucsi, UCSI_CANCEL, cci, NULL, 0, false) ?: -EBUSY;
-> +	if (ret)
-> +		return ret;
->  
->  	if (!(*cci & UCSI_CCI_COMMAND_COMPLETE))
->  		return -EIO;
-> @@ -1197,6 +1199,10 @@ static void ucsi_handle_connector_change(struct work_struct *work)
->  
->  	mutex_lock(&con->lock);
->  
-> +	if (!test_and_set_bit(EVENT_PENDING, &ucsi->flags))
-> +		dev_err_once(ucsi->dev, "%s entered without EVENT_PENDING\n",
-> +			     __func__);
-> +
->  	command = UCSI_GET_CONNECTOR_STATUS | UCSI_CONNECTOR_NUMBER(con->num);
->  
->  	ret = ucsi_send_command_common(ucsi, command, &con->status,
-> -- 
-> 2.43.0
-> 
-> 
+> pw-bot: cr
 
-Hi,
-
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
-
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+-- 
+Thanks,                                                                         
+Raju
 
