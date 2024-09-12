@@ -1,153 +1,146 @@
-Return-Path: <linux-kernel+bounces-326757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDF36976C94
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:49:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 496E9976C97
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:49:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9725FB24C1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:49:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E94C21F21E45
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2791B29C9;
-	Thu, 12 Sep 2024 14:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CECA1B9840;
+	Thu, 12 Sep 2024 14:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oYCgF2ML"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eJBl8BVw"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4131ACDF9;
-	Thu, 12 Sep 2024 14:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7B619C552;
+	Thu, 12 Sep 2024 14:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726152473; cv=none; b=As98ZbLhb6MDeDZxvT5WybV5IwCf94YFmEuzQRPHj3dlzgD4J7JGswP7u1Yl1/J1XI5XUNk8Luljo4BHCtVFCL4g1EXW52QWAoMkF1VKbbslQRWpr5C6/55/z+Kv7Y1EvjxLSw8Ou5Cy6ikbVwI9mc/o7kEe7wa4d1jfK9VEDIw=
+	t=1726152498; cv=none; b=BfaRhiQvmtQisbJ8AmUN6T8B7qw+zwbXvp57n2K5qT6vG5Om4Kc6swB2kJQ5ZSTDDe69SGOdhVQX6P4I0AIdFewWYu957886N3rc03CSVq0Qxz6sHYYXnXrlkGncvxJmTRqrriGDnyFMLmLygoURpNJ5GROTGSNja5YUPhU2VoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726152473; c=relaxed/simple;
-	bh=hF0NkNn49+OsaoQazj7IegXHjTIB2Pa5AXOr8r+MNVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=JqEMY3jGU/RQppUGIPbo4ptHaoLOIZVNz6eF7haj8JWtDygdsuEPw6cUNe3fzdogyOFwLnhc+1Sr0AuC5yLoZPWs8kPqbHoPEESgHPdcHUEy2gtzQoiQBNp+XiHoZR1bzZF226ckoLGwARPID0DCZkfmmEd8PsRruv2Js8wtBkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oYCgF2ML; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48CAeWSL003716;
-	Thu, 12 Sep 2024 14:47:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:reply-to:references:content-type
-	:in-reply-to:mime-version; s=pp1; bh=F6pkaOwZmgo+j9NNrUOeESLmhPs
-	ZpIo3xbmAno/mK4A=; b=oYCgF2MLEpHN9rujApoD/EsBAr64V6xHJMbg7sZkAbg
-	efK84FlHSg/x72tXsG7LHaZ35b7wyPxu0NONBwQ2RbVKxb0xxW6LuPQHk2YrRJb2
-	uvvcvOF8mKT5JCGJ0HGKv5N7ixJ48ygX3vyTzJYNQli3OWzuDhzvFv6Aa5ed9Lf1
-	grpg+l38z3Y2LaM+96jUje8wxj69pbR9kDw9qfGlr38WWjj9NBHQb+y6GQVuGt51
-	ofTuGyKexml8gdEWvpYfw3x7KOnHVz5FrG7RNg3P6CWAd1w+Rnt5mexI4EBC854M
-	FAsZJyDLIEDD0ihFYdqVmH5QP27uEoU5GgenH5hcK/Q==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gd8kv4j7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Sep 2024 14:47:35 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48CElYB5021115;
-	Thu, 12 Sep 2024 14:47:34 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gd8kv4j2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Sep 2024 14:47:34 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48CEWkOO003122;
-	Thu, 12 Sep 2024 14:47:33 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41h15u8reg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Sep 2024 14:47:33 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48CElVaB39715206
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 12 Sep 2024 14:47:31 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C45DB20043;
-	Thu, 12 Sep 2024 14:47:31 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 34E3B20040;
-	Thu, 12 Sep 2024 14:47:28 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.126.150.29])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with SMTP;
-	Thu, 12 Sep 2024 14:47:28 +0000 (GMT)
-Date: Thu, 12 Sep 2024 20:17:27 +0530
-From: Srikar Dronamraju <srikar@linux.ibm.com>
-To: Suleiman Souhlal <suleiman@google.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, joelaf@google.com,
-        vineethrp@google.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, ssouhlal@freebsd.org,
-        David Woodhouse <dwmw2@infradead.org>,
-        Sean Christopherson <seanjc@google.com>
-Subject: Re: [PATCH v2] sched: Don't try to catch up excess steal time.
-Message-ID: <20240912144727.GC1578937@linux.ibm.com>
-Reply-To: Srikar Dronamraju <srikar@linux.ibm.com>
-References: <20240911111522.1110074-1-suleiman@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240911111522.1110074-1-suleiman@google.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: _c9EMgB-lfyaLtrmTipheoTLDt3QQ4DC
-X-Proofpoint-ORIG-GUID: 3CXo64PLHzm_BUK7QFX-xfpEjxNike9J
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1726152498; c=relaxed/simple;
+	bh=Ng1We531z+ADdZeN339PERoJ+VtYQJlwGsc0+ZO3Jrs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XKnvLJxL8uHeI/eTYlKZ0MR3R9rDFALU3ke585BghlW69Y+vkHl7o25HvYThQKzLhr3/WnifBwo+npmLzRsInavSrmhrsTB4SKU5K1DvZt+Xvw1k/3RfJ6qR3jl32T8lrW3XP/8wiyZ7g7QfD9Ky1YiRKTpXqrW8/3HcmPAFtOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eJBl8BVw; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f77fe7ccc4so13294591fa.2;
+        Thu, 12 Sep 2024 07:48:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726152495; x=1726757295; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AUm0nWPOidfCrggryH30scnyqAxC5irEWmcDPpRUwQc=;
+        b=eJBl8BVwdP+y37vJ6dSUDKRSz35PMooMjsKHHZtuSUoTCRMDzxmuJEiyAyp4QlMQSi
+         U+vWvgZVDLFBbJGH2kG8E3E/BtYpUhBMGsax1e0Cw0zLL9X0OhdNB+/MsJzrZWM+Qj3Z
+         uBKkd4/bMRB31AiY9WnkO+gE65+oYqqVG6krvswG1alLUNJ8P2KYpfSkl5f7+19RA+B3
+         Mz9bk8/Qux2ayu3vHXO/Ps8XRz091XRFILveYTsJxx4iBqG6Zum8KZobRW29+Uzp6vQB
+         AtYM71HLPrt1kkMNeln8zJ4gm+ySEQk6lprTtPTDXNH7DYIWApt1LyuoGrP23WnqVzn8
+         Y5UQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726152495; x=1726757295;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AUm0nWPOidfCrggryH30scnyqAxC5irEWmcDPpRUwQc=;
+        b=HLmpmFf/3aOe5KFBUBqIOfmMH3JVzDI201EMy8yJAIsTkBNJKBl2EDvjRectEDJgvz
+         HZYdITHIDVfIwP5BpkFGKrvOqasodJMuSLeGPtKZdU4FmzFwvVtFW8Tk9ilk77Gvnnl8
+         eFlXXcWGxg0EqVQxLVykqePfG/aMGehCkUrKuJxqj1x+zQBfEiqEnaYcFd2kOdXZ0WBC
+         In1QhVZr5UvVZdXMFF5Z8w062Fuoc/L+2yYN3G212MRBmbcpmMUoFwI+AvRnWctFLan7
+         hwpm28bqeF1aUDlZ8tRcCk6LPJhozc/A/J6zVk5ExosZBz1MCg5QpKpLZ1v9rGQJuSZA
+         ui5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUZaoVMnGiNkmrGrHsOoZMUDH2o6G3WUJMexHfTTbQ4JxALdrq+cquXjUnYsGrAX0npW/EzS+KMi45O@vger.kernel.org, AJvYcCW9RZdOwMogEgXMvliaSDhsicLxZODihHHWoSYaJXQz4W0OaBXXiM96beHQO/sePrQ0JUeGQk+RMAvg@vger.kernel.org, AJvYcCXXaG88TsOn5CCuWCpjrO18JVCrp/5QoFbrg9eHvve4rlylzFt7Ae7v2MaXszsTyODjc9etF1kxOpsijHvG@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKYTpyPYPM1L3zQOVLZ3tv4FyIkAFwsaq7wpGDNai5cmHIEmsT
+	GHOWoMnfMv+HwVxBLI2hqFsM+vqONgIRd9VLvMvAYpWvrMY0zjRJklp6ARDEb6Fc5vOdZ0V4e2Q
+	WcY5ospWh0slVLpFOWPcVavL6API=
+X-Google-Smtp-Source: AGHT+IGnv4xxGM66TT0a/GyY0WL54Pjx0jtXuvVU+oyHKxJrlWryaJYczU+VBGx/R916mtU8dat+bdi2BvSNlHmUg6s=
+X-Received: by 2002:a2e:b8c7:0:b0:2ef:2b05:2ab3 with SMTP id
+ 38308e7fff4ca-2f787db726emr17969841fa.10.1726152494707; Thu, 12 Sep 2024
+ 07:48:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-12_04,2024-09-12_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 suspectscore=0 clxscore=1011 phishscore=0 spamscore=0
- lowpriorityscore=0 adultscore=0 mlxscore=0 mlxlogscore=602 bulkscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409120106
+References: <20240912121609.13438-1-ramona.nechita@analog.com> <20240912121609.13438-3-ramona.nechita@analog.com>
+In-Reply-To: <20240912121609.13438-3-ramona.nechita@analog.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 12 Sep 2024 17:47:37 +0300
+Message-ID: <CAHp75VdOjodDaz6J4sWOiT2HHmdXpOPcWeS5kz4e3rB_=gh3xw@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] Documentation: ABI: added filter mode doc in sysfs-bus-iio
+To: Ramona Alexandra Nechita <ramona.nechita@analog.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Cosmin Tanislav <cosmin.tanislav@analog.com>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	Marcelo Schmitt <marcelo.schmitt@analog.com>, Olivier Moysan <olivier.moysan@foss.st.com>, 
+	Dumitru Ceclan <mitrutzceclan@gmail.com>, Matteo Martelli <matteomartelli3@gmail.com>, 
+	=?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>, 
+	Alisa-Dariana Roman <alisadariana@gmail.com>, Mike Looijmans <mike.looijmans@topic.nl>, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-* Suleiman Souhlal <suleiman@google.com> [2024-09-11 20:15:22]:
+On Thu, Sep 12, 2024 at 3:17=E2=80=AFPM Ramona Alexandra Nechita
+<ramona.nechita@analog.com> wrote:
+>
+> The filter mode / filter type property is used for ad4130
+> and ad7779 drivers, therefore the ABI doc file for ad4130
+> was removed, merging both of them in the sysfs-bus-iio.
 
-> When steal time exceeds the measured delta when updating clock_task, we
-> currently try to catch up the excess in future updates.
-> However, this results in inaccurate run times for the future things using
-> clock_task, as they end up getting additional steal time that did not
-> actually happen.
-> 
-> For example, suppose a task in a VM runs for 10ms and had 15ms of steal
-> time reported while it ran. clock_task rightly doesn't advance. Then, a
-> different taks runs on the same rq for 10ms without any time stolen in
-> the host.
-> Because of the current catch up mechanism, clock_sched inaccurately ends
-> up advancing by only 5ms instead of 10ms even though there wasn't any
-> actual time stolen. The second task is getting charged for less time
-> than it ran, even though it didn't deserve it.
-> This can result in tasks getting more run time than they should actually
-> get.
-> 
-> So, we instead don't make future updates pay back past excess stolen time.
-> 
-> Signed-off-by: Suleiman Souhlal <suleiman@google.com>
-> ---
-> v2:
-> - Slightly changed to simply moving one line up instead of adding
->   new variable.
-> 
-> v1: https://lore.kernel.org/lkml/20240806111157.1336532-1-suleiman@google.com
-> ---
+...
 
-After moving the line up, this looks good to me.
+> +What:          /sys/bus/iio/devices/iio:deviceX/filter_type_available
+> +What:          /sys/bus/iio/devices/iio:deviceX/in_voltage-voltage_filte=
+r_mode_available
+> +KernelVersion: 6.1
 
-Reviewed-by: Srikar Dronamraju <srikar@linux.ibm.com>
+I believe I have already commented on this. The commit message keeps
+silent about version changes. Why?
 
--- 
-Thanks and Regards
-Srikar Dronamraju
+> +Contact:       linux-iio@vger.kernel.org
+> +Description:
+> +               Reading returns a list with the possible filter modes. Op=
+tions
+> +               for the attribute:
+> +                       * "sinc3"       - The digital sinc3 filter. Moder=
+ate 1st conversion time.
+> +                   Good noise performance.
+> +                       * "sinc4"       - Sinc 4. Excellent noise perform=
+ance. Long
+> +                       1st conversion time.
+> +                       * "sinc5"       - The digital sinc5 filter. Excel=
+lent noise performance
+> +                       * "sinc4+sinc1" - Sinc4 + averaging by 8. Low 1st=
+ conversion
+> +                   time.
+> +                       * "sinc3+rej60" - Sinc3 + 60Hz rejection.
+> +                       * "sinc3+sinc1" - Sinc3 + averaging by 8. Low 1st=
+ conversion
+> +                   time.
+> +                       * "sinc3+pf1"   - Sinc3 + device specific Post Fi=
+lter 1.
+> +                       * "sinc3+pf2"   - Sinc3 + device specific Post Fi=
+lter 2.
+> +                       * "sinc3+pf3"   - Sinc3 + device specific Post Fi=
+lter 3.
+> +                       * "sinc3+pf4"   - Sinc3 + device specific Post Fi=
+lter 4.
+
+Also, the original file was more verbose for the complex cases, like
+"sinc3+pfX", why has this been changed?
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
