@@ -1,82 +1,130 @@
-Return-Path: <linux-kernel+bounces-325823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4086F975EAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 03:52:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEDD7975EC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B2DF1C22786
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:52:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A50571F23A54
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212EF2BB1B;
-	Thu, 12 Sep 2024 01:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3113BB25;
+	Thu, 12 Sep 2024 02:07:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="Q5A+Vg9x"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YgHSLAoJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E94257D;
-	Thu, 12 Sep 2024 01:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D070AD39;
+	Thu, 12 Sep 2024 02:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726105948; cv=none; b=alXTMmqzQF/GKrfvXK8jYxZ+GpnaAFAYmxlPv7YjkWr8CFjoOPxubouHy3g4IdMfqosLJx9uiX4pvb4m9R+kOUGT2w+WYGSFRcq0sYlITHFh38j4D8Q4l3Wp+AtYRhJEDjTstAjay9nPbWKc3bEnJSe2Vi/7nZH86M5mGgT476o=
+	t=1726106868; cv=none; b=inbLPBxzeMPmrI00zjxTwyjzLz0OEWLD2RShZoyjGUrMwHOXK9KFGQOjdCc5jZwvepzucg5SYtciGqe78WxMGPO1Yt0sZDZHJou52jkd+jUms/18WSAJ0fDRtiSbTlBoxf0ltA20qnEKpTvH9txFFJdsjUHAUr8rpJF1VSsz3K0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726105948; c=relaxed/simple;
-	bh=KOHru+WDJgBP+lLpgOajPKUPOkGltXyKZvX+5Qs0kKw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Tg0COvkYYy0GgnJ4cGvQXgx7+CAGxybE7gcQ0oivLV7PH5SOZrF1Xx3nZxIJSOy71SlBEzsKXxafbi7SZAptZ2HIjATcz8/RFoh+JkORg1LFXy++gSOuTH73jbJWEDaxO6/Cnu16W7Jyj67iacAnqNboFqC6i0g4saH8kePVwKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=Q5A+Vg9x; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1726105943;
-	bh=1GeFB29HWhumDKOdV+Pt4PnPumW3p49ZFqKR/fUZIws=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=Q5A+Vg9xklu9nGYZwwkrRoivoF07C5SpEOD7nQh1keYfvyWHQAMfi+ne5k7vYwaw0
-	 w8SWXZa5JQr+BbbPvwM3zVXLVdUxQhgAhA8l+g39H5QO2gAyDU8C7IgBkKDo1nkm3E
-	 OfWIhzwEN+LY70Pjo0xQuT1KS2ddh5R1kLB/OyRghSC5+4/Vs0x4bDcNFYnfBzFcxz
-	 GUvLGSfn1MF3+3TV4Xq58EsKFKm+kLsMIou9PpooLmLyixdI92llR8wLhNJznKAfWb
-	 nNbAeJ2NxBFwCpbf13S93dID4Dl2A3ml0G6ELXruHz7EWRf6bpZEOMH6F5HgjwTypU
-	 VEJMJkvGmUSfQ==
-Received: from [127.0.1.1] (ppp118-210-89-8.adl-adc-lon-bras32.tpg.internode.on.net [118.210.89.8])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id E1FD3650D6;
-	Thu, 12 Sep 2024 09:52:21 +0800 (AWST)
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: patrick@stwcx.xyz, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
- Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
-Cc: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240910080951.3568594-1-Delphine_CC_Chiu@wiwynn.com>
-References: <20240910080951.3568594-1-Delphine_CC_Chiu@wiwynn.com>
-Subject: Re: [PATCH v2] ARM: dts: aspeed: yosemite4: Enable watchdog2
-Message-Id: <172610594183.699144.11293347477612952253.b4-ty@codeconstruct.com.au>
-Date: Thu, 12 Sep 2024 11:22:21 +0930
+	s=arc-20240116; t=1726106868; c=relaxed/simple;
+	bh=2pC7oUHqvWMtu/IF0XFSSJJ+/UjqjyzX7Lx26PSeFBE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZLDJkSg0eMHXKYXbGZbnZ6T2m8fpoQyaFawhFOYAM3tQs1p4a+nUNyrGbKh9Wh4Yz05NQoYZj/NGY4FmFyxbWzKsWiGm+jAHQdywgSQcLpnJTOCbP+yLc4jXKy/Yqz+Kdlo6B7Of2VpVZX3It48vELWRJA1TInMjhhsMi5CmtwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YgHSLAoJ; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726106868; x=1757642868;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=2pC7oUHqvWMtu/IF0XFSSJJ+/UjqjyzX7Lx26PSeFBE=;
+  b=YgHSLAoJ9pWWTJZdyOK6FsP+OPKhSvpDn7NgV7VzNWeORkKK+LLl9XVF
+   kGQMdv4QPIZSsdugqLSZ0zO4BLp7qksEPOcR60z/LDbJ2RiVZUl2b+MrY
+   ePwrGLqRVa/ZxtfFCtNzw4so03+vGRj0oO8IKlmXHluEVy8zYCutigZbi
+   56h/EhxoMmNdKKH9+knbVefA2hcKiOfqXSud+qiBXv3VHkLWuSPjLxIE2
+   VCtS3/OQFvENoC8/CDxdmLTRJTqwG5G+Eu3Nz7ZHzBJeJkkwVpJS050Zg
+   EEyDF/bJWANMPOaXliv19pXrQCbYLk5mz+goAd5z6svZfAb0qnl49uBIt
+   g==;
+X-CSE-ConnectionGUID: tBE9vKr1SricmQfMsKkWCg==
+X-CSE-MsgGUID: RE/kCSzxQpGQhVi5O4ymhA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="25070648"
+X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
+   d="scan'208";a="25070648"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 19:07:47 -0700
+X-CSE-ConnectionGUID: omHwZdw+SlO9u0NbszeNcw==
+X-CSE-MsgGUID: iSlPjsQBTnKTSinp9R5LKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
+   d="scan'208";a="67174707"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 19:07:46 -0700
+Received: from P12HL2yongliang.png.intel.com (P12HL2yongliang.png.intel.com [10.158.65.196])
+	by linux.intel.com (Postfix) with ESMTP id 91C5A20CFEDA;
+	Wed, 11 Sep 2024 19:07:42 -0700 (PDT)
+From: KhaiWenTan <khai.wen.tan@linux.intel.com>
+To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Simon Horman <horms@kernel.org>,
+	Xiaolei Wang <xiaolei.wang@windriver.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
+	Tan Khai Wen <khai.wen.tan@intel.com>
+Subject: [PATCH net 1/1] net: stmmac: Fix zero-division error when disabling tc cbs
+Date: Thu, 12 Sep 2024 09:55:41 +0800
+Message-Id: <20240912015541.363600-1-khai.wen.tan@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+Content-Transfer-Encoding: 8bit
 
-On Tue, 10 Sep 2024 16:09:50 +0800, Delphine CC Chiu wrote:
-> Enable watchdog2 setting for yosemite4 system.
-> 
-> 
+The commit b8c43360f6e4 ("net: stmmac: No need to calculate speed divider
+when offload is disabled") allows the "port_transmit_rate_kbps" to be
+set to a value of 0, which is then passed to the "div_s64" function when
+tc-cbs is disabled. This leads to a zero-division error.
 
-Thanks, I've applied this to be picked up through the BMC tree.
+When tc-cbs is disabled, the idleslope, sendslope, and credit values the
+credit values are not required to be configured. Therefore, adding a return
+statement after setting the txQ mode to DCB when tc-cbs is disabled would
+prevent a zero-division error.
 
-[1/1] ARM: dts: aspeed: yosemite4: Enable watchdog2
-      commit: 38534704e809d3f253ba131ae1ee8dfb79969166
+Fixes: b8c43360f6e4 ("net: stmmac: No need to calculate speed divider when offload is disabled")
+Cc: <stable@vger.kernel.org>
+Co-developed-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+Signed-off-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+Signed-off-by: KhaiWenTan <khai.wen.tan@linux.intel.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---
-Andrew Jeffery <andrew@codeconstruct.com.au>
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+index 996f2bcd07a2..2c3fd9c66d14 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+@@ -392,10 +392,10 @@ static int tc_setup_cbs(struct stmmac_priv *priv,
+ 	} else if (!qopt->enable) {
+ 		ret = stmmac_dma_qmode(priv, priv->ioaddr, queue,
+ 				       MTL_QUEUE_DCB);
+-		if (ret)
+-			return ret;
++		if (!ret)
++			priv->plat->tx_queues_cfg[queue].mode_to_use = MTL_QUEUE_DCB;
+ 
+-		priv->plat->tx_queues_cfg[queue].mode_to_use = MTL_QUEUE_DCB;
++		return ret;
+ 	}
+ 
+ 	/* Final adjustments for HW */
+-- 
+2.25.1
 
 
