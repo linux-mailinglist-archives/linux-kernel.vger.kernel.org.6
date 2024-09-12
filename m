@@ -1,128 +1,147 @@
-Return-Path: <linux-kernel+bounces-326912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 190C5976E6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:07:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6C23976E68
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:07:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C32B71F228DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:07:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3355D1F228A3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:07:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4A9140E3C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490C113DDB8;
 	Thu, 12 Sep 2024 16:07:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jaMLsxCx"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ywMov3Oq"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8763913D50A;
-	Thu, 12 Sep 2024 16:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3429113D245
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 16:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726157221; cv=none; b=YcpdzYNQu+7E46TpO79nAGKlpSyaVmBr2H+IeBqaMdl45NFLlB/qLZ101lPjeyv6ca3GWCT19zqPGkXPjinuJsDBxRv1q+AbB+JwWGYxk0H3qfp4E6Id/A8PHcypXOI3i9eNFutvzEyTk/gY07a51gUpKGD+dQfYs8wrMX5HFuQ=
+	t=1726157220; cv=none; b=KRakMzG4yMIQkQVs97BjXpfzAak9MHrfXnL9FfOiLGfnNO3GkoJFr6+cixW/c2+oeyZF0ON/unyyXNKgXNifpwF5tT00YfhmdNkj8VYbRj89vX23M+W/6uUhJ5eh9GcltI/amjXvfcwbYI5BTZuHsI1QL7SKoktvojVO2YnGPhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726157221; c=relaxed/simple;
-	bh=GiY28vIjzbF4ncraCjSTkI0n9+bZEJ/i0HDL5G8MzJs=;
+	s=arc-20240116; t=1726157220; c=relaxed/simple;
+	bh=IT1o82vxgKP1FGlb30UH98pNclOmxQrMnkN0OFaimUc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=irO/U1qkXkK+44xTgsoeDVemiKm1RdTTHDTbXoftKULMlPRCR6cg2mPUoPbujf2NH9NJv8XF+HZ4uKKIHEzcEkpDZ4ZZMJqfggOAIvbrmHUZpv2vAIfes6MNfnMXbd0h6me0NWw3+6kUh/BdSqrHdyExok7nctKpGnMXFayKrmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jaMLsxCx; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f761cfa5e6so432171fa.0;
-        Thu, 12 Sep 2024 09:06:58 -0700 (PDT)
+	 To:Cc:Content-Type; b=R7m/wXWMuoAIrY7/D3XPeXF7heXpghEG/bYzq2g0pySPfHKht67woog/cbG0tmIewm8yCkLvRrUPu/SgO63Xls7DNTA3qd30kym0sjuFJHWD6RujeGwsmzoZ2FCysXEyMBhRGozLaLhFb1sq8vXDF3EmLCHc4zOCX8TRP45JUJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ywMov3Oq; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4582a5b495cso249781cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:06:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726157216; x=1726762016; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1726157218; x=1726762018; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+GXnsTeAKkPt+GHGD/GSPgaQmYiEQrEuj2ihhdaJntU=;
-        b=jaMLsxCxRU0jBlyR+6hVxeK3thQqEXo3YPnswD51Sg40OoqVSYkiA3x6MlkNvD7uvg
-         aeAd4nqXncutreDrcZrlcv0OD1fBQwmiUCJMt0ORoJW0ZkuyMut476TvPgz+mJaK4O+b
-         4LxaZmnh9CL2p7AFGvfF3nuvXhAsE5yVpB/Lc0mrpqmpjxwu4gjgQre1LASLIIIs4kuv
-         KvgIWRLNvbNYpLypgC/KzfzRY3iOuHOTf38gUE1NKZrr7l4DyQc94WVFj6fb7hK/aHJf
-         bbgCwo0ClJ80tHd9u+oQ+C4VdJqdPucO/HV6cNqVLIPSenXvGHAM4lMMtqveRQjfVcnz
-         CzeA==
+        bh=omr6m6gliwPRufxamwdCTWNYYmJ3FITHC3JRHgUinPo=;
+        b=ywMov3OqjGZmpPHa1Bxchdlu3MGugCjbPAoPpbL69/JGHT8Ul+Zt/qswuWWoBrnWW3
+         iXp4ueDFPpdqA06vL6FxdbmjTFcN2+m9xgF5DIaJ6h+9XETGRgzt2JkrcTMQOS9MjXyi
+         e32tvykhQ3roJ7/Wphhah1DsVPl8vnc8jcHbC3Xb+SphmzuwOzgXjtobZJCTVKyPjn5i
+         7lFCy5rmCmnbfznwNJVbB5Py70zMj6UBzqw0lI9psdXvPj02Nhnvq5ONvQYDdwrQ9Pn8
+         UZ+nuRzJRlUEBmb2++OvqIFz4fZZsHBJozyDdj0LQmuh7qPySniuOjGToTo/eGjC1aRQ
+         v8vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726157216; x=1726762016;
+        d=1e100.net; s=20230601; t=1726157218; x=1726762018;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+GXnsTeAKkPt+GHGD/GSPgaQmYiEQrEuj2ihhdaJntU=;
-        b=g7T4YpSsesa+KSuQVCOSZS0jFhA+OtSA+kmawI1HbvDOltWTdlf0N7HEzJwWRM1rcf
-         YtrTK0YU+DP4uRky5VQ3axWu2V31Y2gryPO2gA8UCVGKFjBP7cAG5hns/YZ1w5rmLL1P
-         NiEeq9nHc0ru/frDL+unRIlBKC5iM2mz7RIvS3lLzZCUW2dZvPpAxW85ymlXtjitIKLr
-         eoP8lVLpQD4qSvu7QB7vXCtEK4ZeB1lYC1mkV9OootXTP089FUBudARRYc/DoBV+8rGM
-         cUEs8hiF1rIctrbYhQoxbBOdu8xXu3roIlqIbzdEToIYGvwwShfgrb5x5SiSAoHTujbN
-         EU7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV8AIIMRLHw8bh+b2Nmb746BvcevIGg0UpOr8YyWR+GG3wIXynjZ3cyzdL4nwhSSTNY1WzptSLb5z4=@vger.kernel.org, AJvYcCWHYUa0JUu+ghY2qeRDuJBkmqGGEQHiiQL/DvrJ6szYyg2aylzA6EHKkgguLmoG4lYHcmhU1fQIaP8ZJ8GL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+7pDcOG4DACdwdL0sFf2y52jwkslF4eSmjLMmyr8om3MXKioh
-	8xpL+AQX5au+ahIlxzjeEwamXIMJVXV0e11iUxGvDrLPAqC9aKtkm7wYJlQdm40rzqSm2Hs0pZJ
-	CfC6nEzcizpBZN8Ynq8wqcYXSDlY=
-X-Google-Smtp-Source: AGHT+IGWjX10mXNlOA8trM27GN3WdkMlh7d8GXkVJH2ocngxy8iAwvqfcT6QIP3cF4Wm0Y2DMa0xcWaVibkPhnOcuiQ=
-X-Received: by 2002:a05:651c:2125:b0:2f7:528f:421e with SMTP id
- 38308e7fff4ca-2f787c81976mr23687661fa.0.1726157216147; Thu, 12 Sep 2024
- 09:06:56 -0700 (PDT)
+        bh=omr6m6gliwPRufxamwdCTWNYYmJ3FITHC3JRHgUinPo=;
+        b=f0RnQizcm5f7nkozRHlKz9MvZid1kxiKrIJ7FTBrplLFrYiAoxuZY9RRRzJNUuTnOL
+         c67vK/+tT1jzpgujJGYcuUAjJ3KQXm2gUIt3eTB/PmBw283ZSz0TbEeaRZQjrdLiN2Y8
+         YVGTCbzqKfwoXFhdvk16sOQSeUQNOA6gSfCWwlqRVtwTtHqdgxlPsStJIMMoB/EmSm6N
+         122G7WtObcgdWmuWL4CHTdcarIHwSDmn9leRNDl3Clu2b/YlfcOKIUHM/vK+SWOuxPHC
+         JnhoqpEwyiBQC/CawhuLOJ2Z2YqIMTDrDSh5xpKXIYoLtSGipj8zNj5sbHZd7nOGAvaF
+         zwQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUe8OfjgeKfigmZ0qNQ1ZSs6iuPlJ4mnpKQ+vUG10nnSP+W+vLCkAyJV3LcU7/Phw9Psn74MDIdkSWSMiU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+e4gq1XHU/2eOjLc30f33Gm5ggMacRIdnE/2xs8bbHigayqVZ
+	9VpiiEI2oQvmpW9v/o7ma4VacixGtlaRMz8Qa9XKu3gaGqE2cSnp4eq8UbMtBa1vvZiVgy5Fvch
+	bNbeQSGKnT+dbgBSt4aBlbm59jkHe0HmDKU1B
+X-Google-Smtp-Source: AGHT+IGOGPADRaVpGoTSHr0PDggkgl8HZXldTfXyU/ZgwZHpTw+qG9d8tMyjvXLDA0IIjRFc4gXxPJ5tunVOQkpfzMo=
+X-Received: by 2002:a05:622a:198b:b0:447:e0a6:9163 with SMTP id
+ d75a77b69052e-458607b265amr3217081cf.14.1726157217773; Thu, 12 Sep 2024
+ 09:06:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911154820.2846187-1-andriy.shevchenko@linux.intel.com>
- <20240911154820.2846187-9-andriy.shevchenko@linux.intel.com>
- <pwvhzkxeniutopyxczvimkau3elchfy5x32cimlqwjnmqjzv42@zpojd2lxs3o4>
- <ZuMKUnY58Blm7UX-@surfacebook.localdomain> <zuijrzur6htcg4dhccfydl4gb4rj62jq5co4ege6fkggaceesg@3kkujnlrgbye>
-In-Reply-To: <zuijrzur6htcg4dhccfydl4gb4rj62jq5co4ege6fkggaceesg@3kkujnlrgbye>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 12 Sep 2024 19:06:19 +0300
-Message-ID: <CAHp75VeC1Gw8PvJCRGxKKzHGJCaSvsh3JbPnPhDCNsLDF5OaFw@mail.gmail.com>
-Subject: Re: [PATCH v1 08/12] i2c: isch: Use read_poll_timeout()
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jean Delvare <jdelvare@suse.com>
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <20240815173903.4172139-37-samitolvanen@google.com> <alpine.LSU.2.21.2408301114000.1124@pobox.suse.cz>
+ <CABCJKucCWfeC0yL6Q2ZcBfef0tMd9L_gmHRJt-cUYkg_4PDtnA@mail.gmail.com> <599892ec-3cf5-4349-984b-7c94f2ba5687@suse.com>
+In-Reply-To: <599892ec-3cf5-4349-984b-7c94f2ba5687@suse.com>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Thu, 12 Sep 2024 09:06:19 -0700
+Message-ID: <CABCJKuer=O3FnLJNGMg2+-HxFJFUrccTuuHt5OiMpRsAJBvBsg@mail.gmail.com>
+Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved
+ structure fields
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Miroslav Benes <mbenes@suse.cz>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Maurer <mmaurer@google.com>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, 
+	Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 12, 2024 at 6:55=E2=80=AFPM Andi Shyti <andi.shyti@kernel.org> =
-wrote:
-> On Thu, Sep 12, 2024 at 06:35:46PM GMT, Andy Shevchenko wrote:
-> > Thu, Sep 12, 2024 at 09:29:38AM +0200, Andi Shyti kirjoitti:
-
-...
-
-> > > > -         sch_io_wr8(priv, SMBHSTSTS, temp);
-> > > > +         sch_io_wr8(priv, SMBHSTSTS, temp & 0x0f);
-> > >
-> > > there is still a dev_dbg() using temp. To be on the safe side, do
-> > > we want to do a "temp &=3D 0x0f" after the read_poll_timeout?
+On Wed, Sep 11, 2024 at 4:43=E2=80=AFAM Petr Pavlu <petr.pavlu@suse.com> wr=
+ote:
+>
+> On 8/31/24 02:05, Sami Tolvanen wrote:
+> > On Fri, Aug 30, 2024 at 9:34=E2=80=AFAM Miroslav Benes <mbenes@suse.cz>=
+ wrote:
+> >>
+> >> yes, this is one of the approaches we use in SLES. We add kabi padding=
+s
+> >> to some structures in advance (see [1] as a random example) and then u=
+se
+> >> it later if needed.
+> >>
+> >> It is not the only approach. Much more often we do not have a padding =
+and
+> >> use alignment holes ([5]), addition of a new member to the end of a
+> >> structure ([2] or [3]) and such "tricks" ([4] for a newly fully define=
+d
+> >> structure).
 > >
-> > Isn't it even better that we have more information in the debug output?
+> > Thanks for bringing this up! Sounds like we're also going to need a
+> > way to completely exclude specific fields from the output then. I
+> > think we can use a similar union approach, but instead of instructing
+> > the tool to use another type, we can just indicate that the field
+> > should be skipped. I'll come up with a solution for v3.
 >
-> I think not, because:
+> It might have been mentioned previously, not sure, but one more case to
+> consider is handling of enum declarations. New enumerators can be
+> typically added without breaking ABI, e.g. 'enum E { OLD1, OLD2, NEW }'.
+> It would be then great to have some ability to hide them from
+> gendwarfksyms.
 >
->  1. It's information that we don't need, and we intentionally
->     discard in every check. If we print a value we ignore, we
->     risk providing incorrect information.
->
->  2. It=E2=80=99s more future-proof. In future development, cleanups,
->     refactorings, or copy-paste, temp can be used as is
->     without needing to continuously & it with 0xf. This
->     avoids unnecessary operations being repeated later on.
->
->  3. It maintains the original design.
+> I think neither of the __kabi_reserved or __gendwarfksyms_declonly
+> mechanism can currently help with that.
 
-Okay, but where do you see this debug message? I looked again into the
-code and do not see that _this_ value of temp is used in the
-messaging. What did I miss?
+I thought about this a bit and I wonder if we need a separate
+mechanism for that, or is it sufficient to just #define any additional
+hidden values you want to add instead of including them in the enum?
 
-> In any case, these are small details, and the patch is already
-> good as it is.
+  enum e {
+      A,
+      B,
+  #define C (B + 1)
+  #define D (C + 1)
+  };
 
-Thank you for the review!
+Do you see any issues with this approach? I think Clang would complain
+about this with -Wassign-enum, but I'm not sure if we even enable that
+in the kernel, and as long as you don't overflow the underlying type,
+which is a requirement for not breaking the ABI anyway, it should be
+fine.
 
---=20
-With Best Regards,
-Andy Shevchenko
+Sami
 
