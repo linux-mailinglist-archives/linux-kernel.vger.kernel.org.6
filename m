@@ -1,161 +1,95 @@
-Return-Path: <linux-kernel+bounces-326181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 101DE976469
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:26:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BA0097646E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42B911C23243
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:26:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A2991F24DD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D860191499;
-	Thu, 12 Sep 2024 08:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD893192587;
+	Thu, 12 Sep 2024 08:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="tYPBDwtJ"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CQ95qncD"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D199189525
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C1D1917CD;
+	Thu, 12 Sep 2024 08:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726129596; cv=none; b=b+IEM6nDACzF4xaSHEXeeS5jfs84TXCbf7edDFQRMgRUlOO90zZU+xoit6eCz8DF9zPctkAWIUiSra9KjOMF/bMweWOMjU9o9TdcPLhFKX9NInqz3iuLRVbie9eygK8egf5V8XWqrxJ6gU4nRf7rG2MCkch5v2IqQoffnuvUdgA=
+	t=1726129621; cv=none; b=sy7LjumkVes2mPRWZ2E+E1/FDhs+DDfkaN/Gs4eTlJdAq6HrAF7BWzNY2PQM0HHBgl92MD7GlLRmph03lUaoWNTHUXrWUFb5cDAQQZnETF+ge69F3c8N6xGnGxwjJttTQX0xXQBuE4CirTrT3AzKXTG6dBqmz9GX04rJaxbYrcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726129596; c=relaxed/simple;
-	bh=o/ln/aXyOD2d1hjJn0jEzWVVubVN3NXyarbBzfDg7GU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fE7zDdzk/vSqV6Sh2QznnecHNOnBbzf2sd2GtjcnwuLERcA3eqc8my4J4A6ybXWu0FjVDZzb7gIYU/POq3PsLVfvcxuEHnrp8ZDeUek0vNGyTCDSbqB8C44lxc4qBHQBCfMiSAtWGAO0OKj0Tp7m1CVkiCUUslXRGQ1tVfFKUaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=tYPBDwtJ; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 48C8Pu1f2814428
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Thu, 12 Sep 2024 01:25:56 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 48C8Pu1f2814428
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024081601; t=1726129557;
-	bh=0yim0rQSzhYo8awdQQw/2+HjwgI94XKe+wa2uSleBWo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tYPBDwtJq5PRjiiuznjlqN4YGJ3mLm2BTFXXKo62NEYgyHVhsvhg6fGSN1qTiuJfT
-	 assCNF3DvlxkEF+uZ0h8nB+qyzWjvsokMDIL4H6oMqlvJZkN2LcbCOgxCr6iY6nZdA
-	 uDkn6uTCwUX7Sm3GkaAD6m+/rxDwJq+LcBG2eU9llR7MDK1cGIz5/AzsfKvi7zRLHF
-	 84kl3EmFbvi89IzYpEHYqDnMutokN8QFBNyaGOZeb6ueVsGe2wrIXpJAhWyym8aWaI
-	 qWPtg7X97PzBybntI0nz/X7Z68LbYXMht2pU2acmuUkfI/1NsbQNz4HdFL/3232tlw
-	 8JOqtHCx0l83A==
-Message-ID: <e9376635-f578-41df-9e14-e4cc6def848a@zytor.com>
-Date: Thu, 12 Sep 2024 01:25:55 -0700
+	s=arc-20240116; t=1726129621; c=relaxed/simple;
+	bh=eGhoXPmHyaA9nfxemlihyhx2ly0XnoBJTKUcKXRneK8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type; b=hzE7nfuno/143H2hX40fbspjsLLwfkQXCyus9bNzCTJFjdedpJY7BZUxQUw+2yIpeVxhh/GKiV4s9YynOovCm4TZEdk2roAG02nYJs8lNfHQHSW4sQPWxzx34U7XuIdx637HkEXBepGFJFJW3LEp9ajKVaLXvjrDfNu3CpGKTw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CQ95qncD; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c3c30e663fso788372a12.1;
+        Thu, 12 Sep 2024 01:26:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726129618; x=1726734418; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:in-reply-to:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eGhoXPmHyaA9nfxemlihyhx2ly0XnoBJTKUcKXRneK8=;
+        b=CQ95qncDe7oyEpwxeT64lp+N+POIsrTB6TAhIYZGDyliae9PfC1UZSk2p/fQjiCFvD
+         tEma5QGCXGETK/nsHiFXXrOAq1NK9LrXSnsnWHVoK92is2gUjxEJuWm+juX3ZdONmc3s
+         KooP4LCGRJ73uaz45egIr7uLJE3LHRSCPNT2tuwwnfk3z83BhOa6NyyfMSNwpHwE9+zA
+         iMMgV7PSoUuyq3s2OVpf0Jrox9strmqBz1T2Vls40hVOzSlET5en79JfgiAivLpPRtAh
+         8vnYPM5/p9MaucYmmHf42FZvGPMq6uQY7MPhkDekQKWeDeZJXezrw3MTV4GkYqEFG1Es
+         yphw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726129618; x=1726734418;
+        h=content-transfer-encoding:mime-version:in-reply-to:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eGhoXPmHyaA9nfxemlihyhx2ly0XnoBJTKUcKXRneK8=;
+        b=nKfPYGNEEXUtOIAJ+yl34dsI1A0yYSrM5GG6CyIpCYB4CNYokw7YPknTXwYfqYt3v6
+         9t+44QYuvXMCRud9j79rC364yu1/GmCcXbA2p376DI6L0d3LEeFO/TuVLz20of1sOaa7
+         f2PoqYa0Een7GWPLQKd6S5t/ErtwQEAPhzhL2fpNiVTpNFMr0zzvZQCY3a3ZOj2bLuO/
+         dysEIxhfE7lKgu3APbtqvTCLN3uRUnVSvtqeT53/q9a5vs+16/MP0vaIn2a4EFJGO2Wt
+         m19HVKVyYGNLyKhe+eeeZ/Yz/ofToRqsvoHI0I5Ne1ZZnqELnkqFXQkIg9kA5g9lECSM
+         L8nQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9mGEyamuSNZdgqDHkEJ721pEDDObxzt6Xh551Ep2pTOOO9FHj9ERZm4r1Js6q2m793Wd/Aj5agAcnHnc=@vger.kernel.org, AJvYcCWPXCGxtmxGpVoPkQQzeDfG929FHLjQ+V3raKZw/HDdf7mpxWl70EPswdX2ACDyi8VHEFsZ4MPODCPX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+wDXSsTDdaTZp8e+gFctlC+MXHyMV5zEMC211gY6aeTDQonqE
+	7tkmnL6RXoG46y5t7tuMsMmalahDVwa7nSMRnv2bJzHIUYZJyRPw
+X-Google-Smtp-Source: AGHT+IGBHPIOi+BlBzoWIqOf4JAFJrqgZb8DJeyyKsjgufW6aVvNACK9DhzW7U9tj/aYrQcUuM924w==
+X-Received: by 2002:a05:6402:42c3:b0:5be:e9f8:9bbf with SMTP id 4fb4d7f45d1cf-5c413e10cb3mr1843629a12.9.1726129617711;
+        Thu, 12 Sep 2024 01:26:57 -0700 (PDT)
+Received: from foxbook (bio143.neoplus.adsl.tpnet.pl. [83.28.130.143])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd8ce50sm6266289a12.84.2024.09.12.01.26.55
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Thu, 12 Sep 2024 01:26:56 -0700 (PDT)
+Date: Thu, 12 Sep 2024 10:26:51 +0200
+From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
+To: jan.kiszka@siemens.com
+Cc: gregkh@linuxfoundation.org, johan@kernel.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH v2] USB: serial: pl2303: account for deficits of clones
+Message-ID: <20240912102651.0febe751@foxbook>
+In-Reply-To: <ecfefb25-7ce9-4a74-9708-f08d51d03ec1@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] x86/fred: Clear the WFE bit in missing-ENDBRANCH
- #CP
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
-        hpa@zytor.com, andrew.cooper3@citrix.com
-References: <20240911231929.2632698-1-xin@zytor.com>
- <20240912075714.GT4723@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <20240912075714.GT4723@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 9/12/2024 12:57 AM, Peter Zijlstra wrote:
-> On Wed, Sep 11, 2024 at 04:19:29PM -0700, Xin Li (Intel) wrote:
-> 
->> +static void ibt_clear_fred_wfe(struct pt_regs *regs)
->> +{
->> +	if (cpu_feature_enabled(X86_FEATURE_FRED))
->> +		regs->fred_cs.wfe = 0;
->> +}
->> +
->>   static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
->>   {
->>   	if ((error_code & CP_EC) != CP_ENDBR) {
->> @@ -90,6 +107,7 @@ static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
->>   
->>   	if (unlikely(regs->ip == (unsigned long)&ibt_selftest_noendbr)) {
->>   		regs->ax = 0;
->> +		ibt_clear_fred_wfe(regs);
->>   		return;
->>   	}
->>   
->> @@ -97,6 +115,7 @@ static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
->>   	if (!ibt_fatal) {
->>   		printk(KERN_DEFAULT CUT_HERE);
->>   		__warn(__FILE__, __LINE__, (void *)regs->ip, TAINT_WARN, regs, NULL);
->> +		ibt_clear_fred_wfe(regs);
->>   		return;
->>   	}
->>   	BUG();
-> 
-> So, why not clear the bit the moment we know this is CP_ENDBR?
-> 
-> In the fatal case, we'll hit that BUG and die anyway, nobody cares about
-> the tracker state in that case.
+Hi,
 
-I did think about it, but preferred to leave it as in BUG().
+Wouldn't it be simpler to make this a quirk rather than a separate type?
 
-But as you have asked, will change unless someone else disagrees with a
-good reason :)
+Such approach has the added benefit of being easily adaptable to similar
+half-baked clones claiming to be other types. AFAIS "pl2303" is about as
+generic a name as "8051" these days, so I would prepare for the worst...
 
-> 
-> diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
-> index d2c732a34e5d..fde4bdd25a73 100644
-> --- a/arch/x86/kernel/cet.c
-> +++ b/arch/x86/kernel/cet.c
-> @@ -88,6 +88,8 @@ static void do_kernel_cp_fault(struct pt_regs *regs, unsigned long error_code)
->   		return;
->   	}
->   
-> +	ibt_clear_fred_wfe(regs);
-> +
->   	if (unlikely(regs->ip == (unsigned long)&ibt_selftest_noendbr)) {
->   		regs->ax = 0;
->   		return;
-> 
-
+Regards,
+Michal
 
