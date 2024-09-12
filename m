@@ -1,110 +1,179 @@
-Return-Path: <linux-kernel+bounces-326217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88156976512
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:59:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9130B976518
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB2C91C22F91
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:59:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D85B1F24606
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:00:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1781192597;
-	Thu, 12 Sep 2024 08:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D7518F2D4;
+	Thu, 12 Sep 2024 08:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="albRcIbb"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="kaG2bL3N"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960A6126C16;
-	Thu, 12 Sep 2024 08:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF31018C929;
+	Thu, 12 Sep 2024 08:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726131567; cv=none; b=hBpVRnWCirCt0xFrtPuyxcFE4NIpeamFdl5GzbHJ4OtMF4NIAB3s/g6arUuqsyNaCmWkHXNkuMNaRkjgt/LyBa5UwN7AbxH6/vAmeAsRubJZe/4y9Ce2oBGiECKGJosx4TaHQzum2EVFAxnD5YMm0cX3nFBYoyoRsjIPhzActs0=
+	t=1726131593; cv=none; b=tuJN7d3O/cE5Bq3h1lwA1VfKXuBeNAz06ziyzBqkyISHS8DfsuLquYBC12blJgAxqBtcK6bt+oIJwJrhatYJn7Vu1VMz9Zk7TnXNjEShzWFpnB/x42XDX/8bI7ovYuR7p6KIAi3lmh3cazOKnUjfxX8xBwfvGmYV5F+MAeJo060=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726131567; c=relaxed/simple;
-	bh=0OGJJ5q1I2dFwFAloPPPGBlxWK5ysuNhqDO/ggWfpEU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TNoTPSxeIFSgh2rPPWdHFl0wtxnBSBew5gzJW74kc4d7/LqFMpIL64bbRaqjGquLfKXP6j6F3O5hKvLKcQFmrnJ2FwV0po4OEY/DbIBCOS41Ogk/gGmJLuBIb4qn75xkN/e4rw/bMVAcQagP7+LSzf1s7clkfvFM7R4Lkt3DSs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=albRcIbb; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 290091BF216;
-	Thu, 12 Sep 2024 08:59:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1726131563;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h41juF0fv68tfOkIEeNBFEnc3OaBWpW2TAzB82HoCMc=;
-	b=albRcIbbmrRjds0mCszB3DsLpD2g6x0UCP4z9RiW0xtMaZZW9UoG6NV35qDyOiMkn6GhNR
-	XzLlcY82zLKtvf7F6uVhF8doey6jnrioQ58L0rbtNz44IgWc+82/q6tiwCaaEZRpDAk6V/
-	Oofy8OoVx8aTAUfztnsSsR2DJBZB9F8yg/kZzhfPvhBUGJ87xrZ+GF0nSAcBWeWxrc25rh
-	EJACUwlzkMBe4QXM2AtUdj/zh6WRk9ammtr3SCm9r4O2Bd2aYLhn1LdLA/TXSBi9G2k/LB
-	NIddFgZCvG9UB5cpXSbA1+BdNSI/iMpAtoTKOpokMU0IYPsKkVaA5tcaAYd8Iw==
-Date: Thu, 12 Sep 2024 10:59:21 +0200
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>, Oleksij
- Rempel <o.rempel@pengutronix.de>, thomas.petazzoni@bootlin.com, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH net-next] Documentation: networking: Fix missing PSE
- documentation issue
-Message-ID: <20240912105921.3bf04996@kmaincent-XPS-13-7390>
-In-Reply-To: <20240912080929.GD572255@kernel.org>
-References: <20240911144711.693216-1-kory.maincent@bootlin.com>
-	<20240912080929.GD572255@kernel.org>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1726131593; c=relaxed/simple;
+	bh=fl97/sOEUsJQ8VZACP02Z/hvc/HcTprmyXWjBuIpABg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BWN+Gw8RUHWeBvkVFKGEvWQh7BWv1YC0RpEONu+F2/lQfcH54FajuLwAQcmk6HAaVNzMLDKyo2ISV/9LDabTpmBJmbj4TYiEbwBX4rMu0V/9+pbBpv5+Bx/KVh3Elb7UO7tOiFPIv6yBaBpajR3VLXWK29esreW8V4RJkm5gmdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=kaG2bL3N; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
+	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=0LohmCEwjhv/ynQc5/yZjldMZKR+MEom6qwc4qG3GZE=; b=kaG2bL3NXdQmJ+T81qt9zMcG7v
+	bEtj2rhuxVZVR6j/sgPeyhkgxZ0VOu+G7LaO40Wlh+97VCS0mC0pJAKG67BvcaowJo+F64IgkAOfO
+	RDCK3qxjeV/cv8pduxnOAwAcMBbyiiEEco5+D7ItVSBrZersIje+80Dbd8LfeTsfVVMhOmbfHx5Vu
+	dK23tDMt81OPH4hfLka4iPKcHfjHTH85bfIDkEHU2hPn2B1p/1nGIaZCmglVMbqLB20KOM3NIc8GZ
+	iVLbkk0833ETtus0y1TwTP4Vi5jVc4JARiIH/luWlpIJQ4Tbz4xeOgSRTx7dCgM8RDCnSusqVpVOj
+	263LPYrw==;
+Received: from sslproxy01.your-server.de ([78.46.139.224])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <esben@geanix.com>)
+	id 1soffy-000EaL-0b; Thu, 12 Sep 2024 10:59:42 +0200
+Received: from [185.17.218.86] (helo=localhost)
+	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <esben@geanix.com>)
+	id 1soffy-0004eF-1A;
+	Thu, 12 Sep 2024 10:59:41 +0200
+From: Esben Haabendal <esben@geanix.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,  linux-rtc@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] rtc: isl12022: Add alarm support
+In-Reply-To: <20240912082123f10c07cf@mail.local> (Alexandre Belloni's message
+	of "Thu, 12 Sep 2024 10:21:23 +0200")
+References: <20240910-rtc-isl12022-alarm-irq-v1-0-d875cedc997f@geanix.com>
+	<20240910-rtc-isl12022-alarm-irq-v1-2-d875cedc997f@geanix.com>
+	<202409101939448128973d@mail.local> <87mske7gaw.fsf@geanix.com>
+	<20240911122417388bd35c@mail.local> <87h6almjpn.fsf@geanix.com>
+	<20240912082123f10c07cf@mail.local>
+Date: Thu, 12 Sep 2024 10:59:41 +0200
+Message-ID: <878qvxmema.fsf@geanix.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain
+X-Authenticated-Sender: esben@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27395/Wed Sep 11 10:32:20 2024)
 
-On Thu, 12 Sep 2024 09:09:29 +0100
-Simon Horman <horms@kernel.org> wrote:
+Alexandre Belloni <alexandre.belloni@bootlin.com> writes:
 
-> On Wed, Sep 11, 2024 at 04:47:11PM +0200, Kory Maincent wrote:
-> > Fix a missing end of phrase in the documentation. It describes the
-> > ETHTOOL_A_C33_PSE_ACTUAL_PW attribute, which was not fully explained.
-> >=20
-> > Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
-> > ---
-> >  Documentation/networking/ethtool-netlink.rst | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/Documentation/networking/ethtool-netlink.rst
-> > b/Documentation/networking/ethtool-netlink.rst index
-> > ba90457b8b2d..b1390878ba84 100644 ---
-> > a/Documentation/networking/ethtool-netlink.rst +++
-> > b/Documentation/networking/ethtool-netlink.rst @@ -1801,8 +1801,9 @@ the
-> > PSE and the PD. This option is corresponding to ``IEEE 802.3-2022``
-> > 30.9.1.1.8 aPSEPowerClassification.=20
-> >  When set, the optional ``ETHTOOL_A_C33_PSE_ACTUAL_PW`` attribute ident=
-ifies
-> > -This option is corresponding to ``IEEE 802.3-2022`` 30.9.1.1.23
-> > aPSEActualPower. -Actual power is reported in mW.
-> > +the actual power drawn by the C33 PSE. This option is corresponding to=
- =20
->=20
-> nit: While we are here, perhaps we can also update the grammar.
->=20
->      This attribute corresponds to...
+> On 12/09/2024 09:09:40+0200, Esben Haabendal wrote:
+>> Alexandre Belloni <alexandre.belloni@bootlin.com> writes:
+>> 
+>> > On 11/09/2024 10:20:07+0200, Esben Haabendal wrote:
+>> >> Alexandre Belloni <alexandre.belloni@bootlin.com> writes:
+>> >> > On 10/09/2024 12:27:11+0200, Esben Haabendal wrote:
+>> >> 
+>> >> >> +static int isl12022_rtc_read_alarm(struct device *dev,
+>> >> >> +				   struct rtc_wkalrm *alarm)
+>> >> >> +{
+>> >> >> +	struct rtc_time *const tm = &alarm->time;
+>> >> >> +	struct isl12022 *isl12022 = dev_get_drvdata(dev);
+>> >> >> +	struct regmap *regmap = isl12022->regmap;
+>> >> >> +	uint8_t buf[ISL12022_ALARM_SECTION_LEN];
+>> >> >> +	int ret, yr, i;
+>> >> >> +
+>> >> >> +	ret = regmap_bulk_read(regmap, ISL12022_ALARM_SECTION,
+>> >> >> +			       buf, sizeof(buf));
+>> >> >> +	if (ret) {
+>> >> >> +		dev_err(dev, "%s: reading ALARM registers failed\n",
+>> >> >> +			__func__);
+>> >> >
+>> >> > I don't really like those error messages because there is nothing the
+>> >> > user can actually do apart from trying again and this bloats the
+>> >> > kernel.
+>> >> 
+>> >> Ok. Maybe keep it as dev_dbg() then?
+>> >
+>> > This is fine, there are other I didn't point out.
+>> 
+>> Ok. I will change all of these type of error messages to dev_dbg. No problem.
+>> 
+>> >> >> +	isl12022->rtc = rtc;
+>> >> >>  
+>> >> >>  	rtc->ops = &isl12022_rtc_ops;
+>> >> >>  	rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
+>> >> >>  	rtc->range_max = RTC_TIMESTAMP_END_2099;
+>> >> >>  
+>> >> >> +	if (client->irq > 0) {
+>> >> >> +		ret = isl12022_setup_irq(isl12022, client->irq);
+>> >> >
+>> >> > You can't do this in probe, the RTC lifecycle is longer than the linux
+>> >> > system. Or said differently: "oh no, my linux has rebooted and now I
+>> >> > lost my future alarm" ;)
+>> >> 
+>> >> Oh.
+>> >> 
+>> >> We do need to setup the irq here, so I assume you mean I need to drop
+>> >> the part of _setup_irq() that clears alarm registers.
+>> >
+>> > Yes, this is the main problematic part. The other one being disabling
+>> > the IRQ output when in battery backup mode as this will surely prevent
+>> > wakeup of some devices.
+>> 
+>> I know. I did this on purpose, as I don't have a setup where I can test
+>> wakeup, so I thought it was better to start out without this instead of
+>> shipping something that is most likely broken.
+>> 
+>> If I leave IRQ output from RTC chip enabled during battery backup mode,
+>> I assume I have to add working suspend/resume also. Or do you just want
+>> me to flip the bit?
+>
+> The issue is still about the lifecycle. The RTC will remember the
+> setting so if you change it from the default value without providing a
+> control, there is no way to change back the driver behavior in the
+> future because this is going to break a use case and there is no way to
+> win. So my preference is that you leave the bit to its default value.
 
-Yes, indeed. Thanks.
+Yes, sounds like the right approach.
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
+But should I actively set FOBATB bit to the default value, or leave it
+at its current value (which potentially could be non-default)?
+
+> You don't necessarily need the suspend/resume callbacks.
+>
+>> >> And I guess we need to enable irq in probe as well. At least if/when an
+>> >> alarm is set. I think it should be safe to enable irq unconditionally in
+>> >> _probe()...
+>> >
+>> > I guess you mean requesting the interrupt on the SoC side.
+>> 
+>> Yes.
+>> 
+>> > Enabling the RTC interrupt should be left untouched in the probe.
+>> 
+>> Ok, so if/when an alarm is already set before probe, do application need
+>> to enable it using RTC_AIE_ON?
+>
+> If the alarm is on on boot, it must be kept on without any user
+> intervention.
+
+Sure. But do we want to check for an active alarm, and then call
+enable_irq() if there is one? If not, the alarm would assert the
+interrupt line, but the irq might not be raised as the handler is
+disabled.
+
+/Esben
 
