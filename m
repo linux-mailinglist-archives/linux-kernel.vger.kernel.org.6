@@ -1,265 +1,154 @@
-Return-Path: <linux-kernel+bounces-326841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CA08976D98
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:20:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD58976D97
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:20:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17C5A28843D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:20:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6182E1C23DE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358E51BBBC5;
-	Thu, 12 Sep 2024 15:19:07 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 776B11B12E4;
+	Thu, 12 Sep 2024 15:19:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3B91B1507
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C6B848E
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726154346; cv=none; b=dd2ZAzXEnUPOtpzUq+GOAdJFk2f14rDsHIiE0SGQbaFaJn9nM2Gs4w+bDlJZBFBG0lxlmjSd4H87GgYjpJmaP5dTNEes9NhgYVFTPSGThxUClPPnWeYd4As9PsZv+Ei44mMi2VelghQr4ahs6SNiDULiKfwQiaC69R5khh8F4EU=
+	t=1726154345; cv=none; b=S5fz2DUSffIP/JAjb6fgdNK5oG2FXLI8D+PWSaa7ITkKk+hmRMtpdlDUqgoIoLe2WND24sbh05DJu8FDe6fOIkMAPhLY/zr/73XsFqJiu3hz+rMae4NkWZy94yr0p61PuFsXQhSZ0htwOU/etoypDAHpBzX/4b9g0v5/3RpAJnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726154346; c=relaxed/simple;
-	bh=OsLJojm96pMS4IXnyVQSRLVdKdQHtsLTw4J4pA0PcfU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VQe5j47F3cg/x/SrNckORu6p3rUMRhfGrOcrU1PS4puSjRyPimQo0WBEfFuNPAMbfpkTKJFVAkpxpPZ9eAdiKAvgu+4gbCEuhPHacUFa6vbgNrRXNRltlGX6pafG+jfZnzlZSqWYhF8mL03mu+lsKvy84F8UPc38TEuPXHu/3Zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1solae-0001q5-UB; Thu, 12 Sep 2024 17:18:36 +0200
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1solad-007PUI-AE; Thu, 12 Sep 2024 17:18:35 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1solad-000BWk-0l;
-	Thu, 12 Sep 2024 17:18:35 +0200
-Message-ID: <d003cb854f9aea30c7d26b4d2b7f50cf467bf225.camel@pengutronix.de>
-Subject: Re: [PATCH RESEND v27 2/3] reset: npcm: register npcm8xx clock
- auxiliary bus device
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Tomer Maimon <tmaimon77@gmail.com>, mturquette@baylibre.com, 
- sboyd@kernel.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
- tali.perry1@gmail.com, joel@jms.id.au, venture@google.com,
- yuenn@google.com,  benjaminfair@google.com
-Cc: openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Date: Thu, 12 Sep 2024 17:18:35 +0200
-In-Reply-To: <20240815150255.3996258-3-tmaimon77@gmail.com>
-References: <20240815150255.3996258-1-tmaimon77@gmail.com>
-	 <20240815150255.3996258-3-tmaimon77@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1726154345; c=relaxed/simple;
+	bh=STV8om1P7iMadYlrC1Ov5g6TtswUDp7aufrENClQUw0=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=cwjFAQWUVoK77PLpM9EFevlvFrK41FNVAoIcWTN7DQNr18i/kgbBgceREceajLnGdveLLqGAtpKXpfrKEFl1byunhK81lDtoeCYbEc22sG2uxzXXNAMa3o8kFhk49TV3uEPaQS8fzK/OpGx+8jfnl4JfW0Eonntu36zm7/JMlqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39d49576404so11812885ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:19:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726154342; x=1726759142;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7mYGFi5Rv2ZCy/t4Eijr16i9h0twm2O5R16/L7rUMjs=;
+        b=aYqS/wgpqekKCxVjAS5Ybssp2r2tWqnWTXXnSv8YXZ7+3DFKDLX4015617y/C4qdKX
+         +c5UWN5D9LkVb2d41gLuGehO1gHKCKwinDwTjgmEjTaudPXmSGs1Dxe7elnHJ6KynhKe
+         VtDHEEIcsOgTkwYkzqAjp+WlEeuMBA2Mbe5peHv1SPC64xVye4xBLAHqG3IPvTae5AKy
+         0nR4EesI7mlyO7ZK8wm0MvHx0htPN6r3UmrZxFiy34D9pSIuXh75usRVz/JGQhv5VOGZ
+         wUYkj05jZ6MCDeX89TzjHPV6cT4lPeaXh1gT1/2JNJyMn6dpCEl7DDP+ENI0u+6OOzZF
+         KbVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVLPloSHKqSGepQ5/g1UQ2uTObh4KK3xail497YUde1hLlgw5zbg98bzUVdMUD3jVX/1ILRrF9K1T/baoA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiaqE6CiY3TiEv516S4jKKQmPeRx4FWi/8flBTLoh5fw6m1fUh
+	BLZt4vVnExg40b0JWZ73e1bkVPjLI6LTttzVp5ku5k0ts0JmhawHfva0bl36x/ogrWMoMuT7Ixk
+	hSyJ761o5axTw2ypIgmKSFHEhiOrVNmCeS5v55rUAhsWcMaJm675aluc=
+X-Google-Smtp-Source: AGHT+IFt8aUqyC+nBbSueG12rEXJ2jmU3hElZUDMXnoWgq7lVYMH3qmZ64vb3Dj64xbadclXvHxKIEwSs77S8fmOKG4+oEaHYNhu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6e02:1846:b0:3a0:72d5:185a with SMTP id
+ e9e14a558f8ab-3a0849552d0mr36954395ab.16.1726154342457; Thu, 12 Sep 2024
+ 08:19:02 -0700 (PDT)
+Date: Thu, 12 Sep 2024 08:19:02 -0700
+In-Reply-To: <20240912141621.7782-1-aha310510@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000068f3710621eda08c@google.com>
+Subject: Re: [syzbot] [usb?] KMSAN: kernel-infoleak in iowarrior_read
+From: syzbot <syzbot+b8080cbc8d286a5fa23a@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Do, 2024-08-15 at 18:02 +0300, Tomer Maimon wrote:
-> Add NPCM8xx clock controller auxiliary bus device registration.
->=20
-> The NPCM8xx clock controller is registered as an aux device because the
-> reset and the clock controller share the same register region.
->=20
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-> Tested-by: Benjamin Fair <benjaminfair@google.com>
-> ---
->  drivers/reset/Kconfig               |  1 +
->  drivers/reset/reset-npcm.c          | 74 ++++++++++++++++++++++++++++-
->  include/soc/nuvoton/clock-npcm8xx.h | 16 +++++++
->  3 files changed, 90 insertions(+), 1 deletion(-)
->  create mode 100755 include/soc/nuvoton/clock-npcm8xx.h
->=20
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 67bce340a87e..c6bf5275cca2 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -157,6 +157,7 @@ config RESET_MESON_AUDIO_ARB
->  config RESET_NPCM
->  	bool "NPCM BMC Reset Driver" if COMPILE_TEST
->  	default ARCH_NPCM
-> +	select AUXILIARY_BUS
->  	help
->  	  This enables the reset controller driver for Nuvoton NPCM
->  	  BMC SoCs.
-> diff --git a/drivers/reset/reset-npcm.c b/drivers/reset/reset-npcm.c
-> index 8935ef95a2d1..aa68b947226a 100644
-> --- a/drivers/reset/reset-npcm.c
-> +++ b/drivers/reset/reset-npcm.c
-> @@ -1,6 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0
->  // Copyright (c) 2019 Nuvoton Technology corporation.
-> =20
-> +#include <linux/auxiliary_bus.h>
->  #include <linux/delay.h>
->  #include <linux/err.h>
->  #include <linux/io.h>
-> @@ -10,11 +11,14 @@
->  #include <linux/property.h>
->  #include <linux/reboot.h>
->  #include <linux/reset-controller.h>
-> +#include <linux/slab.h>
->  #include <linux/spinlock.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/regmap.h>
->  #include <linux/of_address.h>
-> =20
-> +#include <soc/nuvoton/clock-npcm8xx.h>
-> +
->  /* NPCM7xx GCR registers */
->  #define NPCM_MDLR_OFFSET	0x7C
->  #define NPCM7XX_MDLR_USBD0	BIT(9)
-> @@ -89,6 +93,7 @@ struct npcm_rc_data {
->  	const struct npcm_reset_info *info;
->  	struct regmap *gcr_regmap;
->  	u32 sw_reset_number;
-> +	struct device *dev;
->  	void __iomem *base;
->  	spinlock_t lock;
->  };
-> @@ -372,6 +377,67 @@ static const struct reset_control_ops npcm_rc_ops =
-=3D {
->  	.status		=3D npcm_rc_status,
->  };
-> =20
-> +static void npcm_clock_unregister_adev(void *_adev)
-> +{
-> +	struct auxiliary_device *adev =3D _adev;
-> +
-> +	auxiliary_device_delete(adev);
-> +	auxiliary_device_uninit(adev);
-> +}
-> +
-> +static void npcm_clock_adev_release(struct device *dev)
-> +{
-> +	struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
-> +	struct npcm_clock_adev *rdev =3D to_npcm_clock_adev(adev);
-> +
-> +	kfree(rdev);
-> +}
-> +
-> +static struct auxiliary_device *npcm_clock_adev_alloc(struct npcm_rc_dat=
-a *rst_data, char *clk_name)
-> +{
-> +	struct npcm_clock_adev *rdev;
-> +	struct auxiliary_device *adev;
-> +	int ret;
-> +
-> +	rdev =3D kzalloc(sizeof(*rdev), GFP_KERNEL);
-> +	if (!rdev)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	rdev->base =3D rst_data->base;
-> +
-> +	adev =3D &rdev->adev;
-> +	adev->name =3D clk_name;
-> +	adev->dev.parent =3D rst_data->dev;
-> +	adev->dev.release =3D npcm_clock_adev_release;
-> +	adev->id =3D 555u;
-> +
-> +	ret =3D auxiliary_device_init(adev);
-> +	if (ret) {
-> +		kfree(rdev);
-> +		return ERR_PTR(ret);
-> +	}
-> +
-> +	return adev;
-> +}
-> +
-> +static int npcm8xx_clock_controller_register(struct npcm_rc_data *rst_da=
-ta, char *clk_name)
-> +{
-> +	struct auxiliary_device *adev;
-> +	int ret;
-> +
-> +	adev =3D npcm_clock_adev_alloc(rst_data, clk_name);
-> +	if (IS_ERR(adev))
-> +		return PTR_ERR(adev);
-> +
-> +	ret =3D auxiliary_device_add(adev);
-> +	if (ret) {
-> +		auxiliary_device_uninit(adev);
-> +		return ret;
-> +	}
-> +
-> +	return devm_add_action_or_reset(rst_data->dev, npcm_clock_unregister_ad=
-ev, adev);
-> +}
-> +
->  static int npcm_rc_probe(struct platform_device *pdev)
->  {
->  	struct npcm_rc_data *rc;
-> @@ -392,6 +458,7 @@ static int npcm_rc_probe(struct platform_device *pdev=
-)
->  	rc->rcdev.of_node =3D pdev->dev.of_node;
->  	rc->rcdev.of_reset_n_cells =3D 2;
->  	rc->rcdev.of_xlate =3D npcm_reset_xlate;
-> +	rc->dev =3D &pdev->dev;
-> =20
->  	ret =3D devm_reset_controller_register(&pdev->dev, &rc->rcdev);
->  	if (ret) {
-> @@ -413,7 +480,12 @@ static int npcm_rc_probe(struct platform_device *pde=
-v)
->  		}
->  	}
-> =20
-> -	return ret;
-> +	switch (rc->info->bmc_id) {
-> +	case BMC_NPCM8XX:
+Hello,
 
-Here ret is ignored, which may be the return value from
-register_restart_handler() above.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: kernel-infoleak in iowarrior_read
 
-> +		return npcm8xx_clock_controller_register(rc, "clk-npcm8xx");
-> +	default:
-> +		return ret;
-> +	}
->  }
-> =20
->  static struct platform_driver npcm_rc_driver =3D {
-> diff --git a/include/soc/nuvoton/clock-npcm8xx.h b/include/soc/nuvoton/cl=
-ock-npcm8xx.h
-> new file mode 100755
-> index 000000000000..139130e98c51
-> --- /dev/null
-> +++ b/include/soc/nuvoton/clock-npcm8xx.h
-> @@ -0,0 +1,16 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __SOC_NPCM8XX_CLOCK_H
-> +#define __SOC_NPCM8XX_CLOCK_H
-> +
-> +#include <linux/auxiliary_bus.h>
-> +#include <linux/container_of.h>
-> +
-> +struct npcm_clock_adev {
-> +	void __iomem *base;
-> +	struct auxiliary_device adev;
-> +};
-> +
-> +#define to_npcm_clock_adev(_adev) \
-> +	container_of((_adev), struct npcm_clock_adev, adev)
+=====================================================
+BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+BUG: KMSAN: kernel-infoleak in _inline_copy_to_user include/linux/uaccess.h:180 [inline]
+BUG: KMSAN: kernel-infoleak in _copy_to_user+0xbc/0x110 lib/usercopy.c:26
+ instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+ _inline_copy_to_user include/linux/uaccess.h:180 [inline]
+ _copy_to_user+0xbc/0x110 lib/usercopy.c:26
+ copy_to_user include/linux/uaccess.h:209 [inline]
+ iowarrior_read+0xb02/0xdc0 drivers/usb/misc/iowarrior.c:326
+ vfs_read+0x2a1/0xf60 fs/read_write.c:474
+ ksys_read+0x20f/0x4c0 fs/read_write.c:619
+ __do_sys_read fs/read_write.c:629 [inline]
+ __se_sys_read fs/read_write.c:627 [inline]
+ __x64_sys_read+0x93/0xe0 fs/read_write.c:627
+ x64_sys_call+0x3055/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:1
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Could you make this an inline function instead?
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:3998 [inline]
+ slab_alloc_node mm/slub.c:4041 [inline]
+ __do_kmalloc_node mm/slub.c:4161 [inline]
+ __kmalloc_noprof+0x661/0xf30 mm/slub.c:4174
+ kmalloc_noprof include/linux/slab.h:685 [inline]
+ kmalloc_array_noprof include/linux/slab.h:726 [inline]
+ iowarrior_probe+0x10ea/0x1b90 drivers/usb/misc/iowarrior.c:836
+ usb_probe_interface+0xd6f/0x1350 drivers/usb/core/driver.c:399
+ really_probe+0x4db/0xd90 drivers/base/dd.c:657
+ __driver_probe_device+0x2ab/0x5d0 drivers/base/dd.c:799
+ driver_probe_device+0x72/0x890 drivers/base/dd.c:829
+ __device_attach_driver+0x568/0x9e0 drivers/base/dd.c:957
+ bus_for_each_drv+0x403/0x620 drivers/base/bus.c:457
+ __device_attach+0x3c1/0x650 drivers/base/dd.c:1029
+ device_initial_probe+0x32/0x40 drivers/base/dd.c:1078
+ bus_probe_device+0x3dc/0x5c0 drivers/base/bus.c:532
+ device_add+0x13aa/0x1ba0 drivers/base/core.c:3682
+ usb_set_configuration+0x31c9/0x38d0 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0x109/0x2a0 drivers/usb/core/generic.c:254
+ usb_probe_device+0x3a7/0x690 drivers/usb/core/driver.c:294
+ really_probe+0x4db/0xd90 drivers/base/dd.c:657
+ __driver_probe_device+0x2ab/0x5d0 drivers/base/dd.c:799
+ driver_probe_device+0x72/0x890 drivers/base/dd.c:829
+ __device_attach_driver+0x568/0x9e0 drivers/base/dd.c:957
+ bus_for_each_drv+0x403/0x620 drivers/base/bus.c:457
+ __device_attach+0x3c1/0x650 drivers/base/dd.c:1029
+ device_initial_probe+0x32/0x40 drivers/base/dd.c:1078
+ bus_probe_device+0x3dc/0x5c0 drivers/base/bus.c:532
+ device_add+0x13aa/0x1ba0 drivers/base/core.c:3682
+ usb_new_device+0x15f4/0x2470 drivers/usb/core/hub.c:2651
+ hub_port_connect drivers/usb/core/hub.c:5521 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x4ffb/0x72d0 drivers/usb/core/hub.c:5903
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
+ worker_thread+0xea7/0x14d0 kernel/workqueue.c:3389
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-With those two issues addressed,
+Bytes 0-72 of 73 are uninitialized
+Memory access of size 73 starts at ffff88811bbc6000
+Data copied to user address 0000000020000000
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+CPU: 0 UID: 0 PID: 5938 Comm: syz.0.15 Not tainted 6.11.0-rc7-syzkaller-g77f587896757 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+=====================================================
 
-regards
-Philipp
+
+Tested on:
+
+commit:         77f58789 Merge tag 'arm-fixes-6.11-3' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14c860a9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ea008021530b2de3
+dashboard link: https://syzkaller.appspot.com/bug?extid=b8080cbc8d286a5fa23a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
 
