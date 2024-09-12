@@ -1,137 +1,155 @@
-Return-Path: <linux-kernel+bounces-326478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 120AD9768D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:14:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 604E59768D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:14:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D308B228A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:14:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C65CEB2278A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE6C1A286A;
-	Thu, 12 Sep 2024 12:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72EE51A2631;
+	Thu, 12 Sep 2024 12:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="LoREotbR";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="C7Pb6Eju"
-Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKrsQ3dG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4801A263A;
-	Thu, 12 Sep 2024 12:14:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1EE029CF6;
+	Thu, 12 Sep 2024 12:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726143273; cv=none; b=dNkmFdb6EMkQOAoSRc3SApxMuj6MWZC/SPbwKw4e194eXRJ/UFK7oP2aX4NTmzk8AfF2yklWKgnoXsG6oHYIEIpzdL+eXNbzZuJ9W+Oiy5HZ8hD75vkNeDuMfafbTkFNXVyAaSnbjypad6nkEsKxDEi2ZlFyXgt66gxt6Wd7D/4=
+	t=1726143270; cv=none; b=RklRFwYcW/Kxdd9USibMBihsoe1Cf0zR/zhXPJGLz5n4096Vp9BWAX5EEkVfeWlnrZIa9bjO2MJekac2tnjOe7YrMzSTv7ImIQZOzCa8o3LHUhcr+urp1lz+yK7AqyFON1HVZzr4AmV3farWLL8SRy/aHtAHqtyr2LuzbGVQUyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726143273; c=relaxed/simple;
-	bh=wfy7BXzUP++0BaErFdBByS3tw68gIefu8iQ4Ueg9cro=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=ZDV0kIIi+YjZXIK06QvWI9o/yIQ8TUPXQOLsqDwqhjB0wOfIJBvBm6/a0GvW+qeOBZP9fe0gUiHo4hK7NM8bcl3quNbwFWe5X2nWz7dOzLuHiM23lHctWBas7pawkZyrpUDwmLkfG0bR3bmHfRYKKovrXfK6ePSWmt6YRFgNcKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=LoREotbR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=C7Pb6Eju; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id EF4C7138013C;
-	Thu, 12 Sep 2024 08:14:30 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Thu, 12 Sep 2024 08:14:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1726143270;
-	 x=1726229670; bh=reaSEXaRRQ1hjONh07KHDbOBlC1RQgriGSWx/Pcwh1Y=; b=
-	LoREotbRQ4ZIqT2OhqtqhDcvR+VnP9PAFxxO3qT3qxKWYk3bh491wApIvDNE6PuS
-	35xVtVqsLK2KD5c6y9psDpQ/jU5YPwL0bRvdOuJdKOMQKxXCITG6bb10Z9iadMip
-	0u2C1db40qQCHU/cLsl4Bd3fNOx4xp54U6qJ0L5LzkuL09X4V5UAIzZoqGp1Wzo3
-	k4joYANqcV2Q1EWB1fVOtA4fQCsbyF9/pfjFAIG32d6633m/fRKwHZ8iAJ2luCtZ
-	jMWlKanxbQflNCuWEDBOmmH7hxJef7mT3Hf5N7xrujoE3lAW9RNjtNwOJr8PeGIw
-	WDYPIGoiMscI22EC9yk9sg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726143270; x=
-	1726229670; bh=reaSEXaRRQ1hjONh07KHDbOBlC1RQgriGSWx/Pcwh1Y=; b=C
-	7Pb6EjuwfYEp4HSI3FlinzA/EsvUzNuF/uctjzCtE5JxBypYf0pCoovNFYEdMy2A
-	w5voXs3Ji0m7eSU0mo9+TvrcIj3V3upzUSp716/psJTFZXl/LLTy/8kHzfJfE9dW
-	knKEh8a88UYox1WjHtIqGickF1r30ltsJgRfIJbVX7V9T4qs+YwMQwdOlSgO/CEM
-	H2FW5TyTSHS5VC90Y5hkoLV+YtHcCklLzIB+E0DvnqdIcbEc/HFbflsjdHNz2ep9
-	S/s+ctA2ONX3eIwaLPYMngS+hsT7mATSiFvVOswGlUsCsbw4toiIG+zrUuhP1FvC
-	R9OITnd97BtcWzQ01W3ew==
-X-ME-Sender: <xms:JtviZoES2zax_tGI3zH2kKHIXr_ww-VPJvO4o757Qj4ckbsdelV-Tw>
-    <xme:JtviZhXjyGJ_h2rUwv7XxWDjvXced51Rty0aQv2v2wzso2C7FDTGeBLYC5bYx76a7
-    fW5otLaKBEF4xQqUSI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejfedghedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgepfeenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepjedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhtuhhrqhhuvghtthgvsegsrgihlh
-    hisghrvgdrtghomhdprhgtphhtthhopehsfhhrsegtrghnsgdrrghuuhhgrdhorhhgrdgr
-    uhdprhgtphhtthhopehssghohigusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlih
-    hnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdp
-    rhgtphhtthhopeholhhofheslhhigihomhdrnhgvthdprhgtphhtthhopehlihhnuhigqd
-    hkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhig
-    qdhnvgigthesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:JtviZiLmSRC9BBvgaeHvK5xpp4-YliZMW4iyfEp-vw_pwzbool83eQ>
-    <xmx:JtviZqH0dDy6Xndt8_oX8Db3-L3glFstrce2AEeh0_dcgUgdRmI-Qw>
-    <xmx:JtviZuWSRDDDlIVRHT6Z1wIiSnVyt5Vtom0p5tOMqj8WeU9ukwhZwQ>
-    <xmx:JtviZtPlLqtEPx__a4-0Xa0sfqNim0RsterOMgmshDcgGjeV21KQtA>
-    <xmx:JtviZgIaphFWNTcHKuYxmltxspw7lUe43XbDKK3vemJFEFqMzTyZ9xJw>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 8F39C2220071; Thu, 12 Sep 2024 08:14:30 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1726143270; c=relaxed/simple;
+	bh=LDj2BB55PD5Fd6BGi69vq4kA8GqCGYuml3ehTb4uRjs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B4c6RWcI13RWkazmEi3npC9n5p8iXoQbU0s9Czu19paVC4U2IlQf05zuozyq0XhuTyBwk2B4lEUSH9USZdpAvXMtG6qI9iWtttbksZim5BDl7++1o89ievBcESqoS0P8GM2o2cD3gK/SH2QaYQHvp1MQLMjfJXLXowsfhv+C46s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DKrsQ3dG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3EE3C4CEC4;
+	Thu, 12 Sep 2024 12:14:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726143270;
+	bh=LDj2BB55PD5Fd6BGi69vq4kA8GqCGYuml3ehTb4uRjs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DKrsQ3dGHSRyiTPrgsdPrNPmodaASDBZv1AAGOimmjSpiYPKc5Bsk3WhrsPhtSxWN
+	 zK1W0NmS4DrYmC6cW4/8BumcPumPGZBuAZpkIsdn0UIF0ojw5dOfJi/FGk74XWMB6Z
+	 /AP3ZGP3m6PMpXw30hww681wBZ/TAqJ9aqjzlcP7IKhzpleqkISe5mK5jlGjNSCm/f
+	 o3ft+DXhOg5JQ99MEKfJybAdXM6DozvENtSHRRGRB3Uv6tbloOosOhZo22B26F4pCa
+	 JaQUkemGRAfMKLa8MiX+w1/u9JrNJLgCCgw88k88lvAY2eCh5xDjTAA3F2fvJdtPl9
+	 CilbJuOAD+MlA==
+Date: Thu, 12 Sep 2024 09:14:26 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Changbin Du <changbin.du@huawei.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] perf buildid-cache: recognize vdso when adding files
+Message-ID: <ZuLbImKneZj2afcm@x1>
+References: <20240912120303.2294175-1-changbin.du@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 12 Sep 2024 12:14:09 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Stephen Rothwell" <sfr@canb.auug.org.au>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>
-Cc: "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- linux-next <linux-next@vger.kernel.org>, "Olof Johansson" <olof@lixom.net>,
- ARM <linux-arm-kernel@lists.infradead.org>
-Message-Id: <1bd91561-73dd-454e-91ab-49fce29eecb0@app.fastmail.com>
-In-Reply-To: <20240912105551.6e3a33d2@canb.auug.org.au>
-References: <20240912105349.0453d06b@canb.auug.org.au>
- <20240912105551.6e3a33d2@canb.auug.org.au>
-Subject: Re: linux-next: duplicate patch in the clk tree
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912120303.2294175-1-changbin.du@huawei.com>
 
-On Thu, Sep 12, 2024, at 00:55, Stephen Rothwell wrote:
-> Hi all,
->
-> [just cc'ing the arm-soc contacts]
->
-> On Thu, 12 Sep 2024 10:53:49 +1000 Stephen Rothwell 
-> <sfr@canb.auug.org.au> wrote:
->>
->> Hi all,
->> 
->> The following commit is also in the arm-soc tree as a different commit
->> (but the same patch):
->> 
->>   706ae6446494 ("clk: fixed-rate: add devm_clk_hw_register_fixed_rate_parent_data()")
->> 
->> This is commit
->> 
->>   f579278d690c ("clk: fixed-rate: add devm_clk_hw_register_fixed_rate_parent_data()")
->> 
->> in the arm-soc tree.
+On Thu, Sep 12, 2024 at 08:03:03PM +0800, Changbin Du wrote:
+> Identify vdso by file name matching. The vdso objects have name
+> as vdso[32,64].so[.dbg].
+> 
+> $ perf buildid-cache -a /work/linux/arch/x86/entry/vdso/vdso64.so.dbg
+> 
+> Without this change, added vdso using above command actually will never
+> be used.
+> 
+> Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
+> Tested-by: Adrian Hunter <adrian.hunter@intel.com>
+> Signed-off-by: Changbin Du <changbin.du@huawei.com>
 
-Right, this unfortunately has to stay in the soc tree as a dependency
-of the ep93xx driver.
 
-     Arnd
+Thanks, applied to perf-tools-next,
+
+- Arnaldo
+ 
+> ---
+> This patch is separated from the series "perf: Support searching local
+> debugging vdso or specify vdso path in cmdline".
+> 
+> v2: also update build_id_cache__update_file().
+> ---
+>  tools/perf/builtin-buildid-cache.c | 34 ++++++++++++++++++++++++++++--
+>  1 file changed, 32 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-buildid-cache.c b/tools/perf/builtin-buildid-cache.c
+> index b0511d16aeb6..69f43460d007 100644
+> --- a/tools/perf/builtin-buildid-cache.c
+> +++ b/tools/perf/builtin-buildid-cache.c
+> @@ -172,6 +172,36 @@ static int build_id_cache__add_kcore(const char *filename, bool force)
+>  	return 0;
+>  }
+>  
+> +static bool filename_is_vdso(const char *filename)
+> +{
+> +	bool is_vdso = false;
+> +	char *fname, *bname;
+> +	static const char * const vdso_names[] = {
+> +		"vdso.so", "vdso32.so", "vdso64.so", "vdsox32.so"
+> +	};
+> +
+> +	fname = strdup(filename);
+> +	if (!fname) {
+> +		pr_err("no memory\n");
+> +		return false;
+> +	}
+> +
+> +	bname = basename(fname);
+> +	if (!bname)
+> +		goto out;
+> +
+> +	for (unsigned int i = 0; i < ARRAY_SIZE(vdso_names); i++) {
+> +		if (strstarts(bname, vdso_names[i])) {
+> +			is_vdso = true;
+> +			break;
+> +		}
+> +	}
+> +
+> +out:
+> +	free(fname);
+> +	return is_vdso;
+> +}
+> +
+>  static int build_id_cache__add_file(const char *filename, struct nsinfo *nsi)
+>  {
+>  	char sbuild_id[SBUILD_ID_SIZE];
+> @@ -189,7 +219,7 @@ static int build_id_cache__add_file(const char *filename, struct nsinfo *nsi)
+>  
+>  	build_id__sprintf(&bid, sbuild_id);
+>  	err = build_id_cache__add_s(sbuild_id, filename, nsi,
+> -				    false, false);
+> +				    false, filename_is_vdso(filename));
+>  	pr_debug("Adding %s %s: %s\n", sbuild_id, filename,
+>  		 err ? "FAIL" : "Ok");
+>  	return err;
+> @@ -323,7 +353,7 @@ static int build_id_cache__update_file(const char *filename, struct nsinfo *nsi)
+>  
+>  	if (!err)
+>  		err = build_id_cache__add_s(sbuild_id, filename, nsi, false,
+> -					    false);
+> +					    filename_is_vdso(filename));
+>  
+>  	pr_debug("Updating %s %s: %s\n", sbuild_id, filename,
+>  		 err ? "FAIL" : "Ok");
+> -- 
+> 2.34.1
 
