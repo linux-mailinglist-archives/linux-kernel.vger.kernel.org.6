@@ -1,262 +1,154 @@
-Return-Path: <linux-kernel+bounces-327013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD752976FD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:51:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0288977015
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27D961F24C9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:51:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8300A2864F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F4E1BF7F3;
-	Thu, 12 Sep 2024 17:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA8151BFE06;
+	Thu, 12 Sep 2024 18:05:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jgAwe7HA"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2068.outbound.protection.outlook.com [40.107.92.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="QzBGhaXr"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B905143C6C;
-	Thu, 12 Sep 2024 17:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726163464; cv=fail; b=GgFPK6L7UWa8KVCCwPWGfm8yfzxa6mnXo9hqEkLG+yZBMEu8QqP44/Mf7tBvn36ElyUObCPko5UIO12rsYxFnQHACu5TgByLOkQTRlU4VvAICkmSqVswAWXIBVPvmupIR/IxrZnMzFyf1Nx6wFO4eOyzrbCy42FEni/2jsDWzao=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726163464; c=relaxed/simple;
-	bh=SgE4rrqPrGKI5qee0739yceOmiPuJUBGMpeO8GLVcdQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=gtem14u6KmY4ytpK2qN60PHatjytkerDo//bzYM24md3bMeXZ/lZywivd8eE0WyAJBQb5r29r/TuB97AAS+Y9l49KraJ3LhsadCDLbhb4+/s/bpbqb45Sr9ej5kiJay+PQ58ysw3X0HWK8///tYZloNSQ/9pVngxLlfB7wCFJBM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=jgAwe7HA; arc=fail smtp.client-ip=40.107.92.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cdwlmM3qmE60Wfk1mIP06BjdUwgYaQM3nh64jUEuSZ1nDY6YcGp7IYpAlw69O5EVtDf7P0OgoED7knfgPoXudNZFWrkL55of+o8xoKVNtSNjTKiuj5f2hd/w0HCk1BdRcvKsnyB9ghn53C2vWTl4Kxd768a3jEGyvaDW/vbeC08yMraO0iaz286vi2zFGDJt7NXpyC8lm5/etMU2Dy5mrmvt3BzL+oUHbHTqNOtR9q44L82CUC8cPw85WAjuMwzwd3P55NPQQ4lYyQUjzK4kcsPuJS3xk/x83G5OZyc2fQwCC1jrafJYP2cs8I8mMk1RvZC7Vlx6LcVQFHhlzmgq6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Onm6pcqxQWHaxGj9W/vk1RMLyZkQgsCqKxbcauLRo9I=;
- b=V8ogaWXklOuG89dC8/GqhoT7BYmk8Kscf+JdROxckNpEjmqEU9hgQujy45w5/4k0udp5/+sYnibTqLSZf/p6g88sipD97J2zLrdnVSNAT/z65R1TKIn9hF2QWI27hKu9quIXhaVKo9J7HvpWBP5nExxq9FdyeNItctAt+7D8HHAcMkbzdbzWCGxMFG3z8wFO3a4I4ow4smjhEouytQ/57yphG9VFJycb7xfoKyaWaCtGxF7cMxie+xgUAjFXQmEUXnfkNyi+VDy98iBGxmPFUf3j1jQuFSXJDA+oVPQFm7F0GwbJLRHwmWVo6lSFdmV3xHHSXY3288JsGFUSk38Q1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Onm6pcqxQWHaxGj9W/vk1RMLyZkQgsCqKxbcauLRo9I=;
- b=jgAwe7HAT0+lbWBaAVTkyMYPoxrKeXk1tRWy0QGOCjit/nE7rJOFUmgzxfDCUBZ3d2PdDlpRwLOoC0YrP1W/4JvYXGlDRXsa8ajfcfOZtz+CswzrLWMrMo2FkcGvw11IsZPK+pzWGkj7a8vFZWsCE+W6NDMDdRLXEoBirD95Esg=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH0PR12MB7982.namprd12.prod.outlook.com (2603:10b6:510:28d::5)
- by MN2PR12MB4408.namprd12.prod.outlook.com (2603:10b6:208:26c::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.18; Thu, 12 Sep
- 2024 17:50:59 +0000
-Received: from PH0PR12MB7982.namprd12.prod.outlook.com
- ([fe80::bfd5:ffcf:f153:636a]) by PH0PR12MB7982.namprd12.prod.outlook.com
- ([fe80::bfd5:ffcf:f153:636a%3]) with mapi id 15.20.7962.016; Thu, 12 Sep 2024
- 17:50:59 +0000
-Message-ID: <2ddd0888-abef-4d28-851a-adeaa380641a@amd.com>
-Date: Thu, 12 Sep 2024 10:50:56 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] tg3: Link IRQs to NAPI instances
-To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org
-Cc: Pavan Chebbi <pavan.chebbi@broadcom.com>,
- Michael Chan <mchan@broadcom.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, open list <linux-kernel@vger.kernel.org>
-References: <20240912155830.14688-1-jdamato@fastly.com>
-Content-Language: en-US
-From: Brett Creeley <bcreeley@amd.com>
-In-Reply-To: <20240912155830.14688-1-jdamato@fastly.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR05CA0076.namprd05.prod.outlook.com
- (2603:10b6:a03:e0::17) To PH0PR12MB7982.namprd12.prod.outlook.com
- (2603:10b6:510:28d::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8144513FD99
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 18:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726164338; cv=none; b=l7kqNhvamKLgU4qX7CspdDceZO0jgocFm+CgABq3Sr2Tps9OOOZcfeZMfqWIWx4H+fqrfw0+i3DF1FBWgycQYKehizY6XBSsPwSqvM6e1rxTW0wmFHki74j609SFB1NuX4aGSrShe0Gu1ouDrOJB7B0n8vFzx7VYC5SxS6yH1nA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726164338; c=relaxed/simple;
+	bh=RV2uWN8soq+fqpNsT0C8IJeLAsSUXVvFEfelGbTZnco=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N7zYGkzaLY/O9UwSqw3qlK2f0k4gNx8BV7B9rUQrzQb0vvTsKV2uXHEbyVYLvbtl+VL4pfztjrvH9AR8MkxLgrqb7hO6sV74Cxf45IH6QsEO87gm2tNZlKmwN04AWsbv2KAnkD1DSuXX15/PqcU3Bp6mlccEnknKPKne6of/9po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=QzBGhaXr; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3719419c2aaso130962f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 11:05:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1726164335; x=1726769135; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tTvQ0neig09rznvCNXv5+GeGKEb4Q79dd3N/fQCyhE4=;
+        b=QzBGhaXrieXC9BReBy+dqqlstJmWYMxAFZ0qEQ7T3KaiyHBdonWJZ6nts9CkUa2/H3
+         bA78dcKRQAGVIMWdIEQQgUcj639EGMRqIQMIYkT6TIOkywDf2nygnFs4D5mYjx4Ug/U3
+         VMaedeXsM9U1LNx/5z7IOkbfTGAvagm9cWVotGrZBxkScI4SWUusNBEHfat6ZC4lmHv3
+         IXcmPPH2QiqIEUhUGPLO/eEK1ewqBBhDnCnk05q3KKcA+YqjGNZsFTVKs19ljcEpb9y0
+         cR1PnXBXEBf39X8kJvnfokTU+q5W3Gnlyh2WFS6Aaaw/JOGH4JucvMx2qXyip4k0fSGy
+         bexA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726164335; x=1726769135;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tTvQ0neig09rznvCNXv5+GeGKEb4Q79dd3N/fQCyhE4=;
+        b=mtJ0Bmfsqx+6zqYMDZJjE11Jvk+m6uYHLOlpLmUIfqinPf0cfn/cdL3uZQJv2crbtl
+         6t2gTe8wSeMjG4gn+Je9cUr6r8t3bN4YmP1Q1atS1dLFElBfhWE+8yQ34GVoZJOetjOq
+         3EatkSnk+49lFZvxmmNb1MYD8+vUyki6juV/DcJ515JTinTrY6jCTODlIgGdnjWEXcJV
+         C4k0lOsJTaw9mjB/eV6W6nc9QHXauJdFC3gvo9vBMC1GehnRoJ6ivwCucNiH3u1dj7YB
+         qMKhd94vkDrnGzCPXpg1Nynd/dLrVlRlhRNu1E6cbEMiC+wRxWYBWZGQ9EBWWdsxYIHY
+         GZqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVbelUZeNLNtiEcZdrvgVBmWOGHomePuACxckWYbpwptQaxtcUz4gmJJCGQK2G30/j2rVzP2M2SXJMZ7bE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynzNBGaKxczfHU1FaW2VVvcsDfm6MjJfdaAd4w0D6XD5koBiq+
+	OEiW9koJQhIZxkWasIY/q8dJaXSVr6KiOevp5Uatw7h9OqFxgu34P/NvrhoSjZrXXYnlVZzRnV3
+	A
+X-Google-Smtp-Source: AGHT+IGI3Bj8ICk5AfYRfmtbq2hL2SaATJflcUcHDHijwEfXwXqS0qpG6ijSsUG04+DM1VV9SB4CnQ==
+X-Received: by 2002:a05:6000:2a8:b0:374:bfd1:a786 with SMTP id ffacd0b85a97d-378c2cfbae9mr1356222f8f.4.1726164334620;
+        Thu, 12 Sep 2024 11:05:34 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-62-216-208-212.dynamic.mnet-online.de. [62.216.208.212])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd41c36sm6819472a12.2.2024.09.12.11.05.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 11:05:34 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: kent.overstreet@linux.dev,
+	kees@kernel.org,
+	gustavoars@kernel.org
+Cc: linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] bcachefs: Annotate struct bucket_gens with __counted_by()
+Date: Thu, 12 Sep 2024 19:51:24 +0200
+Message-ID: <20240912175122.112625-3-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR12MB7982:EE_|MN2PR12MB4408:EE_
-X-MS-Office365-Filtering-Correlation-Id: bc3d9417-104f-40cd-f651-08dcd35375b6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bUxPVjFnSXU0WWxHZDdPTHRJdkhGUEVWZllmYnl0U2UvZmhpUE1iZHl1OGFq?=
- =?utf-8?B?VDhSR1hJODFEWkFaNThZSEpBQVozVEhiVnpDTVFKWVJIZ1NwZDZPbUJ0WEcw?=
- =?utf-8?B?YWZqbHRod2RnTmNtTSs0c3ZGTnBUZ0lqMktqRFRYN3FRWXVpUlk4Skc1Vkov?=
- =?utf-8?B?UGRhSE1sZnJpc0VlMzhiSnBwaWxIQm5WTUZNM1RFUEVlYXlsL1VqeWVzdGlX?=
- =?utf-8?B?bzZqTFBkK040RXJYU1NsZ2dHWit3cHhzeDVhWC9CTVhTMlBmN2cyNHIydDlt?=
- =?utf-8?B?cTJTSjh2eEl3Z0hORjhMeWZSTWVPb1l6UHRnQ3dsbG8vK2dpSXd2c2NIRURK?=
- =?utf-8?B?R05RYkdzN1B0bTY4YzU3b2F3bWpWTURUWVV1OW9QMVNMSW9PT0piMVpyY3ZT?=
- =?utf-8?B?Vk5UUTB6aFhkNmp0S0FTblN0Mk5YRnZNeVduWHZlTHdpUDREWXBPR0JCZzMx?=
- =?utf-8?B?RHBVOWdBYkcxdFFQSjVlMTgwaTFFQ0FoVVFaeVQ1UEVNU0dBRUdybnFWcHV4?=
- =?utf-8?B?U0FTRjVVcEQ2Mm9VSDE2ZWlOY1BxN0N2R0NFVi9ZVlBidnRaenNHOGxEMllB?=
- =?utf-8?B?eUwxR1J0VnhqMkduQWFIUC9TdGhwS3grWkpsTHpXNjkyMHNPRDlzOGFpSEha?=
- =?utf-8?B?UjdLZTJ4a3FaYVBqdFlvem9uQmdDdWMxQUZweVdjQTdFSk5rNTFGL0Z4dXdE?=
- =?utf-8?B?UnpkdHNiY0ZCR2hibmIwenVDbGJLL2ZmQ3RUMWQ1RjVZMWFJUDVHSnJYL012?=
- =?utf-8?B?S2FDOTNndjZDbDNub0craHQxdURxb1l6RmdFWW9hN0x1S3pjSmFvR2ZEVmdk?=
- =?utf-8?B?N25ncGhVanZRcHFpYjhDY2paaFp6N0ZoOU5ZT0s1aHlScld2dGtMSGlFYXR6?=
- =?utf-8?B?WVpPU0EwZGVGeTZuR3h5T053MWxlUkhVQmtWVmJVUTZxRmVwZks2NThnbGFV?=
- =?utf-8?B?Y2JKU2NUdEtuWS96d1N2YlNQLzhkNkprY2pQUTE2bmhrcXhxdGJHTUxFRDZJ?=
- =?utf-8?B?UHF6aVBSWTlEcExudGtoVkVpQTJwbUlVQjZwZWcxWmlVeW01amkwZ3ZzOGxC?=
- =?utf-8?B?dm9yWjJZMmpCaEJZRllGZTZ1ZWw4eTQzSkUzblByM0VBMExnTEt6Zy9SL0NS?=
- =?utf-8?B?eUhDVjdjQXBIdzlnWTdRbWltR3VMdU1KYS9Pd0dtSDZ2bktESFZTQWNlMUdz?=
- =?utf-8?B?UEpGVTQ5NEdLbXJHU3d6b3ZEenZUSk5qTjU2dFNZSjFsWThWVkRGelhYam1h?=
- =?utf-8?B?T3BJM0gvRTZpSjBIQkx3ME1sVkFlTkhLYzUxVEZEZEhid2JSbFljRHZNMCts?=
- =?utf-8?B?OFVtZStld0lYN3Z6bG1xTXdoQkUrNkhxRG9wcjhCWDlOMkkwS1huVXRNazdI?=
- =?utf-8?B?RG1qa2dZZ0VFTEQ5SlpkVGc4Sk1nYkY3WEgxWXpmMGhIM2hpL0FVTE4xUDhq?=
- =?utf-8?B?Sjc4MHBoMk4xbGVCdy9TQzlkV2tTSUl3TlpWYnlPaXU0QklweEkzR1JieW5m?=
- =?utf-8?B?TGVnUGdwcUFOVW4xMm0xZVlFcTBwRU5EaTBHV2NUYTFCRjM3OW1tenNZQkhZ?=
- =?utf-8?B?ZEVlT2QzeTQ1TUNpQ3h6OXVzTk1aYlVRSGR6blJuNDNQcGUzK1g2YnlPNkhF?=
- =?utf-8?B?Tk80dGRDSU1VeHFDZ0pTNUxVVUxLUExKU3RheVBkbGJRd2RUTExJaVZQWi95?=
- =?utf-8?B?NXp6MUcrMU0veEpUY0pHTytEWCs2YUZEVkFPZ1R3V245MTQwSk1GYktwcW5k?=
- =?utf-8?B?WW5MVnJjV0k5Z1hQSE9vRmlCQmJ1TS92SzY2VDJ5MDlROGVGS2JXM2Z4K3V6?=
- =?utf-8?B?RTM3akQzUUhPRWIyVEYwUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR12MB7982.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NzBBclFPaGVDczQ3M1BOSVlJMHpoQ2IyVkNvbWI3eUNjaFk0ZHU2NCtiSERV?=
- =?utf-8?B?WHdSdmc4MUd1L3FxQjZ1YnFXZTRmR014a040WWZJS21Pd3BRUTRicmVlTGxQ?=
- =?utf-8?B?eU5KS0FDZUw5ZStKZkt1Zk54S1FSSHZEejROMUR0c3VlTXVjSnpUL01zaDd6?=
- =?utf-8?B?ek5idDVCQmVmYkRoMUl0bElTS0p2aXhHcndtZWxMRzJ4ZTd1d2RpSW84SXhx?=
- =?utf-8?B?M0dBL1FhYjBmd2xBNCtIa2VNK1N0N2gzNy90OGM1djRxU1BiblgyRVpLK3Ju?=
- =?utf-8?B?L1A5MXRNbk1TTmdpOGVpWStMa3FrNHQ2aFBxK21LMGV1eFlQNDlvS28ydDFB?=
- =?utf-8?B?M2RPaVdCMzdzRlNDSkpBMDQ5L2FIK0s3U0VubWtvVEZhaW9PTTJ3dXptS09E?=
- =?utf-8?B?dDAwS3p4TjBHUitZQkQrakZ6TWtoSVVnUVovbWplaUFBVEt5VGtKU1BNTllJ?=
- =?utf-8?B?M3JYVnZKdENGOWtSeTJjNzRDL0JKbWc2VHpyUEQydFBlbWROWGZ2Ui9FNnVv?=
- =?utf-8?B?VVI3dkIvVVduQStSdWw1bUM4cFM4MjlQTXREUzIwUXFsVHZmVzVscks5Mm8r?=
- =?utf-8?B?aEdZU2hOTUdsRnRnRzEwT3lVSWJrVHlWKzBQK2hiaVR0ZXlwdG5UUnFZUURN?=
- =?utf-8?B?QzBMVWw0OFZlYnNjRUp0N2J3NUhRRURYaTFneWN6SnBvSlF1V1REb1VTQU1v?=
- =?utf-8?B?VWk0RVdDMUtYeDBNS3QxTnQ5bXMzVUpWVHZBTDNhdm53OUJpSU1FNHVnRlJT?=
- =?utf-8?B?VDdsRHFsYWNMUGpzTVpTM2hxN3NETTdkaGZMeTlwdmEwREIvZ2kzYTZxZjJu?=
- =?utf-8?B?N0w5L3U1R3plUnZENmJ6SkpmWm52cng2Mjlpd2RjR2Y1bXRBbzJ6L0tQYWxD?=
- =?utf-8?B?Nkt0Um90bm5HOTF3MlJUdjdIVjBkRjZ5clpSL0hVYWR0ZlhVV3ZjVEVXd1Rw?=
- =?utf-8?B?a2hKTnRFQzBIQURNQWlWQnB4VVAwdWJUd0RNL1pqUHdDSWNuQkk2SlRxVHFN?=
- =?utf-8?B?ajZYZGU2SjY0bVJxc2d6Wm43UWVwTVczbmFKK0RtaHMzalRGR0wyVE5MRnMz?=
- =?utf-8?B?MUNaNHQwYWtxcmhpbnRNejRnL1NvbEtyNkF6OUE4NXI3a3hDc2R0blZpZnNI?=
- =?utf-8?B?WFEzOE5lV3hqUzlqMGpmUFc5aFJCY1hWY3RrMFNTdWlwRTR6QzFWVlFBU2Vz?=
- =?utf-8?B?MExnUXlEQ2JhUzRKQ3VTQjlmSkRkZHlYSVF4Zys0YjhCbytocnJVUU9TZzFW?=
- =?utf-8?B?UFE0QzVpVlY2TXFPdUxKNmh0Y2IyTUJqUFlTTThaZ0VURC92WlpRSlRoSWlU?=
- =?utf-8?B?eHQ3ZWlVbkR3MmdhMWpyMFVDc2l0S0ZaSlRqNCs5bFU0Z2ZBWG01QjloQXVo?=
- =?utf-8?B?N05ReThnMmIyZWhwRkJUK2pkbXlOdERNRTU4ZWtiai8zTlNLeEJOWU13VzdY?=
- =?utf-8?B?QkhzRU9reE5BdVo1ZU5nZUl5eXdiMFhKVWJrNWIxQXJhekZHTWUwd0FRbGw0?=
- =?utf-8?B?MWhUaGpWK0RuZGdZZ3JRT0RCQ0o5UzBYL1kxWTdDamNxOGZMT0VxVE4zWm1C?=
- =?utf-8?B?YXpDZkhWWFkxSUdnRWJLQ0pZRzYwUVFqTmMyeEhGbDY4OEdOY0ZLVFNoNmNi?=
- =?utf-8?B?emNReWNjZGh2OHJFWjEvSzlnS3Z0ck5hQmhLMUZjcXk2MzhRekE4SDIrWTZ1?=
- =?utf-8?B?eEtLY3F6Tk13Z1B2alVleTAvQTMwSzlpUmZKM0hsNnQyZ2d3SGpHd2ZyQUNJ?=
- =?utf-8?B?KzBZR2Rja01TbnZvWkxqLzU0STVGRUw1V1lyMmh0QlNoQjFFaWN1MVUxcTBG?=
- =?utf-8?B?VTdQVUpWOEt4UUtPTmR1bUtWRDY0L2tlWXlvVDRPaGFtQlRJSi93MUxnL1px?=
- =?utf-8?B?aE1BVFlrSHJCMTM1WEZFS3h4dmVYcmd0Qm1pemNGbnhibFVzV0NadEJCM3Fp?=
- =?utf-8?B?akdPK09kUS9ub0pFRWcwaVRQbWFXRDZBc0xlbEcyM0JVdjlWTHlWcksrcE1s?=
- =?utf-8?B?ZVRPWVExSUJHcDdIakRJTG4yaTg5MEthMWlpUy9CZDBQM2hTSVY5OFVjN0N1?=
- =?utf-8?B?Z0paTHYreWN3aGF0VmxyYW5DT3ZVcVRJdTNWeXliWGw0dVYxVVkrdUhQcHNP?=
- =?utf-8?Q?ExtI0y8KGSvKjdxDE9H+sCp4x?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bc3d9417-104f-40cd-f651-08dcd35375b6
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR12MB7982.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2024 17:50:59.2045
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: btgPR+dQmoMrVGiNFtmm/2+KUmtJVw+RnsxQ/t28w3GpdWeu12C+HhNm8NrOAfBMbQ1v4TQcjFn4cG2jJDjl2g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4408
+Content-Transfer-Encoding: 8bit
 
+Add the __counted_by compiler attribute to the flexible array member b
+to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+CONFIG_FORTIFY_SOURCE.
 
+Use struct_size() to calculate the number of bytes to be allocated.
 
-On 9/12/2024 8:58 AM, Joe Damato wrote:
-> Caution: This message originated from an External Source. Use proper caution when opening attachments, clicking links, or responding.
-> 
-> 
-> Link IRQs to NAPI instances with netif_napi_set_irq. This information
-> can be queried with the netdev-genl API.
-> 
-> Compare the output of /proc/interrupts for my tg3 device with the output of
-> netdev-genl after applying this patch:
-> 
-> $ cat /proc/interrupts | grep eth0 | cut -f1 --delimiter=':'
->   331
->   332
->   333
->   334
->   335
-> 
-> $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
->                           --dump napi-get --json='{"ifindex": 2}'
-> 
-> [{'id': 149, 'ifindex': 2, 'irq': 335},
->   {'id': 148, 'ifindex': 2, 'irq': 334},
->   {'id': 147, 'ifindex': 2, 'irq': 333},
->   {'id': 146, 'ifindex': 2, 'irq': 332},
->   {'id': 145, 'ifindex': 2, 'irq': 331}]
-> 
-> Signed-off-by: Joe Damato <jdamato@fastly.com>
-> ---
->   drivers/net/ethernet/broadcom/tg3.c | 10 +++++++++-
->   1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
-> index 378815917741..c187b13ab3e6 100644
-> --- a/drivers/net/ethernet/broadcom/tg3.c
-> +++ b/drivers/net/ethernet/broadcom/tg3.c
-> @@ -7393,6 +7393,14 @@ static int tg3_poll(struct napi_struct *napi, int budget)
->          return work_done;
->   }
-> 
-> +static void tg3_napi_set_irq(struct tg3 *tp)
-> +{
-> +       int i;
-> +
-> +       for (i = 0; i < tp->irq_cnt; i++)
-> +               netif_napi_set_irq(&tp->napi[i].napi, tp->napi[i].irq_vec);
-> +}
-> +
->   static void tg3_napi_disable(struct tg3 *tp)
->   {
->          int i;
-> @@ -11652,7 +11660,7 @@ static int tg3_start(struct tg3 *tp, bool reset_phy, bool test_irq,
->                  goto out_ints_fini;
-> 
->          tg3_napi_init(tp);
-> -
-> +       tg3_napi_set_irq(tp);
+Update bucket_gens->nbuckets and bucket_gens->nbuckets_minus_first when
+resizing.
 
-I haven't used this API yet, so I was trying to figure out if this is 
-the right place to call it. I think it is, but other examples may not 
-have put it in the right place.
+Compile-tested only.
 
-I think there is a minor bug in fbnic/fbnic_txrx.c. I say this based on 
-the following:
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ fs/bcachefs/buckets.c       | 13 ++++++++-----
+ fs/bcachefs/buckets_types.h |  2 +-
+ 2 files changed, 9 insertions(+), 6 deletions(-)
 
-fbnic_alloc_napi_vector() {
-<snip>
--> netif_napi_set_irq() # napi->irq = irq
--> netif_napi_add()
-	-> netif_napi_add_weight() # napi->irq = -1
-<snip>
-}
+diff --git a/fs/bcachefs/buckets.c b/fs/bcachefs/buckets.c
+index 721bbe1dffc1..8e8ec400b9ec 100644
+--- a/fs/bcachefs/buckets.c
++++ b/fs/bcachefs/buckets.c
+@@ -1252,8 +1252,9 @@ int bch2_dev_buckets_resize(struct bch_fs *c, struct bch_dev *ca, u64 nbuckets)
+ 
+ 	BUG_ON(resize && ca->buckets_nouse);
+ 
+-	if (!(bucket_gens	= kvmalloc(sizeof(struct bucket_gens) + nbuckets,
+-					   GFP_KERNEL|__GFP_ZERO))) {
++	bucket_gens = kvmalloc(struct_size(bucket_gens, b, nbuckets),
++			       GFP_KERNEL|__GFP_ZERO);
++	if (!bucket_gens) {
+ 		ret = -BCH_ERR_ENOMEM_bucket_gens;
+ 		goto err;
+ 	}
+@@ -1271,11 +1272,13 @@ int bch2_dev_buckets_resize(struct bch_fs *c, struct bch_dev *ca, u64 nbuckets)
+ 	old_bucket_gens = rcu_dereference_protected(ca->bucket_gens, 1);
+ 
+ 	if (resize) {
+-		size_t n = min(bucket_gens->nbuckets, old_bucket_gens->nbuckets);
+-
++		bucket_gens->nbuckets = min(bucket_gens->nbuckets,
++					    old_bucket_gens->nbuckets);
++		bucket_gens->nbuckets_minus_first =
++			bucket_gens->nbuckets - bucket_gens->first_bucket;
+ 		memcpy(bucket_gens->b,
+ 		       old_bucket_gens->b,
+-		       n);
++		       bucket_gens->nbuckets);
+ 	}
+ 
+ 	rcu_assign_pointer(ca->bucket_gens, bucket_gens);
+diff --git a/fs/bcachefs/buckets_types.h b/fs/bcachefs/buckets_types.h
+index c9698cdf866f..139292e3f2fa 100644
+--- a/fs/bcachefs/buckets_types.h
++++ b/fs/bcachefs/buckets_types.h
+@@ -32,7 +32,7 @@ struct bucket_gens {
+ 	u16			first_bucket;
+ 	size_t			nbuckets;
+ 	size_t			nbuckets_minus_first;
+-	u8			b[];
++	u8			b[] __counted_by(nbuckets);
+ };
+ 
+ struct bch_dev_usage {
+-- 
+2.46.0
 
-Just as an FYI I submitted a patch to fix this just now based on 
-reviewing your code:
-
-https://lore.kernel.org/netdev/20240912174922.10550-1-brett.creeley@amd.com/T/#u
-
-LGTM.
-
-Reviewed-by: Brett Creeley <brett.creeley@amd.com>
-
->          tg3_napi_enable(tp);
-> 
->          for (i = 0; i < tp->irq_cnt; i++) {
-> --
-> 2.25.1
-> 
-> 
 
