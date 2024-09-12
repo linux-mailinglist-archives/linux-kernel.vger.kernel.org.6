@@ -1,111 +1,96 @@
-Return-Path: <linux-kernel+bounces-326356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DE3797671C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:01:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FC5097671F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0DE01C23293
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:01:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26CE4284FFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0548919F419;
-	Thu, 12 Sep 2024 11:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vguxJ7Yf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C397DA81;
-	Thu, 12 Sep 2024 11:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55EC31A0BD0;
+	Thu, 12 Sep 2024 11:01:46 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id 4526F19C54C;
+	Thu, 12 Sep 2024 11:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726138878; cv=none; b=AMLYQ487P6wS3NEH25h8sJghm15iDzPVYTp/fvtpL/7DOBKgRAdLNrll7gtp8GAnYFx84BtdvbXDfpD4lVoomoRJp+92dSGj039s9RdLba6ehOZM4ut1CFkZ0edLXe1rcGpMC8k90Ut31DqBi03of6msHRFdlT/rkR3wCJBV1Fs=
+	t=1726138906; cv=none; b=IPh1WxG0RjXdt/1qBZb6NTQOaLZhRS/9d8d/npRWmNizkGBLJclFPjbrbP84R/9tCtrUuHQARbkucdjs+JZ7WLqMtBhN79JelQBhbOIFczLZcjacn0NfTdbTgksI6PKDdezDW3gfy0SXEYOeqL0hkFy9BpcSSqIhbooYwPVMVtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726138878; c=relaxed/simple;
-	bh=fXQcQtrV0+Va2dCrpxf845jeSK2LMbLalbklwUSo7Tw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=foHyStYxhCC7CPwfRWTNYeQIyNxhq/Yc4A8NXJCKdo0v3gvfoCgZPCIycjhw+i58E2wnEnW4TiGK922SR33pAtbybNZRXOD4ffbXYmKx2r00FUmWjfsOWxkG4XP5LVffgT4rnTfCfnEwl2RQKoaXuzsesCAkKTexDY0pbp5r2XA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vguxJ7Yf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58EFCC4CEC3;
-	Thu, 12 Sep 2024 11:01:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726138877;
-	bh=fXQcQtrV0+Va2dCrpxf845jeSK2LMbLalbklwUSo7Tw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vguxJ7YfhP6ntceJ2F89PLgmk976qLE7NK0UYdRiLaWmaT6u2u1WnC+MuaGJW6juJ
-	 ibzIv3VtQMKns2MxjjNr1Bjw/4Mn9E6+oSWUQPqaf2hmhKgEO5ygdXnViKS7nRsq9g
-	 /KP/0Zl2ynIAlOQSmxudQGwqbjRY2X2GhMfDZ7mY=
-Date: Thu, 12 Sep 2024 13:01:14 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Chun-Yi Lee <joeyli.kernel@gmail.com>
-Cc: Justin Sanders <justin@coraid.com>, Jens Axboe <axboe@kernel.dk>,
-	Pavel Emelianov <xemul@openvz.org>,
-	Kirill Korotaev <dev@openvz.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Nicolai Stange <nstange@suse.com>, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Chun-Yi Lee <jlee@suse.com>
-Subject: Re: [PATCH v2] aoe: fix the potential use-after-free problem in more
- places
-Message-ID: <2024091202-frivolous-reimburse-3639@gregkh>
-References: <20240912102935.31442-1-jlee@suse.com>
+	s=arc-20240116; t=1726138906; c=relaxed/simple;
+	bh=DOwjT7TF12kMcyCuBjmBn894pvmkAHrK1vHq8KlIlTo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ly/ry/qqhW4I7aWaP3mlrLyIZT0iWPnlQyrB3XfdMoSJix2jSzR6i7+aXFewHiTdhB1LRXEiG2NOu7FbnLcKRjeqoHvxOQFddzpX4RUMVvRFYGnNeJsaNvOyfRT3gIYtsU/jqsNyOKoMSAi9KUJOv5IWPuC4xSo3kRf4Sfv8H2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from localhost.localdomain (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id EB8F7609E6C40;
+	Thu, 12 Sep 2024 19:01:27 +0800 (CST)
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+To: jmaloy@redhat.com,
+	ying.xue@windriver.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	nathan@kernel.org,
+	ndesaulniers@google.com,
+	morbo@google.com,
+	justinstitt@google.com
+Cc: Su Hui <suhui@nfschina.com>,
+	tuong.t.lien@dektech.com.au,
+	netdev@vger.kernel.org,
+	tipc-discussion@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] net: tipc: avoid possible garbage value
+Date: Thu, 12 Sep 2024 19:01:20 +0800
+Message-Id: <20240912110119.2025503-1-suhui@nfschina.com>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240912102935.31442-1-jlee@suse.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 12, 2024 at 06:29:35PM +0800, Chun-Yi Lee wrote:
-> For fixing CVE-2023-6270, f98364e92662 ("aoe: fix the potential
-> use-after-free problem in aoecmd_cfg_pkts") makes tx() calling dev_put()
-> instead of doing in aoecmd_cfg_pkts(). It avoids that the tx() runs
-> into use-after-free.
-> 
-> Then Nicolai Stange found more places in aoe have potential use-after-free
-> problem with tx(). e.g. revalidate(), aoecmd_ata_rw(), resend(), probe()
-> and aoecmd_cfg_rsp(). Those functions also use aoenet_xmit() to push
-> packet to tx queue. So they should also use dev_hold() to increase the
-> refcnt of skb->dev.
-> 
-> Link: https://nvd.nist.gov/vuln/detail/CVE-2023-6270
-> Fixes: f98364e92662 ("aoe: fix the potential use-after-free problem in aoecmd_cfg_pkts")
-> Reported-by: Nicolai Stange <nstange@suse.com>
-> Signed-off-by: Chun-Yi Lee <jlee@suse.com>
-> ---
-> 
+Clang static checker (scan-build) warning:
+net/tipc/bcast.c:305:4:
+The expression is an uninitialized value. The computed value will also
+be garbage [core.uninitialized.Assign]
+  305 |                         (*cong_link_cnt)++;
+      |                         ^~~~~~~~~~~~~~~~~~
 
-Hi,
+tipc_rcast_xmit() will increase cong_link_cnt's value, but cong_link_cnt
+is uninitialized. Although it won't really cause a problem, it's better
+to fix it.
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+Fixes: dca4a17d24ee ("tipc: fix potential hanging after b/rcast changing")
+Signed-off-by: Su Hui <suhui@nfschina.com>
+---
+ net/tipc/bcast.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+diff --git a/net/tipc/bcast.c b/net/tipc/bcast.c
+index 593846d25214..a3699be6a634 100644
+--- a/net/tipc/bcast.c
++++ b/net/tipc/bcast.c
+@@ -321,7 +321,7 @@ static int tipc_mcast_send_sync(struct net *net, struct sk_buff *skb,
+ 	struct tipc_msg *hdr, *_hdr;
+ 	struct sk_buff_head tmpq;
+ 	struct sk_buff *_skb;
+-	u16 cong_link_cnt;
++	u16 cong_link_cnt = 0;
+ 	int rc = 0;
+ 
+ 	/* Is a cluster supporting with new capabilities ? */
+-- 
+2.30.2
 
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
 
