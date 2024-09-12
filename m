@@ -1,194 +1,244 @@
-Return-Path: <linux-kernel+bounces-326943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F25ED976EDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:37:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17938976EE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:39:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 737991F22C89
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:37:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCF6E28253A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E086F1B29A2;
-	Thu, 12 Sep 2024 16:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843FD1B6541;
+	Thu, 12 Sep 2024 16:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DGdZb7tt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NwPTkUjf"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF23187340;
-	Thu, 12 Sep 2024 16:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832D91AD256
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 16:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726158985; cv=none; b=FoWvrGzPrjQ3lUkZMoGm53FLTw0UdbJoGVg2k+GutjZObSwnFXkvbyxmx3OaWQOA1ttE9v6Fh6aLgk0PztS/AeOM4AP34B5h7HbM0nvSp36jNItmjQvlD3Gu6tpwfDlsUSfeFOFhuwBNDNtKrKTDOoRi20zBTQrFOUs7va0cU1s=
+	t=1726159150; cv=none; b=mvxdhwIWYwXYb8equ+yVkjeBiCxhxxyTDnhPd5ajVdaV3RYLOE+m6ZvdNCC1Gh0vujNyLuaQR8cA0LAApoQdXrombFNjpth7M4aAWB1v1Cb8noHeRyPMrX+EZ3lhos3BfNj9VWY37/wnxA/qUgwL/GRgHxIwxD8Rei4cQaZU72o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726158985; c=relaxed/simple;
-	bh=5YsN9KvVZm5f0UHgFkyHZ3wBKgWIeKr3oPHz1mRnP8M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cpghAUQ2ejCCGelE8dpM+JuWkg6Fj4H0dyiQfr+2NLqoqzTl4Grqio1Jmb0JP0+1pKk5FMn7E2uYjezumnoQs78Ak1O7fDnUvulmh0IHY7YJRQc7qFrgf9NdvtN+M3H5HDZDUG85+wKd5ApLnSp26oqehCB13le+zcHIFt//8So=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DGdZb7tt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE7F4C4CEC3;
-	Thu, 12 Sep 2024 16:36:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726158984;
-	bh=5YsN9KvVZm5f0UHgFkyHZ3wBKgWIeKr3oPHz1mRnP8M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DGdZb7ttrJGYS3zUhQ9GzFUpOrNCETt1m70nyFK+q9jwcdAttdpNfZzxZeFTlul8c
-	 /jxueAgAT1VI4kHRZekIb5SOpdRUK96Jo2HI4caXtVjCJ/ikyUR9ibcRNJscbzsxSl
-	 upRQ+y2Q0QlzWN6ggB70d6LiWBdMrQOhwFFnKYYYK3GTQUDovQO30Wwhkxwa39S3zk
-	 PuWe6eN642wCyeLeGf7OXeJAO5u7kmdinA+Sr9khWb5UCa+3r24uMKaTC7ChQ+HjbV
-	 GT24CiSCS8856EwjRbrKhNwpnT+w1CDYrQkVCK2DUaf44FamFrWWOiVOM5xwj6e/ac
-	 E14gJv6OQG0SQ==
-Date: Thu, 12 Sep 2024 18:36:20 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Kimriver Liu <kimriver.liu@siengine.com>, 
-	jarkko.nikula@linux.intel.com, andriy.shevchenko@linux.intel.com, 
-	mika.westerberg@linux.intel.com, jsd@semihalf.com, linux-i2c@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10] i2c: designware: fix controller is holding SCL low
- while ENABLE bit is disabled
-Message-ID: <fpa7ufcpazewftgeoj72t3m7jumddvt23dzmqpr4znqx663yl7@4vckpbls2iyy>
-References: <cd5f6b0a57adf6fdff7bf3c24cb319bf778d61d6.1726121009.git.kimriver.liu@siengine.com>
- <ZuMJoHWLU1FIznZR@surfacebook.localdomain>
+	s=arc-20240116; t=1726159150; c=relaxed/simple;
+	bh=LCcvfp4PKWBAe5vkmrgHGg3k0mb48S6KmY86tDUVi10=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lwQlAALycyT6W4AIaEMAftjtdnPLLcVvtNumu0hsLqq58x82Q1xyzFY1se2NCg6wyOA+/F8e1/PhRYTffVwNUmaR7qhoiJh8BtJwBTW8UbQ+F985yiv+xgdvxpbjzM/ic5Z0TR8BgDnWmeIIGTZaluqPjTHeLlZ0cHpp9cg3nG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NwPTkUjf; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7cf5e179b68so1007533a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:39:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726159147; x=1726763947; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XTdYHyLuK9WbShZPmPpgg2pgyB5zwJlMRqpYXdQHj1M=;
+        b=NwPTkUjfo1cWFR/xKHTxpzlhcRFBDpr/kWvm34gjpyY7ODNX6AyjKqQqsJ8Z1g/tqw
+         mspF5exZs/8mjv88QuBoG1YYX63TjFixEP+aIG9ZM+6TYACyLzk9CnXHmjL7yHL2zr0C
+         eDhnDy3eikEHQPYL9+YXfZjzvUBPVZNqOAH7pF5D0O7/5IiB6Mrj6AXWEBWUBHr5aSOb
+         lGJTx0QVAOMVyzA/7AkDIIIh+u8PZXE9elJLJOPcQT/CRGRYLdauPaEsRbTW8YpsrgmC
+         bI2TCcsZ5MDlVDqFJibxQDPDAmfYRvLkYEqpKsM1mmN6kmrwI8huLy7mV47XqM8M04uc
+         WqBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726159147; x=1726763947;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XTdYHyLuK9WbShZPmPpgg2pgyB5zwJlMRqpYXdQHj1M=;
+        b=ojCRm+F1BecBExiuhQ4Jk87mASDnfagw9GCfJFeWHgDqDihoqruBLeau8LA4ARzWPs
+         q1uvrwnOyJ4y60HOtoMYmicA9rvmQQO5OXJTe8z1EUENH3CHKfkJ5DTZQ4R9babMb5kw
+         fooEKUdXQ5CJ68ifLwXDhjsTpVzcotPQN6+0l8HSmlq4yT1HivqxwmONOZhtbQrkN9RS
+         rtAD73yMw2EUzn6r5qQFfSJJpIxpjcE247JS0QTE/acIgaENeLVmD3sluu0K8v7An3Hf
+         72ScY6KE0ZAZREoJEMw/oHYqgu5NUwKVBVzFnqjhMyAWjFWhZthHIAivyscnHWTZztUt
+         aQhg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6epLntPs1flM3h0djWwqhqtK2MGZiJK9+Zbef6BlQeGDCNbuDOLRcJRJYdQg61t6s8Cq6MCExnFG+euU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4po65wYFCgKnE9T/IJaU2KcGHZ1lZh9rZ3Sm+Wq2piAkkNmxG
+	A5cfQ6L0/4w8BEqkr9XV8OlBxSJ70rbW0qJ5579QHM6V8m9RsA6cLRoNbIGidwFS1HAYKN6N5vH
+	6CKGtaSoRV2s1TY+PryQRE4rovbQ1oQ87xXiU
+X-Google-Smtp-Source: AGHT+IHmj3RIvbxM6xjvZYqt+Axa65vhzwgFtEgYDzUs8CNhZSgik8WA7/WWnX3cFoy4kkpIUX9/m+T3JnrpwbFMDis=
+X-Received: by 2002:a17:902:e884:b0:205:8a8b:bd2a with SMTP id
+ d9443c01a7336-2074c6df0bemr132694585ad.22.1726159146402; Thu, 12 Sep 2024
+ 09:39:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZuMJoHWLU1FIznZR@surfacebook.localdomain>
+References: <20240909211506.326648-1-mathieu.desnoyers@efficios.com> <20240909211506.326648-2-mathieu.desnoyers@efficios.com>
+In-Reply-To: <20240909211506.326648-2-mathieu.desnoyers@efficios.com>
+From: Marco Elver <elver@google.com>
+Date: Thu, 12 Sep 2024 18:38:30 +0200
+Message-ID: <CANpmjNMjndyBAO3HKHkC+v7zNZv1XHvH5Fjd9S5q0Jj-sEkx-w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] sched: Improve cache locality of RSEQ concurrency
+ IDs for intermittent workloads
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, 
+	Valentin Schneider <vschneid@redhat.com>, Mel Gorman <mgorman@suse.de>, 
+	Steven Rostedt <rostedt@goodmis.org>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, 
+	Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Sep 12, 2024 at 06:32:48PM GMT, Andy Shevchenko wrote:
-> Thu, Sep 12, 2024 at 02:11:12PM +0800, Kimriver Liu kirjoitti:
-> > It was observed that issuing ABORT bit (IC_ENABLE[1]) will not
-> > work when IC_ENABLE is already disabled.
-> > 
-> > Check if ENABLE bit (IC_ENABLE[0]) is disabled when the controller
-> > is holding SCL low. If ENABLE bit is disabled, the software need
+On Mon, 9 Sept 2024 at 23:15, Mathieu Desnoyers
+<mathieu.desnoyers@efficios.com> wrote:
+>
+> commit 223baf9d17f25 ("sched: Fix performance regression introduced by mm_cid")
+> introduced a per-mm/cpu current concurrency id (mm_cid), which keeps
+> a reference to the concurrency id allocated for each CPU. This reference
+> expires shortly after a 100ms delay.
+>
+> These per-CPU references keep the per-mm-cid data cache-local in
+> situations where threads are running at least once on each CPU within
+> each 100ms window, thus keeping the per-cpu reference alive.
 
-/need/needs/
+One orthogonal idea that I recall: If a thread from a different thread
+group (i.e. another process) was scheduled on that CPU, the CID can
+also be invalidated because the caches are likely polluted. Fixed
+values like 100ms seem rather arbitrary and it may work for one system
+but not another.
 
-> > to enable it before trying to issue ABORT bit. otherwise,
+> However, intermittent workloads behaving in bursts spaced by more than
+> 100ms on each CPU exhibit bad cache locality and degraded performance
+> compared to purely per-cpu data indexing, because concurrency IDs are
+> allocated over various CPUs and cores, therefore losing cache locality
+> of the associated data.
+>
+> Introduce the following changes to improve per-mm-cid cache locality:
+>
+> - Add a "recent_cid" field to the per-mm/cpu mm_cid structure to keep
+>   track of which mm_cid value was last used, and use it as a hint to
+>   attempt re-allocating the same concurrency ID the next time this
+>   mm/cpu needs to allocate a concurrency ID,
+>
+> - Add a per-mm CPUs allowed mask, which keeps track of the union of
+>   CPUs allowed for all threads belonging to this mm. This cpumask is
+>   only set during the lifetime of the mm, never cleared, so it
+>   represents the union of all the CPUs allowed since the beginning of
+>   the mm lifetime. (note that the mm_cpumask() is really arch-specific
+>   and tailored to the TLB flush needs, and is thus _not_ a viable
+>   approach for this)
+>
+> - Add a per-mm nr_cpus_allowed to keep track of the weight of the
+>   per-mm CPUs allowed mask (for fast access),
+>
+> - Add a per-mm nr_cids_used to keep track of the highest concurrency
+>   ID allocated for the mm. This is used for expanding the concurrency ID
+>   allocation within the upper bound defined by:
+>
+>     min(mm->nr_cpus_allowed, mm->mm_users)
+>
+>   When the next unused CID value reaches this threshold, stop trying
+>   to expand the cid allocation and use the first available cid value
+>   instead.
+>
+> Spreading allocation to use all the cid values within the range
+>
+>   [ 0, min(mm->nr_cpus_allowed, mm->mm_users) - 1 ]
+>
+> improves cache locality while preserving mm_cid compactness within the
+> expected user limits.
+>
+> - In __mm_cid_try_get, only return cid values within the range
+>   [ 0, mm->nr_cpus_allowed ] rather than [ 0, nr_cpu_ids ]. This
+>   prevents allocating cids above the number of allowed cpus in
+>   rare scenarios where cid allocation races with a concurrent
+>   remote-clear of the per-mm/cpu cid. This improvement is made
+>   possible by the addition of the per-mm CPUs allowed mask.
+>
+> - In sched_mm_cid_migrate_to, use mm->nr_cpus_allowed rather than
+>   t->nr_cpus_allowed. This criterion was really meant to compare
+>   the number of mm->mm_users to the number of CPUs allowed for the
+>   entire mm. Therefore, the prior comparison worked fine when all
+>   threads shared the same CPUs allowed mask, but not so much in
+>   scenarios where those threads have different masks (e.g. each
+>   thread pinned to a single CPU). This improvement is made
+>   possible by the addition of the per-mm CPUs allowed mask.
+>
+> * Benchmarks
+>
+> Each thread increments 16kB worth of 8-bit integers in bursts, with
+> a configurable delay between each thread's execution. Each thread run
+> one after the other (no threads run concurrently). The order of
+> thread execution in the sequence is random. The thread execution
+> sequence begins again after all threads have executed. The 16kB areas
+> are allocated with rseq_mempool and indexed by either cpu_id, mm_cid
+> (not cache-local), or cache-local mm_cid. Each thread is pinned to its
+> own core.
+>
+> Testing configurations:
+>
+> 8-core/1-L3:        Use 8 cores within a single L3
+> 24-core/24-L3:      Use 24 cores, 1 core per L3
+> 192-core/24-L3:     Use 192 cores (all cores in the system)
+> 384-thread/24-L3:   Use 384 HW threads (all HW threads in the system)
+>
+> Intermittent workload delays between threads: 200ms, 10ms.
+>
+> Hardware:
+>
+> CPU(s):                   384
+>   On-line CPU(s) list:    0-383
+> Vendor ID:                AuthenticAMD
+>   Model name:             AMD EPYC 9654 96-Core Processor
+>     Thread(s) per core:   2
+>     Core(s) per socket:   96
+>     Socket(s):            2
+> Caches (sum of all):
+>   L1d:                    6 MiB (192 instances)
+>   L1i:                    6 MiB (192 instances)
+>   L2:                     192 MiB (192 instances)
+>   L3:                     768 MiB (24 instances)
+>
+> Each result is an average of 5 test runs. The cache-local speedup
+> is calculated as: (cache-local mm_cid) / (mm_cid).
+>
+> Intermittent workload delay: 200ms
+>
+>                      per-cpu     mm_cid    cache-local mm_cid    cache-local speedup
+>                          (ns)      (ns)                  (ns)
+> 8-core/1-L3             1374      19289                  1336            14.4x
+> 24-core/24-L3           2423      26721                  1594            16.7x
+> 192-core/24-L3          2291      15826                  2153             7.3x
+> 384-thread/24-L3        1874      13234                  1907             6.9x
+>
+> Intermittent workload delay: 10ms
+>
+>                      per-cpu     mm_cid    cache-local mm_cid    cache-local speedup
+>                          (ns)      (ns)                  (ns)
+> 8-core/1-L3               662       756                   686             1.1x
+> 24-core/24-L3            1378      3648                  1035             3.5x
+> 192-core/24-L3           1439     10833                  1482             7.3x
+> 384-thread/24-L3         1503     10570                  1556             6.8x
+>
+> [ This deprecates the prior "sched: NUMA-aware per-memory-map concurrency IDs"
+>   patch series with a simpler and more general approach. ]
 
-/ABORT/the ABORT/
+I like the simpler and more general approach vs. the NUMA-only
+approach! Attempting to reallocate the previously assigned CID seems
+to go a long way.
 
-> > the controller ignores any write to ABORT bit.
-> > 
-> > These kernel logs show up whenever an I2C transaction is
-> > attempted after this failure.
-> > i2c_designware e95e0000.i2c: timeout waiting for bus ready
-> > i2c_designware e95e0000.i2c: timeout in disabling adapter
-> 
-> > The patch can be fix the controller cannot be disabled while
-> > SCL is held low in ENABLE bit is already disabled.
-> 
-> There are English words but a complete nonsense together.
+However, this doesn't quite do L3-awareness as mentioned in [1], right?
+What I can tell is that this patch improves cache locality for threads
+scheduled back on the _same CPU_, but not if those threads are
+scheduled on a _set of CPUs_ sharing the _same L3_ cache. So if e.g. a
+thread is scheduled from CPU2 to CPU3, but those 2 CPUs share the same
+L3 cache, that thread will get a completely new CID and is unlikely to
+hit in the L3 cache when accessing the per-CPU data.
 
-We could reword this to:
+[1] https://github.com/google/tcmalloc/issues/144#issuecomment-2307739715
 
-The patch fixes the issue where the controller cannot be disabled
-while SCL is held low if the ENABLE bit is already disabled.
+Maybe I missed it, or you are planning to add it in future?
 
->   Fix the condition when controller cannot be disabled while SCL
+In any case, the current patch is definitely an improvement:
 
-/when/where/
+Acked-by: Marco Elver <elver@google.com>
 
->   is held low and ENABLE bit is already disabled.
-
-/ENABLE/the ENABLE/
-
-If you agree with the changes, I can apply them before merging.
-
-> 
-> Reviewed-by: Andy Shevchenko <andy@kernel.org>
-
-Thanks a lot, Andy! I really appreciate your reviews!
-
-> ...
-> 
-> > +		if (!(enable & DW_IC_ENABLE_ENABLE)) {
-> > +			regmap_write(dev->map, DW_IC_ENABLE, DW_IC_ENABLE_ENABLE);
-> > +			/*
-> > +			 * Wait 10 times the signaling period of the highest I2C
-> > +			 * transfer supported by the driver (for 400KHz this is
-> > +			 * 25us) to ensure the I2C ENABLE bit is already set
-> > +			 * as described in the DesignWare I2C databook.
-> > +			 */
-> > +			fsleep(DIV_ROUND_CLOSEST_ULL(10 * MICRO, t->bus_freq_hz));
-> 
-> > +			/* Keep ENABLE bit is already set before Setting ABORT.*/
-> 
-> 			/* Set ENABLE bit before setting ABORT */
-> 
-> 
-> > +			enable |= DW_IC_ENABLE_ENABLE;
-> > +		}
-> 
-> ...
-> 
-> > +/*
-> > + * This functions waits controller idling before disabling I2C
-> 
-> s/functions/function/
-
-I can fix it before merging.
-
-> > + * When the controller is not in the IDLE state,
-> > + * MST_ACTIVITY bit (IC_STATUS[5]) is set.
-> > + * Values:
-> > + * 0x1 (ACTIVE): Controller not idle
-> > + * 0x0 (IDLE): Controller is idle
-> > + * The function is called after returning the end of the current transfer
-> > + * Returns:
-> > + * False when controller is in IDLE state.
-> > + * True when controller is in ACTIVE state.
-> > + */
-> > +static bool i2c_dw_is_controller_active(struct dw_i2c_dev *dev)
-> > +{
-> > +	u32 status;
-> > +
-> > +	regmap_read(dev->map, DW_IC_STATUS, &status);
-> > +	if (!(status & DW_IC_STATUS_MASTER_ACTIVITY))
-> > +		return false;
-> > +
-> > +	return regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
-> > +				       !(status & DW_IC_STATUS_MASTER_ACTIVITY),
-> > +					1100, 20000) != 0;
-> 
-> 	return regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
-> 					!(status & DW_IC_STATUS_MASTER_ACTIVITY),
-> 					1100, 20000) != 0;
-> 
-> (in the second line replaced 7 spaces by a single TAB to fix the indentation)
-
-I can fix it before merging.
-
-Kimriver, if you agree, i can merge this and queue it for the
-next week's fixes merge request.
-
-Andi
-
-> > +}
-> 
-> ...
-> 
-> > +	/*
-> > +	 * This happens rarely (~1:500) and is hard to reproduce. Debug trace
-> > +	 * showed that IC_STATUS had value of 0x23 when STOP_DET occurred,
-> > +	 * if disable IC_ENABLE.ENABLE immediately that can result in
-> > +	 * IC_RAW_INTR_STAT.MASTER_ON_HOLD holding SCL low. Check if
-> > +	 * controller is still ACTIVE before disabling I2C.
-> > +	 */
-> > +	if (i2c_dw_is_controller_active(dev))
-> > +		dev_err(dev->dev, "controller active\n");
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
+Thanks,
+-- Marco
 
