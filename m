@@ -1,193 +1,532 @@
-Return-Path: <linux-kernel+bounces-326833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7848F976D83
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:18:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A72976D8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:19:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAA101C23E08
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:18:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67A23B252B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4701B12F6;
-	Thu, 12 Sep 2024 15:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61FC1BD023;
+	Thu, 12 Sep 2024 15:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ETzWrs8j"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iwJOn+aj"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B3E44C8F
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6026F076;
+	Thu, 12 Sep 2024 15:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726154122; cv=none; b=DBkaXQ3e6YSlQsbEXTPNr7OaQgFJEsXLnJQ6Zer1UiCOHvq7r6htXh0UF0AmG4L2Wx8dqnDZn8h403f/txj+0vqDGNBhNANHlQ8dA+wBIr8NrXbHrJRtcB7g9/Z7lstavKemT20eIhvNarVyKwWx0jeOQ0NzZuAt061SjDFNAOQ=
+	t=1726154170; cv=none; b=U6oH1fwuqLpvdqdEe9Y46vuljlW87XH+4gicm8irZvmpEj3DtJ0/fmoNIEviVSTqKeBXSy6zVkHn+gsgACzuHS658MFF6v0ZFWvb1x3ju1aojSkXoa9JSJlU/wxafkVonV/OVmlZaDm2Rk+k1qMzpmQJPDU9t6+O/A7b2C5YrJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726154122; c=relaxed/simple;
-	bh=fKlbVxrRCiEwCFvfv1wJmQCFWNefqs0T4sbP1rJqPIY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NB23us6w4DzDBbRmOxiaF3M2OEyVloGWz2gVyNEiELAbRsa1X4UoZXFxz73iZQCYG7Wpb8I4LU4eAy42e7gGVhL0aGYumXaKxPA+Lz0A/sgDNOdd2h8TPE/SWFSihESh88no73zN5eA5iLX2gzH6OAMwNuEmd3kM9cfU4R27GOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ETzWrs8j; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726154119;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4ycrK4MsOQKe0pFFMEcK7ih1jRYPQRfevGKgVDDTft8=;
-	b=ETzWrs8jBQtAhqtpbTnheNKCdXM5VVPQD2HKVEwhCKlV90A0FizsFGQwEBWGGx+xxmFGFK
-	VQ0IPuqde85iiKg+TQpbwT9MaByb92NxLi5vdjDSBWqWZ6F256OgGzdT4/KOkhYaZUX+PL
-	Pq3DW+4EBq9pi/a+5ccGsadJWgU8Ljo=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-401-HLLsmy-TNwqlEkpMsV7FXA-1; Thu,
- 12 Sep 2024 11:15:14 -0400
-X-MC-Unique: HLLsmy-TNwqlEkpMsV7FXA-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 192D41956083;
-	Thu, 12 Sep 2024 15:15:13 +0000 (UTC)
-Received: from redhat.com (unknown [10.22.8.105])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5B0841956053;
-	Thu, 12 Sep 2024 15:15:11 +0000 (UTC)
-Date: Thu, 12 Sep 2024 11:15:08 -0400
-From: Joe Lawrence <joe.lawrence@redhat.com>
-To: Lukas Hruska <lhruska@suse.cz>
-Cc: pmladek@suse.com, mbenes@suse.cz, jpoimboe@kernel.org,
-	live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, mpdesouza@suse.com
-Subject: Re: [PATCH v3 0/6] livepatch: klp-convert tool - Minimal version
-Message-ID: <ZuMFfJkCkZ4+9505@redhat.com>
-References: <20240827123052.9002-1-lhruska@suse.cz>
+	s=arc-20240116; t=1726154170; c=relaxed/simple;
+	bh=1Ya8WglVWGY8fgH9b45ei/JXWDqJyhMDClZ/p4QtxlU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NQl3TJCxV2Q62MluvGeAmMXUz3E4W1hr771sFYKgmzWM6XgTOhVrGrr3GpcHautKuQKayryFMH77ipOZLrcDHey9b0ItGqpaUJGu/ilClgXJTa28Mlel/guvBlcE/ljV6S6d+4kpYty60S9xP6egsrPnEuwETYLhBd+qrYhWtVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iwJOn+aj; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f75c205e4aso13476131fa.0;
+        Thu, 12 Sep 2024 08:16:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726154167; x=1726758967; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mTJmzg/cTN8RsU2hs14W4uKdu3EPXysnv6zCHHZgkc0=;
+        b=iwJOn+ajI9YD/NFHa6CTuLzAchA8EH8rSwz/OdRaH2XhILZ3osS8oyiUGAq7y+ba5A
+         6rL73hZl4adgu0ilyYPqeqwgR85VOkFT2h/qPAovCbx4xcwDfFQGevNQXTv+RwtRs6pE
+         U0ChRNYo+vZlZ8hhUYkfB8md7DlhzH9mswntV13wvJi60JPzV/t4uR623QxbB0zloM+m
+         0JdFCHQ3G88tLEtBF3qUGm2LvcrLpzZiTz97TmnlubtY3CYj6qpdr3RLGBiblP7RApNg
+         ILaVeqq06wIfURPKcDtPPSyX/fp/WpvZ8NXnz4dmxz1PsFtd+JQrXdgzQICOq7qsKuZS
+         /AOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726154167; x=1726758967;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mTJmzg/cTN8RsU2hs14W4uKdu3EPXysnv6zCHHZgkc0=;
+        b=UNMkHugs0IAIbKn7uBFwom6TCcNE24JInuOFetvs/gjPcq1tUP2wyt2WPds1p9o3gz
+         6GPQlSh5uId/5HKqXRFlRIbKUWQPmwhBD1912IZFGFrEWcZAqDfHP2Oczf3zIe9Ic6Te
+         GMvz/oiGVZirn9ifH6yhNYUBOdUpplPeQPRgb0MxWguN9fZe65dYQ5+cxWGlvcxxPAQm
+         DBXWTBMl6pIz+zgszZnH9SMHOo/Z42M9BEHAqUFwX6+rI2IMHlrBQBci9+AFF502jCrY
+         fZ3EAxIlX/iXoVwTR/hwDhCS3wMALh2usrtegcvyW7IBu4+BuE1a1XaulD9MmsW8ij+d
+         7QDw==
+X-Forwarded-Encrypted: i=1; AJvYcCURhgZJH32jGByagMBJHpiM657aXUFKXLmTnHFYfrbfpm3hoShJ1Uqk3z8ElKY3taIarNSQCZdfVQhc@vger.kernel.org, AJvYcCWIsD1/kDTQrrXaBiuBV1YMAv+TYyP5Kb5EPjp+cZhWe/AwcIt/7wJiE1AMCXEBpIZTxZwH/c23dWKF@vger.kernel.org, AJvYcCWkrj6JK18mgWPpDYUJFsen3dydBdvhayPnP61CdE6zxurclijOqfhpVtWAqJBtDYTB0FTDbP7u9Hjupmau@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHDicmk1b2nHRYluWqXgqr7ovNFmHz7O+7kZfxJ+7He6Wsrcwq
+	MBhFGhQCIqWUdKGz/bY7ibu5aGqEeWQW648FhAmIaxcxnQ6H+vNzwlDFDeHdRPj1XcAuGOmAz8G
+	Ocls/8WxI1XycYBzamqKiKTZMKpI=
+X-Google-Smtp-Source: AGHT+IHhvW7ayKVJLuNwRUMJDtqNyvvEmcC6b7ZffkBWEpFHp/CRqQRsEukAB38kdoMrB9NlfXnVrODAKPdyexpIfns=
+X-Received: by 2002:a2e:a316:0:b0:2f6:5f7b:e5e0 with SMTP id
+ 38308e7fff4ca-2f787ed89c2mr15980991fa.21.1726154166659; Thu, 12 Sep 2024
+ 08:16:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240827123052.9002-1-lhruska@suse.cz>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+References: <20240912121609.13438-1-ramona.nechita@analog.com> <20240912121609.13438-4-ramona.nechita@analog.com>
+In-Reply-To: <20240912121609.13438-4-ramona.nechita@analog.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 12 Sep 2024 18:15:29 +0300
+Message-ID: <CAHp75VdBf6UX7XGVWi0Luw9Bs2tCzcvFFy8Dp-ZGsEU=TqOn1w@mail.gmail.com>
+Subject: Re: [PATCH v5 3/3] drivers: iio: adc: add support for ad777x family
+To: Ramona Alexandra Nechita <ramona.nechita@analog.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Cosmin Tanislav <cosmin.tanislav@analog.com>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	Marcelo Schmitt <marcelo.schmitt@analog.com>, Olivier Moysan <olivier.moysan@foss.st.com>, 
+	Dumitru Ceclan <mitrutzceclan@gmail.com>, Matteo Martelli <matteomartelli3@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Alisa-Dariana Roman <alisadariana@gmail.com>, Ivan Mikhaylov <fr0st61te@gmail.com>, 
+	Mike Looijmans <mike.looijmans@topic.nl>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 27, 2024 at 02:30:45PM +0200, Lukas Hruska wrote:
-> Summary
-> -------
-> 
-> This is a significantly simplified version of the original klp-convert tool.
-> The klp-convert code has never got a proper review and also clean ups
-> were not easy. The last version was v7, see
-> https://lore.kernel.org/r/20230306140824.3858543-1-joe.lawrence@redhat.com
-> 
-> The main change is that the tool does not longer search for the
-> symbols which would need the livepatch specific relocation entry.
-> Also klp.symbols file is not longer needed.
-> 
-> Instead, the needed information is appended to the symbol declaration
-> via a new macro KLP_RELOC_SYMBOL(). It creates symbol with all needed
-> metadata. For example:
-> 
->   extern char *saved_command_line \
->                  KLP_RELOC_SYMBOL(vmlinux, vmlinux, saved_command_line, 0);
-> 
-> would create symbol
-> 
-> $>readelf -r -W <compiled livepatch module>:
-> Relocation section '.rela.text' at offset 0x32e60 contains 10 entries:
->     Offset             Info             Type               Symbol's Value  Symbol's Name + Addend
-> [...]
-> 0000000000000068  0000003c00000002 R_X86_64_PC32          0000000000000000 .klp.sym.rela.vmlinux.vmlinux.saved_command_line,0 - 4
-> [...]
-> 
-> 
-> The simplified klp-convert tool just transforms symbols
-> created by KLP_RELOC_SYMBOL() to object specific rela sections
-> and rela entries which would later be proceed when the livepatch
-> or the livepatched object is loaded.
-> 
-> For example, klp-convert would replace the above symbols with:
-> 
-> $> readelf -r -W <livepatch_module_proceed_by_klp_convert>
-> Relocation section '.klp.rela.vmlinux.text' at offset 0x5cb60 contains 1 entry:
->     Offset             Info             Type               Symbol's Value  Symbol's Name + Addend
-> 0000000000000068  0000003c00000002 R_X86_64_PC32          0000000000000000 .klp.sym.vmlinux.saved_command_line,0 - 4
-> 
-> 
-> Note that similar macro was needed also in the original version
-> to handle more symbols of the same name (sympos).
-> 
-> Given the above, add klp-convert tool; integrate klp-convert tool into
-> kbuild; add data-structure and macros to enable users to annotate
-> livepatch source code; make modpost stage compatible with livepatches;
-> update livepatch-sample and update documentation.
-> 
-> 
-> Testing
-> -------
-> 
-> The patchset selftests build and execute on x86_64, s390x, and ppc64le
-> for both default config (with added livepatch dependencies) and a larger
-> SLE-15-ish config.
-> 
-> 
-> Summary of changes in this minimal version v3
-> ------------------------
-> 
-> - klp-convert: symbol format changes (suggested by jlawrence)
-> - samples: fixed name of added sample in Makefile (suggested by pmladek)
-> - selftests: added ibt test case as an example (DON'T MERGE)
-> - fixed all suggested small changes in v2
-> 
-> Previous versions
-> -----------------
-> 
-> RFC:
->   https://lore.kernel.org/r/cover.1477578530.git.jpoimboe@redhat.com/
-> v2:
->   https://lore.kernel.org/r/f52d29f7-7d1b-ad3d-050b-a9fa8878faf2@redhat.com/
-> v3:
->   https://lore.kernel.org/r/20190410155058.9437-1-joe.lawrence@redhat.com/
-> v4:
->   https://lore.kernel.org/r/20190509143859.9050-1-joe.lawrence@redhat.com/
-> v5:
->   (not posted)
->   https://github.com/joe-lawrence/klp-convert-tree/tree/klp-convert-v5-devel
-> v6:
->   https://lore.kernel.org/r/20220216163940.228309-1-joe.lawrence@redhat.com/
-> v7:
->   https://lore.kernel.org/r/20230306140824.3858543-1-joe.lawrence@redhat.com/
-> v1 minimal:
->   https://lore.kernel.org/r/20231106162513.17556-1-lhruska@suse.cz/
-> v2 minimal:
->   https://lore.kernel.org/r/20240516133009.20224-1-lhruska@suse.cz/
-> 
+On Thu, Sep 12, 2024 at 3:17=E2=80=AFPM Ramona Alexandra Nechita
+<ramona.nechita@analog.com> wrote:
+>
+> Add support for AD7770, AD7771, AD7779 ADCs. The device is capable of
 
-Hi Lukas,
+"..., and AD7779..."
 
-Thanks again for posting the patchset and trying a simpler approach.
+> sending out data both on DOUT lines interface,as on the SDO line.
+> The driver currently implements only the SDO data streaming mode. SPI
+> communication is used alternatively for accessing registers and streaming
+> data. Register access are protected by crc8.
 
-I tested with latest kpatch-build tree with no ill effects --
-essentially klp-convert is safe to run against .ko files that already
-contain klp-relocations.
+accesses
 
-I would prefer more extensive selftests for various klp-relocation types
-(as well as symbol position), however I believe wasn't the point of the
-minimal version of this patchset.  We can add more tests later.
+...
 
-Anyway, now we have two RFC / patchsets supporting in-tree creation of
-klp-relocations (klp-convert and Josh's objtool patchset).  I think we
-need to figure out whether one precludes the other, can they co-exist,
-or does that even make sense.
+> +/*
+> + * AD7770, AD7771, AD7779 ADC
 
-Since LPC is right around the corner, does it make sense for folks to
-sync up at some point and talk pros/cons to various approaches?  We
-don't have a microconference this year, but perhaps over lunch or beers?
+"..., and AD7779..."
 
---
-Joe
+> + *
+> + * Copyright 2023-2024 Analog Devices Inc.
+> + */
 
+...
+
+> +#define AD7779_MAXCLK_LOWPOWER                 4096000
+
+Units? _HZ? _uV?
+
+...
+
+> +#define GAIN_REL                               0x555555
+
+Is it something like making value for 12 channels? Can you elaborate a
+bit (perhaps in the comment)?
+
+...
+
+> +struct ad7779_state {
+> +       struct spi_device *spi;
+> +       const struct ad7779_chip_info *chip_info;
+> +       struct clk *mclk;
+> +       struct iio_trigger *trig;
+> +       struct completion completion;
+> +       unsigned int sampling_freq;
+> +       enum ad7779_filter filter_enabled;
+> +       /*
+> +        * DMA (thus cache coherency maintenance) requires the
+> +        * transfer buffers to live in their own cache lines.
+> +        */
+> +       u8                      reg_rx_buf[3] __aligned(IIO_DMA_MINALIGN)=
+;
+> +       u8                      reg_tx_buf[3];
+> +       u32                     spidata_rx[8];
+> +       u32                     spidata_tx[8];
+> +       u8                      reset_buf[8];
+> +};
+
+Have you run `pahole` to check if this can be optimised in size?
+
+...
+
+> +static int ad7779_spi_read(struct ad7779_state *st, u8 reg, u8 *rbuf)
+> +{
+> +       int ret;
+> +       int length =3D 3;
+> +       u8 crc_buf[2];
+> +       u8 exp_crc =3D 0;
+> +       struct spi_transfer reg_read_tr[] =3D {
+> +               {
+> +                       .tx_buf =3D st->reg_tx_buf,
+> +                       .rx_buf =3D st->reg_rx_buf,
+> +               },
+> +       };
+> +
+> +       if (reg =3D=3D AD7779_REG_GEN_ERR_REG_1_EN)
+> +               length =3D 2;
+
+Does it mean the crc byte will be ignored? If so, why do we even
+bother to spend resources on calculating it in that case? Same Q for
+other similar cases.
+
+> +       reg_read_tr[0].len =3D length;
+> +
+> +       st->reg_tx_buf[0] =3D AD7779_SPI_READ_CMD | FIELD_GET(AD7779_REG_=
+MSK, reg);
+> +       st->reg_tx_buf[1] =3D 0;
+> +       st->reg_tx_buf[2] =3D crc8(ad7779_crc8_table, st->reg_tx_buf, 2, =
+0);
+> +
+> +       ret =3D spi_sync_transfer(st->spi, reg_read_tr, ARRAY_SIZE(reg_re=
+ad_tr));
+> +       if (ret)
+> +               return ret;
+> +
+> +       crc_buf[0] =3D AD7779_SPI_READ_CMD | FIELD_GET(AD7779_REG_MSK, re=
+g);
+> +       crc_buf[1] =3D st->reg_rx_buf[1];
+> +       exp_crc =3D crc8(ad7779_crc8_table, crc_buf, 2, 0);
+> +       if (reg !=3D AD7779_REG_GEN_ERR_REG_1_EN && exp_crc !=3D st->reg_=
+rx_buf[2]) {
+> +               dev_err(&st->spi->dev, "Bad CRC %x, expected %x",
+> +                       st->reg_rx_buf[2], exp_crc);
+> +               return -EINVAL;
+> +       }
+> +       *rbuf =3D st->reg_rx_buf[1];
+> +
+> +       return 0;
+> +}
+
+...
+
+> +       regval =3D data;
+> +       regval &=3D ~mask;
+> +       regval |=3D val;
+
+Traditional pattern is to have this as
+
+    regval =3D (data & ~mask) | (val & mask);
+
+...
+
+> +static int ad7779_set_sampling_frequency(struct ad7779_state *st,
+> +                                        unsigned int sampling_freq)
+> +{
+> +       int ret;
+> +       unsigned int dec;
+> +       unsigned int div;
+> +       unsigned int decimal;
+> +       int temp;
+> +       unsigned int kfreq;
+
+freq_khz will be better name
+
+> +       if (st->filter_enabled =3D=3D AD7779_SINC3 &&
+> +           sampling_freq > AD7779_SINC3_MAXFREQ)
+> +               return -EINVAL;
+> +
+> +       if (st->filter_enabled =3D=3D AD7779_SINC5 &&
+> +           sampling_freq > AD7779_SINC5_MAXFREQ)
+> +               return -EINVAL;
+> +
+> +       if (sampling_freq > AD7779_SPIMODE_MAX_SAMP_FREQ)
+> +               return -EINVAL;
+> +
+> +       div =3D AD7779_HIGHPOWER_DIV;
+> +
+> +       kfreq =3D sampling_freq / KILO;
+> +       dec =3D div / kfreq;
+> +
+> +       ret =3D ad7779_spi_write(st, AD7779_REG_SRC_N_MSB,
+> +                              FIELD_GET(AD7779_FREQ_MSB_MSK, dec));
+> +       if (ret)
+> +               return ret;
+> +       ret =3D ad7779_spi_write(st, AD7779_REG_SRC_N_LSB,
+> +                              FIELD_GET(AD7779_FREQ_LSB_MSK, dec));
+> +       if (ret)
+> +               return ret;
+
+> +       if (div % kfreq) {
+
+It's better to combine with / above, because some ISAs may have a
+single assembly instruction to do both at the same time. I'm not sure
+compiler (os some versions of it) may see this.
+
+  dec =3D div / freq_khz;
+  frac =3D div % freq_khz;
+  ...
+  if (frac) {
+      ...
+  }
+
+> +               temp =3D (div * KILO) / kfreq;
+> +               decimal =3D ((temp -  dec * KILO) << 16) / KILO;
+
+I would add a small comment to show the formula behind this.
+
+> +               ret =3D ad7779_spi_write(st, AD7779_REG_SRC_N_MSB,
+> +                                      FIELD_GET(AD7779_FREQ_MSB_MSK, dec=
+imal));
+> +               if (ret)
+> +                       return ret;
+> +               ret =3D ad7779_spi_write(st, AD7779_REG_SRC_N_LSB,
+> +                                      FIELD_GET(AD7779_FREQ_LSB_MSK, dec=
+imal));
+> +               if (ret)
+> +                       return ret;
+> +       } else {
+> +               ret =3D ad7779_spi_write(st, AD7779_REG_SRC_N_MSB,
+> +                                      FIELD_GET(AD7779_FREQ_MSB_MSK, 0x0=
+));
+> +               if (ret)
+> +                       return ret;
+> +               ret =3D ad7779_spi_write(st, AD7779_REG_SRC_N_LSB,
+> +                                      FIELD_GET(AD7779_FREQ_LSB_MSK, 0x0=
+));
+> +               if (ret)
+> +                       return ret;
+> +       }
+> +       ret =3D ad7779_spi_write(st, AD7779_REG_SRC_UPDATE, 0x1);
+> +       if (ret)
+> +               return ret;
+> +
+> +       /* SRC update settling time */
+> +       fsleep(15);
+
++ Blank line, otherwise it's unclear how fsleep() is applied (or to
+which sections).
+
+> +       ret =3D ad7779_spi_write(st, AD7779_REG_SRC_UPDATE, 0x0);
+> +       if (ret)
+> +               return ret;
+> +
+> +       /* SRC update settling time */
+> +       fsleep(15);
+
+Alternatively make a helper to avoid potential desynchronisation in
+the code pieces
+
+statuc int ad7779_update_src(..., val)
+{
+    ...
+    /* ... */
+    fsleep(...);
+
+    return 0;
+}
+
+> +       st->sampling_freq =3D sampling_freq;
+> +
+> +       return 0;
+> +}
+
+...
+
+> +static int ad7779_set_calibscale(struct ad7779_state *st, int channel, i=
+nt val)
+> +{
+> +       int ret;
+> +       unsigned int gain;
+> +       unsigned long long tmp;
+> +       u8 gain_bytes[3];
+> +
+> +       tmp =3D val * 5592405LL;
+> +       gain =3D DIV_ROUND_CLOSEST_ULL(tmp, MEGA);
+
+Formula to be explained?
+Magic number to be described (in the same comment), please?
+
+> +       put_unaligned_be24(gain, gain_bytes);
+> +       ret =3D ad7779_spi_write(st,
+> +                              AD7779_REG_CH_GAIN_UPPER_BYTE(channel),
+> +                              gain_bytes[0]);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret =3D ad7779_spi_write(st,
+> +                              AD7779_REG_CH_GAIN_MID_BYTE(channel),
+> +                              gain_bytes[1]);
+> +       if (ret)
+> +               return ret;
+> +
+> +       return ad7779_spi_write(st,
+> +                               AD7779_REG_CH_GAIN_LOWER_BYTE(channel),
+> +                               gain_bytes[2]);
+> +}
+
+...
+
+> +       iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
+> +               switch (mask) {
+> +               case IIO_CHAN_INFO_CALIBSCALE:
+> +                       *val =3D ad7779_get_calibscale(st, chan->channel)=
+;
+> +                       if (*val < 0)
+> +                               return -EINVAL;
+> +                       *val2 =3D GAIN_REL;
+> +                       return IIO_VAL_FRACTIONAL;
+> +               case IIO_CHAN_INFO_CALIBBIAS:
+> +                       *val =3D ad7779_get_calibbias(st, chan->channel);
+> +                       if (*val < 0)
+> +                               return -EINVAL;
+> +                       return IIO_VAL_INT;
+> +               case IIO_CHAN_INFO_SAMP_FREQ:
+> +                       *val =3D st->sampling_freq;
+> +                       if (*val < 0)
+> +                               return -EINVAL;
+> +                       return IIO_VAL_INT;
+> +               }
+> +               return -EINVAL;
+> +       }
+
+> +       unreachable();
+
+Hmm... Is it necessary? Same Q for other similar cases. I.o.w. what
+will be if we don't add this line?
+
+> +}
+
+...
+
+> +static irqreturn_t ad7779_trigger_handler(int irq, void *p)
+> +{
+> +       struct iio_poll_func *pf =3D p;
+> +       struct iio_dev *indio_dev =3D pf->indio_dev;
+> +       struct ad7779_state *st =3D iio_priv(indio_dev);
+> +       int ret;
+> +       int bit;
+> +       int k =3D 0;
+> +       /*
+> +        * Each channel shifts out HEADER + 24 bits of data therefore 8 *=
+ u32
+> +        * for the data and 64 bits for the timestamp
+> +        */
+
+May you do the respective structure and use aligned_s64 for the timestamp?
+
+> +       u32 tmp[10];
+> +
+> +       struct spi_transfer sd_readback_tr[] =3D {
+> +               {
+> +                       .rx_buf =3D st->spidata_rx,
+> +                       .tx_buf =3D st->spidata_tx,
+> +                       .len =3D AD7779_NUM_CHANNELS * AD7779_CHAN_DATA_S=
+IZE,
+> +               }
+> +       };
+> +
+> +       if (!iio_buffer_enabled(indio_dev))
+> +               goto exit_handler;
+> +
+> +       st->spidata_tx[0] =3D AD7779_SPI_READ_CMD;
+> +       ret =3D spi_sync_transfer(st->spi, sd_readback_tr,
+> +                               ARRAY_SIZE(sd_readback_tr));
+> +       if (ret) {
+> +               dev_err(&st->spi->dev,
+> +                       "spi transfer error in irq handler");
+> +               goto exit_handler;
+> +       }
+> +
+> +       for_each_set_bit(bit, indio_dev->active_scan_mask, AD7779_NUM_CHA=
+NNELS - 1)
+> +               tmp[k++] =3D st->spidata_rx[bit];
+> +
+> +       iio_push_to_buffers_with_timestamp(indio_dev, &tmp[0], pf->timest=
+amp);
+> +
+> +exit_handler:
+> +       iio_trigger_notify_done(indio_dev->trig);
+> +       return IRQ_HANDLED;
+> +}
+
+...
+
+> +       st->mclk =3D devm_clk_get_enabled(&spi->dev, "mclk");
+> +       if (IS_ERR(st->mclk))
+> +               return PTR_ERR(st->mclk);
+
+> +       if (!spi->irq)
+> +               return dev_err_probe(&spi->dev, ret,
+> +                                    "DRDY irq not present\n");
+
+This can be done much earlier and avoid unneeded resource allocations.
+
+...
+
+> +static int ad7779_suspend(struct device *dev)
+> +{
+> +       struct iio_dev *indio_dev =3D dev_get_drvdata(dev);
+> +       struct ad7779_state *st =3D iio_priv(indio_dev);
+> +       int ret;
+> +
+> +       ret =3D ad7779_spi_write_mask(st, AD7779_REG_GENERAL_USER_CONFIG_=
+1,
+> +                                   AD7779_MOD_POWERMODE_MSK,
+> +                                   FIELD_PREP(AD7779_MOD_POWERMODE_MSK,
+> +                                              AD7779_LOW_POWER));
+> +       if (ret)
+> +               return ret;
+> +
+> +       return 0;
+
+  return ad7779_spi_write_mask(...);
+
+> +}
+> +
+> +static int ad7779_resume(struct device *dev)
+> +{
+> +       struct iio_dev *indio_dev =3D dev_get_drvdata(dev);
+> +       struct ad7779_state *st =3D iio_priv(indio_dev);
+> +       int ret;
+> +
+> +       ret =3D ad7779_spi_write_mask(st, AD7779_REG_GENERAL_USER_CONFIG_=
+1,
+> +                                   AD7779_MOD_POWERMODE_MSK,
+> +                                   FIELD_PREP(AD7779_MOD_POWERMODE_MSK,
+> +                                              AD7779_HIGH_POWER));
+> +       if (ret)
+> +               return ret;
+> +
+> +       return 0;
+
+Ditto.
+
+> +}
+
+...
+
+> +static const struct spi_device_id ad7779_id[] =3D {
+> +       {
+> +               .name =3D "ad7770",
+> +               .driver_data =3D (kernel_ulong_t)&ad7770_chip_info
+
+Leave trailing comma.
+
+> +       },
+> +       {
+> +               .name =3D "ad7771",
+> +               .driver_data =3D (kernel_ulong_t)&ad7771_chip_info
+
+Ditto.
+
+> +       },
+> +       {
+> +               .name =3D "ad7779",
+> +               .driver_data =3D (kernel_ulong_t)&ad7779_chip_info
+
+Ditto.
+
+> +       },
+> +       { }
+> +};
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
