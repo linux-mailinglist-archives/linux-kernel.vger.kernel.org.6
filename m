@@ -1,279 +1,118 @@
-Return-Path: <linux-kernel+bounces-326989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11BED976F89
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:29:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 689D0976F8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94B921F245E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:29:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BE631F2462E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:29:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D231BE86D;
-	Thu, 12 Sep 2024 17:29:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B83081BFDE5;
+	Thu, 12 Sep 2024 17:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q374CKmY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ILfeSbw+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC221BF7F3;
-	Thu, 12 Sep 2024 17:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B77D15098A;
+	Thu, 12 Sep 2024 17:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726162171; cv=none; b=J8SqRLYWYuncKUpSw8QYuUt2OO/5Ri3IKE6hGN5KKb3d81UstFsTiaDh6GUPtbl7v7P++VR3zCo7tJUCjq7o/ple8SJJTDLcKRcwlOxpnoMnHveIyr3liG84GAlsEyslDf6UqtHioXDUsg89Xo7dKV5DS6XXky7VCkoipXne3Cs=
+	t=1726162183; cv=none; b=g5EOigVpMQ5ZMXxSSf2vYXpgX3PWY94J7A2RQcoJIpiLI42DeSJ2uO3C/FhVLhceNSsnt+dONnp7fjT869wqc2Zli2omZI4gPxXVqNqwEJ2SpSyqR4OHr13TVqW+KxvFUyar5U7dxI/Y/dek60jr4F60IwYWEi1/JzWHMBLRuY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726162171; c=relaxed/simple;
-	bh=xhqvjqpyA8cnq3v8vl+ABjg4kZgip/Nh7LoOnqQc2dc=;
+	s=arc-20240116; t=1726162183; c=relaxed/simple;
+	bh=zDGznEn/StT0eacvGsbWQqOmyRaA1BKWZvptYgykthA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l1Au8BofRANTuRf0UqzAu/oUK1ZgxZ+aYPsHdx3JKx/sqqWtqiYf0iNWEw6LOIfMQolEAU1pPCunSi5HCBKltriqC5oL570AF1qPfCvJQCVaiRt/UrtWTWuGYbHhp1++7K1HIGkfLpIlumlCDSHbRgLiPr03u4RHZauxzu8P8Y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q374CKmY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AA61C4CEC3;
-	Thu, 12 Sep 2024 17:29:28 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=d/CjdEvpaoHtPaJK3+4k+UkCSgMRjQ9PpW2ZvvF2makzVvcUsTSTk5bPuDahY1MFiXvixrrHpOcYA+jFL9MghhRHt+wQYwRu87AGWZgRF+jqE8mySDJJL49F7nLIpb/LcCOfx5VuKGG8zNWDnXLq1CXnLe1YQUJlDE2qM+i4HfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ILfeSbw+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E57E1C4CEC3;
+	Thu, 12 Sep 2024 17:29:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726162170;
-	bh=xhqvjqpyA8cnq3v8vl+ABjg4kZgip/Nh7LoOnqQc2dc=;
+	s=k20201202; t=1726162182;
+	bh=zDGznEn/StT0eacvGsbWQqOmyRaA1BKWZvptYgykthA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q374CKmYTcGVFqGo9pu6FX1jPHBZ+AwGn1oXN+hqRkJTcDWZ3AYsXYYmJ9zvTWJS9
-	 SCBJkUjoz3vyEpmHbwD3AIqBavWCvuISoN+PN1FeQiATm7sP1oJTiGH+KbmxXTSvdX
-	 zGhXPr5hfT/0XyI8hXBoo4DqPwziTqi/zWm2IolMX3YH134dlRA8KVg1s6fm78aQ1E
-	 Jyh5fBDQiu91kWq7uZ8h7rKo10dnQKklkcsLENH3usZ6twyz7Exy4hjSgIoSNFIlpW
-	 vdrVJSPGqcmZCvEIHPAqnGRNHbviIoN1kzQ/wTPnX5/cekxkBCzbEOHVJayHI2eFZ0
-	 BnNyOzOVD3CMw==
-Date: Thu, 12 Sep 2024 18:29:26 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Oleh Kuzhylnyi <kuzhylol@gmail.com>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>, igor.opaniuk@gmail.com,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jeff LaBundy <jeff@labundy.com>
-Subject: Re: [PATCH v7 1/2] dt-bindings: input: touchscreen: add Hynitron
- CST816X
-Message-ID: <20240912-strenuous-shame-57e15e34437b@spud>
-References: <20240912132823.123409-1-kuzhylol@gmail.com>
+	b=ILfeSbw+ykMKzupv4qU1xlaCnMmDg80aCV9c/GQ8X1ITGrUufUpoEUhKQivsfZt96
+	 mIl2oZmkrvZ8EQ78pc7uNOHIm2BHJEl+ct8or6iRF1Gsy17jWW0Cdgr2jtscW7rc8P
+	 rn8JQLaFDgCjckH1eN92sIqA8UTxyEFoDIfo3BWyeEUrDTeRjrhH+lVTXxh3G1X/1L
+	 3EWncvTiw65P6HteNwzHx3AKz6C5wisCIQs57AEBEVwm+C+/wf/VeDNv36l70XU53a
+	 AZFcv3AOQwH4qSGsx1LsWQBYsjOfJvlFEF0tYqxK9B7C6sXnovn8nwb0YZxrguOuQd
+	 rFc0ZuLmvSknw==
+Date: Thu, 12 Sep 2024 18:29:36 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Yury Khrustalev <yury.khrustalev@arm.com>,
+	Wilco Dijkstra <wilco.dijkstra@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH RFC 0/2] arm64: Add infrastructure for use of AT_HWCAP3
+Message-ID: <b8d2f79b-1ef9-4e30-b3eb-a586fa88c4ba@sirena.org.uk>
+References: <20240906-arm64-elf-hwcap3-v1-0-8df1a5e63508@kernel.org>
+ <ZuMauVtQz21aBiAX@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="4cecQjSG5/Xg/ZJA"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="PY2TG83/gvDfQre4"
 Content-Disposition: inline
-In-Reply-To: <20240912132823.123409-1-kuzhylol@gmail.com>
+In-Reply-To: <ZuMauVtQz21aBiAX@arm.com>
+X-Cookie: Happiness is the greatest good.
 
 
---4cecQjSG5/Xg/ZJA
+--PY2TG83/gvDfQre4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 12, 2024 at 03:28:22PM +0200, Oleh Kuzhylnyi wrote:
-> Add documentation for the Hynitron CST816X touchscreen bindings.
->=20
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: Oleh Kuzhylnyi <kuzhylol@gmail.com>
-> ---
->=20
-> Changes in v7:
->  - Introduce the gestures field along with its sub-fields
->  - Make reset-gpio property optional
->  - Extend main description
->  - Remove "touchscreen" reference
->=20
-> Changes in v6:
->  - Fix minor tweak adviced by Krzysztof:
->  - Move additionalProperties field after required
->=20
-> Changes in v5:
->  - No code changes
->=20
-> Changes in v4:
->  - Add Conor's Dooley "Reviewed-by" tag
->=20
-> Changes in v3:
->  - Rename filename to hynitron,cst816s.yaml
->  - Update description with display details
->=20
-> Changes in v2:
->  - Apply pin definitions and DT headers
->  - Use generic name for DT node
->  - Drop status field
->=20
->  .../input/touchscreen/hynitron,cst816s.yaml   | 126 ++++++++++++++++++
->  1 file changed, 126 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/h=
-ynitron,cst816s.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/input/touchscreen/hynitron=
-,cst816s.yaml b/Documentation/devicetree/bindings/input/touchscreen/hynitro=
-n,cst816s.yaml
-> new file mode 100644
-> index 000000000000..99ac29da7a5a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/input/touchscreen/hynitron,cst816=
-s.yaml
-> @@ -0,0 +1,126 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/input/touchscreen/hynitron,cst816s.ya=
-ml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Hynitron CST816S Touchscreen controller
-> +
-> +description:
-> +  The CST816S is a touchscreen controller from Hynitron, which supports =
-gesture
-> +  recognition for swipe directions, tap, and long-press actions. This bi=
-nding
-> +  document defines the necessary properties for integrating the CST816S =
-with
-> +  a Linux system.
-> +
-> +maintainers:
-> +  - Oleh Kuzhylnyi <kuzhylol@gmail.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - hynitron,cst816s
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +    description:
-> +      Optional GPIO line used to reset the touchscreen controller.
-> +    optional: true
-> +
-> +  gestures:
-> +    type: object
-> +    description:
-> +      A list of gestures supported by the CST816S touchscreen controller=
- and
-> +      their associated Linux input event codes.
-> +    optional: true
-> +
-> +    properties:
-> +      "^.*$":
+On Thu, Sep 12, 2024 at 05:45:45PM +0100, Catalin Marinas wrote:
+> On Fri, Sep 06, 2024 at 12:05:23AM +0100, Mark Brown wrote:
 
-Did I really ack this with a .* regex? Surely there's a limit on what
-kinds of gestures that it can recognise?
+> > We will at some point need to bite this bullet but we need to decide if
+> > it's now or later.  Given that we used the high bits of AT_HWCAP2 first
+> > and AT_HWCAP3 is already defined it feels like that might be people's
+> > preference, in order to minimise churn in serieses adding new HWCAPs
+> > it'd be good to get consensus if that's the case or not.
 
-> +        type: object
-> +        description:
-> +          Each child node represents a gesture that the touchscreen cont=
-roller
-> +          can recognize.
-> +
-> +        properties:
-> +          cst816x,gesture:
+> Since the arm64 ABI documents that only bits 62 and 63 from AT_HWCAP are
+> reserved for glibc, I think we should start using the remaining 30 bits
+> of AT_HWCAP first before going for AT_HWCAP3. I'm sure we'll go through
+> them quickly enough, so these two patches will have to be merged at some
+> point.
 
-This isn't a valid vendor prefix. Please remove received acks/reviews if
-you make non-trivial changes to a reviewed patch, I wouldn't have acked
-this.
+That does seem like the easiest path for everyone, assuming that there
+hasn't been any usage of the remaining spare bits we weren't aware of.
 
-> +            description:
-> +              Numeric value representing the gesture ID recognized by the
-> +              CST816S touchscreen controller.
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +          linux,code:
-> +            description:
-> +              Linux input event code (from linux/input-event-codes.h) th=
-at
-> +              corresponds to the gesture.
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +
-> +        required:
-> +          - cst816x,gesture
-> +          - linux,code
-> +
-> +        additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    #include <dt-bindings/input/linux-event-codes.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    i2c {
-> +      #address-cells =3D <1>;
-> +      #size-cells =3D <0>;
-> +
-> +      touchscreen@15 {
-> +        compatible =3D "hynitron,cst816s";
-> +        reg =3D <0x15>;
-> +        interrupt-parent =3D <&gpio0>;
-> +        interrupts =3D <4 IRQ_TYPE_EDGE_RISING>;
-> +        reset-gpios =3D <&gpio 17 GPIO_ACTIVE_LOW>;
-> +
-> +        gestures {
-> +          swipe_up {
-> +            cst816x,gesture =3D <0x1>;
-> +            linux,code =3D <BTN_FORWARD>;
-> +          };
-> +
-> +          swipe_down {
-> +            cst816x,gesture =3D <0x2>;
-> +            linux,code =3D <BTN_BACK>;
-> +          };
-> +
-> +          swipe_left {
-> +            cst816x,gesture =3D <0x3>;
-> +            linux,code =3D <BTN_LEFT>;
-> +          };
-> +
-> +          swipe_right {
-> +            cst816x,gesture =3D <0x4>;
-> +            linux,code =3D <BTN_RIGHT>;
-> +          };
-> +
-> +          single_tap {
-> +            cst816x,gesture =3D <0x5>;
-> +            linux,code =3D <BTN_TOUCH>;
-> +          };
-> +
-> +          long_press {
-> +            cst816x,gesture =3D <0xC>;
-> +            linux,code =3D <BTN_TOOL_TRIPLETAP>;
-> +          };
-> +        };
-> +      };
-> +    };
-> +
-> +...
-> --=20
-> 2.34.1
->=20
+> We'll need an Ack from the (arm64) glibc people on the GCS patch series
+> if we are going for bits 32+ in AT_HWCAP.
 
---4cecQjSG5/Xg/ZJA
+Yup, hopefully Yuri or Wilco can confirm prior to reposting.  It does
+seem like it'd be good for glibc to add whatever support is needed for
+HWCAP3/4 now anyway so that whenever we do burn through the remaining
+bits on AT_HWCAP there's less friction as we start using them.
+
+--PY2TG83/gvDfQre4
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuMk9gAKCRB4tDGHoIJi
-0qjUAQCgNnfPtss2biRbBqzXpRehd+fQC7Gmt5tndEBCgNW+3QD9HL0xA2BSkcoh
-AgofETkHOM7Qu2jJmpgB/18jrlpg9wM=
-=51n/
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbjJP8ACgkQJNaLcl1U
+h9A5uAf/dRvyo0ETJshkqYxCUdY9OOrC8VAw6izGokC7Pbig9GfOGMbwramzsIPK
+79bkWe8NRIYB/ZAPmQJE5on/o7LIfGKmBacSz/hRBUzB0frm2utsQSbFzxOlUZdw
+gBfOhfJ0WT9Fr2HWojcoHFy3Wrlh7yU6fCxLptsclItcYQ66OHqPLyZ3ZmhMJfke
+CdE0ibgG4E5bMwpDHwmUFct9PkaIxLm8G80VBU3h8584BCTGEgy+0zGPfQBi8CBF
+f5SeikY/4ZtCA+SznibclKPw5u0Ow7Z5jmP6/CPInfu0a71R8/nkmAiLJ0hBr7IO
+NsADawEmyVdwQRMhsRpMwtW/HNdULA==
+=ra9H
 -----END PGP SIGNATURE-----
 
---4cecQjSG5/Xg/ZJA--
+--PY2TG83/gvDfQre4--
 
