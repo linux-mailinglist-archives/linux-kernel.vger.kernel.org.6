@@ -1,110 +1,96 @@
-Return-Path: <linux-kernel+bounces-326219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA7CD97651A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:03:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0607D97651D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 708F1281EA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:03:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 386CE1C23310
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD07A1922E0;
-	Thu, 12 Sep 2024 09:03:39 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BBF19146E;
+	Thu, 12 Sep 2024 09:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l0WH8nvT"
+Received: from mail-pj1-f68.google.com (mail-pj1-f68.google.com [209.85.216.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57209188A01;
-	Thu, 12 Sep 2024 09:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2182D18EFED;
+	Thu, 12 Sep 2024 09:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726131819; cv=none; b=WUs+rS75kTH02NbCHltaMqUKuYfbSvb5Qh/cKc0b6pPooMAOXpgz4QfFvdC1Ma4QNXvuFRb3Oa6I9kC6qY+zdtRQt4GJ8cH4/RuLBIi8yrLn50GC5I2CzMjCEsnjfFdgQq1oDZGsCHb6B49iuFjuRISJY3osuleItyYFmxrwlXE=
+	t=1726131830; cv=none; b=QJcuvR9IJ10nHMhfzOkaNIb3jtNhQuX37U/UeLC0c4w0EWLeoksh0WMTqF+EXaYerfeD2AG7bPFnq8hGhIFo+8Rk/eQzDlhkVuNjWgF5ajEswJJgfqgQblThVEUWi2j25Iu3BvnnHwehoSmQS9TxVa7Db+K/hI7WcYTjB/vEaDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726131819; c=relaxed/simple;
-	bh=VJd4Y2IN/9od+WeuKVCAFWnWbNilas3cNK4GJ2oyySw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MwKLHVTV09FobzY7Op4wm4v99TyYvH3SL4bK2rGlyxC3l5w4PaqhDxMjcCTdFJQhaRjM5a3cOWMngrq/uuuqPuAzg88N4ez2+7gZqpoRgNalOHtJA71CAHRhr5vlu3ZOesal4le2reK5H9IrFGGJn9Z2WwRCBfXcOEvVE0hI+k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [192.168.12.114] (unknown [180.111.103.6])
-	by APP-01 (Coremail) with SMTP id qwCowAC3aKhbruJmh60BAw--.7963S2;
-	Thu, 12 Sep 2024 17:03:24 +0800 (CST)
-Message-ID: <b5128162-278a-4284-8271-b2b91dc446e1@iscas.ac.cn>
-Date: Thu, 12 Sep 2024 17:03:20 +0800
+	s=arc-20240116; t=1726131830; c=relaxed/simple;
+	bh=HhpXaTt1FHv4GMgoC6Cc8mnPbpY0i4fq4rQkC7RWOZ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=onP3KWGiG9lcAGMqFgBJC2/275B9UJjbBBX7y6KVrLFgeOM5Y42YzwnW8K85hyhoCvmtzLlmKoxC77JAzeVeskv75r6WwtezPI6hk73HFwg7uQrT9O06gSbgFXE76WNyMMyXKh+C/LZXvuEkNAhWrONu7LSukt9IRmnq0SzORvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l0WH8nvT; arc=none smtp.client-ip=209.85.216.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f68.google.com with SMTP id 98e67ed59e1d1-2d8881850d9so575984a91.3;
+        Thu, 12 Sep 2024 02:03:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726131828; x=1726736628; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HhpXaTt1FHv4GMgoC6Cc8mnPbpY0i4fq4rQkC7RWOZ8=;
+        b=l0WH8nvTym1QCXsh5qushSXhIO/5LhTcGrj0KU/m+NUUmGxbTuZtt9BAXSS+taGPml
+         avNOt+jam7UPx3NV2azRHbVYpuI7HmgT8mcgqxAp2+GcKS3276knm8EKCL1/cnp37kqh
+         f7IPDbWn2zUslas+REd0lKjOxqpOqE6rdSawU+33YevRyLLNsn29m92fufcXUs8YW2uc
+         aWHbRbR+yB5FNuExQ+2C2qD2eqck/j1KPAjAViZoQuPV7YaWbX20D2hGqylve95xaKWM
+         QD+aHSotsspac+9shkmnbPGgc7pcluRp9IeF4iwMvvgq2R9no41xKe0kcq6UZFQJ7R3P
+         h4/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726131828; x=1726736628;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HhpXaTt1FHv4GMgoC6Cc8mnPbpY0i4fq4rQkC7RWOZ8=;
+        b=bTdzmqdO8TS+GqvU65To92AJp5BQK8NXJvh756RZAgzKirxdZ2OM1QwTWKLeFrN0pl
+         ch5/VRC1UK6Khajv43jURQSHRNU3n71bD+xokOjS8mYUenBE+F4sNJKt9Yh2GDrBmJZW
+         T8GN/66Q6NWyGg0d6IwXIMSHehjRz3hXEqX36wXSG6HfHnb2IlWxUWpICBYdX17ikwAl
+         8eymzJbsPnKUHBIS+VW9pbozwieNBKziSFqAStRRfg0fmsv/ArFNFbEYGJLYqm6hTUnp
+         iimnMuS0dP25HRl+oGqkTkzoQPSJOBW8jFm7MInpou83XWMHGj1f1rkcwCnnXkeJcTXY
+         7VLw==
+X-Forwarded-Encrypted: i=1; AJvYcCWXCSgr307xvm4HGMZXTWlyYq4PfX2CC2Im1T/gfuWq+963NTmyPjpNxUdxoA4EEdmL79kgMgUdC5+0efY8@vger.kernel.org, AJvYcCWyMDuO0TOUr6faFDB/j+1s6e5Pdy4dT7YNHXuxEqk5gfAKCLg8dlfGgea5Zg7o/PrtFQslS2WxxauY4AnY@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoJ6FWofQ+afw+Z3zVOhekV4q2F23dUrslvZpuun4p3SuJtmh2
+	wa1g/AYYCslDo41rbpL75N3EOzNvdKJOgqikXrc1Yu9WSd0/R3mcQDE49UNSOTnN9r6Yb1V9Bip
+	7wPe91vtFNjj7kWWjYHtsctitIWM=
+X-Google-Smtp-Source: AGHT+IEmUFvv5ATWibMOCTGFiMeUKzE4whzZv65lnQ7aMsvQ4FtzT+GYpYIzqECgbJdZkICGbzo1wO2QfWGkbeiwNUY=
+X-Received: by 2002:a17:90b:3686:b0:2d8:82da:2627 with SMTP id
+ 98e67ed59e1d1-2dba0061bc6mr2512832a91.27.1726131828132; Thu, 12 Sep 2024
+ 02:03:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] RISC-V: KVM: Redirect instruction access fault trap to
- guest
-To: anup@brainfault.org, ajones@ventanamicro.com, atishp@atishpatra.org,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu
-Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- kvm@vger.kernel.org, kvm-riscv@lists.infradead.org
-References: <83c2234d582b7e823ce9ac9b73a6bbcf63971a29.1724911120.git.zhouquan@iscas.ac.cn>
-Content-Language: en-US
-From: Quan Zhou <zhouquan@iscas.ac.cn>
-In-Reply-To: <83c2234d582b7e823ce9ac9b73a6bbcf63971a29.1724911120.git.zhouquan@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:qwCowAC3aKhbruJmh60BAw--.7963S2
-X-Coremail-Antispam: 1UD129KBjvJXoWrtF1rtr1xWF43Gr4fGFW8Xrb_yoW8JryrpF
-	43CF1a9r4rWFyq93WIvrs7uFWIqwn5K3ZxWr4jqFW5Xwsrtas5Crs0g3yUtFy8Gr4rX3yI
-	9F4IqFyvyFn8twUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvlb7Iv0xC_Cr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwV
-	C2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Cr0_Gr
-	1UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xK
-	xwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
-	W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
-	1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
-	IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
-	x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
-	DU0xZFpf9x07UN2-5UUUUU=
-X-CM-SenderInfo: 52kr31xxdqqxpvfd2hldfou0/1tbiCQ8SBmbifb-JEgAAsP
+References: <20240912031932.1161-1-ganjie182@gmail.com> <20240912065737.GA7455@lst.de>
+In-Reply-To: <20240912065737.GA7455@lst.de>
+From: =?UTF-8?B?5bmy5o23?= <ganjie182@gmail.com>
+Date: Thu, 12 Sep 2024 17:03:36 +0800
+Message-ID: <CAKG3ji1vioBmvpRDRke5Z6vLR6PKa6Y98up38=3hL50iRs27Yg@mail.gmail.com>
+Subject: Re: [PATCH v2] unicode: change the reference of database file
+To: Christoph Hellwig <hch@lst.de>
+Cc: krisman@kernel.org, krisman@suse.de, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, guoxuenan@huawei.com, guoxuenan@huaweicloud.com, 
+	=?UTF-8?B?5bmy5o23?= <ganjie182@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Thanks!
 
 
-On 2024/8/29 14:20, zhouquan@iscas.ac.cn wrote:
-> From: Quan Zhou <zhouquan@iscas.ac.cn>
-> 
-> The M-mode redirects an unhandled instruction access
-> fault trap back to S-mode when not delegating it to
-> VS-mode(hedeleg). However, KVM running in HS-mode
-> terminates the VS-mode software when back from M-mode.
-> 
-> The KVM should redirect the trap back to VS-mode, and
-> let VS-mode trap handler decide the next step.
-> 
-> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
-> ---
->   arch/riscv/kvm/vcpu_exit.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/riscv/kvm/vcpu_exit.c b/arch/riscv/kvm/vcpu_exit.c
-> index fa98e5c024b2..696b62850d0b 100644
-> --- a/arch/riscv/kvm/vcpu_exit.c
-> +++ b/arch/riscv/kvm/vcpu_exit.c
-> @@ -182,6 +182,7 @@ int kvm_riscv_vcpu_exit(struct kvm_vcpu *vcpu, struct kvm_run *run,
->   	ret = -EFAULT;
->   	run->exit_reason = KVM_EXIT_UNKNOWN;
->   	switch (trap->scause) {
-> +	case EXC_INST_ACCESS:
-
-A gentle ping, the instruction access fault should be redirected to
-VS-mode for handling, is my understanding correct?
-
->   	case EXC_INST_ILLEGAL:
->   	case EXC_LOAD_MISALIGNED:
->   	case EXC_STORE_MISALIGNED:
-> 
-> base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
-
+Christoph Hellwig <hch@lst.de> =E4=BA=8E2024=E5=B9=B49=E6=9C=8812=E6=97=A5=
+=E5=91=A8=E5=9B=9B 14:57=E5=86=99=E9=81=93=EF=BC=9A
+>
+> Looks good:
+>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+>
 
