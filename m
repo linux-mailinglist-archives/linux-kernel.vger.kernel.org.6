@@ -1,53 +1,64 @@
-Return-Path: <linux-kernel+bounces-325778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06FE5975E1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:48:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E3E2975DF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:23:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1D93285B61
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:48:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B612BB21FA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5DB1DA4E;
-	Thu, 12 Sep 2024 00:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFCC94685;
+	Thu, 12 Sep 2024 00:23:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="mUVLP5gc"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iecaVI58"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66C93209;
-	Thu, 12 Sep 2024 00:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD3F1877
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 00:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726102083; cv=none; b=tuAuRCVCj+Q+lrFpgbhXx6dJhZR6xLAs1mTfhYjKK/2/8xul9fFfjQNtAHMoxcXmlFOKiXOJ8niKa/MK31fCK+w1miwAqUYiyXGbfVmPFJMC7U03unJT22K8hQSniQVwikAbk/xyERyxZxKqvzTeplpTbeo++XT5L8DXpI0YEY4=
+	t=1726100602; cv=none; b=P1fdknQWbCzVN2x8lyLxhORurqIzI/sq6DWnYz0Q3ShwnPyjaPJdKcD0faQIYc3gfyZHE1PXq8ymJEG2bNv3o2xqLdalZoPCn5Xo3kUqnFQ+o6ziEiCH5m3IhqrSwh6p+MPCxGnocTZlXsi5k2RpCQTJvzzJ4TcNMxHDC8It1+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726102083; c=relaxed/simple;
-	bh=0eysDtgRRa65JkJQOs3PKV4EUwS47bDFQDXpBNYg4Ec=;
+	s=arc-20240116; t=1726100602; c=relaxed/simple;
+	bh=CiR8o9L9CqezBdCRlOwKUcbnA8aSStZB2KaWJ8GnIiQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V/BaQbDtdqPAfvuNwvGPI40KrRagcjDsls3u2LQc9piBIwRF7CTrjAnXAZVJAuIgITJflXq3g31JdfXV+1Rm7X+2swA0JVsMw/5NqHDjb+a840roqgqJMWibymIRoSEDWqJBWtfj6klPvsC6HbTIxzxs19Q2ccZbKYMUQKh2Odw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=mUVLP5gc; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id E65F788CEB;
-	Thu, 12 Sep 2024 02:47:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1726102080;
-	bh=sc503OWPpPYu83ILRstAasVNUOftYWoZvWdM7aKBsdY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mUVLP5gcJk4q+oo5qPmwe6keLWLN7aA1RO/qVVZHwoUPcwuyq8YzhmHxr+5DvR/C5
-	 j6W4MRX3JC5JzkHrWf6m3zXxhxmwNpRCSgOFq20AoVg58np5OBOU2B2t6r2xOWcmFP
-	 1LtXyMdIJ85doT/PXT6oSX7GSBNoKGTahQiTvh/iRazNHsTlOeLPmg/NFieWo5uNr0
-	 LiH6zJXbKj5lO9iCQoj1falZkb82Fdm+R62L3zz1zeWIdd/yi184am+Tf+UbM6oLB4
-	 FaiZcHUiE4ox2HIqFS4GFozib3cnnmxoMd3bI99ciUzPWAsPgASTt1JxU0m5Gba5aU
-	 C+Y5KeDhqPmng==
-Message-ID: <0c69242f-7ce6-463a-b704-a5c0b94389cf@denx.de>
-Date: Thu, 12 Sep 2024 02:22:15 +0200
+	 In-Reply-To:Content-Type; b=t9epTFAGU6uBUfpFNQgz8+8eMpLho0ia+iC3ejU+4X/16F39w8+pNIJeV0iDqL2Y06Q7Zux/dt4KpaatQld8Xa4SsfVVy4bCtRmVOckEPk03Y+ciT9GIV/eUOqkSKG7CBeiuVuPeYLFJKzQRiF3Df6QGTcS0kFk/1sQzfTR6+fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iecaVI58; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726100600; x=1757636600;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=CiR8o9L9CqezBdCRlOwKUcbnA8aSStZB2KaWJ8GnIiQ=;
+  b=iecaVI58VJ9VUmpBI0a9eEqGqDV0l8WbVLfiOu5G66+00kLQ351mrxXp
+   2tOt/NDI+1vOvfSYZfF3QH87vh7Lfze79GQXkKrXPvU1Fe8kgzNzroCJ8
+   NzUVogrMMk4U4VVRkHwwN8MvLRuxxM51lm1Ee+YN2EAm0VoOO5Q+ZoCwt
+   9L1d/fooVoloYTBiQIcZ0cFBRED24zjlvacSI+kG2bBWYQaHBEhEXfCIf
+   0dN3rKkObklwu+hPcjn2jE52kBYN27kQ9UbMCp4WSMs/QtpNQJhqBtQ/S
+   Z6JY9xcOeoxmeqAZZEFOptOIRO/jopw/ZX0O7BIlFQd6JdjvYknDHwHrA
+   w==;
+X-CSE-ConnectionGUID: 4NLfqXQUSqOPPpGvSaD+Yw==
+X-CSE-MsgGUID: q70bHFYIQE6lS/ArafhTEA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="24420718"
+X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
+   d="scan'208";a="24420718"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 17:23:19 -0700
+X-CSE-ConnectionGUID: xbJ5DSq+TsihI8G/1gHitA==
+X-CSE-MsgGUID: jzzAgGozTW2yEHCeAGNJ/w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
+   d="scan'208";a="67527291"
+Received: from dgramcko-desk.amr.corp.intel.com (HELO [10.124.223.221]) ([10.124.223.221])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 17:23:18 -0700
+Message-ID: <3328e53d-b0f2-4516-a6a6-51ca33642683@intel.com>
+Date: Wed, 11 Sep 2024 17:22:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,79 +66,115 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/1] pwm: imx27: workaround of the pwm output bug when
- decrease the duty cycle
-To: Frank Li <Frank.li@nxp.com>
-Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, festevam@gmail.com,
- francesco@dolcini.it, imx@lists.linux.dev, jun.li@nxp.com,
- kernel@pengutronix.de, krzk+dt@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pwm@vger.kernel.org, p.zabel@pengutronix.de, pratikmanvar09@gmail.com,
- robh@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org,
- ukleinek@kernel.org, xiaoning.wang@nxp.com
-References: <20240910152455.2425152-1-Frank.Li@nxp.com>
- <f42fefb6-2815-4f74-b403-fecd2aa79688@denx.de>
- <ZuIR04pr59mepdBB@lizhi-Precision-Tower-5810>
+Subject: Re: [PATCH v1 1/1] x86/fred: Clear the WFE bit in missing-ENDBRANCH
+ #CP
+To: "Xin Li (Intel)" <xin@zytor.com>, linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ peterz@infradead.org, andrew.cooper3@citrix.com
+References: <20240911231929.2632698-1-xin@zytor.com>
+From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <ZuIR04pr59mepdBB@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20240911231929.2632698-1-xin@zytor.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
 
-On 9/11/24 11:55 PM, Frank Li wrote:
+On 9/11/24 16:19, Xin Li (Intel) wrote:
+> +/*
+> + * The WFE (WAIT_FOR_ENDBRANCH) bit in the augmented CS of FRED stack frame is
+> + * set to 1 in missing-ENDBRANCH #CP exceptions.
 
-Hi,
+I think there's a bit of relatively irrelevant info in there.  For
+instance, I don't think it's super important to mention that FRED is
+involved and where the WFE bit is in memory.
 
->>> This only resolves the issue when the PWM period is longer than 2us
->>> (or <500KHz) because write register is not quick enough when PWM period is
->>> very short.
->>
->> You did mention the IPS bus is slow. Do I understand it correctly that the
->> IPS bus write takes about 1us ? Because of the PWM consumes a sample every
->> 2us and we need to write 2 samples to avoid FIFO underrun, then to safely
->> write those 2 samples, we need to be able to write 1 sample per 1 us into
->> the FIFO ?
-> 
-> The above time is just estimated, which variance at difference platform and
-> impact by other IPs. If there are pending write/read from GPIO, PWM write
-> have to wait for GPIO's write finish. It actually depend on IPS bus's
-> loading.
-> 
-> <500Khz is very less possiblity that write slower than PWM's consumes.
-> 
->>
->> Also, would writing more samples help with such "fast" use cases ?
->> Something like this:
->>
->> if (clkrate > 500000) {
->>    // This usleep() could use some further improvement, e.g. calculate
->>    // precise delay for the FIFO to get empty based on PWM clkrate
->>    usleep(2 * 5); // wait 2us for each of the 4 samples in FIFO and a bit
->>    // Now the FIFO is surely empty, write all four FIFO slots
->>    writel_relaxed(imx->duty_cycle, imx->mmio_base + MX3_PWMSAR);
->>    writel_relaxed(imx->duty_cycle, imx->mmio_base + MX3_PWMSAR);
->>    writel_relaxed(imx->duty_cycle, imx->mmio_base + MX3_PWMSAR);
->>    writel_relaxed(imx->duty_cycle, imx->mmio_base + MX3_PWMSAR);
-> 
-> It can help at some possiblity, but still have problem if > 1Mhz, write
-> will always less than consume.
-> 
-> If errata happen, only 1 cycle is full high. I think it is quite less
-> impact at such high frequency.
-> 
-> We found this problem by observe a screen backlight flick when change
-> ducty_cycle. I think we try fix it after a real user visible impact happen.
+FRED's involvement is kinda a no-brainer from the whole X86_FEATURE_FRED
+thing, and if you're reading exception handler code and don't know that
+'regs' is on the stack, this probably isn't the place to explain that.
 
-Indeed, I observed similar problem.
+> + * If the WFE bit is left as 1, the CPU will generate another missing-ENDBRANCH
+> + * #CP because the indirect branch tracker will be set in the WAIT_FOR_ENDBRANCH
+> + * state upon completion of the following ERETS instruction and the CPU will
+> + * restart from the IP that just caused a previous missing-ENDBRANCH #CP.
+> + *
+> + * Clear the WFE bit to avoid dead looping due to the above reason.
+> + */
+> +static void ibt_clear_fred_wfe(struct pt_regs *regs)
+> +{
+> +	if (cpu_feature_enabled(X86_FEATURE_FRED))
+> +		regs->fred_cs.wfe = 0;
+> +}
 
-> Put code here can reduce some possiblity at certain freq range, but may
-> miss-leading user the problem fixed when > 500k.
+Can I suggest a slightly different comment?
 
-You already have good code comments, maybe expanding one would help 
-clarify this issue cannot really be fully fixed with current hardware.
+/*
+ * WFE==1 (WAIT_FOR_ENDBRANCH) means that the CPU expects the next ERETS
+ * to jump to an ENDBR instruction. If the ENDBR is missing, the CPU
+ * raises a #CP.
+ *
+ * Clear WFE to avoid that #CP.
+ *
+ * Use this function in a #CP handler to effectively give the next
+ * ERETS a free pass to ignore IBT for a single instruction.
+ */
 
-I think the multi-write for > 500 kHz could further improve the patch, 
-but let's wait for input from others, let's see what they think.
+I think original comment really needs a "How do I use this?" sentence or
+two.
+
+A comment at the call site also wouldn't hurt:
+
+ 	if (unlikely(regs->ip == (unsigned long)&ibt_selftest_noendbr)){
+ 		regs->ax = 0;
++		/* Disable IBT enforcement for one exception return: */
++		ibt_clear_fred_wfe(regs);
+ 		return;
+ 	}
+
+I'm finding it kinda hard to concisely differentiate between the
+"disable IBT at one ERETS" and "disable IBT forever", but I hope this
+sounds good to folks.
+
 
