@@ -1,193 +1,107 @@
-Return-Path: <linux-kernel+bounces-327333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90F7097744D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:26:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 333A2977458
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B51891C24157
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:26:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6528D1C212E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E615E1C32ED;
-	Thu, 12 Sep 2024 22:26:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BAD1C2DC5;
+	Thu, 12 Sep 2024 22:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="g+DGzlab";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YmH7APkT";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ziYsZbo2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="HI/jfDLi"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZwGoyoAy"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7081C2437;
-	Thu, 12 Sep 2024 22:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279802C80
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 22:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726179974; cv=none; b=UE6mRR1YGuiQGcRm+PGQPGPCzJWI4Vzv/G6bWi5tJnJuKL/hsL9nQ8IO+QUIMCcekXi0DFBXAhxZXfF5GfTgYoymk6InDUjOLvQKB2CNm52G0QAQuYEEuyEdrGxtjGyeAGYtY3aNuLKVxigPc4YJSEmdtImHzVn78D19BbmG/FQ=
+	t=1726180253; cv=none; b=PCQYv47lbLgXLtapKr19yJHkp4CsYc+ojXJRUiRkp5GZjMBwC2XBsI8KWtS1TUiYbRFYSP0/ANlvq+B5BrmFeuMt9nycQguc1oveZY8hyTZqMvCtor3Q7XSw2Tx4ekqQtH0glQAcXXLwYzG9waPltvvSY6yTAyAJoKQL5rEeZLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726179974; c=relaxed/simple;
-	bh=ctItJRVpw82jXmQuDbKx6+6962Ka9QmWJ+Es9knwK/4=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=eeGpZVfX9n8loHopw8LiIJe+HIO8JzNM6lvM+cuHlKIzYxYKX9o6E4an+nH3yqAiZJiAcaCDm6V/0VEdIguCzJoNe0vk8uWiLIaBL/8JQ9rhrRMLatOiYhb+dogERh7fTark/sVfHwyzsVerJd2bkgkpOqm0S4SjR9nLcspYGXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=g+DGzlab; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YmH7APkT; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ziYsZbo2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=HI/jfDLi; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 372A51F7A9;
-	Thu, 12 Sep 2024 22:26:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726179970; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zl+cjXWbhkIbqfDOxo3tas/VXwicE3s/17bB24vRjKk=;
-	b=g+DGzlabXqd6KWY1Dt91L7hQYs01OaNVoUx6oFYSQiZLT38tPaVd9iGGa4JAOzn0WJCLOg
-	lVSODa1oeRTMjMeRmqE3sG4yjzSPpsuYmCUKxmEJaRh4b5BAfWpZinZxw0UYNq3afMIgLu
-	7ml1HG0dKGTuTLJDWLwswqV73K3DaTc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726179970;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zl+cjXWbhkIbqfDOxo3tas/VXwicE3s/17bB24vRjKk=;
-	b=YmH7APkTbkErtqTlXU/5WZBTc3FH7hklDzh1zabTihzph8mi81Tgph4J0QutpCpnTZON6o
-	IZ0vE6s2vJ8edjAQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726179969; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zl+cjXWbhkIbqfDOxo3tas/VXwicE3s/17bB24vRjKk=;
-	b=ziYsZbo2rQ4wh5JA4+cKJPA4FnvmkxMVE6DfOQXpKUcpzDp6V7+4PxsK7A8QBmJ1nZw71N
-	1YCXvRzmWxAxWRQY4ulw0cnNlWShcZwUcHMaGftCswoUQjKe71mQrSHwX0i1+m0u4cagni
-	2uxabQAJAmdxVtlP5wqk/u6eT8mxkB8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726179969;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zl+cjXWbhkIbqfDOxo3tas/VXwicE3s/17bB24vRjKk=;
-	b=HI/jfDLi4OeXSAGV1dwXa1aOD9G8c9lQec/WA1XoELzFJjGKqSR/Q8ZVVw8QWbBDzM9Phf
-	47TruksacWfhnbBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8553413A73;
-	Thu, 12 Sep 2024 22:26:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id RAfwDn5q42bHEgAAD6G6ig
-	(envelope-from <neilb@suse.de>); Thu, 12 Sep 2024 22:26:06 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1726180253; c=relaxed/simple;
+	bh=X/ACVZ2yMqEp+K0nA3WcyXwPm35BI17vNhlKzvwVbIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CUCF0TpsuXUg81dH0xsVryZHoRY4Ufqr/BvRZKW8XBrMVRXrsLpJ0sWnl5ZNYynjwl2KJRRYluxPGjiNHTxu1IgzA+65wW3ZcG1X0vqDzCdRQk6L3wcrYuJ1G1aH+KFCVNgwvlFi9JdZvbkiPriMloaYmZx83n+facW11Hd6WhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ZwGoyoAy; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (213-229-8-243.static.upcbusiness.at [213.229.8.243])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B8D104AD;
+	Fri, 13 Sep 2024 00:29:24 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1726180165;
+	bh=X/ACVZ2yMqEp+K0nA3WcyXwPm35BI17vNhlKzvwVbIQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZwGoyoAyObEXRGPlAyDMyhN/oeNZ0NcQyaWj4EAhf9+vIzIwWN/dBisgAHZybjCiB
+	 il9eGJb+YCPTFs+CnmrVPuOibFZ3lvdTq/VCZx9Bdgpc8pPy6FqO3oHxFYQQJY/ICb
+	 XkvBs0JgPffoCsoCfd7rch8svHxwoFYm11NVydWI=
+Date: Fri, 13 Sep 2024 01:30:07 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Maxime Ripard <mripard@kernel.org>, Devarsh Thakkar <devarsht@ti.com>,
+	ahalaney@redhat.com, airlied@gmail.com, cai.huoqing@linux.dev,
+	caihuoqing@baidu.com, colin.i.king@gmail.com, dakr@redhat.com,
+	daniel@ffwll.ch, dmitry.baryshkov@linaro.org,
+	dri-devel@lists.freedesktop.org, geert+renesas@glider.be,
+	grandmaster@al2klimov.de, j-choudhary@ti.com, javierm@redhat.com,
+	jyri.sarha@iki.fi, linux-kernel@vger.kernel.org,
+	maarten.lankhorst@linux.intel.com, nm@ti.com, praneeth@ti.com,
+	r-ravikumar@ti.com, robh@kernel.org, sam@ravnborg.org,
+	simona.vetter@ffwll.ch, tzimmermann@suse.de,
+	u.kleine-koenig@pengutronix.de, vigneshr@ti.com,
+	ville.syrjala@linux.intel.com, wangxiaojun11@huawei.com,
+	yuanjilin@cdjrlc.com, yuehaibing@huawei.com
+Subject: Re: [PATCH] drm/tidss: Add MIT license along with GPL-2.0
+Message-ID: <20240912223007.GA9669@pendragon.ideasonboard.com>
+References: <20240912171142.3241719-1-devarsht@ti.com>
+ <993bbe0a1b503505dd2e9b33b94e2b83@kernel.org>
+ <20240912-unyielding-mottled-bumblebee-6bb69f@houat>
+ <19f291d7-cb64-49b3-88e7-8541029cdf0d@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: Pali =?utf-8?q?Roh=C3=A1r?= <pali@kernel.org>
-Cc: "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
- "Olga Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
- "Tom Talpey" <tom@talpey.com>, linux-nfs@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nfsd: Fix nfs4_disable_idmapping option
-In-reply-to: <20240912220659.23336-1-pali@kernel.org>
-References: <20240912220659.23336-1-pali@kernel.org>
-Date: Fri, 13 Sep 2024 08:26:02 +1000
-Message-id: <172617996236.17050.1069184645717662362@noble.neil.brown.name>
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <19f291d7-cb64-49b3-88e7-8541029cdf0d@ideasonboard.com>
 
-On Fri, 13 Sep 2024, Pali Roh=C3=A1r wrote:
-> NFSv4 server option nfs4_disable_idmapping says that it turn off server's
-> NFSv4 idmapping when using 'sec=3Dsys'. But it also turns idmapping off also
-> for 'sec=3Dnone'.
->=20
-> NFSv4 client option nfs4_disable_idmapping says same thing and really it
-> turns the NFSv4 idmapping only for 'sec=3Dsys'.
->=20
-> Fix the NFSv4 server option nfs4_disable_idmapping to turn off idmapping
-> only for 'sec=3Dsys'. This aligns the server nfs4_disable_idmapping option
-> with its description and also aligns behavior with the client option.
+On Thu, Sep 12, 2024 at 09:21:19PM +0300, Tomi Valkeinen wrote:
+> On 12/09/2024 21:08, Maxime Ripard wrote:
+> > On Thu, Sep 12, 2024 at 06:04:11PM GMT, Maxime Ripard wrote:
+> >> On Thu, 12 Sep 2024 22:41:42 +0530, Devarsh Thakkar wrote:
+> >>> Modify license to include dual licensing as GPL-2.0-only OR MIT license for
+> >>> tidss display driver. This allows other operating system ecosystems such as
+> >>> Zephyr and also the commercial firmwares to refer and derive code from this
+> >>> display driver in a more permissive manner.
+> >>>
+> >>>
+> >>> [ ... ]
+> >>
+> >> Acked-by: Maxime Ripard <mripard@kernel.org>
+> > 
+> > Also, we need the ack of all contributors to that driver, so my ack
+> > isn't enough to merge that patch.
+> 
+> IANAL, maybe a silly question: if someone from company XYZ has sent a 
+> patch for tidss, don't we then need an ack from someone in XYZ who's 
+> high enough in XYZ to allow changing the license for their code?
 
-Why do you think this is the right approach?
-If the documentation says "turn off when sec=3Dsys" and the implementation
-does "turn off when sec=3Dsys or sec=3Dnone" then I agree that something
-needs to be fixed.  I would suggest that the documentation should be
-fixed.
+This patch needs to be acked by all copyright holders indeed. For
+contributions whose copyright has been assigned to other entities (such
+as work performed by employees for their employers), those other
+entities have to ack the license change. What constitutes a substantial
+enough contribution to be copyrightable is a question I won't attempt to
+answer.
 
-From the perspective of id mapping, sec=3Dnone is similar to sec=3Dsys.
+-- 
+Regards,
 
-NeilBrown
-
-
->=20
-> Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
-> Cc: stable@vger.kernel.org
-> ---
->  fs/nfsd/nfs4idmap.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->=20
-> diff --git a/fs/nfsd/nfs4idmap.c b/fs/nfsd/nfs4idmap.c
-> index 7a806ac13e31..641293711f53 100644
-> --- a/fs/nfsd/nfs4idmap.c
-> +++ b/fs/nfsd/nfs4idmap.c
-> @@ -620,7 +620,7 @@ numeric_name_to_id(struct svc_rqst *rqstp, int type, co=
-nst char *name, u32 namel
->  static __be32
->  do_name_to_id(struct svc_rqst *rqstp, int type, const char *name, u32 name=
-len, u32 *id)
->  {
-> -	if (nfs4_disable_idmapping && rqstp->rq_cred.cr_flavor < RPC_AUTH_GSS)
-> +	if (nfs4_disable_idmapping && rqstp->rq_cred.cr_flavor =3D=3D RPC_AUTH_UN=
-IX)
->  		if (numeric_name_to_id(rqstp, type, name, namelen, id))
->  			return 0;
->  		/*
-> @@ -633,7 +633,7 @@ do_name_to_id(struct svc_rqst *rqstp, int type, const c=
-har *name, u32 namelen, u
->  static __be32 encode_name_from_id(struct xdr_stream *xdr,
->  				  struct svc_rqst *rqstp, int type, u32 id)
->  {
-> -	if (nfs4_disable_idmapping && rqstp->rq_cred.cr_flavor < RPC_AUTH_GSS)
-> +	if (nfs4_disable_idmapping && rqstp->rq_cred.cr_flavor =3D=3D RPC_AUTH_UN=
-IX)
->  		return encode_ascii_id(xdr, id);
->  	return idmap_id_to_name(xdr, rqstp, type, id);
->  }
-> --=20
-> 2.20.1
->=20
->=20
-
+Laurent Pinchart
 
