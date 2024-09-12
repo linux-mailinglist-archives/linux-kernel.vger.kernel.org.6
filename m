@@ -1,119 +1,230 @@
-Return-Path: <linux-kernel+bounces-326211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 967379764FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:54:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC831976500
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61627284112
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:54:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77BF01F24A90
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37F9194AD7;
-	Thu, 12 Sep 2024 08:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58261922C0;
+	Thu, 12 Sep 2024 08:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nsOo47Wm"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HY98Mm4x"
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1C6192B9A
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF6218DF90
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726131261; cv=none; b=BZEl06dvfUrAojEg38o734qsnA9bVnPk5ToSIlbliPu+rBF0sCXfFpCN5Pzv7fceNiL4e1OvV+fSehBwM18doZcunWnQk5606MnGfm9UaEfpD6SEP0d2WDJ8l64PMcYnjb7jNwYv65H0pG5vNYcWo81W3DrkKVz26qNkO9GmKgk=
+	t=1726131367; cv=none; b=Szb+UFsrd+biR6k0P6pC8TtE5AV+nWfJt+46X5cfg0x5mzuHjAOJtZ1u3oEDswxWiAewZizPcB7TagfQxk3ozFuA+swl5b2pYayXVzxb1wrPBJAQwu/mpSj3V4cKxlDFq/rp9USonC6Crzo84qxGw0AfskK7iYhsq2KqcJmyOUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726131261; c=relaxed/simple;
-	bh=j1H/LQU+KRaH8vLBRx7IOo/incd6kQY69GR5S1StL0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WfBbUnl1V2EJKxFaALjcRimvMlI5F6WhF2QN6fYy54n3BxWwftxbQJgahwWS9NuiHfR5BArYofQu9veo095g2c1wInJgtS/ohwzQmUEBKAyKAMMWkXDqON56VIMz1pVHsJbxWzqzpLzPpB/PhpoRGUyyh2Gbp9m4f6C7Vx4+zj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nsOo47Wm; arc=none smtp.client-ip=209.85.167.53
+	s=arc-20240116; t=1726131367; c=relaxed/simple;
+	bh=qD1HhQH4NjYHBF0Xozf0rppz5YvlGbjasErhi8pkmOE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RpeuXTran5LVgvwhsvgiLrlJYFD+u9Z3ytpSSatBcgiEr37PuX2kD242Lpo1hMPmijt9JuBp2t9rIeKVZo8Edk2jtHUiCYKVk7q0B0pP32cXBfvTrbcTtrUZwZpMyGAnXJWlEEw/wlAQflvTRuG3zWF5J9t6mlad/N3veBdMlEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HY98Mm4x; arc=none smtp.client-ip=209.85.217.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53661a131b4so952850e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 01:54:19 -0700 (PDT)
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-49be2ef28aaso212144137.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 01:56:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726131257; x=1726736057; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Bb6xTo7HvOp6BGkaOkepw9FiEEC088bMNPj7HC0ZD3s=;
-        b=nsOo47WmstHJAz7ORw3SDueC0/Kr1ZhBsHePG1GapiHGBSJRi2AaZ8jW6rtse6NxwL
-         klc2oDbtt36fMUIq8vK0xfeKFpSKhd559CAUZYbuOUv9RCtj4wduAlqpq4XYT2rq2q3o
-         MK0WPpm4e7rp0zd+ayv8Alye847L6wzdXkXKls0wSB13b059xS5Np4BDaUrxoGtPXr3D
-         8rnNVJzmKeriayncCTy8xYWqMzIy9vURnliPlfiGMi6A9lcSoqbSejd2fosa07E7oGtz
-         eFoLdkvOo9k6UqdcvainSF4+v2CmtH+/nv/bhAjmQLbCQhpaaFB65vwLMWHKgwGeVdIS
-         EHcg==
+        d=linaro.org; s=google; t=1726131363; x=1726736163; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kcvRVOfTB/QaV43zEeZF3CiWZLcYosI+3Cqn2IbwOTM=;
+        b=HY98Mm4xn1sydvexRT6xn24wcKvnzOf6xjfK2omvn85GG8rVL2iggcYyLEe28lbJbH
+         euVa/VFsEoAFFJF25/LqlUndYmzSKMZUdZyj/0RebNgrlAE4xx7tI+BcDkjFV3PnZ9eR
+         L12lqXudqczYyM8ZsFIjBtOYbqtYdrq8cI6Bz1MIAdhvC6mvK5WgrOG3RHrYq5c/TiSi
+         4Zpdgt3ILe++qp5Cpm6LCJqifv0j6YmbSsspZHcrwS2qhoAtwal+IWCL01rRwtl1Cu+D
+         FqpNgLRghFppAwBcGiotpPTNIEMwzQ+5PdR0F/7Y4dQM+aYPzLTYU3Dbk+Gd5Hh+0xVN
+         Y/aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726131257; x=1726736057;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Bb6xTo7HvOp6BGkaOkepw9FiEEC088bMNPj7HC0ZD3s=;
-        b=XOREUjGMOsYaGyCuoZcfzbcvItaHcA09TlCYkuQ8oKPSpM0is/qaSpKcAC8jykxJgB
-         5B9HPP448MDe0tfvEoa8GDQT79VoWweOi/J5c9sOaxpWBYHe/qYI1YiH6NGxCh8/jN1/
-         zfEj0wFDdUPTbxkzkHimIcjru2jASnXDm9jVIkov2LZIIKfeOh2j5GfwRBksNiN/INRl
-         f6s/FacNQc0WIsUyKXQks+jgU/oLMM4JG3DBYrbEcbI8r4QHV3GGabkUfG2/fz8iS6Mz
-         0ZbCWXzvgP8Wu0RQL+iH53LIDAqXpWtMOmOj8IP+zBg5gEHiHT9dVGIgFu/bf4lvS0bJ
-         xv7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWpozWxk2MPadQLeysoD2crx/4WEIHmGgr2KwzqNId0+dpZEDOyElZ5jEB56piBfawZEVd1XXrkDwHQKik=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZE0WnwH/nFZANA7HBO47QKpqQ4jZ1Mp74L5gMztF5M2cze9Nf
-	70SNIA+4/ggs3KRW23IZm7IzxG58CHoHPoQnyLw9dAtu4rrz6+X374kE9+k+FLA=
-X-Google-Smtp-Source: AGHT+IFzsuu7oMLBhtKyRWUucos4LUolH6WDN7469j4SbLucF6WDfDEXEEOBTx1ZVZJhemXusR1tSg==
-X-Received: by 2002:a05:6512:1384:b0:535:6a05:f9e3 with SMTP id 2adb3069b0e04-53678fa9edfmr1104944e87.7.1726131257317;
-        Thu, 12 Sep 2024 01:54:17 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cb742d0a1sm127875675e9.2.2024.09.12.01.54.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 01:54:16 -0700 (PDT)
-Date: Thu, 12 Sep 2024 11:54:09 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] usb: dwc3: rtk: Clean up error code in
- __get_dwc3_maximum_speed()
-Message-ID: <865e56dc-37cc-47b1-8d35-9047ecb1984a@stanley.mountain>
+        d=1e100.net; s=20230601; t=1726131363; x=1726736163;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kcvRVOfTB/QaV43zEeZF3CiWZLcYosI+3Cqn2IbwOTM=;
+        b=CNdxPICKcEuspHjOypoAgGN9lQMi9jv/s2k8n7bDnu5XNGWyxqejrhRNXWmHNPsAnm
+         Ki2y6l6arxCElH4U2HelWQs81I86HEneswQye3GGVKBKNNLkeJMhqRc90R3rrtGrlxPp
+         lAffQ12D0Z75k6lJiLe/Pik7box6SFCpZZWVZaAv6knNM4hcEXmvQ2mifUlOH178J9Mw
+         pNW3ZKfoGQq9UlX1aCiiqg/v70AkObUCaB1GNwO7kJ08aJes4xliSszs/eu3vblLjrVN
+         +sqRodWjdRWCHEDVuTd/eskNfkqnqxTP+RqnX/SHf6mj67ui6gLMt6kUO/voXN8MGlsG
+         Aytw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGTFHNW7ysy6bba3HkOlzafetueeLsYDEkXAzxoOAWb2i1IJeIABhkENpjcRjXIh4Gq8ddxT5hVAy1y08=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw057PPATqG1jMbpmWH6BmVTqWV/zHRbAmysyyIirbWaB2BH5Gs
+	S0rmlEB9Tr9zG8qIt+94b3/jFFZk4xJjXhTtb3/fRl3smMBhhnSaBqpQTQqIyv1vHalaQhICKHX
+	xiL2ulmrdrw5vawp2oCq1/gyftqZd7eEIttMvoA==
+X-Google-Smtp-Source: AGHT+IGRAG2+e0nWCRhdPvid9sHsfU07sA9f4xus2JUHYoULnNUjW15Gcyv2WVYba67WuoFAKO5VLAEjL3t6C9W0ADY=
+X-Received: by 2002:a05:6102:3712:b0:492:9ca1:d35e with SMTP id
+ ada2fe7eead31-49d4145c022mr1387447137.5.1726131363273; Thu, 12 Sep 2024
+ 01:56:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+References: <20240911130529.320360981@linuxfoundation.org>
+In-Reply-To: <20240911130529.320360981@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 12 Sep 2024 14:25:51 +0530
+Message-ID: <CA+G9fYsw_CwZT81J08ZzurfXx1aOQqHvVqro2tp2FdqU69U-NA@mail.gmail.com>
+Subject: Re: [PATCH 5.10 000/185] 5.10.226-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The __get_dwc3_maximum_speed() function returns an enum type which, in
-this context here, is basically unsigned int.  On error cases, it's
-supposed to return USB_SPEED_UNKNOWN, but it was accidentally changed to
-return negative error codes in commit f93e96c544ca ("usb: dwc3: rtk: use
-scoped device node handling to simplify error paths").
+On Wed, 11 Sept 2024 at 18:37, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.10.226 release.
+> There are 185 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 13 Sep 2024 13:05:03 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
+5.10.226-rc2.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-5.10.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-There is only one caller and because of the way that the types work out,
-returning negative error codes is not a problem.  They will be treated
-as greater than USB_SPEED_HIGH and ignored as invalid.  So this patch
-does not affect run time behavior, it's just a clean up.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/usb/dwc3/dwc3-rtk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-diff --git a/drivers/usb/dwc3/dwc3-rtk.c b/drivers/usb/dwc3/dwc3-rtk.c
-index b3db5cd9906e..e9c8b032c72c 100644
---- a/drivers/usb/dwc3/dwc3-rtk.c
-+++ b/drivers/usb/dwc3/dwc3-rtk.c
-@@ -184,7 +184,7 @@ static enum usb_device_speed __get_dwc3_maximum_speed(struct device_node *np)
- 
- 	ret = of_property_read_string(dwc3_np, "maximum-speed", &maximum_speed);
- 	if (ret < 0)
--		return ret;
-+		return USB_SPEED_UNKNOWN;
- 
- 	ret = match_string(speed_names, ARRAY_SIZE(speed_names), maximum_speed);
- 
--- 
-2.45.2
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
+## Build
+* kernel: 5.10.226-rc2
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 6cc7ac2e6d7e0d3dded48744a235d6630d82caa0
+* git describe: v5.10.225-186-g6cc7ac2e6d7e
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10=
+.225-186-g6cc7ac2e6d7e
+
+## Test Regressions (compared to v5.10.224-152-gee485d4aa099)
+
+## Metric Regressions (compared to v5.10.224-152-gee485d4aa099)
+
+## Test Fixes (compared to v5.10.224-152-gee485d4aa099)
+
+## Metric Fixes (compared to v5.10.224-152-gee485d4aa099)
+
+## Test result summary
+total: 89626, pass: 73979, fail: 2026, skip: 13552, xfail: 69
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 102 total, 102 passed, 0 failed
+* arm64: 29 total, 29 passed, 0 failed
+* i386: 23 total, 23 passed, 0 failed
+* mips: 22 total, 22 passed, 0 failed
+* parisc: 3 total, 0 passed, 3 failed
+* powerpc: 23 total, 23 passed, 0 failed
+* riscv: 6 total, 6 passed, 0 failed
+* s390: 9 total, 9 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 25 total, 25 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
