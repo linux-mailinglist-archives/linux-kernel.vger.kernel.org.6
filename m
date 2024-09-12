@@ -1,113 +1,172 @@
-Return-Path: <linux-kernel+bounces-326967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D634D976F34
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:56:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8F33976F38
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:57:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14C751C23CFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:56:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17DF81C23C8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:57:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0943A1BE84B;
-	Thu, 12 Sep 2024 16:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAE241BE860;
+	Thu, 12 Sep 2024 16:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="Iai0yfON"
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="korcF1/i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736FF1AD256
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 16:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D871865F7;
+	Thu, 12 Sep 2024 16:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726160160; cv=none; b=JcUFBVdCH4K916f7WJzui4lMoelex5bkSvp4B4Y3aRPOYL86zNyAd/vMB45eGvLW3Mvr4Q3SyQP+wciIlSQofGXraWipHGlkWzYG716DFg/0NAWJM7Z+z6CDWAsOTg8FWiDfbwbGaDcHufJXkOIgBNGrn8Urhjv2zDYWmtlb5D4=
+	t=1726160232; cv=none; b=OuxisRPAh9uczpVwnGFod4cZGJ5OjPpvo9Cry7z/1i9QC1zFmyxPKvDVKHILVGm5AQCvJs+BG2x4g4JaMLv8tt84Jp1WRvikm93RpE0IJNyFHzuqRWTYWP0dyb+Ek03Uq7AaJpGqWwZvJbjbRN7NAOlABWx1q2S/VTLB6YcS7Fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726160160; c=relaxed/simple;
-	bh=FcJUnCFiVsoXjpSCDVRftd/aEVh1GoBnNeIOkB+Htt8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=gk6Uzs6VxpBtriLHnBzzLKvijRHjJ0xxBwTGfIbNbjlqbDyLiNEIQSilRhghwFdcrQAYEDhN71qRo0zxxD99fT+T3Cp8FUSffgTUfeggVfImXBLdcrR4ImsrX6BqRzIGoOvMKGKpUyM6Klon2Ze0EIFkggV1NHP4K6drpdTZR7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=Iai0yfON reason="signature verification failed"; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
-X-QQ-mid: bizesmtpsz5t1726160119t7d8kh6
-X-QQ-Originating-IP: Zx7oaLjVt1vFN6j3A7H9ICZ/KuQQ0JHOm7wpnlbAoUA=
-Received: from m16.mail.163.com ( [117.135.210.5])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 13 Sep 2024 00:55:17 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 16381243121260492792
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=H/YC5ZRJVMFIwIEo1fHTYKgGKi1Vxrzsf5zIKLg/VCg=; b=I
-	ai0yfONFjkRdTmt3gRnQgp0Lq3WeP/sjKenDPywK4HNzy3eMECAZH4ELOfpR0U0n
-	0ukxgfL63ZvkGRxTp5VBXDLp9HoCQ5UwyANYi0snTyviMzDVQEDjkb8BaoimDNnh
-	LBWYgGrU4XwKRqbSSfxIZKxbBQHgyrdWbh5nTOBIC4=
-Received: from kxwang23$m.fudan.edu.cn ( [104.238.222.239] ) by
- ajax-webmail-wmsvr-40-136 (Coremail) ; Fri, 13 Sep 2024 00:54:39 +0800
- (CST)
-Date: Fri, 13 Sep 2024 00:54:39 +0800 (CST)
-From: "Kaixin Wang" <kxwang23@m.fudan.edu.cn>
-To: "Miquel Raynal" <miquel.raynal@bootlin.com>
-Cc: "Frank Li" <Frank.li@nxp.com>, 21210240012@m.fudan.edu.cn, 
-	21302010073@m.fudan.edu.cn, conor.culhane@silvaco.com, 
-	alexandre.belloni@bootlin.com, linux-i3c@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i3c: master: svc: Fix use after free vulnerability in
- svc_i3c_master Driver Due to Race Condition
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <20240912085709.6ec0a289@xps-13>
-References: <20240911150135.839946-1-kxwang23@m.fudan.edu.cn>
- <ZuG2SbsHEU5BU9mX@lizhi-Precision-Tower-5810>
- <20240912085709.6ec0a289@xps-13>
-X-NTES-SC: AL_Qu2ZBP2dv0gs7ySeZOkXn0kbjug3WcW0u/0k3oJUNps0sSbJxCIce1FGAHTrzv+TMyOvnjaRQClvyeFHTa9cY5gZc/65IYnnfpHCxo0OHY+7
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1726160232; c=relaxed/simple;
+	bh=Jj/M0eZBMZoxDv71JmXMGVCQT07R36WyX1KvbT/rYaw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=OvwSYHDGQNiDjmP7vlXgpQoXhKRwl+HIe6B9jGqm55+8a+VAHwW82wZlvU91IB41/Q6cA40Qu0aLLRGc1ZL+gpP5+No+uSYEs2P1R+mUQh9eFP61cduGngVgO34yI9c7lv9V4ZbjxR5eN7ILYNTbZ4SJSKd3vb8BW9nkvntj95U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=korcF1/i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65CEDC4CEC3;
+	Thu, 12 Sep 2024 16:57:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726160231;
+	bh=Jj/M0eZBMZoxDv71JmXMGVCQT07R36WyX1KvbT/rYaw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=korcF1/i50mRH0RuPqEW7Uu7oFsXOdoHeoZnO7mTDzDvDJsAi+Y8GfJYEqN7Fpa2e
+	 m7wXdxY/jl0yCYm6YfSfChmwDvEinti/AknoLvKE/TEo8MUPTCj1e3wuB/sl3owNwW
+	 pNqA8XQwxmuGDDgz0YPaE5QYlVb+7FFGfVcDFLnoVUu0v5mtxbhV/4qPHMBjm5Ipai
+	 tzpjLcJwjfJkjBAcJlorlxJynZ0SWwfQ63eR/4bIuZg7Y9Lt3wyixP3+ak6krK334+
+	 af/xOKEx+EbeyK6j3rnkZ7Ruz4tZiFFfRkNg3P3yQdoK357qEII8W18Y/e069bwrgU
+	 xCyRHqS55Hy5A==
+Date: Thu, 12 Sep 2024 11:57:09 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: bhelgaas@google.com, mario.limonciello@amd.com,
+	mika.westerberg@linux.intel.com, linux-pci@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kaihengfeng@gmail.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] PCI/PM: Put devices to low power state on shutdown
+Message-ID: <20240912165709.GA674430@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <C05F548F941D5F36+47d9e505.c28c.191e7288a6e.Coremail.kxwang23@m.fudan.edu.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wD3H_vPHONmxpAFAA--.2860W
-X-CM-SenderInfo: zprtkiiuqyikitw6il2tof0z/1tbiwh5Y2GWXw6aYUAAJsK
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:m.fudan.edu.cn:qybglogicsvrsz:qybglogicsvrsz4a-0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAd53p7vP8TcPj=u5TTuPMXFaWW15hwpJdECCprvXGBhigKD6Q@mail.gmail.com>
 
-CgrlnKggMjAyNC0wOS0xMiAxNDo1NzowOe+8jCJNaXF1ZWwgUmF5bmFsIiA8bWlxdWVsLnJheW5h
-bEBib290bGluLmNvbT4g5YaZ6YGT77yaCj5IaSwKPgo+RnJhbmsubGlAbnhwLmNvbSB3cm90ZSBv
-biBXZWQsIDExIFNlcCAyMDI0IDExOjI0OjU3IC0wNDAwOgo+Cj4+IE9uIFdlZCwgU2VwIDExLCAy
-MDI0IGF0IDExOjAxOjM1UE0gKzA4MDAsIEthaXhpbiBXYW5nIHdyb3RlOgo+PiA+IEluIHRoZSBz
-dmNfaTNjX21hc3Rlcl9wcm9iZSBmdW5jdGlvbiwgJm1hc3Rlci0+aGpfd29yayBpcyBib3VuZCB3
-aXRoCj4+ID4gc3ZjX2kzY19tYXN0ZXJfaGpfd29yaywgJm1hc3Rlci0+aWJpX3dvcmsgaXMgYm91
-bmQgd2l0aAo+PiA+IHN2Y19pM2NfbWFzdGVyX2liaV93b3JrLiBBbmQgc3ZjX2kzY19tYXN0ZXJf
-aWJpX3dvcmsgwqBjYW4gc3RhcnQgdGhlCj4+ID4gaGpfd29yaywgc3ZjX2kzY19tYXN0ZXJfaXJx
-X2hhbmRsZXIgY2FuIHN0YXJ0IHRoZSBpYmlfd29yay4KPj4gPgo+PiA+IElmIHdlIHJlbW92ZSB0
-aGUgbW9kdWxlIHdoaWNoIHdpbGwgY2FsbCBzdmNfaTNjX21hc3Rlcl9yZW1vdmUgdG8KPj4gPiBt
-YWtlIGNsZWFudXAsIGl0IHdpbGwgZnJlZSBtYXN0ZXItPmJhc2UgdGhyb3VnaCBpM2NfbWFzdGVy
-X3VucmVnaXN0ZXIKPj4gPiB3aGlsZSB0aGUgd29yayBtZW50aW9uZWQgYWJvdmUgd2lsbCBiZSB1
-c2VkLiBUaGUgc2VxdWVuY2Ugb2Ygb3BlcmF0aW9ucwo+PiA+IHRoYXQgbWF5IGxlYWQgdG8gYSBV
-QUYgYnVnIGlzIGFzIGZvbGxvd3M6Cj4+ID4KPj4gPiBDUFUwICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICBDUFUxCj4+ID4KPj4gPiAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICB8IHN2Y19pM2NfbWFzdGVyX2hqX3dvcmsKPj4gPiBzdmNfaTNjX21hc3Rl
-cl9yZW1vdmUgICAgICAgICAgICAgICB8Cj4+ID4gaTNjX21hc3Rlcl91bnJlZ2lzdGVyKCZtYXN0
-ZXItPmJhc2UpfAo+PiA+IGRldmljZV91bnJlZ2lzdGVyKCZtYXN0ZXItPmRldikgICAgIHwKPj4g
-PiBkZXZpY2VfcmVsZWFzZSAgICAgICAgICAgICAgICAgICAgICB8Cj4+ID4gLy9mcmVlIG1hc3Rl
-ci0+YmFzZSAgICAgICAgICAgICAgICAgfAo+PiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgIHwgaTNjX21hc3Rlcl9kb19kYWEoJm1hc3Rlci0+YmFzZSkKPj4gPiAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8IC8vdXNlIG1hc3Rlci0+YmFzZQo+PiA+Cj4+
-ID4gRml4IGl0IGJ5IGVuc3VyaW5nIHRoYXQgdGhlIHdvcmsgaXMgY2FuY2VsZWQgYmVmb3JlIHBy
-b2NlZWRpbmcgd2l0aCB0aGUKPj4gPiBjbGVhbnVwIGluIHN2Y19pM2NfbWFzdGVyX3JlbW92ZS4K
-Pj4gPgo+PiA+IFNpZ25lZC1vZmYtYnk6IEthaXhpbiBXYW5nIDxreHdhbmcyM0BtLmZ1ZGFuLmVk
-dS5jbj4KPj4gPiAtLS0gIAo+PiAKPj4gUGxlYXNlIGFkZCBmaXhlcyB0YWcgYW5kIGNjIHN0YWJs
-ZS4KPgo+WWVzIGluZGVlZC4gT3RoZXJ3aXNlIGxvb2tzIGdvb2QgdG8gbWUgb25jZSB0aGlzIGZp
-eGVkLgo+Cj5SZXZpZXdlZC1ieTogTWlxdWVsIFJheW5hbCA8bWlxdWVsLnJheW5hbEBib290bGlu
-LmNvbT4KPgo+VGhhbmtzLAo+TWlxdcOobAo+CgpUaGFua3MgZm9yIHRoZSByZXZpZXchCgpCZXN0
-IHJlZ2FyZHMsCkthaXhpbiBXYW5nCg==
+[+cc Rafael]
+
+On Thu, Sep 12, 2024 at 11:00:43AM +0800, Kai-Heng Feng wrote:
+> On Thu, Sep 12, 2024 at 3:05 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > On Fri, Jul 12, 2024 at 02:24:11PM +0800, Kai-Heng Feng wrote:
+> > > Some laptops wake up after poweroff when HP Thunderbolt Dock G4 is
+> > > connected.
+> > >
+> > > The following error message can be found during shutdown:
+> > > pcieport 0000:00:1d.0: AER: Correctable error message received from 0000:09:04.0
+> > > pcieport 0000:09:04.0: PCIe Bus Error: severity=Correctable, type=Data Link Layer, (Receiver ID)
+> > > pcieport 0000:09:04.0:   device [8086:0b26] error status/mask=00000080/00002000
+> > > pcieport 0000:09:04.0:    [ 7] BadDLLP
+> > >
+> > > Calling aer_remove() during shutdown can quiesce the error message,
+> > > however the spurious wakeup still happens.
+> > >
+> > > The issue won't happen if the device is in D3 before system shutdown, so
+> > > putting device to low power state before shutdown to solve the issue.
+> > >
+> > > I don't have a sniffer so this is purely guesswork, however I believe
+> > > putting device to low power state it's the right thing to do.
+> >
+> > My objection here is that we don't have an explanation of why this
+> > should matter or a pointer to any spec language about this situation,
+> > so it feels a little bit random.
+> 
+> I have the same feeling too. The PCIe spec doesn't specify what's the
+> correct power state for shutdown.
+> So we can only "logically" think the software should put devices to
+> low power state during shutdown.
+> 
+> > I suppose the problem wouldn't happen if AER interrupts were disabled?
+> > We already do disable them in aer_suspend(), but maybe that's not used
+> > in the shutdown path?
+> 
+> That was my first thought, so I modified pcie_port_shutdown_service()
+> to disable AER interrupt.
+> That approach didn't work though.
+> 
+> > My understanding is that .shutdown() should turn off device interrupts
+> > and stop DMA.  So maybe we need an aer_shutdown() that disables
+> > interrupts?
+> 
+> Logically we should do that. However that approach doesn't solve this issue.
+
+I'm not completely clear on the semantics of the .shutdown()
+interface.  The doc at
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/device/driver.h?id=v6.10#n73
+says "@shutdown: Called at shut-down time to quiesce the device"
+
+Turning off device interrupts and DMA *would* fit within the idea of
+quiescing the device.  Does that also include changing the device
+power state?  I dunno.  The power state isn't *mentioned* in the
+.shutdown() context, while it *is* mentioned for .suspend().
+
+IIUC, this patch and commit log uses "shutdown" to refer to a
+system-wide *poweroff*, which is a different concept despite using the
+same "shutdown" name.
+
+So should the system poweroff procedure use .suspend()?  Should it use
+both .shutdown() and .suspend()?  I think it only uses .shutdown()
+today:
+
+  kernel_power_off
+    kernel_shutdown_prepare(SYSTEM_POWER_OFF)
+      device_shutdown
+        while (!list_empty(&devices_kset->list))
+          dev->bus->shutdown(dev)
+            pci_device_shutdown
+
+There are several driver .shutdown() methods that do things like this:
+
+  e1000_shutdown
+    if (system_state == SYSTEM_POWER_OFF)
+      pci_set_power_state(pdev, PCI_D3hot)
+
+Maybe that's the right thing and should be done by the PCI core, which
+is similar to what you propose here.  But I think it muddies the
+definition of .shutdown() a bit by mixing in power management stuff.
+
+> > > Link: https://bugzilla.kernel.org/show_bug.cgi?id=219036
+> > > Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> > > ---
+> > >  drivers/pci/pci-driver.c | 8 ++++++++
+> > >  1 file changed, 8 insertions(+)
+> > >
+> > > diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+> > > index af2996d0d17f..4c6f66f3eb54 100644
+> > > --- a/drivers/pci/pci-driver.c
+> > > +++ b/drivers/pci/pci-driver.c
+> > > @@ -510,6 +510,14 @@ static void pci_device_shutdown(struct device *dev)
+> > >       if (drv && drv->shutdown)
+> > >               drv->shutdown(pci_dev);
+> > >
+> > > +     /*
+> > > +      * If driver already changed device's power state, it can mean the
+> > > +      * wakeup setting is in place, or a workaround is used. Hence keep it
+> > > +      * as is.
+> > > +      */
+> > > +     if (!kexec_in_progress && pci_dev->current_state == PCI_D0)
+> > > +             pci_prepare_to_sleep(pci_dev);
+> > > +
+> > >       /*
+> > >        * If this is a kexec reboot, turn off Bus Master bit on the
+> > >        * device to tell it to not continue to do DMA. Don't touch
+> > > --
+> > > 2.43.0
+> > >
 
