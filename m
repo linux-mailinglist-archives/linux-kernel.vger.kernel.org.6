@@ -1,236 +1,154 @@
-Return-Path: <linux-kernel+bounces-326156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C58697640B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:08:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 262C8976422
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:15:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0279286A03
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:07:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C611B1F2282A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E260191F69;
-	Thu, 12 Sep 2024 08:06:37 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE29E1917EC;
+	Thu, 12 Sep 2024 08:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="SlD/feqP";
+	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="5d2vmuy8"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C9D18E764
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726128396; cv=none; b=rsSiPAPPo6sk8W4ZNGPnzsE/+N6aR4a1Hxh3BcA4BGlldvSkQmYv984Nz89/Ktv37bgHU9VQ76yknm+6Dl/aAW/U2396auefk+wIe5ZrDfkq5xsZD3jk/l4BiibQ2bJG/vYWuEBYKosSB2V9wPC/WJhz33JsvyZcwf5htKFu7wA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726128396; c=relaxed/simple;
-	bh=yo6ClgrrYtZtJj0pgLHxHUjiwKMsQVS4UyGqBqyc2Ic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C9Wo+gjE49ZszlcQvnM46eAnH3aB7+2bvi+P3AH3CCMRetR2c2egb5+RCyrlSW9DVhbDjKt1Hz7qVZ7dyQrznYBZ8g+r5QsRYtYE81vCeiyU4YXkyTClJaXBYSV1MtvGotmkfPyrdVTtHi6lmzDcv3ayJlLSzAOOrU5lWlyLAyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1soeqA-0004AS-FW; Thu, 12 Sep 2024 10:06:10 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1soeq7-007KiX-Rx; Thu, 12 Sep 2024 10:06:07 +0200
-Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id E4905338DC1;
-	Thu, 12 Sep 2024 07:35:27 +0000 (UTC)
-Date: Thu, 12 Sep 2024 09:35:27 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Charan Pedumuru <charan.pedumuru@microchip.com>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: net: can: atmel: Convert to json schema
-Message-ID: <20240912-literate-caped-mandrill-4c0c9d-mkl@pengutronix.de>
-References: <20240912-can-v1-1-c5651b1809bb@microchip.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C791191499;
+	Thu, 12 Sep 2024 08:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726128910; cv=pass; b=LP8z8Jzy/j/UlrH/5VpUZGPIVWJOiO5VcIgpq/lFEyqZKWwp9H0+g7NDe5X8RjmH8g4hrj8mE15xjow58isHSVEoR/t15coAbp46iO5BNP8v775FDMMlQZevuTapIvlR6HtFX4tpOcFtn/csAIpfUcjopI0LS6LmWOmCu6HveK0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726128910; c=relaxed/simple;
+	bh=H2RxP91oTkVhyn625N4T827oCkam97r7DmgJet1F8mI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=f+qN+wue61zwLGTad2TXd4aN1pi0uwi+K0wBLAZGsvmgaTWyx64hWvv6Lm+63SkDZYmOgdSd4j08tlfH9OVjOD24wG12OHU699C7qkT3H8C7c8ByhVmbyqiW4mnIZ0df8tUWXsNuSRnHiMuNXMgNwDpV+Tiqil1XoarbfwVH+Kc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=SlD/feqP; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=5d2vmuy8; arc=pass smtp.client-ip=85.215.255.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
+ARC-Seal: i=1; a=rsa-sha256; t=1726128540; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=jZB5dkNG/t9uD8/+UjTJ3pg6dPmaNc9Kplb1L6Wm1qHgdX/lAkdc2W1q8HWc7dqt9O
+    lEJfbTmRMshaBp6gdmpkRksSqSjbLV1MwjyIDOk8ZbQjEZkJLdovL4JV7sl1Mvb3aPvW
+    OWpzgHwUJLeLtYIEPog8IHnF0onXD2oPg7g3HCYdIcqNJDMmto1I77qIDyIdmqxqjfV9
+    vEIrqdBYuzTqSXnGMgR9KuY++18PzAve0pbRSqcFMTwh3nXEO9OGMRPxjk/pBKgCwOBS
+    u5cxiG2klULPI9JfsjAHjvfaKIqJvBbi51Hn4DjIjk5CPBZl04Hi7vlj/zWoKmG9QsVC
+    NbtA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1726128540;
+    s=strato-dkim-0002; d=strato.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=7oOuMVZyb5hBcyF8Ky9QuaxacwXT5tqF9fJZNv8z3bo=;
+    b=E4UOzdDclpjR3D3yZ8UX/NOwRNYwqRarNm4ryyfxdqSMFsjo2Z07sv+fxNtFuFc0+R
+    JARAQIAj2+R6s4hjK2f2HPo/7tfkXbaTx9dKhVO1XegyR854FEvUW70geHoS0KMVursi
+    r5qzwNw5o0CAk5PZxT5WIk/XLS/XHtaMuBlbNvXTFHvyscBGjz+o8RhAnT4Qfx7d766J
+    qF3o4hx9WR9A+Ca/kghYU8X6H10UK0PidrGvg5LB0eJzelhBtApy94iBydjlbHtoPPn8
+    YmIQV5eYp1RkRp1vq29b6gW+58V1DAVIyktX17j8W2O6+QswRFva8kBNBy0ZScpFuy31
+    gYFg==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1726128540;
+    s=strato-dkim-0002; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=7oOuMVZyb5hBcyF8Ky9QuaxacwXT5tqF9fJZNv8z3bo=;
+    b=SlD/feqPB+Id4GIZSAnk55oeqFr5vwkt7HMIdZPYuImi7gDAwy1a96Lz/EIbYKPfh4
+    w4wzFVe6j6KKH//6BxXL3F528qzujGDsWR4hGmWG8BMotg1J+4ki7x6gwtcrHuhQ6oom
+    rq7X5zCKxhXL8DFLURfqTKI07A9ceq9As6kDNak2Zb+9inqxF1iZy1A+fWgfIUaSya25
+    o3jmKM7/ZG2bcQsJZ9qwLq5205u56EoIY43ujPTmVMVx75jWFFJgCVOv79onq5DqNZ4u
+    DbqaKmMTnUl03aEMqyAm0SUnkXuoJWmH8RkdUaKgLnGSZS3AvVfcOqmjBFXi3IFg0+8W
+    tqHA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1726128540;
+    s=strato-dkim-0003; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=7oOuMVZyb5hBcyF8Ky9QuaxacwXT5tqF9fJZNv8z3bo=;
+    b=5d2vmuy86bxM1L6wmscMtBmtb/hAH/d4Perac+hG2LBt3kjqFgfyAi0FkY794WgyN+
+    m05mZrtN4xh1L9/Ra1Bw==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0lFzL1yeDoZ"
+Received: from smtpclient.apple
+    by smtp.strato.de (RZmta 51.2.3 DYNA|AUTH)
+    with ESMTPSA id Q984c208C88x2bd
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+	(Client did not present a certificate);
+    Thu, 12 Sep 2024 10:08:59 +0200 (CEST)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="orv67sewbwknpnrd"
-Content-Disposition: inline
-In-Reply-To: <20240912-can-v1-1-c5651b1809bb@microchip.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
-
-
---orv67sewbwknpnrd
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH] ARM: dts: ti/omap: Fix at24 EEPROM node names
+From: H. Nikolaus Schaller <hns@goldelico.com>
+In-Reply-To: <20240910215942.824137-1-robh@kernel.org>
+Date: Thu, 12 Sep 2024 10:08:49 +0200
+Cc: Tony Lindgren <tony@atomide.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Linux-OMAP <linux-omap@vger.kernel.org>,
+ devicetree <devicetree@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Discussions about the Letux Kernel <letux-kernel@openphoenux.org>
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <6DD6AD3A-F3D3-48E3-B326-CE874F39E57A@goldelico.com>
+References: <20240910215942.824137-1-robh@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-On 12.09.2024 11:19:16, Charan Pedumuru wrote:
-> Convert atmel-can documentation to yaml format
+
+
+> Am 10.09.2024 um 23:59 schrieb Rob Herring (Arm) <robh@kernel.org>:
 >=20
-> Signed-off-by: Charan Pedumuru <charan.pedumuru@microchip.com>
+> at24.yaml defines the node name for at24 EEPROMs as 'eeprom'.
+>=20
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 > ---
->  .../bindings/net/can/atmel,at91sam9263-can.yaml    | 67 ++++++++++++++++=
-++++++
->  .../devicetree/bindings/net/can/atmel-can.txt      | 15 -----
->  2 files changed, 67 insertions(+), 15 deletions(-)
+> arch/arm/boot/dts/ti/omap/am335x-baltos.dtsi       |  2 +-
+> arch/arm/boot/dts/ti/omap/am335x-bone-common.dtsi  | 10 +++++-----
+> arch/arm/boot/dts/ti/omap/am335x-boneblue.dts      |  2 +-
+> arch/arm/boot/dts/ti/omap/am335x-pdu001.dts        |  6 +++---
+> arch/arm/boot/dts/ti/omap/am335x-shc.dts           |  2 +-
+> arch/arm/boot/dts/ti/omap/am3874-iceboard.dts      |  8 ++++----
+> arch/arm/boot/dts/ti/omap/am437x-cm-t43.dts        |  2 +-
+> arch/arm/boot/dts/ti/omap/am437x-idk-evm.dts       |  2 +-
+> arch/arm/boot/dts/ti/omap/am437x-sbc-t43.dts       |  2 +-
+> arch/arm/boot/dts/ti/omap/am437x-sk-evm.dts        |  2 +-
+> arch/arm/boot/dts/ti/omap/am43x-epos-evm.dts       |  2 +-
+> arch/arm/boot/dts/ti/omap/am57xx-cl-som-am57x.dts  |  2 +-
+> arch/arm/boot/dts/ti/omap/am57xx-sbc-am57x.dts     |  2 +-
+> arch/arm/boot/dts/ti/omap/logicpd-torpedo-som.dtsi |  2 +-
+> arch/arm/boot/dts/ti/omap/omap3-cm-t3x.dtsi        |  2 +-
+> arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi         |  2 +-
+> arch/arm/boot/dts/ti/omap/omap3-sb-t35.dtsi        |  2 +-
+> arch/arm/boot/dts/ti/omap/omap5-cm-t54.dts         |  2 +-
+> arch/arm/boot/dts/ti/omap/omap5-sbc-t54.dts        |  2 +-
+> 19 files changed, 28 insertions(+), 28 deletions(-)
+
+...
+
+> diff --git a/arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi =
+b/arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi
+> index 3661340009e7..2ee3ddd64020 100644
+> --- a/arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi
+> +++ b/arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi
+> @@ -601,7 +601,7 @@ tsc2007@48 {
+> };
 >=20
-> diff --git a/Documentation/devicetree/bindings/net/can/atmel,at91sam9263-=
-can.yaml b/Documentation/devicetree/bindings/net/can/atmel,at91sam9263-can.=
-yaml
-> new file mode 100644
-> index 000000000000..269af4c993a7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/can/atmel,at91sam9263-can.yaml
-> @@ -0,0 +1,67 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/net/can/atmel,at91sam9263-can.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Atmel CAN Controller
-> +
-> +maintainers:
-> +  - Nicolas Ferre <nicolas.ferre@microchip.com>
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - enum:
-> +          - atmel,at91sam9263-can
-> +          - atmel,at91sam9x5-can
-> +          - microchip,sam9x60-can
+> /* RFID EEPROM */
+> - m24lr64@50 {
+> + eeprom@50 {
+> compatible =3D "atmel,24c64";
+> reg =3D <0x50>;
+> };
 
-The driver doesn't have a compatible for "microchip,sam9x60-can".
-
-> +      - items:
-> +          - enum:
-> +              - microchip,sam9x60-can
-> +          - const: atmel,at91sam9x5-can
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  clock-names:
-> +    items:
-> +      - const: can_clk
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +
-> +allOf:
-> +  - $ref: can-controller.yaml#
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - microchip,sam9x60-can
-> +    then:
-> +      required:
-> +        - compatible
-> +        - reg
-> +        - interrupts
-> +        - clocks
-> +        - clock-names
-
-AFAICS clock-names is required for all compatibles.
-
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    can0: can@f000c000 {
-
-I think unused labels should be removed.
-
-> +          compatible =3D "atmel,at91sam9x5-can";
-> +          reg =3D <0xf000c000 0x300>;
-> +          interrupts =3D <30 IRQ_TYPE_LEVEL_HIGH 3>;
-> +    };
-> diff --git a/Documentation/devicetree/bindings/net/can/atmel-can.txt b/Do=
-cumentation/devicetree/bindings/net/can/atmel-can.txt
-> deleted file mode 100644
-> index 218a3b3eb27e..000000000000
-> --- a/Documentation/devicetree/bindings/net/can/atmel-can.txt
-> +++ /dev/null
-> @@ -1,15 +0,0 @@
-> -* AT91 CAN *
-> -
-> -Required properties:
-> -  - compatible: Should be "atmel,at91sam9263-can", "atmel,at91sam9x5-can=
-" or
-> -    "microchip,sam9x60-can"
-> -  - reg: Should contain CAN controller registers location and length
-> -  - interrupts: Should contain IRQ line for the CAN controller
-> -
-> -Example:
-> -
-> -	can0: can@f000c000 {
-> -		compatible =3D "atmel,at91sam9x5-can";
-> -		reg =3D <0xf000c000 0x300>;
-> -		interrupts =3D <40 4 5>
-> -	};
->=20
-> ---
-> base-commit: 32ffa5373540a8d1c06619f52d019c6cdc948bb4
-> change-id: 20240912-can-8eb7f8e7566d
->=20
-> Best regards,
-> --=20
-> Charan Pedumuru <charan.pedumuru@microchip.com>
->=20
->=20
->=20
-
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---orv67sewbwknpnrd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbimbwACgkQKDiiPnot
-vG+igQf7BhUphCaYd67/BKLQBNIguPGy39T5kQzPkdg/QflMpcz6bSZQXYsvyguA
-GsRPQcDt7APYW7tTpTnIa0ZNlYj+lF7cWPl9afS90kk4kRAPPvSYb9Vd2UAMjsPt
-m/jhQsupujHXJg8m2REBHmB0npIGoHuL+kqg0qRIIucFWs0jgsMPG6C11e/QiFtQ
-ArgNdeuIsS7DUqKNXy9eb43tnRSomQkn4M1NojRVKSmAuzMrvheHmKA2mQOLJ2Or
-4JRvI/oRZsbx1KBxqID2y/NMb9pk7TbVw6gZnTLJcYKg5GmhXuIbPIP3RZ6eWnB4
-8h+/7/1vWZlVuhVrFKzyXj9OfBiIyQ==
-=50PA
------END PGP SIGNATURE-----
-
---orv67sewbwknpnrd--
+Acked-by: hns@goldelico.com # for GTA04=
 
