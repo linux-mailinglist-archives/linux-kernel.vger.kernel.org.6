@@ -1,294 +1,199 @@
-Return-Path: <linux-kernel+bounces-327278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D4B0977348
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:04:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A1F397734E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51BBB1C24101
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:04:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E8821C240A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8581C1AA9;
-	Thu, 12 Sep 2024 21:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E1E1BF80A;
+	Thu, 12 Sep 2024 21:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z0Q1MNMh"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NBE3GJ3P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A301B29A2
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 21:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF0C19E96A;
+	Thu, 12 Sep 2024 21:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726175060; cv=none; b=siKfBDHykp+Ett6imkUCifYHmRKU6kqIQFHxfMFhMhjo5gx8o8ciYim/55c8+9KkNdOEm3rsp5pQgbgzAkbtlARrNGojOURknFPcf4Z00YfJ9ofcrNpEa+LM2PgUu4fLRylr1Vdee0hnpYW1M6qnS4m/cCZCZUIlWP0++lCBC5Y=
+	t=1726175070; cv=none; b=TGzopXf01w3OnGw3g6ykfg/KEhvEyOek6jkZY9BRCM9Fz09VL/J904vGJZuNcTtJSRNkS7+Koqx6gBpqzRa8sRSZLF2HLUBbYRP6E1pUeDFxc5UzvTcVAybFR6S8nAtticEHUjv76ZX7+48j0gIu9Q00HwWe3vIbcZlh/dCP9z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726175060; c=relaxed/simple;
-	bh=vM4ejuzZFoGQ4IIqaqzuyaHUU/1X4Ko8fl7eEhkQ/UU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PPL2EAe8/pqEzdEiW5zZT5VyzTWSiK5jMc7pbMHOHgy/gz65+OpHJAQSpaKhfhbcr02Oy0un6TRxhaTjVM+vhqJ+KGZIpAxzZAknD2h9ByafJ2WnUtBB8dwArIxMKMf1CqECd/cDJhU9vXWi0Qp4Al3qHRfxJ5HRUcgTmfSvYf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z0Q1MNMh; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c24374d8b6so3289a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 14:04:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726175057; x=1726779857; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z9VsB68MQof9g4wA1cKKKrr59DMnuyJ0zAwUPhXjwPI=;
-        b=Z0Q1MNMhdGcLjS/s2eLQVEwqfCz+U/DXu4wqoIZ6xY22Bq0Kxcuyv3ASr2L/LKbWZi
-         L0UV4Ul8yAd+T76vlyB7FZGpvNT+3KYe7t+xUT4BXfJanG5Y6O068hjTZrDfaCXNspQr
-         OZxnV7Q/B262+8wcg5Wu9ODYjA4kqRBO/bvOh+KAjeTFz/4eQDD/A7MaHelg20Q73OJV
-         Z6osNAPdyYPvzeGqG/QMBvYbOvRMud9HAjI+pyZ3LqYP+JlhE56zGnOsmklYHEMAIbjr
-         TsNy+sYUAW6eKGEUu00E8+VWuTwoAnb8JCd7NRCmMk9Y5kXXAxTJlGun7CFk817q8+FI
-         qLvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726175057; x=1726779857;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z9VsB68MQof9g4wA1cKKKrr59DMnuyJ0zAwUPhXjwPI=;
-        b=IL8MsfFqhTp8k8fMNb2q4k2g1i1/2IdLJ0Y8SaISo2d1ntpQiQ6+y6OZGtUChp9zoq
-         n0LRd9RcD2Gr1EZXzJeOleW0Qd7mIwYaDfxbBh2eoBKhio8U6WIXqSZbAXHnekJknE66
-         wSwVxN9Ug/4EbSz1H5PSBkqMhnoQl6ihX2bhfHiZ5VDu/JPr3Ahx+eIvJ9E9xfxKq8Qc
-         cXfpY5AZBimt+Xt5J4NudGyWkuI3ifrDOPamWulro/koBpcN1+v0+c8ior+UtfAC1SWw
-         45vXF23fCH9lCe+UrhX5cHe/ZN72yvLgp+Lq5YMF2idHJivnBZw2NHlrTtgHb6TfVnGu
-         0aWA==
-X-Forwarded-Encrypted: i=1; AJvYcCXFIrN6aodeb2GnthqKHLyX2o3n8OcZvF2mCA4Yegw98WGO+tndUFTabCAbENhoWj0Mg376yBpvae2omEA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxb9VMBtCjkwOnicwUUxQ2WzB1TrT7Nz6PW2n3SkajjzRnp848F
-	2EpjwzldDORhhHcQR1h98xxc42uG1pNZXlrM9SdRHHqlj14EXG26CNimiVOiy0y9HKfTcEOYbPt
-	hfK68/kHNunjKr0uX39b7ROB4ODfAXHXhNFcy
-X-Google-Smtp-Source: AGHT+IFLf7AFcbkAtsWFWFjzpfStlqHufGs3sxLk2dIi+9wgBc3dInwrl75rUyYqCfZRJ/a24Knz1XzFxhyJ/z86Zyo=
-X-Received: by 2002:a05:6402:27c7:b0:5c2:5641:af79 with SMTP id
- 4fb4d7f45d1cf-5c414384e17mr488780a12.0.1726175055955; Thu, 12 Sep 2024
- 14:04:15 -0700 (PDT)
+	s=arc-20240116; t=1726175070; c=relaxed/simple;
+	bh=cRVDHFSUybvmScJCn1XhuLmNJDXhvWTEUpsVyK4kqyE=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=klOTr7sHLK7mrzq9nMpi7sQgDrertFGXpvq+WjgTCnglek/bCSnrW9/JPz7q2C6Hs2B11n4tTSrocycTqIdbRFsFCVVPjXPyR08qKvElPzT0GUuX4syvTGtORZeaihGWz+DDjrW46qra+FfSmkf+Hv9M2jDzqhj/IRFex1dYzUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NBE3GJ3P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7AE8C4CEC5;
+	Thu, 12 Sep 2024 21:04:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726175070;
+	bh=cRVDHFSUybvmScJCn1XhuLmNJDXhvWTEUpsVyK4kqyE=;
+	h=Date:From:To:List-Id:Cc:In-Reply-To:References:Subject:From;
+	b=NBE3GJ3P+HfVh5nFD9mdRfCBIGbePIgWdRB7oE2lRaRaVXEuY7PRweuhReFfKt8xg
+	 UZXLR078rKhPxeQhm8wYy064LRPany8U6zTjOeBgmXfPZ58hZ8q01bQyhtJa2Qbf5y
+	 c+0E5yyvv/ZtqfB1JOzQqXxSa7egdKvEnotfotu2pc4xNYo35uc2ZTgsz8niHpHR3e
+	 YjQmT3ERZWLxYKzwZGzkLJwkdEvGiJt5ei1Kgae++5KSGy6FR4nDsgJq7s+ELvHhcW
+	 PV6XdZ0V48nEUDH5yql/1gzBFourFYB3Dl8NYp6r+O+ki5IUxY/ZxRtvo7m5/OEaeI
+	 +6UlbPhf6UgWw==
+Date: Thu, 12 Sep 2024 16:04:28 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJuCfpFFqqUWYOob_WYG_aY=PurnKvZjxznnx7V0=ESbNzHr_w@mail.gmail.com>
- <20240912210222.186542-1-surenb@google.com>
-In-Reply-To: <20240912210222.186542-1-surenb@google.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 12 Sep 2024 14:04:00 -0700
-Message-ID: <CAJuCfpGgoSYmGSdcf+fZF1mUeNo-M=fzfk7G6ATs5-0TT+zkfQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] mm: introduce mmap_lock_speculation_{start|end}
-To: linux-trace-kernel@vger.kernel.org, peterz@infradead.org, oleg@redhat.com
-Cc: rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, 
-	willy@infradead.org, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	mjguzik@gmail.com, brauner@kernel.org, jannh@google.com, andrii@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Arturs Artamonovs <arturs.artamonovs@analog.com>
+Cc: Olof Johansson <olof@lixom.net>, devicetree@vger.kernel.org, 
+ Jiri Slaby <jirislaby@kernel.org>, 
+ Catalin Marinas <catalin.marinas@arm.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Thomas Gleixner <tglx@linutronix.de>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, soc@kernel.org, 
+ linux-clk@vger.kernel.org, linux-serial@vger.kernel.org, 
+ Andi Shyti <andi.shyti@kernel.org>, 
+ Arturs Artamonovs <Arturs.Artamonovs@analog.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, 
+ Greg Malysa <greg.malysa@timesys.com>, Will Deacon <will@kernel.org>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, 
+ Nathan Barrett-Morrison <nathan.morrison@timesys.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
+ Utsav Agarwal <Utsav.Agarwal@analog.com>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, adsp-linux@analog.com, 
+ Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
+ Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20240912-test-v1-0-458fa57c8ccf@analog.com>
+References: <20240912-test-v1-0-458fa57c8ccf@analog.com>
+Message-Id: <172617500940.774816.11284671975335527090.robh@kernel.org>
+Subject: Re: [PATCH 00/21] Adding support of ADI ARMv8 ADSP-SC598 SoC.
 
-On Thu, Sep 12, 2024 at 2:02=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
->
-> Add helper functions to speculatively perform operations without
-> read-locking mmap_lock, expecting that mmap_lock will not be
-> write-locked and mm is not modified from under us.
 
-Here you go. I hope I got the ordering right this time around, but I
-would feel much better if Jann reviewed it before it's included in
-your next patchset :)
-Thanks,
-Suren.
-
->
-> Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+On Thu, 12 Sep 2024 19:24:45 +0100, Arturs Artamonovs wrote:
+> This set of patches based on ADI fork of Linux Kerenl that support family of ADSP-SC5xx
+> SoC's and used by customers for some time . Patch series contains minimal set
+> of changes to add ADSP-SC598 support to upstream kernel. This series include
+> UART,I2C,IRQCHIP,RCU drivers and device-tree to be able boot on EV-SC598-SOM
+> board into serial shell and able to reset the board. Current SOM board
+> requires I2C expander to enable UART output.
+> 
+> UART,I2C and PINCTRL drivers are based on old Blackfin drivers with
+> ADSP-SC5xx related bug fixes and improvments.
+> 
+> Signed-off-by: Arturs Artamonovs <arturs.artamonovs@analog.com>
 > ---
-> Changes since v1 [1]:
-> - Made memory barriers in inc_mm_lock_seq and mmap_lock_speculation_end
-> more strict, per Jann Horn
->
-> [1] https://lore.kernel.org/all/20240906051205.530219-2-andrii@kernel.org=
-/
->
->  include/linux/mm_types.h  |  3 ++
->  include/linux/mmap_lock.h | 74 ++++++++++++++++++++++++++++++++-------
->  kernel/fork.c             |  3 --
->  3 files changed, 65 insertions(+), 15 deletions(-)
->
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 6e3bdf8e38bc..5d8cdebd42bc 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -887,6 +887,9 @@ struct mm_struct {
->                  * Roughly speaking, incrementing the sequence number is
->                  * equivalent to releasing locks on VMAs; reading the seq=
-uence
->                  * number can be part of taking a read lock on a VMA.
-> +                * Incremented every time mmap_lock is write-locked/unloc=
-ked.
-> +                * Initialized to 0, therefore odd values indicate mmap_l=
-ock
-> +                * is write-locked and even values that it's released.
->                  *
->                  * Can be modified under write mmap_lock using RELEASE
->                  * semantics.
-> diff --git a/include/linux/mmap_lock.h b/include/linux/mmap_lock.h
-> index de9dc20b01ba..a281519d0c12 100644
-> --- a/include/linux/mmap_lock.h
-> +++ b/include/linux/mmap_lock.h
-> @@ -71,39 +71,86 @@ static inline void mmap_assert_write_locked(const str=
-uct mm_struct *mm)
->  }
->
->  #ifdef CONFIG_PER_VMA_LOCK
-> +static inline void init_mm_lock_seq(struct mm_struct *mm)
-> +{
-> +       mm->mm_lock_seq =3D 0;
-> +}
-> +
->  /*
-> - * Drop all currently-held per-VMA locks.
-> - * This is called from the mmap_lock implementation directly before rele=
-asing
-> - * a write-locked mmap_lock (or downgrading it to read-locked).
-> - * This should normally NOT be called manually from other places.
-> - * If you want to call this manually anyway, keep in mind that this will=
- release
-> - * *all* VMA write locks, including ones from further up the stack.
-> + * Increment mm->mm_lock_seq when mmap_lock is write-locked (ACQUIRE sem=
-antics)
-> + * or write-unlocked (RELEASE semantics).
->   */
-> -static inline void vma_end_write_all(struct mm_struct *mm)
-> +static inline void inc_mm_lock_seq(struct mm_struct *mm, bool acquire)
->  {
->         mmap_assert_write_locked(mm);
->         /*
->          * Nobody can concurrently modify mm->mm_lock_seq due to exclusiv=
-e
->          * mmap_lock being held.
-> -        * We need RELEASE semantics here to ensure that preceding stores=
- into
-> -        * the VMA take effect before we unlock it with this store.
-> -        * Pairs with ACQUIRE semantics in vma_start_read().
->          */
-> -       smp_store_release(&mm->mm_lock_seq, mm->mm_lock_seq + 1);
-> +
-> +       if (acquire) {
-> +               WRITE_ONCE(mm->mm_lock_seq, mm->mm_lock_seq + 1);
-> +               /*
-> +                * For ACQUIRE semantics we should ensure no following st=
-ores are
-> +                * reordered to appear before the mm->mm_lock_seq modific=
-ation.
-> +                */
-> +               smp_wmb();
-> +       } else {
-> +               /*
-> +                * We need RELEASE semantics here to ensure that precedin=
-g stores
-> +                * into the VMA take effect before we unlock it with this=
- store.
-> +                * Pairs with ACQUIRE semantics in vma_start_read().
-> +                */
-> +               smp_store_release(&mm->mm_lock_seq, mm->mm_lock_seq + 1);
-> +       }
-> +}
-> +
-> +static inline bool mmap_lock_speculation_start(struct mm_struct *mm, int=
- *seq)
-> +{
-> +       /* Pairs with RELEASE semantics in inc_mm_lock_seq(). */
-> +       *seq =3D smp_load_acquire(&mm->mm_lock_seq);
-> +       /* Allow speculation if mmap_lock is not write-locked */
-> +       return (*seq & 1) =3D=3D 0;
-> +}
-> +
-> +static inline bool mmap_lock_speculation_end(struct mm_struct *mm, int s=
-eq)
-> +{
-> +       /* Pairs with ACQUIRE semantics in inc_mm_lock_seq(). */
-> +       smp_rmb();
-> +       return seq =3D=3D READ_ONCE(mm->mm_lock_seq);
->  }
-> +
->  #else
-> -static inline void vma_end_write_all(struct mm_struct *mm) {}
-> +static inline void init_mm_lock_seq(struct mm_struct *mm) {}
-> +static inline void inc_mm_lock_seq(struct mm_struct *mm, bool acquire) {=
-}
-> +static inline bool mmap_lock_speculation_start(struct mm_struct *mm, int=
- *seq) { return false; }
-> +static inline bool mmap_lock_speculation_end(struct mm_struct *mm, int s=
-eq) { return false; }
->  #endif
->
-> +/*
-> + * Drop all currently-held per-VMA locks.
-> + * This is called from the mmap_lock implementation directly before rele=
-asing
-> + * a write-locked mmap_lock (or downgrading it to read-locked).
-> + * This should normally NOT be called manually from other places.
-> + * If you want to call this manually anyway, keep in mind that this will=
- release
-> + * *all* VMA write locks, including ones from further up the stack.
-> + */
-> +static inline void vma_end_write_all(struct mm_struct *mm)
-> +{
-> +       inc_mm_lock_seq(mm, false);
-> +}
-> +
->  static inline void mmap_init_lock(struct mm_struct *mm)
->  {
->         init_rwsem(&mm->mmap_lock);
-> +       init_mm_lock_seq(mm);
->  }
->
->  static inline void mmap_write_lock(struct mm_struct *mm)
->  {
->         __mmap_lock_trace_start_locking(mm, true);
->         down_write(&mm->mmap_lock);
-> +       inc_mm_lock_seq(mm, true);
->         __mmap_lock_trace_acquire_returned(mm, true, true);
->  }
->
-> @@ -111,6 +158,7 @@ static inline void mmap_write_lock_nested(struct mm_s=
-truct *mm, int subclass)
->  {
->         __mmap_lock_trace_start_locking(mm, true);
->         down_write_nested(&mm->mmap_lock, subclass);
-> +       inc_mm_lock_seq(mm, true);
->         __mmap_lock_trace_acquire_returned(mm, true, true);
->  }
->
-> @@ -120,6 +168,8 @@ static inline int mmap_write_lock_killable(struct mm_=
-struct *mm)
->
->         __mmap_lock_trace_start_locking(mm, true);
->         ret =3D down_write_killable(&mm->mmap_lock);
-> +       if (!ret)
-> +               inc_mm_lock_seq(mm, true);
->         __mmap_lock_trace_acquire_returned(mm, true, ret =3D=3D 0);
->         return ret;
->  }
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 61070248a7d3..c86e87ed172b 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1259,9 +1259,6 @@ static struct mm_struct *mm_init(struct mm_struct *=
-mm, struct task_struct *p,
->         seqcount_init(&mm->write_protect_seq);
->         mmap_init_lock(mm);
->         INIT_LIST_HEAD(&mm->mmlist);
-> -#ifdef CONFIG_PER_VMA_LOCK
-> -       mm->mm_lock_seq =3D 0;
-> -#endif
->         mm_pgtables_bytes_init(mm);
->         mm->map_count =3D 0;
->         mm->locked_vm =3D 0;
->
-> base-commit: 015bdfcb183759674ba1bd732c3393014e35708b
+> Arturs Artamonovs (21):
+>       arm64: Add ADI ADSP-SC598 SoC
+>       reset: Add driver for ADI ADSP-SC5xx reset controller
+>       dt-bindigs: arm64: adi,sc598 bindings
+>       dt-bindings: arm64: adi,sc598: Add ADSP-SC598 SoC bindings
+>       clock:Add driver for ADI ADSP-SC5xx PLL
+>       include: dt-binding: clock: add adi clock header file
+>       clock: Add driver for ADI ADSP-SC5xx clock
+>       dt-bindings: clock: adi,sc5xx-clocks: add bindings
+>       gpio: add driver for ADI ADSP-SC5xx platform
+>       dt-bindings: gpio: adi,adsp-port-gpio: add bindings
+>       irqchip: Add irqchip for ADI ADSP-SC5xx platform
+>       dt-bindings: irqchip: adi,adsp-pint: add binding
+>       pinctrl: Add drivers for ADI ADSP-SC5xx platform
+>       dt-bindings: pinctrl: adi,adsp-pinctrl: add bindings
+>       i2c: Add driver for ADI ADSP-SC5xx platforms
+>       dt-bindings: i2c: add i2c/twi driver documentation
+>       serial: adi,uart: Add driver for ADI ADSP-SC5xx
+>       dt-bindings: serial: adi,uart4: add adi,uart4 driver documentation
+>       arm64: dts: adi: sc598: add device tree
+>       arm64: defconfig: sc598 add minimal changes
+>       MAINTAINERS: add adi sc5xx maintainers
+> 
+>  .../devicetree/bindings/arm/analog/adi,sc5xx.yaml  |   24 +
+>  .../bindings/clock/adi,sc5xx-clocks.yaml           |   65 ++
+>  .../bindings/gpio/adi,adsp-port-gpio.yaml          |   69 ++
+>  Documentation/devicetree/bindings/i2c/adi,twi.yaml |   71 ++
+>  .../interrupt-controller/adi,adsp-pint.yaml        |   51 +
+>  .../bindings/pinctrl/adi,adsp-pinctrl.yaml         |   83 ++
+>  .../devicetree/bindings/serial/adi,uart.yaml       |   85 ++
+>  .../bindings/soc/adi/adi,reset-controller.yaml     |   38 +
+>  MAINTAINERS                                        |   22 +
+>  arch/arm64/Kconfig.platforms                       |   13 +
+>  arch/arm64/boot/dts/Makefile                       |    1 +
+>  arch/arm64/boot/dts/adi/Makefile                   |    2 +
+>  arch/arm64/boot/dts/adi/sc598-som-ezkit.dts        |   14 +
+>  arch/arm64/boot/dts/adi/sc598-som.dtsi             |   58 ++
+>  arch/arm64/boot/dts/adi/sc59x-64.dtsi              |  367 +++++++
+>  arch/arm64/configs/defconfig                       |    6 +
+>  drivers/clk/Kconfig                                |    9 +
+>  drivers/clk/Makefile                               |    1 +
+>  drivers/clk/adi/Makefile                           |    4 +
+>  drivers/clk/adi/clk-adi-pll.c                      |  151 +++
+>  drivers/clk/adi/clk-adi-sc598.c                    |  329 ++++++
+>  drivers/clk/adi/clk.h                              |   99 ++
+>  drivers/gpio/Kconfig                               |    8 +
+>  drivers/gpio/Makefile                              |    1 +
+>  drivers/gpio/gpio-adi-adsp-port.c                  |  145 +++
+>  drivers/i2c/busses/Kconfig                         |   17 +
+>  drivers/i2c/busses/Makefile                        |    1 +
+>  drivers/i2c/busses/i2c-adi-twi.c                   |  940 ++++++++++++++++++
+>  drivers/irqchip/Kconfig                            |    9 +
+>  drivers/irqchip/Makefile                           |    2 +
+>  drivers/irqchip/irq-adi-adsp.c                     |  310 ++++++
+>  drivers/pinctrl/Kconfig                            |   12 +
+>  drivers/pinctrl/Makefile                           |    1 +
+>  drivers/pinctrl/pinctrl-adsp.c                     |  919 +++++++++++++++++
+>  drivers/reset/Makefile                             |    1 +
+>  drivers/soc/Makefile                               |    1 +
+>  drivers/soc/adi/Makefile                           |    5 +
+>  drivers/soc/adi/system.c                           |  257 +++++
+>  drivers/tty/serial/Kconfig                         |   19 +-
+>  drivers/tty/serial/Makefile                        |    1 +
+>  drivers/tty/serial/adi_uart.c                      | 1045 ++++++++++++++++++++
+>  include/dt-bindings/clock/adi-sc5xx-clock.h        |   93 ++
+>  include/dt-bindings/pinctrl/adi-adsp.h             |   19 +
+>  include/linux/soc/adi/adsp-gpio-port.h             |   85 ++
+>  include/linux/soc/adi/cpu.h                        |  107 ++
+>  include/linux/soc/adi/rcu.h                        |   55 ++
+>  include/linux/soc/adi/sc59x.h                      |  147 +++
+>  include/linux/soc/adi/system_config.h              |   65 ++
+>  include/uapi/linux/serial_core.h                   |    3 +
+>  49 files changed, 5829 insertions(+), 1 deletion(-)
+> ---
+> base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
+> change-id: 20240909-test-8ec5f76fe6d2
+> 
+> Best regards,
 > --
-> 2.46.0.662.g92d0881bb0-goog
->
+> Arturs Artamonovs <arturs.artamonovs@analog.com>
+> 
+> 
+> 
+
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y adi/sc598-som-ezkit.dtb' for 20240912-test-v1-0-458fa57c8ccf@analog.com:
+
+arch/arm64/boot/dts/adi/sc598-som-ezkit.dtb: /scb-bus/sec@31089000: failed to match any schema with compatible: ['adi,system-event-controller']
+
+
+
+
+
 
