@@ -1,178 +1,93 @@
-Return-Path: <linux-kernel+bounces-327354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B17297748A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:51:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3463F97748C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA26B285C70
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:51:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F4194286503
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238B51C2DC2;
-	Thu, 12 Sep 2024 22:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FF91C2DBD;
+	Thu, 12 Sep 2024 22:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fCb/w0RJ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="z6JiFgl5";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QnjukTj6";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="z6JiFgl5";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="QnjukTj6"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702362C80;
-	Thu, 12 Sep 2024 22:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726181468; cv=fail; b=MAXzCRkOrX+CMWwRclwlbUGbvLEA56jbATigXyly5xIEq3201MFqwv9pC8yTsdKCkW2uPj2FNi7ZNDRTxhq2zVGP9ohD6ws2D6JLQtn8B/FSm2y80XqyxGPv2hW+51O6gERAZbgAUM+MWcUFQ89d5GZtQcveCD32RD6MQeI+bLE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726181468; c=relaxed/simple;
-	bh=qX4SYDfL4JqJXgVG+UxBDac8ZOihcRklmLqm3/61TjY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=FRuxk4o2nNECVWVkfM1I46edoH2FYOLoLSlVOXI/zya9NF6M2IXgQwUJvPJ5gA90/zyMqupKIX2iOZHXs/HjaSJHe+hsMYmt+8Y7eP2FkjZeC+R4kfNBvXnFNdIYWKrYFJ2Q6JLW/MQxHP7T89XiUx8H9OUKIUAujBWwFDi6hTQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fCb/w0RJ; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726181464; x=1757717464;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=qX4SYDfL4JqJXgVG+UxBDac8ZOihcRklmLqm3/61TjY=;
-  b=fCb/w0RJGOnMlN+wpOHT9xTMFLck7MNUdJcR4b/zEtII0N5C+amqCbRZ
-   CnoYyaKWLszqXkFZufFcRFyZd2zJDBkPB1676QG53i4Rs79BbIc+QIkkO
-   8OBVtUh5j097AEKTjWWicSNwqB89LqDcbmtlbu3kAxI3A28wlaRp1EokE
-   FC4r7nCC8OCFi2mQMJbhHN1f+844yh542H+xqCfeBwajpeXpe1dUQZaXP
-   IKD+1OUmJr5codhMytueFIxV+2DVhE5T/xS6BKmKGxcVosdQmgbI3CHdl
-   Hl0r2BfSpjRQrDU2Qc6kUzszpIk6UmFkvogvk8jj4COPbgaUL9iSd2BvS
-   A==;
-X-CSE-ConnectionGUID: HqFn1wywS1a4jFRY0Z+m8A==
-X-CSE-MsgGUID: 76Ai+tRnQbOQgG4KBF2T2g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="28961731"
-X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
-   d="scan'208";a="28961731"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 15:51:02 -0700
-X-CSE-ConnectionGUID: PSxOVKUvT7mIjSWqVlXUDQ==
-X-CSE-MsgGUID: 682emU9xTYK21Drm3w7WTQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
-   d="scan'208";a="67701013"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Sep 2024 15:51:01 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 12 Sep 2024 15:51:00 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 12 Sep 2024 15:51:00 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.48) by
- edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 12 Sep 2024 15:51:00 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VVOef1jpuLtzaG3vqTXtZy9pZPZBuCG1yXa6GrUv3joaaFBeqmh5i3IWGXeTABQRd0auVdcj5O5U7yAnFzBm+DHP5FSYE5kzsjvZiiZWTm32E4oAuOgXhovJWnyqqsWZLDRdjM+1bMv6LYG5tI3WFYPgpH6D4d6hLirK/mW3sfQf0Jh3bHwA4KfCd1llzOt6Ji/cnHN4Z59NT/pw3VVSMwIWFTW5nRUN0oCq4+4hpeAVslsqqHeU1zCYY0w5ICBCmPqV6ZImJLEvKjIvgNqmlKnkfT1SNUIS75/8Jb0Y2eSQLqpoGEnhloiInL7I/W/d4LeubYaOB6wZXZlBwYlTig==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hAnNl4DKJ6Wcd/+rWwnt/jvGdLvft+xC3KAjdaxsQXw=;
- b=Eem7rSldDh14zUrjNjNhVFl4kcGT0mFAldFlZJxJZqjvicTiqwTQW2ixA42NzOAVlTNm61soOmXb9hFa0hqehP2FV7ARHKkcM1HEp9F3kxlrOpKZdyUnQg0WIqi9c/2p5oC8g86mZYS2w1U2JIpt2AihRn3xlk9HhKPxhB/lnQWgDEKTWKJRCQrfn7OcjwEkPQGPCtR7YXdrcuploAwuw0qCjXYreJj9lHIVUrgANwnrmO2gznwY9Ci2MPS+khFl9bZ13aSwww5SXZ1NOg7q9xa1tP7I5WuIgEfcj7rmP0FPrziNZFYaUqL42m1CZbEmK8RjKBKxGBDa1PlN4OS7mQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from IA0PR11MB7185.namprd11.prod.outlook.com (2603:10b6:208:432::20)
- by SJ2PR11MB8324.namprd11.prod.outlook.com (2603:10b6:a03:538::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.25; Thu, 12 Sep
- 2024 22:50:58 +0000
-Received: from IA0PR11MB7185.namprd11.prod.outlook.com
- ([fe80::dd3b:ce77:841a:722b]) by IA0PR11MB7185.namprd11.prod.outlook.com
- ([fe80::dd3b:ce77:841a:722b%5]) with mapi id 15.20.7962.018; Thu, 12 Sep 2024
- 22:50:57 +0000
-From: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>
-To: Huan Yang <link@vivo.com>, Sumit Semwal <sumit.semwal@linaro.org>,
-	=?iso-8859-1?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, Gerd Hoffmann
-	<kraxel@redhat.com>, "linux-media@vger.kernel.org"
-	<linux-media@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "linaro-mm-sig@lists.linaro.org"
-	<linaro-mm-sig@lists.linaro.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
-Subject: RE: [PATCH v6 6/7] udmabuf: remove udmabuf_folio
-Thread-Topic: [PATCH v6 6/7] udmabuf: remove udmabuf_folio
-Thread-Index: AQHbAplk627cSAifF0eA0YramTc73rJRxcFg
-Date: Thu, 12 Sep 2024 22:50:57 +0000
-Message-ID: <IA0PR11MB7185919B9398B745C53C0C0AF8642@IA0PR11MB7185.namprd11.prod.outlook.com>
-References: <20240909091851.1165742-1-link@vivo.com>
- <20240909091851.1165742-7-link@vivo.com>
-In-Reply-To: <20240909091851.1165742-7-link@vivo.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA0PR11MB7185:EE_|SJ2PR11MB8324:EE_
-x-ms-office365-filtering-correlation-id: f7fa72be-b457-423b-7365-08dcd37d5d90
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info: =?iso-8859-1?Q?izdjdZlS9FY4+Alhw0xEnUz965MUGg3E0mD8Lt+bDMdzJ9VCsMC/PyBS4m?=
- =?iso-8859-1?Q?q35aw12sx6o7ejsr6BNxGOU66hBG4ufZwEe8UMVMioQr6rHrITAf21ij4p?=
- =?iso-8859-1?Q?Xy9GrAMQzhBmAS2ZlOUJYWj8nrACErTmxb1EWYsSN4C6Ne9OlvpF3YvPk7?=
- =?iso-8859-1?Q?CwlltXFtrjP6b+DwEaDwt0K34ZgAnZJRHo+CcNHqwPGH3URpkCmckXg/U6?=
- =?iso-8859-1?Q?GAQyC0OfFGtxgn8UOhylpSF1U1gIHdOvFd8XqX4wo10VvDPwDyB0Lzzzm9?=
- =?iso-8859-1?Q?vDd0W9J9eObA8BFuzfEIkakP5ttms1iqkncJiRl8nPCFBV2Mwwh4lbDMs+?=
- =?iso-8859-1?Q?OJ60xIgsOUV0UYBb1af3hG8KAeDLJksANr/mrILke8MoGMoRiiELxPKBlm?=
- =?iso-8859-1?Q?ac5/6bNSs1cg3h99O3cdfFTVW/TlJwuf7yz79FVDAjmcJNA8u7V7FdltHH?=
- =?iso-8859-1?Q?Er/g3HFXEsQnOyLoe2ImZoEq4IOpHSJ8ITQesjNgTnJPh8JhPyWELOBSBJ?=
- =?iso-8859-1?Q?axcZ0xsF7eJRucR+s9Z81U+Awl+jKwOzhpoJF2jYTN5zTBnHGKjhHNM4UG?=
- =?iso-8859-1?Q?kgnjyhEOd7OalkzXPZUYlZ4p9ATmzbBZqFMx6ymFLNrGrk1XRSm30W5tYL?=
- =?iso-8859-1?Q?favoklUz8jkWIy+5AV2PHcuSYmqCOsuQ8a1QEt5hDxIoVBudKmikuf3KHL?=
- =?iso-8859-1?Q?FMYMteabNbW+B4JsLg+gxaJHQKVr8sHvGBcboW6JoSAIt1v3W3APysid2D?=
- =?iso-8859-1?Q?3STGkaa53QycMeK/1MJeN/8BUaY3qaOtjlnMrJx2NJPQwBeRfcOyF9Cuny?=
- =?iso-8859-1?Q?f3fnsYsK4Nd1y44XYa7oR6UllqJT7GFfxevQStGjC82er7qwXAKmdDIFo9?=
- =?iso-8859-1?Q?T/YyAVn6ZC1IbWxWhqB5EetrshPPYzrYtlClUbLLXfWUMM9+CjxtVJdA6d?=
- =?iso-8859-1?Q?5f424M+fWzWCvhtp1eb9ZSliJH2dUMsshZXUa6VrRiIky5ENseqfoL7zmr?=
- =?iso-8859-1?Q?vQt3OibOgaRQ/POMK5QcB8JEyNKdv4QfsgT/Qor5KvbxxHHrLnYwR9+eUp?=
- =?iso-8859-1?Q?L3Te0kAFKu1F5Y84xA0BY2dGdatmJvvQxeC0XAJ5Rx2roVfCwXL01AfHsc?=
- =?iso-8859-1?Q?xF5ThyDEQc1JPD8awms71VkNF+KSU59LdBD6Je1RVXKrE+3J3OPcn4AffC?=
- =?iso-8859-1?Q?+ZJaVlv6LEQlz6shm5vAqzgLRo7ZKJ2PnCmVCNrdB2teVzxs15cLoXlYS/?=
- =?iso-8859-1?Q?oEJh41B1MiaBjcPB4E4z29te8A18hOWh5FU7V+MjbDaUqclxS+YBSquZWA?=
- =?iso-8859-1?Q?ISuipXDSaJ8sUheBEwyjlQdh/iqJ2lIRnpVaGBCi0M7OaUgGvMTOYs38MA?=
- =?iso-8859-1?Q?EGeXLbQN0c0EcUCeZi7E5xB6Ho50qv+Z13KFrlnQjc2qh5pvZmJVGCA7cC?=
- =?iso-8859-1?Q?vFK8KL4lHRvxKhX4/USVeCfRqTVTUuKSk6KPZA=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR11MB7185.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?3HH0fSbl5seO3z62Gp0dMQfBMmV2VDX6ysi1XdUD/CAZ6Ad8WWq/6REG4B?=
- =?iso-8859-1?Q?5o6/9O9a8LuXAPa/2OTjJ1LdDtx3U5zaySP2RUeVnUTluNGFRz9IBGn5Ws?=
- =?iso-8859-1?Q?JCm6jNtxAymenzkC81Zs3IvHxbedaGyoE0jaGKl+yX65wPx3bWOryoKlFN?=
- =?iso-8859-1?Q?TV35kGyEv3J9bw/S+tZxkwNxzvJW7jufUWM1Eas7rlOcTOMJ+LPhmHVxuu?=
- =?iso-8859-1?Q?JuA72ZFsP4x4HYotIaq8mbMPX7asJuWhILeXJFwnl8Tb/+EAtewp9uCooK?=
- =?iso-8859-1?Q?tuEUkHvjms2+tCiJlgVybM7ojRXvNsi5ZJw5Q/07KvDwFq4ItTD9L4rJRJ?=
- =?iso-8859-1?Q?YfW1UbLN8WzhWwjLi7Lqe/PMzkiC7hLKEutmg6ZHpNMMYbvk6zRSLTIgXU?=
- =?iso-8859-1?Q?G3SMeoBfP7Sufx0uRIiGWyHurv51bsiC4q8YnJSakegn5vQbjFhDzx2Tmp?=
- =?iso-8859-1?Q?IqQl1zPGTI4188+iMKiO9VRfs+mewRA7Tmhe+shWXHDqooOS5MeILJx9qf?=
- =?iso-8859-1?Q?HRZfixtT/p9Ro67jkKsF2ghKxDY4cTcXiW5P8r8hFoKIYlCb8QXICSjThz?=
- =?iso-8859-1?Q?W0dDE6z/HJ4JCl57WLOrm2Jrq/vQHZIBKrrlTSgg48gv1DFbthCLrgLZOX?=
- =?iso-8859-1?Q?AJ4J4IrVE3gxqzMKyKRgrXtQ7Wze4Ibp3sUs78LwT1wkVfziLQyLYAzkNF?=
- =?iso-8859-1?Q?a+wwMpeHSlQgtTrHq7EuSTj0zfhD2rROZvuiJ7RYw3f6LmHruHnkyt4UQn?=
- =?iso-8859-1?Q?4jUaEgMrz2C70K0iyPzjSHhSPU9K6c690/3oS4CMDY+l4c/zw0YIQqbKc2?=
- =?iso-8859-1?Q?pTxPv7Sxf1mvkBzTv6QvqYqpqapkF6aKrtH7BPgboDovsiawdYvQPbSmez?=
- =?iso-8859-1?Q?7CQ8/ehjRlXPbWFPQax5d8rQIsPr0fbtd51FhXEbRATe4oDhCjUgSJb7qf?=
- =?iso-8859-1?Q?wt5BYPlCLcMjseqZUEhlw+wNkFIwT/mfJJdrhbNzC9PJpx8Q/m5hd5lHV/?=
- =?iso-8859-1?Q?GGmzKahas0rCKh4jRrbeNDjM9bU0ezEzyQB5IbvT5Ddy+TCrMKAoe3XEyA?=
- =?iso-8859-1?Q?GqY6EConMOiDDC3SIV3RJJWPklLbcIKyuWcU41up6k/tHSg1J2MJ7U2KY8?=
- =?iso-8859-1?Q?PZYpk1WwDytBGcFSE6Dgf9G99iByEJrSOqH8JDkRiRLVkeZvJz7KIrSZxH?=
- =?iso-8859-1?Q?kUzvwG7g+I72T6SPzBwJHm5rtkijXIzFeraaNt8jCFtqM243Azv9hZRWcR?=
- =?iso-8859-1?Q?zD7gAX7xO3KnlLkK+SrlrSc6fJi0SMJLRL9nY+uK1FnpXfZyuyKlkUDsm5?=
- =?iso-8859-1?Q?pAk1dsua/SoYb5Eo+5zqcOx7KAP78+2z+f48TQyuDIZZ86YIlSha6mhH8O?=
- =?iso-8859-1?Q?YgoKNu6V/YQJFBsx8B5K6dHHTkwg/uJOpgDkhAFyUM6dyK/YRsFDMeEIcP?=
- =?iso-8859-1?Q?homrcN6LWIXA328COxycwSI5Q/q0GkwiJ9kOzWuRhBXGLp90uaulHmVv2X?=
- =?iso-8859-1?Q?TOZLJK2HikHgxrmO16efU/B8iLkDWZjmeSUKbk/xin+db1DS5MLW2BTYNr?=
- =?iso-8859-1?Q?FnbDc03OGmjb06AHhQ3QeGlbk2l+XKF918Qw0eoAevQadC3Ku9GLhy2FHv?=
- =?iso-8859-1?Q?OQVYeYWNbedY8+hWRhoW3r/K73aEZh1rZP?=
-Content-Type: text/plain; charset="iso-8859-1"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608191C0DEB;
+	Thu, 12 Sep 2024 22:52:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726181557; cv=none; b=QYvUzpF77MyP8nGuDmFkZaqg2bjs1lMDJLhQtWwyxnKKXqkOwQqGemik/D31Hkx1Diy80piM2QxxkpnU00uH072NHjge+Gz89NYxGCUXbsxEoS2XEBzAN94ZtYXEL1QVDvDojsVic1j0WMek82RsrgIQ7iZvL4sFlHE6K+DHsfE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726181557; c=relaxed/simple;
+	bh=KzTqOSDUlxlRD7ADWx9PoDz9HKJcKh1SoqouHRiR3mw=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=hxcARW25I3c5k+3ozVFwZeYRN7WHFNknNp47RJBviRBk2l7jeDHPOFk0NjGNRtwDyYPkkPS/7q59LmCGCbKFeQ3hVY5xj/cxggoYCrEkbXLc7uHdWcMy9xywYQhggwtINW7rGg0Dk07Wyro5TUZA92Gocr52uKBoCZG7WMhDoXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=z6JiFgl5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QnjukTj6; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=z6JiFgl5; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=QnjukTj6; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B55881FB9F;
+	Thu, 12 Sep 2024 22:52:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726181553; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9E0rUNPJfwywW28fp/gQGHOmO3iFbDjRnJOCehVTlww=;
+	b=z6JiFgl5F6VSpEQIUAzStJzl/LnOZbKHRRN6RcnrWaF0tWNuv98Zeci/KHmVeO/v+0TKGH
+	M6mwPavrguB2XoxQyQ5i1HvPdUeXdRjfLDYBuBATrlDyqFkoyS3MM8xRM4q0+Wv38waXZ1
+	G/leeOpeiXpz4W0bfBQKMD5IvKVuIYc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726181553;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9E0rUNPJfwywW28fp/gQGHOmO3iFbDjRnJOCehVTlww=;
+	b=QnjukTj6Uf1y9bh1CwfYqIWsjtfQsERqxwE9MpB9ohnrpKL2Uu3PsaRT6fw5X5PZEekEXP
+	OUs9LSyfNYAXnkBw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726181553; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9E0rUNPJfwywW28fp/gQGHOmO3iFbDjRnJOCehVTlww=;
+	b=z6JiFgl5F6VSpEQIUAzStJzl/LnOZbKHRRN6RcnrWaF0tWNuv98Zeci/KHmVeO/v+0TKGH
+	M6mwPavrguB2XoxQyQ5i1HvPdUeXdRjfLDYBuBATrlDyqFkoyS3MM8xRM4q0+Wv38waXZ1
+	G/leeOpeiXpz4W0bfBQKMD5IvKVuIYc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726181553;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9E0rUNPJfwywW28fp/gQGHOmO3iFbDjRnJOCehVTlww=;
+	b=QnjukTj6Uf1y9bh1CwfYqIWsjtfQsERqxwE9MpB9ohnrpKL2Uu3PsaRT6fw5X5PZEekEXP
+	OUs9LSyfNYAXnkBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0131313A73;
+	Thu, 12 Sep 2024 22:52:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Su1JKq5w42ayGQAAD6G6ig
+	(envelope-from <neilb@suse.de>); Thu, 12 Sep 2024 22:52:30 +0000
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -180,190 +95,236 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA0PR11MB7185.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f7fa72be-b457-423b-7365-08dcd37d5d90
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Sep 2024 22:50:57.3399
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: HSy9zrUN8vMGtyWz+hh4PelSo1HLLU6rhHcg/Jvv88BdbKGAYpwNHoPUcsEdAVUOYQClytD/dvA2zz/Fmrrnv+Qs8S2TCMj9Ya+FLdwr6pg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB8324
-X-OriginatorOrg: intel.com
+From: "NeilBrown" <neilb@suse.de>
+To: Pali =?utf-8?q?Roh=C3=A1r?= <pali@kernel.org>
+Cc: "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "Olga Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
+ "Tom Talpey" <tom@talpey.com>, linux-nfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH] nfsd: Fix NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT
+In-reply-to: <20240912221917.23802-1-pali@kernel.org>
+References: <20240912221917.23802-1-pali@kernel.org>
+Date: Fri, 13 Sep 2024 08:52:20 +1000
+Message-id: <172618154004.17050.11278438613021939772@noble.neil.brown.name>
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi Huan,
+On Fri, 13 Sep 2024, Pali Roh=C3=A1r wrote:
+> Currently NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT do not bypass
+> only GSS, but bypass any authentication method. This is problem specially
+> for NFS3 AUTH_NULL-only exports.
+>=20
+> The purpose of NFSD_MAY_BYPASS_GSS_ON_ROOT is described in RFC 2623,
+> section 2.3.2, to allow mounting NFS2/3 GSS-only export without
+> authentication. So few procedures which do not expose security risk used
+> during mount time can be called also with AUTH_NONE or AUTH_SYS, to allow
+> client mount operation to finish successfully.
+>=20
+> The problem with current implementation is that for AUTH_NULL-only exports,
+> the NFSD_MAY_BYPASS_GSS_ON_ROOT is active also for NFS3 AUTH_UNIX mount
+> attempts which confuse NFS3 clients, and make them think that AUTH_UNIX is
+> enabled and is working. Linux NFS3 client never switches from AUTH_UNIX to
+> AUTH_NONE on active mount, which makes the mount inaccessible.
+>=20
+> Fix the NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT implementation
+> and really allow to bypass only exports which have some GSS auth flavor
+> enabled.
+>=20
+> The result would be: For AUTH_NULL-only export if client attempts to do
+> mount with AUTH_UNIX flavor then it will receive access errors, which
+> instruct client that AUTH_UNIX flavor is not usable and will either try
+> other auth flavor (AUTH_NULL if enabled) or fails mount procedure.
+>=20
+> This should fix problems with AUTH_NULL-only or AUTH_UNIX-only exports if
+> client attempts to mount it with other auth flavor (e.g. with AUTH_NULL for
+> AUTH_UNIX-only export, or with AUTH_UNIX for AUTH_NULL-only export).
 
-> Subject: [PATCH v6 6/7] udmabuf: remove udmabuf_folio
->=20
-> Currently, udmabuf handles folio by creating an unpin list to record
-> each folio obtained from the list and unpinning them when released. To
-> maintain this approach, many data structures have been established.
->=20
-> However, maintaining this type of data structure requires a significant
-> amount of memory and traversing the list is a substantial overhead,
-> which is not friendly to the CPU cache.
->=20
-> Considering that during creation, we arranged the folio array in the
-> order of pin and set the offset according to pgcnt.
->=20
-> We actually don't need to use unpin_list to unpin during release.
-> Instead, we can iterate through the folios array during release and
-> unpin any folio that is different from the ones previously accessed.
-Sorry, I didn't notice this earlier but the last few lines here do not
-reflect how unpin works in this latest patch version. Please update the
-commit message to describe how it currently works.
+The MAY_BYPASS_GSS flag currently also bypasses TLS restrictions.  With
+your change it doesn't.  I don't think we want to make that change.
+
+I think that what you want to do makes sense.  Higher security can be
+downgraded to AUTH_UNIX, but AUTH_NULL mustn't be upgraded to to
+AUTH_UNIX.
+
+Maybe that needs to be explicit in the code.  The bypass is ONLY allowed
+for AUTH_UNIX and only if something other than AUTH_NULL is allowed.
 
 Thanks,
-Vivek
+NeilBrown
+
+
 
 >=20
-> By this, not only saves the overhead of the udmabuf_folio data structure
-> but also makes array access more cache-friendly.
->=20
-> Signed-off-by: Huan Yang <link@vivo.com>
-> Acked-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
+> Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
 > ---
->  drivers/dma-buf/udmabuf.c | 65 +++++++++++++++++----------------------
->  1 file changed, 29 insertions(+), 36 deletions(-)
+>  fs/nfsd/export.c   | 19 ++++++++++++++++++-
+>  fs/nfsd/export.h   |  2 +-
+>  fs/nfsd/nfs4proc.c |  2 +-
+>  fs/nfsd/nfs4xdr.c  |  2 +-
+>  fs/nfsd/nfsfh.c    | 12 +++++++++---
+>  fs/nfsd/vfs.c      |  2 +-
+>  6 files changed, 31 insertions(+), 8 deletions(-)
 >=20
-> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
-> index c2eda960aaaa..0e405a589ca2 100644
-> --- a/drivers/dma-buf/udmabuf.c
-> +++ b/drivers/dma-buf/udmabuf.c
-> @@ -27,15 +27,21 @@ MODULE_PARM_DESC(size_limit_mb, "Max size of a
-> dmabuf, in megabytes. Default is
->  struct udmabuf {
->  	pgoff_t pagecount;
->  	struct folio **folios;
-> +
-> +	/**
-> +	 * Unlike folios, pinned_folios is only used for unpin.
-> +	 * So, nr_pinned is not the same to pagecount, the pinned_folios
-> +	 * only set each folio which already pinned when udmabuf_create.
-> +	 * Note that, since a folio may be pinned multiple times, each folio
-> +	 * can be added to pinned_folios multiple times, depending on how
-> many
-> +	 * times the folio has been pinned when create.
+> diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
+> index 50b3135d07ac..eb11d3fdffe1 100644
+> --- a/fs/nfsd/export.c
+> +++ b/fs/nfsd/export.c
+> @@ -1074,7 +1074,7 @@ static struct svc_export *exp_find(struct cache_detai=
+l *cd,
+>  	return exp;
+>  }
+> =20
+> -__be32 check_nfsd_access(struct svc_export *exp, struct svc_rqst *rqstp)
+> +__be32 check_nfsd_access(struct svc_export *exp, struct svc_rqst *rqstp, b=
+ool may_bypass_gss)
+>  {
+>  	struct exp_flavor_info *f, *end =3D exp->ex_flavors + exp->ex_nflavors;
+>  	struct svc_xprt *xprt =3D rqstp->rq_xprt;
+> @@ -1120,6 +1120,23 @@ __be32 check_nfsd_access(struct svc_export *exp, str=
+uct svc_rqst *rqstp)
+>  	if (nfsd4_spo_must_allow(rqstp))
+>  		return 0;
+> =20
+> +	/* Some calls may be processed without authentication
+> +	 * on GSS exports. For example NFS2/3 calls on root
+> +	 * directory, see section 2.3.2 of rfc 2623.
+> +	 * For "may_bypass_gss" check that export has really
+> +	 * enabled some GSS flavor and also check that the
+> +	 * used auth flavor is without auth (none or sys).
 > +	 */
-> +	pgoff_t nr_pinned;
-> +	struct folio **pinned_folios;
+> +	if (may_bypass_gss && (
+> +	     rqstp->rq_cred.cr_flavor =3D=3D RPC_AUTH_NULL ||
+> +	     rqstp->rq_cred.cr_flavor =3D=3D RPC_AUTH_UNIX)) {
+> +		for (f =3D exp->ex_flavors; f < end; f++) {
+> +			if (f->pseudoflavor =3D=3D RPC_AUTH_GSS ||
+> +			    f->pseudoflavor >=3D RPC_AUTH_GSS_KRB5)
+> +				return 0;
+> +		}
+> +	}
 > +
->  	struct sg_table *sg;
->  	struct miscdevice *device;
->  	pgoff_t *offsets;
-> -	struct list_head unpin_list;
-> -};
-> -
-> -struct udmabuf_folio {
-> -	struct folio *folio;
-> -	struct list_head list;
->  };
->=20
->  static vm_fault_t udmabuf_vm_fault(struct vm_fault *vmf)
-> @@ -196,38 +202,18 @@ static void unmap_udmabuf(struct
-> dma_buf_attachment *at,
->  	return put_sg_table(at->dev, sg, direction);
+>  denied:
+>  	return rqstp->rq_vers < 4 ? nfserr_acces : nfserr_wrongsec;
 >  }
->=20
-> -static void unpin_all_folios(struct list_head *unpin_list)
-> +static void unpin_all_folios(struct udmabuf *ubuf)
+> diff --git a/fs/nfsd/export.h b/fs/nfsd/export.h
+> index ca9dc230ae3d..dc7cf4f6ac53 100644
+> --- a/fs/nfsd/export.h
+> +++ b/fs/nfsd/export.h
+> @@ -100,7 +100,7 @@ struct svc_expkey {
+>  #define EX_WGATHER(exp)		((exp)->ex_flags & NFSEXP_GATHERED_WRITES)
+> =20
+>  int nfsexp_flags(struct svc_rqst *rqstp, struct svc_export *exp);
+> -__be32 check_nfsd_access(struct svc_export *exp, struct svc_rqst *rqstp);
+> +__be32 check_nfsd_access(struct svc_export *exp, struct svc_rqst *rqstp, b=
+ool may_bypass_gss);
+> =20
+>  /*
+>   * Function declarations
+> diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
+> index 2e39cf2e502a..0f67f4a7b8b2 100644
+> --- a/fs/nfsd/nfs4proc.c
+> +++ b/fs/nfsd/nfs4proc.c
+> @@ -2791,7 +2791,7 @@ nfsd4_proc_compound(struct svc_rqst *rqstp)
+> =20
+>  			if (current_fh->fh_export &&
+>  					need_wrongsec_check(rqstp))
+> -				op->status =3D check_nfsd_access(current_fh->fh_export, rqstp);
+> +				op->status =3D check_nfsd_access(current_fh->fh_export, rqstp, false);
+>  		}
+>  encode_op:
+>  		if (op->status =3D=3D nfserr_replay_me) {
+> diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+> index 97f583777972..b45ea5757652 100644
+> --- a/fs/nfsd/nfs4xdr.c
+> +++ b/fs/nfsd/nfs4xdr.c
+> @@ -3775,7 +3775,7 @@ nfsd4_encode_entry4_fattr(struct nfsd4_readdir *cd, c=
+onst char *name,
+>  			nfserr =3D nfserrno(err);
+>  			goto out_put;
+>  		}
+> -		nfserr =3D check_nfsd_access(exp, cd->rd_rqstp);
+> +		nfserr =3D check_nfsd_access(exp, cd->rd_rqstp, false);
+>  		if (nfserr)
+>  			goto out_put;
+> =20
+> diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
+> index dd4e11a703aa..ed0eabfa3cb0 100644
+> --- a/fs/nfsd/nfsfh.c
+> +++ b/fs/nfsd/nfsfh.c
+> @@ -329,6 +329,7 @@ fh_verify(struct svc_rqst *rqstp, struct svc_fh *fhp, u=
+mode_t type, int access)
 >  {
-> -	struct udmabuf_folio *ubuf_folio;
-> +	pgoff_t i;
+>  	struct nfsd_net *nn =3D net_generic(SVC_NET(rqstp), nfsd_net_id);
+>  	struct svc_export *exp =3D NULL;
+> +	bool may_bypass_gss =3D false;
+>  	struct dentry	*dentry;
+>  	__be32		error;
+> =20
+> @@ -375,8 +376,13 @@ fh_verify(struct svc_rqst *rqstp, struct svc_fh *fhp, =
+umode_t type, int access)
+>  	 * which clients virtually always use auth_sys for,
+>  	 * even while using RPCSEC_GSS for NFS.
+>  	 */
+> -	if (access & NFSD_MAY_LOCK || access & NFSD_MAY_BYPASS_GSS)
+> +	if (access & NFSD_MAY_LOCK)
+>  		goto skip_pseudoflavor_check;
+> +	/*
+> +	 * NFS4 PUTFH may bypass GSS (see nfsd4_putfh() in nfs4proc.c).
+> +	 */
+> +	if (access & NFSD_MAY_BYPASS_GSS)
+> +		may_bypass_gss =3D true;
+>  	/*
+>  	 * Clients may expect to be able to use auth_sys during mount,
+>  	 * even if they use gss for everything else; see section 2.3.2
+> @@ -384,9 +390,9 @@ fh_verify(struct svc_rqst *rqstp, struct svc_fh *fhp, u=
+mode_t type, int access)
+>  	 */
+>  	if (access & NFSD_MAY_BYPASS_GSS_ON_ROOT
+>  			&& exp->ex_path.dentry =3D=3D dentry)
+> -		goto skip_pseudoflavor_check;
+> +		may_bypass_gss =3D true;
+> =20
+> -	error =3D check_nfsd_access(exp, rqstp);
+> +	error =3D check_nfsd_access(exp, rqstp, may_bypass_gss);
+>  	if (error)
+>  		goto out;
+> =20
+> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> index 29b1f3613800..b2f5ea7c2187 100644
+> --- a/fs/nfsd/vfs.c
+> +++ b/fs/nfsd/vfs.c
+> @@ -320,7 +320,7 @@ nfsd_lookup(struct svc_rqst *rqstp, struct svc_fh *fhp,=
+ const char *name,
+>  	err =3D nfsd_lookup_dentry(rqstp, fhp, name, len, &exp, &dentry);
+>  	if (err)
+>  		return err;
+> -	err =3D check_nfsd_access(exp, rqstp);
+> +	err =3D check_nfsd_access(exp, rqstp, false);
+>  	if (err)
+>  		goto out;
+>  	/*
+> --=20
+> 2.20.1
 >=20
-> -	while (!list_empty(unpin_list)) {
-> -		ubuf_folio =3D list_first_entry(unpin_list,
-> -					      struct udmabuf_folio, list);
-> -		unpin_folio(ubuf_folio->folio);
-> +	for (i =3D 0; i < ubuf->nr_pinned; ++i)
-> +		unpin_folio(ubuf->pinned_folios[i]);
 >=20
-> -		list_del(&ubuf_folio->list);
-> -		kfree(ubuf_folio);
-> -	}
-> -}
-> -
-> -static int add_to_unpin_list(struct list_head *unpin_list,
-> -			     struct folio *folio)
-> -{
-> -	struct udmabuf_folio *ubuf_folio;
-> -
-> -	ubuf_folio =3D kzalloc(sizeof(*ubuf_folio), GFP_KERNEL);
-> -	if (!ubuf_folio)
-> -		return -ENOMEM;
-> -
-> -	ubuf_folio->folio =3D folio;
-> -	list_add_tail(&ubuf_folio->list, unpin_list);
-> -	return 0;
-> +	kvfree(ubuf->pinned_folios);
->  }
->=20
->  static __always_inline int init_udmabuf(struct udmabuf *ubuf, pgoff_t
-> pgcnt)
->  {
-> -	INIT_LIST_HEAD(&ubuf->unpin_list);
-> -
->  	ubuf->folios =3D kvmalloc_array(pgcnt, sizeof(*ubuf->folios),
-> GFP_KERNEL);
->  	if (!ubuf->folios)
->  		return -ENOMEM;
-> @@ -236,12 +222,18 @@ static __always_inline int init_udmabuf(struct
-> udmabuf *ubuf, pgoff_t pgcnt)
->  	if (!ubuf->offsets)
->  		return -ENOMEM;
->=20
-> +	ubuf->pinned_folios =3D kvmalloc_array(pgcnt,
-> +					     sizeof(*ubuf->pinned_folios),
-> +					     GFP_KERNEL);
-> +	if (!ubuf->pinned_folios)
-> +		return -ENOMEM;
-> +
->  	return 0;
->  }
->=20
->  static __always_inline void deinit_udmabuf(struct udmabuf *ubuf)
->  {
-> -	unpin_all_folios(&ubuf->unpin_list);
-> +	unpin_all_folios(ubuf);
->  	kvfree(ubuf->offsets);
->  	kvfree(ubuf->folios);
->  }
-> @@ -351,9 +343,11 @@ static int export_udmabuf(struct udmabuf *ubuf,
->  static long udmabuf_pin_folios(struct udmabuf *ubuf, struct file *memfd,
->  			       loff_t start, loff_t size)
->  {
-> -	pgoff_t pgoff, pgcnt, upgcnt =3D ubuf->pagecount;
-> +	pgoff_t nr_pinned =3D ubuf->nr_pinned;
-> +	pgoff_t upgcnt =3D ubuf->pagecount;
->  	struct folio **folios =3D NULL;
->  	u32 cur_folio, cur_pgcnt;
-> +	pgoff_t pgoff, pgcnt;
->  	long nr_folios;
->  	long ret =3D 0;
->  	loff_t end;
-> @@ -375,9 +369,7 @@ static long udmabuf_pin_folios(struct udmabuf
-> *ubuf, struct file *memfd,
->  		pgoff_t subpgoff =3D pgoff;
->  		size_t fsize =3D folio_size(folios[cur_folio]);
->=20
-> -		ret =3D add_to_unpin_list(&ubuf->unpin_list, folios[cur_folio]);
-> -		if (ret < 0)
-> -			goto end;
-> +		ubuf->pinned_folios[nr_pinned++] =3D folios[cur_folio];
->=20
->  		for (; subpgoff < fsize; subpgoff +=3D PAGE_SIZE) {
->  			ubuf->folios[upgcnt] =3D folios[cur_folio];
-> @@ -398,6 +390,7 @@ static long udmabuf_pin_folios(struct udmabuf
-> *ubuf, struct file *memfd,
->  	}
->  end:
->  	ubuf->pagecount =3D upgcnt;
-> +	ubuf->nr_pinned =3D nr_pinned;
->  	kvfree(folios);
->  	return ret;
->  }
-> --
-> 2.45.2
 
 
