@@ -1,182 +1,117 @@
-Return-Path: <linux-kernel+bounces-326549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7A5A9769D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:59:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8438D9769DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98AC2285696
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:59:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 332B41F235E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D421A724C;
-	Thu, 12 Sep 2024 12:59:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDA11A7AF0;
+	Thu, 12 Sep 2024 13:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MNnBqrhY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NolcgDpl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B311A42DA;
-	Thu, 12 Sep 2024 12:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D75A1E4AF;
+	Thu, 12 Sep 2024 13:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726145980; cv=none; b=mLUCE3ihy2WahpJxHYa2WBKDOKkQGJTPm+vEzEmjolthXHU420BxAaxG056cbGtYDYzmBerx/8m5/802jqM0VNaaYSu8pXwMqHwNlFcqDu77EuqBnzt9IAFD9x4V4H5lv5PWshmTm7VzqhituhqWtujKOsI0uQ65RQ0PL/GXBzY=
+	t=1726146161; cv=none; b=mDYnpatgwjQglIEA8siaLaXNEPSf2vqyCnrtGrMb+lkUDEkL04Y/cAkRsGFeILk27/wGbfXOkVlxm5Aiy5Mh1lkCieBIF21c6hmbx6a/c+cyzE+Hg39WcgHWkRsHq5YoZK3DxQXHJPefPbN85Z/sshW8vCMA7jF7BxZ7+XHh0Vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726145980; c=relaxed/simple;
-	bh=AvtzSC3Csk3z8NPXkiPtAx9GovjKGdqPfKXOIZCX9io=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=CRO2H4A5wAJRVkkDmZ12jV//Vqh7dkk6cVWNrf205/xv8UaneguhyM6r4EbylLI+vJCfUoiBC8JNnx8mrXdvr8EVZ5LSoayqIJcCUjyvKCttZESaBppoNsRCA7hCcPynO9gPUDCZ5O0SEfWymUAuG4O7FE4DluZeOd2v9eAFGLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MNnBqrhY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95040C4CEC3;
-	Thu, 12 Sep 2024 12:59:38 +0000 (UTC)
+	s=arc-20240116; t=1726146161; c=relaxed/simple;
+	bh=eJXI6jnCMPp6vz+/hYERZQHNlMmq2KALs+jT51lwMmw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=NTTekCRCChdE0ccPcc/DMAyvTWFibXDcoZ6K6X3jGScfUwuxN7P45L1zp1kjvQ3prKOTELx9F7zEZNh8DvSBYJwmlCg5YQCerLK0fxMnJhK/1nGPOs9A+HrnqlyDPkQ/JjUhK2KQmBgon+RmPWMkvqQJRcKBX0Y5XWi1LrZLLTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NolcgDpl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98A0DC4CEC4;
+	Thu, 12 Sep 2024 13:02:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726145979;
-	bh=AvtzSC3Csk3z8NPXkiPtAx9GovjKGdqPfKXOIZCX9io=;
-	h=Date:From:To:Cc:Subject:From;
-	b=MNnBqrhYNKwn+5KcG4nGejpUPJa5NNohyz7PxGVEtxVTB7JAHO5VN14tbtFOHKuFA
-	 oxuIUJsn1DhWFko6lPDOsdR9DxjPSHxKlOmxcIo94Lrc0wjKFJN4/AwOj24SdPh7Cr
-	 I+5yAMOEwV8sn73fIuDNnQhbKec22uRfmYt5eM0TXPrioe15hHwKx9untYP4ym2Fir
-	 LltFOvZkoYxxznr5Yvr1aovGjty6gNyiNmuvQBqWabzhqeb1ttr4pYCz+DHpH3fr11
-	 FkYHBknjL6NSMv7Q1/7v12K6pt9m+4IzyQMvu0xLQN+lA/RlKYu1SRgoREiq4eiFus
-	 MtIlU7h5H7oTg==
-Date: Thu, 12 Sep 2024 13:59:35 +0100
-From: Will Deacon <will@kernel.org>
-To: joro@8bytes.org
-Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, robin.murphy@arm.com,
-	kernel-team@android.com
-Subject: [GIT PULL] iommu/arm-smmu: Updates for 6.12
-Message-ID: <20240912125934.GA23244@willie-the-truck>
+	s=k20201202; t=1726146160;
+	bh=eJXI6jnCMPp6vz+/hYERZQHNlMmq2KALs+jT51lwMmw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=NolcgDplMxVxIbnG5lqDPiRbmh0v/Y91ofL9A48OnyqfWIfGaCoZSdRTQ1gvGeHf/
+	 E+Iv0wus2fhsHM0HlBqFHebXjs32D0ce/iRMkWKTebHql5GsBv8i3yy0jMOGhrUf8N
+	 ZiXfOZz5W0m0cCOA2FT7p5YDcWdwl0rybXMOJ1VT1yYyapyuPYy2daQixgJHXv+c/r
+	 WWTkxD+qMVgbmZvSzA4iRCT+2x9dXYy7A4hEfiiQfRUBnp3Pkveky5egrd29OAImvV
+	 ON1nNqc8RTGga2ky2cbkhUxe4lxqks4bKcZLdPNQivE6BmjAOja4zCujcqAmcy7aX4
+	 +cBk0DUqFVB+Q==
+Received: by pali.im (Postfix)
+	id 69A405E9; Thu, 12 Sep 2024 15:02:35 +0200 (CEST)
+From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
+To: Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>
+Cc: linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] nfs: Fix mounting NFS3 AUTH_NULL exports
+Date: Thu, 12 Sep 2024 15:02:15 +0200
+Message-Id: <20240912130220.17032-1-pali@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Joerg,
+Linux NFS3 kernel client currently has broken support for NFS3
+AUTH_NULL-only exports and also broken mount option -o sec=none
+(which explicitly specifies that mount should use AUTH_NULL).
 
-Please pull these Arm SMMU updates for v6.12. The big new feature is
-support for NVIDIA's virtual command queue implementation for SMMUv3,
-but everything is summarised in the tag.
+For AUTH_NULL-only server exports, Linux NFS3 kernel client mounts such
+export with AUTH_UNIX authentication which results in unusable mount
+point (any operation on it fails with error because server rejects
+AUTH_UNIX authentication).
 
-** Please note **: I've already pushed this to the arm/smmu branch for
--next coverage, but I thought sending a pull request was still useful
-for the records and the signed tag. If you want to recreate the branch,
-please feel free.
+Half of the problem is with MNTv3 servers, as some of them (e.g. Linux
+one) never announce AUTH_NULL authentication for any export. Linux MNTv3
+server does not announce it even when the export has the only AUTH_NULL
+auth method allowed, instead it announce AUTH_UNIX (even when AUTH_UNIX
+is disabled for that export in Linux NFS3 knfsd server). So MNTv3 server
+for AUTH_NONE-only exports instruct Linux NFS3 kernel client to use
+AUTH_UNIX and then NFS3 server refuse access to files with AUTH_UNIX.
 
-See you at LPC!
+Main problem on the client side is that mount option -o sec=none for
+NFS3 client is not processed and Linux NFS kernel client always skips
+AUTH_NULL (even when server announce it, and also even when user
+specifies -o sec=none on mount command line).
 
-Cheers,
+This patch series address these issues in NFS3 client code.
 
-Will
+Add a workaround for buggy MNTv3 servers which do not announce AUTH_NULL,
+by trying AUTH_NULL authentication as an absolutely last chance when
+everything else fails. And honors user choice of AUTH_NULL if user
+explicitly specified -o sec=none as mount option.
 
---->8
+AUTH_NULL authentication is useful for read-only exports, including
+public exports. As authentication for these types of exports do not have
+to be required.
 
-The following changes since commit 7c626ce4bae1ac14f60076d00eafe71af30450ba:
+Patch series was tested with AUTH_NULL-only, AUTH_UNIX-only and combined
+AUTH_NULL+AUTH_UNIX exports from Linux knfsd NFS3 server + default Linux
+MNTv3 userspace server. And also tested with exports from modified MNTv3
+server to properly return AUTH_NULL support in response list.
 
-  Linux 6.11-rc3 (2024-08-11 14:27:14 -0700)
+Patch series is based on the latest upstream tag v6.11-rc7.
 
-are available in the Git repository at:
+Pali Rohár (5):
+  nfs: Fix support for NFS3 mount with -o sec=none from Linux MNTv3
+    server
+  nfs: Propagate AUTH_NULL/AUTH_UNIX PATHCONF NFS3ERR_ACCESS failures
+  nfs: Try to use AUTH_NULL for NFS3 mount when no -o sec was given
+  nfs: Fix -o sec=none output in /proc/mounts
+  nfs: Remove duplicate debug message 'using auth flavor'
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git tags/arm-smmu-updates
+ fs/nfs/client.c | 14 ++++++++++-
+ fs/nfs/super.c  | 64 +++++++++++++++++++++++++++++++++++++++----------
+ 2 files changed, 65 insertions(+), 13 deletions(-)
 
-for you to fetch changes up to f1c6cf8e7ab9d7498ee70c69d5093165952d3595:
+-- 
+2.20.1
 
-  Merge branch 'for-joerg/arm-smmu/bindings' into for-joerg/arm-smmu/updates (2024-09-12 12:54:14 +0100)
-
-----------------------------------------------------------------
-Arm SMMU updates for 6.12
-
-- SMMUv2:
-  * Devicetree binding updates for Qualcomm MMU-500 implementations.
-  * Extend workarounds for broken Qualcomm hypervisor to avoid touching
-    features that are not available (e.g. 16KiB page support, reserved
-    context banks).
-
-- SMMUv3:
-  * Support for NVIDIA's custom virtual command queue hardware.
-  * Fix Stage-2 stall configuration and extend tests to cover this area.
-  * A bunch of driver cleanups, including simplification of the master
-    rbtree code.
-
-- Plus minor cleanups and fixes across both drivers.
-
-----------------------------------------------------------------
-Dan Carpenter (2):
-      iommu/arm-smmu-v3: Fix a NULL vs IS_ERR() check
-      iommu/tegra241-cmdqv: Fix ioremap() error handling in probe()
-
-Dmitry Baryshkov (1):
-      iommu/arm-smmu-qcom: apply num_context_bank fixes for SDM630 / SDM660
-
-Jason Gunthorpe (10):
-      iommu/arm-smmu-v3: Add struct arm_smmu_impl_ops
-      iommu/arm-smmu-v3: Use the new rb tree helpers
-      iommu/arm-smmu-v3: Add arm_smmu_strtab_l1/2_idx()
-      iommu/arm-smmu-v3: Add types for each level of the 2 level stream table
-      iommu/arm-smmu-v3: Reorganize struct arm_smmu_strtab_cfg
-      iommu/arm-smmu-v3: Remove strtab_base/cfg
-      iommu/arm-smmu-v3: Do not use devm for the cd table allocations
-      iommu/arm-smmu-v3: Shrink the cdtab l1_desc array
-      iommu/arm-smmu-v3: Add types for each level of the CD table
-      iommu/arm-smmu-v3: Reorganize struct arm_smmu_ctx_desc_cfg
-
-Konrad Dybcio (1):
-      iommu/arm-smmu-qcom: Work around SDM845 Adreno SMMU w/ 16K pages
-
-Marc Gonzalez (1):
-      iommu/arm-smmu-qcom: hide last LPASS SMMU context bank from linux
-
-Mostafa Saleh (2):
-      iommu/arm-smmu-v3: Match Stall behaviour for S2
-      iommu/arm-smmu-v3-test: Test masters with stall enabled
-
-Nate Watterson (1):
-      iommu/arm-smmu-v3: Add in-kernel support for NVIDIA Tegra241 (Grace) CMDQV
-
-Nicolin Chen (11):
-      iommu/arm-smmu-v3: Issue a batch of commands to the same cmdq
-      iommu/arm-smmu-v3: Pass in cmdq pointer to arm_smmu_cmdq_build_sync_cmd
-      iommu/arm-smmu-v3: Pass in cmdq pointer to arm_smmu_cmdq_init
-      iommu/arm-smmu-v3: Make symbols public for CONFIG_TEGRA241_CMDQV
-      iommu/arm-smmu-v3: Add ARM_SMMU_OPT_TEGRA241_CMDQV
-      iommu/arm-smmu-v3: Add acpi_smmu_iort_probe_model for impl
-      iommu/arm-smmu-v3: Start a new batch if new command is not supported
-      iommu/tegra241-cmdqv: Limit CMDs for VCMDQs of a guest owned VINTF
-      iommu/tegra241-cmdqv: Fix -Wformat-truncation warnings in lvcmdq_error_header
-      iommu/tegra241-cmdqv: Drop static at local variable
-      iommu/tegra241-cmdqv: Do not allocate vcmdq until dma_set_mask_and_coherent
-
-Nikunj Kela (1):
-      dt-bindings: arm-smmu: document the support on SA8255p
-
-Rob Clark (1):
-      iommu/arm-smmu: Un-demote unhandled-fault msg
-
-Will Deacon (1):
-      Merge branch 'for-joerg/arm-smmu/bindings' into for-joerg/arm-smmu/updates
-
-Zhang Zekun (1):
-      iommu/arm-smmu-v3: Remove the unused empty definition
-
-Zhenhua Huang (1):
-      dt-bindings: arm-smmu: Add compatible for QCS8300 SoC
-
- .../devicetree/bindings/iommu/arm,smmu.yaml        |   5 +
- MAINTAINERS                                        |   1 +
- drivers/iommu/Kconfig                              |  11 +
- drivers/iommu/arm/arm-smmu-v3/Makefile             |   1 +
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-test.c   |  83 +-
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c        | 576 +++++++------
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h        | 137 +++-
- drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c     | 909 +++++++++++++++++++++
- drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c         |  28 +
- drivers/iommu/arm/arm-smmu/arm-smmu.c              |   2 +-
- 10 files changed, 1463 insertions(+), 290 deletions(-)
- create mode 100644 drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c
 
