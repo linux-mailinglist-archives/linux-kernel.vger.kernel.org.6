@@ -1,112 +1,225 @@
-Return-Path: <linux-kernel+bounces-326452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CA96976891
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:03:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A27FC976868
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:57:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C936A284FFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:03:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0966AB20ACC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:57:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0481A0BDD;
-	Thu, 12 Sep 2024 12:03:00 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9631A0BE8;
+	Thu, 12 Sep 2024 11:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qqOer7g3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA602B9D4;
-	Thu, 12 Sep 2024 12:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A54185B5D;
+	Thu, 12 Sep 2024 11:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726142579; cv=none; b=lwc5dWLVQ9wT6Cz5bymRVn9qJ+gdwYLDm2lbc0wMlO+QCaFz/NemUKEuSnmSJRQCyZ2cipSlTNGi6nHW7aB2vrxAW445muFshJfQYLpFjWQR47a5/cT0IhZr7vRmt3Ax6vMbd3NlbVXHXy6jDQooyLi7/GJyi6keTLazYbRJHDk=
+	t=1726142253; cv=none; b=Ab3k1e8dK1T78fshWNjjieSEY1I/2lD1r7bGSSMZ5g67iFXUBOSHJ5NdLRyYksFETty/A5JphjgIcFCDU9fv4uhuD2EsI+A6ELDN+DuZ0H0wLLDQ2OlVtHbcIWU9ifxvClzzHaBIV7vlzipH2MuZhwYLNgSR6CPT3cbe6JEDHN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726142579; c=relaxed/simple;
-	bh=Mv9h1p/TR+VSVbBvMp2ZlmgDk5jkUvI5SRlHyWx8wdY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s2W6QNFuGafvTmD6noAOJ3xD7qmA/qBj6w9STX12CNQnnL3ieD0nMjWicqYIrwsJ0rXRr0EWqxJRuuiw2dSNbWcH+diHx69oYT7bCKbSLeUCZ3ZQ6COwlnrpcNxe8k72/FDJpLmxGJWn8zWEOAIvpL2GUEtYknuJsS2uYFpdtyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4X4GH44jXPzmV6K;
-	Thu, 12 Sep 2024 20:00:48 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id E4CE7140361;
-	Thu, 12 Sep 2024 20:02:53 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 12 Sep 2024 20:02:53 +0800
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-To: <jgg@ziepe.ca>, <leon@kernel.org>
-CC: <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <huangjunxian6@hisilicon.com>
-Subject: [PATCH for-rc] RDMA/hns: Fix ah error counter in sw stat not increasing
-Date: Thu, 12 Sep 2024 19:57:00 +0800
-Message-ID: <20240912115700.2016443-1-huangjunxian6@hisilicon.com>
-X-Mailer: git-send-email 2.30.0
+	s=arc-20240116; t=1726142253; c=relaxed/simple;
+	bh=dUXW/Wfp97X+7KVZAgCVhi9t3O3m0sqGlq3efucYFYw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dxLKh9gDZZ27Zm3d6ewaCrnHW+FNuooZQjSPcmNyK1qGBF08ns4FNpKHKzqqqMPSbY1FS1c1+QlQ7S03IirkZ7hiRNSCDWik9x+fXfWaRDH7/nIkdf1LpAKXckmL9JtxECXYgRBwppnqqzyoacs5i1PwpKM7Aqulrg9Xrtz3A5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qqOer7g3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEF77C4CEC5;
+	Thu, 12 Sep 2024 11:57:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726142251;
+	bh=dUXW/Wfp97X+7KVZAgCVhi9t3O3m0sqGlq3efucYFYw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=qqOer7g37vqVqQ57SAxnn+zqjAz0NnRw8o4AWzjl2Zaf4VjUjUn5+d0krmss6AYgp
+	 9xLys/EI5ek477EM+nGlctMf93xgo3wnMGoO2Izm7/vJBcMo++wR4kmXprPxUn0k5X
+	 IrNV0EG8nW6aV1dBgWqKr4WXnQyRoJioldfwbQmVt/zSdLRbytqAzbgOjLljsiqCVG
+	 CoYv3KL+eJMmlxkvDsLpkLFN/FTbmZSvgaIF5M6f4+IFz+8MtwRyjO38cbf1HdOP2P
+	 Stp1/v0VO5zQyUMkcVXRVT2fviKZ13SSJXcD+3WTetzV1UPQktU7F7jgeVQx03ZmlF
+	 WV3QINzi1Jhog==
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-27bd815cbf1so416791fac.1;
+        Thu, 12 Sep 2024 04:57:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUUlfsIlk+WQdiiz3eW5Y8VYEbRU1/a9EgGaCpPH7TDTfH0ute5VlcWoBYyVUZTDd/eYVjlk0tNFQhj@vger.kernel.org, AJvYcCW5C3/Xe65yY/DTDxp6Dgej6Zvtw/14pI5JVg+oolWrbQTub1KpUDiYoezrGJpn6KIbXjDkEvuLuwXMJZg=@vger.kernel.org, AJvYcCXIHuR+64/EVpXU/sjsOwt9eU43irtJAnoC7aFOhzP2l2T7iy7uLYqal5dys1lcHpB/QTHOnT/kOyQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5NhmUFuur35IHr0os/28hx/rQxtizp4qOuYRROgefyygwEBMm
+	T1gFUKm4wGovpJgRPSbsGxg+mcN4P9zYxO/0ZctWb3wQ6f4K+uxg4i9Y/2AmPPYV3wDf2jJf4bK
+	wyekkjwX1efd26rA9opFY2iz7PCw=
+X-Google-Smtp-Source: AGHT+IHYwqi8+7FVE0+YQWqGodjYIh9QYSBx7RsBTZ7qLtNETJa+BpPGqRuQNBbsJT7kah8GuHW8x3tGyLpdDHPQdqI=
+X-Received: by 2002:a05:6870:80d1:b0:277:dd53:a44f with SMTP id
+ 586e51a60fabf-27be6b0965fmr3979688fac.6.1726142251143; Thu, 12 Sep 2024
+ 04:57:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemf100018.china.huawei.com (7.202.181.17)
+References: <20240708-runtime_pm-v4-1-c02a3663243b@quicinc.com>
+ <20240816204539.GA73302@bhelgaas> <CAJZ5v0j0ck2yKPzisggkdKTFz-AVKG7q+6WnBiiT_43VT4Fbvg@mail.gmail.com>
+ <b0d8e51d-cf53-dc75-0e57-4e2e85a14827@quicinc.com>
+In-Reply-To: <b0d8e51d-cf53-dc75-0e57-4e2e85a14827@quicinc.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 12 Sep 2024 13:57:19 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jMSrkH7jCk0Ayb21vdXjCnYHHiSqdbifNFwq2OucEMtQ@mail.gmail.com>
+Message-ID: <CAJZ5v0jMSrkH7jCk0Ayb21vdXjCnYHHiSqdbifNFwq2OucEMtQ@mail.gmail.com>
+Subject: Re: [PATCH v4] PCI: Enable runtime pm of the host bridge
+To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_vbadigan@quicinc.com, 
+	quic_ramkri@quicinc.com, quic_nitegupt@quicinc.com, quic_skananth@quicinc.com, 
+	quic_parass@quicinc.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
+	Mayank Rana <quic_mrana@quicinc.com>, Markus Elfring <Markus.Elfring@web.de>, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There are several error cases where hns_roce_create_ah() returns
-directly without jumping to sw stat path, thus leading to a problem
-that the ah error counter does not increase.
+On Thu, Sep 12, 2024 at 1:52=E2=80=AFPM Krishna Chaitanya Chundru
+<quic_krichai@quicinc.com> wrote:
+>
+>
+>
+> On 9/12/2024 5:12 PM, Rafael J. Wysocki wrote:
+> > On Fri, Aug 16, 2024 at 10:45=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.=
+org> wrote:
+> >>
+> >> [+cc Rafael, Mayank, Markus (when people have commented on previous
+> >> versions, please cc them on new versions).  I'm still hoping Rafael
+> >> will have a chance to chime in]
+> >>
+> >> On Mon, Jul 08, 2024 at 10:19:40AM +0530, Krishna chaitanya chundru wr=
+ote:
+> >>> The Controller driver is the parent device of the PCIe host bridge,
+> >>> PCI-PCI bridge and PCIe endpoint as shown below.
+> >>>
+> >>>          PCIe controller(Top level parent & parent of host bridge)
+> >>>                          |
+> >>>                          v
+> >>>          PCIe Host bridge(Parent of PCI-PCI bridge)
+> >>>                          |
+> >>>                          v
+> >>>          PCI-PCI bridge(Parent of endpoint driver)
+> >>>                          |
+> >>>                          v
+> >>>                  PCIe endpoint driver
+> >>>
+> >>> Now, when the controller device goes to runtime suspend, PM framework
+> >>> will check the runtime PM state of the child device (host bridge) and
+> >>> will find it to be disabled.
+> >>
+> >> I guess "will find it to be disabled"  means the child (host bridge)
+> >> has runtime PM disabled, not that the child device is disabled, right?
+> >>
+> >>> So it will allow the parent (controller
+> >>> device) to go to runtime suspend. Only if the child device's state wa=
+s
+> >>> 'active' it will prevent the parent to get suspended.
+> >>
+> >> Can we include a hint like the name of the function where the PM
+> >> framework decides this?  Maybe this is rpm_check_suspend_allowed()?
+> >>
+> >> rpm_check_suspend_allowed()  checks ".ignore_children", which sounds
+> >> like it could be related, and AFAICS .ignore_children =3D=3D false her=
+e,
+> >> so .child_count should be relevant.
+> >>
+> >> But I'm still confused about why we can runtime suspend a bridge that
+> >> leads to devices that are not suspended.
+> >
+> > That should only be possible if runtime PM is disabled for those device=
+s.
+> >
+> >>> Since runtime PM is disabled for host bridge, the state of the child
+> >>> devices under the host bridge is not taken into account by PM framewo=
+rk
+> >>> for the top level parent, PCIe controller. So PM framework, allows
+> >>> the controller driver to enter runtime PM irrespective of the state
+> >>> of the devices under the host bridge. And this causes the topology
+> >>> breakage and also possible PM issues like controller driver goes to
+> >>> runtime suspend while endpoint driver is doing some transfers.
+> >
+> > Why is it a good idea to enable runtime PM for a PCIe controller?
+> >
+> PCIe controller can do certain actions like keeping low power state,
+> remove bandwidth votes etc as part of runtime suspend as when we know
+> the client drivers already runtime suspended.
 
-Fixes: ee20cc17e9d8 ("RDMA/hns: Support DSCP")
-Fixes: eb7854d63db5 ("RDMA/hns: Support SW stats with debugfs")
-Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
----
- drivers/infiniband/hw/hns/hns_roce_ah.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+Surely they can, but enabling runtime PM for devices that have
+children with runtime PM disabled and where those children have
+children with runtime PM enabled is a bug.
 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_ah.c b/drivers/infiniband/hw/hns/hns_roce_ah.c
-index 3e02c474f59f..4fc5b9d5fea8 100644
---- a/drivers/infiniband/hw/hns/hns_roce_ah.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_ah.c
-@@ -64,8 +64,10 @@ int hns_roce_create_ah(struct ib_ah *ibah, struct rdma_ah_init_attr *init_attr,
- 	u8 tc_mode = 0;
- 	int ret;
- 
--	if (hr_dev->pci_dev->revision == PCI_REVISION_ID_HIP08 && udata)
--		return -EOPNOTSUPP;
-+	if (hr_dev->pci_dev->revision == PCI_REVISION_ID_HIP08 && udata) {
-+		ret = -EOPNOTSUPP;
-+		goto err_out;
-+	}
- 
- 	ah->av.port = rdma_ah_get_port_num(ah_attr);
- 	ah->av.gid_index = grh->sgid_index;
-@@ -83,7 +85,7 @@ int hns_roce_create_ah(struct ib_ah *ibah, struct rdma_ah_init_attr *init_attr,
- 		ret = 0;
- 
- 	if (ret && grh->sgid_attr->gid_type == IB_GID_TYPE_ROCE_UDP_ENCAP)
--		return ret;
-+		goto err_out;
- 
- 	if (tc_mode == HNAE3_TC_MAP_MODE_DSCP &&
- 	    grh->sgid_attr->gid_type == IB_GID_TYPE_ROCE_UDP_ENCAP)
-@@ -91,8 +93,10 @@ int hns_roce_create_ah(struct ib_ah *ibah, struct rdma_ah_init_attr *init_attr,
- 	else
- 		ah->av.sl = rdma_ah_get_sl(ah_attr);
- 
--	if (!check_sl_valid(hr_dev, ah->av.sl))
--		return -EINVAL;
-+	if (!check_sl_valid(hr_dev, ah->av.sl)) {
-+		ret = -EINVAL;
-+		goto err_out;
-+	}
- 
- 	memcpy(ah->av.dgid, grh->dgid.raw, HNS_ROCE_GID_SIZE);
- 	memcpy(ah->av.mac, ah_attr->roce.dmac, ETH_ALEN);
--- 
-2.33.0
+> >> What does "topology breakage" mean?  Do you mean something other than
+> >> the fact that an endpoint DMA might fail if the controller is
+> >> suspended?
+> >>
+> >>> So enable runtime PM for the host bridge, so that controller driver
+> >>> goes to suspend only when all child devices goes to runtime suspend.
+> >
+> > This by itself makes sense to me.
+> >
+> >> IIUC, the one-sentence description here is that previously, the PCI
+> >> host controller could be runtime suspended even while an endpoint was
+> >> active, which caused DMA failures.  And this patch changes that so the
+> >> host controller is only runtime suspended after the entire hierarchy
+> >> below it is runtime suspended?  Is that right?
+> >>
+> >>> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+> >>> ---
+> >>> Changes in v4:
+> >>
+> >> (Note: v4 applies cleanly to v6.10-rc1 and to v6.11-rc1 with a small
+> >> offset).
+> >>
+> >>> - Changed pm_runtime_enable() to devm_pm_runtime_enable() (suggested =
+by mayank)
+> >>> - Link to v3: https://lore.kernel.org/lkml/20240609-runtime_pm-v3-1-3=
+d0460b49d60@quicinc.com/
+> >>> Changes in v3:
+> >>> - Moved the runtime API call's from the dwc driver to PCI framework
+> >>>    as it is applicable for all (suggested by mani)
+> >>> - Updated the commit message.
+> >>> - Link to v2: https://lore.kernel.org/all/20240305-runtime_pm_enable-=
+v2-1-a849b74091d1@quicinc.com
+> >>> Changes in v2:
+> >>> - Updated commit message as suggested by mani.
+> >>> - Link to v1: https://lore.kernel.org/r/20240219-runtime_pm_enable-v1=
+-1-d39660310504@quicinc.com
+> >>> ---
+> >>>
+> >>> ---
+> >>>   drivers/pci/probe.c | 4 ++++
+> >>>   1 file changed, 4 insertions(+)
+> >>>
+> >>> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> >>> index 8e696e547565..fd49563a44d9 100644
+> >>> --- a/drivers/pci/probe.c
+> >>> +++ b/drivers/pci/probe.c
+> >>> @@ -3096,6 +3096,10 @@ int pci_host_probe(struct pci_host_bridge *bri=
+dge)
+> >>>        }
+> >>>
+> >>>        pci_bus_add_devices(bus);
+> >>> +
+> >>> +     pm_runtime_set_active(&bridge->dev);
+> >>> +     devm_pm_runtime_enable(&bridge->dev);
+> >>> +
+> >>>        return 0;
+> >>>   }
+> >>>   EXPORT_SYMBOL_GPL(pci_host_probe);
+> >
+> > This will effectively prevent the host bridge from being
+> > runtime-suspended at all IIUC, so the PCIe controller will never
+> > suspend too after this change.
+> >
+> No we are having a different observations here.
+> Without this change the PCIe controller driver can go to runtime suspend
+> without considering the state of the client drivers i.e even when the
+> client drivers are active.
+> After adding this change we see the pcie controller is getting runtime
+> suspended only after the client drivers are runtime suspended which is
+> the expected behaviour.
 
+OK, but then when and how is it going to be resumed?
 
