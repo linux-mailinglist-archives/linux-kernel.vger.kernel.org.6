@@ -1,208 +1,189 @@
-Return-Path: <linux-kernel+bounces-326991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4738E976F8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:30:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2F3B976F90
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:30:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4060B240FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:30:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CE53B243BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D42C1BF7FD;
-	Thu, 12 Sep 2024 17:29:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5D21BE86D
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 17:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B03C2C190;
+	Thu, 12 Sep 2024 17:30:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YK+x4gfo"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1300149C50
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 17:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726162199; cv=none; b=MSL6ZExZQ9QO9lzP7Wxpa0HnHxyC3g/i4b9/pzIrFoFu6NewoENdunyiIEmj/1i93PRghY06HSLHxiWbHOiACQocTsI3uRMNrCzWlAUCEdljidJ73wHHL5y+H3umgL1NHoVTBt4vwoiRCCrlzqryspOIFw8imM9t+fAb6fbK+0M=
+	t=1726162223; cv=none; b=Zu5bW/z+339S3NrD3HHsnwLk8VTXTb4ckjPW/H0HTFYqoQzFnl6md2kqsrfSkqhssJek6lFhfA5/WZkjtgnYaHIg0FdL0QSaPr1RrgkeexTBTSecD/4pqKg+iane/tMqMW3uBrTTxFUeYiwFfqZj1IuHSVAMCLl5/Md8slVp6hQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726162199; c=relaxed/simple;
-	bh=r1UmhIQahkS50MEBKiPzTQW2X+QodUEbhFcc+9cRhVE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=htgieqrxslQtxshemXrRXMKB1zl6rhHqysd1O6O70yWI0OUO43Ozl5bwzlSf9JMeCu0CcmOhIgN88Bc6MbCN7W0/itHAjnCcquBnhy1ONPgIYAS+LJld8zOzYY6UVWv03bhQiTJhsRWy3ATvgWvHsvOSnlB/tRM0JP6qeeZch2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 449D3DA7;
-	Thu, 12 Sep 2024 10:30:23 -0700 (PDT)
-Received: from [10.1.32.61] (e127648.arm.com [10.1.32.61])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 84A543F64C;
-	Thu, 12 Sep 2024 10:29:49 -0700 (PDT)
-Message-ID: <a608c2df-ce2b-45d8-94f5-16c830104d46@arm.com>
-Date: Thu, 12 Sep 2024 18:29:46 +0100
+	s=arc-20240116; t=1726162223; c=relaxed/simple;
+	bh=Uu8xl6fxyDyZsGVuZMvMLTJkeYGNLs7n4GLdiKTShmE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N4nBtlRSFCoFxakWoNyXLerYgJ5yWv5u0pyzY8LuhmaHVGuOYVU5d75UmYvIjXG0ZOiCP993wxuXRCO7SBLn8lAnZYTkA8q9hfLZMJIlZa7LFbfzLrVP8qR9Cz5fwzdCDGxEBvv6qiCX14uHxbwv181WrF4naj7xqck1KtKBuQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YK+x4gfo; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-718e55bca81so153135b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 10:30:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726162221; x=1726767021; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5F3cwHqLIvvWEHInKjD1ssV8fBJH4qpK4XgV402VIkk=;
+        b=YK+x4gfocHMDtMgvoY8svw/FRka3DBOGCIWCSKg+2Ix0Q8LlMNw3wu3ZbbyGZexJu5
+         HSiFNL+5yeDV86zwDzHepvJBbQJMBh7lVtOQ8kRmuRucW5Mml3Q7ZwY1Sb/wGrqUSGMZ
+         rRn48BqkWxJsxaAr3VFCH4Qh53eb4WSPQt6tHrpPAJTtq9+uO0mzDRiWAHLhLHVSBZIs
+         7cjs9lOUTVUVnONTM+aeOL/DAJ5pubtipB3TBry/wPXcC1Elislx2AE9BrNbY38a0L7g
+         POwGKb3UqWOhoDTLg4CbOPgLljAldSiHRIX1xHPusSJ76jWFGMwt/I00QH1cFOxt4tj4
+         lvlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726162221; x=1726767021;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5F3cwHqLIvvWEHInKjD1ssV8fBJH4qpK4XgV402VIkk=;
+        b=siKRNOl72ca/jHZ4ji8SFht0zFMCDCxTGZR5sPp6TrxbYxb0SvFYvBEQrWJKxUy68r
+         YLvUd0BJPEDiQaREaWlCsF/9PG17BkzWJLsjCroQ7aQOgFqdSrQ9JMQh1iScjjH/MH+A
+         Y5u8sQLrt1Ue/WIaMi9oEv2iDL90sfdU1RkMUSyZ+KClOrY0uJT2pC6vrhTK57BzVWCi
+         RDtLZJgqqEkSiWwbVLrm015q05BpO0G9xQ4bUKL5ELo5x92RATparsTSE5zflvmTuhSB
+         sQNeKBw5Wl0YrhZkduiQCssJo4r92umqPDV0jj4cRzZK+3U6j2pf/o3PvZOVbo+dbuyM
+         6CjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWVvwbSEYgpDr1mp1taehWn3F3XXwulQymnzpOd23o7mExX8MG9UvcLn+15jdntxaP0a5cBLtk71oSc5CQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFfkxyXdGVUYldnRVymIk1HMNux6AHBwv+Z+y8ox8RuCDFO8qN
+	uo5m/waRLwRxsHqMw3M15lTOf4TYTC1oR+fsqxaDelVsra2MaaGjYEWYnL++Zop3kukyFP2lWHH
+	8muN/tSkKORmn+tkx7hO1pyajDVV0Yw==
+X-Google-Smtp-Source: AGHT+IGGiDi0tH8UV4EuWDX58S3nFgVRaPtWI9WGPWNW+X4EpxgPlMehAnglZMQ4o5KE9POyTj+ZtG1pR9gUlGwq5qE=
+X-Received: by 2002:a05:6a00:3990:b0:718:e49f:137b with SMTP id
+ d2e1a72fcca58-7192634966dmr2222197b3a.7.1726162221032; Thu, 12 Sep 2024
+ 10:30:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND x2][PATCH v12 5/7] sched: Consolidate pick_*_task to
- task_is_pushable helper
-To: John Stultz <jstultz@google.com>, LKML <linux-kernel@vger.kernel.org>
-Cc: Connor O'Brien <connoro@google.com>, Joel Fernandes <joelaf@google.com>,
- Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Valentin Schneider <vschneid@redhat.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Boqun Feng <boqun.feng@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>,
- Metin Kaya <Metin.Kaya@arm.com>, Xuewen Yan <xuewen.yan94@gmail.com>,
- K Prateek Nayak <kprateek.nayak@amd.com>,
- Thomas Gleixner <tglx@linutronix.de>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com
-References: <20240910221235.2132138-1-jstultz@google.com>
- <20240910221235.2132138-6-jstultz@google.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20240910221235.2132138-6-jstultz@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240912071209.47240-1-yanzhen@vivo.com>
+In-Reply-To: <20240912071209.47240-1-yanzhen@vivo.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 12 Sep 2024 13:30:09 -0400
+Message-ID: <CADnq5_PNCJ2oGBN0x3CFQsY4Ufw3=_LLc1tHEWhaoMFHYtOvrw@mail.gmail.com>
+Subject: Re: [PATCH v1] drm/amd/display: fix typo in the comment
+To: Yan Zhen <yanzhen@vivo.com>
+Cc: harry.wentland@amd.com, sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com, 
+	alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, 
+	airlied@gmail.com, simona@ffwll.ch, chaitanya.dhere@amd.com, jun.lei@amd.com, 
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/10/24 23:12, John Stultz wrote:
-> From: Connor O'Brien <connoro@google.com>
-> 
-> This patch consolidates rt and deadline pick_*_task functions to
-> a task_is_pushable() helper
-> 
-> This patch was broken out from a larger chain migration
-> patch originally by Connor O'Brien.
-> 
-> Cc: Joel Fernandes <joelaf@google.com>
-> Cc: Qais Yousef <qyousef@layalina.io>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Juri Lelli <juri.lelli@redhat.com>
-> Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> Cc: Valentin Schneider <vschneid@redhat.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Ben Segall <bsegall@google.com>
-> Cc: Zimuzo Ezeozue <zezeozue@google.com>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Waiman Long <longman@redhat.com>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: "Paul E. McKenney" <paulmck@kernel.org>
-> Cc: Metin Kaya <Metin.Kaya@arm.com>
-> Cc: Xuewen Yan <xuewen.yan94@gmail.com>
-> Cc: K Prateek Nayak <kprateek.nayak@amd.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: kernel-team@android.com
-> Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
-> Tested-by: Metin Kaya <metin.kaya@arm.com>
-> Reviewed-by: Metin Kaya <metin.kaya@arm.com>
-> Reviewed-by: Valentin Schneider <vschneid@redhat.com>
-> Signed-off-by: Connor O'Brien <connoro@google.com>
-> [jstultz: split out from larger chain migration patch,
->  renamed helper function]
-> Signed-off-by: John Stultz <jstultz@google.com>
+Applied.  Thanks!
+
+Alex
+
+On Thu, Sep 12, 2024 at 3:56=E2=80=AFAM Yan Zhen <yanzhen@vivo.com> wrote:
+>
+> Correctly spelled comments make it easier for the reader to understand
+> the code.
+>
+> Replace 'maxium' with 'maximum' in the comment &
+> replace 'diffculty' with 'difficulty' in the comment &
+> replace 'suppluy' with 'supply' in the comment &
+> replace 'Congiuration' with 'Configuration' in the comment &
+> replace 'eanbled' with 'enabled' in the comment.
+>
+> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
 > ---
-> v7:
-> * Split from chain migration patch
-> * Renamed function
-> v11:
-> * Switched to bool (though later in the series it goes
->   to a tri-state return) for now to simplify review.
->   Will add tri-state handling later in the series when
->   its needed. Suggested by Metin and others.
-> ---
->  kernel/sched/deadline.c | 10 +---------
->  kernel/sched/rt.c       | 11 +----------
->  kernel/sched/sched.h    | 10 ++++++++++
->  3 files changed, 12 insertions(+), 19 deletions(-)
-> 
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index ac60d2819bd1d..d3050f6c2958d 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -2183,14 +2183,6 @@ static void task_fork_dl(struct task_struct *p)
->  /* Only try algorithms three times */
->  #define DL_MAX_TRIES 3
->  
-> -static int pick_dl_task(struct rq *rq, struct task_struct *p, int cpu)
-> -{
-> -	if (!task_on_cpu(rq, p) &&
-> -	    cpumask_test_cpu(cpu, &p->cpus_mask))
-> -		return 1;
-> -	return 0;
-> -}
-> -
->  /*
->   * Return the earliest pushable rq's task, which is suitable to be executed
->   * on the CPU, NULL otherwise:
-> @@ -2209,7 +2201,7 @@ static struct task_struct *pick_earliest_pushable_dl_task(struct rq *rq, int cpu
->  	if (next_node) {
->  		p = __node_2_pdl(next_node);
->  
-> -		if (pick_dl_task(rq, p, cpu))
-> +		if (task_is_pushable(rq, p, cpu))
->  			return p;
->  
->  		next_node = rb_next(next_node);
-> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-> index 496d3e6ab57d2..9f07f09641f7a 100644
-> --- a/kernel/sched/rt.c
-> +++ b/kernel/sched/rt.c
-> @@ -1790,15 +1790,6 @@ static void put_prev_task_rt(struct rq *rq, struct task_struct *p)
->  /* Only try algorithms three times */
->  #define RT_MAX_TRIES 3
->  
-> -static int pick_rt_task(struct rq *rq, struct task_struct *p, int cpu)
-> -{
-> -	if (!task_on_cpu(rq, p) &&
-> -	    cpumask_test_cpu(cpu, &p->cpus_mask))
-> -		return 1;
-> -
-> -	return 0;
-> -}
-> -
->  /*
->   * Return the highest pushable rq's task, which is suitable to be executed
->   * on the CPU, NULL otherwise
-> @@ -1812,7 +1803,7 @@ static struct task_struct *pick_highest_pushable_task(struct rq *rq, int cpu)
->  		return NULL;
->  
->  	plist_for_each_entry(p, head, pushable_tasks) {
-> -		if (pick_rt_task(rq, p, cpu))
-> +		if (task_is_pushable(rq, p, cpu))
->  			return p;
->  	}
->  
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index d2cc31c2457e5..10ef612c078f9 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -3586,6 +3586,16 @@ void move_queued_task_locked(struct rq *src_rq, struct rq *dst_rq, struct task_s
->  	set_task_cpu(task, dst_rq->cpu);
->  	activate_task(dst_rq, task, 0);
->  }
-> +
-> +static inline
-> +bool task_is_pushable(struct rq *rq, struct task_struct *p, int cpu)
-> +{
-> +	if (!task_on_cpu(rq, p) &&
-> +	    cpumask_test_cpu(cpu, &p->cpus_mask))
-> +		return true;
-> +
-> +	return false;
-> +}
-
-The slightly awkward
-if (condition)
-	return true;
-return false;
-
-is more convenient for you for the tri-state later, I assume.
-Fine by me FWIW.
-Reviewed-by: Christian Loehle <christian.loehle@arm.com>
-
+>  drivers/gpu/drm/amd/display/dc/basics/dce_calcs.c       | 2 +-
+>  drivers/gpu/drm/amd/display/dc/dml2/display_mode_core.c | 6 +++---
+>  drivers/gpu/drm/amd/display/dc/hwss/dcn30/dcn30_hwseq.c | 2 +-
+>  3 files changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/dc/basics/dce_calcs.c b/drivers/=
+gpu/drm/amd/display/dc/basics/dce_calcs.c
+> index e47e9db062f4..d70a3549e05a 100644
+> --- a/drivers/gpu/drm/amd/display/dc/basics/dce_calcs.c
+> +++ b/drivers/gpu/drm/amd/display/dc/basics/dce_calcs.c
+> @@ -569,7 +569,7 @@ static void calculate_bandwidth(
+>                                 break;
+>                         }
+>                         data->lb_partitions[i] =3D bw_floor2(bw_div(data-=
+>lb_size_per_component[i], data->lb_line_pitch), bw_int_to_fixed(1));
+> -                       /*clamp the partitions to the maxium number suppo=
+rted by the lb*/
+> +                       /* clamp the partitions to the maximum number sup=
+ported by the lb */
+>                         if ((surface_type[i] !=3D bw_def_graphics || dcei=
+p->graphics_lb_nodownscaling_multi_line_prefetching =3D=3D 1)) {
+>                                 data->lb_partitions_max[i] =3D bw_int_to_=
+fixed(10);
+>                         }
+> diff --git a/drivers/gpu/drm/amd/display/dc/dml2/display_mode_core.c b/dr=
+ivers/gpu/drm/amd/display/dc/dml2/display_mode_core.c
+> index 547dfcc80fde..d851c081e376 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dml2/display_mode_core.c
+> +++ b/drivers/gpu/drm/amd/display/dc/dml2/display_mode_core.c
+> @@ -8926,7 +8926,7 @@ void dml_core_mode_programming(struct display_mode_=
+lib_st *mode_lib, const struc
+>
+>         // The prefetch scheduling should only be calculated once as per =
+AllowForPStateChangeOrStutterInVBlank requirement
+>         // If the AllowForPStateChangeOrStutterInVBlank requirement is no=
+t strict (i.e. only try those power saving feature
+> -       // if possible, then will try to program for the best power savin=
+g features in order of diffculty (dram, fclk, stutter)
+> +       // if possible, then will try to program for the best power savin=
+g features in order of difficulty (dram, fclk, stutter)
+>         s->iteration =3D 0;
+>         s->MaxTotalRDBandwidth =3D 0;
+>         s->AllPrefetchModeTested =3D false;
+> @@ -9977,7 +9977,7 @@ void dml_core_get_row_heights(
+>         dml_print("DML_DLG: %s: GPUVMMinPageSizeKBytes =3D %u\n", __func_=
+_, GPUVMMinPageSizeKBytes);
+>  #endif
+>
+> -       // just suppluy with enough parameters to calculate meta and dte
+> +       // just supply with enough parameters to calculate meta and dte
+>         CalculateVMAndRowBytes(
+>                         0, // dml_bool_t ViewportStationary,
+>                         1, // dml_bool_t DCCEnable,
+> @@ -10110,7 +10110,7 @@ dml_bool_t dml_mode_support(
+>  /// Note: In this function, it is assumed that DCFCLK, SOCCLK freq are t=
+he state values, and mode_program will just use the DML calculated DPPCLK a=
+nd DISPCLK
+>  /// @param mode_lib mode_lib data struct that house all the input/output=
+/bbox and calculation values.
+>  /// @param state_idx Power state idx chosen
+> -/// @param display_cfg Display Congiuration
+> +/// @param display_cfg Display Configuration
+>  /// @param call_standalone Calling mode_programming without calling mode=
+ support.  Some of the "support" struct member will be pre-calculated befor=
+e doing mode programming
+>  /// TODO: Add clk_cfg input, could be useful for standalone mode
+>  dml_bool_t dml_mode_programming(
+> diff --git a/drivers/gpu/drm/amd/display/dc/hwss/dcn30/dcn30_hwseq.c b/dr=
+ivers/gpu/drm/amd/display/dc/hwss/dcn30/dcn30_hwseq.c
+> index 42c52284a868..355823530aa4 100644
+> --- a/drivers/gpu/drm/amd/display/dc/hwss/dcn30/dcn30_hwseq.c
+> +++ b/drivers/gpu/drm/amd/display/dc/hwss/dcn30/dcn30_hwseq.c
+> @@ -455,7 +455,7 @@ bool dcn30_mmhubbub_warmup(
+>         struct mcif_wb *mcif_wb;
+>         struct mcif_warmup_params warmup_params =3D {0};
+>         unsigned int  i, i_buf;
+> -       /*make sure there is no active DWB eanbled */
+> +       /* make sure there is no active DWB enabled */
+>         for (i =3D 0; i < num_dwb; i++) {
+>                 dwb =3D dc->res_pool->dwbc[wb_info[i].dwb_pipe_inst];
+>                 if (dwb->dwb_is_efc_transition || dwb->dwb_is_drc) {
+> --
+> 2.34.1
+>
 
