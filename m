@@ -1,141 +1,92 @@
-Return-Path: <linux-kernel+bounces-326168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45202976435
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:17:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CEEF97650A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:58:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09D8B283F4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:17:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D4C51C22F5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE7819005F;
-	Thu, 12 Sep 2024 08:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NFBW+g2V"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB6B17BA1;
-	Thu, 12 Sep 2024 08:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443D0192587;
+	Thu, 12 Sep 2024 08:58:42 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta4.chinamobile.com [111.22.67.137])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A43126C16;
+	Thu, 12 Sep 2024 08:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726129051; cv=none; b=rTUp2xemQ2gu4EQZyn2IwKH03/te1+ek3dzNLVvr8HwOvr+B5ZFKsH9HFamfmwuzifXlvSPQDntlf0Kkk3cTOhEC0F3Op9Glr46KqsR6WKnMm9FfThHcrZkchUSjF4K7LSnoBEoODxE7a6EK2LSvjE12V952gDCqlJ13ohI9dQw=
+	t=1726131521; cv=none; b=f0IExzNtKIAPweY05IVS/Cun0ImAQ7NokQk4ccmbxevwqIJGBJENwcA+o1YPOQPo2133J4d9qzQWL1ZOUmFazKXZPWb8oSA3t9UoR03jLI25tJ5AS/xQZqYFqOEySsnKNsHz2z6qh7OZ0dHsDmVKvYEOjXHrBmIAns3XEV29DMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726129051; c=relaxed/simple;
-	bh=7BpITQX6khmdM16MtxZky2qxPd/ffcH9bYbjvDcC4r8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Nt6Ek7bkB88IpGXShsXx4MGt61giJiXOA0wO8Igas07mxeCoyyQwFQPJgYHyXmQlxbWB7m8ZDlh1VXBqoOe4pgttPJteuAMXeANUS0W8CgCD24VLh7rbo8NURpKemI0ZRnaqD4kfcOMrFPhDZyoHnmwnwsCOoktsAdr1G8QxH5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NFBW+g2V; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 882A3C000F;
-	Thu, 12 Sep 2024 08:17:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1726129047;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IJZp6x9VX7axuaNfrvvZ3iXuDDQ2g5dIWMn+g8OKNvw=;
-	b=NFBW+g2VuFofFDN1sfjx90QeR7elqq/RJfMmaiO4AGUuxz/GnPBoaebA89+zIkI512P2G3
-	hJ5g31chcW+FPgUZ/Stt1Cw2iVD38Z82KteGl0/FgZSIaCWlYj6iX/nEpLvIjXJ6F6zV1X
-	wf+gkkus0DpYuwhYoBXBICquhPzzM96WMXkIsFf6me3yI6sTdcghoRYtX0Az+vqR8SNGqI
-	Why50E6xie2Shp3XQn/Z9g7T0ovTomuUaTKyFQtRYe7qamjhAIYagxX87ks5PpgqyGM0Z+
-	9tD7GWXLdVZ/Gxk8GtnVbc13CnzdS9s3DeB4MlsBB/j+6/pRL8x6R65K+GLJkw==
-Date: Thu, 12 Sep 2024 10:17:24 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
- <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell King
- <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, Christophe
- Leroy <christophe.leroy@csgroup.eu>, Herve Codina
- <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, Heiner
- Kallweit <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
- Marek =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, =?UTF-8?B?S8O2cnk=?=
- Maincent <kory.maincent@bootlin.com>
-Subject: Re: [PATCH net-next 5/7] net: phy: introduce ethtool_phy_ops to get
- and set phy configuration
-Message-ID: <20240912101724.6233b1e4@fedora.home>
-In-Reply-To: <ZuJyJT-HgXJFe5ul@pengutronix.de>
-References: <20240911212713.2178943-1-maxime.chevallier@bootlin.com>
-	<20240911212713.2178943-6-maxime.chevallier@bootlin.com>
-	<ZuJyJT-HgXJFe5ul@pengutronix.de>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1726131521; c=relaxed/simple;
+	bh=K3jXaSgyOdvs3AxWYgzh1DWjXWKOssh0SQejlBuhSMM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EejiokmwXEtBvvEltwVKA7wx+bx4CFo0MJcvRzxmYYq4bw8ejuljMKM9KQEom+zf+XygTpPi7ERll/qwF1xYyEWoMJg7z60C+u2mWdJhtmtD0QMOJp6hRT/+fG8q6lgHvpbaJ2+uCakN4yqzSj+bQwsgOvNt0Wzwqf8qQGaNjhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app04-12004 (RichMail) with SMTP id 2ee466e2ad3aba5-f849b;
+	Thu, 12 Sep 2024 16:58:35 +0800 (CST)
+X-RM-TRANSID:2ee466e2ad3aba5-f849b
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[223.108.79.97])
+	by rmsmtp-syy-appsvr10-12010 (RichMail) with SMTP id 2eea66e2ad3aaa9-113e2;
+	Thu, 12 Sep 2024 16:58:34 +0800 (CST)
+X-RM-TRANSID:2eea66e2ad3aaa9-113e2
+From: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>
+To: ast@kernel.org
+Cc: daniel@iogearbox.net,
+	andrii@kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhang jiao <zhangjiao2@cmss.chinamobile.com>
+Subject: [PATCH] tools/bpf: Add missing fclose.
+Date: Thu, 12 Sep 2024 16:17:30 +0800
+Message-Id: <20240912081730.22094-1-zhangjiao2@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Hello Oleksij,
+From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
 
-On Thu, 12 Sep 2024 06:46:29 +0200
-Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+Cppcheck find a error as below:
+	bpf_dbg.c:1397:2: error: Resource leak: fin [resourceLeak]
+Add fclose to rm this error.
 
-> Hi Maxime,
-> 
-> On Wed, Sep 11, 2024 at 11:27:09PM +0200, Maxime Chevallier wrote:
-> ...
-> >  
-> > +/**
-> > + * struct phy_device_config - General PHY device configuration parameters for
-> > + * status reporting and bulk configuration
-> > + *
-> > + * A structure containing generic PHY device information, allowing to expose
-> > + * internal status to userspace, and perform PHY configuration in a controlled
-> > + * manner.
-> > + *
-> > + * @isolate: The MII-side isolation status of the PHY
-> > + * @loopback: The loopback state of the PHY
-> > + */
-> > +struct phy_device_config {
-> > +	bool isolate;
-> > +	bool loopback;
-> > +};  
->  
-> I would recommend to have loopback enum. There are different levels of
-> loopback:
-> https://www.ti.com/document-viewer/DP83TD510E/datasheet#GUID-50834313-DEF1-42FB-BA00-9B0902B2D7E4/TITLE-SNLS656SNLS5055224
-> 
-> I imagine something like this:
-> 
-> /*
->  * enum phy_loopback_mode - PHY loopback modes
->  * These modes represent different loopback configurations to
->  * facilitate in-circuit testing of the PHY's digital and analog paths.
->  */
-> enum phy_loopback_mode {
-> 	PHY_LOOPBACK_NONE = 0,		/* No loopback mode enabled */
-> 	PHY_LOOPBACK_MII,		/* MII Loopback: MAC to PHY internal loopback */
-> 	PHY_LOOPBACK_PCS,		/* PCS Loopback: PCS layer loopback, no signal processing */
-> 	PHY_LOOPBACK_DIGITAL,		/* Digital Loopback: Loops back entire digital TX/RX path */
-> 	PHY_LOOPBACK_ANALOG,		/* Analog Loopback: Loops back after analog front-end */
-> 	PHY_LOOPBACK_FAR_END		/* Far-End (Reverse) Loopback: Receiver to MAC interface loopback */
-> };
+Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+---
+ tools/bpf/bpf_dbg.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-I agree with you on that, having the ability to fine-tune where the
-loopback happens is really useful for debug. The main problem I would
-see is to come-up with a set of modes that are somewhat generic, as
-vendors implement a wide variety of loopback modes.
+diff --git a/tools/bpf/bpf_dbg.c b/tools/bpf/bpf_dbg.c
+index 00e560a17baf..5fb17fa0ace8 100644
+--- a/tools/bpf/bpf_dbg.c
++++ b/tools/bpf/bpf_dbg.c
+@@ -1394,5 +1394,11 @@ int main(int argc, char **argv)
+ 	if (argc >= 3)
+ 		fout = fopen(argv[2], "w");
+ 
+-	return run_shell_loop(fin ? : stdin, fout ? : stdout);
++	run_shell_loop(fin ? : stdin, fout ? : stdout);
++
++	if (fin)
++		fclose(fin);
++	if (fout)
++		fclose(fout);
++	return 0;
+ }
+-- 
+2.33.0
 
-For example, on BaseT4 PHYs the Analog loopback doesn't exist and is
-more akin to using a loopback stub, whereas the Digital loopback would
-be a loopback at the PMD level (I don't know if that even exists).
 
-That being said, the list of possible places to setup the loopback
-within a PHY is finite and it's conceivable to come-up with a set of
-loopback modes.
 
-Thanks a lot for the feedback,
-
-Maxime
 
