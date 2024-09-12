@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-327115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302C097710F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:07:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C52F4977110
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 552E21C20E46
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:07:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F7F4B236C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8951C1C230D;
-	Thu, 12 Sep 2024 19:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90131C2312;
+	Thu, 12 Sep 2024 19:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DmFGdaVw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Zgp8AbKy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B831C1731
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 19:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA96F1C2327
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 19:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726167968; cv=none; b=umdsZioGlxaLnbdmP//nFC+vCMgh//xnkJmbvQO3rxNjmNq4FI3TtrYfjSLl79CVZvHj3MDWO92knvN/sHYiebvOdc3Qnda+qq0i5L1KHonVxqhBDtXY1GS6gNMBazVpfkIPc6QASrB0fyFzDLxfq4+RcEHUEL/h4SudrmGoXrI=
+	t=1726167972; cv=none; b=aojZC3i8QdhjlF39OLmrRiRx5kRaz/qeCxTA8s51Ak4+frYBNN37Bz3GEBrqQJUXTHFVkxaFIlRtozicrAKnEKMLJI3KPN1ib6jhEGnb+gqYGleQC+5kwGg5kILAgz+4ChgYfaCMXa7vzI9dOiKfYGEN8V66wlyRFqeBTCyDOBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726167968; c=relaxed/simple;
-	bh=aUCb3E4fwDe14SGb551CJJxNiEUdiFN6FsgRj8WtT9I=;
+	s=arc-20240116; t=1726167972; c=relaxed/simple;
+	bh=/rdYGX7UjvkB2gk5fsyYiBzOkcUaojbBXtAJ5ZK88U8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nDa70SdPP8tGfzcOumwVxCi9EyBOvX1fRfPDgrXivBDYdwRHt72GJudaP2uQHwEXMo6Act/NYym2nOXGi0Bz1C2cYDo5QI0ZGM0odPKsdBAzen6X4IOAI70mm80REBVIL09z6zdyQyhPNdqJqhRr7KsTGRsI7shsDJQ2hy3SlXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DmFGdaVw; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=JaT8wcAjlktOZGUIT5dzO6z49/sOyR1Tq6JKHiVQxam8eTcHe+1Cv/HUgSmOdtf+UUD86LYEmGBzIkyJERBRVD0gp6tJqUaCVt/vk2HoWsKLtFhDn3IwjZKs+Yl18biqh1ZCGR098VW98zapWawnQk4R/LgBQiCyv1peuGN36hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Zgp8AbKy; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726167966;
+	s=mimecast20190719; t=1726167969;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ENrAML7KbA1Q5b573pfU+EdAs+FhPf7qf7Vmr13bKQg=;
-	b=DmFGdaVwjq/P1acWOlrVwcl9HS4XT7CQe3GKHeDrOjxU/X6PK/fO8bV531rCOV6DSQ4vB0
-	DijNCuiqcLZQP9DX40QXa3cJ74bcAQ+JIcjdMiJ2EnGuSiG5hY0KfUJIO1GtLRUKW24IB6
-	x4cPKPgWe5xSwKwXZQfOV6z6ny/gtAg=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+	bh=WKQklmomFwAhOEFxjHGrCGOmakddEyukxyf0Xx3I0gQ=;
+	b=Zgp8AbKyEsRK0Ydv1GUGc8mydkQOUrh8HOFar5Aedb7snjFzMIP3axqFJ6nqlvICrFCt9I
+	xfbr+rhoFrWMTPI/uys71CqyLwecYZdr9fC+gezRJKVJRRnF4UwU2ifRArEpNdg5OZTxC1
+	8jFwFv+8jXEl/u5Z2TBsfyI1FZJ0c2s=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-647-6HUIZljXObGcDf_py-gYtg-1; Thu,
- 12 Sep 2024 15:06:01 -0400
-X-MC-Unique: 6HUIZljXObGcDf_py-gYtg-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-686-IQ4apj-_MBKDrbtMdN8_uw-1; Thu,
+ 12 Sep 2024 15:06:08 -0400
+X-MC-Unique: IQ4apj-_MBKDrbtMdN8_uw-1
 Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 17C12195608C;
-	Thu, 12 Sep 2024 19:05:59 +0000 (UTC)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E369F1944AB1;
+	Thu, 12 Sep 2024 19:06:05 +0000 (UTC)
 Received: from chopper.lyude.net (unknown [10.22.9.159])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6C86A19560B5;
-	Thu, 12 Sep 2024 19:05:53 +0000 (UTC)
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4B24C19560B5;
+	Thu, 12 Sep 2024 19:06:00 +0000 (UTC)
 From: Lyude Paul <lyude@redhat.com>
 To: rust-for-linux@vger.kernel.org
 Cc: Danilo Krummrich <dakr@redhat.com>,
@@ -75,11 +75,11 @@ Cc: Danilo Krummrich <dakr@redhat.com>,
 	Andreas Hindborg <a.hindborg@samsung.com>,
 	Alice Ryhl <aliceryhl@google.com>,
 	Trevor Gross <tmgross@umich.edu>,
-	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
 	Valentin Obst <kernel@valentinobst.de>
-Subject: [PATCH v5 1/3] rust: Introduce irq module
-Date: Thu, 12 Sep 2024 15:04:16 -0400
-Message-ID: <20240912190540.53221-2-lyude@redhat.com>
+Subject: [PATCH v5 2/3] rust: sync: Introduce lock::Backend::Context
+Date: Thu, 12 Sep 2024 15:04:17 -0400
+Message-ID: <20240912190540.53221-3-lyude@redhat.com>
 In-Reply-To: <20240912190540.53221-1-lyude@redhat.com>
 References: <20240912190540.53221-1-lyude@redhat.com>
 Precedence: bulk
@@ -91,204 +91,101 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-This introduces a module for dealing with interrupt-disabled contexts,
-including the ability to enable and disable interrupts
-(with_irqs_disabled()) - along with the ability to annotate functions as
-expecting that IRQs are already disabled on the local CPU.
+Now that we've introduced an `IrqDisabled` token for marking contexts in
+which IRQs are disabled, we need a way to be able to pass it to locks that
+require that IRQs are disabled. In order to continue using the
+`lock::Backend` type instead of inventing our own thing, we accomplish this
+by adding the associated Context type, along with a `lock_with()` function
+that can accept a Context when acquiring a lock. To allow current users of
+context-less locks to keep using the normal `lock()` method, we take an
+example from Wedson Almeida Filho's work and add a `where T<'a>: Default`
+bound to `lock()` so that it can only be called on lock types where the
+context is simply a placeholder value, then re-implement it through the new
+`lock_with()` function.
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 
 ---
-
-V2:
-* Actually make it so that we check whether or not we have interrupts
-  disabled with debug assertions
-* Fix issues in the documentation (added suggestions, missing periods, made
-  sure that all rustdoc examples compile properly)
-* Pass IrqDisabled by value, not reference
-* Ensure that IrqDisabled is !Send and !Sync using
-  PhantomData<(&'a (), *mut ())>
-* Add all of the suggested derives from Benno Lossin
 
 V3:
-* Use `impl` for FnOnce bounds in with_irqs_disabled()
-* Use higher-ranked trait bounds for the lifetime of with_irqs_disabled()
-* Wording changes in the documentation for the module itself
-
+* Use explicit lifetimes in lock_with() to ensure self and _context have
+  the same lifetime (Benno)
+* Use () for locks that don't need a Context instead of PhantomData (Benno)
 V4:
-* Use the actual unsafe constructor for IrqDisabled in
-  with_irqs_disabled()
-* Fix comment style in with_irqs_disabled example
-* Check before calling local_irq_restore() in with_irqs_disabled that
-  interrupts are still disabled. It would have been nice to do this from a
-  Drop implementation like I hoped, but I realized rust doesn't allow that
-  for types that implement Copy.
-* Document that interrupts can't be re-enabled within the `cb` provided to
-  `with_irqs_disabled`, and link to the github issue I just filed about
-  this that describes the solution for this.
-
-V5:
-* Rebase against rust-next for the helpers split
-* Fix typo (enabled -> disabled) - Dirk
+* Fix typo (Dirk)
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 ---
- rust/helpers/helpers.c |  1 +
- rust/helpers/irq.c     | 22 +++++++++++
- rust/kernel/irq.rs     | 90 ++++++++++++++++++++++++++++++++++++++++++
- rust/kernel/lib.rs     |  1 +
- 4 files changed, 114 insertions(+)
- create mode 100644 rust/helpers/irq.c
- create mode 100644 rust/kernel/irq.rs
+ rust/kernel/sync/lock.rs          | 17 +++++++++++++++--
+ rust/kernel/sync/lock/mutex.rs    |  1 +
+ rust/kernel/sync/lock/spinlock.rs |  1 +
+ 3 files changed, 17 insertions(+), 2 deletions(-)
 
-diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-index 30f40149f3a96..0bb48df454bd8 100644
---- a/rust/helpers/helpers.c
-+++ b/rust/helpers/helpers.c
-@@ -12,6 +12,7 @@
- #include "build_assert.c"
- #include "build_bug.c"
- #include "err.c"
-+#include "irq.c"
- #include "kunit.c"
- #include "mutex.c"
- #include "page.c"
-diff --git a/rust/helpers/irq.c b/rust/helpers/irq.c
-new file mode 100644
-index 0000000000000..ec1e8d700a220
---- /dev/null
-+++ b/rust/helpers/irq.c
-@@ -0,0 +1,22 @@
-+// SPDX-License-Identifier: GPL-2.0
+diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
+index f6c34ca4d819f..7429bda852173 100644
+--- a/rust/kernel/sync/lock.rs
++++ b/rust/kernel/sync/lock.rs
+@@ -38,6 +38,9 @@ pub unsafe trait Backend {
+     /// [`unlock`]: Backend::unlock
+     type GuardState;
+ 
++    /// The context which must be provided to acquire the lock.
++    type Context<'a>;
 +
-+#include <linux/irqflags.h>
+     /// Initialises the lock.
+     ///
+     /// # Safety
+@@ -120,14 +123,24 @@ pub fn new(t: T, name: &'static CStr, key: &'static LockClassKey) -> impl PinIni
+ }
+ 
+ impl<T: ?Sized, B: Backend> Lock<T, B> {
+-    /// Acquires the lock and gives the caller access to the data protected by it.
+-    pub fn lock(&self) -> Guard<'_, T, B> {
++    /// Acquires the lock with the given context and gives the caller access to the data protected
++    /// by it.
++    pub fn lock_with<'a>(&'a self, _context: B::Context<'a>) -> Guard<'a, T, B> {
+         // SAFETY: The constructor of the type calls `init`, so the existence of the object proves
+         // that `init` was called.
+         let state = unsafe { B::lock(self.state.get()) };
+         // SAFETY: The lock was just acquired.
+         unsafe { Guard::new(self, state) }
+     }
 +
-+unsigned long rust_helper_local_irq_save(void)
-+{
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
-+
-+	return flags;
-+}
-+
-+void rust_helper_local_irq_restore(unsigned long flags)
-+{
-+	local_irq_restore(flags);
-+}
-+
-+bool rust_helper_irqs_disabled(void)
-+{
-+	return irqs_disabled();
-+}
-diff --git a/rust/kernel/irq.rs b/rust/kernel/irq.rs
-new file mode 100644
-index 0000000000000..0673087161f08
---- /dev/null
-+++ b/rust/kernel/irq.rs
-@@ -0,0 +1,90 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Interrupt controls
-+//!
-+//! This module allows Rust code to control processor interrupts. [`with_irqs_disabled()`] may be
-+//! used for nested disables of interrupts, whereas [`IrqDisabled`] can be used for annotating code
-+//! that requires interrupts to be disabled.
-+
-+use bindings;
-+use core::marker::*;
-+
-+/// A token that is only available in contexts where IRQs are disabled.
-+///
-+/// [`IrqDisabled`] is marker made available when interrupts are not active. Certain functions take
-+/// an [`IrqDisabled`] in order to indicate that they may only be run in IRQ-free contexts.
-+///
-+/// This is a marker type; it has no size, and is simply used as a compile-time guarantee that
-+/// interrupts are disabled where required.
-+///
-+/// This token can be created by [`with_irqs_disabled`]. See [`with_irqs_disabled`] for examples and
-+/// further information.
-+#[derive(Copy, Clone, Debug, Ord, Eq, PartialOrd, PartialEq, Hash)]
-+pub struct IrqDisabled<'a>(PhantomData<(&'a (), *mut ())>);
-+
-+impl IrqDisabled<'_> {
-+    /// Create a new [`IrqDisabled`] without disabling interrupts.
-+    ///
-+    /// This creates an [`IrqDisabled`] token, which can be passed to functions that must be run
-+    /// without interrupts. If debug assertions are enabled, this function will assert that
-+    /// interrupts are disabled upon creation. Otherwise, it has no size or cost at runtime.
-+    ///
-+    /// # Panics
-+    ///
-+    /// If debug assertions are enabled, this function will panic if interrupts are not disabled
-+    /// upon creation.
-+    ///
-+    /// # Safety
-+    ///
-+    /// This function must only be called in contexts where it is already known that interrupts have
-+    /// been disabled for the current CPU, as the user is making a promise that they will remain
-+    /// disabled at least until this [`IrqDisabled`] is dropped.
-+    pub unsafe fn new() -> Self {
-+        // SAFETY: FFI call with no special requirements
-+        debug_assert!(unsafe { bindings::irqs_disabled() });
-+
-+        Self(PhantomData)
++    /// Acquires the lock and gives the caller access to the data protected by it.
++    #[inline]
++    pub fn lock<'a>(&'a self) -> Guard<'a, T, B>
++    where
++        B::Context<'a>: Default,
++    {
++        self.lock_with(B::Context::default())
 +    }
-+}
-+
-+/// Run the closure `cb` with interrupts disabled on the local CPU.
-+///
-+/// This creates an [`IrqDisabled`] token, which can be passed to functions that must be run
-+/// without interrupts. Note that interrupts must be disabled for the entire duration of `cb`, they
-+/// cannot be re-enabled. In the future, this may be expanded on
-+/// [as documented here](https://github.com/Rust-for-Linux/linux/issues/1115).
-+///
-+/// # Examples
-+///
-+/// Using [`with_irqs_disabled`] to call a function that can only be called with interrupts
-+/// disabled:
-+///
-+/// ```
-+/// use kernel::irq::{IrqDisabled, with_irqs_disabled};
-+///
-+/// // Requiring interrupts be disabled to call a function
-+/// fn dont_interrupt_me(_irq: IrqDisabled<'_>) {
-+///     // When this token is available, IRQs are known to be disabled. Actions that rely on this
-+///     // can be safely performed
-+/// }
-+///
-+/// // Disabling interrupts. They'll be re-enabled once this closure completes.
-+/// with_irqs_disabled(|irq| dont_interrupt_me(irq));
-+/// ```
-+#[inline]
-+pub fn with_irqs_disabled<T>(cb: impl for<'a> FnOnce(IrqDisabled<'a>) -> T) -> T {
-+    // SAFETY: FFI call with no special requirements
-+    let flags = unsafe { bindings::local_irq_save() };
-+
-+    // SAFETY: We just disabled IRQs using `local_irq_save()`
-+    let ret = cb(unsafe { IrqDisabled::new() });
-+
-+    // Confirm that IRQs are still disabled now that the callback has finished
-+    // SAFETY: FFI call with no special requirements
-+    debug_assert!(unsafe { bindings::irqs_disabled() });
-+
-+    // SAFETY: `flags` comes from our previous call to local_irq_save
-+    unsafe { bindings::local_irq_restore(flags) };
-+
-+    ret
-+}
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index f10b06a78b9d5..df10c58e95c19 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -36,6 +36,7 @@
- pub mod firmware;
- pub mod init;
- pub mod ioctl;
-+pub mod irq;
- #[cfg(CONFIG_KUNIT)]
- pub mod kunit;
- pub mod list;
+ }
+ 
+ /// A lock guard.
+diff --git a/rust/kernel/sync/lock/mutex.rs b/rust/kernel/sync/lock/mutex.rs
+index 30632070ee670..7c2c239944931 100644
+--- a/rust/kernel/sync/lock/mutex.rs
++++ b/rust/kernel/sync/lock/mutex.rs
+@@ -93,6 +93,7 @@ macro_rules! new_mutex {
+ unsafe impl super::Backend for MutexBackend {
+     type State = bindings::mutex;
+     type GuardState = ();
++    type Context<'a> = ();
+ 
+     unsafe fn init(
+         ptr: *mut Self::State,
+diff --git a/rust/kernel/sync/lock/spinlock.rs b/rust/kernel/sync/lock/spinlock.rs
+index ea5c5bc1ce12e..97d85a5576615 100644
+--- a/rust/kernel/sync/lock/spinlock.rs
++++ b/rust/kernel/sync/lock/spinlock.rs
+@@ -92,6 +92,7 @@ macro_rules! new_spinlock {
+ unsafe impl super::Backend for SpinLockBackend {
+     type State = bindings::spinlock_t;
+     type GuardState = ();
++    type Context<'a> = ();
+ 
+     unsafe fn init(
+         ptr: *mut Self::State,
 -- 
 2.46.0
 
