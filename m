@@ -1,193 +1,106 @@
-Return-Path: <linux-kernel+bounces-327367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B80F9774A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:03:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 736F49774AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFD811C21741
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:03:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D1DA1F25327
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:04:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A6D1C2326;
-	Thu, 12 Sep 2024 23:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8091C243E;
+	Thu, 12 Sep 2024 23:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YGW9RYlQ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0jiJ7SP9";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YGW9RYlQ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0jiJ7SP9"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VDWFgz9v"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD19E49654;
-	Thu, 12 Sep 2024 23:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E1918891D;
+	Thu, 12 Sep 2024 23:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726182197; cv=none; b=g11YpcZRxE4kTTgt6R//+aoLw3Hy2ro6LsgnmONYiw95rOM+6Jf6edCnFH86Ksj/QwG5inxvSk0PvJcld7k3Qb9Iyr5/nYpOzkQefuKHymf9mYHTQYkOcchMeXC9yTyGfLvBnvKmpDTn1OSIjzcdrG5rcIHtqzGX5nRL+bmlBrE=
+	t=1726182261; cv=none; b=N9TCMmDdSz7+eO/MhVqfP+LYVxswecZ7GWT2cwnuITZWjqyBK5mZgkgyphn6uul8eSycBc7OH31soiq2Czaj2TsR27kvLFdywXrLU9L44SV+uoONJhN9a1yn2TjBfMsuz0FX1uIFEVWFcFCAG3GdqIv4/KhLs4Na9/ISrBQvYdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726182197; c=relaxed/simple;
-	bh=yiguOJdUYp3yFma5ZEt8wrGVvP4CXoNNCbs9JMzVYWk=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=V1l4OWrcvKK7IMucX9drFI0dcNPMEFCpnSpNAx0MbfyTjwZjlJ23N9IcasI5x63wubHqXq/otHtLDoPE9nflbYTI804qd9cu/i4q3Kfb5i4RqF/zaEbi0M9N97D1Hi8kxrCA0qglV2CC2ruYSmaTPzjHMhi5JyXvI45JtaXLins=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YGW9RYlQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0jiJ7SP9; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YGW9RYlQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0jiJ7SP9; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1DDC621B10;
-	Thu, 12 Sep 2024 23:03:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726182194; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QGDYlmAhXS7z47tNMqUGPEz61zrdgRgJdVTv3ABm+ZQ=;
-	b=YGW9RYlQ3qrGIzTaNu/3NC4xDP2EK0I3rylAL2/xvISLe7NFYoZYdT85f5Ky6wB71srylh
-	kA25nlUH/Cea1DK5ZdwnM28KyE3UZ0NuD4ZcN8cFjARg6OUnXMfWdFpaF0RFRapqKu9t31
-	hE4rmroLMd013twOwJA52lYkn2vKkic=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726182194;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QGDYlmAhXS7z47tNMqUGPEz61zrdgRgJdVTv3ABm+ZQ=;
-	b=0jiJ7SP9xwI1RP7DEGw6nH9fQT+ZixZ/UIaG/xi4LCZuaP0JVj0ohEIU1qdRZ+7YQC4wBe
-	ra/Kh80yrcRN0cDQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=YGW9RYlQ;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=0jiJ7SP9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726182194; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QGDYlmAhXS7z47tNMqUGPEz61zrdgRgJdVTv3ABm+ZQ=;
-	b=YGW9RYlQ3qrGIzTaNu/3NC4xDP2EK0I3rylAL2/xvISLe7NFYoZYdT85f5Ky6wB71srylh
-	kA25nlUH/Cea1DK5ZdwnM28KyE3UZ0NuD4ZcN8cFjARg6OUnXMfWdFpaF0RFRapqKu9t31
-	hE4rmroLMd013twOwJA52lYkn2vKkic=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726182194;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QGDYlmAhXS7z47tNMqUGPEz61zrdgRgJdVTv3ABm+ZQ=;
-	b=0jiJ7SP9xwI1RP7DEGw6nH9fQT+ZixZ/UIaG/xi4LCZuaP0JVj0ohEIU1qdRZ+7YQC4wBe
-	ra/Kh80yrcRN0cDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7086213A73;
-	Thu, 12 Sep 2024 23:03:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id kvABCi9z42afHAAAD6G6ig
-	(envelope-from <neilb@suse.de>); Thu, 12 Sep 2024 23:03:11 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1726182261; c=relaxed/simple;
+	bh=TbW3PVVOenw1xoeKf0LmKcMMzULyit6y23Gk7zGQuJo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MuqEIVA1qGL/iO6wOoQ/rIVa1Rm1SI3iF1tE4G6ucG9PMDFd4yrA/r50DohvaFzm+eOvgcu5PaYrBR3QrGy9+NaaZZV79Lf87l0va3p3GTUppJ92MsmNWokC9ULiWQ2ID1qkiIHVCoHtMYekQ1wFDISt1dMwiIeWTeyTnkrlbXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VDWFgz9v; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6c34fb4f65eso2696926d6.0;
+        Thu, 12 Sep 2024 16:04:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726182259; x=1726787059; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TbW3PVVOenw1xoeKf0LmKcMMzULyit6y23Gk7zGQuJo=;
+        b=VDWFgz9vUmVZIr/DYp+JngYsfFNQSc/BCmHBI2J/MpHV9QlfyPjJ4JKWknDLgYF0OX
+         U9GiuJAyNbBSbkTlB2mXCkl8oT5CWMQE0K6TuNK7NHJAaA6UnZ+sdtVxeOdCj9isSQkH
+         YsXcIgVc5iVawArNWbqVdfxdu2h8eagSnvFFA/zJ473kntXxZwG7TUCvaUflUpvmxcv6
+         QoduEH2bV5iBbUq1Gta6Gii3YgrrYu0Ucej44fOM00pj4ClyTcp6YCT4FQRGeSQWfjfS
+         X4LyN6rHq0FccYU7WW7QHLw6IQtaBz/5izK2sFzFGjgMzKb2r4n3F1AUwGM/kWz/BJ8l
+         hvpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726182259; x=1726787059;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TbW3PVVOenw1xoeKf0LmKcMMzULyit6y23Gk7zGQuJo=;
+        b=fuyexWO+Yt0h7yeZSYPMLXnSslcpdwl0Az3JBjpamxuzRLU4q6U3+qb4h/x6pCPKWj
+         r+O01qfoY7hKgpAhnv6sJF2OarPnlQwKJNfmoHUkPjjoVRjNb3kpyPnSV21HZgix47++
+         feDHJ5r/Uh/HGftTvLYPZUQ63gD/WMwmXqQGC4a95MTm7pM/+uuIVFceL37yMq/KbYh6
+         1TSjMrY0esq41gUEJr50jQLFvYmGOTZMtOa2I/SEBIY9YUxLmVUqzRnOz8oZdNSolQzW
+         ZJEw3SNI6l8KVMy5khI+wdCNfgNAxLVgU14SkGZdlAeGnWNnidcR4VAQM5njuSbfe7yH
+         b76g==
+X-Forwarded-Encrypted: i=1; AJvYcCXCCAKg51qZa6NT0RJEwUg7Le27I2tPsWLiM4CZ3MTFaXV/gGVx70yEoRTnHaKZPYwhAnqbVscj@vger.kernel.org, AJvYcCXWso5uN9eOVk1cXDfGfJT69wiwe4ROBfoSUF9GqRO8vreNma2WGHrGca8LAukRr5HIyAruwuW6nREfeN4g@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/+cJhl8yL7xq1F6+E5qVC11EQ/WN3Yg2gU3wHtDrZoIW65GHG
+	vs3hFzI3yZx7YfhcxfTnywb4P/OdGO2ijPsov9XkPp3qGELy/gBZ4NfghXHQV28I/PXr5k6MzA/
+	e8lBU8iUWq7TZRXbf6zP+AHJHy6Y=
+X-Google-Smtp-Source: AGHT+IEBoIFqglXjOGxm1oG8UaGjX9AjpAULwz49PK4uRew9iXsgCf1fkjksL4FHBlMw9CU99BPhXya3XqchHbXUek4=
+X-Received: by 2002:a05:6214:4a02:b0:6c5:688a:63c4 with SMTP id
+ 6a1803df08f44-6c57e0d898fmr11578736d6.51.1726182258573; Thu, 12 Sep 2024
+ 16:04:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: Pali =?utf-8?q?Roh=C3=A1r?= <pali@kernel.org>
-Cc: "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
- "Olga Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
- "Tom Talpey" <tom@talpey.com>, linux-nfs@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nfsd: Fix nfs4_disable_idmapping option
-In-reply-to: <20240912223858.22qibyh3xwk2pqw5@pali>
-References: <>, <20240912223858.22qibyh3xwk2pqw5@pali>
-Date: Fri, 13 Sep 2024 09:03:00 +1000
-Message-id: <172618218021.17050.8500126114376063163@noble.neil.brown.name>
-X-Rspamd-Queue-Id: 1DDC621B10
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+References: <172547884995.206112.808619042206173396.stgit@firesoul>
+ <CAJD7tkak0yZNh+ZQ0FRJhmHPmC5YmccV4Cs+ZOk9DCp4s1ECCA@mail.gmail.com>
+ <f957dbe3-d669-40b7-8b90-08fa40a3c23d@kernel.org> <CAJD7tkYv8oDsPkVrUkmBrUxB02nEi-Suf=arsd5g4gM7tP2KxA@mail.gmail.com>
+ <afa40214-0196-4ade-9c10-cd78d0588c02@kernel.org> <CAJD7tkZ3-BrnMoEQAu_gfS-zfFMAu4SeFvGFj1pNiZwGdtrmwQ@mail.gmail.com>
+ <84e09f0c-10d7-4648-b243-32f18974e417@kernel.org> <CAJD7tkYY5sipMU+w8ygPTGKfjvdMh_e0=FtxYkO9BG5VpF+QUA@mail.gmail.com>
+ <CAKEwX=PTA0OxisvY12Wa95s5KqzvQTXe1rZ7nw29nP+wR2dxkA@mail.gmail.com>
+ <CAJD7tkbMph337XbBTbWfF8kp_fStP3-rN77vfR5tcn2+wYfJPQ@mail.gmail.com>
+ <CAKEwX=PcK=kJG-yxaoTYvJGNwQ=eTGo1m=ZraqYy1SyLDs9Asw@mail.gmail.com> <CAJD7tkYhOphYbNnwkZfJykii7kAR6PRvZ0pv7R=zhG0vCjxh4A@mail.gmail.com>
+In-Reply-To: <CAJD7tkYhOphYbNnwkZfJykii7kAR6PRvZ0pv7R=zhG0vCjxh4A@mail.gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Thu, 12 Sep 2024 16:04:07 -0700
+Message-ID: <CAKEwX=NQmNpFNf=8OLSWVp-JsRPgo90n4DR68k0Y6+nFUfXw4Q@mail.gmail.com>
+Subject: Re: [PATCH V10] cgroup/rstat: Avoid flushing if there is an ongoing
+ root flush
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Jesper Dangaard Brouer <hawk@kernel.org>, tj@kernel.org, cgroups@vger.kernel.org, 
+	shakeel.butt@linux.dev, hannes@cmpxchg.org, lizefan.x@bytedance.com, 
+	longman@redhat.com, kernel-team@cloudflare.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, mfleming@cloudflare.com, 
+	joshua.hahnjy@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 13 Sep 2024, Pali Roh=C3=A1r wrote:
-> On Friday 13 September 2024 08:26:02 NeilBrown wrote:
-> > On Fri, 13 Sep 2024, Pali Roh=C3=A1r wrote:
-> > > NFSv4 server option nfs4_disable_idmapping says that it turn off server=
-'s
-> > > NFSv4 idmapping when using 'sec=3Dsys'. But it also turns idmapping off=
- also
-> > > for 'sec=3Dnone'.
-> > >=20
-> > > NFSv4 client option nfs4_disable_idmapping says same thing and really it
-> > > turns the NFSv4 idmapping only for 'sec=3Dsys'.
-> > >=20
-> > > Fix the NFSv4 server option nfs4_disable_idmapping to turn off idmapping
-> > > only for 'sec=3Dsys'. This aligns the server nfs4_disable_idmapping opt=
-ion
-> > > with its description and also aligns behavior with the client option.
-> >=20
-> > Why do you think this is the right approach?
->=20
-> I thought it because client has same configuration option, client is
-> already doing it, client documentation says it and also server
-> documentation says it. I just saw too many pieces which agreed on it and
-> just server implementation did not follow it.
->=20
-> And to make mapping usable, both sides (client and server) have to agree
-> on the configuration.
->=20
-> So instead of changing also client and client's documentation it is
-> easier to just fix the server.
->=20
-> > If the documentation says "turn off when sec=3Dsys" and the implementation
-> > does "turn off when sec=3Dsys or sec=3Dnone" then I agree that something
-> > needs to be fixed.  I would suggest that the documentation should be
-> > fixed.
-> >=20
-> > From the perspective of id mapping, sec=3Dnone is similar to sec=3Dsys.
->=20
-> It is similar, but quite different. With sec=3Dsys client sends its uid
-> and list of gids in every (RPC) packet and server authenticate client
-> (and do mapping) based on it. With sec=3Dnone client does not send any uid
-> or gid. So mostly uid/gid form is tight to sec=3Dsys.
->=20
+On Thu, Sep 12, 2024 at 11:51=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com=
+> wrote:
+>
+> Do you mean per-lruvec or per-memcg?
 
-With sec=3Dnone I don't think that any mapping makes sense except to map
-all uids and gids to "none" or similar.
-
-The documented purpose of nfs4_disable_idmapping is to "ease migration
-from NFSv2/v3".  That suggests that where relevant it should behave
-mostly like v2/v3.
-
-I don't feel strongly about this.  You appear to be actually using
-AUTH_NONE authentication.  What behaviour would work best for your
-use-case, and why?
-
-NeilBrown
+Ah yeah ignore that part. I was originally thinking of adding a
+per-lruvec zswap atomic counter just to fix zswap shrinker, but now
+we'll need 2 atomic counters per-memcg to replace MEMCG_ZSWAP_B and
+MEMCG_ZSWAPPED. The zswap_shrinker_count() will also use these two new
+counters too. My apologies for the confusions...
 
