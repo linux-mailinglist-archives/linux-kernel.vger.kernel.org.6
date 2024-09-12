@@ -1,172 +1,166 @@
-Return-Path: <linux-kernel+bounces-326886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0845976E18
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:45:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF091976E1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:46:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D7DB281546
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:45:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42184B2400E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E301BA27E;
-	Thu, 12 Sep 2024 15:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325461B373C;
+	Thu, 12 Sep 2024 15:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KHPDD4sl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pDJccmdj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E8819599C
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811B778C9D;
+	Thu, 12 Sep 2024 15:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726155917; cv=none; b=aI3OPpuhgINrd1QgiD7dU6Cf4cvfnBsuXgbrnJpc5EsBx6cJRs7LSPE9aM7jkDAmcBn2NVJ+zAtOUz6HMEM8xCu2BGuy7MxVsXKUPsH7MGccHT57oLBt5fl+5BUqMvgckyjyImHmu2jBCXGfcQMz+IZTh13QQ0iSWg2YqwbNSWU=
+	t=1726155947; cv=none; b=tht9l2quOuxKpbtY2f+upLUDhdFLk9BtP885Bi0WjkjeCoSLG10TiFakxDzDCqLgQEWBKCsBdbCbIZGqEtupDVPrhWnJihGRn3g3uiXcwboSsYWxdBJxnrt8ELMC8haxzMeW6zopcSbATdgfHDp1wcw1rLJsMLeg4dDD8gZGP2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726155917; c=relaxed/simple;
-	bh=dtPXSulbykHELgA6KlNOG1jUsqjNTl9c9tSwAa79oUw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nhd3AfY7Os0j9ZCysREjSerDa+GF3ddyj0p/TOix1YUPvHyRMB2cBrAmQE25dmpbkG2vKind2UvUvfU+Z0E4044cjj4u/+/l3L+ZajOdmF+m9CXNTPl3EN8YAZ7eFgYUXI/klwdp9Vow2181yOBbK06oXy2Lju8XdhgKO0c0fZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KHPDD4sl; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726155916; x=1757691916;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=dtPXSulbykHELgA6KlNOG1jUsqjNTl9c9tSwAa79oUw=;
-  b=KHPDD4slsjWfI3whVPYwn0IYDMi7G8j0amTxLtMa5Sg+PojpdY+uwoCN
-   lxIPyV6MopksA806rM5IH1wKEGnrZFKxX9Fi9oLDjQi4Cq/fKc/JTapry
-   dENIvpg4YSKa3P6INtWuK9ExWOBZQ4x+1SvrB8lJtZa7fWIHeL+X9V1cS
-   xrv+KjKmafzawLT7RRkaShIpdv8RB3VbopHJ6WvCoVG9kDNmBvj9mQuVE
-   4uVabnEMAHrix5uSehoV/otnHUvnK9iJEC29als82tgFNxZbwtvYn0m0E
-   DOZRGTArf5aHk/3HwHktApbarKagoQMVZWSPG59Tp5/d9x4kGpp7AzBG6
-   A==;
-X-CSE-ConnectionGUID: cpPYoUfKRqSDVGjDMsOmWg==
-X-CSE-MsgGUID: 7jelQZAgQJatPWECNvAQKw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="27936396"
-X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
-   d="scan'208";a="27936396"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 08:45:15 -0700
-X-CSE-ConnectionGUID: APSUk5wjTKm2ulJ/KFUIuw==
-X-CSE-MsgGUID: CzzMDPpXR7yA6cA3hYPWrg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
-   d="scan'208";a="72754341"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 12 Sep 2024 08:45:08 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1som0H-0005P4-1o;
-	Thu, 12 Sep 2024 15:45:05 +0000
-Date: Thu, 12 Sep 2024 23:44:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org,
-	david@redhat.com, willy@infradead.org,
-	kirill.shutemov@linux.intel.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	ryan.roberts@arm.com, anshuman.khandual@arm.com,
-	catalin.marinas@arm.com, cl@gentwo.org, vbabka@suse.cz,
-	mhocko@suse.com, apopple@nvidia.com, dave.hansen@linux.intel.com,
-	will@kernel.org, baohua@kernel.org, jack@suse.cz,
-	mark.rutland@arm.com, hughd@google.com, aneesh.kumar@kernel.org,
-	yang@os.amperecomputing.com, peterx@redhat.com, ioworker0@gmail.com,
-	jglisse@google.com, wangkefeng.wang@huawei.com, ziy@nvidia.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Dev Jain <dev.jain@arm.com>
-Subject: Re: [PATCH v3 2/2] mm: Allocate THP on hugezeropage wp-fault
-Message-ID: <202409122349.PQp7sq2x-lkp@intel.com>
-References: <20240911065600.1002644-3-dev.jain@arm.com>
+	s=arc-20240116; t=1726155947; c=relaxed/simple;
+	bh=ywFiwczqxaKbUkWxJ47iW1M5pbc7iwd6Xn9eBevRoDw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ddpwDVSkla8O1gn3FXh5yh5NZX14Ihdg/cODBtM/Fsk9UBfycm3UMUFfjrRYHTbXqJFD6JORPkk/v12kAvkMY87bzS9ia3p/MtzObBwMszs/VAQsV5xjxGOtoYcytI4PJwjoGQTP2ugn0oAk8FLWuDSC0gg4XVOtBdhLzOcET/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pDJccmdj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18ACCC4AF09;
+	Thu, 12 Sep 2024 15:45:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726155947;
+	bh=ywFiwczqxaKbUkWxJ47iW1M5pbc7iwd6Xn9eBevRoDw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pDJccmdjI03IMJtcb83SC1z9FrOAtChHORsadr4dL473qvY49Ojw7AzIH/kZ+qyJd
+	 HdcYp8vaTNdIVBy3FJem7f5uyj3kAnsETgKuzcOHLCbE+IxOw5YSXS+/Kzs5eluwU0
+	 3PoA7LbnUgooH0Pqso3eGEXTFkYGqemxQHiH51pqx+ESnn4vrtk8IkWi1WXCUpK5Fm
+	 ryACS4yQiuwt0XKNpDWBFaDILYe/2fEWSMHxM2ERC+2Tnxnnd8e62t3w8ETrKSYvOR
+	 N/rKI0p4+c3TyEROfXjyKUIBb9RXT/FOZDVxLkvY9UdvMLWtJ3BSv+x+15AX8ZA6Bp
+	 Z64PIgHlKm35A==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53654dbde59so2132046e87.1;
+        Thu, 12 Sep 2024 08:45:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVe5feESTzueMXtTFfeaN6seBwovgKVhcvfBMcC9NJ99KUE2WytLl9GXUoUnxVy1VZaY3hpr5F4fbU=@vger.kernel.org, AJvYcCXjNjDS/hyWWt+NU6ieiwU+S5dfwWfGmhhCsPS8cqrgQUFs7SNIsc0V8hJOZ8+pdCvWkGh5Ym5vQURls+mw@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+hijUiNJk6i5pneCufqOrkWeRVsvIHMHiM/NTL4w+c7crNm45
+	k64Bv+ubSCKLY2UCJSpFXGLz46YmOc23vrffMFCiR2ajmHxQHtmdPYfZHDpXdIP6ydm+KQ2LC/y
+	ywHkFINujCS94On6p32KjFchlAU0=
+X-Google-Smtp-Source: AGHT+IF+PZ6Sc/dPixZyy1JWDp50kq/OHT7HLXcUA13lJnelsHoZIUZ2S9NCa6y/9M2NhXv+XVcTtIqT2lLSeM+wrVE=
+X-Received: by 2002:a05:6512:308f:b0:52e:9425:3cc8 with SMTP id
+ 2adb3069b0e04-5367909dc4fmr1135158e87.19.1726155945412; Thu, 12 Sep 2024
+ 08:45:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240911065600.1002644-3-dev.jain@arm.com>
+References: <20240911104109.1831501-1-usamaarif642@gmail.com>
+ <CAMj1kXFVyQEwBTf2bG8yBXUktM16dzrcPH-Phz_toAsCK-NfMA@mail.gmail.com>
+ <2542182d-aa79-4705-91b6-fa593bacffa6@gmail.com> <CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
+ <20240912-wealthy-gabby-tamarin-aaba3c@leitao> <CAMj1kXHh-Kov8c1pto0LJL6debugz1og6GFMYCwvfu+RiQGreA@mail.gmail.com>
+ <20240912-sapphire-koala-of-focus-918cff@leitao> <CAMj1kXG842OSYu4GPm-ocyvpBDowPGaXAftqGExxjZ4=dGyt5g@mail.gmail.com>
+ <9d3962f1-96b6-44a3-a7d3-10fbfbe06164@gmail.com>
+In-Reply-To: <9d3962f1-96b6-44a3-a7d3-10fbfbe06164@gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 12 Sep 2024 17:45:34 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXGqnVSoWUf1u6kx5zDHYhZHk_GjjUuV8TVZhXpgjaJDqg@mail.gmail.com>
+Message-ID: <CAMj1kXGqnVSoWUf1u6kx5zDHYhZHk_GjjUuV8TVZhXpgjaJDqg@mail.gmail.com>
+Subject: Re: [RFC] efi/tpm: add efi.tpm_log as a reserved region in 820_table_firmware
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: Breno Leitao <leitao@debian.org>, linux-efi@vger.kernel.org, kexec@lists.infradead.org, 
+	ebiederm@xmission.com, bhe@redhat.com, vgoyal@redhat.com, tglx@linutronix.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	rmikey@meta.com, gourry@gourry.net
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Dev,
+On Thu, 12 Sept 2024 at 17:35, Usama Arif <usamaarif642@gmail.com> wrote:
+>
+>
+>
+> On 12/09/2024 16:21, Ard Biesheuvel wrote:
+> > On Thu, 12 Sept 2024 at 16:29, Breno Leitao <leitao@debian.org> wrote:
+> >>
+> >> On Thu, Sep 12, 2024 at 03:10:43PM +0200, Ard Biesheuvel wrote:
+> >>> On Thu, 12 Sept 2024 at 15:03, Breno Leitao <leitao@debian.org> wrote:
+> >>>> On Thu, Sep 12, 2024 at 12:51:57PM +0200, Ard Biesheuvel wrote:
+> >>>>> I don't see how this could be an EFI bug, given that it does not deal
+> >>>>> with E820 tables at all.
+> >>>>
+> >>>> I want to back up a little bit and make sure I am following the
+> >>>> discussion.
+> >>>>
+> >>>> From what I understand from previous discussion, we have an EFI bug as
+> >>>> the root cause of this issue.
+> >>>>
+> >>>> This happens because the EFI does NOT mark the EFI TPM event log memory
+> >>>> region as reserved (EFI_RESERVED_TYPE).
+> >>>
+> >>> Why do you think EFI should use EFI_RESERVED_TYPE in this case?
+> >>>
+> >>> The EFI spec is very clear that EFI_RESERVED_TYPE really shouldn't be
+> >>> used for anything by EFI itself. It is quite common for EFI
+> >>> configuration tables to be passed as EfiRuntimeServicesData (SMBIOS),
+> >>> EfiBootServicesData (ESRT) or EFiAcpiReclaim (ACPI tables).
+> >>>
+> >>> Reserved memory is mostly for memory that even the firmware does not
+> >>> know what it is for, i.e., particular platform specific uses.
+> >>>
+> >>> In general, it is up to the OS to ensure that EFI configuration tables
+> >>> that it cares about should be reserved in the correct way.
+> >>
+> >> Thanks for the explanation.
+> >>
+> >> So, if I understand what you meant here, the TPM event log memory range
+> >> shouldn't be listed as a memory region in EFI memory map (as passed by
+> >> the firmware to the OS).
+> >>
+> >> Hence, this is not a EFI firmware bug, but a OS/Kernel bug.
+> >>
+> >> Am I correct with the statements above?
+> >>
+> >
+> > No, not entirely. But I also missed the face that this table is
+> > actually created by the EFI stub in Linux, not the firmware. It is
+> > *not* the same memory region that the TPM2 ACPI table describes, and
+> > so what the various specs say about that is entirely irrelevant.
+> >
+> > The TPM event log configuration table is created by the EFI stub,
+> > which uses the TCG2::GetEventLog () protocol method to obtain it. This
+> > must be done by the EFI stub because these protocols will no longer be
+> > available once the OS boots. But the data is not used by the EFI stub,
+> > only by the OS, which is why it is passed in memory like this.
+> >
+> > The memory in question is allocated as EFI_LOADER_DATA, and so we are
+> > relying on the OS to know that this memory is special, and needs to be
+> > preserved.
+> >
+> > I think the solution here is to use a different memory type:
+> >
+> > --- a/drivers/firmware/efi/libstub/tpm.c
+> > +++ b/drivers/firmware/efi/libstub/tpm.c
+> > @@ -96,7 +96,7 @@ static void efi_retrieve_tcg2_eventlog(int version,
+> > efi_physical_addr_t log_loca
+> >         }
+> >
+> >         /* Allocate space for the logs and copy them. */
+> > -       status = efi_bs_call(allocate_pool, EFI_LOADER_DATA,
+> > +       status = efi_bs_call(allocate_pool, EFI_ACPI_RECLAIM_MEMORY,
+> >                              sizeof(*log_tbl) + log_size, (void **)&log_tbl);
+> >
+> >         if (status != EFI_SUCCESS) {
+> >
+> > which will be treated appropriately by the existing EFI-to-E820
+> > conversion logic.
+>
+> I have tested above diff, and it works! No memory corruption.
+>
+> The region comes up as ACPI data:
+> [    0.000000] BIOS-e820: [mem 0x000000007fb6d000-0x000000007fb7efff] ACPI data
+>
+> and kexec doesnt interfere with it.
+>
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on v6.11-rc7]
-[also build test WARNING on linus/master]
-[cannot apply to akpm-mm/mm-everything next-20240912]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Dev-Jain/mm-Abstract-THP-allocation/20240911-145809
-base:   v6.11-rc7
-patch link:    https://lore.kernel.org/r/20240911065600.1002644-3-dev.jain%40arm.com
-patch subject: [PATCH v3 2/2] mm: Allocate THP on hugezeropage wp-fault
-config: x86_64-rhel-8.3-rust (https://download.01.org/0day-ci/archive/20240912/202409122349.PQp7sq2x-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240912/202409122349.PQp7sq2x-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409122349.PQp7sq2x-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> mm/huge_memory.c:990:15: warning: variable 'old_pmd' set but not used [-Wunused-but-set-variable]
-     990 |         pmd_t entry, old_pmd;
-         |                      ^
-   mm/huge_memory.c:1016:6: warning: variable 'pgtable' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
-    1016 |         if (unlikely(!folio)) {
-         |             ^~~~~~~~~~~~~~~~
-   include/linux/compiler.h:77:22: note: expanded from macro 'unlikely'
-      77 | # define unlikely(x)    __builtin_expect(!!(x), 0)
-         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~
-   mm/huge_memory.c:1055:6: note: uninitialized use occurs here
-    1055 |         if (pgtable)
-         |             ^~~~~~~
-   mm/huge_memory.c:1016:2: note: remove the 'if' if its condition is always false
-    1016 |         if (unlikely(!folio)) {
-         |         ^~~~~~~~~~~~~~~~~~~~~~~
-    1017 |                 ret = VM_FAULT_FALLBACK;
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~
-    1018 |                 goto release;
-         |                 ~~~~~~~~~~~~~
-    1019 |         }
-         |         ~
-   mm/huge_memory.c:1010:19: note: initialize the variable 'pgtable' to silence this warning
-    1010 |         pgtable_t pgtable;
-         |                          ^
-         |                           = NULL
-   2 warnings generated.
-
-
-vim +/old_pmd +990 mm/huge_memory.c
-
-   986	
-   987	static void map_pmd_thp(struct folio *folio, struct vm_fault *vmf,
-   988				struct vm_area_struct *vma, unsigned long haddr)
-   989	{
- > 990		pmd_t entry, old_pmd;
-   991		bool is_pmd_none = pmd_none(*vmf->pmd);
-   992	
-   993		entry = mk_huge_pmd(&folio->page, vma->vm_page_prot);
-   994		entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
-   995		folio_add_new_anon_rmap(folio, vma, haddr, RMAP_EXCLUSIVE);
-   996		folio_add_lru_vma(folio, vma);
-   997		if (!is_pmd_none)
-   998			old_pmd = pmdp_huge_clear_flush(vma, haddr, vmf->pmd);
-   999		set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
-  1000		update_mmu_cache_pmd(vma, vmf->address, vmf->pmd);
-  1001		add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
-  1002		if (is_pmd_none)
-  1003			mm_inc_nr_ptes(vma->vm_mm);
-  1004	}
-  1005	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks, I'll take that as a tested-by
 
