@@ -1,262 +1,570 @@
-Return-Path: <linux-kernel+bounces-327338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47C5B97745C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:33:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D336E977460
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:33:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B74F1C21996
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:33:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 976F7282185
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C50DA1C1AB5;
-	Thu, 12 Sep 2024 22:33:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 438C31C2DB3;
+	Thu, 12 Sep 2024 22:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jsi7DTtT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I1/onAI6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EBA2188A35
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 22:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726180399; cv=fail; b=AWSp7GCXTtQg5JFgK6T1+VahLPZhgTrjEZHBHiQUKmt/1YShMXdGP+gldHSUfonBxrJb5nDcHCP6K8kRZMevNfax7LtNhfabMMy36/+USADA/ux5uE+B7GJBuZyP058Yr1hxRDY4h1J1tQ5bEyWu41M1hhhVJAS+C/fonBQv060=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726180399; c=relaxed/simple;
-	bh=WpYyCFMVrOilhQ//efExa8eBtMaSE0BfaJ1HASIgMVM=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Tzz0sKlQe3ypo9nBQEfNRjtFeotbbdynsBpT4Wz5Acbn3EQc6IaPui4gkBgHDlw1JLTR8QP6guEcTDBHw6mMiuVzlabCYmubq5eFmKFNgV8mmxHL6PBHWR603vwbQJHjEaVpc80ntQcbQpH6DIhXg+CwaQjnyG3lO+ZCUq0AQVU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jsi7DTtT; arc=fail smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726180398; x=1757716398;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=WpYyCFMVrOilhQ//efExa8eBtMaSE0BfaJ1HASIgMVM=;
-  b=Jsi7DTtTKTdesQTBBTwYXI6icJus3XO2HpxY6u4kVAFW+PoILr2g8Cg8
-   2wxltxF4S7EiU5tKvLCWTR3JNuAJsUsM5Vb2+HXTJ2qimKf36eV1/02Oz
-   YQbw0azgNf9YCZNQq1CGFzdATs6tFpjmiJN2/9Vut8HpXA48DjkkzG8LJ
-   x7KB6e0e4NhoJybvbZ5CNvTUXcYj6tA5klGKFd3u1TQFe92Q48Z7jutQM
-   lerV/Hi9CDk7Kv8F7rhditXO8HXSXyHewwM0xuRPKu+ju/GmHGBOOjH0S
-   W16IZlQjbh4nYWhcMgGZj656P6BJdfucQi7eQBijrjtS+vWsAbUCN+jV5
-   g==;
-X-CSE-ConnectionGUID: WgcZxME8Rrmq9Fnf2lErXg==
-X-CSE-MsgGUID: Ty/C/waAQ1O+3A2sny7vGQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="27980878"
-X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
-   d="scan'208";a="27980878"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 15:33:17 -0700
-X-CSE-ConnectionGUID: NQkEBBsVTiaTqOQsijRujw==
-X-CSE-MsgGUID: kMVJE2rNT66YG4zCPKSIzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
-   d="scan'208";a="72651656"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Sep 2024 15:33:16 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 12 Sep 2024 15:33:15 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 12 Sep 2024 15:33:15 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.47) by
- edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 12 Sep 2024 15:33:15 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Pq6cg8YI5F+w/uo2XXnyZ8lxC8MsGtJXcLKbU1XGV+Cgy/2temn1FOUmBPcOnfSkjciWk+AkwhQerbJfqLKC/GVF0o2fnOFOLexsnM1NFoW57Hckjj0EWD1mSU1BTJjPeS8lkn0CXcqsNIVWhwc5X46JWIyqd7uBbn+yhN+03QiKmVGQLA80lLbmy/TXtk53LN/hkGvBFswwwsSqTg089zw2tFd38pMZkalCZ9HXXrUGF7cJ+iqzJIZ93fEUULi/E9Ma8n3iC513Gi+++RPOYTQrebR8YyJswnz+rM1vcxfQEpB8S8vFGb93zb0kD9CM5rYULxoQyyG2idZ0UT1Ucw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1h8/x5hd1kh+IReKCK1090W5lUqEpcCSeeW5KF2CO5Q=;
- b=NoBvLh0sm3AlPeEy8CP3QYvDFoR6Sm1PoT/Zxc7Zmi+BZyn9otoGNvDBoVEE2nlbdElJQ26BZ6FglEsBmtjy2yM3W5Ziy84CJGW+DrxYKK7Vz+4wyWGxxYulOKIs0nVSYNnuFsyZASG/ic9SJGJaOxDcIQPwNVe9gCjxZuZQkmd3M5F6JcxtjOcLmWewXikHJDJE7X5X53i5YFoH0DVc+NEl6cPEj6z9ObHkad8v4tnEUBwAjs2ZRD/W/Xn4PXY4DYfbJIp4kwcT9GyHUJbUm/PJjfSQgfx4gelyUHafzdoVSo1s72MQvy6H+MHOI5AXiD//Era3/1Zina62lhR+fA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by SN7PR11MB6946.namprd11.prod.outlook.com (2603:10b6:806:2a9::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.25; Thu, 12 Sep
- 2024 22:33:12 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7939.022; Thu, 12 Sep 2024
- 22:33:12 +0000
-Message-ID: <fc49e252-6283-4a37-b4e8-bd329f326e68@intel.com>
-Date: Thu, 12 Sep 2024 15:33:09 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/resctrl: Annotate __get_mem_config_intel() as __init
-To: Nathan Chancellor <nathan@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>,
-	<x86@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
-	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
-	<dave.hansen@linux.intel.com>
-CC: <linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>,
-	<patches@lists.linux.dev>
-References: <20240822-x86-restctrl-get_mem_config_intel-init-v1-1-8b0a68a8731a@kernel.org>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <20240822-x86-restctrl-get_mem_config_intel-init-v1-1-8b0a68a8731a@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR04CA0273.namprd04.prod.outlook.com
- (2603:10b6:303:89::8) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFA8219E98B
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 22:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726180418; cv=none; b=qabd2cn3bD4TfEUvj4KAwTBo05BaelTZBDiVnqkMRdnzbUmJgB5svDor1tYRK/jbqMhL9zXDzA2XCpG/l3wPjyvLdHIowmLepS+kaSPwZSgFr01xiiDa+4lb3E406sxRs8XkyDDLzjfj0Kna6PtOC7uWEyCPF1KO1jmCvLVxCXw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726180418; c=relaxed/simple;
+	bh=u8Slg3KTL8RqyWu/DaAAc7Er53ufMBkqCZro6FXPm04=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mmsnr7f5z2HSUlHfOzQDtIf0sKy+r4mi8YDdOomhmvKxd4E7ztEUwfx7UV9O5l3s7pnTFWdtNOgnLHEfn4UlqaaZJqmmlXglO6AmcnY7sDjqB51S7QGsltxydbMcfZU+j7WZnuOUobYm2EodMLQOdfNmA2CrrEKZvq7y9W9GnMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I1/onAI6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726180415;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MSco5FHgL7se8dgu4QfULMlQ/zF8R9+5LSuJG3cYoyI=;
+	b=I1/onAI65zmyG/nK5oyC73zBn/5PcBdmy3AsBouTaFAhd1KxEY/200rg4h6ps68ZFCGe8I
+	6RDkrFwrFpquIiWkUw+5wMR6jConF+pomXxcG8TAbAsut1L27rHPkKYKdzR5HpcBd77Z5j
+	Qvi4iiwcxhrqpFziQQ+LgHD1w1CFMNk=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-339-NjZ0KBANNw2YbpxpSwYhTQ-1; Thu, 12 Sep 2024 18:33:33 -0400
+X-MC-Unique: NjZ0KBANNw2YbpxpSwYhTQ-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42caf073db8so11009785e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:33:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726180412; x=1726785212;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MSco5FHgL7se8dgu4QfULMlQ/zF8R9+5LSuJG3cYoyI=;
+        b=tqI54Kfh4JEdrrhpHQ5A5DUqcWKfNmWayaKbdXFeLDqwhjKhlk0ae9hdrnTYudsBvE
+         tc3EenUJ+wu7+BJlcTUOaQtnuxU+IRaCuIeUEtTMqmG7QKo2SyP0DN5LL+3C0kfIRkPu
+         97xzlVaGL2R4mJ/IwKBjLBWM6yjePHFjAX5A7RliN/82acwAknib7vbSaXKz1PCZgI8A
+         wv/cgeHHMvkjj25JgO/j7yBlMojJYdCx2vAsBAEupeSE92jfH9xzIjdXZoWgTr/AdKsh
+         wtkfIpJ9npYTptdW8JUdQQKjSfkEoydd5coVukwmLSFLQkGzY30j7xitEmlaPYPFvQKT
+         ki1w==
+X-Forwarded-Encrypted: i=1; AJvYcCXC+9YvA6ejrMeoD7iiAAS3gwS5Bd567JSsWbHKBB+JdmNO4yWQ+wztoC05L1PAk1XU3RC2Bm7TOuBAAcc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+jAGMUh2pBPZ9S979ARZNdMr6ZduZ0Tz+FX+CuzQmW/DSnHaT
+	rIDMbj/XeNWnF8G4NOZa9qPQx03EHra6RUb3psGg1fBdXB9OSRBxiN0BrAEGNsLvbBVdCxLQOQf
+	vViH8LJEiJzleETUvMyxnTZDSScyE7lwNU9E0IJA26lZg+Rqxorak/dIEVVqncg==
+X-Received: by 2002:a7b:c394:0:b0:42c:df54:18ec with SMTP id 5b1f17b1804b1-42cdf541c13mr30226105e9.28.1726180412008;
+        Thu, 12 Sep 2024 15:33:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEmdIhSdmXtYVIoWYdE8/Hcsa3vnU6dyUFU+jpebvq0opR/rB3J+ska5bMZSTTBLgIsaRLSew==
+X-Received: by 2002:a7b:c394:0:b0:42c:df54:18ec with SMTP id 5b1f17b1804b1-42cdf541c13mr30225835e9.28.1726180411384;
+        Thu, 12 Sep 2024 15:33:31 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37895675c1dsm15337153f8f.58.2024.09.12.15.33.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Sep 2024 15:33:30 -0700 (PDT)
+Message-ID: <89b55f6f-f462-4e84-b2e2-7f2edc0f1cc4@redhat.com>
+Date: Fri, 13 Sep 2024 00:33:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SN7PR11MB6946:EE_
-X-MS-Office365-Filtering-Correlation-Id: aa8e5236-d691-4bf4-8f3c-08dcd37ae276
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?eUxXQzdlUmdOV3gxdUpweGtjY2l0UldYUFFQQkJEcEFjdkY0ZklZR0hZdWpi?=
- =?utf-8?B?Q2dqWFdiWHJYV3JIcytQTEdybVVJYmpMV282QmdVZWF4S1ZjUVZZQzJPT3Vn?=
- =?utf-8?B?eE1rZ2VKenVNajNQZDNsMFQzSmhSbkdxVnVYdDBBeW12R0NVcStmNDRsZjNM?=
- =?utf-8?B?c0hwMFVuWEswa3duMWFWUkRVMEErZCt1ZHBhajJwRXY5TFlWYWxZU3lnYVVq?=
- =?utf-8?B?MEs4UEp1RWk5S3JURFlWa1dORnh4TTY0bEljSlVSZTdOS0xSYktKQzZadVNs?=
- =?utf-8?B?MnhjeGxLYWYvZ3NCZmJnSWI2Q0RCUjROTWF2OFRmWGkxckY0WlRabWFxaEpG?=
- =?utf-8?B?VjBCR2ZUYjRFdXZSNjhyOGFGZDE4NDZySk8wRVZUNi9tME04QW9lZURMVmla?=
- =?utf-8?B?OGhPUENiQ2cyR0pVSy83T2FIVmFPc2ZSZ0dsdDkzU0dzZ0RSSFFRYitjcTBw?=
- =?utf-8?B?c2ZhYlVPNU12QTBIMU9aemxsQlUzQUROa2t6MWFhMHQrU2lvZklhZEs3UFlZ?=
- =?utf-8?B?dUZ2Q1hwWmF1TGlDSWhzNDBoblQxMGF4ZTZpaU1TeDR5dUhtU2U3VmtZYlVx?=
- =?utf-8?B?eHErak1yd003KzkyWmVqcHVsN0svcFFJMUppY2RoRm9uVWNTOUNtcERQczZB?=
- =?utf-8?B?S3JkODkxQUtCTkRrQTdYbVJCTDZUV0NORHQ4L29ybHl2cUI5eXZSNHA1a3Ji?=
- =?utf-8?B?UlBQbHhoWUUzNmY5alBFdm5MVTF3amlqSEJrb0pPTzBUMTVuUGx6b0NSUm9x?=
- =?utf-8?B?Ny9LY3NLOTlhaGJ4c1k5dHU4VUVYSzhOdU4rRkVPMUQwVzNOU29PUW9SQjhq?=
- =?utf-8?B?Sk83RkxmaFJsckpBOFRBM3ZJQTlPT0QwaDlWWmFtd0NRb3dScWVhT0Z2Z1Zk?=
- =?utf-8?B?eXF3Z094cmZ5UVVCZUplVmxMVjkzOUg2Kyt1NXFsRlFHYTllMGdkMGRRSDVV?=
- =?utf-8?B?OEd1cEVPM1c0TFNoV2F4dEpiVWl1VE9pLzRxd204cFRZRjVDMTh0RTFFaUZj?=
- =?utf-8?B?akoxcVZkcHZXOWRjN1dJS2U4eW1WK0M5RVV3N0t6RTU3OGhwaXgyOWtFa1Bu?=
- =?utf-8?B?enlycWxMY2MxdFd5eTU1bi9rSDgybGdDQkJPSlpjR3R4YWVicWFIb2cyMjJG?=
- =?utf-8?B?L1AxYXdHeDlBUGdwNzJ2K2Z4UDhSeGhFOHBoWHpnTUhxcy9NZXhzeFgySURC?=
- =?utf-8?B?QjFyMkpyTFVoQmN6S1ZSRG1CMGtOSUs4LytNZXUzWkxsdy9NZ1hjd29wQUFU?=
- =?utf-8?B?QWNudVNYL0lYci9FbWhNdGt0aU9WRXhxVDd6MnpER29hS2FvWURsTVorL2hs?=
- =?utf-8?B?VWRDYks1VVgrdkdGSmlaUmR6YkxydkVrZWlOeTFpYU45ZVRMWCtQcXAwV0VL?=
- =?utf-8?B?enY4QzdWQ3F1TXJ2WVU2TUJRTm91eGNiYjJHR1FjaC9BSFlLWFY0c3poQStl?=
- =?utf-8?B?UFVCTVg5SEhoWmpNU24veDMxVy8wQzVMMk43eGhFT1hKMVdTbUxaYmZVbTF2?=
- =?utf-8?B?SFMzajRncGNoM2x5WEQ1VXpaRGt4N3p4R25jc1laV0dKQk5CZmFyTkFvbEpH?=
- =?utf-8?B?SUI3Ymg2S0wxK3I1R256Qlg2WlhqbWFiOVNEbnpqdjRCbTlJY1BJbzBiNXJw?=
- =?utf-8?B?c3Z3L2NneXJEQUI1SzJGTlh5aEwxUjVrSXVUalhQelU2K0tmZVZYUHdndVNm?=
- =?utf-8?B?Nkw5VThLc3hIV1NJd2orVkxURjcxaVNucTUvYitBbTMxSnNMUW12S2w2Tk1h?=
- =?utf-8?B?MmMvdEVtNy9LalNTMzcveDZqdEVTZ25CcDdZK0xYMERJbUVNWlRYUjlxNDAw?=
- =?utf-8?Q?Jw6hKKjkoPiohn4+fcwW/sFUnCOm+5cttq8AA=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?V2RwQ3lXczUxYllCeFlVZXZzQXdzUHh6R0oxQ1RYQnhYQzJ2Qm43NkpFMGJk?=
- =?utf-8?B?VGdpSnYwSXdUcVVLYzJxTEJoNlMxTy8xcjczakhERFdHT0s2VlhRNU9TdFhC?=
- =?utf-8?B?VjkrN3lJWmlVWjNGQloyaUFLTWRYS051cUsyeTRiM0VsS3pXRC91ZGkvbjBW?=
- =?utf-8?B?ZCtGYlhDb0IyNE5LOG1FVUVXUG9Ed0FQYytnUUxtZ0NtU1VuMXRoMStqTUdE?=
- =?utf-8?B?QTVhMEJMeFFOUWtlUGsrVVpoZkpFRmV2aW02RXdqT3U1aVJueVQrSGp6cXFq?=
- =?utf-8?B?L3I0bndQcHRSTEwzNm5FQnFJT0JHSnFRZnFsSlVWdlBxVFhYZ01MelpGeUp1?=
- =?utf-8?B?N1ZqSDB5R0kyTnFqcVZkcVh6bkxFNG13Y0tiRUZ1K1ZZNE9mS1M5RXNlN1JD?=
- =?utf-8?B?RkYva21xS25kWkFQQkoralVDMkx4UVdmRi9mNHNsOHI5THcrbEg1d2hsUjgv?=
- =?utf-8?B?U21HQ0FqWHhOUEVrcFd5SWkyTklTSEJiRHduL1ZBVnIwZFJZczNTeDhldlVP?=
- =?utf-8?B?cGQrbmRiS281ZFNpdFpUeS9GRTIvdW85YU1KQlNBQ2N2cHowUWYwTkc2K3Nr?=
- =?utf-8?B?UFZENDRxcWliUkNHQ00rTjZlMk5jbDFqWExrVlhPWTAzUTZjVDZNYnhmZU5Y?=
- =?utf-8?B?MDg1REdGejJ3WUIzLy9uSXpmOE5LZjNIa1BaVTVRY0s0UDF5bXJHU3p3SU9D?=
- =?utf-8?B?YkRnckFkL255OFZGVm53SXlLbm1LY1lhcVVDbUpSUGE5eEJGYkVuMW5PaEda?=
- =?utf-8?B?SVhCTTRBQXFQT2ZWWW5XeTFla0pLOVBzVG5XbHFHaUJhc3VwZnJkWmVkL2ZU?=
- =?utf-8?B?M2xPRGJGTmxhRzRnckROVnpHZThUQytJeTg1ZnhJT3VLTk5WclY0UlBsMXFN?=
- =?utf-8?B?alVtaDF0QXFkZ05zYUE4ZS83Qkp5WXpydVpUcEgxNFAybkhjdWtzeXlDcjRu?=
- =?utf-8?B?WVBpVDU3RmE4Y3pGTTF6enJjZzRSZWVuVjV6S0dKVlRtVnJFRzRrTVdlNEtI?=
- =?utf-8?B?alplNmdLbXNjcmJZbnFRVlhnSHR1ZXpJVUtud0krY3FNSW1SMWoxeXFUNU80?=
- =?utf-8?B?OENWSTlEYlBuSVp5TStOYlkwWVZweXBlQ1YzTWNpNFhOMkd5R01WM2RLaHlu?=
- =?utf-8?B?dm9Xb1FXSmZKZ0tETG01U25zY2x2RkhadWx6dzRzTXk0bVp4NnVDTVdrNkFP?=
- =?utf-8?B?djVISzRqbmVHUlhIZTFKbERiMy95aGw1K1grSWtwMzM3VEQ1QmxRY3pIWTlv?=
- =?utf-8?B?bktWd3k5MnM0eGwzWHdKdkt3eURQTkhyQXh0alZ5UUpmMll1bXVLNFZPN091?=
- =?utf-8?B?d3Z3YjdFZzdJOUNiZ0thRkhVQ1Z1TUJIdWRtK0FwU3I0NnFmVURFeDZHcFg0?=
- =?utf-8?B?RWtrOU1TaW50Vk9GbUJsa1JUWGpVTHZ0cFpwZWhBK2dONDcrbUZXSHBiSjc5?=
- =?utf-8?B?RUdpSGlPME1mYzVqbG9vZTUrbzhCN3E3ajRYdmFNNkYvbHZRTlpEVDVyaFh1?=
- =?utf-8?B?V3p0eDlTaG5NTGw5S0JRS3ZnVmw0R25VNVZ1VVZiU095SVpKVmFuVEJ2L08r?=
- =?utf-8?B?QmZHSlpvUWpZQTQ5YnRJQ0FETHJ5SnA4WCtCdXhtd3BocUN6U3R4aVpqdWVE?=
- =?utf-8?B?VTZtUlFvbTdGbi91RVdBTUdrZDd6SE1SVittRU9oSGlYeG04Uk1ueThCR0lp?=
- =?utf-8?B?WUVrSVo0T1Q3RWdVeHdnczJLMEQxanVNdm45SkErMlQrY2NZdDM5bUdSZ2ZU?=
- =?utf-8?B?M1phcGpUL2hzd25nNGhmNXYzY3JzT05YQ0J3NkdEVi96YkdjVHJTQ3NWeEF2?=
- =?utf-8?B?emNtcXNGaCt5SWxIaTNqNVkxVUFwTUxSL3VUc1JQdFl3Wnpna25ldXNiUFRw?=
- =?utf-8?B?SDRjWGVLYmt2ZjlBQXJTWWd2MXlITTMzd3hnNWhzRm5BVFVmRGlIUkRFNlNk?=
- =?utf-8?B?TDUzZFdTYndJKzI1eEE1VkZNZjFoblNVK2hLVXBCQ2RYUkVmUHJxYXVCRzY2?=
- =?utf-8?B?V213S0gwM3ZaZDlWM3BUcm5JYjNlaTJzSXo3bUxqajArY1FtV2pLL2t3MXBl?=
- =?utf-8?B?RnVnbUdSNjBhdy9aOUJOOGhWZFNIenAwZGpBbXJvaXRRUU03YlR4ZGw4aXRN?=
- =?utf-8?B?aEJCSDEyZ05vMVBkVmNJUUV3TGx5VElIVU9TeElhRmRMRmZzS213NjNpQ3Nh?=
- =?utf-8?B?Vmc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: aa8e5236-d691-4bf4-8f3c-08dcd37ae276
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2024 22:33:11.9825
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RnC1qBqj1nfb3gwII/PcP/5UE4Cge5C689k5DMnJrHXuYAuI0II7E5GIqhsD6holi5HQmesh4CBNLbck0COsEz5A0ZSq9/DMZbgIzHTnid8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB6946
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/qxl: Add drm_panic support
+To: Ryosuke Yasuoka <ryasuoka@redhat.com>, airlied@redhat.com,
+ kraxel@redhat.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, daniel@ffwll.ch
+Cc: virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <20240912093024.661498-1-ryasuoka@redhat.com>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <20240912093024.661498-1-ryasuoka@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Nathan,
+On 12/09/2024 11:30, Ryosuke Yasuoka wrote:
+> QXL supports the drm_panic module, which displays a message to the
+> screen when a kernel panic occurs.
 
-Apologies for the delay.
+Thanks a lot for this work, one more driver that will handle drm_panic.
 
-On 8/22/24 5:12 PM, Nathan Chancellor wrote:
-> After a recent LLVM change [1] that deduces __cold on functions that
-> only call cold code (such as __init functions), there is a section
-> mismatch warning from __get_mem_config_intel(), which got moved to
-> .text.unlikely. as a result of that optimization:
-> 
->    WARNING: modpost: vmlinux: section mismatch in reference: __get_mem_config_intel+0x77 (section: .text.unlikely.) -> thread_throttle_mode_init (section: .init.text)
-> 
-> Mark __get_mem_config_intel() as __init as well since it is only called
-> from __init code, which clears up the warning.
+I have a few comments below, but from drm_panic point of view, it looks 
+already pretty good.
 
-It looks to me as though __rdt_get_mem_config_amd() may need the same __init
-treatment and it is not clear to me why __get_mem_config_intel() would trigger
-such warning, but not __rdt_get_mem_config_amd()?
+-- 
+
+Jocelyn
 
 > 
-> Link: https://github.com/llvm/llvm-project/commit/6b11573b8c5e3d36beee099dbe7347c2a007bf53 [1]
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> Signed-off-by: Ryosuke Yasuoka <ryasuoka@redhat.com>
 > ---
->   arch/x86/kernel/cpu/resctrl/core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Sorry for sending similar mails again and again. Please ignore the
+> following my mails. Let me add dri-devel mailing list and Jocelyn who
+> developped a drm_panic core and look forward to your comments on this
+> mail.
 > 
-> diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
-> index 1930fce9dfe9..b28646f1d9d6 100644
-> --- a/arch/x86/kernel/cpu/resctrl/core.c
-> +++ b/arch/x86/kernel/cpu/resctrl/core.c
-> @@ -199,7 +199,7 @@ static inline bool rdt_get_mb_table(struct rdt_resource *r)
->   	return false;
+> https://lore.kernel.org/all/20240911094644.616280-1-ryasuoka@redhat.com/T/#u
+> https://lore.kernel.org/all/20240911101043.618043-1-ryasuoka@redhat.com/T/#u
+> 
+>   
+>   drivers/gpu/drm/qxl/qxl_cmd.c     | 29 ++++++++++
+>   drivers/gpu/drm/qxl/qxl_display.c | 94 +++++++++++++++++++++++++++++++
+>   drivers/gpu/drm/qxl/qxl_draw.c    | 57 ++++++++++++++++++-
+>   drivers/gpu/drm/qxl/qxl_drv.h     | 21 +++++++
+>   drivers/gpu/drm/qxl/qxl_image.c   | 27 +++++++++
+>   drivers/gpu/drm/qxl/qxl_object.c  | 62 ++++++++++++++++++++
+>   drivers/gpu/drm/qxl/qxl_object.h  |  4 ++
+>   7 files changed, 293 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/qxl/qxl_cmd.c b/drivers/gpu/drm/qxl/qxl_cmd.c
+> index d6ea01f3797b..c70041ce55c0 100644
+> --- a/drivers/gpu/drm/qxl/qxl_cmd.c
+> +++ b/drivers/gpu/drm/qxl/qxl_cmd.c
+> @@ -174,6 +174,35 @@ static bool qxl_ring_pop(struct qxl_ring *ring,
+>   	return true;
 >   }
 >   
-> -static bool __get_mem_config_intel(struct rdt_resource *r)
-> +static bool __init __get_mem_config_intel(struct rdt_resource *r)
-
-Surely resctrl is not consistent in this regard but I understand from the coding style
-doc that storage class should precede the return type, so perhaps:
-	static __init bool __get_mem_config_intel(struct rdt_resource *r)
-
-We may need to follow this recommended style for this to be included.
-
+> +/* For drm panic */
+> +int
+> +qxl_push_command_ring_without_release(struct qxl_device *qdev,
+> +		struct qxl_bo *bo, uint32_t type, uint32_t offset)
+> +{
+> +	struct qxl_command cmd;
+> +	struct qxl_ring *ring = qdev->command_ring;
+> +	struct qxl_ring_header *header = &(ring->ring->header);
+> +	uint8_t *elt;
+> +	int idx;
+> +
+> +	cmd.type = type;
+> +	cmd.data = qxl_bo_physical_address(qdev, bo, offset);
+> +
+> +	idx = header->prod & (ring->n_elements - 1);
+> +	elt = ring->ring->elements + idx * ring->element_size;
+> +
+> +	memcpy((void *)elt, &cmd, ring->element_size);
+> +
+> +	header->prod++;
+> +
+> +	mb();
+> +
+> +	if (header->prod == header->notify_on_prod)
+> +		outb(0, ring->prod_notify);
+> +
+> +	return 0;
+> +}
+> +
+>   int
+>   qxl_push_command_ring_release(struct qxl_device *qdev, struct qxl_release *release,
+>   			      uint32_t type, bool interruptible)
+> diff --git a/drivers/gpu/drm/qxl/qxl_display.c b/drivers/gpu/drm/qxl/qxl_display.c
+> index bc24af08dfcd..b5f2ddfe71a9 100644
+> --- a/drivers/gpu/drm/qxl/qxl_display.c
+> +++ b/drivers/gpu/drm/qxl/qxl_display.c
+> @@ -37,6 +37,7 @@
+>   #include <drm/drm_probe_helper.h>
+>   #include <drm/drm_simple_kms_helper.h>
+>   #include <drm/drm_gem_atomic_helper.h>
+> +#include <drm/drm_panic.h>
+>   
+>   #include "qxl_drv.h"
+>   #include "qxl_object.h"
+> @@ -889,6 +890,97 @@ static void qxl_plane_cleanup_fb(struct drm_plane *plane,
+>   	}
+>   }
+>   
+> +static int qxl_primary_plane_helper_get_scanout_buffer(struct drm_plane *plane,
+> +							struct drm_scanout_buffer *sb)
+> +{
+> +	struct qxl_bo *bo;
+> +
+> +	if (!plane->state || !plane->state->fb)
+> +		return -ENODEV;
+> +
+> +	bo = gem_to_qxl_bo(plane->state->fb->obj[0]);
+> +
+> +	if (!bo->map.vaddr) {
+> +		int ret;
+> +
+> +		ret = qxl_bo_pin_and_vmap(bo, &sb->map[0]);
+> +		if (ret)
+> +			return ret;
+> +	} else {
+> +		iosys_map_set_vaddr(&sb->map[0], bo->map.vaddr);
+> +	}
+> +
+> +	sb->format = plane->state->fb->format;
+> +	sb->height = plane->state->fb->height;
+> +	sb->width = plane->state->fb->width;
+> +	sb->pitch[0] = plane->state->fb->pitches[0];
+> +	return 0;
+> +}
+> +
+> +static void qxl_panic_flush(struct drm_plane *plane)
+> +{
+> +	struct qxl_device *qdev = to_qxl(plane->dev);
+> +	struct qxl_bo *_bo = gem_to_qxl_bo(plane->state->fb->obj[0]);
+> +	uint8_t *surface_base = _bo->map.vaddr;
+> +	struct drm_clip_rect rect = {
+> +		.x1 = 0,
+> +		.y1 = 0,
+> +		.x2 = plane->state->fb->width,
+> +		.y2 = plane->state->fb->height
+> +	};
+> +	unsigned int num_clips = 1;
+> +	struct qxl_bo clips_bo = {};
+> +	struct qxl_bo image_bo = {};
+> +	struct qxl_bo chunk_bo = {};
+> +	struct qxl_drm_image dimage;
+> +	struct qxl_drm_chunk chunk;
+> +	int width = rect.x2;
+> +	int height = rect.y2;
+> +	int stride = plane->state->fb->pitches[0];
+> +	int depth = plane->state->fb->format->cpp[0] * 8;
+> +	struct qxl_rect *rects;
+> +	struct qxl_rect drawable_rect = {
+> +		.left = 0,
+> +		.right = width,
+> +		.top = 0,
+> +		.bottom = height,
+> +	};
+> +	int cur_idx = 0;
+> +	int size = 256;
+> +	struct qxl_bo *bo = qxl_bo_ref(qdev->current_release_bo[cur_idx]);
+> +	uint32_t offset = qdev->current_release_bo_offset[cur_idx] * size;
+> +	int ret;
+> +
+> +	qxl_panic_bo_create(qdev, sizeof(struct qxl_clip_rects) + sizeof(struct qxl_rect),
+> +			false, false, QXL_GEM_DOMAIN_VRAM, 0, NULL, &clips_bo);
+> +
+> +	ret = qxl_image_alloc_objects_without_release(qdev, &dimage, &chunk, &image_bo, &chunk_bo,
+> +			surface_base, width, height, depth, stride);
+> +	if (ret)
+> +		return;
+> +
+> +	ret = make_drawable_without_release(qdev, &drawable_rect, bo, &clips_bo,
+> +			&dimage, offset, height, width);
+> +	if (ret)
+> +		return;
+> +
+> +	rects = drawable_set_clipping(qdev, num_clips, &clips_bo);
+> +	if (!rects)
+> +		return;
+> +	rects[0].left = 0;
+> +	rects[0].right = width;
+> +	rects[0].top = 0;
+> +	rects[0].bottom = height;
+> +
+> +	qxl_push_command_ring_without_release(qdev, bo, QXL_CMD_DRAW, offset);
+> +
+> +	qxl_gem_object_free(&chunk_bo.tbo.base);
+> +	qxl_gem_object_free(&image_bo.tbo.base);
+> +
+> +	qxl_bo_vunmap_locked(&clips_bo);
+> +	qxl_gem_object_free(&clips_bo.tbo.base);
+> +}
+> +
+>   static const uint32_t qxl_cursor_plane_formats[] = {
+>   	DRM_FORMAT_ARGB8888,
+>   };
+> @@ -920,6 +1012,8 @@ static const struct drm_plane_helper_funcs primary_helper_funcs = {
+>   	.atomic_disable = qxl_primary_atomic_disable,
+>   	.prepare_fb = qxl_plane_prepare_fb,
+>   	.cleanup_fb = qxl_plane_cleanup_fb,
+> +	.get_scanout_buffer = qxl_primary_plane_helper_get_scanout_buffer,
+> +	.panic_flush = qxl_panic_flush,
+>   };
+>   
+>   static const struct drm_plane_funcs qxl_primary_plane_funcs = {
+> diff --git a/drivers/gpu/drm/qxl/qxl_draw.c b/drivers/gpu/drm/qxl/qxl_draw.c
+> index 3a3e127ce297..49fdc0162377 100644
+> --- a/drivers/gpu/drm/qxl/qxl_draw.c
+> +++ b/drivers/gpu/drm/qxl/qxl_draw.c
+> @@ -41,7 +41,8 @@ static int alloc_clips(struct qxl_device *qdev,
+>   /* returns a pointer to the already allocated qxl_rect array inside
+>    * the qxl_clip_rects. This is *not* the same as the memory allocated
+>    * on the device, it is offset to qxl_clip_rects.chunk.data */
+> -static struct qxl_rect *drawable_set_clipping(struct qxl_device *qdev,
+> +
+> +struct qxl_rect *drawable_set_clipping(struct qxl_device *qdev,
+>   					      unsigned int num_clips,
+>   					      struct qxl_bo *clips_bo)
 >   {
->   	struct rdt_hw_resource *hw_res = resctrl_to_arch_res(r);
->   	union cpuid_0x10_3_eax eax;
-> 
-> ---
-> base-commit: 7424fc6b86c8980a87169e005f5cd4438d18efe6
-> change-id: 20240822-x86-restctrl-get_mem_config_intel-init-3af02a5130ba
-> 
-> Best regards,
+> @@ -74,6 +75,60 @@ free_drawable(struct qxl_device *qdev, struct qxl_release *release)
+>   	qxl_release_free(qdev, release);
+>   }
+>   
+> +/* For drm panic */
+> +int
+> +make_drawable_without_release(struct qxl_device *qdev,
+> +		struct qxl_rect *drawable_rect,
+> +		struct qxl_bo *bo,
+> +		struct qxl_bo *clips_bo,
+> +		struct qxl_drm_image *dimage,
+> +		uint32_t offset, int height, int width)
+> +{
+> +	struct qxl_drawable *drawable;
+> +	union qxl_release_info *info;
+> +	void *ptr;
+> +	int i;
+> +
+> +	ptr = qxl_bo_kmap_atomic_page(qdev, bo, offset & PAGE_MASK);
+> +	if (!ptr)
+> +		return -ENOMEM;
+> +	drawable = ptr + (offset & ~PAGE_MASK);
+> +
+> +	drawable->type = QXL_DRAW_COPY;
+> +	drawable->surface_id = 0;
+> +	drawable->effect = QXL_EFFECT_OPAQUE;
+> +	drawable->self_bitmap = 0;
+> +	drawable->self_bitmap_area.top = 0;
+> +	drawable->self_bitmap_area.left = 0;
+> +	drawable->self_bitmap_area.bottom = 0;
+> +	drawable->self_bitmap_area.right = 0;
+> +
+> +	for (i = 0; i < 3; ++i)
+> +		drawable->surfaces_dest[i] = -1;
+> +
+> +	drawable->bbox = *drawable_rect;
+> +	drawable->mm_time = qdev->rom->mm_clock;
+> +	drawable->clip.type = SPICE_CLIP_TYPE_RECTS;
+> +	drawable->clip.data = qxl_bo_physical_address(qdev, clips_bo, 0);
+> +	drawable->u.copy.src_area.top = 0;
+> +	drawable->u.copy.src_area.bottom = height;
+> +	drawable->u.copy.src_area.left = 0;
+> +	drawable->u.copy.src_area.right = width;
+> +	drawable->u.copy.rop_descriptor = SPICE_ROPD_OP_PUT;
+> +	drawable->u.copy.scale_mode = 0;
+> +	drawable->u.copy.mask.flags = 0;
+> +	drawable->u.copy.mask.pos.x = 0;
+> +	drawable->u.copy.mask.pos.y = 0;
+> +	drawable->u.copy.mask.bitmap = 0;
+> +	drawable->u.copy.src_bitmap = qxl_bo_physical_address(qdev, dimage->bo, 0);
+> +
+> +	info = &drawable->release_info;
+> +	ptr = ((void *)info) - (offset & ~PAGE_MASK);
+> +	qxl_bo_kunmap_atomic_page(qdev, bo, ptr);
+> +
+> +	return 0;
+> +}
+> +
+>   /* release needs to be reserved at this point */
+>   static int
+>   make_drawable(struct qxl_device *qdev, int surface, uint8_t type,
+> diff --git a/drivers/gpu/drm/qxl/qxl_drv.h b/drivers/gpu/drm/qxl/qxl_drv.h
+> index 32069acd93f8..93dd0de06c23 100644
+> --- a/drivers/gpu/drm/qxl/qxl_drv.h
+> +++ b/drivers/gpu/drm/qxl/qxl_drv.h
+> @@ -334,6 +334,13 @@ int qxl_image_init(struct qxl_device *qdev,
+>   		   const uint8_t *data,
+>   		   int x, int y, int width, int height,
+>   		   int depth, int stride);
+> +
+> +int qxl_image_alloc_objects_without_release(struct qxl_device *qdev,
+> +		struct qxl_drm_image *image, struct qxl_drm_chunk *chunk,
+> +		struct qxl_bo *image_bo, struct qxl_bo *chunk_bo,
+> +		uint8_t *surface_base, int width,
+> +		int height, int depth, int stride);
+> +
+>   int
+>   qxl_image_alloc_objects(struct qxl_device *qdev,
+>   			struct qxl_release *release,
+> @@ -376,6 +383,9 @@ int qxl_alloc_release_reserved(struct qxl_device *qdev, unsigned long size,
+>   			       int type, struct qxl_release **release,
+>   			       struct qxl_bo **rbo);
+>   
+> +int qxl_push_command_ring_without_release(struct qxl_device *qdev,
+> +		struct qxl_bo *bo, uint32_t type, uint32_t offset);
+> +
+>   int
+>   qxl_push_command_ring_release(struct qxl_device *qdev, struct qxl_release *release,
+>   			      uint32_t type, bool interruptible);
+> @@ -387,6 +397,9 @@ int qxl_alloc_bo_reserved(struct qxl_device *qdev,
+>   			  unsigned long size,
+>   			  struct qxl_bo **_bo);
+>   /* qxl drawing commands */
+> +struct qxl_rect *drawable_set_clipping(struct qxl_device *qdev,
+> +					      unsigned int num_clips,
+> +					      struct qxl_bo *clips_bo);
+>   
+>   void qxl_draw_dirty_fb(struct qxl_device *qdev,
+>   		       struct drm_framebuffer *fb,
+> @@ -399,6 +412,14 @@ void qxl_draw_dirty_fb(struct qxl_device *qdev,
+>   void qxl_release_free(struct qxl_device *qdev,
+>   		      struct qxl_release *release);
+>   
+> +int
+> +make_drawable_without_release(struct qxl_device *qdev,
+> +		struct qxl_rect *drawable_rect,
+> +		struct qxl_bo *bo,
+> +		struct qxl_bo *clips_bo,
+> +		struct qxl_drm_image *dimage,
+> +		uint32_t offset, int height, int width);
+> +
+>   /* used by qxl_debugfs_release */
+>   struct qxl_release *qxl_release_from_id_locked(struct qxl_device *qdev,
+>   						   uint64_t id);
+> diff --git a/drivers/gpu/drm/qxl/qxl_image.c b/drivers/gpu/drm/qxl/qxl_image.c
+> index ffff54e5fb31..2efe0cf133a6 100644
+> --- a/drivers/gpu/drm/qxl/qxl_image.c
+> +++ b/drivers/gpu/drm/qxl/qxl_image.c
+> @@ -52,6 +52,33 @@ qxl_allocate_chunk(struct qxl_device *qdev,
+>   	return 0;
+>   }
+>   
+> +/* For drm panic */
+> +int
+> +qxl_image_alloc_objects_without_release(struct qxl_device *qdev,
+> +		struct qxl_drm_image *image, struct qxl_drm_chunk *chunk,
+> +		struct qxl_bo *image_bo, struct qxl_bo *chunk_bo,
+> +		uint8_t *surface_base, int width, int height,
+> +		int depth, int stride)
+> +{
+> +	int ret;
+> +	unsigned int chunk_size = sizeof(struct qxl_data_chunk) + stride * height;
+> +
+> +	INIT_LIST_HEAD(&image->chunk_list);
+> +	qxl_panic_bo_create(qdev, sizeof(struct qxl_image), false, false,
+> +			QXL_GEM_DOMAIN_VRAM, 0, NULL, image_bo);
+> +	image->bo = image_bo;
+> +
+> +	qxl_panic_bo_create(qdev, chunk_size, false, false,
+> +			QXL_GEM_DOMAIN_VRAM, 0, NULL, chunk_bo);
+> +	chunk->bo = chunk_bo;
+> +	list_add_tail(&chunk->head, &image->chunk_list);
+> +
+> +	ret = qxl_image_init(qdev, NULL, image, surface_base,
+> +			     0, 0, width, height, depth, stride);
+> +	return ret;
+> +
+> +}
+> +
+>   int
+>   qxl_image_alloc_objects(struct qxl_device *qdev,
+>   			struct qxl_release *release,
+> diff --git a/drivers/gpu/drm/qxl/qxl_object.c b/drivers/gpu/drm/qxl/qxl_object.c
+> index 66635c55cf85..9e00700f8f03 100644
+> --- a/drivers/gpu/drm/qxl/qxl_object.c
+> +++ b/drivers/gpu/drm/qxl/qxl_object.c
+> @@ -29,6 +29,23 @@
+>   #include "qxl_drv.h"
+>   #include "qxl_object.h"
+>   
+> +/* for drm panic */
+> +static void qxl_panic_ttm_bo_destroy(struct ttm_buffer_object *tbo)
+> +{
+> +	struct qxl_bo *bo;
+> +	struct qxl_device *qdev;
+> +
+> +	bo = to_qxl_bo(tbo);
+> +	qdev = to_qxl(bo->tbo.base.dev);
+> +
+> +	qxl_surface_evict(qdev, bo, false);
 
-Thank you very much.
+qxl_surface_evict() takes a mutex, so we should avoid to call it.
+It may leak things, but it's still better than deadlocking in the panic 
+handler.
 
-Reinette
+> +	WARN_ON_ONCE(bo->map_count > 0);
+> +	mutex_lock(&qdev->gem.mutex);
+> +	list_del_init(&bo->list);
+> +	mutex_unlock(&qdev->gem.mutex);
+
+I think you don't need to remove it from the list. It's added in 
+qxl_gem_object_create(), which I don't see it being called in the panic 
+flush function. (But this is something you can check to make sure).
+
+> +	drm_gem_object_release(&bo->tbo.base);
+> +}
+> +
+>   static void qxl_ttm_bo_destroy(struct ttm_buffer_object *tbo)
+>   {
+>   	struct qxl_bo *bo;
+> @@ -101,6 +118,51 @@ static const struct drm_gem_object_funcs qxl_object_funcs = {
+>   	.print_info = drm_gem_ttm_print_info,
+>   };
+>   
+> +/* for drm_panic */
+> +int qxl_panic_bo_create(struct qxl_device *qdev, unsigned long size,
+> +		  bool kernel, bool pinned, u32 domain, u32 priority,
+> +		  struct qxl_surface *surf, struct qxl_bo *bo)
+> +{
+
+All caller to qxl_panic_bo_create() have a priority of 0, and surf set 
+to NULL, they also have kernel and pinned set to false.
+So you can remove them from the argument list, and simplify this 
+function a bit. There are probably other parameters that can be omitted 
+like this, in the other "panic" functions.
+
+
+> +	struct ttm_operation_ctx ctx = { !kernel, false };
+> +	enum ttm_bo_type type;
+> +	int r;
+> +
+> +	if (kernel)
+> +		type = ttm_bo_type_kernel;
+> +	else
+> +		type = ttm_bo_type_device;
+> +
+> +	size = roundup(size, PAGE_SIZE);
+> +	r = drm_gem_object_init(&qdev->ddev, &bo->tbo.base, size);
+> +	if (unlikely(r))
+> +		return r;
+> +	bo->tbo.base.funcs = &qxl_object_funcs;
+> +	bo->type = domain;
+> +	bo->surface_id = 0;
+> +	INIT_LIST_HEAD(&bo->list);
+> +
+> +	if (surf)
+> +		bo->surf = *surf;
+> +
+> +	qxl_ttm_placement_from_domain(bo, domain);
+> +
+> +	bo->tbo.priority = priority;
+> +	r = ttm_bo_init_reserved(&qdev->mman.bdev, &bo->tbo, type,
+> +				 &bo->placement, 0, &ctx, NULL, NULL,
+> +				 &qxl_panic_ttm_bo_destroy);
+> +	if (unlikely(r != 0)) {
+> +		if (r != -ERESTARTSYS)
+> +			dev_err(qdev->ddev.dev,
+> +				"object_init failed for (%lu, 0x%08X)\n",
+> +				size, domain);
+> +		return r;
+> +	}
+> +	if (pinned)
+> +		ttm_bo_pin(&bo->tbo);
+> +	ttm_bo_unreserve(&bo->tbo);
+> +	return 0;
+> +}
+> +
+>   int qxl_bo_create(struct qxl_device *qdev, unsigned long size,
+>   		  bool kernel, bool pinned, u32 domain, u32 priority,
+>   		  struct qxl_surface *surf,
+> diff --git a/drivers/gpu/drm/qxl/qxl_object.h b/drivers/gpu/drm/qxl/qxl_object.h
+> index 875f63221074..4debb8ce6d08 100644
+> --- a/drivers/gpu/drm/qxl/qxl_object.h
+> +++ b/drivers/gpu/drm/qxl/qxl_object.h
+> @@ -53,6 +53,10 @@ static inline unsigned long qxl_bo_size(struct qxl_bo *bo)
+>   	return bo->tbo.base.size;
+>   }
+>   
+> +extern int qxl_panic_bo_create(struct qxl_device *qdev, unsigned long size,
+> +		  bool kernel, bool pinned, u32 domain, u32 priority,
+> +		  struct qxl_surface *surf,
+> +		  struct qxl_bo *bo);
+>   extern int qxl_bo_create(struct qxl_device *qdev,
+>   			 unsigned long size,
+>   			 bool kernel, bool pinned, u32 domain,
+
 
