@@ -1,105 +1,329 @@
-Return-Path: <linux-kernel+bounces-326360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CFA2976729
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:07:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 718D397672B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:08:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FA571C21F68
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:07:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9B121F23B4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD36B1A0BC9;
-	Thu, 12 Sep 2024 11:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934FD1A0BC9;
+	Thu, 12 Sep 2024 11:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K35sx3Vh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="wYtJeOs6";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="tY5idWfM";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="D86QzUYZ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OoK/u2Kf"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D9019F419;
-	Thu, 12 Sep 2024 11:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C580C19F429
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 11:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726139269; cv=none; b=Ld5X3jUh+MUzQznc+4DsqJfSctOt/SzTEZPDKzUfNcfRehlCha3pv7qDNzZgYn+UwKf/oLwVgQ7k2EofLQSE46YSY245DYMDIRFQSCXkXvQ8YsZXBR2eZTcTVEQT9xtx4T5RdbeAkPY8gZVvulqZz/i2q/Hs3MaRfK6/Fp4sWPk=
+	t=1726139290; cv=none; b=iCVubkuwJEcfHObarmWHitVtzNrcZZoy1oMgQAK1/sDP8+0NQK0IrSyUiSxjCnQcjP9Dxa7NAY0z0TJge/4Cd+vKQ2isCAa3i6Mx5sv/YApsaj3LinfjfGRc8J2nXG4ycAZF82PTCh5phzipEFo8dt8E+t53xC/A2qm9iTQLU2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726139269; c=relaxed/simple;
-	bh=uMm9K7FkVN1zTJRgHFB2LpcT5ciApExr305UqIDfoeo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BopiBtOTJcsp4o/4FPQVHNNjRof+dJIlbUwTI8vAjSs5fZdJFpC37vMgae5F4D0lT6+yXA6O3VOEHPzXVYpQLe2sczPoApAP0FPEe+DwwXU0po96kZc6LG8CHvvbFZTIsSGk6ImNYqDJs/+JEqb/ZNnJnAsBeWgplJoIQYXN+Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K35sx3Vh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DCB2C4CEC3;
-	Thu, 12 Sep 2024 11:07:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726139268;
-	bh=uMm9K7FkVN1zTJRgHFB2LpcT5ciApExr305UqIDfoeo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K35sx3VhAxnmgoLQ9ASSfjJqUAByGUwyIzCNVhWoXQC9kq5Lt0EPUN7lFoYsziIRG
-	 o+XH3xHPw6nFHDFfRsgdLX+gwnEAcs1iiT38fspnA4uZf5r2a3IZMD4lDcZts02mfA
-	 izha8gxRhSRT3zMDUUgZoE1WaCMdkr+XdGUqPjw8Z6BCZVaLDSz1jgO+26fn4RcogR
-	 QxUmLObAd34ywFaxCQ1OfQh2xl63igMT+scOkWBjxlfjZBbx0CZFiTLup5dih61nGJ
-	 rUToUVvC3q98TbHUrbdPVNV1CNn3c2GUMgZJ1iBHBFI28r1P0xgz3oeA6ODQzZ1V8w
-	 iXoNSYmddgqMw==
-Date: Thu, 12 Sep 2024 12:07:44 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Olof Johansson <olof@lixom.net>,
-	Arnd Bergmann <arnd@arndb.de>,
-	ARM <linux-arm-kernel@lists.infradead.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patch in the sound-asoc tree
-Message-ID: <6e5c1a20-2232-4a2d-9a0c-181d50a99ecb@sirena.org.uk>
-References: <20240912144459.634e3e09@canb.auug.org.au>
+	s=arc-20240116; t=1726139290; c=relaxed/simple;
+	bh=GgGK8wXd9G/rDngks+zGWQTQJh2mm3/VWK5v5QSf6ms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LX2ZUu+/qvCMRw9db5lPc09/U+ufNDwvp1yPXV6hXUw0MJmAg6wcbQYbWvgbKItgQGd5g+jDdkTeqQHXRJAZcMhVW8z3B1g4voOV6romOQ1az8jnbXyaUZbzWJxcj/f3gdMzabgG6DvdqpsWZ02W5CYH8kWWWnDn8K7nQfPbmgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=wYtJeOs6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=tY5idWfM; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=D86QzUYZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OoK/u2Kf; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C2E281FB6E;
+	Thu, 12 Sep 2024 11:08:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726139287; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=h/4Z5Sa2rW9H/76fL3w9v4HT3sraQ0XOlhLYae/Uthk=;
+	b=wYtJeOs6PGlrlWb4smlcbtDG3n/J2KHCauKQYSbjf3rwQK2HXDO6VvzJLS+FlV76tc70AM
+	PiBal+pfiKp0mBpmveXiesL9EZa5mJnebwjn2Ck7EOUjhbjCZkVDdpI30LJc567hETMpar
+	p6IauntO1cAIzout/RAXvdlwSbIOrzo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726139287;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=h/4Z5Sa2rW9H/76fL3w9v4HT3sraQ0XOlhLYae/Uthk=;
+	b=tY5idWfM1C78aJzvGLWzXTW66Jv/nr6oSn3ZEb4SHskFJAQqdcSBqpVBb4M8bx08Rc+PpB
+	6PtI7xBS0SjKiFBg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=D86QzUYZ;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="OoK/u2Kf"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726139286; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=h/4Z5Sa2rW9H/76fL3w9v4HT3sraQ0XOlhLYae/Uthk=;
+	b=D86QzUYZlXbO9l6GM19mIpgOq8gxEE764kbLz4dwb03kOVu24AMqwdotL5a5N7Eioru8ZY
+	FA9Q1czJKi2DqAYdvlbqRb0pbkgCk+U3sKU7WiIY5TaA7f1aVPUWv3J/akkCqJSt5GFg0k
+	PdsEofVY09bSmW3uqxNRqKMbVx6SH7k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726139286;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=h/4Z5Sa2rW9H/76fL3w9v4HT3sraQ0XOlhLYae/Uthk=;
+	b=OoK/u2KfInsJcKzxPLYAcGctxJFg6QGPfOUm9KO4W4U7U2Jb/kCWOOAm06nyh1DpFs1hSH
+	ZgCisYmU3BcrmVAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7D5AB13AD8;
+	Thu, 12 Sep 2024 11:08:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Uqv0HJbL4mbGQQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Thu, 12 Sep 2024 11:08:06 +0000
+Message-ID: <f360d860-e02b-4751-b55d-6a078b261a7f@suse.de>
+Date: Thu, 12 Sep 2024 13:08:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="kmUFAmnyecOFyjcw"
-Content-Disposition: inline
-In-Reply-To: <20240912144459.634e3e09@canb.auug.org.au>
-X-Cookie: Happiness is the greatest good.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm/gma500: replace drm_detect_hdmi_monitor() with
+ drm_display_info.is_hdmi
+To: Jani Nikula <jani.nikula@linux.intel.com>,
+ Tejas Vipin <tejasvipin76@gmail.com>, Laurent.pinchart@ideasonboard.com,
+ patrik.r.jakobsson@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, airlied@gmail.com, daniel@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240911180650.820598-1-tejasvipin76@gmail.com>
+ <b0f77fcc-5d84-4727-9a17-9d1f1e2c5b76@suse.de> <87o74ti7g5.fsf@intel.com>
+ <42b27020-a68e-4c43-800e-61977324be78@suse.de> <871q1pi5i3.fsf@intel.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <871q1pi5i3.fsf@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: C2E281FB6E
+X-Spam-Level: 
+X-Spamd-Result: default: False [-5.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[linux.intel.com,gmail.com,ideasonboard.com,kernel.org,ffwll.ch];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -5.01
+X-Spam-Flag: NO
+
+Hi
+
+Am 12.09.24 um 11:30 schrieb Jani Nikula:
+> On Thu, 12 Sep 2024, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+>> Hi
+>>
+>> Am 12.09.24 um 10:48 schrieb Jani Nikula:
+>>> On Thu, 12 Sep 2024, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+>>>> Hi
+>>>>
+>>>> Am 11.09.24 um 20:06 schrieb Tejas Vipin:
+>>>>> Replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi since
+>>>>> monitor HDMI information is available after EDID is parsed. Additionally
+>>>>> rewrite the code the code to have fewer indentation levels.
+>>>> The problem is that the entire logic is outdated. The content
+>>>> of cdv_hdmi_detect() should go into cdv_hdmi_get_modes(), the detect_ctx
+>>>> callback should be set to drm_connector_helper_detect_from_ddc() and
+>>>> cdv_hdmi_detect() should be deleted. The result is that ->detect_ctx
+>>>> will detect the presence of a display and ->get_modes will update EDID
+>>>> and other properties.
+>>> I guess I didn't get the memo on this one.
+>>>
+>>> What's the problem with reading the EDID at detect? The subsequent
+>>> drm_edid_connector_add_modes() called from .get_modes() does not need to
+>>> read the EDID again.
+>> With drm_connector_helper_detect_from_ddc() there is already a helper
+>> for detection. It makes sense to use it. And if we continue to update
+>> the properties in detect (instead of get_modes), what is the correct
+>> connector_status on errors? Right now and with the patch applied, detect
+>> returns status_disconnected on errors. But this isn't correct if there
+>> actually is a display. By separating detect and get_modes cleanly, we
+>> can detect the display reliably, but also handle errors better than we
+>> currently do in gma500. Get_modes is already expected to update the EDID
+>> property, [1] for detect it's not so clear AFAICT. I think that from a
+>> design perspective, it makes sense to have a read-only function that
+>> only detects the physical state of the connector and a read-write
+>> function that updates the connector's properties. Best regards Thomas
+>> [1]
+>> https://elixir.bootlin.com/linux/v6.10.9/source/include/drm/drm_modeset_helper_vtables.h#L865
+> So what if you can probe DDC but can't actually read an EDID of any
+> kind? IMO that's a detect failure.
+
+Not being able to read the EDID is not a failure IMHO. It's better to 
+report a detected display and only provide minimal support, than to 
+outright reject it. The display is essential for most users being able 
+to use the computer at all, so it's often better to display something at 
+lower quality than display nothing at all.
+
+>
+> Or how about things like CEC attach? Seems natural to do it at
+> .detect(). Doing it at .get_modes() just seems wrong. However, it needs
+> the EDID for physical address.
+>
+> I just don't think one size fits all here.
+
+The good thing about the EDID probe helpers is that it only reads a 
+minimal amount of data, like a single byte or the EDID header, so 
+something like that. Many drivers poll the DDC every 10 seconds via 
+->detect. Which means that code running in ->detect possibly runs 
+concurrently to other DRM operations, such as page flips. Hence, 
+->detect can interfere with the driver's hot path. The call to 
+->get_modes usually only runs after the connector status changes to 
+connected, which rarely happens. It's also not time critical as no 
+modeset has happened yet.
+
+And as everyone copies code from everyone else, we should establish best 
+practices that take such things into account. Even with drivers that 
+don't use connector polling, such as gma500, we should encourage devs to 
+do the right thing and move code out of ->detect.
+
+Best regards
+Thomas
 
 
---kmUFAmnyecOFyjcw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>
+> BR,
+> Jani.
+>
+>
+>>> I think it should be fine to do incremental refactors like the patch at
+>>> hand (modulo some issues I mention below).
+>>>
+>>> BR,
+>>> Jani.
+>>>
+>>>
+>>>> Do you have  a device for testing such a change?
+>>>>
+>>>> Best regards
+>>>> Thomas
+>>>>
+>>>>> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+>>>>> ---
+>>>>> Changes in v2:
+>>>>>        - Use drm_edid instead of edid
+>>>>>
+>>>>> Link to v1: https://lore.kernel.org/all/20240910051856.700210-1-tejasvipin76@gmail.com/
+>>>>> ---
+>>>>>     drivers/gpu/drm/gma500/cdv_intel_hdmi.c | 24 +++++++++++++-----------
+>>>>>     1 file changed, 13 insertions(+), 11 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
+>>>>> index 2d95e0471291..701f8bbd5f2b 100644
+>>>>> --- a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
+>>>>> +++ b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
+>>>>> @@ -128,23 +128,25 @@ static enum drm_connector_status cdv_hdmi_detect(
+>>>>>     {
+>>>>>     	struct gma_encoder *gma_encoder = gma_attached_encoder(connector);
+>>>>>     	struct mid_intel_hdmi_priv *hdmi_priv = gma_encoder->dev_priv;
+>>>>> -	struct edid *edid = NULL;
+>>>>> +	const struct drm_edid *drm_edid;
+>>>>> +	int ret;
+>>>>>     	enum drm_connector_status status = connector_status_disconnected;
+>>>>>     
+>>>>> -	edid = drm_get_edid(connector, connector->ddc);
+>>>>> +	drm_edid = drm_edid_read_ddc(connector, connector->ddc);
+>>> Just drm_edid_read() is enough when you're using connector->ddc.
+>>>
+>>>>> +	ret = drm_edid_connector_update(connector, drm_edid);
+>>>>>     
+>>>>>     	hdmi_priv->has_hdmi_sink = false;
+>>>>>     	hdmi_priv->has_hdmi_audio = false;
+>>>>> -	if (edid) {
+>>>>> -		if (edid->input & DRM_EDID_INPUT_DIGITAL) {
+>>>>> -			status = connector_status_connected;
+>>>>> -			hdmi_priv->has_hdmi_sink =
+>>>>> -						drm_detect_hdmi_monitor(edid);
+>>>>> -			hdmi_priv->has_hdmi_audio =
+>>>>> -						drm_detect_monitor_audio(edid);
+>>>>> -		}
+>>>>> -		kfree(edid);
+>>>>> +	if (ret)
+>>> This error path leaks the EDID.
+>>>
+>>>>> +		return status;
+>>>>> +
+>>>>> +	if (drm_edid_is_digital(drm_edid)) {
+>>>>> +		status = connector_status_connected;
+>>>>> +		hdmi_priv->has_hdmi_sink = connector->display_info.is_hdmi;
+>>>>> +		hdmi_priv->has_hdmi_audio = connector->display_info.has_audio;
+>>>>>     	}
+>>>>> +	drm_edid_free(drm_edid);
+>>>>> +
+>>>>>     	return status;
+>>>>>     }
+>>>>>     
 
-On Thu, Sep 12, 2024 at 02:44:59PM +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> The following commit is also in the arm-soc tree as a different commit
-> (but the same patch):
->=20
->   7817eb1ad353 ("ASoC: dt-bindings: cirrus,cs4271: Convert to dtschema")
->=20
-> This is commit
->=20
->   cf700e558e1d ("ASoC: dt-bindings: cirrus,cs4271: Convert to dtschema")
->=20
-> from the arm-soc tree.
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
-I wonder how that ended up in the arm-soc tree...  anyway, shouldn't
-matter if it's the same.
-
---kmUFAmnyecOFyjcw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbiy38ACgkQJNaLcl1U
-h9B0sgf+P5aqeVy32Ar5U1dadRG1BDaht8bj9KjfmDeArJn74H/mpg0LSiYpnrVN
-EQN+tpKXXqD3IKqZcgRm1c/wvXT3DVyLIdnqN65fz7+iuZHraKheWP7rrHhGlHOy
-OraOrYkWiwyEnJNSENAPaoSDwIze3y3F015KzHFUzTAgjSy36xiaZOUkyIoFqs3D
-1xXNqlY8OmOnnuUnPr7MM7XQq10XtZespIHQVLKJKv5QGe3FTpXibQd2B+AwM9lU
-n/fYhJBLGpEelb1S8aB6Q+DeZZt/APmVWDECysh2cShpDi9gW1176/ft+0xOy454
-VCTrZNzukQ8ybm9baGJ3rNavUkHIkw==
-=mPZh
------END PGP SIGNATURE-----
-
---kmUFAmnyecOFyjcw--
 
