@@ -1,50 +1,80 @@
-Return-Path: <linux-kernel+bounces-326401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 652739767E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:29:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A38239767A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:23:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C25A4B2435B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:29:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D62181C22187
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F0018BBBD;
-	Thu, 12 Sep 2024 11:26:03 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E8A1BC070;
+	Thu, 12 Sep 2024 11:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UsRoai/G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA431A76C9;
-	Thu, 12 Sep 2024 11:25:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F4B1BBBDC;
+	Thu, 12 Sep 2024 11:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726140362; cv=none; b=r9XyV5vnX+2+B+nJSgmVA3fOY2EPwef6bdjJyFFkPLTm560bd7RtvCue5H37Jr9woZld7X7yxKZeRNBFWsPdcCaAf1SYsnT59IOPEmgRm6KMnE3YM54RL5gKcikjP7TjNWq8v+s5DjNPdzH5kr2G9vbDnJkQ+r041OMK7S70iF8=
+	t=1726139826; cv=none; b=B2H+QqHL6JOxObSzi614r84YtnnegOTlBReYtlf1lh8+x2gcYjd1wb7ByXGb9SGloN37PxVv8XvG6o4n0XgAUL+IgTUJo9pKZs45TbK4v96HTY7+I0uVZXLtIzph9WKvp2vuA/Y1H0yHtkpJM+ei6qLTrHE8n1kNFV3icfFckS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726140362; c=relaxed/simple;
-	bh=gWnTaDv2sYbLLHEDy9Budvd7mrKb1RwArh6HoJ2nEyA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ThESQ4T2TDrzGCrFUeizepWjQfF0gZnEsjaiY567/r8UnW4vzpXfJa3L2UIJdfuU/X/1Ff8yViL/QiGYcQYfjrExsEtNdzK75RGWqABwaogXwH/2s8xH89Tcf7dtYoY5iHrvdpX+99Casd4wJ8zNGerpUJU4g3OodO5Bo8YzdTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4X4FV71L6Lz1S9mk;
-	Thu, 12 Sep 2024 19:25:19 +0800 (CST)
-Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6B5721A016C;
-	Thu, 12 Sep 2024 19:25:50 +0800 (CST)
-Received: from huawei.com (10.67.174.28) by kwepemd200013.china.huawei.com
- (7.221.188.133) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 12 Sep
- 2024 19:25:49 +0800
-From: Liao Chang <liaochang1@huawei.com>
-To: <rostedt@goodmis.org>, <mhiramat@kernel.org>, <mark.rutland@arm.com>,
-	<mathieu.desnoyers@efficios.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>
-Subject: [PATCH] function_graph: Simplify the initialization of fgraph LRU data
-Date: Thu, 12 Sep 2024 11:15:50 +0000
-Message-ID: <20240912111550.1752115-1-liaochang1@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726139826; c=relaxed/simple;
+	bh=bjk1/BnJ6tUGghkO4rbI4kdxFyJB6hE60cQFrbYFFeA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ifc9zP8ol1KcNwtBZ3BBbXUuvjCDZF8TyaLQ/s2dL8SOwIgrnI59I3B1BHI3wpUrovM+o6c2UhEIHhMAf/LnJFWaBMBo7pXykYxcHNIYxkUFoKwAmxoD6Lqm6XkI3zUWWQS4FrXj1tLl6c7HVkaQdgKjNrVwm/Ll1TlDKMsznSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UsRoai/G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E846BC4CEC3;
+	Thu, 12 Sep 2024 11:17:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726139825;
+	bh=bjk1/BnJ6tUGghkO4rbI4kdxFyJB6hE60cQFrbYFFeA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=UsRoai/Gl1O7Sp/5JxPcgDAMkM6ipvgzmFXZSPfGag9Gk7eyJG+VdfuCd9QQGwabJ
+	 pJBnMolBMOdTzs2oBWlCngWlKspt0aKi0IHd0NV1QihXlPw5ge9SnJv5HvlQ9XFtJ2
+	 wvSrcUz771/xmw0ldpU61b3KgEsbAG/eWsjbov/ea9Im3sNpjnLMXT3teQeLNuWGlW
+	 zII+LQmGfNzh72GCbpz3SCfX2gX6N1CfXTsSY+Ww/DdM41MOuzoB721TYZNr8BqV4f
+	 riGijidjEDVmzfKlimoUn1I9Q+v5auRTA9QlQWa335Fob1c5NshgGTh7q6eI8Gv2/D
+	 Lza+f4KBMQA/g==
+From: Leon Romanovsky <leon@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Keith Busch <kbusch@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	"Zeng, Oak" <oak.zeng@intel.com>,
+	Chaitanya Kulkarni <kch@nvidia.com>
+Cc: Leon Romanovsky <leonro@nvidia.com>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org,
+	linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [RFC v2 16/21] vfio/mlx5: Explicitly store page list
+Date: Thu, 12 Sep 2024 14:15:51 +0300
+Message-ID: <ec473be1e99725c3c40825254066538565f86dbb.1726138681.git.leon@kernel.org>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <cover.1726138681.git.leon@kernel.org>
+References: <cover.1726138681.git.leon@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,121 +82,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd200013.china.huawei.com (7.221.188.133)
 
-This patch uses [first ... last] = value to initialize fgraph_array[].
-And it declares all the callbacks in fgraph_stub as static, as they are
-not called from external code.
+From: Leon Romanovsky <leonro@nvidia.com>
 
-Signed-off-by: Liao Chang <liaochang1@huawei.com>
+As a preparation to removal scatter-gather table and unifying
+receive and send list, explicitly store page list.
+
+Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
 ---
- include/linux/ftrace.h |  1 -
- kernel/trace/fgraph.c  | 54 +++++++++++++++++++++---------------------
- 2 files changed, 27 insertions(+), 28 deletions(-)
+ drivers/vfio/pci/mlx5/cmd.c | 29 ++++++++++++-----------------
+ drivers/vfio/pci/mlx5/cmd.h |  1 +
+ 2 files changed, 13 insertions(+), 17 deletions(-)
 
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index fd5e84d0ec47..76bfc5560b57 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -1039,7 +1039,6 @@ typedef void (*trace_func_graph_ret_t)(struct ftrace_graph_ret *,
- typedef int (*trace_func_graph_ent_t)(struct ftrace_graph_ent *,
- 				      struct fgraph_ops *); /* entry */
- 
--extern int ftrace_graph_entry_stub(struct ftrace_graph_ent *trace, struct fgraph_ops *gops);
- bool ftrace_pids_enabled(struct ftrace_ops *ops);
- 
- #ifdef CONFIG_FUNCTION_GRAPH_TRACER
-diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-index d7d4fb403f6f..41d14b455185 100644
---- a/kernel/trace/fgraph.c
-+++ b/kernel/trace/fgraph.c
-@@ -172,20 +172,41 @@ enum {
- DEFINE_STATIC_KEY_FALSE(kill_ftrace_graph);
- int ftrace_graph_active;
- 
--static struct fgraph_ops *fgraph_array[FGRAPH_ARRAY_SIZE];
-+static int ftrace_graph_entry_stub(struct ftrace_graph_ent *trace,
-+				   struct fgraph_ops *gops)
-+{
-+	return 0;
-+}
-+
-+static void ftrace_graph_ret_stub(struct ftrace_graph_ret *trace,
-+				  struct fgraph_ops *gops)
-+{
-+}
-+
-+static struct fgraph_ops fgraph_stub = {
-+	.entryfunc = ftrace_graph_entry_stub,
-+	.retfunc = ftrace_graph_ret_stub,
-+};
-+
-+static struct fgraph_ops *fgraph_array[FGRAPH_ARRAY_SIZE] = {
-+	[0 ... FGRAPH_ARRAY_SIZE - 1] = &fgraph_stub,
-+};
- static unsigned long fgraph_array_bitmask;
- 
- /* LRU index table for fgraph_array */
- static int fgraph_lru_table[FGRAPH_ARRAY_SIZE];
--static int fgraph_lru_next;
--static int fgraph_lru_last;
-+static int fgraph_lru_next = -1;
-+static int fgraph_lru_last = -1;
- 
- /* Initialize fgraph_lru_table with unused index */
- static void fgraph_lru_init(void)
- {
--	int i;
-+	if ((fgraph_lru_next >= 0) && (fgraph_lru_last >= 0))
-+		return;
- 
--	for (i = 0; i < FGRAPH_ARRAY_SIZE; i++)
-+	fgraph_lru_next = fgraph_lru_last = 0;
-+
-+	for (int i = 0; i < FGRAPH_ARRAY_SIZE; i++)
- 		fgraph_lru_table[i] = i;
+diff --git a/drivers/vfio/pci/mlx5/cmd.c b/drivers/vfio/pci/mlx5/cmd.c
+index 1832a6c1f35d..34ae3e299a9e 100644
+--- a/drivers/vfio/pci/mlx5/cmd.c
++++ b/drivers/vfio/pci/mlx5/cmd.c
+@@ -422,6 +422,7 @@ void mlx5vf_free_data_buffer(struct mlx5_vhca_data_buffer *buf)
+ 	for_each_sgtable_page(&buf->table.sgt, &sg_iter, 0)
+ 		__free_page(sg_page_iter_page(&sg_iter));
+ 	sg_free_append_table(&buf->table);
++	kvfree(buf->page_list);
+ 	kfree(buf);
  }
  
-@@ -483,22 +504,6 @@ int __weak ftrace_disable_ftrace_graph_caller(void)
+@@ -434,39 +435,33 @@ static int mlx5vf_add_migration_pages(struct mlx5_vhca_data_buffer *buf,
+ 	unsigned int to_fill;
+ 	int ret;
+ 
+-	to_fill = min_t(unsigned int, npages, PAGE_SIZE / sizeof(*page_list));
+-	page_list = kvzalloc(to_fill * sizeof(*page_list), GFP_KERNEL_ACCOUNT);
++	to_fill = min_t(unsigned int, npages, PAGE_SIZE / sizeof(*buf->page_list));
++	page_list = kvzalloc(to_fill * sizeof(*buf->page_list), GFP_KERNEL_ACCOUNT);
+ 	if (!page_list)
+ 		return -ENOMEM;
+ 
++	buf->page_list = page_list;
++
+ 	do {
+ 		filled = alloc_pages_bulk_array(GFP_KERNEL_ACCOUNT, to_fill,
+-						page_list);
+-		if (!filled) {
+-			ret = -ENOMEM;
+-			goto err;
+-		}
++				buf->page_list + buf->npages);
++		if (!filled)
++			return -ENOMEM;
++
+ 		to_alloc -= filled;
+ 		ret = sg_alloc_append_table_from_pages(
+-			&buf->table, page_list, filled, 0,
++			&buf->table, buf->page_list + buf->npages, filled, 0,
+ 			filled << PAGE_SHIFT, UINT_MAX, SG_MAX_SINGLE_ALLOC,
+ 			GFP_KERNEL_ACCOUNT);
+ 
+ 		if (ret)
+-			goto err;
++			return ret;
+ 		buf->npages += filled;
+-		/* clean input for another bulk allocation */
+-		memset(page_list, 0, filled * sizeof(*page_list));
+ 		to_fill = min_t(unsigned int, to_alloc,
+-				PAGE_SIZE / sizeof(*page_list));
++				PAGE_SIZE / sizeof(*buf->page_list));
+ 	} while (to_alloc > 0);
+ 
+-	kvfree(page_list);
+ 	return 0;
+-
+-err:
+-	kvfree(page_list);
+-	return ret;
  }
- #endif
  
--int ftrace_graph_entry_stub(struct ftrace_graph_ent *trace,
--			    struct fgraph_ops *gops)
--{
--	return 0;
--}
--
--static void ftrace_graph_ret_stub(struct ftrace_graph_ret *trace,
--				  struct fgraph_ops *gops)
--{
--}
--
--static struct fgraph_ops fgraph_stub = {
--	.entryfunc = ftrace_graph_entry_stub,
--	.retfunc = ftrace_graph_ret_stub,
--};
--
- static struct fgraph_ops *fgraph_direct_gops = &fgraph_stub;
- DEFINE_STATIC_CALL(fgraph_func, ftrace_graph_entry_stub);
- DEFINE_STATIC_CALL(fgraph_retfunc, ftrace_graph_ret_stub);
-@@ -1250,12 +1255,7 @@ int register_ftrace_graph(struct fgraph_ops *gops)
+ struct mlx5_vhca_data_buffer *
+diff --git a/drivers/vfio/pci/mlx5/cmd.h b/drivers/vfio/pci/mlx5/cmd.h
+index 25dd6ff54591..5b764199db53 100644
+--- a/drivers/vfio/pci/mlx5/cmd.h
++++ b/drivers/vfio/pci/mlx5/cmd.h
+@@ -53,6 +53,7 @@ struct mlx5_vf_migration_header {
+ };
  
- 	mutex_lock(&ftrace_lock);
- 
--	if (!fgraph_array[0]) {
--		/* The array must always have real data on it */
--		for (i = 0; i < FGRAPH_ARRAY_SIZE; i++)
--			fgraph_array[i] = &fgraph_stub;
--		fgraph_lru_init();
--	}
-+	fgraph_lru_init();
- 
- 	i = fgraph_lru_alloc_index();
- 	if (i < 0 || WARN_ON_ONCE(fgraph_array[i] != &fgraph_stub)) {
+ struct mlx5_vhca_data_buffer {
++	struct page **page_list;
+ 	struct sg_append_table table;
+ 	loff_t start_pos;
+ 	u64 length;
 -- 
-2.34.1
+2.46.0
 
 
