@@ -1,325 +1,184 @@
-Return-Path: <linux-kernel+bounces-326504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5FB597692E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:31:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EAC4976932
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:31:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3ADBDB212AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:31:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5164284260
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062F91A0BC5;
-	Thu, 12 Sep 2024 12:31:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D690F1A4F2F;
+	Thu, 12 Sep 2024 12:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g4muzwlk"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="QdNCstQo"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011049.outbound.protection.outlook.com [52.101.70.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F50A47
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 12:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726144263; cv=none; b=l0OlOobaBq9ctSZw1geN1NicVGexzUfULfZXOMklqUr3/8fbX4SJBulf3FXEH+SE0abuVXerAoMhqTcK7sBoCy73krKzXNvuVxq0StKsBfS6NEtAvJ/l9n0WqMdV+/TsGhBE2eYLekN+ff933L8H2nY5QR10pjK4j8Kv02Odt7o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726144263; c=relaxed/simple;
-	bh=ypfhf4rMxR6lr4q8W4SwWe/uXxVs+utbA5uCei2u930=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fv9JheIc5LGy/NWOqSv7VTKmt6hg4Y2Je5yA543IBOe8GJusUVDUNwmCAdsstqsJ1ccXCM0MWI1xAuliociQmMPYvCT8OU0Uy7hyoOqB9mGtobK8Hns4J/CBeow19JQKNrhflhf1b5k5tKAvNJ0AMBSufkGoFnPBxD5PsySco1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g4muzwlk; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2d8fa2ca5b1so718980a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 05:31:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726144261; x=1726749061; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kgTK2QnG0+iKmVKeShtiGZan+2/Q7TbF2kF0e2VUzG8=;
-        b=g4muzwlkxANkJc2Iy96tVKnnABvSBhVG/tVeY6tc57SbyzXZSGgFj6I526ex5nqPFM
-         bhiQqHCuLhUV+LKj+yHwuumsEZaXNaB7dh98SxNHJJ++VGAd4nPvuylGf7Z9sPTX4P7o
-         R02FmhWDI/pOu+4sPE8Qxd3n5QXSTd64ML5/AqPr1O4cTsj/CBCwLvXzVDfPD5W0rwdn
-         Ei7ftcAHqDmiJwUuDQG3LtiF/CWDKAyTLiknzY5+8K4k/UMD6a7AvUyv7/rjofVppKxe
-         1NVWU7sG2SLgo2Peq50AmrR/82YCy7cF4FFFon+sWa70dew8NehXOsPEslzK9KsWiifE
-         +jyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726144261; x=1726749061;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kgTK2QnG0+iKmVKeShtiGZan+2/Q7TbF2kF0e2VUzG8=;
-        b=VaDwd1NVb/C7Cz5CPh4tfy+ZGRB8x5IJBYJa2ypTPQNsqB2qlazm6tpBxDOtdd/npN
-         mCvagnwmAIJ2fUf+VDmc7aaLriqCTBqsOPxhYP1jwvx/igwd8jQurMlJIgx7gk6Jr/v7
-         W7eMhlWhHD/2EGeDFCo3YecCszWa3LRN4z6vAdyvNdyccsuDYfAUf3fwaKRvbsEkrgIU
-         UwLwRYQhtSMqhWtqFDSy5EuycDJuJgewku8/cR12OcIfvFe2tUCZZwMOrm74+caYzodk
-         prog8tn7fr/ThqBlbZmcx9sVSKVKZ9pVnvnWxx34X+6Y0Y3Nq7CXtCA2PQby5ly+5m3k
-         q/3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVmk0igQlkxVfhq+DIzA+dDT/hXs0REzcuAIDH2a1OGj0/q61AIBuI1e1/1tHi9XUPRVykqxsF8Hl1b8/M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPhUG47g1NLiMvwPiC4K0V2VqFXQbUD6LsmDi41PZ1m57wOnzH
-	v+bAHAC8t/xvqVr+fNcnXP2iy3QAnsBbbo4kegfvMaHA9+8tdtfvqBgPEwGsGfx4aA5M7XBHceR
-	4qKDV+PbzY+qkpWSZH1N13ofsUyTSFvwnty3N2Q==
-X-Google-Smtp-Source: AGHT+IGWO/KmZajpa6DdgT4HJwICA0A3wZb4ycRVmxIerveiQ9fpqJr2aYUggxRaAnfHmmdYeEOf2fyuJpuLZlrVz04=
-X-Received: by 2002:a17:90b:1e4d:b0:2d3:bc5f:715f with SMTP id
- 98e67ed59e1d1-2db9ff96352mr3450800a91.10.1726144260295; Thu, 12 Sep 2024
- 05:31:00 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA021A47;
+	Thu, 12 Sep 2024 12:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726144273; cv=fail; b=X05sljbNiYbAEt/hv5gsTZqQwM/DrtwQ3F63g+xxl00Rbk+omrfeyFV+XkROuFBuDuDVd7FUccP5BQlMgFqIJTfwJWQXlpIZQJdBeMVhD5n4OuJDuIXbn3wgr5hUC/d8YYb+RKAFshHjwJERPdT6t9Jg3mNlaoXuW01oVTnEbVY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726144273; c=relaxed/simple;
+	bh=KMpdzdWKr+E1zzzkP+HAzBO6+CTnnrtHEOOeo0tr0c4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=lUHRD1SL88K2D2rlM3ND1xq6Qkif37L9yRC5wDzmyJ7j1ot/BhWR+dIRkWIK1Dn6N/FooYR+KrJjS24MJlFw/tfaWJRIDLyALlUWXz38/WaSn5qtHUZDzi8aPeyOYGj79pRodrFeIdjuWkMxBEvDYRWNXY3plYIqiVjpTPDkBg4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=QdNCstQo; arc=fail smtp.client-ip=52.101.70.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=whaURcnguVfjbTGyTYPLRpg7aQPDXuLB+gBQ2pGutjczpHT4GISap4w5e7oFDzh79gipWZ4lq3K8spSNdbKdmp69LUrVR1QhOgRbAhKh9tYvvaAuHvWYZVYTBDzS2QPgBTSJhphSvXD1AVXGB1OOsCmED8vRw+YHcy6uNLQorYbGtmuwwWERv0CIaDnTL3pnMdDJY1P9e9CT0KNqAzmBlQHb3sMw559gBI0DuEYzSqYpQ0jtnrE0kQ9E/9d64XaOZGVF6FxZ7jfHf54JVmdaAKP0Q1LngsZNBIC9j7aOWw8H4EyvfoD3ypMbnnVR6sKyK9tBO6H7gR/ilB3cZRgrvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KMpdzdWKr+E1zzzkP+HAzBO6+CTnnrtHEOOeo0tr0c4=;
+ b=lT0q+GU+zvWJBcVoXIsDc5DXMTMSFWuxlFpRyE6qefFRzIc5rsk8gm42C3ofW60G744FeY1NbwsU0M2q8mWElJAeS7/dzjUbe8cXGUIMFTXJdljLGmfy+J2cg+1I5PFJXEQ8HZvXBctjE8XwsRTuL+R/vKK8d4BAOqCBQIVdMge2VNWiwZ795gr1mLovRZWxu7yrpzKE+7XVRoXn/zx6d5TypfygibA5QifWAOLQZdPzE3A19j4HIp50nEjDfND4BYh7ae27i+DuGYFPrm7pzxyF5hUmErsPmsc5FS3FWctG2KQYJSgZDWaPzu7m/j6bd53nWSpFgre9viGcufJePA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KMpdzdWKr+E1zzzkP+HAzBO6+CTnnrtHEOOeo0tr0c4=;
+ b=QdNCstQo5J9U+tScU9cgcweuBe+96q5OIBs3bDGwrjvne7W30VtA1PFxAoc3jhpMj3CrT7Mw6BDxag1NMuMgaim/4CahuD3dJMxJpDCBwXAPCy27LBIYFxCgz9AGcXlZx6ZQVgees64QCRmQYK/vBgyJW5mjpmVrggHcad36pBWnpbi6+PPWmbrcMvb8pBUFXSaVVVewLM6Ts8sMmGOr+Xgmjy25vZsTsTpD7J8EhGpwmH5xaVw87ws6fYripniBzUPS/+clvh5gpbwoLoYARShEs6fhBxvk942hnAPSjFLiT2fbjTdmbcPF7JPSk14NSu52jIjq9Ra9zlrwF9//Ug==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by AM8PR04MB7937.eurprd04.prod.outlook.com (2603:10a6:20b:248::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.18; Thu, 12 Sep
+ 2024 12:31:06 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%6]) with mapi id 15.20.7962.016; Thu, 12 Sep 2024
+ 12:31:06 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: "John B. Wyatt IV" <jwyatt@redhat.com>, "Peng Fan (OSS)"
+	<peng.fan@oss.nxp.com>
+CC: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>, John
+ Kacur <jkacur@redhat.com>, "open list:CPU POWER MONITORING SUBSYSTEM"
+	<linux-pm@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/2] pm: cpupower: bench: print path fopen failed
+Thread-Topic: [PATCH 1/2] pm: cpupower: bench: print path fopen failed
+Thread-Index: AQHbBLNWC31a55JN0EKkRuDK1MOc/LJUFQYAgAAALVA=
+Date: Thu, 12 Sep 2024 12:31:06 +0000
+Message-ID:
+ <PAXPR04MB8459B7E460A05A0DF07615FB88642@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20240912013846.3058728-1-peng.fan@oss.nxp.com>
+ <ZuLeVCUx4S8mn-2z@rhfedora>
+In-Reply-To: <ZuLeVCUx4S8mn-2z@rhfedora>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|AM8PR04MB7937:EE_
+x-ms-office365-filtering-correlation-id: 5d0db83e-d19a-42e7-e2b8-08dcd326c643
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?gj8lKBmVogOLgvyLVkO48GBOjlttypLTBy7a2kXUGspnL4AnTBDQSR2bFIhR?=
+ =?us-ascii?Q?v3E0LJB+Cmz/uHcUPsn0nQnb1PPtnPvygZ2qyXhxZ3GN3el4iLbDN4w92bBx?=
+ =?us-ascii?Q?h5C7HO9q25iGC+myfH1tzK+GrqfE3lSydi8P4Bd6gg98Mgr8Csnl7dlsASLH?=
+ =?us-ascii?Q?CNMde+bFT1Fwbqz7zJ7CBld1QyQVxGyShZHTh1SE1WLYs7af/VGOZ/FKewTP?=
+ =?us-ascii?Q?w7xE2N86Qq0g6hg82ktizeHGg/r4zS6gi62P8QiEU9+Em95g4k1Q2rYjMvdI?=
+ =?us-ascii?Q?WwQt+7m3d5KkyJ+H+bp4toyA9COl5HKM04kznVqPn2V1Qdyjc3occ+Z3Zb/x?=
+ =?us-ascii?Q?NpsD48JrZSZMuDJtQrIxBW7F4Wh90N//+8ytAUrjOqbr4dOF9eX+8xCBnm7g?=
+ =?us-ascii?Q?tjM5qlerPM+AbouiZc40tad1onvk7+Hu6o9gxL3sKNCy1vTjilvw0g6fbblg?=
+ =?us-ascii?Q?1EvViPCl63sgiy/uAF98/NwC87UJzOuJLABj3KEWeMXvWFKJDGxZXfvLSL4R?=
+ =?us-ascii?Q?yV06orNg+TgFlMI4Aidg+V6fJqK83Vu0JqELrH0p5us085OgFjAvx3A/6f+Z?=
+ =?us-ascii?Q?or4O9NHXEE+ME2B2CoGeEG21DwhJYMq/lUmEclhzGH74WHNcxd+kxA3IvnR2?=
+ =?us-ascii?Q?K/4yOh1kejwtlSSvlLgWM3lzaRweF+RCjkTfxqywTVBITF7OosY3Dkw1o8Ug?=
+ =?us-ascii?Q?xW9nLeKeCzf3htc3Mxl6t1rXNvZ4CEEToCw67nCiBHfcGkstG4kTm5LQ/+MR?=
+ =?us-ascii?Q?uRpv3xEiQuGI9ak6CRe/ir/HQeiy5hewNr/b7RUx/IxXMH9EULpuBNWkk3r0?=
+ =?us-ascii?Q?B59CW/LGl8nZMuzEo82bOK5czac4M9et/B0E0D6Ub3a5AL87wIEQuSj59G4I?=
+ =?us-ascii?Q?Vp70dmTqLobBHW3F0ksUDoKtRtr+gMXfrPYFIknVIDpJE4Li/E1w8be4brN6?=
+ =?us-ascii?Q?HjfJmyOvaNp0CDSTSOYx4iSWoW2GvCfs5VLly/fXN+W3k23CxDoNey75ENQS?=
+ =?us-ascii?Q?2M2MAxUuPD0uR3fnbCjdP+XNDooNZCaKkFamIKhGQd/hPeFKht+ITmYYTWmY?=
+ =?us-ascii?Q?KLNcCe0cRiyfMNMcUmOR4JoU8V7Icg80oZbgmIV5Qf90ecr5Ljs7wYvMwBAp?=
+ =?us-ascii?Q?arFeEC+djDDkDOqwitXnyXMJ9QmIIPUqnc40B1pE1PR4lQ0fMwPAKwqy6dlK?=
+ =?us-ascii?Q?KY9KcNgz/f1oUhlWotgzcu8TDpfFzkHE9n+4KuB5kNiFxIxUAzqEEk6rCtxk?=
+ =?us-ascii?Q?vQxSAy5pFrUAdN73cBF0Cf/+xZkeV58nenfbSA7zpe6ewF0AqX7LCNyEYhAG?=
+ =?us-ascii?Q?UnDjCGsB6IF0XsvNi+DliSv8kdsHIZdyYaUu5XbEphTyXq0RBaaZIEBsrNLV?=
+ =?us-ascii?Q?MDyvN/U/eUDTMiq7/LMIkjG+oaTBoZqPtNhO+p/6ZZ7X3ds3ZQ=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?cGahToKIJxdKNG+aIonPaGOg847dqib1M7mnSDElYjL66beE5axsFWo1l9cF?=
+ =?us-ascii?Q?MwerOOCHIY4skgd1AoDCxkWDIRbprY1hgtyueqhK4p0JB1WgDvjMq8IsvGxw?=
+ =?us-ascii?Q?GjuBs3tyrcYWTuUXuahV/RBryILtHGATWA4E7aNWACEvg71PmZK7edmlmExZ?=
+ =?us-ascii?Q?/RiBWxkWyhDgDCH1yjR8RAK0teTA22aIfY+vvCwn9KYf203ZiVRtjwb/ikVe?=
+ =?us-ascii?Q?ddZK9YcYQatEMyyEFbvVM08RJbpH68mIgZC9jNoOhrxZ3YqIYC1IGadAsto1?=
+ =?us-ascii?Q?knQOKq0oO/vMA2qHFAxobFfRTNsIeHlfvDu76cYkIMJto136cDMh4NbwLf9n?=
+ =?us-ascii?Q?8D8hFpCi1r9ThxTft/nEfpP/gA9XBQ7KDJAhHOvlMNKKf04YZ4MsJxeZG6Eb?=
+ =?us-ascii?Q?dDsQbrC03Ib3x1TZGH5rxIukaL9zJMJgm9r/sb2tJFhoKnqmZxV+vWlQoYXE?=
+ =?us-ascii?Q?R3cAfv1QWdEmz8PBj+TzGaEsSlBjhJwoKdA6TNhpLi4dLth2lFMo2JJHouoq?=
+ =?us-ascii?Q?bF362aXFKp9Xu9XTlqACSaOf1SFL4TtDId1RihhrlThkoedNXsl9RrfojixA?=
+ =?us-ascii?Q?OYfGR0ylvixQyg28ygi3kz/W2VFgUP+lBVciCUMZe8pS967JE72A+gDPJdWu?=
+ =?us-ascii?Q?ahiPmpv5Q56MDNSO35md5EyifhtVlpL/Q4QpBwObRbFKcR1gDw4bXEh/6K2p?=
+ =?us-ascii?Q?MQSa7MTfK0lbvI3SopHtbJtHUVTboda3dG+bpYLEFLd329JewfNHBuTJEBg0?=
+ =?us-ascii?Q?qLBJUDuwFwDyVewMxbHJOkvOLvbBV9biExDFXBxz6mEK3gygYL7WUP5i8tTQ?=
+ =?us-ascii?Q?XrNTmla51M3B6lID9N2PIGRcjHkwVtPDJGL7oAoEwQug5U6FbxMOakiqit/A?=
+ =?us-ascii?Q?c3gaqFQ7xIxfEnF1SSGKbCR3T5ldXXWed9pzx/iH8hHvXHuuWoakurPPYxB7?=
+ =?us-ascii?Q?tfcZ+FwgOaI7dD4FM8lEB5S35Zk3abSpONYdJgGH56lAAQLumSSUxkQyKFl6?=
+ =?us-ascii?Q?518XxtnwqqxCXIDkPhoXhO/oge8ZzJ9zZ/AOqoAJUBqisdEMAKpIyXzKa/Xp?=
+ =?us-ascii?Q?CCjf7tm97DO1iDkZyova5Avqg7mpg6eZ4yinyRbC3j5LHvNS1mktcYFJtdpM?=
+ =?us-ascii?Q?bysqvmDCCoAbQXw8qwLmS7CEVjmThOIQqFQ09bDw1x4Y/ny+tBvYPG2yCbjZ?=
+ =?us-ascii?Q?1gz0ov1Snw8mHLA3d0hAHT2Eyo6UPX8tAyEicKWLe1k0aLUCMn/8JEbyBH7f?=
+ =?us-ascii?Q?R0hbbkO1gkVQ844785xiY906/wIui7O0sYDy9rMEl8ijwQbyyLR8WyVt2EMI?=
+ =?us-ascii?Q?KlqvOcYioJ56ymlSlRN6T5p8BTCe13DcjHsbk1zDZUZ1i5QLCyJEiqBMeMBo?=
+ =?us-ascii?Q?gUN67JttFh0G+rzkkizrhoXM+qk8UU78ZnsYK3epjaeSXajn5uNf/MkeO3oE?=
+ =?us-ascii?Q?OQC4Ay2uriLHk2/N51WWmQQkS8JL6VtVNJvUpvM+LbWaMrHBwcn4Pzp65bkO?=
+ =?us-ascii?Q?fafobLst4nv4rcVWAuM4uDz0SuFir5eIyJmnYP9V+vxUaem/GoojkbW2nMu8?=
+ =?us-ascii?Q?TZWTRgO2zZumsIonfWo=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
- <20240830130309.2141697-6-vincent.guittot@linaro.org> <ccf4095f-5fca-42f4-b9fe-aa93e703016e@arm.com>
-In-Reply-To: <ccf4095f-5fca-42f4-b9fe-aa93e703016e@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Thu, 12 Sep 2024 14:30:49 +0200
-Message-ID: <CAKfTPtDm_e2feardrXN0M3679F67+gys=U7ZHQoyLL_LjzD04w@mail.gmail.com>
-Subject: Re: [RFC PATCH 5/5] sched/fair: Add push task callback for EAS
-To: Pierre Gondois <pierre.gondois@arm.com>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com, 
-	rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org, qyousef@layalina.io, 
-	hongyan.xia2@arm.com
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5d0db83e-d19a-42e7-e2b8-08dcd326c643
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Sep 2024 12:31:06.8057
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: eVvbP1qcFc6X6oYAw88TwxuJY+R/U2NL7hcEveDAnEmfhb40nXpiJ6wVd+L568mFtgxz/6c4hXmCRNRKnQyxyg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8PR04MB7937
 
-Hello Pierre,
+Hi John,
 
-On Wed, 11 Sept 2024 at 16:03, Pierre Gondois <pierre.gondois@arm.com> wrote:
->
-> Hello Vincent,
->
-> On 8/30/24 15:03, Vincent Guittot wrote:
-> > EAS is based on wakeup events to efficiently place tasks on the system, but
-> > there are cases where a task will not have wakeup events anymore or at a
-> > far too low pace. For such situation, we can take advantage of the task
-> > being put back in the enqueued list to check if it should be migrated on
-> > another CPU. When the task is the only one running on the CPU, the tick
-> > will check it the task is stuck on this CPU and should migrate on another
-> > one.
-> >
-> > Wake up events remain the main way to migrate tasks but we now detect
-> > situation where a task is stuck on a CPU by checking that its utilization
-> > is larger than the max available compute capacity (max cpu capacity or
-> > uclamp max setting)
-> >
-> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > ---
-> >   kernel/sched/fair.c  | 211 +++++++++++++++++++++++++++++++++++++++++++
-> >   kernel/sched/sched.h |   2 +
-> >   2 files changed, 213 insertions(+)
-> >
-> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > index e46af2416159..41fb18ac118b 100644
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
->
-> [snip]
->
-> > +
-> > +static inline void check_misfit_cpu(struct task_struct *p, struct rq *rq)
-> > +{
-> > +     int new_cpu, cpu = cpu_of(rq);
-> > +
-> > +     if (!sched_energy_enabled())
-> > +             return;
-> > +
-> > +     if (WARN_ON(!p))
-> > +             return;
-> > +
-> > +     if (WARN_ON(p != rq->curr))
-> > +             return;
-> > +
-> > +     if (is_migration_disabled(p))
-> > +             return;
-> > +
-> > +     if ((rq->nr_running > 1) || (p->nr_cpus_allowed == 1))
-> > +             return;
->
-> I tried the code on a Pixel6 with the following setup:
-> - without the above (rq->nr_running > 1) condition
-> - without the push task mechanism
-> i.e. tasks without regular wakeups only have the opportunity to
-> run feec() via the sched_tick. It seemed sufficient to avoid
-> the problematic you mentioned:
-> - having unbalanced UCLAMP_MAX tasks in a pd, e.g. 1 UCLAMP_MAX task
->    per little CPU, except one little CPU with N UCLAMP_MAX tasks
-> - downgrading UCLAMP_MAX tasks that could run on smaller CPUs
->    but have no wakeups and thus don't run feec()
+> Subject: Re: [PATCH 1/2] pm: cpupower: bench: print path fopen failed
+>=20
+> Hello Peng,
+>=20
+> These two seem like two separate patches and usually a series has a
+> cover letter. Did you mean to send them separately or is something
+> missing?
 
-The main problem with your test is that you always call feec() for the
-running task so you always have to wake up the migration thread to
-migrate the current running thread which is quite inefficient. The
-push mechanism only takes a task which is not the current running one
-and we don't need to wake up migration thread which is simpler and
-more efficient. We check only one task at a time and will not loop on
-an unbounded number of tasks after a task switch or a tick
+I think the two patches are just small patches, so send them
+together and not write cover-letter for them.
 
->
-> Thus I was wondering it it would not be better to integrate the
-> EAS to the load balancer instead (not my idea, but don't remember
-> who suggested that).
+I could write the cover-letter in v2 if there are any comments.
 
-My 1st thought was also to use load balance to pull tasks which were
-stuck on the wrong CPU (as mentioned in [1]) but this solution is not
-scalable as we don't want to test all runnable task on a cpu and it's
-not really easy to know which cpu and which tasks should be checked
+Thanks,
+Peng.
 
-[1] https://youtu.be/PHEBAyxeM_M?si=ZApIOw3BS4SOLPwp
+>=20
+> --
+> Sincerely,
+> John Wyatt
+> Software Engineer, Core Kernel
+> Red Hat
 
-> Or otherwise if just running feec() through the sched_tick path
-> would not be sufficient (i.e. this patch minus the push mechanism).
-
-As mentioned above, the push mechanism is more efficient than active migration.
-
-
->
-> > +
-> > +     if (!task_misfit_cpu(p, cpu))
-> > +             return;
-> > +
-> > +     new_cpu = find_energy_efficient_cpu(p, cpu);
-> > +
-> > +     if (new_cpu == cpu)
-> > +             return;
-> > +
-> > +     /*
-> > +      * ->active_balance synchronizes accesses to
-> > +      * ->active_balance_work.  Once set, it's cleared
-> > +      * only after active load balance is finished.
-> > +      */
-> > +     if (!rq->active_balance) {
-> > +             rq->active_balance = 1;
-> > +             rq->push_cpu = new_cpu;
-> > +     } else
-> > +             return;
-> > +
-> > +     raw_spin_rq_unlock(rq);
-> > +     stop_one_cpu_nowait(cpu,
-> > +             active_load_balance_cpu_stop, rq,
-> > +             &rq->active_balance_work);
-> > +     raw_spin_rq_lock(rq);
->
-> I didn't hit any error, but isn't it eligible to the following ?
->    commit f0498d2a54e7 ("sched: Fix stop_one_cpu_nowait() vs hotplug")
->
-
-I will recheck but being called from the tick, for the local cpu and
-with a running thread no being cpu_stopper_thread, should protect us
-from the case describe in this commit
-
->
-> > +}
-> > +
-> > +static inline int has_pushable_tasks(struct rq *rq)
-> > +{
-> > +     return !plist_head_empty(&rq->cfs.pushable_tasks);
-> > +}
-> > +
-> > +static struct task_struct *pick_next_pushable_fair_task(struct rq *rq)
-> > +{
-> > +     struct task_struct *p;
-> > +
-> > +     if (!has_pushable_tasks(rq))
-> > +             return NULL;
-> > +
-> > +     p = plist_first_entry(&rq->cfs.pushable_tasks,
-> > +                           struct task_struct, pushable_tasks);
-> > +
-> > +     WARN_ON_ONCE(rq->cpu != task_cpu(p));
-> > +     WARN_ON_ONCE(task_current(rq, p));
-> > +     WARN_ON_ONCE(p->nr_cpus_allowed <= 1);
-> > +
-> > +     WARN_ON_ONCE(!task_on_rq_queued(p));
-> > +
-> > +     /*
-> > +      * Remove task from the pushable list as we try only once after
-> > +      * task has been put back in enqueued list.
-> > +      */
-> > +     plist_del(&p->pushable_tasks, &rq->cfs.pushable_tasks);
-> > +
-> > +     return p;
-> > +}
-> > +
-> > +/*
-> > + * See if the non running fair tasks on this rq
-> > + * can be sent to some other CPU that fits better with
-> > + * their profile.
-> > + */
-> > +static int push_fair_task(struct rq *rq)
-> > +{
-> > +     struct task_struct *next_task;
-> > +     struct rq *new_rq;
-> > +     int prev_cpu, new_cpu;
-> > +     int ret = 0;
-> > +
-> > +     next_task = pick_next_pushable_fair_task(rq);
-> > +     if (!next_task)
-> > +             return 0;
-> > +
-> > +     if (is_migration_disabled(next_task))
-> > +             return 0;
-> > +
-> > +     if (WARN_ON(next_task == rq->curr))
-> > +             return 0;
-> > +
-> > +     /* We might release rq lock */
-> > +     get_task_struct(next_task);
-> > +
-> > +     prev_cpu = rq->cpu;
-> > +
-> > +     new_cpu = find_energy_efficient_cpu(next_task, prev_cpu);
-> > +
-> > +     if (new_cpu == prev_cpu)
-> > +             goto out;
-> > +
-> > +     new_rq = cpu_rq(new_cpu);
-> > +
-> > +     if (double_lock_balance(rq, new_rq)) {
->
->
-> I think it might be necessary to check the following:
->    if (task_cpu(next_task) != rq->cpu) {
->      double_unlock_balance(rq, new_rq);
-
-Yes good point
-
->      goto out;
->    }
->
-> Indeed I've been hitting the following warnings:
-> - uclamp_rq_dec_id():SCHED_WARN_ON(!bucket->tasks)
-> - set_task_cpu()::WARN_ON_ONCE(state == TASK_RUNNING &&
->                      p->sched_class == &fair_sched_class &&
->                      (p->on_rq && !task_on_rq_migrating(p)))
-> - update_entity_lag()::SCHED_WARN_ON(!se->on_rq)
->
-> and it seemed to be caused by the task not being on the initial rq anymore.
-
-Do you have a particular use case to trigger this ? I haven't faced
-this in the various stress tests that  I did
-
-
->
-> > +
-> > +             deactivate_task(rq, next_task, 0);
-> > +             set_task_cpu(next_task, new_cpu);
-> > +             activate_task(new_rq, next_task, 0);
-> > +             ret = 1;
-> > +
-> > +             resched_curr(new_rq);
-> > +
-> > +             double_unlock_balance(rq, new_rq);
-> > +     }
-> > +
-> > +out:
-> > +     put_task_struct(next_task);
-> > +
-> > +     return ret;
-> > +}
-> > +
->
-> Regards,
-> Pierre
 
