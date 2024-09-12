@@ -1,172 +1,231 @@
-Return-Path: <linux-kernel+bounces-326003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42633976110
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:11:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F06BB976119
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:14:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F949B2253B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:11:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 608381F23038
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C4461898EE;
-	Thu, 12 Sep 2024 06:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b="M3SyxtvX";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eCbvp2pT"
-Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036C5189521;
+	Thu, 12 Sep 2024 06:14:21 +0000 (UTC)
+Received: from mail03.siengine.com (mail03.siengine.com [43.240.192.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20D65028C;
-	Thu, 12 Sep 2024 06:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC2517966F;
+	Thu, 12 Sep 2024 06:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.240.192.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726121453; cv=none; b=RwLGA75/ayWwaiKSs3z5fIEc3YB1MfrjyGQZMyIrZ4sX+OHB1qY0S/QEZh8LIkGJJhZa4bZS7o397S4dx7UY4jJQkMwWQ1qnqo8Ug6//5ztZsD+MOjH2s+5wmlbzjgDTDLCyuYH0DWUWU+91wRDRnLh75M0sgqOubVM0Dmxv8EE=
+	t=1726121660; cv=none; b=FwRtiHItiCMu8Q413R/xVWwAhHqL1Rn8AFKr6NbiS0HN5dKedMTPop1gAY+LBgR63P9SvAXRUaw92n9damf5LKvdrqsniIDVsGj1c1mSpzg30g08QAQNoZTDO44ZQqSPQisJxt8Xf3FHl0zuq98nW99gJ9RvK/dew3uVHbuOnrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726121453; c=relaxed/simple;
-	bh=kbYJiF6jPrl6B4HZ/oc1OWhI1LwpJSqM8A5kS4JT1OQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mXWYnf3DdDaeWE55QscD571S781a2m8EdO01zZVVi0aDMg2rEoZOWJ0PNgNwKmzcsKxkg5JCN5IkrG2gVFxDWPoUOaQXqMjZD4AOxTQUNI//hX4klY90DO18re/QAvrkWnkhrVEndOU+u6QJZQtbdxaP4KFXTpea0p4yb2f7JYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net; spf=pass smtp.mailfrom=who-t.net; dkim=pass (2048-bit key) header.d=who-t.net header.i=@who-t.net header.b=M3SyxtvX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eCbvp2pT; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=who-t.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=who-t.net
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id ACE6011402E9;
-	Thu, 12 Sep 2024 02:10:50 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Thu, 12 Sep 2024 02:10:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=who-t.net; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1726121450; x=1726207850; bh=0nD5pzeuAh
-	1E4W3B+9CT7q3mBAtGFaHeDO2wy99F/Uw=; b=M3SyxtvXezTRUbdjysmrUibFNQ
-	U+6MU0yO9Tt3m4nNsJyGwhyVQBkK8aArTVndILYmtdTpvg9gtehafTyfn2uVsR22
-	ouVtq45pl3FUrjL/KTkZkwGWjB24G7z04s2R0HtQnAy8BMZD8+loVWXCLMHUj8nS
-	oCDOZafyAv36YOE/fJ2CmzQah/wLWqllFdZjJLuKCEDYR/XIGLkr2XlrdJ8b8BDs
-	K902mnj9G+/7MDiQlFV3XxP1QeVJ7r1Qy6C+7UH+wwMg5mF4kBWIMNCL3Bq4yDmm
-	KIXZsAIZjkZtXsTG84fxQEdhfsq1bYk5QEnCZhPWgCTwOKZVQJ8HKLhLhPhQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1726121450; x=1726207850; bh=0nD5pzeuAh1E4W3B+9CT7q3mBAtG
-	FaHeDO2wy99F/Uw=; b=eCbvp2pTL7js4B+RQCjhdkoQnKMg0jtKzsCq6+JqgmCG
-	7muJONbLBWUddbrempeowLJnp6e6Xra1/Y9el2Rt5BM8Kd6PT7zHuAMDVW+a0Kkk
-	6VyaPTvvX+S/nh+BdKKa6AQ7EKvGmLWh7RZwiIDz8xegby8rNNXOj6soki8BmerS
-	Hyfw99z/zyD80FG3D13/iTRGhd0wJuhXAmuvAHv6qW3u3W7o37jADeGDVczd1BQN
-	cF+JsCU2O3gfTMYqEjIiSAcWB0qEuGjwtEzSVApmU6I9/ONl+WxIllAd4e0snBZB
-	DGZ4jVX9OE57D8oTI94KGAsITSvGO25Truori7u6XQ==
-X-ME-Sender: <xms:6oXiZrOZy4YJdENlltVsYw_I03uxmAuERHE6N4jAz3grPMkMQsovHw>
-    <xme:6oXiZl9fwYMYIAoCiu4GSLExnEVufQquWBfBkOQVVLD1vFbLB7caqHnlwmP0UNNKF
-    o2O0339e2KuSCU6iu0>
-X-ME-Received: <xmr:6oXiZqRN-RkCIkxfy5BX2If_8vmHgpvyB0GZzVaFGoCeN91hhP2j8JS0wYiKYCdldb1mHl1AbkhhlzV7GaHeaQ1KJhnGla95O6ze>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejvddguddthecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpefrvghtvghrucfjuhhtthgvrhgvrhcuoehpvghtvghrrdhhuhhtthgvrh
-    gvrhesfihhohdqthdrnhgvtheqnecuggftrfgrthhtvghrnhepkedvkeegheefjefgvddu
-    fffhveehjeffvefgiefgkefhudeifedugfetudfgtefgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepphgvthgvrhdrhhhuthhtvghrvghrseif
-    hhhoqdhtrdhnvghtpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprh
-    gtphhtthhopegsvghnthhishhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjihhk
-    ohhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihesvghnughrihhfthdrtghomh
-    dprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhn
-    uhigqdhinhhpuhhtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
-    hugidqkhhsvghlfhhtvghsthesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopegsphhfsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:6oXiZvvS-hopthftEolupZnJnvsCG2oQyqgJq30vwi9fZACIkfGHZQ>
-    <xmx:6oXiZjcbATwrFNazBNJF6QBxUT_CGBD1MV-QxaSBmcOJIVH00LSZRw>
-    <xmx:6oXiZr2chtTF4G8CapEahqzkQhC3WHC_GRnUb5jD0Z3xKMO1GXIzfw>
-    <xmx:6oXiZv8b_ERmFRShM02qaIuzwXx-d8_XF9azZDJmUMJbNoDjZ3VlBw>
-    <xmx:6oXiZizn5nC7tc7TLWmsuE8jipH5iss_r1IPHJ6Efs4SN2QUY8B0q_DI>
-Feedback-ID: i7ce144cd:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 12 Sep 2024 02:10:47 -0400 (EDT)
-Date: Thu, 12 Sep 2024 16:10:29 +1000
-From: Peter Hutterer <peter.hutterer@who-t.net>
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: Jiri Kosina <jikos@kernel.org>, Vicki Pfau <vi@endrift.com>,
-	Shuah Khan <shuah@kernel.org>, linux-input@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: Re: [PATCH HID v2 02/11] HID: core: save one kmemdup during .probe()
-Message-ID: <20240912061029.GA559032@quokka>
-References: <20240910-hid-bpf-hid-generic-v2-0-083dfc189e97@kernel.org>
- <20240910-hid-bpf-hid-generic-v2-2-083dfc189e97@kernel.org>
+	s=arc-20240116; t=1726121660; c=relaxed/simple;
+	bh=hM1P/lQZGviyb4gu6OWelaNWuWyZLsPRnkQJA87DSEM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OIir/avduwYfD9A8/KfLoKqVS3S0VQ73lwpCk99zpIKEidh+fN47avCN145YWq4IrGKFj0/uo0HV4aeBshiITu7j+EMuTd40/XX/FYPGT+sHnj7iK5kTK+4h+7QTPhon/tP1/wgPlDV3+a4axqDgOyHwxatPBH+Tp7NsjN2cJYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com; spf=pass smtp.mailfrom=siengine.com; arc=none smtp.client-ip=43.240.192.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siengine.com
+Received: from dsgsiengine01.siengine.com ([10.8.1.61])
+	by mail03.siengine.com with ESMTPS id 48C6DWcR016290
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 12 Sep 2024 14:13:32 +0800 (+08)
+	(envelope-from hongchi.peng@siengine.com)
+Received: from SEEXMB03-2019.siengine.com (SEEXMB03-2019.siengine.com [10.8.1.33])
+	by dsgsiengine01.siengine.com (SkyGuard) with ESMTPS id 4X46ZM49lYz7ZMhG;
+	Thu, 12 Sep 2024 14:13:31 +0800 (CST)
+Received: from SEEXMB05-2019.siengine.com (10.8.1.153) by
+ SEEXMB03-2019.siengine.com (10.8.1.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.11; Thu, 12 Sep 2024 14:13:31 +0800
+Received: from SEEXMB03-2019.siengine.com (10.8.1.33) by
+ SEEXMB05-2019.siengine.com (10.8.1.153) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.9; Thu, 12 Sep 2024 14:13:31 +0800
+Received: from localhost (10.12.10.38) by SEEXMB03-2019.siengine.com
+ (10.8.1.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.2.1544.11 via Frontend
+ Transport; Thu, 12 Sep 2024 14:13:31 +0800
+From: Kimriver Liu <kimriver.liu@siengine.com>
+To: <jarkko.nikula@linux.intel.com>
+CC: <andriy.shevchenko@linux.intel.com>, <mika.westerberg@linux.intel.com>,
+        <jsd@semihalf.com>, <andi.shyti@kernel.org>,
+        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kimriver.liu@siengine.com>
+Subject: [PATCH v10] i2c: designware: fix controller is holding SCL low while ENABLE bit is disabled
+Date: Thu, 12 Sep 2024 14:11:12 +0800
+Message-ID: <cd5f6b0a57adf6fdff7bf3c24cb319bf778d61d6.1726121009.git.kimriver.liu@siengine.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910-hid-bpf-hid-generic-v2-2-083dfc189e97@kernel.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-DKIM-Results: [10.8.1.61]; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:mail03.siengine.com 48C6DWcR016290
 
-On Tue, Sep 10, 2024 at 11:43:38PM +0900, Benjamin Tissoires wrote:
-> Turns out the first kmemdup is only required for the .report_fixup()
-> driver callback. There is no need to do two kmemdup() in a raw in case
+It was observed that issuing ABORT bit (IC_ENABLE[1]) will not
+work when IC_ENABLE is already disabled.
 
-typo: "in a row"?
+Check if ENABLE bit (IC_ENABLE[0]) is disabled when the controller
+is holding SCL low. If ENABLE bit is disabled, the software need
+to enable it before trying to issue ABORT bit. otherwise,
+the controller ignores any write to ABORT bit.
 
-Cheers,
-  Peter
+These kernel logs show up whenever an I2C transaction is
+attempted after this failure.
+i2c_designware e95e0000.i2c: timeout waiting for bus ready
+i2c_designware e95e0000.i2c: timeout in disabling adapter
 
-> .report_fixup() is not present.
-> 
-> Signed-off-by: Benjamin Tissoires <bentiss@kernel.org>
-> 
-> ---
-> 
-> new in v2
-> ---
->  drivers/hid/hid-core.c | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-> index a5f5415571cb..172746a082f9 100644
-> --- a/drivers/hid/hid-core.c
-> +++ b/drivers/hid/hid-core.c
-> @@ -1206,7 +1206,7 @@ int hid_open_report(struct hid_device *device)
->  	struct hid_item item;
->  	unsigned int size;
->  	const __u8 *start;
-> -	__u8 *buf;
-> +	__u8 *buf = NULL;
->  	const __u8 *end;
->  	const __u8 *next;
->  	int ret;
-> @@ -1227,14 +1227,18 @@ int hid_open_report(struct hid_device *device)
->  	if (WARN_ON(!start))
->  		return -ENODEV;
->  
-> -	buf = kmemdup(start, size, GFP_KERNEL);
-> -	if (buf == NULL)
-> -		return -ENOMEM;
-> +	if (device->driver->report_fixup) {
-> +		/*
-> +		 * device->driver->report_fixup() needs to work
-> +		 * on a copy of our report descriptor so it can
-> +		 * change it.
-> +		 */
-> +		buf = kmemdup(start, size, GFP_KERNEL);
-> +		if (buf == NULL)
-> +			return -ENOMEM;
->  
-> -	if (device->driver->report_fixup)
->  		start = device->driver->report_fixup(device, buf, &size);
-> -	else
-> -		start = buf;
-> +	}
->  
->  	start = kmemdup(start, size, GFP_KERNEL);
->  	kfree(buf);
-> 
-> -- 
-> 2.46.0
-> 
+The patch can be fix the controller cannot be disabled while
+SCL is held low in ENABLE bit is already disabled.
+
+Fixes: 2409205acd3c ("i2c: designware: fix __i2c_dw_disable() in case master is holding SCL low")
+Signed-off-by: Kimriver Liu <kimriver.liu@siengine.com>
+Reviewed-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+
+---
+V9->V10:
+	1. return a boolean value for i2c_dw_is_controller_active()
+	2. update comments and indentation alignment
+V8->V9:
+	1. update commit messages and comments
+	2. add Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+	3. add fixes tag
+	4. change function i2c_dw_is_master_idling to i2c_dw_is_controller_active
+	5. update subject as: fix controller is holding SCL low while ENABLE bit is disabled
+V7->V8:
+	1. calculate this delay based on the actual speed in use
+	  fsleep(DIV_ROUND_CLOSEST_ULL(10 * MICRO, t->bus_freq_hz))
+	2. add Reviewed-by: Mika Westerberg<mika.westerberg@linux.intel.com>
+V6->V7:
+	1. add Subject versioning [PATCH v7]
+	2. change fsleep(25) to usleep_range(25, 250)
+	3. Add macro definition DW_iC_ENABLE_ENABLE to fix compile errors
+	  | Reported-by: kernel test robot <lkp@intel.com>
+	  | Closes:https://lore.kernel.org/oe-kbuild-all/202409082011.9JF6aYsk-lkp@intel.com/
+	4. base: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=master
+V5->V6: restore i2c_dw_is_master_idling() function checking
+V4->V5: delete master idling checking
+V3->V4:
+	1. update commit messages and add patch version and changelog
+	2. move print the error message in i2c_dw_xfer
+V2->V3: change (!enable) to (!(enable & DW_IC_ENABLE_ENABLE))
+V1->V2: used standard words in function names and addressed review comments
+
+link to V1:
+https://lore.kernel.org/lkml/20240904064224.2394-1-kimriver.liu@siengine.com/
+---
+ drivers/i2c/busses/i2c-designware-common.c | 14 +++++++++
+ drivers/i2c/busses/i2c-designware-core.h   |  1 +
+ drivers/i2c/busses/i2c-designware-master.c | 35 ++++++++++++++++++++++
+ 3 files changed, 50 insertions(+)
+
+diff --git a/drivers/i2c/busses/i2c-designware-common.c b/drivers/i2c/busses/i2c-designware-common.c
+index e8a688d04aee..48b8d1c1080c 100644
+--- a/drivers/i2c/busses/i2c-designware-common.c
++++ b/drivers/i2c/busses/i2c-designware-common.c
+@@ -441,6 +441,7 @@ int i2c_dw_set_sda_hold(struct dw_i2c_dev *dev)
+ 
+ void __i2c_dw_disable(struct dw_i2c_dev *dev)
+ {
++	struct i2c_timings *t = &dev->timings;
+ 	unsigned int raw_intr_stats;
+ 	unsigned int enable;
+ 	int timeout = 100;
+@@ -453,6 +454,19 @@ void __i2c_dw_disable(struct dw_i2c_dev *dev)
+ 
+ 	abort_needed = raw_intr_stats & DW_IC_INTR_MST_ON_HOLD;
+ 	if (abort_needed) {
++		if (!(enable & DW_IC_ENABLE_ENABLE)) {
++			regmap_write(dev->map, DW_IC_ENABLE, DW_IC_ENABLE_ENABLE);
++			/*
++			 * Wait 10 times the signaling period of the highest I2C
++			 * transfer supported by the driver (for 400KHz this is
++			 * 25us) to ensure the I2C ENABLE bit is already set
++			 * as described in the DesignWare I2C databook.
++			 */
++			fsleep(DIV_ROUND_CLOSEST_ULL(10 * MICRO, t->bus_freq_hz));
++			/* Keep ENABLE bit is already set before Setting ABORT.*/
++			enable |= DW_IC_ENABLE_ENABLE;
++		}
++
+ 		regmap_write(dev->map, DW_IC_ENABLE, enable | DW_IC_ENABLE_ABORT);
+ 		ret = regmap_read_poll_timeout(dev->map, DW_IC_ENABLE, enable,
+ 					       !(enable & DW_IC_ENABLE_ABORT), 10,
+diff --git a/drivers/i2c/busses/i2c-designware-core.h b/drivers/i2c/busses/i2c-designware-core.h
+index e9606c00b8d1..e45daedad967 100644
+--- a/drivers/i2c/busses/i2c-designware-core.h
++++ b/drivers/i2c/busses/i2c-designware-core.h
+@@ -109,6 +109,7 @@
+ 						 DW_IC_INTR_RX_UNDER | \
+ 						 DW_IC_INTR_RD_REQ)
+ 
++#define DW_IC_ENABLE_ENABLE			BIT(0)
+ #define DW_IC_ENABLE_ABORT			BIT(1)
+ 
+ #define DW_IC_STATUS_ACTIVITY			BIT(0)
+diff --git a/drivers/i2c/busses/i2c-designware-master.c b/drivers/i2c/busses/i2c-designware-master.c
+index c7e56002809a..0cc5833214d5 100644
+--- a/drivers/i2c/busses/i2c-designware-master.c
++++ b/drivers/i2c/busses/i2c-designware-master.c
+@@ -253,6 +253,31 @@ static void i2c_dw_xfer_init(struct dw_i2c_dev *dev)
+ 	__i2c_dw_write_intr_mask(dev, DW_IC_INTR_MASTER_MASK);
+ }
+ 
++/*
++ * This functions waits controller idling before disabling I2C
++ * When the controller is not in the IDLE state,
++ * MST_ACTIVITY bit (IC_STATUS[5]) is set.
++ * Values:
++ * 0x1 (ACTIVE): Controller not idle
++ * 0x0 (IDLE): Controller is idle
++ * The function is called after returning the end of the current transfer
++ * Returns:
++ * False when controller is in IDLE state.
++ * True when controller is in ACTIVE state.
++ */
++static bool i2c_dw_is_controller_active(struct dw_i2c_dev *dev)
++{
++	u32 status;
++
++	regmap_read(dev->map, DW_IC_STATUS, &status);
++	if (!(status & DW_IC_STATUS_MASTER_ACTIVITY))
++		return false;
++
++	return regmap_read_poll_timeout(dev->map, DW_IC_STATUS, status,
++				       !(status & DW_IC_STATUS_MASTER_ACTIVITY),
++					1100, 20000) != 0;
++}
++
+ static int i2c_dw_check_stopbit(struct dw_i2c_dev *dev)
+ {
+ 	u32 val;
+@@ -788,6 +813,16 @@ i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
+ 		goto done;
+ 	}
+ 
++	/*
++	 * This happens rarely (~1:500) and is hard to reproduce. Debug trace
++	 * showed that IC_STATUS had value of 0x23 when STOP_DET occurred,
++	 * if disable IC_ENABLE.ENABLE immediately that can result in
++	 * IC_RAW_INTR_STAT.MASTER_ON_HOLD holding SCL low. Check if
++	 * controller is still ACTIVE before disabling I2C.
++	 */
++	if (i2c_dw_is_controller_active(dev))
++		dev_err(dev->dev, "controller active\n");
++
+ 	/*
+ 	 * We must disable the adapter before returning and signaling the end
+ 	 * of the current transfer. Otherwise the hardware might continue
+-- 
+2.17.1
+
 
