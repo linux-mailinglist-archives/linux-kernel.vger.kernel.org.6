@@ -1,82 +1,126 @@
-Return-Path: <linux-kernel+bounces-325843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2D24975EE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:27:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8110975EE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:28:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D38F61C21E7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:27:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53D6DB23931
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47DD41C65;
-	Thu, 12 Sep 2024 02:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A38B548E0;
+	Thu, 12 Sep 2024 02:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="M0lMF+m5"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF773C24;
-	Thu, 12 Sep 2024 02:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="O1EXxiv2"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A423A1DB
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 02:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726108023; cv=none; b=g7OV0yCjM9AN1iWncLsVFxT8lKovnxbJKsoTaI9h3dC7J+FGwXYuEfQC7bvxLZDuFLyv6Z4YMILOyglaWb3W78f9Ic477atO6ssPUeAPX6Gc36lRPn8VPCcxvCH5R8Sgex7vHNzTJQ9HXrMcncCxm7XZxGtcT5ysIYDmtHNJZLw=
+	t=1726108120; cv=none; b=CZbiU1mKKugYuUC3OxncH5eytPXfrBKEqSl2LfsAdqMHllSIzTCG5tDTfM1eTVd6AiUmqOCKB9PiC7ji7nneF/aG1EzKqv2mTF7QvdJIiD53CtP9wJpr2jZsLkuc6xUSPjANIDMbUNO9PEBUV7Cm9dekUfkYyCDX5qDD7I9Lexc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726108023; c=relaxed/simple;
-	bh=BXcYBcx2y4YZCH6yjZQSNtfF5AUmkdKLYxNVH2SITfQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Po86kMRLzQU4FC9hJn1gTn8m7BV6K38v9IEiNgTCviQbMzoXIKFGsbTWbV9/U/Y5baoqBxqZEORicvNSNUGh5K/J0Bs7bPVYk4F/fF3PSn56bh4uTfp+ENWbhL9S6E1CW+yG5Sh+f8DsyE5dwZ8Fv3OEj3H0hhyYuoa0QM6dDVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=M0lMF+m5; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1726108019;
-	bh=4T+rDZ0xJ2wcnLPEZ14zB7/g2o2IjvlNz0qDcwZKU/o=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date;
-	b=M0lMF+m5rm6jq08qEg42+8u0hQV2kXypF2aBpBQs6gO8f1qcAEKHWuwD6zUseVOah
-	 oE6YLdG/BwvAQu3nuBIPjNhsvSzHxgMiYtiuI9c8iGjlQVwoaDfddfClpj3JEJi4bG
-	 LrxU6d3FLkP7ppDGdf8BNZbvnLf7oVX0ICXDVaBs0qE7LEeE7fHpUBTOFdZ8EKNurC
-	 e0FB8+H4ZKWBRUl8E9dUFHiTVwjB+a08QpZoCnSDSaimkOf4dlEpP7Fm0jzOLEXCXs
-	 xyZM6OPdFVagMaLEfgD720gpdosvfbg8RlUdPGx6QgoXN4DUE8w7uQtFziFaXPuHU/
-	 S4eV5aabqvBAw==
-Received: from [127.0.1.1] (ppp118-210-89-8.adl-adc-lon-bras32.tpg.internode.on.net [118.210.89.8])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id F1A34650D6;
-	Thu, 12 Sep 2024 10:26:58 +0800 (AWST)
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: patrick@stwcx.xyz, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
- Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
-Cc: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240910022236.1564291-1-Delphine_CC_Chiu@wiwynn.com>
-References: <20240910022236.1564291-1-Delphine_CC_Chiu@wiwynn.com>
-Subject: Re: [PATCH v1] ARM: dts: aspeed: yosemite4: Enable adc15
-Message-Id: <172610801889.712033.6359452612409373701.b4-ty@codeconstruct.com.au>
-Date: Thu, 12 Sep 2024 11:56:58 +0930
+	s=arc-20240116; t=1726108120; c=relaxed/simple;
+	bh=AY7t6yh868IjzJ2oFBCco6lFuCwlNNAtA3zqeFTqSOU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FH0nBxSve/5f/0JxblVLA8pFLTkns3ABjHBIG7+rMeCLYmNpT1wmvHhjwY+L4BKRGEggBYpZYN9i57NwxbMyiW8nHjVx3B5U08sY78QIxk/YZSKSWMDDHpqJR6csS1bmZhzCQlphaWrGwnn5Q5XlzYbujCd47oa6UmcAOwv4ULc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=O1EXxiv2; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version:
+	Content-Type; bh=e6zkEQS3wj7QBN8oFubOcQpIMuqjGBx3aY/1Y2uIOJ4=;
+	b=O1EXxiv2N3lrqcjQDxMSvhjLojapEp02LOpeNjauBi9izNpWci/dujuu5XoJPP
+	7k3G/GFRqMxIKjhmDbmIwYoACRIdZpnxdYnpkxp4Yvr2fy05ILtoKQoG+T8yVYS0
+	Z10wP6y2Q2FekPJfpwVjZQfW9drzmrDzh8pswYHHd5u00=
+Received: from localhost.localdomain (unknown [111.35.191.143])
+	by gzsmtp4 (Coremail) with SMTP id sygvCgBXJzacUeJmJglwBg--.45767S4;
+	Thu, 12 Sep 2024 10:28:03 +0800 (CST)
+From: David Wang <00107082@163.com>
+To: kent.overstreet@linux.dev,
+	surenb@google.com
+Cc: akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH] Add accumulated call counter for memory allocation profiling
+Date: Thu, 12 Sep 2024 10:27:40 +0800
+Message-Id: <20240912022740.6125-1-00107082@163.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <koa5yyc2opu23giistqjaw3eo47gjcxpx56ekrbsbhltk74wzz@pvym4ollouzu>
+References: <koa5yyc2opu23giistqjaw3eo47gjcxpx56ekrbsbhltk74wzz@pvym4ollouzu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:sygvCgBXJzacUeJmJglwBg--.45767S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJFW3uFWrCF17XFy8Aw1rCrg_yoW5XF1xpa
+	yrt3ZrKFsxXr1ktwnIq347GFyrGw4xGr15JFsYqry7uwnxWr1Igr17tr4ruFZ2krn7JFyj
+	q3yjva4293Z8ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UhYFtUUUUU=
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMxVYqmXAnzbDTQAAsW
 
-On Tue, 10 Sep 2024 10:22:36 +0800, Delphine CC Chiu wrote:
-> Enable Yosemite4 adc15 config for monitoring P3V_BAT_SCALED.
-> 
-> 
+At 2024-07-02 05:58:50, "Kent Overstreet" <kent.overstreet@linux.dev> wrote:
+>On Mon, Jul 01, 2024 at 10:23:32AM GMT, David Wang wrote:
+>> HI Suren, 
+>> 
+>> At 2024-07-01 03:33:14, "Suren Baghdasaryan" <surenb@google.com> wrote:
+>> >On Mon, Jun 17, 2024 at 8:33 AM David Wang <00107082@163.com> wrote:
+>> >>
+>> >> Accumulated call counter can be used to evaluate rate
+>> >> of memory allocation via delta(counters)/delta(time).
+>> >> This metrics can help analysis performance behaviours,
+>> >> e.g. tuning cache size, etc.
+>> >
+>> >Sorry for the delay, David.
+>> >IIUC with this counter you can identify the number of allocations ever
+>> >made from a specific code location. Could you please clarify the usage
+>> >a bit more? Is the goal to see which locations are the most active and
+>> >the rate at which allocations are made there? How will that
+>> >information be used?
+>>  
+>> Cumulative counters can be sampled with timestamp,  say at T1, a monitoring tool got a sample value V1,
+>> then after sampling interval, at T2,  got a sample value V2. Then the average rate of allocation can be evaluated
+>> via (V2-V1)/(T2-T1). (The accuracy depends on sampling interval)
+>> 
+>> This information "may" help identify where the memory allocation is unnecessary frequent,  
+>> and  gain some  better performance by making less memory allocation .
+>> The performance "gain" is just a guess, I do not have a valid example.
+>
+>Easier to just run perf...
 
-Thanks, I've applied this to be picked up through the BMC tree.
+Hi, 
 
-[1/1] ARM: dts: aspeed: yosemite4: Enable adc15
-      commit: e3b9afda18a6dc7975197a061c698142deeccc1b
+To Kent:
+It is strangely odd to reply to this when I was trying to debug a performance issue for bcachefs :)
 
---
-Andrew Jeffery <andrew@codeconstruct.com.au>
+Yes it is true that performance bottleneck could be identified by perf tools, but normally perf
+is not continously running (well, there are some continous profiling projects out there).
+And also, memory allocation normally is not the biggest bottleneck,
+ its impact may not easily picked up by perf. 
+
+Well, in the case of https://lore.kernel.org/lkml/20240906154354.61915-1-00107082@163.com/,
+the memory allocation is picked up by perf tools though. 
+But with this patch, it is easier to spot that memory allocations behavior are quite different:
+When performance were bad, the average rate for 
+"fs/bcachefs/io_write.c:113 func:__bio_alloc_page_pool" was 400k/s,
+while when performance were good, rate was only less than 200/s.
+
+(I have a sample tool collecting /proc/allocinfo, and the data is stored in prometheus,
+the rate is calculated and plot via prometheus statement:
+irate(mem_profiling_count_total{file=~"fs/bcachefs.*", func="__bio_alloc_page_pool"}[5m]))
+
+Hope this could be a valid example demonstrating the usefulness of accumulative counters
+of memory allocation for performance issues.
+
+
+Thanks
+David
+
+ 
 
 
