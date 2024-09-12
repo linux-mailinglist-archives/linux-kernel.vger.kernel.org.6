@@ -1,133 +1,105 @@
-Return-Path: <linux-kernel+bounces-326499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1551097691D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:28:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E5F3976921
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:28:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92B4A1F23655
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:28:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0027B218B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271F61A4E78;
-	Thu, 12 Sep 2024 12:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A3D1A4F24;
+	Thu, 12 Sep 2024 12:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="AAdVE0CB";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="cZQ5IMM7"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NZwVJlC8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491881A0BEE
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 12:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DC91A4E9A
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 12:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726144088; cv=none; b=qMX4VNvpXw3H03iLeFP/WBX59grHfmP12p19/5hjYm3PL9scS+G1sx+kFI7JNGDI0YRH4sFF429ofjwnpPCYDahgINUEcFBFyBqDtGeOIkVoFIXQN3n6zHa41W3vPXiTkTs8LFfqfC969WJooWeWibVbj6z1OwbfhqyaNjky2u8=
+	t=1726144093; cv=none; b=p9ESKkJZOixvu7C89B8gNaudZrVrVoqDy4gonCRhHzdUKbGFaoB6XR79v3tQLwTmYujw+6nkHBqBmwik+RLSHLTyxkN01AxmbDC5+V8BFZnt5eGm2jxz4odRwHpdWjXRNqjI5eYgJ8Owxsfl66cioB54PnZe0Z7D4zY0RfHCo0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726144088; c=relaxed/simple;
-	bh=9ZjnxTfWpjA1p4zlfI33l+DzUXnH6P+5rE0W9WBIxOs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HXlYWPBGAlUozzgOubRZT4WXjCYMULUGVIkdy6dIK1+OcGgzBtYxIa4Gd1+qb90gQIm6bHWIe6NApFnTwprY0JYQQbbybrbOE0GDzZbWXZNc8ulcJiY7+n5Vr3n5WozHgbpdug6QS142WXNr/5mp1htJiAnXC1QUjsi448cQHGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=AAdVE0CB; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=cZQ5IMM7; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1726144086;
-	bh=9ZjnxTfWpjA1p4zlfI33l+DzUXnH6P+5rE0W9WBIxOs=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=AAdVE0CB6ztaej2NjLWMuVFfb6OO2Y+Kdl/dGNBOjZCV/TNYh+ARWTRoHcT2Faqpg
-	 vMDKUPr4HrgZYdR95dEm42ppafoPM1NXE5aK5scdSuyuDhocrYXogt/HRVbkJ/MlQL
-	 yUMz3L1aDn4dhujn5awfVtwmOQYhskI3t1nEmqFc=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 2EF1E1286B75;
-	Thu, 12 Sep 2024 08:28:06 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id pNQr286WJefl; Thu, 12 Sep 2024 08:28:06 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1726144085;
-	bh=9ZjnxTfWpjA1p4zlfI33l+DzUXnH6P+5rE0W9WBIxOs=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=cZQ5IMM770InZlyQTl/BVP2feJT63s5tz6Xlc5LfMYjzPY/vuZotfONtKQpj2TEZw
-	 igF4o7D6uchL1NKkZ1iqhSgl/QmOEnZNZT4LMLyvGV4gRkIufV2bCjIwrDq6UD2cHi
-	 aoTzxzO2OrfRbMD6+/WksiC9n8Npvh9i0C2Jd9bE=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 228DE1285DB2;
-	Thu, 12 Sep 2024 08:28:05 -0400 (EDT)
-Message-ID: <86e6659bc8dd135491dc34bdb247caf05d8d2ad8.camel@HansenPartnership.com>
-Subject: Re: [PATCH RFC 3/3] tsm: Add TVM Measurement Sample Code
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Cedric Xing <cedric.xing@intel.com>, Dan Williams
- <dan.j.williams@intel.com>,  Samuel Ortiz <sameo@rivosinc.com>, Lukas
- Wunner <lukas@wunner.de>, Dionna Amalie Glaze <dionnaglaze@google.com>,
- Qinkun Bao <qinkun@google.com>, Mikko Ylinen
- <mikko.ylinen@linux.intel.com>, Kuppuswamy Sathyanarayanan
- <sathyanarayanan.kuppuswamy@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev
-Date: Thu, 12 Sep 2024 08:28:02 -0400
-In-Reply-To: <20240907-tsm-rtmr-v1-3-12fc4d43d4e7@intel.com>
-References: <20240907-tsm-rtmr-v1-0-12fc4d43d4e7@intel.com>
-	 <20240907-tsm-rtmr-v1-3-12fc4d43d4e7@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1726144093; c=relaxed/simple;
+	bh=fEYiCcSX2cV8Z3LqfRf2jtY34QnJdae7Z4CSXtJ+2to=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YiGsd2j/cUNPSSf2/igsAnTzdaco+Hdi10cRLEUrNC90/fcljDcenxkrYfN09e9i4GRspL85vGX8oTjpaBCjD/W75HYLDyvPGbCqwAMzDbKjjFP9Mi17+nn0h44r3sW2vHWaLqOjJ3zg7Qdl2roV5mCTzuIMudIYeIpmPynns/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NZwVJlC8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726144090;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FwLzZkmd0ZQgN84oz03gWh6XczquwyNmIfnUG06CewU=;
+	b=NZwVJlC8S3tzohxc6GKUqliU2zdcKSF0PtGIqjANRcH+5ktUnjESEKyARzcC+IEh2jWpgT
+	uVe1fl1EAFKNmFoCxHnX/zoBXtoFXzxtDABzZI+020fFJ6ptKNn9Ogg0QVpdBFWfhU+pJL
+	E8wEzoUhgbkv0CClkCO5iCAFH4eNx98=
+Received: from mail-yb1-f197.google.com (mail-yb1-f197.google.com
+ [209.85.219.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-173-7eo_CGsmOk-v8gwswnEuBA-1; Thu, 12 Sep 2024 08:28:09 -0400
+X-MC-Unique: 7eo_CGsmOk-v8gwswnEuBA-1
+Received: by mail-yb1-f197.google.com with SMTP id 3f1490d57ef6-e165fc5d94fso1774005276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 05:28:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726144089; x=1726748889;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FwLzZkmd0ZQgN84oz03gWh6XczquwyNmIfnUG06CewU=;
+        b=wJ44GU+imSgvCSUntIG1X8vbfD6AZQGJ8/AIUQQl+l6dV4jQT1CZTG4IyCvzpGS94R
+         XKeBw8ONfVryx00lmf83g1iq4PUeG4YzcwsDW/ixZsCiDNwpBx8HX22iaFp+6WFD0Oj8
+         kd59DYXoFg42MO1V1vyKy1U6qrPrbxjOgKYwcm8uqAmZXyv8wTdLj+rtGwmmvOY5/7mQ
+         gIiQmsx5vOJDoj4YDJg4bXt7Xc1aFoACUAkZaZ1Gel7rtiIY4sWhCN2A6OjOPIMQGcQe
+         nB9GZpC21VO6zNR3a4/c0QOM68bGG1Qfh+xOtf9NP13VbRlk7A0j2z0cBFrJ13A7dFp/
+         qlmg==
+X-Forwarded-Encrypted: i=1; AJvYcCV131aGShBDHC0l1nSCrqmsjhgS+lEJJK7/HS91tC+OMInjRlxIjKmCHuTYamVkAbYQ91R30wg49msmVuA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWQVGl7FxmFkXPrL/wUGjKmfKqs+C2yTGfcpED2KUofRUdgdDg
+	X9uLIRySXV8odsL0WvaaNxJ7MnJbw8wEfmHffFGv0GF3NdubikgQRvOBB/etWu20H8i1R0we9Et
+	QDZ2zLYMYyZjAWuYrdN/tBzf5nRaQ699wYMAC4eyJfAQdH0C0y6Vyz4ZzFvwMMw==
+X-Received: by 2002:a25:d8c6:0:b0:e1d:a163:1388 with SMTP id 3f1490d57ef6-e1da1631796mr1167359276.48.1726144089144;
+        Thu, 12 Sep 2024 05:28:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHhhzrxqO7X/GruaDObktRaDclR2OL3TS2/b52FR2g1yx9f2p0K7GyH5peWSzidW30OHXt1Ag==
+X-Received: by 2002:a25:d8c6:0:b0:e1d:a163:1388 with SMTP id 3f1490d57ef6-e1da1631796mr1167293276.48.1726144087062;
+        Thu, 12 Sep 2024 05:28:07 -0700 (PDT)
+Received: from rhfedora ([71.217.60.247])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45822f60a81sm52335231cf.67.2024.09.12.05.28.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 05:28:06 -0700 (PDT)
+Date: Thu, 12 Sep 2024 08:28:04 -0400
+From: "John B. Wyatt IV" <jwyatt@redhat.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Thomas Renninger <trenn@suse.com>, Shuah Khan <shuah@kernel.org>,
+	John Kacur <jkacur@redhat.com>, Peng Fan <peng.fan@nxp.com>,
+	"open list:CPU POWER MONITORING SUBSYSTEM" <linux-pm@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] pm: cpupower: bench: print path fopen failed
+Message-ID: <ZuLeVCUx4S8mn-2z@rhfedora>
+References: <20240912013846.3058728-1-peng.fan@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912013846.3058728-1-peng.fan@oss.nxp.com>
 
-On Sat, 2024-09-07 at 23:56 -0500, Cedric Xing wrote:
-> This sample kernel module demonstrates how to make MRs accessible to
-> user mode
-> through TSM.
-> 
-> Once loaded, this module registers a virtual measurement provider
-> with the TSM
-> core and will result in the directory tree below.
-> 
-> /sys/kernel/tsm/
-> └── measurement-example
->     ├── config_mr
->     ├── full_report
->     ├── report_digest
->     ├── rtmr0
->     │   ├── append_event
->     │   ├── digest
->     │   ├── event_log
->     │   └── hash_algo
->     ├── rtmr1
->     │   ├── append_event
->     │   ├── digest
->     │   ├── event_log
->     │   └── hash_algo
->     ├── static_mr
->     └── user_data
+Hello Peng,
 
-I'm not sure this is the best structure to apply to logs with multiple
-banks (hash algorithms).  There needs to be a way to get the same
-registers measurement for each bank, but the log should sit above that
-(appending should extend all active banks)
+These two seem like two separate patches and usually a series has a
+cover letter. Did you mean to send them separately or is something missing?
 
-How about
-
-/sys/kernel/tsm/
-└──<measurement type>
-   ├──reg0
-   │   ├── <log format>
-   │   │   ├── append_event
-   │   │   └── event_log
-   │   ├── <hash algo>  
-   │  ...  └── digest
-   ...
-
-That way it supports multiple log formats (would be the job of the log
-extender to ensure compatibility) and multiple banks.
-
-James
+-- 
+Sincerely,
+John Wyatt
+Software Engineer, Core Kernel
+Red Hat
 
 
