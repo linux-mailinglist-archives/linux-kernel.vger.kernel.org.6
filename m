@@ -1,112 +1,203 @@
-Return-Path: <linux-kernel+bounces-326159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C4F1976411
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:11:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E668976413
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFAD02868A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:11:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F63F1F24A78
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3B719047C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE10190482;
 	Thu, 12 Sep 2024 08:11:24 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCDA18FDC9
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3608618A6A9
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726128683; cv=none; b=mbPLOGvPIVV+h2hdm4Vo038uIxAYPt4IViPjK3dbNL5Vsu9Rb9JEfh6otCBdvmk0Kq18IzFa9IfARx4LBlp6N3M7ezWdYnN/iKUAojESjAAN4X7e9PCC6x6LvJmKgSlA4yNxJGtA2veWPR+BsWtGQPHfger9rJMvZIR2IF1VfIw=
+	t=1726128683; cv=none; b=pHkcuhg5q+ywcbmD1Vs10QvzrW3jqNb2twlodDIxXtdH8wr5KCGPJcks47kZrfl4/qubMx+xFS4Vh6uZDjelYky7Absv5Dsa4hNmNBN4z7JgzF1EXvZgFxgjd0wlukYQ0a+fozDuo/XoNBNRQZ0PIF+Ud/WLOvsHHIEXZE+t1Pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1726128683; c=relaxed/simple;
-	bh=+FjPOjsC90nGSQ6SyM2El4O7afIWk4e2DSPjQIXmi6c=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=pY0TItQhokLBUvFogTJLsQZhzTErXd6xAWucw4Ksi+y45rXzUUteTGd7vrmCjkz98Rtlh1Br03ry/MnJDUhujslnHpH78rKwMi+Rndp22zjSpGY4qMJn4nwCeP8Ek6x1L33TktfXiwY3WX1pSexiGWkyXd7cTaMPGiwsQO9m2sA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+	bh=46sDEFtjw9rDmzGTjxtbVXFeGbK0ohD6ptPEvJdi/oQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=IPV/LhW1M7Yh+m8cBSjl8xf+B17gQo3QhKjK1CTd3e5fsx493rkC7gGxNIHQZ/2EwbJhhZaRt4iw9bM+Iv0npN4FrqK9wPGHkBOwqLnzdAVxRQA779LhquOd4iri+vZmS4n6TIgZIvlcHycMnQp8PBDZjrE0JPJWP4v4+WzqXz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82b930cd6b2so122027239f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 01:11:22 -0700 (PDT)
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a04eef8ed2so11798045ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 01:11:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1726128681; x=1726733481;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=p6URRhafhkSYWjZNhALlJLM/SfWa/5qmQZKFuhu6WB8=;
-        b=i66zG+6ZLbRjbEmHoLm9l4MAbkjhW28pxLcUEYDL5Do9O5HfiT2JAIqo6ZboVivWsf
-         5phfVhcvmBtKCoEPvg9m9yfWzLIpA9sAYTo0i/QgofYzgnn9HpGbiPlp/JErLCVKQQlI
-         12EU7j3MkU9/66eT29Uod+18lHd40BPvVJ/xG7zl2rOo9Tdj10gCYfkiBtd8Ci7u2oCQ
-         MIFKYhEFfJqFiiZUz2EilgDhaKld6ZEBTwAj6FSC3vTcOJljRgk1bo5SDg6KRKLoaR43
-         I9/4d34HLEaeuHnE6AYesfnlWNuGnwtKcnId08VeVVe8yXE8ZHaxDeT70YT0jgfhoyzA
-         n3kA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAzc1peMKiAB5CYYs6IGxrV070SJaW8jDOz82K4/JwQ1groawuMkNIxy/xX/NnaMnrxyQTE+G60O48lbs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwStz4dLjFVKr3yqcY3koHEYpHwC91fM8tbXN2ru4wc1ZXICw4g
-	oAt2S+3SUiTH5VeFjKfg3XMPQZgeeZQC/LOGP9n+cTJLS4hkaKByVNSpWL5XdrhziZqaSZNYxb0
-	x7CQGJg/Zlhg5kPKk5zlU0vxKhDrhuyvdB8XLcGcNhd4xiggbVl+/4M8=
-X-Google-Smtp-Source: AGHT+IH9PefFzA7QiLpOatAAZXNdwSgRcv509nYPOUBPbCuMPlwum216H1nu9GMdnHtOhvrwl6/I2VauZokki3C6SgdxpXrxhNu7
+        bh=IU1L0a8Eh52z552lgQRfW8oNgA34UsiZf+K+o63Sxic=;
+        b=X3YgFiXtUyWJc3CvzTyWbw2RW0SpqqFIOYesOCBYNoiRK5msviDF2/p2oyrDRfRVcA
+         saB25q6j9P54cCCa4AdFllfqMo27Ovvnyq+SWf/aYaU3XdoG7XlVjcN+8b5SPnrTNe+/
+         mJhjNPWrOe2kVBfdqJHvyzvtNzBKnbulaExv8OGyu7Qb3Ls5Xdf8zQAVY877n5HZm26Q
+         gRRgrnXsqE3hmzPCb8/I4PgBhNh+U5rfLA1ZfW5/YNwV0utGWDNcdx6KeBviPo04oe0D
+         YH5eRsNY+9u3nOyM5sGfW46hoN7cW6KcIe7hQ8RLaUzABEhq1+/wg6Jrg4vMx4aqDs7C
+         uz9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWBLdqw7zXt2ELFCqPlPnelzohOSyb0atjuNDiq5TNNCpm3R0KIcty8Bt8SJOt0V7s3LfzXYVXejNTuGbw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDPKQf6Z5EYXN4snyYFD0AwWyG3e/FyRmDWa7jT8DGNdTSubR0
+	p9bMmT5iN7KlwSscDL7uSWbeWJUg+kxdSdNpB40SIXMQu+8pN53fTHo6Ssi7O1TT2w+6FBgv3y4
+	XDM8CmitQFoJLz/k+TtYtdM1ujI6oUJteKmXf89OfVF9UNKbPwps+7Ls=
+X-Google-Smtp-Source: AGHT+IGkq9UVtDYhjtSVER9h4ux/q++b9QvF78WL4PNKcS/8MzRPHacy3Qpym8XA2D8kWJn9l6LX2pCEtIAfWG65s5pDw2s7Awu1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:148c:b0:39d:1694:d261 with SMTP id
- e9e14a558f8ab-3a084907d29mr19004285ab.12.1726128681656; Thu, 12 Sep 2024
+X-Received: by 2002:a05:6e02:19c9:b0:39d:3043:1f2f with SMTP id
+ e9e14a558f8ab-3a0849098b0mr21621755ab.14.1726128681250; Thu, 12 Sep 2024
  01:11:21 -0700 (PDT)
 Date: Thu, 12 Sep 2024 01:11:21 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e831e90621e7a6b5@google.com>
-Subject: [syzbot] Monthly ntfs3 report (Sep 2024)
-From: syzbot <syzbot+list6ec5971c0fd039e92cbd@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, linux-kernel@vger.kernel.org, 
-	ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000e2058e0621e7a637@google.com>
+Subject: [syzbot] [virt?] KCSAN: data-race in virtqueue_disable_cb /
+ vring_interrupt (4)
+From: syzbot <syzbot+8a02104389c2e0ef5049@syzkaller.appspotmail.com>
+To: eperezma@redhat.com, jasowang@redhat.com, linux-kernel@vger.kernel.org, 
+	mst@redhat.com, syzkaller-bugs@googlegroups.com, 
+	virtualization@lists.linux.dev, xuanzhuo@linux.alibaba.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello ntfs3 maintainers/developers,
+Hello,
 
-This is a 31-day syzbot report for the ntfs3 subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/ntfs3
+syzbot found the following issue on:
 
-During the period, 12 new issues were detected and 0 were fixed.
-In total, 38 issues are still open and 50 have been fixed so far.
+HEAD commit:    7c6a3a65ace7 minmax: reduce min/max macro expansion in ato..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1608e49f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1e7d02549be622b2
+dashboard link: https://syzkaller.appspot.com/bug?extid=8a02104389c2e0ef5049
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Some of the still happening issues:
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Ref  Crashes Repro Title
-<1>  12022   Yes   VFS: Busy inodes after unmount (use-after-free)
-                   https://syzkaller.appspot.com/bug?extid=0af00f6a2cba2058b5db
-<2>  8882    Yes   possible deadlock in mi_read
-                   https://syzkaller.appspot.com/bug?extid=bc7ca0ae4591cb2550f9
-<3>  6470    Yes   kernel BUG in dnotify_free_mark
-                   https://syzkaller.appspot.com/bug?extid=06cc05ddc896f12b7ec5
-<4>  3596    Yes   KASAN: out-of-bounds Write in end_buffer_read_sync
-                   https://syzkaller.appspot.com/bug?extid=3f7f291a3d327486073c
-<5>  1828    Yes   possible deadlock in ntfs_fiemap
-                   https://syzkaller.appspot.com/bug?extid=96cee7d33ca3f87eee86
-<6>  864     Yes   possible deadlock in ntfs_file_mmap
-                   https://syzkaller.appspot.com/bug?extid=c1751b6739d83d70bb75
-<7>  491     Yes   possible deadlock in attr_data_get_block (2)
-                   https://syzkaller.appspot.com/bug?extid=262a71e9d2faf8747085
-<8>  179     Yes   possible deadlock in ntfs_fallocate
-                   https://syzkaller.appspot.com/bug?extid=adacb2b0c896bc427962
-<9>  83      Yes   possible deadlock in ntfs_mark_rec_free (2)
-                   https://syzkaller.appspot.com/bug?extid=016b09736213e65d106e
-<10> 56      Yes   KMSAN: uninit-value in ntfs_read_bh
-                   https://syzkaller.appspot.com/bug?extid=7a2ba6b7b66340cff225
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a1f7496fa21f/disk-7c6a3a65.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/f423739e51a9/vmlinux-7c6a3a65.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b65a0f38cbd7/bzImage-7c6a3a65.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8a02104389c2e0ef5049@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KCSAN: data-race in virtqueue_disable_cb / vring_interrupt
+
+write to 0xffff88810285ef52 of 1 bytes by interrupt on cpu 0:
+ vring_interrupt+0x12b/0x180 drivers/virtio/virtio_ring.c:2591
+ __handle_irq_event_percpu+0x95/0x490 kernel/irq/handle.c:158
+ handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
+ handle_irq_event+0x64/0xf0 kernel/irq/handle.c:210
+ handle_edge_irq+0x16d/0x5b0 kernel/irq/chip.c:831
+ generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
+ handle_irq arch/x86/kernel/irq.c:247 [inline]
+ call_irq_handler arch/x86/kernel/irq.c:259 [inline]
+ __common_interrupt+0x58/0xe0 arch/x86/kernel/irq.c:285
+ common_interrupt+0x7c/0x90 arch/x86/kernel/irq.c:278
+ asm_common_interrupt+0x26/0x40 arch/x86/include/asm/idtentry.h:693
+ __preempt_count_dec_and_test arch/x86/include/asm/preempt.h:94 [inline]
+ __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:160 [inline]
+ _raw_spin_unlock_irq+0x2f/0x50 kernel/locking/spinlock.c:202
+ process_one_work kernel/workqueue.c:3200 [inline]
+ process_scheduled_works+0x43b/0x9a0 kernel/workqueue.c:3312
+ worker_thread+0x526/0x6e0 kernel/workqueue.c:3389
+ kthread+0x1d1/0x210 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+read to 0xffff88810285ef52 of 1 bytes by interrupt on cpu 1:
+ virtqueue_disable_cb_split drivers/virtio/virtio_ring.c:892 [inline]
+ virtqueue_disable_cb+0x92/0x180 drivers/virtio/virtio_ring.c:2446
+ start_xmit+0x14b/0x1260 drivers/net/virtio_net.c:3034
+ __netdev_start_xmit include/linux/netdevice.h:4913 [inline]
+ netdev_start_xmit include/linux/netdevice.h:4922 [inline]
+ xmit_one net/core/dev.c:3580 [inline]
+ dev_hard_start_xmit+0x119/0x3f0 net/core/dev.c:3596
+ sch_direct_xmit+0x1b0/0x580 net/sched/sch_generic.c:343
+ __dev_xmit_skb net/core/dev.c:3809 [inline]
+ __dev_queue_xmit+0xf3d/0x1fe0 net/core/dev.c:4389
+ dev_queue_xmit include/linux/netdevice.h:3105 [inline]
+ neigh_hh_output include/net/neighbour.h:526 [inline]
+ neigh_output include/net/neighbour.h:540 [inline]
+ ip_finish_output2+0x73d/0x8b0 net/ipv4/ip_output.c:235
+ ip_finish_output+0x11a/0x2a0 net/ipv4/ip_output.c:323
+ NF_HOOK_COND include/linux/netfilter.h:303 [inline]
+ ip_output+0xab/0x170 net/ipv4/ip_output.c:433
+ dst_output include/net/dst.h:450 [inline]
+ ip_local_out net/ipv4/ip_output.c:129 [inline]
+ __ip_queue_xmit+0xbcc/0xbf0 net/ipv4/ip_output.c:535
+ ip_queue_xmit+0x38/0x50 net/ipv4/ip_output.c:549
+ __tcp_transmit_skb+0x15b0/0x1970 net/ipv4/tcp_output.c:1466
+ tcp_transmit_skb net/ipv4/tcp_output.c:1484 [inline]
+ tcp_write_xmit+0x1273/0x31c0 net/ipv4/tcp_output.c:2829
+ __tcp_push_pending_frames+0x6a/0x1a0 net/ipv4/tcp_output.c:3014
+ tcp_push_pending_frames include/net/tcp.h:2106 [inline]
+ tcp_data_snd_check net/ipv4/tcp_input.c:5707 [inline]
+ tcp_rcv_established+0xa12/0xef0 net/ipv4/tcp_input.c:6141
+ tcp_v4_do_rcv+0x662/0x740 net/ipv4/tcp_ipv4.c:1911
+ tcp_v4_rcv+0x1b25/0x1ee0 net/ipv4/tcp_ipv4.c:2346
+ ip_protocol_deliver_rcu+0x370/0x720 net/ipv4/ip_input.c:205
+ ip_local_deliver_finish+0x17d/0x210 net/ipv4/ip_input.c:233
+ NF_HOOK include/linux/netfilter.h:314 [inline]
+ ip_local_deliver+0xec/0x1d0 net/ipv4/ip_input.c:254
+ dst_input include/net/dst.h:460 [inline]
+ ip_sublist_rcv_finish net/ipv4/ip_input.c:580 [inline]
+ ip_list_rcv_finish net/ipv4/ip_input.c:631 [inline]
+ ip_sublist_rcv+0x55a/0x640 net/ipv4/ip_input.c:639
+ ip_list_rcv+0x25e/0x290 net/ipv4/ip_input.c:674
+ __netif_receive_skb_list_ptype net/core/dev.c:5704 [inline]
+ __netif_receive_skb_list_core+0x4f0/0x520 net/core/dev.c:5752
+ __netif_receive_skb_list net/core/dev.c:5804 [inline]
+ netif_receive_skb_list_internal+0x4e4/0x660 net/core/dev.c:5896
+ gro_normal_list include/net/gro.h:515 [inline]
+ napi_complete_done+0x1cb/0x450 net/core/dev.c:6247
+ virtqueue_napi_complete drivers/net/virtio_net.c:694 [inline]
+ virtnet_poll+0x1b73/0x1fd0 drivers/net/virtio_net.c:2826
+ __napi_poll+0x63/0x3c0 net/core/dev.c:6772
+ napi_poll net/core/dev.c:6841 [inline]
+ net_rx_action+0x3a1/0x7f0 net/core/dev.c:6963
+ handle_softirqs+0xc3/0x280 kernel/softirq.c:554
+ __do_softirq kernel/softirq.c:588 [inline]
+ invoke_softirq kernel/softirq.c:428 [inline]
+ __irq_exit_rcu kernel/softirq.c:637 [inline]
+ irq_exit_rcu+0x3e/0x90 kernel/softirq.c:649
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
+ sysvec_apic_timer_interrupt+0x37/0x80 arch/x86/kernel/apic/apic.c:1043
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+
+value changed: 0x00 -> 0x01
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 UID: 0 PID: 31238 Comm: syz.2.3839 Not tainted 6.11.0-rc7-syzkaller-00021-g7c6a3a65ace7 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+==================================================================
+
 
 ---
 This report is generated by a bot. It may contain errors.
 See https://goo.gl/tpsmEJ for more information about syzbot.
 syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-You may send multiple commands in a single email message.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
