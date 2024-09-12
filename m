@@ -1,131 +1,198 @@
-Return-Path: <linux-kernel+bounces-325968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27185976088
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:45:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2062E97609A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:52:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56641284FBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 05:45:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF7231F23C40
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 05:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9707C18892E;
-	Thu, 12 Sep 2024 05:45:00 +0000 (UTC)
-Received: from cae.in-ulm.de (cae.in-ulm.de [217.10.14.231])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418201885A2;
-	Thu, 12 Sep 2024 05:44:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.10.14.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B21188931;
+	Thu, 12 Sep 2024 05:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="gxZfs8K7"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6232119;
+	Thu, 12 Sep 2024 05:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726119900; cv=none; b=doLafN+lJFvXk72xuIUMFImS8TxDst9vrHHg0xW7KWziI+BLadl1NcQaV4ezb5I50vmoBY+R3TP/rWMIjsR6k6IUaFevSuSnQp9QXoZ1oRC25Yj7WsxXhpHzB+EzWkUPQ8AWUNZBhzbvFzcyhJhaAZyuZnUEWyywIW/a5DSB2gA=
+	t=1726120316; cv=none; b=IhcPeBSGfop7BOdyb1U4Uf8ADbS10gKLjRBsC16t3ECC/KNkS3g9wKnqda552NF07OdTp4d1ubv9QrZ80PkmRKeBNW5SuHIXUgVWKQs89WU8eeJU2rkFSaQKbALSpGTQhgm7ZZLChVbGdhP+Wn97Eb6zHykxequGhwUWckbF0UU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726119900; c=relaxed/simple;
-	bh=rOeQorWaZDlaIIJiAOwM/shiKOi3AhhiIX+db/g+M4U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AbT81bEkLE6Cp8CB36PxVDbdm2wdOmCdEd5jGi4ohpZbxFpDKXXEYpWx6MVyfr5HqeLUUYNYJy6bDbg+x0rqret0hQri71fu0EUSWug4+Q3jAdKzT8/wq2bOCgC/2qFH4ymnYekrjgchi7sZH8pqYJrHw0QnHxpciS2fr+EHY0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c--e.de; spf=pass smtp.mailfrom=c--e.de; arc=none smtp.client-ip=217.10.14.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c--e.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=c--e.de
-Received: by cae.in-ulm.de (Postfix, from userid 1000)
-	id 7A6721402BA; Thu, 12 Sep 2024 07:44:49 +0200 (CEST)
-From: "Christian A. Ehrhardt" <lk@c--e.de>
-To: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: "Christian A. Ehrhardt" <lk@c--e.de>,
-	Anurag Bijea <icaliberdev@gmail.com>,
-	Christian Heusel <christian@heusel.eu>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Jameson Thies <jthies@google.com>,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Subject: [PATCH] usb: typec: ucsi: Fix busy loop on ASUS VivoBooks
-Date: Thu, 12 Sep 2024 07:44:33 +0200
-Message-Id: <20240912054433.721651-1-lk@c--e.de>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1726120316; c=relaxed/simple;
+	bh=5nBw3jed5q3gOSsyd6ygguuJZHN5dfBDVK9fb2f+3nM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=E5ax4fsHP4fr1ldB2pdsd+fLvob4QsN00xbyfQfs7z+y8XVgTDQlYGCAS+TR5CcjOa1V9JHtE6X2Y31siqWcFBFky+BZ7MJV5ifBlNMSvY9rw/eeH4g1MA6UKSX98jAdwwW998PKkGHEXW/FJhaAarAuyEkxBPUX89l0P9u24tE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=gxZfs8K7; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1726120313; x=1757656313;
+  h=from:date:subject:mime-version:content-transfer-encoding:
+   message-id:to:cc;
+  bh=5nBw3jed5q3gOSsyd6ygguuJZHN5dfBDVK9fb2f+3nM=;
+  b=gxZfs8K7Cdw7omjQmW3vdzWoB30LLjd1H9br2j51F0TG8HsW8H2VU5IH
+   NdzXa+1tsaPPnBZ3dDwGTgLfq1QUpJ+Ch0uCVkZoePnFGAfiMeBYbiHac
+   6IjLShvh0JU4UnBcfmmVv0KawP1RwzJnB5qKAG9TwDWExCgxRob5gkTm3
+   b2CadhgA42UiFopilY+jgLAWhSiKeXpwe9vTvXHqFhLnVjaQNxQQGomzN
+   LCD9ENbluVqSxoAPjHR+VpYyo1KY5hYmiLhudZJabkj4FhNTCAdjXNUi/
+   2/imZrydwX/6Zn6uYcRWCcM/h51amq4R0M+9TfRu/guYUrgyo5stk/IKj
+   A==;
+X-CSE-ConnectionGUID: yO5+uw3DTJiRuB0mNxV1RA==
+X-CSE-MsgGUID: Uktahx2VTCiHDFDkJDH4kw==
+X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
+   d="scan'208";a="199112816"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Sep 2024 22:51:51 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 11 Sep 2024 22:50:51 -0700
+Received: from [127.0.0.1] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Wed, 11 Sep 2024 22:50:45 -0700
+From: Charan Pedumuru <charan.pedumuru@microchip.com>
+Date: Thu, 12 Sep 2024 11:19:16 +0530
+Subject: [PATCH] dt-bindings: net: can: atmel: Convert to json schema
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240912-can-v1-1-c5651b1809bb@microchip.com>
+X-B4-Tracking: v=1; b=H4sIANuA4mYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDS0Mj3eTEPF2L1CTzNItUc1MzsxQloMqCotS0zAqwKdGxtbUAg1Hdc1U
+ AAAA=
+To: Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol
+	<mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, "Eric
+ Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nicolas Ferre
+	<nicolas.ferre@microchip.com>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>
+CC: <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Charan Pedumuru
+	<charan.pedumuru@microchip.com>
+X-Mailer: b4 0.14.1
 
-If the busy indicator is set, all other fields in CCI should be
-clear according to the spec. However, some UCSI implementations do
-not follow this rule and report bogus data in CCI along with the
-busy indicator. Ignore the contents of CCI if the busy indicator is
-set.
+Convert atmel-can documentation to yaml format
 
-If a command timeout is hit it is possible that the EVENT_PENDING
-bit is cleared while connector work is still scheduled which can
-cause the EVENT_PENDING bit to go out of sync with scheduled connector
-work. Check and set the EVENT_PENDING bit on entry to
-ucsi_handle_connector_change() to fix this.
-
-Finally, check UCSI_CCI_BUSY before the return code of ->sync_control.
-This ensures that the command is cancelled even if ->sync_control
-returns an error (most likely -ETIMEDOUT).
-
-Reported-by: Anurag Bijea <icaliberdev@gmail.com>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219108
-Bisected-by: Christian Heusel <christian@heusel.eu>
-Tested-by: Anurag Bijea <icaliberdev@gmail.com>
-Fixes: de52aca4d9d5 ("usb: typec: ucsi: Never send a lone connector change ack")
-Cc: stable@vger.kernel.org
-Signed-off-by: Christian A. Ehrhardt <lk@c--e.de>
+Signed-off-by: Charan Pedumuru <charan.pedumuru@microchip.com>
 ---
- NOTE: Rebased onto usb-next.
+ .../bindings/net/can/atmel,at91sam9263-can.yaml    | 67 ++++++++++++++++++++++
+ .../devicetree/bindings/net/can/atmel-can.txt      | 15 -----
+ 2 files changed, 67 insertions(+), 15 deletions(-)
 
- drivers/usb/typec/ucsi/ucsi.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-index 35dce4057c25..e0f3925e401b 100644
---- a/drivers/usb/typec/ucsi/ucsi.c
-+++ b/drivers/usb/typec/ucsi/ucsi.c
-@@ -38,6 +38,10 @@
- 
- void ucsi_notify_common(struct ucsi *ucsi, u32 cci)
- {
-+	/* Ignore bogus data in CCI if busy indicator is set. */
-+	if (cci & UCSI_CCI_BUSY)
-+		return;
+diff --git a/Documentation/devicetree/bindings/net/can/atmel,at91sam9263-can.yaml b/Documentation/devicetree/bindings/net/can/atmel,at91sam9263-can.yaml
+new file mode 100644
+index 000000000000..269af4c993a7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/can/atmel,at91sam9263-can.yaml
+@@ -0,0 +1,67 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/net/can/atmel,at91sam9263-can.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- 	if (UCSI_CCI_CONNECTOR(cci))
- 		ucsi_connector_change(ucsi, UCSI_CCI_CONNECTOR(cci));
- 
-@@ -103,15 +107,13 @@ static int ucsi_run_command(struct ucsi *ucsi, u64 command, u32 *cci,
- 		return -EINVAL;
- 
- 	ret = ucsi->ops->sync_control(ucsi, command);
--	if (ret)
--		return ret;
++title: Atmel CAN Controller
++
++maintainers:
++  - Nicolas Ferre <nicolas.ferre@microchip.com>
++
++properties:
++  compatible:
++    oneOf:
++      - enum:
++          - atmel,at91sam9263-can
++          - atmel,at91sam9x5-can
++          - microchip,sam9x60-can
++      - items:
++          - enum:
++              - microchip,sam9x60-can
++          - const: atmel,at91sam9x5-can
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    items:
++      - const: can_clk
++
++required:
++  - compatible
++  - reg
++  - interrupts
++
++allOf:
++  - $ref: can-controller.yaml#
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - microchip,sam9x60-can
++    then:
++      required:
++        - compatible
++        - reg
++        - interrupts
++        - clocks
++        - clock-names
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    can0: can@f000c000 {
++          compatible = "atmel,at91sam9x5-can";
++          reg = <0xf000c000 0x300>;
++          interrupts = <30 IRQ_TYPE_LEVEL_HIGH 3>;
++    };
+diff --git a/Documentation/devicetree/bindings/net/can/atmel-can.txt b/Documentation/devicetree/bindings/net/can/atmel-can.txt
+deleted file mode 100644
+index 218a3b3eb27e..000000000000
+--- a/Documentation/devicetree/bindings/net/can/atmel-can.txt
++++ /dev/null
+@@ -1,15 +0,0 @@
+-* AT91 CAN *
 -
--	ret = ucsi->ops->read_cci(ucsi, cci);
--	if (ret)
--		return ret;
-+	if (ucsi->ops->read_cci(ucsi, cci))
-+		return -EIO;
- 
- 	if (*cci & UCSI_CCI_BUSY)
- 		return ucsi_run_command(ucsi, UCSI_CANCEL, cci, NULL, 0, false) ?: -EBUSY;
-+	if (ret)
-+		return ret;
- 
- 	if (!(*cci & UCSI_CCI_COMMAND_COMPLETE))
- 		return -EIO;
-@@ -1197,6 +1199,10 @@ static void ucsi_handle_connector_change(struct work_struct *work)
- 
- 	mutex_lock(&con->lock);
- 
-+	if (!test_and_set_bit(EVENT_PENDING, &ucsi->flags))
-+		dev_err_once(ucsi->dev, "%s entered without EVENT_PENDING\n",
-+			     __func__);
-+
- 	command = UCSI_GET_CONNECTOR_STATUS | UCSI_CONNECTOR_NUMBER(con->num);
- 
- 	ret = ucsi_send_command_common(ucsi, command, &con->status,
+-Required properties:
+-  - compatible: Should be "atmel,at91sam9263-can", "atmel,at91sam9x5-can" or
+-    "microchip,sam9x60-can"
+-  - reg: Should contain CAN controller registers location and length
+-  - interrupts: Should contain IRQ line for the CAN controller
+-
+-Example:
+-
+-	can0: can@f000c000 {
+-		compatible = "atmel,at91sam9x5-can";
+-		reg = <0xf000c000 0x300>;
+-		interrupts = <40 4 5>
+-	};
+
+---
+base-commit: 32ffa5373540a8d1c06619f52d019c6cdc948bb4
+change-id: 20240912-can-8eb7f8e7566d
+
+Best regards,
 -- 
-2.43.0
+Charan Pedumuru <charan.pedumuru@microchip.com>
 
 
