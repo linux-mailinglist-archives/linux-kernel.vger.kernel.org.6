@@ -1,213 +1,385 @@
-Return-Path: <linux-kernel+bounces-326325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63C5B976690
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:14:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC1D597668E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:14:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5EAB1F22763
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:14:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09B4AB22033
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3976019F404;
-	Thu, 12 Sep 2024 10:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2688419F42B;
+	Thu, 12 Sep 2024 10:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mqiFBwbt"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="JokuuGst"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DE619F113
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 10:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F2719F11F
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 10:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726136068; cv=none; b=bkz2lfuPcnwc+v3Ya5cS4HUg9gUQKOQkGIr8dBHQqjOgrNjgU5VL4VpVcsG7FSSEced/IVPhMQa8R99IKSf7R3SflB+LvIsd0IcmFLL2RVLSOs/pSXelT+bBNFGp3sxr3QVOWiuvYhJVzTDrStViBl9Llau/MNZ34hiDn+/I2v4=
+	t=1726136038; cv=none; b=ayWs/eQclvue+hSSPepIWelweoP3LRNMSVaGvMmZdESIBnZlMSJyFDkUdh0Ju+ccKt+6C+DhJvP8Y9tcGiE7IqEy167OEGOR4sbtuXKGcF7ir86IlSpnLR7puHSCbyfpIzHxJ5wzwe9jZe4TBFlBzIC10CAgkswAQP8u1lMHzX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726136068; c=relaxed/simple;
-	bh=cN6EFJn/s8Y9mkYp85bQ4DeKYSqzeskgWhENHeFf2Ew=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eBHsPr/sjDTA6N1jsj2IISedlll1XceltZOr/NgLwXnRpHrZPhsmNea41YumAcpqKf8NQAdDCp9U6Ut0tmjxgoCJGk3n/kbPt6epl+FdZQgCnnslGG8bo5qtS6ekZUPM8RQk2k3PzuETa3CJksU7WknVKxVoOhhpqshqmlKoYdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mqiFBwbt; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e02b79c6f21so790089276.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 03:14:26 -0700 (PDT)
+	s=arc-20240116; t=1726136038; c=relaxed/simple;
+	bh=pWuYnZdetnnnu+3BlcUE/4gNPjsDaaKXpqGIDigZmfw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OeWeWSgUJ8oiYox2q4IC5KjcvjL6jxA06b7viGTjxEyIf94JdP4PtuAsN2vsq8XZC69byOjURQ23Jo8S/TuADjTcQvTImPai4psHvT79GpBukOHgAq4NqFpiFklEpVf3T7WwJAdHdP76TejafjYxXdF4Fq1n14eQ4s7u9vyP574=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=JokuuGst; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cb57f8b41so8656565e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 03:13:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726136066; x=1726740866; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cN6EFJn/s8Y9mkYp85bQ4DeKYSqzeskgWhENHeFf2Ew=;
-        b=mqiFBwbt6bLhh8SWFBtc2tfEi5DLwEOzkFkQUXXODuuGe+uKhgKttH+g7V6PtzR7Z7
-         qI5V6/xoZ/b7bWCE2f3YF7l3fuvXYa9rnKAD5Op/ecp84Y0wzt82+alyGNh4x9v4fFIj
-         kU0TXg5cycfAax0+X86O+xJrCXQYM8SiT2HmaW5SN/I+XfLW0pH9mqaQrJjq1JKxA0pI
-         x1odZSMnVVH/n6DVdS1JPcESBfxWS+GdAReRZtBMPj1ksrilD3LgN/pw3Bi/7JgmPgzl
-         Vt9ofqkB61FVrbFzNTA2Gmph9OR5XA8vheq0S6gClB3uJo03wY7dyhHHWuaRHjvK7Plw
-         rwfw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726136034; x=1726740834; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ax7dbBbCuzQUcfZcqCi06hx4jCIx6kiT7TrMLm6qkD0=;
+        b=JokuuGstRYcrSol6rHF/9RQNn64YhBGHUl6S/EZTgWdA0EUDqUwl5diQvGkE/vF2Nc
+         T3u05t7H5HchK7hV25w6vwUI0ouqHTdRtzTvxX07VXCnuFAiIXcMnnYJdF0SHOWCQGlG
+         jDr2rdFU42Tqu6t5If0wksq7yOIUHem0WyegHbgR+8Y/7qGVwVAPmZrU6JhVhWGzQCzF
+         +DQtswEyex8LsMsaJN941rUO6bGfYB7NiXxio+TY0vtuuSFvcD7v1S/8rc7To4IH1K38
+         ml+8+Z8NCZIXWpCAHPgRKv5Kq0I636kKbZjaLJGFZgqjF4cckmNKTaPVTuvQOHjSxJ8E
+         74gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726136066; x=1726740866;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cN6EFJn/s8Y9mkYp85bQ4DeKYSqzeskgWhENHeFf2Ew=;
-        b=u6SgWsWjNH2cc+tqAj5pogbYY0H+1SJaR0cbFGaT71zr8eXJVonlCFkBvS1aJQsBE0
-         v9QDIViZ11FTEQ6ySpnz0f9rOroMJ3dkgNPH55PG3W6L3sZ7Ok2BrJqv0EEUQOcVYVws
-         f+S5KgUn1WiUgUZP/qS/FRqd4dMNA/l057daqzMFOK04mIlIvKGYQZ/r38cJjpJjCunq
-         bQ6EToiSvuKtEm3RBa6ZrS7Z2VpMAdxc/gfahQXnXqO7fLZYs9f3hV+Mh/aBFbcopfo4
-         5JTjI4qjFYqECPKyXIb4BFRlbxHnwlYGKob38+ko1cp58LD8cM8HazO80R+Y4Psnr+Ya
-         UA5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWPGCT6GtzvQMsrCtWK1SJOLKmJGKYnurE1MBgbfNo43iaKXiltO5nREZoJC+lhWi7DU4y1BgZxpAucvlk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkpOfZzkLgkEfACt5bULMmQxLVCA7rjnZi74cco6Pq4e+MRxey
-	dPa7SFn0NsOa0pigPMVl+0RHuooGchazMNZc6idkv5ugDV7l5SN0YbWGxswJxNr0WOwPWXYw/3S
-	pIs58KzkHRsuh/RjJgl1THC6vyZ2F6Gq7781A3g==
-X-Google-Smtp-Source: AGHT+IG06vztCwLGif/dMu8sDhD7TqfZ7MOUniEezADPLz0slQoy/6BZntcdSO4iDJ7Mg0k+WekmhUsHyGqyQrYK7Uw=
-X-Received: by 2002:a05:6902:144d:b0:e1c:f22c:87f0 with SMTP id
- 3f1490d57ef6-e1d9dbbbf1fmr1915348276.14.1726136065697; Thu, 12 Sep 2024
- 03:14:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726136034; x=1726740834;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ax7dbBbCuzQUcfZcqCi06hx4jCIx6kiT7TrMLm6qkD0=;
+        b=VNRyDxk39duCKDk16OpJgvNzAbEVZXL4Ybdqjp/fX26iwuVBivzdjnf6AY2v5dNCbg
+         JmcDwAE0fzS/WnnH6jLQU6lR4yggPtqZMqMaUl+UZge3m4jZXELT0zD8dV1aUeTy1vYi
+         +QaDgsi3AbIbGl2K69jUhHhFUEzA58P9mMe29kFQuO0tTy270WNf7v6wVhc6XjcYeMAk
+         v1QXd4A8N8teHXE9ljkDL4QQTYsmFoO/zqdIte3ShN/mSKVVo4fchSS8L7O982mt7Rkd
+         hVk+sgfp4WDjEY5990+USYUuwhJpWm/lM558gSPOQSt6qt9uMIum2v5YBft9YS4F/Xr6
+         /v/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVqISVdxJ4FHzhWq1rUAMZlTMmveybsPIZGbPv/VXxHF8wx1lxPteR3Dr3+TP7rIgQBoWIMG5fBL2s+YgE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVSguNvfKpjUJQEbuUkX7QXRuhAnC8Yfg4rP74D+8N1dGlp88v
+	daBBm61nLhKHKj4B2cMTIOK+d8tew32MKYwe+v9u89MOi6QvD6hTBWXK1K9AeWs=
+X-Google-Smtp-Source: AGHT+IGupFXKL8Oc6nvWjZJWcoxASYjloZVWY9tJWtiOtX2e41F+Jn5Rq4bbYQ4F3WiAHGg87siCJA==
+X-Received: by 2002:adf:eec5:0:b0:374:c231:a5ea with SMTP id ffacd0b85a97d-378c2cd39f8mr1794861f8f.5.1726136033785;
+        Thu, 12 Sep 2024 03:13:53 -0700 (PDT)
+Received: from ?IPV6:2a02:8428:e55b:1101:a464:2bc6:7cd8:5d56? (2a02-8428-e55b-1101-a464-2bc6-7cd8-5d56.rev.sfr.net. [2a02:8428:e55b:1101:a464:2bc6:7cd8:5d56])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d3941sm13981214f8f.84.2024.09.12.03.13.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Sep 2024 03:13:53 -0700 (PDT)
+Message-ID: <31a1dfeb-2d72-44bc-b3ca-36b4115c3010@baylibre.com>
+Date: Thu, 12 Sep 2024 12:13:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902224815.78220-1-ulf.hansson@linaro.org>
- <20240902224815.78220-3-ulf.hansson@linaro.org> <20240903071638.bedt3gllqdacf43a@vireshk-i7>
- <CAPDyKFoqEAHns0nrXT6dJR3sRd5VWidK_rzXGHzJiZtk_p0cKw@mail.gmail.com>
- <20240903105321.suosbhkkkylfw4bv@vireshk-i7> <CAPDyKFrh4VASFzMxEg3Q8SrhVbt1vH8QJM0rCdfxo+-L1+CN_g@mail.gmail.com>
- <20240904064004.7hwfom4nrqzfkvlo@vireshk-i7> <CAPDyKFqZiX=F4oNa3H+fUCO9cRzapxMaAphdx+JFXuR-Tgv3Cw@mail.gmail.com>
- <20240906061405.bz7y3erlz4v5fvvd@vireshk-i7> <CAPDyKFpbA-fopq11Lc0j9hgM86DjveNh+Q=w=nEn2fvcFyp93w@mail.gmail.com>
- <CAKohponJsqOYAvQqU2qrBCXv_P0+0zKAm7-5gkKGPsF_kT7L0w@mail.gmail.com> <CAPDyKFpHYv1eEy==bHhCg6cX9MYdZr_VDoFKBnucZseQVkQWDw@mail.gmail.com>
-In-Reply-To: <CAPDyKFpHYv1eEy==bHhCg6cX9MYdZr_VDoFKBnucZseQVkQWDw@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 12 Sep 2024 12:13:49 +0200
-Message-ID: <CAPDyKFp2s4mPtdU6pMzPbBqqLFxZa1esrXyqXL6UJO-gU-PsVw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] OPP/pmdomain: Fix the assignment of the required-devs
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Dikshita Agarwal <quic_dikshita@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <quic_kdybcio@quicinc.com>, Nikunj Kela <nkela@quicinc.com>, 
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Stephan Gerhold <stephan@gerhold.net>, Ilia Lin <ilia.lin@kernel.org>, 
-	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 8/8] iio:adc:ad7606: Add iio-backend support
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
+ 20240705211452.1157967-2-u.kleine-koenig@baylibre.com,
+ 20240712171821.1470833-2-u.kleine-koenig@baylibre.com,
+ cover.1721040875.git.u.kleine-koenig@baylibre.com, aardelean@baylibre.com
+References: <20240815-ad7606_add_iio_backend_support-v1-0-cea3e11b1aa4@baylibre.com>
+ <20240815-ad7606_add_iio_backend_support-v1-8-cea3e11b1aa4@baylibre.com>
+ <5dedf51d8ec19b7b3bd0c6cb136048344f1c1007.camel@gmail.com>
+Content-Language: en-US
+From: Guillaume Stols <gstols@baylibre.com>
+In-Reply-To: <5dedf51d8ec19b7b3bd0c6cb136048344f1c1007.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 11 Sept 2024 at 16:15, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+On 9/5/24 10:40, Nuno Sá wrote:
+> On Thu, 2024-08-15 at 12:12 +0000, Guillaume Stols wrote:
+>> - Basic support for iio backend.
+>> - Supports IIO_CHAN_INFO_SAMP_FREQ R/W.
+>> - Only hardware mode is available, and that IIO_CHAN_INFO_RAW is not
+>>    supported if iio-backend mode is selected.
+>>
+>> A small correction was added to the driver's file name in the Kconfig
+>> file's description.
+>>
+>> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+>> ---
+> Hi Guillaume,
 >
-> On Wed, 11 Sept 2024 at 08:03, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> >
-> > FYI, I am on holidays now :)
+> Some initial feedback from me...
 >
-> Oh, nice! Enjoy!
->
-> >
-> > On Fri, 6 Sept 2024 at 14:19, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > > > How do we differentiate between two cases where the required-opps can
-> > > > be defined as either of these:
-> > > >
-> > > > required-opps = <&opp_pd_50, &opp_pd_51>; //corresponds to pd_perf1 and pd_perf0 (in reverse order)
-> > > >
-> > > > OR
-> > > >
-> > > > required-opps = <&opp_pd_51, &opp_pd_50>; //corresponds to pd_perf0 and pd_perf1
-> > > >
-> > > > I thought this can't be fixed without some platform code telling how
-> > > > the DT is really configured, i.e. order of the power domains in the
-> > > > required-opps.
-> > >
-> > > I don't think we need platform code for this.
-> > >
-> > > When registering a genpd provider, an OPP table gets assigned to it.
-> >
-> > So we will create a real OPP table in code, which will point to the common
-> > OPP table in DT. Fine.
-> >
-> > > When hooking up a device to one of its genpd providers, that virtual
-> > > device then also gets a handle to its genpd's OPP table.
-> >
-> > Right.
-> >
-> > If there are two genpds required for a device from the same genpd provider, the
-> > picture isn't very clear at this point. i.e. which required OPP
-> > belongs to which genpd,
-> > as both have same table in DT.
->
-> I agree that it's not very clear.
->
-> But to me, this seems like an orthogonal problem that really should
-> not be managed by platform specific code in consumer drivers.
-> Moreover, unless I am mistaken, I believe this isn't really a problem
-> for the currently supported use cases we have for required-opps. Or is
-> it?
+>>   drivers/iio/adc/Kconfig      |   3 +-
+>>   drivers/iio/adc/ad7606.c     | 103 +++++++++++++++++++++++++++++++++++-------
+>> -
+>>   drivers/iio/adc/ad7606.h     |  16 +++++++
+>>   drivers/iio/adc/ad7606_par.c |  98 +++++++++++++++++++++++++++++++++++++++-
+>>   4 files changed, 200 insertions(+), 20 deletions(-)
+>>
+>> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+>> index 88e8ce2e78b3..01248b6df868 100644
+>> --- a/drivers/iio/adc/Kconfig
+>> +++ b/drivers/iio/adc/Kconfig
+>> @@ -227,9 +227,10 @@ config AD7606_IFACE_PARALLEL
+>>   	help
+>>   	  Say yes here to build parallel interface support for Analog
+>> Devices:
+>>   	  ad7605-4, ad7606, ad7606-6, ad7606-4 analog to digital converters
+>> (ADC).
+>> +	  It also support iio_backended devices for AD7606B.
+>>   
+>>   	  To compile this driver as a module, choose M here: the
+>> -	  module will be called ad7606_parallel.
+>> +	  module will be called ad7606_par.
+>>   
+>>   config AD7606_IFACE_SPI
+>>   	tristate "Analog Devices AD7606 ADC driver with spi interface
+>> support"
+>> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
+>> index 99d5ca5c2348..a753d5caa9f8 100644
+>> --- a/drivers/iio/adc/ad7606.c
+>> +++ b/drivers/iio/adc/ad7606.c
+>> @@ -21,6 +21,7 @@
+>>   #include <linux/util_macros.h>
+>>   #include <linux/units.h>
+>> +
+>> +	/* backend manages interruptions by itself.*/
+> missing space before closing the comment (also not sure the comments adds much)
 
-Answering my own question. After some further investigation, I am
-afraid that your concern was correct.
 
-One sm8250, venus is using three power-domains,"venus", "vcodec0",
-"mx", but there is only one phandle in the required-opp.
-"venus" and "vcodec0" correspond to the "videocc" power-domain, which
-has a parent-domain that is the "rpmhpd".
-"mx" corresponds to the "rpmhpd".
-The rpmhpd power-domain has one shared OPP table used for all the
-power-domains it provides. :-(
+thx, will check again
 
-Because we also need to look for a matching OPP table for the
-required-opp by walking the power-domain parents (needed on Tegra), we
-simply can't tell what power-domain the required-opp belongs to.
 
 >
-> That said, we already have two methods that helps us to deal with this issue:
+>> +	if (!st->back) {
+>> +		ret = wait_for_completion_timeout(&st->completion,
+>> +						  msecs_to_jiffies(1000));
+>> +		if (!ret) {
+>> +			ret = -ETIMEDOUT;
+>> +			goto error_ret;
+>> +		}
+>>   	}
+>>   
+>>   	ret = ad7606_read_samples(st);
+>> @@ -271,6 +284,12 @@ static int ad7606_read_raw(struct iio_dev *indio_dev,
+>>   	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
+>>   		*val = st->oversampling;
+>>   		return IIO_VAL_INT;
+>> +	case IIO_CHAN_INFO_SAMP_FREQ:
+>> +		pwm_get_state_hw(st->cnvst_pwm, &cnvst_pwm_state);
+>> +		/* If the PWM is swinging, return the real frequency,
+>> otherwise 0 */
+>> +		*val = ad7606_pwm_is_swinging(st) ?
+>> +			DIV_ROUND_CLOSEST_ULL(NSEC_PER_SEC,
+>> cnvst_pwm_state.period) : 0;
+>> +		return IIO_VAL_INT;
+>>   	}
+>>   	return -EINVAL;
+>>   }
+>> @@ -360,6 +379,8 @@ static int ad7606_write_raw(struct iio_dev *indio_dev,
+>>   			return ret;
+>>   
+>>   		return 0;
+>> +	case IIO_CHAN_INFO_SAMP_FREQ:
+>> +		return ad7606_set_sampling_freq(st, val);
+>>   	default:
+>>   		return -EINVAL;
+>>   	}
+>> @@ -482,7 +503,6 @@ static int ad7606_buffer_postenable(struct iio_dev
+>> *indio_dev)
+>>   	struct ad7606_state *st = iio_priv(indio_dev);
+>>   
+>>   	gpiod_set_value(st->gpio_convst, 1);
+>> -	ad7606_pwm_set_swing(st);
+>>   
+>>   	return 0;
+>>   }
+>> @@ -492,19 +512,53 @@ static int ad7606_buffer_predisable(struct iio_dev
+>> *indio_dev)
+>>   	struct ad7606_state *st = iio_priv(indio_dev);
+>>   
+>>   	gpiod_set_value(st->gpio_convst, 0);
+>> -	ad7606_pwm_set_low(st);
+>>   
+>>   	return 0;
+>>   }
+>>   
+>> +static int ad7606_pwm_buffer_postenable(struct iio_dev *indio_dev)
+>> +{
+>> +	struct ad7606_state *st = iio_priv(indio_dev);
+>> +
+>> +	return ad7606_pwm_set_swing(st);
+>> +}
+>> +
+>> +static int ad7606_pwm_buffer_predisable(struct iio_dev *indio_dev)
+>> +{
+>> +	struct ad7606_state *st = iio_priv(indio_dev);
+>> +
+>> +	return ad7606_pwm_set_low(st);
+>> +}
+> Maybe I'm missing something but are we removing the gpiod calls?
+
+
+Well actually the pwm is meant to be used only with backend. Though it 
+could be used without it, I dont think it is a very good idea because 
+interrupt handling + transmission init takes quite some time, and a new 
+rising edge could happen before the current samples are effectively 
+transferred. However, since PWM and backend are two separate things, I 
+wanted to show an usage for the PWM when introducing it, and one way to 
+do it was to use it to emulate a GPIO by setting the duty cycle 100% for 
+having a 1 (set_high) and 0% for having a 0 (set_low). Then on this 
+patch, since we introduce iio-backend, I removed this 'mock' usage of it.
+
+But I think that I should separate the removal into an additional patch 
+to avoid confusions. Or shall I just remove the mock usage from the PWM 
+patch ?
+
+
+>> +
+>> +static int ad7606_update_scan_mode(struct iio_dev *indio_dev,
+>> +				   const unsigned long *scan_mask)
+>> +{
+>> +	struct ad7606_state *st = iio_priv(indio_dev);
+>> +
+>> +	/* The update scan mode is only for iio backend compatible drivers.
+>> +	 * If the specific update_scan_mode is not defined in the bus ops,
+>> +	 * just do nothing and return 0.
+>> +	 */
+>> +	if (st->bops->update_scan_mode)
+>> +		return st->bops->update_scan_mode(indio_dev, scan_mask);
+>> +	else
+>> +		return 0;
+> Redundant else
+
+
+ack
+
+>> -	if (ret)
+>> -		return ret;
+>>   
+>> +	if (st->bops->iio_backend_config) {
+>> +		st->bops->iio_backend_config(dev, indio_dev);
+>> +		indio_dev->setup_ops = &ad7606_pwm_buffer_ops;
+> Ignoring error code
+
+
+will handle
+
+
 >
-> 1)
-> For a genpd OF provider that provides multiple genpds, the genpd/OPP
-> core tries to assign an OPP table for each genpd, based on the
-> power-domain index. In other words, if corresponding OPP-tables are
-> specified in the operating-points-v2 list, those would get assigned
-> accordingly.
+>> +	} else {
+>> +		/* Reserve the PWM use only for backend (force gpio_convst
+>> definition)*/
+>> +		if (!st->gpio_convst)
+>> +			return dev_err_probe(dev, -EINVAL,
+>> +					     "Convst pin must be defined when
+>> not in backend mode");
+>> +
+>> +		init_completion(&st->completion);
+>> +		ret = devm_request_threaded_irq(dev, irq,
+>> +						NULL,
+>> +						&ad7606_interrupt,
+>> +						IRQF_TRIGGER_FALLING |
+>> IRQF_ONESHOT,
+>> +						chip_info->name, indio_dev);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+> Are we still calling devm_iio_triggered_buffer_setup() in case we have a backend
+> device?
+
+
+No, this portion of code is only executed if convst is defined 
+(conversion trigger GPIO), which is not the case if there is a backend.
+
+
 >
-> 2)
-> The genpd OF provider can control on a per genpd basis, whether there
-> should be an OPP table assigned to it. This is managed by assigning
-> the ->set_performance_state() callback for the genpd or leaving it
-> unassigned. Typically this works well, when there is one OPP-table
-> specified in the operating-points-v2 list for the provider - and only
-> one of the genpds that should use it.
+>>   	return devm_iio_device_register(dev, indio_dev);
+>>   }
+> ...
 >
-> If it turns out that we need something more flexible, I think we need
-> to look at extending the OPP/power-domain DT bindings. We would
-> probably need a "by-names" DT property, allowing us to specify the
-> mapping between the OPP-tables and the power-domains.
+>> +#ifdef CONFIG_IIO_BACKEND
+> Not a fan of this #ifef... It's not that much code so I would just select
+> IIO_BACKEND for this driver. In fact, I don't think we can separately enable
+> IIO_BACKEND in the menuconfig menu?
+
+
+OK I can do it that way.
+
+>> +static int ad7606_bi_setup_iio_backend(struct device *dev, struct iio_dev
+>> *indio_dev)
+>> +{
+>> +		struct ad7606_state *st = iio_priv(indio_dev);
+>> +		unsigned int ret, c;
+>> +
+>> +		st->back = devm_iio_backend_get(dev, NULL);
+>> +		if (IS_ERR(st->back))
+>> +			return PTR_ERR(st->back);
+>> +
+>> +		/* If the device is iio_backend powered the PWM is mandatory
+>> */
+>> +		if (!st->cnvst_pwm)
+>> +			return -EINVAL;
+>> +
+>> +		ret = devm_iio_backend_request_buffer(dev, st->back,
+>> indio_dev);
+>> +		if (ret)
+>> +			return ret;
+>> +
+>> +		ret = devm_iio_backend_enable(dev, st->back);
+>> +		if (ret)
+>> +			return ret;
+>> +
+>> +		struct iio_backend_data_fmt data = {
+>> +			.sign_extend = true,
+>> +			.enable = true,
+>> +		};
+> I would follow typical kernel coding style and have this declared at the
+> beginning of the function.
+
+
+aouch, yes !
+
+
+>> -
+>> +#ifdef CONFIG_IIO_BACKEND
+>> +	struct iio_backend *back;
+>> +
+>> +	/*For now, only the AD7606B is backend compatible.*/
+>> +	if (chip_info->has_backend) {
+>> +		back = devm_iio_backend_get(&pdev->dev, NULL);
+>> +		if (IS_ERR(back))
+>> +			return PTR_ERR(back);
+>> +
+>> +		return ad7606_probe(&pdev->dev, 0, NULL,
+>> +				    chip_info,
+>> +				    &ad7606_bi_bops);
+>> +	}
+>> +#endif
+> Not sure I follow the above? You also get the backend in
+> ad7606_bi_setup_iio_backend()? So it seems to be that the has_backend flag is
+> not really needed?
+
+
+The first call to devm_iio_backend_get checks if there is a backend 
+available, and if so the backend bops (ad7606_bi_bops)are passed to the 
+generic probe function.
+
+At this stage, the backend cannot be stored in the ad7606_state 
+structure because it is not initialized yet, it will be in the generic 
+probe function, hence the second call.
+
+The has_backend flag is discussed in my answer to Jonathan's comment, 
+and will probably be removed.
+
 >
-> >
-> > > Each of the phandles in the required-opps points to another OPP table,
-> > > which OPP table should be associated with a specific genpd.
-> >
-> > Yes, but a simple order reversal in DT (which I sent in my last
-> > email), will not be picked
-> > by code at all. i.e. DT doesn't give the order in which required OPPs
-> > are present.
+> - Nuno Sá
 >
-> Assuming genpd OF providers are following 1) or 2), I don't think this
-> should be an issue.
-
-It looks like I was wrong.
-
-This whole problem boils down to that we are allowing the OPP table to
-be shared for a genpd OF provider for multiple power-domains. We could
-consider adding some new DT property to point out at what power-domain
-the required-opps belongs to, but it doesn't really matter as we need
-to keep supporting the current DTS.
-
-Oh well, back to the drawing table to re-work this again. It looks
-like we need to make it possible for consumer drivers to provide
-additional information to dev_pm_domain_attach_list(), allowing it to
-understand how the required-devs should be assigned.
-
-Unless you have some better ideas?
-
-[...]
-
-Kind regards
-Uffe
+>
 
