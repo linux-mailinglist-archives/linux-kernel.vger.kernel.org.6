@@ -1,113 +1,115 @@
-Return-Path: <linux-kernel+bounces-326188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66924976481
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:30:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A55997647B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:29:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A22F1F249F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:30:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3234E2827D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202FA191F71;
-	Thu, 12 Sep 2024 08:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249F6191F6E;
+	Thu, 12 Sep 2024 08:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RzMwzLH0"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sWdnb8CX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5DE18A6A9
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2AE1A28D;
+	Thu, 12 Sep 2024 08:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726129800; cv=none; b=SQs/r9mt7Se8MA6lq18ncRpFK7uKFkH5SyUETTbY8FAp2CYi7h3JyP4Ey/rM/4kNrpF/bEeak29xIEFM/jLi4bIKiLPRU/IbYctqdjxIePF7QXR0qTh75WB4AbEX/WuChhAcz2IJSMowdo4hXa0RAVM8SnRFPq6Nrqq8/e+QK8M=
+	t=1726129790; cv=none; b=sSOPctaP/oVa/Y2SvCffzSAOhmPxOHdDcEgl2UXEg1YVVDHhYH3HTJ/oS0i7bKHWnA76hFe5v6TTxXCwSg4SZRzzsvYnaSt4rDixXpRJCI+zuf4z5DIsBbT0+s4vSM4gO+I6XoHZ/yMuky7JJgzo+fVXrYZCts2PI8wh8Z04GIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726129800; c=relaxed/simple;
-	bh=vgepv0dboKEDZIyalIuI+tBzMZSDMsAyMhbtlJJEdBE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qS0s/Hn98Eq/cbPe/QMNHsAu1bFxq0zv2OTdzTB5OnMrhu1t8YV9E03exOj7Nwi7ga9eSn46+3IrkvuHGcNIkt0cJE8hR4Aya7RyFHhJCzaXEzv5gp9gSUt7R1jecZpdbdco7r6Bwo7LXy42Jm4FgOv3bMuegKELwsgW1xIH10g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RzMwzLH0; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7aa086b077so83821466b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 01:29:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726129797; x=1726734597; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vgepv0dboKEDZIyalIuI+tBzMZSDMsAyMhbtlJJEdBE=;
-        b=RzMwzLH0oz9gtLLaA59mBzsaYQK2RKEA73PojmnAor9H0R178KvApjEUAEsrnbXSaT
-         tz6mv2PFIKCj497W03HibRyaU+Uvek31S1SL+GM5zcD7DN2Uu4lihu2yKRtXUcIBFW3C
-         PS5shHDJ1utLJrrCnGtFVdpNP29M8MhKMWqS0uRrq1v347H6kXBiQ7ajkSfQdvSwxMWU
-         YLD3mLPSLeMwW11bOcXCi3gXl+MuYJABucrXXFn+fDIIPYjp7zeJukqT3FBaq0xMs48u
-         KxBRyJcOj0Ck3guaomIKXZG3LV5XzDFNe5LOGQE0pMa9l0R8HALUveMah8c1kzfXG5SD
-         VvLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726129797; x=1726734597;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vgepv0dboKEDZIyalIuI+tBzMZSDMsAyMhbtlJJEdBE=;
-        b=Hjp8qJ/F7khFvYI4qRor9ZrASDPaGA0lVyz2Px88cVzUmmyM1yrJKF+N/GzBMIFC3g
-         b6UDUsgV3oGYwxNO+iyJwj9VK2tybFVT0mVd5JYy2Sypw3z62/QXJaGHRTiFDNej3g8d
-         r0uo9A5tUMNWTg0gemkJ7tWOi51tLThTicOgLT24oexkI8aPP9Ocf8wri1AZgs9TpgeM
-         venFZUFcuvTfeGQKajYqF83u2LBo+gX3mCT0Mu3Ed6bXqjxtevlUZW6ps/qcWJ3lQBDs
-         fjIKUYuhh4urffEt7CG8e9tNrslGWSQTQZJq2SrgWb1GiAMoP58NQU+Ni/q4JNArOTOi
-         tLvA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8/D4P5uqEUc6tLI7R9xXe50KNFD2RxHam8o3KIKgkSiDTbP3kkZbW4CYet6IUejuN2au8DfK3BAp3pOg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaAwmcEdk5B79R4DM5e9ERZ4P/Hwor5cbMAY3RzSona8tXjcSh
-	fndSCxfxbFF0DkJY6GpCIwRMJvxyTXaggySTCqoLkWd/Z0MFz6x9qxzrEH9zpIPnb8PZ4MiL8wt
-	01DSJSz61EgJ02egHCntEcL04ULKdE/YqHy7e
-X-Google-Smtp-Source: AGHT+IFKXIJ+FLzOutx6ya3INwuoofzvp9Oai3Ccg7+eJzEPubs5oXYdvrhio5ROrLJdoSfGd6QneccQ3uQn1JUAWYY=
-X-Received: by 2002:a17:907:e29a:b0:a8d:4631:83a9 with SMTP id
- a640c23a62f3a-a90293dc171mr206258966b.3.1726129796811; Thu, 12 Sep 2024
- 01:29:56 -0700 (PDT)
+	s=arc-20240116; t=1726129790; c=relaxed/simple;
+	bh=vVZSVYNNMpsxf/Mtb1DzmqrGNnMqIEIm+Nt2IKnA8hA=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=DlQhBSrkoFVCGjg5aWFAQ3AHJ8MCXTLcoE/P0PS+4H3NxoQCDYLFsiKY87OVL7SCStCsB101+5qyg7Fzug53ymVK/dpN5AUlAyF9PP4AwTfX1u2h00gNrSIgDFVSojIkNFnKzoj/WnxJTgfIp7cIFRpTTiiSdM8Ig9fIGsVr5aE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sWdnb8CX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BCFEC4CEC3;
+	Thu, 12 Sep 2024 08:29:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726129790;
+	bh=vVZSVYNNMpsxf/Mtb1DzmqrGNnMqIEIm+Nt2IKnA8hA=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=sWdnb8CXle8EwZQtK4FF2OPZiO4WYQ+RQ0yo731sacd6+s9mXxQkLvJR41dZJLHR5
+	 ku1BzgEoYxHHcVg9eIRn9Z0MrgaYViDkjpaq3AQLvODziVTMB+jfMBOz45mNR4JbpC
+	 hIVnQqQx54h9mSjhfscWiRH4TVXlV9xw1ffrSWIXtARfD/oabDu/C6rhGUsCco9iYn
+	 8OgavysBhYcM677c8qTtpjdsvUGDcLOlJLauSgOfdo2XwN7IAVWVoYnnRVVPrF8Pz7
+	 3ebkCbIpvxUv7Rp50WELU2xHRUrEXQ9wUhklmQODO6Fawg2QlY1TkzbGMHH/ud68Wf
+	 014aV9hnrDymQ==
+Date: Thu, 12 Sep 2024 03:29:48 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912075555.225316-1-en-wei.wu@canonical.com>
-In-Reply-To: <20240912075555.225316-1-en-wei.wu@canonical.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 12 Sep 2024 10:29:43 +0200
-Message-ID: <CANn89iLR9RJqK9i6THjsqCtjM_20ffe2joV0h=Q_W=Yo3f6_qw@mail.gmail.com>
-Subject: Re: [PATCH ipsec v3] xfrm: check MAC header is shown with both
- skb->mac_len and skb_mac_header_was_set()
-To: En-Wei Wu <en-wei.wu@canonical.com>
-Cc: steffen.klassert@secunet.com, herbert@gondor.apana.org.au, 
-	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kai.heng.feng@canonical.com, chia-lin.kao@canonical.com, 
-	anthony.wong@canonical.com, kuan-ying.lee@canonical.com, 
-	chris.chiu@canonical.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Mahadevan <quic_mahap@quicinc.com>
+Cc: andersson@kernel.org, dmitry.baryshkov@linaro.org, sean@poorly.run, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ quic_jmadiset@quicinc.com, quic_vpolimer@quicinc.com, 
+ neil.armstrong@linaro.org, swboyd@chromium.org, mailingradian@gmail.com, 
+ quic_abhinavk@quicinc.com, freedreno@lists.freedesktop.org, 
+ danila@jiaxyga.com, quic_kalyant@quicinc.com, 
+ maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, mripard@kernel.org, 
+ konrad.dybcio@linaro.org, linux-arm-msm@vger.kernel.org, 
+ marijn.suijten@somainline.org, robdclark@gmail.com, krzk+dt@kernel.org, 
+ dri-devel@lists.freedesktop.org, daniel@ffwll.ch, quic_jesszhan@quicinc.com, 
+ conor+dt@kernel.org, airlied@gmail.com, bigfoot@classfun.cn
+In-Reply-To: <20240912071437.1708969-2-quic_mahap@quicinc.com>
+References: <20240912071437.1708969-1-quic_mahap@quicinc.com>
+ <20240912071437.1708969-2-quic_mahap@quicinc.com>
+Message-Id: <172612978700.2592228.2560116576416075874.robh@kernel.org>
+Subject: Re: [PATCH 1/5] dt-bindings: display/msm: Document MDSS on SA8775P
 
-On Thu, Sep 12, 2024 at 9:56=E2=80=AFAM En-Wei Wu <en-wei.wu@canonical.com>=
- wrote:
->
-> When we use Intel WWAN with xfrm, our system always hangs after
-> browsing websites for a few seconds. The error message shows that
-> it is a slab-out-of-bounds error:
 
-Quoting Documentation/process/maintainer-netdev.rst
+On Thu, 12 Sep 2024 12:44:33 +0530, Mahadevan wrote:
+> Document the MDSS hardware found on the Qualcomm SA8775P platform.
+> 
+> Signed-off-by: Mahadevan <quic_mahap@quicinc.com>
+> ---
+>  .../display/msm/qcom,sa8775p-mdss.yaml        | 225 ++++++++++++++++++
+>  1 file changed, 225 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
+> 
 
-Resending after review
-~~~~~~~~~~~~~~~~~~~~~~
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Allow at least 24 hours to pass between postings. This will ensure reviewer=
-s
-from all geographical locations have a chance to chime in. Do not wait
-too long (weeks) between postings either as it will make it harder for revi=
-ewers
-to recall all the context.
+yamllint warnings/errors:
 
-Make sure you address all the feedback in your new posting. Do not post a n=
-ew
-version of the code if the discussion about the previous version is still
-ongoing, unless directly instructed by a reviewer.
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml: ^display-controller@[0-9a-f]+$: Missing additionalProperties/unevaluatedProperties constraint
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml: ^displayport-controller@[0-9a-f]+$: Missing additionalProperties/unevaluatedProperties constraint
+Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.example.dts:24:18: fatal error: dt-bindings/clock/qcom,sa8775p-dispcc.h: No such file or directory
+   24 |         #include <dt-bindings/clock/qcom,sa8775p-dispcc.h>
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[2]: *** [scripts/Makefile.lib:442: Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1432: dt_binding_check] Error 2
+make: *** [Makefile:224: __sub-make] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240912071437.1708969-2-quic_mahap@quicinc.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
