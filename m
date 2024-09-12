@@ -1,81 +1,115 @@
-Return-Path: <linux-kernel+bounces-325802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E64F1975E62
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 03:13:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B555A975E65
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 03:17:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AADB82827CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:13:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 750F3284FE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC601D545;
-	Thu, 12 Sep 2024 01:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15A81F947;
+	Thu, 12 Sep 2024 01:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="Cru5l5Y2"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DsOzGFmV"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74181AACA;
-	Thu, 12 Sep 2024 01:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB455684;
+	Thu, 12 Sep 2024 01:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726103617; cv=none; b=TaOcQ5+i7BA3zx6r4Zscj08yPIL+uGMSOYh6nyBi8TYdcO37xHITkX8Srf2GOpYJPdhF+5jCDdbJ2tGR9bPwmvb1wKoc0qEiLeoDKPUpQGmTYDnBBFFzJdGO26kMyZcLchY+JONcj+VkQZpYGxcbtxiD+KgbWEU//0bbXfOV3JE=
+	t=1726103822; cv=none; b=JYmMVDfbiXGKeYCUfkp8kIDx+96Y24cJvud9Rp3lMOg8RAsDsbUrV5hqQFT/e3t3BMRhWWERSqYgc/Cp/HJcWp9K/J8Ns29372sg/aDDYX2+Z9DZp4eFeHiKVc4In33IgL7m9tkzLiOCETETE7DRvH6bP86+vhXbj7qYzieXgio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726103617; c=relaxed/simple;
-	bh=S+MbdhdVOhOMSghEANs8RIXiI0K1AciZRyT3zzRZOq0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QL3+kJqWymN6F908e0/+7PW/GhnWLMtcDR+htxOYzhNvcXKjTQ7Z4VeITbYGVb/2lkeskjJHAM4oSoDrC5KTEFcgJGIgFTYNI4a7zW8x9zxiOPoPa4LguzaSAbCuTDRTprjtKWN1zwNEkR4UMphE2tfgwl7t3WB8C/M/IiCozWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=Cru5l5Y2; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	s=arc-20240116; t=1726103822; c=relaxed/simple;
+	bh=QHsU8N87ajGHNvG7SkWHAwdOP5xSbhjxwmgb8LHviJI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bNnQ9l58Zba24vNqJ2Bjsg1oai17XVlDb+dPHie7TE3QpUv2QzAyA95pQAxUmGIVx6miOmrzZUg1JlmYquPD24mGmcRa3BNOWNZLh16DeUWRga1N6Wp9wocuuodMo0iYprdxEzQSwheEvADdX/LQX4IBNo+MkeP6vH1+AmZ6DGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DsOzGFmV; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4585721f6edso3011711cf.2;
+        Wed, 11 Sep 2024 18:17:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1726103613;
-	bh=S+MbdhdVOhOMSghEANs8RIXiI0K1AciZRyT3zzRZOq0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=Cru5l5Y2rBnuxKzpakQ/JaAECYPKlIOBOpGYvbSlvhvSTEcTVF1oLZpaQgdYrRHAf
-	 Gsj+cbl2e+gfdes6mIsQdyphkQNPkNBWpQi0NzBfPdwPl3enSGwi4Mf0kmX3daoEaY
-	 4DW5Hce8vsqEYuk22jAsPHNgTRaE8AAAa9YfD8hJeAXo/XxwIbwdHRCc+vm235DaLP
-	 8ckVh6devlrBy9B3y1/248dNltGYJjfisPznYpgTPfvselxIkFbqS6s1V+Fa0RCe8V
-	 KmlasRJk0JbldRS12HmKF9hEVVxQwKgtpYIu+IL9FvIzPo3yzb5hc7WSAmC2AGRQIF
-	 iNRNmKChMchyg==
-Received: from [192.168.68.112] (ppp118-210-89-8.adl-adc-lon-bras32.tpg.internode.on.net [118.210.89.8])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 1202F650AD;
-	Thu, 12 Sep 2024 09:13:33 +0800 (AWST)
-Message-ID: <7c5a2a91fad3c52733beb5cd192ad4c90d48f82c.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v1] ARM: dts: aspeed: yosemite4: Remove temperature
- sensors on Medusa Board
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, patrick@stwcx.xyz, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>
-Cc: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org
-Date: Thu, 12 Sep 2024 10:43:32 +0930
-In-Reply-To: <20240910085701.3595248-1-Delphine_CC_Chiu@wiwynn.com>
-References: <20240910085701.3595248-1-Delphine_CC_Chiu@wiwynn.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+        d=gmail.com; s=20230601; t=1726103819; x=1726708619; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z9Ce9nGjZFP5vHJs9bz+yR3wENufdBul9eEWmrVfgH8=;
+        b=DsOzGFmV9CanGAhjbCakQMxL3cAjYPIhXYMEvh5Y0JY7TRdFKZbBGxAyH85YIRsi2Y
+         QJ3igGwsl+f8GPnnxcMjg0JQ4SixdcIONKMplawGVXlmHiSjG4K1Db5b+epP82CyvHLT
+         AJP2raGQZqdvobTDT2hio+FpMtu8sILpzJPqFwEboKek+0TQbvk7Lk3+vsNM9FbUd7Bi
+         jkAAhStPnyKRa7etrY94IIZSTi5Gz6E7aS6oi6C0Tvl4uxJHLimGVOoFMzXHsmCmTadU
+         Slm2iV9K3CvNA79sBOWeQstVeAe9uoBi5RRDteQpEEroo+PXDtVS42ZcLi9Ejj8N8YAD
+         do8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726103819; x=1726708619;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z9Ce9nGjZFP5vHJs9bz+yR3wENufdBul9eEWmrVfgH8=;
+        b=bdw2SlXFPDcEkM5limOmmZnYsdW6ZZlRN4bTrZN5wnlZX0MwajI2kGtzhWSyK3VHjt
+         B/JMdSVjbtrgij+s6fg/VlF+QyvQUKSvbTHJWshf8XpltTkc0FNVqwiOEt2os9ZW4enA
+         eGKdF2obakDAQMJRxzxCMubCjVDkQmeMueFSUQrG138e9dU3o5WqQDf5rqTEDSnHH9Lw
+         a8WZB0d6FLHQZLjjE6FvlRY67CEvWMlUtAhnN2uDuLxYlhAE+w2VhnYWfIFIUi5qsgZe
+         PRK06MYKxELeJY4ByPOlBs05AgT1I/IiCRu+J5GXMHWH2OkFq8vQe8eqkkLPdhw96EXF
+         IpDw==
+X-Forwarded-Encrypted: i=1; AJvYcCVDKiOscacgLIldJgFvxqw0uEDxpUcJ54Y+UHQhFcvAsrReplv+UOM4O7co7udMFbCcQPM6FmPN3e8lpFG8@vger.kernel.org, AJvYcCVRqPDeVBwbaZpe4plVh0uxYR1Oe0kfY3TjPKeOYiSg1p1yahplZzMqJnVO3yLOpCfnaiEulpCP06A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjWTAfjO2C5zqmAKQT8mD88Wv2LDJgsg+k2NkTZOebM4clp/AA
+	6ejnXOZ/Uw2QyL/C+Dcp7ksvk8X9yGarVlt3ipyNQQRQJs7eP71k
+X-Google-Smtp-Source: AGHT+IFblIHJnaDVwGh4GzETKTU5M0uWbRP7F8yh0VAq3YMWQXVcBEBz7bfKQ3ON8am6DPt38xlgsg==
+X-Received: by 2002:a05:622a:205:b0:458:2619:36c with SMTP id d75a77b69052e-45860358394mr17039931cf.35.1726103819397;
+        Wed, 11 Sep 2024 18:16:59 -0700 (PDT)
+Received: from localhost.localdomain (d24-150-189-55.home.cgocable.net. [24.150.189.55])
+        by smtp.googlemail.com with ESMTPSA id d75a77b69052e-458320392cbsm34695801cf.61.2024.09.11.18.16.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 18:16:59 -0700 (PDT)
+From: Dennis Lam <dennis.lamerice@gmail.com>
+To: kent.overstreet@linux.dev,
+	corbet@lwn.net
+Cc: linux-bcachefs@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dennis Lam <dennis.lamerice@gmail.com>
+Subject: [PATCH] docs: filesystems: bcachefs: fixed some spelling mistakes in the bcachefs coding style page
+Date: Wed, 11 Sep 2024 21:16:28 -0400
+Message-ID: <20240912011626.11614-3-dennis.lamerice@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2024-09-10 at 16:57 +0800, Delphine CC Chiu wrote:
-> From: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
->=20
-> Remove two temperature sensors on Medusa Board according to hardware
-> change.
->=20
-> Signed-off-by: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
-> Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+Specifically, fixed spelling of "commit" and pluralization of last sentence.
 
-Thanks, I've applied this to be picked up through the BMC tree.
+Signed-off-by: Dennis Lam <dennis.lamerice@gmail.com>
+---
+ Documentation/filesystems/bcachefs/CodingStyle.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Andrew
+diff --git a/Documentation/filesystems/bcachefs/CodingStyle.rst b/Documentation/filesystems/bcachefs/CodingStyle.rst
+index 0c45829a4899..b29562a6bf55 100644
+--- a/Documentation/filesystems/bcachefs/CodingStyle.rst
++++ b/Documentation/filesystems/bcachefs/CodingStyle.rst
+@@ -175,7 +175,7 @@ errors in our thinking by running our code and seeing what happens. If your
+ time is being wasted because your tools are bad or too slow - don't accept it,
+ fix it.
+ 
+-Put effort into your documentation, commmit messages, and code comments - but
++Put effort into your documentation, commit messages, and code comments - but
+ don't go overboard. A good commit message is wonderful - but if the information
+ was important enough to go in a commit message, ask yourself if it would be
+ even better as a code comment.
+@@ -183,4 +183,4 @@ even better as a code comment.
+ A good code comment is wonderful, but even better is the comment that didn't
+ need to exist because the code was so straightforward as to be obvious;
+ organized into small clean and tidy modules, with clear and descriptive names
+-for functions and variable, where every line of code has a clear purpose.
++for functions and variables, where every line of code has a clear purpose.
+-- 
+2.46.0
+
 
