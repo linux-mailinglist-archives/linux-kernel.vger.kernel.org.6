@@ -1,221 +1,171 @@
-Return-Path: <linux-kernel+bounces-326306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9007897664F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:05:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FE8F976653
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C281B2185D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:05:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3B281C23399
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0292219F42C;
-	Thu, 12 Sep 2024 10:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88ED19F407;
+	Thu, 12 Sep 2024 10:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Js2fqRSf";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gOFEknf2";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Js2fqRSf";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="gOFEknf2"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fWDHyUjC"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B475919341C;
-	Thu, 12 Sep 2024 10:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322F119005A
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 10:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726135487; cv=none; b=Ejg7p2fuVILD5wOOsIBYtMBbNZsCjWe0Ah5tz0TGHXH4iIp2fyM/0KNF/shdqWIXBWuTC3psfydWZaEYKZuWjWlzWqxfC25DujCHJfBEyqP+oj/dbno3LvnuE91IQu8WHvUgd0jgr9sPxziqUvMCeeLq47Ghb/kdrzAoTnzfuWI=
+	t=1726135543; cv=none; b=sTGQtGjCCysMZLL7ObW0M4PAh08bAhI73XLzGQN+ymAveI1sWp76juj6tMxhUIyI4RSOkBg+s9nDCLayU7Q365XDBSPvCBmDRIRypI+Q3QUNlB6E+guwrNx8Wa/lkmbGzdFWNX8I5qnSJRb1NfHSDe8bKm44aWwT2lscR3dDtq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726135487; c=relaxed/simple;
-	bh=ogvSFFSm7bsuGcIAX+zX4t5EIqX9rz45vkV1Vw1w0Q0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OVacEdZ2DSLAQCagMOseDGKk3M8Ns3SA38FFd6fdQvluZRxPGSATXTPEiCM4knr1jhlQlhaJzIQirENDKdl+DUvYngo4JE9M+xRLRMCiegB/n+LchB6RU2dLFIOeJ/nQmg0BuKmDz6X3X0g0OO6vQHJbnTzM5HN6C5cj0C50CQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Js2fqRSf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gOFEknf2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Js2fqRSf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=gOFEknf2; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9504F21AA4;
-	Thu, 12 Sep 2024 10:04:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726135483; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IpWTLo4PiQ/ADwGe8YGgwnxDcDKej5qqjnNe59NmPlk=;
-	b=Js2fqRSfWmWD+vWHuIZQNqOHkzhT9jpWFBrAAOHwGEBAf+cN+OV2c1zuSNj8BRE/TEA6Or
-	06GaTnK34HMdhdxbFEDXLvQCvLvwV/+F4jdyT8bkzQigfuwSc6fUxcQZoMawcBKztmWvgG
-	rkZMTuz3iRR32MlLWdxtVd31Gn/txJs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726135483;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IpWTLo4PiQ/ADwGe8YGgwnxDcDKej5qqjnNe59NmPlk=;
-	b=gOFEknf2aPxPGNHRWKxnoqYnR0+yk7p1uOCJizbxUJzW+LggluBSW6E95gt0G8PHrNCQhX
-	OrI7xkN1ceOcLTBQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726135483; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IpWTLo4PiQ/ADwGe8YGgwnxDcDKej5qqjnNe59NmPlk=;
-	b=Js2fqRSfWmWD+vWHuIZQNqOHkzhT9jpWFBrAAOHwGEBAf+cN+OV2c1zuSNj8BRE/TEA6Or
-	06GaTnK34HMdhdxbFEDXLvQCvLvwV/+F4jdyT8bkzQigfuwSc6fUxcQZoMawcBKztmWvgG
-	rkZMTuz3iRR32MlLWdxtVd31Gn/txJs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726135483;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IpWTLo4PiQ/ADwGe8YGgwnxDcDKej5qqjnNe59NmPlk=;
-	b=gOFEknf2aPxPGNHRWKxnoqYnR0+yk7p1uOCJizbxUJzW+LggluBSW6E95gt0G8PHrNCQhX
-	OrI7xkN1ceOcLTBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 501E913A73;
-	Thu, 12 Sep 2024 10:04:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 1G3uEbu84mYFLgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 12 Sep 2024 10:04:43 +0000
-Date: Thu, 12 Sep 2024 12:05:31 +0200
-Message-ID: <87v7z1yyok.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Mark Brown <broonie@kernel.org>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] ALSA: control: prevent some integer overflow issues
-In-Reply-To: <0f03d569-9804-4617-a806-f0e5c32399fb@stanley.mountain>
-References: <0f03d569-9804-4617-a806-f0e5c32399fb@stanley.mountain>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1726135543; c=relaxed/simple;
+	bh=hYu/0pKiliNNaOhUGCcaNaQSuDVUTyPvYMaGE/XgDx0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=is9vLKGxjqK6M4yIi0KXCR7wTdh4bCBbJ09TSwwLyL1Ij0ppeycMRH6HIWbJ3lWJRTqflU+sp5Txt7lHPaJkl5eQrGS9+8H1m1f119WhkRzfYsadYT37NTF4L+SyN98jYWmtsr4OwiFjvE/VQmL2o6hhNVLRU1rpxld/M3An6qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fWDHyUjC; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f78b28ddb6so4141161fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 03:05:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726135538; x=1726740338; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=adFD0Kl33h6g1TsBUVQtVkGuwXl9NRS/lzgMPLTfIfM=;
+        b=fWDHyUjC0DnNSVuAjNTPVfRlVPsqCmPWQGuFiNBZ2Zhm+Ke0rYmaHw+c3gLtBMtfvg
+         RgNCyptQqIGjSaT9KZdDBKkl7QRfh3L5+t8otQrAAzqqvIKQ8oRgHO+yaLplF+AoTBMO
+         qCGlCndTyW2onviDDnN9qlE5M4H7SnupuF1v81pFbyHVNwgMz7cbA3oVp6NGoevr47AK
+         OzPg310rRnljVXSj4xxhQYl5qH7acWfCBx9qQauNlKlB8WvG+MVLcJVZOspYQ0XKoQzD
+         obTpjlAfWZh54vaRHxUS6cp+hEt9Uvr70r81vmv8akDMSMNYjzRAFcGHqLqv2g4U3KEZ
+         fvDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726135538; x=1726740338;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=adFD0Kl33h6g1TsBUVQtVkGuwXl9NRS/lzgMPLTfIfM=;
+        b=W/VLN848ZFF3O4U7Ht688QD9lB2pCUzxBHCK+SQtQEVMboZZ+ddrDUIkHVBiH4dU/b
+         qtwUGwaXHbh2w6X6tenEQoRAhRotaSaylzRBQ3pANRMn/adYTuqNGKLLwzT3m0FNgFeU
+         eYcqvo2wqXiUFG5gpNV3nVj2ZQeniAS5vPhYvwZUsHIbPpBCsYur9iAM3Iw2A6mQOAW3
+         ohY65mvG2mk5tV58hOP1zApXpQ4DXxY2aOSvloOkL9JExuSdnrnr7vOVTij+z3yRQHsq
+         BpZ7yh31MJahZJ3XvU/rTgOkUvSrIJ1VnD0eB3DunqGoG6UOw78LYzYmGptbhQNDQrpd
+         RlbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXSaliii2KjkIMSh+JxjeMgiyEWaRowWG0klqcaSuMVRG9aTO+j4TWlrikbabdhzd5cGRzkuVzL5p5zxIM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUSSDVvcyqxekx8frIznXGiyJzgxs+ZTfymqNOkfbKA/jj4C0f
+	e8xMlUi4Fo+Tn8lKKkX6IE6LgIZu0K1I3UtuGezyj2FwcLWarKwxcTkjfVZk2k8=
+X-Google-Smtp-Source: AGHT+IEFyn1rrgMQ0CScgFWYq4pfR9WOEvH22bcAF4GZsfQdIo2mhT1yuCXm7GUupNryB4si7OCcag==
+X-Received: by 2002:a05:651c:2125:b0:2f6:4714:57dd with SMTP id 38308e7fff4ca-2f787f582b0mr9597831fa.45.1726135537736;
+        Thu, 12 Sep 2024 03:05:37 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f75c008f89sm18141951fa.57.2024.09.12.03.05.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 03:05:37 -0700 (PDT)
+Date: Thu, 12 Sep 2024 13:05:35 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Amit Sunil Dhamne <amitsd@google.com>
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+	conor+dt@kernel.org, heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, kyletso@google.com, rdbabiera@google.com, 
+	Badhri Jagan Sridharan <badhri@google.com>, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [RFC 1/2] dt-bindings: connector: Add property to set pd timer
+ values
+Message-ID: <5iakowhmqc3hbstmwbs6ixabr27hf2dfz2m4do4qvsrtgrdn72@r7xqawwgebla>
+References: <20240911000715.554184-1-amitsd@google.com>
+ <20240911000715.554184-2-amitsd@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo,linaro.org:email]
-X-Spam-Score: -3.30
-X-Spam-Flag: NO
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911000715.554184-2-amitsd@google.com>
 
-On Thu, 12 Sep 2024 10:51:14 +0200,
-Dan Carpenter wrote:
+On Tue, Sep 10, 2024 at 05:07:05PM GMT, Amit Sunil Dhamne wrote:
+> This commit adds a new property "pd-timers" to enable setting of
+> platform/board specific pd timer values for timers that have a range of
+> acceptable values.
 > 
-> I believe the this bug affects 64bit systems as well, but analyzing this
-> code is easier if we assume that we're on a 32bit system.  The problem is
-> in snd_ctl_elem_add() where we do:
-> 
-> sound/core/control.c
->   1669          private_size = value_sizes[info->type] * info->count;
->   1670          alloc_size = compute_user_elem_size(private_size, count);
->                                                                   ^^^^^
-> count is info->owner.  It's a non-zero u32 that comes from the user via
-> snd_ctl_elem_add_user().  So the math in compute_user_elem_size() could
-> have an integer overflow resulting in a smaller than expected size.
-
-So this should also use the overflow macro, too, in addition to your
-changes?  Something like:
-
---- a/sound/core/control.c
-+++ b/sound/core/control.c
-@@ -1618,7 +1618,7 @@ static int snd_ctl_elem_add(struct snd_ctl_file *file,
- 	struct snd_kcontrol *kctl;
- 	unsigned int count;
- 	unsigned int access;
--	long private_size;
-+	size_t private_size;
- 	size_t alloc_size;
- 	struct user_element *ue;
- 	unsigned int offset;
-@@ -1666,7 +1666,7 @@ static int snd_ctl_elem_add(struct snd_ctl_file *file,
- 	/* user-space control doesn't allow zero-size data */
- 	if (info->count < 1)
- 		return -EINVAL;
--	private_size = value_sizes[info->type] * info->count;
-+	private_size = array_size(value_sizes[info->type], info->count);
- 	alloc_size = compute_user_elem_size(private_size, count);
- 
- 	guard(rwsem_write)(&card->controls_rwsem);
-
-
-thanks,
-
-Takashi
-
-> 
->   1671
->   1672          guard(rwsem_write)(&card->controls_rwsem);
->   1673          if (check_user_elem_overflow(card, alloc_size))
-> 
-> The math is check_user_elem_overflow() can also overflow.  Additionally,
-> large positive values are cast to negative and thus do not exceed
-> max_user_ctl_alloc_size so they are treated as valid.  It should be the
-> opposite, where negative sizes are invalid.
-> 
->   1674                  return -ENOMEM;
-> 
-> Fixes: 2225e79b9b03 ("ALSA: core: reduce stack usage related to snd_ctl_new()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Cc: Badhri Jagan Sridharan <badhri@google.com>
+> Cc: linux-usb@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
 > ---
->  sound/core/control.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  .../bindings/connector/usb-connector.yaml     | 23 +++++++++++++++++++
+>  include/dt-bindings/usb/pd.h                  |  8 +++++++
+>  2 files changed, 31 insertions(+)
 > 
-> diff --git a/sound/core/control.c b/sound/core/control.c
-> index 4f55f64c42e1..f36af27e68d5 100644
-> --- a/sound/core/control.c
-> +++ b/sound/core/control.c
-> @@ -1397,9 +1397,9 @@ struct user_element {
->  };
+> diff --git a/Documentation/devicetree/bindings/connector/usb-connector.yaml b/Documentation/devicetree/bindings/connector/usb-connector.yaml
+> index fb216ce68bb3..9be4ed12f13c 100644
+> --- a/Documentation/devicetree/bindings/connector/usb-connector.yaml
+> +++ b/Documentation/devicetree/bindings/connector/usb-connector.yaml
+> @@ -253,6 +253,16 @@ properties:
 >  
->  // check whether the addition (in bytes) of user ctl element may overflow the limit.
-> -static bool check_user_elem_overflow(struct snd_card *card, ssize_t add)
-> +static bool check_user_elem_overflow(struct snd_card *card, size_t add)
->  {
-> -	return (ssize_t)card->user_ctl_alloc_size + add > max_user_ctl_alloc_size;
-> +	return size_add(card->user_ctl_alloc_size, add) > max_user_ctl_alloc_size;
->  }
+>      additionalProperties: false
 >  
->  static int snd_ctl_elem_user_info(struct snd_kcontrol *kcontrol,
-> @@ -1593,7 +1593,7 @@ static int snd_ctl_elem_init_enum_names(struct user_element *ue)
+> +  pd-timers:
+> +    description: An array of u32 integers, where an even index (i) is the timer (referenced in
+> +      dt-bindings/usb/pd.h) and the odd index (i+1) is the timer value in ms (refer
+> +      "Table 6-68 Time Values" of "USB Power Delivery Specification Revision 3.0, Version 1.2 " for
+> +      the appropriate value). For certain timers the PD spec defines a range rather than a fixed
+> +      value. The timers may need to be tuned based on the platform. This dt property allows the user
+> +      to assign specific values based on the platform. If these values are not explicitly defined,
+> +      TCPM will use a valid default value for such timers.
+> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+
+Is it really necessary to use the array property? I think it's easier
+and more logical to define corresponding individual properties, one per
+the timer.
+
+> +
+>  dependencies:
+>    sink-vdos-v1: [ sink-vdos ]
+>    sink-vdos: [ sink-vdos-v1 ]
+> @@ -478,3 +488,16 @@ examples:
+>              };
+>          };
+>      };
+> +
+> +  # USB-C connector with PD timers
+> +  - |
+> +    #include <dt-bindings/usb/pd.h>
+> +    usb {
+> +        connector {
+> +            compatible = "usb-c-connector";
+> +            label = "USB-C";
+> +            pd-timers =
+> +                <PD_TIMER_SINK_WAIT_CAP 600>,
+> +                <PD_TIMER_CC_DEBOUNCE 170>;
+> +        };
+> +    };
+> diff --git a/include/dt-bindings/usb/pd.h b/include/dt-bindings/usb/pd.h
+> index e6526b138174..6c58c30f3f39 100644
+> --- a/include/dt-bindings/usb/pd.h
+> +++ b/include/dt-bindings/usb/pd.h
+> @@ -465,4 +465,12 @@
+>  	 | ((vbm) & 0x3) << 15 | (curr) << 14 | ((vbi) & 0x3f) << 7	\
+>  	 | ((gi) & 0x3f) << 1 | (ct))
 >  
->  static size_t compute_user_elem_size(size_t size, unsigned int count)
->  {
-> -	return sizeof(struct user_element) + size * count;
-> +	return size_add(sizeof(struct user_element), size_mul(size, count));
->  }
->  
->  static void snd_ctl_elem_user_free(struct snd_kcontrol *kcontrol)
+> +/* PD Timer definitions */
+> +/* tTypeCSinkWaitCap (Table 6-68 Time Values, USB PD3.1 Spec) */
+> +#define PD_TIMER_SINK_WAIT_CAP		0
+> +/* tPSSourceOff (Table 6-68 Time Values, USB PD3.1 Spec) */
+> +#define PD_TIMER_PS_SOURCE_OFF		1
+> +/* tCCDebounce (Table 4-33 CC Timing, USB Type-C Cable & Connector Spec Rel2.2) */
+> +#define PD_TIMER_CC_DEBOUNCE		2
+> +
+>  #endif /* __DT_POWER_DELIVERY_H */
 > -- 
-> 2.45.2
+> 2.46.0.598.g6f2099f65c-goog
 > 
+
+-- 
+With best wishes
+Dmitry
 
