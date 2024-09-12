@@ -1,279 +1,269 @@
-Return-Path: <linux-kernel+bounces-326237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC133976555
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:18:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E570976557
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:19:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBD211C211B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:18:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2122B22BA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DEAC192592;
-	Thu, 12 Sep 2024 09:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QTJoWxLg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="n8R3xjgo";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Cd7+Tu/y";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="159hUFmc"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82CA018F2D4;
+	Thu, 12 Sep 2024 09:19:29 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C76B188910
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33ED06F2FD
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726132731; cv=none; b=IugZ9cy1rvNMYxdI3fw6T5xkweGJwsVfiFhBRhuuKZNCUAwp0ocEkmQPvE5gzXRI1i+Axr1No+kCq72h1y0OtKRuLFB5ASRByfC4mHICyBjG2zCAlGZ+a+B8O+vFHTsvPPN4C4y2BznQaX7aLqksgvGeMbB9NULBK4uV2K5XehY=
+	t=1726132768; cv=none; b=rKNUYr1m4DF0BJn9vMgQGyS0S2y3lxsTEGHTYhYetehNLuLezXdrwwfahh4a/1JtIte9jgI8aLJafD+NH7nL4ophNSVyHeIzyRioGWijbxHp22Ktqr1RRvAaf5+ymf45k/mjIGQBD8ygY6HcoM4S5WXotsBfNXMwY2ua/cJjfFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726132731; c=relaxed/simple;
-	bh=1Tt9njBm4JFXutPotK1lHgdG6qnhxnTFHDMGnSP1mTg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cxv7i+6r96y3N5N0hmcdWPXjwZBt71oX+oTOcNTh2ibbHWSm/AE2CsZTaVQTiD4cHK0VoI6jRgbm5CdN9IlixeP27xRDx/daarnnmFKk+J7Rk+p8zyOPhvh4thWPR4D5BWIZaBG4oEDJiEPIlQh0CvJHiggL5AXZGcbqrAih4Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QTJoWxLg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=n8R3xjgo; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Cd7+Tu/y; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=159hUFmc; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 7A01D1F76C;
-	Thu, 12 Sep 2024 09:18:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726132727; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=kn6dikhq1SSERuKzRRXDJMSAhN3YN1fucw643Y596JY=;
-	b=QTJoWxLgJBU+hbx8PH51rj7Fjxr0JMfPy04s6tdYpVbXCwHK8a5XCvt/eFAHn9BNh6hDE/
-	BLJey3/2ztjRWs+RRHK8+qF5n6GluIrlVHopONYEEtUAgkpXZAEjtBk34+TMUVKgcrMERr
-	yFSzYkfOISMgRyUmZL07ibornYdyO80=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726132727;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=kn6dikhq1SSERuKzRRXDJMSAhN3YN1fucw643Y596JY=;
-	b=n8R3xjgoE28p9qNEImIy6JvWXoBNaAfJU+1rUP/euxKg2DZx7I+gCxodMkUzdI0dMtIDhq
-	G/KmkTThzHX1i9Dg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726132726; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=kn6dikhq1SSERuKzRRXDJMSAhN3YN1fucw643Y596JY=;
-	b=Cd7+Tu/ybzujfY2LZ2mxLb6LRivQuEFALaM5Ajj8c+JY+aZ4J5LXmts4MJeGLoqeQ/2mIo
-	TMrv4o1p876NJ60xOx8Z0yklSyZu4Ffzbs347HlZdBdiSsIeE09YXgI3u+O42BEcHRrCLf
-	3OEFJD9W0O//UYAkFlhyDX6IfzV2vLs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726132726;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=kn6dikhq1SSERuKzRRXDJMSAhN3YN1fucw643Y596JY=;
-	b=159hUFmc9MHxey5NtdxxbvbpGwjOR9HaTHhh7TmNzkN/ifrShZ9/lJkqFnrTauqxT7vrca
-	b6ViZU8FI3PzZwDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2FEAA13A73;
-	Thu, 12 Sep 2024 09:18:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id DA2LCfax4mY4HwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 12 Sep 2024 09:18:46 +0000
-Message-ID: <42b27020-a68e-4c43-800e-61977324be78@suse.de>
-Date: Thu, 12 Sep 2024 11:18:45 +0200
+	s=arc-20240116; t=1726132768; c=relaxed/simple;
+	bh=Imp5yQzdeVWtYPjQT8iGHIcb/WZI5eim7r0rKvfJanE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ieeKDojoxFuruHJhqWDqVD9L9pAAABCJJw3QbYilfNRE5zIXdSncoSdhtODVhUBAaBem46hBHq5Kb2OoUE7xPojn6PTNN+0bKxhhnA90haiJJQwyHmhEHiDI2hTPTo9achNwcbpY+flPCkYKRUEqkzaaejoAGCAPlFjZ7qZ/lz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-82aa499f938so226398439f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 02:19:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726132766; x=1726737566;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Vw2v1OIruMrO32uErPPuw2MWyZaTAJ62zGa/n7f3AUo=;
+        b=AszCTMuWOatzxRR9tZapUbi+epWGOtTu9reMh8J+mGQLChqCm345x0Q9WTxqeA3+7w
+         M0AAAOkHCj49oOBepLN/suR47LpHQYJcZL75OOm/TNrfvmJge6LebBByWh/bB7EJNmI3
+         yjXTC5JHRtEJR2hZOM3zXo4QP09fOi53a96NsuAD8SqUhPbmWmxFseKR41Dsp8Cas9vN
+         GRROR5YKyO4GZKk2fsVGBfwaicD+vdi2t6Pbr3WebIt5gCcpDgDkPX3ePiRHE0e3iPra
+         1RL6+M0peGFrJOztyq07vM3pvqsjbxoo+07Wb8a45YLRM0xN3uiCsuzrQMSFWQN4mKvd
+         Nqug==
+X-Forwarded-Encrypted: i=1; AJvYcCV+pyyslunCmZBZinlS6RkOAxFpqJ0e1Iu+HzbSfqSsCtmniCNtifbVZ5Q4OSIwLOMmnY6oS8CGjAngGcw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI1o9JhBr1jPLlgXp735x3/sYjkeOd+0UxrlY+FGlJazrwP9AK
+	S6zezFmrQuFRYu5/P76tWNA8t3BSbv816PYTLY0cmL/jp4TomJEP+jxBrS0CGbDQm8/NyNDKDDD
+	nIzaUdbcY89TguGPGuKA4kI9jWXfpwMvv+JyIWvJsLcb6hCSMPj/4Wk8=
+X-Google-Smtp-Source: AGHT+IHfigsAjnjxQG8GQoApoEiZ12VM5opynZzDaP7uzM8kN4mMjyfuwOuqnBhjlm4ecl+rvd33pNNzS2qRAGlxTiAJveLQ+Gy9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/gma500: replace drm_detect_hdmi_monitor() with
- drm_display_info.is_hdmi
-To: Jani Nikula <jani.nikula@linux.intel.com>,
- Tejas Vipin <tejasvipin76@gmail.com>, Laurent.pinchart@ideasonboard.com,
- patrik.r.jakobsson@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, airlied@gmail.com, daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240911180650.820598-1-tejasvipin76@gmail.com>
- <b0f77fcc-5d84-4727-9a17-9d1f1e2c5b76@suse.de> <87o74ti7g5.fsf@intel.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <87o74ti7g5.fsf@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[linux.intel.com,gmail.com,ideasonboard.com,kernel.org,ffwll.ch];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[bootlin.com:url,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+X-Received: by 2002:a05:6e02:1cab:b0:39b:35d8:dc37 with SMTP id
+ e9e14a558f8ab-3a08464e389mr14397315ab.13.1726132766118; Thu, 12 Sep 2024
+ 02:19:26 -0700 (PDT)
+Date: Thu, 12 Sep 2024 02:19:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005c2d960621e89afe@google.com>
+Subject: [syzbot] [fs?] KASAN: slab-use-after-free Read in invalidate_bh_lru
+From: syzbot <syzbot+0930d8a3c3c55e931634@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi
+Hello,
 
-Am 12.09.24 um 10:48 schrieb Jani Nikula:
-> On Thu, 12 Sep 2024, Thomas Zimmermann <tzimmermann@suse.de> wrote:
->> Hi
->>
->> Am 11.09.24 um 20:06 schrieb Tejas Vipin:
->>> Replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi since
->>> monitor HDMI information is available after EDID is parsed. Additionally
->>> rewrite the code the code to have fewer indentation levels.
->> The problem is that the entire logic is outdated. The content
->> of cdv_hdmi_detect() should go into cdv_hdmi_get_modes(), the detect_ctx
->> callback should be set to drm_connector_helper_detect_from_ddc() and
->> cdv_hdmi_detect() should be deleted. The result is that ->detect_ctx
->> will detect the presence of a display and ->get_modes will update EDID
->> and other properties.
-> I guess I didn't get the memo on this one.
->
-> What's the problem with reading the EDID at detect? The subsequent
-> drm_edid_connector_add_modes() called from .get_modes() does not need to
-> read the EDID again.
+syzbot found the following issue on:
 
-With drm_connector_helper_detect_from_ddc() there is already a helper 
-for detection. It makes sense to use it. And if we continue to update 
-the properties in detect (instead of get_modes), what is the correct 
-connector_status on errors? Right now and with the patch applied, detect 
-returns status_disconnected on errors. But this isn't correct if there 
-actually is a display. By separating detect and get_modes cleanly, we 
-can detect the display reliably, but also handle errors better than we 
-currently do in gma500. Get_modes is already expected to update the EDID 
-property, [1] for detect it's not so clear AFAICT. I think that from a 
-design perspective, it makes sense to have a read-only function that 
-only detects the physical state of the connector and a read-write 
-function that updates the connector's properties. Best regards Thomas 
-[1] 
-https://elixir.bootlin.com/linux/v6.10.9/source/include/drm/drm_modeset_helper_vtables.h#L865 
+HEAD commit:    b31c44928842 Merge tag 'linux_kselftest-kunit-fixes-6.11-r..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12696f29980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=58a85aa6925a8b78
+dashboard link: https://syzkaller.appspot.com/bug?extid=0930d8a3c3c55e931634
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
->
-> I think it should be fine to do incremental refactors like the patch at
-> hand (modulo some issues I mention below).
->
-> BR,
-> Jani.
->
->
->> Do you have  a device for testing such a change?
->>
->> Best regards
->> Thomas
->>
->>> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
->>> ---
->>> Changes in v2:
->>>       - Use drm_edid instead of edid
->>>
->>> Link to v1: https://lore.kernel.org/all/20240910051856.700210-1-tejasvipin76@gmail.com/
->>> ---
->>>    drivers/gpu/drm/gma500/cdv_intel_hdmi.c | 24 +++++++++++++-----------
->>>    1 file changed, 13 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
->>> index 2d95e0471291..701f8bbd5f2b 100644
->>> --- a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
->>> +++ b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
->>> @@ -128,23 +128,25 @@ static enum drm_connector_status cdv_hdmi_detect(
->>>    {
->>>    	struct gma_encoder *gma_encoder = gma_attached_encoder(connector);
->>>    	struct mid_intel_hdmi_priv *hdmi_priv = gma_encoder->dev_priv;
->>> -	struct edid *edid = NULL;
->>> +	const struct drm_edid *drm_edid;
->>> +	int ret;
->>>    	enum drm_connector_status status = connector_status_disconnected;
->>>    
->>> -	edid = drm_get_edid(connector, connector->ddc);
->>> +	drm_edid = drm_edid_read_ddc(connector, connector->ddc);
-> Just drm_edid_read() is enough when you're using connector->ddc.
->
->>> +	ret = drm_edid_connector_update(connector, drm_edid);
->>>    
->>>    	hdmi_priv->has_hdmi_sink = false;
->>>    	hdmi_priv->has_hdmi_audio = false;
->>> -	if (edid) {
->>> -		if (edid->input & DRM_EDID_INPUT_DIGITAL) {
->>> -			status = connector_status_connected;
->>> -			hdmi_priv->has_hdmi_sink =
->>> -						drm_detect_hdmi_monitor(edid);
->>> -			hdmi_priv->has_hdmi_audio =
->>> -						drm_detect_monitor_audio(edid);
->>> -		}
->>> -		kfree(edid);
->>> +	if (ret)
-> This error path leaks the EDID.
->
->>> +		return status;
->>> +
->>> +	if (drm_edid_is_digital(drm_edid)) {
->>> +		status = connector_status_connected;
->>> +		hdmi_priv->has_hdmi_sink = connector->display_info.is_hdmi;
->>> +		hdmi_priv->has_hdmi_audio = connector->display_info.has_audio;
->>>    	}
->>> +	drm_edid_free(drm_edid);
->>> +
->>>    	return status;
->>>    }
->>>    
+Unfortunately, I don't have any reproducer for this issue yet.
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-b31c4492.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c7a83e0168a1/vmlinux-b31c4492.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f991c4e68b58/bzImage-b31c4492.xz
 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0930d8a3c3c55e931634@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-use-after-free in instrument_atomic_read include/linux/instrumented.h:68 [inline]
+BUG: KASAN: slab-use-after-free in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+BUG: KASAN: slab-use-after-free in __brelse fs/buffer.c:1235 [inline]
+BUG: KASAN: slab-use-after-free in brelse include/linux/buffer_head.h:325 [inline]
+BUG: KASAN: slab-use-after-free in __invalidate_bh_lrus fs/buffer.c:1508 [inline]
+BUG: KASAN: slab-use-after-free in invalidate_bh_lru+0xa8/0x1b0 fs/buffer.c:1521
+Read of size 4 at addr ffff88801c989a58 by task udevd/5114
+
+CPU: 0 UID: 0 PID: 5114 Comm: udevd Not tainted 6.11.0-rc6-syzkaller-00308-gb31c44928842 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ instrument_atomic_read include/linux/instrumented.h:68 [inline]
+ atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+ __brelse fs/buffer.c:1235 [inline]
+ brelse include/linux/buffer_head.h:325 [inline]
+ __invalidate_bh_lrus fs/buffer.c:1508 [inline]
+ invalidate_bh_lru+0xa8/0x1b0 fs/buffer.c:1521
+ csd_do_func kernel/smp.c:134 [inline]
+ smp_call_function_many_cond+0x15d7/0x29d0 kernel/smp.c:847
+ on_each_cpu_cond_mask+0x3f/0x80 kernel/smp.c:1023
+ kill_bdev block/bdev.c:89 [inline]
+ blkdev_flush_mapping+0xfe/0x250 block/bdev.c:664
+ blkdev_put_whole block/bdev.c:671 [inline]
+ bdev_release+0x466/0x700 block/bdev.c:1096
+ blkdev_release+0x15/0x20 block/fops.c:638
+ __fput+0x24a/0x8a0 fs/file_table.c:422
+ __do_sys_close fs/open.c:1566 [inline]
+ __se_sys_close fs/open.c:1551 [inline]
+ __x64_sys_close+0x7f/0x110 fs/open.c:1551
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8226f170a8
+Code: 48 8b 05 83 9d 0d 00 64 c7 00 16 00 00 00 83 c8 ff 48 83 c4 20 5b c3 64 8b 04 25 18 00 00 00 85 c0 75 20 b8 03 00 00 00 0f 05 <48> 3d 00 f0 ff ff 76 5b 48 8b 15 51 9d 0d 00 f7 d8 64 89 02 48 83
+RSP: 002b:00007ffe0319be58 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
+RAX: ffffffffffffffda RBX: 00007f8226dee0e0 RCX: 00007f8226f170a8
+RDX: 000056579a6766d5 RSI: 00007ffe0319b658 RDI: 0000000000000008
+RBP: 00005652ff487f60 R08: 0000000000000006 R09: b595b5b875e4bbae
+R10: 000000000000010f R11: 0000000000000246 R12: 0000000000000002
+R13: 00005652ff478840 R14: 0000000000000008 R15: 00005652ff466910
+ </TASK>
+
+Allocated by task 5112:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:312 [inline]
+ __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:338
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slub.c:3992 [inline]
+ slab_alloc_node mm/slub.c:4041 [inline]
+ kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4048
+ alloc_buffer_head+0x2a/0x290 fs/buffer.c:3025
+ folio_alloc_buffers+0x241/0x5b0 fs/buffer.c:929
+ grow_dev_folio fs/buffer.c:1072 [inline]
+ grow_buffers fs/buffer.c:1113 [inline]
+ __getblk_slow fs/buffer.c:1139 [inline]
+ bdev_getblk+0x2a6/0x550 fs/buffer.c:1441
+ __bread_gfp+0x86/0x400 fs/buffer.c:1495
+ sb_bread include/linux/buffer_head.h:347 [inline]
+ sysv_fill_super+0x231/0x710 fs/sysv/super.c:379
+ mount_bdev+0x20a/0x2d0 fs/super.c:1679
+ legacy_get_tree+0xee/0x190 fs/fs_context.c:662
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3472
+ do_mount fs/namespace.c:3812 [inline]
+ __do_sys_mount fs/namespace.c:4020 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:3997
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 79:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object+0xe0/0x150 mm/kasan/common.c:240
+ __kasan_slab_free+0x37/0x60 mm/kasan/common.c:256
+ kasan_slab_free include/linux/kasan.h:184 [inline]
+ slab_free_hook mm/slub.c:2256 [inline]
+ slab_free mm/slub.c:4477 [inline]
+ kmem_cache_free+0x145/0x350 mm/slub.c:4552
+ free_buffer_head+0x54/0x240 fs/buffer.c:3041
+ try_to_free_buffers+0x311/0x5f0 fs/buffer.c:2982
+ shrink_folio_list+0x26c2/0x8c90 mm/vmscan.c:1413
+ evict_folios+0x50f7/0x7780 mm/vmscan.c:4560
+ try_to_shrink_lruvec+0x9ab/0xbb0 mm/vmscan.c:4755
+ shrink_one+0x3b9/0x850 mm/vmscan.c:4793
+ shrink_many mm/vmscan.c:4856 [inline]
+ lru_gen_shrink_node mm/vmscan.c:4934 [inline]
+ shrink_node+0x3799/0x3de0 mm/vmscan.c:5914
+ kswapd_shrink_node mm/vmscan.c:6742 [inline]
+ balance_pgdat mm/vmscan.c:6934 [inline]
+ kswapd+0x1cbc/0x3720 mm/vmscan.c:7203
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+The buggy address belongs to the object at ffff88801c9899f8
+ which belongs to the cache buffer_head of size 168
+The buggy address is located 96 bytes inside of
+ freed 168-byte region [ffff88801c9899f8, ffff88801c989aa0)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1c989
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+page_type: 0xfdffffff(slab)
+raw: 00fff00000000000 ffff88801b763c80 ffffea0000725d40 0000000000000006
+raw: 0000000000000000 0000000080110011 00000001fdffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Reclaimable, gfp_mask 0x152c50(GFP_NOFS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_HARDWALL|__GFP_RECLAIMABLE), pid 1, tgid 1 (init), ts 28576033639, free_ts 0
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1500
+ prep_new_page mm/page_alloc.c:1508 [inline]
+ get_page_from_freelist+0x2e4c/0x2f10 mm/page_alloc.c:3446
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4702
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ alloc_slab_page+0x5f/0x120 mm/slub.c:2325
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2488
+ new_slab mm/slub.c:2541 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3727
+ __slab_alloc+0x58/0xa0 mm/slub.c:3817
+ __slab_alloc_node mm/slub.c:3870 [inline]
+ slab_alloc_node mm/slub.c:4029 [inline]
+ kmem_cache_alloc_noprof+0x1c1/0x2a0 mm/slub.c:4048
+ alloc_buffer_head+0x2a/0x290 fs/buffer.c:3025
+ folio_alloc_buffers+0x241/0x5b0 fs/buffer.c:929
+ grow_dev_folio fs/buffer.c:1072 [inline]
+ grow_buffers fs/buffer.c:1113 [inline]
+ __getblk_slow fs/buffer.c:1139 [inline]
+ bdev_getblk+0x2a6/0x550 fs/buffer.c:1441
+ __getblk include/linux/buffer_head.h:381 [inline]
+ sb_getblk include/linux/buffer_head.h:387 [inline]
+ ext4_read_inode_bitmap+0x24c/0x12f0 fs/ext4/ialloc.c:145
+ __ext4_new_inode+0x106f/0x4260 fs/ext4/ialloc.c:1054
+ ext4_create+0x279/0x550 fs/ext4/namei.c:2832
+ lookup_open fs/namei.c:3578 [inline]
+ open_last_lookups fs/namei.c:3647 [inline]
+ path_openat+0x1a9a/0x3470 fs/namei.c:3883
+ do_filp_open+0x235/0x490 fs/namei.c:3913
+page_owner free stack trace missing
+
+Memory state around the buggy address:
+ ffff88801c989900: fc fc fa fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88801c989980: fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc fa
+>ffff88801c989a00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                    ^
+ ffff88801c989a80: fb fb fb fb fc fc fc fc fc fc fc fc 00 00 00 00
+ ffff88801c989b00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
