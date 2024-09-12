@@ -1,156 +1,163 @@
-Return-Path: <linux-kernel+bounces-327081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A77629770D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:29:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B868F9770D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:30:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFBE51C24BE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:29:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AC68288522
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:30:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724221BFDEA;
-	Thu, 12 Sep 2024 18:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718051BF336;
+	Thu, 12 Sep 2024 18:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W6GSm8TP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kcQnmABf"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1D613F43A
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 18:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571C02BAE3;
+	Thu, 12 Sep 2024 18:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726165785; cv=none; b=mdAc9a+mm0X9hZvnM8WVPuoADwP+Xa4Wn8meqw9OnAJULaGr/VmoEmI+QZx7Q075Ws2N5wMufHh3H8OtG7EKDgy6FJQv7afvnl+BXVjblBow7y/LGvmaiiPnS2nNW+WpMP8VD4sYgiej2NoAGGnTl9VF2qQO+zRd4XsGzdpMYBc=
+	t=1726165832; cv=none; b=IvUvnFl1f8yIREtOqqvIiU9zaqj6wIcutyK13OJDFyteR73O3AfyMeaePvxnqhBWi0OMQQVl04fThZLuql43iLkByQ6zz4oXixweKpeJnbrUwjdS0apiPovXcHU0RbLNWUszjPsnJrQ/1ReGuYTGSPe7zGlnSnMjyCTn+/iAMrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726165785; c=relaxed/simple;
-	bh=gqzQaTlpGo+QX2EPoFVnO0rEY31FWTVAiW8vn/iHvw4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rXEMyD71MVRmnc3kKRxZg+rxp7mPET3qW50Fh18fjgc+KSjG/iaopoNAj/wqa/LTZ1W5KFmJHd9hajGrnvHXgdpO5pKiXfnpJu55GYwOsqfuyeQEdacbLgZ5cQxXQNojvg2e6Si1+XNCC5Adb4OBLvVTOWckZQp+XIW5bd41kBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W6GSm8TP; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726165783;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lDIH4mBgl9RAQst2WRBMWUVmbQay80eGVTkA1/RxoHw=;
-	b=W6GSm8TPFQ4mblieTQ/xg/Ff4CBw7pjPw+8vCfLDoTBm5/eiJB+v4J9b4L1bp4bFR478sJ
-	7TnWQGoOt+pa7u7QMsI3x/fHF21Q4pmmwsPZpz6ecPciNPqDOHrYiaKZooF5tnp/b8NTwz
-	neKreHCDb+KOFBFmxbaNwGaHdebpbQI=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-345-Ml1PdacCPOWDNK5QRP7VNA-1; Thu, 12 Sep 2024 14:29:41 -0400
-X-MC-Unique: Ml1PdacCPOWDNK5QRP7VNA-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-374b69e65e8so604505f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 11:29:41 -0700 (PDT)
+	s=arc-20240116; t=1726165832; c=relaxed/simple;
+	bh=MT5KHTU8WR3Lh8HyRqCKb/WSBh/7HuIcNHL+nSm7P4U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rU9QmLdsN/uShgabojEqEaYMsucET7BpsX761m6AUbgLmdhrp5hcn6umT2wYdJG8tAwmz4ET0qm4Eu3VdF+Xu14705clev+PHOJNek+dV+bfdsI9EVgnDPTRQsI84W294UIYUqspxShgs1qnoP6kg/Ync2oJ5g2YsgMq0GVJxx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kcQnmABf; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-457cfc2106aso604831cf.2;
+        Thu, 12 Sep 2024 11:30:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726165830; x=1726770630; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=8kAPGqrsaGxGyW2RkQBExyp9b+qbaXCkJ9biAhcsg9U=;
+        b=kcQnmABfAzamGYVM/riKrU/YbRJ66KCENS5X1lfaqawC39P4cGyBXeEJ7wVGHKLRKc
+         m5OinedwsWZmRWIMxeVv23OzFXQDP+CcVnS8WCnA8NFzVPnx4FxqJVgEXx/5a/cH4re9
+         50gN5ki3L98XrCJpoymQ0fvze+WOXtW+D7B2YxiN/5nCs5md9Bs5SkjSyHVxIIRjUs08
+         EKmCsVf7KwI4yGrBhk8VE5hDbSrOSNa0fIMQkyxl/y0a1Ihno9KmBFbbQUj4/etMRRFJ
+         Xl4HKll3T8AXjNYRGFRtDmHtdb9a/Ywkn3qLYJ0YZPocQ3H7tT40zLc7Q3bW1UsK2tdJ
+         engw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726165781; x=1726770581;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lDIH4mBgl9RAQst2WRBMWUVmbQay80eGVTkA1/RxoHw=;
-        b=AYtLL1lHej4VyKEE41xEst/JkL2hIrQT9D7Of1cmU9s78rG18WyaZb6dplyCoLTMsU
-         kM9+9Mv9zW93ozmSofMnFovMO/u475NAHfhYe8MWSe6iqVptBhIHh0APLbC16/ItM9CY
-         vBjQBuwSAZaRuyRHdxRcFzWIMim4SNzUhGeZnN103J4lOzJq0iUZq5IXMVnQvQ9AuKDd
-         Sn6pYnA0IPMpxC14Xgfv12ZRSbwnGAguvXPvzRUcnAn7QCiIakbnJv0hBjvo2Gg7/Zmc
-         9u3LRF1J/LYoJCWuqoJv/sRzJhlTlTHxd6DYmc2EaOXxf/LHlId11lTXcfoMKliAkQA9
-         pGIw==
-X-Forwarded-Encrypted: i=1; AJvYcCWcDxtMlvCt9wPwjxr9g2RBQuifEhxDQVeq5OGB5Wb4ejISShq68FjlxuNQUBmEQhdPUmJqjQEZXUBZ+iU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuW8C3Hr+BTPL7ys61EXSt3JU6LlnIkiuj9fNU2bFpMZybvgjY
-	jWdyJeyq1ixWnNNnRjrGNEAHnXZ+EL3Z5L5vw4Q+zM5N4a4OvG1UswGGazzeZ/0uqupPleu9GsT
-	cbUHKc3G4PrJ/X5aAp8QSOvoyCtei9y3zPKf/Ze4pZvB0fkXnntHzavuLQnPhsHkCflqWTXNMjV
-	pvi2kDuCQketrrO2RLi8VZtEVdGv0EauI5ICho
-X-Received: by 2002:adf:fc0a:0:b0:371:8c61:577c with SMTP id ffacd0b85a97d-378c2d121c0mr2267737f8f.26.1726165780680;
-        Thu, 12 Sep 2024 11:29:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFQtfXLWHi72srHCUSdiyqWsp1/7c4sM6L9CY7al7GP3wF3pMbjYvkXS86BtezLsnLxSofUqszJG/BpEF6KTZ0=
-X-Received: by 2002:adf:fc0a:0:b0:371:8c61:577c with SMTP id
- ffacd0b85a97d-378c2d121c0mr2267720f8f.26.1726165780132; Thu, 12 Sep 2024
- 11:29:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726165830; x=1726770630;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8kAPGqrsaGxGyW2RkQBExyp9b+qbaXCkJ9biAhcsg9U=;
+        b=Z1p1bBYArZuXVj0REg6rGmhwy5kwRow74SwnjoY51ZWur0PV8Te0z2yZO89JccLLfh
+         EN9OPg8RePGZICBwMU4Q8BFYFjPIIvikGOKK5batAOdXOPS6BjMC+4foY078k0WKU1tS
+         knfFHUSU9BARKRV6g5qAeDrZZTb24OW5qyQkDXL7nzUbQ6AdO+gr5FKKHjt69Fl82i4K
+         3JjUF5JKmiETy/hCeVWV+pvfJHaakP2P6DvBkJoWHxpHByDqS/FrrS9kvbUf5DR22cD8
+         FFYAQ/VJpQndn7FJG4KRJKLWVvjkB/Q8TBOoFVnYlA/P7KhSd9eECFKE9bYHU7qmWQ3R
+         2O5A==
+X-Forwarded-Encrypted: i=1; AJvYcCX871JgmDc3obBdkBjaiQ4Q98jsLNODlumdg9aCeCfRCFGs2XObBUubnxpbgGcuisWSpxuDyulNTQzDTdw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzizPP6/ezJtBMYCNK7xijsFWjtJIL2gPxi0UAPXF7RjQuw39PU
+	a2xjah5W8+LWKiOcBkUKUahjvwpMc6p0MA18BVsWfM/BWt5MjQU3
+X-Google-Smtp-Source: AGHT+IHvjweDt4gwowcrHz7d1Nh2Onzk4zDJ35JKD/AOU27y3GTFI54WS2V+BQf4Utn8pRA4Kd4xww==
+X-Received: by 2002:a05:622a:4e86:b0:453:7634:bbfa with SMTP id d75a77b69052e-4599d237db8mr1580331cf.21.1726165829962;
+        Thu, 12 Sep 2024 11:30:29 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45822f60a4csm55521151cf.62.2024.09.12.11.30.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Sep 2024 11:30:29 -0700 (PDT)
+Message-ID: <7736f0f2-8a99-4329-b290-089454d56e36@gmail.com>
+Date: Thu, 12 Sep 2024 11:30:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-26-rick.p.edgecombe@intel.com> <05cf3e20-6508-48c3-9e4c-9f2a2a719012@redhat.com>
- <cd236026-0bc9-424c-8d49-6bdc9daf5743@intel.com> <CABgObfbyd-a_bD-3fKmF3jVgrTiCDa3SHmrmugRji8BB-vs5GA@mail.gmail.com>
- <df05e4fe-a50b-49a8-9ea0-2077cb061c44@intel.com> <CABgObfZ5ssWK=Beu7t+7RqyZGMiY2zbmAKPy_Sk0URDZ9zbhJA@mail.gmail.com>
- <ZuMZ2u937xQzeA-v@google.com>
-In-Reply-To: <ZuMZ2u937xQzeA-v@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Thu, 12 Sep 2024 20:29:27 +0200
-Message-ID: <CABgObfZV3-xRSALfS6syL3pzdMoep82OjWT4m7=4fLRaiWp=XQ@mail.gmail.com>
-Subject: Re: [PATCH 25/25] KVM: x86: Add CPUID bits missing from KVM_GET_SUPPORTED_CPUID
-To: Sean Christopherson <seanjc@google.com>
-Cc: Xiaoyao Li <xiaoyao.li@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	kvm@vger.kernel.org, kai.huang@intel.com, isaku.yamahata@gmail.com, 
-	tony.lindgren@linux.intel.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 1/7] net: phy: allow isolating PHY devices
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>, davem@davemloft.net
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>,
+ Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
+ linux-arm-kernel@lists.infradead.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Herve Codina <herve.codina@bootlin.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>, =?UTF-8?Q?Marek_Beh=C3=BAn?=
+ <kabel@kernel.org>, =?UTF-8?Q?K=C3=B6ry_Maincent?=
+ <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>
+References: <20240911212713.2178943-1-maxime.chevallier@bootlin.com>
+ <20240911212713.2178943-2-maxime.chevallier@bootlin.com>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+In-Reply-To: <20240911212713.2178943-2-maxime.chevallier@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 12, 2024 at 6:42=E2=80=AFPM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> On Thu, Sep 12, 2024, Paolo Bonzini wrote:
-> > On Thu, Sep 12, 2024 at 4:45=E2=80=AFPM Xiaoyao Li <xiaoyao.li@intel.co=
-m> wrote:
-> > > > KVM is not going to have any checks, it's only going to pass the
-> > > > CPUID to the TDX module and return an error if the check fails
-> > > > in the TDX module.
-> > >
-> > > If so, new feature can be enabled for TDs out of KVM's control.
-> > >
-> > > Is it acceptable?
-> >
-> > It's the same as for non-TDX VMs, I think it's acceptable.
->
-> No?  IIUC, it's not the same.
->
-> E.g. KVM doesn't yet support CET, and while userspace can enumerate CET s=
-upport
-> to VMs all it wants, guests will never be able to set CR4.CET and thus ca=
-n't
-> actually enable CET.
->
-> IIUC, the proposal here is to allow userspace to configure the features t=
-hat are
-> exposed _and enabled_ for a TDX VM without any enforcement from KVM.
+On 9/11/24 14:27, Maxime Chevallier wrote:
+> The 802.3 specifications describes the isolation mode as setting the
+> PHY's MII interface in high-impedance mode, thus isolating the PHY from
+> that bus. This effectively breaks the link between the MAC and the PHY,
+> but without necessarily disrupting the link between the PHY and the LP.
+> 
+> This mode can be useful for testing purposes, but also when there are
+> multiple PHYs on the same MII bus (a case that the 802.3 specification
+> refers to).
+> 
+> In Isolation mode, the PHY will still continue to respond to MDIO
+> commands.
+> 
+> Introduce a helper to set the phy in an isolated mode.
+> 
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-Yeah, that's correct, on the other hand a lot of features are just
-new instructions and no new registers.  Those pass under the radar
-and in fact you can even use them if the CPUID bit is 0 (of course).
-Others are just data, and again you can pass any crap you'd like.
+Not sure where that comment belongs so I will put it here, one thing 
+that concerns me is if you have hardware that is not strapped to be 
+isolated by default, and the PHY retains the state configured by Linux, 
+such that the PHY is in isolation mode. A boot loader that is not 
+properly taking the PHY out of isolation mode would be unavailable to 
+use it and that would be a bug that Linux would likely be on the hook to 
+fix.
 
-And for SNP we had the case where we are forced to leave features
-enabled if their state is in the VMSA, because we cannot block
-writes to XCR0 and XSS that we'd like to be invalid.
-
-> CET might be a bad example because it looks like it's controlled by TDCS.=
-XFAM, but
-> presumably there are other CPUID-based features that would actively enabl=
-e some
-> feature for a TDX VM.
-
-XFAM is controlled by userspace though, not KVM, so we've got no
-control on that either.
-
-> For HYPERVISOR and TSC_DEADLINE_TIMER, I would much prefer to fix those K=
-VM warts,
-> and have already posted patches[1][2] to do exactly that.
->
-> With those out of the way, are there any other CPUID-based features that =
-KVM
-> supports, but doesn't advertise?  Ignore MWAIT, it's a special case and i=
-sn't
-> allowed in TDX VMs anyways.
-
-I don't think so.
-
-Paolo
-
+Would recommend adding a phy_shutdown() method which is called upon 
+reboot/kexec and which, based upon a quirk/flag can ensure that the 
+isolation bit is cleared.
+-- 
+Florian
 
