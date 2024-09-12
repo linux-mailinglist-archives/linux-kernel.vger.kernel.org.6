@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-326175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FCE9976456
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:21:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F48697645C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:22:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3AA51F2299D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:21:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE3FEB244CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA2119C56B;
-	Thu, 12 Sep 2024 08:21:20 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0915719E99F;
+	Thu, 12 Sep 2024 08:21:27 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2613318F2FB;
-	Thu, 12 Sep 2024 08:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B1F191489;
+	Thu, 12 Sep 2024 08:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726129279; cv=none; b=OhM+7IQbzJmmczfuRDV/vfp8ZYNRf9kLIV/4GAkU4vOcKKN4Fv/vZ9d5HxJJ3kRy7elIJVZ4vjOSeYdJLvfOCA3fMayVPrG3gVYkR3NGKNBpY0UwGGde7TIfR+6k2XAjIwn7r9un+Ad7hXpldWe1gPWljxcNAzvUHY8nWTTgax0=
+	t=1726129286; cv=none; b=Phr5LIkhHbL0Rv/b7ZfOt7duEJoel/S4ITVScPkw4vTvehkAvSccXuIHqrMauQv4nbIk9agH/LmizJMdIyVndyNSitF444Rwrc1VTCyDY3NvK+Z7VI01njqiHMBtGZv8QZcrlhvb6FFjbR5m8P3tvxKWWG3saQ5ZRtrcJ1BAFeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726129279; c=relaxed/simple;
-	bh=cQzTYxmfx2Nw8qaZphnSpX6S5sepXt4ZTkEKu6TE3Jg=;
+	s=arc-20240116; t=1726129286; c=relaxed/simple;
+	bh=uhGeFDmPYMSKAWPD/jrWWFXKl1eEXDz5JCdoInuqcHU=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QSRhFtiED4HOsx+dV1kqDcXA/AP1cflTmq+ltPZSTHs5b1kvimij88LBag+Lg4Dudy9zHDJYyvZr2OTkDKGs23U4aCCxOOI7UPPEty7vAtiaT4FCBDPB2PMKooKVGh3xe8uxgvuJCSVPaCuxSfiN2vN9+W68V/doO4tmMGQlhX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+	 MIME-Version:Content-Type; b=WCdedDhnpu3we5ExLNVVEa0nU4ZUXfa9qxTtERVIjbPtyYGWGOv/HR2DmI89urzoX6E2lE/F3eJouvoZcVYKSgmII+aplj2ZQHRtTmfQMw5Zq10DhZxBqjAsdcJKHuKy/Ll3Dl5mBjdBKDwIguIWxUmTve9aMPxnbU7C8/t/yCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4X49NR4G6zz16PZH;
-	Thu, 12 Sep 2024 16:20:07 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4X49Ns42lGzyRmm;
+	Thu, 12 Sep 2024 16:20:29 +0800 (CST)
 Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 596311800A0;
-	Thu, 12 Sep 2024 16:21:15 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 41ACA1800D5;
+	Thu, 12 Sep 2024 16:21:16 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
  (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 12 Sep
- 2024 16:21:14 +0800
+ 2024 16:21:15 +0800
 From: Jinjie Ruan <ruanjinjie@huawei.com>
 To: <laurentiu.palcu@oss.nxp.com>, <l.stach@pengutronix.de>,
 	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
@@ -53,9 +53,9 @@ To: <laurentiu.palcu@oss.nxp.com>, <l.stach@pengutronix.de>,
 	<linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>,
 	<linux-tegra@vger.kernel.org>
 CC: <ruanjinjie@huawei.com>
-Subject: [PATCH v2 3/5] drm/imx/ipuv3: Use IRQF_NO_AUTOEN flag in request_irq()
-Date: Thu, 12 Sep 2024 16:30:18 +0800
-Message-ID: <20240912083020.3720233-4-ruanjinjie@huawei.com>
+Subject: [PATCH v2 4/5] drm/tegra: dpaux: Use IRQF_NO_AUTOEN flag in request_irq()
+Date: Thu, 12 Sep 2024 16:30:19 +0800
+Message-ID: <20240912083020.3720233-5-ruanjinjie@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240912083020.3720233-1-ruanjinjie@huawei.com>
 References: <20240912083020.3720233-1-ruanjinjie@huawei.com>
@@ -74,37 +74,34 @@ disable_irq() after request_irq() still has a time gap in which
 interrupts can come. request_irq() with IRQF_NO_AUTOEN flag will
 disable IRQ auto-enable when request IRQ.
 
-Fixes: 47b1be5c0f4e ("staging: imx/drm: request irq only after adding the crtc")
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Fixes: 9e532b3ad9a7 ("drm/tegra: dpaux: Disable interrupt when detached")
 Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 ---
-v2:
-- Add Reviewed-by.
----
- drivers/gpu/drm/imx/ipuv3/ipuv3-crtc.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/tegra/dpaux.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/imx/ipuv3/ipuv3-crtc.c b/drivers/gpu/drm/imx/ipuv3/ipuv3-crtc.c
-index ef29c9a61a46..99db53e167bd 100644
---- a/drivers/gpu/drm/imx/ipuv3/ipuv3-crtc.c
-+++ b/drivers/gpu/drm/imx/ipuv3/ipuv3-crtc.c
-@@ -410,14 +410,12 @@ static int ipu_drm_bind(struct device *dev, struct device *master, void *data)
+diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
+index ae12d001a04b..9646dba950e0 100644
+--- a/drivers/gpu/drm/tegra/dpaux.c
++++ b/drivers/gpu/drm/tegra/dpaux.c
+@@ -517,7 +517,7 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+ 	pm_runtime_enable(&pdev->dev);
+ 	pm_runtime_get_sync(&pdev->dev);
+ 
+-	err = devm_request_irq(dpaux->dev, dpaux->irq, tegra_dpaux_irq, 0,
++	err = devm_request_irq(dpaux->dev, dpaux->irq, tegra_dpaux_irq, IRQF_NO_AUTOEN,
+ 			       dev_name(dpaux->dev), dpaux);
+ 	if (err < 0) {
+ 		dev_err(dpaux->dev, "failed to request IRQ#%u: %d\n",
+@@ -525,8 +525,6 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+ 		goto err_pm_disable;
  	}
  
- 	ipu_crtc->irq = ipu_plane_irq(ipu_crtc->plane[0]);
--	ret = devm_request_irq(ipu_crtc->dev, ipu_crtc->irq, ipu_irq_handler, 0,
--			"imx_drm", ipu_crtc);
-+	ret = devm_request_irq(ipu_crtc->dev, ipu_crtc->irq, ipu_irq_handler,
-+			       IRQF_NO_AUTOEN, "imx_drm", ipu_crtc);
- 	if (ret < 0) {
- 		dev_err(ipu_crtc->dev, "irq request failed with %d.\n", ret);
- 		return ret;
- 	}
--	/* Only enable IRQ when we actually need it to trigger work. */
--	disable_irq(ipu_crtc->irq);
+-	disable_irq(dpaux->irq);
+-
+ 	dpaux->aux.transfer = tegra_dpaux_transfer;
+ 	dpaux->aux.dev = &pdev->dev;
  
- 	return 0;
- }
 -- 
 2.34.1
 
