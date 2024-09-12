@@ -1,232 +1,307 @@
-Return-Path: <linux-kernel+bounces-326278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 767FA9765CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:37:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 318599765C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BB03281EEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:37:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E50E2282532
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356E419E963;
-	Thu, 12 Sep 2024 09:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bN6QmF1A"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4137919F41E;
+	Thu, 12 Sep 2024 09:36:29 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B503E18BB9E;
-	Thu, 12 Sep 2024 09:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A20C4190059
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726133815; cv=none; b=ULIi44ZQ5taQ5XNZLf8eRnsqK9ov99Z/oGR/tA0GnkzRkKH3vNQlqBcfJiushl/lZc3K057kJxuZ8NXh36vliGDIPi7Kee8V4gqsv0ur2nHIhqabvvkRfJkkdiy1DgMX0qQ1ngP73PuFmL/NQ9zYqFHUlduBMvSsldj6lGilWSQ=
+	t=1726133788; cv=none; b=XPtYe2/rojr4IPFVzkSyhaYsaLmYAil35D4U0dG73YBkwoRsjLUb7/kCFczFUkEPo2E2ukxFDdsRAFu4BB/1r/Q+baUfTlDpQo4QE2DgPSLgMQMsGq1qz8PKOXEAxbXTmUDdsHcGZfF6wmXvtosVErsZqfMysztY5779hwsnsX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726133815; c=relaxed/simple;
-	bh=KDL+n7rCwG1RTUcVhoSb8MCzFMSQY2K4mQLbggQD9FY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=X6q8IDigpm5y4n+my6C6kZoy1hfHfcPIqYy/gMub0v74XcGYlgNkEA7RKBzGOBP0oBJ2HiGSiUhGaULSw4HDjI1ABedN8IATJ34uzbXnhtE4Be2cSpMbwBnSaFaNnFHOPulpfIWEwxxjWhYkJMDgE3NjBR2jElqAhRnC3/ApQC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bN6QmF1A; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48C2L9lf014104;
-	Thu, 12 Sep 2024 09:36:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ELMXg0a3PNL9x8cGliR9W3qoMFSOuRXZfpyNfKP19HA=; b=bN6QmF1AnqUGzlp6
-	iTxOPcXR/S4LUlCjtPk/+aP4ohUV0Lxt79CMTXhIShSJIRuOC9fVrOlZkJMyY/Li
-	h6oLsmWkpeNvn6xqBGByQtNr1/BRXpTNkc4g8+FuEjWChdQYE2A6gl8JSpubft0+
-	kn677eT9878MeAfXlFVeHKqXYWnMF7XgLcp7EGtD75Djs6thzJxT2wB19kv8z+UF
-	yfXGgwHdNqgfRG6s0AAIfOEKwEnCzp21bmCXeS+mRnto9zx2OgkpWFkPjmU5EDkP
-	jyewsUUfwuGy0hXKgtDn+ZYG/Uom8R0BNQX1+0USfB+jDIEVGZ5Ac712oVmEG/Rd
-	I+S3Zg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy8p4qnf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Sep 2024 09:36:35 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48C9aYPD002170
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Sep 2024 09:36:34 GMT
-Received: from [10.204.67.70] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 12 Sep
- 2024 02:36:25 -0700
-Message-ID: <274c267f-f3d4-42cf-915e-44a7c76f2489@quicinc.com>
-Date: Thu, 12 Sep 2024 15:06:22 +0530
+	s=arc-20240116; t=1726133788; c=relaxed/simple;
+	bh=/5rCSYh3OOoOdW5qy97tWya33IRuk3CnW3Uk9vBpkhc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=r5V63DKN5hJx+F4wS32ld+nVvnOuPdx3A+sMtPXqPXEV3I1Eiirl7xsvz18RLaUxHt+WB52c/4OVT9No1deOtstBnxL9wb76zbpQ7Uht0FaLF7198+NguVlRXA0Cl6285VcxzeMRiyBJcALOczmHjuuapmdBJ+hGB2YRZfYGNtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a080ae776eso11139325ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 02:36:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726133786; x=1726738586;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wKzpwmXtJs8+zMgm8/Gj8QTmX0gdH+yJ20Wf+Bo+YBs=;
+        b=kJeZLBwcyD+U9MjCx8zUYBkYnkbf+woTS69YPTokDMftFiW2pWQSq9T/EbizQ6rpcU
+         ymfChLeTlm2a0LWU/K6KwIjh1bQHe4fL9/l+Q27JKrIX643GupHc6BRexogyqkAD6RRP
+         FmUOLXUQlYVQAit0NSJ2/5dARgJ3kX6BQQaorh2QhLt+k3c+nOR0LNOYePKrSZU1XYBT
+         3v3DeWVdjLyw6FNTjSSJWkCbrcCUwdEkny+iOC5yJ9egs0DtehKemUn2nd47/uCuVG20
+         PPVTnsgLm1q7oWtdWSyhTOYs1/BGAR5UTjj94IYB+T7O9J5LYImzoDqoIb86zrAXxJD+
+         3PWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQGEEST+rd9sVfsfsP9z1Mijo58+8LxJwNrK174JXWbT6oJTJLKJmqVQRJqp5uP9B4XAhfq/s234x4M7o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysfPPHNUYhZ2WFmTWOg/htzt79rMBzCXpmNxeQ1BMVPBgzbDNX
+	6p4uu96YY/cN6PA3ttHa2I/L8Y/94uYfXmBKQTHu8iFeoIgtD8rh0nDjqszS1ucPwOD9DbPFwGI
+	/WxH3BlItA1C+Hx6TkCAT9XGATHyKf6de0+F5hlmWvNUdxRd2GsUkC7Q=
+X-Google-Smtp-Source: AGHT+IFWRoFQcL2sK2gixMvV/dxKGVbbVQon4ElG+KkcZaHJBrsUUFilop/H7XlQ5K/0PnQsMbUhfYGSVneJZkdY6hf8mNTGQZ3L
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] phy: qcom: edp: Introduce aux_cfg array for version
- specific aux settings
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <vkoul@kernel.org>, <kishon@kernel.org>, <konradybcio@kernel.org>,
-        <andersson@kernel.org>, <simona@ffwll.ch>, <abel.vesa@linaro.org>,
-        <robdclark@gmail.com>, <quic_abhinavk@quicinc.com>, <sean@poorly.run>,
-        <marijn.suijten@somainline.org>, <airlied@gmail.com>,
-        <daniel@ffwll.ch>, <maarten.lankhorst@linux.intel.com>,
-        <mripard@kernel.org>, <tzimmermann@suse.de>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <quic_khsieh@quicinc.com>,
-        <konrad.dybcio@linaro.org>, <quic_parellan@quicinc.com>,
-        <quic_bjorande@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <devicetree@vger.kernel.org>, <quic_riteshk@quicinc.com>,
-        <quic_vproddut@quicinc.com>
-References: <20240911100813.338-1-quic_mukhopad@quicinc.com>
- <20240911100813.338-3-quic_mukhopad@quicinc.com>
- <CAA8EJppLFWpf0QSmzAo5nqu=iMALyKzxEvy7sD5R0LDYSbA_7w@mail.gmail.com>
-From: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
-In-Reply-To: <CAA8EJppLFWpf0QSmzAo5nqu=iMALyKzxEvy7sD5R0LDYSbA_7w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: O9nQmlSGNOHMwTHyVu8MYKBsq1JE8owZ
-X-Proofpoint-ORIG-GUID: O9nQmlSGNOHMwTHyVu8MYKBsq1JE8owZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- impostorscore=0 mlxscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
- mlxlogscore=999 lowpriorityscore=0 adultscore=0 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409120067
+X-Received: by 2002:a05:6e02:174b:b0:39d:55fd:7625 with SMTP id
+ e9e14a558f8ab-3a08494abbamr20889565ab.22.1726133785670; Thu, 12 Sep 2024
+ 02:36:25 -0700 (PDT)
+Date: Thu, 12 Sep 2024 02:36:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000213f750621e8d7d2@google.com>
+Subject: [syzbot] [ocfs2?] possible deadlock in ocfs2_read_virt_blocks
+From: syzbot <syzbot+8b11b4c34ed0362b217a@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    7c6a3a65ace7 minmax: reduce min/max macro expansion in ato..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10b55807980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=61d235cb8d15001c
+dashboard link: https://syzkaller.appspot.com/bug?extid=8b11b4c34ed0362b217a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-7c6a3a65.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1a9a78c56595/vmlinux-7c6a3a65.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1b4e1f2187a1/bzImage-7c6a3a65.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8b11b4c34ed0362b217a@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.11.0-rc7-syzkaller-00021-g7c6a3a65ace7 #0 Not tainted
+------------------------------------------------------
+syz.0.0/5120 is trying to acquire lock:
+ffff88804b8c3f60 (&oi->ip_alloc_sem){++++}-{3:3}, at: ocfs2_read_virt_blocks+0x2ca/0xa50 fs/ocfs2/extent_map.c:976
+
+but task is already holding lock:
+ffff88803d352958 (jbd2_handle){++++}-{0:0}, at: start_this_handle+0x1e94/0x2110 fs/jbd2/transaction.c:448
+
+which lock already depends on the new lock.
 
 
-On 9/11/2024 4:04 PM, Dmitry Baryshkov wrote:
-> On Wed, 11 Sept 2024 at 13:08, Soutrik Mukhopadhyay
-> <quic_mukhopad@quicinc.com> wrote:
->> In order to support different HW versions, introduce aux_cfg array
->> to move v4 specific aux configuration settings.
->>
->> Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
->> ---
->>   drivers/phy/qualcomm/phy-qcom-edp.c | 34 +++++++++++++++++------------
->>   1 file changed, 20 insertions(+), 14 deletions(-)
->>
->> diff --git a/drivers/phy/qualcomm/phy-qcom-edp.c b/drivers/phy/qualcomm/phy-qcom-edp.c
->> index da2b32fb5b45..0f860a807d1b 100644
->> --- a/drivers/phy/qualcomm/phy-qcom-edp.c
->> +++ b/drivers/phy/qualcomm/phy-qcom-edp.c
->> @@ -90,6 +90,7 @@ struct phy_ver_ops {
->>
->>   struct qcom_edp_phy_cfg {
->>          bool is_edp;
->> +       u8 *aux_cfg;
->>          const struct qcom_edp_swing_pre_emph_cfg *swing_pre_emph_cfg;
->>          const struct phy_ver_ops *ver_ops;
->>   };
->> @@ -186,11 +187,14 @@ static const struct qcom_edp_swing_pre_emph_cfg edp_phy_swing_pre_emph_cfg = {
->>          .pre_emphasis_hbr3_hbr2 = &edp_pre_emp_hbr2_hbr3,
->>   };
->>
->> +static u8 edp_phy_aux_cfg_v4[10] = {
-> static const u8, please.
+the existing dependency chain (in reverse order) is:
+
+-> #5 (jbd2_handle){++++}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       start_this_handle+0x1eb4/0x2110 fs/jbd2/transaction.c:448
+       jbd2__journal_start+0x2da/0x5d0 fs/jbd2/transaction.c:505
+       jbd2_journal_start+0x29/0x40 fs/jbd2/transaction.c:544
+       ocfs2_start_trans+0x3c9/0x700 fs/ocfs2/journal.c:352
+       ocfs2_mknod+0x150c/0x2b40 fs/ocfs2/namei.c:359
+       ocfs2_mkdir+0x1ab/0x480 fs/ocfs2/namei.c:655
+       vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4210
+       do_mkdirat+0x264/0x3a0 fs/namei.c:4233
+       __do_sys_mkdirat fs/namei.c:4248 [inline]
+       __se_sys_mkdirat fs/namei.c:4246 [inline]
+       __x64_sys_mkdirat+0x87/0xa0 fs/namei.c:4246
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #4 (&journal->j_trans_barrier){.+.+}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1526
+       ocfs2_start_trans+0x3be/0x700 fs/ocfs2/journal.c:350
+       ocfs2_mknod+0x150c/0x2b40 fs/ocfs2/namei.c:359
+       ocfs2_mkdir+0x1ab/0x480 fs/ocfs2/namei.c:655
+       vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4210
+       do_mkdirat+0x264/0x3a0 fs/namei.c:4233
+       __do_sys_mkdirat fs/namei.c:4248 [inline]
+       __se_sys_mkdirat fs/namei.c:4246 [inline]
+       __x64_sys_mkdirat+0x87/0xa0 fs/namei.c:4246
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #3 (sb_internal#2){.+.+}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
+       __sb_start_write include/linux/fs.h:1676 [inline]
+       sb_start_intwrite include/linux/fs.h:1859 [inline]
+       ocfs2_start_trans+0x2b9/0x700 fs/ocfs2/journal.c:348
+       ocfs2_mknod+0x150c/0x2b40 fs/ocfs2/namei.c:359
+       ocfs2_mkdir+0x1ab/0x480 fs/ocfs2/namei.c:655
+       vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4210
+       do_mkdirat+0x264/0x3a0 fs/namei.c:4233
+       __do_sys_mkdirat fs/namei.c:4248 [inline]
+       __se_sys_mkdirat fs/namei.c:4246 [inline]
+       __x64_sys_mkdirat+0x87/0xa0 fs/namei.c:4246
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #2 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#4){+.+.}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       down_write+0x99/0x220 kernel/locking/rwsem.c:1579
+       inode_lock include/linux/fs.h:800 [inline]
+       ocfs2_reserve_local_alloc_bits+0x132/0x2870 fs/ocfs2/localalloc.c:636
+       ocfs2_reserve_clusters_with_limit+0x1b8/0xb60 fs/ocfs2/suballoc.c:1166
+       ocfs2_mknod+0x1486/0x2b40 fs/ocfs2/namei.c:352
+       ocfs2_mkdir+0x1ab/0x480 fs/ocfs2/namei.c:655
+       vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4210
+       do_mkdirat+0x264/0x3a0 fs/namei.c:4233
+       __do_sys_mkdirat fs/namei.c:4248 [inline]
+       __se_sys_mkdirat fs/namei.c:4246 [inline]
+       __x64_sys_mkdirat+0x87/0xa0 fs/namei.c:4246
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#3){+.+.}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       down_write+0x99/0x220 kernel/locking/rwsem.c:1579
+       inode_lock include/linux/fs.h:800 [inline]
+       ocfs2_reserve_suballoc_bits+0x192/0x4eb0 fs/ocfs2/suballoc.c:786
+       ocfs2_reserve_new_metadata_blocks+0x41c/0x9c0 fs/ocfs2/suballoc.c:982
+       ocfs2_expand_inline_dir fs/ocfs2/dir.c:2819 [inline]
+       ocfs2_extend_dir+0xdef/0x53d0 fs/ocfs2/dir.c:3181
+       ocfs2_prepare_dir_for_insert+0x33d1/0x5c70 fs/ocfs2/dir.c:4296
+       ocfs2_mknod+0xcaf/0x2b40 fs/ocfs2/namei.c:292
+       ocfs2_create+0x1ab/0x480 fs/ocfs2/namei.c:672
+       lookup_open fs/namei.c:3578 [inline]
+       open_last_lookups fs/namei.c:3647 [inline]
+       path_openat+0x1a9a/0x3470 fs/namei.c:3883
+       do_filp_open+0x235/0x490 fs/namei.c:3913
+       do_sys_openat2+0x13e/0x1d0 fs/open.c:1416
+       do_sys_open fs/open.c:1431 [inline]
+       __do_sys_openat fs/open.c:1447 [inline]
+       __se_sys_openat fs/open.c:1442 [inline]
+       __x64_sys_openat+0x247/0x2a0 fs/open.c:1442
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&oi->ip_alloc_sem){++++}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3133 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+       validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
+       __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+       down_read+0xb1/0xa40 kernel/locking/rwsem.c:1526
+       ocfs2_read_virt_blocks+0x2ca/0xa50 fs/ocfs2/extent_map.c:976
+       ocfs2_read_dir_block+0x106/0x5c0 fs/ocfs2/dir.c:508
+       ocfs2_dir_foreach_blk_el fs/ocfs2/dir.c:1827 [inline]
+       ocfs2_dir_foreach_blk+0x2ca/0x1b20 fs/ocfs2/dir.c:1913
+       ocfs2_dir_foreach fs/ocfs2/dir.c:1923 [inline]
+       ocfs2_empty_dir+0x134/0x800 fs/ocfs2/dir.c:2137
+       ocfs2_rename+0x25f1/0x4210 fs/ocfs2/namei.c:1498
+       vfs_rename+0xbdb/0xf00 fs/namei.c:4966
+       do_renameat2+0xd94/0x13f0 fs/namei.c:5123
+       __do_sys_rename fs/namei.c:5170 [inline]
+       __se_sys_rename fs/namei.c:5168 [inline]
+       __x64_sys_rename+0x82/0x90 fs/namei.c:5168
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  &oi->ip_alloc_sem --> &journal->j_trans_barrier --> jbd2_handle
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  rlock(jbd2_handle);
+                               lock(&journal->j_trans_barrier);
+                               lock(jbd2_handle);
+  rlock(&oi->ip_alloc_sem);
+
+ *** DEADLOCK ***
+
+7 locks held by syz.0.0/5120:
+ #0: ffff8880120d2420 (sb_writers#10){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90 fs/namespace.c:515
+ #1: ffff88804b8f89c0 (&type->i_mutex_dir_key#6/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:835 [inline]
+ #1: ffff88804b8f89c0 (&type->i_mutex_dir_key#6/1){+.+.}-{3:3}, at: lock_rename fs/namei.c:3147 [inline]
+ #1: ffff88804b8f89c0 (&type->i_mutex_dir_key#6/1){+.+.}-{3:3}, at: do_renameat2+0x62c/0x13f0 fs/namei.c:5058
+ #2: ffff88804b8c42c0 (&sb->s_type->i_mutex_key#20){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:800 [inline]
+ #2: ffff88804b8c42c0 (&sb->s_type->i_mutex_key#20){+.+.}-{3:3}, at: vfs_rename+0x6cb/0xf00 fs/namei.c:4931
+ #3: ffff88804b8fdf40 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:800 [inline]
+ #3: ffff88804b8fdf40 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]){+.+.}-{3:3}, at: ocfs2_lookup_lock_orphan_dir+0x102/0x350 fs/ocfs2/namei.c:2127
+ #4: ffff8880120d2610 (sb_internal#2){.+.+}-{0:0}, at: ocfs2_rename+0x1ebe/0x4210 fs/ocfs2/namei.c:1487
+ #5: ffff88801259bce8 (&journal->j_trans_barrier){.+.+}-{3:3}, at: ocfs2_start_trans+0x3be/0x700 fs/ocfs2/journal.c:350
+ #6: ffff88803d352958 (jbd2_handle){++++}-{0:0}, at: start_this_handle+0x1e94/0x2110 fs/jbd2/transaction.c:448
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 5120 Comm: syz.0.0 Not tainted 6.11.0-rc7-syzkaller-00021-g7c6a3a65ace7 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2186
+ check_prev_add kernel/locking/lockdep.c:3133 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+ validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3868
+ __lock_acquire+0x137a/0x2040 kernel/locking/lockdep.c:5142
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5759
+ down_read+0xb1/0xa40 kernel/locking/rwsem.c:1526
+ ocfs2_read_virt_blocks+0x2ca/0xa50 fs/ocfs2/extent_map.c:976
+ ocfs2_read_dir_block+0x106/0x5c0 fs/ocfs2/dir.c:508
+ ocfs2_dir_foreach_blk_el fs/ocfs2/dir.c:1827 [inline]
+ ocfs2_dir_foreach_blk+0x2ca/0x1b20 fs/ocfs2/dir.c:1913
+ ocfs2_dir_foreach fs/ocfs2/dir.c:1923 [inline]
+ ocfs2_empty_dir+0x134/0x800 fs/ocfs2/dir.c:2137
+ ocfs2_rename+0x25f1/0x4210 fs/ocfs2/namei.c:1498
+ vfs_rename+0xbdb/0xf00 fs/namei.c:4966
+ do_renameat2+0xd94/0x13f0 fs/namei.c:5123
+ __do_sys_rename fs/namei.c:5170 [inline]
+ __se_sys_rename fs/namei.c:5168 [inline]
+ __x64_sys_rename+0x82/0x90 fs/namei.c:5168
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f0ffc77def9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f0ffd512038 EFLAGS: 00000246 ORIG_RAX: 0000000000000052
+RAX: ffffffffffffffda RBX: 00007f0ffc936058 RCX: 00007f0ffc77def9
+RDX: 0000000000000000 RSI: 00000000200000c0 RDI: 0000000020000200
+RBP: 00007f0ffc7f0b76 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f0ffc936058 R15: 00007ffcf5c18e98
+ </TASK>
+(syz.0.0,5120,0):ocfs2_rename:1698 ERROR: status = -39
 
 
-Sure, we will change this to "static const u8" in next version patch.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
->
->
->> +       0x00, 0x13, 0x24, 0x00, 0x0a, 0x26, 0x0a, 0x03, 0x37, 0x03
->> +};
->> +
->>   static int qcom_edp_phy_init(struct phy *phy)
->>   {
->>          struct qcom_edp *edp = phy_get_drvdata(phy);
->>          int ret;
->> -       u8 cfg8;
->>
->>          ret = regulator_bulk_enable(ARRAY_SIZE(edp->supplies), edp->supplies);
->>          if (ret)
->> @@ -222,22 +226,20 @@ static int qcom_edp_phy_init(struct phy *phy)
->>           * even needed.
->>           */
->>          if (edp->cfg->swing_pre_emph_cfg && !edp->is_edp)
->> -               cfg8 = 0xb7;
->> -       else
->> -               cfg8 = 0x37;
->> +               edp->cfg->aux_cfg[8] = 0xb7;
->>
->>          writel(0xfc, edp->edp + DP_PHY_MODE);
->>
->> -       writel(0x00, edp->edp + DP_PHY_AUX_CFG0);
->> -       writel(0x13, edp->edp + DP_PHY_AUX_CFG1);
->> -       writel(0x24, edp->edp + DP_PHY_AUX_CFG2);
->> -       writel(0x00, edp->edp + DP_PHY_AUX_CFG3);
->> -       writel(0x0a, edp->edp + DP_PHY_AUX_CFG4);
->> -       writel(0x26, edp->edp + DP_PHY_AUX_CFG5);
->> -       writel(0x0a, edp->edp + DP_PHY_AUX_CFG6);
->> -       writel(0x03, edp->edp + DP_PHY_AUX_CFG7);
->> -       writel(cfg8, edp->edp + DP_PHY_AUX_CFG8);
->> -       writel(0x03, edp->edp + DP_PHY_AUX_CFG9);
->> +       writel(edp->cfg->aux_cfg[0], edp->edp + DP_PHY_AUX_CFG0);
->> +       writel(edp->cfg->aux_cfg[1], edp->edp + DP_PHY_AUX_CFG1);
->> +       writel(edp->cfg->aux_cfg[2], edp->edp + DP_PHY_AUX_CFG2);
->> +       writel(edp->cfg->aux_cfg[3], edp->edp + DP_PHY_AUX_CFG3);
->> +       writel(edp->cfg->aux_cfg[4], edp->edp + DP_PHY_AUX_CFG4);
->> +       writel(edp->cfg->aux_cfg[5], edp->edp + DP_PHY_AUX_CFG5);
->> +       writel(edp->cfg->aux_cfg[6], edp->edp + DP_PHY_AUX_CFG6);
->> +       writel(edp->cfg->aux_cfg[7], edp->edp + DP_PHY_AUX_CFG7);
->> +       writel(edp->cfg->aux_cfg[8], edp->edp + DP_PHY_AUX_CFG8);
->> +       writel(edp->cfg->aux_cfg[9], edp->edp + DP_PHY_AUX_CFG9);
->>
->>          writel(PHY_AUX_STOP_ERR_MASK | PHY_AUX_DEC_ERR_MASK |
->>                 PHY_AUX_SYNC_ERR_MASK | PHY_AUX_ALIGN_ERR_MASK |
->> @@ -519,16 +521,19 @@ static const struct phy_ver_ops qcom_edp_phy_ops_v4 = {
->>   };
->>
->>   static const struct qcom_edp_phy_cfg sc7280_dp_phy_cfg = {
->> +       .aux_cfg = edp_phy_aux_cfg_v4,
->>          .ver_ops = &qcom_edp_phy_ops_v4,
->>   };
->>
->>   static const struct qcom_edp_phy_cfg sc8280xp_dp_phy_cfg = {
->> +       .aux_cfg = edp_phy_aux_cfg_v4,
->>          .swing_pre_emph_cfg = &dp_phy_swing_pre_emph_cfg,
->>          .ver_ops = &qcom_edp_phy_ops_v4,
->>   };
->>
->>   static const struct qcom_edp_phy_cfg sc8280xp_edp_phy_cfg = {
->>          .is_edp = true,
->> +       .aux_cfg = edp_phy_aux_cfg_v4,
->>          .swing_pre_emph_cfg = &edp_phy_swing_pre_emph_cfg,
->>          .ver_ops = &qcom_edp_phy_ops_v4,
->>   };
->> @@ -707,6 +712,7 @@ static const struct phy_ver_ops qcom_edp_phy_ops_v6 = {
->>   };
->>
->>   static struct qcom_edp_phy_cfg x1e80100_phy_cfg = {
->> +       .aux_cfg = edp_phy_aux_cfg_v4,
-> Is this correct? Judging by ver_ops, X Elite uses v6 of the PHY, so
-> maybe it should also use v5 AUX tables?
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-As per the current implementation, v6 uses v4 aux configuration, so we 
-updated it to v4.
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-
->
->>          .swing_pre_emph_cfg = &dp_phy_swing_pre_emph_cfg,
->>          .ver_ops = &qcom_edp_phy_ops_v6,
->>   };
->> --
->> 2.17.1
->>
->
-> --
-> With best wishes
-> Dmitry
+If you want to undo deduplication, reply with:
+#syz undup
 
