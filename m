@@ -1,243 +1,196 @@
-Return-Path: <linux-kernel+bounces-326090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96D27976274
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:17:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35866976279
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:18:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B496285D89
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:17:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECB332844AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:18:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BEA018C346;
-	Thu, 12 Sep 2024 07:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BEC418CC15;
+	Thu, 12 Sep 2024 07:18:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="DYP5jAsn"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="q09yaVg0"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2070.outbound.protection.outlook.com [40.107.243.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7948383
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726125435; cv=none; b=QuKoNZ0QGczHC7s4bWjyHU0XC/VbMrxBE54pO8V788NFvH+YY3RE5dtd5BwmslvscA5En7XH18UMuWpkaY4iJgP0iV3baNZDe+P67OpuWTj/aSV3tg+XJ3Hn27z2TT+ySCR2ludOXfxIk+2Z0vhS+VFKFwXyQ9D7IfBEhPl0Y6c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726125435; c=relaxed/simple;
-	bh=8wrhh9zO+IOIiRT1Tc8hptVoqoDpX7vb4PV5hO9B2lM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z//72AzZTbG/k9k2KGi4wrwSLRxnyoZVECh5rzzCqdX+kmOcWsVvl4+Uqk3jM03RCkBgFA2KA6pqIhXvQ3mCMcnLe6Z5H5LbyAwnbeusXDRki+ibLYzw/4CtHzLtdj5YM4OykKgffjSIVDE6xkKH9I8h7Krrw34Af6HgEy50jtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=DYP5jAsn; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id B01423F31F
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:17:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1726125430;
-	bh=yLNtSqSUcGh901eDSIADJN9Uf8pd4Z89WuxSzdAhfHg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
-	b=DYP5jAsnCHYjCpivUBUgkVHHlr1R0XUcOXUeSvrtbdkSeXjyEC25AgtAJ9XbhW9eL
-	 /ivomWHdP3DglCnnU6xcsKZ6gXViFYfrtr11qD2lnocrYYpvwzLcmv7+QH/1Y51QKC
-	 Q3sl3h+BrTAsvicXSwLrOk5u3UYsDDJmyl4Ub8k5LrOqCf8vIlAmNCFKghe5BRRodt
-	 mHT01S2PDcR/ocB0ypXcvjf7jEdKMVQF/bIJp3AUDBYGpL9TVds0LePnlo8l9oTvl7
-	 4uIIy+d+vdst2LyCq9JfvrknKbxQgYD6l8I4aya/OhKnzQPJj3N71PEDcr0nmeZqR0
-	 42eAljG8+BChA==
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2058456b864so13316725ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 00:17:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726125429; x=1726730229;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yLNtSqSUcGh901eDSIADJN9Uf8pd4Z89WuxSzdAhfHg=;
-        b=FwVumUzztur26txPiwRR/TN1SIa9nzyeR6ZQysjKAbL71UBN2qh+v3z+MbUMjOIO0a
-         U2F3X5YVJL6EeqreyvGgCi5jpm42RFxYqyoqeCwum+HCiCKSfHNV96d03JfO+4xPC5y9
-         rcWhoI0Xwz/m5nHAnPliJMAx71ABoHdtgATd5gGkj6FpzZpz9Y1ZoJ+OCXvuUI2881fK
-         e55GeLD/wbloIdStFFI9ii5NpDXNJgnHB31gQPWqj3Pda2pO0+ZEpe2JXuyjkBR5AL0t
-         5gC54mxtb9JqtOcnzZkfj1/L4eOHbr9c8Repyh5t3zD5SCjGPm6O1ItAcHNUmTxhmGGx
-         Fr7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUZBbUrzgRBv5feLhxtulq59rojLE2xkTSNpHJvjX0xuy5dW8O6VgC+0wiRnzzVeQp2Ch54W/j4bMpkUyI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7iK+J4D5lHH1elRAqQ7uJ7497hw8tVBMiq+Yh7tHZOp3lSuoy
-	gz84gusN3OlHEYSZqG/KtR8Z6NEAALxugJBAXjXNrxaId7orK58K0vXcbq+6wvCmDg0A2bm3nox
-	lnoRTeUPvSh3mD7l6/OOrPCCqMjHpVvOxDq6rWwPaZKu99We/+UHeMi6XzwJSw/Ghfzw6RbR1Ev
-	5UuQ==
-X-Received: by 2002:a17:903:18f:b0:205:810a:190a with SMTP id d9443c01a7336-2076e305f90mr32810825ad.2.1726125429099;
-        Thu, 12 Sep 2024 00:17:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEht7kfrwcB9dSSIld1WoYxq0KheqQr6Rm0A0E/7K78AVLKkI58Ko0dsXyBvg489CW657ptVA==
-X-Received: by 2002:a17:903:18f:b0:205:810a:190a with SMTP id d9443c01a7336-2076e305f90mr32810445ad.2.1726125428657;
-        Thu, 12 Sep 2024 00:17:08 -0700 (PDT)
-Received: from rickywu0421-ThinkPad-X1-Carbon-Gen-11.. ([122.147.171.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076af47662sm9275685ad.93.2024.09.12.00.17.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 00:17:08 -0700 (PDT)
-From: En-Wei Wu <en-wei.wu@canonical.com>
-To: steffen.klassert@secunet.com,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	en-wei.wu@canonical.com,
-	kai.heng.feng@canonical.com,
-	chia-lin.kao@canonical.com,
-	anthony.wong@canonical.com,
-	kuan-ying.lee@canonical.com,
-	chris.chiu@canonical.com
-Subject: [PATCH ipsec v2] xfrm: check MAC header is shown with both skb->mac_len and skb_mac_header_was_set()
-Date: Thu, 12 Sep 2024 15:17:02 +0800
-Message-ID: <20240912071702.221128-1-en-wei.wu@canonical.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85FD7189521;
+	Thu, 12 Sep 2024 07:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726125507; cv=fail; b=K7EXfWzoUPe/vRGoAysKOOs0GcgkiSvWOLmvvI63sCHaiy60dWuKiqY7grpZURoHUBaVt7o9CHx6TRYZ2FL94tcR+JIeW+1e9onTit52WaAHiRXQiGeeXs9muex1obtdZkxocAS7rJNPISP5QFSLcjOufZZmkVZAdGlS/9BXtOU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726125507; c=relaxed/simple;
+	bh=iarK1BJHKHAOypwofwjlfvOxT4XD2AcgkvKCxFpB4F4=;
+	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID:Date; b=C1mYmr58eXpmIrGRHuPz8Xs3og2HJGLg52Pwbsrghrp9OSbEC6W87qjXRQ46FCP1HmdsYkTzLq+bqqQ0xF7WJTC3Yb5VLgvnSYGVYJpKvuJtTaI+SN5KUO4DyFSh+8pERXJnZD6nLt3sGaas24YpcpL1+462sm0LHJTIGeP/xiE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=q09yaVg0; arc=fail smtp.client-ip=40.107.243.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZGoA+agiFJRzK44NKuuuIOPO2jbTu3XDAT+U3rCchOB6lh+kd6YAyf0WD21AZCYOBEfSndBZKTGdxySHWWBb4Kif0fpVX2d/WM/1tZYmRY8tbBQ7Og/zscSEP86YN1ePVfH3P8IxyCUfoz0/6UePcytxFmm9dmKDtJw8CEyJEo+2tBRoI3aVQBI/0JtR5Hn+v1CXbgKkEht6j+IqfCQ0HNTkaC7qX3M2HEzKJAtyL+PDsufFFbKSfhorSeyzxm3rUUm8SirCwtrIMtUpH2jVQNC9AzGXWZ+YBFcIa5qXqcLMWlsDkV9Y+RqoZXZ8DurLOIsLqY+MCrkv2E8X+x2c7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RBODeiptA80xsrWm4aWdALLAcD3iS0vvUtU5t/b5+OE=;
+ b=TOIwe+4Bh335FVqKfL5dFOvg1PmEYeRUOi1w+AMJ58J41SwBml5Kn3ydZnAbBa0vRcPnnV3+VWNu3W65vY4w51GmwuHMgLOx/mDehJxlmujvkXGt14LbvJBpRcJO8xuuYJc2IK08lP03scocfSIx6wtkAox5NWdLfaLJYnlB0MEFx3n2nVwVWOXB29RSUGNisM8KKmqgxzrsjBx6w+G2hgE+eRBj0LYV0ZAyzZokRYDlFpxEfZmzzsjhUv/kHLm8/KVwqgweEitz89TnvaL6GWVd96LLNjs9R7GxfT7ZOr0G1RJKSOlWd3j0gj3h6mjIKzNvcdVpMudm4Ag7hZfi9w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linuxfoundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RBODeiptA80xsrWm4aWdALLAcD3iS0vvUtU5t/b5+OE=;
+ b=q09yaVg0fndjXHboQFhxoYH/RXL6G5FyFXejBix56zxkFXCTLGIvMAAdnfKK+rOr/8CLW34lP6ggHJ2kOyz4HTeqiN6ofoEfyBDwEsprv71shYqYEVna3VA20ljvgqYmXwC3RDp4lY6FnA6qJvs37Yc6lti0kHFG5YQ6d7pKiZuzr5mUA80rVYWPBzyFc/nblVoVG2+8yP1vbZ1qtGWGZqq7FoxWxmJ2sn3AeHvd0MlSBQ4hcbCSrnNy8aWGeSHNbLiy11f6uHrvdwsie4kYffPNjFD+fir9A1mtCANBot/kWRrN1GayO4Ews8fId66b6JLBSFv05Vm4rqTNshAchg==
+Received: from MW4PR04CA0332.namprd04.prod.outlook.com (2603:10b6:303:8a::7)
+ by CYXPR12MB9444.namprd12.prod.outlook.com (2603:10b6:930:d6::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.28; Thu, 12 Sep
+ 2024 07:18:08 +0000
+Received: from MWH0EPF000A6735.namprd04.prod.outlook.com
+ (2603:10b6:303:8a:cafe::e) by MW4PR04CA0332.outlook.office365.com
+ (2603:10b6:303:8a::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24 via Frontend
+ Transport; Thu, 12 Sep 2024 07:18:05 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ MWH0EPF000A6735.mail.protection.outlook.com (10.167.249.27) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7918.13 via Frontend Transport; Thu, 12 Sep 2024 07:18:05 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 12 Sep
+ 2024 00:17:50 -0700
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 12 Sep
+ 2024 00:17:49 -0700
+Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Thu, 12 Sep 2024 00:17:49 -0700
+From: Jon Hunter <jonathanh@nvidia.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
+	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
+	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
+	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH 4.19 00/95] 4.19.322-rc2 review
+In-Reply-To: <20240910094253.246228054@linuxfoundation.org>
+References: <20240910094253.246228054@linuxfoundation.org>
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <58a4c4a6-5bcc-4cef-a274-57434f1e97f4@rnnvmail202.nvidia.com>
+Date: Thu, 12 Sep 2024 00:17:49 -0700
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000A6735:EE_|CYXPR12MB9444:EE_
+X-MS-Office365-Filtering-Correlation-Id: d6448d94-545b-44c3-a522-08dcd2fb0be2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?KzlKVEMwOC9NdmVQKzNYMkl5eENQQ2hyQW9pTlk5aUszZmRMVCtMeFIxS2o3?=
+ =?utf-8?B?UzVFUEpHaXhTVUNINytSZXIyVWNBSE9IelBQaFRBSXdnaWJQbUhBSmxNcldB?=
+ =?utf-8?B?aXNKdlpOT3I5T2VEd1RZSW0vaWdCRTA0SU1RSGVYUjQ1c2FWZHYyVCswaTBh?=
+ =?utf-8?B?eGE2QkRPWWRGVTRvS2lVaDRhMWRNaWpwY0R1NnN2ZDI0NndjTWN0cTlaWjhG?=
+ =?utf-8?B?SW4rK2dWZGVoMUM1d2pack9jVDB3cWNwOFpweTBFTmhEc21RRWIvTkM1bG5M?=
+ =?utf-8?B?c1VxTlJ2K3ZTTjEyOEtLNjNWcjljaTRGUnY3V2tTNEJ1Wi9XbExhU0trQjRn?=
+ =?utf-8?B?UXFmUHJQOThhbDF0NDRteWpqdG54amNlL2N4Ym5wSWdJaGxwR1Y2ZUlkQ2Vk?=
+ =?utf-8?B?am9KNXJXWGNJME91Qk5OckZyUFJpOUMrQy92OXRjalZPTFJtT1RiNFhtUGJV?=
+ =?utf-8?B?ZUpqVE5DYTlYT0gwVmc5OEZVNTB2TEYvQm5PODlaR3BoSXQxTDQrZ1JnVENV?=
+ =?utf-8?B?QWRBNDdaTnRlUUlmMmZMM0gyYjFES1VzZFpldFIzdzcvdE1WUmRjRi9hS25t?=
+ =?utf-8?B?ZW5kR0wrMzI3TWtuMjRwTjNrSU52aFRsVmtzVG5qc2piWnR4SkMyR2Q5OVlC?=
+ =?utf-8?B?cDFUY1JXbWVubGRPZ0RHZC9zSy9OendVN0ZGK0pwRWd1ZnlZSlpVNWdxTWVL?=
+ =?utf-8?B?ejRzbnBmYUFWMEJGV3JocVhJZ2MxRGpkZzlPWmNpZFQ2UGNzanY5WDh4cGJT?=
+ =?utf-8?B?NkNBL3VQdURPWlY4ZjZVSDVSSGdHL3B3RTJBVzlPSHRsWGtOVzlwc3hUSENT?=
+ =?utf-8?B?eHcyaE1zUzNWK3BhcFJyekhya1k0NkU0RGFtSjVLL0hpK0F4MHVCU09CVUll?=
+ =?utf-8?B?M3RyMGc0WkVaUzVoTnBvZlRvZFhZQThUNHFkbzRFcGRpeFY3RnEzZlcwTGQ2?=
+ =?utf-8?B?L1BtR29LVTdVWEJEZ2FoenZGY0gwaHBrVk9zTmZTckFzNWM2QXF4cGtzSnhs?=
+ =?utf-8?B?aEF0cCtQdnBhZGdLajhCWHRDQTNIZlpqSXJpYk1nNnk3dFlBb3ZtQUFQNnM4?=
+ =?utf-8?B?MWdDMnNIdGVvQVQ0aUdYMDBMNEloSFJ0a3M3b1ljYUFHQm41RVFac3R4dCtW?=
+ =?utf-8?B?K1FGVmtFOHVDUE1aZlpuVEdxL2VScmVWdE1SUVBMUmk0bUpVT284U0o2WmFX?=
+ =?utf-8?B?cFQ5S3lhTTJjN0tDQy8ybXk0ZkNDZlZTekN3ZHlzYUxObG43MnZFN1kzeGdR?=
+ =?utf-8?B?NSt4N1orT2JjaHJDVGRJQ04yOEZmWEdtOFRvMXJpMjNjbjR3anFXNVZ1Lzdt?=
+ =?utf-8?B?Q1MzNU1LZHRNWENhbWFnT1Fka29GbXZuSDFYdWYrQWgzczBKbzNYV0haendz?=
+ =?utf-8?B?bmxvYXV5ZFF5STM5ZmQrYm45a0M5c0ZxY094OU1SWkpxQUp3TFE5SzhXVnJL?=
+ =?utf-8?B?NFpHbkR1WjVWUER6MThHY2NZQ0xmdE5PdDVFM2VEUnBJSFZjd1IybzM5Qkpa?=
+ =?utf-8?B?N2xiRUl4OTUxNWdhM1dLelF4NEdlL1RIdEVHU2JKTUV5RmhSQlN4eFdjbkNu?=
+ =?utf-8?B?VDFyTDN0VEZkQlR5ODNpU0IzMVRCV3FIVzF6ZUg3K1V2VkNlZTVWSVQrN2JS?=
+ =?utf-8?B?ZXVyUTZqTmlLdGkxZHI2MXF0aUZXM2NwVGdIRG5qM1pHM2E2dTN5dGpNU21n?=
+ =?utf-8?B?WlQzRHdhdGdlOUFhbEFoNHNFb2xENUNRU2VrUlFRSlFuY1R4bUhleVlzTGJI?=
+ =?utf-8?B?WlhqWjBjb2JMU2NvSWs3UU5jalc3ZXVwUTZzMWN5L3YyMzRjakc1Zk05VWtZ?=
+ =?utf-8?B?clU1Vko0VlpGZzB4YmlZWVowcFFXY2xRZWJyQzNpdXBNTGpQZ1FCRisxaTAz?=
+ =?utf-8?B?M3BuRzE1L3FqaVVpSTJiZStKdm9wazYyRWRVUitRdU1zeGp0SFZYV2R0aXZm?=
+ =?utf-8?Q?Cgmvy7vpjV/lnr30Iy4zeLE4Ov33huZo?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2024 07:18:05.6388
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d6448d94-545b-44c3-a522-08dcd2fb0be2
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000A6735.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9444
 
-When we use Intel WWAN with xfrm, our system always hangs after
-browsing websites for a few seconds. The error message shows that
-it is a slab-out-of-bounds error:
+On Tue, 10 Sep 2024 11:43:06 +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.19.322 release.
+> There are 95 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Thu, 12 Sep 2024 09:42:36 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.322-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-[ 67.162014] BUG: KASAN: slab-out-of-bounds in xfrm_input+0x426e/0x6740
-[ 67.162030] Write of size 2 at addr ffff888156cb814b by task ksoftirqd/2/26
+All tests passing for Tegra ...
 
-[ 67.162043] CPU: 2 UID: 0 PID: 26 Comm: ksoftirqd/2 Not tainted 6.11.0-rc6-c763c4339688+ #2
-[ 67.162053] Hardware name: Dell Inc. Latitude 5340/0SG010, BIOS 1.15.0 07/15/2024
-[ 67.162058] Call Trace:
-[ 67.162062] <TASK>
-[ 67.162068] dump_stack_lvl+0x76/0xa0
-[ 67.162079] print_report+0xce/0x5f0
-[ 67.162088] ? xfrm_input+0x426e/0x6740
-[ 67.162096] ? kasan_complete_mode_report_info+0x26/0x200
-[ 67.162105] ? xfrm_input+0x426e/0x6740
-[ 67.162112] kasan_report+0xbe/0x110
-[ 67.162119] ? xfrm_input+0x426e/0x6740
-[ 67.162129] __asan_report_store_n_noabort+0x12/0x30
-[ 67.162138] xfrm_input+0x426e/0x6740
-[ 67.162149] ? __pfx_xfrm_input+0x10/0x10
-[ 67.162160] ? __kasan_check_read+0x11/0x20
-[ 67.162168] ? __call_rcu_common+0x3e7/0x15b0
-[ 67.162178] xfrm4_rcv_encap+0x214/0x470
-[ 67.162186] ? __xfrm4_udp_encap_rcv.part.0+0x3cd/0x560
-[ 67.162195] xfrm4_udp_encap_rcv+0xdd/0xf0
-[ 67.162203] udp_queue_rcv_one_skb+0x880/0x12f0
-[ 67.162212] udp_queue_rcv_skb+0x139/0xa90
-[ 67.162221] udp_unicast_rcv_skb+0x116/0x350
-[ 67.162229] __udp4_lib_rcv+0x213b/0x3410
-[ 67.162237] ? ldsem_down_write+0x211/0x4ed
-[ 67.162246] ? __pfx___udp4_lib_rcv+0x10/0x10
-[ 67.162254] ? __pfx_raw_local_deliver+0x10/0x10
-[ 67.162262] ? __pfx_cache_tag_flush_range_np+0x10/0x10
-[ 67.162273] udp_rcv+0x86/0xb0
-[ 67.162280] ip_protocol_deliver_rcu+0x152/0x380
-[ 67.162289] ip_local_deliver_finish+0x282/0x370
-[ 67.162296] ip_local_deliver+0x1a8/0x380
-[ 67.162303] ? __pfx_ip_local_deliver+0x10/0x10
-[ 67.162310] ? ip_rcv_finish_core.constprop.0+0x481/0x1ce0
-[ 67.162317] ? ip_rcv_core+0x5df/0xd60
-[ 67.162325] ip_rcv+0x2fc/0x380
-[ 67.162332] ? __pfx_ip_rcv+0x10/0x10
-[ 67.162338] ? __pfx_dma_map_page_attrs+0x10/0x10
-[ 67.162346] ? __kasan_check_write+0x14/0x30
-[ 67.162354] ? __build_skb_around+0x23a/0x350
-[ 67.162363] ? __pfx_ip_rcv+0x10/0x10
-[ 67.162369] __netif_receive_skb_one_core+0x173/0x1d0
-[ 67.162377] ? __pfx___netif_receive_skb_one_core+0x10/0x10
-[ 67.162386] ? __kasan_check_write+0x14/0x30
-[ 67.162394] ? _raw_spin_lock_irq+0x8b/0x100
-[ 67.162402] __netif_receive_skb+0x21/0x160
-[ 67.162409] process_backlog+0x1c0/0x590
-[ 67.162417] __napi_poll+0xab/0x550
-[ 67.162425] net_rx_action+0x53e/0xd10
-[ 67.162434] ? __pfx_net_rx_action+0x10/0x10
-[ 67.162443] ? __pfx_wake_up_var+0x10/0x10
-[ 67.162453] ? tasklet_action_common.constprop.0+0x22c/0x670
-[ 67.162463] handle_softirqs+0x18f/0x5d0
-[ 67.162472] ? __pfx_run_ksoftirqd+0x10/0x10
-[ 67.162480] run_ksoftirqd+0x3c/0x60
-[ 67.162487] smpboot_thread_fn+0x2f3/0x700
-[ 67.162497] kthread+0x2b5/0x390
-[ 67.162505] ? __pfx_smpboot_thread_fn+0x10/0x10
-[ 67.162512] ? __pfx_kthread+0x10/0x10
-[ 67.162519] ret_from_fork+0x43/0x90
-[ 67.162527] ? __pfx_kthread+0x10/0x10
-[ 67.162534] ret_from_fork_asm+0x1a/0x30
-[ 67.162544] </TASK>
+Test results for stable-v4.19:
+    10 builds:	10 pass, 0 fail
+    20 boots:	20 pass, 0 fail
+    37 tests:	37 pass, 0 fail
 
-[ 67.162551] The buggy address belongs to the object at ffff888156cb8000
-                which belongs to the cache kmalloc-rnd-09-8k of size 8192
-[ 67.162557] The buggy address is located 331 bytes inside of
-                allocated 8192-byte region [ffff888156cb8000, ffff888156cba000)
+Linux version:	4.19.322-rc2-g00a71bfa9b89
+Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
+                tegra194-p2972-0000, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-[ 67.162566] The buggy address belongs to the physical page:
-[ 67.162570] page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x156cb8
-[ 67.162578] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-[ 67.162583] flags: 0x17ffffc0000040(head|node=0|zone=2|lastcpupid=0x1fffff)
-[ 67.162591] page_type: 0xfdffffff(slab)
-[ 67.162599] raw: 0017ffffc0000040 ffff888100056780 dead000000000122 0000000000000000
-[ 67.162605] raw: 0000000000000000 0000000080020002 00000001fdffffff 0000000000000000
-[ 67.162611] head: 0017ffffc0000040 ffff888100056780 dead000000000122 0000000000000000
-[ 67.162616] head: 0000000000000000 0000000080020002 00000001fdffffff 0000000000000000
-[ 67.162621] head: 0017ffffc0000003 ffffea00055b2e01 ffffffffffffffff 0000000000000000
-[ 67.162626] head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-[ 67.162630] page dumped because: kasan: bad access detected
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-[ 67.162636] Memory state around the buggy address:
-[ 67.162640] ffff888156cb8000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[ 67.162645] ffff888156cb8080: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[ 67.162650] >ffff888156cb8100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[ 67.162653] ^
-[ 67.162658] ffff888156cb8180: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[ 67.162663] ffff888156cb8200: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-
-The reason is that the eth_hdr(skb) inside if statement evaluated
-to an unexpected address with skb->mac_header = ~0U (indicating there
-is no MAC header). The unreliability of skb->mac_len causes the if
-statement to become true even if there is no MAC header inside the
-skb data buffer.
-
-Check both the skb->mac_len and skb_mac_header_was_set(skb) fixes this issue.
-
-Fixes: 87cdf3148b11 ("xfrm: Verify MAC header exists before overwriting eth_hdr(skb)->h_proto")
-Signed-off-by: En-Wei Wu <en-wei.wu@canonical.com>
----
-Changes in v2:
-* Change the title from "xfrm: avoid using skb->mac_len to decide if mac header is shown"
-* Remain skb->mac_len check
-* Apply fix on ipv6 path too
----
- net/xfrm/xfrm_input.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/net/xfrm/xfrm_input.c b/net/xfrm/xfrm_input.c
-index 749e7eea99e4..eef0145c73a7 100644
---- a/net/xfrm/xfrm_input.c
-+++ b/net/xfrm/xfrm_input.c
-@@ -251,7 +251,7 @@ static int xfrm4_remove_tunnel_encap(struct xfrm_state *x, struct sk_buff *skb)
- 
- 	skb_reset_network_header(skb);
- 	skb_mac_header_rebuild(skb);
--	if (skb->mac_len)
-+	if (skb->mac_len && skb_mac_header_was_set(skb))
- 		eth_hdr(skb)->h_proto = skb->protocol;
- 
- 	err = 0;
-@@ -288,7 +288,7 @@ static int xfrm6_remove_tunnel_encap(struct xfrm_state *x, struct sk_buff *skb)
- 
- 	skb_reset_network_header(skb);
- 	skb_mac_header_rebuild(skb);
--	if (skb->mac_len)
-+	if (skb->mac_len && skb_mac_header_was_set(skb))
- 		eth_hdr(skb)->h_proto = skb->protocol;
- 
- 	err = 0;
--- 
-2.43.0
-
+Jon
 
