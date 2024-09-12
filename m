@@ -1,204 +1,127 @@
-Return-Path: <linux-kernel+bounces-326720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06AFB976C2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:31:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF8FF976C30
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:32:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86A26285159
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:31:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66904B21DF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE8F1AB6CB;
-	Thu, 12 Sep 2024 14:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6A61B12E3;
+	Thu, 12 Sep 2024 14:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uOJ2ES/i"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QpwwYNHj"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16A42837B
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 14:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E7CC1E529;
+	Thu, 12 Sep 2024 14:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726151466; cv=none; b=lSTbyQ839BKtHvNwhvUDdWt7EWVrBIgAPpV9BcF6hf+l1f9TGdGraYvAoptZiEO1bkqg1nhSJR3grNHNd33VEsQvwFCHw7Ane3YN+RLuuUy8YrdMxuZT5sPe4a+PXSVLslwgTExRiFBeie5ZxVqtNlgzGQ+qv80No5cd6pxJw5I=
+	t=1726151551; cv=none; b=SM1HgJUHqvVolMitNQU5oUzc368zWE2HA/UU9rlsWXDquurPBrwRraVWX5QnPAUSY0zVJl8DHiHvPmD3ijVpiRTtmKVEcnW1wk2el3YxvZkDglEGzcKvH0dUtnPpy7uDjoqfokMumw6EXpPw1SuanTUxuZh5btW6ohXgfw/MKlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726151466; c=relaxed/simple;
-	bh=CUk8LeFaw7nwK89uItUU8m4VSzxPAj6laAOWqpgdAdg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tbfZ7NfiwHqGoSrESArA5foPogEu2DVwjJ4AvtZ8xtIjdMZHaUuZs7ySckDxxKqtLm71+o9na8v/UIxyrqvFFBumNP3ULHuX9hXe+3UOwhQigY5VzKgg66Dj3ruGX4Ie4olYxzuYcFBUz6FDGyhR8tKpcQI4dPr/SK4KTCbywSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uOJ2ES/i; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <b26be717-a67e-4ee1-9393-3de6147b9c2e@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726151461;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DTWJHgLcn4spfm5GWguWcfzJyLphgl0AC6/fahz7z7s=;
-	b=uOJ2ES/ilsYa2yEI8S6LOlrkwIJQRzu8stg2al7F72G1f34CLeR4F4Rus9F2R+FJm7+I3z
-	noe7cDxmJwwWVLTBkvYVDk8Yh4dqfmLIl6F2NZKJ08tejvHA7gc8q2TUCn2/uexXbVqQvv
-	9xuMwfzRaSdsf+DRUBI7OfkCC4Ha0Po=
-Date: Thu, 12 Sep 2024 10:30:56 -0400
+	s=arc-20240116; t=1726151551; c=relaxed/simple;
+	bh=ZIgxOBr+LUIwGxzcvReySLBimnbVG06Bj6Le94EFSB0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WIDo/zzkQ5rN6QQctfVYI7pnmni5K/ji/n4xK0WNEawp5kn+I6Z6FXPKMAYuIFQZ93JP24LaxtON9sbp14Du2vSsMRFkeCexpVxFdBZTiPJ+mXj/LEJ1TWKv5GTZbNrj036sSzq1zdjmP/ihygRXN2Nhn96vhUyT3I5KQSKtuUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QpwwYNHj; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9018103214so148285866b.3;
+        Thu, 12 Sep 2024 07:32:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726151549; x=1726756349; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k/NO/bp2BRcv2Ga7qjyhvuGGI4Z4xlhL5eAhxJZku/w=;
+        b=QpwwYNHjc8OQYUo/CZtZf4OJMeDS2fTfZA9bCe+5IwA8Bu+97Mhs6OyhhzcLlSXYNq
+         oOBcZbHJDF83QiG+5m7K8RINzW7r2KxwlnlyCGaRQgT0QdprKYfI4wv6lTOHbZBvVHR9
+         U6v1BaagbsrgdVnTgEj8VXnsw2mZpqxgK4jQUBgb6+7axS9cfiUUhERV17ftXamwiM6/
+         SNtKMO++ZR3Akz2txvtF2k0gDvqt0+h1yp8mfd8TMr44Q7osCC1ExrV+Y8PTP55Kgadj
+         bhVusipiK1w1qt0xtB6Trrq2QAGEHciu0TnKtaDzjepKmeHKgMAHTd/ZQLwhyWuDdy6X
+         Wu2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726151549; x=1726756349;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k/NO/bp2BRcv2Ga7qjyhvuGGI4Z4xlhL5eAhxJZku/w=;
+        b=qg3llCzAhw+dNvkOyY+hRxYUuVXMHQuvpP7CBD2BozURxIdzZ3SRx1kUYCwz2jN94L
+         TyPd9A3u/XslrkpA8gNIOzHDitLsg1BneCV+FZl20E8XYIivXlZ8qA842H8HRD/uZi+5
+         gn9+e6Xj/blMMo75JWq7DglloXZ7hkuY9Auzy1U6mmf2DbNneRxHrrUbNNyTwV+aGw0g
+         OhAi5SyG7BvkAI3CLcn+eoK5YBkWUQIHg8zKfq4cHCFCrBwz+n2xESrsWhQ5IPPSc5Vt
+         GO1eeAjpx2LcxEZ5LG59E7KTNeoi6s0w/JplcdjBXjTvoUsYQHmXewlrf8VrYyuIgdH6
+         N0Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCWJzWcod7xEBVxTTptoRb3HvoHa62NzHoumaC9ysI6Lb/XbJXzl1IcgBWKDzCaOoNvFi5oMIsZq8HTOL7K+@vger.kernel.org, AJvYcCWx/pkEwhZz65X2RA3lXHADbtnt4q7OBQ/f+QGGjAAMb+Fa8uqsQ9XFlPkTM40bGh8W1PfdkWvwiefH@vger.kernel.org, AJvYcCXGo8Gmh3cXxFbNL2jgn1tsSmd8QePrlLSZoT9IXoKHC9tAsoXGVrhVu9fBplBbVDDv0GLT4Y3Z+ox0/s7BlVA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIjfAQpMPuolLasY3E328dhgeOXm7lyQ9ipgd3YC54LpZJY8bX
+	Lpw42xRVff9PT78Trr5X7H4s7coPzKl2IFPYjSkSQQ4NZ3SSoCuDZKUy2Uv19Q7nK+CxKcgGJr3
+	O+25Gr3A6lfdJ1lvrvRsc7fxqKOlNpvz2
+X-Google-Smtp-Source: AGHT+IGG+K9zRodKUyfIcrPD5dp8LwlvFqoWeZdZW/MIZ6JugJ94+A0FVDfNXHFrnZeogLuol/sR6GVprkIXZV3N8Ug=
+X-Received: by 2002:a17:907:e2e5:b0:a8b:154b:7640 with SMTP id
+ a640c23a62f3a-a90294acf95mr271319766b.37.1726151548277; Thu, 12 Sep 2024
+ 07:32:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net v2] net: xilinx: axienet: Fix IRQ coalescing packet
- count overflow
-To: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "Gupta, Suraj" <Suraj.Gupta2@amd.com>,
- "Katakam, Harini" <harini.katakam@amd.com>
-Cc: Andy Chiu <andy.chiu@sifive.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Simon Horman <horms@kernel.org>, Ariane Keller
- <ariane.keller@tik.ee.ethz.ch>, Daniel Borkmann <daniel@iogearbox.net>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "Simek, Michal"
- <michal.simek@amd.com>
-References: <20240909230908.1319982-1-sean.anderson@linux.dev>
- <MN0PR12MB5953E38D1EEBF3F83172E2EEB79B2@MN0PR12MB5953.namprd12.prod.outlook.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <MN0PR12MB5953E38D1EEBF3F83172E2EEB79B2@MN0PR12MB5953.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <a0fdf90803ab44508aa07f9190af5e00272231df.1704545258.git.christophe.jaillet@wanadoo.fr>
+ <z5qdyk2onwohenaclbflb7jlfn3wadafjpxsxzpvkmax75mpvg@vhhasuuutjzh> <CAMj1kXFH+zB_YuUS+vaEpguhuVGLYbQw55VNDCxnBfSPe6b-nw@mail.gmail.com>
+In-Reply-To: <CAMj1kXFH+zB_YuUS+vaEpguhuVGLYbQw55VNDCxnBfSPe6b-nw@mail.gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 12 Sep 2024 17:31:51 +0300
+Message-ID: <CAHp75VeRNg+Sbyk9nA6nASatP4apzSXCPrNaJ_ZvsnXhAbyw0g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] i2c: synquacer: Fix an error handling path in synquacer_i2c_probe()
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Andi Shyti <andi.shyti@kernel.org>, 
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Wolfram Sang <wsa@kernel.org>, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 9/11/24 03:01, Pandey, Radhey Shyam wrote:
->> -----Original Message-----
->> From: Sean Anderson <sean.anderson@linux.dev>
->> Sent: Tuesday, September 10, 2024 4:39 AM
->> To: Pandey, Radhey Shyam <radhey.shyam.pandey@amd.com>; David S .
->> Miller <davem@davemloft.net>; Eric Dumazet <edumazet@google.com>;
->> Jakub Kicinski <kuba@kernel.org>; Paolo Abeni <pabeni@redhat.com>;
->> netdev@vger.kernel.org
->> Cc: Andy Chiu <andy.chiu@sifive.com>; linux-kernel@vger.kernel.org; Simon
->> Horman <horms@kernel.org>; Ariane Keller <ariane.keller@tik.ee.ethz.ch>;
->> Daniel Borkmann <daniel@iogearbox.net>; linux-arm-
->> kernel@lists.infradead.org; Simek, Michal <michal.simek@amd.com>; Sean
->> Anderson <sean.anderson@linux.dev>
->> Subject: [PATCH net v2] net: xilinx: axienet: Fix IRQ coalescing packet count
->> overflow
->> 
->> If coalece_count is greater than 255 it will not fit in the register and
->> will overflow. This can be reproduced by running
->> 
->>     # ethtool -C ethX rx-frames 256
->> 
->> which will result in a timeout of 0us instead. Fix this by clamping the
->> counts to the maximum value.
-> After this fix - what is o/p we get on rx-frames read? I think silent clamping is not a great 
-> idea and user won't know about it.  One alternative is to add check in set_coalesc 
-> count for valid range? (Similar to axienet_ethtools_set_ringparam so that user is notified 
-> for incorrect range)
+On Thu, Sep 12, 2024 at 1:23=E2=80=AFPM Ard Biesheuvel <ardb@kernel.org> wr=
+ote:
+> On Mon, 6 May 2024 at 11:03, Andi Shyti <andi.shyti@kernel.org> wrote:
+> > On Sat, Jan 06, 2024 at 01:48:24PM +0100, Christophe JAILLET wrote:
+> > > If an error occurs after the clk_prepare_enable() call, it should be =
+undone
+> > > by a corresponding clk_disable_unprepare() call, as already done in t=
+he
+> > > remove() function.
+> > >
+> > > As devm_clk_get() is used, we can switch to devm_clk_get_enabled() to
+> > > handle it automatically and fix the probe.
+> > >
+> > > Update the remove() function accordingly and remove the now useless
+> > > clk_disable_unprepare() call.
+> > >
+> > > Fixes: 0d676a6c4390 ("i2c: add support for Socionext SynQuacer I2C co=
+ntroller")
+> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> >
+> > Applied to i2c/i2c-host-fixes.
+>
+> These patches should be reverted: ACPI boot on SynQuacer based systems
+> now fails with
+>
+> [    6.206022] synquacer_i2c SCX0003:00: error -ENOENT: failed to get
+> and enable clock
+> [    6.235762] synquacer_i2c SCX0003:00: probe with driver
+> synquacer_i2c failed with error -2
+>
+> as in this case, there is no clock to enable, and the clock rate is
+> specified in the PRP0001 device node.
 
-The value reported will be unclamped. In [1] I improve the driver to
-return the actual (clamped) value.
+Wouldn't simply moving to _optional fix the issue?
 
-Remember that without this commit, we have silent wraparound instead. I
-think clamping is much friendlier, since you at least get something
-close to the rx-frames value, instead of zero!
 
-This commit is just a fix for the overflow issue. To ensure it is
-appropriate for backporting I have omitted any other
-changes/improvements.
-
---Sean
-
-[1] https://lore.kernel.org/netdev/20240909235208.1331065-6-sean.anderson@linux.dev/
-
->> 
->> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
->> Fixes: 8a3b7a252dca ("drivers/net/ethernet/xilinx: added Xilinx AXI Ethernet
->> driver")
->> ---
->> 
->> Changes in v2:
->> - Use FIELD_MAX to extract the max value from the mask
->> - Expand the commit message with an example on how to reproduce this
->>   issue
->> 
->>  drivers/net/ethernet/xilinx/xilinx_axienet.h      | 5 ++---
->>  drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 8 ++++++--
->>  2 files changed, 8 insertions(+), 5 deletions(-)
->> 
->> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet.h
->> b/drivers/net/ethernet/xilinx/xilinx_axienet.h
->> index 1223fcc1a8da..54db69893565 100644
->> --- a/drivers/net/ethernet/xilinx/xilinx_axienet.h
->> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet.h
->> @@ -109,11 +109,10 @@
->>  #define XAXIDMA_BD_CTRL_TXEOF_MASK	0x04000000 /* Last tx packet
->> */
->>  #define XAXIDMA_BD_CTRL_ALL_MASK	0x0C000000 /* All control bits
->> */
->> 
->> -#define XAXIDMA_DELAY_MASK		0xFF000000 /* Delay timeout
->> counter */
->> -#define XAXIDMA_COALESCE_MASK		0x00FF0000 /* Coalesce
->> counter */
->> +#define XAXIDMA_DELAY_MASK		((u32)0xFF000000) /* Delay
->> timeout counter */
-> 
-> Adding typecast here looks odd. Any reason for it? 
-> If needed we do it in specific case where it is required.
-> 
->> +#define XAXIDMA_COALESCE_MASK		((u32)0x00FF0000) /*
->> Coalesce counter */
->> 
->>  #define XAXIDMA_DELAY_SHIFT		24
->> -#define XAXIDMA_COALESCE_SHIFT		16
->> 
->>  #define XAXIDMA_IRQ_IOC_MASK		0x00001000 /* Completion
->> intr */
->>  #define XAXIDMA_IRQ_DELAY_MASK		0x00002000 /* Delay
->> interrupt */
->> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
->> b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
->> index 9eb300fc3590..89b63695293d 100644
->> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
->> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
->> @@ -252,7 +252,9 @@ static u32 axienet_usec_to_timer(struct axienet_local
->> *lp, u32 coalesce_usec)
->>  static void axienet_dma_start(struct axienet_local *lp)
->>  {
->>  	/* Start updating the Rx channel control register */
->> -	lp->rx_dma_cr = (lp->coalesce_count_rx <<
->> XAXIDMA_COALESCE_SHIFT) |
->> +	lp->rx_dma_cr = FIELD_PREP(XAXIDMA_COALESCE_MASK,
->> +				   min(lp->coalesce_count_rx,
->> +
->> FIELD_MAX(XAXIDMA_COALESCE_MASK))) |
->>  			XAXIDMA_IRQ_IOC_MASK |
->> XAXIDMA_IRQ_ERROR_MASK;
->>  	/* Only set interrupt delay timer if not generating an interrupt on
->>  	 * the first RX packet. Otherwise leave at 0 to disable delay interrupt.
->> @@ -264,7 +266,9 @@ static void axienet_dma_start(struct axienet_local
->> *lp)
->>  	axienet_dma_out32(lp, XAXIDMA_RX_CR_OFFSET, lp->rx_dma_cr);
->> 
->>  	/* Start updating the Tx channel control register */
->> -	lp->tx_dma_cr = (lp->coalesce_count_tx <<
->> XAXIDMA_COALESCE_SHIFT) |
->> +	lp->tx_dma_cr = FIELD_PREP(XAXIDMA_COALESCE_MASK,
->> +				   min(lp->coalesce_count_tx,
->> +
->> FIELD_MAX(XAXIDMA_COALESCE_MASK))) |
->>  			XAXIDMA_IRQ_IOC_MASK |
->> XAXIDMA_IRQ_ERROR_MASK;
->>  	/* Only set interrupt delay timer if not generating an interrupt on
->>  	 * the first TX packet. Otherwise leave at 0 to disable delay interrupt.
->> --
->> 2.35.1.1320.gc452695387.dirty
-> 
+--=20
+With Best Regards,
+Andy Shevchenko
 
