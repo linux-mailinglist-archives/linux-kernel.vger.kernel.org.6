@@ -1,146 +1,88 @@
-Return-Path: <linux-kernel+bounces-326847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76F5E976DA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:22:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92ADB976DB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:23:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AA06289360
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:22:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C56F71C23909
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B93F1AD24B;
-	Thu, 12 Sep 2024 15:22:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D820B1B1D5F;
+	Thu, 12 Sep 2024 15:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tU9D9vtM"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P+9HFMWk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9401922D8
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303D5A5F;
+	Thu, 12 Sep 2024 15:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726154523; cv=none; b=O4oS+wtq+ZH5um2Tnlmv9BdgNY2qumdgWWSuF1SnUw3z9/CUqXJVTfvKIZ41/G9xnGp04tL5CR4/W8AGd4Azpi3vc3eFnKfiwYyI0ldpU7majaUh4gwh1xJvPjRXSrPaTsx5PLktp9ws4z6uNpgDMEG7vqZ/IgjE+WSp1Ektum0=
+	t=1726154589; cv=none; b=E8+qnqEZkTVjAxvOG7+dYrnNrGOF0bhlBC1kDTwC7QMaG5pT+l6DXhlo9AHJMAi1ERxfpGBhBX39RgkSb1DkBaICU5bG8TpO8yckjgZxXMvRl3DDgdJhAvl4UdfmhUElmxPTNCIG+JnMBibG8KfQHE7pu5rTNZKeCAPUD4+t0R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726154523; c=relaxed/simple;
-	bh=iQ1oKsBPPe/zMQcslRbghBsY7GVvs4EzjaXss889pls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qsTK1pc6dKD7iXHP3zmHZZtJQkpV9qiEC+RQBdmf4LkbFqlVmDuQKevPnxmWepNGScuJAqo+lD0BoVSsVbrOZxfHHRdrsi3ev1duXYTu4qXnYWFPqiKEM5NmkIoeJCfkwln835Q8+UNitd6bqhewilIULRekkOeDOLKLeIR/VHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tU9D9vtM; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42cc8782869so10347935e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:22:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726154521; x=1726759321; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8yBlVHQt+vnOgxumPxuDbxHiUodHyZmJ8GTxwWDdfrY=;
-        b=tU9D9vtMz60so4ZyI/ZA7FdLTLgAk0Rw0g76zZ7t/5cSwjXQHBcFpH8V1fYzjXznhd
-         dp+TZsjS6TRXxtyA5vmkxF/HdHDUmsxtFQ0XeKDuf83qim2ZMJrJo1HpgzEUHoVUSa2u
-         ygjw7T6JXlRFe/WvBZUmHu+iwvEa/ih6R2amQp6r0MX9aamEBHgxPOKNdnnk6KHqyLJc
-         Gc9v/Vcmq0emsWzOCHlI9hyDcA/WBw2ROvVnKFJ0Bu9k43Kbrs6lj5N6ybjJo4015ZEH
-         xpoJaN1s3JkDeGtGRcMU/PkIxHcjLH5JccW5u+f7DfiQQntUpALO1FzM7vUfS+31SPyp
-         UsBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726154521; x=1726759321;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8yBlVHQt+vnOgxumPxuDbxHiUodHyZmJ8GTxwWDdfrY=;
-        b=MT42gyWxt1Ba+bLocP0Oc7e5FgVQu8zTobzV6eCMJuKcdHp3EEmVbbHjVzpuWOuqJn
-         +R1RnjgNLF8BALrwiV1i3YBqxUCWDQrZYuuanVJclOnr0I66rB+Mrtn/FJ0xPHGOTyz1
-         +Frl0BlMIUrEO1mRK9w8iHwJZ+kouwB2YX5quD4BM08Pz+wMTgfiLI/9yMk8OqveU0sK
-         fchPqXji8RC7duF3WDAf3k44TA9NLvWzbOEd7U9NZnu4bgGYXEU0w/r08c1gUkdAtvud
-         e3EbvvUDqN4F1sc4tAIcTjorIvlReEwTZPVQ+70sm8BCdz+pkP5vIDtJwPQHwsNfmEdY
-         kHPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJMNQ34KpTJVABLDsE0Ix8N7r4x9mlmxqqgv7ABJuTYtQwyqutIFddQ4UxIhxfzPbQxFQ+NPP9VjgjD1g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6PvmzXaumvR56RJqQmMdnxn5Qt4W5SEdTu4Bw5fL/KIVekJWO
-	/TPHQmq5W8uVFmhG4HwaRqHXCuOFo4dqVIzUQc8dWSLYF5uEbuIwofb8mCxc4qM=
-X-Google-Smtp-Source: AGHT+IHlcoT3TEFF8U77+rI/EDslAOsz4FVdUzOrLilBFniwMVVrKySqO4ID2KPEa+yO5Y3+4W6cLg==
-X-Received: by 2002:a05:600c:1914:b0:42c:b95c:65ba with SMTP id 5b1f17b1804b1-42cdb511f40mr26605925e9.6.1726154520433;
-        Thu, 12 Sep 2024 08:22:00 -0700 (PDT)
-Received: from [192.168.1.61] ([84.67.228.188])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956e8a98sm14701188f8f.117.2024.09.12.08.21.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Sep 2024 08:21:59 -0700 (PDT)
-Message-ID: <c124ad7c-31be-42cb-9eeb-507d99a97891@linaro.org>
-Date: Thu, 12 Sep 2024 16:22:11 +0100
+	s=arc-20240116; t=1726154589; c=relaxed/simple;
+	bh=T0AliTqjWVI7nePlIXW52YXenMw2yEMOQRhgyzxECEQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=r6jQVPHwyeYMQE+0jgVlbJbS0ctL3W+ZFcmGF1PxmNqAPQiFVLyn1FG4zki8PnbhElPVxLpJujc0ljKPxPv+morL7PyTA6A4LwKKKYiCcPwQfb7n4qHUCWnLvhQpA16uhgQ3aeUhxxd9uiUZksMw+92YxOpu8Q2zl8bXhP8MiEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P+9HFMWk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72E34C4CEC3;
+	Thu, 12 Sep 2024 15:23:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726154588;
+	bh=T0AliTqjWVI7nePlIXW52YXenMw2yEMOQRhgyzxECEQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=P+9HFMWkFJ8NiBllFIfBh2SxPwiqN+FP8B72hyx2DrnUx6hwbbGh3vbIxeizFc3EI
+	 4E38ldH8ZCRonz/pKgOT9iOIEO5gj6wfN/0qebLwWKk4y2xMKl7cMOHkaAYaqMMp5M
+	 0F0eh+PTD5cLB75dCrQMNXxRrRW7gJEF1A38PFP/XDYJMZt2OnSBQlfSOqpzUAga6H
+	 sW55le4uwUzIlzDge3w4a9FpUXwQzKgaQ554tV0sOfaJW5+txX0O8TPD9pGl0fRtqv
+	 pJSRqgLUqb72SllEZpBA/4X3WNlPzgRYZygxeN1upUEmiT/qkq2Ygv0QjGp5d4/GBw
+	 YfDrPpYlwwEDQ==
+Date: Thu, 12 Sep 2024 08:23:07 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Anders Roxell <anders.roxell@linaro.org>
+Cc: shuah@kernel.org, willemb@google.com, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests: Makefile: add missing 'net/lib' to targets
+Message-ID: <20240912082307.556db015@kernel.org>
+In-Reply-To: <20240912063119.1277322-1-anders.roxell@linaro.org>
+References: <20240912063119.1277322-1-anders.roxell@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] perf cs-etm: Don't flush when packet_queue fills up
-To: Leo Yan <leo.yan@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, John Garry <john.g.garry@oracle.com>,
- Will Deacon <will@kernel.org>, Leo Yan <leo.yan@linux.dev>,
- Ben Gainey <ben.gainey@arm.com>, Ruidong Tian
- <tianruidong@linux.alibaba.com>, Benjamin Gray <bgray@linux.ibm.com>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
- gankulkarni@os.amperecomputing.com, coresight@lists.linaro.org,
- scclevenger@os.amperecomputing.com
-References: <20240905105043.160225-1-james.clark@linaro.org>
- <20240905105043.160225-2-james.clark@linaro.org>
- <5a0d9510-eccb-4074-964e-ae068b4ee31e@arm.com>
- <1e55f148-37d8-4fbe-b863-d604fdfaafaf@arm.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <1e55f148-37d8-4fbe-b863-d604fdfaafaf@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-
-
-On 11/09/2024 09:14, Leo Yan wrote:
+On Thu, 12 Sep 2024 08:31:18 +0200 Anders Roxell wrote:
+> Fixes: 1d0dc857b5d8 ("selftests: drv-net: add checksum tests")
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> ---
+>  tools/testing/selftests/Makefile | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> 
-> On 9/10/2024 9:28 PM, Leo Yan wrote:
->> On 9/5/2024 11:50 AM, James Clark wrote:
->>
->> [...]
->>
->>> cs_etm__flush(), like cs_etm__sample() is an operation that generates a
->>> sample and then swaps the current with the previous packet. Calling
->>> flush after processing the queues results in two swaps which corrupts
->>> the next sample. Therefore it wasn't appropriate to call flush here so
->>> remove it.
->>
->> In the cs_etm__sample(), if the period is not overflow, it is not necessarily
->> to generate instruction samples and copy back stack entries. This is why we
->> want to call cs_etm__flush() to make sure the last packet can be recorded
->> properly for instruction sample with back stacks.
->>
->> We also need to take account into the case for the end of the session - in
->> this case we need to generate samples for the last packet for complete info.
->>
->> I am wandering should we remove the cs_etm__packet_swap() from cs_etm__sample()?
-> 
-> Sorry for typo. I meant to remove the cs_etm__packet_swap() from cs_etm__flush().
-> 
-> Thanks,
-> Leo
+> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+> index 3b7df5477317..fc3681270afe 100644
+> --- a/tools/testing/selftests/Makefile
+> +++ b/tools/testing/selftests/Makefile
+> @@ -64,6 +64,7 @@ TARGETS += net
+>  TARGETS += net/af_unix
+>  TARGETS += net/forwarding
+>  TARGETS += net/hsr
+> +TARGETS += net/lib
+>  TARGETS += net/mptcp
+>  TARGETS += net/netfilter
+>  TARGETS += net/openvswitch
 
-Turns out there was already cs_etm__end_block() for the end of the 
-session, but it was only called for the timeless modes. I added it for 
-timestamped mode too in V2.
+Please make sure you always include a commit message. Among other
+things writing one would force you to understand the code, and
+in this case understand that this target is intentionally left out.
+Look around the Makefile for references to net/lib, you'll figure 
+it out.
 
-I also kept the existing flush() function for discontinuities. I changed 
-my mind that the differences to cs_etm__sample() weren't relevant.
-
-So I think we still need to keep the swap in flush() because otherwise 
-the next sample won't start from the right place.
+The patch is incorrect.
 
