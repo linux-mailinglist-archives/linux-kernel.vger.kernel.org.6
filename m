@@ -1,110 +1,103 @@
-Return-Path: <linux-kernel+bounces-326651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47985976B59
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:58:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11F77976B5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A6A11C23616
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:58:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0747B1C236F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE0D17966F;
-	Thu, 12 Sep 2024 13:57:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005041AD258;
+	Thu, 12 Sep 2024 13:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sdjevSe7"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="ajJHD1qi"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173D818028
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726149476; cv=none; b=b+/NIS1585ydJ2pp71mFbCfliF9Lidu70h3yoeHvJnZm4VdF+ipBW3OcxLAkAc6KnEgoQ80ClE/RXXYfoDd7QScoRGJyDNj982247/Fmt/uZ5QYdft5aLonZ9hDTfciDHmnZpRHyP09uiY1gdUgqjS4ZDd/nD8eWVCRfZpVTz10=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726149476; c=relaxed/simple;
-	bh=2t6DDl14FPTQBxdkXhrMD1mgAQ7ENfFgTaBWL8nte+M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NnaMu06zJp+xvdL4zwWYOmWnuiwpsUsquAqyIN8a8xL6PKRNherN3aHyLHC8XSX4q11sB45qlgOQZ+xTda4dMDAVzR06zEXuAd4JVvuDi6gB6cwIYO5lnkAxQYeMtHPGHlRh1M03B8AtR5qUQZ4BdgEL0jtMr9bA4GiQ54RgkAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sdjevSe7; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-535694d67eeso1024070e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 06:57:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726149473; x=1726754273; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BquzwUboHzXTtdjd0oA0kjxZhS1hFAwbnuUx4HBJ0HA=;
-        b=sdjevSe7zdUduecM/dZeRauUEqYexVDyD9gGVTnbJ559VjhFxGp+uQN5YdpxU2MtGa
-         a1Jdr2UsOHZPmCTC4z1/KnL0Vkgi8sHbqYfM0dc73fMT7IdX0r3DJzznj/pct9DpMOvH
-         O8P9oWg2YsVx7UeRaf6ISPE1CS1i42PCHppCk3HUpZKrj9A1xRYRxvsNGTGHZ0eYU7D2
-         nsLcG+MdqKDHYzOnf5HeWiHILJp8nYTj+xCbg8c55dZCZhjV+6z0jd2GO/eaetVipP5D
-         gJeJ6NuMQjhmux3yDeZfEEAdRQU5rYJiypAmYgaWrS+mCn8+C80KdyKj4xQtfXn/cZGE
-         9e5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726149473; x=1726754273;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BquzwUboHzXTtdjd0oA0kjxZhS1hFAwbnuUx4HBJ0HA=;
-        b=SV6ji3I4nqn5qadVtxI3Lj2ePZ6+4RNOiq/GsawLdy/fjQ8RSaRh/EB8k1ym/wQSHj
-         zMVE8+aooJXtbNUGGO6Jr2M+EdER1aAwBRds9cF/M7ESQtQo1R+RpOO013VcqP/FPz7A
-         mP3+lkOEgs1yQtpAlEoXwW63uizfTvuBy3UFtEMsPQgijy6YwSZW153NvvH36vk12Tkh
-         IZdz0gUesYl9SF/PN+bnKi9ofI1sHWQkQ5++6IMxyDeAaMFzw4OJp1ZYtaWXcsM+0HAH
-         sW2lL4dgYABQ9NCaMY0AF8EQEFiYLXX3schZgqDqorKI7A0escjtGJRxR4R4EkTjwW87
-         mf9A==
-X-Forwarded-Encrypted: i=1; AJvYcCXqF7R+SQJnva0JBvxshGlLRPbesrUAhtqmjFF+hBKNO8KMRdoJ+Vjx/hdvr3x30RvNfC/PGuY6iMNu+mU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW2O6uj9rRmaBfO4gW7ZTeq/310MotVmMtxh/pLenF3vuwciRp
-	b7iSSvUCOOWjuhXWMtsxIWlS677qlvUSXhMqHc7cURwSoxM42BWxjl9ZF96b3Es=
-X-Google-Smtp-Source: AGHT+IHHjX/elZwmUhRzKmMZTPFW8UNakvXLNck40dZybOYY8Xg9afuQtW40j5sB4fM0Jm7lNQ5O5A==
-X-Received: by 2002:a05:6512:3d93:b0:533:32cf:6420 with SMTP id 2adb3069b0e04-53679075a23mr986727e87.8.1726149472778;
-        Thu, 12 Sep 2024 06:57:52 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f868cc4sm1923399e87.33.2024.09.12.06.57.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 06:57:52 -0700 (PDT)
-Date: Thu, 12 Sep 2024 16:57:50 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Simona Vetter <simona.vetter@ffwll.ch>, 
-	Maxime Ripard <mripard@kernel.org>, Intel Graphics <intel-gfx@lists.freedesktop.org>, 
-	DRI <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the drm-misc-fixes tree
-Message-ID: <porwsaq63pizqyzq7agmt72lmowramhp6z5yqgu4fzs5n624ge@wyvmaahjmx7b>
-References: <20240904163018.214efaa7@canb.auug.org.au>
- <20240911180741.45311006@canb.auug.org.au>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C8F18028;
+	Thu, 12 Sep 2024 13:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726149506; cv=pass; b=kyhjXFd4r97NUpjZiqg0CDB9L+H05Qo4ojV/PSZHPic2B0o5OKTNiwYOaxOmKoxyRROAOwkT7bgiLWN+NUzVlEQsBY810BJpacpwDIQNofK20usrsiPBLSrGTLB2WQj/ZlszLYUcOPqaIwuLeSffOBrfUqIFEM/TqKUkOOAKvDw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726149506; c=relaxed/simple;
+	bh=6RL1u9uAiu8DowHkYOLNevCkRFYw9BGRr4Ad9UxyGmE=;
+	h=Message-ID:Date:MIME-Version:Cc:To:From:Subject:Content-Type; b=m50m23elOuyJcQWsnDe0bE606/Owe8qrO8oT5JJs4jfRzea6QRIO6CsE3gkAM+FCDoSLpccnkvFoYSlTUSWtqdKSTckwhXkoN5KJe68RRPL9003gBJQ7N+ud/IKum+L6xwx+8jnAe9hT848pfWcJc6mCtkitT8TIqfEim1iDqa8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=ajJHD1qi; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1726149493; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=XCOvL3FPVJaz2kmlgdcecBR/k006eBoqIIxtQxomgMYBmG10t/FJE5PM1QZMmny8+d81R+CNweat9DbolkRnYkT0y+w9QleumjH0V0taqX98nI1A30ZonWOWEBAZlRsG0rxmvTgJxNUnKz7bqrlhehQ8Eu/Si09yrUFvFs2IJjM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1726149493; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=4XEnPE+y+6wafM93GCnUgLXvpskej0TCZhls/HUpw4M=; 
+	b=B0p9wB8NDUSVcgFU5d+CZ0AlfFwDpIT3yvBjEv3ShG9GTXjwe/XenojWbbG4BowQS0i5gFI1R3+RejA5OgqcDmzJpdzef+96dvTU27/hqzyriwTfnIfGj9rDKRmBg9F24KBDMtGiROwym4k8QhgtIE2IFE8i/KXWgfYBJjUxWVc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726149493;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:To:To:From:From:Subject:Subject:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=4XEnPE+y+6wafM93GCnUgLXvpskej0TCZhls/HUpw4M=;
+	b=ajJHD1qiOZZkv+m+JnmsUUECA5aM8VzLWahaojydZYLymFcOlMlrerMio82yOXNj
+	OiqCCAZvYTEtgAN8c1Ikrv41EXfP4v+csJb5kQvl9JakRyVRoj5q9G0+MAKsYhx6pqC
+	QLIR7qt2QXgGiubwgvcX3XE+aDy+2YJ7CJx0BULI=
+Received: by mx.zohomail.com with SMTPS id 1726149490487599.0968480854402;
+	Thu, 12 Sep 2024 06:58:10 -0700 (PDT)
+Message-ID: <d3468fce-088c-45d0-8543-a2bc9fef07c9@collabora.com>
+Date: Thu, 12 Sep 2024 18:58:02 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240911180741.45311006@canb.auug.org.au>
+User-Agent: Mozilla Thunderbird
+Cc: Usama.Anjum@collabora.com, kernel@collabora.com,
+ gustavo.padovan@collabora.com, helen.koike@collabora.com
+Content-Language: en-US
+To: Daniel Wagner <wagi@monom.org>, Steven Rostedt <rostedt@goodmis.org>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Daniel Bristot de Oliveira <bristot@kernel.org>
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+Subject: [Report] rtla: Failed to set runtime and/or period
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Wed, Sep 11, 2024 at 06:07:41PM GMT, Stephen Rothwell wrote:
-> Hi all,
-> 
-> On Wed, 4 Sep 2024 16:30:18 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > After merging the drm-misc-fixes tree, today's linux-next build (htmldocs)
-> > produced this warning:
-> > 
-> > Error: Cannot open file drivers/gpu/drm/drm_bridge_connector.c
-> > 
-> > Introduced by commit
-> > 
-> >   9da7ec9b19d8 ("drm/bridge-connector: move to DRM_DISPLAY_HELPER module")
-> 
-> That commit is now in Linus' tree, but I am still getting the warning.
+Hi,
 
-Pushed out the fix to the drm-misc-fixes branch.
+We are running rt-tests on KernelCI. I'm looking at failures and I found
+out that rtla osnoise and rtla timerlat are failing. We have just
+enabled these tests and they are failing from day one.
+
+The first thing I fixed in my local setup is to sync the version of rtla
+with that of the running kernel from the source. It resolves the Tracer
+timerlat not found!" error as we had installed the older rtla package
+from Debian on CI. I'll update it. Is the version of rtla dependent on
+the exact kernel version or any recent rtla version is acceptable?
+
+The other errors are persistent:
+
+➜  sudo ./rtla osnoise hist -r 900000
+Failed to set runtime and/or period
+Could not apply config
+
+I thought maybe some argument are wrong. I ran the example from man page:
+
+➜  sudo ./rtla osnoise hist -P F:1 -c 0-11 -r 900000 -d 1M -b 10 -E 25
+Failed to apply CPUs config
+Could not apply config
+
+Is there some configuration which is missing for running rtla? Please
+let me know.
 
 -- 
-With best wishes
-Dmitry
+BR,
+Muhammad Usama Anjum
 
