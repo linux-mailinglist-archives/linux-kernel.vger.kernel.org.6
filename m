@@ -1,130 +1,487 @@
-Return-Path: <linux-kernel+bounces-325772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F256F975E05
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:35:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0445B975E07
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:35:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DE561C21AC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:35:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 276C01C209DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F15046BF;
-	Thu, 12 Sep 2024 00:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F8FB640;
+	Thu, 12 Sep 2024 00:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="G0A9MBNf"
-Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="iyaH+Ovx"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 008791D545
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 00:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1986C8BEC;
+	Thu, 12 Sep 2024 00:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726101292; cv=none; b=o+h4MWZMt8QbBASPKcVVzXpe9A8H2OcttqrivGbTmjCu48i+M+WB0mr4D0hIPMjdaPuxcMECPWdMU0y7bZeZhhIhvXzcG3DEp56m/l2KkpcnYj+QNXpq2Esihnk7XSB5oWpkfnO+lZlLRoTEA2srNR0qDDxdepwwOhDtLk4c+Fw=
+	t=1726101338; cv=none; b=QWoaKyQrBzMbbe1/p6/IoQ61LIkbkj3mEgm76pW/YRmuAHOT7m4LWZQxBrHL2q+oOzatFdWXDA24pbvr6OFolP0yxJC0fpUx34prM6SpGAHWmWfqsapvW2RyArIpKu0K1+Hl5nX9DV0FpxPnLeiBXlBbFekZ/vhkZTrkiMSEdlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726101292; c=relaxed/simple;
-	bh=XfUOfMV5igzSU5sun/scqEAqRQy+RsiSxYiFuj8SKSI=;
-	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
-	 MIME-Version:Content-Type; b=QYfYvxjiviOF2OGuE3mDh7e28ubyUH+lBdopARivMy72aQUbC1TGexV6wjfQmhOAdZoGmcA32PXJyj7/pv0oj8SEEJal2KvrnGdjYnxjbnFfbXpjXyVpQhahGZAI5eJ9hs9q6VcF66vgx1CZS+AL92DsYzbH6vu25C395/qvr50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=G0A9MBNf; arc=none smtp.client-ip=35.89.44.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5003a.ext.cloudfilter.net ([10.0.29.159])
-	by cmsmtp with ESMTPS
-	id oPb6s8567umtXoXnOsObrb; Thu, 12 Sep 2024 00:34:50 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id oXnNswxILO7CroXnOsYcfZ; Thu, 12 Sep 2024 00:34:50 +0000
-X-Authority-Analysis: v=2.4 cv=Pco0hThd c=1 sm=1 tr=0 ts=66e2372a
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
- a=HaFmDPmJAAAA:8 a=YArTxWWgIjO1YVvZgRQA:9 a=QEXdDO2ut3YA:10
- a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=cYvbNQI+gpCYqzJpgX7nuTA/hukRC+DHzSBUzBcEdYQ=; b=G0A9MBNf4fdYDTrE5swOuV181J
-	Kv5IQSjMWb8d2cuu/oPwrebCq3j35WxDx2AqfXY0x/z2OpMP3nqCVQjltSvZKuyOYgvmFmEAm50lu
-	LLwk7/xy8XNitOL0RAlfACgpNZHQLaCw9tOMCHZJQq2yfSfOqj4akqIYcO2k6yzYjL88PyRBl2wYz
-	qTqtQJVuXjjzQF2zLBFicuHJXSa6Ye0C2itv/tL778va8NU7DpLWGN2Tg9ajOA0YY68EFmMb+RmRF
-	h3uctcHdZ4V8y4HsM+6rjOSdzGQ0qNOELHcwEpimUQUjCtya6Nj+pJd7zsWiTa9tY3pyJJZWiULfv
-	hVcqx37Q==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:39894 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1soXnL-0035UP-33;
-	Wed, 11 Sep 2024 18:34:47 -0600
-Subject: Re: [PATCH 5.15 000/212] 5.15.167-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240911130535.165892968@linuxfoundation.org>
-In-Reply-To: <20240911130535.165892968@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <bf463a26-4bcb-2709-fb06-cece37b09688@w6rz.net>
-Date: Wed, 11 Sep 2024 17:34:45 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1726101338; c=relaxed/simple;
+	bh=fW9tL4bOGyj5qqJzgBhajXGygfunrljT2TepswUxlrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Wh/2fOgRtXeM3wlu3CPSASl3W+WwWwkBsAtB0lcXK7LjBAvrNATxNyFtaecjATTNE6xvYD5eqXanHC4WaNa23tCDzreDbod6oL2ThfgdIY17xvg2L9VdfYQ2vSOV3xw6MC2tz79KvHWeVF0G3szj5iz/owaMVIpbXgXtTHQoAHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=iyaH+Ovx; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726101325;
+	bh=ztURQTU8RzYMozhGR69TIN6scBokvybse0n2Z2DAbK4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=iyaH+OvxOQXu5KpQfyKIVKgp+q5aY5s3SYpT6QMV5F5yglTrVr6pcX75y2uZI+GLz
+	 u7R8/Hv18fEPmUl51g64XrNGK/8Bb48GjBTCojjX+Gp+qAEPve6y5tlTVQkHJOls9c
+	 IfjhkwDWipAxMuEY1FnjKdR3SN1VzaHrTSKTWxx9KkEYWniO5kPU1hG47SUAHpJ/+2
+	 hQTLfELi3S/jL01gZ7c7FGueVJB520/2h0+WMLgO8DhdRpfxG+NHLCqKOgNMmci0vv
+	 EZDPFSqPube+OhRXtJ+VXHXRPn8tXXpt6AMpFCFX3p8VNgwGjs1kE5TQBaK6agY021
+	 ZBOwjxMdOEOeg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X3z4F5mwrz4x0K;
+	Thu, 12 Sep 2024 10:35:25 +1000 (AEST)
+Date: Thu, 12 Sep 2024 10:35:24 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Tianrui Zhao
+ <zhaotianrui@loongson.cn>, Xianglai Li <lixianglai@loongson.cn>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the loongarch tree
+Message-ID: <20240912103524.62ac1dae@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1soXnL-0035UP-33
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:39894
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 61
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfJScAlp3/7PDkCCge1Ri1jw3yZwf8wYOFWbSmFG8c3825UA6uiTFsgJfHwHwPBHZLGYZC/9J/6QRdo9jYqZbnb2rcgCkNPmb53j2lGSNAOfIvJ12pGkv
- RjXXo91ChzECLXEQwGjgCYv67d/Rf4oEvi/5BZMGywmlusrlP/kO8MUDle/IzSxqykc2Yb64B7t9HCA+gxhQyhg5omKSwXMcIJw=
+Content-Type: multipart/signed; boundary="Sig_/BgoG=2Qwefxr8tuuU6i4Z3o";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 9/11/24 6:07 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.167 release.
-> There are 212 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 13 Sep 2024 13:05:05 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.167-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+--Sig_/BgoG=2Qwefxr8tuuU6i4Z3o
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+Hi all,
 
-Tested-by: Ron Economos <re@w6rz.net>
+After merging the loongarch tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
+In file included from include/trace/define_trace.h:102,
+                 from include/trace/events/kvm.h:530,
+                 from arch/powerpc/kvm/../../../virt/kvm/kvm_main.c:65:
+include/trace/events/kvm.h: In function 'trace_raw_output_kvm_iocsr':
+include/trace/events/kvm.h:244:44: error: left-hand operand of comma expres=
+sion has no effect [-Werror=3Dunused-value]
+  244 |         ({ KVM_TRACE_IOCSR_READ_UNSATISFIED, "unsatisfied-read" }, \
+      |                                            ^
+include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
+EVENT_CLASS'
+  203 |         trace_event_printf(iter, print);                           =
+     \
+      |                                  ^~~~~
+include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
+   45 |                              PARAMS(print));                   \
+      |                              ^~~~~~
+include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
+  248 | TRACE_EVENT(kvm_iocsr,
+      | ^~~~~~~~~~~
+include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
+  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
+      |         ^~~~~~~~~
+include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
+bolic'
+  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
+iocsr),
+      |                   ^~~~~~~~~~~~~~~~
+include/trace/events/kvm.h:270:51: note: in expansion of macro 'kvm_trace_s=
+ymbol_iocsr'
+  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
+iocsr),
+      |                                                   ^~~~~~~~~~~~~~~~~=
+~~~~~
+include/trace/events/kvm.h:244:65: error: expected ';' before '}' token
+  244 |         ({ KVM_TRACE_IOCSR_READ_UNSATISFIED, "unsatisfied-read" }, \
+      |                                                                 ^
+include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
+EVENT_CLASS'
+  203 |         trace_event_printf(iter, print);                           =
+     \
+      |                                  ^~~~~
+include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
+   45 |                              PARAMS(print));                   \
+      |                              ^~~~~~
+include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
+  248 | TRACE_EVENT(kvm_iocsr,
+      | ^~~~~~~~~~~
+include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
+  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
+      |         ^~~~~~~~~
+include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
+bolic'
+  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
+iocsr),
+      |                   ^~~~~~~~~~~~~~~~
+include/trace/events/kvm.h:270:51: note: in expansion of macro 'kvm_trace_s=
+ymbol_iocsr'
+  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
+iocsr),
+      |                                                   ^~~~~~~~~~~~~~~~~=
+~~~~~
+include/trace/events/kvm.h:244:66: error: expected ')' before ',' token
+  244 |         ({ KVM_TRACE_IOCSR_READ_UNSATISFIED, "unsatisfied-read" }, \
+      |                                                                  ^
+include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
+EVENT_CLASS'
+  203 |         trace_event_printf(iter, print);                           =
+     \
+      |                                  ^~~~~
+include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
+   45 |                              PARAMS(print));                   \
+      |                              ^~~~~~
+include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
+  248 | TRACE_EVENT(kvm_iocsr,
+      | ^~~~~~~~~~~
+include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
+  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
+      |         ^~~~~~~~~
+include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
+bolic'
+  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
+iocsr),
+      |                   ^~~~~~~~~~~~~~~~
+include/trace/events/kvm.h:270:51: note: in expansion of macro 'kvm_trace_s=
+ymbol_iocsr'
+  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
+iocsr),
+      |                                                   ^~~~~~~~~~~~~~~~~=
+~~~~~
+include/trace/events/kvm.h:244:9: error: initialization of 'long unsigned i=
+nt' from 'char *' makes integer from pointer without a cast [-Wint-conversi=
+on]
+  244 |         ({ KVM_TRACE_IOCSR_READ_UNSATISFIED, "unsatisfied-read" }, \
+      |         ^
+include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
+EVENT_CLASS'
+  203 |         trace_event_printf(iter, print);                           =
+     \
+      |                                  ^~~~~
+include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
+   45 |                              PARAMS(print));                   \
+      |                              ^~~~~~
+include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
+  248 | TRACE_EVENT(kvm_iocsr,
+      | ^~~~~~~~~~~
+include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
+  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
+      |         ^~~~~~~~~
+include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
+bolic'
+  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
+iocsr),
+      |                   ^~~~~~~~~~~~~~~~
+include/trace/events/kvm.h:270:51: note: in expansion of macro 'kvm_trace_s=
+ymbol_iocsr'
+  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
+iocsr),
+      |                                                   ^~~~~~~~~~~~~~~~~=
+~~~~~
+include/trace/events/kvm.h:244:9: note: (near initialization for 'symbols[0=
+].mask')
+  244 |         ({ KVM_TRACE_IOCSR_READ_UNSATISFIED, "unsatisfied-read" }, \
+      |         ^
+include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
+EVENT_CLASS'
+  203 |         trace_event_printf(iter, print);                           =
+     \
+      |                                  ^~~~~
+include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
+   45 |                              PARAMS(print));                   \
+      |                              ^~~~~~
+include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
+  248 | TRACE_EVENT(kvm_iocsr,
+      | ^~~~~~~~~~~
+include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
+  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
+      |         ^~~~~~~~~
+include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
+bolic'
+  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
+iocsr),
+      |                   ^~~~~~~~~~~~~~~~
+include/trace/events/kvm.h:270:51: note: in expansion of macro 'kvm_trace_s=
+ymbol_iocsr'
+  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
+iocsr),
+      |                                                   ^~~~~~~~~~~~~~~~~=
+~~~~~
+include/trace/events/kvm.h:244:9: error: initializer element is not constant
+  244 |         ({ KVM_TRACE_IOCSR_READ_UNSATISFIED, "unsatisfied-read" }, \
+      |         ^
+include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
+EVENT_CLASS'
+  203 |         trace_event_printf(iter, print);                           =
+     \
+      |                                  ^~~~~
+include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
+   45 |                              PARAMS(print));                   \
+      |                              ^~~~~~
+include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
+  248 | TRACE_EVENT(kvm_iocsr,
+      | ^~~~~~~~~~~
+include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
+  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
+      |         ^~~~~~~~~
+include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
+bolic'
+  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
+iocsr),
+      |                   ^~~~~~~~~~~~~~~~
+include/trace/events/kvm.h:270:51: note: in expansion of macro 'kvm_trace_s=
+ymbol_iocsr'
+  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
+iocsr),
+      |                                                   ^~~~~~~~~~~~~~~~~=
+~~~~~
+include/trace/events/kvm.h:244:9: note: (near initialization for 'symbols[0=
+].mask')
+  244 |         ({ KVM_TRACE_IOCSR_READ_UNSATISFIED, "unsatisfied-read" }, \
+      |         ^
+include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
+EVENT_CLASS'
+  203 |         trace_event_printf(iter, print);                           =
+     \
+      |                                  ^~~~~
+include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
+   45 |                              PARAMS(print));                   \
+      |                              ^~~~~~
+include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
+  248 | TRACE_EVENT(kvm_iocsr,
+      | ^~~~~~~~~~~
+include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
+  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
+      |         ^~~~~~~~~
+include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
+bolic'
+  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
+iocsr),
+      |                   ^~~~~~~~~~~~~~~~
+include/trace/events/kvm.h:270:51: note: in expansion of macro 'kvm_trace_s=
+ymbol_iocsr'
+  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
+iocsr),
+      |                                                   ^~~~~~~~~~~~~~~~~=
+~~~~~
+include/trace/stages/stage3_trace_output.h:77:37: error: braces around scal=
+ar initializer [-Werror]
+   77 |                 static const struct trace_print_flags symbols[] =3D=
+       \
+      |                                     ^~~~~~~~~~~~~~~~~
+include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
+EVENT_CLASS'
+  203 |         trace_event_printf(iter, print);                           =
+     \
+      |                                  ^~~~~
+include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
+   45 |                              PARAMS(print));                   \
+      |                              ^~~~~~
+include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
+  248 | TRACE_EVENT(kvm_iocsr,
+      | ^~~~~~~~~~~
+include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
+  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
+      |         ^~~~~~~~~
+include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
+bolic'
+  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
+iocsr),
+      |                   ^~~~~~~~~~~~~~~~
+include/trace/stages/stage3_trace_output.h:77:37: note: (near initializatio=
+n for 'symbols[0].name')
+   77 |                 static const struct trace_print_flags symbols[] =3D=
+       \
+      |                                     ^~~~~~~~~~~~~~~~~
+include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
+EVENT_CLASS'
+  203 |         trace_event_printf(iter, print);                           =
+     \
+      |                                  ^~~~~
+include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
+   45 |                              PARAMS(print));                   \
+      |                              ^~~~~~
+include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
+  248 | TRACE_EVENT(kvm_iocsr,
+      | ^~~~~~~~~~~
+include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
+  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
+      |         ^~~~~~~~~
+include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
+bolic'
+  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
+iocsr),
+      |                   ^~~~~~~~~~~~~~~~
+include/trace/stages/stage3_trace_output.h:78:43: error: initialization of =
+'const char *' from 'int' makes pointer from integer without a cast [-Wint-=
+conversion]
+   78 |                         { symbol_array, { -1, NULL }};             =
+     \
+      |                                           ^
+include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
+EVENT_CLASS'
+  203 |         trace_event_printf(iter, print);                           =
+     \
+      |                                  ^~~~~
+include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
+   45 |                              PARAMS(print));                   \
+      |                              ^~~~~~
+include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
+  248 | TRACE_EVENT(kvm_iocsr,
+      | ^~~~~~~~~~~
+include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
+  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
+      |         ^~~~~~~~~
+include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
+bolic'
+  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
+iocsr),
+      |                   ^~~~~~~~~~~~~~~~
+include/trace/stages/stage3_trace_output.h:78:43: note: (near initializatio=
+n for 'symbols[0].name')
+   78 |                         { symbol_array, { -1, NULL }};             =
+     \
+      |                                           ^
+include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
+EVENT_CLASS'
+  203 |         trace_event_printf(iter, print);                           =
+     \
+      |                                  ^~~~~
+include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
+   45 |                              PARAMS(print));                   \
+      |                              ^~~~~~
+include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
+  248 | TRACE_EVENT(kvm_iocsr,
+      | ^~~~~~~~~~~
+include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
+  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
+      |         ^~~~~~~~~
+include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
+bolic'
+  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
+iocsr),
+      |                   ^~~~~~~~~~~~~~~~
+include/linux/stddef.h:8:14: error: excess elements in scalar initializer [=
+-Werror]
+    8 | #define NULL ((void *)0)
+      |              ^
+include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
+EVENT_CLASS'
+  203 |         trace_event_printf(iter, print);                           =
+     \
+      |                                  ^~~~~
+include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
+   45 |                              PARAMS(print));                   \
+      |                              ^~~~~~
+include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
+  248 | TRACE_EVENT(kvm_iocsr,
+      | ^~~~~~~~~~~
+include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
+  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
+      |         ^~~~~~~~~
+include/trace/stages/stage3_trace_output.h:78:47: note: in expansion of mac=
+ro 'NULL'
+   78 |                         { symbol_array, { -1, NULL }};             =
+     \
+      |                                               ^~~~
+include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
+bolic'
+  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
+iocsr),
+      |                   ^~~~~~~~~~~~~~~~
+include/linux/stddef.h:8:14: note: (near initialization for 'symbols[0].nam=
+e')
+    8 | #define NULL ((void *)0)
+      |              ^
+include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
+EVENT_CLASS'
+  203 |         trace_event_printf(iter, print);                           =
+     \
+      |                                  ^~~~~
+include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
+   45 |                              PARAMS(print));                   \
+      |                              ^~~~~~
+include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
+  248 | TRACE_EVENT(kvm_iocsr,
+      | ^~~~~~~~~~~
+include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
+  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
+      |         ^~~~~~~~~
+include/trace/stages/stage3_trace_output.h:78:47: note: in expansion of mac=
+ro 'NULL'
+   78 |                         { symbol_array, { -1, NULL }};             =
+     \
+      |                                               ^~~~
+include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
+bolic'
+  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
+iocsr),
+      |                   ^~~~~~~~~~~~~~~~
+include/trace/stages/stage3_trace_output.h:78:25: error: missing braces aro=
+und initializer [-Werror=3Dmissing-braces]
+   78 |                         { symbol_array, { -1, NULL }};             =
+     \
+      |                         ^
+include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
+EVENT_CLASS'
+  203 |         trace_event_printf(iter, print);                           =
+     \
+      |                                  ^~~~~
+include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
+   45 |                              PARAMS(print));                   \
+      |                              ^~~~~~
+include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
+  248 | TRACE_EVENT(kvm_iocsr,
+      | ^~~~~~~~~~~
+include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
+  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
+      |         ^~~~~~~~~
+include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
+bolic'
+  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
+iocsr),
+      |                   ^~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
+
+Caused by commit
+
+  a7e93cf65d8a ("LoongArch: KVM: Add iocsr and mmio bus simulation in kerne=
+l")
+
+I have used the loongarch tree from next-20240911 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/BgoG=2Qwefxr8tuuU6i4Z3o
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbiN0wACgkQAVBC80lX
+0GwSvAf/T3zbHEcH2j9lx4lH2iS0W1DLLLzfxMqQGvdjApgyg8da20xxuNnG0ino
+FhaoS9BUjUyajAyQZrICP03NSNSZG7l9e/wyoRJ8qzptlAWWylL6vFUPXYoL0dFw
+ePKb2FlqOz8GU2LRIY8jMkVzXX3wa4atSBrzTzjkquZH4aDTnLgypfzifclWO+5k
+BUySVgE+aaufzgpSeQpDeZCRnLpdT+jWfS9tAwVAjcopFCNcfYeGacX12AB69WSP
+tPPD1hLX/uxvs4ASV40905uexEOn0WDqW8tV4AqAnKcL1lQurEM04Z6IXpqFbn2y
+s7opQ7NQHBEcUoac57ZxU8NYu9DM0w==
+=xpJl
+-----END PGP SIGNATURE-----
+
+--Sig_/BgoG=2Qwefxr8tuuU6i4Z3o--
 
