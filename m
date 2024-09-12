@@ -1,113 +1,103 @@
-Return-Path: <linux-kernel+bounces-326292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 191F6976613
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:54:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2846976620
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:56:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D27C1285167
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:54:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B70D285474
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8AB19F10B;
-	Thu, 12 Sep 2024 09:54:48 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852B0184558;
-	Thu, 12 Sep 2024 09:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1C419F404;
+	Thu, 12 Sep 2024 09:55:49 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E56E19F132;
+	Thu, 12 Sep 2024 09:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726134888; cv=none; b=Jfh2Q6L0+tLpXH8SEyu24SNgHvxuo8vQus4bsoEQ2cCP8wRnQfhrB7wumUq5HaNVUZMzh/aXqJdkTuQoXVqBkiiRBiIXwz7h21OBoSvwl9u/9K5QCYxZMthqlDJpqFdJYasIZOY2V6X1BIfN4cKStziCxKrvu/KL9iJTXBUvYcM=
+	t=1726134948; cv=none; b=Tq3iQqbxhl5HxD1+9brirBJ2Wl+fwqW6i2Iu3TG0zsImDFRvmsLJ1Tp4GM0D7yebmST0X8rPxqSb/e6jstYR75Oq4hjyhR2Ovc1apzHBVvwF8tMD/KHL/hTvcV70pl7GCyH6FVqDg2wgYv6rR88J2eFNxBq1MUSAyl7gCyVZ1XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726134888; c=relaxed/simple;
-	bh=b4QTAz5snlatzUhbRAUxPDYebjaCYwwojI+ef5Tcn3c=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Lu+RO58z2KiXSN79pcFBvFju5+F4GiXZFphagVH3JMO0iPjvHdEDR5KMXwvo5DWbVbgX/1PS7q82O7OBBQXmsNuw6atqU38LBAitwwGQQVTlABFus0Dr8bY8e8UQLjPUAg5ajw2SQzguGAxESAr3UAepeUT1y3sbGVeAP7omrkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4X4CQx1sVHzfc21;
-	Thu, 12 Sep 2024 17:52:25 +0800 (CST)
-Received: from kwepemd100011.china.huawei.com (unknown [7.221.188.204])
-	by mail.maildlp.com (Postfix) with ESMTPS id 42C05140390;
-	Thu, 12 Sep 2024 17:54:36 +0800 (CST)
-Received: from kwepemd100011.china.huawei.com (7.221.188.204) by
- kwepemd100011.china.huawei.com (7.221.188.204) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Thu, 12 Sep 2024 17:54:35 +0800
-Received: from kwepemd100011.china.huawei.com ([7.221.188.204]) by
- kwepemd100011.china.huawei.com ([7.221.188.204]) with mapi id 15.02.1258.034;
- Thu, 12 Sep 2024 17:54:35 +0800
-From: duchangbin <changbin.du@huawei.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-CC: James Clark <james.clark@linaro.org>, duchangbin <changbin.du@huawei.com>,
-	Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, "Ian
- Rogers" <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>, "linux-perf-users@vger.kernel.org"
-	<linux-perf-users@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Peter Zijlstra <peterz@infradead.org>, "Ingo
- Molnar" <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH v2] perf ftrace: Detect whether ftrace is enabled on
- system
-Thread-Topic: [PATCH v2] perf ftrace: Detect whether ftrace is enabled on
- system
-Thread-Index: AQHbBDGecvxeNbxUKk+LVH61YHizzLJR2IKAgAAl6wCAAeyYAA==
-Date: Thu, 12 Sep 2024 09:54:35 +0000
-Message-ID: <b0d2446f5eed4c0b91cd853ea8033417@huawei.com>
-References: <20240911100126.900779-1-changbin.du@huawei.com>
- <c37492e5-6a1a-4506-810c-ec59056ee85b@linaro.org> <ZuGNhhzlTaAQaZXj@x1>
-In-Reply-To: <ZuGNhhzlTaAQaZXj@x1>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-imapappendstamp: kwepemd100011.china.huawei.com (15.02.1258.034)
-x-ms-exchange-messagesentrepresentingtype: 1
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <046E3428A206EA478A8DFF5DBDAE3668@huawei.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1726134948; c=relaxed/simple;
+	bh=VOCJPqVsl9L8Gqzs0YlXeTB4sByDOT3XB7vXD9+LNik=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ZcQ05afCyZ7iEcO+eOS8mzDNZunL0dpINF9AGtx/a9zHoxwM6dayAy336hZA+h0kuXzhAzDM0fVdsmLgvAlblGIQ3IlQ/q2aDhMN/76OrEN21jIVYpABmqg+Og2NJuNlWmIkK9jdF8cudForVPami3sppaClhs4kg1Rkh5gpOEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1sogY3-0001w9-00; Thu, 12 Sep 2024 11:55:35 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id D70FFC014D; Thu, 12 Sep 2024 11:54:41 +0200 (CEST)
+Date: Thu, 12 Sep 2024 11:54:41 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: torvalds@linux-foundation.org
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] MIPS changes for v6.12
+Message-ID: <ZuK6YZHRIcriY+Ys@alpha.franken.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-T24gV2VkLCBTZXAgMTEsIDIwMjQgYXQgMDk6MzE6MDJBTSAtMDMwMCwgQXJuYWxkbyBDYXJ2YWxo
-byBkZSBNZWxvIHdyb3RlOg0KPiBPbiBXZWQsIFNlcCAxMSwgMjAyNCBhdCAxMToxNToxOUFNICsw
-MTAwLCBKYW1lcyBDbGFyayB3cm90ZToNCj4gPiBPbiAxMS8wOS8yMDI0IDExOjAxLCBDaGFuZ2Jp
-biBEdSB3cm90ZToNCj4gPiA+IFRvIG1ha2UgZXJyb3IgbWVzc2FnZXMgbW9yZSBhY2N1cmF0ZSwg
-dGhpcyBjaGFuZ2UgZGV0ZWN0cyB3aGV0aGVyIGZ0cmFjZSBpcw0KPiA+ID4gZW5hYmxlZCBvbiBz
-eXN0ZW0gYnkgY2hlY2tpbmcgdHJhY2UgZmlsZSAic2V0X2Z0cmFjZV9waWQiLg0KPiANCj4gPFNO
-SVA+DQo+IA0KPiA+ID4gQEAgLTE1ODMsNiArMTYwMSwxMSBAQCBpbnQgY21kX2Z0cmFjZShpbnQg
-YXJnYywgY29uc3QgY2hhciAqKmFyZ3YpDQo+ID4gPiAgIAlpZiAoIWNoZWNrX2Z0cmFjZV9jYXBh
-YmxlKCkpDQo+ID4gPiAgIAkJcmV0dXJuIC0xOw0KPiA+ID4gKwlpZiAoIWlzX2Z0cmFjZV9zdXBw
-b3J0ZWQoKSkgew0KPiA+ID4gKwkJcHJfZXJyKCJmdHJhY2UgaXMgbm90IHN1cHBvcnRlZCBvbiB0
-aGlzIHN5c3RlbVxuIik7DQo+ID4gPiArCQlyZXR1cm4gLUVOT1RTVVA7DQo+ID4gPiArCX0NCj4g
-PiA+ICsNCj4gPiA+ICAgCXJldCA9IHBlcmZfY29uZmlnKHBlcmZfZnRyYWNlX2NvbmZpZywgJmZ0
-cmFjZSk7DQo+ID4gPiAgIAlpZiAocmV0IDwgMCkNCj4gPiA+ICAgCQlyZXR1cm4gLTE7DQo+ID4g
-DQo+ID4gUmV2aWV3ZWQtYnk6IEphbWVzIENsYXJrIDxqYW1lcy5jbGFya0BsaW5hcm8ub3JnPg0K
-PiANCj4gQXBwbGllZCBhbmQgYWRkZWQgdGhlc2UgY29tbWVudHM6DQo+IA0KPiBDb21taXR0ZXIg
-dGVzdGluZzoNCj4gDQo+IERvaW5nIGl0IGluIGFuIHVucHJpdmlsZWdlZCB0b29sYm94IGNvbnRh
-aW5lciBvbiBGZWRvcmEgNDA6DQo+IA0KPiBCZWZvcmU6DQo+IA0KPiAgIGFjbWVAbnVtYmVyOn4v
-Z2l0L3BlcmYtdG9vbHMtbmV4dCQgdG9vbGJveCBlbnRlciBwZXJmDQo+ICAg4qyiW2FjbWVAdG9v
-bGJveCBwZXJmLXRvb2xzLW5leHRdJCBzdWRvIHN1IC0NCj4gICDirKJbcm9vdEB0b29sYm94IH5d
-IyB+YWNtZS9iaW4vcGVyZiBmdHJhY2UNCj4gICBmYWlsZWQgdG8gcmVzZXQgZnRyYWNlDQo+ICAg
-4qyiW3Jvb3RAdG9vbGJveCB+XSMNCj4gDQo+IEFmdGVyIHRoaXMgcGF0Y2g6DQo+IA0KPiAgIOKs
-oltyb290QHRvb2xib3ggfl0jIH5hY21lL2Jpbi9wZXJmIGZ0cmFjZQ0KPiAgIGZ0cmFjZSBpcyBu
-b3Qgc3VwcG9ydGVkIG9uIHRoaXMgc3lzdGVtDQo+ICAg4qyiW3Jvb3RAdG9vbGJveCB+XSMNCj4g
-DQo+IE1heWJlIHdlIGNvdWxkIGNoZWNrIGlmIHdlIGFyZSBpbiBzdWNoIGFzIHNpdHVhdGlvbiwg
-aW5zaWRlIGFuDQo+IHVucHJpdmlsZWdlZCBjb250YWluZXIsIGFuZCBwcm92aWRlIGEgSElOVCBs
-aW5lPw0KPiANCkkgdGhpbmsgd2UgY291bGQgY2hlY2sgdGhlIG1vdW50IHN0YXR1cyBvZiB0cmFj
-ZWZzIGZpcnN0LCBhbmQgdGhlbiBjaGVjayB3aGV0aGVyDQp0aGUgZnRyYWNlIG5vZGUgZXhpc3Rz
-LiBJZiB0aGVyZSdzIGEgcGVybWlzc2lvbiBpc3N1ZSBpbiBjb250YWluZXIsIG1heWJlIHdlDQpz
-aG91bGQgYWxzbyBjaGVjayB0aGUgZXJybm8gb2YgYWNjZXNzKCkuDQoNCj4gUmV2aWV3ZWQtYnk6
-IEphbWVzIENsYXJrIDxqYW1lcy5jbGFya0BsaW5hcm8ub3JnPg0KPiBTaWduZWQtb2ZmLWJ5OiBD
-aGFuZ2JpbiBEdSA8Y2hhbmdiaW4uZHVAaHVhd2VpLmNvbT4NCj4gVGVzdGVkLWJ5OiBBcm5hbGRv
-IENhcnZhbGhvIGRlIE1lbG8gPGFjbWVAcmVkaGF0LmNvbT4NCg0KLS0gDQpDaGVlcnMsDQpDaGFu
-Z2JpbiBEdQ0K
+The following changes since commit 5be63fc19fcaa4c236b307420483578a56986a37:
+
+  Linux 6.11-rc5 (2024-08-25 19:07:11 +1200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git/ tags/mips_6.12
+
+for you to fetch changes up to 439667fb943cfea46d7bde5c7b29c89efec3cbc7:
+
+  mips: Remove posix_types.h include from sigcontext.h (2024-08-29 10:46:00 +0200)
+
+----------------------------------------------------------------
+- use devm_clk_get_enabled() helper
+- prototype fixes
+- cleanup unused stuff
+
+----------------------------------------------------------------
+Gaosheng Cui (6):
+      MIPS: Remove unused function dump_au1000_dma_channel() in dma.c
+      mips/jazz: remove unused jazz_handle_int() declaration
+      MIPS: MT: Remove unused function mips_mt_regdump()
+      MIPS: Remove unused declarations in asm/cmp.h
+      MIPS: Remove unused mips_display/_scroll_message() declarations
+      MIPS: dec: prom: Remove unused unregister_prom_console() declaration
+
+Vincent Legoll (2):
+      MIPS: ralink: Fix missing `plat_time_init` prototype
+      MIPS: ralink: Fix missing `get_c0_perfcount_int` prototype
+
+Wu Bo (2):
+      bus: bt1-axi: change to use devm_clk_get_enabled() helper
+      bus: bt1-apb: change to use devm_clk_get_enabled() helper
+
+Xi Ruoyao (1):
+      mips: Remove posix_types.h include from sigcontext.h
+
+ arch/mips/alchemy/common/dma.c                 | 23 --------
+ arch/mips/include/asm/cmp.h                    |  8 ---
+ arch/mips/include/asm/dec/prom.h               |  1 -
+ arch/mips/include/asm/mach-au1x00/au1000_dma.h |  1 -
+ arch/mips/include/asm/mips-boards/generic.h    |  3 -
+ arch/mips/include/asm/mips_mt.h                |  2 -
+ arch/mips/include/uapi/asm/sigcontext.h        |  1 -
+ arch/mips/jazz/setup.c                         |  2 -
+ arch/mips/kernel/mips-mt.c                     | 77 --------------------------
+ arch/mips/ralink/irq-gic.c                     |  1 +
+ arch/mips/ralink/timer-gic.c                   |  2 +
+ drivers/bus/bt1-apb.c                          | 23 +-------
+ drivers/bus/bt1-axi.c                          | 23 +-------
+ 13 files changed, 6 insertions(+), 161 deletions(-)
+
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
