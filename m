@@ -1,90 +1,89 @@
-Return-Path: <linux-kernel+bounces-327310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 533809773EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:54:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8126B9773F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:55:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A8BA1F255C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:54:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20113B215E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69601C2456;
-	Thu, 12 Sep 2024 21:54:27 +0000 (UTC)
-Received: from mail.aaazen.com (99-33-87-210.lightspeed.sntcca.sbcglobal.net [99.33.87.210])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF841C2DC3;
+	Thu, 12 Sep 2024 21:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vszIJZK+"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14FD1C2424;
-	Thu, 12 Sep 2024 21:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.33.87.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF0B1C2431;
+	Thu, 12 Sep 2024 21:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726178067; cv=none; b=CKNUpi8Xn7wEYwBeuOxdRnZTKJ2MryJ5pTpVH/fs7IzSIsHSVHCTi2AXSOcuyqyrtfChVn8zneCa7hIuRhPD5dgdish8XgArxiD3QmveaSLCYPZK2lOYj677mmjjmwWfpgOU7A6t1NrFBdSGS6PSp+64kyg4zL7kwa7jfbota6U=
+	t=1726178106; cv=none; b=FloG09G/pPKa3q3QwffcMZKXgG7Ru59nm6fuDbUWVxh6AiXSSoluU2xDPl8uoIJVK4roJttVYyC4D2lfLaKrXXfsP+QDcuv2DbUORWB+NeePd0fxxGfj6sPcTNAwgaIS4FffJ3uboJda9TZ//XwqhbWF8m+54VUl49eUdu8dTaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726178067; c=relaxed/simple;
-	bh=Uucssok7TIvls+tebBseLNQG3VjlcIuDadYcy43VwnY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=B83zQcR3HGcnfPUu8i5BBUj32gSbyCxIN8gLxk4gfcnIWoOr7lE0uRIX2YZtt9YoMj2eKdpw5QMKlamc3jkJ28yjdUFK6KQ4Lru7XSiIVC76RB/S2r6v9ogfbAxVo7rHhQsOMNCm2oVXp/I+DGtyKRTkgYlSt4RHWprxxtdtmqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aaazen.com; spf=pass smtp.mailfrom=aaazen.com; arc=none smtp.client-ip=99.33.87.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aaazen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aaazen.com
-Received: from localhost (localhost [127.0.0.1])
-	by thursday.test (OpenSMTPD) with ESMTP id 2a0062c2;
-	Thu, 12 Sep 2024 14:54:18 -0700 (PDT)
-Date: Thu, 12 Sep 2024 14:54:18 -0700 (PDT)
-From: Richard Narron <richard@aaazen.com>
-X-X-Sender: richard@thursday.test
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-cc: Linux stable <stable@vger.kernel.org>, 
-    Linus Torvalds <torvalds@linux-foundation.org>, 
-    Linux kernel <linux-kernel@vger.kernel.org>, 
-    Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-    Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH 5.15 000/214] 5.15.167-rc1 review
-In-Reply-To: <2024091103-revivable-dictator-a9da@gregkh>
-Message-ID: <a6392c39-e12f-e913-8f4f-c135b283ce@aaazen.com>
-References: <4a5321bd-b1f-1832-f0c-cea8694dc5aa@aaazen.com> <2024091103-revivable-dictator-a9da@gregkh>
+	s=arc-20240116; t=1726178106; c=relaxed/simple;
+	bh=BJkbHY6JbGdmJVgjgCtDgEFzhpZTISMmJWx/J84BNvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BzVpaES5SVVdmWmGuGfsJNv+PEh5ScmV+bpsKBk39Wmp/mJ9FzqsKHGIqpaFd34i1sFZcqPChAJPIFfmJgbEgJTP47SZP5pUjXnTqKpnrEYAYzcOxMpFui2jJ0c3um3aI9hnQ6wX55u/+ewleTriodWEPCWq9KwG+L/XjFhA8Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vszIJZK+; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=GnfPyNgu0BILt09ywPU879XMla3butlw0lEC9CUtWzk=; b=vszIJZK+Jvdrtrizior1yTTJ2u
+	rlSnrzJnL9q2dvdMvWwzLpMBqr7nZrPLok3EEzuY052thHL6X1OfTo2AJyd+qoXDIZkj7p6kq+Dy+
+	4kAczS5IUk/PozZij9/cX92sMmkn9DGnYy/Pkm/Y35meuZVwooU/6I75JM4I9JP/Ukeiq5MqBivos
+	XAgxlZKGblo85rJWpR9gEAM+JAr/6tfUAhAIRpNsuX0tMJVeOWZk05dyjsznMpmKwA8g/SvS69l0C
+	qJqfii+DAS7LeR7mt6YbnLd8CLuAiO5eXcc4VqpElgF4KxmWju7IrZD6yi6FtAW6tpZzwVx98J23F
+	6HCczzJQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sormG-0000000BONF-2X2q;
+	Thu, 12 Sep 2024 21:55:00 +0000
+Date: Thu, 12 Sep 2024 22:55:00 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Christian Theune <ct@flyingcircus.io>
+Cc: linux-mm@kvack.org,
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, axboe@kernel.dk,
+	Daniel Dao <dqminh@cloudflare.com>,
+	Dave Chinner <david@fromorbit.com>, clm@meta.com,
+	regressions@lists.linux.dev, regressions@leemhuis.info
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+Message-ID: <ZuNjNNmrDPVsVK03@casper.infradead.org>
+References: <A5A976CB-DB57-4513-A700-656580488AB6@flyingcircus.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <A5A976CB-DB57-4513-A700-656580488AB6@flyingcircus.io>
 
-On Wed, 11 Sep 2024, Greg Kroah-Hartman wrote:
+On Thu, Sep 12, 2024 at 11:18:34PM +0200, Christian Theune wrote:
+> This bug is very hard to reproduce but has been known to exist as a
+> “fluke” for a while already. I have invested a number of days trying
+> to come up with workloads to trigger it quicker than that stochastic
+> “once every few weeks in a fleet of 1.5k machines", but it eludes
+> me so far. I know that this also affects Facebook/Meta as well as
+> Cloudflare who are both running newer kernels (at least 6.1, 6.6,
+> and 6.9) with the above mentioned patch reverted. I’m from a much
+> smaller company and seeing that those guys are running with this patch
+> reverted (that now makes their kernel basically an untested/unsupported
+> deviation from the mainline) smells like desparation. I’m with a
+> much smaller team and company and I’m wondering why this isn’t
+> tackled more urgently from more hands to make it shallow (hopefully).
 
-> On Tue, Sep 10, 2024 at 03:54:18PM -0700, Richard Narron wrote:
-> > Slackware 15.0 64-bit compiles and runs fine.
-> > Slackware 15.0 32-bit fails to build and gives the "out of memory" error:
-> >
-> > cc1: out of memory allocating 180705472 bytes after a total of 284454912
-> > bytes
-> > ...
-> > make[4]: *** [scripts/Makefile.build:289:
-> > drivers/staging/media/atomisp/pci/isp/kernels/ynr/ynr_1.0/ia_css_ynr.ho
-> > st.o] Error 1
-> >
-> > Patching it with help from Lorenzo Stoakes allows the build to
-> > run:
-> > https://lore.kernel.org/lkml/5882b96e-1287-4390-8174-3316d39038ef@lucifer.local/
-> >
-> > And then 32-bit runs fine too.
->
-> Great, please help to get that commit merged into Linus's tree and then
-> I can backport it here.
+This passive-aggressive nonsense is deeply aggravating.  I've known
+about this bug for much longer, but like you I am utterly unable to
+reproduce it.  I've spent months looking for the bug, and I cannot.
 
-Thanks to Linus and Lorenzo and Hans there is new smaller fix patch in
-Linus's tree:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/staging/media/atomisp/pci/sh_css_frac.h?id=7c6a3a65ace70f12b27b1a27c9a69cb791dc6e91
-
-This works with the new 5.15.167 kernel with both 32-bit (x86) and 64-bit
-(x86_64) CPUs
-
-Can this be backported?
-
-Thanks
-
-richard@aaazen.com
 
