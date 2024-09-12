@@ -1,346 +1,103 @@
-Return-Path: <linux-kernel+bounces-326789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E81D2976CF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:04:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFCB1976CF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 202D6B21557
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:04:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90D4C1F25DBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A232D1B14E9;
-	Thu, 12 Sep 2024 15:04:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACB061AD27A;
+	Thu, 12 Sep 2024 15:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="GPYWlXFf"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="V+lSdM29"
+Received: from mx1.riseup.net (mx1.riseup.net [198.252.153.129])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05B01A4F0A
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD481B12FF
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726153441; cv=none; b=cAd2ydPL/ozhoUiLdZ6mQ7tp3YveIV+mEsHQgaeaUPhqm6w1w+C2E39FEKKpYHYVz4IV/1aeYmsp0HK6BikQuLL/Zazcrw18EQg5E7zr+6ckdclw5om9Z5DVKtJqochWTcpIb68fN2aVnM6a5VTIeRICKLKLyc4n8BbO+rayeNs=
+	t=1726153469; cv=none; b=TCdhpWDOEnw3l509g+QPmC18/cAXaUK4h7qQlXf6DTeQnb/b9A31TiAQnDXRD4Bnlt+sWPjkbppACuNzbv6StZm3A/UgURtbwnVAn+cuY2yqd1KPoLQ9SPRmLOsF0c3qMkJVK0MQrJs9Gz4VSegJRc8Zl3rQT/mEr0kJh9w6c3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726153441; c=relaxed/simple;
-	bh=+7LZG0rvJj/L4db5k+I3s+YJckWW5sdZM0oLD+DvjWg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b0tF0I2n91L9Ndd6yG8CRPanYqxi/sNtUtL0nKHDjE4ddEX6oMx/bWLI3knDtrAhNL3bT0jXRZij3WH3bQCnVZ0jmr4Ydpyfwr62zxcoykRGXrHX/ctUtgFnsAIBg8jDzNTSRnNuYFmlJ938pryWjFaRy3+p/6LM+KaX1nhjOeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=GPYWlXFf; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8d64b27c45so170991266b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:03:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1726153437; x=1726758237; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iJrAQUSIxLUkiGeqfi+dbP3QmEaNP85b+aRDPyt1b4U=;
-        b=GPYWlXFfyDcc6mYfItldWCpZfulq8BiFK3yuUV6PU94p9aPt6aCIzvMzamR2iMPpvs
-         d6Pe/C/f+DBVo4ro9TjJJZ5S309Yz0erln6kG50OnA6/JrEGqnb0525OR24+HfJyyYdI
-         Jm/xDc+pzcpVSS8ZqcLAyDk1hVP6ZcSzr5w1c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726153437; x=1726758237;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iJrAQUSIxLUkiGeqfi+dbP3QmEaNP85b+aRDPyt1b4U=;
-        b=S9gdNv62QSZtmujzQcOPZh8PDTXbOnFCaOP+Jt1js2uzwyZOkI+IbSD+Uun51wjszr
-         YQ1VpTfrXgzeGQJ+1MK8/mP7MC5n7zZBsJw7Nti46LSowEdx4+2XxiRMSfhXwgQ5h1I7
-         sZtEG5A0NvfNOH+WJH1DH21XeLGYOCouhiwoKr9asVTPgmk/KHWhaF3y6NMJ81ezv8yI
-         Yunp0FU+OE76UMTzuMUWSm1mC3+8/vbcBGr7PP5Ha5w/KppnKO1wj/CHjcFfRuh0iOzg
-         DmlO7e3TrWeLOrEeR/qKDGaisVkeAMfI2yVZtvythjXrcS3wGMSaGaQtTHsxJH6EWTn0
-         R31Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXVYgXtt3x4HkCi3kvFLVy4Ai+3vqeiZhwV8DjuChVnqf0BqluXlNNVvlzFsK4mTLfROYTqqUgUz/uoNHI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZurptYWUYDg31jQo3b0N8DkHqfvxi87KU8lL4u+u1u17hMS2x
-	/TYNpPeQ499urqeneJ3BpgrL+55my6UFeUsr+IKsmmwlVHLuTZfYmwpxQtWjYOE=
-X-Google-Smtp-Source: AGHT+IGcPPkC8mduVKODvGQyiolKYPsJm52YqQ1ZBEdnm+fcF25sCtznRpVLU7JypXn/P305OYE5Ng==
-X-Received: by 2002:a17:907:e25b:b0:a8d:439d:5c3c with SMTP id a640c23a62f3a-a9029408106mr344291866b.8.1726153436519;
-        Thu, 12 Sep 2024 08:03:56 -0700 (PDT)
-Received: from LQ3V64L9R2.homenet.telecomitalia.it (host-79-23-194-51.retail.telecomitalia.it. [79.23.194.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25950a7fsm761862866b.57.2024.09.12.08.03.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 08:03:56 -0700 (PDT)
-Date: Thu, 12 Sep 2024 17:03:53 +0200
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: mkarsten@uwaterloo.ca, kuba@kernel.org, skhawaja@google.com,
-	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	David Ahern <dsahern@kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC net-next v3 5/9] net: napi: Add napi_config
-Message-ID: <ZuMC2fYPPtWggB2w@LQ3V64L9R2.homenet.telecomitalia.it>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org,
-	mkarsten@uwaterloo.ca, kuba@kernel.org, skhawaja@google.com,
-	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	David Ahern <dsahern@kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20240912100738.16567-1-jdamato@fastly.com>
- <20240912100738.16567-6-jdamato@fastly.com>
+	s=arc-20240116; t=1726153469; c=relaxed/simple;
+	bh=COHs87GVxy5Lw05efQyeO4Rt+U9sNmcRpFGBuku0KwM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=mTPPSfHYi5QiLJeB6WyFDdIFSGqo6hS+zpn9ck602CwjWm+HqE8aCGKlxYj4h3/bNHTzo9Yeum0ew98qVlWP+EZMxYRf4ZhGTpgJjm74ynEMzrx6TeM0/87IZdD4pio7vFtl3xXRcRhCjpVHSEt7NT2yPcIbLUe4caXYFORE4OM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=V+lSdM29; arc=none smtp.client-ip=198.252.153.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
+Received: from fews01-sea.riseup.net (fews01-sea-pn.riseup.net [10.0.1.109])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx1.riseup.net (Postfix) with ESMTPS id 4X4LLq5xMLzDqpj;
+	Thu, 12 Sep 2024 15:04:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
+	t=1726153460; bh=COHs87GVxy5Lw05efQyeO4Rt+U9sNmcRpFGBuku0KwM=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=V+lSdM29xRXmS++zuqjAtIU6xS/exkwjEu1Mmvt6W/iNkRUL+N40WvVRlq2QLGg+D
+	 Q7JznIzH5Yuo0tXvEfJ80Zgq0ebcSeYF51LnU5BnhtSzC83kHFc0ifK/ICxbAkpRha
+	 yOSWE6xBQZbKf4CQhCPI5EWRJoch0CpOnbAYissk=
+X-Riseup-User-ID: DCD0941570C4622093E0E8E6210C22C8A04D7AE62FD600F173C3BD9F25EB9400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	 by fews01-sea.riseup.net (Postfix) with ESMTPSA id 4X4LLX3b67zJsSh;
+	Thu, 12 Sep 2024 15:04:04 +0000 (UTC)
+Message-ID: <386b3df4-dade-4ad0-b17a-3582b917b640@riseup.net>
+Date: Thu, 12 Sep 2024 12:04:01 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240912100738.16567-6-jdamato@fastly.com>
+Subject: Re: [PATCH] MAINTAINERS: Add myself as VKMS Maintainer
+To: Maxime Ripard <mripard@kernel.org>, rodrigosiqueiramelo@gmail.com,
+ melissa.srw@gmail.com, hamohammed.sa@gmail.com, daniel@ffwll.ch,
+ dri-devel@lists.freedesktop.org, maarten.lankhorst@linux.intel.com,
+ tzimmermann@suse.de, sean@poorly.run, thomas.petazzoni@bootlin.com,
+ linux-kernel@vger.kernel.org, seanpaul@google.com
+References: <20240910-vkms-maintainer-v1-1-e7a6c7a4ae71@bootlin.com>
+ <68da3932-10ab-4001-a978-f0f54034a64d@riseup.net>
+ <ZuGJyfhkQe93jKlz@louis-chauvet-laptop>
+ <20240911-functional-finch-of-competition-ad54e9@houat>
+Content-Language: en-US
+From: Maira Canal <mairacanal@riseup.net>
+In-Reply-To: <20240911-functional-finch-of-competition-ad54e9@houat>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Several comments on different things below for this patch that I just noticed.
-
-On Thu, Sep 12, 2024 at 10:07:13AM +0000, Joe Damato wrote:
-> Add a persistent NAPI config area for NAPI configuration to the core.
-> Drivers opt-in to setting the storage for a NAPI by passing an index
-> when calling netif_napi_add_storage.
+On 9/11/24 10:01, Maxime Ripard wrote:
+> On Wed, Sep 11, 2024 at 02:15:05PM GMT, Louis Chauvet wrote:
+>> Le 10/09/24 - 15:57, Maira Canal a écrit :
+>>> On 9/10/24 12:10, Louis Chauvet wrote:
+>>>> I've been actively working on VKMS to provide new features and
+>>>> participated in reviews and testing. To help Maìra with her work, add
+>>>> myself as co-maintainer of VKMS.
+>>>>
+>>>> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+>>>
+>>> Acked-by: Maíra Canal <mairacanal@riseup.net>
+>>>
+>>> Please, check the procedures to apply for commit rights in drm-misc and
+>>> apply it. This way you will be able to commit your patches.
+>>
+>> Thanks for your support!
+>>
+>> I just checked the rules to become a commiter, and it requires at least 10
+>> non-trivial patches, so I can't apply right now.
 > 
-> napi_config is allocated in alloc_netdev_mqs, freed in free_netdev
-> (after the NAPIs are deleted), and set to 0 when napi_enable is called.
+> As far as I'm concerned, being a maintainer of a driver in drm-misc
+> gives you automatically that right :)
 
-Forgot to re-read all the commit messages. I will do that for rfcv4
-and make sure they are all correct; this message is not correct.
- 
-> Drivers which implement call netif_napi_add_storage will have persistent
-> NAPI IDs.
++1
+
+Best Regards,
+- Maíra
+
 > 
-> Signed-off-by: Joe Damato <jdamato@fastly.com>
-> ---
->  .../networking/net_cachelines/net_device.rst  |  1 +
->  include/linux/netdevice.h                     | 34 +++++++++
->  net/core/dev.c                                | 74 +++++++++++++++++--
->  net/core/dev.h                                | 12 +++
->  4 files changed, 113 insertions(+), 8 deletions(-)
->
-
-[...]
-
-> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-> index 3e07ab8e0295..08afc96179f9 100644
-> --- a/include/linux/netdevice.h
-> +++ b/include/linux/netdevice.h
-
-[...]
-
-> @@ -2685,6 +2717,8 @@ void __netif_napi_del(struct napi_struct *napi);
->   */
->  static inline void netif_napi_del(struct napi_struct *napi)
->  {
-> +	napi->config = NULL;
-> +	napi->index = -1;
->  	__netif_napi_del(napi);
->  	synchronize_net();
->  }
-
-I don't quite see how, but occasionally when changing the queue
-count with ethtool -L, I seem to trigger a page_pool issue.
-
-I assumed it was related to either my changes above in netif_napi_del, or 
-below in __netif_napi_del, but I'm not so sure because the issue does not
-happen reliably and I can't seem to figure out how my change would cause this.
-
-When it does happen, this is the stack trace:
-
-  page_pool_empty_ring() page_pool refcnt -30528 violation
-  ------------[ cut here ]------------
-  Negative(-1) inflight packet-pages
-  WARNING: CPU: 1 PID: 5117 at net/core/page_pool.c:617 page_pool_inflight+0x4c/0x90
-
-  [...]
-
-  CPU: 1 UID: 0 PID: 5117 Comm: ethtool Tainted: G        W          [...]
-
-  RIP: 0010:page_pool_inflight+0x4c/0x90
-  Code: e4 b8 00 00 00 00 44 0f 48 e0 44 89 e0 41 5c e9 8a c1 1b 00 66 90 45 85 e4 79 ef 44 89 e6 48 c7 c7 78 56 26 82 e8 14 63 78 ff <0f> 0b eb dc 65 8b 05 b5 af 71 7e 48 0f a3 05 21 d9 3b 01 73 d7 48
-  RSP: 0018:ffffc9001d01b640 EFLAGS: 00010282
-  RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000027
-  RDX: 0000000000000027 RSI: 00000000ffefffff RDI: ffff88bf4f45c988
-  RBP: ffff8900da55a800 R08: 0000000000000000 R09: ffffc9001d01b480
-  R10: 0000000000000001 R11: 0000000000000001 R12: 00000000ffffffff
-  R13: ffffffff82cd35b0 R14: ffff890062550f00 R15: ffff8881b0e85400
-  FS:  00007fa9cb382740(0000) GS:ffff88bf4f440000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: 0000558baa9d3b38 CR3: 000000011222a000 CR4: 0000000000350ef0
-  Call Trace:
-   <TASK>
-   ? __warn+0x80/0x110
-   ? page_pool_inflight+0x4c/0x90
-   ? report_bug+0x19c/0x1b0
-   ? handle_bug+0x3c/0x70
-   ? exc_invalid_op+0x18/0x70
-   ? asm_exc_invalid_op+0x1a/0x20
-   ? page_pool_inflight+0x4c/0x90
-   page_pool_release+0x10e/0x1d0
-   page_pool_destroy+0x66/0x160
-   mlx5e_free_rq+0x69/0xb0 [mlx5_core]
-   mlx5e_close_queues+0x39/0x150 [mlx5_core]
-   mlx5e_close_channel+0x1c/0x60 [mlx5_core]
-   mlx5e_close_channels+0x49/0xa0 [mlx5_core]
-   mlx5e_switch_priv_channels+0xa9/0x120 [mlx5_core]
-   ? __pfx_mlx5e_num_channels_changed_ctx+0x10/0x10 [mlx5_core]
-   mlx5e_safe_switch_params+0xb8/0xf0 [mlx5_core]
-   mlx5e_ethtool_set_channels+0x17a/0x290 [mlx5_core]
-   ethnl_set_channels+0x243/0x310
-   ethnl_default_set_doit+0xc1/0x170
-   genl_family_rcv_msg_doit+0xd9/0x130
-   genl_rcv_msg+0x18f/0x2c0
-   ? __pfx_ethnl_default_set_doit+0x10/0x10
-   ? __pfx_genl_rcv_msg+0x10/0x10
-   netlink_rcv_skb+0x5a/0x110
-   genl_rcv+0x28/0x40
-   netlink_unicast+0x1aa/0x260
-   netlink_sendmsg+0x1e9/0x420
-   __sys_sendto+0x1d5/0x1f0
-   ? handle_mm_fault+0x1cb/0x290
-   ? do_user_addr_fault+0x558/0x7c0
-   __x64_sys_sendto+0x29/0x30
-   do_syscall_64+0x5d/0x170
-   entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-> diff --git a/net/core/dev.c b/net/core/dev.c
-> index f2fd503516de..ca2227d0b8ed 100644
-> --- a/net/core/dev.c
-> +++ b/net/core/dev.c
-
-[...]
-
-> @@ -6736,7 +6776,13 @@ void __netif_napi_del(struct napi_struct *napi)
->  	if (!test_and_clear_bit(NAPI_STATE_LISTED, &napi->state))
->  		return;
->  
-> -	napi_hash_del(napi);
-> +	if (!napi->config) {
-> +		napi_hash_del(napi);
-> +	} else {
-> +		napi->index = -1;
-> +		napi->config = NULL;
-> +	}
-> +
-
-See above; perhaps something related to this change is triggering the page pool
-warning occasionally.
-
->  	list_del_rcu(&napi->dev_list);
->  	napi_free_frags(napi);
->  
-> @@ -11049,6 +11095,8 @@ struct net_device *alloc_netdev_mqs(int sizeof_priv, const char *name,
->  		unsigned int txqs, unsigned int rxqs)
->  {
->  	struct net_device *dev;
-> +	size_t napi_config_sz;
-> +	unsigned int maxqs;
->  
->  	BUG_ON(strlen(name) >= sizeof(dev->name));
->  
-> @@ -11062,6 +11110,9 @@ struct net_device *alloc_netdev_mqs(int sizeof_priv, const char *name,
->  		return NULL;
->  	}
->  
-> +	WARN_ON_ONCE(txqs != rxqs);
-
-This warning triggers for me on boot every time with mlx5 NICs.
-
-The code in mlx5 seems to get the rxq and txq maximums in:
-  drivers/net/ethernet/mellanox/mlx5/core/en_main.c
-    mlx5e_create_netdev
-
-  which does:
-
-    txqs = mlx5e_get_max_num_txqs(mdev, profile);
-    rxqs = mlx5e_get_max_num_rxqs(mdev, profile);
-
-    netdev = alloc_etherdev_mqs(sizeof(struct mlx5e_priv), txqs, rxqs);
-
-In my case for my device, txqs: 760, rxqs: 63.
-
-I would guess that this warning will trigger everytime for mlx5 NICs
-and would be quite annoying.
-
-We may just want to replace the allocation logic to allocate
-txqs+rxqs, remove the WARN_ON_ONCE, and be OK with some wasted
-space?
-
-> +	maxqs = max(txqs, rxqs);
-> +
->  	dev = kvzalloc(struct_size(dev, priv, sizeof_priv),
->  		       GFP_KERNEL_ACCOUNT | __GFP_RETRY_MAYFAIL);
->  	if (!dev)
-> @@ -11136,6 +11187,11 @@ struct net_device *alloc_netdev_mqs(int sizeof_priv, const char *name,
->  	if (!dev->ethtool)
->  		goto free_all;
->  
-> +	napi_config_sz = array_size(maxqs, sizeof(*dev->napi_config));
-> +	dev->napi_config = kvzalloc(napi_config_sz, GFP_KERNEL_ACCOUNT);
-> +	if (!dev->napi_config)
-> +		goto free_all;
-> +
-
-[...]
-
-> diff --git a/net/core/dev.h b/net/core/dev.h
-> index a9d5f678564a..9eb3f559275c 100644
-> --- a/net/core/dev.h
-> +++ b/net/core/dev.h
-> @@ -167,11 +167,17 @@ static inline void napi_set_defer_hard_irqs(struct napi_struct *n, u32 defer)
->  static inline void netdev_set_defer_hard_irqs(struct net_device *netdev,
->  					      u32 defer)
->  {
-> +	unsigned int count = max(netdev->num_rx_queues,
-> +				 netdev->num_tx_queues);
->  	struct napi_struct *napi;
-> +	int i;
->  
->  	WRITE_ONCE(netdev->napi_defer_hard_irqs, defer);
->  	list_for_each_entry(napi, &netdev->napi_list, dev_list)
->  		napi_set_defer_hard_irqs(napi, defer);
-> +
-> +	for (i = 0; i < count; i++)
-> +		netdev->napi_config[i].defer_hard_irqs = defer;
-
-The above is incorrect. Some devices may have netdev->napi_config =
-NULL if they don't call the add_storage wrapper.
-
-Unless there is major feedback/changes requested that affect this
-code, in the rfcv4 branch I plan to fix this by adding a NULL check:
-
-  if (netdev->napi_config)
-    for (....)
-      netdev->napi_config[i]....
-
->  
->  /**
-> @@ -206,11 +212,17 @@ static inline void napi_set_gro_flush_timeout(struct napi_struct *n,
->  static inline void netdev_set_gro_flush_timeout(struct net_device *netdev,
->  						unsigned long timeout)
->  {
-> +	unsigned int count = max(netdev->num_rx_queues,
-> +				 netdev->num_tx_queues);
->  	struct napi_struct *napi;
-> +	int i;
->  
->  	WRITE_ONCE(netdev->gro_flush_timeout, timeout);
->  	list_for_each_entry(napi, &netdev->napi_list, dev_list)
->  		napi_set_gro_flush_timeout(napi, timeout);
-> +
-> +	for (i = 0; i < count; i++)
-> +		netdev->napi_config[i].gro_flush_timeout = timeout;
-
-Same as above.
+> Maxime
 
