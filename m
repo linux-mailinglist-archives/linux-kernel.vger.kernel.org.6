@@ -1,129 +1,228 @@
-Return-Path: <linux-kernel+bounces-326855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14245976DBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:27:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 216A0976DB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:26:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82742B23792
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:27:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 469D31C23B7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:26:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25FC1BC079;
-	Thu, 12 Sep 2024 15:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0EC1B9829;
+	Thu, 12 Sep 2024 15:26:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UPURCvKu"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a2/oqNWI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C781BC074
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B84044C8F;
+	Thu, 12 Sep 2024 15:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726154793; cv=none; b=H1bg5g+L1bk+q19ZJx2ycENT3Jl0vgssh0daTLTT5+AusKgtC+7HC2QtKJymqm9sqDzvgAVXF4mBIPLY5IA2+1XFVSOwzv8U24jD+t7iuCxseOTrxDUYiLkDvLQFfdq/T9DdE7qCMs5TqNIuxv+L6wzZ60+dkfvkK9RH1BWiRLg=
+	t=1726154774; cv=none; b=TLbTnTGtlIWqi3d4vqc0hHMVFaraNnlG5JcO5KNM1eroNHDKP1OGTIh7jxvPcE2RePnuvdTx4Z3pG7CCrCOTnTsuPxESCgEo/9NqYznr7BxwIBz9U4WljhoynqacDKXASsfzsXwNqiSaC/6RM+jmqXEIjHYVHoQtUeGADdSy83E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726154793; c=relaxed/simple;
-	bh=/qs6pBE+6TXI6raTey9HQj8iXVGyKi538F1VSOwPpiA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UlfNra8s52QDkK7gSnVHtxRRorsVIGzCnWUjoWaxtL3gokPNic+cB2o127XNoG6ieXhuHwVtwNJG9Q3xJ8vaDxZruY2jjFW/McuxTxAflwm1gYtNTQZkBFB0RRv9Rzl5jPaI3wq4bG/TWDa5fSbW1z/cooXGcFadqxlE66jnoEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UPURCvKu; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7BAB940002;
-	Thu, 12 Sep 2024 15:26:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1726154788;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=1N6F3NgoFy3d7URwWvnHA4RSAADZLw/Lv40JW9LXebE=;
-	b=UPURCvKu35+P1Q8LdtRdWy7EZSXK74XR92SWyKBwNilWaA0zfEq5O6cbqF2ZH/8RoKD9sV
-	iRrrwREOW38UPTen3l/TV9Ds24vlyejs4d/UTEMH6OU/bxH4cY+wHf8iHibc0QWjaDshRn
-	WWUImmJ/b82yiUt6EWzkvDwPkE6wjJBUt99vtRBPmCHXZps1WPjC3v9EoIpPxpxI816Jxo
-	3kLbpGGqtxcHyfw73/sSlm/gtR3B6qB8xtTRbiIfQgVcY7uthhfHCMbFdmzQCW+lZKQjZS
-	vjhrJYEBZ/8lGVFKwMKa8Y6x/I2lpcZCIZjXhI8xztk2XCHxx2MsPTiT3xSEZQ==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Thu, 12 Sep 2024 17:25:33 +0200
-Subject: [PATCH] drm/vkms: Suppress context imbalance sparse warning
+	s=arc-20240116; t=1726154774; c=relaxed/simple;
+	bh=eT5iKufiEqBrOOHnVVD75u4spQv2bu9zWq9lPSq8HXQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kJFZPeDBme2cs801sPs+f97uARdrrbML8YMqr4AwqPtqaizSPBftpDjCVnknGZ6XOnEE1ZnYGPRWZ3OK/iLBr1o5TJLaNcNaNaKNqjk839BVIWmJqRGzdmFfyOsbgCygjqkye+OuQztSTV2GQEBG6mBFQVavZ+Ug0A+Ehqow6Tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a2/oqNWI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DF6AC4CEC3;
+	Thu, 12 Sep 2024 15:26:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726154773;
+	bh=eT5iKufiEqBrOOHnVVD75u4spQv2bu9zWq9lPSq8HXQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=a2/oqNWImsRF63TtKZfRJokrnQh4veCjTbq8hYaoS9r9/Yla+QR4K3v5VSPGCCS0i
+	 +yoIRYu5jYInrsMx4sav4baIgWZoq2sBsmviRHLGnm/HKuIgMAgA8GLOp4ipAeJZZC
+	 3ZhR/LjYn8m1a1NLPKFYxeMmnGPmZzKhbmtHxqy/CIbNjMpwZy9HdPz9hMAlpBZAjl
+	 g62bFol1VIR/rCH2bMlqFDbj7IOQlltbhGCbDfPggFVZ0spBs+f/vLCm6Hf6ynSBX2
+	 6Yu4zhB7Bq2QHE4aLFsinS9rgN5mIoyQ8YO4jzFEC+1wabGY8125ICWZFUwZWav4PN
+	 dilesEWC9lkOg==
+Message-ID: <73a104e0-d73f-4836-92fd-4bef415900d4@kernel.org>
+Date: Thu, 12 Sep 2024 17:26:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240912-vkms-warnings-v1-1-59f3e13ea8e5@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAOwH42YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDS0Mj3bLs3GLd8sSivMy89GLdVINUY2PDpGTTVLMUJaCegqLUtMwKsHn
- RsbW1AJyIn4RfAAAA
-X-Change-ID: 20240912-vkms-warnings-e0e331bc5e6d
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
- =?utf-8?q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>, 
- Haneen Mohammed <hamohammed.sa@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Melissa Wen <melissa.srw@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>
-Cc: thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, Louis Chauvet <louis.chauvet@bootlin.com>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1435;
- i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=/qs6pBE+6TXI6raTey9HQj8iXVGyKi538F1VSOwPpiA=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBm4wgj0iAgp/MqkajSlDB6sB9SLJZEDklvx0dLN
- V8oHHDpCpWJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCZuMIIwAKCRAgrS7GWxAs
- 4lX1D/0T5LCCTxAr3zJUW8h+hK6OuEwnsQqzPdoSs7c9PrIzFs/uQvdT8pvO+rgHTZIo/3z36FX
- aANh/DAGCzFyhwlXRH84O8uSK0NkGdT4tgKUwr8PBiZnACywiTzczyzCI28HBG3GLW+8k6Rrf/o
- zv3JpzgV/l1DpYJuN6ChAIgzyiS/WDI+K3BaktVqwMylUaCWrfqGrLjIuNQl7zxb7WIY2mksYGM
- 7bqWv6OEnqp4QumLaksxuR9kULOK8Grq7pKZqdxBU8nRMxgHcpAYVIFYcT3Za4BOEWQQ+eixN/+
- Lde25x5Kw8bpJfBNJCz2zj5BHcMlE0jtRYE2cxs3aH6XFGhgdDMZVvmUM/v98t3o+my3E9XmDlb
- 7H3QqOKdlQBTnHUrbOg3NvOkQ151z6sB37CaojFaobgQ9efprle/EKrsuToLJV2bMdYagvOBN2F
- VDJTbwJ6a3JXpGn/0nhmbSFw7E7/No7L70pUjYpsNS8fLNV1+3E6eDtMQxrYfkg4/xdBnXBKB/P
- xzIgK5X/ZALiwOUyX2VzvSSju3adc2enfla755yTULv+ZyuawTta2bAgfbLHz2vkXI1K4XLxF0D
- earPOdf0sgRYRMDqZKpIMRJm3dyhxXp+InX7Pgo5wuvpral9+eZq17eCd02NUArQWFmgZv++PFN
- sl7cMo+RPzutfGA==
-X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
- fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
-X-GND-Sasl: louis.chauvet@bootlin.com
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH net-next] memory-provider: fix compilation issue without
+ SYSFS
+Content-Language: en-GB
+To: Mina Almasry <almasrymina@google.com>
+Cc: mptcp@lists.linux.dev, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Kaiyuan Zhang <kaiyuanz@google.com>,
+ Willem de Bruijn <willemb@google.com>,
+ Pavel Begunkov <asml.silence@gmail.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240912-net-next-fix-get_netdev_rx_queue_index-v1-1-d73a1436be8c@kernel.org>
+ <CAHS8izOkpnLM_Uev79skrmdQjdOGwy_oYWV7xb3hNpSb=yYZ6g@mail.gmail.com>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <CAHS8izOkpnLM_Uev79skrmdQjdOGwy_oYWV7xb3hNpSb=yYZ6g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The functions `vkms_crtc_atomic_begin` and `vkms_crtc_atomic_flush` are
-responsible for locking and unlocking a mutex, respectively. Add the
-`__acquires` and `__releases` annotations to these functions to prevent
-the associated sparse warning about context imbalance.
+Hi Mina,
 
-Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
----
- drivers/gpu/drm/vkms/vkms_crtc.c | 2 ++
- 1 file changed, 2 insertions(+)
+Thank you for your reply!
 
-diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_crtc.c
-index 40b4d084e3ceef9e1e24b7338efdd9253afee8d6..2ad164b518fb93f5b6b86948116ff7ed97770b60 100644
---- a/drivers/gpu/drm/vkms/vkms_crtc.c
-+++ b/drivers/gpu/drm/vkms/vkms_crtc.c
-@@ -232,6 +232,7 @@ static void vkms_crtc_atomic_disable(struct drm_crtc *crtc,
- 
- static void vkms_crtc_atomic_begin(struct drm_crtc *crtc,
- 				   struct drm_atomic_state *state)
-+	__acquires(&vkms_output->lock)
- {
- 	struct vkms_output *vkms_output = drm_crtc_to_vkms_output(crtc);
- 
-@@ -243,6 +244,7 @@ static void vkms_crtc_atomic_begin(struct drm_crtc *crtc,
- 
- static void vkms_crtc_atomic_flush(struct drm_crtc *crtc,
- 				   struct drm_atomic_state *state)
-+	__releases(&vkms_output->lock)
- {
- 	struct vkms_output *vkms_output = drm_crtc_to_vkms_output(crtc);
- 
+On 12/09/2024 14:49, Mina Almasry wrote:
+> On Thu, Sep 12, 2024 at 3:25 AM Matthieu Baerts (NGI0)
+> <matttbe@kernel.org> wrote:
+>>
+>> When CONFIG_SYSFS is not set, the kernel fails to compile:
+>>
+>>      net/core/page_pool_user.c:368:45: error: implicit declaration of function 'get_netdev_rx_queue_index' [-Werror=implicit-function-declaration]
+>>       368 |                 if (pool->slow.queue_idx == get_netdev_rx_queue_index(rxq)) {
+>>           |                                             ^~~~~~~~~~~~~~~~~~~~~~~~~
+>>
+>> When CONFIG_SYSFS is not set, get_netdev_rx_queue_index() is not defined
+>> as well. In this case, page_pool_check_memory_provider() cannot check
+>> the memory provider, and a success answer can be returned instead.
+>>
+> 
+> Thanks Matthieu, and sorry about that.
+> 
+> I have reproduced the build error and the fix resolves it. But...
+> 
+>> Fixes: 0f9214046893 ("memory-provider: dmabuf devmem memory provider")
+>> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+>> ---
+>>  net/core/page_pool_user.c | 4 ++++
+>>  1 file changed, 4 insertions(+)
+>>
+>> diff --git a/net/core/page_pool_user.c b/net/core/page_pool_user.c
+>> index 48335766c1bf..a98c0a76b33f 100644
+>> --- a/net/core/page_pool_user.c
+>> +++ b/net/core/page_pool_user.c
+>> @@ -353,6 +353,7 @@ void page_pool_unlist(struct page_pool *pool)
+>>  int page_pool_check_memory_provider(struct net_device *dev,
+>>                                     struct netdev_rx_queue *rxq)
+>>  {
+>> +#ifdef CONFIG_SYSFS
+>>         struct net_devmem_dmabuf_binding *binding = rxq->mp_params.mp_priv;
+>>         struct page_pool *pool;
+>>         struct hlist_node *n;
+>> @@ -372,6 +373,9 @@ int page_pool_check_memory_provider(struct net_device *dev,
+>>         }
+>>         mutex_unlock(&page_pools_lock);
+>>         return -ENODATA;
+>> +#else
+>> +       return 0;
+> 
+> ...we can't assume success when we cannot check the memory provider.
+> The memory provider check is somewhat critical; we rely on it to
+> detect that the driver does not support memory providers or is not
+> doing the right thing, and report that to the user. I don't think we
+> can silently disable the check when the CONFIG_SYSFS is disabled.
+> Please return -ENODATA or some other error here.
 
----
-base-commit: d2194256049910d286cd6c308c2689df521d8842
-change-id: 20240912-vkms-warnings-e0e331bc5e6d
+I initially returned 0 to have the same behaviour as when
+CONFIG_PAGE_POOL is not defined. But thanks to your explanations, I
+understand it seems better to return -ENODATA here. Or another errno, to
+let the userspace understanding there is a different error? I can send a
+v2 after the 24h rate-limit period if you are OK with that.
 
-Best regards,
+> If we disable devmem TCP for !CONFIG_SYSFS we should probably add
+> something to the docs saying this. I can do that in a follow up
+> change.
+
+Good point, thank you.
+
+> However, I'm looking at the definition of get_netdev_rx_queue_index()
+> and at first glance I don't see anything there that is actually
+> dependent on CONFIG_SYSFS. Can we do this instead? I have build-tested
+> it and it resolves the build issue as well:
+> 
+> ```
+> diff --git a/include/net/netdev_rx_queue.h b/include/net/netdev_rx_queue.h
+> index ac34f5fb4f71..596836abf7bf 100644
+> --- a/include/net/netdev_rx_queue.h
+> +++ b/include/net/netdev_rx_queue.h
+> @@ -45,7 +45,6 @@ __netif_get_rx_queue(struct net_device *dev, unsigned int rxq)
+>         return dev->_rx + rxq;
+>  }
+> 
+> -#ifdef CONFIG_SYSFS
+>  static inline unsigned int
+>  get_netdev_rx_queue_index(struct netdev_rx_queue *queue)
+>  {
+> @@ -55,7 +54,6 @@ get_netdev_rx_queue_index(struct netdev_rx_queue *queue)
+>         BUG_ON(index >= dev->num_rx_queues);
+>         return index;
+>  }
+> -#endif
+>  ```
+
+I briefly looked at taking this path when I saw what this helper was
+doing, but then I saw all operations related to the received queues were
+enabled only when CONFIG_SYSFS is set, see commit a953be53ce40
+("net-sysfs: add support for device-specific rx queue sysfs
+attributes"). I understood from that it is better not to look at
+dev->_rx or dev->num_rx_queues when CONFIG_SYSFS is not set. I'm not
+very familiar to that part of the code, but it feels like removing this
+#ifdef might be similar to the "return 0" I suggested: silently
+disabling the check, no?
+
+I *think* it might be clearer to return an error when SYSFS is not set.
+
+> Matthieu, I'm happy to follow up with v2 of this fix if you don't have time.
+If you prefer to explore other ways than returning an error in
+page_pool_check_memory_provider() when SYSFS is not set, yes please do
+the follow-up if you don't mind. My main goal is to stop my CI to
+complain about that when compiling with 'make tinyconfig' + MPTCP :)
+
+Cheers,
+Matt
 -- 
-Louis Chauvet <louis.chauvet@bootlin.com>
+Sponsored by the NGI0 Core fund.
 
 
