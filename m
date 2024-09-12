@@ -1,93 +1,151 @@
-Return-Path: <linux-kernel+bounces-326843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A82C5976DA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:21:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40EB9976DA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:21:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1708D1F274EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:21:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0927C288487
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:21:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DEE1B1507;
-	Thu, 12 Sep 2024 15:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17D521B985C;
+	Thu, 12 Sep 2024 15:21:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OOGbvgFh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iB4Rzoob"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9829548E0;
-	Thu, 12 Sep 2024 15:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE8A1B5EC6;
+	Thu, 12 Sep 2024 15:21:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726154458; cv=none; b=ZSKb0PubygadscUimu5h8owZAp9QXJFP33rs0E89zaMKEPA+9oHnG30DUGmRcevRn/3aHhteDSq8V1GPBxybeEui8OdlDmbv5k3oFZvnMCFQp7TYDPR6GYMkAhdgXeiaQeOhv42y5SGwscTtWY9cJxsA9lOCu+VVpr25JGeEKkY=
+	t=1726154481; cv=none; b=MmaS1VZFHXhi47Nx+UA9ZrIDlowvpBTkMhVSTmddB2pmxzuGBLZbKtG2Hv3VQgYC3CE0sCZoK2amvBpG7E83vrjtislw7uKJUQOEyOg+gK1ftVZgFqvWCkeEyB+7AXPkh7Gl/+SgtW9cvTZITzidXKtr1WxQUAh79Je3BkBUe/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726154458; c=relaxed/simple;
-	bh=Pa+luGAf3a2+eoxTNfhzvSyF/opw87hXVNCHeiOEuaY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F2d6KGJ0OhAok0POpdblrGtTKDwvJSO0g4bm1GJlA1X2JFzv0W3v9AbMFfYD8w75ChOFXNjwY+HJ3gXX39waO3XpxNw3AR2ZmrdGKSd9fJB8EYmU6zxTk5APK+Hvp6+Q9x7TcfqAWvlEFVhODHNMlEPa5GyrEECWEvpu50SeBZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OOGbvgFh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C636AC4CEC3;
-	Thu, 12 Sep 2024 15:20:53 +0000 (UTC)
+	s=arc-20240116; t=1726154481; c=relaxed/simple;
+	bh=XoAQWmOKdAGe2LxePsrGsTfGlOK7zWHOGSNbSW1eKAw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m76p6WEVUJ1HVecawto4gNxIvQEPV7yr02jj+LBntNNCt9KbOP/BpUk52fIcju86WoWI1dZxP+XDp7lA0MMAn/7dyPUjLrtnGmiZL2JwancGQM5fB+P0WTgQyMja8MKqgKgayHG48MPq6+sBgf9LqWqdj1mCtyINZ1FcHEQm1ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iB4Rzoob; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD0C6C4CEC5;
+	Thu, 12 Sep 2024 15:21:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726154458;
-	bh=Pa+luGAf3a2+eoxTNfhzvSyF/opw87hXVNCHeiOEuaY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OOGbvgFhBiN3gmugusqjyoH4Qm263rbj3lHiO880GffhWgfKoMyX+6a0HZwaoQBAQ
-	 RMvj94yx7P53bFpRHaI7bLN2Cm32LlPpTDnNvrO8//9xUj1YShtBglimmK926iRbaN
-	 xROwRStggfYwQf/YZygPWvAIrJ6qR06pLzO0PrT2TbXDxulCkAsVbhOh/Is/rRn4X6
-	 CXDmCO8DEbafTGm/NJ1owvRYVBqKxtBraGH0sKWIo5XXj6XEUhIqgWeli2Cf1OexOS
-	 ii1ec5bYiK0h3fr0sCAS3DrNW/JSd8U+m3/9vXr+5DO+VZLolMeifiofxQNkRQO+L+
-	 IU5OnZdwBJLAw==
-Date: Thu, 12 Sep 2024 16:20:50 +0100
-From: Lee Jones <lee@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: robh@kernel.org, lars@metafoo.de, krzk+dt@kernel.org,
-	conor+dt@kernel.org, matthias.bgg@gmail.com, andy@kernel.org,
-	nuno.sa@analog.com, bigunclemax@gmail.com, dlechner@baylibre.com,
-	marius.cristea@microchip.com, marcelo.schmitt@analog.com,
-	fr0st61te@gmail.com, mitrutzceclan@gmail.com,
-	mike.looijmans@topic.nl, marcus.folkesson@gmail.com,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, andy.shevchenko@gmail.com,
-	kernel@collabora.com, jic23@kernel.org
-Subject: Re: [PATCH v2 2/5] dt-bindings: mfd: mediatek,mt6357: Describe
- Auxiliary ADC subdev
-Message-ID: <20240912152050.GF24460@google.com>
-References: <20240604123008.327424-1-angelogioacchino.delregno@collabora.com>
- <20240604123008.327424-3-angelogioacchino.delregno@collabora.com>
- <01020191e56f3f66-1afb592c-a676-4871-b75a-bc38d896ae03-000000@eu-west-1.amazonses.com>
+	s=k20201202; t=1726154480;
+	bh=XoAQWmOKdAGe2LxePsrGsTfGlOK7zWHOGSNbSW1eKAw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=iB4RzoobDJ2QP8gIiVB5vpjnOnZDlVGB7EKeqxbvLAc5+wcnN2Xzaxyg8xeRnHXuS
+	 gCgauQvCaV6+IFQ1Yix3jIvb5q0hG6ad/rYoHR6wgqGoKGQAGohn1+HM8RFThsLsfF
+	 R9CudEYY7kAfIeH3ce9942Wfh9z7QTurMOkdp6AIu0tIJFZCMtc20i8We2ZEGfaw+u
+	 9B01gIQamFsl1sgyiPPwl9CmBpQDlgLRjVDhdFflYplNt7WVR+d7g79dmL75wRqNOH
+	 4RvKOTHjg+khA3w+i+2au9mKMywnBQ2rpDck8SM9BtXvDi8L742Owh23Poh3igr4hF
+	 Icp2b7RhXFI1w==
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-535dc4ec181so981246e87.3;
+        Thu, 12 Sep 2024 08:21:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV5dLlBWTmZiqhyMms5TVpAg1eDXWbqOMwl43ylRec6Khbx031X3g5zjlASlD8+1psC1z75KDP0tt0=@vger.kernel.org, AJvYcCVPIHl7bANpzbEZLgpTLtHqtsOes1jpGOKeoqP2noOSdmX0jjnJOl6YYE/9k0dKmDBdrdQuww99FmWVmVFB@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZZ+PXlNaTfrulgEblwTRB/ZYs6cPKgCkEsdvj7PXc8uVXUkdB
+	JrC3e9QqYfpYADKqj47vdSyM3UmkRBn07eT0kMKah3h/DINMX97ISTc1YuZ46n9ZRcAt7GGmGQH
+	U249OyrlS5ZAzb1LT1xGnKfIRveg=
+X-Google-Smtp-Source: AGHT+IHgOs3mfCFDWSz8kmWB+CF7guYg1lA3puiGFoO0qOIGPDEteJfcHHhRjaQATWNg9FoAOzw2KhmhqqNzjmioQ3k=
+X-Received: by 2002:a05:6512:3b0e:b0:536:5551:79ec with SMTP id
+ 2adb3069b0e04-53678faa022mr2183618e87.4.1726154479251; Thu, 12 Sep 2024
+ 08:21:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <01020191e56f3f66-1afb592c-a676-4871-b75a-bc38d896ae03-000000@eu-west-1.amazonses.com>
+References: <20240911104109.1831501-1-usamaarif642@gmail.com>
+ <CAMj1kXFVyQEwBTf2bG8yBXUktM16dzrcPH-Phz_toAsCK-NfMA@mail.gmail.com>
+ <2542182d-aa79-4705-91b6-fa593bacffa6@gmail.com> <CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
+ <20240912-wealthy-gabby-tamarin-aaba3c@leitao> <CAMj1kXHh-Kov8c1pto0LJL6debugz1og6GFMYCwvfu+RiQGreA@mail.gmail.com>
+ <20240912-sapphire-koala-of-focus-918cff@leitao>
+In-Reply-To: <20240912-sapphire-koala-of-focus-918cff@leitao>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 12 Sep 2024 17:21:08 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXG842OSYu4GPm-ocyvpBDowPGaXAftqGExxjZ4=dGyt5g@mail.gmail.com>
+Message-ID: <CAMj1kXG842OSYu4GPm-ocyvpBDowPGaXAftqGExxjZ4=dGyt5g@mail.gmail.com>
+Subject: Re: [RFC] efi/tpm: add efi.tpm_log as a reserved region in 820_table_firmware
+To: Breno Leitao <leitao@debian.org>
+Cc: Usama Arif <usamaarif642@gmail.com>, linux-efi@vger.kernel.org, 
+	kexec@lists.infradead.org, ebiederm@xmission.com, bhe@redhat.com, 
+	vgoyal@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com, 
+	x86@kernel.org, linux-kernel@vger.kernel.org, rmikey@meta.com, 
+	gourry@gourry.net
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 12 Sep 2024, AngeloGioacchino Del Regno wrote:
+On Thu, 12 Sept 2024 at 16:29, Breno Leitao <leitao@debian.org> wrote:
+>
+> On Thu, Sep 12, 2024 at 03:10:43PM +0200, Ard Biesheuvel wrote:
+> > On Thu, 12 Sept 2024 at 15:03, Breno Leitao <leitao@debian.org> wrote:
+> > > On Thu, Sep 12, 2024 at 12:51:57PM +0200, Ard Biesheuvel wrote:
+> > > > I don't see how this could be an EFI bug, given that it does not deal
+> > > > with E820 tables at all.
+> > >
+> > > I want to back up a little bit and make sure I am following the
+> > > discussion.
+> > >
+> > > From what I understand from previous discussion, we have an EFI bug as
+> > > the root cause of this issue.
+> > >
+> > > This happens because the EFI does NOT mark the EFI TPM event log memory
+> > > region as reserved (EFI_RESERVED_TYPE).
+> >
+> > Why do you think EFI should use EFI_RESERVED_TYPE in this case?
+> >
+> > The EFI spec is very clear that EFI_RESERVED_TYPE really shouldn't be
+> > used for anything by EFI itself. It is quite common for EFI
+> > configuration tables to be passed as EfiRuntimeServicesData (SMBIOS),
+> > EfiBootServicesData (ESRT) or EFiAcpiReclaim (ACPI tables).
+> >
+> > Reserved memory is mostly for memory that even the firmware does not
+> > know what it is for, i.e., particular platform specific uses.
+> >
+> > In general, it is up to the OS to ensure that EFI configuration tables
+> > that it cares about should be reserved in the correct way.
+>
+> Thanks for the explanation.
+>
+> So, if I understand what you meant here, the TPM event log memory range
+> shouldn't be listed as a memory region in EFI memory map (as passed by
+> the firmware to the OS).
+>
+> Hence, this is not a EFI firmware bug, but a OS/Kernel bug.
+>
+> Am I correct with the statements above?
+>
 
-> Il 04/06/24 14:30, AngeloGioacchino Del Regno ha scritto:
-> > Describe the PMIC-integrated Auxiliary Analog to Digital Converter
-> > subdevice node.
-> > Full description is available in the mediatek,mt6359-auxadc.yaml
-> > binding relative to that hardware.
-> > 
-> 
-> Hello,
-> 
-> I just realized (indeed too late) that while all of the other commits of this
-> series are upstream, this patch was not picked, causing dts validation warnings.
-> 
-> Should I resend or can you just simply pick it?
+No, not entirely. But I also missed the face that this table is
+actually created by the EFI stub in Linux, not the firmware. It is
+*not* the same memory region that the TPM2 ACPI table describes, and
+so what the various specs say about that is entirely irrelevant.
 
-It's lacking a DT review.
+The TPM event log configuration table is created by the EFI stub,
+which uses the TCG2::GetEventLog () protocol method to obtain it. This
+must be done by the EFI stub because these protocols will no longer be
+available once the OS boots. But the data is not used by the EFI stub,
+only by the OS, which is why it is passed in memory like this.
 
--- 
-Lee Jones [李琼斯]
+The memory in question is allocated as EFI_LOADER_DATA, and so we are
+relying on the OS to know that this memory is special, and needs to be
+preserved.
+
+I think the solution here is to use a different memory type:
+
+--- a/drivers/firmware/efi/libstub/tpm.c
++++ b/drivers/firmware/efi/libstub/tpm.c
+@@ -96,7 +96,7 @@ static void efi_retrieve_tcg2_eventlog(int version,
+efi_physical_addr_t log_loca
+        }
+
+        /* Allocate space for the logs and copy them. */
+-       status = efi_bs_call(allocate_pool, EFI_LOADER_DATA,
++       status = efi_bs_call(allocate_pool, EFI_ACPI_RECLAIM_MEMORY,
+                             sizeof(*log_tbl) + log_size, (void **)&log_tbl);
+
+        if (status != EFI_SUCCESS) {
+
+which will be treated appropriately by the existing EFI-to-E820
+conversion logic.
 
