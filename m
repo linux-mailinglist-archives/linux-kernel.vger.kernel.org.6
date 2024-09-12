@@ -1,134 +1,230 @@
-Return-Path: <linux-kernel+bounces-326998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6094B976FA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:37:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C342A976FA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27479285EAF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:37:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC2C2B23B8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516CB1BB69E;
-	Thu, 12 Sep 2024 17:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE651BB69E;
+	Thu, 12 Sep 2024 17:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="IzlJ/TGU"
-Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="puXsQxor"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853CD188938
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 17:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD63B1B1402;
+	Thu, 12 Sep 2024 17:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726162652; cv=none; b=VrBYO4qct0wX5MwIr3fp7p/am9Z6PYXcwT3V62BkAiTbpG7hYl5gedOZUl/Mzx/ylMV0dbpNQ2FVKwsAsC7ob55x9UVMFQ7fL41qzPEKADKAO67sNVXmhfQUPdlGO8MEs8BYDfSFXCQvXP8RIMVHI7QkSUr7my4NJ3vyCZ9YTs4=
+	t=1726162676; cv=none; b=TG1mVj+Z+EzGrIIiA3FIggS6Ohc/+zKKyqVXGsq/QGVXIjQC9fTOFLZsy4WHEPmyRR6okwpj61D++nqU+JreewePeB2F32pg5haPOGW23gbRvH5UB7S5/ebXfmKr9pGrnbqjBtP9ObsXJXN+9WELEGRUMtdy7ybvNZJDkmitHA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726162652; c=relaxed/simple;
-	bh=glg2UfXfjxi1K+gnh0UqHI3avqdbOH9DqjXefWtRLns=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l4Mvrib8OLjPwjbPqBhlEZ7kyKlly2sORPrhn6ccZztIKGE8x/HCeYUOg0kp5ApDqs5o1V5DUELa8b6XS0/I+GUcYOukMfr7yfGCsZft7DHUDsHqnMsLzCfRPwskXZ0xdRtcfq0SxZf3qf/Lv72i/NcZgSCB7MQMtua8ImZp484=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=IzlJ/TGU; arc=none smtp.client-ip=80.12.242.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id onkwsnwVe84dOonkwsX4WV; Thu, 12 Sep 2024 19:37:22 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1726162642;
-	bh=9V0LiK+3T9Sa6G2HcSMQtaO768ib4++IOLvMY90IceI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=IzlJ/TGUQTjNWe1EI4McrF25DUEfmaBKDCVra9oqLfYFcNw2PBmGk8ww4cTkFnB8P
-	 IwthNbx7MPszLYT1jYsAAHvLGHbce27+t9VfG2mWWyIjFRNRuXBRSX/G5rliJYiGua
-	 AB+JLNmuihZhEMMp4JiWDsIwa0KBUuG2EElUJtQo60P4hyqetOO1q3bxDHvFPgIAJv
-	 XWv0nYcVxFvt5RReHty0K47YuT/scykgMYK8qym1xYRPfZiLH1NMDm+8Qy3ZOFWnet
-	 x0SMYtLSIp0ITWoErI4pRDHyJBvV2GPmD5mZyZRe4pjDoxw5sC4TanCefbQ/b5XcjC
-	 Y90JLFUAfohUw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Thu, 12 Sep 2024 19:37:22 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <4b15a9d3-23a4-43fe-a275-c9af11c6c8e1@wanadoo.fr>
-Date: Thu, 12 Sep 2024 19:37:22 +0200
+	s=arc-20240116; t=1726162676; c=relaxed/simple;
+	bh=B8EL+9+b+t9SUXyOoAFdFBITc2Oye2+Mb9NUh5olAl4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nyz6P0Dk0Xfzp5hmK8C+ITd8inHT+4F2uFH2KE9ZMWP7dIOUC7cAWSSWNqB6MkghECkwEtInV9xC9KVCyMXXEmGjUW9vomDGKy/gApQf/UwMgkOYRmPRaBU/LJT6sHOuPGogG+SyDLKVMxlY8HWXVwalZTnjgVOEcHQUT7rGJwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=puXsQxor; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1726162672;
+	bh=B8EL+9+b+t9SUXyOoAFdFBITc2Oye2+Mb9NUh5olAl4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=puXsQxor0x/43rdISwlqcirvH9yJqkzSvK0YUU9NdVxld6IUhFFcp4aH5xGC6ub2V
+	 CrPd4VIlAxAOA+D5ZNesrgx9LcNpcVolUE+glSIt+W9QiDp7rt7BvDgHpVAj+9zYi6
+	 H0YU0liKQOG+Ud9Mu1CkX6EgTc03ij+bIxBmZTXfP/vPeEFEwPI0Bhi69N8Lt4kNe2
+	 j3EQDrfLD4gyFpYapGXkd/cDIGLiWCyV9rS0ejHvcVOHMzhpl9Rwmt8j0pYi1GG2W2
+	 rqp63gYfY75ZRPIHjLgg4vRSbImIO3oLah9cvraBpvyDKCueb0yoyAh1ocnFc7TTwI
+	 Huy2cRy8zxN/Q==
+Received: from pan.lan (unknown [IPv6:2a00:23c6:c32f:9100::16d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: martyn)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5784B17E1063;
+	Thu, 12 Sep 2024 19:37:52 +0200 (CEST)
+From: Martyn Welch <martyn.welch@collabora.com>
+To: Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: kernel@collabora.com,
+	Martyn Welch <martyn.welch@collabora.com>,
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v4] net: enetc: Replace ifdef with IS_ENABLED
+Date: Thu, 12 Sep 2024 18:37:40 +0100
+Message-ID: <20240912173742.484549-1-martyn.welch@collabora.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] i2c/synquacer: Deal with optional PCLK correctly
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-i2c@vger.kernel.org,
- stable@vger.kernel.org, Andi Shyti <andi.shyti@kernel.org>,
- Andy Shevchenko <andy.shevchenko@gmail.com>, Wolfram Sang <wsa@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Kernel Janitors <kernel-janitors@vger.kernel.org>
-References: <20240912104630.1868285-2-ardb+git@google.com>
- <5ed76217-c30e-4b9a-9462-0dbd859b2a79@wanadoo.fr>
- <CAMj1kXEYpD4LdZ9jQebyViWW98ogX7=tKzQNLNZxdBUORgpnQg@mail.gmail.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <CAMj1kXEYpD4LdZ9jQebyViWW98ogX7=tKzQNLNZxdBUORgpnQg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 12/09/2024 à 19:12, Ard Biesheuvel a écrit :
-> On Thu, 12 Sept 2024 at 19:11, Marion & Christophe JAILLET
-> <christophe.jaillet@wanadoo.fr> wrote:
->>
->> (trying to merge t and cc fields from Ard's and Andy's messages)
->>
->>
->> Le 12/09/2024 à 12:46, Ard Biesheuvel a écrit :
->>> From: Ard Biesheuvel <ardb@kernel.org>
->>>
->>> ACPI boot does not provide clocks and regulators, but instead, provides
->>> the PCLK rate directly, and enables the clock in firmware. So deal
->>> gracefully with this.
->>>
->>> Fixes: 55750148e559 ("i2c: synquacer: Fix an error handling path in synquacer_i2c_probe()")
->>
->> Hi,
->>
->> If that matters, I'm not sure that the Fixes tag is correct.
->>
->> IIUC, either it is a new functionally that is added (now it works with
->> ACPI...), or if considered as a fix, then I think that it is linked to
->> commit 0d676a6c4390 ("i2c: add support for Socionext SynQuacer I2C
->> controller").
->>
->> I don't think that 55750148e559 introduced a regression. The issue seems
->> to be there since the beginning. Agreed?
->>
-> 
-> No.
-> 
-> The original code used IS_ERR_OR_NULL() to explicitly permit the case
-> where no clock exists at all.
+The enetc driver uses ifdefs when checking whether
+CONFIG_FSL_ENETC_PTP_CLOCK is enabled in a number of places. This works
+if the driver is built-in but fails if the driver is available as a
+kernel module. Replace the instances of ifdef with use of the IS_ENABLED
+macro, that will evaluate as true when this feature is built as a kernel
+module and follows the kernel's coding style.
 
-Got it, this is not related to the removed _OR_NULL, but to the change 
-of logic I've introduce.
+Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
+---
 
-	if (!IS_ERR)
-		do_something_and_continue;
-	if_NOENT_was_returned_we_still_get_there();
+Changes since v1:
+  - Switched from preprocessor conditionals to normal C conditionals.
 
-which became:
-	if (IS_ERR)
-		return;
-	we_can_get_there_with_NOENT_anymore();
+Changes since v2:
+  - Reworked enetc_ethtool.c changes to fit around changes merged in
+    net-next.
 
-My bad!
+Changes since v3:
+  - Correction of SOB ordering.
+  - Removal of unneeded `__maybe_unused` tags.
 
-CJ
+drivers/net/ethernet/freescale/enetc/enetc.c  | 22 ++++++++-----------
+ drivers/net/ethernet/freescale/enetc/enetc.h  |  9 +++-----
+ .../ethernet/freescale/enetc/enetc_ethtool.c  | 12 ++++++----
+ 3 files changed, 20 insertions(+), 23 deletions(-)
 
-> 
-> This has worked fine with ACPI boot for many years before this fix was applied.
-> 
->> If yes, then it may be needed to backport it in older kernels too.
->>
-> 
-> No, it used to work. The fix is what broke ACPI boot.
-> 
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c b/drivers/net/ethernet/freescale/enetc/enetc.c
+index 5c45f42232d3..66e3e982882a 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc.c
++++ b/drivers/net/ethernet/freescale/enetc/enetc.c
+@@ -977,7 +977,6 @@ static int enetc_refill_rx_ring(struct enetc_bdr *rx_ring, const int buff_cnt)
+ 	return j;
+ }
+ 
+-#ifdef CONFIG_FSL_ENETC_PTP_CLOCK
+ static void enetc_get_rx_tstamp(struct net_device *ndev,
+ 				union enetc_rx_bd *rxbd,
+ 				struct sk_buff *skb)
+@@ -1001,7 +1000,6 @@ static void enetc_get_rx_tstamp(struct net_device *ndev,
+ 		shhwtstamps->hwtstamp = ns_to_ktime(tstamp);
+ 	}
+ }
+-#endif
+ 
+ static void enetc_get_offloads(struct enetc_bdr *rx_ring,
+ 			       union enetc_rx_bd *rxbd, struct sk_buff *skb)
+@@ -1041,10 +1039,9 @@ static void enetc_get_offloads(struct enetc_bdr *rx_ring,
+ 		__vlan_hwaccel_put_tag(skb, tpid, le16_to_cpu(rxbd->r.vlan_opt));
+ 	}
+ 
+-#ifdef CONFIG_FSL_ENETC_PTP_CLOCK
+-	if (priv->active_offloads & ENETC_F_RX_TSTAMP)
++	if (IS_ENABLED(CONFIG_FSL_ENETC_PTP_CLOCK) &&
++	    (priv->active_offloads & ENETC_F_RX_TSTAMP))
+ 		enetc_get_rx_tstamp(rx_ring->ndev, rxbd, skb);
+-#endif
+ }
+ 
+ /* This gets called during the non-XDP NAPI poll cycle as well as on XDP_PASS,
+@@ -2882,7 +2879,6 @@ void enetc_set_features(struct net_device *ndev, netdev_features_t features)
+ }
+ EXPORT_SYMBOL_GPL(enetc_set_features);
+ 
+-#ifdef CONFIG_FSL_ENETC_PTP_CLOCK
+ static int enetc_hwtstamp_set(struct net_device *ndev, struct ifreq *ifr)
+ {
+ 	struct enetc_ndev_priv *priv = netdev_priv(ndev);
+@@ -2951,17 +2947,17 @@ static int enetc_hwtstamp_get(struct net_device *ndev, struct ifreq *ifr)
+ 	return copy_to_user(ifr->ifr_data, &config, sizeof(config)) ?
+ 	       -EFAULT : 0;
+ }
+-#endif
+ 
+ int enetc_ioctl(struct net_device *ndev, struct ifreq *rq, int cmd)
+ {
+ 	struct enetc_ndev_priv *priv = netdev_priv(ndev);
+-#ifdef CONFIG_FSL_ENETC_PTP_CLOCK
+-	if (cmd == SIOCSHWTSTAMP)
+-		return enetc_hwtstamp_set(ndev, rq);
+-	if (cmd == SIOCGHWTSTAMP)
+-		return enetc_hwtstamp_get(ndev, rq);
+-#endif
++
++	if (IS_ENABLED(CONFIG_FSL_ENETC_PTP_CLOCK)) {
++		if (cmd == SIOCSHWTSTAMP)
++			return enetc_hwtstamp_set(ndev, rq);
++		if (cmd == SIOCGHWTSTAMP)
++			return enetc_hwtstamp_get(ndev, rq);
++	}
+ 
+ 	if (!priv->phylink)
+ 		return -EOPNOTSUPP;
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc.h b/drivers/net/ethernet/freescale/enetc/enetc.h
+index a9c2ff22431c..97524dfa234c 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc.h
++++ b/drivers/net/ethernet/freescale/enetc/enetc.h
+@@ -184,10 +184,9 @@ static inline union enetc_rx_bd *enetc_rxbd(struct enetc_bdr *rx_ring, int i)
+ {
+ 	int hw_idx = i;
+ 
+-#ifdef CONFIG_FSL_ENETC_PTP_CLOCK
+-	if (rx_ring->ext_en)
++	if (IS_ENABLED(CONFIG_FSL_ENETC_PTP_CLOCK) && rx_ring->ext_en)
+ 		hw_idx = 2 * i;
+-#endif
++
+ 	return &(((union enetc_rx_bd *)rx_ring->bd_base)[hw_idx]);
+ }
+ 
+@@ -199,10 +198,8 @@ static inline void enetc_rxbd_next(struct enetc_bdr *rx_ring,
+ 
+ 	new_rxbd++;
+ 
+-#ifdef CONFIG_FSL_ENETC_PTP_CLOCK
+-	if (rx_ring->ext_en)
++	if (IS_ENABLED(CONFIG_FSL_ENETC_PTP_CLOCK) && rx_ring->ext_en)
+ 		new_rxbd++;
+-#endif
+ 
+ 	if (unlikely(++new_index == rx_ring->bd_count)) {
+ 		new_rxbd = rx_ring->bd_base;
+diff --git a/drivers/net/ethernet/freescale/enetc/enetc_ethtool.c b/drivers/net/ethernet/freescale/enetc/enetc_ethtool.c
+index 47c478e08d44..2563eb8ac7b6 100644
+--- a/drivers/net/ethernet/freescale/enetc/enetc_ethtool.c
++++ b/drivers/net/ethernet/freescale/enetc/enetc_ethtool.c
+@@ -851,7 +851,12 @@ static int enetc_get_ts_info(struct net_device *ndev,
+ 		symbol_put(enetc_phc_index);
+ 	}
+ 
+-#ifdef CONFIG_FSL_ENETC_PTP_CLOCK
++	if (!IS_ENABLED(CONFIG_FSL_ENETC_PTP_CLOCK)) {
++		info->so_timestamping = SOF_TIMESTAMPING_TX_SOFTWARE;
++
++		return 0;
++	}
++
+ 	info->so_timestamping = SOF_TIMESTAMPING_TX_HARDWARE |
+ 				SOF_TIMESTAMPING_RX_HARDWARE |
+ 				SOF_TIMESTAMPING_RAW_HARDWARE |
+@@ -860,11 +865,10 @@ static int enetc_get_ts_info(struct net_device *ndev,
+ 	info->tx_types = (1 << HWTSTAMP_TX_OFF) |
+ 			 (1 << HWTSTAMP_TX_ON) |
+ 			 (1 << HWTSTAMP_TX_ONESTEP_SYNC);
++
+ 	info->rx_filters = (1 << HWTSTAMP_FILTER_NONE) |
+ 			   (1 << HWTSTAMP_FILTER_ALL);
+-#else
+-	info->so_timestamping = SOF_TIMESTAMPING_TX_SOFTWARE;
+-#endif
++
+ 	return 0;
+ }
+ 
+-- 
+2.45.2
 
 
