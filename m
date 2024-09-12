@@ -1,92 +1,135 @@
-Return-Path: <linux-kernel+bounces-325759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1452E975DDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:11:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D65975DDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:12:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9B0228568F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:11:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D02DB230A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B7B383;
-	Thu, 12 Sep 2024 00:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9F780B;
+	Thu, 12 Sep 2024 00:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a9k55ivj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P362+vOc"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE1926ACC;
-	Thu, 12 Sep 2024 00:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F393F163
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 00:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726099835; cv=none; b=YCmXrni84wv//9O57mSEzEhoED2jjnbrZypWfsBlX/aCHdelhGjSKBtAPrGn1guzMb+NXJpsHDSW+NiseQ/QkaX2AgukFBfPub6MaB32L82gTZKCWkZg6afxAe4lG9mY8IMGOg4f3lRE+Q77z2iCqUsf5G7ggNgopTZSXgit8Aw=
+	t=1726099958; cv=none; b=npJEr9UZG4N52pGSdmPpVLot3J/m+hztmyMCBuW+HO6L9UYEDA7kfMuJQ5nhPJ+lra45pkNBEG2msjiItPcAk2aGs2KYSBgooS0MoXI1o/kp/T1JqiqCzCPgSv+hBp3c8m+cRoik+leOBv2eFut1y3XsRfrY8AMTUf16pac9+Mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726099835; c=relaxed/simple;
-	bh=1PkcicRtJ2yph9ZFp4DEh0CdMcGUQWxsDsmLfvFfO5E=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Fb2sGjQ8ox/oEGbelIvkXF831kJe/rFQVMg8DWVQo9iVxIXlas1evz26JoPfCLbh4oRDQC5/mgKFg6eUnOFNB2AOhFE6v4dyUGnKc07aWZuoh08OXHSrLWhI3ntn36l2/rmtnQo7dtEZraYIXF4lgHYoFx1NV1WqsUDGmNuWi7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a9k55ivj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB172C4CECC;
-	Thu, 12 Sep 2024 00:10:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726099833;
-	bh=1PkcicRtJ2yph9ZFp4DEh0CdMcGUQWxsDsmLfvFfO5E=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=a9k55ivjr8e+6bTTsLhhwmE6TxMC+9ZpM11mpOh1FEkn6JVGPWLJZwd6wgulXw4L5
-	 InpGeqsaKEkA/wlclLTm6MCntv7/OdVzwtDE09deAb0XazNyVdps+a4ZywNb8qdJGY
-	 hMwT8oSXIYkXmRgwB56RF5hHpOd+pucDCo68NqT4LITcQHUAtL/mJijkttk1cXDavw
-	 7tOLz8Smk+pX9+7OOV/4bqZV/YmAti8NJ2sMZGbOLh4oOcOV0BGdTQ24SenEMxNg1x
-	 zQ+fzhea6u+l8VYtelYYGlNZSWhV7MAKNrGvY3b7WC7OmLUqlZ1ln2PBkPvCLNQxpx
-	 lw0rMVteWgyMQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33C7E3806656;
-	Thu, 12 Sep 2024 00:10:36 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1726099958; c=relaxed/simple;
+	bh=yE1e1oJjZv8b19e6MheS1wRSUqmnO5tHYjKTQN6gSz4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JjxmNgjxL7hgcean78u8peiGyVVxcLIbTU+IyHoLeZupB3lq6AqSuCOcOOWMwSBJFxMMuUjRo40w4kNINtj02bT/8ZpRqEIXzIgJINyWRUqWaju9nDMxt/CqwknoIXzM/Aflgjd25r8psf2UKe3zS9u1bHedw8lGX4Errpl61RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P362+vOc; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71798a15ce5so1091464b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 17:12:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726099956; x=1726704756; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=YRhIRnidwJmOdSjyzFN3o9E8wDi15Yl61Z0LHp95sU4=;
+        b=P362+vOc+xexclHKaDB+g9+wQSDvMvrRXx3Y3VErwh2KYl0ZzBkYL1DECNif6dL5e1
+         ejRVJHDIvMBbttbDOkpIIa+KVwmCqJDpCrT8wmi3xuldTbcNGUc9fISjH2M4Yrwr37Uk
+         90FBEg5CVDsvQlD/bItX6LvdmdNOVYh0tgGGSt9CIohggZjyDNUNtQVvRBAqtHFu1te3
+         jqqsDYHo7IKLklCYH2Ie+LU2s7h5Xx/Yb4R9QvWrL7PM2TT/HuNZEXgTmlFWL97/bl+Z
+         Weaky1MLjQMk5Dfd7ySIE4WPjtsZkvr+RScwcEo9LfRWfgA75THXLLlNphzTwEexZy6G
+         mLXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726099956; x=1726704756;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YRhIRnidwJmOdSjyzFN3o9E8wDi15Yl61Z0LHp95sU4=;
+        b=Zw3TND40oVUBmilSTcDxXk9DrQNMSr9G56jNyN+p9+Due/1P9KXWPT6Zm9lOvOcGWI
+         I7GQt/XLZoIDmLdfhC0jAXRyb/mlzNE9DGHux34jvQSoE8QUJiWLcWCMv5YvpAi6d3yR
+         EWOqwQ8Zbvv9NvTDbU7T8dURRwFf5SJcI9t7oMYFoG8nGEqF4QPMkYL/jSafrL1HHygE
+         I6o87I/cMwvtfAW73YYB4H4ipM6XoJGIfj52I8S/X6ld3YKf0crh6VEXtdDjgiShRFeD
+         +R036t3f7BhcLLxFFWoKMzFNABU+fiHZZNfIEQtQDLSEMyAdBr+EYHv8u/S0cymtEr6g
+         MT7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUspdmYWxMjDMakzloMLT8jlxpIsm5cg9T2AQiUyfhv8MvMR4JRWWulvpa2YmUw+7Mqd1EzbDC7EdR1jx4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7f9+5fNQSP8znacuoysKEZ5EnKsWVIjQOM4I2L8HWeaJI79JY
+	Gchoq3aoleaprFeQLeKMeerNh6qszqHP5wYoSLhfO7QLrZK+zhk3
+X-Google-Smtp-Source: AGHT+IFiWt724MUdfh6lTY2YBFQTHx49rEguXMGqwgXVrmwES84P38IbzbLYqPVXsGKTuLUxvXhVfg==
+X-Received: by 2002:a05:6a20:d807:b0:1cf:6713:b791 with SMTP id adf61e73a8af0-1cf75598c1bmr1419212637.2.1726099956034;
+        Wed, 11 Sep 2024 17:12:36 -0700 (PDT)
+Received: from embed-PC.myguest.virtualbox.org ([106.222.234.231])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-719090c37efsm3512676b3a.187.2024.09.11.17.12.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 17:12:35 -0700 (PDT)
+Date: Thu, 12 Sep 2024 05:42:29 +0530
+From: Abhishek Tamboli <abhishektamboli9@gmail.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: neil.armstrong@linaro.org, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+	daniel@ffwll.ch, quic_jesszhan@quicinc.com,
+	skhan@linuxfoundation.org, rbmarliere@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	lkp@intel.com
+Subject: Re: [PATCH v2] drm/panel: hx83112a: Transition to wrapped mipi_dsi
+ functions
+Message-ID: <ZuIx7dFxMa46dapr@embed-PC.myguest.virtualbox.org>
+References: <20240903173130.41784-1-abhishektamboli9@gmail.com>
+ <CAD=FV=VVxWBv2oqL39j8eoRdJf42byoiUJ+XvY0kwL-OXoe0fg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCHv2 net-next] net: gianfar: fix NVMEM mac address
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172609983475.1114191.546174782933434370.git-patchwork-notify@kernel.org>
-Date: Thu, 12 Sep 2024 00:10:34 +0000
-References: <20240910220913.14101-1-rosenp@gmail.com>
-In-Reply-To: <20240910220913.14101-1-rosenp@gmail.com>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, andrew@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux-kernel@vger.kernel.org, jacob.e.keller@intel.com, horms@kernel.org,
- sd@queasysnail.net, chunkeey@gmail.com
+In-Reply-To: <CAD=FV=VVxWBv2oqL39j8eoRdJf42byoiUJ+XvY0kwL-OXoe0fg@mail.gmail.com>
 
-Hello:
+Hi Doug,
+Thanks for the feedback.
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue, 10 Sep 2024 15:09:13 -0700 you wrote:
-> If nvmem loads after the ethernet driver, mac address assignments will
-> not take effect. of_get_ethdev_address returns EPROBE_DEFER in such a
-> case so we need to handle that to avoid eth_hw_addr_random.
+On Tue, Sep 10, 2024 at 02:22:37PM -0700, Doug Anderson wrote:
+> Hi,
 > 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
->  v2: use goto instead of return
+> On Tue, Sep 3, 2024 at 10:32 AM Abhishek Tamboli
+> <abhishektamboli9@gmail.com> wrote:
+> >
+> > Transition to mipi_dsi_dcs_write_seq_multi() macros for initialization
+> > sequences. The previous mipi_dsi_dcs_write_seq() macros were
+> > non-intuitive and use other wrapped MIPI DSI functions in the
+> > driver code to simplify the code pattern.
+> >
+> > Reported-by: kernel test robot <lkp@intel.com>
+> > Closes: https://lore.kernel.org/oe-kbuild-all/202409040049.2hf8jrZG-lkp@intel.com/
 > 
-> [...]
-
-Here is the summary with links:
-  - [PATCHv2,net-next] net: gianfar: fix NVMEM mac address
-    https://git.kernel.org/netdev/net-next/c/b2d9544070d0
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+> You'd only include the above two tags if the original problematic
+> commit had actually landed. Since it didn't you leave them off and the
+> Robot gets no credit (even though it is awesome).
+Sure, I will keep this in mind before sending the next patch.
+> 
+> > Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
+> > ---
+> > Changes in v2:
+> > - Update the commit message to explain the reason for the change.
+> > - Correct the code by changing 'dsi->mode_flags' to 'dsi_ctx.dsi->mode_flags'
+> > This change addresses a build error in v1 reported by kernel test robot
+> > caused by using an undeclared variable 'dsi'.
+> > [v1] : https://lore.kernel.org/all/20240902170153.34512-1-abhishektamboli9@gmail.com/
+> >
+> >  drivers/gpu/drm/panel/panel-himax-hx83112a.c | 140 ++++++++-----------
+> >  1 file changed, 60 insertions(+), 80 deletions(-)
+> 
+> Just adding a note that there's nearly the same patch in
+> https://lore.kernel.org/r/20240904141521.554451-1-tejasvipin76@gmail.com
+> and we're discussing what to do about it there.
+> 
+Regards,
+Abhishek
 
