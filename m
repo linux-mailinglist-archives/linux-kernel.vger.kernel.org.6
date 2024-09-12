@@ -1,119 +1,93 @@
-Return-Path: <linux-kernel+bounces-326731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7C17976C51
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:41:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FCDC976C52
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:41:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91BA31F24474
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:41:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7982285B41
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72991B6521;
-	Thu, 12 Sep 2024 14:40:59 +0000 (UTC)
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694391B374D;
+	Thu, 12 Sep 2024 14:41:26 +0000 (UTC)
+Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E7C3D556;
-	Thu, 12 Sep 2024 14:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509101AD25D
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 14:41:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726152059; cv=none; b=mrMG4ZDpD2fzVdMwto1dEzOXPwee8+6YMF5uF7zmsktlfrGvwQDP31L9KXCzT+TjEypwNU9Kv2Q7axz7r/6mTX7X78v37TuMUy9HQoEMmTeqpe6QTmz1Kna5O0jEcowYzP5EBKrZ8z5HXkqlMOSVv3sO2tkUoNNjiIZt+tm4YhA=
+	t=1726152086; cv=none; b=FLyh/TkbKp0EE38+15kiaby477iyxLDya4Nx6UYbXGBkh4bgJDft1rzOdCUs+hJNPVwFyd2895J+ESizPlfaUBlDodLqPPqsEoQfoH6+WkZovh6H2Nn0Gkz0ZH7OD2zetZlk5U986TN0r9um0qhiT3bz+8yUJM0m3gZEXLHGeVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726152059; c=relaxed/simple;
-	bh=5Q8EeO7IWmCisueTMEdgf82zML0ivjll3WApTztREac=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XMk9RcaJQlI2jixtquynndJmOi0o+Apc6stSjFsUVVcYB5c+aclR8niFeCutYQw/DRBZQHE5gqPaZgMBnJ74PsdJwwDwSeWBgghai7TXwsY283nhAlLB3h6tEnvM1SH9mbzTA9H66k+/eZhZnN/Heg7z+8Fq5Ht3eB+NAmR+qTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a8a706236bfso80554666b.0;
-        Thu, 12 Sep 2024 07:40:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726152056; x=1726756856;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QLdXsCii9/gYxEQoBDMcsRP0n0Dk6hYYTZqqP6ceFgo=;
-        b=wBrfdE6Lde9BgOCsBTqha9NJbYBbYfLbuudsp73OrvTw28RsjDvW0lqMRw0W6UvUK5
-         B9pNbxF2rA7Gc+kDBFLNKVHntr8W6CJ5Y0AayKsZKL2yzarhaWu6rvMQ9jD5UNdjRchP
-         +wbQ0eHyJjG9bU7NyiWIg4QIUUdwNng/6q93zRtdhTnLYGl4f3n+bHosqC21e3HJx89g
-         /hWq/cQdbG4r+X7MDUbr54n439bQrvEDwHVPshlCGo8K+CUB4Xpl85YNRbdUoMDhY/Zn
-         TEQNlZMZ16BRY9zC4tEcrEzEm5VwG7iu8ccIwra7+xsZw+NEdJkrRsZSklhOnoaSd9X4
-         hEbA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7zqvtxxrSdoVdoA9NcttgZVwrTeEdPMpRU77+segt/vEKyndBhfx3yhEZRDnLcry44BY=@vger.kernel.org, AJvYcCWjckjTofl4H5IkaT+KH+EZBMTH74wnee1z1eSyGnQ3H1rGYy8C8hMIS7va/r/M9kr0+QZXTXKG@vger.kernel.org, AJvYcCXoZOlbilEFjD7mcV/CsPPjqDbzpMT2FE517GgXC5jEv5b2EfFEW6PvSm73txVSwKSwFTjuW+TeBX+fW0qv@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCbGIKLrrD1BZABDStT123Bs+c0ORJEN5c2WKYx17ipAoVy1K+
-	rTf21WLcSc+njqmiuqGtXYs5bOO6WUCa6pX4is+9DF8PgnQrQBbY
-X-Google-Smtp-Source: AGHT+IG93XXZFGRrW1suIchQ7gpC2xDF1Q80orW3dYtGvyPa0Qg72wWYtsceWm22Zo5WWSgNGWmTCA==
-X-Received: by 2002:a05:6402:2551:b0:5c3:cb45:2e with SMTP id 4fb4d7f45d1cf-5c413e0577fmr3046068a12.5.1726152055771;
-        Thu, 12 Sep 2024 07:40:55 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-001.fbsv.net. [2a03:2880:30ff:1::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd8cdebsm6544247a12.95.2024.09.12.07.40.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 07:40:55 -0700 (PDT)
-Date: Thu, 12 Sep 2024 07:40:52 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Jakub Kicinski <kuba@kernel.org>, andrii@kernel.org, ast@kernel.org,
-	syzbot <syzbot+08811615f0e17bc6708b@syzkaller.appspotmail.com>,
-	bpf@vger.kernel.org, daniel@iogearbox.net, davem@davemloft.net,
-	eddyz87@gmail.com, haoluo@google.com, hawk@kernel.org,
-	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
-	linux-kernel@vger.kernel.org, martin.lau@linux.dev,
-	netdev@vger.kernel.org, sdf@fomichev.me, song@kernel.org,
-	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Subject: Re: [PATCH net-net] tun: Assign missing bpf_net_context.
-Message-ID: <20240912-polite-wooden-jellyfish-acae2f@leitao>
-References: <000000000000adb970061c354f06@google.com>
- <20240702114026.1e1f72b7@kernel.org>
- <20240703122758.i6lt_jii@linutronix.de>
- <20240703120143.43cc1770@kernel.org>
- <20240912-simple-fascinating-mackerel-8fe7c0@devvm32600>
- <20240912122847.x70_LgN_@linutronix.de>
- <20240912-hypnotic-messy-leopard-f1d2b0@leitao>
- <9a2a1cce-8d92-4d10-87ea-4cdf1934d5fb@linux.dev>
- <20240912-organic-spoonbill-of-discourse-ad2e6e@leitao>
- <20240912143029.x5iudw-g@linutronix.de>
+	s=arc-20240116; t=1726152086; c=relaxed/simple;
+	bh=eFo8M1L8R7wjkPEig4kgYKYx7zNgDhbmpnAZ+9y3Vmg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FpsfoW8KcldE2WMnN/ReJIg6OZVJ5IG+xR6joAVGn1E0rKNi/wZEZ+mtaEFDc4e1p5jxU97e6ygcs+rGvqPEqPGGZ+bAYB7yhdW8sPe6qfP0JcI05+6RO/VMn/k4rg1Y4Eog3vWmrQf6m82YEMdwD5KTy+3PI4Hsisc1tFbeVdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-25-87.elisa-laajakaista.fi [88.113.25.87])
+	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
+	id 0b7c55c8-7115-11ef-812b-005056bdd08f;
+	Thu, 12 Sep 2024 17:41:07 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Ard Biesheuvel <ardb@kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: [PATCH v1 1/1] i2c: synquacer: Fix clock rate retrieval code
+Date: Thu, 12 Sep 2024 17:41:05 +0300
+Message-ID: <20240912144105.1555624-1-andy.shevchenko@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240912143029.x5iudw-g@linutronix.de>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 12, 2024 at 04:30:29PM +0200, Sebastian Andrzej Siewior wrote:
-> On 2024-09-12 07:19:54 [-0700], Breno Leitao wrote:
-> > Hello Vadim,
-> > 
-> > On Thu, Sep 12, 2024 at 02:32:55PM +0100, Vadim Fedorenko wrote:
-> > > On 12/09/2024 14:17, Breno Leitao wrote:
-> > > > @@ -72,6 +73,7 @@ static netdev_tx_t netkit_xmit(struct sk_buff *skb, struct net_device *dev)
-> > > >   	struct net_device *peer;
-> > > >   	int len = skb->len;
-> > > > +	bpf_net_ctx = bpf_net_ctx_set(&__bpf_net_ctx);
-> > > >   	rcu_read_lock();
-> > > 
-> > > Hi Breno,
-> > > 
-> > > looks like bpf_net_ctx should be set under rcu read lock...
-> > 
-> > Why exactly?
-> > 
-> > I saw in some examples where bpf_net_ctx_set() was set inside the
-> > rcu_read_lock(), but, I was not able to come up with justification to do
-> > the same. Would you mind elaborating why this might be needed inside the
-> > lock?
-> 
-> It might have been done due to simpler nesting or other reasons but
-> there is no requirement to do this under RCU protection. The assignment
-> and cleanup is always performed task-local.
+With the devm_clk_get_enabled() the probe will fail on the systems
+that have no clock provided, such as ACPI-based ones.
 
-Thanks. I will keep it out of the RCU lock then, as in the patch above.
+    synquacer_i2c SCX0003:00: error -ENOENT: failed to get and enable clock
+    synquacer_i2c SCX0003:00: probe with driver synquacer_i2c failed with error -2
 
---breno
+Fix this by switching to devm_clk_get_optional_enabled() in conjunction with NULL
+check, so we won't overwrite the clock rate from the property.
+
+Fixes: 55750148e559 ("i2c: synquacer: Fix an error handling path in synquacer_i2c_probe()")
+Reported-by: Ard Biesheuvel <ardb@kernel.org>
+Closes: https://lore.kernel.org/r/CAMj1kXFH+zB_YuUS+vaEpguhuVGLYbQw55VNDCxnBfSPe6b-nw@mail.gmail.com
+Signed-off-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+---
+ drivers/i2c/busses/i2c-synquacer.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-synquacer.c b/drivers/i2c/busses/i2c-synquacer.c
+index 4eccbcd0fbfc..49d01fa8fb4e 100644
+--- a/drivers/i2c/busses/i2c-synquacer.c
++++ b/drivers/i2c/busses/i2c-synquacer.c
+@@ -550,12 +550,12 @@ static int synquacer_i2c_probe(struct platform_device *pdev)
+ 	device_property_read_u32(&pdev->dev, "socionext,pclk-rate",
+ 				 &i2c->pclkrate);
+ 
+-	pclk = devm_clk_get_enabled(&pdev->dev, "pclk");
++	pclk = devm_clk_get_optional_enabled(&pdev->dev, "pclk");
+ 	if (IS_ERR(pclk))
+ 		return dev_err_probe(&pdev->dev, PTR_ERR(pclk),
+ 				     "failed to get and enable clock\n");
+-
+-	i2c->pclkrate = clk_get_rate(pclk);
++	if (pclk)
++		i2c->pclkrate = clk_get_rate(pclk);
+ 
+ 	if (i2c->pclkrate < SYNQUACER_I2C_MIN_CLK_RATE ||
+ 	    i2c->pclkrate > SYNQUACER_I2C_MAX_CLK_RATE)
+-- 
+2.46.0
+
 
