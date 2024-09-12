@@ -1,176 +1,158 @@
-Return-Path: <linux-kernel+bounces-326510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57D26976940
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:36:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB42E976939
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:35:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A2001C22D40
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:36:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 893F42847E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5C51A7058;
-	Thu, 12 Sep 2024 12:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2241A3023;
+	Thu, 12 Sep 2024 12:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Nlf+ARJf"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kryV5s15"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4932519F42D;
-	Thu, 12 Sep 2024 12:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E87A19F42D;
+	Thu, 12 Sep 2024 12:35:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726144598; cv=none; b=Luuvlwn5VgyFQZFRqDf7dJrhTDsJUWvhDZqnTbPBhg1dqMJvrsNxtOMFrUXks/uJwef8grkLcne+2L2mlSmvWjN3+dpSAtGmy1SU+asY5TLdUVknuMp0bTdSwYZA3SMVEMS1Yn0pxFqUCqyvTbynYApUUjlerT/BZZiNPdaT5UM=
+	t=1726144539; cv=none; b=afsqD5M3r38nNu9OQuLrcHEx3zs/tlipUekL0AqHwc+Y4h/diMRmKFbKiyX7J2QQtafa0mFIOJpMXgwZ8lBqiSMw//qOlROnTt1b4lHMLDTi0xm88p1WcdLUNtoi4/8Fr9UUd7CjFwFMiRAiTCbjtGASIcAvMScErTn08P3iQGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726144598; c=relaxed/simple;
-	bh=e0+ULRJe/0UPjAGbqFTaPDEPJA7zDqYn2Tg68Qzn/vc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=cOpclnd5fqxqdVSc4n+j2JFELZreESlgcQ9rjnTFHCGWBEtUjSvJvnj2/ZAGK6L6n1VxAiWitWN8CV0Lee2wtX7gycAKutQbtV0A0w6w7su8zjnlCAUgQQB9ZHi33RhxvB5RaskDyomFncJ/vqpcgjSx5jU2YDOURn3/2DjJ49A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Nlf+ARJf; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48C9XnPZ002414;
-	Thu, 12 Sep 2024 14:36:09 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	ycOodbDvrhisx/5OptdgsTR2uHOjLnY6oXa5ZUn9Ewk=; b=Nlf+ARJfan7qvNcb
-	wKVmVHjIjlPE/OfQkt/x0tPUVrVc01CZD/nD1x/z0K88NJB9IYu2B8bexiQhqytm
-	apcdr+HAidJPid4giMBZlfsI++fIwgMAuho4nBq+6zEgLbzDOtisqTKe7eQcxELO
-	SZl4MGZ63X/LuKq4Jd4BeftUCAhgXiJfND07sGHUGTPRm/50dozk48ZQuTs0Pb69
-	ed0ZLdHeQVTosEIK7b3Ua9bPY6Zq6MoGRAU3IOEsuf3KFKhttMFzexx+GcbBjNoL
-	Ea54M6iiPL/gZok/R137I9XT7v5pSw2DPq/zrMOqbizMXUyAfLSSnyA7VoO2wDpO
-	8Vyydg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 41gyaakyu1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Sep 2024 14:36:09 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id AC36D4004C;
-	Thu, 12 Sep 2024 14:34:49 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0198B269E16;
-	Thu, 12 Sep 2024 14:32:43 +0200 (CEST)
-Received: from [10.48.86.208] (10.48.86.208) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 12 Sep
- 2024 14:32:42 +0200
-Message-ID: <7869d6b4-6b6e-4fb6-95d9-bbe497caeceb@foss.st.com>
-Date: Thu, 12 Sep 2024 14:32:41 +0200
+	s=arc-20240116; t=1726144539; c=relaxed/simple;
+	bh=QE+hZV8eqeYJlZgA/eZa43htlQUKxwyLfSsv/+3TO1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xw/Eb0B3v/g2XcZ/+BhLTySr+nxQYYmuVxr2/2VjNiARQCaVkAwCD5Mz7pnuRbEPj8BPGrkLaVdg2vp3GgRv8t5BDOzDffBMGwdr61CXA5wqoPSxfTe7q9dfr+BmD0MTFWGlLqDClmgsGDtNlpwX7Ixl8BkqBNht5CkQWmE2kq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kryV5s15; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726144537; x=1757680537;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QE+hZV8eqeYJlZgA/eZa43htlQUKxwyLfSsv/+3TO1I=;
+  b=kryV5s15ARjfHSgDQB+bErv2ourO5roS1jnjBwpNRWPcabnDcqtcrfOZ
+   9ItBfEbi/fEQN04k2Zd+MJ/uL73H8Hn8ZIZ3aSQA+It57p1bAhAeXGeW3
+   qldi2S+opNbR0ATuK3/BTijpw8InCJk1c7W6nyi9ntJC5LbrvdtGB7KcX
+   VVoxtxIfxrPMaslCv76hF3a1QHF+z20fLz5lCwGkCdCmmc6MYnb9CcHCb
+   oON0pyylCJsexOgSosp1hqZEb7YmZwEpOcct8B8erIsQeGzaahISBnBIA
+   Y8SAVvwsQXOuzy/dhdha4nYAkoskQvquCGyLD0GQtaEEqhIa/Ac0R5O+0
+   g==;
+X-CSE-ConnectionGUID: M/FemamPQBWEjm8b1a+Njg==
+X-CSE-MsgGUID: dM2KcxnpTeyIuX2cVtMxaA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="42508170"
+X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
+   d="scan'208";a="42508170"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 05:34:59 -0700
+X-CSE-ConnectionGUID: zFtikUdASJy1wNYt0ML1cQ==
+X-CSE-MsgGUID: fDDGsRWzRqSIrw/Ctntn8g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
+   d="scan'208";a="72483178"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 12 Sep 2024 05:34:57 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1soj2E-00059O-0A;
+	Thu, 12 Sep 2024 12:34:54 +0000
+Date: Thu, 12 Sep 2024 20:34:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Levi Yun <yeoreum.yun@arm.com>, peterz@infradead.org,
+	mark.rutland@arm.com, james.clark@linaro.org, rostedt@goodmis.org,
+	mhiramat@kernel.org, mathieu.desnoyers@efficios.com, mingo@elte.hu
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, Levi Yun <yeoreum.yun@arm.com>
+Subject: Re: [PATCH] trace/trace_event_perf: remove duplicate samples on the
+ first tracepoint event
+Message-ID: <202409122013.3PMFMv8D-lkp@intel.com>
+References: <20240911122747.4168556-1-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] media: uapi: add WebP VP8 frame flag
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil
-	<hverkuil-cisco@xs4all.nl>,
-        Fritz Koenig <frkoenig@chromium.org>,
-        Sebastian
- Fricke <sebastian.fricke@collabora.com>,
-        Daniel Almeida
-	<daniel.almeida@collabora.com>,
-        Andrzej Pietrasiewicz
-	<andrzej.p@collabora.com>,
-        Benjamin Gaignard
-	<benjamin.gaignard@collabora.com>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20240911135011.161217-1-hugues.fruchet@foss.st.com>
- <20240911135011.161217-2-hugues.fruchet@foss.st.com>
- <01020191e212f333-703af7d0-fc68-4f47-b55c-6c0c3de6708a-000000@eu-west-1.amazonses.com>
-Content-Language: en-US
-From: Hugues FRUCHET <hugues.fruchet@foss.st.com>
-In-Reply-To: <01020191e212f333-703af7d0-fc68-4f47-b55c-6c0c3de6708a-000000@eu-west-1.amazonses.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911122747.4168556-1-yeoreum.yun@arm.com>
 
-Hi Nicolas,
+Hi Levi,
 
-Thanks for reviewing.
+kernel test robot noticed the following build errors:
 
-On 9/11/24 19:12, Nicolas Dufresne wrote:
-> Hi Hugues,
-> 
-> Le mercredi 11 septembre 2024 à 15:50 +0200, Hugues Fruchet a écrit :
->> Add a flag indicating that VP8 bitstream is a WebP picture.
-> 
-> Sounds like there should be some code changes in GStreamer that you haven't
-> disclosed. Mind sharing how this new uAPI is used ? I would also expect this
-> commit message to give more insight on what is special about WebP that makes
-> this flag required.
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.11-rc7 next-20240912]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Levi-Yun/trace-trace_event_perf-remove-duplicate-samples-on-the-first-tracepoint-event/20240911-202917
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20240911122747.4168556-1-yeoreum.yun%40arm.com
+patch subject: [PATCH] trace/trace_event_perf: remove duplicate samples on the first tracepoint event
+config: sparc64-defconfig (https://download.01.org/0day-ci/archive/20240912/202409122013.3PMFMv8D-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240912/202409122013.3PMFMv8D-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409122013.3PMFMv8D-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   kernel/trace/trace_event_perf.c: In function 'perf_trace_add':
+>> kernel/trace/trace_event_perf.c:360:31: error: 'event' undeclared (first use in this function); did you mean 'p_event'?
+     360 |         if (is_sampling_event(event)) {
+         |                               ^~~~~
+         |                               p_event
+   kernel/trace/trace_event_perf.c:360:31: note: each undeclared identifier is reported only once for each function it appears in
 
 
-GStreamer changes here:
-https://gitlab.freedesktop.org/gstreamer/gstreamer/-/commit/138ecfac54ce85b273a26ff6f0fefe3998f8d436?merge_request_iid=7505
+vim +360 kernel/trace/trace_event_perf.c
 
-Verisilicon datasheet is not explicit on why WebP must be signaled to 
-hardware but WebP decoding fails if not.
-Seems to me that such a simple addition on an already existing flag is 
-something acceptable and preferable to the development of a new complete 
-uAPI for WebP decoding.
+   351	
+   352	int perf_trace_add(struct perf_event *p_event, int flags)
+   353	{
+   354		struct trace_event_call *tp_event = p_event->tp_event;
+   355		struct hw_perf_event *hwc = &p_event->hw;
+   356	
+   357		if (!(flags & PERF_EF_START))
+   358			p_event->hw.state = PERF_HES_STOPPED;
+   359	
+ > 360		if (is_sampling_event(event)) {
+   361			hwc->last_period = hwc->sample_period;
+   362			perf_swevent_set_period(p_event);
+   363		}
+   364	
+   365		/*
+   366		 * If TRACE_REG_PERF_ADD returns false; no custom action was performed
+   367		 * and we need to take the default action of enqueueing our event on
+   368		 * the right per-cpu hlist.
+   369		 */
+   370		if (!tp_event->class->reg(tp_event, TRACE_REG_PERF_ADD, p_event)) {
+   371			struct hlist_head __percpu *pcpu_list;
+   372			struct hlist_head *list;
+   373	
+   374			pcpu_list = tp_event->perf_events;
+   375			if (WARN_ON_ONCE(!pcpu_list))
+   376				return -EINVAL;
+   377	
+   378			list = this_cpu_ptr(pcpu_list);
+   379			hlist_add_head_rcu(&p_event->hlist_entry, list);
+   380		}
+   381	
+   382		return 0;
+   383	}
+   384	
 
-> 
-> I would also need some more API or documentation that explain how we can
-> differentiate a upstream decoder that is capable of WebP decoding from one that
-> does not. I wonder if it would not have been better to define a new format ?
-> That being said, I haven't looked at all in the specification and only rely on
-> your cover letter and patch series.
-> 
-> Nicolas
-
-
-> 
->>
->> Signed-off-by: Hugues Fruchet <hugues.fruchet@foss.st.com>
->> ---
->>   .../userspace-api/media/v4l/ext-ctrls-codec-stateless.rst      | 3 +++
->>   include/uapi/linux/v4l2-controls.h                             | 1 +
->>   2 files changed, 4 insertions(+)
->>
->> diff --git a/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst b/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst
->> index 0da635691fdc..bb08aacddc9c 100644
->> --- a/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst
->> +++ b/Documentation/userspace-api/media/v4l/ext-ctrls-codec-stateless.rst
->> @@ -1062,6 +1062,9 @@ FWHT Flags
->>       * - ``V4L2_VP8_FRAME_FLAG_SIGN_BIAS_ALT``
->>         - 0x20
->>         - Sign of motion vectors when the alt frame is referenced.
->> +    * - ``V4L2_VP8_FRAME_FLAG_WEBP``
->> +      - 0x40
->> +      - Indicates that this frame is a WebP picture.
->>   
->>   .. c:type:: v4l2_vp8_entropy_coder_state
->>   
->> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
->> index 974fd254e573..e41b62f2cb2b 100644
->> --- a/include/uapi/linux/v4l2-controls.h
->> +++ b/include/uapi/linux/v4l2-controls.h
->> @@ -1897,6 +1897,7 @@ struct v4l2_vp8_entropy_coder_state {
->>   #define V4L2_VP8_FRAME_FLAG_MB_NO_SKIP_COEFF	0x08
->>   #define V4L2_VP8_FRAME_FLAG_SIGN_BIAS_GOLDEN	0x10
->>   #define V4L2_VP8_FRAME_FLAG_SIGN_BIAS_ALT	0x20
->> +#define V4L2_VP8_FRAME_FLAG_WEBP		0x40
->>   
->>   #define V4L2_VP8_FRAME_IS_KEY_FRAME(hdr) \
->>   	(!!((hdr)->flags & V4L2_VP8_FRAME_FLAG_KEY_FRAME))
-> 
-
-BR,
-Hugues.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
