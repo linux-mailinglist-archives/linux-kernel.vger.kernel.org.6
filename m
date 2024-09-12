@@ -1,106 +1,101 @@
-Return-Path: <linux-kernel+bounces-326189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55211976487
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:30:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E890D976445
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03F5E1F24AB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:30:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 940B31F22E76
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5689B19049A;
-	Thu, 12 Sep 2024 08:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="emP8N6Qc"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2A72191F71;
+	Thu, 12 Sep 2024 08:21:18 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BEF18DF7E;
-	Thu, 12 Sep 2024 08:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5391518BBA1;
+	Thu, 12 Sep 2024 08:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726129817; cv=none; b=e75Io+dM/hOWCFP+JAsXDsd8v2J+kC1UEUacbRI4Dh2Bhv1GPubfZccvQYsmDqpSdkMwJc3riL+dJX9gNphzuVb7f6hNqTa5E6JCoSGoZnca12m9cKhW7pHmKho4u7eNDH0ccSmyzeg5gjkr/tLsA5U15GvhqeDcbNpMRhUGSuc=
+	t=1726129278; cv=none; b=rEHkY6Wa51/pUDny32XR1MY7fFbRzJhfXNrhEJeS5OxDvmaNCT7TcGO+9+omJYE1KDmppq5sYwyOcG4yj6Dzt6UnpRCksCf1lnh8dVXSk7+n1RmWdfZwpwrsS4vGfQpczt7JyDjvYJdTudvq40lDy7+DEGhBupdiQYn/uEKY72U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726129817; c=relaxed/simple;
-	bh=5i/YCjWwVMx3uNZnk4aIVy97PGYM0OWIx7cepN/R0bk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=PD1E6tnmB2VAMQzwtjkFkdBSl0ChZfbhW4m6IBzVSq8MKNdcioj0H4ICBOio+3YzhtOnPk2g5kZM67JVDr9RxSXWVukMUh/phYumFnAMHaTbhPSXH/B8DXVRDT4gJYwXWxho10ifyJB0H7pizNcurIRZg4BG5IN5lPR/iPgdRXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=emP8N6Qc; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726129812;
-	bh=ZTygpK6kE/x0OmW4gBjQYK1dH6vP7NZt0HfXwF/ocJQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=emP8N6Qc040yEX90EYchF+KYx6C44o48KLvuJe0MwQHLSamiWu56HKkykhRBrZ/SD
-	 br3Kf+Rlsu5ZJh204Zq9B7fmZMTWh38x07da9IllmtF4gCfZjopD5dncqEQ4eqee2z
-	 u2x6iJoDBW/+kGgk6us7wIx+qDbtXHeNWNsSvqpe/03/V/t8rjhIMAW2KZYt6M+zKt
-	 6yCTacB0WpKubHDTUJkcN12+KGci2EAcX2zdphDs/6yj+X7o2diUAvRXGViwt5bTmc
-	 ki4K3zdpeN2FVyTMP4EyJuAaY/21uGsKKET1iGqqnQwLukJIhNhozY9jwqne6CCvuK
-	 hjqJHWIkbjKUg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X49c371B7z4x5M;
-	Thu, 12 Sep 2024 18:30:11 +1000 (AEST)
-Date: Thu, 12 Sep 2024 18:30:11 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the cxl tree
-Message-ID: <20240912183011.6a8ededa@canb.auug.org.au>
+	s=arc-20240116; t=1726129278; c=relaxed/simple;
+	bh=/VfIfyP9TL1T/qToMbw9UamvauZp0459XJC7+YA7tIo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VqUayrGoMMCSQ4CxY7cLUrgexpdZ5B2DcOYDlLuyQeUZhnBTU+zeHZhnlZRQBEF2SnL8Rwslt2SuYMiuS5J919R9HooWove7EqLHBtBpetoeGyVRxg1/cLGB1T+cw6GWokeSO92vLgM8/Lta1JLigIsfSzhnqYul/YXX+3S5ut0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4X49PY5WvQz20nnp;
+	Thu, 12 Sep 2024 16:21:05 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id B04AB1A0188;
+	Thu, 12 Sep 2024 16:21:12 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 12 Sep
+ 2024 16:21:11 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <laurentiu.palcu@oss.nxp.com>, <l.stach@pengutronix.de>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<shawnguo@kernel.org>, <s.hauer@pengutronix.de>, <kernel@pengutronix.de>,
+	<festevam@gmail.com>, <p.zabel@pengutronix.de>, <robdclark@gmail.com>,
+	<sean@poorly.run>, <konradybcio@kernel.org>, <quic_abhinavk@quicinc.com>,
+	<dmitry.baryshkov@linaro.org>, <marijn.suijten@somainline.org>,
+	<thierry.reding@gmail.com>, <mperttunen@nvidia.com>, <jonathanh@nvidia.com>,
+	<agx@sigxcpu.org>, <gregkh@linuxfoundation.org>, <jordan@cosmicpenguin.net>,
+	<dri-devel@lists.freedesktop.org>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>,
+	<linux-tegra@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH v2 0/5] drm: Use IRQF_NO_AUTOEN flag in request_irq()
+Date: Thu, 12 Sep 2024 16:30:15 +0800
+Message-ID: <20240912083020.3720233-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/klDF=XsH11d3uh2hE/jQkfM";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
---Sig_/klDF=XsH11d3uh2hE/jQkfM
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+As commit cbe16f35bee6 ("genirq: Add IRQF_NO_AUTOEN for request_irq/nmi()")
+said, reqeust_irq() and then disable_irq() is unsafe. In the small time gap
+between request_irq() and disable_irq(), interrupts can still come.
 
-Hi all,
+IRQF_NO_AUTOEN flag can be used by drivers to request_irq(). It prevents
+the automatic enabling of the requested interrupt in the same
+safe way. With that the usage can be simplified and corrected.
 
-After merging the cxl tree, today's linux-next build (htmldocs) produced
-this warning:
+Compile-tested only.
 
-drivers/cxl/pci.c:200: warning: Excess function parameter 'mds' description=
- in '__cxl_pci_mbox_send_cmd'
-drivers/cxl/pci.c:200: warning: Function parameter or struct member 'cxl_mb=
-ox' not described in '__cxl_pci_mbox_send_cmd'
-drivers/cxl/pci.c:200: warning: Excess function parameter 'mds' description=
- in '__cxl_pci_mbox_send_cmd'
+Changes in v2:
+- Correct the commit subject.
+- Add reviewed-by.
 
-Introduced by commit
+Jinjie Ruan (5):
+  drm/imx: Use IRQF_NO_AUTOEN flag in request_irq()
+  drm/imx/dcss: Use IRQF_NO_AUTOEN flag in request_irq()
+  drm/imx/ipuv3: Use IRQF_NO_AUTOEN flag in request_irq()
+  drm/tegra: dpaux: Use IRQF_NO_AUTOEN flag in request_irq()
+  drm/msm/adreno: Use IRQF_NO_AUTOEN flag in request_irq()
 
-  bb10253dafc1 ("cxl: Move mailbox related bits to the same context")
+ drivers/gpu/drm/imx/dcss/dcss-crtc.c   | 6 ++----
+ drivers/gpu/drm/imx/dcss/dcss-dtg.c    | 4 +---
+ drivers/gpu/drm/imx/ipuv3/ipuv3-crtc.c | 6 ++----
+ drivers/gpu/drm/msm/adreno/a6xx_gmu.c  | 4 +---
+ drivers/gpu/drm/tegra/dpaux.c          | 4 +---
+ 5 files changed, 7 insertions(+), 17 deletions(-)
 
---=20
-Cheers,
-Stephen Rothwell
+-- 
+2.34.1
 
---Sig_/klDF=XsH11d3uh2hE/jQkfM
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbippMACgkQAVBC80lX
-0Gz8Gwf7B7HkNX8PukUYu1e6bVHUFQ263dovc6XjLKFAXbYqvknZfLggNWTve2R/
-qw6kxOeLNydTU0LoC3+R1Ns56FkegxwF6ZZGsvbEQ0fcVbl+6VXIVCc5PadrYbur
-SOSx7BEtvPExj2hu/Fp9NOiHw7BDdWhSlZ4N9s42zifuVrVVRJMk/O1wkzyiR7eb
-MmNNqCYXxTzxjcI8hTWzpQtLUR2AlplImyBnq6VoO45Llu1vsOxPcSNg+oCNklUx
-eEELOp0LlL07HvAYl234TeEf7ABuab7tUmJzsb4qtqBJGlDnvrAyfW/dJBacCynA
-vW+zgi3oQEKPHwRoUXDeWMRcPT/FwQ==
-=c5vH
------END PGP SIGNATURE-----
-
---Sig_/klDF=XsH11d3uh2hE/jQkfM--
 
