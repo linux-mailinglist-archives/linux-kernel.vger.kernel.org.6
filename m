@@ -1,169 +1,135 @@
-Return-Path: <linux-kernel+bounces-326082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7080E976255
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:14:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4B54976264
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:15:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 110501F24BA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:14:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2259F1C2313D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E7018BC14;
-	Thu, 12 Sep 2024 07:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD2018D64F;
+	Thu, 12 Sep 2024 07:15:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pa+3LdMJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ebGr2VNR"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEA5410FF
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:14:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4DF188906;
+	Thu, 12 Sep 2024 07:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726125268; cv=none; b=m1HibKoNuyfULoWIVZ+vW/KXdEEmO0oLcPNIuMqhTAwnbu0mUibxEbC1iet+egqJftyiOd+MYGCAxD1WdJa/mdBgYAnHhcC5ZR+2DFWV4Bn+PtLxcSytXWuAeuJujqx5aRcA91MmCl5ZYRoIyqNX30DXp/onVlcd8mBGG9GLQCA=
+	t=1726125318; cv=none; b=RS8zBEfdkgcDiJBBXe4FeehJssRsh12rNRaC9XbgZm/WYhaM5GDKXZnlqFjbXU2QRgsdKGUwFa4Dbo9fvZOqyj200bWy4r0rVgjnIA+pWtvcTj2baT5fIlyJsPEaoaNOA9T3geAlHeSMsNONYGAO+wWtCsKIE4B0Nei+0iOjlaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726125268; c=relaxed/simple;
-	bh=ZA9BLxD+lQ9n6b28gDkrvcFthmnuikCEMekpEbh0DG8=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=jt4O68/fbGiiKJoBKdCzX0El01GbyoW92z4bDrFi7vQiKfWe6LPqTSkcKdSOxZxWbpZ/+dqr4u7djNViDrgAk2w8THFrM5W1G8K/sv/IkA4mt99bAS2maVytmrOooQQ8Qs530wG+G3oqglnseCFQKaNMyxmrzlNEgRPz51JV9R8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pa+3LdMJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39E1AC4CEC3;
-	Thu, 12 Sep 2024 07:14:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726125267;
-	bh=ZA9BLxD+lQ9n6b28gDkrvcFthmnuikCEMekpEbh0DG8=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=Pa+3LdMJCowinybpA2znB7wcPMIXLIrrOvTLqsyo8CAXaDwGitwW2WGTHTFxIvDmS
-	 38ikG4e/ucuwUbhydWUy2iqV2G5vgo52cA0ubLsKAsKTdfJxomzXwXTDMg6RQYbq7l
-	 2h+CGZ9IBWw/BBU+NY0KhSMl/Fd+j71/+vM288l+lUthkAsu2rgHr03AA0pWnfnKlL
-	 Ex8w+ICqAD7dvJGy0JOGfKLEUYTE9Gjy9bYKkrApJ2Y7DXneF8EPK9jMu/JthOQV/t
-	 N0eFQiaF0aMR6/5rKRq6Esg7BlgqNeqjz5GSGO8TC1FNhx2wvyvzNH4u0+WGEoieMb
-	 a30ABy3GiOtug==
-Message-ID: <679c7dae-91c4-4ad0-a2cb-55dc92b47fd4@kernel.org>
-Date: Thu, 12 Sep 2024 15:14:24 +0800
+	s=arc-20240116; t=1726125318; c=relaxed/simple;
+	bh=3v2vCCllcM8vJvg22T5gtMXJGc6AOicHbI9zwAwEQug=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cyXQt8RnVv9/96zzIoHMiIgRvgGLsXCdZPGd/62fzcwTmNoouMqPuIBBl+LtzVTz+y9xjLtavi4dn8xC3AfaRW+JOxpYMxt/2hzLj+AO0b8HplIyhYEmstp4UvdzBtAZWkwRh8dgmKI0kB3fANCKnPgWxii+KozsX+YLfg5Y8C8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ebGr2VNR; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48C2L8Pd006676;
+	Thu, 12 Sep 2024 07:15:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=ZxJ7NCNW1Cz6xqRyaiFTCUzzAiDVE4S9pdA
+	P/UhJqn0=; b=ebGr2VNR3qSSm2rwiXtjD4yUmGf8u/BKgZzqm9PGcLtKOA/KiMO
+	4iuqZPe0waC52XMUcmYLmUA/AaX/m1jB4rHGIh6quQTKp0Z51VBGehd7NxaQ++yh
+	c+xueyMpn1TWCcRCb9QvNp6iHivCtpCiOeN84d2skgUGkVrJD//lAMH62sw194gA
+	7yDrz8xCzW1JR4USeaOQthnEQwBFITxL2hRxegb0oEvU7YRxgr2tpeKWfRv42UU3
+	hJnEiCheTeCI4SCdhKZ0FBsdTFlG3T3W0rXwo7TT51w9Axl6ab49CYGPzk9oL4jf
+	o1cBeqHTWh9KcjV4VurLx3a/2m/nqCyU1uw==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy6pc6rp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Sep 2024 07:15:00 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 48C7Ete3000425;
+	Thu, 12 Sep 2024 07:14:55 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 41h168ypm1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Sep 2024 07:14:55 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48C7Et8j000397;
+	Thu, 12 Sep 2024 07:14:55 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-mahap-hyd.qualcomm.com [10.213.96.84])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 48C7Esms000393
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Sep 2024 07:14:55 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 2365311)
+	id 5B8AFADB; Thu, 12 Sep 2024 12:44:53 +0530 (+0530)
+From: Mahadevan <quic_mahap@quicinc.com>
+To: robdclark@gmail.com, quic_abhinavk@quicinc.com,
+        dmitry.baryshkov@linaro.org, sean@poorly.run,
+        marijn.suijten@somainline.org, airlied@gmail.com, daniel@ffwll.ch,
+        maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, swboyd@chromium.org, konrad.dybcio@linaro.org,
+        danila@jiaxyga.com, bigfoot@classfun.cn, neil.armstrong@linaro.org,
+        mailingradian@gmail.com, quic_jesszhan@quicinc.com,
+        andersson@kernel.org
+Cc: Mahadevan <quic_mahap@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_kalyant@quicinc.com, quic_jmadiset@quicinc.com,
+        quic_vpolimer@quicinc.com
+Subject: [PATCH 0/5] Add display support for Qualcomm SA8775P platform
+Date: Thu, 12 Sep 2024 12:44:32 +0530
+Message-Id: <20240912071437.1708969-1-quic_mahap@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-f2fs-devel@lists.sourceforge.net, Wu Bo <wubo.oduw@gmail.com>
-Subject: Re: [PATCH v2 00/13] f2fs: introduce inline tail
-To: Wu Bo <bo.wu@vivo.com>, linux-kernel@vger.kernel.org
-References: <cover.1726024116.git.bo.wu@vivo.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <cover.1726024116.git.bo.wu@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ejgitIFGMrpN6cBJ8c37Bzd_qi-zwMkB
+X-Proofpoint-GUID: ejgitIFGMrpN6cBJ8c37Bzd_qi-zwMkB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
+ bulkscore=0 lowpriorityscore=0 mlxlogscore=868 spamscore=0 phishscore=0
+ impostorscore=0 suspectscore=0 mlxscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409120049
 
-On 2024/9/11 11:57, Wu Bo wrote:
-> The inode in F2FS occupies an entire 4k block. For many small files, this means
-> they consume much more space than their actual size. Therefore, there is
-> significant potential to better utilize the inode block space.
-> 
-> Currently, F2FS has two features to make use of the inode block space: inline
-> data and inline xattr.
-> 
-> Inline data stores file which size is smaller then 3.5k in inode block. However,
-> for slightly larger small files, there still have much waste.
-> For example, a 5k file requires 3 blocks, totaling 12k of space, which is
-> more than twice the size of the file itself!
-> 
-> Additionally, the end of a file often does not occupy an entire block. If we can
-> store the end of the file data within the inode block, we can save an entire
-> block for the file. This is particularly important for small files.
-> 
-> In fact, the current inline data is a special case of inline tail, and
-> inline tail is an extension of inline data.
-> 
-> To make it simple, inline tail only on small files(<64k). And for larger files,
-> inline tails don't provide any significant benefits.
-> 
-> The layout of an inline tail inode block is following:
-> 
-> | inode block     | 4096 |     inline tail enable    |
-> | --------------- | ---- | --------------------------|
-> | inode info      | 360  |                           |
-> | --------------- | ---- | --------------------------|
-> |                 |      | extra info         | 0~36 |
-> |                 |      | **compact_addr[16] | 64   |
-> | addr table[923] | 3692 | reserved           | 4    |
-> |                 |      | **tail data        |      |
-> |                 |      | inline_xattr       | 200  |
-> | --------------- | ---- | --------------------------|
-> | nid table[5]    | 20   |
-> | node footer     | 24   |
-> 
-> F2fs-tools to support inline tail:
-> https://lore.kernel.org/linux-f2fs-devel/20240903075931.3339584-1-bo.wu@vivo.com
-> 
-> I tested inline tail by copying the source code of Linux 6.9.7. The storage
-> space was reduced by approximately 8%. Additionally, due to the reduced IO, the
-> copy time also reduced by around 10%.
-> 
-> This patch series has been tested with xfstests by running 'kvm-xfstests -c f2fs
-> -g quick' both with and without the patch; no regressions were observed.
-> The test result is:
-> f2fs/default: 583 tests, 6 failures, 213 skipped, 650 seconds
->    Failures: generic/050 generic/064 generic/250 generic/252 generic/563
->        generic/735
->        Totals: 607 tests, 213 skipped, 30 failures, 0 errors, 579s
+Add support for mdss and dpu driver on Qualcomm SA8775P platform.
 
-MKFS_OPTIONS  -- -O extra_attr,encrypt,inode_checksum,flexible_inline_xattr,inode_crtime,verity,compression -f /dev/vdc
-MOUNT_OPTIONS -- -o acl,user_xattr -o discard,inline_tail /dev/vdc /mnt/scratch_f2fs
+---
+This series depends on following series:
+https://lore.kernel.org/all/20240816-sa8775p-mm-v3-v1-0-77d53c3c0cef@quicinc.com/
+---
 
-Before:
-Failures: generic/042 generic/050 generic/250 generic/252 generic/270 generic/389 generic/563 generic/700 generic/735
-Failed 9 of 746 tests
+Mahadevan (5):
+  dt-bindings: display/msm: Document MDSS on SA8775P
+  dt-bindings: display/msm: Document the DPU for SA8775P
+  drm/msm: mdss: Add SA8775P support
+  drm/msm/dpu: Add SA8775P support
+  arm64: dts: qcom: sa8775p: add display dt nodes
 
-After:
-Failures: generic/042 generic/050 generic/125 generic/250 generic/252 generic/270 generic/389 generic/418 generic/551 generic/563 generic/700 generic/735
-Failed 12 of 746 tests
+ .../display/msm/qcom,sa8775p-dpu.yaml         | 120 +++++
+ .../display/msm/qcom,sa8775p-mdss.yaml        | 225 ++++++++
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi         |  85 +++
+ .../msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h   | 485 ++++++++++++++++++
+ .../gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c    |   3 +-
+ .../gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h    |   3 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c       |   3 +-
+ drivers/gpu/drm/msm/msm_mdss.c                |  10 +
+ 8 files changed, 931 insertions(+), 3 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/msm/qcom,sa8775p-dpu.yaml
+ create mode 100644 Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
+ create mode 100644 drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h
 
-Failures: f2fs/004
-
-Can you please check failed testcases?
-
-Thanks,
-
-> 
-> ---
-> v2:
-> - fix ARCH=arc build warning
-> 
-> ---
-> Wu Bo (13):
->    f2fs: add inline tail mount option
->    f2fs: add inline tail disk layout definition
->    f2fs: implement inline tail write & truncate
->    f2fs: implement inline tail read & fiemap
->    f2fs: set inline tail flag when create inode
->    f2fs: fix address info has been truncated
->    f2fs: support seek for inline tail
->    f2fs: convert inline tail when inode expand
->    f2fs: fix data loss during inline tail writing
->    f2fs: avoid inlining quota files
->    f2fs: fix inline tail data lost
->    f2fs: convert inline tails to avoid potential issues
->    f2fs: implement inline tail forward recovery
-> 
->   fs/f2fs/data.c     |  93 +++++++++++++++++++++++++-
->   fs/f2fs/f2fs.h     |  46 ++++++++++++-
->   fs/f2fs/file.c     |  85 +++++++++++++++++++++++-
->   fs/f2fs/inline.c   | 159 +++++++++++++++++++++++++++++++++++++++------
->   fs/f2fs/inode.c    |   6 ++
->   fs/f2fs/namei.c    |   3 +
->   fs/f2fs/node.c     |   6 +-
->   fs/f2fs/recovery.c |   9 ++-
->   fs/f2fs/super.c    |  25 +++++++
->   fs/f2fs/verity.c   |   4 ++
->   10 files changed, 409 insertions(+), 27 deletions(-)
-> 
-> 
-> base-commit: 67784a74e258a467225f0e68335df77acd67b7ab
+-- 
+2.34.1
 
 
