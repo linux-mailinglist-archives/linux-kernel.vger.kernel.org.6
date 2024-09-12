@@ -1,54 +1,48 @@
-Return-Path: <linux-kernel+bounces-326107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 197EE9762B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:29:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EAED9762B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9D3C1F24868
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:29:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E914A281A59
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA2518DF62;
-	Thu, 12 Sep 2024 07:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UbmHp4q5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15E418E04A;
+	Thu, 12 Sep 2024 07:30:02 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365A8126BFC;
-	Thu, 12 Sep 2024 07:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6E218E047
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726126183; cv=none; b=eP3+ngyyV+I2XOwnL++cO2AV4splJCDs+k8rhquMW21KusC2jEIz6qm4wMHjvIYRn6VtV++/9a2+GbMttIl1F1IYGf3Kl1gwJ9MFrP2Gvx62b5n+iMpcrhDfk81tkTqhZprY8/exZj5aDmzQzoUFST7Xym9JPlqBaPBcos/Re5U=
+	t=1726126202; cv=none; b=r8UMJAva7m++8+ibc3a2aqL+IOyD3pK9/jYbUrob7sAPiQ/b0qw+iHvRUQm9bBEjDgXgtT7WzWan0ghMO54zNeu/FjN3FtbAEO4hJK5slf7kH6BiovQ7E1visFbYPSxYlzs9Iowa5hzdN4huyGw03/bmgT/UoHW5e2SNIUpIBBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726126183; c=relaxed/simple;
-	bh=uVoySAa/5Xi8uQ8WEJx1H/S17eNfwgwkO5RN1y7SltA=;
+	s=arc-20240116; t=1726126202; c=relaxed/simple;
+	bh=EJTDZxvDTGO8aKCg3ypB07gV+yLhBoB+tl2vKjYOw4I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fXI1gS0HVSeb9yIHLlqff+7aJOkzVzmw5HqH13C6EeT1ARMU7PwG+xPrS0AgFtnf/YFWVcW1PXXw/MDjs3orMqxPF2c9VB2PPJCGZfHm39mTV+Vh/rJBkPJKXefOQTziH9sSVY9SARil8sq5L+eHGT6nSLI/lERp9r7udHezsrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UbmHp4q5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F4C1C4CEC3;
-	Thu, 12 Sep 2024 07:29:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726126182;
-	bh=uVoySAa/5Xi8uQ8WEJx1H/S17eNfwgwkO5RN1y7SltA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UbmHp4q5dKw9fxiuTCmhHT/b0QbyuKjde27+Q9UfoZjhhwSD+6scXxxJ0oFBs/CJN
-	 RVHYxv9NMea3dUIUfg4YK619c0D+MtmH/hYMZYN/GLAHOMs1zkBwHEtkaObV/hryPV
-	 JTGj21Xrpd3QoLoSSOyAGDwdSaFx9r4ll0lpahlrXAE91Of6GKqKhk8+V+ux5U2fAO
-	 YKjUe494jrRuLjOguw5cgvcTYkEh9vE+SQgA2JrdfrL0H5bdADKntAkAybPAqVjWDJ
-	 zGbN8jPXnZUSd5DnJuBogZlE7ru+xph29cflTAZAihVpiGbaGgyhI6qedeYY/JInoa
-	 k8hMOpZNBYbUg==
-Date: Thu, 12 Sep 2024 09:29:38 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jean Delvare <jdelvare@suse.com>
-Subject: Re: [PATCH v1 08/12] i2c: isch: Use read_poll_timeout()
-Message-ID: <pwvhzkxeniutopyxczvimkau3elchfy5x32cimlqwjnmqjzv42@zpojd2lxs3o4>
-References: <20240911154820.2846187-1-andriy.shevchenko@linux.intel.com>
- <20240911154820.2846187-9-andriy.shevchenko@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XBLcK9XUuyS2u2MZhkr7bHBa/5ZNdBV8y30tNw0MeNYAsK1T4CtbnBkDLkw7izRwFJFyjAG7Tu8zZNY566FD1qybgJVPeOEtSILdFmddN75afx7tzwqaoBSRmKrMr7Eayrk68opQNbnpGcTYg4+SbzrR4b6cc00GuPsU8D/WtY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 4B94E227AAF; Thu, 12 Sep 2024 09:29:55 +0200 (CEST)
+Date: Thu, 12 Sep 2024 09:29:54 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Leon Romanovsky <leonro@nvidia.com>, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>
+Subject: Re: [PATCH] dma-mapping: reliably inform about DMA support for
+ IOMMU
+Message-ID: <20240912072954.GC7614@lst.de>
+References: <7bbedc085ce87b121b9d0cb33eca8fba2fbdddbc.1726049194.git.leonro@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,55 +51,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240911154820.2846187-9-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <7bbedc085ce87b121b9d0cb33eca8fba2fbdddbc.1726049194.git.leonro@nvidia.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hi Andy,
+Thanks, I've applied this.  I do like the flow of dma_supported even
+less with the duplicate condition now.  Can I get a quick review for
+this incremental cleanup, please?
 
-...
+---
+From d311bfe189d12a836b4add55fdb946f37f8697fa Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch@lst.de>
+Date: Thu, 12 Sep 2024 09:21:18 +0200
+Subject: dma-mapping: reflow dma_supported
 
-> @@ -83,7 +80,6 @@ static int sch_transaction(struct i2c_adapter *adap)
->  	struct sch_i2c *priv = container_of(adap, struct sch_i2c, adapter);
->  	int temp;
->  	int result = 0;
-> -	int retries = 0;
->  
->  	dev_dbg(&adap->dev,
->  		"Transaction (pre): CNT=%02x, CMD=%02x, ADD=%02x, DAT0=%02x, DAT1=%02x\n",
-> @@ -112,15 +108,11 @@ static int sch_transaction(struct i2c_adapter *adap)
->  	temp |= 0x10;
->  	sch_io_wr8(priv, SMBHSTCNT, temp);
->  
-> -	do {
-> -		usleep_range(100, 200);
-> -		temp = sch_io_rd8(priv, SMBHSTSTS) & 0x0f;
-> -	} while ((temp & 0x08) && (retries++ < MAX_RETRIES));
-> -
-> +	result = read_poll_timeout(sch_io_rd8, temp, !(temp & 0x08), 200, 500000, true,
-> +				   priv, SMBHSTSTS);
->  	/* If the SMBus is still busy, we give up */
-> -	if (retries > MAX_RETRIES) {
-> +	if (result) {
->  		dev_err(&adap->dev, "SMBus Timeout!\n");
-> -		result = -ETIMEDOUT;
->  	} else if (temp & 0x04) {
->  		result = -EIO;
->  		dev_dbg(&adap->dev, "Bus collision! SMBus may be locked until next hard reset. (sorry!)\n");
-> @@ -130,7 +122,7 @@ static int sch_transaction(struct i2c_adapter *adap)
->  		dev_err(&adap->dev, "Error: no response!\n");
->  	} else if (temp & 0x01) {
->  		dev_dbg(&adap->dev, "Post complete!\n");
-> -		sch_io_wr8(priv, SMBHSTSTS, temp);
-> +		sch_io_wr8(priv, SMBHSTSTS, temp & 0x0f);
+dma_supported has become too much spaghetti for my taste.  Reflow it to
+remove the duplicate use_dma_iommu condition and make the main path more
+obvious.
 
-there is still a dev_dbg() using temp. To be on the safe side, do
-we want to do a "temp &= 0x0f" after the read_poll_timeout?
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ kernel/dma/mapping.c | 25 ++++++++++++++-----------
+ 1 file changed, 14 insertions(+), 11 deletions(-)
 
-Andi
+diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
+index 022d670f8cad29..cd2a97d362cd24 100644
+--- a/kernel/dma/mapping.c
++++ b/kernel/dma/mapping.c
+@@ -841,20 +841,23 @@ static int dma_supported(struct device *dev, u64 mask)
+ {
+ 	const struct dma_map_ops *ops = get_dma_ops(dev);
+ 
+-	if (WARN_ON(ops && use_dma_iommu(dev)))
+-		return false;
+-
+-	if (use_dma_iommu(dev))
++	if (use_dma_iommu(dev)) {
++		if (WARN_ON(ops))
++			return false;
+ 		return true;
++	}
++
+ 	/*
+-	 * ->dma_supported sets the bypass flag, so we must always call
+-	 * into the method here unless the device is truly direct mapped.
++	 * ->dma_supported sets and clears the bypass flag, so ignore it here
++	 * and always call into the method if there is one.
+ 	 */
+-	if (!ops)
+-		return dma_direct_supported(dev, mask);
+-	if (!ops->dma_supported)
+-		return 1;
+-	return ops->dma_supported(dev, mask);
++	if (ops) {
++		if (!ops->dma_supported)
++			return 1;
++		return ops->dma_supported(dev, mask);
++	}
++
++	return dma_direct_supported(dev, mask);
+ }
+ 
+ bool dma_pci_p2pdma_supported(struct device *dev)
+-- 
+2.45.2
 
->  		temp = sch_io_rd8(priv, SMBHSTSTS) & 0x07;
->  		if (temp & 0x06) {
->  			/* Completion clear failed */
-> -- 
-> 2.43.0.rc1.1336.g36b5255a03ac
-> 
 
