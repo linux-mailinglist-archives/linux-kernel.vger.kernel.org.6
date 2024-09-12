@@ -1,123 +1,137 @@
-Return-Path: <linux-kernel+bounces-326714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C762976C14
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:28:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F433976BA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:12:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 238B81F28A6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:28:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D8971F22E1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C5711AE87F;
-	Thu, 12 Sep 2024 14:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B431AD255;
+	Thu, 12 Sep 2024 14:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="J1GpqNWT"
-Received: from mail-m3286.qiye.163.com (mail-m3286.qiye.163.com [220.197.32.86])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D5mUpJ3O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB051B982F;
-	Thu, 12 Sep 2024 14:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D4581A76D7;
+	Thu, 12 Sep 2024 14:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726151288; cv=none; b=pehgkiWsFuDMcQHvHesNlD1BfslkLr4C3/LBS5txWVtfE26s+nYpqk+bQbCldDafDEGYqXJh4OS00p67hEEpcBoyBNJpDcEkvGAxx7r0aiOBBm/pCS3zayC2UoUuCyd73z9ed8kxX+kPHoI/vMmjlisVa+S833WDihEyPYv4i+8=
+	t=1726150352; cv=none; b=s0twI77Vy9Wb5yLZu+QCLc6BQ0YewfE9BMwDoQEAgO9FVDQ2Nh4qvIYHF91h9rCXPzBdIuKR9eq4iKnatFZ3AQ2YOxOtasCVgneobnWKRfqJ6HRkRTWJoeEiCzxt67T1DsYzYGXPfpvymJ+9pI5mRL+DGtA/vzoDwQL2/gEFv/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726151288; c=relaxed/simple;
-	bh=DK+v+22EZz5ENpKUfX/gHGhM6CYDYS3BQtQ/SGerRzc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Tnlt0U6kWUcDHmXjbc4Gvu/PyAL3hSrzGFZirLEIidyQF+JDPmVC0LMzhDC79q4oPDrUkLmAoumn6wjoXeMKVJxiUgo8Sxta4y6Z88kBP3JoQ8H4gKPzcbAfcQzh13taEeLyW0463z9I2Sxk0jbhf/0qZoshslkiKM+co3CE6sI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=J1GpqNWT; arc=none smtp.client-ip=220.197.32.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-DKIM-Signature: a=rsa-sha256;
-	b=J1GpqNWTuAOXyj1458CD0KpxFacY/JVRzOtQjyV2aGC8o5Hxz5r8GbN/h1NYIkvZpuxYVPj/xhQNI/uTxkr/EUSLq8Z6v8FaZ5isVRAi8iWDZtQq/XtmNJbgyRKXtoC6qFNSQN0aukYXpwXggt6FDWzOHt6u03u+SI4hNtlFpqs=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=Rifbf6LNchQUBXr5NiVt464i0aIKbw7yq2BirSFdw6g=;
-	h=date:mime-version:subject:message-id:from;
-Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 9D44F100348;
-	Thu, 12 Sep 2024 16:03:07 +0800 (CST)
-From: Damon Ding <damon.ding@rock-chips.com>
-To: heiko@sntech.de
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	macromorgan@hotmail.com,
-	jonas@kwiboo.se,
-	tim@feathertop.org,
-	knaerzche@gmail.com,
-	efectn@protonmail.com,
-	andyshrk@163.com,
-	jagan@edgeble.ai,
-	dsimic@manjaro.org,
-	megi@xff.cz,
-	sebastian.reichel@collabora.com,
-	alchark@gmail.com,
-	boris.brezillon@collabora.com,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Damon Ding <damon.ding@rock-chips.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH v4 1/2] dt-bindings: arm: rockchip: Add RK3588S EVB1 board
-Date: Thu, 12 Sep 2024 16:02:47 +0800
-Message-Id: <20240912080248.1133061-2-damon.ding@rock-chips.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240912080248.1133061-1-damon.ding@rock-chips.com>
-References: <20240912080248.1133061-1-damon.ding@rock-chips.com>
+	s=arc-20240116; t=1726150352; c=relaxed/simple;
+	bh=kqayeH9yAU6QmO2yJDv3m4IZj5gcg/omaai2guG9iog=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=hDC7recWJVcPJEUgFKkGk05a+3PaUOTYfvCwwIoGEZMqFQ/ylIRGqH8VAdWMQ+Qqawn8LgE741SGSAgOFaGHTdOWPU5lMR1vhrwFlFN+5MeQWAJCKXnwLlEjZM675L5FNKRuaNUm9eNptEoHaKit/GYyiZ2As2ESc8aYYWI45aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D5mUpJ3O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F218C4CEC3;
+	Thu, 12 Sep 2024 14:12:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726150350;
+	bh=kqayeH9yAU6QmO2yJDv3m4IZj5gcg/omaai2guG9iog=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=D5mUpJ3O1koF7JP47t4FWgVsCAm+0OjzbMXhK60BjQNyg/HSbhR/HjeFHf68N3gRx
+	 IFievAqRBQu+G+UT9XXLzrN4+jjP+zaWe5wrSzNPkfMMRDOQ3lrkFKip0a/yH/qj66
+	 GXh5ML58ydTnX/DpLlYqmxZVSCTvlFprCwZhwsHhWAWimj2RDd4HBG1l7riY3nc8fy
+	 /R3LdsbUG4FuIS0JsMK6lRolM6q8Xzc+NXfP4UOeVHJg+J1Nir1Ux5uIq9AJwM6X7a
+	 8dCWrFZZhXmcv7IawZyzYDfT9NCWfnn3IT+pcDfrpyhsuF610pkN1k7htfpOiDb3CX
+	 wUEPif5hjSgLw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUhITlZNHR1KTE9PTR1OSktWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-X-HM-Tid: 0a91e541ed5d03a7kunm9d44f100348
-X-HM-MType: 1
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Pyo6Pzo5DzI#Nyw9Qy8OMjoa
-	CDMKCgFVSlVKTElNSklDSkNCT0hNVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
-	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFIS0JLNwY+
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 12 Sep 2024 17:12:26 +0300
+Message-Id: <D44D89US0PW6.3HVNXUTP0CMFZ@kernel.org>
+Subject: Re: [PATCH v2] KEYS: prevent NULL pointer dereference in
+ find_asymmetric_key()
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Sergey Shtylyov" <s.shtylyov@omp.ru>, "Roman Smirnov"
+ <r.smirnov@omp.ru>, "David Howells" <dhowells@redhat.com>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
+ "Andrew Zaborowski" <andrew.zaborowski@intel.com>
+Cc: <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+X-Mailer: aerc 0.18.2
+References: <20240910111806.65945-1-r.smirnov@omp.ru>
+ <D42N9ASJJSUD.EG094MFWZA4Q@kernel.org>
+ <84d6b0fa-4948-fe58-c766-17f87c2a2dba@omp.ru>
+ <D43HG3PEBR4I.2INNPVZIT19ZZ@kernel.org>
+ <D43HH3XOAXFO.2MX7FA48VOLE9@kernel.org>
+ <85607ea7-a42a-1c7b-0722-e4b63a814385@omp.ru>
+In-Reply-To: <85607ea7-a42a-1c7b-0722-e4b63a814385@omp.ru>
 
-Add devicetree binding for the Rockchip RK3588S evaluation board.
+On Wed Sep 11, 2024 at 5:45 PM EEST, Sergey Shtylyov wrote:
+> On 9/11/24 4:19 PM, Jarkko Sakkinen wrote:
+>
+> [...]
+>
+> >>>>> In find_asymmetric_key(), if all NULLs are passed in id_{0,1,2} par=
+ameters
+> >>>>> the kernel will first emit WARN and then have an oops because id_2 =
+gets
+> >>>>> dereferenced anyway.
+> >>>>>
+> >>>>> Found by Linux Verification Center (linuxtesting.org) with Svace st=
+atic
+> >>>>> analysis tool.
+> >>>>
+> >>>> Weird, I recall that I've either sent a patch to address the same si=
+te
+> >>>> OR have commented a patch with similar reasoning. Well, it does not
+> >>>> matter, I think it this makes sense to me.
+> >>>>
+> >>>> You could further add to the motivation that given the panic_on_warn
+> >>>> kernel command-line parameter, it is for the best limit the scope an=
+d
+> >>>> use of the WARN-macro.
+> >>>
+> >>>    I don't understand what you mean -- this version of the patch keep=
+s
+> >>> the WARN_ON() call, it just moves that call, so that the duplicate id=
+_{0,1,2}
+> >>> checks are avoided...
+> >>
+> >> I overlooked the code change (my bad sorry). Here's a better version o=
+f
+> >> the first paragraph:
+> >>
+> >> "find_asymmetric_keys() has nullity checks of id_0 and id_1 but ignore=
+s
+> >> validation for id_2. Check nullity also for id_2."
+> >>
+> >> Yep, and it changes no situation with WARN_ON() macro for better or
+> >> worse. It would logically separate issue to discuss and address so
+> >> as far as I'm concerned, with this clarification I think the change
+> >> makes sense to me.
+> >=20
+> > Actually explicitly stating that call paths leading to WARN_ON()
+> > invocation are intact by the commit (as a reminder for future).
+>
+>    OK...
+>    Do you still think the Fixes tag should be dropped (and thus the
+> Reported-by tag would become unnecessary?)?
 
-RK3588S EVB1 board features:
-- Rockchip RK3588S
-- PMIC: RK806-2x2pcs+DiscretePower
-- RAM: LPDDR4/4x 2pcsx 32bit
-- ROM: eMMC5.1+ SPI Falsh
+Good question but I think we should keep them (spent 15 minutes thinking
+about this).
 
-Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
----
+It's a glitch at least and would not do harm for stable series to have
+it like that :-) So if you polish the message, send a new version I'll
+pick it, and put to my next PR.
 
-Changes in v4:
-- Add more detailed comments in commit message
+Thanks for the patience with this.
 
- Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+>
+> > BR, Jarkko
+>
+> MBR, Sergey
 
-diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
-index 1ef09fbfdfaf..4f6e24fcc765 100644
---- a/Documentation/devicetree/bindings/arm/rockchip.yaml
-+++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
-@@ -942,6 +942,11 @@ properties:
-           - const: rockchip,rk3588-evb1-v10
-           - const: rockchip,rk3588
- 
-+      - description: Rockchip RK3588S Evaluation board
-+        items:
-+          - const: rockchip,rk3588s-evb1-v10
-+          - const: rockchip,rk3588s
-+
-       - description: Rockchip RV1108 Evaluation board
-         items:
-           - const: rockchip,rv1108-evb
--- 
-2.34.1
-
+BR, Jarkko
 
