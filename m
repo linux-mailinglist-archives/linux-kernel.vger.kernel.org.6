@@ -1,215 +1,283 @@
-Return-Path: <linux-kernel+bounces-326942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43710976EDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:36:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89D26976ED9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:36:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00AC1285FA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:36:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AF10285389
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AB31BB6A2;
-	Thu, 12 Sep 2024 16:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B571B9847;
+	Thu, 12 Sep 2024 16:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E+UEPLww"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="x1ROdXH1"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2075.outbound.protection.outlook.com [40.107.220.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10FD81BA86F;
-	Thu, 12 Sep 2024 16:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726158977; cv=none; b=mWLrV9KXBYf/NEirHHTe2HlLUnhbP6y4KQxuaLDm769Y7/ZbuGlKfczsulocGr2Qzq8lrACgNLqFvKe57NgFig76xTh2ZmpwD67y2yTeluYcuSCcUgTdNwQucUfJI03kV6Yxn4tOX3pbx/ksqf6vaYdFiGGn6H/Y11OGkTliZoc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726158977; c=relaxed/simple;
-	bh=9ePkSUpvWLm8KN2FGW++zZeyNa08vsr64xdApCrFuGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=buz7YSyYJu8KpqBDM73Bkka0WJbYOWLZzgvbo7rE0CZNHRRSC0dm9GeIGCca1oijuxlB46SGTFdl6b5zy+b5jEIq8rv6a7Kqa/n/RTwGj2rvUSU1Tk5qbln3l76rnJFDwyDA0YvGBTk8SQh/bNiGG1PdsJ7SZ3kSFg/rhGVxXTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E+UEPLww; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726158975; x=1757694975;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9ePkSUpvWLm8KN2FGW++zZeyNa08vsr64xdApCrFuGw=;
-  b=E+UEPLwwsWcGXo/Vas9erV3gJHrkwvJ23JUEsp2aRwy964Ijz45TKVmA
-   EROCcWztlracy6qtHekglzLuc0GEaETuPah5C5c+nFwCkbBhn8lhQamtf
-   5ieF17jP/frc+L/PJ+/nGkvHDuxVbIJafjqOOYj4PgxPuOwz67kBupc28
-   qbWtdZHmCOT4BELKCBwV9NogilIsPJzsbPNO/tYPYwvJhqnAPmxPQdFeJ
-   6bQrM2h55GXQ0Z2kdpMGj/rMha3d+KLpu/awImOUy3bYIWVHHewS/1SLg
-   ffqneKqnDHc+fms8psXhffyPw5UuKT62TjWKrilu2kVQ2sjRauX+IiF5N
-   w==;
-X-CSE-ConnectionGUID: PekZynJ5QHiU3Adb9RRd3w==
-X-CSE-MsgGUID: T9dXhI5YS5KVE6b5r2qJ9A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="24564844"
-X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
-   d="scan'208";a="24564844"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 09:36:14 -0700
-X-CSE-ConnectionGUID: o353610kQkmQeqsxkNmmsQ==
-X-CSE-MsgGUID: XkwQ4q6hRvqUVoeEmgD4mg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
-   d="scan'208";a="68273802"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 12 Sep 2024 09:36:10 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1somng-0005TC-0v;
-	Thu, 12 Sep 2024 16:36:08 +0000
-Date: Fri, 13 Sep 2024 00:36:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Patryk Biel <pbiel7@gmail.com>, Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Patryk Biel <pbiel7@gmail.com>
-Subject: Re: [PATCH] hwmon: Conditionally clear individual status bits for
- pmbus rev >= 1.2
-Message-ID: <202409122210.audc5WGS-lkp@intel.com>
-References: <20240909-pmbus-status-reg-clearing-v1-1-f1c0d68c6408@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717341AD262;
+	Thu, 12 Sep 2024 16:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726158972; cv=fail; b=ZbFroVHkkL9Q6drzqw05mlsvosrH3Bg3xf3CUEuEh8gO0Yf7hGCuyAug91mMohs/Ngh0adSJ+vQlZTidL2wXnGcXAJcdq8wpJQfxoE/h727UtfHuLix219fEdxrIpfZr2oud6aJ+mHGzQdRJmuulDkSAx3v9ZOjb1crCdWfhXN4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726158972; c=relaxed/simple;
+	bh=Zq6PU9hACj3KBGbkm8qibNN4/1XzICfyAb9+UAMI8lo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=kV+gmlfgaCtIiznnORK7EhaujxTABaOm1JcbmgXYkPYY0NVzyLD0wU/ylF6JXJU1J44zMynE9/K0Zx///qzjEvzgSuIBaeQLXi7xzReiWMul6JsliyF9JX6WXoGeWnsolG9VDO97RP64Fs+Ut210H4tiHRKpAXwrZemv07KxP6o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=x1ROdXH1; arc=fail smtp.client-ip=40.107.220.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cH+kFncMimfhsMzYj0TfWC8Indn4mipqZ03UaPEx9fmwRQR9aQhZt3sOwE4jKquq7tjKNrFrO0wX4QNm+viJUkTM3rPMZbz+qKk39/G6/0I6O0i068ns9pq/MdQOZ/4/zJTQIsHdc+QUGtlYU6dFBmPacCK3NXsKtg3mdDvOQVNgKd/xoYHm+XmfFq553pRZq/HLINtLMVn8riCi9Ecai1nh243pbdPPyrHfT7yiBaESwqZOYHeTQ19ZCt0bRlFkFGLqfCnAJKOfFqeDqzDfhKhV9q2875+kLj0dsjr9oi0/a0dF6DmRAFAGcpGemO0HO0xM/QUgB4/nNo2otYvR5w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LgA7m0xByn/+LLF950yqNFSRGtedM7rBCP/zQSRSRVc=;
+ b=Zu0W6pK3bGiagiU/UEwPGcJ19ln+h9S9Dn3wq2ufSaYaki/Wj9DWZc4lRo88v5INb+ucxLzSVJn2BLAp2zjndGvNn9JzMr3XQD0LrFUqhOLCixLix2srOSX5QwuqjdRvgCJ/TOv+Nkh9hQGioHuUvqEMdqxqIp4+HdtRvqJQj5nD61KXr0En2MMCjqW5OHUo/M1Ugu1BJRxB1LZy+Kf2nmM5vZcfnps5UjfN84GkhJ2SQnDttTy+iFPFeqvB6cLC+dB3+sFFnxq2NeydMw/MpVUBm9Q8YiN8dGzl7jCqlnml6wM7oENhvQV8PQSkGvgECUp16FChxiIeQdxZN8YkqA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LgA7m0xByn/+LLF950yqNFSRGtedM7rBCP/zQSRSRVc=;
+ b=x1ROdXH1tE8Z8IOU9ot7T3jBT/4sZ0eXvFHNQlPUQPIAm3xSuuaPKFrkigzUizbH66zsA61LtXwe2aOLBM4PDUT3nK7nNS6F00aQpMGAqwdZcn3DWvPuwoDol0bCWfTURCEPkxOyqZ2iUuSsc1Tr0TOG6YN8l1MFYcGrbZUjsp25HIeiq6f/mWto8hQgCy6nbFTONtInr3AVzIZ4gdA4G21jDbBrZrI72I0INCvmqC0gfKHeFVlpxKsJw6U1BFCATRjNm9BA2R1N7Yq73H8Gmn5HXeWoc990TbHrsVHfe/8yNOtr7bJfgIgcnY+GNcevaePuGYJ9ZqixRhGkFVHxsQ==
+Received: from PH8PR11MB7965.namprd11.prod.outlook.com (2603:10b6:510:25c::13)
+ by PH8PR11MB8106.namprd11.prod.outlook.com (2603:10b6:510:255::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Thu, 12 Sep
+ 2024 16:36:07 +0000
+Received: from PH8PR11MB7965.namprd11.prod.outlook.com
+ ([fe80::ad6c:cf56:3c3d:4739]) by PH8PR11MB7965.namprd11.prod.outlook.com
+ ([fe80::ad6c:cf56:3c3d:4739%3]) with mapi id 15.20.7918.024; Thu, 12 Sep 2024
+ 16:36:07 +0000
+From: <Ronnie.Kunin@microchip.com>
+To: <andrew@lunn.ch>
+CC: <Raju.Lakkaraju@microchip.com>, <netdev@vger.kernel.org>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <Bryan.Whitehead@microchip.com>,
+	<UNGLinuxDriver@microchip.com>, <linux@armlinux.org.uk>,
+	<maxime.chevallier@bootlin.com>, <rdunlap@infradead.org>,
+	<Steen.Hegelund@microchip.com>, <Daniel.Machon@microchip.com>,
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net-next V2 1/5] net: lan743x: Add SFP support check flag
+Thread-Topic: [PATCH net-next V2 1/5] net: lan743x: Add SFP support check flag
+Thread-Index:
+ AQHbBGXGELjLauDUqEuTABaTIHCmgrJS0SWAgADgLwCAAIyPgIAACRTwgAAJYwCAAAOM4A==
+Date: Thu, 12 Sep 2024 16:36:07 +0000
+Message-ID:
+ <PH8PR11MB7965DD30A84DB845BEC4070E95642@PH8PR11MB7965.namprd11.prod.outlook.com>
+References: <20240911161054.4494-1-Raju.Lakkaraju@microchip.com>
+ <20240911161054.4494-2-Raju.Lakkaraju@microchip.com>
+ <a40de4e3-28a9-4628-960c-894b6c912229@lunn.ch>
+ <ZuKKMIz2OuL8UbgS@HYD-DK-UNGSW21.microchip.com>
+ <e5e4659c-a9e2-472b-957b-9eee80741ccf@lunn.ch>
+ <PH8PR11MB7965848234A8DF14466E49C095642@PH8PR11MB7965.namprd11.prod.outlook.com>
+ <ad0813aa-1a11-4a26-8bc7-528ef51cf0c2@lunn.ch>
+In-Reply-To: <ad0813aa-1a11-4a26-8bc7-528ef51cf0c2@lunn.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microchip.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH8PR11MB7965:EE_|PH8PR11MB8106:EE_
+x-ms-office365-filtering-correlation-id: c6a0a041-ad96-4163-f103-08dcd3490098
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB7965.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?5OVZV9IaVlL4f9lwbXNT15MS1WcVCermFPNfEOw1Jg0uebR7S0XS8SIDSDof?=
+ =?us-ascii?Q?0JHeRHWlllRgAJM8a/KQKI98jW3IakXk9fjr91A5caOrK0t5MDG+fiBNpH/U?=
+ =?us-ascii?Q?aFUcAWk5kTFbqJFX0LITKoUrc6B7dR901+XY0XmFugL+FjTOy2lIgStcfGlq?=
+ =?us-ascii?Q?Iw5OAlqEjIbEY1r4yiz1BzTrjafEZfMZcY5h6nuuyLWvZNoeRBCS/NN/xGvS?=
+ =?us-ascii?Q?BLTabNShmjCWEPMd65a0avx3CNFm1i8p/sm6gN32RQUYqfwzWau5gFpmZR25?=
+ =?us-ascii?Q?0CkVRY1LRVCOl7I/xP7olB8CrrPAiyBs5Xbiru5H4OnliXGMkl+uponw02Ls?=
+ =?us-ascii?Q?DMuYn1l1O0cmIKHGJ26TIo5ipJEc6dlAPJMgjIAeZzHrXfIePE7ZaEJDVpUv?=
+ =?us-ascii?Q?i7hkSxVtO8858ai4jmG7L3yKnXXqey1vbZ/Vd8KvKbZYOVa6TxYizjRihBFk?=
+ =?us-ascii?Q?hLPWRTZgfK20TqeekMxEtcsBue0sMd8PXcodcWCQrIeP7e2XQ88vcBCPzX67?=
+ =?us-ascii?Q?Htgf/TIR85T/4AKsMgYQubbPaHcwO+wJV7Lhv/F2lhPr78CJpJDKN/gGPZZs?=
+ =?us-ascii?Q?HUMe32YzoDfnSIUnizXlb4QTpm+xwHUJby+gXZjlK4b5ZPcvX2WA95OfL9ZN?=
+ =?us-ascii?Q?evSVh4OwhSCy9VzEN1ADqJ/Y5q/J2JYWNesM17NK4Sw8edwKDHjpk9hy8GCC?=
+ =?us-ascii?Q?zmxFjQVk3LzEFMWr1pd1SXDHqVn0baOISMNLDDFXoPOQpBKUcJlEt0nztaVy?=
+ =?us-ascii?Q?r2omWAdNBECCE3iHIjAj75YGY6c1Wb+luo959fuvPL1EtvmATnJF3R7bES5x?=
+ =?us-ascii?Q?tqqKBQLdh+yi1WR0l4lU/Bx9q7uWnII3x04kkQPq6Hv3q/Dn0T5V3kTsQtPy?=
+ =?us-ascii?Q?MX5SbkszGMO6ZYuJnqL5VQNxpf/o1iCm/G4rWaiF/k6QLXI4iVCqnJviGKxv?=
+ =?us-ascii?Q?xLEH9auDgIulTEYS0y0qP1v53YgRSl1629D9UVjWo5ARckDmb/v6kI8tNdcu?=
+ =?us-ascii?Q?KGd5zxugmRBI/qU/eAGfXntRA7cd5SPFX4LyUhM3xH4CKVoS7wVVTID9oLW3?=
+ =?us-ascii?Q?LtkjaUzRoq1qorIjcwTxd2Lj06b+ZpMhqtzJurXO3Nk8v6+qbtZ66BAsLY5h?=
+ =?us-ascii?Q?tPVSi5QrwO7E/joAg06GxfdN0lyIINVrm3nq8cWgx41QDYByVzfTFXf0aBxr?=
+ =?us-ascii?Q?9LkTNpfB7MH4ubHI0S5R8vy4TiLxUUL4sqP+Gj82pzH9nZOi24xZ5MSr70+i?=
+ =?us-ascii?Q?mlHVQY2MpYJYOWHgQIX6lVWRsumP52/qaZi9+BlNZ/XB/nxPKAt66jzfW8vh?=
+ =?us-ascii?Q?PTpsLXxCHk1m8ralw4MvLM9rqgoz2Ia0Ddtu0fS8m5Eax+RvRXID8jV+Zc1T?=
+ =?us-ascii?Q?4zGWRH/a4J+b6p+EkB9fr0+Jo03n6uV1FGjf3UOFMrdcGvpNhw=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?EsisSVwvxA/B8GdmcY+B79axpSkOo4QcTV+GgIG7SZk+dc2pRpfNaUsV4U+B?=
+ =?us-ascii?Q?an8nMpHI0HrhX/zxk4UP1aFZ2A4vB1nptbd9eihj88a3lGshmPVVlg2zUcbn?=
+ =?us-ascii?Q?ZAroGA48BkmL7piF+gLTnKC1LFlnc3kdME3LHMDftaxJQpV+OczzHvqedDBA?=
+ =?us-ascii?Q?m05VziYcix3jL6HuzHRO/upJZkx0FLBQ689Rok/jcm859M63TxicW999Z3qt?=
+ =?us-ascii?Q?Xjk52NVakG/F+yodH+z4DIzNVg5Z88FCvUS2WY5fTYHkaA91TJlDlaklsADt?=
+ =?us-ascii?Q?CEsjc9izaK47UTMQBkOfn3bJFDNdI7iG7mWw8FLCjfP7KWN58Rqu4UTj/HvJ?=
+ =?us-ascii?Q?tJriCdjRwm+fqZD1YsUwbf/uDacedx5DKg/gQ0AkC6sY52KifwxasFjSQwer?=
+ =?us-ascii?Q?w4cJxZ0nNYYNq2NQ/FR31fKld03EAoWqb5IcSJOHMwoO999NOuq4/s1+jMPf?=
+ =?us-ascii?Q?pl8TY+jOlblnkcWtjSqpfcpT3paCZiZC1sIw18HWnK74L7MEaQ9rk2A0UJFY?=
+ =?us-ascii?Q?ga0xMpIfHv+naGNXdv4nl8oZNH6GwF4QQ39Whd588hAMVcBVWzvOETJPJs3D?=
+ =?us-ascii?Q?LbK1XuIKHhhgGll+AODv7tsd3EKO2H6vzPPWmjjQ4vZ+u45SmeID4B18yKOm?=
+ =?us-ascii?Q?x96LEVy7PYDkbaEYr5WNE0RUIb1WwEeo+MVs48S7peHGAB42BvdvqfFoIFTV?=
+ =?us-ascii?Q?BWeJ4zu5m7QG47F7skbUWnIdjp99ASYgAE7keRGuS/LLNhVZPNkiIJoR6xbt?=
+ =?us-ascii?Q?U5aFVkYK4HjqxkAOwtgTZNXi5Ba9ZGHB/CB2GTPSXco+w6rHtBBYVgzIBuei?=
+ =?us-ascii?Q?WnHzjmc//aQtLldEvuSq76vLZlg31Je0VerYZT08xgDm+FOsG9vkxBW/ZlxR?=
+ =?us-ascii?Q?K8LX/Ma6rF341mUHsag1BGnAOs4opgKX8J5Ki13DFKPR6uAFY+VAbcQ8H+dH?=
+ =?us-ascii?Q?CB7bsQkfWTJvWP3znTXOxj16rHndvIY4c7z7K5JhxRFPEU8JeFXLKCDO5hKy?=
+ =?us-ascii?Q?Mzas9RTpkDZTaEk7D3NPsyz6AGkxoBwLLHxaP14sVxN2ePrjbysxNc7ieI2C?=
+ =?us-ascii?Q?+c2lv2WgfVE8CkU9AzgpS9xRCpHKjEcuFtwxikYYb1kEHXuot7pZD0CzarYV?=
+ =?us-ascii?Q?D5/LPYHAxZ0Cp2D9e3iCeywoWDjijGtn3VUsoY0EJ0+FWDOwXdufWnRai+KF?=
+ =?us-ascii?Q?uXLTsVn4lLZyiyQy3DZGNQbGFeL0Kl59GKsrpksce10inQf8LFptbR5SkmZ4?=
+ =?us-ascii?Q?PCJYgRMJ6lyItxDOxaWBcnQsLsiRGpo21B/v3762vfjjtIobuSQ6qKN26Cy1?=
+ =?us-ascii?Q?3xo8z3N4yzcXdAs4WdUmQ68purEGokoOJZadp8xNz0mEfB6ztdaWsJq0j8Qb?=
+ =?us-ascii?Q?r8riYfSrbwQtw6N8rScbZWPuaVyw4LPmEd4hQXI/Wbh+mSOH3wzruOAMOa0W?=
+ =?us-ascii?Q?+rLauuDj3jlPPvrkCG0azs2qjfsguok/pkuSPTlKUni793QpKpi4EpXZFNv8?=
+ =?us-ascii?Q?Ap+/ZLtaGQlP08YOEcJogHE20snz7F+0iZyodROta8paUTfSqKCpmB1GH81R?=
+ =?us-ascii?Q?3I3id/ZyKBs8IFnETILH7hxB8IkH+D7MX5YlSoeN?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240909-pmbus-status-reg-clearing-v1-1-f1c0d68c6408@gmail.com>
-
-Hi Patryk,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on c763c43396883456ef57e5e78b64d3c259c4babc]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Patryk-Biel/hwmon-Conditionally-clear-individual-status-bits-for-pmbus-rev-1-2/20240909-173838
-base:   c763c43396883456ef57e5e78b64d3c259c4babc
-patch link:    https://lore.kernel.org/r/20240909-pmbus-status-reg-clearing-v1-1-f1c0d68c6408%40gmail.com
-patch subject: [PATCH] hwmon: Conditionally clear individual status bits for pmbus rev >= 1.2
-config: x86_64-rhel-8.3-rust (https://download.01.org/0day-ci/archive/20240912/202409122210.audc5WGS-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240912/202409122210.audc5WGS-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409122210.audc5WGS-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/hwmon/pmbus/pmbus_core.c:1100:7: warning: variable 'ret' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-    1100 |                 if (data->revision >= PMBUS_REV_12)
-         |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/hwmon/pmbus/pmbus_core.c:1105:7: note: uninitialized use occurs here
-    1105 |                 if (ret)
-         |                     ^~~
-   drivers/hwmon/pmbus/pmbus_core.c:1100:3: note: remove the 'if' if its condition is always true
-    1100 |                 if (data->revision >= PMBUS_REV_12)
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    1101 |                         ret = _pmbus_write_byte_data(client, page, reg, regval);
-         |                                                                                ~
-    1102 |                 else
-         |                 ~~~~
-    1103 |                         pmbus_clear_fault_page(client, page);
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/hwmon/pmbus/pmbus_core.c:1083:9: note: initialize the variable 'ret' to silence this warning
-    1083 |         int ret, status;
-         |                ^
-         |                 = 0
-   1 warning generated.
+X-OriginatorOrg: microchip.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB7965.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6a0a041-ad96-4163-f103-08dcd3490098
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Sep 2024 16:36:07.5715
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jXN2r+My7rHh36EZjomyNDrknvcuqIKVRWgOkK/BWprr6psBUyGR2CyIAyAzYlmugFLwC3fzC0RLdRhr+D0hqsZ1AjTTkaqmRZdDGuegyTg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB8106
 
 
-vim +1100 drivers/hwmon/pmbus/pmbus_core.c
 
-  1050	
-  1051	/*
-  1052	 * Return boolean calculated from converted data.
-  1053	 * <index> defines a status register index and mask.
-  1054	 * The mask is in the lower 8 bits, the register index is in bits 8..23.
-  1055	 *
-  1056	 * The associated pmbus_boolean structure contains optional pointers to two
-  1057	 * sensor attributes. If specified, those attributes are compared against each
-  1058	 * other to determine if a limit has been exceeded.
-  1059	 *
-  1060	 * If the sensor attribute pointers are NULL, the function returns true if
-  1061	 * (status[reg] & mask) is true.
-  1062	 *
-  1063	 * If sensor attribute pointers are provided, a comparison against a specified
-  1064	 * limit has to be performed to determine the boolean result.
-  1065	 * In this case, the function returns true if v1 >= v2 (where v1 and v2 are
-  1066	 * sensor values referenced by sensor attribute pointers s1 and s2).
-  1067	 *
-  1068	 * To determine if an object exceeds upper limits, specify <s1,s2> = <v,limit>.
-  1069	 * To determine if an object exceeds lower limits, specify <s1,s2> = <limit,v>.
-  1070	 *
-  1071	 * If a negative value is stored in any of the referenced registers, this value
-  1072	 * reflects an error code which will be returned.
-  1073	 */
-  1074	static int pmbus_get_boolean(struct i2c_client *client, struct pmbus_boolean *b,
-  1075				     int index)
-  1076	{
-  1077		struct pmbus_data *data = i2c_get_clientdata(client);
-  1078		struct pmbus_sensor *s1 = b->s1;
-  1079		struct pmbus_sensor *s2 = b->s2;
-  1080		u16 mask = pb_index_to_mask(index);
-  1081		u8 page = pb_index_to_page(index);
-  1082		u16 reg = pb_index_to_reg(index);
-  1083		int ret, status;
-  1084		u16 regval;
-  1085	
-  1086		mutex_lock(&data->update_lock);
-  1087		status = pmbus_get_status(client, page, reg);
-  1088		if (status < 0) {
-  1089			ret = status;
-  1090			goto unlock;
-  1091		}
-  1092	
-  1093		if (s1)
-  1094			pmbus_update_sensor_data(client, s1);
-  1095		if (s2)
-  1096			pmbus_update_sensor_data(client, s2);
-  1097	
-  1098		regval = status & mask;
-  1099		if (regval) {
-> 1100			if (data->revision >= PMBUS_REV_12)
-  1101				ret = _pmbus_write_byte_data(client, page, reg, regval);
-  1102			else
-  1103				pmbus_clear_fault_page(client, page);
-  1104	
-  1105			if (ret)
-  1106				goto unlock;
-  1107		}
-  1108		if (s1 && s2) {
-  1109			s64 v1, v2;
-  1110	
-  1111			if (s1->data < 0) {
-  1112				ret = s1->data;
-  1113				goto unlock;
-  1114			}
-  1115			if (s2->data < 0) {
-  1116				ret = s2->data;
-  1117				goto unlock;
-  1118			}
-  1119	
-  1120			v1 = pmbus_reg2data(data, s1);
-  1121			v2 = pmbus_reg2data(data, s2);
-  1122			ret = !!(regval && v1 >= v2);
-  1123		} else {
-  1124			ret = !!regval;
-  1125		}
-  1126	unlock:
-  1127		mutex_unlock(&data->update_lock);
-  1128		return ret;
-  1129	}
-  1130	
+> -----Original Message-----
+> From: Andrew Lunn <andrew@lunn.ch>
+> Sent: Thursday, September 12, 2024 11:58 AM
+> To: Ronnie Kunin - C21729 <Ronnie.Kunin@microchip.com>
+> Cc: Raju Lakkaraju - I30499 <Raju.Lakkaraju@microchip.com>; netdev@vger.k=
+ernel.org;
+> davem@davemloft.net; edumazet@google.com; kuba@kernel.org; pabeni@redhat.=
+com; Bryan
+> Whitehead - C21958 <Bryan.Whitehead@microchip.com>; UNGLinuxDriver
+> <UNGLinuxDriver@microchip.com>; linux@armlinux.org.uk; maxime.chevallier@=
+bootlin.com;
+> rdunlap@infradead.org; Steen Hegelund - M31857 <Steen.Hegelund@microchip.=
+com>; Daniel Machon -
+> M70577 <Daniel.Machon@microchip.com>; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH net-next V2 1/5] net: lan743x: Add SFP support check =
+flag
+>=20
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know th=
+e content is safe
+>=20
+> > > > > > +     if (adapter->is_pci11x1x && !adapter->is_sgmii_en &&
+> > > > > > +         adapter->is_sfp_support_en) {
+> > > > > > +             netif_err(adapter, drv, adapter->netdev,
+> > > > > > +                       "Invalid eeprom cfg: sfp enabled with s=
+gmii disabled");
+> > > > > > +             return -EINVAL;
+> > > > >
+> > > > > is_sgmii_en actually means PCS? An SFP might need 1000BaseX or
+> > > > > SGMII,
+> > > >
+> > > > No, not really.
+> > > > The PCI11010/PCI1414 chip can support either an RGMII interface or
+> > > > an SGMII/1000Base-X/2500Base-X interface.
+> > >
+> > > A generic name for SGMII/1000Base-X/2500Base-X would be PCS, or
+> > > maybe SERDES. To me, is_sgmii_en means SGMII is enabled, but in fact
+> > > it actually means SGMII/1000Base-X/2500Base-X is enabled. I just thin=
+k this is badly named. It would
+> be more understandable if it was is_pcs_en.
+> > >
+> > > > According to the datasheet,
+> > > > the "Strap Register (STRAP)" bit 6 is described as "SGMII_EN_STRAP"
+> > > > Therefore, the flag is named "is_sgmii_en".
+> > >
+> > > Just because the datasheet uses a bad name does not mean the driver h=
+as to also use it.
+> > >
+> > >         Andrew
+> >
+> > The hardware architect, who is a very bright guy (it's not me :-), just=
+ called the strap SGMII_EN in order
+> not to make the name too long and to contrast it with the opposite polari=
+ty of the bit which means the
+> interface is set to RGMII; but in the description of the strap he clearly=
+ stated what it is:
+> >       SGMII_EN_STRAP
+> >       0 =3D RGMII
+> >       1 =3D SGMII / 1000/2500BASE-X
+> >
+> > I don't think PCS or Serdes (both of which get used in other technologi=
+es - some of which are also
+> included in this chip and are therefore bound to create even more confusi=
+on if used) are good choices
+> either.
+>=20
+> SERDES i understand, PCI itself is a SERDES. But what are the other uses =
+of PCS? At least in the context of
+> networking, PCS is reasonably well understood.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Here's one example: the LAN743x device, which this driver also services, do=
+es not support either SGMII or BASEX. It only supports RGMII, but it does h=
+ave an internal PHY and its MMDs at address 3 controls the Ethernet PCS.=20
+
+>=20
+> > That being said, if it makes it more we can certainly call this flag "i=
+s_sgmii_basex_en". How's that
+> sound ?
+>=20
+> Better. But i still think PCS is better.
+>=20
+> But you need to look at the wider context:
+>=20
+> > > > > > +                       "Invalid eeprom cfg: sfp enabled with
+> > > > > > + sgmii disabled");
+>=20
+> SGMII is wrong here as well. You could flip it around:
+>=20
+> > > > > > +                       "Invalid eeprom cfg: sfp enabled with
+> > > > > > + RGMII");
+
+Agreed. There are some other debug/err messages that were not clear that I =
+also suggested Raju to change and he will submit in the next version of thi=
+s the patch series.
+
+>=20
+> In terms of reviewing this code, i have to ask myself the question, does =
+it really mean SGMII when it says
+> SGMII? When you are talking about Base-T, i don't know of any 1000BaseX P=
+HYs, so you can be sloppy
+> with the term SGMII. But as soon as SFPs come into the mix, SGMII vs 1000=
+BaseX becomes important, so
+> you want the code to really mean SGMII when it says SGMII.
+
+That's fine. But the particular strap (and that is what that flag tracks) y=
+ou are talking about needs to be set for either SGMII or BASEX. Whatever el=
+se may need to be handled differently is taken care (I guess within the Lin=
+ux framework)  when the phylink interface (PHY_INTERFACE_MODE_*) ends up fl=
+ipping=20
+
+>=20
+>      Andrew
 
