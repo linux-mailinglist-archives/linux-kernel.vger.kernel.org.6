@@ -1,115 +1,109 @@
-Return-Path: <linux-kernel+bounces-326902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A347976E4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:59:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8B15976E51
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:59:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53226284F8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:59:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 518DBB22A78
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 626D61BB69C;
-	Thu, 12 Sep 2024 15:59:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E721BAEFB;
+	Thu, 12 Sep 2024 15:59:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U16/QnKW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bH94ytom"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F6D1B9831
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF121B9B46;
+	Thu, 12 Sep 2024 15:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726156739; cv=none; b=Sc8tipgfZwqaf+5l6IUjc3B919lLaPEDC3vCVxnD5CqgorI9yIa4RiiMgMVv+e4XUPeU1B/RrCWDaEA98JzMUwi990xbVaS+T8O0s6lfkkm++o9yEHZrYKFXLclu7cN3VJ405w94RUhmabRL2M7jFSYDmWki3Pso3LSk530+5PY=
+	t=1726156789; cv=none; b=OB4fCbN4Cwg+aC0lG1C0Xacz9hdU0x+1gw6AF4F7pRhbrM09EFnRIr9M9uTqYwsr/8QzZB6ltaPaMoKmo14+8tunn7oCAUSl4rTefAV2Zwxdmr8YQxv1M+JqNwFoV7ms5zf+vy4zoV/sayoIHBf6r0cn0Fa5MZmnAYDyZEdVCvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726156739; c=relaxed/simple;
-	bh=2Ah+UB8jWbF2jpIVo3QtWSvjzROR0a+owJiVel0AMQs=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=rlujuWQF18JoAMUcyVLwfyCNJlgVZNuSORdKO7P2qeb47FBuxpAD1D/PBt81r/PrUls7kYYTt/CtINyecEO6lS/U7SeakxP+bNmZhwj3CWjrMiBytOlUljmYi/mBlUgIrBr/8mnfA38144BPlBbyw8iBQ4jwvNcTQlHgt2NUZxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U16/QnKW; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726156736;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=YL60uZXjVMA/Ai1HS+Y5Ta5iPB8j6En/OIngcfUhpNs=;
-	b=U16/QnKW6yEh6xKM+Sv8yP+XbIZZA0jBYBrqAxzAtLVqmxT2z4D3BT3tA+SF0jEoGXxcHK
-	J3g53C/4O60nb0V0tPe8Zl046xOM+DoXvQknga2BrK6aUHAk7jY/7QpEapyJWrg76wxO2w
-	Vvc3OiuuxngRsAnye7PUsVGccN4uycg=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-10-Hx4GskIqONK8Mkk5DvRy9g-1; Thu,
- 12 Sep 2024 11:58:53 -0400
-X-MC-Unique: Hx4GskIqONK8Mkk5DvRy9g-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0FF0B194510D;
-	Thu, 12 Sep 2024 15:58:52 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.67])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 98C241956052;
-	Thu, 12 Sep 2024 15:58:49 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Steve French <sfrench@samba.org>
-cc: dhowells@redhat.com, Paulo Alcantara <pc@manguebit.com>,
-    Shyam Prasad N <nspmangalore@gmail.com>,
-    Rohith Surabattula <rohiths.msft@gmail.com>,
-    Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] cifs: Fix signature miscalculation
+	s=arc-20240116; t=1726156789; c=relaxed/simple;
+	bh=10XQZp334ICfGIzjTHfIhZ69Z8yK42Sp65d2sy226x8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hAqDAfCkkLAxG/M1Pkc7kSExmhKfZu0jFVtxutYMccPQ5h1lIHNm6nZUCs+kSTHZQ6qmevOwNubKpmU2Qzn3xgOSn0XnQtDnBFkCi7CGXoJhYadyolMvxYgwJz/0l1sUxuS/E/rcSNdOxmrVomuCUTQIYN/v0fbtM4h0N5s7CnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bH94ytom; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B5B3C4CEC5;
+	Thu, 12 Sep 2024 15:59:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726156789;
+	bh=10XQZp334ICfGIzjTHfIhZ69Z8yK42Sp65d2sy226x8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bH94ytomvyNQnybKtJYaHhAVZKfX0VxSX4I7s45aEdiBRi8C2/4EBdNAC4V+PPoxt
+	 Ot54cTYJvx9l+Tx9SjtHr/25AgzWKD9ci83JM08JZVv0wW/kT7WgdxHD3NwJchMiqk
+	 7NXlDbuwY7MbS3O4yQRzXOyeyRnqOB8Kag6BZyfoAkMYoUg+k5zDCENKG20RmDZfjS
+	 5CrL2q4wmATMY9dDR9I6PnlIYwvItNiCIH18hvgTya5gnTFIXBk4EnpUfNGmvKCVoT
+	 ugJaUI2yAyEDsj0bj/OVjWpi0HYwPvC89TF9bfWVQKv/8MLe5XrEOxsJsSfoqO11jj
+	 FT4L8f6PiamwA==
+Date: Thu, 12 Sep 2024 16:59:44 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Fuad Tabba <tabba@google.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] KVM: arm64: Fix confusion in documentation for pKVM
+ SME assert
+Message-ID: <3e5253f2-ea69-4ae4-833c-0627b410e815@sirena.org.uk>
+References: <20240730-kvm-arm64-sme-assert-v3-1-8699454e5cb8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1197026.1726156728.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 12 Sep 2024 16:58:48 +0100
-Message-ID: <1197027.1726156728@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="+zXfBMQstQ6Z1UEz"
+Content-Disposition: inline
+In-Reply-To: <20240730-kvm-arm64-sme-assert-v3-1-8699454e5cb8@kernel.org>
+X-Cookie: Happiness is the greatest good.
 
-    =
 
-Fix the calculation of packet signatures by adding the offset into a page
-in the read or write data payload when hashing the pages from it.
+--+zXfBMQstQ6Z1UEz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Fixes: 39bc58203f04 ("cifs: Add a function to Hash the contents of an iter=
-ator")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Steve French <sfrench@samba.org>
-cc: Paulo Alcantara <pc@manguebit.com>
-cc: Shyam Prasad N <nspmangalore@gmail.com>
-cc: Rohith Surabattula <rohiths.msft@gmail.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: linux-cifs@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
----
- fs/smb/client/cifsencrypt.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, Jul 30, 2024 at 02:33:03PM +0100, Mark Brown wrote:
+> As raised in the review comments for the original patch the assert and
+> comment added in afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are
+> disabled in protected mode") are bogus. The comments says that we check
+> that we do not have SME enabled for a pKVM guest but the assert actually
+> checks to see if the host has anything set in SVCR which is unrelated to
+> the guest features or state, regardless of if those guests are protected
+> or not. This check is also made in the hypervisor, it will refuse to run
+> a guest if the check fails, so it appears that the assert here is
+> intended to improve diagnostics.
 
-diff --git a/fs/smb/client/cifsencrypt.c b/fs/smb/client/cifsencrypt.c
-index 6322f0f68a17..b0473c2567fe 100644
---- a/fs/smb/client/cifsencrypt.c
-+++ b/fs/smb/client/cifsencrypt.c
-@@ -129,7 +129,7 @@ static ssize_t cifs_shash_xarray(const struct iov_iter=
- *iter, ssize_t maxsize,
- 			for (j =3D foffset / PAGE_SIZE; j < npages; j++) {
- 				len =3D min_t(size_t, maxsize, PAGE_SIZE - offset);
- 				p =3D kmap_local_page(folio_page(folio, j));
--				ret =3D crypto_shash_update(shash, p, len);
-+				ret =3D crypto_shash_update(shash, p + offset, len);
- 				kunmap_local(p);
- 				if (ret < 0)
- 					return ret;
+This hasn't had any feedback for a whole release cycle - are there any
+issues with the patch?
 
+> Fixes: afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are disabled in protected mode")
+> Reviewed-by: Fuad Tabba <tabba@google.com>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+
+Faud reviewed it during the prior cycle.
+
+--+zXfBMQstQ6Z1UEz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbjD+8ACgkQJNaLcl1U
+h9Bb3gf+MQZdJ0f4YsuOTSEO/+jdqHESFHKG/LBJhBkskYCnDDu5xzs5v/ICLZ+y
+nXlhI6KR34Jux8pGsfe1N8qZhUCdLrFjchv58/T3aRv3wtJMb70E57fHn45LSIdI
+spn3yJ9Pifjb4fhEj5S7vNvIAoLzPiBeC9WbQ5lc4yYk5UjB4p2ve4kDRplzMRKQ
+ytfxfdGRSBvUB/61JOb4RCqET7oM03KLOSKE+LWh9gxpPT6j+40YUoVih/WCeXK9
+s50hKPdifEK77Nm0Au1huDadMixBYj88veZxXSovvFx+k7IBvVrD+aevVyzprp7J
+jfQwupRHjunFgAU1CQHorZZxmgqUPQ==
+=hzB6
+-----END PGP SIGNATURE-----
+
+--+zXfBMQstQ6Z1UEz--
 
