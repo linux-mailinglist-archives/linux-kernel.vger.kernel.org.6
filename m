@@ -1,261 +1,169 @@
-Return-Path: <linux-kernel+bounces-326608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D555976AB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:33:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC11D976AB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:33:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02ED01F24D97
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:33:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF0601C239FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9ED1A262F;
-	Thu, 12 Sep 2024 13:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B483419F42E;
+	Thu, 12 Sep 2024 13:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="A4RXjX5q"
-Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kVRR7k8v"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D8019F42E
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6841A4E84
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726147980; cv=none; b=nehflbY0JYIDA3DkoF8ef2zmu08KAACGUn0Bzmn3GX13LU17pF0ya2mBj4zxYM0Purcq9kU6HqX2Ecb5X7/eUu+IdNFqjJ5S02qlDB8orVa03pwYnQfGnQKj92IIjSf8mPr6WHPaHD572rgDKWZ/79USmOmB31kX0lV70RMkH9g=
+	t=1726147989; cv=none; b=mGYjzBJlXCCZALcnMVhe3WOjtWgrG43Taa2DIGISbukyRFmW1lBJWZuoSAPAcL3c+p8TfX3XR57QQqeGRXOZDhF+TmkbiQq/gq8P4Eaw3L7lHxAONtysepx1NaGSmM3WUMg2bQjPJ8Jzx/76M3aeBANuikKZdC6hUTOTkR9wuv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726147980; c=relaxed/simple;
-	bh=y4JXK2nQ+yYVmIJ0dkBzHHepqbMO63NpftfrisvUxuI=;
+	s=arc-20240116; t=1726147989; c=relaxed/simple;
+	bh=CPeu07DxP3wbB3dMsGK7rsRNYxCKorSGumHxlY94PXE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P1B+QzJlS2zrGFFfGOoV06ntaVtBKsbDmQtVCE6FRvpS50BC9S3in90k1gyllvHc079elHhCUOQsPTaT3ti1mcgVUNb7X/W/geZ3ifwtQkswqfuSfcKMuEhQRx4k2WX3nayy4vdjbwz+ZZoe5cKL9AHyzZkzndMLivXoQ0BDThk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=A4RXjX5q; arc=none smtp.client-ip=209.85.210.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
-Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-718da0821cbso742294b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 06:32:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1726147978; x=1726752778; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mSCLXgKSR/O6qPpMsarYrPyYwmGaU1cMe+1bP08dBzY=;
-        b=A4RXjX5qHHTYU0yfMFtHtU0/aV0MER28weS4K983LJmrOhYkJaEalq8WfD2SB1UGEn
-         6rzyod7i552ZiAb0cFiP92rz+pX8NWlTrsYdHC7dtCRQrPAZgEPExJvm9u8ttERd1h+g
-         LyEerUKZRj2jX2cOT8t1GrcKrKtBcjMcnBsbVjfZh375RtPq/Yday5S/4270X6Yo9uvV
-         9EP21JkAhU7/qRD6KwOpouTnbrl03irMnvRUhnGwFiIha/NurWyeW+wC4cogYzfefq6B
-         6ebdKGdRcYBroOSE3O/mrsBC0Az8gQ3/hyIGAmVwe7J8SGb+OtKf02D1xzJ9Sg5qZxS0
-         6BMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726147978; x=1726752778;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mSCLXgKSR/O6qPpMsarYrPyYwmGaU1cMe+1bP08dBzY=;
-        b=JDE/aaW+nu0wxYUL+Ir9CA+Ym5BpFU97oZ+5DkMT+jvmn3jqkvF14Tr6RGb4im2Kp9
-         Hm1oD1YdvkBQ6aPu0rKCBt5wxYJBqp8YnIPhM/t2Clsp/p4BN0wilDpKrjMYppzdU69s
-         PsPYGM1k3HjtuAqhFsB8U3fumOXvv75jGWIpqu8gP+FF1OBUS2c7Q9APSmIuN4fkypkL
-         wTIoRKDkvAiAV8kNL7WsS76JzqQ2dCmZ6JGGHascrvkwAk5+1U6wRGqw3z+WwlhKH8Tv
-         vDRpH+QLsTjSS9QJ9vL/vHW9Xd0DcukfymLtLFavr6ONHA9JoPK0Q6MJezZSBi6vxfL1
-         fvjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV5I80EenxW8QEzuYqgbvuMr3bSOn72Soj1X+J/PDBKlBpOvMfpAJng4fNkn0MLzot8+QzIipajz/i2pqw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEtCQppQaTXpGCxY4ClJ0Ib8+3Ko9u/d7isp2OtED8Oap2USx3
-	P8VjpOZgoxst6iHV8/i7++LFRwVhSaUb2W1nK7yvAuynW7QURDrOV57e64B0Qg==
-X-Google-Smtp-Source: AGHT+IHPBYH3dxSRY7Ys4valC9Nf6OkNReNcuKNFDgx+eOAc4A3ZD0f4f+0ft/cSZzhfPqD2o6437Q==
-X-Received: by 2002:a05:6a21:7108:b0:1cf:539c:5712 with SMTP id adf61e73a8af0-1cf761f9867mr3708626637.38.1726147978258;
-        Thu, 12 Sep 2024 06:32:58 -0700 (PDT)
-Received: from [172.16.118.100] ([103.15.228.94])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-719090b2c3fsm4577209b3a.165.2024.09.12.06.32.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Sep 2024 06:32:57 -0700 (PDT)
-Message-ID: <7d3cff7a-ecc0-4744-836f-ce74f335b753@beagleboard.org>
-Date: Thu, 12 Sep 2024 19:02:46 +0530
+	 In-Reply-To:Content-Type; b=ZcoOPHZbMDV7GIUHPLldVYpoqJ5E6KgJJ5inbhntuIxCNgD0IFQx/sl4jO6/7YLHDoXDNs0ov4t5E+IUjUD/HX+7E7q2l41uu32YZaPKndm0ErNnClH5V51uoHGIGndtDEgqJiPMYEb3skNVonFLAYqKsORRxT0nbvjDr2axbes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kVRR7k8v; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <9a2a1cce-8d92-4d10-87ea-4cdf1934d5fb@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1726147981;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tyq9bRI1TS3hXpjwHtn17hObsWlvaRNqSMNKcUTXNC0=;
+	b=kVRR7k8vkeBdRcCmr9Ft0hnm4G456BoZGtzeOSUTMlEcvcZYa/9Wk4GXEZAVvx+VPoqw1N
+	qcCVjagUQ1IBLQlbkz6BJwcY1JUkVxlKo489HEBXe53dUzpr37qUnIJGcknMfGvpW3iaO2
+	DbeZ6QLelw07hRNsVnCFGPFVm48tjNQ=
+Date: Thu, 12 Sep 2024 14:32:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/8] mikrobus: Add mikrobus driver
+Subject: Re: [PATCH net-net] tun: Assign missing bpf_net_context.
+To: Breno Leitao <leitao@debian.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Jakub Kicinski <kuba@kernel.org>, andrii@kernel.org, ast@kernel.org,
+ syzbot <syzbot+08811615f0e17bc6708b@syzkaller.appspotmail.com>,
+ bpf@vger.kernel.org, daniel@iogearbox.net, davem@davemloft.net,
+ eddyz87@gmail.com, haoluo@google.com, hawk@kernel.org,
+ john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
+ linux-kernel@vger.kernel.org, martin.lau@linux.dev, netdev@vger.kernel.org,
+ sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com,
+ yonghong.song@linux.dev
+References: <000000000000adb970061c354f06@google.com>
+ <20240702114026.1e1f72b7@kernel.org> <20240703122758.i6lt_jii@linutronix.de>
+ <20240703120143.43cc1770@kernel.org>
+ <20240912-simple-fascinating-mackerel-8fe7c0@devvm32600>
+ <20240912122847.x70_LgN_@linutronix.de>
+ <20240912-hypnotic-messy-leopard-f1d2b0@leitao>
 Content-Language: en-US
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Ayush Singh <ayushdevel1325@gmail.com>
-Cc: fabien.parent@linaro.org, d-gole@ti.com, lorforlinux@beagleboard.org,
- jkridner@beagleboard.org, robertcnelson@beagleboard.org,
- Andrew Davis <afd@ti.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>,
- Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
- Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Tero Kristo <kristo@kernel.org>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240911-mikrobus-dt-v1-0-3ded4dc879e7@beagleboard.org>
- <20240911-mikrobus-dt-v1-3-3ded4dc879e7@beagleboard.org>
- <2024091144-glitzy-kindly-fa74@gregkh>
- <ecd1fff8-9c15-496a-982f-36e6c58e906a@gmail.com>
- <2024091151-hummus-usher-2561@gregkh>
-From: Ayush Singh <ayush@beagleboard.org>
-In-Reply-To: <2024091151-hummus-usher-2561@gregkh>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20240912-hypnotic-messy-leopard-f1d2b0@leitao>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 9/12/24 01:33, Greg Kroah-Hartman wrote:
-
-> On Wed, Sep 11, 2024 at 09:32:21PM +0530, Ayush Singh wrote:
->> On 9/11/24 20:27, Greg Kroah-Hartman wrote:
+On 12/09/2024 14:17, Breno Leitao wrote:
+> Hello Sabastian,
+> 
+> Thanks for the quick reply!
+> 
+> On Thu, Sep 12, 2024 at 02:28:47PM +0200, Sebastian Andrzej Siewior wrote:
+>> On 2024-09-12 05:06:36 [-0700], Breno Leitao wrote:
+>>> Hello Sebastian, Jakub,
+>> Hi,
 >>
->>> On Wed, Sep 11, 2024 at 07:57:20PM +0530, Ayush Singh wrote:
->>>> A simple platform driver for now that does nothing. This is required
->>>> because without a platform driver, the mikrobus_gpio0 nexus node cannot
->>>> be used.
->>>>
->>>> In future, this driver will also allow for dynamic board detection using
->>>> 1-wire eeprom in new mikrobus boards.
->>>>
->>>> Signed-off-by: Ayush Singh <ayush@beagleboard.org>
->>>> ---
->>>>    MAINTAINERS              |  1 +
->>>>    drivers/misc/Kconfig     | 17 +++++++++++++++++
->>>>    drivers/misc/Makefile    |  1 +
->>>>    drivers/misc/mikrobus.rs | 32 ++++++++++++++++++++++++++++++++
->>>>    4 files changed, 51 insertions(+)
->>>>
->>>> diff --git a/MAINTAINERS b/MAINTAINERS
->>>> index 0cc27446b18a..d0c18bd7b558 100644
->>>> --- a/MAINTAINERS
->>>> +++ b/MAINTAINERS
->>>> @@ -15433,6 +15433,7 @@ MIKROBUS CONNECTOR
->>>>    M:	Ayush Singh <ayush@beagleboard.org>
->>>>    S:	Maintained
->>>>    F:	Documentation/devicetree/bindings/connector/mikrobus-connector.yaml
->>>> +F:	drivers/misc/mikrobus.rs
->>>>    MIKROTIK CRS3XX 98DX3236 BOARD SUPPORT
->>>>    M:	Luka Kovacic <luka.kovacic@sartura.hr>
->>>> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
->>>> index 3fe7e2a9bd29..30defb522e98 100644
->>>> --- a/drivers/misc/Kconfig
->>>> +++ b/drivers/misc/Kconfig
->>>> @@ -610,6 +610,23 @@ config MARVELL_CN10K_DPI
->>>>    	  To compile this driver as a module, choose M here: the module
->>>>    	  will be called mrvl_cn10k_dpi.
->>>> +menuconfig MIKROBUS
->>>> +	tristate "Module for instantiating devices on mikroBUS ports"
->>>> +	help
->>>> +	  This option enables the mikroBUS driver. mikroBUS is an add-on
->>>> +	  board socket standard that offers maximum expandability with
->>>> +	  the smallest number of pins. The mikroBUS driver instantiates
->>>> +	  devices on a mikroBUS port described by identifying data present
->>>> +	  in an add-on board resident EEPROM, more details on the mikroBUS
->>>> +	  driver support and discussion can be found in this eLinux wiki :
->>>> +	  elinux.org/Mikrobus
->>> So you want to be a bus?  Or just a single driver?  I'm confused, what
->>> exactly is this supposed to do?
+>>> I've seen some crashes in 6.11-rc7 that seems related to 401cb7dae8130
+>>> ("net: Reference bpf_redirect_info via task_struct on PREEMPT_RT.").
 >>>
->>> If a bus, great, let's tie into the proper driver core bus code, don't
->>> "open code" all of that, as that's just going to make things messier and
->>> harder to work overall in the end.
+>>> Basically bpf_net_context is NULL, and it is being dereferenced by
+>>> bpf_net_ctx->ri.kern_flags (offset 0x38) in the following code.
 >>>
->>> If a single driver, why is it called "bus"?  :)
+>>> 	static inline struct bpf_redirect_info *bpf_net_ctx_get_ri(void)
+>>> 	{
+>>> 		struct bpf_net_context *bpf_net_ctx = bpf_net_ctx_get();
+>>> 		if (!(bpf_net_ctx->ri.kern_flags & BPF_RI_F_RI_INIT)) {
 >>>
->>> thanks,
+>>> That said, it means that bpf_net_ctx_get() is returning NULL.
 >>>
->>> greg k-h
+>>> This stack is coming from the bpf function bpf_redirect()
+>>> 	BPF_CALL_2(bpf_redirect, u32, ifindex, u64, flags)
+>>> 	{
+>>> 	      struct bpf_redirect_info *ri = bpf_net_ctx_get_ri();
+>>>
+>>>
+>>> Since I don't think there is XDP involved, I wondering if we need some
+>>> preotection before calling bpf_redirect()
 >>
->> Well, mikroBUS [0] is the name of the socket standard. It is basically a
->> group of following pins:
->>
->> Analog - AN
->> Reset - RST
->> SPI Chip Select - CS
->> SPI Clock - SCK
->> SPI Master Input Slave Output - MISO
->> SPI Master Output Slave Input - MOSI
->> VCC-3.3V power - +3.3V
->> Reference Ground - GND
->> PWM - PWM output
->> INT - Hardware Interrupt
->> RX - UART Receive
->> TX - UART Transmit
->> SCL - I2C Clock
->> SDA - I2C Data
->> +5V - VCC-5V power
->> GND - Reference Ground
->>
->>
->> I do not think it would qualify as as a "bus" in the Linux driver sense.
->> Especially with the devicetree based approach here which applies overlay
->> directly to the actual uart/i2c/spi controllers and basically not interact
->> with the mikroBUS node much.
-> It will be a "bus" in the driver sense as you want to have different
-> drivers bound to devices that are plugged in here, right?  Or if this is
-> just a single driver for the hardware, then no, as you will not have any
-> additional drivers for this standard?  It's unclear you want to do here.
-No, a single driver. The driver is for board detection and applying 
-proper overlay. There will not be separate drivers for each addon board.
+>> This origins in netkit_xmit(). If my memory serves me, then Daniel told
+>> me that netkit is not doing any redirect and therefore does not need
+>> "this". This must have been during one of the first "designs"/ versions.
+> 
+> Right, I've seen several crashes related to this, and in all of them it
+> is through netkit_xmit() -> netkit_run() ->  bpf_prog_run()
+> 
+>> If you are saying, that this is possible then something must be done.
+>> Either assign a context or reject the bpf program.
+> 
+> If we want to assign a context, do you meant something like the
+> following?
+> 
+> Author: Breno Leitao <leitao@debian.org>
+> Date:   Thu Sep 12 06:11:28 2024 -0700
+> 
+>      netkit: Assign missing bpf_net_context.
+>      
+>      During the introduction of struct bpf_net_context handling for
+>      XDP-redirect, the netkit driver has been missed.
+>      
+>      Set the bpf_net_context before invoking netkit_xmit() program within the
+>      netkit driver.
+>      
+>      Fixes: 401cb7dae8130 ("net: Reference bpf_redirect_info via task_struct on PREEMPT_RT.")
+>      Signed-off-by: Breno Leitao <leitao@debian.org>
+> 
+> diff --git a/drivers/net/netkit.c b/drivers/net/netkit.c
+> index 79232f5cc088..f8af57b7a1e8 100644
+> --- a/drivers/net/netkit.c
+> +++ b/drivers/net/netkit.c
+> @@ -65,6 +65,7 @@ static struct netkit *netkit_priv(const struct net_device *dev)
+>   
+>   static netdev_tx_t netkit_xmit(struct sk_buff *skb, struct net_device *dev)
+>   {
+> +	struct bpf_net_context __bpf_net_ctx, *bpf_net_ctx;
+>   	struct netkit *nk = netkit_priv(dev);
+>   	enum netkit_action ret = READ_ONCE(nk->policy);
+>   	netdev_tx_t ret_dev = NET_XMIT_SUCCESS;
+> @@ -72,6 +73,7 @@ static netdev_tx_t netkit_xmit(struct sk_buff *skb, struct net_device *dev)
+>   	struct net_device *peer;
+>   	int len = skb->len;
+>   
+> +	bpf_net_ctx = bpf_net_ctx_set(&__bpf_net_ctx);
+>   	rcu_read_lock();
 
->> The driver is here to enable the following:
->>
->> 1. Enable dynamic board detection using 1-wire eeprom on some addon boards.
-> Some, not all?
+Hi Breno,
 
-Some mikroBUS boards have 1-wire eeprom [0]. This can be used to enable 
-dynamic detection of the board. But this is not part of mikroBUS 
-specification itself, and is like a mikroe addition. So there will be a 
-lot of mikrobus addon boards that do not have any way to do dynamic 
-detection.
+looks like bpf_net_ctx should be set under rcu read lock...
 
->> 2. Provide sysfs entry for runtime board adding/removal
-> That's not what sysfs is for, but we can get there eventually...
+>   	peer = rcu_dereference(nk->peer);
+>   	if (unlikely(!peer || !(peer->flags & IFF_UP) ||
+> @@ -110,6 +112,7 @@ static netdev_tx_t netkit_xmit(struct sk_buff *skb, struct net_device *dev)
+>   		break;
+>   	}
+>   	rcu_read_unlock();
+> +	bpf_net_ctx_clear(bpf_net_ctx);
+>   	return ret_dev;
+>   }
 
->> 3. Enable using mikrobus connector node as nexus node for GPIO (not having a
->> platform driver makes any driver trying to use the connector as nexus node
->> go into deffered probing state).
-> Why is this a platform device?  Is this always going to be described by
-> DT somehow?
-
-
-Well, since greybus does not use a dt based approach right now, that is 
-one case where we potentially cannot describe the connector in DT. But 
-since greybus is mostly staging, I am not sure if there are any plans to 
-use DT before bringing it to mainline.
-
-
->> For this patch series, the driver is mostly here due to point 3. Basically a
->> stub.
-> Let's see how this really works before coming to conclusions.
->
-> As an example, how do you think sysfs should look for this device?  For
-> all devices?  Write out the needed sysfs documentation entries first and
-> then that will help explain things better.
->
-> thanks,
->
-> greg k-h
-
-
-Something like the following:
-
-cat board-overlay.dtbo > /sys/bus/platform/mikrobus-connector0/new_device
-
-
-And to remove the device (revert the overlay)
-
-echo 1 > /sys/bus/platform/mikrobus-connector0/delete_device
-
-
-The main motivation for the sysfs entry is that only the board overlay 
-needs to be provided, since the driver already knows it's own connector 
-(and hence the symbols overlay for the connector).
-
-
-[0]: https://github.com/MikroElektronika/click_id
-
-
-Ayush Singh
 
 
