@@ -1,194 +1,117 @@
-Return-Path: <linux-kernel+bounces-325810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC01A975E85
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 03:30:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15B5B975E8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 03:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A7971F234FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:30:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADF0D1F233A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888E72BB1B;
-	Thu, 12 Sep 2024 01:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0CB2837B;
+	Thu, 12 Sep 2024 01:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jXRl7uD1"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="eOQtrzZC"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658482D7BF;
-	Thu, 12 Sep 2024 01:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6765684;
+	Thu, 12 Sep 2024 01:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726104606; cv=none; b=rKSiJTD9fb5iryIvnVjqWz/RuGB4iVrRYpOThXDYe0JE+wHoBxiHPuhED8gsdqMEHIbFoUxL8qcfeK9xF748Jjv5vGF3Sqt8YKhFbui6xXDah+uvLJ0JhNqVo9RCQiHNitKO2GOmq0kZdMeYHKAUKc52EmCMOhpO8iDG2C8QFZM=
+	t=1726104730; cv=none; b=eOzJpxT3UQDuPZ9GcgXgN3RwhbUAv4N3KTWEJVhDISUBKPiOsBFOVihbVL4VXlKpXXaN0F/vyQsKUdQxe/sBZz1NDj9ydqOtBf1/ZCDflvwifYzjUzSHiwdIJjBHhFOMe4wjQ+qSoIzz65VbjJ7Wgu/alnge4zqNAHb+PAnsRMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726104606; c=relaxed/simple;
-	bh=YnBG6MVQuPnj+84wi6UszEipgdwYiSRRUWpmwlFpoa0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TWdJCaiqstz4omCbNBDnB7I+byuAjvsg5PY1yolvQZe5xBEG1sfzRc3mO92pFZnvK/pWhTk2iSlBF2CSolcMevA3LM/J5W1zVa2iBDPvLMRc3wWJg11hGKbDOIa69iCauBi+k1NsxCY99TwTNLp0/F1c116/FcYGnvASw5B3Vys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jXRl7uD1; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6d5a4615a56so3962247b3.0;
-        Wed, 11 Sep 2024 18:30:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726104604; x=1726709404; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Oc4A9PUbXEgnIX4R83UKro/vj2MRuKfr14pnn04li2E=;
-        b=jXRl7uD1w7STv5GII17vZRkbCc4QVINffhTqlwsOKQv86t+YBKtEQUNDGg6dWO/qLh
-         EtMqYlhMo2oqGlfSBvsexNTwtWCtJu3BJzSFgMqu3b4wCHnKXc4eLahnvhCHvI4Xflgw
-         Erorwm/3mKxvG1WNHBhUSpUPU86GDZ4JSJ0lUQhnkcFiXFZUGTGAw9qMD9Tk/zSxeIq8
-         6o++oAnjVPIQROyRjA8BF7w8G2tOsIQptoMpT/hrRIZ88SX4H1gMImNZVq0Ah7+QUXtV
-         1pgp3ypSKsPa5KykcShpuw2W4aYQVSsTH4DaZq61yLxLA4U4mHX35ER3yFA6HOUm96gY
-         FfJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726104604; x=1726709404;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Oc4A9PUbXEgnIX4R83UKro/vj2MRuKfr14pnn04li2E=;
-        b=UL0YEvkcagCCYwH3G072UNxDK+XFlCuWhInqVhJWEbBbSdbRlSYfehohI1IbrjPeqn
-         ZULmHWPijbP42GO8biBczSKIA3+7PqEFibOMscLMSBr3L2i39+oaE/N3OLAwL3QSE4jc
-         ywLiMbSGbqTL1nw0LWfQdVH4vh/llRq+Ssk+f3osDgv9mT8pSb7shvWro288VWm/NPzj
-         q0GU3I8qqNFA67PD+f6BI+AvcipcJ6UOWgy1o6r2Xmg7mCMxEfUVBD3pkOjmwa7X/OSj
-         NUWmcY51AhAVkDHZCw/U8yQ9YiuLtLW9aP02wgA7AUzXiTwFRmtjn9fAr1ChcVSgC04k
-         QDuw==
-X-Forwarded-Encrypted: i=1; AJvYcCU4UcAEA+yT8hVVyMhyjIOz5XXhzmngxBPGWU+EiK8PH8ovWqSsFXxF5s2suIdqyYmtnY2hp+Flo2u5Lv2J5swYag==@vger.kernel.org, AJvYcCV9T7hfeDEF7wBmRScRJ734yOrZ5kqNvTg/I6ezyTnguPNVjOFIKdm+FFrmorv4asCtb/dbUeMF4T1212g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzMClhfoh/5amVoo0OOBxX1yIw/eo+Mm+yWk+/6jxGuTK/PNtI
-	zQgQw4Klb7fXUPDUv0fi8e60ToP1QNLdt24etdvYY5kaM45t334IBByF8AKcb1OOvkV6zrWobeT
-	60Cc5yIwgrxZKv0AfnPhAu3869Ug=
-X-Google-Smtp-Source: AGHT+IE+H6DHvC/Mz6o8AEsnRfwB7c8j0ptt/UcEiR7jTWtefm/c4gfpAtbee+sa6fjJl3dc9A/cpPflbhKSqZA/0aw=
-X-Received: by 2002:a05:690c:2a46:b0:6d1:f545:4ae6 with SMTP id
- 00721157ae682-6dbb6b13b7emr12410537b3.16.1726104604212; Wed, 11 Sep 2024
- 18:30:04 -0700 (PDT)
+	s=arc-20240116; t=1726104730; c=relaxed/simple;
+	bh=02RKLivhx3YcJ+Yytua9aGRaixYRj/aHQu3H0kMrXYg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QGpKbWY9prJQq3PVxf+Osg85+cgW8nwwkq/E8IheKb9hGMkCGCtBNsVNoR+6amOuiheeaOpkZsRA3tqxM3x7wyjcL87IckCKcykBfvdMesMph7Y10yxydcQmGnRhtUrPQJfipJT6GO1uF4oEqUSONF4nUPCnH6zblqktA3MyamY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=eOQtrzZC; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4X40Kh3VJqz6ClY94;
+	Thu, 12 Sep 2024 01:32:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1726104726; x=1728696727; bh=A4IFHD2bgumyn15Psby8zd33
+	93rJ5zZZP0BtK+yAFl4=; b=eOQtrzZCgZgE+gEp4Q3jhwMPGDGPOHghNseQml/g
+	VowTdiCt2iVJQY+SVdIYFUBZMjlg7pxpNHpc1kzmb+lvJzmk4P8ndFYq9DLFUsUB
+	aRcOv7z2OfZVRpNWnqUWHX/NweH/0drATHyfUX0i10oMwEOXoVAZbmZhOJi3UPP9
+	PZhFU8n5LLoL8WKVQBxVRJkEYr/6aE4nbqATXjtaFtxe6ZCTEqIcrT7UBwlv7DAy
+	+WrBas9LUckQk9q6He54+IasnJb/jFM6+U98pJnursbBtWHj8Qb2w1MQgEpqBezH
+	6Ah0xvfdikXvyrtAWeRcIltYMUQ6/9d+fvfjW+Uxzss66w==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id DfU3nvbYkfes; Thu, 12 Sep 2024 01:32:06 +0000 (UTC)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4X40Kd3bQSz6ClY93;
+	Thu, 12 Sep 2024 01:32:05 +0000 (UTC)
+Message-ID: <e19fc109-9711-4a3d-9aaf-4a7159946a2b@acm.org>
+Date: Wed, 11 Sep 2024 18:32:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZuH8qhuZB6mr9JvR@x1>
-In-Reply-To: <ZuH8qhuZB6mr9JvR@x1>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Wed, 11 Sep 2024 18:29:53 -0700
-Message-ID: <CAH0uvog5akiwUp+28w5u7+-j_fYvQLWahJ6YvEzWjdCz3Ky9Wg@mail.gmail.com>
-Subject: Re: perf trace: substruct BTF based pretty printing
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Alan Maguire <alan.maguire@oracle.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Namhyung Kim <namhyung@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] scsi: ufs: Zero utp_upiu_req at the beginning of each
+ command
+To: Avri Altman <avri.altman@wdc.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240911053951.4032533-1-avri.altman@wdc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240911053951.4032533-1-avri.altman@wdc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello Arnaldo,
+On 9/10/24 10:39 PM, Avri Altman wrote:
+> +static void zero_utp_upiu(struct utp_upiu_req *req)
+> +{
+> +	memset(&req->utp_upiu, 0, sizeof(req->utp_upiu));
+> +}
 
-On Wed, Sep 11, 2024 at 1:25=E2=80=AFPM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> Hi Howard,
->
->         Not really a requirement on you to do work, just a some notes to
-> add to our discussion/experiment on using BTF to pretty print syscall
-> (and tracepoints/whatever) arguments:
->
-> root@number:~# perf trace -e setitimer -p 5444 |& head -5
->      0.000 ( 0.017 ms): Xwayland/5444 setitimer(value: (struct __kernel_o=
-ld_itimerval){})                   =3D 0
->      0.050 ( 0.004 ms): Xwayland/5444 setitimer(value: (struct __kernel_o=
-ld_itimerval){})                   =3D 0
->      0.142 ( 0.005 ms): Xwayland/5444 setitimer(value: (struct __kernel_o=
-ld_itimerval){})                   =3D 0
->      0.174 ( 0.004 ms): Xwayland/5444 setitimer(value: (struct __kernel_o=
-ld_itimerval){})                   =3D 0
->      0.293 ( 0.004 ms): Xwayland/5444 setitimer(value: (struct __kernel_o=
-ld_itimerval){})                   =3D 0
+Introducing a function that only calls memset() seems like overkill to
+me. Please call memset() directly.
 
-First glance, yes this is a substruct, but we should be able to
-collect those substruct data in BPF, since it is substruct, not
-substruct pointer. It seems to be the same -p problem we discussed
-here:
+> diff --git a/include/uapi/scsi/scsi_bsg_ufs.h b/include/uapi/scsi/scsi_bsg_ufs.h
+> index 8c29e498ef98..b0d60d54d6c9 100644
+> --- a/include/uapi/scsi/scsi_bsg_ufs.h
+> +++ b/include/uapi/scsi/scsi_bsg_ufs.h
+> @@ -162,11 +162,13 @@ struct utp_upiu_cmd {
+>    */
+>   struct utp_upiu_req {
+>   	struct utp_upiu_header header;
+> -	union {
+> -		struct utp_upiu_cmd		sc;
+> -		struct utp_upiu_query		qr;
+> -		struct utp_upiu_query		uc;
+> -	};
+> +	struct_group(utp_upiu,
+> +		union {
+> +			struct utp_upiu_cmd	sc;
+> +			struct utp_upiu_query	qr;
+> +			struct utp_upiu_query	uc;
+> +		};
+> +	);
+>   };
 
-Before:
-```
-perf $ perf trace -e open -p 3792392
-         ? (         ):  ... [continued]: open())
-                       =3D -1 ENOENT (No such file or directory)
-         ? (         ):  ... [continued]: open())
-                       =3D -1 ENOENT (No such file or directory)
-```
-
-We can see there's no output.
-
-After:
-```
-perf $ perf trace -e open -p 3792392
-     0.000 ( 0.123 ms): a.out/3792392 open(filename: "DINGZHEN",
-flags: WRONLY)                             =3D -1 ENOENT (No such file
-or directory)
-  1000.398 ( 0.116 ms): a.out/3792392 open(filename: "DINGZHEN",
-flags: WRONLY)                             =3D -1 ENOENT (No such file
-or directory)
-```
-
-I will test and fix it later.
+Is the above change perhaps independent of the rest of this patch? I
+think that this change can be left out.
 
 Thanks,
-Howard
 
-> root@number:~# strace -e setitimer -p 5444 |& head -5
-> strace: Process 5444 attached
-> setitimer(ITIMER_REAL, {it_interval=3D{tv_sec=3D0, tv_usec=3D5000}, it_va=
-lue=3D{tv_sec=3D0, tv_usec=3D5000}}, NULL) =3D 0
-> setitimer(ITIMER_REAL, {it_interval=3D{tv_sec=3D0, tv_usec=3D0}, it_value=
-=3D{tv_sec=3D0, tv_usec=3D0}}, NULL) =3D 0
-> setitimer(ITIMER_REAL, {it_interval=3D{tv_sec=3D0, tv_usec=3D5000}, it_va=
-lue=3D{tv_sec=3D0, tv_usec=3D5000}}, NULL) =3D 0
-> setitimer(ITIMER_REAL, {it_interval=3D{tv_sec=3D0, tv_usec=3D0}, it_value=
-=3D{tv_sec=3D0, tv_usec=3D0}}, NULL) =3D 0
-> root@number:~#
-> root@number:~#
-> root@number:~# grep -w value /sys/kernel/tracing/events/syscalls/sys_ente=
-r_rseq/format
-> root@number:~# grep -w value /sys/kernel/tracing/events/syscalls/sys_ente=
-r_setitimer/format
->         field:struct __kernel_old_itimerval * value;    offset:24;      s=
-ize:8; signed:0;
-> print fmt: "which: 0x%08lx, value: 0x%08lx, ovalue: 0x%08lx", ((unsigned =
-long)(REC->which)), ((unsigned long)(REC->value)), ((unsigned long)(REC->ov=
-alue))
-> root@number:~# pahole __kernel_old_itimerval
-> struct __kernel_old_itimerval {
->         struct __kernel_old_timeval it_interval;         /*     0    16 *=
-/
->         struct __kernel_old_timeval it_value;            /*    16    16 *=
-/
->
->         /* size: 32, cachelines: 1, members: 2 */
->         /* last cacheline: 32 bytes */
-> };
->
-> root@number:~# pahole -E __kernel_old_itimerval
-> struct __kernel_old_itimerval {
->         struct __kernel_old_timeval {
->                 /* typedef __kernel_long_t */ long int           tv_sec; =
-                /*     0     8 */
->                 /* typedef __kernel_long_t */ long int           tv_usec;=
-                /*     8     8 */
->         } it_interval; /*     0    16 */
->         struct __kernel_old_timeval {
->                 /* typedef __kernel_long_t */ long int           tv_sec; =
-                /*    16     8 */
->                 /* typedef __kernel_long_t */ long int           tv_usec;=
-                /*    24     8 */
->         } it_value; /*    16    16 */
->
->         /* size: 32, cachelines: 1, members: 2 */
->         /* last cacheline: 32 bytes */
-> };
->
-> root@number:~#
+Bart.
+
 
