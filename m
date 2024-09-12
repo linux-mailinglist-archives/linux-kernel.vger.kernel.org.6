@@ -1,152 +1,172 @@
-Return-Path: <linux-kernel+bounces-327251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EF389772DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:47:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 042969772DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:47:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA3ED2860AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:47:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 367D21C23F93
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8227D1C1738;
-	Thu, 12 Sep 2024 20:47:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDFCE1C174B;
+	Thu, 12 Sep 2024 20:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="W8nJKsdp"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2eiThzkk"
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33DDA126C17
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00621C0DEB
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726174045; cv=none; b=B5DcV8+dq5lmqwhjLuiUFL21k0lGG9JO1afr172UhMq2+dzTe6QPzyEMyw02S6cNedu32Z6LCy1KE/aukL7KYrMT5MKNKv7WmwdaeMFIDdE5PFvZ24cYOHIhDpJIilIucLAhh9e7N5NevQsNaezqJYFHSnoBTcNxKjm5mfXWXMk=
+	t=1726174056; cv=none; b=DmwbTLm+mkjrInG3rNvgUd3C17wTHUC7UeMrL132mmuZmh4Z48u662yOEpKSr1Ifbxg7+0SZXU3VTK0oXoSVcJLa1W7GTQYZbTbeuTOW2MljIc+7gDKnOnb03zOmKrHRPkBcy3jvW/hnzJ3jbTDMWfwanzUDdg602vs6Kitn4vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726174045; c=relaxed/simple;
-	bh=UeKDIfl46B0MjAeHHAOJysv7+DcyldeuRzbyODT/6Vk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d6lvFHiIukKimiKyoExQNATBd18hbGQTbk/cz7B5/DEMyq/JO+T736SyZvxZIrzwtp/Ax3RW2qK8icxBKwvccPrcbWksd+qPI6LegpQnvlIIWiJ87G5SD6U31Lc0e9FNE0ksbLSR37+rfiQPYtS4Zp9klwySsn1gFS50McX615Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=W8nJKsdp; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7d7a9200947so75776a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:47:24 -0700 (PDT)
+	s=arc-20240116; t=1726174056; c=relaxed/simple;
+	bh=YVOONdyMDfAAPT3E8i8vp3i+ah2xetTTBd9LCjlO3Ko=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iWQQLjFEJDOcTwcA4TYIaMhXqBmRs1FhTlgmu0Wc5iiOqpveArMdXyyWQ0F0Sz6c3Pb2UqHrgs6hXTmHc4TDhJfVo4b8z1I+3PqLnmvZMxp2hkl4tJ2L/8VmFwtSMMh+ChI6dYNF0h7TaNoCreGlxmpJ1d7PK9FJSA/q6ZH/Vsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2eiThzkk; arc=none smtp.client-ip=209.85.217.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-49bcb3d0d6fso395684137.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:47:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1726174043; x=1726778843; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QkYEDgSUi+q4cC1mKbyRLPDEigMYGApwN1eBhMPthC4=;
-        b=W8nJKsdpI8iv3NLyLAEaFtnhAZlR/I8zVU7hEdlE9lWIbzTWLQRhrwW9P03gQKm7ol
-         yNNbwmpfuZlHuV4ZvnxHGCXu1cy4v+IqK6qsaoIF0sSVQepg4A9tO+byMrA9IURBAceb
-         nIsDGJbJuLHeJpJ0p98izj6ts6NL4dQBGYmN4+e4/IvLbAgaQQZOz0yZ9F3wnyNzEnRW
-         tA7HfYHwwitRTHdq4ABm+gzfZTMYPhUt94phP9Hn7hzZXOf3rSaO2hKZFsZWeqiXNmg+
-         Ea1nUO1MFIiVWR5uyRGGv19KjGcNOcCc8KKRgyHqsTUXkUGLFUVAuqVNtxcAmGtoSFC2
-         8L4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726174043; x=1726778843;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1726174053; x=1726778853; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QkYEDgSUi+q4cC1mKbyRLPDEigMYGApwN1eBhMPthC4=;
-        b=iPB/0wxlqUoavWMWgftEWKVqzrV4mnkPllomd+X2x+3+yF6qMzp8dJWgjY4fvTtbg5
-         RydyOIxXRLHfSKRvkgmkJEvFwt6hH7TuZ/7ACE4cDkjaGDrucQCzub+FZ6DXfWCltsXc
-         rv82pdJ5K0ot+jziBf8kT61A7vT4YJHRpC4uRF3Jp+rDyzi0E+khSDguP9hvUHQ66hcR
-         XYTJZjoPFyX/b16lBm5T0MNG+ahxZc2oMqXAI/gu0O4qDNBaqlByHNPAJPQ2VpAjnRsV
-         /afyoJbmuBN8TNw296u5PfYUMyaGOreu/QgOl+LUGBtY5YWH219Saql3ok8JPHiztB/T
-         8REg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKw/VWjOzGk/WK2/kHGShBBnIWb+91psCLcS+rqnWsw/KtcHCOagsHCflUXHd/XcSBMo5l39kQ0/WYEv0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEtP+I4+AhEeY6KgS6QS+2G5TLsOSk+xCwpkE5V3vCMjFszmr/
-	UT9Z4RnCKQ7NEqoGnFg1Hha3/Zi2AKz+h3nVWgcOBGGig2H/zqpeWfQU9aR6Wgo=
-X-Google-Smtp-Source: AGHT+IHY1ulWf8xIoYCgymvFfMz7AvIjbgg3u2pIVYFSwdjBxA8LW0bzDtVMfKaopkm+QTibJTkj8w==
-X-Received: by 2002:a05:6a21:e90:b0:1cf:6d67:fe5a with SMTP id adf61e73a8af0-1d112edc9b4mr484866637.50.1726174043300;
-        Thu, 12 Sep 2024 13:47:23 -0700 (PDT)
-Received: from ghost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db1fddd1c4sm2128722a12.63.2024.09.12.13.47.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 13:47:22 -0700 (PDT)
-Date: Thu, 12 Sep 2024 13:47:20 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Alexandre Ghiti <alex@ghiti.fr>, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: Re: [PATCH] selftest/mm: Do not use hint for riscv mmap
-Message-ID: <ZuNTWCsPPLTm1zdX@ghost>
-References: <20240912100018.736447-1-zhangchunyan@iscas.ac.cn>
+        bh=EW6ORuO6UAIknL/dRfg0azJ4PmYS1WR3P3nm1fuxNAU=;
+        b=2eiThzkkVdTBfRG2fQ4tQhgYOyjOkxV6cQc4kxjoeWiIW84RHisbJWR21QsqCU5z1S
+         x7ySv3GdC5aBq7qccu4AXKD+ArIYXi4dU5Eyh+s43lMn2j5kiwnEJsUtN9ady+QOJDKR
+         Bm5RH/9mOQT+w/cNif+u/NZc7b6s3A2dsZ2kKwOscfLTmtYoUMaAnhq2NBiGlLX5gCNH
+         4ZoheI1yfgcmaprwyNITmst1SP3O8bU4CttVBuhMMi1zG4zRZ5Kdv5hAHe2oGq1/6Dhp
+         VMCizoduj8H47z1QH4NOYfEsoHLXYpO7Zmdp5yCqqzXi7au8fqIRz0zN1EWGj7YXi6gy
+         Mx0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726174053; x=1726778853;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EW6ORuO6UAIknL/dRfg0azJ4PmYS1WR3P3nm1fuxNAU=;
+        b=lOAwMLJY0nAkZrUKsnE4kEdhKYHdGf9eSthiey6BEQH+ruuuIVKDVKyTi2n5d/KaWA
+         FdOP6mBE/kFX8dZfLWuWwfu+U6w0sAYgo66tT/CC6x/IW+d2UtKn75eIPnp9b6NeGAP0
+         Gw31xoqdFXhcX1zUR7CXp79dW4RHcdwtRuF2XRCpqms8ZixtoO2ugRArt5vPdPK3segH
+         2mJ/7EBuyVcUlFUVhAwokqKl0VAc1ycGEB2IcV1b9FTCS0RMrSIdbYBlY5yhNbSEW4OB
+         DzpFeXUsjwd8CZEx/hITFfHQXJNTkXAzwtCykhmYXT1OWSsYQsRiXrpoySr+k0BUum9Z
+         l5Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCXVcKE0IozDFtpO7/6KjQqncmTAejgSK5ninDxfq19vrBXgFnC3Dl/taJXV3l0qoSw8olUkXVaokBt/ndE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNMM87BHidE6nYgK2UIXfa49TN4M4nnKefiABZK7EMn6cD+Jyt
+	qeZQAWnmKhXZaBTgNgRFkr3hz6rcJRyI9ucfCOy8tLX2SD9X+3v01EIuCc8nn7MOMRVE1CEbvAj
+	62E37hYqyRSyhp1qAfpud2XevXWSyR9aa4ZXw
+X-Google-Smtp-Source: AGHT+IENltP/J2FRcSH0t6JFPlpXTtj8oHiZ0wN117RfOO9nTGm+9hN4pJU4dEgwVrAW+FqPGfO3010PigbLkApwA3E=
+X-Received: by 2002:a05:6102:c92:b0:49b:eae3:bdae with SMTP id
+ ada2fe7eead31-49d414806a4mr3292598137.9.1726174053304; Thu, 12 Sep 2024
+ 13:47:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240912100018.736447-1-zhangchunyan@iscas.ac.cn>
+References: <20240909-strncpy-net-caif-chnl_net-c-v1-1-438eb870c155@google.com>
+ <20240910093751.GA572255@kernel.org> <CAFhGd8qQ_e_rh1xQqAnaAZmA7R+ftRGjprxGp+njoqg_FGMCSw@mail.gmail.com>
+In-Reply-To: <CAFhGd8qQ_e_rh1xQqAnaAZmA7R+ftRGjprxGp+njoqg_FGMCSw@mail.gmail.com>
+From: Justin Stitt <justinstitt@google.com>
+Date: Thu, 12 Sep 2024 13:47:22 -0700
+Message-ID: <CAFhGd8r2PO9qLej9okVpwcfL2Kz5oCahdnzEVRpCJVm+b5g-Bw@mail.gmail.com>
+Subject: Re: [PATCH] caif: replace deprecated strncpy with strscpy_pad
+To: Simon Horman <horms@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 12, 2024 at 06:00:18PM +0800, Chunyan Zhang wrote:
-> When the virtual address range selftest is run on RISC-V platforms,
-> it is observed that using the hint address when calling mmap cannot
-> get the address in the range of that validate_addr() checks, also
-> that will cause '/proc/self/maps' have gaps larger than MAP_CHUNK_SIZE.
-> 
-> Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-> ---
->  tools/testing/selftests/mm/virtual_address_range.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/mm/virtual_address_range.c b/tools/testing/selftests/mm/virtual_address_range.c
-> index 4e4c1e311247..25f3eb304999 100644
-> --- a/tools/testing/selftests/mm/virtual_address_range.c
-> +++ b/tools/testing/selftests/mm/virtual_address_range.c
-> @@ -64,6 +64,14 @@
->  #define NR_CHUNKS_HIGH  NR_CHUNKS_384TB
->  #endif
->  
-> +#if defined(__riscv) && (__riscv_xlen == 64)
-> +static char *hind_addr(void)
+On Thu, Sep 12, 2024 at 1:43=E2=80=AFPM Justin Stitt <justinstitt@google.co=
+m> wrote:
+>
+> Hi,
+>
+> On Tue, Sep 10, 2024 at 2:37=E2=80=AFAM Simon Horman <horms@kernel.org> w=
+rote:
+> >
+> > On Mon, Sep 09, 2024 at 04:39:28PM -0700, Justin Stitt wrote:
+> > > strncpy() is deprecated for use on NUL-terminated destination strings=
+ [1] and
+> > > as such we should prefer more robust and less ambiguous string interf=
+aces.
+> > >
+> > > Towards the goal of [2], replace strncpy() with an alternative that
+> > > guarantees NUL-termination and NUL-padding for the destination buffer=
+.
+> >
+> > Hi Justin,
+> >
+> > I am curious to know why the _pad variant was chosen.
+>
+> I chose the _pad variant as it matches the behavior of strncpy in this
+> context, ensuring minimal functional change. I think the point you're
+> trying to get at is that the net_device should be zero allocated to
+> begin with -- rendering all thus NUL-padding superfluous. I have some
+> questions out of curiosity: 1) do all control paths leading here
+> zero-allocate the net_device struct? and 2) does it matter that this
+> private data be NUL-padded (I assume not).
+>
+> With all that being said, I'd be happy to send a v2 using the regular
+> strscpy variant if needed.
 
-This is not a typo by you since this is the name of the original
-function but this should be "hint_addr" right?
+I just saw [1] so let's go with that, obviously.
 
-> +{
-> +	return NULL;
-> +}
-> +
-> +static void validate_addr(char *ptr, int high_addr) { }
-> +#else
+>
+> >
+> > > Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#=
+strncpy-on-nul-terminated-strings [1]
+> > > Link: https://github.com/KSPP/linux/issues/90 [2]
+> > > Link: https://manpages.debian.org/testing/linux-manual-4.8/strscpy.9.=
+en.html
+> > > Cc: Kees Cook <keescook@chromium.org>
+> > > Cc: linux-hardening@vger.kernel.org
+> > > Signed-off-by: Justin Stitt <justinstitt@google.com>
+> > > ---
+> > > Note: build-tested only.
+> > > ---
+> > >  net/caif/chnl_net.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/net/caif/chnl_net.c b/net/caif/chnl_net.c
+> > > index 47901bd4def1..ff37dceefa26 100644
+> > > --- a/net/caif/chnl_net.c
+> > > +++ b/net/caif/chnl_net.c
+> > > @@ -347,7 +347,7 @@ static int chnl_net_init(struct net_device *dev)
+> > >       struct chnl_net *priv;
+> > >       ASSERT_RTNL();
+> > >       priv =3D netdev_priv(dev);
+> > > -     strncpy(priv->name, dev->name, sizeof(priv->name));
+> > > +     strscpy_pad(priv->name, dev->name);
+> > >       INIT_LIST_HEAD(&priv->list_field);
+> > >       return 0;
+> > >  }
+> > >
+> > > ---
+> > > base-commit: bc83b4d1f08695e85e85d36f7b803da58010161d
+> > > change-id: 20240909-strncpy-net-caif-chnl_net-c-a505e955e697
+> > >
+> > > Best regards,
+> > > --
+> > > Justin Stitt <justinstitt@google.com>
+> > >
+> > >
+>
+> I appreciate the review.
+>
+> Thanks
+> Justin
 
-This is something that I am trying to solve over at
-https://lore.kernel.org/lkml/20240905-patches-below_hint_mmap-v3-0-3cd5564efbbb@rivosinc.com/
-(the solution is still in flux). Since riscv doesn't currently have this
-behavior of restricting the virtual address space, I think it is more
-reasonable to disable this test entirely. After we have a longer-term
-solution with the patch I have up we can adjust the test and re-enable
-it. What do you think?
+[1]: https://lore.kernel.org/all/20240911015228.1555779-1-kuba@kernel.org/
 
-- Charlie
-
->  static char *hind_addr(void)
->  {
->  	int bits = HIGH_ADDR_SHIFT + rand() % (63 - HIGH_ADDR_SHIFT);
-> @@ -81,6 +89,7 @@ static void validate_addr(char *ptr, int high_addr)
->  	if (addr > HIGH_ADDR_MARK)
->  		ksft_exit_fail_msg("Bad address %lx\n", addr);
->  }
-> +#endif
->  
->  static int validate_lower_address_hint(void)
->  {
-> -- 
-> 2.34.1
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+Thanks
+Justin
 
