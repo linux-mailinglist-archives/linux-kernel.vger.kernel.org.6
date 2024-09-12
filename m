@@ -1,183 +1,116 @@
-Return-Path: <linux-kernel+bounces-325927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAF65975FE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 05:53:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1272B975FE4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 05:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D42C1F23ADC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 03:53:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AED7E2856D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 03:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D0E18858D;
-	Thu, 12 Sep 2024 03:53:27 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2378B188010;
+	Thu, 12 Sep 2024 03:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z1IP+qfa"
+Received: from mail-pg1-f193.google.com (mail-pg1-f193.google.com [209.85.215.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F68716BE17;
-	Thu, 12 Sep 2024 03:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7E228F5;
+	Thu, 12 Sep 2024 03:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726113206; cv=none; b=EbpOX4KTCTveyHxb2a2w3F9AmY3qZtnAQ3rnK6R9BcHScSFqFRTWrXm/gqrM1m1BO09h2yAqy3LAI6R+A7CUQUhv8maSac2nbxF1vcIweDMeMKaVxJIeNg8A1SrJ+w3GEBTQWmDTQn+CktQmJ+qVx8mCAffHj2bShDCfyH4AsMs=
+	t=1726113505; cv=none; b=FrbmpcHFTJEW8GeUM48HUoiZ+U/tXREAGfe6nCtXSf291qbVHA+AMT/96C0eFIEqrbd36eRiCVzAAlMLL3lJfe2jrp0mEFNzACayU+KO1o6EUWCj6bSQ0V9J7xr7xAcrd+Qb1IXr2Eypb+4a3qkU02LbnEJPyGbZnbHPdVG9IxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726113206; c=relaxed/simple;
-	bh=04aZRYrtm8kYQYqDApOMz2M5HoYXYctrlv4NHXiyWOc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eKmX/lQkgYbGiZNlRaPuhf7f/INGKF0lqSSE495gBcTcrPWCtXJ/Zwq1eHudfqFDSGBY5QEZTxG3ooIjfWOJTaOB32eqyuUTEHZZ/cTU8sj2nxTOyI0fjB5JuusFv/InVyzWc/rN7m7tvMSgqKS1Xr10+NMDGYqYK/74qfZo5R4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4X43ST6VjZz69SX;
-	Thu, 12 Sep 2024 11:53:13 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id D7D0618006C;
-	Thu, 12 Sep 2024 11:53:20 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 12 Sep 2024 11:53:20 +0800
-Message-ID: <c662f0b9-31dc-8b97-ef3f-ea33f9fc62af@huawei.com>
-Date: Thu, 12 Sep 2024 11:53:19 +0800
+	s=arc-20240116; t=1726113505; c=relaxed/simple;
+	bh=YVb5mOSgVEoh00SI3vDwZZJ5t/Ip3f/Ajj+k9DooyGo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HalOkfHtPW9OrdppRmaJscmP6peigwrHnNJaGASeRqGb9IavI5Wgd8v2ASSEN7gN+WjKyw8DmhA1clswX92CtXJrR70e7zDOR/CTxI9UqYP2qU+oBJORdbFkvQ9lG3CDiKa8dULQV32N07BabGFB58jly/lBdCoIIJ/pHTc5Uhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z1IP+qfa; arc=none smtp.client-ip=209.85.215.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f193.google.com with SMTP id 41be03b00d2f7-7db19de6346so369705a12.2;
+        Wed, 11 Sep 2024 20:58:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726113503; x=1726718303; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W2hLQNIMSmxWhc1/C74r+p1wfn7zuzdiQIq0XCR1VZU=;
+        b=Z1IP+qfaQA/tuziAHHUbbYu9ruCsGnIc4R7SEHTLFgRh30XnPmJleIHPoYkQ21gnyO
+         KV5JP7jKLWRZNw/rrmwtVlOke04cVgR9UeMCOD93Hf1kmeJBWoM10n0Vo/JPNnuTgzQ3
+         85hlWoZKFQSe/2pntifGtXpR59iux4PmkrKy7TTNpn7eDTtakoQmDeJzz1V50BUqtTkX
+         xqsskI6VBAhp3zcFgMgPBrksljnv0A05NEuxm+eOBWrVp1wQlgxALR6JMKVooC3kHT44
+         Ojl6YkBXpInPoOXRNxndY3ZvXibFdjcqFZCdYBoNJIpSHNEsIpMAdo2VmDkrZZXujR2u
+         LrJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726113503; x=1726718303;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W2hLQNIMSmxWhc1/C74r+p1wfn7zuzdiQIq0XCR1VZU=;
+        b=ifmsTZpceetkyPlxjlAIyclnyncGhZs8FF3Apb2GxYhzlRuV8MgkmF2jrBk1lUJA2l
+         gejsYsH+QBn+EbQ+1AfW5VTC4LNKSOCT1Shrl3umG9vYq5iRZYsJ7WGiw0Jin8jPdyME
+         4Slqsz5sB2yUHJpoBfz5H7uXhMsKp9h4F/9a+Wdf/iUvFNiQxWp3yZ3cwgTg+bfDTvE8
+         X/nXCPgTP6X5OD3xdkPcObVwSjyafi+OnYi962IIQo03oCZmB52HP1dQtx2mR+Cqndqw
+         2Q8+8Monh3IlPEeJa1pbJijN0wUXtmBfQXq81kDoRxSfZvAUGNcLsyrRlfeBVfCSPnbn
+         bwgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUuPfYpmb6+r/GPKow9UHPrhZXaiF6NYH35XKhLi0ezcrsbSSejVjtKJ2gRx3mqPXp1rObWMJLpLcvoAxCyQGq0hPam5Q==@vger.kernel.org, AJvYcCWu2HIikKIEaaSi0d9baJvhA694+Dyt+GqphVtGwxysjWyqdNL+D5e9QmtMelhQwEjDST190bRoOn+Cg7o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzA0JbpjR9mlt9+ck7Wt4x+tWSQExHdlmr/O8ZfjocIuTpIWyIA
+	+ioesJINd/qoPL0PD/kY4onIPCX2pCvxjzrRmhtJFpdF1jZmqu6MUqpIY9vIqO0LBg==
+X-Google-Smtp-Source: AGHT+IEYVR4Dk0ZvCaDyqJiI1zczDrKh9T2qArG66b7TgkwyL83pGpRRjoOEbm2uAuYdTVZmS1Ftkw==
+X-Received: by 2002:a05:6a21:1796:b0:1cf:6eeb:bfea with SMTP id adf61e73a8af0-1cf76239cefmr1769180637.45.1726113503302;
+        Wed, 11 Sep 2024 20:58:23 -0700 (PDT)
+Received: from fedora.. ([58.246.215.174])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7190909250asm3713395b3a.133.2024.09.11.20.58.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 20:58:23 -0700 (PDT)
+From: aln8 <aln8un@gmail.com>
+To: Shyam-sundar.S-k@amd.com
+Cc: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	aln8 <aln8un@gmail.com>
+Subject: [PATCH] platform/x86/amd: pmf: Add quirk for TUF Gaming A14
+Date: Thu, 12 Sep 2024 11:57:55 +0800
+Message-ID: <20240912035755.47278-1-aln8un@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v4 3/3] spi: geni-qcom: Use devm functions to simplify
- code
-Content-Language: en-US
-To: Doug Anderson <dianders@chromium.org>
-CC: <broonie@kernel.org>, <akashast@codeaurora.org>, <vkoul@kernel.org>,
-	<linux-arm-msm@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240909132810.1296786-1-ruanjinjie@huawei.com>
- <20240909132810.1296786-4-ruanjinjie@huawei.com>
- <CAD=FV=XQ7uf_Y_WTv_6-DX1Mo=+RycKSyxf=E-f3TOKiuE5RMA@mail.gmail.com>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <CAD=FV=XQ7uf_Y_WTv_6-DX1Mo=+RycKSyxf=E-f3TOKiuE5RMA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemh500013.china.huawei.com (7.202.181.146)
 
+The ASUS TUF Gaming A14 has the same issue as the ROG Zephyrus G14 
+where it advertises SPS support but doesn't use it.
 
+Signed-off-by: aln8 <aln8un@gmail.com>
+---
+ drivers/platform/x86/amd/pmf/pmf-quirks.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-On 2024/9/12 6:53, Doug Anderson wrote:
-> Hi,
-> 
-> On Mon, Sep 9, 2024 at 6:19 AM Jinjie Ruan <ruanjinjie@huawei.com> wrote:
->>
->> Use devm_pm_runtime_enable(), devm_request_irq() and
->> devm_spi_register_controller() to simplify code.
->>
->> And also register a callback spi_geni_release_dma_chan() with
->> devm_add_action_or_reset(), to release dma channel in both error
->> and device detach path, which can make sure the release sequence is
->> consistent with the original one.
->>
->> 1. Unregister spi controller.
->> 2. Free the IRQ.
->> 3. Free DMA chans
->> 4. Disable runtime PM.
->>
->> So the remove function can also be removed.
->>
->> Suggested-by: Doug Anderson <dianders@chromium.org>
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> ---
->> v4:
->> - Correct the "data" of devm_add_action_or_reset().
->> v3:
->> - Land the rest of the cleanups afterwards.
->> ---
->>  drivers/spi/spi-geni-qcom.c | 37 +++++++++++++------------------------
->>  1 file changed, 13 insertions(+), 24 deletions(-)
->>
->> diff --git a/drivers/spi/spi-geni-qcom.c b/drivers/spi/spi-geni-qcom.c
->> index 6f4057330444..5cb002d7d4a6 100644
->> --- a/drivers/spi/spi-geni-qcom.c
->> +++ b/drivers/spi/spi-geni-qcom.c
->> @@ -632,8 +632,10 @@ static int spi_geni_grab_gpi_chan(struct spi_geni_master *mas)
->>         return ret;
->>  }
->>
->> -static void spi_geni_release_dma_chan(struct spi_geni_master *mas)
->> +static void spi_geni_release_dma_chan(void *data)
->>  {
->> +       struct spi_geni_master *mas = data;
->> +
->>         if (mas->rx) {
->>                 dma_release_channel(mas->rx);
->>                 mas->rx = NULL;
->> @@ -1132,6 +1134,12 @@ static int spi_geni_probe(struct platform_device *pdev)
->>         if (ret)
->>                 return ret;
->>
->> +       ret = devm_add_action_or_reset(dev, spi_geni_release_dma_chan, mas);
->> +       if (ret) {
->> +               dev_err(dev, "Unable to add action.\n");
->> +               return ret;
->> +       }
-> 
-> Use dev_err_probe() to simplify.
-> 
-> ret = devm_add_action_or_reset(dev, spi_geni_release_dma_chan, mas);
-> if (ret)
->   return dev_err_probe(dev, ret, "Unable to add action.\n");
+diff --git a/drivers/platform/x86/amd/pmf/pmf-quirks.c b/drivers/platform/x86/amd/pmf/pmf-quirks.c
+index 48870ca52..136709797 100644
+--- a/drivers/platform/x86/amd/pmf/pmf-quirks.c
++++ b/drivers/platform/x86/amd/pmf/pmf-quirks.c
+@@ -37,6 +37,14 @@ static const struct dmi_system_id fwbug_list[] = {
+ 		},
+ 		.driver_data = &quirk_no_sps_bug,
+ 	},
++	{
++		.ident = "ASUS TUF Gaming A14",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "FA401WV"),
++		},
++		.driver_data = &quirk_no_sps_bug,
++	},
+ 	{}
+ };
+ 
+-- 
+2.46.0
 
-It seems that if it only return -ENOMEM or 0, using dev_err_probe() has
-not not much value for many community maintainers.
-
-> 
-> 
-> Personally I'd also rather that you do the devm_add_action_or_reset()
-> call straight in spi_geni_grab_gpi_chan(). That makes it much more
-
-Yes, it will be more clear.
-
-> obvious what's happening. You can still use dev_err_probe() in there
-> since it's called (indirectly) from probe. In that case you'd probably
-> replace the "return 0;" in that function with just "return
-> dev_err_probe(...)".
-> 
-> 
->> @@ -1146,33 +1154,15 @@ static int spi_geni_probe(struct platform_device *pdev)
->>         if (mas->cur_xfer_mode == GENI_GPI_DMA)
->>                 spi->flags = SPI_CONTROLLER_MUST_TX;
->>
->> -       ret = request_irq(mas->irq, geni_spi_isr, 0, dev_name(dev), spi);
->> +       ret = devm_request_irq(dev, mas->irq, geni_spi_isr, 0, dev_name(dev), spi);
->>         if (ret)
->> -               goto spi_geni_release_dma;
->> +               return ret;
->>
->> -       ret = spi_register_controller(spi);
->> +       ret = devm_spi_register_controller(dev, spi);
->>         if (ret)
->> -               goto spi_geni_probe_free_irq;
->> +               return ret;
->>
->>         return 0;
-> 
-> You no longer need the "if" statement or even to assign to "ret". Just:
-> 
-> return devm_spi_register_controller(dev, spi);
-
-Right!
-
-> 
-> 
-> Those are just nits, though. I'd be OK with:
-> 
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> 
-> ...since Mark has already landed the first two patches, your v5 would
-> just contain this one patch.
-> 
-> -Doug
 
