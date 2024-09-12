@@ -1,179 +1,110 @@
-Return-Path: <linux-kernel+bounces-326218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9130B976518
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:00:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA7CD97651A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D85B1F24606
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:00:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 708F1281EA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D7518F2D4;
-	Thu, 12 Sep 2024 08:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="kaG2bL3N"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD07A1922E0;
+	Thu, 12 Sep 2024 09:03:39 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF31018C929;
-	Thu, 12 Sep 2024 08:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57209188A01;
+	Thu, 12 Sep 2024 09:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726131593; cv=none; b=tuJN7d3O/cE5Bq3h1lwA1VfKXuBeNAz06ziyzBqkyISHS8DfsuLquYBC12blJgAxqBtcK6bt+oIJwJrhatYJn7Vu1VMz9Zk7TnXNjEShzWFpnB/x42XDX/8bI7ovYuR7p6KIAi3lmh3cazOKnUjfxX8xBwfvGmYV5F+MAeJo060=
+	t=1726131819; cv=none; b=WUs+rS75kTH02NbCHltaMqUKuYfbSvb5Qh/cKc0b6pPooMAOXpgz4QfFvdC1Ma4QNXvuFRb3Oa6I9kC6qY+zdtRQt4GJ8cH4/RuLBIi8yrLn50GC5I2CzMjCEsnjfFdgQq1oDZGsCHb6B49iuFjuRISJY3osuleItyYFmxrwlXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726131593; c=relaxed/simple;
-	bh=fl97/sOEUsJQ8VZACP02Z/hvc/HcTprmyXWjBuIpABg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BWN+Gw8RUHWeBvkVFKGEvWQh7BWv1YC0RpEONu+F2/lQfcH54FajuLwAQcmk6HAaVNzMLDKyo2ISV/9LDabTpmBJmbj4TYiEbwBX4rMu0V/9+pbBpv5+Bx/KVh3Elb7UO7tOiFPIv6yBaBpajR3VLXWK29esreW8V4RJkm5gmdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=kaG2bL3N; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=0LohmCEwjhv/ynQc5/yZjldMZKR+MEom6qwc4qG3GZE=; b=kaG2bL3NXdQmJ+T81qt9zMcG7v
-	bEtj2rhuxVZVR6j/sgPeyhkgxZ0VOu+G7LaO40Wlh+97VCS0mC0pJAKG67BvcaowJo+F64IgkAOfO
-	RDCK3qxjeV/cv8pduxnOAwAcMBbyiiEEco5+D7ItVSBrZersIje+80Dbd8LfeTsfVVMhOmbfHx5Vu
-	dK23tDMt81OPH4hfLka4iPKcHfjHTH85bfIDkEHU2hPn2B1p/1nGIaZCmglVMbqLB20KOM3NIc8GZ
-	iVLbkk0833ETtus0y1TwTP4Vi5jVc4JARiIH/luWlpIJQ4Tbz4xeOgSRTx7dCgM8RDCnSusqVpVOj
-	263LPYrw==;
-Received: from sslproxy01.your-server.de ([78.46.139.224])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <esben@geanix.com>)
-	id 1soffy-000EaL-0b; Thu, 12 Sep 2024 10:59:42 +0200
-Received: from [185.17.218.86] (helo=localhost)
-	by sslproxy01.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <esben@geanix.com>)
-	id 1soffy-0004eF-1A;
-	Thu, 12 Sep 2024 10:59:41 +0200
-From: Esben Haabendal <esben@geanix.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,  linux-rtc@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] rtc: isl12022: Add alarm support
-In-Reply-To: <20240912082123f10c07cf@mail.local> (Alexandre Belloni's message
-	of "Thu, 12 Sep 2024 10:21:23 +0200")
-References: <20240910-rtc-isl12022-alarm-irq-v1-0-d875cedc997f@geanix.com>
-	<20240910-rtc-isl12022-alarm-irq-v1-2-d875cedc997f@geanix.com>
-	<202409101939448128973d@mail.local> <87mske7gaw.fsf@geanix.com>
-	<20240911122417388bd35c@mail.local> <87h6almjpn.fsf@geanix.com>
-	<20240912082123f10c07cf@mail.local>
-Date: Thu, 12 Sep 2024 10:59:41 +0200
-Message-ID: <878qvxmema.fsf@geanix.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1726131819; c=relaxed/simple;
+	bh=VJd4Y2IN/9od+WeuKVCAFWnWbNilas3cNK4GJ2oyySw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MwKLHVTV09FobzY7Op4wm4v99TyYvH3SL4bK2rGlyxC3l5w4PaqhDxMjcCTdFJQhaRjM5a3cOWMngrq/uuuqPuAzg88N4ez2+7gZqpoRgNalOHtJA71CAHRhr5vlu3ZOesal4le2reK5H9IrFGGJn9Z2WwRCBfXcOEvVE0hI+k0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from [192.168.12.114] (unknown [180.111.103.6])
+	by APP-01 (Coremail) with SMTP id qwCowAC3aKhbruJmh60BAw--.7963S2;
+	Thu, 12 Sep 2024 17:03:24 +0800 (CST)
+Message-ID: <b5128162-278a-4284-8271-b2b91dc446e1@iscas.ac.cn>
+Date: Thu, 12 Sep 2024 17:03:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Authenticated-Sender: esben@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27395/Wed Sep 11 10:32:20 2024)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] RISC-V: KVM: Redirect instruction access fault trap to
+ guest
+To: anup@brainfault.org, ajones@ventanamicro.com, atishp@atishpatra.org,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu
+Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ kvm@vger.kernel.org, kvm-riscv@lists.infradead.org
+References: <83c2234d582b7e823ce9ac9b73a6bbcf63971a29.1724911120.git.zhouquan@iscas.ac.cn>
+Content-Language: en-US
+From: Quan Zhou <zhouquan@iscas.ac.cn>
+In-Reply-To: <83c2234d582b7e823ce9ac9b73a6bbcf63971a29.1724911120.git.zhouquan@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:qwCowAC3aKhbruJmh60BAw--.7963S2
+X-Coremail-Antispam: 1UD129KBjvJXoWrtF1rtr1xWF43Gr4fGFW8Xrb_yoW8JryrpF
+	43CF1a9r4rWFyq93WIvrs7uFWIqwn5K3ZxWr4jqFW5Xwsrtas5Crs0g3yUtFy8Gr4rX3yI
+	9F4IqFyvyFn8twUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvlb7Iv0xC_Cr1lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
+	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
+	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xII
+	jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwV
+	C2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Cr0_Gr
+	1UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xK
+	xwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
+	W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
+	1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
+	IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
+	x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
+	DU0xZFpf9x07UN2-5UUUUU=
+X-CM-SenderInfo: 52kr31xxdqqxpvfd2hldfou0/1tbiCQ8SBmbifb-JEgAAsP
 
-Alexandre Belloni <alexandre.belloni@bootlin.com> writes:
 
-> On 12/09/2024 09:09:40+0200, Esben Haabendal wrote:
->> Alexandre Belloni <alexandre.belloni@bootlin.com> writes:
->> 
->> > On 11/09/2024 10:20:07+0200, Esben Haabendal wrote:
->> >> Alexandre Belloni <alexandre.belloni@bootlin.com> writes:
->> >> > On 10/09/2024 12:27:11+0200, Esben Haabendal wrote:
->> >> 
->> >> >> +static int isl12022_rtc_read_alarm(struct device *dev,
->> >> >> +				   struct rtc_wkalrm *alarm)
->> >> >> +{
->> >> >> +	struct rtc_time *const tm = &alarm->time;
->> >> >> +	struct isl12022 *isl12022 = dev_get_drvdata(dev);
->> >> >> +	struct regmap *regmap = isl12022->regmap;
->> >> >> +	uint8_t buf[ISL12022_ALARM_SECTION_LEN];
->> >> >> +	int ret, yr, i;
->> >> >> +
->> >> >> +	ret = regmap_bulk_read(regmap, ISL12022_ALARM_SECTION,
->> >> >> +			       buf, sizeof(buf));
->> >> >> +	if (ret) {
->> >> >> +		dev_err(dev, "%s: reading ALARM registers failed\n",
->> >> >> +			__func__);
->> >> >
->> >> > I don't really like those error messages because there is nothing the
->> >> > user can actually do apart from trying again and this bloats the
->> >> > kernel.
->> >> 
->> >> Ok. Maybe keep it as dev_dbg() then?
->> >
->> > This is fine, there are other I didn't point out.
->> 
->> Ok. I will change all of these type of error messages to dev_dbg. No problem.
->> 
->> >> >> +	isl12022->rtc = rtc;
->> >> >>  
->> >> >>  	rtc->ops = &isl12022_rtc_ops;
->> >> >>  	rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
->> >> >>  	rtc->range_max = RTC_TIMESTAMP_END_2099;
->> >> >>  
->> >> >> +	if (client->irq > 0) {
->> >> >> +		ret = isl12022_setup_irq(isl12022, client->irq);
->> >> >
->> >> > You can't do this in probe, the RTC lifecycle is longer than the linux
->> >> > system. Or said differently: "oh no, my linux has rebooted and now I
->> >> > lost my future alarm" ;)
->> >> 
->> >> Oh.
->> >> 
->> >> We do need to setup the irq here, so I assume you mean I need to drop
->> >> the part of _setup_irq() that clears alarm registers.
->> >
->> > Yes, this is the main problematic part. The other one being disabling
->> > the IRQ output when in battery backup mode as this will surely prevent
->> > wakeup of some devices.
->> 
->> I know. I did this on purpose, as I don't have a setup where I can test
->> wakeup, so I thought it was better to start out without this instead of
->> shipping something that is most likely broken.
->> 
->> If I leave IRQ output from RTC chip enabled during battery backup mode,
->> I assume I have to add working suspend/resume also. Or do you just want
->> me to flip the bit?
->
-> The issue is still about the lifecycle. The RTC will remember the
-> setting so if you change it from the default value without providing a
-> control, there is no way to change back the driver behavior in the
-> future because this is going to break a use case and there is no way to
-> win. So my preference is that you leave the bit to its default value.
+On 2024/8/29 14:20, zhouquan@iscas.ac.cn wrote:
+> From: Quan Zhou <zhouquan@iscas.ac.cn>
+> 
+> The M-mode redirects an unhandled instruction access
+> fault trap back to S-mode when not delegating it to
+> VS-mode(hedeleg). However, KVM running in HS-mode
+> terminates the VS-mode software when back from M-mode.
+> 
+> The KVM should redirect the trap back to VS-mode, and
+> let VS-mode trap handler decide the next step.
+> 
+> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
+> ---
+>   arch/riscv/kvm/vcpu_exit.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/riscv/kvm/vcpu_exit.c b/arch/riscv/kvm/vcpu_exit.c
+> index fa98e5c024b2..696b62850d0b 100644
+> --- a/arch/riscv/kvm/vcpu_exit.c
+> +++ b/arch/riscv/kvm/vcpu_exit.c
+> @@ -182,6 +182,7 @@ int kvm_riscv_vcpu_exit(struct kvm_vcpu *vcpu, struct kvm_run *run,
+>   	ret = -EFAULT;
+>   	run->exit_reason = KVM_EXIT_UNKNOWN;
+>   	switch (trap->scause) {
+> +	case EXC_INST_ACCESS:
 
-Yes, sounds like the right approach.
+A gentle ping, the instruction access fault should be redirected to
+VS-mode for handling, is my understanding correct?
 
-But should I actively set FOBATB bit to the default value, or leave it
-at its current value (which potentially could be non-default)?
+>   	case EXC_INST_ILLEGAL:
+>   	case EXC_LOAD_MISALIGNED:
+>   	case EXC_STORE_MISALIGNED:
+> 
+> base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
 
-> You don't necessarily need the suspend/resume callbacks.
->
->> >> And I guess we need to enable irq in probe as well. At least if/when an
->> >> alarm is set. I think it should be safe to enable irq unconditionally in
->> >> _probe()...
->> >
->> > I guess you mean requesting the interrupt on the SoC side.
->> 
->> Yes.
->> 
->> > Enabling the RTC interrupt should be left untouched in the probe.
->> 
->> Ok, so if/when an alarm is already set before probe, do application need
->> to enable it using RTC_AIE_ON?
->
-> If the alarm is on on boot, it must be kept on without any user
-> intervention.
-
-Sure. But do we want to check for an active alarm, and then call
-enable_irq() if there is one? If not, the alarm would assert the
-interrupt line, but the irq might not be raised as the handler is
-disabled.
-
-/Esben
 
