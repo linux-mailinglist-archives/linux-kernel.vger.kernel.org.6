@@ -1,230 +1,194 @@
-Return-Path: <linux-kernel+bounces-326212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC831976500
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:56:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26564976502
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77BF01F24A90
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:56:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A95E1C22E07
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58261922C0;
-	Thu, 12 Sep 2024 08:56:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60EB61917C0;
+	Thu, 12 Sep 2024 08:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HY98Mm4x"
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cR9twx6i"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF6218DF90
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C9E126C16
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726131367; cv=none; b=Szb+UFsrd+biR6k0P6pC8TtE5AV+nWfJt+46X5cfg0x5mzuHjAOJtZ1u3oEDswxWiAewZizPcB7TagfQxk3ozFuA+swl5b2pYayXVzxb1wrPBJAQwu/mpSj3V4cKxlDFq/rp9USonC6Crzo84qxGw0AfskK7iYhsq2KqcJmyOUw=
+	t=1726131418; cv=none; b=n91/88atisbzsLDMe3UTakPHXfXxqnaFnT3bJoKwhmHj4dNCaCbgrzq4sVYe7BVvazDgnFQzMQPNtT82/5sDNlEINFa734grXbRDtVJC8C48Co9XzetAb6PrwVk/yN/X8d2mixDbIIChRr1wpErHm0tD1IG6B4t2UP+heAma+1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726131367; c=relaxed/simple;
-	bh=qD1HhQH4NjYHBF0Xozf0rppz5YvlGbjasErhi8pkmOE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RpeuXTran5LVgvwhsvgiLrlJYFD+u9Z3ytpSSatBcgiEr37PuX2kD242Lpo1hMPmijt9JuBp2t9rIeKVZo8Edk2jtHUiCYKVk7q0B0pP32cXBfvTrbcTtrUZwZpMyGAnXJWlEEw/wlAQflvTRuG3zWF5J9t6mlad/N3veBdMlEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HY98Mm4x; arc=none smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-49be2ef28aaso212144137.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 01:56:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726131363; x=1726736163; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kcvRVOfTB/QaV43zEeZF3CiWZLcYosI+3Cqn2IbwOTM=;
-        b=HY98Mm4xn1sydvexRT6xn24wcKvnzOf6xjfK2omvn85GG8rVL2iggcYyLEe28lbJbH
-         euVa/VFsEoAFFJF25/LqlUndYmzSKMZUdZyj/0RebNgrlAE4xx7tI+BcDkjFV3PnZ9eR
-         L12lqXudqczYyM8ZsFIjBtOYbqtYdrq8cI6Bz1MIAdhvC6mvK5WgrOG3RHrYq5c/TiSi
-         4Zpdgt3ILe++qp5Cpm6LCJqifv0j6YmbSsspZHcrwS2qhoAtwal+IWCL01rRwtl1Cu+D
-         FqpNgLRghFppAwBcGiotpPTNIEMwzQ+5PdR0F/7Y4dQM+aYPzLTYU3Dbk+Gd5Hh+0xVN
-         Y/aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726131363; x=1726736163;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kcvRVOfTB/QaV43zEeZF3CiWZLcYosI+3Cqn2IbwOTM=;
-        b=CNdxPICKcEuspHjOypoAgGN9lQMi9jv/s2k8n7bDnu5XNGWyxqejrhRNXWmHNPsAnm
-         Ki2y6l6arxCElH4U2HelWQs81I86HEneswQye3GGVKBKNNLkeJMhqRc90R3rrtGrlxPp
-         lAffQ12D0Z75k6lJiLe/Pik7box6SFCpZZWVZaAv6knNM4hcEXmvQ2mifUlOH178J9Mw
-         pNW3ZKfoGQq9UlX1aCiiqg/v70AkObUCaB1GNwO7kJ08aJes4xliSszs/eu3vblLjrVN
-         +sqRodWjdRWCHEDVuTd/eskNfkqnqxTP+RqnX/SHf6mj67ui6gLMt6kUO/voXN8MGlsG
-         Aytw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGTFHNW7ysy6bba3HkOlzafetueeLsYDEkXAzxoOAWb2i1IJeIABhkENpjcRjXIh4Gq8ddxT5hVAy1y08=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw057PPATqG1jMbpmWH6BmVTqWV/zHRbAmysyyIirbWaB2BH5Gs
-	S0rmlEB9Tr9zG8qIt+94b3/jFFZk4xJjXhTtb3/fRl3smMBhhnSaBqpQTQqIyv1vHalaQhICKHX
-	xiL2ulmrdrw5vawp2oCq1/gyftqZd7eEIttMvoA==
-X-Google-Smtp-Source: AGHT+IGRAG2+e0nWCRhdPvid9sHsfU07sA9f4xus2JUHYoULnNUjW15Gcyv2WVYba67WuoFAKO5VLAEjL3t6C9W0ADY=
-X-Received: by 2002:a05:6102:3712:b0:492:9ca1:d35e with SMTP id
- ada2fe7eead31-49d4145c022mr1387447137.5.1726131363273; Thu, 12 Sep 2024
- 01:56:03 -0700 (PDT)
+	s=arc-20240116; t=1726131418; c=relaxed/simple;
+	bh=6Tkzbnot1aUNPoidsetbIWb7Ad8rBiS0quVwLz7P/Po=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fHH4XItcT0hbG96Ib76hOZC/Z7whvbK8svuGzUiFU7VkyWx4zxArLMdEB2KNtItLBnxpUW3X9tz06leNq8o4l64AKsjlYrX1s9r1yeTVQJAem4IDp21tdOyFxCqnnhGn8WBOcqLjfTaeahA2AUOPb1OlNbu+MmI3LagqOqehMr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cR9twx6i; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726131416; x=1757667416;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=6Tkzbnot1aUNPoidsetbIWb7Ad8rBiS0quVwLz7P/Po=;
+  b=cR9twx6iojyD4gYwgM1R++IuP846MPOdWspEtnS1JKZDYd8Dp4HKEqP8
+   SVd5WBII9SfJXssAGI6a5TvbaLVsHyUqzokcETxKym53r4TdkGJRDd4wb
+   /opEZDcejYI8ceVZHtFzCfLPn/Yfbpymx7RAilawhVTliWTmvT+mbsDpj
+   1TmhdeBYZPHnPy/hz0c3ImwFnsqlKmF8YmEBCG9O31hok8R15Gp1DeTEJ
+   qnQyKZXN4G0jnWw3ymGwVJIb9rN9TCx+L74S6IJ8rW1KbeHDUxGZ1xHse
+   bWhYHL6n7uz4K0p6FtyU3T7m9owi58L/57dhYnnF5FsBUY++hqlmik+sp
+   A==;
+X-CSE-ConnectionGUID: qwIHw5GkTGmdM1Jeatu6Ew==
+X-CSE-MsgGUID: x1S12r4zSweAHwJhJL2lzg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="24848392"
+X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
+   d="scan'208";a="24848392"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 01:56:55 -0700
+X-CSE-ConnectionGUID: g45qTTtXQNOT4npoaH3hZQ==
+X-CSE-MsgGUID: 5BsJJWrgRkKAYy+a/eL33g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
+   d="scan'208";a="68426878"
+Received: from carterle-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.253])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 01:56:51 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>, Tejas Vipin
+ <tejasvipin76@gmail.com>, Laurent.pinchart@ideasonboard.com,
+ patrik.r.jakobsson@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, airlied@gmail.com, daniel@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/gma500: replace drm_detect_hdmi_monitor() with
+ drm_display_info.is_hdmi
+In-Reply-To: <87o74ti7g5.fsf@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240911180650.820598-1-tejasvipin76@gmail.com>
+ <b0f77fcc-5d84-4727-9a17-9d1f1e2c5b76@suse.de> <87o74ti7g5.fsf@intel.com>
+Date: Thu, 12 Sep 2024 11:56:47 +0300
+Message-ID: <87ldzxi71s.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911130529.320360981@linuxfoundation.org>
-In-Reply-To: <20240911130529.320360981@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 12 Sep 2024 14:25:51 +0530
-Message-ID: <CA+G9fYsw_CwZT81J08ZzurfXx1aOQqHvVqro2tp2FdqU69U-NA@mail.gmail.com>
-Subject: Re: [PATCH 5.10 000/185] 5.10.226-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 11 Sept 2024 at 18:37, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Thu, 12 Sep 2024, Jani Nikula <jani.nikula@linux.intel.com> wrote:
+> On Thu, 12 Sep 2024, Thomas Zimmermann <tzimmermann@suse.de> wrote:
+>> Hi
+>>
+>> Am 11.09.24 um 20:06 schrieb Tejas Vipin:
+>>> Replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi since
+>>> monitor HDMI information is available after EDID is parsed. Additionally
+>>> rewrite the code the code to have fewer indentation levels.
+>>
+>> The problem is that the entire logic is outdated. The content=20
+>> of=C2=A0cdv_hdmi_detect() should go into cdv_hdmi_get_modes(), the detec=
+t_ctx=20
+>> callback should be set to drm_connector_helper_detect_from_ddc() and=20
+>> cdv_hdmi_detect() should be deleted. The result is that ->detect_ctx=20
+>> will detect the presence of a display and ->get_modes will update EDID=20
+>> and other properties.
 >
-> This is the start of the stable review cycle for the 5.10.226 release.
-> There are 185 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> I guess I didn't get the memo on this one.
 >
-> Responses should be made by Fri, 13 Sep 2024 13:05:03 +0000.
-> Anything received after that time might be too late.
+> What's the problem with reading the EDID at detect? The subsequent
+> drm_edid_connector_add_modes() called from .get_modes() does not need to
+> read the EDID again.
+
+Moreover, in this case .detect() only detects digital displays as
+reported by EDID. If you postpone that to .get_modes(), the probe helper
+will still report connected, and invent non-EDID fallback modes. The
+behaviour changes.
+
+> I think it should be fine to do incremental refactors like the patch at
+> hand (modulo some issues I mention below).
+
+Another issue in the patch is that it should also change .get_modes() to
+not read the EDID again, but just call drm_edid_connector_add_modes().
+
+BR,
+Jani.
+
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
-5.10.226-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-5.10.y
-> and the diffstat can be found below.
+> BR,
+> Jani.
 >
-> thanks,
 >
-> greg k-h
+>>
+>> Do you have=C2=A0 a device for testing such a change?
+>>
+>> Best regards
+>> Thomas
+>>
+>>>
+>>> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+>>> ---
+>>> Changes in v2:
+>>>      - Use drm_edid instead of edid
+>>>
+>>> Link to v1: https://lore.kernel.org/all/20240910051856.700210-1-tejasvi=
+pin76@gmail.com/
+>>> ---
+>>>   drivers/gpu/drm/gma500/cdv_intel_hdmi.c | 24 +++++++++++++-----------
+>>>   1 file changed, 13 insertions(+), 11 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c b/drivers/gpu/drm/=
+gma500/cdv_intel_hdmi.c
+>>> index 2d95e0471291..701f8bbd5f2b 100644
+>>> --- a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
+>>> +++ b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
+>>> @@ -128,23 +128,25 @@ static enum drm_connector_status cdv_hdmi_detect(
+>>>   {
+>>>   	struct gma_encoder *gma_encoder =3D gma_attached_encoder(connector);
+>>>   	struct mid_intel_hdmi_priv *hdmi_priv =3D gma_encoder->dev_priv;
+>>> -	struct edid *edid =3D NULL;
+>>> +	const struct drm_edid *drm_edid;
+>>> +	int ret;
+>>>   	enum drm_connector_status status =3D connector_status_disconnected;
+>>>=20=20=20
+>>> -	edid =3D drm_get_edid(connector, connector->ddc);
+>>> +	drm_edid =3D drm_edid_read_ddc(connector, connector->ddc);
+>
+> Just drm_edid_read() is enough when you're using connector->ddc.
+>
+>>> +	ret =3D drm_edid_connector_update(connector, drm_edid);
+>>>=20=20=20
+>>>   	hdmi_priv->has_hdmi_sink =3D false;
+>>>   	hdmi_priv->has_hdmi_audio =3D false;
+>>> -	if (edid) {
+>>> -		if (edid->input & DRM_EDID_INPUT_DIGITAL) {
+>>> -			status =3D connector_status_connected;
+>>> -			hdmi_priv->has_hdmi_sink =3D
+>>> -						drm_detect_hdmi_monitor(edid);
+>>> -			hdmi_priv->has_hdmi_audio =3D
+>>> -						drm_detect_monitor_audio(edid);
+>>> -		}
+>>> -		kfree(edid);
+>>> +	if (ret)
+>
+> This error path leaks the EDID.
+>
+>>> +		return status;
+>>> +
+>>> +	if (drm_edid_is_digital(drm_edid)) {
+>>> +		status =3D connector_status_connected;
+>>> +		hdmi_priv->has_hdmi_sink =3D connector->display_info.is_hdmi;
+>>> +		hdmi_priv->has_hdmi_audio =3D connector->display_info.has_audio;
+>>>   	}
+>>> +	drm_edid_free(drm_edid);
+>>> +
+>>>   	return status;
+>>>   }
+>>>=20=20=20
 
-
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
-
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build
-* kernel: 5.10.226-rc2
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 6cc7ac2e6d7e0d3dded48744a235d6630d82caa0
-* git describe: v5.10.225-186-g6cc7ac2e6d7e
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.10.y/build/v5.10=
-.225-186-g6cc7ac2e6d7e
-
-## Test Regressions (compared to v5.10.224-152-gee485d4aa099)
-
-## Metric Regressions (compared to v5.10.224-152-gee485d4aa099)
-
-## Test Fixes (compared to v5.10.224-152-gee485d4aa099)
-
-## Metric Fixes (compared to v5.10.224-152-gee485d4aa099)
-
-## Test result summary
-total: 89626, pass: 73979, fail: 2026, skip: 13552, xfail: 69
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 102 total, 102 passed, 0 failed
-* arm64: 29 total, 29 passed, 0 failed
-* i386: 23 total, 23 passed, 0 failed
-* mips: 22 total, 22 passed, 0 failed
-* parisc: 3 total, 0 passed, 3 failed
-* powerpc: 23 total, 23 passed, 0 failed
-* riscv: 6 total, 6 passed, 0 failed
-* s390: 9 total, 9 passed, 0 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 6 total, 6 passed, 0 failed
-* x86_64: 25 total, 25 passed, 0 failed
-
-## Test suites summary
-* boot
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kunit
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
+--=20
+Jani Nikula, Intel
 
