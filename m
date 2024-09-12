@@ -1,170 +1,245 @@
-Return-Path: <linux-kernel+bounces-326225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3005E97652A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:07:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C76697652C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0D9AB224B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:07:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3972B22022
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEBAA192B68;
-	Thu, 12 Sep 2024 09:07:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1A619146E;
+	Thu, 12 Sep 2024 09:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="btIgOAZ9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Fvr4jxgd";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="btIgOAZ9";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Fvr4jxgd"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dBsKwQ6n"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A770188A35;
-	Thu, 12 Sep 2024 09:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE2719048D;
+	Thu, 12 Sep 2024 09:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726132046; cv=none; b=DFQtA0x1ii9zGjHpb2HE14ankQyDh7k2mneVIktWfGqXCKi0k0ERtDL0h1nJOBPrPkp9h8kyHXOvpCMJYdLukWnmAyJWS5rHycRNiWRjugE9xKQ1CarhP7iOs/OJe+gx8daoiET9Vbjhznz3NcWuFPlm7HKEyscbhmqZ3zjfCXI=
+	t=1726132067; cv=none; b=pHO5G3OUbfI5ADTr89Ju1mbRRvIbF0a/ijDysCQgYDSZqpnueo1QcxhWOYsq8/ACu0WXrwGwGTtemSUyZTvmQXjRFQcLYNCHJgtL3X95OJcq50LBBNwLu+dU43oxfgx58ma+9JcbRxgjwy76dUVJArm5QLr9DRBNDd/g3jY9p0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726132046; c=relaxed/simple;
-	bh=jOgLfYrRrYA6YqozFCaYTUHe2HSPPtO0emZuQRzxWpY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fwn9h0jMJ9sCJd/8X1TIVPxRQfXBqPZYCHiHyV4/unabhaftagAXc8tpWwkqSVplGCRA+1yiAv3k75DNGwT4M+4yfSjIjwXYxL6ZlbSenQH/fNYKYATwIR5l/vTQQd6a42xYcIEauQdovhc54qXzd5yQM1SG1/ooTorO74RXcXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=btIgOAZ9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Fvr4jxgd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=btIgOAZ9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Fvr4jxgd; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A501A219E7;
-	Thu, 12 Sep 2024 09:07:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726132042; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nNNn9u5EOy3XN6BN/n/lP5n9ds6j5LP/KiWNjpZ/eO8=;
-	b=btIgOAZ91iv/CvuR9ikDr4G7dNZC56ON3oIPs1/KV4oQHZTMWn/kjUCticrKWny1RGU8Ud
-	vc+xKVkwBp+aYg2YkzKWYTZjHMXlqnIl0EZAcvZ7jfavgdOYRKzN7EkmCTxP8lQWY/GYZ7
-	rQwusDTUYCJythIGtFTtV+SG8IiyvvU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726132042;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nNNn9u5EOy3XN6BN/n/lP5n9ds6j5LP/KiWNjpZ/eO8=;
-	b=Fvr4jxgd87DDQYA4ArrwAWMkxdtxDIejD1cEsjdhsuonYqjJS2CfZL41IPBW9jMqNPM793
-	I4vpFQawtXw9gfAA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1726132042; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nNNn9u5EOy3XN6BN/n/lP5n9ds6j5LP/KiWNjpZ/eO8=;
-	b=btIgOAZ91iv/CvuR9ikDr4G7dNZC56ON3oIPs1/KV4oQHZTMWn/kjUCticrKWny1RGU8Ud
-	vc+xKVkwBp+aYg2YkzKWYTZjHMXlqnIl0EZAcvZ7jfavgdOYRKzN7EkmCTxP8lQWY/GYZ7
-	rQwusDTUYCJythIGtFTtV+SG8IiyvvU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1726132042;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nNNn9u5EOy3XN6BN/n/lP5n9ds6j5LP/KiWNjpZ/eO8=;
-	b=Fvr4jxgd87DDQYA4ArrwAWMkxdtxDIejD1cEsjdhsuonYqjJS2CfZL41IPBW9jMqNPM793
-	I4vpFQawtXw9gfAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 999F513A73;
-	Thu, 12 Sep 2024 09:07:22 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id KL98JUqv4mYxGwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 12 Sep 2024 09:07:22 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 54956A08B3; Thu, 12 Sep 2024 11:07:22 +0200 (CEST)
-Date: Thu, 12 Sep 2024 11:07:22 +0200
-From: Jan Kara <jack@suse.cz>
-To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Cc: tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH -next] ext4: Simplify if condition
-Message-ID: <20240912090722.4e7o4l462y6hccau@quack3>
-References: <20240830071713.40565-1-jiapeng.chong@linux.alibaba.com>
+	s=arc-20240116; t=1726132067; c=relaxed/simple;
+	bh=7k0XyMEH1Z3n5hHu5Ip9hn4g+5mmuwI5Pk2cZmfaAwk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NilsHGnNrO86eH8bRL6cmGNZdgkDKi13FnQSDI9ampHpvNm2QcXvvqK2btEgucjy+11LFgB9kdLtpDsfztCHlCDFVtUPKa45REt+QjOv0cO6Z/4ZyfBDxYlpmDdapEzZnQRUCQiRWZbzK1BPWSlgQ8lOYUaBzsegXyEhRS8PgUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dBsKwQ6n; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726132066; x=1757668066;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=7k0XyMEH1Z3n5hHu5Ip9hn4g+5mmuwI5Pk2cZmfaAwk=;
+  b=dBsKwQ6n8epAxUg3xU85f9c8MLsXQ1X4VC0csDgk+13WbQ8gn4AmlvUC
+   GJV156u8fK58l/CdpY/t21irqjLYSPII5gxuDN6kULe5aaR8vjc1t+iat
+   gJK3+mUnopr3YOpdT1cm5Vam3Jfs/oi/wD0YclURU/n/LQO2IaP/Tokef
+   vcoyDiP9w6C/hz35bZ+uQ21lZRg7qTHLSYqLNMbW3vQ5+Ma/Gdxu34KIA
+   FTBfbCusSd4/jD+7Q0nn7x3TqB14xoD2qVllq3zKb1ITl1pKrdBACYR4r
+   ghhZSuCSwh1vk4JWbW67svpoUcUomHcFh9InA8lpeU7dBPSADB4ZMpcUq
+   A==;
+X-CSE-ConnectionGUID: MB2a0AujTUODiLDbZPdTsQ==
+X-CSE-MsgGUID: 1P3dXy3+Q82UkpUSPlPhYw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="13490770"
+X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
+   d="scan'208";a="13490770"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 02:07:45 -0700
+X-CSE-ConnectionGUID: l6wLoMHlTtG+zcCHKarU5g==
+X-CSE-MsgGUID: dEd+rqZURI6hQJlO+dSTAw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
+   d="scan'208";a="67367320"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.224.38]) ([10.124.224.38])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 02:07:43 -0700
+Message-ID: <e2a11f6d-96d3-4607-b3f2-3a42ba036641@intel.com>
+Date: Thu, 12 Sep 2024 17:07:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240830071713.40565-1-jiapeng.chong@linux.alibaba.com>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/25] KVM: TDX: Initialize KVM supported capabilities
+ when module setup
+To: Nikolay Borisov <nik.borisov@suse.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
+ pbonzini@redhat.com, kvm@vger.kernel.org
+Cc: kai.huang@intel.com, isaku.yamahata@gmail.com,
+ tony.lindgren@linux.intel.com, linux-kernel@vger.kernel.org
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-11-rick.p.edgecombe@intel.com>
+ <caa4407a-b838-4e1b-bb3d-87518f3de66b@suse.com>
+ <aa764aad-1736-459f-896e-4f43bfe8b18d@intel.com>
+ <2a2dd102-2ad9-4bbd-a5f7-5994de3870ae@suse.com>
+ <45963b9e-eec8-40b1-9e86-226504c463b8@intel.com>
+ <55366da1-2b9c-4d12-aba7-93c15a1b3b09@suse.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <55366da1-2b9c-4d12-aba7-93c15a1b3b09@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri 30-08-24 15:17:13, Jiapeng Chong wrote:
-> The if condition !A || A && B can be simplified to !A || B.
-> 
-> ./fs/ext4/fast_commit.c:362:21-23: WARNING !A || A && B is equivalent to !A || B.
-> 
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9837
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/ext4/fast_commit.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
-> index 326c16a4e51e..53a77172dc9f 100644
-> --- a/fs/ext4/fast_commit.c
-> +++ b/fs/ext4/fast_commit.c
-> @@ -357,9 +357,7 @@ void ext4_fc_mark_ineligible(struct super_block *sb, int reason, handle_t *handl
->  	}
->  	spin_lock(&sbi->s_fc_lock);
->  	is_ineligible = ext4_test_mount_flag(sb, EXT4_MF_FC_INELIGIBLE);
-> -	if (has_transaction &&
-> -	    (!is_ineligible ||
-> -	     (is_ineligible && tid_gt(tid, sbi->s_fc_ineligible_tid))))
-> +	if (has_transaction && (!is_ineligible || tid_gt(tid, sbi->s_fc_ineligible_tid)))
->  		sbi->s_fc_ineligible_tid = tid;
->  	ext4_set_mount_flag(sb, EXT4_MF_FC_INELIGIBLE);
->  	spin_unlock(&sbi->s_fc_lock);
-> -- 
-> 2.32.0.3.g01195cf9f
+On 9/12/2024 4:43 PM, Nikolay Borisov wrote:
 > 
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> On 12.09.24 г. 11:37 ч., Xiaoyao Li wrote:
+>> On 9/12/2024 4:04 PM, Nikolay Borisov wrote:
+>>>
+>>>
+>>> On 5.09.24 г. 16:36 ч., Xiaoyao Li wrote:
+>>>> On 9/4/2024 7:58 PM, Nikolay Borisov wrote:
+>>>>>
+>>>>>
+>>>>> On 13.08.24 г. 1:48 ч., Rick Edgecombe wrote:
+>>>>>> From: Xiaoyao Li <xiaoyao.li@intel.com>
+>>>>>>
+>>>>>> While TDX module reports a set of capabilities/features that it
+>>>>>> supports, what KVM currently supports might be a subset of them.
+>>>>>> E.g., DEBUG and PERFMON are supported by TDX module but currently not
+>>>>>> supported by KVM.
+>>>>>>
+>>>>>> Introduce a new struct kvm_tdx_caps to store KVM's capabilities of 
+>>>>>> TDX.
+>>>>>> supported_attrs and suppported_xfam are validated against fixed0/1
+>>>>>> values enumerated by TDX module. Configurable CPUID bits derive 
+>>>>>> from TDX
+>>>>>> module plus applying KVM's capabilities (KVM_GET_SUPPORTED_CPUID),
+>>>>>> i.e., mask off the bits that are configurable in the view of TDX 
+>>>>>> module
+>>>>>> but not supported by KVM yet.
+>>>>>>
+>>>>>> KVM_TDX_CPUID_NO_SUBLEAF is the concept from TDX module, switch it 
+>>>>>> to 0
+>>>>>> and use KVM_CPUID_FLAG_SIGNIFCANT_INDEX, which are the concept of 
+>>>>>> KVM.
+>>>>>>
+>>>>>> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
+>>>>>> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+>>>>>> ---
+>>>>>> uAPI breakout v1:
+>>>>>>   - Change setup_kvm_tdx_caps() to use the exported 'struct 
+>>>>>> tdx_sysinfo'
+>>>>>>     pointer.
+>>>>>>   - Change how to copy 'kvm_tdx_cpuid_config' since 'struct 
+>>>>>> tdx_sysinfo'
+>>>>>>     doesn't have 'kvm_tdx_cpuid_config'.
+>>>>>>   - Updates for uAPI changes
+>>>>>> ---
+>>>>>>   arch/x86/include/uapi/asm/kvm.h |  2 -
+>>>>>>   arch/x86/kvm/vmx/tdx.c          | 81 
+>>>>>> +++++++++++++++++++++++++++++++++
+>>>>>>   2 files changed, 81 insertions(+), 2 deletions(-)
+>>>>>>
+>>>>>> diff --git a/arch/x86/include/uapi/asm/kvm.h 
+>>>>>> b/arch/x86/include/uapi/asm/kvm.h
+>>>>>> index 47caf508cca7..c9eb2e2f5559 100644
+>>>>>> --- a/arch/x86/include/uapi/asm/kvm.h
+>>>>>> +++ b/arch/x86/include/uapi/asm/kvm.h
+>>>>>> @@ -952,8 +952,6 @@ struct kvm_tdx_cmd {
+>>>>>>       __u64 hw_error;
+>>>>>>   };
+>>>>>> -#define KVM_TDX_CPUID_NO_SUBLEAF    ((__u32)-1)
+>>>>>> -
+>>>>>>   struct kvm_tdx_cpuid_config {
+>>>>>>       __u32 leaf;
+>>>>>>       __u32 sub_leaf;
+>>>>>> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+>>>>>> index 90b44ebaf864..d89973e554f6 100644
+>>>>>> --- a/arch/x86/kvm/vmx/tdx.c
+>>>>>> +++ b/arch/x86/kvm/vmx/tdx.c
+>>>>>> @@ -31,6 +31,19 @@ static void __used tdx_guest_keyid_free(int keyid)
+>>>>>>       ida_free(&tdx_guest_keyid_pool, keyid);
+>>>>>>   }
+>>>>>> +#define KVM_TDX_CPUID_NO_SUBLEAF    ((__u32)-1)
+>>>>>> +
+>>>>>> +struct kvm_tdx_caps {
+>>>>>> +    u64 supported_attrs;
+>>>>>> +    u64 supported_xfam;
+>>>>>> +
+>>>>>> +    u16 num_cpuid_config;
+>>>>>> +    /* This must the last member. */
+>>>>>> +    DECLARE_FLEX_ARRAY(struct kvm_tdx_cpuid_config, cpuid_configs);
+>>>>>> +};
+>>>>>> +
+>>>>>> +static struct kvm_tdx_caps *kvm_tdx_caps;
+>>>>>> +
+>>>>>>   static int tdx_get_capabilities(struct kvm_tdx_cmd *cmd)
+>>>>>>   {
+>>>>>>       const struct tdx_sysinfo_td_conf *td_conf = 
+>>>>>> &tdx_sysinfo->td_conf;
+>>>>>> @@ -131,6 +144,68 @@ int tdx_vm_ioctl(struct kvm *kvm, void __user 
+>>>>>> *argp)
+>>>>>>       return r;
+>>>>>>   }
+>>>>>> +#define KVM_SUPPORTED_TD_ATTRS (TDX_TD_ATTR_SEPT_VE_DISABLE)
+>>>>>
+>>>>> Why isn't TDX_TD_ATTR_DEBUG added as well?
+>>>>
+>>>> Because so far KVM doesn't support all the features of a DEBUG TD 
+>>>> for userspace. e.g., KVM doesn't provide interface for userspace to 
+>>>> read/write private memory of DEBUG TD.
+>>>
+>>> But this means that you can't really run a TDX with SEPT_VE_DISABLE 
+>>> disabled for debugging purposes, so perhaps it might be necessary to 
+>>> rethink the condition allowing SEPT_VE_DISABLE to be disabled. 
+>>> Without the debug flag and SEPT_VE_DISABLE disabled the code refuses 
+>>> to start the VM, what if one wants to debug some SEPT issue by having 
+>>> an oops generated inside the vm ?
+>>
+>> sept_ve_disable is allowed to be disable, i.e., set to 0.
+>>
+>> I think there must be some misunderstanding.
+> 
+> There isn't, the current code is:
+> 
+>    201         if (!(td_attr & ATTR_SEPT_VE_DISABLE)) {
+>      1                 const char *msg = "TD misconfiguration: 
+> SEPT_VE_DISABLE attribute must be set.";
+>      2
+>      3                 /* Relax SEPT_VE_DISABLE check for debug TD. */
+>      4                 if (td_attr & ATTR_DEBUG)
+>      5                         pr_warn("%s\n", msg);
+>      6                 else
+>      7                         tdx_panic(msg);
+>      8         }
+> 
+> 
+> I.e if we disable SEPT_VE_DISABLE without having ATTR_DEBUG it results 
+> in a panic.
+
+I see now.
+
+It's linux TD guest's implementation, which requires SEPT_VE_DISABLE 
+must be set unless it's a debug TD.
+
+Yes, it can be the motivation to request KVM to add the support of 
+ATTRIBUTES.DEBUG. But the support of ATTRIBUTES.DEBUG is not just 
+allowing this bit to be set to 1. For DEBUG TD, VMM is allowed to 
+read/write the private memory content, cpu registers, and MSRs, VMM is 
+allowed to trap the exceptions in TD, VMM is allowed to manipulate the 
+VMCS of TD vcpu, etc.
+
+IMHO, for upstream, no need to support all the debug capability as 
+described above. But we need firstly define a subset of them as the 
+starter of supporting ATTRIBUTES.DEBUG. Otherwise, what is the meaning 
+of KVM to allow the DEBUG to be set without providing any debug capability?
+
+For debugging purpose, you can just hack guest kernel to allow 
+spet_ve_disable to be 0 without DEBUG bit set, or hack KVM to allow 
+DEBUG bit to be set.
+
+>>
+>>>>
+>>>>> <snip>
+>>>>
+>>>>
+>>
+
 
