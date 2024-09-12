@@ -1,125 +1,155 @@
-Return-Path: <linux-kernel+bounces-326764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AF01976CA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:50:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 673BC976CA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:50:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD7611C23B5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:50:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0CB5B25379
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73CEB14293;
-	Thu, 12 Sep 2024 14:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DD831B3F3A;
+	Thu, 12 Sep 2024 14:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kKknT4C7"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ak6oMl/v"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A09176FCF
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 14:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A491B1509;
+	Thu, 12 Sep 2024 14:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726152640; cv=none; b=P/jFlPOB8KfsnPtHEQswcdN9725nIsgOl/AFA+U+At9oUuGLWHcMPgKUTk0xIglQuijrKnEbayumyUBfgsshuZi4bF2Xa3wDRm8dglrJ9WwCSv53HOwmVSBXmR2t/JPoOeA23N9ade7vexwpZOLuXJA2cBbgH7EysmSw1WteuMA=
+	t=1726152610; cv=none; b=VDos/bLQnRK1Meh5w/KRh7GnKpSk25noThd5exs+ekdG7qfYGuwWU8JKGBLdCvkDLSExJG8n5uGs6YX0+nlHxFdV4Qff6p6HH+NYm8/KHmhYUAEmth7UaN5bciJLT/l0+gYubY1FQodu4mh51mx5feWboC6kMrM2NE0hG+8FD2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726152640; c=relaxed/simple;
-	bh=TBxosJnxKNSR0MGeo9H9cM/4TfnfF1GV0MUVsO/FJXg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qe/oR6vU9mdhbnsuVfCT+EI1Ye3cs2861UPnNy/zrGIRHddHhBWGe2vvPeCjQQyZaE+fT32H/4dIuef+gKshyN5sewYI3MywX02Hq0hqMyZANoBEa2VW0DoenRGlmMYG/GOGy+ld6eJiVe7yR1xug1xJ11tIUMXUwZLHvuGsMR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kKknT4C7; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2055a3f80a4so7459655ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:50:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726152639; x=1726757439; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8riDeJfpKTiIIgIK66ZvC0JkQHqkw/ZkvYMdWGm4eVU=;
-        b=kKknT4C7VsEw99TpuC89aoZZSdMdmdRRiaqe1ayEa3f94Rfqw2gE8xbK2tRlA/oVsH
-         HxEvkqZhD9Lr8YtyFKWp4B1L0zErz82/hDnpQrnS0fd2cqceIVX+62oqYXALxzzZ09xZ
-         hK+60J/VS2Tn6wCMXpx8FlZisNHaRvoBudFnkCN8sSKAhcRpmEviDcOsgwqITAo7X2Ah
-         VwB1PBILBzyh0M7ujQ6cUdDVyvfhLBTeDjlqOlrTLVA0RZm6P8vNZH16EcZF1bJ8908S
-         GTXUAf+WGXaf+zXQHRXDdfEYE25HN7hjKobRIu3tk6zDm7AkjjrLyBXJq7JnNu9qAOog
-         08TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726152639; x=1726757439;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8riDeJfpKTiIIgIK66ZvC0JkQHqkw/ZkvYMdWGm4eVU=;
-        b=cFVuiGWFYqyLYPZU0qerhwxpUfhEfxlj973IE+ax8dFRST3NoJk0bZVfJsxvWU01YC
-         qfNJRlEfDGZa75cEbuLq4qkgC/8vNJyHmzoWwHQf7UXEsB+AF6L2Ql7JZGC5nIPc+vwl
-         yCRIEs/Y7yIdlRoIgl0bwD8DZwkd++5R/NrkbV/3mUDGcFpWT8qo4eLAJR8DEjRm2zTv
-         mJxZvfX3f8tj+deXnrpMwlITbf5WbIU2gCjUHs5FjuaNUfAvJSAEq1+b8vguoh8cW4HL
-         jWo2sUsoAwsp07EpsL1hcFu/zOzGLikuDr3rzB6cmZmW8xxUz1qOyskIOfxr6k7lnlpw
-         NAfg==
-X-Gm-Message-State: AOJu0YwwwbJFRhWbojNlsN1Cn51pqQjmezuP51KJO5KxqOk5M8uUDvtf
-	VzDqNSBP/1iJOF7iWMmrQXCZimEh3IyemufPEJNKWEPzlp2GsbYfMCKVK15rnBhgNbC/ycEr9cN
-	2aPgODRj9llkkdPbeeO5ryCjSRSe52CvMSxHa
-X-Google-Smtp-Source: AGHT+IH+oOivsgfrBeKHuHozhtz6eiw/QOezGUkUUw4eyVeYY7NMSvWWqexcWfthAnr/CXOkRdF8YxLmOcYdvlqrug4=
-X-Received: by 2002:a17:903:32c2:b0:207:894:6e58 with SMTP id
- d9443c01a7336-2076e45e311mr42095165ad.56.1726152638371; Thu, 12 Sep 2024
- 07:50:38 -0700 (PDT)
+	s=arc-20240116; t=1726152610; c=relaxed/simple;
+	bh=+BgwN9MX/60QTjD/VU3ATqHjFLnavWPc01LGHnKtKoI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iLNugDwzRJQVH/L7JR5DQQmc3aX0XRBv14uvcjaQhvEKTchovAFdsw6K7X1gSEvPDuN2s/6UFyjQ0tug+wleFT9O5IEkGG3lsaupcOIQMN3DZ1Kqar5YOKpWZUpb5GPmFrsJp/gWhBRySR66Aoh8izfLfUSGuuBX3dqd3HKzsjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ak6oMl/v; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726152609; x=1757688609;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=+BgwN9MX/60QTjD/VU3ATqHjFLnavWPc01LGHnKtKoI=;
+  b=Ak6oMl/vsLp0gPZCD/bPIMcct635j+MVdpMBM6vxzPVZGBjz0uAK9sub
+   Bh/pSYwhqDpgx7xP/YPQAK6HVG0/scRPYdsBpRCK0k1tbYiLNzVe4SCOF
+   jiDK3Y9v1FhDITjPx6+OTCa1kn56Oc4mfjeoJqvupEsZRwHL5DKekNw9q
+   ihUuQLpWFHkgEImFmofs59MTJucRes6+jyMQZLU+XZzRt2CcFfvNbyu65
+   4H5XqP6wmgg1tmQfV3g7Q9K11rqEFU3cBweLftLL9Q6KqZL73ZWkozfV1
+   dDSuYqIXYoJ/mn8nt0JO2UpiBciHsZuEFcBxxCBsUMWluYeH/pTmx1JPB
+   g==;
+X-CSE-ConnectionGUID: bQKdu7ZhSlKkuA20qhIMdQ==
+X-CSE-MsgGUID: vftxy1OWSPqLU4WS5NSN5Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="47526685"
+X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
+   d="scan'208";a="47526685"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 07:50:08 -0700
+X-CSE-ConnectionGUID: zW8AD8+SRZGJXfRd47DaFQ==
+X-CSE-MsgGUID: WFazzlTnRPGa3QkjIV4lJA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
+   d="scan'208";a="68038468"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by orviesa006.jf.intel.com with ESMTP; 12 Sep 2024 07:50:09 -0700
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org
+Cc: tglx@linutronix.de,
+	hpa@zytor.com,
+	sfr@canb.auug.org.au,
+	steven.price@arm.com,
+	Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH] perf: Fix topology_sibling_cpumask check warning on ARM
+Date: Thu, 12 Sep 2024 07:50:25 -0700
+Message-Id: <20240912145025.1574448-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <39fbceb9a794b7c412b17c4ac6c2dd285d1bd3e5.1726152335.git.mst@redhat.com>
-In-Reply-To: <39fbceb9a794b7c412b17c4ac6c2dd285d1bd3e5.1726152335.git.mst@redhat.com>
-From: Marco Elver <elver@google.com>
-Date: Thu, 12 Sep 2024 16:50:02 +0200
-Message-ID: <CANpmjNMNgvg+NKtzxy06AB4QFQKzFsmp-chB1G_+XueiKNA-bA@mail.gmail.com>
-Subject: Re: [PATCH] virtio_ring: tag event_triggered as racy for KCSAN
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: linux-kernel@vger.kernel.org, 
-	syzbot+8a02104389c2e0ef5049@syzkaller.appspotmail.com, 
-	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	virtualization@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, 12 Sept 2024 at 16:45, Michael S. Tsirkin <mst@redhat.com> wrote:
->
-> event_triggered is fundamentally racy. There are races of 2 types:
-> 1. vq processing can read false value while interrupt
->    triggered and set it to true.
->    result will be a bit of extra work when disabling cbs, no big deal.
->
-> 1. vq processing can set false value then interrupt
->    immediately sets true value
->    since interrupt then triggers a callback which will
->    process buffers, this is also not an issue.
->
-> However, looks like KCSAN isn't smart enough to figure this out.
-> Tag the field __data_racy for now.
-> We should probably look at ways to make this more straight-forwardly
-> correct.
->
-> Cc: Marco Elver <elver@google.com>
-> Reported-by: syzbot+8a02104389c2e0ef5049@syzkaller.appspotmail.com
-> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> ---
->  drivers/virtio/virtio_ring.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-> index be7309b1e860..724aa9c27c6b 100644
-> --- a/drivers/virtio/virtio_ring.c
-> +++ b/drivers/virtio/virtio_ring.c
-> @@ -194,7 +194,7 @@ struct vring_virtqueue {
->         u16 last_used_idx;
->
->         /* Hint for event idx: already triggered no need to disable. */
-> -       bool event_triggered;
-> +       bool __data_racy event_triggered;
+From: Kan Liang <kan.liang@linux.intel.com>
 
-I guess if you don't care about any data races on this variable, this
-is reasonable. Although note that data race is more subtle than just a
-"race": https://lwn.net/Articles/816850/
+The below warning is triggered when building with arm
+multi_v7_defconfig.
 
-Acked-by: Marco Elver <elver@google.com>
+kernel/events/core.c: In function 'perf_event_setup_cpumask':
+kernel/events/core.c:14012:13: warning: the comparison will always
+evaluate as 'true' for the address of 'thread_sibling' will never be
+NULL [-Waddress]
+14012 |         if (!topology_sibling_cpumask(cpu)) {
+
+The perf_event_init_cpu() may be invoked at the early boot stage, while
+the topology_*_cpumask hasn't been initialized yet. The check is to
+specially handle the case, and initialize the perf_online_<domain>_masks
+on the boot CPU.
+X86 uses a per-cpu cpumask pointer, which could be NULL at the early
+boot stage. However, ARM uses a global variable, which never be NULL.
+
+Use perf_online_mask as an indicator instead. Only initialize the
+perf_online_<domain>_masks when perf_online_mask is empty.
+
+Fix a typo as well.
+
+Fixes: 4ba4f1afb6a9 ("perf: Generic hotplug support for a PMU with a scope")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Closes: https://lore.kernel.org/lkml/20240911153854.240bbc1f@canb.auug.org.au/
+Reported-by: Steven Price <steven.price@arm.com>
+Closes: https://lore.kernel.org/lkml/1835eb6d-3e05-47f3-9eae-507ce165c3bf@arm.com/
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ kernel/events/core.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 7a028474caef..20e97c1aa4d6 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -13954,21 +13954,19 @@ static void perf_event_setup_cpumask(unsigned int cpu)
+ 	struct cpumask *pmu_cpumask;
+ 	unsigned int scope;
+ 
+-	cpumask_set_cpu(cpu, perf_online_mask);
+-
+ 	/*
+ 	 * Early boot stage, the cpumask hasn't been set yet.
+ 	 * The perf_online_<domain>_masks includes the first CPU of each domain.
+-	 * Always uncondifionally set the boot CPU for the perf_online_<domain>_masks.
++	 * Always unconditionally set the boot CPU for the perf_online_<domain>_masks.
+ 	 */
+-	if (!topology_sibling_cpumask(cpu)) {
++	if (cpumask_empty(perf_online_mask)) {
+ 		for (scope = PERF_PMU_SCOPE_NONE + 1; scope < PERF_PMU_MAX_SCOPE; scope++) {
+ 			pmu_cpumask = perf_scope_cpumask(scope);
+ 			if (WARN_ON_ONCE(!pmu_cpumask))
+ 				continue;
+ 			cpumask_set_cpu(cpu, pmu_cpumask);
+ 		}
+-		return;
++		goto end;
+ 	}
+ 
+ 	for (scope = PERF_PMU_SCOPE_NONE + 1; scope < PERF_PMU_MAX_SCOPE; scope++) {
+@@ -13983,6 +13981,8 @@ static void perf_event_setup_cpumask(unsigned int cpu)
+ 		    cpumask_any_and(pmu_cpumask, cpumask) >= nr_cpu_ids)
+ 			cpumask_set_cpu(cpu, pmu_cpumask);
+ 	}
++end:
++	cpumask_set_cpu(cpu, perf_online_mask);
+ }
+ 
+ int perf_event_init_cpu(unsigned int cpu)
+-- 
+2.38.1
+
 
