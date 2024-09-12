@@ -1,159 +1,89 @@
-Return-Path: <linux-kernel+bounces-326303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89185976643
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:02:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A910E97663E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:02:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD1C11C222FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:02:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F4F3B22B62
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8EB191F9C;
-	Thu, 12 Sep 2024 10:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BFC19F10D;
+	Thu, 12 Sep 2024 10:02:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cIbtk/mH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pkao1/pM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225DA18E043
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 10:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74BB136328;
+	Thu, 12 Sep 2024 10:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726135363; cv=none; b=I4dIzGR5Oz/3CO2ywziankNbL3baOpKHCUuprq7/6iB3eda5bPVv6wyu2Y1c2OXZYqC/+aUz9NckBi9kqZGaJG0FwPyNJVAzGiWo2ukOC1d/R9TFhjnXNPTmWql7hNcWkTwsQ5sTkmxyjONgB+Jrh7nuA4r7PeoFyLP5AfgG77Y=
+	t=1726135328; cv=none; b=qSy1dM8FAw0VLsJB/P2YOzgEiEgqd8ANuk7fsNMPO4nCR6H8/cG2zJELnbI16BDEx0lMcqn8MoZMuMQY1hNblnHHPHTRMhGuCoR1k6dXVdnP/Mi+P/bt0NdFuP3iNB92tIWS0NHsIuNubUtbCHTcwBBWT8whr8apOJT1BnNMIC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726135363; c=relaxed/simple;
-	bh=a5vCrkBl64E/DxQ9VPHN+y7+aJZs9Z1Kpz+98ZbYe4Y=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=qHdAjHmhhIcXtUXofmzlEOg2YQSOgzpgXVHpPcD0L/pBGOB5f3uTr081mb5QtEBQtlhbigvvcY0s3rf4EXnZOujYQz9KM7fzDphWsxir5qCdSaXk7CaVaiexzd7B2VkNzxueqIj2vVTIquBmhQYU+bU/k96iGHl8mvrpQFe4BJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cIbtk/mH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F9CEC4CECD;
-	Thu, 12 Sep 2024 10:02:42 +0000 (UTC)
+	s=arc-20240116; t=1726135328; c=relaxed/simple;
+	bh=2AmhqDEMZCRF60IhqOsscYYo0UoqtMMlj7QiuCR9y+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MrbsO4QS5aF0XxYGfz+xpbyvhueP0dz98t0T4i2nXktCu6Pe9f20dSCTpsGgAKBvECo0kjVNIWi+TvSt/eLFuXXS4bQ42bPg94IjG/BgDSqhar/LhfkswqZDy9DGFzv1B7j+wb0bSxxoVkDzLesmOJQ6cmmUkMNiy3w8lZK5iWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pkao1/pM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC72DC4CEC3;
+	Thu, 12 Sep 2024 10:02:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726135362;
-	bh=a5vCrkBl64E/DxQ9VPHN+y7+aJZs9Z1Kpz+98ZbYe4Y=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=cIbtk/mHKhxFttFlEB0tywkl4cFj4dA5RxxCfdbjlgnyzU9QdOmH1GXUBilh5AL0b
-	 /Y46yLkHoH/kR7rBbCBxls1xeQczIY4fOsWl5duUg+8BL+gxI2+23UYq+byI3iV3nH
-	 uD2f3RIJo9ao8RtHJU6OpK3LEq3LAf+VDO5gTpn7TBD9HsVEKmPf8iO+ZF3YXPLyt1
-	 EqxJeW0FLfVtiz7XOM94YwpdkOj3SEitjugOjdDPu8JYAFXrwIuJT+stUaD0CXnF66
-	 gfEAbVRq58mZUbOaDdlU32inlOH4Zuovj0BevrNlC0JgfCOWkKUeS4c9EwP3EwpTwc
-	 QqvHS/Xy9OWiQ==
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 6A79A120006A;
-	Thu, 12 Sep 2024 06:02:41 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Thu, 12 Sep 2024 06:02:41 -0400
-X-ME-Sender: <xms:QbziZi_gNVisByn4l1i4Jr1FxIpR1uEynX6RTtRl6lwZgvi0arq4DQ>
-    <xme:QbziZivKpKvdGbfZALX8t5O3HRRfeaP7YRr8JjUXbqlUw6TI5u2kkxDG6_NcoPjnq
-    vdUsaLuuSz6LYwxhY8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejfedgvdefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusehkvghrnhgvlh
-    drohhrgheqnecuggftrfgrthhtvghrnhepjeejffetteefteekieejudeguedvgfeffeei
-    tdduieekgeegfeekhfduhfelhfevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhguodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
-    thihqdduvdekhedujedtvdegqddvkeejtddtvdeigedqrghrnhgupeepkhgvrhhnvghlrd
-    horhhgsegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhp
-    ohhuthdprhgtphhtthhopehjshhtuhhlthiisehgohhoghhlvgdrtghomhdprhgtphhtth
-    hopeholhhivhgvrhdrshgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtohepsghrrghu
-    nhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhlrgihthhonheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtohepshgsohihugeskhgvrhhnvghlrdhorhhgpdhrtghpthht
-    ohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepjhgrtghksehsuh
-    hsvgdrtgiipdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghr
-    nhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvg
-    hrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:QbziZoAO0cMepT2rctHgh4AK_aIj1zUgE-oPT73DVPFEYcKEGh3o3A>
-    <xmx:QbziZqeY7dWFUrxbUYyHhomeiYueageZRAjvsScfYDDA_N7r7rHVQA>
-    <xmx:QbziZnPNh1U4f9K4f27u9ap8v_5BwY8LIM8k1Q74e0KJyTc9db57OA>
-    <xmx:QbziZkloUg5oE-03ViTeXr3hyD-Xb9mgbnJqgLiatGNMfOWRilD8HA>
-    <xmx:QbziZpuOsQYn9n6tSYBsKJjXdwC4cydU0IBT6VNu9ATP_r8kmr0LSFu->
-Feedback-ID: i36794607:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 39243222006F; Thu, 12 Sep 2024 06:02:41 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=k20201202; t=1726135328;
+	bh=2AmhqDEMZCRF60IhqOsscYYo0UoqtMMlj7QiuCR9y+Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pkao1/pMhI+cqDVQQ43SIJrL0fGIbZkOI66ioVqWMrUgIMZdRCFm38+nLDyZ94okW
+	 ktKlKH7jofybXjzDujzXY2Ru0Xm9eokqTtv4rdRkkgL7+fqOmdByligHh4GcZkERjm
+	 L21gD7xEoGUhLZyNd/F/V8p5UVTNn0BFA3WRYGGB/GeLkpx+fDpYEKyUznUG7sbyWE
+	 CXvcVf5jZsNzpZohOKzodGvILZg/uvInQOEyJbMHYimdXuevys1Y2SORnYKlsBJJhV
+	 yKfX1fCQ8xPqlg2W6EUXYz+wVM5B1oYqlXucPGJhfZg+IWj1wvaOIVUlRrfqh7+GhH
+	 hGvqoaR0r2U/A==
+Date: Thu, 12 Sep 2024 12:02:04 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+Cc: konrad.dybcio@linaro.org, andersson@kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	quic_vdadhani@quicinc.com, vkoul@kernel.org
+Subject: Re: [PATCH] i2c: i2c-qcom-geni: Serve transfer during early resume
+ stage
+Message-ID: <uib7it3noxnkekza4p4ngf5w677fizrb7j5ov7ekos2vinge5x@sh24m63gmkrr>
+References: <20240402102741.128424-1-quic_msavaliy@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 12 Sep 2024 10:01:59 +0000
-From: "Arnd Bergmann" <arnd@kernel.org>
-To: "Jeff Layton" <jlayton@kernel.org>, "John Stultz" <jstultz@google.com>
-Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Stephen Boyd" <sboyd@kernel.org>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- "kernel test robot" <oliver.sang@intel.com>
-Message-Id: <1484d32b-ab0f-48ff-998a-62feada58300@app.fastmail.com>
-In-Reply-To: <e4d922c8d0a06de08b91844860c76936bd5fa03a.camel@kernel.org>
-References: <20240911-mgtime-v1-1-e4aedf1d0d15@kernel.org>
- <CANDhNCpmZO1LTCDXzi-GZ6XkvD5w3ci6aCj61-yP6FJZgXj2RA@mail.gmail.com>
- <d6fe52c2-bc9e-424f-a44e-cfc3f4044443@app.fastmail.com>
- <e4d922c8d0a06de08b91844860c76936bd5fa03a.camel@kernel.org>
-Subject: Re: [PATCH] timekeeping: move multigrain ctime floor handling into timekeeper
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240402102741.128424-1-quic_msavaliy@quicinc.com>
 
-On Wed, Sep 11, 2024, at 20:43, Jeff Layton wrote:
->
-> I think we'd have to track this delta as an atomic value and cmpxchg
-> new values into place. The zeroing seems quite tricky to make race-
-> free.
->
-> Currently, we fetch the floor value early in the process and if it
-> changes before we can swap a new one into place, we just take whatever
-> the new value is (since it's just as good). Since these are monotonic
-> values, any new value is still newer than the original one, so its
-> fine. I'm not sure that still works if we're dealing with a delta that
-> is siding upward and downward.
->
-> Maybe it does though. I'll take a stab at this tomorrow and see how it
-> looks.
+Hi Mukesh,
 
-Right, the only idea I had for this would be to atomically
-update a 64-bit tuple of the 32-bit sequence count and the
-32-bit delta value in the timerkeeper. That way I think the
-"coarse" reader would still get a correct value when running
-concurrently with both a fine-grained reader updating the count
-and the timer tick setting a new count.
+Is this patch still needed? Can anyone active in the Qualcomm
+drivers take a look?
 
-There are still a couple of problems:
+On Tue, Apr 02, 2024 at 03:57:41PM GMT, Mukesh Kumar Savaliya wrote:
+> pm_runtime_get_sync() function fails during PM early resume and returning
+> -EACCES because runtime PM for the device is disabled at the early stage
+> causing i2c transfer to fail. Make changes to serve transfer with force
+> resume.
+> 
+> 1. Register interrupt with IRQF_EARLY_RESUME and IRQF_NO_SUSPEND flags
+>    to avoid timeout of transfer when IRQ is not enabled during early stage.
+> 2. Do force resume if pm_runtime_get_sync() is failing after system
+>    suspend when runtime PM is not enabled.
+> 3. Increment power usage count after forced resume to balance
+>    it against regular runtime suspend.
+> 
+> Co-developed-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
 
-- this extends the timekeeper logic beyond what the seqlock
-  semantics normally allow, and I can't prove that this actually
-  works in all corner cases.
+Should this be considered a fix?
 
-- if the delta doesn't fit in a 32-bit value, there has to 
-  be another fallback mechanism.
-
-- This still requires an atomic64_cmpxchg() in the
-  fine-grained ktime_get_real_ts64() replacement, which
-  I think is what inode_set_ctime_current() needs today
-  as well to ensure that the next coarse value is the
-  highest one that has been read so far.
-
-There is another idea that would completely replace
-your design with something /much/ simpler:
-
- - add a variant of ktime_get_real_ts64() that just
-   sets a flag in the timekeeper to signify that a
-   fine-grained time has been read since the last
-   timer tick
- - add a variant of ktime_get_coarse_real_ts64()
-   that returns either tk_xtime() if the flag is
-   clear or calls ktime_get_real_ts64() if it's set
- - reset the flag in timekeeping_advance() and any other
-   place that updates tk_xtime
-
-That way you avoid the atomic64_try_cmpxchg()
-inode_set_ctime_current(), making that case faster,
-and avoid all overhead in coarse_ctime() unless you
-use both types during the same tick.
-
-      Arnd
+Thanks,
+Andi
 
