@@ -1,118 +1,103 @@
-Return-Path: <linux-kernel+bounces-325834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B9B1975ECE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:16:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ADBD975ED2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:17:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5A42B23788
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:16:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 414981F23E67
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:17:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88B641C65;
-	Thu, 12 Sep 2024 02:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36DE93BB48;
+	Thu, 12 Sep 2024 02:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jHC1MUMV"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="UWlhUR4k"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518552EAE5;
-	Thu, 12 Sep 2024 02:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB1D282FB;
+	Thu, 12 Sep 2024 02:16:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726107387; cv=none; b=rIVEIJ8Awjn4pizgNnnsKeAOFqtobuf+hg5SyvMIGPhSrr9JJOPQGmUzXNmJBheQdd84tWVOuGzbDpe4qJUlMDDbc+UJG8gQhmNInw1s+7BtwNiDOpsR4Yn+5C2QcSEmbJUt3nMvgILIS4g+3YcUmhitno83UQzIo/n6U3VcIFM=
+	t=1726107412; cv=none; b=TLn9tL4wRWqugoG/IMgz4fg6q5OfjikKGNuFyW5SP4kiQy3e7axQBDdIWA4PE9xCbXoqtznbPlBTEFRGT4P0FFAjnpM2muyZ76VBVygnSro+OOj+K1Et27PmOj8yXtzYXCx7G1IjGQ1/jGk5HsMPkBdXDWJx4PTT8JV1vYeka/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726107387; c=relaxed/simple;
-	bh=rPuy1Ff10KOvt7O5pU7bhBViYS+YgNCDPrhsJY9z/1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=GDnImJmqOyA7P8wpIPMk09LOGY/QQj6BbzCrzpPcDmdG4ddP8BFEuOwdahUeFrDsftHL7DmSwaK2mswKzFXEbfsYoSR+dtLAmZXs6ebLlLy38fNrM9IEPeMQ0xWOg0DO+Qo1USFtFC32ZBee8vdi7BYCbJJKS84LN2juZTP116o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=jHC1MUMV; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726107382;
-	bh=XvebqfpgRkKov2LFe+PC2QWLyi2MOqj3FjjMED5eDZ0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=jHC1MUMV6SUuBKoq6JWCzoFLGpCedC31zpi+8CNx+PwPF3eyQgoNurLSGDmJcEVLG
-	 vt/jj8ojtuJMovs9CVuKP/TU+Gk03c5UvPKFy30SzO7QvG4LI1lWBAb9mz2vFqah/B
-	 LUCX5OedGbLMCCpr11sxUQQvafke6vo5O8jHEx5c40NurWNeGowe3dUtz06nmPw0W1
-	 mY5B4niUCCeQW302Z1TFxA74jYpQIP5zomsLhw4pviZbuHmWQqhykTtVgN684zUqAY
-	 p3tjsayDuYSvP1MZ1j510vhFxCzBu/gt/nLle0h9iBU26ymOWsHEl+ZL5gGIrEe2xi
-	 ojyuBJ4/U05fg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X41Jk01Rxz4x0K;
-	Thu, 12 Sep 2024 12:16:21 +1000 (AEST)
-Date: Thu, 12 Sep 2024 12:16:21 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Miller <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>
-Cc: Eric Dumazet <edumazet@google.com>, Networking <netdev@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20240912121621.5593aa8b@canb.auug.org.au>
+	s=arc-20240116; t=1726107412; c=relaxed/simple;
+	bh=Tzzk1cA2o5tp+xiwq/YyxOWAaHtfPyCRWaj2LVEUd1M=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=b1EfV9fCcfAlzQxuyV5IXjuv2DMjxz3JOyM3fdjCHHHeAA7dYnhsOiFZW1x35pKlThNpQv/v7sC8XyYvZJQD/bpxehTDSDUi86eItghuTcJRVmTylcGBCZdVmOmtvwzzkDwt2eHUyiBxtelsigev0QgMfieCNxyKqM2PMCA1ESQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=UWlhUR4k; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1726107408;
+	bh=dTGWD0Gn+Yi/RRB39Ic05wD/vXoyL7B1/d6vhk5Cy3w=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=UWlhUR4kacrXMMr2rVhZkPbmfXUDEaLDt0sgF7YKt8aeR2BiebejEq1g8TC3GlEra
+	 ++wdggIEtNkwpIA8zpgXUkgVvoRvb/cyH2vZW4AIbJ59zHAc6f0YNklc3mrrFWJgX4
+	 db/kntu0OAts7HlM38nLtFf6bK0PVSUTVgFlxNDn6JR7Y4N7WThLSkgtWIY7PZ84t/
+	 j0r3mapTb7LZKT687nj6I4IMmFVq8vZkBti+N21/ZTzNu9oA2NeZE2LL4wweTC4WKB
+	 X6+JZaKtG4NGP/kTJFh7b6QM/039wx3cfHwonfP8k0b/NMSaP6eAkVuFPozY7QMxrr
+	 Nc7RxDnBUH6LQ==
+Received: from [192.168.68.112] (ppp118-210-89-8.adl-adc-lon-bras32.tpg.internode.on.net [118.210.89.8])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 13AB9650D6;
+	Thu, 12 Sep 2024 10:16:48 +0800 (AWST)
+Message-ID: <215e32abc38011a5e265d91340292234ca157ec8.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v1] ARM: dts: aspeed: yosemite4: Revise quad mode to
+ dual mode
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>, patrick@stwcx.xyz, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>
+Cc: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org
+Date: Thu, 12 Sep 2024 11:46:47 +0930
+In-Reply-To: <20240910051350.2580971-1-Delphine_CC_Chiu@wiwynn.com>
+References: <20240910051350.2580971-1-Delphine_CC_Chiu@wiwynn.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/pylc+n2aTgKyRTc1JwelXnX";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/pylc+n2aTgKyRTc1JwelXnX
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, 2024-09-10 at 13:13 +0800, Delphine CC Chiu wrote:
+> From: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
+>=20
+> Revise quad mode to dual mode to avoid WP pin influnece the SPI.
+>=20
+> Signed-off-by: Ricky CX Wu <ricky.cx.wu.wiwynn@gmail.com>
+> Signed-off-by: Delphine CC Chiu <Delphine_CC_Chiu@wiwynn.com>
+> ---
+>  .../arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts b=
+/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+> index 98477792aa00..3073ade6d77c 100644
+> --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-yosemite4.dts
+> @@ -105,15 +105,17 @@ flash@0 {
+>  		status =3D "okay";
+>  		m25p,fast-read;
+>  		label =3D "bmc";
+> -		spi-rx-bus-width =3D <4>;
+> +		spi-tx-bus-width =3D <2>;
+> +		spi-rx-bus-width =3D <2>;
+>  		spi-max-frequency =3D <50000000>;
+> -#include "openbmc-flash-layout-64.dtsi"
+> +#include "openbmc-flash-layout-128.dtsi"
 
-Hi all,
+This is a bit more drastic than changing the bus mode.
 
-Today's linux-next merge of the net-next tree got conflicts in:
+Can you please split that out to a separate change with some
+justification in the commit message? For instance, was the chip changed
+too? Or were you using the 64M layout or a 128M chip the whole time?
 
-  net/hsr/hsr_device.c
-  net/hsr/hsr_main.h
-
-between commit:
-
-  b3c9e65eb227 ("net: hsr: remove seqnr_lock")
-
-from the net tree and commit:
-
-  35e24f28c2e9 ("net: hsr: Remove interlink_sequence_nr.")
-
-from the net-next tree.
-
-I fixed it up (the former incorporated the latter) and can carry the
-fix as necessary. This is now fixed as far as linux-next is concerned,
-but any non trivial conflicts should be mentioned to your upstream
-maintainer when your tree is submitted for merging.  You may also want
-to consider cooperating with the maintainer of the conflicting tree to
-minimise any particularly complex conflicts.
-
-
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/pylc+n2aTgKyRTc1JwelXnX
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbiTvUACgkQAVBC80lX
-0Gw4Zwf9FgLRWoqb866dGySYBPJdnf/SPUpawp4Ue2xYHoeBcPdNKcPmdn1ZWHq6
-1Q5WTsOmSQik10U6awjZn7oI+i1zA+xlb50TaINdm4/71D5qrQ1BFdoH4p49maU0
-5mFwm1OoWra+ipJ0TgPfTYYhkMYEQQmJ7UO29DbcC2E3M6GYWyHue9eB6thmBFqh
-f2xUqmx2FUcAEAIuw+ULzf3UVp4FtSKkSNvvwzL3SgVwoHOhPVhDmYCVq5Neg++S
-S5b60egoku1690g/iuKsu0cNsjAiJHLk9+O4we/Q7sdArc1tzKstOYzMNpdjJACF
-ZQaBNsYUoXNumtJSdnwwJXuc7CjZqA==
-=Cpa0
------END PGP SIGNATURE-----
-
---Sig_/pylc+n2aTgKyRTc1JwelXnX--
+Andrew
 
