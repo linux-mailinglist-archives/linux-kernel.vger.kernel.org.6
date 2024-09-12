@@ -1,53 +1,92 @@
-Return-Path: <linux-kernel+bounces-327410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63979977598
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:31:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0657897759B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:32:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AE532819C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:31:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EDA81C235DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1AF1C2DA6;
-	Thu, 12 Sep 2024 23:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E071C2DCC;
+	Thu, 12 Sep 2024 23:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JxIXWoZc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gVEhHMKc"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D8619F12B;
-	Thu, 12 Sep 2024 23:31:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F389218C004;
+	Thu, 12 Sep 2024 23:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726183911; cv=none; b=eyd6l+xcaG9a6ZK/hWF8Ds1LqL0Z8aapC3SYr3KC0dQcVJZNj90UQIav6qnJdG+8tGRosaNPx/zxv9CpmctDf4QJ2wWyZcyznLUcX2gond5uu2thGq8d8zlx0qq6evXkLbltGKlKdarirAv7NfERu9L3gk4ul9p0iSV7IjMjLDI=
+	t=1726183963; cv=none; b=FrOEgZ43GNbxMknnsBo2Ghq9qQbCirLufyOoHdOHp/24ziMLszAvt+nENEzCAW/k+LXKeEOX7gzAG+9Y5VOELe0MLx404bmtXxHy4gaBZn21u3a8LUP8u0p7KdGiV5VyPBPSmn4Oj0iFg7GwTAy7TMqpxgsCDSKHAw1Y2PgqoGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726183911; c=relaxed/simple;
-	bh=Z9JSzBM8cUSMozMvf6HU9FhqYubxNBiiPQOmpIc7w7k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AaVp/5SA2ot7FzxyySiDM0r0EOvcgxotAlp91QkV0bHLuqMBH0Uoxs1TPTD0mjKp+Gaf5D5fdwsPNvsescIdrYTOxmMInzDJxtJlsdraJJkt/vJSuu1vD5fi4SqkAizeO/NvsYzX+fmyqNFYSPORLZfytIq8nHJAE1DnM1M2Ga4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JxIXWoZc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6514DC4CEC3;
-	Thu, 12 Sep 2024 23:31:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726183910;
-	bh=Z9JSzBM8cUSMozMvf6HU9FhqYubxNBiiPQOmpIc7w7k=;
-	h=From:To:Cc:Subject:Date:From;
-	b=JxIXWoZctvIb4DUfEKxvD2ByCiMY9wxJ6s5aYHMFQ3YNjk1NyaJNg3nb/vUYRZ6I0
-	 SORd7BdLpyXrK1ZFWpnQ7c5LYxGa7KInaQ8bloWTTfjSY61RKBF437pmG2QJqYr3+n
-	 lk40DYY5SBM2E5SFgBTQ8/rl0Js+F0QJ6/Hnu7UEWllZXMAHQZBfbAv0HZOz0j1v6W
-	 BjeinMcoDC664zELxZNy4oH4pBiGF09aXDepu8wX5VWUseSXXE45gwqwCis8PU0Iev
-	 KGayqAJT3pcTsCPEZqciE7vnr98PKRLD82Vij07YJClRTtT1AJSeegzDwIP5XfO2A4
-	 G1CsQcmb9z7pg==
-From: Stephen Boyd <sboyd@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v6.11-rc7
-Date: Thu, 12 Sep 2024 16:31:47 -0700
-Message-ID: <20240912233149.1923482-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.46.0.662.g92d0881bb0-goog
+	s=arc-20240116; t=1726183963; c=relaxed/simple;
+	bh=MwBiRcebgFejZ7NnmF7yso/zNLRTuVzxymdAskFQDw4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pBZscQ+uSpnt8AEV2YGJEuX6C0fqSzf1iSe5FIjyOdwHh5Yd8mIAHHNBvTgyo+I67XkRXzFL+Yvfr9gp4LIEweMCIHaKWFJ0AVAEwVIWONHz7/ZYHys7PZ2A32xa51SjVRN2UdUuMcnznGiOuZ0o7/V74CJtPvXclBzMByGgnAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gVEhHMKc; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c3d2f9f896so367429a12.1;
+        Thu, 12 Sep 2024 16:32:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726183960; x=1726788760; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cw5p1wONQt1xZkiqpK8DnoIpAgNzaO8WQ5uVapWWj1g=;
+        b=gVEhHMKcwk/zphav0lRUYwVb6JA/8fWrjFmcG7u5x2LAHZYhaXZvxaRqwP2D41pggI
+         r+87wBBDg/4sgMRamP6e5J8ySPxubJyOt9NiXtoUCi6IY4O1aY9pSS3RHnxriajgtxdr
+         PHI5NFgMQ/U2v61hPIKBMijkGFwgjmkhRt6qxYR7gmVju7qudYwbIBBwalQX1uzgFfCA
+         732LFgnIQDUuQ5CwSK9cRxcKrbgFe7PudSfMmAe6rgdsjZq9H7XAN3hGTyXnA4NwLISR
+         8Q1VFiMcSWn6NFe6Ime7gaYZ9/SiB9byXuAYPIumim7VgShbIgKAQnpA73n1AxOocMxf
+         +pVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726183960; x=1726788760;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cw5p1wONQt1xZkiqpK8DnoIpAgNzaO8WQ5uVapWWj1g=;
+        b=VkdElrXinVBhOIH5a/g5GgqFt8zdSTNIJmmTtGfQExFgteBBLb7n93Zpw/yxjNdqzr
+         x1bDUbSuwlbUMHYG8I6CCGP3RITqt6Xj/CzghWRvWKBCYS4hIXOuIBf2/bqP2AH7nXsY
+         iT2Oxju5AucV/FpgShofGEkqJrNS1nsXMQu+YXyNfv7fM0axF/EpFJGKs3yeMrSh7ibI
+         eWzNdD96aooLbfgTY8OAjRRzUhuSElUr07b0FPsXQ8XK+rUSCVIupN+W8QUdme8vyUdh
+         YXi1hiD6xx2R2lkNIjJ2S1kAJKHpTOWxN3jc3w7P99f33uK0s+pzPftnp9O9nqf8iHLN
+         dH+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUuz6KgcKVdE0cgtyL3X94lbdpMQeAgCRAjXsvve34B5QTnpyM0JedNZ0/7xBXdu7CCeS437WtTUK+XgI/k@vger.kernel.org, AJvYcCWwelv7saU6lTRIp0fYwgV7wAhFq13DeAUyY/0t4aWSFJ8DPa6ny251bwQ7KCeK1323cfCjjCluZyIS@vger.kernel.org, AJvYcCXXSEZCwlWmRhCSGOX09du44Sunc5QqEAlYecJcGEgLSpXK2yFtiaTzuRRxZJFxiMBnjoMNgvl7DHxc@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3Z4ST5tnTcxss+rGauuaP7LM3rvVvPNJyiHlpGeLxxq02oDjg
+	+rCDkgGfEvzrQJD4WeHKGxTzdpzPXMi3gH4iWFITjyCBbAiBjt+T
+X-Google-Smtp-Source: AGHT+IGuHaQK4z5w1jGYkv26zOLeNWC1SWAP5EpVI/5+J9unupfzkfDZEEmbQmSJCSKALGlfaX0Jww==
+X-Received: by 2002:a05:6402:2803:b0:5c3:2440:8570 with SMTP id 4fb4d7f45d1cf-5c41e1acc7amr567693a12.26.1726183959630;
+        Thu, 12 Sep 2024 16:32:39 -0700 (PDT)
+Received: from localhost.localdomain ([2a04:ee41:82:7577:85e4:cf41:16db:65d5])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c421aab306sm26693a12.73.2024.09.12.16.32.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 16:32:38 -0700 (PDT)
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+To: jic23@kernel.org,
+	lars@metafoo.de,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	andriy.shevchenko@linux.intel.com
+Cc: vassilisamir@gmail.com,
+	ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org,
+	biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com,
+	semen.protsenko@linaro.org,
+	579lpy@gmail.com,
+	ak@it-klinger.de,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	christophe.jaillet@wanadoo.fr
+Subject: [PATCH v6 0/4] pressure: bmp280: Minor cleanup and interrupt support
+Date: Fri, 13 Sep 2024 01:32:30 +0200
+Message-Id: <20240912233234.45519-1-vassilisamir@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,31 +95,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The following changes since commit 71c03a8cb213d267853e0d9f520c972480960544:
+Depends on this: https://lore.kernel.org/linux-iio/20240823172017.9028-1-vassilisamir@gmail.com
 
-  clk: qcom: gcc-sc8280xp: don't use parking clk_ops for QUPs (2024-09-03 13:01:34 -0700)
+Changes in v6:
+	- First 3 patches were applied already, last 4 remain.
 
-are available in the Git repository at:
+[PATCH v6 1/4]:
+	- Remove outer parentheses and change indentation in mathematical
+	  expressions.
+	- Use De-Morgan's Law to make !A OR !B = !(A AND B)
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+[PATCH v6 2/4]:
+	- Remove extra line
+	- Use contains keyword where it's needed
 
-for you to fetch changes up to a4d89b11aca3ffa73e234f06685261ce85e5fb41:
+[PATCH v6 3/4]:
+	- Change string from small to capital letters
+	- Use better naming for interrupt pin config
 
-  clk: qcom: clk-alpha-pll: Simplify the zonda_pll_adjust_l_val() (2024-09-09 14:06:07 -0700)
+---
+v5: https://lore.kernel.org/linux-iio/20240902184222.24874-1-vassilisamir@gmail.com
+v4: https://lore.kernel.org/linux-iio/20240828205128.92145-1-vassilisamir@gmail.com
+v3: https://lore.kernel.org/linux-iio/20240823181714.64545-1-vassilisamir@gmail.com
+v2: https://lore.kernel.org/linux-iio/20240725231039.614536-1-vassilisamir@gmail.com
+v1: https://lore.kernel.org/linux-iio/20240711211558.106327-1-vassilisamir@gmail.com
 
-----------------------------------------------------------------
-One build fix for 32-bit arches using the Qualcomm PLL driver. It's
-cheaper to use a comparison here instead of a division so we just do
-that to fix the build.
+Vasileios Amoiridis (4):
+  iio: pressure: bmp280: Use sleep and forced mode for oneshot captures
+  dt-bindings: iio: pressure: bmp085: Add interrupts for BMP3xx and
+    BMP5xx devices
+  iio: pressure: bmp280: Add data ready trigger support
+  iio: pressure: bmp280: Move bmp085 interrupt to new configuration
 
-----------------------------------------------------------------
-Satya Priya Kakitapalli (1):
-      clk: qcom: clk-alpha-pll: Simplify the zonda_pll_adjust_l_val()
+ .../bindings/iio/pressure/bmp085.yaml         |  22 +-
+ drivers/iio/pressure/bmp280-core.c            | 580 ++++++++++++++++--
+ drivers/iio/pressure/bmp280-i2c.c             |   4 +-
+ drivers/iio/pressure/bmp280-spi.c             |   4 +-
+ drivers/iio/pressure/bmp280.h                 |  43 ++
+ 5 files changed, 613 insertions(+), 40 deletions(-)
 
- drivers/clk/qcom/clk-alpha-pll.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
 
+base-commit: fec496684388685647652ab4213454fbabdab099
+prerequisite-patch-id: e4f81f31f4fbb2aa872c0c74ed4511893eee0c9a
 -- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+2.25.1
+
 
