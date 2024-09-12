@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-327107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 333EB977105
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:05:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50554977106
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:06:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7B6528322E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:05:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C785C1F21881
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B52C1C2452;
-	Thu, 12 Sep 2024 19:04:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59CC21C1731;
+	Thu, 12 Sep 2024 19:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vFCzIZEE"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TuOw07y8"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 508D91C2430
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 19:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96F81C2435
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 19:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726167853; cv=none; b=GSc4zCu9LqgItrAGZa0LBm2kdhDdDm77d3oSyD8nIsmo85l+UP7rZlLz4c0H4MzHGFCSMCtvBFskjcSRISELgwva1D2+UjPa6BbxBk3fBADXwXF+u6Mdw+pDumguLXvzqKDTq2rEOZeNghh88fZZkEfwX6FytR2Szz4nkXiH3uA=
+	t=1726167855; cv=none; b=smBckkPF8sSYGQW03h+NJETDVCgPQopXZKM2yer4ptvTcJOOaWUiuhX//XET8gimzZE5ruEbT0PVjxyOXLVOrgxLxR+MaRqnOX1VeYE6GUb9kNM6Y5WDau6Uc9UzAYoV2nCC6bMpaudpxQZHW3P+NiegdHn62OKqMdJsFNe73hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726167853; c=relaxed/simple;
-	bh=zapSEGsQgIL61ZEsU5YA58q0vIiAHQfaNjf0YF8DeB0=;
+	s=arc-20240116; t=1726167855; c=relaxed/simple;
+	bh=15Nc/OwWurUUacjqwVltwlzbPJZfDu3Guj0Nm4r/qc4=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=Zs+WDuOspYYmOu93bYa1Wsg4Za0DFdJs3dYVtLAvHYRbSat08DuLdNgYi9rz0zPJBkEQFnKlhmzQU49d+qF+Zyd7ZGX37l9SwCofiz8WkJT2hH+mdktBDuEvIV/keT2kQ4c515YoN4YAn7Zh3WGgx3Ib90R4yZgk1a7CkeXuhGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vFCzIZEE; arc=none smtp.client-ip=209.85.128.202
+	 To:Content-Type; b=MfVqTa+6zZHZqu16UDuKHQdHSRche+90GcadvrHF2/aMT5RH7NUKTWNrowmqw7CQX473o0uOBSJn7/52ZHEx/qdALjGXRtLtX4Ku7IZ7XNLs5NPJzv1lwLlaLrcJk3sxWQMXmm4nX4fhmMciEOPMOMiwp8C0jfUCb9THqubDQiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TuOw07y8; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6d4426ad833so31698977b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 12:04:11 -0700 (PDT)
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e1d46cee0b0so2317403276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 12:04:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726167850; x=1726772650; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1726167853; x=1726772653; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Qwi2Sac9s+asJZx0ZDodmxFO/gJn7Y8byoQSP/zeaw0=;
-        b=vFCzIZEE0+qcwIFeyOA8uLuuUZXW2ppsBBZMEA9gGJYaXqgSQiN1//YijvnwzSrM9k
-         aTkEZaEkDWlsKz5wn4cFjtTT/M8XGbr1g3JbRUHnLcgL8/Wy/zji9axgtZS9ZfZV5Vwy
-         Ydh/w2WWIxGAoCG/0mUE2ExDZAS882sgMU+aPoMdGh+OnUq7v4JA8uU6K1zD8mvvCWYl
-         BuRIonj7LsINnrfKXF8ZvJhVcj1SA/VvRxOqHOdQDYMYlTs0tvpPY5v20k7yDIKfmA6T
-         A4wfMPt/26wHJagz2HlNu1AuRV5MrHAed5JE08DALiC0HXnRWdJY28Tb9SJ6tigPk9el
-         aqqA==
+        bh=FX+r6SVFIqGib21jmzvlNHWAGVIuITyDyogStZXuwgU=;
+        b=TuOw07y8oKvj2Z8kOPnIw886EEKnJDiu5/WAD7gr24PUuXJI4XPab3yY5J67CoV4+w
+         GZZumz9Rc2bQXu0i+gxj/ucpBsF/tNUZ2K1M3DWi/k5Al/4//PTq3KVjTKeqQxH22/ZA
+         5z3X+FofC0Xbv2ttk2BUDGYvFuAw0DaYzH/qS4L1XaoTp374v63oO+MPZ0kMX4LuyjPP
+         hXsdxGeHgGnZgPZ0FMxVd/ghPjTmf7Jsk1b2ZDSJqxgHOGjXga57xqVt0ti5YTIVgP6M
+         IPnmLGNIJYe+pW8khrV9mK4gNPn/09DvNHH8eun3jRw+Yb9MbnzuckCa8IgyHT8B+Pvu
+         uH+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726167850; x=1726772650;
+        d=1e100.net; s=20230601; t=1726167853; x=1726772653;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qwi2Sac9s+asJZx0ZDodmxFO/gJn7Y8byoQSP/zeaw0=;
-        b=PIZeE0uQ1rNHMZP1fx+udtLHuxL4U7KOCqBtmZq15P5YWe3eI4DCOA2hrQJJ5I6KET
-         qbIg7AJlJxs3SEGIFoRVSRM4UpGY2E1VkV+Hu+uOWzt9xLpBfOQSbbuGHTVxsLtEqOTP
-         xywEM51WwE07nma+KuDhNt0/Cx6xrAeIdzG8U40SRUOeUsfjtlRUktdSuML0j1p1Z6DI
-         3yLWMbyhrQszS0byV/VUzVFv5bPzM9OeAbQa4TZaZQHas+693zdace18PuioEWr9fZAT
-         aBCSJ79ROCk3am8Tt+hrROFy1ekgOMHMBrNPvu25EpDwe0VU0idDYLVhUNe/FEAuJ9zP
-         JQyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8HLBwoQVttw5ylP3z02KI4bJKh8B2r6BT1NhWPAafOCslIQZ9HlQQKsZqlUgIpHwR5bcWdZXsTjqSOFA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAnjK2MZ93KE0tU/2zzf8o9i0fd4KXMf8uJnCYz49RpEvLRyk6
-	6X8nDYa+3pHGigtLn1hroDonwvLHYFhpVUSIVjoT6WrL5ofB1MsSC+4gbZ389ZJxR3vuSW6/DiJ
-	6sAsrxw==
-X-Google-Smtp-Source: AGHT+IHiG/7TeNX7kdEoKK0lWn5nwEpRZ+1ylyJ4Rp1/rDpABHnz8K1NHY3kjCjIaqVvhOSJz7IMjVmSQDru
+        bh=FX+r6SVFIqGib21jmzvlNHWAGVIuITyDyogStZXuwgU=;
+        b=p/Pg4HISUVjBEks4FLU93xCrmX7RmJv5O+hKTWXPcQCfwVR5tC3Gh8vXyEuVBu1a1o
+         QFtF87Y1CDQBnFBmZY7hi89hoi2RQIr0j2SWKBiwy8p+dwSCBolC04AQgu2J/AcDYcHg
+         /m9h0+lBVfjcZcK9hPI/YnJebj20PY17JdKpdUlMB2Yg1uATKNfrbRhA0xaJAB6Vn2R5
+         o8DGD5m5KhzW2RQv+anVT7KaEbiZSZDNV2eHGojs0+pySVOsjDJgvpsHU21quGowQpwd
+         EQEXiUQAThlKy4qW+h46v4GnLsp+mvvUFm6tgSClaniGsuoxFsKpl9S9ddckj3D99/s0
+         K6pg==
+X-Forwarded-Encrypted: i=1; AJvYcCXhXfhCtvGa21GIY6AzIascEQ6IdEg86mYp3NA0woKLfF7mi6QlnbPU/kto4Cfvx3ZFkg4CKoQ1T+1BO0c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy197pO5mdNfc90945stzCbVnXXsuhaI5JqJXtkBc9aaYxIfk7B
+	EsxjL0OsqQ108nsYDhGxt2fz3LTUgfkU0DSlnhwtoBQcKB5UR0ZKcD6cmZAhIFwNJ+bKJvNT8K6
+	5RAzWMQ==
+X-Google-Smtp-Source: AGHT+IGvofSNWStqV0FQzod3PiS0/dd5eh6QGon7LzpPoW9cWLn4mOIWytpk9Z8xbGbtLTwR8S/zRT7oQlDW
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:cf0e:7a99:e672:3862])
- (user=irogers job=sendgmr) by 2002:a05:690c:620e:b0:6db:b2ed:7625 with SMTP
- id 00721157ae682-6dbb69be9dbmr457287b3.0.1726167850371; Thu, 12 Sep 2024
- 12:04:10 -0700 (PDT)
-Date: Thu, 12 Sep 2024 12:03:36 -0700
+ (user=irogers job=sendgmr) by 2002:a25:e812:0:b0:e16:51f9:59da with SMTP id
+ 3f1490d57ef6-e1d9dc1b42emr12659276.6.1726167852675; Thu, 12 Sep 2024 12:04:12
+ -0700 (PDT)
+Date: Thu, 12 Sep 2024 12:03:37 -0700
 In-Reply-To: <20240912190341.919229-1-irogers@google.com>
-Message-Id: <20240912190341.919229-10-irogers@google.com>
+Message-Id: <20240912190341.919229-11-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,8 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240912190341.919229-1-irogers@google.com>
 X-Mailer: git-send-email 2.46.0.662.g92d0881bb0-goog
-Subject: [PATCH v2 09/13] perf tool_pmu: Switch to standard pmu functions and
- json descriptions
+Subject: [PATCH v2 10/13] perf tests: Add tool PMU test
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -100,300 +99,172 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 
-Use the regular PMU approaches with tool json events to reduce the
-amount of special tool_pmu code - tool_pmu__config_terms and
-tool_pmu__for_each_event_cb are removed. Some functions remain, like
-tool_pmu__str_to_event, as conveniences to metricgroups. Add
-tool_pmu__skip_event/tool_pmu__num_skip_events to handle the case that
-tool json events shouldn't appear on certain architectures. This isn't
-done in jevents.py due to complexity in the empty-pmu-events.c and
-when all vendor json is built into the tool.
+Ensure parsing with and without PMU creates events with the expected
+config values. This ensures the tool.json doesn't get out of sync with
+tool_pmu_event enum.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/pmu.c      |  26 ++++-----
- tools/perf/util/pmus.c     |   4 +-
- tools/perf/util/tool_pmu.c | 109 +++++++++++--------------------------
- tools/perf/util/tool_pmu.h |  12 +---
- 4 files changed, 46 insertions(+), 105 deletions(-)
+ tools/perf/tests/Build          |   1 +
+ tools/perf/tests/builtin-test.c |   1 +
+ tools/perf/tests/tests.h        |   1 +
+ tools/perf/tests/tool_pmu.c     | 111 ++++++++++++++++++++++++++++++++
+ 4 files changed, 114 insertions(+)
+ create mode 100644 tools/perf/tests/tool_pmu.c
 
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 9cb7a4e5e7d4..beb93e2603e2 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -1549,9 +1549,6 @@ int perf_pmu__config(struct perf_pmu *pmu, struct perf_event_attr *attr,
- {
- 	bool zero = !!pmu->perf_event_attr_init_default;
+diff --git a/tools/perf/tests/Build b/tools/perf/tests/Build
+index 5671ee530019..a771e4928247 100644
+--- a/tools/perf/tests/Build
++++ b/tools/perf/tests/Build
+@@ -67,6 +67,7 @@ perf-test-y += sigtrap.o
+ perf-test-y += event_groups.o
+ perf-test-y += symbols.o
+ perf-test-y += util.o
++perf-test-y += tool_pmu.o
  
--	if (perf_pmu__is_tool(pmu))
--		return tool_pmu__config_terms(attr, head_terms, err);
--
- 	/* Fake PMU doesn't have proper terms so nothing to configure in attr. */
- 	if (perf_pmu__is_fake(pmu))
- 		return 0;
-@@ -1664,8 +1661,8 @@ int perf_pmu__check_alias(struct perf_pmu *pmu, struct parse_events_terms *head_
- 	info->scale    = 0.0;
- 	info->snapshot = false;
- 
--	/* Tool/fake PMU doesn't rewrite terms. */
--	if (perf_pmu__is_tool(pmu) || perf_pmu__is_fake(pmu))
-+	/* Fake PMU doesn't rewrite terms. */
-+	if (perf_pmu__is_fake(pmu))
- 		goto out;
- 
- 	list_for_each_entry_safe(term, h, &head_terms->terms, list) {
-@@ -1831,8 +1828,8 @@ bool perf_pmu__have_event(struct perf_pmu *pmu, const char *name)
- {
- 	if (!name)
- 		return false;
--	if (perf_pmu__is_tool(pmu))
--		return tool_pmu__str_to_event(name) != TOOL_PMU__EVENT_NONE;
-+	if (perf_pmu__is_tool(pmu) && tool_pmu__skip_event(name))
-+		return false;
- 	if (perf_pmu__find_alias(pmu, name, /*load=*/ true) != NULL)
- 		return true;
- 	if (pmu->cpu_aliases_added || !pmu->events_table)
-@@ -1844,9 +1841,6 @@ size_t perf_pmu__num_events(struct perf_pmu *pmu)
- {
- 	size_t nr;
- 
--	if (perf_pmu__is_tool(pmu))
--		return tool_pmu__num_events();
--
- 	pmu_aliases_parse(pmu);
- 	nr = pmu->sysfs_aliases + pmu->sys_json_aliases;
- 
-@@ -1857,6 +1851,9 @@ size_t perf_pmu__num_events(struct perf_pmu *pmu)
- 	else
- 		assert(pmu->cpu_json_aliases == 0);
- 
-+	if (perf_pmu__is_tool(pmu))
-+		nr -= tool_pmu__num_skip_events();
+ ifeq ($(SRCARCH),$(filter $(SRCARCH),x86 arm arm64 powerpc))
+ perf-test-$(CONFIG_DWARF_UNWIND) += dwarf-unwind.o
+diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
+index 470a9709427d..3b30f258c395 100644
+--- a/tools/perf/tests/builtin-test.c
++++ b/tools/perf/tests/builtin-test.c
+@@ -73,6 +73,7 @@ static struct test_suite *generic_tests[] = {
+ 	&suite__PERF_RECORD,
+ 	&suite__pmu,
+ 	&suite__pmu_events,
++	&suite__tool_pmu,
+ 	&suite__dso_data,
+ 	&suite__perf_evsel__roundtrip_name_test,
+ #ifdef HAVE_LIBTRACEEVENT
+diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
+index 6ea2be86b7bf..1ed76d4156b6 100644
+--- a/tools/perf/tests/tests.h
++++ b/tools/perf/tests/tests.h
+@@ -83,6 +83,7 @@ DECLARE_SUITE(perf_evsel__tp_sched_test);
+ DECLARE_SUITE(syscall_openat_tp_fields);
+ DECLARE_SUITE(pmu);
+ DECLARE_SUITE(pmu_events);
++DECLARE_SUITE(tool_pmu);
+ DECLARE_SUITE(attr);
+ DECLARE_SUITE(dso_data);
+ DECLARE_SUITE(dso_data_cache);
+diff --git a/tools/perf/tests/tool_pmu.c b/tools/perf/tests/tool_pmu.c
+new file mode 100644
+index 000000000000..94d0dd8fd3cb
+--- /dev/null
++++ b/tools/perf/tests/tool_pmu.c
+@@ -0,0 +1,111 @@
++// SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
++#include "debug.h"
++#include "evlist.h"
++#include "parse-events.h"
++#include "tests.h"
++#include "tool_pmu.h"
 +
- 	return pmu->selectable ? nr + 1 : nr;
- }
- 
-@@ -1907,15 +1904,15 @@ int perf_pmu__for_each_event(struct perf_pmu *pmu, bool skip_duplicate_pmus,
- 	int ret = 0;
- 	struct strbuf sb;
- 
--	if (perf_pmu__is_tool(pmu))
--		return tool_pmu__for_each_event_cb(pmu, state, cb);
--
- 	strbuf_init(&sb, /*hint=*/ 0);
- 	pmu_aliases_parse(pmu);
- 	pmu_add_cpu_aliases(pmu);
- 	list_for_each_entry(event, &pmu->aliases, list) {
- 		size_t buf_used, pmu_name_len;
- 
-+		if (perf_pmu__is_tool(pmu) && tool_pmu__skip_event(event->name))
-+			continue;
++static int do_test(enum tool_pmu_event ev, bool with_pmu)
++{
++	struct evlist *evlist = evlist__new();
++	struct evsel *evsel;
++	struct parse_events_error err;
++	int ret;
++	char str[128];
++	bool found = false;
 +
- 		info.pmu_name = event->pmu_name ?: pmu->name;
- 		pmu_name_len = pmu_deduped_name_len(pmu, info.pmu_name,
- 						    skip_duplicate_pmus);
-@@ -2321,9 +2318,6 @@ const char *perf_pmu__name_from_config(struct perf_pmu *pmu, u64 config)
- 	if (!pmu)
- 		return NULL;
- 
--	if (perf_pmu__is_tool(pmu))
--		return tool_pmu__event_to_str(config);
--
- 	pmu_aliases_parse(pmu);
- 	pmu_add_cpu_aliases(pmu);
- 	list_for_each_entry(event, &pmu->aliases, list) {
-diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
-index 6e657c44de58..107de86c2637 100644
---- a/tools/perf/util/pmus.c
-+++ b/tools/perf/util/pmus.c
-@@ -440,6 +440,7 @@ static int perf_pmus__print_pmu_events__callback(void *vstate,
- 		pr_err("Unexpected event %s/%s/\n", info->pmu->name, info->name);
- 		return 1;
- 	}
-+	assert(info->pmu != NULL || info->name != NULL);
- 	s = &state->aliases[state->index];
- 	s->pmu = info->pmu;
- #define COPY_STR(str) s->str = info->str ? strdup(info->str) : NULL
-@@ -590,9 +591,6 @@ void perf_pmus__print_raw_pmu_events(const struct print_callbacks *print_cb, voi
- 		int len = pmu_name_len_no_suffix(pmu->name);
- 		const char *desc = "(see 'man perf-list' or 'man perf-record' on how to encode it)";
- 
--		if (perf_pmu__is_tool(pmu))
--			continue;
--
- 		if (!pmu->is_core)
- 			desc = NULL;
- 
-diff --git a/tools/perf/util/tool_pmu.c b/tools/perf/util/tool_pmu.c
-index 3768c6a42ff6..488c9db33e27 100644
---- a/tools/perf/util/tool_pmu.c
-+++ b/tools/perf/util/tool_pmu.c
-@@ -33,101 +33,54 @@ static const char *const tool_pmu__event_names[TOOL_PMU__EVENT_MAX] = {
- 	"system_tsc_freq",
- };
- 
--
--const char *tool_pmu__event_to_str(enum tool_pmu_event ev)
--{
--	if (ev > TOOL_PMU__EVENT_NONE && ev < TOOL_PMU__EVENT_MAX)
--		return tool_pmu__event_names[ev];
--
--	return NULL;
--}
--
--enum tool_pmu_event tool_pmu__str_to_event(const char *str)
-+bool tool_pmu__skip_event(const char *name __maybe_unused)
- {
--	int i;
--
--	tool_pmu__for_each_event(i) {
--		if (!strcasecmp(str, tool_pmu__event_names[i])) {
- #if !defined(__aarch64__)
--			/* The slots event should only appear on arm64. */
--			if (i == TOOL_PMU__EVENT_SLOTS)
--				return TOOL_PMU__EVENT_NONE;
-+	/* The slots event should only appear on arm64. */
-+	if (strcasecmp(name, "slots") == 0)
-+		return true;
- #endif
--			return i;
--		}
--	}
--	return TOOL_PMU__EVENT_NONE;
-+#if !defined(__i386__) && !defined(__x86_64__)
-+	/* The system_tsc_freq event should only appear on x86. */
-+	if (strcasecmp(name, "system_tsc_freq") == 0)
-+		return true;
-+#endif
-+	return false;
- }
- 
--static int tool_pmu__config_term(struct perf_event_attr *attr,
--				 struct parse_events_term *term,
--				 struct parse_events_error *err)
-+int tool_pmu__num_skip_events(void)
- {
--	if (term->type_term == PARSE_EVENTS__TERM_TYPE_USER) {
--		enum tool_pmu_event ev = tool_pmu__str_to_event(term->config);
-+	int num = 0;
- 
--		if (ev == TOOL_PMU__EVENT_NONE)
--			goto err_out;
--
--		attr->config = ev;
--		return 0;
--	}
--err_out:
--	if (err) {
--		char *err_str;
--
--		parse_events_error__handle(err, term->err_val,
--					asprintf(&err_str,
--						"unexpected tool event term (%s) %s",
--						parse_events__term_type_str(term->type_term),
--						term->config) < 0
--					? strdup("unexpected tool event term")
--					: err_str,
--					NULL);
--	}
--	return -EINVAL;
-+#if !defined(__aarch64__)
-+	num++;
-+#endif
-+#if !defined(__i386__) && !defined(__x86_64__)
-+	num++;
-+#endif
-+	return num;
- }
- 
--int tool_pmu__config_terms(struct perf_event_attr *attr,
--			   struct parse_events_terms *terms,
--			   struct parse_events_error *err)
-+const char *tool_pmu__event_to_str(enum tool_pmu_event ev)
- {
--	struct parse_events_term *term;
--
--	list_for_each_entry(term, &terms->terms, list) {
--		if (tool_pmu__config_term(attr, term, err))
--			return -EINVAL;
--	}
--
--	return 0;
-+	if (ev > TOOL_PMU__EVENT_NONE && ev < TOOL_PMU__EVENT_MAX)
-+		return tool_pmu__event_names[ev];
- 
-+	return NULL;
- }
- 
--int tool_pmu__for_each_event_cb(struct perf_pmu *pmu, void *state, pmu_event_callback cb)
-+enum tool_pmu_event tool_pmu__str_to_event(const char *str)
- {
--	struct pmu_event_info info = {
--		.pmu = pmu,
--		.event_type_desc = "Tool event",
--	};
- 	int i;
- 
-+	if (tool_pmu__skip_event(str))
-+		return TOOL_PMU__EVENT_NONE;
++	if (!evlist) {
++		pr_err("evlist allocation failed\n");
++		return TEST_FAIL;
++	}
 +
- 	tool_pmu__for_each_event(i) {
--		int ret;
--
--		info.name = tool_pmu__event_to_str(i);
--		info.alias = NULL;
--		info.scale_unit = NULL;
--		info.desc = NULL;
--		info.long_desc = NULL;
--		info.encoding_desc = NULL;
--		info.topic = NULL;
--		info.pmu_name = pmu->name;
--		info.deprecated = false;
--		ret = cb(state, &info);
--		if (ret)
--			return ret;
-+		if (!strcasecmp(str, tool_pmu__event_names[i]))
-+			return i;
- 	}
--	return 0;
-+	return TOOL_PMU__EVENT_NONE;
- }
- 
- bool perf_pmu__is_tool(const struct perf_pmu *pmu)
-@@ -548,6 +501,8 @@ struct perf_pmu *perf_pmus__tool_pmu(void)
- 		.caps = LIST_HEAD_INIT(tool.caps),
- 		.format = LIST_HEAD_INIT(tool.format),
- 	};
-+	if (!tool.events_table)
-+		tool.events_table = find_core_events_table("common", "common");
- 
- 	return &tool;
- }
-diff --git a/tools/perf/util/tool_pmu.h b/tools/perf/util/tool_pmu.h
-index ecdf316525bb..a60184859080 100644
---- a/tools/perf/util/tool_pmu.h
-+++ b/tools/perf/util/tool_pmu.h
-@@ -29,17 +29,11 @@ enum tool_pmu_event {
- #define tool_pmu__for_each_event(ev)					\
- 	for ((ev) = TOOL_PMU__EVENT_DURATION_TIME; (ev) < TOOL_PMU__EVENT_MAX; ev++)
- 
--static inline size_t tool_pmu__num_events(void)
--{
--	return TOOL_PMU__EVENT_MAX - 1;
--}
--
- const char *tool_pmu__event_to_str(enum tool_pmu_event ev);
- enum tool_pmu_event tool_pmu__str_to_event(const char *str);
--int tool_pmu__config_terms(struct perf_event_attr *attr,
--			   struct parse_events_terms *terms,
--			   struct parse_events_error *err);
--int tool_pmu__for_each_event_cb(struct perf_pmu *pmu, void *state, pmu_event_callback cb);
-+bool tool_pmu__skip_event(const char *name);
-+int tool_pmu__num_skip_events(void);
++	if (with_pmu)
++		snprintf(str, sizeof(str), "tool/%s/", tool_pmu__event_to_str(ev));
++	else
++		strncpy(str, tool_pmu__event_to_str(ev), sizeof(str));
 +
- bool tool_pmu__read_event(enum tool_pmu_event ev, u64 *result);
- 
- u64 tool_pmu__cpu_slots_per_cycle(void);
++	parse_events_error__init(&err);
++	ret = parse_events(evlist, str, &err);
++	if (ret) {
++		evlist__delete(evlist);
++		if (tool_pmu__skip_event(tool_pmu__event_to_str(ev))) {
++			ret = TEST_OK;
++			goto out;
++		}
++
++		pr_debug("FAILED %s:%d failed to parse event '%s', err %d\n",
++			 __FILE__, __LINE__, str, ret);
++		parse_events_error__print(&err, str);
++		ret = TEST_FAIL;
++		goto out;
++	}
++
++	ret = TEST_OK;
++	if (with_pmu ? (evlist->core.nr_entries != 1) : (evlist->core.nr_entries < 1)) {
++		pr_debug("FAILED %s:%d Unexpected number of events for '%s' of %d\n",
++			 __FILE__, __LINE__, str, evlist->core.nr_entries);
++		ret = TEST_FAIL;
++		goto out;
++	}
++
++	evlist__for_each_entry(evlist, evsel) {
++		if (perf_pmu__is_tool(evsel->pmu)) {
++			if (evsel->core.attr.config != ev) {
++				pr_debug("FAILED %s:%d Unexpected config for '%s', %lld != %d\n",
++					__FILE__, __LINE__, str, evsel->core.attr.config, ev);
++				ret = TEST_FAIL;
++				goto out;
++			}
++			found = true;
++		}
++	}
++
++	if (!found && !tool_pmu__skip_event(tool_pmu__event_to_str(ev))) {
++		pr_debug("FAILED %s:%d Didn't find tool event '%s' in parsed evsels\n",
++			 __FILE__, __LINE__, str);
++		ret = TEST_FAIL;
++	}
++
++out:
++	evlist__delete(evlist);
++	return ret;
++}
++
++static int test__tool_pmu_without_pmu(struct test_suite *test __maybe_unused,
++				      int subtest __maybe_unused)
++{
++	int i;
++
++	tool_pmu__for_each_event(i) {
++		int ret = do_test(i, /*with_pmu=*/false);
++
++		if (ret != TEST_OK)
++			return ret;
++	}
++	return TEST_OK;
++}
++
++static int test__tool_pmu_with_pmu(struct test_suite *test __maybe_unused,
++				   int subtest __maybe_unused)
++{
++	int i;
++
++	tool_pmu__for_each_event(i) {
++		int ret = do_test(i, /*with_pmu=*/true);
++
++		if (ret != TEST_OK)
++			return ret;
++	}
++	return TEST_OK;
++}
++
++static struct test_case tests__tool_pmu[] = {
++	TEST_CASE("Parsing without PMU name", tool_pmu_without_pmu),
++	TEST_CASE("Parsing with PMU name", tool_pmu_with_pmu),
++	{	.name = NULL, }
++};
++
++struct test_suite suite__tool_pmu = {
++	.desc = "Tool PMU",
++	.test_cases = tests__tool_pmu,
++};
 -- 
 2.46.0.662.g92d0881bb0-goog
 
