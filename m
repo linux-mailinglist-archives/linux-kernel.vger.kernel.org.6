@@ -1,114 +1,157 @@
-Return-Path: <linux-kernel+bounces-326257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5259B976597
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:31:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A568A976599
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:31:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 167AE288647
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:31:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E79CB23305
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18C719E980;
-	Thu, 12 Sep 2024 09:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE02F19CC16;
+	Thu, 12 Sep 2024 09:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="a9y9nv9N"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mIxLwDtt"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1C819CC16
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B3818FDD8;
+	Thu, 12 Sep 2024 09:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726133446; cv=none; b=kk/jDltByIRcd7ylPGE7i2jHm/rKLPe8nVNHCrn5F723C1x4Uw3qCjEuh1MOGRUyAvsF8vovEPXsXjbVj/x1CtD2hFOpYRxc8Mb6NlhP1AXPHC2uyhsOHIQpSyira4EKcNVhAY/iKtCkt2QAvfcde5kPBTTZr0LeUM+xst8IuZw=
+	t=1726133458; cv=none; b=Oo+KmUjiK11U/O6G7vQhYiMCLqH2h/lJFxZabppPCHcajj267lQrPOxxXlVNpjxjHFPDfmHJRDFKkUnJFDAETldIfoFLBNNxR/dn+3vtHrrMJiypQ5MYPz4CJy8cz6gynSapBNh8QsbNeIqYjoC4N/VtWwKoU0TqEXdmxe3HqbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726133446; c=relaxed/simple;
-	bh=kIskcl+cEgPa5aOW8KFz0H+4vDyJJxE4xQKfindfVE0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qX0F8f1yHKDUCBjVu/72PwrRVfzbW43imJQOJBC1i9mEY6iGqVgnqAmxq9ltrHYu5Ymlcc/Cf8CsAN7Fak9TiAmnUS54L3o0WRKjcE37PIvYl4tj1w9PQnSns/Bz3bfgXtJB1h9b45KLWQrNSDQSTPbJb38e9+Lr7cd+grJSgUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=a9y9nv9N; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a90188ae58eso82510666b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 02:30:44 -0700 (PDT)
+	s=arc-20240116; t=1726133458; c=relaxed/simple;
+	bh=75c0JWzLzPHdmAeuquabsf38JsqcZl6sGMXOC/sjHgo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=sckdxDUf35sgyYDQHFnYYgsIyyvpnuM3W0lJX83aNtk/DytkjB4yDuGLrXYcUJCFITw0LISpHJdluekIkmJVm6NgyLsEDhiStkMsnV4+N8EOyr3m7lk4IpnwyEG5Y226aQXrfFhQ7bf1TqU2YibqEGZzQbkbYOeagks7QcOX0rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mIxLwDtt; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42cb7a2e4d6so6033385e9.0;
+        Thu, 12 Sep 2024 02:30:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1726133442; x=1726738242; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8tehr3Mtj48VR2KLQ5YViiHbq049BmJKRG0Xv+xURro=;
-        b=a9y9nv9Ndk311ezdPxvKVfd6wriza/G/oKMayiBpLs3th6CMFI82PSH0SoVhXsOshN
-         dlt/IXhUFIVsosvXq502tT2ReCZk+Jv4iHCJ5Ew18yENiWMigVfvu+yboDg2QLaYKW2a
-         q/uDQixv47epgqaHXyLlUBdQ3x59G6uGF3WIhlNDVqFvApnIDtCIhvamwIByghz1qx3G
-         JgjcXrf5VTJFG4jq0mo1eo8fVRXPa8IxH9sZS6uIQaklaNmF73tyrCc8UkXYqRSRf7Ij
-         vITjwoSXPI7YRssoKu8SzKruQNW2UktbHKCQ2XS0JoIYVcT8BFF3uKpKaisPAc8YjYwq
-         4hzQ==
+        d=gmail.com; s=20230601; t=1726133454; x=1726738254; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gwD8SDtMDuYN59ioTbpBQfDFiemRVDz9PeV0tYn0Y9o=;
+        b=mIxLwDttpaw8Ge7Gxl96LbHbi6TjJ1o8SKNPeXciKudejXXbHj+0nkZz72ERr9ePiQ
+         O2afziririSEy6iOk52IElEt3EpXlQ9ShBX0lI0Mr18P6p87Z9g8CBfXgUrK+Jrsh+Kv
+         AELYmevWn04gztsew59X1dwuwa3uPLVaCsULIbbby2NitQoRUQvyIRLlJiVFO4G5vfD6
+         Qk4TzZZk7FiCajWWhHECR33rrvUCRaEWnSuLNWOPW/Hng9m5NEc3PUxH9maQrSEqJfUr
+         prJFfr1gi5V/TuAvvj8Y9kmGARSAW5AlbmuR3Br+RxjtodLB1SSIfx8pPLm6e29Qkkkq
+         egZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726133442; x=1726738242;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8tehr3Mtj48VR2KLQ5YViiHbq049BmJKRG0Xv+xURro=;
-        b=pw73dicgsPWUFZhPUKylpXjwmIOVueBmmgB9vDgTmMDuDp/Y1kPZ3uPvZkNZ3oUIr3
-         GT+8Y6z7k4/wnKWJH13RHy/8qWJOXzhHjKOueAcqc3cfSV2mN85Ur841wrBdLPAGHSCz
-         Rwk3rPwA1aBDk1N0QxTSLckIagKNW9ZlnEnOgmisGs5j7txQ0rH6oo8nIXTbg1Dwvlg9
-         YUcZ9xdQWIfGn3ohGMwP0uk7dH1movPuDaLZuDC+lyCaZsjUIndcO1SrjZOwsFCNS0Bf
-         Z+Mgl2hUsHoYFAUcfqDuYp6omGTi1Sm8wwmUw5RO7hOs1dhsqaa4yiQWF+nA+Q6QMwLG
-         oljQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUEgiIt8NYWSm3Em19QygCqZ3y1xOznijPkVHW7tGfq1OCelym+s8ZW5YOZC15+9ZetJrW+3BPaq+2iBxw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/Thz27Z/23OXAKMliwNdAe/VRYiw6NCGjnOrDWhQYpX/Vurpr
-	3rI+4XpLhbHkHkkLsOaEGRBawstfHA34CA37DeDil5cHYzCb1yn9tfuMzEfVgPE=
-X-Google-Smtp-Source: AGHT+IFk61q1QaMhES8++jv0G4QK+ddVK/i63wtjh2HBapnGeR6O1fso9P71UpK7pdr8aia6GB6nVg==
-X-Received: by 2002:a17:907:f7a0:b0:a8d:6648:813f with SMTP id a640c23a62f3a-a90293f9ec4mr197574166b.3.1726133441942;
-        Thu, 12 Sep 2024 02:30:41 -0700 (PDT)
-Received: from ?IPV6:2001:a61:13ca:eb01:f47c:2f3f:7fd9:e714? ([2001:a61:13ca:eb01:f47c:2f3f:7fd9:e714])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d65742sm719928066b.216.2024.09.12.02.30.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Sep 2024 02:30:41 -0700 (PDT)
-Message-ID: <3ff7c85f-95f9-427f-a496-370f2e56d1fe@suse.com>
-Date: Thu, 12 Sep 2024 11:30:39 +0200
+        d=1e100.net; s=20230601; t=1726133454; x=1726738254;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gwD8SDtMDuYN59ioTbpBQfDFiemRVDz9PeV0tYn0Y9o=;
+        b=LuJ3VLDNBLmAJnq1QYZOmoLbLIPuEkGSRJuYSXC1hhtbyOpcO49uCviEJpGlY3L/wx
+         NfDwOJZzx6AwE84R3ysO03LQrcY4hNCBTAsXv4qsgLVfdPS63xkp5hOfAtLLq+tuokbR
+         AV0NzXUwbiFERy5yA1k/KPJtoZ7cvMd5u4XKTSawjMVjR7BkCuer4CKU9+UVz4zXsSYT
+         jB3Dl97uY/bBbMsNS6iOMOShAgVqih4jiBuTQfO57gYXxhtL4fGe+IAiX+eRAnpiftbo
+         0BYIjQ/UMLhPAmcxTmrbI02ZTtjt3+HnDHSBIN4TM9mPoED/wWVC1ZnPl89WyHhb5y2c
+         CwLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYQCT1MJxbbdn42ZcB2Bm2B4J6h+qU+d3fiOwz6y0li/9NYsjnfWEmFgYdiHK9yn/s8X5IJ/P+fOOF4K4=@vger.kernel.org, AJvYcCXiWgkNA+vWAbeSZu2cSZBdnatn20+LrQqoQ1xsadD4ZeHvDoQad9/GlKaMzW8yCTd6GD6K+tsRbCso3Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIBfsj/3SdAV2zvBcggZk7uI24ldiJWmyofJz7oouCgq8oGfUR
+	LdS+kuJYd6PfxWrIc6G1in1jR8LeDGygphSvj6C0icAGmVq7+mIW
+X-Google-Smtp-Source: AGHT+IGT2Ij+VvI4m03GiMl+vozD/+bImoF9oyvXkaxyAqilMzAQyuAFsTr8JmVJUGhgywr5aXBvtA==
+X-Received: by 2002:a05:600c:5121:b0:42c:b377:3f5f with SMTP id 5b1f17b1804b1-42cdb547e96mr17839175e9.14.1726133454508;
+        Thu, 12 Sep 2024 02:30:54 -0700 (PDT)
+Received: from localhost.localdomain ([212.200.182.192])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cc137556esm76688225e9.1.2024.09.12.02.30.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 02:30:54 -0700 (PDT)
+From: Aleksandar Rikalo <arikalo@gmail.com>
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Aleksandar Rikalo <arikalo@gmail.com>,
+	Chao-ying Fu <cfu@wavecomp.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Greg Ungerer <gerg@kernel.org>,
+	Hauke Mehrtens <hauke@hauke-m.de>,
+	Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	Marc Zyngier <maz@kernel.org>,
+	Paul Burton <paulburton@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>
+Subject: [PATCH v6 0/9] MIPS: Support I6500 multi-cluster configuration
+Date: Thu, 12 Sep 2024 11:30:42 +0200
+Message-Id: <20240912093051.452172-1-arikalo@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 net] usbnet: fix cyclical race on disconnect with work
- queue
-To: Paolo Abeni <pabeni@redhat.com>, Oliver Neukum <oneukum@suse.com>,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- netdev@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <20240905134811.35963-1-oneukum@suse.com>
- <ff23bcb5-d2e8-4b1b-a669-feab4a97994a@redhat.com>
-Content-Language: en-US
-From: Oliver Neukum <oneukum@suse.com>
-In-Reply-To: <ff23bcb5-d2e8-4b1b-a669-feab4a97994a@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Taken from Paul Burton MIPS repo with minor changes from Chao-ying Fu.
+Tested with 64r6el_defconfig on Boston board in 2 cluster/2 VPU and
+1 cluster/4 VPU configurations.
 
+v6:
+ - Re-base onto the master branch, with no functionality impact.
+ - Correct the issue reported by the kernel test robot.
 
-On 10.09.24 11:58, Paolo Abeni wrote:
+v5:
+ - Drop FDC related changes (patches 12, 13, and 14).
+ - Apply changes suggested by Thomas Gleixner (patches 3 and 4).
+ - Add #include <linux/cpumask.h> to patch 1, suggested by Thomas Bogendoerfer.
+ - Add Reviewed-by: Philippe Mathieu-Daudé <philmd@linaro.org> for the patch 08/11.
+ - Add Tested-by: Serge Semin <fancer.lancer@gmail.com> for the entire series.
+ - Correct some commit messages.
 
-> I guess you do the shutdown twice because a running tasklet or timer could re-schedule the others? If so, what prevent the rescheduling to happen in the 2nd iteration? why can't you add usbnet_going_away() checks on tasklet and timer reschedule point?
+v4:
+ - Re-base onto the master branch, with no functionality impact.
+ - Refactor MIPS FDC driver in the context of multicluster support.
 
-Hi,
+v3:
+ - Add Reviewed-by: Jiaxun Yang <jiaxun.yang@flygoat.com> for the patch 02/12.
+ - Add the changes requested by Marc Zyngier for the 3/12 patch.
+ - Remove the patch 11/12 (a consequence of a discussion between Jiaxun Yang
+   and Marc Zyngier.
+ - Re-base onto the master branch, with no functionality impact.
 
-I am not sure I fully understand the question. Technically
-the flag prevents it in cooperation with del_timer_sync(),
-which will wait for the timer handler to run to completion.
+v2:
+ - Apply correct Signed-off-by to avoid confusion.
 
-Hence if the timer handler has passed the the check the first
-time, it will see the flag the second time.
-I am not sure that answers the question, because AFAICT I have
-added the checks, but there is an inevitable window between
-the check and acting upon it.
+Chao-ying Fu (1):
+  irqchip/mips-gic: Setup defaults in each cluster
 
-	Regards
-		Oliver
+Paul Burton (8):
+  irqchip/mips-gic: Introduce for_each_online_cpu_gic()
+  irqchip/mips-gic: Support multi-cluster in for_each_online_cpu_gic()
+  irqchip/mips-gic: Multi-cluster support
+  clocksource: mips-gic-timer: Always use cluster 0 counter as
+    clocksource
+  clocksource: mips-gic-timer: Enable counter when CPUs start
+  MIPS: pm-cps: Use per-CPU variables as per-CPU, not per-core
+  MIPS: CPS: Introduce struct cluster_boot_config
+  MIPS: CPS: Boot CPUs in secondary clusters
+
+ arch/mips/include/asm/mips-cm.h      |  18 ++
+ arch/mips/include/asm/smp-cps.h      |   7 +-
+ arch/mips/kernel/asm-offsets.c       |   3 +
+ arch/mips/kernel/cps-vec.S           |  19 +-
+ arch/mips/kernel/mips-cm.c           |   4 +-
+ arch/mips/kernel/pm-cps.c            |  35 ++--
+ arch/mips/kernel/smp-cps.c           | 285 ++++++++++++++++++++++-----
+ drivers/clocksource/mips-gic-timer.c |  45 ++++-
+ drivers/irqchip/Kconfig              |   1 +
+ drivers/irqchip/irq-mips-gic.c       | 257 ++++++++++++++++++++----
+ 10 files changed, 560 insertions(+), 114 deletions(-)
+
+-- 
+2.25.1
 
 
