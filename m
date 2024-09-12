@@ -1,120 +1,243 @@
-Return-Path: <linux-kernel+bounces-326513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFD29976948
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:41:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F43797694B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EB7F1C22E08
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:41:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40A50285187
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDEC1A4E84;
-	Thu, 12 Sep 2024 12:41:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3351A4E6D;
+	Thu, 12 Sep 2024 12:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DJGNzah0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="ViX02ETU"
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3841A3023;
-	Thu, 12 Sep 2024 12:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26681A303C;
+	Thu, 12 Sep 2024 12:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726144868; cv=none; b=W6f14yKGHx2HjsbfTvgn1wioUGNy2ogYbKUbOy0f9P9Du9n7HyB0dJVGoLkRUczZKkZhQJ9LXTQw61lVYvMI3vo+sQopzPQFc6f9BZ6wKXMhD35W16xpLwKNJjSQJYz0jyQMaXugYWp3BHKtDB9LVKeBcdrszDEQ6Pc6sj8xlnQ=
+	t=1726144925; cv=none; b=UoeiuKDr75uiPzNo+Bg5lDAMAE+BUyQeSMrOZfGs40QCO3U+75IP8QQa8XZVJ++L31Vjcqcn8WG7vLhkvcFv9j9Qlx0X/ZIt1rdnxd4egwL+4PavABsb5j+GQnUKHslNdgtD2OAhfZwCR0OpI24+0ezTjDtCGXDVmlP+ulgmrok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726144868; c=relaxed/simple;
-	bh=9UdpE9bRfyPWA9Gi9O6F8t+KWQsbhnFofcxVtiy2dPc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GwYTlVV36qmKfCDSTbnMxgZhVpJTY0SVhQDf7/L/9klXIy+Y8HFblKRq2FMG2R0vBfjC0aYGGVKxqL7csWnnnbGujKR21N0SNtqen9Szsbhfjfu/Eaz9j7agvshaaxHFdi+IWjCXkHLTyKQ4lAHiEtT9MKDU93Gh/9qHlmgRxGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DJGNzah0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36FCDC4CEC4;
-	Thu, 12 Sep 2024 12:41:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726144868;
-	bh=9UdpE9bRfyPWA9Gi9O6F8t+KWQsbhnFofcxVtiy2dPc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DJGNzah0uVKXY92tI4a9y87wFUcXK6fVhmQI27KD99z5aaqseFMQmb9d9+rTj+1tE
-	 iaDKjNxcIjhHhb3npGMZdwc+80pxB+rACcIGfvgfgFNCnT/iUWQjW7kGpNBzo7iL8P
-	 XfdHVnh4U2Qt/bdV83VjRz8v2MBL8xyD+UpXH9ONhWflWC8PttBguN5VsZuvu4K7KY
-	 Oo8I3r1TkxaAWeA3NXfLt99wA9OGSO8lv4xrTeI9RR3AY9ntm/4vmGFbeZxMVFxIo/
-	 FW3FV3hk1KRAMUWVzULfYkBC7T8hbMb2xaJxVprxufhTN8jcMhRgJWQsM0bIPzG1gK
-	 ANwdMUzRT6rlg==
-From: Christian Brauner <brauner@kernel.org>
-To: Benjamin Coddington <bcodding@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	gfs2@lists.linux.dev,
-	ocfs2-devel@lists.linux.dev,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Neil Brown <neilb@suse.de>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andreas Gruenbacher <agruenba@redhat.com>,
-	Mark Fasheh <mark@fasheh.com>,
-	Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Alexander Ahring Oder Aring <aahringo@redhat.com>
-Subject: Re: [PATCH v1 0/4] Fixup NLM and kNFSD file lock callbacks
-Date: Thu, 12 Sep 2024 14:40:47 +0200
-Message-ID: <20240912-jogginganzug-frucht-136525bde80c@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <cover.1726083391.git.bcodding@redhat.com>
-References: <cover.1726083391.git.bcodding@redhat.com>
+	s=arc-20240116; t=1726144925; c=relaxed/simple;
+	bh=D1uDsvTbaqu1HrfHJ2Vd8lkZ3tUN2jkcWKugSRK1ikM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i1i95HNOnam/1xjcvWbMD9lNsWAx0MP3WJ7iwXwxqnpF3pHIa9R9MP60l1QyEWJchAQ6WdF9/EgtmdhOV199FlkZANdqdMsuesVuQDrrdkHo+kO20OF7th2D39Cd0eN486FlecJxcLRpDzEClhDJFi9TLEr3HrySEB8VotER3jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=ViX02ETU; arc=none smtp.client-ip=74.208.4.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
+	s=s1-ionos; t=1726144909; x=1726749709; i=parker@finest.io;
+	bh=fBbkcOl0VMdsHvC9YylJScXU+R8oqCgwbE9yHAKhiVg=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=ViX02ETUlEqaWkwtrBelv/RrhRbr3u6gqzbzSjkvAiA47eLMqOZESybaJtAt82xY
+	 lZJnwjvr/jcaSmNNY2exuTS2c9SiZ1Kr/PoURyzgxrJEBBu9tTQQqUcsn0B4v0yp6
+	 TOcO8BGGlRzFjs0FPsfWHh59IjQiWkj8e9bbd9nO3s+2OZMruW2ZijrT+NIXXhaim
+	 eTwJq0OTpaTkGnV7zcOhhOVik2uBHP1ZGY9S5fBHtGcvaUWhNdGocFdV+giEfN7NG
+	 L/xelWKpBaWfROdUcyV+M72whH8+SBJkBd5rJ4pwL6YA6KAGGibOXMXUlF68yen7O
+	 wm5sgiQoTPdCb6kebw==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from SWDEV2.connecttech.local ([98.159.241.229]) by
+ mrelay.perfora.net (mreueus004 [74.208.5.2]) with ESMTPSA (Nemesis) id
+ 1N7yr1-1rt28E0VEJ-0101Zs; Thu, 12 Sep 2024 14:41:49 +0200
+Date: Thu, 12 Sep 2024 08:41:47 -0400
+From: Parker Newman <parker@finest.io>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Parker Newman <pnewman@connecttech.com>, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>
+Subject: Re: [PATCH v2 00/13] serial: 8250_exar: Clean up the driver
+Message-ID: <20240912084147.6af5ac12@SWDEV2.connecttech.local>
+In-Reply-To: <ZuICvRjM4TqozL_X@smile.fi.intel.com>
+References: <20240503171917.2921250-1-andriy.shevchenko@linux.intel.com>
+	<20240503143303.15bf82bc@SWDEV2.connecttech.local>
+	<Ztr5u2wEt8VF1IdI@black.fi.intel.com>
+	<20240906095141.021318c8@SWDEV2.connecttech.local>
+	<ZtsQrFgH86AkKgPp@smile.fi.intel.com>
+	<20240906103354.0bf5f3b7@SWDEV2.connecttech.local>
+	<ZtsU0nfAFssevmmz@smile.fi.intel.com>
+	<20240906143851.21c97ef9@SWDEV2.connecttech.local>
+	<Zt7IonZIYgBqjvy7@smile.fi.intel.com>
+	<20240911133848.2cbb1834@SWDEV2.connecttech.local>
+	<ZuICvRjM4TqozL_X@smile.fi.intel.com>
+Organization: Connect Tech Inc.
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1773; i=brauner@kernel.org; h=from:subject:message-id; bh=9UdpE9bRfyPWA9Gi9O6F8t+KWQsbhnFofcxVtiy2dPc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ9ehhZ+3BTqo5chplhfAPnxe/XhO/y6dzUEXQ5MKl0t dF2E4P6jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIkcvM3IME/nwhqln5dFd3/6 VV+XdOzU3X8s+z2uWZ6NT5VSfSon18rI0CUwb/uF+v157H8FNxZIiGdfivPYt1eNXbRCd7G1PZs iBwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:O+X3c3mUes4o50eMtLFzGJcNgPinrqwicO1KsP1DsYP7OAXJFJe
+ yuUrkhKnyXT04BLbLcJ0GICS+5l28ougLK+V9G0TU9irUUZw8M/qqHuuSSmPdXEdSEJY2YL
+ eLYE1ywhySMob0F6+I4FZaEu6eXsbS6X/rVv6U9tR0bbT0EpEL/2vPvaC8AX5I8rUEipk+M
+ EexBiJ8kkGIuLCnPE6dlA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:aShr8j0d03k=;U/gcWrVSCjzHlunSSPJlLx9pW1b
+ XZQb6+jgZGUy8q3XH13HUhK9sY6CvwfTNGYUsntqys2PIYrZoMkxaL8QyUpy5bJYUesprdiWw
+ QnT50ASSmE5KknylEIUTOkRzBPlh8CD8xQvXxj4xyiuIfzY/t6qwDfIUrrDOucA/a0s+wax8q
+ sDZLSqsZuzBq4Pabzw694CLZS9nopBfiJ4neLbMMZmypL5PKeUQwWmw49qAs/Tn6UyoTBgrVA
+ YEqdTG7aY6Hx+htCJNZo8x9J8n5sb9jDCdpidYWG8isZpQ31JzdAQfIRMCBa/5J3JP09l/XXo
+ 4fxP4Ql6zeZSlopqFp4QvwwFDPq92OuUK+95kRYnxbizpuQQygY7HMfdxINCBc9A4FSDOTj+m
+ 26PUNsSfSpWAWa+v6fshjeQ63HKeQER3/B2qH1dY59K3IYEtNYIXkS6Z1QXlrngf54BAmJQT1
+ FLVJ5llOAPRGRbDFY7pSun0MroFGH613Pzi1J3t2ZZhxO1k4wFKwB7tEdY9R+3Y7CN71VZWc7
+ Xe0hzXTTFEXHp5cOZ65cGJ9UnTqLm8TqQ+MhUji0uGfvhKERMp90uU2ZdZAONvD+uS/6oEkLu
+ nqLZ2foK+uom4A2/LNuUYmYBRS45keLimyTjyJAlWrTEMtMP/57ZfZz6Ug99WeCtI46a4MROL
+ pzewSC6KL7X8XJehYGxlQkoX3t7ymZhScc9+PRDynUCpYGCk0z2U6keFEeMtas5rQdhDFwbJS
+ tGc6PrSFQ+kdFqxeUOiAHK+rDfS60+tEA==
 
-On Wed, 11 Sep 2024 15:42:56 -0400, Benjamin Coddington wrote:
-> Last year both GFS2 and OCFS2 had some work done to make their locking more
-> robust when exported over NFS.  Unfortunately, part of that work caused both
-> NLM (for NFS v3 exports) and kNFSD (for NFSv4.1+ exports) to no longer send
-> lock notifications to clients.
-> 
-> This in itself is not a huge problem because most NFS clients will still
-> poll the server in order to acquire a conflicted lock, but now that I've
-> noticed it I can't help but try to fix it because there are big advantages
-> for setups that might depend on timely lock notifications, and we've
-> supported that as a feature for a long time.
-> 
-> [...]
+On Wed, 11 Sep 2024 23:51:09 +0300
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-Applied to the vfs.misc.v6.13 branch of the vfs/vfs.git tree.
-Patches in the vfs.misc.v6.13 branch should appear in linux-next soon.
+> On Wed, Sep 11, 2024 at 01:38:48PM -0400, Parker Newman wrote:
+> > On Mon, 9 Sep 2024 13:06:26 +0300
+> > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > > On Fri, Sep 06, 2024 at 02:38:51PM -0400, Parker Newman wrote:
+> > > > On Fri, 6 Sep 2024 17:42:26 +0300
+> > > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > > > > On Fri, Sep 06, 2024 at 10:33:54AM -0400, Parker Newman wrote:
+> > > > > > On Fri, 6 Sep 2024 17:24:44 +0300
+> > > > > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > > > > > > On Fri, Sep 06, 2024 at 09:51:41AM -0400, Parker Newman wrot=
+e:
+> > > > > > > > On Fri, 6 Sep 2024 15:46:51 +0300
+> > > > > > > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > > > > > > > > On Fri, May 03, 2024 at 02:33:03PM -0400, Parker Newman =
+wrote:
+>
+> ...
+>
+> > > > > > > > > Sorry for blast from the past, but I have some instersti=
+ng information
+> > > > > > > > > for you. We now have spi-gpio and 93c46 eeprom drivers a=
+vailable to be
+> > > > > > > > > used from others via software nodes, can you consider up=
+dating your code
+> > > > > > > > > to replace custom bitbanging along with r/w ops by the i=
+nstantiating the
+> > > > > > > > > respective drivers?
+> > > > > > > >
+> > > > > > > > Hi Andy,
+> > > > > > > > The Exar UARTs don't actually use MPIO/GPIO for the EEPROM=
+.
+> > > > > > > > They have a dedicated "EEPROM interface" which is accessed=
+ by the
+> > > > > > > > REGB (0x8E) register. It is a very simple bit-bang interfa=
+ce though,
+> > > > > > > > one bit per signal.
+> > > > > > > >
+> > > > > > > > I guess in theory I could either add  GPIO wrapper to togg=
+le these bits
+> > > > > > > > and use the spi-gpio driver but I am not sure if that real=
+ly improves things?
+> > > > > > > > Maybe using the spi-bitbang driver directly is more approp=
+riate?
+> > > > > > > > What do you think?
+> > > > > > >
+> > > > > > > Yes, spi-bitbang seems better in this case.
+> > > > > >
+> > > > > > I will try to make some time to implement this... Or if someon=
+e else from the
+> > > > > > community wants to take this on in the mean time I am certainl=
+y happy to test
+> > > > > > and help out!
+> > > > >
+> > > > > Sure, I shared this thought due to having lack of time to look m=
+yself,
+> > > > > but I prepared the above mentioned drivers to make them work in =
+this case.
+> > > > > (If you are curios, see the Git history for the last few release=
+s with
+> > > > >  --author=3D"Andy Shevchenko")
+> > > > >
+> > > >
+> > > > Looking into it a bit more I think we could just use the eeprom_93=
+cx6
+> > > > driver without any SPI layer. Just need to add simple register_rea=
+d()
+> > > > and register_write() functions to read/write the REB register.
+> > > >
+> > > > That should be a pretty easy change to make, I can try to make tha=
+t
+> > > > change soon unless anyone has any objections to that method?
+> > >
+> > > Thank you, this is pretty wonderful news!
+> > >
+> >
+> > I have this mostly working however there is one issue. The eeprom_93cx=
+6
+> > driver doesn't seem to discard the "dummy bit" the 93C46 EEPROM output=
+s
+> > between the writing of the op-code/address to the EEPROM and the readi=
+ng
+> > of the data from the EEPROM.
+> >
+> > More info can be found on page 6 of the AT93C46 datasheet. I see simil=
+ar
+> > notes in other 93C46/93C56/93C66 datasheets.
+> > Link: https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-5193-SEEP=
+ROM-AT93C46D-Datasheet.pdf
+> >
+> > In summary the read operation for the AT93C46 EEPROM is:
+> > Write to EEPROM :	110[A5-A0]	(9 bits)
+> > Read from EEPROM: 	0[D15-D0]	(17 bits)
+> >
+> > Where 110 is the READ OpCode, [A5-A0] is the address to read from,
+> > 0 is a "dummy bit" and then [D15-D0] is the actual data.
+> >
+> > I am seeing the "correct" values being read from the EEPROM when using=
+ the
+> > eeprom_93cx6 driver but they are all shifted right by one because the
+> > dummy 0 bit is not being discarded.
+> >
+> > The confusing part is the eeprom_93cx6 driver has behaved the same sin=
+ce
+> > at least 2009 and half a dozen or so other drivers use it. I am not su=
+re
+> > if they just work around and/or live with this bug or if they have
+> > different HW that handles the extra dummy bit?
+>
+> I briefly looked at a few users and it seems to me:
+> 1) either the Atmel chip has different HW protocol;
+> 2) or all of them handle that in HW transparently to SW.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+The 3 Exar cards I have handy actually use the ST M93C46 version but looki=
+ng
+through our BOMs I see AT/CAT/ST used on various cards over the years.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Looking at the READ timing diagrams in the Atmel and ST datasheets it look=
+s
+like the dummy bit should actually be clocked out on the last address bit
+clock cycle. If this were so it would be ignored naturally.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+This may just be a quirk of the Exar HW. All Exar code I have looked at
+manually discards the dummy bit.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc.v6.13
+> > I am hesitant to "fix" the eeprom_93cx6 driver and potentially break t=
+he
+> > other users of it. I could add a flag to the eeprom_93cx6 struct to wo=
+rk
+> > around this issue... Unless anyone else has some ideas or input?
+>
+> In my opinion the 93c46 needs an additional configuration setting (in th=
+e
+> respective data structure) and some code to implement what you need here=
+.
 
-[1/4] fs: Introduce FOP_ASYNC_LOCK
-      https://git.kernel.org/vfs/vfs/c/8cf9a01edc21
-[2/4] gfs2/ocfs2: set FOP_ASYNC_LOCK
-      https://git.kernel.org/vfs/vfs/c/2253ab99f2e9
-[3/4] NLM/NFSD: Fix lock notifications for async-capable filesystems
-      https://git.kernel.org/vfs/vfs/c/81be05940ccc
-[4/4] exportfs: Remove EXPORT_OP_ASYNC_LOCK
-      https://git.kernel.org/vfs/vfs/c/bb06326008c3
+I see the eeprom_93xx46 driver has the QUIRK_EXTRA_READ_CYCLE quirk to sol=
+ve
+this issue. I could add something similar.
+
+> But yes, let's wait a bit for other opinions...
+>
+
 
