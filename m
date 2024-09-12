@@ -1,180 +1,136 @@
-Return-Path: <linux-kernel+bounces-325870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80052975F47
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:53:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94B60975F3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFFA81F240D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:53:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8FDA1C224DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B811714C4;
-	Thu, 12 Sep 2024 02:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8EE0126C15;
+	Thu, 12 Sep 2024 02:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ieF4X4j9"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HjPrl+mn"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A05156F5D;
-	Thu, 12 Sep 2024 02:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56720524D7;
+	Thu, 12 Sep 2024 02:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726109547; cv=none; b=qVvD6/RWVuq81rA+zEapekoKAWsjQ8XEM2BKjKMd6Zpm/fhWZdcJS/Nsup99/urY7Opt2GcLUH9+jY7AbRisvSE38BntvWrWgQgnyBn7KZ8JyvZlXg/Tt9U/pxl258AdaRi1q9k0pCJSGpCwXZz2rfLXBgismu74/hkDdi4Wq30=
+	t=1726109473; cv=none; b=diQyKvBWWclVkdE/TUGCfMh5SHreJiiTFMAMXfAllT6qUnpe3H1VBR007SjzpOIzQv8m4BpHjlypnqfcRzGomzHdSKIUaASa48gW3s8qr+fCtVvmJJW4/hR0QuUvt5sf/jf1vxxT7lFuPw2aS/bl9cwxgIAq2iN3YJtVGpQkWNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726109547; c=relaxed/simple;
-	bh=hQu4H95TEw4lqRy24mfnmeSorE9NQ6G7QEL/EgKkUEA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QNVDFLTkkpvKxACi588j+H/fCqtLSqhHy5PTAjYzWyLDe09K1qlgBtxwteNWRd02HkEGX+f1H09Cy2Ndl5FNp+DSLx/W/iG5sF6W/utd674eszzUHCYBXOyONWeutcK9gcE7/hxpERA74h/O4zhErK5G6Cq0SNr38q9gyTv6KZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ieF4X4j9; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7d50b3a924bso196652a12.0;
-        Wed, 11 Sep 2024 19:52:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726109544; x=1726714344; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CbhfTGrSMvC/tgmYMhKvFdZrItzTEJ4tenHm4R5TGCQ=;
-        b=ieF4X4j9WcBt3rlKipHb8AQomB0h6ooWprMyQgRaVq2bCFxz6hpr8FpCf58rilc3ni
-         JB1MqNNbDVSN8WRpva7ptZUu1or9uZfEpS9WjDw0s/Cvqyxmn4B7TGONsDujieAJNsFl
-         1ofMeE+aHel9AyQG/EOKLracxfkAfLtVHph9PG5k3ZFHOFcFANCODVluf6OFI2vC1/19
-         EGjtPSUYZuaxfcDcQqG1iEXXGJAjK7ogN++RSaQHkXYx4bW1KdPB+VFf1guD4DPrVMek
-         8t3upoPj7MPze8N+VqhTBFZgNACOCFj7Ggh3balORmslz2qR35dqpBWECwsErqdUIRGH
-         bCmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726109544; x=1726714344;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CbhfTGrSMvC/tgmYMhKvFdZrItzTEJ4tenHm4R5TGCQ=;
-        b=ogNO3D29X9SsMr8aFaBuu6X7ahyNin0AaCmfmH7ZMPjoXmiZgWEA3FfO9oQTdWEo7G
-         DDjgh3ryealDAQrOcGr7ASuodGpgopXfhE/s67Jxxzor7R8xd10ElaE8urD1a8XPZK4X
-         ZK5oZVMrUVR+baylRG7XC/r4cFPZHT6gHOmVySPy/mrOdyVcH7KZcZVh922rJ2rEouBG
-         4C5RqymbzcF8MxFZIIsPIkuMp2p8xfkOzHFSUBptFiBieQfHFXVqUueuBJ80C8LytRCa
-         34zjuZE4PqCb3ZSZwdbRiDp/MC1DCAGvfJvV3p3to7zU6OZUZLATJfu15QpePBCeLYvM
-         PbEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/FJzQyAHGSHg5XUcfIQ6Uf1Wt/3r3zrfyjOCuDOg8sCVnceigsMXFR6rMgexJJGL+UdPQ24ku/6eo4WFb@vger.kernel.org, AJvYcCWkVPnnVn3s64Ao1+D4PZvmc6iHI1tTLXpjh7L6RT3ILa6eRvvmNJdCiWAfEHICLYQkr9lKoXIlR9Qw@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7DV8uT+aMkSLgul3tj4nPFjYM594iyI1MFZAkOirDBR1CUy2z
-	lbf06Om+PlFsl0K9zSqnLyVg5DUYX1V/8kIs75rgHMzxSVcnhqYy
-X-Google-Smtp-Source: AGHT+IF8HeK6/BQhqecMhAqWlKM4X8CDT4o85XrqfS2zkOCm7oxs5tX2NJUPbSqU54VIZ5nGAuvpIg==
-X-Received: by 2002:a05:6a20:d50c:b0:1cf:2513:89f6 with SMTP id adf61e73a8af0-1cf76239981mr1446471637.41.1726109544283;
-        Wed, 11 Sep 2024 19:52:24 -0700 (PDT)
-Received: from luna.turtle.lan ([2601:1c2:c184:dc00::315])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db1fbbf877sm569023a12.50.2024.09.11.19.52.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 19:52:23 -0700 (PDT)
-From: Sam Edwards <cfsworks@gmail.com>
-X-Google-Original-From: Sam Edwards <CFSworks@gmail.com>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Ondrej Jirman <megi@xff.cz>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Alex Zhao <zzc@rock-chips.com>,
-	Dragan Simic <dsimic@manjaro.org>,
-	FUKAUMI Naoki <naoki@radxa.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Jing Luo <jing@jing.rocks>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Daniel=20Kukie=C5=82a?= <daniel@kukiela.pl>,
-	Joshua Riek <jjriek@verizon.net>,
-	Sam Edwards <CFSworks@gmail.com>
-Subject: [PATCH 5/5] arm64: dts: rockchip: Enable GPU on Turing RK1
-Date: Wed, 11 Sep 2024 19:50:34 -0700
-Message-ID: <20240912025034.180233-6-CFSworks@gmail.com>
-X-Mailer: git-send-email 2.44.2
-In-Reply-To: <20240912025034.180233-1-CFSworks@gmail.com>
-References: <20240912025034.180233-1-CFSworks@gmail.com>
+	s=arc-20240116; t=1726109473; c=relaxed/simple;
+	bh=y/uLkUWBQOLP7TPOb5+vS1X6nVhCEjLZ5TdYFfVh6iE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=d3IdaQNSs+weCM2i24bH/k9X3esrY3Wav0s30ojTWH5qKtzLsk/hzcC+otmDXgKZFVGRDsZ38aKk1dgSYC2D/+LNglUwFHh7W1X/+JQDHB8B7Lbq6zSYmYhDqJvQGONtxs6Lj89x8vj22e40UDJG2wpNbd/4t9n4iCh7da1qL0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HjPrl+mn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48C2Ku8e006373;
+	Thu, 12 Sep 2024 02:51:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=CJ5sZMWil1t8FAGnOVtcPM
+	tKd3t9USG+iO6mzn5nstQ=; b=HjPrl+mnowHzddBQMEpmsdQ3goMSEqCBfAhecY
+	WjBKQu/5s+kPdflZ6JdKOZ5MBWmnAGtRtI0E2Xw3EQBL0KT5fuUTn6aPxJJuCMkJ
+	9HlvlNWPqDPfKb+gPnzfHmbCyV8lQ8G2wWSvjG1HnRUIyZztFznwiBF4mRPXwhf/
+	wfAcM8n0wOsgZ4688Z8+hPTmkYjugyJw1RrHltPIchFu3ZfrF/AqHB3JaLL7hMTH
+	IROgL1gzLQaO6yWA/kEfLqh7x+hZS6yN0YhVNVB/57SObJMYjE9CXoyWDi8Fl5Yk
+	IE21JM5EASCQ5Tfg+mh2V1iUsqH2yxqZxJWB7NHKcPdPYPyg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy6pbm92-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Sep 2024 02:51:08 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48C2p7Kj024918
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Sep 2024 02:51:07 GMT
+Received: from lijuang2-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 11 Sep 2024 19:51:02 -0700
+From: Lijuan Gao <quic_lijuang@quicinc.com>
+Date: Thu, 12 Sep 2024 10:50:39 +0800
+Subject: [PATCH] dt-bindings: mfd: qcom,tcsr: Add compatible for qcs615
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240912-add_tcsr_compatible_for_qcs615-v1-1-5b85dd4d42ad@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAP5W4mYC/42NQQ6CMBBFr2JmbU0HioAr72FIQ4dWJlEKLRIN4
+ e5WTuDy/fy8t0K0gW2Ey2GFYBeO7IcEeDwA9e1wt4K7xJDJTMkaUbRdp2eKQZN/ju3M5mG180F
+ PFM9YCKfI5K6opKoIkmQM1vF7D9yaxD3H2YfP3lvwt/6tXlCgKGuZF9IYUnl5nV5MPNAp/aHZt
+ u0LO1egvM4AAAA=
+To: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
+        Lijuan Gao
+	<quic_lijuang@quicinc.com>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726109462; l=1050;
+ i=quic_lijuang@quicinc.com; s=20240827; h=from:subject:message-id;
+ bh=y/uLkUWBQOLP7TPOb5+vS1X6nVhCEjLZ5TdYFfVh6iE=;
+ b=73IyChFMtwCDIKLXJwOV7JY5Up7bZJBdk7btNSOxwra4ijtU+Kvsm1Fh3zjDkDiVJSzQPZuGr
+ YBFraVvofhMBR2p2owPwyvmNJyiI3pDEvGVp4kp6V5DTA/zjiic8tMW
+X-Developer-Key: i=quic_lijuang@quicinc.com; a=ed25519;
+ pk=1zeM8FpQK/J1jSFHn8iXHeb3xt7F/3GvHv7ET2RNJxE=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: v_50T28R2Lhg9M1e7fjzWi6mSKcoxIdk
+X-Proofpoint-GUID: v_50T28R2Lhg9M1e7fjzWi6mSKcoxIdk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
+ bulkscore=0 lowpriorityscore=0 mlxlogscore=693 spamscore=0 phishscore=0
+ impostorscore=0 suspectscore=0 mlxscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409120020
 
-Enable the Mali GPU in the Turing RK1.
+Document the qcom,qcs615-tcsr compatible.
 
-This patch also sets the external GPU voltage regulator in the RK806-1
-to "always-on" because it is necessary for this regulator to be active
-when enabling the GPU power domain or the kernel will fail with:
+Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
+---
+Document the qcom,qcs615-tcsr compatible, tcsr will provide various
+control and status functions for their peripherals.
+---
+ Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-rockchip-pm-domain fd8d8000.power-management:power-controller: \
-    failed to set domain 'gpu', val=0
-rockchip-pm-domain fd8d8000.power-management:power-controller: \
-    failed to get ack on domain 'gpu', val=0x1bffff
-
-...followed by a panic when it attempts to access unavailable QoS
-registers.
-
-Since there is currently no `domain-supply` or similar to express this
-dependency, the only way to ensure that the regulator is never off when
-the GPU power domain is brought up is to ensure that the regulator is
-never off.
-
-Signed-off-by: Sam Edwards <CFSworks@gmail.com>
+diff --git a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
+index c6bd14ec5aa0..1b09a57fc633 100644
+--- a/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
++++ b/Documentation/devicetree/bindings/mfd/qcom,tcsr.yaml
+@@ -21,6 +21,7 @@ properties:
+           - qcom,msm8998-tcsr
+           - qcom,qcm2290-tcsr
+           - qcom,qcs404-tcsr
++          - qcom,qcs615-tcsr
+           - qcom,sc7180-tcsr
+           - qcom,sc7280-tcsr
+           - qcom,sc8280xp-tcsr
 
 ---
+base-commit: 100cc857359b5d731407d1038f7e76cd0e871d94
+change-id: 20240911-add_tcsr_compatible_for_qcs615-f4cb3f58048c
 
-Hi list,
-
-This particular patch will probably need to be revisited once something
-like [1] lands. I'm completely unable to get the GPU up and running
-without some kind of solution to the power dependency issue, but it's
-possible that this is because I'm just particularly unlucky in the
-timing department.
-
-Cheers,
-Sam
-
-[1]: https://lore.kernel.org/lkml/20240910180530.47194-7-sebastian.reichel@collabora.com/T/
----
- .../boot/dts/rockchip/rk3588-turing-rk1.dtsi     | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
-index 6036c4fe6727..dedfb9ede4a3 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-turing-rk1.dtsi
-@@ -116,6 +116,11 @@ &gmac1_rgmii_clk
- 	status = "okay";
- };
- 
-+&gpu {
-+	mali-supply = <&vdd_gpu_s0>;
-+	status = "okay";
-+};
-+
- &i2c0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&i2c0m2_xfer>;
-@@ -386,6 +391,17 @@ rk806_dvs3_null: dvs3-null-pins {
- 
- 		regulators {
- 			vdd_gpu_s0: vdd_gpu_mem_s0: dcdc-reg1 {
-+				/*
-+				 * RK3588's GPU power domain cannot be enabled
-+				 * without this regulator active, but it
-+				 * doesn't have to be on when the GPU PD is
-+				 * disabled.  Because the PD binding does not
-+				 * currently allow us to express this
-+				 * relationship, we have no choice but to do
-+				 * this instead:
-+				 */
-+				regulator-always-on;
-+
- 				regulator-boot-on;
- 				regulator-min-microvolt = <550000>;
- 				regulator-max-microvolt = <950000>;
+Best regards,
 -- 
-2.44.2
+Lijuan Gao <quic_lijuang@quicinc.com>
 
 
