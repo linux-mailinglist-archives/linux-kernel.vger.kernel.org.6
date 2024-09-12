@@ -1,67 +1,67 @@
-Return-Path: <linux-kernel+bounces-326956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 691F7976F0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:47:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ACC6976F20
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:50:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5820B22250
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:47:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12BD4281843
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E4D1BC9F1;
-	Thu, 12 Sep 2024 16:47:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D81B1BE866;
+	Thu, 12 Sep 2024 16:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="b/+JTLk/"
-Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="IwgOxAQC"
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2534E185939;
-	Thu, 12 Sep 2024 16:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8879C1AD256;
+	Thu, 12 Sep 2024 16:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726159664; cv=none; b=nlI/yugaLU2+X0Jr8+XgNuFxP0gAHRIHkqNxLLKdcYePgbotWKV+ys5PYFyKZB/BNobNKuCYvX82OgcXsZU3BVniJ3bdatfPSdhTAlCC6vWT4iIEeWyLbXV1VPTLFzmF0Ml4rnhVeLCEH5rdwuhGOhHP2Y0wtUSWEy5naHVPsKY=
+	t=1726159742; cv=none; b=bmeMzCMdu3HW+uILiVQfLk7QWv197Jp4R0Zq6MrkfTf1Gj4j/k7+CVD0yK2y0hgjL6Yylmbt2KLWt9D2zToLg+fTy6VT42GYgTxksR1W69ard/4PyhbbWZJ15ms4AYLI0x81dMQnOnryM+mnZdgLB8PosyqPU9F0D6BkL1U4DP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726159664; c=relaxed/simple;
-	bh=cKwzCUEYjKoPwIDNhCww9BvIKS25aLWnTmd4rd91Z4M=;
+	s=arc-20240116; t=1726159742; c=relaxed/simple;
+	bh=530XNQAEmhOrC7VwRpLecl9sAiK36GwooP77boVE0Lw=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=nULClVva2rHJIfpgIigTGgol80mgz5kHzVJXpZaCpHzlSDFgtyoWDBxo2tAJV8d1OzpEG8WEysGzZ72M5q+71kmryA3P8QSKVjO66jhx+3MVQvm2/oe6rn3s/HnLC+RKyqQYxhYUwsoBsbIdq/4OMgjsQs2bzZrBiKrwsB+crpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=b/+JTLk/ reason="signature verification failed"; arc=none smtp.client-ip=18.132.163.193
+	 MIME-Version:Message-ID; b=D9tQHu+aFLFpDOxRPKAHN+JCSiTbnelVHvkL3/gwPvww2BlgerE/Ql2koEV0ATu9IH6U4xvY4cXvfuRg5imZ8sN81bjYSRqDlyfQE2Pj3KIsxCqvqxkidre4jeaq7vvl/yHwWlMauh78ZQ+/yJKrFLlSTHtcrFa6p0zRrrgaXME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=IwgOxAQC reason="signature verification failed"; arc=none smtp.client-ip=54.206.16.166
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
-X-QQ-mid: bizesmtp83t1726159613to5d2kq4
-X-QQ-Originating-IP: //8ojEWj5zyik+IDOVW2+Nz6vwRhEBJ1fP4hKMrx43w=
-Received: from m16.mail.163.com ( [117.135.210.2])
+X-QQ-mid: bizesmtpsz3t1726159696trnlepd
+X-QQ-Originating-IP: wEd5VLb+C7DJlBJJc80hO5dQ5BCjltzEjPN05/PxW9k=
+Received: from m16.mail.163.com ( [220.197.31.4])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 13 Sep 2024 00:46:51 +0800 (CST)
+	id ; Fri, 13 Sep 2024 00:48:14 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 8686062611762100577
+X-BIZMAIL-ID: 17481997288728720519
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
 	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=rdcNj5uwJJEZjLv5Z3DsoThouba4FdiHltV8i8AMl18=; b=b
-	/+JTLk/7/Wbyp+yJX70aplaEvV24gSZ8L7a/2QssKIO+dNBAzaZpTpvLH0L9feel
-	YOt8WFbl6U61oy/7aIpQegBAFiufG5EToKJ/08KrD5Lk1x1xqVurwNfTf05GN9FY
-	5UQJDOG/rnTj/pccr4bRMbZepEaHDWuVbtKEtF9Cp4=
+	Message-ID; bh=8XrEsIIS9aI5+bq/hsZocilGWCWX5u1no4Zo+q3KNn4=; b=I
+	wgOxAQCYN+9Yyl8LM/872U5Rna63quAW/63FICJvhjG60a/6yexzMOBcPK4cILfz
+	Jh38N6nWyvqR+5ZUr2xOvAMRkPYZKPpGdgn6KviDCgtHtXdcA1fOBGkePQh1GY26
+	z71IU4Tqfd9Zh/E2yf/Iy+8GtufUhjpeUv22yfAgVk=
 Received: from kxwang23$m.fudan.edu.cn ( [104.238.222.239] ) by
- ajax-webmail-wmsvr-40-136 (Coremail) ; Fri, 13 Sep 2024 00:46:15 +0800
+ ajax-webmail-wmsvr-40-136 (Coremail) ; Fri, 13 Sep 2024 00:47:39 +0800
  (CST)
-Date: Fri, 13 Sep 2024 00:46:15 +0800 (CST)
+Date: Fri, 13 Sep 2024 00:47:39 +0800 (CST)
 From: "Kaixin Wang" <kxwang23@m.fudan.edu.cn>
-To: "Przemek Kitszel" <przemyslaw.kitszel@intel.com>
-Cc: wtdeng24@m.fudan.edu.cn, 21210240012@m.fudan.edu.cn, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, edumazet@google.com, kuba@kernel.org, 
-	davem@davemloft.net
-Subject: Re: [PATCH] net: seeq: Fix use after free vulnerability in ether3
- Driver Due to Race Condition
+To: "Logan Gunthorpe" <logang@deltatee.com>
+Cc: 21302010073@m.fudan.edu.cn, 21210240012@m.fudan.edu.cn, dave.jiang@intel.com, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kurt.schwemmer@microsemi.com, bhelgaas@google.com
+Subject: Re: [PATCH] ntb: ntb_hw_switchtec: Fix use after free vulnerability
+ in switchtec_ntb_remove due to race condition
 X-Priority: 3
 X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
  Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <26614b92-4d24-4aff-8fc3-25aa8ed83cb6@intel.com>
-References: <20240909175821.2047-1-kxwang23@m.fudan.edu.cn>
- <26614b92-4d24-4aff-8fc3-25aa8ed83cb6@intel.com>
-X-NTES-SC: AL_Qu2ZBP2etk0s4yabYOkXn0kbjug3WcW0u/0k3oJUNps0sSbJxCIce1FGAHTrzv+TMyOvnjaRQClvyeFHTa9cY5iDGeXF3HowFERebwPIor1Q
+In-Reply-To: <dd14d4b8-0215-4d0b-a599-eb75b397447f@deltatee.com>
+References: <20240909172007.1863-1-kxwang23@m.fudan.edu.cn>
+ <dd14d4b8-0215-4d0b-a599-eb75b397447f@deltatee.com>
+X-NTES-SC: AL_Qu2ZBP2etk4u7yCYZukXn0kbjug3WcW0u/0k3oJUNps0sSbJxCIce1FGAHTrzv+TMyOvnjaRQClvyeFHTa9cY5jlf0r4v/rVwiL22O5MRq10
 Content-Transfer-Encoding: base64
 Content-Type: text/plain; charset=GBK
 Precedence: bulk
@@ -70,44 +70,32 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <2BC065D799E6D23B+6fef9b03.c268.191e720da5e.Coremail.kxwang23@m.fudan.edu.cn>
+Message-ID: <BF7FF550B3EEF70F+12371232.c26f.191e7222004.Coremail.kxwang23@m.fudan.edu.cn>
 X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wDnr6vYGuNmEJAFAA--.2873W
-X-CM-SenderInfo: zprtkiiuqyikitw6il2tof0z/1tbiwh5Y2GWXw6aYUAAFsG
+X-CM-TRANSID:_____wD3X5srG+NmLpAFAA--.2953W
+X-CM-SenderInfo: zprtkiiuqyikitw6il2tof0z/1tbiwh5Y2GWXw6aYUAAGsF
 X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:m.fudan.edu.cn:qybglogicsvrsz:qybglogicsvrsz4a-0
+Feedback-ID: bizesmtpsz:m.fudan.edu.cn:qybglogicsvrsz:qybglogicsvrsz4a-0
 
-CkF0IDIwMjQtMDktMTEgMTc6Mjk6NDQsICJQcnplbWVrIEtpdHN6ZWwiIDxwcnplbXlzbGF3Lmtp
-dHN6ZWxAaW50ZWwuY29tPiB3cm90ZToKPk9uIDkvOS8yNCAxOTo1OCwgS2FpeGluIFdhbmcgd3Jv
-dGU6Cj4+IEluIHRoZSBldGhlcjNfcHJvYmUgZnVuY3Rpb24sIGEgdGltZXIgaXMgaW5pdGlhbGl6
-ZWQgd2l0aCBhIGNhbGxiYWNrCj4+IGZ1bmN0aW9uIGV0aGVyM19sZWRvZmYsIGJvdW5kIHRvICZw
-cmV2KGRldiktPnRpbWVyLiBPbmNlIHRoZSB0aW1lciBpcwo+PiBzdGFydGVkLCB0aGVyZSBpcyBh
-IHJpc2sgb2YgYSByYWNlIGNvbmRpdGlvbiBpZiB0aGUgbW9kdWxlIG9yIGRldmljZQo+PiBpcyBy
-ZW1vdmVkLCB0cmlnZ2VyaW5nIHRoZSBldGhlcjNfcmVtb3ZlIGZ1bmN0aW9uIHRvIHBlcmZvcm0g
-Y2xlYW51cC4KPj4gVGhlIHNlcXVlbmNlIG9mIG9wZXJhdGlvbnMgdGhhdCBtYXkgbGVhZCB0byBh
-IFVBRiBidWcgaXMgYXMgZm9sbG93czoKPj4gCj4+IENQVTAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICBDUFUxCj4+IAo+PiAgICAgICAgICAgICAgICAgICAgICAgIHwgIGV0aGVy
-M19sZWRvZmYKPj4gZXRoZXIzX3JlbW92ZSAgICAgICAgIHwKPj4gICAgZnJlZV9uZXRkZXYoZGV2
-KTsgICB8Cj4+ICAgIHB1dF9kZXZpYyAgICAgICAgICAgfAo+PiAgICBrZnJlZShkZXYpOyAgICAg
-ICAgIHwKPj4gICB8ICBldGhlcjNfb3V0dyhwcml2KGRldiktPnJlZ3MuY29uZmlnMiB8PSBDRkcy
-X0NUUkxPLCBSRUdfQ09ORklHMik7Cj4+ICAgICAgICAgICAgICAgICAgICAgICAgfCAvLyB1c2Ug
-ZGV2Cj4+IAo+PiBGaXggaXQgYnkgZW5zdXJpbmcgdGhhdCB0aGUgdGltZXIgaXMgY2FuY2VsZWQg
-YmVmb3JlIHByb2NlZWRpbmcgd2l0aAo+PiB0aGUgY2xlYW51cCBpbiBldGhlcjNfcmVtb3ZlLgo+
-Cj50aGlzIGNvZGUgY2hhbmdlIGluZGVlZCBwcmV2ZW50cyBVQUYgYnVnCj5idXQgYXMgaXMsIHRo
-ZSBDRkcyX0NUUkxPIGZsYWcgb2YgUkVHX0NPTkZJRzIgd2lsbCBiZSBsZWZ0IGluIHN0YXRlICJP
-TiIKPgo+aXQgd291bGQgYmUgYmV0dGVyIHRvIGZpcnN0IHR1cm4gdGhlIExFRCBvZmYgdW5jb25k
-aXRpb25hbGx5Cj4KCkkgd2lsbCBmaXggaXQgaW4gdGhlIG5leHQgdmVyc2lvbiBvZiBwYXRjaC4K
-Cj4+IAo+PiBTaWduZWQtb2ZmLWJ5OiBLYWl4aW4gV2FuZyA8a3h3YW5nMjNAbS5mdWRhbi5lZHUu
-Y24+Cj4+IC0tLQo+PiAgIGRyaXZlcnMvbmV0L2V0aGVybmV0L3NlZXEvZXRoZXIzLmMgfCAxICsK
-Pj4gICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykKPj4gCj4+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL25ldC9ldGhlcm5ldC9zZWVxL2V0aGVyMy5jIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQv
-c2VlcS9ldGhlcjMuYwo+PiBpbmRleCBjNjcyZjkyZDY1ZTkuLmY5ZDI3YzlkNjgwOCAxMDA2NDQK
-Pj4gLS0tIGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvc2VlcS9ldGhlcjMuYwo+PiArKysgYi9kcml2
-ZXJzL25ldC9ldGhlcm5ldC9zZWVxL2V0aGVyMy5jCj4+IEBAIC04NTAsNiArODUwLDcgQEAgc3Rh
-dGljIHZvaWQgZXRoZXIzX3JlbW92ZShzdHJ1Y3QgZXhwYW5zaW9uX2NhcmQgKmVjKQo+PiAgIAll
-Y2FyZF9zZXRfZHJ2ZGF0YShlYywgTlVMTCk7Cj4+ICAgCj4+ICAgCXVucmVnaXN0ZXJfbmV0ZGV2
-KGRldik7Cj4+ICsJZGVsX3RpbWVyX3N5bmMoJnByaXYoZGV2KS0+dGltZXIpOwo+PiAgIAlmcmVl
-X25ldGRldihkZXYpOwo+PiAgIAllY2FyZF9yZWxlYXNlX3Jlc291cmNlcyhlYyk7Cj4+ICAgfQo+
-Cj4KVGhhbmtzIGZvciB0aGUgcmV2aWV3IQoKQmVzdCByZWdhcmRzLApLYWl4aW4gV2FuZwoK
+CgoKQXQgMjAyNC0wOS0xMCAwMjoxNzo1NywgIkxvZ2FuIEd1bnRob3JwZSIgPGxvZ2FuZ0BkZWx0
+YXRlZS5jb20+IHdyb3RlOgo+Cj4KPk9uIDIwMjQtMDktMDkgMTE6MjAsIEthaXhpbiBXYW5nIHdy
+b3RlOgo+PiBJbiB0aGUgc3dpdGNodGVjX250Yl9hZGQgZnVuY3Rpb24sIGl0IGNhbiBjYWxsIHN3
+aXRjaHRlY19udGJfaW5pdF9zbmRldgo+PiBmdW5jdGlvbiwgdGhlbiAmc25kZXYtPmNoZWNrX2xp
+bmtfc3RhdHVzX3dvcmsgaXMgYm91bmQgd2l0aAo+PiBjaGVja19saW5rX3N0YXR1c193b3JrLiBz
+d2l0Y2h0ZWNfbnRiX2xpbmtfbm90aWZpY2F0aW9uIG1heSBiZSBjYWxsZWQKPj4gdG8gc3RhcnQg
+dGhlIHdvcmsuCj4+IAo+PiBJZiB3ZSByZW1vdmUgdGhlIG1vZHVsZSB3aGljaCB3aWxsIGNhbGwg
+c3dpdGNodGVjX250Yl9yZW1vdmUgdG8gbWFrZQo+PiBjbGVhbnVwLCBpdCB3aWxsIGZyZWUgc25k
+ZXYgdGhyb3VnaCBrZnJlZShzbmRldiksIHdoaWxlIHRoZSB3b3JrCj4+IG1lbnRpb25lZCBhYm92
+ZSB3aWxsIGJlIHVzZWQuIFRoZSBzZXF1ZW5jZSBvZiBvcGVyYXRpb25zIHRoYXQgbWF5IGxlYWQK
+Pj4gdG8gYSBVQUYgYnVnIGlzIGFzIGZvbGxvd3M6Cj4+IAo+PiBDUFUwICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgQ1BVMQo+PiAKPj4gICAgICAgICAgICAgICAgICAgICAgICAgfCBj
+aGVja19saW5rX3N0YXR1c193b3JrCj4+IHN3aXRjaHRlY19udGJfcmVtb3ZlICAgIHwKPj4ga2Zy
+ZWUoc25kZXYpOyAgICAgICAgICAgfAo+PiAgICAgICAgICAgICAgICAgICAgICAgICB8IGlmIChz
+bmRldi0+bGlua19mb3JjZV9kb3duKQo+PiAgICAgICAgICAgICAgICAgICAgICAgICB8IC8vIHVz
+ZSBzbmRldgo+PiAKPj4gRml4IGl0IGJ5IGVuc3VyaW5nIHRoYXQgdGhlIHdvcmsgaXMgY2FuY2Vs
+ZWQgYmVmb3JlIHByb2NlZWRpbmcgd2l0aAo+PiB0aGUgY2xlYW51cCBpbiBzd2l0Y2h0ZWNfbnRi
+X3JlbW92ZS4KPgo+VGhhbmsgeW91LCB0aGlzIGxvb2tzIGdvb2QgdG8gbWUuCj4KPlJldmlld2Vk
+LWJ5OiBMb2dhbiBHdW50aG9ycGUgPGxvZ2FuZ0BkZWx0YXRlZS5jb20+Cj4KClRoYW5rcyBmb3Ig
+dGhlIHJldmlldyEKCkJlc3QgcmVnYXJkcywKS2FpeGluIFdhbmcK
 
