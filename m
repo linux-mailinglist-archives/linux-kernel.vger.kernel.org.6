@@ -1,358 +1,173 @@
-Return-Path: <linux-kernel+bounces-327370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E9ED9774B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:09:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA9229774BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:11:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6BC91F24D53
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:09:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03929B21E93
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1791C2DCF;
-	Thu, 12 Sep 2024 23:09:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469421C2DCB;
+	Thu, 12 Sep 2024 23:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FQ023UgG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WrF0fgjX";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+KRjn0Tq";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="WrF0fgjX";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+KRjn0Tq"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B70E18891D;
-	Thu, 12 Sep 2024 23:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726182558; cv=fail; b=W3mdmz5cIVXWZHAS/6F/eYOQMrvQE5VF1xesoZ2fC/yrOr7BE8MKFZGjHK6fZPaDA7bF0CTNvqRtjFcCsfSOUeSAILguDQbHuZ/Bne39YoKaWtGRwcVzvaCCDzvushfOQhyuIR8z5eZ465EjlD/Nnoa44cOZjnKAfr6/obNHHuA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726182558; c=relaxed/simple;
-	bh=wTnZiBF3OsWecLuci647FV3Jk2RHKPXVfp0sS8NtvPM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=VBgeG0tow/68CdUO0oWs7SfSK+kitl7jwfN5pCRD1abIN7CeEzyxCPO4MLBjl6Vw3ZjqmEtPXnBfbNtt6FZWcu9akCI3bqHoiKXDiSp0hYXxV1EPr4Hw91/sNtpSJ6Ics149NAPxXjlVqERhUxG96DTD1fvYLNr4E+F/Yv4Ixzw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FQ023UgG; arc=fail smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726182555; x=1757718555;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=wTnZiBF3OsWecLuci647FV3Jk2RHKPXVfp0sS8NtvPM=;
-  b=FQ023UgGLghJC0xHmj4GZR/mww8DzwuRdfP0oOylXqmCqjRIeJupkfZj
-   qc5fJb/oK7Mnvvu0NAV4+D/JgIw3+45w0LYcYYHmt/MZmdbFuYb0AXGdb
-   YMETRsXFMuaP+NLiofg6Nu1312wHMRksKNqgLwp0aBmaIkHv5lrJAJbSe
-   8KUT6j2rq9jagfOyHzqdbVbRCQFUh0ok44E7SZavxTchYaRyKGoeY20yK
-   id4PBEtymtddzDKCM9u76B0W5T70nEwpuOi+7Y49+xZmvQeWHuuoj1Pmt
-   YpsUNceIKoyeBAcsuG+KwcqQeVYUVdvI/ICWbUx4NYq9AoqkiMExLRyiL
-   g==;
-X-CSE-ConnectionGUID: +9vbQPjsRXqh63jdODrQeA==
-X-CSE-MsgGUID: 4XA7Cb+7QemyUHqfDql8aA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="36447324"
-X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
-   d="scan'208";a="36447324"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 16:09:15 -0700
-X-CSE-ConnectionGUID: qTNaNT57QbuqfhchMnSUTA==
-X-CSE-MsgGUID: vFwjFwxgSrWTZBxRdr+hDA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
-   d="scan'208";a="72860976"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Sep 2024 16:09:15 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 12 Sep 2024 16:09:14 -0700
-Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 12 Sep 2024 16:09:14 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 12 Sep 2024 16:09:14 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.171)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 12 Sep 2024 16:09:13 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fbsYkZ7zqBssI5iW7NCXQ50luQRJB5theWHYw+9uJ/nSchLKP0nMKsMKnvGI2ODI2ur2XDG2NuMnwZd0oHgwRG8cMJeOGz3UUPF9ocO68vEvtpidAhXKI4s1ZLgeiJS86ABS3IYmqWMJzKovV4HN9yHPMj9stfCD/dqoSelMP5kkErZ6Na3fEztZYmjrQL+bfbii4cLDzIYQLcwifPC5X9vN776ybgON6Ml3nfrfp4/HInvQ43lcZZEsfbnuTXc+l/bJtlNNAfmBkSuUSpkx/UZtYJmvqVfTA2S86RJvGjrgWxFMCgE/dX/OYPEGI0g8iHnW8xIphurLWWR9vEf9ag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+sOCF8SxGA7uZHhs9/avxGoJLrP6Fx8QJFLjmaqZhI8=;
- b=O78HWFq6Unsdaf8aR1eNq3e9NV2mCRUQ2iBSEpH3+sYZWAOhwB4cUMDbNIz8I1KQR90+JLhTm4TfQUHLWwxq3SZIZAt8IhiVz3t8zwDKQ25mP4HtjpP4dvXKySmYVECIFebh4HdZfmCfFyPQx2a3gv42dRXyB9ZU0FyI6eazMGZAPmcD3HioOt2M1Z1pOyRIqaXdnJ4x0gDMrT+R1+pWfCYeQ01p6rwG2qAwrQarIcJy0lio5SzpjERin3QN7lNDtNEWsycy/y45mNJ5WEAHJqTT2pachvhwO5lLtPXoTfXpFbtL+Rcdxi6zM0dmiLuCPFRKatkAgtxQJgRQKYkkog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from IA0PR11MB7185.namprd11.prod.outlook.com (2603:10b6:208:432::20)
- by DS0PR11MB7972.namprd11.prod.outlook.com (2603:10b6:8:124::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.28; Thu, 12 Sep
- 2024 23:09:12 +0000
-Received: from IA0PR11MB7185.namprd11.prod.outlook.com
- ([fe80::dd3b:ce77:841a:722b]) by IA0PR11MB7185.namprd11.prod.outlook.com
- ([fe80::dd3b:ce77:841a:722b%5]) with mapi id 15.20.7962.018; Thu, 12 Sep 2024
- 23:09:11 +0000
-From: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>
-To: Huan Yang <link@vivo.com>, Sumit Semwal <sumit.semwal@linaro.org>,
-	=?iso-8859-1?Q?Christian_K=F6nig?= <christian.koenig@amd.com>, Gerd Hoffmann
-	<kraxel@redhat.com>, "linux-media@vger.kernel.org"
-	<linux-media@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "linaro-mm-sig@lists.linaro.org"
-	<linaro-mm-sig@lists.linaro.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
-Subject: RE: [PATCH v6 7/7] udmabuf: reuse folio array when pin folios
-Thread-Topic: [PATCH v6 7/7] udmabuf: reuse folio array when pin folios
-Thread-Index: AQHbAplkOJGjjp2cgE2MOT46vlFIF7JRxdbQ
-Date: Thu, 12 Sep 2024 23:09:11 +0000
-Message-ID: <IA0PR11MB718505CD32E41064EFB0E7CAF8642@IA0PR11MB7185.namprd11.prod.outlook.com>
-References: <20240909091851.1165742-1-link@vivo.com>
- <20240909091851.1165742-8-link@vivo.com>
-In-Reply-To: <20240909091851.1165742-8-link@vivo.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA0PR11MB7185:EE_|DS0PR11MB7972:EE_
-x-ms-office365-filtering-correlation-id: c1e387b6-6e1e-419a-5c8c-08dcd37fe9c3
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info: =?iso-8859-1?Q?amm7cURQ/aUl1FEP9ZTTA/dBxowHNATqwL3dYICZltG8VBOYNrwE0UnbIH?=
- =?iso-8859-1?Q?xl0kfYol8OOT38v8vd0rrej/XvbqKCm9c3JsT2C5lfQVaSdFBznc7TIFlS?=
- =?iso-8859-1?Q?/doChwIsd5flYsfzc82m8GN9MSywbo96sBDvIwGzbhwuxWGDlfhvb4HEcR?=
- =?iso-8859-1?Q?yI33lcrIcOjRY8ud2Kjv7rxifg886G/wvmesPo7E5jL5dqlzfZDuN+aaqj?=
- =?iso-8859-1?Q?NN+l2PP2Tdi5ybOGdgbsh/lXde8JrxouN290m8MuDqacou9nvDm1dUb7rJ?=
- =?iso-8859-1?Q?vLPzl5RCC41j7n2ZgX5ZsAoo0L/iouI99pEdafLH6ymRZpoPS+rNvrtGg1?=
- =?iso-8859-1?Q?f5KCj/xJExb2XGe0K6aJuY3CWgoj0XvEmH8cVOzSCRY7at45reHijcEzH3?=
- =?iso-8859-1?Q?cZw8ECPZTzegOWEKT8TnJVI/X0FPLqc9I1pwE1yiGQTdHhO6frZ09YXX8i?=
- =?iso-8859-1?Q?42VSxuWjOuIt++g/2Lv+Y+ioldixiqDFvbiRs9ZieNAprWCcNdVIXSyhLw?=
- =?iso-8859-1?Q?KKsJF3YnB9+CWB3UqmkE+kBd4LdWWarB0QTHqYEpcKdxMetA8D/D2j3lK7?=
- =?iso-8859-1?Q?FBN2IxgBrJaWb0zO1lB0Z44HK8qnWexH9kRBg3IydK0RcO6XvUn5dPl3+Y?=
- =?iso-8859-1?Q?W7Ta4q56dWMPv3VVFt5MHhy4ZobB7/uraNFnuZu74Xi19r4tXqXtYAC5JX?=
- =?iso-8859-1?Q?n/puO//7+7ztoUs8sKZUU3rgz7/7HpdIvrZcinBqKtl19dfWxTC36+iJUg?=
- =?iso-8859-1?Q?nwDbi22Zd83oHcuNZ2oDHM1sRceEBmD1SXuf+WTLpv4ojeKXyrxl+5DP17?=
- =?iso-8859-1?Q?7TDWbeQXT7jpdBnV5n9EeyXWcLfk1SpYN3u8QA/Ym/a1B95whVwzYZn4tQ?=
- =?iso-8859-1?Q?2frbVBFKCizT6cvfHVMvm+cMkUsBWoQ2NfM7eQZT2Yt+Z4gozBK2wcPNQc?=
- =?iso-8859-1?Q?0tIQRNVarGMqJe73dHAmWBqK5O3YV27TNF123ogNmfTPBlA/Jv3ZpQB2Xn?=
- =?iso-8859-1?Q?mwbnhw/4+csz2XBQEjSeKoqP92SsslglvpLZcIvYguzOP84vgSU7i2KABX?=
- =?iso-8859-1?Q?yLoR3lPulRNgtcOjtFm3mFGQfzHKWP9UHyXiJDMn4tNI6EpyalRoZIjay3?=
- =?iso-8859-1?Q?1nC4JdPcbMR38UbK8yp5kYu61xw0V2w11Nlltjim8IQ3/CXrYpxavSciv8?=
- =?iso-8859-1?Q?uYr+7XJODOk1pgqNU2O/XrTs/KeZn2MOhglPSypdrQJGib0e5/v8bX/fb7?=
- =?iso-8859-1?Q?cRbj9GeslsfcKWmJy/xQ93yWYTNZYe/oYdMkjIWt0dOO0GHxbDGn7Wz34v?=
- =?iso-8859-1?Q?hy4ElRzUGIcK+pi24QYAfAMenle8zDV9TcxXFX0gyFaI2ag4x7DeZMUXiq?=
- =?iso-8859-1?Q?POOXD6ME2IXP+aqnMY9Ex0wPFBTdyruSPXkEAzddIUAOFQwqgTBmJqPjbg?=
- =?iso-8859-1?Q?wgKFyv/i4ob0TPr18ZU5AN+zV8Htth6zt8WTkg=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR11MB7185.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?7e3+p5K98r+OGDW5SKiP2ne0HkL6EyWuV2jds2iE804myeLIz8o9hXUvhS?=
- =?iso-8859-1?Q?u548lSVrmS0vQM51V0c5Q6MXXcm32BW61svW58QqsDkb8uo5rRWTTK5xV3?=
- =?iso-8859-1?Q?yBFrTuykD1Cv8cycYR15QkXKpeqRHGc1RnUjV+d43xAmOgTqRiUjduGY/m?=
- =?iso-8859-1?Q?s2itzUcQie3J63/CMtl9G0w50iojLcaHHp5mQ5Q0IDnviyhnlTbExZpMOP?=
- =?iso-8859-1?Q?sqfUh8z8ICpiWhU8ewQ5sizExnkTjQMAgtA4u4qCYUJAH1ZnldUm+YBV1q?=
- =?iso-8859-1?Q?M1RTJueFwZfT6oPtL5/AEtbsW/VGmZU3kOH+XIbMSBCvWtZA6uRZtXVvjd?=
- =?iso-8859-1?Q?5PAlvl4u39FVgwD6bdZJeQr7WQicGZduD1Ayw6XVd2MnqHnHUsN77oKMsb?=
- =?iso-8859-1?Q?Im+dpOCTB9VGKc2LxMKGoGVLOwTBxdJmTzspvkl92N+DTQ3JmRYw5EgBC+?=
- =?iso-8859-1?Q?9KC7NX43XVdmR97jD64I1xQLW3NNOy4jNZAZwPM42A+9hGSY1+JKXWbzrR?=
- =?iso-8859-1?Q?4jxYemUDZXviE7ogptwla6B5tm8Tzdsn8ZPp3J9Ev6ngy//i3cEoWnAUbR?=
- =?iso-8859-1?Q?p+EZvA7glujsYrf7kt0cH5Erv+lPJvtNb4/4DwcNkwqGRK/M163yYKlVZs?=
- =?iso-8859-1?Q?jjKQPZJFJBOTCfHj0L79U3W/7wdcfAqkNsINUZAZK6IT72L9sxZrXA6MUg?=
- =?iso-8859-1?Q?lurb0bc9UjRlHt+L/0oh+wW7j3y+eV+96S+Z2MD3rzuvCtR3MwmV/pYg0y?=
- =?iso-8859-1?Q?Jbrav5i6fT9RxLrPSi6NUheI1gdEHwQtGc1ZBuZ/P6Ligu35LP23Y1BcAz?=
- =?iso-8859-1?Q?oX8/QLeZFlvPdwNm6ntgJnw/j5iOenjHSRWNGuBgbX/RGcUasU2f+quf1x?=
- =?iso-8859-1?Q?dFCUEhSHRfcWaP4PmLDaD6ADAfy/KlmmMqgrBztT1GhyIaAdf5veqeuxet?=
- =?iso-8859-1?Q?xhC6kayHfNsb5EjWzfECD3GK4DKru2QbHhNQHXInCtlnN2xIRdXwtelj/C?=
- =?iso-8859-1?Q?caTrtklKEznj30Ykmm1Fatt20alJFNtHHPx5kYkGXLsWYEq1hyaBGxjkOz?=
- =?iso-8859-1?Q?CPdAEKsm924CCKGP4p5AP0JxK596c2Nnuzf0KwB21+P2AlLqhEAJHKYQyV?=
- =?iso-8859-1?Q?bhpU6woby6+Tpaz+gVSAKsQiICK3JCjcF7NuDSpfSvSFbet3OzR6TuMD7E?=
- =?iso-8859-1?Q?1H1h7+imyzhYyLiV/l8SzUH9bkS72T37KpozVexEMgFb5XPVi29Pu0fxpK?=
- =?iso-8859-1?Q?woYO56kmXKrd2sskJDdYU0P1NjBalPcArE9XxWNJBbByLkMFW+xQScQOIP?=
- =?iso-8859-1?Q?u1+2EDpmFHplKg4iiorOYGrvVCeImT0j4S0fFea1uqH6g0PqalXJj0rR1u?=
- =?iso-8859-1?Q?UM45fPmxJgbb8mMmc4yUNdFf3r0tXVDx/ECbfIDZeHocw1ZfEsNh65BDJr?=
- =?iso-8859-1?Q?X6FswSQ/MDc3QEGso6tNaRIZ0nBNCQOPc0QtXIsj4LVNlSRzO6w6hdNxUz?=
- =?iso-8859-1?Q?RlqHGzCyd/DiSmwiKKeNpdnNXbpLw7D9QISjp2RGqUxKxITMXL8+Y9MKRm?=
- =?iso-8859-1?Q?dTbkWEkn/xUzTukl6f03K42wvJbYlK2oDVtIVStcn2Xh3GDuSeDUP44gui?=
- =?iso-8859-1?Q?+mmgyDeWK7UiYPaR+ZL4PxKJ9A1mc9u+PK?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B2D02C80;
+	Thu, 12 Sep 2024 23:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726182658; cv=none; b=WKXXDhlDF25M8vrmmWjMUxNv2NDvxABNADnPPUhmpixby7u2TxS0js2Is1DXklULNnRoZ12Kk6tpP6oLuW+qwoAsHeReU/avAyXfnGRIlqdWcdmf+YINz7QR6ldbIfWDJqhDN0IyiSxzvikD76FqVOK/jVue6i6A6m/qyAz4Yqk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726182658; c=relaxed/simple;
+	bh=oP+I0tH+wHFrMDcCrFCLReOz6iYxkKFn6BRSvGt1mAw=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=BxF9BjZj+fV3W7LImTUjmOdjN/osoqlhDwrozT8mtTH38RC7+PV3RnzeFL50xjcrQ4psmXG9rHUMoWxjM5mecfHEWNVaYspZpGeMibKugwiGm6OQ9kMWxWwm+Mm1ivVUbMcukvLqPFyC30dBbVkBi1VGIwvMEiJ1fmI9gntHPcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WrF0fgjX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+KRjn0Tq; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=WrF0fgjX; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+KRjn0Tq; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4111621B04;
+	Thu, 12 Sep 2024 23:10:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726182655; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tcJPXcfSvW6EXee0fKAxrLiHmEi5QsaBkJPvf/Y2x5c=;
+	b=WrF0fgjXPDWJu7co/VGlSQJrpUxv4OIWJYTq80SqSLRALxQMJChxlbqQe3t7erctJ3yiiK
+	X8GlvMIvzh3QY/9FzsIuxj+0lMq7/xkmIkfwgqN0zdYPkiC6w7J/76ijUXYY3+3Y0Hmp0A
+	lMH4RCr14WrWlSDOXp/Q6xiO9NVWTv4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726182655;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tcJPXcfSvW6EXee0fKAxrLiHmEi5QsaBkJPvf/Y2x5c=;
+	b=+KRjn0TqjMCF2g0wibfZBWvmvhXxqmE+/XG2TGEKhFEFhVJDL3UbBWqw2UowTCpL+eK73+
+	bh2ml/LAKbEQ4DCg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=WrF0fgjX;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=+KRjn0Tq
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726182655; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tcJPXcfSvW6EXee0fKAxrLiHmEi5QsaBkJPvf/Y2x5c=;
+	b=WrF0fgjXPDWJu7co/VGlSQJrpUxv4OIWJYTq80SqSLRALxQMJChxlbqQe3t7erctJ3yiiK
+	X8GlvMIvzh3QY/9FzsIuxj+0lMq7/xkmIkfwgqN0zdYPkiC6w7J/76ijUXYY3+3Y0Hmp0A
+	lMH4RCr14WrWlSDOXp/Q6xiO9NVWTv4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726182655;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tcJPXcfSvW6EXee0fKAxrLiHmEi5QsaBkJPvf/Y2x5c=;
+	b=+KRjn0TqjMCF2g0wibfZBWvmvhXxqmE+/XG2TGEKhFEFhVJDL3UbBWqw2UowTCpL+eK73+
+	bh2ml/LAKbEQ4DCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8471F13A73;
+	Thu, 12 Sep 2024 23:10:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ZgGtDvx042aTHgAAD6G6ig
+	(envelope-from <neilb@suse.de>); Thu, 12 Sep 2024 23:10:52 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA0PR11MB7185.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1e387b6-6e1e-419a-5c8c-08dcd37fe9c3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Sep 2024 23:09:11.5425
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Co7DF5svWQicuul86/2V6/0WOpou+cWTENr5JEhXbnDJ4Cpf8n58P5sHw0P48VrsWpQY993u1dcA2Pw2QeZvVTlrW+lS7E1K0LLK5jRridU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7972
-X-OriginatorOrg: intel.com
+From: "NeilBrown" <neilb@suse.de>
+To: Pali =?utf-8?q?Roh=C3=A1r?= <pali@kernel.org>
+Cc: "Chuck Lever" <chuck.lever@oracle.com>, "Jeff Layton" <jlayton@kernel.org>,
+ "Olga Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
+ "Tom Talpey" <tom@talpey.com>, linux-nfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lockd: Fix comment about NLMv3 backwards compatibility
+In-reply-to: <20240912225320.24178-1-pali@kernel.org>
+References: <20240912225320.24178-1-pali@kernel.org>
+Date: Fri, 13 Sep 2024 09:10:45 +1000
+Message-id: <172618264559.17050.3120241812160491786@noble.neil.brown.name>
+X-Rspamd-Queue-Id: 4111621B04
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi Huan,
-
-> Subject: [PATCH v6 7/7] udmabuf: reuse folio array when pin folios
->=20
-> When invoke memfd_pin_folios, we need offer an array to save each folio
-> which we pinned.
->=20
-> The currently way is dynamic alloc an array, get folios, save into
-*current
-
-> udmabuf and then free.
->=20
-> If the size is tiny(alloc from slab) is ok due to slab can cache it.
-> Or, just PCP order can cover, also ok.
-A casual reader may not know what is PCP. Please mention what it
-stands for and how it is relevant here.
-
->=20
-> But if size is huge, need fallback into vmalloc, then, not well, due to
-> each page need alloc, and map into vmalloc area. Too heavy.
-I think it would be better if the above two lines are rewritten to more cle=
-arly
-describe why or how fallback to vmalloc adversely affects performance.
-
-Thanks,
-Vivek
-
->=20
-> Now that we need to iter each udmabuf item, then pin it's range folios,
-> we can reuse the maximum size range's folios array.
->=20
-> Signed-off-by: Huan Yang <link@vivo.com>
-> Acked-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
+On Fri, 13 Sep 2024, Pali Rohár wrote:
+> NLMv2 is completely different protocol than NLMv1 and NLMv3, and in
+> original Sun implementation is used for RPC loopback callbacks from statd
+> to lockd services. Linux does not use nor does not implement NLMv2.
+> 
+> Hence, NLMv3 is not backward compatible with NLMv2. But NLMv3 is backward
+> compatible with NLMv1. Fix comment.
+> 
+> Signed-off-by: Pali Rohár <pali@kernel.org>
 > ---
->  drivers/dma-buf/udmabuf.c | 36 +++++++++++++++++++++---------------
->  1 file changed, 21 insertions(+), 15 deletions(-)
->=20
-> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
-> index 0e405a589ca2..9fc5d22d54ae 100644
-> --- a/drivers/dma-buf/udmabuf.c
-> +++ b/drivers/dma-buf/udmabuf.c
-> @@ -341,28 +341,20 @@ static int export_udmabuf(struct udmabuf *ubuf,
->  }
->=20
->  static long udmabuf_pin_folios(struct udmabuf *ubuf, struct file *memfd,
-> -			       loff_t start, loff_t size)
-> +			       loff_t start, loff_t size, struct folio **folios)
->  {
->  	pgoff_t nr_pinned =3D ubuf->nr_pinned;
->  	pgoff_t upgcnt =3D ubuf->pagecount;
-> -	struct folio **folios =3D NULL;
->  	u32 cur_folio, cur_pgcnt;
->  	pgoff_t pgoff, pgcnt;
->  	long nr_folios;
-> -	long ret =3D 0;
->  	loff_t end;
->=20
->  	pgcnt =3D size >> PAGE_SHIFT;
-> -	folios =3D kvmalloc_array(pgcnt, sizeof(*folios), GFP_KERNEL);
-> -	if (!folios)
-> -		return -ENOMEM;
-> -
->  	end =3D start + (pgcnt << PAGE_SHIFT) - 1;
->  	nr_folios =3D memfd_pin_folios(memfd, start, end, folios, pgcnt,
-> &pgoff);
-> -	if (nr_folios <=3D 0) {
-> -		ret =3D nr_folios ? nr_folios : -EINVAL;
-> -		goto end;
-> -	}
-> +	if (nr_folios <=3D 0)
-> +		return nr_folios ? nr_folios : -EINVAL;
->=20
->  	cur_pgcnt =3D 0;
->  	for (cur_folio =3D 0; cur_folio < nr_folios; ++cur_folio) {
-> @@ -391,14 +383,15 @@ static long udmabuf_pin_folios(struct udmabuf
-> *ubuf, struct file *memfd,
->  end:
->  	ubuf->pagecount =3D upgcnt;
->  	ubuf->nr_pinned =3D nr_pinned;
-> -	kvfree(folios);
-> -	return ret;
-> +	return 0;
->  }
->=20
->  static long udmabuf_create(struct miscdevice *device,
->  			   struct udmabuf_create_list *head,
->  			   struct udmabuf_create_item *list)
->  {
-> +	unsigned long max_nr_folios =3D 0;
-> +	struct folio **folios =3D NULL;
->  	pgoff_t pgcnt =3D 0, pglimit;
->  	struct udmabuf *ubuf;
->  	long ret =3D -EINVAL;
-> @@ -410,14 +403,19 @@ static long udmabuf_create(struct miscdevice
-> *device,
->=20
->  	pglimit =3D (size_limit_mb * 1024 * 1024) >> PAGE_SHIFT;
->  	for (i =3D 0; i < head->count; i++) {
-> +		pgoff_t subpgcnt;
-> +
->  		if (!PAGE_ALIGNED(list[i].offset))
->  			goto err_noinit;
->  		if (!PAGE_ALIGNED(list[i].size))
->  			goto err_noinit;
->=20
-> -		pgcnt +=3D list[i].size >> PAGE_SHIFT;
-> +		subpgcnt =3D list[i].size >> PAGE_SHIFT;
-> +		pgcnt +=3D subpgcnt;
->  		if (pgcnt > pglimit)
->  			goto err_noinit;
-> +
-> +		max_nr_folios =3D max_t(unsigned long, subpgcnt,
-> max_nr_folios);
->  	}
->=20
->  	if (!pgcnt)
-> @@ -427,6 +425,12 @@ static long udmabuf_create(struct miscdevice
-> *device,
->  	if (ret)
->  		goto err;
->=20
-> +	folios =3D kvmalloc_array(max_nr_folios, sizeof(*folios), GFP_KERNEL);
-> +	if (!folios) {
-> +		ret =3D -ENOMEM;
-> +		goto err;
-> +	}
-> +
->  	for (i =3D 0; i < head->count; i++) {
->  		struct file *memfd =3D fget(list[i].memfd);
->=20
-> @@ -442,7 +446,7 @@ static long udmabuf_create(struct miscdevice
-> *device,
->  		}
->=20
->  		ret =3D udmabuf_pin_folios(ubuf, memfd, list[i].offset,
-> -					 list[i].size);
-> +					 list[i].size, folios);
->  		fput(memfd);
->  		if (ret)
->  			goto err;
-> @@ -453,12 +457,14 @@ static long udmabuf_create(struct miscdevice
-> *device,
->  	if (ret < 0)
->  		goto err;
->=20
-> +	kvfree(folios);
->  	return ret;
->=20
->  err:
->  	deinit_udmabuf(ubuf);
->  err_noinit:
->  	kfree(ubuf);
-> +	kvfree(folios);
->  	return ret;
->  }
->=20
-> --
-> 2.45.2
+>  fs/lockd/clntxdr.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/lockd/clntxdr.c b/fs/lockd/clntxdr.c
+> index a3e97278b997..81ffa521f945 100644
+> --- a/fs/lockd/clntxdr.c
+> +++ b/fs/lockd/clntxdr.c
+> @@ -3,7 +3,9 @@
+>   * linux/fs/lockd/clntxdr.c
+>   *
+>   * XDR functions to encode/decode NLM version 3 RPC arguments and results.
+> - * NLM version 3 is backwards compatible with NLM versions 1 and 2.
+> + * NLM version 3 is backwards compatible with NLM version 1.
+> + * NLM version 2 is different protocol used only for RPC loopback callbacks
+> + * from statd to lockd and is not implemented on Linux.
+>   *
+>   * NLM client-side only.
+>   *
 
+Reviewed-by: NeilBrown <neilb@suse.de>
+
+Do you have a reference for that info about v2?  I hadn't heard of it
+before.
+
+NeilBrown
 
