@@ -1,130 +1,135 @@
-Return-Path: <linux-kernel+bounces-325829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEDD7975EC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:07:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5630975EB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:01:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A50571F23A54
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:07:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13DDD1C229F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3113BB25;
-	Thu, 12 Sep 2024 02:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CF72E3EB;
+	Thu, 12 Sep 2024 02:01:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YgHSLAoJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="USzx/xwa"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D070AD39;
-	Thu, 12 Sep 2024 02:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5761C1DA3D
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 02:00:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726106868; cv=none; b=inbLPBxzeMPmrI00zjxTwyjzLz0OEWLD2RShZoyjGUrMwHOXK9KFGQOjdCc5jZwvepzucg5SYtciGqe78WxMGPO1Yt0sZDZHJou52jkd+jUms/18WSAJ0fDRtiSbTlBoxf0ltA20qnEKpTvH9txFFJdsjUHAUr8rpJF1VSsz3K0=
+	t=1726106460; cv=none; b=Bxiaus3R/zLITLk2kGwsilQcladrkOjgOssuuRPLd28FDKGoekbOQdV4qIuxbe2/T2Rwjq51oaiYZ6irUXsK7REx4RvoLKOwI/yAR5qOyP4VJZJMJB/EQkMaaW2HOKpqz6zXDkkU7tnLqb8QRxisnbqhxyXRjI3zJTADBMKy9B4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726106868; c=relaxed/simple;
-	bh=2pC7oUHqvWMtu/IF0XFSSJJ+/UjqjyzX7Lx26PSeFBE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZLDJkSg0eMHXKYXbGZbnZ6T2m8fpoQyaFawhFOYAM3tQs1p4a+nUNyrGbKh9Wh4Yz05NQoYZj/NGY4FmFyxbWzKsWiGm+jAHQdywgSQcLpnJTOCbP+yLc4jXKy/Yqz+Kdlo6B7Of2VpVZX3It48vELWRJA1TInMjhhsMi5CmtwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YgHSLAoJ; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726106868; x=1757642868;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=2pC7oUHqvWMtu/IF0XFSSJJ+/UjqjyzX7Lx26PSeFBE=;
-  b=YgHSLAoJ9pWWTJZdyOK6FsP+OPKhSvpDn7NgV7VzNWeORkKK+LLl9XVF
-   kGQMdv4QPIZSsdugqLSZ0zO4BLp7qksEPOcR60z/LDbJ2RiVZUl2b+MrY
-   ePwrGLqRVa/ZxtfFCtNzw4so03+vGRj0oO8IKlmXHluEVy8zYCutigZbi
-   56h/EhxoMmNdKKH9+knbVefA2hcKiOfqXSud+qiBXv3VHkLWuSPjLxIE2
-   VCtS3/OQFvENoC8/CDxdmLTRJTqwG5G+Eu3Nz7ZHzBJeJkkwVpJS050Zg
-   EEyDF/bJWANMPOaXliv19pXrQCbYLk5mz+goAd5z6svZfAb0qnl49uBIt
-   g==;
-X-CSE-ConnectionGUID: tBE9vKr1SricmQfMsKkWCg==
-X-CSE-MsgGUID: RE/kCSzxQpGQhVi5O4ymhA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="25070648"
-X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
-   d="scan'208";a="25070648"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 19:07:47 -0700
-X-CSE-ConnectionGUID: omHwZdw+SlO9u0NbszeNcw==
-X-CSE-MsgGUID: iSlPjsQBTnKTSinp9R5LKg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
-   d="scan'208";a="67174707"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 19:07:46 -0700
-Received: from P12HL2yongliang.png.intel.com (P12HL2yongliang.png.intel.com [10.158.65.196])
-	by linux.intel.com (Postfix) with ESMTP id 91C5A20CFEDA;
-	Wed, 11 Sep 2024 19:07:42 -0700 (PDT)
-From: KhaiWenTan <khai.wen.tan@linux.intel.com>
-To: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	Xiaolei Wang <xiaolei.wang@windriver.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
-	Tan Khai Wen <khai.wen.tan@intel.com>
-Subject: [PATCH net 1/1] net: stmmac: Fix zero-division error when disabling tc cbs
-Date: Thu, 12 Sep 2024 09:55:41 +0800
-Message-Id: <20240912015541.363600-1-khai.wen.tan@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1726106460; c=relaxed/simple;
+	bh=KTqAiMtsDxIktsPNE9vhSnbzhIInxHk4U9ytkiGz8P0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r0BacwNQguxqWfBDRFtTC6616zuBG58raoKEYqHA8fpbcJQ0uLRoa2opaubJ7G380GJCVlL8Cs7loTWxTFgDkIwrGTgusKs8ug5F18Y1AVfvTI2T17Ziv4ceYifdWqkqlbOgBshAZRg7vQdO+phZFUgZ1ZJoYx0q8BEmmPCkzkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=USzx/xwa; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726106457;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MEeDXDP4NDLx5wLz02Qa65mtauP0cLnEIEN+qnxdGYc=;
+	b=USzx/xwa5Gg8VZgPI5HXRacfk6JbyFXShORaoeOfG8/SDWLDviAO51azbchh5zKyPeovjK
+	uEGXiGEaUmWmXhgZ0vzncVjQkLRjdzLenlTStJf6sd1R+3qT5vVE0vJsqi0ohJiSZWzVFH
+	HLAiym0UR7AooQFfIBX9Tw4GDRuZIV0=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-220-Ou1LTDgLOVKwDOClcFo0Vw-1; Wed, 11 Sep 2024 22:00:55 -0400
+X-MC-Unique: Ou1LTDgLOVKwDOClcFo0Vw-1
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-205425b7e27so6979355ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 19:00:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726106455; x=1726711255;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MEeDXDP4NDLx5wLz02Qa65mtauP0cLnEIEN+qnxdGYc=;
+        b=nr5dd1Jdnl8ttI5rx+TY3Swn2T1tcTZKAqRBFUbSq+c4JCnCUXbcQ/RYtD2ZzK2jvp
+         TO8kiOrXT0x/fj45REzPC9xk53JFn4wYyG7NNXyUvDg4SlVV2qexkBwlsgE6AsP+XoEe
+         yV21O2WDfVG+iYunhBGWiGhje48NFrpIBBPjJ3XsGi/96yfro+4xj4Lmpx4iqPWVOSVY
+         i8RB7oq9fzLjJUTW4Y0+kevH2rMh0iMuNQftOe4bB5fpejLa2Hwzi6CmtAxkxeZRyI9w
+         YoWWB/ajMuNyRaj1y/hupicnAFKTGd2+wYQlfdaKzLo/yaf49ZpsJHmRFTcBJjB06/6d
+         m9Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCVB8OLWMeWFc2s/cgaUYJ0ZrfgbmVypYG9m0iZcuAnaLsqzvWxuyvTVSgZcYPEHUyKg0lejOf5igVCotEo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1C+fu0AGFcojD+jsomWts2BykuWXR7UmmVUqKgNG4gW5Vv5Uy
+	8uGvNv/8UTv/jRGJkV86SZoQgXyi3TY3OdkGO479zMbYhTHJQP8CaigGwzGg/Ra9u614e5userh
+	75xojImqGuVJ0B1ROs/U4ZbPEI2peRWFPfoG9hF59Mh2W+5vAqU4/OaqJC0skXw==
+X-Received: by 2002:a17:902:e545:b0:205:6f40:221c with SMTP id d9443c01a7336-2076e3aef8dmr13674635ad.35.1726106454735;
+        Wed, 11 Sep 2024 19:00:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFcADcGHi+f4kmNVvdThCUyObTn0GaFSHD6eWPYsHeJMfVa8dFZsfzIKDKUvZkTdfNmc3rqag==
+X-Received: by 2002:a17:902:e545:b0:205:6f40:221c with SMTP id d9443c01a7336-2076e3aef8dmr13674365ad.35.1726106454363;
+        Wed, 11 Sep 2024 19:00:54 -0700 (PDT)
+Received: from [10.72.116.14] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076af21c2csm5501995ad.18.2024.09.11.19.00.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Sep 2024 19:00:53 -0700 (PDT)
+Message-ID: <8dfd2741-a2a4-4fbd-9800-5d19de2c4377@redhat.com>
+Date: Thu, 12 Sep 2024 10:00:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] fs/ceph/quota: ignore quota with CAP_SYS_RESOURCE
+To: Patrick Donnelly <pdonnell@redhat.com>,
+ Max Kellermann <max.kellermann@ionos.com>
+Cc: idryomov@gmail.com, ceph-devel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <4b6aec51-dc23-4e49-86c5-0496823dfa3c@redhat.com>
+ <20240911142452.4110190-1-max.kellermann@ionos.com>
+ <CA+2bHPb+_=1NQQ2RaTzNy155c6+ng+sjbE6-di2-4mqgOK7ysg@mail.gmail.com>
+ <CAKPOu+-Q7c7=EgY3r=vbo5BUYYTuXJzfwwe+XRVAxmjRzMprUQ@mail.gmail.com>
+ <CA+2bHPYYCj1rWyXqdPEVfbKhvueG9+BNXG-6-uQtzpPSD90jiQ@mail.gmail.com>
+ <CAKPOu+9KauLTWWkF+JcY4RXft+pyhCGnC0giyd82K35oJ2FraA@mail.gmail.com>
+ <CA+2bHPbMwsg8NkvW=FCSwCs9p2B0wBkrfW6AbPj+SOWNHAD45w@mail.gmail.com>
+Content-Language: en-US
+From: Xiubo Li <xiubli@redhat.com>
+In-Reply-To: <CA+2bHPbMwsg8NkvW=FCSwCs9p2B0wBkrfW6AbPj+SOWNHAD45w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-The commit b8c43360f6e4 ("net: stmmac: No need to calculate speed divider
-when offload is disabled") allows the "port_transmit_rate_kbps" to be
-set to a value of 0, which is then passed to the "div_s64" function when
-tc-cbs is disabled. This leads to a zero-division error.
 
-When tc-cbs is disabled, the idleslope, sendslope, and credit values the
-credit values are not required to be configured. Therefore, adding a return
-statement after setting the txQ mode to DCB when tc-cbs is disabled would
-prevent a zero-division error.
+On 9/12/24 04:14, Patrick Donnelly wrote:
+> On Wed, Sep 11, 2024 at 3:21 PM Max Kellermann <max.kellermann@ionos.com> wrote:
+>> On Wed, Sep 11, 2024 at 8:04 PM Patrick Donnelly <pdonnell@redhat.com> wrote:
+>>> CephFS has many components that are cooperatively maintained by the
+>>> MDS **and** the clients; i.e. the clients are trusted to follow the
+>>> protocols and restrictions in the file system. For example,
+>>> capabilities grant a client read/write permissions on an inode but a
+>>> client could easily just open any file and write to it at will. There
+>>> is no barrier preventing that misbehavior.
+>> To me, that sounds like you confirm my assumption on how Ceph works -
+>> both file permissions and quotas. As a superuser (CAP_DAC_OVERRIDE), I
+>> can write arbitrary files, and just as well CAP_SYS_RESOURCE should
+>> allow me to exceed quotas - that's how both capabilities are
+>> documented.
+>>
+>>> Having root on a client does not extend to arbitrary superuser
+>>> permissions on the distributed file system. Down that path lies chaos
+>>> and inconsistency.
+>> Fine for me - I'll keep my patch in our kernel fork (because we need
+>> the feature), together with the other Ceph patches that were rejected.
+> If you want to upstream this, the appropriate change would go in
+> ceph.git as a new cephx capability (not cephfs capability) for the
+> "mds" auth cap that would allow a client with root (or
+> CAP_SYS_RESOURCE) to bypass quotas. I would support merging such a
+> patch (and the corresponding userspace / kernel client changes).
+>
+Yeah, Patrick is correct. This really will by pass the protocols and 
+restrictions in cephfs and introduces inconsistency. By adding a new 
+cephx caps we can broadcast this to all the users or clients.
 
-Fixes: b8c43360f6e4 ("net: stmmac: No need to calculate speed divider when offload is disabled")
-Cc: <stable@vger.kernel.org>
-Co-developed-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
-Signed-off-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
-Signed-off-by: KhaiWenTan <khai.wen.tan@linux.intel.com>
----
- drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-index 996f2bcd07a2..2c3fd9c66d14 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-@@ -392,10 +392,10 @@ static int tc_setup_cbs(struct stmmac_priv *priv,
- 	} else if (!qopt->enable) {
- 		ret = stmmac_dma_qmode(priv, priv->ioaddr, queue,
- 				       MTL_QUEUE_DCB);
--		if (ret)
--			return ret;
-+		if (!ret)
-+			priv->plat->tx_queues_cfg[queue].mode_to_use = MTL_QUEUE_DCB;
- 
--		priv->plat->tx_queues_cfg[queue].mode_to_use = MTL_QUEUE_DCB;
-+		return ret;
- 	}
- 
- 	/* Final adjustments for HW */
--- 
-2.25.1
+Thanks
 
 
