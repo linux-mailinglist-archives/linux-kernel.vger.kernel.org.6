@@ -1,177 +1,117 @@
-Return-Path: <linux-kernel+bounces-326925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CBD0976E94
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:21:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE1AC976E96
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:22:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E1A81C239EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:21:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8F341C239F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8554A1509B4;
-	Thu, 12 Sep 2024 16:20:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B1E14C5AF;
+	Thu, 12 Sep 2024 16:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KrpT/EZt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="JtpFVzTI";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="JtpFVzTI"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BF4126C0E
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 16:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5946E126C0E;
+	Thu, 12 Sep 2024 16:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726158058; cv=none; b=q+4pg9xQYvgctFALkUBF8dNrkR08Nx6UQ1cdzrjDPiEUlXktXC4m24YTQD/3X2wJg+0OhwQkSl5+RU4xnuL6c3ucZeMumEo8ZrU2/EfNmxjtfWzj8fOA+SgxyBsP6mqKgQTPj0+AhuMg0Yc5ucKiVtyvS8so5KxdZPllbKenw1A=
+	t=1726158126; cv=none; b=qaEKoor4AP/3qqa80Mj4u4z5Y6ocifUMMMB593r8twNcIgerqF1PTWtAxTfI2d+fX28hrawfKryTSRyCvo0FjVTA3P6aMscQ6+vdDlOOvLTZcOxXI1yOU6SG6aejuzDAVDvCJI4u3SBdI+Hu5/gUqiMl23zg5jw65MGIuHi122Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726158058; c=relaxed/simple;
-	bh=61FjxYnFqoZjOQnqRNBNaBrHVxuHKhvfYWTDzANo+5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TsaCgZ/Dt9TCypomsLoassIjx6Yodej1hYe5FVOOYn4JXtge0HrJ4RO/4oa1cuteSKwl7+/0gjRhR/3ND9yHxIQgB06xt880wV8aZzEqr5d5Hrp4On277HLFjXR8HOKvpDb+VOtLCDvUmpjZ1KdQDZS/y1r4Cytn0k/hOEn5s2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KrpT/EZt; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726158055;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ig6fjTDvlYtMVYhCJ7RrIH/6U1AxI1tHu5V3SG2FN9M=;
-	b=KrpT/EZtsjf3gV+z3aXt+IVlZoRtvbTeI0q7lO0njDTh2xRkZOKKsyWN1wqZiyBvkcudTB
-	LnJKfyux4AP5aixAb1pes0kAjGEKc6LpRyvTf1DbDXqXV0vRJfUX/1jQIH5VSGIROCLrZR
-	D2XMlwx9C+OCa6LmrGFJ8J3zKRf5kxA=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-568-V78Nc_s2NjqbgP2OY2heiA-1; Thu,
- 12 Sep 2024 12:20:52 -0400
-X-MC-Unique: V78Nc_s2NjqbgP2OY2heiA-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	s=arc-20240116; t=1726158126; c=relaxed/simple;
+	bh=1RRoQ/B4c+/9l2rOSmetknZ/zgMtHUG3tKaFxUMUnaY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KMradQvEtbMCPYY2a7lZzvMhocEUstcdLPeH7xf/ab0/z+I8aJDiZllLfrr6PC/weQay+2KISne4mlg1HwUXaxHot0YefDK13u+VonTrzMJSJEKD1cI70mKMrj0EvL/glrqG4/fDRvuUyU6Tx2YPVL6hFqSvpPfcPZOnRC3z8q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=JtpFVzTI; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=JtpFVzTI; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1726158124;
+	bh=1RRoQ/B4c+/9l2rOSmetknZ/zgMtHUG3tKaFxUMUnaY=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=JtpFVzTIHu3vcsWd8FnI4U69MrrUlIzg5yn0PYJIfCV2mTy/nJC87hx4HiuS43Acy
+	 DmTv7hmcKZpVcjWZUUx9oD5gZbLVAcRLUX+dLpiEUqThuhVl3TNJYDxzzrzmlCJgAZ
+	 6/JNrn5qT7MuDwJCK/KZkKCZeNzteWZszWuC4gks=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 6ADBF1287751;
+	Thu, 12 Sep 2024 12:22:04 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id gI1Frh6cg5OL; Thu, 12 Sep 2024 12:22:04 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1726158124;
+	bh=1RRoQ/B4c+/9l2rOSmetknZ/zgMtHUG3tKaFxUMUnaY=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=JtpFVzTIHu3vcsWd8FnI4U69MrrUlIzg5yn0PYJIfCV2mTy/nJC87hx4HiuS43Acy
+	 DmTv7hmcKZpVcjWZUUx9oD5gZbLVAcRLUX+dLpiEUqThuhVl3TNJYDxzzrzmlCJgAZ
+	 6/JNrn5qT7MuDwJCK/KZkKCZeNzteWZszWuC4gks=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 107A61955F3C;
-	Thu, 12 Sep 2024 16:20:49 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.62])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 959B61956052;
-	Thu, 12 Sep 2024 16:20:42 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu, 12 Sep 2024 18:20:37 +0200 (CEST)
-Date: Thu, 12 Sep 2024 18:20:29 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCHv3 1/7] uprobe: Add support for session consumer
-Message-ID: <20240912162028.GD27648@redhat.com>
-References: <20240909074554.2339984-1-jolsa@kernel.org>
- <20240909074554.2339984-2-jolsa@kernel.org>
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 1084A128765B;
+	Thu, 12 Sep 2024 12:22:02 -0400 (EDT)
+Message-ID: <d9df5012cd3306afa2eddd5187e643a3bbdfd866.camel@HansenPartnership.com>
+Subject: Re: [RFC] efi/tpm: add efi.tpm_log as a reserved region in
+ 820_table_firmware
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Breno Leitao <leitao@debian.org>, Ard Biesheuvel <ardb@kernel.org>
+Cc: Usama Arif <usamaarif642@gmail.com>, linux-efi@vger.kernel.org, 
+ kexec@lists.infradead.org, ebiederm@xmission.com, bhe@redhat.com, 
+ vgoyal@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
+ x86@kernel.org,  linux-kernel@vger.kernel.org, rmikey@meta.com,
+ gourry@gourry.net
+Date: Thu, 12 Sep 2024 12:22:01 -0400
+In-Reply-To: <20240912-wealthy-gabby-tamarin-aaba3c@leitao>
+References: <20240911104109.1831501-1-usamaarif642@gmail.com>
+	 <CAMj1kXFVyQEwBTf2bG8yBXUktM16dzrcPH-Phz_toAsCK-NfMA@mail.gmail.com>
+	 <2542182d-aa79-4705-91b6-fa593bacffa6@gmail.com>
+	 <CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
+	 <20240912-wealthy-gabby-tamarin-aaba3c@leitao>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240909074554.2339984-2-jolsa@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Transfer-Encoding: 7bit
 
-On 09/09, Jiri Olsa wrote:
->
->  static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
->  {
->  	struct uprobe_consumer *uc;
->  	int remove = UPROBE_HANDLER_REMOVE;
-> -	bool need_prep = false; /* prepare return uprobe, when needed */
-> +	struct return_consumer *ric = NULL;
-> +	struct return_instance *ri = NULL;
->  	bool has_consumers = false;
->
->  	current->utask->auprobe = &uprobe->arch;
->
->  	list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
->  				 srcu_read_lock_held(&uprobes_srcu)) {
-> +		__u64 cookie = 0;
->  		int rc = 0;
->
->  		if (uc->handler) {
-> -			rc = uc->handler(uc, regs);
-> -			WARN(rc & ~UPROBE_HANDLER_MASK,
-> +			rc = uc->handler(uc, regs, &cookie);
-> +			WARN(rc < 0 || rc > 2,
->  				"bad rc=0x%x from %ps()\n", rc, uc->handler);
->  		}
->
-> -		if (uc->ret_handler)
-> -			need_prep = true;
-> -
-> +		/*
-> +		 * The handler can return following values:
-> +		 * 0 - execute ret_handler (if it's defined)
-> +		 * 1 - remove uprobe
-> +		 * 2 - do nothing (ignore ret_handler)
-> +		 */
->  		remove &= rc;
->  		has_consumers = true;
-> +
-> +		if (rc == 0 && uc->ret_handler) {
+On Thu, 2024-09-12 at 06:03 -0700, Breno Leitao wrote:
+> Hello Ard,
+> 
+> On Thu, Sep 12, 2024 at 12:51:57PM +0200, Ard Biesheuvel wrote:
+> > I don't see how this could be an EFI bug, given that it does not
+> > deal with E820 tables at all.
+> 
+> I want to back up a little bit and make sure I am following the
+> discussion.
+> 
+> From what I understand from previous discussion, we have an EFI bug
+> as the root cause of this issue.
+> 
+> This happens because the EFI does NOT mark the EFI TPM event log
+> memory region as reserved (EFI_RESERVED_TYPE). Not having an entry
+> for the event table memory in EFI memory mapped, then libstub will
+> ignore it completely (the TPM event log memory range) and not
+> populate e820 table with it.
 
-should we enter this block if uc->handler == NULL?
+Wait, that's not correct.  The TPM log is in memory that doesn't
+survive ExitBootServices (by design in case the OS doesn't care about
+it).  So the EFI stub actually copies it over to a new configuration
+table that is in reserved memory before it calls ExitBootServices. 
+This new copy should be in kernel reserved memory regardless of its
+e820 map status.
 
-> +			/*
-> +			 * Preallocate return_instance object optimistically with
-> +			 * all possible consumers, so we allocate just once.
-> +			 */
-> +			if (!ri) {
-> +				ri = alloc_return_instance(uprobe->consumers_cnt);
+Regards,
 
-This doesn't look right...
-
-Suppose we have a single consumer C1, so uprobe->consumers_cnt == 1 and
-alloc_return_instance() allocates return_instance with for a single consumer,
-so that only ri->consumers[0] is valid.
-
-Right after that uprobe_register()->consumer_add() adds another consumer
-C2 with ->ret_handler != NULL.
-
-On the next iteration return_consumer_next() will return the invalid addr
-== &ri->consumers[1].
-
-perhaps this needs krealloc() ?
-
-> +				if (!ri)
-> +					return;
-
-Not sure we should simply return if kzalloc fails... at least it would be better
-to clear current->utask->auprobe.
-
-> +	if (ri && !remove)
-> +		prepare_uretprobe(uprobe, regs, ri); /* put bp at return */
-> +	else
-> +		kfree(ri);
-
-Well, if ri != NULL then remove is not possible, afaics... ri != NULL means
-that at least one ->handler() returned rc = 0, thus "remove" must be zero.
-
-So it seems you can just do
-
-	if (ri)
-		prepare_uretprobe(...);
-
-
-Didn't read other parts of your patch yet ;)
-
-Oleg.
+James
 
 
