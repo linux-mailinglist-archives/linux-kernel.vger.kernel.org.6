@@ -1,108 +1,100 @@
-Return-Path: <linux-kernel+bounces-327297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1147F9773A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:29:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30154977390
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:28:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E2B61C2412B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:29:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFFA22826F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:28:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BD21C3F18;
-	Thu, 12 Sep 2024 21:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C8A1C233B;
+	Thu, 12 Sep 2024 21:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Afd38TyL"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1981C2441;
-	Thu, 12 Sep 2024 21:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qe1jx/jV"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1BC273FC;
+	Thu, 12 Sep 2024 21:27:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726176499; cv=none; b=jBdQQ3Kifm3hD7bgApF60emgzbPLkGS2J5s/Oz+MEwBfxA9ibWSCOCsnYqcN4TBYBhkvTjv9TalZza7zYmsGC5cLb9432pMfKWFFp8PRIa4NLLsIPW5Ug+UxiQqpaTVKYqGbPIoOyrHK5t5CJW5N/my6mGIOOS52N41SikZH07M=
+	t=1726176474; cv=none; b=sX1aFaHfwJtXHJgdHvFYWkNO4gbBvN+Uw2vjeSZBCeIsmi+N6jCESs3A8Mf5ePfZwMJCRLea+QW/Gh6x2XjvAtSmbAZMemx4XS22aHhb872/DmsfIXqfzMygIMGI1LakT9G0yLr5VwKooLN7IQZzWSMNbl/AAC6DOVaLYpha8so=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726176499; c=relaxed/simple;
-	bh=JIwb2fxdGTCY3ZXiwAi/IPPzke29FwK/r3lMIvWGaOA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=n6XdQ/4QG49pJLg79/MlGtd6aQKGeIvtCwGgZW1ggSNPKSMOgdyac0xKV4O8uqPLnCRfpY5rFBJKcLxZRZfKI/LnwQsNCpdv5Y8M3O5rD6soaKiGsg+sSEMj2L25MF0nApovXbEy/c8MaafQBY5sA9ol2lhDixVAjdMeQbsp8Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Afd38TyL; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1173)
-	id 817E420B9D5D; Thu, 12 Sep 2024 14:28:17 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 817E420B9D5D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1726176497;
-	bh=1HKlBTJZg9nod4uf/oOpvVXZP9gG3UTdC9IPlLQXrZ4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Afd38TyLkkLjLkIGzvfXBgV3/b/x2qun2JHpgvSu1zzjg9ZlTJB0ep02B+QF/iLaI
-	 EsLIWejM3IaYvHdBpMUwLn1MbOFrJfc8guKUwoAL1Nl+l7vd6XBau8lvAOdMzF2IrM
-	 OZGFRGo2zJ+As60j8acfpuiIJS2guL2CG4ybkVVE=
-From: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-To: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	jikos@kernel.org,
-	bentiss@kernel.org,
-	dmitry.torokhov@gmail.com,
-	linux-hyperv@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: ernis@microsoft.com,
-	Erni Sri Satya Vennela <ernis@linux.microsoft.com>
-Subject: [PATCH 2/3] Revert "Input: hyperv-keyboard - register as a wakeup source"
-Date: Thu, 12 Sep 2024 14:27:49 -0700
-Message-Id: <1726176470-13133-3-git-send-email-ernis@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1726176470-13133-1-git-send-email-ernis@linux.microsoft.com>
-References: <1726176470-13133-1-git-send-email-ernis@linux.microsoft.com>
+	s=arc-20240116; t=1726176474; c=relaxed/simple;
+	bh=w/YgIPhQR9ivOQ+vklFgfxUKH+pnzE7kpK6RShDkoxI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R8xWqahoa74NWVlq6ovhvThEha419AW3bJPPCMQlIFAfFHZfWRISNCeJDUBHNhJpWr6pjK6wLWCTK209tUcZeYADS3MV4Isxdd4Hyy9pYibCu0iCoOLd3Km/k8yY9eeTVvX9JASxRa2kT2tlJ7Lqw10y2NoF/A5DLH276qvU3nA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qe1jx/jV; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-206b9455460so12097345ad.0;
+        Thu, 12 Sep 2024 14:27:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726176472; x=1726781272; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=shUfZxXMDRpMKCAQP+MW5jtasId7ndgHn/WYAvIFVIU=;
+        b=Qe1jx/jV9UO9JGFoZP7cGqufV2TnQgHYaTrojcKZU2pHbXBPMoAehnUPYxdAsxJnZM
+         xmd2z5dYa0N3kbbjIBw0Q5JtowkJrq9M3aercnfxezJqk4zjIacDAMizePeO4ABbdii3
+         +zuGYF5deMg3SA7/K9rgB2DH+KfF4j/qZJ1zddASmuAEdm9FBLv3z3Mw123g47qunQxG
+         5rwCzHyAZFr+akj/zKM0FFkn990suNcmAxD1uPL4AUc0brMXsdI7vUZOIJ2kmYQYZV/b
+         ajRw7AlfhHOBpEHP3BvXP2ZbGiC5gtGMPTHm9uwBAau4V0RnNUwuaYCjfsJ2zauaQYtP
+         7cqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726176472; x=1726781272;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=shUfZxXMDRpMKCAQP+MW5jtasId7ndgHn/WYAvIFVIU=;
+        b=nWVq/IY+PN5YayywG4NkIpHI/OjJBCMNBzKNDuFf3+8HjbuBP1tbceW8KcXry/FKDc
+         e4V244ylszicceL8DVgOpCJMnNQRfxOieRhgmm+wLmRBRReXjJQEK3sfW8x5Cwvu3W+E
+         16+H1UO3HQxW+RKFRO+iWyltV0VPdGKCF0veGodtz2w/ttvdGMO0+DFY55WXs23hkQgz
+         6g0A3s+Ed13QUpdVn8/aTdTQTfmnMKMf/+mjC4wAweTK8uJ66SGbgLqJumnPBAvuoA45
+         vnRV4GvKkxH39Cf9mH5iSFM8pNnvan4mRrqwdC2q+jTojBG+1/CHA7DTJx/b5G0fJrhO
+         ovdw==
+X-Forwarded-Encrypted: i=1; AJvYcCWChW/lt0tnb8XlpiXOZYJfuQRbfS58DGG6MH4JFWlkD3aV9ALv+BnPzXhhYTj2rlOxV/ycMLUMKZOi294=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWr2r8rfDefx4OSNJ0JeNbu/NWz80a49tpe6cqGFxP1SrBEjlV
+	r0WsU+GBDAFmn4TaSWhyMPUVlXTbXM5PP5b8JboVYnGMS4iF0ddQ
+X-Google-Smtp-Source: AGHT+IGQqkCyfA9xv/r1rKq53mBs1DRUR6bsYBfle2gcyQyqpcuDzxUUzRl1iGnrHIV+DcqpdU9WCw==
+X-Received: by 2002:a17:902:d50b:b0:205:5d71:561e with SMTP id d9443c01a7336-2076e61e061mr59199795ad.26.1726176472195;
+        Thu, 12 Sep 2024 14:27:52 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076b009724sm18106835ad.251.2024.09.12.14.27.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 14:27:51 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 12 Sep 2024 14:27:50 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jean Delvare <jdelvare@suse.com>
+Subject: Re: [PATCH v1 1/1] hwmon: (sch5636) Print unknown ID in error string
+ via %*pE
+Message-ID: <ac9698f5-6ff6-479e-8c13-00e8786ac44b@roeck-us.net>
+References: <20240911201903.2886874-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911201903.2886874-1-andriy.shevchenko@linux.intel.com>
 
-This reverts commit 62238f3aadc9bc56da70100e19ec61b9f8d72a5f.
+On Wed, Sep 11, 2024 at 11:19:03PM +0300, Andy Shevchenko wrote:
+> Instead of custom approach this allows to print escaped strings
+> via %*pE extension. With this the unknown ID will be printed
+> as a string. Nonetheless, leave hex values to be printed as well.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Remove keyboard as wakeup source since Suspend-to-Idle feature
-is disabled.
+Applied.
 
-Signed-off-by: Erni Sri Satya Vennela <ernis@linux.microsoft.com>
----
- drivers/input/serio/hyperv-keyboard.c | 12 ------------
- 1 file changed, 12 deletions(-)
-
-diff --git a/drivers/input/serio/hyperv-keyboard.c b/drivers/input/serio/hyperv-keyboard.c
-index 31d9dacd2fd1..b42c546636bf 100644
---- a/drivers/input/serio/hyperv-keyboard.c
-+++ b/drivers/input/serio/hyperv-keyboard.c
-@@ -162,15 +162,6 @@ static void hv_kbd_on_receive(struct hv_device *hv_dev,
- 			serio_interrupt(kbd_dev->hv_serio, scan_code, 0);
- 		}
- 		spin_unlock_irqrestore(&kbd_dev->lock, flags);
--
--		/*
--		 * Only trigger a wakeup on key down, otherwise
--		 * "echo freeze > /sys/power/state" can't really enter the
--		 * state because the Enter-UP can trigger a wakeup at once.
--		 */
--		if (!(info & IS_BREAK))
--			pm_wakeup_hard_event(&hv_dev->device);
--
- 		break;
- 
- 	default:
-@@ -356,9 +347,6 @@ static int hv_kbd_probe(struct hv_device *hv_dev,
- 		goto err_close_vmbus;
- 
- 	serio_register_port(kbd_dev->hv_serio);
--
--	device_init_wakeup(&hv_dev->device, true);
--
- 	return 0;
- 
- err_close_vmbus:
--- 
-2.34.1
-
+Thanks,
+Guenter
 
