@@ -1,114 +1,200 @@
-Return-Path: <linux-kernel+bounces-327315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E82697741A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:08:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD61697741C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:10:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F9491C24176
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:08:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F95F1C24171
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D0E1C244B;
-	Thu, 12 Sep 2024 22:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EE01C2432;
+	Thu, 12 Sep 2024 22:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oq+WSJ4B"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="The2V6he"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0F4192D89;
-	Thu, 12 Sep 2024 22:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81FA192B96;
+	Thu, 12 Sep 2024 22:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726178914; cv=none; b=TdaXLtL+xqP5Z8Ak6TCmllTPY7GLZs84cxeXccZ6IRO7VnGMf80Lh7pJ6DWgPMWfVJF3O44A93eL81dCdmDgU0Ms77Swj7/x1mFftnqjf8l91Ee1Hvkwrl9iJxgrhrCqu75kmRaT+3Zw2YP/BVTRPdLQsoDIL2vo65mnv3p1Eh8=
+	t=1726179047; cv=none; b=GayvuQZF4LYXRxOcglianceN1DGBg5T9IE3uSxYy9B+vs20/mBz+RsEzz4tZCVl4vyr/y/1diiPcCKWIcuTuGecmYa20x6kKLf7Lrf5GER70uWDDyHVZXdzGtmrOD+zlaL4OMSQ91FScn5+xP5MpufUxBzo1yc89yGYX7IT6UEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726178914; c=relaxed/simple;
-	bh=/2YLoM8QgDHNOaLNzKK8v/KNYvua5uBzCv9i1eFPyFY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nBd4iZCWUX7ohsISRXvkULOcH01ofVo+u+gDNLxXaQf9NiBe6TKn+4r4neHDBf/yphFhhWTD+Ormu6xqmRFRaCesNVEdtoij3bAbRU7Q2iiwHHvUhA/CQDtZMWkUi/QDDesbPk3ynL2AKCkY7d1+bV7NLpTlJQzZUgx+COWHHi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oq+WSJ4B; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2d871bd95ffso227219a91.2;
-        Thu, 12 Sep 2024 15:08:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726178912; x=1726783712; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/2YLoM8QgDHNOaLNzKK8v/KNYvua5uBzCv9i1eFPyFY=;
-        b=Oq+WSJ4BvWt7Q5lwsboI0cufYTLEl/bG23DZcwZQlYmm8RE8jccRG/xUXFc6I8PaS9
-         kBRN0S8lYKDkUgzNM97WoPsOhlvKEpGZBZJ1vmlsIoJ3660mpMXOP5TptYNWgBLEgJtX
-         UocvF6+7Bd2dcZHW/MTbUA7hzInaRuP2WA8PDPy+xfqnaQpzBvzuf1k3CLNvdVAZcIlJ
-         eHH+VbOWhQSglVWXPBRyrlaEhiaB4Fncut7x4zHLPacSsLDXFqPbvmUwxce/qOPkp5rz
-         zfXZIQGBYIXFiTRtcDsc0oGDsiDLOZmQxaHF1i/qoa8X/RU8fgF5D4Mg04vVhTcAcfAv
-         LV4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726178912; x=1726783712;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/2YLoM8QgDHNOaLNzKK8v/KNYvua5uBzCv9i1eFPyFY=;
-        b=UCZAYKs2FZUd2rg6OJJ1eOK64BqLQP/S43oNH1kLE3hbl3CGUjS5cebH5i26SeBnsQ
-         5us3AiomI1wn7hpL5hewfWtsQyuWT4OGEsF4gHyiUsLOXKH8yv2k5rGLr1qA+YFTU2xk
-         wNuFZFnRzXmbb7PaNg+RoOMLMKG6ZBe+/KfB08hj9T1+ZASDaNCtVa/PHKLXl++wTkqf
-         +YFRv60+pzyLjfqOG9i+gV3/Y7vkK5zZiPo9ACjq0i7/5yYRus5HLT8CdOIfyDtepSvJ
-         aSpHpcRdoxAl4BQws8YvMVc0fj0LOAtfsJ7hWtqvagBOAAODWDGLvTHcmJwpH+xpKEDF
-         htuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNREeu0RzIfrNoTX29Al/SLKdjikAxlB2IMQLOrmBz0l6QK4nZYDyxzTS11WUHGq+ribrR9GJ3bKlGEU70DFg=@vger.kernel.org, AJvYcCXHVx6940fyH7X2mMl7RRSmoGLJlrzkQgrcEXD25Anq6wnfWbjS2XV0wbQn6xJjUww7wBV5/6UBB2MnvjLx@vger.kernel.org, AJvYcCXbQorcoTNdMobBXjU2NSnjcnQ7TuJ/P+YTq9KPMtvlDeyuH/oQSmZssurbR6HrBKK+oiiG5Rk8bSGG0Yo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMkEdXwZoQbCVP+O3jauzEJsDZmcIg7xJiwrzEJicgXSBCmiDO
-	qniIfKV2YBQoxeL4F0hlVp4xvNkKI4skDXMWIiPUU5g/6EhbreG/14vVQ+Pjfh6Sb7IW6Xb9ebH
-	6UqouYOH17+hdk+fUsVKwvlv2edo=
-X-Google-Smtp-Source: AGHT+IG6aej/NB5LBMrn83sRcBRKI2TpgN93fxt/vJJgonNH0ivdw+rd6rheCsWsaNjoH5e3gvokg2/fm6nDqHPOGEI=
-X-Received: by 2002:a17:90a:d791:b0:2da:71f8:7ff with SMTP id
- 98e67ed59e1d1-2dba005b46amr2003435a91.5.1726178912177; Thu, 12 Sep 2024
- 15:08:32 -0700 (PDT)
+	s=arc-20240116; t=1726179047; c=relaxed/simple;
+	bh=mEDHQ5nWdcgdLUwd9qLHksx71AmMq8JsmHTzNaVTjjM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=TlnvNHDPFlekPP4WtYf4RjYck/msXjiR/7ellQ4e9O7NhLwNicWn9b0RfCgbNbbla2EWeTWZi2Oe62JAvuHyvkc/x7hLmjrkMm8XwTZqrOyEgvUp/nynP3Wy6M76wyqt3RCe6ZkhqHXJ1Kexq0VVXFc4GaghQVwR5UN2Ayra7S8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=The2V6he; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40EA5C4CEC3;
+	Thu, 12 Sep 2024 22:10:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726179046;
+	bh=mEDHQ5nWdcgdLUwd9qLHksx71AmMq8JsmHTzNaVTjjM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=The2V6he5yYQCB7bVDPRImCupIklcLBCAK+RStsUpOFQb0KBzYLBNZ3vqtOlerWk9
+	 RIxBwKoJNmg9j8mIg376Wpf46FU+t9vZrisPdJ2Y70x5RLpnsthk/Qib0N618KB4M4
+	 EEf4JYV+TARUDXfe8dCgAsoh/4AUyCoPDJmbNAFpWSbpFVVGHYvzAfuy0IcfvY75Xa
+	 j4DLGmX28Pck6dS5G+0xcK80oYCvogsrmKC4CiNt/tnQef2WOa1mf+HZ0EEcEt81bM
+	 qwyNNB/QfMOZKlExEw3vGVE8F1KT967yFVdBwBXbDRTwWU3Etkep7fZR9uY+HBT21B
+	 rwesOjNvXAqXw==
+Received: by pali.im (Postfix)
+	id BC4425E9; Fri, 13 Sep 2024 00:10:41 +0200 (CEST)
+From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
+To: Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>
+Cc: linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] nfsd: Fill NFSv4.1 server implementation fields in OP_EXCHANGE_ID response
+Date: Fri, 13 Sep 2024 00:09:19 +0200
+Message-Id: <20240912220919.23449-1-pali@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829-shadow-call-stack-v7-1-2f62a4432abf@google.com>
-In-Reply-To: <20240829-shadow-call-stack-v7-1-2f62a4432abf@google.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 13 Sep 2024 00:08:20 +0200
-Message-ID: <CANiq72kNmvFOXhhAcQJQdMC872908=CWW15_bzyyt9ht2q=twQ@mail.gmail.com>
-Subject: Re: [PATCH v7] rust: support for shadow call stack sanitizer
-To: Alice Ryhl <aliceryhl@google.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Ard Biesheuvel <ardb@kernel.org>, Jamie Cunliffe <Jamie.Cunliffe@arm.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Conor Dooley <conor@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Marc Zyngier <maz@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Valentin Obst <kernel@valentinobst.de>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	rust-for-linux@vger.kernel.org, linux-riscv <linux-riscv@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 29, 2024 at 10:23=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
-wrote:
->
-> Add all of the flags that are needed to support the shadow call stack
-> (SCS) sanitizer with Rust, and updates Kconfig to allow only
-> configurations that work.
+NFSv4.1 OP_EXCHANGE_ID response from server may contain server
+implementation details (domain, name and build time) in optional
+nfs_impl_id4 field. Currently nfsd does not fill this field.
 
-Applied to `rust-next` -- thanks everyone!
+NFSv4.1 OP_EXCHANGE_ID call request from client may contain client
+implementation details and Linux NFSv4.1 client is already filling these
+information based on runtime module param "nfs.send_implementation_id" and
+build time Kconfig option "NFS_V4_1_IMPLEMENTATION_ID_DOMAIN". Module param
+send_implementation_id specify whether to fill implementation fields and
+Kconfig option "NFS_V4_1_IMPLEMENTATION_ID_DOMAIN" specify the domain
+string.
 
-Paul/Palmer/Albert/RISC-V: I think you were not Cc'd (at least in this
-version?), so please shout if you have a problem with this.
+Do same in nfsd, introduce new runtime param "nfsd.send_implementation_id"
+and build time Kconfig option "NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN" and
+based on them fill NFSv4.1 server implementation details in OP_EXCHANGE_ID
+response. Logic in nfsd is exactly same as in nfs.
 
-[ Fixed indentation using spaces. - Miguel ]
+This aligns Linux NFSv4.1 server logic with Linux NFSv4.1 client logic.
 
-Cheers,
-Miguel
+NFSv4.1 client and server implementation fields are useful for statistic
+purposes or for identifying type of clients and servers.
+
+Signed-off-by: Pali Rohár <pali@kernel.org>
+---
+ fs/nfsd/Kconfig   | 12 +++++++++++
+ fs/nfsd/nfs4xdr.c | 55 +++++++++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 65 insertions(+), 2 deletions(-)
+
+diff --git a/fs/nfsd/Kconfig b/fs/nfsd/Kconfig
+index ec2ab6429e00..70067c29316e 100644
+--- a/fs/nfsd/Kconfig
++++ b/fs/nfsd/Kconfig
+@@ -136,6 +136,18 @@ config NFSD_FLEXFILELAYOUT
+ 
+ 	  If unsure, say N.
+ 
++config NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN
++	string "NFSv4.1 Implementation ID Domain"
++	depends on NFSD_V4
++	default "kernel.org"
++	help
++	  This option defines the domain portion of the implementation ID that
++	  may be sent in the NFS exchange_id operation.  The value must be in
++	  the format of a DNS domain name and should be set to the DNS domain
++	  name of the distribution.
++	  If the NFS server is unchanged from the upstream kernel, this
++	  option should be set to the default "kernel.org".
++
+ config NFSD_V4_2_INTER_SSC
+ 	bool "NFSv4.2 inter server to server COPY"
+ 	depends on NFSD_V4 && NFS_V4_2
+diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+index b45ea5757652..5e89f999d4c7 100644
+--- a/fs/nfsd/nfs4xdr.c
++++ b/fs/nfsd/nfs4xdr.c
+@@ -62,6 +62,9 @@
+ #include <linux/security.h>
+ #endif
+ 
++static bool send_implementation_id = true;
++module_param(send_implementation_id, bool, 0644);
++MODULE_PARM_DESC(send_implementation_id, "Send implementation ID with NFSv4.1 exchange_id");
+ 
+ #define NFSDDBG_FACILITY		NFSDDBG_XDR
+ 
+@@ -4833,6 +4836,53 @@ nfsd4_encode_server_owner4(struct xdr_stream *xdr, struct svc_rqst *rqstp)
+ 	return nfsd4_encode_opaque(xdr, nn->nfsd_name, strlen(nn->nfsd_name));
+ }
+ 
++#define IMPL_NAME_LIMIT (sizeof(utsname()->sysname) + sizeof(utsname()->release) + \
++			 sizeof(utsname()->version) + sizeof(utsname()->machine) + 8)
++
++static __be32
++nfsd4_encode_server_impl_id(struct xdr_stream *xdr)
++{
++	char impl_name[IMPL_NAME_LIMIT];
++	int impl_name_len;
++	__be32 *p;
++
++	impl_name_len = 0;
++	if (send_implementation_id &&
++	    sizeof(CONFIG_NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN) > 1 &&
++	    sizeof(CONFIG_NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN) <= NFS4_OPAQUE_LIMIT)
++		impl_name_len = snprintf(impl_name, sizeof(impl_name), "%s %s %s %s",
++			       utsname()->sysname, utsname()->release,
++			       utsname()->version, utsname()->machine);
++
++	if (impl_name_len <= 0) {
++		if (xdr_stream_encode_u32(xdr, 0) != XDR_UNIT)
++			return nfserr_resource;
++		return nfs_ok;
++	}
++
++	if (xdr_stream_encode_u32(xdr, 1) != XDR_UNIT)
++		return nfserr_resource;
++
++	p = xdr_reserve_space(xdr,
++		4 /* nii_domain.len */ +
++		(XDR_QUADLEN(sizeof(CONFIG_NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN) - 1) * 4) +
++		4 /* nii_name.len */ +
++		(XDR_QUADLEN(impl_name_len) * 4) +
++		8 /* nii_time.tv_sec */ +
++		4 /* nii_time.tv_nsec */);
++	if (!p)
++		return nfserr_resource;
++
++	p = xdr_encode_opaque(p, CONFIG_NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN,
++				sizeof(CONFIG_NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN) - 1);
++	p = xdr_encode_opaque(p, impl_name, impl_name_len);
++	/* just send zeros for nii_date - the date is in nii_name */
++	p = xdr_encode_hyper(p, 0); /* tv_sec */
++	*p++ = cpu_to_be32(0); /* tv_nsec */
++
++	return nfs_ok;
++}
++
+ static __be32
+ nfsd4_encode_exchange_id(struct nfsd4_compoundres *resp, __be32 nfserr,
+ 			 union nfsd4_op_u *u)
+@@ -4867,8 +4917,9 @@ nfsd4_encode_exchange_id(struct nfsd4_compoundres *resp, __be32 nfserr,
+ 	if (nfserr != nfs_ok)
+ 		return nfserr;
+ 	/* eir_server_impl_id<1> */
+-	if (xdr_stream_encode_u32(xdr, 0) != XDR_UNIT)
+-		return nfserr_resource;
++	nfserr = nfsd4_encode_server_impl_id(xdr);
++	if (nfserr != nfs_ok)
++		return nfserr;
+ 
+ 	return nfs_ok;
+ }
+-- 
+2.20.1
+
 
