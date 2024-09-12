@@ -1,207 +1,267 @@
-Return-Path: <linux-kernel+bounces-326269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FE479765B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:34:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CB589765C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:36:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34BE01C2309F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:34:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA085B23D08
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C52019E96A;
-	Thu, 12 Sep 2024 09:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E287119EEA1;
+	Thu, 12 Sep 2024 09:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Nu+vAQnn"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=ps.report@gmx.net header.b="tEpjkT3e"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618DD19307E;
-	Thu, 12 Sep 2024 09:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43C319E981;
+	Thu, 12 Sep 2024 09:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726133600; cv=none; b=n54fzuTn5fcNSbaBAIzzrag4tXMilXvGUEkIo2uTHELmh4VoVuH/tW09e500tBKrPHJLH9vR+kF/q380xiQhoTa4UZc5h3kJk2Ui17xoliv4lU2JKxIQL/D2Y80uIwoRMMGmuj4+wkpJJsdpi/ZYw390xZOLn0NfnGFqV9sPeqU=
+	t=1726133773; cv=none; b=M82x/qJ6o0eCnOj1hPf+Xka466rhsRSpAuKLk6P0sgmOoqippDld4AyZhKLVq58Ocz5EGfR6BrQdvdw8SA8bdkllqo9/fRRPHuU1RHBQBb8lW/Nnk1X0hcw3EKv3aYbv7L1c27MyFzsdDmuICtZT2HiCJNLr97o8+kcm+HmEYN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726133600; c=relaxed/simple;
-	bh=x9MZ4i7i6o6MmiE6TuNgzQILdZZGvsilrySuI6sanyE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=D1atFGdpPbGUJjxrz7Pcz8WmXMlm4JnE8nXAlskX3HeJYwWRV1jZiwAS2rKtciKBgV+e7gLmRe8oFbI/HgRJbMYfdKkZ6lD9EvRHlsntSGkYef3Q3+gSKIuuNoBDD62JgNDyMbFkqnQJyVbbGbfN25S2DcLl64iWK4l9hKvA2Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Nu+vAQnn; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1726133599; x=1757669599;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=x9MZ4i7i6o6MmiE6TuNgzQILdZZGvsilrySuI6sanyE=;
-  b=Nu+vAQnnc5Q1RBRcVEeDxvnoP+0gNZeiuL0z9nc8QFJjvf18Vlj0QSaY
-   K7eRF0sYyup9oFhlF2xLIQEtLz9/zFwYZ9gE9fwKJvTWlAS51PYOD+8Gu
-   ZryLxCIdfvJyMZxQuKHxXt3ivO9x69ttC0DSp/dr9SV4h3JCKS1QLUupT
-   P/9nRvvyrEwm9DuhCmTE8yxgmExltEja6qyuhshulsoBxNHM/9E15OnQG
-   udktMKUx3PDZC93HxUmBu78KOYHqj7IpKDCWeEIdG+7UNcCXkyU7GzTuy
-   I83qjpDyTZ6ZkSGpqrUuvY9Nqnwwyy8anbCJeu4pGCvb9V9vZ5J9HgItk
-   g==;
-X-CSE-ConnectionGUID: BCOxaM+xQw2ODPMijRn+Xg==
-X-CSE-MsgGUID: ApUAX4bvS0O/r4wqYbJuEg==
-X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
-   d="scan'208";a="262677950"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Sep 2024 02:33:18 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 12 Sep 2024 02:33:13 -0700
-Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Thu, 12 Sep 2024 02:33:10 -0700
-From: Andrei Simion <andrei.simion@microchip.com>
-To: <nicolas.ferre@microchip.com>, <claudiu.beznea@tuxon.dev>,
-	<alexandre.belloni@bootlin.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, Andrei Simion <andrei.simion@microchip.com>
-Subject: [PATCH v2] ARM: dts: microchip: sam9x60: Add missing property atmel,usart-mode
-Date: Thu, 12 Sep 2024 12:33:07 +0300
-Message-ID: <20240912093307.40488-1-andrei.simion@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726133773; c=relaxed/simple;
+	bh=0B/HTcZAjFJQ/TI2gZYoPjdvaxMxvzApfSEC+vNdUfo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sV2rIacatcv/AMN3aXvIdgvQ5b13sP1ZhAR5OnqW148/bsk1ES0gaMw6kd57ldjSTq9+h6nGCLFepxhlkZmcUjrG97sliJHA8ncaaNpv+nydE9q9GELJzezwPMApiYfiHB1YQiZo+PFxfFrev6wTcSjjG/fHQE3Qse1u4shD/uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=ps.report@gmx.net header.b=tEpjkT3e; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1726133720; x=1726738520; i=ps.report@gmx.net;
+	bh=hvUwuCji2FVWW+lSXytJRqaFIqI73lvVq/rqcH0isKs=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=tEpjkT3eMCVn+uqnviql4xVq45/gmXweOJQKxu4Ak1uJshzATi6jxCsBgTxo4Spt
+	 SBeqEL4EgItJ4tShEN4Ht8NMHm6rlHDhKb7q7eQiXp3bP0Rnty+JlcEPgqCje5Ese
+	 ETcA1MyFAu83Ax6rmcZXKxKpLE+7dVA9IMyRZDLDOlrVaLB2tUkKg2TjMaR9Dbg0P
+	 ngy5tEhl4OD9C97MPMEPfXt6VE+qo8J0xTHMO1+S6QCaxV9Wocr8j/8gSJtbOOgJP
+	 XTxYA9mqXH5v491Ohlp+ZN9qr7GKfJY5gCpSSD5UHkPgmLW8jokC0TT2B0QN2j0rE
+	 2pT2ra65RButXZC04g==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from localhost ([82.135.81.136]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1M6UZv-1svXqj15nl-00DIiJ; Thu, 12
+ Sep 2024 11:35:20 +0200
+Date: Thu, 12 Sep 2024 11:35:18 +0200
+From: Peter Seiderer <ps.report@gmx.net>
+To: En-Wei Wu <en-wei.wu@canonical.com>
+Cc: steffen.klassert@secunet.com, herbert@gondor.apana.org.au,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kai.heng.feng@canonical.com, chia-lin.kao@canonical.com,
+ anthony.wong@canonical.com, kuan-ying.lee@canonical.com,
+ chris.chiu@canonical.com
+Subject: Re: [PATCH ipsec v2] xfrm: check MAC header is shown with both
+ skb->mac_len and skb_mac_header_was_set()
+Message-ID: <20240912113518.5941b0cf@gmx.net>
+In-Reply-To: <20240912071702.221128-1-en-wei.wu@canonical.com>
+References: <20240912071702.221128-1-en-wei.wu@canonical.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:5t4f8lAHgnAMeehsF/T2jDXsBATlVB+wehZLyQF51TDtIESMH5/
+ DPHRQNUUtBpZtGkR/uTz/NMRya1hwxZonDcwpS8pJC43IP5uFXVM/3sHO7eBEdVTJh03ypg
+ o2mZVwNDz+uNmaC/rNXYzcogxYVNh+NfjWM9u2TMMMPrRpJPUe9sFvPsxxjUjdo1REHqGiV
+ /qMalDmVhQ7DoVXqa++GQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:rTO7R1njQ20=;jXIBLPu1J88IO3iKqntBIN5UYZh
+ tnCvSZJ6LWNoHISVvvO2euO2zNc1OYqe5iudFgkPAZgEtCLSOkSXUfWeh+y2TR6HboBdgNUAg
+ Cfa8YcWfIOTvsp02pPoscFmr6Dfy8JYdGpjIEtYbpAiY2mx3ycoJ26m5z/qCG7yG4j92UcSqB
+ fUbxCgpWlqWusDYMWoONA4fOo028h8wDLGDi+68bv4nJ5IdG4e5D8FdQgDqCNsgfndY5jlTPX
+ NItKFeewKSRhQ44ZDIpSiOp/T0em6kRl4T9N+J3tRqmZyx2di/xmIO0+80dlVjsdwMdo4xV9G
+ z5OsB/GTOXfeLMVCsEaNVc0+YS6PLSVukktEHyYwyQn57nTbEyCwmFHGNQL3MkZ5B2Oj8VpJZ
+ fHwgRbkULItBmIhIlxDfEad8oRhFG9OznrHb7PrOqDkupoyDbDgh32o5moOlvFGNpfcLuWA10
+ 3Q6YTR/xciRfcPTLQ51JHcNlLBM/LkpW2XMA2H2pc+KGWKhS6Qw+4H/fEIFDJzMJcKZYwyW9o
+ 2anDPyrJm7ycOr/W8Tup5GOHW+4cX5GxlpR3DaVVg4bw6mBZqG0NlNxfzmmX5kyLBH9/BXjE1
+ IIacJArtKFuaGn62Cfw3L4WEVmYQMv/FF5xzE3A6s9OzadEYEw+vGD5H6BmE+HCsYK/7sLSwo
+ h1LcA5E2KPmq0yG/2SwDeMMqbjZ69BIOzJnmCkiGn9KqzrW2cFt2BT1N09kM46n2Byk6X9jsk
+ QUKxUxbPbSQ2Oj5p6x2p+DGyYvfUFaPJPoTs+B7xC10ShSe2EpdmlCy+BeX4SNVIYaDCBCRHg
+ AAtCbqxfzqnFW5NbLYMxD45QzI4WTV3J9o7xb9unLAVLs=
 
-Add the atmel,usart-mode property to the UART nodes. This ensures
-compliance with the atmel,at91-usart.yaml schema and resolves the errors
-below:
-serial@200: $nodename:0: 'serial@200' does not match
-'^spi(@.*|-([0-9]|[1-9][0-9]+))?$'
-serial@200: atmel,use-dma-rx: False schema does not allow True
-serial@200: atmel,use-dma-tx: False schema does not allow True
-serial@200: atmel,fifo-size: False schema does not allow [[16]]
+Hello *,
 
-These errors indicate that the property
-atmel,usart-mode = <AT91_USART_MODE_SERIAL> is missing for
-UART nodes 0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, and 12.
+On Thu, 12 Sep 2024 15:17:02 +0800, En-Wei Wu <en-wei.wu@canonical.com> wr=
+ote:
 
-Fixes: 99c808335877 ("ARM: dts: at91: sam9x60: Add missing flexcom definitions")
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
----
-v1 -> v2:
-- reword commit message
-- add Acked-by received in V1
----
- arch/arm/boot/dts/microchip/sam9x60.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+> When we use Intel WWAN with xfrm, our system always hangs after
+> browsing websites for a few seconds. The error message shows that
+> it is a slab-out-of-bounds error:
+>
+> [ 67.162014] BUG: KASAN: slab-out-of-bounds in xfrm_input+0x426e/0x6740
+> [ 67.162030] Write of size 2 at addr ffff888156cb814b by task ksoftirqd/=
+2/26
+>
+> [ 67.162043] CPU: 2 UID: 0 PID: 26 Comm: ksoftirqd/2 Not tainted 6.11.0-=
+rc6-c763c4339688+ #2
+> [ 67.162053] Hardware name: Dell Inc. Latitude 5340/0SG010, BIOS 1.15.0 =
+07/15/2024
+> [ 67.162058] Call Trace:
+> [ 67.162062] <TASK>
+> [ 67.162068] dump_stack_lvl+0x76/0xa0
+> [ 67.162079] print_report+0xce/0x5f0
+> [ 67.162088] ? xfrm_input+0x426e/0x6740
+> [ 67.162096] ? kasan_complete_mode_report_info+0x26/0x200
+> [ 67.162105] ? xfrm_input+0x426e/0x6740
+> [ 67.162112] kasan_report+0xbe/0x110
+> [ 67.162119] ? xfrm_input+0x426e/0x6740
+> [ 67.162129] __asan_report_store_n_noabort+0x12/0x30
+> [ 67.162138] xfrm_input+0x426e/0x6740
+> [ 67.162149] ? __pfx_xfrm_input+0x10/0x10
+> [ 67.162160] ? __kasan_check_read+0x11/0x20
+> [ 67.162168] ? __call_rcu_common+0x3e7/0x15b0
+> [ 67.162178] xfrm4_rcv_encap+0x214/0x470
+> [ 67.162186] ? __xfrm4_udp_encap_rcv.part.0+0x3cd/0x560
+> [ 67.162195] xfrm4_udp_encap_rcv+0xdd/0xf0
+> [ 67.162203] udp_queue_rcv_one_skb+0x880/0x12f0
+> [ 67.162212] udp_queue_rcv_skb+0x139/0xa90
+> [ 67.162221] udp_unicast_rcv_skb+0x116/0x350
+> [ 67.162229] __udp4_lib_rcv+0x213b/0x3410
+> [ 67.162237] ? ldsem_down_write+0x211/0x4ed
+> [ 67.162246] ? __pfx___udp4_lib_rcv+0x10/0x10
+> [ 67.162254] ? __pfx_raw_local_deliver+0x10/0x10
+> [ 67.162262] ? __pfx_cache_tag_flush_range_np+0x10/0x10
+> [ 67.162273] udp_rcv+0x86/0xb0
+> [ 67.162280] ip_protocol_deliver_rcu+0x152/0x380
+> [ 67.162289] ip_local_deliver_finish+0x282/0x370
+> [ 67.162296] ip_local_deliver+0x1a8/0x380
+> [ 67.162303] ? __pfx_ip_local_deliver+0x10/0x10
+> [ 67.162310] ? ip_rcv_finish_core.constprop.0+0x481/0x1ce0
+> [ 67.162317] ? ip_rcv_core+0x5df/0xd60
+> [ 67.162325] ip_rcv+0x2fc/0x380
+> [ 67.162332] ? __pfx_ip_rcv+0x10/0x10
+> [ 67.162338] ? __pfx_dma_map_page_attrs+0x10/0x10
+> [ 67.162346] ? __kasan_check_write+0x14/0x30
+> [ 67.162354] ? __build_skb_around+0x23a/0x350
+> [ 67.162363] ? __pfx_ip_rcv+0x10/0x10
+> [ 67.162369] __netif_receive_skb_one_core+0x173/0x1d0
+> [ 67.162377] ? __pfx___netif_receive_skb_one_core+0x10/0x10
+> [ 67.162386] ? __kasan_check_write+0x14/0x30
+> [ 67.162394] ? _raw_spin_lock_irq+0x8b/0x100
+> [ 67.162402] __netif_receive_skb+0x21/0x160
+> [ 67.162409] process_backlog+0x1c0/0x590
+> [ 67.162417] __napi_poll+0xab/0x550
+> [ 67.162425] net_rx_action+0x53e/0xd10
+> [ 67.162434] ? __pfx_net_rx_action+0x10/0x10
+> [ 67.162443] ? __pfx_wake_up_var+0x10/0x10
+> [ 67.162453] ? tasklet_action_common.constprop.0+0x22c/0x670
+> [ 67.162463] handle_softirqs+0x18f/0x5d0
+> [ 67.162472] ? __pfx_run_ksoftirqd+0x10/0x10
+> [ 67.162480] run_ksoftirqd+0x3c/0x60
+> [ 67.162487] smpboot_thread_fn+0x2f3/0x700
+> [ 67.162497] kthread+0x2b5/0x390
+> [ 67.162505] ? __pfx_smpboot_thread_fn+0x10/0x10
+> [ 67.162512] ? __pfx_kthread+0x10/0x10
+> [ 67.162519] ret_from_fork+0x43/0x90
+> [ 67.162527] ? __pfx_kthread+0x10/0x10
+> [ 67.162534] ret_from_fork_asm+0x1a/0x30
+> [ 67.162544] </TASK>
+>
+> [ 67.162551] The buggy address belongs to the object at ffff888156cb8000
+>                 which belongs to the cache kmalloc-rnd-09-8k of size 819=
+2
+> [ 67.162557] The buggy address is located 331 bytes inside of
+>                 allocated 8192-byte region [ffff888156cb8000, ffff888156=
+cba000)
+>
+> [ 67.162566] The buggy address belongs to the physical page:
+> [ 67.162570] page: refcount:1 mapcount:0 mapping:0000000000000000 index:=
+0x0 pfn:0x156cb8
+> [ 67.162578] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:=
+0 pincount:0
+> [ 67.162583] flags: 0x17ffffc0000040(head|node=3D0|zone=3D2|lastcpupid=
+=3D0x1fffff)
+> [ 67.162591] page_type: 0xfdffffff(slab)
+> [ 67.162599] raw: 0017ffffc0000040 ffff888100056780 dead000000000122 000=
+0000000000000
+> [ 67.162605] raw: 0000000000000000 0000000080020002 00000001fdffffff 000=
+0000000000000
+> [ 67.162611] head: 0017ffffc0000040 ffff888100056780 dead000000000122 00=
+00000000000000
+> [ 67.162616] head: 0000000000000000 0000000080020002 00000001fdffffff 00=
+00000000000000
+> [ 67.162621] head: 0017ffffc0000003 ffffea00055b2e01 ffffffffffffffff 00=
+00000000000000
+> [ 67.162626] head: 0000000000000008 0000000000000000 00000000ffffffff 00=
+00000000000000
+> [ 67.162630] page dumped because: kasan: bad access detected
+>
+> [ 67.162636] Memory state around the buggy address:
+> [ 67.162640] ffff888156cb8000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc=
+ fc fc
+> [ 67.162645] ffff888156cb8080: fc fc fc fc fc fc fc fc fc fc fc fc fc fc=
+ fc fc
+> [ 67.162650] >ffff888156cb8100: fc fc fc fc fc fc fc fc fc fc fc fc fc f=
+c fc fc
+> [ 67.162653] ^
+> [ 67.162658] ffff888156cb8180: fc fc fc fc fc fc fc fc fc fc fc fc fc fc=
+ fc fc
+> [ 67.162663] ffff888156cb8200: fc fc fc fc fc fc fc fc fc fc fc fc fc fc=
+ fc fc
+>
+> The reason is that the eth_hdr(skb) inside if statement evaluated
+> to an unexpected address with skb->mac_header =3D ~0U (indicating there
+> is no MAC header). The unreliability of skb->mac_len causes the if
+> statement to become true even if there is no MAC header inside the
+> skb data buffer.
+>
+> Check both the skb->mac_len and skb_mac_header_was_set(skb) fixes this i=
+ssue.
+>
+> Fixes: 87cdf3148b11 ("xfrm: Verify MAC header exists before overwriting =
+eth_hdr(skb)->h_proto")
+> Signed-off-by: En-Wei Wu <en-wei.wu@canonical.com>
+> ---
+> Changes in v2:
+> * Change the title from "xfrm: avoid using skb->mac_len to decide if mac=
+ header is shown"
+> * Remain skb->mac_len check
+> * Apply fix on ipv6 path too
+> ---
+>  net/xfrm/xfrm_input.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/net/xfrm/xfrm_input.c b/net/xfrm/xfrm_input.c
+> index 749e7eea99e4..eef0145c73a7 100644
+> --- a/net/xfrm/xfrm_input.c
+> +++ b/net/xfrm/xfrm_input.c
+> @@ -251,7 +251,7 @@ static int xfrm4_remove_tunnel_encap(struct xfrm_sta=
+te *x, struct sk_buff *skb)
+>
+>  	skb_reset_network_header(skb);
+>  	skb_mac_header_rebuild(skb);
+> -	if (skb->mac_len)
+> +	if (skb->mac_len && skb_mac_header_was_set(skb))
+>  		eth_hdr(skb)->h_proto =3D skb->protocol;
+>
+>  	err =3D 0;
+> @@ -288,7 +288,7 @@ static int xfrm6_remove_tunnel_encap(struct xfrm_sta=
+te *x, struct sk_buff *skb)
+>
+>  	skb_reset_network_header(skb);
+>  	skb_mac_header_rebuild(skb);
+> -	if (skb->mac_len)
+> +	if (skb->mac_len && skb_mac_header_was_set(skb))
+>  		eth_hdr(skb)->h_proto =3D skb->protocol;
+>
+>  	err =3D 0;
 
-diff --git a/arch/arm/boot/dts/microchip/sam9x60.dtsi b/arch/arm/boot/dts/microchip/sam9x60.dtsi
-index 04a6d716ecaf..0ba424bba7cc 100644
---- a/arch/arm/boot/dts/microchip/sam9x60.dtsi
-+++ b/arch/arm/boot/dts/microchip/sam9x60.dtsi
-@@ -174,6 +174,7 @@ flx4: flexcom@f0000000 {
- 				uart4: serial@200 {
- 					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
- 					reg = <0x200 0x200>;
-+					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
- 					interrupts = <13 IRQ_TYPE_LEVEL_HIGH 7>;
- 					dmas = <&dma0
- 						(AT91_XDMAC_DT_MEM_IF(0) |
-@@ -376,6 +377,7 @@ flx11: flexcom@f0020000 {
- 				uart11: serial@200 {
- 					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
- 					reg = <0x200 0x200>;
-+					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
- 					interrupts = <32 IRQ_TYPE_LEVEL_HIGH 7>;
- 					dmas = <&dma0
- 						(AT91_XDMAC_DT_MEM_IF(0) |
-@@ -427,6 +429,7 @@ flx12: flexcom@f0024000 {
- 				uart12: serial@200 {
- 					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
- 					reg = <0x200 0x200>;
-+					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
- 					interrupts = <33 IRQ_TYPE_LEVEL_HIGH 7>;
- 					dmas = <&dma0
- 						(AT91_XDMAC_DT_MEM_IF(0) |
-@@ -586,6 +589,7 @@ flx6: flexcom@f8010000 {
- 				uart6: serial@200 {
- 					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
- 					reg = <0x200 0x200>;
-+					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
- 					interrupts = <9 IRQ_TYPE_LEVEL_HIGH 7>;
- 					dmas = <&dma0
- 						(AT91_XDMAC_DT_MEM_IF(0) |
-@@ -637,6 +641,7 @@ flx7: flexcom@f8014000 {
- 				uart7: serial@200 {
- 					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
- 					reg = <0x200 0x200>;
-+					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
- 					interrupts = <10 IRQ_TYPE_LEVEL_HIGH 7>;
- 					dmas = <&dma0
- 						(AT91_XDMAC_DT_MEM_IF(0) |
-@@ -688,6 +693,7 @@ flx8: flexcom@f8018000 {
- 				uart8: serial@200 {
- 					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
- 					reg = <0x200 0x200>;
-+					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
- 					interrupts = <11 IRQ_TYPE_LEVEL_HIGH 7>;
- 					dmas = <&dma0
- 						(AT91_XDMAC_DT_MEM_IF(0) |
-@@ -739,6 +745,7 @@ flx0: flexcom@f801c000 {
- 				uart0: serial@200 {
- 					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
- 					reg = <0x200 0x200>;
-+					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
- 					interrupts = <5 IRQ_TYPE_LEVEL_HIGH 7>;
- 					dmas = <&dma0
- 						(AT91_XDMAC_DT_MEM_IF(0) |
-@@ -809,6 +816,7 @@ flx1: flexcom@f8020000 {
- 				uart1: serial@200 {
- 					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
- 					reg = <0x200 0x200>;
-+					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
- 					interrupts = <6 IRQ_TYPE_LEVEL_HIGH 7>;
- 					dmas = <&dma0
- 						(AT91_XDMAC_DT_MEM_IF(0) |
-@@ -879,6 +887,7 @@ flx2: flexcom@f8024000 {
- 				uart2: serial@200 {
- 					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
- 					reg = <0x200 0x200>;
-+					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
- 					interrupts = <7 IRQ_TYPE_LEVEL_HIGH 7>;
- 					dmas = <&dma0
- 						(AT91_XDMAC_DT_MEM_IF(0) |
-@@ -949,6 +958,7 @@ flx3: flexcom@f8028000 {
- 				uart3: serial@200 {
- 					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
- 					reg = <0x200 0x200>;
-+					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
- 					interrupts = <8 IRQ_TYPE_LEVEL_HIGH 7>;
- 					dmas = <&dma0
- 						(AT91_XDMAC_DT_MEM_IF(0) |
-@@ -1074,6 +1084,7 @@ flx9: flexcom@f8040000 {
- 				uart9: serial@200 {
- 					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
- 					reg = <0x200 0x200>;
-+					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
- 					interrupts = <15 IRQ_TYPE_LEVEL_HIGH 7>;
- 					dmas = <&dma0
- 						(AT91_XDMAC_DT_MEM_IF(0) |
-@@ -1125,6 +1136,7 @@ flx10: flexcom@f8044000 {
- 				uart10: serial@200 {
- 					compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
- 					reg = <0x200 0x200>;
-+					atmel,usart-mode = <AT91_USART_MODE_SERIAL>;
- 					interrupts = <16 IRQ_TYPE_LEVEL_HIGH 7>;
- 					dmas = <&dma0
- 						(AT91_XDMAC_DT_MEM_IF(0) |
+Same change (and request for more debugging) already suggested in 2023, se=
+e [1]...
 
-base-commit: 32ffa5373540a8d1c06619f52d019c6cdc948bb4
--- 
-2.34.1
+Regards,
+Peter
 
+[1] https://lore.kernel.org/netdev/d1cf5a66-03e1-44b8-929d-ac123b1bbd7b@sy=
+lv.io/T/
 
