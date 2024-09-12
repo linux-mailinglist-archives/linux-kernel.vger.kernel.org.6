@@ -1,487 +1,285 @@
-Return-Path: <linux-kernel+bounces-325773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0445B975E07
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:35:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 502AF975E0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:39:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 276C01C209DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:35:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C70271F23C10
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F8FB640;
-	Thu, 12 Sep 2024 00:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54128489;
+	Thu, 12 Sep 2024 00:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="iyaH+Ovx"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TiduW9sE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1986C8BEC;
-	Thu, 12 Sep 2024 00:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726101338; cv=none; b=QWoaKyQrBzMbbe1/p6/IoQ61LIkbkj3mEgm76pW/YRmuAHOT7m4LWZQxBrHL2q+oOzatFdWXDA24pbvr6OFolP0yxJC0fpUx34prM6SpGAHWmWfqsapvW2RyArIpKu0K1+Hl5nX9DV0FpxPnLeiBXlBbFekZ/vhkZTrkiMSEdlo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726101338; c=relaxed/simple;
-	bh=fW9tL4bOGyj5qqJzgBhajXGygfunrljT2TepswUxlrc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Wh/2fOgRtXeM3wlu3CPSASl3W+WwWwkBsAtB0lcXK7LjBAvrNATxNyFtaecjATTNE6xvYD5eqXanHC4WaNa23tCDzreDbod6oL2ThfgdIY17xvg2L9VdfYQ2vSOV3xw6MC2tz79KvHWeVF0G3szj5iz/owaMVIpbXgXtTHQoAHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=iyaH+Ovx; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726101325;
-	bh=ztURQTU8RzYMozhGR69TIN6scBokvybse0n2Z2DAbK4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=iyaH+OvxOQXu5KpQfyKIVKgp+q5aY5s3SYpT6QMV5F5yglTrVr6pcX75y2uZI+GLz
-	 u7R8/Hv18fEPmUl51g64XrNGK/8Bb48GjBTCojjX+Gp+qAEPve6y5tlTVQkHJOls9c
-	 IfjhkwDWipAxMuEY1FnjKdR3SN1VzaHrTSKTWxx9KkEYWniO5kPU1hG47SUAHpJ/+2
-	 hQTLfELi3S/jL01gZ7c7FGueVJB520/2h0+WMLgO8DhdRpfxG+NHLCqKOgNMmci0vv
-	 EZDPFSqPube+OhRXtJ+VXHXRPn8tXXpt6AMpFCFX3p8VNgwGjs1kE5TQBaK6agY021
-	 ZBOwjxMdOEOeg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X3z4F5mwrz4x0K;
-	Thu, 12 Sep 2024 10:35:25 +1000 (AEST)
-Date: Thu, 12 Sep 2024 10:35:24 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Huacai Chen <chenhuacai@loongson.cn>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Tianrui Zhao
- <zhaotianrui@loongson.cn>, Xianglai Li <lixianglai@loongson.cn>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the loongarch tree
-Message-ID: <20240912103524.62ac1dae@canb.auug.org.au>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA7D1C36;
+	Thu, 12 Sep 2024 00:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726101588; cv=fail; b=uN19FAv+ZVYUtwzw+XYTvnr1euv+m9XgxV/cFIthtzsYgB7+IKg2d/xjGy04URgf7x4zr92E1qX1JLjsuvcvFCBi4HZnC+BwEO5D/mm2nzPRFVf2nCAWxd4fU0bxdLhOqK+e071/r6c0QFxD8G2CfahQMqn6PqkRxaDlk4cgQao=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726101588; c=relaxed/simple;
+	bh=VAgNWD3ctbizQdUhDLMGfoNaJ9FPu7WZhgg5iKW73v0=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=p/KTduMXDaz8Fpr/p2CPsfc5LThXDd8HJ3m13XGUDDgPNH8hvs9g5qiew2Um7hfdShxRDRCpzLOVxIB1bX2tOBfRGjUYiESiX1xVVzsyn6SoGTj55KLBiiU/1TDpluCCge7+dYPz+2PuK6ejWmzZA/tITZsO5072FuxQdXpQS+Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TiduW9sE; arc=fail smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726101587; x=1757637587;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=VAgNWD3ctbizQdUhDLMGfoNaJ9FPu7WZhgg5iKW73v0=;
+  b=TiduW9sEyWRITmdD5tqZhdKhP3tQ+AU4oPjWR8vwGkIrDolyM3WxSTpk
+   +8RsBqy2tZCNL0aWbsG139pM00g1Ijdx5E9p5af5lFa+7tdnSFKoRTsHO
+   C0r7w3+cXogyEFqfLNF2yra4uMdRRzrB/Icfp2ec3agwKnj0QzAiAn6hB
+   9e3ZenaRhKZhNHLEvhx8nFHnazeMsiXZzJ6e/vo5WCnb6m8P05oHc2yW+
+   STMB46zZPv+l2Lt8TpvCDwpEGU7SUYV6p/K+fuJWYGVvGuKSWn6tyKUlc
+   hK3fcedV/eRQKr1gTfOauC5Jz9u0RzDcBPw+aZ6vHOjlGSGjGqrNcE2SY
+   Q==;
+X-CSE-ConnectionGUID: VnLt+50iSFOmMtU/VhcLPA==
+X-CSE-MsgGUID: 82KpddL3R3SNHnMPL4nYsw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="27851705"
+X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
+   d="scan'208";a="27851705"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 17:39:46 -0700
+X-CSE-ConnectionGUID: KuGRmQu/Q2WZWLxAEWTHaA==
+X-CSE-MsgGUID: RtD2lRMNSy+LDD/m1WlMtg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
+   d="scan'208";a="98241685"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Sep 2024 17:39:46 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 11 Sep 2024 17:39:45 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 11 Sep 2024 17:39:45 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 11 Sep 2024 17:39:45 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.100)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 11 Sep 2024 17:39:45 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ECEzYFuKpexd4phLqkwivt1sr0PJwWKLuNM1vUbQlzkR/nfP2duDAU0nmu/eFYQhh8cnFT2picL6ETEY1VwNjsmgF3p/yxvp1eHlcdVjvy28hJlV2RpkZJu4Tf+uXW6mp6FN9bBrZ53KiDC6RZ815fpTMiIjz6iCxLc18r7FmHGbA96tZMuxFxxhRqWoJUwhfSqwd8MHmyBJdaCYn7RUpiMdBQaitDu8yEVsh+dskbKJCp77aU48zl5QnL22y92MbJHg0IjR1nt78U2nd844IB1QCXWX04oGxd/iCzAY/dQeQtWnT5gOom5w1A5RjKjxRZy7ayYRjO4dBEhzMtl9Og==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2rxJTd/+rzIjG98LNpAlDxE+LoDa8tRM6930OxSJDAs=;
+ b=GS6vQGBMMaM5Qe2uHO8A6aJH1mWGK6Z4vb4zL5Hd8/+R7J+4/YrWAPsJZWIP1iK24UQx0tmsqV+ioDbJ61T8eUaisuLfQFdTEW1UAdLxWiS0ufjo7yF8DSGp7joyxoECquEN5T+eEB4K1m+y5dUj0nRIzS44Hnoi5rRu/tqRCn5boF0lFnLNQzlV7xCkX1SKoGGk+rPDbJ5wTpJcqnnE2oqucfWWhjtJ/z2aV9VlT2DNiQ70cPA95VaELgMEfD22HMIjcixhJQPeWtc7hHuNeNYebTS5TLvgJQOuk7u/MolqTSRWR50w1+Xna5lewuIssAfVjOibswsfdNcTCdqn9g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
+ by DS0PR11MB7630.namprd11.prod.outlook.com (2603:10b6:8:149::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.28; Thu, 12 Sep
+ 2024 00:39:43 +0000
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b%4]) with mapi id 15.20.7939.022; Thu, 12 Sep 2024
+ 00:39:43 +0000
+Message-ID: <8761e1b8-4c65-4837-b152-98be86cf220d@intel.com>
+Date: Thu, 12 Sep 2024 12:39:36 +1200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/21] KVM: VMX: Teach EPT violation helper about private
+ mem
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>, <seanjc@google.com>,
+	<pbonzini@redhat.com>, <kvm@vger.kernel.org>
+CC: <dmatlack@google.com>, <isaku.yamahata@gmail.com>, <yan.y.zhao@intel.com>,
+	<nik.borisov@suse.com>, <linux-kernel@vger.kernel.org>
+References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
+ <20240904030751.117579-6-rick.p.edgecombe@intel.com>
+Content-Language: en-US
+From: "Huang, Kai" <kai.huang@intel.com>
+In-Reply-To: <20240904030751.117579-6-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR13CA0016.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c0::21) To BL1PR11MB5978.namprd11.prod.outlook.com
+ (2603:10b6:208:385::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/BgoG=2Qwefxr8tuuU6i4Z3o";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR11MB5978:EE_|DS0PR11MB7630:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9cd09cbe-96f0-4421-fe76-08dcd2c364b0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?TUF6YWdWZm82cWptcFhZK3lNYjVHeE5pM0JEU29mV0p2dUV4cmJjL0FGS1Zn?=
+ =?utf-8?B?QXVrYXYwMVhqNlN0Y3kyV1p4UXVnMzJxSm5ZOFJqOFNmMGFMWHpuckFMOVRr?=
+ =?utf-8?B?RkptRFRzSU9DWEtodGMyNlRlQ1hIYjgvWCtuT2JwMmJPWVRPSndLa244Q3lF?=
+ =?utf-8?B?dXU3aW10b1JicVZSM1diMnhmamxNbHlXYkxlUzdiMGdPZDAxSkRXUTl3ZmhR?=
+ =?utf-8?B?ZHZhT1F4U1gwSnkwWjBOZ2hlM0g1cmRQb0cxeTdiVHRodDJ0bDQzR3N4czVD?=
+ =?utf-8?B?ZThoVit3SEd3am8xMWp1MGpOVy9XQUV1OW9xYjVxT3ZQekRFSkpWWUdTelU2?=
+ =?utf-8?B?ejNoaWg1NmFFTUxtQ1ZNKzNKWVlyczRhS2hlVU5OdUpOQzEwNFhiV29pZFpm?=
+ =?utf-8?B?Y0dLRjFoZWJqTkV3aVNMT2pjZW5kLzFBWEttdDJyK3FsdlZ2NTZ1U09ZZTJZ?=
+ =?utf-8?B?TWNBYUF3MFhPU0R6UGR3UERiMmIrakZad2FnRlVhdGs5d1VMQ0tBUENzd1cv?=
+ =?utf-8?B?UVpUK3R1dDR0ekdULy80bmp2MEluTDhMRC9zMndiQ0F4azViVHpoSDBpNDJL?=
+ =?utf-8?B?OHhFb3NBZzZIbGY3NGVCV0l5NWkrcHN0RDd4RS9GSFBXbXRmNkZjM1FsWjBY?=
+ =?utf-8?B?ZFR4TWdQSnJyT1V3REtPd25ETm9jcjRVZWtwZ0hKUE42Q0JnL0V3cDJvOFgx?=
+ =?utf-8?B?eWQycnAzMW91L3IwTm1ncXgzclNYdXEvclNVNTdkRnZ2Y3hPUVNpQXA3T3lO?=
+ =?utf-8?B?dkhxVzh3WVhhY1FabnpzU1VhbXQ4SWlsNjdwSmVURndiQUV5V29remo1Yy91?=
+ =?utf-8?B?aklUNEVRbm4wMGt2RjdTUkZkWThXdVBEQytZVmdWWEZ3VjRUVHdKS0YwcXho?=
+ =?utf-8?B?SzR2Y04reU9mdXNzbUNXKzdxLzRkZHBmNUk5Y3dFQnJ4dG95ek1BaGM1NjB6?=
+ =?utf-8?B?MGNVQktIZU9WSTdDYWFpT2dvcXNhMGJTUjJJK056WkpVUVlEanA3LzhUSnEv?=
+ =?utf-8?B?dVJhNm4wRkh6YzdQbGtCelh4Zk56aStNYnpZdUg1RDJBOHVFTWhFa2l6YkZJ?=
+ =?utf-8?B?S1ordllsNWtYMjlUeUd4eWxza1Jlc1ZBc25CaDBiVFpaR3lFaDViNGh1V0NU?=
+ =?utf-8?B?UmhkU2JoQy9ObWVXUXp5dTN0MTgxNnNwbEcxQ1JUOFVYT2RjdHE5S3FuaExh?=
+ =?utf-8?B?R1dKNWl4UFU1akNnYXBzTExnTDVFNWpqQ25JN1VnbXk0OFRrWnRQOGppZFph?=
+ =?utf-8?B?UHpmWVhMQ2hJVWFsaUo3U3VqQllQa2dNYWM0WWYrd2ZBS3NnU0lJZUwydU5H?=
+ =?utf-8?B?QisxREJKb1lFZTl3NUE0L0c3U2dPc3lYSmVCdlFHUWlaYUVnN0tMTmRCM0F6?=
+ =?utf-8?B?VnlyazU2UCtjT2xSSGdUMTVLcExmZHUxUUJieUNZclltZGVTMTdiR0ZaSktF?=
+ =?utf-8?B?cCtnZGJqR0xxM2FEUUNLVFF1cllPcTRGNG4yelQ3N1cvNGg0TDI5ckpDdDJz?=
+ =?utf-8?B?RHoxQlZQVDM2SS9MVGtMemFKSE1nenJETEFSUXVDK21JRDRJR0V2dDdZeHZy?=
+ =?utf-8?B?ckVuUXduTUEvNzgxbFN4NTJFV1pFUzllcU0rOHk0SlV3Qlp6dGsxenRySi9x?=
+ =?utf-8?B?QTNqQjBCVDBjRWJwb1VhelFtbFlYdEo2c2JxRmFMQmQreTZLcXp2RWMzeUxp?=
+ =?utf-8?B?SWFxN3pmcUNRUWdhWjVZbVdRRnhZUTV3Q1JGL1Y3d0gvR0xjbXpVangra014?=
+ =?utf-8?B?MXhETC9ob2w2TFFEZksySDVQNTRFeXNpemowR1NQQkJ2ck5xT0svMHNzNjF2?=
+ =?utf-8?B?MjJnaFFFRlV3QVViZlpldz09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?cVA4SStmc3pwQmxyNmNaYWR5N2wxczBONEVNVVdXbmlObndQOWI0VG41Zzl1?=
+ =?utf-8?B?TG9rVk9zTnNiTnFoZnR1UFJPYnBBN2U4L0IwYkZ6anl2Z1V5SzVLRlBzVjNo?=
+ =?utf-8?B?TVYwYi9POW9vRG9kOFJMS2JEUzJMc3JyNUduUEZJUVhKcmdtOEpTQ3JOMFFn?=
+ =?utf-8?B?MGdjUzB6QmNvSnp2N3Z5U1k3TWFQZmNtUk1XSTZkOElCYW5LVEh4TnpVWC9t?=
+ =?utf-8?B?eVRmSncrTXNwV09FSkdSOHFKMHlUVklDY1hWc1ZUS1gzcXl2clYzWk1yY2NI?=
+ =?utf-8?B?ZjdBRFZoVTBxcmVTREFUa0RsZ1JVM2pWL3FxQW94bFE0aGxySFF5Uy8vQWlt?=
+ =?utf-8?B?VDlHZk5qQkR6cXJiV2xrc0M1UldrOHFIQjNTN2NLc1dyMkZEQ1pvb3UyT2xj?=
+ =?utf-8?B?eG5qbHFXNDhnQXdWcE1sT1BXRkhhTnVPaHJEcWNnSG5TRWlhUjFjWUY5MVBI?=
+ =?utf-8?B?WW1RamxQL1MvSWpUalFmM0YxQmY2TFRaeFhhMFg2K0REeTdpM3NpSmlDN0xY?=
+ =?utf-8?B?emJFc3Z4WUNDNjFMK2RSV2RvQ3c3NW0wNWtTUWlac3BCa1ZZWXovTzFJWWZE?=
+ =?utf-8?B?WUJDYmcxdDZpd2FaUFN6UUxiQzJCUm0yVXFvU1F6ZXEycE9zU2JRYlljSkww?=
+ =?utf-8?B?c3dPT0ZJUFROZ01IS1B0aGJwNmZXRUVWSkVxNS8rTHprdTRLekNLV0RFRVpv?=
+ =?utf-8?B?YWlGeUE1MWhWb1RwaTBiNUZNTVpyVWRqTWJtZ1dIcTFBUHgzanRYSlFzYVFx?=
+ =?utf-8?B?dU84bkpWMmhtTlR1aTZoSVNvbHVlWUhIeVFDMEJVcjRGUmVML2lTM2lpM3Bk?=
+ =?utf-8?B?QmdEUDdhbC9rQ3E2SWpOdXMrc25yeXEzS0ZJd2FzZ2ZxZFE4OHplVUZ2akNq?=
+ =?utf-8?B?aXJ3Q1pXODZFWDc4dCtMMFA4aUhRTDg2NmkzYW15UENjaUZDMFNHNzRweDFs?=
+ =?utf-8?B?Y1ROYUZWYVorWWpGdzRaS3NWalprcmw3TlRDKzZvMFJTTFpsdUpuc1ZCWDFI?=
+ =?utf-8?B?SFBrSndGRHpNdTVrV0xITmNUbEtKcXpKejd6bmNkTFRzSVBrMDRXTXdwR2o1?=
+ =?utf-8?B?UC9xdzZmWkhZME8zNzNoZ3doZzVYdzlza24xTHJZb21LbW9vL3BHQ1B6Z3Fa?=
+ =?utf-8?B?QURLZHFwUzgxRldYZ1NmQWUzN1k4UHd5anBhd1NGQWxCa0c1QnYreU5xcDly?=
+ =?utf-8?B?dGdEV0ZYSFM2WUF4WU5ERWNkOGJsZllabStPb3lIR1hhOGk2WEtlN3hKWC9Q?=
+ =?utf-8?B?SzMzYng1VVdCVFc4WlBtTWdSUmZxVDdiTDVqTXdYN0ZaSit3NlpuOXlCdG9J?=
+ =?utf-8?B?QW5QNVpBNDRhMy9UUGN2TitxcmhSb0FVWFZzSzRGWjc1aHV4a0hyQ1ZxcW9X?=
+ =?utf-8?B?S2VFUCtkUXZMVlBNcVZPZGJmRVdsQkNNTllmRnZRb29kZ091Y1ZHTnJ1ek9r?=
+ =?utf-8?B?M3hXRkZjaUt6SlFKbDhoKzJVamNOZ3U4amRSSUUvaFF3SE14NHRVV3J1UVN5?=
+ =?utf-8?B?N3VkM3U0aHo3QVlsSVk1OE1qcDZoL3A3a2lFUWxDTTk5emNoUDAvMmRTd0FO?=
+ =?utf-8?B?bzIveEhRdkl0KzFCSkRCS1VGN2V3MjdvQWwvUjZKOGd5NzZkeGRpdjNtR3FQ?=
+ =?utf-8?B?cGxuZUN5UXhLcFVORlY3K1ZBZGVWcDJmUlFPYThUc25qaXR0YjkxRG9ZNlQ0?=
+ =?utf-8?B?aWhpcXhWL3RYYjNmV0J5eVZjS3ZRQ1p5MXZDdU42ay8yb2VwcXdoM2xmLy9Z?=
+ =?utf-8?B?ZlQ4dThPb0hFaGl4RnVMc3JlQksxMjJSUFQreXBrb3lvWkJKK04rNmhEL0dy?=
+ =?utf-8?B?Z3d5OHU4bFB4MVovN3pvZWt4bytnbXljMVNPYnZBU1hNWmM5RGYzcWdnV1V1?=
+ =?utf-8?B?Z1JFY2tMb2VEd0VWKzk3UHFHeitYZlBETFh4U1JiMlh5dTREeUZzMlYwYlpL?=
+ =?utf-8?B?bDVkOHRhQ2hyWlFuVnppdXJ3UUJqQnBjTk1LMGtyYWJOd2NDeXBJZElBRjhX?=
+ =?utf-8?B?b0hQZklCUEEvQUxaZUk5Ry9pTzh1eFc4NWZhSE9RR2ZzazVTLzNheldnV0ZJ?=
+ =?utf-8?B?eUhhRXQ5VkJVZXlJeDJmQ3UwRDR6aE4yeklaVXdjVUlnV3NkOTF0am54VDR2?=
+ =?utf-8?Q?eVY3lBQsvcIfeY0FiN099+vUG?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9cd09cbe-96f0-4421-fe76-08dcd2c364b0
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2024 00:39:43.1120
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: imJOMHR4G7Q/g55RyRyK3JU8WOFkJYQjfu42hyyzrZfk/VbCYkmBCHeG4xaj3dxUeRVwu/c1KAK2JApg4EQk0g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7630
+X-OriginatorOrg: intel.com
 
---Sig_/BgoG=2Qwefxr8tuuU6i4Z3o
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-After merging the loongarch tree, today's linux-next build (powerpc
-ppc64_defconfig) failed like this:
+On 4/09/2024 3:07 pm, Rick Edgecombe wrote:
+> Teach EPT violation helper to check shared mask of a GPA to find out
+> whether the GPA is for private memory.
+> 
+> When EPT violation is triggered after TD accessing a private GPA, KVM will
+> exit to user space if the corresponding GFN's attribute is not private.
+> User space will then update GFN's attribute during its memory conversion
+> process. After that, TD will re-access the private GPA and trigger EPT
+> violation again. Only with GFN's attribute matches to private, KVM will
+> fault in private page, map it in mirrored TDP root, and propagate changes
+> to private EPT to resolve the EPT violation.
+> 
+> Relying on GFN's attribute tracking xarray to determine if a GFN is
+> private, as for KVM_X86_SW_PROTECTED_VM, may lead to endless EPT
+> violations.
+> 
+> Co-developed-by: Yan Zhao <yan.y.zhao@intel.com>
+> Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+> TDX MMU part 2 v1:
+>   - Split from "KVM: TDX: handle ept violation/misconfig exit"
+> ---
+>   arch/x86/kvm/vmx/common.h | 13 +++++++++++++
+>   1 file changed, 13 insertions(+)
+> 
+> diff --git a/arch/x86/kvm/vmx/common.h b/arch/x86/kvm/vmx/common.h
+> index 78ae39b6cdcd..10aa12d45097 100644
+> --- a/arch/x86/kvm/vmx/common.h
+> +++ b/arch/x86/kvm/vmx/common.h
+> @@ -6,6 +6,12 @@
+>   
+>   #include "mmu.h"
+>   
+> +static inline bool kvm_is_private_gpa(struct kvm *kvm, gpa_t gpa)
+> +{
+> +	/* For TDX the direct mask is the shared mask. */
+> +	return !kvm_is_addr_direct(kvm, gpa);
+> +}
 
-In file included from include/trace/define_trace.h:102,
-                 from include/trace/events/kvm.h:530,
-                 from arch/powerpc/kvm/../../../virt/kvm/kvm_main.c:65:
-include/trace/events/kvm.h: In function 'trace_raw_output_kvm_iocsr':
-include/trace/events/kvm.h:244:44: error: left-hand operand of comma expres=
-sion has no effect [-Werror=3Dunused-value]
-  244 |         ({ KVM_TRACE_IOCSR_READ_UNSATISFIED, "unsatisfied-read" }, \
-      |                                            ^
-include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
-EVENT_CLASS'
-  203 |         trace_event_printf(iter, print);                           =
-     \
-      |                                  ^~~~~
-include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
-   45 |                              PARAMS(print));                   \
-      |                              ^~~~~~
-include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
-  248 | TRACE_EVENT(kvm_iocsr,
-      | ^~~~~~~~~~~
-include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
-  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
-      |         ^~~~~~~~~
-include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
-bolic'
-  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
-iocsr),
-      |                   ^~~~~~~~~~~~~~~~
-include/trace/events/kvm.h:270:51: note: in expansion of macro 'kvm_trace_s=
-ymbol_iocsr'
-  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
-iocsr),
-      |                                                   ^~~~~~~~~~~~~~~~~=
-~~~~~
-include/trace/events/kvm.h:244:65: error: expected ';' before '}' token
-  244 |         ({ KVM_TRACE_IOCSR_READ_UNSATISFIED, "unsatisfied-read" }, \
-      |                                                                 ^
-include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
-EVENT_CLASS'
-  203 |         trace_event_printf(iter, print);                           =
-     \
-      |                                  ^~~~~
-include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
-   45 |                              PARAMS(print));                   \
-      |                              ^~~~~~
-include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
-  248 | TRACE_EVENT(kvm_iocsr,
-      | ^~~~~~~~~~~
-include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
-  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
-      |         ^~~~~~~~~
-include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
-bolic'
-  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
-iocsr),
-      |                   ^~~~~~~~~~~~~~~~
-include/trace/events/kvm.h:270:51: note: in expansion of macro 'kvm_trace_s=
-ymbol_iocsr'
-  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
-iocsr),
-      |                                                   ^~~~~~~~~~~~~~~~~=
-~~~~~
-include/trace/events/kvm.h:244:66: error: expected ')' before ',' token
-  244 |         ({ KVM_TRACE_IOCSR_READ_UNSATISFIED, "unsatisfied-read" }, \
-      |                                                                  ^
-include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
-EVENT_CLASS'
-  203 |         trace_event_printf(iter, print);                           =
-     \
-      |                                  ^~~~~
-include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
-   45 |                              PARAMS(print));                   \
-      |                              ^~~~~~
-include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
-  248 | TRACE_EVENT(kvm_iocsr,
-      | ^~~~~~~~~~~
-include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
-  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
-      |         ^~~~~~~~~
-include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
-bolic'
-  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
-iocsr),
-      |                   ^~~~~~~~~~~~~~~~
-include/trace/events/kvm.h:270:51: note: in expansion of macro 'kvm_trace_s=
-ymbol_iocsr'
-  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
-iocsr),
-      |                                                   ^~~~~~~~~~~~~~~~~=
-~~~~~
-include/trace/events/kvm.h:244:9: error: initialization of 'long unsigned i=
-nt' from 'char *' makes integer from pointer without a cast [-Wint-conversi=
-on]
-  244 |         ({ KVM_TRACE_IOCSR_READ_UNSATISFIED, "unsatisfied-read" }, \
-      |         ^
-include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
-EVENT_CLASS'
-  203 |         trace_event_printf(iter, print);                           =
-     \
-      |                                  ^~~~~
-include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
-   45 |                              PARAMS(print));                   \
-      |                              ^~~~~~
-include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
-  248 | TRACE_EVENT(kvm_iocsr,
-      | ^~~~~~~~~~~
-include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
-  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
-      |         ^~~~~~~~~
-include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
-bolic'
-  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
-iocsr),
-      |                   ^~~~~~~~~~~~~~~~
-include/trace/events/kvm.h:270:51: note: in expansion of macro 'kvm_trace_s=
-ymbol_iocsr'
-  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
-iocsr),
-      |                                                   ^~~~~~~~~~~~~~~~~=
-~~~~~
-include/trace/events/kvm.h:244:9: note: (near initialization for 'symbols[0=
-].mask')
-  244 |         ({ KVM_TRACE_IOCSR_READ_UNSATISFIED, "unsatisfied-read" }, \
-      |         ^
-include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
-EVENT_CLASS'
-  203 |         trace_event_printf(iter, print);                           =
-     \
-      |                                  ^~~~~
-include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
-   45 |                              PARAMS(print));                   \
-      |                              ^~~~~~
-include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
-  248 | TRACE_EVENT(kvm_iocsr,
-      | ^~~~~~~~~~~
-include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
-  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
-      |         ^~~~~~~~~
-include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
-bolic'
-  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
-iocsr),
-      |                   ^~~~~~~~~~~~~~~~
-include/trace/events/kvm.h:270:51: note: in expansion of macro 'kvm_trace_s=
-ymbol_iocsr'
-  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
-iocsr),
-      |                                                   ^~~~~~~~~~~~~~~~~=
-~~~~~
-include/trace/events/kvm.h:244:9: error: initializer element is not constant
-  244 |         ({ KVM_TRACE_IOCSR_READ_UNSATISFIED, "unsatisfied-read" }, \
-      |         ^
-include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
-EVENT_CLASS'
-  203 |         trace_event_printf(iter, print);                           =
-     \
-      |                                  ^~~~~
-include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
-   45 |                              PARAMS(print));                   \
-      |                              ^~~~~~
-include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
-  248 | TRACE_EVENT(kvm_iocsr,
-      | ^~~~~~~~~~~
-include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
-  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
-      |         ^~~~~~~~~
-include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
-bolic'
-  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
-iocsr),
-      |                   ^~~~~~~~~~~~~~~~
-include/trace/events/kvm.h:270:51: note: in expansion of macro 'kvm_trace_s=
-ymbol_iocsr'
-  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
-iocsr),
-      |                                                   ^~~~~~~~~~~~~~~~~=
-~~~~~
-include/trace/events/kvm.h:244:9: note: (near initialization for 'symbols[0=
-].mask')
-  244 |         ({ KVM_TRACE_IOCSR_READ_UNSATISFIED, "unsatisfied-read" }, \
-      |         ^
-include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
-EVENT_CLASS'
-  203 |         trace_event_printf(iter, print);                           =
-     \
-      |                                  ^~~~~
-include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
-   45 |                              PARAMS(print));                   \
-      |                              ^~~~~~
-include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
-  248 | TRACE_EVENT(kvm_iocsr,
-      | ^~~~~~~~~~~
-include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
-  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
-      |         ^~~~~~~~~
-include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
-bolic'
-  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
-iocsr),
-      |                   ^~~~~~~~~~~~~~~~
-include/trace/events/kvm.h:270:51: note: in expansion of macro 'kvm_trace_s=
-ymbol_iocsr'
-  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
-iocsr),
-      |                                                   ^~~~~~~~~~~~~~~~~=
-~~~~~
-include/trace/stages/stage3_trace_output.h:77:37: error: braces around scal=
-ar initializer [-Werror]
-   77 |                 static const struct trace_print_flags symbols[] =3D=
-       \
-      |                                     ^~~~~~~~~~~~~~~~~
-include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
-EVENT_CLASS'
-  203 |         trace_event_printf(iter, print);                           =
-     \
-      |                                  ^~~~~
-include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
-   45 |                              PARAMS(print));                   \
-      |                              ^~~~~~
-include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
-  248 | TRACE_EVENT(kvm_iocsr,
-      | ^~~~~~~~~~~
-include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
-  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
-      |         ^~~~~~~~~
-include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
-bolic'
-  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
-iocsr),
-      |                   ^~~~~~~~~~~~~~~~
-include/trace/stages/stage3_trace_output.h:77:37: note: (near initializatio=
-n for 'symbols[0].name')
-   77 |                 static const struct trace_print_flags symbols[] =3D=
-       \
-      |                                     ^~~~~~~~~~~~~~~~~
-include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
-EVENT_CLASS'
-  203 |         trace_event_printf(iter, print);                           =
-     \
-      |                                  ^~~~~
-include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
-   45 |                              PARAMS(print));                   \
-      |                              ^~~~~~
-include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
-  248 | TRACE_EVENT(kvm_iocsr,
-      | ^~~~~~~~~~~
-include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
-  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
-      |         ^~~~~~~~~
-include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
-bolic'
-  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
-iocsr),
-      |                   ^~~~~~~~~~~~~~~~
-include/trace/stages/stage3_trace_output.h:78:43: error: initialization of =
-'const char *' from 'int' makes pointer from integer without a cast [-Wint-=
-conversion]
-   78 |                         { symbol_array, { -1, NULL }};             =
-     \
-      |                                           ^
-include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
-EVENT_CLASS'
-  203 |         trace_event_printf(iter, print);                           =
-     \
-      |                                  ^~~~~
-include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
-   45 |                              PARAMS(print));                   \
-      |                              ^~~~~~
-include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
-  248 | TRACE_EVENT(kvm_iocsr,
-      | ^~~~~~~~~~~
-include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
-  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
-      |         ^~~~~~~~~
-include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
-bolic'
-  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
-iocsr),
-      |                   ^~~~~~~~~~~~~~~~
-include/trace/stages/stage3_trace_output.h:78:43: note: (near initializatio=
-n for 'symbols[0].name')
-   78 |                         { symbol_array, { -1, NULL }};             =
-     \
-      |                                           ^
-include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
-EVENT_CLASS'
-  203 |         trace_event_printf(iter, print);                           =
-     \
-      |                                  ^~~~~
-include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
-   45 |                              PARAMS(print));                   \
-      |                              ^~~~~~
-include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
-  248 | TRACE_EVENT(kvm_iocsr,
-      | ^~~~~~~~~~~
-include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
-  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
-      |         ^~~~~~~~~
-include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
-bolic'
-  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
-iocsr),
-      |                   ^~~~~~~~~~~~~~~~
-include/linux/stddef.h:8:14: error: excess elements in scalar initializer [=
--Werror]
-    8 | #define NULL ((void *)0)
-      |              ^
-include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
-EVENT_CLASS'
-  203 |         trace_event_printf(iter, print);                           =
-     \
-      |                                  ^~~~~
-include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
-   45 |                              PARAMS(print));                   \
-      |                              ^~~~~~
-include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
-  248 | TRACE_EVENT(kvm_iocsr,
-      | ^~~~~~~~~~~
-include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
-  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
-      |         ^~~~~~~~~
-include/trace/stages/stage3_trace_output.h:78:47: note: in expansion of mac=
-ro 'NULL'
-   78 |                         { symbol_array, { -1, NULL }};             =
-     \
-      |                                               ^~~~
-include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
-bolic'
-  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
-iocsr),
-      |                   ^~~~~~~~~~~~~~~~
-include/linux/stddef.h:8:14: note: (near initialization for 'symbols[0].nam=
-e')
-    8 | #define NULL ((void *)0)
-      |              ^
-include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
-EVENT_CLASS'
-  203 |         trace_event_printf(iter, print);                           =
-     \
-      |                                  ^~~~~
-include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
-   45 |                              PARAMS(print));                   \
-      |                              ^~~~~~
-include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
-  248 | TRACE_EVENT(kvm_iocsr,
-      | ^~~~~~~~~~~
-include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
-  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
-      |         ^~~~~~~~~
-include/trace/stages/stage3_trace_output.h:78:47: note: in expansion of mac=
-ro 'NULL'
-   78 |                         { symbol_array, { -1, NULL }};             =
-     \
-      |                                               ^~~~
-include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
-bolic'
-  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
-iocsr),
-      |                   ^~~~~~~~~~~~~~~~
-include/trace/stages/stage3_trace_output.h:78:25: error: missing braces aro=
-und initializer [-Werror=3Dmissing-braces]
-   78 |                         { symbol_array, { -1, NULL }};             =
-     \
-      |                         ^
-include/trace/trace_events.h:203:34: note: in definition of macro 'DECLARE_=
-EVENT_CLASS'
-  203 |         trace_event_printf(iter, print);                           =
-     \
-      |                                  ^~~~~
-include/trace/trace_events.h:45:30: note: in expansion of macro 'PARAMS'
-   45 |                              PARAMS(print));                   \
-      |                              ^~~~~~
-include/trace/events/kvm.h:248:1: note: in expansion of macro 'TRACE_EVENT'
-  248 | TRACE_EVENT(kvm_iocsr,
-      | ^~~~~~~~~~~
-include/trace/events/kvm.h:269:9: note: in expansion of macro 'TP_printk'
-  269 |         TP_printk("iocsr %s len %u gpa 0x%llx val 0x%llx",
-      |         ^~~~~~~~~
-include/trace/events/kvm.h:270:19: note: in expansion of macro '__print_sym=
-bolic'
-  270 |                   __print_symbolic(__entry->type, kvm_trace_symbol_=
-iocsr),
-      |                   ^~~~~~~~~~~~~~~~
-cc1: all warnings being treated as errors
+Does this get used in any other places?  If no I think we can open code 
+this in the __vmx_handle_ept_violation().
 
-Caused by commit
+The reason is I think the name kvm_is_private_gpa() is too generic and 
+this is in the header file.  E.g., one can come up with another 
+kvm_is_private_gpa() checking the memory attributes to tell whether a 
+GPA is private.
 
-  a7e93cf65d8a ("LoongArch: KVM: Add iocsr and mmio bus simulation in kerne=
-l")
+Or we rename it to something like
 
-I have used the loongarch tree from next-20240911 for today.
+	__vmx_is_faulting_gpa_private()
+?
 
---=20
-Cheers,
-Stephen Rothwell
+Which clearly says it is checking the *faulting* GPA.
 
---Sig_/BgoG=2Qwefxr8tuuU6i4Z3o
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+> +
+>   static inline int __vmx_handle_ept_violation(struct kvm_vcpu *vcpu, gpa_t gpa,
+>   					     unsigned long exit_qualification)
+>   {
+> @@ -28,6 +34,13 @@ static inline int __vmx_handle_ept_violation(struct kvm_vcpu *vcpu, gpa_t gpa,
+>   		error_code |= (exit_qualification & EPT_VIOLATION_GVA_TRANSLATED) ?
+>   			      PFERR_GUEST_FINAL_MASK : PFERR_GUEST_PAGE_MASK;
+>   
+> +	/*
+> +	 * Don't rely on GFN's attribute tracking xarray to prevent EPT violation
+> +	 * loops.
+> +	 */
+> +	if (kvm_is_private_gpa(vcpu->kvm, gpa))
+> +		error_code |= PFERR_PRIVATE_ACCESS;
+> +
+>   	return kvm_mmu_page_fault(vcpu, gpa, error_code, NULL, 0);
+>   }
+>   
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbiN0wACgkQAVBC80lX
-0GwSvAf/T3zbHEcH2j9lx4lH2iS0W1DLLLzfxMqQGvdjApgyg8da20xxuNnG0ino
-FhaoS9BUjUyajAyQZrICP03NSNSZG7l9e/wyoRJ8qzptlAWWylL6vFUPXYoL0dFw
-ePKb2FlqOz8GU2LRIY8jMkVzXX3wa4atSBrzTzjkquZH4aDTnLgypfzifclWO+5k
-BUySVgE+aaufzgpSeQpDeZCRnLpdT+jWfS9tAwVAjcopFCNcfYeGacX12AB69WSP
-tPPD1hLX/uxvs4ASV40905uexEOn0WDqW8tV4AqAnKcL1lQurEM04Z6IXpqFbn2y
-s7opQ7NQHBEcUoac57ZxU8NYu9DM0w==
-=xpJl
------END PGP SIGNATURE-----
-
---Sig_/BgoG=2Qwefxr8tuuU6i4Z3o--
 
