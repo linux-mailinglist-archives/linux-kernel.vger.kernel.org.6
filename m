@@ -1,45 +1,71 @@
-Return-Path: <linux-kernel+bounces-325922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C698975FD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 05:40:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D020975FD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 05:47:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 325831F23BD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 03:40:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E76CB233EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 03:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78FAF17BB3A;
-	Thu, 12 Sep 2024 03:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF17187855;
+	Thu, 12 Sep 2024 03:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FS1HsBva"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="hFtDiCdv"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CAEC41C85;
-	Thu, 12 Sep 2024 03:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684971581E5
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 03:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726112422; cv=none; b=hgTPUE5MPpejV9L3VYpEZ2TfE+M0Y9TSrcFluqq6ctXWsNbAe0NsQSQMqeOHR+SCmnazf+r+raGWVJ2Oqc5om+qnKVlmHh5u/TL+73ySo69028f2RY2cxBywrUnshKX6b+LhGCMRfOZPcWO+A2hgH8JbjyIcZZvvc8HdTlbvGZQ=
+	t=1726112843; cv=none; b=rlIJzYdWNbYPM9VIz/g2GvxBSZh4zEpf7w5knnC31VW+k+KjPASn1K4IT2UrsfECnV0jxQKdDkJzVZz7HzSOANbcK5lbJSkoZ3+rwdvuuAr8Ly8TWXId42NrwLoQLWKA/wJNGiAHq+4dqCZKpm2JZJz6Ljl4kwVbNTIQu7PBneQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726112422; c=relaxed/simple;
-	bh=OgBfoF0uQJL8VbO/B+LInj/jOK3zQ8JOapCbQRKtO7g=;
+	s=arc-20240116; t=1726112843; c=relaxed/simple;
+	bh=hy2gvfBgvSG2CLZXo5GsU0amQH43X4/Zx2HrHavroIQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cRDRN3EDXD8vx7i1Uc9XO42Dt9hpbr9KQsCOo6hJgrY9IPKMSUwuvI8UMWGlWWa9+jm5VeyUzBUNBkm1W/WlJrB50S15SfO7ELhCizOZQLk9y4k39+q05v2WPq8NXZgt2CpwPWFrvJeD9/8lyJ0wJUcu8pmDYA7SPpU7UNosRBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FS1HsBva; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1726112416; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=Hlkq/ftincoERyzjSrqe4weNoSJrTUxkxGsEH3U8sFU=;
-	b=FS1HsBva0E/FfnhUZy5LJ/a1sCcH6oJETfUo24gzeLRJHFdZA1mUhao8ccYs9Y4swYiNhVp72lODLI4VlZmXl5T+Y9DyZqFTPyo5rw94kRXGQn6oMnehdGINvv0ujG4OKI880vUBQs+D7UGFBmqCAqVpr9QrxdVybqxSQZsNQVU=
-Received: from 30.221.129.22(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0WEpzPN9_1726112415)
-          by smtp.aliyun-inc.com;
-          Thu, 12 Sep 2024 11:40:16 +0800
-Message-ID: <ec511307-c8ae-4551-a716-e3096ba604df@linux.alibaba.com>
-Date: Thu, 12 Sep 2024 11:40:15 +0800
+	 In-Reply-To:Content-Type; b=UoaFNSeQfW3wtx8TMP/miB/TBW+S5DeGqAC5ldWgIB6fDVXqIipEEtaFVUAhSeNYRjGEtX0T8WSgiZPyYubMrixjrCicsx8qeei1UM+SLyoz38Yth40ChzPwrUza7x8guQdQDiXRNbGIadUa1XMJKLHNjuDqWZg563oektHgpBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=hFtDiCdv; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2057c6c57b5so2415155ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 20:47:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1726112842; x=1726717642; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=zpi5WjCruGgU8/71SyqcIeKcw1xnAxd9pukWEA3iPRo=;
+        b=hFtDiCdv19nLIWdozBSqvwbIZf79IZK0epHZrlHicIpEf2rsLU5ksy6vOjRoy2pwNU
+         0BZCTK6xY/Acnh6+5+Wl74uu37kxor3peH9eUOhMsnkSl6nQ6J2IvR4CnUIKUHzH0RYj
+         hNi2h8dECcGjtFPwM7uEHh5V2eVri0imxbEtM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726112842; x=1726717642;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zpi5WjCruGgU8/71SyqcIeKcw1xnAxd9pukWEA3iPRo=;
+        b=Wu56J2uocK6jbWvd7H6PN98vbT+IT4mHlnUw10tJ23wLlkeW+Qbslx6xxhsV+Ua9Fh
+         ujmiCSTVEyUufnvBolkrSW9Wq+w4h6mh7pROwHhxA16LqxS0uR9ZAN133LUObNHeEvMc
+         gUQI61fES3RNu1JJktachxLMhJaiZf7btjwTuKYe/AT11OEV1OY7D8Ad9a2SNYCV74RR
+         WDZerEFMflthRHYEhBt0f2SkbGMDX7uhJMVerDjH/FQugWUvwp4xH+no56wp9iZB/W2P
+         3Jh528LBzcqDZVSp6ZqBGrVwVGd34f0J8q9zynBWNhBhGMHPS+/00b1dMQ2mSfF8xSxy
+         zFeg==
+X-Forwarded-Encrypted: i=1; AJvYcCXWeQoLk57WQSJhfbwY8d3w4peBA1Zo6OpKttNRxL/6Nb0VnkHkMvUlcS62L00MRRFIhbR1sDTugcthN78=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx18Xy8VGc8La06UnAm4rzGy85lBvfaKcUSLvG4LhR9v4x+BKpg
+	iSS4lRX5MWSZkuO5atfpVSLCiaNfyrNgPJxpcDtHjaB5f1etQ2hSdU7ECqezsA==
+X-Google-Smtp-Source: AGHT+IFem+1x/fe9+X54nK3rU13rdd0fY1tEDb6WUxX7J3VusaUVKUpL8i43ZGtGxq7FK2JrdjeN3Q==
+X-Received: by 2002:a17:902:e80f:b0:205:5f95:c283 with SMTP id d9443c01a7336-2074c5d28d9mr97113095ad.4.1726112841361;
+        Wed, 11 Sep 2024 20:47:21 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076afdd8b2sm6281215ad.175.2024.09.11.20.47.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Sep 2024 20:47:20 -0700 (PDT)
+Message-ID: <2ba9dfa8-2c54-43bd-aa41-8ab87a7b2dc8@broadcom.com>
+Date: Wed, 11 Sep 2024 20:47:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,166 +73,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC V2 1/1] ocfs2: reserve space for inline xattr before
- attaching reflink tree
-To: Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>
-Cc: junxiao.bi@oracle.com, rajesh.sivaramasubramaniom@oracle.com,
- ocfs2-devel@lists.linux.dev, stable@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240912031421.853017-1-gautham.ananthakrishna@oracle.com>
+Subject: Re: [PATCH v5 01/10] MIPS: smp: Make IPI interrupts scalable
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Huacai Chen
+ <chenhuacai@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Serge Semin <fancer.lancer@gmail.com>, Paul Burton <paulburton@kernel.org>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240908-b4-mips-ipi-improvements-v5-0-be8617dd2e53@flygoat.com>
+ <20240908-b4-mips-ipi-improvements-v5-1-be8617dd2e53@flygoat.com>
 Content-Language: en-US
-From: Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <20240912031421.853017-1-gautham.ananthakrishna@oracle.com>
-Content-Type: text/plain; charset=UTF-8
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20240908-b4-mips-ipi-improvements-v5-1-be8617dd2e53@flygoat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
-On 9/12/24 11:14 AM, Gautham Ananthakrishna wrote:
-> One of our customers reported a crash and a corrupted ocfs2 filesystem.
-> The crash was due to the detection of corruption. Upon troubleshooting,
-> the fsck -fn output showed the below corruption
+On 9/8/2024 3:20 AM, Jiaxun Yang wrote:
+> Define enum ipi_message_type as other architectures did to
+> allow easy extension to number of IPI interrupts, fiddle
+> around platform IPI code to adopt to the new infra, add
+> extensive BUILD_BUG_ON on IPI numbers to ensure future
+> extensions won't break existing platforms.
 > 
-> [EXTENT_LIST_FREE] Extent list in owner 33080590 claims 230 as the next free chain record,
-> but fsck believes the largest valid value is 227.  Clamp the next record value? n
+> IPI related stuff are pulled to asm/ipi.h to avoid include
+> linux/interrupt.h in asm/smp.h.
 > 
-> The stat output from the debugfs.ocfs2 showed the following corruption
-> where the "Next Free Rec:" had overshot the "Count:" in the root metadata
-> block.
-> 
->         Inode: 33080590   Mode: 0640   Generation: 2619713622 (0x9c25a856)
->         FS Generation: 904309833 (0x35e6ac49)
->         CRC32: 00000000   ECC: 0000
->         Type: Regular   Attr: 0x0   Flags: Valid
->         Dynamic Features: (0x16) HasXattr InlineXattr Refcounted
->         Extended Attributes Block: 0  Extended Attributes Inline Size: 256
->         User: 0 (root)   Group: 0 (root)   Size: 281320357888
->         Links: 1   Clusters: 141738
->         ctime: 0x66911b56 0x316edcb8 -- Fri Jul 12 06:02:30.829349048 2024
->         atime: 0x66911d6b 0x7f7a28d -- Fri Jul 12 06:11:23.133669517 2024
->         mtime: 0x66911b56 0x12ed75d7 -- Fri Jul 12 06:02:30.317552087 2024
->         dtime: 0x0 -- Wed Dec 31 17:00:00 1969
->         Refcount Block: 2777346
->         Last Extblk: 2886943   Orphan Slot: 0
->         Sub Alloc Slot: 0   Sub Alloc Bit: 14
->         Tree Depth: 1   Count: 227   Next Free Rec: 230
->         ## Offset        Clusters       Block#
->         0  0             2310           2776351
->         1  2310          2139           2777375
->         2  4449          1221           2778399
->         3  5670          731            2779423
->         4  6401          566            2780447
->         .......          ....           .......
->         .......          ....           .......
-> 
-> The issue was in the reflink workfow while reserving space for inline xattr.
-> The problematic function is ocfs2_reflink_xattr_inline(). By the time this
-> function is called the reflink tree is already recreated at the destination
-> inode from the source inode. At this point, this function reserves space
-> space inline xattrs at the destination inode without even checking if there
-> is space at the root metadata block. It simply reduces the l_count from 243
-> to 227 thereby making space of 256 bytes for inline xattr whereas the inode
-> already has extents beyond this index (in this case upto 230), thereby causing
-> corruption.
-> 
-> The fix for this is to reserve space for inline metadata before the at the
-> destination inode before the reflink tree gets recreated. The customer has
-> verified the fix.
-> 
-> Fixes: ef962df057aa ("ocfs2: xattr: fix inlined xattr reflink")
-> Cc: stable@vger.kernel.org
-> 
-> Signed-off-by: Gautham Ananthakrishna <gautham.ananthakrishna@oracle.com>
+> Tested-by: Serge Semin <fancer.lancer@gmail.com>
+> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
 > ---
->  fs/ocfs2/refcounttree.c | 26 ++++++++++++++++++++++++--
->  fs/ocfs2/xattr.c        | 11 +----------
->  2 files changed, 25 insertions(+), 12 deletions(-)
-> 
-> diff --git a/fs/ocfs2/refcounttree.c b/fs/ocfs2/refcounttree.c
-> index 3f80a56d0d60..1d427da06bee 100644
-> --- a/fs/ocfs2/refcounttree.c
-> +++ b/fs/ocfs2/refcounttree.c
-> @@ -25,6 +25,7 @@
->  #include "namei.h"
->  #include "ocfs2_trace.h"
->  #include "file.h"
-> +#include "symlink.h"
->  
->  #include <linux/bio.h>
->  #include <linux/blkdev.h>
-> @@ -4155,8 +4156,9 @@ static int __ocfs2_reflink(struct dentry *old_dentry,
->  	int ret;
->  	struct inode *inode = d_inode(old_dentry);
->  	struct buffer_head *new_bh = NULL;
-> +	struct ocfs2_inode_info *oi = OCFS2_I(inode);
->  
-> -	if (OCFS2_I(inode)->ip_flags & OCFS2_INODE_SYSTEM_FILE) {
-> +	if (oi->ip_flags & OCFS2_INODE_SYSTEM_FILE) {
->  		ret = -EINVAL;
->  		mlog_errno(ret);
->  		goto out;
-> @@ -4182,6 +4184,26 @@ static int __ocfs2_reflink(struct dentry *old_dentry,
->  		goto out_unlock;
->  	}
->  
-> +	if ((oi->ip_dyn_features & OCFS2_HAS_XATTR_FL) &&
-> +	    (oi->ip_dyn_features & OCFS2_INLINE_XATTR_FL)) {
-> +		/*
-> +		 * Adjust extent record count to reserve space for extended attribute.
-> +		 * Inline data count had been adjusted in ocfs2_duplicate_inline_data().
-> +		 */
-> +		struct ocfs2_inode_info *ni = OCFS2_I(new_inode);
+>   arch/mips/cavium-octeon/smp.c         | 111 ++++++++++--------------------
+>   arch/mips/fw/arc/init.c               |   1 -
+>   arch/mips/include/asm/ipi.h           |  34 ++++++++++
+>   arch/mips/include/asm/octeon/octeon.h |   2 +
+>   arch/mips/include/asm/smp-ops.h       |   8 +--
+>   arch/mips/include/asm/smp.h           |  41 +++++------
+>   arch/mips/kernel/smp-bmips.c          |  43 ++++++------
 
-Could you please rename it to 'new_oi'?
-Other looks good to me.
+For smp-bmips.c:
 
-Joseph
-> +
-> +		if (!(ni->ip_dyn_features & OCFS2_INLINE_DATA_FL) &&
-> +		    !(ocfs2_inode_is_fast_symlink(new_inode))) {
-> +			struct ocfs2_dinode *new_di = new_bh->b_data;
-> +			struct ocfs2_dinode *old_di = old_bh->b_data;
-> +			struct ocfs2_extent_list *el = &new_di->id2.i_list;
-> +			int inline_size = le16_to_cpu(old_di->i_xattr_inline_size);
-> +
-> +			le16_add_cpu(&el->l_count, -(inline_size /
-> +					sizeof(struct ocfs2_extent_rec)));
-> +		}
-> +	}
-> +
->  	ret = ocfs2_create_reflink_node(inode, old_bh,
->  					new_inode, new_bh, preserve);
->  	if (ret) {
-> @@ -4189,7 +4211,7 @@ static int __ocfs2_reflink(struct dentry *old_dentry,
->  		goto inode_unlock;
->  	}
->  
-> -	if (OCFS2_I(inode)->ip_dyn_features & OCFS2_HAS_XATTR_FL) {
-> +	if (oi->ip_dyn_features & OCFS2_HAS_XATTR_FL) {
->  		ret = ocfs2_reflink_xattrs(inode, old_bh,
->  					   new_inode, new_bh,
->  					   preserve);
-> diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
-> index 3b81213ed7b8..a9f716ec89e2 100644
-> --- a/fs/ocfs2/xattr.c
-> +++ b/fs/ocfs2/xattr.c
-> @@ -6511,16 +6511,7 @@ static int ocfs2_reflink_xattr_inline(struct ocfs2_xattr_reflink *args)
->  	}
->  
->  	new_oi = OCFS2_I(args->new_inode);
-> -	/*
-> -	 * Adjust extent record count to reserve space for extended attribute.
-> -	 * Inline data count had been adjusted in ocfs2_duplicate_inline_data().
-> -	 */
-> -	if (!(new_oi->ip_dyn_features & OCFS2_INLINE_DATA_FL) &&
-> -	    !(ocfs2_inode_is_fast_symlink(args->new_inode))) {
-> -		struct ocfs2_extent_list *el = &new_di->id2.i_list;
-> -		le16_add_cpu(&el->l_count, -(inline_size /
-> -					sizeof(struct ocfs2_extent_rec)));
-> -	}
-> +
->  	spin_lock(&new_oi->ip_lock);
->  	new_oi->ip_dyn_features |= OCFS2_HAS_XATTR_FL | OCFS2_INLINE_XATTR_FL;
->  	new_di->i_dyn_features = cpu_to_le16(new_oi->ip_dyn_features);
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
 
