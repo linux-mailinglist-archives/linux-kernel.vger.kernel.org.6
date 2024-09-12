@@ -1,267 +1,160 @@
-Return-Path: <linux-kernel+bounces-326274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CB589765C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:36:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A073B9765BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA085B23D08
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:36:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB5B01C20E0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E287119EEA1;
-	Thu, 12 Sep 2024 09:36:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=ps.report@gmx.net header.b="tEpjkT3e"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93EB819CC15;
+	Thu, 12 Sep 2024 09:35:28 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C43C319E981;
-	Thu, 12 Sep 2024 09:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978BF18DF90
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726133773; cv=none; b=M82x/qJ6o0eCnOj1hPf+Xka466rhsRSpAuKLk6P0sgmOoqippDld4AyZhKLVq58Ocz5EGfR6BrQdvdw8SA8bdkllqo9/fRRPHuU1RHBQBb8lW/Nnk1X0hcw3EKv3aYbv7L1c27MyFzsdDmuICtZT2HiCJNLr97o8+kcm+HmEYN8=
+	t=1726133728; cv=none; b=A+WV1utQlTdMzLzmRNRtHeZnsLhkJrNcL5ksvSDrrUurUTppc2fy+sUXtIJaqIY6T/OVqaYeYxHFLFIZNMMXTVtzw2Fm7I0ZRg6UN9jUQioUW2yvIqW6+a3p6h8lZvgt67zgznxLXKJu0uWp3NjQeKFlC5Pigx6pOVOHwbbRUec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726133773; c=relaxed/simple;
-	bh=0B/HTcZAjFJQ/TI2gZYoPjdvaxMxvzApfSEC+vNdUfo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sV2rIacatcv/AMN3aXvIdgvQ5b13sP1ZhAR5OnqW148/bsk1ES0gaMw6kd57ldjSTq9+h6nGCLFepxhlkZmcUjrG97sliJHA8ncaaNpv+nydE9q9GELJzezwPMApiYfiHB1YQiZo+PFxfFrev6wTcSjjG/fHQE3Qse1u4shD/uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=ps.report@gmx.net header.b=tEpjkT3e; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1726133720; x=1726738520; i=ps.report@gmx.net;
-	bh=hvUwuCji2FVWW+lSXytJRqaFIqI73lvVq/rqcH0isKs=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=tEpjkT3eMCVn+uqnviql4xVq45/gmXweOJQKxu4Ak1uJshzATi6jxCsBgTxo4Spt
-	 SBeqEL4EgItJ4tShEN4Ht8NMHm6rlHDhKb7q7eQiXp3bP0Rnty+JlcEPgqCje5Ese
-	 ETcA1MyFAu83Ax6rmcZXKxKpLE+7dVA9IMyRZDLDOlrVaLB2tUkKg2TjMaR9Dbg0P
-	 ngy5tEhl4OD9C97MPMEPfXt6VE+qo8J0xTHMO1+S6QCaxV9Wocr8j/8gSJtbOOgJP
-	 XTxYA9mqXH5v491Ohlp+ZN9qr7GKfJY5gCpSSD5UHkPgmLW8jokC0TT2B0QN2j0rE
-	 2pT2ra65RButXZC04g==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from localhost ([82.135.81.136]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M6UZv-1svXqj15nl-00DIiJ; Thu, 12
- Sep 2024 11:35:20 +0200
-Date: Thu, 12 Sep 2024 11:35:18 +0200
-From: Peter Seiderer <ps.report@gmx.net>
-To: En-Wei Wu <en-wei.wu@canonical.com>
-Cc: steffen.klassert@secunet.com, herbert@gondor.apana.org.au,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kai.heng.feng@canonical.com, chia-lin.kao@canonical.com,
- anthony.wong@canonical.com, kuan-ying.lee@canonical.com,
- chris.chiu@canonical.com
-Subject: Re: [PATCH ipsec v2] xfrm: check MAC header is shown with both
- skb->mac_len and skb_mac_header_was_set()
-Message-ID: <20240912113518.5941b0cf@gmx.net>
-In-Reply-To: <20240912071702.221128-1-en-wei.wu@canonical.com>
-References: <20240912071702.221128-1-en-wei.wu@canonical.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1726133728; c=relaxed/simple;
+	bh=2Pb+1qdyBRlYhUb3gAIRIDVPdu7sAaLz7e8j7xbWY4A=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rgogkw1odXolkHda3W5Vqry8seXtvDrrLOOjf+a5fTG/6n/mY+LRUgclr6sxd7EkTlgC9bbrOqkF/WgXVfVRp+4zO+W6yMpUdofXERDFv4nzR7Y+Sq3XiJX/I8cjRdcO8mWyfJ4G2L+vyRc+k6nV98TyEnvn18aaam0tsM/kjmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39f4f43b818so24778305ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 02:35:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726133726; x=1726738526;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EvsVbk2tfqPiyiGs5RPZdw1iX6YznRXmuK6gNwuUJgo=;
+        b=RqhwFTm/WEnwegXojAYjsbmOK5qBWT1yhtb+AFTk1aJB4HzyVP2N7/ePzd/7cAzo7u
+         pIr39R7s4+j38cyUQGrAfUPDcC02wMT2I9k4JbYRZgaByFpaZ1WzwiXOnNiyaxFp/2h5
+         +5MZN+wGas3Ld7n18ll5yfEK5DJjNSTAtzzviz5mAcYC5NVrvTDHE+x89zGMKG0sOntK
+         N5Vd93HmXzscqeIweo6tSTszYhxiEJQlzRJxBpdWPxHMK/w6YNmJ2+4iUomC7iotgtti
+         vWN5KKPaNqJAOTOt7SBHa/oNxLihEqIJEg9O7qON7coZEys7mNJHqZRpH8yglBg+BO9c
+         W3AA==
+X-Forwarded-Encrypted: i=1; AJvYcCWpWYYg3YXQa4ZjlFyefpCV8sJoTi5jgkRhERTMHc70nMk9YMICl/kyX2i5qEJnqP+8Z5AOh/nlyfXGcZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyYuw3a7Ijvhon1ijg0t9f70rEJQnE39CqL1wAMu8qIlfRav1W
+	Jdmv/nt/xo2hLnTIq++MafakJWp/JWK6DdurylSzGyi4ZAb4b9CkL8Op22HFm4c2vnOsC628GuE
+	kx+NEIKFB3dTnCRr/BHq/Af8KQKX2dDygjGT7QyRq5z008bgQycCaOQ4=
+X-Google-Smtp-Source: AGHT+IH6w3R1tcY3hl7RTeHeAUFIPxt9DLwWQRQ2QECfiI8p9aN7JXHt3H6b2C+mY0LUhLNSMD6jfrvkDvYdY68Vza8XGUWbQdRe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:5t4f8lAHgnAMeehsF/T2jDXsBATlVB+wehZLyQF51TDtIESMH5/
- DPHRQNUUtBpZtGkR/uTz/NMRya1hwxZonDcwpS8pJC43IP5uFXVM/3sHO7eBEdVTJh03ypg
- o2mZVwNDz+uNmaC/rNXYzcogxYVNh+NfjWM9u2TMMMPrRpJPUe9sFvPsxxjUjdo1REHqGiV
- /qMalDmVhQ7DoVXqa++GQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:rTO7R1njQ20=;jXIBLPu1J88IO3iKqntBIN5UYZh
- tnCvSZJ6LWNoHISVvvO2euO2zNc1OYqe5iudFgkPAZgEtCLSOkSXUfWeh+y2TR6HboBdgNUAg
- Cfa8YcWfIOTvsp02pPoscFmr6Dfy8JYdGpjIEtYbpAiY2mx3ycoJ26m5z/qCG7yG4j92UcSqB
- fUbxCgpWlqWusDYMWoONA4fOo028h8wDLGDi+68bv4nJ5IdG4e5D8FdQgDqCNsgfndY5jlTPX
- NItKFeewKSRhQ44ZDIpSiOp/T0em6kRl4T9N+J3tRqmZyx2di/xmIO0+80dlVjsdwMdo4xV9G
- z5OsB/GTOXfeLMVCsEaNVc0+YS6PLSVukktEHyYwyQn57nTbEyCwmFHGNQL3MkZ5B2Oj8VpJZ
- fHwgRbkULItBmIhIlxDfEad8oRhFG9OznrHb7PrOqDkupoyDbDgh32o5moOlvFGNpfcLuWA10
- 3Q6YTR/xciRfcPTLQ51JHcNlLBM/LkpW2XMA2H2pc+KGWKhS6Qw+4H/fEIFDJzMJcKZYwyW9o
- 2anDPyrJm7ycOr/W8Tup5GOHW+4cX5GxlpR3DaVVg4bw6mBZqG0NlNxfzmmX5kyLBH9/BXjE1
- IIacJArtKFuaGn62Cfw3L4WEVmYQMv/FF5xzE3A6s9OzadEYEw+vGD5H6BmE+HCsYK/7sLSwo
- h1LcA5E2KPmq0yG/2SwDeMMqbjZ69BIOzJnmCkiGn9KqzrW2cFt2BT1N09kM46n2Byk6X9jsk
- QUKxUxbPbSQ2Oj5p6x2p+DGyYvfUFaPJPoTs+B7xC10ShSe2EpdmlCy+BeX4SNVIYaDCBCRHg
- AAtCbqxfzqnFW5NbLYMxD45QzI4WTV3J9o7xb9unLAVLs=
+X-Received: by 2002:a05:6e02:12c5:b0:39f:325f:78e6 with SMTP id
+ e9e14a558f8ab-3a0845a0d55mr16695925ab.0.1726133725753; Thu, 12 Sep 2024
+ 02:35:25 -0700 (PDT)
+Date: Thu, 12 Sep 2024 02:35:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008f00ed0621e8d33c@google.com>
+Subject: [syzbot] [btrfs?] WARNING in btrfs_destroy_inode (2)
+From: syzbot <syzbot+3f149babf28b57cee242@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello *,
+Hello,
 
-On Thu, 12 Sep 2024 15:17:02 +0800, En-Wei Wu <en-wei.wu@canonical.com> wr=
-ote:
+syzbot found the following issue on:
 
-> When we use Intel WWAN with xfrm, our system always hangs after
-> browsing websites for a few seconds. The error message shows that
-> it is a slab-out-of-bounds error:
->
-> [ 67.162014] BUG: KASAN: slab-out-of-bounds in xfrm_input+0x426e/0x6740
-> [ 67.162030] Write of size 2 at addr ffff888156cb814b by task ksoftirqd/=
-2/26
->
-> [ 67.162043] CPU: 2 UID: 0 PID: 26 Comm: ksoftirqd/2 Not tainted 6.11.0-=
-rc6-c763c4339688+ #2
-> [ 67.162053] Hardware name: Dell Inc. Latitude 5340/0SG010, BIOS 1.15.0 =
-07/15/2024
-> [ 67.162058] Call Trace:
-> [ 67.162062] <TASK>
-> [ 67.162068] dump_stack_lvl+0x76/0xa0
-> [ 67.162079] print_report+0xce/0x5f0
-> [ 67.162088] ? xfrm_input+0x426e/0x6740
-> [ 67.162096] ? kasan_complete_mode_report_info+0x26/0x200
-> [ 67.162105] ? xfrm_input+0x426e/0x6740
-> [ 67.162112] kasan_report+0xbe/0x110
-> [ 67.162119] ? xfrm_input+0x426e/0x6740
-> [ 67.162129] __asan_report_store_n_noabort+0x12/0x30
-> [ 67.162138] xfrm_input+0x426e/0x6740
-> [ 67.162149] ? __pfx_xfrm_input+0x10/0x10
-> [ 67.162160] ? __kasan_check_read+0x11/0x20
-> [ 67.162168] ? __call_rcu_common+0x3e7/0x15b0
-> [ 67.162178] xfrm4_rcv_encap+0x214/0x470
-> [ 67.162186] ? __xfrm4_udp_encap_rcv.part.0+0x3cd/0x560
-> [ 67.162195] xfrm4_udp_encap_rcv+0xdd/0xf0
-> [ 67.162203] udp_queue_rcv_one_skb+0x880/0x12f0
-> [ 67.162212] udp_queue_rcv_skb+0x139/0xa90
-> [ 67.162221] udp_unicast_rcv_skb+0x116/0x350
-> [ 67.162229] __udp4_lib_rcv+0x213b/0x3410
-> [ 67.162237] ? ldsem_down_write+0x211/0x4ed
-> [ 67.162246] ? __pfx___udp4_lib_rcv+0x10/0x10
-> [ 67.162254] ? __pfx_raw_local_deliver+0x10/0x10
-> [ 67.162262] ? __pfx_cache_tag_flush_range_np+0x10/0x10
-> [ 67.162273] udp_rcv+0x86/0xb0
-> [ 67.162280] ip_protocol_deliver_rcu+0x152/0x380
-> [ 67.162289] ip_local_deliver_finish+0x282/0x370
-> [ 67.162296] ip_local_deliver+0x1a8/0x380
-> [ 67.162303] ? __pfx_ip_local_deliver+0x10/0x10
-> [ 67.162310] ? ip_rcv_finish_core.constprop.0+0x481/0x1ce0
-> [ 67.162317] ? ip_rcv_core+0x5df/0xd60
-> [ 67.162325] ip_rcv+0x2fc/0x380
-> [ 67.162332] ? __pfx_ip_rcv+0x10/0x10
-> [ 67.162338] ? __pfx_dma_map_page_attrs+0x10/0x10
-> [ 67.162346] ? __kasan_check_write+0x14/0x30
-> [ 67.162354] ? __build_skb_around+0x23a/0x350
-> [ 67.162363] ? __pfx_ip_rcv+0x10/0x10
-> [ 67.162369] __netif_receive_skb_one_core+0x173/0x1d0
-> [ 67.162377] ? __pfx___netif_receive_skb_one_core+0x10/0x10
-> [ 67.162386] ? __kasan_check_write+0x14/0x30
-> [ 67.162394] ? _raw_spin_lock_irq+0x8b/0x100
-> [ 67.162402] __netif_receive_skb+0x21/0x160
-> [ 67.162409] process_backlog+0x1c0/0x590
-> [ 67.162417] __napi_poll+0xab/0x550
-> [ 67.162425] net_rx_action+0x53e/0xd10
-> [ 67.162434] ? __pfx_net_rx_action+0x10/0x10
-> [ 67.162443] ? __pfx_wake_up_var+0x10/0x10
-> [ 67.162453] ? tasklet_action_common.constprop.0+0x22c/0x670
-> [ 67.162463] handle_softirqs+0x18f/0x5d0
-> [ 67.162472] ? __pfx_run_ksoftirqd+0x10/0x10
-> [ 67.162480] run_ksoftirqd+0x3c/0x60
-> [ 67.162487] smpboot_thread_fn+0x2f3/0x700
-> [ 67.162497] kthread+0x2b5/0x390
-> [ 67.162505] ? __pfx_smpboot_thread_fn+0x10/0x10
-> [ 67.162512] ? __pfx_kthread+0x10/0x10
-> [ 67.162519] ret_from_fork+0x43/0x90
-> [ 67.162527] ? __pfx_kthread+0x10/0x10
-> [ 67.162534] ret_from_fork_asm+0x1a/0x30
-> [ 67.162544] </TASK>
->
-> [ 67.162551] The buggy address belongs to the object at ffff888156cb8000
->                 which belongs to the cache kmalloc-rnd-09-8k of size 819=
-2
-> [ 67.162557] The buggy address is located 331 bytes inside of
->                 allocated 8192-byte region [ffff888156cb8000, ffff888156=
-cba000)
->
-> [ 67.162566] The buggy address belongs to the physical page:
-> [ 67.162570] page: refcount:1 mapcount:0 mapping:0000000000000000 index:=
-0x0 pfn:0x156cb8
-> [ 67.162578] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:=
-0 pincount:0
-> [ 67.162583] flags: 0x17ffffc0000040(head|node=3D0|zone=3D2|lastcpupid=
-=3D0x1fffff)
-> [ 67.162591] page_type: 0xfdffffff(slab)
-> [ 67.162599] raw: 0017ffffc0000040 ffff888100056780 dead000000000122 000=
-0000000000000
-> [ 67.162605] raw: 0000000000000000 0000000080020002 00000001fdffffff 000=
-0000000000000
-> [ 67.162611] head: 0017ffffc0000040 ffff888100056780 dead000000000122 00=
-00000000000000
-> [ 67.162616] head: 0000000000000000 0000000080020002 00000001fdffffff 00=
-00000000000000
-> [ 67.162621] head: 0017ffffc0000003 ffffea00055b2e01 ffffffffffffffff 00=
-00000000000000
-> [ 67.162626] head: 0000000000000008 0000000000000000 00000000ffffffff 00=
-00000000000000
-> [ 67.162630] page dumped because: kasan: bad access detected
->
-> [ 67.162636] Memory state around the buggy address:
-> [ 67.162640] ffff888156cb8000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc=
- fc fc
-> [ 67.162645] ffff888156cb8080: fc fc fc fc fc fc fc fc fc fc fc fc fc fc=
- fc fc
-> [ 67.162650] >ffff888156cb8100: fc fc fc fc fc fc fc fc fc fc fc fc fc f=
-c fc fc
-> [ 67.162653] ^
-> [ 67.162658] ffff888156cb8180: fc fc fc fc fc fc fc fc fc fc fc fc fc fc=
- fc fc
-> [ 67.162663] ffff888156cb8200: fc fc fc fc fc fc fc fc fc fc fc fc fc fc=
- fc fc
->
-> The reason is that the eth_hdr(skb) inside if statement evaluated
-> to an unexpected address with skb->mac_header =3D ~0U (indicating there
-> is no MAC header). The unreliability of skb->mac_len causes the if
-> statement to become true even if there is no MAC header inside the
-> skb data buffer.
->
-> Check both the skb->mac_len and skb_mac_header_was_set(skb) fixes this i=
-ssue.
->
-> Fixes: 87cdf3148b11 ("xfrm: Verify MAC header exists before overwriting =
-eth_hdr(skb)->h_proto")
-> Signed-off-by: En-Wei Wu <en-wei.wu@canonical.com>
-> ---
-> Changes in v2:
-> * Change the title from "xfrm: avoid using skb->mac_len to decide if mac=
- header is shown"
-> * Remain skb->mac_len check
-> * Apply fix on ipv6 path too
-> ---
->  net/xfrm/xfrm_input.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/net/xfrm/xfrm_input.c b/net/xfrm/xfrm_input.c
-> index 749e7eea99e4..eef0145c73a7 100644
-> --- a/net/xfrm/xfrm_input.c
-> +++ b/net/xfrm/xfrm_input.c
-> @@ -251,7 +251,7 @@ static int xfrm4_remove_tunnel_encap(struct xfrm_sta=
-te *x, struct sk_buff *skb)
->
->  	skb_reset_network_header(skb);
->  	skb_mac_header_rebuild(skb);
-> -	if (skb->mac_len)
-> +	if (skb->mac_len && skb_mac_header_was_set(skb))
->  		eth_hdr(skb)->h_proto =3D skb->protocol;
->
->  	err =3D 0;
-> @@ -288,7 +288,7 @@ static int xfrm6_remove_tunnel_encap(struct xfrm_sta=
-te *x, struct sk_buff *skb)
->
->  	skb_reset_network_header(skb);
->  	skb_mac_header_rebuild(skb);
-> -	if (skb->mac_len)
-> +	if (skb->mac_len && skb_mac_header_was_set(skb))
->  		eth_hdr(skb)->h_proto =3D skb->protocol;
->
->  	err =3D 0;
+HEAD commit:    89f5e14d05b4 Merge tag 'timers_urgent_for_v6.11_rc7' of gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14c39f29980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=58a85aa6925a8b78
+dashboard link: https://syzkaller.appspot.com/bug?extid=3f149babf28b57cee242
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Same change (and request for more debugging) already suggested in 2023, se=
-e [1]...
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Regards,
-Peter
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-89f5e14d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/dfc310daee41/vmlinux-89f5e14d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a92f22c06568/bzImage-89f5e14d.xz
 
-[1] https://lore.kernel.org/netdev/d1cf5a66-03e1-44b8-929d-ac123b1bbd7b@sy=
-lv.io/T/
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3f149babf28b57cee242@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5121 at fs/btrfs/inode.c:7729 btrfs_destroy_inode+0x323/0x7d0 fs/btrfs/inode.c:7729
+Modules linked in:
+CPU: 0 UID: 0 PID: 5121 Comm: syz.0.0 Not tainted 6.11.0-rc6-syzkaller-00363-g89f5e14d05b4 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:btrfs_destroy_inode+0x323/0x7d0 fs/btrfs/inode.c:7729
+Code: 0f 0b 90 e9 61 fe ff ff e8 aa 07 e1 fd 90 0f 0b 90 e9 d2 fe ff ff e8 9c 07 e1 fd 90 0f 0b 90 e9 fd fe ff ff e8 8e 07 e1 fd 90 <0f> 0b 90 48 85 ed 0f 85 2d ff ff ff e8 7c 07 e1 fd 49 8d 9c 24 98
+RSP: 0018:ffffc90002f9efa8 EFLAGS: 00010283
+RAX: ffffffff83b28522 RBX: ffffffffffffffff RCX: 0000000000040000
+RDX: ffffc9000b53a000 RSI: 000000000002e363 RDI: 000000000002e364
+RBP: ffff88803d78c000 R08: ffffffff83b28445 R09: 1ffffffff2030ee5
+R10: dffffc0000000000 R11: ffffffff83b28200 R12: ffff88801310b790
+R13: ffff88803d78c000 R14: ffff88801310b3f0 R15: dffffc0000000000
+FS:  00007ff6855786c0(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000556646649f88 CR3: 0000000040dba000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ destroy_inode fs/inode.c:313 [inline]
+ evict+0x809/0x950 fs/inode.c:729
+ btrfs_iget_path+0x124f/0x17b0 fs/btrfs/inode.c:5605
+ btrfs_iget_logging fs/btrfs/tree-log.c:154 [inline]
+ add_conflicting_inode fs/btrfs/tree-log.c:5680 [inline]
+ copy_inode_items_to_log fs/btrfs/tree-log.c:5950 [inline]
+ btrfs_log_inode+0x22bb/0x4700 fs/btrfs/tree-log.c:6613
+ btrfs_log_inode_parent+0xb3e/0x1160 fs/btrfs/tree-log.c:7106
+ btrfs_log_dentry_safe+0x61/0x80 fs/btrfs/tree-log.c:7207
+ btrfs_sync_file+0xb60/0x11c0 fs/btrfs/file.c:1778
+ generic_write_sync include/linux/fs.h:2822 [inline]
+ btrfs_do_write_iter+0x5e2/0x760 fs/btrfs/file.c:1515
+ do_iter_readv_writev+0x60a/0x890
+ vfs_writev+0x37c/0xbb0 fs/read_write.c:971
+ do_pwritev fs/read_write.c:1072 [inline]
+ __do_sys_pwritev2 fs/read_write.c:1131 [inline]
+ __se_sys_pwritev2+0x1ca/0x2d0 fs/read_write.c:1122
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ff68477cef9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ff685578038 EFLAGS: 00000246 ORIG_RAX: 0000000000000148
+RAX: ffffffffffffffda RBX: 00007ff684936058 RCX: 00007ff68477cef9
+RDX: 0000000000000001 RSI: 0000000020022e80 RDI: 0000000000000008
+RBP: 00007ff6847ef046 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007ff684936058 R15: 00007fff28631528
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
