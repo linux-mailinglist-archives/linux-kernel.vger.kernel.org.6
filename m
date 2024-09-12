@@ -1,129 +1,204 @@
-Return-Path: <linux-kernel+bounces-326146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C231F9763BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:59:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBCAB9763C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:01:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C93AB22CC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:59:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEAEE28684B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2CB818F2DD;
-	Thu, 12 Sep 2024 07:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="NtQWR1QJ";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="c3lH6ZI8"
-Received: from a7-49.smtp-out.eu-west-1.amazonses.com (a7-49.smtp-out.eu-west-1.amazonses.com [54.240.7.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3176A18FDBA;
+	Thu, 12 Sep 2024 08:00:55 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7676F11712;
-	Thu, 12 Sep 2024 07:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FAB4189B88;
+	Thu, 12 Sep 2024 08:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726127965; cv=none; b=Q+86z4C2eTWDzcfj+NQ1nuaXriANv2YYiQ7ykJ/JZp5XSbxbPsO7h5exg/DK2Rpk0Clxd9Z+B/YwQvWpwik8Jbk1sddE2d1mS9R4dzsoXR0Bxvh54E5EZ0MB8/hoFjmd7XeRx5HrnvgMTKdCMwTxA2e2z+vu9lHSkW2hUvWRdAk=
+	t=1726128054; cv=none; b=EaYu22EwYYm3M+rPWHm63rJooqZ1sfr/VkE+amn5n/FFqHirOIzelqL6tns/EyLZ4pSVmR3mYP6PcxvDe/9MxIc6MYcBUemRjm9/S4GtgDxWXc1lX/5EjTmn33zav7ZuvjLv8utKp+4f/G1kmWs5mHV3/PoMXV9HZSIXHIWdSp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726127965; c=relaxed/simple;
-	bh=cldL7U+54qSN12pAQeSnPmmhceVDu+NalVaDHIDluX0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n4lQ1mXQi+HEnw41fC4ciQub15ASc+H2syCJODX7GtQjQpOZr1fbw9LZthj5Yq/BZm470+VB+eQVMpW8ykIgdVSVj0xYh6zqj6Z8i8/Pr1HhucOhU1szEXS57SZ06BRDQpgra+tUuUm4OjpX/k4Ox2Z+HC5sNR0ZMic0hUmh3tQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=NtQWR1QJ; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=c3lH6ZI8; arc=none smtp.client-ip=54.240.7.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1726127961;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	bh=cldL7U+54qSN12pAQeSnPmmhceVDu+NalVaDHIDluX0=;
-	b=NtQWR1QJPkxoJQdRf/qJU1KmHdFte6fnqP/Br8NrTPqmIobSI96U3KORXePFfeBW
-	8Qjg0OpjTYHEOczbvUeA3AWAlja00Mmxcdy9v/Gf+sp2cmNIjgxPv2D4NCLV7/ca4Dw
-	NeFgee4lZazq4OQW53Ug3Eg6LZwmhELVAI563IpHalXGZJgJVew0Rex0x5Q6swN6Oe0
-	LnGUhrb0r3ZWsr3IGxBE+NwSNY0p24n4Qu0E0rgbJfOCHYy4mpyRzJV4r0EgfSlGGO8
-	EaZIk5wOKQk4kajYE/kKKan3wAl4rMiBkHllhm44y0RumUElatUnY71WOy8cW8TxWGg
-	WtuURPawQA==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1726127961;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
-	bh=cldL7U+54qSN12pAQeSnPmmhceVDu+NalVaDHIDluX0=;
-	b=c3lH6ZI8LwowGvCxpLVTIMn1EB+gq+KJXUJ4peySHipaj8FHkKBlLr+5a+AYDhzW
-	dzLL8sxo21e9kb1bJsZyRwn7mYtQTuN/Se55g0fh0emWEG6BAIs+Mch8yP7qPmML1lq
-	z7qafrMtxlOBBSVlS/gx83XFBYMukITGF7Vm/tGE=
-Message-ID: <01020191e53e7670-d04af181-0137-4f35-962e-2f1119d026df-000000@eu-west-1.amazonses.com>
-Date: Thu, 12 Sep 2024 07:59:21 +0000
+	s=arc-20240116; t=1726128054; c=relaxed/simple;
+	bh=/IE5H4qEn0ERo4W5Op+X8VJ/LuEYoF9jATwLBKJd/v0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fOTF+zh9w/7DJx+nv18ggnmZRggzTH8NfdFyWtT11oIkT1/IvV4EjNjvZp1Ud5Ml9FCXuXo+vct4eB4bh8DyNH0VjrSpbIaOYKzlJBSyGZc8w0RMbieCcBXvZuEl/d0kxBbKoiAkOU8rKEc/TNPhEaD1YSIXmfZ3bv8WmeljYvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from zq-Legion-Y7000.. (unknown [180.111.103.6])
+	by APP-01 (Coremail) with SMTP id qwCowACn_aqUn+Jm+Fn9Ag--.7302S2;
+	Thu, 12 Sep 2024 16:00:21 +0800 (CST)
+From: zhouquan@iscas.ac.cn
+To: anup@brainfault.org,
+	ajones@ventanamicro.com,
+	atishp@atishpatra.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-perf-users@vger.kernel.org,
+	Quan Zhou <zhouquan@iscas.ac.cn>
+Subject: [PATCH v3 0/2] riscv: Add perf support to collect KVM guest statistics from host side
+Date: Thu, 12 Sep 2024 16:00:18 +0800
+Message-Id: <cover.1726126795.git.zhouquan@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: mailbox: mediatek,gce-mailbox: Stop
- requiring clock-names
-To: Conor Dooley <conor@kernel.org>
-Cc: krzk+dt@kernel.org, jassisinghbrar@gmail.com, robh@kernel.org, 
-	conor+dt@kernel.org, matthias.bgg@gmail.com, 
-	houlong.wei@mediatek.com, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, kernel@collabora.com, 
-	fshao@chromium.org
-References: <20240911104327.123602-1-angelogioacchino.delregno@collabora.com>
- <20240911-unhappy-wifi-b0a851e261bb@spud>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240911-unhappy-wifi-b0a851e261bb@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
-X-SES-Outgoing: 2024.09.12-54.240.7.49
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowACn_aqUn+Jm+Fn9Ag--.7302S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxuw1xJw15CF13uryDCF45KFg_yoW7Gw4fpr
+	sxCrsxtr4rAryxXw1Svr1Y9ry5J397XrnxGrnxJ3yrAr4jvaykXwn2gr1xZ3y0qrykKryr
+	Xw1vqFy2kas8AFUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9E14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Cr0_Gr1UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI4
+	8JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xv
+	wVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjx
+	v20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20E
+	Y4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267
+	AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU1x9NDUUUUU==
+X-CM-SenderInfo: 52kr31xxdqqxpvfd2hldfou0/1tbiCQ4SBmbifb98twABsf
 
-Il 11/09/24 19:51, Conor Dooley ha scritto:
-> On Wed, Sep 11, 2024 at 12:43:27PM +0200, AngeloGioacchino Del Regno wrote:
->> There is no reason to make specifying the clock-names property
->> mandatory, as the Global Command Engine HW needs only one clock.
-> 
-> Have you checked to make sure that there are no users that do the lookup
-> by name?
-> 
+From: Quan Zhou <zhouquan@iscas.ac.cn>
 
-It's just that I didn't want to mention any "driver" word in the commit description
-for a binding ;-)
+Add basic guest support to RISC-V perf, enabling it to distinguish
+whether PMU interrupts occur in the host or the guest, and then
+collect some basic guest information from the host side
+(guest os callchain is not supported for now).
 
-(Of course I did, and the driver is not doing any by_name lookup)
+Based on the x86/arm implementation, tested with kvm-riscv.
+test env:
+- host: qemu-9.0.0
+- guest: qemu-9.0.0 --enable-kvm (only start one guest and run top)
 
-Cheers,
-Angelo
+-----------------------------------------
+1) perf kvm top
+./perf kvm --host --guest \
+  --guestkallsyms=/root/repo/shared/kallsyms \
+  --guestmodules=/root/repo/shared/modules top
 
->>
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> ---
->>   .../bindings/mailbox/mediatek,gce-mailbox.yaml        | 11 -----------
->>   1 file changed, 11 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml b/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml
->> index cef9d7601398..ff5d010fbcf0 100644
->> --- a/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml
->> +++ b/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml
->> @@ -56,17 +56,6 @@ required:
->>     - interrupts
->>     - clocks
->>   
->> -allOf:
->> -  - if:
->> -      not:
->> -        properties:
->> -          compatible:
->> -            contains:
->> -              const: mediatek,mt8195-gce
->> -    then:
->> -      required:
->> -        - clock-names
->> -
->>   additionalProperties: false
->>   
->>   examples:
->> -- 
->> 2.46.0
->>
+PerfTop:      41 irqs/sec  kernel:97.6% us: 0.0% guest kernel: 0.0% guest us: 0.0% exact:  0.0% [250Hz cycles:P],  (all, 4 CPUs)
+-------------------------------------------------------------------------------
 
+    64.57%  [kernel]        [k] default_idle_call
+     3.12%  [kernel]        [k] _raw_spin_unlock_irqrestore
+     3.03%  [guest.kernel]  [g] mem_serial_out
+     2.61%  [kernel]        [k] handle_softirqs
+     2.32%  [kernel]        [k] do_trap_ecall_u
+     1.71%  [kernel]        [k] _raw_spin_unlock_irq
+     1.26%  [guest.kernel]  [g] do_raw_spin_lock
+     1.25%  [kernel]        [k] finish_task_switch.isra.0
+     1.16%  [kernel]        [k] do_idle
+     0.77%  libc.so.6       [.] ioctl
+     0.76%  [kernel]        [k] queue_work_on
+     0.69%  [kernel]        [k] __local_bh_enable_ip
+     0.67%  [guest.kernel]  [g] __noinstr_text_start
+     0.64%  [guest.kernel]  [g] mem_serial_in
+     0.41%  libc.so.6       [.] pthread_sigmask
+     0.39%  [kernel]        [k] mem_cgroup_uncharge_skmem
+     0.39%  [kernel]        [k] __might_resched
+     0.39%  [guest.kernel]  [g] _nohz_idle_balance.isra.0
+     0.37%  [kernel]        [k] sched_balance_update_blocked_averages
+     0.34%  [kernel]        [k] sched_balance_rq
+
+2) perf kvm record
+./perf kvm --host --guest \
+  --guestkallsyms=/root/repo/shared/kallsyms \
+  --guestmodules=/root/repo/shared/modules record -a sleep 60
+
+[ perf record: Woken up 3 times to write data ]
+[ perf record: Captured and wrote 1.292 MB perf.data.kvm (17990 samples) ]
+
+3) perf kvm report (the data shown here is not complete)
+./perf kvm --host --guest \
+  --guestkallsyms=/root/repo/shared/kallsyms \
+  --guestmodules=/root/repo/shared/modules report -i perf.data.kvm
+
+# Total Lost Samples: 0
+#
+# Samples: 17K of event 'cycles:P'
+# Event count (approx.): 269968947184
+#
+# Overhead  Command          Shared Object            Symbol                                        
+# ........  ...............  .......................  ..............................................
+#
+    61.86%  swapper          [kernel.kallsyms]        [k] default_idle_call
+     2.93%  :6463            [guest.kernel.kallsyms]  [g] do_raw_spin_lock
+     2.82%  :6462            [guest.kernel.kallsyms]  [g] mem_serial_out
+     2.11%  sshd             [kernel.kallsyms]        [k] _raw_spin_unlock_irqrestore
+     1.78%  :6462            [guest.kernel.kallsyms]  [g] do_raw_spin_lock
+     1.37%  swapper          [kernel.kallsyms]        [k] handle_softirqs
+     1.36%  swapper          [kernel.kallsyms]        [k] do_idle
+     1.21%  sshd             [kernel.kallsyms]        [k] do_trap_ecall_u
+     1.21%  sshd             [kernel.kallsyms]        [k] _raw_spin_unlock_irq
+     1.11%  qemu-system-ris  [kernel.kallsyms]        [k] do_trap_ecall_u
+     0.93%  qemu-system-ris  libc.so.6                [.] ioctl
+     0.89%  sshd             [kernel.kallsyms]        [k] __local_bh_enable_ip
+     0.77%  qemu-system-ris  [kernel.kallsyms]        [k] _raw_spin_unlock_irqrestore
+     0.68%  qemu-system-ris  [kernel.kallsyms]        [k] queue_work_on
+     0.65%  sshd             [kernel.kallsyms]        [k] handle_softirqs
+     0.44%  :6462            [guest.kernel.kallsyms]  [g] mem_serial_in
+     0.42%  sshd             libc.so.6                [.] pthread_sigmask
+     0.34%  :6462            [guest.kernel.kallsyms]  [g] serial8250_tx_chars
+     0.30%  swapper          [kernel.kallsyms]        [k] finish_task_switch.isra.0
+     0.29%  swapper          [kernel.kallsyms]        [k] sched_balance_rq
+     0.29%  sshd             [kernel.kallsyms]        [k] __might_resched
+     0.26%  swapper          [kernel.kallsyms]        [k] tick_nohz_idle_exit
+     0.26%  swapper          [kernel.kallsyms]        [k] sched_balance_update_blocked_averages
+     0.26%  swapper          [kernel.kallsyms]        [k] _nohz_idle_balance.isra.0
+     0.24%  qemu-system-ris  [kernel.kallsyms]        [k] finish_task_switch.isra.0
+     0.23%  :6462            [guest.kernel.kallsyms]  [g] __noinstr_text_start
+     
+---
+Change since v2:
+- Rebased on v6.11-rc7
+- Keep the misc type consistent with other architectures
+  as `unsigned long` (Andrew)
+- Add the same comment for `kvm_arch_pmi_in_guest`
+  as in arm64. (Andrew)
+
+Change since v1:
+- Rebased on v6.11-rc3
+- Fix incorrect misc type (Andrew)
+
+---
+v1 link:
+https://lore.kernel.org/all/cover.1721271251.git.zhouquan@iscas.ac.cn/
+v2 link:
+https://lore.kernel.org/all/cover.1723518282.git.zhouquan@iscas.ac.cn/
+
+Quan Zhou (2):
+  riscv: perf: add guest vs host distinction
+  riscv: KVM: add basic support for host vs guest profiling
+
+ arch/riscv/include/asm/kvm_host.h   | 10 ++++++++
+ arch/riscv/include/asm/perf_event.h |  7 ++++++
+ arch/riscv/kernel/perf_callchain.c  | 38 +++++++++++++++++++++++++++++
+ arch/riscv/kvm/Kconfig              |  1 +
+ arch/riscv/kvm/main.c               | 12 +++++++--
+ arch/riscv/kvm/vcpu.c               |  7 ++++++
+ 6 files changed, 73 insertions(+), 2 deletions(-)
+
+
+base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
+-- 
+2.34.1
 
 
