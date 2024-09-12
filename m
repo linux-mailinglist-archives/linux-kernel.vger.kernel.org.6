@@ -1,102 +1,135 @@
-Return-Path: <linux-kernel+bounces-326337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F329766B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:32:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00F5D9766BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DEA21C233EB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:32:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A5C91C23101
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 376E719F42C;
-	Thu, 12 Sep 2024 10:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43E419F42D;
+	Thu, 12 Sep 2024 10:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="angwLnBs"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="W8R2gx12"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117DB18E043;
-	Thu, 12 Sep 2024 10:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726137146; cv=pass; b=DNfuSh2+9+knlgCFmtt/aPeDrk+/TiKihLwmnWspq8PGczt3UDVozWpFiwFBcYio+Y5uPi38NVildybdDhuXEiQzLWseoR9yIbqZp9Rcz6vXrriB17xcA75I6QXUQHRbn+69sRkqSdRNdrJ9Xs/KdxMM+PjsYSThn6PHpJ3DR7E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726137146; c=relaxed/simple;
-	bh=vmqX2w/Cu707ZQWEALXLDG9u1fWpIVh3jY/q5HFldtI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qTa++LNSYvomZD/mTMsKA11sDAVS8YRDYAVNjTX4kMJbC1eL0nGZjpYDL0A/8qIJeipQJGi+nGK80YfmMzhCZolDP0+nwQW2L0GrUWM46mxYa6yCJplkVcygM7S6CyFKUzMT5CiyQom4UDTMJRZy8tF34ShI+XcJISl2EWvZiQg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=angwLnBs; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1726137134; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=EZpA+P+Y2FEA4EpO8s45jGgMGI4VOo7iBqY8qWtMuotw+SYcl6ESteJnKy1KWkp0nvCiNKfrhIhbunjPOTkpXKqi8TbeVXn8SrpI6T+b7kbpLoeeQSVUoyDMSROHZeNgyjl2M8Ex24+lJ/0ResBHif7z3ERwJCFun9P/V3cCad0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1726137134; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=KSpDKK1DAsive3QibtWD5FNSGNv2v0elbqHMj3W+HfM=; 
-	b=A3qq24RhL4lPUXtV1TX+K2SkSODWeE2zeIN7ewTJYAHYpwOsmQbGQWqTnw4LE3TSN9xq2oZSFufHdn948wN7zNHS0U4MPHjUGbHFHL1vHk1ANPcENAAAJqc4btcRLPnn9omhZuKlox9IQoq7paZEHzm4/bBvfZ3SAy/s9HZmKqI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
-	dmarc=pass header.from=<usama.anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726137134;
-	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Reply-To;
-	bh=KSpDKK1DAsive3QibtWD5FNSGNv2v0elbqHMj3W+HfM=;
-	b=angwLnBslkPYWhbz4ZUN12nwu+j2uWW0ycMuHhwIzEU9HmKVRYvDymVZ32IXNtBi
-	9D45h0c5kjywyTzvO+w38dJCG4n10k38U50MmyfdvcfNUzwieeyQBZShfAXdLoNzjV+
-	p8KteobJ9o1T1Z9wM/8aF5uigeXN8J4+HRp94frg=
-Received: by mx.zohomail.com with SMTPS id 172613713313932.761884341043356;
-	Thu, 12 Sep 2024 03:32:13 -0700 (PDT)
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	kernel@collabora.com,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] kselftests: mm: Fail the test if userfaultfd syscall isn't found
-Date: Thu, 12 Sep 2024 15:31:51 +0500
-Message-Id: <20240912103151.1520254-2-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240912103151.1520254-1-usama.anjum@collabora.com>
-References: <20240912103151.1520254-1-usama.anjum@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3CB19E96F
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 10:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726137524; cv=none; b=Y3hSbp8yPyP7CB/D6FPBFeOuOVgxLrXFaCv8d6zQ5NIZyLTnAGohdnwCGlMUqJTkYdidEMNgcSnu5ODTjU2nSpuE+LjxjpqbOLKbltzrCSSD0prbox7OSZh/tjrOa4QYtSQBnzNZOW6NlRFYLYgxJsjmxXjJdjWJ9H8Ipr91gy4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726137524; c=relaxed/simple;
+	bh=hyIJKDKyBGQJ8sBYqdzAAXREso4kqHXOHUWOOvf4Bco=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ejfSvc9EuAO0lGWNadrwIfgIBY+i4QQsv+4zfWuNlZD5aM2DgByxbFeBN2AxfLmvdeL7xblMC5gutnB3hwMZr8rcJJTh8nbtZA4BP5j2/kj6AD0atdYv3Ij6m88gXALhQvAEr4+eJT6WP2b/MCOs3BAju1F1BdWqn6FfdKdAICI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=W8R2gx12; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5bef295a429so973668a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 03:38:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1726137521; x=1726742321; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=moGGULLUEV1Y3cbTy14suA2JI+5i9gExySNmdaD1asM=;
+        b=W8R2gx12w11JLo95zguNhh+EG3zcN5GNMkP6gC3ms4qif4mW5qxcUu9MAvTF5+4ojI
+         0pGJRnnPSD3PT/rNA0CdwaiVZgCcSqw90H6DuU1E6Cu3tiseDPXm226rLq169cU6+EpD
+         1DDuN9SGFFeTVCL6Q9/67Qd7VtgW0Vl+1CA7o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726137521; x=1726742321;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=moGGULLUEV1Y3cbTy14suA2JI+5i9gExySNmdaD1asM=;
+        b=tjv0ENH7g/wEy4XRXG6WRbqUrDaot23aEIKMOcR0L/TaoC2VCEcec0uqw06OjRKFNZ
+         pK/ceohVWyQhQGjZaZQOev+r1SHgOWCW6rPQYAnRmWUNiz7C/qnmU3sSPD0Qc3efOuk9
+         Oq8dEEAd5MwxghplzuxFZ9olNoJANbPHwfsjATK+XDx1B7Aux71sJJlzwo3o+qINd8hO
+         On1fneTRQ+S9i0a1nygh8+bAe2uy5bwgwVFVCXBUAry35bZUcgkRKWVpYeN9+J2+L+cI
+         wA7/6f24i2OrVykb+MwYsVISTBTB4ggqY3/TP0wFSoV8xJQPQmHFckjHDoAoLpaKTQ+7
+         Bg6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXnNy+mGNKzRzYFfi8oRMnpQ8z/hx54ESC1/AgrKrSZfDAySoq/4QWdicGH6TGx8K+LpJgeg+DVBqXBKiw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3iickROImmyA8kPaNnn1zpw5mQpxd3KvKO+7gcgp/+S7f2Tqv
+	nSmHXQeQ61Etu5BeQGlnFJXI2JL7IfIqs0LZgXkuDSt10AN2nMRdowzsrQtWh6hKa/XXA21+UGH
+	BIhSg8g==
+X-Google-Smtp-Source: AGHT+IFL1gOJsvSHttMZpKvuRPTGnIa2GRXgNK6xpjEjpN3OaswAhWjMaZZsXSr2f6Esrt8faKfOfg==
+X-Received: by 2002:a17:906:bc22:b0:a8a:9054:8399 with SMTP id a640c23a62f3a-a902949aca6mr232677766b.27.1726137520104;
+        Thu, 12 Sep 2024 03:38:40 -0700 (PDT)
+Received: from LQ3V64L9R2.homenet.telecomitalia.it (host-79-23-194-51.retail.telecomitalia.it. [79.23.194.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25c6126esm724495566b.120.2024.09.12.03.38.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 03:38:39 -0700 (PDT)
+Date: Thu, 12 Sep 2024 12:38:37 +0200
+From: Joe Damato <jdamato@fastly.com>
+To: netdev@vger.kernel.org
+Cc: mkarsten@uwaterloo.ca, kuba@kernel.org, skhawaja@google.com,
+	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Daniel Jurgens <danielj@nvidia.com>,
+	Larysa Zaremba <larysa.zaremba@intel.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC net-next v3 6/9] netdev-genl: Support setting per-NAPI
+ config values
+Message-ID: <ZuLErUy3j6KpswM-@LQ3V64L9R2.homenet.telecomitalia.it>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>, netdev@vger.kernel.org,
+	mkarsten@uwaterloo.ca, kuba@kernel.org, skhawaja@google.com,
+	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Daniel Jurgens <danielj@nvidia.com>,
+	Larysa Zaremba <larysa.zaremba@intel.com>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240912100738.16567-1-jdamato@fastly.com>
+ <20240912100738.16567-7-jdamato@fastly.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912100738.16567-7-jdamato@fastly.com>
 
-The userfaultfd is enabled in the config fragment of mm selftest suite.
-It must always be present. If it isn't present, we should throw error
-and not just skip. This would have helped us catch the test breakage.
-Adding this now to catch the future breakages.
+On Thu, Sep 12, 2024 at 10:07:14AM +0000, Joe Damato wrote:
+> Add support to set per-NAPI defer_hard_irqs and gro_flush_timeout.
+> 
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
+> ---
+>  Documentation/netlink/specs/netdev.yaml | 11 ++++++
+>  include/uapi/linux/netdev.h             |  1 +
+>  net/core/netdev-genl-gen.c              | 14 ++++++++
+>  net/core/netdev-genl-gen.h              |  1 +
+>  net/core/netdev-genl.c                  | 45 +++++++++++++++++++++++++
+>  tools/include/uapi/linux/netdev.h       |  1 +
+>  6 files changed, 73 insertions(+)
 
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
- tools/testing/selftests/mm/pagemap_ioctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+My apologies; there's a few merge conflicts with this patch against
+the latest net-next/main. I pulled recently, but it looks like
+Mina's work got merged (which is excellent news) after I pulled and
+so my patch won't apply cleanly.
 
-diff --git a/tools/testing/selftests/mm/pagemap_ioctl.c b/tools/testing/selftests/mm/pagemap_ioctl.c
-index bcc73b4e805c6..d83dda8edf62c 100644
---- a/tools/testing/selftests/mm/pagemap_ioctl.c
-+++ b/tools/testing/selftests/mm/pagemap_ioctl.c
-@@ -95,7 +95,7 @@ int init_uffd(void)
- 
- 	uffd = syscall(__NR_userfaultfd, O_CLOEXEC | O_NONBLOCK | UFFD_USER_MODE_ONLY);
- 	if (uffd == -1)
--		return uffd;
-+		ksft_exit_fail_perror("Userfaultfd syscall failed");
- 
- 	uffdio_api.api = UFFD_API;
- 	uffdio_api.features = UFFD_FEATURE_WP_UNPOPULATED | UFFD_FEATURE_WP_ASYNC |
--- 
-2.39.2
+I can wait the 48 hours to resend or simply reply with an updated
+patch 6 in the body of my message, as this is only an RFC.
 
+Let me know what works easiest for anyone who wants to actually test
+this (vs just review it).
+
+Sorry about that; should have pulled this morning before sending :)
+
+- Joe
 
