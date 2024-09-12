@@ -1,242 +1,136 @@
-Return-Path: <linux-kernel+bounces-326141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE2369763A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:56:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43AA99763A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:56:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E3B1283091
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:56:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76A4D1C20892
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBD318F2DF;
-	Thu, 12 Sep 2024 07:56:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B19118FDDB;
+	Thu, 12 Sep 2024 07:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="t8eQsoMH"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V1WIYOmy"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64D018DF9B
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED09D189516
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726127768; cv=none; b=Y8Wj2YYhXZQeYZT4z5DM6X87qW1+wwBxNyakxaD++ooVOUfCgJuTrIvwS8Ppu7F4FRYDTkJsTOJtBZDVRVfg86UqqnIOKx1nX9Nn/AHbCC1yuD05mNDy7/DcOU+2jSTlVBqOMYgoL1i3Ns2qcBRF3hFiKo8OPYzpDK8J2GfrswI=
+	t=1726127807; cv=none; b=dR4wpHXjxRMqKsXoy0wHsz5aEL5oQv3Cz2ZQhAgQ4/yjMzjHKNNlAmoONTgpJGridiAGZvAuUX07dP2iOPZIv7Y612d/g46Deoy1Llj6JDJzVu8AEbayoJxE6b7lH9zQFXvoJFL4pD4osjXUXlOa+QZgAKnLBlPHFc6L8BUkNBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726127768; c=relaxed/simple;
-	bh=dNQQlAVFs2vCdURoAlYQG8QkvzVb13C0bL60G5t9Pho=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NqglBRxjxTrCxixIxNJ1Ji7K+pQrjoOwU3EY30kd+0fUurmxQ3G9aU9WXkdxMD2t18sOk0d47ihiaI1d4wlMYlGU9jcjW9StktUWYdn4uNYo0Z5u7lZFsHa3z2mEPMhYPRoiqKid+NRR9YbkqzMAqdUxasnPwvwZTXlA0Oy6o7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=t8eQsoMH; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 16A683F6BB
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:56:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1726127763;
-	bh=pbrIxi68gOsMYItiiHH151+Tr1OOehx4s88IlZpapRw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
-	b=t8eQsoMHSt3uRuOe0Van0eyeB84n5Re+y/aqCng0lszIpVRfAzZqkJv8ZmoreUvX1
-	 PIVnHkZXWWGB6+WW8B69LRKn9SY/za1ZGIjjz4zzzUvOOCcvXFdA5wTwfLRCPqJk5c
-	 mA4VyaQe/vRZQrLre9PR0KD+BKuWPbM6teXhuKaDu1XqCDVUxi/8KEPvtQHnVdxczv
-	 5C3yEXvdh5/agEkxb9OptbP87MdjSRBxxT1dF7aEMsoKpCctb+hXZC51LFuENR1jG/
-	 Z0GpqqSLCysPrCea8fG6Pq1k0tBgxIV4APV75IgbnNxYRw0NEv0p0AbgZk1Pp7hJ+C
-	 tYsHTkaOVvRAA==
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2da8c2eeecaso772295a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 00:56:03 -0700 (PDT)
+	s=arc-20240116; t=1726127807; c=relaxed/simple;
+	bh=ixO4eAmSsyxYP705i69Tpb+LkysSM4JEOUqvDo0Heu0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qqRTLlJ6TTEmWCy8Dp/c3q5dfmNk+7QQhhpuY0LQsJlEc2cDZwc/wJblZcb3cB/axZcHJVIMegFYcFYUVt2EF5S+qzpT+dXMKc5FP/EnrYzKZMs73+jCvV+Izv36CTLHMKaMAl/gn6Xrfq74dOqux0SlaIiTDN7nLgnbg0ktw1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V1WIYOmy; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f763e9e759so7200381fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 00:56:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726127804; x=1726732604; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rzUy16PQ8SDXmHcug8jXm/7h574vKZnBpTKJTICvI5k=;
+        b=V1WIYOmyvSEUhyx5B/vR/Gwh9FEp7kZBcDYs4ifdZSaiJywhDOBs08UeGXCKMkqZ+p
+         rsn/5+A6eNJCtChho/5dK8kAfQoSxMSKadZr2gTi73uH1LQ2/CPw5DVGgzrCP3SHeUiY
+         49aNA8MOs1XR1WElidhx8YQAe8PAVboVQp81c8fZotmoOjSBkkb8vdMd928bPrGpP49v
+         b2aGxxiNrUAAIikjEn+tHb00E0LByb7Cb6Gh7ILk+NDz3GeCpyQVgU5/E2RRBdyEvtlI
+         c5HkkRJmt6K2SbDk8xCc/Efke4g9zS/q+NOPi6YQcS7cqkNpVvuYBuOR/dU64eeiID0O
+         nIIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726127760; x=1726732560;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pbrIxi68gOsMYItiiHH151+Tr1OOehx4s88IlZpapRw=;
-        b=T633Awwy1F0LFuNI61Co6N6a5xJrHSbCjRwenp4p8sfHQmbFaS/K5JN8Iv2yOqP6LB
-         rCvi6LGjhm1KDOrF2iSIo0Gr0V1U8uaVYdVGvAmOAY0QS5Rpt0r0uxLQb6qALi5zKLH4
-         9fQMlHsqA/FjTo54TVWbLi/wok4LqQJr+0NwZrjLSuJl0LZYO0B4DpRgZL65Bm+u4QPI
-         HZs2icVk9gvMgnJTRIqYNvXD4jAvaXoG3yDcYBFQnP1+5I4eZjxsIbLg/PaXsY1d/KUZ
-         GK9FPt7vtu6XV7Rc+zlxBnQnQXg+LZ21aGRLQjX/J4GCbN2Lts3flQKXZtPIKyqQobY+
-         ut+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV3J1631GhcH4r73/Gd1kRbXG88ETBNXN0OkWPrutPFw7jjJYRMvNSZh5hD6+/owNUOY1rd+EalhArCUsw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxvl8x+rFbWtMLKZ9Q22ekSgulHRXvX8kwfTYIYxiPspMJ5Rk8m
-	xvJbnVikNRHYOfQMio/rk/zvgesSz8WZwKPMGledhS538OivhfJxS52rxvMnlIDEDVSv8Vn1wzp
-	er6LeJGnQNgX9E8HC2UttS1CfyMHGL4rui0gIImyI0RaDKPAOAlmBF+melKIq6B6QQwpsc1bH9X
-	eMZQ==
-X-Received: by 2002:a17:90a:6089:b0:2d8:ad96:6ef4 with SMTP id 98e67ed59e1d1-2dba0064ee1mr2032190a91.28.1726127760426;
-        Thu, 12 Sep 2024 00:56:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHTGWQOfx+oqjbXxi62gyrmCzuhchrID9SkwLSClQzJcML/tmC2EQgjWpXynAcNxAOUNVkdiA==
-X-Received: by 2002:a17:90a:6089:b0:2d8:ad96:6ef4 with SMTP id 98e67ed59e1d1-2dba0064ee1mr2032174a91.28.1726127759935;
-        Thu, 12 Sep 2024 00:55:59 -0700 (PDT)
-Received: from rickywu0421-ThinkPad-X1-Carbon-Gen-11.. ([122.147.171.160])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadb42e6fasm12033799a91.0.2024.09.12.00.55.57
+        d=1e100.net; s=20230601; t=1726127804; x=1726732604;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rzUy16PQ8SDXmHcug8jXm/7h574vKZnBpTKJTICvI5k=;
+        b=M35lVqcqJHIjfEPrFXS7klwRAtiik3Ky0ggXiqQj4nVvJQdTg6adhhi0xfvwge2ylG
+         scchXIAuGX/TUL2mN2M1ly05c+xL0BDA9u/6wHax3z4fCIIvje7ovD4FuVBw8Y3MKnuN
+         AGtpFJR9HndJDze9LcMFK7KUUv3xIvDJ8K7FJehZKdqa8BKKCgBSnu0/mP2Bxvpj3IRx
+         rL6OhlPbHsAmKyLxIG2bD+CqfVjTKNp9ro7pvBuPv9vpggK9DMSwCkZ8DQlt73ogmiSa
+         aik0HxYKZYcayEJcX7cZHlhW7xrh01LqTntTNj9jTX9KVS2dsQ5sAfxjBd5JRd0H9yD1
+         HC/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVjcKMfyFjI9GWGltyjcEds94M5f8p4FDm873GqECzVUlqeMTTpigyXEdphh85i9kpg/Hu+T6KPBzocFWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuZiEqsirGQoEf8zVCbZJOZqHVpEhrjZxdZHuJk6IqEDZQ41v4
+	920zN5rXj2GORsKYxGAWYvMcqC2zZAxjUZa9M3AMCH4K8l/1ENO/OuAL/Lls3Sk=
+X-Google-Smtp-Source: AGHT+IEO+oaR2J+/C5HWt9j3Jqj2WBAglLEJ+Odvyq26KObdZCTNoi/+ljmrdSm1pK1NNmf0NzUFaQ==
+X-Received: by 2002:a2e:be91:0:b0:2ef:2016:262e with SMTP id 38308e7fff4ca-2f787ca97e6mr12162111fa.0.1726127803444;
+        Thu, 12 Sep 2024 00:56:43 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f75c07c897sm18188401fa.75.2024.09.12.00.56.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 00:55:59 -0700 (PDT)
-From: En-Wei Wu <en-wei.wu@canonical.com>
-To: steffen.klassert@secunet.com,
-	herbert@gondor.apana.org.au,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	en-wei.wu@canonical.com,
-	kai.heng.feng@canonical.com,
-	chia-lin.kao@canonical.com,
-	anthony.wong@canonical.com,
-	kuan-ying.lee@canonical.com,
-	chris.chiu@canonical.com
-Subject: [PATCH ipsec v3] xfrm: check MAC header is shown with both skb->mac_len and skb_mac_header_was_set()
-Date: Thu, 12 Sep 2024 15:55:55 +0800
-Message-ID: <20240912075555.225316-1-en-wei.wu@canonical.com>
-X-Mailer: git-send-email 2.43.0
+        Thu, 12 Sep 2024 00:56:43 -0700 (PDT)
+Date: Thu, 12 Sep 2024 10:56:41 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Mahadevan <quic_mahap@quicinc.com>
+Cc: robdclark@gmail.com, quic_abhinavk@quicinc.com, sean@poorly.run, 
+	marijn.suijten@somainline.org, airlied@gmail.com, daniel@ffwll.ch, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, swboyd@chromium.org, 
+	konrad.dybcio@linaro.org, danila@jiaxyga.com, bigfoot@classfun.cn, 
+	neil.armstrong@linaro.org, mailingradian@gmail.com, quic_jesszhan@quicinc.com, 
+	andersson@kernel.org, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_kalyant@quicinc.com, quic_jmadiset@quicinc.com, quic_vpolimer@quicinc.com
+Subject: Re: [PATCH 0/5] Add display support for Qualcomm SA8775P platform
+Message-ID: <7fcbvouzb7gq6lclrkgs6pxondvj5wvutyw3swg55ugvzfpvd4@2ph7x7ulxoyv>
+References: <20240912071437.1708969-1-quic_mahap@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912071437.1708969-1-quic_mahap@quicinc.com>
 
-When we use Intel WWAN with xfrm, our system always hangs after
-browsing websites for a few seconds. The error message shows that
-it is a slab-out-of-bounds error:
+On Thu, Sep 12, 2024 at 12:44:32PM GMT, Mahadevan wrote:
+> Add support for mdss and dpu driver on Qualcomm SA8775P platform.
+> 
+> ---
+> This series depends on following series:
+> https://lore.kernel.org/all/20240816-sa8775p-mm-v3-v1-0-77d53c3c0cef@quicinc.com/
 
-[ 67.162014] BUG: KASAN: slab-out-of-bounds in xfrm_input+0x426e/0x6740
-[ 67.162030] Write of size 2 at addr ffff888156cb814b by task ksoftirqd/2/26
+As such, it probably can not be merged before 6.14 (the mentioned series
+will go on 6.13, we usually don't do cross-tree merges into drm). Please
+rework the bindings to drop the dependency (it is possible, use fake
+nodes instead of using dispcc + ID). Then you can specify that only the
+DTS patch depends on the dispcc support, allowing driver changes to go
+in first.
 
-[ 67.162043] CPU: 2 UID: 0 PID: 26 Comm: ksoftirqd/2 Not tainted 6.11.0-rc6-c763c4339688+ #2
-[ 67.162053] Hardware name: Dell Inc. Latitude 5340/0SG010, BIOS 1.15.0 07/15/2024
-[ 67.162058] Call Trace:
-[ 67.162062] <TASK>
-[ 67.162068] dump_stack_lvl+0x76/0xa0
-[ 67.162079] print_report+0xce/0x5f0
-[ 67.162088] ? xfrm_input+0x426e/0x6740
-[ 67.162096] ? kasan_complete_mode_report_info+0x26/0x200
-[ 67.162105] ? xfrm_input+0x426e/0x6740
-[ 67.162112] kasan_report+0xbe/0x110
-[ 67.162119] ? xfrm_input+0x426e/0x6740
-[ 67.162129] __asan_report_store_n_noabort+0x12/0x30
-[ 67.162138] xfrm_input+0x426e/0x6740
-[ 67.162149] ? __pfx_xfrm_input+0x10/0x10
-[ 67.162160] ? __kasan_check_read+0x11/0x20
-[ 67.162168] ? __call_rcu_common+0x3e7/0x15b0
-[ 67.162178] xfrm4_rcv_encap+0x214/0x470
-[ 67.162186] ? __xfrm4_udp_encap_rcv.part.0+0x3cd/0x560
-[ 67.162195] xfrm4_udp_encap_rcv+0xdd/0xf0
-[ 67.162203] udp_queue_rcv_one_skb+0x880/0x12f0
-[ 67.162212] udp_queue_rcv_skb+0x139/0xa90
-[ 67.162221] udp_unicast_rcv_skb+0x116/0x350
-[ 67.162229] __udp4_lib_rcv+0x213b/0x3410
-[ 67.162237] ? ldsem_down_write+0x211/0x4ed
-[ 67.162246] ? __pfx___udp4_lib_rcv+0x10/0x10
-[ 67.162254] ? __pfx_raw_local_deliver+0x10/0x10
-[ 67.162262] ? __pfx_cache_tag_flush_range_np+0x10/0x10
-[ 67.162273] udp_rcv+0x86/0xb0
-[ 67.162280] ip_protocol_deliver_rcu+0x152/0x380
-[ 67.162289] ip_local_deliver_finish+0x282/0x370
-[ 67.162296] ip_local_deliver+0x1a8/0x380
-[ 67.162303] ? __pfx_ip_local_deliver+0x10/0x10
-[ 67.162310] ? ip_rcv_finish_core.constprop.0+0x481/0x1ce0
-[ 67.162317] ? ip_rcv_core+0x5df/0xd60
-[ 67.162325] ip_rcv+0x2fc/0x380
-[ 67.162332] ? __pfx_ip_rcv+0x10/0x10
-[ 67.162338] ? __pfx_dma_map_page_attrs+0x10/0x10
-[ 67.162346] ? __kasan_check_write+0x14/0x30
-[ 67.162354] ? __build_skb_around+0x23a/0x350
-[ 67.162363] ? __pfx_ip_rcv+0x10/0x10
-[ 67.162369] __netif_receive_skb_one_core+0x173/0x1d0
-[ 67.162377] ? __pfx___netif_receive_skb_one_core+0x10/0x10
-[ 67.162386] ? __kasan_check_write+0x14/0x30
-[ 67.162394] ? _raw_spin_lock_irq+0x8b/0x100
-[ 67.162402] __netif_receive_skb+0x21/0x160
-[ 67.162409] process_backlog+0x1c0/0x590
-[ 67.162417] __napi_poll+0xab/0x550
-[ 67.162425] net_rx_action+0x53e/0xd10
-[ 67.162434] ? __pfx_net_rx_action+0x10/0x10
-[ 67.162443] ? __pfx_wake_up_var+0x10/0x10
-[ 67.162453] ? tasklet_action_common.constprop.0+0x22c/0x670
-[ 67.162463] handle_softirqs+0x18f/0x5d0
-[ 67.162472] ? __pfx_run_ksoftirqd+0x10/0x10
-[ 67.162480] run_ksoftirqd+0x3c/0x60
-[ 67.162487] smpboot_thread_fn+0x2f3/0x700
-[ 67.162497] kthread+0x2b5/0x390
-[ 67.162505] ? __pfx_smpboot_thread_fn+0x10/0x10
-[ 67.162512] ? __pfx_kthread+0x10/0x10
-[ 67.162519] ret_from_fork+0x43/0x90
-[ 67.162527] ? __pfx_kthread+0x10/0x10
-[ 67.162534] ret_from_fork_asm+0x1a/0x30
-[ 67.162544] </TASK>
+> ---
+> 
+> Mahadevan (5):
+>   dt-bindings: display/msm: Document MDSS on SA8775P
+>   dt-bindings: display/msm: Document the DPU for SA8775P
+>   drm/msm: mdss: Add SA8775P support
+>   drm/msm/dpu: Add SA8775P support
+>   arm64: dts: qcom: sa8775p: add display dt nodes
+> 
+>  .../display/msm/qcom,sa8775p-dpu.yaml         | 120 +++++
+>  .../display/msm/qcom,sa8775p-mdss.yaml        | 225 ++++++++
+>  arch/arm64/boot/dts/qcom/sa8775p.dtsi         |  85 +++
+>  .../msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h   | 485 ++++++++++++++++++
+>  .../gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c    |   3 +-
+>  .../gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h    |   3 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c       |   3 +-
+>  drivers/gpu/drm/msm/msm_mdss.c                |  10 +
+>  8 files changed, 931 insertions(+), 3 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/display/msm/qcom,sa8775p-dpu.yaml
+>  create mode 100644 Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
+>  create mode 100644 drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h
+> 
+> -- 
+> 2.34.1
+> 
 
-[ 67.162551] The buggy address belongs to the object at ffff888156cb8000
-                which belongs to the cache kmalloc-rnd-09-8k of size 8192
-[ 67.162557] The buggy address is located 331 bytes inside of
-                allocated 8192-byte region [ffff888156cb8000, ffff888156cba000)
-
-[ 67.162566] The buggy address belongs to the physical page:
-[ 67.162570] page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x156cb8
-[ 67.162578] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-[ 67.162583] flags: 0x17ffffc0000040(head|node=0|zone=2|lastcpupid=0x1fffff)
-[ 67.162591] page_type: 0xfdffffff(slab)
-[ 67.162599] raw: 0017ffffc0000040 ffff888100056780 dead000000000122 0000000000000000
-[ 67.162605] raw: 0000000000000000 0000000080020002 00000001fdffffff 0000000000000000
-[ 67.162611] head: 0017ffffc0000040 ffff888100056780 dead000000000122 0000000000000000
-[ 67.162616] head: 0000000000000000 0000000080020002 00000001fdffffff 0000000000000000
-[ 67.162621] head: 0017ffffc0000003 ffffea00055b2e01 ffffffffffffffff 0000000000000000
-[ 67.162626] head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-[ 67.162630] page dumped because: kasan: bad access detected
-
-[ 67.162636] Memory state around the buggy address:
-[ 67.162640] ffff888156cb8000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[ 67.162645] ffff888156cb8080: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[ 67.162650] >ffff888156cb8100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[ 67.162653] ^
-[ 67.162658] ffff888156cb8180: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[ 67.162663] ffff888156cb8200: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-
-The reason is that the eth_hdr(skb) inside if statement evaluated
-to an unexpected address with skb->mac_header = ~0U (indicating there
-is no MAC header). The unreliability of skb->mac_len causes the if
-statement to become true even if there is no MAC header inside the
-skb data buffer.
-
-Check both the skb->mac_len and skb_mac_header_was_set(skb) fixes this issue.
-
-Fixes: 87cdf3148b11 ("xfrm: Verify MAC header exists before overwriting eth_hdr(skb)->h_proto")
-Signed-off-by: En-Wei Wu <en-wei.wu@canonical.com>
----
-Changes in v3:
-* Swap the check: skb->mac_len and skb_mac_header_was_set(skb)
----
-
- net/xfrm/xfrm_input.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/net/xfrm/xfrm_input.c b/net/xfrm/xfrm_input.c
-index 749e7eea99e4..e12ba288e6ee 100644
---- a/net/xfrm/xfrm_input.c
-+++ b/net/xfrm/xfrm_input.c
-@@ -251,7 +251,7 @@ static int xfrm4_remove_tunnel_encap(struct xfrm_state *x, struct sk_buff *skb)
- 
- 	skb_reset_network_header(skb);
- 	skb_mac_header_rebuild(skb);
--	if (skb->mac_len)
-+	if (skb_mac_header_was_set(skb) && skb->mac_len)
- 		eth_hdr(skb)->h_proto = skb->protocol;
- 
- 	err = 0;
-@@ -288,7 +288,7 @@ static int xfrm6_remove_tunnel_encap(struct xfrm_state *x, struct sk_buff *skb)
- 
- 	skb_reset_network_header(skb);
- 	skb_mac_header_rebuild(skb);
--	if (skb->mac_len)
-+	if (skb_mac_header_was_set(skb) && skb->mac_len)
- 		eth_hdr(skb)->h_proto = skb->protocol;
- 
- 	err = 0;
 -- 
-2.43.0
-
+With best wishes
+Dmitry
 
