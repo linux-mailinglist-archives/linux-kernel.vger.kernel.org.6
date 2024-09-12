@@ -1,156 +1,85 @@
-Return-Path: <linux-kernel+bounces-326111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB5A79762C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:33:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B4D39762C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:33:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5859A1F236E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:33:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E1B21C22258
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC40B18E367;
-	Thu, 12 Sep 2024 07:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A985518C033;
+	Thu, 12 Sep 2024 07:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="CWEpvclX"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jJhurP9p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1063178C7B;
-	Thu, 12 Sep 2024 07:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1122E186E58;
+	Thu, 12 Sep 2024 07:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726126382; cv=none; b=MgbMIpY5CxfppGLhDp7HAltgOYXO3N1+n8TNqK7Y3pjFJ9y7CfFNBJ3i/JOXwVYvJMf0HKR3H2o7IYedYOm424Qz1tCwxmulpwOqRhyiwGZjyfX/x5enldf3iIpx1QgnAojL9tJEY7L5wz3Ie5Tz4Sd69ZCetVAh+wcrkpC6GBg=
+	t=1726126425; cv=none; b=i+r4ZuZV4z8B8UjnRPKMHC8c8urz9AHz1C+DDeHJx1OS7/hqw6kvERnbY4VEhZmpds0flTHQjOLgPnTRpwQP0H6tsRN+tHG8+5kviCe32/J8a6/K3GLJFUHRkCi/B22d4AM9GKJT0z1xKSJU3+xa7CHMMebO636N1AKmMR5r/kY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726126382; c=relaxed/simple;
-	bh=A0OLi+CRloHyK/Ua4rHjaFAPFQYO8jOgh8kX9YifaN0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tQGSembQjBmyHcwvSp6ftGwrinx/Bbfwz0Rnnv6Q+PblYdNJSvV0f32wdudIoo9Bin3UEm9IK3Dltj8ZM3pSPNNMdDuYvQHQOnxgfKOaBTTAoD5SDadrEcM3BOY/+J+gEeVzsNheap7dJGM5RSOokYt5dbT6bz62MiVylIX5EBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=CWEpvclX; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1726126380; x=1757662380;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=A0OLi+CRloHyK/Ua4rHjaFAPFQYO8jOgh8kX9YifaN0=;
-  b=CWEpvclX97d2Yrq9XxSVEETrq4ydiUk4STBJlqts65R3soA9H7FCMvxl
-   v4OkInI78IHyNMjW66LuKKJREh7gVkaDTerHhwXhLMdXGJvStPPIKpou3
-   6KloXlGhdDHAcMsgN0Ss/1S4/hSaKmO8QIW7sEai9XordKoPbU1C0jr7p
-   CKkCWn3zAOB1YCiMV6G9be8iiDyWGnC9dtZZG8+PD2Rj5GY3WLSBxbQq8
-   2jND3WG4xF3up5uhkBMiGiqdLO+kseaNSgieHHssu/f5zJNHZ1xGUFFwy
-   Q9/Wjb+UN+yz5kaZNLqulIw5hYbDOrRFh8Rv/QN5rBIKfnPoS6kBgj2y6
-   A==;
-X-CSE-ConnectionGUID: LpRQBBlMQkGueR9dw36uBA==
-X-CSE-MsgGUID: f7yaRPOpS069i9Newcnl4A==
-X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
-   d="asc'?scan'208";a="31577165"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Sep 2024 00:32:58 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 12 Sep 2024 00:32:23 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Thu, 12 Sep 2024 00:32:20 -0700
-Date: Thu, 12 Sep 2024 08:31:46 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: WangYuli <wangyuli@uniontech.com>
-CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	<stable@vger.kernel.org>, <gregkh@linuxfoundation.org>, <sashal@kernel.org>,
-	<william.qiu@starfivetech.com>, <emil.renner.berthing@canonical.com>,
-	<xingyu.wu@starfivetech.com>, <walker.chen@starfivetech.com>,
-	<robh@kernel.org>, <hal.feng@starfivetech.com>, <kernel@esmil.dk>,
-	<robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-	<conor+dt@kernel.org>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
-	<aou@eecs.berkeley.edu>, <devicetree@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<richardcochran@gmail.com>, <netdev@vger.kernel.org>
-Subject: Re: [PATCH 6.6 1/4] riscv: dts: starfive: add assigned-clock* to
- limit frquency
-Message-ID: <20240912-sketch-research-ad02c157cbf3@wendy>
-References: <D200DC520B462771+20240909074645.1161554-1-wangyuli@uniontech.com>
- <20240909-fidgeting-baggage-e9ef9fab9ca4@wendy>
- <ac72665f-0138-4951-aa90-d1defebac9ca@linaro.org>
- <20240909-wrath-sway-0fe29ff06a22@wendy>
- <DBEFAD22C49AAFC6+58debc20-5281-4ae7-a418-a4b232be9458@uniontech.com>
+	s=arc-20240116; t=1726126425; c=relaxed/simple;
+	bh=OKbMY4rkvt7/khnhRGV2aeG58u/xhiIc8zzfHJ4cOmU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bi8JebiV/5HiGcp5K3tHBJFSDqeM4Qs4cefSPFntEus1lACTFQMfZ5NlaQj36BFlKGaZocpkgfM28xOoN46fVDK1WN88zjg+/73LT3ImhkiZ0LC+9Fq1lOoRoaVmpXjr2Z5QKwmCDt8hYN37mohnu9XLNKvhUytCiHFazqBHyTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jJhurP9p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C57FCC4CEC6;
+	Thu, 12 Sep 2024 07:33:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726126424;
+	bh=OKbMY4rkvt7/khnhRGV2aeG58u/xhiIc8zzfHJ4cOmU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jJhurP9ph+TFCfn1IjP8mOKwZxVRSjHMxjEG5keNAusgv2/sGX5Kl/CKhRwL7F51Q
+	 GB/kossWucK4arhfxxwUzsElak1aqBTaI5qPGrwm7viQERCIMJ7X0HXwvVkk1JNWLn
+	 eno1CAR2s9FAeqJaF5zk/f44nzBDivE1p51jJmHcAWGf+mQ9JswxYetqjyGX3pnVey
+	 Nx52DTTvVZlfS8cNFTQrh4L/93Bf8psN6NrPnoRp9SX25lDeCImN0OcVs2vxKS6nvu
+	 WXkBlCu2wJJEPsVFevOqCmZNZNSVufIyI0sRsoKuNqpKNuR4Mmg1ZHaGDsWRkTYjHU
+	 bemvwREv/j7vQ==
+Date: Thu, 12 Sep 2024 09:33:40 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jean Delvare <jdelvare@suse.com>
+Subject: Re: [PATCH v1 00/12] i2c: isch: Put the driver into shape
+Message-ID: <4gdk4ktbfbgd4r7rf75o2vr5f6wtw335ywjaec6hiqua2rl27n@mgpevcixnz27>
+References: <20240911154820.2846187-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="dUrs2a+ddceNZFId"
-Content-Disposition: inline
-In-Reply-To: <DBEFAD22C49AAFC6+58debc20-5281-4ae7-a418-a4b232be9458@uniontech.com>
-
---dUrs2a+ddceNZFId
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240911154820.2846187-1-andriy.shevchenko@linux.intel.com>
 
-On Thu, Sep 12, 2024 at 10:38:20AM +0800, WangYuli wrote:
->=20
-> On 2024/9/9 19:17, Conor Dooley wrote:
-> > [6.6] in the subject and Sasha/Greg/stable list on CC, so I figure it is
-> > for stable, yeah. Only one of these patches is a "fix", and not really a
-> > functional one, so I would like to know why this stuff is being
-> > backported. I think under some definition of "new device IDs and quirks"
-> > it could be suitable, but it'd be a looser definition than I personally
-> > agree with!
-> These submissions will help to ensure a more stable behavior for the RISC=
--V
-> devices involved on the Linux-6.6.y kernel,
+Hi Andy,
 
-I'll accept that argument for the first patch, but the three that are
-adding support for audio devices on the platform cannot really be
-described as making behaviour more stable. I don't hugely object to
-these being backported, but I would like a more accurate justification
-for it being done - even if that is just that "we are using this board
-with 6.6 and would like audio to work, which these 3 simple patches
-allow it to do".
+> Andy Shevchenko (12):
+>   i2c: isch: Add missed 'else'
+>   i2c: isch: Pass pointer to struct i2c_adapter down
+>   i2c: isch: Use string_choices API instead of ternary operator
+>   i2c: isch: Switch to memory mapped IO accessors
+>   i2c: isch: Use custom private data structure
+>   i2c: isch: switch i2c registration to devm functions
+>   i2c: isch: Utilize temporary variable to hold device pointer
+>   i2c: isch: Use read_poll_timeout()
+>   i2c: isch: Unify the name of the variable to hold an error code
+>   i2c: isch: Don't use "proxy" headers
+>   i2c: isch: Prefer to use octal permission
+>   i2c: isch: Convert to kernel-doc
 
-> and as far as I can tell,they
-> won't introduce any new issues (please correct me if I'm wrong).
+very nice cleanup! Now this driver has a nice modern look.
+Thanks!
 
-I don't know. Does this first patch require a driver change for the
-mmc driver to work correctly?
+I will leave this patch for some time to give it some more time
+for review and then I will take it in.
 
-> > Oh, and also, the 4 patches aren't threaded - you should fix that
->=20
-> I apologize for my ignorance about the correct procedure...
->=20
-> For instance,for these four commits,I first used 'git format-patch -4' to
-> create four consecutive .patch files,and then used 'git send-email
-> --annotate --cover-letter --thread ./*.patch' to send them,but the result
-> wasn't as expected...
->=20
-> I'm not sure where the problem lies...
-
-I'm not sure, I don't send patches using that method. Usually I output
-my patches to a directory and call git send-email using the path to that
-directory.
-
-Cheers,
-Conor.
-
---dUrs2a+ddceNZFId
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuKY4gAKCRB4tDGHoIJi
-0r2pAQDK9tw50M9/pd5jx1uyrtkDT/RUbd0s3qpnx1Z0YSYF9AEA+k8EKSF51lvO
-hrrZQj9ToA2Lnoo4N8es473eQLiq+g8=
-=6MvV
------END PGP SIGNATURE-----
-
---dUrs2a+ddceNZFId--
+Thanks,
+Andi
 
