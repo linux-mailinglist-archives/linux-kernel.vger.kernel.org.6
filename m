@@ -1,236 +1,131 @@
-Return-Path: <linux-kernel+bounces-326820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4317976D5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:14:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFE58976D69
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:15:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30ECEB25890
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:14:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A87C1F244CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D69C41BD4F9;
-	Thu, 12 Sep 2024 15:11:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC4F1BB6B7;
+	Thu, 12 Sep 2024 15:12:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZK9CCC9M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wt0ufvpF"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4D13D556;
-	Thu, 12 Sep 2024 15:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00FF31B9B24
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726153905; cv=none; b=Bgxk6LXqrnKDrgtvjN39ILpjrI+078jaY+6ewcqCDXOTCrNIbqFpQkrn0Prq7MKW2aw/zXb8u8l0veHx22eIntXTFsm1TgsE587XlKH9UhkYtqnDO8fIq1aOHKj0bjddFkGLkFUUJvIaGP+Dsn2asILwBcirs+96JYBVLIO07qw=
+	t=1726153948; cv=none; b=DB7A9HsjDmuytfUCl+XGnkLnEQ3335+J9/hRzpprDdevx+IrXvOQ8eIQOLV8Uvzz63Eb9mGmJCdvNZ5ON+axHsBu/BscnWgxEQUS85miDeneUFbbxOnALSlCcECEx1iri6XQVCDK3tRkX9sRN6dS4YYOMKssfRmzvZClMgD17Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726153905; c=relaxed/simple;
-	bh=amoRD0d8bJ/7dPaqGBhYcBhuedEEvM42PqERJ3MQPSg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W/AOwAQNAzpZHp7mCiysQj5sUsPZdK0K4hfhObR4tUJuB1lIqYgiT3ZRxpUHReMKpx1PR19VlRMkoL93vaym43wNLqX79uI3cJ02tyoRtzoB/6qb46uxzqtI9QFldO/a5cXsnzPKt+aZkE5nozjLWXudnSmIsNAxBBqFw6H7VOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZK9CCC9M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BEA7C4CEC3;
-	Thu, 12 Sep 2024 15:11:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726153904;
-	bh=amoRD0d8bJ/7dPaqGBhYcBhuedEEvM42PqERJ3MQPSg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZK9CCC9Mt3C2f0oXIJhhtFzWAfokK+GK2NlgFQW41ye9g1X8QC+/UECeN7RWCYuAS
-	 gKZ3kB48r4791FUCDaAgtCW5Dba4KrXKUPuzUmHHV7qLtmoy9ndpY9QgGsE8qL7VpI
-	 uHmWWHigBAZQSCyffbAGIrxhkwNqCDb3U33CQgOFWfn8Si8N/izXvgBn8+T8ErtY6w
-	 lWukascOsXO5OdG9mXztT1t+oll7k8Fn1w+ErPjz60vcTUbooygkyBILFUeuCPH7+f
-	 xrIkFXzj94VFXHvQRmX2NaiapAh61O3zuemBHL5kjyMD1lkZdeEKDqHM0sT0t2YZzM
-	 qbu3JfTZFAENw==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Florent Revest <revest@chromium.org>
-Cc: linux-trace-kernel@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	bpf <bpf@vger.kernel.org>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Guo Ren <guoren@kernel.org>,
-	linux-arch@vger.kernel.org
-Subject: [PATCH v14 19/19] fgraph: Skip recording calltime/rettime if it is not nneeded
-Date: Fri, 13 Sep 2024 00:11:38 +0900
-Message-Id: <172615389864.133222.14452329708227900626.stgit@devnote2>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <172615368656.133222.2336770908714920670.stgit@devnote2>
-References: <172615368656.133222.2336770908714920670.stgit@devnote2>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1726153948; c=relaxed/simple;
+	bh=I2voFZcLWTdXlH0Xxt1X+l2lqmh24ceGysC1sOnKj2E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IPn+V3IKW1EdEKIYSH2vUixKS7dDCIln5AZN69h8El/yxPFOAupzvP2NrPTNK0ZrDRu0DveBDvJr3R2ykhC6vO9wqLar7nWuAqfhsjMTfm4Bs8uYjDJrZnFNoHuDeOxMgNLkysqhZlHVhe0J++sv+/dNTQu7yHyWrlQnFbj12yE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Wt0ufvpF; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7d666fb3fb9so561930a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:12:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726153946; x=1726758746; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hornCASRPZxYyES6JkKYahDm/Amb2BvB/wmy3lSmhe8=;
+        b=Wt0ufvpFa2MqQ9fp4BMIclNsuaj2ZNcTK4mNZdiifmP6RkOPj43DGKNt3K4JkBI8n9
+         sOiZuuz09bbUxJ7wQm+Z798zX4/8qpZQiuHm7HyATA/MEGNxSaG6hE5yDOGwoC1L9r+N
+         W0IF2QuU1kxS3E3IPYlMV4MyR6stZaUb85w8Grv9VO/eSw5az1WX3KA/Dwtc3aVbOZFq
+         j2S7WE2dGOcT9FS1jaFVdDg9Q2EfUhVvNi5n+cENhFKM6sr7WQ5bpc2YjKD1y5nH2u4r
+         SjhmUusMPxfy8v9AmcxJNQ7fpA+sActhsVkghCGIJSa6GlxkUn+0nvDM+DKfk7T/glEf
+         joGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726153946; x=1726758746;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hornCASRPZxYyES6JkKYahDm/Amb2BvB/wmy3lSmhe8=;
+        b=DPDLZtOTx3Hz2fbwAcyw93uMW/+gDznZMLCJ3ANrmb96D/TDB8JTmPcFxPuV8raNML
+         AKPAcka3fP5Zn6gqK86fQ0nmLfzW3bWNKfcNTpjY0+Td8subfKVNe7QuFOslUbNancPo
+         OzTE1OffMnNML5528qK1yAp+cTOoa1VBOjxEz6osEfytkRP7phohmcAySOGENqgFxHR4
+         BITiNPCMPj4ADQ18W2dPLMyIZAf5cXRtjf1ojz8eDrHBy9sxxOx1aIsDixo5TTYR1V9l
+         wzn7qmJzSSW+GcMPxgRh+zhv6rx2rLDXgA8Yskb5sbRCUNKtA6nG5SEMBgFkDZ0JEZdB
+         XBZw==
+X-Gm-Message-State: AOJu0YxhGjHQXEDZLmck9NfFN3jHVXZy61dHnLOXvBmEmS24UrWbRxOB
+	PAts3mcibb82Ze6/a3ZXMCZJK5+a1dNFHzpYiTKCvKMlmG6aLfiaJQVjymADMqWy0NQ0X1chBi+
+	eNNvlsDVkS3DP9CL1BrSR9CwylmBnigbDnXPL
+X-Google-Smtp-Source: AGHT+IFpigeOxXGsM9No1KNYNjI2xqYtkNJEQG1vrniLwX/lIuN2l+NdeRaljmmGR2d1QqRvBKl43C4rBl0OtQrx2rM=
+X-Received: by 2002:a17:902:d2c8:b0:206:892c:b758 with SMTP id
+ d9443c01a7336-2074c5ff323mr134718295ad.13.1726153945851; Thu, 12 Sep 2024
+ 08:12:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <6bdd771a4fb7625a9227971b3cf4745c34c31a32.1726153334.git.mst@redhat.com>
+In-Reply-To: <6bdd771a4fb7625a9227971b3cf4745c34c31a32.1726153334.git.mst@redhat.com>
+From: Marco Elver <elver@google.com>
+Date: Thu, 12 Sep 2024 17:11:43 +0200
+Message-ID: <CANpmjNNU_-NCjN3qUm0-0_oDoO9TzbuO5zrLixA=M1=ON+5J7g@mail.gmail.com>
+Subject: Re: [PATCH v2] virtio_ring: tag event_triggered as racy for KCSAN
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-kernel@vger.kernel.org, 
+	syzbot+8a02104389c2e0ef5049@syzkaller.appspotmail.com, 
+	Jason Wang <jasowang@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	virtualization@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Thu, 12 Sept 2024 at 17:02, Michael S. Tsirkin <mst@redhat.com> wrote:
+>
+> Setting event_triggered from the interrupt handler
+> is fundamentally racy. There are races of 2 types:
+> 1. vq processing can read false value while interrupt
+>    triggered and set it to true.
+>    result will be a bit of extra work when disabling cbs, no big deal.
+>
+> 1. vq processing can set false value then interrupt
+>    immediately sets true value
+>    since interrupt then triggers a callback which will
+>    process buffers, this is also not an issue.
+>
+> However, looks like KCSAN can not figure all this out, and warns about
+> the race between the write and the read.  Tag the access data_racy for
+> now.  We should probably look at ways to make this more
+> straight-forwardly correct.
+>
+> Cc: Marco Elver <elver@google.com>
+> Reported-by: syzbot+8a02104389c2e0ef5049@syzkaller.appspotmail.com
+> Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
 
-Skip recording calltime and rettime if the fgraph_ops does not need it.
-This is a kind of performance optimization for fprobe. Since the fprobe
-user does not use these entries, recording timestamp in fgraph is just
-a overhead (e.g. eBPF, ftrace). So introduce the skip_timestamp flag,
-and all fgraph_ops sets this flag, skip recording calltime and rettime.
+Probably more conservative than the __data_racy hammer:
 
-Here is the performance results measured by
- tools/testing/selftests/bpf/benchs/run_bench_trigger.sh
+Acked-by: Marco Elver <elver@google.com>
 
-Without this:
-kprobe-multi   :    5.700 ± 0.065M/s
-kretprobe-multi:    4.239 ± 0.006M/s
-
-With skip-timestamp:
-kprobe-multi   :    6.265 ± 0.033M/s	+9.91%
-kretprobe-multi:    4.758 ± 0.009M/s	+12.24%
-
-Suggested-by: Jiri Olsa <olsajiri@gmail.com>
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- Changes in v11:
-  - Simplify it to be symmetric on push and pop. (Thus the timestamp
-    getting place is a bit shifted.)
- Changes in v10:
-  - Add likely() to skipping timestamp.
- Changes in v9:
-  - Newly added.
----
- include/linux/ftrace.h |    2 ++
- kernel/trace/fgraph.c  |   36 +++++++++++++++++++++++++++++++++---
- kernel/trace/fprobe.c  |    1 +
- 3 files changed, 36 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index 63fb91088a23..bab6fabb3fa1 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -1160,6 +1160,8 @@ struct fgraph_ops {
- 	void				*private;
- 	trace_func_graph_ent_t		saved_func;
- 	int				idx;
-+	/* If skip_timestamp is true, this does not record timestamps. */
-+	bool				skip_timestamp;
- };
- 
- void *fgraph_reserve_data(int idx, int size_bytes);
-diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-index 6a3e2db16aa4..c116a92839ae 100644
---- a/kernel/trace/fgraph.c
-+++ b/kernel/trace/fgraph.c
-@@ -174,6 +174,7 @@ int ftrace_graph_active;
- 
- static struct fgraph_ops *fgraph_array[FGRAPH_ARRAY_SIZE];
- static unsigned long fgraph_array_bitmask;
-+static bool fgraph_skip_timestamp;
- 
- /* LRU index table for fgraph_array */
- static int fgraph_lru_table[FGRAPH_ARRAY_SIZE];
-@@ -557,7 +558,11 @@ ftrace_push_return_trace(unsigned long ret, unsigned long func,
- 		return -EBUSY;
- 	}
- 
--	calltime = trace_clock_local();
-+	/* This is not really 'likely' but for keeping the least path to be faster. */
-+	if (likely(fgraph_skip_timestamp))
-+		calltime = 0LL;
-+	else
-+		calltime = trace_clock_local();
- 
- 	offset = READ_ONCE(current->curr_ret_stack);
- 	ret_stack = RET_STACK(current, offset);
-@@ -728,6 +733,12 @@ ftrace_pop_return_trace(struct ftrace_graph_ret *trace, unsigned long *ret,
- 	*ret = ret_stack->ret;
- 	trace->func = ret_stack->func;
- 	trace->calltime = ret_stack->calltime;
-+	/* This is not really 'likely' but for keeping the least path to be faster. */
-+	if (likely(!trace->calltime))
-+		trace->rettime = 0LL;
-+	else
-+		trace->rettime = trace_clock_local();
-+
- 	trace->overrun = atomic_read(&current->trace_overrun);
- 	trace->depth = current->curr_ret_depth;
- 	/*
-@@ -788,7 +799,6 @@ __ftrace_return_to_handler(struct ftrace_regs *fregs, unsigned long frame_pointe
- 		return (unsigned long)panic;
- 	}
- 
--	trace.rettime = trace_clock_local();
- 	if (fregs)
- 		ftrace_regs_set_instruction_pointer(fregs, ret);
- 
-@@ -1248,6 +1258,24 @@ static void ftrace_graph_disable_direct(bool disable_branch)
- 	fgraph_direct_gops = &fgraph_stub;
- }
- 
-+static void update_fgraph_skip_timestamp(void)
-+{
-+	int i;
-+
-+	for (i = 0; i < FGRAPH_ARRAY_SIZE; i++) {
-+		struct fgraph_ops *gops = fgraph_array[i];
-+
-+		if (gops == &fgraph_stub)
-+			continue;
-+
-+		if (!gops->skip_timestamp) {
-+			fgraph_skip_timestamp = false;
-+			return;
-+		}
-+	}
-+	fgraph_skip_timestamp = true;
-+}
-+
- int register_ftrace_graph(struct fgraph_ops *gops)
- {
- 	int command = 0;
-@@ -1271,6 +1299,7 @@ int register_ftrace_graph(struct fgraph_ops *gops)
- 	gops->idx = i;
- 
- 	ftrace_graph_active++;
-+	update_fgraph_skip_timestamp();
- 
- 	if (ftrace_graph_active == 2)
- 		ftrace_graph_disable_direct(true);
-@@ -1303,6 +1332,7 @@ int register_ftrace_graph(struct fgraph_ops *gops)
- 		ftrace_graph_active--;
- 		gops->saved_func = NULL;
- 		fgraph_lru_release_index(i);
-+		update_fgraph_skip_timestamp();
- 	}
- out:
- 	mutex_unlock(&ftrace_lock);
-@@ -1326,8 +1356,8 @@ void unregister_ftrace_graph(struct fgraph_ops *gops)
- 		goto out;
- 
- 	fgraph_array[gops->idx] = &fgraph_stub;
--
- 	ftrace_graph_active--;
-+	update_fgraph_skip_timestamp();
- 
- 	if (!ftrace_graph_active)
- 		command = FTRACE_STOP_FUNC_RET;
-diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-index 5a0b4ef52fa7..b108d26d7ee5 100644
---- a/kernel/trace/fprobe.c
-+++ b/kernel/trace/fprobe.c
-@@ -345,6 +345,7 @@ NOKPROBE_SYMBOL(fprobe_return);
- static struct fgraph_ops fprobe_graph_ops = {
- 	.entryfunc	= fprobe_entry,
- 	.retfunc	= fprobe_return,
-+	.skip_timestamp = true,
- };
- static int fprobe_graph_active;
- 
-
+> ---
+>  drivers/virtio/virtio_ring.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> index be7309b1e860..98374ed7c577 100644
+> --- a/drivers/virtio/virtio_ring.c
+> +++ b/drivers/virtio/virtio_ring.c
+> @@ -2588,7 +2588,7 @@ irqreturn_t vring_interrupt(int irq, void *_vq)
+>
+>         /* Just a hint for performance: so it's ok that this can be racy! */
+>         if (vq->event)
+> -               vq->event_triggered = true;
+> +               data_race(vq->event_triggered = true);
+>
+>         pr_debug("virtqueue callback for %p (%p)\n", vq, vq->vq.callback);
+>         if (vq->vq.callback)
+> --
+> MST
+>
 
