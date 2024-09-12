@@ -1,162 +1,135 @@
-Return-Path: <linux-kernel+bounces-327271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7464E977330
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:59:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 519E0977334
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:59:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEED9B246A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:58:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 994F8B24939
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361061C2433;
-	Thu, 12 Sep 2024 20:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B301F1C1AC9;
+	Thu, 12 Sep 2024 20:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="zMYKHmeH"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="12qgrbfr"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BEE91C1AB5
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9151F15098A
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:59:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726174691; cv=none; b=AZuCyo8rR17tEEKzPL1nGLBXFoKZsMZ1relxwAd1QEtw5P5M1kM+i3ugRC66lX9JAfvLjezAL1s8ADzzwmQqBvGzfyJSBBAKNsYkr2xfDVvwLzeaPMmkhEXiHxC0df1a7hjS346OcqdJ8goKiFVqz4n9PSo5DsVwlrimXFa6isU=
+	t=1726174747; cv=none; b=lE111NpLmZtTBTqhB31Y4K4/NjID2vtniv9tHc6mucHMZe9wnijorgftxZFMEicLwhpLbK9hNHx7EtyrlAeDJvMyZgg8nd1DlMwhJIXztO4amoyOP0BEo3b80+MO8FeYp5YQefbc/cFJG1uPXxUULZemPYwZqvgE7LuO+flFS0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726174691; c=relaxed/simple;
-	bh=MYDZvrqlWEpmfJ0PC8MrAJxxkqkqQuxjGFHhVbXAtYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uOneFg+9HGKcFBuvBH32meYVHFcdahUQXRTNlGMr4ozdNYAyHwIM2RGjZv4vlyJrcIq8sYv0r9Ec7yrsFuyWtcZBIXy0fDRovaTFNZuQhRQy0WPtxa1OMQu0sV1/Y8XniArcnpAx9l6RSYY+ErSL/0MKfHgcyBRPT7HFBbsIsfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=zMYKHmeH; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-205909af9b5so1910985ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:58:09 -0700 (PDT)
+	s=arc-20240116; t=1726174747; c=relaxed/simple;
+	bh=BGo4YnBtJLBzALgGPXw2885jarBIn/OgobqfXJlzQZQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lZL7qGjyAY06EOVWi4gewHWTJdbfeFAe/KJo0xHGDLbaUP5jaZoZ/z4b+tEFtl6guswQfd0meB3LZj75wSjJ9FrNWE5EC3PVkfZeFo1icEgba6O8ghiz9+fSTUQo28uXJUQhUhM631j39oRtgig9VcQLKMX8UZVaXVO1tgYEXGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=12qgrbfr; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4582a5b495cso22791cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:59:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1726174689; x=1726779489; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=awElkTLWK6u37rMcH6vV+9dmrRY/uH5yY9ycJ6GvqvQ=;
-        b=zMYKHmeHeQVgR09jItL/tqN8Iu4Z3xtNVUJI3mfrZ+xz47TgmOXyD7WQL1V+VVGI3b
-         057mf/boAlQUxGXeRg11VB7fhHybVjqZLyWIvQcSGLVNYAvEv6iVp2R/U2+FSV02jjcd
-         suOfT2n8WEHaIQZ7MAl3Mw314o+l/CEiO4Pp1cMKbQGXY3VLZ/4NDcgIO8whd3++PjfM
-         bYNypxqJ5LyaYGOl2easU6fx3QBQhOBcywyL59Sdf/VWM4nvA43cJPIq7jivxdDaK1Wr
-         50tRSpf6h/DSxjes6lm4PoYYfAuZHQUzhdoTCApthYu9TE1JgagCpEIBtR2wsA4IRZTO
-         6LEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726174689; x=1726779489;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1726174744; x=1726779544; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=awElkTLWK6u37rMcH6vV+9dmrRY/uH5yY9ycJ6GvqvQ=;
-        b=BBqyTtCGOSFiue4lbo7uzSXU+Yr2+rZahOBlSnVzmr5Oe/haxfIIH9v3iTvsWeJce/
-         k+isbpU7OfVG3IunW/d49/+T2bBVmLkxOHKEW1ib1prJlVcx6MG+9UKFiwhV48cnxfJH
-         KSRia7Mn6hS+VzcNLv9VPr54H1oAkvZumSdW4M/uG7+/CS5clZafg8dhqC0S3TciK0xu
-         t/aBn6I/JxcLUqE5Bn2CXEYAxYskj2DgPr+pH15l9doSvaeQtteOfeNkjsmF5QzLEQPP
-         pWbkhUnYouD7V98uAVnySJ9o4Fm8IFlK629LGapC8vGEZxV3nl2YoKkn3E8V7X+t/nlV
-         9mmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVVkxFNVFuCAtWrSCDgAYisBpES3/428LjtkGQnBQCM8udSc+oWlxs09mORi8JX5/VeNO7rrLVd6iJeAZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrZoCmrEY3Zir5FtKT23M6zle+nHpNrKKiSCsQX5+OPjD7JMvJ
-	W+VQyHEPGEoG9mlGKV91whts1qCor7ZhpVa2PwdX9EME9wtVK2uFYC0cal+dtN8=
-X-Google-Smtp-Source: AGHT+IFNbFNRlMUVnmzvIAqMYOHLNoYiu39w2cW+++5PhbuKhP72IpMktdJxCrIrvKb5Z0jSCotKrw==
-X-Received: by 2002:a17:902:f60e:b0:205:809c:d490 with SMTP id d9443c01a7336-20781d61d67mr8439965ad.16.1726174689001;
-        Thu, 12 Sep 2024 13:58:09 -0700 (PDT)
-Received: from ghost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076b0097desm18030445ad.247.2024.09.12.13.58.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 13:58:08 -0700 (PDT)
-Date: Thu, 12 Sep 2024 13:58:05 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Celeste Liu <coelacanthushex@gmail.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,
-	Anup Patel <anup@brainfault.org>,
-	Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Russell King <linux@armlinux.org.uk>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev, linux-sh@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-	linux-tegra@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] riscv: defconfig: drop RT_GROUP_SCHED=y
-Message-ID: <ZuNV3ewTH63lb972@ghost>
-References: <20240910-fix-riscv-rt_group_sched-v3-0-486e75e5ae6d@gmail.com>
- <20240910-fix-riscv-rt_group_sched-v3-1-486e75e5ae6d@gmail.com>
+        bh=fsCx7PNwUKDs1VgbiUw0bQvBD47bWmKcNmPPKYW0TEU=;
+        b=12qgrbfrttf0OYZuqi6cXwLR8/+GLqh4g74C50/WZTePue6idYRzsnbJ4EaZCz62uy
+         Y06BE0k6sGucB9kX3nU/EfeMYuJfzGxPzb9OITmkPOhcmKWBTbMmzRTIkrupDbFIdebd
+         NKUnrt5HdCAJNLzh7rnPcxCz2ZpzOcaAtqn3QKxrXKHxOHl1A2DSCatlhzgw5qB0Iqtb
+         vEBYyW4+gjmFBO+fvoHAH18UazZMgDMxQ6KMp+jkxz8Gt93Ic1J8+0F3Qfe13F7eZ7g2
+         ca9dARo2gPcfmm7gnQJf+KhQiHYHrQIKFNsIu+MK25nM+/3UjH2/Ize02UhRlE9eWXeC
+         zFCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726174744; x=1726779544;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fsCx7PNwUKDs1VgbiUw0bQvBD47bWmKcNmPPKYW0TEU=;
+        b=wswjpXkUpiDeLxoNOUSmuJp81i7ri9hNyv353xjwMAEw73fQf6CwDeEE0ufP6m4vrk
+         8kaorNMQyuj8t4Fq/k9pk43lzkib+S0Y4FbSAG4gaQ2r5cqqer+fliR2xdPhRyLAbVT6
+         1v6DyeumXIMLGfcPys/ETHQbydkf7dgJLzBBKl0C/gRbO3KGqW+BnF7jyje1BqljcDfw
+         ZG7swRLTaSxjGq6nZsI/UMMazqN4fvKSF5GQJvTHthxQDv/Q/h8KX231CMkfE63A5K6B
+         blHzKfOhJK/YJ762gFBHDt1Xw0GZegV6L2XQ8esUEzkTq1JHIxLPhUqPYyqbPDOpgZqP
+         URwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWY/5l/efPa80OdomNPdwyrvot7Tgu8sqvrJG7wAeYlVjUChUsu0A374sJQVWSs7V0rKEStzzrdwDA5NFA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJgcuefTO93KzNVMQkzvE4N1kci8T4/ZGGO/6PH0YWdyTEd5ZZ
+	pvzCYWwjHewP9tge1Q/IJkzKMAh5+pt5BTk618LRl60+nZtydk8+dichGOtprf3+ijnpbUhIzKI
+	OXw6OTMcz11VaMQnkIhJyX8eTxKPQHsirMigO
+X-Google-Smtp-Source: AGHT+IGJ2peUmYzPvc/ly/d/Ex14Yi8y3LliEmED5bKrPQbZs3ROv8z0RY2viWsWeA+pvalyZNjXSH9Ak/Cat2QudqE=
+X-Received: by 2002:ac8:57d0:0:b0:447:eaaa:c852 with SMTP id
+ d75a77b69052e-45864547dedmr4206811cf.23.1726174744257; Thu, 12 Sep 2024
+ 13:59:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910-fix-riscv-rt_group_sched-v3-1-486e75e5ae6d@gmail.com>
+References: <20240815173903.4172139-21-samitolvanen@google.com>
+ <20240815173903.4172139-37-samitolvanen@google.com> <alpine.LSU.2.21.2408301114000.1124@pobox.suse.cz>
+ <CABCJKucCWfeC0yL6Q2ZcBfef0tMd9L_gmHRJt-cUYkg_4PDtnA@mail.gmail.com>
+ <599892ec-3cf5-4349-984b-7c94f2ba5687@suse.com> <CABCJKuer=O3FnLJNGMg2+-HxFJFUrccTuuHt5OiMpRsAJBvBsg@mail.gmail.com>
+ <2b2d4953-d2a3-4ea2-98a4-078901cfbda3@proton.me>
+In-Reply-To: <2b2d4953-d2a3-4ea2-98a4-078901cfbda3@proton.me>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Thu, 12 Sep 2024 13:58:25 -0700
+Message-ID: <CABCJKue-YtCQWinad2GW7uJuVN-ZSUmRYttK_PUurJOR51Urgg@mail.gmail.com>
+Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved
+ structure fields
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Petr Pavlu <petr.pavlu@suse.com>, Miroslav Benes <mbenes@suse.cz>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, Neal Gompa <neal@gompa.dev>, 
+	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 10, 2024 at 08:51:07PM +0800, Celeste Liu wrote:
-> Commit ba6cfef057e1 ("riscv: enable Docker requirements in defconfig")
-> introduced it because of Docker, but Docker has removed this requirement
-> since [1] (2023-04-19).
-> 
-> For cgroup v1, if turned on, and there's any cgroup in the "cpu" hierarchy it
-> needs an RT budget assigned, otherwise the processes in it will not be able to
-> get RT at all. The problem with RT group scheduling is that it requires the
-> budget assigned but there's no way we could assign a default budget, since the
-> values to assign are both upper and lower time limits, are absolute, and need to
-> be sum up to < 1 for each individal cgroup. That means we cannot really come up
-> with values that would work by default in the general case.[2]
-> 
-> For cgroup v2, it's almost unusable as well. If it turned on, the cpu controller
-> can only be enabled when all RT processes are in the root cgroup. But it will
-> lose the benefits of cgroup v2 if all RT process were placed in the same cgroup.
-> 
-> Red Hat, Gentoo, Arch Linux and Debian all disable it. systemd also doesn't
-> support it.[3]
-> 
-> [1]: https://github.com/moby/moby/commit/005150ed69c540fb0b5323e0f2208608c1204536
-> [2]: https://bugzilla.redhat.com/show_bug.cgi?id=1229700
-> [3]: https://github.com/systemd/systemd/issues/13781#issuecomment-549164383
-> 
-> Acked-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
-> Signed-off-by: Celeste Liu <CoelacanthusHex@gmail.com>
+Hi Benno,
 
-Acked-by: Charlie Jenkins <charlie@rivosinc.com>
+On Thu, Sep 12, 2024 at 11:08=E2=80=AFAM Benno Lossin <benno.lossin@proton.=
+me> wrote:
+>
+> On 12.09.24 18:06, Sami Tolvanen wrote:
+> >
+> > I thought about this a bit and I wonder if we need a separate
+> > mechanism for that, or is it sufficient to just #define any additional
+> > hidden values you want to add instead of including them in the enum?
+> >
+> >   enum e {
+> >       A,
+> >       B,
+> >   #define C (B + 1)
+> >   #define D (C + 1)
+> >   };
+> >
+> >
+> > Do you see any issues with this approach? I think Clang would complain
+> > about this with -Wassign-enum, but I'm not sure if we even enable that
+> > in the kernel, and as long as you don't overflow the underlying type,
+> > which is a requirement for not breaking the ABI anyway, it should be
+> > fine.
+>
+> Rust has problems with `#define`-style enums, because bindgen (the tool
+> that generates definitions for Rust to be able to call C code) isn't
+> able to convert them to Rust enums.
+>
+> So if you can come up with an approach that allows you to continue to
+> use C enums instead of `#define`, we would appreciate that, since it
+> would make our lives a lot easier.
 
-> ---
->  arch/riscv/configs/defconfig | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
-> index 12dc8c73a8acfaa5c8f442968a807de303428d9e..de85c3ab261e6d62b2089a3c89bdc9d1b34fa792 100644
-> --- a/arch/riscv/configs/defconfig
-> +++ b/arch/riscv/configs/defconfig
-> @@ -9,7 +9,6 @@ CONFIG_CGROUPS=y
->  CONFIG_MEMCG=y
->  CONFIG_CGROUP_SCHED=y
->  CONFIG_CFS_BANDWIDTH=y
-> -CONFIG_RT_GROUP_SCHED=y
->  CONFIG_CGROUP_PIDS=y
->  CONFIG_CGROUP_FREEZER=y
->  CONFIG_CGROUP_HUGETLB=y
-> 
-> -- 
-> 2.46.0
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+That's an interesting point. Is the problem that you cannot assign
+arbitrary values to the Rust enum that bindgen generates, or is using
+a #define the problem? We could probably just make the hidden enum
+values visible to bindgen only if needed.
+
+Sami
 
