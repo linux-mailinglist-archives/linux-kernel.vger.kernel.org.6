@@ -1,331 +1,129 @@
-Return-Path: <linux-kernel+bounces-326647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 367DF976B43
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:54:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5D7C976B49
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FE331C237B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:54:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 608741F22A6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B7881B12C4;
-	Thu, 12 Sep 2024 13:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4C31AB6CB;
+	Thu, 12 Sep 2024 13:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BXHsH5sq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m2H7PA8l"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509AD1A0BDA;
-	Thu, 12 Sep 2024 13:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC31819FA91;
+	Thu, 12 Sep 2024 13:54:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726149267; cv=none; b=B3dbDcSc08dp0U5/fXIJFGSvReDLXc/oxSlyYXivobHR001nYvR6Il5f1hXiunxk4OLPU3aFrT+31CABHWftzd3nbEnrfdxKNJLBFkyCSx5G6m0YyBvt31yv9noYZO26WFRBukQ69wwyj1jG9wOrkyxozWDCq+16ue73UtLrk4E=
+	t=1726149301; cv=none; b=NlT5xSlkWx4/pl+BHm4SIUHq/RhzPi5F3ijHBAeQIKiZlkhb8SlnLnLO581ebmyb4DDwFkyy7Q8Q63R2XA6QB2d/wEG8RlI53LlZwb9iKACxh2Nviku6o5xqV8bxVeM2HLsG1+76M8NkYZmfiUV01n8D57RqEdkp2VNlZaS3B6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726149267; c=relaxed/simple;
-	bh=r3e9l6T8+l0GSLZWpkxe5c2KHX2CvPdoVfI+8KICeY0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Jl16s705zF+a56xr9sEeBr7rHuX+6U/KY3Bv/nC6bIBRP+Rjr0UCBTx4dy9hxJD0ISnBCNWyovd5GdWNHu6xEnjKH0ysZUBPmDLMX7mGCy1JVnwyMA1KfsJsH2ESVunG5RrxOEI7wG+wdRSXfWlMcOK/fYwy9J94fkhzLQOY29k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BXHsH5sq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C747C4CEC3;
-	Thu, 12 Sep 2024 13:54:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726149266;
-	bh=r3e9l6T8+l0GSLZWpkxe5c2KHX2CvPdoVfI+8KICeY0=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=BXHsH5sq50sAiYY4pptLoWGINTlNDsTQKD7J0nH4VxKXZuEwPBaNvhBU9omLHjAJP
-	 8TqmLjj53powrk/4bCa0ebQDIR1gPDfVN2z1o44V7M/4TjLBkMoOgTc6tyI3XWmhPN
-	 /h7zVJrRyQQXn1qwj6PXKI5l3r5omeFOWL2z3NbplynT43+J8NBPjfv7Eqh4NI3PIi
-	 2NAk/RHFHMSf65VOTcUBO7Maobf52ICa9Pv+mqFwHixW4fCbUbYXGe/iEFhu56tbxT
-	 EHX4J/wBBbJPMkWZAnlrr0jMiO9KRATHYeXHLWiBW8YbUFePvCMUkDT0E9Qq4JM0B3
-	 GaGA2roasxgIA==
+	s=arc-20240116; t=1726149301; c=relaxed/simple;
+	bh=v69ORr0ifvFA/qf9QeGOilpbCJyouut1G4+0nulVqb8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lAODaruIr7jFzHFYC9trEDDhfgNUzhF2oG+emBDzj8Kgob1yssEX6UoHfc4OqxGV8zuPkSM597wEhqMpgZeFORteNDoaZhNnCWb+TSUxYIqwee3Mv5t1nR+jRhnvyR/sioAVMvON6gvhLUCX0xTyWXW4It1smN1L2ARzC8ZJRnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m2H7PA8l; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8d6d0fe021so155744366b.1;
+        Thu, 12 Sep 2024 06:54:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726149298; x=1726754098; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=t1G5qVhSpJn+iV45COy44bHVmW0jeUlHnhOjcc2IqBg=;
+        b=m2H7PA8luxxmvaeQ2qDtJm6Iyje6P88A/aW9BLCRfEGkVP6fPm6sDSQgfGSavV/hDZ
+         AsNi/AiyxJfzb/Q+DxOu4+U6pwQbsf1oALr5OrkDIxhocN/OIukxFkiiUefbKj7MJyJk
+         IMQ2WnVhomVfrMsXlUrSoCkrGBKeglmsU1Cd2eBDCaI0m2YVhi5UbMedbQ4VXCmWycrG
+         52TgkcsrFYghk/Z3fGe1pXXRXw6p/oyvCrewsFJUGaNj7+mL1cV2DtF26b0mqTX4cb9Q
+         QuG2HRFH5zbq3miH2KSMrm5PxcA6ndC4kJmcIfydmO5KPxmnda8YDphepXlc1Hzy/7bX
+         /TIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726149298; x=1726754098;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=t1G5qVhSpJn+iV45COy44bHVmW0jeUlHnhOjcc2IqBg=;
+        b=JELgvNhaG4A7CC7VqVkiXMWeX1EBfVUaf8r0PEosEHhYfGBDZ4FZ1p66nm/gOAyPwq
+         rxN6GPDQA4KYwsJbV/14REAnNfucdP+hPnOwqb7VGzTrlUmocda+bT5MRMVk30bBGjCy
+         +7KMxyqgU7w38LZz1i87ToFIXxKiukgVY6XRwIzy9UFyOYvChj0OMvLfNDkiW2asI1cH
+         rnhAZbMRynz3IMivbDk1DDRba4dOq0CMmXeajDNKsq9dtPVtFevOVT1439E4KW5oJRMe
+         s8xq7z7IhG+X5SFObdmhMaxF/9XabO6j14HDgGuum4vLHc8mWJikG/Y1n6PRSYq1VSfb
+         Yjpg==
+X-Forwarded-Encrypted: i=1; AJvYcCUljf8dLyV8LRl6l6Suqf9/0crIx3Usq6O2rTUROz2HuDh2x05tSyHsNcwnOyhiV/J8oHT/6jWm+d+n19M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7TfoLd58tUAkpaCf0LNHlbqZ0THvWIsEsuWbp7kUoZKQ9uV3F
+	jJ2yKcJp8y+oHP8x8pJ01nEtcYfLlMti98CdHKGhgifZ/NqoKf0M
+X-Google-Smtp-Source: AGHT+IGHyggpXdC19jbQjmV+z/3GczJJNtHI7cEPIGNXAzJMFOl3VDvtIn7uWtgy0U0A/cj483cK+Q==
+X-Received: by 2002:a17:906:c151:b0:a8d:5d28:8e0d with SMTP id a640c23a62f3a-a90296175a4mr320642766b.45.1726149297648;
+        Thu, 12 Sep 2024 06:54:57 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::6:5725])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d5dda8sm744523866b.211.2024.09.12.06.54.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Sep 2024 06:54:57 -0700 (PDT)
+Message-ID: <6b2cc4c4-4354-4b29-bc73-c1384b90dfc6@gmail.com>
+Date: Thu, 12 Sep 2024 14:54:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] efi/tpm: add efi.tpm_log as a reserved region in
+ 820_table_firmware
+To: Ard Biesheuvel <ardb@kernel.org>, Breno Leitao <leitao@debian.org>
+Cc: linux-efi@vger.kernel.org, kexec@lists.infradead.org,
+ ebiederm@xmission.com, bhe@redhat.com, vgoyal@redhat.com,
+ tglx@linutronix.de, dave.hansen@linux.intel.com, x86@kernel.org,
+ linux-kernel@vger.kernel.org, rmikey@meta.com, gourry@gourry.net
+References: <20240911104109.1831501-1-usamaarif642@gmail.com>
+ <CAMj1kXFVyQEwBTf2bG8yBXUktM16dzrcPH-Phz_toAsCK-NfMA@mail.gmail.com>
+ <2542182d-aa79-4705-91b6-fa593bacffa6@gmail.com>
+ <CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
+ <20240912-wealthy-gabby-tamarin-aaba3c@leitao>
+ <CAMj1kXHh-Kov8c1pto0LJL6debugz1og6GFMYCwvfu+RiQGreA@mail.gmail.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <CAMj1kXHh-Kov8c1pto0LJL6debugz1og6GFMYCwvfu+RiQGreA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Thu, 12 Sep 2024 16:54:23 +0300
-Message-Id: <D44CUG76DIBS.31UGN7S3KFK74@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, <keyrings@vger.kernel.org>,
- <linux-crypto@vger.kernel.org>, <zohar@linux.ibm.com>,
- <linux-integrity@vger.kernel.org>, <torvalds@linux-foundation.org>,
- "Roberto Sassu" <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v3 03/14] PGPLIB: PGP definitions (RFC 9580)
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Roberto Sassu" <roberto.sassu@huaweicloud.com>, <dhowells@redhat.com>,
- <dwmw2@infradead.org>, <herbert@gondor.apana.org.au>, <davem@davemloft.net>
-X-Mailer: aerc 0.18.2
-References: <20240911122911.1381864-1-roberto.sassu@huaweicloud.com>
- <20240911122911.1381864-4-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20240911122911.1381864-4-roberto.sassu@huaweicloud.com>
-
-On Wed Sep 11, 2024 at 3:29 PM EEST, Roberto Sassu wrote:
-> From: David Howells <dhowells@redhat.com>
->
-> Provide some useful PGP definitions from RFC 9580.  These describe detail=
-s
-> of public key crypto as used by crypto keys for things like signature
-> verification.
->
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  crypto/asymmetric_keys/pgp.h | 216 +++++++++++++++++++++++++++++++++++
->  1 file changed, 216 insertions(+)
->  create mode 100644 crypto/asymmetric_keys/pgp.h
->
-> diff --git a/crypto/asymmetric_keys/pgp.h b/crypto/asymmetric_keys/pgp.h
-> new file mode 100644
-> index 000000000000..eaf0ab8e0373
-> --- /dev/null
-> +++ b/crypto/asymmetric_keys/pgp.h
-> @@ -0,0 +1,216 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/* PGP definitions (RFC 9580)
-> + *
-> + * Copyright (C) 2011 Red Hat, Inc. All Rights Reserved.
-> + * Written by David Howells (dhowells@redhat.com)
-> + */
-> +
-> +#include <linux/types.h>
-> +
-> +struct pgp_key_ID {
-> +	u8 id[8];
-> +} __packed;
-> +
-> +struct pgp_time {
-> +	u8 time[4];
-> +} __packed;
-> +
-> +/*
-> + * PGP public-key algorithm identifiers [RFC 9580: 9.1]
-
-Nicely done documentation, which is rare, i.e. tells what the thing is
-and gives an easy to access reference. 0x1F44D for that.
-
-> + */
-> +enum pgp_pubkey_algo {
-> +	PGP_PUBKEY_RSA_ENC_OR_SIG	=3D 1,
-> +	PGP_PUBKEY_RSA_ENC_ONLY		=3D 2,
-> +	PGP_PUBKEY_RSA_SIG_ONLY		=3D 3,
-> +	PGP_PUBKEY_ELGAMAL		=3D 16,
-> +	PGP_PUBKEY_DSA			=3D 17,
-> +	PGP_PUBKEY_ECDH			=3D 18,
-> +	PGP_PUBKEY_ECDSA		=3D 19,
-> +	PGP_PUBKEY_EDDSA_LEGACY		=3D 22,
-> +	PGP_PUBKEY_X25519		=3D 25,
-> +	PGP_PUBKEY_X448			=3D 26,
-> +	PGP_PUBKEY_ED25519		=3D 27,
-> +	PGP_PUBKEY_ED448		=3D 28,
-> +	PGP_PUBKEY__LAST
-> +};
-> +
-> +/*
-> + * PGP symmetric-key algorithm identifiers [RFC 9580: 9.3]
-> + */
-> +enum pgp_symkey_algo {
-> +	PGP_SYMKEY_PLAINTEXT		=3D 0,
-> +	PGP_SYMKEY_IDEA			=3D 1,
-> +	PGP_SYMKEY_3DES			=3D 2,
-> +	PGP_SYMKEY_CAST5		=3D 3,
-> +	PGP_SYMKEY_BLOWFISH		=3D 4,
-> +	PGP_SYMKEY_AES_128KEY		=3D 7,
-> +	PGP_SYMKEY_AES_192KEY		=3D 8,
-> +	PGP_SYMKEY_AES_256KEY		=3D 9,
-> +	PGP_SYMKEY_TWOFISH_256KEY	=3D 10,
-> +	PGP_SYMKEY_CAMELIA_128KEY	=3D 11,
-> +	PGP_SYMKEY_CAMELIA_192KEY	=3D 12,
-> +	PGP_SYMKEY_CAMELIA_256KEY	=3D 13,
-> +	PGP_SYMKEY__LAST
-> +};
-> +
-> +/*
-> + * PGP compression algorithm identifiers [RFC 9580: 9.4]
-> + */
-> +enum pgp_compr_algo {
-> +	PGP_COMPR_UNCOMPRESSED		=3D 0,
-> +	PGP_COMPR_ZIP			=3D 1,
-> +	PGP_COMPR_ZLIB			=3D 2,
-> +	PGP_COMPR_BZIP2			=3D 3,
-> +	PGP_COMPR__LAST
-> +};
-> +
-> +/*
-> + * PGP hash algorithm identifiers [RFC 9580: 9.4]
-> + */
-> +enum pgp_hash_algo {
-> +	PGP_HASH_MD5			=3D 1,
-> +	PGP_HASH_SHA1			=3D 2,
-> +	PGP_HASH_RIPE_MD_160		=3D 3,
-> +	PGP_HASH_SHA256			=3D 8,
-> +	PGP_HASH_SHA384			=3D 9,
-> +	PGP_HASH_SHA512			=3D 10,
-> +	PGP_HASH_SHA224			=3D 11,
-> +	PGP_HASH_SHA3_256		=3D 12,
-> +	PGP_HASH_SHA3_512		=3D 14,
-> +	PGP_HASH__LAST
-> +};
-> +
-
-/*
- * doc
- */
-> +extern const char *const pgp_hash_algorithms[PGP_HASH__LAST];
-> +
-> +/*
-> + * PGP packet type tags [RFC 9580: 5].
-> + */
-> +enum pgp_packet_tag {
-> +	PGP_PKT_RESERVED		=3D 0,
-> +	PGP_PKT_PUBKEY_ENC_SESSION_KEY	=3D 1,
-> +	PGP_PKT_SIGNATURE		=3D 2,
-> +	PGP_PKT_SYMKEY_ENC_SESSION_KEY	=3D 3,
-> +	PGP_PKT_ONEPASS_SIGNATURE	=3D 4,
-> +	PGP_PKT_SECRET_KEY		=3D 5,
-> +	PGP_PKT_PUBLIC_KEY		=3D 6,
-> +	PGP_PKT_SECRET_SUBKEY		=3D 7,
-> +	PGP_PKT_COMPRESSED_DATA		=3D 8,
-> +	PGP_PKT_SYM_ENC_DATA		=3D 9,
-> +	PGP_PKT_MARKER			=3D 10,
-> +	PGP_PKT_LITERAL_DATA		=3D 11,
-> +	PGP_PKT_TRUST			=3D 12,
-> +	PGP_PKT_USER_ID			=3D 13,
-> +	PGP_PKT_PUBLIC_SUBKEY		=3D 14,
-> +	PGP_PKT_USER_ATTRIBUTE		=3D 17,
-> +	PGP_PKT_SYM_ENC_AND_INTEG_DATA	=3D 18,
-> +	PGP_PKT_MODIFY_DETECT_CODE	=3D 19,
-> +	PGP_PKT_PRIVATE_0		=3D 60,
-> +	PGP_PKT_PRIVATE_3		=3D 63,
-> +	PGP_PKT__HIGHEST		=3D 63
-> +};
-> +
-> +/*
-> + * Signature (tag 2) packet [RFC 9580: 5.2].
-> + */
-> +enum pgp_signature_version {
-> +	PGP_SIG_VERSION_3			=3D 3,
-> +	PGP_SIG_VERSION_4			=3D 4,
-> +};
-> +
-> +/*
-> + * Signature types [RFC 9580: 5.2.1].
-> + */
-> +enum pgp_signature_type {
-> +	PGP_SIG_BINARY_DOCUMENT_SIG		=3D 0x00,
-> +	PGP_SIG_CANONICAL_TEXT_DOCUMENT_SIG	=3D 0x01,
-> +	PGP_SIG_STANDALONE_SIG			=3D 0x02,
-> +	PGP_SIG_GENERAL_CERT_OF_UID_PUBKEY	=3D 0x10,
-> +	PGP_SIG_PERSONAL_CERT_OF_UID_PUBKEY	=3D 0x11,
-> +	PGP_SIG_CASUAL_CERT_OF_UID_PUBKEY	=3D 0x12,
-> +	PGP_SIG_POSTITIVE_CERT_OF_UID_PUBKEY	=3D 0x13,
-> +	PGP_SIG_SUBKEY_BINDING_SIG		=3D 0x18,
-> +	PGP_SIG_PRIMARY_KEY_BINDING_SIG		=3D 0x19,
-> +	PGP_SIG_DIRECTLY_ON_KEY			=3D 0x1F,
-> +	PGP_SIG_KEY_REVOCATION_SIG		=3D 0x20,
-> +	PGP_SIG_SUBKEY_REVOCATION_SIG		=3D 0x28,
-> +	PGP_SIG_CERT_REVOCATION_SIG		=3D 0x30,
-> +	PGP_SIG_TIMESTAMP_SIG			=3D 0x40,
-> +	PGP_SIG_THIRD_PARTY_CONFIRM_SIG		=3D 0x50,
-> +};
-> +
-
-/*
- * doc
- */
-> +struct pgp_signature_v3_packet {
-> +	enum pgp_signature_version version : 8; /* =3D=3D PGP_SIG_VERSION_3 */
-> +	u8	length_of_hashed;	/* =3D=3D 5 */
-> +	struct {
-> +		enum pgp_signature_type signature_type : 8;
-> +		struct pgp_time	creation_time;
-> +	} __packed hashed;
-> +	struct pgp_key_ID issuer;
-> +	enum pgp_pubkey_algo pubkey_algo : 8;
-> +	enum pgp_hash_algo hash_algo : 8;
-> +} __packed;
-> +
-
-/*
- * doc
- */
-> +struct pgp_signature_v4_packet {
-> +	enum pgp_signature_version version : 8;	/* =3D=3D PGP_SIG_VERSION_4 */
-> +	enum pgp_signature_type signature_type : 8;
-> +	enum pgp_pubkey_algo pubkey_algo : 8;
-> +	enum pgp_hash_algo hash_algo : 8;
-> +} __packed;
-> +
-> +/*
-> + * V4 signature subpacket types [RFC 9580: 5.2.3.7].
-> + */
-> +enum pgp_sig_subpkt_type {
-> +	PGP_SIG_CREATION_TIME			=3D 2,
-> +	PGP_SIG_EXPIRATION_TIME			=3D 3,
-> +	PGP_SIG_EXPORTABLE_CERT			=3D 4,
-> +	PGP_SIG_TRUST_SIG			=3D 5,
-> +	PGP_SIG_REGEXP				=3D 6,
-> +	PGP_SIG_REVOCABLE			=3D 7,
-> +	PGP_SIG_KEY_EXPIRATION_TIME		=3D 9,
-> +	PGP_SIG_PREF_SYM_ALGO			=3D 11,
-> +	PGP_SIG_REVOCATION_KEY			=3D 12,
-> +	PGP_SIG_ISSUER				=3D 16,
-> +	PGP_SIG_NOTATION_DATA			=3D 20,
-> +	PGP_SIG_PREF_HASH_ALGO			=3D 21,
-> +	PGP_SIG_PREF_COMPR_ALGO			=3D 22,
-> +	PGP_SIG_KEY_SERVER_PREFS		=3D 23,
-> +	PGP_SIG_PREF_KEY_SERVER			=3D 24,
-> +	PGP_SIG_PRIMARY_USER_ID			=3D 25,
-> +	PGP_SIG_POLICY_URI			=3D 26,
-> +	PGP_SIG_KEY_FLAGS			=3D 27,
-> +	PGP_SIG_SIGNERS_USER_ID			=3D 28,
-> +	PGP_SIG_REASON_FOR_REVOCATION		=3D 29,
-> +	PGP_SIG_FEATURES			=3D 30,
-> +	PGP_SIG_TARGET				=3D 31,
-> +	PGP_SIG_EMBEDDED_SIG			=3D 32,
-> +	PGP_SIG_ISSUER_FINGERPRINT		=3D 33,
-> +	PGP_SIG_INTENDED_RECIPIENT_FINGERPRINT	=3D 35,
-> +	PGP_SIG_PREFERRED_AEAD_CIPHERS		=3D 39,
-> +	PGP_SIG__LAST
-> +};
-> +
-
-/*
- * Documentation what is the critical mask.
- */
-> +#define PGP_SIG_SUBPKT_TYPE_CRITICAL_MASK	0x80
-> +
-> +/*
-> + * Key (tag 5, 6, 7 and 14) packet
-> + */
-> +enum pgp_key_version {
-> +	PGP_KEY_VERSION_4			=3D 4,
-> +};
-> +
-
-/*
- * doc
- */
-> +struct pgp_key_v4_packet {
-> +	enum pgp_key_version version : 8;
-> +	struct pgp_time	creation_time;
-> +	enum pgp_pubkey_algo pubkey_algo : 8;
-> +	u8 key_material[];
-> +} __packed;
-> +
-> +/*
-> + * Literal Data (tag 11) packet
-> + */
-> +enum pgp_literal_data_format {
-> +	PGP_LIT_FORMAT_BINARY			=3D 0x62,
-> +	PGP_LIT_FORMAT_TEXT			=3D 0x74,
-> +	PGP_LIT_FORMAT_TEXT_UTF8		=3D 0x75,
-> +};
+Content-Transfer-Encoding: 7bit
 
 
-BR, Jarkko
+
+On 12/09/2024 14:10, Ard Biesheuvel wrote:
+> Does the below help at all?
+> 
+> --- a/drivers/firmware/efi/tpm.c
+> +++ b/drivers/firmware/efi/tpm.c
+> @@ -60,7 +60,7 @@ int __init efi_tpm_eventlog_init(void)
+>         }
+> 
+>         tbl_size = sizeof(*log_tbl) + log_tbl->size;
+> -       memblock_reserve(efi.tpm_log, tbl_size);
+> +       efi_mem_reserve(efi.tpm_log, tbl_size);
+> 
+>         if (efi.tpm_final_log == EFI_INVALID_TABLE_ADDR) {
+>                 pr_info("TPM Final Events table not present\n");
+
+Unfortunately not. efi_mem_reserve updates e820_table, while kexec looks at /sys/firmware/memmap
+which is e820_table_firmware.
+
+arch_update_firmware_area introduced in the RFC patch does the same thing as efi_mem_reserve does at
+its end, just with e820_table_firmware instead of e820_table.
+i.e. efi_mem_reserve does:
+	e820__range_update(addr, size, E820_TYPE_RAM, E820_TYPE_RESERVED);
+	e820__update_table(e820_table);
+
+while arch_update_firmware_area does:
+	e820__range_update_firmware(addr, size, E820_TYPE_RAM, E820_TYPE_RESERVED);
+	e820__update_table(e820_table_firmware);
+
+Thanks,
+Usama
 
