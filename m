@@ -1,454 +1,110 @@
-Return-Path: <linux-kernel+bounces-326650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66701976B55
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:57:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47985976B59
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 251C928093B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:57:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A6A11C23616
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531281AD26E;
-	Thu, 12 Sep 2024 13:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE0D17966F;
+	Thu, 12 Sep 2024 13:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fRjZywS+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sdjevSe7"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8EF17966F;
-	Thu, 12 Sep 2024 13:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173D818028
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726149458; cv=none; b=g6ia/xLpn3AAt7RfsJc6pXekfBPemGDKHu8BiD6ue2qaejnxS14jDNtzKwXVl7N53yuYmLc/tFyirHYt1eTYteDhj2Kv0/Z+73/DGuZRgX/l+et4leBrpR2s8lr+o/VEyzwa0mdGBe1w4u+Kz3zdzCBwE8P8jY8FtJhUyMMsC7w=
+	t=1726149476; cv=none; b=b+/NIS1585ydJ2pp71mFbCfliF9Lidu70h3yoeHvJnZm4VdF+ipBW3OcxLAkAc6KnEgoQ80ClE/RXXYfoDd7QScoRGJyDNj982247/Fmt/uZ5QYdft5aLonZ9hDTfciDHmnZpRHyP09uiY1gdUgqjS4ZDd/nD8eWVCRfZpVTz10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726149458; c=relaxed/simple;
-	bh=hpnmLUdj6I9Xqg7VTdRTBOJb3Q4SwLfnBPYrP2ZXgkA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=OrM5t+zHonVkkVB3YhxBzDXncDibH42oouJP7O/pqMEwXbdS1oqKe5u1cL8XSxkzOO3zmZ25qT8jzpbsbSez59tNOZA2lc5QFrQLcT47vvXHo9B84RrSlTEiq1zR+MtoubaC7dhAUXf8HIfqi/OhZO+/ignPnF/bPiSccwBktHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fRjZywS+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AE00C4CEC3;
-	Thu, 12 Sep 2024 13:57:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726149457;
-	bh=hpnmLUdj6I9Xqg7VTdRTBOJb3Q4SwLfnBPYrP2ZXgkA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fRjZywS+WodpHyR2ZTTHa1WAmT1D5Gq6+2fkHV8dJHvxt1zPTKdS9h5kyFexLl34J
-	 iwtr2QdqKjiAXhxXeXbigV3e4ByeW+8pT3daWAt7P2O9FMfavgIQHMVzfFdxYEU0xz
-	 Xw+h28VlrlIFHx6zS7eX4sXEP66fBK4VCZIM6Ik/pONtKVEx5nLz9akKbJx1iBpRxH
-	 gqaihUkZltBpowCGUUqvTuQDZeikiwH4RSSeoGZVLljvjKPzNgH87ek8aA91ix2YJH
-	 /6X4jc2olP35HIvUXqCGtQt8ScmSEwiRYbHw2ZR77rPArbk1d2bM3VmoYK1zqyXU/n
-	 6cYvqsKQO1OTQ==
+	s=arc-20240116; t=1726149476; c=relaxed/simple;
+	bh=2t6DDl14FPTQBxdkXhrMD1mgAQ7ENfFgTaBWL8nte+M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NnaMu06zJp+xvdL4zwWYOmWnuiwpsUsquAqyIN8a8xL6PKRNherN3aHyLHC8XSX4q11sB45qlgOQZ+xTda4dMDAVzR06zEXuAd4JVvuDi6gB6cwIYO5lnkAxQYeMtHPGHlRh1M03B8AtR5qUQZ4BdgEL0jtMr9bA4GiQ54RgkAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sdjevSe7; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-535694d67eeso1024070e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 06:57:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726149473; x=1726754273; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BquzwUboHzXTtdjd0oA0kjxZhS1hFAwbnuUx4HBJ0HA=;
+        b=sdjevSe7zdUduecM/dZeRauUEqYexVDyD9gGVTnbJ559VjhFxGp+uQN5YdpxU2MtGa
+         a1Jdr2UsOHZPmCTC4z1/KnL0Vkgi8sHbqYfM0dc73fMT7IdX0r3DJzznj/pct9DpMOvH
+         O8P9oWg2YsVx7UeRaf6ISPE1CS1i42PCHppCk3HUpZKrj9A1xRYRxvsNGTGHZ0eYU7D2
+         nsLcG+MdqKDHYzOnf5HeWiHILJp8nYTj+xCbg8c55dZCZhjV+6z0jd2GO/eaetVipP5D
+         gJeJ6NuMQjhmux3yDeZfEEAdRQU5rYJiypAmYgaWrS+mCn8+C80KdyKj4xQtfXn/cZGE
+         9e5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726149473; x=1726754273;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BquzwUboHzXTtdjd0oA0kjxZhS1hFAwbnuUx4HBJ0HA=;
+        b=SV6ji3I4nqn5qadVtxI3Lj2ePZ6+4RNOiq/GsawLdy/fjQ8RSaRh/EB8k1ym/wQSHj
+         zMVE8+aooJXtbNUGGO6Jr2M+EdER1aAwBRds9cF/M7ESQtQo1R+RpOO013VcqP/FPz7A
+         mP3+lkOEgs1yQtpAlEoXwW63uizfTvuBy3UFtEMsPQgijy6YwSZW153NvvH36vk12Tkh
+         IZdz0gUesYl9SF/PN+bnKi9ofI1sHWQkQ5++6IMxyDeAaMFzw4OJp1ZYtaWXcsM+0HAH
+         sW2lL4dgYABQ9NCaMY0AF8EQEFiYLXX3schZgqDqorKI7A0escjtGJRxR4R4EkTjwW87
+         mf9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXqF7R+SQJnva0JBvxshGlLRPbesrUAhtqmjFF+hBKNO8KMRdoJ+Vjx/hdvr3x30RvNfC/PGuY6iMNu+mU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyW2O6uj9rRmaBfO4gW7ZTeq/310MotVmMtxh/pLenF3vuwciRp
+	b7iSSvUCOOWjuhXWMtsxIWlS677qlvUSXhMqHc7cURwSoxM42BWxjl9ZF96b3Es=
+X-Google-Smtp-Source: AGHT+IHHjX/elZwmUhRzKmMZTPFW8UNakvXLNck40dZybOYY8Xg9afuQtW40j5sB4fM0Jm7lNQ5O5A==
+X-Received: by 2002:a05:6512:3d93:b0:533:32cf:6420 with SMTP id 2adb3069b0e04-53679075a23mr986727e87.8.1726149472778;
+        Thu, 12 Sep 2024 06:57:52 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f868cc4sm1923399e87.33.2024.09.12.06.57.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 06:57:52 -0700 (PDT)
+Date: Thu, 12 Sep 2024 16:57:50 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Simona Vetter <simona.vetter@ffwll.ch>, 
+	Maxime Ripard <mripard@kernel.org>, Intel Graphics <intel-gfx@lists.freedesktop.org>, 
+	DRI <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the drm-misc-fixes tree
+Message-ID: <porwsaq63pizqyzq7agmt72lmowramhp6z5yqgu4fzs5n624ge@wyvmaahjmx7b>
+References: <20240904163018.214efaa7@canb.auug.org.au>
+ <20240911180741.45311006@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 12 Sep 2024 16:57:34 +0300
-Message-Id: <D44CWVY4FZ00.2C7VG1HOAMQLD@kernel.org>
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Roberto Sassu" <roberto.sassu@huaweicloud.com>, <dhowells@redhat.com>,
- <dwmw2@infradead.org>, <herbert@gondor.apana.org.au>, <davem@davemloft.net>
-Cc: <linux-kernel@vger.kernel.org>, <keyrings@vger.kernel.org>,
- <linux-crypto@vger.kernel.org>, <zohar@linux.ibm.com>,
- <linux-integrity@vger.kernel.org>, <torvalds@linux-foundation.org>,
- "Roberto Sassu" <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v3 04/14] PGPLIB: Basic packet parser
-X-Mailer: aerc 0.18.2
-References: <20240911122911.1381864-1-roberto.sassu@huaweicloud.com>
- <20240911122911.1381864-5-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20240911122911.1381864-5-roberto.sassu@huaweicloud.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911180741.45311006@canb.auug.org.au>
 
-On Wed Sep 11, 2024 at 3:29 PM EEST, Roberto Sassu wrote:
-> From: David Howells <dhowells@redhat.com>
->
-> Provide a simple parser that extracts the packets from a PGP packet blob
-> and passes the desirous ones to the given processor function:
->
-> 	struct pgp_parse_context {
-> 		u64 types_of_interest;
-> 		int (*process_packet)(struct pgp_parse_context *context,
-> 				      enum pgp_packet_tag type,
-> 				      u8 headerlen,
-> 				      const u8 *data,
-> 				      size_t datalen);
-> 	};
->
-> 	int pgp_parse_packets(const u8 *data, size_t datalen,
-> 			      struct pgp_parse_context *ctx);
->
-> This is configured on with CONFIG_PGP_LIBRARY.
->
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  crypto/asymmetric_keys/Kconfig       |   6 +
->  crypto/asymmetric_keys/Makefile      |   5 +
->  crypto/asymmetric_keys/pgp_library.c | 262 +++++++++++++++++++++++++++
->  crypto/asymmetric_keys/pgplib.h      |  33 ++++
->  4 files changed, 306 insertions(+)
->  create mode 100644 crypto/asymmetric_keys/pgp_library.c
->  create mode 100644 crypto/asymmetric_keys/pgplib.h
->
-> diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kcon=
-fig
-> index e1345b8f39f1..8215e3fcd8db 100644
-> --- a/crypto/asymmetric_keys/Kconfig
-> +++ b/crypto/asymmetric_keys/Kconfig
-> @@ -103,4 +103,10 @@ config FIPS_SIGNATURE_SELFTEST_ECDSA
->  	depends on CRYPTO_SHA256=3Dy || CRYPTO_SHA256=3DFIPS_SIGNATURE_SELFTEST
->  	depends on CRYPTO_ECDSA=3Dy || CRYPTO_ECDSA=3DFIPS_SIGNATURE_SELFTEST
-> =20
-> +config PGP_LIBRARY
-> +	tristate "PGP parsing library"
-> +	help
-> +	  This option enables a library that provides a number of simple
-> +	  utility functions for parsing PGP (RFC 9580) packet-based messages.
-> +
->  endif # ASYMMETRIC_KEY_TYPE
-> diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/Mak=
-efile
-> index bc65d3b98dcb..055b28207111 100644
-> --- a/crypto/asymmetric_keys/Makefile
-> +++ b/crypto/asymmetric_keys/Makefile
-> @@ -79,3 +79,8 @@ verify_signed_pefile-y :=3D \
-> =20
->  $(obj)/mscode_parser.o: $(obj)/mscode.asn1.h $(obj)/mscode.asn1.h
->  $(obj)/mscode.asn1.o: $(obj)/mscode.asn1.c $(obj)/mscode.asn1.h
-> +
-> +#
-> +# PGP handling
-> +#
-> +obj-$(CONFIG_PGP_LIBRARY) +=3D pgp_library.o
-> diff --git a/crypto/asymmetric_keys/pgp_library.c b/crypto/asymmetric_key=
-s/pgp_library.c
-> new file mode 100644
-> index 000000000000..1b87f8af411b
-> --- /dev/null
-> +++ b/crypto/asymmetric_keys/pgp_library.c
-> @@ -0,0 +1,262 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* PGP packet parser (RFC 9580)
-/*=20
- * PGP packet parser (RFC 9580)
+On Wed, Sep 11, 2024 at 06:07:41PM GMT, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Wed, 4 Sep 2024 16:30:18 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > After merging the drm-misc-fixes tree, today's linux-next build (htmldocs)
+> > produced this warning:
+> > 
+> > Error: Cannot open file drivers/gpu/drm/drm_bridge_connector.c
+> > 
+> > Introduced by commit
+> > 
+> >   9da7ec9b19d8 ("drm/bridge-connector: move to DRM_DISPLAY_HELPER module")
+> 
+> That commit is now in Linus' tree, but I am still getting the warning.
 
-> + *
-> + * Copyright (C) 2011 Red Hat, Inc. All Rights Reserved.
-> + * Written by David Howells (dhowells@redhat.com)
-> + */
-> +
-> +#define pr_fmt(fmt) "PGPL: "fmt
-> +#include <linux/errno.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +
-> +#include "pgplib.h"
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("PGP library");
-> +
-> +const char *const pgp_hash_algorithms[PGP_HASH__LAST] =3D {
-> +	[PGP_HASH_MD5]			=3D "md5",
-> +	[PGP_HASH_SHA1]			=3D "sha1",
-> +	[PGP_HASH_RIPE_MD_160]		=3D "rmd160",
-> +	[PGP_HASH_SHA256]		=3D "sha256",
-> +	[PGP_HASH_SHA384]		=3D "sha384",
-> +	[PGP_HASH_SHA512]		=3D "sha512",
-> +	[PGP_HASH_SHA224]		=3D "sha224",
-> +	[PGP_HASH_SHA3_256]		=3D "sha3-256",
-> +	[PGP_HASH_SHA3_512]		=3D "sha3-512",
-> +};
-> +EXPORT_SYMBOL_GPL(pgp_hash_algorithms);
-> +
-> +/**
-> + * pgp_parse_packet_header - Parse a PGP packet header
-> + * @_data: Start of the PGP packet (updated to PGP packet data)
-> + * @_datalen: Amount of data remaining in buffer (decreased)
-> + * @_type: Where the packet type will be returned
-> + * @_headerlen: Where the header length will be returned
-> + *
-> + * Parse a set of PGP packet header [RFC 9580: 4.2].
-> + *
-> + * Return: Packet data size on success; non-zero on error.  If successfu=
-l,
-> + * *_data and *_datalen will have been updated and *_headerlen will be s=
-et to
-> + * hold the length of the packet header.
-> + */
-> +static ssize_t pgp_parse_packet_header(const u8 **_data, size_t *_datale=
-n,
-> +				       enum pgp_packet_tag *_type,
-> +				       u8 *_headerlen)
-> +{
-> +	enum pgp_packet_tag type;
-> +	const u8 *data =3D *_data;
-> +	size_t size, datalen =3D *_datalen;
+Pushed out the fix to the drm-misc-fixes branch.
 
-Move the last declaration as the first declaration, makes more
-readable (reverse christmas tree order).
-
-I don't have time to go this patch fully for this round but I
-saw some other similar nits below.
-
-> +
-> +	pr_devel("-->%s(,%zu,,)\n", __func__, datalen);
-> +
-> +	if (datalen < 2)
-> +		goto short_packet;
-> +
-> +	pr_devel("pkthdr %02x, %02x\n", data[0], data[1]);
-> +
-> +	type =3D *data++;
-> +	datalen--;
-> +	if (!(type & 0x80)) {
-> +		pr_debug("Packet type does not have MSB set\n");
-> +		return -EBADMSG;
-> +	}
-> +	type &=3D ~0x80;
-> +
-> +	if (type & 0x40) {
-> +		/* New packet length format */
-> +		type &=3D ~0x40;
-> +		pr_devel("new format: t=3D%u\n", type);
-> +		switch (data[0]) {
-> +		case 0x00 ... 0xbf:
-> +			/* One-byte length */
-> +			size =3D data[0];
-> +			data++;
-> +			datalen--;
-> +			*_headerlen =3D 2;
-> +			break;
-> +		case 0xc0 ... 0xdf:
-> +			/* Two-byte length */
-> +			if (datalen < 2)
-> +				goto short_packet;
-> +			size =3D (data[0] - 192) * 256;
-> +			size +=3D data[1] + 192;
-> +			data +=3D 2;
-> +			datalen -=3D 2;
-> +			*_headerlen =3D 3;
-> +			break;
-> +		case 0xff:
-> +			/* Five-byte length */
-> +			if (datalen < 5)
-> +				goto short_packet;
-> +			size =3D  data[1] << 24;
-> +			size |=3D data[2] << 16;
-> +			size |=3D data[3] << 8;
-> +			size |=3D data[4];
-> +			data +=3D 5;
-> +			datalen -=3D 5;
-> +			*_headerlen =3D 6;
-> +			break;
-> +		default:
-> +			pr_debug("Partial body length packet not supported\n");
-> +			return -EBADMSG;
-> +		}
-> +	} else {
-> +		/* Old packet length format */
-> +		u8 length_type =3D type & 0x03;
-> +
-> +		type >>=3D 2;
-> +		pr_devel("old format: t=3D%u lt=3D%u\n", type, length_type);
-> +
-> +		switch (length_type) {
-> +		case 0:
-> +			/* One-byte length */
-> +			size =3D data[0];
-> +			data++;
-> +			datalen--;
-> +			*_headerlen =3D 2;
-> +			break;
-> +		case 1:
-> +			/* Two-byte length */
-> +			if (datalen < 2)
-> +				goto short_packet;
-> +			size  =3D data[0] << 8;
-> +			size |=3D data[1];
-> +			data +=3D 2;
-> +			datalen -=3D 2;
-> +			*_headerlen =3D 3;
-> +			break;
-> +		case 2:
-> +			/* Four-byte length */
-> +			if (datalen < 4)
-> +				goto short_packet;
-> +			size  =3D data[0] << 24;
-> +			size |=3D data[1] << 16;
-> +			size |=3D data[2] << 8;
-> +			size |=3D data[3];
-> +			data +=3D 4;
-> +			datalen -=3D 4;
-> +			*_headerlen =3D 5;
-> +			break;
-> +		default:
-> +			pr_debug("Indefinite length packet not supported\n");
-> +			return -EBADMSG;
-> +		}
-> +	}
-> +
-> +	pr_devel("datalen=3D%zu size=3D%zu\n", datalen, size);
-> +	if (datalen < size)
-> +		goto short_packet;
-> +	if (size > INT_MAX)
-> +		goto too_big;
-> +
-> +	*_data =3D data;
-> +	*_datalen =3D datalen;
-> +	*_type =3D type;
-> +	pr_devel("Found packet type=3D%u size=3D%zd\n", type, size);
-> +	return size;
-> +
-> +short_packet:
-> +	pr_debug("Attempt to parse short packet\n");
-> +	return -EBADMSG;
-> +too_big:
-> +	pr_debug("Signature subpacket size >2G\n");
-> +	return -EMSGSIZE;
-> +}
-> +
-> +/**
-> + * pgp_parse_packets - Parse a set of PGP packets
-> + * @data: Data to be parsed (updated)
-> + * @datalen: Amount of data (updated)
-> + * @ctx: Parsing context
-> + *
-> + * Parse a set of PGP packets [RFC 9580: 4].
-> + *
-> + * Return: 0 on successful parsing, a negative value otherwise.
-> + */
-> +int pgp_parse_packets(const u8 *data, size_t datalen,
-> +		      struct pgp_parse_context *ctx)
-> +{
-> +	enum pgp_packet_tag type;
-> +	ssize_t pktlen;
-> +	u8 headerlen;
-> +	int ret;
-> +
-> +	while (datalen > 2) {
-> +		pktlen =3D pgp_parse_packet_header(&data, &datalen, &type,
-> +						 &headerlen);
-> +		if (pktlen < 0)
-> +			return pktlen;
-> +
-> +		if ((ctx->types_of_interest >> type) & 1) {
-> +			ret =3D ctx->process_packet(ctx, type, headerlen,
-> +						  data, pktlen);
-> +			if (ret < 0)
-> +				return ret;
-> +		}
-> +		data +=3D pktlen;
-> +		datalen -=3D pktlen;
-> +	}
-> +
-> +	if (datalen !=3D 0) {
-> +		pr_debug("Excess octets in packet stream\n");
-> +		return -EBADMSG;
-> +	}
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(pgp_parse_packets);
-> +
-> +/**
-> + * pgp_parse_public_key - Parse the common part of a PGP pubkey packet
-> + * @_data: Content of packet (updated)
-> + * @_datalen: Length of packet remaining (updated)
-> + * @pk: Public key data
-> + *
-> + * Parse the common data struct for a PGP pubkey packet [RFC 9580: 5.5.2=
-].
-> + *
-> + * Return: 0 on successful parsing, a negative value otherwise.
-> + */
-> +int pgp_parse_public_key(const u8 **_data, size_t *_datalen,
-> +			 struct pgp_parse_pubkey *pk)
-> +{
-> +	const u8 *data =3D *_data;
-> +	size_t datalen =3D *_datalen;
-> +	unsigned int tmp;
-> +
-> +	if (datalen < 12) {
-> +		pr_debug("Public key packet too short\n");
-> +		return -EBADMSG;
-> +	}
-> +
-> +	pk->version =3D *data++;
-> +	switch (pk->version) {
-> +	case PGP_KEY_VERSION_4:
-> +		break;
-> +	default:
-> +		pr_debug("Public key packet with unhandled version %d\n",
-> +			 pk->version);
-> +		return -EBADMSG;
-> +	}
-> +
-> +	tmp  =3D *data++ << 24;
-> +	tmp |=3D *data++ << 16;
-> +	tmp |=3D *data++ << 8;
-> +	tmp |=3D *data++;
-> +	pk->creation_time =3D tmp;
-> +	if (pk->version =3D=3D PGP_KEY_VERSION_4)
-> +		pk->expires_at =3D 0; /* Have to get it from the selfsignature */
-> +
-> +	pk->pubkey_algo =3D *data++;
-> +	datalen -=3D 6;
-> +
-> +	pr_devel("%x,%x,%lx,%lx\n",
-> +		 pk->version, pk->pubkey_algo, pk->creation_time,
-> +		 pk->expires_at);
-> +
-> +	*_data =3D data;
-> +	*_datalen =3D datalen;
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(pgp_parse_public_key);
-> diff --git a/crypto/asymmetric_keys/pgplib.h b/crypto/asymmetric_keys/pgp=
-lib.h
-> new file mode 100644
-> index 000000000000..3ec4b408a11e
-> --- /dev/null
-> +++ b/crypto/asymmetric_keys/pgplib.h
-> @@ -0,0 +1,33 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/* PGP library definitions (RFC 9580)
-> + *
-> + * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
-> + * Written by David Howells (dhowells@redhat.com)
-> + */
-> +
-> +#include "pgp.h"
-> +
-> +/*
-> + * PGP library packet parser
-> + */
-> +struct pgp_parse_context {
-> +	u64 types_of_interest;
-> +	int (*process_packet)(struct pgp_parse_context *context,
-> +			      enum pgp_packet_tag type,
-> +			      u8 headerlen,
-> +			      const u8 *data,
-> +			      size_t datalen);
-> +};
-> +
-> +extern int pgp_parse_packets(const u8 *data, size_t datalen,
-> +			     struct pgp_parse_context *ctx);
-> +
-> +struct pgp_parse_pubkey {
-> +	enum pgp_key_version version : 8;
-> +	enum pgp_pubkey_algo pubkey_algo : 8;
-> +	__kernel_old_time_t creation_time;
-> +	__kernel_old_time_t expires_at;
-> +};
-> +
-> +extern int pgp_parse_public_key(const u8 **_data, size_t *_datalen,
-> +				struct pgp_parse_pubkey *pk);
-
-
-BR, Jarkko
+-- 
+With best wishes
+Dmitry
 
