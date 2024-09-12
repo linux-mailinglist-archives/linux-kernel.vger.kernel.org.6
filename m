@@ -1,110 +1,153 @@
-Return-Path: <linux-kernel+bounces-326756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE5C9976C92
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:48:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDF36976C94
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D5991C23A40
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:48:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9725FB24C1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B686D1BCA03;
-	Thu, 12 Sep 2024 14:47:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2791B29C9;
+	Thu, 12 Sep 2024 14:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Pbm2HzJL"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="oYCgF2ML"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCACA1B983F
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 14:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4131ACDF9;
+	Thu, 12 Sep 2024 14:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726152430; cv=none; b=TzG+iCbFoG7o6nNoTNPf3AWhiPRbizBx9jw079fnCX5KcMINPFrkFFI9lwa+zcPyfsgxp2Bgnh0QotUXC/EvOPkr1mYBncJQbC1sUquTxuP6uw3DbnBspjw78lMULcodlR/raAgE0hS/xN3UcoPt3X38eF2maFNoeO339lXrOyc=
+	t=1726152473; cv=none; b=As98ZbLhb6MDeDZxvT5WybV5IwCf94YFmEuzQRPHj3dlzgD4J7JGswP7u1Yl1/J1XI5XUNk8Luljo4BHCtVFCL4g1EXW52QWAoMkF1VKbbslQRWpr5C6/55/z+Kv7Y1EvjxLSw8Ou5Cy6ikbVwI9mc/o7kEe7wa4d1jfK9VEDIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726152430; c=relaxed/simple;
-	bh=VLgQVidQ6JkwNHBG+bT7z+vat5MVRXiuTmpzNYEBtjo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=O0qNJTWhJ6B0m/CUTXWfJQSRu5Gwjb6tMyjTzk47G2o2gZyonD0Ik2l48SkHxpkThCuU8ds0jrz/68ui+PXH7PXrlCt1n6DvEejBUhMYGWMEE6GS3iuZMhXKhwhRHpghQ7D+4qqhmH0XSirN+yjchHVGNxcd7ZIsPu6l6Tj8ddY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Pbm2HzJL; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-82cd869453eso42191339f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:47:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1726152426; x=1726757226; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WuqxE552eGXfY1QPIyif8tITUzuqDHdFknJEPi/61EI=;
-        b=Pbm2HzJLGlJjw/8u8R304Kf/0lNOwgPO9fY/m/b0stzmPnnX4KTD+d/nYNxhWFhRI1
-         G8/r7Y65/FDXgRipKhqfBbcDUu66aGZyAInZ0MFBH10hSknHVuIj7MQUBGTEDD+4eppB
-         hWJDXIaIlPRHLSqWfnSvdIkftLSCl1ZVNNstOHwxOBdY8XvJskxfGbnUpc9MSpy3aVkQ
-         7uqpTqKFpQaBaMqg08KPIB6SzmZESR6NFJ4Bma7IcJysCdPOa2VsSH/PGVGYZr0SvBlI
-         srhEE7DCv2aoXxc5BYf/48eDnycIg9RB4FvcUJsuIwL0C+qsbC5T/k19Jmc1WqueJrLE
-         uZAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726152426; x=1726757226;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WuqxE552eGXfY1QPIyif8tITUzuqDHdFknJEPi/61EI=;
-        b=Vnyqvt6gSnLmP+hO9Am/Uy7DiYbTzRp/+ZJSbq9ymojJCsCSMnEie1sEa1+4VgAhQD
-         hsZWIiCT7SF0y31psSURTNr+CICQDE1kSn09B6X+G0tMWBDv8VdhNOV3HO8OT+GWBK7c
-         Q2Wh7BGNQILRMYWAYUSLG/TBc+X9StmTURlX570slo9XAzlASnpVOEfWu8+qZ4cc9uuK
-         XWz7VkuKNG6HwlaMb2gKiYSnVURHi+wXE4UjXCAPIoLONnkuqGa3ZFDLNSFCUOipa2gj
-         uu6VL74am/EpfExaINAVKM3omlsdXXBfb/lFq6SQXO1HFrFw0qb3ZbHulIPofFub4Zej
-         +Q4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXhYMpVUTCv2D0IYPN2Ff6ZraaAH5TS8XqPGPQqst51ee1Ac7MIMkKzz0qXa7T4Lb6rKpGgpaJ4vjScl5w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdLxyAaBB5rAPlATfl1FEGTKNTPHEUuBHnyMZe89x4QQ0VXmev
-	ujau/cm8IFC2xzer4et1DqsOo4NR2fQBASD91OussCkZj43tgo3W2TrQ+j8yCxk=
-X-Google-Smtp-Source: AGHT+IF/1lFIcEGDucV4K4EUBkE//+6FWK/0zRbuXQuHpWpvj6rxbxk4lY+FKUQePA1L6vRyxhJ6eg==
-X-Received: by 2002:a05:6602:6d13:b0:82c:f30d:fc72 with SMTP id ca18e2360f4ac-82d1f8b72dfmr410240439f.2.1726152425689;
-        Thu, 12 Sep 2024 07:47:05 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d35f433db8sm633355173.18.2024.09.12.07.47.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 07:47:05 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Riyan Dhiman <riyandhiman14@gmail.com>
-Cc: hch@lst.de, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240911132954.5874-1-riyandhiman14@gmail.com>
-References: <20240911132954.5874-1-riyandhiman14@gmail.com>
-Subject: Re: [PATCH v2] block: fix potential invalid pointer dereference in
- blk_add_partition
-Message-Id: <172615242499.556162.4004565592803835809.b4-ty@kernel.dk>
-Date: Thu, 12 Sep 2024 08:47:04 -0600
+	s=arc-20240116; t=1726152473; c=relaxed/simple;
+	bh=hF0NkNn49+OsaoQazj7IegXHjTIB2Pa5AXOr8r+MNVI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=JqEMY3jGU/RQppUGIPbo4ptHaoLOIZVNz6eF7haj8JWtDygdsuEPw6cUNe3fzdogyOFwLnhc+1Sr0AuC5yLoZPWs8kPqbHoPEESgHPdcHUEy2gtzQoiQBNp+XiHoZR1bzZF226ckoLGwARPID0DCZkfmmEd8PsRruv2Js8wtBkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=oYCgF2ML; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48CAeWSL003716;
+	Thu, 12 Sep 2024 14:47:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:reply-to:references:content-type
+	:in-reply-to:mime-version; s=pp1; bh=F6pkaOwZmgo+j9NNrUOeESLmhPs
+	ZpIo3xbmAno/mK4A=; b=oYCgF2MLEpHN9rujApoD/EsBAr64V6xHJMbg7sZkAbg
+	efK84FlHSg/x72tXsG7LHaZ35b7wyPxu0NONBwQ2RbVKxb0xxW6LuPQHk2YrRJb2
+	uvvcvOF8mKT5JCGJ0HGKv5N7ixJ48ygX3vyTzJYNQli3OWzuDhzvFv6Aa5ed9Lf1
+	grpg+l38z3Y2LaM+96jUje8wxj69pbR9kDw9qfGlr38WWjj9NBHQb+y6GQVuGt51
+	ofTuGyKexml8gdEWvpYfw3x7KOnHVz5FrG7RNg3P6CWAd1w+Rnt5mexI4EBC854M
+	FAsZJyDLIEDD0ihFYdqVmH5QP27uEoU5GgenH5hcK/Q==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gd8kv4j7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Sep 2024 14:47:35 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48CElYB5021115;
+	Thu, 12 Sep 2024 14:47:34 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gd8kv4j2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Sep 2024 14:47:34 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48CEWkOO003122;
+	Thu, 12 Sep 2024 14:47:33 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41h15u8reg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Sep 2024 14:47:33 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48CElVaB39715206
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 12 Sep 2024 14:47:31 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C45DB20043;
+	Thu, 12 Sep 2024 14:47:31 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 34E3B20040;
+	Thu, 12 Sep 2024 14:47:28 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.126.150.29])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with SMTP;
+	Thu, 12 Sep 2024 14:47:28 +0000 (GMT)
+Date: Thu, 12 Sep 2024 20:17:27 +0530
+From: Srikar Dronamraju <srikar@linux.ibm.com>
+To: Suleiman Souhlal <suleiman@google.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, joelaf@google.com,
+        vineethrp@google.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, ssouhlal@freebsd.org,
+        David Woodhouse <dwmw2@infradead.org>,
+        Sean Christopherson <seanjc@google.com>
+Subject: Re: [PATCH v2] sched: Don't try to catch up excess steal time.
+Message-ID: <20240912144727.GC1578937@linux.ibm.com>
+Reply-To: Srikar Dronamraju <srikar@linux.ibm.com>
+References: <20240911111522.1110074-1-suleiman@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240911111522.1110074-1-suleiman@google.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: _c9EMgB-lfyaLtrmTipheoTLDt3QQ4DC
+X-Proofpoint-ORIG-GUID: 3CXo64PLHzm_BUK7QFX-xfpEjxNike9J
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-12_04,2024-09-12_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 clxscore=1011 phishscore=0 spamscore=0
+ lowpriorityscore=0 adultscore=0 mlxscore=0 mlxlogscore=602 bulkscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409120106
 
+* Suleiman Souhlal <suleiman@google.com> [2024-09-11 20:15:22]:
 
-On Wed, 11 Sep 2024 18:59:54 +0530, Riyan Dhiman wrote:
-> The blk_add_partition() function initially used a single if-condition
-> (IS_ERR(part)) to check for errors when adding a partition. This was
-> modified to handle the specific case of -ENXIO separately, allowing the
-> function to proceed without logging the error in this case. However,
-> this change unintentionally left a path where md_autodetect_dev()
-> could be called without confirming that part is a valid pointer.
+> When steal time exceeds the measured delta when updating clock_task, we
+> currently try to catch up the excess in future updates.
+> However, this results in inaccurate run times for the future things using
+> clock_task, as they end up getting additional steal time that did not
+> actually happen.
 > 
-> [...]
+> For example, suppose a task in a VM runs for 10ms and had 15ms of steal
+> time reported while it ran. clock_task rightly doesn't advance. Then, a
+> different taks runs on the same rq for 10ms without any time stolen in
+> the host.
+> Because of the current catch up mechanism, clock_sched inaccurately ends
+> up advancing by only 5ms instead of 10ms even though there wasn't any
+> actual time stolen. The second task is getting charged for less time
+> than it ran, even though it didn't deserve it.
+> This can result in tasks getting more run time than they should actually
+> get.
+> 
+> So, we instead don't make future updates pay back past excess stolen time.
+> 
+> Signed-off-by: Suleiman Souhlal <suleiman@google.com>
+> ---
+> v2:
+> - Slightly changed to simply moving one line up instead of adding
+>   new variable.
+> 
+> v1: https://lore.kernel.org/lkml/20240806111157.1336532-1-suleiman@google.com
+> ---
 
-Applied, thanks!
+After moving the line up, this looks good to me.
 
-[1/1] block: fix potential invalid pointer dereference in blk_add_partition
-      commit: 26e197b7f9240a4ac301dd0ad520c0c697c2ea7d
+Reviewed-by: Srikar Dronamraju <srikar@linux.ibm.com>
 
-Best regards,
 -- 
-Jens Axboe
-
-
-
+Thanks and Regards
+Srikar Dronamraju
 
