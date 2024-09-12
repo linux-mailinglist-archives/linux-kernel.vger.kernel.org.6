@@ -1,384 +1,486 @@
-Return-Path: <linux-kernel+bounces-326914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41CA0976E6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:08:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA405976E70
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:08:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86F89B24033
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:08:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12BAA1F2261D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:08:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8077C14A096;
-	Thu, 12 Sep 2024 16:08:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5B213D538;
+	Thu, 12 Sep 2024 16:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="mXeo3Xyl";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="mXeo3Xyl"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KwZsS7Ml"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4DF43144;
-	Thu, 12 Sep 2024 16:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6EC43144;
+	Thu, 12 Sep 2024 16:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726157294; cv=none; b=Yhkb8uxHLnxR1mJRxeqbwbTYjY4VEFLs9C8XVq84g6u3ggwKLswOjDnAkH3vOZJ51vP84lvKfgNfVerYqkm3GynRl0hqPm9UVNryV/iZ+wy+ZkN4EgQfmCGZLAcR+SbmK+q3Q9H2u09LLLuiFjBlohgWNVeJN493ak9ARI9ek7Y=
+	t=1726157318; cv=none; b=sqRG6UHl0Rv6/c6vvrP0zTwez3IDRwylKLMkDyKViFbv2OD0BGjeLUoLM4mfeBFhfIk7mTYseH4O+82/9itA4rNcLnclBZi60SxTFn8qX1cIsFAnzeZuy3DdteCFp3fR1KqS0zyaRFP9Qm7rDd7fgpo8DAamLgrqJa1jbKZQ4cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726157294; c=relaxed/simple;
-	bh=Wn8FoEwW+D2QuE42oVTj1YP+4D8UCzzDjZm7CDVaXfc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YmpSK0m4L6EvtkqOkecJV/ZCV48jg24/eNyGjX4ykmSTv77wVTY3u+zpDSyOkNZgCpExGJ9cAaXhO8MFqnwitKCgzflVk+R00lL19ZsSyINMSTbpFPartI1xh8enN5bQIXCVsTuTjY7v+2eSWAClE/cD3Fb++cav0Z+/iOgEbH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=mXeo3Xyl; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=mXeo3Xyl; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 03EB41FB82;
-	Thu, 12 Sep 2024 16:08:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1726157289; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=nT3s6Lc7/ILovJ0HaNwI1dJWTyKHFyAO/l3//LkMJI8=;
-	b=mXeo3Xyl3O6A6IoxoZMa2uo76qY24wqU/T6wjVqkiNMf4AthtYjTPON22YwNqghy3gnrRq
-	BfdLC07TEQC77CyP9PICxOwuQy7c8qRRqkSt9kPXC22KXa9qGOHrPQ3kJnkLNW7mda5I4J
-	OM/hiCrCXh8K5senCfW4SEpneGHqhLA=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=mXeo3Xyl
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1726157289; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=nT3s6Lc7/ILovJ0HaNwI1dJWTyKHFyAO/l3//LkMJI8=;
-	b=mXeo3Xyl3O6A6IoxoZMa2uo76qY24wqU/T6wjVqkiNMf4AthtYjTPON22YwNqghy3gnrRq
-	BfdLC07TEQC77CyP9PICxOwuQy7c8qRRqkSt9kPXC22KXa9qGOHrPQ3kJnkLNW7mda5I4J
-	OM/hiCrCXh8K5senCfW4SEpneGHqhLA=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F1D4B13A73;
-	Thu, 12 Sep 2024 16:08:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id LGIGO+gR42ZfJAAAD6G6ig
-	(envelope-from <dsterba@suse.com>); Thu, 12 Sep 2024 16:08:08 +0000
-From: David Sterba <dsterba@suse.com>
-To: torvalds@linux-foundation.org
-Cc: David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Btrfs updates for 6.12
-Date: Thu, 12 Sep 2024 18:08:02 +0200
-Message-ID: <cover.1726154772.git.dsterba@suse.com>
-X-Mailer: git-send-email 2.45.0
+	s=arc-20240116; t=1726157318; c=relaxed/simple;
+	bh=U3VOALeumJGisEeB0OEW7BdyaFX+gZszoURAPjLs1pQ=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dl23Z5GKjDQSf7P4N71RJZM6a49Fj2BYOKstjLIQsW4D5IeFlRrcyJuYR9BUeU6/fys1NLCxUxGCK5Dr9Nisgd5IC74D0aUZQHAwpx/pXwwpYdGZjOD7y51q8mbnXh5E4Iyi71RwZ0P6reoSWoW++yHLszpu2FfvxIK3jLWVBVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KwZsS7Ml; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f759688444so11222071fa.1;
+        Thu, 12 Sep 2024 09:08:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726157314; x=1726762114; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YiljT4h9ENP2rTguJJ6qszFdcjCVhri9xDUwGvenRoc=;
+        b=KwZsS7MlZEttaAWg08oVmUCqE8q1HLVC+shP3wwZBqjRpwYTbQxpenxowyJ09j4dds
+         3Ee7gVOAi9eOe/8NB9RpSWK4pODnrNiDaMM3iAyj23HyMGYNQjxS+Lu4ya6whXd+Sq6l
+         ZeZ0zdkndGG+t1A1ww7pIEX8lC6oJtltM/b5xRay7IelVEsQ65N46iX3flhKKK9TPUj6
+         wc3IGgQQwvzTRZtepCh6BC0V/EnHWq2usIoOAORSZfZUm8gSl9TsvUH3qDQmjDFHoZYo
+         4/s+7zixs07Lx7zHPRWIfIvaweZYeskrkHuEWm3g1XSHyFmrwMsdmAu32avTkVnRp9zy
+         D4yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726157314; x=1726762114;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YiljT4h9ENP2rTguJJ6qszFdcjCVhri9xDUwGvenRoc=;
+        b=co6E7vghc4m7SqcEJ3qwvveF/GQE++9pVSqEx/ocv3382xymFHnx3r7ZyFoFRDbv10
+         T7dVe2Ycu96lG0+nQFBL3N0jNFN5Pq1Xe266KCZco2M8lkxRWSFyW4X1xJUtsoFUxUjQ
+         ASZv574N3mCi4qAMNZHLG+XxXiDKc3Y5FMoaa0li6C5qw94qMJUkcNEtLVnK1cdRfn6I
+         amncGP+xJlUBcLdKUqOuTEBeWpWu5/TQiyD1ZcB6pOku4tVaOLGmo8hn0JpLWtYpAaKk
+         LYFEyYZubZY/Nn1Mp0zyATMoA9N0V9GuqnWjJhxUTGtsyV6/EgZrvM/FIhxRN5OY4Pbk
+         mO0A==
+X-Forwarded-Encrypted: i=1; AJvYcCW+XSYOaqqIbN7a8EPQCdDcKBhDqgX/POyF/WDk4ul9PlGKWXdX0ULxXgLHeyJvKZzolvicuJizcSTIhhc=@vger.kernel.org, AJvYcCW0d1ug0d9L7/VC8o/F632P7dASZhdSzofWODnw5K8f6X9kfU4nP/wuTX3kZdxCSQC/g9zY@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRxXVNDW7OSm6ObTxvILiqjlZz0qQgVYaVN7ljGQ/EaXbUeG/L
+	wGM0HuXkeqFPPkFRixv4m1azSGULUi2JHf0AF2hsx05dxBART/Ok
+X-Google-Smtp-Source: AGHT+IHIWmRASK1GlvzjbJeOjvB4S2ZAC+lJSZSf3rgc2jZdShZ3G6z3pAbQwTLFmhmsP7r1Y0hLBg==
+X-Received: by 2002:a2e:719:0:b0:2ef:2c27:6680 with SMTP id 38308e7fff4ca-2f787dc2fc8mr14461881fa.12.1726157312556;
+        Thu, 12 Sep 2024 09:08:32 -0700 (PDT)
+Received: from pc636 (host-90-235-20-248.mobileonline.telia.com. [90.235.20.248])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f75bffc12csm19616311fa.34.2024.09.12.09.08.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 09:08:31 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Thu, 12 Sep 2024 18:08:29 +0200
+To: Xingyu Li <xli399@ucr.edu>
+Cc: Uladzislau Rezki <urezki@gmail.com>, paulmck@kernel.org,
+	frederic@kernel.org, neeraj.upadhyay@kernel.org,
+	joel@joelfernandes.org, josh@joshtriplett.org, boqun.feng@gmail.com,
+	rostedt@goodmis.org, mathieu.desnoyers@efficios.com,
+	jiangshanlai@gmail.com, qiang.zhang1211@gmail.com,
+	rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Yu Hao <yhao016@ucr.edu>
+Subject: Re: BUG: WARNING in kvfree_rcu_bulk
+Message-ID: <ZuMR_U5JfZTIeG30@pc636>
+References: <CALAgD-7JNKw5m0wpGAN+ezCL-qn7LcTL5vgyBmQZKbf5BTNUCw@mail.gmail.com>
+ <ZtAunXBPC4WElcez@pc636>
+ <CALAgD-4kr9MLE6jSF7pXFX9msd-NWFL8mrscvJAOecNWAYL4RQ@mail.gmail.com>
+ <ZtieQFsSiALVVGld@pc636>
+ <CALAgD-7WAY6FwTNGdt0BQ2S99Nr+yJ5XyWhA_L_SsbkKsHBrFw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 03EB41FB82
-X-Spam-Score: -5.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-5.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.com:+];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:mid,suse.com:dkim]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALAgD-7WAY6FwTNGdt0BQ2S99Nr+yJ5XyWhA_L_SsbkKsHBrFw@mail.gmail.com>
 
-Hi,
+> > >
+> > > Here is the config file:
+> > > https://gist.github.com/TomAPU/64f5db0fe976a3e94a6dd2b621887cdd
+> > >
+I tested your "reproducer" on 6.11.0-rc2. I see some panics and they are
+different. For example below one triggers: BUG: kernel NULL pointer dereference, address: 0000000000000010
 
-this update brings mostly refactoring, cleanups, minor performance
-optimizations and usual fixes. The folio API conversions are most
-noticeable.
+<snip>
+Linux pc640 6.11.0-rc2-00037-g6b376d473b12 #3833 SMP PREEMPT_DYNAMIC Thu Sep 12 15:42:02 CEST 2024 x86_64
 
-There's one less visible change that could have a high impact. The
-extent lock scope for read is reduced, not held for the entire
-operation. In the buffered read case it's left to page or inode lock,
-some direct io read synchronization is still needed.
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
 
-This used to prevent deadlocks induced by page faults during direct io,
-so there was a 4K limitation on the requests, e.g. for io_uring. In the
-future this will allow smoother integration with iomap where the extent
-read lock was a major obstacle.
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Thu Sep 12 11:13:52 EDT 2024 on ttyS0
+uroot@pc640:~# /home/urezki/a.out
+[  108.612276][ T8454] chnl_net:caif_netlink_parms(): no params data found
+[  108.630121][ T8455] chnl_net:caif_netlink_parms(): no params data found
+[  109.305626][ T8454] bridge0: port 1(bridge_slave_0) entered blocking state
+[  109.310125][ T8454] bridge0: port 1(bridge_slave_0) entered disabled state
+[  109.314806][ T8454] bridge_slave_0: entered allmulticast mode
+[  109.321617][ T8454] bridge_slave_0: entered promiscuous mode
+[  109.614547][ T8454] bridge0: port 2(bridge_slave_1) entered blocking state
+[  109.618924][ T8454] bridge0: port 2(bridge_slave_1) entered disabled state
+[  109.624061][ T8454] bridge_slave_1: entered allmulticast mode
+[  109.630982][ T8454] bridge_slave_1: entered promiscuous mode
+[  109.774534][ T8455] bridge0: port 1(bridge_slave_0) entered blocking state
+[  109.781204][ T8455] bridge0: port 1(bridge_slave_0) entered disabled state
+[  109.787878][ T8455] bridge_slave_0: entered allmulticast mode
+[  109.792835][ T8455] bridge_slave_0: entered promiscuous mode
+[  109.974516][ T8455] bridge0: port 2(bridge_slave_1) entered blocking state
+[  109.978872][ T8455] bridge0: port 2(bridge_slave_1) entered disabled state
+[  109.983548][ T8455] bridge_slave_1: entered allmulticast mode
+[  109.988361][ T8455] bridge_slave_1: entered promiscuous mode
+[  109.997251][ T8454] bond0: (slave bond_slave_0): Enslaving as an active interface with an up link
+[  110.187177][ T8454] bond0: (slave bond_slave_1): Enslaving as an active interface with an up link
+[  110.527036][ T8455] bond0: (slave bond_slave_0): Enslaving as an active interface with an up link
+[  110.666716][ T8455] bond0: (slave bond_slave_1): Enslaving as an active interface with an up link
+[  110.677591][ T8454] team0: Port device team_slave_0 added
+[  110.836395][ T8454] team0: Port device team_slave_1 added
+[  111.510715][ T8455] team0: Port device team_slave_0 added
+[  111.626814][ T8455] team0: Port device team_slave_1 added
+[  111.632180][ T8454] batman_adv: batadv0: Adding interface: batadv_slave_0
+[  111.638793][ T8454] batman_adv: batadv0: The MTU of interface batadv_slave_0 is too small (1500) to handle the transport of batman-adv packets. Packets going over this interface will be fragmented on layer2 which could impact the performance. Setting the MTU to 1560 would solve the problem.
+[  111.661108][ T8454] batman_adv: batadv0: Not using interface batadv_slave_0 (retrying later): interface not active
+[  111.835012][ T8454] batman_adv: batadv0: Adding interface: batadv_slave_1
+[  111.841107][ T8454] batman_adv: batadv0: The MTU of interface batadv_slave_1 is too small (1500) to handle the transport of batman-adv packets. Packets going over this interface will be fragmented on layer2 which could impact the performance. Setting the MTU to 1560 would solve the problem.
+[  111.857352][ T8454] batman_adv: batadv0: Not using interface batadv_slave_1 (retrying later): interface not active
+[  112.081965][ T8455] batman_adv: batadv0: Adding interface: batadv_slave_0
+[  112.088499][ T8455] batman_adv: batadv0: The MTU of interface batadv_slave_0 is too small (1500) to handle the transport of batman-adv packets. Packets going over this interface will be fragmented on layer2 which could impact the performance. Setting the MTU to 1560 would solve the problem.
+[  112.111075][ T8455] batman_adv: batadv0: Not using interface batadv_slave_0 (retrying later): interface not active
+[  112.119385][ T8455] batman_adv: batadv0: Adding interface: batadv_slave_1
+[  112.123657][ T8455] batman_adv: batadv0: The MTU of interface batadv_slave_1 is too small (1500) to handle the transport of batman-adv packets. Packets going over this interface will be fragmented on layer2 which could impact the performance. Setting the MTU to 1560 would solve the problem.
+[  112.141098][ T8455] batman_adv: batadv0: Not using interface batadv_slave_1 (retrying later): interface not active
+[  112.715591][ T8454] hsr_slave_0: entered promiscuous mode
+[  112.801330][ T8454] hsr_slave_1: entered promiscuous mode
+[  113.095845][ T8455] hsr_slave_0: entered promiscuous mode
+[  113.171469][ T8455] hsr_slave_1: entered promiscuous mode
+[  113.251172][ T8455] debugfs: Directory 'hsr0' with parent 'hsr' already present!
+[  113.261201][ T8455] Cannot create hsr debugfs directory
+[  114.440022][ T8454] netdevsim netdevsim0 netdevsim0: renamed from eth0
+[  114.508448][ T8454] netdevsim netdevsim0 netdevsim1: renamed from eth1
+[  114.634433][ T8454] netdevsim netdevsim0 netdevsim2: renamed from eth2
+[  114.744227][ T8454] netdevsim netdevsim0 netdevsim3: renamed from eth3
+[  114.866169][ T8455] netdevsim netdevsim1 netdevsim0: renamed from eth0
+[  114.974856][ T8455] netdevsim netdevsim1 netdevsim1: renamed from eth1
+[  115.094399][ T8455] netdevsim netdevsim1 netdevsim2: renamed from eth2
+[  115.198370][ T8455] netdevsim netdevsim1 netdevsim3: renamed from eth3
+[  115.393414][ T8454] 8021q: adding VLAN 0 to HW filter on device bond0
+[  115.428509][ T8454] 8021q: adding VLAN 0 to HW filter on device team0
+[  115.445428][ T8455] 8021q: adding VLAN 0 to HW filter on device bond0
+[  115.455183][  T841] bridge0: port 1(bridge_slave_0) entered blocking state
+[  115.463761][  T841] bridge0: port 1(bridge_slave_0) entered forwarding state
+[  115.479368][  T142] bridge0: port 2(bridge_slave_1) entered blocking state
+[  115.487741][  T142] bridge0: port 2(bridge_slave_1) entered forwarding state
+[  115.513042][ T8455] 8021q: adding VLAN 0 to HW filter on device team0
+[  115.534056][  T841] bridge0: port 1(bridge_slave_0) entered blocking state
+[  115.540831][  T841] bridge0: port 1(bridge_slave_0) entered forwarding state
+[  115.556733][ T1883] bridge0: port 2(bridge_slave_1) entered blocking state
+[  115.563088][ T1883] bridge0: port 2(bridge_slave_1) entered forwarding state
+[  115.621249][ T8454] 8021q: adding VLAN 0 to HW filter on device batadv0
+[  115.662366][ T8455] 8021q: adding VLAN 0 to HW filter on device batadv0
+[  115.692483][ T8454] veth0_vlan: entered promiscuous mode
+[  115.709197][ T8454] veth1_vlan: entered promiscuous mode
+[  115.740423][ T8455] veth0_vlan: entered promiscuous mode
+[  115.752797][ T8455] veth1_vlan: entered promiscuous mode
+[  115.768040][ T8454] veth0_macvtap: entered promiscuous mode
+[  115.776722][ T8454] veth1_macvtap: entered promiscuous mode
+[  115.799794][ T8454] batman_adv: batadv0: Interface activated: batadv_slave_0
+[  115.810688][ T8455] veth0_macvtap: entered promiscuous mode
+[  115.823230][ T8454] batman_adv: batadv0: Interface activated: batadv_slave_1
+[  115.832372][ T8455] veth1_macvtap: entered promiscuous mode
+[  115.846846][ T8454] netdevsim netdevsim0 netdevsim0: set [1, 0] type 2 family 0 port 6081 - 0
+[  115.855626][ T8454] netdevsim netdevsim0 netdevsim1: set [1, 0] type 2 family 0 port 6081 - 0
+[  115.863223][ T8454] netdevsim netdevsim0 netdevsim2: set [1, 0] type 2 family 0 port 6081 - 0
+[  115.869729][ T8454] netdevsim netdevsim0 netdevsim3: set [1, 0] type 2 family 0 port 6081 - 0
+[  115.934253][ T8455] batman_adv: The newly added mac address (aa:aa:aa:aa:aa:3d) already exists on: batadv_slave_0
+[  115.944230][ T8455] batman_adv: It is strongly recommended to keep mac addresses unique to avoid problems!
+[  115.954913][ T8455] batman_adv: batadv0: Interface activated: batadv_slave_0
+[  116.054848][ T8455] batman_adv: The newly added mac address (aa:aa:aa:aa:aa:3e) already exists on: batadv_slave_1
+[  116.064684][ T8455] batman_adv: It is strongly recommended to keep mac addresses unique to avoid problems!
+[  116.075471][ T8455] batman_adv: batadv0: Interface activated: batadv_slave_1
+[  116.174807][ T8455] netdevsim netdevsim1 netdevsim0: set [1, 0] type 2 family 0 port 6081 - 0
+[  116.183164][ T8455] netdevsim netdevsim1 netdevsim1: set [1, 0] type 2 family 0 port 6081 - 0
+[  116.191693][ T8455] netdevsim netdevsim1 netdevsim2: set [1, 0] type 2 family 0 port 6081 - 0
+[  116.199476][ T8455] netdevsim netdevsim1 netdevsim3: set [1, 0] type 2 family 0 port 6081 - 0
+[  116.210161][ T8454] ieee80211 phy3: Selected rate control algorithm 'minstrel_ht'
+[  116.314373][ T1138] wlan0: Created IBSS using preconfigured BSSID 50:50:50:50:50:50
+[  116.323148][ T1138] wlan0: Creating new IBSS network, BSSID 50:50:50:50:50:50
+[  116.363438][ T8454] ieee80211 phy4: Selected rate control algorithm 'minstrel_ht'
+[  116.427601][ T8455] ieee80211 phy5: Selected rate control algorithm 'minstrel_ht'
+[  116.439923][   T12] wlan1: Created IBSS using preconfigured BSSID 50:50:50:50:50:50
+[  116.447760][   T12] wlan1: Creating new IBSS network, BSSID 50:50:50:50:50:50
+[  116.513068][   T12] wlan0: Created IBSS using preconfigured BSSID 50:50:50:50:50:50
+[  116.515525][ T8455] ieee80211 phy6: Selected rate control algorithm 'minstrel_ht'
+[  116.517602][   T12] wlan0: Creating new IBSS network, BSSID 50:50:50:50:50:50
+[  116.554182][  T120] wlan1: Created IBSS using preconfigured BSSID 50:50:50:50:50:50
+[  116.562646][  T120] wlan1: Creating new IBSS network, BSSID 50:50:50:50:50:50
+executing program
+[  116.605018][T10471] program a.out is using a deprecated SCSI ioctl, please convert it to SG_IO
+[  117.764915][   T65] netdevsim netdevsim1 netdevsim3 (unregistering): unset [1, 0] type 2 family 0 port 6081 - 0
+[  119.264267][   T65] netdevsim netdevsim1 netdevsim2 (unregistering): unset [1, 0] type 2 family 0 port 6081 - 0
+[  121.375536][   T65] netdevsim netdevsim1 netdevsim1 (unregistering): unset [1, 0] type 2 family 0 port 6081 - 0
+[  121.963598][   T65] netdevsim netdevsim1 netdevsim0 (unregistering): unset [1, 0] type 2 family 0 port 6081 - 0
+[  122.381273][   T65] bridge_slave_1: left allmulticast mode
+[  122.389071][   T65] bridge_slave_1: left promiscuous mode
+[  122.396906][   T65] bridge0: port 2(bridge_slave_1) entered disabled state
+[  122.601981][   T65] bridge_slave_0: left allmulticast mode
+[  122.611091][   T65] bridge_slave_0: left promiscuous mode
+[  122.617820][   T65] bridge0: port 1(bridge_slave_0) entered disabled state
+[  125.712116][   T65] bond0 (unregistering): (slave bond_slave_0): Releasing backup interface
+[  125.921681][   T65] bond0 (unregistering): (slave bond_slave_1): Releasing backup interface
+[  126.042002][   T65] bond0 (unregistering): Released all slaves
+[  128.331207][   T65] hsr_slave_0: left promiscuous mode
+[  128.461209][   T65] hsr_slave_1: left promiscuous mode
+[  128.591184][   T65] batman_adv: batadv0: Interface deactivated: batadv_slave_0
+[  128.595352][   T65] batman_adv: batadv0: Removing interface: batadv_slave_0
+[  128.655982][   T65] batman_adv: batadv0: Interface deactivated: batadv_slave_1
+[  128.664072][   T65] batman_adv: batadv0: Removing interface: batadv_slave_1
+[  128.867924][   T65] veth1_macvtap: left promiscuous mode
+[  128.875673][   T65] veth0_macvtap: left promiscuous mode
+[  128.882671][   T65] veth1_vlan: left promiscuous mode
+[  128.889132][   T65] veth0_vlan: left promiscuous mode
+[  138.513086][   T65] team0 (unregistering): Port device team_slave_1 removed
+[  139.601978][   T65] team0 (unregistering): Port device team_slave_0 removed
+[  150.514196][ T1333] ieee802154 phy0 wpan0: encryption failed: -22
+[  150.531082][ T1333] ieee802154 phy1 wpan1: encryption failed: -22
+[  181.351814][ T1058] ata1: lost interrupt (Status 0x58)
+[  182.061440][ T1058] ata1: found unknown device (class 0)
+executing program
+[  182.101661][T10525] program a.out is using a deprecated SCSI ioctl, please convert it to SG_IO
+[  182.331131][    C7] BUG: kernel NULL pointer dereference, address: 0000000000000010
+[  182.339044][    C7] #PF: supervisor read access in kernel mode
+[  182.345673][    C7] #PF: error_code(0x0000) - not-present page
+[  182.352216][    C7] PGD 150394067 P4D 150394067 PUD 192e9f067 PMD 0
+[  182.359123][    C7] Oops: Oops: 0000 [#1] PREEMPT SMP KASAN NOPTI
+[  182.365905][    C7] CPU: 7 UID: 0 PID: 54 Comm: ksoftirqd/7 Not tainted 6.11.0-rc2-00037-g6b376d473b12 #3833
+[  182.375040][    C7] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+[  182.382819][    C7] RIP: 0010:stack_depot_save_flags+0x147/0x8d0
+[  182.388239][    C7] Code: c1 e1 04 4c 03 0d 81 1d c8 0f 65 ff 05 5a ae 92 7b 49 8b 09 49 39 c9 75 11 e9 91 00 00 00 48 8b 09 49 39 c9 0f 84 a4 01 00 00 <39> 59 10 75 ef 44 3b 79 14 75 e9 31 c0 48 8b 54 c1 20 49 39 54 c5
+[  182.399223][    C7] RSP: 0018:ffffc90006657970 EFLAGS: 00010286
+[  182.402848][    C7] RAX: 00000000f759be75 RBX: 00000000f759be75 RCX: 0000000000000000
+[  182.407055][    C7] RDX: 0000000018e8f28b RSI: 000000004a278650 RDI: 00000000bc02d21f
+[  182.411271][    C7] RBP: 0000000000000001 R08: 0000000000000005 R09: ffff88901cdbe750
+[  182.415500][    C7] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+[  182.419717][    C7] R13: ffffc900066579d0 R14: 000000000000000e R15: 000000000000000e
+[  182.423938][    C7] FS:  0000000000000000(0000) GS:ffff88901d780000(0000) knlGS:0000000000000000
+[  182.428464][    C7] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  182.432274][    C7] CR2: 0000000000000010 CR3: 00000001730ac000 CR4: 00000000000006f0
+[  182.436523][    C7] Call Trace:
+[  182.439244][    C7]  <TASK>
+[  182.441839][    C7]  ? show_regs+0x88/0x90
+[  182.444877][    C7]  ? __die+0x28/0x80
+[  182.447798][    C7]  ? page_fault_oops+0x3b6/0xb80
+[  182.451009][    C7]  ? copy_from_kernel_nofault_allowed+0xe6/0x110
+[  182.454703][    C7]  ? __pfx_page_fault_oops+0x10/0x10
+[  182.458029][    C7]  ? copy_from_kernel_nofault+0x12f/0x2c0
+[  182.461515][    C7]  ? __sanitizer_cov_trace_switch+0x50/0x90
+[  182.465062][    C7]  ? stack_depot_save_flags+0x147/0x8d0
+[  182.468496][    C7]  ? is_prefetch.constprop.0+0x9d/0x520
+[  182.471883][    C7]  ? stack_depot_save_flags+0x156/0x8d0
+[  182.475300][    C7]  ? __pfx_is_prefetch.constprop.0+0x10/0x10
+[  182.478866][    C7]  ? fixup_exception+0x108/0xae0
+[  182.482081][    C7]  ? kernelmode_fixup_or_oops.constprop.0+0xb8/0xe0
+[  182.485867][    C7]  ? __bad_area_nosemaphore+0x390/0x6a0
+[  182.489306][    C7]  ? ret_from_fork_asm+0x19/0x30
+[  182.492554][    C7]  ? do_user_addr_fault+0x928/0x12c0
+[  182.495874][    C7]  ? rcu_is_watching+0xe/0xc0
+[  182.499002][    C7]  ? exc_page_fault+0x57/0xd0
+[  182.502122][    C7]  ? asm_exc_page_fault+0x22/0x30
+[  182.505376][    C7]  ? stack_depot_save_flags+0x147/0x8d0
+[  182.508798][    C7]  ? __lock_acquire+0xd09/0x5d30
+[  182.512038][    C7]  ? i_callback+0x5d/0x70
+[  182.515071][    C7]  kasan_save_stack+0x3e/0x50
+[  182.518234][    C7]  ? kasan_save_stack+0x2f/0x50
+[  182.521420][    C7]  ? kasan_save_track+0x10/0x30
+[  182.524622][    C7]  ? kasan_save_free_info+0x37/0x60
+[  182.527907][    C7]  ? poison_slab_object+0xf7/0x160
+[  182.531169][    C7]  ? __kasan_slab_free+0x2e/0x50
+[  182.534346][    C7]  ? kmem_cache_free+0x12b/0x4a0
+[  182.537489][    C7]  ? i_callback+0x5d/0x70
+[  182.540435][    C7]  ? rcu_core+0x84d/0x1c60
+[  182.543390][    C7]  ? handle_softirqs+0x219/0x980
+[  182.546499][    C7]  ? run_ksoftirqd+0x36/0x60
+[  182.549492][    C7]  ? smpboot_thread_fn+0x660/0xa10
+[  182.552629][    C7]  ? kthread+0x336/0x440
+[  182.555447][    C7]  ? ret_from_fork+0x44/0x70
+[  182.558334][    C7]  ? ret_from_fork_asm+0x1a/0x30
+[  182.561276][    C7]  kasan_save_track+0x10/0x30
+[  182.564051][    C7]  kasan_save_free_info+0x37/0x60
+[  182.566922][    C7]  poison_slab_object+0xf7/0x160
+[  182.569747][    C7]  __kasan_slab_free+0x2e/0x50
+[  182.572530][    C7]  kmem_cache_free+0x12b/0x4a0
+[  182.575296][    C7]  ? i_callback+0x5d/0x70
+[  182.577922][    C7]  ? rcu_core+0x848/0x1c60
+[  182.580554][    C7]  i_callback+0x5d/0x70
+[  182.583066][    C7]  rcu_core+0x84d/0x1c60
+[  182.585582][    C7]  ? __pfx_rcu_core+0x10/0x10
+[  182.588229][    C7]  handle_softirqs+0x219/0x980
+[  182.590882][    C7]  ? __pfx_handle_softirqs+0x10/0x10
+[  182.593717][    C7]  ? rcu_is_watching+0xe/0xc0
+[  182.596347][    C7]  ? __pfx_run_ksoftirqd+0x10/0x10
+[  182.599104][    C7]  ? smpboot_thread_fn+0x599/0xa10
+[  182.601869][    C7]  run_ksoftirqd+0x36/0x60
+[  182.604434][    C7]  smpboot_thread_fn+0x660/0xa10
+[  182.607152][    C7]  ? __kthread_parkme+0x148/0x220
+[  182.609906][    C7]  ? __pfx_smpboot_thread_fn+0x10/0x10
+[  182.612801][    C7]  kthread+0x336/0x440
+[  182.615219][    C7]  ? _raw_spin_unlock_irq+0x1f/0x50
+[  182.618023][    C7]  ? __pfx_kthread+0x10/0x10
+[  182.620623][    C7]  ret_from_fork+0x44/0x70
+[  182.623162][    C7]  ? __pfx_kthread+0x10/0x10
+[  182.625755][    C7]  ret_from_fork_asm+0x1a/0x30
+[  182.628385][    C7]  </TASK>
+[  182.630443][    C7] Modules linked in:
+[  182.632779][    C7] CR2: 0000000000000010
+[  182.635183][    C7] ---[ end trace 0000000000000000 ]---
+[  182.638056][    C7] RIP: 0010:stack_depot_save_flags+0x147/0x8d0
+[  182.641146][    C7] Code: c1 e1 04 4c 03 0d 81 1d c8 0f 65 ff 05 5a ae 92 7b 49 8b 09 49 39 c9 75 11 e9 91 00 00 00 48 8b 09 49 39 c9 0f 84 a4 01 00 00 <39> 59 10 75 ef 44 3b 79 14 75 e9 31 c0 48 8b 54 c1 20 49 39 54 c5
+[  182.649808][    C7] RSP: 0018:ffffc90006657970 EFLAGS: 00010286
+[  182.653031][    C7] RAX: 00000000f759be75 RBX: 00000000f759be75 RCX: 0000000000000000
+[  182.656897][    C7] RDX: 0000000018e8f28b RSI: 000000004a278650 RDI: 00000000bc02d21f
+[  182.660748][    C7] RBP: 0000000000000001 R08: 0000000000000005 R09: ffff88901cdbe750
+[  182.664628][    C7] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+[  182.668435][    C7] R13: ffffc900066579d0 R14: 000000000000000e R15: 000000000000000e
+[  182.672198][    C7] FS:  0000000000000000(0000) GS:ffff88901d780000(0000) knlGS:0000000000000000
+[  182.676268][    C7] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  182.679617][    C7] CR2: 0000000000000010 CR3: 00000001730ac000 CR4: 00000000000006f0
+[  182.683435][    C7] Kernel panic - not syncing: Fatal exception in interrupt
+[  182.687412][    C7] Kernel Offset: disabled
+<snip>
 
-Please pull, thanks.
+second one:
 
-User visible changes:
+<snip>
+[  657.192361][    C0] list_add corruption. next->prev should be prev (ffff8881996a2670), but was 0000000000000000. (next=ffff8881a3571000).
+[  657.204270][    C0] ------------[ cut here ]------------
+[  657.210763][    C0] kernel BUG at lib/list_debug.c:29!
+[  657.217140][    C0] Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+[  657.224382][    C0] CPU: 0 UID: 0 PID: 16 Comm: ksoftirqd/0 Not tainted 6.11.0-rc2-00037-g6b376d473b12 #3833
+[  657.233350][    C0] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+[  657.241232][    C0] RIP: 0010:__list_add_valid_or_report+0xa2/0x100
+[  657.246703][    C0] Code: c7 c7 e0 2e 2a 8b e8 4d 3d 24 fd 0f 0b 48 c7 c7 80 2f 2a 8b e8 3f 3d 24 fd 0f 0b 48 89 d9 48 c7 c7 e0 2f 2a 8b e8 2e 3d 24 fd <0f> 0b 48 89 f1 48 c7 c7 60 30 2a 8b 48 89 de e8 1a 3d 24 fd 0f 0b
+[  657.257782][    C0] RSP: 0018:ffffc9000434f458 EFLAGS: 00010082
+[  657.261306][    C0] RAX: 0000000000000075 RBX: ffff8881a3571000 RCX: ffffffff816b4fb9
+[  657.265447][    C0] RDX: 0000000000000000 RSI: ffffffff816bef02 RDI: 0000000000000005
+[  657.269555][    C0] RBP: ffff8881b1b40d40 R08: 0000000000000005 R09: 0000000000000000
+[  657.273686][    C0] R10: 0000000000000101 R11: 0000000000000001 R12: ffff8881996a2670
+[  657.277798][    C0] R13: 0000000000000820 R14: ffff8881b1b40d40 R15: ffff8881a3571000
+[  657.281918][    C0] FS:  0000000000000000(0000) GS:ffff88861fc00000(0000) knlGS:0000000000000000
+[  657.286383][    C0] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  657.290128][    C0] CR2: 00007f4027088128 CR3: 000000000d17c000 CR4: 00000000000006f0
+[  657.294297][    C0] Call Trace:
+[  657.297076][    C0]  <TASK>
+[  657.299729][    C0]  ? show_regs+0x88/0x90
+[  657.302756][    C0]  ? die+0x32/0xa0
+[  657.305654][    C0]  ? do_trap+0x232/0x430
+[  657.308703][    C0]  ? __list_add_valid_or_report+0xa2/0x100
+[  657.312223][    C0]  ? __list_add_valid_or_report+0xa2/0x100
+[  657.315709][    C0]  ? do_error_trap+0xf4/0x230
+[  657.318839][    C0]  ? __list_add_valid_or_report+0xa2/0x100
+[  657.322308][    C0]  ? handle_invalid_op+0x34/0x40
+[  657.325530][    C0]  ? __list_add_valid_or_report+0xa2/0x100
+[  657.329015][    C0]  ? exc_invalid_op+0x29/0x40
+[  657.332190][    C0]  ? asm_exc_invalid_op+0x16/0x20
+[  657.335452][    C0]  ? __wake_up_klogd.part.0+0x99/0xf0
+[  657.338814][    C0]  ? vprintk+0x82/0x90
+[  657.341768][    C0]  ? __list_add_valid_or_report+0xa2/0x100
+[  657.345267][    C0]  ? __list_add_valid_or_report+0xa2/0x100
+[  657.348732][    C0]  ? ref_tracker_alloc+0x205/0x5a0
+[  657.352010][    C0]  ref_tracker_alloc+0x236/0x5a0
+[  657.355208][    C0]  ? __pfx_ref_tracker_alloc+0x10/0x10
+[  657.358533][    C0]  ? dst_init+0xd6/0x570
+[  657.361499][    C0]  ? dst_alloc+0xb7/0x1a0
+[  657.364473][    C0]  ? ip6_dst_alloc+0x28/0xa0
+[  657.367536][    C0]  ? icmp6_dst_alloc+0x6c/0x4a0
+[  657.370635][    C0]  ? ndisc_send_skb+0x1275/0x1c20
+[  657.373740][    C0]  ? ndisc_send_rs+0x127/0x690
+[  657.376821][    C0]  ? addrconf_rs_timer+0x41e/0x850
+[  657.379973][    C0]  ? call_timer_fn+0x1a3/0x600
+[  657.383021][    C0]  ? __run_timers+0x749/0xae0
+[  657.386018][    C0]  ? timer_expire_remote+0xfb/0x160
+[  657.389128][    C0]  ? tmigr_handle_remote+0x7c7/0xfc0
+[  657.392261][    C0]  ? run_timer_softirq+0x31/0x40
+[  657.395251][    C0]  ? handle_softirqs+0x219/0x980
+[  657.398195][    C0]  ? run_ksoftirqd+0x36/0x60
+[  657.401024][    C0]  ? smpboot_thread_fn+0x660/0xa10
+[  657.404017][    C0]  ? kthread+0x336/0x440
+[  657.406708][    C0]  ? rcu_is_watching+0xe/0xc0
+[  657.409508][    C0]  dst_init+0xd6/0x570
+[  657.412090][    C0]  dst_alloc+0xb7/0x1a0
+[  657.414630][    C0]  ip6_dst_alloc+0x28/0xa0
+[  657.417183][    C0]  icmp6_dst_alloc+0x6c/0x4a0
+[  657.419786][    C0]  ndisc_send_skb+0x1275/0x1c20
+[  657.422420][    C0]  ? validate_store+0x1e/0x60
+[  657.425004][    C0]  ? __pfx_ndisc_send_skb+0x10/0x10
+[  657.427726][    C0]  ? __build_skb_around+0x278/0x3b0
+[  657.430441][    C0]  ? __alloc_skb+0x1fc/0x380
+[  657.432973][    C0]  ? skb_put+0x134/0x1a0
+[  657.435368][    C0]  ndisc_send_rs+0x127/0x690
+[  657.437856][    C0]  addrconf_rs_timer+0x41e/0x850
+[  657.440437][    C0]  ? __pfx_addrconf_rs_timer+0x10/0x10
+[  657.443169][    C0]  ? try_to_wake_up+0x13b/0x15d0
+[  657.445750][    C0]  ? __pfx_lock_release+0x10/0x10
+[  657.448369][    C0]  call_timer_fn+0x1a3/0x600
+[  657.450828][    C0]  ? __pfx_addrconf_rs_timer+0x10/0x10
+[  657.453586][    C0]  ? __pfx_call_timer_fn+0x10/0x10
+[  657.456234][    C0]  ? __pfx_lock_release+0x10/0x10
+[  657.458856][    C0]  ? __pfx_addrconf_rs_timer+0x10/0x10
+[  657.461613][    C0]  ? __pfx_addrconf_rs_timer+0x10/0x10
+[  657.464365][    C0]  __run_timers+0x749/0xae0
+[  657.466804][    C0]  ? __pfx___run_timers+0x10/0x10
+[  657.469401][    C0]  ? __pfx_lock_acquire+0x10/0x10
+[  657.471986][    C0]  ? lock_acquire+0x1ad/0x550
+[  657.474472][    C0]  timer_expire_remote+0xfb/0x160
+[  657.477069][    C0]  ? __pfx_timer_expire_remote+0x10/0x10
+[  657.479850][    C0]  ? _raw_spin_unlock_irq+0x1f/0x50
+[  657.482475][    C0]  ? lockdep_hardirqs_on+0x78/0x100
+[  657.485141][    C0]  tmigr_handle_remote+0x7c7/0xfc0
+[  657.487771][    C0]  ? __pfx_tmigr_handle_remote+0x10/0x10
+[  657.490551][    C0]  ? run_timer_base+0x11e/0x190
+[  657.493102][    C0]  ? __pfx_run_timer_base+0x10/0x10
+[  657.495762][    C0]  run_timer_softirq+0x31/0x40
+[  657.498286][    C0]  handle_softirqs+0x219/0x980
+[  657.500812][    C0]  ? __pfx_handle_softirqs+0x10/0x10
+[  657.503503][    C0]  ? rcu_is_watching+0xe/0xc0
+[  657.506009][    C0]  ? __pfx_run_ksoftirqd+0x10/0x10
+[  657.508657][    C0]  ? smpboot_thread_fn+0x599/0xa10
+[  657.511301][    C0]  run_ksoftirqd+0x36/0x60
+[  657.513734][    C0]  smpboot_thread_fn+0x660/0xa10
+[  657.516336][    C0]  ? __kthread_parkme+0x148/0x220
+[  657.518950][    C0]  ? __pfx_smpboot_thread_fn+0x10/0x10
+[  657.521715][    C0]  kthread+0x336/0x440
+[  657.524064][    C0]  ? _raw_spin_unlock_irq+0x1f/0x50
+[  657.526737][    C0]  ? __pfx_kthread+0x10/0x10
+[  657.529240][    C0]  ret_from_fork+0x44/0x70
+[  657.531687][    C0]  ? __pfx_kthread+0x10/0x10
+[  657.534185][    C0]  ret_from_fork_asm+0x1a/0x30
+[  657.536744][    C0]  </TASK>
+[  657.538752][    C0] Modules linked in:
+[  657.541038][    C0] ---[ end trace 0000000000000000 ]---
+[  657.543837][    C0] RIP: 0010:__list_add_valid_or_report+0xa2/0x100
+[  657.546921][    C0] Code: c7 c7 e0 2e 2a 8b e8 4d 3d 24 fd 0f 0b 48 c7 c7 80 2f 2a 8b e8 3f 3d 24 fd 0f 0b 48 89 d9 48 c7 c7 e0 2f 2a 8b e8 2e 3d 24 fd <0f> 0b 48 89 f1 48 c7 c7 60 30 2a 8b 48 89 de e8 1a 3d 24 fd 0f 0b
+[  657.555312][    C0] RSP: 0018:ffffc9000434f458 EFLAGS: 00010082
+[  657.558444][    C0] RAX: 0000000000000075 RBX: ffff8881a3571000 RCX: ffffffff816b4fb9
+[  657.562186][    C0] RDX: 0000000000000000 RSI: ffffffff816bef02 RDI: 0000000000000005
+[  657.565917][    C0] RBP: ffff8881b1b40d40 R08: 0000000000000005 R09: 0000000000000000
+[  657.569676][    C0] R10: 0000000000000101 R11: 0000000000000001 R12: ffff8881996a2670
+[  657.573430][    C0] R13: 0000000000000820 R14: ffff8881b1b40d40 R15: ffff8881a3571000
+[  657.577198][    C0] FS:  0000000000000000(0000) GS:ffff88861fc00000(0000) knlGS:0000000000000000
+[  657.581305][    C0] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  657.584702][    C0] CR2: 00007f4027088128 CR3: 000000000d17c000 CR4: 00000000000006f0
+[  657.588528][    C0] Kernel panic - not syncing: Fatal exception in interrupt
+[  657.592637][    C0] Kernel Offset: disabled
+<snip>
 
-- the FSTRIM ioctl updates the processed range even after an error or
-  interruption
+is about list corruption BUG. So they are different and looks like
+something is corrupted. So i would not trust that your report is about
+kvfree_rcu_bulk() warning is related to a real issue with kvfree_rcu()
+call.
 
-- cleaner thread is woken up in SYNC ioctl instead of waking the
-  transaction thread that can take some delay before waking up the
-  cleaner, this can speed up cleaning of deleted subvolumes
+A also run the reproducer on the 6.11.0-rc7 kernel. It still runs
+without any panics yet.
 
-- print an error message when opening a device fail, e.g. when it's
-  unexpectedly read-only
+Could you please test the latest kernel? For example 6.11.0-rc7?
 
-Core changes:
-
-- improved extent map handling in various ways (locking, iteration, ...)
-
-- new assertions and locking annotations
-
-- raid-stripe-tree locking fixes
-
-- use xarray for tracking dirty qgroup extents, switched from rb-tree
-
-- turn the subpage test to compile-time condition if possible (e.g. on
-  x86_64 with 4K pages), this allows to skip a lot of ifs and remove
-  dead code
-
-- more preparatory work for compression in subpage mode
-
-Cleanups and refactoring
-
-- folio API conversions, many simple cases where page is passed so
-  switch it to folios
-
-- more subpage code refactoring, update page state bitmap processing
-
-- introduce auto free for btrfs_path structure, use for the simple cases
-
-----------------------------------------------------------------
-The following changes since commit da3ea35007d0af457a0afc87e84fddaebc4e0b63:
-
-  Linux 6.11-rc7 (2024-09-08 14:50:28 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.12-tag
-
-for you to fetch changes up to bd610c0937aaf03b2835638ada1fab8b0524c61a:
-
-  btrfs: only unlock the to-be-submitted ranges inside a folio (2024-09-10 16:51:22 +0200)
-
-----------------------------------------------------------------
-Boris Burkov (1):
-      btrfs: add comment about locking in cow_file_range_inline()
-
-David Sterba (14):
-      btrfs: rename btrfs_submit_bio() to btrfs_submit_bbio()
-      btrfs: rename __btrfs_submit_bio() and drop double underscores
-      btrfs: rename __extent_writepage() and drop double underscores
-      btrfs: rename __compare_inode_defrag() and drop double underscores
-      btrfs: constify arguments of compare_inode_defrag()
-      btrfs: rename __need_auto_defrag() and drop double underscores
-      btrfs: rename __btrfs_add_inode_defrag() and drop double underscores
-      btrfs: rename __btrfs_run_defrag_inode() and drop double underscores
-      btrfs: clear defragmented inodes using postorder in btrfs_cleanup_defrag_inodes()
-      btrfs: return void from btrfs_add_inode_defrag()
-      btrfs: drop transaction parameter from btrfs_add_inode_defrag()
-      btrfs: always pass readahead state to defrag
-      btrfs: rework BTRFS_I as macro to preserve parameter const
-      btrfs: constify more pointer parameters
-
-Filipe Manana (5):
-      btrfs: reduce size and overhead of extent_map_block_end()
-      btrfs: reschedule when updating chunk maps at the end of a device replace
-      btrfs: more efficient chunk map iteration when device replace finishes
-      btrfs: directly wake up cleaner kthread in the BTRFS_IOC_SYNC ioctl
-      btrfs: add and use helper to verify the calling task has locked the inode
-
-Johannes Thumshirn (8):
-      btrfs: update stripe extents for existing logical addresses
-      btrfs: update stripe_extent delete loop assumptions
-      btrfs: don't dump stripe-tree on lookup error
-      btrfs: rename btrfs_io_stripe::is_scrub to rst_search_commit_root
-      btrfs: set search_commit_root on stripe io in case of relocation
-      btrfs: don't readahead the relocation inode on RST
-      btrfs: change RST lookup error message level to debug
-      btrfs: reduce chunk_map lookups in btrfs_map_block()
-
-Josef Bacik (49):
-      btrfs: convert btrfs_readahead() to only use folio
-      btrfs: convert btrfs_read_folio() to only use a folio
-      btrfs: convert end_page_read() to take a folio
-      btrfs: convert begin_page_folio() to take a folio instead
-      btrfs: convert submit_extent_page() to use a folio
-      btrfs: convert btrfs_do_readpage() to only use a folio
-      btrfs: update the writepage tracepoint to take a folio
-      btrfs: convert __extent_writepage_io() to take a folio
-      btrfs: convert extent_write_locked_range() to use folios
-      btrfs: convert __extent_writepage() to be completely folio based
-      btrfs: convert add_ra_bio_pages() to use only folios
-      btrfs: utilize folio more in btrfs_page_mkwrite()
-      btrfs: convert can_finish_ordered_extent() to use a folio
-      btrfs: convert btrfs_finish_ordered_extent() to take a folio
-      btrfs: convert btrfs_mark_ordered_io_finished() to take a folio
-      btrfs: convert writepage_delalloc() to take a folio
-      btrfs: convert find_lock_delalloc_range() to use a folio
-      btrfs: convert lock_delalloc_pages() to take a folio
-      btrfs: convert __unlock_for_delalloc() to take a folio
-      btrfs: convert __process_pages_contig() to take a folio
-      btrfs: convert process_one_page() to operate only on folios
-      btrfs: convert extent_clear_unlock_delalloc() to take a folio
-      btrfs: convert extent_write_locked_range() to take a folio
-      btrfs: convert run_delalloc_cow() to take a folio
-      btrfs: convert cow_file_range_inline() to take a folio
-      btrfs: convert cow_file_range() to take a folio
-      btrfs: convert fallback_to_cow() to take a folio
-      btrfs: convert run_delalloc_nocow() to take a folio
-      btrfs: convert btrfs_cleanup_ordered_extents() to use folios
-      btrfs: convert btrfs_cleanup_ordered_extents() to take a folio
-      btrfs: convert run_delalloc_compressed() to take a folio
-      btrfs: convert btrfs_run_delalloc_range() to take a folio
-      btrfs: convert struct async_chunk to hold a folio
-      btrfs: convert submit_uncompressed_range() to take a folio
-      btrfs: convert btrfs_writepage_fixup_worker() to use a folio
-      btrfs: convert btrfs_writepage_cow_fixup() to use folio
-      btrfs: convert struct btrfs_writepage_fixup to use a folio
-      btrfs: convert uncompress_inline() to take a folio
-      btrfs: convert read_inline_extent() to use a folio
-      btrfs: convert btrfs_get_extent() to take a folio
-      btrfs: convert __get_extent_map() to take a folio
-      btrfs: convert find_next_dirty_byte() to take a folio
-      btrfs: convert wait_subpage_spinlock() to only use a folio
-      btrfs: convert btrfs_set_range_writeback() to use a folio
-      btrfs: convert insert_inline_extent() to use a folio
-      btrfs: convert extent_range_clear_dirty_for_io() to use a folio
-      btrfs: introduce EXTENT_DIO_LOCKED
-      btrfs: take the dio extent lock during O_DIRECT operations
-      btrfs: do not hold the extent lock for entire read
-
-Junchao Sun (2):
-      btrfs: qgroup: use goto style to handle errors in add_delayed_ref()
-      btrfs: qgroup: use xarray to track dirty extents in transaction
-
-Leo Martins (3):
-      btrfs: DEFINE_FREE for struct btrfs_path
-      btrfs: use btrfs_path auto free in zoned.c
-      btrfs: BTRFS_PATH_AUTO_FREE in orphan.c
-
-Li Zetao (14):
-      btrfs: convert clear_page_extent_mapped() to take a folio
-      btrfs: convert get_next_extent_buffer() to take a folio
-      btrfs: convert try_release_subpage_extent_buffer() to take a folio
-      btrfs: convert try_release_extent_buffer() to take a folio
-      btrfs: convert read_key_bytes() to take a folio
-      btrfs: convert submit_eb_subpage() to take a folio
-      btrfs: convert submit_eb_page() to take a folio
-      btrfs: convert try_release_extent_state() to take a folio
-      btrfs: convert try_release_extent_mapping() to take a folio
-      btrfs: convert zlib_decompress() to take a folio
-      btrfs: convert lzo_decompress() to take a folio
-      btrfs: convert zstd_decompress() to take a folio
-      btrfs: convert btrfs_decompress() to take a folio
-      btrfs: convert copy_inline_to_page() to use folio
-
-Li Zhang (1):
-      btrfs: print message on device opening error during mount
-
-Luca Stefani (1):
-      btrfs: always update fstrim_range on failure in FITRIM ioctl
-
-Qu Wenruo (11):
-      btrfs: move uuid tree related code to uuid-tree.[ch]
-      btrfs: make btrfs_is_subpage() to return false directly for 4K page size
-      btrfs: subpage: fix the bitmap dump which can cause bitmap corruption
-      btrfs: refactor __extent_writepage_io() to do sector-by-sector submission
-      btrfs: remove the nr_ret parameter from __extent_writepage_io()
-      btrfs: subpage: remove btrfs_fs_info::subpage_info member
-      btrfs: merge btrfs_orig_bbio_end_io() into btrfs_bio_end_io()
-      btrfs: make compression path to be subpage compatible
-      btrfs: remove btrfs_folio_end_all_writers()
-      btrfs: merge btrfs_folio_unlock_writer() into btrfs_folio_end_writer_lock()
-      btrfs: only unlock the to-be-submitted ranges inside a folio
-
-Thorsten Blum (1):
-      btrfs: send: fix grammar in comments
-
- fs/btrfs/backref.c               |   6 +-
- fs/btrfs/bio.c                   |  54 ++-
- fs/btrfs/bio.h                   |   6 +-
- fs/btrfs/block-group.c           |  34 +-
- fs/btrfs/block-group.h           |  11 +-
- fs/btrfs/block-rsv.c             |   2 +-
- fs/btrfs/block-rsv.h             |   2 +-
- fs/btrfs/btrfs_inode.h           |  24 +-
- fs/btrfs/compression.c           |  82 ++--
- fs/btrfs/compression.h           |  16 +-
- fs/btrfs/ctree.c                 |  18 +-
- fs/btrfs/ctree.h                 |  11 +-
- fs/btrfs/defrag.c                |  97 ++---
- fs/btrfs/defrag.h                |   3 +-
- fs/btrfs/delayed-ref.c           |  36 +-
- fs/btrfs/delayed-ref.h           |   4 +-
- fs/btrfs/dev-replace.c           |  43 +-
- fs/btrfs/direct-io.c             |  73 ++--
- fs/btrfs/discard.c               |   4 +-
- fs/btrfs/disk-io.c               |  16 +-
- fs/btrfs/extent-io-tree.c        |  55 ++-
- fs/btrfs/extent-io-tree.h        |  38 +-
- fs/btrfs/extent-tree.c           |   4 +-
- fs/btrfs/extent_io.c             | 865 +++++++++++++++++----------------------
- fs/btrfs/extent_io.h             |  12 +-
- fs/btrfs/extent_map.c            |   9 +-
- fs/btrfs/file-item.c             |   4 +-
- fs/btrfs/file-item.h             |   2 +-
- fs/btrfs/file.c                  |  26 +-
- fs/btrfs/fs.h                    |   2 +-
- fs/btrfs/inode-item.c            |  10 +-
- fs/btrfs/inode-item.h            |   4 +-
- fs/btrfs/inode.c                 | 368 +++++++++--------
- fs/btrfs/ioctl.c                 |  11 +-
- fs/btrfs/lzo.c                   |  12 +-
- fs/btrfs/ordered-data.c          |  30 +-
- fs/btrfs/ordered-data.h          |   6 +-
- fs/btrfs/orphan.c                |  24 +-
- fs/btrfs/qgroup.c                |  66 ++-
- fs/btrfs/qgroup.h                |   1 -
- fs/btrfs/raid-stripe-tree.c      |  46 ++-
- fs/btrfs/reflink.c               |  35 +-
- fs/btrfs/relocation.c            |  22 +-
- fs/btrfs/scrub.c                 |  12 +-
- fs/btrfs/send.c                  |   4 +-
- fs/btrfs/space-info.c            |  25 +-
- fs/btrfs/space-info.h            |  10 +-
- fs/btrfs/subpage.c               | 277 ++++++-------
- fs/btrfs/subpage.h               |  60 ++-
- fs/btrfs/tests/extent-io-tests.c |  10 +-
- fs/btrfs/transaction.c           |   5 +-
- fs/btrfs/tree-log.c              |   2 +-
- fs/btrfs/tree-mod-log.c          |  14 +-
- fs/btrfs/tree-mod-log.h          |   6 +-
- fs/btrfs/uuid-tree.c             | 179 ++++++++
- fs/btrfs/uuid-tree.h             |   2 +
- fs/btrfs/verity.c                |  20 +-
- fs/btrfs/volumes.c               | 228 ++---------
- fs/btrfs/volumes.h               |   4 +-
- fs/btrfs/xattr.c                 |   2 +-
- fs/btrfs/zlib.c                  |  33 +-
- fs/btrfs/zoned.c                 |  36 +-
- fs/btrfs/zoned.h                 |   4 +-
- fs/btrfs/zstd.c                  |  35 +-
- include/trace/events/btrfs.h     |  18 +-
- 65 files changed, 1583 insertions(+), 1597 deletions(-)
+--
+Uladzislau Rezki
 
