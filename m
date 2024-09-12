@@ -1,194 +1,116 @@
-Return-Path: <linux-kernel+bounces-325784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0C65975E3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:55:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35142975E3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:56:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 118C11C2154B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:55:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6590F1C21F7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E8D1CD2B;
-	Thu, 12 Sep 2024 00:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DFC41877;
+	Thu, 12 Sep 2024 00:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="O2wKfq8+"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PEceMrOf"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6967E2BB09;
-	Thu, 12 Sep 2024 00:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9B22F3E
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 00:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726102501; cv=none; b=JLAjWiQiWgrSwAMByeRl71HW6GHhG/M6uUehdQGu6WwJSvu8YVZ3+WJGb2UxIaNF9ksQ4gHKN8+rOgtVCXwUcBCKSZKhR30OujKhyetUpzLpGKud0pFmz8iqK0iAdt0VAtcqUV7sB76evhk8/6nyrX1/rkG9OB9FkuxFtuAd0nE=
+	t=1726102554; cv=none; b=Cq+GSL2BpDkJiehtbpo7547Sa1jsD1Ryyc2EqkMLQicbGAUe2z8VQjY2VXD0VWUdX4xLl7LnkJa5zI4PdDW9a5MbqzOMhkzCJ9+3wSr/wAHDpN06lghUSNjanDsB0nxeUETYuqyxwOrIWcepX+oQA5q9pbxbHHL+EZms99vCFSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726102501; c=relaxed/simple;
-	bh=2HgyrxXLJU5mjML79DcvpvbBLrmCZ501gDh82MjKUmQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dwfrMeVuzgWjJS0EBFDuhh7NAYhJVT0krG9VYEvL6N7xUEnYF4MmvvQhe9/LWTOC4Zoy1uvfJ0DSwojo8BLT81IhuUfGi/VpZ8zjjfgJ9L4gYRMy7H113Iu2xI7OhpX5nAJ4gMY32I6369VdI1cwr6mocwfCv4d1VVwjTTtxedo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=O2wKfq8+; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48BEm6SZ018059;
-	Thu, 12 Sep 2024 00:54:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8Ih1bUx3KcsBMZWUmWZgzv2wwRZZ6EQj/FyuNOvDE+E=; b=O2wKfq8+0q7/rbQG
-	b64dRW0StvhGBY2eM3hqBo4KKqBcpe4wb/XUIcgx45sWRpA70jdQLbQvUnre1I6A
-	ib7Y5MT8OszYe2fqz2RIQ5reV5M4RJEdpo6x6EQFnhCmgLLTmga1v2kf1dceD9Xd
-	acFi/wGX/wQBtNzifqx5MwbGmBgn2d2YDiMrqZhhm5PL9ZiBrMP4dAMmJ7Vi57AS
-	DmEk0x6vSElejTCghvtJOPQyRoVU8g8S0O4+fN0woN33zAnpnkhzIMBD/PaBTaOs
-	UQk5IHeG1QyDE3dRXZYMci95+5e4r6QaYMX2dsdjB5U11TtZKVU165AEFcIls+BQ
-	l38Fqw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy6pbctu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Sep 2024 00:54:48 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48C0slx9010230
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Sep 2024 00:54:47 GMT
-Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 11 Sep
- 2024 17:54:45 -0700
-Message-ID: <34dad274-a048-4a1f-8acb-894d264ebe80@quicinc.com>
-Date: Wed, 11 Sep 2024 17:54:44 -0700
+	s=arc-20240116; t=1726102554; c=relaxed/simple;
+	bh=allnzNoZ5adyq7EbzXq3qivJGaoQmFasRqpMPa5ZioU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t1CSJ1wT6+cacXhPuFWO+6VPCiXUABN0lwtJiDa/ZKUwm8vwG7c/i1fWf5aJ3+Xk8x9lXG9IDqZh2LbuCfMPOMyrgsOim+phjWgyj8ChNvYJ8qPwM4BmFFcnqjbV72T2ZopkL0v6OuEf1gnFVdxCtXAvwDuh+iyt/BrYTiczkJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PEceMrOf; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726102551;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vq8g+VbGslfb1hOl6tAeTLv/FON/Of4no1HXOLBWnao=;
+	b=PEceMrOfv7fv9w+5RQJJKihKldtRCc72hCZ+AZEl+W5GSFv7toekkvESPGv/T2QMx9/cQy
+	VPB2ezcQZOKfnSP6hDjPFv42uYUtHdfJ08r1HJxppBaQfN5oj3CilGHajkY4xOJZAqBmGF
+	3787iDGfDBeMF9C0m/cMoV8TeOEYvLo=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-346-IE3cpcCxNWSLXNZHNWqwrw-1; Wed,
+ 11 Sep 2024 20:55:48 -0400
+X-MC-Unique: IE3cpcCxNWSLXNZHNWqwrw-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5F6001955DD3;
+	Thu, 12 Sep 2024 00:55:46 +0000 (UTC)
+Received: from chopper.lyude.net (unknown [10.22.32.36])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 90A4119560B1;
+	Thu, 12 Sep 2024 00:55:41 +0000 (UTC)
+From: Lyude Paul <lyude@redhat.com>
+To: rust-for-linux@vger.kernel.org
+Cc: Danilo Krummrich <dakr@redhat.com>,
+	airlied@redhat.com,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	linux-kernel@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>
+Subject: [PATCH v4 0/3] rust: Add irq abstraction, SpinLockIrq
+Date: Wed, 11 Sep 2024 20:55:31 -0400
+Message-ID: <20240912005539.175428-1-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] drm: allow encoder mode_set even when connectors
- change for crtc
-To: Maxime Ripard <mripard@kernel.org>
-CC: <dri-devel@lists.freedesktop.org>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        <linux-arm-msm@vger.kernel.org>, <freedreno@lists.freedesktop.org>,
-        <robdclark@gmail.com>, <dmitry.baryshkov@linaro.org>,
-        <quic_jesszhan@quicinc.com>, <linux-kernel@vger.kernel.org>
-References: <20240905221124.2587271-1-quic_abhinavk@quicinc.com>
- <20240909-neat-stoic-hamster-cbbe42@houat>
- <33f29f1c-157a-424e-89c6-c1549a2d6403@quicinc.com>
- <20240910-liberal-platinum-scorpion-d43cff@houat>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20240910-liberal-platinum-scorpion-d43cff@houat>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: rp1R-rxA_sJcONcGVzujrn9-7xijuvPu
-X-Proofpoint-GUID: rp1R-rxA_sJcONcGVzujrn9-7xijuvPu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- bulkscore=0 lowpriorityscore=0 mlxlogscore=999 spamscore=0 phishscore=0
- impostorscore=0 suspectscore=0 mlxscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409120005
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hi Maxime
+This adds a simple interface for disabling and enabling CPUs, along with
+the ability to mark a function as expecting interrupts be disabled -
+along with adding bindings for spin_lock_irqsave/spin_lock_irqrestore().
 
-On 9/10/2024 1:40 AM, Maxime Ripard wrote:
-> Hi,
-> 
-> On Mon, Sep 09, 2024 at 12:59:47PM GMT, Abhinav Kumar wrote:
->> On 9/9/2024 6:37 AM, Maxime Ripard wrote:
->>> Hi,
->>>
->>> On Thu, Sep 05, 2024 at 03:11:24PM GMT, Abhinav Kumar wrote:
->>>> In certain use-cases, a CRTC could switch between two encoders
->>>> and because the mode being programmed on the CRTC remains
->>>> the same during this switch, the CRTC's mode_changed remains false.
->>>> In such cases, the encoder's mode_set also gets skipped.
->>>>
->>>> Skipping mode_set on the encoder for such cases could cause an issue
->>>> because even though the same CRTC mode was being used, the encoder
->>>> type could have changed like the CRTC could have switched from a
->>>> real time encoder to a writeback encoder OR vice-versa.
->>>>
->>>> Allow encoder's mode_set to happen even when connectors changed on a
->>>> CRTC and not just when the mode changed.
->>>>
->>>> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
->>>
->>> The patch and rationale looks sane to me, but we should really add kunit
->>> tests for that scenarii.
->>>
->>
->> Thanks for the review.
->>
->> We have a IGT for recreating this scenario and thats how this issue was
->> captured
->>
->> kms_writeback --run-subtest writeback-check-output -c <primary display mode>
->>
->> We had added an option ( 'c' - custom mode) a couple of yrs ago to allow
->> writeback to be tested using any mode the user passes in (https://lore.kernel.org/r/all/YuJhGkkxah9U6FGx@platvala-desk.ger.corp.intel.com/T/)
->>
->> If we pass in the same resolution as the primary RT display, this scenario
->> always happens as the CRTC switches between RT encoder and WB encoder. Hope
->> that addresses some of the concern.
-> 
-> Unless it can easily be run in some sort of CI loop by anyone
-> contributing to that part of the kernel, it doesn't.
-> 
-> Don't get me wrong, it's a great feature, but it doesn't help making
-> sure that issue never creeps back in.
-> 
+Current example usecase (very much WIP driver) in rvkms:
 
-Ack, I understand.
+https://gitlab.freedesktop.org/lyudess/linux/-/commits/rvkms-example-08012024
 
->> Regarding KUnit tests, I have a couple of questions:
->>
->> 1) This is more of a run-time scenario where CRTC switch happens, does this
->> qualify for a KUnit or perhaps I am missing something.
-> 
-> We've been using kunit to perform integration tests in the kernel too,
-> so I would say that it definitely qualifies.
-> 
->> 2) Is there any existing KUnit test file under drm/tests for validating
->> drm_atomic_helper_commit_modeset_disables() /
->> drm_atomic_helper_commit_modeset_enables() path because this will fall under
->> that bucket. I didnt find any matching case where we can extend this.
-> 
-> We don't have that at the moment, but we shouldn't be too far off. The
-> HDMI framework I contributed some months ago for example has all the
-> mode checking infrastructure in kunit. So you already have some way to
-> create a driver, a new state, modify that state and check it.
-> 
-> The only thing missing in your case is being able to commit it and check
-> that it has run, which shouldn't be too hard
-> 
-> Maxime
+specifically drivers/gpu/drm/rvkms/crtc.rs
 
-Alright. Yes I reviewed the hdmi infrastructure tests and you seem to 
-have most of the pieces. I just need to find some cycles to work on this 
-:) so you can have my name down for it and either me one of our team 
-members or perhaps with some help from other msm developers we can get 
-it added.
+Lyude Paul (3):
+  rust: Introduce irq module
+  rust: sync: Introduce lock::Backend::Context
+  rust: sync: Add SpinLockIrq
 
-The reason I was hoping to get this reviewed and added as a "fix" was we 
-had already run into this scenario with kms_writeback test case and the 
-same scenario was seen in another msm bug 
-https://gitlab.freedesktop.org/drm/msm/-/issues/59 leading to a null ptr 
-crash but we ended up fixing that within msm because that was a better 
-fix anyway so I was thinking this change would help to resolve these 
-types of issues for us once for all.
+ rust/helpers.c                    |  23 +++++++
+ rust/kernel/irq.rs                |  90 +++++++++++++++++++++++++
+ rust/kernel/lib.rs                |   1 +
+ rust/kernel/sync.rs               |   2 +-
+ rust/kernel/sync/lock.rs          |  17 ++++-
+ rust/kernel/sync/lock/mutex.rs    |   1 +
+ rust/kernel/sync/lock/spinlock.rs | 105 ++++++++++++++++++++++++++++++
+ 7 files changed, 236 insertions(+), 3 deletions(-)
+ create mode 100644 rust/kernel/irq.rs
 
-But if this needs to wait for the KUnit to be added, thats fine, we will 
-resend this one along with the KUnit once we work on it.
+
+base-commit: 8d8d276ba2fb5f9ac4984f5c10ae60858090babc
+-- 
+2.46.0
 
 
