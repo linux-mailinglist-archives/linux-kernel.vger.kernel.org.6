@@ -1,88 +1,93 @@
-Return-Path: <linux-kernel+bounces-326850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92ADB976DB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:23:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13780976DB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:25:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C56F71C23909
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:23:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B84BC1F24546
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D820B1B1D5F;
-	Thu, 12 Sep 2024 15:23:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D8C11B1509;
+	Thu, 12 Sep 2024 15:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P+9HFMWk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=b1n.io header.i=@b1n.io header.b="Vzz79M7C"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303D5A5F;
-	Thu, 12 Sep 2024 15:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA72E548E0
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726154589; cv=none; b=E8+qnqEZkTVjAxvOG7+dYrnNrGOF0bhlBC1kDTwC7QMaG5pT+l6DXhlo9AHJMAi1ERxfpGBhBX39RgkSb1DkBaICU5bG8TpO8yckjgZxXMvRl3DDgdJhAvl4UdfmhUElmxPTNCIG+JnMBibG8KfQHE7pu5rTNZKeCAPUD4+t0R4=
+	t=1726154721; cv=none; b=T2hT+/56yB9Besw/VAOVHjG5UHia3S5Nu84tWt997ccivIgX7zI0Qr88z/AFJHfjU/DIKTFG4rSDtUevNgUU4o+WSiyTymjO4IiqYMw0qCIox4doTnblR5wzufJGMqZYuzXrY0KHtvlAcg89PwlScFc8xb5qEk7PjqXAWA8fc0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726154589; c=relaxed/simple;
-	bh=T0AliTqjWVI7nePlIXW52YXenMw2yEMOQRhgyzxECEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r6jQVPHwyeYMQE+0jgVlbJbS0ctL3W+ZFcmGF1PxmNqAPQiFVLyn1FG4zki8PnbhElPVxLpJujc0ljKPxPv+morL7PyTA6A4LwKKKYiCcPwQfb7n4qHUCWnLvhQpA16uhgQ3aeUhxxd9uiUZksMw+92YxOpu8Q2zl8bXhP8MiEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P+9HFMWk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72E34C4CEC3;
-	Thu, 12 Sep 2024 15:23:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726154588;
-	bh=T0AliTqjWVI7nePlIXW52YXenMw2yEMOQRhgyzxECEQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=P+9HFMWkFJ8NiBllFIfBh2SxPwiqN+FP8B72hyx2DrnUx6hwbbGh3vbIxeizFc3EI
-	 4E38ldH8ZCRonz/pKgOT9iOIEO5gj6wfN/0qebLwWKk4y2xMKl7cMOHkaAYaqMMp5M
-	 0F0eh+PTD5cLB75dCrQMNXxRrRW7gJEF1A38PFP/XDYJMZt2OnSBQlfSOqpzUAga6H
-	 sW55le4uwUzIlzDge3w4a9FpUXwQzKgaQ554tV0sOfaJW5+txX0O8TPD9pGl0fRtqv
-	 pJSRqgLUqb72SllEZpBA/4X3WNlPzgRYZygxeN1upUEmiT/qkq2Ygv0QjGp5d4/GBw
-	 YfDrPpYlwwEDQ==
-Date: Thu, 12 Sep 2024 08:23:07 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Anders Roxell <anders.roxell@linaro.org>
-Cc: shuah@kernel.org, willemb@google.com, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests: Makefile: add missing 'net/lib' to targets
-Message-ID: <20240912082307.556db015@kernel.org>
-In-Reply-To: <20240912063119.1277322-1-anders.roxell@linaro.org>
-References: <20240912063119.1277322-1-anders.roxell@linaro.org>
+	s=arc-20240116; t=1726154721; c=relaxed/simple;
+	bh=axOYoJlI6bdZq6OU625j/kErOrfwkvuTb3DPmHXAtio=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=qJxMAnm3wzyrFgsIeswc6KcIANFr20MjxZoUZLzgpFnh9uCqD/0UCjAb3V297UUw7+0eyI5WwY4i7HHlAAV3SokEyvv1j9Ox02pE3xXLp09Q55Ft4edA4QBCJDFBo0FyKTcmJLjlKWB0nNNb9wdsChnx7Xnxl7d9J+jKJR30UPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=b1n.io; spf=pass smtp.mailfrom=b1n.io; dkim=pass (2048-bit key) header.d=b1n.io header.i=@b1n.io header.b=Vzz79M7C; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=b1n.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=b1n.io
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=b1n.io; s=key1;
+	t=1726154716;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ny1DW933RdPYWKsafrbgXfgTl8R051z3hjD0hBkKkWs=;
+	b=Vzz79M7CXg+G6gMwXnva4TGGOHeoWwPB5Of4osZYrBXPAKQuTur0b19dLsSXvPQhcTtfLs
+	5j9FuEOPbOMjmbF8KzKiX2R/i5+RJpd7qs2viS5BTOs3H/kv247YRQhtCNrLEwUrkwgEST
+	oSZxIPDYuav118C5s/z7a3yFW3LD9YYZXXtVKJneIWClb9M/pYg8YbnfK6DdvZbbvb7CRx
+	lx+eg5vev5TuSw55WLIJJA7Xq+c8ywlMJYyg841OFh7kAbJ1e3gh5z5xtcwwbnajbMb7BV
+	PD2yIUZGBz6KPqp48D5NCxzlQ9yIwcaI6f+RALfSdWAJ8EbcpU1vjYIs6orL2g==
+Content-Type: multipart/signed;
+ boundary=83bcee3f1348bd116570d71e3276ca0c0086caf96377bd8fca9839bf4539;
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+Date: Thu, 12 Sep 2024 15:25:05 +0000
+Message-Id: <D44ERWLRJH34.2CABCYZDI1SI9@b1n.io>
+Cc: "Philipp Hortmann" <philipp.g.hortmann@gmail.com>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, <linux-staging@lists.linux.dev>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] staging: vt6655: Rename variable apTD0Rings
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "b1n" <b1n@b1n.io>
+To: "Dan Carpenter" <dan.carpenter@linaro.org>
+References: <20240912145234.75499-1-b1n@b1n.io>
+ <9d12ad46-d028-4be7-b8e3-2167e214ae66@stanley.mountain>
+In-Reply-To: <9d12ad46-d028-4be7-b8e3-2167e214ae66@stanley.mountain>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 12 Sep 2024 08:31:18 +0200 Anders Roxell wrote:
-> Fixes: 1d0dc857b5d8 ("selftests: drv-net: add checksum tests")
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
->  tools/testing/selftests/Makefile | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-> index 3b7df5477317..fc3681270afe 100644
-> --- a/tools/testing/selftests/Makefile
-> +++ b/tools/testing/selftests/Makefile
-> @@ -64,6 +64,7 @@ TARGETS += net
->  TARGETS += net/af_unix
->  TARGETS += net/forwarding
->  TARGETS += net/hsr
-> +TARGETS += net/lib
->  TARGETS += net/mptcp
->  TARGETS += net/netfilter
->  TARGETS += net/openvswitch
+--83bcee3f1348bd116570d71e3276ca0c0086caf96377bd8fca9839bf4539
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8; format=Flowed
 
-Please make sure you always include a commit message. Among other
-things writing one would force you to understand the code, and
-in this case understand that this target is intentionally left out.
-Look around the Makefile for references to net/lib, you'll figure 
-it out.
+On Thu Sep 12, 2024 at 11:09 PM CST, Dan Carpenter wrote:
+> It's weird to have ap_td0_rings and apTD1Rings.  They no longer match.
+ok
 
-The patch is incorrect.
+-- 
+xingquan liu
+
+
+--83bcee3f1348bd116570d71e3276ca0c0086caf96377bd8fca9839bf4539
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iM4EABYKAHYWIQRK8k7aQ0rr/Uwki+E2I1LDHPWnXgUCZuMH21gYaHR0cHM6Ly9r
+ZXlzLm9wZW5wZ3Aub3JnL3Zrcy92MS9ieS1maW5nZXJwcmludC8zMEFGMUFDMDcz
+MDg5M0VEQzE0OUI3OTVCMDA3OUIxMkU2Qzk4RUE2AAoJEDYjUsMc9adeHPoBANnU
+FBIYCc/FRoAI0Ad8wOjxYDOL0Gd5zgnODepdrP9rAP4/KBlfmeO2Jrjlaag1ABec
+OVNDhNYRhtP9phqwS4lHCA==
+=BZcD
+-----END PGP SIGNATURE-----
+
+--83bcee3f1348bd116570d71e3276ca0c0086caf96377bd8fca9839bf4539--
 
