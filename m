@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-327126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A556F97711F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:10:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6E05977120
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:10:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA9401C23686
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:10:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC6721C23852
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:10:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70CC13D530;
-	Thu, 12 Sep 2024 19:09:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C13B1C232B;
+	Thu, 12 Sep 2024 19:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pd3tKEUV"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2047.outbound.protection.outlook.com [40.107.93.47])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="i8i2wMUW"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2081.outbound.protection.outlook.com [40.107.223.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D381C1755
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC501C1AA3
 	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 19:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.47
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.81
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726168162; cv=fail; b=OfeA7Pivo37LDRy+5y1xN9B2tB7rvldqSzIx/140iOmZuFtXY7Na6fNfwZFHhN94JlaLwSI1SfIsuTcbuZkGsoLpoXgctcGWDE/P+n6sVi0OlnM4jt3WWcjCennV9qZNwGijciUNE/2O0CLFw/iuCIVwbU8A+Ipo35ffavxXpso=
+	t=1726168163; cv=fail; b=LACap1CwPQJ/q4uotJf5LamLbUgIbrIbO9GVMKqeUkjCqQBlOi//cScBOgiaOCbjaiuz/WpF6kTVpvNdbenex3SaH/Egi2YyjYNg+yxieOtfIbsSKMGYrF71IIOwjAmDr+pr2YLJyEU4fzpXolXggrm94H5zqrSI2KipjWjcEsM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726168162; c=relaxed/simple;
-	bh=AAqBz+/JpUJ/Tn0zBrm18Sv5bWwEk4XYDgq9DaQENvk=;
+	s=arc-20240116; t=1726168163; c=relaxed/simple;
+	bh=vLPITijN2cQ7t37rG6+3aq+kdur1hgefHiLuu0kUOXM=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pt3/3AY09Iy1ky5Jy21fWfguZHeiGO82/RXty3AAhGaM+pTZp27AJPdR0+7F8dmQBffN75d4dCXJUuMSJH234IWJV0hQV52uEETx/FawZXn61e/t72SWyrN0fsZSZga/DtmBUgRAvoBpE//yBn5OPITUph19YTkC1QNiJCX5L54=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pd3tKEUV; arc=fail smtp.client-ip=40.107.93.47
+	 MIME-Version:Content-Type; b=PWCi3en0Mk16bZWWb6tCFKja5leQJMeiARCjgFx/NyHl0AFT7hJzM8RS9uNomYYJbKve+tWNoeTjPs9NH0l7TJt+vQG0e5Xgbch+pIGs94jQuYxsH2M0kQDPdxM9Bw3KJahSxsvTe7ucR5qzrTYBlgxWhuNMsmb7xlHbm79/4ig=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=i8i2wMUW; arc=fail smtp.client-ip=40.107.223.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=I3m/yrI3oB1couBmr/umq+l+QZepVA1MHSLGY7de3BFljUO+Dj5SvnXyL0mN6DShyx8RFXsjlOF11x3zc9cJiJ7+vh4RLCqaOYZuQcF3QNZpohYY0Wzw56/qPlyYZQw/0i9dvjT8Jvy1uAFn25pXvlbEvM1oLqE1CvvKprguh3MTbCjJOg5MlvoDO9d3C9g+rWVZT4OAW10QHg6onTExvD+/WVrLVICB5wAmpcK6XyJIRbJdXtz6VsmaUW7ZZvsnkxzaQpK3P0bpKOwxLkSW0qH9j740Z/WNkD7zzl/OX0hRQaL+AdWI2KlBDIDtiBTs6r+y5lk5W5HZHwrNyLdjfA==
+ b=ZbRsc8i00u8ajcYhskw7MVpXhjr+XdpIegz6EF2xjl8IpWKgLBWTBX0P6CiLWMw9HSxobfb1pBMvO1Gcmy48yicJveBBBsNawWRx2/M8YxtbIUA58bw42mbRyMZaiS936L4EMJbQWkqtFemChXIBD7XBM7vPRmOclaqDSCENkROarJkMazvbBVPuiCQdE1yKZelj4QFsFp9SBWPXDhgkwo/GXiIg7rTc1AXHvgdrs6udVHyHOZrQhqeo1aWIksihucO8TKv8wOH/89ycPrVjKL8dtP7UAvQye9ZgGRTeswJyvHcX1R5vWaDM1wOxfpKjWWerjyMIQXdvYuDM+OP1lg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7PN7cG0zo5y/9+Gfu9G4um1So66CFCbVl4LtrqNall4=;
- b=mYYJKqDf4LiyCcZ4OVEJynGTDf5GOsBxB2IND2jQOOSTnNT4eHqNRuJPgdtKmg84R+NFoden1QUskWqS9AFosnE+W8Gx5vEmzGLVE8ErC9v96GfwmjJESwSMIlZSV4R6oVSNX7YbIx877TFykaVkNsZGxJCLWvEFyhjJUVlPuWU5hu+rUCQXt6EKMwdJldh5IE5npNTVoZKzc7PXLml2V9qwpVGHGxRy4J1ASHRr4qvwwgkxsQ46NcBetUjBRNJ9TfxGDjXqgaH69IxPlfU04963sigigZvYn1Pj5SPQ1zkdwehnEqvckbxwx1DW8HPjQlvXGIDAV4jGySjF5usV3Q==
+ bh=LGhcbBnModAkL2Cb248Vafy9TcThihHbMkSgc8sJEEQ=;
+ b=AtaeJDwOTMi60+XE/70Q4J0TCIjHbZjvawyCJuh5Jrgb7cx+JfTxbLpIGZYZmOgVPHB+cJymN5DK9OrfScgv0KepZRusCAOPEZbnr3P5d//l8d7TP2rfDa8ZGbI7AKzYV1RwPni5IPcPYbP/vQAcgQ4cbF/vy+MRVhcmNTloHMuyokbnR9m0/n8FOhGbk79TQro9TOZkS0qyHg8pHRWA3ctCFcP0XbcuagbrTuBGO2t9pnUKEQzEkhYsO66s/mYEp/pvJrdhMDJ0uYN1mGWfOEVSwFpFLjOEWom+chix13B+Q92WBto6+zFB466KCYp3ccKTX5d35xWbQ50eTikuGg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7PN7cG0zo5y/9+Gfu9G4um1So66CFCbVl4LtrqNall4=;
- b=pd3tKEUVTu9l3cUbxkd1VAc7rbtAWp3tko+axP667AF8FzyoE1ugqtPgX+67EcSc85LI0BC3agsO0H2NxOc3x3THIdGoAdTn2SmQ/PNDf2aPD43z1nLEghno6SzXm19kcNnavdb4G4hXXjZJ9eKjMJu6w2lGmY1eKP36PlGLGyk=
-Received: from MW4P222CA0026.NAMP222.PROD.OUTLOOK.COM (2603:10b6:303:114::31)
- by MN6PR12MB8567.namprd12.prod.outlook.com (2603:10b6:208:478::12) with
+ bh=LGhcbBnModAkL2Cb248Vafy9TcThihHbMkSgc8sJEEQ=;
+ b=i8i2wMUWrpoSHd2J/gzdg3hzjBnAaZyJA8qeW0GvbnCQLkNDl5HRW2bK7Aq8AAlsBFW/asoOl2r2I7hrNQ6QElGea1EH+dMtRw7+XODm5WmW7i71pRZuGaibhDQgPChWsSPcaKn9mfvI4kZbXRCbR/SUoOqEebJnnFwlPdVRQ/s=
+Received: from MW4P222CA0014.NAMP222.PROD.OUTLOOK.COM (2603:10b6:303:114::19)
+ by PH7PR12MB9067.namprd12.prod.outlook.com (2603:10b6:510:1f5::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.18; Thu, 12 Sep
- 2024 19:09:16 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.28; Thu, 12 Sep
+ 2024 19:09:17 +0000
 Received: from SJ1PEPF00002313.namprd03.prod.outlook.com
- (2603:10b6:303:114:cafe::8b) by MW4P222CA0026.outlook.office365.com
- (2603:10b6:303:114::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24 via Frontend
- Transport; Thu, 12 Sep 2024 19:09:15 +0000
+ (2603:10b6:303:114:cafe::fa) by MW4P222CA0014.outlook.office365.com
+ (2603:10b6:303:114::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.25 via Frontend
+ Transport; Thu, 12 Sep 2024 19:09:17 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -64,7 +64,7 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
  SJ1PEPF00002313.mail.protection.outlook.com (10.167.242.167) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Thu, 12 Sep 2024 19:09:15 +0000
+ 15.20.7918.13 via Frontend Transport; Thu, 12 Sep 2024 19:09:17 +0000
 Received: from tiny.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 12 Sep
@@ -76,9 +76,9 @@ To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	<mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
 	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
 CC: <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 07/34] x86/bugs: Remove md_clear_*_mitigation()
-Date: Thu, 12 Sep 2024 14:08:30 -0500
-Message-ID: <20240912190857.235849-8-david.kaplan@amd.com>
+Subject: [RFC PATCH 08/34] x86/bugs: Restructure srbds mitigation
+Date: Thu, 12 Sep 2024 14:08:31 -0500
+Message-ID: <20240912190857.235849-9-david.kaplan@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240912190857.235849-1-david.kaplan@amd.com>
 References: <20240912190857.235849-1-david.kaplan@amd.com>
@@ -94,151 +94,122 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002313:EE_|MN6PR12MB8567:EE_
-X-MS-Office365-Filtering-Correlation-Id: e5bd5734-0eba-4281-cdf3-08dcd35e653b
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002313:EE_|PH7PR12MB9067:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6d73dfe9-e3b0-4dab-d85b-08dcd35e6608
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|7416014|376014;
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|7416014|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?aTLBUbdaQd/l0zkxRUkQB8GLo9jXwbuOtiRCt4DW1zjvhX29UigCD8pyB9fm?=
- =?us-ascii?Q?crKfXDuIWZn6Jp/rI+hymUNtwtsr7+b9rGhx4mflClrfIxKEiMP989sT5w8Z?=
- =?us-ascii?Q?WUxTCLN53ChpUgbVnkqYcXSrqLxRP7c8kDGwVHOLyxNIA0vf1zEI1LSLZytH?=
- =?us-ascii?Q?zFU+nLmNR8o0LonqSRgYBLGsONDnwM4k76h96CJVJZKTQQBxgNOzHqCUVwpR?=
- =?us-ascii?Q?EnE919DR297kWJQbpBrgCOCu8PtAajoJ77ftjhoSBVuFJPnhYTPnIw7RRcx/?=
- =?us-ascii?Q?aRukOVr82V1wq0LQudPhFEBvmlEYU6qEWlujz+Qvyfv5stXMQjEi3lSPpA0w?=
- =?us-ascii?Q?G8UA/55Uue4alzHXmlzgUlG3KqZjBn56sTodp7oimtlFX/ouNPwDlcQm6XLc?=
- =?us-ascii?Q?Q6h874djgpbcyPfDC0/ymTVOx4U41YVBXNzuJFawGIHyILLrBGhj7JSLaawH?=
- =?us-ascii?Q?3DHlNkL+OMWpx4abW1p4HAyF6ChTcsdtHXhVQ/RN9R1fW21wCBDrvhje2Try?=
- =?us-ascii?Q?jZGsutNRfZ46IhxVDUT4Y3JD4qCIx8zYKu64H9t9dazM7a0Llp8E4/1px9C1?=
- =?us-ascii?Q?vkc4bn6yVdQcdd5iXoatosfPxIt3yi6j9+bC2wZ9XCDxPxzmzN1M0nXxeQOC?=
- =?us-ascii?Q?yKF1QQCW69pM5rzWcVMjO1Kj4QKXOilXsMMiHkLZGLUJw7Tb0D8eob6fEsEN?=
- =?us-ascii?Q?a7oHZzNR5oqWl9XmcCa/2Gu4Z1J86CuoQoG9wnuH37mM8TPTw/3jNUqF8fnp?=
- =?us-ascii?Q?rLnRG+76waJqpSm6a2xC+EQUCbloz6vKSEd9b2JwBQwit0dJ0PljolR2qzbR?=
- =?us-ascii?Q?MPbL9hBG19FqK14skGM2ANFuaVEjzpc0G+uLfzmC88583XEetx3DZUCwL29h?=
- =?us-ascii?Q?6rzds6hMWDLtHd0LRfqG7+T8JMEWWBO7iLlfo+Rht9S2qB7aPGyy2gvaOhVc?=
- =?us-ascii?Q?DhTTT4D9qCZFoRZj4j83KBgWJO9FXVTt5ceNczXB8r5KBr4e0JPy89JGJBJD?=
- =?us-ascii?Q?gx3cEei/4z+kdzsjoKMMv/Tl8PbV8+CEW0gmMhFbTDxi74ApSB6Vp48shu9F?=
- =?us-ascii?Q?vwdvuBic5Xndn5O1h2o21Y3+O9we2SuMalCVY8jR1pnnIzahZt0XpswMBPFD?=
- =?us-ascii?Q?g8GHgXur+olm1V5b/6FCv5V9SGt2L6j6omcAjmW2VypgjRRhyt6mcCdw70zE?=
- =?us-ascii?Q?L/1h3KX/5HrfSniRdouik03WcRrf7XsONCpBuVeVfXenXWpdyugkcAtxGkBd?=
- =?us-ascii?Q?j1+0Zhaw5WYsjT8fMtEIJMc3dHg3dU4ymLHW4+V4XIKh0CjEeahzEvx7L+P3?=
- =?us-ascii?Q?AK4qgOJjVlhj0eRr+Of5ruosonv2cTBRD09L7yTNVRY+EC1ckV6va7+XKkVk?=
- =?us-ascii?Q?eZe76e/PAJNW9sUdmpkO2EquXvJ8Xh0O7Gz7OZ9g0V0b36RmGZde3tDslpeH?=
- =?us-ascii?Q?jjQw7IrLdJUUjEq8lytmRDYxackjAgO2?=
+	=?us-ascii?Q?D71GkIvHp9X0zKrlT0Q8qvjPDn03MHsvU7mR900PxNLPT+X4kPdObzlNr11z?=
+ =?us-ascii?Q?rd2MbuxcBRJLXxzuz7zbcMqkHOHBRr49n2b+OK0fe0+kc7HVavisCSCUeR47?=
+ =?us-ascii?Q?GJYvQxxUqfbf42H+8kSrsgC8zzH2UXLQTYOQbMIKlCv+1WRigtlg2OwVPKVH?=
+ =?us-ascii?Q?D6rV/LyiUxL/+e6KZDwrZvjsZD3J1y3JIeKR9/NtP89BqSFPQ8sPdWOEz+bb?=
+ =?us-ascii?Q?pv4PlVPKXSSwdHInTLK3A9h/1h5Ie0BH+mxWcE/ca8fgxSNRL9OASpyZiHMf?=
+ =?us-ascii?Q?szMZPx6jYUhYt8USHtrFukr1Rf3OmspYM/k6HQgR5LE5sfiPU93ArqEiV/u4?=
+ =?us-ascii?Q?owBl0lqmRikpRj4YFEFWoiPX3v1URwDdvrAbItF4ZZmhmcx+suPfEdCly5HH?=
+ =?us-ascii?Q?Tny+LKGKGuk29tUq8uBablS5z4ax3QnzCDVx7vQBY4NKmvmX/2czmnLkQ5tE?=
+ =?us-ascii?Q?u0zBhkxzP7f5WC/R9JnKQW7uhPJ9eri9AUe5WvTwzA6bVugrH11GIFjAgvTB?=
+ =?us-ascii?Q?fGaLtV2+yaWE9sXV90pyLPWqhQ7rI3aGDZ4bDUU/vMbQsdibKhGVRYNUpzDR?=
+ =?us-ascii?Q?OJ1GHUIjWOXryXxg9i+EH4b5M9GMTPOe0nzlq522yU6lMvk3LnNUOfHQMZaN?=
+ =?us-ascii?Q?z8Sa4KFBCQ16sO4JZJVDwIjOwbLbt5+Aahi8hDCQJeR3a5w7UoY0nV/xJqoo?=
+ =?us-ascii?Q?E5DSpWNNL8BjTKP+iQisMkNS+CiFHc8KVPKHHvVBGsfeo8K3vjCJUYc61JU7?=
+ =?us-ascii?Q?pYulEqG00KOWasNL2Gwc6JUPrZ5e4WQcl+hORO9ydfMMbTVvq57Kiei7qEmJ?=
+ =?us-ascii?Q?OWI7LIdJME2zWKipHlh8GoS4YnvXA7EZkBwOVNNohsgmdsf+zUqQUWKgXH0B?=
+ =?us-ascii?Q?tcNZIJUOZfyP8fymaR9V9R8pxKcp8xiFpOssiuJqEqWCF159k3D4Tj5PO4q6?=
+ =?us-ascii?Q?3MQvKUpIwttoN/dOKSFmkuHm873TB1H8xHgHbaguGJmM5IigXhogIs7LFHzi?=
+ =?us-ascii?Q?WzH1mVDZbtIl41LilxOT2c6bq/vP1Fh4USmyjqaOupwGKpVaXdsQeisYRSRd?=
+ =?us-ascii?Q?3HGK24JeydPNInrmqjxBsQ35s58sBZOjazAm4Hdy09c7wPmqfu9gMkD0VTsf?=
+ =?us-ascii?Q?eP3wqfuLt6VE2HCbDIKuubq53bJXWXpkNbBatMOqGSEA2+KygV7Wf3CG9PQv?=
+ =?us-ascii?Q?EJVP4PkPufrf+WCwA4yRDyHr22wflioHdhXIpGQa0FI+viJcIoaDA2e9H+Ti?=
+ =?us-ascii?Q?c5GgpmHjrpn3EDHeLYV5JWz82CaZOZZTzjqe8GBW7qdWlfUkzL63SIvP8GIs?=
+ =?us-ascii?Q?xB8CYq6NXZzIeGImH4d0tpgKt9840aACMbmNP8Qpybk3HJTOOPq0YtZRUcb7?=
+ =?us-ascii?Q?AtP6RJ3vUhBuP9Kann+a+cDCvwKjr+YM4LHSAI+emWD+bHQrVjfg/hIQWUpE?=
+ =?us-ascii?Q?eHTwaA2iofMpgAoLYjw0QksjCzrBbLNX?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(7416014)(376014);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(7416014)(82310400026);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2024 19:09:15.7166
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2024 19:09:17.0447
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5bd5734-0eba-4281-cdf3-08dcd35e653b
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d73dfe9-e3b0-4dab-d85b-08dcd35e6608
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
 	SJ1PEPF00002313.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8567
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9067
 
-The functionality in md_clear_update_mitigation() and
-md_clear_select_mitigation() is now integrated into the select/update
-functions for the MDS, TAA, MMIO, and RFDS vulnerabilities.
+Restructure srbds to use select/apply functions to create consistent
+vulnerability handling.
+
+Define new AUTO mitigation for SRBDS.
 
 Signed-off-by: David Kaplan <david.kaplan@amd.com>
 ---
- arch/x86/kernel/cpu/bugs.c | 65 --------------------------------------
- 1 file changed, 65 deletions(-)
+ arch/x86/kernel/cpu/bugs.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
 diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index d3e6ce7238e4..df41572c5d10 100644
+index df41572c5d10..0fb97b94f5b9 100644
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -62,8 +62,6 @@ static void __init l1tf_select_mitigation(void);
- static void __init mds_select_mitigation(void);
- static void __init mds_update_mitigation(void);
- static void __init mds_apply_mitigation(void);
--static void __init md_clear_update_mitigation(void);
--static void __init md_clear_select_mitigation(void);
- static void __init taa_select_mitigation(void);
- static void __init taa_update_mitigation(void);
- static void __init taa_apply_mitigation(void);
-@@ -197,7 +195,6 @@ void __init cpu_select_mitigations(void)
- 	taa_select_mitigation();
- 	mmio_select_mitigation();
- 	rfds_select_mitigation();
--	md_clear_select_mitigation();
- 	srbds_select_mitigation();
- 	l1d_flush_select_mitigation();
- 
-@@ -661,68 +658,6 @@ static __init int rfds_parse_cmdline(char *str)
+@@ -72,6 +72,7 @@ static void __init rfds_select_mitigation(void);
+ static void __init rfds_update_mitigation(void);
+ static void __init rfds_apply_mitigation(void);
+ static void __init srbds_select_mitigation(void);
++static void __init srbds_apply_mitigation(void);
+ static void __init l1d_flush_select_mitigation(void);
+ static void __init srso_select_mitigation(void);
+ static void __init gds_select_mitigation(void);
+@@ -218,6 +219,7 @@ void __init cpu_select_mitigations(void)
+ 	taa_apply_mitigation();
+ 	mmio_apply_mitigation();
+ 	rfds_apply_mitigation();
++	srbds_apply_mitigation();
  }
- early_param("reg_file_data_sampling", rfds_parse_cmdline);
  
--#undef pr_fmt
--#define pr_fmt(fmt)     "" fmt
--
--static void __init md_clear_update_mitigation(void)
--{
--	if (cpu_mitigations_off())
--		return;
--
--	if (!boot_cpu_has(X86_FEATURE_CLEAR_CPU_BUF))
--		goto out;
--
--	/*
--	 * X86_FEATURE_CLEAR_CPU_BUF is now enabled. Update MDS, TAA and MMIO
--	 * Stale Data mitigation, if necessary.
--	 */
--	if (mds_mitigation == MDS_MITIGATION_OFF &&
--	    boot_cpu_has_bug(X86_BUG_MDS)) {
--		mds_mitigation = MDS_MITIGATION_FULL;
--		mds_select_mitigation();
--	}
--	if (taa_mitigation == TAA_MITIGATION_OFF &&
--	    boot_cpu_has_bug(X86_BUG_TAA)) {
--		taa_mitigation = TAA_MITIGATION_VERW;
--		taa_select_mitigation();
--	}
--	/*
--	 * MMIO_MITIGATION_OFF is not checked here so that mmio_stale_data_clear
--	 * gets updated correctly as per X86_FEATURE_CLEAR_CPU_BUF state.
--	 */
--	if (boot_cpu_has_bug(X86_BUG_MMIO_STALE_DATA)) {
--		mmio_mitigation = MMIO_MITIGATION_VERW;
--		mmio_select_mitigation();
--	}
--	if (rfds_mitigation == RFDS_MITIGATION_OFF &&
--	    boot_cpu_has_bug(X86_BUG_RFDS)) {
--		rfds_mitigation = RFDS_MITIGATION_VERW;
--		rfds_select_mitigation();
--	}
--out:
--	if (boot_cpu_has_bug(X86_BUG_MDS))
--		pr_info("MDS: %s\n", mds_strings[mds_mitigation]);
--	if (boot_cpu_has_bug(X86_BUG_TAA))
--		pr_info("TAA: %s\n", taa_strings[taa_mitigation]);
--	if (boot_cpu_has_bug(X86_BUG_MMIO_STALE_DATA))
--		pr_info("MMIO Stale Data: %s\n", mmio_strings[mmio_mitigation]);
--	else if (boot_cpu_has_bug(X86_BUG_MMIO_UNKNOWN))
--		pr_info("MMIO Stale Data: Unknown: No mitigations\n");
--	if (boot_cpu_has_bug(X86_BUG_RFDS))
--		pr_info("Register File Data Sampling: %s\n", rfds_strings[rfds_mitigation]);
--}
--
--static void __init md_clear_select_mitigation(void)
--{
--
--	/*
--	 * As these mitigations are inter-related and rely on VERW instruction
--	 * to clear the microarchitural buffers, update and print their status
--	 * after mitigation selection is done for each of these vulnerabilities.
--	 */
--	md_clear_update_mitigation();
--}
--
- #undef pr_fmt
- #define pr_fmt(fmt)	"SRBDS: " fmt
+ /*
+@@ -663,6 +665,7 @@ early_param("reg_file_data_sampling", rfds_parse_cmdline);
  
+ enum srbds_mitigations {
+ 	SRBDS_MITIGATION_OFF,
++	SRBDS_MITIGATION_AUTO,
+ 	SRBDS_MITIGATION_UCODE_NEEDED,
+ 	SRBDS_MITIGATION_FULL,
+ 	SRBDS_MITIGATION_TSX_OFF,
+@@ -670,7 +673,7 @@ enum srbds_mitigations {
+ };
+ 
+ static enum srbds_mitigations srbds_mitigation __ro_after_init =
+-	IS_ENABLED(CONFIG_MITIGATION_SRBDS) ? SRBDS_MITIGATION_FULL : SRBDS_MITIGATION_OFF;
++	IS_ENABLED(CONFIG_MITIGATION_SRBDS) ? SRBDS_MITIGATION_AUTO : SRBDS_MITIGATION_OFF;
+ 
+ static const char * const srbds_strings[] = {
+ 	[SRBDS_MITIGATION_OFF]		= "Vulnerable",
+@@ -724,6 +727,9 @@ static void __init srbds_select_mitigation(void)
+ 	if (!boot_cpu_has_bug(X86_BUG_SRBDS))
+ 		return;
+ 
++	if (srbds_mitigation == SRBDS_MITIGATION_AUTO)
++		srbds_mitigation = SRBDS_MITIGATION_FULL;
++
+ 	/*
+ 	 * Check to see if this is one of the MDS_NO systems supporting TSX that
+ 	 * are only exposed to SRBDS when TSX is enabled or when CPU is affected
+@@ -738,6 +744,12 @@ static void __init srbds_select_mitigation(void)
+ 		srbds_mitigation = SRBDS_MITIGATION_UCODE_NEEDED;
+ 	else if (cpu_mitigations_off() || srbds_off)
+ 		srbds_mitigation = SRBDS_MITIGATION_OFF;
++}
++
++static void __init srbds_apply_mitigation(void)
++{
++	if (!boot_cpu_has_bug(X86_BUG_SRBDS))
++		return;
+ 
+ 	update_srbds_msr();
+ 	pr_info("%s\n", srbds_strings[srbds_mitigation]);
 -- 
 2.34.1
 
