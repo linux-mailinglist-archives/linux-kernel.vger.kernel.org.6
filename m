@@ -1,144 +1,263 @@
-Return-Path: <linux-kernel+bounces-326901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8D22976E49
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:58:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B32976E4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:59:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CDA5281C2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:58:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC936B22F0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:59:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0C51B9845;
-	Thu, 12 Sep 2024 15:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABCE19599C;
+	Thu, 12 Sep 2024 15:59:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="ohp1OMTm"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q4pTY9p/"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BA631898F8
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B971B9B3E
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726156719; cv=none; b=fubJgQL9wzw8qwIwpUXsTohKupaJt4cuZieq1gIY5MSSi78HZBNvFNoqM889BDKFq6KpVHR9pBZapLnVHscYs9LIWV3K4ebLkPN/SVlfSBp41sWjwxCHUiXg1bLQe0F3JPobKgeDyRA9eREkqfPYv2Tw7XlFPZEbPgV8xrYNipM=
+	t=1726156749; cv=none; b=MRUE0XdmtBBOCp04vPDhbimVCHjmoq6pCvcAMMq/L9XnhKzU2vD8m+hD35jYEpgNice4aClduSOioKBbbcEMKZSmgNmNxcYPrkbZFleKZev2zMXtFfjGgSy/8qMM41jllUMFJFEmeHtb/EeloU4jXdCNvm+jlRimlPEkwkmsFKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726156719; c=relaxed/simple;
-	bh=U9dUmOOuXwqX5mq5q+c61lnytJLwV7sVtmKS0yIcsSw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J4iaKROZUEwPBykQgh0LXcpk8n5V6MxtYUnlGpNFhuqK87K3uoeXszgRFtSt2ghlNmM+XOsWWzkvHvCUR3+VUJuaGcNk8/NlGDxDHF1t/hyjKHUFO1GgwzqdO8aPKR+QuiEfyeRQtOqujgHZ+hfh+fqydx/ZGMwDx6lv3ZBMc+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=ohp1OMTm; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-277f0540c3aso581340fac.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:58:37 -0700 (PDT)
+	s=arc-20240116; t=1726156749; c=relaxed/simple;
+	bh=ZRaI2PSJ/nRX+fPnK4kI2jK3HRbntl97iav/M7nPcHQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lqO3z1+Obr6cEWBH2nT6O/xrI9+8xSTuR2C8i46yPwUc/W6mBJLwFfwo5LFghiOXzsvsigWKCa3Vm5A0DZUmpScAwip3yk92Mtxwa3KbRrdm0mNFTgAA6L8qTxfK/FMC8m6LLmcpK49iAzgPU7kpYOM6rBvIFSYJBBs+3qEq4Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q4pTY9p/; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c247dd0899so19332a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:59:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1726156716; x=1726761516; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QYJCNJBfM3mnUo54efKbh8cT5QtGE+6/2LtRTMxqLoo=;
-        b=ohp1OMTmc4+MY7BjSxQHsCJIJMIRl/Z4utjQ95fYeombWtM7Jn8+zzYbmrcBSoopbo
-         TaPOjRa/b2Sz6LyAoh2ZFQTlTiYRrN0l/dIANNsy4fYwekKTkuKDydt3J9cJmNXqhyDY
-         6K29Ed6MJeFrPWE6jAjge8CNhI0n1TVwlbHMs=
+        d=google.com; s=20230601; t=1726156745; x=1726761545; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DzkSOjtlRgEJBE0QzC4qfBZck+h9F5FrZHcRFt4ekK8=;
+        b=q4pTY9p/wUQTKZYqIyxX822+/rIbrjZWnJ8MdRWbcA3SGucp7oTZdlAT8CYp4krXGd
+         mJPBniLyldP2pl6LAyReMb5zWhfJ53hnO84gvFumouNV7L/w8Gds+7iLEkGIuSMfWrPX
+         xk427oxUeAUhHjVtviSDZBXtEtGt63unbkKHM7ZdjkqPG3T2+9pCK/heUTaSM9S87uLN
+         7sRgN7VoDKtZeElOsfyTVE+rUNL0DvjJO14CvU/h90PaeYK7d2S3Z8Y/GJDrVu1CfaC4
+         XGqiSQbPNyVE83jv9Pc7fjqd5woX9BeWR+cqWK/lhVUmwPXhiMazx6P0Jv6PG75KDsLY
+         VLwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726156716; x=1726761516;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QYJCNJBfM3mnUo54efKbh8cT5QtGE+6/2LtRTMxqLoo=;
-        b=b3/XbFd5OB2Fs2P8jbj62TBtFf/uFTp8SvYoeHHHmlbUFFDpV0furqwIyn/uywQu6H
-         yfuHrqL5cc6lQznotD+0cA3kiJ3K3vKucC0fThpGc+42bZcuHpXp226lscjvVaveBdxW
-         SzTL5nk7231+FP3Op5Kt7r4kc+5NwYtlbGDzeJJSkh2w2AZSR1C2lNCIwPwfszE0h1cp
-         ncQ3KF7SX5t8Cmof26NLn61/RbEhLZUtNaKXGg08PX0E9RIaVoxDsX47H33AjbWYbNBM
-         lf/zQAoNnJzijAxces1yeKL9GO7z9FErB3b6ziHly5pjGgHP3g4NPZbi1JaaZXG7gnAn
-         UwRg==
-X-Forwarded-Encrypted: i=1; AJvYcCVF29Tf2XjyBN4tJZT3ZARt9N320Q5uwEKOuyglt6GiAgoVGS/PcIMvnBNRbPC5wUlSNMAOIBOR8njAqPk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlSbHtpHf0Q0b4s4hRjeivycjEoOMObh+xA1UImoOF9Uw9iRWC
-	VELt0HAMhk6XIggeJ1Kq+TVlJIptgYi5+DKfU6II7nGmJ85orN1twD1ttNjDkEo=
-X-Google-Smtp-Source: AGHT+IG3uy2cnoFLcKM6BA2VUcWTFVL1Y4Nki9RUdsjOWsRn+gcYCkgHPFUU6mCU9sbh30OTyZ5Mtw==
-X-Received: by 2002:a05:6870:7b47:b0:277:d7f1:db53 with SMTP id 586e51a60fabf-27c3f2c3db5mr2514880fac.17.1726156716474;
-        Thu, 12 Sep 2024 08:58:36 -0700 (PDT)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db1fbb527csm1913939a12.27.2024.09.12.08.58.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 08:58:35 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: Joe Damato <jdamato@fastly.com>,
-	Pavan Chebbi <pavan.chebbi@broadcom.com>,
-	Michael Chan <mchan@broadcom.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next] tg3: Link IRQs to NAPI instances
-Date: Thu, 12 Sep 2024 15:58:30 +0000
-Message-Id: <20240912155830.14688-1-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
+        d=1e100.net; s=20230601; t=1726156745; x=1726761545;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DzkSOjtlRgEJBE0QzC4qfBZck+h9F5FrZHcRFt4ekK8=;
+        b=JnNecgMnx+hwDZsd0LWYtkaS4I5vyGsH1pBNmMF+DMVFymZJgMNXXJX2qimz0PuDMJ
+         N2bxiDjh7IjZ40cm61v1OHa+PYhDgov0soorJxovwfusWEPuCKfhOMc4tONinpihirDJ
+         Rhym/iVfEqoOZvuOEZrKtpWQYg429KL6hVoS+NW8bJrBtTnkdALMYgQdinUDpzhVV81Y
+         FzUUQUFdkNphv7j46QlN1CD1k3O5Dq0PQcjmcyHLFUEtzNXqtAJoMVZV9SUb1vOQ/O9P
+         SH4SBaNzpXLOxKbSvIa5uNY4L2xGr9QC+YLyblYh7fYVDSQmdgGGLDg0EsDcmYH5vzfQ
+         kBzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/yEBBFw1FVEE/TKHsmL5+JlD8lV0EUS0zR7Ez9/RyZR1g5gZ92vNODB1M+AVbW1D3PLwq3ZK8HxA4zxY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypWy3wNPY6h4YoZCpKkjPsw3LO/PAwp9/5jC2kFH2zB8geePRc
+	Pgi0wpofc/EPD3gLWsb1adjOZZCeGJSuQUd0JKIC7TJ1SN+AGNJ6J+75fX6fnDYt7I/5Fpm69X+
+	1gQP1c8HgN/GiHWoCh/pdsKnp6twrEl01WuDV
+X-Google-Smtp-Source: AGHT+IHsTcSdl2wYCab3UQ1UwOoblz6Kyhoy04ecJapJrovEhl/+EJxUnbtQa5b/7UIj3ct3VL+haxAvOyHQNaUBk2A=
+X-Received: by 2002:a05:6402:1d48:b0:5c2:5251:ba5c with SMTP id
+ 4fb4d7f45d1cf-5c41439fd9dmr529985a12.0.1726156744526; Thu, 12 Sep 2024
+ 08:59:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240809072532.work.266-kees@kernel.org> <20240809073309.2134488-5-kees@kernel.org>
+ <CAJuCfpHOqKPzbbkULpWU5g1-8mTLXraQM4taHzajY_cJ-YFWgQ@mail.gmail.com> <202409111523.AEAEE48@keescook>
+In-Reply-To: <202409111523.AEAEE48@keescook>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 12 Sep 2024 08:58:48 -0700
+Message-ID: <CAJuCfpEw1fsuQjDcS23yZ-WE+WoA0oKArs=Q=G14Bh-509AYgA@mail.gmail.com>
+Subject: Re: [PATCH 5/5] slab: Allocate and use per-call-site caches
+To: Kees Cook <kees@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
+	"GONG, Ruiqi" <gongruiqi@huaweicloud.com>, Jann Horn <jannh@google.com>, 
+	Matteo Rizzo <matteorizzo@google.com>, jvoisin <julien.voisin@dustri.org>, 
+	Xiu Jianfeng <xiujianfeng@huawei.com>, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Link IRQs to NAPI instances with netif_napi_set_irq. This information
-can be queried with the netdev-genl API.
+On Wed, Sep 11, 2024 at 3:30=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
+>
+> On Thu, Aug 29, 2024 at 10:03:56AM -0700, Suren Baghdasaryan wrote:
+> > On Fri, Aug 9, 2024 at 12:33=E2=80=AFAM Kees Cook <kees@kernel.org> wro=
+te:
+> > >
+> > > Use separate per-call-site kmem_cache or kmem_buckets. These are
+> > > allocated on demand to avoid wasting memory for unused caches.
+> > >
+> > > A few caches need to be allocated very early to support allocating th=
+e
+> > > caches themselves: kstrdup(), kvasprintf(), and pcpu_mem_zalloc(). An=
+y
+> > > GFP_ATOMIC allocations are currently left to be allocated from
+> > > KMALLOC_NORMAL.
+> > >
+> > > With a distro config, /proc/slabinfo grows from ~400 entries to ~2200=
+.
+> > >
+> > > Since this feature (CONFIG_SLAB_PER_SITE) is redundant to
+> > > CONFIG_RANDOM_KMALLOC_CACHES, mark it a incompatible. Add Kconfig hel=
+p
+> > > text that compares the features.
+> > >
+> > > Improvements needed:
+> > > - Retain call site gfp flags in alloc_tag meta field to:
+> > >   - pre-allocate all GFP_ATOMIC caches (since their caches cannot
+> > >     be allocated on demand unless we want them to be GFP_ATOMIC
+> > >     themselves...)
+> >
+> > I'm currently working on a feature to identify allocations with
+> > __GFP_ACCOUNT known at compile time (similar to how you handle the
+> > size in the previous patch). Might be something you can reuse/extend.
+>
+> Great, yes! I'd love to check it out.
+>
+> > >   - Separate MEMCG allocations as well
+> >
+> > Do you mean allocations with __GFP_ACCOUNT or something else?
+>
+> I do, yes.
+>
+> > > +static void alloc_tag_site_init_early(struct codetag *ct)
+> > > +{
+> > > +       /* Explicitly initialize the caches needed to initialize cach=
+es. */
+> > > +       if (strcmp(ct->function, "kstrdup") =3D=3D 0 ||
+> > > +           strcmp(ct->function, "kvasprintf") =3D=3D 0 ||
+> > > +           strcmp(ct->function, "pcpu_mem_zalloc") =3D=3D 0)
+> >
+> > I hope we can find a better way to distinguish these allocations.
+> > Maybe have a specialized hook for them, like alloc_hooks_early() which
+> > sets a bit inside ct->flags to distinguish them?
+>
+> That might be possible. I'll see how that ends up looking. I don't want
+> to even further fragment the alloc_hooks_... variants.
+>
+> >
+> > > +               alloc_tag_site_init(ct, false);
+> > > +
+> > > +       /* TODO: pre-allocate GFP_ATOMIC caches here. */
+> >
+> > You could pre-allocate GFP_ATOMIC caches during
+> > alloc_tag_module_load() only if gfp_flags are known at compile time I
+> > think. I guess for the dynamic case choose_slab() will fall back to
+> > kmalloc_slab()?
+>
+> Right, yes. I'd do it like the size checking: if we know at compile
+> time, we can depend on it, otherwise it's a run-time fallback.
+>
+> >
+> > > @@ -175,8 +258,21 @@ static bool alloc_tag_module_unload(struct codet=
+ag_type *cttype,
+> > >
+> > >                 if (WARN(counter.bytes,
+> > >                          "%s:%u module %s func:%s has %llu allocated =
+at module unload",
+> > > -                        ct->filename, ct->lineno, ct->modname, ct->f=
+unction, counter.bytes))
+> > > +                        ct->filename, ct->lineno, ct->modname, ct->f=
+unction, counter.bytes)) {
+> > >                         module_unused =3D false;
+> > > +               }
+> > > +#ifdef CONFIG_SLAB_PER_SITE
+> > > +               else if (tag->meta.sized) {
+> > > +                       /* Remove the allocated caches, if possible. =
+*/
+> > > +                       void *p =3D READ_ONCE(tag->meta.cache);
+> > > +
+> > > +                       WRITE_ONCE(tag->meta.cache, NULL);
+> >
+> > I'm guessing you are not using try_cmpxchg() the same way you did in
+> > alloc_tag_site_init() because a race with any other user is impossible
+> > at the module unload time? If so, a comment mentioning that would be
+> > good.
+>
+> Correct. It should not be possible. But yes, I will add a comment.
+>
+> > > diff --git a/mm/Kconfig b/mm/Kconfig
+> > > index 855c63c3270d..4f01cb6dd32e 100644
+> > > --- a/mm/Kconfig
+> > > +++ b/mm/Kconfig
+> > > @@ -302,7 +302,20 @@ config SLAB_PER_SITE
+> > >         default SLAB_FREELIST_HARDENED
+> > >         select SLAB_BUCKETS
+> > >         help
+> > > -         Track sizes of kmalloc() call sites.
+> > > +         As a defense against shared-cache "type confusion" use-afte=
+r-free
+> > > +         attacks, every kmalloc()-family call allocates from a separ=
+ate
+> > > +         kmem_cache (or when dynamically sized, kmem_buckets). Attac=
+kers
+> > > +         will no longer be able to groom malicious objects via simil=
+arly
+> > > +         sized allocations that share the same cache as the target o=
+bject.
+> > > +
+> > > +         This increases the "at rest" kmalloc slab memory usage by
+> > > +         roughly 5x (around 7MiB), and adds the potential for greate=
+r
+> > > +         long-term memory fragmentation. However, some workloads
+> > > +         actually see performance improvements when single allocatio=
+n
+> > > +         sites are hot.
+> >
+> > I hope you provide the performance and overhead data in the cover
+> > letter when you post v1.
+>
+> That's my plan. It's always odd choosing workloads, but we do seem to
+> have a few 'regular' benchmarks (hackbench, kernel builds, etc). Is
+> there anything in particular you'd want to see?
 
-Compare the output of /proc/interrupts for my tg3 device with the output of
-netdev-genl after applying this patch:
+I have a stress test implemented as a loadable module to benchmark
+slab and page allocation times (just a tight loop and timing it). I
+can clean it up a bit and share with you.
 
-$ cat /proc/interrupts | grep eth0 | cut -f1 --delimiter=':'
- 331
- 332
- 333
- 334
- 335
+>
+> > > +static __always_inline
+> > > +struct kmem_cache *choose_slab(size_t size, kmem_buckets *b, gfp_t f=
+lags,
+> > > +                              unsigned long caller)
+> > > +{
+> > > +#ifdef CONFIG_SLAB_PER_SITE
+> > > +       struct alloc_tag *tag =3D current->alloc_tag;
+> > > +
+> > > +       if (!b && tag && tag->meta.sized &&
+> > > +           kmalloc_type(flags, caller) =3D=3D KMALLOC_NORMAL &&
+> > > +           (flags & GFP_ATOMIC) !=3D GFP_ATOMIC) {
+> >
+> > What if allocation is GFP_ATOMIC but a previous allocation from the
+> > same location (same tag) happened without GFP_ATOMIC and
+> > tag->meta.cache was allocated. Why not use that existing cache?
+> > Same if the tag->meta.cache was pre-allocated.
+>
+> Maybe I was being too conservative in my understanding -- I thought that
+> I couldn't use those caches on the chance that they may already be full?
+> Or is that always the risk, ad GFP_ATOMIC deals with that? If it would
+> be considered safe attempt the allocation from the existing cache, then
+> yeah, I can adjust this check.
 
-$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-			 --dump napi-get --json='{"ifindex": 2}'
+Well, you fall back to kmalloc_slab() which also might be full. So,
+how would using an existing cache be different?
 
-[{'id': 149, 'ifindex': 2, 'irq': 335},
- {'id': 148, 'ifindex': 2, 'irq': 334},
- {'id': 147, 'ifindex': 2, 'irq': 333},
- {'id': 146, 'ifindex': 2, 'irq': 332},
- {'id': 145, 'ifindex': 2, 'irq': 331}]
-
-Signed-off-by: Joe Damato <jdamato@fastly.com>
----
- drivers/net/ethernet/broadcom/tg3.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
-index 378815917741..c187b13ab3e6 100644
---- a/drivers/net/ethernet/broadcom/tg3.c
-+++ b/drivers/net/ethernet/broadcom/tg3.c
-@@ -7393,6 +7393,14 @@ static int tg3_poll(struct napi_struct *napi, int budget)
- 	return work_done;
- }
- 
-+static void tg3_napi_set_irq(struct tg3 *tp)
-+{
-+	int i;
-+
-+	for (i = 0; i < tp->irq_cnt; i++)
-+		netif_napi_set_irq(&tp->napi[i].napi, tp->napi[i].irq_vec);
-+}
-+
- static void tg3_napi_disable(struct tg3 *tp)
- {
- 	int i;
-@@ -11652,7 +11660,7 @@ static int tg3_start(struct tg3 *tp, bool reset_phy, bool test_irq,
- 		goto out_ints_fini;
- 
- 	tg3_napi_init(tp);
--
-+	tg3_napi_set_irq(tp);
- 	tg3_napi_enable(tp);
- 
- 	for (i = 0; i < tp->irq_cnt; i++) {
--- 
-2.25.1
-
+>
+> Thanks for looking these over!
+>
+> -Kees
+>
+> --
+> Kees Cook
 
