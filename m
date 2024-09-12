@@ -1,126 +1,137 @@
-Return-Path: <linux-kernel+bounces-325845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8110975EE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:28:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8620975EE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:28:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53D6DB23931
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:28:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71BE12852A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:28:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A38B548E0;
-	Thu, 12 Sep 2024 02:28:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16B241C89;
+	Thu, 12 Sep 2024 02:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="O1EXxiv2"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A423A1DB
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 02:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lyfbqo43"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07FF83A8E4
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 02:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726108120; cv=none; b=CZbiU1mKKugYuUC3OxncH5eytPXfrBKEqSl2LfsAdqMHllSIzTCG5tDTfM1eTVd6AiUmqOCKB9PiC7ji7nneF/aG1EzKqv2mTF7QvdJIiD53CtP9wJpr2jZsLkuc6xUSPjANIDMbUNO9PEBUV7Cm9dekUfkYyCDX5qDD7I9Lexc=
+	t=1726108120; cv=none; b=CMaxGUcQPlfeMozXOkAB4Pqwpf1SJurxa6tkOGwPaMjzL2sRIneKpMlofXun2snoT6KxG4r+9ixUlmzi687XrElDrGwUGl02TnTEb8YIkUezIEmVm3HLA+9atVlM1jNwcqlVsPXtKvCciR7lfWKKQ9PuHGHJUk3t04gYTcButxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1726108120; c=relaxed/simple;
-	bh=AY7t6yh868IjzJ2oFBCco6lFuCwlNNAtA3zqeFTqSOU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FH0nBxSve/5f/0JxblVLA8pFLTkns3ABjHBIG7+rMeCLYmNpT1wmvHhjwY+L4BKRGEggBYpZYN9i57NwxbMyiW8nHjVx3B5U08sY78QIxk/YZSKSWMDDHpqJR6csS1bmZhzCQlphaWrGwnn5Q5XlzYbujCd47oa6UmcAOwv4ULc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=O1EXxiv2; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version:
-	Content-Type; bh=e6zkEQS3wj7QBN8oFubOcQpIMuqjGBx3aY/1Y2uIOJ4=;
-	b=O1EXxiv2N3lrqcjQDxMSvhjLojapEp02LOpeNjauBi9izNpWci/dujuu5XoJPP
-	7k3G/GFRqMxIKjhmDbmIwYoACRIdZpnxdYnpkxp4Yvr2fy05ILtoKQoG+T8yVYS0
-	Z10wP6y2Q2FekPJfpwVjZQfW9drzmrDzh8pswYHHd5u00=
-Received: from localhost.localdomain (unknown [111.35.191.143])
-	by gzsmtp4 (Coremail) with SMTP id sygvCgBXJzacUeJmJglwBg--.45767S4;
-	Thu, 12 Sep 2024 10:28:03 +0800 (CST)
-From: David Wang <00107082@163.com>
-To: kent.overstreet@linux.dev,
-	surenb@google.com
-Cc: akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH] Add accumulated call counter for memory allocation profiling
-Date: Thu, 12 Sep 2024 10:27:40 +0800
-Message-Id: <20240912022740.6125-1-00107082@163.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <koa5yyc2opu23giistqjaw3eo47gjcxpx56ekrbsbhltk74wzz@pvym4ollouzu>
-References: <koa5yyc2opu23giistqjaw3eo47gjcxpx56ekrbsbhltk74wzz@pvym4ollouzu>
+	bh=qodVbfsk2jzTOVDM5QUgWXPpxmGD7DmX0L54gqdkxZY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tc6cPYjKIqfvtTXh6LeYaReTbdy/fN7s97ujs0P8gq26M3l52nNvAFE57ChRJMgw6Z3K1eYcUh5VGdmuLnh5zOlmX85wMQCqbix5NNo5XrriiNulp+w8NfbT3UM5FlaUr/ZcXRBe4BWLiJNwRlZ/H5L8ACx4rldYBOuJw+9HiUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lyfbqo43; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2055f630934so4408675ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 19:28:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726108118; x=1726712918; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y3JUbu16VfQSd9QVqb7yoAZ12Rb7JByfojqzpqofCls=;
+        b=Lyfbqo43tzY0UlNMMH4gGTroXhBvVbE4PC0K1OUbNkibkNBK+uigVEJ0XR+4gOGgRH
+         Wa/bDzTMMsxTTI04NeFHK3As3xI+1G3hsNpntRIePidA7d+aul3ajybUGmoNFs6Y/nBV
+         4hm/nRZu+BZAO2pzJ909ad75BlBZ6Ck5Wnl+cb4o/5LBb2hvAtt9Gmw1Dar6IKvgGYR+
+         Rs1uSXOGGs+ZNiLRIvZrf55tvdUiStRQHlJSaipckXPDHaFkh0GfqiKVzMLSvlIG62Ug
+         VTxPVL+V6jQTlrTeJa+RwLOePlboenVzx/QiG/QY4xvT17s4SarS2syaoQWcyXovTM1n
+         2nLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726108118; x=1726712918;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y3JUbu16VfQSd9QVqb7yoAZ12Rb7JByfojqzpqofCls=;
+        b=bCinqvqyXEj9QDiukp8VkvTMPRVo8GTSKPhOVPv9TF6MUhDgobzgV/95TErCh1mNdI
+         egwSfur08al97cvuxOZVfAINOO89shW4G1RyLGnxT87D+u+CaoZbQJ01aJnLwFQZeBHy
+         JfPsmTquxSZ6dfCztUXyh2zLT9RA2/6TB+mE/7pBSPZGiS3Qco54+Am0iHqHEcMMu/a0
+         mDWVuyW5s1E1RHDiYwDPZ1erWxfvssSc5/+oCB0nTVpjeXxvDWJubIUbsmue6rAGHZhm
+         0POFZXkBiiE6EDPhC3Ffb8oAMXtOazQ/dCOh5rMNP2RM4So8X+T6q5YPdYrEgIIKY22P
+         vpCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUDgidOU8+RBAeoWd2zeVoDxxfMPoHPJTT5N+aHqN23EMo6h+7ls6pBq+9ZSvchSFmJOwwPyO0dAZTgs0g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1NuScWAEbNrYV5vSPdzJcOMwsjrcTEiY9+ooGXD+rNOSXZl8r
+	ZJfiE+SERJiVPPUbyk1P26peKrMb4rHm8Q3uAsQAWjMGlAYigBDy
+X-Google-Smtp-Source: AGHT+IE8jJbwto1D6atTHvUw6MoZSBz0Mbq4oirenkf3ludI59+GenOLwEMtKNX/Mxh9AiLM/nU6OA==
+X-Received: by 2002:a17:903:2347:b0:205:8610:3e3c with SMTP id d9443c01a7336-2076e30652amr21113025ad.9.1726108117938;
+        Wed, 11 Sep 2024 19:28:37 -0700 (PDT)
+Received: from [192.168.255.10] (23.105.223.42.16clouds.com. [23.105.223.42])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076b009867sm5533135ad.296.2024.09.11.19.28.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 11 Sep 2024 19:28:37 -0700 (PDT)
+Message-ID: <1691f16c-af41-4b38-bd5e-38af0e7a2c99@gmail.com>
+Date: Thu, 12 Sep 2024 10:28:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 00/21] mm/zsmalloc: add zpdesc memory descriptor for
+ zswap.zpool
+To: Vishal Moola <vishal.moola@gmail.com>
+Cc: alexs@kernel.org, Vitaly Wool <vitaly.wool@konsulko.com>,
+ Miaohe Lin <linmiaohe@huawei.com>, Andrew Morton
+ <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, minchan@kernel.org, willy@infradead.org,
+ senozhatsky@chromium.org, david@redhat.com, 42.hyeyoo@gmail.com,
+ Yosry Ahmed <yosryahmed@google.com>, nphamcs@gmail.com
+References: <20240902072136.578720-1-alexs@kernel.org>
+ <0a10e61b-f0e6-4423-996c-7884c93af65f@gmail.com>
+ <66d8bd3e.170a0220.18832.0206@mx.google.com>
+Content-Language: en-US
+From: Alex Shi <seakeel@gmail.com>
+In-Reply-To: <66d8bd3e.170a0220.18832.0206@mx.google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:sygvCgBXJzacUeJmJglwBg--.45767S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxJFW3uFWrCF17XFy8Aw1rCrg_yoW5XF1xpa
-	yrt3ZrKFsxXr1ktwnIq347GFyrGw4xGr15JFsYqry7uwnxWr1Igr17tr4ruFZ2krn7JFyj
-	q3yjva4293Z8ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UhYFtUUUUU=
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMxVYqmXAnzbDTQAAsW
+Content-Transfer-Encoding: 7bit
 
-At 2024-07-02 05:58:50, "Kent Overstreet" <kent.overstreet@linux.dev> wrote:
->On Mon, Jul 01, 2024 at 10:23:32AM GMT, David Wang wrote:
->> HI Suren, 
->> 
->> At 2024-07-01 03:33:14, "Suren Baghdasaryan" <surenb@google.com> wrote:
->> >On Mon, Jun 17, 2024 at 8:33 AM David Wang <00107082@163.com> wrote:
->> >>
->> >> Accumulated call counter can be used to evaluate rate
->> >> of memory allocation via delta(counters)/delta(time).
->> >> This metrics can help analysis performance behaviours,
->> >> e.g. tuning cache size, etc.
->> >
->> >Sorry for the delay, David.
->> >IIUC with this counter you can identify the number of allocations ever
->> >made from a specific code location. Could you please clarify the usage
->> >a bit more? Is the goal to see which locations are the most active and
->> >the rate at which allocations are made there? How will that
->> >information be used?
->>  
->> Cumulative counters can be sampled with timestamp,  say at T1, a monitoring tool got a sample value V1,
->> then after sampling interval, at T2,  got a sample value V2. Then the average rate of allocation can be evaluated
->> via (V2-V1)/(T2-T1). (The accuracy depends on sampling interval)
->> 
->> This information "may" help identify where the memory allocation is unnecessary frequent,  
->> and  gain some  better performance by making less memory allocation .
->> The performance "gain" is just a guess, I do not have a valid example.
->
->Easier to just run perf...
 
-Hi, 
 
-To Kent:
-It is strangely odd to reply to this when I was trying to debug a performance issue for bcachefs :)
+On 9/5/24 4:04 AM, Vishal Moola wrote:
+> On Wed, Sep 04, 2024 at 02:54:14PM +0800, Alex Shi wrote:
+>>
+>>
+>> On 9/2/24 3:21 PM, alexs@kernel.org wrote:
+>>> From: Alex Shi <alexs@kernel.org>
+>>>
+>> ...
+>>
+>>>
+>>> This patchset abstracts the memory descriptor used in zsmalloc by zswap/zram.
+>>> The descriptor still overlays the struct page; nothing has changed
+>>> in that regard. What this patchset accomplishes is the use of folios in
+>>> to save some code size, and the introduction of a new concept, zpdesc. 
+>>> This patchset is just an initial step; it does not bias the potential 
+>>> changes to kmem_alloc or larger zspage modifications.
+>>>
+>> ...
+>>>
+>>> Thanks a lot for comments and suggestion from Yosry, Yoo, Sergey, Willy
+>>> and Vishal!
+>>>
+>>
+>> This patchset could save 6.3% code size, and it's a nice abstract of zsmalloc
+>> memory usage.
+>> Is there any more comments, or mind to give a reviewed-by?
+> 
+> Please CC me on future versions. Most of the zsmalloc conversions seem
+> ok, but I'd hold off on further iterations of the descriptor patches until
+> the maintainers decide on what/how this descriptor will be used
+> (i.e. our end goals).
 
-Yes it is true that performance bottleneck could be identified by perf tools, but normally perf
-is not continously running (well, there are some continous profiling projects out there).
-And also, memory allocation normally is not the biggest bottleneck,
- its impact may not easily picked up by perf. 
+Thanks for your care.
 
-Well, in the case of https://lore.kernel.org/lkml/20240906154354.61915-1-00107082@163.com/,
-the memory allocation is picked up by perf tools though. 
-But with this patch, it is easier to spot that memory allocations behavior are quite different:
-When performance were bad, the average rate for 
-"fs/bcachefs/io_write.c:113 func:__bio_alloc_page_pool" was 400k/s,
-while when performance were good, rate was only less than 200/s.
+Is there some places or some conversion should be changed?
 
-(I have a sample tool collecting /proc/allocinfo, and the data is stored in prometheus,
-the rate is calculated and plot via prometheus statement:
-irate(mem_profiling_count_total{file=~"fs/bcachefs.*", func="__bio_alloc_page_pool"}[5m]))
-
-Hope this could be a valid example demonstrating the usefulness of accumulative counters
-of memory allocation for performance issues.
-
+btw, the descriptor is used now and could save a few code size. :)
 
 Thanks
-David
-
- 
-
 
