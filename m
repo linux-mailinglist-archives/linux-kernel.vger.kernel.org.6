@@ -1,122 +1,138 @@
-Return-Path: <linux-kernel+bounces-326686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82B0A976BC2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:16:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11C68976BC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:16:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46094286CE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:16:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44CB71C23474
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:16:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E23C1B013F;
-	Thu, 12 Sep 2024 14:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A866F1B3F17;
+	Thu, 12 Sep 2024 14:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C5iivF/H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ETRKohEN"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D096A2209B;
-	Thu, 12 Sep 2024 14:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A181B2ECD;
+	Thu, 12 Sep 2024 14:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726150566; cv=none; b=LNbn96GIog3BVtAoE632t2ZTGGFpAuYXSyZZ78xdLnE897X92W0VqmT/DrrR9s9rWKTHY2LMGQiN+iJGFoKWSsDbjdQykOSDJER/bPzJVUusUYd2LAEA1/Ivvx9LJklpJ9t2EMw0q8EaTw7AnqN0yXWhEw/RnMhxEfQ4uvASvMA=
+	t=1726150571; cv=none; b=G+8/+YxIEZEwZBAbC4e92bhmlJ0xd2yb2v4gG1I2aq16uHEbbXbQjmuY7VuKN+3xvyoOTX2S/mlaX0xbq3O4JfbazbvcayAr1MszyhWk5nnGmHswyKrkqej3VoiXULyd2RwMiDddBi+VwE8hWBUxa43o046dC5ijdEgzOKEirmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726150566; c=relaxed/simple;
-	bh=fVIETZv+H9p1/it8eBQidsDxsQ++8d/hnRorBQfS3C0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=akXpZsAiOK7w79NsgXPt2eGuJdE0jvanBPYzKRqhNAxI9Xyg62nFFeB4LgT4ShtdsH7EbXIrLZ7Thh4LnDlbqrOPEfksqpe6eI4KamyvFOtEuvLuVep1kBAx6AVpaG5rgCyC4B/kh5zgTHnlvekH2x/Y7QC8pEWQnlA1uz5Puvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C5iivF/H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01140C4CEC3;
-	Thu, 12 Sep 2024 14:15:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726150566;
-	bh=fVIETZv+H9p1/it8eBQidsDxsQ++8d/hnRorBQfS3C0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=C5iivF/H28ePrgwhxHcJmm5659Weo5AOrMMA8JYewHHjPvLnFa1WK8qNA3N8PDkOQ
-	 a+B+BDhF1/6uutnd7lfbpL7pQ/Lva37UDKBL9nFH5NS0kKxTz3BsKrkmz6ry8pZWq2
-	 vcCGtfxmqeLEBCsXl5zT/gBAGAvPWfszDuEa9kL7xeSXmsmALu9SmW67RH9yqvZK09
-	 KEOs3zgz97YFc4ieuqrxbdpL9STATh9GVf/0VA+4f+ZrjX2GYl4mAPTZaC7fKMd5Tv
-	 GBIvWetuVlpCqFCzgDLCIntn+VXI+9mVe3azFPsfxvmIgVm+7Oh54tdOiieXRNWLJ2
-	 uPBNa0b009Lzg==
-Message-ID: <d5468dd2-0f81-4d89-a3bd-a546b2395ca6@kernel.org>
-Date: Thu, 12 Sep 2024 16:15:56 +0200
+	s=arc-20240116; t=1726150571; c=relaxed/simple;
+	bh=hd7bYJjKsetG/qAejVRqZ3gPuIxQayzn2jYl4iBpDmM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pDv2GhoMMOXlWI8vMkjJgLvRxFuPX047e2lsxPA7sb38VO/mogFgLYevUgxm1cxhPgkRHHn2mfanZYvCBHJH4mFBThF3hEWYkQfr/Zs2bTvqKQcnpQWFK6HlXgkPU4gmqCiGDguRS811vOv3+2x1FGXTNeSDO3OZSZBaJuUEPuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ETRKohEN; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7092dd03223so183564a34.1;
+        Thu, 12 Sep 2024 07:16:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726150569; x=1726755369; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y5q/aiK+W9oGv3NhL8TwsrDYz8Pjrqgc7jByWkFjmNU=;
+        b=ETRKohENR6z2zewogwl0OkliLd4IK0VfKVqrfP/ThYDNGzJvLFyUY89Go/sLjTUP9c
+         0NgGrC45dVesubW4VMvpaZpiBeAXqfaaCRYLAtsCopDDdPT5ykBtLcqLGFkls+e1o/Ve
+         Sio/WdG3C89BA7ToY2inVxaltZErbGLWf1xoVFtgp7nUPVAshOXvWqXPeHQo61xiFmob
+         RXNVTAO3wTpE46LCqVv+i+aFw8uPPxuA9qQAPX6tyzmz/x6Zd24woOZO5Q2bCzToHTl3
+         Du2xIFCnSq2PMuFxNNmfYXfvbAaFfUbcfcP2Xj/0m/wDcTCV/YwV+ArGRip4aRkK6lvN
+         GHuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726150569; x=1726755369;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y5q/aiK+W9oGv3NhL8TwsrDYz8Pjrqgc7jByWkFjmNU=;
+        b=Sb7mfkNLHEH/BsxGxcvy22Jb0aHHbUvMD1E+9tqMYgwThslQgySYbQ5jCbGTDhTR6m
+         NF8KQiB0MOv0hTkmy9ltd4aSsk8QJghUFbCtcwg/XcmivB7kwbPYQZizIHYa2RGUKCHf
+         jL6xxV57dZmsOi2fCW8+LmY/v5SSQs0SZ9E9mIM5085yxelgXrh7jEGAEo1ZvowB4H1D
+         M6Nr2n+5/pR5SSU4z+R4oai/k0zQObh25mn1mFo8buPXA/CJnUzhrBrl/rnXp7QnmY78
+         /BntCdZBkNisxQCmiuBnPpdPjZfVhik2NA3YpzWMkteDRjWTLGdA3/d1QBez0EpXErXc
+         i+ow==
+X-Forwarded-Encrypted: i=1; AJvYcCVGLqt0uTElDYvVRju1zNTSumZUsM2lzKXGijJqs7NM6bgNtP9B2duQ8hRH6u9tb7d2hrUEgkHw525buvE=@vger.kernel.org, AJvYcCX598ZWCs9Hlm6vYKnVRWVUFmbiFoPZ397iLWRMYniLBdbAx74IpS+Xp4TRvFN84B4JdSm/NWYnsNphEQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbBYROJZE+gFWVAfntKYVXj8i0JHDszpv7CVNp2UA5ses+NpWx
+	wjKdt8h6IWWAKtmb2aWYU66z/FjTsjePHyzGd91658ZlKmXEnXYSIt36jneQPSCH/7Pix3RcW5y
+	NB2J6ydZVIpw6YvybfLDqtTNnCrI=
+X-Google-Smtp-Source: AGHT+IGYOiv5iUwIrr/uUlnM76kt0QoMn1Hz/+z3d7YdA1RVBxNb8lGNX/pT6cxKnbzDKpZsxuB94U+bId0FpIB+LQU=
+X-Received: by 2002:a05:6830:3c09:b0:710:ec4a:b394 with SMTP id
+ 46e09a7af769-7110957134cmr1958018a34.29.1726150568518; Thu, 12 Sep 2024
+ 07:16:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 8/8] PCI: qcom: Add support to PCIe slot power supplies
-To: Qiang Yu <quic_qianyu@quicinc.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, vkoul@kernel.org,
- kishon@kernel.org, robh@kernel.org, andersson@kernel.org,
- konradybcio@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, abel.vesa@linaro.org,
- quic_msarkar@quicinc.com, quic_devipriy@quicinc.com, kw@linux.com,
- lpieralisi@kernel.org, neil.armstrong@linaro.org,
- linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20240827063631.3932971-1-quic_qianyu@quicinc.com>
- <20240827063631.3932971-9-quic_qianyu@quicinc.com>
- <CAA8EJpq5KergZ8czg4F=EYMLANoOeBsiSVoO-zAgfG0ezQrKCQ@mail.gmail.com>
- <20240827165826.moe6cnemeheos6jn@thinkpad>
- <26f2845f-2e29-4887-9f33-0b5b2a06adb6@quicinc.com>
- <20240911153228.7ajcqicxnu2afhbp@thinkpad>
- <9222ef18-2eef-4ba3-95aa-fae540c06925@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <9222ef18-2eef-4ba3-95aa-fae540c06925@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240822142603.3608a26d@canb.auug.org.au> <20240828150900.7ffd7588@canb.auug.org.au>
+ <20240906183621.6c630b7f@canb.auug.org.au> <12e1eda76baaa67109da3798b1b184b4a94531e6.camel@collabora.com>
+ <20240912183408.36acc6dd@canb.auug.org.au>
+In-Reply-To: <20240912183408.36acc6dd@canb.auug.org.au>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Thu, 12 Sep 2024 09:15:57 -0500
+Message-ID: <CABb+yY07P0zs6nT2CrZ+TnO+2XxZKYUfEjyRj2wwn+zAx9T0iQ@mail.gmail.com>
+Subject: Re: linux-next: build warning after merge of the rpmsg tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	Martyn Welch <martyn.welch@collabora.com>, Andrew Davis <afd@ti.com>, Hari Nagalla <hnagalla@ti.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, arnd@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12.09.2024 3:39 PM, Qiang Yu wrote:
-> 
-> On 9/11/2024 11:32 PM, Manivannan Sadhasivam wrote:
->> On Wed, Sep 11, 2024 at 04:17:41PM +0800, Qiang Yu wrote:
->>> On 8/28/2024 12:58 AM, Manivannan Sadhasivam wrote:
->>>> On Tue, Aug 27, 2024 at 02:44:09PM +0300, Dmitry Baryshkov wrote:
->>>>> On Tue, 27 Aug 2024 at 09:36, Qiang Yu <quic_qianyu@quicinc.com> wrote:
->>>>>> On platform x1e80100 QCP, PCIe3 is a standard x8 form factor. Hence, add
->>>>>> support to use 3.3v, 3.3v aux and 12v regulators.
->>>>> First of all, I don't see corresponding bindings change.
->>>>>
->>>>> Second, these supplies power up the slot, not the host controller
->>>>> itself. As such these supplies do not belong to the host controller
->>>>> entry. Please consider using the pwrseq framework instead.
->>>>>
->>>> Indeed. For legacy reasons, slot power supplies were populated in the host
->>>> bridge node itself until recently Rob started objecting it [1]. And it makes
->>>> real sense to put these supplies in the root port node and handle them in the
->>>> relevant driver.
->>>>
->>>> I'm still evaluating whether the handling should be done in the portdrv or
->>>> pwrctl driver, but haven't reached the conclusion. Pwrctl seems to be the ideal
->>>> choice, but I see a few issues related to handling the OF node for the root
->>>> port.
->>>>
->>>> Hope I'll come to a conclusion in the next few days and will update this thread.
->>>>
->>>> - Mani
->>>>
->>>> [1] https://lore.kernel.org/lkml/20240604235806.GA1903493-robh@kernel.org/
->>> Hi Mani, do you have any updates?
->>>
->> I'm working with Bartosz to add a new pwrctl driver for rootports. And we are
->> debugging an issue currently. Unfortunately, the progress is very slow as I'm on
->> vacation still.
->>
->> Will post the patches once it got resolved.
->>
->> - Mani
-> OK, thanks for your update.
+On Thu, Sep 12, 2024 at 3:34=E2=80=AFAM Stephen Rothwell <sfr@canb.auug.org=
+.au> wrote:
+>
+> Hi all,
+>
+> On Fri, 06 Sep 2024 09:58:23 +0100 Martyn Welch <martyn.welch@collabora.c=
+om> wrote:
+> >
+> > On Fri, 2024-09-06 at 18:36 +1000, Stephen Rothwell wrote:
+> > >
+> > > On Wed, 28 Aug 2024 15:09:00 +1000 Stephen Rothwell <sfr@canb.auug.or=
+g.au> wrote:
+> > > >
+> > > > On Thu, 22 Aug 2024 14:26:03 +1000 Stephen Rothwell <sfr@canb.auug.=
+org.au> wrote:
+> > > > >
+> > > > > After merging the rpmsg tree, today's linux-next build (x86_64
+> > > > > allmodconfig) produced this warning:
+> > > > >
+> > > > > WARNING: unmet direct dependencies detected for OMAP2PLUS_MBOX
+> > > > >   Depends on [n]: MAILBOX [=3Dy] && (ARCH_OMAP2PLUS || ARCH_K3)
+> > > > >   Selected by [m]:
+> > > > >   - TI_K3_M4_REMOTEPROC [=3Dm] && REMOTEPROC [=3Dy] && (ARCH_K3 |=
+| COMPILE_TEST [=3Dy])
+> > > > >
+> > > > > Probably introduced by commit
+> > > > >
+> > > > >   ebcf9008a895 ("remoteproc: k3-m4: Add a remoteproc driver for M=
+4F subsystem")
+> > > >
+> > > > I am still seeing this warning.
+> > >
+> > > I am still getting this warning.
+> >
+> > I believe this is the required fix, but I believe it's waiting for
+> > review/merging:
+> >
+> > https://lore.kernel.org/all/010201919d8b298f-dd1585dd-7c4d-4865-9483-ff=
+6cd7399a90-000000@eu-west-1.amazonses.com/
+>
+> I am still getting this warning.
+>
+ This https://lore.kernel.org/lkml/20240909203825.1666947-1-arnd@kernel.org=
+/T/#u
+  seems like a more complete solution.
 
-Qiang, you can still resubmit the rest of the patches without having
-to wait on that to be resolved
+I am ok if it goes through TI or another tree.
 
-Konrad
+Acked-by: Jassi Brar <jassisinghbrar@gmail.com>
 
