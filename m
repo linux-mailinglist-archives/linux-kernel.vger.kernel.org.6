@@ -1,170 +1,182 @@
-Return-Path: <linux-kernel+bounces-326590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC5DA976A7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:26:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84E21976A80
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:26:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 813F4284139
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:26:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 312CE1F235EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D10B1AD24C;
-	Thu, 12 Sep 2024 13:25:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA451AD271;
+	Thu, 12 Sep 2024 13:26:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gzfuCz17"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="F7l0i4qe";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="F7l0i4qe"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C420F1AC884
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1961AD241;
+	Thu, 12 Sep 2024 13:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726147552; cv=none; b=kpZ5MIV8QHvxMRUxnYwQP5UAXCJtqj1jxkAzo7vFZrK0saUim6Y0qg1uoPB0HB5Gp4/HAtoP68NY5gg/Mg/46f5luzwTCF5ZeEDrSm6KEWE1sAZjQLdTaGRRb5a8K10x7c+uC9LElFvIiKcTXLOXIC2BHZlo3vFjCojT9XpnYIk=
+	t=1726147566; cv=none; b=XlGmQLebxOgGpMcNt2wk1OMplUIo/raCmQtlo4wkkKmlcmJunl4lmmcIRfZPTJcoJ72kQ7+EqG+G42pSfSQBHJ4QhtBO8hLsmcGB5lz3fHrA6zn6FV2CNZupgqsJ+PLogUIdlx5C4/zzGDHDnbfITtu0+QHxHsCyNTjfQ+VjLcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726147552; c=relaxed/simple;
-	bh=xITUTQRl45ipox7CJz4yV6/g4MnIuHZA5arLXxNw0d4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=HcpPydxxh62HCetgBw0Yfl3Jhi61dBDQSTrTrYRmG8q8DGoT0ccq8DnQwo9Kpf8Q4TMwk8e6QW5RuAujgPuKtCDHrXTwXYF6DvEPY7JtcgHAgySioWDw8Uo+p9dp7Ypvjvrf6+h5iFGeNPwWPcAPyJOhc4M/kCpimRKAeOd/u6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gzfuCz17; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1726147566; c=relaxed/simple;
+	bh=kwRh1esz7VeQ7gbJNWGtqcN88SglDE5yRSb/KPxUqBY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FaUWA4PZn+4eMZeq43y18+ebaqZse8AbGmzliqyVdwBHycCm/AFPJqYj2zVmcSUPcnJtKOaE1YB4Gv8H59BEYq3QnlMFwXxXygP1QkQkZ0t7jgvhiC0QhFxViXp28Evem4QUZHjaDQY1DBkA7IhVRVB8KmcuIc71gPktPZWOU3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=F7l0i4qe; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=F7l0i4qe; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726147550; x=1757683550;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=xITUTQRl45ipox7CJz4yV6/g4MnIuHZA5arLXxNw0d4=;
-  b=gzfuCz17MwCpwzg+VXcsU0f8MCvr/tlSB/QVoHN/BUstPlJI38tswLLN
-   Xn7H0qse5lW4oftuPz70RYsj95RMzSnt/MKIJcHjfKEfNcKD76O1HYYS6
-   9dlT863NQHjJCVuMB9Ox5WcyiYRxkNdL8XUqhBCYSXV3fJf93gdMhB/BT
-   j0684/mpg2RXdWlEz+8DLr95FP+HnaYjhA1FsGQ5L3tsxaFSvk+9/nuWN
-   2B970UNHdQMG6F9cSnU1YETSgjbzdZUG2oLIV4TYffp4DrKZZ9Oeg9DHh
-   wmshh22YQeHE1oDKv2rxaUwuXuQj+3qTMtzOAMgcVoYpCcZDUkxVg1CDW
-   A==;
-X-CSE-ConnectionGUID: 9/X1sVcxRAav/EO/+c5v5g==
-X-CSE-MsgGUID: VxM9xcCfTpOGgLzMJEYfAQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="24822061"
-X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
-   d="scan'208";a="24822061"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 06:25:50 -0700
-X-CSE-ConnectionGUID: +CKDuMijSYue4qvW/tYUVg==
-X-CSE-MsgGUID: JIG+0YWCTMOhzOyUEBe6+w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
-   d="scan'208";a="67328839"
-Received: from jnikula-mobl4.fi.intel.com (HELO localhost) ([10.237.66.160])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 06:25:47 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Thomas Zimmermann <tzimmermann@suse.de>, Tejas Vipin
- <tejasvipin76@gmail.com>, Laurent.pinchart@ideasonboard.com,
- patrik.r.jakobsson@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, airlied@gmail.com, daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/gma500: replace drm_detect_hdmi_monitor() with
- drm_display_info.is_hdmi
-In-Reply-To: <1d16c1ae-2e27-4daa-b8a6-5eab179ef551@suse.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240911180650.820598-1-tejasvipin76@gmail.com>
- <b0f77fcc-5d84-4727-9a17-9d1f1e2c5b76@suse.de> <87o74ti7g5.fsf@intel.com>
- <87ldzxi71s.fsf@intel.com> <988bb389-13e6-4465-ab37-3ed94ecee9be@suse.de>
- <87y13xgqj3.fsf@intel.com> <57016d01-4525-4685-b029-41e03b0abbda@suse.de>
- <87bk0tgll7.fsf@intel.com> <1d16c1ae-2e27-4daa-b8a6-5eab179ef551@suse.de>
-Date: Thu, 12 Sep 2024 16:25:44 +0300
-Message-ID: <87mskdf1gn.fsf@intel.com>
+	d=hansenpartnership.com; s=20151216; t=1726147563;
+	bh=kwRh1esz7VeQ7gbJNWGtqcN88SglDE5yRSb/KPxUqBY=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=F7l0i4qeFlQoFFpSdEaf2wx4dj7Uw+zt2i3F9XiAx4DmChSlOpdAipb+WzT2VVCTF
+	 uJSQM1Tfp+g+8E9AjENkZdrtRfHZRKdf6YEamNKr7a6n4mAzoOvyIjBuvcMdjX32YK
+	 xNperrr8aK6M27LU9imXDek8KhRzv6GA2sqZ5a04=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 621681286B75;
+	Thu, 12 Sep 2024 09:26:03 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id nk-URM0lINK2; Thu, 12 Sep 2024 09:26:03 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1726147563;
+	bh=kwRh1esz7VeQ7gbJNWGtqcN88SglDE5yRSb/KPxUqBY=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=F7l0i4qeFlQoFFpSdEaf2wx4dj7Uw+zt2i3F9XiAx4DmChSlOpdAipb+WzT2VVCTF
+	 uJSQM1Tfp+g+8E9AjENkZdrtRfHZRKdf6YEamNKr7a6n4mAzoOvyIjBuvcMdjX32YK
+	 xNperrr8aK6M27LU9imXDek8KhRzv6GA2sqZ5a04=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 782B212869D8;
+	Thu, 12 Sep 2024 09:26:02 -0400 (EDT)
+Message-ID: <c47b129aeb95094aace5b174fc6d81bf0a7ecfbf.camel@HansenPartnership.com>
+Subject: Re: [regression] significant delays when secureboot is enabled
+ since 6.10
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>, Roberto Sassu
+	 <roberto.sassu@huaweicloud.com>, Linux regressions mailing list
+	 <regressions@lists.linux.dev>
+Cc: keyrings@vger.kernel.org, "linux-integrity@vger.kernel.org"
+	 <linux-integrity@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Pengyu Ma <mapengyu@gmail.com>
+Date: Thu, 12 Sep 2024 09:26:01 -0400
+In-Reply-To: <D44C19QB8IK1.OMUJP7N91HRN@kernel.org>
+References: <0b4a5a86-a9f6-42d1-a9ba-ec565b336d3a@leemhuis.info>
+	 <92fbcc4c252ec9070d71a6c7d4f1d196ec67eeb0.camel@huaweicloud.com>
+	 <D42LZPLE8HR3.2UTNOI9CYZPIR@kernel.org>
+	 <D42M6OE94RLT.6EZSZLBTX437@kernel.org>
+	 <663d272617d1aead08077ad2b72929cbc226372a.camel@HansenPartnership.com>
+	 <D42N17MFTEDM.3E6IK034S26UT@kernel.org>
+	 <f554031343039883068145f9f4777277e490dc05.camel@huaweicloud.com>
+	 <10ae7b8592af7bacef87e493e6d628a027641b8d.camel@HansenPartnership.com>
+	 <D44C19QB8IK1.OMUJP7N91HRN@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, 12 Sep 2024, Thomas Zimmermann <tzimmermann@suse.de> wrote:
-> Hi
->
-> Am 12.09.24 um 13:25 schrieb Jani Nikula:
->> On Thu, 12 Sep 2024, Thomas Zimmermann <tzimmermann@suse.de> wrote:
->>> Hi
->>>
->>> Am 12.09.24 um 11:38 schrieb Jani Nikula:
->>>> On Thu, 12 Sep 2024, Thomas Zimmermann <tzimmermann@suse.de> wrote:
->>>>> Am 12.09.24 um 10:56 schrieb Jani Nikula:
->>>>>> Moreover, in this case .detect() only detects digital displays as
->>>>>> reported by EDID. If you postpone that to .get_modes(), the probe he=
-lper
->>>>>> will still report connected, and invent non-EDID fallback modes. The
->>>>>> behaviour changes.
->>>>> The change in behavior is intentional, because the current test seems
->>>>> arbitrary. Does the driver not work with analog outputs?
->>>> Not on a DVI/HDMI port. Same with i915.
->>>>
->>>> That's possibly the only way to distinguish a DVI-A display connected =
-to
->>>> DVI-D source.
->>> That's a detect failure, but IMHO our probe helpers should really handle
->>> this case.
->> How? Allow returning detect failures from .get_modes()?
->
-> Something like that, I guess.
->
-> For the specific problem it would be enough to read the first 20 bytes=20
-> of EDID data on DVI connectors and test the digital-input flag bit=20
-> against the exact connector requirements. drm_probe_ddc() could do this.=
-=20
+On Thu, 2024-09-12 at 16:16 +0300, Jarkko Sakkinen wrote:
+> On Wed Sep 11, 2024 at 3:21 PM EEST, James Bottomley wrote:
+> > On Wed, 2024-09-11 at 10:53 +0200, Roberto Sassu wrote:
+[...]
+> > > I made few measurements. I have a Fedora 38 VM with TPM
+> > > passthrough.
+> > > 
+> > > Kernels: 6.11-rc2+ (guest), 6.5.0-45-generic (host)
+> > > 
+> > > QEMU:
+> > > 
+> > > rc  qemu-kvm                                          1:4.2-
+> > > 3ubuntu6.27
+> > > ii  qemu-system-x86                                   1:6.2+dfsg-
+> > > 2ubuntu6.22
+> > > 
+> > > 
+> > > TPM2_PT_MANUFACTURER:
+> > >   raw: 0x49465800
+> > >   value: "IFX"
+> > > TPM2_PT_VENDOR_STRING_1:
+> > >   raw: 0x534C4239
+> > >   value: "SLB9"
+> > > TPM2_PT_VENDOR_STRING_2:
+> > >   raw: 0x36373000
+> > >   value: "670"
+> > > 
+> > > 
+> > > No HMAC:
+> > > 
+> > > # tracer: function_graph
+> > > #
+> > > # CPU  DURATION                  FUNCTION CALLS
+> > > # |     |   |                     |   |   |   |
+> > >  0)               |  tpm2_pcr_extend() {
+> > >  0)   1.112 us    |    tpm_buf_append_hmac_session();
+> > >  0) # 6360.029 us |    tpm_transmit_cmd();
+> > >  0) # 6415.012 us |  }
+> > > 
+> > > 
+> > > HMAC:
+> > > 
+> > > # tracer: function_graph
+> > > #
+> > > # CPU  DURATION                  FUNCTION CALLS
+> > > # |     |   |                     |   |   |   |
+> > >  1)               |  tpm2_pcr_extend() {
+> > >  1)               |    tpm2_start_auth_session() {
+> > >  1) * 36976.99 us |      tpm_transmit_cmd();
+> > >  1) * 84746.51 us |      tpm_transmit_cmd();
+> > >  1) # 3195.083 us |      tpm_transmit_cmd();
+> > >  1) @ 126795.1 us |    }
+> > >  1)   2.254 us    |    tpm_buf_append_hmac_session();
+> > >  1)   3.546 us    |    tpm_buf_fill_hmac_session();
+> > >  1) * 24356.46 us |    tpm_transmit_cmd();
+> > >  1)   3.496 us    |    tpm_buf_check_hmac_response();
+> > >  1) @ 151171.0 us |  }
+> > 
+> > Well, unfortunately, that tells us that it's the TPM itself that's
+> > taking the time processing the security overhead.  The ordering of
+> > the commands in tpm2_start_auth_session() shows
+> > 
+> >  37ms for context restore of null key
+> >  85ms for start session with encrypted salt
+> >   3ms to flush null key
+> > -----
+> > 125ms
+> > 
+> > If we context save the session, we'd likely only bear a single 37ms
+> > cost to restore it (replacing the total 125ms).  However, there's
+> > nothing we can do about the extend execution going from 6ms to
+> > 24ms, so I could halve your current boot time with security enabled
+> > (it's currently 149ms, it would go to 61ms, but it's still 10x
+> > slower than the unsecured extend at 6ms)
+> > 
+> > James
+> 
+> I'll hold for better benchmarks.
 
-Just a quick reply on this particular point:
+Well, yes, I'd like to see this for a variety of TPMs.
 
-I'm very strongly against doing partial EDID reads. It's all geared
-towards EDID block sized handling. And you can't do checksum checking on
-the 20 bytes. It would be a maze of special casing, something the EDID
-code could have less, not more.
+This one clearly shows it's the real time wait for the TPM (since it
+dwarfs the CPU time calculation there's not much optimization we can do
+on the kernel end).  The one thing that's missing in all of this is
+what was the TPM?  but even if it's an outlier that's really bad at
+crypto what should we do?  We could have a blacklist that turns off the
+extend hmac (or a whitelist that turns it on), but we can't simply say
+too bad you need a better TPM.
 
-BR,
-Jani.
+James
 
-> Non-DVI connectors would continue to read a single bytes to detect the DD=
-C.
->
-> For more sophisticated problems, it would be good to introduce an=20
-> intermediate callback that updates the connector state. So the probe=20
-> logic would look like:
->
->  =C2=A01) call ->detect to read physical connector status
->  =C2=A02) return if physical status did not change
->  =C2=A03) increment epoch counter
->  =C2=A04) call ->update to update connector state and properties (EDID, e=
-tc)=20
-> get new connector status
->  =C2=A05) call ->get_modes if connected
->
-> The initial ->detect would be minimal. The ->update, if implemented,=20
-> could do more processing and error checking. It's result would be the=20
-> connector's new status.
->
-> On a side note, I've recently spend quite a few patches on getting the=20
-> BMC output for ast and mgag200 usable. Something like the above logic=20
-> would have helped, I think. Because with the current probe logic, I had=20
-> to implement steps 1 to 4 in ->detect itself. The result has to maintain=
-=20
-> physical status and epoch counter by itself. [1]
->
-> Best regards
-> Thomas
->
-> [1]=20
-> https://gitlab.freedesktop.org/drm/kernel/-/commit/2a2391f857cdc5cf16f8df=
-030944cef8d3d2bc30
->
->>
->> BR,
->> Jani.
->>
->>
-
---=20
-Jani Nikula, Intel
 
