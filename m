@@ -1,191 +1,156 @@
-Return-Path: <linux-kernel+bounces-326151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 044369763D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:03:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D88649763DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:04:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83F8F1F24896
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:03:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 915DE2851F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E8F18BC33;
-	Thu, 12 Sep 2024 08:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8D518F2DD;
+	Thu, 12 Sep 2024 08:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="C4CwBt63"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WMj64vR/"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1129C189BA5
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16541189BA5
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726128190; cv=none; b=a905LdShm/wNd/AJefP6NVKktjKgPdV6bNkK1jytbkMNeATBUxpzUrXQ5tUbv94kmDR1S9txtXEL7YB3fYN3bfrirYt5ksPQEwGIbcPxD2oQkyxmbTHbxIswke0mLGOoo2Oi25bBYFw+XY3blhsVw1eBD1IdxqLL7q3hT0u3+bc=
+	t=1726128240; cv=none; b=o02f82BSNufO/24+JIVT+m5uvcbiqSWJeTBBqRCSVaCLDyvlkrS0dvShFnfvd4uEt1SkgQesd/nd9nSk2T5v7NhTH8NUXU72UbReTQV2c27h8IPRSq0UeET8cJ8euoKlsxvaE5F1vCbujKBB3C3UGcCM8ufLa6XFpo5YkU2qEik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726128190; c=relaxed/simple;
-	bh=Xq9/zJGImDodUK6APv8rmLUXRYQWoOSD8nL+qHMbnYM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VZfIEwNIL2hhFEZTaMBHOvZiFepMevBTDhNHBeboU/K6K8YbxBnktJLAHpDMxAkACXb4SMIlLVV2RO2D4S0vfwxIjy/2rt1yPl9p39e33KjLogNYpXfpceAZfjPS+QPCVZH/75TteHxL6WbG1g0y/Cc9K2DL2Z361KPArdi+tns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=C4CwBt63; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1726128184; x=1726387384;
-	bh=Xq9/zJGImDodUK6APv8rmLUXRYQWoOSD8nL+qHMbnYM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=C4CwBt63SnffFih3hoIpqHY1Ol+QUlLNiK1Q+9okWe+1BRA9KOKE8UeiPBL+XThbs
-	 FL478P4CStuTWW52UhdZh7oN5WZQc5VoAZCjeaPOGgvIQdCaSdUEQonz5w1KqxD7zi
-	 8CEc5LDTJq71hMOGRm4QpK+5gh+zINCc6D0U3SujD/knbVjTWFDRnfE68D0sghCyww
-	 2RSnyJQp/Mt31JdvquLUCF2xjdVGNfMkjdupd4AfI7Yk16bUeXWE0ErHA5tdqrXLma
-	 wyoY0PmWm2HcmMSPMZfSqrabiWWZCgjbzrZf+goJyruCVKuk0ouIiW+O3dcsX9KESC
-	 4oq7ktDf9Z16w==
-Date: Thu, 12 Sep 2024 08:03:00 +0000
-To: Danilo Krummrich <dakr@kernel.org>, Alice Ryhl <aliceryhl@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 09/26] rust: alloc: implement kernel `Box`
-Message-ID: <58c81781-65b5-48ab-9c4c-b4f2dd014445@proton.me>
-In-Reply-To: <ZuGuI7Ow0jJQBim6@cassiopeiae>
-References: <20240816001216.26575-1-dakr@kernel.org> <ZuCEneJeXcRo5qs8@pollux> <19d81a27-9600-4990-867c-624104e3ad83@proton.me> <ZuDVekRzfeBkWmKz@pollux> <77b91448-a21e-4e1b-9a8e-3d2052d79a78@proton.me> <ZuF444VO8gK8l7UR@pollux> <b80cb238-5fcc-4bbb-8b03-42e173c28653@proton.me> <CAH5fLghwj-rD8zoPFgp3g1JYm8WrOhuiWnm7w=zStqOfRRZUJw@mail.gmail.com> <ZuGuI7Ow0jJQBim6@cassiopeiae>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: e1b1c981f8d8dd5b13dddd8bb98baf557cdbfb28
+	s=arc-20240116; t=1726128240; c=relaxed/simple;
+	bh=AlXxuP1UObQBFKY+VptOImAhmc7gEv6X/O7Zb8Ya0II=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Jxh+dzSbepTJIFwcKEYlPHASCazh7ooSl4fqMyKeOKKmaIZnYD1Hwjl6G4e5UPXkG+24AVHGMAOz02D+3aT/Y1p8pZs3HmEat5kzBWjSBkQVMx/zhUp4S7mwo04GjXCMpiIKraImG6y5SC+1763ApLQTKsmpLiz7FjZRLsehTQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WMj64vR/; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48BMdOZb025206;
+	Thu, 12 Sep 2024 08:03:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	oYpDSObymtP5trr0Dg3dxQpCaFYppzt85CDjuduwHw4=; b=WMj64vR/seYiXMx8
+	nXRJ085pVG5oNXnL+JMhlh/DUT4v/J1X8uk2AjD/ylvQz0heepRoK4QwibbmaFYw
+	RNuqMwvu0Tk9s1NQoHR3jYNwc20WwtaKXmO7h8aNK7Yp8lXGc3fg3SxtnsXf9u85
+	ZlW2/xJ4ldWDtCPlS6dLx5ghAzidnKEsLdCaJInbYleJIppYlJU3ERLjO0VDpfa7
+	fUyXBg3lD/pf1hnUAlFthQf+c5lwtu+sUjFZYyo3IRq0jspQXIp+SKzYVkNhaZlw
+	F2hA1JUhN6oy5DKaM3kngv+ADL7pwDKU2aUFsrT+PXd+kR1oqfPTrzpG8rti5ChU
+	rW/Abw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gefyt16t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Sep 2024 08:03:41 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48C83eC9025017;
+	Thu, 12 Sep 2024 08:03:40 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gefyt16p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Sep 2024 08:03:40 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48C5jH8K003122;
+	Thu, 12 Sep 2024 08:03:40 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 41h15u6rhg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Sep 2024 08:03:40 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48C83cX18651188
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 12 Sep 2024 08:03:38 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 74D4A20043;
+	Thu, 12 Sep 2024 08:03:38 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D26562004B;
+	Thu, 12 Sep 2024 08:03:33 +0000 (GMT)
+Received: from [9.43.115.177] (unknown [9.43.115.177])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 12 Sep 2024 08:03:33 +0000 (GMT)
+Message-ID: <f4dcb6b4-2da8-4355-9d89-8b41af30214d@linux.ibm.com>
+Date: Thu, 12 Sep 2024 13:33:31 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v2] kexec/crash: no crash update when kexec in
+ progress
+To: Baoquan He <bhe@redhat.com>
+Cc: akpm@linux-foundation.org, Hari Bathini <hbathini@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, kexec@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, Sachin P Bappalige <sachinpb@linux.vnet.ibm.com>
+References: <20240911112111.108056-1-sourabhjain@linux.ibm.com>
+ <ZuGnH5R+FOC481V3@MiWiFi-R3L-srv>
+Content-Language: en-US
+From: Sourabh Jain <sourabhjain@linux.ibm.com>
+In-Reply-To: <ZuGnH5R+FOC481V3@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: tq5vb7peLAjR_5_8qxwGwQdcYnON-O-e
+X-Proofpoint-ORIG-GUID: Gdw-KrRH0ymkfw_x-UoPGfWRmIMBalgj
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-11_02,2024-09-09_02,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501
+ adultscore=0 clxscore=1011 spamscore=0 bulkscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409120055
 
-On 11.09.24 16:50, Danilo Krummrich wrote:
-> On Wed, Sep 11, 2024 at 03:27:57PM +0200, Alice Ryhl wrote:
->> On Wed, Sep 11, 2024 at 3:26=E2=80=AFPM Benno Lossin <benno.lossin@proto=
-n.me> wrote:
->>> On 11.09.24 13:02, Danilo Krummrich wrote:
->>>> On Wed, Sep 11, 2024 at 08:36:38AM +0000, Benno Lossin wrote:
->>>>> On 11.09.24 01:25, Danilo Krummrich wrote:
->>>>>> On Tue, Sep 10, 2024 at 07:49:42PM +0000, Benno Lossin wrote:
->>>>>>> On 10.09.24 19:40, Danilo Krummrich wrote:
->>>>>>>> On Sat, Aug 31, 2024 at 05:39:07AM +0000, Benno Lossin wrote:
->>>>>>>>> On 16.08.24 02:10, Danilo Krummrich wrote:
->>>>>>>>>> +///
->>>>>>>>>> +/// ```
->>>>>>>>>> +/// # use kernel::bindings;
->>>>>>>>>> +/// const SIZE: usize =3D bindings::KMALLOC_MAX_SIZE as usize +=
- 1;
->>>>>>>>>> +/// struct Huge([u8; SIZE]);
->>>>>>>>>> +///
->>>>>>>>>> +/// assert!(KVBox::<Huge>::new_uninit(GFP_KERNEL).is_ok());
->>>>>>>>>> +/// ```
->>>>>>>>>
->>>>>>>>> Similarly, you could then say above this one "Instead use either =
-`VBox`
->>>>>>>>> or `KVBox`:"
->>>>>>>>>
->>>>>>>>>> +///
->>>>>>>>>> +/// # Invariants
->>>>>>>>>> +///
->>>>>>>>>> +/// The [`Box`]' pointer is always properly aligned and either =
-points to memory allocated with `A`
->>>>>>>>>
->>>>>>>>> Please use `self.0` instead of "[`Box`]'".
->>>>>>>>>
->>>>>>>>>> +/// or, for zero-sized types, is a dangling pointer.
->>>>>>>>>
->>>>>>>>> Probably "dangling, well aligned pointer.".
->>>>>>>>
->>>>>>>> Does this add any value? For ZSTs everything is "well aligned", is=
-n't it?
->>>>>>>
->>>>>>> ZSTs can have alignment and then unaligned pointers do exist for th=
-em
->>>>>>> (and dereferencing them is UB!):
->>>>>>
->>>>>> Where is this documented? The documentation says:
->>>>>>
->>>>>> "For operations of size zero, *every* pointer is valid, including th=
-e null
->>>>>> pointer. The following points are only concerned with non-zero-sized=
- accesses."
->>>>>> [1]
->>>>>
->>>>> That's a good point, the documentation looks a bit outdated. I found
->>>>> this page in the nomicon: https://doc.rust-lang.org/nomicon/vec/vec-z=
-sts.html
->>>>> The first iterator implementation has an alignment issue. (Neverthele=
-ss,
->>>>> that chapter of the nomicon is probably useful to you, since it goes
->>>>> over implementing `Vec`, but maybe you already saw it)
->>>>>
->>>>>> [1] https://doc.rust-lang.org/std/ptr/index.html
->>>>>
->>>>> Might be a good idea to improve/complain about this at the rust proje=
-ct.
->>>>
->>>> Well, my point is how do we know? There's no language specification an=
-d the
->>>> documentation is (at least) ambiguous.
->>>
->>> So I went through the unsafe-coding-guidelines issues list and only
->>> found this one: https://github.com/rust-lang/unsafe-code-guidelines/iss=
-ues/93
->>> Maybe I missed something. You could also try to ask at the rust zulip i=
-n
->>> the t-opsem channel for further clarification.
->>>
->>> I think we should just be on the safe side and assume that ZSTs require
->>> alignment. But if you get a convincing answer and if they say that they
->>> will document it, then I don't mind removing the alignment requirement.
->=20
-> I agree -- I also wrote this in a previous mail.
->=20
-> I was just wondering why you are so sure about it, since the documentatio=
-n
-> doesn't seem to be clear about it.
+Hello Baoquan,
 
-As Alice found below, the documentation is actually clear about this. (I
-think I read it at some point, but forgot exactly where it was)
-
-Maybe it could be better documented that dereferencing has the same
-requirements as `read` (or whatever they are).
-
->> Please see the section on alignment in the same page. Just because a
->> pointer is valid does not mean that it is properly aligned.
+On 11/09/24 19:50, Baoquan He wrote:
+> On 09/11/24 at 04:51pm, Sourabh Jain wrote:
+>> The following errors are observed when kexec is done with SMT=off on
+>> powerpc.
 >>
->> From the page:
+>> [  358.458385] Removing IBM Power 842 compression device
+>> [  374.795734] kexec_core: Starting new kernel
+>> [  374.795748] kexec: Waking offline cpu 1.
+>> [  374.875695] crash hp: kexec_trylock() failed, elfcorehdr may be inaccurate
+>> [  374.935833] kexec: Waking offline cpu 2.
+>> [  375.015664] crash hp: kexec_trylock() failed, elfcorehdr may be inaccurate
+>> snip..
+>> [  375.515823] kexec: Waking offline cpu 6.
+>> [  375.635667] crash hp: kexec_trylock() failed, elfcorehdr may be inaccurate
+>> [  375.695836] kexec: Waking offline cpu 7.
 >>
->> Valid raw pointers as defined above are not necessarily properly
->> aligned (where =E2=80=9Cproper=E2=80=9D alignment is defined by the poin=
-tee type,
->> i.e., *const T must be aligned to mem::align_of::<T>()). However, most
->> functions require their arguments to be properly aligned, and will
->> explicitly state this requirement in their documentation. Notable
->> exceptions to this are read_unaligned and write_unaligned.
+>> To avoid kexec kernel boot failure on PowerPC, all the present CPUs that
+>> are offline are brought online during kexec. For more information, refer
+>> to commit e8e5c2155b00 ("powerpc/kexec: Fix orphaned offline CPUs across
+>> kexec"). Bringing the CPUs online triggers the crash hotplug handler,
+>> crash_handle_hotplug_event(), to update the kdump image. Since the
+>> system is on the kexec kernel boot path and the kexec lock is held, the
+>> crash_handle_hotplug_event() function fails to acquire the same lock to
+>> update the kdump image, resulting in the error messages mentioned above.
 >>
->> When a function requires proper alignment, it does so even if the
->> access has size 0, i.e., even if memory is not actually touched.
->> Consider using NonNull::dangling in such cases.
->=20
-> Good point.
->=20
-> It still sounds like it's only required for functions that explicitly sta=
-te so.
->=20
-> And as cited from nomicon "This is possibly needless pedantry because ptr=
-::read
-> is a noop for a ZST, [...]". But, no question, of course we have to honor=
- it
-> anyways.
+>> To fix this, return from crash_handle_hotplug_event() without printing
+>> the error message if kexec is in progress.
+>>
+>> The same applies to the crash_check_hotplug_support() function. Return
+>> 0 if kexec is in progress because kernel is not in a position to update
+>> the kdump image.
+> LGTM, thanks.
+>
+> Acked-by: Baoquan he <bhe@redhat.com>
 
-This sounds to me like an implementation detail note, not something that
-a caller should consider. But that's my interpretation.
+Thank you for the Ack!
 
----
-Cheers,
-Benno
-
+My understanding is that this patch will go upstream via the linux-next 
+tree, as it is based on 
+https://lore.kernel.org/all/20240902034708.88EC1C4CEC2@smtp.kernel.org/ 
+which is already part of the linux-next master branch. - Sourabh Jain
 
