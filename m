@@ -1,102 +1,148 @@
-Return-Path: <linux-kernel+bounces-326288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB5F9765F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:45:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DC6A9765F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78B2F1F22E72
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:45:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 498E5284EDE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C026199EB8;
-	Thu, 12 Sep 2024 09:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NaS7wHx0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF6819C57E;
+	Thu, 12 Sep 2024 09:46:24 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7384F125DB
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13537199EB8
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726134322; cv=none; b=TEnsUF4Fbo6hCF5KUhJfqgSFTlDY2xe4FOgajPmQlaNli7nwds+Z+z9vVe/pSEizikXeeHxqBIaSw5spCoOVe0brMuYv6l0/Pnf6ulk2r24RzuKZ/sBmLnC33bLLCvk4OGvn9btuMtwcu4aoyEvXkSROGO+0m3DeXIOg9R0djJ8=
+	t=1726134384; cv=none; b=PecCOnLvMbxRlWaBx1HqrGaZlIXAsdIqwAA02KlkTzuv/GdSmwB6MxrkL7m98BdBRB7XMdSIYlt4m0wfJOgVJZ8jKi8MlhpciQ0QH5+/UtwiYOfdm5wSHw1lTi8N6i7ObRwKtgZF0JVrZN6L93ILD2OJ5yXg7OY35uabSn09/UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726134322; c=relaxed/simple;
-	bh=H8QEBi3zjs/yjlllv/UUtvRI0TFE+396Z3SAq8oALU0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QhSxeFuHrJ+HI9dv/EDRNG3e/BCeUC0EckgkZDLj7pN8OWEF5d0eVwfg6XbB6U4g3sQRRjzA5SSOtC9dZuYmA3YSWTXRe0WnG06V/4wTB2Qo6mK97mlnE03LrQsTkY0fYeybUSMg0zBXBwn/UHobHIlVUuyFGNN8o/Fa9TD3n3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NaS7wHx0; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726134321; x=1757670321;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=H8QEBi3zjs/yjlllv/UUtvRI0TFE+396Z3SAq8oALU0=;
-  b=NaS7wHx0FNhAhz/rbm+HyRG99hWgyPeY5Hq27NImoy2EFTY09dOGMy6E
-   sYCU4FJu72afJmpKccenfMy0e7cjHAV6NbYTPc57KuSdrhsSjXG3mUjcI
-   fZyQtPpFTLxfUxhsl4vt810lD2IKNPydxd90ghBUa8iGZ1cn6SoxH5hn9
-   pj+zZwNRRrxfewl+m05pem3AOePIJfdp3Eb1C3J/xJ14CJaE5nwv0Qh82
-   VOkf3N2cndGUvPOr8NejNOb4GPi7SPC/ncoonzPUhJUUio0Ld8TrxzwVy
-   5BUMHIDUTgiFUjYQG3np7DGj9Jhv9VQGzH1/xFQl9Z/lmNaBcZroq+g0/
-   Q==;
-X-CSE-ConnectionGUID: i1QJlqp6T42zVgmnE8HEtA==
-X-CSE-MsgGUID: zXHhS/ntSP6pWNbI9NIobg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="42451700"
-X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
-   d="scan'208";a="42451700"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 02:45:21 -0700
-X-CSE-ConnectionGUID: ufw+YWvcTWyWxRrm69udCg==
-X-CSE-MsgGUID: JvDa7t9WS+C7ka3cBH+XlQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
-   d="scan'208";a="67888961"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa010.fm.intel.com with ESMTP; 12 Sep 2024 02:45:16 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 2DB69269; Thu, 12 Sep 2024 12:45:15 +0300 (EEST)
-Date: Thu, 12 Sep 2024 12:45:15 +0300
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, 
-	Alexey Gladkov <legion@kernel.org>, linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Yuan Yao <yuan.yao@intel.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Yuntao Wang <ytcoode@gmail.com>, Kai Huang <kai.huang@intel.com>, 
-	Baoquan He <bhe@redhat.com>, Oleg Nesterov <oleg@redhat.com>, cho@microsoft.com, 
-	decui@microsoft.com, John.Starks@microsoft.com, Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH v6 0/6] x86/tdx: Allow MMIO instructions from userspace
-Message-ID: <h5gp6dgcfazm2yk3lorwqms24c2y2z4saqyed6bnzkk2zhq5g2@rf3lj2a22omd>
-References: <cover.1724837158.git.legion@kernel.org>
- <cover.1725622408.git.legion@kernel.org>
- <6c158a14-ba01-4146-9c6c-8e4c035dd055@intel.com>
- <ZttwkLP74TrQgVtL@google.com>
- <d3895e03-bdfc-4f2a-a1c4-b2c95a098fb5@intel.com>
- <ZuHC-G575S4A-S_m@google.com>
+	s=arc-20240116; t=1726134384; c=relaxed/simple;
+	bh=NjzYRBNG2lMBlzjbh1aj0f917nsYUrL5rqCLwGTzklU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KH2DnZPdnhGt/5Pmu4X7RJc7bKDurQRQ16XZ98L2AglfO9Vz4dinNNBze7zz1xSu3U9tnzblBImbmhmyxoDKuiUqntfrZjOPOdtzloSI5iI/3Zoxl3u+Jmztk3uQiL3y919Addjjpn0cCBgLJmXPwYzBMEimH9MYUFcNX55vrOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a050af2717so13969845ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 02:46:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726134382; x=1726739182;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B1R+h/OmDweOJUF721+4YYV7lgj8RjG9bGByowlRGDQ=;
+        b=IGlPrpK9qacDb+T8aHinxVYOKH/j+0ZVhOyJfsQviYdr/VI6pqQQ2VNu63v4hPruuK
+         tOHhdm8MuZY8lCadBH/pM+jhXmVTwRIs7OfbgA0l9mGe78LSxbG994URlglfKVYQ7JFP
+         wwgWB01CpoYA1+BTbcvoSKrCyTRnEO1Nzkg3l/gNyDvAeyxXxn6PKqKB1SeVtLlqLoQV
+         shyxTzGdUsOlnEZAvbhgnv+VCIBqIfHzF7h/G6t2PsSy6JdC8EXGsSxXmv5KZYyZiSl6
+         3biOYc6eRMUu4Xwo0LptAOCfRLtboMHWcoDnDbRDd+JDVuIaRQY0Z1Cif5O+J4MX4L4T
+         b/tg==
+X-Forwarded-Encrypted: i=1; AJvYcCVOM80nKU1u7/OzN6cbQeCz9FZobyXDyurWmCVqXIa3gThY20Y9accz44+SOTAbT17Khb8N7zFyMbaP8/c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkM9hOrlPtYoftgeuymM0PSfysfMfFC62WFuvQ2QBR1w7AUCtb
+	LT6bqIgtNfjjbel5EawVm0gVFNYLYmnjy/+YldT38hAD6IFpqE1QIDRcBa4LSvBaIfAOfHDZaNC
+	Go3fuWsVeJJT7BhzSkM78kPHa6cnWMUzhAI/SlwNvV3tACM/oulYgPqI=
+X-Google-Smtp-Source: AGHT+IEJPqcz94gV+wDKD10A32pSng2GnEUN5E2b2FVVu+m50EW7cQtRC5UXqqxLk6Mynzke/5AnmlbfozF/hFpk8BmLmdu0Ulz0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZuHC-G575S4A-S_m@google.com>
+X-Received: by 2002:a05:6e02:18cb:b0:39f:7020:6a13 with SMTP id
+ e9e14a558f8ab-3a0848c9ea3mr23325795ab.6.1726134382141; Thu, 12 Sep 2024
+ 02:46:22 -0700 (PDT)
+Date: Thu, 12 Sep 2024 02:46:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000aeb73d0621e8fa14@google.com>
+Subject: [syzbot] [gfs2?] kernel BUG in gfs2_assert_warn_i
+From: syzbot <syzbot+ffe01cefd437cbde362b@syzkaller.appspotmail.com>
+To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Sep 11, 2024 at 09:19:04AM -0700, Sean Christopherson wrote:
-> Yep.  Based on the original report[*], it sounds like the userspace program is
-> doing a memcpy(), so it's hard to even argue that userspace is being silly.
+Hello,
 
-The kernel does MMIO accesses using special helpers that use well-known
-instructions. I believe we should educate userspace to do the same by
-rejecting emulation of anything more complex than plain loads and stores.
-Otherwise these asks will keep coming.
+syzbot found the following issue on:
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+HEAD commit:    89f5e14d05b4 Merge tag 'timers_urgent_for_v6.11_rc7' of gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17b54807980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=58a85aa6925a8b78
+dashboard link: https://syzkaller.appspot.com/bug?extid=ffe01cefd437cbde362b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-89f5e14d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/dfc310daee41/vmlinux-89f5e14d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a92f22c06568/bzImage-89f5e14d.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ffe01cefd437cbde362b@syzkaller.appspotmail.com
+
+gfs2: fsid=syz:syz.0: warning: assertion "!qd->qd_change" failed - function = gfs2_qd_dispose, file = fs/gfs2/quota.c, line = 129
+------------[ cut here ]------------
+kernel BUG at fs/gfs2/util.c:414!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 76 Comm: kswapd0 Not tainted 6.11.0-rc6-syzkaller-00363-g89f5e14d05b4 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:gfs2_assert_warn_i+0x2df/0x2f0 fs/gfs2/util.c:414
+Code: fe 48 c7 c7 40 a9 4f 8c 48 89 ee 48 8b 54 24 08 48 8b 4c 24 10 4c 8b 44 24 18 44 8b 4c 24 04 e8 87 88 ce 07 e8 e2 73 ab fd 90 <0f> 0b 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 90 90 90 90 90
+RSP: 0018:ffffc90000e57328 EFLAGS: 00010293
+RAX: ffffffff83e818ce RBX: 0000000000000004 RCX: ffff88801f3f8000
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000000
+RBP: ffff8880119ec000 R08: ffffffff83e81787 R09: 1ffff920001cae04
+R10: dffffc0000000000 R11: fffff520001cae05 R12: ffff8880119ec2bc
+R13: 00000000000003e8 R14: 1ffff1100233d857 R15: 0000000000000126
+FS:  0000000000000000(0000) GS:ffff88801fe00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f391d5a6000 CR3: 000000001e06e000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ gfs2_qd_dispose+0x4af/0x5b0 fs/gfs2/quota.c:129
+ gfs2_qd_list_dispose fs/gfs2/quota.c:146 [inline]
+ gfs2_qd_shrink_scan+0x2ae/0x360 fs/gfs2/quota.c:185
+ do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
+ shrink_slab+0x1093/0x14d0 mm/shrinker.c:662
+ shrink_one+0x43b/0x850 mm/vmscan.c:4795
+ shrink_many mm/vmscan.c:4856 [inline]
+ lru_gen_shrink_node mm/vmscan.c:4934 [inline]
+ shrink_node+0x3799/0x3de0 mm/vmscan.c:5914
+ kswapd_shrink_node mm/vmscan.c:6742 [inline]
+ balance_pgdat mm/vmscan.c:6934 [inline]
+ kswapd+0x1cbc/0x3720 mm/vmscan.c:7203
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
