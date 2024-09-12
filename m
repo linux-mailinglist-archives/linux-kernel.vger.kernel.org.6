@@ -1,198 +1,148 @@
-Return-Path: <linux-kernel+bounces-325971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2062E97609A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:52:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A28D976095
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:50:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF7231F23C40
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 05:52:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3C1B285387
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 05:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B21188931;
-	Thu, 12 Sep 2024 05:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C2018890A;
+	Thu, 12 Sep 2024 05:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="gxZfs8K7"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sSB+qi3N"
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6232119;
-	Thu, 12 Sep 2024 05:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6722119
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 05:50:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726120316; cv=none; b=IhcPeBSGfop7BOdyb1U4Uf8ADbS10gKLjRBsC16t3ECC/KNkS3g9wKnqda552NF07OdTp4d1ubv9QrZ80PkmRKeBNW5SuHIXUgVWKQs89WU8eeJU2rkFSaQKbALSpGTQhgm7ZZLChVbGdhP+Wn97Eb6zHykxequGhwUWckbF0UU=
+	t=1726120222; cv=none; b=lHO9+c0vQ6pGFY3qdYrxi+QBHahA44oULqhWvyfPTk+QSAvrrPWqcoCbAqcIEKxdC40nSRtLPLQ7I9Bs+OEwhMNaWsG4bLWqrKVOj0jbhTU7wUT8hjT7GrkYBF0YVHdRKBmIB8D50QqMEz09UPy1ehnPlHcQpf32lK/PH9kregY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726120316; c=relaxed/simple;
-	bh=5nBw3jed5q3gOSsyd6ygguuJZHN5dfBDVK9fb2f+3nM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=E5ax4fsHP4fr1ldB2pdsd+fLvob4QsN00xbyfQfs7z+y8XVgTDQlYGCAS+TR5CcjOa1V9JHtE6X2Y31siqWcFBFky+BZ7MJV5ifBlNMSvY9rw/eeH4g1MA6UKSX98jAdwwW998PKkGHEXW/FJhaAarAuyEkxBPUX89l0P9u24tE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=gxZfs8K7; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1726120313; x=1757656313;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:to:cc;
-  bh=5nBw3jed5q3gOSsyd6ygguuJZHN5dfBDVK9fb2f+3nM=;
-  b=gxZfs8K7Cdw7omjQmW3vdzWoB30LLjd1H9br2j51F0TG8HsW8H2VU5IH
-   NdzXa+1tsaPPnBZ3dDwGTgLfq1QUpJ+Ch0uCVkZoePnFGAfiMeBYbiHac
-   6IjLShvh0JU4UnBcfmmVv0KawP1RwzJnB5qKAG9TwDWExCgxRob5gkTm3
-   b2CadhgA42UiFopilY+jgLAWhSiKeXpwe9vTvXHqFhLnVjaQNxQQGomzN
-   LCD9ENbluVqSxoAPjHR+VpYyo1KY5hYmiLhudZJabkj4FhNTCAdjXNUi/
-   2/imZrydwX/6Zn6uYcRWCcM/h51amq4R0M+9TfRu/guYUrgyo5stk/IKj
-   A==;
-X-CSE-ConnectionGUID: yO5+uw3DTJiRuB0mNxV1RA==
-X-CSE-MsgGUID: Uktahx2VTCiHDFDkJDH4kw==
-X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
-   d="scan'208";a="199112816"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Sep 2024 22:51:51 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 11 Sep 2024 22:50:51 -0700
-Received: from [127.0.0.1] (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Wed, 11 Sep 2024 22:50:45 -0700
-From: Charan Pedumuru <charan.pedumuru@microchip.com>
-Date: Thu, 12 Sep 2024 11:19:16 +0530
-Subject: [PATCH] dt-bindings: net: can: atmel: Convert to json schema
+	s=arc-20240116; t=1726120222; c=relaxed/simple;
+	bh=jPagxh1QctUbn8z4DmD4MmtMBVYdURYELOaPTpUig0U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=awffclU91Lnojb0ER6P4ubbLy2aqU296olTYeH98y3hXuO+nu2NybDm8ec4OIV1z8P2rVEDKQ1mVw2x09r9E2omKPosAETKClPVY5PiCZ3YyeF+KzFFDq0TlMGZUgKvvCKka48v9+bAVkoMu3yxv+7qFZt6Avn3M5/LO0tZyW2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sSB+qi3N; arc=none smtp.client-ip=209.85.161.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5e1c8a6afa7so825339eaf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 22:50:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726120220; x=1726725020; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jw2u1x2ZsZhOm6grLl0lyn93jYQjPNNlRFvwR4K3Uk4=;
+        b=sSB+qi3NXSwDXoG0SR45bQ2tRkh25L2gVVHibAGwKsX5aPwCU2YnV+Nelc26NkOcGx
+         Nz/1mdVuSY6Z80V/KeoiRtVprfK313JldC9YFHuMEzYGj3gQi/LzAtM+wRFcNZHUUxnd
+         09XAEYItslFgqjVBn9RWYUowFIVc/sqtIdvE1Sw4esTruw9gK58+bAzcvtCrvSnuWDRy
+         2z+n0XNLNcviikCm8EyShbt5brqsB7t7fWi2kPpXTnkWv0ov02RaaM5T6vWeTOOyFZYT
+         nQXmztFNtwfq4TjtE2km4kEAKsXUTnabTqV/td1HJNKMAYdKxUrILEQvsXsjMnSpUDhU
+         cECQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726120220; x=1726725020;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jw2u1x2ZsZhOm6grLl0lyn93jYQjPNNlRFvwR4K3Uk4=;
+        b=R+y8bv83ech63A+s0XHw75VJ1XHK1Ku8oXbJR/wNzEe8gLSiLXqQ1aauqmqji3vOq7
+         Ci6bnv4zGTLf8krsvApqagsHlAcBoriccF19YuYoNrygd07WcpdW6j84A42RtTNIRJ2f
+         Hf7jbCCRpGswRgXaY9Lg8fA8wU/hOmhZO+DWh9FFz5YNyDVTUR6dENeJ1m1aBefmrMzI
+         ZScBglTCiB8JQSVC99GUyau6wQfpgD5NGKGFFWs8h7eiZhZIVh4GgKXOzABGpK+8PANq
+         zEOaIxanKxu8DIvkjDLqf7K68g/8YUiAw+6P9nEIjQkL/rdH4XQWb/X8bz0xznhAASv8
+         KKrA==
+X-Forwarded-Encrypted: i=1; AJvYcCX3eh5MsAHdAh+YtMoLlEZijJJ2551VlDuYCwrkj0396GJIP0pHNlcgO1LkL6XCjOzMxehlATT9dnz4VV8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxThuhImxvf7/eUhqOG8Y0ulqHz+W3/LDi8oQTtif42fnE5XoDH
+	xWqeFk9l5mqBWf56ZnZUUW1JAwQ9Dzu7mMyOkIDbY6W9AyicabUST79WrNW7DQ5td6zuC9AeAy2
+	XahB782TT4+gWL1qY3W5YVe+52ay9GH2jueGo9A==
+X-Google-Smtp-Source: AGHT+IF34XxlusBtIC/EMndCmBpCudogBTcdy1u5SHEo3pqIrR4CkLbEeUU+WOFO7sk9XkhQbIGjSQEnEpjm+0ZsdyI=
+X-Received: by 2002:a05:6871:3399:b0:277:ec3d:cd21 with SMTP id
+ 586e51a60fabf-27c3ea39800mr795369fac.13.1726120219645; Wed, 11 Sep 2024
+ 22:50:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240912-can-v1-1-c5651b1809bb@microchip.com>
-X-B4-Tracking: v=1; b=H4sIANuA4mYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDS0Mj3eTEPF2L1CTzNItUc1MzsxQloMqCotS0zAqwKdGxtbUAg1Hdc1U
- AAAA=
-To: Marc Kleine-Budde <mkl@pengutronix.de>, Vincent Mailhol
-	<mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nicolas Ferre
-	<nicolas.ferre@microchip.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>
-CC: <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Charan Pedumuru
-	<charan.pedumuru@microchip.com>
-X-Mailer: b4 0.14.1
+References: <20240911204136.2887858-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20240911204136.2887858-1-andriy.shevchenko@linux.intel.com>
+From: Jens Wiklander <jens.wiklander@linaro.org>
+Date: Thu, 12 Sep 2024 07:50:08 +0200
+Message-ID: <CAHUa44G4O0JgqN=BwvshRXzUeEE1oXD1o8Yn-5X6p5qY8vkDQA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] tee: amdtee: Use %pUl printk() format specifier to
+ print GUIDs
+To: Rijo Thomas <Rijo-john.Thomas@amd.com>, Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, op-tee@lists.trustedfirmware.org, 
+	linux-kernel@vger.kernel.org, Sumit Garg <sumit.garg@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Convert atmel-can documentation to yaml format
+On Wed, Sep 11, 2024 at 10:41=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> Replace the custom approach with the %pUl printk() format specifier.
+> No functional change intended.
+>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/tee/amdtee/core.c | 17 ++++-------------
+>  1 file changed, 4 insertions(+), 13 deletions(-)
 
-Signed-off-by: Charan Pedumuru <charan.pedumuru@microchip.com>
----
- .../bindings/net/can/atmel,at91sam9263-can.yaml    | 67 ++++++++++++++++++++++
- .../devicetree/bindings/net/can/atmel-can.txt      | 15 -----
- 2 files changed, 67 insertions(+), 15 deletions(-)
+Thanks, the patch looks like a nice simplificatrion.
 
-diff --git a/Documentation/devicetree/bindings/net/can/atmel,at91sam9263-can.yaml b/Documentation/devicetree/bindings/net/can/atmel,at91sam9263-can.yaml
-new file mode 100644
-index 000000000000..269af4c993a7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/can/atmel,at91sam9263-can.yaml
-@@ -0,0 +1,67 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/net/can/atmel,at91sam9263-can.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Atmel CAN Controller
-+
-+maintainers:
-+  - Nicolas Ferre <nicolas.ferre@microchip.com>
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - enum:
-+          - atmel,at91sam9263-can
-+          - atmel,at91sam9x5-can
-+          - microchip,sam9x60-can
-+      - items:
-+          - enum:
-+              - microchip,sam9x60-can
-+          - const: atmel,at91sam9x5-can
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: can_clk
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+
-+allOf:
-+  - $ref: can-controller.yaml#
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - microchip,sam9x60-can
-+    then:
-+      required:
-+        - compatible
-+        - reg
-+        - interrupts
-+        - clocks
-+        - clock-names
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    can0: can@f000c000 {
-+          compatible = "atmel,at91sam9x5-can";
-+          reg = <0xf000c000 0x300>;
-+          interrupts = <30 IRQ_TYPE_LEVEL_HIGH 3>;
-+    };
-diff --git a/Documentation/devicetree/bindings/net/can/atmel-can.txt b/Documentation/devicetree/bindings/net/can/atmel-can.txt
-deleted file mode 100644
-index 218a3b3eb27e..000000000000
---- a/Documentation/devicetree/bindings/net/can/atmel-can.txt
-+++ /dev/null
-@@ -1,15 +0,0 @@
--* AT91 CAN *
--
--Required properties:
--  - compatible: Should be "atmel,at91sam9263-can", "atmel,at91sam9x5-can" or
--    "microchip,sam9x60-can"
--  - reg: Should contain CAN controller registers location and length
--  - interrupts: Should contain IRQ line for the CAN controller
--
--Example:
--
--	can0: can@f000c000 {
--		compatible = "atmel,at91sam9x5-can";
--		reg = <0xf000c000 0x300>;
--		interrupts = <40 4 5>
--	};
+Rijo, Devaraj, does this work for you?
 
----
-base-commit: 32ffa5373540a8d1c06619f52d019c6cdc948bb4
-change-id: 20240912-can-8eb7f8e7566d
+Cheers,
+Jens
 
-Best regards,
--- 
-Charan Pedumuru <charan.pedumuru@microchip.com>
-
+>
+> diff --git a/drivers/tee/amdtee/core.c b/drivers/tee/amdtee/core.c
+> index e487231d25dc..d3201eff1b74 100644
+> --- a/drivers/tee/amdtee/core.c
+> +++ b/drivers/tee/amdtee/core.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/mm.h>
+>  #include <linux/uaccess.h>
+>  #include <linux/firmware.h>
+> +#include <linux/uuid.h>
+>  #include "amdtee_private.h"
+>  #include <linux/psp-tee.h>
+>
+> @@ -172,21 +173,11 @@ static int copy_ta_binary(struct tee_context *ctx, =
+void *ptr, void **ta,
+>  {
+>         const struct firmware *fw;
+>         char fw_name[TA_PATH_MAX];
+> -       struct {
+> -               u32 lo;
+> -               u16 mid;
+> -               u16 hi_ver;
+> -               u8 seq_n[8];
+> -       } *uuid =3D ptr;
+>         int n, rc =3D 0;
+> +       guid_t uuid;
+>
+> -       n =3D snprintf(fw_name, TA_PATH_MAX,
+> -                    "%s/%08x-%04x-%04x-%02x%02x%02x%02x%02x%02x%02x%02x.=
+bin",
+> -                    TA_LOAD_PATH, uuid->lo, uuid->mid, uuid->hi_ver,
+> -                    uuid->seq_n[0], uuid->seq_n[1],
+> -                    uuid->seq_n[2], uuid->seq_n[3],
+> -                    uuid->seq_n[4], uuid->seq_n[5],
+> -                    uuid->seq_n[6], uuid->seq_n[7]);
+> +       import_guid(&uuid, ptr);
+> +       n =3D snprintf(fw_name, TA_PATH_MAX, "%s/%pUl.bin", TA_LOAD_PATH,=
+ &uuid);
+>         if (n < 0 || n >=3D TA_PATH_MAX) {
+>                 pr_err("failed to get firmware name\n");
+>                 return -EINVAL;
+> --
+> 2.43.0.rc1.1336.g36b5255a03ac
+>
 
