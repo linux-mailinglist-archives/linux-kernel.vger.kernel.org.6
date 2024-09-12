@@ -1,82 +1,78 @@
-Return-Path: <linux-kernel+bounces-327274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACE4F97733B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:59:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54503977342
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:02:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8513C2868C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:59:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87D781C240BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4C81C175D;
-	Thu, 12 Sep 2024 20:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007771BF80A;
+	Thu, 12 Sep 2024 21:02:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b="mQcIUfKt"
-Received: from sonic314-20.consmr.mail.sg3.yahoo.com (sonic314-20.consmr.mail.sg3.yahoo.com [106.10.240.144])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XuzCqWuA"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB1C18BC33
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.240.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D0713CFB7;
+	Thu, 12 Sep 2024 21:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726174790; cv=none; b=ZIj9PjEyTSHQwn5gp+OmqPjiGXovorNPwK85HtOe6A9/v2cxY8HMJzZjJJYRj00uii2MGWte0Jm/ta6XCEOyWSwcf80zSQGeKuYrJpo+I+cZyD044LhPzkdlWY+7LfBwNRJF8Oips85ls3rIgS18Rfmf/jfzJGkN3ILYX1ffJuA=
+	t=1726174940; cv=none; b=XrpFBOVxoGz3r38opUoIBYxu6fD9ivYvP99tNfoc8qqtjID5TfNgaJz5G5qNWzCaEEvQUGPLqorQG4wwKssJciiBCDNu8oMdLIi9uBvlulVUePGWfRzWrAZLbOd+RIJ+V+mQEBIHxqQyao7l3np0K2/DsOlne9hP/VRT2RQQ28M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726174790; c=relaxed/simple;
-	bh=LUsjhXjA8R09WUdrhbG2u2DIfwEBw3KH4drZdVkfRkw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=URrzLDW07NkRBZ3FoV5WDndez+QTIrNE6i+ageKvgLtmPYIjYgUI/uyBaU/vNwpZjZUxHgXJMdYCyR9I6MMdwuXEdDFFE+VOfTa/ESZBS4WTbxH6c0YG1b64p/9BOhT5OSPqu78nivPb7Izeu3VOuIpFRpOVW+3mcDQiOA1js9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com; spf=pass smtp.mailfrom=myyahoo.com; dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b=mQcIUfKt; arc=none smtp.client-ip=106.10.240.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=myyahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=myyahoo.com; s=s2048; t=1726174780; bh=94Q9a+075SmQezW4neaY7XefCzLDWbgo6ES4DknRTgA=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=mQcIUfKtLrTXePBg+fwavuxMbm3lauqx3nAkvAGaWXIYN8+CJFTsTMs70Mvyw/Az1lSa+NoFh479z64U52SIeZXY7/fRurZ/cJ93erG6A0XCMecHcQzur+QcSWtBG7UGUctVElLVkh3UkBRZhLSjpd/kDbpdvy2mA0pR7Qom4e9BsCMGg6l5pM4PUVj7lL5iznEqz1pggA7AOdbliN2fD2rssL439AbDArqBEaBRdQVOOGE0VBfrzxeC5vFzsXr4SsINphyOn8YhnQuwmK6D8F1u6KJhJtf/qxc9bYvBebt4ZXr7X+qzxfGk9DjTfew0exxVbDOUc1CCbGc+6Q+n4Q==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1726174780; bh=NpjoOtpyGcgR8z2Jm7mOj1Ibd+7s4NyyEcaphKJLAD/=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=JJugJVHzZdpqMuWBHOua1cAcJsMfu9g1T1w4785QT6HHFnTtWIf09mnIRxXhhd4FYVcobPCjSqkYAoe7y0T19y6F2LkYKCbLzwbIUSYO4cXZxUyuZcu1n5AxTg8+fl5silsO7mJypyrftrPSPBenQ0aA9yjHAftBug6CpJ5Fbuj0RlSvZl6VfTOXw8HCmBP0zvdz7t9/t4jPnAfd/LEJEtWK12/l8Gn3UpOqvKXjWVyai+3fBJq2Xl9dIzUPcTTL+9IhZ9F7Sn+nXUephYE4zZIpr4gRBOtionXY1im11HsVcIK08D2WXKBBJmRzypIYxJZVvtOrVB0VoYgtMO2TVg==
-X-YMail-OSG: zzC_1M0VM1kYVrKgJ6pn6WQLR4l0YjdLQuA.llo2ktSJIaGxs7Qtn1I5dz5X8lA
- Igc1okPsjV9GAy0q5jTRrI5KKQqKRLGTtAh3tuXaPYj3paCAtlJ_jGrImmbqMfC_usoUP3k62mh3
- KbSZCQN0wU4rM7AIw6e4ldmHdDUHWaTfIKyGr.snZY7Gc7jljwTigMsveLBcKhVuYwkK8YEW.d1y
- rMs8Ic1RyB5p0mPF_hUnvuHPmT.vqb6l3iTYKfH9wI1nlNssqJ2NLKv.4u6nLpVmrlt8ZlDwHyIu
- 6HxtvZCpk6QQ272I8fet9skb7Aw1Sj_PG8kC2JUiPj0mOA3vaWLzZZnCUWsqfTWAE1KfvmW4Iyhx
- maNE.RMJshyYizAKAJU4up2abPdbo7zW3yqBR5W7jeqsBALVbCvnwo.uKGFMDLS_zKIelyRDh5OB
- Fnmdw4YWzJMQsWny1uf.9LSXs5dgJV.Hve6oMw5hqO9cRawCJ4ssuOyxdD1PFmOEPgLG0_Y2W6F1
- 9nP4PEYivX.lFoqw3qbM35yVNXjhseq0dCJHswZMYQ.w88Q3gtTtG7QhVkEFqcYePGkec_OddOOs
- NU4gXScD2XquHlIn0fM5agM4qMXDhrPv5L8t.rI7r1CKUNL6KcQ1Elu0A8nM0Sx03fcCRDanKpVB
- QcwyA0c3MVzemYI6YdshDtL1c5ufOJBgUygqqDq8Z91_yalLvTqkhAzSAkQ4pTBMotSdS1YYxa84
- jS10LJ1jhV.gGsYFpDcGb2VW3DHq_6oGBvZz3pfkT_6JRPj0O.OQVCrhXSYGU.WMt6GM9CvA7GaM
- nwLCXGPAm.jXqCvITa00WQ6aEptPmjXRuAUe5RLPswdvBTJK6SzpMctqszEtA8rpq64YVILtybMS
- AoGDLHey0841Gdph8So4rhMWF.H6Kszu4YV5h9Z0Us0WmelbsXQJ3tBbYImUSt6Yos73RwNnzyUT
- d6_pGiOw.GjBM.WyjZ30u4kBr.PAaZGXtQAG1.1G1hmukrV5QqW4LD2twvDYyJ2n0SmvHqs4oWHJ
- V_LhV6fNPoM1HS5A7xDd.IU9v3949CVQa0PZD54eQtGXiEbW9RP_2Yhm.YuOB2_4kqLleZnNiA0Y
- vLOWtIFftnY5xXaC8_eGto5odCjo3hCqy3aW6MYSPsIm.xzEj5Lluzc8IVV2bT7zGDa4roQoxHrz
- 5cs_KvRUjGt1QPJ7Hy8lofCaIre2bGU1jLrWlwcovNw5ZyVqK1P3euics0ja0YXtP47IRSJF0PXE
- EDcOxKKTey0.e4Ek9McfOhK8zlD3OuAPjQELFk_gvI1rLhyh373BSGM8fhO8.wPc.CHTAhXbLEEo
- iL7xwskvPN6BYv23uC9I6c2wlP4zmgsDr0eBmJB13cvacpThTBEqH9jcmK32OdgpoTOjhn1owTXG
- 7T7CtVdU2ckKdC_M_mXbheGtQRukDHjDgx9KDbL1Kktxr.TbBHDxcUVfQOStGlvwDxoOY.aRDOc4
- r8s84cqg9ypLGHS_bGHtuhBgFQdq72urzrEdD7k4qEpL3GS_qCZzLy_bK8j5ADbgsuVgtp7R7mkQ
- 59UF7VLKsi_24LfAY08LCue.6EKgk0Pty4Gg0t03sDF2Z030506jpPcyczdpeDHPSe6qt3zAdn5J
- ZgbdlLFWf3Gxi7uSCvdT_jJwmKdvMkFb4X.vblGHJ8O7M0M.UKfd0yq8er1epowjkPb4kyyUUQJW
- Ys1I92CBki3W_8hcn_ti2loV4FVemoO6uyVfBVmykqFU65fMCxBVu17Du6vIYvixT_HGLbl13sEJ
- m748d.K7yGnY5ezI4tFsHDfLtQdR9NvlwIJs.SsL91FmVPEo6MXXSPyKeG5559YQ4eF38WJufCqC
- FhY8RnychLRuFzSuzntNRoO0vuqEbtY_qw78y_Ds.pQGWt2LcD2CvG6DyisoWu2Uyezo1kK14Tkl
- FJ262hts9TGoTX4Y9_v47bEZRc5F0mKV9qV2bAYgowZt5yY0JfteekDfON0EhrXWA52lqPQ1MjgQ
- 2I5aZDLFPKkISHmDHwkKntPXEOJrQWaThSYb_qMo6hBfswXNWGDKpU2XgeC5rexoElbLn2LvodDM
- LW.169yZEfqdohs7qViUq9dbyK5kvIPNfyB2GyZZ0hVfqOkLbq7eCq_NR3bIQ2XNlu_aeq.dzsmm
- 56boAag3Ou04QPD7lroAjo0t_06jtbE4DU8Ui4WlSXmAZ0TB9m3.rbrCO63mvXrd_i3NvGriu5G_
- VsKuXVWC_ZJerXxaXCM_oJTOfDH1vB4tkpC5VvdzbYUuANxAu2VZ6oWZKogHS
-X-Sonic-MF: <abdul.rahim@myyahoo.com>
-X-Sonic-ID: 537d67d4-8153-420b-bf00-c0f2bfaf22a7
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.sg3.yahoo.com with HTTP; Thu, 12 Sep 2024 20:59:40 +0000
-Received: by hermes--production-sg3-fc85cddf6-qj99b (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 936a2007f212483d89f3628f4710acfa;
-          Thu, 12 Sep 2024 20:59:36 +0000 (UTC)
-From: Abdul Rahim <abdul.rahim@myyahoo.com>
-To: rafael@kernel.org,
-	lenb@kernel.org
-Cc: linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Abdul Rahim <abdul.rahim@myyahoo.com>
-Subject: [PATCH] ACPI: thermal: Use strscpy() instead of strcpy()
-Date: Fri, 13 Sep 2024 02:29:22 +0530
-Message-ID: <20240912205922.302036-1-abdul.rahim@myyahoo.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726174940; c=relaxed/simple;
+	bh=rssm9HJWK2a0zh7wx7igItT3UMlUUg3vCxnu4E+AOEE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uIY4HZxRgsHbQbGqgtboLkgZeBwTyPtQQH7Mvlpx6KIbJRNOiKg2HBSAhsqfyTMEbyfsuv4w/9BRZkTfCAphfIgHAZOJuuaHjAHlR1L+qr/t6b78nYqdzOugNzE6iojzYWHvDgxT+CQOjXbc8DbLVchIrABhMQg0xsl93u97e1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XuzCqWuA; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-206b9455460so11938185ad.0;
+        Thu, 12 Sep 2024 14:02:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726174938; x=1726779738; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=RrSckW6x9uomKy/ENMgMIUSNKJ25LuLqiiUE4kLcewk=;
+        b=XuzCqWuAEQ2E1RoTUn/nLCgKJOFa4Lt2w77zsd+1Duu9kgfSjUCc5X8ueQnmAZag8R
+         aTuDlf6no4RvfAXwwrc5DKX/92h58bx+uHIG3bAd8uU1zNk3BEfdtLAtSaNeOPrBSdQt
+         ozb5ASUp6m8jXF2Jqn0zhnZGUXzdz3ibAB8rqISZ1iCQnERTbaAoNPxVPeWtO1YaQB98
+         YZ/dz4cejpGzgKxJzR5sxb5PU86nvaF/zvwd7NcOhXdTtQed19jvG0lsNOgfF7EPZOuN
+         9K3WtTiRN3B5/7Hh7wVu4wjgGV3jAIppukBPhGOw1Rcaj2oyGrZ6pREDXINCrpx+8gxH
+         sQZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726174938; x=1726779738;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RrSckW6x9uomKy/ENMgMIUSNKJ25LuLqiiUE4kLcewk=;
+        b=sBwSWhgr2ZfFAwhrf8BYSnITRlaQ/RVygaXoABlsdrv0W1ihIMRLV+ij3Qj0SbN1jZ
+         0wfKd0pKAKyDrlCFYb8L7K8KzAIefb9oVAbYygFamBCsK2hWvYjAd5GeUcDbSAKdlvfE
+         +JHtmmFaT7Xnz0YSCCbHrspHZ3ITpCNqMMf9x/6Wjb1lt2nJZgEZ/yVY0IFIzNJ0Z/5M
+         d0n7BmTOWYCFScL6ZjsLy+/g0zDyIB0TY8sySyeGA67l8tznYnVKg0+SyVmmhFKqVbe8
+         VsVkxZsXY5AoWBi6mfAaBwVx1BCFb9l21h465EfIPHZ7TB0xDNfaEOK5mxjlOUNNqVk5
+         P+cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXrg6KsWnkuFR4y3fhF/Cz3XoOEpseMQpAz2G8ej8YMdss/7QbUP6An1Zkp16vWBXX/xVyTkdfV3lh9br4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsAwplTGRfLWJHCPzAIXBYNh+5k+BBNWNA4aPuMEJzdrGQqKbh
+	DKj0zNJJTl2Qsp4ub2VqpYRw118ZttqDENEVu3dwr0PPxiVNWrC4XDrpUw==
+X-Google-Smtp-Source: AGHT+IHKG7QyKtTs1qWEPh7TiqTVtdGQobXWdjhjaSGLocZkDEjmhrneg8j2M1Jv8DiBxeNUgaX1+w==
+X-Received: by 2002:a17:903:2a90:b0:206:aa47:adc0 with SMTP id d9443c01a7336-2074c6dcfdbmr153269085ad.24.1726174937843;
+        Thu, 12 Sep 2024 14:02:17 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076af25709sm18051745ad.24.2024.09.12.14.02.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 14:02:16 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hwmon fixes for v6.11-rc8
+Date: Thu, 12 Sep 2024 14:02:15 -0700
+Message-ID: <20240912210215.1907774-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,40 +80,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-References: <20240912205922.302036-1-abdul.rahim.ref@myyahoo.com>
 
-thermal: prefer strscpy() over strcpy()
+Hi Linus,
 
-strcpy() is generally considered unsafe and use of strscpy() is
-recommended [1]
+Please pull hwmon fixes for Linux v6.11-rc8 from signed tag:
 
-this fixes checkpatch warning:
-	WARNING: Prefer strscpy over strcpy
+    git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-v6.11-rc8
 
-Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strcpy [1]
-Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
----
- drivers/acpi/thermal.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Thanks,
+Guenter
+------
 
-diff --git a/drivers/acpi/thermal.c b/drivers/acpi/thermal.c
-index 78db38c7076e..a35e40976763 100644
---- a/drivers/acpi/thermal.c
-+++ b/drivers/acpi/thermal.c
-@@ -796,9 +796,9 @@ static int acpi_thermal_add(struct acpi_device *device)
- 		return -ENOMEM;
- 
- 	tz->device = device;
--	strcpy(tz->name, device->pnp.bus_id);
--	strcpy(acpi_device_name(device), ACPI_THERMAL_DEVICE_NAME);
--	strcpy(acpi_device_class(device), ACPI_THERMAL_CLASS);
-+	strscpy(tz->name, device->pnp.bus_id);
-+	strscpy(acpi_device_name(device), ACPI_THERMAL_DEVICE_NAME, MAX_ACPI_DEVICE_NAME_LEN);
-+	strscpy(acpi_device_class(device), ACPI_THERMAL_CLASS);
- 	device->driver_data = tz;
- 
- 	acpi_thermal_aml_dependency_fix(tz);
--- 
-2.43.0
+The following changes since commit da3ea35007d0af457a0afc87e84fddaebc4e0b63:
 
+  Linux 6.11-rc7 (2024-09-08 14:50:28 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git tags/hwmon-for-v6.11-rc8
+
+for you to fetch changes up to 20471071f198c8626dbe3951ac9834055b387844:
+
+  hwmon: (pmbus) Conditionally clear individual status bits for pmbus rev >= 1.2 (2024-09-09 10:58:09 -0700)
+
+----------------------------------------------------------------
+hwmon fixes for v6.11-rc8/v6.11
+
+- Fix clearing status register bits for chips supporting older
+  PMBus versions
+
+----------------------------------------------------------------
+Patryk Biel (1):
+      hwmon: (pmbus) Conditionally clear individual status bits for pmbus rev >= 1.2
+
+ drivers/hwmon/pmbus/pmbus.h      |  6 ++++++
+ drivers/hwmon/pmbus/pmbus_core.c | 17 ++++++++++++++---
+ 2 files changed, 20 insertions(+), 3 deletions(-)
 
