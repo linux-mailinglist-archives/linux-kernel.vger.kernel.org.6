@@ -1,191 +1,95 @@
-Return-Path: <linux-kernel+bounces-327177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8224C97717B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:37:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D57A97717D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:38:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8C32B21E79
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:37:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39F011C23E12
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D738D1BF80E;
-	Thu, 12 Sep 2024 19:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81FB1C0DC3;
+	Thu, 12 Sep 2024 19:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WUrm4o+L"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Zi3JgrSU"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E7F1878
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 19:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD44418BC20;
+	Thu, 12 Sep 2024 19:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726169866; cv=none; b=fJjPvlu7xvpiaAl1M6HHvykXomTBS7QRNEEqrj7m/YZ9vY3MSkRE/GAUSmx6ipGmOQsaOlu8L8YqO3ypGgR9yVNCojAIw8LRjcvJksyJQ+nz5CINczfLM/Vq5KjY5Pin/soBZY3AVE10wAqx9/F5/X/MaSZFxNF3NUgH9BdLpTQ=
+	t=1726169886; cv=none; b=iU9fhvN5rEdXSjDygxgViBsO0UBhPv5tuDILBP6XbgjYiZ4FDwj+T24pOKsvH89M1qRwHm3TJwg3hD9+2z7LQySbyC4XQTYTgx1Moz0Y/RP/T3BcmknFpeJO6Q8bTjwNmt8Atwga9HN/1CJzxluUXZdfQ/yr7LR9xBng3UjTXlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726169866; c=relaxed/simple;
-	bh=nM8nvrfY/MZ6fAugZ3+bpjzwU12fPd1pbQprdrV1XbY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AM4Afs/mJSVN0b2VrgP/i+x5sIwklQ/OSJGXGT4EjQnNmLAOg6qBhrEv8WS43aKsG9bscqdE/NkbCiYKhOH5Dlv4axNF3UYXClBWJtCBpjyEK2Y2rAAu5VPXuB+J6WmdCGgiJraegcajhoG/2bBRosDljdy26ISVRPgfWlnuBAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WUrm4o+L; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726169864; x=1757705864;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=nM8nvrfY/MZ6fAugZ3+bpjzwU12fPd1pbQprdrV1XbY=;
-  b=WUrm4o+Lax1oMA9DtD3l73ChMe8n9xYfD5lQiyJXd4E2pW0fxdszzdDH
-   2uywXYhJXRBjAXwquhoc9AKlgZseeQyDwBR4+qK6QyRPc/l7S1ov2HLdu
-   6qo+1BKg1H8yvmSshL29JxNEX2uxzWo+Wui9d4pRM9XEMNt7iiHblQ86i
-   yCrPUCQZ761pcezZI73vOtPTbR4PlitwDdeVjS9PkV8LZeqxyKk95f6I+
-   9MLkdtnVt6WRA5OoYd1gPKXkFa7CmaLchapZ7qvV+pvM5tm9Ft1mOudyL
-   KBRvdwdk8gS3I7FsYhmIybnUAehavJnmTOuVr2bbJVSBdmUfZW/kr2hc2
-   Q==;
-X-CSE-ConnectionGUID: CsKKvsrZRqyF6d/O8HqAyQ==
-X-CSE-MsgGUID: GeHgbz9nSGqBzL1Y4PiujQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="27966427"
-X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
-   d="scan'208";a="27966427"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 12:37:44 -0700
-X-CSE-ConnectionGUID: 9XBPYzv5S9iYcP5cjE4Pbg==
-X-CSE-MsgGUID: lg2saZb8R96BQ0UqOpMeLg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
-   d="scan'208";a="67743511"
-Received: from dgramcko-desk.amr.corp.intel.com (HELO [10.124.220.153]) ([10.124.220.153])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 12:37:42 -0700
-Message-ID: <8a406835-b985-415a-a944-25d0ebea4fd0@intel.com>
-Date: Thu, 12 Sep 2024 12:37:22 -0700
+	s=arc-20240116; t=1726169886; c=relaxed/simple;
+	bh=GlHn2Wjig0XjkKzD9shgFjd6oGagoxGcQqbzq+rmMHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YxwpPcmsVd9I6xb6Fv2zFQFIcRvTfM1zr+jCenECPtkrVccvfZaGPoQAuABklJ6v9eVXevC2dfp1pBkVsEWO231cU2anrUtirHQIOQddrk1FNx4Jgl5ljT+uhz3guTGKX7NSB6zDXOYSNNMLP6t+enE38bdljH72jxWm7ZwIOPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Zi3JgrSU; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=yb4dKd+Zim0/9uWomLTc7IVQqv4OKV/WQNVcMBfCUtA=; b=Zi3JgrSUjSpZOuspQRfnBiymBf
+	tPfQN3WERaNmtz27hqgHOceGScodrP3ruIFKIWCySQ7QV8//kRFijRQAoiMpRBf2f2Oa6NCrUCJiv
+	ECtAMiysOMhygLnU3SwO6h2k81Wo4hmYPToQWpTf0SOAp1fTBk3A54Uq+rpspLXRVyF4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sopdU-007L0p-N2; Thu, 12 Sep 2024 21:37:48 +0200
+Date: Thu, 12 Sep 2024 21:37:48 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Ronnie.Kunin@microchip.com
+Cc: Raju.Lakkaraju@microchip.com, netdev@vger.kernel.org,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, Bryan.Whitehead@microchip.com,
+	UNGLinuxDriver@microchip.com, linux@armlinux.org.uk,
+	maxime.chevallier@bootlin.com, rdunlap@infradead.org,
+	Steen.Hegelund@microchip.com, Daniel.Machon@microchip.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next V2 4/5] net: lan743x: Implement phylink pcs
+Message-ID: <cde5eba7-770c-4521-8539-cecd69cc1db9@lunn.ch>
+References: <20240911161054.4494-1-Raju.Lakkaraju@microchip.com>
+ <20240911161054.4494-5-Raju.Lakkaraju@microchip.com>
+ <c6e36569-e3a8-4962-ac85-2fd7d35ab5d1@lunn.ch>
+ <ZuKP6XcWTSk0SUn4@HYD-DK-UNGSW21.microchip.com>
+ <cbc505ca-3df0-4139-87a1-db603f9f426a@lunn.ch>
+ <PH8PR11MB79651A4A42D0492064F6541B95642@PH8PR11MB7965.namprd11.prod.outlook.com>
+ <100f9c30-f6cc-4995-a6e9-2856dd3a029f@lunn.ch>
+ <PH8PR11MB79651E0A10963CD805666D9295642@PH8PR11MB7965.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 27/34] x86/bugs: Add attack vector controls for
- spectre_v1
-To: David Kaplan <david.kaplan@amd.com>, Thomas Gleixner
- <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
- Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>
-Cc: linux-kernel@vger.kernel.org
-References: <20240912190857.235849-1-david.kaplan@amd.com>
- <20240912190857.235849-28-david.kaplan@amd.com>
-Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20240912190857.235849-28-david.kaplan@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PH8PR11MB79651E0A10963CD805666D9295642@PH8PR11MB7965.namprd11.prod.outlook.com>
 
-On 9/12/24 12:08, David Kaplan wrote:
-> @@ -1114,6 +1114,9 @@ static void __init spectre_v1_select_mitigation(void)
->  {
->  	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V1) || cpu_mitigations_off())
->  		spectre_v1_mitigation = SPECTRE_V1_MITIGATION_NONE;
-> +
-> +	if (!should_mitigate_vuln(SPECTRE_V1))
-> +		spectre_v1_mitigation = SPECTRE_V1_MITIGATION_NONE;
->  }
+> > But where is the PCS connected?
+> 
+> For SGMII/BASE-X support the PCI11010 uses Synopsys IP which is all internal to the device. The registers of this Synopsys block are accessible indirectly using a couple of registers (called SGMII_ACCESS and SGMII_DATA) that are mapped into the PCI11010 PCIe BAR.
 
-Just a high-level comment on this: usually in a well-structured series
-that has sufficient refactoring, if you start to look at the end of the
-series, things start to fall into place.  The series (at some point)
-stops adding complexity things get simpler.
+Right, so not actually on the MDIO bus. Hence it is not correct to
+replace the true MDIO access functions with these that do MMIO.
 
-I don't really see that inflection point here.
+I do understand wanting this to look like an MDIO bus, that is what
+the Synopsys driver expects. So create an MDIO bus for it. A bus of
+its own.
 
-For instance, I would have expected cpu_mitigations_off() to be
-consulted in should_mitigate_vuln() so that some of the individual sites
-can go away.
+Just for my understanding. The configuration is purely EEPROM, not
+fuses? The PCS exists independent of the 'RGMII/not RGMII' bit in the
+EEPROM. So you could unconditionally create the PCS MDIO bus, and
+instantiate the PCS driver. In the RGMII case it would just sit there
+idle. In the 'not RGMII' mode, the PCS could be used to connect to an
+external PHY using SGMII or 2500BaseX. Or it could be connected to an
+SFP cage, using SGMII, 1000BaseX or 2500BaseX. In both cases, you tell
+phylink about it, phylink will tell you how to configure it.
 
-There's also added complexity from having 'enum vulnerabilities' which
-basically duplicate the X86_BUG_* space.  If the infrastructure was, for
-instance, built around X86_BUG bits, it might have enabled this patch to
-be something like:
-
--  	if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V1) ||
--	    cpu_mitigations_off())
-+	if (!should_mitigate_vuln(X86_BUG_SPECTRE_V1))
-		spectre_v1_mitigation = SPECTRE_V1_MITIGATION_NONE;
-
-I'm also not sure this series takes the right approach in representing
-logic in data structures versus code.
-
-For instance, this:
-
-> +	case MDS:
-> +	case TAA:
-> +	case MMIO:
-> +	case RFDS:
-> +	case SRBDS:
-> +	case GDS:
-> +		return cpu_mitigate_attack_vector(CPU_MITIGATE_USER_KERNEL) ||
-> +			cpu_mitigate_attack_vector(CPU_MITIGATE_GUEST_HOST) ||
-> +			cpu_mitigate_attack_vector(CPU_MITIGATE_USER_USER) ||
-> +			cpu_mitigate_attack_vector(CPU_MITIGATE_GUEST_GUEST);
-
-We've _tended_ to represent these in data structure like cpu_vuln_whitelist.
-
-struct whatever var[] =
-   MACRO(MDS,  USER_KERNEL | GUEST_HOST | USER_USER | GUEST_GUEST)
-   MACRO(MMIO, USER_KERNEL | GUEST_HOST | USER_USER | GUEST_GUEST)
-   ...
-};
-
-But I do like the concept of users being focused on the attack vectors
-in general.  That part is really nice.
-
-As we talk about this at Plumbers, we probably need to be focused on
-whether users want this new attack-vector-based selection mechanism or
-the old style.  Because adding the attack-vector style is going to add
-complexity any way we do it.
+	  Andrew
 
