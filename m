@@ -1,131 +1,130 @@
-Return-Path: <linux-kernel+bounces-327011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3BFF976FC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:49:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83155976FD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:51:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5099A1F24B9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:49:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CE221C23F10
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:51:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8376D1BF7FD;
-	Thu, 12 Sep 2024 17:49:31 +0000 (UTC)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1341BFDF4;
+	Thu, 12 Sep 2024 17:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nyxzXIpE"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73865149C50;
-	Thu, 12 Sep 2024 17:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC65C188592;
+	Thu, 12 Sep 2024 17:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726163371; cv=none; b=p+XWhJR5H9BE5ydAgT9vlfqyXFeLaSzIGT7AGHv5zf4HrBC5RzpFJWfdOhJIznsR98LhyYwuCzMMsnLADmKWM12ZyGiBcACvGbFE1RKxyTbHiVhUMCNBgfVhuN/q5mUExjdgV84snNj7HoyjP4lKStJyLFUHq2eARKa7kKIEaG4=
+	t=1726163466; cv=none; b=Vjt+VDbhPhjjs5yoeC2otftxsAqHzoPIBn7LBBiBqYwUSo/I0eUanbo5hxRmCnPoHz6XExXkBa8S3bOnSzS51PL2zlEafBMpmHxhBNBttbaLxX9XU7416CPqJAw8JiZP8rY6DZ7mFvEuSjytAE9yWKEhssyxyX/I7FfkBvw2OXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726163371; c=relaxed/simple;
-	bh=C5U1bcY1T+1rchz/nfQuV9RtGy8VEcB1pZLozPFTIYY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IYAhsNx7E6N0bovpMx9FYcEAhI2eKRjE6E8WtwiEs8Dn5H0ZRAiXWDwAYhwBxaVgbdEF4mrkClt4d0o1C1F8qZNmFnw7PLXDwi0ggerWv4y47mdVvMq9MjEymtSnIdDSVOmaQA1uV7cmPaTrBD5IWMIDIhuaQiYS3RXvL8OTBQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c26815e174so84017a12.0;
-        Thu, 12 Sep 2024 10:49:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726163368; x=1726768168;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aG6T1eQjFkj0EwYfybn/Brg9qKOXhI/1MoAEcTM2NxE=;
-        b=AOpkFbOZbH1R6l+QAGi3ds1NddeWAviywmQnEcQA2ImLYC9znMyp+o0u1UK8eRp0/7
-         T/wsfv6Q7q3vfe11VT6kG74PFObf1Gh1AtOvPAoiv/RfoMWC/zOGmb7uK3xknTp6RAyZ
-         nr4YHIP4irTbxAtqBunrGWWrZROSSNSJWNWhyL9wvrh4V1BgY8S/WsPS1A9+Q6S9F3LU
-         hgG/EB2GPODGhmJizeG+H4wTsEw6la1dHlIbv7XMR5PqIofi9Ze1ade/iefjcgNTnDMg
-         YaQcE3k18CdyoN9h0SR8qFvWhM4JEvqq+EXUi6y30eqKA5dtZaHUvoc9TeTvJ2nsD5cE
-         wQww==
-X-Forwarded-Encrypted: i=1; AJvYcCUf/o8qEuWEx4retNbTvxWfTuCjmp5Vif7gDzrH55QfqzgSNIoLyqBiAkQo6rxO3FGDOMqm/KTaVYbRR9E=@vger.kernel.org, AJvYcCWW/QgHattUk1/FrVbeDfvtnPVS0XuFBHewSN81A/9XlYanU06rh63UuH7MwcNxKE0XLPmEZL7V@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8NC+qmBgAmxN/xdVbTAPC7D2h3B/7Wmykkq3nufd406v5yBtC
-	kdD1UjxN1ZywxZ5m6mf9xGSIoCJh7T5MMlbIu5DWWNXGgc5BYlCQ
-X-Google-Smtp-Source: AGHT+IHrEJDc6pS8fzTbZTav71UY+P1dnrFfHwbVRdt4kB6psPXPJ4F6J3gL+HuwtbG40G5/7nxJuA==
-X-Received: by 2002:a05:6402:2803:b0:5c3:2440:8570 with SMTP id 4fb4d7f45d1cf-5c41e1acc7amr68881a12.26.1726163366674;
-        Thu, 12 Sep 2024 10:49:26 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-003.fbsv.net. [2a03:2880:30ff:3::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd523bfsm6832356a12.53.2024.09.12.10.49.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 10:49:26 -0700 (PDT)
-Date: Thu, 12 Sep 2024 10:49:24 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Maksym Kutsevol <max@kutsevol.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 2/2] netcons: Add udp send fail statistics to
- netconsole
-Message-ID: <20240912-honest-industrious-skua-9902c3@leitao>
-References: <20240912173608.1821083-1-max@kutsevol.com>
- <20240912173608.1821083-2-max@kutsevol.com>
+	s=arc-20240116; t=1726163466; c=relaxed/simple;
+	bh=hE57exT5nkoakk6qpUhqx+qvtY8IHdaEVxrZ77/wNgs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=q/lFnQ3vcwzza7qQAFOGpfm0CL1fQHYv2aC3CAczsgQSiH5l2rKtg4rYhcwO6o3NqKHOuvg3MuulXmDL+CSgZMEy37vjk5qdtH7vDnMBSx2FlDO246CIE4XFBvgPCENGlGpyE1PqNqExW9wvGExxUyeBuMTy00t6B8dGicUQlcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nyxzXIpE; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48CBnZfC028261;
+	Thu, 12 Sep 2024 17:50:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=JvW5JjlIyW6t8pxCWnahq3
+	wxHl71l61a8D2wN1+88W8=; b=nyxzXIpEARwySedRNcJS2PXMniR2rxOf5c1t4o
+	XI/dzmp3y3F1LJNgYEUb2sZahIrN4KnwxJenNvCuCTDgGNlXmRIhWzHmMLxJBMZT
+	o5YdpZ3aE+X7mlzrGhPrIMw2xbCUkGjWxcHSg9QyEP9OXKUTbjuP2wqWL9C+x9bt
+	ak2W9ELyM9+Q/hQnKX7qZqrt+Ff+Dasf5p5tZN9QT6wj4i4oTMftfXVoP9tw+Rwq
+	sg9Hgwd+Bc9fDvP0FEdq9iprwNaVyXy+bv2LTq1Cs42NQ6nqgO9bsU7DPEFHa+/Q
+	X6HiOz8pF1IciI3VdXCYy69otUKW4pLYGCZN0k6Iv6u+S/Ug==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy736c0a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Sep 2024 17:50:59 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48CHowEe022686
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 12 Sep 2024 17:50:58 GMT
+Received: from hu-nkela-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 12 Sep 2024 10:50:54 -0700
+From: Nikunj Kela <quic_nkela@quicinc.com>
+To: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
+        <quic_psodagud@quicinc.com>, Nikunj Kela <quic_nkela@quicinc.com>
+Subject: [PATCH v3] dt-bindings: cpufreq: qcom-hw: document support for SA8255p
+Date: Thu, 12 Sep 2024 10:50:43 -0700
+Message-ID: <20240912175043.2262697-1-quic_nkela@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240912173608.1821083-2-max@kutsevol.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: MyqPSI2pmKsOsFPfAM7g4lts3ZTgt_wg
+X-Proofpoint-GUID: MyqPSI2pmKsOsFPfAM7g4lts3ZTgt_wg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ impostorscore=0 lowpriorityscore=0 clxscore=1015 bulkscore=0
+ malwarescore=0 adultscore=0 mlxlogscore=949 suspectscore=0
+ priorityscore=1501 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2408220000 definitions=main-2409120132
 
-Hello Maksym,
+Add compatible for the cpufreq engine representing support on SA8255p.
 
-Thanks for the patch, it is looking good. A few nits:
+Signed-off-by: Nikunj Kela <quic_nkela@quicinc.com>
+---
 
-On Thu, Sep 12, 2024 at 10:28:52AM -0700, Maksym Kutsevol wrote:
-> +/**
-> + * netpoll_send_udp_count_errs - Wrapper for netpoll_send_udp that counts errors
-> + * @nt: target to send message to
-> + * @msg: message to send
-> + * @len: length of message
-> + *
-> + * Calls netpoll_send_udp and classifies the return value. If an error
-> + * occurred it increments statistics in nt->stats accordingly.
-> + * Only calls netpoll_send_udp if CONFIG_NETCONSOLE_DYNAMIC is disabled.
-> + */
-> +static void netpoll_send_udp_count_errs(struct netconsole_target *nt, const char *msg, int len)
-> +{
-> +	int result = netpoll_send_udp(&nt->np, msg, len);
+Changes in v3:
+	- Added compatible to the correct constraint list
+	- Removed the new constraint block added in v2
+	- Removed the patch from original series[1]
 
-Would you get a "variable defined but not used" type of eror if
-CONFIG_NETCONSOLE_DYNAMIC is disabled?
+Changes in v2:
+	- Added new constraints
 
-> +
-> +	if (IS_ENABLED(CONFIG_NETCONSOLE_DYNAMIC)) {
-> +		if (result == NET_XMIT_DROP) {
-> +			u64_stats_update_begin(&nt->stats.syncp);
-> +			u64_stats_inc(&nt->stats.xmit_drop_count);
-> +			u64_stats_update_end(&nt->stats.syncp);
-> +		} else if (result == -ENOMEM) {
-> +			u64_stats_update_begin(&nt->stats.syncp);
-> +			u64_stats_inc(&nt->stats.enomem_count);
-> +			u64_stats_update_end(&nt->stats.syncp);
-> +		}
-> +	}
+[1]: https://lore.kernel.org/all/20240903220240.2594102-1-quic_nkela@quicinc.com/
+---
+ Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Would this look better?
+diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml
+index 1e9797f96410..1d1f8637bc03 100644
+--- a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml
++++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.yaml
+@@ -34,6 +34,7 @@ properties:
+         items:
+           - enum:
+               - qcom,qdu1000-cpufreq-epss
++              - qcom,sa8255p-cpufreq-epss
+               - qcom,sa8775p-cpufreq-epss
+               - qcom,sc7280-cpufreq-epss
+               - qcom,sc8280xp-cpufreq-epss
+@@ -130,6 +131,7 @@ allOf:
+           contains:
+             enum:
+               - qcom,qdu1000-cpufreq-epss
++              - qcom,sa8255p-cpufreq-epss
+               - qcom,sc7180-cpufreq-hw
+               - qcom,sc8280xp-cpufreq-epss
+               - qcom,sdm670-cpufreq-hw
+-- 
+2.34.1
 
-	if (IS_ENABLED(CONFIG_NETCONSOLE_DYNAMIC)) {
-		u64_stats_update_begin(&nt->stats.syncp);
-
-		if (result == NET_XMIT_DROP)
-			u64_stats_inc(&nt->stats.xmit_drop_count);
-		else if (result == -ENOMEM)
-			u64_stats_inc(&nt->stats.enomem_count);
-		else
-			WARN_ONCE(true, "invalid result: %d\n", result)
-
-		u64_stats_update_end(&nt->stats.syncp);
-	}
-
-Thanks
---breno
 
