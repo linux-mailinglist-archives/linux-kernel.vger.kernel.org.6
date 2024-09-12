@@ -1,136 +1,128 @@
-Return-Path: <linux-kernel+bounces-326684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37135976BBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:14:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69C30976BBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:15:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1250285F3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:14:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21F811F235F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B82D1B12EF;
-	Thu, 12 Sep 2024 14:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2DA1B12E4;
+	Thu, 12 Sep 2024 14:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VxF7j5eM"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCu4fUiz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442DE188A01;
-	Thu, 12 Sep 2024 14:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F79188A01;
+	Thu, 12 Sep 2024 14:14:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726150488; cv=none; b=maT+ZSI/MRN6Z7pmcwUgE8gwuqwilA3bJdUdH0Xp0kIMhkE+GL55+K8FeGtrLcTnEFDBPPUl03OZctmgfblCq7DZFngE6jBEo7yuvveZxzuJKPDBtmII/1cTWTQE8PlalJgejaJGHto3qC2F/CVp8hTtuFNiCcHDKXtJXXZZmSM=
+	t=1726150497; cv=none; b=rcdnblucuPUmZapuCOFw4WT7kICRo/AU28aWRkrcJxoXdPIZP1YiHYn6mQH1TcgbYAkAXD9HWV1qndoQLBY29yrpE0ZfHai0ZU8mroXC2iI+Vq2k5LjN2P4JY8N3zzv5KLqDHpzxu0joFMKjnVY79c28y1uqSiB3fKTfnagALB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726150488; c=relaxed/simple;
-	bh=N/8v03rBrpEgHqb+PXOydlfeoaazZNe9MY9sOeCvP6M=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=FzSq9EvqbcwpvwNPA0anMSD1ywy4dkANIZq8yHd4VSrw383qEWWpT/7jdV8GhJlYuU34ibaZIE+aOhwLdBVD4tbAI+E3uZUYOBih7vtPc5yfheKrALwBuGl3O7DltvC229Sqq8M5LVfU6WGxHCysnRUM/ZmPX9bWdv1dqhUIsQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VxF7j5eM; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cb806623eso9005755e9.2;
-        Thu, 12 Sep 2024 07:14:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726150484; x=1726755284; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=g714x2KPyDdUULb7WdPERfWkw9Cpc1SnJyjrBIWDKVY=;
-        b=VxF7j5eMNYAeGiY0QfwF9f+e9rYlgcIHDZR6RKv35eHJ7RREO9sADDgDQn5qxKDcAx
-         8z/hk9dkNQGmMHFqF/hBs0iS/5pizBBojH/5YDLs2y81xistQUDgqj7K9lxRpiKbheSD
-         Ga5duaUdBk9XrJP6xWHOYD1zpRuUfHSFlGtSZC7nQxhtEziq2EWZln3quQjHqQSGyZzr
-         Dkf2idhqqoKAnRRifc2Pah9MCwaJH0SChB8ssqrVXcaqIKGxqa8I8qiGKna6hTc0yHSR
-         A3g48Ir2M9yAhiFW7+HFsMq+496tJO7vb7BSDOyZIKkENMPC8sNbCFG/hKhBoi/mxbaM
-         O0YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726150484; x=1726755284;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g714x2KPyDdUULb7WdPERfWkw9Cpc1SnJyjrBIWDKVY=;
-        b=rIOMBW3OIa7ldtBtTWLCwqVBy4vXkY+NiR81Xd9V9RyurDxU7gLHa5jdkRI+rhhwN4
-         ja6oDgBEdk5liMY6io8mrfy1RJ5FpGuiLqGQBIQ0EH0HvtoDuGdXALwRQQbHNO0Wn2sG
-         W3LF3wNobBV2hrvf8+GZOZrVi4R7jLCsGj4Ppu3ICMGQ26CNCV9olGoo5p8WKO2uSOwD
-         V9oGSXeEfEbG/lWs/KWw0agdK5IB76nV1Ck3yS+p3qPI5IbsOnJ5LBphadRBa5VtMf2j
-         fX15o1h2R7sa02pdQVv+MHKdv4Yjx+JYd0vZwSJbIzPBYvdiBH7l/c1aBgu9VROpFlHK
-         YNaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUsXVTILddJOr7NXiWT0fG5Y2l3PPnuPk+YQjEumj2Au380J5bj6X5/mZwQc+MNsTs+vg7dGzYT@vger.kernel.org, AJvYcCXhreXq78A/fTRYIDMMPoB9S1+n3b6sxns8nulJwIbDF2UIRMSI6an1g0hiyloomwW5HIsDHfkOtRNeWUE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/S0qeD17115cQvcVbKJD1vDRXFXZ8/ANw6eifIDYXqxTnZgM+
-	v7J8HYcWX/RlZnhIqTpHArcYxyR8vZqmKS/DTHrsCohex1hdmiIz
-X-Google-Smtp-Source: AGHT+IGkh/I4jLC8F1W7DHi3pewlNhPDdyiR06lI0MufFjfNvYiL/lSsmteSIJ2MDt446X/fOq4SPQ==
-X-Received: by 2002:a5d:4811:0:b0:374:c08c:1046 with SMTP id ffacd0b85a97d-378c2d0650emr1692383f8f.20.1726150483926;
-        Thu, 12 Sep 2024 07:14:43 -0700 (PDT)
-Received: from ubuntu.localdomain ([46.121.16.106])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb45c81sm176654735e9.28.2024.09.12.07.14.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 07:14:43 -0700 (PDT)
-From: Guy Avraham <guyavrah1986@gmail.com>
-To: guyavrah1986@gmail.com,
-	davem@davemloft.net,
-	dsahern@kernel.org,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net] net:ipv4:ip_route_input_slow: Change behaviour of routing decision when IP router alert option is present
-Date: Thu, 12 Sep 2024 17:14:40 +0300
-Message-Id: <20240912141440.314005-1-guyavrah1986@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1726150497; c=relaxed/simple;
+	bh=VGZRJzmCN+Wam8xXW+P57As3xaf2eURuf7X7kqSVP/4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qnBOm9t3Qu5j0I49rP8nykZ17+meSKarg9qimVw8IM+FnVAWF0DSIAfVsSvcEPcTVJEEmvXkih+zgZUwsge0DpcUjF8b2Gz48iz7itkEJWWrgIG6izseqbY3mxFWyjjTiL5q2Y4BG1xp9ByOtPInb1YBVm4mziAfke14Engng20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCu4fUiz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23DA9C4CED1;
+	Thu, 12 Sep 2024 14:14:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726150497;
+	bh=VGZRJzmCN+Wam8xXW+P57As3xaf2eURuf7X7kqSVP/4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=UCu4fUizGzE/dzDYc6CuCz/qavF3YbiQyMrJzGo/5YZsGrD+qM5sopYjrApGcg/VV
+	 es6Dwq7BMu6suX1JkIfpGnAXCt0FU7SW2zkAFHYhhQIDbj5hoGd+TrZ9IsBrHhjKr7
+	 +OQ9CieoiZUesGyHUZZwAJucay1togj7ylsiSJMtU4dxEIALi9gPfWxfZWoKGCvHDk
+	 ULLDsGQBNtHuNgqct0Gbe8QZTXN6gKWUKrFjP38ezSDlMAQ5I0MGRKdL2+Slt5GI5R
+	 UERtzmrTLRPsZK6yvgm3F72GGvERC9s66IR+5AA0p6IYViJuOTa/PRin5wZCk6tCdW
+	 Uj2nOqtepDcQw==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f75f116d11so13281321fa.1;
+        Thu, 12 Sep 2024 07:14:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUaDEuLOedB2HZHOOQvYsIrIVTvnJV5KG/JLiCvLCwd3aTiiU++9vjGcNREZ7Rzql0bFLDu1ZBtbkHjojQc@vger.kernel.org, AJvYcCXHnhCsDN5rmnulmUuvQJTfMmjriHSing6uQmG27Trt3SL2RAScojJj+1AHj/pTpIN0ox+SCVE87pE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywN6/TH1UEmaTwzu3h0pw6HqmtbSQa+P9Bte/8Iprnhwc3QHHq
+	BduDTaArwpyNCV/UQJfx5ko3Uz/Ynypx3lWv8DN8zRf/ZeiufhEjsr+Qe2gNCcAM8S3OY2kgs1Z
+	5vZrzW/FIpBBCYI6aT4HFfxfrtb4=
+X-Google-Smtp-Source: AGHT+IGyYLLbdVpehbHj2Oyt04OkcFENJP/n0YHbA9nWypu5M9+GnU0Kn53CEAQm2eO+JUyPpMVSPBaYRfKVMrIyfhM=
+X-Received: by 2002:a2e:a7c1:0:b0:2f7:543a:3b1a with SMTP id
+ 38308e7fff4ca-2f787d9e337mr19645771fa.7.1726150495442; Thu, 12 Sep 2024
+ 07:14:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240911104109.1831501-1-usamaarif642@gmail.com>
+ <CAMj1kXFVyQEwBTf2bG8yBXUktM16dzrcPH-Phz_toAsCK-NfMA@mail.gmail.com>
+ <2542182d-aa79-4705-91b6-fa593bacffa6@gmail.com> <CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
+ <20240912-wealthy-gabby-tamarin-aaba3c@leitao> <CAMj1kXHh-Kov8c1pto0LJL6debugz1og6GFMYCwvfu+RiQGreA@mail.gmail.com>
+ <6b2cc4c4-4354-4b29-bc73-c1384b90dfc6@gmail.com> <CAMj1kXG1hbiafKRyC5qM1Vj5X7x-dmLndqqo2AYnHMRxDz-80w@mail.gmail.com>
+In-Reply-To: <CAMj1kXG1hbiafKRyC5qM1Vj5X7x-dmLndqqo2AYnHMRxDz-80w@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 12 Sep 2024 16:14:43 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXFr+N9LMj0=wULchYosUpV0ygZSKUj1vdUP0KWEANKasw@mail.gmail.com>
+Message-ID: <CAMj1kXFr+N9LMj0=wULchYosUpV0ygZSKUj1vdUP0KWEANKasw@mail.gmail.com>
+Subject: Re: [RFC] efi/tpm: add efi.tpm_log as a reserved region in 820_table_firmware
+To: Usama Arif <usamaarif642@gmail.com>, Dave Young <dyoung@redhat.com>
+Cc: Breno Leitao <leitao@debian.org>, linux-efi@vger.kernel.org, kexec@lists.infradead.org, 
+	ebiederm@xmission.com, bhe@redhat.com, vgoyal@redhat.com, tglx@linutronix.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	rmikey@meta.com, gourry@gourry.net
+Content-Type: text/plain; charset="UTF-8"
 
-When an IP packet with the IP router alert (RFC 2113) field arrives
-to some host who is not the destination of that packet (i.e - non of
-its interfaces is the address in the destination IP address field of that
-packet) and, for whatever reason, it does not have a route to this
-destination address, it drops this packet during the "routing decision"
-flow even though it should potentially pass it to the relevant
-application(s) that are interested in this packet's content - which happens
-in the "forwarding decision" flow. The suggested fix changes this behaviour
-by setting the ip_forward as the next "step" in the flow of the packet,
-just before it (previously was) is dropped, so that later the ip_forward,
-as usual, will pass it on to its relevant recipient (socket), by
-invoking the ip_call_ra_chain.
+(cc Dave)
 
-Signed-off-by: Guy Avraham <guyavrah1986@gmail.com>
----
-The fix was tested and verified on Linux hosts that act as routers in which
-there are kerenls 3.10 and 5.2. The verification was done by simulating
-a scenario in which an RSVP (RFC 2205) Path message (that has the IP
-router alert option set) arrives to a transit RSVP node, and this host
-passes on the RSVP Path message to the relevant socket (of the RSVP
-deamon) even though upon arrival of this packet it does NOT have route
-to the destination IP address of the IP packet (that encapsulates the
-RSVP Path message).
+Full thread here:
+https://lore.kernel.org/all/CAMj1kXG1hbiafKRyC5qM1Vj5X7x-dmLndqqo2AYnHMRxDz-80w@mail.gmail.com/T/#u
 
- net/ipv4/route.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/net/ipv4/route.c b/net/ipv4/route.c
-index 13c0f1d455f3..7c416eca84f8 100644
---- a/net/ipv4/route.c
-+++ b/net/ipv4/route.c
-@@ -2360,8 +2360,12 @@ out:	return err;
- 
- 	RT_CACHE_STAT_INC(in_slow_tot);
- 	if (res->type == RTN_UNREACHABLE) {
--		rth->dst.input= ip_error;
--		rth->dst.error= -err;
-+		if (IPCB(skb)->opt.router_alert)
-+			rth->dst.input = ip_forward;
-+		else
-+			rth->dst.input = ip_error;
-+
-+		rth->dst.error = -err;
- 		rth->rt_flags	&= ~RTCF_LOCAL;
- 	}
- 
--- 
-2.25.1
-
+On Thu, 12 Sept 2024 at 16:05, Ard Biesheuvel <ardb@kernel.org> wrote:
+>
+> On Thu, 12 Sept 2024 at 15:55, Usama Arif <usamaarif642@gmail.com> wrote:
+> >
+> >
+> >
+> > On 12/09/2024 14:10, Ard Biesheuvel wrote:
+> > > Does the below help at all?
+> > >
+> > > --- a/drivers/firmware/efi/tpm.c
+> > > +++ b/drivers/firmware/efi/tpm.c
+> > > @@ -60,7 +60,7 @@ int __init efi_tpm_eventlog_init(void)
+> > >         }
+> > >
+> > >         tbl_size = sizeof(*log_tbl) + log_tbl->size;
+> > > -       memblock_reserve(efi.tpm_log, tbl_size);
+> > > +       efi_mem_reserve(efi.tpm_log, tbl_size);
+> > >
+> > >         if (efi.tpm_final_log == EFI_INVALID_TABLE_ADDR) {
+> > >                 pr_info("TPM Final Events table not present\n");
+> >
+> > Unfortunately not. efi_mem_reserve updates e820_table, while kexec looks at /sys/firmware/memmap
+> > which is e820_table_firmware.
+> >
+> > arch_update_firmware_area introduced in the RFC patch does the same thing as efi_mem_reserve does at
+> > its end, just with e820_table_firmware instead of e820_table.
+> > i.e. efi_mem_reserve does:
+> >         e820__range_update(addr, size, E820_TYPE_RAM, E820_TYPE_RESERVED);
+> >         e820__update_table(e820_table);
+> >
+> > while arch_update_firmware_area does:
+> >         e820__range_update_firmware(addr, size, E820_TYPE_RAM, E820_TYPE_RESERVED);
+> >         e820__update_table(e820_table_firmware);
+> >
+>
+> Shame.
+>
+> Using efi_mem_reserve() is appropriate here in any case, but I guess
+> kexec on x86 needs to be fixed to juggle the EFI memory map, memblock
+> table, and 3 (!) versions of the E820 table in the correct way
+> (e820_table, e820_table_kexec and e820_table_firmware)
+>
+> Perhaps we can put this additional logic in x86's implementation of
+> efi_arch_mem_reserve()? AFAICT, all callers of efi_mem_reserve() deal
+> with configuration tables produced by the firmware that may not be
+> reserved correctly if kexec looks at e820_table_firmware[] only.
 
