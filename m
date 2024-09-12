@@ -1,130 +1,205 @@
-Return-Path: <linux-kernel+bounces-327352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9AA4977486
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:49:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A440E977487
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:50:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F24F1F2524B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:49:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 340831F254E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39DD21C2DB2;
-	Thu, 12 Sep 2024 22:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9220D1C2DBD;
+	Thu, 12 Sep 2024 22:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e81qgHXL"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BpwbQFaG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB3E2C80;
-	Thu, 12 Sep 2024 22:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64652C80;
+	Thu, 12 Sep 2024 22:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726181382; cv=none; b=hkybmcTVGk8tUPxJeirzEMVAFIzLi3BnTtYU9A+J5mpMGZPS4CnoSl/9Ct8mwxpqcG4Oc/Qz0kDE5W2RVJlCYQTUjW/asu9vIaSDbgpaVI6X0foibszx9QumyOFg41KWLIlQg+t2fypo4aEsux4TixdQj0HVyZz8/40qoyjennU=
+	t=1726181418; cv=none; b=eKWFLZOMEbJa5fYd8ONuXJf0nDJzGNawO+uxn0FyhCeTzS3qFdtzboRhBKHtl3OfHqVdjjMVnWaWZh32of/k9m2OZO4k/9L+Us1bu2Rm8ZpG2hfOm6aaQj2M5bwoHAk+6k5V1wL1XFViii9DIcFp/MfMW5LVtNEb0om8H1Hb0VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726181382; c=relaxed/simple;
-	bh=D0KsdfpzYaJ+R34imwB84t1tcxTzy7uDwzAnCSdfLl0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W4RxJv2gox2vVJU3YZD75DEaY19pE3zhtOEimnI6HwrzNWk8XeHPhGRTpbJ7Q4UIYFr5qAXWP/aufrvWt7uMa5VA6rN4V2AkmLc7elwPHzy9s9+XJ23jiLsHE0ozCfH98RPQ9TA3i0sC+3vvHzOUon/IB4calY+HfdFGb4GuzLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e81qgHXL; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2d8abac30ddso1259533a91.0;
-        Thu, 12 Sep 2024 15:49:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726181380; x=1726786180; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xfz3ffC20am1RxApc5KtkJVNDjR/H4j/9ugKy+x5Bh4=;
-        b=e81qgHXLzvrf8cc3D/M2KN86opGJ6a4BVTeCXlajCsY3YLYLbEjVfOmgk0Xcumbvb8
-         pkrVdZPYkLoGbuLAExvT6ItuhlCJxeE4vgPQeJKqxY54Mm99dzRHcPY2X+zzyhn5LYTd
-         YNgh7s5+UcpiWanjyiiN4QYKW+u7SHEGRErnj/0L11ANp6mp05PRJpyrBGSJlk6LuyYk
-         3E1TIaoq2OfqwbUy+b2VtL5WCT7bfpYYgW5iTzjC5UXkmLXnPRL7zTDR0RZxa62Hqfkl
-         6gomgiTjivB4Xr4eTiLpmSnwDRdcDiqJ125qzg/b7dyTWhRVoA0u2vzAB5ZkAmka5S+T
-         t9Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726181380; x=1726786180;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Xfz3ffC20am1RxApc5KtkJVNDjR/H4j/9ugKy+x5Bh4=;
-        b=Z9INJ9hGRLhYvzqPxsV0lmAjWpRzOp0v2yrmktOBC1xuSTqnyCISwY1Vk7Xqn9SsL6
-         yLxsZ4K7Gor/Tx4djquKEdomwsIZDkiGAHn4YqciNyU2fk+5bajVpsACHcNJ9LDXS+l9
-         HUcoJyIYN3F3niSLEP5mQxV3hRNJmGlTLmz4RIWf6mf2uU3tACGc8vajWPvv7+LY64u0
-         QPa4o5rrsc/DPl5QRQhdqLcTqlchRQr0qVJPZLlsr+6zjggJ7a0ekcfz0PUO5aWpeqj7
-         dbiZIdMrm7xAgnDpKcGVe+H/O047jxg9sr8LjVUl/ahsKbqSgY5WotZInG0ErAJQq5PI
-         vNEg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtNz5WZ1qfwLSyBtMtvTl2Pu2Vm6Slw7H+/jGf8IgavRJXxStY1JCRaNWYLsAao+8dyUc/9NVvnYM=@vger.kernel.org, AJvYcCWw9Vss70utWStmWVOiLm3Obm3V3UvpwiFBM5tzpM1YgSEPUv8KAmwCp21q8l24SFRod+lCKJPu7lssiEw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvmhCWK374P5DEzYTtjI29q7ILw1xlPgCSigm/X6F62MGZEfk/
-	IFGr97Lttb++roClx5APgyykNzGmDxv1O1HHIm2+kQBip75p8/2Q
-X-Google-Smtp-Source: AGHT+IFNWm4n0MIsKKq0PGarqFsLiSTjHXWHrXbLKn5gk/7hkmSpIOlZufnM2C64D6bd8kekC8datQ==
-X-Received: by 2002:a17:90a:c28c:b0:2d8:7a54:51a6 with SMTP id 98e67ed59e1d1-2dba007dfc2mr5249627a91.33.1726181380491;
-        Thu, 12 Sep 2024 15:49:40 -0700 (PDT)
-Received: from localhost.localdomain (111-240-84-197.dynamic-ip.hinet.net. [111.240.84.197])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbb9ced092sm246449a91.38.2024.09.12.15.49.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 15:49:40 -0700 (PDT)
-From: Min-Hua Chen <minhuadotchen@gmail.com>
-To: jwyatt@redhat.com
-Cc: jkacur@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	minhuadotchen@gmail.com,
-	shuah@kernel.org,
-	skhan@linuxfoundation.org,
-	trenn@suse.com
-Subject: Re: [RFC PATCH for-next] pm: cpupower: rename raw_pylibcpupower.i
-Date: Fri, 13 Sep 2024 06:49:15 +0800
-Message-ID: <20240912224916.79367-1-minhuadotchen@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <ZuMmqAmr62ErjqHc@rhfedora>
-References: <ZuMmqAmr62ErjqHc@rhfedora>
+	s=arc-20240116; t=1726181418; c=relaxed/simple;
+	bh=NY0p3xR2vEqci09C9/o+Zh+pGhrvoPtl3r1LixLt0+s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DcGTEL0Gyerp5WNwZYl76bgUqdrEJtwT2vPfdEYBL8wwfKy0Ec2BDl2uZ2UopnIC4ue3TDZs5M9K8CBDAyGd/yG/60u/oAHL/iRkw48FClNR4XHMqXfevlHp1SSBm2vMaWJHfQQGMrntzyC96l6U5Q4piJ04KD2h4tf5qtmkLi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BpwbQFaG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BD71C4CEC3;
+	Thu, 12 Sep 2024 22:50:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726181418;
+	bh=NY0p3xR2vEqci09C9/o+Zh+pGhrvoPtl3r1LixLt0+s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BpwbQFaGHbg2UI+G/qAHCWRm+sNr/rWbLx2IK9LMBh9SJeCW1Owp2r7rLIFqeJeoI
+	 jWWOTz88t1wi3ruIqyPlMNebCiA4VPhql0ri4OSPXjGcCCBR0vQJKLeurJaY7/cC/V
+	 1KqnwDL8SF90mwedUndHxNTQ1sl6+PZB9Y8Gz6CEaln7PukVYp5352k7Kih2fZsetH
+	 tXZz0q5l1fmhNk0IrNrY3BbBjIrVUA5LlYikSoVhHtY0tpdCIOkBhsJsUVsWWkjupC
+	 KosHEtiBO/ycMBN1b3Ysb4wKz1axY5Dip+a7Srj3/lfWQZoTDTt1VUs9BuTHnUm7gX
+	 TpiAdLj7DhwOg==
+Date: Thu, 12 Sep 2024 15:50:15 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Jing Zhang <renyu.zj@linux.alibaba.com>,
+	Xu Yang <xu.yang_2@nxp.com>, Sandipan Das <sandipan.das@amd.com>,
+	Benjamin Gray <bgray@linux.ibm.com>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	Howard Chu <howardchu95@gmail.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Yang Jihong <yangjihong@bytedance.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Veronika Molnarova <vmolnaro@redhat.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Changbin Du <changbin.du@huawei.com>, Ze Gao <zegao2021@gmail.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	=?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clement.legoffic@foss.st.com>,
+	Sun Haiyong <sunhaiyong@loongson.cn>,
+	Junhao He <hejunhao3@huawei.com>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 00/13] Tool and hwmon PMUs
+Message-ID: <ZuNwJ07GyMVIT0Qi@google.com>
+References: <20240912190341.919229-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240912190341.919229-1-irogers@google.com>
 
-Hi,
+On Thu, Sep 12, 2024 at 12:03:27PM -0700, Ian Rogers wrote:
+> Rather than have fake and tool PMUs being special flags in an evsel,
+> create special PMUs. This allows, for example, duration_time to also
+> be tool/duration_time/. Once adding events to the tools PMU is just
+> adding to an array, add events for nearly all the expr literals like
+> num_cpus_online. Rather than create custom logic for finding and
+> describing the tool events use json and add a notion of common json
+> for the tool events.
+> 
+> Following the convention of the tool PMU, create a hwmon PMU that
+> exposes hwmon data for reading. For example, the following shows
+> reading the CPU temperature and 2 fan speeds alongside the uncore
+> frequency:
+> ```
+> $ perf stat -e temp_cpu,fan1,hwmon_thinkpad/fan2/,tool/num_cpus_online/ -M UNCORE_FREQ -I 1000
+>      1.001153138              52.00 'C   temp_cpu
+>      1.001153138              2,588 rpm  fan1
+>      1.001153138              2,482 rpm  hwmon_thinkpad/fan2/
+>      1.001153138                  8      tool/num_cpus_online/
+>      1.001153138      1,077,101,397      UNC_CLOCK.SOCKET                 #     1.08 UNCORE_FREQ
+>      1.001153138      1,012,773,595      duration_time
+> ...
+> ```
+> 
+> Additional data on the hwmon events is in perf list:
+> ```
+> $ perf list
+> ...
+> hwmon:
+> ...
+>   temp_core_0 OR temp2
+>        [Temperature in unit coretemp named Core 0. crit=100'C,max=100'C crit_alarm=0'C. Unit:
+>         hwmon_coretemp]
+> ...
+> ```
+> 
+> v2: Address Namhyung's review feedback. Rebase dropping 4 patches
+>     applied by Arnaldo, fix build breakage reported by Arnaldo.
+> 
+> Ian Rogers (13):
+>   perf pmu: Simplify an asprintf error message
+>   perf pmu: Allow hardcoded terms to be applied to attributes
+>   perf parse-events: Expose/rename config_term_name
+>   perf tool_pmu: Factor tool events into their own PMU
+>   perf tool_pmu: Rename enum perf_tool_event to tool_pmu_event
+>   perf tool_pmu: Rename perf_tool_event__* to tool_pmu__*
+>   perf tool_pmu: Move expr literals to tool_pmu
+>   perf jevents: Add tool event json under a common architecture
+>   perf tool_pmu: Switch to standard pmu functions and json descriptions
+>   perf tests: Add tool PMU test
+>   perf hwmon_pmu: Add a tool PMU exposing events from hwmon in sysfs
+>   perf test: Add hwmon "PMU" test
+>   perf docs: Document tool and hwmon events
 
->On Thu, Sep 12, 2024 at 10:31:19AM -0600, Shuah Khan wrote:
->> On 9/12/24 06:50, Min-Hua Chen wrote:
->> > This RFC patch is actually bug report. All *.i file will be
->> > removed by 'make mrproper', including raw_pylibcpupower.i, added
->> > by commit: 338f490e07bc ("pm:cpupower: Add SWIG bindings files for libcpupower")
->> > 
->> > We can reproduce the error by performing the following command:
->> > cd linux-next
->> > make mrproper
->> > cd tools/power/cpupower/bindings/python
->> > make
->> > 
->> > We will get an error message:
->> > make: *** No rule to make target 'raw_pylibcpupower.i', needed by 'raw_pylibcpupower_wrap.c'.  Stop.
->> > 
->> > Renaming the raw_pylibcpupower.i is just a workaround to fix the
->> > issue above.
->> 
->> I need a non-rfc patch for this. Please send a proper patch
->> I can pull in once John has a chance to review this.
->
->I have reviewed and tested and this. I am good with it being a stopgap.
->
->Please send the non-rfc patch.
->
->Thank you for reporting and sending a patch for this Min-Hua.
->
->Reviewed-by: John B. Wyatt IV <jwyatt@redhat.com>
->Reviewed-by: John B. Wyatt IV <sageofredondo@gmail.com>
->Tested-by: John B. Wyatt IV <jwyatt@redhat.com>
->Tested-by: John B. Wyatt IV <sageofredondo@gmail.com>
+For patch 1-10,
 
-Thank you for reviewing this patch, I will submit a non-rfc patch later.
+Acked-by: Namhyung Kim <namhyung@kernel.org>
 
-cheers,
-Min-Hua
+I'll take a look at hwmon patches later, but I think it'd be nice if you
+could split the change into pieces.
+
+Thanks,
+Namhyung
+
+> 
+>  tools/perf/Documentation/perf-list.txt        |  15 +
+>  tools/perf/arch/arm64/util/pmu.c              |   5 +-
+>  tools/perf/arch/x86/util/intel-pt.c           |   3 +-
+>  tools/perf/arch/x86/util/tsc.c                |  18 +-
+>  tools/perf/builtin-list.c                     |  13 +-
+>  tools/perf/builtin-stat.c                     |   7 +-
+>  .../pmu-events/arch/common/common/tool.json   |  74 ++
+>  tools/perf/pmu-events/empty-pmu-events.c      | 208 +++--
+>  tools/perf/pmu-events/jevents.py              |  16 +-
+>  tools/perf/tests/Build                        |   2 +
+>  tools/perf/tests/builtin-test.c               |   2 +
+>  tools/perf/tests/hwmon_pmu.c                  | 243 ++++++
+>  tools/perf/tests/pmu.c                        |   3 +-
+>  tools/perf/tests/tests.h                      |   2 +
+>  tools/perf/tests/tool_pmu.c                   | 111 +++
+>  tools/perf/util/Build                         |   2 +
+>  tools/perf/util/evsel.c                       | 287 +-----
+>  tools/perf/util/evsel.h                       |  28 +-
+>  tools/perf/util/expr.c                        |  93 +-
+>  tools/perf/util/hwmon_pmu.c                   | 818 ++++++++++++++++++
+>  tools/perf/util/hwmon_pmu.h                   | 154 ++++
+>  tools/perf/util/metricgroup.c                 |  35 +-
+>  tools/perf/util/parse-events.c                |  62 +-
+>  tools/perf/util/parse-events.h                |   5 +-
+>  tools/perf/util/parse-events.l                |  11 -
+>  tools/perf/util/parse-events.y                |  16 -
+>  tools/perf/util/pmu.c                         | 104 ++-
+>  tools/perf/util/pmu.h                         |   9 +-
+>  tools/perf/util/pmus.c                        |  16 +
+>  tools/perf/util/pmus.h                        |   3 +
+>  tools/perf/util/print-events.c                |  36 +-
+>  tools/perf/util/print-events.h                |   1 -
+>  tools/perf/util/stat-display.c                |  14 +-
+>  tools/perf/util/stat-shadow.c                 |  22 +-
+>  tools/perf/util/tool_pmu.c                    | 508 +++++++++++
+>  tools/perf/util/tool_pmu.h                    |  56 ++
+>  tools/perf/util/tsc.h                         |   2 +-
+>  37 files changed, 2376 insertions(+), 628 deletions(-)
+>  create mode 100644 tools/perf/pmu-events/arch/common/common/tool.json
+>  create mode 100644 tools/perf/tests/hwmon_pmu.c
+>  create mode 100644 tools/perf/tests/tool_pmu.c
+>  create mode 100644 tools/perf/util/hwmon_pmu.c
+>  create mode 100644 tools/perf/util/hwmon_pmu.h
+>  create mode 100644 tools/perf/util/tool_pmu.c
+>  create mode 100644 tools/perf/util/tool_pmu.h
+> 
+> -- 
+> 2.46.0.662.g92d0881bb0-goog
+> 
 
