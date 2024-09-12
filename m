@@ -1,106 +1,100 @@
-Return-Path: <linux-kernel+bounces-325755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A4F6975DC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 01:51:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 083A1975DD4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:10:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1BDE1C221ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 11 Sep 2024 23:51:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7D09285532
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111631B78FC;
-	Wed, 11 Sep 2024 23:51:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B960DA5F;
+	Thu, 12 Sep 2024 00:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f+ZcnKWy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/GsMvBy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70DB686126;
-	Wed, 11 Sep 2024 23:51:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC20370;
+	Thu, 12 Sep 2024 00:10:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726098702; cv=none; b=fxlDL0hhGMPT8BBzkfkU48g4uUEQ5LXcOw7t0+mdrNv9Yr/TRdPZvJl4noopw4jR9GReSZ1nm3e+h+U6QlhAn9cuw1wy7XdDNL/lUUjc+RBzcGGwqHPEjQbzjdAzKRCK5whq0p3I5V6etYIUAsOosFkxSySsyIRfQUvoFDk+rfQ=
+	t=1726099830; cv=none; b=i6BfP5Sze0LCf7Gkc5BTdwJ8dCz7FjcqB8LYFpnVW3NjDIEe6KcUZA7OCVsxDMbF4ImN/ySS7W8Ngs5H0/OF9bCgg2A8OUv9daXUOUXbsfBSl3p/3BcdIJQmYxhTS4ciURYNS/3mQKoRhiAwwAST4v74Xb1MSAjfjLMTaP9Qym0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726098702; c=relaxed/simple;
-	bh=Y6kf4Wi6KDs88Xo6Q2D9THZIQ/bLuNqar2amyrJ7IBE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XmqMqKab0rfybZub1CDKOSLH2fesGgFBLsAiXsjN6w/WIWjPW1Jtc1vfsypoeQZYp3A5GmZbpakdyn/1ibULeLY8SsJlH/rn4RM2VPlAUYHweK5FN3OAagJAo7XQw/iu1vA8+LR3k6mwSo7BtjVCPOz/NCVMOVHvC0r/N0bvwMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f+ZcnKWy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50AE2C4CEC0;
-	Wed, 11 Sep 2024 23:51:41 +0000 (UTC)
+	s=arc-20240116; t=1726099830; c=relaxed/simple;
+	bh=rP3n2Z81E+GHipTuYvkjjLRamE9/nTaunYCwiTU76f0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=XzK4THBseaYvKhRDWiUV6rxdrR5FwS+DfugpX3c0/sbIUY7ffUqKJJk3+xPT5GRFafrFI6PH+0niN7tjzFMQnTNNUoh1SJnojQXL/TB/xhHMSzAkCEi/XL2N7Eq+BeEVzrEn5qqSyrwUkPyigEaQsMUlVaNeaxpWe7N77Dm3cII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/GsMvBy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97B72C4CEC0;
+	Thu, 12 Sep 2024 00:10:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726098701;
-	bh=Y6kf4Wi6KDs88Xo6Q2D9THZIQ/bLuNqar2amyrJ7IBE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=f+ZcnKWyi/9UeOBLlF/Z3b+5pgzmUkwOiy10JBnuRxQTfqc4Hosspr/wpoDJIXVtI
-	 kk0Li2BICh2E/3SN852se+VptdvCM2DHcgLnkE0ORU+Y5ST9cfAITgQLxSLvpZtB8l
-	 cP7ALk2w2e5Qos/NuLD9CdmEP0Ect8bsLcdMpfJ8b1+b2HAIht0Sp/fZ2cd7GyPmJy
-	 9bLOKQqMIKNXXxWOnOx+r8fPJc/IqtLrGWUeo4yJE6I75CJiYJahEgze1GP1U7y7fn
-	 Ix/Lxos3H3MZngCNdicv+J6H7X8MkOpu7NQwIqH8EH1F754GbaaG0nel0DeqXjyNbk
-	 87ebwq7P0sF9A==
-Date: Wed, 11 Sep 2024 16:51:40 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Suraj Jaiswal <quic_jsuraj@quicinc.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu
- <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Maxime
- Coquelin <mcoquelin.stm32@gmail.com>, <netdev@vger.kernel.org>,
- <linux-stm32@st-md-mailman.stormreply.com>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- Prasad Sodagudi <psodagud@quicinc.com>, Andrew Halaney
- <ahalaney@redhat.com>, Rob Herring <robh@kernel.org>, <kernel@quicinc.com>
-Subject: Re: [PATCH v2] net: stmmac: allocate separate page for buffer
-Message-ID: <20240911165140.566d9fdb@kernel.org>
-In-Reply-To: <20240910124841.2205629-2-quic_jsuraj@quicinc.com>
-References: <20240910124841.2205629-1-quic_jsuraj@quicinc.com>
-	<20240910124841.2205629-2-quic_jsuraj@quicinc.com>
+	s=k20201202; t=1726099829;
+	bh=rP3n2Z81E+GHipTuYvkjjLRamE9/nTaunYCwiTU76f0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=V/GsMvByWGG4B+ji1lFQJN9ynd7iDwan9/0j0AOo4MbLSQsOVKfi2UCQIkejPmfkw
+	 QU+sPm/JRrWJ+65kt3gCw9Zu0obegkbEzwt1yBJfiHUoGnbn/FApi3A1iqXkPRM/TF
+	 mJXXcZ5N0h3dQuWoft5AA8WNgjeOONtGnRQY4ZdRUq+VVMxppb9e9O6FlmLnd06if6
+	 HRSV5r+F8cXvVccZkdsLQ4NgfEE7r74M0sbnXZgDQ+g3fT7LtOPUeTdve9rI/zS34r
+	 9BtdZz76H9o7g94hOyDP6idB5PLfqN237RQSZeMsdlVaE9cfRfMpS7jXjDrpHS9VQN
+	 JI4nt8cnMrcjQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB3093806656;
+	Thu, 12 Sep 2024 00:10:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: ethtool: phy: Check the req_info.pdn field for
+ GET commands
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172609983077.1114191.12993526225003591845.git-patchwork-notify@kernel.org>
+Date: Thu, 12 Sep 2024 00:10:30 +0000
+References: <20240910174636.857352-1-maxime.chevallier@bootlin.com>
+In-Reply-To: <20240910174636.857352-1-maxime.chevallier@bootlin.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, andrew@lunn.ch, kuba@kernel.org,
+ edumazet@google.com, pabeni@redhat.com, linux@armlinux.org.uk,
+ linux-arm-kernel@lists.infradead.org, christophe.leroy@csgroup.eu,
+ herve.codina@bootlin.com, f.fainelli@gmail.com, hkallweit1@gmail.com,
+ vladimir.oltean@nxp.com, kory.maincent@bootlin.com,
+ jesse.brandeburg@intel.com, kabel@kernel.org, piergiorgio.beruto@gmail.com,
+ o.rempel@pengutronix.de, nicveronese@gmail.com, horms@kernel.org,
+ mwojtas@chromium.org, nathan@kernel.org, atenart@kernel.org,
+ mkl@pengutronix.de, dan.carpenter@linaro.org, romain.gantois@bootlin.com
 
-On Tue, 10 Sep 2024 18:18:41 +0530 Suraj Jaiswal wrote:
-> Currently for TSO page is mapped with dma_map_single()
-> and then resulting dma address is referenced (and offset)
-> by multiple descriptors until the whole region is
-> programmed into the descriptors.
-> This makes it possible for stmmac_tx_clean() to dma_unmap()
-> the first of the already processed descriptors, while the
-> rest are still being processed by the DMA engine. This leads
-> to an iommu fault due to the DMA engine using unmapped memory
-> as seen below:
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue, 10 Sep 2024 19:46:35 +0200 you wrote:
+> When processing the netlink GET requests to get PHY info, the req_info.pdn
+> pointer is NULL when no PHY matches the requested parameters, such as when
+> the phy_index is invalid, or there's simply no PHY attached to the
+> interface.
 > 
-> arm-smmu 15000000.iommu: Unhandled context fault: fsr=0x402,
-> iova=0xfc401000, fsynr=0x60003, cbfrsynra=0x121, cb=38
+> Therefore, check the req_info.pdn pointer for NULL instead of
+> dereferencing it.
 > 
-> Descriptor content:
->      TDES0       TDES1   TDES2   TDES3
-> 317: 0xfc400800  0x0     0x36    0xa02c0b68
-> 318: 0xfc400836  0x0     0xb68   0x90000000
-> 
-> As we can see above descriptor 317 holding a page address
-> and 318 holding the buffer address by adding offset to page
-> addess. Now if 317 descritor is cleaned as part of tx_clean()
-> then we will get SMMU fault if 318 descriptor is getting accessed.
+> [...]
 
-The device is completing earlier chunks of the payload before the entire
-payload is sent? That's very unusual, is there a manual you can quote
-on this?
+Here is the summary with links:
+  - [net-next] net: ethtool: phy: Check the req_info.pdn field for GET commands
+    https://git.kernel.org/netdev/net-next/c/fce1e9f86af1
 
-> To fix this, let's map each descriptor's memory reference individually.
-> This way there's no risk of unmapping a region that's still being
-> referenced by the DMA engine in a later descriptor.
-
-This adds overhead. Why not wait with unmapping until the full skb is
-done? Presumably you can't free half an skb, anyway.
-
-Please added Fixes tag and use "PATCH net" as the subject tag/prefix.
+You are awesome, thank you!
 -- 
-pw-bot: cr
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
