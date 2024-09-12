@@ -1,88 +1,186 @@
-Return-Path: <linux-kernel+bounces-326447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F18DB976877
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:00:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF654976864
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:57:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B2521F2378A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:00:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 577241F23392
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A6D1A0BE9;
-	Thu, 12 Sep 2024 12:00:09 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABA91A0BC9;
+	Thu, 12 Sep 2024 11:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bCQ7S4he"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDD1B1A0BF7
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 12:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B054185B5D;
+	Thu, 12 Sep 2024 11:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726142408; cv=none; b=HoNC/N/OA8OLU2txhJ3cHAIb/z1WfTVFY3q3g9zV4c78yO5qqoeoFhIkHeOWjt2mZS6YNh/ZcC8XZwoLfCLwdCc4W19Pomc6vkraszYqPpt1c6+zjipzDsVZWEa06HJjg0uZkPML3EN8aOGUef1gPZmy9jedIf5vZv9Pa2zm76U=
+	t=1726142221; cv=none; b=lNgG+t5RNskwTYJJ3fo5JNf1V0MIUjn9xsA2FGNCPVMD6RMQTFZfr/zmtFrQF93DJVGT9OX88q22SVjC0jCl/FnwyptXUhNlPXWpIgYQs3dhGv9uDR+8iJMLfiKMEPdzcZRTz4OPvWQuj+g7y/nrDLmVp7HZyOKO9Q/7kxLctlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726142408; c=relaxed/simple;
-	bh=8mL4SYV/sc5j7FM0U9gCOlGikh+zeGgHTs1kbs1CkRw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nuh1PprVjaWCIXNARKzyW2AdnnBGDXeha5avjLfhXtTyik1ywdaNoURgiZiS5FSjynSxsVJHPn8ICiUEAzgCjFmIw7Kbfioz3eEeEIEZlXUK0wgHWO222O7FAxnrAK2gAEnbhYsptVMrjU7Cip3T6U1vEJBfxacL4E7OzurKBMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4X4GDt5g3szyRTr;
-	Thu, 12 Sep 2024 19:58:54 +0800 (CST)
-Received: from dggpeml500003.china.huawei.com (unknown [7.185.36.200])
-	by mail.maildlp.com (Postfix) with ESMTPS id 13D6B140132;
-	Thu, 12 Sep 2024 20:00:03 +0800 (CST)
-Received: from huawei.com (10.44.142.84) by dggpeml500003.china.huawei.com
- (7.185.36.200) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 12 Sep
- 2024 20:00:02 +0800
-From: Yu Liao <liaoyu15@huawei.com>
-To: <apw@canonical.com>, <joe@perches.com>
-CC: <liaoyu15@huawei.com>, <liwei391@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <dwaipayanray1@gmail.com>,
-	<lukas.bulwahn@gmail.com>
-Subject: [PATCH 2/2] checkpatch: add del_timer[_sync] to the deprecated list
-Date: Thu, 12 Sep 2024 19:56:15 +0800
-Message-ID: <20240912115615.1029452-3-liaoyu15@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20240912115615.1029452-1-liaoyu15@huawei.com>
-References: <20240912115615.1029452-1-liaoyu15@huawei.com>
+	s=arc-20240116; t=1726142221; c=relaxed/simple;
+	bh=A8wdww0er5ggmgsXROiK3rdoHRp09oG2Pjf7dwwm9NY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=boOqOBsGrXBHkmI3Fvf0MhYT6CioTbuJMMtkrYEBpnXR8uiCrxvcmjGrOCnVuink/Hxj2TlW7yrHJwBkn8Q4QF/z1IqOCmtYNcAb0uj5DtPrSGP/dkpHqZE81/R9sk4Dnf1ZsY2u+spwrJKTqqs4DHEd4kAWxRVbhUcD9KCkjfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bCQ7S4he; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726142220; x=1757678220;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=A8wdww0er5ggmgsXROiK3rdoHRp09oG2Pjf7dwwm9NY=;
+  b=bCQ7S4hef/zknA+bGBORiVwhA3nk3UWpgUxEuUi5G2oWKxYKQbmo7VQY
+   6LTvxTrlaQfHnlJEXktdM+eBD8sZ2EVrQtVq3+0xOrLpvYtqBSmz7KkVs
+   0Bb97Or9YAI22jQQFxPwlNDKIsp26Xr0i5beiMDC15OBGTIb2tXVAMdmT
+   SW3m9L59Hbq43Gpa8/2hRS/MPZzlMarEGMfQwiq2UcDhbSg9Ys2sRr9uG
+   /kezysaT8aRopLOFUktKiecBwmqSQXiCthspRg+MVRoztxD0Z4V9spNfC
+   dAsBB9ro8l3fej/6mIvRdF98f/hMxZyrnYLwJeJFnSM7ZAVjQy1pPyDP8
+   A==;
+X-CSE-ConnectionGUID: uToR0xCfRIyLm2n55YTQGQ==
+X-CSE-MsgGUID: UUzkjtooRbKAEd5uXjfawg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="24523085"
+X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
+   d="scan'208";a="24523085"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 04:56:59 -0700
+X-CSE-ConnectionGUID: Q1eY3NHzSlymKWiT6qGHuw==
+X-CSE-MsgGUID: egwhfoWOTxGumbwUsEdiew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
+   d="scan'208";a="98386471"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.26.196])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 04:56:55 -0700
+Message-ID: <096d999a-780b-446d-aaed-0415411003a8@intel.com>
+Date: Thu, 12 Sep 2024 14:56:49 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpeml500003.china.huawei.com (7.185.36.200)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf buildid-cache: recognize vdso when adding files
+To: Changbin Du <changbin.du@huawei.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240912111623.2213105-1-changbin.du@huawei.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20240912111623.2213105-1-changbin.du@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-del_timer[_sync]() have been deprecated and replaced by
-timer_delete[_sync](). But new code still use the deprecated timer
-APIs, so add them to the deprecated list.
+On 12/09/24 14:16, Changbin Du wrote:
+> Identify vdso by file name matching. The vdso objects have name
+> as vdso[32,64].so[.dbg].
+> 
+> $ perf buildid-cache -a /work/linux/arch/x86/entry/vdso/vdso64.so.dbg
+> 
+> Without this change, added vdso using above command actually will never
+> be used.
+> 
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Signed-off-by: Changbin Du <changbin.du@huawei.com>
 
-Signed-off-by: Yu Liao <liaoyu15@huawei.com>
----
- scripts/checkpatch.pl | 2 ++
- 1 file changed, 2 insertions(+)
+I realized my example was overly convoluted since to
+overwrite the existing buildid cache entry the --update
+option could simply be used.  However, that needs another
+change:
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index ca60a2db223a..683f9805adee 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -838,6 +838,8 @@ our %deprecated_apis = (
- 	"kunmap"				=> "kunmap_local",
- 	"kmap_atomic"				=> "kmap_local_page",
- 	"kunmap_atomic"				=> "kunmap_local",
-+	"del_timer"				=> "timer_delete",
-+	"del_timer_sync"			=> "timer_delete_sync",
- );
- 
- #Create a search pattern for all these strings to speed up a loop below
--- 
-2.33.0
+diff --git a/tools/perf/builtin-buildid-cache.c
+b/tools/perf/builtin-buildid-cache.c
+index 08de05e2aaae3..69f43460d007f 100644
+--- a/tools/perf/builtin-buildid-cache.c
++++ b/tools/perf/builtin-buildid-cache.c
+@@ -353,7 +353,7 @@ static int build_id_cache__update_file(const char
+*filename, struct nsinfo *nsi)
+
+ 	if (!err)
+ 		err = build_id_cache__add_s(sbuild_id, filename, nsi, false,
+-					    false);
++					    filename_is_vdso(filename));
+
+ 	pr_debug("Updating %s %s: %s\n", sbuild_id, filename,
+ 		 err ? "FAIL" : "Ok");
+
+With that you can add:
+
+Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
+Tested-by: Adrian Hunter <adrian.hunter@intel.com>
+
+
+> 
+> ---
+> This patch is separated from the series "perf: Support searching local
+> debugging vdso or specify vdso path in cmdline".
+> ---
+>  tools/perf/builtin-buildid-cache.c | 32 +++++++++++++++++++++++++++++-
+>  1 file changed, 31 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/builtin-buildid-cache.c b/tools/perf/builtin-buildid-cache.c
+> index b0511d16aeb6..08de05e2aaae 100644
+> --- a/tools/perf/builtin-buildid-cache.c
+> +++ b/tools/perf/builtin-buildid-cache.c
+> @@ -172,6 +172,36 @@ static int build_id_cache__add_kcore(const char *filename, bool force)
+>  	return 0;
+>  }
+>  
+> +static bool filename_is_vdso(const char *filename)
+> +{
+> +	bool is_vdso = false;
+> +	char *fname, *bname;
+> +	static const char * const vdso_names[] = {
+> +		"vdso.so", "vdso32.so", "vdso64.so", "vdsox32.so"
+> +	};
+> +
+> +	fname = strdup(filename);
+> +	if (!fname) {
+> +		pr_err("no memory\n");
+> +		return false;
+> +	}
+> +
+> +	bname = basename(fname);
+> +	if (!bname)
+> +		goto out;
+> +
+> +	for (unsigned int i = 0; i < ARRAY_SIZE(vdso_names); i++) {
+> +		if (strstarts(bname, vdso_names[i])) {
+> +			is_vdso = true;
+> +			break;
+> +		}
+> +	}
+> +
+> +out:
+> +	free(fname);
+> +	return is_vdso;
+> +}
+> +
+>  static int build_id_cache__add_file(const char *filename, struct nsinfo *nsi)
+>  {
+>  	char sbuild_id[SBUILD_ID_SIZE];
+> @@ -189,7 +219,7 @@ static int build_id_cache__add_file(const char *filename, struct nsinfo *nsi)
+>  
+>  	build_id__sprintf(&bid, sbuild_id);
+>  	err = build_id_cache__add_s(sbuild_id, filename, nsi,
+> -				    false, false);
+> +				    false, filename_is_vdso(filename));
+>  	pr_debug("Adding %s %s: %s\n", sbuild_id, filename,
+>  		 err ? "FAIL" : "Ok");
+>  	return err;
 
 
