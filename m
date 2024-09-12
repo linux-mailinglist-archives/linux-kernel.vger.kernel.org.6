@@ -1,168 +1,171 @@
-Return-Path: <linux-kernel+bounces-326412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBF00976803
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:39:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02C1A976807
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:41:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EC1C2839FF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:39:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7689EB22F6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FFE9190079;
-	Thu, 12 Sep 2024 11:39:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00854224CF;
+	Thu, 12 Sep 2024 11:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BFgoCJvO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c2PiO1QY"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16CC288BD;
-	Thu, 12 Sep 2024 11:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CB4176FCF
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 11:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726141191; cv=none; b=Ij3kOuUaYoW70vwy50hABQHOeEM/IloQxi4KFUexocVKk/dEzAhTnmo+y7aktSjGFmIlZUCIDi7/KlZECCUHR/vHHPpOrz6DGRg4esJp4kjWQ0AM+bnjy/Ub1OXsPwXS7NYy9CZdKZbLCFpq7c7ud4agBwAS2CCczbv9VZj9+qw=
+	t=1726141289; cv=none; b=oY18BuWMdUZx63uyRk2qTAW1Wy5E0DgeThKIT0yiY+7W8k4nYNJTPFCPXnZnrHuC4AQDmnUFEUq9kOK8yC8IV52cBtk9aolnnivZx5zmlIYUbRQMUKm63hwskuuJR+T+n1orMO8UNDmvf4ttVurzFdvr3wwf4ei2YI4+dWksE+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726141191; c=relaxed/simple;
-	bh=T7L5DaGqzTOTtAvvzaHbnlKPp7RFKeCBqLlFYkwSqLw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gg8lp/9sMkUOeAu0Ejfg4LxmJpGSWMX3QfMbnPC/QU0/OJ8sfEboewUZ/946yTghZtN4FGN39LZYZBVkk3JJx5AKeh7Z/CTfe8/4Yja4GoVss3LrCXD63EONiF05CdFSgXEky3ABHHLLdd8qfMxdda+U0jplaCePLoPibio6g0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BFgoCJvO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2FD2C4CEC3;
-	Thu, 12 Sep 2024 11:39:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726141190;
-	bh=T7L5DaGqzTOTtAvvzaHbnlKPp7RFKeCBqLlFYkwSqLw=;
-	h=From:Date:Subject:To:Cc:From;
-	b=BFgoCJvOJyY3bOglFn+ZWACYg8QtpwGdz8pOmQIFdE74BGNSBRZXNsZoGc/3TT7wU
-	 pIYxqLan4KPTOpjpP3inHAEGVz5vjDDn23KuJSrIa2Gh7FVzJBuV/k/LXxPe3+Q0ni
-	 UxSRctHpb+A+bzBZ+GJFLciS/UxrF1oD6HIA+Uxzva1OvjsWjmYuzEnkHwAmN8qAdl
-	 PXIKZxopbrVwRHXv18u1bl6aaU4/E4iCrt+rscPGfyPRH/fJ0geN15PGYk7hcwJJ9i
-	 nRCqVzomZ99TqboGrk3OaOACn4KrFWa9imbTwv9SKXuf5FYeqltPTWHPlOB0xPjzD4
-	 G8Evs7cywhkEQ==
-From: Mark Brown <broonie@kernel.org>
-Date: Thu, 12 Sep 2024 12:39:35 +0100
-Subject: [PATCH v2] KVM: arm64: Constrain the host to the maximum shared
- SVE VL with pKVM
+	s=arc-20240116; t=1726141289; c=relaxed/simple;
+	bh=Heof43DyvfqRJlRi0bBeyPYxJf13DtSSsWQ+FAooBOQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=leEXAxNx7A/KheZTcADZBJ7VLf/9S3GJFmUAAPAOI5OVJJczazb8sE1wlWxgmVIUs/SrCEi/LaOYzu19zf/17lompcbNJGK6lo1CdiRSMckkYX/AeDMCa4f3njANiCuqKZMpcD7flzQJxm7zvs2hKjBG3IeaWxetWFPFdLY/v30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c2PiO1QY; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7a81bd549eso104268066b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 04:41:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726141286; x=1726746086; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tzc1SB9FR1O0Hrrsa6BC4Sqb7TXAInj7HgbZ9sPm2/s=;
+        b=c2PiO1QYeAB6e+2rWgvYegE4mql9jjepoLT8xkXpkTHe+mqD1bnVT42vtPN3u8cnVf
+         iPKmDyY3NdYm9rvL3SyDj/4H/TQB//fteLoXsRxg9YS9s73dVTy2mpTEcuYNpABZpbHn
+         jfXyIWmi+MBX5NkuoNro8/cEdw8uAKzeyituls1+ggbnxKFyNyqgPPu42vnKLM97XouD
+         pZp0nsG0sGl4hGwb/8qnApcTBsbgb/z00HdaqQf5ew60j3X8PFEWCzIEiEGJ1MRsoDDT
+         ZYFERopwb2aj2zuusC9Nw2QZKTKUmog3pkR8CjWMiFdxCh+8Pb4SOwmh6xafEEcKsOBN
+         MQ1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726141286; x=1726746086;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tzc1SB9FR1O0Hrrsa6BC4Sqb7TXAInj7HgbZ9sPm2/s=;
+        b=UmyezzSdTAfrvl7/Hj8bIgqFqYbEjPYRrlyxV87ZdMM3U8DY0B5Ye+RENtY/l+NzKt
+         2S8iugTa/D+VXnSMlujDcdwQHDlyWNghg3+VdvGrL9FyhDAqqe2QjrZo02Zcj0VngvU5
+         bhEYwxQ/Ayk0OG55+I2qLwOw+DKh2WXQq5Hyq5dI+Bn2sslzarB8qu3xW+DSzWqxueWn
+         brqcT59NZx0gs+Fg6WBl0MvQAM2dvrL3TVqiNYgG+tXScuZsf4gVSow4AXwsdjpnWPSo
+         GpQZcmQKOUMJbPNZqQvE/B772WsryEpRGiU4K5UXpvYFzjSeSoTUFCveuHir8C5e09zU
+         o9iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX7fWm6ISRd1WF/u5jISW2JzcIGexZ+mSNsxF4EgJM9FuRk2kNDlT60liPMcW8bh5WqGbIH9IJBJBVP0mg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQqbC1hrJ4+ILCVtQGX8DuU87biIUVbSmmzwmXre4vhelid+0c
+	WFnNdHj0ELjQl4wzWWjgQkpf/kpo2RUIj9uADngO074PhDIwYtwQE05V4sBIf4k=
+X-Google-Smtp-Source: AGHT+IF2wx3/sCQSoXraGqXOBRLBye6JAmeptMCNWTKtJqhL/MIXqZonIUqoAEP5C6ftg/j1PBtCNw==
+X-Received: by 2002:a17:907:e6e8:b0:a86:7ddf:2909 with SMTP id a640c23a62f3a-a90294fcf3bmr253511866b.14.1726141285775;
+        Thu, 12 Sep 2024 04:41:25 -0700 (PDT)
+Received: from [192.168.0.25] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25ce9ed6sm729090166b.165.2024.09.12.04.41.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Sep 2024 04:41:25 -0700 (PDT)
+Message-ID: <82dd61ab-83c0-4f9c-a2ee-e00473f4ff23@linaro.org>
+Date: Thu, 12 Sep 2024 12:41:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240912-kvm-arm64-limit-guest-vl-v2-1-dd2c29cb2ac9@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAPbS4mYC/42NTQ6CMBBGr0Jm7ZiWFAmuvIdhQcsUJvxmio2Gc
- HcrJ3D5XvK9b4dAwhTgnu0gFDnwMifILxm4vpk7Qm4TQ65yoyqtcIgTNjLdDI488Ybdi8KGccS
- 28LZRrnSutJDmq5Dn95l+1ol7Dtsin/Mp6p/9Ixo1aixM642yVeG9fQwkM43XRTqoj+P4AoWw2
- gjBAAAA
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- James Morse <james.morse@arm.com>, 
- Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
- Fuad Tabba <tabba@google.com>
-Cc: Dave Martin <Dave.Martin@arm.com>, linux-arm-kernel@lists.infradead.org, 
- kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-99b12
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4033; i=broonie@kernel.org;
- h=from:subject:message-id; bh=T7L5DaGqzTOTtAvvzaHbnlKPp7RFKeCBqLlFYkwSqLw=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBm4tMBhIe/LyjljX9tuBWlDKk4ejJQHl0QK9VwvpLj
- RdUeHXiJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZuLTAQAKCRAk1otyXVSH0IdqB/
- 4gXr5PVu25pExDRTo3+OAEvKWTRTw/ws6HXCW3rva49UeNE2tmd+L2YNmgFAG6FI8kzDofraRBM2GG
- +fzc+m+LBymMfeYGHklB+aqfJoHbA7l+9YvehpcWE3LaNEpAgzko5Q6I8lPl/mZHe1A94WsFNPCtS4
- UOmAqc4Lzzv+xMT7qTpL82zmc1HGD4ltyzxY2Pv9OQry5CXAdoZ478qOyq6khV0Q/yZyMs4CpYMKsH
- n5MwpGNqRxJlAoCnk899KSVkD6mV6g6waZ/x/+8epabahAKZ4Oae6UNcc6+OPxqSMXnn9oXPz9JCN0
- Z9WCmy2EdR4M6ffd2/BEwbQu5q7afS
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/13] dt-bindings: media: camss: Add qcom,sm8550-camss
+ binding
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@quicinc.com, Yongsheng Li <quic_yon@quicinc.com>
+References: <20240812144131.369378-1-quic_depengs@quicinc.com>
+ <20240812144131.369378-8-quic_depengs@quicinc.com>
+ <b1b4a866-fa64-4844-a49b-dfdcfca536df@linaro.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <b1b4a866-fa64-4844-a49b-dfdcfca536df@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-When pKVM saves and restores the host floating point state on a SVE system
-it programs the vector length in ZCR_EL2.LEN to be whatever the maximum VL
-for the PE is but uses a buffer allocated with kvm_host_sve_max_vl, the
-maximum VL shared by all PEs in the system. This means that if we run on a
-system where the maximum VLs are not consistent we will overflow the buffer
-on PEs which support larger VLs.
+On 12/09/2024 09:22, Vladimir Zapolskiy wrote:
+>> +
+>> +  vdda-phy-supply:
+>> +    description:
+>> +      Phandle to a regulator supply to PHY core block.
+>> +
+>> +  vdda-pll-supply:
+>> +    description:
+>> +      Phandle to 1.2V regulator supply to PHY refclk pll block.
+>> +
+> 
+> Here the supplies should be split into ones, which are specific to CSI 
+> blocks,
+> and I believe they shall be set as optional.
 
-Since the host will not currently attempt to make use of non-shared VLs fix
-this by explicitly setting the EL2 VL to be the maximum shared VL when we
-save and restore. This will enforce the limit on host VL usage. Should we
-wish to support asymmetric VLs this code will need to be updated along with
-the required changes for the host, patches have previously been posted:
+In principle I agree with that, each CSIPHY should have its own vdda-phy 
+and vdda-pll regulator specified.
 
-  https://lore.kernel.org/r/20240730-kvm-arm64-fix-pkvm-sve-vl-v6-0-cae8a2e0bd66@kernel.org
+In practice though I don't believe its necessary, below.
 
-Fixes: b5b9955617bc ("KVM: arm64: Eagerly restore host fpsimd/sve state in pKVM")
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
-Changes in v2:
-- Update all places where we constrain the host VL, not just those where
-  we save and restore host state.
-- The value written to the register is 0 based, not 1 based.
-- Link to v1: https://lore.kernel.org/r/20240910-kvm-arm64-limit-guest-vl-v1-1-54df40b95ffb@kernel.org
----
- arch/arm64/kvm/hyp/include/hyp/switch.h |  2 +-
- arch/arm64/kvm/hyp/nvhe/hyp-main.c      | 12 +++++++-----
- 2 files changed, 8 insertions(+), 6 deletions(-)
+> The proposed names are:
+> 
+> vdda-phy-01-supply
+> vdda-pll-01-supply
+> vdda-phy-23-supply
+> vdda-pll-23-supply
+> vdda-phy-46-supply
+> vdda-pll-46-supply
+> vdda-phy-57-supply
+> vdda-pll-57-supply
 
-diff --git a/arch/arm64/kvm/hyp/include/hyp/switch.h b/arch/arm64/kvm/hyp/include/hyp/switch.h
-index f59ccfe11ab9..c2cfb4d6dc92 100644
---- a/arch/arm64/kvm/hyp/include/hyp/switch.h
-+++ b/arch/arm64/kvm/hyp/include/hyp/switch.h
-@@ -339,7 +339,7 @@ static inline void __hyp_sve_save_host(void)
- 	struct cpu_sve_state *sve_state = *host_data_ptr(sve_state);
- 
- 	sve_state->zcr_el1 = read_sysreg_el1(SYS_ZCR);
--	write_sysreg_s(ZCR_ELx_LEN_MASK, SYS_ZCR_EL2);
-+	write_sysreg_s(sve_vq_from_vl(kvm_host_sve_max_vl) - 1, SYS_ZCR_EL2);
- 	__sve_save_state(sve_state->sve_regs + sve_ffr_offset(kvm_host_sve_max_vl),
- 			 &sve_state->fpsr,
- 			 true);
-diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-index f43d845f3c4e..dd1c6aa907a2 100644
---- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-+++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
-@@ -33,7 +33,7 @@ static void __hyp_sve_save_guest(struct kvm_vcpu *vcpu)
- 	 */
- 	sve_cond_update_zcr_vq(vcpu_sve_max_vq(vcpu) - 1, SYS_ZCR_EL2);
- 	__sve_save_state(vcpu_sve_pffr(vcpu), &vcpu->arch.ctxt.fp_regs.fpsr, true);
--	write_sysreg_s(ZCR_ELx_LEN_MASK, SYS_ZCR_EL2);
-+	write_sysreg_s(sve_vq_from_vl(kvm_host_sve_max_vl) - 1, SYS_ZCR_EL2);
- }
- 
- static void __hyp_sve_restore_host(void)
-@@ -45,10 +45,11 @@ static void __hyp_sve_restore_host(void)
- 	 * the host. The layout of the data when saving the sve state depends
- 	 * on the VL, so use a consistent (i.e., the maximum) host VL.
- 	 *
--	 * Setting ZCR_EL2 to ZCR_ELx_LEN_MASK sets the effective length
--	 * supported by the system (or limited at EL3).
-+	 * Note that this constrains the PE to the maximum shared VL
-+	 * that was discovered, if we wish to use larger VLs this will
-+	 * need to be revisited.
- 	 */
--	write_sysreg_s(ZCR_ELx_LEN_MASK, SYS_ZCR_EL2);
-+	write_sysreg_s(sve_vq_from_vl(kvm_host_sve_max_vl) - 1, SYS_ZCR_EL2);
- 	__sve_restore_state(sve_state->sve_regs + sve_ffr_offset(kvm_host_sve_max_vl),
- 			    &sve_state->fpsr,
- 			    true);
-@@ -479,7 +480,8 @@ void handle_trap(struct kvm_cpu_context *host_ctxt)
- 	case ESR_ELx_EC_SVE:
- 		cpacr_clear_set(0, CPACR_ELx_ZEN);
- 		isb();
--		sve_cond_update_zcr_vq(ZCR_ELx_LEN_MASK, SYS_ZCR_EL2);
-+		sve_cond_update_zcr_vq(sve_vq_from_vl(kvm_host_sve_max_vl) - 1,
-+				       SYS_ZCR_EL2);
- 		break;
- 	case ESR_ELx_EC_IABT_LOW:
- 	case ESR_ELx_EC_DABT_LOW:
+In principle, you're right, we need to expand the name set here.
+
+> I understand that what I ask is much more clumsy, and it could be seen 
+> even as
+> unneeded, however it'll be the right set of properties to describe the 
+> CAMSS IP
+> in this respect
+I think the following naming would be better as it matches the 
+power-grid naming in the docs.
+
+csiphyX-vdda-phy-supply
+csiphyX-vdda-pll-supply
+
+=>
+
+// voltage domain = vdd_a_csi_01_09 = regulator l1e
+csiphy0-vdda-phy-supply = <&vreg_l1e_0p9>;
+
+// voltage domain = vdd_a_csi_01_1p2 = regulator l3e
+csiphy0-vdda-pll-supply = <&vreg_l3e_1p2>;
+
+//
+csiphy1-vdda-phy-supply = <&vreg_l1e_0p9>;
+csiphy1-vdda-pll-supply = <&vreg_l3e_1p2>;
+
+Where X indicates the CSIPHY number.
+
+So in fact, in practice we don't need to differentiate these entries.
+
+Checking x1e80100 ...
+
+csiphy0
+
+vdda-phy-supply = <&vreg_l2c_0p9>;
+vdda-pll-supply = <&vreg_l1c_1p2>;
+
+This is also the case for csiphy 1/2/4
+
+So, I _don't_ believe this is work we need to do, since its the same 
+regulator for each PHY.
 
 ---
-base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
-change-id: 20240910-kvm-arm64-limit-guest-vl-d5fba0c7cc7b
-
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
-
+bod
 
