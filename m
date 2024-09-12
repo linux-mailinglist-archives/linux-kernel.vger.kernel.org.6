@@ -1,114 +1,135 @@
-Return-Path: <linux-kernel+bounces-326454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B298D976897
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:05:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C0AD97689D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:06:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ADB0283C20
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:05:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9418284525
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:06:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08681A0BFF;
-	Thu, 12 Sep 2024 12:05:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D681A2657;
+	Thu, 12 Sep 2024 12:05:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hxkWB3D2";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0KjfqOQ7"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Wm2kivNI"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05CB18E043;
-	Thu, 12 Sep 2024 12:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DE51A2639;
+	Thu, 12 Sep 2024 12:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726142700; cv=none; b=Iw283SwBTkDmEjdMVtl1yXVCCP6c1xo9DRZGkEcEgLulUTFapfBlc1zSanHbvQS+xYlmKobWKcM5EAc/T3UJQJKy94yxB3onBAj83HLyeetbPTvLB5G6k8OyadpkvTRFGURMIaN2uZYxawh6nc31u+uj9kmz5nij9+OGdEmAvLY=
+	t=1726142749; cv=none; b=XgGwlLhOoWdGKdHiT8j1llNAhm1mEnDFscaJgg96xAn/2WVRscn8eWz/VzgEWwSRSmY8nqAQoHoTisi4rUnpHJRxuNrMZXzvdFNIchfP4l2JQGAoq0v3ucbkVjNqqJnsiq8WTAHibA36m90JY04YWe6szJFEmy7z2TTXu17eOyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726142700; c=relaxed/simple;
-	bh=6ElcBIC1Y6mHAxXIoF87OEMWWuDZBtobn02T4HnDMxg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KrE3/HfVPBmLC+gaANLqcQ26mrN1AV/qDaD8UNqlUj/bCbEkihJWCmAJMxRYSpI9wdERv0HUltMC2hPgVADkTJCceFFcRBCGK+rKSnYFE25VMA1LmloN/ejCRi3i4oORHjwbb/MIGq/N//VsnhG85F0xwq4ke3Pvr2HsNI8n9m0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hxkWB3D2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0KjfqOQ7; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1726142696;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WLNJKXffC/1phJTPsnafjkuYY3WKkcoBWZ0khVj1ZB0=;
-	b=hxkWB3D2zLwUGMX2nBNuyHLr9iWimli81ahfEisFMAjSrd8i0UIvly55mCxwQzV29bJwa3
-	ldhTs72yUVH+e9Ou6pdvKs2oUBOVBUV/1Ly0ohZuA+KbVULH3aqDKoP5Bdxqngo3qbZK+h
-	X+aJpF1n/IdA2CojUNPWa8MNG0liKk3i87gFAPrtcSOIO9BDo8pSRN4PqrA3TykD4hHfbi
-	Z8+Fd9+haYdLaEx0h3+Ya2I+SVByTsRo4qor27bAoiXr7nnl0fS+oDo/MIcJfmtKFtuQbO
-	w2lKetCeLuYyMdnXRMQ6F2vhJvTfsjU3ShSosld0LpaOeedG5lqqUpz9U+2lbQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1726142696;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WLNJKXffC/1phJTPsnafjkuYY3WKkcoBWZ0khVj1ZB0=;
-	b=0KjfqOQ7lpk6fVTk18oPVqg88aCGQbD1u8b3QTMfe0BGK+/Mw90lQDKnOBXpCZpL4051Ud
-	vKfV6YYL32yGN0Dw==
-To: Jinjie Ruan <ruanjinjie@huawei.com>, Richard Cochran
- <richardcochran@gmail.com>
-Cc: bryan.whitehead@microchip.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, anna-maria@linutronix.de,
- frederic@kernel.org, UNGLinuxDriver@microchip.com, mbenes@suse.cz,
- jstultz@google.com, andrew@lunn.ch, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next v3 1/2] posix-timers: Check timespec64 before call
- clock_set()
-In-Reply-To: <ea351ea0-5095-d7ae-5592-ec3bd45c771c@huawei.com>
-References: <20240909074124.964907-1-ruanjinjie@huawei.com>
- <20240909074124.964907-2-ruanjinjie@huawei.com>
- <Zt8SFUpFp7JDkNbM@hoboy.vegasvil.org>
- <ea351ea0-5095-d7ae-5592-ec3bd45c771c@huawei.com>
-Date: Thu, 12 Sep 2024 14:04:55 +0200
-Message-ID: <874j6l9ixk.ffs@tglx>
+	s=arc-20240116; t=1726142749; c=relaxed/simple;
+	bh=agfC5ZtSxRDKdSEOCCVkvyOM5Vt8+Q5NReccVU8cJ6k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fyX0IXtYw9sAzRUSrn2A3MUwdmFmmC2bzcpjhn4vQkGdgE5ZpdW6Kogd0MdBgPrZvKtsIoKybUxJuREfTzEJCSl+l6SabN+oeVdIe91Io2skKKFrk97H7aiAsQOmvHsKxbyWsYktCV3JBrLxtw5fAmkafFuMQEMvM122HmGlsYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Wm2kivNI; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (213-229-8-243.static.upcbusiness.at [213.229.8.243])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D091F73;
+	Thu, 12 Sep 2024 14:04:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1726142666;
+	bh=agfC5ZtSxRDKdSEOCCVkvyOM5Vt8+Q5NReccVU8cJ6k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Wm2kivNIsDpZOPp099FU0SUk7ecPkahkuEGu8b23O9Xynhh+SGJ8TEZ79G2bXNK6U
+	 yUX3xUMXpuxi3iXGDM4owBih9Zm5wIxe2GUhGVIrbKacruthEEfVgdYQiqXciif4Wo
+	 kZXefQcg16UKFUQXWNn6lGjjEjgeASGriq3LLOt8=
+Date: Thu, 12 Sep 2024 15:05:10 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tommaso Merciai <tomm.merciai@gmail.com>
+Cc: linuxfancy@googlegroups.com, sakari.ailus@linux.intel.com,
+	julien.massot@collabora.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] media: i2c: max96714: add HAS_EVENTS subdev flag
+Message-ID: <20240912120510.GB25276@pendragon.ideasonboard.com>
+References: <20240910134428.795273-1-tomm.merciai@gmail.com>
+ <20240910134428.795273-2-tomm.merciai@gmail.com>
+ <20240912104409.GA25276@pendragon.ideasonboard.com>
+ <ZuLMUaxn/oTw5dco@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZuLMUaxn/oTw5dco@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
 
-On Thu, Sep 12 2024 at 10:53, Jinjie Ruan wrote:
+On Thu, Sep 12, 2024 at 01:11:13PM +0200, Tommaso Merciai wrote:
+> Hi Laurent,
+> 
+> On Thu, Sep 12, 2024 at 01:44:09PM +0300, Laurent Pinchart wrote:
+> > Hi Tommaso,
+> > 
+> > On Tue, Sep 10, 2024 at 03:44:27PM +0200, Tommaso Merciai wrote:
+> > > Controls can be exposed to userspace via a v4l-subdevX device, and
+> > > userspace has to be able to subscribe to control events so that it is
+> > > notified when the control changes value. Add missing HAS_EVENTS flag.
+> > 
+> > How is this supposed to work, given that the driver doesn't implement
+> > .subscribe_event() ?
+> 
+> You are completely right, sorry.
+> I think in both cases I'm missing:
+> 
+> diff --git a/drivers/media/i2c/max96714.c b/drivers/media/i2c/max96714.c
+> index 94b1bc000e48..2257b6b807ea 100644
+> --- a/drivers/media/i2c/max96714.c
+> +++ b/drivers/media/i2c/max96714.c
+> @@ -17,6 +17,7 @@
+> 
+>  #include <media/v4l2-cci.h>
+>  #include <media/v4l2-ctrls.h>
+> +#include <media/v4l2-event.h>
+>  #include <media/v4l2-fwnode.h>
+>  #include <media/v4l2-subdev.h>
+> 
+> @@ -488,6 +489,8 @@ static int max96714_log_status(struct v4l2_subdev *sd)
+> 
+>  static const struct v4l2_subdev_core_ops max96714_subdev_core_ops = {
+>         .log_status = max96714_log_status,
+> +       .subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> +       .unsubscribe_event = v4l2_event_subdev_unsubscribe,
+>  };
+> 
+>  static const struct v4l2_subdev_video_ops max96714_video_ops = {
+> 
+> Like you suggest. Or I'm wrong?
 
-> On 2024/9/9 23:19, Richard Cochran wrote:
->> On Mon, Sep 09, 2024 at 03:41:23PM +0800, Jinjie Ruan wrote:
->>> diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
->>> index 1cc830ef93a7..34deec619e17 100644
->>> --- a/kernel/time/posix-timers.c
->>> +++ b/kernel/time/posix-timers.c
->>> @@ -1137,6 +1137,9 @@ SYSCALL_DEFINE2(clock_settime, const clockid_t, which_clock,
->>>  	if (get_timespec64(&new_tp, tp))
->>>  		return -EFAULT;
->>>  
->>> +	if (!timespec64_valid(&new_tp))
->>> +		return -ERANGE;
->> 
->> Why not use timespec64_valid_settod()?
->
-> There was already checks in following code, so it is not necessary to
-> check NULL or timespec64_valid() in ptp core and its drivers, only the
-> second patch is needed.
->
-> 169 int do_sys_settimeofday64(const struct timespec64 *tv, const struct
-> timezone *tz)
->  170 {
->  171 >-------static int firsttime = 1;
->  172 >-------int error = 0;
->  173
->  174 >-------if (tv && !timespec64_valid_settod(tv))
->  175 >------->-------return -EINVAL;
+That looks better :-)
 
-How does this code validate timespecs for clock_settime(clockid) where
-clockid != CLOCK_REALTIME?
+Out of curiosity, what's your use case for control events ?
 
-Thanks,
+> > > Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
+> > > ---
+> > >  drivers/media/i2c/max96714.c | 3 ++-
+> > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/media/i2c/max96714.c b/drivers/media/i2c/max96714.c
+> > > index 159753b13777..94b1bc000e48 100644
+> > > --- a/drivers/media/i2c/max96714.c
+> > > +++ b/drivers/media/i2c/max96714.c
+> > > @@ -602,7 +602,8 @@ static int max96714_create_subdev(struct max96714_priv *priv)
+> > >  		goto err_free_ctrl;
+> > >  	}
+> > >  
+> > > -	priv->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_STREAMS;
+> > > +	priv->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
+> > > +			  V4L2_SUBDEV_FL_HAS_EVENTS | V4L2_SUBDEV_FL_STREAMS;
+> > >  	priv->sd.entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
+> > >  	priv->sd.entity.ops = &max96714_entity_ops;
+> > >  
 
-        tglx
+-- 
+Regards,
+
+Laurent Pinchart
 
