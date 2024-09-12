@@ -1,187 +1,203 @@
-Return-Path: <linux-kernel+bounces-326693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7DC6976BD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:21:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 134EA976BDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 432591F2552C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:21:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ACA61F25E8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69FDB1AE038;
-	Thu, 12 Sep 2024 14:21:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39CB1AD25F;
+	Thu, 12 Sep 2024 14:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DtIR71YN"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F4oG6LR5"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CBC837703;
-	Thu, 12 Sep 2024 14:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBF12BB09
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 14:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726150900; cv=none; b=AuMQ+9x/JPjjx5bxE1a8kCTLpfRyWRv0EZMKf69EvjFvsnW9CsxPnumGqBrwNLkhgl6PzvCCs/wxhhhNISl8Iv2Qjh3NfXiSDJ7mNBCsb6YC9H4lp3V8x2zZPLvctbiBojWTzGroZSV3vHpsjfgq+oh3j+KkaW09Qb8V6wXjqUA=
+	t=1726150944; cv=none; b=WazrMBH7ZGAyY8GVPRz5vzAuQ+WO71j/Cco0fwBIdVmkB4IIiXk4lhv54YrHG72RVkmOBwpj015cPyN+P9w1KG0b02Uixbm70CfVZa85tuL4Kjy+9wif23fVBxozCNjfSph/de1BXgbtQDXMBBKCCnp1ZE3yyyZmZbcQVml1tmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726150900; c=relaxed/simple;
-	bh=XTecsvZnA2wlK2jQQxxrGxxKOc4Q28McTMdBPvRWpjo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 Content-Type:MIME-Version; b=Etd64mNfi2i1s7elebP9RxphTqwpZwVZLELu4ggJYvUBcdCrrYLJs6Kto3Y0of+IpIu9ewAyK65Ak1RrYAlVpcLqsXIuKOO/2KVye5ovcjeT+pu4uUAUCfvjiIiiz7osImoTgTSWmxY6IoYvowOpASyTiCwoaEB5KjfoapZJpTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DtIR71YN; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48C6K8m7022678;
-	Thu, 12 Sep 2024 14:21:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:in-reply-to:references:date:message-id
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	/JkIOX4BO+EUbCRj3c1s2zMiEoiNz6eBpmylaYFVKjc=; b=DtIR71YNytrtdbyz
-	Uwf8xk2et7kSCb+LH3UblwzexQz1pDQYyFHzxEXLQlDi0T+bJw11ImoAuQa0GfHS
-	928aHaDFeWxYxJXpfpeMQNDwTh3stcPCJK32V3GDjbef5RgOu7J7ADOJ92m44Wdx
-	/Pap2EbI+DxQdP69dqIPZykO3JTCrD33EuCW6/yx6Up3c7AOvUZdVdQWen+s6Ihw
-	iLaKSP1AMqi4WHaqkKxZQ1XRKXYzTyNb4xi+z4iWp/wfKMnnW5JXBIKKbUwHkIp1
-	QEjshfDDH438ryqLN/jqKIcHW7uP4uCDUeNHnClb2bhIa7+C1sO6BMSJxiy2qOtB
-	5jTt8A==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gebam6e2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Sep 2024 14:21:30 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 48CEI9EK025401;
-	Thu, 12 Sep 2024 14:21:29 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gebam6du-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Sep 2024 14:21:29 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48CCNhib010729;
-	Thu, 12 Sep 2024 14:21:28 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41kmb6v2hf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Sep 2024 14:21:28 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48CELQQ154198584
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 12 Sep 2024 14:21:26 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4435D20043;
-	Thu, 12 Sep 2024 14:21:26 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DF62F20040;
-	Thu, 12 Sep 2024 14:21:25 +0000 (GMT)
-Received: from li-1de7cd4c-3205-11b2-a85c-d27f97db1fe1.ibm.com (unknown [9.171.81.202])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 12 Sep 2024 14:21:25 +0000 (GMT)
-From: "Marc Hartmayer" <mhartmay@linux.ibm.com>
-To: Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org
-Cc: Lai Jiangshan <jiangshan.ljs@antgroup.com>, stable@vger.kernel.org,
-        Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH] workqueue: Clear worker->pool in the worker thread context
-In-Reply-To: <20240912032329.419054-1-jiangshanlai@gmail.com>
-References: <20240912032329.419054-1-jiangshanlai@gmail.com>
-Date: Thu, 12 Sep 2024 16:21:25 +0200
-Message-ID: <87zfod54wq.fsf@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: DfmBiw9eodo3-BfwvKHhwx_jyEd8zyCC
-X-Proofpoint-GUID: 2eCHTCewJDC7tW4gExXttv7s2DLTpcsR
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1726150944; c=relaxed/simple;
+	bh=wjbYL2Xn5q39ZUu2R2/TS92BlULoVl0GkzrND1hKir4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bNe49mkh/obSmrxR+BfeqsB4DCzX0IyMbb4/Ut87Ev9KrH21keEp7Q4jJjvmQqeMDjesgJg94Bo6uyX0EDvgbe28fzwqTP3BXxNt04HQRBiuOE7yt/Qx1Ytw67oIpM45WalUIpB/gDbGgvcqz5IWCdqr8VxhSBm2bmrib6LurCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=F4oG6LR5; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c2460e885dso31799a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:22:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726150941; x=1726755741; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=vPVa+TxePmfNOKyBF++5A+N++QA4GdG9hxLFcALU9M8=;
+        b=F4oG6LR5IFRAnQIxxbXPf67dqByf3dVOALfMHKbGmeN6786biEmc/hj0hbHOoUa4qt
+         aR1K8xx+vnEKgzOT9NURmRN9C2FjD+ElxHdlXjNuBj4hkjOCXH8z6ruWx7VrVosd4u0f
+         cUp7zgGjeKoXJ3Qc6y8jiU3w0EBCcLKWi2iwxCPxnuKpuEw3oGsBipgVHO1Fxfvje0em
+         rNZqslPKhfzFRdmDMhJG9nJNj9o+qWpyKH6fC7ovUSXPTf2O5G6g66VVbs9y6NKvCN4y
+         FE3M4FRdKcBT3bl1sVFCrh4fbs6ojVfAbcRkgaeo9zVRJ6kkecnvrqT8m5Bw2prvOypn
+         /diA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726150941; x=1726755741;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vPVa+TxePmfNOKyBF++5A+N++QA4GdG9hxLFcALU9M8=;
+        b=gRfq33j7O9Zc459sTHShT/1UeWGaPKuQMjj4kbHP5O+aw6jxUgvXZX0g7i8nfkEDCa
+         h20pfC48ufnyFxgUvLfZ7hAQPFu0vCGEXq88UOw59/hrnUVx3lvIHZQOtu89JxSHkMeh
+         BC9IEZ3PyBi6r3tDB7cstbVdRXXlWBtnaTV85E5IwKABH/djxd9AK7MTB8EpAo7g3iGA
+         xNAoVTMljADmGRUg+WtgU4eezTgTYNPtXZOgEvRqkDM2tzHcRxJuvoRZrWm6YvD05sCM
+         U2gVLdvsDNcUKa7qxMk+hUes0Ll2fMv7RnmzfjiJRE3MmBmW3/AdPY3YfNyIKEcSk1Gd
+         GE7A==
+X-Forwarded-Encrypted: i=1; AJvYcCU1p3QSTzZKr8q0a+xDp7VURMsGPbiGD++j6qkEHtpxr/EOJ7/hXhjyloZKNNJ0tgszLD7L0DTIx4tijks=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxucz2XLNCncDx+k2mRlQWi6+irjBFRY3kWoHz4wkDFerMgcJ6p
+	N+HzCyOVeOjb6/Vp1leOfJbv2kpWcwyTrCrMHqdZxmpntPV7dnv0XdzGpDEFONY7mP+HSKXSD2e
+	pCBCDNb1K/JmoQF6OGh5y2ITy7z76H4VdWgEz
+X-Google-Smtp-Source: AGHT+IEa6Hzh8iplc2O4j6MAuHsPrz3gwMtJo4QDDed36sqLtaIyvZNgtfYHMunzORQAJFT/1HqMx5ok1MkSOReqCEc=
+X-Received: by 2002:a05:6402:35cd:b0:58b:15e4:d786 with SMTP id
+ 4fb4d7f45d1cf-5c415dd2e59mr386985a12.5.1726150940497; Thu, 12 Sep 2024
+ 07:22:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-12_03,2024-09-12_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- priorityscore=1501 bulkscore=0 spamscore=0 phishscore=0 lowpriorityscore=0
- mlxscore=0 mlxlogscore=999 impostorscore=0 clxscore=1011 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
- definitions=main-2409120102
+References: <20240912-kvm-arm64-limit-guest-vl-v2-1-dd2c29cb2ac9@kernel.org>
+In-Reply-To: <20240912-kvm-arm64-limit-guest-vl-v2-1-dd2c29cb2ac9@kernel.org>
+From: Fuad Tabba <tabba@google.com>
+Date: Thu, 12 Sep 2024 15:21:43 +0100
+Message-ID: <CA+EHjTyJcP0NcvhF0WeuF9_zuFSa1o7w8tA5J2eU=GutF+ZmRA@mail.gmail.com>
+Subject: Re: [PATCH v2] KVM: arm64: Constrain the host to the maximum shared
+ SVE VL with pKVM
+To: Mark Brown <broonie@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Dave Martin <Dave.Martin@arm.com>, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Sep 12, 2024 at 11:23 AM +0800, Lai Jiangshan <jiangshanlai@gmail.c=
-om> wrote:
-> From: Lai Jiangshan <jiangshan.ljs@antgroup.com>
+Hi Mark,
+
+On Thu, 12 Sept 2024 at 12:39, Mark Brown <broonie@kernel.org> wrote:
 >
-> Marc Hartmayer reported:
->         [   23.133876] Unable to handle kernel pointer dereference in vir=
-tual kernel address space
->         [   23.133950] Failing address: 0000000000000000 TEID: 0000000000=
-000483
->         [   23.133954] Fault in home space mode while using kernel ASCE.
->         [   23.133957] AS:000000001b8f0007 R3:0000000056cf4007 S:00000000=
-56cf3800 P:000000000000003d
->         [   23.134207] Oops: 0004 ilc:2 [#1] SMP
-> 	(snip)
->         [   23.134516] Call Trace:
->         [   23.134520]  [<0000024e326caf28>] worker_thread+0x48/0x430
->         [   23.134525] ([<0000024e326caf18>] worker_thread+0x38/0x430)
->         [   23.134528]  [<0000024e326d3a3e>] kthread+0x11e/0x130
->         [   23.134533]  [<0000024e3264b0dc>] __ret_from_fork+0x3c/0x60
->         [   23.134536]  [<0000024e333fb37a>] ret_from_fork+0xa/0x38
->         [   23.134552] Last Breaking-Event-Address:
->         [   23.134553]  [<0000024e333f4c04>] mutex_unlock+0x24/0x30
->         [   23.134562] Kernel panic - not syncing: Fatal exception: panic=
-_on_oops
+> When pKVM saves and restores the host floating point state on a SVE system
+> it programs the vector length in ZCR_EL2.LEN to be whatever the maximum VL
+> for the PE is but uses a buffer allocated with kvm_host_sve_max_vl, the
+> maximum VL shared by all PEs in the system. This means that if we run on a
+> system where the maximum VLs are not consistent we will overflow the buffer
+> on PEs which support larger VLs.
 >
-> With debuging and analysis, worker_thread() accesses to the nullified
-> worker->pool when the newly created worker is destroyed before being
-> waken-up, in which case worker_thread() can see the result detach_worker()
-> reseting worker->pool to NULL at the begining.
+> Since the host will not currently attempt to make use of non-shared VLs fix
+> this by explicitly setting the EL2 VL to be the maximum shared VL when we
+> save and restore. This will enforce the limit on host VL usage. Should we
+> wish to support asymmetric VLs this code will need to be updated along with
+> the required changes for the host, patches have previously been posted:
 >
-> Move the code "worker->pool =3D NULL;" out from detach_worker() to fix the
-> problem.
+>   https://lore.kernel.org/r/20240730-kvm-arm64-fix-pkvm-sve-vl-v6-0-cae8a2e0bd66@kernel.org
+
+Thanks for fixing this.
+
+One part that you haven't changed is setting ZCR_EL2 during el2 setup:
+arch/arm64/include/asm/el2_setup.h: .Linit_sve_ : lines 290/291
+
+I guess at that point it's not straightforward to figure sve_max_vl.
+Is there a window after el2 setup where we might actually get the VL
+implied by ZCR_ELx_LEN_MASK, or would it always get set to
+sve_vq_from_vl(kvm_host_sve_max_vl) - 1 ?
+
+That said, this passes the sve-stress test now: tested on qemu using
+nvhe, pKVM non-protected guest, pKVM protected guest (the latest with
+patches not upstream yet).
+
+Assuming that the current code in el2_setup.h is fine as it is:
+Tested-by: Fuad Tabba <tabba@google.com>
+Reviewed-by: Fuad Tabba <tabba@google.com>
+
+Cheers,
+/fuad
+
+
+
 >
-> worker->pool had been designed to be constant for regular workers and
-> changeable for rescuer. To share attaching/detaching code for regular
-> and rescuer workers and to avoid worker->pool being accessed inadvertently
-> when the worker has been detached, worker->pool is reset to NULL when
-> detached no matter the worker is rescuer or not.
->
-> To maintain worker->pool being reset after detached, move the code
-> "worker->pool =3D NULL;" in the worker thread context after detached.
->
-> It is either be in the regular worker thread context after PF_WQ_WORKER
-> is cleared or in rescuer worker thread context with wq_pool_attach_mutex
-> held. So it is safe to do so.
->
-> Cc: Marc Hartmayer <mhartmay@linux.ibm.com>
-> Link: https://lore.kernel.org/lkml/87wmjj971b.fsf@linux.ibm.com/
-> Reported-by: Marc Hartmayer <mhartmay@linux.ibm.com>
-> Fixes: f4b7b53c94af ("workqueue: Detach workers directly in idle_cull_fn(=
-)")
-> Cc: stable@vger.kernel.org # v6.11+
-> Signed-off-by: Lai Jiangshan <jiangshan.ljs@antgroup.com>
+> Fixes: b5b9955617bc ("KVM: arm64: Eagerly restore host fpsimd/sve state in pKVM")
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 > ---
-
-[=E2=80=A6snip=E2=80=A6]
-
-Hi, Lai,
-
-so I tested several things:
-
-1. f4b7b53c94af ("workqueue: Detach workers directly in
-   idle_cull_fn()") is the commit that introduced the bug
-2. with your fix applied I cannot reproduce the bug
-
-Therefore
-
-Tested-by: Marc Hartmayer <mhartmay@linux.ibm.com>
-
-Thanks for the quick fix!
-
----
-Kind regards / Beste Gr=C3=BC=C3=9Fe
-   Marc Hartmayer
-
-IBM Deutschland Research & Development GmbH
-Vorsitzender des Aufsichtsrats: Wolfgang Wendt
-Gesch=C3=A4ftsf=C3=BChrung: David Faller
-Sitz der Gesellschaft: B=C3=B6blingen
-Registergericht: Amtsgericht Stuttgart, HRB 243294
+> Changes in v2:
+> - Update all places where we constrain the host VL, not just those where
+>   we save and restore host state.
+> - The value written to the register is 0 based, not 1 based.
+> - Link to v1: https://lore.kernel.org/r/20240910-kvm-arm64-limit-guest-vl-v1-1-54df40b95ffb@kernel.org
+> ---
+>  arch/arm64/kvm/hyp/include/hyp/switch.h |  2 +-
+>  arch/arm64/kvm/hyp/nvhe/hyp-main.c      | 12 +++++++-----
+>  2 files changed, 8 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/arm64/kvm/hyp/include/hyp/switch.h b/arch/arm64/kvm/hyp/include/hyp/switch.h
+> index f59ccfe11ab9..c2cfb4d6dc92 100644
+> --- a/arch/arm64/kvm/hyp/include/hyp/switch.h
+> +++ b/arch/arm64/kvm/hyp/include/hyp/switch.h
+> @@ -339,7 +339,7 @@ static inline void __hyp_sve_save_host(void)
+>         struct cpu_sve_state *sve_state = *host_data_ptr(sve_state);
+>
+>         sve_state->zcr_el1 = read_sysreg_el1(SYS_ZCR);
+> -       write_sysreg_s(ZCR_ELx_LEN_MASK, SYS_ZCR_EL2);
+> +       write_sysreg_s(sve_vq_from_vl(kvm_host_sve_max_vl) - 1, SYS_ZCR_EL2);
+>         __sve_save_state(sve_state->sve_regs + sve_ffr_offset(kvm_host_sve_max_vl),
+>                          &sve_state->fpsr,
+>                          true);
+> diff --git a/arch/arm64/kvm/hyp/nvhe/hyp-main.c b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> index f43d845f3c4e..dd1c6aa907a2 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/hyp-main.c
+> @@ -33,7 +33,7 @@ static void __hyp_sve_save_guest(struct kvm_vcpu *vcpu)
+>          */
+>         sve_cond_update_zcr_vq(vcpu_sve_max_vq(vcpu) - 1, SYS_ZCR_EL2);
+>         __sve_save_state(vcpu_sve_pffr(vcpu), &vcpu->arch.ctxt.fp_regs.fpsr, true);
+> -       write_sysreg_s(ZCR_ELx_LEN_MASK, SYS_ZCR_EL2);
+> +       write_sysreg_s(sve_vq_from_vl(kvm_host_sve_max_vl) - 1, SYS_ZCR_EL2);
+>  }
+>
+>  static void __hyp_sve_restore_host(void)
+> @@ -45,10 +45,11 @@ static void __hyp_sve_restore_host(void)
+>          * the host. The layout of the data when saving the sve state depends
+>          * on the VL, so use a consistent (i.e., the maximum) host VL.
+>          *
+> -        * Setting ZCR_EL2 to ZCR_ELx_LEN_MASK sets the effective length
+> -        * supported by the system (or limited at EL3).
+> +        * Note that this constrains the PE to the maximum shared VL
+> +        * that was discovered, if we wish to use larger VLs this will
+> +        * need to be revisited.
+>          */
+> -       write_sysreg_s(ZCR_ELx_LEN_MASK, SYS_ZCR_EL2);
+> +       write_sysreg_s(sve_vq_from_vl(kvm_host_sve_max_vl) - 1, SYS_ZCR_EL2);
+>         __sve_restore_state(sve_state->sve_regs + sve_ffr_offset(kvm_host_sve_max_vl),
+>                             &sve_state->fpsr,
+>                             true);
+> @@ -479,7 +480,8 @@ void handle_trap(struct kvm_cpu_context *host_ctxt)
+>         case ESR_ELx_EC_SVE:
+>                 cpacr_clear_set(0, CPACR_ELx_ZEN);
+>                 isb();
+> -               sve_cond_update_zcr_vq(ZCR_ELx_LEN_MASK, SYS_ZCR_EL2);
+> +               sve_cond_update_zcr_vq(sve_vq_from_vl(kvm_host_sve_max_vl) - 1,
+> +                                      SYS_ZCR_EL2);
+>                 break;
+>         case ESR_ELx_EC_IABT_LOW:
+>         case ESR_ELx_EC_DABT_LOW:
+>
+> ---
+> base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+> change-id: 20240910-kvm-arm64-limit-guest-vl-d5fba0c7cc7b
+>
+> Best regards,
+> --
+> Mark Brown <broonie@kernel.org>
+>
 
