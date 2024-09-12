@@ -1,192 +1,108 @@
-Return-Path: <linux-kernel+bounces-326736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6448976C5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:43:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64FCE976C68
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:44:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55E9E1F243D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:43:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9791A1C2384E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BEB61B9858;
-	Thu, 12 Sep 2024 14:43:24 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2161B9834;
+	Thu, 12 Sep 2024 14:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mab+uNUQ"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2456F1AD26E
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 14:43:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E181B5801
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 14:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726152203; cv=none; b=QD+PLuZ+hTALtBzFWOd5xSVW2MI2WsfQprECEsWa5L8iqswznlQb0llb0oJsihjW8Vll3lsK9WU8aytFJOb8m3xoaCEI/cbuJ5O85EvDC0nlHUMaS/BGEvfHSf7qgue7iNREwCUXJtDQ4Lt4pZi2zw4v+wvrN+yBPC2nJJ+8fU4=
+	t=1726152280; cv=none; b=uMjBrUexgHio3scbn3h0+E29qXsKCLAi2tWk1O/CC6uNYvaY531L63aQr7Elpn32EXC8fBmwuhmxn57s/6ctzkP3SD+cwSH6uDs6PtJcH3u5Tdf1prf57wI4i7khaonOro4DkVv/G1yFEUFYO6lVRBhEmKrazEwLjGo176CpdJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726152203; c=relaxed/simple;
-	bh=44HZROY6hkUjMrwzO00wKvZQN6SjPK5W+mybUxobiB0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=o109EVrNQfZ+pdpTSYw4tQsIcIJeXDhr7qaSDE7/sL469w+Dc9M2jD96uAEf68Ze+ENJcK4YlNS/VqXlHP05UUq2N00YjDQt8KZj3GpA8oIM6g2yHMzzlTrpS29iS42n1SRtocUJs3NogoeACd04TYYdvGLQJtY+JSJutKQwyN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82aa4678394so190931739f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:43:21 -0700 (PDT)
+	s=arc-20240116; t=1726152280; c=relaxed/simple;
+	bh=ailPSFTxMrNMGHA7HZ9l1aBMXWsllhW7RSR3xtvRlgU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jKp8162x73NzLyhAlDtgSTky9mWkO6auW8S+PjENJF4Dfb7hls++J2lLAD9wzyCWX6iFPPCgI5HSp8NiIU1aCYSq6rGyocYjiAl2I9SmSvSMoVk8e3zeS/myTiwyY1K+PBE0jpwWdr/Rkxv1v6fB1fLECIRR49HUMSMP2gFmcyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mab+uNUQ; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7178df70f28so776735b3a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:44:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1726152278; x=1726757078; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SnjQo2l57VNy0/9b9V7jPtL8zuWKJeeYd2oBfdE66r8=;
+        b=mab+uNUQPU3h3IBtI8kmp9iQpEIsMxVBb/poFeaP8Mwmq2vKz+nKTFvo8NfxByz3bm
+         0z8J4PZSuWiTFvS1umPRyfxMry+OX4u9KQ67ptv78k1FaLlaQoKdnue0TZRtwIFTGdDa
+         OznG+JrrJT4nxGzqWuFomejbhNWXrUJKBhPhg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726152201; x=1726757001;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ij+GkpxlEVk7Mj41pa+W5MVk69nYLgtiVnFQHtDPlt0=;
-        b=CpZXZi1A6SXTmmsIi7mSCLV0KEn54XUJpEzZUTkEU2dnGx+iNbJEDTp0+64zo1Jbfc
-         UHCFmpVpbu2nRK8M6yY5znkalAOloEjLnE+rFkAk7OR+MkxeAuJI2/wI6bm8FEruVwQz
-         41SrJfM6G3aEyIIdn1IJHVSXkqzMj/qRJprWOX8F+4k7WMWTcpAHfkkonKJz4bFvdh8y
-         q32pAA1f6pmyP6XYjcxRLUBqv/94fK+HAmffkRtoHRmXrmch9z8hJR1RF/J57ruW4hfq
-         fe2A135tDi8g+XFL/a30tqLaTHG/fQfK5MlEOINt/5Z9EClIHZgvGRpHIcuQF/xNzr0Z
-         bxWA==
-X-Forwarded-Encrypted: i=1; AJvYcCWxZ/u2H2AOtn8ni6HBoE4ZdBF9eY9NOqjRPYRfQCAIfZpZjZg2X8q3pQUjIiYWWjh5bGmEQZEO274lVwI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywvd29Jr4KkB7IROzRtQwNBbcUs2HRwRxWh0IZaYbl9pZqBeGC+
-	2wRGIqCCqzBgURuPxfrci9L0Gmt6Ia3J527H9rQrEPCXRcvU7wmuNa/XoG4Cxc7v1VMB8EJI2+Y
-	VasRj7FlucvBhieXwYzNqGeSU9OF9CFF4cBH9kl5PEiA21X3SLlpnvCE=
-X-Google-Smtp-Source: AGHT+IH97IoXQLzlQcGm+nbcLb02E7mifpDJBoHBIkOLOsVm3EGLbq3ZGrIMm0VJb40L/AexNZevqcls3ExKpuwpBjpRGBigDijL
+        d=1e100.net; s=20230601; t=1726152278; x=1726757078;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SnjQo2l57VNy0/9b9V7jPtL8zuWKJeeYd2oBfdE66r8=;
+        b=D52NFIarm9EnLiJ1OpgmM8KhWwIkr9AIX5QvRjOd2Xt1ltsVjR60zU28ooCz8w46m/
+         jvLoiKHlYm08VMPqvcBzz0fEun3h5X3F3nrEwzedWNRuZRmkkqfyVXum6w3b2XoKiKJI
+         YlXzkx+Wap6uj6zIsV9KkiTf/eRONytwq4xunPKkllnaCsb1AE3O+hvrFmmjKjQkCO5A
+         rQMqlCD0sz54Zg3TFv1vIUa8okPmGs4YGZqMP9IUHSh68GyJXOmVHcIL4TCUYy6+NJgB
+         RzlJ1iExbvPlZ0JMRp9QFCWj5s/Xl3flvi/TonMl8Pyg5WCDvfoVXIxhg23H87cpv4DK
+         5cxA==
+X-Gm-Message-State: AOJu0Yxi2Q5A39CvQ3LDQ8eYxkGGLLqAom7dPRUTe4ol1CttVnC1uBAY
+	lBI2BfCdX0+0Gtvz2nCiGQ3pewXUN55Km7G+jF5d4LEl8WLPziFl0S8l3gbpWw==
+X-Google-Smtp-Source: AGHT+IGe8UZsXDErTlsFVsKEqocto9ktULRfXcWaq34cYE7rYYe0pLbf4dzAsufnELC8pqE5fNjDew==
+X-Received: by 2002:a05:6a20:ac43:b0:1cf:36f2:21e9 with SMTP id adf61e73a8af0-1cf76358fdfmr3795202637.32.1726152277655;
+        Thu, 12 Sep 2024 07:44:37 -0700 (PDT)
+Received: from treapking.tpe.corp.google.com ([2401:fa00:1:10:8638:897f:b6cd:8c44])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db1fdee186sm1826269a12.85.2024.09.12.07.44.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 07:44:37 -0700 (PDT)
+From: Pin-yen Lin <treapking@chromium.org>
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	CK Hu <ck.hu@mediatek.com>
+Cc: linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	Pin-yen Lin <treapking@chromium.org>,
+	Fabien Parent <fparent@baylibre.com>,
+	Jitao shi <jitao.shi@mediatek.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH 0/2] Fix dtcheck warnings for mediatek,dpi binding
+Date: Thu, 12 Sep 2024 22:43:57 +0800
+Message-ID: <20240912144430.3161717-1-treapking@chromium.org>
+X-Mailer: git-send-email 2.46.0.662.g92d0881bb0-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:15cb:b0:82c:d744:2936 with SMTP id
- ca18e2360f4ac-82d1f80b5demr410511239f.0.1726152201338; Thu, 12 Sep 2024
- 07:43:21 -0700 (PDT)
-Date: Thu, 12 Sep 2024 07:43:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ca18210621ed20e6@google.com>
-Subject: [syzbot] [fuse?] linux-next test error: general protection fault in fuse_get_req
-From: syzbot <syzbot+20c7e20cc8f5296dca12@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-next@vger.kernel.org, miklos@szeredi.hu, sfr@canb.auug.org.au, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    57f962b956f1 Add linux-next specific files for 20240912
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1575b100580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3fe5de8661687e85
-dashboard link: https://syzkaller.appspot.com/bug?extid=20c7e20cc8f5296dca12
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/545b0277a56b/disk-57f962b9.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2a78e0824c78/vmlinux-57f962b9.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0ea0ed7e55f3/bzImage-57f962b9.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+20c7e20cc8f5296dca12@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc000000000b: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000058-0x000000000000005f]
-CPU: 1 UID: 0 PID: 5438 Comm: syz.1.200 Not tainted 6.11.0-rc7-next-20240912-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-RIP: 0010:fuse_get_req+0x699/0xd40 fs/fuse/dev.c:151
-Code: 24 50 48 83 c3 08 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 f5 d0 e9 fe 48 8b 1b 48 83 c3 58 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 d8 d0 e9 fe 48 8b 1b 81 e3 00 20
-RSP: 0018:ffffc90003fef4c0 EFLAGS: 00010202
-RAX: 000000000000000b RBX: 0000000000000058 RCX: ffffffff83149a52
-RDX: 0000000000000001 RSI: 0000000000000008 RDI: ffff888027181030
-RBP: ffffc90003fef5e8 R08: ffff888027181037 R09: 1ffff11004e30206
-R10: dffffc0000000000 R11: ffffed1004e30207 R12: ffff888027181000
-R13: dffffc0000000000 R14: ffff88807b835840 R15: ffff888027181000
-FS:  000055556da20500(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ff9fa307040 CR3: 0000000079296000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- fuse_simple_background+0x9d/0xb10 fs/fuse/dev.c:622
- cuse_send_init fs/fuse/cuse.c:469 [inline]
- cuse_channel_open+0x447/0x670 fs/fuse/cuse.c:526
- misc_open+0x2cc/0x340 drivers/char/misc.c:165
- chrdev_open+0x521/0x600 fs/char_dev.c:414
- do_dentry_open+0x978/0x1460 fs/open.c:958
- vfs_open+0x3e/0x330 fs/open.c:1088
- do_open fs/namei.c:3774 [inline]
- path_openat+0x2cb5/0x3b40 fs/namei.c:3942
- do_filp_open+0x235/0x490 fs/namei.c:3969
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_openat fs/open.c:1446 [inline]
- __se_sys_openat fs/open.c:1441 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff9fa37def9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fffbadbdaa8 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007ff9fa535f80 RCX: 00007ff9fa37def9
-RDX: 0000000000000002 RSI: 0000000020000040 RDI: ffffffffffffff9c
-RBP: 00007ff9fa3f0b76 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ff9fa535f80 R14: 00007ff9fa535f80 R15: 0000000000000b44
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:fuse_get_req+0x699/0xd40 fs/fuse/dev.c:151
-Code: 24 50 48 83 c3 08 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 f5 d0 e9 fe 48 8b 1b 48 83 c3 58 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 d8 d0 e9 fe 48 8b 1b 81 e3 00 20
-RSP: 0018:ffffc90003fef4c0 EFLAGS: 00010202
-RAX: 000000000000000b RBX: 0000000000000058 RCX: ffffffff83149a52
-RDX: 0000000000000001 RSI: 0000000000000008 RDI: ffff888027181030
-RBP: ffffc90003fef5e8 R08: ffff888027181037 R09: 1ffff11004e30206
-R10: dffffc0000000000 R11: ffffed1004e30207 R12: ffff888027181000
-R13: dffffc0000000000 R14: ffff88807b835840 R15: ffff888027181000
-FS:  000055556da20500(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055e8d04790b8 CR3: 0000000079296000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	24 50                	and    $0x50,%al
-   2:	48 83 c3 08          	add    $0x8,%rbx
-   6:	48 89 d8             	mov    %rbx,%rax
-   9:	48 c1 e8 03          	shr    $0x3,%rax
-   d:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1)
-  12:	74 08                	je     0x1c
-  14:	48 89 df             	mov    %rbx,%rdi
-  17:	e8 f5 d0 e9 fe       	call   0xfee9d111
-  1c:	48 8b 1b             	mov    (%rbx),%rbx
-  1f:	48 83 c3 58          	add    $0x58,%rbx
-  23:	48 89 d8             	mov    %rbx,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	48 89 df             	mov    %rbx,%rdi
-  34:	e8 d8 d0 e9 fe       	call   0xfee9d111
-  39:	48 8b 1b             	mov    (%rbx),%rbx
-  3c:	81                   	.byte 0x81
-  3d:	e3 00                	jrcxz  0x3f
-  3f:	20                   	.byte 0x20
+This series fixes two binding schema errors in mediatek,dpi binding.
+The first patch adds the power-domain property to the binding, and the
+second patch adds the port node as it's required by the binding.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Pin-yen Lin (2):
+  dt-bindings: display: mediatek: dpi: Add power-domains to the bindings
+  arm64: dts: mt8183: Add port node to dpi node
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ .../bindings/display/mediatek/mediatek,dpi.yaml           | 8 ++++++++
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi                  | 4 ++++
+ 2 files changed, 12 insertions(+)
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+-- 
+2.46.0.662.g92d0881bb0-goog
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
