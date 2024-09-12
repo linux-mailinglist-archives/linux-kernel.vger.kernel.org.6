@@ -1,96 +1,118 @@
-Return-Path: <linux-kernel+bounces-327357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA851977490
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:53:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 291D3977494
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:55:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A87E1F2555F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:53:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6A651F2524B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561441C2DC2;
-	Thu, 12 Sep 2024 22:53:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A28A1C2DC3;
+	Thu, 12 Sep 2024 22:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tos/uB5y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XaOYOryR"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A866E1A3020;
-	Thu, 12 Sep 2024 22:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C1719F41A;
+	Thu, 12 Sep 2024 22:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726181624; cv=none; b=N0YUuX0sSAWzqcr6lviB+Qmr6xOiM6p2DHOadZq0mtnKUjurch09oYMSrXTBJLqnLvTfPNNDd6fX0+SAu1QKr38xj2voVZW6aSwA7eMZgZAVkL2nnMtDjdx4Wr42iWezONNWh27wi/Zi1M1ZgyDXDjFXvZ3hP/7JYIYS1z6tUHs=
+	t=1726181745; cv=none; b=bB1gJMq3nMc51rI+R0Vc0YDwpDGUhKykDAGB0w67NmzIxmTW5VVCIMhlT196y3RzKvdoeA/p1CcRszNu1vm1J2roXjv66MzBcQayu32A5Tigjz9wx/MZWBM3ne37rjS1NiyhzJDKANEZx7pMpTGfZApprbH0w/HE/Uy5pm4OlB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726181624; c=relaxed/simple;
-	bh=zdsGZy9kgbEI3Q5/TXUAM8lqaaji8u2K+l2wok8Srd0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=lixmVAf3RiqU3uGThwmzub7K+h6WDP6QcGLQpl/hNysfywMJV9biyDbdyYg8NZoEZkKkTSFqJfEzB8NnKaNrc1E/d80PbdjjqwlmqbFOpZsogi8rI9u2Hoq7jK9Yznoiik8JXki0qDuBn1ZSgCh9tzQYeJu1epfjtdolLxIzOVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tos/uB5y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D5ACC4CEC3;
-	Thu, 12 Sep 2024 22:53:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726181624;
-	bh=zdsGZy9kgbEI3Q5/TXUAM8lqaaji8u2K+l2wok8Srd0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=tos/uB5ywQE2viX9ViRtznZ4nfDI0i24i99uDckZXYUUTQVAYcwRc6LhmxXNh9Hfs
-	 bXB3RS5WZuGssxw3Gu45MQq7nqr66eUVGRcUSZXiD85UU5JF6NlA3sZQ5WMUijKp7G
-	 rD1l69Yylp/gtNpIPONVgpUYCCJNwNrvg+xeqobWFctuwu2oN66ABJCYHhHTvggUWY
-	 FZCrD9h12p2m12846nQvIcOIMgg7t7BCZyGODJs6+2hGTlP0RjGq2gETPYjLKk/v4u
-	 Fr/hz8oPjXKKnFXrZqOXZFu05u8A5qAQGe2Q6E4J8yB9hEtdsTu3B1sgKj3DmFHLrG
-	 t6+FmcR0xxyfA==
-Received: by pali.im (Postfix)
-	id 123805E9; Fri, 13 Sep 2024 00:53:40 +0200 (CEST)
-From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>
-Cc: linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] lockd: Fix comment about NLMv3 backwards compatibility
-Date: Fri, 13 Sep 2024 00:53:20 +0200
-Message-Id: <20240912225320.24178-1-pali@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1726181745; c=relaxed/simple;
+	bh=1fAqIZkQ3lBFl80DRTe5melKKG+bWX3d1ek7rpniYAM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=UHLlsNiHuncAmPD/V5p7jZQwj9YHqsan2W2P74eaK4M2kZ1as8meOdWRLGV/gX/0RUwnT2krKpyFiQTCl240geXmf4f9foKgKAkMWncvYuHoW1URUjP0rzmoRd/FB1MNe82QgdkdV7gOE1W0Ob4FoJZSe34ZOwRksLByEeCmZwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XaOYOryR; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2059204f448so14522505ad.0;
+        Thu, 12 Sep 2024 15:55:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726181744; x=1726786544; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pWuMZXE9BAfG5V2S6lvMwMxoSKtMEwZr/chmLcyZA3Y=;
+        b=XaOYOryRrTsFUCk9nQHhTIYuBfAIws0QwyvBNHXCWk1B8tEREFhg/Jd716Z2amyjFA
+         HuZ35CNOzn3HGwKn5TU9fCw143IVh/kAP5jHf6/696G/ZV5x3uQhbruc8E/4acJnvIsN
+         1Xby2mJqtDotBUf4UNvXCRKztlrhu6eKzv43aLBVhIDeofYjmWGAdeNyLxT7t8DKEwHv
+         ex4uX9tj2m6wxy+ZegPZOWEtRH39VsAQFeuV1vnTpnBAB+KlW5dhXM+UOod/vSNti+UU
+         lm4WauAGOSYzl9cck3zKj8zwS0P+cfr9op+fcYzmJenTr9cw/ba9opf2q+y+LYILIhnf
+         UUWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726181744; x=1726786544;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pWuMZXE9BAfG5V2S6lvMwMxoSKtMEwZr/chmLcyZA3Y=;
+        b=BgAmTigpEcGkdO45nFXSwSJu6Ze5b8ZoOmxc9VhZk1q5z7dLbk4dqiILsWBF9NBcTy
+         5XLrlEGSYuyfKJ6ygF9Y4cyNI8y1aDjXNztFSMogZcQVii9CfRHfi4VBSLitRiEpT5F+
+         VQraz8MFdOZepdPBTVZ6o6v15pdKOljhP9hpeep6YShmQXvj/6xPYr92AkiAwsaYinAh
+         XGL8F0HsCan9qbPRyd3TbpdLjB9SlRfZZeMsCWBDAeR7yWFWONchPsYcnMb5oQFgJY2L
+         Bg+sLaG8FWvuwQoabXzLhjsiqHPeYMSYjNfv7dTSSB8jKUa5kQqh2p1WzTEWCACk6F2N
+         +P/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUdbRT8aMDsp4TdCs9nn6dnckiKphU6VKldPUW7HXa4P+eNDaTzFY1WSo2FVcHN4/kDilC9x/F7B16TO2o=@vger.kernel.org, AJvYcCXgfb6QtzzHtQ6h9bFpSGU18L8nxoIxOTmLV9ENPLBGHYkRBr6SQJxmB8cXQ/J1drtehQqsF9du5XI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmTC0yJImJoZne+r9AShFzpJV5GlFgnMNLhIjFnGDPqqZckMEI
+	RVXjgmqn0Wu4FqnKfHNb1BVzipLKMrEYX6i63vRYsVcw7DD1MqvveWn0CA==
+X-Google-Smtp-Source: AGHT+IG4m9xRCD0geWalANohIYIaiTFjMIB0Nd7SodDb983G6xvkB0yUJcB1tcQU2ZcRFLxi3eLsiw==
+X-Received: by 2002:a17:902:c945:b0:207:5f56:4788 with SMTP id d9443c01a7336-2076e4768eemr51110465ad.60.1726181743715;
+        Thu, 12 Sep 2024 15:55:43 -0700 (PDT)
+Received: from localhost.localdomain (111-240-84-197.dynamic-ip.hinet.net. [111.240.84.197])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076b0083efsm18674825ad.244.2024.09.12.15.55.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 15:55:43 -0700 (PDT)
+From: Min-Hua Chen <minhuadotchen@gmail.com>
+To: skhan@linuxfoundation.org
+Cc: jkacur@redhat.com,
+	jwyatt@redhat.com,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	minhuadotchen@gmail.com,
+	shuah@kernel.org,
+	trenn@suse.com
+Subject: Re: [RFC PATCH for-next] pm: cpupower: rename raw_pylibcpupower.i
+Date: Fri, 13 Sep 2024 06:55:19 +0800
+Message-ID: <20240912225519.119392-1-minhuadotchen@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <b64402ad-4c0d-4f5f-939b-4be1a7855e4a@linuxfoundation.org>
+References: <b64402ad-4c0d-4f5f-939b-4be1a7855e4a@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-NLMv2 is completely different protocol than NLMv1 and NLMv3, and in
-original Sun implementation is used for RPC loopback callbacks from statd
-to lockd services. Linux does not use nor does not implement NLMv2.
+AFAIK,
+raw_pylibcpupower.i is not a generated file, it is a interface file
+for swig.
 
-Hence, NLMv3 is not backward compatible with NLMv2. But NLMv3 is backward
-compatible with NLMv1. Fix comment.
+The *.i file extension is also used for pre-processor output
+(single target build) and all *.i files are removed by 'make mrproper',
+including raw_pylibcpupower.i (should not be removed).
 
-Signed-off-by: Pali Rohár <pali@kernel.org>
----
- fs/lockd/clntxdr.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/lockd/clntxdr.c b/fs/lockd/clntxdr.c
-index a3e97278b997..81ffa521f945 100644
---- a/fs/lockd/clntxdr.c
-+++ b/fs/lockd/clntxdr.c
-@@ -3,7 +3,9 @@
-  * linux/fs/lockd/clntxdr.c
-  *
-  * XDR functions to encode/decode NLM version 3 RPC arguments and results.
-- * NLM version 3 is backwards compatible with NLM versions 1 and 2.
-+ * NLM version 3 is backwards compatible with NLM version 1.
-+ * NLM version 2 is different protocol used only for RPC loopback callbacks
-+ * from statd to lockd and is not implemented on Linux.
-  *
-  * NLM client-side only.
-  *
--- 
-2.20.1
-
+thanks,
+Min-Hua
+>
+>
+>> I have reviewed and tested and this. I am good with it being a stopgap.
+>
+>I am okay with the stopgap, but I do want i explore other solutions.
+>> 
+>> Please send the non-rfc patch.
+>> 
+>> Thank you for reporting and sending a patch for this Min-Hua.
+>> 
+>> Reviewed-by: John B. Wyatt IV <jwyatt@redhat.com>
+>> Reviewed-by: John B. Wyatt IV <sageofredondo@gmail.com>
+>> Tested-by: John B. Wyatt IV <jwyatt@redhat.com>
+>> Tested-by: John B. Wyatt IV <sageofredondo@gmail.com>
+>> 
 
