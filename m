@@ -1,76 +1,147 @@
-Return-Path: <linux-kernel+bounces-326689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2EED976BC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:17:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F33D0976BCE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:19:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DA35285E6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:17:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD7C9283AA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB2C21B1507;
-	Thu, 12 Sep 2024 14:16:30 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1A91AB6E9;
+	Thu, 12 Sep 2024 14:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="OvTJJspy"
+Received: from alln-iport-4.cisco.com (alln-iport-4.cisco.com [173.37.142.91])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226751B12FC
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 14:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E981A0BDF;
+	Thu, 12 Sep 2024 14:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.37.142.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726150590; cv=none; b=QwECDwY4yPfiOTgGYPRoFCrZ6qWOpk19JPSXMGM4002kQjWHr1EdoM8TifwNTLsYLrFMSrWcs9VxE0km7XWjtG3Qld1aYBuo2QT4mAnA5XvpdU07GbxlvHif9h0A0g4vHWWI8iPMf0Hg6CG1MTAHv1Kgjp4qIsuqpGtEwGKYNBg=
+	t=1726150775; cv=none; b=lsuywGzabz4LUj+bH8qBe5SFMRIECToWFU8yWl+eZtTIzqOfRz438nG/T4mXxrdrGnk6N7aPCjhBABd0pTlqN5Q0iOL4AP7U6+qPwpWIx7srt104kBcxkwwi6ccY+EvMfeZalhqfMeRuxqa784Lw2xQjgPF9h+P8EU7WG6PsmJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726150590; c=relaxed/simple;
-	bh=FrH7F6eRwG6ae7eC1yC1bTvsPrIboV2TWCHIdmrYS54=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=MhrjAyMzaj2hmTHO/pgEXckzakQYcEJIYfLD6sLIzrD9NPv4Z6iI4H5mYfGcgdEsGeJH18PKBUc6q+hXLOsktAwcYddhD0UZ10N4F8Y5/0S71/yMTGvUTtw/t+txj2uzh+EvgFe63HP1w/tO+NzqG/M21F4k62JNWlJ7BQN1KCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82cf28c74efso168877439f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:16:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726150588; x=1726755388;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FrH7F6eRwG6ae7eC1yC1bTvsPrIboV2TWCHIdmrYS54=;
-        b=C8aY0ArTLjebuoiTUFQ30SMpPJALfszbA7zGD7unKr3U1JiQe3f+vk3IqrRlJF8SsV
-         Wl1J1oPG2dDngoGjXD7tj+QKKhKdPG9Drl1S4kZh/H0in0bhnhy307fvtgRAByzmvuBv
-         YvoFDtTNS8kC2CGs7Tb/bhjYuZQRjFAPbr0oMtPC3hch5kn6yJE3YMS4kQnQ9kJKSArA
-         8UQh/lXoK4Esn0DuxCXpPMObtI1Gg6x8y8NySenNv45ahL6TXZ45v3lvzlV1lj6/UZJm
-         XPn7JWpdGsTbiehj0mFtcfb7hjcDPQV4Q0NukfVhhrS1Rx3GpAy8a7hFl+dhntVqUDjV
-         UQzQ==
-X-Gm-Message-State: AOJu0YzhOKquNabLY1UsKfGiregiOAdJjh/e2ZDsCaBUhQsTwIGC571b
-	B+pLyyORc7jM3vY0rOC9EaBYiFqDRvLQ+3VF5XaFBf175lzOmTbDOBtwTvtcS7X/sevMdeH74U4
-	tynV++ebOEANKKRdzmEmzRzTVOg1i+eNxeZczhh+y21q5q9kVlfct8vQ=
-X-Google-Smtp-Source: AGHT+IG5zBVAGQmxlTTJ6AsyIlTLy0bf8s6jLaFVyhvoZyxCmuzT2p4uZahKRGszH7iKZ7SEj7y2sKZOTvLfKmWpNIqhm5ljZnEG
+	s=arc-20240116; t=1726150775; c=relaxed/simple;
+	bh=t2mQwJo8APQZjTDExku0tcmE5K7kPNwIXQv3lZfWQCk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=RNRxJTb7JiE8/yoXzgoan9QVGtV/Ajj203v1Dtet7NiAALbBFDjoaql/FOszEFEGuJoT03FS/zJf3Y9ZGo8toLh1bUHwC3nzyaW+stt/1kbr71bkXBaMLhKOWVEiIpbHYPYzxU6bZ8Y2ftsnQIfSCEmUrseVEgLboeNfITyPHmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b=OvTJJspy; arc=none smtp.client-ip=173.37.142.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=cisco.com; i=@cisco.com; l=2312; q=dns/txt; s=iport;
+  t=1726150773; x=1727360373;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=2aoEE5RzvQEUmldkzRvDhp7X1WP97oJd1VWVMHtU+Yk=;
+  b=OvTJJspycjgQCq8X36yn+Tzd3oxDxV7BjYGH/4CSfPKHRdZUWep1OQvW
+   F0+5nHdGtYbVdg5C+BFbBiQvqbflhVhDZT8e21RHqDFplGkwHx25QgY0j
+   vMHc0TKt+7HxV0QeefGdWCjJG8ORqqcttXiEPiEvfWiGYpkDoiFMXlRRp
+   Y=;
+X-CSE-ConnectionGUID: fl1e6fgZS1m1XvieohE2Ow==
+X-CSE-MsgGUID: +wC4hs95TWeivNzCb3BoJg==
+X-IronPort-AV: E=Sophos;i="6.10,223,1719878400"; 
+   d="scan'208";a="343594541"
+Received: from alln-core-8.cisco.com ([173.36.13.141])
+  by alln-iport-4.cisco.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 14:19:32 +0000
+Received: from sjc-ads-3421.cisco.com (sjc-ads-3421.cisco.com [171.68.249.119])
+	by alln-core-8.cisco.com (8.15.2/8.15.2) with ESMTP id 48CEJVhM031210;
+	Thu, 12 Sep 2024 14:19:31 GMT
+From: Oleksandr Ocheretnyi <oocheret@cisco.com>
+To: linux@roeck-us.net
+Cc: jdelvare@suse.de, linux-kernel@vger.kernel.org,
+        linux-watchdog@vger.kernel.org, mika.westerberg@linux.intel.com,
+        oocheret@cisco.com, wim@linux-watchdog.org, wsa@kernel.org,
+        xe-linux-external@cisco.com
+Subject: [PATCH v2] iTCO_wdt: mask NMI_NOW bit for update_no_reboot_bit() call
+Date: Thu, 12 Sep 2024 07:19:31 -0700
+Message-Id: <20240912141931.2447826-1-oocheret@cisco.com>
+X-Mailer: git-send-email 2.35.6
+In-Reply-To: <9afcde72-6720-494e-9a02-b0089253c121@roeck-us.net>
+References: <9afcde72-6720-494e-9a02-b0089253c121@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a2d:b0:39d:4c8a:370d with SMTP id
- e9e14a558f8ab-3a084933c7emr29500795ab.18.1726150588064; Thu, 12 Sep 2024
- 07:16:28 -0700 (PDT)
-Date: Thu, 12 Sep 2024 07:16:28 -0700
-In-Reply-To: <0000000000001fdbd80621e28ae3@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a172110621ecc009@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [usb?] KMSAN: kernel-infoleak in iowarrior_read
-From: syzbot <syzbot+b8080cbc8d286a5fa23a@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Auto-Response-Suppress: DR, OOF, AutoReply
+X-Outbound-SMTP-Client: 171.68.249.119, sjc-ads-3421.cisco.com
+X-Outbound-Node: alln-core-8.cisco.com
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+Commit da23b6faa8bf ("watchdog: iTCO: Add support for Cannon Lake
+PCH iTCO") does not mask NMI_NOW bit during TCO1_CNT register's
+value comparison for update_no_reboot_bit() call causing following
+failure:
 
-***
+   ...
+   iTCO_vendor_support: vendor-support=0
+   iTCO_wdt iTCO_wdt: unable to reset NO_REBOOT flag, device
+                                    disabled by hardware/BIOS
+   ...
 
-Subject: Re: [syzbot] [usb?] KMSAN: kernel-infoleak in iowarrior_read
-Author: aha310510@gmail.com
+and this can lead to unexpected NMIs later during regular
+crashkernel's workflow because of watchdog probe call failures.
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+This change masks NMI_NOW bit for TCO1_CNT register values to
+avoid unexpected NMI_NOW bit inversions.
+
+Fixes: da23b6faa8bf ("watchdog: iTCO: Add support for Cannon Lake PCH iTCO")
+Signed-off-by: Oleksandr Ocheretnyi <oocheret@cisco.com>
+---
+ drivers/watchdog/iTCO_wdt.c | 23 +++++++++++++++++++----
+ 1 file changed, 19 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/watchdog/iTCO_wdt.c b/drivers/watchdog/iTCO_wdt.c
+index 264857d314da..46c09359588f 100644
+--- a/drivers/watchdog/iTCO_wdt.c
++++ b/drivers/watchdog/iTCO_wdt.c
+@@ -82,6 +82,12 @@
+ #define TCO2_CNT(p)	(TCOBASE(p) + 0x0a) /* TCO2 Control Register	*/
+ #define TCOv2_TMR(p)	(TCOBASE(p) + 0x12) /* TCOv2 Timer Initial Value*/
+ 
++/* NMI_NOW is bit 8 of TCO1_CNT register
++ * Read/Write
++ * This bit is implemented as RW but has no effect on HW.
++ */
++#define NMI_NOW		BIT(8)
++
+ /* internal variables */
+ struct iTCO_wdt_private {
+ 	struct watchdog_device wddev;
+@@ -217,15 +223,24 @@ static int update_no_reboot_bit_mem(void *priv, bool set)
+ static int update_no_reboot_bit_cnt(void *priv, bool set)
+ {
+ 	struct iTCO_wdt_private *p = priv;
+-	u16 val, newval;
+-
+-	val = inw(TCO1_CNT(p));
++	u16 val, newval, mask = (~NMI_NOW);
++
++	/* writing back 1b1 to NMI_NOW of TCO1_CNT register
++	 * causes NMI_NOW bit inversion what consequently does
++	 * not allow to perform the register's value comparison
++	 * properly.
++	 *
++	 * NMI_NOW bit masking for TCO1_CNT register values
++	 * helps to avoid possible NMI_NOW bit inversions on
++	 * following write operation.
++	 */
++	val = inw(TCO1_CNT(p)) & mask;
+ 	if (set)
+ 		val |= BIT(0);
+ 	else
+ 		val &= ~BIT(0);
+ 	outw(val, TCO1_CNT(p));
+-	newval = inw(TCO1_CNT(p));
++	newval = inw(TCO1_CNT(p)) & mask;
+ 
+ 	/* make sure the update is successful */
+ 	return val != newval ? -EIO : 0;
+-- 
+2.35.6
+
 
