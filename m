@@ -1,164 +1,169 @@
-Return-Path: <linux-kernel+bounces-326434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87D6D976849
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:52:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 494FD97684A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:52:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B9C41F21B97
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:52:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA2AB1F21B97
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF251A3BAE;
-	Thu, 12 Sep 2024 11:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD52E1A4F0A;
+	Thu, 12 Sep 2024 11:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Vqu1doXI"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PhzGVysH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946771A3ABE;
-	Thu, 12 Sep 2024 11:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE001A42AC
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 11:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726141811; cv=none; b=sOeD+cluSyWdqd7nOotizJ4igNCBBqWZMYzpNbCdRsXeGSsqG/VlvchU35bMGoV/2gGb8P91ZmgiravZxqM8TyZJKXhT7EWO7ttNQ8ULTNlhpT9s7L2qN8LFJ8EMA/l0Tfjg55pWzx2vyTRHXTDZSuX1b+F3PFKijcKHyV6TDZI=
+	t=1726141817; cv=none; b=GUugM/KtAPktndLs57KhFepKTeylEgcjIHNnFxjAHf8erO9dizBJloG4Tma4kKePWTCwMAuw6uivLWTBoPCjUs6R5qG9TqBfjoUM81Gg9MudOqPHiJ5lmMP8Wdz2z8R5qhu20O5vWKfVfOk4jwmYx4m+Fuga2Xlzd2IQyF33Xmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726141811; c=relaxed/simple;
-	bh=PM3KMX1b8ItBdUmCUzfcN2txmojhqZ2WTKlRJyp3FXc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P/SF6ASPSxRwh5nRckipT+H5ObJverHDFXiU7Niqqj/+G6qAScNIgOyGoDrUBfT4UEIkZ5l5ATtABnBO/3T9QZ78Xep4QlRumecTUFXzbQnt1uRdMC78lyAeNX70Hrgs05YvJjfsQmWgtfxAYOvf0NPKtYT3P14/Tv3tFjCdm5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Vqu1doXI; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6F33220009;
-	Thu, 12 Sep 2024 11:49:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1726141800;
+	s=arc-20240116; t=1726141817; c=relaxed/simple;
+	bh=Xl6nNLBK8GTBKxLIKD61vE0uvYByirFE263h76WjaRM=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=Ki0gqYAKaSneEQA+uk3w5QFwxoKsun9fXTSEdr6ZbJpQPiizQiK64x2jMpjqBU0FgNNfh4s0pfGQv+xZ1u0YE7Odrz5pVfewAqDC7eiofwDjJRMRsErBDiN1OLt459M9PYIK2egdEo5W+v0I/M1x1DPeGFOPimZLMab5Cg8217g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PhzGVysH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726141814;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r9lFEdtubc+Tq5IhwOwbHyzwGuSufkKYfVp5GQixoCY=;
-	b=Vqu1doXIHE+83bgc5UWD+qmupzcEeSXlIppq2gTBN0lKFlbi3PtlE1bHbRD4eZLiY8rImx
-	1peP3+N6+dxrI5PDjXOFIMBD5TcqP+DLSnfLsDrT39Cp8/XIFxjNPNuVJXvdk1hKCR9eXS
-	v4TeHItYXVp821aZAabTUAhwtCJSw3aR4QyUcmULLnkipQtb7WmAPJqzsoVus6/6Ckhcel
-	7qoyS9X59ChfzQEMEVEUZs+OTi+e8Q2y+yUGcxYKmSWtZjGlCUaYTJdgXtx42NCmASgQEV
-	M51GNuD5uHBN76aK+kDNg0bvVU/Z6AsdGh7A7cF4x9sRxQ0yFVP9rMBRFIsr8Q==
-Date: Thu, 12 Sep 2024 13:49:57 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, <netdev@vger.kernel.org>,
- <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
- <pabeni@redhat.com>, <bryan.whitehead@microchip.com>,
- <UNGLinuxDriver@microchip.com>, <linux@armlinux.org.uk>,
- <rdunlap@infradead.org>, <Steen.Hegelund@microchip.com>,
- <daniel.machon@microchip.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next V2 5/5] net: lan743x: Add Support for 2.5G SFP
- with 2500Base-X Interface
-Message-ID: <20240912134957.29998261@fedora.home>
-In-Reply-To: <ZuKRzWTi2lIbBl0/@HYD-DK-UNGSW21.microchip.com>
-References: <20240911161054.4494-1-Raju.Lakkaraju@microchip.com>
-	<20240911161054.4494-6-Raju.Lakkaraju@microchip.com>
-	<82067738-f569-448b-b5d8-7111bef2a8e9@lunn.ch>
-	<20240911220138.30575de5@fedora.home>
-	<ZuKRzWTi2lIbBl0/@HYD-DK-UNGSW21.microchip.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jLN3U1yZ7TMderZrIcQLdov+Z22mdFuW5sMvjEe338o=;
+	b=PhzGVysHpzbF0X83ZaR/BnmDU4+JTXmGUmdMze73dB8LlCLEsLkhsqf7/rqX/NbQZrbjIh
+	6aN3Rn6QUn11A+igbJO/yHwk4tea1teRRX1p9yDgfeddqDzfd0Zby7kj+jHlC1HMvNJDO2
+	NmxkSErI3nkuhZK3QSyDOHJFM+TCP7Q=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-615-FdrR9fltPha0VMOFb_6fTA-1; Thu,
+ 12 Sep 2024 07:50:13 -0400
+X-MC-Unique: FdrR9fltPha0VMOFb_6fTA-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F3217197702F;
+	Thu, 12 Sep 2024 11:50:10 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.67])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1FA4519560AA;
+	Thu, 12 Sep 2024 11:50:06 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <brauner@kernel.org>,
+    Steve French <stfrench@microsoft.com>
+cc: dhowells@redhat.com, Paulo Alcantara <pc@manguebit.com>,
+    Jeff Layton <jlayton@kernel.org>,
+    Stephen Rothwell <sfr@canb.auug.org.au>, linux-cifs@vger.kernel.org,
+    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] cifs: Fix up netfs-writeback vs cifs fixes merge conflicts
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1131387.1726141806.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Date: Thu, 12 Sep 2024 12:50:06 +0100
+Message-ID: <1131388.1726141806@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Hi Raju,
+    =
 
-On Thu, 12 Sep 2024 12:31:33 +0530
-Raju Lakkaraju <Raju.Lakkaraju@microchip.com> wrote:
+Fix up the conflicts between the netfslib development patches and cifs fix
+commits due to:
 
-> The 09/11/2024 22:01, Maxime Chevallier wrote:
-> > EXTERNAL EMAIL: Do not click links or open attachments unless you know =
-the content is safe
-> >=20
-> > On Wed, 11 Sep 2024 19:31:01 +0200
-> > Andrew Lunn <andrew@lunn.ch> wrote:
-> >  =20
-> > > > @@ -3359,6 +3362,7 @@ static int lan743x_phylink_create(struct lan7=
-43x_adapter *adapter)
-> > > >     lan743x_phy_interface_select(adapter);
-> > > >
-> > > >     switch (adapter->phy_interface) {
-> > > > +   case PHY_INTERFACE_MODE_2500BASEX:
-> > > >     case PHY_INTERFACE_MODE_SGMII:
-> > > >             __set_bit(PHY_INTERFACE_MODE_SGMII,
-> > > >                       adapter->phylink_config.supported_interfaces)=
-; =20
-> > >
-> > > I _think_ you also need to set the PHY_INTERFACE_MODE_2500BASEX bit in
-> > > phylink_config.supported_interfaces if you actually support it. =20
-> >=20
-> > It's actually being set a bit below. However that raises the
-> > question of why.
-> >=20
-> > On the variant that don't have this newly-introduced SFP support but do
-> > have sgmii support (!is_sfp_support_en && is_sgmii_en), can this chip
-> > actually support 2500BaseX ? =20
->=20
-> Yes.=20
-> PCI11010/PCI11414 chip's PCS support SGMII/2500Baxe-X I/F at 2.5Gpbs
-> We need to over clocking at a bit rate of 3.125 Gbps for 2.5Gbps event SG=
-MII
-> I/F
->=20
-> From data sheet:
-> "The SGMII interface also supports over clocking at a bit rate of 3.125 G=
-bps for an effective 2.5 Gbps data rate. 10 and
-> 100 Mbps modes are also scaled up by 2.5x but are most likely not useful."
->=20
-> >=20
-> > If so, is there a point in getting a different default interface
-> > returned from lan743x_phy_interface_select() depending on wether or not
-> > there's SFP support ? =20
->=20
-> Yes.
->=20
-> This LAN743x driver support following chips
->  1. LAN7430 - GMII I/F
->  2. LAN7431 - MII I/F
->  3. PCI11010/PCI11414 - RGMII or SGMII/1000Base-X/2500Base-X
+        a68c74865f517e26728735aba0ae05055eaff76c
+        cifs: Fix SMB1 readv/writev callback in the same way as SMB2/3
 
-In your patch there's the following change :
+conflicting with:
 
-@@ -1495,7 +1495,10 @@ static void lan743x_phy_interface_select(struct lan7=
-43x_adapter *adapter)
- 	data =3D lan743x_csr_read(adapter, MAC_CR);
- 	id_rev =3D adapter->csr.id_rev & ID_REV_ID_MASK_;
-=20
--	if (adapter->is_pci11x1x && adapter->is_sgmii_en)
-+	if (adapter->is_pci11x1x && adapter->is_sgmii_en &&
-+	    adapter->is_sfp_support_en)
-+		adapter->phy_interface =3D PHY_INTERFACE_MODE_2500BASEX;
-+	else if (adapter->is_pci11x1x && adapter->is_sgmii_en)
- 		adapter->phy_interface =3D PHY_INTERFACE_MODE_SGMII;
- 	else if (id_rev =3D=3D ID_REV_ID_LAN7430_)
- 		adapter->phy_interface =3D PHY_INTERFACE_MODE_GMII;
+        ee4cdf7ba857
+        netfs: Speed up buffered reading"
 
-=46rom what I get, if the chip is a pci11x1x and has sgmii_en, it doesn't
-really matter wether or not the "is_sfp_support" it set, as you support
-the same sets of interface modes.
+This will need to be applied if/when Christian's vfs.netfs branch is merge=
+d.
 
-The phy_interface will be re-configured the moment the SFP module is
-plugged, so it shouldn't matter wether you set the default interface to
-SGMII or 2500BaseX.
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Steve French <stfrench@microsoft.com>
+cc: Paulo Alcantara <pc@manguebit.com>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: linux-cifs@vger.kernel.org
+cc: netfs@lists.linux.dev
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/smb/client/cifssmb.c |   14 +++++++-------
+ fs/smb/client/smb2pdu.c |    2 --
+ 2 files changed, 7 insertions(+), 9 deletions(-)
 
-So, the change quoted above doesn't really bring anything, am I correct
-?
+diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
+index 6ad22732c25c..d0df0c17b18f 100644
+--- a/fs/smb/client/cifssmb.c
++++ b/fs/smb/client/cifssmb.c
+@@ -1266,9 +1266,7 @@ static void cifs_readv_worker(struct work_struct *wo=
+rk)
+ 	struct cifs_io_subrequest *rdata =3D
+ 		container_of(work, struct cifs_io_subrequest, subreq.work);
+ =
 
-Thanks,
+-	netfs_subreq_terminated(&rdata->subreq,
+-				(rdata->result =3D=3D 0 || rdata->result =3D=3D -EAGAIN) ?
+-				rdata->got_bytes : rdata->result, true);
++	netfs_read_subreq_terminated(&rdata->subreq, rdata->result, false);
+ }
+ =
 
-Maxime
+ static void
+@@ -1327,9 +1325,9 @@ cifs_readv_callback(struct mid_q_entry *mid)
+ 		__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
+ 		rdata->result =3D 0;
+ 	} else {
+-		if (rdata->got_bytes < rdata->actual_len &&
+-		    rdata->subreq.start + rdata->subreq.transferred + rdata->got_bytes =
+=3D=3D
+-		    ictx->remote_i_size) {
++		size_t trans =3D rdata->subreq.transferred + rdata->got_bytes;
++		if (trans < rdata->subreq.len &&
++		    rdata->subreq.start + trans =3D=3D ictx->remote_i_size) {
+ 			__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
+ 			rdata->result =3D 0;
+ 		}
+@@ -1337,7 +1335,9 @@ cifs_readv_callback(struct mid_q_entry *mid)
+ =
+
+ 	rdata->credits.value =3D 0;
+ 	rdata->subreq.transferred +=3D rdata->got_bytes;
+-	netfs_read_subreq_terminated(&rdata->subreq, rdata->result, false);
++	trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_progress);
++	INIT_WORK(&rdata->subreq.work, cifs_readv_worker);
++	queue_work(cifsiod_wq, &rdata->subreq.work);
+ 	release_mid(mid);
+ 	add_credits(server, &credits, 0);
+ }
+diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
+index 95377bb91950..bb8ecbbe78af 100644
+--- a/fs/smb/client/smb2pdu.c
++++ b/fs/smb/client/smb2pdu.c
+@@ -4614,8 +4614,6 @@ smb2_readv_callback(struct mid_q_entry *mid)
+ 			      0, cifs_trace_rw_credits_read_response_clear);
+ 	rdata->credits.value =3D 0;
+ 	rdata->subreq.transferred +=3D rdata->got_bytes;
+-	if (rdata->subreq.start + rdata->subreq.transferred >=3D rdata->subreq.r=
+req->i_size)
+-		__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
+ 	trace_netfs_sreq(&rdata->subreq, netfs_sreq_trace_io_progress);
+ 	INIT_WORK(&rdata->subreq.work, smb2_readv_worker);
+ 	queue_work(cifsiod_wq, &rdata->subreq.work);
 
 
