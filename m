@@ -1,154 +1,101 @@
-Return-Path: <linux-kernel+bounces-326165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 262C8976422
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:15:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BD5A97640E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:09:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C611B1F2282A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:15:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8ABDFB22128
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE29E1917EC;
-	Thu, 12 Sep 2024 08:15:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B40190079;
+	Thu, 12 Sep 2024 08:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="SlD/feqP";
-	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="5d2vmuy8"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.53])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jnjBzjON"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C791191499;
-	Thu, 12 Sep 2024 08:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726128910; cv=pass; b=LP8z8Jzy/j/UlrH/5VpUZGPIVWJOiO5VcIgpq/lFEyqZKWwp9H0+g7NDe5X8RjmH8g4hrj8mE15xjow58isHSVEoR/t15coAbp46iO5BNP8v775FDMMlQZevuTapIvlR6HtFX4tpOcFtn/csAIpfUcjopI0LS6LmWOmCu6HveK0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726128910; c=relaxed/simple;
-	bh=H2RxP91oTkVhyn625N4T827oCkam97r7DmgJet1F8mI=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=f+qN+wue61zwLGTad2TXd4aN1pi0uwi+K0wBLAZGsvmgaTWyx64hWvv6Lm+63SkDZYmOgdSd4j08tlfH9OVjOD24wG12OHU699C7qkT3H8C7c8ByhVmbyqiW4mnIZ0df8tUWXsNuSRnHiMuNXMgNwDpV+Tiqil1XoarbfwVH+Kc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=SlD/feqP; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=5d2vmuy8; arc=pass smtp.client-ip=85.215.255.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
-ARC-Seal: i=1; a=rsa-sha256; t=1726128540; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=jZB5dkNG/t9uD8/+UjTJ3pg6dPmaNc9Kplb1L6Wm1qHgdX/lAkdc2W1q8HWc7dqt9O
-    lEJfbTmRMshaBp6gdmpkRksSqSjbLV1MwjyIDOk8ZbQjEZkJLdovL4JV7sl1Mvb3aPvW
-    OWpzgHwUJLeLtYIEPog8IHnF0onXD2oPg7g3HCYdIcqNJDMmto1I77qIDyIdmqxqjfV9
-    vEIrqdBYuzTqSXnGMgR9KuY++18PzAve0pbRSqcFMTwh3nXEO9OGMRPxjk/pBKgCwOBS
-    u5cxiG2klULPI9JfsjAHjvfaKIqJvBbi51Hn4DjIjk5CPBZl04Hi7vlj/zWoKmG9QsVC
-    NbtA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1726128540;
-    s=strato-dkim-0002; d=strato.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=7oOuMVZyb5hBcyF8Ky9QuaxacwXT5tqF9fJZNv8z3bo=;
-    b=E4UOzdDclpjR3D3yZ8UX/NOwRNYwqRarNm4ryyfxdqSMFsjo2Z07sv+fxNtFuFc0+R
-    JARAQIAj2+R6s4hjK2f2HPo/7tfkXbaTx9dKhVO1XegyR854FEvUW70geHoS0KMVursi
-    r5qzwNw5o0CAk5PZxT5WIk/XLS/XHtaMuBlbNvXTFHvyscBGjz+o8RhAnT4Qfx7d766J
-    qF3o4hx9WR9A+Ca/kghYU8X6H10UK0PidrGvg5LB0eJzelhBtApy94iBydjlbHtoPPn8
-    YmIQV5eYp1RkRp1vq29b6gW+58V1DAVIyktX17j8W2O6+QswRFva8kBNBy0ZScpFuy31
-    gYFg==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1726128540;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=7oOuMVZyb5hBcyF8Ky9QuaxacwXT5tqF9fJZNv8z3bo=;
-    b=SlD/feqPB+Id4GIZSAnk55oeqFr5vwkt7HMIdZPYuImi7gDAwy1a96Lz/EIbYKPfh4
-    w4wzFVe6j6KKH//6BxXL3F528qzujGDsWR4hGmWG8BMotg1J+4ki7x6gwtcrHuhQ6oom
-    rq7X5zCKxhXL8DFLURfqTKI07A9ceq9As6kDNak2Zb+9inqxF1iZy1A+fWgfIUaSya25
-    o3jmKM7/ZG2bcQsJZ9qwLq5205u56EoIY43ujPTmVMVx75jWFFJgCVOv79onq5DqNZ4u
-    DbqaKmMTnUl03aEMqyAm0SUnkXuoJWmH8RkdUaKgLnGSZS3AvVfcOqmjBFXi3IFg0+8W
-    tqHA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1726128540;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=7oOuMVZyb5hBcyF8Ky9QuaxacwXT5tqF9fJZNv8z3bo=;
-    b=5d2vmuy86bxM1L6wmscMtBmtb/hAH/d4Perac+hG2LBt3kjqFgfyAi0FkY794WgyN+
-    m05mZrtN4xh1L9/Ra1Bw==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0lFzL1yeDoZ"
-Received: from smtpclient.apple
-    by smtp.strato.de (RZmta 51.2.3 DYNA|AUTH)
-    with ESMTPSA id Q984c208C88x2bd
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-	(Client did not present a certificate);
-    Thu, 12 Sep 2024 10:08:59 +0200 (CEST)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA1018BBB6;
+	Thu, 12 Sep 2024 08:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726128574; cv=none; b=Cw9Mx58i/HRFoaBkoO77opI9oU4B4yxzcPzUwu8PdnQNz4JDy6oizro7Yku5h3Iy4YU8yC5qvys5NVaVqN6eYmiwp4Mt3NtDWgTCISeBzBh2RPNaQUo9yE8/uVRW3T1XShNh1uSBXG8/V/t+qL0n7CEtvD57zpSyqSaL4zc2kn0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726128574; c=relaxed/simple;
+	bh=SES32wNoIGrGed28oBc2F5wQIjRruZj+eJv3fRuFOgM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L8Rzpy7fEQcI76hvrBY5zvLTdxMV64VcjLxVdyAOyXcW3v6W8Apc4yzS5NqR7QVgjXLFGDk2ihtDo9IhXWQoNIQ7m977/ovXR9ZA3nStjujudGwXPwFplVcfpCftI0jlnn+CxznBX051DBfQfMsczQA0INpB3eIW+XkpbJafzhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jnjBzjON; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7046C4CEC3;
+	Thu, 12 Sep 2024 08:09:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726128574;
+	bh=SES32wNoIGrGed28oBc2F5wQIjRruZj+eJv3fRuFOgM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jnjBzjONOKd5NBx/TMxrHMdgJkPExfk3Qf6fErCrrlEOQNURa2YUtyrps27kbKwzy
+	 rErspzq4hsieZJbg5HO5OjegNnRonh2tiHjaN0TDAZgc8xbFcgB8nFfboNMJhjDEaa
+	 7QXumVS7YM1b0lQVUDmq5PYkh2rAgiR1I22dC/FAM8JWQszkd6IY4EX//4If9nIXqz
+	 Mu4g5raHbRkOqh4xJY7NrlUjL6ML46CuAzb4CiT/tmnGAuQ7qjlwQl0U/ErDD3he89
+	 dRz1/R1MLAWxZmHKw9dOKt/GGFxy9M9Z3F7QR4UIdwNFpPHXUmdxJAjzX6m0wjkccy
+	 SAdXHse8argzQ==
+Date: Thu, 12 Sep 2024 09:09:29 +0100
+From: Simon Horman <horms@kernel.org>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	thomas.petazzoni@bootlin.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH net-next] Documentation: networking: Fix missing PSE
+ documentation issue
+Message-ID: <20240912080929.GD572255@kernel.org>
+References: <20240911144711.693216-1-kory.maincent@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH] ARM: dts: ti/omap: Fix at24 EEPROM node names
-From: H. Nikolaus Schaller <hns@goldelico.com>
-In-Reply-To: <20240910215942.824137-1-robh@kernel.org>
-Date: Thu, 12 Sep 2024 10:08:49 +0200
-Cc: Tony Lindgren <tony@atomide.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Linux-OMAP <linux-omap@vger.kernel.org>,
- devicetree <devicetree@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Discussions about the Letux Kernel <letux-kernel@openphoenux.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <6DD6AD3A-F3D3-48E3-B326-CE874F39E57A@goldelico.com>
-References: <20240910215942.824137-1-robh@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911144711.693216-1-kory.maincent@bootlin.com>
 
-
-
-> Am 10.09.2024 um 23:59 schrieb Rob Herring (Arm) <robh@kernel.org>:
->=20
-> at24.yaml defines the node name for at24 EEPROMs as 'eeprom'.
->=20
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+On Wed, Sep 11, 2024 at 04:47:11PM +0200, Kory Maincent wrote:
+> Fix a missing end of phrase in the documentation. It describes the
+> ETHTOOL_A_C33_PSE_ACTUAL_PW attribute, which was not fully explained.
+> 
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 > ---
-> arch/arm/boot/dts/ti/omap/am335x-baltos.dtsi       |  2 +-
-> arch/arm/boot/dts/ti/omap/am335x-bone-common.dtsi  | 10 +++++-----
-> arch/arm/boot/dts/ti/omap/am335x-boneblue.dts      |  2 +-
-> arch/arm/boot/dts/ti/omap/am335x-pdu001.dts        |  6 +++---
-> arch/arm/boot/dts/ti/omap/am335x-shc.dts           |  2 +-
-> arch/arm/boot/dts/ti/omap/am3874-iceboard.dts      |  8 ++++----
-> arch/arm/boot/dts/ti/omap/am437x-cm-t43.dts        |  2 +-
-> arch/arm/boot/dts/ti/omap/am437x-idk-evm.dts       |  2 +-
-> arch/arm/boot/dts/ti/omap/am437x-sbc-t43.dts       |  2 +-
-> arch/arm/boot/dts/ti/omap/am437x-sk-evm.dts        |  2 +-
-> arch/arm/boot/dts/ti/omap/am43x-epos-evm.dts       |  2 +-
-> arch/arm/boot/dts/ti/omap/am57xx-cl-som-am57x.dts  |  2 +-
-> arch/arm/boot/dts/ti/omap/am57xx-sbc-am57x.dts     |  2 +-
-> arch/arm/boot/dts/ti/omap/logicpd-torpedo-som.dtsi |  2 +-
-> arch/arm/boot/dts/ti/omap/omap3-cm-t3x.dtsi        |  2 +-
-> arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi         |  2 +-
-> arch/arm/boot/dts/ti/omap/omap3-sb-t35.dtsi        |  2 +-
-> arch/arm/boot/dts/ti/omap/omap5-cm-t54.dts         |  2 +-
-> arch/arm/boot/dts/ti/omap/omap5-sbc-t54.dts        |  2 +-
-> 19 files changed, 28 insertions(+), 28 deletions(-)
+>  Documentation/networking/ethtool-netlink.rst | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/networking/ethtool-netlink.rst b/Documentation/networking/ethtool-netlink.rst
+> index ba90457b8b2d..b1390878ba84 100644
+> --- a/Documentation/networking/ethtool-netlink.rst
+> +++ b/Documentation/networking/ethtool-netlink.rst
+> @@ -1801,8 +1801,9 @@ the PSE and the PD. This option is corresponding to ``IEEE 802.3-2022``
+>  30.9.1.1.8 aPSEPowerClassification.
+>  
+>  When set, the optional ``ETHTOOL_A_C33_PSE_ACTUAL_PW`` attribute identifies
+> -This option is corresponding to ``IEEE 802.3-2022`` 30.9.1.1.23 aPSEActualPower.
+> -Actual power is reported in mW.
+> +the actual power drawn by the C33 PSE. This option is corresponding to
 
-...
+nit: While we are here, perhaps we can also update the grammar.
 
-> diff --git a/arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi =
-b/arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi
-> index 3661340009e7..2ee3ddd64020 100644
-> --- a/arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi
-> +++ b/arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi
-> @@ -601,7 +601,7 @@ tsc2007@48 {
-> };
->=20
-> /* RFID EEPROM */
-> - m24lr64@50 {
-> + eeprom@50 {
-> compatible =3D "atmel,24c64";
-> reg =3D <0x50>;
-> };
+     This attribute corresponds to...
 
-Acked-by: hns@goldelico.com # for GTA04=
+> +``IEEE 802.3-2022`` 30.9.1.1.23 aPSEActualPower. Actual power is reported
+> +in mW.
+>  
+>  When set, the optional ``ETHTOOL_A_C33_PSE_EXT_STATE`` attribute identifies
+>  the extended error state of the C33 PSE. Possible values are:
+> -- 
+> 2.34.1
+> 
+> 
 
