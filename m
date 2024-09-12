@@ -1,287 +1,454 @@
-Return-Path: <linux-kernel+bounces-326658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA6DC976B6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:03:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66701976B55
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06E741C236B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:03:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 251C928093B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A89CA1AD265;
-	Thu, 12 Sep 2024 14:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531281AD26E;
+	Thu, 12 Sep 2024 13:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="UwcYyyKY"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fRjZywS+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1E714F6C;
-	Thu, 12 Sep 2024 14:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8EF17966F;
+	Thu, 12 Sep 2024 13:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726149784; cv=none; b=LuEf77hVBDFU/zD7tffkg3oXg8YTDVZKm7KG5Co9MOZFLMgz8iZNcZQgxuPca7iYgqC2I68c3OI88Gp1B4NYzys/5d05tkDhD8r1jxPv10ZZirunESC19K3P/VQonifj2g/IvNEDN2lzMUIfN34pWeRfQMUO1zRvPaOVHgFXbsQ=
+	t=1726149458; cv=none; b=g6ia/xLpn3AAt7RfsJc6pXekfBPemGDKHu8BiD6ue2qaejnxS14jDNtzKwXVl7N53yuYmLc/tFyirHYt1eTYteDhj2Kv0/Z+73/DGuZRgX/l+et4leBrpR2s8lr+o/VEyzwa0mdGBe1w4u+Kz3zdzCBwE8P8jY8FtJhUyMMsC7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726149784; c=relaxed/simple;
-	bh=6VNELcmiOGridR0hfeVG9f1nXPaRFEiRQOHr2rlq44M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=TGlUWFZwerGrc1C9mPz5C6s8pao3+q+qKmVHexoxkfm1DL2wIWWFH2t7JKqjLt15aJupVT3I/LpV+nLEWTiic9yxEtAzQMVbox8fnX4nMp6b5k15dLcLJHqc9FYqyBC0uB70gEp0i3Uo8SMySieEPwIZlU1mj2OA/waffRXBZIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=UwcYyyKY; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48CA0B91007769;
-	Thu, 12 Sep 2024 16:01:12 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	wydyosr06jttKvWq2McbxmUj/AVPLDsXH8zlKd5DuUs=; b=UwcYyyKYBr/7L4Xg
-	m8LL6KaR0eq5R5RnY8GuczEq5eY9C9UWSoKg50ePrd1TeMIEYXxELmuNAVIG2KzH
-	hmY5z6dRQRSRstZultdS3cGa4bcggvdZs0tGB/Zt1Drjf1B4/4LlXZJ12Elq7voE
-	8Tjj0siwS++QLyKb0GPK6gIglLebje/z+Ye/4UHKijLcqX8zZ7QpsJRK+pTYmeZT
-	G/qJ4ES7VJp9uFGbDeoGlrHPgYZX5Ifno4nTXzOGCJ9CXsqccgXQ8LDG1WIkphOU
-	W40UmoxDUEhlSqoZ+Lw8d86tUTtx5inmHTTv6X5DBfPSf7qxVRgxcRl+el7R/3eB
-	E1Wj4w==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 41h1sgm66q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Sep 2024 16:01:12 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D47F440072;
-	Thu, 12 Sep 2024 15:59:55 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6149726CBC1;
-	Thu, 12 Sep 2024 15:57:01 +0200 (CEST)
-Received: from [10.48.86.208] (10.48.86.208) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Thu, 12 Sep
- 2024 15:57:00 +0200
-Message-ID: <1b863880-89e1-4fb4-8365-8c69e6228cb6@foss.st.com>
-Date: Thu, 12 Sep 2024 15:57:00 +0200
+	s=arc-20240116; t=1726149458; c=relaxed/simple;
+	bh=hpnmLUdj6I9Xqg7VTdRTBOJb3Q4SwLfnBPYrP2ZXgkA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=OrM5t+zHonVkkVB3YhxBzDXncDibH42oouJP7O/pqMEwXbdS1oqKe5u1cL8XSxkzOO3zmZ25qT8jzpbsbSez59tNOZA2lc5QFrQLcT47vvXHo9B84RrSlTEiq1zR+MtoubaC7dhAUXf8HIfqi/OhZO+/ignPnF/bPiSccwBktHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fRjZywS+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AE00C4CEC3;
+	Thu, 12 Sep 2024 13:57:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726149457;
+	bh=hpnmLUdj6I9Xqg7VTdRTBOJb3Q4SwLfnBPYrP2ZXgkA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fRjZywS+WodpHyR2ZTTHa1WAmT1D5Gq6+2fkHV8dJHvxt1zPTKdS9h5kyFexLl34J
+	 iwtr2QdqKjiAXhxXeXbigV3e4ByeW+8pT3daWAt7P2O9FMfavgIQHMVzfFdxYEU0xz
+	 Xw+h28VlrlIFHx6zS7eX4sXEP66fBK4VCZIM6Ik/pONtKVEx5nLz9akKbJx1iBpRxH
+	 gqaihUkZltBpowCGUUqvTuQDZeikiwH4RSSeoGZVLljvjKPzNgH87ek8aA91ix2YJH
+	 /6X4jc2olP35HIvUXqCGtQt8ScmSEwiRYbHw2ZR77rPArbk1d2bM3VmoYK1zqyXU/n
+	 6cYvqsKQO1OTQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] media: verisilicon: add WebP decoding support
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Hans Verkuil
-	<hverkuil-cisco@xs4all.nl>,
-        Fritz Koenig <frkoenig@chromium.org>,
-        Sebastian
- Fricke <sebastian.fricke@collabora.com>,
-        Daniel Almeida
-	<daniel.almeida@collabora.com>,
-        Benjamin Gaignard
-	<benjamin.gaignard@collabora.com>,
-        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20240911135011.161217-1-hugues.fruchet@foss.st.com>
- <20240911135011.161217-3-hugues.fruchet@foss.st.com>
- <1d02cbe2797053c69ba9d7adb9c666ca221407e0.camel@collabora.com>
- <01020191e2672cd9-0b3804cc-def2-4dfb-aa44-8eddbd5e99fb-000000@eu-west-1.amazonses.com>
- <e3e4a4e6-d0ac-455e-9854-d93bdb13f272@foss.st.com>
- <01020191e65d93a5-448a3c64-c746-4d9b-820f-6a9413c6f0af-000000@eu-west-1.amazonses.com>
-Content-Language: en-US
-From: Hugues FRUCHET <hugues.fruchet@foss.st.com>
-In-Reply-To: <01020191e65d93a5-448a3c64-c746-4d9b-820f-6a9413c6f0af-000000@eu-west-1.amazonses.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 12 Sep 2024 16:57:34 +0300
+Message-Id: <D44CWVY4FZ00.2C7VG1HOAMQLD@kernel.org>
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Roberto Sassu" <roberto.sassu@huaweicloud.com>, <dhowells@redhat.com>,
+ <dwmw2@infradead.org>, <herbert@gondor.apana.org.au>, <davem@davemloft.net>
+Cc: <linux-kernel@vger.kernel.org>, <keyrings@vger.kernel.org>,
+ <linux-crypto@vger.kernel.org>, <zohar@linux.ibm.com>,
+ <linux-integrity@vger.kernel.org>, <torvalds@linux-foundation.org>,
+ "Roberto Sassu" <roberto.sassu@huawei.com>
+Subject: Re: [PATCH v3 04/14] PGPLIB: Basic packet parser
+X-Mailer: aerc 0.18.2
+References: <20240911122911.1381864-1-roberto.sassu@huaweicloud.com>
+ <20240911122911.1381864-5-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20240911122911.1381864-5-roberto.sassu@huaweicloud.com>
 
-Thanks Nicolas,
+On Wed Sep 11, 2024 at 3:29 PM EEST, Roberto Sassu wrote:
+> From: David Howells <dhowells@redhat.com>
+>
+> Provide a simple parser that extracts the packets from a PGP packet blob
+> and passes the desirous ones to the given processor function:
+>
+> 	struct pgp_parse_context {
+> 		u64 types_of_interest;
+> 		int (*process_packet)(struct pgp_parse_context *context,
+> 				      enum pgp_packet_tag type,
+> 				      u8 headerlen,
+> 				      const u8 *data,
+> 				      size_t datalen);
+> 	};
+>
+> 	int pgp_parse_packets(const u8 *data, size_t datalen,
+> 			      struct pgp_parse_context *ctx);
+>
+> This is configured on with CONFIG_PGP_LIBRARY.
+>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> ---
+>  crypto/asymmetric_keys/Kconfig       |   6 +
+>  crypto/asymmetric_keys/Makefile      |   5 +
+>  crypto/asymmetric_keys/pgp_library.c | 262 +++++++++++++++++++++++++++
+>  crypto/asymmetric_keys/pgplib.h      |  33 ++++
+>  4 files changed, 306 insertions(+)
+>  create mode 100644 crypto/asymmetric_keys/pgp_library.c
+>  create mode 100644 crypto/asymmetric_keys/pgplib.h
+>
+> diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kcon=
+fig
+> index e1345b8f39f1..8215e3fcd8db 100644
+> --- a/crypto/asymmetric_keys/Kconfig
+> +++ b/crypto/asymmetric_keys/Kconfig
+> @@ -103,4 +103,10 @@ config FIPS_SIGNATURE_SELFTEST_ECDSA
+>  	depends on CRYPTO_SHA256=3Dy || CRYPTO_SHA256=3DFIPS_SIGNATURE_SELFTEST
+>  	depends on CRYPTO_ECDSA=3Dy || CRYPTO_ECDSA=3DFIPS_SIGNATURE_SELFTEST
+> =20
+> +config PGP_LIBRARY
+> +	tristate "PGP parsing library"
+> +	help
+> +	  This option enables a library that provides a number of simple
+> +	  utility functions for parsing PGP (RFC 9580) packet-based messages.
+> +
+>  endif # ASYMMETRIC_KEY_TYPE
+> diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/Mak=
+efile
+> index bc65d3b98dcb..055b28207111 100644
+> --- a/crypto/asymmetric_keys/Makefile
+> +++ b/crypto/asymmetric_keys/Makefile
+> @@ -79,3 +79,8 @@ verify_signed_pefile-y :=3D \
+> =20
+>  $(obj)/mscode_parser.o: $(obj)/mscode.asn1.h $(obj)/mscode.asn1.h
+>  $(obj)/mscode.asn1.o: $(obj)/mscode.asn1.c $(obj)/mscode.asn1.h
+> +
+> +#
+> +# PGP handling
+> +#
+> +obj-$(CONFIG_PGP_LIBRARY) +=3D pgp_library.o
+> diff --git a/crypto/asymmetric_keys/pgp_library.c b/crypto/asymmetric_key=
+s/pgp_library.c
+> new file mode 100644
+> index 000000000000..1b87f8af411b
+> --- /dev/null
+> +++ b/crypto/asymmetric_keys/pgp_library.c
+> @@ -0,0 +1,262 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/* PGP packet parser (RFC 9580)
+/*=20
+ * PGP packet parser (RFC 9580)
+
+> + *
+> + * Copyright (C) 2011 Red Hat, Inc. All Rights Reserved.
+> + * Written by David Howells (dhowells@redhat.com)
+> + */
+> +
+> +#define pr_fmt(fmt) "PGPL: "fmt
+> +#include <linux/errno.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +
+> +#include "pgplib.h"
+> +
+> +MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("PGP library");
+> +
+> +const char *const pgp_hash_algorithms[PGP_HASH__LAST] =3D {
+> +	[PGP_HASH_MD5]			=3D "md5",
+> +	[PGP_HASH_SHA1]			=3D "sha1",
+> +	[PGP_HASH_RIPE_MD_160]		=3D "rmd160",
+> +	[PGP_HASH_SHA256]		=3D "sha256",
+> +	[PGP_HASH_SHA384]		=3D "sha384",
+> +	[PGP_HASH_SHA512]		=3D "sha512",
+> +	[PGP_HASH_SHA224]		=3D "sha224",
+> +	[PGP_HASH_SHA3_256]		=3D "sha3-256",
+> +	[PGP_HASH_SHA3_512]		=3D "sha3-512",
+> +};
+> +EXPORT_SYMBOL_GPL(pgp_hash_algorithms);
+> +
+> +/**
+> + * pgp_parse_packet_header - Parse a PGP packet header
+> + * @_data: Start of the PGP packet (updated to PGP packet data)
+> + * @_datalen: Amount of data remaining in buffer (decreased)
+> + * @_type: Where the packet type will be returned
+> + * @_headerlen: Where the header length will be returned
+> + *
+> + * Parse a set of PGP packet header [RFC 9580: 4.2].
+> + *
+> + * Return: Packet data size on success; non-zero on error.  If successfu=
+l,
+> + * *_data and *_datalen will have been updated and *_headerlen will be s=
+et to
+> + * hold the length of the packet header.
+> + */
+> +static ssize_t pgp_parse_packet_header(const u8 **_data, size_t *_datale=
+n,
+> +				       enum pgp_packet_tag *_type,
+> +				       u8 *_headerlen)
+> +{
+> +	enum pgp_packet_tag type;
+> +	const u8 *data =3D *_data;
+> +	size_t size, datalen =3D *_datalen;
+
+Move the last declaration as the first declaration, makes more
+readable (reverse christmas tree order).
+
+I don't have time to go this patch fully for this round but I
+saw some other similar nits below.
+
+> +
+> +	pr_devel("-->%s(,%zu,,)\n", __func__, datalen);
+> +
+> +	if (datalen < 2)
+> +		goto short_packet;
+> +
+> +	pr_devel("pkthdr %02x, %02x\n", data[0], data[1]);
+> +
+> +	type =3D *data++;
+> +	datalen--;
+> +	if (!(type & 0x80)) {
+> +		pr_debug("Packet type does not have MSB set\n");
+> +		return -EBADMSG;
+> +	}
+> +	type &=3D ~0x80;
+> +
+> +	if (type & 0x40) {
+> +		/* New packet length format */
+> +		type &=3D ~0x40;
+> +		pr_devel("new format: t=3D%u\n", type);
+> +		switch (data[0]) {
+> +		case 0x00 ... 0xbf:
+> +			/* One-byte length */
+> +			size =3D data[0];
+> +			data++;
+> +			datalen--;
+> +			*_headerlen =3D 2;
+> +			break;
+> +		case 0xc0 ... 0xdf:
+> +			/* Two-byte length */
+> +			if (datalen < 2)
+> +				goto short_packet;
+> +			size =3D (data[0] - 192) * 256;
+> +			size +=3D data[1] + 192;
+> +			data +=3D 2;
+> +			datalen -=3D 2;
+> +			*_headerlen =3D 3;
+> +			break;
+> +		case 0xff:
+> +			/* Five-byte length */
+> +			if (datalen < 5)
+> +				goto short_packet;
+> +			size =3D  data[1] << 24;
+> +			size |=3D data[2] << 16;
+> +			size |=3D data[3] << 8;
+> +			size |=3D data[4];
+> +			data +=3D 5;
+> +			datalen -=3D 5;
+> +			*_headerlen =3D 6;
+> +			break;
+> +		default:
+> +			pr_debug("Partial body length packet not supported\n");
+> +			return -EBADMSG;
+> +		}
+> +	} else {
+> +		/* Old packet length format */
+> +		u8 length_type =3D type & 0x03;
+> +
+> +		type >>=3D 2;
+> +		pr_devel("old format: t=3D%u lt=3D%u\n", type, length_type);
+> +
+> +		switch (length_type) {
+> +		case 0:
+> +			/* One-byte length */
+> +			size =3D data[0];
+> +			data++;
+> +			datalen--;
+> +			*_headerlen =3D 2;
+> +			break;
+> +		case 1:
+> +			/* Two-byte length */
+> +			if (datalen < 2)
+> +				goto short_packet;
+> +			size  =3D data[0] << 8;
+> +			size |=3D data[1];
+> +			data +=3D 2;
+> +			datalen -=3D 2;
+> +			*_headerlen =3D 3;
+> +			break;
+> +		case 2:
+> +			/* Four-byte length */
+> +			if (datalen < 4)
+> +				goto short_packet;
+> +			size  =3D data[0] << 24;
+> +			size |=3D data[1] << 16;
+> +			size |=3D data[2] << 8;
+> +			size |=3D data[3];
+> +			data +=3D 4;
+> +			datalen -=3D 4;
+> +			*_headerlen =3D 5;
+> +			break;
+> +		default:
+> +			pr_debug("Indefinite length packet not supported\n");
+> +			return -EBADMSG;
+> +		}
+> +	}
+> +
+> +	pr_devel("datalen=3D%zu size=3D%zu\n", datalen, size);
+> +	if (datalen < size)
+> +		goto short_packet;
+> +	if (size > INT_MAX)
+> +		goto too_big;
+> +
+> +	*_data =3D data;
+> +	*_datalen =3D datalen;
+> +	*_type =3D type;
+> +	pr_devel("Found packet type=3D%u size=3D%zd\n", type, size);
+> +	return size;
+> +
+> +short_packet:
+> +	pr_debug("Attempt to parse short packet\n");
+> +	return -EBADMSG;
+> +too_big:
+> +	pr_debug("Signature subpacket size >2G\n");
+> +	return -EMSGSIZE;
+> +}
+> +
+> +/**
+> + * pgp_parse_packets - Parse a set of PGP packets
+> + * @data: Data to be parsed (updated)
+> + * @datalen: Amount of data (updated)
+> + * @ctx: Parsing context
+> + *
+> + * Parse a set of PGP packets [RFC 9580: 4].
+> + *
+> + * Return: 0 on successful parsing, a negative value otherwise.
+> + */
+> +int pgp_parse_packets(const u8 *data, size_t datalen,
+> +		      struct pgp_parse_context *ctx)
+> +{
+> +	enum pgp_packet_tag type;
+> +	ssize_t pktlen;
+> +	u8 headerlen;
+> +	int ret;
+> +
+> +	while (datalen > 2) {
+> +		pktlen =3D pgp_parse_packet_header(&data, &datalen, &type,
+> +						 &headerlen);
+> +		if (pktlen < 0)
+> +			return pktlen;
+> +
+> +		if ((ctx->types_of_interest >> type) & 1) {
+> +			ret =3D ctx->process_packet(ctx, type, headerlen,
+> +						  data, pktlen);
+> +			if (ret < 0)
+> +				return ret;
+> +		}
+> +		data +=3D pktlen;
+> +		datalen -=3D pktlen;
+> +	}
+> +
+> +	if (datalen !=3D 0) {
+> +		pr_debug("Excess octets in packet stream\n");
+> +		return -EBADMSG;
+> +	}
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(pgp_parse_packets);
+> +
+> +/**
+> + * pgp_parse_public_key - Parse the common part of a PGP pubkey packet
+> + * @_data: Content of packet (updated)
+> + * @_datalen: Length of packet remaining (updated)
+> + * @pk: Public key data
+> + *
+> + * Parse the common data struct for a PGP pubkey packet [RFC 9580: 5.5.2=
+].
+> + *
+> + * Return: 0 on successful parsing, a negative value otherwise.
+> + */
+> +int pgp_parse_public_key(const u8 **_data, size_t *_datalen,
+> +			 struct pgp_parse_pubkey *pk)
+> +{
+> +	const u8 *data =3D *_data;
+> +	size_t datalen =3D *_datalen;
+> +	unsigned int tmp;
+> +
+> +	if (datalen < 12) {
+> +		pr_debug("Public key packet too short\n");
+> +		return -EBADMSG;
+> +	}
+> +
+> +	pk->version =3D *data++;
+> +	switch (pk->version) {
+> +	case PGP_KEY_VERSION_4:
+> +		break;
+> +	default:
+> +		pr_debug("Public key packet with unhandled version %d\n",
+> +			 pk->version);
+> +		return -EBADMSG;
+> +	}
+> +
+> +	tmp  =3D *data++ << 24;
+> +	tmp |=3D *data++ << 16;
+> +	tmp |=3D *data++ << 8;
+> +	tmp |=3D *data++;
+> +	pk->creation_time =3D tmp;
+> +	if (pk->version =3D=3D PGP_KEY_VERSION_4)
+> +		pk->expires_at =3D 0; /* Have to get it from the selfsignature */
+> +
+> +	pk->pubkey_algo =3D *data++;
+> +	datalen -=3D 6;
+> +
+> +	pr_devel("%x,%x,%lx,%lx\n",
+> +		 pk->version, pk->pubkey_algo, pk->creation_time,
+> +		 pk->expires_at);
+> +
+> +	*_data =3D data;
+> +	*_datalen =3D datalen;
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(pgp_parse_public_key);
+> diff --git a/crypto/asymmetric_keys/pgplib.h b/crypto/asymmetric_keys/pgp=
+lib.h
+> new file mode 100644
+> index 000000000000..3ec4b408a11e
+> --- /dev/null
+> +++ b/crypto/asymmetric_keys/pgplib.h
+> @@ -0,0 +1,33 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/* PGP library definitions (RFC 9580)
+> + *
+> + * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
+> + * Written by David Howells (dhowells@redhat.com)
+> + */
+> +
+> +#include "pgp.h"
+> +
+> +/*
+> + * PGP library packet parser
+> + */
+> +struct pgp_parse_context {
+> +	u64 types_of_interest;
+> +	int (*process_packet)(struct pgp_parse_context *context,
+> +			      enum pgp_packet_tag type,
+> +			      u8 headerlen,
+> +			      const u8 *data,
+> +			      size_t datalen);
+> +};
+> +
+> +extern int pgp_parse_packets(const u8 *data, size_t datalen,
+> +			     struct pgp_parse_context *ctx);
+> +
+> +struct pgp_parse_pubkey {
+> +	enum pgp_key_version version : 8;
+> +	enum pgp_pubkey_algo pubkey_algo : 8;
+> +	__kernel_old_time_t creation_time;
+> +	__kernel_old_time_t expires_at;
+> +};
+> +
+> +extern int pgp_parse_public_key(const u8 **_data, size_t *_datalen,
+> +				struct pgp_parse_pubkey *pk);
 
 
-On 9/12/24 15:12, Nicolas Dufresne wrote:
-> Le jeudi 12 septembre 2024 à 14:18 +0200, Hugues FRUCHET a écrit :
->> Hi Nicolas,
->>
->> Thanks for reviewing.
->>
->> GStreamer changes are provided through this merge request:
->> https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/7505
->>
->> Code:
->> https://gitlab.freedesktop.org/gstreamer/gstreamer/-/commit/138ecfac54ce85b273a26ff6f0fefe3998f8d436?merge_request_iid=7505
->>
->>
->>
->> On 9/11/24 20:44, Nicolas Dufresne wrote:
->>> Le mercredi 11 septembre 2024 à 13:58 -0400, Nicolas Dufresne a écrit :
->>>> Hi Hugues,
->>>>
->>>> Le mercredi 11 septembre 2024 à 15:50 +0200, Hugues Fruchet a écrit :
->>>>> Add WebP picture decoding support to VP8 stateless decoder.
->>>>
->>>> Unless when its obvious, the commit message should explain what is being
->>>> changed.
->>>>
->>>>>
->>>>> Signed-off-by: Hugues Fruchet <hugues.fruchet@foss.st.com>
->>>>> ---
->>>>>    drivers/media/platform/verisilicon/hantro_g1_regs.h    | 1 +
->>>>>    drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c | 7 +++++++
->>>>>    2 files changed, 8 insertions(+)
->>>>>
->>>>> diff --git a/drivers/media/platform/verisilicon/hantro_g1_regs.h b/drivers/media/platform/verisilicon/hantro_g1_regs.h
->>>>> index c623b3b0be18..e7d4db788e57 100644
->>>>> --- a/drivers/media/platform/verisilicon/hantro_g1_regs.h
->>>>> +++ b/drivers/media/platform/verisilicon/hantro_g1_regs.h
->>>>> @@ -232,6 +232,7 @@
->>>>>    #define     G1_REG_DEC_CTRL7_DCT7_START_BIT(x)		(((x) & 0x3f) << 0)
->>>>>    #define G1_REG_ADDR_STR					0x030
->>>>>    #define G1_REG_ADDR_DST					0x034
->>>>> +#define G1_REG_ADDR_DST_CHROMA				0x038
->>>>>    #define G1_REG_ADDR_REF(i)				(0x038 + ((i) * 0x4))
->>>>>    #define     G1_REG_ADDR_REF_FIELD_E			BIT(1)
->>>>>    #define     G1_REG_ADDR_REF_TOPC_E			BIT(0)
->>>>> diff --git a/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c b/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
->>>>> index 851eb67f19f5..c6a7584b716a 100644
->>>>> --- a/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
->>>>> +++ b/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
->>>>> @@ -427,6 +427,11 @@ static void cfg_buffers(struct hantro_ctx *ctx,
->>>>>    
->>>>>    	dst_dma = hantro_get_dec_buf_addr(ctx, &vb2_dst->vb2_buf);
->>>>>    	vdpu_write_relaxed(vpu, dst_dma, G1_REG_ADDR_DST);
->>>>> +
->>>>> +	if (hdr->flags & V4L2_VP8_FRAME_FLAG_WEBP)
->>>>> +		vdpu_write_relaxed(vpu, dst_dma +
->>>>> +				   ctx->dst_fmt.height * ctx->dst_fmt.width,
->>>>
->>>> I'm not really not fan of that type of formula using padded width/height. Not
->>>> sure if its supported already, but if we have foreign buffers with a bigger
->>>> bytesperline, the IP may endup overwriting the luma. Please use the per-plane
->>>> bytesperline, we have v4l2-common to help with that when needed.
->>>>> +				   G1_REG_ADDR_DST_CHROMA);
->>
->> OK, I'll check that.
->>
->>>>
->>>> I have a strong impression this patch is incomplete (not generic enough). The
->>>> documentation I have indicates that the resolution range for WebP can be
->>>> different for different synthesis. See swreg54 (0xd8), if bit 19 is set, then it
->>>> can support 16K x 16K resolution. There is no other way around that then
->>>> signalling explicitly at the format level that this is webp, since otherwise you
->>>> can't know from userspace and can't enumerate the different resolution. I'm
->>>> curious what is the difference at bitstream level, would be nice to clarify too.
->>
->> See below WebP image details.
->>
->>>
->>> I've also found that when the PP is used, you need to fill some extended
->>> dimension (SWREG92) with the missing bit of the width/height, as the dimension
->>> don't fit the usual register.
->>>
->>
->> Yes there are additional registers to set in postproc for large image >
->> 3472x4672 and image input bitstream larger than 16777215 bytes.
->> I have not tested such large images for now.
->> Additionally I don't have postproc support on STM32MP25.
->> Anyway I can guard for those limits in code...
->>
->>> More notes, I noticed that WebP supports having a second frame for the alpha,
->>> similar to WebM Alpha, for that we expect 2 requests, so no issue on this front.
->>> WebP Loss-less is a completely different codec, and should have its own format.
->>>
->>> I think overall, from my read of the spec, that its normal VP8, but the
->>> resolution will exceed the normal one. We also can't always enable WebP, since
->>> it will break references.
->>>
->>> Nicolas
->>>
->>
->> As far as I have understood & tested, WebP is just an encapsulation of
->> VP8 video chunk:
->>    * Webp image RIFF header
->>    *
->>    * 52 49 46 46 f6 00 00 00 57 45 42 50 56 50 38 20  RIFF....WEBPVP8
->>    * ea 00 00 00 90 09 00 9d 01 2a 30 00 30 00 3e 35  .........*0.0.>5
->>    *           | \______/ \______/
->>    *           |       |         \__VP8 startcode
->>    *           |        \__VP8 frame_tag
->>    *           |
->>    *            \__End of WebP RIFF header: 20 bytes, then VP8 chunk
->>
->> At least for lossy WebP.
->>
->> There are two others WebP formats which are loss-less WebP and animated
->> WebP but untested on my side, I don't even know if those formats are
->> supported by the hardware IP.
->>
->>>>
->>>> On GStreamer side, the formats are entirely seperate, image/webp vs video/x-vp8
->>>> are the mime types. Seems a lot safe to keep these two as seperate formats. They
->>>> can certainly share the same stateless frame structure, with the additional flag
->>>> imho.
->>>>
->>>> Nicolas
->>
->> Really very few changes needed on VP8 codebase to support WebP. On my
->> opinion it doesn't need a fork of codec for that, hence just the minor
->> addition of "WebP"  signaling on uAPI see GStreamer limited changes in
->> VP8 codebase to support WebP:
->> https://gitlab.freedesktop.org/gstreamer/gstreamer/-/commit/138ecfac54ce85b273a26ff6f0fefe3998f8d436?merge_request_iid=7505
-> 
-> If it was identical, we'd need no flag. The requirement to use the flag is not
-> discoverable. What I'm guessing is that anything above 1080p needs the flag. But
-> then if you enable that flag, you loose the ability to use references, so that
-> would equally break normal VP8. It seems like a VP8 decoder is compatible with
-> WebP, but a WebP decoder is not compatible with VP8.
-> 
-> I cannot accept what you believe is a simple solution since its not discover-
-> able by userspace. The Hantro VP8 decoder driver is not the only VP8 driver, so
-> the GStreamer implementation would break randomly on other SoC.
-> 
-> My recommendation is to introduce V4L2_PIX_FMT_WEBP_FRAME, and make it so that
-> format reused 100% of the VP8_FRAME format (very little work, no flag needed
-> since the format holds that). This way, drivers can be very explicit through
-> their ENUM_FORMAT implementation, and can also expose different resolution
-> ranges properly.
-> 
-> Nicolas
-
-OK, I'll wait for your comments on GStreamer side to propose a new 
-kernel patchset based on this new format.
-
-> 
-> p.s. you should draft the required synthesis check and postproc code, I can test
-> it for you.
-> 
-
-Thanks for that ;)
-
->>
->>>>
->>>>>    }
->>>>>    
->>>>>    int hantro_g1_vp8_dec_run(struct hantro_ctx *ctx)
->>>>> @@ -471,6 +476,8 @@ int hantro_g1_vp8_dec_run(struct hantro_ctx *ctx)
->>>>>    		reg |= G1_REG_DEC_CTRL0_SKIP_MODE;
->>>>>    	if (hdr->lf.level == 0)
->>>>>    		reg |= G1_REG_DEC_CTRL0_FILTERING_DIS;
->>>>> +	if (hdr->flags & V4L2_VP8_FRAME_FLAG_WEBP)
->>>>> +		reg |= G1_REG_DEC_CTRL0_WEBP_E;
->>>>>    	vdpu_write_relaxed(vpu, reg, G1_REG_DEC_CTRL0);
->>>>>    
->>>>>    	/* Frame dimensions */
->>>>
->>>
->>
->> BR,
->> Hugues.
-> 
-BR,
-Hugues.
+BR, Jarkko
 
