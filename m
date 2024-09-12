@@ -1,142 +1,122 @@
-Return-Path: <linux-kernel+bounces-326755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E0FD976C90
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:48:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5BD9976C8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:48:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6021E1C214D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:48:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D6FF285A95
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30BA21BC9E1;
-	Thu, 12 Sep 2024 14:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18161B9843;
+	Thu, 12 Sep 2024 14:47:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QftcuLJg"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LWW9yDkB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1176C1BBBDA
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 14:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A6C1B9829
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 14:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726152427; cv=none; b=E1429hOr3PSVSx+2KfF69OPuQPGJv/pbmLeJki6Bbj7Q+nrg3gzHdR1eVL6kcy6+OsWqKs8RBS3Z743xgXLOs7QBqPfEQ751Nyxw/h4S1uuw3h8IGDLtbyfT2kNn4v68YDUEUmiO1IBlsV0RWbS2oGY88Pzl1P7j0cQV/chNvHc=
+	t=1726152421; cv=none; b=lU4/jCK/zCmgnoNyvxm+6AwdMaJgYl4Fwuqj1YrWGLOhNxEhFFqVb2iRu5/zRvLNgpH7WMytDYnrxmL2HruJYYZ4DgIezY3IlY25Ka4iRUSWIgdoXOBNRRLQ75lwdRAym0Hpam2TrpnK8exQdSBV8akw51l9WuFR9EZQLJkdjQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726152427; c=relaxed/simple;
-	bh=yysFE99Y5Emir5Z8MTpaSYvkaElUuc2VX9lhXX5Tz2Y=;
+	s=arc-20240116; t=1726152421; c=relaxed/simple;
+	bh=tpdgi4juBb051AiOwZ5loJ0Avk2Y9YVyXPUQ57w6zTk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EdXqHzjVcwjEUWhVHvJh1u1TlC8+AhckioGOmCNcmsEpsxgx60p8D7B1bk4GYJ8vzfhyerX8Nd7K+MsJFbo2vbp1Cy4IW7W9TP0X65O4eXHIrpRY1bYteSDPY7hPUb39BXNlnrDwte1Paj6w9OSjPAbJEN1y+q6MUiaQc18cov0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QftcuLJg; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7c1324be8easo1550142a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:47:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726152425; x=1726757225; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=O5RqqAQCKLZ7/+gmavvgQDF/zChWWD9gq5CWrMwyiC0=;
-        b=QftcuLJg6ZajxMqOR0I0RASUDfXKoP9y+mKfuSQlgJokeMSGcZzJmPeHYxz40mkTKw
-         gorXlqEiU1VEVEX/QjQEvTQ1iq+Voj98TBBmGSKFBvWRo3Ad+F44NGqlpEym38UlQTz8
-         BL8t98JbjN7dJsYY+AkYbTbGp2N8i9FY3p7n/nIhR5puq8/XE6LK3g5gEw7lAbTTZAob
-         kqozQ9GKVflxDvcndyTuK+Z+SL0iw0p0UiyUH74MmZ/PtIheyy0BpoJjR3vL/zgDVIFg
-         4szHCxBTfDfiVcky+z1OKoDbGeK+UxSb30R90KA8dTeQ+Mv37UlcRWoSQOAl1vXwiVWb
-         2g6g==
+	 To:Cc:Content-Type; b=YkNwBqtlvDviqv4fJQ9O+YQ+YkDvLZsGcrRoZFC4Y+/yC3H9Zrrt+TLOLT18SqTbdixzu7fAJpsx0sDxTcbYipfRbcR5DlTMHgVw6jsV1kOwwnyZ/1wTZvvB6tZY0U6COj62k2LCTqGuKkkPqtBGn0UgGFFnxAElLZpTQTkr9/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LWW9yDkB; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726152417;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tpdgi4juBb051AiOwZ5loJ0Avk2Y9YVyXPUQ57w6zTk=;
+	b=LWW9yDkBBnvJQc0+nXBykRoboaZyYWVBqj0g4nqgE0pxJ2PWFxAnt/DpuOC3oMOHfVa7ot
+	weObX6hXjKzqPsqleHTqkFN3fECOSTk8MPI+K3hIG+W7mhVNgNnYR3wCU0WSErjoukKn5W
+	TKWuDMRaZSb8xx6J7fc22kQ70FSiP5U=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-418-7olfwgR5NemhXYeV--QTUw-1; Thu, 12 Sep 2024 10:46:55 -0400
+X-MC-Unique: 7olfwgR5NemhXYeV--QTUw-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42cceb06940so7874145e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:46:54 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726152425; x=1726757225;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O5RqqAQCKLZ7/+gmavvgQDF/zChWWD9gq5CWrMwyiC0=;
-        b=uKNGUANBLSJrF1nP7f96lkQP9OeJapCVpIzTTl+v/e8y3UqSy4FrdD/UZnZVGLPUIj
-         eKhpZ6vPxCFR2InAJl8daXzPWnX0AARMreU10v/FlxGvZVX69WFEq2vnBvUGEph7HExw
-         OBH1tzyzjX+fKSZDxL9kRRog88a7Z2thS8Pr9j+UlW+gC85SdtaqQAQlPCW+e+d/nv4j
-         yOzbvZeDmwRpE5CMe+hvv1QQLlzev/6sPS18kZZiGmX1Vhlyxkm5SajCg1NQe67w6zgR
-         yK8mkMJr4i3d07iU2/ucPmMP+izeDC520KLDJqA62AIMIOQ2fwxKkUnPCfOJ77cDDxqM
-         NS3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ//p07DP7GnrwysFSCfE5lV8fKGR+6TRMFXbXdtik0m4DjlInLbAASN6eUr6fcgkois9TEW1himW0D4c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2EWmznc2RG+f/5ZhCd7JgvKXYkI9nmvru/VCFuxqlapJgl9bM
-	jkHvnlxc4n/2j6IH1Yjr2/DsHrrG9QIa3ouTli7rJj4l8Hra6y5WXws6QKzxOZ7n548zm4gC1FE
-	IwiL57XYKjqwikBIAj5DbF/PYf48oJWDGgGYG
-X-Google-Smtp-Source: AGHT+IFust92Fikdsqho6imV+PsPdvyXW21u1a9qb23cqJI7Y7HiY2EO8+6cZUItE74mHAq0kFTKlPW6DkWtVMyTj7Y=
-X-Received: by 2002:a17:902:e952:b0:205:7007:84fa with SMTP id
- d9443c01a7336-2076e61e31amr46398585ad.28.1726152424882; Thu, 12 Sep 2024
- 07:47:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726152412; x=1726757212;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tpdgi4juBb051AiOwZ5loJ0Avk2Y9YVyXPUQ57w6zTk=;
+        b=nsUzsaD4XhUDh9i23IHGzsB1OVHHIy2bMUnX7c7WoT6fhw4tDh4vv6XCDd5CIt61uc
+         w2b0EfC9WVvX7RZh8Z/EAut4QNM4nEgLbxX7XeUUuO/t4AGkWsnjfG8vglOuj5qdawTI
+         5xioODKSSgABItbHsF8BagMXg8sgji8AdSKP3U2UD7xpa6wAhY/3s8rGdOm2XqMDgBH8
+         lpqa63VgL7hWwzpCcDlNXXy73W3wiYqolKI+3+qdcpzc8NfTKylQz8YqGBjdnRH8FUJf
+         TKeq40zFa5H8nAvK8vER7y84XXw6HjeSZAhUiy/HQjcRzUYsaY5e3p8xrTo+ullxISDG
+         LVUw==
+X-Forwarded-Encrypted: i=1; AJvYcCV7zxXbcVTY2JrbTEv/W+jpqlbgi+23gSNbKUidWK4IxnVmDKH5dqfofHreYsWUjnFmFpxZiYPDSiRt4fE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6nBW1/4PXpIwd9eKHG869ey6rCo6RPpX6Gqh04D69RX8X983a
+	q+IkcYJnytsv3b7fEdaUG08Lcc4O7BhleaKfzgKVuL0AWNa9PPyLtHlLrdvbjlh7STBC0tYJR//
+	L6lCLM6koiuGmNOHOlF7k0uVcxZbbEAfV1oJFF+p77Oxh23zHzsqDKpVGi0hNMOGIGQclsmqmeq
+	p3CIZRFDRWBO2up33IL26FvD4Y9fjidwbgPm/h
+X-Received: by 2002:a05:6000:128b:b0:374:c911:7756 with SMTP id ffacd0b85a97d-378c2d5a0b9mr1767659f8f.38.1726152412436;
+        Thu, 12 Sep 2024 07:46:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGXOt7eWeKrY/oke1uOUY9JGn1eMWvkplmC6z0F6bdmjBjP9Jctk6jvW8//ZU8X0ryKSQz/AKC9pD2uLCl6aP8=
+X-Received: by 2002:a05:6000:128b:b0:374:c911:7756 with SMTP id
+ ffacd0b85a97d-378c2d5a0b9mr1767637f8f.38.1726152411958; Thu, 12 Sep 2024
+ 07:46:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <000000000000e2058e0621e7a637@google.com> <20240912070121-mutt-send-email-mst@kernel.org>
- <CANpmjNN+3TwdxkvnFzzeQNOVXq-smqpi+xtkw0j+Pd-BGkrgFw@mail.gmail.com> <20240912103017-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20240912103017-mutt-send-email-mst@kernel.org>
-From: Marco Elver <elver@google.com>
-Date: Thu, 12 Sep 2024 16:46:28 +0200
-Message-ID: <CANpmjNOGpVXXdi61vFJDPB4CHsd3ksotjdQHO6WiVXV2m-aABg@mail.gmail.com>
-Subject: Re: [syzbot] [virt?] KCSAN: data-race in virtqueue_disable_cb /
- vring_interrupt (4)
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: syzbot <syzbot+8a02104389c2e0ef5049@syzkaller.appspotmail.com>, 
-	eperezma@redhat.com, jasowang@redhat.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, virtualization@lists.linux.dev, 
-	xuanzhuo@linux.alibaba.com
+References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
+ <20240904030751.117579-6-rick.p.edgecombe@intel.com> <8761e1b8-4c65-4837-b152-98be86cf220d@intel.com>
+ <ZuLzl6reeDH_1fFh@google.com> <d5c49c918a86d37995ed6388c1e77cd41fc51c19.camel@intel.com>
+In-Reply-To: <d5c49c918a86d37995ed6388c1e77cd41fc51c19.camel@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Thu, 12 Sep 2024 16:46:39 +0200
+Message-ID: <CABgObfZsqf7BbXo0CzyDOAG=x_GucHt-kANQHLa=on9RhE_ngg@mail.gmail.com>
+Subject: Re: [PATCH 05/21] KVM: VMX: Teach EPT violation helper about private mem
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "seanjc@google.com" <seanjc@google.com>, "Huang, Kai" <kai.huang@intel.com>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "nik.borisov@suse.com" <nik.borisov@suse.com>, 
+	"dmatlack@google.com" <dmatlack@google.com>, "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, 
+	"Zhao, Yan Y" <yan.y.zhao@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 12 Sept 2024 at 16:34, Michael S. Tsirkin <mst@redhat.com> wrote:
+On Thu, Sep 12, 2024 at 4:43=E2=80=AFPM Edgecombe, Rick P
+<rick.p.edgecombe@intel.com> wrote:
 >
-> On Thu, Sep 12, 2024 at 03:48:32PM +0200, Marco Elver wrote:
-> > On Thu, 12 Sept 2024 at 13:03, Michael S. Tsirkin <mst@redhat.com> wrote:
-> > >
-> > > On Thu, Sep 12, 2024 at 01:11:21AM -0700, syzbot wrote:
-> > > > Hello,
-> > > >
-> > > > syzbot found the following issue on:
-> > > >
-> > > > HEAD commit:    7c6a3a65ace7 minmax: reduce min/max macro expansion in ato..
-> > > > git tree:       upstream
-> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=1608e49f980000
-> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=1e7d02549be622b2
-> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=8a02104389c2e0ef5049
-> > > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> > > >
-> > > > Unfortunately, I don't have any reproducer for this issue yet.
-> > > >
-> > > > Downloadable assets:
-> > > > disk image: https://storage.googleapis.com/syzbot-assets/a1f7496fa21f/disk-7c6a3a65.raw.xz
-> > > > vmlinux: https://storage.googleapis.com/syzbot-assets/f423739e51a9/vmlinux-7c6a3a65.xz
-> > > > kernel image: https://storage.googleapis.com/syzbot-assets/b65a0f38cbd7/bzImage-7c6a3a65.xz
-> > > >
-> > > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > > Reported-by: syzbot+8a02104389c2e0ef5049@syzkaller.appspotmail.com
-> > > >
-> > > > ==================================================================
-> > > > BUG: KCSAN: data-race in virtqueue_disable_cb / vring_interrupt
-> > > >
-> > > > write to 0xffff88810285ef52 of 1 bytes by interrupt on cpu 0:
-> > > >  vring_interrupt+0x12b/0x180 drivers/virtio/virtio_ring.c:2591
-> > >
-> > >
-> > > Yes, it's racy!
-> > >
-> > > 2589:        /* Just a hint for performance: so it's ok that this can be racy! */
-> > > 2590:        if (vq->event)
-> > > 2591:            vq->event_triggered = true;
-> > >
-> > >
-> > > Question: is there a way to annotate code to tell syzbot it's ok?
+> On Thu, 2024-09-12 at 06:58 -0700, Sean Christopherson wrote:
+> > > Which clearly says it is checking the *faulting* GPA.
 > >
-> > In this case, "if (data_race(vq->event))" might be the right choice.
+> > I don't think that necessarily solves the problem either, because the r=
+eader
+> > has
+> > to know that the KVM looks at the shared bit.
+> >
+> > If open coding is undesirable
 >
-> No, vq->event is not racy.
+> Yea, I think it's used in enough places that a helper is worth it.
+>
+> > , maybe a very literal name, e.g. vmx_is_shared_bit_set()?
+>
+> Sure, thanks.
 
-Oops - yes.
+I didn't see a problem with kvm_is_private_gpa(), but I do prefer
+something that has vmx_ or vt_ in the name after seeing it. My
+preference would go to something like vt_is_tdx_private_gpa(), but I'm
+not going to force one name or another.
 
-> The race is between a write and a read of event_triggered.
-> I think data_race tags a read, it can not tag a write, correct?
+Paolo
 
-data_race() takes an expression, so either read or write can be
-enclosed - e.g. "data_race(vq->event_triggered = true);" works as
-well.
 
