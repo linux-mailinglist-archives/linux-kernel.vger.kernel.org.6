@@ -1,176 +1,147 @@
-Return-Path: <linux-kernel+bounces-326819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68ECA976D5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:14:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D13C0976D67
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:15:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D51C1C23581
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:14:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 106CB1C23B48
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB4D1BA86F;
-	Thu, 12 Sep 2024 15:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141B41BBBCB;
+	Thu, 12 Sep 2024 15:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CM7FgE4l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qMsAr9HH"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213EC3D556;
-	Thu, 12 Sep 2024 15:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC2B1B9833
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726153894; cv=none; b=uT+usXgJb7ma8Yvi3t+w6G7vLegvmzKQJ+5JK+VcFfH0l9l/YbEayo6jPrXW9uHzuxvbSzRahMh4xPrXZnK62jOJVdCMmsV1ni0j/3X6m+QmsAEbeODoO/oBaedRc86NgPqeoMKLey9ByZ5vfwhkqBYRmdr5CNwOfBoAQTUvJiY=
+	t=1726153946; cv=none; b=RgplDLnUpqc+bFB/TQO7GlBgkusOuu8hG8jA6C+5sQrrnWd70E0yW2uNviAcv+jty/AuDQt7lh9fsVCZJbJ9JvqYJFZx7NPueV/yi+rJGg8Q/U+5dsRLscaVmgltZSSIndEKWzGCmqB7IYHldKxEGkJbH5Rye53Arzl4zA/bnM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726153894; c=relaxed/simple;
-	bh=8t7YVZmoVUR7dCk/2nFP4SmQbrkuMwJVZH30PnGw0sc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CVVkyQHoskCS7ykLE6g6MaOdMwm6sPrzeAdg7N44tAeI+ntAS+Zhc3FiucdhhKnACC2j0eY6wFkNuCNImfru2PGsmM2NYcALJOMFTw/4Xi4VIS+vrH8Y15QeArDHL6UImSuGRZzTdmaKyWSk4/Cg3/6+9YLpdp70yNU1zxwqQ/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CM7FgE4l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5878C4CEC3;
-	Thu, 12 Sep 2024 15:11:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726153893;
-	bh=8t7YVZmoVUR7dCk/2nFP4SmQbrkuMwJVZH30PnGw0sc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CM7FgE4lNhz07Ne5rtBiCc6H1ZSJSr1G4BYAuMwZwVmFJF7rjIUJlFtXxTCj4S0ma
-	 wVKfHQbAChfhs/HQe203xug/lYlYnklVtlDxOPpzD4WP9ST5h1spoIWAL/ZgaYmcHx
-	 9HpUJVqJnwJNqOX77f+nYXtpo4FyFf2QX+PsSUAMd/HNGhGZxDgP7XHbGuCaHiL9Fe
-	 TacYm+zJwk4JwXE5nN6ORyf6+SCta241yMphjtLaAFgdJB+tOf0yxzC651nZKYZKRK
-	 GpNSOeQ2vjgUAULFv7eSYcyzROJKjtTVqr/QmiX0B4UkS5pP+BeufqfVy+CTfE+Ivr
-	 pBk50ZVffg2yA==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Florent Revest <revest@chromium.org>
-Cc: linux-trace-kernel@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	bpf <bpf@vger.kernel.org>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
+	s=arc-20240116; t=1726153946; c=relaxed/simple;
+	bh=QlEYYDXtTGIxeBuZbvdktHIfoy0JqF2apXxlZhC0hSM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ls4Qr249OMl79JsBhzycKjo6cPnwwDal78B8ydFAVM8UWgrmNjXQm7wkJyDBxSWKy0ifOq0lX6NCC10ZhgXhoGef8wiP9cAsWwZ/FABiYYaYZAW662xSIUd+q/x2BDCguRL99gUwXRDJ6O7bWf+GueqLnYE0q79wQXfhvR5XpqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qMsAr9HH; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42cb8dac900so10081975e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:12:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726153943; x=1726758743; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0vEtamCOnYuoncchNofQc9nqoQ7AlgNKS0ZFixTi9Yk=;
+        b=qMsAr9HHkSEHz7OPFeNx9YvAwJdCjCj56pIru2FmNGWFLd7zNpEWN9yIeGLv3/Z6zD
+         oX1GbriCBD2m0K7TNSkAVazNUSfasUBjS7oRPFbxqrngqexwKWHo2hz7eNwOWsXXxAap
+         o+gvTMuQ7QbnPCtRmJY7m6ZFamyoMs/U6d5OY/KCna7SymF2OFWEYAuNWOq3UDSoli6O
+         tL+vkMjeM1TSACg7M9FfqN48bfubYEWLrku44DF8KHamnDWyv9kzubzqhGjnThSjExSA
+         Lqwmzw8ZIgGOLmzgThv8vgYP3PidvQtXyCECYj1mPBI5OqJ3e0XkTdFceoVv2RlGaOoB
+         /2hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726153943; x=1726758743;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0vEtamCOnYuoncchNofQc9nqoQ7AlgNKS0ZFixTi9Yk=;
+        b=s41B+WTn3aY4Kp23bseY6dRl7uXUeYPvL9gty0vBaImuLkxJ12a6MU+cEmaIhActU8
+         7z+EapJxHCXsC6f9P+00Mb1vZb3gAgAWAJeagBVKC8H48odvQiQsR/5oUfB0ff7cFaC4
+         XbaRljn2RsfYiRx3EsFtVXsREh0hVoO9yD6Q6Xjq4xwcTYDUdsPbnQe9vRVixju/OgqP
+         jFEd8cRQZQC4Z5LwjIgWTN9RNyh3fWjj9VoF2fe4TWwJjXwnjPt2nVLtDjqeGSf1PqMo
+         lok+N72DDR+TmReMEaCL0/jZKdtoT3v2AYXjPTi4t0GJskWdxH9RHeadPaHdY130dYH9
+         CYDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXTcnmn2wYS6eYt2W3ASTVGHIgs6KW7RXJupdPVc7ZxNsWn2kjLERjZHnPl+Xv8NomxaoVmu1IokePRQBA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTdHHBUeulf3XNqecLIF+XSNcFkJTiEVsiI6PSGFshFq9LCVSm
+	zOKVuTLnn6B+r2QbuvecVzcNQxSp84NzbPOyqMqO0AZr6hoyx81zmvvWUCN9Uoc=
+X-Google-Smtp-Source: AGHT+IHpusjf0xjPxFiA1GZfxsDd5yBxUzacHglUD/J7pm0cxmuicT08JsLhs59QcAxNXs2hkgj50w==
+X-Received: by 2002:a05:600c:3581:b0:42c:c8be:4217 with SMTP id 5b1f17b1804b1-42cdb53192dmr25176075e9.11.1726153942753;
+        Thu, 12 Sep 2024 08:12:22 -0700 (PDT)
+Received: from localhost.localdomain ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cb0dbcb6bsm171928845e9.30.2024.09.12.08.12.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 08:12:22 -0700 (PDT)
+From: James Clark <james.clark@linaro.org>
+To: linux-perf-users@vger.kernel.org,
+	gankulkarni@os.amperecomputing.com,
+	coresight@lists.linaro.org,
+	leo.yan@arm.com,
+	scclevenger@os.amperecomputing.com
+Cc: James Clark <james.clark@linaro.org>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Guo Ren <guoren@kernel.org>,
-	linux-arch@vger.kernel.org
-Subject: [PATCH v14 18/19] Documentation: probes: Update fprobe on function-graph tracer
-Date: Fri, 13 Sep 2024 00:11:27 +0900
-Message-Id: <172615388768.133222.17760488069848028033.stgit@devnote2>
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	John Garry <john.g.garry@oracle.com>,
+	Will Deacon <will@kernel.org>,
+	Leo Yan <leo.yan@linux.dev>,
+	Ben Gainey <ben.gainey@arm.com>,
+	Ruidong Tian <tianruidong@linux.alibaba.com>,
+	Benjamin Gray <bgray@linux.ibm.com>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 0/7] perf: cs-etm: Coresight decode and disassembly improvements
+Date: Thu, 12 Sep 2024 16:11:31 +0100
+Message-Id: <20240912151143.1264483-1-james.clark@linaro.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <172615368656.133222.2336770908714920670.stgit@devnote2>
-References: <172615368656.133222.2336770908714920670.stgit@devnote2>
-User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+A set of changes that came out of the issues reported here [1].
 
-Update fprobe documentation for the new fprobe on function-graph
-tracer. This includes some bahvior changes and pt_regs to
-ftrace_regs interface change.
+ * First 2 patches fix a decode bug in Perf and add support for new
+   consistency checks in OpenCSD
+ * The remaining ones make the disassembly script easier to test
+   and use. This also involves adding a new Python binding to
+   Perf to get a config value (perf_config_get())
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- Changes in v2:
-  - Update @fregs parameter explanation.
----
- Documentation/trace/fprobe.rst |   42 ++++++++++++++++++++++++++--------------
- 1 file changed, 27 insertions(+), 15 deletions(-)
+[1]: https://lore.kernel.org/linux-arm-kernel/20240719092619.274730-1-gankulkarni@os.amperecomputing.com/
 
-diff --git a/Documentation/trace/fprobe.rst b/Documentation/trace/fprobe.rst
-index 196f52386aaa..f58bdc64504f 100644
---- a/Documentation/trace/fprobe.rst
-+++ b/Documentation/trace/fprobe.rst
-@@ -9,9 +9,10 @@ Fprobe - Function entry/exit probe
- Introduction
- ============
- 
--Fprobe is a function entry/exit probe mechanism based on ftrace.
--Instead of using ftrace full feature, if you only want to attach callbacks
--on function entry and exit, similar to the kprobes and kretprobes, you can
-+Fprobe is a function entry/exit probe mechanism based on the function-graph
-+tracer.
-+Instead of tracing all functions, if you want to attach callbacks on specific
-+function entry and exit, similar to the kprobes and kretprobes, you can
- use fprobe. Compared with kprobes and kretprobes, fprobe gives faster
- instrumentation for multiple functions with single handler. This document
- describes how to use fprobe.
-@@ -91,12 +92,14 @@ The prototype of the entry/exit callback function are as follows:
- 
- .. code-block:: c
- 
-- int entry_callback(struct fprobe *fp, unsigned long entry_ip, unsigned long ret_ip, struct pt_regs *regs, void *entry_data);
-+ int entry_callback(struct fprobe *fp, unsigned long entry_ip, unsigned long ret_ip, struct ftrace_regs *fregs, void *entry_data);
- 
-- void exit_callback(struct fprobe *fp, unsigned long entry_ip, unsigned long ret_ip, struct pt_regs *regs, void *entry_data);
-+ void exit_callback(struct fprobe *fp, unsigned long entry_ip, unsigned long ret_ip, struct ftrace_regs *fregs, void *entry_data);
- 
--Note that the @entry_ip is saved at function entry and passed to exit handler.
--If the entry callback function returns !0, the corresponding exit callback will be cancelled.
-+Note that the @entry_ip is saved at function entry and passed to exit
-+handler.
-+If the entry callback function returns !0, the corresponding exit callback
-+will be cancelled.
- 
- @fp
-         This is the address of `fprobe` data structure related to this handler.
-@@ -112,12 +115,10 @@ If the entry callback function returns !0, the corresponding exit callback will
-         This is the return address that the traced function will return to,
-         somewhere in the caller. This can be used at both entry and exit.
- 
--@regs
--        This is the `pt_regs` data structure at the entry and exit. Note that
--        the instruction pointer of @regs may be different from the @entry_ip
--        in the entry_handler. If you need traced instruction pointer, you need
--        to use @entry_ip. On the other hand, in the exit_handler, the instruction
--        pointer of @regs is set to the current return address.
-+@fregs
-+        This is the `ftrace_regs` data structure at the entry and exit. This
-+        includes the function parameters, or the return values. So user can
-+        access thos values via appropriate `ftrace_regs_*` APIs.
- 
- @entry_data
-         This is a local storage to share the data between entry and exit handlers.
-@@ -125,6 +126,17 @@ If the entry callback function returns !0, the corresponding exit callback will
-         and `entry_data_size` field when registering the fprobe, the storage is
-         allocated and passed to both `entry_handler` and `exit_handler`.
- 
-+Entry data size and exit handlers on the same function
-+======================================================
-+
-+Since the entry data is passed via per-task stack and it is has limited size,
-+the entry data size per probe is limited to `15 * sizeof(long)`. You also need
-+to take care that the different fprobes are probing on the same function, this
-+limit becomes smaller. The entry data size is aligned to `sizeof(long)` and
-+each fprobe which has exit handler uses a `sizeof(long)` space on the stack,
-+you should keep the number of fprobes on the same function as small as
-+possible.
-+
- Share the callbacks with kprobes
- ================================
- 
-@@ -165,8 +177,8 @@ This counter counts up when;
-  - fprobe fails to take ftrace_recursion lock. This usually means that a function
-    which is traced by other ftrace users is called from the entry_handler.
- 
-- - fprobe fails to setup the function exit because of the shortage of rethook
--   (the shadow stack for hooking the function return.)
-+ - fprobe fails to setup the function exit because of failing to allocate the
-+   data buffer from the per-task shadow stack.
- 
- The `fprobe::nmissed` field counts up in both cases. Therefore, the former
- skips both of entry and exit callback and the latter skips the exit
+Changes since V1:
+  * Keep the flush function for discontinuities
+  * Still remove the flush when the buffer fills, but now add
+    cs_etm__end_block() for the end trace. That way we won't drop
+    the last branch stack if the instruction sample period wasn't
+    hit at the very end.
+
+James Clark (7):
+  perf cs-etm: Don't flush when packet_queue fills up
+  perf cs-etm: Use new OpenCSD consistency checks
+  perf scripting python: Add function to get a config value
+  perf scripts python cs-etm: Update to use argparse
+  perf scripts python cs-etm: Improve arguments
+  perf scripts python cs-etm: Add start and stop arguments
+  perf test: cs-etm: Test Coresight disassembly script
+
+ .../perf/Documentation/perf-script-python.txt |   2 +-
+ .../scripts/python/Perf-Trace-Util/Context.c  |  11 ++
+ .../scripts/python/arm-cs-trace-disasm.py     | 109 +++++++++++++-----
+ .../tests/shell/test_arm_coresight_disasm.sh  |  63 ++++++++++
+ tools/perf/util/config.c                      |  22 ++++
+ tools/perf/util/config.h                      |   1 +
+ .../perf/util/cs-etm-decoder/cs-etm-decoder.c |   7 +-
+ tools/perf/util/cs-etm.c                      |  25 ++--
+ 8 files changed, 205 insertions(+), 35 deletions(-)
+ create mode 100755 tools/perf/tests/shell/test_arm_coresight_disasm.sh
+
+-- 
+2.34.1
 
 
