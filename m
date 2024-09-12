@@ -1,108 +1,84 @@
-Return-Path: <linux-kernel+bounces-326793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A91E976D02
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:07:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 179BC976D06
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:07:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83A38281D04
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:07:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B70471F22AEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C6C18EFF3;
-	Thu, 12 Sep 2024 15:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q0kgfayb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44AD81B1D60;
+	Thu, 12 Sep 2024 15:07:45 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05551A42B7
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D1218EFF3;
+	Thu, 12 Sep 2024 15:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726153639; cv=none; b=ca8KWFHg/Zc2amgKgY6AobGirdhVe/44scosQKK4ORgTjR1fg/Sf6gnkCnB39a8n/LOivl2CvJEZEdr9gYdHKnzyhlhH2xbDfubRReVaont9o/PrzzyZrg1x661MONxcNRfhkT7Rw1wLZF2I7/z59iHRg2wES4PbF/ozJPxkhpY=
+	t=1726153664; cv=none; b=bEfUzvVicO6KST0KfBDLe2cr1HnCz6DMK9DnWokqWR3Mt+jBLFv8zKXFmugOXfNard4vd7I9+U9Me/cHCk/2S3g7BPCBiVZahAoB0RmNyLSXmR5KSGvK5gtn2PxGHP8PZe1ZEdWdnCnk4LZ8B/Ym3B9sVIjbjAj/afywU3YZ97E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726153639; c=relaxed/simple;
-	bh=LJvxsgflj8pZlvjIKTkCrTlJ7a96ogwA3GwBe0I9emQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i41HL/QzlxL8kEmKTq3AVdiFPloZg5XV2aq0JLG9WrTU9vSDQ8EqtWKIiUgB2lzaQQVXaKoXtHg5OChGFpJMfBbpKf7LHSsPpPN93AM7x3OT+Ra/YJgVV3G0gEq2GdzKLMLeN9YcRU7pB1FrvGqY/SV4slM3k1fItjPsLkprq38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q0kgfayb; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726153636;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ihswte3WO7fAyaggneLRgaaCtBvDjJMIFwFHZuMM5zs=;
-	b=Q0kgfaybY0QYE94wdjVF/WrCL1fmxP2b97fqWWjOjlx0+mlStkZVKWwSNk/bJECtZ66E+G
-	d46CqSPFo4VCd8Pflw+u1fEfL+hdo3jAKDyRYALfATpj49/iJaOqGmBKHCzkT46lTGltiu
-	I1FHQsNhDe1j7EXxhbdBhdzg5nYzCcw=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-607-Sb7Kqj6iPQOmTylxiKa5zQ-1; Thu,
- 12 Sep 2024 11:07:11 -0400
-X-MC-Unique: Sb7Kqj6iPQOmTylxiKa5zQ-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8AC571955F43;
-	Thu, 12 Sep 2024 15:07:08 +0000 (UTC)
-Received: from [192.168.37.1] (unknown [10.22.48.7])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6DED919560AB;
-	Thu, 12 Sep 2024 15:07:02 +0000 (UTC)
-From: Benjamin Coddington <bcodding@redhat.com>
-To: Chuck Lever III <chuck.lever@oracle.com>,
- Christian Brauner <brauner@kernel.org>
-Cc: Jeff Layton <jlayton@kernel.org>, Amir Goldstein <amir73il@gmail.com>,
- Neil Brown <neilb@suse.de>, Trond Myklebust <trondmy@kernel.org>,
- Anna Schumaker <anna@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Andreas Gruenbacher <agruenba@redhat.com>, Mark Fasheh <mark@fasheh.com>,
- Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>,
- Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- Alexander Ahring Oder Aring <aahringo@redhat.com>,
- Linux FS Devel <linux-fsdevel@vger.kernel.org>,
- Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
- linux-doc@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- gfs2@lists.linux.dev, ocfs2-devel@lists.linux.dev
-Subject: Re: [PATCH v1 0/4] Fixup NLM and kNFSD file lock callbacks
-Date: Thu, 12 Sep 2024 11:06:59 -0400
-Message-ID: <E2E16098-2A6E-4300-A17A-FA7C2E140B23@redhat.com>
-In-Reply-To: <244954CF-C177-406C-9CAC-6F62D65C94DE@oracle.com>
-References: <cover.1726083391.git.bcodding@redhat.com>
- <244954CF-C177-406C-9CAC-6F62D65C94DE@oracle.com>
+	s=arc-20240116; t=1726153664; c=relaxed/simple;
+	bh=FiGsT7iRJbP7v9SqMgnOfhpz8TkQF0NUSpFtVT82w4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D4XZ7jWFInfFXeyzmpXozbP7Yfvusj8z6f95Zw2L/xvoYWmtfdpD15z1d1GdTJx/bYCKrZpi21oV2SvAb66WUbN9FGFkg4kpLB1Pd7Ih2fQuNBC3og8A7XIlfhj8vueylLtrZGnKQUxI+xFxzYvjwv3GISUyQSm+QbQJmt2IwDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 338EB68AA6; Thu, 12 Sep 2024 17:07:37 +0200 (CEST)
+Date: Thu, 12 Sep 2024 17:07:37 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>, axboe@kernel.dk, song@kernel.org,
+	yukuai3@huawei.com, kbusch@kernel.org, sagi@grimberg.me,
+	James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-raid@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-scsi@vger.kernel.org
+Subject: Re: [PATCH RFC 1/4] block: Make bdev_can_atomic_write() robust
+ against mis-aligned bdev size
+Message-ID: <20240912150736.GA5534@lst.de>
+References: <20240903150748.2179966-1-john.g.garry@oracle.com> <20240903150748.2179966-2-john.g.garry@oracle.com> <20240912131506.GA29641@lst.de> <0f2652ce-63e1-4399-8414-0bd150521e1b@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0f2652ce-63e1-4399-8414-0bd150521e1b@oracle.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On 12 Sep 2024, at 10:01, Chuck Lever III wrote:
-
-> For the NFSD and exportfs hunks:
+On Thu, Sep 12, 2024 at 03:58:00PM +0100, John Garry wrote:
+> On 12/09/2024 14:15, Christoph Hellwig wrote:
+>> On Tue, Sep 03, 2024 at 03:07:45PM +0000, John Garry wrote:
+>>> For bdev file operations, a write will be truncated when trying to write
+>>> past the end of the device. This could not be tolerated for an atomic
+>>> write.
+>>>
+>>> Ensure that the size of the bdev matches max atomic write unit so that this
+>>> truncation would never occur.
+>>
+>> But we'd still support atomic writes for all but the last sectors of
+>> the device? 
 >
-> Acked-by: Chuck Lever <chuck.lever@oracle.com <mailto:chuck.lever@oracle.com>>
->
-> "lockd: introduce safe async lock op" is in v6.10. Does this
-> series need to be backported to v6.10.y ? Should the series
-> have "Fixes: 2dd10de8e6bc ("lockd: introduce safe async lock
->  op")" ?
+> We should do be able to, but with this patch we cannot. However, a 
+> misaligned partition would be very much unexpected.
 
-Thanks Chuck! Probably yes, if we want notifications fixed up there.  It
-should be sufficient to add this to the signoff area for at least the first
-three (and fourth for cleanup):
+Yes, misaligned partitions is very unexpected, but with large and
+potentially unlimited atomic boundaries I would not expect the size
+to always be aligned.  But then again at least in NVMe atomic writes
+don't need to match the max size anyway, so I'm not entirely sure
+what the problem actually is.
 
-Cc: <stable@vger.kernel.org> # 6.10.x
+> I could also just reject any truncation on the atomic write in fops. Maybe 
+> that is better.
 
-No problem for me to send a v2 with these if needed.
-
-Ben
+It probably is.
 
 
