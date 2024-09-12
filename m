@@ -1,132 +1,189 @@
-Return-Path: <linux-kernel+bounces-327256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CD209772E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:49:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A6AE9772ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:51:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF6301C23FEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:49:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 930C41F23772
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC5E1C0DEB;
-	Thu, 12 Sep 2024 20:49:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C34C91BFE03;
+	Thu, 12 Sep 2024 20:51:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GqzAI6WT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VZhkDORo"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8301C0DEA
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFAB71BB691
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726174141; cv=none; b=HnC1nrgsxa0ZR5sLfVlK2bzA/fyGjcs3ESw5/wH4OGJKFZTFG7Z9ry5zipxbRBwEMqpEP2MZ/q8y4WnS21Rq3wQljMpZAwnlUf/uBVqJ18eOINp8Hr3ua31tv6z9pOvbZzzaKkf2Oiu5wJMGUSmzSn6O9pTX2vJ9IGMCmD9Ue94=
+	t=1726174299; cv=none; b=DyC+DQ6ur1pCdrKzYFgFWFeXIlHOCBL4sJQhxG4xEyET7p0bwpJuaSFMCe2v3jgrtnUItWK3Blup8GQk92D/K5Z6mQ30gv16rvpQ89/20XqW8J8lySaULbi7Bp9xhOeI5qlmn22Ww/Wm4HcfAnhL2A3o6qTpdsL+KkXoNURbZYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726174141; c=relaxed/simple;
-	bh=yIP6S9iCrMiW5fAQkDzldFnKUGGLDTbn0cgLJErdI/E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DuKa282RjaawajoWqb49ITWp+ZkyXg8MuhQf6+Z+fsWwNKSTkVH20WMJKhYYasO+JARQJuABodRtbgL/6Txcg8cgsTnx6XBvSdzn1pmJ9XwqMJJkyYXkyBQTPPQwJS0D4FKI/+JSFSnLbrVTja6/EOuPREq5h/mPdSsgkbV5uqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GqzAI6WT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726174137;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vDpmMjelNalx2jwG4t1xNYLZluds06xeruDv/xAuYKQ=;
-	b=GqzAI6WT9OUelHs+BnwoUiyfBmTvEEOJcjxQqrjXcqIIXUlLJmeYGAnk0a2KB4AnezkyXQ
-	1mEGm+ILmwM3lAWSobikCzpOIKHxA7jsZk1BuJc8TgRjRE16jzLChXgYjKwfx8S2exsRSP
-	EXifLEN3g/AqAhH8tuFX/AZPs5c9knI=
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
- [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-100-m_JpYOBzMESqrGYMd0wXTQ-1; Thu, 12 Sep 2024 16:48:56 -0400
-X-MC-Unique: m_JpYOBzMESqrGYMd0wXTQ-1
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82a678fbd0dso30815739f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:48:56 -0700 (PDT)
+	s=arc-20240116; t=1726174299; c=relaxed/simple;
+	bh=MNxtXrr9QPAqRF21OcqTy6lGILMNbXhqSs9zqcWQea0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Ml5IdAdbvejMVe/cUvTybKKR3jP5KBEdZ1+8sV2WDwdsyi5SRC68ToOFfhJRHjttJjSQv/6dAwkDnqaPVw8ch6kHhBQHVtD39R/k/+alybXV2IH4kZxzfQaQSTAyfnuTZ3RwihTmTeLtZBRmJsKQTiBlPZ9fLL0npk0NF7+0ugM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VZhkDORo; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e165fc5d94fso2639695276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:51:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726174296; x=1726779096; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=h7GxOQtGez9zo05dGUGsUVNGDqEVne28eAH8BDc6VWA=;
+        b=VZhkDORo5AK4m1kNYdk8m8H5E6Vt6h/9xc/hQDywRzXOEGrVGX14DUe6cqepXUesfz
+         1BeJEjjkBmBFh5SMpQ+6bOSxmTS++yHC2ln9e9qiIKSesofnOx+Hsvfil9lqBO/mThDa
+         qLgHF1XrcFgukzFr6HmOQdW09JqWeXXDZiJg81/Y2Nbc0PF4mIwFDHMpZbsq4wePoWQ8
+         h/Otudu+0J/s6sxIGsnlcVCj8KunyAfJAKTfP906KJ+WUyGUkOAKVDo5r5ksT1RyHOdV
+         VuFnIq7xnJZ46xIDuMi1O847f4oMxDQR1m4lYnNO1iQX9PdJIN+0ZRTm+TS0LIi0ABnz
+         wZxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726174136; x=1726778936;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vDpmMjelNalx2jwG4t1xNYLZluds06xeruDv/xAuYKQ=;
-        b=xVcfiLNPA2HOfVw6TiTq0CzJzfp9iNpPOYU6P4DRDJErGU2MNtJZyfPt51dfbQGh65
-         QoipgOlq9swArvIU/Y7DRToiSvFWsSukRRwxwrihzOeqc7vtpyoinhVCEb5ApXSM0vRa
-         vkLsFQLyWbxRyAbqA0PAPhx27tkBS3J7vt0skMUcLcEdsY631pKeT/t9sksrkZ3p7bvw
-         ax6kGcCZXb9uJAkvJcYzWIby2lS4so0peFBYKVr7vjUWCcaR9eZ+tO7o0xysX2mLzRfk
-         X+XwdWIsOuK9BBEu97/n3o3BR2m7pN1HNGUh/al9qgmRufver5y96ibKZr5dg0pSA27h
-         QS+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWYaldQFHGI/i6z9e+6jfar9om1ZC8AWfmKEiNDN8boSwS3L0F09V7L6VqxzFuXEFYwvX7gGNKqsJXjs/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfCnhhPwDXQVfD4u+8ke1hgPgwPLx8xWYW0JQtzZ19riqOjwhg
-	B0l2UhmSWlvo+9khzOohGZkAyfCaoTseaceik53t6NFU8FGEa820fPccuYi7XBSg0MGvZxCz6Ti
-	Gwrq/4VRZWi/jGa1q/NeGo2hg+D5JClV1R8yWiizqtV+jHCfRQDKq3dYFsUPOvPl9XNZs/A==
-X-Received: by 2002:a05:6e02:17c9:b0:3a0:4bd3:6cd with SMTP id e9e14a558f8ab-3a0847cde94mr11229535ab.0.1726174135794;
-        Thu, 12 Sep 2024 13:48:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF27lLlFUrUcBat8oysYWhOtTVjDxFqpMhIx9lYi5bD/C/pP0LIVOh0yQJnIQl2kFEKYKcbRw==
-X-Received: by 2002:a05:6e02:17c9:b0:3a0:4bd3:6cd with SMTP id e9e14a558f8ab-3a0847cde94mr11229455ab.0.1726174135458;
-        Thu, 12 Sep 2024 13:48:55 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d35f949133sm778323173.164.2024.09.12.13.48.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 13:48:55 -0700 (PDT)
-Date: Thu, 12 Sep 2024 14:48:53 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, Yi
- Liu <yi.l.liu@intel.com>, Christian Brauner <brauner@kernel.org>, Kunwu
- Chan <chentao@kylinos.cn>, Ankit Agrawal <ankita@nvidia.com>,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] vfio/pci: clean up a type in
- vfio_pci_ioctl_pci_hot_reset_groups()
-Message-ID: <20240912144853.42ceb733.alex.williamson@redhat.com>
-In-Reply-To: <262ada03-d848-4369-9c37-81edeeed2da2@stanley.mountain>
-References: <262ada03-d848-4369-9c37-81edeeed2da2@stanley.mountain>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+        d=1e100.net; s=20230601; t=1726174296; x=1726779096;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=h7GxOQtGez9zo05dGUGsUVNGDqEVne28eAH8BDc6VWA=;
+        b=hWz3dbn3qtYrpY7HEGRQf2HJ7MzS19oezNLXsZlO/cj5jhGypgPe7GQDB7vdu2PcYL
+         leZEro5/pHoVAmrLwwMInIUZsIjIpR6ef9NN5N7uDPnz8zK/f8ArZszy+CHWYuJvm3ZL
+         2+p+6Hwid3Qg2cd7NEvHb2ZYc+HwDlfTPp4EcYKDrGUsyX02Q9PWfgI1QHG46qOgiAlQ
+         NqPjlxa4ivhXqzM2FDHHML3/quGtbfQiss02JWqU7blsp/aAzyXZcY0GEJcjIsJ0hHP5
+         aalcNDpSVEswp0J19S1O0MrV1CK4YAW8ZAj41qtMgTKhfPrK3sTZvID0hWFoUKnMj/w0
+         TC6g==
+X-Forwarded-Encrypted: i=1; AJvYcCXOkU1vVgkDMumougwIkLzT7Nfv+wx64is2pZURT1H/BREeeLyev8ajH25UZMmJjMSnsn4BJ7eL+a/h2zo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywd07cRPargeyTgws1mTxecSDPLLXpyKcNg8j/GT/uTDJxmbDbf
+	qqD2uukK9h4GEaDFd9MPi/LSlmoXku3X+99bhpn5LHSfskOnd34SGJAOxgR/K5Mge/E7S1Hpp+4
+	PltHceKDaO57CxJAehr85hw==
+X-Google-Smtp-Source: AGHT+IEKK4aKpKiP70M1q7RoK97ftYvX/6/8VPxfOowbkLjsgUfLaXZWPQb4Cz0o8Wq45udLHTwqEBExFDGaaK+o3A==
+X-Received: from coltonlewis-kvm.c.googlers.com ([fda3:e722:ac3:cc00:11b:3898:ac11:fa18])
+ (user=coltonlewis job=sendgmr) by 2002:a05:6902:1781:b0:e1a:6eac:3d0f with
+ SMTP id 3f1490d57ef6-e1d9dc419efmr6874276.8.1726174295745; Thu, 12 Sep 2024
+ 13:51:35 -0700 (PDT)
+Date: Thu, 12 Sep 2024 20:51:28 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.662.g92d0881bb0-goog
+Message-ID: <20240912205133.4171576-1-coltonlewis@google.com>
+Subject: [PATCH v3 0/5] Correct perf sampling with Guest VMs
+From: Colton Lewis <coltonlewis@google.com>
+To: kvm@vger.kernel.org
+Cc: Oliver Upton <oliver.upton@linux.dev>, Sean Christopherson <seanjc@google.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Will Deacon <will@kernel.org>, 
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H . Peter Anvin" <hpa@zytor.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
+	Colton Lewis <coltonlewis@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 12 Sep 2024 11:49:10 +0300
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
+v3:
+  * Clarify final commit message further
+  * Remove an unused variable in perf_arch_misc_flags()
 
-> The "array_count" value comes from the copy_from_user() in
-> vfio_pci_ioctl_pci_hot_reset().  If the user passes a value larger than
-> INT_MAX then we'll pass a negative value to kcalloc() which triggers an
-> allocation failure and a stack trace.
-> 
-> It's better to make the type unsigned so that if (array_count > count)
-> returns -EINVAL instead.
-> 
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/vfio/pci/vfio_pci_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
-> index 077d4a2629c8..1ab58da9f38a 100644
-> --- a/drivers/vfio/pci/vfio_pci_core.c
-> +++ b/drivers/vfio/pci/vfio_pci_core.c
-> @@ -1324,7 +1324,7 @@ static int vfio_pci_ioctl_get_pci_hot_reset_info(
->  
->  static int
->  vfio_pci_ioctl_pci_hot_reset_groups(struct vfio_pci_core_device *vdev,
-> -				    int array_count, bool slot,
-> +				    u32 array_count, bool slot,
->  				    struct vfio_pci_hot_reset __user *arg)
->  {
->  	int32_t *group_fds;
+v2:
+https://lore.kernel.org/kvm/20240911222433.3415301-1-coltonlewis@google.com/
 
-Applied to vfio next branch for v6.12.  Thanks!
+v1:
+https://lore.kernel.org/kvm/20240904204133.1442132-1-coltonlewis@google.com/
 
-Alex
+This series cleans up perf recording around guest events and improves
+the accuracy of the resulting perf reports.
 
+Perf was incorrectly counting any PMU overflow interrupt that occurred
+while a VCPU was loaded as a guest event even when the events were not
+truely guest events. This lead to much less accurate and useful perf
+recordings.
+
+See as an example the below reports of `perf record
+dirty_log_perf_test -m 2 -v 4` before and after the series on ARM64.
+
+Without series:
+
+Samples: 15K of event 'instructions', Event count (approx.): 31830580924
+Overhead  Command          Shared Object        Symbol
+  54.54%  dirty_log_perf_  dirty_log_perf_test  [.] run_test
+   5.39%  dirty_log_perf_  dirty_log_perf_test  [.] vcpu_worker
+   0.89%  dirty_log_perf_  [kernel.vmlinux]     [k] release_pages
+   0.70%  dirty_log_perf_  [kernel.vmlinux]     [k] free_pcppages_bulk
+   0.62%  dirty_log_perf_  dirty_log_perf_test  [.] userspace_mem_region_find
+   0.49%  dirty_log_perf_  dirty_log_perf_test  [.] sparsebit_is_set
+   0.46%  dirty_log_perf_  dirty_log_perf_test  [.] _virt_pg_map
+   0.46%  dirty_log_perf_  dirty_log_perf_test  [.] node_add
+   0.37%  dirty_log_perf_  dirty_log_perf_test  [.] node_reduce
+   0.35%  dirty_log_perf_  [kernel.vmlinux]     [k] free_unref_page_commit
+   0.33%  dirty_log_perf_  [kernel.vmlinux]     [k] __kvm_pgtable_walk
+   0.31%  dirty_log_perf_  [kernel.vmlinux]     [k] stage2_attr_walker
+   0.29%  dirty_log_perf_  [kernel.vmlinux]     [k] unmap_page_range
+   0.29%  dirty_log_perf_  dirty_log_perf_test  [.] test_assert
+   0.26%  dirty_log_perf_  [kernel.vmlinux]     [k] __mod_memcg_lruvec_state
+   0.24%  dirty_log_perf_  [kernel.vmlinux]     [k] kvm_s2_put_page
+
+With series:
+
+Samples: 15K of event 'instructions', Event count (approx.): 31830580924
+Samples: 15K of event 'instructions', Event count (approx.): 30898031385
+Overhead  Command          Shared Object        Symbol
+  54.05%  dirty_log_perf_  dirty_log_perf_test  [.] run_test
+   5.48%  dirty_log_perf_  [kernel.kallsyms]    [k] kvm_arch_vcpu_ioctl_run
+   4.70%  dirty_log_perf_  dirty_log_perf_test  [.] vcpu_worker
+   3.11%  dirty_log_perf_  [kernel.kallsyms]    [k] kvm_handle_guest_abort
+   2.24%  dirty_log_perf_  [kernel.kallsyms]    [k] up_read
+   1.98%  dirty_log_perf_  [kernel.kallsyms]    [k] __kvm_tlb_flush_vmid_ipa_nsh
+   1.97%  dirty_log_perf_  [kernel.kallsyms]    [k] __pi_clear_page
+   1.30%  dirty_log_perf_  [kernel.kallsyms]    [k] down_read
+   1.13%  dirty_log_perf_  [kernel.kallsyms]    [k] release_pages
+   1.12%  dirty_log_perf_  [kernel.kallsyms]    [k] __kvm_pgtable_walk
+   1.08%  dirty_log_perf_  [kernel.kallsyms]    [k] folio_batch_move_lru
+   1.06%  dirty_log_perf_  [kernel.kallsyms]    [k] __srcu_read_lock
+   1.03%  dirty_log_perf_  [kernel.kallsyms]    [k] get_page_from_freelist
+   1.01%  dirty_log_perf_  [kernel.kallsyms]    [k] __pte_offset_map_lock
+   0.82%  dirty_log_perf_  [kernel.kallsyms]    [k] handle_mm_fault
+   0.74%  dirty_log_perf_  [kernel.kallsyms]    [k] mas_state_walk
+
+Colton Lewis (5):
+  arm: perf: Drop unused functions
+  perf: Hoist perf_instruction_pointer() and perf_misc_flags()
+  powerpc: perf: Use perf_arch_instruction_pointer()
+  x86: perf: Refactor misc flag assignments
+  perf: Correct perf sampling with guest VMs
+
+ arch/arm/include/asm/perf_event.h            |  7 ---
+ arch/arm/kernel/perf_callchain.c             | 17 -------
+ arch/arm64/include/asm/perf_event.h          |  4 --
+ arch/arm64/kernel/perf_callchain.c           | 28 ------------
+ arch/powerpc/include/asm/perf_event_server.h |  6 +--
+ arch/powerpc/perf/callchain.c                |  2 +-
+ arch/powerpc/perf/callchain_32.c             |  2 +-
+ arch/powerpc/perf/callchain_64.c             |  2 +-
+ arch/powerpc/perf/core-book3s.c              |  4 +-
+ arch/s390/include/asm/perf_event.h           |  6 +--
+ arch/s390/kernel/perf_event.c                |  4 +-
+ arch/x86/events/core.c                       | 47 +++++++++++---------
+ arch/x86/include/asm/perf_event.h            | 12 ++---
+ include/linux/perf_event.h                   | 26 +++++++++--
+ kernel/events/core.c                         | 27 ++++++++++-
+ 15 files changed, 95 insertions(+), 99 deletions(-)
+
+
+base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
+--
+2.46.0.662.g92d0881bb0-goog
 
