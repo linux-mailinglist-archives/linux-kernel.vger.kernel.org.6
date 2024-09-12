@@ -1,97 +1,109 @@
-Return-Path: <linux-kernel+bounces-326874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C089C976DF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:39:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B24B9976DF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:40:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1E421C23BD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:39:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AF9C283940
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159AE1BB69F;
-	Thu, 12 Sep 2024 15:39:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E301BAEE9;
+	Thu, 12 Sep 2024 15:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tU6FOm+E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="KYutAf2z"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701D21B984E;
-	Thu, 12 Sep 2024 15:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5811E1BAEF9
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726155559; cv=none; b=WEDDXBpkPNcW1T0vF+VNgF0VJN78zXL4cht/k+ZJUDJVvI62cnyWaBnuQmn1/x3JjLQlMb2t5QsVeYsTUXg0CUUAikrWVU52iR6b4J+vqbZCNg6lj4UKchfTUO51K15cqrVyjfiuL0rB48VBoKUMjfYb55NT8/rKLIl0c5wFzKk=
+	t=1726155583; cv=none; b=joWqHXYlWkAlCRL7qfbT5w2VP9jNsbE4vFkFa9yhmO/SWm8SoJJmwFzB9+jCWNByzvzpP4NULWFEeyyCO4wv4y5/4eej7gDtjv2CN67bSwdLiVs8C9IfNMRJV1b0ViPOYGf9B4LnJFyy/Wqq6EAdZNokPYR6OSS0+pIRS3lEOfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726155559; c=relaxed/simple;
-	bh=PsbP6YmUG40fnhWdGtrZKl7z1KBrwr8/1/qnLtehBvU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uI45ji3ce2lpa/xBFQS0RGfSrg61Pz0leJOku39M2PvpBfrG3v70rnZ3JSnciAuXLGIId+4PBwJEQaFrFNThosxb15uQyU75WcF5e5CDVXjspQx3F7nsrSBr2RPdlpDVFrMw8KYDdMYgVNYYIRZY05h3Y5QENvsmyULNzPdUa48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tU6FOm+E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12D59C4CEC3;
-	Thu, 12 Sep 2024 15:39:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726155558;
-	bh=PsbP6YmUG40fnhWdGtrZKl7z1KBrwr8/1/qnLtehBvU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tU6FOm+E2UPgzTBO+hPEN0MmR61pBecN9uxcn9dW2BCy7Ye5D2HVdvmet/hdO03gK
-	 xd3apWcCZNXHrlnMvA9vw0RMS5nZ7bPofqk20OFENcYhO4cQhssZD5WoyxvElnnFZp
-	 F8JpDjZ4LZXdDfqnqatLPmVr4bEpqLTYPO4bSvTiXjlgrapwyx4/Dlb/On7EU4d2VX
-	 Kmb8c/xhld7Iyjb0WEyWeHyKvYfIB5FmSet9B4aWu8vhOxa1qsz8gWe6FMqjt3ZeWU
-	 4EfkpgaTwtPFZVubrxoZco78iZ2M5rf6Eav7lob1/eMM6j3kVrUze46g0ilumRUbVD
-	 0NmIMieBI0qHg==
-Date: Thu, 12 Sep 2024 16:39:13 +0100
-From: Simon Horman <horms@kernel.org>
-To: KhaiWenTan <khai.wen.tan@linux.intel.com>
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Xiaolei Wang <xiaolei.wang@windriver.com>, netdev@vger.kernel.org,
+	s=arc-20240116; t=1726155583; c=relaxed/simple;
+	bh=36Sxi+gbBpE+8wmTVMyJTVNzyvmV3WPwvvIGgTk/KzQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cNAD1zuAlp5KXkENLnqO7Uzl1SsDKDE4CGDkobe3Z6Q98+1L4GKIuBZ4E7bHbPP0U8ayqlcQlx3dqzUJEpDzr38Zm+kPK0GaCNatGkNak8wCpeZB3GCuPdwpqqlBmcgmqL9IIGlqwg8ccuBaLOHvzzDYN4eiGVevThVea9mLSvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=KYutAf2z; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c3c2405766so177012a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:39:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1726155579; x=1726760379; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=z9euUjqtbYgwWwgE1/oq9DzNoO18ZxptGpiy8C+yuEE=;
+        b=KYutAf2z6ZdLzRKbhPktFomiuVkRknUGUH4UeVhcTvTkCE+NxdsnddJuRg7m9daqro
+         YRZTGuNzbQwzuZQilReSOzgw9mAvQBLB2RnmuxaC4SYBlmWPiDn0wG2Kh5MkphFTUbNz
+         xijolhFaPcF+1VzcT6T4iw0H+I/JKIYEqa2R9i5Y1y9MIXw3fWGnq5g44paPhJ1E2KoX
+         7rH7km5U5ik9Z8Prm6lcGjippwCKjCFCh67Xwl51WTvxxUhGX1LgAGcbu7PhICmqxcjd
+         NBaIGgx5Tkye0zMpIw2JCbn6/oRx3SqVgFI9yhrgc2ndkSJ7c6JiEZklnYWtckYRJf9a
+         nqKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726155579; x=1726760379;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z9euUjqtbYgwWwgE1/oq9DzNoO18ZxptGpiy8C+yuEE=;
+        b=JWPLp2Mmlds8og43psgaPXuJ/AH6DT2FLaKFtdEgUBH91FCjLWKcmwHo7VHyySEphM
+         J0njJt4HtQLv1zVpecb7HmnACUHHnauCeQe8Fe2FMUGwAvYJi7kOvgSt+Vi7WgaOI00l
+         y28PZazsc5mrHks71ejg1ESwHYAT6lowc/sbhJf/LteGFnNt2hxxE/XDuwmlMT9VpPVf
+         dg2hTLGrcKTVgWbr455jhS3VXPwF5wVpwZ72t6mmAkf3agEfxhFaUbwGGla/MS27u46a
+         egClmeLAEI/dSuQdQtCF5XcqpBFJL/Sv08RNqufVPV+uQPZl8ZXk3RaVApzZzqXdERRv
+         UszA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfvLCB1TsIGX2+CWCbbEsRYJqG5ZBUbybBGAbJUU+HpR6rr8T+hrdYFxZiR6oy4OIbFnG5cgrvosgzm5E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeFuo7TGPtCv0Nl9pqBBZP9sJaQ0s3AwUXgo3nsPqawdewuswV
+	yjMKKQzfPYHq3bO3KoQwI2izsYgovgCRxjYpBGvIuw0MA8/qZUNNG8k//OkqRanQgOmQagPwCpX
+	e
+X-Google-Smtp-Source: AGHT+IHCqQ88trVe2YKiL2igp8EWFO/FeGG+AEqn7eeF6kH5sk4mmdw/rmPnL7ucA079Y/QGVbLl/g==
+X-Received: by 2002:a05:6402:2113:b0:5c3:eb29:83ce with SMTP id 4fb4d7f45d1cf-5c413e60babmr1334577a12.9.1726155579239;
+        Thu, 12 Sep 2024 08:39:39 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-62-216-208-212.dynamic.mnet-online.de. [62.216.208.212])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd52135sm6694734a12.49.2024.09.12.08.39.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 08:39:38 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: xiubli@redhat.com,
+	idryomov@gmail.com
+Cc: ceph-devel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
-	Tan Khai Wen <khai.wen.tan@intel.com>
-Subject: Re: [PATCH net 1/1] net: stmmac: Fix zero-division error when
- disabling tc cbs
-Message-ID: <20240912153913.GO572255@kernel.org>
-References: <20240912015541.363600-1-khai.wen.tan@linux.intel.com>
- <20240912153730.GN572255@kernel.org>
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] ceph: Use struct_size() helper
+Date: Thu, 12 Sep 2024 17:39:24 +0200
+Message-ID: <20240912153924.78724-1-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240912153730.GN572255@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 12, 2024 at 04:37:30PM +0100, Simon Horman wrote:
-> On Thu, Sep 12, 2024 at 09:55:41AM +0800, KhaiWenTan wrote:
-> > The commit b8c43360f6e4 ("net: stmmac: No need to calculate speed divider
-> > when offload is disabled") allows the "port_transmit_rate_kbps" to be
-> > set to a value of 0, which is then passed to the "div_s64" function when
-> > tc-cbs is disabled. This leads to a zero-division error.
-> > 
-> > When tc-cbs is disabled, the idleslope, sendslope, and credit values the
-> > credit values are not required to be configured. Therefore, adding a return
-> > statement after setting the txQ mode to DCB when tc-cbs is disabled would
-> > prevent a zero-division error.
-> > 
-> > Fixes: b8c43360f6e4 ("net: stmmac: No need to calculate speed divider when offload is disabled")
-> > Cc: <stable@vger.kernel.org>
-> > Co-developed-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
-> > Signed-off-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
-> > Signed-off-by: KhaiWenTan <khai.wen.tan@linux.intel.com>
+Use struct_size() to calculate the number of bytes to be allocated.
 
-...
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ fs/ceph/addr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-One more thing, if you do post an updated patch, please
-be sure to wait until 24h after the original patch was posted.
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index c4744a02db75..ab494f250d80 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -2133,7 +2133,7 @@ static int __ceph_pool_perm_get(struct ceph_inode_info *ci,
+ 	}
+ 
+ 	pool_ns_len = pool_ns ? pool_ns->len : 0;
+-	perm = kmalloc(sizeof(*perm) + pool_ns_len + 1, GFP_NOFS);
++	perm = kmalloc(struct_size(perm, pool_ns, pool_ns_len + 1), GFP_NOFS);
+ 	if (!perm) {
+ 		err = -ENOMEM;
+ 		goto out_unlock;
+-- 
+2.46.0
 
-https://docs.kernel.org/process/maintainer-netdev.html
 
