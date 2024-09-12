@@ -1,111 +1,195 @@
-Return-Path: <linux-kernel+bounces-326662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D281976B74
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:04:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 029D4976B6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55D4D2870BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:04:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B98E62821C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BFB1B12D9;
-	Thu, 12 Sep 2024 14:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B746F1AD25A;
+	Thu, 12 Sep 2024 14:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CKwNGbpo"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CMZ1lW6c";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="P7JH6P8b";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="CMZ1lW6c";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="P7JH6P8b"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4981AD9FD
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 14:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B19F19F43E;
+	Thu, 12 Sep 2024 14:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726149832; cv=none; b=G8i7+loFl6Ytipvh0pqsBOqpKwAz6PUIglh2MZJevep/csH2qnqQTGDUmMmWtz6lNKWU17H/rN8PRclDAYJTCiz0TcuqplXt47+U7mnQwWYqMiF1SMwyYV2+lTJIvpPfGyCQzna78+9LmPTeMjjO7IzqKhUX+If83f2oLp+xSBM=
+	t=1726149794; cv=none; b=XCMO3G5e8KN1CJfkaRvltjy+j+Dct5vhAZY2Yn2KDK6UqR5F6ek4WHpV3Q2ADmCMiBPVCDej6Crkudv0TV8PbTv4JP/WN77269Ub42oKWWNXVOccRlYaIevuApjfffk79XFQwijrXjpk8ml/ahXPvyX+EosqOhYALpA4eSm60qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726149832; c=relaxed/simple;
-	bh=f4ub2ioH2rAq4LrWkvf3tWt0xuhXdG4XmLanIfAoLdo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=tMHwK4yC21ujXhEyRcQbPZ49znjDXCU2rAN2KcEJY1Mi5TFjZEtigIumyXTT4yORFk5R0ngm9FcxkJK65hFI7R60cY+B6/kX/6UDXTejTjDJlzpH/fBNq1MiHD4DY8gf2FnSnIWMfyBv+3rccRBYOlaYsngjkwoK/IqKAxtHPw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CKwNGbpo; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6b8d96aa5ebso24012567b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:03:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726149830; x=1726754630; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WJF8OdeeEbgD1lB1UBEPz4l4GIXf0/aw8YXbCeOR8js=;
-        b=CKwNGbpo2/WDq5/P2EeFcJLyFVoobjdYbNX4rLK549XnqMmjHaaAI9aqi6XWXQZ6Go
-         Umh64ffg0GG2pBKCy+5c2UoYbSPqsPJKGMf13YtKs/KCHMtzZJ5hhdFPsMajQtpL+W1t
-         /sT009ZxHAUrwDLQwsvlOnjMAepIJnu7mb0BmbDurGjr3tNyg5HYyL8Icf6oS8RwjBhP
-         YtMAoDBr2GMa4XEo8PcEybFYw1L+h94Ups+/oxKmyTOMbX1F9+cI6TE+ejGhGML98njS
-         wr4RwiZrHL0n89f1/3rWWrllrdxv55ErJf6IPQW/VatIIDp08PDmrg11P1RXwu2qgZTn
-         E7pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726149830; x=1726754630;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WJF8OdeeEbgD1lB1UBEPz4l4GIXf0/aw8YXbCeOR8js=;
-        b=eo1XWSfp8QHtkn25wN7zDktxAAYIUuoEZH6mVxU/tkDvqDRZFhUCXW9L8rH4bhrDSC
-         PnW94tDYJ9T9Tv8oRJFOIc1tX2CUD54pXrl0u5Rb9f+bZFgdMnhCWFO8/DEW0fL/ktZd
-         pOIFK7GZuXNFaSZvyE5VyNSCAY4j6cSxeW4mNF4UiWhNst/5rCuPb+96/0AhRx9gCJdT
-         9Y6tTV/9EzZqvX2tuY/1czmkBlvFVrFH7Bu3PcAi6Xuo3hWD2sCWsJilLHzA8mRVfug7
-         WG35ex2p8o375pgedwMjRFmTvj5m47Xa+xYxmnM9dthGzB8VI8DpWnISpdWCyzSyPLbA
-         S/3A==
-X-Forwarded-Encrypted: i=1; AJvYcCUlCcLavDPBXMyctqekvQPlP3EXa2VidzPMufbfUwEcPMAhwOK0eIcIQYUufNdX0FuHKgLbarPdsUw5El0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyrq1vmX2EOmrrM7vDVfHSgps5NFcXmBX8eMOhUOqmZbbFmpX9T
-	El/SrDMWFDIp2sH8lSjd65ydS+A+CCaaTJgf3xqVRvWr1f1zBFueM4DQILyQPcs+IEx6bcH3VFw
-	bQQ==
-X-Google-Smtp-Source: AGHT+IG9MDMwcr2ud0GqvqLu65vyfg3SEL0UKjpaqJLZjzXIU9brTD+du2LqNfe439QMw4Yu0UCoNCtm5zw=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:690c:209d:b0:64a:d1b0:4f24 with SMTP id
- 00721157ae682-6dbb6bb7dc7mr477817b3.7.1726149830238; Thu, 12 Sep 2024
- 07:03:50 -0700 (PDT)
-Date: Thu, 12 Sep 2024 07:03:48 -0700
-In-Reply-To: <20240912-757a952b867ea1136cb260cf@orel>
+	s=arc-20240116; t=1726149794; c=relaxed/simple;
+	bh=pU9EDLH8YOlI7K9VrpwxvKT6yC9pj2rCPVeHAQU1uBQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LXxbpwHTre92udd6/fRnAVJswHWjepaTgIbJwiqPtrWvCokmF+Bx8d2eMzVYr5pWyb0iU9kFxjroXGRq51qh9dgDFInlThvgouzJof3ZrZT19/cj91K5XUguDKfbWTM48HfSOy7xfda9YE1WrNynU6QClcRaq1xPJisT8xWd6JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CMZ1lW6c; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=P7JH6P8b; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=CMZ1lW6c; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=P7JH6P8b; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8546B219B8;
+	Thu, 12 Sep 2024 14:03:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726149790; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HBsxw1L2t1ColpoRoRCyZTlOXVTERMyxbhoF1TUdq/8=;
+	b=CMZ1lW6cTvMdjxTvTspPNghdaDtJtCh7bWp/ocpsmktR4BpBFtfkemMaiu22A3DOfisBbt
+	wPOdBYa72NXs3pJFgYlBWVtmoIbDPaVC9qw6zb5w17tl5PywRHyjXZtW3+KLjUf5kQSdto
+	ZOELaSpjNF/JHTqBRbYFQpeknSNTQSw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726149790;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HBsxw1L2t1ColpoRoRCyZTlOXVTERMyxbhoF1TUdq/8=;
+	b=P7JH6P8bKk+/Qr/MfLkxtXmF4Yw6mmMxYEF6tM8up6UMN5ney/voYLuQZ4Ogtb2Zp1uiCs
+	SXu0pkKRCH9qQ7Dw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726149790; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HBsxw1L2t1ColpoRoRCyZTlOXVTERMyxbhoF1TUdq/8=;
+	b=CMZ1lW6cTvMdjxTvTspPNghdaDtJtCh7bWp/ocpsmktR4BpBFtfkemMaiu22A3DOfisBbt
+	wPOdBYa72NXs3pJFgYlBWVtmoIbDPaVC9qw6zb5w17tl5PywRHyjXZtW3+KLjUf5kQSdto
+	ZOELaSpjNF/JHTqBRbYFQpeknSNTQSw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726149790;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HBsxw1L2t1ColpoRoRCyZTlOXVTERMyxbhoF1TUdq/8=;
+	b=P7JH6P8bKk+/Qr/MfLkxtXmF4Yw6mmMxYEF6tM8up6UMN5ney/voYLuQZ4Ogtb2Zp1uiCs
+	SXu0pkKRCH9qQ7Dw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 432BA13A73;
+	Thu, 12 Sep 2024 14:03:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id H+4uD5704mYbewAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 12 Sep 2024 14:03:10 +0000
+Date: Thu, 12 Sep 2024 16:03:58 +0200
+Message-ID: <87r09pynn5.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Mark Brown <broonie@kernel.org>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] ALSA: control: prevent some integer overflow issues
+In-Reply-To: <72907305-eddc-4fb4-9c74-7e1d2750f4b9@stanley.mountain>
+References: <0f03d569-9804-4617-a806-f0e5c32399fb@stanley.mountain>
+	<87v7z1yyok.wl-tiwai@suse.de>
+	<20c99f50-948e-4076-ba28-9640c3cd982d@stanley.mountain>
+	<72907305-eddc-4fb4-9c74-7e1d2750f4b9@stanley.mountain>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240911204158.2034295-1-seanjc@google.com> <20240912-757a952b867ea1136cb260cf@orel>
-Message-ID: <ZuL0xEIB1ol5epEE@google.com>
-Subject: Re: [PATCH v2 00/13] KVM: selftests: Morph max_guest_mem to mmu_stress
-From: Sean Christopherson <seanjc@google.com>
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Anup Patel <anup@brainfault.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	James Houghton <jthoughton@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -3.30
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Thu, Sep 12, 2024, Andrew Jones wrote:
-> I gave this test a try on riscv, but it appears to hang in
-> rendezvous_with_vcpus(). My platform is QEMU, so maybe I was just too
-> impatient.
-
-Try running with " -m 1 -s 1", which tells the test to use only 1GiB of memory.
-That should run quite quickly, even in an emulator.
-
-> Anyway, I haven't read the test yet, so I don't even know what it's doing.
-> It's possibly it's trying to do something not yet supported on riscv. I'll
-> add investigating that to my TODO, but I'm not sure when I'll get to it.
+On Thu, 12 Sep 2024 14:44:30 +0200,
+Dan Carpenter wrote:
 > 
-> As for this series, another patch (or a sneaky change to one
-> of the patches...) should add 
+> On Thu, Sep 12, 2024 at 02:29:58PM +0300, Dan Carpenter wrote:
+> > On Thu, Sep 12, 2024 at 12:05:31PM +0200, Takashi Iwai wrote:
+> > > On Thu, 12 Sep 2024 10:51:14 +0200,
+> > > Dan Carpenter wrote:
+> > > > 
+> > > > I believe the this bug affects 64bit systems as well, but analyzing this
+> > > > code is easier if we assume that we're on a 32bit system.  The problem is
+> > > > in snd_ctl_elem_add() where we do:
+> > > > 
+> > > > sound/core/control.c
+> > > >   1669          private_size = value_sizes[info->type] * info->count;
+> > > >   1670          alloc_size = compute_user_elem_size(private_size, count);
+> > > >                                                                   ^^^^^
+> > > > count is info->owner.  It's a non-zero u32 that comes from the user via
+> > > > snd_ctl_elem_add_user().  So the math in compute_user_elem_size() could
+> > > > have an integer overflow resulting in a smaller than expected size.
+> > > 
+> > > So this should also use the overflow macro, too, in addition to your
+> > > changes?  Something like:
+> > > 
+> > > --- a/sound/core/control.c
+> > > +++ b/sound/core/control.c
+> > > @@ -1618,7 +1618,7 @@ static int snd_ctl_elem_add(struct snd_ctl_file *file,
+> > >  	struct snd_kcontrol *kctl;
+> > >  	unsigned int count;
+> > >  	unsigned int access;
+> > > -	long private_size;
+> > > +	size_t private_size;
+> > >  	size_t alloc_size;
+> > >  	struct user_element *ue;
+> > >  	unsigned int offset;
+> > > @@ -1666,7 +1666,7 @@ static int snd_ctl_elem_add(struct snd_ctl_file *file,
+> > >  	/* user-space control doesn't allow zero-size data */
+> > >  	if (info->count < 1)
+> > >  		return -EINVAL;
+> > > -	private_size = value_sizes[info->type] * info->count;
+> > > +	private_size = array_size(value_sizes[info->type], info->count);
+> > >  	alloc_size = compute_user_elem_size(private_size, count);
+> > >  
+> > >  	guard(rwsem_write)(&card->controls_rwsem);
+> > > 
+> > 
+> > I've reviewed this some more and those changes are harmless but unnecessary.
+> > info->count is checked in snd_ctl_check_elem_info().
+> > 
 > 
->  #include "ucall_common.h"
-> 
-> to mmu_stress_test.c since it's not there yet despite using get_ucall().
-> Building riscv faild because of that.
+> I also considered if I should fix this bug by adding checks to
+> snd_ctl_check_elem_info() but I don't think that's the right approach.  I
+> couldn't see how it would work at least.
 
-Roger that.
+OK, so it doesn't seem affected in the end.
+The input values have been checked, and they can't overflow.
 
-Thanks!
+
+thanks,
+
+Takashi
 
