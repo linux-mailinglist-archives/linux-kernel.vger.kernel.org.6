@@ -1,145 +1,145 @@
-Return-Path: <linux-kernel+bounces-326629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85FA4976B00
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:44:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E8A2976B03
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:44:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E99B6B2226F
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:43:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37B212818F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:44:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E44F1BD03B;
-	Thu, 12 Sep 2024 13:40:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 111151A7061;
+	Thu, 12 Sep 2024 13:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E9jud47o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aBvmGCmn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692071BD023;
-	Thu, 12 Sep 2024 13:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC1518953E
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726148451; cv=none; b=UKPKy6e5puoUOkskLluZR4yYUtVHET59+wIYWvcCPHEmcsGxa/cEIuR3VQSWK8P1zIP/2wML5uhbPWa7EZ3zq2k5Hi6+RxoxU6L6b3iFFEmWxIaXchGg9Oj45wBCFgVz7IKLckY2tDDAXMg1RpzNFxu7FInkavt9bUIuIhMdvV0=
+	t=1726148659; cv=none; b=AJrnAb7QcC1iCnA+D2VGNMYZh5jVH9MqObt/Hv1iPbiXZcKbNN+ubPz9n+77AqaMdZkeK375OIl/tbwyxYCr3+MU7FR4HE2Dfh5MxnWNHNLdzsY3Zu7aqOx7LA9G6jocz8rsCeYi3HSVi+vebGPMoOIw4yH+vTHfMhu1d4bwEM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726148451; c=relaxed/simple;
-	bh=R9tAX9aaSwPbnFZpW4q5nFs0907fZ8SErJ3Ztm7AhmQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qFyGMXbDU2o9jWNkmmHWTVjhAN5cDZTF5k3Q0VfOKRbtoO6yExuEJIscVnrXy2AOcXUiCHhyoKUYFwk9gkmnBUIIymRQnHvjk8L+1/iTr5ZHzka5lIB6wh9uRrGSGTPm+4NQneFrFObO9BLLEc+LuO4/ifedB3hNYC1o9sYLB1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E9jud47o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC5BEC4CECC;
-	Thu, 12 Sep 2024 13:40:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726148450;
-	bh=R9tAX9aaSwPbnFZpW4q5nFs0907fZ8SErJ3Ztm7AhmQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=E9jud47ouK79VzZrYktenTM3Y2fehkXSgb+0PXCYx3eUPy4u3cphdsuRawccQeu1z
-	 MfbpvmLDM5Lum2qIWNPL65jYwzhSMyDsY1ujqtaicZFNP1DdM6jPmvXVhKQPEZKTvI
-	 vePfQkaJoAI2XZm+2dQfMnG7nFinHXBZQjNl89tSCVWMYPi+LfG8sc68O44MF0TEqy
-	 EXjcDU9hUpIQ4ZVKOFEt5Q/OYz/9DZ4MSzVbLGVsbQdjxSDsXAsHIQ6kRSD0y2z5D1
-	 EW5N4VWLJLMOo5w4P+1VZvS9svpT+2bXOHgTUkKxjbWUrGvNW+12aNejiN9Zkh/pnP
-	 VKQRh7rZk7jlQ==
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-710e489860bso439243a34.1;
-        Thu, 12 Sep 2024 06:40:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVuLO9/GnTNU5XZqWqDn0Nqb9dIrkvotWFBRT2y1N7KGj3SG4QHqSXUaaVfHv4Y4BB4my7l3s6/S1iqHBs=@vger.kernel.org, AJvYcCXGH328ULH0681OcUPZYKBlVPH7dU3ORABh/e+ADSn6r0q+657AWZj51mq75bsuVbhUj3OaRHe6sQqdEaA=@vger.kernel.org, AJvYcCXTSWAxvq7hkCX7miK5QiWve4U6I1RKXeKykzMf3N18lskJApiN1XaTZIJ9T/00lZnxYm0j1sta2esTV0c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeOmlAozVrI3CShULSLA65w0oaBjUqK2EJjWi7jS8zWceT2JS/
-	JtcKN675zn3kDDQ1V4sSiU58OO0TqrVbu/7XEgK3tmkdmlxT8jOghcif8LFsDgwhsrSZIn19WJC
-	alZmZLrW+Aki72uq4cX9uq1ocjPI=
-X-Google-Smtp-Source: AGHT+IEX+HeSyhmoH2U+UnAc09NReaImcbF92SlNzOwp9B+vmOjdU4ANnWjBbv9wCSq+K121NIxebA+gtfodJVVa3Rw=
-X-Received: by 2002:a05:6830:4112:b0:710:f3ea:c30 with SMTP id
- 46e09a7af769-711094aa606mr2769814a34.21.1726148450249; Thu, 12 Sep 2024
- 06:40:50 -0700 (PDT)
+	s=arc-20240116; t=1726148659; c=relaxed/simple;
+	bh=6QLGfjqph9dCdgfpbGIDUHpt/wnZt4RxogTgn+JRE4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AtVunJm5sPfTKTGaZerA0AWxqHDk5xHTPTj5b2gq/oglyf3dpgLgyc7nK/Afry5VeZzDwgXZoV2DRiJOFmLdLPLYLmVQ0WE/Yx0GJ/67cPTLqPA4VzNkp21uzMYHj4DB6TUKq8MX+k1zMMv/4PiFRBdKCezjASVSOyEb2IH6Bt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aBvmGCmn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726148657;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xLEeXW3zplWiS6wK6khRG9CmZ0AgbbGOrPcRRbNfBu8=;
+	b=aBvmGCmn7un+bwlPRsrv8ahYiJ1L6NcFBwQ3mhisX03YGM6urIuynVjHHrOoW7nRcmlrIc
+	1Q6XfSIvDATK2SvgYBYVl1pH7wvf4VG2kOhUhoN4z1m7TxHcwEmZUGWVn2s7nV71PFeBJ1
+	Cm7QL8ynVmuBp3tW3U4TDaGN0htlIyI=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-548-TQwyIp4KOIejDGQVlrfrKg-1; Thu,
+ 12 Sep 2024 09:44:11 -0400
+X-MC-Unique: TQwyIp4KOIejDGQVlrfrKg-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 695C2193E8F1;
+	Thu, 12 Sep 2024 13:44:09 +0000 (UTC)
+Received: from redhat.com (unknown [10.22.8.105])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DB49C1956086;
+	Thu, 12 Sep 2024 13:44:06 +0000 (UTC)
+Date: Thu, 12 Sep 2024 09:44:04 -0400
+From: Joe Lawrence <joe.lawrence@redhat.com>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
+	Petr Mladek <pmladek@suse.com>, Jiri Kosina <jikos@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Song Liu <song@kernel.org>
+Subject: Re: [RFC 00/31] objtool, livepatch: Livepatch module generation
+Message-ID: <ZuLwJIgt4nsQKvqZ@redhat.com>
+References: <cover.1725334260.git.jpoimboe@kernel.org>
+ <20240911073942.fem2kekg3f23hzf2@treble>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240902-imx214-v1-0-c96cba989315@apitzsch.eu> <20240902-imx214-v1-2-c96cba989315@apitzsch.eu>
-In-Reply-To: <20240902-imx214-v1-2-c96cba989315@apitzsch.eu>
-From: Ricardo Ribalda Delgado <ribalda@kernel.org>
-Date: Thu, 12 Sep 2024 15:40:33 +0200
-X-Gmail-Original-Message-ID: <CAPybu_2SaRHzGzb2xy7x4xLMjW40Lah0i63YOztby6hTkrPRrw@mail.gmail.com>
-Message-ID: <CAPybu_2SaRHzGzb2xy7x4xLMjW40Lah0i63YOztby6hTkrPRrw@mail.gmail.com>
-Subject: Re: [PATCH 02/13] media: i2c: imx214: Remove unneeded goto
-To: git@apitzsch.eu
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht, 
-	phone-devel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911073942.fem2kekg3f23hzf2@treble>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Hi  Andre
+On Wed, Sep 11, 2024 at 12:39:42AM -0700, Josh Poimboeuf wrote:
+> On Mon, Sep 02, 2024 at 08:59:43PM -0700, Josh Poimboeuf wrote:
+> > Hi,
+> > 
+> > Here's a new way to build livepatch modules called klp-build.
+> > 
+> > I started working on it when I realized that objtool already does 99% of
+> > the work needed for detecting function changes.
+> > 
+> > This is similar in concept to kpatch-build, but the implementation is
+> > much cleaner.
+> > 
+> > Personally I still have reservations about the "source-based" approach
+> > (klp-convert and friends), including the fragility and performance
+> > concerns of -flive-patching.  I would submit that klp-build might be
+> > considered the "official" way to make livepatch modules.
+> > 
+> > Please try it out and let me know what you think.  Based on v6.10.
+> > 
+> > Also avaiable at:
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git klp-build-rfc
+> 
+> Here's an updated branch with a bunch of fixes.  It's still incompatible
+> with BTF at the moment, otherwise it should (hopefully) fix the rest of
+> the issues reported so far.
+> 
+> While the known bugs are fixed, I haven't finished processing all the
+> review comments yet.  Once that happens I'll post a proper v2.
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git klp-build-v1.5
 
-On Mon, Sep 2, 2024 at 11:53=E2=80=AFPM Andr=C3=A9 Apitzsch via B4 Relay
-<devnull+git.apitzsch.eu@kernel.org> wrote:
->
-> From: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
->
-> Simplify the imx214_start_streaming() by removing unneeded goto
-> statements, and the corresponding error label.
+Hi Josh,
 
-Could you squash this patch with the previous one?
+I've had much better results with v1.5, thanks for collecting up those
+fixes in a branch.
 
-Thanks!
+One new thing to report: depending on the optimzation of
+drivers/gpu/drm/vmwgfx/vmwgfx.o, objtool may throw a complaint about an
+unexpected relocation symbol type:
 
+  $ make -j$(nproc) drivers/gpu/drm/vmwgfx/vmwgfx.o
+  drivers/gpu/drm/vmwgfx/vmwgfx.o: error: objtool [check.c:1048]: unexpected relocation symbol type in .rela.discard.func_stack_frame_non_standard: 0
+  
+I modified check.c to print the reloc->sym->name in this case and it
+reports, "vmw_recv_msg".
 
->
-> Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
-> ---
->  drivers/media/i2c/imx214.c | 13 ++++---------
->  1 file changed, 4 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-> index 58f3c3f67e0d..283d4783c22e 100644
-> --- a/drivers/media/i2c/imx214.c
-> +++ b/drivers/media/i2c/imx214.c
-> @@ -776,7 +776,7 @@ static int imx214_start_streaming(struct imx214 *imx2=
-14)
->         ret =3D imx214_write_table(imx214, mode_table_common);
->         if (ret < 0) {
->                 dev_err(imx214->dev, "could not sent common table %d\n", =
-ret);
-> -               goto error;
-> +               return ret;
->         }
->
->         mode =3D v4l2_find_nearest_size(imx214_modes,
-> @@ -785,22 +785,17 @@ static int imx214_start_streaming(struct imx214 *im=
-x214)
->         ret =3D imx214_write_table(imx214, mode->reg_table);
->         if (ret < 0) {
->                 dev_err(imx214->dev, "could not sent mode table %d\n", re=
-t);
-> -               goto error;
-> +               return ret;
->         }
->         ret =3D __v4l2_ctrl_handler_setup(&imx214->ctrls);
->         if (ret < 0) {
->                 dev_err(imx214->dev, "could not sync v4l2 controls\n");
-> -               goto error;
-> +               return ret;
->         }
->         ret =3D regmap_write(imx214->regmap, IMX214_REG_MODE_SELECT, IMX2=
-14_MODE_STREAMING);
-> -       if (ret < 0) {
-> +       if (ret < 0)
->                 dev_err(imx214->dev, "could not sent start table %d\n", r=
-et);
-> -               goto error;
-> -       }
-> -
-> -       return 0;
->
-> -error:
->         return ret;
->  }
->
->
-> --
-> 2.46.0
->
->
+If I recreate vmwgfx.o and dump the symbol table, I notice that this is
+a NOTYPE symbol (probably because of vmw_recv_msg.constprop.0?)
+
+  $ ld -m elf_x86_64 -z noexecstack   -r -o drivers/gpu/drm/vmwgfx/vmwgfx.o @drivers/gpu/drm/vmwgfx/vmwgfx.mod
+  $ readelf --wide --symbols drivers/gpu/drm/vmwgfx/vmwgfx.o | grep -b -e 'vmw_recv_msg' -e 'vmw_send_msg'
+  148334:  2198: 0000000000000010   183 FUNC    LOCAL  DEFAULT 1255 vmw_send_msg
+  151116:  2234: 0000000000000010   409 FUNC    LOCAL  DEFAULT 1251 vmw_recv_msg.constprop.0
+  180895:  2615: 0000000000000000     0 NOTYPE  GLOBAL DEFAULT  UND vmw_recv_msg
+
+I don't think the config matters (I used the centos-stream-10 config) as
+long as the driver builds.  I only saw this with a rhel-9 gcc version
+11.5.0 20240719 (Red Hat 11.5.0-2) and not fedora gcc version 12.3.1
+20230508 (Red Hat 12.3.1-1), which kept vmw_recv_msg w/o constprop.
+
+--
+Joe
+
 
