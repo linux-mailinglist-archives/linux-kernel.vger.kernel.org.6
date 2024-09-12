@@ -1,181 +1,161 @@
-Return-Path: <linux-kernel+bounces-326171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B31FF97643C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:19:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A038D97645E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:22:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CFDC283BE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:19:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B04F1F250C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F781917E8;
-	Thu, 12 Sep 2024 08:19:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332F019F406;
+	Thu, 12 Sep 2024 08:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="ZUS5ChCC"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IDwF6+Ex"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5CC18E764;
-	Thu, 12 Sep 2024 08:19:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1186D1917E8;
+	Thu, 12 Sep 2024 08:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726129143; cv=none; b=eXp2ojDirbFDsuX8L4nthQ/VyvMmYEtm1Cxk011jtLQMk10hOZz0eIegN2Os7LCRUCm1ZvecdYrsJqCnozzCSAftqO9Grl2fKjTnzQm6cHV15DieUa9pG+MUKvbFZT5d3Dbed5suHjMIqbmc6LTLK4LTd1D5mtiYFSJg+ll3q1c=
+	t=1726129288; cv=none; b=oYDm8l1WbfEoASrUOOtmEzAWTWv8pyNFWK2x05lDfo2mZIciyrircoCUqReyJzjxew1dipZumFdapGF5+9zHgpzCY6SFINRaD8S4K71wwSKmaBDq69TBdQvrqFwQVVGEbvgwJFOJfhhF4xSjTSHDkHgNTyomke7VLmYOPUUHZPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726129143; c=relaxed/simple;
-	bh=C7bGRTs5k0M/c+01U+T4gd19hO54MhrssoK3Lu0cgn8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Xdv4HS3G3xIxub/C3CzaGIN1QJMMwrfwLHl79TJkpoLH2B4TWHWNT/312yBw2Y3U9G0uiZzOqP/I0pvnZu3BNWiICqHTeWO3ApvhySsc+c2RahBUD3ZqJ2nRhklXwh9kNPkEy/a0BnhgnQtQI7wwph2r4McMgVvGSPpFggheynk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=ZUS5ChCC; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=rm764jmzjrfdlpu23jcgp3ybda.protonmail; t=1726129133; x=1726388333;
-	bh=4BCBkUymeOe6HphWwcmNL8sLnaSR+aRCcfpXpcPxwcw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=ZUS5ChCC71JlgP0VafuBMNeaejGL/HBp/Pkfvrj5+IFLW8uLTnn+7Y+vdLWFYQaj1
-	 5DM/MsgtJy6N4RMMPWe0cLWdBWfEMmuG/jusPJWzcoJxbJRvUdfxOeagrAtEqhhKk0
-	 Xt3SWtlmA9CIbENxMX+U4QHVL91FvgXl0LUHURVOSlUWzjrpJHMqFIFbCUMML6Z7H4
-	 XCm+ttKk6Wrt2HdhXd535JBtlDrVvD70KjmalaBmGAbwijpb2Hia9IvN4dZJqutclv
-	 AP1VlkFzhjv+sD5REWcxLByDqwiHFwy7RthhsbtNFW5NEBcnniEJfA1dOXnN0I2lco
-	 3j2UT5uswxilA==
-Date: Thu, 12 Sep 2024 08:18:49 +0000
-To: Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@samsung.com, aliceryhl@google.com, akpm@linux-foundation.org, daniel.almeida@collabora.com, faith.ekstrand@collabora.com, boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v6 22/26] rust: alloc: implement `Cmalloc` in module allocator_test
-Message-ID: <9561eb0e-796c-4a39-b49a-00013052fe4b@proton.me>
-In-Reply-To: <ZuGrQcLwXi-tiK8l@cassiopeiae>
-References: <20240816001216.26575-1-dakr@kernel.org> <20240816001216.26575-23-dakr@kernel.org> <e3ccbf52-224e-4869-992b-4fcaa0ec3410@proton.me> <ZtD1TsGm0swi7gyv@pollux.localdomain> <ZuGNlFluwAmTG19R@cassiopeiae> <bf158e23-4123-419b-a2ce-a27c4ea51219@proton.me> <ZuGrQcLwXi-tiK8l@cassiopeiae>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 290574dee1d25111830bc8a59bafc078c55d9c5a
+	s=arc-20240116; t=1726129288; c=relaxed/simple;
+	bh=7R4e3nnIXpLRZ8k/IYYqykk4SdReC+fkYDBpv+JBQVk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cBa5WAamtC5g68ovRqF0qfMzWscwXQHJRYa6CHUq4eDlSgQNYIcmB15RDh+iAekWn6Pr8VyfMrcWXQxq5nYwIoAVSqF72OT5JwcdsN9cDTX83GOx8zD1SKq+SgkD4hU5PJhe8/pPtNsyFovhkwg5rDvnoayO06LZP46+5J2SedE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IDwF6+Ex; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 11D9BE0002;
+	Thu, 12 Sep 2024 08:21:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1726129284;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qSphxjECBCoInb+jgBYfvCmHBRhwkizrGcHNSqeJrKA=;
+	b=IDwF6+ExsFRWJL10EYmhOfEi9p1j0hRMB7Q4+ybs5nw3aErdsqYS9MK/S6htW5I5m14b+w
+	pcvgGKRWwyatC7qcZatZSHJcVHar6hiwpg/XUDOiVnZdYm9DUGx1b9bnCLMFH2g5e8QyOZ
+	tJaTSfUlntX+g5rC9UdrKhgn3uhZf7jc8PcvST9X+wW5NKLCGCRZX9VXq+edTnrmS+oji1
+	eqXWdtyd7AE0luf/XI33dt5rDO7KjWUcy1h5qj36rsP92QuugKDw4Ht97wJ74KZEquBYyT
+	0qg8YVpDghwvdbxik4YhW//hUtpABXrADV2o/TQfdiGZgEW0LcrRu4nUXtAwDw==
+Date: Thu, 12 Sep 2024 10:21:23 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Esben Haabendal <esben@geanix.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] rtc: isl12022: Add alarm support
+Message-ID: <20240912082123f10c07cf@mail.local>
+References: <20240910-rtc-isl12022-alarm-irq-v1-0-d875cedc997f@geanix.com>
+ <20240910-rtc-isl12022-alarm-irq-v1-2-d875cedc997f@geanix.com>
+ <202409101939448128973d@mail.local>
+ <87mske7gaw.fsf@geanix.com>
+ <20240911122417388bd35c@mail.local>
+ <87h6almjpn.fsf@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87h6almjpn.fsf@geanix.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On 11.09.24 16:37, Danilo Krummrich wrote:
-> On Wed, Sep 11, 2024 at 01:32:31PM +0000, Benno Lossin wrote:
->> On 11.09.24 14:31, Danilo Krummrich wrote:
->>> On Fri, Aug 30, 2024 at 12:25:27AM +0200, Danilo Krummrich wrote:
->>>> On Thu, Aug 29, 2024 at 07:14:18PM +0000, Benno Lossin wrote:
->>>>> On 16.08.24 02:11, Danilo Krummrich wrote:
->>>>>> +
->>>>>> +        if layout.size() =3D=3D 0 {
->>>>>> +            // SAFETY: `src` has been created by `Self::alloc_store=
-_data`.
->>>>>
->>>>> This is not true, consider:
->>>>>
->>>>>     let ptr =3D alloc(size =3D 0);
->>>>>     free(ptr)
->>>>>
->>>>> Alloc will return a dangling pointer due to the first if statement an=
-d
->>>>> then this function will pass it to `free_read_data`, even though it
->>>>> wasn't created by `alloc_store_data`.
->>>>> This isn't forbidden by the `Allocator` trait function's safety
->>>>> requirements.
->>>>>
->>>>>> +            unsafe { Self::free_read_data(src) };
->>>>>> +
->>>>>> +            return Ok(NonNull::slice_from_raw_parts(NonNull::dangli=
-ng(), 0));
->>>>>> +        }
->>>>>> +
->>>>>> +        let dst =3D Self::alloc(layout, flags)?;
->>>>>> +
->>>>>> +        // SAFETY: `src` has been created by `Self::alloc_store_dat=
-a`.
->>>>>> +        let data =3D unsafe { Self::data(src) };
->>>>>
->>>>> Same issue here, if the allocation passed in is zero size. I think yo=
-u
->>>>> have no other choice than to allocate even for zero size requests...
->>>>> Otherwise how would you know that they are zero-sized.
->>>>
->>>> Good catch - gonna fix it.
->>>
->>> Almost got me. :) I think the code is fine, callers are not allowed to =
-pass
->>> pointers to `realloc` and `free`, which haven't been allocated with the=
- same
->>> corresponding allocator or are dangling.
->>
->> But what about the example above (ie the `alloc(size =3D 0)` and then
->> `free`)?
->=20
-> This never has been valid for the `Allocator` trait. Look at `Kmalloc`,
-> `Vmalloc` and `KVmalloc`, they don't allow this either.
+On 12/09/2024 09:09:40+0200, Esben Haabendal wrote:
+> Alexandre Belloni <alexandre.belloni@bootlin.com> writes:
+> 
+> > On 11/09/2024 10:20:07+0200, Esben Haabendal wrote:
+> >> Alexandre Belloni <alexandre.belloni@bootlin.com> writes:
+> >> > On 10/09/2024 12:27:11+0200, Esben Haabendal wrote:
+> >> 
+> >> >> +static int isl12022_rtc_read_alarm(struct device *dev,
+> >> >> +				   struct rtc_wkalrm *alarm)
+> >> >> +{
+> >> >> +	struct rtc_time *const tm = &alarm->time;
+> >> >> +	struct isl12022 *isl12022 = dev_get_drvdata(dev);
+> >> >> +	struct regmap *regmap = isl12022->regmap;
+> >> >> +	uint8_t buf[ISL12022_ALARM_SECTION_LEN];
+> >> >> +	int ret, yr, i;
+> >> >> +
+> >> >> +	ret = regmap_bulk_read(regmap, ISL12022_ALARM_SECTION,
+> >> >> +			       buf, sizeof(buf));
+> >> >> +	if (ret) {
+> >> >> +		dev_err(dev, "%s: reading ALARM registers failed\n",
+> >> >> +			__func__);
+> >> >
+> >> > I don't really like those error messages because there is nothing the
+> >> > user can actually do apart from trying again and this bloats the
+> >> > kernel.
+> >> 
+> >> Ok. Maybe keep it as dev_dbg() then?
+> >
+> > This is fine, there are other I didn't point out.
+> 
+> Ok. I will change all of these type of error messages to dev_dbg. No problem.
+> 
+> >> >> +	isl12022->rtc = rtc;
+> >> >>  
+> >> >>  	rtc->ops = &isl12022_rtc_ops;
+> >> >>  	rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
+> >> >>  	rtc->range_max = RTC_TIMESTAMP_END_2099;
+> >> >>  
+> >> >> +	if (client->irq > 0) {
+> >> >> +		ret = isl12022_setup_irq(isl12022, client->irq);
+> >> >
+> >> > You can't do this in probe, the RTC lifecycle is longer than the linux
+> >> > system. Or said differently: "oh no, my linux has rebooted and now I
+> >> > lost my future alarm" ;)
+> >> 
+> >> Oh.
+> >> 
+> >> We do need to setup the irq here, so I assume you mean I need to drop
+> >> the part of _setup_irq() that clears alarm registers.
+> >
+> > Yes, this is the main problematic part. The other one being disabling
+> > the IRQ output when in battery backup mode as this will surely prevent
+> > wakeup of some devices.
+> 
+> I know. I did this on purpose, as I don't have a setup where I can test
+> wakeup, so I thought it was better to start out without this instead of
+> shipping something that is most likely broken.
+> 
+> If I leave IRQ output from RTC chip enabled during battery backup mode,
+> I assume I have to add working suspend/resume also. Or do you just want
+> me to flip the bit?
 
-That is true.
+The issue is still about the lifecycle. The RTC will remember the
+setting so if you change it from the default value without providing a
+control, there is no way to change back the driver behavior in the
+future because this is going to break a use case and there is no way to
+win. So my preference is that you leave the bit to its default value.
+You don't necessarily need the suspend/resume callbacks.
 
-> We've discussed this already in previous versions of this series, where f=
-or this
-> purpose, you asked for `old_layout` for `free`. Such that `free` can chec=
-k if
-> the `size` was zero and therefore return without doing anything.
+> 
+> >> And I guess we need to enable irq in probe as well. At least if/when an
+> >> alarm is set. I think it should be safe to enable irq unconditionally in
+> >> _probe()...
+> >
+> > I guess you mean requesting the interrupt on the SoC side.
+> 
+> Yes.
+> 
+> > Enabling the RTC interrupt should be left untouched in the probe.
+> 
+> Ok, so if/when an alarm is already set before probe, do application need
+> to enable it using RTC_AIE_ON?
 
-Yes, but that was only about the old_layout parameter (at least that's
-what I thought).
+If the alarm is on on boot, it must be kept on without any user
+intervention.
 
->> I guess this all depends on how one interprets the term
->> "existing, valid memory allocation". To me that describes anything an
->> `Allocator` returns via `alloc` and `realloc`, including zero-sized
->> allocations.
->=20
-> I argue that the dangling pointer returned for `size =3D=3D 0` does not p=
-oint to any
-> allocation in the sense of those allocators. It's just a dangling `[u8]`
-> pointer.
 
-Sure, but to me the concept of zero-sized allocations does exist.
-
->> But if you argue that those are not valid allocations from that
->> allocator, then that is not properly documented in the safety
->> requirements of `Allocator`.
->=20
-> The safety requirements of `Allocator` where proposed by you and I though=
-t they
-> consider this aspect?
-
-No, they did not consider this aspect. I was under the impression, that
-we would still allow zero-sized allocations (in retrospect, this is
-stupid, since dangling pointers shouldn't be passed to `krealloc` etc.).
-
-> `realloc` has:
->=20
-> "If `ptr =3D=3D Some(p)`, then `p` must point to an existing and valid me=
-mory
-> allocation created by this allocator."
->=20
-> `free` has:
->=20
-> "`ptr` must point to an existing and valid memory allocation created by t=
-his
-> `Allocator` and must not be a dangling pointer."
->=20
-> We can add the part about the dangling pointer to `realloc` if you want.
-
-So I think we should do the following:=20
-(1) Add a paragraph to the `Allocator` trait that explains that
-    zero-sized allocations are not supported.
-(2) Add a check to `realloc` for zero-sized allocations + null pointer
-    (ie a new allocation request) that prints a warning and returns an
-    error
-(3) Instead of writing "existing and valid memory allocation created by
-    this allocator", I think "valid non-zero-sized memory allocation
-    created by this allocator" fits better.
-
----
-Cheers,
-Benno
-
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
