@@ -1,134 +1,240 @@
-Return-Path: <linux-kernel+bounces-326078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C26897624D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:12:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F3F2976253
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 441FF1C22F56
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:12:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 833731C23279
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC6D18BC27;
-	Thu, 12 Sep 2024 07:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E1F18BC14;
+	Thu, 12 Sep 2024 07:13:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WsT0YJ6g"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="G5jrE1Ud"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2059.outbound.protection.outlook.com [40.107.117.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58288186E58;
-	Thu, 12 Sep 2024 07:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726125132; cv=none; b=mxyeQ8YDE/0Q9etavHo24j2IuN024G1DP34QEXFaF/TeTJAxU7BGWKT7Ni+R6R5vungvAQVZLT0JxIoao3vhr22r5GBKO7JxidMj7g4a0oBTcs18PWOSecPxjXg44jxVHKQgSNGIZHbS4gZuz1DRL0XbKyy18sD/2bKAu044v2I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726125132; c=relaxed/simple;
-	bh=MZG69yN+VrDh2mqtkQIj+eKhaHCGouv3mkdUyAMEDE4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Kr0q4WxWorpZw9yv+aNimK32GmnuQpdYsfGqfpYK9bA1PI27YL+gJ+qnl/UXTb+XvJJLhQHApcEGz2r5hA7RE0b378xaB18f2oXggVrGFSyRxk6qubUC4YOAYdDJDCgyQ7pUAZzO5dy9IUtyi27wAXwK7dBb7bFWoxPRUGhRhPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WsT0YJ6g; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c40942358eso946143a12.1;
-        Thu, 12 Sep 2024 00:12:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726125129; x=1726729929; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RPB8bSnbYYyaLXMYazm7IKm+KD/Qi3JzsUK5HOuFh60=;
-        b=WsT0YJ6gfyLGThYZzFsBbwemVYL/esVyCJzA8z885N/7UwBnCZZjc97YmX8xJPwNsk
-         ZUwHztMoqF4XtQqe7WTxPy2Od20LpPVUVEJ9ijHxu9EfgfTWluCslwHPFuYgzFVWDQnL
-         u967+yrKFMV9whnjlyTEBVJjqHt74w+a3XcUjRb/jthGVjpu+OAmgsWZD+EzbA5J/fiz
-         kGzktRAFzrjki/DjgBPjkXzYYWe2l6Nxy1Ndan1X7Kfy/MGX+B7d3VVMm4ZTktSfXXJM
-         WdFjADOGx6ApGUICjmZmoV6t7ZoDEzq22knqLCyoAV3GvhSEJ1NLKIpwXNml2jNdHAUb
-         of8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726125129; x=1726729929;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RPB8bSnbYYyaLXMYazm7IKm+KD/Qi3JzsUK5HOuFh60=;
-        b=Cq2rzFRtl7+3hlCdnoWTvjbCTtzyM7mvpGei14EWIWH7GeA1x/WXqiMTh7a0TZ3CWt
-         M0UzoGlZa/BwApKqgII6uvIcZdJCMaedpx75DG+/DxRWDMr+DJoXsJIynkJpZFzNuxuM
-         jeLBaRPUA/n2DUxj9GCxZ+Oz6q1QkzBeDhHWz3tLk46EWjB6WP9K1V5ORv4MASIAAEuW
-         eOFRvJd2WqCgFjMZ5uIN4NKZELQQ2fuiGsLGZ7pDd2DQw2oV0axNzOZb31L2fP4byX6L
-         jv0jVnzY5NdUsB/WLUKyF+2M6tMg8LvYrPzWSORjvwSxGytLJPLdcn+Upk0YjF2JkLva
-         uu9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVWJ5wBc+/RiMQKMKh0p8TU4TzYJkQlvtk9beuWKLxe0mIYmSB9AfJ8p/1QMSdSq/1GXluwcyaVzBvU@vger.kernel.org, AJvYcCVklZL6oyV9ASiMQGQ+FxpJAY/uhiK8nDCQ11t9D9PqszRlVLxNmcDLbY04sjTwK7vklL2cjpby+2pWd3E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEvNaKzsH7dgZlqmpq5/dBrieyEz+7Iqy7YT9TQRKgsrjROGeu
-	qB7ex6l+E5IqadRqSj/15R2/4/Q2+RzGXu/vY91uHDB4owE8EoNo
-X-Google-Smtp-Source: AGHT+IFjQrmnZ1v5Q+Orx0b/xD4kyE6g0/G6HJcyZYdPWz5D3lxa0VyltlCMrHlspyo4MAW534kIbQ==
-X-Received: by 2002:a05:6402:27c7:b0:5c2:7699:92ef with SMTP id 4fb4d7f45d1cf-5c414387344mr2023513a12.16.1726125129160;
-        Thu, 12 Sep 2024 00:12:09 -0700 (PDT)
-Received: from foxbook (bio143.neoplus.adsl.tpnet.pl. [83.28.130.143])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd52099sm6142860a12.48.2024.09.12.00.12.07
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Thu, 12 Sep 2024 00:12:08 -0700 (PDT)
-Date: Thu, 12 Sep 2024 09:12:03 +0200
-From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
-To: Kuangyi Chiang <ki.chiang65@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, mathias.nyman@intel.com
-Subject: Re: [PATCH 0/3] xhci: Some improvement for Etron xHCI host
-Message-ID: <20240912091203.3ac9b88a@foxbook>
-In-Reply-To: <CAHN5xi235kgU8Xd0VYw6r5NeieCM8uqWjgPnLSP1haAFqgcFsw@mail.gmail.com>
-References: <20240911051716.6572-4-ki.chiang65@gmail.com>
-	<20240911093828.58129593@foxbook>
-	<CAHN5xi235kgU8Xd0VYw6r5NeieCM8uqWjgPnLSP1haAFqgcFsw@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3FD10FF
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726125197; cv=fail; b=fn60r4PeUdYinwlLbFqC35dVjw+tW28XgBQU2fwkKviCyXgXQgIEXXrVTkxAW/eQkbWs7R6xR9Vm7sVraWoXASqmz2Vd5OutqNixEUVkV0d6BMve3DB2UthtVjJce80+dY9ZvLcnzuurWp0DyH/4Wn3UUiiOMTK+3J3VE02aBTU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726125197; c=relaxed/simple;
+	bh=JBPGfDGkBBZHE8jOJt7vo0H76kLoFJQ4IOtL3P5jgH0=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ejL3/IQMFzVyp2lcv1z8Qep/m3zTn3My4QA9J3fnqfjb+gudWpLhEVEWmy9T42tW8B2hColOdsoEvv6sxD7J5Aemb8rhMItxrNamADkrX0IuPpmRizaD0rZzU1uYpD9bRGsa/6zB8tIKsF6TVaxtnIJohLsD0SHhHYHLAFBylMU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=G5jrE1Ud; arc=fail smtp.client-ip=40.107.117.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=K/MAbsSA22GKNcrd+8qpQ6ju6BtP6TiVBos+27fksUoKDMUXTORgfamASIKNd8+pyz5Fx9GpJsWxzKERErwUHyc6pYEuY/P+Kg5Aa57jV+AYlWm7W2WSmBVo1rXhZATeavgnuzFoVCF9zCKcC6WnZyYY/7itgZ5e56QCX1ayEp1iyTGgGezt54NfSfmh7CZfa7tc51ITUbG4A/orBwVwDZFSCECgFbrSSLiMmWRwkFc2HccaSVS3T7fJDU4136vGGsu6L5ysqb6CFmudj3miHcIhLvbZDfeniWvuhiEAGB4/nn2uJmP5EN8MjcPLFyfaeMZcXh/iGr3d7aBb7WSDcQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uV6dLJodIBtjFLXYU4IUuaxgxQhurHUIoRmA7DMhpKU=;
+ b=wdh7qOyrzBk6pBmO35sliBKuj5jGsKIcJwICMScAMYQGg0MMRhxL2BYKBvU0jFlG4iUUGcoOKcT0c01fsGajX5KUac7t+2cpm4oq6vSHuRMsc4HxoVQXflC6FD2WAG02vkLEhVWzImwjolHgaxSJGyMqll+4n6ZaNhXTbeotuJBNiOtWyeVHmNSQ9UGmatT47Vs6D/xP3pa7KUDX6oFsWn1bLUPaIUDtvM4AZaKmuLUT2U2N83DtXYBY18+SedgrXxMe+QJY3TX4GZc32VbDUkM38M05OFMKsyeznckXd6wTy7I0qNjdcfDo5x0LDGnaxd/avkY3f6ovJQFqufjewg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uV6dLJodIBtjFLXYU4IUuaxgxQhurHUIoRmA7DMhpKU=;
+ b=G5jrE1UdQT9Bau/MGVOU7I0POg1atz+LKFyhsLK2ATarnWVsd/6IonbB4T+Cu5AEYM1cqi1EpC3xzTGC8hrOpdbUHndyGA5bobTu7etwtQwcf73Dx3uhGs+c2Zhk5DHaP+IrjzVao4a5VGqdR62hGYkYV8CodmOPUEOr8mGrJhV6AlfwdUvOS3LTpniqSs2Ets5/6GfkLX9pwfJvs5xXjVzeyblj1YqMDiCZgXl6Ptd3M6w3XxXjJ9BRouZEhcNfKL+e9lgb7OpH8w50j+R0p3QJ0PX1jXB3aYeS1jK1vjglBhH7//5078uM1CMDkLrDOxYx8JSK9hHSsJtOztBlQA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR0601MB4113.apcprd06.prod.outlook.com (2603:1096:820:31::7)
+ by KL1PR0601MB5776.apcprd06.prod.outlook.com (2603:1096:820:b4::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Thu, 12 Sep
+ 2024 07:13:11 +0000
+Received: from KL1PR0601MB4113.apcprd06.prod.outlook.com
+ ([fe80::7e85:dad0:3f7:78a1]) by KL1PR0601MB4113.apcprd06.prod.outlook.com
+ ([fe80::7e85:dad0:3f7:78a1%4]) with mapi id 15.20.7962.017; Thu, 12 Sep 2024
+ 07:13:10 +0000
+From: Yan Zhen <yanzhen@vivo.com>
+To: harry.wentland@amd.com,
+	sunpeng.li@amd.com,
+	Rodrigo.Siqueira@amd.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	chaitanya.dhere@amd.com,
+	jun.lei@amd.com
+Cc: amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com,
+	Yan Zhen <yanzhen@vivo.com>
+Subject: [PATCH v1] drm/amd/display: fix typo in the comment
+Date: Thu, 12 Sep 2024 15:12:09 +0800
+Message-Id: <20240912071209.47240-1-yanzhen@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TY2PR06CA0038.apcprd06.prod.outlook.com
+ (2603:1096:404:2e::26) To KL1PR0601MB4113.apcprd06.prod.outlook.com
+ (2603:1096:820:31::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR0601MB4113:EE_|KL1PR0601MB5776:EE_
+X-MS-Office365-Filtering-Correlation-Id: 33ce66e0-e7d7-463e-fbf5-08dcd2fa5bce
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|52116014|376014|366016|1800799024|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?q5izYZaDkobkRfESqQxyev5azG6OzTRL3Kx5RejrZ+dUXZsnU9lHX1IavZZb?=
+ =?us-ascii?Q?r+rJpXQH9tGqo6rK3FuuKlpmZ8qXB6xexiG4BUoO6HvZ0RExmYF7zegE/AOd?=
+ =?us-ascii?Q?Vhzq0+Y2llkGmmictVi9j1Xdlzhw9ZRP7CT47dVOlzTzNpZJT5tEKpSO4L8j?=
+ =?us-ascii?Q?Eo70oF5ideKoLch2ko1idwCVtlyJPktxGujWXzFvAEdchJ/fb3bkLJjlEK0I?=
+ =?us-ascii?Q?qTU4lVrg+rXcOPp6YyYZ7zZG6QdF7GoPu7pUUHAnWwPEN7EVm3xO3JZ0NFLZ?=
+ =?us-ascii?Q?p37zU7JzEDDAc8CIIbH76poxSsfVYAgqErEKRbXBgWpaY/v/tqD9fTub8JuC?=
+ =?us-ascii?Q?EGx3JaCww0Zyai+ApyqAyBGFCYH+w4xoLb7P2tqUPUhCWNY78JN/FqOxnFtY?=
+ =?us-ascii?Q?ZLsaAxhq43gKCllELxPc1wsBWEIuMjis39siGHX65jMr8XHt1d5/+xe3OZbd?=
+ =?us-ascii?Q?t6kv9bYVkpWqSYZtDabWXcfa2yVdAx/4wGAxC5bJ/V4tpGJVEJLHwD0O6gfP?=
+ =?us-ascii?Q?zOEnIfftHKiZ2ZVaN2C2SRJkBqaTNAnHg1/PP8Hhcbj/+ZjWj8odL9jdibPg?=
+ =?us-ascii?Q?qmdOvb5mSbKl1x4kObovbPaA2XVKiH8nlcpSL0kXi1p8R8mfiQzrjYvKx78T?=
+ =?us-ascii?Q?WwbAGxQbAepErLiWIYS/HxCkpxH7JN8ratLJFhXvUA9CxezxxI7q8gQD9DXQ?=
+ =?us-ascii?Q?FpFaN3l06DPLgmTtfQROGj05MJW1oBbG396amfcEQTVGYlAeFUPQhD0d5VYE?=
+ =?us-ascii?Q?8HaLQiduVReVSBM6GlscjgjhjgazQe26kNgnRerPTC4vStKNygT+ImOfdWhl?=
+ =?us-ascii?Q?a/T1VJ7Zk/e399JyriZEuLyw3Fs1dCoyI5y1oL/t2vIcJcZ2O1O6zkgSWURr?=
+ =?us-ascii?Q?bdTKEr86zvoVBX930T0EF//PAIkOqABXsFAsUhKMLIe00RkvDjL3YN0yo4FT?=
+ =?us-ascii?Q?J4VF/uNWArJqfokvsHONRJXZGYky1OJNVryKw0cmpIm+702y4li57SOUZfaz?=
+ =?us-ascii?Q?wK6so+jrmlOlOrFPlyyx3uyxp/mp3iqqVNGYR2GjgENQyq4Pfsf8QRsD+CHc?=
+ =?us-ascii?Q?0fGFklr/zIqi9i5MUY4FuB2O4+vL2K9lErorD5fKqKZu7ZRKpgS8bbpvBNUr?=
+ =?us-ascii?Q?1qr3mBesFm9Cg124LQulKUNCcaxaRBswp6U+6PdYZeAazbqYAH+s4N3ikaDs?=
+ =?us-ascii?Q?iJZTWv9JFNB9PeeLg52KaS4tMOHoMLohGLrosH1t2/nVK4MODg69KDTu2AOt?=
+ =?us-ascii?Q?oFbwvVb+R6lNG1i6ucrHL5O6/U3Rj6TLrSIL6JiGAzf7mRtmj7yYo00nPm4w?=
+ =?us-ascii?Q?reY+p5xvTBus98l6S6+gLWWNt6mYq3qs6OMEEHZ79PEcwzA+U23SROs3MdFl?=
+ =?us-ascii?Q?/1oqFadxTEODMrv4bSud/OtDHwmWlSTHk1OHUrk9yr2qboevrArm7c/7zryf?=
+ =?us-ascii?Q?I1SBhuKrujY=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR0601MB4113.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(366016)(1800799024)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?4IVuwt0isRxvVqEh12e3UfQScLhOBE/aGjgSoq889JgoBmlVPglyk5zAheeC?=
+ =?us-ascii?Q?HlFnEy3BWA2XUJPvKDxYxOlAaiY+rlzbROkmGZ7j39WdMsc93UlQuURw45SS?=
+ =?us-ascii?Q?S44dGGzmdfiyPFD89mNdymmzVaB9+QMjNBvpX3WW3K+00uKQ1xU6rZtiR+9c?=
+ =?us-ascii?Q?e8xdBmWmdgWvjAEgQ9PhpN7NWSEaGSoxHgA68UMJJqeXfFRc/KFDXB68ukoW?=
+ =?us-ascii?Q?j/2bPxg6D1Mjvzl8uN+78Di38VdKqwhOwCf9+yMBQZOwmc+6my8TCJN1JN40?=
+ =?us-ascii?Q?UuigbFeU3p4iVvgIgjdwyfzbN3Lt3lYRipI9VbC6/+ilkxJbVxHLKLQPKq/q?=
+ =?us-ascii?Q?nfyu+D50gOFEktJ8sMh1mVKuNGR//DD+D2EneF/QR63KwQNZ03tmd45/4a+s?=
+ =?us-ascii?Q?ui/X9xqXn0uGHFfZ2X97B4Czuf4+pjo1obS5rhG4NDRd81CERd5Lee0hL5Cn?=
+ =?us-ascii?Q?rgK9rVHWlaaq8sVy0A+EAICDzpai4DLmk3pEpzdQibe7dKhbWFTu0NDrgZZk?=
+ =?us-ascii?Q?uxwvBMsO5KgfBghvATayjjNshif7UfH5gMNa740gaxO/xVqreNx4UT5zsw8L?=
+ =?us-ascii?Q?A6lcoZQSuHnjAfgDMZxmmc1dIXcRz2PdPF3WRKNHnQj7wAly5LIIWV9t5bil?=
+ =?us-ascii?Q?zZw4LsPyygRtRQDQdIBaAOBUd/i/cuhlho1o0t8/bgBlaJW9TcqZOd/nqU6b?=
+ =?us-ascii?Q?hzLPGOb/QMOgBoqHEIfvMqy+e+0GRKn0Jr+yHSgQJBRNXI907xHlPXWaZExi?=
+ =?us-ascii?Q?WPZvCnO5mB4GaxhJ1T+P7vuFYMYITCCCj0vpRcMPVTRbMS+Bs5qe7trFZ2JE?=
+ =?us-ascii?Q?hoSAtlr8hcwe5nAzMm1GoW6XsQk7c6lHZsMtO+qaxjEZGuiM9A3vIaXYxjXj?=
+ =?us-ascii?Q?tgKRnJvJziLjmIfiuoBpFhYEqRPBJPym3t8oLXgrDoqRmo22I2WAIFTUs/HW?=
+ =?us-ascii?Q?EYIBfSmmHNSPCM4fBb+SSLBJ0LCyDmQ6KfaVWXB3qbowLbUefnflNZdVE91D?=
+ =?us-ascii?Q?QkSvOlsI3x9jvObY+5BLcjvi+udHPb98HLqatYF9nR4XkAXOSdhWOJQG4PCh?=
+ =?us-ascii?Q?psJgMLvr8KNboRADsscnGslXDew+oKdgm7daivJ0Z1yNzv748X7bfSMt/DVc?=
+ =?us-ascii?Q?bItJ5dvARZ++ooJTQUfw7JG0rafl5L92cjT7XgvelCpYDeImZAym/1FdCwYk?=
+ =?us-ascii?Q?wM2gKb5fOUYWeLj7BoCX6NZledrJb5+c2SOUXmXBeQe/fIkKtpvpOGAx3lvI?=
+ =?us-ascii?Q?MF/N5X6rpNAUPOkGU/citQTDhuGiJ3R2mfvh26bKjV572M0wPfLgLPDuMC8p?=
+ =?us-ascii?Q?o/a4LwFvtPQYx/0hM0a/GmuQTCDVraB78iRz+wBRiL0D+px97g8C9WlLTewK?=
+ =?us-ascii?Q?1YzUZcStsji1mRTiaryfTH03TKBZyCdAHr3BfJlfCwCvR2EXeX+mVuuGonRI?=
+ =?us-ascii?Q?RMtz4NpVGGTN1aRo+9ii6wXURPH8miYkNwgqAWY0ECP1ScjSiabcMEQGYYo5?=
+ =?us-ascii?Q?w9TVVZ+nzSXPtEcwgrCNzwWafJl2fFAG8Hmbc2glmd+4eXbipGXLSh1BBiks?=
+ =?us-ascii?Q?c/iTgTY4Bhkn2UJUkTaNoExSs7AbJfFxLtEQMc03?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 33ce66e0-e7d7-463e-fbf5-08dcd2fa5bce
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR0601MB4113.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2024 07:13:10.5483
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PeNhovxSp9OiSt8m6ioNQhigK5971VdkWTurpVPWgWIc2E7YvjGJ8dXOiN5oVundib4bZPz3mGVukbRU+uMRPw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR0601MB5776
 
-Hi,
+Correctly spelled comments make it easier for the reader to understand
+the code.
 
-> > I'm aware of one more bug which affects my Etron: if an error occurs
-> > on an isochronous TD, two events are generated: first the error,
-> > then "success", even if the error is on the final TRB (the common
-> > case). Then the "success" causes "TRB DMA not part of current TD"
-> > warning. I suspect that all Etron chips are the same. This should
-> > be easily reproducible by unpligging an audio/video device while
-> > streaming.  
-> 
-> Hmm, I don't encounter this problem.
+Replace 'maxium' with 'maximum' in the comment &
+replace 'diffculty' with 'difficulty' in the comment &
+replace 'suppluy' with 'supply' in the comment &
+replace 'Congiuration' with 'Configuration' in the comment &
+replace 'eanbled' with 'enabled' in the comment.
 
-OK, I know what happened. This bug only affects SuperSpeed isochronous
-endpoints. If you don't have this kind of device, you will not see it.
-I checked that High-speed isochronous errors are reported correctly.
+Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+---
+ drivers/gpu/drm/amd/display/dc/basics/dce_calcs.c       | 2 +-
+ drivers/gpu/drm/amd/display/dc/dml2/display_mode_core.c | 6 +++---
+ drivers/gpu/drm/amd/display/dc/hwss/dcn30/dcn30_hwseq.c | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-My motivation to develop a workaround for this bug has just decreased
-another notch.
+diff --git a/drivers/gpu/drm/amd/display/dc/basics/dce_calcs.c b/drivers/gpu/drm/amd/display/dc/basics/dce_calcs.c
+index e47e9db062f4..d70a3549e05a 100644
+--- a/drivers/gpu/drm/amd/display/dc/basics/dce_calcs.c
++++ b/drivers/gpu/drm/amd/display/dc/basics/dce_calcs.c
+@@ -569,7 +569,7 @@ static void calculate_bandwidth(
+ 				break;
+ 			}
+ 			data->lb_partitions[i] = bw_floor2(bw_div(data->lb_size_per_component[i], data->lb_line_pitch), bw_int_to_fixed(1));
+-			/*clamp the partitions to the maxium number supported by the lb*/
++			/* clamp the partitions to the maximum number supported by the lb */
+ 			if ((surface_type[i] != bw_def_graphics || dceip->graphics_lb_nodownscaling_multi_line_prefetching == 1)) {
+ 				data->lb_partitions_max[i] = bw_int_to_fixed(10);
+ 			}
+diff --git a/drivers/gpu/drm/amd/display/dc/dml2/display_mode_core.c b/drivers/gpu/drm/amd/display/dc/dml2/display_mode_core.c
+index 547dfcc80fde..d851c081e376 100644
+--- a/drivers/gpu/drm/amd/display/dc/dml2/display_mode_core.c
++++ b/drivers/gpu/drm/amd/display/dc/dml2/display_mode_core.c
+@@ -8926,7 +8926,7 @@ void dml_core_mode_programming(struct display_mode_lib_st *mode_lib, const struc
+ 
+ 	// The prefetch scheduling should only be calculated once as per AllowForPStateChangeOrStutterInVBlank requirement
+ 	// If the AllowForPStateChangeOrStutterInVBlank requirement is not strict (i.e. only try those power saving feature
+-	// if possible, then will try to program for the best power saving features in order of diffculty (dram, fclk, stutter)
++	// if possible, then will try to program for the best power saving features in order of difficulty (dram, fclk, stutter)
+ 	s->iteration = 0;
+ 	s->MaxTotalRDBandwidth = 0;
+ 	s->AllPrefetchModeTested = false;
+@@ -9977,7 +9977,7 @@ void dml_core_get_row_heights(
+ 	dml_print("DML_DLG: %s: GPUVMMinPageSizeKBytes = %u\n", __func__, GPUVMMinPageSizeKBytes);
+ #endif
+ 
+-	// just suppluy with enough parameters to calculate meta and dte
++	// just supply with enough parameters to calculate meta and dte
+ 	CalculateVMAndRowBytes(
+ 			0, // dml_bool_t ViewportStationary,
+ 			1, // dml_bool_t DCCEnable,
+@@ -10110,7 +10110,7 @@ dml_bool_t dml_mode_support(
+ /// Note: In this function, it is assumed that DCFCLK, SOCCLK freq are the state values, and mode_program will just use the DML calculated DPPCLK and DISPCLK
+ /// @param mode_lib mode_lib data struct that house all the input/output/bbox and calculation values.
+ /// @param state_idx Power state idx chosen
+-/// @param display_cfg Display Congiuration
++/// @param display_cfg Display Configuration
+ /// @param call_standalone Calling mode_programming without calling mode support.  Some of the "support" struct member will be pre-calculated before doing mode programming
+ /// TODO: Add clk_cfg input, could be useful for standalone mode
+ dml_bool_t dml_mode_programming(
+diff --git a/drivers/gpu/drm/amd/display/dc/hwss/dcn30/dcn30_hwseq.c b/drivers/gpu/drm/amd/display/dc/hwss/dcn30/dcn30_hwseq.c
+index 42c52284a868..355823530aa4 100644
+--- a/drivers/gpu/drm/amd/display/dc/hwss/dcn30/dcn30_hwseq.c
++++ b/drivers/gpu/drm/amd/display/dc/hwss/dcn30/dcn30_hwseq.c
+@@ -455,7 +455,7 @@ bool dcn30_mmhubbub_warmup(
+ 	struct mcif_wb *mcif_wb;
+ 	struct mcif_warmup_params warmup_params = {0};
+ 	unsigned int  i, i_buf;
+-	/*make sure there is no active DWB eanbled */
++	/* make sure there is no active DWB enabled */
+ 	for (i = 0; i < num_dwb; i++) {
+ 		dwb = dc->res_pool->dwbc[wb_info[i].dwb_pipe_inst];
+ 		if (dwb->dwb_is_efc_transition || dwb->dwb_is_drc) {
+-- 
+2.34.1
 
-
-On the other hand, I was unable to reproduce the control transfer bug.
-The exact chip I have is labeled "EtronTech EJ168A", for the record.
-
-You are right, not all transfers have the data stage and transactions
-get out of sync with segment boundaries. I modified the patch to only
-print a warning instead of queuing a No-Op and then did various things
-which use control transactions: setting baud rate on serial, changing
-the volume on audio, starting video recording on a webcam, running
-ethtool on a NIC.
-
-The warning was printed a few times, but nothing interesting happened.
-Dynamic debug was enabled on handle_tx_event() - no errors reported.
-
-Maybe a different silicon/firmware revision, or maybe it's another
-SuperSpeed-only bug, or other special conditions for it to happen?
-
-> Ok, I will use one quirk XHCI_ETRON_HOST for these workarounds in the
-> next patch revision.
-That was just a suggestion, you should ask Mathias Nyman, I suppose.
-
-But, again, my impression of this hardware is that it's pretty bad
-and full of bugs, and they are bizarre enough to likely be unique.
-
-Regards,
-Michal
 
