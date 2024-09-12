@@ -1,261 +1,172 @@
-Return-Path: <linux-kernel+bounces-325763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B535975DE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:16:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FFCE975DE2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:15:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD9171F23648
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:16:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 536151C20D57
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D448A1D69E;
-	Thu, 12 Sep 2024 00:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AAB53AC;
+	Thu, 12 Sep 2024 00:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XYgEl+a3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LZnikTmO"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66898489;
-	Thu, 12 Sep 2024 00:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726100134; cv=fail; b=RxGRB/L0QwGD0fTPqe3+U4RV4R/NXph+ylbWZaP5g+x638PSFBln7VlOzQOUOlSE5eBtTv8YoSXSdNDdxtnfNtz/6BgCxnRhXdBH3TpRctmAqDK8NfE5x+EG8uEdS81QBrECQt9C91aaInnZeBVC4q4f5eVh9AosAtPjVn/GSVI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726100134; c=relaxed/simple;
-	bh=L1UIFoh51uI90Q7/ZckL0kM1thDxRM+fO11fIoJFDrE=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=m1xj4xmJk57wLZg2JSdN1CxWG+vE2oF4MDeZ48CVK0+0NztSEje02clt2KS5AgE2VIfKqIU+NTofTTQ7DgedworUWyVeYOp3PlRlOxvLWL4I4cV/aM4VYjpUJtK5O28U8yeqJ3tHSrnyqNWA5Bw5hpr02T9VfStao87jqILncTU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XYgEl+a3; arc=fail smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726100132; x=1757636132;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=L1UIFoh51uI90Q7/ZckL0kM1thDxRM+fO11fIoJFDrE=;
-  b=XYgEl+a3OfWHrl9ed9kE9f61dLfxB/I6OBBf+GE0PF7rmFpODPZJLEHC
-   dxIORX2BMrJLmwlDQ0TtZcz6mTfB+8b/sw+34tI6Uzla7r92a7JvfGLPI
-   N64JBLRQm4XcelH9ykxBFVMFri1mFhzn5m6oaBt/zB0mg2ylXiX8KI1SX
-   MaK+J4jukvKV+ZNDBgeZwIIqyIQJdKACF1/7rPamkVXkVBxiNcWri4X00
-   YBI28EiNr63nJLYKl7J7czCHm4g/Mw3LN9rt0jn5Q2Zrx38ZOYsYEB24i
-   hyXLOCO4CdgTn4xltWLaSdzmrSg7U/WR+3l86n/ngYo/xyReRoAiYbsAg
-   Q==;
-X-CSE-ConnectionGUID: aQ1LpV0CSq647v0VOT4M3g==
-X-CSE-MsgGUID: Sz97MSpNQPOBjvg0Fbarjg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="36317180"
-X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
-   d="scan'208";a="36317180"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2024 17:15:30 -0700
-X-CSE-ConnectionGUID: 0sJgUjaURE6pnDHbMui43w==
-X-CSE-MsgGUID: pMmKRLYHQtOGSbdCqP7hmQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,221,1719903600"; 
-   d="scan'208";a="68038083"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Sep 2024 17:15:30 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 11 Sep 2024 17:15:29 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 11 Sep 2024 17:15:29 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 11 Sep 2024 17:15:29 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.174)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 11 Sep 2024 17:15:28 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HxVWkyoJ40Coe0KC+mjuRBtJ8R8UeZl9J1fPRtey0d6TctgF5xXBkJEL8E7bWlTsbsSkJ200bYnzPzZsGb6seWeYXWA1Wf7h12tOchRdy/p8TmKSC1erUnxw116aubQLU65UTaUxOgIGwcp1iCyQxgG62fiMoyQrcvF0mS9UxIYsQGZzEW60LqN3wnpq5Cz/oe5ubY2dRGxcs4m6p/gcWSshm3r2lmXFwjrfW6/5JzaYwJbZvosRns+IPoPDOcLMXsl+afquo24qP0U9yBY1i7MsV6XqAgCIvzOOhmAOu6A6ne6Equrmp+rCv/umSATqVG1fTXXY4Kj0zGmhmxphkg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rTquRTjDF7nslBrBYX3giq+6BbOCGx8AwVwHJQL41Jg=;
- b=d/wD6iHkuL0AXSLB8XSI0M9LTdfbzmkuWUQNpi+517TdIvVToUCosCw+q9ut6AeY55IA6Ejx0ZP3kh1myP57WcaboYFack8RNyhbob2KT+s3FSWsJnrGNA+Oh6a7hx4yVgZkGDo5dwi/rjpaZNR51AoQmVvQPqc3W0a9MgTlzK4tUFneq1t/3cwmnBYgtPJm1/xoVAsZZVgzDsvy6TUuENp5JWZ4046HALdIWYbnG8p76rPrw5A14JR9G+IQbzRIO4rgrfTzHZo9NApYJCwECNOAJJAiYHLZBMZrgu6Y3Snoop8WWjdzXUed143HJG2ncKGRjq0FLc7JltdbImEOLQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
- by CO1PR11MB4946.namprd11.prod.outlook.com (2603:10b6:303:9e::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.17; Thu, 12 Sep
- 2024 00:15:24 +0000
-Received: from BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
- ([fe80::fdb:309:3df9:a06b%4]) with mapi id 15.20.7939.022; Thu, 12 Sep 2024
- 00:15:24 +0000
-Message-ID: <78d7b648-ad06-4065-bc87-c195c790f699@intel.com>
-Date: Thu, 12 Sep 2024 12:15:18 +1200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/21] KVM: TDX: Require TDP MMU and mmio caching for TDX
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, "seanjc@google.com"
-	<seanjc@google.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>
-CC: "dmatlack@google.com" <dmatlack@google.com>, "isaku.yamahata@gmail.com"
-	<isaku.yamahata@gmail.com>, "Zhao, Yan Y" <yan.y.zhao@intel.com>,
-	"nik.borisov@suse.com" <nik.borisov@suse.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
- <20240904030751.117579-11-rick.p.edgecombe@intel.com>
-Content-Language: en-US
-From: "Huang, Kai" <kai.huang@intel.com>
-In-Reply-To: <20240904030751.117579-11-rick.p.edgecombe@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0168.namprd03.prod.outlook.com
- (2603:10b6:a03:338::23) To BL1PR11MB5978.namprd11.prod.outlook.com
- (2603:10b6:208:385::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8266910E6;
+	Thu, 12 Sep 2024 00:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726100130; cv=none; b=cK5pE0XPEvikEHj7zcOTKnE7bZAMflveuUyD228rIWr+w0/8MGg565QToCdSFjxmoHywGaUVY+qSFOFp7zEizv13LS6YhwVelGGMQX3loTNM01LMtvWjTPjndyo5NLRkqxEcQFZ8J+kPl1bRt4+6BNiIzOq5uGg3eLCl0Y4P4V4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726100130; c=relaxed/simple;
+	bh=S3C7v9YnDNRcBILJMpX+FpkSyOuupZ7xt5mGvvS11Ng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aSt5girArc3ukpNJI9EzySCEchuEDk/BqUV2qHibf3t67d85XqV32SBvecAzSOg/I0cDUArGavmSZmT97UY8nRXwawtt1walScHpJCuKIDyqP0SNxBpwt3dgokDma7r1N6hAbDrgUsOQbUPhV3eK0IJDsj++m7P0PW36y8oiMxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LZnikTmO; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20573eb852aso10158115ad.1;
+        Wed, 11 Sep 2024 17:15:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726100128; x=1726704928; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=tB3E/T7YAvjvqVbBXzUkuOGhb4WX8ydsVz+TdkUG8B0=;
+        b=LZnikTmOgFvX6WiQJzTcQuFKwu9/vPpahlRGMi+bMaq7qVRXS3hWodl67QCBYIxo77
+         74iJ1vgk3nDWkoCx+JemA9g4Q+tZPXQfcY3+DLcGfq/srnHLs290slUZE/UtoEUaN7IK
+         zdvDKJQDSrNqysyWkwKDSM69ti86Q9SuZBIEa/v5Yr15sLqiH0I00+UqJMLVJASkEm/2
+         QT1WPvBE6Uu1xBttFEFNSACC6QfhADyEZAEH7ukX9cBPbdy9zgSxacunV6A+fn2Q7NJu
+         YoqM+ELY8ODsb6PXUmQKCC0by+LK1Iaa+13B+s4WOPKvYH36A3e+obO8UKwYZpWZdiIY
+         yuZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726100128; x=1726704928;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tB3E/T7YAvjvqVbBXzUkuOGhb4WX8ydsVz+TdkUG8B0=;
+        b=QytbS/SfDO7eLSmgt5Ohpb7VePdvYBqrwCLU7jMrN6KslbjGVQmKiZS8spRCmlFBFX
+         L/54RmoX90K2W9V+3lbhi6DDGglNKuVUb8Q51MuN46Q1UYr869lth4aaKjCHFJQQSzdk
+         LjTmQDvKXHASvHhdy9yiPhVASx2z/q7fbd3UQacKWIa2kAoWVKEFGMoXY2ert5xu+aep
+         wRKJSpaJPqEdCjdIGuv6GW5D3i2nCuWMKv+jTvnHtHXU0K8JwRQA5zA+65oHbcb9U+Ka
+         okeU2X5AZOJgY9fGdvnwud6mluL0iM9zxI5IJbfdYb0BcaL9V8d8553NHUbckdBpuT5L
+         vdYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVR/qbpWxz+YJjvHalWV+GBwUu/UKWQugPHAhdSQepEDzyuPTq0YUZ6z7U0lXPuhQTz05AyYwc/1b2j7AnyHvi1gWfxOQ7i@vger.kernel.org, AJvYcCWQwOaK+toLvyZdj4haOHWtX517RSzEbj6GDUyNlzekuTajw5W8iodxrKvwhTq049Onnh1ZvqUfPQhnJrY=@vger.kernel.org, AJvYcCX1L8SZr/XtitSIDE3+hjGyNtk61c2I+Ow1dckAS+JL1XaV+izGqqBPsObzBelvrM4zi57RpNRA@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRZgtkBoBuM/DlZA/2KHI88Ixirzvxea9VT27yut2kgGTtakKO
+	AOgHKgNHRPc1/3kpuoAsyHOu29tHUqcxzuuIQVzuy9K+qXhQEU9cqv7GMEIH
+X-Google-Smtp-Source: AGHT+IEy1ADhaFtrJIE8didZWkzouq2MGonBNdxcWKaj66hgINbNzZc29epaW0S6YvQE0rABqiBItQ==
+X-Received: by 2002:a17:902:d4ce:b0:1fd:96c7:24f5 with SMTP id d9443c01a7336-2074c5d2351mr86441445ad.5.1726100127410;
+        Wed, 11 Sep 2024 17:15:27 -0700 (PDT)
+Received: from tahera-OptiPlex-5000 ([136.159.49.123])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076af278aasm4761075ad.28.2024.09.11.17.15.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 17:15:26 -0700 (PDT)
+Date: Wed, 11 Sep 2024 18:15:24 -0600
+From: Tahera Fahimi <fahimitahera@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com,
+	jmorris@namei.org, serge@hallyn.com,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	bjorn3_gh@protonmail.com, jannh@google.com, netdev@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] landlock: Signal scoping support
+Message-ID: <ZuIynFIRt475uBP5@tahera-OptiPlex-5000>
+References: <cover.1725657727.git.fahimitahera@gmail.com>
+ <20240911.BieLu8DooJiw@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL1PR11MB5978:EE_|CO1PR11MB4946:EE_
-X-MS-Office365-Filtering-Correlation-Id: 50b07db9-20b2-43e7-0cda-08dcd2bfff21
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?a3RkRGxySlcvUFFWOE04SDFldXB6ZVRENFZ4aGtyK1ZjTWlRMzAvV1hhMDRP?=
- =?utf-8?B?b2VqMWp0RDVQa2k3OGxTVVVseXJGcUVKc2JHbkRqd1hHZFVveE1hMjdWSVJY?=
- =?utf-8?B?MXlibklocUVLQy8vM0EybVBvQVhKcGxaWFJrZUdBUCtnRmREdE9vV0MxTDd4?=
- =?utf-8?B?SmphSzFvNlRPMkJteStSVjJhbnREOWQrMi9iblh5L3U4bVFNTTFIODJnaGx3?=
- =?utf-8?B?SXlqdlIrRHBJWkhYVnFlaVYyS3ZWRTZPTUdqa2M1K2FWMkhabHBDeHVJbGtI?=
- =?utf-8?B?Z1Y5dWVnTWNnTkxHTVl4RmI0TWJIdElPMXhwOGRjOVpnYlVPMmRYaEwyUUov?=
- =?utf-8?B?Y2NVUzR6THpCZFVIY0d5am9uNVhiZmt3aFdYQWVuRmpFZlhPaHArczBJb2FH?=
- =?utf-8?B?ODVBekxLRXpZMFJKNGFzMk45eVl0K1FZbURWSXFOV0hrak8weURIVVlBcGM0?=
- =?utf-8?B?WjdpVStkVTVod1lqdUsrSG93ZnRicG1sdmZUS3lRYjlwbmxwNElRVlQ1NHFz?=
- =?utf-8?B?M3ZUbDVqMTdJQ05seUMyMGc3SGxEVnMydWNoV09BZGo5SE91VnY5V3cvS01U?=
- =?utf-8?B?RVNNekpyeUoxSFJpT1MrQXdNc04wTm1LYWpQOTcvNnVBZkFMTUFCM2ljTGJV?=
- =?utf-8?B?bnhUU3hRTXY1dnNVdjdMRkdKTG5DQWFvSzREbmh1amtQYU1wMEhMMVI1eXRp?=
- =?utf-8?B?WGh4TWlmQWN6U3E4eW5EMms3SnF4SWZnbFRNSnNyVUZkOEVQMnF2T0VQbVh5?=
- =?utf-8?B?YlZaY0o0VzlONzNwekw3cG02SDU0bldPSjR2bUVHUUpsN1hVdDQxR0lqS2hv?=
- =?utf-8?B?djhZM2dITTVoaFJudDl0cWhQQXluQzllWXZ6ZVBnbGFrQWxxMEtDeHNKN1Ju?=
- =?utf-8?B?Um1IbzBLQkErbmZ4ajgvdzVnc2x6OEFwVjJnRHludXNvcGdBalBwOTd2cng1?=
- =?utf-8?B?SXBWb2N0djNZUjIvbjNvNlNYbnpQU0hXOFM5cmJ3ZXU5RjN1ZnBIMHVvelYv?=
- =?utf-8?B?S2tDYzIxdEhDOExxNm02QUUxYWF5dWVqVjBxRDVEK2o5dVo4ZFg3NVJHSEVj?=
- =?utf-8?B?SFNhK1plSjkzcE1NVXV0ZExwMlJuc0V1V1Faam5leVFreG5Vbk85QTVKMmt6?=
- =?utf-8?B?alpEeTVLdGVnc1Y2LzA0SW40eHA0TnhrenJiemhsNlhudlhxNk5uNnhSbTFw?=
- =?utf-8?B?TnZmVHVSTjJoMWs0ZitQdkVJc3pteFhiMzBHaEhLNU96alpSdmVxK3dhaEVO?=
- =?utf-8?B?ZDJjSnlSMFZIZHpjcm5LRmdKM0VNLy9kdWwwUThkTDhHMXBrWTltMVp4YjNE?=
- =?utf-8?B?TlVkWXFMSkNKSW1rVXM4WWtCbE9HRG1WV3JyMUc1elFnWXlocGdYNXgyRVcz?=
- =?utf-8?B?U3FSOXZGSzYrY29mQ3ExT2grN09uamJxVWNHOGo0L285cTZnaXdOVUs0U2k0?=
- =?utf-8?B?MnZieVoyTzQ0L2hEWklNUU8rM1Z5b3cxZ0dHVE52dFdSdWhqUWlueDBWWG11?=
- =?utf-8?B?TnRLQWRuUlNqbVpqTUVsd1RWMStsR1dTbkRXOHJ2RUFoampkV3RpRW81RDJy?=
- =?utf-8?B?M0t6MHNxTy8yajBwUUpwTFpySkJYZ3duQUw2dEljRThSdWJzcW4vOExiQ1Jq?=
- =?utf-8?B?NFIvS0JHMEhqL2o4QVNoemVNVnpqQXpVUjNHc3lrTmFwbDVHc3UxYVBuaUtD?=
- =?utf-8?B?bEtYVjhaZzFmd1FEZmxxdURlYThvcjZrTlFlaCt0bEExZG5wdWhHRnkrcUFr?=
- =?utf-8?B?dmxpTzlvdGNxSWEza0lNVmRKcDV6bXl3a2xRMGlGR09DRjRJalpDTnVKZUpN?=
- =?utf-8?B?TWJFODRZZ2t5UTNENjNhZz09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OTZxTThncndSeFlvTDFtRWFSRHdFNERnQ3hLY1B6OTZ3T05MZ0kybXd3bTZs?=
- =?utf-8?B?a3lSMzEvMER0Zno3V2Fjd215N20zcXpiTjhuV2xNRGxVS2F3UUU4Q1hQMlNt?=
- =?utf-8?B?TGEzc1ZkWTlZREtGY0ZjTUhiTzlnSElSMGF5ZGJ6ZWd4UThDcXMrQ3AwWjJO?=
- =?utf-8?B?Sld1TDZMYU8vRDRaWWZsNEQrSGVGYUZiVGphaXFzMHR5ckd4Z3ArVEJnaHRS?=
- =?utf-8?B?N2dIK3ZHRHEzRUtML1k3Tm1FamxSeitJUVdCdGpJa1hlTm15SUdhL1BBOEpB?=
- =?utf-8?B?QVljMStRRUk4YmV0R2puUVloL3Y4dm5OaGd5aWphYzVGVWowVDFqdGhVQzJJ?=
- =?utf-8?B?RDVwN0NqTzVtcFBzOFMxMGY3cWtERXFJSW1Gakh1b0szL3YyRUp5VUt2ZEpH?=
- =?utf-8?B?c04vYTVFZC9mallvVldGOGUvaDltT3JLZlorN0F6MTNQSmhOSTdnUjQ4Nldu?=
- =?utf-8?B?Y0R3elFFWXVBTVZZRFY2Yzh0M1pmb1JRVVh1TkJacjJ5OTN4QnZyZ200WFVR?=
- =?utf-8?B?Q3hyanZ1bmkxVkJPUnRKS2J0cVVTaXRkRFZXZWVOYVVxSXBScXgzNWljcDl0?=
- =?utf-8?B?MW1JT1dFa3kyeVlIS2dab1o3VmZqc1RpRnZwQSs5VTF3NVZuajZJT0RtQVpC?=
- =?utf-8?B?aFhvRXlLWmVNc1pFL2lGUzloRmZlUkthYUs4bWJ1OUxpT2txbytraWhQRlNX?=
- =?utf-8?B?VERiVndRcU44Y3E3SCtsdmxGZ2ZzMk9WZG5sc0UzYm1UK0p3M3QrZHJoajZG?=
- =?utf-8?B?NUlCQ0REWkR3Ny9LaGFkRjNORnNyYm5xK2g0RWJKL0lQYlB3MytCVUVYM1BK?=
- =?utf-8?B?NUdUVnAwL3RjLzJmMUZaajVPVnd0WWkvUE96OHllanI0eVEwa0NBWDJQVkZx?=
- =?utf-8?B?bnc2N1A4dERpZUtsMkY4ejhXbjJsS2NTd2psY1dqRFM0Y2w3TWtNMktrYjJU?=
- =?utf-8?B?eVBXMS85RkQ5QkpYOGRha1ZRWDAyUDFnUjluMFhJa0lzL1lTZkFkNXdtYjBC?=
- =?utf-8?B?V29qY29EOTlUU0ZkVDh1em5sTVpzZVZ3WnVpNmtJRWZRV1ZmcGx2cFJNR0dZ?=
- =?utf-8?B?SzJHNDMzUllxemFGUnJseTU0RUc1b1lZbDlCNHJsOE45TmhDM1R2Vjh1TGY1?=
- =?utf-8?B?dHhINVp3bGl6TDIrQVdlRXU3TWx3WWtzOFVGcFJxbzg3NFIrK0tuMXdLNHVw?=
- =?utf-8?B?c001UkcrdXVXYnV4NW00TWNaT1N5UW5Xbks5SkZ2RlJTVXFCMFd3OFBnY1pV?=
- =?utf-8?B?djA0clBjUGFtWkthRDFIanpDK1RLYmtkT0FEZ1NHWmZPenEvTmI1eTdHMEwy?=
- =?utf-8?B?S2xlS1BTR0FuUDhBejRSZ0J3eUdkcDQ4cDNhZnJRck9nMmlzOXdMUVVhTTJG?=
- =?utf-8?B?YUYyMG9wZEc0S2dwaVVJcmY4UDZ0WlJ0ZDZabXB1dTVhaWZ4eHY0R1JoOTY1?=
- =?utf-8?B?aUJ3NDNpME5SKzFQY2QybW9yejE4bk13YXRDeFFGbFI0eStVOGdHeVlhdFR4?=
- =?utf-8?B?RkI2L1ZUU1FSMzN1VkpVQTYvUjkyVHp6d1hzNzR4WGhhdmNYUjJIU0dZU2pp?=
- =?utf-8?B?bXN6d0NuZ3hXeURtTWhJR2dtYlpaMTk5d1hmYzNvejVCNExiUkJGR05RU0J0?=
- =?utf-8?B?eFR4bDUzSDdTK2NiYzJVenlGMkZvRzZYL0Z6UkhEWXBaZWd0WGRkM01Dc3VO?=
- =?utf-8?B?RzdzYlRITTdQcVJiM1NwU3pib2JVVkpYaVhvdGVpK1ZWZTlFa3JHTHdVbXRs?=
- =?utf-8?B?TCtVWDZtTmZFdHdsNjcwUlgxTU5jbWpWZWw3VlpzY3E1bUhUMEpYYXphR3Fx?=
- =?utf-8?B?Q1lCNEZyMVFEa3dKS2o1c2U3N04rcFN6eE50czUzb0dMRklsNGNMVGVNbHZs?=
- =?utf-8?B?QVVDQndkelZhdG4xbDl0VHJySDd6L1o1SGthanF0SjZiVXdhR1pDa1hJZSto?=
- =?utf-8?B?b1J3MnMrb293VDY1VkRVekQxSzFFQWFLS2FIR3djYnZXNmtiYi9JRGZHTXlU?=
- =?utf-8?B?V2FnK1djV1dqK29CcmVmdWljL3ovcEJvVDcramNwSXNVNUVTNEZxa21WYW9v?=
- =?utf-8?B?Zjhab0xsVkk4NWliSUFhdXZQaUtXQ2JLa00yOGJET2Nqbzk2cWRUUFNUUERJ?=
- =?utf-8?Q?LkeYFCHBiqS0XtPhwiHQXoHBp?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 50b07db9-20b2-43e7-0cda-08dcd2bfff21
-X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2024 00:15:24.2685
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZUcBbextFokaqW4mO4wzJit/eaPVzNuRZiNhNrzd7xHZm+zB/L+7iq5rLi2e2d0XF1XRr6F0wut9wzp9A0EEtA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB4946
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240911.BieLu8DooJiw@digikod.net>
 
+On Wed, Sep 11, 2024 at 08:17:04PM +0200, Mickaël Salaün wrote:
+> We should also have the same tests as for scoped_vs_unscoped variants.
+Hi, 
 
+Thanks for the review, I will add them soon.
+> I renamed them from the abstract unix socket patch series, please take a
+> look:
+> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
+Wonderful! Thank you :)
 
-On 4/09/2024 3:07 pm, Edgecombe, Rick P wrote:
-> From: Isaku Yamahata <isaku.yamahata@intel.com>
-> 
-> Disable TDX support when TDP MMU or mmio caching aren't supported.
-> 
-> As TDP MMU is becoming main stream than the legacy MMU, the legacy MMU
-> support for TDX isn't implemented.
+> I'll send more reviews tomorrow and I'll fix most of them in my -next
+> branch (WIP), except for the hook_file_send_sigiotask tests and these
+> scoped_vs_unscoped variants that you should resolve.
+I will keep an eye on reviews. What parts of hook_file_send_sigiotask
+would need changes?
 
-Nitpickings:
-
-I suppose we should use imperative mode since this is part of what this 
-patch does?
-
-Like:
-
-TDX needs extensive MMU code change to make it work.  As TDP MMU is 
-becoming main stream than the legacy MMU, for simplicity only support 
-TDX for TDP MMU for now.
-
-> 
-> TDX requires KVM mmio caching. Without mmio caching, KVM will go to MMIO
-> emulation without installing SPTEs for MMIOs. However, TDX guest is
-> protected and KVM would meet errors when trying to emulate MMIOs for TDX
-> guest during instruction decoding. So, TDX guest relies on SPTEs being
-> installed for MMIOs, which are with no RWX bits and with VE suppress bit
-> unset, to inject VE to TDX guest. The TDX guest would then issue TDVMCALL
-> in the VE handler to perform instruction decoding and have host do MMIO
-> emulation.
-
-AFAICT the above two paragraphs are talking about two different things 
-that one thing doens't have hard dependency to the other.
-
-Should we separate this into two patches:  one patch to change 'checking 
-enable_ept' to 'checking tdp_mmu_enabled' (which justifies the first 
-paragraph), and the other to add MMIO caching checking.
-
-The final code after the two patches could still end up with ...
-
-[...]
-
-> +	if (!tdp_mmu_enabled || !enable_mmio_caching)
-> +		return -EOPNOTSUPP;
-> +
-
-... this though.
-
-But feel free to ignore (since nitpickings).
+> On Fri, Sep 06, 2024 at 03:30:02PM -0600, Tahera Fahimi wrote:
+> > This patch series adds scoping mechanism for signals.
+> > Closes: https://github.com/landlock-lsm/linux/issues/8
+> > 
+> > Problem
+> > =======
+> > 
+> > A sandboxed process is currently not restricted from sending signals
+> > (e.g. SIGKILL) to processes outside the sandbox since Landlock has no
+> > restriction on signals(see more details in [1]).
+> > 
+> > A simple way to apply this restriction would be to scope signals the
+> > same way abstract unix sockets are restricted.
+> > 
+> > [1]https://lore.kernel.org/all/20231023.ahphah4Wii4v@digikod.net/
+> > 
+> > Solution
+> > ========
+> > 
+> > To solve this issue, we extend the "scoped" field in the Landlock
+> > ruleset attribute structure by introducing "LANDLOCK_SCOPED_SIGNAL"
+> > field to specify that a ruleset will deny sending any signals from
+> > within the sandbox domain to its parent(i.e. any parent sandbox or
+> > non-sandbox processes).
+> > 
+> > Example
+> > =======
+> > 
+> > Create a sansboxed shell and pass the character "s" to LL_SCOPED:
+> > LL_FD_RO=/ LL_FS_RW=. LL_SCOPED="s" ./sandboxer /bin/bash
+> > Try to send a signal(like SIGTRAP) to a process ID <PID> through:
+> > kill -SIGTRAP <PID>
+> > The sandboxed process should not be able to send the signal.
+> > 
+> > Previous Versions
+> > =================
+> > v3:https://lore.kernel.org/all/cover.1723680305.git.fahimitahera@gmail.com/
+> > v2:https://lore.kernel.org/all/cover.1722966592.git.fahimitahera@gmail.com/
+> > v1:https://lore.kernel.org/all/cover.1720203255.git.fahimitahera@gmail.com/
+> > 
+> > Tahera Fahimi (6):
+> >   landlock: Add signal scoping control
+> >   selftest/landlock: Signal restriction tests
+> >   selftest/landlock: Add signal_scoping_threads test
+> >   selftest/landlock: Test file_send_sigiotask by sending out-of-bound
+> >     message
+> >   sample/landlock: Support sample for signal scoping restriction
+> >   landlock: Document LANDLOCK_SCOPED_SIGNAL
+> > 
+> >  Documentation/userspace-api/landlock.rst      |  22 +-
+> >  include/uapi/linux/landlock.h                 |   3 +
+> >  samples/landlock/sandboxer.c                  |  17 +-
+> >  security/landlock/fs.c                        |  17 +
+> >  security/landlock/fs.h                        |   6 +
+> >  security/landlock/limits.h                    |   2 +-
+> >  security/landlock/task.c                      |  59 +++
+> >  .../selftests/landlock/scoped_signal_test.c   | 371 ++++++++++++++++++
+> >  .../testing/selftests/landlock/scoped_test.c  |   2 +-
+> >  9 files changed, 486 insertions(+), 13 deletions(-)
+> >  create mode 100644 tools/testing/selftests/landlock/scoped_signal_test.c
+> > 
+> > -- 
+> > 2.34.1
+> > 
 
 
