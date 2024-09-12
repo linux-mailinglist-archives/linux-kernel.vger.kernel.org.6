@@ -1,67 +1,73 @@
-Return-Path: <linux-kernel+bounces-326860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72771976DCC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:31:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA343976DD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:32:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32BEE285812
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:31:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB32C1C237F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18C91B9832;
-	Thu, 12 Sep 2024 15:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166FE1B5EC6;
+	Thu, 12 Sep 2024 15:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b="K8X2v6ld"
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b="ADnssp9F"
 Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359C044C8F;
-	Thu, 12 Sep 2024 15:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEEC44C8F;
+	Thu, 12 Sep 2024 15:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726155112; cv=pass; b=ma3+/wEosPeX3zQzKSEnxC68TRihUhOcXmA9SRauuwE6lhtfT8zgm29vPqEGskXWM9mGey6UypiVeUyvorz5zzuDemu0yFJVPeMNlOlOdN3GdxgE5vzHBnn4w5jBBG9ja0e4LTdE1NJmtsp17ZLtyqvLa1Xxv++P7+SA69Gc1os=
+	t=1726155166; cv=pass; b=DqT3Tvus+ClDEbP395QOGJtS9lU14HWNsPQ+u1bUGJX57JwggW4lBH8ry8y+n6nRK66WEcfYvciq8yMjNRjE5mWfNyz09dvvkXXkky7Q8Al6zyrVF5kEQVsbyDrutaZ8VL7DRO3KhZFbQZ6T6ldcnQj85WWUGZZGBwmzKSEleA8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726155112; c=relaxed/simple;
-	bh=/ayxcgN01zXL94O1IKevl/0D45Irwt/+UChGAHvQ3m0=;
+	s=arc-20240116; t=1726155166; c=relaxed/simple;
+	bh=YV9YcH/288vAjtNfsh/90bu+74L4xPu9n7Huwp4eayU=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EfhgyVYK3tEYSxAgQFn483x7LWpabjbDoqoUs5o3xlIg4sid2RK7Gd7WLwH+ym3U6obZA7r2xSpbkKfLO3QzXPMmGyCiadECmuCfnRCmsD1q98QIwmG+3Slbwf75TgdAt/wt+s5LRMbeTpB9eLaSZZgI+KU9Tj66sPeQuH42zLc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b=K8X2v6ld; arc=pass smtp.client-ip=136.143.188.112
+	 Content-Type:MIME-Version; b=H5apPPptgdrrHAtNKkQdu9ynazAyG3SxXWdEAHmTl8Ipx+/h8LdNmSYBfVwViqsFzbsuZDry16z/+dVGHeqJyUyqGVa+YRHsxHJBFoXey9wBx/02QPanzWVqEuXA7CXk+dtiJALYLD3zznRu4iGWTNV4s5ZjpWmCRIJW6KIOIp4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=martyn.welch@collabora.com header.b=ADnssp9F; arc=pass smtp.client-ip=136.143.188.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1726155101; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1726155160; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=QtUiDmtRqijCE0ndDFf52cBBR3ZcTFXQvpljq9B4dpqan2FsORJDPaHjSfRwM7mkiP+epUfbm9oCBth0XkUQ6/TnRcwzyS0+FlGoBz85sYaqZQqYJHLK4pnrn6Z6rPoxTh2U0dpWTC+peg2TRsCtKfMcwdznVphEHPMT9HgseUQ=
+	b=kscO4jdLhxvHd6mk64ppAKG54LVWJIwn5WsMtgRzjyamuKm+0ixWqlJdImjL5Y2E3kOyC5nFaCqp/T2BvQjPErnu7W65niRQNRdmwv3VOE3PFgAesnRDnGMg1bkgb/tmcpGiIt7FQ8EK6bUDh9uFkMKmcfjVIK/oiU31ylMLpas=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1726155101; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=b9WP+mxv6vpXOPr0ioQLGuy77w7vcW8unNzXox+cGqo=; 
-	b=JEGYyfybs0AEWhb2QvivZ6jBJxkoty6Sb6tl1Au5Xd3oAVTFGGZh7I/QWq/9c0HZqC2cYd+sSuVjLbeypaPuxvjx40mX92vM+Dcptb2KTFRkbfY1bktbyeNmztcan/Xr8zTi4f5ncJyN0h3WhrvZVGYB+ZsOBg+7oktPPxp3AO0=
+	t=1726155160; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=YV9YcH/288vAjtNfsh/90bu+74L4xPu9n7Huwp4eayU=; 
+	b=eWtSmILYgIo+nqXPJxUq4g4kJE3pz/8ce3XD0sUY4Wn5lg3KR3oeVGe0Eu09XPt+XVs2DbgnvuAs1F9Uj7/CtIllWj/jTfvkUjzvCABKll07oOeHRIB+t81GjXnIhTDnWy5KbDbS847cZrO/PajaNPxylkGNsNllD7c2N/Ci6wE=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=martyn.welch@collabora.com;
 	dmarc=pass header.from=<martyn.welch@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726155101;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726155160;
 	s=zohomail; d=collabora.com; i=martyn.welch@collabora.com;
 	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=b9WP+mxv6vpXOPr0ioQLGuy77w7vcW8unNzXox+cGqo=;
-	b=K8X2v6ld2tDd8Fiz/uDyO2Rq37IrbfycayZlI4mP+ZqQdd2DKnaL+2h6nulbXUgc
-	fBEcs+t1AoK+dlJ9E6rMsvViFrzKFgu5cStIx9R8dlguTgpMjDr6HJDltLpjzrAwO4V
-	13/DAkNEtB4eXfOl1JPbZGJhubfVV8tPkDGzflSE=
-Received: by mx.zohomail.com with SMTPS id 1726155099067152.57015306927974;
-	Thu, 12 Sep 2024 08:31:39 -0700 (PDT)
-Message-ID: <cfeb02df9a3f34b3509b26c40a90799aecf22fb9.camel@collabora.com>
-Subject: Re: [PATCH] mailbox, remoteproc: omap2+: fix compile testing
+	bh=YV9YcH/288vAjtNfsh/90bu+74L4xPu9n7Huwp4eayU=;
+	b=ADnssp9F6hO1o9podZiITeDZ9Qd/+EOSwCCU3vZEPl4g5bNaOQHgcvNs7YSwdfm3
+	Uv/vb2YBiN5rKu1GiQZ4p2wVYUVJrCInIKCZPPP82vKhkVtzn8UvKTHE7qBwI5MMOJ3
+	HeCE7zoOzXQm9XVlgqsYLwf/B76mgETSYGMN2QVU=
+Received: by mx.zohomail.com with SMTPS id 1726155158140886.7487074473904;
+	Thu, 12 Sep 2024 08:32:38 -0700 (PDT)
+Message-ID: <a5f3b6c7029c9d431e28a8ba4ed886a1cf67fff9.camel@collabora.com>
+Subject: Re: linux-next: build warning after merge of the rpmsg tree
 From: Martyn Welch <martyn.welch@collabora.com>
-To: Arnd Bergmann <arnd@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, 
- Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier
- <mathieu.poirier@linaro.org>, Hari Nagalla <hnagalla@ti.com>,  Andrew Davis
-	 <afd@ti.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Date: Thu, 12 Sep 2024 16:31:35 +0100
-In-Reply-To: <20240909203825.1666947-1-arnd@kernel.org>
-References: <20240909203825.1666947-1-arnd@kernel.org>
+To: Jassi Brar <jassisinghbrar@gmail.com>, Stephen Rothwell
+	 <sfr@canb.auug.org.au>
+Cc: Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier	
+ <mathieu.poirier@linaro.org>, Andrew Davis <afd@ti.com>, Hari Nagalla	
+ <hnagalla@ti.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>,  Linux Next Mailing List
+ <linux-next@vger.kernel.org>, arnd@kernel.org
+Date: Thu, 12 Sep 2024 16:32:34 +0100
+In-Reply-To: <CABb+yY07P0zs6nT2CrZ+TnO+2XxZKYUfEjyRj2wwn+zAx9T0iQ@mail.gmail.com>
+References: <20240822142603.3608a26d@canb.auug.org.au>
+	 <20240828150900.7ffd7588@canb.auug.org.au>
+	 <20240906183621.6c630b7f@canb.auug.org.au>
+	 <12e1eda76baaa67109da3798b1b184b4a94531e6.camel@collabora.com>
+	 <20240912183408.36acc6dd@canb.auug.org.au>
+	 <CABb+yY07P0zs6nT2CrZ+TnO+2XxZKYUfEjyRj2wwn+zAx9T0iQ@mail.gmail.com>
 Organization: Collabora Ltd.
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
@@ -74,118 +80,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-ZohoMailClient: External
 
-On Mon, 2024-09-09 at 20:38 +0000, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Thu, 2024-09-12 at 09:15 -0500, Jassi Brar wrote:
+> On Thu, Sep 12, 2024 at 3:34=E2=80=AFAM Stephen Rothwell
+> <sfr@canb.auug.org.au> wrote:
+> >=20
+> > Hi all,
+> >=20
+> > On Fri, 06 Sep 2024 09:58:23 +0100 Martyn Welch
+> > <martyn.welch@collabora.com> wrote:
+> > >=20
+> > > On Fri, 2024-09-06 at 18:36 +1000, Stephen Rothwell wrote:
+> > > >=20
+> > > > On Wed, 28 Aug 2024 15:09:00 +1000 Stephen Rothwell
+> > > > <sfr@canb.auug.org.au> wrote:
+> > > > >=20
+> > > > > On Thu, 22 Aug 2024 14:26:03 +1000 Stephen Rothwell
+> > > > > <sfr@canb.auug.org.au> wrote:
+> > > > > >=20
+> > > > > > After merging the rpmsg tree, today's linux-next build
+> > > > > > (x86_64
+> > > > > > allmodconfig) produced this warning:
+> > > > > >=20
+> > > > > > WARNING: unmet direct dependencies detected for
+> > > > > > OMAP2PLUS_MBOX
+> > > > > > =C2=A0 Depends on [n]: MAILBOX [=3Dy] && (ARCH_OMAP2PLUS ||
+> > > > > > ARCH_K3)
+> > > > > > =C2=A0 Selected by [m]:
+> > > > > > =C2=A0 - TI_K3_M4_REMOTEPROC [=3Dm] && REMOTEPROC [=3Dy] && (AR=
+CH_K3
+> > > > > > || COMPILE_TEST [=3Dy])
+> > > > > >=20
+> > > > > > Probably introduced by commit
+> > > > > >=20
+> > > > > > =C2=A0 ebcf9008a895 ("remoteproc: k3-m4: Add a remoteproc drive=
+r
+> > > > > > for M4F subsystem")
+> > > > >=20
+> > > > > I am still seeing this warning.
+> > > >=20
+> > > > I am still getting this warning.
+> > >=20
+> > > I believe this is the required fix, but I believe it's waiting
+> > > for
+> > > review/merging:
+> > >=20
+> > > https://lore.kernel.org/all/010201919d8b298f-dd1585dd-7c4d-4865-9483-=
+ff6cd7399a90-000000@eu-west-1.amazonses.com/
+> >=20
+> > I am still getting this warning.
+> >=20
+> =C2=A0This
+> https://lore.kernel.org/lkml/20240909203825.1666947-1-arnd@kernel.org/T/#=
+u
+> =C2=A0 seems like a more complete solution.
 >=20
-> Selecting CONFIG_OMAP2PLUS_MBOX while compile testing
-> causes a build failure:
+> I am ok if it goes through TI or another tree.
 >=20
-> WARNING: unmet direct dependencies detected for OMAP2PLUS_MBOX
-> =C2=A0 Depends on [n]: MAILBOX [=3Dy] && (ARCH_OMAP2PLUS || ARCH_K3)
-> =C2=A0 Selected by [m]:
-> =C2=A0 - TI_K3_M4_REMOTEPROC [=3Dm] && REMOTEPROC [=3Dy] && (ARCH_K3 ||
-> COMPILE_TEST [=3Dy])
->=20
-> Using 'select' to force-enable another subsystem is generally
-> a mistake and causes problems such as this one, so change the
-> three drivers that link against this driver to use 'depends on'
-> instead, and ensure the driver itself can be compile tested
-> regardless of the platform.
->=20
-> When compile-testing without CONFIG_TI_SCI_PROTOCOL=3Dm, there
-> is a chance for a link failure, so add a careful dependency
-> on that.
->=20
-> arm-linux-gnueabi-ld: drivers/remoteproc/ti_k3_m4_remoteproc.o: in
-> function `k3_m4_rproc_probe':
-> ti_k3_m4_remoteproc.c:(.text.k3_m4_rproc_probe+0x76): undefined
-> reference to `devm_ti_sci_get_by_phandle'
->=20
-> Fixes: ebcf9008a895 ("remoteproc: k3-m4: Add a remoteproc driver for
-> M4F subsystem")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> =C2=A0drivers/mailbox/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
-=C2=A0 2 +-
-> =C2=A0drivers/mailbox/omap-mailbox.c |=C2=A0 2 +-
-> =C2=A0drivers/remoteproc/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0 | 10 ++++------
-> =C2=A03 files changed, 6 insertions(+), 8 deletions(-)
->=20
+> Acked-by: Jassi Brar <jassisinghbrar@gmail.com>
 
-Looks good to me:
 
-Reviewed-by: Martyn Welch <martyn.welch@collabora.com>
+That solution works for me.
 
-> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
-> index 4eed97295927..ecaf78beb934 100644
-> --- a/drivers/mailbox/Kconfig
-> +++ b/drivers/mailbox/Kconfig
-> @@ -73,7 +73,7 @@ config ARMADA_37XX_RWTM_MBOX
-> =C2=A0
-> =C2=A0config OMAP2PLUS_MBOX
-> =C2=A0	tristate "OMAP2+ Mailbox framework support"
-> -	depends on ARCH_OMAP2PLUS || ARCH_K3
-> +	depends on ARCH_OMAP2PLUS || ARCH_K3 || COMPILE_TEST
-> =C2=A0	help
-> =C2=A0	=C2=A0 Mailbox implementation for OMAP family chips with hardware
-> for
-> =C2=A0	=C2=A0 interprocessor communication involving DSP, IVA1.0 and
-> IVA2 in
-> diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-
-> mailbox.c
-> index 7a87424657a1..6797770474a5 100644
-> --- a/drivers/mailbox/omap-mailbox.c
-> +++ b/drivers/mailbox/omap-mailbox.c
-> @@ -603,7 +603,7 @@ static struct platform_driver omap_mbox_driver =3D
-> {
-> =C2=A0	.driver	=3D {
-> =C2=A0		.name =3D "omap-mailbox",
-> =C2=A0		.pm =3D &omap_mbox_pm_ops,
-> -		.of_match_table =3D
-> of_match_ptr(omap_mailbox_of_match),
-> +		.of_match_table =3D omap_mailbox_of_match,
-> =C2=A0	},
-> =C2=A0};
-> =C2=A0module_platform_driver(omap_mbox_driver);
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index 0f0862e20a93..62f8548fb46a 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -330,8 +330,7 @@ config STM32_RPROC
-> =C2=A0config TI_K3_DSP_REMOTEPROC
-> =C2=A0	tristate "TI K3 DSP remoteproc support"
-> =C2=A0	depends on ARCH_K3
-> -	select MAILBOX
-> -	select OMAP2PLUS_MBOX
-> +	depends on OMAP2PLUS_MBOX
-> =C2=A0	help
-> =C2=A0	=C2=A0 Say m here to support TI's C66x and C71x DSP remote
-> processor
-> =C2=A0	=C2=A0 subsystems on various TI K3 family of SoCs through the
-> remote
-> @@ -343,8 +342,8 @@ config TI_K3_DSP_REMOTEPROC
-> =C2=A0config TI_K3_M4_REMOTEPROC
-> =C2=A0	tristate "TI K3 M4 remoteproc support"
-> =C2=A0	depends on ARCH_K3 || COMPILE_TEST
-> -	select MAILBOX
-> -	select OMAP2PLUS_MBOX
-> +	depends on TI_SCI_PROTOCOL || (COMPILE_TEST &&
-> TI_SCI_PROTOCOL=3Dn)
-> +	depends on OMAP2PLUS_MBOX
-> =C2=A0	help
-> =C2=A0	=C2=A0 Say m here to support TI's M4 remote processor subsystems
-> =C2=A0	=C2=A0 on various TI K3 family of SoCs through the remote
-> processor
-> @@ -356,8 +355,7 @@ config TI_K3_M4_REMOTEPROC
-> =C2=A0config TI_K3_R5_REMOTEPROC
-> =C2=A0	tristate "TI K3 R5 remoteproc support"
-> =C2=A0	depends on ARCH_K3
-> -	select MAILBOX
-> -	select OMAP2PLUS_MBOX
-> +	depends on OMAP2PLUS_MBOX
-> =C2=A0	help
-> =C2=A0	=C2=A0 Say m here to support TI's R5F remote processor subsystems
-> =C2=A0	=C2=A0 on various TI K3 family of SoCs through the remote
-> processor
-
+Martyn
 
