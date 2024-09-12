@@ -1,107 +1,143 @@
-Return-Path: <linux-kernel+bounces-327336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 333A2977458
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:31:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2D81977453
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:30:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6528D1C212E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:31:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51998B22688
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BAD1C2DC5;
-	Thu, 12 Sep 2024 22:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A7D1C2DCB;
+	Thu, 12 Sep 2024 22:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZwGoyoAy"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="OPjKlmzH"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279802C80
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 22:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A5017DFF5
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 22:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726180253; cv=none; b=PCQYv47lbLgXLtapKr19yJHkp4CsYc+ojXJRUiRkp5GZjMBwC2XBsI8KWtS1TUiYbRFYSP0/ANlvq+B5BrmFeuMt9nycQguc1oveZY8hyTZqMvCtor3Q7XSw2Tx4ekqQtH0glQAcXXLwYzG9waPltvvSY6yTAyAJoKQL5rEeZLY=
+	t=1726180233; cv=none; b=s0jo/SVFEJdEt/gxXVYLnGTV3SQhVrpSBTNpYAEZ8zPrhgWZqquqHIsM+F/Emwzeo3oh5CSX49Y0K+Uj2xF5bJ3xwk+iU6NSx8fA95QKRdUIL8hYUB+Iaxfbf3tptpn18DsNcoJd+BTXErFAeRqYNaLUp2JMNT47gI2MqRAQAPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726180253; c=relaxed/simple;
-	bh=X/ACVZ2yMqEp+K0nA3WcyXwPm35BI17vNhlKzvwVbIQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CUCF0TpsuXUg81dH0xsVryZHoRY4Ufqr/BvRZKW8XBrMVRXrsLpJ0sWnl5ZNYynjwl2KJRRYluxPGjiNHTxu1IgzA+65wW3ZcG1X0vqDzCdRQk6L3wcrYuJ1G1aH+KFCVNgwvlFi9JdZvbkiPriMloaYmZx83n+facW11Hd6WhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ZwGoyoAy; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (213-229-8-243.static.upcbusiness.at [213.229.8.243])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B8D104AD;
-	Fri, 13 Sep 2024 00:29:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1726180165;
-	bh=X/ACVZ2yMqEp+K0nA3WcyXwPm35BI17vNhlKzvwVbIQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZwGoyoAyObEXRGPlAyDMyhN/oeNZ0NcQyaWj4EAhf9+vIzIwWN/dBisgAHZybjCiB
-	 il9eGJb+YCPTFs+CnmrVPuOibFZ3lvdTq/VCZx9Bdgpc8pPy6FqO3oHxFYQQJY/ICb
-	 XkvBs0JgPffoCsoCfd7rch8svHxwoFYm11NVydWI=
-Date: Fri, 13 Sep 2024 01:30:07 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Maxime Ripard <mripard@kernel.org>, Devarsh Thakkar <devarsht@ti.com>,
-	ahalaney@redhat.com, airlied@gmail.com, cai.huoqing@linux.dev,
-	caihuoqing@baidu.com, colin.i.king@gmail.com, dakr@redhat.com,
-	daniel@ffwll.ch, dmitry.baryshkov@linaro.org,
-	dri-devel@lists.freedesktop.org, geert+renesas@glider.be,
-	grandmaster@al2klimov.de, j-choudhary@ti.com, javierm@redhat.com,
-	jyri.sarha@iki.fi, linux-kernel@vger.kernel.org,
-	maarten.lankhorst@linux.intel.com, nm@ti.com, praneeth@ti.com,
-	r-ravikumar@ti.com, robh@kernel.org, sam@ravnborg.org,
-	simona.vetter@ffwll.ch, tzimmermann@suse.de,
-	u.kleine-koenig@pengutronix.de, vigneshr@ti.com,
-	ville.syrjala@linux.intel.com, wangxiaojun11@huawei.com,
-	yuanjilin@cdjrlc.com, yuehaibing@huawei.com
-Subject: Re: [PATCH] drm/tidss: Add MIT license along with GPL-2.0
-Message-ID: <20240912223007.GA9669@pendragon.ideasonboard.com>
-References: <20240912171142.3241719-1-devarsht@ti.com>
- <993bbe0a1b503505dd2e9b33b94e2b83@kernel.org>
- <20240912-unyielding-mottled-bumblebee-6bb69f@houat>
- <19f291d7-cb64-49b3-88e7-8541029cdf0d@ideasonboard.com>
+	s=arc-20240116; t=1726180233; c=relaxed/simple;
+	bh=4tbk8G/VDY81O229gvF6PriMvRVhPd18JVOse4OhW/w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LvpGqB5t7bL9mS0azNUk0MXebmc8nuQeW/nYo/aXzbs3fVAmiNmhsEK6dAUqfTmnVORi8eccS4M2ezO6I1ZCc75zqVi3NprSa4M8PukyVmA480KIRWxK7DBtK85z+WRiRxCNNVNDqDsmP3MTSnJeMG3Yqu28Zary26DT8b62rr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=OPjKlmzH; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7d4f8a1626cso169332a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:30:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1726180231; x=1726785031; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ONdBPIMyzZ6xU3izITaSKx2Q8d20ZvtQqwKOGE5YIUM=;
+        b=OPjKlmzHE4V8SX3aFF/ZLIOyEGtlyZMCk5uirTZMKlYUxtwisRV0T5OXaPa/hQsmib
+         54ceqoPFSdDGFex3kj3p9AgnITX0nrkE2ENFAGSICMVOY4IElzmwoOl4pS1qgycGQguY
+         pOrzjjtiYxt4/6f1jpjHLkFU+MOFEmjSJtejeNSDsfM92AtSUU2yTwInhu4ma2/DTprr
+         oq+C1yVnpBjUoR0k1Pis7lbUXsxepdsAgmpoLUYYBdOTLb/y9U0xLjiP6bdGdWTwFaD/
+         LzaDK9RNtSpaO4z2yZgvRBVM+eN1OdJIf5zj2XVsxzaNtvvy0LpnHJnqMt7ug7BW1QyF
+         5l+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726180231; x=1726785031;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ONdBPIMyzZ6xU3izITaSKx2Q8d20ZvtQqwKOGE5YIUM=;
+        b=IrL6eqLaVM683fmT8NSDtBReE/NShQAc4kmIGv8oAacZgtBqtvf7OxCUyPF02Livg6
+         RIkjatIA3K2Q7mxmnI2CtCMgy3vbjTmnkmtAs+KnJTvZwLmRPaOvOpSGdwjZzgmtCyqB
+         16cqbBcbehwius+o3B9BudhoX9QUna4yypi5Rhw3GybgpXnvY3Uo+lQJZ7u1WVrzWGq4
+         VEvCKof0EcKqTGffjMRdzduSQo2J5HALLqYXCCIT+G+CIKl9QvIU2oXRwl8DcBp/0fUA
+         N1PsPMpQzEBtwU0YD8stHDo3igHlIiL3GQ9HIvsHe7mzpkNaERKQRXIrmN76ErU0PARg
+         18oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+z+IUQh2x3EUougwMUH7Abfi46oFtz/2ZzFSbgDav8/Y0/UeV4LZxeaJVVtdzE4/Ic4Hwejeq64tGbMI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNvzhBABWMp+DiaHcNJSchnTN36e8zIX4Gy5sMp7q1kjhHoKja
+	co2xgvIR06Mb6moMdx4id7gc183AyB8VexfkBzg2b35t/3RseWyi8ypeQ9cAGRM=
+X-Google-Smtp-Source: AGHT+IELxGffTm/vOTCU6GKkLGts7f4oggk+OaSXCHB4wd3tdF/80Vdf6npvarkwyjy+x+jlAgsX7w==
+X-Received: by 2002:a05:6a21:398a:b0:1cf:21c7:2aff with SMTP id adf61e73a8af0-1d112cbc058mr1046793637.23.1726180230753;
+        Thu, 12 Sep 2024 15:30:30 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-719090d5204sm5031966b3a.209.2024.09.12.15.30.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Sep 2024 15:30:30 -0700 (PDT)
+Message-ID: <415b0e1a-c92f-4bf9-bccd-613f903f3c75@kernel.dk>
+Date: Thu, 12 Sep 2024 16:30:28 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <19f291d7-cb64-49b3-88e7-8541029cdf0d@ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>,
+ Christian Theune <ct@flyingcircus.io>, linux-mm@kvack.org,
+ "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Daniel Dao <dqminh@cloudflare.com>, Dave Chinner <david@fromorbit.com>,
+ clm@meta.com, regressions@lists.linux.dev, regressions@leemhuis.info
+References: <A5A976CB-DB57-4513-A700-656580488AB6@flyingcircus.io>
+ <ZuNjNNmrDPVsVK03@casper.infradead.org>
+ <0fc8c3e7-e5d2-40db-8661-8c7199f84e43@kernel.dk>
+ <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 12, 2024 at 09:21:19PM +0300, Tomi Valkeinen wrote:
-> On 12/09/2024 21:08, Maxime Ripard wrote:
-> > On Thu, Sep 12, 2024 at 06:04:11PM GMT, Maxime Ripard wrote:
-> >> On Thu, 12 Sep 2024 22:41:42 +0530, Devarsh Thakkar wrote:
-> >>> Modify license to include dual licensing as GPL-2.0-only OR MIT license for
-> >>> tidss display driver. This allows other operating system ecosystems such as
-> >>> Zephyr and also the commercial firmwares to refer and derive code from this
-> >>> display driver in a more permissive manner.
-> >>>
-> >>>
-> >>> [ ... ]
-> >>
-> >> Acked-by: Maxime Ripard <mripard@kernel.org>
-> > 
-> > Also, we need the ack of all contributors to that driver, so my ack
-> > isn't enough to merge that patch.
+On 9/12/24 4:25 PM, Linus Torvalds wrote:
+> On Thu, 12 Sept 2024 at 15:12, Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> When I saw Christian's report, I seemed to recall that we ran into this
+>> at Meta too. And we did, and hence have been reverting it since our 5.19
+>> release (and hence 6.4, 6.9, and 6.11 next). We should not be shipping
+>> things that are known broken.
 > 
-> IANAL, maybe a silly question: if someone from company XYZ has sent a 
-> patch for tidss, don't we then need an ack from someone in XYZ who's 
-> high enough in XYZ to allow changing the license for their code?
+> I do think that if we have big sites just reverting it as known broken
+> and can't figure out why, we should do so upstream too.
 
-This patch needs to be acked by all copyright holders indeed. For
-contributions whose copyright has been assigned to other entities (such
-as work performed by employees for their employers), those other
-entities have to ack the license change. What constitutes a substantial
-enough contribution to be copyrightable is a question I won't attempt to
-answer.
+Agree. I suspect it would've come up internally shortly too, as we're
+just now preparing to roll 6.11 as the next kernel. That always starts
+with a list of "what commits are in our 6.9 tree that aren't upstream"
+and then porting those, and this one is in that (pretty short) list.
+
+> Yes,  it's going to make it even harder to figure out what's wrong.
+> Not great. But if this causes filesystem corruption, that sure isn't
+> great either. And people end up going "I'll use ext4 which doesn't
+> have the problem", that's not exactly helpful either.
+
+Until someone has a good reproducer for it, it is going to remain
+elusive. And it's a two-liner to enable it again for testing, hence
+should not be a hard thing to do.
+
+> And yeah, the reason ext4 doesn't have the problem is simply because
+> ext4 doesn't enable large folios. So that doesn't pin anything down
+> either (ie it does *not* say "this is an xfs bug" - it obviously might
+> be, but it's probably more likely some large-folio issue).
+> 
+> Other filesystems do enable large folios (afs, bcachefs, erofs, nfs,
+> smb), but maybe just not be used under the kind of load to show it.
+
+It might be an iomap thing... Other file systems do use it, but to
+various degrees, and XFS is definitely the primary user.
+
+> Honestly, the fact that it hasn't been reverted after apparently
+> people knowing about it for months is a bit shocking to me. Filesystem
+> people tend to take unknown corruption issues as a big deal. What
+> makes this so special? Is it because the XFS people don't consider it
+> an XFS issue, so...
+
+Double agree, I was pretty surprised when I learned of all this today.
 
 -- 
-Regards,
-
-Laurent Pinchart
+Jens Axboe
 
