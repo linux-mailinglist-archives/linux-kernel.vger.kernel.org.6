@@ -1,170 +1,289 @@
-Return-Path: <linux-kernel+bounces-326772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E789B976CBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:53:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27608976CBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 420E2B21E82
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:53:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59A2A1C23B86
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F901B1509;
-	Thu, 12 Sep 2024 14:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=b1n.io header.i=@b1n.io header.b="dzHeF4s2"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F2B51B654F;
+	Thu, 12 Sep 2024 14:53:01 +0000 (UTC)
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD021B9826
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 14:52:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0BC176FCF;
+	Thu, 12 Sep 2024 14:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726152766; cv=none; b=ph2RC1mFq233/PwH8/k6DujJs/BnvfN6NOfNB/Py6pF0XTT3P8Sqj+skuw8B+twJU81yxDnvy51dJXfU1s8cvA1h8jQgITR/JyFg4wkGcO+uimvRK3RJviWAM7ZaYv37Fltr0RNmIOFATSUeTnPV1isEMa3RoQeucxmyD4cM1YE=
+	t=1726152781; cv=none; b=PSQHeeb76Nf9kVzBRxgRo4oOd1i3Xmk6uKvzZ8m8pmJokdY5a9QAwXFUgg1azZ2+SQOzqzAa38vTR6S04YSyxMhG0u1zBgwCAA/v4p0FWX4m72lYQNs9yXX97RtLYwNn9vfZx4XaLIH7vEaCkBFDbiRcJsMqkiKrMRUFoMdqo6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726152766; c=relaxed/simple;
-	bh=ikpNBFzF+ec1oGEsXdclhHbI5wA2hTAchVDv0fZP+M0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lJ47/cTVcKpfxfiqjJ8DK9DAYL7swXiatA2wtb4IbzFtAI3rVTpqhwpAA+EfCCTzr4VicJl17XomgHaufv1SUa4HcBGKzE7LHU01IhIjeorQSl8qGLMA7zUTgFOrJyEJBSt+Tenpv66vys8j5fUq/ioHZ9KwiLwf0ZMVBMW0qJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=b1n.io; spf=pass smtp.mailfrom=b1n.io; dkim=pass (2048-bit key) header.d=b1n.io header.i=@b1n.io header.b=dzHeF4s2; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=b1n.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=b1n.io
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=b1n.io; s=key1;
-	t=1726152762;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=wAjctIG7kmDFkmelUoNBFSAnPu/SWGm8tJMOA/n57SI=;
-	b=dzHeF4s2PdFu3AXBucE6iaAPTTNri1RuhEkYJJbVVYrydtAQuzz7dy+Ve4Hbl8LSaiBFnd
-	vqE5yvdP3oPgSnAAE/oq4BJ5KEu6aU+m0HC8KdklbcgCga9E9mY6zysP33AQS9AT8Xy4yV
-	FlFcny4TSzwK848ryMbUSbJca3dxkvmkYXknIbDL4ePLbBmkPJ/w7UlQIvE0Lk5K/zxIna
-	GVuFVn4jGr+IBvEQewiNuggUeRfCXn/jWWBt1K2o7ACEKtWIOk3NY6Jt60efddcl9GZ3Yk
-	2dgXNcrqwI2efcy5K/rGP+y7fRZCU/NZbhTaIyUne4S2wgcVkQJkDJitbUoE7A==
-From: b1n@b1n.io
-To: Philipp Hortmann <philipp.g.hortmann@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Xingquan Liu <b1n@b1n.io>
-Subject: [PATCH] staging: vt6655: Rename variable apTD0Rings
-Date: Thu, 12 Sep 2024 22:52:34 +0800
-Message-Id: <20240912145234.75499-1-b1n@b1n.io>
+	s=arc-20240116; t=1726152781; c=relaxed/simple;
+	bh=jJRKHuyFhRwIGFXt36hK6RLoLWePKd0LtKVg67zuh5s=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TV5YUoTWChZigxt5kY7uGsVEfukFs8tDM6uHp4Hyxy3XeAYSA3hmyLmvN/8GZ8CeloSiD7OWe/rlsYk8rWvPSyA/5TOJyc8hCmVu1t2b0hVOYyknBIVFLH7LrBa7qFfvCyZdctOPBLbBz4H51p5dKjjwzk/9gbD3yw1Fhc3P1F0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4X4KgB51hrz9v7NT;
+	Thu, 12 Sep 2024 22:33:26 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id AC2A4140B27;
+	Thu, 12 Sep 2024 22:52:53 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwDndy88AONmTKPHAA--.2627S2;
+	Thu, 12 Sep 2024 15:52:52 +0100 (CET)
+Message-ID: <0cd01bd94b6e29b4db2f071a32e5d543df02eb21.camel@huaweicloud.com>
+Subject: Re: [regression] significant delays when secureboot is enabled
+ since 6.10
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>, Jarkko Sakkinen
+	 <jarkko@kernel.org>, Linux regressions mailing list
+	 <regressions@lists.linux.dev>
+Cc: keyrings@vger.kernel.org, "linux-integrity@vger.kernel.org"
+	 <linux-integrity@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Pengyu Ma <mapengyu@gmail.com>
+Date: Thu, 12 Sep 2024 16:52:40 +0200
+In-Reply-To: <e3d0947a45f7a6fea0dca345deaa52baf9ffaaf6.camel@HansenPartnership.com>
+References: <0b4a5a86-a9f6-42d1-a9ba-ec565b336d3a@leemhuis.info>
+	 <92fbcc4c252ec9070d71a6c7d4f1d196ec67eeb0.camel@huaweicloud.com>
+	 <D42LZPLE8HR3.2UTNOI9CYZPIR@kernel.org>
+	 <D42M6OE94RLT.6EZSZLBTX437@kernel.org>
+	 <663d272617d1aead08077ad2b72929cbc226372a.camel@HansenPartnership.com>
+	 <D42N17MFTEDM.3E6IK034S26UT@kernel.org>
+	 <f554031343039883068145f9f4777277e490dc05.camel@huaweicloud.com>
+	 <10ae7b8592af7bacef87e493e6d628a027641b8d.camel@HansenPartnership.com>
+	 <D44C19QB8IK1.OMUJP7N91HRN@kernel.org>
+	 <c47b129aeb95094aace5b174fc6d81bf0a7ecfbf.camel@HansenPartnership.com>
+	 <155190f0eb0974e223538f10afaa7860c5a61cf5.camel@huaweicloud.com>
+	 <e3d0947a45f7a6fea0dca345deaa52baf9ffaaf6.camel@HansenPartnership.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-CM-TRANSID:LxC2BwDndy88AONmTKPHAA--.2627S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3JFWrGF4kXw1DZw18Jr43Wrg_yoWxGw4xpw
+	48JFyUGr95Jr1rtr1vyr1Dtry2y34UJw1UXrn5JF1kAF1DKr1Ygr15Xr1Y9r1DXr4xJr15
+	tr1UJr13ur1UJF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUylb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUwxhLUUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAEBGbiTfQKWAAAsu
 
-From: Xingquan Liu <b1n@b1n.io>
+On Thu, 2024-09-12 at 10:13 -0400, James Bottomley wrote:
+> On Thu, 2024-09-12 at 15:36 +0200, Roberto Sassu wrote:
+> > On Thu, 2024-09-12 at 09:26 -0400, James Bottomley wrote:
+> > > On Thu, 2024-09-12 at 16:16 +0300, Jarkko Sakkinen wrote:
+> > > > On Wed Sep 11, 2024 at 3:21 PM EEST, James Bottomley wrote:
+> > > > > On Wed, 2024-09-11 at 10:53 +0200, Roberto Sassu wrote:
+> > > [...]
+> > > > > > I made few measurements. I have a Fedora 38 VM with TPM
+> > > > > > passthrough.
+> > > > > >=20
+> > > > > > Kernels: 6.11-rc2+ (guest), 6.5.0-45-generic (host)
+> > > > > >=20
+> > > > > > QEMU:
+> > > > > >=20
+> > > > > > rc=C2=A0 qemu-kvm=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1:4.2-
+> > > > > > 3ubuntu6.27
+> > > > > > ii=C2=A0 qemu-system-x86=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0
+> > > > > > 1:6.2+dfsg-
+> > > > > > 2ubuntu6.22
+> > > > > >=20
+> > > > > >=20
+> > > > > > TPM2_PT_MANUFACTURER:
+> > > > > > =C2=A0 raw: 0x49465800
+> > > > > > =C2=A0 value: "IFX"
+> > > > > > TPM2_PT_VENDOR_STRING_1:
+> > > > > > =C2=A0 raw: 0x534C4239
+> > > > > > =C2=A0 value: "SLB9"
+> > > > > > TPM2_PT_VENDOR_STRING_2:
+> > > > > > =C2=A0 raw: 0x36373000
+> > > > > > =C2=A0 value: "670"
+> > > > > >=20
+> > > > > >=20
+> > > > > > No HMAC:
+> > > > > >=20
+> > > > > > # tracer: function_graph
+> > > > > > #
+> > > > > > # CPU=C2=A0 DURATION=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 FUNCTION CALLS
+> > > > > > # |=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 |=C2=A0=C2=A0 |=C2=A0=C2=A0 |
+> > > > > > =C2=A00)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 tpm2_pcr_extend() {
+> > > > > > =C2=A00)=C2=A0=C2=A0 1.112 us=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=
+=C2=A0 tpm_buf_append_hmac_session();
+> > > > > > =C2=A00) # 6360.029 us |=C2=A0=C2=A0=C2=A0 tpm_transmit_cmd();
+> > > > > > =C2=A00) # 6415.012 us |=C2=A0 }
+> > > > > >=20
+> > > > > >=20
+> > > > > > HMAC:
+> > > > > >=20
+> > > > > > # tracer: function_graph
+> > > > > > #
+> > > > > > # CPU=C2=A0 DURATION=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 FUNCTION CALLS
+> > > > > > # |=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 |=C2=A0=C2=A0 |=C2=A0=C2=A0 |
+> > > > > > =C2=A01)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 tpm2_pcr_extend() {
+> > > > > > =C2=A01)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 tpm2_start_auth_session(=
+) {
+> > > > > > =C2=A01) * 36976.99 us |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tpm_tran=
+smit_cmd();
+> > > > > > =C2=A01) * 84746.51 us |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tpm_tran=
+smit_cmd();
+> > > > > > =C2=A01) # 3195.083 us |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tpm_tran=
+smit_cmd();
+> > > > > > =C2=A01) @ 126795.1 us |=C2=A0=C2=A0=C2=A0 }
+> > > > > > =C2=A01)=C2=A0=C2=A0 2.254 us=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=
+=C2=A0 tpm_buf_append_hmac_session();
+> > > > > > =C2=A01)=C2=A0=C2=A0 3.546 us=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=
+=C2=A0 tpm_buf_fill_hmac_session();
+> > > > > > =C2=A01) * 24356.46 us |=C2=A0=C2=A0=C2=A0 tpm_transmit_cmd();
+> > > > > > =C2=A01)=C2=A0=C2=A0 3.496 us=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=
+=C2=A0 tpm_buf_check_hmac_response();
+> > > > > > =C2=A01) @ 151171.0 us |=C2=A0 }
+> > > > >=20
+> > > > > Well, unfortunately, that tells us that it's the TPM itself
+> > > > > that's
+> > > > > taking the time processing the security overhead.=C2=A0 The order=
+ing
+> > > > > of
+> > > > > the commands in tpm2_start_auth_session() shows
+> > > > >=20
+> > > > > =C2=A037ms for context restore of null key
+> > > > > =C2=A085ms for start session with encrypted salt
+> > > > > =C2=A0 3ms to flush null key
+> > > > > -----
+> > > > > 125ms
+> > > > >=20
+> > > > > If we context save the session, we'd likely only bear a single
+> > > > > 37ms
+> > > > > cost to restore it (replacing the total 125ms).=C2=A0 However,
+> > > > > there's
+> > > > > nothing we can do about the extend execution going from 6ms to
+> > > > > 24ms, so I could halve your current boot time with security
+> > > > > enabled
+> > > > > (it's currently 149ms, it would go to 61ms, but it's still 10x
+> > > > > slower than the unsecured extend at 6ms)
+> > > > >=20
+> > > > > James
+> > > >=20
+> > > > I'll hold for better benchmarks.
+> > >=20
+> > > Well, yes, I'd like to see this for a variety of TPMs.
+> > >=20
+> > > This one clearly shows it's the real time wait for the TPM (since
+> > > it dwarfs the CPU time calculation there's not much optimization we
+> > > can do on the kernel end).=C2=A0 The one thing that's missing in all =
+of
+> > > this is what was the TPM?=C2=A0 but even if it's an outlier that's
+> > > really bad at crypto what should we do?=C2=A0 We could have a blackli=
+st
+> > > that turns off the extend hmac (or a whitelist that turns it on),
+> > > but we can't simply say too bad you need a better TPM.
+> >=20
+> > Ops, sorry. I pasted the TPM properties. Was not that clear:
+> >=20
+> > Infineon Optiga SLB9670 (interpreting the properties).
+>=20
+> OK, that's reasonably modern and common:
+>=20
+> https://www.infineon.com/cms/en/product/security-smart-card-solutions/opt=
+iga-embedded-security-solutions/optiga-tpm/
+>=20
+> I assume it's one of the Q20 (otherwise it would be a TPM 1.2) but what
+> firmware version (as in could it be upgraded and the tests re-run to
+> see if that makes a difference).
+>=20
+> I also need the IMA community to start thinking about what they're
+> willing to accept in terms of performance for the added security hmac
+> brings to TPM extends.
 
-Rename variable apTD0Rings to ap_td0_rings
-to fix checkpatch warning Avoid CamelCase.
+Just for curiosity, I made a comparison of the boot time of Fedora 38
+(minimal installation) without and with HMAC enabled, without and with
+the Integrity Digest Cache [1], which I originally designed exactly for
+this purpose (one measurement per package):
 
-Signed-off-by: Xingquan Liu <b1n@b1n.io>
----
- drivers/staging/vt6655/card.c        |  6 +++---
- drivers/staging/vt6655/device.h      |  2 +-
- drivers/staging/vt6655/device_main.c | 14 +++++++-------
- 3 files changed, 11 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/staging/vt6655/card.c b/drivers/staging/vt6655/card.c
-index 688c870d89bc..36bf8cde2e08 100644
---- a/drivers/staging/vt6655/card.c
-+++ b/drivers/staging/vt6655/card.c
-@@ -388,8 +388,8 @@ void card_safe_reset_tx(struct vnt_private *priv)
- 	struct vnt_tx_desc *curr_td;
- 
- 	/* initialize TD index */
--	priv->tail_td[0] = &priv->apTD0Rings[0];
--	priv->apCurrTD[0] = &priv->apTD0Rings[0];
-+	priv->tail_td[0] = &priv->ap_td0_rings[0];
-+	priv->apCurrTD[0] = &priv->ap_td0_rings[0];
- 
- 	priv->tail_td[1] = &priv->apTD1Rings[0];
- 	priv->apCurrTD[1] = &priv->apTD1Rings[0];
-@@ -398,7 +398,7 @@ void card_safe_reset_tx(struct vnt_private *priv)
- 		priv->iTDUsed[uu] = 0;
- 
- 	for (uu = 0; uu < priv->opts.tx_descs[0]; uu++) {
--		curr_td = &priv->apTD0Rings[uu];
-+		curr_td = &priv->ap_td0_rings[uu];
- 		curr_td->td0.owner = OWNED_BY_HOST;
- 		/* init all Tx Packet pointer to NULL */
- 	}
-diff --git a/drivers/staging/vt6655/device.h b/drivers/staging/vt6655/device.h
-index 32d9cbd55222..32c51d794264 100644
---- a/drivers/staging/vt6655/device.h
-+++ b/drivers/staging/vt6655/device.h
-@@ -135,7 +135,7 @@ struct vnt_private {
- 	struct vnt_tx_desc *apCurrTD[TYPE_MAXTD];
- 	struct vnt_tx_desc *tail_td[TYPE_MAXTD];
- 
--	struct vnt_tx_desc *apTD0Rings;
-+	struct vnt_tx_desc *ap_td0_rings;
- 	struct vnt_tx_desc *apTD1Rings;
- 
- 	struct vnt_rx_desc *aRD0Ring;
-diff --git a/drivers/staging/vt6655/device_main.c b/drivers/staging/vt6655/device_main.c
-index 9ea647aefd60..a8dcd8ad3945 100644
---- a/drivers/staging/vt6655/device_main.c
-+++ b/drivers/staging/vt6655/device_main.c
-@@ -550,7 +550,7 @@ static bool device_init_rings(struct vnt_private *priv)
- 		priv->opts.tx_descs[0] * sizeof(struct vnt_tx_desc);
- 
- 	/* vir_pool: pvoid type */
--	priv->apTD0Rings = vir_pool
-+	priv->ap_td0_rings = vir_pool
- 		+ priv->opts.rx_descs0 * sizeof(struct vnt_rx_desc)
- 		+ priv->opts.rx_descs1 * sizeof(struct vnt_rx_desc);
- 
-@@ -720,7 +720,7 @@ static int device_init_td0_ring(struct vnt_private *priv)
- 	curr = priv->td0_pool_dma;
- 	for (i = 0; i < priv->opts.tx_descs[0];
- 	     i++, curr += sizeof(struct vnt_tx_desc)) {
--		desc = &priv->apTD0Rings[i];
-+		desc = &priv->ap_td0_rings[i];
- 		desc->td_info = kzalloc(sizeof(*desc->td_info), GFP_KERNEL);
- 		if (!desc->td_info) {
- 			ret = -ENOMEM;
-@@ -730,20 +730,20 @@ static int device_init_td0_ring(struct vnt_private *priv)
- 		desc->td_info->buf = priv->tx0_bufs + i * PKT_BUF_SZ;
- 		desc->td_info->buf_dma = priv->tx_bufs_dma0 + i * PKT_BUF_SZ;
- 
--		desc->next = &(priv->apTD0Rings[(i + 1) % priv->opts.tx_descs[0]]);
-+		desc->next = &(priv->ap_td0_rings[(i + 1) % priv->opts.tx_descs[0]]);
- 		desc->next_desc = cpu_to_le32(curr +
- 					      sizeof(struct vnt_tx_desc));
- 	}
- 
- 	if (i > 0)
--		priv->apTD0Rings[i - 1].next_desc = cpu_to_le32(priv->td0_pool_dma);
--	priv->tail_td[0] = priv->apCurrTD[0] = &priv->apTD0Rings[0];
-+		priv->ap_td0_rings[i - 1].next_desc = cpu_to_le32(priv->td0_pool_dma);
-+	priv->tail_td[0] = priv->apCurrTD[0] = &priv->ap_td0_rings[0];
- 
- 	return 0;
- 
- err_free_desc:
- 	while (i--) {
--		desc = &priv->apTD0Rings[i];
-+		desc = &priv->ap_td0_rings[i];
- 		kfree(desc->td_info);
- 	}
- 
-@@ -795,7 +795,7 @@ static void device_free_td0_ring(struct vnt_private *priv)
- 	int i;
- 
- 	for (i = 0; i < priv->opts.tx_descs[0]; i++) {
--		struct vnt_tx_desc *desc = &priv->apTD0Rings[i];
-+		struct vnt_tx_desc *desc = &priv->ap_td0_rings[i];
- 		struct vnt_td_info *td_info = desc->td_info;
- 
- 		dev_kfree_skb(td_info->skb);
--- 
-Xingquan Liu
+Without HMAC:
+Without Integrity Digest Cache:
+
+[root@fedora ~]# systemd-analyze=20
+Startup finished in 2.486s (kernel) + 3.594s (initrd) + 11.613s (userspace)=
+ =3D 17.694s=20
+multi-user.target reached after 11.559s in userspace.
+[root@fedora ~]# cat /sys/kernel/security/ima/ascii_runtime_measurements|wc=
+ -l
+444
+
+With Integrity Digest Cache:
+
+[root@fedora ~]# systemd-analyze=20
+Startup finished in 2.381s (kernel) + 3.469s (initrd) + 11.794s (userspace)=
+ =3D 17.644s=20
+multi-user.target reached after 11.750s in userspace.
+[root@fedora ~]# cat /sys/kernel/security/ima/ascii_runtime_measurements|wc=
+ -l
+218
+
+
+
+With HMAC:
+Without Integrity Digest Cache:
+
+[root@fedora ~]# systemd-analyze=20
+Startup finished in 2.911s (kernel) + 3.453s (initrd) + 1min 5.754s (usersp=
+ace) =3D 1min 12.119s=20
+multi-user.target reached after 1min 5.707s in userspace.
+[root@fedora ~]# cat /sys/kernel/security/ima/ascii_runtime_measurements|wc=
+ -l
+444
+
+
+With Integrity Digest Cache:
+
+[root@fedora ~]# systemd-analyze=20
+Startup finished in 2.990s (kernel) + 3.462s (initrd) + 37.038s (userspace)=
+ =3D 43.491s=20
+multi-user.target reached after 36.997s in userspace.
+[root@fedora ~]# cat /sys/kernel/security/ima/ascii_runtime_measurements|wc=
+ -l
+218
+
+
+[1]: https://lore.kernel.org/linux-integrity/20240905150543.3766895-1-rober=
+to.sassu@huaweicloud.com/
+
+Roberto
 
 
