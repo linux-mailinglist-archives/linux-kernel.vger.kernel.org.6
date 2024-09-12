@@ -1,236 +1,308 @@
-Return-Path: <linux-kernel+bounces-327328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE17497743F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:20:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D4A797743D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:20:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67C801F252BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:20:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC1BF286604
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716211C2435;
-	Thu, 12 Sep 2024 22:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2EC1C245D;
+	Thu, 12 Sep 2024 22:20:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kK/OzA+n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hhwt5M9y"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0DF18EFED;
-	Thu, 12 Sep 2024 22:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4F9191F8F;
+	Thu, 12 Sep 2024 22:20:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726179620; cv=none; b=P4baKAOh2SbrOvrtVL4HyRyZ4I8EIREjhM0JY6e50xp15iaXutkW4v51BB5trUPVQw/RPSg9kYVsGHVYmTUQ0DIa4VSJiJ4r0YkeYrHDfLmEViDDQY3P/nwN15tciVifJjNXPa4u1Izt/VLlR7etoxinRSHhyj5/gk8PYDN/vpk=
+	t=1726179608; cv=none; b=rYvbKUygE+9uj0xzlG7wRNPb0NG2p8X3jaF+l++Wmxirb787t+CCekS5mN2Bf1EMIzdSqq+kOUtf+/HZKkxs1vLpUpUKSAY4DMvCdqJgkjQ6j1+UArqjB5tB7SFTyJwRkDE3vy5KX+kYQVuA71EKGm2+7uZ0t+SIFdTJ5p1H74I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726179620; c=relaxed/simple;
-	bh=nj9fV5kOVzpzl9DstAMQLd8D+jcdOATomopimDXm1ww=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Xtt3rPNJ1aWQzj5CyFV0VpuiYIjBfnantfhCkspjOv1lnaBLDrWpSojULkAQpLGbrn4hRUTqLjLRt62RhXitpNry9nugGAuVryARAvnIqmm+zMyjBFxcsj7NSLVrcTss47uWEE2IhiID9uhcRGiTKYdi2v5vCJy1Z9INCHWNifo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kK/OzA+n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3A76C4CEC3;
-	Thu, 12 Sep 2024 22:20:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726179620;
-	bh=nj9fV5kOVzpzl9DstAMQLd8D+jcdOATomopimDXm1ww=;
-	h=From:To:Cc:Subject:Date:From;
-	b=kK/OzA+nauT1/FdtJCLjvkypJ6WJw0pRAmWoAoJc3H0kyOBUf2/Xrc0hmD5ET/Cgj
-	 6lX/JNF92ihjRRKipMXlS5LLPWJmkUiQPuE94I7MHCeb1lh9Sxa7IjC7ZiUXwP/7AN
-	 rNu3lINp2wqy6EEuRT7EyuCiUmonnphYAsVgjODRANsHO5giVHRe3WXAhPodFdWmmE
-	 a7JF3AkQI+T1RgnUWSNDNBQT8mGiHQeNt7RsjI/eTkKx7Z1RLZsF4aAVP90RCWcAza
-	 TeIwNRJ3nRSHGwZFUqianhlOCDMVM6YxI9GPf8eFiMIEJG+vrSNRqFSS/qgcw51vvQ
-	 aCfUD3VcgzZTQ==
-Received: by pali.im (Postfix)
-	id 43A0D5E9; Fri, 13 Sep 2024 00:20:15 +0200 (CEST)
-From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>
-Cc: linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] nfsd: Fix NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT
-Date: Fri, 13 Sep 2024 00:19:17 +0200
-Message-Id: <20240912221917.23802-1-pali@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1726179608; c=relaxed/simple;
+	bh=4KvjL9alLChNH5qfYu8L6u407dvTlrkvisLjpNv431s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tk16ldnB1n8AazLQAl8I2PIC93ubnDIA8GN9uxANrlZ0AdZEJS5h1IWPnx3SABjstfd311w7AE+2yUfij/AEZYEWDPZZTWIAL8dH77hBNuCriRV1/4hK6uVkS17vaytEY+Zstw/AO9d3RkhqcfGx2YMgC6RlxMFuLPy7pu4Qiv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hhwt5M9y; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2d89229ac81so1250443a91.0;
+        Thu, 12 Sep 2024 15:20:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726179606; x=1726784406; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SagmcUfMRj7CswGgvyMGzL+KR4HzY8oA3rfSHnW0rGw=;
+        b=Hhwt5M9yNOANdo7nn9RurtRbl2OpD6VluoGIyzHk3yATg5QaiaBCUPTugqyhF39Cay
+         1dbRlNLSFwz1Fo6NlTQ8w9x7WQkqLKrcn2+ZxarBsy31Q5zGU0NcDOMlKT+gBcVh5OF+
+         N8wR9uCeZp9NPBVIBYqq1hLqOJe5lfwfyRl9J07hk7m+LcJqo/CoGEVeHjVVnETklH2e
+         q6cnkIAPDrhqz/ZFYUHjSLEy3BmWmQPxKYUeq9BH5gVnKrue9XdtxX20TqOKVIcH+WTP
+         j0WFJXnEm2DTejT1LE/azMFax7vAqf+StEbzHQDZnSi6MWOuSES75qc/X0mywL3gZmYE
+         SIZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726179606; x=1726784406;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SagmcUfMRj7CswGgvyMGzL+KR4HzY8oA3rfSHnW0rGw=;
+        b=itWZJyXYZvLCU/ArA6jBp6g58dPLlU6K4UY3FLhWfc3zsOxwEDNDmh81ciHimn7fCN
+         n9Wki7U9HD1qPG98fLoCCxxYeCX4q57c0zAvKdYQ1AI86GLdD5kImNdiWK0tvF0+VQBH
+         oohafbQysy0iHp82rd/U2FPFMxdVrMQO9PDdXwUB4vAZvk8xRx1QorBIR7hh30ld6QSw
+         UeV9/cpuKIndV8pshtdxm2mH15EV+sBRt1BenYKUWSIYLYYMnsNAHYt97UXhACic6U1i
+         8Ir9v/RKcD8IDFO8SJhuZMB/FOLqoV91HX/uXU3Q7QcgAHxmkcDvu7Bm8qjBsF07zv4A
+         MEiw==
+X-Forwarded-Encrypted: i=1; AJvYcCXw/K3R6nAnbx+YomupDcCLfZif6iYAkHIAzPEQZR0tUo5HhdWDtN5X+t/NuOEi9PDfmkM=@vger.kernel.org, AJvYcCXyqZsA/r3gpUUy0PpNDSbhfmJfaYobkij07Vd8AbCKU7F591PTWmbkyxmwdVOsePCVWHKnLJ9O1JLKOd/r@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9PbJPCFZ1iqG8Hulyr7xj3AFLg4R2Lqx2Txg1c4fF4HNPk/Hj
+	3edKnyMD8EXxDrFv6B5Mnm6MXrCVK59kdY5ojSjvsIg6pRwT7RGvXeSxmR6nHqQwdEC/8RAmDa3
+	0WWVMB581qsEeLaeBlhVGEGE6QBs=
+X-Google-Smtp-Source: AGHT+IGfqDytp8ykySDhYO5cmlto0zg26xLHQ2nm/xbuMBqLsy5H3krZS+pfz6TUXijAno29TpeKY7wnK6r3A8gBe+4=
+X-Received: by 2002:a17:90a:ab0b:b0:2d8:97b7:449f with SMTP id
+ 98e67ed59e1d1-2dba0065e20mr5259536a91.38.1726179606298; Thu, 12 Sep 2024
+ 15:20:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CAJuCfpFFqqUWYOob_WYG_aY=PurnKvZjxznnx7V0=ESbNzHr_w@mail.gmail.com>
+ <20240912210222.186542-1-surenb@google.com> <CAJuCfpGgoSYmGSdcf+fZF1mUeNo-M=fzfk7G6ATs5-0TT+zkfQ@mail.gmail.com>
+In-Reply-To: <CAJuCfpGgoSYmGSdcf+fZF1mUeNo-M=fzfk7G6ATs5-0TT+zkfQ@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 12 Sep 2024 15:19:54 -0700
+Message-ID: <CAEf4BzZTaS3jeUvBiAdH8x6N71fkxJYT7ohPYPKqfSyJZ=NGog@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] mm: introduce mmap_lock_speculation_{start|end}
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org, oleg@redhat.com, 
+	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org, 
+	willy@infradead.org, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	mjguzik@gmail.com, brauner@kernel.org, jannh@google.com, andrii@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT do not bypass
-only GSS, but bypass any authentication method. This is problem specially
-for NFS3 AUTH_NULL-only exports.
+On Thu, Sep 12, 2024 at 2:04=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+>
+> On Thu, Sep 12, 2024 at 2:02=E2=80=AFPM Suren Baghdasaryan <surenb@google=
+.com> wrote:
+> >
+> > Add helper functions to speculatively perform operations without
+> > read-locking mmap_lock, expecting that mmap_lock will not be
+> > write-locked and mm is not modified from under us.
+>
+> Here you go. I hope I got the ordering right this time around, but I
+> would feel much better if Jann reviewed it before it's included in
+> your next patchset :)
 
-The purpose of NFSD_MAY_BYPASS_GSS_ON_ROOT is described in RFC 2623,
-section 2.3.2, to allow mounting NFS2/3 GSS-only export without
-authentication. So few procedures which do not expose security risk used
-during mount time can be called also with AUTH_NONE or AUTH_SYS, to allow
-client mount operation to finish successfully.
+Thanks a lot! And yes, I'll give it a bit of time for reviews before
+sending a new revision.
 
-The problem with current implementation is that for AUTH_NULL-only exports,
-the NFSD_MAY_BYPASS_GSS_ON_ROOT is active also for NFS3 AUTH_UNIX mount
-attempts which confuse NFS3 clients, and make them think that AUTH_UNIX is
-enabled and is working. Linux NFS3 client never switches from AUTH_UNIX to
-AUTH_NONE on active mount, which makes the mount inaccessible.
+Did you by any chance get any new ideas for possible benchmarks
+(beyond what I did with will-it-scale)?
 
-Fix the NFSD_MAY_BYPASS_GSS and NFSD_MAY_BYPASS_GSS_ON_ROOT implementation
-and really allow to bypass only exports which have some GSS auth flavor
-enabled.
 
-The result would be: For AUTH_NULL-only export if client attempts to do
-mount with AUTH_UNIX flavor then it will receive access errors, which
-instruct client that AUTH_UNIX flavor is not usable and will either try
-other auth flavor (AUTH_NULL if enabled) or fails mount procedure.
-
-This should fix problems with AUTH_NULL-only or AUTH_UNIX-only exports if
-client attempts to mount it with other auth flavor (e.g. with AUTH_NULL for
-AUTH_UNIX-only export, or with AUTH_UNIX for AUTH_NULL-only export).
-
-Signed-off-by: Pali Rohár <pali@kernel.org>
----
- fs/nfsd/export.c   | 19 ++++++++++++++++++-
- fs/nfsd/export.h   |  2 +-
- fs/nfsd/nfs4proc.c |  2 +-
- fs/nfsd/nfs4xdr.c  |  2 +-
- fs/nfsd/nfsfh.c    | 12 +++++++++---
- fs/nfsd/vfs.c      |  2 +-
- 6 files changed, 31 insertions(+), 8 deletions(-)
-
-diff --git a/fs/nfsd/export.c b/fs/nfsd/export.c
-index 50b3135d07ac..eb11d3fdffe1 100644
---- a/fs/nfsd/export.c
-+++ b/fs/nfsd/export.c
-@@ -1074,7 +1074,7 @@ static struct svc_export *exp_find(struct cache_detail *cd,
- 	return exp;
- }
- 
--__be32 check_nfsd_access(struct svc_export *exp, struct svc_rqst *rqstp)
-+__be32 check_nfsd_access(struct svc_export *exp, struct svc_rqst *rqstp, bool may_bypass_gss)
- {
- 	struct exp_flavor_info *f, *end = exp->ex_flavors + exp->ex_nflavors;
- 	struct svc_xprt *xprt = rqstp->rq_xprt;
-@@ -1120,6 +1120,23 @@ __be32 check_nfsd_access(struct svc_export *exp, struct svc_rqst *rqstp)
- 	if (nfsd4_spo_must_allow(rqstp))
- 		return 0;
- 
-+	/* Some calls may be processed without authentication
-+	 * on GSS exports. For example NFS2/3 calls on root
-+	 * directory, see section 2.3.2 of rfc 2623.
-+	 * For "may_bypass_gss" check that export has really
-+	 * enabled some GSS flavor and also check that the
-+	 * used auth flavor is without auth (none or sys).
-+	 */
-+	if (may_bypass_gss && (
-+	     rqstp->rq_cred.cr_flavor == RPC_AUTH_NULL ||
-+	     rqstp->rq_cred.cr_flavor == RPC_AUTH_UNIX)) {
-+		for (f = exp->ex_flavors; f < end; f++) {
-+			if (f->pseudoflavor == RPC_AUTH_GSS ||
-+			    f->pseudoflavor >= RPC_AUTH_GSS_KRB5)
-+				return 0;
-+		}
-+	}
-+
- denied:
- 	return rqstp->rq_vers < 4 ? nfserr_acces : nfserr_wrongsec;
- }
-diff --git a/fs/nfsd/export.h b/fs/nfsd/export.h
-index ca9dc230ae3d..dc7cf4f6ac53 100644
---- a/fs/nfsd/export.h
-+++ b/fs/nfsd/export.h
-@@ -100,7 +100,7 @@ struct svc_expkey {
- #define EX_WGATHER(exp)		((exp)->ex_flags & NFSEXP_GATHERED_WRITES)
- 
- int nfsexp_flags(struct svc_rqst *rqstp, struct svc_export *exp);
--__be32 check_nfsd_access(struct svc_export *exp, struct svc_rqst *rqstp);
-+__be32 check_nfsd_access(struct svc_export *exp, struct svc_rqst *rqstp, bool may_bypass_gss);
- 
- /*
-  * Function declarations
-diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-index 2e39cf2e502a..0f67f4a7b8b2 100644
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -2791,7 +2791,7 @@ nfsd4_proc_compound(struct svc_rqst *rqstp)
- 
- 			if (current_fh->fh_export &&
- 					need_wrongsec_check(rqstp))
--				op->status = check_nfsd_access(current_fh->fh_export, rqstp);
-+				op->status = check_nfsd_access(current_fh->fh_export, rqstp, false);
- 		}
- encode_op:
- 		if (op->status == nfserr_replay_me) {
-diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-index 97f583777972..b45ea5757652 100644
---- a/fs/nfsd/nfs4xdr.c
-+++ b/fs/nfsd/nfs4xdr.c
-@@ -3775,7 +3775,7 @@ nfsd4_encode_entry4_fattr(struct nfsd4_readdir *cd, const char *name,
- 			nfserr = nfserrno(err);
- 			goto out_put;
- 		}
--		nfserr = check_nfsd_access(exp, cd->rd_rqstp);
-+		nfserr = check_nfsd_access(exp, cd->rd_rqstp, false);
- 		if (nfserr)
- 			goto out_put;
- 
-diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
-index dd4e11a703aa..ed0eabfa3cb0 100644
---- a/fs/nfsd/nfsfh.c
-+++ b/fs/nfsd/nfsfh.c
-@@ -329,6 +329,7 @@ fh_verify(struct svc_rqst *rqstp, struct svc_fh *fhp, umode_t type, int access)
- {
- 	struct nfsd_net *nn = net_generic(SVC_NET(rqstp), nfsd_net_id);
- 	struct svc_export *exp = NULL;
-+	bool may_bypass_gss = false;
- 	struct dentry	*dentry;
- 	__be32		error;
- 
-@@ -375,8 +376,13 @@ fh_verify(struct svc_rqst *rqstp, struct svc_fh *fhp, umode_t type, int access)
- 	 * which clients virtually always use auth_sys for,
- 	 * even while using RPCSEC_GSS for NFS.
- 	 */
--	if (access & NFSD_MAY_LOCK || access & NFSD_MAY_BYPASS_GSS)
-+	if (access & NFSD_MAY_LOCK)
- 		goto skip_pseudoflavor_check;
-+	/*
-+	 * NFS4 PUTFH may bypass GSS (see nfsd4_putfh() in nfs4proc.c).
-+	 */
-+	if (access & NFSD_MAY_BYPASS_GSS)
-+		may_bypass_gss = true;
- 	/*
- 	 * Clients may expect to be able to use auth_sys during mount,
- 	 * even if they use gss for everything else; see section 2.3.2
-@@ -384,9 +390,9 @@ fh_verify(struct svc_rqst *rqstp, struct svc_fh *fhp, umode_t type, int access)
- 	 */
- 	if (access & NFSD_MAY_BYPASS_GSS_ON_ROOT
- 			&& exp->ex_path.dentry == dentry)
--		goto skip_pseudoflavor_check;
-+		may_bypass_gss = true;
- 
--	error = check_nfsd_access(exp, rqstp);
-+	error = check_nfsd_access(exp, rqstp, may_bypass_gss);
- 	if (error)
- 		goto out;
- 
-diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index 29b1f3613800..b2f5ea7c2187 100644
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -320,7 +320,7 @@ nfsd_lookup(struct svc_rqst *rqstp, struct svc_fh *fhp, const char *name,
- 	err = nfsd_lookup_dentry(rqstp, fhp, name, len, &exp, &dentry);
- 	if (err)
- 		return err;
--	err = check_nfsd_access(exp, rqstp);
-+	err = check_nfsd_access(exp, rqstp, false);
- 	if (err)
- 		goto out;
- 	/*
--- 
-2.20.1
-
+> Thanks,
+> Suren.
+>
+> >
+> > Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > ---
+> > Changes since v1 [1]:
+> > - Made memory barriers in inc_mm_lock_seq and mmap_lock_speculation_end
+> > more strict, per Jann Horn
+> >
+> > [1] https://lore.kernel.org/all/20240906051205.530219-2-andrii@kernel.o=
+rg/
+> >
+> >  include/linux/mm_types.h  |  3 ++
+> >  include/linux/mmap_lock.h | 74 ++++++++++++++++++++++++++++++++-------
+> >  kernel/fork.c             |  3 --
+> >  3 files changed, 65 insertions(+), 15 deletions(-)
+> >
+> > diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> > index 6e3bdf8e38bc..5d8cdebd42bc 100644
+> > --- a/include/linux/mm_types.h
+> > +++ b/include/linux/mm_types.h
+> > @@ -887,6 +887,9 @@ struct mm_struct {
+> >                  * Roughly speaking, incrementing the sequence number i=
+s
+> >                  * equivalent to releasing locks on VMAs; reading the s=
+equence
+> >                  * number can be part of taking a read lock on a VMA.
+> > +                * Incremented every time mmap_lock is write-locked/unl=
+ocked.
+> > +                * Initialized to 0, therefore odd values indicate mmap=
+_lock
+> > +                * is write-locked and even values that it's released.
+> >                  *
+> >                  * Can be modified under write mmap_lock using RELEASE
+> >                  * semantics.
+> > diff --git a/include/linux/mmap_lock.h b/include/linux/mmap_lock.h
+> > index de9dc20b01ba..a281519d0c12 100644
+> > --- a/include/linux/mmap_lock.h
+> > +++ b/include/linux/mmap_lock.h
+> > @@ -71,39 +71,86 @@ static inline void mmap_assert_write_locked(const s=
+truct mm_struct *mm)
+> >  }
+> >
+> >  #ifdef CONFIG_PER_VMA_LOCK
+> > +static inline void init_mm_lock_seq(struct mm_struct *mm)
+> > +{
+> > +       mm->mm_lock_seq =3D 0;
+> > +}
+> > +
+> >  /*
+> > - * Drop all currently-held per-VMA locks.
+> > - * This is called from the mmap_lock implementation directly before re=
+leasing
+> > - * a write-locked mmap_lock (or downgrading it to read-locked).
+> > - * This should normally NOT be called manually from other places.
+> > - * If you want to call this manually anyway, keep in mind that this wi=
+ll release
+> > - * *all* VMA write locks, including ones from further up the stack.
+> > + * Increment mm->mm_lock_seq when mmap_lock is write-locked (ACQUIRE s=
+emantics)
+> > + * or write-unlocked (RELEASE semantics).
+> >   */
+> > -static inline void vma_end_write_all(struct mm_struct *mm)
+> > +static inline void inc_mm_lock_seq(struct mm_struct *mm, bool acquire)
+> >  {
+> >         mmap_assert_write_locked(mm);
+> >         /*
+> >          * Nobody can concurrently modify mm->mm_lock_seq due to exclus=
+ive
+> >          * mmap_lock being held.
+> > -        * We need RELEASE semantics here to ensure that preceding stor=
+es into
+> > -        * the VMA take effect before we unlock it with this store.
+> > -        * Pairs with ACQUIRE semantics in vma_start_read().
+> >          */
+> > -       smp_store_release(&mm->mm_lock_seq, mm->mm_lock_seq + 1);
+> > +
+> > +       if (acquire) {
+> > +               WRITE_ONCE(mm->mm_lock_seq, mm->mm_lock_seq + 1);
+> > +               /*
+> > +                * For ACQUIRE semantics we should ensure no following =
+stores are
+> > +                * reordered to appear before the mm->mm_lock_seq modif=
+ication.
+> > +                */
+> > +               smp_wmb();
+> > +       } else {
+> > +               /*
+> > +                * We need RELEASE semantics here to ensure that preced=
+ing stores
+> > +                * into the VMA take effect before we unlock it with th=
+is store.
+> > +                * Pairs with ACQUIRE semantics in vma_start_read().
+> > +                */
+> > +               smp_store_release(&mm->mm_lock_seq, mm->mm_lock_seq + 1=
+);
+> > +       }
+> > +}
+> > +
+> > +static inline bool mmap_lock_speculation_start(struct mm_struct *mm, i=
+nt *seq)
+> > +{
+> > +       /* Pairs with RELEASE semantics in inc_mm_lock_seq(). */
+> > +       *seq =3D smp_load_acquire(&mm->mm_lock_seq);
+> > +       /* Allow speculation if mmap_lock is not write-locked */
+> > +       return (*seq & 1) =3D=3D 0;
+> > +}
+> > +
+> > +static inline bool mmap_lock_speculation_end(struct mm_struct *mm, int=
+ seq)
+> > +{
+> > +       /* Pairs with ACQUIRE semantics in inc_mm_lock_seq(). */
+> > +       smp_rmb();
+> > +       return seq =3D=3D READ_ONCE(mm->mm_lock_seq);
+> >  }
+> > +
+> >  #else
+> > -static inline void vma_end_write_all(struct mm_struct *mm) {}
+> > +static inline void init_mm_lock_seq(struct mm_struct *mm) {}
+> > +static inline void inc_mm_lock_seq(struct mm_struct *mm, bool acquire)=
+ {}
+> > +static inline bool mmap_lock_speculation_start(struct mm_struct *mm, i=
+nt *seq) { return false; }
+> > +static inline bool mmap_lock_speculation_end(struct mm_struct *mm, int=
+ seq) { return false; }
+> >  #endif
+> >
+> > +/*
+> > + * Drop all currently-held per-VMA locks.
+> > + * This is called from the mmap_lock implementation directly before re=
+leasing
+> > + * a write-locked mmap_lock (or downgrading it to read-locked).
+> > + * This should normally NOT be called manually from other places.
+> > + * If you want to call this manually anyway, keep in mind that this wi=
+ll release
+> > + * *all* VMA write locks, including ones from further up the stack.
+> > + */
+> > +static inline void vma_end_write_all(struct mm_struct *mm)
+> > +{
+> > +       inc_mm_lock_seq(mm, false);
+> > +}
+> > +
+> >  static inline void mmap_init_lock(struct mm_struct *mm)
+> >  {
+> >         init_rwsem(&mm->mmap_lock);
+> > +       init_mm_lock_seq(mm);
+> >  }
+> >
+> >  static inline void mmap_write_lock(struct mm_struct *mm)
+> >  {
+> >         __mmap_lock_trace_start_locking(mm, true);
+> >         down_write(&mm->mmap_lock);
+> > +       inc_mm_lock_seq(mm, true);
+> >         __mmap_lock_trace_acquire_returned(mm, true, true);
+> >  }
+> >
+> > @@ -111,6 +158,7 @@ static inline void mmap_write_lock_nested(struct mm=
+_struct *mm, int subclass)
+> >  {
+> >         __mmap_lock_trace_start_locking(mm, true);
+> >         down_write_nested(&mm->mmap_lock, subclass);
+> > +       inc_mm_lock_seq(mm, true);
+> >         __mmap_lock_trace_acquire_returned(mm, true, true);
+> >  }
+> >
+> > @@ -120,6 +168,8 @@ static inline int mmap_write_lock_killable(struct m=
+m_struct *mm)
+> >
+> >         __mmap_lock_trace_start_locking(mm, true);
+> >         ret =3D down_write_killable(&mm->mmap_lock);
+> > +       if (!ret)
+> > +               inc_mm_lock_seq(mm, true);
+> >         __mmap_lock_trace_acquire_returned(mm, true, ret =3D=3D 0);
+> >         return ret;
+> >  }
+> > diff --git a/kernel/fork.c b/kernel/fork.c
+> > index 61070248a7d3..c86e87ed172b 100644
+> > --- a/kernel/fork.c
+> > +++ b/kernel/fork.c
+> > @@ -1259,9 +1259,6 @@ static struct mm_struct *mm_init(struct mm_struct=
+ *mm, struct task_struct *p,
+> >         seqcount_init(&mm->write_protect_seq);
+> >         mmap_init_lock(mm);
+> >         INIT_LIST_HEAD(&mm->mmlist);
+> > -#ifdef CONFIG_PER_VMA_LOCK
+> > -       mm->mm_lock_seq =3D 0;
+> > -#endif
+> >         mm_pgtables_bytes_init(mm);
+> >         mm->map_count =3D 0;
+> >         mm->locked_vm =3D 0;
+> >
+> > base-commit: 015bdfcb183759674ba1bd732c3393014e35708b
+> > --
+> > 2.46.0.662.g92d0881bb0-goog
+> >
 
