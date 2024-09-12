@@ -1,131 +1,107 @@
-Return-Path: <linux-kernel+bounces-326031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9948D976189
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:31:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9026D976188
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:31:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60AC62829A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:31:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2488E282361
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97463189536;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46945189530;
 	Thu, 12 Sep 2024 06:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="WKoZvoyg"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l5/rRESD"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0571146A6F
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 06:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B1356455
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 06:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726122688; cv=none; b=GzuEm79WGkIw+zGbvB6DZiANsh7T1/iJ0WwGfbkRZj/KyEzxi9+/A3ub19MJX0WXkXkQIB6bK8N3my1x82DHGwxhamuK5IfkDoQVqomjCRm/1HW4irl7UmuVGWOYNQVwrnil3rt001X8uMu0DRJJKWLqJ++NJOZisc2bD5L0Oc0=
+	t=1726122688; cv=none; b=HRknqfxJtRWgf/8jU3GtGNYHMvt+zj1lVNUJSj4FDjiCMvH+6DZ5lH4UpIRT3ksuY+G/lw8/24yWknG2FLONsEjzXa92h8wyHwmtIft+0WeXZIgL06Pp7MNiGAkNzPj511G46lTyCHDQuYnU5RWavbNYfpMLLXg5eo+1riupdNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1726122688; c=relaxed/simple;
-	bh=pz7lmaCixmDU8jWsNlE+WokwdONvJ+P9anNkfWDN5Ew=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iPjFhe0ATu2qTbFhF0X4I8rrWgyZyDRpLgweqZY5PeSucg3NpCsy5DNfk+o7Bs4n/+SreHXJGY1VS7pAq8bcwu9IrP0wq7XQvpqEFOInyVgpjR4RHgBXapx11C58qdnj01AYiDUeYm5Qff+AKhWFM3TblA+y43R8m6DqGrotLEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=WKoZvoyg; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6db449f274fso5001477b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 23:31:26 -0700 (PDT)
+	bh=rICUziB6M1nqe34g/DSkBETJu4TjDQ+3xTSrisT8cOA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fMm3cuUO94d+Qf/OLGX7I4CTM62jY4UGOdX8Ubn/2jWoNrY+8MpoaaZF3Fg/I4JhvG/hP1vPnac0RCo/0nVJjGl3MhGVa+IgyWTmmZ5Wh47qfzwYfkjIRsVknpg5D6eBj4tpwitWheRB8RteyO2kDNmBkWiMwuvy30d2iCXhu9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l5/rRESD; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53569e624a9so90224e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 23:31:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google; t=1726122685; x=1726727485; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VLqRk9xs0Z8USD34uHyus8ov3Zx+G/NGqLFegF19mAE=;
-        b=WKoZvoygVK38SGFLWU5f6jRWtxmEaqTl1mFlyAVpaqqcmXaqQ4bh/gENk5PvTORPdF
-         dlfgm4L7rMBWeYm3xpJOEPx7twISPN+RdpX7tQ56/5hy/aHJ4E/C+oM42iqQqeuFnPFb
-         uNRUA3+KcVx1D1IEZ5ffJVVVpMH8lDOjnaZrHeu1Z1uEAuIx6BVZec6iSC7DBavnPRE0
-         K6wNDB6JUKdTcNWUsC0yYYQu/rKzSjHC3rJA9o1xYEKKfBwkxjh0giBrf0g/v9N4ZOIh
-         /MA77mxO1f9BVwUsVbnd+qEjfb6xSjtd6o0vQq7Vo2fqUWH2kOuGEb7FW3VRcITvB/fH
-         XAvA==
+        d=linaro.org; s=google; t=1726122684; x=1726727484; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KomP7G90w5XiTxBfY5n2KIRLtbQEtmSrnwcuWwZeCTA=;
+        b=l5/rRESDP9LjCFOV6e4nNL8rXBt5/TBxWtzc35Jf+APqTgSISCfeSC5hdNwAmqcNoq
+         UdqVFfzqkRhlRJ7MdMwBr+Ht2Y1VtPCZoRuSW/sHDS0h/5uhjNAViMMJ66hX1xEEDbd5
+         2OAKDcI+hzW3WeFopfyVGXOtbekfodjvqfkttOOczVPOdw6a5sfLUhCrH0a/LSmoVlXo
+         2OSak9tt+xWPg9TOQIkAErH5IVCmECLK83VCSLeYbTaMbowPGLPaHdn5biXpXSHbvmDS
+         sq1cz2W1v30CSku2YmjQ0ZLUbjvqNqM1zHLD3YTbgZljEXVo3iMk5Gr07qP7Ocut9Dzn
+         j8hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726122685; x=1726727485;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VLqRk9xs0Z8USD34uHyus8ov3Zx+G/NGqLFegF19mAE=;
-        b=QceYmGzpgGavkgeIWRUzajFLK18ndYtCh5Ph7jIZ/nxppKcs6qrqCtSQDLmSyHZAh5
-         uvkcm026PyJmIwxyZXUe7nZ+0NqPdxU1lzpqxVsR5h1zCurl2i9/IeQK+Ew7no/0J5i6
-         OQGOAFcshqo2ltUSSRp3NzXOAP/yX/me7nCYCb1FCtQJo2byaWvHt7YBvqYBNFCNMe7O
-         4iF3d59xndZP18V/Jg+jiYKcQd3jPYMPJtdscwUSfxFd2jOFOstOylSEFJg5g1m5Vt3N
-         uwfbY6cR19Y2028rG2xKiFbzDf0ZrhAbxtsJTWgDCNfhlGjMN4orxZcCwsI7YxkulLBn
-         LCnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfu0oa8Q1kE3tbdgp5V4rBN7OM5UcIU/R+YH+P8dhg0qiptGuj/mSdtlTQMuBa0bBs2nagZ8G1bLDrMBk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx94Pn8fpQHP/tmoDl9i0SPmF2PJoiQwlLfZ7KUzgmQvyst/d7p
-	0hFygAPtcTnw1Q7rXK9Bh8EcHPi1rEyFts7t5BYVVmAMPbYL5B9/fc4yN63DrNpWikLrRtIVsvg
-	BC51tCkT0+Kh4wFfYb931xSyR92W0HyOUd+so4w==
-X-Google-Smtp-Source: AGHT+IH4kBB8JN2cgcgO3jywYmXVWr3Ng49Lv24oVaKiZ9IuWZORUke+o0pxGQVji/XNXO5oMFwy9ZkLUHYHtIhC4S4=
-X-Received: by 2002:a05:690c:f0f:b0:643:92a8:ba00 with SMTP id
- 00721157ae682-6dbb69c3024mr19417697b3.0.1726122685709; Wed, 11 Sep 2024
- 23:31:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726122684; x=1726727484;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KomP7G90w5XiTxBfY5n2KIRLtbQEtmSrnwcuWwZeCTA=;
+        b=hacgr2mOzKRVg8yYKf5Jiay6haN8V4Nd9OMT21igFhyu2IAryYn3Tpg8npZOsp6nbM
+         zdd1iCW9B1/BamOjgHEvrYChIlHgur/lxX3QBd9WvHu2U/kcve8JXlB2IlpoyDEfrTE/
+         ZPsU/CbBwH/sFSaSU8LvpCawovNj37XyK+PG2SGr+vob85zSIpAYPRg1N2vGV6G2Dgtl
+         ZXbg4zOVjWelploE4W27U/JsncJI+YVjIc9M6dLfp7WYuIlxgsLbOawCMxy5M+L4ESUj
+         qyr/YFJBG7mR4GviXnMgHJlawD8Uc6c3ifcsbyeY9uBvRpkVEypDLQ9qZKTqaer4q3SK
+         L2KA==
+X-Forwarded-Encrypted: i=1; AJvYcCWncKh6a7vqNylrqRo/X2ei0d2ihSfa93l8npjNRhTKfyZHvudlr7GCXD14+W2AF1HAfBqSPIDBJQR2WHQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGdfmFwgKh0OV4dk1WKx3cgwgDuPADEFw3u6WP+7szVn7RWpW5
+	OVRx9H6VvPH1BMw1S+/CMA/kQtCKDN4ir8jblMrzLmgfvXEyKOJYhWKZklLX+TY=
+X-Google-Smtp-Source: AGHT+IH2hkCTeR/X91NdGpik4tEsXEvkiIUGn0c4AHSX61UnYwePZRohOaArIFwge+uJMjMRc6ltPg==
+X-Received: by 2002:a05:6512:2828:b0:52f:c337:4c1f with SMTP id 2adb3069b0e04-53678f5988fmr268684e87.0.1726122683861;
+        Wed, 11 Sep 2024 23:31:23 -0700 (PDT)
+Received: from localhost (c-9b0ee555.07-21-73746f28.bbcust.telenor.se. [85.229.14.155])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f870c3csm1869347e87.104.2024.09.11.23.31.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 23:31:22 -0700 (PDT)
+From: Anders Roxell <anders.roxell@linaro.org>
+To: shuah@kernel.org
+Cc: willemb@google.com,
+	kuba@kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] selftests: Makefile: add missing 'net/lib' to targets
+Date: Thu, 12 Sep 2024 08:31:18 +0200
+Message-ID: <20240912063119.1277322-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911062511.494855-1-patrick.rudolph@9elements.com>
- <20240911062511.494855-21-patrick.rudolph@9elements.com> <CAFLszTgYrEk=UBd6zgesphC+rLPtkOG4fjBOYaGRQXYLNUomyA@mail.gmail.com>
-In-Reply-To: <CAFLszTgYrEk=UBd6zgesphC+rLPtkOG4fjBOYaGRQXYLNUomyA@mail.gmail.com>
-From: Patrick Rudolph <patrick.rudolph@9elements.com>
-Date: Thu, 12 Sep 2024 08:31:14 +0200
-Message-ID: <CALNFmy3cDCTzppfr5y=sAjKn0eBKsHPq9LD4zGg0KC9HT3qNMA@mail.gmail.com>
-Subject: Re: [PATCH v3 20/30] drivers/arm: Implement acpi_fill_madt
-To: Simon Glass <sjg@chromium.org>
-Cc: u-boot@lists.denx.de, linux-kernel@vger.kernel.org, 
-	Tom Rini <trini@konsulko.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 12, 2024 at 2:58=E2=80=AFAM Simon Glass <sjg@chromium.org> wrot=
-e:
->
-> Hi Patrick,
->
-> On Wed, 11 Sept 2024 at 00:25, Patrick Rudolph
-> <patrick.rudolph@9elements.com> wrote:
-> >
-> > Fill the MADT table in the GIC driver and armv8 CPU driver to
-> > drop SoC specific code. While the GIC only needs devicetree
-> > data, the CPU driver needs additional information stored in
-> > the cpu_plat struct.
-> >
-> > While on it update the only board making use of the existing
-> > drivers and writing ACPI MADT in mainboard code.
-> >
-> > TEST: Booted on QEMU sbsa using driver model generated MADT.
-> > Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
-> > Cc: Simon Glass <sjg@chromium.org>
-> > ---
-> >  arch/arm/lib/acpi_table.c |  1 +
-> >  arch/arm/lib/gic-v3-its.c | 89 ++++++++++++++++++++++++++++++++++++++-
-> >  drivers/cpu/armv8_cpu.c   | 27 ++++++++++++
-> >  include/cpu.h             | 27 +++++++++++-
-> >  4 files changed, 141 insertions(+), 3 deletions(-)
->
-> Reviewed-by: Simon Glass <sjg@chromium.org>
->
-> Are the GIC values available by probing, or are they just 'known', and
-> dependent on the compatible string?
-Sorry I don't get that question.
+Fixes: 1d0dc857b5d8 ("selftests: drv-net: add checksum tests")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ tools/testing/selftests/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-The "arm_gic_v3_its" and "arm_gic_v3" driver uses existing DT
-properties and should work with all existing boards.
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index 3b7df5477317..fc3681270afe 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -64,6 +64,7 @@ TARGETS += net
+ TARGETS += net/af_unix
+ TARGETS += net/forwarding
+ TARGETS += net/hsr
++TARGETS += net/lib
+ TARGETS += net/mptcp
+ TARGETS += net/netfilter
+ TARGETS += net/openvswitch
+-- 
+2.45.2
 
-The madt_gicc entries are board specific. Besides the mpidr all of
-them can be 0.
-Those entries currently do not have matching DT properties in the CPU
-node that could be used.
-Some of those entries are present in the GIC node, but there's no
-direct association between CPU nodes and GIC nodes.
-
->
-> Regards,
-> Simon
 
