@@ -1,112 +1,93 @@
-Return-Path: <linux-kernel+bounces-326842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1724976D9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:20:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A82C5976DA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:21:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C1D11F267FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:20:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1708D1F274EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A901BAEE9;
-	Thu, 12 Sep 2024 15:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DEE1B1507;
+	Thu, 12 Sep 2024 15:20:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="IIHhLAYh"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OOGbvgFh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6DD126BE2;
-	Thu, 12 Sep 2024 15:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9829548E0;
+	Thu, 12 Sep 2024 15:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726154393; cv=none; b=CGwb3zCaNEtI7x75QSIYbLzJnxYCzeYVaDMa8q3Br5CzrVLXrr6ycX05IB5b97QYhNWGqzRvocnfPTQa4x+W4wAUu1F0zOuldwkpyj/HnYnQwLqmv7TyKYzczvPjY8CaSzptNmroO+zmjkkKdGfI4aLOzxIql94AfVT4eat6WPY=
+	t=1726154458; cv=none; b=ZSKb0PubygadscUimu5h8owZAp9QXJFP33rs0E89zaMKEPA+9oHnG30DUGmRcevRn/3aHhteDSq8V1GPBxybeEui8OdlDmbv5k3oFZvnMCFQp7TYDPR6GYMkAhdgXeiaQeOhv42y5SGwscTtWY9cJxsA9lOCu+VVpr25JGeEKkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726154393; c=relaxed/simple;
-	bh=/OXhOlV9Y45rThy6liriw9VPETV5rNH9lt4zzjrFg5M=;
+	s=arc-20240116; t=1726154458; c=relaxed/simple;
+	bh=Pa+luGAf3a2+eoxTNfhzvSyF/opw87hXVNCHeiOEuaY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TRaSLiX2yF3F9kn8Iq3BSFDsFlU8zn+KAXmDH07p9SUyCLZglvbNCQ0XRjO+yD+11Ka+nhVqiHTwL+Ra9mloBF8YmqOw6HcEvFulU1dVRxIjzieDXxz0u1bdDzHvCx3oWMq4IF8E45h5hSCFudJnTA1xJFGjltg77pWJgKEqTu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=IIHhLAYh; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=6faEgCEj/9OUXs3v+131xY7iaDYBTFMaSLrdrzCB6GE=; b=IIHhLAYh3H2EUb5pYmaSbUCWrM
-	vIQ0zYl1dP8lCQmbMFJ7fqRIT4qs4k7B466OXjiz+M5J5ua7m0S6w7Xx21xz9UeYU4cQUWf0UOYqa
-	WDFLahKhUZ81K9nuKNC1odxhb+TdbZq/saNzg+p+bldCGMxdTA9+KLz+G/ce2RKZqkmg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1solbd-007Jmx-Cl; Thu, 12 Sep 2024 17:19:37 +0200
-Date: Thu, 12 Sep 2024 17:19:37 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, bryan.whitehead@microchip.com,
-	UNGLinuxDriver@microchip.com, linux@armlinux.org.uk,
-	maxime.chevallier@bootlin.com, rdunlap@infradead.org,
-	Steen.Hegelund@microchip.com, daniel.machon@microchip.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next V2 2/5] net: lan743x: Add support to
- software-nodes for sfp
-Message-ID: <016f93bc-3177-412c-9441-d1a6cd2b466e@lunn.ch>
-References: <20240911161054.4494-1-Raju.Lakkaraju@microchip.com>
- <20240911161054.4494-3-Raju.Lakkaraju@microchip.com>
- <cb39041e-9b72-4b76-bfd7-03f825b20f23@lunn.ch>
- <ZuKMcMexEAqTLnSc@HYD-DK-UNGSW21.microchip.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=F2d6KGJ0OhAok0POpdblrGtTKDwvJSO0g4bm1GJlA1X2JFzv0W3v9AbMFfYD8w75ChOFXNjwY+HJ3gXX39waO3XpxNw3AR2ZmrdGKSd9fJB8EYmU6zxTk5APK+Hvp6+Q9x7TcfqAWvlEFVhODHNMlEPa5GyrEECWEvpu50SeBZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OOGbvgFh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C636AC4CEC3;
+	Thu, 12 Sep 2024 15:20:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726154458;
+	bh=Pa+luGAf3a2+eoxTNfhzvSyF/opw87hXVNCHeiOEuaY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OOGbvgFhBiN3gmugusqjyoH4Qm263rbj3lHiO880GffhWgfKoMyX+6a0HZwaoQBAQ
+	 RMvj94yx7P53bFpRHaI7bLN2Cm32LlPpTDnNvrO8//9xUj1YShtBglimmK926iRbaN
+	 xROwRStggfYwQf/YZygPWvAIrJ6qR06pLzO0PrT2TbXDxulCkAsVbhOh/Is/rRn4X6
+	 CXDmCO8DEbafTGm/NJ1owvRYVBqKxtBraGH0sKWIo5XXj6XEUhIqgWeli2Cf1OexOS
+	 ii1ec5bYiK0h3fr0sCAS3DrNW/JSd8U+m3/9vXr+5DO+VZLolMeifiofxQNkRQO+L+
+	 IU5OnZdwBJLAw==
+Date: Thu, 12 Sep 2024 16:20:50 +0100
+From: Lee Jones <lee@kernel.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: robh@kernel.org, lars@metafoo.de, krzk+dt@kernel.org,
+	conor+dt@kernel.org, matthias.bgg@gmail.com, andy@kernel.org,
+	nuno.sa@analog.com, bigunclemax@gmail.com, dlechner@baylibre.com,
+	marius.cristea@microchip.com, marcelo.schmitt@analog.com,
+	fr0st61te@gmail.com, mitrutzceclan@gmail.com,
+	mike.looijmans@topic.nl, marcus.folkesson@gmail.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, andy.shevchenko@gmail.com,
+	kernel@collabora.com, jic23@kernel.org
+Subject: Re: [PATCH v2 2/5] dt-bindings: mfd: mediatek,mt6357: Describe
+ Auxiliary ADC subdev
+Message-ID: <20240912152050.GF24460@google.com>
+References: <20240604123008.327424-1-angelogioacchino.delregno@collabora.com>
+ <20240604123008.327424-3-angelogioacchino.delregno@collabora.com>
+ <01020191e56f3f66-1afb592c-a676-4871-b75a-bc38d896ae03-000000@eu-west-1.amazonses.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZuKMcMexEAqTLnSc@HYD-DK-UNGSW21.microchip.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <01020191e56f3f66-1afb592c-a676-4871-b75a-bc38d896ae03-000000@eu-west-1.amazonses.com>
 
-On Thu, Sep 12, 2024 at 12:08:40PM +0530, Raju Lakkaraju wrote:
-> Hi Andrew,
-> 
-> The 09/11/2024 19:17, Andrew Lunn wrote:
-> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> > 
-> > > diff --git a/drivers/net/ethernet/microchip/Kconfig b/drivers/net/ethernet/microchip/Kconfig
-> > > index 2e3eb37a45cd..9c08a4af257a 100644
-> > > --- a/drivers/net/ethernet/microchip/Kconfig
-> > > +++ b/drivers/net/ethernet/microchip/Kconfig
-> > > @@ -50,6 +50,8 @@ config LAN743X
-> > >       select CRC16
-> > >       select CRC32
-> > >       select PHYLINK
-> > > +     select I2C_PCI1XXXX
-> > > +     select GP_PCI1XXXX
-> > 
-> > GP_ is odd. GPIO drivers usually use GPIO_. Saying that, GPIO_PCI1XXXX
-> > is not in 6.11-rc7. Is it in gpio-next?
+On Thu, 12 Sep 2024, AngeloGioacchino Del Regno wrote:
+
+> Il 04/06/24 14:30, AngeloGioacchino Del Regno ha scritto:
+> > Describe the PMIC-integrated Auxiliary Analog to Digital Converter
+> > subdevice node.
+> > Full description is available in the mediatek,mt6359-auxadc.yaml
+> > binding relative to that hardware.
 > > 
 > 
-> Yes. But GPIO driver developer use this.
+> Hello,
+> 
+> I just realized (indeed too late) that while all of the other commits of this
+> series are upstream, this patch was not picked, causing dts validation warnings.
+> 
+> Should I resend or can you just simply pick it?
 
-And the GPIO Maintainer accepted this, despite it not being the same
-as every other GPIO driver?
+It's lacking a DT review.
 
-Ah, there is no Acked-by: from anybody i recognise as a GPIO
-maintainer. Was it even reviewed by GPIO people? And why is it hiding
-in driver/misc? I don't see any reason it cannot be in drivers/gpio,
-which is where i looked for it. There are other auxiliary_driver in
-drivers/gpio.
-
-> I have to use the same here.
-
-Unfortunately, i have to agree, for the moment.
-
-But it would be good to clean it up. I _think_ mchp_pci1xxxx_gpio.c
-can be moved into driver/gpio, given the expected Kconfig symbol
-GPIO_PCI1XXXX and depends on GP_PCI1XXXX. It would then also get
-reviewed by the GPIO Maintainers, which you probably want.
-
-	Andrew
+-- 
+Lee Jones [李琼斯]
 
