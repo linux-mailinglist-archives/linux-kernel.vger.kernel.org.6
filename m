@@ -1,132 +1,116 @@
-Return-Path: <linux-kernel+bounces-326137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CEB4976390
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:55:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AD6997639B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C495F283525
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:55:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99505B20E0A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F15B18C92D;
-	Thu, 12 Sep 2024 07:55:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B5F18FDCD;
+	Thu, 12 Sep 2024 07:55:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="EqcnRPnw"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RE4Jpos0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B97A1552E1;
-	Thu, 12 Sep 2024 07:55:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035FA18E349;
+	Thu, 12 Sep 2024 07:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726127707; cv=none; b=R3Q3Wu5qkCBG10JCzcalxKIdGEB43RH7uXiHxRVhr3N9oZFKrZdusuMRS49puO4X/khUFpDE8/Ifwu7TOS3nZclvOA8HXY34envH+e8so6U1uR5JcspsIme57sbdGNGs1jRki1Zu520F3iFrrLpORONhGHCu0IOY9N+VKol5CoQ=
+	t=1726127732; cv=none; b=dacyhsAvLjOykFXReeU6h9OecENu81642d0tVC5M5Nm4A18QHAjt6g6990Bnqpar/RGvlHQA2LSkXKIBsqD5mrwTQODaiRLKXbNWX0TBCWugVeVQGL1St4SyhKUwjcI0TIeOMTEHDDE/0dYQcIvyEOaR6DOYITRPuXeupX2TNo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726127707; c=relaxed/simple;
-	bh=d4ZjZcDFs0o4PEWxZ+LOmu7N2ldJb3avJf/pClXKkhE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=VhGJUAMGzTPgkddzuc74EDWHbNj0WZBJtWMB8AMOl3ClwS92YSjo5Jcmg5CzkysWyAAQ5dRZUsnqhUfprVLyJIHIVgofJFKvgjD41BWi+YsHqX59wBYf1YyI5QOxj3PZ8PQZhmAtU54UaovfZSGjOx9CERaZjLo2Li3dEMTju3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=EqcnRPnw; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726127702;
-	bh=zjHxZVqZOWcrDP7grFwYDsOpfB2qzj9ymqd2+By9LYM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=EqcnRPnwQtXzM2GNxRAMHnrmlVeTU7KwD//eBGbmLFc3+mXOqr1q5Z6lx80T6RJNG
-	 LGAMYecahAo/EWB4XuC/QfvFXP7LzhDnB2bMb/ipe0ngDWlvwNYuh0MdONRAsaJwFV
-	 Omqg4mq5fF1T/JlmUYd2K2tIQQN/36LVZdqyk1Aik51t4ASLPBjbb180gRwBzdUqvB
-	 MHETTrOZ+U69lSpxlMcrHOcbfdiSLJd8GjlVnUu5cKG43NkhHMY8BXjzc2zbJLbApR
-	 FXHYLgrQyEFMRfK6nvm0soWZ6Z+UjFjD9UIgh8sR93jB0BBsnP+3OVKqBsbyK4/QLD
-	 Jl4FIBcmfeHaA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X48qV1yjxz4x0K;
-	Thu, 12 Sep 2024 17:55:02 +1000 (AEST)
-Date: Thu, 12 Sep 2024 17:55:01 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Linus Walleij <linus.walleij@linaro.org>, Olof Johansson
- <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
-Cc: ARM <linux-arm-kernel@lists.infradead.org>, Alexander Sverdlin
- <alexander.sverdlin@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Nikita Shubin <nikita.shubin@maquefel.me>,
- =?UTF-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>
-Subject: linux-next: manual merge of the pinctrl tree with the arm-soc tree
-Message-ID: <20240912175501.02f057f1@canb.auug.org.au>
+	s=arc-20240116; t=1726127732; c=relaxed/simple;
+	bh=4s+VuwhVbNSAVesYDsrgOzVFuC3dn4Fh96NjWQHHSd4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T6c1sWxW5fA2B1SCV5IYRE/M97KXKOLAexRDTrIf17CQUHWmvnfRe6FQIoPmsD0HPKH3tqmqpx7zGyPJf6ClV7B5S3lWkVSZkvQUOkWdpJaSVebTbRRcwaOjjhN/VbKPFlYjDO6HgLFA2XHJYy84rQsYYenCm4IfA7u+vX5R7rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RE4Jpos0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BDB5C4CEC3;
+	Thu, 12 Sep 2024 07:55:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726127730;
+	bh=4s+VuwhVbNSAVesYDsrgOzVFuC3dn4Fh96NjWQHHSd4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RE4Jpos0PNEzX+j4gvv4HnNOrUggjKzwMILkyBwl0ysVmjqAOlVX/mQhrIQNly6u5
+	 D4cMLo65bYBMzWlE/3MbcvaGJgeSBNYdVepAt76I+DLSY7juHCYtKFtFSF+NxXRLnf
+	 nw0U9baOT3m36ADEOMsC52DEtH41CuFRaJgFalbX5iXcl4IyQp85V7KiijKjx0cNGT
+	 6KayroEwMI5tGGbabloSBt1YK8gCKXHgprPzBlO8p/mD27xX6IExuLkytas4cCy+Lx
+	 FeyB97LCD7R1E9Adejrws3/2lIKYd4KEQJJgQvTdJ/MZTah6JaIHWY/t17UQPpDuJl
+	 ey2Ge3BBptu3g==
+Date: Thu, 12 Sep 2024 08:55:23 +0100
+From: Lee Jones <lee@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Junhao Xie <bigfoot@classfun.cn>, devicetree@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, linux-leds@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Chukun Pan <amadeus@jmu.edu.cn>, Conor Dooley <conor+dt@kernel.org>,
+	=?iso-8859-1?Q?G=FCnter_R=F6ck?= <linux@roeck-us.net>,
+	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+	Jean Delvare <jdelvare@suse.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
+	Sebastian Reichel <sre@kernel.org>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>
+Subject: Re: [PATCH 1/9] mfd: Add driver for Photonicat power management MCU
+Message-ID: <20240912075523.GB24460@google.com>
+References: <20240906093630.2428329-2-bigfoot@classfun.cn>
+ <de5c9c27-56fa-4163-98e1-9a98400d2408@web.de>
+ <43918eda-c4e8-471a-9de4-ea72bb090803@classfun.cn>
+ <917ac8d8-a483-422c-a408-cdd44793e910@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/K36+epsehf746sxFjfPckvw";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <917ac8d8-a483-422c-a408-cdd44793e910@kernel.org>
 
---Sig_/K36+epsehf746sxFjfPckvw
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, 08 Sep 2024, Krzysztof Kozlowski wrote:
 
-Hi all,
+> On 07/09/2024 16:33, Junhao Xie wrote:
+> > On 2024/9/7 16:44, Markus Elfring wrote:
+> >> …
+> >>> +++ b/include/linux/mfd/photonicat-pmu.h
+> >>> @@ -0,0 +1,86 @@
+> >> …
+> >>> +#ifndef _PHOTONICAT_PMU_H
+> >>> +#define _PHOTONICAT_PMU_H
+> >> …
+> >>
+> >> I suggest to omit leading underscores from such identifiers.
+> >> https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+define+a+reserved+identifier
+> >>
+> >> Regards,
+> >> Markus
+> > 
+> > Thanks for your suggestion, does this look better?
+> > #ifndef MFD_PHOTONICAT_PMU_H
+> > #define MFD_PHOTONICAT_PMU_H
 
-Today's linux-next merge of the pinctrl tree got a conflict in:
+Yes, this is better.
 
-  drivers/pinctrl/Makefile
+> <form letter>
+> Feel free to ignore all comments from Markus, regardless whether the
+> suggestion is reasonable or not. This person is banned from LKML and
+> several maintainers ignore Markus' feedback, because it is just a waste
+> of time.
+> </form letter>
 
-between commit:
+If you really _must_ do this, at least keep it factual.
 
-  d1661439f5a3 ("pinctrl: add a Cirrus ep93xx SoC pin controller")
+To the best of my knowledge Markus is not banned from LKML.
 
-from the arm-soc tree and commit:
-
-  41795aa1f56a ("pinctrl: eyeq5: add platform driver")
-
-from the pinctrl tree.
-
-I fixed it up (see below - I also sorted the entries) and can carry
-the fix as necessary. This is now fixed as far as linux-next is
-concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the
-conflicting tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/pinctrl/Makefile
-index f28602d95424,3c2355150961..000000000000
---- a/drivers/pinctrl/Makefile
-+++ b/drivers/pinctrl/Makefile
-@@@ -22,8 -22,8 +22,9 @@@ obj-$(CONFIG_PINCTRL_CY8C95X0)	+=3D pinct
-  obj-$(CONFIG_PINCTRL_DA850_PUPD) +=3D pinctrl-da850-pupd.o
-  obj-$(CONFIG_PINCTRL_DA9062)	+=3D pinctrl-da9062.o
-  obj-$(CONFIG_PINCTRL_DIGICOLOR)	+=3D pinctrl-digicolor.o
-- obj-$(CONFIG_PINCTRL_EQUILIBRIUM)   +=3D pinctrl-equilibrium.o
- +obj-$(CONFIG_PINCTRL_EP93XX)	+=3D pinctrl-ep93xx.o
-+ obj-$(CONFIG_PINCTRL_EQUILIBRIUM)   +=3D pinctrl-equilibrium.o
-+ obj-$(CONFIG_PINCTRL_EYEQ5)	+=3D pinctrl-eyeq5.o
-  obj-$(CONFIG_PINCTRL_GEMINI)	+=3D pinctrl-gemini.o
-  obj-$(CONFIG_PINCTRL_INGENIC)	+=3D pinctrl-ingenic.o
-  obj-$(CONFIG_PINCTRL_K210)	+=3D pinctrl-k210.o
-
---Sig_/K36+epsehf746sxFjfPckvw
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbinlUACgkQAVBC80lX
-0GwM+Qf8DOwYvL1rRBx7zF1ulYtg55kInxm3Yn6PMerpJWND0bHM5xVdYVsFi0+c
-0gT3yqoFlIc8PJ1x6WQGNMZjV4hn/ewxFxZQVUMguyxv4pFYRVopEsd9440jGWDf
-oqxRLnGN1eee0QGj+3Jebi5eHt1QjL+1RZ6nC0/OeUgjUfPqJMfU+toiSNcrcAro
-LCtgkw/5QXQewF0L9ZMbuRDxjtPXWm39TzhNiBFcc9V6se34XNhX7IoUWs3J6ScH
-6irJ86yKqZnho/zvWzD+fDS7wHTWuspmmwQQw1e9xbDkg2M74BFq0MRzptdTVfVi
-Fd8GcSt8l4lN/0N1Ouv9TYxtRq80vQ==
-=I6bg
------END PGP SIGNATURE-----
-
---Sig_/K36+epsehf746sxFjfPckvw--
+-- 
+Lee Jones [李琼斯]
 
