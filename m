@@ -1,251 +1,358 @@
-Return-Path: <linux-kernel+bounces-327117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD1CF977111
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:08:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D25D997710A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:07:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A5D51F244F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:08:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55A981F244D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4731C243D;
-	Thu, 12 Sep 2024 19:06:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8C41C175D;
+	Thu, 12 Sep 2024 19:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Fo1oENNq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="CsobTckg"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C0D1C2434
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 19:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22BFB1BF7FC;
+	Thu, 12 Sep 2024 19:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726167979; cv=none; b=mJwApLRZU2sqoQnXw8qrHdC9u7NxvBe5xjbG2O0Q7qHjG1nTtT6E7JsdW1Zm5lDe+WYW7jFBtUr3KNSOkt7FbHhCOXPvYDTMunHUJAfpcTHqwEu4s4MYAtVsqAlu17fbqdjvUh66Cyc+SkFk7IO4B1mGLsh91Nh0xdz1Ye2GUYo=
+	t=1726167883; cv=none; b=G74E7+gvxjoq3GJaWeReU2h2jrDIFYPMIvu0p5qj3w/dvrszwq6TWha899HgY3SQCMwi6L5Nb8f5FDVtU5gvze0uBeAclPlG7q5qsBYc0764Y5+exxDnKPneONH4L/cPvExOot0qsfnasm7EI8abBXJ+2gZoyZB6XTWxuOqO1v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726167979; c=relaxed/simple;
-	bh=NCiAWhLXHRt4Co7rpuhMDCPctoF3Xn4/Hp4FhL+4OxI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RlynAjFHYP8Uh3+3DNrOHxNfAgpLJq3EyLu706Xh5B0RY2FiRXT2T/YkRHLk9AoHP9tDt1c2QdbJowRYoH7fnjvNBru6qqZHpezYTYeIt0w4qTc/gj8k5TuLn7Mysh7LGJXBcU838k7+PF376hfQ0afLYbezpVh08LAOhMZRW18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Fo1oENNq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726167976;
+	s=arc-20240116; t=1726167883; c=relaxed/simple;
+	bh=8MKM2klD4hS3pv4ky1dpyosPwvTDwiKHuzZ+MmcWla0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=s/xHDpjVnHc1AtJUEaU9D437wc53AqVJDX4+/6dMSBZYdHdX/kuWfdbVYDCWugZ+naxxEWlWYKm9ahAtAQp0N+JXnt0rvRJw9J9qfsU4DbVuK5AhMobISz+/udKOEyxpp28wXARPpAf7YDDhVLw6jqtjDdnwbYdHYrRQjjjE6ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=CsobTckg; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 89783C0002;
+	Thu, 12 Sep 2024 19:04:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
+	t=1726167872;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+OGhrfJ98BvRkmlDl+pbOcc2LBNeMy80VxbOVlvu+v4=;
-	b=Fo1oENNqM/vAFhPq8320BH0BxDX7cQKGDxz6GOhhV/47A9ggF+4ZQvaPbVQb+f3rJvxK02
-	b0aeyQbq5jAPUjTIGvRlVJx9rsKau5KEBJA4U0ZKyCYwFJUwifss91q4QO5YkRe25mYPqt
-	DncjvheTgGvqQBk0NhNOCsvRXTeiyo4=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-541--kTCIirfN6KJurtP0za4nQ-1; Thu,
- 12 Sep 2024 15:06:13 -0400
-X-MC-Unique: -kTCIirfN6KJurtP0za4nQ-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F38531955D4C;
-	Thu, 12 Sep 2024 19:06:10 +0000 (UTC)
-Received: from chopper.lyude.net (unknown [10.22.9.159])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0320819560B5;
-	Thu, 12 Sep 2024 19:06:06 +0000 (UTC)
-From: Lyude Paul <lyude@redhat.com>
-To: rust-for-linux@vger.kernel.org
-Cc: Danilo Krummrich <dakr@redhat.com>,
-	airlied@redhat.com,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	linux-kernel@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-	Valentin Obst <kernel@valentinobst.de>
-Subject: [PATCH v5 3/3] rust: sync: Add SpinLockIrq
-Date: Thu, 12 Sep 2024 15:04:18 -0400
-Message-ID: <20240912190540.53221-4-lyude@redhat.com>
-In-Reply-To: <20240912190540.53221-1-lyude@redhat.com>
-References: <20240912190540.53221-1-lyude@redhat.com>
+	bh=I9mSGcS9UoGNA8xUFK+xWajkc6aiw1nttzLrj4qX5Q4=;
+	b=CsobTckgSyjRtlO17KQb5//Nn/NdBni25gBX2wrahF2+JOu47Lneu9DDeO/I39LxjBcWnl
+	CRPgRlkmTQuvhhRd6aWx+mycCgrL9pFKTes5aNZ7XwI/C1tJl1eM/CxJVkLjCM39uFJ21J
+	EdAI379ilb63hTMY13cq6uaKmjgDf7UG9GPcvgAYXF3/kRSnXSLk5C6FN9EmA1MuuH2Kqz
+	qbj2Xm+yjqiQW6euAFMKibK9dG83YNuRduYkZP7Z1Ta3XXnDv3aGwE8TslxwonQYlCsdg6
+	qiOKvT8M4Bgo2Xj0K/wG8KZReTRlfiywpc78vmY1ApO/4q1Nmmlrlk5I3Vp59A==
+From: Gabriel Krisman Bertazi <gabriel@krisman.be>
+To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
+Cc: Hugh Dickins <hughd@google.com>,  Andrew Morton
+ <akpm@linux-foundation.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
+  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
+  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
+  linux-fsdevel@vger.kernel.org,  kernel-dev@igalia.com,  Daniel Rosenberg
+ <drosen@google.com>,  smcv@collabora.com,  Christoph Hellwig <hch@lst.de>,
+  Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [PATCH v4 07/10] tmpfs: Add casefold lookup support
+In-Reply-To: <20240911144502.115260-8-andrealmeid@igalia.com>
+ (=?utf-8?Q?=22Andr=C3=A9?=
+	Almeida"'s message of "Wed, 11 Sep 2024 11:44:59 -0300")
+References: <20240911144502.115260-1-andrealmeid@igalia.com>
+	<20240911144502.115260-8-andrealmeid@igalia.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
+Date: Thu, 12 Sep 2024 15:04:27 -0400
+Message-ID: <87ed5olmmc.fsf@mailhost.krisman.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: gabriel@krisman.be
 
-A variant of SpinLock that is expected to be used in noirq contexts, and
-thus requires that the user provide an kernel::irq::IrqDisabled to prove
-they are in such a context upon lock acquisition. This is the rust
-equivalent of spin_lock_irqsave()/spin_lock_irqrestore().
+Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Enable casefold lookup in tmpfs, based on the encoding defined by
+> userspace. That means that instead of comparing byte per byte a file
+> name, it compares to a case-insensitive equivalent of the Unicode
+> string.
 
----
+I think this looks much better.
 
-V2:
-* s/IrqSpinLock/SpinLockIrq/
-* Implement `lock::Backend` now that we have `Context`
-* Add missing periods
-* Make sure rustdoc examples compile correctly
-* Add documentation suggestions
+A few things left. First, I'd suggest you merge patch 5 and this
+one. There is not much sense in keeping them separate; patch 5 is a
+dependency that won't crash the build, but might cause runtime errors if an=
+yone
+cherry-picks the feature but forgets to pull it.
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- rust/kernel/sync.rs               |   2 +-
- rust/kernel/sync/lock/spinlock.rs | 104 ++++++++++++++++++++++++++++++
- 2 files changed, 105 insertions(+), 1 deletion(-)
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 5a77acf6ac6a..4fde63596ab3 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -40,6 +40,8 @@
+>  #include <linux/fs_parser.h>
+>  #include <linux/swapfile.h>
+>  #include <linux/iversion.h>
+> +#include <linux/unicode.h>
 
-diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
-index 0ab20975a3b5d..b028ee325f2a6 100644
---- a/rust/kernel/sync.rs
-+++ b/rust/kernel/sync.rs
-@@ -15,7 +15,7 @@
- pub use arc::{Arc, ArcBorrow, UniqueArc};
- pub use condvar::{new_condvar, CondVar, CondVarTimeoutResult};
- pub use lock::mutex::{new_mutex, Mutex};
--pub use lock::spinlock::{new_spinlock, SpinLock};
-+pub use lock::spinlock::{new_spinlock, new_spinlock_irq, SpinLock, SpinLockIrq};
- pub use locked_by::LockedBy;
- 
- /// Represents a lockdep class. It's a wrapper around C's `lock_class_key`.
-diff --git a/rust/kernel/sync/lock/spinlock.rs b/rust/kernel/sync/lock/spinlock.rs
-index 97d85a5576615..47c71d779062a 100644
---- a/rust/kernel/sync/lock/spinlock.rs
-+++ b/rust/kernel/sync/lock/spinlock.rs
-@@ -3,6 +3,7 @@
- //! A kernel spinlock.
- //!
- //! This module allows Rust code to use the kernel's `spinlock_t`.
-+use kernel::irq::*;
- 
- /// Creates a [`SpinLock`] initialiser with the given name and a newly-created lock class.
- ///
-@@ -116,3 +117,106 @@ unsafe fn unlock(ptr: *mut Self::State, _guard_state: &Self::GuardState) {
-         unsafe { bindings::spin_unlock(ptr) }
-     }
- }
-+
-+/// Creates a [`SpinLockIrq`] initialiser with the given name and a newly-created lock class.
-+///
-+/// It uses the name if one is given, otherwise it generates one based on the file name and line
-+/// number.
-+#[macro_export]
-+macro_rules! new_spinlock_irq {
-+    ($inner:expr $(, $name:literal)? $(,)?) => {
-+        $crate::sync::SpinLockIrq::new(
-+            $inner, $crate::optional_name!($($name)?), $crate::static_lock_class!())
-+    };
-+}
-+pub use new_spinlock_irq;
-+
-+/// A spinlock that may be acquired when interrupts are disabled.
-+///
-+/// A version of [`SpinLock`] that can only be used in contexts where interrupts for the local CPU
-+/// are disabled. It requires that the user acquiring the lock provide proof that interrupts are
-+/// disabled through [`IrqDisabled`].
-+///
-+/// For more info, see [`SpinLock`].
-+///
-+/// # Examples
-+///
-+/// The following example shows how to declare, allocate initialise and access a struct (`Example`)
-+/// that contains an inner struct (`Inner`) that is protected by a spinlock.
-+///
-+/// ```
-+/// use kernel::{
-+///     sync::{new_spinlock_irq, SpinLockIrq},
-+///     irq::{with_irqs_disabled, IrqDisabled}
-+/// };
-+///
-+/// struct Inner {
-+///     a: u32,
-+///     b: u32,
-+/// }
-+///
-+/// #[pin_data]
-+/// struct Example {
-+///     c: u32,
-+///     #[pin]
-+///     d: SpinLockIrq<Inner>,
-+/// }
-+///
-+/// impl Example {
-+///     fn new() -> impl PinInit<Self> {
-+///         pin_init!(Self {
-+///             c: 10,
-+///             d <- new_spinlock_irq!(Inner { a: 20, b: 30 }),
-+///         })
-+///     }
-+/// }
-+///
-+/// // Accessing an `Example` from a function that can only be called in no-irq contexts
-+/// fn noirq_work(e: &Example, irq: IrqDisabled<'_>) {
-+///     assert_eq!(e.c, 10);
-+///     assert_eq!(e.d.lock_with(irq).a, 20);
-+/// }
-+///
-+/// // Allocate a boxed `Example`
-+/// let e = Box::pin_init(Example::new(), GFP_KERNEL)?;
-+///
-+/// // Accessing an `Example` from a context where IRQs may not be disabled already.
-+/// let b = with_irqs_disabled(|irq| {
-+///     noirq_work(&e, irq);
-+///     e.d.lock_with(irq).b
-+/// });
-+/// assert_eq!(b, 30);
-+/// # Ok::<(), Error>(())
-+/// ```
-+pub type SpinLockIrq<T> = super::Lock<T, SpinLockIrqBackend>;
-+
-+/// A kernel `spinlock_t` lock backend that is acquired in no-irq contexts.
-+pub struct SpinLockIrqBackend;
-+
-+unsafe impl super::Backend for SpinLockIrqBackend {
-+    type State = bindings::spinlock_t;
-+    type GuardState = ();
-+    type Context<'a> = IrqDisabled<'a>;
-+
-+    unsafe fn init(
-+        ptr: *mut Self::State,
-+        name: *const core::ffi::c_char,
-+        key: *mut bindings::lock_class_key,
-+    ) {
-+        // SAFETY: The safety requirements ensure that `ptr` is valid for writes, and `name` and
-+        // `key` are valid for read indefinitely.
-+        unsafe { bindings::__spin_lock_init(ptr, name, key) }
-+    }
-+
-+    unsafe fn lock(ptr: *mut Self::State) -> Self::GuardState {
-+        // SAFETY: The safety requirements of this function ensure that `ptr` points to valid
-+        // memory, and that it has been initialised before.
-+        unsafe { bindings::spin_lock(ptr) }
-+    }
-+
-+    unsafe fn unlock(ptr: *mut Self::State, _guard_state: &Self::GuardState) {
-+        // SAFETY: The safety requirements of this function ensure that `ptr` is valid and that the
-+        // caller is the owner of the spinlock.
-+        unsafe { bindings::spin_unlock(ptr) }
-+    }
-+}
--- 
-2.46.0
+> +#include <linux/parser.h>
 
+I think you don't need this header anymore
+
+>  #include "swap.h"
+>=20=20
+>  static struct vfsmount *shm_mnt __ro_after_init;
+> @@ -123,6 +125,8 @@ struct shmem_options {
+>  	bool noswap;
+>  	unsigned short quota_types;
+>  	struct shmem_quota_limits qlimits;
+> +	struct unicode_map *encoding;
+> +	bool strict_encoding;
+>  #define SHMEM_SEEN_BLOCKS 1
+>  #define SHMEM_SEEN_INODES 2
+>  #define SHMEM_SEEN_HUGE 4
+> @@ -3427,6 +3431,10 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode =
+*dir,
+>  	if (IS_ERR(inode))
+>  		return PTR_ERR(inode);
+>=20=20
+> +	if (IS_ENABLED(CONFIG_UNICODE) &&
+> +	    !generic_ci_validate_strict_name(dir, &dentry->d_name))
+> +		return -EINVAL;
+> +
+
+Commenting here, but this is about generic_ci_validate_strict_name.  Can
+you make it an inline function in the header file instead? This way you
+can fold the IS_ENABLED into it and also avoid the function call.
+
+>  	error =3D simple_acl_create(dir, inode);
+>  	if (error)
+>  		goto out_iput;
+> @@ -3442,7 +3450,12 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode =
+*dir,
+>  	dir->i_size +=3D BOGO_DIRENT_SIZE;
+>  	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
+>  	inode_inc_iversion(dir);
+> -	d_instantiate(dentry, inode);
+> +
+> +	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
+> +		d_add(dentry, inode);
+> +	else
+> +		d_instantiate(dentry, inode);
+> +
+>  	dget(dentry); /* Extra count - pin the dentry in core */
+>  	return error;
+>=20=20
+> @@ -3533,7 +3546,10 @@ static int shmem_link(struct dentry *old_dentry, s=
+truct inode *dir,
+>  	inc_nlink(inode);
+>  	ihold(inode);	/* New dentry reference */
+>  	dget(dentry);	/* Extra pinning count for the created dentry */
+> -	d_instantiate(dentry, inode);
+> +	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
+> +		d_add(dentry, inode);
+> +	else
+> +		d_instantiate(dentry, inode);
+>  out:
+>  	return ret;
+>  }
+> @@ -3553,6 +3569,14 @@ static int shmem_unlink(struct inode *dir, struct =
+dentry *dentry)
+>  	inode_inc_iversion(dir);
+>  	drop_nlink(inode);
+>  	dput(dentry);	/* Undo the count from "create" - does all the work */
+> +
+> +	/*
+> +	 * For now, VFS can't deal with case-insensitive negative dentries, so
+> +	 * we invalidate them
+> +	 */
+> +	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
+> +		d_invalidate(dentry);
+> +
+>  	return 0;
+>  }
+>=20=20
+> @@ -3697,7 +3721,10 @@ static int shmem_symlink(struct mnt_idmap *idmap, =
+struct inode *dir,
+>  	dir->i_size +=3D BOGO_DIRENT_SIZE;
+>  	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
+>  	inode_inc_iversion(dir);
+> -	d_instantiate(dentry, inode);
+> +	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
+> +		d_add(dentry, inode);
+> +	else
+> +		d_instantiate(dentry, inode);
+>  	dget(dentry);
+>  	return 0;
+>=20=20
+> @@ -4050,6 +4077,9 @@ enum shmem_param {
+>  	Opt_usrquota_inode_hardlimit,
+>  	Opt_grpquota_block_hardlimit,
+>  	Opt_grpquota_inode_hardlimit,
+> +	Opt_casefold_version,
+> +	Opt_casefold,
+> +	Opt_strict_encoding,
+>  };
+>=20=20
+>  static const struct constant_table shmem_param_enums_huge[] =3D {
+> @@ -4081,9 +4111,53 @@ const struct fs_parameter_spec shmem_fs_parameters=
+[] =3D {
+>  	fsparam_string("grpquota_block_hardlimit", Opt_grpquota_block_hardlimit=
+),
+>  	fsparam_string("grpquota_inode_hardlimit", Opt_grpquota_inode_hardlimit=
+),
+>  #endif
+> +	fsparam_string("casefold",	Opt_casefold_version),
+> +	fsparam_flag  ("casefold",	Opt_casefold),
+> +	fsparam_flag  ("strict_encoding", Opt_strict_encoding),
+>  	{}
+>  };
+>=20=20
+> +#if IS_ENABLED(CONFIG_UNICODE)
+> +static int shmem_parse_opt_casefold(struct fs_context *fc, struct fs_par=
+ameter *param,
+> +				    bool latest_version)
+> +{
+> +	struct shmem_options *ctx =3D fc->fs_private;
+> +	unsigned int version =3D UTF8_LATEST;
+> +	struct unicode_map *encoding;
+> +	char *version_str =3D param->string + 5;
+> +
+> +	if (!latest_version) {
+> +		if (strncmp(param->string, "utf8-", 5))
+> +			return invalfc(fc, "Only UTF-8 encodings are supported "
+> +				       "in the format: utf8-<version number>");
+> +
+> +		version =3D utf8_parse_version(version_str);
+> +		if (version < 0)
+> +			return invalfc(fc, "Invalid UTF-8 version: %s", version_str);
+> +	}
+> +
+> +	encoding =3D utf8_load(version);
+> +
+> +	if (IS_ERR(encoding)) {
+> +		return invalfc(fc, "Failed loading UTF-8 version: utf8-%u.%u.%u\n",
+> +		unicode_major(version), unicode_minor(version), unicode_rev(version));
+
+bad indentation?
+
+> +	}
+> +
+> +	pr_info("tmpfs: Using encoding : utf8-%u.%u.%u\n",
+> +		unicode_major(version), unicode_minor(version), unicode_rev(version));
+> +
+> +	ctx->encoding =3D encoding;
+> +
+> +	return 0;
+> +}
+> +#else
+> +static int shmem_parse_opt_casefold(struct fs_context *fc, struct fs_par=
+ameter *param,
+> +				    bool latest_version)
+> +{
+> +	return invalfc(fc, "tmpfs: Kernel not built with CONFIG_UNICODE\n");
+> +}
+> +#endif
+> +
+>  static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *p=
+aram)
+>  {
+>  	struct shmem_options *ctx =3D fc->fs_private;
+> @@ -4242,6 +4316,13 @@ static int shmem_parse_one(struct fs_context *fc, =
+struct fs_parameter *param)
+>  				       "Group quota inode hardlimit too large.");
+>  		ctx->qlimits.grpquota_ihardlimit =3D size;
+>  		break;
+> +	case Opt_casefold_version:
+> +		return shmem_parse_opt_casefold(fc, param, false);
+> +	case Opt_casefold:
+> +		return shmem_parse_opt_casefold(fc, param, true);
+> +	case Opt_strict_encoding:
+> +		ctx->strict_encoding =3D true;
+
+Using strict_encoding without encoding should be explicitly forbidden.
+
+> +		break;
+>  	}
+>  	return 0;
+>=20=20
+> @@ -4471,6 +4552,11 @@ static void shmem_put_super(struct super_block *sb)
+>  {
+>  	struct shmem_sb_info *sbinfo =3D SHMEM_SB(sb);
+>=20=20
+> +#if IS_ENABLED(CONFIG_UNICODE)
+> +	if (sb->s_encoding)
+> +		utf8_unload(sb->s_encoding);
+> +#endif
+> +
+>  #ifdef CONFIG_TMPFS_QUOTA
+>  	shmem_disable_quotas(sb);
+>  #endif
+> @@ -4481,6 +4567,17 @@ static void shmem_put_super(struct super_block *sb)
+>  	sb->s_fs_info =3D NULL;
+>  }
+>=20=20
+> +#if IS_ENABLED(CONFIG_UNICODE)
+> +static const struct dentry_operations shmem_ci_dentry_ops =3D {
+> +	.d_hash =3D generic_ci_d_hash,
+> +	.d_compare =3D generic_ci_d_compare,
+> +#ifdef CONFIG_FS_ENCRYPTION
+> +	.d_revalidate =3D fscrypt_d_revalidate,
+> +#endif
+> +	.d_delete =3D always_delete_dentry,
+> +};
+> +#endif
+> +
+>  static int shmem_fill_super(struct super_block *sb, struct fs_context *f=
+c)
+>  {
+>  	struct shmem_options *ctx =3D fc->fs_private;
+> @@ -4515,9 +4612,21 @@ static int shmem_fill_super(struct super_block *sb=
+, struct fs_context *fc)
+>  	}
+>  	sb->s_export_op =3D &shmem_export_ops;
+>  	sb->s_flags |=3D SB_NOSEC | SB_I_VERSION;
+> +
+> +#if IS_ENABLED(CONFIG_UNICODE)
+> +	if (ctx->encoding) {
+> +		sb->s_encoding =3D ctx->encoding;
+> +		sb->s_d_op =3D &shmem_ci_dentry_ops;
+> +		if (ctx->strict_encoding)
+> +			sb->s_encoding_flags =3D SB_ENC_STRICT_MODE_FL;
+> +	}
+>  #else
+> -	sb->s_flags |=3D SB_NOUSER;
+> +	sb->s_d_op =3D &simple_dentry_operations;
+
+Moving simple_dentry_operations to be set at s_d_op should be a separate
+patch.
+
+It is a change that has non-obvious side effects (i.e. the way we
+treat the root dentry) so it needs proper review by itself.  It is
+also not related to the rest of the case-insensitive patch.
+
+Also, why is it done only for CONFIG_UNICODE=3Dn?
+
+>  #endif
+> +
+> +#else
+> +	sb->s_flags |=3D SB_NOUSER;
+> +#endif /* CONFIG_TMPFS */
+>  	sbinfo->max_blocks =3D ctx->blocks;
+>  	sbinfo->max_inodes =3D ctx->inodes;
+>  	sbinfo->free_ispace =3D sbinfo->max_inodes * BOGO_INODE_SIZE;
+> @@ -4791,6 +4900,8 @@ int shmem_init_fs_context(struct fs_context *fc)
+>  	ctx->uid =3D current_fsuid();
+>  	ctx->gid =3D current_fsgid();
+>=20=20
+> +	ctx->encoding =3D NULL;
+> +
+>  	fc->fs_private =3D ctx;
+>  	fc->ops =3D &shmem_fs_context_ops;
+>  	return 0;
+
+--=20
+Gabriel Krisman Bertazi
 
