@@ -1,230 +1,257 @@
-Return-Path: <linux-kernel+bounces-326408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 783079767F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:34:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A6BD9767FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:36:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FD711F2407A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:34:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09382B216F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F8E19F113;
-	Thu, 12 Sep 2024 11:34:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00DE519E998;
+	Thu, 12 Sep 2024 11:35:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NA3cU9Zu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RbV6sVf+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5031118E043;
-	Thu, 12 Sep 2024 11:34:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7014813BAE7
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 11:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726140885; cv=none; b=qaYu6OPHJDpfUtaGzcAu6qngskUOSKp6d0WDhnG1bPp5/0KSvoguKgPRac758UzTuEiEwtPGsIB9hrexPuqOj1vMW6zfvubSZot9hZ5eSrThpTPwiCiYuj4qfAg7hSVAmUQNE9+i9NWcMmX5K51ifPMjcdi4tS1llLpFPZOCuJQ=
+	t=1726140955; cv=none; b=MyZB4ZQr1aPZKSdYoJpaINsuecs42byl/mFIXFteF9u1mWsN7ngUkMj35IqsrZ3xYp9RfAkrKEAN4kqInOij9AmpWHq8k4Uphpaup3Rl52+rU1GQ/lqtgiYFycAjdeB9NrYmlt4NF9zqbCW7GmqxLrCRhVYrEoi7o7GAZYTOWXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726140885; c=relaxed/simple;
-	bh=IIfJjuHSn6Oy60E9NyDTffyExvdhGm0b5DhmtTEOUOo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=neYRzJR303z+DPMWb6ghsQsqqCkAe1TLldm7RfDYI4cUN5vuHnNLq4WqSHRWjveIlB3U27riP0LLzfphZW9ALZVCCp3iwop3q59gG/fsLb1uXR7lRUEI1AmDEAfEsWYqstau6l0rX8shnuhG3dxTWwDNIFDuuSVWg9VF4n/EvQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NA3cU9Zu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1002C4CEC3;
-	Thu, 12 Sep 2024 11:34:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726140884;
-	bh=IIfJjuHSn6Oy60E9NyDTffyExvdhGm0b5DhmtTEOUOo=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=NA3cU9ZuP9WDYH2nMgsBy17kDCjg5x0hOwlz9bfKhuVX9oX3YYHmNRZWJT+hh2O5C
-	 VvwW0P5ob/IC6UhIbb/CxnZTLwwZ77RW7K0AH5+2p0+2QhETFFTgNsz34yw35xmKM4
-	 y2s+BZL/Dc8d1293Ua+kWTmu2fAh+JV3muO4ePalqz5x8VFMFpy7DtoKli5eRGc1jF
-	 Lql9D2neLIjNdelT65vws/vOwP+X3Nm0wfANBU8r2AZFSgm+NUD3saLpxJiYGKyJTh
-	 zuvT5zZjoUQtzckAHN62P7ENCjy5hr8+t2cFo0+C7qoNDmnWNEhVFHysfQEFO5mQtD
-	 YdFtFpnhZQ1Ig==
-Message-ID: <c9ed7670a0b35b212991b7ce4735cb3dfaae1fda.camel@kernel.org>
-Subject: Re: [PATCH] timekeeping: move multigrain ctime floor handling into
- timekeeper
-From: Jeff Layton <jlayton@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>, John Stultz <jstultz@google.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Thomas Gleixner
- <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel test
- robot <oliver.sang@intel.com>
-Date: Thu, 12 Sep 2024 07:34:42 -0400
-In-Reply-To: <1484d32b-ab0f-48ff-998a-62feada58300@app.fastmail.com>
-References: <20240911-mgtime-v1-1-e4aedf1d0d15@kernel.org>
-	 <CANDhNCpmZO1LTCDXzi-GZ6XkvD5w3ci6aCj61-yP6FJZgXj2RA@mail.gmail.com>
-	 <d6fe52c2-bc9e-424f-a44e-cfc3f4044443@app.fastmail.com>
-	 <e4d922c8d0a06de08b91844860c76936bd5fa03a.camel@kernel.org>
-	 <1484d32b-ab0f-48ff-998a-62feada58300@app.fastmail.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
- MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
- gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
- 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
- R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
- rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
- ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
- Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
- lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
- iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
- QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
- YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
- wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
- LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
- 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
- c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
- LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
- TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
- 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
- xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
- +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
- Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
- BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
- N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
- naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
- RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
- FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
- 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
- P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
- aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
- T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
- dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
- 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
- kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
- uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
- AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
- FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
- 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
- sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
- qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
- sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
- IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
- UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
- dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
- EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
- apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
- M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
- dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
- 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
- jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
- flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
- BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
- AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
- 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
- HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
- 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
- uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
- DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
- CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
- Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
- AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
- aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
- f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40app2) 
+	s=arc-20240116; t=1726140955; c=relaxed/simple;
+	bh=Mh1k1rMwpZPEn8mwNjSNmhWqLkYKVzI0gnLuz0Jfu6U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=AfHDLYpdAq7NWEbnfW9OI4+71056JMndllD55U0w35NUQm/FwzhWRVIENhldBU4H1KMN6Xgr8werJM+3DBw0TU1Qlzwdq0zu9/f/rOJGWrzNqPG+3Je74uSDXe2sCMEn81KdhwpiYQP50fSwAEnScpLcb3OJ6oKyQ2n1dl4/3g4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RbV6sVf+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726140951;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IYaaq+dX0/7DEojW1l9AFpFIChJdEY2bBK1F9k5BgD0=;
+	b=RbV6sVf+4F8Jb9xKXS6d/m0T6SHPJdHYQdrCtvekXILAZl1B70+DB6QY6CjOBYeUxb715C
+	EOE8xgStkUjCl0Dk+Z1M4GR7AnhpwdKZDAecashU64gi1ocQtUoEflCbTaeQL97vezv8SM
+	5ZkY465XuG1j4Pf+l47A5q2rSRe986c=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-650-5IKGrogiP8ujq1rAVCcU1g-1; Thu, 12 Sep 2024 07:35:50 -0400
+X-MC-Unique: 5IKGrogiP8ujq1rAVCcU1g-1
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-53660eb17b8so779256e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 04:35:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726140949; x=1726745749;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IYaaq+dX0/7DEojW1l9AFpFIChJdEY2bBK1F9k5BgD0=;
+        b=mTDDPBDn4xtxve/OpmHX6VDjfNXG/zrO4B+xl4YK2MpyPv+OnOVTxow/+l/Wxo1ep4
+         C1U1pvYMLgsUpR77krypzTksgXqZVuVRYBD3jsQW+TlP7qN3dZrrYYvYA+Or092Eu5HQ
+         LEMWyZDplQo77XWFlSQNZH3buTkESbfCdZPZ4F/Hk4GfWWjlxJ1tStCCqf+u9QjFKR4W
+         AMAZexQzzfqqb406YTB52iJCZYqrEzMsG2HYYS6fVFaJzGIkhtxEil1LweEc6UUDd4ig
+         qMULsAMs1EdQnynvIPBXzIKvMHQXRHWfcfSVKR2te4q1Bb8gelmuTrSJREstdFgnkFy0
+         mXyg==
+X-Forwarded-Encrypted: i=1; AJvYcCVWc385Fq/fMyatZlveZTjbMIP4LKlgUmfTm4rDdtOR71y8M8u69GknTLJf7fwPJfO84HvxyLKy5IzZzeU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUTGAv42BeGb8iauV2nOcF3xB+ox36dYbAv5jYt1QYWChHCA/r
+	8sTIGtQbgLIv54PJ7rFbL70j4RKOkk+/W8lSDkRscfYVPsXymIp25ZTshtoJmbMDVOnp/nh0mum
+	ZPjR6MVKz0rc/r2/JCzZRgeu4O1wJnlUAPSSX/rphupnq378wJEi4Ht+CYpx1Mg==
+X-Received: by 2002:a05:6512:4017:b0:533:4785:82a7 with SMTP id 2adb3069b0e04-53678fc8586mr1605064e87.28.1726140948557;
+        Thu, 12 Sep 2024 04:35:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEBna+5EinCwR/Lij9CpfGsghHsYmmA3HZg2qxflQ5JJykqP5bH1I+Yy9IcXwnu0/KGf+lDXw==
+X-Received: by 2002:a05:6512:4017:b0:533:4785:82a7 with SMTP id 2adb3069b0e04-53678fc8586mr1605032e87.28.1726140947816;
+        Thu, 12 Sep 2024 04:35:47 -0700 (PDT)
+Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cb179f8e3sm162451165e9.43.2024.09.12.04.35.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 04:35:47 -0700 (PDT)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Brian Norris <briannorris@chromium.org>, Borislav Petkov <bp@alien8.de>
+Cc: Hugues Bruant <hugues.bruant@gmail.com>, stable@vger.kernel.org,
+ regressions@lists.linux.dev, linux-kernel@vger.kernel.org, Fenghua Yu
+ <fenghua.yu@intel.com>, Reinette Chatre <reinette.chatre@intel.com>, Tony
+ Luck <tony.luck@intel.com>, Tzung-Bi Shih <tzungbi@kernel.org>, Julius
+ Werner <jwerner@chromium.org>, chrome-platform@lists.linux.dev, Jani
+ Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org
+Subject: Re: [NOT A REGRESSION] firmware: framebuffer-coreboot: duplicate
+ device name "simple-framebuffer.0"
+In-Reply-To: <ZuCGkjoxKxpnhEh6@google.com>
+References: <CALvjV29jozswRtmYxDur2TuEQ=1JSDrM+uWVHmghW3hG5Y9F+w@mail.gmail.com>
+ <20240909080200.GAZt6reI9c98c9S_Xc@fat_crate.local>
+ <ZuCGkjoxKxpnhEh6@google.com>
+Date: Thu, 12 Sep 2024 13:35:46 +0200
+Message-ID: <87jzfhayul.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
 
-On Thu, 2024-09-12 at 10:01 +0000, Arnd Bergmann wrote:
-> On Wed, Sep 11, 2024, at 20:43, Jeff Layton wrote:
-> >=20
-> > I think we'd have to track this delta as an atomic value and cmpxchg
-> > new values into place. The zeroing seems quite tricky to make race-
-> > free.
-> >=20
-> > Currently, we fetch the floor value early in the process and if it
-> > changes before we can swap a new one into place, we just take whatever
-> > the new value is (since it's just as good). Since these are monotonic
-> > values, any new value is still newer than the original one, so its
-> > fine. I'm not sure that still works if we're dealing with a delta that
-> > is siding upward and downward.
-> >=20
-> > Maybe it does though. I'll take a stab at this tomorrow and see how it
-> > looks.
->=20
-> Right, the only idea I had for this would be to atomically
-> update a 64-bit tuple of the 32-bit sequence count and the
-> 32-bit delta value in the timerkeeper. That way I think the
-> "coarse" reader would still get a correct value when running
-> concurrently with both a fine-grained reader updating the count
-> and the timer tick setting a new count.
->=20
-> There are still a couple of problems:
->=20
-> - this extends the timekeeper logic beyond what the seqlock
->   semantics normally allow, and I can't prove that this actually
->   works in all corner cases.
+Brian Norris <briannorris@chromium.org> writes:
+
+Hello Brian,
+
+> (Tweaking subject; this indeed isn't related to the regression at all)
 >
-> - if the delta doesn't fit in a 32-bit value, there has to=20
->   be another fallback mechanism.
->=20
+> Hi,
+>
+> On Mon, Sep 09, 2024 at 10:02:00AM +0200, Borislav Petkov wrote:
+>> Looking at your log, the first warn is in framebuffer_coreboot. Some mess in
+>> the sysfs platform devices registration.
+>> 
+>> Adding the relevant people for that:
+>> 
+>> Aug 20 20:29:36 luna kernel: sysfs: cannot create duplicate filename '/bus/platform/devices/simple-framebuffer.0'
+>> Aug 20 20:29:36 luna kernel: CPU: 5 PID: 571 Comm: (udev-worker) Tainted: G           OE      6.10.6-arch1-1 #1 703d152c24f1971e36f16e505405e456fc9e23f8
+>> Aug 20 20:29:36 luna kernel: Hardware name: Purism Librem 14/Librem 14, BIOS 4.14-Purism-1 06/18/2021
+>> Aug 20 20:29:36 luna kernel: Call Trace:
+>> Aug 20 20:29:36 luna kernel:  <TASK>
+>> Aug 20 20:29:36 luna kernel:  dump_stack_lvl+0x5d/0x80
+>> Aug 20 20:29:36 luna kernel:  sysfs_warn_dup.cold+0x17/0x23
+>> Aug 20 20:29:36 luna kernel:  sysfs_do_create_link_sd+0xcf/0xe0
+>> Aug 20 20:29:36 luna kernel:  bus_add_device+0x6b/0x130
+>> Aug 20 20:29:36 luna kernel:  device_add+0x3b3/0x870
+>> Aug 20 20:29:36 luna kernel:  platform_device_add+0xed/0x250
+>> Aug 20 20:29:36 luna kernel:  platform_device_register_full+0xbb/0x140
+>> Aug 20 20:29:36 luna kernel:  platform_device_register_resndata.constprop.0+0x54/0x80 [framebuffer_coreboot a587d2fc243ebaa0205c3badd33442a004d284e0]
+>> Aug 20 20:29:36 luna kernel:  framebuffer_probe+0x165/0x1b0 [framebuffer_coreboot a587d2fc243ebaa0205c3badd33442a004d284e0]
+>> Aug 20 20:29:36 luna kernel:  really_probe+0xdb/0x340
+>> Aug 20 20:29:36 luna kernel:  ? pm_runtime_barrier+0x54/0x90
+>> Aug 20 20:29:36 luna kernel:  ? __pfx___driver_attach+0x10/0x10
+>> Aug 20 20:29:36 luna kernel:  __driver_probe_device+0x78/0x110
+>> Aug 20 20:29:36 luna kernel:  driver_probe_device+0x1f/0xa0
+>> Aug 20 20:29:36 luna kernel:  __driver_attach+0xba/0x1c0
+>> Aug 20 20:29:36 luna kernel:  bus_for_each_dev+0x8c/0xe0
+>> Aug 20 20:29:36 luna kernel:  bus_add_driver+0x112/0x1f0
+>> Aug 20 20:29:36 luna kernel:  driver_register+0x72/0xd0
+>> Aug 20 20:29:36 luna kernel:  ? __pfx_framebuffer_driver_init+0x10/0x10 [framebuffer_coreboot a587d2fc243ebaa0205c3badd33442a004d284e0]
+>> Aug 20 20:29:36 luna kernel:  do_one_initcall+0x58/0x310
+>> Aug 20 20:29:36 luna kernel:  do_init_module+0x60/0x220
+>> Aug 20 20:29:36 luna kernel:  init_module_from_file+0x89/0xe0
+>> Aug 20 20:29:36 luna kernel:  idempotent_init_module+0x121/0x320
+>> Aug 20 20:29:36 luna kernel:  __x64_sys_finit_module+0x5e/0xb0
+>> Aug 20 20:29:36 luna kernel:  do_syscall_64+0x82/0x190
+>> Aug 20 20:29:36 luna kernel:  ? __do_sys_newfstatat+0x3c/0x80
+>> Aug 20 20:29:36 luna kernel:  ? syscall_exit_to_user_mode+0x72/0x200
+>> Aug 20 20:29:36 luna kernel:  ? do_syscall_64+0x8e/0x190
+>> Aug 20 20:29:36 luna kernel:  ? do_sys_openat2+0x9c/0xe0
+>> Aug 20 20:29:36 luna kernel:  ? syscall_exit_to_user_mode+0x72/0x200
+>> Aug 20 20:29:36 luna kernel:  ? do_syscall_64+0x8e/0x190
+>> Aug 20 20:29:36 luna kernel:  ? clear_bhb_loop+0x25/0x80
+>> Aug 20 20:29:36 luna kernel:  ? clear_bhb_loop+0x25/0x80
+>> Aug 20 20:29:36 luna kernel:  ? clear_bhb_loop+0x25/0x80
+>> Aug 20 20:29:36 luna kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>> Aug 20 20:29:36 luna kernel: RIP: 0033:0x7b1bee2f81fd
+>
+> Looks like it might be a conflict with
+> drivers/firmware/sysfb_simplefb.c, which also uses the
+> "simple-framebuffer" name with a constant ID of 0. It's possible both
+> drivers should be switched to use PLATFORM_DEVID_AUTO? Or at least one
+> of them. Or they should use different base names.
+>
 
-That could be a problem. I was hoping the delta couldn't grow that
-large between timer ticks, but I guess it can. I guess the fallback
-could be to just grab new fine-grained timestamps on each call until
-the timer ticks.
+I'm unsure about PLATFORM_DEVID_AUTO because I don't know if there are
+user-space programs that assume this to always be "simple-framebuffer.0".
 
-> - This still requires an atomic64_cmpxchg() in the
->   fine-grained ktime_get_real_ts64() replacement, which
->   I think is what inode_set_ctime_current() needs today
->   as well to ensure that the next coarse value is the
->   highest one that has been read so far.
->=20
+> I'm not really sure what the best option is (does anyone rely on or care
+> about the device naming?), and I don't actually use this driver. But
+> here's an untested diff to try if you'd really like. If you test it,
+> feel free to submit as a proper patch with my:
+>
 
-Yes. We really don't want to take the seqlock for write just to update
-timestamps. I'd prefer to keep the floor-handling lock-free if
-possible.
 
-> There is another idea that would completely replace
-> your design with something /much/ simpler:
->=20
->  - add a variant of ktime_get_real_ts64() that just
->    sets a flag in the timekeeper to signify that a
->    fine-grained time has been read since the last
->    timer tick
->  - add a variant of ktime_get_coarse_real_ts64()
->    that returns either tk_xtime() if the flag is
->    clear or calls ktime_get_real_ts64() if it's set
->  - reset the flag in timekeeping_advance() and any other
->    place that updates tk_xtime
->=20
-> That way you avoid the atomic64_try_cmpxchg()
-> inode_set_ctime_current(), making that case faster,
-> and avoid all overhead in coarse_ctime() unless you
-> use both types during the same tick.
->=20
+I've discussed this with Thomas Zimmermann (simpledrm maintainer) and
+he suggests that the problem is the system framebuffer information to
+be provided in both Coreboot table entry (AFAIU is LB_TAG_FRAMEBUFFER)
+and in the boot_params, which leads to struct screen_info to be filled.
 
-With the current code we only get a fine grained timestamp iff:
+We had the same problem for EFI systems that passed DTB to the kernel
+instead of ACPI, in those cases both a "simple-framebuffer" DT node and
+an EFI-GOP table could be provided.
 
-1/ the timestamps have been queried (a'la I_CTIME_QUERIED)
-2/ the current coarse-grained or floor time would not show a change in
-the ctime
+Commit 3310288f6135 "(of/platform: Disable sysfb if a simple-framebuffer
+node is found") solved that issue. I've typed the same for Coreboot to
+handle in the same way. Please let me know what you think:
 
-If we do what you're suggesting above, as soon as one task sets the
-flag, anyone calling current_time() will end up getting a brand new
-fine-grained timestamp, even when the current floor time would have
-been fine.
+From 6955149fb13af1c0cba2e5c1fbb1ac9367a09ae2 Mon Sep 17 00:00:00 2001
+From: Javier Martinez Canillas <javierm@redhat.com>
+Date: Thu, 12 Sep 2024 12:55:29 +0200
+Subject: [RFC PATCH] firmware: coreboot: Disable sysfb if Coreboot already
+ provides a FB
 
-That means a lot more calls into ktime_get_real_ts64(), at least until
-the timer ticks, and would probably mean a lot of extra journal
-transactions, since those timestamps would all be distinct from one
-another and would need to go to disk more often.
---=20
-Jeff Layton <jlayton@kernel.org>
+On Coreboot platforms, a system framebuffer may be provided to the Linux
+kernel by filling a LB_TAG_FRAMEBUFFER entry in the Coreboot table. But
+it seems SeaBIOS payload can also provide a VGA mode in the boot params.
+
+If that the case, early arch x86 boot code will fill the global struct
+screen_info data.
+
+The data is used by the Generic System Framebuffers (sysfb) framework to
+add a platform device with platform data about the system framebuffer.
+
+But if there is information about the system framebuffer in the Coreboot
+table as well, the framebuffer_coreboot driver will also try to do the
+same and add another device for the system framebuffer. This will fail
+though because there's already a simple-framebuffer.0 device registered:
+
+    sysfs: cannot create duplicate filename '/bus/platform/devices/simple-framebuffer.0'
+    ...
+    coreboot: could not register framebuffer
+    framebuffer coreboot8: probe with driver framebuffer failed with error -17
+
+To prevent the issue, make the framebuffer_core driver to disable sysfb
+if there is system framebuffer data in the Coreboot table. That way only
+this driver will register a device and sysfb would not attempt to do it
+(or remove its registered device if was already executed before).
+
+Reported-by: Brian Norris <briannorris@chromium.org>
+Link: https://lore.kernel.org/all/ZuCG-DggNThuF4pj@b20ea791c01f/T/#ma7fb65acbc1a56042258adac910992bb225a20d2
+Suggested-by: Thomas Zimmermann <tzimmermann@suse.de>
+Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+---
+ drivers/firmware/google/framebuffer-coreboot.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/drivers/firmware/google/framebuffer-coreboot.c b/drivers/firmware/google/framebuffer-coreboot.c
+index daadd71d8ddd..0a28aa5b17dc 100644
+--- a/drivers/firmware/google/framebuffer-coreboot.c
++++ b/drivers/firmware/google/framebuffer-coreboot.c
+@@ -61,6 +61,19 @@ static int framebuffer_probe(struct coreboot_device *dev)
+ 	if (res.end <= res.start)
+ 		return -EINVAL;
+ 
++	/*
++	 * Since a "simple-framebuffer" device is already added
++	 * here, disable the Generic System Framebuffers (sysfb)
++	 * to prevent it from registering another device for the
++	 * system framebuffer later (e.g: using the screen_info
++	 * data that may had been filled as well).
++	 *
++	 * This can happen for example on Coreboot systems, that
++	 * advertise a LB_TAG_FRAMEBUFFER entry in their Coreboot
++	 * table and also a VESA mode by the BIOS used as payload.
++	 */
++	sysfb_disable();
++
+ 	pdev = platform_device_register_resndata(&dev->dev,
+ 						 "simple-framebuffer", 0,
+ 						 &res, 1, &pdata,
+-- 
+ 
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
+
 
