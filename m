@@ -1,331 +1,186 @@
-Return-Path: <linux-kernel+bounces-326864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A54FC976DD6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:34:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5CA8976DD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:35:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA4C31C2287D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:34:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FEE91F227FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D251B984E;
-	Thu, 12 Sep 2024 15:34:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA79B1B9832;
+	Thu, 12 Sep 2024 15:35:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="isQWtx2v"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aDWU/RrV"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D2144C8F;
-	Thu, 12 Sep 2024 15:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E1D44C8F;
+	Thu, 12 Sep 2024 15:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726155257; cv=none; b=MXB6vn3JTe9yMS8yf/6FXTeJh5XaME2CJIzg9WDgz4SOJ9GRF1YWD+G7qNBOZV0zKDo4F33mJ1F4VyVx3RpSV2JmqQZmubbW2Sn98IB/lo9KAgx/3OURXuUobnNS6upfmwovrKEUBkemxhuNdD+dh7AQptBx3lzBHaq5FjGCFJM=
+	t=1726155312; cv=none; b=UysS6EN2f4EzeRWs6I/iY8hB1ixJXji0OlS6tLSiU5W1LwymoUeza4SIVwSPNumPimWlQz5p3xqaUeW+lQBSrBvF6L8xrqAOqw/Fi3PqHtjRiGVDg+RZ5g6slIpYtq7bh+DRbalH2Qypj5gc35SQWj+Wq1ViAepK77ChT0Zv8Tw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726155257; c=relaxed/simple;
-	bh=uC8bINOlTOIfY7GDaZsn94TvEUHWGpXD3w8N+5Y0huU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VjpWkg3UB0x4PlFPcSNrtufZGZsZBUXxTvwNVsdT1hEaxgwNPBgGIUOKmGxMwKdJJsLac1CP4yNSCFHs4Xzt+7cdlCft57oFVR/thofF652WPsJV8qibrMRVbv+zFe9tt1wBTwL+YYuC0ifJxFovrbawlU7dBAzkezVt4bttg1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=isQWtx2v; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48CCIpB8032620;
-	Thu, 12 Sep 2024 08:33:58 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=aq9fT8NgBiKDh5qR5sIBRFC0C
-	YrCUgRB2Bx0fhZFcEU=; b=isQWtx2vxS8omwYzab16Sz6wvJ/NfmPBl7ah9l+HD
-	oTh3vHEc+WRcUE3I8H3bjqS/w/ZY+wZ41SJveVvnCTZyX+avrdnjhUv0HRZ4hFwt
-	rNpayGHs9VApGoLW98uk0S7qGmxS/r1qFUBGImaHaUDzVugkQFblmkxy/g+9b9XS
-	e7z7dcUZWed3i6RpTzv31Fn5gYQk3ZmD8gdLgH+9pmczgwWfmXvD5PezZ/5uei8a
-	EY5LoyRGsWk6D35jUjaNzXhq6/PCNbsqHb5PsArSLZiKYi4JO0ABeRHHh/ikW7mA
-	a5+FV8lbTnprDXwHcsrqxjI2+s/NIG/NITrdifvneX8Bw==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 41ks8ptrbt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 12 Sep 2024 08:33:58 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Thu, 12 Sep 2024 08:33:57 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Thu, 12 Sep 2024 08:33:57 -0700
-Received: from hyd1403.caveonetworks.com (unknown [10.29.37.84])
-	by maili.marvell.com (Postfix) with SMTP id 3CAF85E6867;
-	Thu, 12 Sep 2024 08:33:53 -0700 (PDT)
-Date: Thu, 12 Sep 2024 21:03:53 +0530
-From: Linu Cherian <lcherian@marvell.com>
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-CC: <davem@davemloft.net>, <sgoutham@marvell.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <gakula@marvell.com>,
-        <hkelam@marvell.com>, <sbhatta@marvell.com>, <edumazet@google.com>,
-        <kuba@kernel.org>, <pabeni@redhat.com>
-Subject: Re: [PATCH net-next 1/2] octeontx2-af: Knobs for NPC default rule
- counters
-Message-ID: <20240912153353.GA685543@hyd1403.caveonetworks.com>
-References: <20240911143303.160124-1-lcherian@marvell.com>
- <20240911143303.160124-2-lcherian@marvell.com>
- <ceb00673-8151-49b0-b36b-75b5dc402041@linux.dev>
+	s=arc-20240116; t=1726155312; c=relaxed/simple;
+	bh=GgF9WySBxWg/HnwUpSa2FLnApHM1oc0hTz1Cn6WwaVE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d30A0o01f0IWlym7J8fOl3CKNdnkQqsBKENPDMtonFUBaZrSIkqzrrFHmSjZxXMd10egJ9yLOKbbEZym2XgNWhOcbigub/pvmyB2k/95leRDPnhuDpCbWQpQeIvmXbJbUZCy2PN0gnYlKOcwp9ET1Xvw0OjWG6P0tVwR6H/JFK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aDWU/RrV; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-378c16a4d3eso1331556f8f.1;
+        Thu, 12 Sep 2024 08:35:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726155309; x=1726760109; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=P0RYORsO9RSRQ8Ioex3F7hf3hojejMNnxlRBDN5pkaA=;
+        b=aDWU/RrV8RpJ430EqSxHIWRty1fUB1BUn+PgiTsHYVVgYsbdTJb9C7a/nz5XajmbYc
+         5U+ypqh5ulxk9vi+pjhMuW3zMVAeIlUe7T933YP2ocUVxpz1ghNO3wf8Q74KC2jkopbo
+         4kZW/t60wXpQ8TrDeLvhA9oUlO/y7BlTcU6+OxTghLioZk/A6UN+YMHxtO4leYF1QDUx
+         nMK1Ja2eFgDamZK7rPfMeK+gOYbLXKOloyQuPeImZFuh2EV1e7n3ZCsfT15bTEJjEhqz
+         S2dtmwAVdam8/ZcxyWZ6S+WUwrtlz6/lwETlwR9aaPUV74TA1cUODZIVp71R5ZiBzeds
+         WS7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726155309; x=1726760109;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P0RYORsO9RSRQ8Ioex3F7hf3hojejMNnxlRBDN5pkaA=;
+        b=mr7xcp50jOh6eAoa93qmyGQhMxa8XF6t8qSrOz0vOm0aMQJzT1dov16EvmVBHWFL9E
+         uhDkRvCgw0OgynwUkXxeTKHi151yMgs9UrbS95ughFS+fOGwbYgcCYw+7xLjP1HDxGCm
+         CN1Iu7Q8FYBeF+E1zVWlhGyyMa+4vYDXNItIvWgKP9bggQjauMv/hYaOuCeCaJLnhU+x
+         pKuvDCWmEATlfNDU1hOMfGuePdW01uuGcEp2s7VHqsU5r0GnUvmIaxJ2D6mLKJ9gIt+l
+         W21E7rbXUpJu9xfShZM4gJf03wRMNqBjTLYvX/tIYC+RVoDqG3wN6nGxKCTKiWhnMjaE
+         YsmA==
+X-Forwarded-Encrypted: i=1; AJvYcCULq5JAEr38w5cZOS9W1Ia4448KZxUsJoxdsYel3+Ng9Szs63a/LUSs+K2J4suNl1cf1jm80+YEyEV9O4w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyte3coJLz59rWyo6RwBgB11Xkw0UCMms9iCMJvJ3cRB55JY5Lc
+	WwFqvj12RF8Xp6Kr2tesb7FAe5o41BWkPEmrv/6SzGiVup7jC0Ge
+X-Google-Smtp-Source: AGHT+IFXuaRB4REQ196i6uJBPCKixLywzCDFF6ZO0mWYedPQxpp3dIPVKUmizW8iLHQMtjHNotnZeA==
+X-Received: by 2002:a5d:67d0:0:b0:374:d29e:6db8 with SMTP id ffacd0b85a97d-378c2cf4ad4mr2768741f8f.16.1726155307755;
+        Thu, 12 Sep 2024 08:35:07 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::6:5725])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25a27a9fsm756906866b.91.2024.09.12.08.35.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Sep 2024 08:35:07 -0700 (PDT)
+Message-ID: <9d3962f1-96b6-44a3-a7d3-10fbfbe06164@gmail.com>
+Date: Thu, 12 Sep 2024 16:35:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ceb00673-8151-49b0-b36b-75b5dc402041@linux.dev>
-X-Proofpoint-ORIG-GUID: iFya_YZ93LmftEedqqIijkJdRKfTLSZm
-X-Proofpoint-GUID: iFya_YZ93LmftEedqqIijkJdRKfTLSZm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] efi/tpm: add efi.tpm_log as a reserved region in
+ 820_table_firmware
+To: Ard Biesheuvel <ardb@kernel.org>, Breno Leitao <leitao@debian.org>
+Cc: linux-efi@vger.kernel.org, kexec@lists.infradead.org,
+ ebiederm@xmission.com, bhe@redhat.com, vgoyal@redhat.com,
+ tglx@linutronix.de, dave.hansen@linux.intel.com, x86@kernel.org,
+ linux-kernel@vger.kernel.org, rmikey@meta.com, gourry@gourry.net
+References: <20240911104109.1831501-1-usamaarif642@gmail.com>
+ <CAMj1kXFVyQEwBTf2bG8yBXUktM16dzrcPH-Phz_toAsCK-NfMA@mail.gmail.com>
+ <2542182d-aa79-4705-91b6-fa593bacffa6@gmail.com>
+ <CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
+ <20240912-wealthy-gabby-tamarin-aaba3c@leitao>
+ <CAMj1kXHh-Kov8c1pto0LJL6debugz1og6GFMYCwvfu+RiQGreA@mail.gmail.com>
+ <20240912-sapphire-koala-of-focus-918cff@leitao>
+ <CAMj1kXG842OSYu4GPm-ocyvpBDowPGaXAftqGExxjZ4=dGyt5g@mail.gmail.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <CAMj1kXG842OSYu4GPm-ocyvpBDowPGaXAftqGExxjZ4=dGyt5g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Vadim,
 
-On 2024-09-11 at 21:26:03, Vadim Fedorenko (vadim.fedorenko@linux.dev) wrote:
-> On 11/09/2024 15:33, Linu Cherian wrote:
-> > Add devlink knobs to enable/disable counters on NPC
-> > default rule entries.
-> > 
-> > Introduce lowlevel variant of rvu_mcam_remove/add_counter_from/to_rule
-> > for better code reuse, which assumes necessary locks are taken at
-> > higher level.
-> > 
-> > Sample command to enable default rule counters:
-> > devlink dev param set <dev> name npc_def_rule_cntr value true cmode runtime
-> > 
-> > Sample command to read the counter:
-> > cat /sys/kernel/debug/cn10k/npc/mcam_rules
-> > 
-> > Signed-off-by: Linu Cherian <lcherian@marvell.com>
-> > ---
-> >   .../net/ethernet/marvell/octeontx2/af/rvu.h   |   8 +-
-> >   .../marvell/octeontx2/af/rvu_devlink.c        |  32 +++++
-> >   .../ethernet/marvell/octeontx2/af/rvu_npc.c   | 132 ++++++++++++++++--
-> >   .../marvell/octeontx2/af/rvu_npc_fs.c         |  36 ++---
-> >   4 files changed, 171 insertions(+), 37 deletions(-)
-> > 
-> > diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
-> > index 43b1d83686d1..fb4b88e94649 100644
-> > --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
-> > +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.h
-> > @@ -526,6 +526,7 @@ struct rvu {
-> >   	struct mutex		alias_lock; /* Serialize bar2 alias access */
-> >   	int			vfs; /* Number of VFs attached to RVU */
-> >   	u16			vf_devid; /* VF devices id */
-> > +	bool			def_rule_cntr_en;
-> >   	int			nix_blkaddr[MAX_NIX_BLKS];
-> >   	/* Mbox */
-> > @@ -961,7 +962,11 @@ void rvu_npc_disable_default_entries(struct rvu *rvu, u16 pcifunc, int nixlf);
-> >   void rvu_npc_enable_default_entries(struct rvu *rvu, u16 pcifunc, int nixlf);
-> >   void rvu_npc_update_flowkey_alg_idx(struct rvu *rvu, u16 pcifunc, int nixlf,
-> >   				    int group, int alg_idx, int mcam_index);
-> > -
-> > +void __rvu_mcam_remove_counter_from_rule(struct rvu *rvu, u16 pcifunc,
-> > +					 struct rvu_npc_mcam_rule *rule);
-> > +void __rvu_mcam_add_counter_to_rule(struct rvu *rvu, u16 pcifunc,
-> > +				    struct rvu_npc_mcam_rule *rule,
-> > +				    struct npc_install_flow_rsp *rsp);
-> >   void rvu_npc_get_mcam_entry_alloc_info(struct rvu *rvu, u16 pcifunc,
-> >   				       int blkaddr, int *alloc_cnt,
-> >   				       int *enable_cnt);
-> > @@ -986,6 +991,7 @@ void npc_set_mcam_action(struct rvu *rvu, struct npc_mcam *mcam,
-> >   void npc_read_mcam_entry(struct rvu *rvu, struct npc_mcam *mcam,
-> >   			 int blkaddr, u16 src, struct mcam_entry *entry,
-> >   			 u8 *intf, u8 *ena);
-> > +int npc_config_cntr_default_entries(struct rvu *rvu, bool enable);
-> >   bool is_cgx_config_permitted(struct rvu *rvu, u16 pcifunc);
-> >   bool is_mac_feature_supported(struct rvu *rvu, int pf, int feature);
-> >   u32  rvu_cgx_get_fifolen(struct rvu *rvu);
-> > diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
-> > index 7498ab429963..9c26e19a860b 100644
-> > --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
-> > +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_devlink.c
-> > @@ -1238,6 +1238,7 @@ enum rvu_af_dl_param_id {
-> >   	RVU_AF_DEVLINK_PARAM_ID_DWRR_MTU,
-> >   	RVU_AF_DEVLINK_PARAM_ID_NPC_MCAM_ZONE_PERCENT,
-> >   	RVU_AF_DEVLINK_PARAM_ID_NPC_EXACT_FEATURE_DISABLE,
-> > +	RVU_AF_DEVLINK_PARAM_ID_NPC_DEF_RULE_CNTR_ENABLE,
-> >   	RVU_AF_DEVLINK_PARAM_ID_NIX_MAXLF,
-> >   };
-> > @@ -1358,6 +1359,32 @@ static int rvu_af_dl_npc_mcam_high_zone_percent_validate(struct devlink *devlink
-> >   	return 0;
-> >   }
-> > +static int rvu_af_dl_npc_def_rule_cntr_get(struct devlink *devlink, u32 id,
-> > +					   struct devlink_param_gset_ctx *ctx)
-> > +{
-> > +	struct rvu_devlink *rvu_dl = devlink_priv(devlink);
-> > +	struct rvu *rvu = rvu_dl->rvu;
-> > +
-> > +	ctx->val.vbool = rvu->def_rule_cntr_en;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int rvu_af_dl_npc_def_rule_cntr_set(struct devlink *devlink, u32 id,
-> > +					   struct devlink_param_gset_ctx *ctx,
-> > +					   struct netlink_ext_ack *extack)
-> > +{
-> > +	struct rvu_devlink *rvu_dl = devlink_priv(devlink);
-> > +	struct rvu *rvu = rvu_dl->rvu;
-> > +	int err;
-> > +
-> > +	err = npc_config_cntr_default_entries(rvu, ctx->val.vbool);
-> > +	if (!err)
-> > +		rvu->def_rule_cntr_en = ctx->val.vbool;
-> > +
-> > +	return err;
-> > +}
-> > +
-> >   static int rvu_af_dl_nix_maxlf_get(struct devlink *devlink, u32 id,
-> >   				   struct devlink_param_gset_ctx *ctx)
-> >   {
-> > @@ -1444,6 +1471,11 @@ static const struct devlink_param rvu_af_dl_params[] = {
-> >   			     rvu_af_dl_npc_mcam_high_zone_percent_get,
-> >   			     rvu_af_dl_npc_mcam_high_zone_percent_set,
-> >   			     rvu_af_dl_npc_mcam_high_zone_percent_validate),
-> > +	DEVLINK_PARAM_DRIVER(RVU_AF_DEVLINK_PARAM_ID_NPC_DEF_RULE_CNTR_ENABLE,
-> > +			     "npc_def_rule_cntr", DEVLINK_PARAM_TYPE_BOOL,
-> > +			     BIT(DEVLINK_PARAM_CMODE_RUNTIME),
-> > +			     rvu_af_dl_npc_def_rule_cntr_get,
-> > +			     rvu_af_dl_npc_def_rule_cntr_set, NULL),
-> >   	DEVLINK_PARAM_DRIVER(RVU_AF_DEVLINK_PARAM_ID_NIX_MAXLF,
-> >   			     "nix_maxlf", DEVLINK_PARAM_TYPE_U16,
-> >   			     BIT(DEVLINK_PARAM_CMODE_RUNTIME),
-> > diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c
-> > index 97722ce8c4cb..a766870520b3 100644
-> > --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c
-> > +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_npc.c
-> > @@ -2691,6 +2691,51 @@ void npc_mcam_rsrcs_reserve(struct rvu *rvu, int blkaddr, int entry_idx)
-> >   	npc_mcam_set_bit(mcam, entry_idx);
-> >   }
-> > +int npc_config_cntr_default_entries(struct rvu *rvu, bool enable)
-> > +{
-> > +	struct npc_install_flow_rsp rsp = { 0 };
-> > +	struct npc_mcam *mcam = &rvu->hw->mcam;
-> > +	struct rvu_npc_mcam_rule *rule;
-> > +	int blkaddr;
-> > +
-> > +	blkaddr = rvu_get_blkaddr(rvu, BLKTYPE_NPC, 0);
-> > +	if (blkaddr < 0)
-> > +		return -EINVAL;
-> > +
-> > +	mutex_lock(&mcam->lock);
-> > +	list_for_each_entry(rule, &mcam->mcam_rules, list) {
-> > +		if (!is_mcam_entry_enabled(rvu, mcam, blkaddr, rule->entry))
-> > +			continue;
-> > +		if (!rule->default_rule)
-> > +			continue;
-> > +		if (enable && !rule->has_cntr) { /* Alloc and map new counter */
-> > +			__rvu_mcam_add_counter_to_rule(rvu, rule->owner,
-> > +						       rule, &rsp);
-> > +			if (rsp.counter < 0) {
-> > +				dev_err(rvu->dev, "%s: Err to allocate cntr for default rule (err=%d)\n",
-> > +					__func__, rsp.counter);
-> > +				break;
-> > +			}
-> > +			npc_map_mcam_entry_and_cntr(rvu, mcam, blkaddr,
-> > +						    rule->entry, rsp.counter);
-> > +		}
-> > +
-> > +		if (enable && rule->has_cntr) /* Reset counter before use */ {
-> > +			rvu_write64(rvu, blkaddr,
-> > +				    NPC_AF_MATCH_STATX(rule->cntr), 0x0);
-> > +			continue;
-> > +		}
-> > +
-> > +		if (!enable && rule->has_cntr) /* Free and unmap counter */ {
-> > +			__rvu_mcam_remove_counter_from_rule(rvu, rule->owner,
-> > +							    rule);
-> > +		}
-> > +	}
-> > +	mutex_unlock(&mcam->lock);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >   int rvu_mbox_handler_npc_mcam_alloc_entry(struct rvu *rvu,
-> >   					  struct npc_mcam_alloc_entry_req *req,
-> >   					  struct npc_mcam_alloc_entry_rsp *rsp)
-> > @@ -2975,9 +3020,9 @@ int rvu_mbox_handler_npc_mcam_shift_entry(struct rvu *rvu,
-> >   	return rc;
-> >   }
-> > -int rvu_mbox_handler_npc_mcam_alloc_counter(struct rvu *rvu,
-> > -			struct npc_mcam_alloc_counter_req *req,
-> > -			struct npc_mcam_alloc_counter_rsp *rsp)
-> > +static int __npc_mcam_alloc_counter(struct rvu *rvu,
-> > +				    struct npc_mcam_alloc_counter_req *req,
-> > +				    struct npc_mcam_alloc_counter_rsp *rsp)
-> >   {
-> >   	struct npc_mcam *mcam = &rvu->hw->mcam;
-> >   	u16 pcifunc = req->hdr.pcifunc;
-> > @@ -2998,7 +3043,6 @@ int rvu_mbox_handler_npc_mcam_alloc_counter(struct rvu *rvu,
-> >   	if (!req->contig && req->count > NPC_MAX_NONCONTIG_COUNTERS)
-> >   		return NPC_MCAM_INVALID_REQ;
-> > -	mutex_lock(&mcam->lock);
-> >   	/* Check if unused counters are available or not */
-> >   	if (!rvu_rsrc_free_count(&mcam->counters)) {
-> > @@ -3035,12 +3079,27 @@ int rvu_mbox_handler_npc_mcam_alloc_counter(struct rvu *rvu,
-> >   		}
-> >   	}
-> > -	mutex_unlock(&mcam->lock);
+
+On 12/09/2024 16:21, Ard Biesheuvel wrote:
+> On Thu, 12 Sept 2024 at 16:29, Breno Leitao <leitao@debian.org> wrote:
+>>
+>> On Thu, Sep 12, 2024 at 03:10:43PM +0200, Ard Biesheuvel wrote:
+>>> On Thu, 12 Sept 2024 at 15:03, Breno Leitao <leitao@debian.org> wrote:
+>>>> On Thu, Sep 12, 2024 at 12:51:57PM +0200, Ard Biesheuvel wrote:
+>>>>> I don't see how this could be an EFI bug, given that it does not deal
+>>>>> with E820 tables at all.
+>>>>
+>>>> I want to back up a little bit and make sure I am following the
+>>>> discussion.
+>>>>
+>>>> From what I understand from previous discussion, we have an EFI bug as
+>>>> the root cause of this issue.
+>>>>
+>>>> This happens because the EFI does NOT mark the EFI TPM event log memory
+>>>> region as reserved (EFI_RESERVED_TYPE).
+>>>
+>>> Why do you think EFI should use EFI_RESERVED_TYPE in this case?
+>>>
+>>> The EFI spec is very clear that EFI_RESERVED_TYPE really shouldn't be
+>>> used for anything by EFI itself. It is quite common for EFI
+>>> configuration tables to be passed as EfiRuntimeServicesData (SMBIOS),
+>>> EfiBootServicesData (ESRT) or EFiAcpiReclaim (ACPI tables).
+>>>
+>>> Reserved memory is mostly for memory that even the firmware does not
+>>> know what it is for, i.e., particular platform specific uses.
+>>>
+>>> In general, it is up to the OS to ensure that EFI configuration tables
+>>> that it cares about should be reserved in the correct way.
+>>
+>> Thanks for the explanation.
+>>
+>> So, if I understand what you meant here, the TPM event log memory range
+>> shouldn't be listed as a memory region in EFI memory map (as passed by
+>> the firmware to the OS).
+>>
+>> Hence, this is not a EFI firmware bug, but a OS/Kernel bug.
+>>
+>> Am I correct with the statements above?
+>>
 > 
-> There is mutex_unlock() left in this function in error path of
-> rvu_rsrc_free_count(&mcam->counters)
-
-Ack. Will fix in v2
-
+> No, not entirely. But I also missed the face that this table is
+> actually created by the EFI stub in Linux, not the firmware. It is
+> *not* the same memory region that the TPM2 ACPI table describes, and
+> so what the various specs say about that is entirely irrelevant.
 > 
-> >   	return 0;
-> >   }
-> > -int rvu_mbox_handler_npc_mcam_free_counter(struct rvu *rvu,
-> > -		struct npc_mcam_oper_counter_req *req, struct msg_rsp *rsp)
-> > +int rvu_mbox_handler_npc_mcam_alloc_counter(struct rvu *rvu,
-> > +			struct npc_mcam_alloc_counter_req *req,
-> > +			struct npc_mcam_alloc_counter_rsp *rsp)
-> > +{
-> > +	struct npc_mcam *mcam = &rvu->hw->mcam;
-> > +	int err;
-> > +
-> > +	mutex_lock(&mcam->lock);
-> > +
-> > +	err = __npc_mcam_alloc_counter(rvu, req, rsp);
-> > +
-> > +	mutex_unlock(&mcam->lock);
-> > +	return err;
-> > +}
-> > +
-> > +static int __npc_mcam_free_counter(struct rvu *rvu,
-> > +				   struct npc_mcam_oper_counter_req *req,
-> > +				   struct msg_rsp *rsp)
-> >   {
-> >   	struct npc_mcam *mcam = &rvu->hw->mcam;
-> >   	u16 index, entry = 0;
-> > @@ -3050,7 +3109,6 @@ int rvu_mbox_handler_npc_mcam_free_counter(struct rvu *rvu,
-> >   	if (blkaddr < 0)
-> >   		return NPC_MCAM_INVALID_REQ;
-> > -	mutex_lock(&mcam->lock);
-> >   	err = npc_mcam_verify_counter(mcam, req->hdr.pcifunc, req->cntr);
-> >   	if (err) {
-> >   		mutex_unlock(&mcam->lock);
+> The TPM event log configuration table is created by the EFI stub,
+> which uses the TCG2::GetEventLog () protocol method to obtain it. This
+> must be done by the EFI stub because these protocols will no longer be
+> available once the OS boots. But the data is not used by the EFI stub,
+> only by the OS, which is why it is passed in memory like this.
 > 
-> And here it's even visible in the chunk..
-
-Ack. Thanks for pointing out, somehow missed the error paths.
-
+> The memory in question is allocated as EFI_LOADER_DATA, and so we are
+> relying on the OS to know that this memory is special, and needs to be
+> preserved.
 > 
-> > @@ -3077,10 +3135,66 @@ int rvu_mbox_handler_npc_mcam_free_counter(struct rvu *rvu,
-> >   					      index, req->cntr);
-> >   	}
-> > -	mutex_unlock(&mcam->lock);
-> >   	return 0;
-> >   }
+> I think the solution here is to use a different memory type:
 > 
+> --- a/drivers/firmware/efi/libstub/tpm.c
+> +++ b/drivers/firmware/efi/libstub/tpm.c
+> @@ -96,7 +96,7 @@ static void efi_retrieve_tcg2_eventlog(int version,
+> efi_physical_addr_t log_loca
+>         }
+> 
+>         /* Allocate space for the logs and copy them. */
+> -       status = efi_bs_call(allocate_pool, EFI_LOADER_DATA,
+> +       status = efi_bs_call(allocate_pool, EFI_ACPI_RECLAIM_MEMORY,
+>                              sizeof(*log_tbl) + log_size, (void **)&log_tbl);
+> 
+>         if (status != EFI_SUCCESS) {
+> 
+> which will be treated appropriately by the existing EFI-to-E820
+> conversion logic.
 
-Linu Cherian.
+I have tested above diff, and it works! No memory corruption.
+
+The region comes up as ACPI data:
+[    0.000000] BIOS-e820: [mem 0x000000007fb6d000-0x000000007fb7efff] ACPI data                                                                                                                               
+
+and kexec doesnt interfere with it.
+
+Thanks,
+Usama
 
 
