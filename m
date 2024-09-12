@@ -1,106 +1,115 @@
-Return-Path: <linux-kernel+bounces-325853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F187E975F00
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:40:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 697F2975F25
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 04:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FFAC1C22096
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:40:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E84E1F23F44
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:49:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806856F315;
-	Thu, 12 Sep 2024 02:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18436126BEB;
+	Thu, 12 Sep 2024 02:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="EQd4CRSj"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D73B3C6AC;
-	Thu, 12 Sep 2024 02:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IEBW6Fut"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AE81E4A2;
+	Thu, 12 Sep 2024 02:49:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726108813; cv=none; b=D2Ms4Btz18qKRT/G3ze9GHj1sHbKEno/6+nF2No+kg6gNZI0cr1zfZqz3BIDHft1vNdzW5cbNE5JuSQA5Y/TYVSLIH4Q3xIK5cd+HIIX+MJObOEYJP1ANI2F1qpdqmTkiZs0aaI/7Hdq2ge0X4pNOUXFh7gl/08Sxuj2/Vpo5Mc=
+	t=1726109348; cv=none; b=TboeKrZ4/XH/ElG1c/lgfGcxpPdBbefWsMhLR6HhMuT4zg1bvrQKGU/ien/VgaHCaJl+Rxii4LbwMWxfV7XI4QrD1mPwd/LBclA8DXdKsJhgSU5y4llLNWfwUiT8svJwlwFJXByrMQs5fLwEwUCXedqs2WqTg/dVZKdiTxuMRn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726108813; c=relaxed/simple;
-	bh=n9zPdd6VyObY2XyYje8KfAAclPbnHAcROpIDVThF3+w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=GziD1TmKRJRsRqICSjcdkNoAS5GDBldv+OFq/0ToawNMqkuGSD7F6BoLYKpLk/r23t/uu2kkkrac1QAcAg+c4GMSY7oTCGLA+5IS0m5NJmiC4jm3S8ai9LAcLtvas/vdcOTtVNZou74roJ6otiZABoSZtb+oaNpY8HWcY9Wr/yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=EQd4CRSj reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=rrePD99XD6KgiMnMr0Ra2sNyjZivH58JwfIFtEA4/Z8=; b=E
-	Qd4CRSjXpgRuQUpCPr63VFL7vnsjVZZ12iWfDs5LpGCgcG3s67//8+jBoVcXeONg
-	dKdzm7b12QK8+G2cqoHimCgNNIHFtCwVlXgDAaZxGWwmZItekFjmxF2Pssjo8SXq
-	tWeCIJQ45Cv1rVwGrqiL6rZmnwFPLQu+bGckNBCQ+A=
-Received: from 00107082$163.com ( [111.35.191.143] ) by
- ajax-webmail-wmsvr-40-144 (Coremail) ; Thu, 12 Sep 2024 10:39:48 +0800
- (CST)
-Date: Thu, 12 Sep 2024 10:39:48 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Kent Overstreet" <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [BUG?] bcachefs performance: read is way too slow when a file
- has no overwrite.
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <ebqvaqme76nrgr2dh7avy7yjwxsgnnybxuybgxejahupgbrqw5@a6d244ghjqis>
-References: <ka3sjrka6dugdaab2bvewfbonc3ksixumue3hs2juhajhjm37w@bnxvz5mozpgr>
- <20240907103437.71139-1-00107082@163.com>
- <ebqvaqme76nrgr2dh7avy7yjwxsgnnybxuybgxejahupgbrqw5@a6d244ghjqis>
-X-NTES-SC: AL_Qu2ZBP2bt08j7iOYZ+kXn0oTju85XMCzuv8j3YJeN500tSbm6C8rRHh6JVzw3OSLFiCJtx+lbD9ezNRZZK9cdrlWYK4/K7ewwMY1LvZbmBJ6
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1726109348; c=relaxed/simple;
+	bh=tAM95XGTzbapPftXsftKEV3TNf2Al+BWzAnhD70VsNM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TA4/LkM0M8ILD7lFXNPgHtGoNVIvF1zfw+iZSKC0XQMnKwgqT2ZWnYwX+RYZk0UAlV6dOMHMQNP35UA0v9wLuUXJUsQ5fNEEOPs1yy3sDtY0SZL5pQlk2yV5vBRpEOzivxg1zwJRIiFLWskn4nZLBXP7l/uLbu3C/DOIW/tYCh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IEBW6Fut; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2053f6b8201so4559105ad.2;
+        Wed, 11 Sep 2024 19:49:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726109346; x=1726714146; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4fkjJuBXsGdganvltri3POVXvXTvnOSAc4m3VYvsJR4=;
+        b=IEBW6FutdzjfPwYLleEUxLDfaqqDIHMUVN+pEQ3pO0c2KU6duOeio79jgN9R12LTHl
+         /1UolEGhtOt9RoKLhByVmMkBpDJFkr7hHpE98jd+xaJH1g6J2g+0stewARv2SwxjB+s7
+         34ZN153oCoWvrgdIKjdAmn/Nir0YAMuR3gltJRMfdQQ/26puvEE/Z4iLqjBRPxlaWw5d
+         shijYlWWkCi50PgfiEkRV/FOke4gCNeS1RWd4xoDM1KYgIyoQjIUQADIyKm+1mFNlV3+
+         QYI9nrq7oq2pEVUe0C+Rv0bA8adEggxoix79JM9SVaTTK67pGWZ2ACqptCC+rCvsnB7U
+         0IPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726109346; x=1726714146;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4fkjJuBXsGdganvltri3POVXvXTvnOSAc4m3VYvsJR4=;
+        b=JkLyhkPj1SqwcnmH0M1XQ5iFypkA6AHI2Di90ATOAEuSKvfLlgmFoSgVzMQ7pmnfPd
+         i4xK7ILyZUQejWfJw8UuFVrH/6foXr9eQzEpZEEDVWrYzUZ7E3dRh7sCSK6AsYQQWp5I
+         /2vmSE1x47YA5hM3z7fNpqXVDRAhm0irik3XW8ae/BnhHzNDdO6fF7D18qUCVCin9PFr
+         AMDejOLTzSNfBoVKpUz17miHj2t154SbHzv6CQzrUyV40qpteUPYicDh2D8zRjlUzYeK
+         6ZkJE6aZEk1hqHS6D2KLKXkvJGcZRVUeDDdW1ql91mm/zMxmJGekUtDGaTAwStO11KT6
+         gXhw==
+X-Forwarded-Encrypted: i=1; AJvYcCXUucwB2BgO9qU1l2mjfZHTFnw/6Oc7HUqxmpts65xQYd9hOIhlijm4FDx9s6fDlmoSDee1WUJquAMI/Mw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmAXdep/5CGEWH/YhcTB4XSZEsTFYOrWoFcyN/S9MLV+vN+FZw
+	twxicf8wjQqd1YwKAVR/5u7/WZT7KzFAcy6xl0uSrDEw5FJHkkkyj+/EGNA6
+X-Google-Smtp-Source: AGHT+IHA8DfiFFRviUD4f3bxvHEivYR9Io0vIEajbxKVVrUJBB58GqHng4vf8V7gdxeBA4alu50lFw==
+X-Received: by 2002:a17:90b:4b45:b0:2da:5347:b0fa with SMTP id 98e67ed59e1d1-2db9ffb137dmr1703060a91.18.1726109346308;
+        Wed, 11 Sep 2024 19:49:06 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadbfe4897sm11457868a91.7.2024.09.11.19.49.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 19:49:05 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: andrew@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org,
+	jacob.e.keller@intel.com,
+	horms@kernel.org,
+	sd@queasysnail.net,
+	chunkeey@gmail.com
+Subject: [PATCHv5 net-next 0/9] net: ibm: emac: modernize a bit
+Date: Wed, 11 Sep 2024 19:48:54 -0700
+Message-ID: <20240912024903.6201-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <f69544.2e70.191e419e656.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wDXPzl1VOJmJqwCAA--.777W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiMxVYqmXAnzbDTQADsV
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Transfer-Encoding: 8bit
 
-CkhpLCAKQXQgMjAyNC0wOS0wOSAyMTozNzozNSwgIktlbnQgT3ZlcnN0cmVldCIgPGtlbnQub3Zl
-cnN0cmVldEBsaW51eC5kZXY+IHdyb3RlOgo+T24gU2F0LCBTZXAgMDcsIDIwMjQgYXQgMDY6MzQ6
-MzdQTSBHTVQsIERhdmlkIFdhbmcgd3JvdGU6Cgo+PiAKPj4gQmFzZWQgb24gdGhlIHJlc3VsdDoK
-Pj4gMS4gVGhlIHJvdyB3aXRoIHByZXBhcmUtd3JpdGUgc2l6ZSA0SyBzdGFuZHMgb3V0LCBoZXJl
-Lgo+PiBXaGVuIGZpbGVzIHdlcmUgcHJlcGFpcmVkIHdpdGggd3JpdGUgc2l6ZSA0SywgdGhlIGFm
-dGVyd2FyZHMKPj4gIHJlYWQgcGVyZm9ybWFuY2UgaXMgd29yc2UuICAoSSBkaWQgZG91YmxlIGNo
-ZWNrIHRoZSByZXN1bHQsCj4+IGJ1dCBpdCBpcyBwb3NzaWJsZSB0aGF0IEkgbWlzcyBzb21lIGFm
-ZmVjdGluZyBmYWN0b3JzLik7Cj4KPk9uIHNtYWxsIGJsb2Nrc2l6ZSB0ZXN0cyB5b3Ugc2hvdWxk
-IGJlIGxvb2tpbmcgYXQgSU9QUywgbm90IE1CL3MuCj4KPlByZXBhcmUtd3JpdGUgc2l6ZSBpcyB0
-aGUgY29sdW1uPwpFYWNoIHJvdyBpcyBmb3IgYSBzcGVjaWZpYyBwcmVwYXJlLXdyaXRlIHNpemUg
-aW5kaWNhdGVkIGJ5IGZpcnN0IGNvbHVtbi4gCgo+Cj5Bbm90aGVyIGZhY3RvciBpcyB0aGF0IHdl
-IGRvIG1lcmdlIGV4dGVudHMgKGluY2x1ZGluZyBjaGVja3N1bXMpOyBzbyBpZgo+dGhlIHByZXBh
-cmV0LXdyaXRlIGlzIGRvbmUgc2VxdWVudGlhbGx5IHdlIHdvbid0IGFjdHVhbGx5IGJlIGVuZGlu
-ZyB1cAo+d2l0aCBleHRlbnRzIG9mIHRoZSBzYW1lIHNpemUgYXMgd2hhdCB3ZSB3cm90ZS4KPgo+
-SSBiZWxpZXZlIHRoZXJlJ3MgYSBrbm9iIHNvbWV3aGVyZSB0byB0dXJuIG9mZiBleHRlbnQgbWVy
-Z2luZyAobW9kdWxlCj5wYXJhbWV0ZXI/IGl0J3MgaW50ZW5kZWQgZm9yIGRlYnVnZ2luZykuCgpJ
-IG1hZGUgc29tZSBkZWJ1Zywgd2hlbiBwZXJmb3JtYW5jZSBpcyBiYWQsIHRoZSBjb25kaXRpb25z
-CmJ2ZWNfaXRlcl9zZWN0b3JzKGl0ZXIpICE9IHBpY2suY3JjLnVuY29tcHJlc3NlZF9zaXplIGFu
-ZCAKYnZlY19pdGVyX3NlY3RvcnMoaXRlcikgIT0gcGljay5jcmMubGl2ZV9zaXplIGFyZSAiYWxt
-b3N0IiBhbHdheXMgYm90aCAidHJ1ZSIsCndoaWxlIHdoZW4gcGVyZm9ybWFuY2UgaXMgZ29vZCAo
-YWZ0ZXIgInRob3JvdWdoIiB3cml0ZSksIHRoZXkgYXJlIG9ubHkgbGl0dGxlCnBlcmNlbnQgKH4z
-NTAgb3V0IG9mIDEwMDAwMDApICB0byBiZSB0cnVlLgoKQW5kIGlmIHRob3NlIGNvbmRpdGlvbnMg
-YXJlICJ0cnVlIiwgImJvdW5jZSIgd291bGQgYmUgc2V0IGFuZCBjb2RlIHNlZW1zIHRvIHJ1bgpv
-biBhIHRpbWUgY29uc3VtaW5nIHBhdGguCgpJIHN1c3BlY3QgIm1lcmVseSByZWFkIiBjb3VsZCBu
-ZXZlciBjaGFuZ2UgdGhvc2UgY29uZGl0aW9ucywgYnV0ICJ3cml0ZSIgY2FuPwoKPgo+PiAyLiBX
-aXRob3V0IE9fRElSRUNULCByZWFkIHBlcmZvcm1hbmNlIHNlZW1zIGNvcnJlbGF0ZWQgd2l0aCB0
-aGUgZGlmZmVyZW5jZQo+PiAgYmV0d2VlbiByZWFkIHNpemUgYW5kIHByZXBhcmUgd3JpdGUgc2l6
-ZSwgYnV0IHdpdGggT19ESVJFQ1QsIGNvcnJlbGF0aW9uIGlzIG5vdCBvYnZpb3VzLgo+Cj5TbyB0
-aGUgT19ESVJFQ1QgYW5kIGJ1ZmZlcmVkIElPIHBhdGhzIGFyZSB2ZXJ5IGRpZmZlcmVudCAoaW4g
-ZXZlcnkKPmZpbGVzeXN0ZW0pIC0geW91J3JlIGxvb2tpbmcgYXQgdmVyeSBkaWZmZXJlbnQgdGhp
-bmdzLiBUaGV5IGFyZSBib3RoCj5zdWJqZWN0IHRvIHRoZSBjaGVja3N1bSBncmFudWxhcml0eSBp
-c3N1ZSwgYnV0IGluIGJ1ZmZlcmVkIG1vZGUgd2Ugcm91bmQKPnVwIHJlYWRzIHRvIGV4dGVudCBz
-aXplLCB3aGVuIGZpbGxpbmcgaW50byB0aGUgcGFnZSBjYWNoZS4KPgo+QmlnIHN0YW5kYXJkIGRl
-dmlhdGlvbiAoaGlnaCB0YWlsIGxhdGVuY3k/KSBpcyBzb21ldGhpbmcgd2UnZCB3YW50IHRvCj50
-cmFjayBkb3duLiBUaGVyZSdzIGEgYnVuY2ggb2YgdGltZV9zdGF0cyBpbiBzeXNmcywgYnV0IHRo
-ZXkncmUgbW9zdGx5Cj5mb3IgdGhlIHdyaXRlIHBhdGhzLiBJZiB5b3UncmUgdHJ5aW5nIHRvIGlk
-ZW50aWZ5IHdoZXJlIHRoZSBsYXRlbmNpZXMKPmFyZSBjb21pbmcgZnJvbSwgd2UgY2FuIGxvb2sg
-YXQgYWRkaW5nIHNvbWUgbmV3IHRpbWUgc3RhdHMgdG8gaXNvbGF0ZS4K
+v2: removed the waiting code in favor of EPROBE_DEFER.
+v3: reverse xmas order fix, unnecessary assignment fix, wrong usage of
+EPROBE_DEFER fix.
+v4: fixed line length warnings and unused goto.
+v5: Add back accidentally left out commit
+
+Rosen Penev (9):
+  net: ibm: emac: use devm for alloc_etherdev
+  net: ibm: emac: manage emac_irq with devm
+  net: ibm: emac: use devm for of_iomap
+  net: ibm: emac: remove mii_bus with devm
+  net: ibm: emac: use devm for register_netdev
+  net: ibm: emac: use netdev's phydev directly
+  net: ibm: emac: replace of_get_property
+  net: ibm: emac: remove all waiting code
+  net: ibm: emac: get rid of wol_irq
+
+ drivers/net/ethernet/ibm/emac/core.c | 219 +++++++++------------------
+ drivers/net/ethernet/ibm/emac/core.h |   4 -
+ 2 files changed, 71 insertions(+), 152 deletions(-)
+
+-- 
+2.46.0
+
 
