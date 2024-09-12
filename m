@@ -1,130 +1,158 @@
-Return-Path: <linux-kernel+bounces-326364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40AD9976734
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:10:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9DA2976737
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:11:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 739291C22728
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:10:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BE8C1F24303
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:11:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5471A0BD5;
-	Thu, 12 Sep 2024 11:10:23 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94451A0BD0;
+	Thu, 12 Sep 2024 11:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hSfBPxow"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D137E1A08C4;
-	Thu, 12 Sep 2024 11:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9986318E043;
+	Thu, 12 Sep 2024 11:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726139423; cv=none; b=R0im5MJXJwvCAoZC/nHaz1g762AqqH/AfpUFio0zVMylYZUvKoVTiDZGtUWp82/00U2e8jaY4alBX7ugvIwFFZQmn66CREYibiFwBNotqtwGXwf4aBLLpkK12LBU0vV1zHa7AewW3M9g4W+wT4ZDT4dr1vpV/Wip8D1rehmxPg8=
+	t=1726139480; cv=none; b=t3wxRJAtTWMtJH8llp7R9bPLj4PoClmUWlB5/d95HD9UA27PlTvqlIvCrSNYAxXOcio5EiR32ACWj2FaxTURyW3cWtqc4clc+fU7t1B4sVaeR08jrn5+mtsybOJBDww/j8DpwEDw39IL5TtUWFx+9JtwQkisVA+j/eAcJF1wkrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726139423; c=relaxed/simple;
-	bh=L3MUCMKtkTguWF9pBToUYcRy9e1ieedTm1iuky8Pw6Y=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=nirHP20INJsrAkkmJ1RHmtq22TeCakb+V26qhn++ZpbxykCnYCTZug3Co6+fy1GneO3LZdznC+JrrMlw6OYLa/VJSzcuOVkF1plq88ACEcnWyYKFp+WJTxSpmZbbBA9zIIXKguVTQ6Dx8ONyqPiWIzPjX6QsgKMZWw7uTykvBGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4X4F8W64g6z20lDc;
-	Thu, 12 Sep 2024 19:10:03 +0800 (CST)
-Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id E2B3214013B;
-	Thu, 12 Sep 2024 19:10:10 +0800 (CST)
-Received: from kwepemd100011.china.huawei.com (7.221.188.204) by
- kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Thu, 12 Sep 2024 19:10:10 +0800
-Received: from kwepemd100011.china.huawei.com ([7.221.188.204]) by
- kwepemd100011.china.huawei.com ([7.221.188.204]) with mapi id 15.02.1258.034;
- Thu, 12 Sep 2024 19:10:10 +0800
-From: duchangbin <changbin.du@huawei.com>
-To: Adrian Hunter <adrian.hunter@intel.com>
-CC: duchangbin <changbin.du@huawei.com>, Peter Zijlstra
-	<peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, "Arnaldo Carvalho de
- Melo" <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, Nathan
- Chancellor <nathan@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
-	<jolsa@kernel.org>, "Ian Rogers" <irogers@google.com>, "Liang, Kan"
-	<kan.liang@linux.intel.com>, "Nick Desaulniers" <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
-	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>, "Wanghui (OS Kernel Lab,
- Beijing)" <hw.huiwang@huawei.com>
-Subject: Re: [PATCH v6 8/8] perf buildid-cache: recognize vdso when adding
- files
-Thread-Topic: [PATCH v6 8/8] perf buildid-cache: recognize vdso when adding
- files
-Thread-Index: AQHa3jimIYtCUWpsdU+ECcILatWtFrJSACMAgAJL8QA=
-Date: Thu, 12 Sep 2024 11:10:10 +0000
-Message-ID: <953cc060c1a24e36abf797918824d13e@huawei.com>
-References: <20240725021549.880167-1-changbin.du@huawei.com>
- <20240725021549.880167-9-changbin.du@huawei.com>
- <68f29f30-f0f8-4cda-a99a-68f51838dcd7@intel.com>
-In-Reply-To: <68f29f30-f0f8-4cda-a99a-68f51838dcd7@intel.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-imapappendstamp: kwepemd100011.china.huawei.com (15.02.1258.034)
-x-ms-exchange-messagesentrepresentingtype: 1
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <674352206418F4468498DA60930A32B9@huawei.com>
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1726139480; c=relaxed/simple;
+	bh=m3Xyn/8ZS+zTxpOr89U1fMdhubbijqdam36gFhcr7So=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pHtzqifZjeUsYzw4Dw0ymQH1I0MuXQS0TpuoXEI05GJYLeoZSYJG4JPT2ohwCldBlx8QwK4dcDcxCDB9mplUvIfaX9nLq7a2NxYAN4VGNzkoBKtllYVgYAAFu2AuN2I3FNPIn+jXswkfQmPMQOJZ1XXSEvA2v6+QeQ3Ui7xP5YA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hSfBPxow; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8d2b24b7a8so367021566b.1;
+        Thu, 12 Sep 2024 04:11:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726139477; x=1726744277; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3Ysr1tTQ+NR5cX2Cq4HdlMqiAfbbcfrTBI5MQi4YwZQ=;
+        b=hSfBPxowVAkqXv1oXHVPLX8lQGRwP+ChM80dOTf4ORPvBwTEGl3Xd4RpGLjtemofme
+         iycFohZsWMmt5Armed3RNFftAHPhN1qOlFYAqD+AHM9hAxuoKuI9/EspfVSU5ghfukBU
+         WD8DZIQtHtaX0Fxxdalcjg2nuhdS7fYy3tjA+822WwNuLhf1BE8+L5XRGYE3adK+xvPg
+         gvZBjxmjb4WHwNAJbUdqGwYBaQL4kOYOj8I9An4IRPNsZtTJjSmSBP4+97C8OQVYJznx
+         KDFKR2ci4UqKQqeOQYdSM9wS/DQgycoY2eS9KuaqHSmCauhES7rXMYNPmZepKaNfo55N
+         JKig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726139477; x=1726744277;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3Ysr1tTQ+NR5cX2Cq4HdlMqiAfbbcfrTBI5MQi4YwZQ=;
+        b=UyidIck7xRmpVZgv6fvYwYgDAHFNzALq4b/8Huev2tFml6dX05ku1RQ/ctx17aOSsh
+         J3YV+gfoImF17GMuJ11KFPMeZkkluMTg1o0+NC+9VEG/yErnZn7Mlm2uZtbNRKV4ITIe
+         zAXZXy0WWYI4zr6geeGWD+AKo5cImYiBqXv8ejmu3jZgoduDVmIvjMnRqL/e5Y0ZsCPD
+         i5jU29C4kKFkmdO8aLhRIaPJrBIXADcdpImRSRRGeIYDfQ3rC7y8jSHBaSG57vy/m/M4
+         Ca3/ct80Qz91Os2tLYpUHq+JnFBm1sa4XYcfubbkFZUNvtEQzDae4KJmVkHRKwZTqCA/
+         HZ/w==
+X-Forwarded-Encrypted: i=1; AJvYcCU4yBwgj6GEaYKpXpzQhE4kcNCe/oxBb73jjA7POn48PfKho9fY8gIu87LkT7DkUVLqhZJbEuqNm1vYFhA=@vger.kernel.org, AJvYcCX6/Hb86zFiz4iR19XuTzA4C4fyFwqRtarYemd5jp1ll5MBgtRGUVcO/EmRJpukcQxH7y8vcLIgTp9KM2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnaY0VzbPMeIKfTdqDy+Fq64ISnr+ELF0GxpkMU4V3F7ReGyEQ
+	YlRJFK9mMRvxlqe9zEhG6kgi1KCKQOjFEbZKLvgY0LRro4zx00im
+X-Google-Smtp-Source: AGHT+IF3jiQA5KFfOParTbNwMjFosQ5FM0KbFd1M5zS7hv6QhWapPzmadlkhusgXhNA0EchoBqOANQ==
+X-Received: by 2002:a17:907:9626:b0:a72:5967:b34 with SMTP id a640c23a62f3a-a902a8c2779mr242250066b.22.1726139476131;
+        Thu, 12 Sep 2024 04:11:16 -0700 (PDT)
+Received: from tom-HP-ZBook-Fury-15-G7-Mobile-Workstation (net-188-217-48-58.cust.vodafonedsl.it. [188.217.48.58])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25ced18csm728705066b.161.2024.09.12.04.11.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 04:11:15 -0700 (PDT)
+Date: Thu, 12 Sep 2024 13:11:13 +0200
+From: Tommaso Merciai <tomm.merciai@gmail.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linuxfancy@googlegroups.com, sakari.ailus@linux.intel.com,
+	julien.massot@collabora.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] media: i2c: max96714: add HAS_EVENTS subdev flag
+Message-ID: <ZuLMUaxn/oTw5dco@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+References: <20240910134428.795273-1-tomm.merciai@gmail.com>
+ <20240910134428.795273-2-tomm.merciai@gmail.com>
+ <20240912104409.GA25276@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912104409.GA25276@pendragon.ideasonboard.com>
 
-T24gV2VkLCBTZXAgMTEsIDIwMjQgYXQgMTE6MDU6MjBBTSArMDMwMCwgQWRyaWFuIEh1bnRlciB3
-cm90ZToNCj4gT24gMjUvMDcvMjQgMDU6MTUsIENoYW5nYmluIER1IHdyb3RlOg0KPiA+IElkZW50
-aWZ5IHZkc28gYnkgZmlsZSBuYW1lIG1hdGNoaW5nLiBUaGUgdmRzbyBvYmplY3RzIGhhdmUgbmFt
-ZQ0KPiA+IGFzIHZkc29bMzIsNjRdLnNvWy5kYmddLg0KPiA+IA0KPiA+ICQgcGVyZiBidWlsZGlk
-LWNhY2hlIC1hIC93b3JrL2xpbnV4L2FyY2gveDg2L2VudHJ5L3Zkc28vdmRzbzY0LnNvLmRiZw0K
-PiA+IA0KPiA+IFdpdGhvdXQgdGhpcyBjaGFuZ2UsIGFkZGluZyB2ZHNvIHVzaW5nIGFib3ZlIGNv
-bW1hbmQgYWN0dWFsbHkgd2lsbCBuZXZlcg0KPiA+IGJlIHVzZWQuDQo+ID4gDQo+ID4gU2lnbmVk
-LW9mZi1ieTogQ2hhbmdiaW4gRHUgPGNoYW5nYmluLmR1QGh1YXdlaS5jb20+DQo+IA0KPiBBIGNv
-dXBsZSBvZiBjb21tZW50cywgYnV0IGFkZHJlc3MgdGhvc2UgdGhlbiBhZGQ6DQo+IA0KPiBSZXZp
-ZXdlZC1ieTogQWRyaWFuIEh1bnRlciA8YWRyaWFuLmh1bnRlckBpbnRlbC5jb20+DQo+IA0KPiA+
-IC0tLQ0KPiA+ICB0b29scy9wZXJmL2J1aWx0aW4tYnVpbGRpZC1jYWNoZS5jIHwgMjYgKysrKysr
-KysrKysrKysrKysrKysrKysrKy0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDI1IGluc2VydGlvbnMo
-KyksIDEgZGVsZXRpb24oLSkNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvdG9vbHMvcGVyZi9idWls
-dGluLWJ1aWxkaWQtY2FjaGUuYyBiL3Rvb2xzL3BlcmYvYnVpbHRpbi1idWlsZGlkLWNhY2hlLmMN
-Cj4gPiBpbmRleCBiMDUxMWQxNmFlYjYuLjhlZGVhOTA0NGE2NSAxMDA2NDQNCj4gPiAtLS0gYS90
-b29scy9wZXJmL2J1aWx0aW4tYnVpbGRpZC1jYWNoZS5jDQo+ID4gKysrIGIvdG9vbHMvcGVyZi9i
-dWlsdGluLWJ1aWxkaWQtY2FjaGUuYw0KPiA+IEBAIC0xNzIsNiArMTcyLDMwIEBAIHN0YXRpYyBp
-bnQgYnVpbGRfaWRfY2FjaGVfX2FkZF9rY29yZShjb25zdCBjaGFyICpmaWxlbmFtZSwgYm9vbCBm
-b3JjZSkNCj4gPiAgCXJldHVybiAwOw0KPiA+ICB9DQo+ID4gIA0KPiA+ICtzdGF0aWMgYm9vbCBm
-aWxlbmFtZV9pc192ZHNvKGNvbnN0IGNoYXIgKmZpbGVuYW1lKQ0KPiA+ICt7DQo+ID4gKwljaGFy
-ICpmbmFtZSwgKmJuYW1lOw0KPiA+ICsJc3RhdGljIGNvbnN0IGNoYXIgKiBjb25zdCB2ZHNvX25h
-bWVzW10gPSB7DQo+ID4gKwkJInZkc28uc28iLCAidmRzbzMyLnNvIiwgInZkc282NC5zbyIsICJ2
-ZHNveDMyLnNvIg0KPiA+ICsJfTsNCj4gPiArDQo+ID4gKwlmbmFtZSA9IHN0cmR1cChmaWxlbmFt
-ZSk7DQo+ID4gKwlpZiAoIWZuYW1lKSB7DQo+ID4gKwkJcHJfZXJyKCJubyBtZW1lbW9yeVxuIik7
-DQo+IA0KPiBtZW1lbW9yeSAtPiBtZW1vcnkNCj4NCmZpeGVkLg0KDQo+ID4gKwkJcmV0dXJuIGZh
-bHNlOw0KPiA+ICsJfQ0KPiANCj4gZm5hbWUgaXMgbmV2ZXIgZnJlZWQuDQo+IA0KZml4ZWQuDQoN
-Cj4gPiArDQo+ID4gKwlibmFtZSA9IGJhc2VuYW1lKGZuYW1lKTsNCj4gPiArCWlmICghYm5hbWUp
-DQo+ID4gKwkJcmV0dXJuIGZhbHNlOw0KPiA+ICsNCj4gPiArCWZvciAodW5zaWduZWQgaW50IGkg
-PSAwOyBpIDwgQVJSQVlfU0laRSh2ZHNvX25hbWVzKTsgaSsrKSB7DQo+IA0KPiAndW5zaWduZWQn
-IGlzIHVubmVjZXNzYXJ5DQo+IA0KVGhpcyBpcyByZXF1aXJlZCB0byBzdXByZXNzIHRoaXMgZXJy
-b3IuDQplcnJvcjogY29tcGFyaXNvbiBvZiBpbnRlZ2VyIGV4cHJlc3Npb25zIG9mIGRpZmZlcmVu
-dCBzaWduZWRuZXNzOiDigJhpbnTigJkgYW5kIOKAmGxvbmcgdW5zaWduZWQgaW504oCZDQoNCj4g
-PiArCQlpZiAoIXN0cm5jbXAoYm5hbWUsIHZkc29fbmFtZXNbaV0sIHN0cmxlbih2ZHNvX25hbWVz
-W2ldKSkpDQo+IA0KPiBVc2Ugc3Ryc3RhcnRzKCkNCj4gDQpva2F5Lg0KDQo+ID4gKwkJCXJldHVy
-biB0cnVlOw0KPiA+ICsJfQ0KPiA+ICsJcmV0dXJuIGZhbHNlOw0KPiA+ICt9DQo+ID4gKw0KPiA+
-ICBzdGF0aWMgaW50IGJ1aWxkX2lkX2NhY2hlX19hZGRfZmlsZShjb25zdCBjaGFyICpmaWxlbmFt
-ZSwgc3RydWN0IG5zaW5mbyAqbnNpKQ0KPiA+ICB7DQo+ID4gIAljaGFyIHNidWlsZF9pZFtTQlVJ
-TERfSURfU0laRV07DQo+ID4gQEAgLTE4OSw3ICsyMTMsNyBAQCBzdGF0aWMgaW50IGJ1aWxkX2lk
-X2NhY2hlX19hZGRfZmlsZShjb25zdCBjaGFyICpmaWxlbmFtZSwgc3RydWN0IG5zaW5mbyAqbnNp
-KQ0KPiA+ICANCj4gPiAgCWJ1aWxkX2lkX19zcHJpbnRmKCZiaWQsIHNidWlsZF9pZCk7DQo+ID4g
-IAllcnIgPSBidWlsZF9pZF9jYWNoZV9fYWRkX3Moc2J1aWxkX2lkLCBmaWxlbmFtZSwgbnNpLA0K
-PiA+IC0JCQkJICAgIGZhbHNlLCBmYWxzZSk7DQo+ID4gKwkJCQkgICAgZmFsc2UsIGZpbGVuYW1l
-X2lzX3Zkc28oZmlsZW5hbWUpKTsNCj4gPiAgCXByX2RlYnVnKCJBZGRpbmcgJXMgJXM6ICVzXG4i
-LCBzYnVpbGRfaWQsIGZpbGVuYW1lLA0KPiA+ICAJCSBlcnIgPyAiRkFJTCIgOiAiT2siKTsNCj4g
-PiAgCXJldHVybiBlcnI7DQo+IA0KPiANCg0KLS0gDQpDaGVlcnMsDQpDaGFuZ2JpbiBEdQ0K
+Hi Laurent,
+
+On Thu, Sep 12, 2024 at 01:44:09PM +0300, Laurent Pinchart wrote:
+> Hi Tommaso,
+> 
+> On Tue, Sep 10, 2024 at 03:44:27PM +0200, Tommaso Merciai wrote:
+> > Controls can be exposed to userspace via a v4l-subdevX device, and
+> > userspace has to be able to subscribe to control events so that it is
+> > notified when the control changes value. Add missing HAS_EVENTS flag.
+> 
+> How is this supposed to work, given that the driver doesn't implement
+> .subscribe_event() ?
+
+You are completely right, sorry.
+I think in both cases I'm missing:
+
+diff --git a/drivers/media/i2c/max96714.c b/drivers/media/i2c/max96714.c
+index 94b1bc000e48..2257b6b807ea 100644
+--- a/drivers/media/i2c/max96714.c
++++ b/drivers/media/i2c/max96714.c
+@@ -17,6 +17,7 @@
+
+ #include <media/v4l2-cci.h>
+ #include <media/v4l2-ctrls.h>
++#include <media/v4l2-event.h>
+ #include <media/v4l2-fwnode.h>
+ #include <media/v4l2-subdev.h>
+
+@@ -488,6 +489,8 @@ static int max96714_log_status(struct v4l2_subdev *sd)
+
+ static const struct v4l2_subdev_core_ops max96714_subdev_core_ops = {
+        .log_status = max96714_log_status,
++       .subscribe_event = v4l2_ctrl_subdev_subscribe_event,
++       .unsubscribe_event = v4l2_event_subdev_unsubscribe,
+ };
+
+ static const struct v4l2_subdev_video_ops max96714_video_ops = {
+
+Like you suggest. Or I'm wrong?
+
+Thanks & Regards,
+Tommaso
+
+> 
+> > Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
+> > ---
+> >  drivers/media/i2c/max96714.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/media/i2c/max96714.c b/drivers/media/i2c/max96714.c
+> > index 159753b13777..94b1bc000e48 100644
+> > --- a/drivers/media/i2c/max96714.c
+> > +++ b/drivers/media/i2c/max96714.c
+> > @@ -602,7 +602,8 @@ static int max96714_create_subdev(struct max96714_priv *priv)
+> >  		goto err_free_ctrl;
+> >  	}
+> >  
+> > -	priv->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_STREAMS;
+> > +	priv->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
+> > +			  V4L2_SUBDEV_FL_HAS_EVENTS | V4L2_SUBDEV_FL_STREAMS;
+> >  	priv->sd.entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
+> >  	priv->sd.entity.ops = &max96714_entity_ops;
+> >  
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
 
