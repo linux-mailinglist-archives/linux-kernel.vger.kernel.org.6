@@ -1,116 +1,131 @@
-Return-Path: <linux-kernel+bounces-326406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0051D9767F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:33:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF0149767F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:34:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C5D4B23CC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:33:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FBA91F21337
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6939419599C;
-	Thu, 12 Sep 2024 11:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254E919E998;
+	Thu, 12 Sep 2024 11:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="a+bSlcPc"
-Received: from mail.avm.de (mail.avm.de [212.42.244.119])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HoRJBYLi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35BA1339BC;
-	Thu, 12 Sep 2024 11:33:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8170F224CF;
+	Thu, 12 Sep 2024 11:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726140825; cv=none; b=aywKes6Z1FWvYuhMXxtjDhLcXVbUetlEtAug6he5Qtqg2F9j5M05y4zAxFDQxskAr6hK5jr15vy/ydLrEJCaCe+ZMRyJ5M6iFUfkbVBfJRDKg+3W5Pd5MA/TCB37en7rjeORHv/XfoKewESY/FvH0eBc3HJNEOVTN1kqphe1nek=
+	t=1726140843; cv=none; b=M72pd2ESNGvBgvmHmR2BHXWC2Yv2I3eNjMiQrexh0obvhFZL3Mf7tRaGPTaNnKw7TMncypU3Fwla44+bV1weccwboJ/IlaOJHQB+NeJS978DD0GTzQkvHd+teEvWMfC7TDWIDKrRFoJlXgBXZ7WJoyozS+5p5YKg7IDOHwDYBbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726140825; c=relaxed/simple;
-	bh=0qyj5L1lY3J+eSYHvtfw7NpUKHPg++eN0xabTIOhBAc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g2h/Kvyosfzn3MCaC2GPrNzU1Bp8D18J6pbxSbatMkSttz8/6NmLKuyWMX/bJGrYTRRuZ3b2BKooRw1ZKfMkDa9BsCiyXhl6H5qt4WS0dNf6Fl/QV2/4h2VFn5wkAdN19TFQEMdQK9Mv56yk1cF4b6guL4kU6eNj+eYLqaz5xXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=a+bSlcPc; arc=none smtp.client-ip=212.42.244.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
-	t=1726140820; bh=0qyj5L1lY3J+eSYHvtfw7NpUKHPg++eN0xabTIOhBAc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=a+bSlcPcvguA1OteUakBVxlz5axiVCjjAWURY36WTof4YAA5nk84R4tZqAY+8ZsK4
-	 epgZL0saapGxzjaKhtmZO46IliYFqfBanmL0RsyvqfZoFZIxfOfkQU/aYfmeLTekYn
-	 HtNRSm7rIV2fnqGwAMxZHcXeiF8WkEOKBVKVDXwg=
-Received: from mail-auth.avm.de (dovecot-mx-01.avm.de [212.42.244.71])
-	by mail.avm.de (Postfix) with ESMTPS;
-	Thu, 12 Sep 2024 13:33:40 +0200 (CEST)
-Message-ID: <9b245c1e-997a-4224-a819-3a3f1aee8b3f@avm.de>
-Date: Thu, 12 Sep 2024 13:33:39 +0200
+	s=arc-20240116; t=1726140843; c=relaxed/simple;
+	bh=E9iWqBBsKTyRQym7PTkz8rCTACYBy/adJ1/ujdivEY8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o1I/plSLeLJ/+8DV7jcCUJBEQf9BDNePzIE7r7x6GHXdCkytgdz15fUX2aP9rASMiWH0FoTqkHQJCND+5qU9Qc5eQyqZ1SNiDdwCCHmmA8hWXuZDVA1mowXM0xnhzk3+kefqb1ZemCZri3lyCnCwlAHXFri3N7+bXAPhe0PzV7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HoRJBYLi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F256CC4CEC4;
+	Thu, 12 Sep 2024 11:34:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726140843;
+	bh=E9iWqBBsKTyRQym7PTkz8rCTACYBy/adJ1/ujdivEY8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=HoRJBYLiu7K+eHj7RRisbR6FjTkMq9cGHxDy1AuA5y1EL7+hY0xN3DGyd+FDmAjpM
+	 /1/QLwi4OJ1SoVocvc9gkNtqXMxMiKSvsY1pxKi8vwmBfFO6kjlG3LTOHC/9EzWVue
+	 cRXNZTEvLVjINYfJTF3LE0siCVjQNwKR6S2NK2lRfJfXA4/Fald9aPPqX7s2tvhksb
+	 4OP6OEe7M84Z76+/Mw64mCFMUrhCzpIz7EZ1xc1ByOhih5+LPKA1LrHYyzYEHSue+4
+	 ufdo3IrdWFDzC8YSqd1ej7JzIdZ+DH6T+j+NVRrchq47BVIlKNYGuZpqINIsrbZV4A
+	 FxIQLwWqprP7w==
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-278279a3a39so395126fac.0;
+        Thu, 12 Sep 2024 04:34:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUvkOamygL5k+vDQn55yDggaaQ1m+QSeDzlMQw6mV4lhWwIEVXVGfVIlkgtpzVFlutrZuO7364r6K4=@vger.kernel.org, AJvYcCXxAO+FAWE7AK0G8/O/R9cFsAwALMvg7qn+CAbuFUXQ4j/jqnS0CAfEux59QbDcFTaUREAfmHoOZg9o1ok=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPHYW6O6lvpkdfKFENVdUvqPdlc78DAO4ifUtHpbKovu9EkWLt
+	jnigoqn+96YBgRB9MOpoSjLgKDc9VmT1OHZ0ztvLBdXQIOnVf3Ld2voTqbMrQAovDvfAEZZYNbv
+	vjrfm27T3CsA4C7rZve/MpRclPb4=
+X-Google-Smtp-Source: AGHT+IGRI15b2rce7iEfqbVp0JwmRC0WFhUwAfzhbjaOLB/cliqAZLEZieIAOu1ofedCQ/CSE2p3+DvqzwgdAFolR1A=
+X-Received: by 2002:a05:6870:71c5:b0:277:f399:705b with SMTP id
+ 586e51a60fabf-27c3f0ede91mr1339323fac.1.1726140842301; Thu, 12 Sep 2024
+ 04:34:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH RFC] net: bridge: drop packets with a local source
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Roopa Prabhu <roopa@nvidia.com>, Nikolay Aleksandrov
- <razor@blackwall.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, jnixdorf-oss@avm.de,
- bridge@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240911125820.471469-1-tmartitz-oss@avm.de>
- <210e3e45-21b3-4cbe-9372-297f32cf6967@lunn.ch>
-Content-Language: de-DE, en-US
-From: tmartitz-oss <tmartitz-oss@avm.de>
-In-Reply-To: <210e3e45-21b3-4cbe-9372-297f32cf6967@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-purgate-ID: 149429::1726140820-E259D885-C8B33756/0/0
-X-purgate-type: clean
-X-purgate-size: 1746
-X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
-X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
-X-purgate: clean
+References: <20240728184551.42133-1-qyousef@layalina.io> <6e4a4605-f6c5-4948-ac38-c4ddf4990754@arm.com>
+In-Reply-To: <6e4a4605-f6c5-4948-ac38-c4ddf4990754@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 12 Sep 2024 13:33:50 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ieB4hppC8fHnjhNNpfFZzEL4Y96irSTmCmavXCid2xtA@mail.gmail.com>
+Message-ID: <CAJZ5v0ieB4hppC8fHnjhNNpfFZzEL4Y96irSTmCmavXCid2xtA@mail.gmail.com>
+Subject: Re: [PATCH v7] sched: Consolidate cpufreq updates
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: Qais Yousef <qyousef@layalina.io>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Ingo Molnar <mingo@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, 
+	Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, 
+	Hongyan Xia <hongyan.xia2@arm.com>, John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Andrew,
-
-Am 11.09.24 um 18:33 schrieb Andrew Lunn:
-> On Wed, Sep 11, 2024 at 02:58:17PM +0200, Thomas Martitz wrote:
->> Currently, there is only a warning if a packet enters the bridge
->> that has the bridge's or one port's MAC address as source.
->>
->> Clearly this indicates a network loop (or even spoofing) so we
->> generally do not want to process the packet. Therefore, move the check
->> already done for 802.1x scenarios up and do it unconditionally.
-> Does 802.1d say anything about this?
+On Wed, Sep 11, 2024 at 10:34=E2=80=AFPM Christian Loehle
+<christian.loehle@arm.com> wrote:
 >
-> Quoting the standard gives you a strong case for getting the patch
-> merged.
+> On 7/28/24 19:45, Qais Yousef wrote:
+> > Improve the interaction with cpufreq governors by making the
+> > cpufreq_update_util() calls more intentional.
+> >
+> > At the moment we send them when load is updated for CFS, bandwidth for
+> > DL and at enqueue/dequeue for RT. But this can lead to too many updates
+> > sent in a short period of time and potentially be ignored at a critical
+> > moment due to the rate_limit_us in schedutil.
+> >
+> > For example, simultaneous task enqueue on the CPU where 2nd task is
+> > bigger and requires higher freq. The trigger to cpufreq_update_util() b=
+y
+> > the first task will lead to dropping the 2nd request until tick. Or
+> > another CPU in the same policy triggers a freq update shortly after.
+> >
+> > Updates at enqueue for RT are not strictly required. Though they do hel=
+p
+> > to reduce the delay for switching the frequency and the potential
+> > observation of lower frequency during this delay. But current logic
+> > doesn't intentionally (at least to my understanding) try to speed up th=
+e
+> > request.
+> >
+> > To help reduce the amount of cpufreq updates and make them more
+> > purposeful, consolidate them into these locations:
+> >
+> > 1. context_switch()
+> > 2. task_tick_fair()
+> > 3. sched_balance_update_blocked_averages()
+> > 4. on sched_setscheduler() syscall that changes policy or uclamp values
+> > 5. on check_preempt_wakeup_fair() if wakeup preemption failed
+> > 6. on __add_running_bw() to guarantee DL bandwidth requirements.
+> >
+>
+> Actually now reading that code again reminded me, there is another
+> iowait boost change for intel_pstate.
+> intel_pstate has either intel_pstate_update_util() or
+> intel_pstate_update_util_hwp().
+> Both have
+>         if (smp_processor_id() !=3D cpu->cpu)
+>                 return;
+> Now since we move that update from enqueue to context_switch() that will
+> always be false.
+> I don't think that was deliberate but rather to simplify intel_pstate
+> synchronization, although !mcq device IO won't be boosted which you
+> could argue is good.
+> Just wanted to mention that, doesn't have to be a bad, but surely some
+> behavior change.
 
-I have 802.1q, the successor to 802.1d, at hand. It's a large document 
-and I haven't read
-all the details yet. From a coarse reading I get the impression that a 
-bridge entity could
-chose to filter such frames (based on "Filter Database" information 
-which translates to our
-BR_FDB_LOCAL flag), or forward to potential ports.
-
-If we say we still want to forward these frames, that would probably be 
-OK. The main
-purpose of the patch is to avoid local processing of IGMP and other 
-stuff. So at a minimum
-we must avoid passing the frame up the stack and IGMP/MLD snooping code 
-in addition
-to the current handling (which is limited to avoiding to update the FDB).
-
-However, I have a hard time to imagine legitimate cases of forwarding a 
-frame again
-that we obviously send out earlier. This is not helpful to our overall 
-goal to stop storms when
-customers manage to make loops in their networks (remember that we build 
-routers
-for end-user homes and loops are a constant source of problem reports).
-
-Dropping on ingress is, in my opinion, also the better response to MAC 
-spoofers on the network.
-
-Best regards.
-
-
+This particular change shouldn't be problematic.
 
