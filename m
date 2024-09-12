@@ -1,149 +1,121 @@
-Return-Path: <linux-kernel+bounces-326155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 752D2976405
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:07:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7810976352
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F055AB212F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:07:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17B26B214D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF2C19048C;
-	Thu, 12 Sep 2024 08:06:27 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFBC018DF9B;
+	Thu, 12 Sep 2024 07:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KEKAb3O6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1AA189B88
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E7D15C3;
+	Thu, 12 Sep 2024 07:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726128386; cv=none; b=ZoOwApA/+CWJm1ppAj0MCjbJUo0E5YSKF5pBwDsbxXp6HoTY46R5bLssgeF9CURtKkvwUuc/Z5G4MQfplHFDxDOcCb5l0ooo9c7tAizOKkqiVu3gii45UYk1WCEu5kJp7DBvQ6TxiAG0I7iHnMK7rU1VUm6AaGq1RT7tjFibrTQ=
+	t=1726127388; cv=none; b=NuqZW/nlTGjKDk+2nVeKtiW59dhunJCG34yTnYqRqDPufEfsQdEcLD9s9Rr3Z00pKjt0f3FIydppj/PAUxmS4P2hm1t4QfsYo+rYbwiB1TYxSzJ0j2/usqDvtwtF9v6nlgVfVd41VjGnY5+dQi2DbUFqF6A7d3E/noYtabftkaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726128386; c=relaxed/simple;
-	bh=P0QW3eUui3jH3ahZzJIfEnfBUeffglKNHp4BLtQwZgg=;
+	s=arc-20240116; t=1726127388; c=relaxed/simple;
+	bh=4cfUrNrNQI0pGpRJ4Z3iwcyQuYqTrPywWDtjicOzygg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u1wFnAao9mnTxfTVectpsiGXZSiZXH/X8tpltBjaqhuYpeu0jAEQODdNBErnruDu6RXVuBob0dYvuDY674C5LFD0NO0YxSZfuJWJoC5ldBJGFHBDeddviEddHEQrJbXDTsaI2CroiJyfHJvqP67Ur1D/ArMG6kQOnoe3KjrO/1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1soeq9-00048c-53; Thu, 12 Sep 2024 10:06:09 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1soeq6-007Kg6-Qh; Thu, 12 Sep 2024 10:06:06 +0200
-Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 44E80338DE4;
-	Thu, 12 Sep 2024 07:45:05 +0000 (UTC)
-Date: Thu, 12 Sep 2024 09:45:05 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Jake Hamby <Jake.Hamby@teledyne.com>, 
-	Chandrasekar Ramakrishnan <rcsekar@samsung.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Dong Aisheng <b29396@freescale.com>, Varka Bhadram <varkabhadram@gmail.com>
-Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH can v3 1/2] can: m_can: enable NAPI before enabling
- interrupts
-Message-ID: <20240912-ingenious-ruddy-deer-327fdb-mkl@pengutronix.de>
-References: <20240910-can-m_can-fix-ifup-v3-0-6c1720ba45ce@pengutronix.de>
- <20240910-can-m_can-fix-ifup-v3-1-6c1720ba45ce@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y2eHrD+aTzdk/vqAWKIshV0NPo10c5/4elPd3nDmjChTMOjxeGPOvOTXxAb//xyYMTA5C2Zb/0a6rjwNwCcUSC09nGq4rBsshhzgmRbXbfPRxg2Wx+yLhflILIeXUHivGtg5pYJzfbAEIxtyPYZPZNPOxzgod73eSD2XWAqdYsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KEKAb3O6; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726127387; x=1757663387;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=4cfUrNrNQI0pGpRJ4Z3iwcyQuYqTrPywWDtjicOzygg=;
+  b=KEKAb3O6YCiH525ix+Jr16ciu0e68tV5CD5HCPN5fCg53fZ5u05UrZmw
+   2rbxS1/Vakjp2vusHrroyF7ze2CJK9kvYX6gClp2vsOtjnNxHIf6548p7
+   QeOBFFS7kL8FvLOVd1wTEORu+y6CdizVS2EPXo+UfzDml4Jp9l8G5cZ3P
+   yQpqJ6A8Uu3/9ujtM8h9zAqVYXqs+r9kwVJWom9C2phQ//kTT0oRorS9P
+   eXkihSlQwNtVR9gqOXTJpFbZk+BdT53eusE6uEpwJyO+IiIGTa66Jx1qp
+   kN+pb1vlEaxYWyta3+0K8LwwG7jCvytKDTjBP1FJ315Q1cWF11iHI480E
+   A==;
+X-CSE-ConnectionGUID: Oo5M4cAjRD2FvSeOabcVKQ==
+X-CSE-MsgGUID: PWlM+hJwR52u1hPO5EOeLQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="36103241"
+X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
+   d="scan'208";a="36103241"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 00:49:46 -0700
+X-CSE-ConnectionGUID: eKc6OE1+TgyhYuEBPSCeQw==
+X-CSE-MsgGUID: UbolNsVqR/mYPtpOlu9PrQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
+   d="scan'208";a="67684250"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa008.fm.intel.com with ESMTP; 12 Sep 2024 00:49:43 -0700
+Date: Thu, 12 Sep 2024 15:47:01 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"Huang, Kai" <kai.huang@intel.com>,
+	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
+	"Zhao, Yan Y" <yan.y.zhao@intel.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"nik.borisov@suse.com" <nik.borisov@suse.com>,
+	"dmatlack@google.com" <dmatlack@google.com>
+Subject: Re: [PATCH 13/21] KVM: TDX: Handle TLB tracking for TDX
+Message-ID: <ZuKcdbXO7ImQJqbm@yilunxu-OptiPlex-7050>
+References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
+ <20240904030751.117579-14-rick.p.edgecombe@intel.com>
+ <ZuE38n/yhI24vS20@yilunxu-OptiPlex-7050>
+ <6b9671bfdc7f1e8dab0ede65fa7c7e76f0358a06.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="o53ahiqpbfpfpvdc"
-Content-Disposition: inline
-In-Reply-To: <20240910-can-m_can-fix-ifup-v3-1-6c1720ba45ce@pengutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
-
-
---o53ahiqpbfpfpvdc
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6b9671bfdc7f1e8dab0ede65fa7c7e76f0358a06.camel@intel.com>
 
-On 10.09.2024 19:15:28, Marc Kleine-Budde wrote:
-> From: Jake Hamby <Jake.Hamby@Teledyne.com>
->=20
-> If an interrupt (RX-complete or error flag) is set when bringing up
-> the CAN device, e.g. due to CAN bus traffic before initializing the
-> device, when m_can_start() is called and interrupts are enabled,
-> m_can_isr() is called immediately, which disables all CAN interrupts
-> and calls napi_schedule().
->=20
-> Because napi_enable() isn't called until later in m_can_open(), the
-> call to napi_schedule() never schedules the m_can_poll() callback and
-> the device is left with interrupts disabled and can't receive any CAN
-> packets until rebooted.
->=20
-> This can be verified by running "cansend" from another device before
-> setting the bitrate and calling "ip link set up can0" on the test
-> device. Adding debug lines to m_can_isr() shows it's called with flags
-> (IR_EP | IR_EW | IR_CRCE), which calls m_can_disable_all_interrupts()
-> and napi_schedule(), and then m_can_poll() is never called.
->=20
-> Move the call to napi_enable() above the call to m_can_start() to
-> enable any initial interrupt flags to be handled by m_can_poll() so
-> that interrupts are reenabled. Add a call to napi_disable() in the
-> error handling section of m_can_open(), to handle the case where later
-> functions return errors.
->=20
-> Also, in m_can_close(), move the call to napi_disable() below the call
-> to m_can_stop() to ensure all interrupts are handled when bringing
-> down the device. This race condition is much less likely to occur.
->=20
-> Tested on a Microchip SAMA7G54 MPU. The fix should be applicable to
-> any SoC with a Bosch M_CAN controller.
->=20
-> Signed-off-by: Jake Hamby <Jake.Hamby@Teledyne.com>
-> Fixes: e0d1f4816f2a ("can: m_can: add Bosch M_CAN controller support")
-> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+On Wed, Sep 11, 2024 at 05:28:18PM +0000, Edgecombe, Rick P wrote:
+> On Wed, 2024-09-11 at 14:25 +0800, Xu Yilun wrote:
+> > > +static void vt_flush_tlb_all(struct kvm_vcpu *vcpu)
+> > > +{
+> > > +       /*
+> > > +        * TDX calls tdx_track() in tdx_sept_remove_private_spte() to ensure
+> > > +        * private EPT will be flushed on the next TD enter.
+> > > +        * No need to call tdx_track() here again even when this callback is
+> > > as
+> > > +        * a result of zapping private EPT.
+> > > +        * Just invoke invept() directly here to work for both shared EPT
+> > > and
+> > > +        * private EPT.
+> > 
+> > IIUC, private EPT is already flushed in .remove_private_spte(), so in
+> > theory we don't have to invept() for private EPT?
+> 
+> I think you are talking about the comment, and not an optimization. So changing:
 
-Tested successfully on a stm32mp1.
+Yes, just the comment.
 
-Tested-by: Marc Kleine-Budde <mkl@pengutronix.de>
+> "Just invoke invept() directly here to work for both shared EPT and private EPT"
+> to just "Just invoke invept() directly here to work for shared EPT".
 
-regards,
-Mar
-c
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+Maybe also remind invept() is redundant for private EPT in some cases,
+but we implement like this for simplicity.
 
---o53ahiqpbfpfpvdc
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
+Yilun
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmbim/4ACgkQKDiiPnot
-vG+eqgf/Y278Mm2VhmA92JQSpeHGcr4HsaZMY8T8Hb9gCZDC6NMNbz8bSt8Fquaj
-NxF8TRlPaTHn5HJSGklvy1IOm3ZMqt9qdqBVDZzK9+zFdQEk5AusVm0PUzUA8ykB
-wpSan5ztoT+a5CQilB/YVSyLOxma2AEV9pDrfaq2YtWexRTRPkJ6BvmfW7lOmtu/
-SqGIjjCfVo5UwcTBJR5qb6bd3VUcr0ftewKRa3RHcYJ7do7vTCabK9EOFz3DvKky
-EsDfbVRXTWdiR17QcsXkiESzuP5iWAqh1jajKivZLeo1Qsj9d7ijb3skznNruxF5
-5yCaDZN0lEHJHRb43HGKFhCvEFiSDQ==
-=yeUS
------END PGP SIGNATURE-----
-
---o53ahiqpbfpfpvdc--
+> 
+> Seems good to me.
 
