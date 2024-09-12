@@ -1,200 +1,120 @@
-Return-Path: <linux-kernel+bounces-327316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD61697741C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:10:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EC3497741F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:11:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F95F1C24171
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:10:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 184A928653A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92EE01C2432;
-	Thu, 12 Sep 2024 22:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21C71C244B;
+	Thu, 12 Sep 2024 22:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="The2V6he"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b="ZUhlgfLi"
+Received: from mail.flyingcircus.io (mail.flyingcircus.io [212.122.41.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81FA192B96;
-	Thu, 12 Sep 2024 22:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0C5192D89;
+	Thu, 12 Sep 2024 22:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.122.41.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726179047; cv=none; b=GayvuQZF4LYXRxOcglianceN1DGBg5T9IE3uSxYy9B+vs20/mBz+RsEzz4tZCVl4vyr/y/1diiPcCKWIcuTuGecmYa20x6kKLf7Lrf5GER70uWDDyHVZXdzGtmrOD+zlaL4OMSQ91FScn5+xP5MpufUxBzo1yc89yGYX7IT6UEQ=
+	t=1726179101; cv=none; b=pe1kOkubBLpS7sqtP96UZR4pKzbgE691tqdGw6yUElax+40n1PDAXceSBeclCusMEahrcV/UPXhRaIWseL9ZR58M+hLIDoNZ9CDk2iFbYG1v/FxgAf8idUkYMbppXcIn1HNrqgpUEfMw5RXCwg0wPKZGG5hrjpObQ4Tq4AqLFpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726179047; c=relaxed/simple;
-	bh=mEDHQ5nWdcgdLUwd9qLHksx71AmMq8JsmHTzNaVTjjM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=TlnvNHDPFlekPP4WtYf4RjYck/msXjiR/7ellQ4e9O7NhLwNicWn9b0RfCgbNbbla2EWeTWZi2Oe62JAvuHyvkc/x7hLmjrkMm8XwTZqrOyEgvUp/nynP3Wy6M76wyqt3RCe6ZkhqHXJ1Kexq0VVXFc4GaghQVwR5UN2Ayra7S8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=The2V6he; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40EA5C4CEC3;
-	Thu, 12 Sep 2024 22:10:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726179046;
-	bh=mEDHQ5nWdcgdLUwd9qLHksx71AmMq8JsmHTzNaVTjjM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=The2V6he5yYQCB7bVDPRImCupIklcLBCAK+RStsUpOFQb0KBzYLBNZ3vqtOlerWk9
-	 RIxBwKoJNmg9j8mIg376Wpf46FU+t9vZrisPdJ2Y70x5RLpnsthk/Qib0N618KB4M4
-	 EEf4JYV+TARUDXfe8dCgAsoh/4AUyCoPDJmbNAFpWSbpFVVGHYvzAfuy0IcfvY75Xa
-	 j4DLGmX28Pck6dS5G+0xcK80oYCvogsrmKC4CiNt/tnQef2WOa1mf+HZ0EEcEt81bM
-	 qwyNNB/QfMOZKlExEw3vGVE8F1KT967yFVdBwBXbDRTwWU3Etkep7fZR9uY+HBT21B
-	 rwesOjNvXAqXw==
-Received: by pali.im (Postfix)
-	id BC4425E9; Fri, 13 Sep 2024 00:10:41 +0200 (CEST)
-From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>
-Cc: linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] nfsd: Fill NFSv4.1 server implementation fields in OP_EXCHANGE_ID response
-Date: Fri, 13 Sep 2024 00:09:19 +0200
-Message-Id: <20240912220919.23449-1-pali@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1726179101; c=relaxed/simple;
+	bh=C5b5MUBnTW6H84A4QG+IYJbRrb6slOh/4Ly8FZoKsBw=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=H/fpLiLRPFJ/9RRg/veQEDiPT40DNJlEaIAd9LAJdBtK29yPZeb8D413oLkfh4SRC8+Xu0lFLqPsjZdGwz5R0RgQe144pNkoYob8CGFCjURvekpewDA4Nz16A+rIbbx2zzs+c3UEMfLbLmN9qrD1v2Ku1zXM4Hl07duknXXrmnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io; spf=pass smtp.mailfrom=flyingcircus.io; dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b=ZUhlgfLi; arc=none smtp.client-ip=212.122.41.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flyingcircus.io
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flyingcircus.io;
+	s=mail; t=1726179095;
+	bh=tLufAUa9Md3zA7yO5hhrLcww1PKNnR1dzXzgw8FRsVc=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To;
+	b=ZUhlgfLiJpi0EFJgc0SJooISs/ObkWUgF4bWjtliLY/eQwfcidnzLTtYC97UwswbH
+	 gvwvbrgkLKqVaCRv7OPQp4NZa7qonpQOAsiWDmRdMa1ouRIDRTgDpI4z6LME7S7A1g
+	 +kipp5bA686f6PsXwaQDfcGM2C1gwIACJeSzL/s4=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+From: Christian Theune <ct@flyingcircus.io>
+In-Reply-To: <ZuNjNNmrDPVsVK03@casper.infradead.org>
+Date: Fri, 13 Sep 2024 00:11:14 +0200
+Cc: linux-mm@kvack.org,
+ "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+ linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org,
+ axboe@kernel.dk,
+ Daniel Dao <dqminh@cloudflare.com>,
+ Dave Chinner <david@fromorbit.com>,
+ clm@meta.com,
+ regressions@lists.linux.dev,
+ regressions@leemhuis.info
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <969BEE75-323B-4331-8E09-60AA3E662EC6@flyingcircus.io>
+References: <A5A976CB-DB57-4513-A700-656580488AB6@flyingcircus.io>
+ <ZuNjNNmrDPVsVK03@casper.infradead.org>
+To: Matthew Wilcox <willy@infradead.org>
 
-NFSv4.1 OP_EXCHANGE_ID response from server may contain server
-implementation details (domain, name and build time) in optional
-nfs_impl_id4 field. Currently nfsd does not fill this field.
+Hi Matthew,
 
-NFSv4.1 OP_EXCHANGE_ID call request from client may contain client
-implementation details and Linux NFSv4.1 client is already filling these
-information based on runtime module param "nfs.send_implementation_id" and
-build time Kconfig option "NFS_V4_1_IMPLEMENTATION_ID_DOMAIN". Module param
-send_implementation_id specify whether to fill implementation fields and
-Kconfig option "NFS_V4_1_IMPLEMENTATION_ID_DOMAIN" specify the domain
-string.
+> On 12. Sep 2024, at 23:55, Matthew Wilcox <willy@infradead.org> wrote:
+>=20
+> On Thu, Sep 12, 2024 at 11:18:34PM +0200, Christian Theune wrote:
+>> This bug is very hard to reproduce but has been known to exist as a
+>> =E2=80=9Cfluke=E2=80=9D for a while already. I have invested a number =
+of days trying
+>> to come up with workloads to trigger it quicker than that stochastic
+>> =E2=80=9Conce every few weeks in a fleet of 1.5k machines", but it =
+eludes
+>> me so far. I know that this also affects Facebook/Meta as well as
+>> Cloudflare who are both running newer kernels (at least 6.1, 6.6,
+>> and 6.9) with the above mentioned patch reverted. I=E2=80=99m from a =
+much
+>> smaller company and seeing that those guys are running with this =
+patch
+>> reverted (that now makes their kernel basically an =
+untested/unsupported
+>> deviation from the mainline) smells like desparation. I=E2=80=99m =
+with a
+>> much smaller team and company and I=E2=80=99m wondering why this =
+isn=E2=80=99t
+>> tackled more urgently from more hands to make it shallow (hopefully).
+>=20
+> This passive-aggressive nonsense is deeply aggravating.  I've known
+> about this bug for much longer, but like you I am utterly unable to
+> reproduce it.  I've spent months looking for the bug, and I cannot.
 
-Do same in nfsd, introduce new runtime param "nfsd.send_implementation_id"
-and build time Kconfig option "NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN" and
-based on them fill NFSv4.1 server implementation details in OP_EXCHANGE_ID
-response. Logic in nfsd is exactly same as in nfs.
+I=E2=80=99m sorry. I=E2=80=99ve honestly tried my best to not make this =
+message personally injuring to anybody involved while trying to also =
+communicate the seriousness of this issue that we=E2=80=99re stuck with. =
+Apparently I failed.=20
 
-This aligns Linux NFSv4.1 server logic with Linux NFSv4.1 client logic.
+As I=E2=80=99m not a kernel developer I tried to stick to describing the =
+issue and am not sure what strategies would typically need to be applied =
+when individual efforts fail.=20
 
-NFSv4.1 client and server implementation fields are useful for statistic
-purposes or for identifying type of clients and servers.
+I=E2=80=99m not sure why it=E2=80=99s nonsense, though.
 
-Signed-off-by: Pali Rohár <pali@kernel.org>
----
- fs/nfsd/Kconfig   | 12 +++++++++++
- fs/nfsd/nfs4xdr.c | 55 +++++++++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 65 insertions(+), 2 deletions(-)
+Liebe Gr=C3=BC=C3=9Fe,
+Christian Theune
 
-diff --git a/fs/nfsd/Kconfig b/fs/nfsd/Kconfig
-index ec2ab6429e00..70067c29316e 100644
---- a/fs/nfsd/Kconfig
-+++ b/fs/nfsd/Kconfig
-@@ -136,6 +136,18 @@ config NFSD_FLEXFILELAYOUT
- 
- 	  If unsure, say N.
- 
-+config NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN
-+	string "NFSv4.1 Implementation ID Domain"
-+	depends on NFSD_V4
-+	default "kernel.org"
-+	help
-+	  This option defines the domain portion of the implementation ID that
-+	  may be sent in the NFS exchange_id operation.  The value must be in
-+	  the format of a DNS domain name and should be set to the DNS domain
-+	  name of the distribution.
-+	  If the NFS server is unchanged from the upstream kernel, this
-+	  option should be set to the default "kernel.org".
-+
- config NFSD_V4_2_INTER_SSC
- 	bool "NFSv4.2 inter server to server COPY"
- 	depends on NFSD_V4 && NFS_V4_2
-diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-index b45ea5757652..5e89f999d4c7 100644
---- a/fs/nfsd/nfs4xdr.c
-+++ b/fs/nfsd/nfs4xdr.c
-@@ -62,6 +62,9 @@
- #include <linux/security.h>
- #endif
- 
-+static bool send_implementation_id = true;
-+module_param(send_implementation_id, bool, 0644);
-+MODULE_PARM_DESC(send_implementation_id, "Send implementation ID with NFSv4.1 exchange_id");
- 
- #define NFSDDBG_FACILITY		NFSDDBG_XDR
- 
-@@ -4833,6 +4836,53 @@ nfsd4_encode_server_owner4(struct xdr_stream *xdr, struct svc_rqst *rqstp)
- 	return nfsd4_encode_opaque(xdr, nn->nfsd_name, strlen(nn->nfsd_name));
- }
- 
-+#define IMPL_NAME_LIMIT (sizeof(utsname()->sysname) + sizeof(utsname()->release) + \
-+			 sizeof(utsname()->version) + sizeof(utsname()->machine) + 8)
-+
-+static __be32
-+nfsd4_encode_server_impl_id(struct xdr_stream *xdr)
-+{
-+	char impl_name[IMPL_NAME_LIMIT];
-+	int impl_name_len;
-+	__be32 *p;
-+
-+	impl_name_len = 0;
-+	if (send_implementation_id &&
-+	    sizeof(CONFIG_NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN) > 1 &&
-+	    sizeof(CONFIG_NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN) <= NFS4_OPAQUE_LIMIT)
-+		impl_name_len = snprintf(impl_name, sizeof(impl_name), "%s %s %s %s",
-+			       utsname()->sysname, utsname()->release,
-+			       utsname()->version, utsname()->machine);
-+
-+	if (impl_name_len <= 0) {
-+		if (xdr_stream_encode_u32(xdr, 0) != XDR_UNIT)
-+			return nfserr_resource;
-+		return nfs_ok;
-+	}
-+
-+	if (xdr_stream_encode_u32(xdr, 1) != XDR_UNIT)
-+		return nfserr_resource;
-+
-+	p = xdr_reserve_space(xdr,
-+		4 /* nii_domain.len */ +
-+		(XDR_QUADLEN(sizeof(CONFIG_NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN) - 1) * 4) +
-+		4 /* nii_name.len */ +
-+		(XDR_QUADLEN(impl_name_len) * 4) +
-+		8 /* nii_time.tv_sec */ +
-+		4 /* nii_time.tv_nsec */);
-+	if (!p)
-+		return nfserr_resource;
-+
-+	p = xdr_encode_opaque(p, CONFIG_NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN,
-+				sizeof(CONFIG_NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN) - 1);
-+	p = xdr_encode_opaque(p, impl_name, impl_name_len);
-+	/* just send zeros for nii_date - the date is in nii_name */
-+	p = xdr_encode_hyper(p, 0); /* tv_sec */
-+	*p++ = cpu_to_be32(0); /* tv_nsec */
-+
-+	return nfs_ok;
-+}
-+
- static __be32
- nfsd4_encode_exchange_id(struct nfsd4_compoundres *resp, __be32 nfserr,
- 			 union nfsd4_op_u *u)
-@@ -4867,8 +4917,9 @@ nfsd4_encode_exchange_id(struct nfsd4_compoundres *resp, __be32 nfserr,
- 	if (nfserr != nfs_ok)
- 		return nfserr;
- 	/* eir_server_impl_id<1> */
--	if (xdr_stream_encode_u32(xdr, 0) != XDR_UNIT)
--		return nfserr_resource;
-+	nfserr = nfsd4_encode_server_impl_id(xdr);
-+	if (nfserr != nfs_ok)
-+		return nfserr;
- 
- 	return nfs_ok;
- }
--- 
-2.20.1
+--=20
+Christian Theune =C2=B7 ct@flyingcircus.io =C2=B7 +49 345 219401 0
+Flying Circus Internet Operations GmbH =C2=B7 https://flyingcircus.io
+Leipziger Str. 70/71 =C2=B7 06108 Halle (Saale) =C2=B7 Deutschland
+HR Stendal HRB 21169 =C2=B7 Gesch=C3=A4ftsf=C3=BChrer: Christian Theune, =
+Christian Zagrodnick
 
 
