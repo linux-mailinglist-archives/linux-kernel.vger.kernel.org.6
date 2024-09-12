@@ -1,141 +1,213 @@
-Return-Path: <linux-kernel+bounces-327364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C16E69774A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:01:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5B6F9774A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:01:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69B061F25322
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:01:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A52DA28445F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1E31C243E;
-	Thu, 12 Sep 2024 23:01:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A2219E98B;
+	Thu, 12 Sep 2024 23:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IcmrkDC+"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="BJgTVTJG"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABEE49654;
-	Thu, 12 Sep 2024 23:01:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8279049654
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 23:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726182089; cv=none; b=hPHqN0477HCuBfj7eiW1WhAd/0t6kVJQvFlNRzos4HTEr/ASVD3s4uqOw7e3vnsmaWFPKAqExDpnda1xFRByRwAhxWurtsjSYAT/d8T5T1EtuQzWvQl3mQii4FZwh7bbkrgC6JyyBD0q2rrYmELZpxvJlWesz4cOKWmvnWyumwQ=
+	t=1726182100; cv=none; b=YRrIEmSUkiSd/FsBtSDJI2WYPfdvQ8TeMaq3r9F5wSzq1iE3ch03GCAB3AUFXqoK37xxdT+m0f2Hj4dv2xxXZ+c02Z8FTXp765hmbhmpToCsgaio5SciwGZjrD5ypU/ptKCzCmd9BunO6H8jMriT5kaebMfr0/79k8eTvcEslaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726182089; c=relaxed/simple;
-	bh=1RRhyzzot8M+OzmNpGIM6ngou92I+qH69yeps2lCQVU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UtlhFY5sfKjF8ERdj3DL6ZP/kRLlaZt3lB7VB98tT8s+UfF7D7cfhzSH87cWFGYe0+hU7yID4pz0m43/LfCS610DvshXHMusU3nxkByD7Vf+0SPakrOyf6pJkhl2zX6CtLHAwYE+3V7bSR0Cc59pGnEmrY4nueROLWTL9dmBfgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IcmrkDC+; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2d8815ef6d2so1268018a91.0;
-        Thu, 12 Sep 2024 16:01:27 -0700 (PDT)
+	s=arc-20240116; t=1726182100; c=relaxed/simple;
+	bh=IawwxT8RgkovRSNlbIXTBn8jyM3A45DJni2eOsvVrkg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P1hiSNtCSK0cVWEEpaRm/sCoXCC8foGUXmgLQeFo9a/kIwUCe5EqA22r9SxzGaK67+x+XrCMbjTIDn3BCazbtqNA3ENHIBRaaf22x/0kM5PF31NNYV9rnjU4WMI84tQ9tIrY3VYd3KWgLg8eOuZAhMRF0ge6FH6/qFSfF1p78dU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=BJgTVTJG; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71790ed8c2dso1263440b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 16:01:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726182087; x=1726786887; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tuq/qwh3p/xqQg6vD3Gwn7KcfnrMZ+zcgC0C8gCmIbY=;
-        b=IcmrkDC+Fc/JLBNqL+bUu4meRvKIZzYY2fjerGnicaq8s1RtIigioTdxiSoUUc+sOV
-         KAEsOuNjdk6PtHS1S2Zdc1WkufJq/eERiQSuQkyiUx8aTwaX0V+lEZfDJtJWQiH/+cMX
-         h+9weQYUjeEdseG0XN/nN1qjEcvK6kTvhFFi1Y4JTggfD/yKJ3OxcfuzcadakFtwaCgY
-         E7Ht48ph/st/uo909kLlwD7BOOTkGtjuquTpeyynDtV+4DRsgDDQGVJNyZqMgcIdPIkT
-         U/wN00t1dlAAOt4tmnyxlgD/j70FrnWX5exvAMa0K9EzYb3m2or2gc5qldOIzDUAXZmm
-         xxCQ==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1726182098; x=1726786898; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gXcV8jbFts4t9XD/hggH3giDaMs3zJsjMShL2Y10OZY=;
+        b=BJgTVTJGyvtDPWi0F17HfrvAUasrsmvmWpNDzSBrc5vcPy7oswY9DDHFR/IeQUN1bF
+         GtoAw9zc801EP8IOA58RHMwVOvJ6WFWTXrptfuh6Yg+hNXFLt5ldbNasnHwP0IwqIeWt
+         +DWllp3jepCbLGARKLFhlsJQ07WdTlOXs0ZWyPzmSqHwRPP+Vp7idxaLa0dVdDi3W0Ml
+         qk65jTkcq4skh7VxVeqPT8+jaIN4eDGz8BMjSWc49tBGdIQJao/SaHKaRklJnXDUwkYB
+         GjAouRHHqWwVkdig5bf3rDfGV7+0sMkw1Aor2HVXZTdqJt7AfZJHFWYHwankvrr5RVzh
+         CoPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726182087; x=1726786887;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tuq/qwh3p/xqQg6vD3Gwn7KcfnrMZ+zcgC0C8gCmIbY=;
-        b=XrQIYYv9gHnFmXNgsihn5tunbH/wTVcoJlF0fczQS8EnI0wFYFN2riElM9wVlwhjM3
-         2mm36oTAsekvFTJHwKmIV4vCHz1JH3nLdw3hfU8HFJVA15rnjrdJYfQV5fHXvKjLqV30
-         +TWIvFa+ba9z+L5OgGxSCbGIlL4b7NxwIZldyFdod8zCkHdTXhm4+003Y+CsIe/r37BZ
-         UKR2U50GMLG2O7SXfyHVfurxfvdrkt/qbV/saB78qSeDV6Bjm5Ws4tstHJfMhGngTkdS
-         paPiekpYaD0YNxfoOvqh28jaFEEEk6lTTL+tAdBcxN852w0Z4gQVTnmnE6+9cSDC48oa
-         dAIg==
-X-Forwarded-Encrypted: i=1; AJvYcCUwt3GUXel027L6CffjXtRRtud3gh9AdbafishVOKVh7f8/8N9drKKBByUa8XqK7LfuWNF+nUsUWo4fVOY=@vger.kernel.org, AJvYcCVvChWiGfRBc5JwpeinPXBqi4mItwi+maybOLP3S7LwpVlHKfrBJ4akVHrrmPzBkKMcu4Ld+NtjWIY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywh9ZfcXb3TytX0meJBssfy8GX2o5KJHu3VcRlFgnLBSbhMqpj5
-	Lpx6pOTHIKdNUJWl4bEgk3UiyYMuS3e8HCaMCQlAMD+bTET6jwLE
-X-Google-Smtp-Source: AGHT+IH5MYPu1JmDxwSKc5VR1TQ7RPQZ9jLD7DOL/fmFhC5p030rPg3T6VUe3IBfeKA4U0Psw4hC3A==
-X-Received: by 2002:a17:90a:fc85:b0:2d8:baf1:e319 with SMTP id 98e67ed59e1d1-2dba0068195mr5160486a91.25.1726182086915;
-        Thu, 12 Sep 2024 16:01:26 -0700 (PDT)
-Received: from localhost.localdomain (111-240-84-197.dynamic-ip.hinet.net. [111.240.84.197])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbb9cadb0bsm257819a91.27.2024.09.12.16.01.25
+        d=1e100.net; s=20230601; t=1726182098; x=1726786898;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gXcV8jbFts4t9XD/hggH3giDaMs3zJsjMShL2Y10OZY=;
+        b=tJEeXxXkdHrMXrwYo4rLQ8yuR7/W+vuVivB3wNKVMfEU93/d/4IoEPEB5B4g8eP03Q
+         +b7Ipnpb5KOLHL3OLhIlThZhpjl/It6FUCrIbWf/jWD1OAa6kmsCyf0N+/tKZ++s+wCz
+         GY4DRzLwzHQgHchPm7W74ANft2jf0sXnzmQk1M7Mgy5QyTm2u4weoO20ELHwnhxBgnT/
+         2c8NMW3+LIif69ESopLn8DpAG1FHPIreLffosL3zZTzcPp1gavuGK0bi/sb5eAvdFUN0
+         G7TlINgbMTW7tAAtvWnU89sBUs1JA3DGHSplAc1WYyWHfKSXqdB3SUJ7d7nhwvJNRu1o
+         A1Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCURZXji54KyudiAZD4LWWTziUS09HWiTcA0ZMIG+cOojR8vxt6lZCP2qRO5ABnVbPKEhfuSG6ApC+34VqU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc3M4SsioRtA8uZTb8q0UA/iE8ooMhAKyLjsAaFsjsKWV2JqwG
+	vMxqBKdv/v+Rpm//ZFO0i9ljObP8D7x4KrVgCl7C3E43QtexKEF7Z8sG6zh3lQlZerAAC4Uo0vm
+	W
+X-Google-Smtp-Source: AGHT+IGA0ZtiOG8+WbEJ7rjuu0f8eCrPbZ5QeaMeNPlHl9dVMItuTHlOjdo8kxxxxAZ9gUAw9fT6bA==
+X-Received: by 2002:a05:6a00:1906:b0:70d:2621:5808 with SMTP id d2e1a72fcca58-7192607fcb9mr6715512b3a.9.1726182097519;
+        Thu, 12 Sep 2024 16:01:37 -0700 (PDT)
+Received: from ghost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db1fddd86asm2221706a12.68.2024.09.12.16.01.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 16:01:26 -0700 (PDT)
-From: Min-Hua Chen <minhuadotchen@gmail.com>
-To: Thomas Renninger <trenn@suse.com>,
-	Shuah Khan <shuah@kernel.org>,
-	"John B. Wyatt IV" <jwyatt@redhat.com>,
-	John Kacur <jkacur@redhat.com>
-Cc: Min-Hua Chen <minhuadotchen@gmail.com>,
-	"John B . Wyatt IV" <sageofredondo@gmail.com>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 for-next] pm: cpupower: rename raw_pylibcpupower.i
-Date: Fri, 13 Sep 2024 07:01:00 +0800
-Message-ID: <20240912230102.157534-1-minhuadotchen@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Thu, 12 Sep 2024 16:01:36 -0700 (PDT)
+Date: Thu, 12 Sep 2024 16:01:34 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: linux-riscv@lists.infradead.org, Palmer Dabbelt <palmer@dabbelt.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Conor Dooley <conor@kernel.org>, linux-kernel@vger.kernel.org,
+	Deepak Gupta <debug@rivosinc.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Andy Chiu <andy.chiu@sifive.com>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
+	Evan Green <evan@rivosinc.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Sunil V L <sunilvl@ventanamicro.com>
+Subject: Re: [PATCH v4 1/3] riscv: Enable cbo.zero only when all harts
+ support Zicboz
+Message-ID: <ZuNyztqpH09ns0ws@ghost>
+References: <20240814081126.956287-1-samuel.holland@sifive.com>
+ <20240814081126.956287-2-samuel.holland@sifive.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240814081126.956287-2-samuel.holland@sifive.com>
 
-All *.i files will be removed by 'make mrproper',
-including raw_pylibcpupower.i, added by
-commit: 338f490e07bc ("pm:cpupower: Add SWIG bindings files for libcpupower")
+On Wed, Aug 14, 2024 at 01:10:54AM -0700, Samuel Holland wrote:
+> Currently, we enable cbo.zero for usermode on each hart that supports
+> the Zicboz extension. This means that the [ms]envcfg CSR value may
+> differ between harts. Other features, such as pointer masking and CFI,
+> require setting [ms]envcfg bits on a per-thread basis. The combination
+> of these two adds quite some complexity and overhead to context
+> switching, as we would need to maintain two separate masks for the
+> per-hart and per-thread bits. Andrew Jones, who originally added Zicboz
+> support, writes[1][2]:
+> 
+>   I've approached Zicboz the same way I would approach all
+>   extensions, which is to be per-hart. I'm not currently aware of
+>   a platform that is / will be composed of harts where some have
+>   Zicboz and others don't, but there's nothing stopping a platform
+>   like that from being built.
+> 
+>   So, how about we add code that confirms Zicboz is on all harts.
+>   If any hart does not have it, then we complain loudly and disable
+>   it on all the other harts. If it was just a hardware description
+>   bug, then it'll get fixed. If there's actually a platform which
+>   doesn't have Zicboz on all harts, then, when the issue is reported,
+>   we can decide to not support it, support it with defconfig, or
+>   support it under a Kconfig guard which must be enabled by the user.
+> 
+> Let's follow his suggested solution and require the extension to be
+> available on all harts, so the envcfg CSR value does not need to change
+> when a thread migrates between harts. Since we are doing this for all
+> extensions with fields in envcfg, the CSR itself only needs to be saved/
+> restored when it is present on all harts.
+> 
+> This should not be a regression as no known hardware has asymmetric
+> Zicboz support, but if anyone reports seeing the warning, we will
+> re-evaluate our solution.
+> 
+> Link: https://lore.kernel.org/linux-riscv/20240322-168f191eeb8479b2ea169a5e@orel/ [1]
+> Link: https://lore.kernel.org/linux-riscv/20240323-28943722feb57a41fb0ff488@orel/ [2]
+> Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Reviewed-by: Deepak Gupta <debug@rivosinc.com>
+> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+> ---
 
-We can reproduce the error by performing the following command:
-cd linux-next
-make mrproper
-cd tools/power/cpupower/bindings/python
-make
+I realized I was looking at v4 but responding to v3, whoops. I will put
+my tags here as well.
 
-We will get an error message:
-make: *** No rule to make target 'raw_pylibcpupower.i', needed by 'raw_pylibcpupower_wrap.c'.  Stop.
+Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+Tested-by: Charlie Jenkins <charlie@rivosinc.com>
 
-To fix it, rename raw_pylibcpupower.i to raw_pylibcpupower.if.
-
-Reviewed-by: John B. Wyatt IV <jwyatt@redhat.com>
-Reviewed-by: John B. Wyatt IV <sageofredondo@gmail.com>
-Tested-by: John B. Wyatt IV <jwyatt@redhat.com>
-Tested-by: John B. Wyatt IV <sageofredondo@gmail.com>
-Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
----
- tools/power/cpupower/bindings/python/Makefile                 | 4 ++--
- .../python/{raw_pylibcpupower.i => raw_pylibcpupower.if}      | 0
- 2 files changed, 2 insertions(+), 2 deletions(-)
- rename tools/power/cpupower/bindings/python/{raw_pylibcpupower.i => raw_pylibcpupower.if} (100%)
-
-diff --git a/tools/power/cpupower/bindings/python/Makefile b/tools/power/cpupower/bindings/python/Makefile
-index dc09c5b66ead..de872a1b80d3 100644
---- a/tools/power/cpupower/bindings/python/Makefile
-+++ b/tools/power/cpupower/bindings/python/Makefile
-@@ -20,13 +20,13 @@ _raw_pylibcpupower.so: raw_pylibcpupower_wrap.o
- raw_pylibcpupower_wrap.o: raw_pylibcpupower_wrap.c
- 	$(CC) -fPIC -c raw_pylibcpupower_wrap.c $(PY_INCLUDE)
- 
--raw_pylibcpupower_wrap.c: raw_pylibcpupower.i
-+raw_pylibcpupower_wrap.c: raw_pylibcpupower.if
- ifeq ($(HAVE_SWIG),0)
- 	$(error "swig was not found. Make sure you have it installed and in the PATH to generate the bindings.")
- else ifeq ($(HAVE_PYCONFIG),0)
- 	$(error "python-config was not found. Make sure you have it installed and in the PATH to generate the bindings.")
- endif
--	swig -python raw_pylibcpupower.i
-+	swig -python raw_pylibcpupower.if
- 
- # Will only clean the bindings folder; will not clean the actual cpupower folder
- clean:
-diff --git a/tools/power/cpupower/bindings/python/raw_pylibcpupower.i b/tools/power/cpupower/bindings/python/raw_pylibcpupower.if
-similarity index 100%
-rename from tools/power/cpupower/bindings/python/raw_pylibcpupower.i
-rename to tools/power/cpupower/bindings/python/raw_pylibcpupower.if
--- 
-2.43.0
-
+> 
+> (no changes since v3)
+> 
+> Changes in v3:
+>  - Rebase on riscv/for-next
+> 
+>  arch/riscv/kernel/cpufeature.c | 7 ++++++-
+>  arch/riscv/kernel/suspend.c    | 4 ++--
+>  2 files changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+> index b427188b28fc..0139d4ea8426 100644
+> --- a/arch/riscv/kernel/cpufeature.c
+> +++ b/arch/riscv/kernel/cpufeature.c
+> @@ -28,6 +28,8 @@
+>  
+>  #define NUM_ALPHA_EXTS ('z' - 'a' + 1)
+>  
+> +static bool any_cpu_has_zicboz;
+> +
+>  unsigned long elf_hwcap __read_mostly;
+>  
+>  /* Host ISA bitmap */
+> @@ -98,6 +100,7 @@ static int riscv_ext_zicboz_validate(const struct riscv_isa_ext_data *data,
+>  		pr_err("Zicboz disabled as cboz-block-size present, but is not a power-of-2\n");
+>  		return -EINVAL;
+>  	}
+> +	any_cpu_has_zicboz = true;
+>  	return 0;
+>  }
+>  
+> @@ -918,8 +921,10 @@ unsigned long riscv_get_elf_hwcap(void)
+>  
+>  void riscv_user_isa_enable(void)
+>  {
+> -	if (riscv_cpu_has_extension_unlikely(smp_processor_id(), RISCV_ISA_EXT_ZICBOZ))
+> +	if (riscv_has_extension_unlikely(RISCV_ISA_EXT_ZICBOZ))
+>  		csr_set(CSR_ENVCFG, ENVCFG_CBZE);
+> +	else if (any_cpu_has_zicboz)
+> +		pr_warn_once("Zicboz disabled as it is unavailable on some harts\n");
+>  }
+>  
+>  #ifdef CONFIG_RISCV_ALTERNATIVE
+> diff --git a/arch/riscv/kernel/suspend.c b/arch/riscv/kernel/suspend.c
+> index c8cec0cc5833..9a8a0dc035b2 100644
+> --- a/arch/riscv/kernel/suspend.c
+> +++ b/arch/riscv/kernel/suspend.c
+> @@ -14,7 +14,7 @@
+>  
+>  void suspend_save_csrs(struct suspend_context *context)
+>  {
+> -	if (riscv_cpu_has_extension_unlikely(smp_processor_id(), RISCV_ISA_EXT_XLINUXENVCFG))
+> +	if (riscv_has_extension_unlikely(RISCV_ISA_EXT_XLINUXENVCFG))
+>  		context->envcfg = csr_read(CSR_ENVCFG);
+>  	context->tvec = csr_read(CSR_TVEC);
+>  	context->ie = csr_read(CSR_IE);
+> @@ -37,7 +37,7 @@ void suspend_save_csrs(struct suspend_context *context)
+>  void suspend_restore_csrs(struct suspend_context *context)
+>  {
+>  	csr_write(CSR_SCRATCH, 0);
+> -	if (riscv_cpu_has_extension_unlikely(smp_processor_id(), RISCV_ISA_EXT_XLINUXENVCFG))
+> +	if (riscv_has_extension_unlikely(RISCV_ISA_EXT_XLINUXENVCFG))
+>  		csr_write(CSR_ENVCFG, context->envcfg);
+>  	csr_write(CSR_TVEC, context->tvec);
+>  	csr_write(CSR_IE, context->ie);
+> -- 
+> 2.45.1
+> 
 
