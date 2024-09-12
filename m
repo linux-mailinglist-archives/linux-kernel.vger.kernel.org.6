@@ -1,118 +1,87 @@
-Return-Path: <linux-kernel+bounces-326888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C36C6976E1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:47:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 194C0976E1D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:47:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09E411C23890
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:47:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8D52B216EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043191AD256;
-	Thu, 12 Sep 2024 15:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Q6p+f+A2"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87272C144;
-	Thu, 12 Sep 2024 15:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D861A2876;
+	Thu, 12 Sep 2024 15:47:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E67C144
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726156012; cv=none; b=DCbxfrXNS5feARoutd9NVZxffrRsHYtge+ckT+16vtnqEmrIQdr2ox+pyxSDANSGbt30M1s20mNTJNEHx1HDtBZpljZMEoVksozbvNIjjQAXEcWxTDA40G16nhwwKadNTI7NqXvk3R5KB8S5UfT5l6q5UUy7rI9doN0LKjJbLyA=
+	t=1726156025; cv=none; b=g9z8f16bQPS9haE/gtttZSictEmGv6wrYOeczqGNu2jEkx8RFkDUBNNeLCaooG4APCjhDkiFSzaNwKCS+icfEVmfcdCqO/T5hYqVkJrq1FoZl3dL1C1Oa39d7bjsm9dlfJ9VVE5AqLLgrBKEXk5fTaVf/U/yizQ8yWXsS2wxHO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726156012; c=relaxed/simple;
-	bh=ixe1NwvB+Ap08jHkTseRNdlPRemLsbn7IlJGZ3SgnAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X1557ZYejHNf02L49CrRKCGh9PztmVKa/1DZejQi/QnSfnXdvs2LQKdzDkH9sdPlDH946Rk0h75P8pUEHqTR9cxfAOZOk17gDAa9dQjdAIgFwQcuaSpKOwnkuFiWoFWM3gkFJCeumacnTvCVX4U0YNsuClk4NbIoRN7jDpfnsAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Q6p+f+A2; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=xxUxrZ1bLLlD2bEmJAo1fVUINGNgaZyWOtszqPfWAa8=;
-	b=Q6p+f+A2jMMF74mtVoi1ISK4lSKRD7hOaXO2FQ/EgcMOcjUC5TDU/92iE9omaH
-	bHJd8fsw2HFFg6pJEf+4NRqF0lyjXy6wlPDBeZQ+q4U1W1xRwAilsI/VYUMQX/++
-	nbDJBGeCbYojlNpoVXHV1k3fZE56a4G8iUUD5YdhJ9/Tk=
-Received: from localhost (unknown [120.26.85.94])
-	by gzga-smtp-mta-g2-4 (Coremail) with SMTP id _____wD3_0zKDONm48JaBA--.14683S2;
-	Thu, 12 Sep 2024 23:46:18 +0800 (CST)
-Date: Thu, 12 Sep 2024 23:46:18 +0800
-From: Qianqiang Liu <qianqiang.liu@163.com>
-To: kuba@kernel.org
-Cc: andrew@lunn.ch, o.rempel@pengutronix.de, rosenp@gmail.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: ag71xx: remove dead code path
-Message-ID: <ZuMMyv9_npZ8txU8@iZbp1asjb3cy8ks0srf007Z>
-References: <20240910152254.21238-1-qianqiang.liu@163.com>
+	s=arc-20240116; t=1726156025; c=relaxed/simple;
+	bh=du7iGjmF0Upo7ebcwdH5GIv0ih/U1/o7XJCooqYKjsc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=frVgrEj4lUaVgHBPkSNMiwCU7qFZBaFp+E4neetnHI+coHC+FVBwL+hsID6L9f4h2eJwjk9gyP5M1BPw7k8YdgPTbzm0WMx9+q73HGiDdp1CDZNZH7dMkjogw8yxWzmV72QEJifNTBfD4gxak9OYtm2IzOH3+2DrZfbCumeHooY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a0539a446dso15474975ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:47:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726156023; x=1726760823;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=m2iY4kfQ0pcNAE2g2icTQK1gdVPAhfM8REbk4rhp2xw=;
+        b=jfjWi+20l62uuD9+q50ziDhk8uW+a+A4JuRBr9NoFf8gMGiK89yH4xEGVKb3+5n6t3
+         4JaD9Cr66H/MTPbwi6uLEqakgUqxXSYv3DiRNdO4t85VWHv6tGFxHTf+mB6BpnhXymGq
+         wMZur1aWKZhZJA+G9pSxiXz/8jWBH2N7ZFxQ+GhvWmoETYOy0RrrqkHhYIRf3DQLr9Cg
+         VzxVFpSgmWP6s5sfutZqqgAT9eV+Ia04YBTLaAipMwQcRg6OBm1XDPWrnnTnT4RqY63D
+         /ds20dSZI24Rg9xWoobOPKYidT1TnjsK+kxgsSbgDI4Fvz+pA8Gf4g/APLVDhmJBL9F9
+         bM8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXxskL0lMT3x6uhTROUVRXm6CM8w/ZGSoqOu2V4zJ+HOHd2vdLM8JRhSygyae7uR0tyufmaavImVdzCVrw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+cNsMY/eAuqYGSNUQdio0tXPWfAYG7hg/XvS8zkBBjpsB5WRS
+	lWTn28IlXCAV6EJuLWFotiKg2ppW9nbs07iNjHvgQOGS0VKNZsc+uShYU3vSzhyYE/uTgaQ7Q7r
+	ZZWZ0UHU62wLnP1wWbd24dwEBMqWpAw5Q7iwM8VTfLIOpBYSLrNLUTcM=
+X-Google-Smtp-Source: AGHT+IFaoNcfm7xMMkVx4ORuHztMXbe0SfdqhpN511Kpywl9ZR92LpdpDuSFWInyxeeV3n469lAN3ml2rCLpBNZ9cNz7RC9x/g6s
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910152254.21238-1-qianqiang.liu@163.com>
-X-CM-TRANSID:_____wD3_0zKDONm48JaBA--.14683S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7KF45uF18Gr45Xryxtw48tFb_yoW8XrWfpr
-	W3KayIgFW0yr1Uta4UZw4xZF98Can0yrZ0grW5X3yFvr1UAryYg3s7KFWUKr1xWrW8Cw4a
-	vw18ZFnrAFsxXwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j60P-UUUUU=
-X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiRQVYamXAo3-RrgABs1
+X-Received: by 2002:a05:6e02:1e03:b0:39f:d10e:55e0 with SMTP id
+ e9e14a558f8ab-3a084958dfdmr31875815ab.19.1726156023545; Thu, 12 Sep 2024
+ 08:47:03 -0700 (PDT)
+Date: Thu, 12 Sep 2024 08:47:03 -0700
+In-Reply-To: <20240912142145.8418-1-aha310510@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009c4e3e0621ee0434@google.com>
+Subject: Re: [syzbot] [usb?] KMSAN: kernel-infoleak in iowarrior_read
+From: syzbot <syzbot+b8080cbc8d286a5fa23a@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Sep 10, 2024 at 11:22:54PM +0800, Qianqiang Liu wrote:
-> The 'err' is always zero, so the following branch can never be executed:
-> if (err) {
-> 	ndev->stats.rx_dropped++;
-> 	kfree_skb(skb);
-> }
-> Therefore, the 'if' statement can be removed.
-> 
-> Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
-> ---
->  drivers/net/ethernet/atheros/ag71xx.c | 12 +++---------
->  1 file changed, 3 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
-> index 96a6189cc31e..5477f3f87e10 100644
-> --- a/drivers/net/ethernet/atheros/ag71xx.c
-> +++ b/drivers/net/ethernet/atheros/ag71xx.c
-> @@ -1616,7 +1616,6 @@ static int ag71xx_rx_packets(struct ag71xx *ag, int limit)
->  		unsigned int i = ring->curr & ring_mask;
->  		struct ag71xx_desc *desc = ag71xx_ring_desc(ring, i);
->  		int pktlen;
-> -		int err = 0;
->  
->  		if (ag71xx_desc_empty(desc))
->  			break;
-> @@ -1646,14 +1645,9 @@ static int ag71xx_rx_packets(struct ag71xx *ag, int limit)
->  		skb_reserve(skb, offset);
->  		skb_put(skb, pktlen);
->  
-> -		if (err) {
-> -			ndev->stats.rx_dropped++;
-> -			kfree_skb(skb);
-> -		} else {
-> -			skb->dev = ndev;
-> -			skb->ip_summed = CHECKSUM_NONE;
-> -			list_add_tail(&skb->list, &rx_list);
-> -		}
-> +		skb->dev = ndev;
-> +		skb->ip_summed = CHECKSUM_NONE;
-> +		list_add_tail(&skb->list, &rx_list);
->  
->  next:
->  		ring->buf[i].rx.rx_buf = NULL;
-> -- 
-> 2.39.2
+Hello,
 
-Hi Jakub,
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Could you please review this patch?
+Reported-by: syzbot+b8080cbc8d286a5fa23a@syzkaller.appspotmail.com
+Tested-by: syzbot+b8080cbc8d286a5fa23a@syzkaller.appspotmail.com
 
--- 
-Best,
-Qianqiang Liu
+Tested on:
 
+commit:         77f58789 Merge tag 'arm-fixes-6.11-3' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=158460a9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ea008021530b2de3
+dashboard link: https://syzkaller.appspot.com/bug?extid=b8080cbc8d286a5fa23a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17ff6797980000
+
+Note: testing is done by a robot and is best-effort only.
 
