@@ -1,115 +1,143 @@
-Return-Path: <linux-kernel+bounces-326934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8856976EB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:31:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 282D2976EB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:31:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 407071F24F71
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:31:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5ED21F2167C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F6B14B976;
-	Thu, 12 Sep 2024 16:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8187A1A0BF6;
+	Thu, 12 Sep 2024 16:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="pRkYPHm0"
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GROl4hub"
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809FD57CB4;
-	Thu, 12 Sep 2024 16:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED45187350
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 16:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726158659; cv=none; b=hg2eKvVEa6ySmVGn8WU3drlKihHtLeU2/lMMk9OVDpeDpapByJMqB+nk4zZi1y9gbLkXLlyE2ZLa3pginynSvU2QCYvwEVo2fLSCFkFR71XCf9FPDdhw+l9F0YnefHjQ76H2L0H9V+k+uK+rhg7SqrVpeXjKHWbDwsI5SSk8UG4=
+	t=1726158683; cv=none; b=DeppBPmRXmlRGqtHs8pCgDel3s232ugWViV7pfhCRYSG/PuG4yYCzQgYZlFKQJiYPccVQStVdsdI+alnHZpWzRb8WhAs5XYKkwi1TcOk2n10IiVqY+P8ogQQA3AQYjvaMY6iDc04+duzTvT7iPYpTei9QD6ZY+O1HBfMy+yYopg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726158659; c=relaxed/simple;
-	bh=pIAvUz7AdR7Cd4/p7TKjjsRTaWtGb38TbvttvobxCt0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=AyrAt/8rR3c0FS2rY2GwPDylR6VbCgeKk8X3P9uHrMNFgL2q6ChQrJTfAP7TFygNvkObntnbFqQ8h10OXDRK1xsYZNmQkI01P73apDoAd6T3sPDrk6hetGqOZN0I5gNE0U/FCEzs4DHj1xCUOg49IuJoLnb1NYWcTKJQFmbe94s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=pRkYPHm0 reason="signature verification failed"; arc=none smtp.client-ip=54.206.16.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
-X-QQ-mid: bizesmtp87t1726158613tg3c3bqc
-X-QQ-Originating-IP: ivnHupChGXKxz0+qNd23PfVkuiwQxwfKgQiTgP/OwLo=
-Received: from m16.mail.163.com ( [220.197.31.5])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 13 Sep 2024 00:30:11 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 18047817215908464017
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=KN/BuQSTcSNJl+7Nu1E4ko/CumlClB1S2fh3meVE1rE=; b=p
-	RkYPHm0vahx7yzaj6TgqxGr1asPuZK9UauK8HTEMLF1JGki2ouE+sPlPodWw6CXT
-	FcEM9pEx2iOn9YJ5L2mCZkQrJz5azIacB7m5txFuRg1iQh7ctxnnrZOUEroPZPpS
-	8YHWEoQJfe7tGk5WpyOuxiNPkwwvvSuOemxP1/jke4=
-Received: from kxwang23$m.fudan.edu.cn ( [104.238.222.239] ) by
- ajax-webmail-wmsvr-40-136 (Coremail) ; Fri, 13 Sep 2024 00:29:33 +0800
- (CST)
-Date: Fri, 13 Sep 2024 00:29:33 +0800 (CST)
-From: "Kaixin Wang" <kxwang23@m.fudan.edu.cn>
-To: "Helge Deller" <deller@gmx.de>
-Cc: 21210240012@m.fudan.edu.cn, 21302010073@m.fudan.edu.cn, 
-	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, kuninori.morimoto.gx@renesas.com, 
-	laurent.pinchart@ideasonboard.com
-Subject: Re: [PATCH] fbdev: pxafb: Fix use after free vulnerability in
- pxafb_driver Driver Due to Race Condition
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <7baab3f7-1185-473d-83a7-07ad49a4130a@gmx.de>
-References: <20240911142952.833223-1-kxwang23@m.fudan.edu.cn>
- <7baab3f7-1185-473d-83a7-07ad49a4130a@gmx.de>
-X-NTES-SC: AL_Qu2ZBP2et00s5SGbYOkXn0kbjug3WcW0u/0k3oJUNps0sSbJxCIce1FGAHTrzv+TMyOvnjaRQClvyeFHTa9cY5isaIJncdeUlrTj9gzSNVvL
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1726158683; c=relaxed/simple;
+	bh=W+J1FMH3tHI+6OFtsSQZ3Juup+l/59W1qlpH8qCoJNQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iftgzMZF+khpxVhCDoiMG5rsXlEIiqEi+qTvcYXr0OGfC1+ZkEUjfAZ9Ccy9n913rkD5x6J77BTGRVyyw79MXKbLynxw076WGZ+KV5pxkUJP0lCYDUtehcLM1FX+55/HmEYqL/Fskzc2DFq7114bPW+LiFiUmGYoY3n1al9sebA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GROl4hub; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-82d07f32eeaso56004939f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:31:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1726158680; x=1726763480; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ige0hospoSC0I0mXPH/sPi2U7TWVYcFeY8Oc0s0Dk6E=;
+        b=GROl4hubFy4Jum5Zpf2oKrD3+bY7J59mjSW+KZ2M99t35ziqEchP3iX0wZ2EHdpkic
+         A3Fi/3Sq9u34SwCSmcCe8Y2ijuKx3N0dFCo8QRNqVTKXMfcwIYf5rWRvGFP3pCgIzL9o
+         /kbdlsPpAp7bt9EjsZeV0wGYS0d2AqlcSOD+g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726158680; x=1726763480;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ige0hospoSC0I0mXPH/sPi2U7TWVYcFeY8Oc0s0Dk6E=;
+        b=ed8V2vBGX0C/mjtftGE9xjOPc8FpWm9uTPbRYOQSekgEog9IS51EjWls2INSM6Z/vb
+         m+/6DGiVJ7vQq4two9ds9t5M0MF4EeusV0AeFhUgKY+f3ZmjWi4g58n03g79SM+i8Y6Y
+         VkZkRNlK/Lz5dT20Yh8+tj/RDhhHvhXVZKvtzWoCHMtdpbFq+VlAk+vvuZM7YxWMlDbG
+         /JlVlqx5l7NoQIn1YXvPnwvpdqa5geZZna8yjnZl6FdCDygsmDih5D5STzVWKhO3nNau
+         wnqd9eizRqg+ydjO+w84mtc/AwWV5rL2xoqFBALZTF5zZ2obgGdWD1qACO0wCo+qZuEQ
+         djXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXszaRCZAqML3KLYVF3JJfEwWaa0WdWv86MTdSP5TRSmDPYJzaP34oXJKiPNeW/26/VIf7z8hqQ3uNi95E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVqxkNXVKrkDY8+Pp7az9ZENtKdtMyi8dILfUdyDdThojAjaIw
+	sJ7n116fFkk0bTjzxF23ENegWwuHHF3N8HuIFOoYp2FjV7PJDl6QAw9iTRYCDRI=
+X-Google-Smtp-Source: AGHT+IG1giQTOPVkzv0dnvg8e+wyJNeH79IfT3UNXNJqA2LVrGdANRo2yN/y8lncZQFAguOo8CmmMQ==
+X-Received: by 2002:a05:6602:3fd1:b0:82c:fdc2:e25a with SMTP id ca18e2360f4ac-82d3761cb5bmr5180739f.0.1726158680478;
+        Thu, 12 Sep 2024 09:31:20 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4d35f8dac37sm674341173.133.2024.09.12.09.31.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Sep 2024 09:31:20 -0700 (PDT)
+Message-ID: <5785527a-b259-42ba-989e-978d2e72ff35@linuxfoundation.org>
+Date: Thu, 12 Sep 2024 10:31:19 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <1C2E4AB314A69BCF+750f4f16.c216.191e7118e58.Coremail.kxwang23@m.fudan.edu.cn>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wDnr8juFuNmG1IHAA--.2650W
-X-CM-SenderInfo: zprtkiiuqyikitw6il2tof0z/1tbiwh5Y2GWXw6aYUAADsA
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:m.fudan.edu.cn:qybglogicsvrsz:qybglogicsvrsz4a-0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH for-next] pm: cpupower: rename raw_pylibcpupower.i
+To: Min-Hua Chen <minhuadotchen@gmail.com>, Thomas Renninger
+ <trenn@suse.com>, Shuah Khan <shuah@kernel.org>,
+ "John B. Wyatt IV" <jwyatt@redhat.com>, John Kacur <jkacur@redhat.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240912125030.19809-1-minhuadotchen@gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240912125030.19809-1-minhuadotchen@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-CgpBdCAyMDI0LTA5LTEyIDAxOjM4OjI2LCAiSGVsZ2UgRGVsbGVyIiA8ZGVsbGVyQGdteC5kZT4g
-d3JvdGU6Cj5PbiA5LzExLzI0IDE2OjI5LCBLYWl4aW4gV2FuZyB3cm90ZToKPj4gSW4gdGhlIHB4
-YWZiX3Byb2JlIGZ1bmN0aW9uLCBpdCBjYWxscyB0aGUgcHhhZmJfaW5pdF9mYmluZm8gZnVuY3Rp
-b24sCj4+IGFmdGVyIHdoaWNoICZmYmktPnRhc2sgaXMgYXNzb2NpYXRlZCB3aXRoIHB4YWZiX3Rh
-c2suIE1vcmVvdmVyLAo+PiB3aXRoaW4gdGhpcyBweGFmYl9pbml0X2ZiaW5mbyBmdW5jdGlvbiwg
-dGhlIHB4YWZiX2JsYW5rIGZ1bmN0aW9uCj4+IHdpdGhpbiB0aGUgJnB4YWZiX29wcyBzdHJ1Y3Qg
-aXMgY2FwYWJsZSBvZiBzY2hlZHVsaW5nIHdvcmsuCj4+Cj4+IElmIHdlIHJlbW92ZSB0aGUgbW9k
-dWxlIHdoaWNoIHdpbGwgY2FsbCBweGFmYl9yZW1vdmUgdG8gbWFrZSBjbGVhbnVwLAo+PiBpdCB3
-aWxsIGNhbGwgdW5yZWdpc3Rlcl9mcmFtZWJ1ZmZlciBmdW5jdGlvbiB3aGljaCBjYW4gY2FsbAo+
-PiBkb191bnJlZ2lzdGVyX2ZyYW1lYnVmZmVyIHRvIGZyZWUgZmJpLT5mYiB0aHJvdWdoCj4+IHB1
-dF9mYl9pbmZvKGZiX2luZm8pLCB3aGlsZSB0aGUgd29yayBtZW50aW9uZWQgYWJvdmUgd2lsbCBi
-ZSB1c2VkLgo+PiBUaGUgc2VxdWVuY2Ugb2Ygb3BlcmF0aW9ucyB0aGF0IG1heSBsZWFkIHRvIGEg
-VUFGIGJ1ZyBpcyBhcyBmb2xsb3dzOgo+Pgo+PiBDUFUwICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgQ1BVMQo+Pgo+PiAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICB8IHB4YWZiX3Rhc2sKPj4gcHhhZmJfcmVtb3ZlICAgICAgICAgICAgICAg
-ICAgICAgICB8Cj4+IHVucmVnaXN0ZXJfZnJhbWVidWZmZXIoaW5mbykgICAgICAgfAo+PiBkb191
-bnJlZ2lzdGVyX2ZyYW1lYnVmZmVyKGZiX2luZm8pIHwKPj4gcHV0X2ZiX2luZm8oZmJfaW5mbykg
-ICAgICAgICAgICAgICB8Cj4+IC8vIGZyZWUgZmJpLT5mYiAgICAgICAgICAgICAgICAgICAgfCBz
-ZXRfY3RybHJfc3RhdGUoZmJpLCBzdGF0ZSkKPj4gICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgfCBfX3B4YWZiX2xjZF9wb3dlcihmYmksIDApCj4+ICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgIHwgZmJpLT5sY2RfcG93ZXIob24sICZmYmktPmZiLnZhcikKPj4g
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAvL3VzZSBmYmktPmZiCj4+Cj4+
-IEZpeCBpdCBieSBlbnN1cmluZyB0aGF0IHRoZSB3b3JrIGlzIGNhbmNlbGVkIGJlZm9yZSBwcm9j
-ZWVkaW5nCj4+IHdpdGggdGhlIGNsZWFudXAgaW4gcHhhZmJfcmVtb3ZlLgo+Pgo+PiBOb3RlIHRo
-YXQgb25seSByb290IHVzZXIgY2FuIHJlbW92ZSB0aGUgZHJpdmVyIGF0IHJ1bnRpbWUuCj4+Cj4+
-IFNpZ25lZC1vZmYtYnk6IEthaXhpbiBXYW5nIDxreHdhbmcyM0BtLmZ1ZGFuLmVkdS5jbj4KPj4g
-LS0tCj4+ICAgZHJpdmVycy92aWRlby9mYmRldi9weGFmYi5jIHwgMSArCj4+ICAgMSBmaWxlIGNo
-YW5nZWQsIDEgaW5zZXJ0aW9uKCspCj4KPkkndmUgYWRkZWQgdGhlIHBhdGNoIHRvIHRoZSBmYmRl
-diBnaXQgdHJlZSwgYnV0IGNoYW5nZWQgdGhlIHRpdGxlIHRvOgo+ImZiZGV2OiBweGFmYjogRml4
-IHBvc3NpYmxlIHVzZSBhZnRlciBmcmVlIGluIHB4YWZiX3Rhc2soKSIKPgo+VGhhbmtzIQo+SGVs
-Z2UKPgo+CgoKVGhhbmtzIGZvciB0aGUgcmV2aWV3ISBJIGFwcHJlY2lhdGUgdGhlIGFkanVzdG1l
-bnQgdG8gdGhlIHBhdGNoIHRpdGxlIHRvIG1ha2UgaXQgbW9yZSBwcmVjaXNlLgoKQmVzdCByZWdh
-cmRzLApLYWl4aW4gV2FuZwo=
+On 9/12/24 06:50, Min-Hua Chen wrote:
+> This RFC patch is actually bug report. All *.i file will be
+> removed by 'make mrproper', including raw_pylibcpupower.i, added
+> by commit: 338f490e07bc ("pm:cpupower: Add SWIG bindings files for libcpupower")
+> 
+> We can reproduce the error by performing the following command:
+> cd linux-next
+> make mrproper
+> cd tools/power/cpupower/bindings/python
+> make
+> 
+> We will get an error message:
+> make: *** No rule to make target 'raw_pylibcpupower.i', needed by 'raw_pylibcpupower_wrap.c'.  Stop.
+> 
+> Renaming the raw_pylibcpupower.i is just a workaround to fix the
+> issue above.
+
+I need a non-rfc patch for this. Please send a proper patch
+I can pull in once John has a chance to review this.
+
+> 
+> Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
+> ---
+>   tools/power/cpupower/bindings/python/Makefile                 | 4 ++--
+>   .../python/{raw_pylibcpupower.i => raw_pylibcpupower.if}      | 0
+>   2 files changed, 2 insertions(+), 2 deletions(-)
+>   rename tools/power/cpupower/bindings/python/{raw_pylibcpupower.i => raw_pylibcpupower.if} (100%)
+> 
+> diff --git a/tools/power/cpupower/bindings/python/Makefile b/tools/power/cpupower/bindings/python/Makefile
+> index dc09c5b66ead..de872a1b80d3 100644
+> --- a/tools/power/cpupower/bindings/python/Makefile
+> +++ b/tools/power/cpupower/bindings/python/Makefile
+> @@ -20,13 +20,13 @@ _raw_pylibcpupower.so: raw_pylibcpupower_wrap.o
+>   raw_pylibcpupower_wrap.o: raw_pylibcpupower_wrap.c
+>   	$(CC) -fPIC -c raw_pylibcpupower_wrap.c $(PY_INCLUDE)
+>   
+> -raw_pylibcpupower_wrap.c: raw_pylibcpupower.i
+> +raw_pylibcpupower_wrap.c: raw_pylibcpupower.if
+>   ifeq ($(HAVE_SWIG),0)
+>   	$(error "swig was not found. Make sure you have it installed and in the PATH to generate the bindings.")
+>   else ifeq ($(HAVE_PYCONFIG),0)
+>   	$(error "python-config was not found. Make sure you have it installed and in the PATH to generate the bindings.")
+>   endif
+> -	swig -python raw_pylibcpupower.i
+> +	swig -python raw_pylibcpupower.if
+>   
+>   # Will only clean the bindings folder; will not clean the actual cpupower folder
+>   clean:
+> diff --git a/tools/power/cpupower/bindings/python/raw_pylibcpupower.i b/tools/power/cpupower/bindings/python/raw_pylibcpupower.if
+> similarity index 100%
+> rename from tools/power/cpupower/bindings/python/raw_pylibcpupower.i
+> rename to tools/power/cpupower/bindings/python/raw_pylibcpupower.if
+
+thanks,
+-- Shuah
 
