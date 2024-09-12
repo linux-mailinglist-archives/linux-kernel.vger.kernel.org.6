@@ -1,119 +1,192 @@
-Return-Path: <linux-kernel+bounces-326774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 135CB976CC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:53:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1C95976CC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:54:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5053285ABF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:53:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12E7B1C23BC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859171B985A;
-	Thu, 12 Sep 2024 14:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E9A1B29A2;
+	Thu, 12 Sep 2024 14:53:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ibbt1mLK"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RejNEboD"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 837A71B6541;
-	Thu, 12 Sep 2024 14:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF8A2AF07;
+	Thu, 12 Sep 2024 14:53:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726152782; cv=none; b=hmGDJ/hLQmvCoQJxgL65lyoTHmC9tm+bpiP1gKZxmectdokZugr6n6W3HdSlxw1q2XUu7m3WmXvK+uEa3dV5hAwOXdFftI/bhj9LVFm1mCTQ/wlnro0B6WuiqwIkTbSY556nX7WJFtYg9/7c/ur15SnJHJA0+ItpRcwXO+Bc/WY=
+	t=1726152837; cv=none; b=ORtMVLxXXPek7/pHr7DBIRz6wgQbXr664AdgcXXH/IWUU/YGG5N9GZMK5lA/mmGG1nr70XMwznJ1abh4qXi2+hs/VYISCJ889ufHA059OuTN0kIZT+ZnPf+ObKpEO09/fg5U/uyehlSqpqWlhdR9AScn1y44FYPOZorScqmKHyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726152782; c=relaxed/simple;
-	bh=OWL4mlcwtG9tysqDuntuby0lkx3kp3yrJUTlD+NSAk4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rnicchxPB1BteSum9SXaLO6mSGE97PdRAwJ2cyVurSLL/Y2M6M1Nw7/0Go+8nQwhiodwqm85yuW+J6Dd9GPZjgMD//Zo4d69Il/jrs02rNmAzNsSqJItW7t2rqNtX0ly7tK3lTJXJW08U4pOOpehDfBV5HIZVC1ziy7Pk5KDwr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ibbt1mLK; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2d8a7c50607so734612a91.1;
-        Thu, 12 Sep 2024 07:53:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726152781; x=1726757581; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+5IKbYoDJEP2KO85oswQmEdobyY+Md1ZqhM7AUuMvg0=;
-        b=ibbt1mLKj11tLbnR97UW6F+YW2wPi3W+XfDh0J98oYss0JXl+k2YsbAq67qabJgl+Q
-         zbQoeHhS0z99PPJvAjvlX6mwBawlUoLmPlTlmVPoQ28suqi00VOgSDc92JVj3QJayxqR
-         itqzb62HOHaFPF/qz67/lsQVXDXzGCg+Djrdq/M3O6Z0dCbeG5RDTFoMnpaU7mQk/qf4
-         dISkgum5m3rPkf3/kmDdrjUkkxv/26DkikbBR3lgx60b2vgURIaM59hktxwF6g+vLFGC
-         TK5CE2fZmImQRI1IJ5uHe/RFfQuMXtzKTo4iHEMh8mGZiUg/Y34sUy3YEi72vsTnj+w4
-         +Fcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726152781; x=1726757581;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+5IKbYoDJEP2KO85oswQmEdobyY+Md1ZqhM7AUuMvg0=;
-        b=q/SYTXKtNHzAzrMRCD0S1//yfq7FxWqcDaO8xBHr89y5rlUuk1YOQWvHVadUu0BzrJ
-         yTTfz4rLVHAfjHD5Sdlu3bQdNsvJjCOv5FF0osTWiaIvKYYNhKKP4TxS+PkN4K2YKsu+
-         gD4CxNqf73CVs4XlHz/2Sf3dLBwJQCgnsn0IXeoVxCQOfN+BvCh+o+GxabAHB/uxYNJl
-         lAZ2VrGtY5MW29d1Oppmhw0JLhMMo4kSXMgi38fwWyybXCJGfwbaPjWXVjnUYe1s03lR
-         Sv+I3jcyVFNKZQbNNlZe3X29sDjG4e30waEjttcf3Mwab6ZgSW7zazxAzZqzgzGthfKU
-         i7jg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCVwZ0MGN+nCpKJNuQbC94fUb0QoSbBxAFUZkL3tECYBCjF9tSCA7zklAWGFIa5Abch26bD6TAOyKdyy0=@vger.kernel.org, AJvYcCXdU4Lc8vw1fpImAS465CYELrqSrOxlixs0MJ9iCZ+3ej5qUZWwIuR34d2xhPT+6M9IgZdK/DzUj7Oo@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsKRjclaVXVJ3IXaMcuK0l1aSNH80ynJcHN70Woz9rSYFCrfYx
-	P6iwTB0QsuzPSKiEkWJv74qqoXXM0Q6KZGk6sGtw3zYnZO8sLcN1
-X-Google-Smtp-Source: AGHT+IGnHgXzCoYLfVO4IAmPffp9UdTT8UdZ3TotNadEvQeLFNoK2/xvDlu0w5z7lWOj456UG/fd0A==
-X-Received: by 2002:a17:90a:3ec4:b0:2d8:8509:85d1 with SMTP id 98e67ed59e1d1-2dba00826d9mr3133023a91.38.1726152780589;
-        Thu, 12 Sep 2024 07:53:00 -0700 (PDT)
-Received: from embed-PC.. ([106.222.232.184])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dadbfe4b41sm12760161a91.8.2024.09.12.07.52.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 07:52:59 -0700 (PDT)
-From: Abhishek Tamboli <abhishektamboli9@gmail.com>
-To: stern@rowland.harvard.edu,
-	gregkh@linuxfoundation.org
-Cc: skhan@linuxfoundation.org,
-	dan.carpenter@linaro.org,
-	rbmarliere@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-usb@vger.kernel.org,
-	usb-storage@lists.one-eyed-alien.net,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] usb: storage: ene_ub6250: Fix right shift warnings
-Date: Thu, 12 Sep 2024 20:22:47 +0530
-Message-Id: <20240912145247.15544-1-abhishektamboli9@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726152837; c=relaxed/simple;
+	bh=mtopl/K5nIFe8atSq7wOTQN3lPmYWwufwD4mRg/IySs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RxUkJh21kZhKZXOQnMX9baVfLOGQHB5RhzSNlRMk983bcPZouPKu85Bee9ni6O5FL+NY4Syww0+1CQw7JULYB2YOCQVSL6A0VTdpCvMwSGJR8/yRMmpe+YU266BdYRPTl4pdhRpVanx0H54vntW9Bmysz7hVlrXtaMkANfefTfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RejNEboD; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726152835; x=1757688835;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=mtopl/K5nIFe8atSq7wOTQN3lPmYWwufwD4mRg/IySs=;
+  b=RejNEboDPJ06Rap8zMeAjmstpdzNURQwfBxEQdDwVOosR3GjIZ6SlLEb
+   5mTe4jtL+p+FxomPAUzWB2NEtPohyMEn4RwZhP78NePL0cXkvPItBhLID
+   gUOXkqXJ77kmDVp0+niNPEiWjzDYptjaduY4S8yAf5mQD5aPwkjBvX0ug
+   +t47vd9MhiDhSv1ILCkWD/NrYSz7ES1UaF/EbwmrwLR/fHuI0QNAEcuEi
+   065WdcRLtu4dGIxUMENDa27Uu0eYZ5zYCriL1P9+7Snr7D32e48KIYpZG
+   u5h0PsDz23FMgrjkbWRWh0YXtj8lyF0H/N0fwsBYE5+uwMF/7sTrNhfH+
+   A==;
+X-CSE-ConnectionGUID: Q99FVxlITgCSfvAs52idYw==
+X-CSE-MsgGUID: V+bYtMmrQda5cGy+pmqMeA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="35602522"
+X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
+   d="scan'208";a="35602522"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 07:53:24 -0700
+X-CSE-ConnectionGUID: YgCBeE9LSvWZhE86IsuZsA==
+X-CSE-MsgGUID: fhCIfB9GQKKaRNFps4vajw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
+   d="scan'208";a="67569565"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 07:53:23 -0700
+Received: from [10.212.20.231] (kliang2-mobl1.ccr.corp.intel.com [10.212.20.231])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id CDDE920BF401;
+	Thu, 12 Sep 2024 07:53:21 -0700 (PDT)
+Message-ID: <ff48cea2-05d6-4c1a-8c0f-c3949dd294cc@linux.intel.com>
+Date: Thu, 12 Sep 2024 10:53:20 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [tip: perf/core] perf: Generic hotplug support for a PMU with a
+ scope
+To: Steven Price <steven.price@arm.com>, linux-kernel@vger.kernel.org,
+ linux-tip-commits@vger.kernel.org
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org
+References: <20240802151643.1691631-2-kan.liang@linux.intel.com>
+ <172596234514.2215.6662153156633974477.tip-bot2@tip-bot2>
+ <1835eb6d-3e05-47f3-9eae-507ce165c3bf@arm.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <1835eb6d-3e05-47f3-9eae-507ce165c3bf@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Change bl_len from u16 to u32 to accommodate the necessary bit shifts.
 
-Fix the following smatch warnings:
 
-drivers/usb/storage/ene_ub6250.c:1509 ms_scsi_read_capacity() warn:
-right shifting more than type allows 16 vs 24
-drivers/usb/storage/ene_ub6250.c:1510 ms_scsi_read_capacity() warn:
-right shifting more than type allows 16 vs 16
+On 2024-09-12 6:12 a.m., Steven Price wrote:
+> On 10/09/2024 10:59, tip-bot2 for Kan Liang wrote:
+>> The following commit has been merged into the perf/core branch of tip:
+>>
+>> Commit-ID:     4ba4f1afb6a9fed8ef896c2363076e36572f71da
+>> Gitweb:        https://git.kernel.org/tip/4ba4f1afb6a9fed8ef896c2363076e36572f71da
+>> Author:        Kan Liang <kan.liang@linux.intel.com>
+>> AuthorDate:    Fri, 02 Aug 2024 08:16:37 -07:00
+>> Committer:     Peter Zijlstra <peterz@infradead.org>
+>> CommitterDate: Tue, 10 Sep 2024 11:44:12 +02:00
+>>
+>> perf: Generic hotplug support for a PMU with a scope
+>>
+>> The perf subsystem assumes that the counters of a PMU are per-CPU. So
+>> the user space tool reads a counter from each CPU in the system wide
+>> mode. However, many PMUs don't have a per-CPU counter. The counter is
+>> effective for a scope, e.g., a die or a socket. To address this, a
+>> cpumask is exposed by the kernel driver to restrict to one CPU to stand
+>> for a specific scope. In case the given CPU is removed,
+>> the hotplug support has to be implemented for each such driver.
+>>
+>> The codes to support the cpumask and hotplug are very similar.
+>> - Expose a cpumask into sysfs
+>> - Pickup another CPU in the same scope if the given CPU is removed.
+>> - Invoke the perf_pmu_migrate_context() to migrate to a new CPU.
+>> - In event init, always set the CPU in the cpumask to event->cpu
+>>
+>> Similar duplicated codes are implemented for each such PMU driver. It
+>> would be good to introduce a generic infrastructure to avoid such
+>> duplication.
+>>
+>> 5 popular scopes are implemented here, core, die, cluster, pkg, and
+>> the system-wide. The scope can be set when a PMU is registered. If so, a
+>> "cpumask" is automatically exposed for the PMU.
+>>
+>> The "cpumask" is from the perf_online_<scope>_mask, which is to track
+>> the active CPU for each scope. They are set when the first CPU of the
+>> scope is online via the generic perf hotplug support. When a
+>> corresponding CPU is removed, the perf_online_<scope>_mask is updated
+>> accordingly and the PMU will be moved to a new CPU from the same scope
+>> if possible.
+>>
+>> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+>> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+>> Link: https://lore.kernel.org/r/20240802151643.1691631-2-kan.liang@linux.intel.com
+>> ---
+>>  include/linux/perf_event.h |  18 ++++-
+>>  kernel/events/core.c       | 164 +++++++++++++++++++++++++++++++++++-
+>>  2 files changed, 180 insertions(+), 2 deletions(-)
+>>
+> [...]
+>> diff --git a/kernel/events/core.c b/kernel/events/core.c
+>> index 67e115d..5ff9735 100644
+>> --- a/kernel/events/core.c
+>> +++ b/kernel/events/core.c
+> [...]
+>> @@ -13856,6 +13980,42 @@ static void perf_event_exit_cpu_context(int cpu) { }
+>>  
+>>  #endif
+>>  
+>> +static void perf_event_setup_cpumask(unsigned int cpu)
+>> +{
+>> +	struct cpumask *pmu_cpumask;
+>> +	unsigned int scope;
+>> +
+>> +	cpumask_set_cpu(cpu, perf_online_mask);
+>> +
+>> +	/*
+>> +	 * Early boot stage, the cpumask hasn't been set yet.
+>> +	 * The perf_online_<domain>_masks includes the first CPU of each domain.
+>> +	 * Always uncondifionally set the boot CPU for the perf_online_<domain>_masks.
+>                   ^^^^^^^^^^^^^^^ typo
+> 
+>> +	 */
+>> +	if (!topology_sibling_cpumask(cpu)) {
+> 
+> This causes a compiler warning:
+> 
+>> kernel/events/core.c: In function 'perf_event_setup_cpumask':
+>> kernel/events/core.c:14012:13: error: the comparison will always evaluate as 'true' for the address of 'thread_sibling' will never be NULL [-Werror=address]
+>> 14012 |         if (!topology_sibling_cpumask(cpu)) {
+>>       |             ^
+>> In file included from ./include/linux/topology.h:30,
+>>                  from ./include/linux/gfp.h:8,
+>>                  from ./include/linux/xarray.h:16,
+>>                  from ./include/linux/list_lru.h:14,
+>>                  from ./include/linux/fs.h:13,
+>>                  from kernel/events/core.c:11:
+>> ./include/linux/arch_topology.h:78:19: note: 'thread_sibling' declared here
+>>    78 |         cpumask_t thread_sibling;
+>>       |                   ^~~~~~~~~~~~~~
+>> cc1: all warnings being treated as errors
+> 
 
-Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
----
- drivers/usb/storage/ene_ub6250.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The patch to fix the warning has been posted.
+https://lore.kernel.org/lkml/20240912145025.1574448-1-kan.liang@linux.intel.com/
 
-diff --git a/drivers/usb/storage/ene_ub6250.c b/drivers/usb/storage/ene_ub6250.c
-index 97c66c0d91f4..ab6718dc874f 100644
---- a/drivers/usb/storage/ene_ub6250.c
-+++ b/drivers/usb/storage/ene_ub6250.c
-@@ -1484,7 +1484,7 @@ static int ms_scsi_mode_sense(struct us_data *us, struct scsi_cmnd *srb)
- static int ms_scsi_read_capacity(struct us_data *us, struct scsi_cmnd *srb)
- {
- 	u32   bl_num;
--	u16    bl_len;
-+	u32    bl_len;
- 	unsigned int offset = 0;
- 	unsigned char    buf[8];
- 	struct scatterlist *sg = NULL;
--- 
-2.34.1
+Please give it a try.
 
+Thanks,
+Kan
 
