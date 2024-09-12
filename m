@@ -1,72 +1,123 @@
-Return-Path: <linux-kernel+bounces-327422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FF2C9775B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:46:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 497B39775CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF9C41F2372E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:46:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1EEF1F2439A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D7D1C3307;
-	Thu, 12 Sep 2024 23:45:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C3E1C32FA;
+	Thu, 12 Sep 2024 23:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OSZ7rY2+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DB5QJf12"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB8118891D;
-	Thu, 12 Sep 2024 23:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E53019F425;
+	Thu, 12 Sep 2024 23:57:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726184753; cv=none; b=ntW7pl3OzQXE6XeweO0rpiSxZ87w2hkMu53td3SjlC0bmWqJhzMLhT8pD9KN9Ub3O/fT+yaZfmrUvhKJ2NMTr91KU1KZCBl0GpMhHrG8XT8Bjq+WjCTr6XEJSA5aV1PaQertl+4S1UfdghsE3VDrN39aNtgSARO/EEJj0Kb/xgE=
+	t=1726185444; cv=none; b=OBnMj3sd5cAE5wRjYMaOAE/2cODPpzgyn8NCqVgtwcemyULwYOX5KGJg269d3sgO/2F/8VEWILu1b/3jaoMGjFTMBpU3Gkwe4SlxmF2/DHa5y52SsVbvf3ZxWiIK5uUmFXSFCn1URl07rtjWeUqrlEtcNlf9CjVed0r04OyFr1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726184753; c=relaxed/simple;
-	bh=Uq0kkQVqpccg0BdoOMB4WvgRs+396QtDG1vIiaA8lb4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jxvYekMPJBF6v8kANUniE5EnZckzTngaZSHdmJegQVapmjXXtPMGVtzWP3SWZMsgZb6BBviKlIwKwgz5T9bUAMrSnnorJ2WZKiPM+1OcDKFCnr2vZpEDEz4F5KvxnloAhlVk28cQ8+9IqudpVedYaAWajbRWVSoRSB2Jf35Hyh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OSZ7rY2+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2CC9C4CEC3;
-	Thu, 12 Sep 2024 23:45:52 +0000 (UTC)
+	s=arc-20240116; t=1726185444; c=relaxed/simple;
+	bh=AsfRcrtObUzG0G02vJhdYtWyZnOhJwTlNYYrFWc+CCg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=t+w6Ife6yazdgoq+BnGWBkARSSo39/qvknF0RJf6+qbJ/F5Lpu9HYKVUjmjLRGHYivg9XI1RlkBzbQoPTaLj1Op+miXl8kALOjh89bVwzS38OC7qoifJT/i/FnMS0mUM/DqHDnjbMXI4UCzVU3pPiOZQS0JLvF8nO0fvIFLPAVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DB5QJf12; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A48FDC4CEC3;
+	Thu, 12 Sep 2024 23:57:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726184753;
-	bh=Uq0kkQVqpccg0BdoOMB4WvgRs+396QtDG1vIiaA8lb4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OSZ7rY2+aXDt0vXwwWW9KJ090mwIUS+k8dK1uwVNtg6gsF+oaO9ZLrknjSSvMxiK2
-	 u+c0i64QPr3e3+0gws872UINBWAnQ5My7OQnvf/3ueI6AtBmoygbxTAUekMEyntUgV
-	 tUrI4leOZXZ3F512NxH3K63TuIftPrFvq1gvcP6ERhQKy7/g7VY/E6qTz/xqOZ22w6
-	 kwFDlvVWkzOFR4pbpJx2BOJOToav1wOxC21H6CB9l3SDS3pb8WVtADzeOWy9yv/2r/
-	 xaoQBYzPoD1uaAaozdjl2NvQrf3T7AvAmUunStwGPsl+1V7FkeJFGXr6fywcimxJd+
-	 ufq63ojEpyb+A==
-Date: Thu, 12 Sep 2024 16:45:51 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Daniel Zahka <daniel.zahka@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] ethtool: rss: fix rss key initialization
- warning
-Message-ID: <20240912164551.3ce5b1a8@kernel.org>
-In-Reply-To: <20240912230531.3116582-1-daniel.zahka@gmail.com>
-References: <20240912230531.3116582-1-daniel.zahka@gmail.com>
+	s=k20201202; t=1726185444;
+	bh=AsfRcrtObUzG0G02vJhdYtWyZnOhJwTlNYYrFWc+CCg=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=DB5QJf121WmloINNRr9CXjIgZovlOpNsyCUdEDkRtBvHlpbjiOg+OLyfS4aN7OJLM
+	 uZyVKHNHSiTKIG85yxti+1Oc+bdYYzDWVnglbPFWJm7wtlYUH/I8cdiX28mpcC711l
+	 LKesPT/n/vJiP1zbHGp/y86uMjT42cJihoFOtOKLkUKT6u4/p5EbOKagxW+XF9YRy3
+	 vhY/iCfDkarlUXIaaqLXYoy7xbjXXo5+2Z+x7HsAb+N/cRxva7cAxRT35j8V8j//L4
+	 MWZdSfiCdOEi1G63TwuWlEh1fnbUedVmOjolwTZfw/3oAWZU6k/NBZKoNppwO+ZxtB
+	 YakCukUmSRc6A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 13 Sep 2024 02:57:20 +0300
+Message-Id: <D44PO3WW3R6S.1VSJQ4AYFJW04@kernel.org>
+To: "Sergey Shtylyov" <s.shtylyov@omp.ru>, "Roman Smirnov"
+ <r.smirnov@omp.ru>, "David Howells" <dhowells@redhat.com>, "Herbert Xu"
+ <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
+ "Andrew Zaborowski" <andrew.zaborowski@intel.com>
+Cc: <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: Re: [PATCH v2] KEYS: prevent NULL pointer dereference in
+ find_asymmetric_key()
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20240910111806.65945-1-r.smirnov@omp.ru>
+ <D42N9ASJJSUD.EG094MFWZA4Q@kernel.org>
+ <84d6b0fa-4948-fe58-c766-17f87c2a2dba@omp.ru>
+ <D43HG3PEBR4I.2INNPVZIT19ZZ@kernel.org>
+ <8774f6a2-9bec-b699-6b68-63a26019c5b3@omp.ru>
+ <D44DK087Y80R.25CNND6WHJ7EE@kernel.org>
+ <dbc7249a-7bf5-7e5f-7204-d368c052023c@omp.ru>
+In-Reply-To: <dbc7249a-7bf5-7e5f-7204-d368c052023c@omp.ru>
 
-On Thu, 12 Sep 2024 16:05:30 -0700 Daniel Zahka wrote:
-> -			WARN_ON_ONCE(!ret && !rxfh_dev.key &&
-> +			WARN_ON_ONCE(!ret && !rxfh_dev.key && ops->rxfh_per_ctx_key &&
+On Thu Sep 12, 2024 at 8:36 PM EEST, Sergey Shtylyov wrote:
+> On 9/12/24 5:27 PM, Jarkko Sakkinen wrote:
+> [...]
+>
+> >>>>>> In find_asymmetric_key(), if all NULLs are passed in id_{0,1,2} pa=
+rameters
+> >>>>>> the kernel will first emit WARN and then have an oops because id_2=
+ gets
+> >>>>>> dereferenced anyway.
+> >>>>>>
+> >>>>>> Found by Linux Verification Center (linuxtesting.org) with Svace s=
+tatic
+> >>>>>> analysis tool.
+> >>>>>
+> >>>>> Weird, I recall that I've either sent a patch to address the same s=
+ite
+> >>>>> OR have commented a patch with similar reasoning. Well, it does not
+> >>>>> matter, I think it this makes sense to me.
+> >>>>>
+> >>>>> You could further add to the motivation that given the panic_on_war=
+n
+> >>>>> kernel command-line parameter, it is for the best limit the scope a=
+nd
+> >>>>> use of the WARN-macro.
+> >>>>
+> >>>>    I don't understand what you mean -- this version of the patch kee=
+ps
+> >>>> the WARN_ON() call, it just moves that call, so that the duplicate i=
+d_{0,1,2}
+> >>>> checks are avoided...
+> >>>
+> >>> I overlooked the code change (my bad sorry). Here's a better version =
+of
+> >>> the first paragraph:
+> >>>
+> >>> "find_asymmetric_keys() has nullity checks of id_0 and id_1 but ignor=
+es
+> >>> validation for id_2. Check nullity also for id_2."
+> >>
+> >>    Hm, what about WARN_ON(!id_0 && !id_1 && !id_2) -- it used to check=
+ all
+> >> the pointers, right? I think our variant was closer to reality... :-)
+> >=20
+> > Right (lazy validation, first null ignores rest)
+>
+>    No, contrariwise: since we use && and !, first non-NULL would ignore t=
+he rest.
 
-wrap at 80 chars, please, make sure you read:
-https://www.kernel.org/doc/html/next/process/maintainer-netdev.html
-before sending v2
--- 
-pw-bot: cr
+Oops correct :-/
+
+BR, Jarkko
 
