@@ -1,148 +1,181 @@
-Return-Path: <linux-kernel+bounces-326021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7464197615E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:20:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F188F976168
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:20:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E70B281EB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:20:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 714A51F21B5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:20:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC3318A6C7;
-	Thu, 12 Sep 2024 06:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC022189BB9;
+	Thu, 12 Sep 2024 06:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dzqWCkJv"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="f7ImMjz5"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C7118952C;
-	Thu, 12 Sep 2024 06:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C8F18A6BB
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 06:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726122004; cv=none; b=K8XiiZUflJQWfSzmrrYLB5l0+SpnVkADcDKZbnmfaApV4lbZ5gpf+/Art6BZBCSPjDXjhFLmsYuH8Bs9MNE6VmDUkmXhooy4TNlug/Z2YgAGLgei3jA4ITnKAUXik/wH5nQK8bIphzLsPGbWaknSCooRua5PCeXzxNYP8gVMozM=
+	t=1726122044; cv=none; b=O5JAxn+fKbaY2ab7HQcwZwc+2KTH36+8QVroH63HkBTsDvdERM5buWVAs39unqdmHp96cPKRTvWbr6OjLCZKLpeQAR+0TfYUbA6drL327h6RhlmGWBbV3dSCfzCoic7omM2bGLvMwP41+ON6xtwAXJrNmzV/ezNoBhlsiCI7QPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726122004; c=relaxed/simple;
-	bh=Eh//eC2ZQUF3nfb6eUzz3dVJDDGdTBrFXZ1nCAZv5ow=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bArOuLDnw6g2/L2vTC9VetvZ6H/lsW0PBbp6C94/3boynxjiZB9PcO9dAcSPOu12zsCMdm4X6LU/BcbPoPkJFh9FyaBJzcByjVJOPTYnARbikKzv0sjoNbMddoaoIfkfsmV1R0hnQR7ESJHTj0a5r9NaFQODPhsFDPAOgOIW4hA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dzqWCkJv; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-374b9761eecso492499f8f.2;
-        Wed, 11 Sep 2024 23:20:02 -0700 (PDT)
+	s=arc-20240116; t=1726122044; c=relaxed/simple;
+	bh=2F6IKkpv/Qwlr7Q/6xNHbyfy5PQ3xNesTPaXOFDb4UY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LwjFN3Ipgz2M2eQGI37XJvijCD4hEVfXwYcBqZm01Lzj3xZfjPwHdK2qNBrXPb888yC/JAHcMRtPeCf2M+Wr6CWu2oD4S+kft9fGcWQ5pu/WyUNaAPceozTdiVhUcLE0CLuCV1T8urJxRGBGzGhNacvu+fuxyrcXXn3Lw96O22I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=f7ImMjz5; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-206bd1c6ccdso6153075ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 23:20:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726122001; x=1726726801; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lrFGMy8rj0h87/GhVASiPltt/Rs0Uh3ENOxRwjDF3p4=;
-        b=dzqWCkJvyov0H1d0Yq6N/SmiWwCv20G+1vAFKgDl8Eoc/3VQyTHoePd4G68cc27ru8
-         dEJTibskPNU8608v1MeFAeHjWfQoFHGM8lAYbqyKE6EvJrIRhIg7KZWoqmzIhHKpcCJd
-         Swfap7bkxHMijjNf/ha9rW2h6npM43QALGLpHW4hQ7CQO4ntBl/3HBj2JzOFNDuVfMJ7
-         LwwJ0NPMU8mj+m7y8IwjOKsLZYA+9GjqTCjrYTeUhJsHhu9I8ac1jR7px1jWY/V1vhUQ
-         TV0IfOYtoKbZT6wqXAiizxQFguIPuHP34NDPQR/HlNpGY7vfPtbdKhqb9B+wiYyXFYWd
-         xF/Q==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1726122042; x=1726726842; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4MH+VWCTNjiA22bJ+vIa1h0/NxuAZxX6cpAlaipl1hg=;
+        b=f7ImMjz5nD3GVetxCwMWoMX0kbIS4lvT7rEllYmLdT1KxiOENjPfwGS0uGx1s49aoE
+         e+S6xHj/IwKOfMTOWQabXZVX65tJFPq0fLcBDOfXfsFJhwEvgMvrUr9UlGXPbcb7Lay4
+         Gi/IQ6rnGZ8UYdmka+oBZwvNaR+WwIpIymqItrNmjNailKIQdWCBeH89j2wDY3mlS/wx
+         FvHk8yCVj+VYIQSt+IwVrm0VnCz09SHus+F7QpDCtn0bPIzDT+K5kwUg6cnCIkY1VOMH
+         97dX+cVLAMHx/6gRUewjaflWeYX++hO2+QEGMn2rXsKqWiltX77adLjzFL/QhUylIYvo
+         MahA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726122001; x=1726726801;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lrFGMy8rj0h87/GhVASiPltt/Rs0Uh3ENOxRwjDF3p4=;
-        b=eIfH4F84xvVSRT2FIK6x7/WYDY32O1/htDMsj/bk0RI6jlPQ0rz2ULv24Qlo34/pgK
-         7//wWAg7LRW/t7vOOFPmpZ5/V/iudrmoGt41UkBPkipJOS5LvC9sJlVKeV5OLp7NDAQl
-         p6Ol1+D4xB2+DN4uqUgy0xVKFPYVRfJkOR03GBGX2L7VKg9XnBp4/l/nuEeagPl7Frpm
-         yUkmvukJZooRRSnnF3f6JyR7Lj5JfpXhRk9asfd+JeB/cMBde7iiqNVSnnXHK2CgyBfw
-         dXWI2Uc7BOpztHXcHnUCh5AcmYveUk56mOkuxrK0eKOtzvDVNFAG4PuNjSp9egcbzDM3
-         kEtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWKXAnspPlMfnVdLB15D0NZvh8XI/A08TBq0ecUdDSq4ljnBoOgY62cMEHVQgquFJS6PdVgfQbFlrvozGY=@vger.kernel.org, AJvYcCWMzy44hxiVbxw4WlIiw2qqy52OS5tFtA/aKfAhwSenOw2OFedkL4Kr0vhoPVp6gSBtiW6mcEguFQlm@vger.kernel.org, AJvYcCWu7SfxUfRPrsa/vQVP2KmiPe8AgePAhXjMqmUkrC6IasT7V4pv3nm2lVdiFU24UsQwiuR4kbve@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTeuGmFZs0K9Bnn6NHsz57lFTC4S2SvTADL0t3Pm/p/8yFiDAc
-	kD170Yr7szsZngLmmKs/Rftnz5Wd4IP86sgGyfoS1EqCt5p0ECc+sPd7mJEEZj1W3MGHUzpzn6h
-	YpsXJqCvBE84TEe/P2LgiN75uxXI=
-X-Google-Smtp-Source: AGHT+IFoNGTWT3h99GoY81Qz+ckGxTsP5b3QngDN17LEFaL8m39H2H60Mty6V0Vopz/yEwWpGaNSgzfGudlm4Qbkn98=
-X-Received: by 2002:adf:a356:0:b0:377:284d:9946 with SMTP id
- ffacd0b85a97d-378c2d031ebmr803696f8f.30.1726122001036; Wed, 11 Sep 2024
- 23:20:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726122042; x=1726726842;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4MH+VWCTNjiA22bJ+vIa1h0/NxuAZxX6cpAlaipl1hg=;
+        b=Si0jSc6RdvZalUdKo0+jUERLMJvD86Iht3UMWAbfGU56cATnfmw75u2MiQHDPzMgJP
+         PvE1gJtVYMGTK75hC74iAZBs+IfFQVK70Mh1NpQNg4kvkRtz4evqdlQIOEjoIR5X1LOA
+         aQ+3dJsEh69y287vySqKTFcUaq4Ch4IkL/SZ8+IupRVgJO//cq4KDAblOSVu2NrEev6O
+         FqRfyUk+rbnOq9FBDH9Cdc8ahWEk5Th6BV2qlrjJnti/rC2V9JB7sQTrwqAWQdky3G9M
+         +D/XsdVDfbBVa3h/dcDwicvViEo+CJ6wZIHNr0ECSHwLZaLk8hJhKnMFeSXpeUJ4uk1k
+         gaXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVVzl2Nyu+0UfiX5h6a/563gWpxUuy8wqWdG+fj3gLS/uD6K/dlRxNb4rUqmvZTgWIR1/GTsyQNmqb8A6w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYQLlBZbR0uEMPTHYybIac+BHoPLQ61t0zKVTVTrBmmXtf+lg2
+	vfl4cTdaoDMoN5J0CnGd9dOY89go+EyGqPWN0Ve1RD2jODnGuoAEsyDjMvDy2n4=
+X-Google-Smtp-Source: AGHT+IEU0tdlu4WO+IdyYZyQDbQui3iM6ZAtkm5A4CWh7CFo7CMKirqsrpvUAjbSGnQEOy1Vcb5RUw==
+X-Received: by 2002:a17:903:191:b0:206:aa2e:6d1f with SMTP id d9443c01a7336-2076e423272mr22083755ad.46.1726122041553;
+        Wed, 11 Sep 2024 23:20:41 -0700 (PDT)
+Received: from ghost ([2601:647:6700:64d0:7acc:9910:2c1d:4e65])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076afdd82asm8286105ad.129.2024.09.11.23.20.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 23:20:40 -0700 (PDT)
+Date: Wed, 11 Sep 2024 23:20:35 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>, Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Michal Hocko <mhocko@suse.com>,
+	"Kirill A. Shutemov" <kirill@shutemov.name>,
+	Chris Torek <chris.torek@gmail.com>, linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-abi-devel@lists.sourceforge.net
+Subject: Re: [PATCH RFC v3 1/2] mm: Add personality flag to limit address to
+ 47 bits
+Message-ID: <ZuKIMz7U8rDrq8jA@ghost>
+References: <20240905-patches-below_hint_mmap-v3-0-3cd5564efbbb@rivosinc.com>
+ <20240905-patches-below_hint_mmap-v3-1-3cd5564efbbb@rivosinc.com>
+ <87zfol468z.fsf@mail.lhotse>
+ <Zt9HboH/PmPlRPmH@ghost>
+ <1aca8e4c-1c12-4624-a689-147ff60b75d6@csgroup.eu>
+ <CAMuHMdURgy6NPthHhfOv_h=C_gw2hEpnGQ7iBGoDE=ZazUPRHA@mail.gmail.com>
+ <8734m6s428.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911051716.6572-2-ki.chiang65@gmail.com> <20240911095233.3e4d734d@foxbook>
-In-Reply-To: <20240911095233.3e4d734d@foxbook>
-From: Kuangyi Chiang <ki.chiang65@gmail.com>
-Date: Thu, 12 Sep 2024 14:19:51 +0800
-Message-ID: <CAHN5xi1ZiOrZBUUAKmyJ5qtUUx5wLc3vyavQwA7k_Q47dN-WNg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] xhci: Fix control transfer error on Etron xHCI host
-To: =?UTF-8?Q?Micha=C5=82_Pecio?= <michal.pecio@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, mathias.nyman@intel.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8734m6s428.fsf@mail.lhotse>
 
-Hi,
-
-Thank you for the review.
-
-Micha=C5=82 Pecio <michal.pecio@gmail.com> =E6=96=BC 2024=E5=B9=B49=E6=9C=
-=8811=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=883:52=E5=AF=AB=E9=81=93=
-=EF=BC=9A
->
-> Hi,
->
-> > This happens when the xHCI driver enqueue a control TD (which cross
-> > over the Link TRB between two ring segments, as shown) in the endpoint
-> > zero's transfer ring. Seems the Etron xHCI host can not perform this
-> > TD correctly, causing the USB transfer error occurred, maybe the upper
-> > driver retry that control-IN request can solve problem, but not all
-> > drivers do this.
+On Wed, Sep 11, 2024 at 11:38:55PM +1000, Michael Ellerman wrote:
+> Geert Uytterhoeven <geert@linux-m68k.org> writes:
+> > Hi Christophe,
 > >
-> > |     |
-> > -------
-> > | TRB | Setup Stage
-> > -------
-> > | TRB | Link
-> > -------
-> > -------
-> > | TRB | Data Stage
-> > -------
-> > | TRB | Status Stage
-> > -------
-> > |     |
->
-> I wonder about a few things.
->
-> 1. What are the exact symptoms, besides Ethernet driver errors?
-> Any errors from xhci_hcd? What if dynamic debug is enabled?
+> > On Tue, Sep 10, 2024 at 11:21 AM Christophe Leroy
+> > <christophe.leroy@csgroup.eu> wrote:
+> >> >>> diff --git a/include/uapi/linux/personality.h b/include/uapi/linux/personality.h
+> >> >>> index 49796b7756af..cd3b8c154d9b 100644
+> >> >>> --- a/include/uapi/linux/personality.h
+> >> >>> +++ b/include/uapi/linux/personality.h
+> >> >>> @@ -22,6 +22,7 @@ enum {
+> >> >>>     WHOLE_SECONDS =         0x2000000,
+> >> >>>     STICKY_TIMEOUTS =       0x4000000,
+> >> >>>     ADDR_LIMIT_3GB =        0x8000000,
+> >> >>> +   ADDR_LIMIT_47BIT =      0x10000000,
+> >> >>>   };
+> >> >>
+> >> >> I wonder if ADDR_LIMIT_128T would be clearer?
+> >> >>
+> >> >
+> >> > I don't follow, what does 128T represent?
+> >>
+> >> 128T is 128 Terabytes, that's the maximum size achievable with a 47BIT
+> >> address, that naming would be more consistant with the ADDR_LIMIT_3GB
+> >> just above that means a 3 Gigabytes limit.
+> >
+> > Hence ADDR_LIMIT_128TB?
+> 
+> Yes it should be 128TB. Typo by me.
+> 
+> cheers
 
-The xhci driver receives a transfer event TRB (completion code is
-"USB Transaction Error") when the issue is triggered.
+47BIT was selected because the usecase for this flag is for applications
+that want to store data in the upper bits of a virtual address space. In
+this case, how large the virtual address space is irrelevant, and only
+the number of bits that are being used, and hence the number of bits
+that are free.
 
->
-> 2. How did you determine that this is the exact cause?
+- Charlie
 
-The issue is triggered every time when a Link TRB follows a Setup
-Stage TRB.
-
->
-> 3. Does it happen every time when a Link follows Setup, or only
-> randomly and it takes lots of control transfers to trigger it?
-
-Yes, it happens every time.
-
->
-> 4. How is it even possible? As far as I see, Linux simply queues
-> three TRBs for a control URB. There are 255 slots in a segemnt,
-> so exactly 85 URBs should fit, and then back to the first slot.
-
-The xhci driver also queues no data control transfers.
-
->
-> Regards,
-> Michal
-
-Thanks,
-Kuangyi Chiang
 
