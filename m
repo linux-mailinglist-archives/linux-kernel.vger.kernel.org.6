@@ -1,218 +1,190 @@
-Return-Path: <linux-kernel+bounces-326147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB419763C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:00:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D8989763CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:01:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E38D51C23408
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:00:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF2E21F24868
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7866C18DF9B;
-	Thu, 12 Sep 2024 08:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uur9dmxa"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EFB619259D;
+	Thu, 12 Sep 2024 08:01:02 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229B9189B88
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53567126C18;
+	Thu, 12 Sep 2024 08:00:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726128042; cv=none; b=A1CgD/By1bIIWF5K2x5Q1aQO6B/WmJ8i1ynNB6oq+YmmjuYfCYOu3E2kOJG1CmWZDhSq/WWQkJD373ePgTfEmyqMp70svWj0JspgCq0C1SNxjC1wlrqDjlJaClEVioVckLY8046uAHZ+9fhxzJRotxSM3L0VQnfockFjltolYH8=
+	t=1726128062; cv=none; b=IvJowywxN4PYgR5SFUgHLQUvWNSaUQb3End+Vz1YIO/p2eXijXc5A3dHX0SRP7kwyQsY+gk73TkU7dgKSBi7cHdio5WBEGHWgmClYABoaW0hQgX4/3hJuI8dvSLGu6B1RDBqh1YmNw27A6VMI0odgOlVMzuH3+5Le9GcqB6wukc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726128042; c=relaxed/simple;
-	bh=Q5Q4yukVQCdw40/7wDBQrcY2I6g4IYljJ4ajwKiCGUI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jBtuXPAHCmwK7BZy71imVwDxezZJxPSzH7Pz+t2RMQ1RlpjIooCzGVS5Ud93FgHhG6vtfuY/hedocPEvg8D/rPRW8V73pdIzVdjqh7vJI71DkXC1/sgYIIuMWb3KCgDlw0UUW42KIho67+9RXy0adgJrbgU6lk9Jb4/cPu8vDMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uur9dmxa; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5356aa9a0afso905530e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 01:00:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726128039; x=1726732839; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5modn5x5ktb92R2/Sf1154fPo8VvDbqrTciHNWoobzQ=;
-        b=uur9dmxaVg0gRv/o+ymERQqYV5YOmrNYWE1en4I2+1T1iv3CQeuci0jzJFh/4V1R7l
-         DYn7c15uiTlQTgbqggYDu9k/g6hWrcqHul5fzg7i1kAIpxyfIlpm1g+g1tSkW/6aid87
-         QGSU4n0reQDqf8w5rLKEt4HVyXi+VLf5ZjmHJpZfzIEYUjRvnQFgf/1JFPdFRWFds5u+
-         qYsm8G83pePM/LWLEb92f6lYgYn6x5/TgXn9MW+LI1qzLOxOSN92MP5KWApl+P5oar8n
-         epxYVedC2Kv+iuUV5a9QvAYs2B0cMKJTXwRgR80cUDk4h9EehuEZN1ICaKONfe0meBAT
-         BuPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726128039; x=1726732839;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5modn5x5ktb92R2/Sf1154fPo8VvDbqrTciHNWoobzQ=;
-        b=osH5a/S6v1z/uAs4Kh4eNxh9gKHV+/xwHF9Pb4Zhou5qZMaQ6mujsYsk5QRlImEgct
-         KwKU4ICxSp+kMg8EEdlP7Acy4EX9xydWZ9/gu/QfqNc2Buy33uZImyZOLw0IoClgSKHD
-         qndVnIhvz9Sa+rTwAsgz30ZobsFWnL1u48HrBgcNh7rXq4Bm80JbPxs9ZtJvYkTxEIPT
-         KAcsxqpSLyaHR6sIZW7reXnPdoa+dGDWwIJc7X8DhCcep+xBCcBB2UDDH/Dppd9UvW0e
-         Oj7fIFabNVp2fSBd23d+sknQkQJNFVcxJCZ/yefe1V0p1LqEwHruple32d00KXX2FMfI
-         7pUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnDdfqcqwWbWTXZACKNcq0WcSN+J4hIAgMd8bnJVFDHC9PHbrDYfJ15r08W2x/72lyLgjWb8V1eIPI1A4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmRkjeEA5AG5yVj6eARs26wxvbDyV19gCdUz6bfwL1+lZXiTgy
-	pWR9BrmYdS295ftpW65HsQAs2LTEXxmvXZqz11gqPjjil+qjOOUnHE+NdcINjP0=
-X-Google-Smtp-Source: AGHT+IHahBSHVXIeldwwf3pO17r+LD9jwU2Se1YwQ3QQIuNHAGAmDpStfbv4s0gMC389h59Yw6vybA==
-X-Received: by 2002:a05:6512:3b22:b0:536:741a:6bc5 with SMTP id 2adb3069b0e04-53678fab49dmr1746967e87.12.1726128037823;
-        Thu, 12 Sep 2024 01:00:37 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f8cb73esm1831653e87.174.2024.09.12.01.00.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 01:00:37 -0700 (PDT)
-Date: Thu, 12 Sep 2024 11:00:35 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Mahadevan <quic_mahap@quicinc.com>
-Cc: robdclark@gmail.com, quic_abhinavk@quicinc.com, sean@poorly.run, 
-	marijn.suijten@somainline.org, airlied@gmail.com, daniel@ffwll.ch, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, swboyd@chromium.org, 
-	konrad.dybcio@linaro.org, danila@jiaxyga.com, bigfoot@classfun.cn, 
-	neil.armstrong@linaro.org, mailingradian@gmail.com, quic_jesszhan@quicinc.com, 
-	andersson@kernel.org, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	quic_kalyant@quicinc.com, quic_jmadiset@quicinc.com, quic_vpolimer@quicinc.com
-Subject: Re: [PATCH 5/5] arm64: dts: qcom: sa8775p: add display dt nodes
-Message-ID: <kxxcjrqndc2qzmexn4mm4vmfugfo23y63aa6oyia3uiwpe3arr@sbvdni2f2hq2>
-References: <20240912071437.1708969-1-quic_mahap@quicinc.com>
- <20240912071437.1708969-6-quic_mahap@quicinc.com>
+	s=arc-20240116; t=1726128062; c=relaxed/simple;
+	bh=aVlSPsUZBfRf+FqfFhEzZSGZfo19zpqp7vNBm72MltQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=LX3SfBsQXJNV3l8pxXHXq64BBZC+pl5T+fmxTMfdaCgtmXfUJjFChjEpDH2+szp6P0ZxMX/MdpfIFiEwZO7lR7QoIND4QuyymSB8YW4zwnm7Ls+vnMrbrr940ZV3HrHU60+Etb01Bp1e4k/iWFzczsXQ4JbJnn6xR4YkcycJ10Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from zq-Legion-Y7000.. (unknown [180.111.103.6])
+	by APP-01 (Coremail) with SMTP id qwCowAAHDx+pn+Jm9F_9Ag--.56033S2;
+	Thu, 12 Sep 2024 16:00:41 +0800 (CST)
+From: zhouquan@iscas.ac.cn
+To: anup@brainfault.org,
+	ajones@ventanamicro.com,
+	atishp@atishpatra.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	linux-perf-users@vger.kernel.org,
+	Quan Zhou <zhouquan@iscas.ac.cn>
+Subject: [PATCH v3 2/2] riscv: KVM: add basic support for host vs guest profiling
+Date: Thu, 12 Sep 2024 16:00:38 +0800
+Message-Id: <86e8f4eeb30dfc8700089cd88616e6cfb5a142ff.1726126795.git.zhouquan@iscas.ac.cn>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1726126795.git.zhouquan@iscas.ac.cn>
+References: <cover.1726126795.git.zhouquan@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240912071437.1708969-6-quic_mahap@quicinc.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAAHDx+pn+Jm9F_9Ag--.56033S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJFW7KrWUtFWxAryrGF15Arb_yoW5ZF1xpF
+	Z8ur9Y9r4rKryxC34ayr1v9r45WFsYg343Xry7CFy5Wr45try8Jr4vg34DAry5JFW8Xa4S
+	kFy8KFyruwn8Aw7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBj14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2jsIE14v26F4j6r4UJwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
+	8cxan2IY04v7M4kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwI
+	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
+	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
+	IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k2
+	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUXqXdUUUUU=
+X-CM-SenderInfo: 52kr31xxdqqxpvfd2hldfou0/1tbiCQ8SBmbifb+DkgAAsF
 
-On Thu, Sep 12, 2024 at 12:44:37PM GMT, Mahadevan wrote:
-> Add mdss and mdp DT nodes for SA8775P.
-> 
-> Signed-off-by: Mahadevan <quic_mahap@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 85 +++++++++++++++++++++++++++
->  1 file changed, 85 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> index 67ba124d20f8..d5d8e02fdb29 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> @@ -6,6 +6,7 @@
->  #include <dt-bindings/interconnect/qcom,icc.h>
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  #include <dt-bindings/clock/qcom,rpmh.h>
-> +#include <dt-bindings/clock/qcom,sa8775p-dispcc.h>
->  #include <dt-bindings/clock/qcom,sa8775p-gcc.h>
->  #include <dt-bindings/clock/qcom,sa8775p-gpucc.h>
->  #include <dt-bindings/interconnect/qcom,sa8775p-rpmh.h>
-> @@ -2937,6 +2938,90 @@ camcc: clock-controller@ade0000 {
->  			#power-domain-cells = <1>;
->  		};
->  
-> +		mdss0: display-subsystem@ae00000 {
+From: Quan Zhou <zhouquan@iscas.ac.cn>
 
-Is there going to be mdss1?
+For the information collected on the host side, we need to
+identify which data originates from the guest and record
+these events separately, this can be achieved by having
+KVM register perf callbacks.
 
-> +			compatible = "qcom,sa8775p-mdss";
-> +			reg = <0x0 0x0ae00000 0x0 0x1000>;
-> +			reg-names = "mdss";
-> +
-> +			/* same path used twice */
-> +			interconnects = <&mmss_noc MASTER_MDP0 0 &mc_virt SLAVE_EBI1 0>,
-> +					<&mmss_noc MASTER_MDP1 0 &mc_virt SLAVE_EBI1 0>,
-> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-> +					 &config_noc SLAVE_DISPLAY_CFG QCOM_ICC_TAG_ACTIVE_ONLY>;
-> +			interconnect-names = "mdp0-mem",
-> +					     "mdp1-mem",
-> +					     "cpu-cfg";
-> +
-> +			power-domains = <&dispcc0 MDSS_DISP_CC_MDSS_CORE_GDSC>;
-> +
-> +			clocks = <&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>,
-> +				 <&gcc GCC_DISP_HF_AXI_CLK>,
-> +				 <&dispcc0 MDSS_DISP_CC_MDSS_MDP_CLK>;
-> +
-> +			interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-controller;
-> +			#interrupt-cells = <1>;
-> +
-> +			iommus = <&apps_smmu 0x1000 0x402>;
-> +
-> +			#address-cells = <2>;
-> +			#size-cells = <2>;
-> +			ranges;
-> +
-> +			status = "disabled";
-> +
-> +			mdss0_mdp: display-controller@ae01000 {
-> +				compatible = "qcom,sa8775p-dpu";
-> +				reg = <0x0 0x0ae01000 0x0 0x8f000>,
-> +				      <0x0 0x0aeb0000 0x0 0x2008>;
-> +				reg-names = "mdp", "vbif";
-> +
-> +				clocks = <&gcc GCC_DISP_HF_AXI_CLK>,
-> +					<&dispcc0 MDSS_DISP_CC_MDSS_AHB_CLK>,
-> +					<&dispcc0 MDSS_DISP_CC_MDSS_MDP_LUT_CLK>,
-> +					<&dispcc0 MDSS_DISP_CC_MDSS_MDP_CLK>,
-> +					<&dispcc0 MDSS_DISP_CC_MDSS_VSYNC_CLK>;
+Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
+---
+ arch/riscv/include/asm/kvm_host.h | 10 ++++++++++
+ arch/riscv/kvm/Kconfig            |  1 +
+ arch/riscv/kvm/main.c             | 12 ++++++++++--
+ arch/riscv/kvm/vcpu.c             |  7 +++++++
+ 4 files changed, 28 insertions(+), 2 deletions(-)
 
-Wrong indentation
-
-> +				clock-names = "bus",
-> +					      "iface",
-> +					      "lut",
-> +					      "core",
-> +					      "vsync";
-> +
-> +				assigned-clocks = <&dispcc0 MDSS_DISP_CC_MDSS_VSYNC_CLK>;
-> +				assigned-clock-rates = <19200000>;
-> +
-> +				operating-points-v2 = <&mdss0_mdp_opp_table>;
-> +				power-domains = <&rpmhpd RPMHPD_MMCX>;
-> +
-> +				interrupt-parent = <&mdss0>;
-> +				interrupts = <0>;
-> +
-> +				mdss0_mdp_opp_table: opp-table {
-> +					compatible = "operating-points-v2";
-> +
-> +					opp-375000000 {
-> +						opp-hz = /bits/ 64 <375000000>;
-> +						required-opps = <&rpmhpd_opp_svs_l1>;
-> +					};
-> +
-> +					opp-500000000 {
-> +						opp-hz = /bits/ 64 <500000000>;
-> +						required-opps = <&rpmhpd_opp_nom>;
-> +					};
-> +
-> +					opp-575000000 {
-> +						opp-hz = /bits/ 64 <575000000>;
-> +						required-opps = <&rpmhpd_opp_turbo>;
-> +					};
-> +
-> +					opp-650000000 {
-> +						opp-hz = /bits/ 64 <650000000>;
-> +						required-opps = <&rpmhpd_opp_turbo_l1>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
->  		dispcc0: clock-controller@af00000 {
->  			compatible = "qcom,sa8775p-dispcc0";
->  			reg = <0x0 0x0af00000 0x0 0x20000>;
-> -- 
-> 2.34.1
-> 
-
+diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/kvm_host.h
+index 2e2254fd2a2a..35eab6e0f4ae 100644
+--- a/arch/riscv/include/asm/kvm_host.h
++++ b/arch/riscv/include/asm/kvm_host.h
+@@ -286,6 +286,16 @@ struct kvm_vcpu_arch {
+ 	} sta;
+ };
+ 
++/*
++ * Returns true if a Performance Monitoring Interrupt (PMI), a.k.a. perf event,
++ * arrived in guest context.  For riscv, any event that arrives while a vCPU is
++ * loaded is considered to be "in guest".
++ */
++static inline bool kvm_arch_pmi_in_guest(struct kvm_vcpu *vcpu)
++{
++	return IS_ENABLED(CONFIG_GUEST_PERF_EVENTS) && !!vcpu;
++}
++
+ static inline void kvm_arch_sync_events(struct kvm *kvm) {}
+ 
+ #define KVM_RISCV_GSTAGE_TLB_MIN_ORDER		12
+diff --git a/arch/riscv/kvm/Kconfig b/arch/riscv/kvm/Kconfig
+index 26d1727f0550..0c3cbb0915ff 100644
+--- a/arch/riscv/kvm/Kconfig
++++ b/arch/riscv/kvm/Kconfig
+@@ -32,6 +32,7 @@ config KVM
+ 	select KVM_XFER_TO_GUEST_WORK
+ 	select KVM_GENERIC_MMU_NOTIFIER
+ 	select SCHED_INFO
++	select GUEST_PERF_EVENTS if PERF_EVENTS
+ 	help
+ 	  Support hosting virtualized guest machines.
+ 
+diff --git a/arch/riscv/kvm/main.c b/arch/riscv/kvm/main.c
+index bab2ec34cd87..734b48d8f6dd 100644
+--- a/arch/riscv/kvm/main.c
++++ b/arch/riscv/kvm/main.c
+@@ -51,6 +51,12 @@ void kvm_arch_hardware_disable(void)
+ 	csr_write(CSR_HIDELEG, 0);
+ }
+ 
++static void kvm_riscv_teardown(void)
++{
++	kvm_riscv_aia_exit();
++	kvm_unregister_perf_callbacks();
++}
++
+ static int __init riscv_kvm_init(void)
+ {
+ 	int rc;
+@@ -105,9 +111,11 @@ static int __init riscv_kvm_init(void)
+ 		kvm_info("AIA available with %d guest external interrupts\n",
+ 			 kvm_riscv_aia_nr_hgei);
+ 
++	kvm_register_perf_callbacks(NULL);
++
+ 	rc = kvm_init(sizeof(struct kvm_vcpu), 0, THIS_MODULE);
+ 	if (rc) {
+-		kvm_riscv_aia_exit();
++		kvm_riscv_teardown();
+ 		return rc;
+ 	}
+ 
+@@ -117,7 +125,7 @@ module_init(riscv_kvm_init);
+ 
+ static void __exit riscv_kvm_exit(void)
+ {
+-	kvm_riscv_aia_exit();
++	kvm_riscv_teardown();
+ 
+ 	kvm_exit();
+ }
+diff --git a/arch/riscv/kvm/vcpu.c b/arch/riscv/kvm/vcpu.c
+index 8d7d381737ee..e8ffb3456898 100644
+--- a/arch/riscv/kvm/vcpu.c
++++ b/arch/riscv/kvm/vcpu.c
+@@ -226,6 +226,13 @@ bool kvm_arch_vcpu_in_kernel(struct kvm_vcpu *vcpu)
+ 	return (vcpu->arch.guest_context.sstatus & SR_SPP) ? true : false;
+ }
+ 
++#ifdef CONFIG_GUEST_PERF_EVENTS
++unsigned long kvm_arch_vcpu_get_ip(struct kvm_vcpu *vcpu)
++{
++	return vcpu->arch.guest_context.sepc;
++}
++#endif
++
+ vm_fault_t kvm_arch_vcpu_fault(struct kvm_vcpu *vcpu, struct vm_fault *vmf)
+ {
+ 	return VM_FAULT_SIGBUS;
 -- 
-With best wishes
-Dmitry
+2.34.1
+
 
