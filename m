@@ -1,194 +1,114 @@
-Return-Path: <linux-kernel+bounces-326213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26564976502
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:57:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 158E5976505
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A95E1C22E07
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:57:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D305D2842FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:57:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60EB61917C0;
-	Thu, 12 Sep 2024 08:56:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61FB1192B61;
+	Thu, 12 Sep 2024 08:57:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cR9twx6i"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iaJUlmOj"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C9E126C16
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D49018FDAA
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726131418; cv=none; b=n91/88atisbzsLDMe3UTakPHXfXxqnaFnT3bJoKwhmHj4dNCaCbgrzq4sVYe7BVvazDgnFQzMQPNtT82/5sDNlEINFa734grXbRDtVJC8C48Co9XzetAb6PrwVk/yN/X8d2mixDbIIChRr1wpErHm0tD1IG6B4t2UP+heAma+1Y=
+	t=1726131434; cv=none; b=W15kGUlFZ2q2A3ZHPOV8dxGt3yB4HZmwamFbXFBTvT2q+gWialdrOFuThgrIXjqO3D3eQilMqUWRFPq/2L+5UXJSSoNP5MHpz3j14CqKuDAiF+lwv8Gr58OozGNhGeuwSXS3mbDUqjL4cXkfkrlVkMWKCIbGHVxGjVW6VxREXUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726131418; c=relaxed/simple;
-	bh=6Tkzbnot1aUNPoidsetbIWb7Ad8rBiS0quVwLz7P/Po=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fHH4XItcT0hbG96Ib76hOZC/Z7whvbK8svuGzUiFU7VkyWx4zxArLMdEB2KNtItLBnxpUW3X9tz06leNq8o4l64AKsjlYrX1s9r1yeTVQJAem4IDp21tdOyFxCqnnhGn8WBOcqLjfTaeahA2AUOPb1OlNbu+MmI3LagqOqehMr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cR9twx6i; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726131416; x=1757667416;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=6Tkzbnot1aUNPoidsetbIWb7Ad8rBiS0quVwLz7P/Po=;
-  b=cR9twx6iojyD4gYwgM1R++IuP846MPOdWspEtnS1JKZDYd8Dp4HKEqP8
-   SVd5WBII9SfJXssAGI6a5TvbaLVsHyUqzokcETxKym53r4TdkGJRDd4wb
-   /opEZDcejYI8ceVZHtFzCfLPn/Yfbpymx7RAilawhVTliWTmvT+mbsDpj
-   1TmhdeBYZPHnPy/hz0c3ImwFnsqlKmF8YmEBCG9O31hok8R15Gp1DeTEJ
-   qnQyKZXN4G0jnWw3ymGwVJIb9rN9TCx+L74S6IJ8rW1KbeHDUxGZ1xHse
-   bWhYHL6n7uz4K0p6FtyU3T7m9owi58L/57dhYnnF5FsBUY++hqlmik+sp
-   A==;
-X-CSE-ConnectionGUID: qwIHw5GkTGmdM1Jeatu6Ew==
-X-CSE-MsgGUID: x1S12r4zSweAHwJhJL2lzg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="24848392"
-X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
-   d="scan'208";a="24848392"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 01:56:55 -0700
-X-CSE-ConnectionGUID: g45qTTtXQNOT4npoaH3hZQ==
-X-CSE-MsgGUID: 5BsJJWrgRkKAYy+a/eL33g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
-   d="scan'208";a="68426878"
-Received: from carterle-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.253])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 01:56:51 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Thomas Zimmermann <tzimmermann@suse.de>, Tejas Vipin
- <tejasvipin76@gmail.com>, Laurent.pinchart@ideasonboard.com,
- patrik.r.jakobsson@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, airlied@gmail.com, daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/gma500: replace drm_detect_hdmi_monitor() with
- drm_display_info.is_hdmi
-In-Reply-To: <87o74ti7g5.fsf@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240911180650.820598-1-tejasvipin76@gmail.com>
- <b0f77fcc-5d84-4727-9a17-9d1f1e2c5b76@suse.de> <87o74ti7g5.fsf@intel.com>
-Date: Thu, 12 Sep 2024 11:56:47 +0300
-Message-ID: <87ldzxi71s.fsf@intel.com>
+	s=arc-20240116; t=1726131434; c=relaxed/simple;
+	bh=DjtjHEGrvANFI5B9lVHCDNbOIvLuaXQEHlBzxQ+GrD8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ZUOtMojwiiuH0hzUJRZDJagUa0bMP5ZqRZmy75Qw7njQWnGzpP6/oSkRsfl0kLhkba1DYG6R1eCFjinCP1vc1ygf41cEPQp9iuL8PAybhyHNGNUPmEUJ6uvX+SS3ltof5hzVQt2BZKleFqFfTNU1W101CkQOsoYUuR6z0+NT/dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iaJUlmOj; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-374bd059b12so509987f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 01:57:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726131431; x=1726736231; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6GB2egBmowzD1BmyczzI/bnYTjW28edWluz9NwGsMtk=;
+        b=iaJUlmOjKxDaMOBKXtRgFCUWa40wevVN/1VF0qOP2LPqgM3V/Pm3wK9BWcnMcvXVVX
+         wwZLl9ppQAqOyrpjQcXXy2EtzQch1FpNI6EGviMX0spfdUSq0N6A76R5W0i/lEUfrMCc
+         egMNVdqdA6njVK5NifQlEcik7tOfraRcXjOpCg2A2190xnrQIiAKIdjQS0wWiXKLtvOM
+         OW9xyQelGI2Q9/bp+lsfFcVdIBoIbsjvbvE+vh647IjF+37r1VD7iB5Agg46KLQcM/0b
+         i8PcAgBZ5WGH0o0DKACTpRD6gX6pbtY5b959biMB+S36UakfqFUaNbpg0eMwJzqtwfz+
+         WM2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726131431; x=1726736231;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6GB2egBmowzD1BmyczzI/bnYTjW28edWluz9NwGsMtk=;
+        b=aPysNa/vH1jUgXKBiRb0v2XW8ph99MHLJpGGnrwYgwfDIQhUrPg9WAfF1S6io8+Y9b
+         QJhBhWb77OuqyIpw6SefvxkE173iwP5wEAr9oZaay/Yx8FL2dGcImhzTQCryR9JY9dj0
+         2cVILYav/6gSHpWiV2Jv9m3Q53kH1Jhj+tGWRoOfrTi/33URP60CXXexa3uN1ARP7sBQ
+         Prk85lzu1VU/94CeVoeXkiilKxskU02+t4jFRTbY/BHUz2uq4IWcumMGkBSMLUmWADFg
+         NXCD15nNvsQdYPCHSPsl6sSQGjJJ1W360pz1v+WsSE0PxU88Wxr3bOIjXu5SqsoZ0SK9
+         4phw==
+X-Forwarded-Encrypted: i=1; AJvYcCXotwacOWEGrH+uvEqo+RaMDHkDnvEX6/nfT3NZd4Vrh4FLmrbqnJqDxtq8uzHXCYB/pycthjPjM3UgJuo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7baZsvJtnQv4088c0LFDcFfk8R9RN+rsziUK+SbQMbTGE319y
+	fASLB40IFguUvkv44UA+hZRRxILktF/HsoB/LMZVzDfH7NFzEx9ozowo1B4fkp8=
+X-Google-Smtp-Source: AGHT+IEOtJzJsuwuqY2oaUeNN42g94gx2ZHs0ZQuD1RVXqzgi2ozhnck9PoCMtBGjepfFwTy/BEe8Q==
+X-Received: by 2002:a5d:65c9:0:b0:374:c793:7bad with SMTP id ffacd0b85a97d-378c2cf3c57mr1155356f8f.16.1726131431260;
+        Thu, 12 Sep 2024 01:57:11 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789567609esm13746480f8f.59.2024.09.12.01.57.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 01:57:10 -0700 (PDT)
+Date: Thu, 12 Sep 2024 11:57:06 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Justin Lai <justinlai0215@realtek.com>
+Cc: Larry Chiu <larry.chiu@realtek.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH net-next] rtase: Fix error code in rtase_init_board()
+Message-ID: <f53ed942-5ac2-424b-a1ed-9473c599905e@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-On Thu, 12 Sep 2024, Jani Nikula <jani.nikula@linux.intel.com> wrote:
-> On Thu, 12 Sep 2024, Thomas Zimmermann <tzimmermann@suse.de> wrote:
->> Hi
->>
->> Am 11.09.24 um 20:06 schrieb Tejas Vipin:
->>> Replace drm_detect_hdmi_monitor() with drm_display_info.is_hdmi since
->>> monitor HDMI information is available after EDID is parsed. Additionally
->>> rewrite the code the code to have fewer indentation levels.
->>
->> The problem is that the entire logic is outdated. The content=20
->> of=C2=A0cdv_hdmi_detect() should go into cdv_hdmi_get_modes(), the detec=
-t_ctx=20
->> callback should be set to drm_connector_helper_detect_from_ddc() and=20
->> cdv_hdmi_detect() should be deleted. The result is that ->detect_ctx=20
->> will detect the presence of a display and ->get_modes will update EDID=20
->> and other properties.
->
-> I guess I didn't get the memo on this one.
->
-> What's the problem with reading the EDID at detect? The subsequent
-> drm_edid_connector_add_modes() called from .get_modes() does not need to
-> read the EDID again.
+Return an error if dma_set_mask_and_coherent() fails.  Don't return
+success.
 
-Moreover, in this case .detect() only detects digital displays as
-reported by EDID. If you postpone that to .get_modes(), the probe helper
-will still report connected, and invent non-EDID fallback modes. The
-behaviour changes.
+Fixes: a36e9f5cfe9e ("rtase: Add support for a pci table in this module")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/net/ethernet/realtek/rtase/rtase_main.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> I think it should be fine to do incremental refactors like the patch at
-> hand (modulo some issues I mention below).
+diff --git a/drivers/net/ethernet/realtek/rtase/rtase_main.c b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+index 7882f2c0e1a4..ffebc67cba5a 100644
+--- a/drivers/net/ethernet/realtek/rtase/rtase_main.c
++++ b/drivers/net/ethernet/realtek/rtase/rtase_main.c
+@@ -2023,7 +2023,8 @@ static int rtase_init_board(struct pci_dev *pdev, struct net_device **dev_out,
+ 	if (ret < 0)
+ 		goto err_out_disable;
+ 
+-	if (dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64))) {
++	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
++	if (ret) {
+ 		dev_err(&pdev->dev, "no usable dma addressing method\n");
+ 		goto err_out_free_res;
+ 	}
+-- 
+2.45.2
 
-Another issue in the patch is that it should also change .get_modes() to
-not read the EDID again, but just call drm_edid_connector_add_modes().
-
-BR,
-Jani.
-
->
-> BR,
-> Jani.
->
->
->>
->> Do you have=C2=A0 a device for testing such a change?
->>
->> Best regards
->> Thomas
->>
->>>
->>> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
->>> ---
->>> Changes in v2:
->>>      - Use drm_edid instead of edid
->>>
->>> Link to v1: https://lore.kernel.org/all/20240910051856.700210-1-tejasvi=
-pin76@gmail.com/
->>> ---
->>>   drivers/gpu/drm/gma500/cdv_intel_hdmi.c | 24 +++++++++++++-----------
->>>   1 file changed, 13 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c b/drivers/gpu/drm/=
-gma500/cdv_intel_hdmi.c
->>> index 2d95e0471291..701f8bbd5f2b 100644
->>> --- a/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
->>> +++ b/drivers/gpu/drm/gma500/cdv_intel_hdmi.c
->>> @@ -128,23 +128,25 @@ static enum drm_connector_status cdv_hdmi_detect(
->>>   {
->>>   	struct gma_encoder *gma_encoder =3D gma_attached_encoder(connector);
->>>   	struct mid_intel_hdmi_priv *hdmi_priv =3D gma_encoder->dev_priv;
->>> -	struct edid *edid =3D NULL;
->>> +	const struct drm_edid *drm_edid;
->>> +	int ret;
->>>   	enum drm_connector_status status =3D connector_status_disconnected;
->>>=20=20=20
->>> -	edid =3D drm_get_edid(connector, connector->ddc);
->>> +	drm_edid =3D drm_edid_read_ddc(connector, connector->ddc);
->
-> Just drm_edid_read() is enough when you're using connector->ddc.
->
->>> +	ret =3D drm_edid_connector_update(connector, drm_edid);
->>>=20=20=20
->>>   	hdmi_priv->has_hdmi_sink =3D false;
->>>   	hdmi_priv->has_hdmi_audio =3D false;
->>> -	if (edid) {
->>> -		if (edid->input & DRM_EDID_INPUT_DIGITAL) {
->>> -			status =3D connector_status_connected;
->>> -			hdmi_priv->has_hdmi_sink =3D
->>> -						drm_detect_hdmi_monitor(edid);
->>> -			hdmi_priv->has_hdmi_audio =3D
->>> -						drm_detect_monitor_audio(edid);
->>> -		}
->>> -		kfree(edid);
->>> +	if (ret)
->
-> This error path leaks the EDID.
->
->>> +		return status;
->>> +
->>> +	if (drm_edid_is_digital(drm_edid)) {
->>> +		status =3D connector_status_connected;
->>> +		hdmi_priv->has_hdmi_sink =3D connector->display_info.is_hdmi;
->>> +		hdmi_priv->has_hdmi_audio =3D connector->display_info.has_audio;
->>>   	}
->>> +	drm_edid_free(drm_edid);
->>> +
->>>   	return status;
->>>   }
->>>=20=20=20
-
---=20
-Jani Nikula, Intel
 
