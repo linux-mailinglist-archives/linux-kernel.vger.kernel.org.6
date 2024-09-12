@@ -1,137 +1,106 @@
-Return-Path: <linux-kernel+bounces-326927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0191D976EA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:24:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E617C976EA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:25:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 253B41F24CF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:24:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEB0828639C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC43F1531C0;
-	Thu, 12 Sep 2024 16:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D78D1509B4;
+	Thu, 12 Sep 2024 16:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a92Fn/1f"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DrHu0hsJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD53126C0E;
-	Thu, 12 Sep 2024 16:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AE81448C1;
+	Thu, 12 Sep 2024 16:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726158259; cv=none; b=Qyd+GnhvbN+Vk5UKzzpnXYmFQS3ELAJVj8SchT4bhMCWVcl7pMFP5Msu4crZllVBKUGGz6XtZbdpnrE27YGgQwyCQtSJ8jHcRNVy+cz2ilE4UBuX3N3FYbhwHFiR5Mcjm6OKtak2i3gXd1Lszrvqa25cNbT8Zb768he2BSYZy7s=
+	t=1726158295; cv=none; b=EykMHXPbTwtV16roSRRoxD4GVxULkzCHPJKUQV4hlqcjqWccCf4X2/A/Tb3lvuseyUpYVV6HDOfvJgKbvle1LlibgG6HdW5UPr64MTpzwlgMSGhbJEaQ5F5GhPObA15a+kDyDuyqNr8YV6ar8X1cBptHiZ5CACFsv4/N2MXA6dU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726158259; c=relaxed/simple;
-	bh=f9mJ/Uh32dDaHr2+VRWvs2+Fg/4sZPPfeCbiu9X1MsA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DHSZu9/rUHv+XWIzleRMbojJYEdZM6AachhPeae2fcklFzdz3fVJ7EpjKYvAEiqYvA6XE7Ubf1a6LoyHfTv9y+25hUqjKV9MsGPcOcI89+7FdKxQlXrZF1m1rmmm3m+3QiGZ5+P33axnJDbcNJ+MULlrDa+n5FxcL4ZQuxj34hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a92Fn/1f; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5365aec6fc1so1390421e87.3;
-        Thu, 12 Sep 2024 09:24:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726158256; x=1726763056; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NiLlf1hoInqPJk8sDtJDxagapQpk3Yj07i/CZovnACY=;
-        b=a92Fn/1fg5loSa2ArrMkWm88sEw1ccZ/Rotmld/XfApG86J/FWj9aAEeLbQaG7XFQp
-         nJvA4mpRGL8AQ8o5KDJdgH1WjtzDK+b6q/8bYnS+OE/yaeQOHwMbtZoKQmACm5mva4Bp
-         qevq0DZ5prqPa+uXz8VLvw3vZF4c9ZZkqTW0He15qPxnQtaYN8+LFEghKJp2+aV/W3F2
-         1gw6qy2rXnLt2lC3Iw0r/DjIQt7fYgCI/th0oQPhdiIW6/kevCU/pBFU+NoT5ynrmktZ
-         99R9m1Lx5eOyOCEHzAhSSTzyuaSM38wZCaQ7NPcfm6gxnQUFk3M22JsjFng/xZDouDvu
-         H+JQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726158256; x=1726763056;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NiLlf1hoInqPJk8sDtJDxagapQpk3Yj07i/CZovnACY=;
-        b=Z5ICKTZJTAt3E/9WYdJI5fyHP4h1+yX9UB3MjrefaphE984lp2XLkTNT2ocstaRiOw
-         evDzX06t3BNFDEO93/LUd6HmPBHDmRzxcyfd3zSgq6v1Sc2Sv6mRTpHeUeUgWQzFCtH5
-         BGl4glA0N+vZeOwqNgE8qbWC8okNyw1xGcm8fpVefHZXZFrm/4rCdjmo86DbLdo1vx+Y
-         fGdRr9FQ3sgizE9YNbqQkfOpG1qOlug4D6z0/IULQDj48iG7/CIGzmzlku1308Hr54z4
-         T02H0TDEda+KYCh1nSE6IJ3Y/BrO3sSI6HQSLBiAqgDRfOGAqFil4z/fJbN0e80u3bqJ
-         DucQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3q+it2F+fCmU8ATkuriZTlh6vgXkWlYDL5eyxh0UQ1XoLWE6mdGn69tyHGoqA9aeEhLU4RSpV2eo9+e0u@vger.kernel.org, AJvYcCXZIz5RWqubmq28AUxLxE8rEl3J4amC7X0CG4Pg61DTlLS6gV38DXLedWvq7hOIHuzm4Uhgd2WUUIqe@vger.kernel.org, AJvYcCXv23ksT0b5ALQjfjsXA050/Ycdad0MAGukIThkRqtbF7DsLAiBimpUZ/l4+HDjWY+HYm9f1YKBD8mRUusIAw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzR7024fHv9HfaqKOan/DlPsHy8tAvc2IybkEYsbBzPJkzTRU5S
-	AO1AAKpMCjOW0n65KaTeQNx/qzLNZWgr+pJI6nWqB7Fg03ot0CdXxC3u+BkZyp9NRWXZgQqHbHO
-	dL30gE3ZrsgoOJHbcB2gQIS7nPX0=
-X-Google-Smtp-Source: AGHT+IGwfOIECbj79V7s6bnAokjRAAFfqr5874TYEO+eZnkwoXU/hqGJa2R0ILSir04h0qjaOEQ1oi/4B403MYYQLeE=
-X-Received: by 2002:a05:6512:3e1a:b0:536:56d6:ea4f with SMTP id
- 2adb3069b0e04-53678fceb9emr2478050e87.29.1726158255481; Thu, 12 Sep 2024
- 09:24:15 -0700 (PDT)
+	s=arc-20240116; t=1726158295; c=relaxed/simple;
+	bh=CHEVBjIBBe7uiVAfeq59Zm3quIP3T9dxsy24PDWRhAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kPy9UfJy8kBaw2bqmErL5jIl0u+/BOD0eXsVvo/UT7UnsSUxUi7uw47rl8QIqNJObyX4r3vEZjwZlduTxYufboAhrALSWK3vJd4kIn7MY9bw7u/2k6gbIQ2rTm569fPEg58ct4XTYitAJqzcs6PWtqw25Lit8ILljzE5/oOsJsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DrHu0hsJ; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726158293; x=1757694293;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=CHEVBjIBBe7uiVAfeq59Zm3quIP3T9dxsy24PDWRhAY=;
+  b=DrHu0hsJBvp6/9fjVfApWAKIpowdSUBjAd2eEpN4mb0CovmqX1a09EGm
+   D6GcVxeHTvZ5yLy73YQ0uZYstRb3z34biL9FCGduYDbKvv32u2i7A7FtH
+   Dbf5X5GBoEQcR2D+FmjzBEjpAu2CuaS+5aYj4Qy0ZrC0xr0qenvIUksCJ
+   qLLGCayPVjrW+unRfdvFI9b1yuWBTujtySyfT7d0VPG6/79BDXYM5Et1e
+   5U2VGVeyjrEg5sADptjrhwGhht1LDP+mMLGZCKpC0uBovOjXG2l2kr/nE
+   p8s/+0bsh0xzoBIUjCk0b6gi8pRAb1t2q9hn6xZpWIM4oUDqqw0gjr6CK
+   Q==;
+X-CSE-ConnectionGUID: favFiimUTVafdXY+Noh3pQ==
+X-CSE-MsgGUID: dTVMRuZDQXGn+hjTTq9B3Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="25220812"
+X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
+   d="scan'208";a="25220812"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 09:24:53 -0700
+X-CSE-ConnectionGUID: OQsqQzHLQxCnxvy+2i4sKA==
+X-CSE-MsgGUID: OuV2X7C9REi0ZHRY43coRQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
+   d="scan'208";a="67465615"
+Received: from merlinax-mobl.amr.corp.intel.com (HELO desk) ([10.125.147.150])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 09:24:52 -0700
+Date: Thu, 12 Sep 2024 09:24:40 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Jon Kohler <jon@nutanix.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, X86 ML <x86@kernel.org>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	LKML <linux-kernel@vger.kernel.org>,
+	"kvm @ vger . kernel . org" <kvm@vger.kernel.org>,
+	chao.gao@intel.com
+Subject: Re: [PATCH] x86/bhi: avoid hardware mitigation for
+ 'spectre_bhi=vmexit'
+Message-ID: <20240912162440.be23sgv5v5ojtf3q@desk>
+References: <20240912141156.231429-1-jon@nutanix.com>
+ <20240912151410.bazw4tdc7dugtl6c@desk>
+ <070B4F7E-5103-4C1B-B901-01CE7191EB9A@nutanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1197027.1726156728@warthog.procyon.org.uk>
-In-Reply-To: <1197027.1726156728@warthog.procyon.org.uk>
-From: Steve French <smfrench@gmail.com>
-Date: Thu, 12 Sep 2024 11:24:03 -0500
-Message-ID: <CAH2r5ms+7qDhOkxf=ti4Lifh1Tm0k2ipy8_rXaHhL7ygEqXvsw@mail.gmail.com>
-Subject: Re: [PATCH] cifs: Fix signature miscalculation
-To: David Howells <dhowells@redhat.com>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
-	Shyam Prasad N <nspmangalore@gmail.com>, Rohith Surabattula <rohiths.msft@gmail.com>, 
-	Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <070B4F7E-5103-4C1B-B901-01CE7191EB9A@nutanix.com>
 
-looks like this fixes the problem - merged into cifs-2.6.git for-next
+On Thu, Sep 12, 2024 at 03:44:38PM +0000, Jon Kohler wrote:
+> > It is only worth implementing the long sequence in VMEXIT_ONLY mode if it is
+> > significantly better than toggling the MSR.
+> 
+> Thanks for the pointer! I hadn’t seen that second sequence. I’ll do measurements on
+> three cases and come back with data from an SPR system.
+> 1. as-is (wrmsr on entry and exit)
+> 2. Short sequence (as a baseline)
+> 3. Long sequence
 
-On Thu, Sep 12, 2024 at 10:59=E2=80=AFAM David Howells <dhowells@redhat.com=
-> wrote:
->
->
-> Fix the calculation of packet signatures by adding the offset into a page
-> in the read or write data payload when hashing the pages from it.
->
-> Fixes: 39bc58203f04 ("cifs: Add a function to Hash the contents of an ite=
-rator")
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Steve French <sfrench@samba.org>
-> cc: Paulo Alcantara <pc@manguebit.com>
-> cc: Shyam Prasad N <nspmangalore@gmail.com>
-> cc: Rohith Surabattula <rohiths.msft@gmail.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: linux-cifs@vger.kernel.org
-> cc: linux-fsdevel@vger.kernel.org
-> ---
->  fs/smb/client/cifsencrypt.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/smb/client/cifsencrypt.c b/fs/smb/client/cifsencrypt.c
-> index 6322f0f68a17..b0473c2567fe 100644
-> --- a/fs/smb/client/cifsencrypt.c
-> +++ b/fs/smb/client/cifsencrypt.c
-> @@ -129,7 +129,7 @@ static ssize_t cifs_shash_xarray(const struct iov_ite=
-r *iter, ssize_t maxsize,
->                         for (j =3D foffset / PAGE_SIZE; j < npages; j++) =
-{
->                                 len =3D min_t(size_t, maxsize, PAGE_SIZE =
-- offset);
->                                 p =3D kmap_local_page(folio_page(folio, j=
-));
-> -                               ret =3D crypto_shash_update(shash, p, len=
-);
-> +                               ret =3D crypto_shash_update(shash, p + of=
-fset, len);
->                                 kunmap_local(p);
->                                 if (ret < 0)
->                                         return ret;
->
->
+I wonder if virtual SPEC_CTRL feature introduced in below series can
+provide speedup, as it can replace the MSR toggling with faster VMCS
+operations:
 
+  https://lore.kernel.org/kvm/20240410143446.797262-1-chao.gao@intel.com/
 
---=20
-Thanks,
-
-Steve
+Adding Chao for their opinion.
 
