@@ -1,116 +1,90 @@
-Return-Path: <linux-kernel+bounces-326138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AD6997639B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:55:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2085197639C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:55:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99505B20E0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:55:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA4051F224BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B5F18FDCD;
-	Thu, 12 Sep 2024 07:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C42118FC89;
+	Thu, 12 Sep 2024 07:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RE4Jpos0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="P4RmSSJc";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="g+vgxaLm"
+Received: from a7-42.smtp-out.eu-west-1.amazonses.com (a7-42.smtp-out.eu-west-1.amazonses.com [54.240.7.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035FA18E349;
-	Thu, 12 Sep 2024 07:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D43818A6A9;
+	Thu, 12 Sep 2024 07:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726127732; cv=none; b=dacyhsAvLjOykFXReeU6h9OecENu81642d0tVC5M5Nm4A18QHAjt6g6990Bnqpar/RGvlHQA2LSkXKIBsqD5mrwTQODaiRLKXbNWX0TBCWugVeVQGL1St4SyhKUwjcI0TIeOMTEHDDE/0dYQcIvyEOaR6DOYITRPuXeupX2TNo8=
+	t=1726127745; cv=none; b=mFUD8VpkiURZWLxlj363DiogfBRGV51lMs+o8Mr2P/OjBSU7pPopn1AcH88WarBnJXvCYnfFBM73HZ6a5gZZLgigY2ESJHrPnjV/kIxj3FUL2gLhsyXa7rrvsNWmUgqsNvR9kbK8MqeN1qwcXftxQSgfiJBXHXLuuDJPOSahw1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726127732; c=relaxed/simple;
-	bh=4s+VuwhVbNSAVesYDsrgOzVFuC3dn4Fh96NjWQHHSd4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T6c1sWxW5fA2B1SCV5IYRE/M97KXKOLAexRDTrIf17CQUHWmvnfRe6FQIoPmsD0HPKH3tqmqpx7zGyPJf6ClV7B5S3lWkVSZkvQUOkWdpJaSVebTbRRcwaOjjhN/VbKPFlYjDO6HgLFA2XHJYy84rQsYYenCm4IfA7u+vX5R7rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RE4Jpos0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BDB5C4CEC3;
-	Thu, 12 Sep 2024 07:55:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726127730;
-	bh=4s+VuwhVbNSAVesYDsrgOzVFuC3dn4Fh96NjWQHHSd4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RE4Jpos0PNEzX+j4gvv4HnNOrUggjKzwMILkyBwl0ysVmjqAOlVX/mQhrIQNly6u5
-	 D4cMLo65bYBMzWlE/3MbcvaGJgeSBNYdVepAt76I+DLSY7juHCYtKFtFSF+NxXRLnf
-	 nw0U9baOT3m36ADEOMsC52DEtH41CuFRaJgFalbX5iXcl4IyQp85V7KiijKjx0cNGT
-	 6KayroEwMI5tGGbabloSBt1YK8gCKXHgprPzBlO8p/mD27xX6IExuLkytas4cCy+Lx
-	 FeyB97LCD7R1E9Adejrws3/2lIKYd4KEQJJgQvTdJ/MZTah6JaIHWY/t17UQPpDuJl
-	 ey2Ge3BBptu3g==
-Date: Thu, 12 Sep 2024 08:55:23 +0100
-From: Lee Jones <lee@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Junhao Xie <bigfoot@classfun.cn>, devicetree@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, linux-leds@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Chukun Pan <amadeus@jmu.edu.cn>, Conor Dooley <conor+dt@kernel.org>,
-	=?iso-8859-1?Q?G=FCnter_R=F6ck?= <linux@roeck-us.net>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Jean Delvare <jdelvare@suse.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>
-Subject: Re: [PATCH 1/9] mfd: Add driver for Photonicat power management MCU
-Message-ID: <20240912075523.GB24460@google.com>
-References: <20240906093630.2428329-2-bigfoot@classfun.cn>
- <de5c9c27-56fa-4163-98e1-9a98400d2408@web.de>
- <43918eda-c4e8-471a-9de4-ea72bb090803@classfun.cn>
- <917ac8d8-a483-422c-a408-cdd44793e910@kernel.org>
+	s=arc-20240116; t=1726127745; c=relaxed/simple;
+	bh=1m7M7RGWH/0IfXhPGV9mtNbCDn8qDXKZ4SD0dBzJTuE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ViesXM70Ag9DjRsItKmMtftvsb91ffgS//nRJzCBDM/yNTWy+/WDxxn0S/tDXUYNkf0qjznx8+Q/S/mc0fbre/LdSYXZd4OnplMyqKaqgXRHOviYHOvV0cbcr//PcP/zXUjGdLfC4Ab9+F709hk0hKdsnY00mXy7qoIvUXMwTi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=P4RmSSJc; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=g+vgxaLm; arc=none smtp.client-ip=54.240.7.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1726127741;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=1m7M7RGWH/0IfXhPGV9mtNbCDn8qDXKZ4SD0dBzJTuE=;
+	b=P4RmSSJcyV9C35wg9iMZm2BMJ6mSVfYZGNmdQrSGKT/LgWWfXBI6QdWAmnl9keXF
+	MC0oDUpT7AzRycQx0n55Pv0uBoVJFZ3HZi9trsRL/VSHop77YTayMRRqQ+wWNVq7W12
+	ibEwBHCj3n/G3zId+jlAT1mMVax9ulrLbfOJAOW2rbxNWTeU8N8okVI/tA1siCJ165+
+	f9pjljeL98uP7j4JSYYt3KMmOepKtcv2qRwlRPh9zhUSBMx4vfp+GrzcswTDNPv58vh
+	DVH9Ax8lAaJabs78yXQ3yMirSQhvz8BmIhuhXwcFYnm5JfEymMgZi0ZwV209QnL6bqx
+	HRxxKQRkAQ==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1726127741;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
+	bh=1m7M7RGWH/0IfXhPGV9mtNbCDn8qDXKZ4SD0dBzJTuE=;
+	b=g+vgxaLmyyk3btXWYDOGlViy8dC/odqJkrT93Dc+PQNXEBmp9gNTDjj+F5Yf38AG
+	zMp7AgBTgfA9ST49lLyr4qSzwSwe5nFVPnkRz/f+Tfrk1ryBBw1uucNWMzb0qArPJ5f
+	r2AtnS2tYtfJ5Q+kAkYp10hwt6RWaHaCJ6ep0GGU=
+Message-ID: <01020191e53b1b5a-173497ca-00f1-4f81-be2e-0eed9ba7cd67-000000@eu-west-1.amazonses.com>
+Date: Thu, 12 Sep 2024 07:55:41 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <917ac8d8-a483-422c-a408-cdd44793e910@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ASoC: mediatek: Remove redundant error message
+To: Tang Bin <tangbin@cmss.chinamobile.com>, lgirdwood@gmail.com, 
+	broonie@kernel.org, perex@perex.cz, tiwai@suse.com, 
+	matthias.bgg@gmail.com
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org
+References: <20240911123751.2078-1-tangbin@cmss.chinamobile.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240911123751.2078-1-tangbin@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.09.12-54.240.7.42
 
-On Sun, 08 Sep 2024, Krzysztof Kozlowski wrote:
+Il 11/09/24 14:37, Tang Bin ha scritto:
+> In the function mt7986_afe_pcm_dev_probe, when get irq
+> failed, the function platform_get_irq() logs an error
+> message, so remove redundant one here.
+> 
+> Signed-off-by: Tang Bin <tangbin@cmss.chinamobile.com>
 
-> On 07/09/2024 16:33, Junhao Xie wrote:
-> > On 2024/9/7 16:44, Markus Elfring wrote:
-> >> …
-> >>> +++ b/include/linux/mfd/photonicat-pmu.h
-> >>> @@ -0,0 +1,86 @@
-> >> …
-> >>> +#ifndef _PHOTONICAT_PMU_H
-> >>> +#define _PHOTONICAT_PMU_H
-> >> …
-> >>
-> >> I suggest to omit leading underscores from such identifiers.
-> >> https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+define+a+reserved+identifier
-> >>
-> >> Regards,
-> >> Markus
-> > 
-> > Thanks for your suggestion, does this look better?
-> > #ifndef MFD_PHOTONICAT_PMU_H
-> > #define MFD_PHOTONICAT_PMU_H
+Please clarify the commit titie, like
+ASoC: mediatek: mt7986-afe-pcm: Remove redundant error message
 
-Yes, this is better.
+After which,
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-> <form letter>
-> Feel free to ignore all comments from Markus, regardless whether the
-> suggestion is reasonable or not. This person is banned from LKML and
-> several maintainers ignore Markus' feedback, because it is just a waste
-> of time.
-> </form letter>
 
-If you really _must_ do this, at least keep it factual.
-
-To the best of my knowledge Markus is not banned from LKML.
-
--- 
-Lee Jones [李琼斯]
 
