@@ -1,177 +1,162 @@
-Return-Path: <linux-kernel+bounces-327270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ED9397732C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:58:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7464E977330
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:59:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 715C31C23FC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:58:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEED9B246A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB00B1C2325;
-	Thu, 12 Sep 2024 20:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361061C2433;
+	Thu, 12 Sep 2024 20:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rj26X24R"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="zMYKHmeH"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EB013CFB7
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BEE91C1AB5
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726174637; cv=none; b=COv6k3jOIYmNWRjpcZNCKtHTIz4JtAAM5RWWKXQyHFTXR3Ij8EPJW7ZCxWueQJAEV82ljEtSJPzfA2PqWhTrRTnRnBWrtMKs1CbBJ0nP6APwo9858Ghzxj0YAs3l4GpRUefQq6eNoq/Y2yIWyU0mmSnzTgdlmoool5YtMXDg8VQ=
+	t=1726174691; cv=none; b=AZuCyo8rR17tEEKzPL1nGLBXFoKZsMZ1relxwAd1QEtw5P5M1kM+i3ugRC66lX9JAfvLjezAL1s8ADzzwmQqBvGzfyJSBBAKNsYkr2xfDVvwLzeaPMmkhEXiHxC0df1a7hjS346OcqdJ8goKiFVqz4n9PSo5DsVwlrimXFa6isU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726174637; c=relaxed/simple;
-	bh=KJviDHZ9lPMrCKs9Y16MulHLEhykyksuBhbmdkvKEt4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E2JN3LqqJq+jyuvgEAOpmZWV+KpJDEZbZAPJck0qNQS+ZJfY2o73WfxgWuYJESU/2aLSJeBmqfoBVD+JzBXphNK8q/SclNA8jf3JuM7kB/MG/4hZPzHZk10GF8IR2CvWT2uoP4HWgtJ5pOiqU77nzHTW67cUJlQoO8UCrfmuZ70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rj26X24R; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f7556a7e73so1447321fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:57:15 -0700 (PDT)
+	s=arc-20240116; t=1726174691; c=relaxed/simple;
+	bh=MYDZvrqlWEpmfJ0PC8MrAJxxkqkqQuxjGFHhVbXAtYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uOneFg+9HGKcFBuvBH32meYVHFcdahUQXRTNlGMr4ozdNYAyHwIM2RGjZv4vlyJrcIq8sYv0r9Ec7yrsFuyWtcZBIXy0fDRovaTFNZuQhRQy0WPtxa1OMQu0sV1/Y8XniArcnpAx9l6RSYY+ErSL/0MKfHgcyBRPT7HFBbsIsfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=zMYKHmeH; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-205909af9b5so1910985ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:58:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726174633; x=1726779433; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VEN2kvQPgr1Ms7pd8H18XzR4Akxhw4D8Y32gs8tCUBI=;
-        b=rj26X24RZhaVvv9w0zswB2/K8IEyIqWc4uTFz9fJvw/oChVhjqO5s/XTa8sQzQhxMk
-         HBCWhJFVbblkhC+KahPfXSC1yiJjVszSJcpfMmH9+HYBadd2Q4FrA2GPPtM4j6Ek0Za4
-         d74Fwsc06P5nGhIDafJgLLbDG4zeZiAqw7SAzAdASWk/5b5O3oDxScPe69oY9Cvcr/V7
-         ODvvITP/D/q/b+YuMt6+C/YC2Wr/Dh0jT7eQYW+e77xn85bMI/K/8rEmEipaVj+7zSQh
-         LToD1WKa59n033SK2othiQBbyJLY6ps7euQ8CZVp2JfhgDZjIDOXRqcrEtSBmu4oQM3n
-         R72Q==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1726174689; x=1726779489; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=awElkTLWK6u37rMcH6vV+9dmrRY/uH5yY9ycJ6GvqvQ=;
+        b=zMYKHmeHeQVgR09jItL/tqN8Iu4Z3xtNVUJI3mfrZ+xz47TgmOXyD7WQL1V+VVGI3b
+         057mf/boAlQUxGXeRg11VB7fhHybVjqZLyWIvQcSGLVNYAvEv6iVp2R/U2+FSV02jjcd
+         suOfT2n8WEHaIQZ7MAl3Mw314o+l/CEiO4Pp1cMKbQGXY3VLZ/4NDcgIO8whd3++PjfM
+         bYNypxqJ5LyaYGOl2easU6fx3QBQhOBcywyL59Sdf/VWM4nvA43cJPIq7jivxdDaK1Wr
+         50tRSpf6h/DSxjes6lm4PoYYfAuZHQUzhdoTCApthYu9TE1JgagCpEIBtR2wsA4IRZTO
+         6LEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726174633; x=1726779433;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VEN2kvQPgr1Ms7pd8H18XzR4Akxhw4D8Y32gs8tCUBI=;
-        b=a5ZLNS0zziSHoIqiVdQCZLLC+gYdQpfaYyRnKGySmSJTuPvj8z9AhdmpOc9pFknFlz
-         pG7GtvQm3UbP8L7JlztgXHNtJMiOB0YR1+UzPzKjpyPSFJ1D0asegmKP1RnRfcz/RdGi
-         Tqt5YLmu+3Pa/WWHjYeD4xTfFERabnQiuysYQZ/Vl3YUZkdl6H+RaUjeVmj8rh0YGTuO
-         wD4JGdVkXYV+WarRYk426eggAEcvJUgs4OiXYANbTt9XVOq59nEKfvTf4JDv24012sIa
-         gOVlvdBft4r8SIOTg+dt2pAZ4YK+U8cROWd9H2Mw0fyus8bTJHY1F1GrpBXdr7VxaRMv
-         kHUg==
-X-Forwarded-Encrypted: i=1; AJvYcCWpta17JRmMtfN5+UJRcT41Qr5F90EfePFqrciqxPk02LCp0791pml4vyppi8x0JkVa5zOBrz3pAGxswwg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzumg3hd0jFeiwIBxuVdY87RjS2qrraKfM9bQgdBmyARZs91daZ
-	y0nhgPXcL4ThZ4XyFHZDZT1fdJltFKDyns7JlZVoY7TeodmPDlxDlSqfDnYBSms=
-X-Google-Smtp-Source: AGHT+IF5y36oHtilMrxdEGv+5g780tzqe3ogPeLW1QGZrWL44AwZEE7/E7trA6yIla2NOXosmijcCg==
-X-Received: by 2002:a05:651c:2203:b0:2f7:7f76:992f with SMTP id 38308e7fff4ca-2f787ee1554mr8031811fa.6.1726174633366;
-        Thu, 12 Sep 2024 13:57:13 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f75bfe7f1fsm19904211fa.11.2024.09.12.13.57.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Sep 2024 13:57:12 -0700 (PDT)
-Message-ID: <6eadc285-f413-4bf0-8795-59ff19c734da@linaro.org>
-Date: Thu, 12 Sep 2024 23:57:11 +0300
+        d=1e100.net; s=20230601; t=1726174689; x=1726779489;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=awElkTLWK6u37rMcH6vV+9dmrRY/uH5yY9ycJ6GvqvQ=;
+        b=BBqyTtCGOSFiue4lbo7uzSXU+Yr2+rZahOBlSnVzmr5Oe/haxfIIH9v3iTvsWeJce/
+         k+isbpU7OfVG3IunW/d49/+T2bBVmLkxOHKEW1ib1prJlVcx6MG+9UKFiwhV48cnxfJH
+         KSRia7Mn6hS+VzcNLv9VPr54H1oAkvZumSdW4M/uG7+/CS5clZafg8dhqC0S3TciK0xu
+         t/aBn6I/JxcLUqE5Bn2CXEYAxYskj2DgPr+pH15l9doSvaeQtteOfeNkjsmF5QzLEQPP
+         pWbkhUnYouD7V98uAVnySJ9o4Fm8IFlK629LGapC8vGEZxV3nl2YoKkn3E8V7X+t/nlV
+         9mmg==
+X-Forwarded-Encrypted: i=1; AJvYcCVVkxFNVFuCAtWrSCDgAYisBpES3/428LjtkGQnBQCM8udSc+oWlxs09mORi8JX5/VeNO7rrLVd6iJeAZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrZoCmrEY3Zir5FtKT23M6zle+nHpNrKKiSCsQX5+OPjD7JMvJ
+	W+VQyHEPGEoG9mlGKV91whts1qCor7ZhpVa2PwdX9EME9wtVK2uFYC0cal+dtN8=
+X-Google-Smtp-Source: AGHT+IFNbFNRlMUVnmzvIAqMYOHLNoYiu39w2cW+++5PhbuKhP72IpMktdJxCrIrvKb5Z0jSCotKrw==
+X-Received: by 2002:a17:902:f60e:b0:205:809c:d490 with SMTP id d9443c01a7336-20781d61d67mr8439965ad.16.1726174689001;
+        Thu, 12 Sep 2024 13:58:09 -0700 (PDT)
+Received: from ghost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076b0097desm18030445ad.247.2024.09.12.13.58.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 13:58:08 -0700 (PDT)
+Date: Thu, 12 Sep 2024 13:58:05 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Celeste Liu <coelacanthushex@gmail.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,
+	Anup Patel <anup@brainfault.org>,
+	Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Russell King <linux@armlinux.org.uk>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev, linux-sh@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+	linux-tegra@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] riscv: defconfig: drop RT_GROUP_SCHED=y
+Message-ID: <ZuNV3ewTH63lb972@ghost>
+References: <20240910-fix-riscv-rt_group_sched-v3-0-486e75e5ae6d@gmail.com>
+ <20240910-fix-riscv-rt_group_sched-v3-1-486e75e5ae6d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/13] dt-bindings: media: camss: Add qcom,sm8550-camss
- binding
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org,
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@quicinc.com, Yongsheng Li <quic_yon@quicinc.com>
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-8-quic_depengs@quicinc.com>
- <b1b4a866-fa64-4844-a49b-dfdcfca536df@linaro.org>
- <82dd61ab-83c0-4f9c-a2ee-e00473f4ff23@linaro.org>
- <da60cf71-13a4-465d-a0ee-ca2ad3775262@linaro.org>
- <97e4f888-1ed7-4d82-b972-3e0b95610198@linaro.org>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <97e4f888-1ed7-4d82-b972-3e0b95610198@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240910-fix-riscv-rt_group_sched-v3-1-486e75e5ae6d@gmail.com>
 
-Hi Bryan,
-
-On 9/12/24 18:11, Bryan O'Donoghue wrote:
-> On 12/09/2024 13:44, Vladimir Zapolskiy wrote:
->>> csiphy0
->>>
->>> vdda-phy-supply = <&vreg_l2c_0p9>;
->>> vdda-pll-supply = <&vreg_l1c_1p2>;
->>>
->>> This is also the case for csiphy 1/2/4
->>>
->>> So, I _don't_ believe this is work we need to do, since its the same
->>> regulator for each PHY.
->>
->> This is board specific, and even if the separation is not needed on the
->> boards
->> you have just checked, still it may be needed on some boards, which are
->> not yet
->> checked/not yet known.
+On Tue, Sep 10, 2024 at 08:51:07PM +0800, Celeste Liu wrote:
+> Commit ba6cfef057e1 ("riscv: enable Docker requirements in defconfig")
+> introduced it because of Docker, but Docker has removed this requirement
+> since [1] (2023-04-19).
 > 
-> There is a Power Grid Analysis document which specifies these rails @
-> the SoC level and assumes you've used the Qcom PMIC to power, moreover
-> the PGA re-uses the same regulator over and over again.
+> For cgroup v1, if turned on, and there's any cgroup in the "cpu" hierarchy it
+> needs an RT budget assigned, otherwise the processes in it will not be able to
+> get RT at all. The problem with RT group scheduling is that it requires the
+> budget assigned but there's no way we could assign a default budget, since the
+> values to assign are both upper and lower time limits, are absolute, and need to
+> be sum up to < 1 for each individal cgroup. That means we cannot really come up
+> with values that would work by default in the general case.[2]
 > 
-> You _could_ provide that power from your own PMIC which provides the
-> same voltage range as the Qcom PMIC you haven't used. Even if you did
-> provide that from your own PMIC you'd have to provide _separate_ rails
-> for the various CSIPHYs before it would be required to have a per PHY
-> rail requirement on this SoC.
+> For cgroup v2, it's almost unusable as well. If it turned on, the cpu controller
+> can only be enabled when all RT processes are in the root cgroup. But it will
+> lose the benefits of cgroup v2 if all RT process were placed in the same cgroup.
 > 
-> Are people really powering these SoCs with their own PMICs ?
-> No probably not.
+> Red Hat, Gentoo, Arch Linux and Debian all disable it. systemd also doesn't
+> support it.[3]
 > 
-> Should we add the support for it anyway ?
-> Maybe.
-
-To have a set of regulators is a matter of proper IC/IP description, actually
-here I see very little option for a divergence or disagreement.
-
-> So to reiterate:
+> [1]: https://github.com/moby/moby/commit/005150ed69c540fb0b5323e0f2208608c1204536
+> [2]: https://bugzilla.redhat.com/show_bug.cgi?id=1229700
+> [3]: https://github.com/systemd/systemd/issues/13781#issuecomment-549164383
 > 
-> 1. csiphyX-vdda-phy-supply
->      csiphyX-vdda-pll-supply
+> Acked-by: Heinrich Schuchardt <heinrich.schuchardt@canonical.com>
+> Signed-off-by: Celeste Liu <CoelacanthusHex@gmail.com>
+
+Acked-by: Charlie Jenkins <charlie@rivosinc.com>
+
+> ---
+>  arch/riscv/configs/defconfig | 1 -
+>  1 file changed, 1 deletion(-)
 > 
->      In the dts and yaml
+> diff --git a/arch/riscv/configs/defconfig b/arch/riscv/configs/defconfig
+> index 12dc8c73a8acfaa5c8f442968a807de303428d9e..de85c3ab261e6d62b2089a3c89bdc9d1b34fa792 100644
+> --- a/arch/riscv/configs/defconfig
+> +++ b/arch/riscv/configs/defconfig
+> @@ -9,7 +9,6 @@ CONFIG_CGROUPS=y
+>  CONFIG_MEMCG=y
+>  CONFIG_CGROUP_SCHED=y
+>  CONFIG_CFS_BANDWIDTH=y
+> -CONFIG_RT_GROUP_SCHED=y
+>  CONFIG_CGROUP_PIDS=y
+>  CONFIG_CGROUP_FREEZER=y
+>  CONFIG_CGROUP_HUGETLB=y
 > 
->      => The names should be generic from the perspective of the driver
-
-As for me I don't care about the particular names, somebody else can care.
-
-> 2. camss.c::csiphy_res_sm8550
->      [0].regulators = { "csiphy0-vdda-phy-supply",
->                         "csiphy0-vdda-pll-supply" }
->      ...
+> -- 
+> 2.46.0
 > 
->      [N].regulators = { "csiphyN-vdda-phy-supply",
->                         "csiphyN-vdda-pll-supply" }
 > 
->      => The regulators for the PHY should be defined in the
->         PHY resources description
-
-This is obvious.
-
-> 3. Required not optional in the yaml
-> 
->      => You can't use the PHY without its regulators
-
-No, the supplies shall be optional, since it's absolutely possible to have
-such a board, where supplies are merely not connected to the SoC.
-
-Hence there shall be no requirement to describe any non-present supplies,
-which is a legit case, if there is no connection and usage of the
-correspondent non-supplied PHY.
-
---
-Best wishes,
-Vladimir
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
