@@ -1,162 +1,135 @@
-Return-Path: <linux-kernel+bounces-327217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44E2797727B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:56:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E29AF97727C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECACB282780
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:56:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E30B1F23692
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF261BFDE5;
-	Thu, 12 Sep 2024 19:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3E51BFDE3;
+	Thu, 12 Sep 2024 19:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="BUPSlXGi"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="WXSO6fo1"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F96313D530;
-	Thu, 12 Sep 2024 19:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E621BF7F8
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 19:57:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726171005; cv=none; b=g565rqrMQu2X9laDO0WjA4POPBxKuLTr+LusDSKkDhdPqk/ugKcJtdPwLIwDFRZp6jcuSI7s8IYyJ9nt09jeFYuWoTlFfW+yuxm9rWyuaKzQhIbhIqq7fnac2yFY5HPvDPwUjDH3MB4FoXWVarYoQxG75Pxnr/GICTZqGIc/Zhc=
+	t=1726171028; cv=none; b=V4mF4QqVEcemu93geg9yflGittSBxLuO0uLqJyG6JlnZpYM+GJXLrwNY4/Kg3hWWR9R0tA1oAFGIMm7cwPqzWeHH2TrRu9PNvLAg3TvTDlWCG7qWfkWcVJcPjFaazjlAxkx8OMbYxTT28WB4gSIv5rUiLdbdmCmJMRNY9drs//U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726171005; c=relaxed/simple;
-	bh=jn24PCsRq7rS3UjmaQrGE6VHsaCJKDC/zjSJEp9fxgI=;
-	h=Date:To:From:Subject:Message-ID:MIME-Version:Content-Type; b=MfC9uDwH28QmTdnnDbRqNsvcmbpp5QM6J4vgN79pu1+uuR6kd0vFy5yQxALvctxq3PlKEP3GvenxbcsV5ptvaNEoZqFcW/MUGHVgXvwVEj4cEkjAVql6Dt53+NR/DoR1AXYrTO1uLfm4o5aXNigB4At/rynt0Q6P/Bg27SYR26k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=BUPSlXGi; arc=none smtp.client-ip=185.70.43.16
+	s=arc-20240116; t=1726171028; c=relaxed/simple;
+	bh=VbK06qcABsMM09cwJzvrclQ93mnb+Q5QPxslepDCLnw=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=jSvm7lTBbaopcLbgIoGwxhZL+fnj8Cjap7v1DDztB+SvymU6moUt3IWswYahqVFrbAVd9FgBGOEz/YEzsBwxqZgMwfRpdiBboHwKCGosDSXyDZk0G9JHLpzHPpcIP4y+n0+9T2DFDkX5cA2hoBaI3JBFE1IN7pNIH0VHE7Xc3Cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=WXSO6fo1; arc=none smtp.client-ip=185.70.40.134
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1726171000; x=1726430200;
-	bh=UtTV70sJnMZEWjp2Gmu0UPl2yJFbUM1VFJZP0vfjRqI=;
-	h=Date:To:From:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	s=protonmail; t=1726171023; x=1726430223;
+	bh=ioxCKQoJPP1RrM0XHQsuL7TjavZxschOwKDn895QCdc=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
 	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=BUPSlXGiY7Sog9nnc6qBCwQhLWaxm9T3tVX0AZRrTKhewJHejqSmZa89cyvlAJZRV
-	 kT6VeA604s1udVAjQoNDp/S+eyY6wv9T34eW+Tbp5ccAsyHfrZlS52SjFQz6W42uRt
-	 lUQ2p9jWpFbgV8yJ8LxXmKyAEbeCRvsdmh6bqS0PiYkYtDly7hdBPdfrlTir050MOw
-	 fRkU9f9IEchH3c3WB4Arq85YsTaPXYfrJ+CKoe0HeCw8yzhMLtNeDtcx1sS6asSt5q
-	 h3UNpEMszbNKtk25GJ9+rvlfsD15ZVWohjWSlOPQT0Yl23QVDxiGOVzYK3vKyaMwgf
-	 a7+5O1+aA4cfA==
-Date: Thu, 12 Sep 2024 19:56:36 +0000
-To: a.hindborg@samsung.com, alex.gaynor@gmail.com, alexanderaltman@me.com, alexmantel93@mailbox.org, aliceryhl@google.com, aswinunni01@gmail.com, benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, fujita.tomonori@gmail.com, gary@garyguo.net, kernel@valentinobst.de, linux-kernel@vger.kernel.org, ojeda@kernel.org, paddymills@proton.me, rust-for-linux@vger.kernel.org, tmgross@umich.edu, wedsonaf@gmail.com, yakoyoku@gmail.com
+	b=WXSO6fo1hHAQyYXVqrnQqEcpQ1KENRgNCj8zAPNaOShbNfzoSyRm72L2P7npbtyBS
+	 g3hlxQb/EtZCXTU99XLuGKTxFvsIRKmqmgvRCEb/ClBJVjUOApQzyU28TEDZtlNTl8
+	 KUHkC3wKPGa/1HeQLiSAMI4AINj0w0otvWQwXpwj0UAaDF4aIv2NvrjVbH8ateIg0L
+	 KRk30tQn6ZjtP+ZapXGvnung+IsmeygaoJn7mV/y3PsxKnym08DKiu0ly9BO6wI+C+
+	 hvaQSYy0DJoKAvfRzdHMt1ONJo5hEaJnyYWukZr5gUnI5iOROrgXB1Hw9suU2H8iOK
+	 5U8gHVl/hZHAg==
+Date: Thu, 12 Sep 2024 19:56:57 +0000
+To: a.hindborg@samsung.com, alex.gaynor@gmail.com, aliceryhl@google.com, apw@canonical.com, benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, dwaipayanray1@gmail.com, gary@garyguo.net, joe@perches.com, linux-kernel@vger.kernel.org, lukas.bulwahn@gmail.com, ojeda@kernel.org, rust-for-linux@vger.kernel.org, tmgross@umich.edu, wedsonaf@gmail.com
 From: Patrick Miller <paddymills@proton.me>
-Subject: [PATCH v3 1/2] docs: rust: make section names plural
-Message-ID: <20240912195629.227696-1-paddymills@proton.me>
+Cc: Patrick Miller <paddymills@proton.me>
+Subject: [PATCH v3 2/2] checkpatch: warn on known non-plural rust doc headers
+Message-ID: <20240912195649.227878-1-paddymills@proton.me>
 Feedback-ID: 45271957:user:proton
-X-Pm-Message-ID: b1cf0e057c641509777efcb77f939149bf1a1420
+X-Pm-Message-ID: 0994224a80c609493abbbab7f4e33e763946e7ee
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha256; boundary="------fa271470f0deb941e48ffe37d3d7b57d36e8427dc6ad3a5518552c2bccb1c818"; charset=utf-8
+Content-Type: multipart/signed; protocol="application/pgp-signature"; micalg=pgp-sha256; boundary="------a8f31ebb5b9f44d6538e62653999092623cb746570c051973a29fc584807f3f4"; charset=utf-8
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------fa271470f0deb941e48ffe37d3d7b57d36e8427dc6ad3a5518552c2bccb1c818
+--------a8f31ebb5b9f44d6538e62653999092623cb746570c051973a29fc584807f3f4
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 From: Patrick Miller <paddymills@proton.me>
 To: a.hindborg@samsung.com,
 	alex.gaynor@gmail.com,
-	alexanderaltman@me.com,
-	alexmantel93@mailbox.org,
 	aliceryhl@google.com,
-	aswinunni01@gmail.com,
+	apw@canonical.com,
 	benno.lossin@proton.me,
 	bjorn3_gh@protonmail.com,
 	boqun.feng@gmail.com,
-	fujita.tomonori@gmail.com,
+	dwaipayanray1@gmail.com,
 	gary@garyguo.net,
-	kernel@valentinobst.de,
+	joe@perches.com,
 	linux-kernel@vger.kernel.org,
+	lukas.bulwahn@gmail.com,
 	ojeda@kernel.org,
-	paddymills@proton.me,
 	rust-for-linux@vger.kernel.org,
 	tmgross@umich.edu,
-	wedsonaf@gmail.com,
-	yakoyoku@gmail.com
-Subject: [PATCH v3 1/2] docs: rust: make section names plural
-Date: Thu, 12 Sep 2024 15:56:29 -0400
-Message-ID: <20240912195629.227696-1-paddymills@proton.me>
+	wedsonaf@gmail.com
+Cc: Patrick Miller <paddymills@proton.me>
+Subject: [PATCH v3 2/2] checkpatch: warn on known non-plural rust doc headers
+Date: Thu, 12 Sep 2024 15:56:49 -0400
+Message-ID: <20240912195649.227878-1-paddymills@proton.me>
 X-Mailer: git-send-email 2.46.0
 MIME-Version: 1.0
 
-Fixes existing rust documentation section headers to be use plural names.
+Adds a check for documentation in rust file. Warns if certain known
+documentation headers are not plural.
 
-Signed-off-by: Patrick Miller <paddymills@proton.me>
-Suggested-by: Miguel Ojeda <ojeda@kernel.org>
+The rust maintainers prefer document headers to be plural. This is to enforce
+consistency among the documentation as well as to protect against errors when
+additions are made. For example, if the header said "Example" because there was
+only 1 example, if a second example was added, making the header plural could
+easily be missed and the maintainers prefer to not have to remind people to fix
+their documentation.
+
 Link: https://github.com/Rust-for-Linux/linux/issues/1110
 
+v1: https://lore.kernel.org/rust-for-linux/2024090628-bankable-refusal-5f20@gregkh/T/#t
+v2: https://lore.kernel.org/rust-for-linux/92be0b48-cde9-4241-8ef9-7fe4d7c42466@proton.me/T/#t
+  - fixed whitespace that was formatted due to editor settings 
+v3:
+  - move && to previous line and remove whitespace in WARN per Joe Perches
+  - reformat following C coding style
 ---
- rust/kernel/init.rs     | 2 +-
- rust/kernel/list/arc.rs | 2 +-
- rust/kernel/sync/arc.rs | 2 +-
- rust/macros/lib.rs      | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+ scripts/checkpatch.pl | 7 ++++
++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/rust/kernel/init.rs b/rust/kernel/init.rs
-index a17ac8762d8f..98889ddf9828 100644
---- a/rust/kernel/init.rs
-+++ b/rust/kernel/init.rs
-@@ -746,7 +746,7 @@ macro_rules! try_init {
- /// Asserts that a field on a struct using `#[pin_data]` is marked with `#[pin]` ie. that it is
- /// structurally pinned.
- ///
--/// # Example
-+/// # Examples
- ///
- /// This will succeed:
- /// ```
-diff --git a/rust/kernel/list/arc.rs b/rust/kernel/list/arc.rs
-index d801b9dc6291..611ce07cd290 100644
---- a/rust/kernel/list/arc.rs
-+++ b/rust/kernel/list/arc.rs
-@@ 
--464,7 +464,7 @@ impl<T, U, const ID: u64> core::ops::DispatchFromDyn<ListArc<U, ID>> for ListArc
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index 39032224d504..5b18246ad511 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -3900,6 +3900,13 @@ sub process {
+ 			     "Avoid using '.L' prefixed local symbol names for denoting a range of code via 'SYM_*_START/END' annotations; see Documentation/core-api/asm-annotations.rst\n" . $herecurr);
+ 		}
  
- /// A utility for tracking whether a [`ListArc`] exists using an atomic.
- ///
--/// # Invariant
-+/// # Invariants
- ///
- /// If the boolean is `false`, then there is no [`ListArc`] for this value.
- #[repr(transparent)]
-diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
-index 3021f30fd822..3d3c100b0c0d 100644
---- a/rust/kernel/sync/arc.rs
-+++ b/rust/kernel/sync/arc.rs
-@@ -436,7 +436,7 @@ fn from(item: Pin<UniqueArc<T>>) -> Self {
- /// There are no mutable references to the underlying [`Arc`], and it remains valid for the
- /// lifetime of the [`ArcBorrow`] instance.
- ///
--/// # Example
-+/// # Examples
- ///
- /// ```
- /// use kernel::sync::{Arc, ArcBorrow};
-diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
-index a626b1145e5c..3879e1162866 100644
---- a/rust/macros/lib.rs
-+++ b/rust/macros/lib.rs
-@@ -307,7 +307,7 @@ pub fn pinned_drop(args: TokenStream, 
-input: TokenStream) -> TokenStream {
- /// literals (lifetimes and documentation strings are not supported). There is a difference in
- /// supported modifiers as well.
- ///
--/// # Example
-+/// # Examples
- ///
- /// ```ignore
- /// use kernel::macro::paste;
++# check that document section headers are plural in rust files
++		if ($realfile =~ /\.rs$/ &&
++		    $rawline =~ /^\+\s*\/\/\/\s+#+\s+(Example|Invariant|Guarantee|Panic)\s*$/) {
++			WARN("RUST_DOC_HEADER",
++			     "Rust doc headers should be plural\n" . $herecurr);
++		}
++
+ # check we are in a valid source file C or perl if not then ignore this hunk
+ 		next if ($realfile !~ /\.(h|c|pl|dtsi|dts)$/);
+ 
 -- 
 2.46.0
 
 
---------fa271470f0deb941e48ffe37d3d7b57d36e8427dc6ad3a5518552c2bccb1c818
+--------a8f31ebb5b9f44d6538e62653999092623cb746570c051973a29fc584807f3f4
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
@@ -164,13 +137,13 @@ Content-Disposition: attachment; filename="signature.asc"
 -----BEGIN PGP SIGNATURE-----
 Version: ProtonMail
 
-wnUEARYIACcFAmbjR3QJEJtRGrsur54RFiEE3KdIkSvUnCve801mm1Eauy6v
-nhEAAG7zAQClZpMPoxdLb1YtVW1FRyB4QwOW+x7uPSJaYV67/1YApwD/aKdO
-MtCDMSdf6ii81N8GgOjimTNxTdhCw5uoGcI1RQs=
-=f4lu
+wnUEARYIACcFAmbjR4cJEJtRGrsur54RFiEE3KdIkSvUnCve801mm1Eauy6v
+nhEAABGZAP9CNmMVBNQnjTxTaW3YDlhHT/+9TtAP3HxG+yQgGb2vBAEAobkt
+Udvo+sJ5puFEEKX61KKxkMwIMEqiFbIvMCRGpAo=
+=sr4v
 -----END PGP SIGNATURE-----
 
 
---------fa271470f0deb941e48ffe37d3d7b57d36e8427dc6ad3a5518552c2bccb1c818--
+--------a8f31ebb5b9f44d6538e62653999092623cb746570c051973a29fc584807f3f4--
 
 
