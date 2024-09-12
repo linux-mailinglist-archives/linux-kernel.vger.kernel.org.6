@@ -1,178 +1,177 @@
-Return-Path: <linux-kernel+bounces-327269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82035977328
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:58:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ED9397732C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:58:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04B9D1F24FD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:58:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 715C31C23FC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D51B1C3F2E;
-	Thu, 12 Sep 2024 20:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB00B1C2325;
+	Thu, 12 Sep 2024 20:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i6f0xQEX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rj26X24R"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5621C3F1E;
-	Thu, 12 Sep 2024 20:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EB013CFB7
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726174594; cv=none; b=QIQ6OXxSPihErISv7N8qkci82vi7hwdwiELFl33FPsMNReLhMcGqz7JJQ7AzwQFBg5tlLMm6iqPv3YsoMotM7CW9lIf8MzpxPXPRN/0hgMNd/Ar19ik3bJ5pUOw/aCCxTyZzk65ZYP3P+JyDASli+V0K518tSK3Cpdt9V4ppRLw=
+	t=1726174637; cv=none; b=COv6k3jOIYmNWRjpcZNCKtHTIz4JtAAM5RWWKXQyHFTXR3Ij8EPJW7ZCxWueQJAEV82ljEtSJPzfA2PqWhTrRTnRnBWrtMKs1CbBJ0nP6APwo9858Ghzxj0YAs3l4GpRUefQq6eNoq/Y2yIWyU0mmSnzTgdlmoool5YtMXDg8VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726174594; c=relaxed/simple;
-	bh=L7W91oHIJMuEtO58gO4Ue+RG5vV00ay6/5X6YgnfWUo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=YgfB/D1LEWQ2jsmCvb50YczpQy2tS/qHDLCHxGLEoiiSL6YfLQppdRs30WliHfGA/1kZRJc3jLs6ius9GuG27xx8ZJsvfUvxRuPwUFGaHoUE4Yw4EdLRdFl7Arp+qBGPCWOAXdpDGWuowgZ0yAd9gIS1i6hdfaqBvf0AdW5ooM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i6f0xQEX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3A85C4CEC3;
-	Thu, 12 Sep 2024 20:56:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726174593;
-	bh=L7W91oHIJMuEtO58gO4Ue+RG5vV00ay6/5X6YgnfWUo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=i6f0xQEXzN8f8xvgqdxxQp0vhGV7Bjf+uEhmCD56rFRzYzH33cPrYLMZasKqInDf1
-	 G5RlpdhduuKPXs0AGqFwCJUB12fySzegOshYg8r8jsDPJbWy9b9+v0R3y2xHgrJbWD
-	 Q+EfzIu9pzHqkIMM4H0XqIyZi1M2RuxG4iBsW3QLIU48uDgx1XiLZFY6XEViVN9Phh
-	 ruwfsub1fqHU0jVONxeWgtbNd4Mo+h62zxzWR1FzUzb0buGthqguh0nOSRlR9lOJZj
-	 xgSjv3/81DJ4aki7VSfYP4rDBgjGwB8p3cW60lzQ4xBWUDzNo49VprwxZJGDTapqIi
-	 tA/Q/tXcFy6CA==
-Date: Thu, 12 Sep 2024 10:56:31 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	Waiman Long <longman@redhat.com>,
-	Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Subject: [GIT PULL] cgroup: Changes for v6.12
-Message-ID: <ZuNVf1ocpQi03lkf@slm.duckdns.org>
+	s=arc-20240116; t=1726174637; c=relaxed/simple;
+	bh=KJviDHZ9lPMrCKs9Y16MulHLEhykyksuBhbmdkvKEt4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E2JN3LqqJq+jyuvgEAOpmZWV+KpJDEZbZAPJck0qNQS+ZJfY2o73WfxgWuYJESU/2aLSJeBmqfoBVD+JzBXphNK8q/SclNA8jf3JuM7kB/MG/4hZPzHZk10GF8IR2CvWT2uoP4HWgtJ5pOiqU77nzHTW67cUJlQoO8UCrfmuZ70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rj26X24R; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f7556a7e73so1447321fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:57:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726174633; x=1726779433; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VEN2kvQPgr1Ms7pd8H18XzR4Akxhw4D8Y32gs8tCUBI=;
+        b=rj26X24RZhaVvv9w0zswB2/K8IEyIqWc4uTFz9fJvw/oChVhjqO5s/XTa8sQzQhxMk
+         HBCWhJFVbblkhC+KahPfXSC1yiJjVszSJcpfMmH9+HYBadd2Q4FrA2GPPtM4j6Ek0Za4
+         d74Fwsc06P5nGhIDafJgLLbDG4zeZiAqw7SAzAdASWk/5b5O3oDxScPe69oY9Cvcr/V7
+         ODvvITP/D/q/b+YuMt6+C/YC2Wr/Dh0jT7eQYW+e77xn85bMI/K/8rEmEipaVj+7zSQh
+         LToD1WKa59n033SK2othiQBbyJLY6ps7euQ8CZVp2JfhgDZjIDOXRqcrEtSBmu4oQM3n
+         R72Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726174633; x=1726779433;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VEN2kvQPgr1Ms7pd8H18XzR4Akxhw4D8Y32gs8tCUBI=;
+        b=a5ZLNS0zziSHoIqiVdQCZLLC+gYdQpfaYyRnKGySmSJTuPvj8z9AhdmpOc9pFknFlz
+         pG7GtvQm3UbP8L7JlztgXHNtJMiOB0YR1+UzPzKjpyPSFJ1D0asegmKP1RnRfcz/RdGi
+         Tqt5YLmu+3Pa/WWHjYeD4xTfFERabnQiuysYQZ/Vl3YUZkdl6H+RaUjeVmj8rh0YGTuO
+         wD4JGdVkXYV+WarRYk426eggAEcvJUgs4OiXYANbTt9XVOq59nEKfvTf4JDv24012sIa
+         gOVlvdBft4r8SIOTg+dt2pAZ4YK+U8cROWd9H2Mw0fyus8bTJHY1F1GrpBXdr7VxaRMv
+         kHUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWpta17JRmMtfN5+UJRcT41Qr5F90EfePFqrciqxPk02LCp0791pml4vyppi8x0JkVa5zOBrz3pAGxswwg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzumg3hd0jFeiwIBxuVdY87RjS2qrraKfM9bQgdBmyARZs91daZ
+	y0nhgPXcL4ThZ4XyFHZDZT1fdJltFKDyns7JlZVoY7TeodmPDlxDlSqfDnYBSms=
+X-Google-Smtp-Source: AGHT+IF5y36oHtilMrxdEGv+5g780tzqe3ogPeLW1QGZrWL44AwZEE7/E7trA6yIla2NOXosmijcCg==
+X-Received: by 2002:a05:651c:2203:b0:2f7:7f76:992f with SMTP id 38308e7fff4ca-2f787ee1554mr8031811fa.6.1726174633366;
+        Thu, 12 Sep 2024 13:57:13 -0700 (PDT)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f75bfe7f1fsm19904211fa.11.2024.09.12.13.57.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Sep 2024 13:57:12 -0700 (PDT)
+Message-ID: <6eadc285-f413-4bf0-8795-59ff19c734da@linaro.org>
+Date: Thu, 12 Sep 2024 23:57:11 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/13] dt-bindings: media: camss: Add qcom,sm8550-camss
+ binding
+Content-Language: en-US
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org,
+ Neil Armstrong <neil.armstrong@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@quicinc.com, Yongsheng Li <quic_yon@quicinc.com>
+References: <20240812144131.369378-1-quic_depengs@quicinc.com>
+ <20240812144131.369378-8-quic_depengs@quicinc.com>
+ <b1b4a866-fa64-4844-a49b-dfdcfca536df@linaro.org>
+ <82dd61ab-83c0-4f9c-a2ee-e00473f4ff23@linaro.org>
+ <da60cf71-13a4-465d-a0ee-ca2ad3775262@linaro.org>
+ <97e4f888-1ed7-4d82-b972-3e0b95610198@linaro.org>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <97e4f888-1ed7-4d82-b972-3e0b95610198@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The following changes since commit ff0ce721ec213499ec5a532041fb3a1db2dc5ecb:
+Hi Bryan,
 
-  cgroup/cpuset: Eliminate unncessary sched domains rebuilds in hotplug (2024-08-05 10:54:25 -1000)
+On 9/12/24 18:11, Bryan O'Donoghue wrote:
+> On 12/09/2024 13:44, Vladimir Zapolskiy wrote:
+>>> csiphy0
+>>>
+>>> vdda-phy-supply = <&vreg_l2c_0p9>;
+>>> vdda-pll-supply = <&vreg_l1c_1p2>;
+>>>
+>>> This is also the case for csiphy 1/2/4
+>>>
+>>> So, I _don't_ believe this is work we need to do, since its the same
+>>> regulator for each PHY.
+>>
+>> This is board specific, and even if the separation is not needed on the
+>> boards
+>> you have just checked, still it may be needed on some boards, which are
+>> not yet
+>> checked/not yet known.
+> 
+> There is a Power Grid Analysis document which specifies these rails @
+> the SoC level and assumes you've used the Qcom PMIC to power, moreover
+> the PGA re-uses the same regulator over and over again.
+> 
+> You _could_ provide that power from your own PMIC which provides the
+> same voltage range as the Qcom PMIC you haven't used. Even if you did
+> provide that from your own PMIC you'd have to provide _separate_ rails
+> for the various CSIPHYs before it would be required to have a per PHY
+> rail requirement on this SoC.
+> 
+> Are people really powering these SoCs with their own PMICs ?
+> No probably not.
+> 
+> Should we add the support for it anyway ?
+> Maybe.
 
-are available in the Git repository at:
+To have a set of regulators is a matter of proper IC/IP description, actually
+here I see very little option for a divergence or disagreement.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git/ tags/cgroup-for-6.12
+> So to reiterate:
+> 
+> 1. csiphyX-vdda-phy-supply
+>      csiphyX-vdda-pll-supply
+> 
+>      In the dts and yaml
+> 
+>      => The names should be generic from the perspective of the driver
 
-for you to fetch changes up to af000ce85293b8e608f696f0c6c280bc3a75887f:
+As for me I don't care about the particular names, somebody else can care.
 
-  cgroup: Do not report unavailable v1 controllers in /proc/cgroups (2024-09-10 10:04:28 -1000)
+> 2. camss.c::csiphy_res_sm8550
+>      [0].regulators = { "csiphy0-vdda-phy-supply",
+>                         "csiphy0-vdda-pll-supply" }
+>      ...
+> 
+>      [N].regulators = { "csiphyN-vdda-phy-supply",
+>                         "csiphyN-vdda-pll-supply" }
+> 
+>      => The regulators for the PHY should be defined in the
+>         PHY resources description
 
-----------------------------------------------------------------
-cgroup: Changes for v6.12
+This is obvious.
 
-- cpuset isolation improvements.
+> 3. Required not optional in the yaml
+> 
+>      => You can't use the PHY without its regulators
 
-- cpuset cgroup1 support is split into its own file behind the new config
-  option CONFIG_CPUSET_V1. This makes it the second controller which makes
-  cgroup1 support optional after memcg.
+No, the supplies shall be optional, since it's absolutely possible to have
+such a board, where supplies are merely not connected to the SoC.
 
-- Handling of unavailable v1 controller handling improved during cgroup1
-  mount operations.
+Hence there shall be no requirement to describe any non-present supplies,
+which is a legit case, if there is no connection and usage of the
+correspondent non-supplied PHY.
 
-- union_find applied to cpuset. It makes code simpler and more efficient.
-
-- Reduce spurious events in pids.events.
-
-- Cleanups and other misc changes.
-
-- Contains a merge of cgroup/for-6.11-fixes to receive cpuset fixes that
-  further changes build upon.
-
-----------------------------------------------------------------
-Chen Ridong (18):
-      cgroup/cpuset: remove child_ecpus_count
-      cgroup/cpuset: add decrease attach_in_progress helpers
-      cgroup: update some statememt about delegation
-      cgroup/cpuset: Correct invalid remote parition prs
-      cgroup/cpuset: remove fetch_xcpus
-      cgroup/cpuset: remove use_parent_ecpus of cpuset
-      cgroup/cpuset: introduce cpuset-v1.c
-      cgroup/cpuset: move common code to cpuset-internal.h
-      cgroup/cpuset: move memory_pressure to cpuset-v1.c
-      cgroup/cpuset: move relax_domain_level to cpuset-v1.c
-      cgroup/cpuset: move memory_spread to cpuset-v1.c
-      cgroup/cpuset: add callback_lock helper
-      cgroup/cpuset: move legacy hotplug update to cpuset-v1.c
-      cgroup/cpuset: move validate_change_legacy to cpuset-v1.c
-      cgroup/cpuset: move v1 interfaces to cpuset-v1.c
-      cgroup/cpuset: rename functions shared between v1 and v2
-      cgroup/cpuset: guard cpuset-v1 code under CONFIG_CPUSETS_V1
-      cgroup/cpuset: add sefltest for cpuset v1
-
-Michal Koutný (3):
-      cgroup/cpuset: Expose cpuset filesystem with cpuset v1 only
-      cgroup: Disallow mounting v1 hierarchies without controller implementation
-      cgroup: Do not report unavailable v1 controllers in /proc/cgroups
-
-Tejun Heo (1):
-      Merge branch 'cgroup/for-6.11-fixes' into cgroup/for-6.12
-
-Waiman Long (7):
-      cgroup: Show # of subsystem CSSes in cgroup.stat
-      cgroup/cpuset: Check for partition roots with overlapping CPUs
-      selftest/cgroup: Add new test cases to test_cpuset_prs.sh
-      cgroup: Fix incorrect WARN_ON_ONCE() in css_release_work_fn()
-      cgroup/cpuset: Account for boot time isolated CPUs
-      selftest/cgroup: Make test_cpuset_prs.sh deal with pre-isolated CPUs
-      cgroup/cpuset: Move cpu.h include to cpuset-internal.h
-
-Xavier (3):
-      Union-Find: add a new module in kernel library
-      cpuset: use Union-Find to optimize the merging of cpumasks
-      Documentation: Fix the compilation errors in union_find.rst
-
-Xiu Jianfeng (3):
-      cgroup/pids: Avoid spurious event notification
-      cgroup/cpuset: Remove cpuset_slab_spread_rotor
-      cgroup/pids: Remove unreachable paths of pids_{can,cancel}_fork
-
- Documentation/admin-guide/cgroup-v2.rst            |   22 +-
- Documentation/core-api/index.rst                   |    1 +
- Documentation/core-api/union_find.rst              |  106 ++
- .../translations/zh_CN/core-api/index.rst          |    1 +
- .../translations/zh_CN/core-api/union_find.rst     |   92 ++
- MAINTAINERS                                        |   12 +
- include/linux/cgroup-defs.h                        |   14 +
- include/linux/cpuset.h                             |   10 +-
- include/linux/sched.h                              |    1 -
- include/linux/union_find.h                         |   41 +
- init/Kconfig                                       |   13 +
- kernel/cgroup/Makefile                             |    1 +
- kernel/cgroup/cgroup-v1.c                          |   17 +-
- kernel/cgroup/cgroup.c                             |   68 +-
- kernel/cgroup/cpuset-internal.h                    |  305 ++++++
- kernel/cgroup/cpuset-v1.c                          |  562 ++++++++++
- kernel/cgroup/cpuset.c                             | 1155 +++-----------------
- kernel/cgroup/pids.c                               |   32 +-
- kernel/fork.c                                      |    1 -
- lib/Makefile                                       |    2 +-
- lib/union_find.c                                   |   49 +
- tools/testing/selftests/cgroup/test_cpuset_prs.sh  |   56 +-
- .../selftests/cgroup/test_cpuset_v1_base.sh        |   77 ++
- 23 files changed, 1569 insertions(+), 1069 deletions(-)
- create mode 100644 Documentation/core-api/union_find.rst
- create mode 100644 Documentation/translations/zh_CN/core-api/union_find.rst
- create mode 100644 include/linux/union_find.h
- create mode 100644 kernel/cgroup/cpuset-internal.h
- create mode 100644 kernel/cgroup/cpuset-v1.c
- create mode 100644 lib/union_find.c
- create mode 100755 tools/testing/selftests/cgroup/test_cpuset_v1_base.sh
-
--- 
-tejun
+--
+Best wishes,
+Vladimir
 
