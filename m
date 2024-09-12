@@ -1,139 +1,122 @@
-Return-Path: <linux-kernel+bounces-326468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBA239768BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:09:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DED5D976A8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:28:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EC6DB23B92
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:09:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1C9B28526F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C7E16F0D0;
-	Thu, 12 Sep 2024 12:09:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014BF1AD245;
+	Thu, 12 Sep 2024 13:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Qa4h3Pl8";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SED5MqyH"
-Received: from fout3-smtp.messagingengine.com (fout3-smtp.messagingengine.com [103.168.172.146])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="h6cjnqat"
+Received: from mail-m49230.qiye.163.com (mail-m49230.qiye.163.com [45.254.49.230])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D886D19ABA8;
-	Thu, 12 Sep 2024 12:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8D41A4E7E;
+	Thu, 12 Sep 2024 13:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.230
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726142943; cv=none; b=tabhbtCDDeAc1fVrJgGMJVlN1PdllN70sILY6KhDls+GHHKAO+Bo29Vu9/dPr9+NE+IU5qgWJg5uJsbXw265DOLWQSMyeo+y1MlKPAe4ANKT1Uom+YQUfnbm1lydHnIRzgZMnIdeTH1utGWRox8ygGd7YH6Cd1qSNPwv7DEwvl0=
+	t=1726147696; cv=none; b=NUKiEIiwTKSU6lEjH7kZS1w9CZtGWOgY51IT/tqEpnZrSBmp4bWvYR4UQjRWiMHWmLf4NyryZ5ohg/jOGGe9FldqIFULeGrt2iskc5RKQVEh6QNWUr4ukh50uP9FCnLXMWVwMnmsrV931V0LQ29Ky7Paj7T3KPRTmG/DUhGmeIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726142943; c=relaxed/simple;
-	bh=oRAi04yGDdgwaNrb48NE71vzDh79gGXCg0gAUcJvGdY=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=kCWH6dnXL4tjtIUcOkAY7sWLvaRiMp0E+M0DM1lp7bOcbqNMRNEy0VkfGZKeWNAIpN4yjvcx0roit/b/mFGc7c81lV8fgvxxKMHnIm3C/fiDkO2lifCEJHYC9V1o76begFiKYrNjXUOE0ViLGdNtWlg6fkfP1rvfXi3YxNM+7vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Qa4h3Pl8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SED5MqyH; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id AB1051380619;
-	Thu, 12 Sep 2024 08:08:59 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Thu, 12 Sep 2024 08:08:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1726142939;
-	 x=1726229339; bh=sIxFd/zC/glVL7uLL/29pVv6KQW+eBqGPbDa7HeUJjA=; b=
-	Qa4h3Pl8N1qMzuZIVmLfSQ4TEvxTo1UxeBT8wckzM/15hvsBpdtO+vJsxBfBwjDl
-	scy/MEFUB0HkH2h3Rjlllh6UoV3LcF8n1BeK0vq+p8YnWfU9GRPEQdgTA6GWtU9X
-	PYVZvWMfG1wDchdHkViyXUk4sdsA+PI07dlYGPq9ia3xsFosD/B1Kozj4XVIkYOA
-	kAyn4gWcyVGBYFm9t73lxTN7CF1O9vdYeLUV/SeK8oX9n57ic+GAbPn5XmiwzXgY
-	/BZSFpRZsMpIVtZp2YRzMuVdnkzpyKnnDijiucvSc10Kp/BY74WETnV04Pu0hHFQ
-	y7r+K78hSPU2W1wn/SlSbw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726142939; x=
-	1726229339; bh=sIxFd/zC/glVL7uLL/29pVv6KQW+eBqGPbDa7HeUJjA=; b=S
-	ED5MqyHu/KyNFhQ10W3M9GdfvptKZXOMhmIXUMQRYWe1CrtaF3kiZV7RCB71K8QC
-	E4neNEmV7xx7VIfJEMsY2oBZqZm8gHQsZu5LiaqhM1ulebPztpwY7vEZuOjvp1UL
-	0IrIGFkypLXm43VcFI9W6URQzkfaJM04Bq0fDbUkGw1tbkcW5Hrcvcw0xfV7WjmQ
-	pd1EoVggMv/5bbwOs3dAlhqvF37OFe2fWwjbTIcj1UpdjdLnI/Mjfjsc9FvYCEeE
-	2okJMA5FWYx8hoyfQ1TA6F6a2qDLW/0LqmXtN9uJP5WIBekYl4T7ewnG+7uYPq/y
-	dfPBRdMiYNQDFyJv5UCog==
-X-ME-Sender: <xms:29niZjtWteb9Cps6ZzrQslqjBamAcFTOE_CdymoWx1Gtr7WGGY7U2Q>
-    <xme:29niZkfVCBf8wMbCUbf4-DBxcFSUUZU1oyEvwYloT2nqnKsKWe7J8QHCbsmpOYkD-
-    MYlAqXl-tPVJOvr5N8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejfedggeelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepjedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrdgruhhughdroh
-    hrghdrrghupdhrtghpthhtoheplhhgihhrugifohhougesghhmrghilhdrtghomhdprhgt
-    phhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuh
-    igqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgt
-    phhtthhopeholhhofheslhhigihomhdrnhgvthdprhgtphhtthhopehlihhnuhigqdhkvg
-    hrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhn
-    vgigthesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:29niZmzxNOWo-A81hP7F5ESVunQqTP0awKC-MigmlrhqH9RLOt0Xrw>
-    <xmx:29niZiM_5aSacL44e4SvYjlHtMYPe-fm8sA6Fhhf47xkvOmvAL4ELA>
-    <xmx:29niZj8Y3fZGE70dy7ME0_-LxsJRzXNG_tgPkIBxH91zF7BXixjMMQ>
-    <xmx:29niZiWJ5jyr5LJu0BoEIzVgMZeLvjQGsP0ciT3XQ7oiQHVRfofcBg>
-    <xmx:29niZjzA4NyN7ktKY7hFNT1Cy6UMXmzv6MDn2dnt-gRObI98hnrNukvq>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id EA809222006F; Thu, 12 Sep 2024 08:08:58 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1726147696; c=relaxed/simple;
+	bh=GiZDh8vEOlhH/Uf5Flmntow1FXV9+eaekmgO7blLLsg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nV3FISNGHoK23frUGVYFZ8dEgB52ZpTLc42wF/hTDPJQO2ASDR4qPIfhztJbiFWdvtcH23NEPSKL7hNavPx1VjCEJ/Cbvhp9ODJVnHfGjQg60fyrPWNqFTqpN8zKv0WLKf/nsIbyXWj5rehr1OCE5WeLdIvlm3hi8ZJpZ4i27Ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=h6cjnqat; arc=none smtp.client-ip=45.254.49.230
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+DKIM-Signature: a=rsa-sha256;
+	b=h6cjnqatK6rgyLNAn6VvaL2/6P9vDMxqGUEcuwDiAHvJAHfolJ+uIbu9Ed119mFBsFhItp9/sTapDeeQRFhR48Y5zeAsnG+ChemMOfBYRmjo+JFmbe33l+53xkHn+yLnMRekwHqqipuAKd2tI4zsO5Tpx5txhQALf1oapdTCxZs=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=dHQFFhn3Ml0FVTMmnTTgqqzpKuNt0ErXTmfzGae0Ie0=;
+	h=date:mime-version:subject:message-id:from;
+Received: from zyb-HP-ProDesk-680-G2-MT.. (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id C7EC11001C9;
+	Thu, 12 Sep 2024 16:03:04 +0800 (CST)
+From: Damon Ding <damon.ding@rock-chips.com>
+To: heiko@sntech.de
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	macromorgan@hotmail.com,
+	jonas@kwiboo.se,
+	tim@feathertop.org,
+	knaerzche@gmail.com,
+	efectn@protonmail.com,
+	andyshrk@163.com,
+	jagan@edgeble.ai,
+	dsimic@manjaro.org,
+	megi@xff.cz,
+	sebastian.reichel@collabora.com,
+	alchark@gmail.com,
+	boris.brezillon@collabora.com,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Damon Ding <damon.ding@rock-chips.com>
+Subject: [PATCH v4 0/2] Add support for RK3588S Evaluation board
+Date: Thu, 12 Sep 2024 16:02:46 +0800
+Message-Id: <20240912080248.1133061-1-damon.ding@rock-chips.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 12 Sep 2024 12:08:37 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Mark Brown" <broonie@kernel.org>,
- "Stephen Rothwell" <sfr@canb.auug.org.au>
-Cc: "Liam Girdwood" <lgirdwood@gmail.com>, "Olof Johansson" <olof@lixom.net>,
- ARM <linux-arm-kernel@lists.infradead.org>,
- "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
- linux-next <linux-next@vger.kernel.org>
-Message-Id: <7e5c452c-61ec-421f-bd87-506d66a58f55@app.fastmail.com>
-In-Reply-To: <6e5c1a20-2232-4a2d-9a0c-181d50a99ecb@sirena.org.uk>
-References: <20240912144459.634e3e09@canb.auug.org.au>
- <6e5c1a20-2232-4a2d-9a0c-181d50a99ecb@sirena.org.uk>
-Subject: Re: linux-next: duplicate patch in the sound-asoc tree
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQx9LQ1ZDGU8eGkJOHRpDT0NWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+X-HM-Tid: 0a91e541e2a403a7kunmc7ec11001c9
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6ND46MDo4HzI4Kyw6DioBMjBN
+	Kw9PCjxVSlVKTElNSklDSkNNTU1DVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJQ05ONwY+
 
-On Thu, Sep 12, 2024, at 11:07, Mark Brown wrote:
-> On Thu, Sep 12, 2024 at 02:44:59PM +1000, Stephen Rothwell wrote:
->> Hi all,
->> 
->> The following commit is also in the arm-soc tree as a different commit
->> (but the same patch):
->> 
->>   7817eb1ad353 ("ASoC: dt-bindings: cirrus,cs4271: Convert to dtschema")
->> 
->> This is commit
->> 
->>   cf700e558e1d ("ASoC: dt-bindings: cirrus,cs4271: Convert to dtschema")
->> 
->> from the arm-soc tree.
->
-> I wonder how that ended up in the arm-soc tree...  anyway, shouldn't
-> matter if it's the same.
+RK3588S EVB1 board features:
+- Rockchip RK3588S
+- PMIC: RK806-2x2pcs+DiscretePower
+- RAM: LPDDR4/4x 2pcsx 32bit
+- ROM: eMMC5.1+ SPI Falsh
 
-I merged the entire ep93xx DT conversion series in one branch
-that I plan to send as a separate pull request after the normal
-soc/dt, soc/drivers etc branches, in order to finally get the
-work done.
+Damon Ding (2):
+  dt-bindings: arm: rockchip: Add RK3588S EVB1 board
+  arm64: dts: rockchip: Add RK3588S EVB1 board
 
-This patch it not needed for bisecting through the series, so
-I've now dropped it again.
+Changes in v2:
+- rename amplifier nodes to amplifier-headphone and amplifier-speaker
+- sort audio and backlight nodes by node name
+- format names of regulator nodes to regulator-*
+- add CPU/memory regulator coupling
+- fix "VOP-" to "VOL-" in commit message
+- remove bootargs property in chosen node
 
-     Arnd
+Changes in v3:
+- remove unevaluated properties:
+    pcie@fe190000: 'rockchip,skip-scan-in-resume'
+    pmic@1: regulators: dcdc-reg*: 'regulator-init-microvolt'
+    phy@fed80000: 'svid'
+
+Changes in v4:
+- remove unexpected property bootargs which added by mistake in v3
+- add cd-gpios property in sdmmc node
+- enable combphy2_psu for pcie2x1l1
+- improve commit messages
+- add proper series title
+
+ .../devicetree/bindings/arm/rockchip.yaml     |    5 +
+ arch/arm64/boot/dts/rockchip/Makefile         |    1 +
+ .../boot/dts/rockchip/rk3588s-evb1-v10.dts    | 1129 +++++++++++++++++
+ 3 files changed, 1135 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts
+
+-- 
+2.34.1
+
 
