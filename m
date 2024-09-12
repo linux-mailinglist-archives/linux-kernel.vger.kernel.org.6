@@ -1,120 +1,103 @@
-Return-Path: <linux-kernel+bounces-326971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79566976F43
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:01:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE351976F44
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:05:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 304611F230B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:01:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D76B285012
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386371BF7F3;
-	Thu, 12 Sep 2024 17:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BD31BF7E3;
+	Thu, 12 Sep 2024 17:05:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mDF/dz1e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TyuyVELg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D2449654;
-	Thu, 12 Sep 2024 17:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59C61BDA91;
+	Thu, 12 Sep 2024 17:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726160455; cv=none; b=Kt+I6RlttKVY6RBrhFvxUN0DLQmOROvgkB/DmQIw21ihsuwB1Biy06/o5t100emtKhE4PXav7Oox39malKrTffIpu4/E/EhB86e4GSzNmwU9PgMuMJ3AHera0ovQDDFCGH9PZfChIxLSW3EtBA6oFIHRQoFqqLXNobKEdC+MpmY=
+	t=1726160717; cv=none; b=INU4wqtMx5+A0UbRJZEFYdlFW+J2QOaNc06NC7FFN6BwqIFu7DxgYezCsbRk6ieKK45+R+CDaqaFtqGyr65ofJXR1blXbTEAwfo7fBKeKAsPi1JpJb463G3y2FDn/6kYaEMeMJZDqWMCka2bHuYtHvb4FFT+pBIVVTLQGaKxzcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726160455; c=relaxed/simple;
-	bh=UDKMDUCUwWVXn9aUo/LFf70emdXSaz9qd8L0RE6dHN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=hu8dQvygcCeFBu2YgzPT09172CoZ3GkWU0U7juhnOACAgeC49JabMnDnQVbfEGCmcwzhDu+ll7+bMyqq+ELPrG24p2NC10JVQDvETbFD/lmAtFO3MKwbnIytMWnBOKHfu7ElLuv+KkKe1OAct1sfEMWpbQgm6kDuNHCSWec0nek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mDF/dz1e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A14CEC4CEC3;
-	Thu, 12 Sep 2024 17:00:54 +0000 (UTC)
+	s=arc-20240116; t=1726160717; c=relaxed/simple;
+	bh=Jn+D3Ldn3xXWF87flG57S+s2cGeeN6zBdVn7hWJkyhI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=NduypcM3XenyNEYJSw8Lji4tr0EA/o/mX2bBafBFwV8OvCbFhwq7eECYJSGrtL2pApArZkj4KQ5SrvD04pvGDF+2PQ+EAKRe7SdsWq0SKBb2ZTrFZQi7WC2TqbjFNsVYI1yCSWzBocqP781/CyeBXots/B5z1zdfQsU7qCqiDIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TyuyVELg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44938C4CEC4;
+	Thu, 12 Sep 2024 17:05:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726160455;
-	bh=UDKMDUCUwWVXn9aUo/LFf70emdXSaz9qd8L0RE6dHN4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=mDF/dz1ec0OQiVPo0b5i0DSy1dXUfD1Gg5jPKs0WrFVVfZc09uFPI1Mj14yfCInfy
-	 tiGWr3CN1aHP5AX/whkpHWZmq9iBz4pvwTUX5oxrG1X1V5Ilz5hcOeHVkkiNDoEFE8
-	 7LXONGdrCPS1+ta3kPL8deLye8eDnGBW+kwkbvGhcwj8PK+IqxTgSUAzV95wgnE4hC
-	 PB/Pmrso03xFZsC2dVmfj9/uOd8gLUf1046rjlvdfA9ZBE/g/sWH6YXk0PmmCCEmkq
-	 b3VaDl7zEbHn1LtDCht/sYhdKbd3i6nr5DZeZdJ8OvQR4QNOGKb8Y7ZX/A/bsuhyCq
-	 3Jwd5J6pdG6DQ==
-Date: Thu, 12 Sep 2024 12:00:52 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Simon Horman <horms@kernel.org>, Lee Jones <lee@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Lars Povlsen <lars.povlsen@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	UNGLinuxDriver@microchip.com, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v5 1/8] misc: Add support for LAN966x PCI device
-Message-ID: <20240912170052.GA677163@bhelgaas>
+	s=k20201202; t=1726160717;
+	bh=Jn+D3Ldn3xXWF87flG57S+s2cGeeN6zBdVn7hWJkyhI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=TyuyVELgN12TDDomQTcsuk0TYow8KnxpOq3PzmdVvokNIyhoCAJQ7xDJmQL5Slu59
+	 WMyQyaIgHncTo8y35lymIgT8mJG1TQyiZWQ5fe8MvShwRtOUuixHANcGUNT+01zla2
+	 uKYPkqiWHO89YUnv/GBLy11prPheXSfloiAnCh76Q4jN1E6GHHKXO8rQmx8tHWpBeU
+	 R/SWDke4OFbHWQwJl6mh9cEXZ+LnqZq/pL+HuqiO1GwzzC9CTVHRzAIDUTho5aujdb
+	 7OxQcwea3IYmy1/XP6Htw5snZQWVaVA3B4lh3k3/K1CJJQLxUGb6/EWJGsdpOkjTN2
+	 I9V5tNOsGe9IQ==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Nicolas Belin <nbelin@baylibre.com>, 
+ Alexandre Mergnat <amergnat@baylibre.com>, 
+ Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: kernel@collabora.com, linux-sound@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org
+In-Reply-To: <20240911123629.125686-1-usama.anjum@collabora.com>
+References: <20240911123629.125686-1-usama.anjum@collabora.com>
+Subject: Re: [PATCH v2] ASoc: mediatek: mt8365: Remove unneeded assignment
+Message-Id: <172616071500.69425.1928964300196117932.b4-ty@kernel.org>
+Date: Thu, 12 Sep 2024 18:05:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240808154658.247873-2-herve.codina@bootlin.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-99b12
 
-On Thu, Aug 08, 2024 at 05:46:50PM +0200, Herve Codina wrote:
-> Add a PCI driver that handles the LAN966x PCI device using a device-tree
-> overlay. This overlay is applied to the PCI device DT node and allows to
-> describe components that are present in the device.
+On Wed, 11 Sep 2024 17:36:22 +0500, Muhammad Usama Anjum wrote:
+> The ret is being assigned, but not being used. Remove the assignment.
+> One of the reviewer mentioned that dev_warn should be replaced with
+> dev_info. Make this change as well.
 > 
-> The memory from the device-tree is remapped to the BAR memory thanks to
-> "ranges" properties computed at runtime by the PCI core during the PCI
-> enumeration.
 > 
-> The PCI device itself acts as an interrupt controller and is used as the
-> parent of the internal LAN966x interrupt controller to route the
-> interrupts to the assigned PCI INTx interrupt.
-> 
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> ---
->  drivers/misc/Kconfig          |  24 ++++
->  drivers/misc/Makefile         |   3 +
->  drivers/misc/lan966x_pci.c    | 215 ++++++++++++++++++++++++++++++++++
->  drivers/misc/lan966x_pci.dtso | 167 ++++++++++++++++++++++++++
->  drivers/pci/quirks.c          |   1 +
 
-Acked-by: Bjorn Helgaas <bhelgaas@google.com> # drivers/pci/quirks.c
+Applied to
 
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index a2ce4e08edf5..bae2dd99017c 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -6245,6 +6245,7 @@ DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0xa76e, dpc_log_size);
->  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_XILINX, 0x5020, of_pci_make_dev_node);
->  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_XILINX, 0x5021, of_pci_make_dev_node);
->  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_REDHAT, 0x0005, of_pci_make_dev_node);
-> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_EFAR, 0x9660, of_pci_make_dev_node);
->  
->  /*
->   * Devices known to require a longer delay before first config space access
-> -- 
-> 2.45.0
-> 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/1] ASoc: mediatek: mt8365: Remove unneeded assignment
+      commit: d69f11e8c57e9459c9e60bffc0f2c6c3aa02f4b1
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
