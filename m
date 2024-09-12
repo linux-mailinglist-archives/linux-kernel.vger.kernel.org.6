@@ -1,178 +1,107 @@
-Return-Path: <linux-kernel+bounces-326804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11B35976D28
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:10:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39CA8976D29
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:10:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B05691F21FDF
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:10:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C9F61C23CEE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388221AD24E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D2D1BC9F7;
 	Thu, 12 Sep 2024 15:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aZosUZo+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KoSUqc68"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C171AD245;
-	Thu, 12 Sep 2024 15:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 168C41B14E9
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726153782; cv=none; b=lwP65c19hdxoggasvOq1uYdddFd9MlNDnvYMol5KuIkAW1pTL+3l/ACtSAQ2j4MBmzscEOg7bkWUPTia7Cn0X0qQZw21VOGO9pKkLup5DVYFEX3XQy9xgKNGEQ6mKE8gNch1ohGyOSZ7U+b7SHST9JbZG6cDRoCdJ5RCaSG/RYU=
+	t=1726153782; cv=none; b=uSGMb7YqnbYgh6dpm9f2QqadZSSctqPQ8x/bCQ7uWE14nuQUIbOtSV+iyknNlrOrGx/lAIgOrmjSHqLG/3pIX8mXYl0AG79yUNacGJO7fWR8sHeogcKXU6FXszlqgyW5nbfVtNvudBVnuklnBtkyrmlTaojSJn2Ef0vPTUIiKMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1726153782; c=relaxed/simple;
-	bh=Q4hXcXNt3n/tPL7yqMlb2L8eUR76I6dupDqzich+MVM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dqYZR4Iswzw6RcrRkcawvpy784vUdCFZ02c5oKpz4259QqDtiILxJt2onlVW9kOwYG6ErLhmuBhe9F7H+p14HiuitYUbgi7MiXsyPWa6N03UoIO4tLpFFjmIXGinsEjxDUEmVbIMR+H/ZWGLmkFMS9Q7wLVgCLb+/0+LJd/HVRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aZosUZo+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B047C4CEC5;
-	Thu, 12 Sep 2024 15:09:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726153782;
-	bh=Q4hXcXNt3n/tPL7yqMlb2L8eUR76I6dupDqzich+MVM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aZosUZo+YvULTK9yYt/nimu77TH50vzsaFTbLl0YEjNhQ+iEe1uHlYsrBgUvONcGG
-	 2sH92FJ0MxA9zKeYXnt/gzM7GP7ezUY1hgj8yLz0EAcaDM8LtWdFDp/nEax9IXMFkx
-	 TbRLyhygQEniSEeojRHQyqmL4BM/KyAZ/IW5/ny1FGvzUo/6fDGUmrMbkTH9xUZva5
-	 FFdX+A1aLZZ2NogORWS9I9fCMCd1W7lf0umpK+5bnZEMe/+pD7shv6rtmipXjCng3k
-	 n7L9vk7AqmYksk8iu1YL1HU4FlpmjyHbOznzeWP8pKjHILNnQC2TgY3Q48drFvhTbp
-	 UlMVIYvkfWFCQ==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Florent Revest <revest@chromium.org>
-Cc: linux-trace-kernel@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	bpf <bpf@vger.kernel.org>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Guo Ren <guoren@kernel.org>,
-	linux-arch@vger.kernel.org
-Subject: [PATCH v14 08/19] tracing: Add ftrace_partial_regs() for converting ftrace_regs to pt_regs
-Date: Fri, 13 Sep 2024 00:09:35 +0900
-Message-Id: <172615377576.133222.5911358383330497277.stgit@devnote2>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <172615368656.133222.2336770908714920670.stgit@devnote2>
-References: <172615368656.133222.2336770908714920670.stgit@devnote2>
-User-Agent: StGit/0.19
+	bh=jpnq6+i4OOoUnH1u60SSe0DzWX0QpN9JkqbO2mQBiM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bZgmjtuWoTf7J1/Un9vM9jQQ/iaWfueS/9u9RLTOX292sBGEVWBP5BiNM7qBL7JFwD4oxmbVBxcMbSZyxsh3CzQO+lVR2lPwLBweieq0W5maEfll7A477+HpaHSflmU0wmWFQaOwug8/Ha9WFHUS+pANJOJlFn2P+3AdcSpSqHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KoSUqc68; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a8d6d0fe021so168760466b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:09:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726153779; x=1726758579; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=m2FTFSt65RpqX2pKE+PYQ5IJqaSrd1Ivf+eZBs0Jl3Q=;
+        b=KoSUqc68mSC2aAsEu81RWPQ+d9773BLDKq2iE31vHR6BP/rW/b8M8UaXo7idtKerLI
+         l1OZmd3uuJmBV2MWq9w/mtNxgDwgeHssoP3xN4pBHonnNp9tfjfxwTtujZF3ltQJPtTd
+         3tWSE1nZ9QtDelNplbY6Lf6Ii+y0KEtGS1q7FrTwJGoTZVio8GlogW9Cju8lYwI2gil8
+         47o2VQN2J3m+CrxQjZe+cVF1LrJo3sOuJWoTEkOfqT5TYAKfVxq5xkwWgQnk7B7+PeRS
+         Nw05ohml/cglWft61V5FGxC5II6Rb4DyDopKHJpnMY889k3c4gN6XXuNnOWFttTrr7Z8
+         1RiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726153779; x=1726758579;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m2FTFSt65RpqX2pKE+PYQ5IJqaSrd1Ivf+eZBs0Jl3Q=;
+        b=X/AQOhIqI2EBz6Nfaf6AsRT1StAGnazBww9KGuw9nx1liCk10+2RuDoE4a8kbEQrCs
+         jBY6OCa3YiiwvOjr18Bbe7agHAYtoKGoOHbe2dPpTPIvCYlvT/+EPHYB84koz8uH3FKo
+         IO/Z4iXLdA74bHCPXDqPIHDJfO+cuuwAehYgq8YI0H+sugVrv//QyZ3ci5SVkHA0A/xf
+         TqEuK1NvmYL6MRoGIaHF2q+tcrNtAqXxZbTqbPzIhgrtHYzzd6virc/E+YbCYNQhzCqB
+         4VCtCcS6uEhPbM1iGNbiUMbjEN06tLE1njW7dqjRIopbsy/C8VnYV33rDH/vcudy8lXZ
+         TnqA==
+X-Forwarded-Encrypted: i=1; AJvYcCXJhO82odC2qWhMikUYNxRweQS5traxlyN+wVKmjO6eaKQ4fSH4VvPn7SsdF8Dx5XyxDZZQABTxNBeVF4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrZhGiNA8CqA7a8CdQkQu3kCZaY4+o3qYjm4oIMDFmRlZl+BL6
+	iY0eVF7Z7h2afT6c40Vi/6PlI6Dmd9/vocX5vRJTiMJwIrKGwJumQK28y5hJg9c=
+X-Google-Smtp-Source: AGHT+IFx8uklWz3IvdJl75Nws6S3qWWNNUNkE8Qf8xQTCLyZLWokkWUxAMVluycglpcbiI+lT958kQ==
+X-Received: by 2002:a17:907:c7d4:b0:a8d:60e2:3972 with SMTP id a640c23a62f3a-a902943a562mr313368466b.23.1726153779212;
+        Thu, 12 Sep 2024 08:09:39 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d74e26sm763631266b.225.2024.09.12.08.09.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 08:09:38 -0700 (PDT)
+Date: Thu, 12 Sep 2024 18:09:35 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: b1n@b1n.io
+Cc: Philipp Hortmann <philipp.g.hortmann@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: vt6655: Rename variable apTD0Rings
+Message-ID: <9d12ad46-d028-4be7-b8e3-2167e214ae66@stanley.mountain>
+References: <20240912145234.75499-1-b1n@b1n.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912145234.75499-1-b1n@b1n.io>
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On Thu, Sep 12, 2024 at 10:52:34PM +0800, b1n@b1n.io wrote:
+> diff --git a/drivers/staging/vt6655/device.h b/drivers/staging/vt6655/device.h
+> index 32d9cbd55222..32c51d794264 100644
+> --- a/drivers/staging/vt6655/device.h
+> +++ b/drivers/staging/vt6655/device.h
+> @@ -135,7 +135,7 @@ struct vnt_private {
+>  	struct vnt_tx_desc *apCurrTD[TYPE_MAXTD];
+                                  ^^
 
-Add ftrace_partial_regs() which converts the ftrace_regs to pt_regs.
-This is for the eBPF which needs this to keep the same pt_regs interface
-to access registers.
-Thus when replacing the pt_regs with ftrace_regs in fprobes (which is
-used by kprobe_multi eBPF event), this will be used.
+>  	struct vnt_tx_desc *tail_td[TYPE_MAXTD];
+>  
+> -	struct vnt_tx_desc *apTD0Rings;
+> +	struct vnt_tx_desc *ap_td0_rings;
+>  	struct vnt_tx_desc *apTD1Rings;
+                              ^^^
+It's weird to have ap_td0_rings and apTD1Rings.  They no longer match.
 
-If the architecture defines its own ftrace_regs, this copies partial
-registers to pt_regs and returns it. If not, ftrace_regs is the same as
-pt_regs and ftrace_partial_regs() will return ftrace_regs::regs.
-
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Acked-by: Florent Revest <revest@chromium.org>
----
- Changes in v14:
-  - Add riscv change.
- Changes in v8:
-  - Add the reason why this required in changelog.
- Changes from previous series: NOTHING, just forward ported.
----
- arch/arm64/include/asm/ftrace.h |   11 +++++++++++
- arch/riscv/include/asm/ftrace.h |   12 ++++++++++++
- include/linux/ftrace.h          |   17 +++++++++++++++++
- 3 files changed, 40 insertions(+)
-
-diff --git a/arch/arm64/include/asm/ftrace.h b/arch/arm64/include/asm/ftrace.h
-index dffaab3dd1f1..5cd587afab6d 100644
---- a/arch/arm64/include/asm/ftrace.h
-+++ b/arch/arm64/include/asm/ftrace.h
-@@ -132,6 +132,17 @@ ftrace_regs_get_frame_pointer(const struct ftrace_regs *fregs)
- 	return fregs->fp;
- }
- 
-+static __always_inline struct pt_regs *
-+ftrace_partial_regs(const struct ftrace_regs *fregs, struct pt_regs *regs)
-+{
-+	memcpy(regs->regs, fregs->regs, sizeof(u64) * 9);
-+	regs->sp = fregs->sp;
-+	regs->pc = fregs->pc;
-+	regs->regs[29] = fregs->fp;
-+	regs->regs[30] = fregs->lr;
-+	return regs;
-+}
-+
- int ftrace_regs_query_register_offset(const char *name);
- 
- int ftrace_init_nop(struct module *mod, struct dyn_ftrace *rec);
-diff --git a/arch/riscv/include/asm/ftrace.h b/arch/riscv/include/asm/ftrace.h
-index e9f364ce9fe8..897779dec402 100644
---- a/arch/riscv/include/asm/ftrace.h
-+++ b/arch/riscv/include/asm/ftrace.h
-@@ -193,6 +193,18 @@ static __always_inline void ftrace_override_function_with_return(struct ftrace_r
- 	fregs->epc = fregs->ra;
- }
- 
-+static __always_inline struct pt_regs *
-+ftrace_partial_regs(const struct ftrace_regs *fregs, struct pt_regs *regs)
-+{
-+	memcpy(&regs->a0, fregs->args, sizeof(u64) * 8);
-+	regs->epc = fregs->epc;
-+	regs->ra = fregs->ra;
-+	regs->sp = fregs->sp;
-+	regs->s0 = fregs->s0;
-+	regs->t1 = fregs->t1;
-+	return regs;
-+}
-+
- int ftrace_regs_query_register_offset(const char *name);
- 
- void ftrace_graph_func(unsigned long ip, unsigned long parent_ip,
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index a1b2ef492c7f..bd9a26bdf660 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -176,6 +176,23 @@ static __always_inline struct pt_regs *ftrace_get_regs(struct ftrace_regs *fregs
- 	return arch_ftrace_get_regs(fregs);
- }
- 
-+#if !defined(CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS) || \
-+	defined(CONFIG_HAVE_PT_REGS_TO_FTRACE_REGS_CAST)
-+
-+static __always_inline struct pt_regs *
-+ftrace_partial_regs(struct ftrace_regs *fregs, struct pt_regs *regs)
-+{
-+	/*
-+	 * If CONFIG_HAVE_PT_REGS_TO_FTRACE_REGS_CAST=y, ftrace_regs memory
-+	 * layout is the same as pt_regs. So always returns that address.
-+	 * Since arch_ftrace_get_regs() will check some members and may return
-+	 * NULL, we can not use it.
-+	 */
-+	return &fregs->regs;
-+}
-+
-+#endif /* !CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS || CONFIG_HAVE_PT_REGS_TO_FTRACE_REGS_CAST */
-+
- /*
-  * When true, the ftrace_regs_{get,set}_*() functions may be used on fregs.
-  * Note: this can be true even when ftrace_get_regs() cannot provide a pt_regs.
+regards,
+dan carpenter
 
 
