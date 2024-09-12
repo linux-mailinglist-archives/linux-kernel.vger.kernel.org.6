@@ -1,317 +1,207 @@
-Return-Path: <linux-kernel+bounces-326858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44F25976DC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:30:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8226A976DC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCB5B1F2A1AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:30:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6F2C1C239DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:31:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA71B1B9B33;
-	Thu, 12 Sep 2024 15:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF7D1B9833;
+	Thu, 12 Sep 2024 15:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P8fK0c9y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yzc4bnlQ"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2084.outbound.protection.outlook.com [40.107.237.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64FC13CFA5;
-	Thu, 12 Sep 2024 15:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726155038; cv=none; b=qoKw1UH75GKK8iHqWMXCGHpXHsBc6xgTApwc+xBc97YMP4oHJAruTB/MmiIMYjnKzSvgNfU1QwAYYY50Alx06Epavgd9vl9XRNGEwTNiVcu68TJLRdjGHKdLjBNNRUGXnXuP7ObwJ/Qj/hvNdHJFTBbpjjC3kYDV9rXTvY/EcBI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726155038; c=relaxed/simple;
-	bh=EWwVrJVmryYGTBtgOws0yOatVwhpmA5hqy9SfXjiqfI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h55Wn2bb9WjMVgesYayjU3c/7P5bUQZndBO0/B26a75dyO5zl78A6tNE/4Lnnnu8gkPOE9e0TRb+vhmPMwFVEj+N6MiAyxltTWsed409BqdoKdA6t4MKUzBaMXPOPUCdY4g5ntAkhsMe/cBnlDX9PWv1FgeVr0jEIVKdE2pzc7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P8fK0c9y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FE6AC4CEC5;
-	Thu, 12 Sep 2024 15:30:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726155038;
-	bh=EWwVrJVmryYGTBtgOws0yOatVwhpmA5hqy9SfXjiqfI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=P8fK0c9y6ix8fMUhxOR7MisI6G2sr3+ZZ4oG6nwpUTlj9xqGOSfoewBR+74iRmcc3
-	 Hk8xMokLs9LClWebyYSoFZupUe1VhrZKloc8VvqcSEUTQJ7OS0dD2Ig4aYV/LAcr0Q
-	 F+V1GE0bAsPsO6y5OYTIgR4cV4q2gSjpZsIpw2tTZlGOazpItSGfFFFX2xgHyKD3Wp
-	 0j9Fh5JsA4T3yFQ7XAZo9j35vRiitVeBgjAn8RIfiqWRXPwyRvtRXX65orW5OQERQ3
-	 Q5Fo56dfH3RaexopNODCkr5NxZ0w3p63KBszgHIKgwBEwLUfAb9U2SU/ozRt4w5AwU
-	 1ytilJRCTNnsA==
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2780827dbafso613725fac.1;
-        Thu, 12 Sep 2024 08:30:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUuOy6zoSsl+B/+zGAnIr7jnHRIpeYMo1wo+ZhLXrDouLcA92DkONYD89hqwE+8+MlNMsX49g1KP2Pd@vger.kernel.org, AJvYcCVQUKqzNpofZQ8APGTczpKxz3Nphq0LOnHGmaidjz4v0BfuIY+k2JwC3hr/vOqayyEIF2Jj3k21ah9xLR0=@vger.kernel.org, AJvYcCXMVbKgZQf0Bv+dioxtkD8WldXiIgBscEw6ETZCC9kcWp403VC/h+LSJiCwjCqhrKTYdMhyQXrJqTs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyF8z9FvWJZUNUukQKTR2DzkuikCy+3qmlw5TEAe4g0w0S8gnN
-	6Iesi3WPd6l5QzE8xvzNuWnGo7UP6Ksw2rjwS4gA6nJ/qrX0tzunWEtBVVQuC+ESoemm5faqh2r
-	VRxEHN7ovNN2oiGN/Z13MXaVgb8Q=
-X-Google-Smtp-Source: AGHT+IGSct7yC0a4i2wfvfgVBg/kZJYcrY9q5/H09FBQTm/EhXW40aB7X7f7r6fiGRSPc1YJa5zS9X+X2ogQ6i8Xk70=
-X-Received: by 2002:a05:6871:58f:b0:268:2189:f0d with SMTP id
- 586e51a60fabf-27c3f64f3b2mr2317817fac.33.1726155037502; Thu, 12 Sep 2024
- 08:30:37 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C091B12F6;
+	Thu, 12 Sep 2024 15:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726155061; cv=fail; b=emYWGUSsMLVKdpSURuMqFVK4mvSY8sG6soqpWa9SpS581L5D0JhbeEreviASiSx1fVApoaiNAGC+7l7uxkpcQWxyh/vQJ5mwXs16YjaZQah2PfnYfQBMSrFgD9JtVLYSduc8G90x2lUrJQBGln9uYuWGnnCsEQ/nOKPJlumumAU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726155061; c=relaxed/simple;
+	bh=6dPSip1KxfMPGFf2Z9WNW0Hs4EJUKoHzXmcCOZn0w1g=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FymS3bAWfNevwdMYn8P8PwmJTXRhj2y0zhYRKL6lrWC2TKQ2i6eQBBC0aMOSMUyZOIN6nzM78WcnZ0m8q9FD0yhOnDKlXixbY6g5vSSXWzqmaFsES/vAZLT2pxQ3h64bGSUaggyC1uD8xUWJCCMzvB9Oq4bAB5Tqmtt6jIupPJY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yzc4bnlQ; arc=fail smtp.client-ip=40.107.237.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VjIM6fVaTmVQ1urC3MxteQsLV8MZ1rRmP1P9NvjA/UkCoHGeUYZ/5gbTOGadY68paxJcmikB806OMoyynmBxxwxl+08umOL5Jdo7/DdhP+EoWm3YdpxODXK/UJxnJTDQUDJIT1a1Xcw6zGyP2mcBAvlNLTFdhcPZWzAAGvoP4YJIZ7SNdzN5v550wqq+f5FzJneoBpx8ROJqJXhktovb1NmeQkl0z3aY2utRID97/ZX45r8pG3C60c3DxokRkN1JW8r8JG5W0l0oyRRY+LEABSPufH9TnkyvO8wr3WZDV4u1tIWnT6EUh04O+LX2jzQeAeO8N/crOtN/1FlWSAY4nQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zZUsym6SE1GhguGfItHdHa8XLBuSjeQEhPeYIpsvoO4=;
+ b=tWK/0Qkm+eDSKOBm6TDCMtg4Fb+Kh5SqhWMpgEdmA9XUfpbDs/rqdsVdYAeUG94AYC8Ohg8mxT2VGyNTJPAIJO8ky4MKUigqz5HpKlnu+o8wZlQT0QUPsOOuwLCwUvDCLmgyqTaJUp04nJL+xyE74JRe3YB9XXtUbCMt+z/Ap0y/IqjYxUzAL+OGG8g62aqoB7g7l8Sr7bkBD+xQPpEn2AXNsm9NMSm3iwATeFihKOe729+wVaweaLpHKs8c0lbJruMOIE5VoguntXGPewyDlLr5zxGakUe3liYB/4Wtm9VU4SDIACtXTuD4da5A+5S+dfxYT+OTqAKNdZu1fRnpxw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zZUsym6SE1GhguGfItHdHa8XLBuSjeQEhPeYIpsvoO4=;
+ b=yzc4bnlQ5BRfqf/bvdRZoo2P6fhPWchuUvUhXI+L/V8OsiVHH7ddrHwxx6fIXWGIExq7nA6xzsIQJY/QtncaTs9qxacUQu3IwxD2JhRMg4CsFEPbu0t+XYMm4aWnz0lq2dhz+rxZQg+/5XiQFqznnLA4x9ACT5jAbey8nP7Xxj4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL1PR12MB5176.namprd12.prod.outlook.com (2603:10b6:208:311::19)
+ by DS0PR12MB6629.namprd12.prod.outlook.com (2603:10b6:8:d3::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.25; Thu, 12 Sep
+ 2024 15:30:57 +0000
+Received: from BL1PR12MB5176.namprd12.prod.outlook.com
+ ([fe80::ed5b:dd2f:995a:bcf4]) by BL1PR12MB5176.namprd12.prod.outlook.com
+ ([fe80::ed5b:dd2f:995a:bcf4%7]) with mapi id 15.20.7939.022; Thu, 12 Sep 2024
+ 15:30:57 +0000
+Message-ID: <b3ecf961-c399-43b2-a8b3-6b5ed664db27@amd.com>
+Date: Thu, 12 Sep 2024 21:00:49 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] platform/x86/amd: pmf: Add quirk for TUF Gaming A14
+Content-Language: en-US
+To: aln8 <aln8un@gmail.com>
+Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, luke@ljones.dev,
+ platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240912073601.65656-1-aln8un@gmail.com>
+From: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+In-Reply-To: <20240912073601.65656-1-aln8un@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN3PR01CA0171.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:de::14) To BL1PR12MB5176.namprd12.prod.outlook.com
+ (2603:10b6:208:311::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708-runtime_pm-v4-1-c02a3663243b@quicinc.com>
- <20240816204539.GA73302@bhelgaas> <CAJZ5v0j0ck2yKPzisggkdKTFz-AVKG7q+6WnBiiT_43VT4Fbvg@mail.gmail.com>
- <b0d8e51d-cf53-dc75-0e57-4e2e85a14827@quicinc.com> <CAJZ5v0jMSrkH7jCk0Ayb21vdXjCnYHHiSqdbifNFwq2OucEMtQ@mail.gmail.com>
- <bfdc6c20-926e-533b-a8e3-0d5a3ef8be8c@quicinc.com>
-In-Reply-To: <bfdc6c20-926e-533b-a8e3-0d5a3ef8be8c@quicinc.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 12 Sep 2024 17:30:26 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gHw=BUGn7MkRaLnAQ9ki-YDOL3SpNxd0X9YmTVG-ofzw@mail.gmail.com>
-Message-ID: <CAJZ5v0gHw=BUGn7MkRaLnAQ9ki-YDOL3SpNxd0X9YmTVG-ofzw@mail.gmail.com>
-Subject: Re: [PATCH v4] PCI: Enable runtime pm of the host bridge
-To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_vbadigan@quicinc.com, 
-	quic_ramkri@quicinc.com, quic_nitegupt@quicinc.com, quic_skananth@quicinc.com, 
-	quic_parass@quicinc.com, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
-	Mayank Rana <quic_mrana@quicinc.com>, Markus Elfring <Markus.Elfring@web.de>, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5176:EE_|DS0PR12MB6629:EE_
+X-MS-Office365-Filtering-Correlation-Id: 896be18b-b327-4779-6f65-08dcd33fe56c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NzNzRTZMVE5ud3MzT1RuUi9PdjB5SjRhZGJPRUQ1cy84SlZsMmZGb2VaUWUw?=
+ =?utf-8?B?MVVmdzArbVJQU3dVZHpsMGhPT25MTkpxaFpwR3NxQzAyOWJIYzk3aThpdG80?=
+ =?utf-8?B?OVVGZXhqcVpsaGc5em1kMUYvZ0dLUWpCWnQ2TnpLcllBa1UvWmVHWEUvdjRE?=
+ =?utf-8?B?dVdsbGJJN0tXNGd6cjJ2RUJIZGdSalVJdFRORCtzZ1d5akN5aG9oTHBvd3dY?=
+ =?utf-8?B?M1VtYnpWQ1BxYTdjRThrU1ZjZ29xSmlFU095QVFhSFRhWVUyWnFWWmZlcHE4?=
+ =?utf-8?B?REtuVDhraFNJUnRBR1JZUmM3emx0ZTRNYzAwd3JYeU9UVEM3NEpTcjJuRUVB?=
+ =?utf-8?B?eG4wQnhyNWJYRWVTejE1aTVjdC8ycGh2Y0NPMlRyYUdPRVAvTjdyTEQ2QmFk?=
+ =?utf-8?B?cHg1RXZwTTNXRUdibUdtNmZBNEF5dGYyUjVLRHVZQ0d6Uk4yYUx4bDRVVUt6?=
+ =?utf-8?B?V0xUQzk4M3BNY21aY0EzT3BWbW5RNS9Nd3M1TW1xVy9CUEw1cDBaaG1VMm5k?=
+ =?utf-8?B?SHBYSXNOYVh3T0h5UXFqNnRCUDdMWEQzY3JtV0k5S2M5WHcwYWxBSjVNRG5Q?=
+ =?utf-8?B?YjVZVVZUbWp1UE9Qa0FYNGo4MXRwbmxVSVpTWlA2K1czajdoTXcxa3NDeGw5?=
+ =?utf-8?B?Mm1sTGJRWU53blk5SUtYK1g2L1RqMERCRWFKMzJ5UE9Ld3pzaFdWNU5ldVhU?=
+ =?utf-8?B?djlzd09MNjRuak8yT0pNRldlZ3h0Z3QzQnp0NDJ4eTNnNUFlaXM3VWM2YzFN?=
+ =?utf-8?B?YjVPSXlHNHhzZnIwZm0xeXg5L0FTZFlsNzFMcVJDNTcvTVcvbkVWdkluYnJv?=
+ =?utf-8?B?ZDlsaCsrMXRWd2ZsR1h1TFZRZEh0cUx3c0doMWtCTUZ3WTVLa01NQVBZRUo3?=
+ =?utf-8?B?S0VYdkxMcEhNdGtMOXdqT1FqM3R1bEtvd2FRZk9ySEVBaklySWpENDluSXlo?=
+ =?utf-8?B?QWJJeVJJbGhlcUJnbFhrRitQU0pSbElvTnhINWpSVW9CRE5TR0tDVXhRSkJs?=
+ =?utf-8?B?MUNZcElOMng5MHBTNnV1cHR0cUpmSkdrZDJ5d0ZJeTVaYVVKMjV1QlFXQ2FI?=
+ =?utf-8?B?blFTTy9JV3UzSjhFWFBGZ3o4WFVFY29yQzlwRkp6Q1BHS3pNaG9oWUVXam52?=
+ =?utf-8?B?R1dxM3U3RlpwREhaTkJkWll4S2cyTld4b1VMajkzeVZrbTdzOC9adkFnVlpW?=
+ =?utf-8?B?SEVpUStpN2VxMktSd29MVkNjd2prUmVDZHhpU09iUDdmQUV4SGtGbi9BWXlD?=
+ =?utf-8?B?OHg1U3hZdUlOY0lySUk1cExza3dnR01DVlBIVjVIcWRpNzNaRmxJdlg5d2dP?=
+ =?utf-8?B?Rk5qb0MrQ0pPeVY4ZWY4R3BuQlpuc0gvc2JLdGxRMU1URW15K0Y5ejVKbE5o?=
+ =?utf-8?B?Z2drOHV6MXcvTTlNaGJjZ05PZXZPY2taanArZyt1Ui9HRlVaV0tMbkc4eWRr?=
+ =?utf-8?B?ZHIvNENNZzRRbjZ2Ump2akhVV2I4OU42Z1hnUnlhSFF3WXByRU9oNE9wcU01?=
+ =?utf-8?B?aXZmZzFiVVp1akZ2NjV0NlhFTFhiYXZuYy9DMmRpaDYzTENhVVUzdnRqOTgz?=
+ =?utf-8?B?bWpDM0hQVlpJWUVZdkF6UmUzRUNqbVd4VXZWZG82Uk9xdHc0NC90ampVWnhh?=
+ =?utf-8?B?dEtIK2NTNTF4YTdHUzdpSDEvYWRtbklFaitOeHlvTzNMeHZnREhlYy84NU00?=
+ =?utf-8?B?cS8rL3JDTEE0dTBoWFMxK1F2dE9rQWE0NHhoRGFIc0ZFQ2pDNHhPanVNLzhn?=
+ =?utf-8?B?UGMxdWU0TUFLd2huWW56VTNvZmdwOUF6Z1h4Zk9PR2FpTDltRlhCZ1J3Mkov?=
+ =?utf-8?B?NUdVWG5hZDVSL0FWVStoQT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5176.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TXBFK0JZVHZIMnRQWTU2YUY3OHArRnVqYzlVV25ZaE5rQ1NUTnlFd21uSUQ2?=
+ =?utf-8?B?NkYvanZlN3UzSzF3bkx6cEFVeC84VnpZMFhIR0hiT2hzTXRxNDFvS1QyTi9n?=
+ =?utf-8?B?MVhqWjE0ak1vVm1vZTBTSS9hdS81aDM2akhkQWZuSExHM0Q2SHFNTU9PNVdk?=
+ =?utf-8?B?ckdWalMraHRyVFBYQXAzcWUxM0tPQzlsc0FiMGM2anJHdGluaVZoV1BVSjd3?=
+ =?utf-8?B?Z2Q3N0hDZlFZRThLdmkzTndEWnZ3aW5vK0VQQ2h4NHU1V2JLYVp2bUM0bEVn?=
+ =?utf-8?B?ZjZFWjcwYXBWQzZveHV0UVA2Q05sOWpPek5zOEo5dStKdGZEcnkwWmJyV2tC?=
+ =?utf-8?B?NmdwVTZmR1lBckNjU1NFQUwySnJPSEJvakhxOVZIV2FaM1hNZXVQd2lieW4x?=
+ =?utf-8?B?K3ZMTkwwSkxhbkk1aHdRb1p4YlFsMXVKdmRPNTUzcDVkZzVNYytXVy9sUGVs?=
+ =?utf-8?B?eksvbHJZZ1N1Z0d2L1BFZzIxcVl1ZWhMK09OYko1MlJWZDJ4YnVtOHg0dWhZ?=
+ =?utf-8?B?Q1AyTXgzZmRzL2dBRVVQYnFIcGs4SlFWRTJJVnYwSkh0UWlMWjdIa0pCUllr?=
+ =?utf-8?B?Lzl4NjF3N0VyNDhKdnhjbEZ1b3VBV2R4S1A3aEVoelFxNmYyejBGVUkxRDJN?=
+ =?utf-8?B?cGJCNnJnRURsM2cwWjlPd3c5Yk9GU1lHc09DMmpmVmhUL0NEZlZsM3M4WDdx?=
+ =?utf-8?B?S1VWZkdPU00zWXN4VTFoaVlSaDNycmRNY01OR3ExT25BK1BYVElzbGJXVmR3?=
+ =?utf-8?B?SUp4QWNRd1BoMDhuMlF5Q1JvZWNvS1krenlwdGE2L3lXT3lGRVhMWEdqV0hW?=
+ =?utf-8?B?c0o0cy9lQzYxQnZYWmNqZm1GUzhFUUswL2xyOFppY05JQnhlZEdocSt6dkxG?=
+ =?utf-8?B?bFBzeUVKdGNTcmRoVmJnYUhXbFoycVpxN2dVZDJOUUR0NUxBTFowTysyUENL?=
+ =?utf-8?B?amRuQlE5N3BtOEpmQXp0dk1tUDRFUHRhN0pWRmNwQXdncVhpdG8yVTd0U3hq?=
+ =?utf-8?B?TWMyVDdyUEwyZjUyS1ZWc3dvYVJyOVBrYS8waUVSY2NsSXVERm83c0pqTEcv?=
+ =?utf-8?B?YmVDR2pYV1h1OVhNaTlSSzh5ZTMyNmFiSTU1VS9LcWdUZHhDS1lUU1drT3ZL?=
+ =?utf-8?B?cjJKeU4xSENYSHhxajBoYVF3dkpjWG5RMExURFprVDIxOERScHR5S0phSzQ1?=
+ =?utf-8?B?Ulo5NGpLSEQrV2VMeitCZXJyTzUybXZQVjJkdXpGMG9HS29Ed3k4ZHoxQ283?=
+ =?utf-8?B?aDZXZTBrTUpRdy9wU3F1b3pXRUU3RnZYL0dXdEJjOERYajBFZ0xkYW9pTXMw?=
+ =?utf-8?B?S0hwY1hncVBtWHozUzFPZnNkSHUxVWYvN2hyUThKTndaZ3k4VVFldHEySy9N?=
+ =?utf-8?B?VlAwR2RWdU53TjFJOEJaS2JCR2dQUnkxbmVEdzVpSG1TSkIyb2VpS1I3OGlI?=
+ =?utf-8?B?WS9jY09CaFg2dlI5dUY2M09IZkZ4OWQyQkl2Tmh2blpseVlMUHBUZWhIdHcz?=
+ =?utf-8?B?SGtSUzlPUWRFT3hKQk55L3IxRFZLSU9ld09UK1ZNK0k0K3plMndGaFRRb2s1?=
+ =?utf-8?B?SFh0UXlEZFJnaTNxVW1LTHNjZGJRSytPRHY3elNGQTFmbDFXdG1GUy9sN0oy?=
+ =?utf-8?B?YzJ6R1Rta1dZSVFjTXJiZWJ3S0NiNjQzTWoweGQxVmFzU0N1REp6MFFKVlBW?=
+ =?utf-8?B?QzdaVFNMRytnUzVMei94VVNQVFRRbENScjk4dlN2KzlzcjduNXEvZ2VDelR2?=
+ =?utf-8?B?ZThONERKT1dqQnY4ZUFhTExLNkgyUmlJZk5sMklTbEVlaVl2YVBqTWNEL3kv?=
+ =?utf-8?B?N0ZzVzZKRVp3UlNBZlNZUGcrakZUYXdIK09Jejhtb3o2M3VrSFBLSTMrLzZl?=
+ =?utf-8?B?MW1HM1QwdWpWZ2dQc04xR2hUejlsb0VvaGhSdERERHdyTVE2ZFFlS3JQcXFQ?=
+ =?utf-8?B?Z05ZYzRQaCszWGlXSXFlYU5XUVh5NzVnU2M5c0x0UkpiMHNVR0g2anJhT2Rs?=
+ =?utf-8?B?SmE1QXk4ZjZ1SVEvWDdVQkdCQzRFcS9XSHBXZEpUUkZkS3RWREtZUUw4RXBm?=
+ =?utf-8?B?MkFjdGpMZ1FHa0xXNURWN1FWQ2E3ckJvMXU2Zm1ib2I5REl3Q3hpV1dFRzd3?=
+ =?utf-8?Q?O69hOO0c9KYGpO1JlYS0JoTcX?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 896be18b-b327-4779-6f65-08dcd33fe56c
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5176.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2024 15:30:57.0770
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: h8Bkwi+P2pHnX+BFROr8wnyKSXs1UbhJ1RoELmswcRbDvJYoYAdEgDgVZI12HU2JSgDJtFkiqQP6dihU8q2d6w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6629
 
-On Thu, Sep 12, 2024 at 2:13=E2=80=AFPM Krishna Chaitanya Chundru
-<quic_krichai@quicinc.com> wrote:
->
->
->
-> On 9/12/2024 5:27 PM, Rafael J. Wysocki wrote:
-> > On Thu, Sep 12, 2024 at 1:52=E2=80=AFPM Krishna Chaitanya Chundru
-> > <quic_krichai@quicinc.com> wrote:
-> >>
-> >>
-> >>
-> >> On 9/12/2024 5:12 PM, Rafael J. Wysocki wrote:
-> >>> On Fri, Aug 16, 2024 at 10:45=E2=80=AFPM Bjorn Helgaas <helgaas@kerne=
-l.org> wrote:
-> >>>>
-> >>>> [+cc Rafael, Mayank, Markus (when people have commented on previous
-> >>>> versions, please cc them on new versions).  I'm still hoping Rafael
-> >>>> will have a chance to chime in]
-> >>>>
-> >>>> On Mon, Jul 08, 2024 at 10:19:40AM +0530, Krishna chaitanya chundru =
-wrote:
-> >>>>> The Controller driver is the parent device of the PCIe host bridge,
-> >>>>> PCI-PCI bridge and PCIe endpoint as shown below.
-> >>>>>
-> >>>>>           PCIe controller(Top level parent & parent of host bridge)
-> >>>>>                           |
-> >>>>>                           v
-> >>>>>           PCIe Host bridge(Parent of PCI-PCI bridge)
-> >>>>>                           |
-> >>>>>                           v
-> >>>>>           PCI-PCI bridge(Parent of endpoint driver)
-> >>>>>                           |
-> >>>>>                           v
-> >>>>>                   PCIe endpoint driver
-> >>>>>
-> >>>>> Now, when the controller device goes to runtime suspend, PM framewo=
-rk
-> >>>>> will check the runtime PM state of the child device (host bridge) a=
-nd
-> >>>>> will find it to be disabled.
-> >>>>
-> >>>> I guess "will find it to be disabled"  means the child (host bridge)
-> >>>> has runtime PM disabled, not that the child device is disabled, righ=
-t?
-> >>>>
-> >>>>> So it will allow the parent (controller
-> >>>>> device) to go to runtime suspend. Only if the child device's state =
-was
-> >>>>> 'active' it will prevent the parent to get suspended.
-> >>>>
-> >>>> Can we include a hint like the name of the function where the PM
-> >>>> framework decides this?  Maybe this is rpm_check_suspend_allowed()?
-> >>>>
-> >>>> rpm_check_suspend_allowed()  checks ".ignore_children", which sounds
-> >>>> like it could be related, and AFAICS .ignore_children =3D=3D false h=
-ere,
-> >>>> so .child_count should be relevant.
-> >>>>
-> >>>> But I'm still confused about why we can runtime suspend a bridge tha=
-t
-> >>>> leads to devices that are not suspended.
-> >>>
-> >>> That should only be possible if runtime PM is disabled for those devi=
-ces.
-> >>>
-> >>>>> Since runtime PM is disabled for host bridge, the state of the chil=
-d
-> >>>>> devices under the host bridge is not taken into account by PM frame=
-work
-> >>>>> for the top level parent, PCIe controller. So PM framework, allows
-> >>>>> the controller driver to enter runtime PM irrespective of the state
-> >>>>> of the devices under the host bridge. And this causes the topology
-> >>>>> breakage and also possible PM issues like controller driver goes to
-> >>>>> runtime suspend while endpoint driver is doing some transfers.
-> >>>
-> >>> Why is it a good idea to enable runtime PM for a PCIe controller?
-> >>>
-> >> PCIe controller can do certain actions like keeping low power state,
-> >> remove bandwidth votes etc as part of runtime suspend as when we know
-> >> the client drivers already runtime suspended.
-> >
-> > Surely they can, but enabling runtime PM for devices that have
-> > children with runtime PM disabled and where those children have
-> > children with runtime PM enabled is a bug.
-> >
-> we are trying to enable the runtime PM of host bridge here, so that we
-> can enable runtime PM of the controller.
 
-So this is a preliminary step.  That was unclear to me.
 
-> If this change got accepted the child here(host bridge) runtime pm will
-> be enabled then i think there will no issue in enabling the runtime pm
-> of the controller then.
-> >>>> What does "topology breakage" mean?  Do you mean something other tha=
-n
-> >>>> the fact that an endpoint DMA might fail if the controller is
-> >>>> suspended?
-> >>>>
-> >>>>> So enable runtime PM for the host bridge, so that controller driver
-> >>>>> goes to suspend only when all child devices goes to runtime suspend=
-.
-> >>>
-> >>> This by itself makes sense to me.
-> >>>
-> >>>> IIUC, the one-sentence description here is that previously, the PCI
-> >>>> host controller could be runtime suspended even while an endpoint wa=
-s
-> >>>> active, which caused DMA failures.  And this patch changes that so t=
-he
-> >>>> host controller is only runtime suspended after the entire hierarchy
-> >>>> below it is runtime suspended?  Is that right?
-> >>>>
-> >>>>> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> >>>>> ---
-> >>>>> Changes in v4:
-> >>>>
-> >>>> (Note: v4 applies cleanly to v6.10-rc1 and to v6.11-rc1 with a small
-> >>>> offset).
-> >>>>
-> >>>>> - Changed pm_runtime_enable() to devm_pm_runtime_enable() (suggeste=
-d by mayank)
-> >>>>> - Link to v3: https://lore.kernel.org/lkml/20240609-runtime_pm-v3-1=
--3d0460b49d60@quicinc.com/
-> >>>>> Changes in v3:
-> >>>>> - Moved the runtime API call's from the dwc driver to PCI framework
-> >>>>>     as it is applicable for all (suggested by mani)
-> >>>>> - Updated the commit message.
-> >>>>> - Link to v2: https://lore.kernel.org/all/20240305-runtime_pm_enabl=
-e-v2-1-a849b74091d1@quicinc.com
-> >>>>> Changes in v2:
-> >>>>> - Updated commit message as suggested by mani.
-> >>>>> - Link to v1: https://lore.kernel.org/r/20240219-runtime_pm_enable-=
-v1-1-d39660310504@quicinc.com
-> >>>>> ---
-> >>>>>
-> >>>>> ---
-> >>>>>    drivers/pci/probe.c | 4 ++++
-> >>>>>    1 file changed, 4 insertions(+)
-> >>>>>
-> >>>>> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> >>>>> index 8e696e547565..fd49563a44d9 100644
-> >>>>> --- a/drivers/pci/probe.c
-> >>>>> +++ b/drivers/pci/probe.c
-> >>>>> @@ -3096,6 +3096,10 @@ int pci_host_probe(struct pci_host_bridge *b=
-ridge)
-> >>>>>         }
-> >>>>>
-> >>>>>         pci_bus_add_devices(bus);
-> >>>>> +
-> >>>>> +     pm_runtime_set_active(&bridge->dev);
-> >>>>> +     devm_pm_runtime_enable(&bridge->dev);
-> >>>>> +
-> >>>>>         return 0;
-> >>>>>    }
-> >>>>>    EXPORT_SYMBOL_GPL(pci_host_probe);
-> >>>
-> >>> This will effectively prevent the host bridge from being
-> >>> runtime-suspended at all IIUC, so the PCIe controller will never
-> >>> suspend too after this change.
-> >>>
-> >> No we are having a different observations here.
-> >> Without this change the PCIe controller driver can go to runtime suspe=
-nd
-> >> without considering the state of the client drivers i.e even when the
-> >> client drivers are active.
-> >> After adding this change we see the pcie controller is getting runtime
-> >> suspended only after the client drivers are runtime suspended which is
-> >> the expected behaviour.
-> >
-> > OK, but then when and how is it going to be resumed?
->
-> sorry I am not expert of the pm framework here, what we observed is when
-> client drivers are trying to resume using runtime_get we see the
-> controller driver is also getting resume properly with this change.
-> let me dig in and see in code on how this is happening.
->
-> Bjorn has this view on this change in previous v2 version[1]
-> "My expectation is that adding new functionality should only require
-> changes in drivers that want to take advantage of it.  For example, if
-> we add runtime PM support in the controller driver, the result should
-> be functionally correct even if we don't update drivers for downstream
-> devices.
->
-> If that's not the way it works, I suggest that would be a problem in
-> the PM framework.
+On 9/12/2024 13:06, aln8 wrote:
+> The ASUS TUF Gaming A14 has the same issue as the ROG Zephyrus G14
+> where it advertises SPS support but doesn't use it.
+> 
+> Signed-off-by: aln8 <aln8un@gmail.com>
 
-You can say so, but that's how it goes.
+Thank you for the patch. Looks good to me.
 
-If there are any devices with runtime PM disabled in a dependency
-chain, the runtime PM framework cannot follow that chain as a whole.
-If enabling runtime PM for a device leads to this situation, it is not
-correct.
+Acked-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
 
-> The host bridge might be a special case because we don't have a
-> separate "host bridge" driver; that code is kind of integrated with
-> the controller drivers.  So maybe it's OK to do controller + host
-> bridge runtime PM support at the same time, as long as any time we add
-> runtime PM to a controller, we sure it's also set up for the host
-> bridge"
-
-I think that you can enable runtime PM for host bridge devices in
-general, as long as they don't need to be resumed without resuming any
-of their children.
-
-If that's the case, resuming one of its children will also cause the
-host bridge to resume and all should be fine, although you also need
-to ensure that system-wide suspend handling is in agreement with this.
-
-I would suggest calling pm_runtime_no_callbacks() for the host bridge devic=
-e.
-
-> [1] https://lore.kernel.org/all/20240307215505.GA632869@bhelgaas/
-
-And this is the information to put into your patch changelog:
-
-1. It is a property of the runtime PM framework that it can only
-follow continuous dependency chains.  That is, if there is a device
-with runtime PM disabled in a dependency chain, runtime PM cannot be
-enabled for devices below it and above it in that chain both at the
-same time.
-
-2. Because of the above, in order to enable runtime PM for a PCIe
-controller device, one needs to ensure that runtime PM is enabled for
-all devices in every dependency chain between it and any PCIe endpoint
-(as runtime PM is enabled for PCIe endpoints).
-
-3. This means that runtime PM needs to be enabled for the host bridge
-device, which is present in all of these dependency chains.
-
-4. After this change, the host bridge device will be runtime-suspended
-by the runtime PM framework automatically after suspending its last
-child and it will be runtime-resumed automatically before resuming its
-first child which will allow the runtime PM framework to track
-dependencies between the host bridge device and all of its
-descendants.
-
-Thanks!
+> ---
+> v1 -> v2: Change to FA401W so full series models will get the fix.
+> ---
+>  drivers/platform/x86/amd/pmf/pmf-quirks.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/amd/pmf/pmf-quirks.c b/drivers/platform/x86/amd/pmf/pmf-quirks.c
+> index 48870ca52..7cde5733b 100644
+> --- a/drivers/platform/x86/amd/pmf/pmf-quirks.c
+> +++ b/drivers/platform/x86/amd/pmf/pmf-quirks.c
+> @@ -37,6 +37,14 @@ static const struct dmi_system_id fwbug_list[] = {
+>  		},
+>  		.driver_data = &quirk_no_sps_bug,
+>  	},
+> +	{
+> +		.ident = "ASUS TUF Gaming A14",
+> +		.matches = {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+> +			DMI_MATCH(DMI_PRODUCT_NAME, "FA401W"),
+> +		},
+> +		.driver_data = &quirk_no_sps_bug,
+> +	},
+>  	{}
+>  };
+>  
 
