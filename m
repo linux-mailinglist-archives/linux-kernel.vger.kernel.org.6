@@ -1,313 +1,208 @@
-Return-Path: <linux-kernel+bounces-325966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2EAD976054
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:27:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2625E976056
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:30:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7760B284733
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 05:27:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5468C1C22A2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 05:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93EB18892F;
-	Thu, 12 Sep 2024 05:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1D118890E;
+	Thu, 12 Sep 2024 05:30:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0ROEZC7K"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AFtSTXGh"
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88B228F4;
-	Thu, 12 Sep 2024 05:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51C7126BED
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 05:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726118846; cv=none; b=XNTOvJOBrUNRHv2O/swFYe9q7A1m6iDv36xAhfAzFa6rX5LyW4l6Mfo7vuL7WtnU9e963HW4SR6tHY04MUgUO2tQjbdpnx8LJAsVMQzEg8mdnwCb25JLynZRhDHX9DC0yBJOK79fiYbHuyORtBNfXx1WFCrJcmlRSAkfWlgE110=
+	t=1726119044; cv=none; b=h/+YM3cK1x2O5+jr4Q1pLSs7rx9nSqQ3CU4jysibcvYQiOrrpdL4n1LaAnl4MrD7Z4R+G6eb1UymqaFW8EeokDDnAbAFMKDIQGkCH9lfmSp+IqheGOC5m7Gqkwe+qNOCdDLQv851PCAQUflY1h+is6y6g9X3Pz8KBP9pHn40aZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726118846; c=relaxed/simple;
-	bh=FBoKZW8go4jR8d468STNkw8a4R5bxPadQKoaIPJ6Lto=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nbatRMJbNfpVgxhPO9p6m2UfajEVCgz2OjHsL03d6YzR6KHFiTZ1asgpyiGBC9SMZHPb8JLUwsQGHKUAbduKbjDW9LL77F+BNfiMltXZosQ+YSPzkivC7BdnKn4IxOGPlwJiXuAffPec1rr35/Cr96y8BkT0O/AzEOoW4CnX/Bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0ROEZC7K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D011CC4CEC3;
-	Thu, 12 Sep 2024 05:27:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726118845;
-	bh=FBoKZW8go4jR8d468STNkw8a4R5bxPadQKoaIPJ6Lto=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0ROEZC7KnK0p3MCfhRsJQdBQ5pM7kguH/EZPbFusSLn5FegiImEfW00oL8AYBk5Rq
-	 ZrcSafNiHxyEcC9fpIz6/S0NH2OhYbPH1jid+cUzp0yjUFPM/lSVqcwJ3EFfw2zriX
-	 q8iuR+TXHCnzrdd9tMQq9uIjSDZ12tFa+zM8t8JM=
-Date: Thu, 12 Sep 2024 07:27:22 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Serge Semin <fancer.lancer@gmail.com>
-Cc: Viresh Kumar <vireshk@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Maciej Sosnowski <maciej.sosnowski@intel.com>,
-	Haavard Skinnemoen <haavard.skinnemoen@atmel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Jiri Slaby <jirislaby@kernel.org>, dmaengine@vger.kernel.org,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dmaengine: dw: Prevent tx-status calling DMA-desc
- callback
-Message-ID: <2024091215-appraisal-rocket-45d6@gregkh>
-References: <20240911184710.4207-1-fancer.lancer@gmail.com>
- <20240911184710.4207-2-fancer.lancer@gmail.com>
+	s=arc-20240116; t=1726119044; c=relaxed/simple;
+	bh=zvdkoE3BvaRWBAJT+6hVKQfvf0deVHtcNW73hBtJNzk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZLQKtVV2j1a3EO9aAar6UBEXIjECwPXtVR+7XrF13KOn4H3CkYHjnjvxGFVbn9PHsuvM9LthYydQ8cV6zPgwTfDcoX5jOpd5ULzvHXbNvoFukSrzZTMTNGxtM8lnITeMtRvbPPcIjYs0SmxQG+Ay18x4M7+ZUwXge02Z+jpbKw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AFtSTXGh; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3e045525719so329423b6e.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 22:30:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726119040; x=1726723840; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DkPd0Cr7x8f24pxEWoJCTBS7zwjsrOd1iZVMDN4zQlE=;
+        b=AFtSTXGhYAtfrcO6leA6Nhp0mZbWTJfXxp8M8SSq6lw73rYRmMobhJklUyb9igHpPo
+         HGKgrwF+SqfohWrDNnQSLKgNmKVXB1YBeTp76TJm4+2Iv5XvExi2h/jD6eYSgOwupgQi
+         uRODCoOD8oAdtTyhRtyQ4ivtE+Ciy7Kg1NKJuz+AYITpZahKhlZd6gP4wN7p6rhz6iHi
+         D+phZihTJOsQe99AMSJzjptZqHLaZBmd2xC9IVTy9utThGGWDHskSery1b9kkIURWk7+
+         w8S6BPjKUmCh9X5+HY7fShV9a8zvxU2FbqwZAIVQ4cHUKktKMJFFhHKO9wPYmkd9NC40
+         csuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726119040; x=1726723840;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DkPd0Cr7x8f24pxEWoJCTBS7zwjsrOd1iZVMDN4zQlE=;
+        b=Bqk9Uo0Fqap5k+pFi4G6HO1tPMSfdosYSL84fAMJtbZ0VSzBrGcQ3AObpJ9UImVdMI
+         QW9wvTemOKAP6YpR1VA5u7rlpwOExM35UqC+oWfIraEyWSJNIyXCy1ePIb5yH2Ce2XHM
+         GW75RVSpHlaH4hXcDehUONDNDyFhDBdX+7s0cJcEwserBZyNTEbqtK2rxY1qUY6v9bX/
+         g5dXdSmC77FW10TVOMQ90GkufnD82eRCxLm2N74ue7LhFFKnAIG43u3c3+5o+1DOP3qO
+         DuPtibE5/RhJfq5uU2tBT4z121MFwO0GqgjDbOYTHkzpBzd8oo7IcFFEVdbq8VwpKk0A
+         ZBnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW9jlr2427P80/CG+tn+0V2FM8PIVmyrgXveMfYya31DXr264bQnvjJKP4hQZ2q61WyKTmkYPW7AhN4ISU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQ50XEqErvbFOjcTPDkocg0CuGvCTaW8FkxlsVlaFghfTghQ89
+	iwcUcnp791Wd2brYiedjsNmldKYCIfIwuLG+QIBZ0Toj7CMMUYTz1bnCJSuT0g==
+X-Google-Smtp-Source: AGHT+IHU8FR+L/XU0vdhAEGs/bYRvW8pdSvNBRYhhxU+psuWfbVZBWUIot9yMuEwen0zemMyw1h03w==
+X-Received: by 2002:a05:6808:159e:b0:3e0:391f:dc83 with SMTP id 5614622812f47-3e071ae75f2mr1029644b6e.36.1726119040485;
+        Wed, 11 Sep 2024 22:30:40 -0700 (PDT)
+Received: from localhost.localdomain ([120.60.130.207])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db1fbbeecasm916935a12.42.2024.09.11.22.30.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 22:30:39 -0700 (PDT)
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: bhelgaas@google.com,
+	kw@linux.com
+Cc: kishon@kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: [PATCH] PCI: Pass domain number explicitly to pci_bus_release_domain_nr() API
+Date: Thu, 12 Sep 2024 11:00:25 +0530
+Message-Id: <20240912053025.25314-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240911184710.4207-2-fancer.lancer@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 11, 2024 at 09:46:09PM +0300, Serge Semin wrote:
-> The dmaengine_tx_status() method implemented in the DW DMAC driver is
-> responsible for not just DMA-transfer status getting, but may also cause
-> the transfer finalization with the Tx-descriptors callback invocation.
-> This makes the simple DMA-transfer status getting being much more complex
-> than it seems with a wider room for possible bugs.
-> 
-> In particular a deadlock has been discovered in the DW 8250 UART device
-> driver interacting with the DW DMA controller channels. Here is the
-> call-trace causing the deadlock:
-> 
-> serial8250_handle_irq()
->   uart_port_lock_irqsave(port); ----------------------+
->   handle_rx_dma()                                     |
->     serial8250_rx_dma_flush()                         |
->       __dma_rx_complete()                             |
->         dmaengine_tx_status()                         |
->           dwc_scan_descriptors()                      |
->             dwc_complete_all()                        |
->               dwc_descriptor_complete()               |
->                 dmaengine_desc_callback_invoke()      |
->                   cb->callback(cb->callback_param);   |
->                   ||                                  |
->                   dma_rx_complete();                  |
->                     uart_port_lock_irqsave(port); ----+ <- Deadlock!
-> 
-> So in case if the DMA-engine finished working at some point before the
-> serial8250_rx_dma_flush() invocation and the respective tasklet hasn't
-> been executed yet to finalize the DMA transfer, then calling the
-> dmaengine_tx_status() will cause the DMA-descriptors status update and the
-> Tx-descriptor callback invocation.
-> 
-> Generalizing the case up: if the dmaengine_tx_status() method callee and
-> the Tx-descriptor callback refer to the related critical section, then
-> calling dmaengine_tx_status() from the Tx-descriptor callback will
-> inevitably cause a deadlock around the guarding lock as it happens in the
-> Serial 8250 DMA implementation above. (Note the deadlock doesn't happen
-> very often, but can be eventually discovered if the being received data
-> size is greater than the Rx DMA-buffer size defined in the 8250_dma.c
-> driver. In my case reducing the Rx DMA-buffer size increased the deadlock
-> probability.)
-> 
-> Alas there is no obvious way to prevent the deadlock by fixing the
-> 8250-port drivers because the UART-port lock must be held for the entire
-> port IRQ handling procedure. Thus the best way to fix the discovered
-> problem (and prevent similar ones in the drivers using the DW DMAC device
-> channels) is to simplify the DMA-transfer status getter by removing the
-> Tx-descriptors state update from there and making the function to serve
-> just one purpose - calculate the DMA-transfer residue and return the
-> transfer status. The DMA-transfer status update will be performed in the
-> bottom-half procedure only.
-> 
-> Fixes: 3bfb1d20b547 ("dmaengine: Driver for the Synopsys DesignWare DMA controller")
-> Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
-> 
-> ---
-> 
-> Changelog RFC:
-> - Instead of just dropping the dwc_scan_descriptors() method invocation
->   calculate the residue in the Tx-status getter.
-> ---
->  drivers/dma/dw/core.c | 90 ++++++++++++++++++++++++-------------------
->  1 file changed, 50 insertions(+), 40 deletions(-)
-> 
-> diff --git a/drivers/dma/dw/core.c b/drivers/dma/dw/core.c
-> index dd75f97a33b3..af1871646eb9 100644
-> --- a/drivers/dma/dw/core.c
-> +++ b/drivers/dma/dw/core.c
-> @@ -39,6 +39,8 @@
->  	BIT(DMA_SLAVE_BUSWIDTH_2_BYTES)		| \
->  	BIT(DMA_SLAVE_BUSWIDTH_4_BYTES)
->  
-> +static u32 dwc_get_hard_llp_desc_residue(struct dw_dma_chan *dwc, struct dw_desc *desc);
-> +
->  /*----------------------------------------------------------------------*/
->  
->  static struct device *chan2dev(struct dma_chan *chan)
-> @@ -297,14 +299,12 @@ static inline u32 dwc_get_sent(struct dw_dma_chan *dwc)
->  
->  static void dwc_scan_descriptors(struct dw_dma *dw, struct dw_dma_chan *dwc)
->  {
-> -	dma_addr_t llp;
->  	struct dw_desc *desc, *_desc;
->  	struct dw_desc *child;
->  	u32 status_xfer;
->  	unsigned long flags;
->  
->  	spin_lock_irqsave(&dwc->lock, flags);
-> -	llp = channel_readl(dwc, LLP);
->  	status_xfer = dma_readl(dw, RAW.XFER);
->  
->  	if (status_xfer & dwc->mask) {
-> @@ -358,41 +358,16 @@ static void dwc_scan_descriptors(struct dw_dma *dw, struct dw_dma_chan *dwc)
->  		return;
->  	}
->  
-> -	dev_vdbg(chan2dev(&dwc->chan), "%s: llp=%pad\n", __func__, &llp);
-> +	dev_vdbg(chan2dev(&dwc->chan), "%s: hard LLP mode\n", __func__);
->  
->  	list_for_each_entry_safe(desc, _desc, &dwc->active_list, desc_node) {
-> -		/* Initial residue value */
-> -		desc->residue = desc->total_len;
-> -
-> -		/* Check first descriptors addr */
-> -		if (desc->txd.phys == DWC_LLP_LOC(llp)) {
-> -			spin_unlock_irqrestore(&dwc->lock, flags);
-> -			return;
-> -		}
-> -
-> -		/* Check first descriptors llp */
-> -		if (lli_read(desc, llp) == llp) {
-> -			/* This one is currently in progress */
-> -			desc->residue -= dwc_get_sent(dwc);
-> +		desc->residue = dwc_get_hard_llp_desc_residue(dwc, desc);
-> +		if (desc->residue) {
->  			spin_unlock_irqrestore(&dwc->lock, flags);
->  			return;
->  		}
->  
-> -		desc->residue -= desc->len;
-> -		list_for_each_entry(child, &desc->tx_list, desc_node) {
-> -			if (lli_read(child, llp) == llp) {
-> -				/* Currently in progress */
-> -				desc->residue -= dwc_get_sent(dwc);
-> -				spin_unlock_irqrestore(&dwc->lock, flags);
-> -				return;
-> -			}
-> -			desc->residue -= child->len;
-> -		}
-> -
-> -		/*
-> -		 * No descriptors so far seem to be in progress, i.e.
-> -		 * this one must be done.
-> -		 */
-> +		/* No data left to be send. Finalize the transfer then */
->  		spin_unlock_irqrestore(&dwc->lock, flags);
->  		dwc_descriptor_complete(dwc, desc, true);
->  		spin_lock_irqsave(&dwc->lock, flags);
-> @@ -976,6 +951,45 @@ static struct dw_desc *dwc_find_desc(struct dw_dma_chan *dwc, dma_cookie_t c)
->  	return NULL;
->  }
->  
-> +static u32 dwc_get_soft_llp_desc_residue(struct dw_dma_chan *dwc, struct dw_desc *desc)
-> +{
-> +	u32 residue = desc->residue;
-> +
-> +	if (residue)
-> +		residue -= dwc_get_sent(dwc);
-> +
-> +	return residue;
-> +}
-> +
-> +static u32 dwc_get_hard_llp_desc_residue(struct dw_dma_chan *dwc, struct dw_desc *desc)
-> +{
-> +	u32 residue = desc->total_len;
-> +	struct dw_desc *child;
-> +	dma_addr_t llp;
-> +
-> +	llp = channel_readl(dwc, LLP);
-> +
-> +	/* Check first descriptor for been pending to be fetched by DMAC */
-> +	if (desc->txd.phys == DWC_LLP_LOC(llp))
-> +		return residue;
-> +
-> +	/* Check first descriptor LLP to see if it's currently in-progress */
-> +	if (lli_read(desc, llp) == llp)
-> +		return residue - dwc_get_sent(dwc);
-> +
-> +	/* Check subordinate LLPs to find the currently in-progress desc */
-> +	residue -= desc->len;
-> +	list_for_each_entry(child, &desc->tx_list, desc_node) {
-> +		if (lli_read(child, llp) == llp)
-> +			return residue - dwc_get_sent(dwc);
-> +
-> +		residue -= child->len;
-> +	}
-> +
-> +	/* Shall return zero if no in-progress desc found */
-> +	return residue;
-> +}
-> +
->  static u32 dwc_get_residue_and_status(struct dw_dma_chan *dwc, dma_cookie_t cookie,
->  				      enum dma_status *status)
->  {
-> @@ -988,9 +1002,11 @@ static u32 dwc_get_residue_and_status(struct dw_dma_chan *dwc, dma_cookie_t cook
->  	desc = dwc_find_desc(dwc, cookie);
->  	if (desc) {
->  		if (desc == dwc_first_active(dwc)) {
-> -			residue = desc->residue;
-> -			if (test_bit(DW_DMA_IS_SOFT_LLP, &dwc->flags) && residue)
-> -				residue -= dwc_get_sent(dwc);
-> +			if (test_bit(DW_DMA_IS_SOFT_LLP, &dwc->flags))
-> +				residue = dwc_get_soft_llp_desc_residue(dwc, desc);
-> +			else
-> +				residue = dwc_get_hard_llp_desc_residue(dwc, desc);
-> +
->  			if (test_bit(DW_DMA_IS_PAUSED, &dwc->flags))
->  				*status = DMA_PAUSED;
->  		} else {
-> @@ -1012,12 +1028,6 @@ dwc_tx_status(struct dma_chan *chan,
->  	struct dw_dma_chan	*dwc = to_dw_dma_chan(chan);
->  	enum dma_status		ret;
->  
-> -	ret = dma_cookie_status(chan, cookie, txstate);
-> -	if (ret == DMA_COMPLETE)
-> -		return ret;
-> -
-> -	dwc_scan_descriptors(to_dw_dma(chan->device), dwc);
-> -
->  	ret = dma_cookie_status(chan, cookie, txstate);
->  	if (ret == DMA_COMPLETE)
->  		return ret;
-> -- 
-> 2.43.0
-> 
-> 
+pci_bus_release_domain_nr() API is supposed to free the domain number
+allocated by pci_bus_find_domain_nr(). Most of the callers of
+pci_bus_find_domain_nr(), store the domain number in pci_bus::domain_nr.
 
-Hi,
+So pci_bus_release_domain_nr() implicitly frees the domain number by
+dereferencing 'struct pci_bus'. But one of the callers of this API, PCI
+endpoint subsystem doesn't have 'struct pci_bus', so it only passes NULL.
+Due to this, the API will end up dereferencing the NULL pointer.
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+To fix this issue, let's just pass the domain number explicitly to this
+API. Since 'struct pci_bus' is not used for any other purposes in this API
+other than extracting the domain number, it makes sense to pass the domain
+number directly.
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+Fixes: 0328947c5032 ("PCI: endpoint: Assign PCI domain number for endpoint controllers")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/linux-pci/c0c40ddb-bf64-4b22-9dd1-8dbb18aa2813@stanley.mountain
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ drivers/pci/endpoint/pci-epc-core.c |  2 +-
+ drivers/pci/pci.c                   | 14 +++++++-------
+ drivers/pci/probe.c                 |  2 +-
+ drivers/pci/remove.c                |  2 +-
+ include/linux/pci.h                 |  2 +-
+ 5 files changed, 11 insertions(+), 11 deletions(-)
 
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
+diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+index 085a2de8b923..17f007109255 100644
+--- a/drivers/pci/endpoint/pci-epc-core.c
++++ b/drivers/pci/endpoint/pci-epc-core.c
+@@ -840,7 +840,7 @@ void pci_epc_destroy(struct pci_epc *epc)
+ 	device_unregister(&epc->dev);
+ 
+ #ifdef CONFIG_PCI_DOMAINS_GENERIC
+-	pci_bus_release_domain_nr(NULL, &epc->dev);
++	pci_bus_release_domain_nr(&epc->dev, epc->domain_nr);
+ #endif
+ }
+ EXPORT_SYMBOL_GPL(pci_epc_destroy);
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index e3a49f66982d..b86693c91753 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -6801,16 +6801,16 @@ static int of_pci_bus_find_domain_nr(struct device *parent)
+ 	return ida_alloc(&pci_domain_nr_dynamic_ida, GFP_KERNEL);
+ }
+ 
+-static void of_pci_bus_release_domain_nr(struct pci_bus *bus, struct device *parent)
++static void of_pci_bus_release_domain_nr(struct device *parent, int domain_nr)
+ {
+-	if (bus->domain_nr < 0)
++	if (domain_nr < 0)
+ 		return;
+ 
+ 	/* Release domain from IDA where it was allocated. */
+-	if (of_get_pci_domain_nr(parent->of_node) == bus->domain_nr)
+-		ida_free(&pci_domain_nr_static_ida, bus->domain_nr);
++	if (of_get_pci_domain_nr(parent->of_node) == domain_nr)
++		ida_free(&pci_domain_nr_static_ida, domain_nr);
+ 	else
+-		ida_free(&pci_domain_nr_dynamic_ida, bus->domain_nr);
++		ida_free(&pci_domain_nr_dynamic_ida, domain_nr);
+ }
+ 
+ int pci_bus_find_domain_nr(struct pci_bus *bus, struct device *parent)
+@@ -6819,11 +6819,11 @@ int pci_bus_find_domain_nr(struct pci_bus *bus, struct device *parent)
+ 			       acpi_pci_bus_find_domain_nr(bus);
+ }
+ 
+-void pci_bus_release_domain_nr(struct pci_bus *bus, struct device *parent)
++void pci_bus_release_domain_nr(struct device *parent, int domain_nr)
+ {
+ 	if (!acpi_disabled)
+ 		return;
+-	of_pci_bus_release_domain_nr(bus, parent);
++	of_pci_bus_release_domain_nr(parent, domain_nr);
+ }
+ #endif
+ 
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index b14b9876c030..e9e56bbb3b59 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -1061,7 +1061,7 @@ static int pci_register_host_bridge(struct pci_host_bridge *bridge)
+ 
+ free:
+ #ifdef CONFIG_PCI_DOMAINS_GENERIC
+-	pci_bus_release_domain_nr(bus, parent);
++	pci_bus_release_domain_nr(parent, bus->domain_nr);
+ #endif
+ 	kfree(bus);
+ 	return err;
+diff --git a/drivers/pci/remove.c b/drivers/pci/remove.c
+index 910387e5bdbf..d2523fdf9bae 100644
+--- a/drivers/pci/remove.c
++++ b/drivers/pci/remove.c
+@@ -163,7 +163,7 @@ void pci_remove_root_bus(struct pci_bus *bus)
+ #ifdef CONFIG_PCI_DOMAINS_GENERIC
+ 	/* Release domain_nr if it was dynamically allocated */
+ 	if (host_bridge->domain_nr == PCI_DOMAIN_NR_NOT_SET)
+-		pci_bus_release_domain_nr(bus, host_bridge->dev.parent);
++		pci_bus_release_domain_nr(host_bridge->dev.parent, bus->domain_nr);
+ #endif
+ 
+ 	pci_remove_bus(bus);
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 4cf89a4b4cbc..37d97bef060f 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -1884,7 +1884,7 @@ static inline int acpi_pci_bus_find_domain_nr(struct pci_bus *bus)
+ { return 0; }
+ #endif
+ int pci_bus_find_domain_nr(struct pci_bus *bus, struct device *parent);
+-void pci_bus_release_domain_nr(struct pci_bus *bus, struct device *parent);
++void pci_bus_release_domain_nr(struct device *parent, int domain_nr);
+ #endif
+ 
+ /* Some architectures require additional setup to direct VGA traffic */
+-- 
+2.25.1
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
 
