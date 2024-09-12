@@ -1,281 +1,72 @@
-Return-Path: <linux-kernel+bounces-326573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89682976A41
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:16:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C95DA976A48
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45BE9B215D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:16:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07BC81C21B7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5AA1AD260;
-	Thu, 12 Sep 2024 13:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e4DBR8dy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210411AD251;
+	Thu, 12 Sep 2024 13:17:01 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937CE11712;
-	Thu, 12 Sep 2024 13:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4081AD241;
+	Thu, 12 Sep 2024 13:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726146980; cv=none; b=ZeVPdXFSeJ+Kv+UugPpynNoNt78pU5OWa2Hk9zRdHOLHNaa/osXd5aUpjoAH+d01W4sDU3GnNK6oIXcTCG83guMRUSzudb4gAyHsoLPPHRuORVVAxdrl43uOnHVPT3qgGqRTPwq+LSMR15A4we4493grXaDpAxFZ4AebF+nTrUU=
+	t=1726147020; cv=none; b=mMlFwwlojYJV/ef+HJa0m0nbLuQtf87frYCWN8wZY7omvAA7x2Nvz8Rv2AoPO8/gpi95JmiLKF0bfRleRRAHtzCaCKT/foyzJ75rsJHrQqjaAsRSEY5cVqWHngQCuOHzNWa5sj/q8rcvgiGcCexlmTXtvR+UebF33Z3Tpiu5rmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726146980; c=relaxed/simple;
-	bh=+sk5lvVZkq66zk2Uc0Zu/K0bHgXgjF+VpL5jtSIItjM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=he/KDiMjxkofLEcqU3tkjq1x8BtII4n8cbLonEhNgsEt3NBdvglAifqeyXE1d0P5dMNcYLNrHWh5vG32a92CVNCaS7peI/S28GIvusX4KphJAvIr6yxN8+FtU8emEdYOCNN9VR/Ew+wLJ1OU9HkSRQIATJLoYWDmAx9MFxeWCcw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e4DBR8dy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBF93C4CECC;
-	Thu, 12 Sep 2024 13:16:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726146980;
-	bh=+sk5lvVZkq66zk2Uc0Zu/K0bHgXgjF+VpL5jtSIItjM=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=e4DBR8dyQczZab6/OFMIvlpgdAhUs9l/pSE+ETBwlwumudKB+1mcZKTMKqi8101AU
-	 eHxix3C/x4WPPKBDBsHkzVljGZ5OHu19UfuIe5xdnKe0zy7im5DULRx2i2KjBIqdgY
-	 lwZ+RVf/T4Sq/yjhZsJTdsqA7N9SaA5ew/KWUdHa87I0zyrMq8QIgYZRTcm1SzAENl
-	 KvvsO73KdsIkNXCYHm63Pn6YjzLjXCfIjh9jjprlSpmkzAdFQul22kyH+tcym3H2Fm
-	 QVfokHRAroOwR4bhzFpFOHj5qUlgPcz6f+8MZLyiTbWvMV6dNLffwQJ7bOgtXSgLC9
-	 1k9JEwwmeNmwg==
+	s=arc-20240116; t=1726147020; c=relaxed/simple;
+	bh=sHMMlg6S2BC9qxXQqFP8udlN45B5qCVPc5EdBgBiurk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aOhdQsgyxBpZ4DaUgz317hIBn2Y9EITavU77Q6Uvdq30wPgh9HRQ4d2cNe56T+n/qxQ4WCDiELRRxVvR/DcOq69F9T+XmkNMyIjxVnKWZwrDGio+iepc13L9MqHAp3wyJjL3Ww8A7QvV1EAyyQ9B+4tBKAY4C23TWeOKc25GiM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 43F69227AAF; Thu, 12 Sep 2024 15:16:56 +0200 (CEST)
+Date: Thu, 12 Sep 2024 15:16:56 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, song@kernel.org, yukuai3@huawei.com, kbusch@kernel.org,
+	hch@lst.de, sagi@grimberg.me, James.Bottomley@HansenPartnership.com,
+	martin.petersen@oracle.com, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org
+Subject: Re: [PATCH RFC 3/4] block: Support atomic writes limits for
+ stacked devices
+Message-ID: <20240912131656.GC29641@lst.de>
+References: <20240903150748.2179966-1-john.g.garry@oracle.com> <20240903150748.2179966-4-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 12 Sep 2024 16:16:16 +0300
-Message-Id: <D44C19QB8IK1.OMUJP7N91HRN@kernel.org>
-Cc: <keyrings@vger.kernel.org>, "linux-integrity@vger.kernel.org"
- <linux-integrity@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>,
- "Pengyu Ma" <mapengyu@gmail.com>
-Subject: Re: [regression] significant delays when secureboot is enabled
- since 6.10
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "James Bottomley" <James.Bottomley@HansenPartnership.com>, "Roberto
- Sassu" <roberto.sassu@huaweicloud.com>, "Linux regressions mailing list"
- <regressions@lists.linux.dev>
-X-Mailer: aerc 0.18.2
-References: <0b4a5a86-a9f6-42d1-a9ba-ec565b336d3a@leemhuis.info>
- <92fbcc4c252ec9070d71a6c7d4f1d196ec67eeb0.camel@huaweicloud.com>
- <D42LZPLE8HR3.2UTNOI9CYZPIR@kernel.org>
- <D42M6OE94RLT.6EZSZLBTX437@kernel.org>
- <663d272617d1aead08077ad2b72929cbc226372a.camel@HansenPartnership.com>
- <D42N17MFTEDM.3E6IK034S26UT@kernel.org>
- <f554031343039883068145f9f4777277e490dc05.camel@huaweicloud.com>
- <10ae7b8592af7bacef87e493e6d628a027641b8d.camel@HansenPartnership.com>
-In-Reply-To: <10ae7b8592af7bacef87e493e6d628a027641b8d.camel@HansenPartnership.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240903150748.2179966-4-john.g.garry@oracle.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Wed Sep 11, 2024 at 3:21 PM EEST, James Bottomley wrote:
-> On Wed, 2024-09-11 at 10:53 +0200, Roberto Sassu wrote:
-> > On Tue, 2024-09-10 at 16:28 +0300, Jarkko Sakkinen wrote:
-> > > On Tue Sep 10, 2024 at 3:57 PM EEST, James Bottomley wrote:
-> > > > On Tue, 2024-09-10 at 15:48 +0300, Jarkko Sakkinen wrote:
-> > > > > On Tue Sep 10, 2024 at 3:39 PM EEST, Jarkko Sakkinen wrote:
-> > > > > > On Tue Sep 10, 2024 at 12:05 PM EEST, Roberto Sassu wrote:
-> > > > > > > On Tue, 2024-09-10 at 11:01 +0200, Linux regression
-> > > > > > > tracking
-> > > > > > > (Thorsten
-> > > > > > > Leemhuis) wrote:
-> > > > > > > > Hi, Thorsten here, the Linux kernel's regression tracker.
-> > > > > > > >=20
-> > > > > > > > James, Jarkoo, I noticed a report about a regression in
-> > > > > > > > bugzilla.kernel.org that appears to be caused by this
-> > > > > > > > change of
-> > > > > > > > yours:
-> > > > > > > >=20
-> > > > > > > > 6519fea6fd372b ("tpm: add hmac checks to
-> > > > > > > > tpm2_pcr_extend()")
-> > > > > > > > [v6.10-rc1]
-> > > > > > > >=20
-> > > > > > > > As many (most?) kernel developers don't keep an eye on
-> > > > > > > > the bug
-> > > > > > > > tracker,
-> > > > > > > > I decided to forward it by mail. To quote from
-> > > > > > > > https://bugzilla.kernel.org/show_bug.cgi?id=3D219229=C2=A0:
-> > > > > > > >=20
-> > > > > > > > > When secureboot is enabled,
-> > > > > > > > > the kernel boot time is ~20 seconds after 6.10 kernel.
-> > > > > > > > > it's ~7 seconds on 6.8 kernel version.
-> > > > > > > > >=20
-> > > > > > > > > When secureboot is disabled,
-> > > > > > > > > the boot time is ~7 seconds too.
-> > > > > > > > >=20
-> > > > > > > > > Reproduced on both AMD and Intel platform on ThinkPad
-> > > > > > > > > X1 and
-> > > > > > > > > T14.
-> > > > > > > > >=20
-> > > > > > > > > It probably caused autologin failure and micmute led
-> > > > > > > > > not
-> > > > > > > > > loaded on AMD platform.
-> > > > > > > >=20
-> > > > > > > > It was later bisected to the change mentioned above. See
-> > > > > > > > the
-> > > > > > > > ticket for
-> > > > > > > > more details.
-> > > > > > >=20
-> > > > > > > Hi
-> > > > > > >=20
-> > > > > > > I suspect I encountered the same problem:
-> > > > > > >=20
-> > > > > > > https://lore.kernel.org/linux-integrity/b8a7b3566e6014ba102ab=
-98e10ede0d574d8930e.camel@huaweicloud.com/
-> > > > > > >=20
-> > > > > > > Going to provide more info there.
-> > > > > >=20
-> > > > > > I suppose you are going try to acquire the tracing data I
-> > > > > > asked?
-> > > > > > That would be awesome, thanks for taking the troube.=C2=A0 Let'=
-s
-> > > > > > look
-> > > > > > at the data and draw conclusions based on that.
-> > > > > >=20
-> > > > > > Workaround is pretty simple: CONFIG_TCG_TPM2_HMAC=3Dn to the
-> > > > > > kernel
-> > > > > > configuration disables the feature.
-> > > > > >=20
-> > > > > > For making decisions what to do with the=C2=A0 we are talking
-> > > > > > about ~2
-> > > > > > week window estimated, given the Vienna conference slows
-> > > > > > things
-> > > > > > down, so I hope my workaround is good enough before that.
-> > > > >=20
-> > > > > I can enumerate three most likely ways to address the issue:
-> > > > >=20
-> > > > > 1. Strongest: drop from defconfig.
-> > > > > 2. Medium: leave to defconfig but add an opt-in kernel command-
-> > > > > line
-> > > > > =C2=A0=C2=A0 parameter.
-> > > > > 3. Lightest: if we can based on tracing data nail the
-> > > > > regression in
-> > > > > =C2=A0=C2=A0 sustainable schedule, fix it.
-> > > >=20
-> > > > Actually, there's a fourth: not use sessions for the PCR extend
-> > > > (if
-> > > > we'd got the timings when I asked, this was going to be my
-> > > > suggestion
-> > > > if they came back problematic).=C2=A0 This seems only to be a probl=
-em
-> > > > for
-> > > > IMA measured boot (because it does lots of extends).=C2=A0 If
-> > > > necessary this
-> > > > could even be wrapped in a separate config or boot option that
-> > > > only
-> > > > disables HMAC on extend if IMA (so we still get security for
-> > > > things
-> > > > like sd-boot)
-> > >=20
-> > > I can buy that but with a twist that make it an opt-in kernel
-> > > command
-> > > line option. We don't want to take already existing functionality
-> > > away
-> > > from those who might want to use it (given e.g. hardening
-> > > requirements),
-> > > and with that basis opt-in (by default disabled) would be more
-> > > balanced
-> > > way to address the issue.
-> > >=20
-> > > Please do a send a patch!
-> >=20
-> > I made few measurements. I have a Fedora 38 VM with TPM passthrough.
-> >=20
-> > Kernels: 6.11-rc2+ (guest), 6.5.0-45-generic (host)
-> >=20
-> > QEMU:
-> >=20
-> > rc=C2=A0 qemu-kvm=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1:4.2-
-> > 3ubuntu6.27
-> > ii=C2=A0 qemu-system-x86=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 1:6.2+dfsg-
-> > 2ubuntu6.22
-> >=20
-> >=20
-> > TPM2_PT_MANUFACTURER:
-> > =C2=A0 raw: 0x49465800
-> > =C2=A0 value: "IFX"
-> > TPM2_PT_VENDOR_STRING_1:
-> > =C2=A0 raw: 0x534C4239
-> > =C2=A0 value: "SLB9"
-> > TPM2_PT_VENDOR_STRING_2:
-> > =C2=A0 raw: 0x36373000
-> > =C2=A0 value: "670"
-> >=20
-> >=20
-> > No HMAC:
-> >=20
-> > # tracer: function_graph
-> > #
-> > # CPU=C2=A0 DURATION=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 FUNCTION CALLS
-> > # |=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 |=C2=A0=C2=A0 |=C2=A0=C2=A0 |
-> > =C2=A00)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 tpm2_pcr_extend() {
-> > =C2=A00)=C2=A0=C2=A0 1.112 us=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 tpm=
-_buf_append_hmac_session();
-> > =C2=A00) # 6360.029 us |=C2=A0=C2=A0=C2=A0 tpm_transmit_cmd();
-> > =C2=A00) # 6415.012 us |=C2=A0 }
-> >=20
-> >=20
-> > HMAC:
-> >=20
-> > # tracer: function_graph
-> > #
-> > # CPU=C2=A0 DURATION=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 FUNCTION CALLS
-> > # |=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 |=C2=A0=C2=A0 |=C2=A0=C2=A0 |
-> > =C2=A01)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 tpm2_pcr_extend() {
-> > =C2=A01)=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 tpm2_start_auth_session() {
-> > =C2=A01) * 36976.99 us |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tpm_transmit_cmd=
-();
-> > =C2=A01) * 84746.51 us |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tpm_transmit_cmd=
-();
-> > =C2=A01) # 3195.083 us |=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tpm_transmit_cmd=
-();
-> > =C2=A01) @ 126795.1 us |=C2=A0=C2=A0=C2=A0 }
-> > =C2=A01)=C2=A0=C2=A0 2.254 us=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 tpm=
-_buf_append_hmac_session();
-> > =C2=A01)=C2=A0=C2=A0 3.546 us=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 tpm=
-_buf_fill_hmac_session();
-> > =C2=A01) * 24356.46 us |=C2=A0=C2=A0=C2=A0 tpm_transmit_cmd();
-> > =C2=A01)=C2=A0=C2=A0 3.496 us=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 tpm=
-_buf_check_hmac_response();
-> > =C2=A01) @ 151171.0 us |=C2=A0 }
->
-> Well, unfortunately, that tells us that it's the TPM itself that's
-> taking the time processing the security overhead.  The ordering of the
-> commands in tpm2_start_auth_session() shows
->
->  37ms for context restore of null key
->  85ms for start session with encrypted salt
->   3ms to flush null key
-> -----
-> 125ms
->
-> If we context save the session, we'd likely only bear a single 37ms
-> cost to restore it (replacing the total 125ms).  However, there's
-> nothing we can do about the extend execution going from 6ms to 24ms, so
-> I could halve your current boot time with security enabled (it's
-> currently 149ms, it would go to 61ms, but it's still 10x slower than
-> the unsecured extend at 6ms)
->
-> James
+On Tue, Sep 03, 2024 at 03:07:47PM +0000, John Garry wrote:
+> +	} else if (t->features & BLK_FEAT_ATOMIC_WRITES) {
+> +		t->atomic_write_hw_max = min_not_zero(t->atomic_write_hw_max,
+> +						b->atomic_write_hw_max);
+> +		t->atomic_write_boundary_sectors =
+> +					min_not_zero(t->atomic_write_boundary_sectors,
+> +						b->atomic_write_boundary_sectors);
+> +		t->atomic_write_hw_unit_min = max(t->atomic_write_hw_unit_min,
+> +						b->atomic_write_hw_unit_min);
+> +		t->atomic_write_hw_unit_max =
+> +					min_not_zero(t->atomic_write_hw_unit_max,
+> +						b->atomic_write_hw_unit_max);
 
-I'll hold for better benchmarks.
+Maybe split this into a helper to make the code more readable?
 
-BR, Jarkko
+Otherwise this looks good to me.
 
