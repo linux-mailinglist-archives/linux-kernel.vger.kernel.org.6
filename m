@@ -1,162 +1,119 @@
-Return-Path: <linux-kernel+bounces-326964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB97C976F28
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:53:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 523C6976F2B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C6531C23C2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:53:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F26371F2494D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2E61BE84E;
-	Thu, 12 Sep 2024 16:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F591BE85B;
+	Thu, 12 Sep 2024 16:53:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EGN5fpwX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="LLtTqI8j"
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4161865F7
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 16:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014C71BE84E
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 16:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726160000; cv=none; b=k9N9MdhDZcbf58ZiZ1rvqAhOQgswMp1SypJuVshrpX6apBMmtwVcxfkFjtpKb9zWhQt4vdysw+SE9T/xkWNvb1zAqa7KSubGEHESrhbDsaaxc88FENbU1O7J1kPvEwtv9gUIN8nswJQVuHSMH3LAB+5Bz7k3J8Vq+7lLCFREE04=
+	t=1726160019; cv=none; b=m4gboHF6xXjVWCIKgpZDc601OhKP8DvNPmq9H4sXTREcO3IFY47jIoLb7jTFXrQeeCZ+c+ub/zG6vG7H4snL82ZoIya282c/dTRxoTtLepPu5jOykATzNobtKxMdhdWpJWsHs4Kcx1i1m6/9E1uZTPbIxtQ/E7r/jxMggBE+4UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726160000; c=relaxed/simple;
-	bh=NS0psCyXMoQOWIi5/SsS35KhFzxrGs+XZODMnDu4vlE=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=TmVKMvj2OmTedvL/4xkQ3l2eh1o4mmnegAwnrMfM8Sm+lwoDr8O5U1+A/T/1halPbNe4AiqKG7jRbQb8T98uqwaztlIeiNzVhjMJAId7rEqZfA9UA6NHgYNlYvPyNGM9a4ACZwKx8/xYF+kSi44H7J7etL1o6GTvLxIOCmwcQuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EGN5fpwX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F8F4C4CEC3;
-	Thu, 12 Sep 2024 16:53:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726159999;
-	bh=NS0psCyXMoQOWIi5/SsS35KhFzxrGs+XZODMnDu4vlE=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=EGN5fpwXN8eF/DXVbaIirE/I7O2FWMzGft3z3+ITQqplQIVMDNiC/7TGD7+8K5qvW
-	 iLDaW0onkKiTiLtYgzhySnFK7QiOs69Yb5StpexuUIEmiU7YRk8LGdK4HxvrUe8hn/
-	 i+sEbDymRFZBKtCU2GTJsa++E3+qvgu/YZ3gJqbWjXTyKG8SvZV+nGCVPFVVEzsA9k
-	 Cb5oLRsd1NzXl9VeuJGS5qJOleV32h8dqYQilvs92DtWKkrr8fKaWoDXSn+7OS0OUZ
-	 Y34ckBQQn/kGf8w8kXDwYh/zO45YRJ7oLEUpn5Yjtd5jNcIUiJ7ii+xQyTpSoznT8f
-	 tHOs/Cq6jbuYg==
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 5EB461200043;
-	Thu, 12 Sep 2024 12:53:18 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Thu, 12 Sep 2024 12:53:18 -0400
-X-ME-Sender: <xms:fhzjZtxr5FxgfOcgpu4W7reiYXKtUmuzhnldk7xndz3itREvy59Amw>
-    <xme:fhzjZtSw70R-Ydy5CzcZi0lQI8GuzSiBmSwkEOtRwkfam0YQ6omtwjRId4hcyeqwe
-    vd_qIcLUkbKvQrAXSg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejfedguddtkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugeskhgvrhhnvg
-    hlrdhorhhgqeenucggtffrrghtthgvrhhnpeejjeffteetfeetkeeijedugeeuvdfgfeef
-    iedtudeikeeggeefkefhudfhlefhveenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpegrrhhnugdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
-    ihhthidquddvkeehudejtddvgedqvdekjedttddvieegqdgrrhhnugeppehkvghrnhgvlh
-    drohhrghesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhht
-    phhouhhtpdhrtghpthhtohepjhhsthhulhhtiiesghhoohhglhgvrdgtohhmpdhrtghpth
-    htohepohhlihhvvghrrdhsrghnghesihhnthgvlhdrtghomhdprhgtphhtthhopegsrhgr
-    uhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjlhgrhihtohhnsehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopehssghohigusehkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehjrggtkhessh
-    hushgvrdgtiidprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
-    gvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:fhzjZnUavYW64BMj7P5WbzfaZF4yPTdPBSSgy40KL9YRMBbnFxbgmQ>
-    <xmx:fhzjZvjNCPZ5thJHvEB-6Ng-fmoF93_CqFemTWgOg5kpRuNpRYyPxw>
-    <xmx:fhzjZvBGsNeGGJ_1Z9c-JYXTxRKBZwr--FJ2X6FnabblmxnbtgmRVg>
-    <xmx:fhzjZoJw8DvV39S4Eyole57cZwWd9JUpokSRrG4r0jV49EZp9NqpVQ>
-    <xmx:fhzjZuBE6nCXh-vzj419XjjjxIJnBVT9ZQZ4ix1sJEFGhxAbwOJrogLU>
-Feedback-ID: i36794607:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 31D48222006F; Thu, 12 Sep 2024 12:53:18 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1726160019; c=relaxed/simple;
+	bh=ZPmS3+7qzrd1cXmMYQ1uK+Gwj8wCxqLN6+TgdPwoOxE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=gR0bPzhK2NFFmVtOuqtacl4omkqizRK7WXJMsTUbWzcROkBt/PivKu+H5WaqJ/AP2JoQAUdYTSXRzdlOTD6DeytTXnFSY/cqcvCLWGypFvcN6Mc47l0j3O+zAIQuwmkGE9xwRg4fVcweWid1T2vAaYwR3m3V3TmtV0snescVteI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=LLtTqI8j reason="signature verification failed"; arc=none smtp.client-ip=54.207.19.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
+X-QQ-mid: bizesmtp79t1726159961toq43fll
+X-QQ-Originating-IP: rL1x0Rat/nncHimj4lJmjDQwPeyyf/2EuepTUgnHA+A=
+Received: from m16.mail.163.com ( [117.135.210.3])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 13 Sep 2024 00:52:39 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 15712298379917099184
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=zt3evTV/LPdQes2sdSNIks22MRrncz8ZWesD68rrhhY=; b=L
+	LtTqI8j/zR0OcpLhW29Zs+uu/Nu0Ry6EzCpwbomwobGez4v7r1iK3GAo8f5fW2G5
+	alvrT+yhvVRuxOvmoagIh2KirOlqUPj08sYE7sh2zEvL7ese7JUgL0Ub0ZQvwVZ/
+	XgcNYV3rBsoABO5ZnqBe6KWeFAc9ud+MnZ3AB05PJM=
+Received: from kxwang23$m.fudan.edu.cn ( [104.238.222.239] ) by
+ ajax-webmail-wmsvr-40-136 (Coremail) ; Fri, 13 Sep 2024 00:52:05 +0800
+ (CST)
+Date: Fri, 13 Sep 2024 00:52:05 +0800 (CST)
+From: "Kaixin Wang" <kxwang23@m.fudan.edu.cn>
+To: "Frank Li" <Frank.li@nxp.com>
+Cc: miquel.raynal@bootlin.com, 21210240012@m.fudan.edu.cn, 
+	21302010073@m.fudan.edu.cn, conor.culhane@silvaco.com, 
+	alexandre.belloni@bootlin.com, linux-i3c@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i3c: master: svc: Fix use after free vulnerability in
+ svc_i3c_master Driver Due to Race Condition
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <ZuG2SbsHEU5BU9mX@lizhi-Precision-Tower-5810>
+References: <20240911150135.839946-1-kxwang23@m.fudan.edu.cn>
+ <ZuG2SbsHEU5BU9mX@lizhi-Precision-Tower-5810>
+X-NTES-SC: AL_Qu2ZBP2etkEp4yKfbOkXn0kbjug3WcW0u/0k3oJUNps0sSbJxCIce1FGAHTrzv+TMyOvnjaRQClvyeFHTa9cY5gFCYNNOhAGDD6ta/FAxMmY
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 12 Sep 2024 16:51:11 +0000
-From: "Arnd Bergmann" <arnd@kernel.org>
-To: "Jeff Layton" <jlayton@kernel.org>, "John Stultz" <jstultz@google.com>
-Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Stephen Boyd" <sboyd@kernel.org>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- "kernel test robot" <oliver.sang@intel.com>
-Message-Id: <7586990d-ca2b-4ff3-9231-928f1f3be4ea@app.fastmail.com>
-In-Reply-To: <12577f7d9865ef8fabc7447a23cdfc1674cbe7e8.camel@kernel.org>
-References: <20240911-mgtime-v1-1-e4aedf1d0d15@kernel.org>
- <CANDhNCpmZO1LTCDXzi-GZ6XkvD5w3ci6aCj61-yP6FJZgXj2RA@mail.gmail.com>
- <d6fe52c2-bc9e-424f-a44e-cfc3f4044443@app.fastmail.com>
- <e4d922c8d0a06de08b91844860c76936bd5fa03a.camel@kernel.org>
- <1484d32b-ab0f-48ff-998a-62feada58300@app.fastmail.com>
- <c9ed7670a0b35b212991b7ce4735cb3dfaae1fda.camel@kernel.org>
- <b71c161a-8b43-400e-8c61-caac80e685a8@app.fastmail.com>
- <284fd6a654eaec5a45b78c9ee88cde7b543e2278.camel@kernel.org>
- <12577f7d9865ef8fabc7447a23cdfc1674cbe7e8.camel@kernel.org>
-Subject: Re: [PATCH] timekeeping: move multigrain ctime floor handling into timekeeper
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Message-ID: <DEA8C409E7FC03F8+419f2dd.c282.191e726302a.Coremail.kxwang23@m.fudan.edu.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wDnr5c1HONmiJAFAA--.2351W
+X-CM-SenderInfo: zprtkiiuqyikitw6il2tof0z/1tbiwh5Y2GWXw6aYUAAIsL
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:m.fudan.edu.cn:qybglogicsvrsz:qybglogicsvrsz4a-0
 
-On Thu, Sep 12, 2024, at 14:37, Jeff Layton wrote:
-> On Thu, 2024-09-12 at 09:26 -0400, Jeff Layton wrote:
->> On Thu, 2024-09-12 at 13:17 +0000, Arnd Bergmann wrote:
->> > On Thu, Sep 12, 2024, at 11:34, Jeff Layton wrote:
->> 
->> I'll plan to hack something together later today and see how it does.
->> 
->
-> Ok, already hit a couple of problems:
->
-> First, moving the floor word into struct timekeeper is probably not a
-> good idea. This is going to be updated more often than the rest of the
-> timekeeper, and so its cacheline will be invalidated more. I think we
-> need to keep the floor word on its own cacheline. It can be a static
-> u64 though inside timekeeper.c.
-
-Right.
-
-> So, I think that we actually need an API like this:
->
->     /* returns opaque cookie value */
->     u64 ktime_get_coarse_real_ts64_mg(struct timespec64 *ts);
->
->     /* accepts opaque cookie value from above function */ 
->     void ktime_get_real_ts64_mg(struct timespec64 *ts, u64 cookie);
->
-> The first function fills in @ts with the max of coarse time and floor,
-> and returns an opaque cookie (a copy of the floor word). The second
-> fetches a fine-grained timestamp and uses the floor cookie as the "old"
-> value when doing the cmpxchg, and then fills in @ts with the result.
-
-I think you lost me here, I'd need to look at the code in
-more detail to understand it.
-
-> Does that sound reasonable? If so, then the next question is around
-> what the floor word should hold:
->
-> IMO, just keeping it as a monotonic time value seems simplest. I'm
-> struggling to understand where the "delta" portion would come from in
-> your earlier proposal, and the fact that that value could overflow
-> seems less than ideal.
-
-I was thinking of the diffence between tk->xtime_nsec and the
-computed nsecs in ktime_get_real_ts64().
-
-The calculation is what is in timekeeping_cycles_to_ns(),
-with the  "+ tkr->xtime_nsec" left out, roughly
-
-   ((tk_clock_read(tkr) - tkr->cycle_last) & tkr->mask) * \
-         tkr->mult >> tkr->shift
-
-There are a few subtleties here, including the possible
-1-bit rounding error from the shift. 
-
-     Arnd
+CgrlnKggMjAyNC0wOS0xMSAyMzoyNDo1N++8jCJGcmFuayBMaSIgPEZyYW5rLmxpQG54cC5jb20+
+IOWGmemBk++8mgo+T24gV2VkLCBTZXAgMTEsIDIwMjQgYXQgMTE6MDE6MzVQTSArMDgwMCwgS2Fp
+eGluIFdhbmcgd3JvdGU6Cj4+IEluIHRoZSBzdmNfaTNjX21hc3Rlcl9wcm9iZSBmdW5jdGlvbiwg
+Jm1hc3Rlci0+aGpfd29yayBpcyBib3VuZCB3aXRoCj4+IHN2Y19pM2NfbWFzdGVyX2hqX3dvcmss
+ICZtYXN0ZXItPmliaV93b3JrIGlzIGJvdW5kIHdpdGgKPj4gc3ZjX2kzY19tYXN0ZXJfaWJpX3dv
+cmsuIEFuZCBzdmNfaTNjX21hc3Rlcl9pYmlfd29yayDCoGNhbiBzdGFydCB0aGUKPj4gaGpfd29y
+aywgc3ZjX2kzY19tYXN0ZXJfaXJxX2hhbmRsZXIgY2FuIHN0YXJ0IHRoZSBpYmlfd29yay4KPj4K
+Pj4gSWYgd2UgcmVtb3ZlIHRoZSBtb2R1bGUgd2hpY2ggd2lsbCBjYWxsIHN2Y19pM2NfbWFzdGVy
+X3JlbW92ZSB0bwo+PiBtYWtlIGNsZWFudXAsIGl0IHdpbGwgZnJlZSBtYXN0ZXItPmJhc2UgdGhy
+b3VnaCBpM2NfbWFzdGVyX3VucmVnaXN0ZXIKPj4gd2hpbGUgdGhlIHdvcmsgbWVudGlvbmVkIGFi
+b3ZlIHdpbGwgYmUgdXNlZC4gVGhlIHNlcXVlbmNlIG9mIG9wZXJhdGlvbnMKPj4gdGhhdCBtYXkg
+bGVhZCB0byBhIFVBRiBidWcgaXMgYXMgZm9sbG93czoKPj4KPj4gQ1BVMCAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgQ1BVMQo+Pgo+PiAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICB8IHN2Y19pM2NfbWFzdGVyX2hqX3dvcmsKPj4gc3ZjX2kzY19tYXN0
+ZXJfcmVtb3ZlICAgICAgICAgICAgICAgfAo+PiBpM2NfbWFzdGVyX3VucmVnaXN0ZXIoJm1hc3Rl
+ci0+YmFzZSl8Cj4+IGRldmljZV91bnJlZ2lzdGVyKCZtYXN0ZXItPmRldikgICAgIHwKPj4gZGV2
+aWNlX3JlbGVhc2UgICAgICAgICAgICAgICAgICAgICAgfAo+PiAvL2ZyZWUgbWFzdGVyLT5iYXNl
+ICAgICAgICAgICAgICAgICB8Cj4+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IHwgaTNjX21hc3Rlcl9kb19kYWEoJm1hc3Rlci0+YmFzZSkKPj4gICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgfCAvL3VzZSBtYXN0ZXItPmJhc2UKPj4KPj4gRml4IGl0IGJ5IGVu
+c3VyaW5nIHRoYXQgdGhlIHdvcmsgaXMgY2FuY2VsZWQgYmVmb3JlIHByb2NlZWRpbmcgd2l0aCB0
+aGUKPj4gY2xlYW51cCBpbiBzdmNfaTNjX21hc3Rlcl9yZW1vdmUuCj4+Cj4+IFNpZ25lZC1vZmYt
+Ynk6IEthaXhpbiBXYW5nIDxreHdhbmcyM0BtLmZ1ZGFuLmVkdS5jbj4KPj4gLS0tCj4KPlBsZWFz
+ZSBhZGQgZml4ZXMgdGFnIGFuZCBjYyBzdGFibGUuCj4KPkZyYW5rCj4KCkkgd2lsbCBhZGQgdGhl
+bSBpbiB0aGUgbmV4dCB2ZXJzaW9uIG9mIHRoZSBwYXRjaC4KCkJlc3QgcmVnYXJkcywKS2FpeGlu
+IFdhbmcKCj4KPj4gIGRyaXZlcnMvaTNjL21hc3Rlci9zdmMtaTNjLW1hc3Rlci5jIHwgMSArCj4+
+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvaTNjL21hc3Rlci9zdmMtaTNjLW1hc3Rlci5jIGIvZHJpdmVycy9pM2MvbWFzdGVyL3N2Yy1p
+M2MtbWFzdGVyLmMKPj4gaW5kZXggMGE2OGZkMWI4MWQ0Li5lMDg0YmE2NDhiNGEgMTAwNjQ0Cj4+
+IC0tLSBhL2RyaXZlcnMvaTNjL21hc3Rlci9zdmMtaTNjLW1hc3Rlci5jCj4+ICsrKyBiL2RyaXZl
+cnMvaTNjL21hc3Rlci9zdmMtaTNjLW1hc3Rlci5jCj4+IEBAIC0xNzc1LDYgKzE3NzUsNyBAQCBz
+dGF0aWMgdm9pZCBzdmNfaTNjX21hc3Rlcl9yZW1vdmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAq
+cGRldikKPj4gIHsKPj4gIAlzdHJ1Y3Qgc3ZjX2kzY19tYXN0ZXIgKm1hc3RlciA9IHBsYXRmb3Jt
+X2dldF9kcnZkYXRhKHBkZXYpOwo+Pgo+PiArCWNhbmNlbF93b3JrX3N5bmMoJm1hc3Rlci0+aGpf
+d29yayk7Cj4+ICAJaTNjX21hc3Rlcl91bnJlZ2lzdGVyKCZtYXN0ZXItPmJhc2UpOwo+Pgo+PiAg
+CXBtX3J1bnRpbWVfZG9udF91c2VfYXV0b3N1c3BlbmQoJnBkZXYtPmRldik7Cj4+IC0tCj4+IDIu
+MjUuMQo+Pgo+Cg==
 
