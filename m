@@ -1,102 +1,98 @@
-Return-Path: <linux-kernel+bounces-326637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23258976B25
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:49:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65A08976B27
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:50:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DABDF281F0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:49:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E9C21F23212
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:50:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EEC1A725F;
-	Thu, 12 Sep 2024 13:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C8401A4E89;
+	Thu, 12 Sep 2024 13:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZSQTMkzs"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="j1CLyVYX"
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5F8191F9C
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC108191F9C
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726148984; cv=none; b=fnZgkCS8JyAfHggv5O8ZMD9Rh217neq83efRDWXXDroVatup7Ki5hPxGJibeRfF4NUhJ+H/5L0ZcQ+U5oTZ1v1omIyADUqvIGi4UGalyplCUKabk2fMO83gUY7nAU7OCEo3aS39ofw0Q47tdtKGDrc2tUh6/8WW3Tgq9Mjpn7Zg=
+	t=1726149008; cv=none; b=jiAWo05CKrwyNzEbciGOc/fpur5n/pKntX39E0X3btFcs1Ts57AXChcXSlJ1XJ2tv31lv5GCPxJtWxZGweA5uuNscFTOr4ntOFzC9llujfhMpHUu+v/qOuxtaVfMKdHJAx/D3YxQJlGi1sJzuil8TnNk7SPPJhBNGWRfxwKWRoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726148984; c=relaxed/simple;
-	bh=TK63ZITwXiK1tpwBleYE7XvV84aecTotysnL7Q6Y+UI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ho7ijDtjXvR9VvrEVLsW/DLDn7HbcD/PHYLt7gDjnFzXG3QbsLlhem4cZkW65W+mxcrFcdB25NKwKZSg1y6RXcdl/pp2Bxw3kzoDEgdUEXJ00hHbX3sNHFgPUAUWR5uMk9uGeTSwz1NE5y7Hwyz3Ya1mNCSSAYVWm+wDyB+kVCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZSQTMkzs; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6886cd07673so25343347b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 06:49:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726148982; x=1726753782; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XqdrXm4ZcBhMxArHEVqbh0H8bhyUvIJvDn8m8Oi5KOY=;
-        b=ZSQTMkzsggCnz2qFqYYMTitCnmimFkrgh7IALeNoHySb+qFm8MajpuoJfjvVintMvd
-         4aP0JepGxGkysCYFjF0Ly2vbHk6zfYK6M0QsGYzT0wF1VP7FE4uA/V8Ama4Z50WVDEQD
-         fsc/o03ZR0imD3MIV8HkreYe9/AZNrbDVPY+aPg/8cpNNJVAYT5+fIQnKp5FGcOr01nH
-         Hb5bq88ca8BDNwIWvtXYwyZRMj3/K1YSTx5fa/mSY0hcajgfgKQ/RyVdVqHYoVwOugyd
-         RcqiqE8jaR3gxgmRwzdYJFYXiSernO3LG8PKQ3KDGCOFfKMZj+epi8dXQtlJqKTKAIm4
-         CiDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726148982; x=1726753782;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XqdrXm4ZcBhMxArHEVqbh0H8bhyUvIJvDn8m8Oi5KOY=;
-        b=nqMG6aLT4imJESEkszo8CYejFqb1c9yaUiTBuQfrXnFqOMKmCirAQ1ySI+dLv7NUtO
-         NRXgWAVphiMKnI8DZoBXKvGpQYLbnjOsQXb7qfwAKNQ+vnXqXbEYKjTDA0ZPvsqjIsvc
-         S2WQC8jrmXpQfOebJ6nEOXYVXesejMLNcvb0ztcEtFSpqWFf78wfKnZ09qyXytc29eu1
-         7wvh2Nj4kMflRCPBj6ZeMml26sp+KeW3wbgcW1QQKxCeiQDhyNFabxoGB5SiPdZtW1j2
-         8Aan2NfrH+LoTPCECXkQG/pVCwXQ/ymZCyH5Ye1hr28bi01ZlWF24IYek/VHZN8brW9v
-         n5MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEjAs2LMH5ocOVj6IrAGU28YAVIi7NZb53PVOgCcuJtR91lYG5Re71xLEGt9Ef+84q0F5njyFRyatpHxg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+ivRB8sTgBcRHDDX/H7hkzmEfpkw0BVwj3rQZOQut82pJ6hgA
-	CRK4i5aPfw38wHk0bgeQ5wmf5bmE+CvljMmlVA7HP8GJUXgXIcDm7QBOI4Ea22pVjWjQH1bjIV2
-	LIw==
-X-Google-Smtp-Source: AGHT+IERWDyZH0lw1THIMdF1ZNEMNfNEpIHjvdgU0tin44x4h90whZRVuXvE3+8fuo4JVbUfWmxTfJ+4tEs=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:50c:b0:e1d:a616:602 with SMTP id
- 3f1490d57ef6-e1da6160834mr2247276.7.1726148982380; Thu, 12 Sep 2024 06:49:42
- -0700 (PDT)
-Date: Thu, 12 Sep 2024 06:49:40 -0700
-In-Reply-To: <20240912-a3894135370bf3fe551ed018@orel>
+	s=arc-20240116; t=1726149008; c=relaxed/simple;
+	bh=nKO917iQkSklHyzXDiHt4hYUrjNzSfbThEliY8dJsW0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l+X5RO8H0Vmz1IEzbfMQ8TVSwffcIfiE6TFIJhaCPdWD23eUVopnhtuvocce02mMNxW0V1HM16sVO6DKmOjuZE1zquqcQfnfrXQ2VJidW2L4dGkfLjm0RTk4QFPS5imbx7MexUn2QLI5511cRhxyRidiXBLs/jNO6555OmZct6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=j1CLyVYX; arc=none smtp.client-ip=18.132.163.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1726149001;
+	bh=s2uI9eOAaihPZf+0siC24nn5Pw8SO5uIyZM4H3qVeCc=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=j1CLyVYXd2vZBo0xr21Y8dxlwb8ajT9S4hnOy6yZ/OPfbskL952HrXid/qvHSnkBq
+	 5fTcTXX2azEKHy7eioGfda2eL79FbR/BNexloEI+pO8Api3fDwU46zcnlNKTNalp0H
+	 7B4teDwVQbLDw5gs2MVdWCpJ6o3gquk0UHGVSSh8=
+X-QQ-mid: bizesmtp77t1726148996tcph1scv
+X-QQ-Originating-IP: S1gtQrf5JsmG/in/LdoJAWcnwzJTBcojHOYNfr9epsg=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 12 Sep 2024 21:49:54 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 18164927246695078520
+From: WangYuli <wangyuli@uniontech.com>
+To: paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	samuel.holland@sifive.com,
+	conor.dooley@microchip.com
+Cc: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	atish.patra@wdc.com,
+	anup@brainfault.org,
+	guanwentao@uniontech.com,
+	zhanjun@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>
+Subject: [RESEND. PATCH] riscv: Use '%u' to format the output of 'cpu'
+Date: Thu, 12 Sep 2024 21:49:46 +0800
+Message-ID: <E4CA32D7942C8637+20240912134946.163833-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240911204158.2034295-1-seanjc@google.com> <20240911204158.2034295-3-seanjc@google.com>
- <20240912-a3894135370bf3fe551ed018@orel>
-Message-ID: <ZuLxIjMT4QzrUaad@google.com>
-Subject: Re: [PATCH v2 02/13] KVM: selftests: Return a value from
- vcpu_get_reg() instead of using an out-param
-From: Sean Christopherson <seanjc@google.com>
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Anup Patel <anup@brainfault.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Janosch Frank <frankja@linux.ibm.com>, 
-	Claudio Imbrenda <imbrenda@linux.ibm.com>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	James Houghton <jthoughton@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-On Thu, Sep 12, 2024, Andrew Jones wrote:
-> On Wed, Sep 11, 2024 at 01:41:47PM GMT, Sean Christopherson wrote:
-> > Return a uint64_t from vcpu_get_reg() instead of having the caller provide
-> > a pointer to storage, as none of the KVM_GET_ONE_REG usage in KVM selftests
-> 
-> "none of the vcpu_get_reg() usage"
-> 
-> (There is KVM_GET_ONE_REG usage accessing larger registers, but those are
->  done through __vcpu_get_reg(). See get-reg-list.c)
+'cpu' is an unsigned integer, so its placeholder should be %u, not %d.
 
-Doh, right, which was also part of my reasoning for making the conversion (tests
-can use __vcpu_get_reg() if they need to get a larger register).
+Suggested-by: Wentao Guan <guanwentao@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ arch/riscv/kernel/cpu-hotplug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/riscv/kernel/cpu-hotplug.c b/arch/riscv/kernel/cpu-hotplug.c
+index 28b58fc5ad19..a1e38ecfc8be 100644
+--- a/arch/riscv/kernel/cpu-hotplug.c
++++ b/arch/riscv/kernel/cpu-hotplug.c
+@@ -58,7 +58,7 @@ void arch_cpuhp_cleanup_dead_cpu(unsigned int cpu)
+ 	if (cpu_ops->cpu_is_stopped)
+ 		ret = cpu_ops->cpu_is_stopped(cpu);
+ 	if (ret)
+-		pr_warn("CPU%d may not have stopped: %d\n", cpu, ret);
++		pr_warn("CPU%u may not have stopped: %d\n", cpu, ret);
+ }
+ 
+ /*
+-- 
+2.43.4
+
 
