@@ -1,108 +1,114 @@
-Return-Path: <linux-kernel+bounces-327314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 568DE977417
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:07:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E82697741A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:08:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E00E2862AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:07:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F9491C24176
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8CC91C2434;
-	Thu, 12 Sep 2024 22:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D0E1C244B;
+	Thu, 12 Sep 2024 22:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rkOQmnzU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oq+WSJ4B"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB40192D89;
-	Thu, 12 Sep 2024 22:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0F4192D89;
+	Thu, 12 Sep 2024 22:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726178848; cv=none; b=UQ8d1xiURj2aAG4i57RMYLsJ1uV67rb0rWOzGmgbNO6VLN1YeX55wyzQT9pdtphe/Lf0KeRLMTzjQI4RB8ShK0SBxcBKp5TGTucfEjeQqa0aph3XAS3ha2/bskuD9AGNEqLlOd48y+qyb5V8ew4+pO92isdy4oXuMIqfGCJsJxY=
+	t=1726178914; cv=none; b=TdaXLtL+xqP5Z8Ak6TCmllTPY7GLZs84cxeXccZ6IRO7VnGMf80Lh7pJ6DWgPMWfVJF3O44A93eL81dCdmDgU0Ms77Swj7/x1mFftnqjf8l91Ee1Hvkwrl9iJxgrhrCqu75kmRaT+3Zw2YP/BVTRPdLQsoDIL2vo65mnv3p1Eh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726178848; c=relaxed/simple;
-	bh=GnDMqcTsTtZ+P4FfCR5hKRgnRo1g1o6vSBp86Dqdo80=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=lShhG8So07VrgF+4q7Y33p84MuLnkiD7kHCiMtiU6viKhlD7iKCml9JU63fm7N23vw+tVsrODjPRK39ZWCdsFK8DVb/ZsGWm+HchwutfdMdtCHo7etXByvc64AlTGYudWwy9onV6cqTnUQgW6NwESJ0LMC9zQZ6TYddr1Y+OTCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rkOQmnzU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95592C4CEC3;
-	Thu, 12 Sep 2024 22:07:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726178847;
-	bh=GnDMqcTsTtZ+P4FfCR5hKRgnRo1g1o6vSBp86Dqdo80=;
-	h=From:To:Cc:Subject:Date:From;
-	b=rkOQmnzUzBcAYhawpuIFLhFjb4PpBUEFTPqHni7dnw7AeNFNKxK6/6v4l9VPW64Ny
-	 uH2YHRk6d+3wYGfZ7F5aK/Jn+QZy/Fd3HZllYrhZhOxpvx/KZMB1LGxg13YchNVewi
-	 e7+JEkUWS1IUE0NFw3eET+N/ZF3zHkoxJJFgGuotogoSacv3nTQiOLRxJvyanV0xi6
-	 WQatc/TEv51hybf+W9R+cLp8vr1Gu1aEeFF0LQmW3KQH1sQWxfyZj7oxhhpWUVBUPb
-	 vZvm1PCoDK0NosvVJn7gIKyIwbROt6cE0CaOQ0BY0UQOUN8L9wVEJAz6glYBsTijhA
-	 Mpf/010FERUqw==
-Received: by pali.im (Postfix)
-	id A9F035E9; Fri, 13 Sep 2024 00:07:22 +0200 (CEST)
-From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>
-Cc: linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] nfsd: Fix nfs4_disable_idmapping option
-Date: Fri, 13 Sep 2024 00:06:59 +0200
-Message-Id: <20240912220659.23336-1-pali@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1726178914; c=relaxed/simple;
+	bh=/2YLoM8QgDHNOaLNzKK8v/KNYvua5uBzCv9i1eFPyFY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nBd4iZCWUX7ohsISRXvkULOcH01ofVo+u+gDNLxXaQf9NiBe6TKn+4r4neHDBf/yphFhhWTD+Ormu6xqmRFRaCesNVEdtoij3bAbRU7Q2iiwHHvUhA/CQDtZMWkUi/QDDesbPk3ynL2AKCkY7d1+bV7NLpTlJQzZUgx+COWHHi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oq+WSJ4B; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2d871bd95ffso227219a91.2;
+        Thu, 12 Sep 2024 15:08:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726178912; x=1726783712; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/2YLoM8QgDHNOaLNzKK8v/KNYvua5uBzCv9i1eFPyFY=;
+        b=Oq+WSJ4BvWt7Q5lwsboI0cufYTLEl/bG23DZcwZQlYmm8RE8jccRG/xUXFc6I8PaS9
+         kBRN0S8lYKDkUgzNM97WoPsOhlvKEpGZBZJ1vmlsIoJ3660mpMXOP5TptYNWgBLEgJtX
+         UocvF6+7Bd2dcZHW/MTbUA7hzInaRuP2WA8PDPy+xfqnaQpzBvzuf1k3CLNvdVAZcIlJ
+         eHH+VbOWhQSglVWXPBRyrlaEhiaB4Fncut7x4zHLPacSsLDXFqPbvmUwxce/qOPkp5rz
+         zfXZIQGBYIXFiTRtcDsc0oGDsiDLOZmQxaHF1i/qoa8X/RU8fgF5D4Mg04vVhTcAcfAv
+         LV4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726178912; x=1726783712;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/2YLoM8QgDHNOaLNzKK8v/KNYvua5uBzCv9i1eFPyFY=;
+        b=UCZAYKs2FZUd2rg6OJJ1eOK64BqLQP/S43oNH1kLE3hbl3CGUjS5cebH5i26SeBnsQ
+         5us3AiomI1wn7hpL5hewfWtsQyuWT4OGEsF4gHyiUsLOXKH8yv2k5rGLr1qA+YFTU2xk
+         wNuFZFnRzXmbb7PaNg+RoOMLMKG6ZBe+/KfB08hj9T1+ZASDaNCtVa/PHKLXl++wTkqf
+         +YFRv60+pzyLjfqOG9i+gV3/Y7vkK5zZiPo9ACjq0i7/5yYRus5HLT8CdOIfyDtepSvJ
+         aSpHpcRdoxAl4BQws8YvMVc0fj0LOAtfsJ7hWtqvagBOAAODWDGLvTHcmJwpH+xpKEDF
+         htuw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNREeu0RzIfrNoTX29Al/SLKdjikAxlB2IMQLOrmBz0l6QK4nZYDyxzTS11WUHGq+ribrR9GJ3bKlGEU70DFg=@vger.kernel.org, AJvYcCXHVx6940fyH7X2mMl7RRSmoGLJlrzkQgrcEXD25Anq6wnfWbjS2XV0wbQn6xJjUww7wBV5/6UBB2MnvjLx@vger.kernel.org, AJvYcCXbQorcoTNdMobBXjU2NSnjcnQ7TuJ/P+YTq9KPMtvlDeyuH/oQSmZssurbR6HrBKK+oiiG5Rk8bSGG0Yo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMkEdXwZoQbCVP+O3jauzEJsDZmcIg7xJiwrzEJicgXSBCmiDO
+	qniIfKV2YBQoxeL4F0hlVp4xvNkKI4skDXMWIiPUU5g/6EhbreG/14vVQ+Pjfh6Sb7IW6Xb9ebH
+	6UqouYOH17+hdk+fUsVKwvlv2edo=
+X-Google-Smtp-Source: AGHT+IG6aej/NB5LBMrn83sRcBRKI2TpgN93fxt/vJJgonNH0ivdw+rd6rheCsWsaNjoH5e3gvokg2/fm6nDqHPOGEI=
+X-Received: by 2002:a17:90a:d791:b0:2da:71f8:7ff with SMTP id
+ 98e67ed59e1d1-2dba005b46amr2003435a91.5.1726178912177; Thu, 12 Sep 2024
+ 15:08:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240829-shadow-call-stack-v7-1-2f62a4432abf@google.com>
+In-Reply-To: <20240829-shadow-call-stack-v7-1-2f62a4432abf@google.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 13 Sep 2024 00:08:20 +0200
+Message-ID: <CANiq72kNmvFOXhhAcQJQdMC872908=CWW15_bzyyt9ht2q=twQ@mail.gmail.com>
+Subject: Re: [PATCH v7] rust: support for shadow call stack sanitizer
+To: Alice Ryhl <aliceryhl@google.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Ard Biesheuvel <ardb@kernel.org>, Jamie Cunliffe <Jamie.Cunliffe@arm.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Conor Dooley <conor@kernel.org>, Kees Cook <kees@kernel.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Marc Zyngier <maz@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Valentin Obst <kernel@valentinobst.de>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	rust-for-linux@vger.kernel.org, linux-riscv <linux-riscv@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-NFSv4 server option nfs4_disable_idmapping says that it turn off server's
-NFSv4 idmapping when using 'sec=sys'. But it also turns idmapping off also
-for 'sec=none'.
+On Thu, Aug 29, 2024 at 10:23=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
+wrote:
+>
+> Add all of the flags that are needed to support the shadow call stack
+> (SCS) sanitizer with Rust, and updates Kconfig to allow only
+> configurations that work.
 
-NFSv4 client option nfs4_disable_idmapping says same thing and really it
-turns the NFSv4 idmapping only for 'sec=sys'.
+Applied to `rust-next` -- thanks everyone!
 
-Fix the NFSv4 server option nfs4_disable_idmapping to turn off idmapping
-only for 'sec=sys'. This aligns the server nfs4_disable_idmapping option
-with its description and also aligns behavior with the client option.
+Paul/Palmer/Albert/RISC-V: I think you were not Cc'd (at least in this
+version?), so please shout if you have a problem with this.
 
-Signed-off-by: Pali Rohár <pali@kernel.org>
-Cc: stable@vger.kernel.org
----
- fs/nfsd/nfs4idmap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+[ Fixed indentation using spaces. - Miguel ]
 
-diff --git a/fs/nfsd/nfs4idmap.c b/fs/nfsd/nfs4idmap.c
-index 7a806ac13e31..641293711f53 100644
---- a/fs/nfsd/nfs4idmap.c
-+++ b/fs/nfsd/nfs4idmap.c
-@@ -620,7 +620,7 @@ numeric_name_to_id(struct svc_rqst *rqstp, int type, const char *name, u32 namel
- static __be32
- do_name_to_id(struct svc_rqst *rqstp, int type, const char *name, u32 namelen, u32 *id)
- {
--	if (nfs4_disable_idmapping && rqstp->rq_cred.cr_flavor < RPC_AUTH_GSS)
-+	if (nfs4_disable_idmapping && rqstp->rq_cred.cr_flavor == RPC_AUTH_UNIX)
- 		if (numeric_name_to_id(rqstp, type, name, namelen, id))
- 			return 0;
- 		/*
-@@ -633,7 +633,7 @@ do_name_to_id(struct svc_rqst *rqstp, int type, const char *name, u32 namelen, u
- static __be32 encode_name_from_id(struct xdr_stream *xdr,
- 				  struct svc_rqst *rqstp, int type, u32 id)
- {
--	if (nfs4_disable_idmapping && rqstp->rq_cred.cr_flavor < RPC_AUTH_GSS)
-+	if (nfs4_disable_idmapping && rqstp->rq_cred.cr_flavor == RPC_AUTH_UNIX)
- 		return encode_ascii_id(xdr, id);
- 	return idmap_id_to_name(xdr, rqstp, type, id);
- }
--- 
-2.20.1
-
+Cheers,
+Miguel
 
