@@ -1,105 +1,112 @@
-Return-Path: <linux-kernel+bounces-326984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98C57976F79
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:23:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82237976F7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:26:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E369BB234A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:23:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 828101C23B8E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF651B1402;
-	Thu, 12 Sep 2024 17:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHQENVl2"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D31158DD2;
-	Thu, 12 Sep 2024 17:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FDF1BF7E2;
+	Thu, 12 Sep 2024 17:25:59 +0000 (UTC)
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143B015098A
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 17:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726161772; cv=none; b=KPOgyMxRMHg+vUtP55kUle22BYdIubhOn3Z0ozahPokKp6EZgML6yNmWtwpcGg2yeOkYuxYH4D+dch1Mo03E10IiPvImqhVhbaeqtGVzzpRxuyfwW1RVIgLKwb85oucek/E3LqhdRDrm3VmLqOs0SvKFsiQSRiStJK7eMSRnVoY=
+	t=1726161958; cv=none; b=ZLgck+EbL1MCiakCT/82PGXP+oCS7HA2c5A7gWsPdhsAZLo9PmWmTb0SBu/G7JloH/dWwx7gq/1QllCI+VWbPy+mZcae59iMhC3rMswUPfS45qTw9to/Fmqa6Rk3m/yxDTrHURV2zZPH4EoIoweZ/yr0guri9n8/xgzfFD2xFQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726161772; c=relaxed/simple;
-	bh=IWmueW/2HPyG8HWdEpakh5zNGcRdl3p45Wo1GUB0IXk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ptBgRh8HtFbTekHKB7QlRLLNjqkYjYbLkdkcK/2fJXVr/bgwZbtlLumcwPavmXhAzdP3qV3VmnWDvC2YkidxpOqzFpmiyPIvkIlFCTG1V/eSm0FIhqwDGA+nyXPhXrytpZRzge2eKRw670l51h3EC02CfrXHXUNy6JcXGcseAx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RHQENVl2; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6c3567a143eso9427856d6.2;
-        Thu, 12 Sep 2024 10:22:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726161769; x=1726766569; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IWmueW/2HPyG8HWdEpakh5zNGcRdl3p45Wo1GUB0IXk=;
-        b=RHQENVl2Zb7UpqF9JjSJt1r95ysydzGCB3e016rUjcLbnBvVMXQebuaNP7NjdntU7q
-         Ru6/NPY9IpX6hOY9zUYaJiki5QTJr2bmdlvlON4JhcRud744asElgDBSC2PdMs+Lznqc
-         jTy8+7MOoLLnlNaBzAv3BGykyKb3BhwrGqhq0zLV25yrYK+aI+Fay8ei94kByRLB9PgJ
-         xn5kMPllg8Ge7ZqE745AQyUSGWIFOWfr8YQe2Of0MoNf2MTL7UvuTw1YLRFptWUfXibw
-         c8qXdidSyCCQDacrlYcjIzVGW06mCZztVDy0llhU/4HhJV3ZUlm3I1WNY16ozIyfOt2i
-         YKWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726161769; x=1726766569;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IWmueW/2HPyG8HWdEpakh5zNGcRdl3p45Wo1GUB0IXk=;
-        b=Su1bWx6rMwE0cNvLcMIBoX3GEQQEvKRPD3H3LT2QP9C0OXjCtejLZkeflnuLvt+YkM
-         WgVxVU5mMF20aRxLMBUhTnePnIaOAbq84LeWOF2vCf7Omuds0NQ3Wdo8aENtCzqc/P25
-         GMEyJK/JrSW5keFta9i5Z7BaA7+2XeQXRGfsxy0bOGIR23YYp5uz+VUj4cWO7KzflLJ7
-         UP2wak6/wGzjOBVRS3GYO/FC3Cw4KIkAGgclZ2sM0Go39T+wsGvJ3XdX4xEaeqW+OfKF
-         PMMqmtiGThXfXEqgtYfCAmDBm1EWgKKwie6h/K95lidY7JVIGdvRKSEZ3VtBpcybjuYY
-         F8ow==
-X-Forwarded-Encrypted: i=1; AJvYcCXI3XXN1l1qIIlg6Yp5u1jCuXpyDj4OATXPxwVEAiGQIj9meOkd7nKGGhjdJ5ds0BZ60U06eqti@vger.kernel.org, AJvYcCXL9Zr3wfdJR6w/6UjP+YSN9mvJEaKflh5rfOG5lvKD/rQ5L6n5thzbwcHbWqaycdNZSpXNuOh1fP2HKG9Q@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1Xg3sfB8lz3qKneFaxepCVEAktiw7uz0yYVGldUlIzBUTGeyM
-	TA6KYf3JAyuTb50SGdbncy2Ur8JfVpOzd2coLpZJJWIqPLiHFMdv2fHGJrS6K7L84o0lcelD2Cz
-	5aOjJmG5VC6IXp8rOFeKcMV8OleY=
-X-Google-Smtp-Source: AGHT+IEqTdFlpeKZGci8It87XbPBnudWtvW8f90wPyEMUDR1KRydLqC2TaXUk8HvnqWpcfFlzaRAjc6k8c9/1PeQy8A=
-X-Received: by 2002:a05:6214:3a86:b0:6c5:297c:da5f with SMTP id
- 6a1803df08f44-6c573570b58mr64415406d6.33.1726161769448; Thu, 12 Sep 2024
- 10:22:49 -0700 (PDT)
+	s=arc-20240116; t=1726161958; c=relaxed/simple;
+	bh=3ONgVfMJXgmy9PQHeYpfI25WqaLgBdHYvdWjmP5r+OI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IONlpAetFQenLwuk+i6M8eA7jwVvUBqucp+ANj0haxn1P3c5dlHVw1vm6AZWG8EM/0T2TEWpZER2aaTxHSczChDXtogn6TRKYSta2ZVQ8A3bHylO1SYql4/eCB5Z1fvlfwhXqssftrEAUchqZ8asz7d43KFODAV1mRCVBuU/d2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+Received: (from willy@localhost)
+	by mail.home.local (8.17.1/8.17.1/Submit) id 48CHPM8G026358;
+	Thu, 12 Sep 2024 19:25:22 +0200
+Date: Thu, 12 Sep 2024 19:25:22 +0200
+From: Willy Tarreau <w@1wt.eu>
+To: nerdopolis <bluescreen_avenger@verizon.net>
+Cc: linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Greg KH <gregkh@linuxfoundation.org>, john.ogness@linutronix.de,
+        senozhatsky@chromium.org, tglx@linutronix.de, tony@atomide.com
+Subject: Re: VT-less kernels, and /dev/console on x86
+Message-ID: <ZuMkAiJz1YgdGpmJ@1wt.eu>
+References: <2669238.7s5MMGUR32.ref@nerdopolis2>
+ <1877609.QCnGb9OGeP@nerdopolis2>
+ <Zs3YyYG0RwNcG2vL@1wt.eu>
+ <4925457.GXAFRqVoOG@nerdopolis2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <172547884995.206112.808619042206173396.stgit@firesoul>
- <CAJD7tkak0yZNh+ZQ0FRJhmHPmC5YmccV4Cs+ZOk9DCp4s1ECCA@mail.gmail.com>
- <f957dbe3-d669-40b7-8b90-08fa40a3c23d@kernel.org> <CAJD7tkYv8oDsPkVrUkmBrUxB02nEi-Suf=arsd5g4gM7tP2KxA@mail.gmail.com>
- <afa40214-0196-4ade-9c10-cd78d0588c02@kernel.org> <CAJD7tkZ3-BrnMoEQAu_gfS-zfFMAu4SeFvGFj1pNiZwGdtrmwQ@mail.gmail.com>
- <84e09f0c-10d7-4648-b243-32f18974e417@kernel.org> <CAJD7tkYY5sipMU+w8ygPTGKfjvdMh_e0=FtxYkO9BG5VpF+QUA@mail.gmail.com>
-In-Reply-To: <CAJD7tkYY5sipMU+w8ygPTGKfjvdMh_e0=FtxYkO9BG5VpF+QUA@mail.gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Thu, 12 Sep 2024 10:22:38 -0700
-Message-ID: <CAKEwX=PTA0OxisvY12Wa95s5KqzvQTXe1rZ7nw29nP+wR2dxkA@mail.gmail.com>
-Subject: Re: [PATCH V10] cgroup/rstat: Avoid flushing if there is an ongoing
- root flush
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Jesper Dangaard Brouer <hawk@kernel.org>, tj@kernel.org, cgroups@vger.kernel.org, 
-	shakeel.butt@linux.dev, hannes@cmpxchg.org, lizefan.x@bytedance.com, 
-	longman@redhat.com, kernel-team@cloudflare.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, mfleming@cloudflare.com, 
-	joshua.hahnjy@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4925457.GXAFRqVoOG@nerdopolis2>
 
-On Thu, Sep 12, 2024 at 9:35=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com>=
- wrote:
->
-> >
-> Yeah there is a plan to remove these.
->
-> Nhat, are you currently working on this? If not I can try to find a
-> few cycles to address this.
+On Thu, Sep 12, 2024 at 12:48:01PM -0400, nerdopolis wrote:
+> > > I still kind of lean to CONFIG_NULL_TTY_CONSOLE, that way if enabled, and in
+> > > theory, only distributions that had CONFIG_VT_CONSOLE turned on would turn on
+> > > this option. That could allow /dev/console will still work the same way for
+> > > user space logging, while disabling vgacon and fbcon.
+> > > 
+> > > And it could still be overridden by console=ttyS0, which I think is needed
+> > > anyway if you have CONFIG_VT_CONSOLE enabled
+> > 
+> > That sounds safer. And even then, I still don't understand why the application
+> > logging to /dev/console needs to block on it instead of just dropping whatever
+> > doesn't fit there since that's the primary intent of an optional logging
+> > console, i.e. emit events but without preventing regular operations. Maybe
+> > *this* is the thing that would require a setting: wait or drop.
+> > 
+> Sorry about the late reply, the application that is logging and dropping is
+> kind of unintentional I think. From how I understand it, systemd wants to
+> verify that /dev/console is actually /dev/console, so it calls isatty() on it.
 
-I'm not, but Joshua from my team is working on it :)
+OK.
 
-cc-ing Joshua...
+> isatty() in turn calls the TCGETS ioctl on /dev/console, which when the console
+> device is actually /dev/ttyS0, and /dev/ttyS0 is unplugged, it the ioctl fails,
+> and isatty() returns false, and systemd assumes that it is not a serial device,
+> and in turn it doesn't log because of that.
+
+I'm no tty expert at all, but on this machine I'm having this:
+
+  # dmesg|grep console
+  [    0.000000] Kernel command line: boot_image=l0 console=ttyS0,115200 root=/dev/mmcblk0p2 rw rootwait
+  [    1.638242] printk: console [ttyS0] disabled
+  [    2.848759] printk: console [ttyS0] enabled
+  [   12.950334] systemd[1]: Starting Set the console keyboard layout...
+
+  # cat /proc/consoles 
+  ttyS0                -W- (EC p a)    4:64
+
+  # strace -e trace=ioctl stty -a < /dev/console 
+  ioctl(0, TCGETS, {B115200 opost -isig -icanon -echo ...}) = 0
+  ioctl(1, TIOCGWINSZ, {ws_row=30, ws_col=152, ws_xpixel=1534, ws_ypixel=604}) = 0
+  ioctl(0, TIOCGWINSZ, {ws_row=24, ws_col=80, ws_xpixel=0, ws_ypixel=0}) = 0
+  speed 115200 baud; rows 24; columns 80; line = 0;
+  intr = ^C; quit = ^\; erase = ^?; kill = ^U; eof = ^D; eol = <undef>; eol2 = <undef>; swtch = <undef>; start = ^Q; stop = ^S; susp = ^Z; rprnt = ^R;
+  werase = ^W; lnext = ^V; discard = ^O; min = 1; time = 0;
+  -parenb -parodd -cmspar cs8 hupcl -cstopb cread clocal -crtscts
+  -ignbrk -brkint -ignpar -parmrk -inpck -istrip -inlcr -igncr -icrnl -ixon -ixoff -iuclc -ixany -imaxbel iutf8
+  opost -olcuc -ocrnl onlcr -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0 vt0 ff0
+  -isig -icanon -iexten -echo -echoe -echok -echonl -noflsh -xcase -tostop -echoprt -echoctl -echoke -flusho -extproc
+  +++ exited with 0 +++
+
+So TCGETS succeeded above, and the console is unplugged. Even if I enable
+HW flow control (crtscts) the result is the same BTW (I preferred to check).
+Same if I enable carrier detection (-clocal).
+
+So I'm unsure what would cause TCGETS to fail in your case.
+
+Willy
 
