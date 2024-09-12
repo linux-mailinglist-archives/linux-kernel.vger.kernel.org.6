@@ -1,103 +1,86 @@
-Return-Path: <linux-kernel+bounces-326354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C990D976713
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:57:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93E5D9767FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:37:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CDA3281787
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:57:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C65B41C21410
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 11:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0425019F425;
-	Thu, 12 Sep 2024 10:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="iI3TCyU4"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F8219F40D;
+	Thu, 12 Sep 2024 11:37:01 +0000 (UTC)
+Received: from iris.vrvis.at (iris.vrvis.at [92.60.8.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0C515D5D9
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 10:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B33A29CF6;
+	Thu, 12 Sep 2024 11:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.60.8.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726138647; cv=none; b=FtMZPu3ExE30jbImgKNgARIWzGW0J0RvY7f9666xtXM4EsU9+LaGWIAi5S4K6USqaAU2edpIvqaG/BE9fk0m1tQ13QYZ2T5jMV/iQ8b8uqFsBSFhz3F0CrWRDiF5neg3yLA2dO3XXSZIZ6fXQbO3TV3DUZQfvhGfvrJIk+mNV3k=
+	t=1726141021; cv=none; b=PhKGzLMeEb9e9coHdFwrF/V6ogyc+28JLqNDF73cf7rYOONUCYu9ZymBCrhT4r7HpDZPRvY5pI3qVpgKL+6fUHvNMmguyM91rRlypwEhg3Dsg67/LMiwT/GthHrPJ0kD6KVROkQb8rt4AP6mb18yIrf8CL1k1jURO9btWAX59sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726138647; c=relaxed/simple;
-	bh=RNrH12uCylYoxmdQLt4glumo2cnznmtL10jIk63nHLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mw+yyOe2XNVPl19S9bYocf4cAsN7TaBwgvmYFp2P0x8WKH2Kx1Jh3V+0l3+6SPdVQTxqOMDxGJA28Z5LhIBQxm1pK2tD0I6zSQ6khxsLz0Fl7u0LGTWPInJ7kRF8gMqMvFPE1riiRavQa8//6eh6dqvPXYJ1wEJu/niZyzS3r6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=iI3TCyU4; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id DC1C140E028A;
-	Thu, 12 Sep 2024 10:57:21 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id tb5dPQGEPXb9; Thu, 12 Sep 2024 10:57:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1726138638; bh=y/A2BhrRlRkuUusp8T3EU9bXIVJma9RWL+7ouaZ5iws=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iI3TCyU4+Pyki6mWZkQmry2Q+YeZAHyqugEG1L/VwBZsGyzP2CQI6D09bZEZVQrtl
-	 3j1Yji7CDNyWSfpJW6g1IWMczGr457CiC+QALSDhQ9MM/1pioWrJCUWbrHr5QGsR2M
-	 8ry5Wr+zoEef5wSMNBhIy/6m39xNlzCxd8DdeIlDUxg/1go2IhG8KQ9+dUQ5wSaWou
-	 DkbQdueLhbU+gnuhwWFwiXrnnBru2No1R8rNxOch3aX2dkc/ikg6dWMtKVlOPUm+rC
-	 qFHP2PLZFJs3NK0KZKhlLygpJk+5nLoLzMbLrha5bkDpmTIjFHBrJ/IPoP76ov4KXn
-	 f8Cvp6z1kXmeMQ7ZsJYVerCaLnQnF8prE5u/gnjEDUg0HtP05pDIFpQ0s1MCNaSVI8
-	 KGhrJXwXa0tjoubGRJ1JED4GaplG+USbnFP6JvYNZwIYct2LJfIAzMwT4aWqmqQOwM
-	 pH0stVDAh7XN50Jc0erxlHRodv5xqSzzKuJNdn76g5hSHG8BTCN1g7qBXRcie6woBF
-	 wdLvIl+I2BJAeRVRqxsjDe7s0E5ofVerDe7yV5kkD/HX2PrHSAWpuvOOtSjGwVvEz4
-	 cc2O1slq+gNcR+U09huIvH1IVnwegBUMd7eZesfkEn46ELkDR5+EORwpbjiONgee3g
-	 7x0c1Wxy7T7zKZUycwvzGjNo=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B5E3440E0288;
-	Thu, 12 Sep 2024 10:56:59 +0000 (UTC)
-Date: Thu, 12 Sep 2024 12:56:53 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc: x86@kernel.org, Andreas Herrmann <aherrmann@suse.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Chen Yu <yu.c.chen@intel.com>, Len Brown <len.brown@intel.com>,
-	Radu Rendec <rrendec@redhat.com>,
-	Pierre Gondois <Pierre.Gondois@arm.com>, Pu Wen <puwen@hygon.cn>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Will Deacon <will@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Ricardo Neri <ricardo.neri@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 1/4] cacheinfo: Check for null last-level cache info
-Message-ID: <20240912105653.GAZuLI9fCfDjZ1Ler2@fat_crate.local>
-References: <20240905060036.5655-1-ricardo.neri-calderon@linux.intel.com>
- <20240905060036.5655-2-ricardo.neri-calderon@linux.intel.com>
- <20240911140509.GEZuGjlfyxj5hvSDYU@fat_crate.local>
- <20240911233746.GB7043@ranerica-svr.sc.intel.com>
+	s=arc-20240116; t=1726141021; c=relaxed/simple;
+	bh=yCWwqYowKJ2cQpeC8wSeYs2nASVcdeCpMVxGz7y9JtA=;
+	h=Message-ID:Date:MIME-Version:Cc:To:References:From:In-Reply-To:
+	 Content-Type:Subject; b=GcFvNLPNjNeNAr4HjxKDUf4ibTEtJr8avnrOzzjlCXzjQxYLMYCoaXHuz0LSfp4g79n5LNr5gip4uYfbVRu/VVME9nR3i1N6VzEXYrjflF6PK01ljZhBmt4QOLFG2MgLZ+xSzIs8F/5Wg6qndwH3ncny3FMdAvxKk4+94fNT924=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vrvis.at; spf=pass smtp.mailfrom=vrvis.at; arc=none smtp.client-ip=92.60.8.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vrvis.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vrvis.at
+Received: from whiskey.org.vrvis.lan ([10.42.2.171])
+	by iris.vrvis.at with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(ESMPT Server)
+	(envelope-from <valentin@vrvis.at>)
+	id 1sohXD-0007Us-2A;
+	Thu, 12 Sep 2024 12:58:52 +0200
+Message-ID: <9371a3ab-3637-4106-bee5-9280abb5f5ae@vrvis.at>
+Date: Thu, 12 Sep 2024 12:58:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240911233746.GB7043@ranerica-svr.sc.intel.com>
+User-Agent: Mozilla Thunderbird
+Cc: Jens Axboe <axboe@kernel.dk>, Pavel Emelianov <xemul@openvz.org>,
+ Kirill Korotaev <dev@openvz.org>, "David S . Miller" <davem@davemloft.net>,
+ Nicolai Stange <nstange@suse.com>, Greg KH <gregkh@linuxfoundation.org>,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Chun-Yi Lee <jlee@suse.com>
+To: Chun-Yi Lee <joeyli.kernel@gmail.com>, Justin Sanders <justin@coraid.com>
+References: <20240912102935.31442-1-jlee@suse.com>
+Content-Language: en-US, de-AT-frami
+From: Valentin Kleibel <valentin@vrvis.at>
+In-Reply-To: <20240912102935.31442-1-jlee@suse.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	* -4.5 BAYES_00 BODY: Bayes spam probability is 0 to 1%
+	*      [score: 0.0000]
+Subject: Re: [PATCH v2] aoe: fix the potential use-after-free problem in more
+ places
+X-SA-Exim-Version: 4.2.1 (built Wed, 06 Jul 2022 17:57:39 +0000)
 
-On Wed, Sep 11, 2024 at 04:37:46PM -0700, Ricardo Neri wrote:
-> Sure! I can do this. I assume this should be a separate patch.
+> Then Nicolai Stange found more places in aoe have potential use-after-free
+> problem with tx(). e.g. revalidate(), aoecmd_ata_rw(), resend(), probe()
+> and aoecmd_cfg_rsp(). Those functions also use aoenet_xmit() to push
+> packet to tx queue. So they should also use dev_hold() to increase the
+> refcnt of skb->dev.
 
-Not needed.
+We've tested your patch on our servers and ran into an issue.
+With heavy I/O load the aoe device had stale I/Os (e.g. rsync waiting 
+indefinetly on one core) that can be "fixed" by running aoe-revalidate 
+on that device.
 
--- 
-Regards/Gruss,
-    Boris.
+Additionally when trying to shut down the system we see the message:
+unregister_netdevice: waiting for XXX to become free. Usage Count = XXXXX
+on aoe devices with a usage count somewhere in the millions.
+This has been the same as without the patch, i assume the fix is still 
+incomplete.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Thanks for your work,
+Valentin
 
