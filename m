@@ -1,211 +1,133 @@
-Return-Path: <linux-kernel+bounces-326634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 469F8976B13
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:48:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD0B1976B1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:49:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAABF1F21928
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:48:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B6A41F240B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0A91AD256;
-	Thu, 12 Sep 2024 13:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2E21AD256;
+	Thu, 12 Sep 2024 13:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JyvWCATG"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oJDBqZLO"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A517C19F42E
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B45F1A76AE
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726148913; cv=none; b=CeFgWFXGRLC4xFLWiI0joNaWKcgoW7UaDG8hOD2lxLUXSAM5EtjWdHaIoWNXYljl7FD7DF4DTQ7lj3j1x8KuOUclzSv8JxcidxuAwg3IC+IAeB1Li0cYl4MA7a45Eh5sh2zIphBKfMaAloNLqF71+Y3Wxn/1IbD7kLk35zMJpy8=
+	t=1726148952; cv=none; b=ei1OR2QwT8tFDfISjr14ck02vnHTV7wBq7rtkxAG4xXV1RnMCndPs6M7ZQFutOeZYs/9Fx4JM+Uwu8Cuii1x4YeKXNc8CBSv9VxPjwBoq/7k8M3TPq2LKdaOQy8OWCkSu6EmR83FB2Lr60UdO6GbUhs/j6FTjykl4Yfbnqwj6tQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726148913; c=relaxed/simple;
-	bh=xGmSZvJPMA6/WDsG5Nu532RgUOS4u5eT+NtzLeebeXs=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ARbSza9LMzfpPPwZnaZVSw7bJTjCNZxUalwVe4GUVFy5eealBqVjJedqsnUeZ2BFfy3gzvVoTco+PQMQv41otwWy6ku73dWiMudk+XoSBaNMhon/riSCb+oy6G/DlcrN6VrF7cmPMzUHaFzuzWGVoZV/Jy34AP3zcazizUgN8jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JyvWCATG; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cc8782869so9315415e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 06:48:31 -0700 (PDT)
+	s=arc-20240116; t=1726148952; c=relaxed/simple;
+	bh=BeCToDaYapaX3Saa/es3zn7QE7cn2Hm7x6pEwmgVvYw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mc9UJ+jS2ODcMzBWwpd4EA5TkR5Wlc0aAPDIxNJ4ZtapC6u3cBtIGJ+vefhJIN3ZFAXUFkbKbVdVzWV7ARO/ef8F4q3JCUyrplN1knkp9+d8/aAM4vGG+WLq8SiNRy/LipADqjIVHItHQIvFQYjjDE3PFDk9UMpuTVKs4ykGMr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oJDBqZLO; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7db0fb03df5so825597a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 06:49:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726148910; x=1726753710; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Rbwy09Mt6M+UVIdl4w21jxB17U9+FB7plRA5s10UoaA=;
-        b=JyvWCATGXwMjfqeHMrbzZmUbE3EL/yHBo44lcSE5SdJ/+Pot/lsPmFJpRG61lMpj3r
-         8YhTPKl3Tzc5hWctV6JiDb1PS2EcXrwXUcqrY9BfsKSlHjfd2rdpgvjN3t0ZzPL1Pz92
-         4YL4xmchuRrp+CcBtPscignireNljpTh0w+T/LQJ+xUwto3eUMqqcSgZyXQUTRS9GlrK
-         RMKuD7j1VwK2kNPQ1+85r8D0OrxFlMSjR0jnuJS0DsapJ91zRDXUNq+NvWiJ7abzajlQ
-         EYzCC2MJA1QXyBx8/r9YA5RHUp63gNs3LtA2WEUFIhaalUqR6tAoT0bNsUyWWhp7pYJM
-         BFxA==
+        d=google.com; s=20230601; t=1726148950; x=1726753750; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fUQa4s1nfS6Ak/vMXpFFTKhTCLVYkjsgEZVj84spgpI=;
+        b=oJDBqZLORPa6s7CPZ8kjzOvCBiHxkVmO3dImpTanPK4HtxunWWrRvzQwvmnaM5hQmG
+         Y6gxAANU7XaHxtMHpK0mrxWmgY+SKJgK6YgAWG+AlCYZteGt7Xtr/M9aYnCoLcwTyeXZ
+         9NfS/rLpXV5iglNWMYklCxj3NpMjFh2NYydrwpRaQmgZX4Vk47+l5SfOy4rHDTqcJqNt
+         9dnr+rmbQ2vjHKkUZ1TC6nblcPDxY21NKgY5CRgPuybwiiEWJ+ck+6sk+VQSfk+QUZDY
+         CFm/T6uj7Mw4xZf2VBtbuOXElQk8WFX+OYzH5aRMdOmTV6v0Q7HXd1bkugARbYQjiDys
+         PKoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726148910; x=1726753710;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Rbwy09Mt6M+UVIdl4w21jxB17U9+FB7plRA5s10UoaA=;
-        b=v3mnfLH8ZH0KdcZEP5gcpA3PuFYBdhysiYiXIXK4HG5WRpC9x3VXJ7lduikH7M8cYu
-         PQTPwhAPK0a7HEWsyc7GrJzdTMBRWFxluEg4vCoPbg5hkv6ypNajF1WNsTq94j0BwpK6
-         YfUfYf87Zt3UGN3agJ8m6lz0zS6KI2Sye1WLU0rR+/zvWpkj7HmNlTqHr6hktavp0m6e
-         r7LibFtAGO9dp7AfyXbqOnmsi97BdvLgwHiy880uEPuhjnG48gRkMCBOdQrg0NoL3Fnp
-         7BxB5plvtYYm5N8s6DuAseAAn9vHhbVrhV857jhjw6xutMFOilS4tgXfvvYz6CgGhZ+r
-         Cskg==
-X-Forwarded-Encrypted: i=1; AJvYcCWuDAx7C0UnVDrGbt87dLNF5YNqZHiLvYaR+ZkNQbn8PAxpbl0vfzjhi+5W8GaNTm4kI7E/Le1hR5j5Dpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYFr4bgyBBTqAEFGNKApsCDzcLC9jCVgdpDXwEPiHMF6OTpf2g
-	2mrnkQX3FCLNJzs/R9/eq5bYBoemhtoIKU0+vgzmXIkrz8s+z5bLJzdK+aelVyk=
-X-Google-Smtp-Source: AGHT+IEjEDquT/aJgXoom8sDLR++VADiuZhuI/LJsjJSdWAMIa+jxBJ8AUa1I3E93mENrXnqOyJi6A==
-X-Received: by 2002:a05:600c:5127:b0:42c:a574:6360 with SMTP id 5b1f17b1804b1-42cdb5790c1mr24484905e9.29.1726148909401;
-        Thu, 12 Sep 2024 06:48:29 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:ab97:5a37:ff38:488e? ([2a01:e0a:982:cbb0:ab97:5a37:ff38:488e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956ddbbbsm14253237f8f.93.2024.09.12.06.48.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Sep 2024 06:48:28 -0700 (PDT)
-Message-ID: <6d78c1de-00bf-4aea-b0c6-a147faa40a8f@linaro.org>
-Date: Thu, 12 Sep 2024 15:48:27 +0200
+        d=1e100.net; s=20230601; t=1726148950; x=1726753750;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fUQa4s1nfS6Ak/vMXpFFTKhTCLVYkjsgEZVj84spgpI=;
+        b=vhVklxuHP4O4Qmv7vmE1sZLYLn2yLGcXQV5eS05/laIXdKanG/J1dmnhj6kCYLyYxD
+         zqPL8RAWRBf2jnbKqvSbkOJAoPuOR1gEEbL07LXpJJ1wn88RwGzQ3IS0Pd4GBslER9Vm
+         BHYRYtBbD1l65fiRfSAyde2kQWxdTRYT1pqrkbfx5W+WTcwpH5dKoUh/iAVGrSPjOk1c
+         KqkyAGMpI2U/KYGjeJw8yFN4pIFTJMmD41ZtH0/Ri52+Nwg0Qu2vi+IJQl3QihBT7gpK
+         bcCA5yDqt4P06eYT7/ES0k/rbtJ8OAxLNkSXpBS6JQDEcVNK2hlkAdH4wrVmI40W4JOR
+         cqlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXzD381Y/XPtdrS6Rv2ZrN9RS5WqEbWG4pj157qwFFBIOSNnO+p3WHt4cKjlAB387hYoluIYRYIPfs0pRY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyUudKBQbI8CiU0buxKlPJ/L9raFtQ9nmHN93QFXcEZO5aj7ZJ
+	nV/vjC4bI5h3OtdkExwaOxXGHTQewPivCDYM/NGu28p5cAeREbQ6UNCmR82P30By6FrvtpMcGZh
+	vUyEiLLzuMLoQkXiPXh3LJ0mjNIVXaMp/j64IOhoKf34nurbTyTDo
+X-Google-Smtp-Source: AGHT+IEPr3PK6becA5u/81rvfWVTB62iUowBdbi297hZYuVMK8UYMPCjcecQcbIV27iiqIRftGBxFzb0qMGGSrE5SgY=
+X-Received: by 2002:a05:6a21:b8a:b0:1cf:5c1d:83e2 with SMTP id
+ adf61e73a8af0-1cf7624b290mr4425750637.39.1726148949520; Thu, 12 Sep 2024
+ 06:49:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 07/13] dt-bindings: media: camss: Add qcom,sm8550-camss
- binding
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@quicinc.com, Yongsheng Li <quic_yon@quicinc.com>
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
- <20240812144131.369378-8-quic_depengs@quicinc.com>
- <b1b4a866-fa64-4844-a49b-dfdcfca536df@linaro.org>
- <82dd61ab-83c0-4f9c-a2ee-e00473f4ff23@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <82dd61ab-83c0-4f9c-a2ee-e00473f4ff23@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <000000000000e2058e0621e7a637@google.com> <20240912070121-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20240912070121-mutt-send-email-mst@kernel.org>
+From: Marco Elver <elver@google.com>
+Date: Thu, 12 Sep 2024 15:48:32 +0200
+Message-ID: <CANpmjNN+3TwdxkvnFzzeQNOVXq-smqpi+xtkw0j+Pd-BGkrgFw@mail.gmail.com>
+Subject: Re: [syzbot] [virt?] KCSAN: data-race in virtqueue_disable_cb /
+ vring_interrupt (4)
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: syzbot <syzbot+8a02104389c2e0ef5049@syzkaller.appspotmail.com>, 
+	eperezma@redhat.com, jasowang@redhat.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, virtualization@lists.linux.dev, 
+	xuanzhuo@linux.alibaba.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 12/09/2024 13:41, Bryan O'Donoghue wrote:
-> On 12/09/2024 09:22, Vladimir Zapolskiy wrote:
->>> +
->>> +  vdda-phy-supply:
->>> +    description:
->>> +      Phandle to a regulator supply to PHY core block.
->>> +
->>> +  vdda-pll-supply:
->>> +    description:
->>> +      Phandle to 1.2V regulator supply to PHY refclk pll block.
->>> +
->>
->> Here the supplies should be split into ones, which are specific to CSI blocks,
->> and I believe they shall be set as optional.
-> 
-> In principle I agree with that, each CSIPHY should have its own vdda-phy and vdda-pll regulator specified.
-> 
-> In practice though I don't believe its necessary, below.
-> 
->> The proposed names are:
->>
->> vdda-phy-01-supply
->> vdda-pll-01-supply
->> vdda-phy-23-supply
->> vdda-pll-23-supply
->> vdda-phy-46-supply
->> vdda-pll-46-supply
->> vdda-phy-57-supply
->> vdda-pll-57-supply
-> 
-> In principle, you're right, we need to expand the name set here.
-> 
->> I understand that what I ask is much more clumsy, and it could be seen even as
->> unneeded, however it'll be the right set of properties to describe the CAMSS IP
->> in this respect
-> I think the following naming would be better as it matches the power-grid naming in the docs.
-> 
-> csiphyX-vdda-phy-supply
-> csiphyX-vdda-pll-supply
-> 
-> =>
-> 
-> // voltage domain = vdd_a_csi_01_09 = regulator l1e
-> csiphy0-vdda-phy-supply = <&vreg_l1e_0p9>;
-> 
-> // voltage domain = vdd_a_csi_01_1p2 = regulator l3e
-> csiphy0-vdda-pll-supply = <&vreg_l3e_1p2>;
-> 
-> //
-> csiphy1-vdda-phy-supply = <&vreg_l1e_0p9>;
-> csiphy1-vdda-pll-supply = <&vreg_l3e_1p2>;
-> 
-> Where X indicates the CSIPHY number.
-> 
-> So in fact, in practice we don't need to differentiate these entries.
-> 
-> Checking x1e80100 ...
-> 
-> csiphy0
-> 
-> vdda-phy-supply = <&vreg_l2c_0p9>;
-> vdda-pll-supply = <&vreg_l1c_1p2>;
-> 
-> This is also the case for csiphy 1/2/4
-> 
-> So, I _don't_ believe this is work we need to do, since its the same regulator for each PHY.
+On Thu, 12 Sept 2024 at 13:03, Michael S. Tsirkin <mst@redhat.com> wrote:
+>
+> On Thu, Sep 12, 2024 at 01:11:21AM -0700, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    7c6a3a65ace7 minmax: reduce min/max macro expansion in ato..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=1608e49f980000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=1e7d02549be622b2
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=8a02104389c2e0ef5049
+> > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> >
+> > Unfortunately, I don't have any reproducer for this issue yet.
+> >
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/a1f7496fa21f/disk-7c6a3a65.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/f423739e51a9/vmlinux-7c6a3a65.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/b65a0f38cbd7/bzImage-7c6a3a65.xz
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > Reported-by: syzbot+8a02104389c2e0ef5049@syzkaller.appspotmail.com
+> >
+> > ==================================================================
+> > BUG: KCSAN: data-race in virtqueue_disable_cb / vring_interrupt
+> >
+> > write to 0xffff88810285ef52 of 1 bytes by interrupt on cpu 0:
+> >  vring_interrupt+0x12b/0x180 drivers/virtio/virtio_ring.c:2591
+>
+>
+> Yes, it's racy!
+>
+> 2589:        /* Just a hint for performance: so it's ok that this can be racy! */
+> 2590:        if (vq->event)
+> 2591:            vq->event_triggered = true;
+>
+>
+> Question: is there a way to annotate code to tell syzbot it's ok?
 
-Except when it's not the case, like on the SM8650 HDK:
-VDD_A_CSI_01_0P9	=> VREG_L2I_0P88
-VDD_A_CSI_01_1P2	=> VREG_L3I_1P2
-VDD_A_CSI_24_0P9	=> VREG_L1I_0P88
-VDD_A_CSI_24_1P2	=> VREG_L3I_1P2
-VDD_A_CSI_35_0P9	=> VREG_L2I_0P88
-VDD_A_CSI_35_1P2	=> VREG_L3I_1P2
+In this case, "if (data_race(vq->event))" might be the right choice.
 
-the 1P2 all uses VREG_L3I_1P2, while the 0P9 are using VREG_L2I_0P88 or VREG_L1I_0P88
+This is a quick guide on which access primitive to use in concurrent
+code: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/memory-model/Documentation/access-marking.txt
 
-Not declaring the exact supplies is pure lazyness, it will bounce back at our faces at some point.
-
-Neil
-
-> 
-> ---
-> bod
-
+Thanks,
+-- Marco
 
