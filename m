@@ -1,102 +1,113 @@
-Return-Path: <linux-kernel+bounces-326966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1E03976F30
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:54:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D634D976F34
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:56:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67ED51F21E6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:54:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14C751C23CFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:56:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3671BE868;
-	Thu, 12 Sep 2024 16:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0943A1BE84B;
+	Thu, 12 Sep 2024 16:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSkpgXj+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="Iai0yfON"
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E741AD256;
-	Thu, 12 Sep 2024 16:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736FF1AD256
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 16:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726160053; cv=none; b=jU9/GSlmoOcDmOj6Usf2+E868R4wB/4db62vP3PPw9VD82qigJkoZBz3PAMjVEm6Hr9q5N4TwcupN6gfv7MZeHhuiBY4JqNbqRTPRWZg3/XPN/Egvgl5mj09r7zqA5N6jajSp6cff/ZeTDYqpoTbdhVkM5IkLgcqRQvkjOxTEJo=
+	t=1726160160; cv=none; b=JcUFBVdCH4K916f7WJzui4lMoelex5bkSvp4B4Y3aRPOYL86zNyAd/vMB45eGvLW3Mvr4Q3SyQP+wciIlSQofGXraWipHGlkWzYG716DFg/0NAWJM7Z+z6CDWAsOTg8FWiDfbwbGaDcHufJXkOIgBNGrn8Urhjv2zDYWmtlb5D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726160053; c=relaxed/simple;
-	bh=EvuQRTOvCygv4JttyYOrIYG2JZuDMwbgBuOgkBJTeAc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iMNTeCkbzpKSzXs7ErKT00apM2Cvt6yIOx+l3kUHiPD2Q1IrI3gh1VLaHznAp43Y4r4wGQF24MIq/pqYGzYhoNm7QDzojZA7QukEx8b46X6o77ijnw9gCYVgWqI169uHVix8jhnpnEi15JAT5/JMcyg/oPsaIivpBA7TUkhNWWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RSkpgXj+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B42B2C4CEC3;
-	Thu, 12 Sep 2024 16:54:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726160052;
-	bh=EvuQRTOvCygv4JttyYOrIYG2JZuDMwbgBuOgkBJTeAc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RSkpgXj+jtRgdtCiTXLvwsUHUdoe4J25kmlMfVfb1/cYDHZ39VIPLu0B+EVQYrWEg
-	 eXasDGChp/IqEDddBOUc/14D0P3rUbJEy8ojr8kmWAWhcEzxIidEsLruIsiveCeT/7
-	 BlQTgenMOoQZz0A1+zCRv5EXrG4ipcfqagMuMEj9+sGrXYxlBljX5jv/saUVLWc63C
-	 tcH1VSgSzk7SiVByhan7p8/+K8io2ALVDTPqrE6CHWBJxDwKKo++qPawPEqMRdrpOn
-	 qYlXGo0kJqpyKlp5jnHne3PZ/qwgUGIbicMDDSaRVjD5Tv0fhuY5O5667XleL8Nm6P
-	 g8cY44G2Vnw+A==
-Date: Thu, 12 Sep 2024 17:54:04 +0100
-From: Lee Jones <lee@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Flora Fu <flora.fu@mediatek.com>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Alexandre Mergnat <amergnat@baylibre.com>,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Nicolas Belin <nbelin@baylibre.com>
-Subject: Re: (subset) [PATCH v7 00/16] Add audio support for the MediaTek
- Genio 350-evk board
-Message-ID: <20240912165404.GG24460@google.com>
-References: <20240226-audio-i350-v7-0-6518d953a141@baylibre.com>
- <172544860860.19172.7052813450885034844.b4-ty@kernel.org>
- <20240912145100.GE24460@google.com>
- <10c1217b-d8a3-489c-93fc-6de45dcbe47c@sirena.org.uk>
+	s=arc-20240116; t=1726160160; c=relaxed/simple;
+	bh=FcJUnCFiVsoXjpSCDVRftd/aEVh1GoBnNeIOkB+Htt8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=gk6Uzs6VxpBtriLHnBzzLKvijRHjJ0xxBwTGfIbNbjlqbDyLiNEIQSilRhghwFdcrQAYEDhN71qRo0zxxD99fT+T3Cp8FUSffgTUfeggVfImXBLdcrR4ImsrX6BqRzIGoOvMKGKpUyM6Klon2Ze0EIFkggV1NHP4K6drpdTZR7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=Iai0yfON reason="signature verification failed"; arc=none smtp.client-ip=54.243.244.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
+X-QQ-mid: bizesmtpsz5t1726160119t7d8kh6
+X-QQ-Originating-IP: Zx7oaLjVt1vFN6j3A7H9ICZ/KuQQ0JHOm7wpnlbAoUA=
+Received: from m16.mail.163.com ( [117.135.210.5])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 13 Sep 2024 00:55:17 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 16381243121260492792
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=H/YC5ZRJVMFIwIEo1fHTYKgGKi1Vxrzsf5zIKLg/VCg=; b=I
+	ai0yfONFjkRdTmt3gRnQgp0Lq3WeP/sjKenDPywK4HNzy3eMECAZH4ELOfpR0U0n
+	0ukxgfL63ZvkGRxTp5VBXDLp9HoCQ5UwyANYi0snTyviMzDVQEDjkb8BaoimDNnh
+	LBWYgGrU4XwKRqbSSfxIZKxbBQHgyrdWbh5nTOBIC4=
+Received: from kxwang23$m.fudan.edu.cn ( [104.238.222.239] ) by
+ ajax-webmail-wmsvr-40-136 (Coremail) ; Fri, 13 Sep 2024 00:54:39 +0800
+ (CST)
+Date: Fri, 13 Sep 2024 00:54:39 +0800 (CST)
+From: "Kaixin Wang" <kxwang23@m.fudan.edu.cn>
+To: "Miquel Raynal" <miquel.raynal@bootlin.com>
+Cc: "Frank Li" <Frank.li@nxp.com>, 21210240012@m.fudan.edu.cn, 
+	21302010073@m.fudan.edu.cn, conor.culhane@silvaco.com, 
+	alexandre.belloni@bootlin.com, linux-i3c@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i3c: master: svc: Fix use after free vulnerability in
+ svc_i3c_master Driver Due to Race Condition
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <20240912085709.6ec0a289@xps-13>
+References: <20240911150135.839946-1-kxwang23@m.fudan.edu.cn>
+ <ZuG2SbsHEU5BU9mX@lizhi-Precision-Tower-5810>
+ <20240912085709.6ec0a289@xps-13>
+X-NTES-SC: AL_Qu2ZBP2dv0gs7ySeZOkXn0kbjug3WcW0u/0k3oJUNps0sSbJxCIce1FGAHTrzv+TMyOvnjaRQClvyeFHTa9cY5gZc/65IYnnfpHCxo0OHY+7
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <10c1217b-d8a3-489c-93fc-6de45dcbe47c@sirena.org.uk>
+Message-ID: <C05F548F941D5F36+47d9e505.c28c.191e7288a6e.Coremail.kxwang23@m.fudan.edu.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD3H_vPHONmxpAFAA--.2860W
+X-CM-SenderInfo: zprtkiiuqyikitw6il2tof0z/1tbiwh5Y2GWXw6aYUAAJsK
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:m.fudan.edu.cn:qybglogicsvrsz:qybglogicsvrsz4a-0
 
-On Thu, 12 Sep 2024, Mark Brown wrote:
-
-> On Thu, Sep 12, 2024 at 03:51:00PM +0100, Lee Jones wrote:
-> > On Wed, 04 Sep 2024, Mark Brown wrote:
-> 
-> > > [03/16] dt-bindings: mfd: mediatek: Add codec property for MT6357 PMIC
-> > >         commit: 761cab667898d86c04867948f1b7aec1090be796
-> 
-> > Did you mean to hoover this up?
-> 
-> It seemed to go along with the series and had a DT review so it looked
-> like you'd just left it to the DT people to review, there wasn't any
-> other MFD content in the series.
-
-I applied it from this set 6 weeks ago! :)
-
-
--- 
-Lee Jones [李琼斯]
+CgrlnKggMjAyNC0wOS0xMiAxNDo1NzowOe+8jCJNaXF1ZWwgUmF5bmFsIiA8bWlxdWVsLnJheW5h
+bEBib290bGluLmNvbT4g5YaZ6YGT77yaCj5IaSwKPgo+RnJhbmsubGlAbnhwLmNvbSB3cm90ZSBv
+biBXZWQsIDExIFNlcCAyMDI0IDExOjI0OjU3IC0wNDAwOgo+Cj4+IE9uIFdlZCwgU2VwIDExLCAy
+MDI0IGF0IDExOjAxOjM1UE0gKzA4MDAsIEthaXhpbiBXYW5nIHdyb3RlOgo+PiA+IEluIHRoZSBz
+dmNfaTNjX21hc3Rlcl9wcm9iZSBmdW5jdGlvbiwgJm1hc3Rlci0+aGpfd29yayBpcyBib3VuZCB3
+aXRoCj4+ID4gc3ZjX2kzY19tYXN0ZXJfaGpfd29yaywgJm1hc3Rlci0+aWJpX3dvcmsgaXMgYm91
+bmQgd2l0aAo+PiA+IHN2Y19pM2NfbWFzdGVyX2liaV93b3JrLiBBbmQgc3ZjX2kzY19tYXN0ZXJf
+aWJpX3dvcmsgwqBjYW4gc3RhcnQgdGhlCj4+ID4gaGpfd29yaywgc3ZjX2kzY19tYXN0ZXJfaXJx
+X2hhbmRsZXIgY2FuIHN0YXJ0IHRoZSBpYmlfd29yay4KPj4gPgo+PiA+IElmIHdlIHJlbW92ZSB0
+aGUgbW9kdWxlIHdoaWNoIHdpbGwgY2FsbCBzdmNfaTNjX21hc3Rlcl9yZW1vdmUgdG8KPj4gPiBt
+YWtlIGNsZWFudXAsIGl0IHdpbGwgZnJlZSBtYXN0ZXItPmJhc2UgdGhyb3VnaCBpM2NfbWFzdGVy
+X3VucmVnaXN0ZXIKPj4gPiB3aGlsZSB0aGUgd29yayBtZW50aW9uZWQgYWJvdmUgd2lsbCBiZSB1
+c2VkLiBUaGUgc2VxdWVuY2Ugb2Ygb3BlcmF0aW9ucwo+PiA+IHRoYXQgbWF5IGxlYWQgdG8gYSBV
+QUYgYnVnIGlzIGFzIGZvbGxvd3M6Cj4+ID4KPj4gPiBDUFUwICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICBDUFUxCj4+ID4KPj4gPiAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICB8IHN2Y19pM2NfbWFzdGVyX2hqX3dvcmsKPj4gPiBzdmNfaTNjX21hc3Rl
+cl9yZW1vdmUgICAgICAgICAgICAgICB8Cj4+ID4gaTNjX21hc3Rlcl91bnJlZ2lzdGVyKCZtYXN0
+ZXItPmJhc2UpfAo+PiA+IGRldmljZV91bnJlZ2lzdGVyKCZtYXN0ZXItPmRldikgICAgIHwKPj4g
+PiBkZXZpY2VfcmVsZWFzZSAgICAgICAgICAgICAgICAgICAgICB8Cj4+ID4gLy9mcmVlIG1hc3Rl
+ci0+YmFzZSAgICAgICAgICAgICAgICAgfAo+PiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIHwgaTNjX21hc3Rlcl9kb19kYWEoJm1hc3Rlci0+YmFzZSkKPj4gPiAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8IC8vdXNlIG1hc3Rlci0+YmFzZQo+PiA+Cj4+
+ID4gRml4IGl0IGJ5IGVuc3VyaW5nIHRoYXQgdGhlIHdvcmsgaXMgY2FuY2VsZWQgYmVmb3JlIHBy
+b2NlZWRpbmcgd2l0aCB0aGUKPj4gPiBjbGVhbnVwIGluIHN2Y19pM2NfbWFzdGVyX3JlbW92ZS4K
+Pj4gPgo+PiA+IFNpZ25lZC1vZmYtYnk6IEthaXhpbiBXYW5nIDxreHdhbmcyM0BtLmZ1ZGFuLmVk
+dS5jbj4KPj4gPiAtLS0gIAo+PiAKPj4gUGxlYXNlIGFkZCBmaXhlcyB0YWcgYW5kIGNjIHN0YWJs
+ZS4KPgo+WWVzIGluZGVlZC4gT3RoZXJ3aXNlIGxvb2tzIGdvb2QgdG8gbWUgb25jZSB0aGlzIGZp
+eGVkLgo+Cj5SZXZpZXdlZC1ieTogTWlxdWVsIFJheW5hbCA8bWlxdWVsLnJheW5hbEBib290bGlu
+LmNvbT4KPgo+VGhhbmtzLAo+TWlxdcOobAo+CgpUaGFua3MgZm9yIHRoZSByZXZpZXchCgpCZXN0
+IHJlZ2FyZHMsCkthaXhpbiBXYW5nCg==
 
