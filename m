@@ -1,142 +1,148 @@
-Return-Path: <linux-kernel+bounces-326480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63F389768DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:15:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE6EF9768DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEC392832B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:15:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D25BB2432C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 12:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179D51A2659;
-	Thu, 12 Sep 2024 12:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C02419F420;
+	Thu, 12 Sep 2024 12:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BguL3c3R"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Sd+YwGt+";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="fF1w6HzE"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC64E1A2567;
-	Thu, 12 Sep 2024 12:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099771E51D
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 12:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726143299; cv=none; b=lLyAyh5pN45D5lwdfs8D/scK6W5VXD03M97NEuBwm5VlyWs3TB6pUE4wcrEO6fJoHgnk0vVVIogkTxGsqrADt7zZoSfWmEoA2rK+xFzaM4uE7Qgbt6GYuT0x7cyPh40nz5MJFqa1gz5eDA51Arq8xSDiEVJQ+kX0GWieIF0Q064=
+	t=1726143313; cv=none; b=pHhsdoaNJrOreii39sBJ9bBUR8ED6+J7ezw5U0HwA0bF5gUYYVez0B/spVlLa+RXFxEL42V1bsgBqT5DoZGSfjFBbyfW+uo7JewWvBGvUlxjpZMbhj3PiVZCOqhXZMukMWkJUsi105olAfv6qrB2YkpKaDNQflhCWbKgs9J1l/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726143299; c=relaxed/simple;
-	bh=bFOFsSQEk5ZqaizgNm0YjuWjwI52R6tKqjo5RfDa6hY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UNsM/ryRgQ9F0zmMAZraRmcbfrXHh6FAcYLyhhn2W6BMHb7K4NpgO44/jton9oz1tPL4d1XB+4u2ZtcmDeevh76soVGAZAolVVjcsPHUGHztx186Ktn3mZL44O+dPFkdaIXfa7YmSngUAg+meKrANIGJlDttoBW2ZnvQasjBuyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BguL3c3R; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1726143313; c=relaxed/simple;
+	bh=oP+x8vTR6i5LlScGznSHY5Nv6feXOepnr9iiMusFwbE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PGwtE3TDeK1IA9AtV4jbeeAKsa7Gj46OhPxUH867smFLVLbdA7r9qvzbP8W1OdmJc5ElrXnkmGLnHJfrPxw+3ENU4ntx3D/44rvu7/4F76BL5bafYrVSn6yA9S8VWgm/JyWUGnFJHAYurSpPLJBLf3PG7OgjJ6lqUfzoLPcTzXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=Sd+YwGt+; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=fF1w6HzE; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726143298; x=1757679298;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bFOFsSQEk5ZqaizgNm0YjuWjwI52R6tKqjo5RfDa6hY=;
-  b=BguL3c3RFMhW7sroGQsBXymT8BstdwVQy76HDdA8/Ngg5a+/FwOQIdfz
-   Q2TJvi9lp5z0wUyfCPOGFPEi1lAPbEjeFrXwwxr47toHLaWuFbqCmIISc
-   62Nh7WCZrecVYoYUmB264wZGCayh42xqsZBZwCdweRwpvnRqkp8YTC1wv
-   QEnevEKT53ky40OwmJ3KXWPQktBLeTbqE99IXuwO4+hGF/D6BJHlI5Wjq
-   1fHA6iQUfifWsDAIsYYEwgtJ9IhT3dDNpyTNDWltB4ie5pZr+oFrI+MDf
-   lK3ftBVyhtgT+ffJFKoNBau3UFTatP6ASw2uAr1fhX4QJoq9j6p2aOThv
-   g==;
-X-CSE-ConnectionGUID: EC5BsLK2STKAhcgqkSXXmQ==
-X-CSE-MsgGUID: CL9/OsPPTEOrrqk0EIm2nA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11192"; a="36129045"
-X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
-   d="scan'208";a="36129045"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 05:14:57 -0700
-X-CSE-ConnectionGUID: 7G5nBN0xSly0OHoXcdqvsQ==
-X-CSE-MsgGUID: VeKXwzuNR/2lB0rY2t0G2Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,223,1719903600"; 
-   d="scan'208";a="72477476"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 05:14:56 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id AA16A11F7DC;
-	Thu, 12 Sep 2024 15:14:52 +0300 (EEST)
-Date: Thu, 12 Sep 2024 12:14:52 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Tommaso Merciai <tomm.merciai@gmail.com>, linuxfancy@googlegroups.com,
-	julien.massot@collabora.com,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] media: i2c: max96714: add HAS_EVENTS subdev flag
-Message-ID: <ZuLbPMluhB4NL7ty@kekkonen.localdomain>
-References: <20240910134428.795273-1-tomm.merciai@gmail.com>
- <20240910134428.795273-2-tomm.merciai@gmail.com>
- <20240912104409.GA25276@pendragon.ideasonboard.com>
- <ZuLMUaxn/oTw5dco@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
- <20240912120510.GB25276@pendragon.ideasonboard.com>
+	d=hansenpartnership.com; s=20151216; t=1726143309;
+	bh=oP+x8vTR6i5LlScGznSHY5Nv6feXOepnr9iiMusFwbE=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=Sd+YwGt+tlFV3Ao0FyAT7VdVyLAleprzJQFM6pzpsfp02E17Ci1u4qdKJY/Rxeau+
+	 7oWuRxf/L+WJ0fi/oCkx2WqWTX5Ed7pHNFRkhS1qnAFpqO3Axi1BlBSjiMOhiGqxnM
+	 dx8Z4USKLREam8PlDKfZV+ejUE5Xz+tWN6Y+HcD8=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id E3E321286089;
+	Thu, 12 Sep 2024 08:15:09 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id D75SfnYKynVW; Thu, 12 Sep 2024 08:15:09 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1726143308;
+	bh=oP+x8vTR6i5LlScGznSHY5Nv6feXOepnr9iiMusFwbE=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=fF1w6HzEY/tm/Y6bSe4tFwhUdZImuVSqH0K0W6zR9CNnGWPOtpE1FEbPV3pbm2/OL
+	 EDdBMdwwf+bW4b2fcJ97CFbmT1g8Lv9fTT92Nu3GANo8wzk2oTuOlA455jf3/F+QNt
+	 VTwN+mTxpsnV7bw6d+qQ/21ANA5cItEfEp8qnPBk=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 384B512860C5;
+	Thu, 12 Sep 2024 08:15:05 -0400 (EDT)
+Message-ID: <0b334090c4bf21740b19371664ad0d78b66830c4.camel@HansenPartnership.com>
+Subject: Re: [PATCH RFC 0/3] tsm: Unified Measurement Register ABI for TVMs
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: "Xing, Cedric" <cedric.xing@intel.com>, Qinkun Bao <qinkun@google.com>
+Cc: Jean-Philippe Brucker <jean-philippe@linaro.org>, Dan Williams
+ <dan.j.williams@intel.com>, Samuel Ortiz <sameo@rivosinc.com>, Lukas Wunner
+ <lukas@wunner.de>, Dionna Amalie Glaze <dionnaglaze@google.com>, Mikko
+ Ylinen <mikko.ylinen@linux.intel.com>, Kuppuswamy Sathyanarayanan
+ <sathyanarayanan.kuppuswamy@linux.intel.com>, linux-kernel@vger.kernel.org,
+  linux-coco@lists.linux.dev, suzuki.poulose@arm.com, sami.mujawar@arm.com,
+ Chong Cai <chongc@google.com>
+Date: Thu, 12 Sep 2024 08:15:01 -0400
+In-Reply-To: <c7157fb7-b8d0-482b-9ec3-d60179a95882@intel.com>
+References: <20240907-tsm-rtmr-v1-0-12fc4d43d4e7@intel.com>
+	 <20240910170959.GA213064@myrica>
+	 <f6b0a1d2-c730-4b20-a8f3-afd9a7cf822a@intel.com>
+	 <14fc2ce22d224f05f4d382cd22f5242297e9fb86.camel@HansenPartnership.com>
+	 <CAOjUGWfgYoXBzUB8wFvO5LDq+=t7hAEksu0EA4Dc7FwbmUJp7A@mail.gmail.com>
+	 <f92766c96c993276bec770e8a255bca6cc46c292.camel@HansenPartnership.com>
+	 <c7157fb7-b8d0-482b-9ec3-d60179a95882@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240912120510.GB25276@pendragon.ideasonboard.com>
+Content-Transfer-Encoding: 7bit
 
-Hi Laurent,
-
-On Thu, Sep 12, 2024 at 03:05:10PM +0300, Laurent Pinchart wrote:
-> On Thu, Sep 12, 2024 at 01:11:13PM +0200, Tommaso Merciai wrote:
-> > Hi Laurent,
-> > 
-> > On Thu, Sep 12, 2024 at 01:44:09PM +0300, Laurent Pinchart wrote:
-> > > Hi Tommaso,
-> > > 
-> > > On Tue, Sep 10, 2024 at 03:44:27PM +0200, Tommaso Merciai wrote:
-> > > > Controls can be exposed to userspace via a v4l-subdevX device, and
-> > > > userspace has to be able to subscribe to control events so that it is
-> > > > notified when the control changes value. Add missing HAS_EVENTS flag.
-> > > 
-> > > How is this supposed to work, given that the driver doesn't implement
-> > > .subscribe_event() ?
-> > 
-> > You are completely right, sorry.
-> > I think in both cases I'm missing:
-> > 
-> > diff --git a/drivers/media/i2c/max96714.c b/drivers/media/i2c/max96714.c
-> > index 94b1bc000e48..2257b6b807ea 100644
-> > --- a/drivers/media/i2c/max96714.c
-> > +++ b/drivers/media/i2c/max96714.c
-> > @@ -17,6 +17,7 @@
-> > 
-> >  #include <media/v4l2-cci.h>
-> >  #include <media/v4l2-ctrls.h>
-> > +#include <media/v4l2-event.h>
-> >  #include <media/v4l2-fwnode.h>
-> >  #include <media/v4l2-subdev.h>
-> > 
-> > @@ -488,6 +489,8 @@ static int max96714_log_status(struct v4l2_subdev *sd)
-> > 
-> >  static const struct v4l2_subdev_core_ops max96714_subdev_core_ops = {
-> >         .log_status = max96714_log_status,
-> > +       .subscribe_event = v4l2_ctrl_subdev_subscribe_event,
-> > +       .unsubscribe_event = v4l2_event_subdev_unsubscribe,
-> >  };
-> > 
-> >  static const struct v4l2_subdev_video_ops max96714_video_ops = {
-> > 
-> > Like you suggest. Or I'm wrong?
+On Wed, 2024-09-11 at 22:23 -0500, Xing, Cedric wrote:
+> Hi James,
 > 
-> That looks better :-)
-> 
-> Out of curiosity, what's your use case for control events ?
+> I would like to clarify that, even though the log format is
+> incompatible with the existing TCG2 log format, nothing prevents TPM
+> PCRs from being exposed through the TSM measurement framework.
 
-I'm not sure if there's a use case, however control event should be
-supported when a driver supports controls.
+Well, the PCRs are already exposed through 
 
--- 
-Regards,
+/sys/class/tpm/tpm0/pcr-<algo>/<n>
 
-Sakari Ailus
+but they don't have much meaning without the log.
+
+> Please note that the existing event types in the TCG2 log format are 
+> predominantly BIOS/firmware-oriented, which seldom makes sense for 
+> applications in OS runtime. Consequently, most application-specific 
+> events have to come under the EV_EVENT_TAG umbrella, which is 
+> essentially arbitrary binary data with no specific format. Thus, I
+> don't see much value in continuing the TCG2 log into OS runtime IMHO.
+
+And the IMA log, which is runtime and isn't TCG2?
+
+> The proposed log format aims to provide a framework for unambiguous 
+> hashing while allowing application-defined events. Its primary design
+> objective is to enable application-agnostic kernel/verifier to 
+> hash/verify logs without understanding the event records, allowing 
+> application-specific appraisers to be built on top (i.e., 
+> semantics/storage separation). Both TCG2 and CEL formats rely on 
+> event/content type to dictate what part of event data to hash, making
+> semantics/storage separation impossible. Therefore, this proposed log
+> format cannot accommodate entries from TCG2 or CEL logs due to that 
+> design conflict. However, entries of this log can easily be
+> encapsulated in TCG2 (as EV_ACTION entries) or CEL-JSON (a new
+> content type string needs to be defined, like what systemd is doing
+> today) logs.
+
+But that's my complaint.  This specification:
+
+   - Records are lines ending with `\n`.
+   - Each record (line) is hashed in its entirety (excluding the
+   trailing `\n`) and extended to the RTMR.
+   - The log for an RTMR is stored at
+   `/sys/kernel/tsm/<MR group name>/<RTMR name>/event_log` and consists
+   of these delineated records.
+   - Lines that are empty (containing only `\n`) or start with `#` are
+   skipped (not hashed or extended).
+   
+Is completely incompatible with pretty much every current log format. 
+Given you have fairly elaborate decorations for the register formats,
+what's the problem with simply having a decoration for the log format? 
+That way you can use the above incompatible log for your purpose but this
+framework can support existing logs and expand to future ones as they come
+along.  All this would mean initially to the code is adding the decoration
+file (easy) and ensuring that append_event is handled by a log format
+specific component, allowing for expansion.
+
+James
+
 
