@@ -1,147 +1,154 @@
-Return-Path: <linux-kernel+bounces-326906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9157976E57
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:01:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06043976E54
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:01:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 890C7281851
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:01:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CBA1B22C51
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7764126C05;
-	Thu, 12 Sep 2024 16:01:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7766F43144;
-	Thu, 12 Sep 2024 16:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8830B7868B;
+	Thu, 12 Sep 2024 16:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="D0TFyp6E";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="heHxXiK1";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="D0TFyp6E";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="heHxXiK1"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742591EB2A;
+	Thu, 12 Sep 2024 16:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726156900; cv=none; b=lSAa32iRmt/CULHKeWdjiFSRyOHtE0yW5ObGcjfaOOFr2Zl6/MLXhrfDNznRgo20oSGcQIU0f3sTJlK5jDJeZT6j2giwxQGquBGogrxwcdV8yGTxWrMPVWRZOMR0+6azd/c31HuAUVMzzvI0ka29ESYda7i78V9Z06gqotPgOJI=
+	t=1726156852; cv=none; b=C+A3YFlZipsduBLxaAVTmjxasIpCPbdYF4kbq/ZjJMfNfRlC/fddCK0vwfs+OXVkPy1394OUHaB4UTr07DY5NDgUYsJNFYxQXE+l9LL+OkwVjNJ7KR+7LxaJY9BnoUW6Ir3Ri2b/LflZ5NOEg5Kv+adPCMQZ7fcVfvfQ744PBtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726156900; c=relaxed/simple;
-	bh=jYXw2uiElp5iGEHTeUqCiCGns270dC90YDCh7La/u5w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gUb/DoOE2K8oVYAFP7izLOPJ/ru1/rP9EhqvAwi3JgqGgJofRvwwlGMeLuiKPiyYk+xJc3lW9xDP51idiLQ/Uq5N2pHzT4Nra4B1zF93f4I1GPH0BHythlajgeZ7Z/PEBfkafI1LF0KPGkBSDuyHA2E2qqksXsrOEGGs1gZFuOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 00F3C152B;
-	Thu, 12 Sep 2024 09:02:07 -0700 (PDT)
-Received: from [10.1.32.61] (e127648.arm.com [10.1.32.61])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D09103F66E;
-	Thu, 12 Sep 2024 09:01:35 -0700 (PDT)
-Message-ID: <ac4c9060-e447-46da-9f37-167864a7906f@arm.com>
-Date: Thu, 12 Sep 2024 17:01:33 +0100
+	s=arc-20240116; t=1726156852; c=relaxed/simple;
+	bh=gG42ozVvV6+BbGtVKFqhowCSWwptcDdxjLkJvWrSKbI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZyFsWPBo7hqTJeDcm7RvgB6zReRE0vpscVHwi1zf9WA/3ELZLK7QZ8k1O7HhFEz5ri0Gh3yM9iIJ/c+r6dveQD9Jdu+u+VsaIwxWqxTWgL6sY0ZeW/BIZw+fO1IKpXbnTIxCXBeHDnspoxbvKpXKYUs8JIOj1nQCztRlSPXgZO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=D0TFyp6E; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=heHxXiK1; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=D0TFyp6E; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=heHxXiK1; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8B46F21B13;
+	Thu, 12 Sep 2024 16:00:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726156848; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VH1CvNjzwRlNSKpwAd7M4y39jAuCuA7jnUxQokgxr7g=;
+	b=D0TFyp6EW2F/UxiNht6DbbO88VmaVEUqQ+wevWeOh5Sd6sUDi/byXIesAeCOKK60H2ZCM1
+	gGeIs8ikD0CdndsyUvFTBWfw1MiIqheDFUOWVHPWPHkjjn9jGxvwCO9qG/EC6kl83KCgpO
+	tdWM3OpaNdRdcYy13E2aFxxjCn9U54k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726156848;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VH1CvNjzwRlNSKpwAd7M4y39jAuCuA7jnUxQokgxr7g=;
+	b=heHxXiK1AYGqiawPVHwbuCawvfK42Cxuc3J9Rsa+lZKSBrbZxPVVGNUg+1uOuxsA792jb7
+	aIBeZ4wllmHA03Dw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=D0TFyp6E;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=heHxXiK1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726156848; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VH1CvNjzwRlNSKpwAd7M4y39jAuCuA7jnUxQokgxr7g=;
+	b=D0TFyp6EW2F/UxiNht6DbbO88VmaVEUqQ+wevWeOh5Sd6sUDi/byXIesAeCOKK60H2ZCM1
+	gGeIs8ikD0CdndsyUvFTBWfw1MiIqheDFUOWVHPWPHkjjn9jGxvwCO9qG/EC6kl83KCgpO
+	tdWM3OpaNdRdcYy13E2aFxxjCn9U54k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726156848;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VH1CvNjzwRlNSKpwAd7M4y39jAuCuA7jnUxQokgxr7g=;
+	b=heHxXiK1AYGqiawPVHwbuCawvfK42Cxuc3J9Rsa+lZKSBrbZxPVVGNUg+1uOuxsA792jb7
+	aIBeZ4wllmHA03Dw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3FF9B13A73;
+	Thu, 12 Sep 2024 16:00:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id UyWxDTAQ42Y0IgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 12 Sep 2024 16:00:48 +0000
+Date: Thu, 12 Sep 2024 18:01:37 +0200
+Message-ID: <877cbgg8ta.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Joshua Pius <joshuapius@chromium.org>
+Cc: alsa-devel@alsa-project.org,
+	Joshua Pius <joshuapius@google.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Karol Kosik <k.kosik@outlook.com>,
+	"Steven 'Steve' Kendall" <skend@chromium.org>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: usb-audio: Add logitech Audio profile quirk
+In-Reply-To: <20240912152635.1859737-1-joshuapius@google.com>
+References: <20240912152635.1859737-1-joshuapius@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cpufreq/schedutil: Only bind threads if needed
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- linux-pm <linux-pm@vger.kernel.org>, Qais Yousef <qyousef@layalina.io>,
- Juri Lelli <juri.lelli@redhat.com>, Ingo Molnar <mingo@redhat.com>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Pierre Gondois <pierre.gondois@arm.com>
-References: <480f2140-ea59-4e1d-a68d-18cbcec10941@arm.com>
- <CAJZ5v0h_AFNe2ZynDseE7N_5U9DV4NnLEhw9w=ErGuBswfpWow@mail.gmail.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <CAJZ5v0h_AFNe2ZynDseE7N_5U9DV4NnLEhw9w=ErGuBswfpWow@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: 8B46F21B13
+X-Spam-Score: -5.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-5.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[outlook.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[alsa-project.org,google.com,perex.cz,suse.com,outlook.com,chromium.org,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 9/12/24 16:41, Rafael J. Wysocki wrote:
-> On Thu, Sep 12, 2024 at 3:53 PM Christian Loehle
-> <christian.loehle@arm.com> wrote:
->>
->> Remove the unconditional binding of sugov kthreads to the affected CPUs
->> if the cpufreq driver indicates that updates can happen from any CPU.
->> This allows userspace to set affinities to either save power (waking up
->> bigger CPUs on HMP can be expensive) or increasing performance (by
->> letting the utilized CPUs run without preemption of the sugov kthread).
->>
->> Without this patch the behavior of sugov threads will basically be a
->> boot-time dice roll on which CPU of the PD has to handle all the
->> cpufreq updates. With the recent decreases of update filtering these
->> two basic problems become more and more apparent:
->> 1. The wake_cpu might be idle and we are waking it up from another
->> CPU just for the cpufreq update. Apart from wasting power, the exit
->> latency of it's idle state might be longer than the sugov threads
->> running time, essentially delaying the cpufreq update unnecessarily.
->> 2. We are preempting either the requesting or another busy CPU of the
->> PD, while the update could be done from a CPU that we deem less
->> important and pay the price of an IPI and two context-switches.
->>
->> The change is essentially not setting PF_NO_SETAFFINITY on
->> dvfs_possible_from_any_cpu, no behavior change if userspace doesn't
->> touch affinities.
+On Thu, 12 Sep 2024 17:26:28 +0200,
+Joshua Pius wrote:
 > 
-> I'd like to hear from Viresh on this.
+> Specify shortnames for the following Logitech Devices: Rally bar, Rally
+> bar mini, Tap, MeetUp and Huddle.
 > 
->> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
->> ---
->>  kernel/sched/cpufreq_schedutil.c | 6 +++++-
->>  kernel/sched/syscalls.c          | 3 +++
->>  2 files changed, 8 insertions(+), 1 deletion(-)
->>
->> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
->> index 43111a515a28..466fb79e0b81 100644
->> --- a/kernel/sched/cpufreq_schedutil.c
->> +++ b/kernel/sched/cpufreq_schedutil.c
->> @@ -683,7 +683,11 @@ static int sugov_kthread_create(struct sugov_policy *sg_policy)
->>         }
->>
->>         sg_policy->thread = thread;
->> -       kthread_bind_mask(thread, policy->related_cpus);
->> +       if (policy->dvfs_possible_from_any_cpu)
->> +               set_cpus_allowed_ptr(thread, policy->related_cpus);
->> +       else
->> +               kthread_bind_mask(thread, policy->related_cpus);
->> +
->>         init_irq_work(&sg_policy->irq_work, sugov_irq_work);
->>         mutex_init(&sg_policy->work_lock);
->>
->> diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
->> index c62acf509b74..7d4a4edfcfb9 100644
->> --- a/kernel/sched/syscalls.c
->> +++ b/kernel/sched/syscalls.c
->> @@ -1159,6 +1159,9 @@ int dl_task_check_affinity(struct task_struct *p, const struct cpumask *mask)
->>         if (!task_has_dl_policy(p) || !dl_bandwidth_enabled())
->>                 return 0;
->>
->> +       if (dl_entity_is_special(&p->dl))
->> +               return 0;
->> +
-> 
-> Care to explain this particular piece?
+> Signed-off-by: Joshua Pius <joshuapius@chromium.org>
 
-Looks suspicious but the truncated comment below explains it:
-	/*
-	 * Since bandwidth control happens on root_domain basis,
-	 * if admission test is enabled, we only admit -deadline
-	 * tasks allowed to run on all the CPUs in the task's
-	 * root_domain.
-	 */
-So that would only allow setting it to all CPUs for the relevant
-platforms unfortunately.
+Thanks, applied.
 
-That should be fine though since the sugov task is pretty much
-a dummy in terms of bandwidth / admission control internally, so
-no harm done to not enforce this when userspace wants to set
-affinities.
-...Unless Juri disagrees.
 
-> 
->>         /*
->>          * Since bandwidth control happens on root_domain basis,
->>          * if admission test is enabled, we only admit -deadline
->> --
-
+Takashi
 
