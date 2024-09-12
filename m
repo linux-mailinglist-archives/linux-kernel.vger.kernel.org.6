@@ -1,109 +1,147 @@
-Return-Path: <linux-kernel+bounces-326904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8B15976E51
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:59:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9157976E57
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:01:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 518DBB22A78
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:59:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 890C7281851
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E721BAEFB;
-	Thu, 12 Sep 2024 15:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bH94ytom"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF121B9B46;
-	Thu, 12 Sep 2024 15:59:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7764126C05;
+	Thu, 12 Sep 2024 16:01:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7766F43144;
+	Thu, 12 Sep 2024 16:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726156789; cv=none; b=OB4fCbN4Cwg+aC0lG1C0Xacz9hdU0x+1gw6AF4F7pRhbrM09EFnRIr9M9uTqYwsr/8QzZB6ltaPaMoKmo14+8tunn7oCAUSl4rTefAV2Zwxdmr8YQxv1M+JqNwFoV7ms5zf+vy4zoV/sayoIHBf6r0cn0Fa5MZmnAYDyZEdVCvY=
+	t=1726156900; cv=none; b=lSAa32iRmt/CULHKeWdjiFSRyOHtE0yW5ObGcjfaOOFr2Zl6/MLXhrfDNznRgo20oSGcQIU0f3sTJlK5jDJeZT6j2giwxQGquBGogrxwcdV8yGTxWrMPVWRZOMR0+6azd/c31HuAUVMzzvI0ka29ESYda7i78V9Z06gqotPgOJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726156789; c=relaxed/simple;
-	bh=10XQZp334ICfGIzjTHfIhZ69Z8yK42Sp65d2sy226x8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hAqDAfCkkLAxG/M1Pkc7kSExmhKfZu0jFVtxutYMccPQ5h1lIHNm6nZUCs+kSTHZQ6qmevOwNubKpmU2Qzn3xgOSn0XnQtDnBFkCi7CGXoJhYadyolMvxYgwJz/0l1sUxuS/E/rcSNdOxmrVomuCUTQIYN/v0fbtM4h0N5s7CnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bH94ytom; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B5B3C4CEC5;
-	Thu, 12 Sep 2024 15:59:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726156789;
-	bh=10XQZp334ICfGIzjTHfIhZ69Z8yK42Sp65d2sy226x8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bH94ytomvyNQnybKtJYaHhAVZKfX0VxSX4I7s45aEdiBRi8C2/4EBdNAC4V+PPoxt
-	 Ot54cTYJvx9l+Tx9SjtHr/25AgzWKD9ci83JM08JZVv0wW/kT7WgdxHD3NwJchMiqk
-	 7NXlDbuwY7MbS3O4yQRzXOyeyRnqOB8Kag6BZyfoAkMYoUg+k5zDCENKG20RmDZfjS
-	 5CrL2q4wmATMY9dDR9I6PnlIYwvItNiCIH18hvgTya5gnTFIXBk4EnpUfNGmvKCVoT
-	 ugJaUI2yAyEDsj0bj/OVjWpi0HYwPvC89TF9bfWVQKv/8MLe5XrEOxsJsSfoqO11jj
-	 FT4L8f6PiamwA==
-Date: Thu, 12 Sep 2024 16:59:44 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Fuad Tabba <tabba@google.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] KVM: arm64: Fix confusion in documentation for pKVM
- SME assert
-Message-ID: <3e5253f2-ea69-4ae4-833c-0627b410e815@sirena.org.uk>
-References: <20240730-kvm-arm64-sme-assert-v3-1-8699454e5cb8@kernel.org>
+	s=arc-20240116; t=1726156900; c=relaxed/simple;
+	bh=jYXw2uiElp5iGEHTeUqCiCGns270dC90YDCh7La/u5w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gUb/DoOE2K8oVYAFP7izLOPJ/ru1/rP9EhqvAwi3JgqGgJofRvwwlGMeLuiKPiyYk+xJc3lW9xDP51idiLQ/Uq5N2pHzT4Nra4B1zF93f4I1GPH0BHythlajgeZ7Z/PEBfkafI1LF0KPGkBSDuyHA2E2qqksXsrOEGGs1gZFuOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 00F3C152B;
+	Thu, 12 Sep 2024 09:02:07 -0700 (PDT)
+Received: from [10.1.32.61] (e127648.arm.com [10.1.32.61])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D09103F66E;
+	Thu, 12 Sep 2024 09:01:35 -0700 (PDT)
+Message-ID: <ac4c9060-e447-46da-9f37-167864a7906f@arm.com>
+Date: Thu, 12 Sep 2024 17:01:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="+zXfBMQstQ6Z1UEz"
-Content-Disposition: inline
-In-Reply-To: <20240730-kvm-arm64-sme-assert-v3-1-8699454e5cb8@kernel.org>
-X-Cookie: Happiness is the greatest good.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] cpufreq/schedutil: Only bind threads if needed
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ linux-pm <linux-pm@vger.kernel.org>, Qais Yousef <qyousef@layalina.io>,
+ Juri Lelli <juri.lelli@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Pierre Gondois <pierre.gondois@arm.com>
+References: <480f2140-ea59-4e1d-a68d-18cbcec10941@arm.com>
+ <CAJZ5v0h_AFNe2ZynDseE7N_5U9DV4NnLEhw9w=ErGuBswfpWow@mail.gmail.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <CAJZ5v0h_AFNe2ZynDseE7N_5U9DV4NnLEhw9w=ErGuBswfpWow@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 9/12/24 16:41, Rafael J. Wysocki wrote:
+> On Thu, Sep 12, 2024 at 3:53 PM Christian Loehle
+> <christian.loehle@arm.com> wrote:
+>>
+>> Remove the unconditional binding of sugov kthreads to the affected CPUs
+>> if the cpufreq driver indicates that updates can happen from any CPU.
+>> This allows userspace to set affinities to either save power (waking up
+>> bigger CPUs on HMP can be expensive) or increasing performance (by
+>> letting the utilized CPUs run without preemption of the sugov kthread).
+>>
+>> Without this patch the behavior of sugov threads will basically be a
+>> boot-time dice roll on which CPU of the PD has to handle all the
+>> cpufreq updates. With the recent decreases of update filtering these
+>> two basic problems become more and more apparent:
+>> 1. The wake_cpu might be idle and we are waking it up from another
+>> CPU just for the cpufreq update. Apart from wasting power, the exit
+>> latency of it's idle state might be longer than the sugov threads
+>> running time, essentially delaying the cpufreq update unnecessarily.
+>> 2. We are preempting either the requesting or another busy CPU of the
+>> PD, while the update could be done from a CPU that we deem less
+>> important and pay the price of an IPI and two context-switches.
+>>
+>> The change is essentially not setting PF_NO_SETAFFINITY on
+>> dvfs_possible_from_any_cpu, no behavior change if userspace doesn't
+>> touch affinities.
+> 
+> I'd like to hear from Viresh on this.
+> 
+>> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+>> ---
+>>  kernel/sched/cpufreq_schedutil.c | 6 +++++-
+>>  kernel/sched/syscalls.c          | 3 +++
+>>  2 files changed, 8 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+>> index 43111a515a28..466fb79e0b81 100644
+>> --- a/kernel/sched/cpufreq_schedutil.c
+>> +++ b/kernel/sched/cpufreq_schedutil.c
+>> @@ -683,7 +683,11 @@ static int sugov_kthread_create(struct sugov_policy *sg_policy)
+>>         }
+>>
+>>         sg_policy->thread = thread;
+>> -       kthread_bind_mask(thread, policy->related_cpus);
+>> +       if (policy->dvfs_possible_from_any_cpu)
+>> +               set_cpus_allowed_ptr(thread, policy->related_cpus);
+>> +       else
+>> +               kthread_bind_mask(thread, policy->related_cpus);
+>> +
+>>         init_irq_work(&sg_policy->irq_work, sugov_irq_work);
+>>         mutex_init(&sg_policy->work_lock);
+>>
+>> diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
+>> index c62acf509b74..7d4a4edfcfb9 100644
+>> --- a/kernel/sched/syscalls.c
+>> +++ b/kernel/sched/syscalls.c
+>> @@ -1159,6 +1159,9 @@ int dl_task_check_affinity(struct task_struct *p, const struct cpumask *mask)
+>>         if (!task_has_dl_policy(p) || !dl_bandwidth_enabled())
+>>                 return 0;
+>>
+>> +       if (dl_entity_is_special(&p->dl))
+>> +               return 0;
+>> +
+> 
+> Care to explain this particular piece?
 
---+zXfBMQstQ6Z1UEz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Looks suspicious but the truncated comment below explains it:
+	/*
+	 * Since bandwidth control happens on root_domain basis,
+	 * if admission test is enabled, we only admit -deadline
+	 * tasks allowed to run on all the CPUs in the task's
+	 * root_domain.
+	 */
+So that would only allow setting it to all CPUs for the relevant
+platforms unfortunately.
 
-On Tue, Jul 30, 2024 at 02:33:03PM +0100, Mark Brown wrote:
-> As raised in the review comments for the original patch the assert and
-> comment added in afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are
-> disabled in protected mode") are bogus. The comments says that we check
-> that we do not have SME enabled for a pKVM guest but the assert actually
-> checks to see if the host has anything set in SVCR which is unrelated to
-> the guest features or state, regardless of if those guests are protected
-> or not. This check is also made in the hypervisor, it will refuse to run
-> a guest if the check fails, so it appears that the assert here is
-> intended to improve diagnostics.
+That should be fine though since the sugov task is pretty much
+a dummy in terms of bandwidth / admission control internally, so
+no harm done to not enforce this when userspace wants to set
+affinities.
+...Unless Juri disagrees.
 
-This hasn't had any feedback for a whole release cycle - are there any
-issues with the patch?
+> 
+>>         /*
+>>          * Since bandwidth control happens on root_domain basis,
+>>          * if admission test is enabled, we only admit -deadline
+>> --
 
-> Fixes: afb91f5f8ad7 ("KVM: arm64: Ensure that SME controls are disabled in protected mode")
-> Reviewed-by: Fuad Tabba <tabba@google.com>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-
-Faud reviewed it during the prior cycle.
-
---+zXfBMQstQ6Z1UEz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmbjD+8ACgkQJNaLcl1U
-h9Bb3gf+MQZdJ0f4YsuOTSEO/+jdqHESFHKG/LBJhBkskYCnDDu5xzs5v/ICLZ+y
-nXlhI6KR34Jux8pGsfe1N8qZhUCdLrFjchv58/T3aRv3wtJMb70E57fHn45LSIdI
-spn3yJ9Pifjb4fhEj5S7vNvIAoLzPiBeC9WbQ5lc4yYk5UjB4p2ve4kDRplzMRKQ
-ytfxfdGRSBvUB/61JOb4RCqET7oM03KLOSKE+LWh9gxpPT6j+40YUoVih/WCeXK9
-s50hKPdifEK77Nm0Au1huDadMixBYj88veZxXSovvFx+k7IBvVrD+aevVyzprp7J
-jfQwupRHjunFgAU1CQHorZZxmgqUPQ==
-=hzB6
------END PGP SIGNATURE-----
-
---+zXfBMQstQ6Z1UEz--
 
