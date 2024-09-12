@@ -1,540 +1,130 @@
-Return-Path: <linux-kernel+bounces-327303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87EA59773B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:42:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 780899773E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:52:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACCE61C23DC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:42:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B15031C24295
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E3C81C2306;
-	Thu, 12 Sep 2024 21:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6CB1C2306;
+	Thu, 12 Sep 2024 21:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fJO/eulG"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="B2snj8pG"
+Received: from mail-4321.protonmail.ch (mail-4321.protonmail.ch [185.70.43.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7FF18BB80
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 21:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290D8A5F
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 21:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726177321; cv=none; b=oXrq3DooA6js4YHxJptled++wFp3u5qcHKE+gUV44SLbfujm527a5lwdQJENaFJpGT12cEiceEWr+Z3OaaAoDWekxoRrnRu8d6S2JDsDanstef8FLAa6MAjJ78rZJX1Bl+NRgnIY2FYKojlbn13YxAMD/DP7UJssbpM8Dg0QbEA=
+	t=1726177955; cv=none; b=SvhMFrEonezNwlnoDy13xjpOGg/76R9uoyBCkNXaObhWj6cMIj42G89OTSreQJMsMsO+r3Qv7OcNCDRA1u22i5PnYO+WenfiS22Wr8O0tSmcRZgSfOknJkljhOmdeIpjmVLIDQ1E3ySNyKVqEGiDwH3gby3D0LjO77fijbfDVow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726177321; c=relaxed/simple;
-	bh=JjlQyr/wFuy8m01BED9HSVzcdWYDkMr/xLmVMQEdMVw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sbNIn8y99QXS4yNb3ZFYopq5bxTH+uUbWNR0GRrlHu53ACAGScHFGL0pZCnUlRQsFDHMLxKSWaMbWvRhO14jmMoscYa2QmynxVZdhYWRLSAwQzLf5dj35Se8ikXkd/aNddRfJfEtEjRkmINSrJXPwBTxZ5a+DbpYYq4Fzi+TMxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fJO/eulG; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7aa086b077so179317966b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 14:41:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726177317; x=1726782117; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rTZv2DvHUPeuuWtbWXNvhL20hGAkO1mn69EjhOlUabk=;
-        b=fJO/eulGTXRNCq6+dkY7Zxm/cOkpVxT7uuRACLf3ZeTXAENyfZui0fyWnvgYboqSb/
-         CvGEIETynInprvz1yCi10GTp1C6LZVPaVSJSUFBsEF70+pi4cvo60Iboz3/Nw/2qeqJC
-         3useTi91ZF8yn/NshUpbF5MiFpBdvfUWTF9W0jJdUnZfm2AAr9c+vD+zLSdTsiRTsIhK
-         mC1NRYh3XmX+8VtSBHc3hlFzP5aqgOiPayPNIim9L9dNPdYhyvRUObPBPibGTu7xqf0T
-         6BTMI7QAzkWcoB5p73iQDSMWapzWfm/zej4yAA/ep0zJspw6cfntvEem/AICXs3pRJWX
-         cBMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726177317; x=1726782117;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rTZv2DvHUPeuuWtbWXNvhL20hGAkO1mn69EjhOlUabk=;
-        b=B6LqWVbkNl3Cvp995gyfR1JhLEGb+JEeuh7zx5QnjHBEQBIVooBKZ15Mu+YXob8H/B
-         V2qs0Sx7OR48mAZobpKrHxwlc6lWlz1dsODfkmF8afYkh9shMUr4IfFhVvJEdR3w5qnU
-         nJg5mxbQcWpXeUxGAwJlPaPI8oNo8pnaiRnYlratwbbxncH1Z/4AD8Yb4qp1Ur0ingSR
-         07Iphl6sz9HOHGc1NWu0kd4odWuAJV0dGXTdxh6wYtSqRDW3qSNDtn+uc2QOlCA6c2Yg
-         Jpw2Z34KMjICHsvQOt+zOgyyBMlwGeiwQIWeSEaFlqqjRc0Z+vKVUsH5EgD4kYarGT01
-         /5Hw==
-X-Forwarded-Encrypted: i=1; AJvYcCVo9NM9bPYPp7Oa8F94T0DEjMGb5nY0ah/LNPefAVaVNw2skyZDIH3MJLfuN1fndS19zgR/k3ZVJe6KRcM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFJPmGjnHInxYedAF9C9Xw7l3ZwvN42SpD9xn+qTF7ldC/IR4l
-	tdS2QFnYarauWhayV2SGZgKBFs2UsStGcr/tyibqC6OByeQ96hStuX6C/2oZE51FQnvtUmBAiIU
-	tMih7OuwsYMy/ewxegoAbjFMYic1oRrAFJdOi
-X-Google-Smtp-Source: AGHT+IFJ6L/EjAQhvjUs3LCLWwrLAXw7wzIe3wRS5fwMYlDRY4tVJbtr+7tjdNlnrYIEmTliMOCPryTOB0VfVwINmm4=
-X-Received: by 2002:a17:907:f168:b0:a8f:f799:e7db with SMTP id
- a640c23a62f3a-a9029438211mr405542366b.16.1726177315834; Thu, 12 Sep 2024
- 14:41:55 -0700 (PDT)
+	s=arc-20240116; t=1726177955; c=relaxed/simple;
+	bh=QeQeRgHYzciFXarHMGK4pJrZJ7IUGGtKVgYRFMp2yBU=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=M5CBE6NqfCVoW5VVQSMybRyNORj6Y/VFPBAte7MIefjZJ4cvZr7OV3NuXdFkoPIlpAKH5dJk0X32mMrF2PwIduK5qOYrSl5rx81h/z9SwBu8kjjUZCC1Xm1b1KQaIpJIvDWQU9ILG2rp1mEyFG8bavDMb0fMcOkHYWAHR0nKnCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=B2snj8pG; arc=none smtp.client-ip=185.70.43.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1726177497; x=1726436697;
+	bh=a2FNSbtlmAl871wxBHtsJ79Qcx6CVUfTQE+lnwadJCI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=B2snj8pGDevCUVv31aiX/DomN/es1zvLongt38Lt6XXsQSfdOZYr1I8AdDgvNK+YB
+	 b6+ag6LI5aTEor1yhVtoFtmDGz7UsbPAVARHGQvRJgpbIcFb/KGhsRSYW6T1MOz+me
+	 54Zif4QfiBH+QzJx12/ukt5tvRlt8LVvb5p9FcgxXfQ5OXdFcRF+jaoilfH1ipCmBE
+	 d8hwgzCcStfeHe11ew9zU3OgEp3asebu33uSLNleMCEIS9sX4MgJtV/22JC7xDXmiq
+	 3oCpjenvbkNFMosrmyfPf9UzGl+fbDbc31FyVECGGgpXJjCgmvNw6XNCnZB0gqEH7w
+	 ipCdGBR0Yt4qA==
+Date: Thu, 12 Sep 2024 21:44:52 +0000
+To: o-takashi@sakamocchi.jp
+From: Edmund Raile <edmund.raile@protonmail.com>
+Cc: apais@linux.microsoft.com, edmund.raile@protonmail.com, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-sound@vger.kernel.org, netdev@vger.kernel.org, tiwai@suse.de
+Subject: firewire: use sleepable workqueue to handle 1394 OHCI IT/IR context events: test 2
+Message-ID: <20240912214404.10616-2-edmund.raile@protonmail.com>
+In-Reply-To: <20240904125155.461886-1-o-takashi@sakamocchi.jp>
+References: <20240904125155.461886-1-o-takashi@sakamocchi.jp>
+Feedback-ID: 43016623:user:proton
+X-Pm-Message-ID: 01bc3483bc2521001e61230b823aa401971571ee
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <172616070094.2055617.17676042522679701515.stgit@firesoul>
-In-Reply-To: <172616070094.2055617.17676042522679701515.stgit@firesoul>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Thu, 12 Sep 2024 14:41:18 -0700
-Message-ID: <CAJD7tkZyKHRHJue1NaNqTMo5Ue2BvZfW_GXetMb+M+OkiCoj8g@mail.gmail.com>
-Subject: Re: [PATCH V11] cgroup/rstat: Avoid flushing if there is an ongoing
- root flush
-To: Jesper Dangaard Brouer <hawk@kernel.org>
-Cc: tj@kernel.org, cgroups@vger.kernel.org, shakeel.butt@linux.dev, 
-	hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com, 
-	kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 12, 2024 at 10:07=E2=80=AFAM Jesper Dangaard Brouer <hawk@kerne=
-l.org> wrote:
->
-> This patch reintroduces and generalizes the "stats_flush_ongoing" concept
-> to avoid redundant flushes if there is an ongoing flush at cgroup root
-> level, addressing production lock contention issues on the global cgroup
-> rstat lock.
->
-> In this revision userspace readers will wait for the ongoing flusher to
-> complete before returning, to avoid reading out-dated stats just before
-> they get updated. Generally in-kernel users will attempt to skip the
-> flush in-order to get out of the lock contention state. Some in-kernel
-> users of the cgroup_rstat_flush() API depend on waiting for the flush to
-> complete before continuing. This patch introduce the call
-> cgroup_rstat_flush_relaxed() with a wait_for_flush option to satisfy both
-> use-cases.
->
-> At Cloudflare, we observed significant performance degradation due to
-> lock contention on the rstat lock, primarily caused by kswapd. The
-> specific mem_cgroup_flush_stats() call inlined in shrink_node, which
-> takes the rstat lock, is particularly problematic.
->
-> On our 12 NUMA node machines, each with a kswapd kthread per NUMA node, w=
+Hello Sakamoto-San, I came around to testing your patch [1], after RFT.
+
+I've had to make the following changes to patch 1/5 again for it to apply t=
+o
+mainline (d1f2d51b711a3b7f1ae1b46701c769c1d580fa7f), due to missing b171e20
+from 2009 and a7ecbe9 from 2022.
+
+@@ -584,9 +601,13 @@ int fw_card_add(struct fw_card *card,
+=20
+ =09generate_config_rom(card, tmp_config_rom);
+ =09ret =3D card->driver->enable(card, tmp_config_rom, config_rom_length);
+ =09if (ret =3D=3D 0)
+ =09=09list_add_tail(&card->link, &card_list);
++=09else
++=09=09destroy_workqueue(isoc_wq);
++
++=09card->isoc_wq =3D isoc_wq;
+
+ =09mutex_unlock(&card_mutex);
+
+ =09return ret;
+@@ -709,7 +729,9 @@ void fw_core_remove_card(struct fw_card *card)
+ {
+ =09struct fw_card_driver dummy_driver =3D dummy_driver_template;
+ =09unsigned long flags;
+=20
++=09might_sleep();
++
+ =09card->driver->update_phy_reg(card, 4,
+ =09=09=09=09     PHY_LINK_ACTIVE | PHY_CONTENDER, 0);
+ =09fw_schedule_bus_reset(card, false, true);
+@@ -719,6 +741,7 @@ void fw_core_remove_card(struct fw_card *card)
+ =09dummy_driver.free_iso_context=09=3D card->driver->free_iso_context;
+ =09dummy_driver.stop_iso=09=09=3D card->driver->stop_iso;
+ =09card->driver =3D &dummy_driver;
++=09drain_workqueue(card->isoc_wq);
+=20
+ =09spin_lock_irqsave(&card->lock, flags);
+ =09fw_destroy_nodes(card);
+
+Then everything applied fine.
+
+This resulted in 6.11.0-rc6-1-mainline-00326-gd1f2d51b711a-dirty.
+
+Testing it with TI XIO2213B and RME Fireface 800 so far:
+
+Initially I had a buffer freeze after 3 hours of continuous ALSA playback
+from mpv:
+  mpv --audio-device=3Dalsa/sysdefault:CARD=3DFireface800 Spor-Ignition.fla=
+c
+accompanied by stresstest (mprime).
+
+It didn't freeze/crash the kernel, just the audio buffer kept repeating.
+Gone after power-cycling the interface and restarting playback.
+
+Can't say with certainty whether it's related, have been unable to replicat=
 e
-> noted severe lock contention on the rstat lock, causing 12 CPUs to waste
-> cycles spinning every time kswapd runs. Fleet-wide stats (/proc/N/schedst=
-at)
-> for kthreads revealed that we are burning an average of 20,000 CPU cores
-> fleet-wide on kswapd, primarily due to spinning on the rstat lock.
->
-> Here's a brief overview of the issue:
-> - __alloc_pages_slowpath calls wake_all_kswapds, causing all kswapdN thre=
-ads
->   to wake up simultaneously.
-> - The kswapd thread invokes shrink_node (via balance_pgdat), triggering t=
-he
->   cgroup rstat flush operation as part of its work.
-> - balance_pgdat() has a NULL value in target_mem_cgroup, causing
->   mem_cgroup_flush_stats() to flush with root_mem_cgroup.
->
-> The kernel previously addressed this with a "stats_flush_ongoing" concept=
-,
-> which was removed in commit 7d7ef0a4686a ("mm: memcg: restore subtree sta=
-ts
-> flushing"). This patch reintroduces and generalizes the concept to apply =
-to
-> all users of cgroup rstat, not just memcg.
->
-> It have been a general theme to replace mem_cgroup_flush_stats() with
-> mem_cgroup_flush_stats_ratelimited every time we see a new case of this
-> issue. This will hide the contention issue until something starves the
-> kthread that does the periodic 2 second flush (for 2 periods). In
-> production we are seeing kthreads getting starved longer than 20 seconds.
-> This often happens in connection with OOM killer. This recreates the
-> kswapd lock contention situation at a very unfortunate point in time.
-> Thus, it makes sense to have this ongoing flusher lock contention
-> protection in place.
->
-> In this patch only a root cgroup can become the ongoing flusher, as this =
-solves
-> the production issue. Letting other levels becoming ongoing flusher cause=
- root
-> cgroup to contend on the lock again.
->
-> This change significantly reduces lock contention, especially in
-> environments with multiple NUMA nodes, thereby improving overall system
-> performance.
->
-> Fixes: 7d7ef0a4686a ("mm: memcg: restore subtree stats flushing").
-> Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
-> ---
+the issue for the past 3 days (good sign I hope).
+That's why I was holding this message back a bit.
 
-To reiterate my response on v10, I prefer that this problem is handled
-at the reclaim flushing site. This started as a nice simple and
-generic approach, but ended up being complex and tailored to handle
-the reclaim flushing case.
+Kind regards,
+Edmund Raile.
 
-I do have some comments on the current implementation nonetheless.
+Signed-off-by: Edmund Raile <edmund.raile@protonmail.com>
+Tested-by: Edmund Raile <edmund.raile@protonmail.com>
 
-> v11:
->  - Address Yosry request to wait-for-flush for userspace readers
->
-> V10: https://lore.kernel.org/all/172547884995.206112.808619042206173396.s=
-tgit@firesoul/
->
->  block/blk-cgroup.c         |    2 -
->  include/linux/cgroup.h     |    1
->  include/linux/memcontrol.h |    1
->  kernel/cgroup/rstat.c      |  133 ++++++++++++++++++++++++++++++++++++++=
-++++--
->  mm/memcontrol.c            |   40 +++++++++----
->  mm/vmscan.c                |    2 -
->  mm/zswap.c                 |    2 -
->  7 files changed, 157 insertions(+), 24 deletions(-)
->
-> diff --git a/block/blk-cgroup.c b/block/blk-cgroup.c
-> index 37e6cc91d576..058393e7665a 100644
-> --- a/block/blk-cgroup.c
-> +++ b/block/blk-cgroup.c
-> @@ -1200,7 +1200,7 @@ static int blkcg_print_stat(struct seq_file *sf, vo=
-id *v)
->         if (!seq_css(sf)->parent)
->                 blkcg_fill_root_iostats();
->         else
-> -               cgroup_rstat_flush(blkcg->css.cgroup);
-> +               cgroup_rstat_flush_relaxed(blkcg->css.cgroup, true);
->
->         rcu_read_lock();
->         hlist_for_each_entry_rcu(blkg, &blkcg->blkg_list, blkcg_node) {
-> diff --git a/include/linux/cgroup.h b/include/linux/cgroup.h
-> index 2150ca60394b..ff65bc100ca5 100644
-> --- a/include/linux/cgroup.h
-> +++ b/include/linux/cgroup.h
-> @@ -691,6 +691,7 @@ void cgroup_rstat_updated(struct cgroup *cgrp, int cp=
-u);
->  void cgroup_rstat_flush(struct cgroup *cgrp);
->  void cgroup_rstat_flush_hold(struct cgroup *cgrp);
->  void cgroup_rstat_flush_release(struct cgroup *cgrp);
-> +int cgroup_rstat_flush_relaxed(struct cgroup *cgrp, bool wait_for_flush)=
-;
-
-We now have 4 different flavors of rstat flushing:
-
-1. cgroup_rstat_flush() -> normal flush: lock, flush, unlock
-2. cgroup_rstat_flush_hold() -> same, but keep the lock held
-3. cgroup_rstat_flush_relaxed(wait_for_flush=3Dtrue) -> if someone is
-already flushing us, wait, otherwise normal
-4. cgroup_rstat_flush_relaxed(wait_for_flush=3Dfalse) -> if someone is
-already flushing us, wait, otherwise normal
-
-Why do we need the third one? Can't we just keep using (1) for now for
-userspace readers?
-
->
->  /*
->   * Basic resource stats.
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 030d34e9d117..7e24c5e1327f 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -1026,6 +1026,7 @@ unsigned long lruvec_page_state_local(struct lruvec=
- *lruvec,
->                                       enum node_stat_item idx);
->
->  void mem_cgroup_flush_stats(struct mem_cgroup *memcg);
-> +void mem_cgroup_flush_stats_relaxed(struct mem_cgroup *memcg);
->  void mem_cgroup_flush_stats_ratelimited(struct mem_cgroup *memcg);
->
->  void __mod_lruvec_kmem_state(void *p, enum node_stat_item idx, int val);
-> diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
-> index a06b45272411..80a4b949138f 100644
-> --- a/kernel/cgroup/rstat.c
-> +++ b/kernel/cgroup/rstat.c
-> @@ -11,6 +11,9 @@
->
->  static DEFINE_SPINLOCK(cgroup_rstat_lock);
->  static DEFINE_PER_CPU(raw_spinlock_t, cgroup_rstat_cpu_lock);
-> +static struct cgroup *cgrp_rstat_ongoing_flusher =3D NULL;
-> +static struct task_struct *cgrp_rstat_ongoing_flusher_ID =3D NULL;
-
-rstat_ongoing_flush_cgrp and rstat_ongoing_flush_task are probably
-clearer names.
-
-> +static DEFINE_MUTEX(cgrp_rstat_ongoing_flusher_serialize);
->
->  static void cgroup_base_stat_flush(struct cgroup *cgrp, int cpu);
->
-> @@ -299,6 +302,68 @@ static inline void __cgroup_rstat_unlock(struct cgro=
-up *cgrp, int cpu_in_loop)
->         spin_unlock_irq(&cgroup_rstat_lock);
->  }
->
-> +static inline bool cgroup_is_root(struct cgroup *cgrp)
-> +{
-> +       return cgroup_parent(cgrp) =3D=3D NULL;
-> +}
-> +
-> +/**
-> + * cgroup_rstat_trylock_flusher - Trylock that checks for on ongoing flu=
-sher
-> + * @cgrp: target cgroup
-> + * @strict: always lock and ignore/skip ongoing flusher checks
-> + *
-> + * Function return value follow trylock semantics. Returning true when l=
-ock is
-> + * obtained. Returning false when not locked and it detected flushing ca=
-n be
-> + * skipped as another ongoing flusher is taking care of the flush.
-> + *
-> + * For callers that depend on flush completing before returning a strict=
- option
-> + * is provided.
-> + */
-> +static bool cgroup_rstat_trylock_flusher(struct cgroup *cgrp, bool stric=
-t)
-> +{
-> +       struct cgroup *ongoing;
-> +
-> +       if (strict)
-> +               goto lock;
-
-Might as well just have a cgroup_rstat_lock_flusher() function instead
-of the boolean parameter, which is also consistent with the
-lock/trylock semantics you are following.
-
-> +
-> +       /*
-> +        * Check if ongoing flusher is already taking care of this.  Desc=
-endant
-> +        * check is necessary due to cgroup v1 supporting multiple root's=
-.
-> +        */
-> +       ongoing =3D READ_ONCE(cgrp_rstat_ongoing_flusher);
-> +       if (ongoing && cgroup_is_descendant(cgrp, ongoing))
-
-The ongoing flusher may be going away, so cgroup_is_descendant() may
-be a UAF as I pointed out a few times. I actually think even taking a
-ref here may not work as it may be a flush from cgroup_rstat_exit().
-
-One thing we can do is get the root of cgrp (probably
-cgrp->root->cgrp?) and compare it to cgrp_rstat_ongoing_flusher
-without ever dereferencing it. If the ongoing flusher is in fact the
-root of cgrp, this implies a ref on it anyway so we can dereference it
-if needed.
-
-That would obviously need a comment to explain it.
-
-> +               return false;
-> +
-> +       /* Grab right to be ongoing flusher */
-> +       if (!ongoing && cgroup_is_root(cgrp)) {
-> +               struct cgroup *old;
-> +
-> +               old =3D cmpxchg(&cgrp_rstat_ongoing_flusher, NULL, cgrp);
-> +               if (old) {
-> +                       /* Lost race for being ongoing flusher */
-> +                       if (cgroup_is_descendant(cgrp, old))
-> +                               return false;
-> +               }
-> +               /* Due to lock yield combined with strict mode record ID =
-*/
-
-This needs a more detailed comment.
-
-> +               WRITE_ONCE(cgrp_rstat_ongoing_flusher_ID, current);
-
-This will overwrite the ID if we lost the race but are not a
-descendant of the flusher that one the race, right?
-
-> +       }
-> +lock:
-> +       __cgroup_rstat_lock(cgrp, -1);
-> +
-> +       return true;
-> +}
-> +
-> +static void cgroup_rstat_unlock_flusher(struct cgroup *cgrp)
-> +{
-> +       if (cgrp =3D=3D READ_ONCE(cgrp_rstat_ongoing_flusher) &&
-> +           READ_ONCE(cgrp_rstat_ongoing_flusher_ID) =3D=3D current) {
-> +               WRITE_ONCE(cgrp_rstat_ongoing_flusher_ID, NULL);
-> +               WRITE_ONCE(cgrp_rstat_ongoing_flusher, NULL);
-> +       }
-> +
-> +       __cgroup_rstat_unlock(cgrp, -1);
-> +}
-> +
->  /* see cgroup_rstat_flush() */
->  static void cgroup_rstat_flush_locked(struct cgroup *cgrp)
->         __releases(&cgroup_rstat_lock) __acquires(&cgroup_rstat_lock)
-> @@ -333,6 +398,19 @@ static void cgroup_rstat_flush_locked(struct cgroup =
-*cgrp)
->         }
->  }
->
-> +static int __cgroup_rstat_flush(struct cgroup *cgrp, bool strict)
-> +{
-> +       might_sleep();
-> +
-> +       if (!cgroup_rstat_trylock_flusher(cgrp, strict))
-> +               return false;
-> +
-> +       cgroup_rstat_flush_locked(cgrp);
-> +       cgroup_rstat_unlock_flusher(cgrp);
-> +
-> +       return true;
-> +}
-> +
->  /**
->   * cgroup_rstat_flush - flush stats in @cgrp's subtree
->   * @cgrp: target cgroup
-> @@ -348,11 +426,49 @@ static void cgroup_rstat_flush_locked(struct cgroup=
- *cgrp)
->   */
->  __bpf_kfunc void cgroup_rstat_flush(struct cgroup *cgrp)
->  {
-> -       might_sleep();
-> +       __cgroup_rstat_flush(cgrp, true);
-> +}
->
-> -       __cgroup_rstat_lock(cgrp, -1);
-> -       cgroup_rstat_flush_locked(cgrp);
-> -       __cgroup_rstat_unlock(cgrp, -1);
-> +int cgroup_rstat_flush_relaxed(struct cgroup *cgrp, bool wait_for_flush)
-> +{
-> +       bool flushed =3D __cgroup_rstat_flush(cgrp, false);
-> +
-> +       if (!flushed && wait_for_flush) {
-
-Isn't the code below essentially open-coding completions in a less
-efficient way? Anyway as I mentioned above I don't believe we really
-need wait_for_flush for now. I was hoping we can make this work for
-both in-kernel and userspace flushers, but I don't think we want to
-add it just for userspace flushers.
-
-> +               /*
-> +                * Reaching here we know an ongoing flusher is running, t=
-hat
-> +                * will take care of flushing for us, but for caller to r=
-ead
-> +                * accurate stats we want to wait for this ongoing flushe=
-r.
-> +                *
-> +                * TODO: When lock becomes mutex and no-yielding this cod=
-e can
-> +                * be simplifed as we can just sleep on the mutex lock.
-> +                */
-> +               struct task_struct *id, *cur_id;
-> +               u64 timeout;
-> +
-> +               id =3D READ_ONCE(cgrp_rstat_ongoing_flusher_ID);
-> +               timeout =3D jiffies_64 + msecs_to_jiffies(50);
-> +
-> +               if (!id)
-> +                       return false;
-> +
-> +               cond_resched();
-> +               /* We might get lucky and flush already completed */
-> +               cur_id =3D READ_ONCE(cgrp_rstat_ongoing_flusher_ID);
-> +
-> +               /* Due to lock yield, make sure "id" flusher completes */
-> +               while (cur_id =3D=3D id && time_before64(jiffies_64, time=
-out)) {
-> +                       cond_resched();
-> +                       /* Use mutex to reduce stress on global lock */
-> +                       mutex_lock(&cgrp_rstat_ongoing_flusher_serialize)=
-;
-> +                       __cgroup_rstat_lock(cgrp, -1);
-> +                       /* Get lock with ongoing can happen due to yieldi=
-ng */
-> +                       cur_id =3D READ_ONCE(cgrp_rstat_ongoing_flusher_I=
-D);
-> +                       __cgroup_rstat_unlock(cgrp, -1);
-> +                       mutex_unlock(&cgrp_rstat_ongoing_flusher_serializ=
-e);
-> +               }
-> +       }
-> +
-> +       return flushed;
->  }
->
->  /**
-> @@ -368,8 +484,11 @@ void cgroup_rstat_flush_hold(struct cgroup *cgrp)
->         __acquires(&cgroup_rstat_lock)
->  {
->         might_sleep();
-> -       __cgroup_rstat_lock(cgrp, -1);
-> -       cgroup_rstat_flush_locked(cgrp);
-> +
-> +       if (cgroup_rstat_trylock_flusher(cgrp, false))
-> +               cgroup_rstat_flush_locked(cgrp);
-> +       else
-> +               __cgroup_rstat_lock(cgrp, -1);
->  }
->
->  /**
-> @@ -379,7 +498,7 @@ void cgroup_rstat_flush_hold(struct cgroup *cgrp)
->  void cgroup_rstat_flush_release(struct cgroup *cgrp)
->         __releases(&cgroup_rstat_lock)
->  {
-> -       __cgroup_rstat_unlock(cgrp, -1);
-> +       cgroup_rstat_unlock_flusher(cgrp);
->  }
->
->  int cgroup_rstat_init(struct cgroup *cgrp)
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 71fe2a95b8bd..6694f7a859b5 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -871,12 +871,26 @@ static inline void memcg_rstat_updated(struct mem_c=
-group *memcg, int val)
->         }
->  }
->
-> -static void do_flush_stats(struct mem_cgroup *memcg)
-> +static void do_flush_stats(struct mem_cgroup *memcg, bool wait_for_flush=
-)
->  {
-> -       if (mem_cgroup_is_root(memcg))
-> -               WRITE_ONCE(flush_last_time, jiffies_64);
-> +       bool flushed =3D cgroup_rstat_flush_relaxed(memcg->css.cgroup,
-> +                                                 wait_for_flush);
->
-> -       cgroup_rstat_flush(memcg->css.cgroup);
-> +       if (mem_cgroup_is_root(memcg) && flushed)
-> +                   WRITE_ONCE(flush_last_time, jiffies_64);
-> +}
-> +
-> +static void __mem_cgroup_flush_stats(struct mem_cgroup *memcg,
-> +                                    bool wait_for_flush)
-> +{
-> +       if (mem_cgroup_disabled())
-> +               return;
-> +
-> +       if (!memcg)
-> +               memcg =3D root_mem_cgroup;
-> +
-> +       if (memcg_vmstats_needs_flush(memcg->vmstats))
-> +               do_flush_stats(memcg, wait_for_flush);
->  }
->
->  /*
-> @@ -890,21 +904,19 @@ static void do_flush_stats(struct mem_cgroup *memcg=
-)
->   */
->  void mem_cgroup_flush_stats(struct mem_cgroup *memcg)
->  {
-> -       if (mem_cgroup_disabled())
-> -               return;
-> -
-> -       if (!memcg)
-> -               memcg =3D root_mem_cgroup;
-> +       __mem_cgroup_flush_stats(memcg, true);
-> +}
->
-> -       if (memcg_vmstats_needs_flush(memcg->vmstats))
-> -               do_flush_stats(memcg);
-> +void mem_cgroup_flush_stats_relaxed(struct mem_cgroup *memcg)
-> +{
-> +       __mem_cgroup_flush_stats(memcg, false);
->  }
->
->  void mem_cgroup_flush_stats_ratelimited(struct mem_cgroup *memcg)
->  {
->         /* Only flush if the periodic flusher is one full cycle late */
->         if (time_after64(jiffies_64, READ_ONCE(flush_last_time) + 2*FLUSH=
-_TIME))
-> -               mem_cgroup_flush_stats(memcg);
-> +               mem_cgroup_flush_stats_relaxed(memcg);
-
-mem_cgroup_flush_stats_ratelimited() now basically says: only flush if
-the periodic flusher is late but no one else is flushing, if we end up
-pursuing this we probably want to start documenting these variants.
 
