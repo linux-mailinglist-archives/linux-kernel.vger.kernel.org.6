@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-327137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2FA0977130
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:12:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E19C197712B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:12:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B414B24FB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:12:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3FFA2881C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79F31C4604;
-	Thu, 12 Sep 2024 19:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973091C3F21;
+	Thu, 12 Sep 2024 19:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Z5qqy9Hr"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2057.outbound.protection.outlook.com [40.107.220.57])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nms+UU5X"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2071.outbound.protection.outlook.com [40.107.220.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13311C2453
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 19:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362681C2DB1
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 19:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.71
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726168169; cv=fail; b=VzslhAtWozuSYfawhZlDaMjpd4uHlp1F8LP8rPl4OkB8maqUeBN1zo7hfkexZSoAYX+8+/3OGD1G9SnYJgkCwboBt3LSG4SgqbhIAmEsokzzM3+2k+2rU2ukUOba0xrrB7hPRBCXcAEqGwzkoNAS8NtZEQiLvYh/nQrOUHxEZBQ=
+	t=1726168168; cv=fail; b=m2bSDPgok5nfDh+GxYuqf0xTMGW89AUHaJC4rnBDZ8QZS2bWrgtzpE2fEGdyC5jpiqNbJCpl6qat/oSOSLlI/qFPtrFzeD3Eb8ypd9oBFWRD5KnvfHyJPB9e9jiL7iQz4TKM1lMQU6Wq/yUqXqwMoxD+hWtiXXhOrC/AmkmRfiY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726168169; c=relaxed/simple;
-	bh=6/Q8CHbmjdqrbS5JeONL3pZJ/vC7izSPsfv1e2BnI60=;
+	s=arc-20240116; t=1726168168; c=relaxed/simple;
+	bh=n0ewX1m0DVXMIt29Ih9ptk95o4XuQQVWouoMhFlNwzA=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QkbE2hsHYW37UAzohmCQMUIinUovsjkUoNatpA+mTAx6MQZtuJ0ol7ozsC0flivbms5xmMAF5bA8IxbawDwR+sECLVEGllys4475EVr1k+4ixHM7sGw5bXBv4uvSsh4PqPfDq/2RuQ317CnTJIbFPU43gc2ygfhBWQxnxQWDoB4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Z5qqy9Hr; arc=fail smtp.client-ip=40.107.220.57
+	 MIME-Version:Content-Type; b=Te6xl+KFgqz2BRCbhAZhyx1bgV6wxDpvFmXZKTH3M5QJZcDKsvMZLlX4Bg9ZOQYb+R1xUbyWleAcIBgdKkLHf8zR6U5pgOsJnk5R20xNXg3W+KG/OqnbxnxqfjkWUjRwUjRe1r58waF0Y7mTJrEGAgJXljQBJoPriYnwDlqdxwc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nms+UU5X; arc=fail smtp.client-ip=40.107.220.71
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AxxDuq6DftiqHbuUsbcdHnHpmbmKYPSnqBGmBzSL3uwtWEAT4JR4b6yN8M/bRQH+5+bTCh/2VgXy/8evWVuS7dMeDuiUEdIerTN4r/6H2iH2qijjmUV5MViAaEtlVdTH0eeWMNByc90YdrJC1Hfj/rdMYfoZLW9PF/KFCKTqsRG8NkeLLuRavLFnCbnNO0hXiGnGlykvuSzVE2e6zamVoFmf7wB8M5wPBrx0J2JNET7ZM2Qubl4RC66FdYsZ3/6dVsPZ9XcY+bRHiXpLXibhHZt/HXGaep0TITWTdj3NqYVjUZoOO4s2E2Q+T0OcyaCMDaJ7bx4p5DIPqHYTMjZ/ow==
+ b=XMKgZIzhMk80MWOhtVLGJTu9bqn5xQQ8qgjUKNV4YiGkI0MAqowiHDLB9NK1cis3bzclBpex1/jukEfdOwJLS5wzN04pN1VAVWJ5zz9Co1mxyZxjQ5V6Jtw00cJlC6hhpu+iCLr662lvCKUlhtc3wiW4GFhgrSznDPLeAgImRu8gIce1TYDk0PB3ekGw1mTPI5DAt2ApoDNAMObfVS/GQ6TlRas17Z+C5UxCiil5UkqKU00Po1lgcrYRGltYYoaaL8/IS4Qw1K1mp0i4gxnJ4zb+ePoDdhd+OjiunnvZGk25TiPkrLWsTHRVky2CjSBfunKuTnifpvgpKNk+gp9Pog==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VJE842/DQH7Y18Kn+8BUpUlPdP/4L2y9ssRAkX4APlc=;
- b=crvzgXUAy2GXSMM5vh1mSweMDSZt8wtiIQ0vbo36qmlEFj2ZWB57qiD39AaWL+ECyLUDdZ5W5So5sH5LIsk6/n1MvNCIX8rwQaIEbn+ljaTVbmYfYJdNfFqN2jRJB/8hHE6SAqb7Zt8df0yYzpa6CQKLEEdFdq9m+u/HjqrMrmL4e3FLn6p4nT9l8C0k+5c1YXJOQlkVW5GJ2QUNXOe46+8jSWGks3CBuKiQ98R23E5rI7CnI7vd1CCaqijl6+mU47QamVZ8dSAbrsl9xw9QNuggE27TGmsE8H45PF3Lx1u6ZJO5gVxCdawOKxe2G5NBN0jVcG5FuN+zcPX8JmFCVg==
+ bh=poHheHxdxiwnT7zxGa+k80TxnHbojjrRI+aJ6pOCjcU=;
+ b=H6RjiaWLEMurS6lhLONnOOB+ZwJ4xSwcMeXopCnlZEt4vFDHD/A/2YWIcSt+Lk20lHk3OPE8y4AQ5dJ8tveKYrvI3dTL3M8E0ld3upnYTYz3Csz18oRoKhvdEpb4+dXX27YJ3JlbHaN4NrfzzicdqTIE23RQWFqzgVljzoJrppWUj2MNtqvkVzhxewbGR3UIWC54rKAFypqc7I+OBMyyyZ/jbp5SqkcMLdWhk61osbD721DqjyK2o0HniBR8jYSR047bW1lZ1uOsgj+LxrTS0sdbt5Zi7WFVGZQ+chu1bWxyEJq19Yaa8qtORKozVQZm/aQC/6LMDJphLcgjTQX1tA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=linutronix.de smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VJE842/DQH7Y18Kn+8BUpUlPdP/4L2y9ssRAkX4APlc=;
- b=Z5qqy9Hr/DIMduC2VzmyGg3+EjziAO12Hi1sb72OXRilfzKCDtzwlG+7Sqrcl5KkT/eVmM3JY6mMroqtuhtdQ10ABzAVBiDuPZiclDpipuWo1jx4lmuog7eNU81LW0Y42dmptZMp6XEk6Ae5WFoH8QYvzoO/16Dakzixp3fGIcg=
-Received: from BY3PR10CA0016.namprd10.prod.outlook.com (2603:10b6:a03:255::21)
- by MW6PR12MB8758.namprd12.prod.outlook.com (2603:10b6:303:23d::18) with
+ bh=poHheHxdxiwnT7zxGa+k80TxnHbojjrRI+aJ6pOCjcU=;
+ b=nms+UU5XGnx963s568VA5XldjbAOmManTOl0QiPY4EFAHe/jhH1RicEVAN2mTm0Nx41kzXYAQ7zw+1ZgOjT6VPJRhsb/F4Q3IDR5XDSbiOlhWMaXU1+XxAMRKfEEMXERkJc9N7gg4CqFOwCTlhMIS+gdTC/Zk9yHZNiwPnh46so=
+Received: from MW4P222CA0008.NAMP222.PROD.OUTLOOK.COM (2603:10b6:303:114::13)
+ by SJ0PR12MB8614.namprd12.prod.outlook.com (2603:10b6:a03:47d::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Thu, 12 Sep
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.17; Thu, 12 Sep
  2024 19:09:21 +0000
-Received: from SJ1PEPF00002314.namprd03.prod.outlook.com
- (2603:10b6:a03:255:cafe::a4) by BY3PR10CA0016.outlook.office365.com
- (2603:10b6:a03:255::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.26 via Frontend
+Received: from SJ1PEPF00002313.namprd03.prod.outlook.com
+ (2603:10b6:303:114:cafe::c3) by MW4P222CA0008.outlook.office365.com
+ (2603:10b6:303:114::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24 via Frontend
  Transport; Thu, 12 Sep 2024 19:09:21 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
@@ -62,9 +62,9 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF00002314.mail.protection.outlook.com (10.167.242.168) with Microsoft
+ SJ1PEPF00002313.mail.protection.outlook.com (10.167.242.167) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Thu, 12 Sep 2024 19:09:20 +0000
+ 15.20.7918.13 via Frontend Transport; Thu, 12 Sep 2024 19:09:21 +0000
 Received: from tiny.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 12 Sep
@@ -76,9 +76,9 @@ To: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
 	<mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
 	<x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
 CC: <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH 18/34] Documentation/x86: Document the new attack vector controls
-Date: Thu, 12 Sep 2024 14:08:41 -0500
-Message-ID: <20240912190857.235849-19-david.kaplan@amd.com>
+Subject: [RFC PATCH 19/34] x86/bugs: Define attack vectors
+Date: Thu, 12 Sep 2024 14:08:42 -0500
+Message-ID: <20240912190857.235849-20-david.kaplan@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240912190857.235849-1-david.kaplan@amd.com>
 References: <20240912190857.235849-1-david.kaplan@amd.com>
@@ -94,264 +94,170 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002314:EE_|MW6PR12MB8758:EE_
-X-MS-Office365-Filtering-Correlation-Id: bbbc636c-230c-46e3-dc37-08dcd35e6861
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002313:EE_|SJ0PR12MB8614:EE_
+X-MS-Office365-Filtering-Correlation-Id: 40f4f274-60eb-4d46-9394-08dcd35e68ab
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026|7416014;
+	BCL:0;ARA:13230040|36860700013|7416014|82310400026|376014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?HJEyNV+64EKzc4VCR7VItCExQ697JPg0VftlXijd0vBEhdmPyc1ffgRnPtT8?=
- =?us-ascii?Q?cRQWnqKz0iUdZh9NmEI7nbw0GLIX/RqB1lLGSZxsOa8r+m3QWwEzGwNEFIUs?=
- =?us-ascii?Q?QHw10MTaqShUzxlNHSOIZ/pxSXM0kOm96BBnZa4lEMysUBKbaJ9Sg4h4VW35?=
- =?us-ascii?Q?RvFkNGeIjo0WHSzk/ro9aBjmN2S1/MG5ed1d/VlVTJbsxMarYrStiWMb7qxQ?=
- =?us-ascii?Q?qNkmx79zRbfA5/MEPURROUUi4embwh2dSaev9XozQc457f1kbEAYAJ048jvT?=
- =?us-ascii?Q?TOV4D9cv94rYsOyJp9ym7mS9E6xS5u4Qs+KmaLXtoaqVS8MgshsVZp5r3PCO?=
- =?us-ascii?Q?QqY/PNBeMBaAK9REbbqZdHZf1+vC8OtHCsezMIYzZ+Rla+Q8ErbXdSsZ2Z7a?=
- =?us-ascii?Q?QxJoInySAHU0O2dpIAHSPPSSUyJuOW2cuX3r5LZPejCGxygVgMqUybxNkQIV?=
- =?us-ascii?Q?ugWEZK75gzfVIAdqEKkqQzN5s9VC8TSw6joE31cGbNmsH+ATKlZ1x6DQJ0km?=
- =?us-ascii?Q?wug/wvjeKERJGyDGyloyAs7joIuSDOGEGooMbV8honQ8+m73llYnnHdbxBe7?=
- =?us-ascii?Q?552NHUHHzxVkvuirx6CzsC1Iok/a/f93AmR5cghLt/CzI7h+GT0p2GvPTCOZ?=
- =?us-ascii?Q?K6lxh5p8l0bhj9O6cWey/97o3qJrEaB/l+HkrEWhx0sFH76qQVJCvdiisS6q?=
- =?us-ascii?Q?gjeJj/KreVXKkF+3oI9qiNf+c3jBJP1KMISDIyKOdoQKl3JYIWhW8yaM1uts?=
- =?us-ascii?Q?LPPZNQ5Dtr27nJDcSGkEKq0Rdhjky6z/uHHbpTxF0uwdOt0dz2EpT8g77T1i?=
- =?us-ascii?Q?8U8WJuPL3pX7wQa/+KpYtCD1PNAy2FIXG0l3wyPOoKulZr6BeadW6IC2+Nvp?=
- =?us-ascii?Q?KrjRcAwAeWauGETuBSPJjvO4bZLfEF+DG0lIuffwE9Ueoe5qRpoewPI61wyZ?=
- =?us-ascii?Q?6Ec94Kcqp9bsu/XTEyDh1ZfBmKihw7irZZSmfrDH5B2iBhBI5ejnaB9VUaWZ?=
- =?us-ascii?Q?636kVjfsbdseFKq3jwPDfCm75KznL0UdFUTRzxNSmjjSntDkArji3aWsbalI?=
- =?us-ascii?Q?vlDLAsVkbgmBLg/COnrrEo87obOHUZa3SLfW273XIwpf+p4oeXbP6AiDnR7F?=
- =?us-ascii?Q?jktPoEbU+5TSQnrKK0wBoaBnL44l1zAcqT1e2UjqDMzzhDAVSVMnHC8AmAs5?=
- =?us-ascii?Q?pHr3M2C+tWjoW96WeRpbTiUphoh5bAvx+CPBe5U1mMAYVRDUL8l6RWM1NaG8?=
- =?us-ascii?Q?4zW/ebkXXZMYsQZrYTDoPZdZ9IArevDCdIez5pxMApJ9smqC5aYBrOEYL0B+?=
- =?us-ascii?Q?ekF5dEBlhGub/9WZOgcpdM8mw144DcaHaeN8/r/NTDjMWnymUFe46Q/qxQPl?=
- =?us-ascii?Q?z3hftiRrWFH+iBrdkBRKGjOc19sob8CZVgMdvH5RFBYqDLpWRe1M8L2n8J1q?=
- =?us-ascii?Q?lCLUtvSyzanj3FNkpn+a2hPxPpSCn4vv?=
+	=?us-ascii?Q?kXS8fk48DlgEIbZHP4+px/UEFHNZfpG0+sKIz0P2vAHyPxKGoqnVR5moVmLd?=
+ =?us-ascii?Q?OwbEoqBeqThHtRruzn8HZtuwY96xtLkQZV+LzVf5G/vCgZbBAPWNivAgz14j?=
+ =?us-ascii?Q?PZ4eLP+p/KQAKqzhb+zfJ2bQO455e4rRFHdl6U0sovZMzDDTVKY+HAZ7ATFk?=
+ =?us-ascii?Q?WCmuP5DSF5/JZ/YqmiINvedCbAFUNSUhdNw6BgnRJxOmlLqxSVtZeIRVdj+S?=
+ =?us-ascii?Q?18Ug8ZoQa0jEMXUkkRAlQXFUnHkgEgUde8/F+1nzk+4OFDyXOIvABLK5lZHJ?=
+ =?us-ascii?Q?ls2jRnS1N6ckbUNQICMc7y9E1TCVgcawi4Tf3U9YvS9U+uDW0yxI6VyqtpSy?=
+ =?us-ascii?Q?vspu4YUccVIiGokKNmBLIPWRrr5R4eukHAMCnehDflIl9yKYqB/uyoV7Ie53?=
+ =?us-ascii?Q?tLDOE72eXRrD1fpCmGMMbbAIbaNfDxoj72Hedte5WR6kWX2ti70oF/tLrL4T?=
+ =?us-ascii?Q?ivpU0smtMpkm5sQwW5zzU4jtbuCfFYUGJFeCKmeRk8fc4wpOBL4NelqUOgtU?=
+ =?us-ascii?Q?2MlfMSgs8e+8q/2Gu8pX3gK6q89SkFCJAL8EyM8S46n/7dhxDwtvY09y65qm?=
+ =?us-ascii?Q?ppqVPBODM1ooBgeJ1AKpwTN5xaAaG1qvZj2EaHPXN+zR2XYB5HW9/I/1OBtI?=
+ =?us-ascii?Q?vLZyB7x9jnohSMT8LbC+TPBcHhD8rlzmxP/j6cYw+tdHVP1h2nEkHKhEtGdH?=
+ =?us-ascii?Q?72pCDd6aPuvgR5/RVUXT1HtBn0sVhYgs4nmNYALcw+RoyC+FnmgA42UArjul?=
+ =?us-ascii?Q?FqGbRP7TZ0yDavlb4yCllagdHc6PZe31iNhlJ17RG7tm6yocL3GH++8lzPTT?=
+ =?us-ascii?Q?3ozCRFnD+C255ZkQLLyZyWI3V9kBbHEiWcwup1D/VEV3QcoqC8/5wnZbeYxu?=
+ =?us-ascii?Q?WdbWy9dyJshLVYd+oj+mGZh2NYbm19aBg8o7Q/K90XcfR86NiQb/a1abG6rt?=
+ =?us-ascii?Q?gFRzqgAr15BtsdB79qETIocdq5OLAXAStnmVtZxtrXecmhuQ+/B1wrRqJR7q?=
+ =?us-ascii?Q?BmN2AKhYjMi8a5sJuInLPaei8xqPDIm5S7uafFsJlGvdR3Op7+n/cHVCyoMX?=
+ =?us-ascii?Q?QVzTqIG8upNs914LOYDeYSLZWpqwKNlxNGRObSKGrpdROXqtrs+2DqfpENpF?=
+ =?us-ascii?Q?kyiV05O23xK1ThURiBqDnvi5SFSI2pI11f3KiB2ku36SoPd35cFG7S/A1LK5?=
+ =?us-ascii?Q?ArIUUhgZ5vd0PK7o7Oz3Q6fT7SSjtZaXV4vIaYHLBrON5avQ6nn7W9cNaDaB?=
+ =?us-ascii?Q?G3aA/sdVGlJohUViJi43HwlhC9y0igsZWbgrrUmeBaVsrhtyofdgu6N6aS2K?=
+ =?us-ascii?Q?kNQ1tm8KbcvoeWaJ96gXi+ztl1vosMxcqZAl/tk2m/A+pSJo1FBjZHssOVTB?=
+ =?us-ascii?Q?b03RumqDn5bhXekPmEs/HoAy35e07Rax/3mGOy1QIAZGU9PSRGQaXK6u4vSU?=
+ =?us-ascii?Q?xMKYCfkAegg/ne6HA1H6rmIgTbjQZCB7?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026)(7416014);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(82310400026)(376014)(1800799024);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2024 19:09:20.9054
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2024 19:09:21.4666
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bbbc636c-230c-46e3-dc37-08dcd35e6861
+X-MS-Exchange-CrossTenant-Network-Message-Id: 40f4f274-60eb-4d46-9394-08dcd35e68ab
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002314.namprd03.prod.outlook.com
+	SJ1PEPF00002313.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8758
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB8614
 
-Document the 5 new attack vector command line options, how they
-interact with existing vulnerability controls, and recommendations on
-when they can be disabled.
+Define 5 new attack vectors that are used for controlling CPU
+speculation mitigations and associated command line options.  Each
+attack vector may be enabled or disabled, which affects the CPU
+mitigations enabled.
 
-Note that while mitigating against untrusted userspace requires both
-mitigate_user_kernel and mitigate_user_user, these are kept separate.
-The kernel can control what code executes inside of it and that may
-affect the risk associated with vulnerabilities especially if new kernel
-mitigations are implemented.  The same isn't typically true of userspace.
-
-In other words, the risk associated with user_user or guest_guest
-attacks is unlikely to change over time.  While the risk associated with
-user_kernel or guest_host attacks may change.  Therefore, these controls
-are separated.
+The default settings for these attack vectors are consistent with
+existing kernel defaults, other than the automatic disabling of VM-based
+attack vectors if KVM support is not present.
 
 Signed-off-by: David Kaplan <david.kaplan@amd.com>
 ---
- .../hw-vuln/attack_vector_controls.rst        | 172 ++++++++++++++++++
- Documentation/admin-guide/hw-vuln/index.rst   |   1 +
- 2 files changed, 173 insertions(+)
- create mode 100644 Documentation/admin-guide/hw-vuln/attack_vector_controls.rst
+ include/linux/cpu.h | 11 +++++++++
+ kernel/cpu.c        | 58 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 69 insertions(+)
 
-diff --git a/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst b/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst
-new file mode 100644
-index 000000000000..4f77e1e69090
---- /dev/null
-+++ b/Documentation/admin-guide/hw-vuln/attack_vector_controls.rst
-@@ -0,0 +1,172 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+Attack Vector Controls
-+======================
-+
-+Attack vector controls provide a simple method to configure only the mitigations
-+for CPU vulnerabilities which are relevant given the intended use of a system.
-+Administrators are encouraged to consider which attack vectors are relevant and
-+disable all others in order to recoup system performance.
-+
-+When new relevant CPU vulnerabilities are found, they will be added to these
-+attack vector controls so administrators will likely not need to reconfigure
-+their command line parameters as mitigations will continue to be correctly
-+applied based on the chosen attack vector controls.
-+
-+Attack Vectors
-+--------------
-+
-+There are 5 sets of attack-vector mitigations currently supported by the kernel:
-+
-+#. :ref:`user_kernel` (mitigate_user_kernel= )
-+#. :ref:`user_user` (mitigate_user_user= )
-+#. :ref:`guest_host` (mitigate_guest_host= )
-+#. :ref:`guest_guest` (mitigate_guest_guest=)
-+#. :ref:`cross_thread` (mitigate_cross_thread= )
-+
-+Each control may either be specified as 'off' or 'on'.
-+
-+.. _user_kernel:
-+
-+User-to-Kernel
-+^^^^^^^^^^^^^^
-+
-+The user-to-kernel attack vector involves a malicious userspace program
-+attempting to leak kernel data into userspace by exploiting a CPU vulnerability.
-+The kernel data involved might be limited to certain kernel memory, or include
-+all memory in the system, depending on the vulnerability exploited.
-+
-+If no untrusted userspace applications are being run, such as with single-user
-+systems, consider disabling user-to-kernel mitigations.
-+
-+Note that the CPU vulnerabilities mitigated by Linux have generally not been
-+shown to be exploitable from browser-based sandboxes.  User-to-kernel
-+mitigations are therefore mostly relevant if unknown userspace applications may
-+be run by untrusted users.
-+
-+*mitigate_user_kernel defaults to 'on'*
-+
-+.. _user_user:
-+
-+User-to-User
-+^^^^^^^^^^^^
-+
-+The user-to-user attack vector involves a malicious userspace program attempting
-+to influence the behavior of another unsuspecting userspace program in order to
-+exfiltrate data.  The vulnerability of a userspace program is based on the
-+program itself and the interfaces it provides.
-+
-+If no untrusted userspace applications are being run, consider disabling
-+user-to-user mitigations.
-+
-+Note that because the Linux kernel contains a mapping of all physical memory,
-+preventing a malicious userspace program from leaking data from another
-+userspace program requires mitigating user-to-kernel attacks as well for
-+complete protection.
-+
-+*mitigate_user_user defaults to 'on'*
-+
-+.. _guest_host:
-+
-+Guest-to-Host
-+^^^^^^^^^^^^^
-+
-+The guest-to-host attack vector involves a malicious VM attempting to leak
-+hypervisor data into the VM.  The data involved may be limited, or may
-+potentially include all memory in the system, depending on the vulnerability
-+exploited.
-+
-+If no untrusted VMs are being run, consider disabling guest-to-host mitigations.
-+
-+*mitigate_guest_host defaults to 'on' if KVM support is present*
-+
-+.. _guest_guest:
-+
-+Guest-to-Guest
-+^^^^^^^^^^^^^^
-+
-+The guest-to-guest attack vector involves a malicious VM attempting to influence
-+the behavior of another unsuspecting VM in order to exfiltrate data.  The
-+vulnerability of a VM is based on the code inside the VM itself and the
-+interfaces it provides.
-+
-+If no untrusted VMs, or only a single VM is being run, consider disabling
-+guest-to-guest mitigations.
-+
-+Similar to the user-to-user attack vector, preventing a malicious VM from
-+leaking data from another VM requires mitigating guest-to-host attacks as well
-+due to the Linux kernel phys map.
-+
-+*mitigate_guest_guest defaults to 'on' if KVM support is present*
-+
-+.. _cross_thread:
-+
-+Cross-Thread
-+^^^^^^^^^^^^
-+
-+The cross-thread attack vector involves a malicious userspace program or
-+malicious VM either observing or attempting to influence the behavior of code
-+running on the SMT sibling thread in order to exfiltrate data.
-+
-+Many cross-thread attacks can only be mitigated if SMT is disabled, which will
-+result in reduced CPU core count and reduced performance.  Enabling mitigations
-+for the cross-thread attack vector may result in SMT being disabled, depending
-+on the CPU vulnerabilities detected.
-+
-+*mitigate_cross_thread defaults to 'off'*
-+
-+Interactions with command-line options
-+--------------------------------------
-+
-+The global 'mitigations=off' command line takes precedence over all attack
-+vector controls and will disable all mitigations.
-+
-+Vulnerability-specific controls (e.g. "retbleed=off") take precedence over all
-+attack vector controls.  Mitigations for individual vulnerabilities may be
-+turned on or off via their command-line options regardless of the attack vector
-+controls.
-+
-+Summary of attack-vector mitigations
-+------------------------------------
-+
-+When a vulnerability is mitigated due to an attack-vector control, the default
-+mitigation option for that particular vulnerability is used.  To use a different
-+mitigation, please use the vulnerability-specific command line option.
-+
-+The table below summarizes which vulnerabilities are mitigated when different
-+attack vectors are enabled and assuming the CPU is vulnerable.
-+
-+=============== ============== ============ ============= ============== ============
-+Vulnerability   User-to-Kernel User-to-User Guest-to-Host Guest-to-Guest Cross-Thread
-+=============== ============== ============ ============= ============== ============
-+BHI                   X                           X
-+GDS                   X              X            X              X
-+L1TF                                              X                       (Note 1)
-+MDS                   X              X            X              X        (Note 1)
-+MMIO                  X              X            X              X        (Note 1)
-+Meltdown              X
-+Retbleed              X                           X                       (Note 2)
-+RFDS                  X              X            X              X
-+Spectre_v1            X
-+Spectre_v2            X                           X
-+Spectre_v2_user                      X                           X
-+SRBDS                 X              X            X              X
-+SRSO                  X                           X
-+SSB (Note 3)
-+TAA                   X              X            X              X        (Note 1)
-+=============== ============== ============ ============= ============== ============
-+
-+Notes:
-+   1 --  Disables SMT if cross-thread mitigations are selected and CPU is vulnerable
-+
-+   2 --  Disables SMT if cross-thread mitigations are selected, CPU is vulnerable,
-+   and STIBP is not supported
-+
-+   3 --  Speculative store bypass is always enabled by default (no kernel
-+   mitigation applied) unless overridden with spec_store_bypass_disable option
-+
-+When an attack-vector is disabled (e.g., *mitigate_user_kernel=off*), all
-+mitigations for the vulnerabilities listed in the above table are disabled,
-+unless mitigation is required for a different enabled attack-vector or a
-+mitigation is explicitly selected via a vulnerability-specific command line
-+option.
-diff --git a/Documentation/admin-guide/hw-vuln/index.rst b/Documentation/admin-guide/hw-vuln/index.rst
-index ff0b440ef2dc..1add4a0baeb0 100644
---- a/Documentation/admin-guide/hw-vuln/index.rst
-+++ b/Documentation/admin-guide/hw-vuln/index.rst
-@@ -9,6 +9,7 @@ are configurable at compile, boot or run time.
- .. toctree::
-    :maxdepth: 1
+diff --git a/include/linux/cpu.h b/include/linux/cpu.h
+index bdcec1732445..b25566e1fb04 100644
+--- a/include/linux/cpu.h
++++ b/include/linux/cpu.h
+@@ -189,6 +189,17 @@ void cpuhp_report_idle_dead(void);
+ static inline void cpuhp_report_idle_dead(void) { }
+ #endif /* #ifdef CONFIG_HOTPLUG_CPU */
  
-+   attack_vector_controls
-    spectre
-    l1tf
-    mds
++enum cpu_attack_vectors {
++	CPU_MITIGATE_USER_KERNEL,
++	CPU_MITIGATE_USER_USER,
++	CPU_MITIGATE_GUEST_HOST,
++	CPU_MITIGATE_GUEST_GUEST,
++	CPU_MITIGATE_CROSS_THREAD,
++	NR_CPU_ATTACK_VECTORS,
++};
++
++bool cpu_mitigate_attack_vector(enum cpu_attack_vectors v);
++
+ #ifdef CONFIG_CPU_MITIGATIONS
+ extern bool cpu_mitigations_off(void);
+ extern bool cpu_mitigations_auto_nosmt(void);
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index d293d52a3e00..980653a55d9c 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -3201,6 +3201,22 @@ enum cpu_mitigations {
+ 
+ static enum cpu_mitigations cpu_mitigations __ro_after_init = CPU_MITIGATIONS_AUTO;
+ 
++/*
++ * All except the cross-thread attack vector are mitigated by default.
++ * Cross-thread mitigation often requires disabling SMT which is too expensive
++ * to be enabled by default.
++ *
++ * Guest-to-Host and Guest-to-Guest vectors are only needed if KVM support is
++ * present.
++ */
++static bool cpu_mitigate_attack_vectors[NR_CPU_ATTACK_VECTORS] __ro_after_init = {
++	[CPU_MITIGATE_USER_KERNEL] = true,
++	[CPU_MITIGATE_USER_USER] = true,
++	[CPU_MITIGATE_GUEST_HOST] = IS_ENABLED(CONFIG_KVM),
++	[CPU_MITIGATE_GUEST_GUEST] = IS_ENABLED(CONFIG_KVM),
++	[CPU_MITIGATE_CROSS_THREAD] = false
++};
++
+ static int __init mitigations_parse_cmdline(char *arg)
+ {
+ 	if (!strcmp(arg, "off"))
+@@ -3229,11 +3245,53 @@ bool cpu_mitigations_auto_nosmt(void)
+ 	return cpu_mitigations == CPU_MITIGATIONS_AUTO_NOSMT;
+ }
+ EXPORT_SYMBOL_GPL(cpu_mitigations_auto_nosmt);
++
++#define DEFINE_ATTACK_VECTOR(opt, v) \
++static int __init v##_parse_cmdline(char *arg) \
++{ \
++	if (!strcmp(arg, "off")) \
++		cpu_mitigate_attack_vectors[v] = false; \
++	else if (!strcmp(arg, "on")) \
++		cpu_mitigate_attack_vectors[v] = true; \
++	else \
++		pr_warn("Unsupported " opt "=%s\n", arg); \
++	return 0; \
++} \
++early_param(opt, v##_parse_cmdline)
++
++bool cpu_mitigate_attack_vector(enum cpu_attack_vectors v)
++{
++	BUG_ON(v >= NR_CPU_ATTACK_VECTORS);
++	return cpu_mitigate_attack_vectors[v];
++}
++EXPORT_SYMBOL_GPL(cpu_mitigate_attack_vector);
++
+ #else
+ static int __init mitigations_parse_cmdline(char *arg)
+ {
+ 	pr_crit("Kernel compiled without mitigations, ignoring 'mitigations'; system may still be vulnerable\n");
+ 	return 0;
+ }
++
++#define DEFINE_ATTACK_VECTOR(opt, v) \
++static int __init v##_parse_cmdline(char *arg) \
++{ \
++	pr_crit("Kernel compiled without mitigations, ignoring %s; system may still be vulnerable\n", opt); \
++	return 0; \
++} \
++early_param(opt, v##_parse_cmdline)
++
++bool cpu_mitigate_attack_vector(enum cpu_attack_vectors v)
++{
++	return false;
++}
++EXPORT_SYMBOL_GPL(cpu_mitigate_attack_vector);
++
+ #endif
+ early_param("mitigations", mitigations_parse_cmdline);
++
++DEFINE_ATTACK_VECTOR("mitigate_user_kernel", CPU_MITIGATE_USER_KERNEL);
++DEFINE_ATTACK_VECTOR("mitigate_user_user", CPU_MITIGATE_USER_USER);
++DEFINE_ATTACK_VECTOR("mitigate_guest_host", CPU_MITIGATE_GUEST_HOST);
++DEFINE_ATTACK_VECTOR("mitigate_guest_guest", CPU_MITIGATE_GUEST_GUEST);
++DEFINE_ATTACK_VECTOR("mitigate_cross_thread", CPU_MITIGATE_CROSS_THREAD);
 -- 
 2.34.1
 
