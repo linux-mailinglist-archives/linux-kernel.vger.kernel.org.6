@@ -1,134 +1,173 @@
-Return-Path: <linux-kernel+bounces-325775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-325776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44852975E11
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:45:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37EE7975E15
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 02:46:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECE13285B49
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:45:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A5B31C2287C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 00:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903B779EA;
-	Thu, 12 Sep 2024 00:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6550CA954;
+	Thu, 12 Sep 2024 00:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bM0gOnM/"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VB1NSZDL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDC0632;
-	Thu, 12 Sep 2024 00:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40CA4C85;
+	Thu, 12 Sep 2024 00:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726101928; cv=none; b=RUpW2CVwi8h6XeVvThaEBAZfERp2NqgsVj3idxoHun1sniZb/TJhwSZuZ42u1sy+llG4r32k+IaxWAWmabWmE8YAq2Y+ZdfwpUmwpcbKF0ZUo5jS25BL5522lbPuWFsSZjn9RUstcc7nIh/Ny94XXolS2mU1MWDIVkk7rxWazS0=
+	t=1726101977; cv=none; b=ZEPIqnXh1B8fMuyRhjywsuNcA45uhYD+5EVuWqkDluR+E4EdrX04TPaq94A1VyjWd157OyEn7HQTEL2p1kIqGY1fVM/JMMJeL9bpjtlw6t0jwHNOtNIAFm65dvDPyQO6mVPQJjJLIoPmvzRVe1hpcW/iZaAWsX+9PEYRvB/aI8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726101928; c=relaxed/simple;
-	bh=0uaHx4x1yyJDSLxsboXvUD14IU2KPxprqTlUPWK7cqA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mjO6eWTIxqaptPvYK6QgtB4MOlUCmVlv9n+72Y6VUqSq/UGuExnLZwQnmYsQjWpSWRwrrviPX0CdjTORfuBduH8oWRgOs+W9xosBIUviWOASPDgXbgkntfJmDjshAhDqz/Bm8I6zsECvnrPK22R7pp51o74zXgXKalyv4t9rMlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bM0gOnM/; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7c6b4222fe3so266459a12.3;
-        Wed, 11 Sep 2024 17:45:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726101926; x=1726706726; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cXFeEE7MIL9Z9sVBfBbEtID4t2efTNAyYO/k4o/Sl5g=;
-        b=bM0gOnM/ZKUvpEdGEvjGNedcCSI0tgOZpSFATVK3gSgJWfpt+rU9aUHYnr5+A0OYgc
-         Fo9Yb++DzBXH65Q/hcDxiCTttGP3YTscnCgyUsE/46JwPUpIZLdUezFGLc/7oilGs5XC
-         XztYOQMef3oMRwEZ4UGTAc/tbA2pOL/9Ea1hy3Dw7AfBMqIq7jQoaOaGrmHYK9RMHX0f
-         mvAybklUzdG3JSw2+e+J4aHLSCjZ83rlmXnIbJ6i5cAJ6niLs2SgWuHQms5exIFCrjlY
-         cCwnjEnsRK4/yf1TDx5VCSwUsvTNko6Et+mZ9ZKLlYSh8eBEsbYsaEYGpvyj3RXhfgk5
-         I0Qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726101926; x=1726706726;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cXFeEE7MIL9Z9sVBfBbEtID4t2efTNAyYO/k4o/Sl5g=;
-        b=XswIliIzxu6HYAdgvjZHVHPsZVah7bEt+qShN0xEwMUGmH2We3uZIehK307g6ktYVQ
-         XvtCNZBukIBQ+ZfyxeMIbbe29c9r/3uXhrBBsyMLkBB4KRGYk1mcrCsP88r+wa0ViN0r
-         RyephBOueilk6cty+DuPTYbee0iq3mU5mO9kQmqJjUwHBAk3UPZgVGS/Oof0zObdWTdl
-         xdCYe/XtFXxoEEsYPbZdddlebWuE+FknoXiP1b77j+DYafTPLuYTemkPwVIkg8BX1pw9
-         CRud6D/OeY4r1Jonq2Sk6I6DPP9eSHkWNy0SgihN18Ky9e1QYbbquIhFZm/rcA1RD1dB
-         3uDA==
-X-Forwarded-Encrypted: i=1; AJvYcCVTQI9bckV+WYkguRSBwv5qBWZKRmnPg+ol9d6jmP81qmi1ZuPa+Vx5zvURv0MvVOCpw4kFNlpoXN2jdPM=@vger.kernel.org, AJvYcCXy8BEzx59u3yd3o8Bht/r0/Xks5BdiAosdYMBv2NomWDOSRcX0ei9ENDgVlQfdJ1WrVc0XQgZktUaT@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRxEoCAnRyAgtzm5h0MjfU9WxsKAWAC2eBxbMRyq7woT1J14lv
-	EHhJBfj0ogfh4YEGrfgU+YsCwTILbrlSKtiIFB3haKnuxVq9f51zxZAUeyIfuP4=
-X-Google-Smtp-Source: AGHT+IEksB2QaBHw7RPvGTa2YA8PRJJaWVzkbYoySyhn/h6Bg3bUYHOMHC+R3N0ppsvheo1qaPCRDA==
-X-Received: by 2002:a05:6a21:1518:b0:1cf:39bd:bd61 with SMTP id adf61e73a8af0-1cf75ef29d3mr1140446637.23.1726101925872;
-        Wed, 11 Sep 2024 17:45:25 -0700 (PDT)
-Received: from embed-PC.myguest.virtualbox.org ([106.222.234.231])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db1fe11ad7sm560045a12.94.2024.09.11.17.45.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 17:45:25 -0700 (PDT)
-Date: Thu, 12 Sep 2024 06:15:18 +0530
-From: Abhishek Tamboli <abhishektamboli9@gmail.com>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: gregkh@linuxfoundation.org, usb-storage@lists.one-eyed-alien.net,
-	linux-usb@vger.kernel.org, skhan@linuxfoundation.org,
-	dan.carpenter@linaro.org, rbmarliere@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: storage: ene_ub6250: Fix right shift warnings
-Message-ID: <ZuI5nptdk+BcXh+R@embed-PC.myguest.virtualbox.org>
-References: <20240729182348.451436-1-abhishektamboli9@gmail.com>
- <e72cc56a-3066-4cb8-848d-bfe27a48c095@suse.com>
- <ZqkpOQIjcBSAg8rC@embed-PC.myguest.virtualbox.org>
- <5d7870b0-6b63-430b-8885-2509b33dc78a@suse.com>
- <804a6d40-73a4-4af6-944b-95e9324d7429@rowland.harvard.edu>
- <Zqp8vbbIC8E/XrQY@embed-PC.myguest.virtualbox.org>
- <b35a344a-018b-44ae-975a-7767a3d5b6ec@rowland.harvard.edu>
- <f5d4711f-9b4a-457c-b68c-c2e9aefbe4a8@suse.com>
- <890e0ed1-25c3-414e-9e8e-f5925fe8c778@rowland.harvard.edu>
+	s=arc-20240116; t=1726101977; c=relaxed/simple;
+	bh=rCTip0z8RW4T9O3sL3tYawuQAxSVn1R+UDt8fG0rfBM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XLKrYU6Np6wbimi0KCvgB6J77UqdYNFUoQZFV731eqo2T2rbWeDTj3laelTWJv9FgV6h01f67SoODBuHxVrpgPTyJ6syAc72EVAQX3T9EMHv+4HcFsdCKhuSqIeNb2H1nQDqv0AYK89KbD6znXTIUqFC+09BgTY0FJ5M5EHtE3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VB1NSZDL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33C5AC4CECD;
+	Thu, 12 Sep 2024 00:46:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726101977;
+	bh=rCTip0z8RW4T9O3sL3tYawuQAxSVn1R+UDt8fG0rfBM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=VB1NSZDLmJLYXgjMhVZp4X3/D8q938fh8TJ5msMRVPPG5e8YqL60zl/PejZumuLbu
+	 RLc65k5MW8ZAy4W9nYGaYJQXW1OiU5S+d6OH474cQNXeeIPsTTIWyQrvovzhQi7VqP
+	 4tPcCzhmnm9W7TR7kJNrScdYf+FAtI6dR9ZxfpPHkG1xX3izdOE4Q/defk2834m0n5
+	 HgPCh5NjuhKo0f7ddA85wxt/Iu8LZi2xb5PV16fGYBbI9+4J2Onj3GlEUqh9/zh/Fm
+	 DivkyvEI4BVw6mBGozAPvcDmN/+COz8kL766rw794WiXljC3BgDAjCzVZBORMe62w8
+	 tp/RZEiZsq/rQ==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5365928acd0so472637e87.2;
+        Wed, 11 Sep 2024 17:46:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV+mNaCdb6cQTnUamMrey1OmReXvmVvW+pwElE/AOAxorX6WH9TJ+QAje2lBHRAUKZiMUA=@vger.kernel.org, AJvYcCVzlLGGakm6wDcr+TX9uVBpA/3J46/L7Uv23azIehXwUDJXUewrcpXiLp70q+f6jlFosqGzqp8wEYKzBi/b@vger.kernel.org, AJvYcCWuyNAOJX/CxK31sUmP8gs1e65mr/I+SUVQTs0oMFwaX4VIM5Q8Hyov/4bZK9kvSAApMN4JgRfjJDVUhg==@vger.kernel.org, AJvYcCX6doiXNKabbKRDuPiHtXVWHehtkN+sn5bHfAsdr4DXMasrCjH0G0WyDYWhwSqnBGnOSe2DYnH7Tdsq3A2R@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhDYzsX3oOxPE/ArifJJPNp7ipe/yNlZ3oVz8WUokhwyN8ccwA
+	QCTHf65Jr0Yb5Z23Hnfsgna2YjDJFzvjhJIg6EMnC/immZqg5cinddajTDORcfsK37FWfwlRRP7
+	JYcsgiiEABwqU95YznkaD7UDNN7s=
+X-Google-Smtp-Source: AGHT+IFW/U6JzNS0Bm4hp70ip1Ry319HSUQjP/Bsw523ptagVoYpWZ/J3vEQMKjpxaZJeWMPwLKyr+a8IXL/eVQilwo=
+X-Received: by 2002:a05:6512:3b0e:b0:533:4656:d4cd with SMTP id
+ 2adb3069b0e04-53678fc1816mr607644e87.33.1726101975865; Wed, 11 Sep 2024
+ 17:46:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <890e0ed1-25c3-414e-9e8e-f5925fe8c778@rowland.harvard.edu>
+References: <20240911110401.598586-1-masahiroy@kernel.org> <20240911110401.598586-2-masahiroy@kernel.org>
+ <56fbf243-8e50-4760-9ed0-8d1f0f7e5ed3@oracle.com>
+In-Reply-To: <56fbf243-8e50-4760-9ed0-8d1f0f7e5ed3@oracle.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 12 Sep 2024 09:45:39 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS3XKeeQwKNMnnXDpMK+T2Df9UNoMVQtajuwr6cUR4EzQ@mail.gmail.com>
+Message-ID: <CAK7LNAS3XKeeQwKNMnnXDpMK+T2Df9UNoMVQtajuwr6cUR4EzQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] btf: move pahole check in scripts/link-vmlinux.sh to lib/Kconfig.debug
+To: Alan Maguire <alan.maguire@oracle.com>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>, bpf@vger.kernel.org, linux-arch@vger.kernel.org, 
+	Andrii Nakryiko <andrii@kernel.org>, linux-kernel@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Alan,
-On Thu, Aug 01, 2024 at 10:51:35AM -0400, Alan Stern wrote:
-> On Thu, Aug 01, 2024 at 08:54:18AM +0200, 'Oliver Neukum' via USB Mass Storage on Linux wrote:
-> > 
-> > 
-> > On 31.07.24 20:19, Alan Stern wrote:
-> > > On Wed, Jul 31, 2024 at 11:34:45PM +0530, Abhishek Tamboli wrote:
-> > > > On Wed, Jul 31, 2024 at 10:04:33AM -0400, Alan Stern wrote:
-> > 
-> > Hi,
-> > 
-> > I should make my reasoning clearer.
-> > 
-> > > > > Replacing the variable with a constant won't make much difference.  The
-> > > > > compiler will realize that bl_len has a constant value and will generate
-> > > > > appropriate code anyway.  I think just changing the type is a fine fix.
-> > 
-> > While that is absolutely true, it kind of removes the reason for the patch
-> > in the first place. The code gcc generates is unlikely to be changed.
-> > 
-> > We are reacting to a warning an automatic tool generates. That is a good thing.
-> > We should have clean code. The question is how we react to such a report.
-> > It just seems to me that if we fix such a warning, the code should really be clean
-> > after that. Just doing the minimum that will make the checker shut up is
-> > no good.
-> 
-> With this fix, the code seems clean to me.  It may not be as short as 
-> possible, but it's clean.
+On Thu, Sep 12, 2024 at 2:25=E2=80=AFAM Alan Maguire <alan.maguire@oracle.c=
+om> wrote:
+>
+> On 11/09/2024 12:03, Masahiro Yamada wrote:
+> > When DEBUG_INFO_DWARF5 is selected, pahole 1.21+ is required to enable
+> > DEBUG_INFO_BTF.
+> >
+> > When DEBUG_INFO_DWARF4 or DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT is selecte=
+d,
+> > DEBUG_INFO_BTF can be enabled without pahole installed, but a build err=
+or
+> > will occur in scripts/link-vmlinux.sh:
+> >
+> >     LD      .tmp_vmlinux1
+> >   BTF: .tmp_vmlinux1: pahole (pahole) is not available
+> >   Failed to generate BTF for vmlinux
+> >   Try to disable CONFIG_DEBUG_INFO_BTF
+> >
+> > We did not guard DEBUG_INFO_BTF by PAHOLE_VERSION when previously
+> > discussed [1].
+> >
+> > However, commit 613fe1692377 ("kbuild: Add CONFIG_PAHOLE_VERSION")
+> > added CONFIG_PAHOLE_VERSION at all. Now several CONFIG options, as
+> > well as the combination of DEBUG_INFO_BTF and DEBUG_INFO_DWARF5, are
+> > guarded by PAHOLE_VERSION.
+> >
+> > The remaining compile-time check in scripts/link-vmlinux.sh now appears
+> > to be an awkward inconsistency.
+> >
+> > This commit adopts Nathan's original work.
+> >
+> > [1]: https://lore.kernel.org/lkml/20210111180609.713998-1-natechancello=
+r@gmail.com/
+> >
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+>
+> Nice cleanup! For the series
+>
+> Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
+>
+> One small thing below..
+>
+> > ---
+> >
+> >  lib/Kconfig.debug       |  3 ++-
+> >  scripts/link-vmlinux.sh | 12 ------------
+> >  2 files changed, 2 insertions(+), 13 deletions(-)
+> >
+> > diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> > index 5e2f30921cb2..eff408a88dfd 100644
+> > --- a/lib/Kconfig.debug
+> > +++ b/lib/Kconfig.debug
+> > @@ -379,12 +379,13 @@ config DEBUG_INFO_BTF
+> >       depends on !DEBUG_INFO_SPLIT && !DEBUG_INFO_REDUCED
+> >       depends on !GCC_PLUGIN_RANDSTRUCT || COMPILE_TEST
+> >       depends on BPF_SYSCALL
+> > +     depends on PAHOLE_VERSION >=3D 116
+> >       depends on !DEBUG_INFO_DWARF5 || PAHOLE_VERSION >=3D 121
+> >       # pahole uses elfutils, which does not have support for Hexagon r=
+elocations
+> >       depends on !HEXAGON
+> >       help
+> >         Generate deduplicated BTF type information from DWARF debug inf=
+o.
+> > -       Turning this on expects presence of pahole tool, which will con=
+vert
+> > +       Turning this on requires presence of pahole tool, which will co=
+nvert
+> >         DWARF type info into equivalent deduplicated BTF type info.
+> >
+>
+> One thing we lose from the change below is an explicit message about the
+> minimal pahole version required. While it is codified in the
+> dependendencies, given that we used to loudly warn about this,
+> would it make sense to note it in the help text here; just a sentence
+> like "BTF generation requires pahole v1.16 or later."? Thanks!
 
-I noticed that the patch has not yet been pulled into linux-next, 
-even though it has been acked-by you for over a month. Is there 
-anything else I need to do on my end?
 
-Thank you for your attention to this matter.
+How about this help message?
 
-Regards,
-Abhishek
+
+
+help
+  Generate deduplicated BTF type information from DWARF debug info.
+  Turning this on requires pahole v1.16 or later (v1.21 or later
+  for DWARF 5), which will convert DWARF type info into equivalent
+  deduplicated BTF type info.
+
+
+
+
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
