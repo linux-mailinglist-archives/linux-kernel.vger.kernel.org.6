@@ -1,81 +1,101 @@
-Return-Path: <linux-kernel+bounces-326162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEE49976418
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:13:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBF0E97641A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:13:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3945BB21E0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:13:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B1CB1C236B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ECFB18FDDB;
-	Thu, 12 Sep 2024 08:13:00 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCA3190079;
+	Thu, 12 Sep 2024 08:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FiTcdWCc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854E436C
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B21B18FDBA
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:13:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726128779; cv=none; b=kyMwgI5fzu+8KIQzyzUd4F8TqVvvu+NIpK3Z+zwJ1KH6qTrdnLUHt/oDf5X4p59Klsug5GPSyv0+9r536r1sbtSVCdy95zNVc1z9RDmHZJZ7yzrzNIMNlYxw2COqVdH6p5TXLPbwQCoXtrDIZAn4tBEZGkIpZKekL6gineT1YC0=
+	t=1726128792; cv=none; b=BrfGJQ0OaaHHdzrsdUBvYf44qkqMUbD0RaG/WIShB5xiPCbcPXlWNCVTgvElsYFA439pD9d5SoQOVXeMujcHBtdkYHsRgngPi0UoZ915zTEWgZjrHnjHAHIob5tyWqWEW1GoQujUZM4JNxNdJe33FHpxBjE6le07MGKf/FtwnAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726128779; c=relaxed/simple;
-	bh=tFc20qYi8G2nsGh4yLlGq+s03iVNuXtFC3P3F5JNYvU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GNem59NaAwmDFfCyc0OoimL2tGz+np3qJ34EMQoYKvisR9FU5zy6p0N2w13JDVeQsR46Sn7IdhQMajMtHZn6b3h15arspYuubWZNzqXq/aRdc3/eWYgCkrrQGsmK6XeEauiXv7OsGuC3R5tgsCjz2HVS8M1rzOSCFcF5NSjTYt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1soewa-0006tl-H3; Thu, 12 Sep 2024 10:12:48 +0200
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1soewZ-007Kw9-0z; Thu, 12 Sep 2024 10:12:47 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1soewY-0002V3-37;
-	Thu, 12 Sep 2024 10:12:46 +0200
-Message-ID: <d94539ba211906d3ecfed9446258870762a72acb.camel@pengutronix.de>
-Subject: Re: [PATCH v1] reset: npcm: convert comma to semicolon
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Yan Zhen <yanzhen@vivo.com>, avifishman70@gmail.com,
- tmaimon77@gmail.com,  tali.perry1@gmail.com
-Cc: venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	opensource.kernel@vivo.com
-Date: Thu, 12 Sep 2024 10:12:46 +0200
-In-Reply-To: <20240909061258.2246292-1-yanzhen@vivo.com>
-References: <20240909061258.2246292-1-yanzhen@vivo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1726128792; c=relaxed/simple;
+	bh=OIzbugZ8+w82y/GQ5XlRUkvrI/8TKghHlbg88MrRrf0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j968pQZQFUGalFs7CjWiYaZ9+F5hh2E0frpWYuDogu5OiOOqJ7HKnf+UnjVFYDpt9DORpw2fDxXPA3bvflLV96T0PMhrifL8cpyVs315FVPtXLVLsRkca9EPdI6t07Fn5eW98wQm9fEPBF8u5TxubWQQ8/d84AkGC+h7J9EdZrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FiTcdWCc; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726128790;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I/d1SgyYtM49Uvgf3ca5OttSFKxWT9MmZxx9vMSYJgo=;
+	b=FiTcdWCcz27U6O7WMN6QWSC7Q59WdKeJ3CJGTOMLFGmBSFiWxep+epu70lhEfjpdrHqXNu
+	oD0YQXU/FDz/F+9GpFN5eHzpOIuWG8vws4RFuo06Bel6HeSPU6yPuxHfWb9no3hgXlZVSS
+	pEjo+H1BnBKaF+F9VbHDsqYz/CPvwZQ=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-134-8wcMhIZmPzy_R_N0RYqfeA-1; Thu,
+ 12 Sep 2024 04:13:06 -0400
+X-MC-Unique: 8wcMhIZmPzy_R_N0RYqfeA-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D47141954B2D;
+	Thu, 12 Sep 2024 08:13:04 +0000 (UTC)
+Received: from localhost (unknown [10.43.135.229])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E816F195605A;
+	Thu, 12 Sep 2024 08:13:01 +0000 (UTC)
+Date: Thu, 12 Sep 2024 10:12:59 +0200
+From: Miroslav Lichvar <mlichvar@redhat.com>
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: John Stultz <jstultz@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>,
+	Christopher S Hall <christopher.s.hall@intel.com>
+Subject: Re: [PATCH 00/21] ntp: Rework to prepare support of indenpendent PTP
+ clocks
+Message-ID: <ZuKii1KDGHSXElB6@localhost>
+References: <20240911-devel-anna-maria-b4-timers-ptp-ntp-v1-0-2d52f4e13476@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911-devel-anna-maria-b4-timers-ptp-ntp-v1-0-2d52f4e13476@linutronix.de>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Mo, 2024-09-09 at 14:12 +0800, Yan Zhen wrote:
-> Replace a comma between expression statements by a semicolon.
->=20
-> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
+On Wed, Sep 11, 2024 at 03:17:36PM +0200, Anna-Maria Behnsen wrote:
+> This problem can be solved by emulating clock_gettime() via the system
+> clock source e.g. TSC on x86. Such emulation requires:
+> 
+> 1. timekeeping mechanism similar to the existing system timekeeping
+> 2. clock steering equivalent to NTP/adjtimex()
 
-Thank you,
+I'm trying to understand what independent PTP clocks means here. Is
+the goal to provide virtual PTP clocks running on top of the system
+clocksource (e.g. TSC) similarly to what is currently done for
+physical PTP clocks by writing to /sys/class/ptp/ptp*/n_vclocks,
+expecting the virtual clocks to be synchronized by applications like
+phc2sys?
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Or is this more about speeding up the reading of the PHC, where the
+kernel itself would be tracking the offset using one of the PTP
+driver's PTP_SYS_OFFSET operations and emulating a fast-reading PHC?
 
-regards
-Philipp
+-- 
+Miroslav Lichvar
+
 
