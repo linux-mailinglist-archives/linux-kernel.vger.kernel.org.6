@@ -1,113 +1,145 @@
-Return-Path: <linux-kernel+bounces-327232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1306597729E
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:16:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D8AE9772A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:17:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 836BAB2315B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:16:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C3E1B23081
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:17:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888101C0DF3;
-	Thu, 12 Sep 2024 20:16:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363751BFDEC;
+	Thu, 12 Sep 2024 20:16:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oEh2Oiyl"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RTmQcQDf"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BA76FBF
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC336FBF
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726172164; cv=none; b=hy7MTS/jqd6W/d6WydeP90lorpxwXV8xweKTCSZuhgPVyNZBnbPyAE26/wH3eZt8zMxFegEVd0y1JyboRHhKoUGOYl1isECP6sX5eDEMs8qcrX3UNRNrYAYa2631fK/pNBoTNB9tOlqJk66G6QX4LtaneRzFPFPYoZZAR9eR1A8=
+	t=1726172218; cv=none; b=KFfKO6Aa+AORswpOzvnq+PL3XzEEgExZElx/t7lg4vfS79RtOw7IdKyf5nerfUiC1uwULI+1uT+5LwSbiMBXjfucgx2jHjMfkQt1uQ8D4fsESIESlaXjvKMoH+0nlJ9onjp7V8Wt/N2QmJG4nIJzkxIuZx4Aq8BUqHWx14uakHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726172164; c=relaxed/simple;
-	bh=hHoQQyYyg4nYi15hTtxasl5id2V0+j+p7ZvGXRW5XH4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nsj/4Mfs5jI3WC7GsdenAqzbqbvz2qTk7WZOoyvYHr1KhKzU3+/l+BZVIjCM5Z5zAVnGwufoXGc0OzKZGPCQKaogThfCNo/644v0/hxZiLz4OtfnNe9SH3SMxqekIyXt5dVGhzVj9Bwo2Fkj/unskdH7YGZR/Vv4uhYlVBDDNfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oEh2Oiyl; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53659867cbdso309450e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:16:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726172160; x=1726776960; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3OcTdr1oD21bDFlWgrDP94oUO7BjSI12VKiNlN7J8IY=;
-        b=oEh2OiylrfGxB8wzckgyh/y5aUB20gsmcd/VLuT6Apr/WYfO8u1ZaLEJxGvwiJncNo
-         JHfL71OA10rMLkq6M4C0RKo55Rom9IJJ5RcXhX8HkBQamUMILVKMruvbjb/Bc8stlwnd
-         ALMQWBG5MLT8dwK3PlaxvEzGqRikTHj2o2z5lQYZCMKMLedhQDVlAGROqdRSK/DhTTyC
-         /lb+eGCMQKUQZQWSfHZM+JyGbCG4jpWL3AvL5Hjp4PgEXDP8XRN6Ny6eisqQwdRlDsnB
-         OH5ccONZb9NCLqhlpxgMFzuL9LL6TRcY50CkM+PNtJ74wUF/kWnm2aIKCnHDsy8dxAGL
-         WFbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726172160; x=1726776960;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3OcTdr1oD21bDFlWgrDP94oUO7BjSI12VKiNlN7J8IY=;
-        b=kivDEAd0qC2AhEgNrNNSYOghlhqT7T3FFWKXL0wDJ+EDlNNasCIoMfpNcN826iL8a9
-         LSNmu7g1Mkllhm1eBY9XKWbbAyvWm3KL0rRj0UkcReBE5kbD7NZD8PpTP+1Styk/8luV
-         jJ2nsEaWZPHZAWMpWiYFle40QLrAXshloOExeyAQWmK6x0jfZF1SqrsZaXZLg3VFk/HI
-         S8Fg2vXKAF7Kc4R33mAtZr6B3uKWrxEKY2GWQ8HGy/vsDErgs2HXqTkigbhEhVpL92QD
-         UfIUxFMl3qE279b83DeXnZxhEaUgHz8eRssDbIE1D6oBDY05dosQRxxRrXsRNBZwtfIx
-         bRJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVr5++RxnLj8idRFMIp61i/psToCELp7Gb0gt4ezDVDicEDbi/o5r6ukIzegJ0Kdw+q/ymHsUwVojBmkbw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3SYkGI21ltsNry2Abso3YcJH1Syzrd6+E3k4wpDDo3584sYk1
-	ZNS7QddD8sfBQSgfWnSfpYEmI/5ZHGAqTbsgt22OoV1rcqEjzAlVgrHyptYSKde3Fe8cCgLxHY3
-	0xS1zAdm4LThAYwLWRt0E8CSyUDk3m2RFXwE=
-X-Google-Smtp-Source: AGHT+IFmGbLe7NzaH3EJuurC1RFXKVf3MQbr9jwudg2Gy6okgYnei1JNov9IGPgqos7iOnHDL5Kegj48KEr6vIYkmXY=
-X-Received: by 2002:a05:6512:2812:b0:533:3fc8:9ab9 with SMTP id
- 2adb3069b0e04-5367fef18femr305656e87.34.1726172159944; Thu, 12 Sep 2024
- 13:15:59 -0700 (PDT)
+	s=arc-20240116; t=1726172218; c=relaxed/simple;
+	bh=VS6mkQXgPagJMTPWkzbj0v5kF1CmhQvXwlkEqTUFAkM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MQzTRQdozyJoyFpCMHRbfgUCj+hUDDdRoGQQp5KNTCOnI8qMaQjitzVZX/zO6DDFhTLdnE0MuP0I7/LQbytc7jjK2P659UDxUGrXMdvx88ReyrYhWZ3GF3OHVtOQp5JrWDSrTN7RPs2d33NqmEx0SvBjeWJQxLtMjLVHvMt5Oqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RTmQcQDf; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726172218; x=1757708218;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=VS6mkQXgPagJMTPWkzbj0v5kF1CmhQvXwlkEqTUFAkM=;
+  b=RTmQcQDfXOZWPJrZkv64Vor/Pi8/hPpZVkaH0laUSQHyBQNe7NQhwF/4
+   suauBRTGgRRn0RLF3EI+agYlpghXrUCZSmV1gLYrjCx+Uto+29VMEjaRw
+   3yerft5H0KEKOYP9Yqrv2yGss+D/lPt5SyFjDRlIa5IlBDr98YbiFfCBM
+   r1A+Nysm3K3Y048HSW9NomDENXz0FpL0qCNtFbvJJA6nHnW2wGfJuxPMc
+   +t6YjTbGIM6LxQrOzc7Q2UssI+vvQnpga0rFW7S/1Xg1H2ywUpfaGgYgk
+   63GDrQEzhupi0OkAP3ArG9OXRioIX0MrtwHNvhdpDciWmPX8idtuv307F
+   A==;
+X-CSE-ConnectionGUID: GhaNhnRmSX2LvB6LH75fvA==
+X-CSE-MsgGUID: NqHTXlJ1TM2ZlUf9KpbeHw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="24878343"
+X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
+   d="scan'208";a="24878343"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 13:16:57 -0700
+X-CSE-ConnectionGUID: tyWPtJpTSD+MPTetVJf/sA==
+X-CSE-MsgGUID: SmimJXUxTmOE5iOXDtD/Fw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
+   d="scan'208";a="72175902"
+Received: from dgramcko-desk.amr.corp.intel.com (HELO [10.124.220.153]) ([10.124.220.153])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 13:16:56 -0700
+Message-ID: <9f5b7d94-91ae-41be-b4f3-49d2b9526133@intel.com>
+Date: Thu, 12 Sep 2024 13:16:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912-mgtime-v2-1-54db84afb7a7@kernel.org> <CANDhNCrpkTfe6BRVNf1ihhGALbPBBhOs1PCPxA4MDHa1+=sEbQ@mail.gmail.com>
-In-Reply-To: <CANDhNCrpkTfe6BRVNf1ihhGALbPBBhOs1PCPxA4MDHa1+=sEbQ@mail.gmail.com>
-From: John Stultz <jstultz@google.com>
-Date: Thu, 12 Sep 2024 13:15:49 -0700
-Message-ID: <CANDhNCrfzMZj8T-mCKd9RAF4D6-EBAtmkffvP5-WMJbgQHdztw@mail.gmail.com>
-Subject: Re: [PATCH v2] timekeeping: move multigrain timestamp floor handling
- into timekeeper
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@kernel.org>, 
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel test robot <oliver.sang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 27/34] x86/bugs: Add attack vector controls for
+ spectre_v1
+To: "Kaplan, David" <David.Kaplan@amd.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+ Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+ Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "x86@kernel.org" <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20240912190857.235849-1-david.kaplan@amd.com>
+ <20240912190857.235849-28-david.kaplan@amd.com>
+ <8a406835-b985-415a-a944-25d0ebea4fd0@intel.com>
+ <LV3PR12MB9265FDD41382B1271DB0305E94642@LV3PR12MB9265.namprd12.prod.outlook.com>
+Content-Language: en-US
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <LV3PR12MB9265FDD41382B1271DB0305E94642@LV3PR12MB9265.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 12, 2024 at 1:11=E2=80=AFPM John Stultz <jstultz@google.com> wr=
-ote:
-> So initially I was expecting this to look something like (sorry for
-> the whitespace damage here):
-> {
->     do {
->         seq =3D read_seqcount_begin(&tk_core.seq);
->         ts->tv_sec =3D tk->xtime_sec;
->         mono =3D tk->tkr_mono.base;
->         nsecs =3D timekeeping_get_ns(&tk->tkr_mono);
->         offset =3D *offsets[TK_OFFS_REAL];
->     } while (read_seqcount_retry(&tk_core.seq, seq));
->
->     mono =3D ktime_add_ns(mono, nsecs);
->     do {
->         old =3D atomic64_read(&mg_floor);
->         if (floor >=3D mono)
->             break;
+On 9/12/24 12:57, Kaplan, David wrote:
+> And to be clear, I was trying to continue to support both.  But the 
+> attack-vector style is also more future-proof because when new issues 
+> arise, they would get added to the appropriate vectors and users 
+> wouldn't have to do anything ideally.
 
-Apologies, that should be
-         if (old >=3D mono)
-             break;
+That's a good point.  Do you have any inkling about how static folks'
+vector selection would have been over time?
 
-thanks
--john
+For instance, if someone cared about CPU_MITIGATE_GUEST_HOST at the
+original spectre_v2 time, did that carry forward to L1TF and all the way
+into 2024?
+
+Or would they have had to shift their vector selection over time?
 
