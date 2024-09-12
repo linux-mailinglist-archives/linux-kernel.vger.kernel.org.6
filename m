@@ -1,135 +1,47 @@
-Return-Path: <linux-kernel+bounces-325998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B59509760FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:07:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 176D3976107
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:09:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA1AE1F27890
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:07:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8013FB2245E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B8C18890E;
-	Thu, 12 Sep 2024 06:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="sHsSO+rK"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE17F18BB81
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 06:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EDE1891D9;
+	Thu, 12 Sep 2024 06:09:03 +0000 (UTC)
+Received: from cae.in-ulm.de (cae.in-ulm.de [217.10.14.231])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E097654765;
+	Thu, 12 Sep 2024 06:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.10.14.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726121216; cv=none; b=Rc5vCUw8yEwnJhuvpZN6IFhIoqT+5Rj1VGF1o3/QBNW9nGjzyQvRok2eJ/kdnC/5eL8aFDuSO4R1DC9EYNE2wSLcUHgZUGao/vqLbgnLtyQZvy0fpkuCfaMxbnyJvOf7O8ktb1WSQXZQXzPgNvNM4WZ4rHuQODDAaVYo5aNjBjs=
+	t=1726121342; cv=none; b=ISts4dylt0/HnWkk5gIxJijIjWibcOGKMYI4gXlw1Nhfe9I3nCpkHks2Wl0YWvzwwotDtqSoKTRxY6UQ3Rij4ELx4FKCgmCbu8WBzqRCG8CcYv4JwmI5jAQRwL18tf17NEg+BJqqUIIK6p2oGMaGUDhwdF2Dd903Xm7BLxfcIzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726121216; c=relaxed/simple;
-	bh=8VMhfxsEEjCM7EFz4nzoCAQ/THTIdB3CL+j9lCXOfzo=;
+	s=arc-20240116; t=1726121342; c=relaxed/simple;
+	bh=FevOhKzsugQid8HT0NPGQLEbvHyB/3ayhZVlDswm1dY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bXxrX0yGBq82uEIMG43s89X5fnkMOxqqTt23f4EfzRCI5tEFbtYBF79n44DiSoXVxED1QTacj13sVGWm4n18DxvI8Tjlv25VK7o5dUVTQjdR5YpVoy4uY1YIOCy1nrqAxH9KM0Y29L5hSs9ljUGkS4V1Wtc+NdJ+BL2VRrZ81H0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=sHsSO+rK; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2055136b612so8468065ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Sep 2024 23:06:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1726121213; x=1726726013; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UDJaA5Y9npfkWPEOnJeHdGlQ/o0X1HQ/Q2gtdhbnZuk=;
-        b=sHsSO+rK7CTiNGyLTpsJZ39HJF79f/aHJJY9TFeKQaIer2XQuta/PiHqq58T+rt3Jd
-         PqCrT7qQ6QT9I1BL5oTM2QD/le3wRhD6eh8fhsORmer2nTrR3TA+ollYTPqY6Ywmm1iy
-         QoxaayWksxyI8fzzi2PCtgKWfsWqUf8DmJC0EZ4AOsQJkAC00mzAiD61s7IjA2UEjPit
-         GQ6WqXF/KPmM+AcBcWOBNv5lAZq1gX4K0SxuWudQrjeYu5hVoomTBSq7NOwHRVlLYNmo
-         QjX7Vl6fcshxwc4DTahTqtQuQtXNzVB1NvRH0jX8qZPe8+0/4QFrZB3HQ0EAM8ZS/TZA
-         3HCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726121213; x=1726726013;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UDJaA5Y9npfkWPEOnJeHdGlQ/o0X1HQ/Q2gtdhbnZuk=;
-        b=m0oNRTp95OZmMv4t3a3dZTwhkVMVAZswUjbE8k8GzSLyReUGIFhrmcG5e25buYKtzO
-         gNR6nRL4uuFKMaNgUCGOR8AgZRTu/yB0Ns/50Zv/CQDGiRDb1rOE9H1vODfaalbiuk3Q
-         tmdmZVUjaNS8HrI4LPPg2/N6qCZgisj/5MOthCKnJb4NfZqGOReL35QwXUsLo6pkm2tI
-         lxE6tanS8xm9qO489D+TXSc1J/ZuM5L3AvRnFHRIjBC05eJ6N9HvYc3OCCBj2NvqhrU+
-         VsSUdRZq3c9bWhEQu2+dkCkzDYMZfKFNig5kHkTpgseKZfMhAdIzcE1XICeRFpWIGjoT
-         gLXw==
-X-Forwarded-Encrypted: i=1; AJvYcCWbOr+Kgf9Y5IoFhSHnGSAC7rFCVPojWeeCEHmm6I1taf5vOo9Ka0sB6Hsz1Q750ZP+4fipUaAatjcw+7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl5DaGlSmckzj14rKeh3OFy7RrNt/OV3V871CPYkuqZ1pkRaZW
-	Eaahs4FJMCgXXBMkM4wBKYc0VOknXP2gln7fYWeQM09tn5QtgsNtaDH+rzQUP1E=
-X-Google-Smtp-Source: AGHT+IGKXy/6JapHeAVjChHUI6qH3tbjA0GPIxSDVxSa+LImRNXpcKvZ6AKB4gkH/Tg4GRKQ5PFIHQ==
-X-Received: by 2002:a17:902:d2ca:b0:206:c2f4:afb7 with SMTP id d9443c01a7336-2076e36db8cmr23914475ad.26.1726121212752;
-        Wed, 11 Sep 2024 23:06:52 -0700 (PDT)
-Received: from ghost ([2601:647:6700:64d0:7acc:9910:2c1d:4e65])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076b01a39esm8052185ad.287.2024.09.11.23.06.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 23:06:52 -0700 (PDT)
-Date: Wed, 11 Sep 2024 23:06:46 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	guoren <guoren@kernel.org>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-	Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	shuah <shuah@kernel.org>, Christoph Hellwig <hch@infradead.org>,
-	Michal Hocko <mhocko@suse.com>,
-	"Kirill A. Shutemov" <kirill@shutemov.name>,
-	Chris Torek <chris.torek@gmail.com>,
-	Linux-Arch <linux-arch@vger.kernel.org>,
-	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-abi-devel@lists.sourceforge.net
-Subject: Re: [PATCH RFC v3 1/2] mm: Add personality flag to limit address to
- 47 bits
-Message-ID: <ZuKE9nnNGR/5fHh/@ghost>
-References: <20240905-patches-below_hint_mmap-v3-0-3cd5564efbbb@rivosinc.com>
- <20240905-patches-below_hint_mmap-v3-1-3cd5564efbbb@rivosinc.com>
- <9fc4746b-8e9d-4a75-b966-e0906187e6b7@app.fastmail.com>
- <CAJF2gTTVX9CFM3oRZZP3hGExwVwA_=n1Lrq_0DQKWA+-ZbOekg@mail.gmail.com>
- <f23b18c6-1856-4b59-9ba3-59809b425c81@app.fastmail.com>
- <Ztrq8PBLJ3QuFJz7@arm.com>
- <oshwto46wbbgneiayj63umllyozm3c4267rvpszqzaopwnt2l7@6mxl5vydtons>
- <ZuDoExckq21fePoe@ghost>
- <8130e50c-01e2-45c3-a516-45f5499311f2@app.fastmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=j5ySjBAiUHXpZqfZ3fNd/xnlzM5hBMHjp/dR4RwJavb3GeV0QBu920wpWWDkSqx1JpkJYcCvmGB7z7RboELzT4YHcmjE/b/PxCLEv3qoXtJTvBOlSFj4ZH8mIqBxH66HcXrsxNqQgX9bFcS0R65tl65hxg8nRQqvkbk72m9dEjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c--e.de; spf=pass smtp.mailfrom=c--e.de; arc=none smtp.client-ip=217.10.14.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=c--e.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=c--e.de
+Received: by cae.in-ulm.de (Postfix, from userid 1000)
+	id 28D3C140553; Thu, 12 Sep 2024 08:08:58 +0200 (CEST)
+Date: Thu, 12 Sep 2024 08:08:58 +0200
+From: "Christian A. Ehrhardt" <lk@c--e.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Anurag Bijea <icaliberdev@gmail.com>,
+	Christian Heusel <christian@heusel.eu>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Jameson Thies <jthies@google.com>,
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
+Subject: Re: [PATCH v4] usb: typec: ucsi: Fix busy loop on ASUS VivoBooks
+Message-ID: <ZuKFetxhrQY1L5fQ@cae.in-ulm.de>
+References: <20240906065853.637205-1-lk@c--e.de>
+ <2024091156-astronomy-licorice-5569@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -138,48 +50,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8130e50c-01e2-45c3-a516-45f5499311f2@app.fastmail.com>
+In-Reply-To: <2024091156-astronomy-licorice-5569@gregkh>
 
-On Wed, Sep 11, 2024 at 07:25:08AM +0000, Arnd Bergmann wrote:
-> On Wed, Sep 11, 2024, at 00:45, Charlie Jenkins wrote:
-> > On Tue, Sep 10, 2024 at 03:08:14PM -0400, Liam R. Howlett wrote:
-> >
-> > I responded to Arnd in the other thread, but I am still not convinced
-> > that the solution that x86 and arm64 have selected is the best solution.
-> > The solution of defaulting to 47 bits does allow applications the
-> > ability to get addresses that are below 47 bits. However, due to
-> > differences across architectures it doesn't seem possible to have all
-> > architectures default to the same value. Additionally, this flag will be
-> > able to help users avoid potential bugs where a hint address is passed
-> > that causes upper bits of a VA to be used.
-> >
-> > The other issue I have with this is that if there is not a hint address
-> > specified to be greater than 47 bits on x86, then mmap() may return an
-> > address that is greater than 47-bits. The documentation in
-> > Documentation/arch/x86/x86_64/5level-paging.rst says:
-> >
-> > "If hint address set above 47-bit, but MAP_FIXED is not specified, we try
-> > to look for unmapped area by specified address. If it's already
-> > occupied, we look for unmapped area in *full* address space, rather than
-> > from 47-bit window."
+
+Hi,
+
+On Wed, Sep 11, 2024 at 03:37:25PM +0200, Greg Kroah-Hartman wrote:
+> On Fri, Sep 06, 2024 at 08:58:53AM +0200, Christian A. Ehrhardt wrote:
+> > If the busy indicator is set, all other fields in CCI should be
+> > clear according to the spec. However, some UCSI implementations do
+> > not follow this rule and report bogus data in CCI along with the
+> > busy indicator. Ignore the contents of CCI if the busy indicator is
+> > set.
+> > 
+> > If a command timeout is hit it is possible that the EVENT_PENDING
+> > bit is cleared while connector work is still scheduled which can
+> > cause the EVENT_PENDING bit to go out of sync with scheduled connector
+> > work. Check and set the EVENT_PENDING bit on entry to
+> > ucsi_handle_connector_change() to fix this.
+> > 
+> > Finally, check UCSI_CCI_BUSY before the return code of ->sync_control.
+> > This ensures that the command is cancelled even if ->sync_control
+> > returns an error (most likely -ETIMEDOUT).
+> > 
+> > Reported-by: Anurag Bijea <icaliberdev@gmail.com>
+> > Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219108
+> > Bisected-by: Christian Heusel <christian@heusel.eu>
+> > Tested-by: Anurag Bijea <icaliberdev@gmail.com>
+> > Fixes: de52aca4d9d5 ("usb: typec: ucsi: Never send a lone connector change ack")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Christian A. Ehrhardt <lk@c--e.de>
+> > ---
+> >  drivers/usb/typec/ucsi/ucsi.c | 18 ++++++++++++------
+> >  1 file changed, 12 insertions(+), 6 deletions(-)
 > 
-> This is also in the commit message of b569bab78d8d ("x86/mm: Prepare
-> to expose larger address space to userspace"), which introduced it.
-> However, I don't actually see the fallback to the full address space,
-> instead the actual behavior seems to be the same as arm64.
+> Does not apply to my usb-next branch :(
 > 
-> Am I missing something in the x86 implementation, or do we just
-> need to update the documentation?
-> 
->       Arnd
+> Can you rebase and resend this?  Or wait until -rc1 is out and rebase
+> and resend then?
 
-Yeah I guess it is incorrect documentation then? It seems more
-reasonable to me to have a hint address fall back onto the larger
-address space because otherwise the "hint" address can cause allocations
-to fail even if there is space above the 47-bit limit. This is another
-reason I wanted to avoid having this default behavior on riscv, to not
-have this abuse of the hint address.
+I sent a v5 rebased onto usb-next.
 
-- Charlie
-
+Best regards,
+Christian
 
