@@ -1,223 +1,192 @@
-Return-Path: <linux-kernel+bounces-326937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59536976ED0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:34:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68D05976ED3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D6951C23A02
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:34:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B8511C23A4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49211187874;
-	Thu, 12 Sep 2024 16:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9DA018FDD7;
+	Thu, 12 Sep 2024 16:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DHyXS37M"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZX3mVhST"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D36A1865F7
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 16:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12C118732B;
+	Thu, 12 Sep 2024 16:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726158845; cv=none; b=Xe4OAAGN1kQvjMqoB7rykoZJW+VMJ1axsA3o9xo9DWo/D5+Wsgk+R8nJiv518DZ4ThMzRmA8Gpv47mAQ9mifNJi5pv6a7iN1upghZllySmriPtqEV9+UeqSvvV3UBLgbKU1OmJdiylaMCj/26IvIO82ZaPYyqoitVyrcu7uTIvg=
+	t=1726158868; cv=none; b=k+9gK+SQOluPyw6Lgdl3cfG0bcIVvd6ZDo4DF2Tws+w87SziGMxg5ghsT5s5LKu5bMirRMI9tXVCY8LKA+uqGT8od7OHiFbIJsn12sUpQVQijIkgtIGZeguKHY5/ZCUOVBONVhwpQUSg3hWCDXYFhi92wqqoPmVfv3CNwZ1hy60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726158845; c=relaxed/simple;
-	bh=XQG7wonhC6R1YdTQNDlE3VJtJ10vFf+cAJlA/RvoZf0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JZIlGY4tGBM4c/KbDd95ALtDj+vOggRhfcsfR7CwvfB1RuqBMZolR2RC5D++ClRKs97d+wEdvBvSMiRYKZgi7w2Yb9sLnfqXEx7WZYIULYt7+wT+bZwje9mTwuVM9laJmFx4Zqr00gZdqjxrMAy28u56os2QAOH5Lz5CsS8hpAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DHyXS37M; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726158843;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EOmdO+b7gYLR4VAcBUs89Ub1sXD9TFu8fmoSrmDCcEU=;
-	b=DHyXS37McYLD8iW4fcBsEVDN1OKuoJ+eL7QusXLyqwBa93UTo29jVUQghok8sVpfRz0Ljm
-	dAUh4S9nibBDrhAEOKTDzaprxk4rCHXy8ksdWJKWLT5qPajeaN+vUOgFQUMrcKpctep5En
-	pW1xdd0nXOvWU+7WUq/kKSzY6f0Y6us=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-19-UYRTsvViO--3gtUcM1LFGg-1; Thu, 12 Sep 2024 12:34:02 -0400
-X-MC-Unique: UYRTsvViO--3gtUcM1LFGg-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-374c90d24e3so12201f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 09:34:01 -0700 (PDT)
+	s=arc-20240116; t=1726158868; c=relaxed/simple;
+	bh=iEPQ8zzcorMOzRJBRTf9fmKdtL3HliGfxkfxfwUJNsE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tMjvSI9C/734oMVtw9ULpuMF19Bt9SD2oDkuFPRsqHXovQS80r7/zxKRV7JCM/9S39ooTDqrh3t0qNWyIMmfe6Pn9kijmqb9ZACQL4n0x8v0J4KObdWI4Avx9/ok1/rECCTCsR8gb063At5BolLKsPLK4PEZsDzLd3NhxZztMks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZX3mVhST; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7d4fa972cbeso1004574a12.2;
+        Thu, 12 Sep 2024 09:34:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726158866; x=1726763666; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=547bd2aXINcYH9WA1WmShRDK1C+/D+Dc9zpQGWKFd5Y=;
+        b=ZX3mVhSTNul+S9ewxKBmEjhwoCdPOFDy9tnAux4z3nxB5uLmLwZo+oxUs1z8LgDXOe
+         07NXBulfWwJt2YJrIyWtrQiF5e2hjDtS0fCQB3dSkIUsFHXxtC94NIRS9siwIO+vAODo
+         m+YdU4OewZJrSW1zRwvwC/FKPCbd1Rdh1aYfnvI0bDWC4FTKxDk5mgT43JSjZFbyVdBS
+         g2ZPdWLfyjMtnTmemArQGcTIaVaOCgaJo3OfZDQvOjMdr3YkyhVpPfWhGckr49kpXImc
+         O5RwNIncJlKtYGpex8a/UdA9sFArqKDVOCS2f0Ob/7F/jcGwWSi/9wIaSa+HJeorVWqS
+         TCaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726158840; x=1726763640;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EOmdO+b7gYLR4VAcBUs89Ub1sXD9TFu8fmoSrmDCcEU=;
-        b=mFbrzJKxjD+LzbtKhiCq/ykGgAAE4mqi7qdDmE+CLyufnExTkxsS/y3GINJmuBtsHP
-         x7AdvSfFExgMhHBH0v3X4vvGlBdBqyLdaAuJIFuxqiBr5QID5f1BdTNBylApiACHr5o3
-         tfPaFSrjaY36UppbemEzm3ibWjGie3x0m/aoeCJ70Etyv99IkKzgsvMSUHb3e5PjnQa1
-         CtyzpMYCrXeVTbJdKd/KcZN9H029WeLWpUA6iOzABq2StXloB65KTSwYYxOamUvWmxeH
-         +aCweJMZuW99m2Pzu6ylm9ii7uQSGNGvPHVfqAQ+Tas2BL6QZy7aWaQ6EWm14gwo3Bm8
-         eNmw==
-X-Forwarded-Encrypted: i=1; AJvYcCXIZyWE6WDftMK7eRZJKd7VMAEEhxkqJe2aGF2lQcOkSr5oQGitEgExm7JTkvTpXqy+wGGIB91AJBBv3u8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkhXm0CogyOiI6TQbuUEI2LbKfWToi5jpysNddmbGBHZd/grR/
-	j/jK4F9CG1B0cZQk+bxG2OE9Yp0zSMGWSht5Q+lNOU2VDWgtnTsJBalH9rYEkB+IfpLihir4lHm
-	isxLQE7IjEUYd6cnMFC1rBDduyheV1Bq8YXh4liyv13DN3EsolB5Yl/o+T2DM1g==
-X-Received: by 2002:a05:6000:c81:b0:374:bde8:66af with SMTP id ffacd0b85a97d-378c2d581camr2869424f8f.57.1726158840262;
-        Thu, 12 Sep 2024 09:34:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHykV9DHzv3qV6R6EuPD0pzt9S/Yjo+tEE1Jd7G9+MiD3zDj61TCo7+RJHhLaEraT38VncGGg==
-X-Received: by 2002:a05:6000:c81:b0:374:bde8:66af with SMTP id ffacd0b85a97d-378c2d581camr2869405f8f.57.1726158839736;
-        Thu, 12 Sep 2024 09:33:59 -0700 (PDT)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956653f9sm14798656f8f.31.2024.09.12.09.33.59
+        d=1e100.net; s=20230601; t=1726158866; x=1726763666;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=547bd2aXINcYH9WA1WmShRDK1C+/D+Dc9zpQGWKFd5Y=;
+        b=V2nSK6uR0AnkTKs7knrVfS+MCLQJztv3DDJmOVHXg4m5+tupOXHUrEQJfPSrreC3ws
+         d9/26WM+Nn5o6DviBhKh9VIJXXscBrGgRSvIae0H6LdYdzNDtMmVB1n5dfl8nq3PTs73
+         O1GDx13B0Y8vpN3DUs0J87uZTGaEutc5Q7FCTLU0behFu1pOM6BArN99Wowo8xrtZRoF
+         9q/kDuAeOMswdjsLCl5ZVnMqimTzsiLX6oOFxrkqVqcrYEIBRbwhkY5o01URVBTO0p2a
+         k2GtzcObpAXFfo+4IhEI72AZupxT4Mozf04UBZkhGaFwhpTr+5Hi58JYz5zGDvL/mbsX
+         Im2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVqrqRl4R1p3MVWcH45T+btLgLee/3Me1JM0UB8ENNBO1Mvtf/7VhqZdsc4q00XNTcXFHchnpI9cJpP@vger.kernel.org, AJvYcCW7U9+DTvQ+XPaGJZ01yB1PD1j74m7z+x/j3ZgpDDELWJ+2or/B4qkCceCDI/sVZqH9WeJSkrh0diysPZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOTZ33ru+JzalBj16N722xCxV1NCeLNApZ26MwI2mVr7bruk4C
+	0Stw1qzmazIN+Qs8LGSuWNTWkfm7fJ74novaWDcvaVjV3fPlBVHY
+X-Google-Smtp-Source: AGHT+IGahJU9/cTFpSeTVZNaeztxiBF+TKN2FP5ccEkm/2ol42zS2uyvp62hTojCAi3Bh1dsNdkbIA==
+X-Received: by 2002:a05:6a21:164e:b0:1cf:4dc3:a89e with SMTP id adf61e73a8af0-1cf75c7e8a6mr4320859637.9.1726158865858;
+        Thu, 12 Sep 2024 09:34:25 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71908fc8459sm4769040b3a.24.2024.09.12.09.34.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 09:33:59 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Julius Werner <jwerner@chromium.org>
-Cc: Brian Norris <briannorris@chromium.org>, Borislav Petkov <bp@alien8.de>,
- Hugues Bruant <hugues.bruant@gmail.com>, stable@vger.kernel.org,
- regressions@lists.linux.dev, linux-kernel@vger.kernel.org, Fenghua Yu
- <fenghua.yu@intel.com>, Reinette Chatre <reinette.chatre@intel.com>, Tony
- Luck <tony.luck@intel.com>, Tzung-Bi Shih <tzungbi@kernel.org>, Julius
- Werner <jwerner@chromium.org>, chrome-platform@lists.linux.dev, Jani
- Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org
-Subject: Re: [NOT A REGRESSION] firmware: framebuffer-coreboot: duplicate
- device name "simple-framebuffer.0"
-In-Reply-To: <CAODwPW8P+jcF0erUph5XyWoyQgLFbZWxEM6Ygi_LFCCTLmH89Q@mail.gmail.com>
-References: <CALvjV29jozswRtmYxDur2TuEQ=1JSDrM+uWVHmghW3hG5Y9F+w@mail.gmail.com>
- <20240909080200.GAZt6reI9c98c9S_Xc@fat_crate.local>
- <ZuCGkjoxKxpnhEh6@google.com>
- <87jzfhayul.fsf@minerva.mail-host-address-is-not-set>
- <CAODwPW8P+jcF0erUph5XyWoyQgLFbZWxEM6Ygi_LFCCTLmH89Q@mail.gmail.com>
-Date: Thu, 12 Sep 2024 18:33:58 +0200
-Message-ID: <87mskczv9l.fsf@minerva.mail-host-address-is-not-set>
+        Thu, 12 Sep 2024 09:34:25 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: colin.i.king@gmail.com,
+	kees@kernel.org,
+	gustavo@embeddedor.com,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+b8080cbc8d286a5fa23a@syzkaller.appspotmail.com,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH] usb: iowarrior: fix infoleak in iowarrior_read()
+Date: Fri, 13 Sep 2024 01:34:13 +0900
+Message-Id: <20240912163413.10019-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Julius Werner <jwerner@chromium.org> writes:
+The dev->read_queue buffer memory allocated from iowarrior_probe is
+allocated in an uninitialized state, and it is possible to copy the
+uninitialized memory area to the user buffer through iowarrior_read.
 
-Hello Julius,
+This has a risk of leaking important information, and even if it is
+modified to initialize to NULL bytes when allocating memory, there is
+no significant change in performance, so I think it is appropriate to
+allocate memory through kcalloc instead of kmalloc_array.
 
->> On Coreboot platforms, a system framebuffer may be provided to the Linux
->> kernel by filling a LB_TAG_FRAMEBUFFER entry in the Coreboot table. But
->> it seems SeaBIOS payload can also provide a VGA mode in the boot params.
->>
->> [...]
->>
->> To prevent the issue, make the framebuffer_core driver to disable sysfb
->> if there is system framebuffer data in the Coreboot table. That way only
->> this driver will register a device and sysfb would not attempt to do it
->> (or remove its registered device if was already executed before).
->
-> I wonder if the priority should be the other way around? coreboot's
-> framebuffer is generally only valid when coreboot exits to the payload
-> (e.g. SeaBIOS). Only if the payload doesn't touch the display
-> controller or if there is no payload and coreboot directly hands off
-> to a kernel does the kernel driver for LB_TAG_FRAMEBUFFER make sense.
-> But if there is some other framebuffer information passed to the
-> kernel from a firmware component running after coreboot, most likely
-> that one is more up to date and the framebuffer described by the
-> coreboot table doesn't work anymore (because the payload usually
-> doesn't modify the coreboot tables again, even if it changes hardware
-> state). So if there are two drivers fighting over which firmware
-> framebuffer description is the correct one, the coreboot driver should
-> probably give way.
->
+KMSAN report:
+=====================================================
+BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+BUG: KMSAN: kernel-infoleak in _inline_copy_to_user include/linux/uaccess.h:180 [inline]
+BUG: KMSAN: kernel-infoleak in _copy_to_user+0xbc/0x110 lib/usercopy.c:26
+ instrument_copy_to_user include/linux/instrumented.h:114 [inline]
+ _inline_copy_to_user include/linux/uaccess.h:180 [inline]
+ _copy_to_user+0xbc/0x110 lib/usercopy.c:26
+ copy_to_user include/linux/uaccess.h:209 [inline]
+ iowarrior_read+0xb02/0xdc0 drivers/usb/misc/iowarrior.c:326
+ vfs_read+0x2a1/0xf60 fs/read_write.c:474
+ ksys_read+0x20f/0x4c0 fs/read_write.c:619
+ __do_sys_read fs/read_write.c:629 [inline]
+ __se_sys_read fs/read_write.c:627 [inline]
+ __x64_sys_read+0x93/0xe0 fs/read_write.c:627
+ x64_sys_call+0x3055/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:1
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-That's a very good point. I'm actually not familiar with Coreboot and I
-used an educated guess (in the case of DT for example, that's the main
-source of truth and I didn't know if a Core table was in a similar vein).
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:3998 [inline]
+ slab_alloc_node mm/slub.c:4041 [inline]
+ __do_kmalloc_node mm/slub.c:4161 [inline]
+ __kmalloc_noprof+0x661/0xf30 mm/slub.c:4174
+ kmalloc_noprof include/linux/slab.h:685 [inline]
+ kmalloc_array_noprof include/linux/slab.h:726 [inline]
+ iowarrior_probe+0x10ea/0x1b90 drivers/usb/misc/iowarrior.c:836
+ usb_probe_interface+0xd6f/0x1350 drivers/usb/core/driver.c:399
+ really_probe+0x4db/0xd90 drivers/base/dd.c:657
+ __driver_probe_device+0x2ab/0x5d0 drivers/base/dd.c:799
+ driver_probe_device+0x72/0x890 drivers/base/dd.c:829
+ __device_attach_driver+0x568/0x9e0 drivers/base/dd.c:957
+ bus_for_each_drv+0x403/0x620 drivers/base/bus.c:457
+ __device_attach+0x3c1/0x650 drivers/base/dd.c:1029
+ device_initial_probe+0x32/0x40 drivers/base/dd.c:1078
+ bus_probe_device+0x3dc/0x5c0 drivers/base/bus.c:532
+ device_add+0x13aa/0x1ba0 drivers/base/core.c:3682
+ usb_set_configuration+0x31c9/0x38d0 drivers/usb/core/message.c:2210
+ usb_generic_driver_probe+0x109/0x2a0 drivers/usb/core/generic.c:254
+ usb_probe_device+0x3a7/0x690 drivers/usb/core/driver.c:294
+ really_probe+0x4db/0xd90 drivers/base/dd.c:657
+ __driver_probe_device+0x2ab/0x5d0 drivers/base/dd.c:799
+ driver_probe_device+0x72/0x890 drivers/base/dd.c:829
+ __device_attach_driver+0x568/0x9e0 drivers/base/dd.c:957
+ bus_for_each_drv+0x403/0x620 drivers/base/bus.c:457
+ __device_attach+0x3c1/0x650 drivers/base/dd.c:1029
+ device_initial_probe+0x32/0x40 drivers/base/dd.c:1078
+ bus_probe_device+0x3dc/0x5c0 drivers/base/bus.c:532
+ device_add+0x13aa/0x1ba0 drivers/base/core.c:3682
+ usb_new_device+0x15f4/0x2470 drivers/usb/core/hub.c:2651
+ hub_port_connect drivers/usb/core/hub.c:5521 [inline]
+ hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
+ port_event drivers/usb/core/hub.c:5821 [inline]
+ hub_event+0x4ffb/0x72d0 drivers/usb/core/hub.c:5903
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
+ worker_thread+0xea7/0x14d0 kernel/workqueue.c:3389
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-Maybe something like the following (untested) patch then?
+Bytes 0-72 of 73 are uninitialized
+Memory access of size 73 starts at ffff88811bbc6000
+Data copied to user address 0000000020000000
 
-From de1c32017006f4671d91b695f4d6b4e99c073ab2 Mon Sep 17 00:00:00 2001
-From: Javier Martinez Canillas <javierm@redhat.com>
-Date: Thu, 12 Sep 2024 18:31:55 +0200
-Subject: [PATCH] firmware: coreboot: Don't register a pdev if screen_info data
- is available
+CPU: 0 UID: 0 PID: 5938 Comm: syz.0.15 Not tainted 6.11.0-rc7-syzkaller-g77f587896757 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+=====================================================
 
-On Coreboot platforms, a system framebuffer may be provided to the Linux
-kernel by filling a LB_TAG_FRAMEBUFFER entry in the Coreboot table. But
-a Coreboot payload (e.g: SeaBIOS) could also provide this information to
-the Linux kernel.
-
-If that the case, early arch x86 boot code will fill the global struct
-screen_info data and that data used by the Generic System Framebuffers
-(sysfb) framework to add a platform device with platform data about the
-system framebuffer.
-
-But later then the framebuffer_coreboot driver will try to do the same
-framebuffer (using the information from the Coreboot table), which will
-lead to an error due a simple-framebuffer.0 device already registered:
-
-    sysfs: cannot create duplicate filename '/bus/platform/devices/simple-framebuffer.0'
-    ...
-    coreboot: could not register framebuffer
-    framebuffer coreboot8: probe with driver framebuffer failed with error -17
-
-To prevent the issue, make the framebuffer_core driver to not register a
-platform device if the global struct screen_info data has been filled.
-
-Reported-by: Brian Norris <briannorris@chromium.org>
-Link: https://lore.kernel.org/all/ZuCG-DggNThuF4pj@b20ea791c01f/T/#ma7fb65acbc1a56042258adac910992bb225a20d2
-Suggested-by: Julius Werner <jwerner@chromium.org>
-Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+Reported-by: syzbot+b8080cbc8d286a5fa23a@syzkaller.appspotmail.com
+Tested-by: syzbot+b8080cbc8d286a5fa23a@syzkaller.appspotmail.com
+Fixes: 23feefda2239 ("usb: iowarrior: replace kmalloc with kmalloc_array")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
 ---
- drivers/firmware/google/framebuffer-coreboot.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/usb/misc/iowarrior.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/firmware/google/framebuffer-coreboot.c b/drivers/firmware/google/framebuffer-coreboot.c
-index daadd71d8ddd..4e50da17cd7e 100644
---- a/drivers/firmware/google/framebuffer-coreboot.c
-+++ b/drivers/firmware/google/framebuffer-coreboot.c
-@@ -15,6 +15,7 @@
- #include <linux/module.h>
- #include <linux/platform_data/simplefb.h>
- #include <linux/platform_device.h>
-+#include <linux/screen_info.h>
- 
- #include "coreboot_table.h"
- 
-@@ -27,6 +28,7 @@ static int framebuffer_probe(struct coreboot_device *dev)
- 	int i;
- 	u32 length;
- 	struct lb_framebuffer *fb = &dev->framebuffer;
-+	struct screen_info *si = &screen_info;
- 	struct platform_device *pdev;
- 	struct resource res;
- 	struct simplefb_platform_data pdata = {
-@@ -36,6 +38,20 @@ static int framebuffer_probe(struct coreboot_device *dev)
- 		.format = NULL,
- 	};
- 
-+	/*
-+	 * If the global screen_info data has been filled, the Generic
-+	 * System Framebuffers (sysfb) will already register a platform
-+	 * and pass the screen_info as platform_data to a driver that
-+	 * could scan-out using the system provided framebuffer.
-+	 *
-+	 * On Coreboot systems, the advertise LB_TAG_FRAMEBUFFER entry
-+	 * in the Coreboot table should only be used if the payload did
-+	 * not set video mode info and passed it to the Linux kernel.
-+	 */
-+	if (si->orig_video_isVGA == VIDEO_TYPE_VLFB ||
-+            si->orig_video_isVGA == VIDEO_TYPE_EFI)
-+		return -EINVAL;
-+
- 	if (!fb->physical_address)
- 		return -ENODEV;
- 
--- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
-
+diff --git a/drivers/usb/misc/iowarrior.c b/drivers/usb/misc/iowarrior.c
+index 6d28467ce352..5240e05c094e 100644
+--- a/drivers/usb/misc/iowarrior.c
++++ b/drivers/usb/misc/iowarrior.c
+@@ -831,9 +831,9 @@ static int iowarrior_probe(struct usb_interface *interface,
+ 			 dev->int_in_buffer, dev->report_size,
+ 			 iowarrior_callback, dev,
+ 			 dev->int_in_endpoint->bInterval);
+-	/* create an internal buffer for interrupt data from the device */
++	/* create an internal buffer for interrupt data from the device and initialize it */
+ 	dev->read_queue =
+-	    kmalloc_array(dev->report_size + 1, MAX_INTERRUPT_BUFFER,
++	    kcalloc(dev->report_size + 1, MAX_INTERRUPT_BUFFER,
+ 			  GFP_KERNEL);
+ 	if (!dev->read_queue)
+ 		goto error;
+--
 
