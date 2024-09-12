@@ -1,320 +1,194 @@
-Return-Path: <linux-kernel+bounces-326043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF2609761B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:41:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68C359761C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:44:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92F722876B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:41:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B73E1C2266B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:44:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50AAC18FDD7;
-	Thu, 12 Sep 2024 06:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2974918BB8F;
+	Thu, 12 Sep 2024 06:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="CWUs2wZf"
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kEXNTh35"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC3018BBBC;
-	Thu, 12 Sep 2024 06:40:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B71282FB;
+	Thu, 12 Sep 2024 06:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726123249; cv=none; b=XVWKfwb39LVLCcCRNZWp4ONpqDIK7MXDBgqj3SCpjh3AmMaYgrNajD2AYrR6LuWNB7I/r5dD97b3m9bnr5GQa44wearMhwVnpF6wW/AgRke0CfrE39oM5q9dSe5yyYZNIQrypJPS66Pxa3Gviq1JGqHv5D4HaLxdoyAMn9RWDsc=
+	t=1726123448; cv=none; b=VEUqQxdiUuopBUsN9/fjwL9ElgavjtG/if0ZnTRu9yIbOpeX6KKwHKNQI74c2WVYHeOgedQJi/7wQsDAGPqneyO24UflflMLZ3cJpPTyCiwiZDQJ4x6LLbw+UvFAdvLflH62El23iPXqUPlFzCKge8zgO8fQnm6cvTtUaw1HIRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726123249; c=relaxed/simple;
-	bh=a+OQEgihkbaNfjeZoKkfESFnRgk7yCwCS28l/yRiURA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mKFYzNg4r8KY6Xt/Q6VimxORBbFyuI/JXXSpfXFEY3VoPBI9aKyhUr3/WQihJV9HDrpK4akuN0lKTkIg5tgxYQv31pvGJBNrRSvCQroBoB7ZGW1SX8/LPYcYHrhHJG2Rc2DyhLIm0a/soKvuGqH6ObBM6REB8jNxqlcy39zYg40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=CWUs2wZf; arc=none smtp.client-ip=67.231.156.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48C4PBoN002008;
-	Wed, 11 Sep 2024 23:40:38 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pfpt0220; bh=x96ALA0iQpCyhxiMwZcya8Gu2
-	33B4pb5sf20hvT0qNI=; b=CWUs2wZfmzdcpq5REHVCTLSoxG/EWA4p4B3TNJXKS
-	mREaI5M8OHgh6o+0jZM7IGBa9/sUM+wc2BHM0FKlzz+s1Q56pnuf3O8njh1vJ9XT
-	lb8mvE7JSnOLP4gnVVX9HaV/kCq3wzWgQuq/rolBQ/YxOinb5dHPIW4kUdNyL7GT
-	WcCAdpUDyVXK22mMO9aRVsP/rbhaQXCfV3aK6yGZ4SL6ior/CR7nM/ZNCscH8kbP
-	oAg1ZE2ntGyP97MB+GLpSPvYz3DeOelwvgbGHlT5dyY0IWLM6EBCuEkYMoDqmqFj
-	q7sPaYvqnJt266Ju5rOvU5X5vz1bblj/O/12kH7JDKE+g==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 41ks8prd2t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 11 Sep 2024 23:40:38 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 11 Sep 2024 23:40:37 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 11 Sep 2024 23:40:37 -0700
-Received: from hyd1soter3.marvell.com (unknown [10.29.37.12])
-	by maili.marvell.com (Postfix) with ESMTP id B368E5E6864;
-	Wed, 11 Sep 2024 23:40:33 -0700 (PDT)
-From: Geetha sowjanya <gakula@marvell.com>
-To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <kuba@kernel.org>, <davem@davemloft.net>, <pabeni@redhat.com>,
-        <jiri@resnulli.us>, <edumazet@google.com>, <sgoutham@marvell.com>,
-        <gakula@marvell.com>, <sbhatta@marvell.com>, <hkelam@marvell.com>
-Subject: [net-next PATCH v3 4/4] octeontx2-pf: Export common APIs
-Date: Thu, 12 Sep 2024 12:10:17 +0530
-Message-ID: <20240912064017.4429-5-gakula@marvell.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240912064017.4429-1-gakula@marvell.com>
-References: <20240912064017.4429-1-gakula@marvell.com>
+	s=arc-20240116; t=1726123448; c=relaxed/simple;
+	bh=RIg5FqMY3WCyjaVG7wZTmaeOMd2Lc0QI9AIKIbcjRBs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nJEP9EmyQCoZMpegBGJ899fzPDkVhxV3Z8db/ohZ2RkCPCJt+YxB5PqD9bnzlUsoLnBJPUkI8H87Gs2iENyT6R3rTaAnenQwxLv9X8I3h252koOjF+r2DKMUmDyR5ccOdjdhE6B0p8foda3jlfMsZb6gGmgfN53tpE7H1wr7sZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kEXNTh35; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-718f28f77f4so535854b3a.1;
+        Wed, 11 Sep 2024 23:44:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726123446; x=1726728246; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y7hy43Re2oXJOlp1c0ylXP5QjQeV2Hny88PsAJJ3TBU=;
+        b=kEXNTh35ZUL3OHwQj3nkct2ceGOPrID3DD+bJIIoriRz5/r0kjgjKCPx1SDTVv38Ed
+         GyOy4qhvNo5XWoojvgX6ZNnl2mGyFDiC22HLXRxj9md+70r3iOJUUHuNRl5n06LP80vc
+         eUqkFqkiLdYB3QzzdROIN4UuuU7AOws/O4vaG3vysE7IRA8Ai4B/wzKHgGYyWyurPK1D
+         cJG3jSUrhQ2EYNOeokLX8qN0czLGRHGABls2gMdblygFBvMkvxMUqI/FF3mg68sjNggH
+         NlTTNrHZl7suKRpHlC3OTKWC+pOHJQSqDD9pBiLJFFX7YL4Prx7RbW+8Ud/hBBQsFBh5
+         rTaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726123446; x=1726728246;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y7hy43Re2oXJOlp1c0ylXP5QjQeV2Hny88PsAJJ3TBU=;
+        b=lMShP0c6It5rN3rKbtJT1dugiHhqc01EXI3a7dWDFq2IrUTMavV8d2ccmy0OmoGNk2
+         wlKYTCgv4nsPxtpgcLlFk2eO5c8qRh8rlwnMqOuM0wCgxpIZa4scJ1kq9krAQwi+UGsu
+         8iIIgEoJv6kln/+IMJvsFGcPpPWqBS4p7E84tiHk/M2tlLGP5PyfeIp1XIgFHHeLmnVF
+         XCzwEVOplVAHbTjO28i7ipLc6ZTBaQDGwKvK5HlVRfY48nvEmVl9yg0k9ubFY5OK7Lqx
+         wkXfr5yQnyOGCfy/rC0wZguptkyLdcDmBPZk+wl67k6UInFi71a6Mx5D84BOa89gobXf
+         NNjg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZF54Eql/m89hib4RlkycRgzDvKqNkVoH+ToNbpZ2raOx3HO27m5bHP59csN9pIVXWSRju7IWtKdse30Y=@vger.kernel.org, AJvYcCVKNQSiYYZTw+7yzPPAljiXIAvD8OGrJwjVu5RN+PEAolc4MSS//55VHbzKv/vFi63cEAnocNf0@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyzUoC4Hav1uidxzTlKNYzo99jN4ixkx9ec2bSXTNBNRwSkJX1
+	17LX3bHiREeeW0hHlVRWmyntcA2EMbTXL0zK4NqSo8QVOQKX9GFT
+X-Google-Smtp-Source: AGHT+IHtS+LhpiXKHiUQ6YZQT+Z2rziYfmj2WgD9t7Oybxe3a3jJ3OAbYWbkecS+lUjr9ilVuJ5kSQ==
+X-Received: by 2002:a05:6a00:92a6:b0:714:25ee:df58 with SMTP id d2e1a72fcca58-719261e772amr2789330b3a.18.1726123446302;
+        Wed, 11 Sep 2024 23:44:06 -0700 (PDT)
+Received: from fedora.redhat.com ([2402:e280:3e0d:606:d0c9:2a06:9cc6:18a3])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-719090ae309sm3948927b3a.164.2024.09.11.23.44.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Sep 2024 23:44:05 -0700 (PDT)
+From: Suresh Kumar <suresh2514@gmail.com>
+To: jv@jvosburgh.net,
+	andy@greyhouse.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Suresh Kumar <suresh2514@gmail.com>
+Subject: [PATCH] net: bonding: do not set force_primary if reselect is set to failure
+Date: Thu, 12 Sep 2024 12:10:43 +0530
+Message-ID: <20240912064043.36956-1-suresh2514@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: O2dByzhu19-uKOsm5SIP1l8RCr9cK-XD
-X-Proofpoint-GUID: O2dByzhu19-uKOsm5SIP1l8RCr9cK-XD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Transfer-Encoding: 8bit
 
-Export mbox, hw resources and interrupt configuration functions.
-So, that they can be used later by the RVU representor driver.
+when bond_enslave() is called, it sets bond->force_primary to true
+without checking if primary_reselect is set to 'failure' or 'better'.
+This can result in primary becoming active again when link is back which
+is not what we want when primary_reselect is set to 'failure'
 
-Signed-off-by: Geetha sowjanya <gakula@marvell.com>
+Test
+====
+Ethernet Channel Bonding Driver: v3.7.1 (April 27, 2011)
+
+Bonding Mode: fault-tolerance (active-backup)
+Primary Slave: enp1s0 (primary_reselect failure)
+Currently Active Slave: enp1s0
+MII Status: up
+MII Polling Interval (ms): 100
+Up Delay (ms): 0
+Down Delay (ms): 0
+Peer Notification Delay (ms): 0
+
+Slave Interface: enp1s0
+MII Status: up
+Speed: 1000 Mbps
+Duplex: full
+Link Failure Count: 0
+Permanent HW addr: 52:54:00:d7:a7:2a
+Slave queue ID: 0
+
+Slave Interface: enp9s0
+MII Status: up
+Speed: 1000 Mbps
+Duplex: full
+Link Failure Count: 0
+Permanent HW addr: 52:54:00:da:9a:f9
+Slave queue ID: 0
+
+
+After primary link failure:
+
+Bonding Mode: fault-tolerance (active-backup)
+Primary Slave: None
+Currently Active Slave: enp9s0 <---- secondary is active now
+MII Status: up
+MII Polling Interval (ms): 100
+Up Delay (ms): 0
+Down Delay (ms): 0
+Peer Notification Delay (ms): 0
+
+Slave Interface: enp9s0
+MII Status: up
+Speed: 1000 Mbps
+Duplex: full
+Link Failure Count: 0
+Permanent HW addr: 52:54:00:da:9a:f9
+Slave queue ID: 0
+
+
+Now add primary link back and check bond status:
+
+Bonding Mode: fault-tolerance (active-backup)
+Primary Slave: enp1s0 (primary_reselect failure)
+Currently Active Slave: enp1s0  <------------- primary is active again
+MII Status: up
+MII Polling Interval (ms): 100
+Up Delay (ms): 0
+Down Delay (ms): 0
+Peer Notification Delay (ms): 0
+
+Slave Interface: enp9s0
+MII Status: up
+Speed: 1000 Mbps
+Duplex: full
+Link Failure Count: 0
+Permanent HW addr: 52:54:00:da:9a:f9
+Slave queue ID: 0
+
+Slave Interface: enp1s0
+MII Status: up
+Speed: 1000 Mbps
+Duplex: full
+Link Failure Count: 0
+Permanent HW addr: 52:54:00:d7:a7:2a
+Slave queue ID: 0
+
+Signed-off-by: Suresh Kumar <suresh2514@gmail.com>
 ---
-v1-v2:
- - Dropped unrelated changes.
+ drivers/net/bonding/bond_main.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
- .../marvell/octeontx2/nic/otx2_common.c       |  2 +
- .../marvell/octeontx2/nic/otx2_common.h       | 11 ++++++
- .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 37 +++++++++++++------
- .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |  4 +-
- 4 files changed, 40 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-index 34e76cfd941b..e38b3eea11f3 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-@@ -246,6 +246,7 @@ int otx2_hw_set_mtu(struct otx2_nic *pfvf, int mtu)
- 	mutex_unlock(&pfvf->mbox.lock);
- 	return err;
- }
-+EXPORT_SYMBOL(otx2_hw_set_mtu);
- 
- int otx2_config_pause_frm(struct otx2_nic *pfvf)
- {
-@@ -1782,6 +1783,7 @@ void otx2_free_cints(struct otx2_nic *pfvf, int n)
- 		free_irq(vector, &qset->napi[qidx]);
+diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+index bb9c3d6ef435..731256fbb996 100644
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -2146,7 +2146,9 @@ int bond_enslave(struct net_device *bond_dev, struct net_device *slave_dev,
+ 		/* if there is a primary slave, remember it */
+ 		if (strcmp(bond->params.primary, new_slave->dev->name) == 0) {
+ 			rcu_assign_pointer(bond->primary_slave, new_slave);
+-			bond->force_primary = true;
++            if (bond->params.primary_reselect != BOND_PRI_RESELECT_FAILURE  &&
++                bond->params.primary_reselect != BOND_PRI_RESELECT_BETTER)
++			    bond->force_primary = true;
+ 		}
  	}
- }
-+EXPORT_SYMBOL(otx2_free_cints);
- 
- void otx2_set_cints_affinity(struct otx2_nic *pfvf)
- {
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
-index b36b87dae2cb..327254e578d5 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.h
-@@ -1000,6 +1000,17 @@ int otx2_aura_init(struct otx2_nic *pfvf, int aura_id,
- int otx2_init_rsrc(struct pci_dev *pdev, struct otx2_nic *pf);
- void otx2_free_queue_mem(struct otx2_qset *qset);
- int otx2_alloc_queue_mem(struct otx2_nic *pf);
-+int otx2_init_hw_resources(struct otx2_nic *pfvf);
-+void otx2_free_hw_resources(struct otx2_nic *pf);
-+int otx2_wq_init(struct otx2_nic *pf);
-+int otx2_check_pf_usable(struct otx2_nic *pf);
-+int otx2_pfaf_mbox_init(struct otx2_nic *pf);
-+int otx2_register_mbox_intr(struct otx2_nic *pf, bool probe_af);
-+int otx2_realloc_msix_vectors(struct otx2_nic *pf);
-+void otx2_pfaf_mbox_destroy(struct otx2_nic *pf);
-+void otx2_disable_mbox_intr(struct otx2_nic *pf);
-+void otx2_disable_napi(struct otx2_nic *pf);
-+irqreturn_t otx2_cq_intr_handler(int irq, void *cq_irq);
- 
- /* RSS configuration APIs*/
- int otx2_rss_init(struct otx2_nic *pfvf);
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-index 962583277f7b..dfe76571984e 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-@@ -1008,7 +1008,7 @@ static irqreturn_t otx2_pfaf_mbox_intr_handler(int irq, void *pf_irq)
- 	return IRQ_HANDLED;
- }
- 
--static void otx2_disable_mbox_intr(struct otx2_nic *pf)
-+void otx2_disable_mbox_intr(struct otx2_nic *pf)
- {
- 	int vector = pci_irq_vector(pf->pdev, RVU_PF_INT_VEC_AFPF_MBOX);
- 
-@@ -1016,8 +1016,9 @@ static void otx2_disable_mbox_intr(struct otx2_nic *pf)
- 	otx2_write64(pf, RVU_PF_INT_ENA_W1C, BIT_ULL(0));
- 	free_irq(vector, pf);
- }
-+EXPORT_SYMBOL(otx2_disable_mbox_intr);
- 
--static int otx2_register_mbox_intr(struct otx2_nic *pf, bool probe_af)
-+int otx2_register_mbox_intr(struct otx2_nic *pf, bool probe_af)
- {
- 	struct otx2_hw *hw = &pf->hw;
- 	struct msg_req *req;
-@@ -1060,8 +1061,9 @@ static int otx2_register_mbox_intr(struct otx2_nic *pf, bool probe_af)
- 
- 	return 0;
- }
-+EXPORT_SYMBOL(otx2_register_mbox_intr);
- 
--static void otx2_pfaf_mbox_destroy(struct otx2_nic *pf)
-+void otx2_pfaf_mbox_destroy(struct otx2_nic *pf)
- {
- 	struct mbox *mbox = &pf->mbox;
- 
-@@ -1076,8 +1078,9 @@ static void otx2_pfaf_mbox_destroy(struct otx2_nic *pf)
- 	otx2_mbox_destroy(&mbox->mbox);
- 	otx2_mbox_destroy(&mbox->mbox_up);
- }
-+EXPORT_SYMBOL(otx2_pfaf_mbox_destroy);
- 
--static int otx2_pfaf_mbox_init(struct otx2_nic *pf)
-+int otx2_pfaf_mbox_init(struct otx2_nic *pf)
- {
- 	struct mbox *mbox = &pf->mbox;
- 	void __iomem *hwbase;
-@@ -1124,6 +1127,7 @@ static int otx2_pfaf_mbox_init(struct otx2_nic *pf)
- 	otx2_pfaf_mbox_destroy(pf);
- 	return err;
- }
-+EXPORT_SYMBOL(otx2_pfaf_mbox_init);
- 
- static int otx2_cgx_config_linkevents(struct otx2_nic *pf, bool enable)
- {
-@@ -1379,7 +1383,7 @@ static irqreturn_t otx2_q_intr_handler(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
--static irqreturn_t otx2_cq_intr_handler(int irq, void *cq_irq)
-+irqreturn_t otx2_cq_intr_handler(int irq, void *cq_irq)
- {
- 	struct otx2_cq_poll *cq_poll = (struct otx2_cq_poll *)cq_irq;
- 	struct otx2_nic *pf = (struct otx2_nic *)cq_poll->dev;
-@@ -1398,20 +1402,25 @@ static irqreturn_t otx2_cq_intr_handler(int irq, void *cq_irq)
- 
- 	return IRQ_HANDLED;
- }
-+EXPORT_SYMBOL(otx2_cq_intr_handler);
- 
--static void otx2_disable_napi(struct otx2_nic *pf)
-+void otx2_disable_napi(struct otx2_nic *pf)
- {
- 	struct otx2_qset *qset = &pf->qset;
- 	struct otx2_cq_poll *cq_poll;
-+	struct work_struct *work;
- 	int qidx;
- 
- 	for (qidx = 0; qidx < pf->hw.cint_cnt; qidx++) {
- 		cq_poll = &qset->napi[qidx];
--		cancel_work_sync(&cq_poll->dim.work);
-+		work = &cq_poll->dim.work;
-+		if (work->func)
-+			cancel_work_sync(work);
- 		napi_disable(&cq_poll->napi);
- 		netif_napi_del(&cq_poll->napi);
- 	}
- }
-+EXPORT_SYMBOL(otx2_disable_napi);
- 
- static void otx2_free_cq_res(struct otx2_nic *pf)
- {
-@@ -1477,7 +1486,7 @@ static int otx2_get_rbuf_size(struct otx2_nic *pf, int mtu)
- 	return ALIGN(rbuf_size, 2048);
- }
- 
--static int otx2_init_hw_resources(struct otx2_nic *pf)
-+int otx2_init_hw_resources(struct otx2_nic *pf)
- {
- 	struct nix_lf_free_req *free_req;
- 	struct mbox *mbox = &pf->mbox;
-@@ -1601,8 +1610,9 @@ static int otx2_init_hw_resources(struct otx2_nic *pf)
- 	mutex_unlock(&mbox->lock);
- 	return err;
- }
-+EXPORT_SYMBOL(otx2_init_hw_resources);
- 
--static void otx2_free_hw_resources(struct otx2_nic *pf)
-+void otx2_free_hw_resources(struct otx2_nic *pf)
- {
- 	struct otx2_qset *qset = &pf->qset;
- 	struct nix_lf_free_req *free_req;
-@@ -1688,6 +1698,7 @@ static void otx2_free_hw_resources(struct otx2_nic *pf)
- 	}
- 	mutex_unlock(&mbox->lock);
- }
-+EXPORT_SYMBOL(otx2_free_hw_resources);
- 
- static bool otx2_promisc_use_mce_list(struct otx2_nic *pfvf)
- {
-@@ -2809,7 +2820,7 @@ static const struct net_device_ops otx2_netdev_ops = {
- 	.ndo_set_vf_trust	= otx2_ndo_set_vf_trust,
- };
- 
--static int otx2_wq_init(struct otx2_nic *pf)
-+int otx2_wq_init(struct otx2_nic *pf)
- {
- 	pf->otx2_wq = create_singlethread_workqueue("otx2_wq");
- 	if (!pf->otx2_wq)
-@@ -2820,7 +2831,7 @@ static int otx2_wq_init(struct otx2_nic *pf)
- 	return 0;
- }
- 
--static int otx2_check_pf_usable(struct otx2_nic *nic)
-+int otx2_check_pf_usable(struct otx2_nic *nic)
- {
- 	u64 rev;
- 
-@@ -2837,8 +2848,9 @@ static int otx2_check_pf_usable(struct otx2_nic *nic)
- 	}
- 	return 0;
- }
-+EXPORT_SYMBOL(otx2_check_pf_usable);
- 
--static int otx2_realloc_msix_vectors(struct otx2_nic *pf)
-+int otx2_realloc_msix_vectors(struct otx2_nic *pf)
- {
- 	struct otx2_hw *hw = &pf->hw;
- 	int num_vec, err;
-@@ -2860,6 +2872,7 @@ static int otx2_realloc_msix_vectors(struct otx2_nic *pf)
- 
- 	return otx2_register_mbox_intr(pf, false);
- }
-+EXPORT_SYMBOL(otx2_realloc_msix_vectors);
- 
- static int otx2_sriov_vfcfg_init(struct otx2_nic *pf)
- {
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
-index 79a8acac6283..c4e6c78a8deb 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_vf.c
-@@ -500,7 +500,7 @@ static const struct net_device_ops otx2vf_netdev_ops = {
- 	.ndo_setup_tc = otx2_setup_tc,
- };
- 
--static int otx2_wq_init(struct otx2_nic *vf)
-+static int otx2_vf_wq_init(struct otx2_nic *vf)
- {
- 	vf->otx2_wq = create_singlethread_workqueue("otx2vf_wq");
- 	if (!vf->otx2_wq)
-@@ -689,7 +689,7 @@ static int otx2vf_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		goto err_ptp_destroy;
- 	}
- 
--	err = otx2_wq_init(vf);
-+	err = otx2_vf_wq_init(vf);
- 	if (err)
- 		goto err_unreg_netdev;
  
 -- 
-2.25.1
+2.43.0
 
 
