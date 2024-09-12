@@ -1,194 +1,151 @@
-Return-Path: <linux-kernel+bounces-326047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68C359761C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:44:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA8629761A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:40:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B73E1C2266B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:44:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE545B21B77
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 06:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2974918BB8F;
-	Thu, 12 Sep 2024 06:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8E218BB80;
+	Thu, 12 Sep 2024 06:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kEXNTh35"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="i6yEJ0SH";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OzgyJ6HO";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kkg6zmEc";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qkU2/s7w"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B71282FB;
-	Thu, 12 Sep 2024 06:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E91A1898E6;
+	Thu, 12 Sep 2024 06:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726123448; cv=none; b=VEUqQxdiUuopBUsN9/fjwL9ElgavjtG/if0ZnTRu9yIbOpeX6KKwHKNQI74c2WVYHeOgedQJi/7wQsDAGPqneyO24UflflMLZ3cJpPTyCiwiZDQJ4x6LLbw+UvFAdvLflH62El23iPXqUPlFzCKge8zgO8fQnm6cvTtUaw1HIRI=
+	t=1726123224; cv=none; b=W67ZBObEpDHUFwFwIyF7Zhy4qesS7aHLskw2tTy7LINPKrhP5V9gXuMEFRUThX+WkBhTRrjRpHX4TRhuuugRogu2WmflP3WpPAVnV7gm/YbcEKqtoxnnyUhSHPyRLxkx2x2wU1vRYzd3u+6xuJpG1fIguKyJuHuYftgOPr7MZrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726123448; c=relaxed/simple;
-	bh=RIg5FqMY3WCyjaVG7wZTmaeOMd2Lc0QI9AIKIbcjRBs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nJEP9EmyQCoZMpegBGJ899fzPDkVhxV3Z8db/ohZ2RkCPCJt+YxB5PqD9bnzlUsoLnBJPUkI8H87Gs2iENyT6R3rTaAnenQwxLv9X8I3h252koOjF+r2DKMUmDyR5ccOdjdhE6B0p8foda3jlfMsZb6gGmgfN53tpE7H1wr7sZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kEXNTh35; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-718f28f77f4so535854b3a.1;
-        Wed, 11 Sep 2024 23:44:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726123446; x=1726728246; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y7hy43Re2oXJOlp1c0ylXP5QjQeV2Hny88PsAJJ3TBU=;
-        b=kEXNTh35ZUL3OHwQj3nkct2ceGOPrID3DD+bJIIoriRz5/r0kjgjKCPx1SDTVv38Ed
-         GyOy4qhvNo5XWoojvgX6ZNnl2mGyFDiC22HLXRxj9md+70r3iOJUUHuNRl5n06LP80vc
-         eUqkFqkiLdYB3QzzdROIN4UuuU7AOws/O4vaG3vysE7IRA8Ai4B/wzKHgGYyWyurPK1D
-         cJG3jSUrhQ2EYNOeokLX8qN0czLGRHGABls2gMdblygFBvMkvxMUqI/FF3mg68sjNggH
-         NlTTNrHZl7suKRpHlC3OTKWC+pOHJQSqDD9pBiLJFFX7YL4Prx7RbW+8Ud/hBBQsFBh5
-         rTaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726123446; x=1726728246;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y7hy43Re2oXJOlp1c0ylXP5QjQeV2Hny88PsAJJ3TBU=;
-        b=lMShP0c6It5rN3rKbtJT1dugiHhqc01EXI3a7dWDFq2IrUTMavV8d2ccmy0OmoGNk2
-         wlKYTCgv4nsPxtpgcLlFk2eO5c8qRh8rlwnMqOuM0wCgxpIZa4scJ1kq9krAQwi+UGsu
-         8iIIgEoJv6kln/+IMJvsFGcPpPWqBS4p7E84tiHk/M2tlLGP5PyfeIp1XIgFHHeLmnVF
-         XCzwEVOplVAHbTjO28i7ipLc6ZTBaQDGwKvK5HlVRfY48nvEmVl9yg0k9ubFY5OK7Lqx
-         wkXfr5yQnyOGCfy/rC0wZguptkyLdcDmBPZk+wl67k6UInFi71a6Mx5D84BOa89gobXf
-         NNjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUZF54Eql/m89hib4RlkycRgzDvKqNkVoH+ToNbpZ2raOx3HO27m5bHP59csN9pIVXWSRju7IWtKdse30Y=@vger.kernel.org, AJvYcCVKNQSiYYZTw+7yzPPAljiXIAvD8OGrJwjVu5RN+PEAolc4MSS//55VHbzKv/vFi63cEAnocNf0@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyzUoC4Hav1uidxzTlKNYzo99jN4ixkx9ec2bSXTNBNRwSkJX1
-	17LX3bHiREeeW0hHlVRWmyntcA2EMbTXL0zK4NqSo8QVOQKX9GFT
-X-Google-Smtp-Source: AGHT+IHtS+LhpiXKHiUQ6YZQT+Z2rziYfmj2WgD9t7Oybxe3a3jJ3OAbYWbkecS+lUjr9ilVuJ5kSQ==
-X-Received: by 2002:a05:6a00:92a6:b0:714:25ee:df58 with SMTP id d2e1a72fcca58-719261e772amr2789330b3a.18.1726123446302;
-        Wed, 11 Sep 2024 23:44:06 -0700 (PDT)
-Received: from fedora.redhat.com ([2402:e280:3e0d:606:d0c9:2a06:9cc6:18a3])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-719090ae309sm3948927b3a.164.2024.09.11.23.44.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Sep 2024 23:44:05 -0700 (PDT)
-From: Suresh Kumar <suresh2514@gmail.com>
-To: jv@jvosburgh.net,
-	andy@greyhouse.net,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Suresh Kumar <suresh2514@gmail.com>
-Subject: [PATCH] net: bonding: do not set force_primary if reselect is set to failure
-Date: Thu, 12 Sep 2024 12:10:43 +0530
-Message-ID: <20240912064043.36956-1-suresh2514@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726123224; c=relaxed/simple;
+	bh=qlkxiGVfAawnzAbu4vj+aVeVqB1IK3wCK1Ay8Qsvn/E=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j9YBigDyqcBzRu+FBLgTNhj0SKJAFeN9hg1B9OKUNXkgRo8xllueqhbKraYI6AjpAKaWugfBCF8BemEHmpF+5wWw3DHaQGYkskifr3W4iQHqn7zEG+/wUdG2UtaJKJNng0fybqYoeMlOXox292hF5j83cE3vv+uWp+hC/HyRiqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=i6yEJ0SH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OzgyJ6HO; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kkg6zmEc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qkU2/s7w; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E276E21ADF;
+	Thu, 12 Sep 2024 06:40:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726123220; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ra0Qgw/VImENFFqMCROKUJr/aKmzw6l5/J/Yegu0dQI=;
+	b=i6yEJ0SHJzs2ZYcXuxoC6Bb/26hldZ+YQ6PGzq1n/rI/007oFiPW2676gzkaDuctnl5FpK
+	H+LlGV4XUgDudkJb7ODjNceg1zm4gFMpw4NUj/jhXmdpJZBKOH5cnwKxdS37N7JQh7dr9c
+	yNo9x1pqYg3IYXZLJ+yoxBs+NyMrVZs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726123220;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ra0Qgw/VImENFFqMCROKUJr/aKmzw6l5/J/Yegu0dQI=;
+	b=OzgyJ6HOBUvSZeFu6dbWFtQQyJTH/EGk7ZEPGPUcP64livuMJSj8uoQxP+jTrqEhMYQCXb
+	Uo4JjxF8w7TM4zDQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=kkg6zmEc;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="qkU2/s7w"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726123219; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ra0Qgw/VImENFFqMCROKUJr/aKmzw6l5/J/Yegu0dQI=;
+	b=kkg6zmEcOiUcCRdxBAAOoRz2rv5ryGlRh91j74Xx/RdqQ6THfIstZaZDV3rluMX8+gSHQK
+	2joZt5+J2ZELIzsW4XrXWWtMFPyXl/rj7ekpoEdsPWEXvQ3NAm0+Y0RrQGlK3ZuKUAnoFa
+	J/uP13Srmef0I0s9p0tgFl15/od2OT8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726123219;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ra0Qgw/VImENFFqMCROKUJr/aKmzw6l5/J/Yegu0dQI=;
+	b=qkU2/s7wmTkcJgu00Jd3F89FXjzxo4RhzAUbN3y3N7Qoy7+dHFruTFdae+XYYgLz3XPf0m
+	zlypK7Onq7hTTuCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ABD3313A73;
+	Thu, 12 Sep 2024 06:40:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id tO8pKNOM4mYoaAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 12 Sep 2024 06:40:19 +0000
+Date: Thu, 12 Sep 2024 08:41:07 +0200
+Message-ID: <87h6al1iik.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Subject: Re: [PATCH v1 1/1] ALSA: ump: Use %*ph to print small buffer
+In-Reply-To: <20240911195039.2885979-1-andriy.shevchenko@linux.intel.com>
+References: <20240911195039.2885979-1-andriy.shevchenko@linux.intel.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: E276E21ADF
+X-Spam-Score: -5.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-5.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-when bond_enslave() is called, it sets bond->force_primary to true
-without checking if primary_reselect is set to 'failure' or 'better'.
-This can result in primary becoming active again when link is back which
-is not what we want when primary_reselect is set to 'failure'
+On Wed, 11 Sep 2024 21:50:39 +0200,
+Andy Shevchenko wrote:
+> 
+> Use %*ph format to print small buffer as hex string.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Test
-====
-Ethernet Channel Bonding Driver: v3.7.1 (April 27, 2011)
-
-Bonding Mode: fault-tolerance (active-backup)
-Primary Slave: enp1s0 (primary_reselect failure)
-Currently Active Slave: enp1s0
-MII Status: up
-MII Polling Interval (ms): 100
-Up Delay (ms): 0
-Down Delay (ms): 0
-Peer Notification Delay (ms): 0
-
-Slave Interface: enp1s0
-MII Status: up
-Speed: 1000 Mbps
-Duplex: full
-Link Failure Count: 0
-Permanent HW addr: 52:54:00:d7:a7:2a
-Slave queue ID: 0
-
-Slave Interface: enp9s0
-MII Status: up
-Speed: 1000 Mbps
-Duplex: full
-Link Failure Count: 0
-Permanent HW addr: 52:54:00:da:9a:f9
-Slave queue ID: 0
-
-
-After primary link failure:
-
-Bonding Mode: fault-tolerance (active-backup)
-Primary Slave: None
-Currently Active Slave: enp9s0 <---- secondary is active now
-MII Status: up
-MII Polling Interval (ms): 100
-Up Delay (ms): 0
-Down Delay (ms): 0
-Peer Notification Delay (ms): 0
-
-Slave Interface: enp9s0
-MII Status: up
-Speed: 1000 Mbps
-Duplex: full
-Link Failure Count: 0
-Permanent HW addr: 52:54:00:da:9a:f9
-Slave queue ID: 0
+Thanks, applied now.
 
 
-Now add primary link back and check bond status:
-
-Bonding Mode: fault-tolerance (active-backup)
-Primary Slave: enp1s0 (primary_reselect failure)
-Currently Active Slave: enp1s0  <------------- primary is active again
-MII Status: up
-MII Polling Interval (ms): 100
-Up Delay (ms): 0
-Down Delay (ms): 0
-Peer Notification Delay (ms): 0
-
-Slave Interface: enp9s0
-MII Status: up
-Speed: 1000 Mbps
-Duplex: full
-Link Failure Count: 0
-Permanent HW addr: 52:54:00:da:9a:f9
-Slave queue ID: 0
-
-Slave Interface: enp1s0
-MII Status: up
-Speed: 1000 Mbps
-Duplex: full
-Link Failure Count: 0
-Permanent HW addr: 52:54:00:d7:a7:2a
-Slave queue ID: 0
-
-Signed-off-by: Suresh Kumar <suresh2514@gmail.com>
----
- drivers/net/bonding/bond_main.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-index bb9c3d6ef435..731256fbb996 100644
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -2146,7 +2146,9 @@ int bond_enslave(struct net_device *bond_dev, struct net_device *slave_dev,
- 		/* if there is a primary slave, remember it */
- 		if (strcmp(bond->params.primary, new_slave->dev->name) == 0) {
- 			rcu_assign_pointer(bond->primary_slave, new_slave);
--			bond->force_primary = true;
-+            if (bond->params.primary_reselect != BOND_PRI_RESELECT_FAILURE  &&
-+                bond->params.primary_reselect != BOND_PRI_RESELECT_BETTER)
-+			    bond->force_primary = true;
- 		}
- 	}
- 
--- 
-2.43.0
-
+Takashi
 
