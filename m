@@ -1,105 +1,313 @@
-Return-Path: <linux-kernel+bounces-326835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35E9F976D89
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:18:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2A45976D8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB6121F24B98
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:18:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 237FD1C23E8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905981BCA02;
-	Thu, 12 Sep 2024 15:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DDDB1BBBDC;
+	Thu, 12 Sep 2024 15:16:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m+c5MCJb"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="qW6pCDNV"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6862C1B9849
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2E71BD501
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726154147; cv=none; b=O5VQvmc6hnISEi0FwtXPzWJ82MGqiARE6bzckCoWt5lg/WXDKhP9llAVJW4zt4/+M35mWOEsIxs9HAdIKnTqQYy16WRUCRwDZNpDVaW91tGef5qiuHZvDv7F/Q4ABkGebI/LUlvkeFHGGF7KK0RFzM2YlV3XWYkpOiLtQdz11LM=
+	t=1726154194; cv=none; b=lwVcJZMue+y6NpFDtsNObZzi4rQRXEPP8IxQ4vICt+SB5vAAGymxqhruB0rvrsNUdFNDBB5JFtpK6ZSwgDkIbjE5uc/uA8H8Oojwvs99Xv5OkqWTPUhQs1y6pV7xqIoQuTM5PXnqxPOiJbws3hwyxMSwoEMKZxRrnZ+E67tPoN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726154147; c=relaxed/simple;
-	bh=6DeNJKisdHYMTlnWCPVFWo+z9XDLlOGPOF91RO/mKyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=goCMcjnl8eOjrtpjaFzOGsTKyuYr0AoSOiwYAqx1lLWf+41M3q4VETUukoHaZj9LEJrT+652OVOhR1flZElQBJ55WeACFTCvTcgtY3K/PakBPksJZvdG7TPIecM4gFlwSGAK4djWtR51KPIO9I69rMEqjZE/MxVAAVvPhsT69kI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m+c5MCJb; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f75c6ed397so12679731fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:15:45 -0700 (PDT)
+	s=arc-20240116; t=1726154194; c=relaxed/simple;
+	bh=rTjIdXGqTtWh6DCGbfiplFxev2qSYEs+DpLwF9tjrwQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kCpqIEba37RBi5oHJMBDqJz3jKbDT0YXfFpKMj5QObzcF4ezx1q30JXcpJ1mE5+7KsDgc9aIYrda/IP9D69Y5Mt9Ahc61XiCLxmi4Jsq1/kH4jQGELIUSjk508vhMs7kJz5IdesHgzWUw5ky0Zdr+sZZLxFgVdKQWSYUJxny9Ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=qW6pCDNV; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e04196b7603so1080774276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:16:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726154144; x=1726758944; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TPI6G/S5031LI8BZfD5KQZOQrwoKDAX7R4Xz8VDkK7A=;
-        b=m+c5MCJb9kVsj82Xu37so6GB9Pbjz8WlGaNo6yPhg1+bWxxUPOGdc/CEjCE5hPL0xQ
-         HhIaFsA15nzQWQheb/qMjDTCv7i0tVhFwoHHPF/lp7vcyIoWEYyl0Om4K5Th24PcPhOY
-         jmEdq9sfaOnUDCj++5eOgTu4PJAPm5O949KnxjyuRMTe2zMUj9kWSVwSdDgkJxXrL4DK
-         qgRsRbw0PlQlruhnbCRSmMV2MxW6f2iWzSGfHFdwFW+U2tmd2FLrubt3E8Ztz7kDI+7d
-         nkVwjgp4BlOpAfRf6zrItqnb+nPhMl5dXfB+3tca84xzMu5f4iSkaTNsGpcwvFuEHDaC
-         UYsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726154144; x=1726758944;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=raspberrypi.com; s=google; t=1726154191; x=1726758991; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TPI6G/S5031LI8BZfD5KQZOQrwoKDAX7R4Xz8VDkK7A=;
-        b=Qx/DU1kwTJokkCZ4fw9bbJ+229PqaYwIXOMjeResBFZEOWRw0zPdDh7xchojUEHqO2
-         jWYLT/X1348FFRDXJN4cONO22p3TfwWj9iFw4FYQuKOSwBD96znRFptLsmh9ptMp+Y2Y
-         IrcEHcgTav+iKeQ+Ur7j0rhZHntN98OvQfZhQ+O3C/BSgBbubYTy9eP3SVRKF3ujlSKB
-         giQhx6dFtPKZmz3nfLlcMuM2/7KxrxHZ2tV0CcHNOWL9z9E86PiiS0u/nqCyFrQL4S9A
-         HU6MJv2Y8MHgknHKPPtI+idBWiFegpw5qqyezrGGNoanCY82UBRaxD+M0X+Hx7P9Xbqp
-         SuoA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKtEb98aGk9ZmaA/WroGnX5GcDPP7Wsrw+frIDf4/E1CDgRCqQQap0MOHrG1eutvmrsBA2lmivEfFDhz4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfSDIdgWiZ3BcabvAhgRZ011WNp6KsdLzcDUQwPHjRUjI1/Iph
-	u/rSZj0TtUQd9WfiZiR+9kNtkP2WglEBBoNhvl4GbtGaQE96Y0maW58DScXdTrI=
-X-Google-Smtp-Source: AGHT+IEq3+0QP1kTu16Ee8cKa/6tDbQAbGkULUNu0YLqrcV48CRN+wczhR73Rl5UaQW8a6CDxJLzNg==
-X-Received: by 2002:a05:651c:b0c:b0:2f3:f193:d2d0 with SMTP id 38308e7fff4ca-2f787f2dacfmr18360581fa.33.1726154142906;
-        Thu, 12 Sep 2024 08:15:42 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f75c0b2138sm18952261fa.137.2024.09.12.08.15.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 08:15:42 -0700 (PDT)
-Date: Thu, 12 Sep 2024 18:15:40 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Rob Clark <robdclark@gmail.com>, 
-	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] drm/msm8998: make const arrays ratio_list and
- band_list static
-Message-ID: <fbgqvfhansee6zklmziht7igpebsbwt7xdfzqdq4qwkjbff2p3@cb43iqi4oxxx>
-References: <20240912151037.592477-1-colin.i.king@gmail.com>
+        bh=7jDXM/8JYc74GeqomisgcAX27KJrohlYuCAxmOfiyHE=;
+        b=qW6pCDNV2S7TJnVEhmahBcApFO91MXIvRv4l/n6CR0WwCARY7af7bf3FB2A2zihlQS
+         cOmTP1XjLslI3yKa92y6sdKU8u7DiNRBWHUpiUFMGcUvRhJeHHDPMwS39bD0meqvdRL7
+         hMKZDL7qy/+ABWQC8uuCmMKJNXX8WL6KuZ1ZNpKKYX33gGa7x/fL/EBzkVUE48WrfP6+
+         eS02b6I0Lh0b7QuGYebCCIqR6PUdSNqyChJNQbW7QadsisOQYeQMHBb7bYGa08aDz8Lg
+         UjRZJgjNfu5yIPTPp2j1zOXKlbLsJPb1dzJZ4W2HJhNS0WWaxyEloaJ0XeSSjFxW7nHO
+         DNUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726154191; x=1726758991;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7jDXM/8JYc74GeqomisgcAX27KJrohlYuCAxmOfiyHE=;
+        b=Nykv+US/RfqCrfrkJnn5BWlimiLRFY8GBRjcha21yR9d1BkSg96yTnh+sF8k0Gupjh
+         5KhZMV0NpcZL0h+WGfvpO9lB52ixCVREnVIVtlyvmIRs/vw7XD4sX9O6kzMg8zyYA60Z
+         MLOSOPYCTQC4gV6UjBw4RIVDJpOdYiP+wHTSpYYnUGJYzyetfV59FJGHgKuhH/3s7iUH
+         Rlh03cxhTOUTj/Rsil6oAqsj6a/4+yAeLjNxvfxdR4iHYdPu0KNpGMOt6Khdvm4KVve/
+         XzUjN8pL9tIlsyx2u0ZI8oiGFR4WjT5XQ41aL6GtT2E7tJlWQyuDVglm259yl43xd7gx
+         lsMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoVJyT4Loi7oKMmUuCypcMjvNzMb3F/6y45VfAI5t9mJnRRXlXfFQNpMDEYgewIU9EzHeonCL6iyjHiR8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZiEIRIkxAoWdpXkr84sHi3N5094iEFir/jA/7EUaA6h6vkJyh
+	sDt9/g3dWgBsp4vbKLk2hBDVLSq+/mLnI7sYG/PpzHKJPPeiBWPir18+j2IWZxTBeSgq/Vhbj1y
+	W9DyafZp/cZTS5XzNm4lNPUWOGH9xZJblM0Ya6A==
+X-Google-Smtp-Source: AGHT+IHUOVEIikRTp4j+VV9CsLzlAMQU/EfA+K9ougOAUrzzUXwDf5IHXBGuxgEuzZwwJAlz4uNTezgk08+2j1j4E6o=
+X-Received: by 2002:a05:6902:e0e:b0:e11:6961:2fdf with SMTP id
+ 3f1490d57ef6-e1d9dbd22c7mr2934644276.33.1726154189157; Thu, 12 Sep 2024
+ 08:16:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240912151037.592477-1-colin.i.king@gmail.com>
+References: <20240902-imx214-v1-0-c96cba989315@apitzsch.eu> <20240902-imx214-v1-10-c96cba989315@apitzsch.eu>
+In-Reply-To: <20240902-imx214-v1-10-c96cba989315@apitzsch.eu>
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date: Thu, 12 Sep 2024 16:16:13 +0100
+Message-ID: <CAPY8ntCjaJBmmjjbHz8PaT=eZQY0-BTjM==foMwZWpPTDHtcfg@mail.gmail.com>
+Subject: Re: [PATCH 10/13] media: i2c: imx214: Implement vflip/hflip controls
+To: git@apitzsch.eu
+Cc: Ricardo Ribalda <ribalda@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht, 
+	phone-devel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 12, 2024 at 04:10:37PM GMT, Colin Ian King wrote:
-> Don't populate the const read-only arrays ratio_list and band_list on the
-> stack at run time, instead make them static.
-> 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Hi Andr=C3=A9
+
+On Mon, 2 Sept 2024 at 22:54, Andr=C3=A9 Apitzsch via B4 Relay
+<devnull+git.apitzsch.eu@kernel.org> wrote:
+>
+> From: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+>
+> The imx214 sensor supports horizontal and vertical flipping. Add
+> appropriate controls to the driver.
+>
+> Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
 > ---
->  drivers/gpu/drm/msm/hdmi/hdmi_phy_8998.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
+>  drivers/media/i2c/imx214.c | 73 ++++++++++++++++++++++++++++++++++++++++=
++-----
+>  1 file changed, 65 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
+> index 733f55257585..4a1433728cd5 100644
+> --- a/drivers/media/i2c/imx214.c
+> +++ b/drivers/media/i2c/imx214.c
+> @@ -30,7 +30,6 @@
+>  #define IMX214_DEFAULT_LINK_FREQ 480000000
+>  #define IMX214_DEFAULT_PIXEL_RATE ((IMX214_DEFAULT_LINK_FREQ * 8LL) / 10=
+)
+>  #define IMX214_FPS 30
+> -#define IMX214_MBUS_CODE MEDIA_BUS_FMT_SRGGB10_1X10
+>
+>  /* V-TIMING internal */
+>  #define IMX214_REG_FRM_LENGTH_LINES    CCI_REG16(0x0340)
+> @@ -186,6 +185,22 @@ static const char * const imx214_supply_name[] =3D {
+>
+>  #define IMX214_NUM_SUPPLIES ARRAY_SIZE(imx214_supply_name)
+>
+> +/*
+> + * The supported formats.
+> + * This table MUST contain 4 entries per format, to cover the various fl=
+ip
+> + * combinations in the order
+> + * - no flip
+> + * - h flip
+> + * - v flip
+> + * - h&v flips
+> + */
+> +static const u32 imx214_mbus_formats[] =3D {
+> +       MEDIA_BUS_FMT_SRGGB10_1X10,
+> +       MEDIA_BUS_FMT_SGRBG10_1X10,
+> +       MEDIA_BUS_FMT_SGBRG10_1X10,
+> +       MEDIA_BUS_FMT_SBGGR10_1X10,
+> +};
+> +
+>  struct imx214 {
+>         struct device *dev;
+>         struct clk *xclk;
+> @@ -202,6 +217,8 @@ struct imx214 {
+>         struct v4l2_ctrl *vblank;
+>         struct v4l2_ctrl *hblank;
+>         struct v4l2_ctrl *exposure;
+> +       struct v4l2_ctrl *vflip;
+> +       struct v4l2_ctrl *hflip;
+>         struct v4l2_ctrl *unit_size;
+>
+>         struct regulator_bulk_data      supplies[IMX214_NUM_SUPPLIES];
+> @@ -339,7 +356,6 @@ static const struct cci_reg_sequence mode_table_commo=
+n[] =3D {
+>
+>         /* global setting */
+>         /* basic config */
+> -       { IMX214_REG_ORIENTATION, 0 },
+>         { IMX214_REG_MASK_CORR_FRAMES, IMX214_CORR_FRAMES_MASK },
+>         { IMX214_REG_FAST_STANDBY_CTRL, 1 },
+>         { IMX214_REG_LINE_LENGTH_PCK, IMX214_PPL_DEFAULT },
+> @@ -518,11 +534,29 @@ static int __maybe_unused imx214_power_off(struct d=
+evice *dev)
+>         return 0;
+>  }
+>
+> +/* Get bayer order based on flip setting. */
+> +static u32 imx214_get_format_code(struct imx214 *imx214, u32 code)
+> +{
+> +       unsigned int i;
+> +
+> +       for (i =3D 0; i < ARRAY_SIZE(imx214_mbus_formats); i++)
+> +               if (imx214_mbus_formats[i] =3D=3D code)
+> +                       break;
+> +
+> +       if (i >=3D ARRAY_SIZE(imx214_mbus_formats))
+> +               i =3D 0;
+> +
+> +       i =3D (i & ~3) | (imx214->vflip->val ? 2 : 0) |
+> +           (imx214->hflip->val ? 1 : 0);
+> +
+> +       return imx214_mbus_formats[i];
+> +}
+> +
+>  static void imx214_update_pad_format(struct imx214 *imx214,
+>                                      const struct imx214_mode *mode,
+>                                      struct v4l2_mbus_framefmt *fmt, u32 =
+code)
+>  {
+> -       fmt->code =3D IMX214_MBUS_CODE;
+> +       fmt->code =3D imx214_get_format_code(imx214, code);
+>         fmt->width =3D mode->width;
+>         fmt->height =3D mode->height;
+>         fmt->field =3D V4L2_FIELD_NONE;
+> @@ -538,10 +572,12 @@ static int imx214_enum_mbus_code(struct v4l2_subdev=
+ *sd,
+>                                  struct v4l2_subdev_state *sd_state,
+>                                  struct v4l2_subdev_mbus_code_enum *code)
+>  {
+> -       if (code->index > 0)
+> +       struct imx214 *imx214 =3D to_imx214(sd);
+> +
+> +       if (code->index >=3D (ARRAY_SIZE(imx214_mbus_formats) / 4))
+>                 return -EINVAL;
+>
+> -       code->code =3D IMX214_MBUS_CODE;
+> +       code->code =3D imx214_get_format_code(imx214, imx214_mbus_formats=
+[code->index * 4]);
+>
+>         return 0;
+>  }
+> @@ -550,7 +586,11 @@ static int imx214_enum_frame_size(struct v4l2_subdev=
+ *subdev,
+>                                   struct v4l2_subdev_state *sd_state,
+>                                   struct v4l2_subdev_frame_size_enum *fse=
+)
+>  {
+> -       if (fse->code !=3D IMX214_MBUS_CODE)
+> +       struct imx214 *imx214 =3D to_imx214(subdev);
+> +       u32 code;
+> +
+> +       code =3D imx214_get_format_code(imx214, fse->code);
+> +       if (fse->code !=3D code)
+>                 return -EINVAL;
+>
+>         if (fse->index >=3D ARRAY_SIZE(imx214_modes))
+> @@ -708,6 +748,7 @@ static int imx214_entity_init_state(struct v4l2_subde=
+v *subdev,
+>         struct v4l2_subdev_format fmt =3D { };
+>
+>         fmt.which =3D sd_state ? V4L2_SUBDEV_FORMAT_TRY : V4L2_SUBDEV_FOR=
+MAT_ACTIVE;
+> +       fmt.format.code =3D MEDIA_BUS_FMT_SRGGB10_1X10;
+>         fmt.format.width =3D imx214_modes[0].width;
+>         fmt.format.height =3D imx214_modes[0].height;
+>
+> @@ -750,6 +791,11 @@ static int imx214_set_ctrl(struct v4l2_ctrl *ctrl)
+>         case V4L2_CID_EXPOSURE:
+>                 cci_write(imx214->regmap, IMX214_REG_EXPOSURE, ctrl->val,=
+ &ret);
+>                 break;
+> +       case V4L2_CID_HFLIP:
+> +       case V4L2_CID_VFLIP:
+> +               cci_write(imx214->regmap, IMX214_REG_ORIENTATION,
+> +                         imx214->hflip->val | imx214->vflip->val << 1, &=
+ret);
+> +               break;
+>         case V4L2_CID_VBLANK:
+>                 cci_write(imx214->regmap, IMX214_REG_FRM_LENGTH_LINES,
+>                           format->height + ctrl->val, &ret);
+> @@ -788,7 +834,7 @@ static int imx214_ctrls_init(struct imx214 *imx214)
+>                 return ret;
+>
+>         ctrl_hdlr =3D &imx214->ctrls;
+> -       ret =3D v4l2_ctrl_handler_init(&imx214->ctrls, 8);
+> +       ret =3D v4l2_ctrl_handler_init(&imx214->ctrls, 10);
+>         if (ret)
+>                 return ret;
+>
+> @@ -825,6 +871,16 @@ static int imx214_ctrls_init(struct imx214 *imx214)
+>                                              IMX214_EXPOSURE_STEP,
+>                                              exposure_def);
+>
+> +       imx214->hflip =3D v4l2_ctrl_new_std(ctrl_hdlr, &imx214_ctrl_ops,
+> +                                         V4L2_CID_HFLIP, 0, 1, 1, 0);
+> +       if (imx214->hflip)
+> +               imx214->hflip->flags |=3D V4L2_CTRL_FLAG_MODIFY_LAYOUT;
+> +
+> +       imx214->vflip =3D v4l2_ctrl_new_std(ctrl_hdlr, &imx214_ctrl_ops,
+> +                                         V4L2_CID_VFLIP, 0, 1, 1, 0);
+> +       if (imx214->vflip)
+> +               imx214->vflip->flags |=3D V4L2_CTRL_FLAG_MODIFY_LAYOUT;
+> +
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+A minor optimisation.
+Currently a VIDIOC_S_EXT_CTRLS with both HFLIP and VFLIP in the list
+will call your set_ctrl function twice, which gives a redundant update
+to the register.
+Define the two controls as a cluster via v4l2_ctrl_cluster(), and
+you'll only get called once.
 
--- 
-With best wishes
-Dmitry
+See ccs-core.c or imx290.c for an example, and docs at
+https://www.kernel.org/doc/html/latest/driver-api/media/v4l2-controls.html#=
+control-clusters
+
+  Dave
+
+>         imx214->unit_size =3D v4l2_ctrl_new_std_compound(ctrl_hdlr,
+>                                 NULL,
+>                                 V4L2_CID_UNIT_CELL_SIZE,
+> @@ -1034,6 +1090,7 @@ static int imx214_enum_frame_interval(struct v4l2_s=
+ubdev *subdev,
+>                                 struct v4l2_subdev_state *sd_state,
+>                                 struct v4l2_subdev_frame_interval_enum *f=
+ie)
+>  {
+> +       struct imx214 *imx214 =3D to_imx214(subdev);
+>         const struct imx214_mode *mode;
+>
+>         if (fie->index !=3D 0)
+> @@ -1043,7 +1100,7 @@ static int imx214_enum_frame_interval(struct v4l2_s=
+ubdev *subdev,
+>                                 ARRAY_SIZE(imx214_modes), width, height,
+>                                 fie->width, fie->height);
+>
+> -       fie->code =3D IMX214_MBUS_CODE;
+> +       fie->code =3D imx214_get_format_code(imx214, fie->code);
+>         fie->width =3D mode->width;
+>         fie->height =3D mode->height;
+>         fie->interval.numerator =3D 1;
+>
+> --
+> 2.46.0
+>
+>
+>
 
