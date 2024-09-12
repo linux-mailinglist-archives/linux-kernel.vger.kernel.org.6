@@ -1,122 +1,169 @@
-Return-Path: <linux-kernel+bounces-326576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64F4D976A4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:17:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B78E976A58
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:18:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 984C41C20F3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:17:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C050C1C213E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AE271AC884;
-	Thu, 12 Sep 2024 13:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QBRNsFuG"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7622F1AD24B;
+	Thu, 12 Sep 2024 13:18:04 +0000 (UTC)
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1AE1A2641;
-	Thu, 12 Sep 2024 13:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4383D1A76C9;
+	Thu, 12 Sep 2024 13:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726147055; cv=none; b=jt0JKfIv9jXHJt7Yb0H8pFZc9H1ZhUaMiqV5fH141K/V65P7hGnUjAg8PzDsDTWTZaFngrts0ScmjOr2VJa5PJkhqt71NPY+2Z3H0e9wwr3jedYt/LEF+Gk/qC5DbaM1O7vYyMlQnaovyoZmrbgS4eeTIi3m3cixBkn95l4hA64=
+	t=1726147084; cv=none; b=XfsxrxMAHed1Na/aXInxe9Plx/slVHN0QX/Jxt79o3jkOw9jDV2M3xOFUKhgSb2T5RIGNAgLMcS+8kxWrA0v9RZeFb/wY6Wk0yjkoudHIVs4CWQXvvRbKOJHbJKqhSeBCRqYTcvLwr/3moR27i+qzxVlLgn+Hz5zmDEMgjfCQbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726147055; c=relaxed/simple;
-	bh=K1r5aTSERKfF00tNzsjXwR4UzRjP0fmcaifJ7kHqDfU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=LcuXmhRM1sUKs+xQ/QZz9T4Xq4YHJ3qCnQMP+vTSO8S1NFZFG4S+0Wl+81yNE10NikFAdRgqFwJ5QAQ2BPn05euF8lHndomsCsLaIZZbkR106Y+Su0aUqhRwTJcn0GwcjK/8XzP3hqo5+Chk1Z64CI/Gpq0reftxmymDeqK3SNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QBRNsFuG; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1726147084; c=relaxed/simple;
+	bh=8vtiuWy8DEEYZuh8z5JLVaTZZ+OrEOoXgyyr+iakjlE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KMlNcxqtuk+tSasHd0KDYFL9g/sOBkubUXx0L9B5tKD0BaL5z+LCydkDS/4UswJpQERhhyAtlolvhUI+N7/rDhuP0tRc4r3YxrYnHwcjcaW5Rd8Wc8ucic8U4HGpfRE2tmvEWteV9vgX82YaQugZ9hG3fQlEDMgJVFAgiO1/KjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cb806623eso8277135e9.2;
-        Thu, 12 Sep 2024 06:17:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726147052; x=1726751852; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HVCiz+GfbXXcZjaWdHj1FGnRfFqmbDnDvMXfgNHyN9c=;
-        b=QBRNsFuGiuJiVc/p3MVgYJNru9ydz3pbFKn1A33IH/bWSe3ZFmyt+aEs8ndjcZy34h
-         X1Y9KGEqtp9TdgEJPgwH6JzY7cm4mIenbRg1DM+jrZu5GlgItTDqC0ODWyIZWjHhoBIQ
-         t1PEqN2d2CxT9b3bpJbUc0x/veTJ5mtTaSfg9jkUlSmwvyTYGCx6Hrh8Yhn9rmlC4eG5
-         Vdg10ri5yYFhZTblKxYVftJ9nHPmtHqo2WMP/L7ke3Eve5YLqI+Dhp9W8ATHCGLVfN1v
-         hqmqkjXSQo+FSP8gfwJUPiImjV6IYDM96tKldqJzHHK7GuoV5Mgi3nCCoQ29KgDfbnzX
-         xBUg==
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-374c3400367so925323f8f.2;
+        Thu, 12 Sep 2024 06:18:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726147052; x=1726751852;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HVCiz+GfbXXcZjaWdHj1FGnRfFqmbDnDvMXfgNHyN9c=;
-        b=oQseJuVBSy3D95kz27j6zBkke9RRCeU+VC7C0isrQcMztCKvqTwpP4dZcc8j4xB8fT
-         cmcRDuQKeX742UkbsyM9a4piwN1lt7z7OR/t1KALMzA9xxlW1H5dybw4M8/t6iiAg+xY
-         Gszz8eQbX6hKngNXxXHjfJbOPfWpfhnNkRWohpjEAc3qBpfR0h/R0X9Vs8oOdATo/HRE
-         fZlQ7VmN8gBptBMAV5G0KO67YqR0Kh+OkeZx54TDEMJygf6s+9zTX3qrdPxEERq4Rgr0
-         lYEV6aoFP6Wsb2uNjpjnmwTf1wBzxm2BoONv2SMwQQPpy4uqgoPXoM8GmfOJ2rh/pIA9
-         SLKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUexfw0hQ6aO1HKSKaF8y4YfpmwPRsTFnCU5eE8UcaQUTIO565DN7b9l0NP5SLFEMHaxrJ5DXjItPRG@vger.kernel.org, AJvYcCWnYLshiMGmnmAcnM86sTxdeqdHLynsl+xnSd59ZuU15VZ7MDsJRI1XMca/onSU843MBhhJle2S5iSQbcPh@vger.kernel.org
-X-Gm-Message-State: AOJu0Yze8CzELCwGFgkOpYys0YhxlQhBZpGRdfg3v1y1xA/bIX+PGYeL
-	UV8SrjP29CA/3kedwjUgG7CcDp1DiIP2HUpngtx8DpOXitnRiOjU
-X-Google-Smtp-Source: AGHT+IGinFsn/IDIoimF7gK6JCHIlBd9EvXDNaB9+t+mIHn7EPvmjRWe3N7Si/my4wteiQ6feV4waw==
-X-Received: by 2002:a05:600c:4ecb:b0:42c:b8c9:16cb with SMTP id 5b1f17b1804b1-42cdb4e6aecmr21661315e9.5.1726147051905;
-        Thu, 12 Sep 2024 06:17:31 -0700 (PDT)
-Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42caeb8ada3sm170610095e9.43.2024.09.12.06.17.30
+        d=1e100.net; s=20230601; t=1726147080; x=1726751880;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k+jkhZtCbEDKlDFBZYWklnHtzrWSfKD6Ka+gxj0l1wk=;
+        b=QKnqf0UmiI5+5P1WOMCPcr6N/Xc/Ajdwmu4MUplDGRVjTKxhNRdXgB7E/fEz5xUtIf
+         PoZlMKA2kFKoq53KTAYYp8ayzboznMfhNwkXaVXVyx2XrG0o3KhwszgbecoeN5sE4rdM
+         DpI5mYDhiSNT66Fb/qmApfcZjJ8OgeFudX/1S4kQXcjn+buJu6UKkCoE5LjjAwAmwPq3
+         ZcNQK61lFW9OX1HwMn8wAUTRlbQ5DeTm6W8Vbg6qM03jOPcmTyyztrgIeEoUFDrbMN2Q
+         ESI7ut5XtJuDfh8QsvXXjI7dGTDhjouVOaAGZdtVbixu2qE5SJ8cpABHMWTLfzJXpqn5
+         bFaw==
+X-Forwarded-Encrypted: i=1; AJvYcCVWOtNLfWTC1jzgpFmCj4KrbHnnQfIRzvPVjRYt5w6aPL1Vzrb0oV/YXI4mKr8COzkaSKFN7+Iq8DFwnCBi@vger.kernel.org, AJvYcCVqgCINT3MxkOyuqdNrI2O1glzt/yAcGpv0aZljjmuQwgBJGYYrp/O1AtOaNofjts15ZDbGN0Q5@vger.kernel.org, AJvYcCWRomv1pUrfRZrs3okzIfmyriqTkmkw86YG/lrWfS7LPDyH9wC8HpXsiThIFLlHLp1rwPE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyzhu3bM8PLU+13AJ9AIfg9l1umb/qbeng1Be6/hFyDVoHR7wwB
+	XMz/ryEycFtYcTwpJySsjg56NTfrOFNv7iyVgkMPKUXskZnirx1L
+X-Google-Smtp-Source: AGHT+IH2FK1sZsXCQcQITQimeUOtmON1FCsxoZGOoivBPz1eG/mktX+Dh3Repf8UyTiOlZqLX7uTeQ==
+X-Received: by 2002:a5d:6751:0:b0:374:c512:87ce with SMTP id ffacd0b85a97d-378c2d0359fmr2390588f8f.30.1726147080369;
+        Thu, 12 Sep 2024 06:18:00 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-001.fbsv.net. [2a03:2880:30ff:1::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d40b2esm748160266b.194.2024.09.12.06.17.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 06:17:30 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	linux-edac@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] EDAC, pnd2: Make read-only const array intlv static
-Date: Thu, 12 Sep 2024 14:17:30 +0100
-Message-Id: <20240912131730.588673-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.39.2
+        Thu, 12 Sep 2024 06:17:59 -0700 (PDT)
+Date: Thu, 12 Sep 2024 06:17:55 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Jakub Kicinski <kuba@kernel.org>, andrii@kernel.org, ast@kernel.org,
+	syzbot <syzbot+08811615f0e17bc6708b@syzkaller.appspotmail.com>,
+	bpf@vger.kernel.org, daniel@iogearbox.net, davem@davemloft.net,
+	eddyz87@gmail.com, haoluo@google.com, hawk@kernel.org,
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev,
+	netdev@vger.kernel.org, sdf@fomichev.me, song@kernel.org,
+	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
+Subject: Re: [PATCH net-net] tun: Assign missing bpf_net_context.
+Message-ID: <20240912-hypnotic-messy-leopard-f1d2b0@leitao>
+References: <000000000000adb970061c354f06@google.com>
+ <20240702114026.1e1f72b7@kernel.org>
+ <20240703122758.i6lt_jii@linutronix.de>
+ <20240703120143.43cc1770@kernel.org>
+ <20240912-simple-fascinating-mackerel-8fe7c0@devvm32600>
+ <20240912122847.x70_LgN_@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912122847.x70_LgN_@linutronix.de>
 
-Don't populate the const read-only array intlv on the stack at
-run time, instead make it static.
+Hello Sabastian,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/edac/pnd2_edac.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks for the quick reply!
 
-diff --git a/drivers/edac/pnd2_edac.c b/drivers/edac/pnd2_edac.c
-index f93f2f2b1cf2..af14c8a3279f 100644
---- a/drivers/edac/pnd2_edac.c
-+++ b/drivers/edac/pnd2_edac.c
-@@ -372,7 +372,7 @@ static int gen_asym_mask(struct b_cr_slice_channel_hash *p,
- 			 struct b_cr_asym_mem_region1_mchbar *as1,
- 			 struct b_cr_asym_2way_mem_region_mchbar *as2way)
- {
--	const int intlv[] = { 0x5, 0xA, 0x3, 0xC };
-+	static const int intlv[] = { 0x5, 0xA, 0x3, 0xC };
- 	int mask = 0;
+On Thu, Sep 12, 2024 at 02:28:47PM +0200, Sebastian Andrzej Siewior wrote:
+> On 2024-09-12 05:06:36 [-0700], Breno Leitao wrote:
+> > Hello Sebastian, Jakub,
+> Hi,
+> 
+> > I've seen some crashes in 6.11-rc7 that seems related to 401cb7dae8130
+> > ("net: Reference bpf_redirect_info via task_struct on PREEMPT_RT.").
+> > 
+> > Basically bpf_net_context is NULL, and it is being dereferenced by
+> > bpf_net_ctx->ri.kern_flags (offset 0x38) in the following code.
+> > 
+> > 	static inline struct bpf_redirect_info *bpf_net_ctx_get_ri(void)
+> > 	{
+> > 		struct bpf_net_context *bpf_net_ctx = bpf_net_ctx_get();
+> > 		if (!(bpf_net_ctx->ri.kern_flags & BPF_RI_F_RI_INIT)) {
+> > 
+> > That said, it means that bpf_net_ctx_get() is returning NULL.
+> > 
+> > This stack is coming from the bpf function bpf_redirect()
+> > 	BPF_CALL_2(bpf_redirect, u32, ifindex, u64, flags)
+> > 	{
+> > 	      struct bpf_redirect_info *ri = bpf_net_ctx_get_ri();
+> > 
+> > 
+> > Since I don't think there is XDP involved, I wondering if we need some
+> > preotection before calling bpf_redirect()
+> 
+> This origins in netkit_xmit(). If my memory serves me, then Daniel told
+> me that netkit is not doing any redirect and therefore does not need
+> "this". This must have been during one of the first "designs"/ versions. 
+
+Right, I've seen several crashes related to this, and in all of them it
+is through netkit_xmit() -> netkit_run() ->  bpf_prog_run()
+
+> If you are saying, that this is possible then something must be done.
+> Either assign a context or reject the bpf program.
+
+If we want to assign a context, do you meant something like the
+following?
+
+Author: Breno Leitao <leitao@debian.org>
+Date:   Thu Sep 12 06:11:28 2024 -0700
+
+    netkit: Assign missing bpf_net_context.
+    
+    During the introduction of struct bpf_net_context handling for
+    XDP-redirect, the netkit driver has been missed.
+    
+    Set the bpf_net_context before invoking netkit_xmit() program within the
+    netkit driver.
+    
+    Fixes: 401cb7dae8130 ("net: Reference bpf_redirect_info via task_struct on PREEMPT_RT.")
+    Signed-off-by: Breno Leitao <leitao@debian.org>
+
+diff --git a/drivers/net/netkit.c b/drivers/net/netkit.c
+index 79232f5cc088..f8af57b7a1e8 100644
+--- a/drivers/net/netkit.c
++++ b/drivers/net/netkit.c
+@@ -65,6 +65,7 @@ static struct netkit *netkit_priv(const struct net_device *dev)
  
- 	if (as2way->asym_2way_interleave_enable)
-@@ -489,7 +489,7 @@ static int dnv_get_registers(void)
-  */
- static int get_registers(void)
+ static netdev_tx_t netkit_xmit(struct sk_buff *skb, struct net_device *dev)
  {
--	const int intlv[] = { 10, 11, 12, 12 };
-+	static const int intlv[] = { 10, 11, 12, 12 };
++	struct bpf_net_context __bpf_net_ctx, *bpf_net_ctx;
+ 	struct netkit *nk = netkit_priv(dev);
+ 	enum netkit_action ret = READ_ONCE(nk->policy);
+ 	netdev_tx_t ret_dev = NET_XMIT_SUCCESS;
+@@ -72,6 +73,7 @@ static netdev_tx_t netkit_xmit(struct sk_buff *skb, struct net_device *dev)
+ 	struct net_device *peer;
+ 	int len = skb->len;
  
- 	if (RD_REG(&tolud, b_cr_tolud_pci) ||
- 		RD_REG(&touud_lo, b_cr_touud_lo_pci) ||
--- 
-2.39.2
-
++	bpf_net_ctx = bpf_net_ctx_set(&__bpf_net_ctx);
+ 	rcu_read_lock();
+ 	peer = rcu_dereference(nk->peer);
+ 	if (unlikely(!peer || !(peer->flags & IFF_UP) ||
+@@ -110,6 +112,7 @@ static netdev_tx_t netkit_xmit(struct sk_buff *skb, struct net_device *dev)
+ 		break;
+ 	}
+ 	rcu_read_unlock();
++	bpf_net_ctx_clear(bpf_net_ctx);
+ 	return ret_dev;
+ }
 
