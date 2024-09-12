@@ -1,165 +1,113 @@
-Return-Path: <linux-kernel+bounces-326185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AF62976475
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:28:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66924976481
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C80461F24E6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:28:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A22F1F249F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C253C1917EC;
-	Thu, 12 Sep 2024 08:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202FA191F71;
+	Thu, 12 Sep 2024 08:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="OSHqFeot"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RzMwzLH0"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9691018BB9F;
-	Thu, 12 Sep 2024 08:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5DE18A6A9
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726129729; cv=none; b=M8DYHL37lrS9d3bB4U123Ev4m1y0eDx05l63UQwfRmh1BXYCvegLBVgFfd0aZhx0cRMYv58obwGnrs3qw4lAB6OOkVoinCQXmy4Yugi1ZD1LqvM2EG8KfIi3C4gR1OGmTAGxE+fjenX3pQbg7wgjWpOuzhlgfeTkmPNL7xQOxWY=
+	t=1726129800; cv=none; b=SQs/r9mt7Se8MA6lq18ncRpFK7uKFkH5SyUETTbY8FAp2CYi7h3JyP4Ey/rM/4kNrpF/bEeak29xIEFM/jLi4bIKiLPRU/IbYctqdjxIePF7QXR0qTh75WB4AbEX/WuChhAcz2IJSMowdo4hXa0RAVM8SnRFPq6Nrqq8/e+QK8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726129729; c=relaxed/simple;
-	bh=8Ddv7HUWuYQvmUZWtwWJeKEmMDUpqmgyTgmsWwrISAM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pGIOExsZIrHvT6nr/9yTn4xTL4G9XtD8J4bXvQRSRzy00a3RMvTmAog+RJC5p2CIx0Dy8Wv4Sr35rMosG/jDGN0Nn7K89YjpCiRLJMDl9PcVYvKcyI2ZH0tUujKSyHvrMmAfxELLeO3SqD+KaVBnTP2I39nRar/tqIzhsIIxCsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=OSHqFeot; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1726129727; x=1757665727;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8Ddv7HUWuYQvmUZWtwWJeKEmMDUpqmgyTgmsWwrISAM=;
-  b=OSHqFeotgO28xatVqat7ydlOhmMSEPMuGLO2sd/+BVXEMnDkVv5gPXqg
-   In9HBgdVUiY4sdA6dYEQslBK3pJ4xd1DF54dpUREDTiwD8Uj6ajQ0dRa8
-   KUsJpFOkFWXsSijXs9Kf/S1QvSnaFW0/dACcYPKDsHDa9E4kgVENlLtgF
-   qz8EVbo/9rT98561yCit+4OWeOZWcGf+as+x70sHF2cLfrG1H2Bp4nRj5
-   MmVNx/qcbHtgqUu6f263nVRM/ZdoCuxRBO7tRyKryT3HjmYzf5uyneFlo
-   RTN/EKVpZX5Wjx1FKq1h/5LOYmMjaBhWjnLeFX8V8Z0iYkA87cay6wJ2m
-   w==;
-X-CSE-ConnectionGUID: T7JnfdXURN2u+9KF+BrmJA==
-X-CSE-MsgGUID: /5FdtCw2ReGk+R3+EKNFcg==
-X-IronPort-AV: E=Sophos;i="6.10,222,1719903600"; 
-   d="asc'?scan'208";a="31689468"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Sep 2024 01:28:46 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 12 Sep 2024 01:28:05 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex04.mchp-main.com (10.10.85.152)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Thu, 12 Sep 2024 01:28:03 -0700
-Date: Thu, 12 Sep 2024 09:27:30 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-CC: Conor Dooley <conor@kernel.org>, <krzk+dt@kernel.org>,
-	<jassisinghbrar@gmail.com>, <robh@kernel.org>, <conor+dt@kernel.org>,
-	<matthias.bgg@gmail.com>, <houlong.wei@mediatek.com>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<kernel@collabora.com>, <fshao@chromium.org>
-Subject: Re: [PATCH] dt-bindings: mailbox: mediatek,gce-mailbox: Stop
- requiring clock-names
-Message-ID: <20240912-unsaddle-rubbing-9aedc46c024b@wendy>
-References: <20240911104327.123602-1-angelogioacchino.delregno@collabora.com>
- <20240911-unhappy-wifi-b0a851e261bb@spud>
- <01020191e53e7670-d04af181-0137-4f35-962e-2f1119d026df-000000@eu-west-1.amazonses.com>
+	s=arc-20240116; t=1726129800; c=relaxed/simple;
+	bh=vgepv0dboKEDZIyalIuI+tBzMZSDMsAyMhbtlJJEdBE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qS0s/Hn98Eq/cbPe/QMNHsAu1bFxq0zv2OTdzTB5OnMrhu1t8YV9E03exOj7Nwi7ga9eSn46+3IrkvuHGcNIkt0cJE8hR4Aya7RyFHhJCzaXEzv5gp9gSUt7R1jecZpdbdco7r6Bwo7LXy42Jm4FgOv3bMuegKELwsgW1xIH10g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RzMwzLH0; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7aa086b077so83821466b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 01:29:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726129797; x=1726734597; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vgepv0dboKEDZIyalIuI+tBzMZSDMsAyMhbtlJJEdBE=;
+        b=RzMwzLH0oz9gtLLaA59mBzsaYQK2RKEA73PojmnAor9H0R178KvApjEUAEsrnbXSaT
+         tz6mv2PFIKCj497W03HibRyaU+Uvek31S1SL+GM5zcD7DN2Uu4lihu2yKRtXUcIBFW3C
+         PS5shHDJ1utLJrrCnGtFVdpNP29M8MhKMWqS0uRrq1v347H6kXBiQ7ajkSfQdvSwxMWU
+         YLD3mLPSLeMwW11bOcXCi3gXl+MuYJABucrXXFn+fDIIPYjp7zeJukqT3FBaq0xMs48u
+         KxBRyJcOj0Ck3guaomIKXZG3LV5XzDFNe5LOGQE0pMa9l0R8HALUveMah8c1kzfXG5SD
+         VvLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726129797; x=1726734597;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vgepv0dboKEDZIyalIuI+tBzMZSDMsAyMhbtlJJEdBE=;
+        b=Hjp8qJ/F7khFvYI4qRor9ZrASDPaGA0lVyz2Px88cVzUmmyM1yrJKF+N/GzBMIFC3g
+         b6UDUsgV3oGYwxNO+iyJwj9VK2tybFVT0mVd5JYy2Sypw3z62/QXJaGHRTiFDNej3g8d
+         r0uo9A5tUMNWTg0gemkJ7tWOi51tLThTicOgLT24oexkI8aPP9Ocf8wri1AZgs9TpgeM
+         venFZUFcuvTfeGQKajYqF83u2LBo+gX3mCT0Mu3Ed6bXqjxtevlUZW6ps/qcWJ3lQBDs
+         fjIKUYuhh4urffEt7CG8e9tNrslGWSQTQZJq2SrgWb1GiAMoP58NQU+Ni/q4JNArOTOi
+         tLvA==
+X-Forwarded-Encrypted: i=1; AJvYcCX8/D4P5uqEUc6tLI7R9xXe50KNFD2RxHam8o3KIKgkSiDTbP3kkZbW4CYet6IUejuN2au8DfK3BAp3pOg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaAwmcEdk5B79R4DM5e9ERZ4P/Hwor5cbMAY3RzSona8tXjcSh
+	fndSCxfxbFF0DkJY6GpCIwRMJvxyTXaggySTCqoLkWd/Z0MFz6x9qxzrEH9zpIPnb8PZ4MiL8wt
+	01DSJSz61EgJ02egHCntEcL04ULKdE/YqHy7e
+X-Google-Smtp-Source: AGHT+IFKXIJ+FLzOutx6ya3INwuoofzvp9Oai3Ccg7+eJzEPubs5oXYdvrhio5ROrLJdoSfGd6QneccQ3uQn1JUAWYY=
+X-Received: by 2002:a17:907:e29a:b0:a8d:4631:83a9 with SMTP id
+ a640c23a62f3a-a90293dc171mr206258966b.3.1726129796811; Thu, 12 Sep 2024
+ 01:29:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="EYD/Iv1Qa4+YYkTp"
-Content-Disposition: inline
-In-Reply-To: <01020191e53e7670-d04af181-0137-4f35-962e-2f1119d026df-000000@eu-west-1.amazonses.com>
-
---EYD/Iv1Qa4+YYkTp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240912075555.225316-1-en-wei.wu@canonical.com>
+In-Reply-To: <20240912075555.225316-1-en-wei.wu@canonical.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 12 Sep 2024 10:29:43 +0200
+Message-ID: <CANn89iLR9RJqK9i6THjsqCtjM_20ffe2joV0h=Q_W=Yo3f6_qw@mail.gmail.com>
+Subject: Re: [PATCH ipsec v3] xfrm: check MAC header is shown with both
+ skb->mac_len and skb_mac_header_was_set()
+To: En-Wei Wu <en-wei.wu@canonical.com>
+Cc: steffen.klassert@secunet.com, herbert@gondor.apana.org.au, 
+	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kai.heng.feng@canonical.com, chia-lin.kao@canonical.com, 
+	anthony.wong@canonical.com, kuan-ying.lee@canonical.com, 
+	chris.chiu@canonical.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 12, 2024 at 07:59:21AM +0000, AngeloGioacchino Del Regno wrote:
-> Il 11/09/24 19:51, Conor Dooley ha scritto:
-> > On Wed, Sep 11, 2024 at 12:43:27PM +0200, AngeloGioacchino Del Regno wr=
-ote:
-> > > There is no reason to make specifying the clock-names property
-> > > mandatory, as the Global Command Engine HW needs only one clock.
-> >=20
-> > Have you checked to make sure that there are no users that do the lookup
-> > by name?
-> >=20
->=20
-> It's just that I didn't want to mention any "driver" word in the commit d=
-escription
-> for a binding ;-)
->=20
-> (Of course I did, and the driver is not doing any by_name lookup)
+On Thu, Sep 12, 2024 at 9:56=E2=80=AFAM En-Wei Wu <en-wei.wu@canonical.com>=
+ wrote:
+>
+> When we use Intel WWAN with xfrm, our system always hangs after
+> browsing websites for a few seconds. The error message shows that
+> it is a slab-out-of-bounds error:
 
-It's fine to mention drivers in this case, it'd save us asking. Given
-your choice of article, is the gce-mailbox not used outside of the
-kernel?
+Quoting Documentation/process/maintainer-netdev.rst
 
->=20
-> > >=20
-> > > Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@=
-collabora.com>
-> > > ---
-> > >   .../bindings/mailbox/mediatek,gce-mailbox.yaml        | 11 --------=
----
-> > >   1 file changed, 11 deletions(-)
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/mailbox/mediatek,gce-m=
-ailbox.yaml b/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbo=
-x.yaml
-> > > index cef9d7601398..ff5d010fbcf0 100644
-> > > --- a/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.=
-yaml
-> > > +++ b/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.=
-yaml
-> > > @@ -56,17 +56,6 @@ required:
-> > >     - interrupts
-> > >     - clocks
-> > > -allOf:
-> > > -  - if:
-> > > -      not:
-> > > -        properties:
-> > > -          compatible:
-> > > -            contains:
-> > > -              const: mediatek,mt8195-gce
-> > > -    then:
-> > > -      required:
-> > > -        - clock-names
-> > > -
-> > >   additionalProperties: false
-> > >   examples:
-> > > --=20
-> > > 2.46.0
-> > >=20
->=20
->=20
+Resending after review
+~~~~~~~~~~~~~~~~~~~~~~
 
---EYD/Iv1Qa4+YYkTp
-Content-Type: application/pgp-signature; name="signature.asc"
+Allow at least 24 hours to pass between postings. This will ensure reviewer=
+s
+from all geographical locations have a chance to chime in. Do not wait
+too long (weeks) between postings either as it will make it harder for revi=
+ewers
+to recall all the context.
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuKl4wAKCRB4tDGHoIJi
-0tumAP943qZFgBuFVe+btsj1qTbWlXxCqsq4MWQNp77G2A6MbwEA1XQp6AQftUQi
-i/4Z6mryf6pc/ploLFfLEnuNprWc/g4=
-=ZrkD
------END PGP SIGNATURE-----
-
---EYD/Iv1Qa4+YYkTp--
+Make sure you address all the feedback in your new posting. Do not post a n=
+ew
+version of the code if the discussion about the previous version is still
+ongoing, unless directly instructed by a reviewer.
 
