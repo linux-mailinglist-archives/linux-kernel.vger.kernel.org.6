@@ -1,236 +1,124 @@
-Return-Path: <linux-kernel+bounces-326198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E216A9764C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:43:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 070049764C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:45:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12D171C22911
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:43:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A64B91F249B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6261C1917EC;
-	Thu, 12 Sep 2024 08:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133EC1922E3;
+	Thu, 12 Sep 2024 08:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="b7r5micS"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OE35+moa"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E913E374F6
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:43:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625C91922C0
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726130595; cv=none; b=KiaCsOIfqmDVdO2cuBktvciv06280S+Bep/IZtMbNcxncqqWwuwMwwHystymXAgusZqQmoJkIBk1j/J+Zydn1mkHRUW5pPNn7TkS+4fz9wE9vKE4UOqJGZHtG+87IrmzbNy/UDJfU+sExuRqO/RAdV8FNeyV8OC6ww8nCZVhktY=
+	t=1726130708; cv=none; b=mZ2+RjjZ1luKZE1FlUK5QRAh1IdI5FZCRHO63uk7+3zHQHpXdSDSB/eV6zoAb5oeIt0V65Z1WWp1lzBzKXnc3YYzv4um4SRLcGRFUVf80+RpSEjTolCthMaO/Vh4lQwcQauXBTxnyJe18f9gKFruGIfHmuNH0d1jCz8oZ7jeX64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726130595; c=relaxed/simple;
-	bh=dsW4dSpQykdg67bz04HE3UICRsUhbSjaOXv+3ikor50=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SouvTliTwU90ztP27dV3MmYj7sCzDODnATTHnm1u15V606dU+d5mHfEDjTUHTQNu5ZVQLmUj+M4BFFH7NTLNkdAkPMlf/N8OFsfqiZJBmXMAEvowB9KebXaqGWETVgUV+H1p8BfbWQB5rZlIlPBq2zQohRyEhjXAeChWeUBPSIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=b7r5micS; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-371ba7e46easo591860f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 01:43:12 -0700 (PDT)
+	s=arc-20240116; t=1726130708; c=relaxed/simple;
+	bh=mOqvLpNO+BNetEeobtLxC6/KmXf0MhVchHjd7Fyzcq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=eNn74U73yz3LZ6yys043n9+mXOcutjJlHVTJmrcVO6qJ9bV6vKjDc1DuKU+qNvsE+8cTWMH4DqrGAaGMwTiV9U0wOO/Umm2I+3iu7HOsLPyiNkbGsT/ii0/on2N1vVP5gXfyuB/ManMpCsZGSv1lDFMZfJEvb6aPlxGuzq4nrVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OE35+moa; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42cbface8d6so7373685e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 01:45:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1726130591; x=1726735391; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=linaro.org; s=google; t=1726130704; x=1726735504; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=8C7k36zp6nuvCl3rPtCpYR0WkNI/VFLekJAPO3wtMQ8=;
-        b=b7r5micS/TmaSCBk4zLpjNbXIUi+eAY/6vBViNvfBP/iX9Tpwu1/sUPl4aCxu8KuI0
-         TUYGkB2rLm4Pg7OxPaav5aflweSC1mBxlrenDtdyh5SXMPRnGThuOt1uDeJVQpbl4StB
-         AXu94Mp8tBc5EcIPB8lyOG00/r3E0CfUYOyZujked/ls4LAwN7We7byjKg6WR+X8Mbje
-         2SncCTKZE9Yna4zjSnNFawqkqnkC3xgg6RTZXwsYkD+iVkrfZbLbPEDzMPQ3EVyeZGbU
-         fdcvr1lE89KSlqqYafydgvNVdaQNVxQhpYG0EfvPNSgxd0eI4FM5XgZAUwoL6FNbLqRC
-         iSIA==
+        bh=Iwn1or/bBYSNEeUGyuhOfxUWx3sWzISGdpZDtEwQt38=;
+        b=OE35+moaE2ufayZNtLkRSoaoIlRDpTm0v5D6Iuvv4tjQMj3dp6cVHLhInIqNX869Fg
+         nAphBFnQhWj8EkCiBf29MN+xLtpWoDWFgAWxn3HwYU4A8as2uvinfeycYTMSBfPLKOM9
+         Ek4GgYmaJYuglzaAMgcchOSM6IBSPhVJab6pz30aNkY1Bqze15RaDCB23uwZ52ZiQnuT
+         Fm51aSf1ghczKBubYkoSQ9oQ58oOW/YB/oUwbvmiIDwDWSANGQXFF4xoegXrA+KT7uMW
+         Nx0wVddxeoRU1ZYFVw0J6x0EIgoae+3Jtk4lnhlLP7nnByGi3amVsQO0xtevw9wgcD00
+         woBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726130591; x=1726735391;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1726130704; x=1726735504;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8C7k36zp6nuvCl3rPtCpYR0WkNI/VFLekJAPO3wtMQ8=;
-        b=pwJhBh91IZ89cDi96s9wT4ITTeLtzm9AVJlVLB7FeLO6g1SsugpSE1pEis3JXQ+MBj
-         TSmOv0KPceI9JyoFjKuW0gU/q2/KHoNHpZKErLFmYWwjEB0Fsip5VY3Z0bo4u8aN85si
-         qHK7WkGZOpmmcADZopsvE43VPqGotw6G0Nw/VP33kBs4rB4cDYl4ovMLr81xYHzz7ZvO
-         NxOxHkLre0VzTHeud4HriwJhDuoxBcv8E1xl0fKQhKWYyvkMCnMUs5Jlm4RInV+Z0rS+
-         dMYMf7KlU6pmVWYuf1iBmujOr9mayyavKYhAUuTS2Ew/EtvVNGjNkWx6+kjeMcLyWSOx
-         SRDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOHCuGcRl5z58UAq/tvN/bRuKDmV/+EP5CPxdZsc8X5q8Y7XT9y8RUSWCCwOxk4vatJvk7XWv1M5sG8bg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUQ+oje7ucM4rm6H39d20zLuDtBNajO0e+b9bPfX+MXHsjaQAt
-	nPzhixJBjoygHJwcZlotETBh/CWS4Zd9Y0kVkSyuGThSvXH+FsKBbDQ/JYqyBCM=
-X-Google-Smtp-Source: AGHT+IEYZ4XupAL5Kt47RVjQRhyZJxYobH7jy6a6s8BJ0ZFnSihZjOZtxf3EjySqNpaSaFXNRBS04g==
-X-Received: by 2002:a5d:6250:0:b0:367:9d05:cf1f with SMTP id ffacd0b85a97d-378c2cf40c5mr1021162f8f.14.1726130590279;
-        Thu, 12 Sep 2024 01:43:10 -0700 (PDT)
-Received: from ?IPV6:2a10:bac0:b000:75b8:2c66:dc25:5ab3:ad59? ([2a10:bac0:b000:75b8:2c66:dc25:5ab3:ad59])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cb5a66475sm135924465e9.44.2024.09.12.01.43.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Sep 2024 01:43:10 -0700 (PDT)
-Message-ID: <55366da1-2b9c-4d12-aba7-93c15a1b3b09@suse.com>
-Date: Thu, 12 Sep 2024 11:43:08 +0300
+        bh=Iwn1or/bBYSNEeUGyuhOfxUWx3sWzISGdpZDtEwQt38=;
+        b=N4GS3Gfx8AlZhJEKjga8F+I05rwPQmyA28eAH7WxnsKzJXNFrL824jEato8R99f0GG
+         SM8fvuVUAz+EgT4EVmbGos7+GCbvlogJxH0XjtkfE/sEKO0QV51x0G8YDWQgnESBrZ0H
+         yCQMCics0k0h8ZRKy/LCKY745Ty2QMNTtbad6iZqGxfNkLiJbkVJFlvv+nrK6JdDu6Ed
+         I3Gk02f1TZqUXRPvp+OZgiGPGfDV2l4Hlbo8MVgt1gDFzva6o3pA4OGNG0jTVuBZ94Xt
+         88Y9GBXH0YOT65dgy9w03SfGXpuMfTfVTTjtfhpe1rlYJVeive7qzxWCFejYAgfCOJ03
+         V+/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUQOKdZoHvbQAr+ieplzF+2s9iT5/zSCmwCXQxaskzZoXw9/TuUQ/3MV5nrh1p6EpRWD1oCkUs4tOSf9KI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyb7qBxWeW1qYlii/0b53Sa6jqltWAsY1UbzTJkWveEyIXhAzxO
+	glhE3tXbnJBjjgZ8FD3Tr/H8GRrY81QOk1UAGEp6Fz28TUhEPiqlTooUWfPOZVg=
+X-Google-Smtp-Source: AGHT+IE3jIKp1LsMR7cNfJjwontG8p+Vo7dQ6rcRj2YQpKpztKUglDivYbVOWQlxSgzVuxQlXUEEiQ==
+X-Received: by 2002:adf:ae51:0:b0:374:c7f8:3d50 with SMTP id ffacd0b85a97d-378c2d588d5mr1389741f8f.58.1726130703593;
+        Thu, 12 Sep 2024 01:45:03 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956de262sm13712489f8f.112.2024.09.12.01.45.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 01:45:03 -0700 (PDT)
+Date: Thu, 12 Sep 2024 11:44:59 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kernel-janitors@vger.kernel.org,
+	Jason-JH Lin =?utf-8?B?KOael+edv+elpSk=?= <Jason-JH.Lin@mediatek.com>
+Subject: [PATCH] drm/mediatek: Fix potential NULL dereference in
+ mtk_crtc_destroy()
+Message-ID: <cc537bd6-837f-4c85-a37b-1a007e268310@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/25] KVM: TDX: Initialize KVM supported capabilities
- when module setup
-To: Xiaoyao Li <xiaoyao.li@intel.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
- pbonzini@redhat.com, kvm@vger.kernel.org
-Cc: kai.huang@intel.com, isaku.yamahata@gmail.com,
- tony.lindgren@linux.intel.com, linux-kernel@vger.kernel.org
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-11-rick.p.edgecombe@intel.com>
- <caa4407a-b838-4e1b-bb3d-87518f3de66b@suse.com>
- <aa764aad-1736-459f-896e-4f43bfe8b18d@intel.com>
- <2a2dd102-2ad9-4bbd-a5f7-5994de3870ae@suse.com>
- <45963b9e-eec8-40b1-9e86-226504c463b8@intel.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-In-Reply-To: <45963b9e-eec8-40b1-9e86-226504c463b8@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
+In mtk_crtc_create(), if the call to mbox_request_channel() fails then we
+set the "mtk_crtc->cmdq_client.chan" pointer to NULL.  In that situation,
+we do not call cmdq_pkt_create().
 
+During the cleanup, we need to check if the "mtk_crtc->cmdq_client.chan"
+is NULL first before calling cmdq_pkt_destroy().  Calling
+cmdq_pkt_destroy() is unnecessary if we didn't call cmdq_pkt_create() and
+it will result in a NULL pointer dereference.
 
-On 12.09.24 г. 11:37 ч., Xiaoyao Li wrote:
-> On 9/12/2024 4:04 PM, Nikolay Borisov wrote:
->>
->>
->> On 5.09.24 г. 16:36 ч., Xiaoyao Li wrote:
->>> On 9/4/2024 7:58 PM, Nikolay Borisov wrote:
->>>>
->>>>
->>>> On 13.08.24 г. 1:48 ч., Rick Edgecombe wrote:
->>>>> From: Xiaoyao Li <xiaoyao.li@intel.com>
->>>>>
->>>>> While TDX module reports a set of capabilities/features that it
->>>>> supports, what KVM currently supports might be a subset of them.
->>>>> E.g., DEBUG and PERFMON are supported by TDX module but currently not
->>>>> supported by KVM.
->>>>>
->>>>> Introduce a new struct kvm_tdx_caps to store KVM's capabilities of 
->>>>> TDX.
->>>>> supported_attrs and suppported_xfam are validated against fixed0/1
->>>>> values enumerated by TDX module. Configurable CPUID bits derive 
->>>>> from TDX
->>>>> module plus applying KVM's capabilities (KVM_GET_SUPPORTED_CPUID),
->>>>> i.e., mask off the bits that are configurable in the view of TDX 
->>>>> module
->>>>> but not supported by KVM yet.
->>>>>
->>>>> KVM_TDX_CPUID_NO_SUBLEAF is the concept from TDX module, switch it 
->>>>> to 0
->>>>> and use KVM_CPUID_FLAG_SIGNIFCANT_INDEX, which are the concept of KVM.
->>>>>
->>>>> Signed-off-by: Xiaoyao Li <xiaoyao.li@intel.com>
->>>>> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
->>>>> ---
->>>>> uAPI breakout v1:
->>>>>   - Change setup_kvm_tdx_caps() to use the exported 'struct 
->>>>> tdx_sysinfo'
->>>>>     pointer.
->>>>>   - Change how to copy 'kvm_tdx_cpuid_config' since 'struct 
->>>>> tdx_sysinfo'
->>>>>     doesn't have 'kvm_tdx_cpuid_config'.
->>>>>   - Updates for uAPI changes
->>>>> ---
->>>>>   arch/x86/include/uapi/asm/kvm.h |  2 -
->>>>>   arch/x86/kvm/vmx/tdx.c          | 81 
->>>>> +++++++++++++++++++++++++++++++++
->>>>>   2 files changed, 81 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/arch/x86/include/uapi/asm/kvm.h 
->>>>> b/arch/x86/include/uapi/asm/kvm.h
->>>>> index 47caf508cca7..c9eb2e2f5559 100644
->>>>> --- a/arch/x86/include/uapi/asm/kvm.h
->>>>> +++ b/arch/x86/include/uapi/asm/kvm.h
->>>>> @@ -952,8 +952,6 @@ struct kvm_tdx_cmd {
->>>>>       __u64 hw_error;
->>>>>   };
->>>>> -#define KVM_TDX_CPUID_NO_SUBLEAF    ((__u32)-1)
->>>>> -
->>>>>   struct kvm_tdx_cpuid_config {
->>>>>       __u32 leaf;
->>>>>       __u32 sub_leaf;
->>>>> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
->>>>> index 90b44ebaf864..d89973e554f6 100644
->>>>> --- a/arch/x86/kvm/vmx/tdx.c
->>>>> +++ b/arch/x86/kvm/vmx/tdx.c
->>>>> @@ -31,6 +31,19 @@ static void __used tdx_guest_keyid_free(int keyid)
->>>>>       ida_free(&tdx_guest_keyid_pool, keyid);
->>>>>   }
->>>>> +#define KVM_TDX_CPUID_NO_SUBLEAF    ((__u32)-1)
->>>>> +
->>>>> +struct kvm_tdx_caps {
->>>>> +    u64 supported_attrs;
->>>>> +    u64 supported_xfam;
->>>>> +
->>>>> +    u16 num_cpuid_config;
->>>>> +    /* This must the last member. */
->>>>> +    DECLARE_FLEX_ARRAY(struct kvm_tdx_cpuid_config, cpuid_configs);
->>>>> +};
->>>>> +
->>>>> +static struct kvm_tdx_caps *kvm_tdx_caps;
->>>>> +
->>>>>   static int tdx_get_capabilities(struct kvm_tdx_cmd *cmd)
->>>>>   {
->>>>>       const struct tdx_sysinfo_td_conf *td_conf = 
->>>>> &tdx_sysinfo->td_conf;
->>>>> @@ -131,6 +144,68 @@ int tdx_vm_ioctl(struct kvm *kvm, void __user 
->>>>> *argp)
->>>>>       return r;
->>>>>   }
->>>>> +#define KVM_SUPPORTED_TD_ATTRS (TDX_TD_ATTR_SEPT_VE_DISABLE)
->>>>
->>>> Why isn't TDX_TD_ATTR_DEBUG added as well?
->>>
->>> Because so far KVM doesn't support all the features of a DEBUG TD for 
->>> userspace. e.g., KVM doesn't provide interface for userspace to 
->>> read/write private memory of DEBUG TD.
->>
->> But this means that you can't really run a TDX with SEPT_VE_DISABLE 
->> disabled for debugging purposes, so perhaps it might be necessary to 
->> rethink the condition allowing SEPT_VE_DISABLE to be disabled. Without 
->> the debug flag and SEPT_VE_DISABLE disabled the code refuses to start 
->> the VM, what if one wants to debug some SEPT issue by having an oops 
->> generated inside the vm ?
-> 
-> sept_ve_disable is allowed to be disable, i.e., set to 0.
-> 
-> I think there must be some misunderstanding.
+Fixes: 7627122fd1c0 ("drm/mediatek: Add cmdq_handle in mtk_crtc")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpu/drm/mediatek/mtk_crtc.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-There isn't, the current code is:
+diff --git a/drivers/gpu/drm/mediatek/mtk_crtc.c b/drivers/gpu/drm/mediatek/mtk_crtc.c
+index 175b00e5a253..c15013792583 100644
+--- a/drivers/gpu/drm/mediatek/mtk_crtc.c
++++ b/drivers/gpu/drm/mediatek/mtk_crtc.c
+@@ -127,9 +127,8 @@ static void mtk_crtc_destroy(struct drm_crtc *crtc)
+ 
+ 	mtk_mutex_put(mtk_crtc->mutex);
+ #if IS_REACHABLE(CONFIG_MTK_CMDQ)
+-	cmdq_pkt_destroy(&mtk_crtc->cmdq_client, &mtk_crtc->cmdq_handle);
+-
+ 	if (mtk_crtc->cmdq_client.chan) {
++		cmdq_pkt_destroy(&mtk_crtc->cmdq_client, &mtk_crtc->cmdq_handle);
+ 		mbox_free_channel(mtk_crtc->cmdq_client.chan);
+ 		mtk_crtc->cmdq_client.chan = NULL;
+ 	}
+-- 
+2.45.2
 
-   201         if (!(td_attr & ATTR_SEPT_VE_DISABLE)) { 
-
-     1                 const char *msg = "TD misconfiguration: 
-SEPT_VE_DISABLE attribute must be set.";
-     2 
-
-     3                 /* Relax SEPT_VE_DISABLE check for debug TD. */ 
-
-     4                 if (td_attr & ATTR_DEBUG) 
-
-     5                         pr_warn("%s\n", msg); 
-
-     6                 else 
-
-     7                         tdx_panic(msg); 
-
-     8         }
-
-
-I.e if we disable SEPT_VE_DISABLE without having ATTR_DEBUG it results 
-in a panic.
-
-> 
->>>
->>>> <snip>
->>>
->>>
-> 
 
