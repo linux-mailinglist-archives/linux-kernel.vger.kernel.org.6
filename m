@@ -1,256 +1,253 @@
-Return-Path: <linux-kernel+bounces-326567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02A37976A25
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:13:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F38A3976A30
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:13:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B491B21465
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:13:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 240431C23608
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 13:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222191ABEDB;
-	Thu, 12 Sep 2024 13:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33C71A76A4;
+	Thu, 12 Sep 2024 13:13:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dX7NuG/w";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="AH1HDdvh"
-Received: from a7-33.smtp-out.eu-west-1.amazonses.com (a7-33.smtp-out.eu-west-1.amazonses.com [54.240.7.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="c6dvfLXD"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD0BE1A7061;
-	Thu, 12 Sep 2024 13:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 473FF1A7061
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 13:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726146782; cv=none; b=THjHmA9HYBa3SY0NJPAqYJXDWSF9Lxod769QPuzqyv84uRr8fR6rHKb4eVNO8OpzNBCTS7epzmgOaB3JGmU/A1BwHuyeE+N1dPp8Z6RBT/7MNq+ISNPn+crSr5mqrrLbyVSnwBW++hyKyr1pqeMAkDViAGDEoT8bQe4GneSjRrg=
+	t=1726146793; cv=none; b=mIW24Hy+MIhTh5Wt3xy+5LJwboE5mDQCyHHOZhQuHlsLzsBb1LevyGitkPanDwP7CRzJxCNAG3rfiFItRik2WQJUFu57DtZTPIW/HJ50A1/g0F0XkCkBar+F/eF5iBGtBGnsFtLMJKFZaAkrV4/TIMbJ5HpIpG/U6bddWo66/Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726146782; c=relaxed/simple;
-	bh=FCDKH+dGTne6gNIyeiiS/f4ZRvgrS/69nkalAook8Iw=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DbvwTUS29BKvwkVfjCHkQ0cd139B2FCXEVqbEzYhSgje9ifUoZMtIiDBK+5udqVBpIezRYCW+P+m8/gMH1HrBFWkZx4hW07iYIQV6fpr0M+qtrm0Zw2vH75oy1n0kvwncsAuA4C7jbIt0gXhZfpUcncIrsyY5dmQWZf6pUPxKMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dX7NuG/w; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=AH1HDdvh; arc=none smtp.client-ip=54.240.7.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1726146778;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:Content-Type:MIME-Version:Content-Transfer-Encoding;
-	bh=FCDKH+dGTne6gNIyeiiS/f4ZRvgrS/69nkalAook8Iw=;
-	b=dX7NuG/w3m2zQqH3BSd0dC7vXlvt7MFc+w6DerDMQmyMDMngk7Y2K+zO3p7Be3f8
-	PGyCy9/T+Wkh+vzzglygLM7sUsoDsMw4WsXmdBx03bnD/PjTKj01u7wJQk4OKv8jAy0
-	xqUsDzbSxs+WBvzqijZmxlTeLEuisApMsUtd3qWOa7j8ry8sLpLIjfi0X6VQ8t50Yjr
-	cVCA7y0JX+euqSQORnOMjYtxG/Mvvfpm0JZFT9CWRvN8+dQ2FAIQVgRzZDpo0F3eDHm
-	P3P8rZYn+82ijUZz9WEbKBb5HBma5fFO2H23/JXZOWRyHM9nP8p70Wm1NfUY84HWo8c
-	VVPUUNBEEQ==
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1726146778;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:Content-Type:MIME-Version:Content-Transfer-Encoding:Feedback-ID;
-	bh=FCDKH+dGTne6gNIyeiiS/f4ZRvgrS/69nkalAook8Iw=;
-	b=AH1HDdvhcNeJm5JK+XP26VzYc19yEQZrA39ietZ1yhs0tkglzn8WXDPqhsypXrIL
-	W3YXUsa3hy3OpvIzXSkhX+vjBUszRWjYCNuvSdbkkVNQEMCuNXz66n64CoFQIeniOue
-	/XyNRV35SlLzaP2Jq7R4/XopFoqFkqjJaOwK1qKY=
-Message-ID: <01020191e65d93a5-448a3c64-c746-4d9b-820f-6a9413c6f0af-000000@eu-west-1.amazonses.com>
-Subject: Re: [PATCH 2/2] media: verisilicon: add WebP decoding support
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Hugues FRUCHET <hugues.fruchet@foss.st.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, 
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>, 
-	Fritz Koenig <frkoenig@chromium.org>, 
-	Sebastian Fricke <sebastian.fricke@collabora.com>, 
-	Daniel Almeida <daniel.almeida@collabora.com>, 
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rockchip@lists.infradead.org, 
-	linux-stm32@st-md-mailman.stormreply.com
-Date: Thu, 12 Sep 2024 13:12:58 +0000
-In-Reply-To: <e3e4a4e6-d0ac-455e-9854-d93bdb13f272@foss.st.com>
-References: <20240911135011.161217-1-hugues.fruchet@foss.st.com>
-	 <20240911135011.161217-3-hugues.fruchet@foss.st.com>
-	 <1d02cbe2797053c69ba9d7adb9c666ca221407e0.camel@collabora.com>
-	 <01020191e2672cd9-0b3804cc-def2-4dfb-aa44-8eddbd5e99fb-000000@eu-west-1.amazonses.com>
-	 <e3e4a4e6-d0ac-455e-9854-d93bdb13f272@foss.st.com>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1726146793; c=relaxed/simple;
+	bh=4+7eZ70TRmzASDW1zhj5ubGF6PkABNVC+DSVigxTwNM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NqYCNYPX31QbbBlIVvZo9aXDzP8eQradJXCTWZBjwiAHsb0N6xzAoexZ63zpVUsKmEQFqezC/BJlsaq3OqW8UyBFC8j/l23iRh/U+yhcpdWEcUX33Y/wT0x2FLqaxtz1yNcNTIFNVI1iZEk83qUl81CSiDiqQUMaCtxZDGlhr8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=c6dvfLXD; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c3c30e663fso1099825a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 06:13:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1726146789; x=1726751589; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=4+7eZ70TRmzASDW1zhj5ubGF6PkABNVC+DSVigxTwNM=;
+        b=c6dvfLXDm5jWuKbP+ug/MW/Mja7LaYyYrUYef5K+sUPRBWGaRKb8F+vINpEH3PGdFO
+         P9W+GOZbodVHRnfFUGkZxDzeNYa3Hh7V0WfAugTSu62zWTGPueXgEBIuvq2kOFE0dc0z
+         KMOea5Q6Pk+0z2e2ZY0E3r24fRNuTDh7J7nhI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726146789; x=1726751589;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4+7eZ70TRmzASDW1zhj5ubGF6PkABNVC+DSVigxTwNM=;
+        b=WvwIqaO4tgI3vk9Y4CdRyViNAHI49uCQ31FABgVjqoq9wlNXTU5wp35pgEHlPyo8qc
+         NhFsBh+Kb8+mmicK2fvT213fctdvjn3UZ1L0VvByNUIgGyj+4CXN1QLgvd/a08L62fE9
+         wr9MmqsuTvHhe5AzEJqZcsd6oV2RTiux6BPF4PK5IGFFDGRmB4GaxcERScXLh3k8UZ4N
+         3kVBFPuAwxE4Zru1mcEKOwsEYNSUHoQxwqGynJwRvVJcOIM4XQK3MXxV5VdMILCoAnbh
+         6ALjTm/FHQD97oh4jCgJp9cmbCTulfXbqTFtjR9Q8iE5m7bmlCERbZnR/BbDGZN6Y0PY
+         G9Ig==
+X-Forwarded-Encrypted: i=1; AJvYcCVL+VZ0H4D+ucXPRUf4/w1hpO/IT5GAw6+xJvMJHUlvQL1WfvBRmuOOcu1MgYiiiRIguNfBQafn+Pf+XbM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDLVetnSjDJJJKfAA6UBPI+oAZ55Id4EHG/cSpMg/Y8yluc1jN
+	FhL4g+cnRK4CfFPPD6UUtCJYDWv61/vzwnObVHRUCANmKuxOd78e+0D2yFiNTVezoQwXrGA8hPb
+	E
+X-Google-Smtp-Source: AGHT+IEGKNjoO+cEr/aUpYt+VOilbB1ausyOk8IHkyVIOxwe4xjEEivouHdmZ4YLFcRSn6yw+6Y69g==
+X-Received: by 2002:a17:907:d859:b0:a8d:555f:eeda with SMTP id a640c23a62f3a-a90294a9cedmr300875566b.8.1726146789173;
+        Thu, 12 Sep 2024 06:13:09 -0700 (PDT)
+Received: from [10.125.226.166] ([185.25.67.249])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25c80a24sm746873166b.137.2024.09.12.06.13.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Sep 2024 06:13:08 -0700 (PDT)
+Message-ID: <8f0bd469-ebd7-4487-9518-1e93368e5318@citrix.com>
+Date: Thu, 12 Sep 2024 14:13:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] x86/fred: Clear the WFE bit in missing-ENDBRANCH
+ #CP
+To: Xin Li <xin@zytor.com>, Dave Hansen <dave.hansen@intel.com>,
+ linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ peterz@infradead.org
+References: <20240911231929.2632698-1-xin@zytor.com>
+ <3328e53d-b0f2-4516-a6a6-51ca33642683@intel.com>
+ <676eb52a-5d9f-4204-9e79-15c1d7dc2b08@zytor.com>
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <676eb52a-5d9f-4204-9e79-15c1d7dc2b08@zytor.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
-X-SES-Outgoing: 2024.09.12-54.240.7.33
 
-Le jeudi 12 septembre 2024 à 14:18 +0200, Hugues FRUCHET a écrit :
-> Hi Nicolas,
-> 
-> Thanks for reviewing.
-> 
-> GStreamer changes are provided through this merge request: 
-> https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/7505
-> 
-> Code:
-> https://gitlab.freedesktop.org/gstreamer/gstreamer/-/commit/138ecfac54ce85b273a26ff6f0fefe3998f8d436?merge_request_iid=7505
-> 
-> 
-> 
-> On 9/11/24 20:44, Nicolas Dufresne wrote:
-> > Le mercredi 11 septembre 2024 à 13:58 -0400, Nicolas Dufresne a écrit :
-> > > Hi Hugues,
-> > > 
-> > > Le mercredi 11 septembre 2024 à 15:50 +0200, Hugues Fruchet a écrit :
-> > > > Add WebP picture decoding support to VP8 stateless decoder.
-> > > 
-> > > Unless when its obvious, the commit message should explain what is being
-> > > changed.
-> > > 
-> > > > 
-> > > > Signed-off-by: Hugues Fruchet <hugues.fruchet@foss.st.com>
-> > > > ---
-> > > >   drivers/media/platform/verisilicon/hantro_g1_regs.h    | 1 +
-> > > >   drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c | 7 +++++++
-> > > >   2 files changed, 8 insertions(+)
-> > > > 
-> > > > diff --git a/drivers/media/platform/verisilicon/hantro_g1_regs.h b/drivers/media/platform/verisilicon/hantro_g1_regs.h
-> > > > index c623b3b0be18..e7d4db788e57 100644
-> > > > --- a/drivers/media/platform/verisilicon/hantro_g1_regs.h
-> > > > +++ b/drivers/media/platform/verisilicon/hantro_g1_regs.h
-> > > > @@ -232,6 +232,7 @@
-> > > >   #define     G1_REG_DEC_CTRL7_DCT7_START_BIT(x)		(((x) & 0x3f) << 0)
-> > > >   #define G1_REG_ADDR_STR					0x030
-> > > >   #define G1_REG_ADDR_DST					0x034
-> > > > +#define G1_REG_ADDR_DST_CHROMA				0x038
-> > > >   #define G1_REG_ADDR_REF(i)				(0x038 + ((i) * 0x4))
-> > > >   #define     G1_REG_ADDR_REF_FIELD_E			BIT(1)
-> > > >   #define     G1_REG_ADDR_REF_TOPC_E			BIT(0)
-> > > > diff --git a/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c b/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
-> > > > index 851eb67f19f5..c6a7584b716a 100644
-> > > > --- a/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
-> > > > +++ b/drivers/media/platform/verisilicon/hantro_g1_vp8_dec.c
-> > > > @@ -427,6 +427,11 @@ static void cfg_buffers(struct hantro_ctx *ctx,
-> > > >   
-> > > >   	dst_dma = hantro_get_dec_buf_addr(ctx, &vb2_dst->vb2_buf);
-> > > >   	vdpu_write_relaxed(vpu, dst_dma, G1_REG_ADDR_DST);
-> > > > +
-> > > > +	if (hdr->flags & V4L2_VP8_FRAME_FLAG_WEBP)
-> > > > +		vdpu_write_relaxed(vpu, dst_dma +
-> > > > +				   ctx->dst_fmt.height * ctx->dst_fmt.width,
-> > > 
-> > > I'm not really not fan of that type of formula using padded width/height. Not
-> > > sure if its supported already, but if we have foreign buffers with a bigger
-> > > bytesperline, the IP may endup overwriting the luma. Please use the per-plane
-> > > bytesperline, we have v4l2-common to help with that when needed.
-> > > > +				   G1_REG_ADDR_DST_CHROMA);
-> 
-> OK, I'll check that.
-> 
-> > > 
-> > > I have a strong impression this patch is incomplete (not generic enough). The
-> > > documentation I have indicates that the resolution range for WebP can be
-> > > different for different synthesis. See swreg54 (0xd8), if bit 19 is set, then it
-> > > can support 16K x 16K resolution. There is no other way around that then
-> > > signalling explicitly at the format level that this is webp, since otherwise you
-> > > can't know from userspace and can't enumerate the different resolution. I'm
-> > > curious what is the difference at bitstream level, would be nice to clarify too.
-> 
-> See below WebP image details.
-> 
-> > 
-> > I've also found that when the PP is used, you need to fill some extended
-> > dimension (SWREG92) with the missing bit of the width/height, as the dimension
-> > don't fit the usual register.
-> > 
-> 
-> Yes there are additional registers to set in postproc for large image > 
-> 3472x4672 and image input bitstream larger than 16777215 bytes.
-> I have not tested such large images for now.
-> Additionally I don't have postproc support on STM32MP25.
-> Anyway I can guard for those limits in code...
-> 
-> > More notes, I noticed that WebP supports having a second frame for the alpha,
-> > similar to WebM Alpha, for that we expect 2 requests, so no issue on this front.
-> > WebP Loss-less is a completely different codec, and should have its own format.
-> > 
-> > I think overall, from my read of the spec, that its normal VP8, but the
-> > resolution will exceed the normal one. We also can't always enable WebP, since
-> > it will break references.
-> > 
-> > Nicolas
-> > 
-> 
-> As far as I have understood & tested, WebP is just an encapsulation of 
-> VP8 video chunk:
->   * Webp image RIFF header
->   *
->   * 52 49 46 46 f6 00 00 00 57 45 42 50 56 50 38 20  RIFF....WEBPVP8
->   * ea 00 00 00 90 09 00 9d 01 2a 30 00 30 00 3e 35  .........*0.0.>5
->   *           | \______/ \______/
->   *           |       |         \__VP8 startcode
->   *           |        \__VP8 frame_tag
->   *           |
->   *            \__End of WebP RIFF header: 20 bytes, then VP8 chunk
-> 
-> At least for lossy WebP.
-> 
-> There are two others WebP formats which are loss-less WebP and animated 
-> WebP but untested on my side, I don't even know if those formats are 
-> supported by the hardware IP.
-> 
-> > > 
-> > > On GStreamer side, the formats are entirely seperate, image/webp vs video/x-vp8
-> > > are the mime types. Seems a lot safe to keep these two as seperate formats. They
-> > > can certainly share the same stateless frame structure, with the additional flag
-> > > imho.
-> > > 
-> > > Nicolas
-> 
-> Really very few changes needed on VP8 codebase to support WebP. On my 
-> opinion it doesn't need a fork of codec for that, hence just the minor 
-> addition of "WebP"  signaling on uAPI see GStreamer limited changes in 
-> VP8 codebase to support WebP:
-> https://gitlab.freedesktop.org/gstreamer/gstreamer/-/commit/138ecfac54ce85b273a26ff6f0fefe3998f8d436?merge_request_iid=7505
+On 12/09/2024 9:53 am, Xin Li wrote:
+> On 9/11/2024 5:22 PM, Dave Hansen wrote:
+>> On 9/11/24 16:19, Xin Li (Intel) wrote:
+>>> +/*
+>>> + * The WFE (WAIT_FOR_ENDBRANCH) bit in the augmented CS of FRED
+>>> stack frame is
+>>> + * set to 1 in missing-ENDBRANCH #CP exceptions.
+>>
+>> I think there's a bit of relatively irrelevant info in there.  For
+>> instance, I don't think it's super important to mention that FRED is
+>> involved and where the WFE bit is in memory.
+>>
+>> FRED's involvement is kinda a no-brainer from the whole X86_FEATURE_FRED
+>> thing, and if you're reading exception handler code and don't know that
+>> 'regs' is on the stack, this probably isn't the place to explain that.
+>
+> I often find myself in a dilemma, should I mention some technical
+> background which sometimes could also be distracting :(
+>
+> Based on your feedback, maybe the following is better?
+>
+> static void ibt_clear_fred_wfe(struct pt_regs *regs)
+> {
+>     if (regs->fred_cs.wfe)
+>         regs->fred_cs.wfe = 0;
+> }
 
-If it was identical, we'd need no flag. The requirement to use the flag is not
-discoverable. What I'm guessing is that anything above 1080p needs the flag. But
-then if you enable that flag, you loose the ability to use references, so that
-would equally break normal VP8. It seems like a VP8 decoder is compatible with
-WebP, but a WebP decoder is not compatible with VP8.
+static void ibt_clear_fred_wfe(struct pt_regs *regs)
+{
+        regs->fred_cs.wfe = 0;
+}
 
-I cannot accept what you believe is a simple solution since its not discover-
-able by userspace. The Hantro VP8 decoder driver is not the only VP8 driver, so
-the GStreamer implementation would break randomly on other SoC.
+would be better.  With any luck, the compiler would drop the if() on
+your behalf, but it would still be better not to have it to start with.
 
-My recommendation is to introduce V4L2_PIX_FMT_WEBP_FRAME, and make it so that
-format reused 100% of the VP8_FRAME format (very little work, no flag needed
-since the format holds that). This way, drivers can be very explicit through
-their ENUM_FORMAT implementation, and can also expose different resolution
-ranges properly.
+>
+> And we know only FRED hardware will set the WFE bit.
+>
+>>
+>>> + * If the WFE bit is left as 1, the CPU will generate another
+>>> missing-ENDBRANCH
+>>> + * #CP because the indirect branch tracker will be set in the
+>>> WAIT_FOR_ENDBRANCH
+>>> + * state upon completion of the following ERETS instruction and the
+>>> CPU will
+>>> + * restart from the IP that just caused a previous
+>>> missing-ENDBRANCH #CP.
+>>> + *
+>>> + * Clear the WFE bit to avoid dead looping due to the above reason.
+>>> + */
+>>> +static void ibt_clear_fred_wfe(struct pt_regs *regs)
+>>> +{
+>>> +    if (cpu_feature_enabled(X86_FEATURE_FRED))
+>>> +        regs->fred_cs.wfe = 0;
+>>> +}
+>>
+>> Can I suggest a slightly different comment?
+>>
+>> /*
+>>   * WFE==1 (WAIT_FOR_ENDBRANCH) means that the CPU expects the next
+>> ERETS
+>>   * to jump to an ENDBR instruction. If the ENDBR is missing, the CPU
+>>   * raises a #CP.
+>>   *
+>>   * Clear WFE to avoid that #CP.
+>>   *
+>>   * Use this function in a #CP handler to effectively give the next
+>>   * ERETS a free pass to ignore IBT for a single instruction.
+>>   */
+>>
+>> I think original comment really needs a "How do I use this?" sentence or
+>> two.
+>>
+>> A comment at the call site also wouldn't hurt:
+>>
+>>       if (unlikely(regs->ip == (unsigned long)&ibt_selftest_noendbr)){
+>>           regs->ax = 0;
+>> +        /* Disable IBT enforcement for one exception return: */
+>> +        ibt_clear_fred_wfe(regs);
+>>           return;
+>>       }
+>>
+>> I'm finding it kinda hard to concisely differentiate between the
+>> "disable IBT at one ERETS" and "disable IBT forever", but I hope this
+>> sounds good to folks.
+>>
+>
+> My understanding is that a missing-ENDBRANCH #CP is triggered in two
+> steps:
+>
+>     1) Upon completion of an indirect call/jmp, or an event return
+>        instruction, the CPU indirect branch tracker is put in the
+>        WAIT_FOR_ENDBRANCH state.
+>
+>     2) As the CPU is in WAIT_FOR_ENDBRANCH state, if the instruction to
+>        be executed is ENDBR, the CPU indirect branch tracker exits
+>        WAIT_FOR_ENDBRANCH state, otherwise a #CP is generated.
+>
+> So this is more of "preserve WAIT_FOR_ENDBRANCH state" or not.
+>
+> IDT is unable to preserve WAIT_FOR_ENDBRANCH state when returning from
+> event handling, which as Andrew mentioned is a security hole.
 
-Nicolas
+I just said hole, but that was the subtext :)
 
-p.s. you should draft the required synthesis check and postproc code, I can test
-it for you.
 
-> 
-> > > 
-> > > >   }
-> > > >   
-> > > >   int hantro_g1_vp8_dec_run(struct hantro_ctx *ctx)
-> > > > @@ -471,6 +476,8 @@ int hantro_g1_vp8_dec_run(struct hantro_ctx *ctx)
-> > > >   		reg |= G1_REG_DEC_CTRL0_SKIP_MODE;
-> > > >   	if (hdr->lf.level == 0)
-> > > >   		reg |= G1_REG_DEC_CTRL0_FILTERING_DIS;
-> > > > +	if (hdr->flags & V4L2_VP8_FRAME_FLAG_WEBP)
-> > > > +		reg |= G1_REG_DEC_CTRL0_WEBP_E;
-> > > >   	vdpu_write_relaxed(vpu, reg, G1_REG_DEC_CTRL0);
-> > > >   
-> > > >   	/* Frame dimensions */
-> > > 
-> > 
-> 
-> BR,
-> Hugues.
+But yes - mentioning ERETS is unhelpful; it's not relevant, and it
+confuses how this works.
 
+In a FRED world, WFE will be restored for the interrupted context.  Then
+there's an instruction boundary (normal #RESET/MC/INIT/INTR processing),
+and only on decoding the next instruction might a #CP[endbr] be raised.
+
+WFE is a state that crosses an instruction boundary.  It is very similar
+to EFLAGS.RF, existing to alter the behaviour of the *next* instruction.
+
+~Andrew
 
