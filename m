@@ -1,170 +1,157 @@
-Return-Path: <linux-kernel+bounces-326738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90CE6976C64
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:44:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4289E976C78
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:45:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C32A61C225F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:44:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD9B81F247D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 14:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA931B373C;
-	Thu, 12 Sep 2024 14:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A181BB6A4;
+	Thu, 12 Sep 2024 14:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=b1n.io header.i=@b1n.io header.b="qoiTykH9"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M64PuJY2"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C67E21AD24C
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 14:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5084F1AD24C
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 14:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726152277; cv=none; b=a/e4xDZBcI3ISpUdHK3m7Hp2c3PQ64jvTSgKvi+Pq7sPtjdBas4K5RK24FsoVr5rSyG4ZlkhdmKVtjT7Bb4ULv3GimOKLbbeRUn8gpj2dEqouk949Q3JYWyszlI+2jBC+Q/nSLM+Z77myr12Y6Rwc2ZzDYlT74KkVqUpil6UmD0=
+	t=1726152303; cv=none; b=G2sZ3xep0Q54iXG6UENnoHSy6W5P5Yfk3x9k4VJRRurM4zUTNyQBhb5p9VjwQ4rELpWTivXSvdH9S+nLsZc7NeqWMFjJKNOTbMJzsT1RZZIw0C1yyeJdMXZkObGHVMxdaJ+9MhVzzajbzKvI6K/KLBQTBvIcw2Id3tjE7hpA6U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726152277; c=relaxed/simple;
-	bh=ZDnGDsgiQdqsKaaIMXk3CdAkLoVBQ6ulYHiyP61ZtT8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t8aBW3L9vLt6DupPO6WmT9x4P+hw03t0UOdbh20xDD5xMoCtJAquKqNSkwxo4s9sPYUVjHgW3RLXmg2iKuHMbXtGox2aP/6Nmo/ps3ZY254A4Q4XB5VNXBc0efoRXJrlDYI8a/SpOPzYUf/sIplV6PX1XcyNiBRmlj3h5cpFA1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=b1n.io; spf=pass smtp.mailfrom=b1n.io; dkim=pass (2048-bit key) header.d=b1n.io header.i=@b1n.io header.b=qoiTykH9; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=b1n.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=b1n.io
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=b1n.io; s=key1;
-	t=1726152271;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=BVnp3JLR4wewbGfHCbCYjkO7ys/eYGy/6dEiArxWd3A=;
-	b=qoiTykH9KVr1fvnSZzA0yU8rvNu6W+bstEaadOqjGVHJwaOp6La+kN0SmC18OZBJJYvSfk
-	82E+dxkXsYvs0/lh9CYRubHJ7SFQ1iy+G4stTbDtbvcWFZ7TTlsKUvKl+IYysG8hoI4Wha
-	HYZizZ9aNAmDwHLeCcbDGquE+WL3mHTGSfxJUSrnBAPWupmnl3OrkAyN+SOcw2be61TIYI
-	mvFD496iWYd1ICXVh9GkJIbzABhjJdBlU2LF9NbVRVkMpK2fXLIgXxWKvbau0Ydts8sfgn
-	pStk4eHoiWotgMwtEvdDFzcqfzgyU7/Xr9NZzy2RUDMa6/yu8Wij+nO7eCJckQ==
-From: b1n@b1n.io
-To: Philipp Hortmann <philipp.g.hortmann@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: b1n <b1n@b1n.io>
-Subject: [PATCH] staging: vt6655: Rename variable apTD0Rings
-Date: Thu, 12 Sep 2024 22:44:20 +0800
-Message-Id: <20240912144420.71609-1-b1n@b1n.io>
+	s=arc-20240116; t=1726152303; c=relaxed/simple;
+	bh=A/8ZCG9y3TEjGNR152EIdHi0nvsFyn37cQI3yggThnQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nrDSxy3XXoOZDiwe+/B5bD5OxHzVkP5fmxnutDDemjcjnqY6LGIXjmkfRJ0toFwtysTvfFhdlYmpIG/4Aqa8k8jk68w2VufK+AOWcrDI/k8L+6O0ISeEM5QOmtJDqH7Si2rDGGtfk04SMuUmEJQMz9ANHtgLR1Lqj4W+NMRpb4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M64PuJY2; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-27b7a1480bdso497391fac.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:45:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726152300; x=1726757100; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Us8nS3NBHkRNjHO7PeWm6594BLpqNuKjFcNB+sFes+A=;
+        b=M64PuJY2q7KYAL40MoJ6dBc9GVuYcuKgtCUZckScnQOdyW1I+CCQzRKWvQOcEfSpi4
+         HkyDAeNWiYfZtqb5vEPTndtv0sT+5vvJC1a1HSq7vSP+EDTzN85dSocYGrS+TB1HouvP
+         sPJmitc6aSX3NCPIRi6IWAckO/x1qtAknGJcG845RCzEFHq5p/iAPun27yf3oE5FNEGw
+         QcKFnrIwWNkSTKWBuc/a6cqOx0rzLZLfNIEkq9+K/KZ2zLQ9cFig4hSDLfsmMEQywgQv
+         JILM/rfKbZU0rQgsof/Z1pzuIewpJ+A/4fU8wXw6nNlIegmElIfrQKk4QwvJi/36y5H9
+         3qnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726152300; x=1726757100;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Us8nS3NBHkRNjHO7PeWm6594BLpqNuKjFcNB+sFes+A=;
+        b=OnPIvVvLwGDd1nePNcjxtsvDgxXRLaHZa8v77yuL6wmfyOJdOsbLf/RE9HYL5C9If9
+         6p9xnyBN/fHjAvTlwQ2TRwJcKGT9Na5UfWv0V7ng0yqjpruXCAfa/eGMo+13BgPrMSI4
+         cnvajYj+PMWpUsZFioyZeqk+wNqkZAAI6hBWKvnSvWl93cIIO3yIoiCXMmeM6L/MTBi/
+         1/BAlpl5Spe0/v/+yVR0LW58iUpVd+E7SlbPB5s0YEqqA7GjRtpHg8VfAbgPO1VLW2pA
+         +aDfOaTc4hrVdJedD+zfqfBPvPkAN2Vm2M1nDeakd8Q0PT0/0M65lgxBJUn4hS+rGvba
+         qhNA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGF3w0DNCCsk3oGhyU8NZf1aertBs+VmupKrJ/p1HOKfI0dqThe2xxwyb/rzoDod5MBvAcq59xLAb03aw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyX6cQV+NJx61mh3o/B3mC2cl+fZ5WPTO858PqdsWxpa49lsi/P
+	ZMOqBcYfyp8PG5D7JTbqH5WGuAaAgx59pks4QAL8l38r/a3YwC6OjNeT12Hahw==
+X-Google-Smtp-Source: AGHT+IELriO1F3RjFu7Nlmk0OH8Yy7rcsbs7jfdrPadTuniwAi50BrFet+dLaCQCkStjWf6ncGBXOA==
+X-Received: by 2002:a05:6871:3319:b0:277:ff5a:db0f with SMTP id 586e51a60fabf-27c3f2cfe64mr2186877fac.27.1726152300341;
+        Thu, 12 Sep 2024 07:45:00 -0700 (PDT)
+Received: from thinkpad ([120.60.79.18])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71908fe4e8asm4673021b3a.79.2024.09.12.07.44.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 07:45:00 -0700 (PDT)
+Date: Thu, 12 Sep 2024 20:14:39 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Qiang Yu <quic_qianyu@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, vkoul@kernel.org,
+	kishon@kernel.org, robh@kernel.org, andersson@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
+	sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
+	quic_devipriy@quicinc.com, kw@linux.com, lpieralisi@kernel.org,
+	neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 8/8] PCI: qcom: Add support to PCIe slot power supplies
+Message-ID: <20240912144439.fnne4x7qvggveve2@thinkpad>
+References: <20240827063631.3932971-1-quic_qianyu@quicinc.com>
+ <20240827063631.3932971-9-quic_qianyu@quicinc.com>
+ <CAA8EJpq5KergZ8czg4F=EYMLANoOeBsiSVoO-zAgfG0ezQrKCQ@mail.gmail.com>
+ <20240827165826.moe6cnemeheos6jn@thinkpad>
+ <26f2845f-2e29-4887-9f33-0b5b2a06adb6@quicinc.com>
+ <20240911153228.7ajcqicxnu2afhbp@thinkpad>
+ <9222ef18-2eef-4ba3-95aa-fae540c06925@quicinc.com>
+ <d5468dd2-0f81-4d89-a3bd-a546b2395ca6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <d5468dd2-0f81-4d89-a3bd-a546b2395ca6@kernel.org>
 
-From: b1n <b1n@b1n.io>
+On Thu, Sep 12, 2024 at 04:15:56PM +0200, Konrad Dybcio wrote:
+> On 12.09.2024 3:39 PM, Qiang Yu wrote:
+> > 
+> > On 9/11/2024 11:32 PM, Manivannan Sadhasivam wrote:
+> >> On Wed, Sep 11, 2024 at 04:17:41PM +0800, Qiang Yu wrote:
+> >>> On 8/28/2024 12:58 AM, Manivannan Sadhasivam wrote:
+> >>>> On Tue, Aug 27, 2024 at 02:44:09PM +0300, Dmitry Baryshkov wrote:
+> >>>>> On Tue, 27 Aug 2024 at 09:36, Qiang Yu <quic_qianyu@quicinc.com> wrote:
+> >>>>>> On platform x1e80100 QCP, PCIe3 is a standard x8 form factor. Hence, add
+> >>>>>> support to use 3.3v, 3.3v aux and 12v regulators.
+> >>>>> First of all, I don't see corresponding bindings change.
+> >>>>>
+> >>>>> Second, these supplies power up the slot, not the host controller
+> >>>>> itself. As such these supplies do not belong to the host controller
+> >>>>> entry. Please consider using the pwrseq framework instead.
+> >>>>>
+> >>>> Indeed. For legacy reasons, slot power supplies were populated in the host
+> >>>> bridge node itself until recently Rob started objecting it [1]. And it makes
+> >>>> real sense to put these supplies in the root port node and handle them in the
+> >>>> relevant driver.
+> >>>>
+> >>>> I'm still evaluating whether the handling should be done in the portdrv or
+> >>>> pwrctl driver, but haven't reached the conclusion. Pwrctl seems to be the ideal
+> >>>> choice, but I see a few issues related to handling the OF node for the root
+> >>>> port.
+> >>>>
+> >>>> Hope I'll come to a conclusion in the next few days and will update this thread.
+> >>>>
+> >>>> - Mani
+> >>>>
+> >>>> [1] https://lore.kernel.org/lkml/20240604235806.GA1903493-robh@kernel.org/
+> >>> Hi Mani, do you have any updates?
+> >>>
+> >> I'm working with Bartosz to add a new pwrctl driver for rootports. And we are
+> >> debugging an issue currently. Unfortunately, the progress is very slow as I'm on
+> >> vacation still.
+> >>
+> >> Will post the patches once it got resolved.
+> >>
+> >> - Mani
+> > OK, thanks for your update.
+> 
+> Qiang, you can still resubmit the rest of the patches without having
+> to wait on that to be resolved
+> 
 
-Rename variable apTD0Rings to ap_td0_rings
-to fix checkpatch warning Avoid CamelCase.
+In that case, the slot supplies should be described in the PCIe bridge.
 
-Signed-off-by: b1n <b1n@b1n.io>
----
- drivers/staging/vt6655/card.c        |  6 +++---
- drivers/staging/vt6655/device.h      |  2 +-
- drivers/staging/vt6655/device_main.c | 14 +++++++-------
- 3 files changed, 11 insertions(+), 11 deletions(-)
+- Mani
 
-diff --git a/drivers/staging/vt6655/card.c b/drivers/staging/vt6655/card.c
-index 688c870d89bc..36bf8cde2e08 100644
---- a/drivers/staging/vt6655/card.c
-+++ b/drivers/staging/vt6655/card.c
-@@ -388,8 +388,8 @@ void card_safe_reset_tx(struct vnt_private *priv)
- 	struct vnt_tx_desc *curr_td;
- 
- 	/* initialize TD index */
--	priv->tail_td[0] = &priv->apTD0Rings[0];
--	priv->apCurrTD[0] = &priv->apTD0Rings[0];
-+	priv->tail_td[0] = &priv->ap_td0_rings[0];
-+	priv->apCurrTD[0] = &priv->ap_td0_rings[0];
- 
- 	priv->tail_td[1] = &priv->apTD1Rings[0];
- 	priv->apCurrTD[1] = &priv->apTD1Rings[0];
-@@ -398,7 +398,7 @@ void card_safe_reset_tx(struct vnt_private *priv)
- 		priv->iTDUsed[uu] = 0;
- 
- 	for (uu = 0; uu < priv->opts.tx_descs[0]; uu++) {
--		curr_td = &priv->apTD0Rings[uu];
-+		curr_td = &priv->ap_td0_rings[uu];
- 		curr_td->td0.owner = OWNED_BY_HOST;
- 		/* init all Tx Packet pointer to NULL */
- 	}
-diff --git a/drivers/staging/vt6655/device.h b/drivers/staging/vt6655/device.h
-index 32d9cbd55222..32c51d794264 100644
---- a/drivers/staging/vt6655/device.h
-+++ b/drivers/staging/vt6655/device.h
-@@ -135,7 +135,7 @@ struct vnt_private {
- 	struct vnt_tx_desc *apCurrTD[TYPE_MAXTD];
- 	struct vnt_tx_desc *tail_td[TYPE_MAXTD];
- 
--	struct vnt_tx_desc *apTD0Rings;
-+	struct vnt_tx_desc *ap_td0_rings;
- 	struct vnt_tx_desc *apTD1Rings;
- 
- 	struct vnt_rx_desc *aRD0Ring;
-diff --git a/drivers/staging/vt6655/device_main.c b/drivers/staging/vt6655/device_main.c
-index 9ea647aefd60..a8dcd8ad3945 100644
---- a/drivers/staging/vt6655/device_main.c
-+++ b/drivers/staging/vt6655/device_main.c
-@@ -550,7 +550,7 @@ static bool device_init_rings(struct vnt_private *priv)
- 		priv->opts.tx_descs[0] * sizeof(struct vnt_tx_desc);
- 
- 	/* vir_pool: pvoid type */
--	priv->apTD0Rings = vir_pool
-+	priv->ap_td0_rings = vir_pool
- 		+ priv->opts.rx_descs0 * sizeof(struct vnt_rx_desc)
- 		+ priv->opts.rx_descs1 * sizeof(struct vnt_rx_desc);
- 
-@@ -720,7 +720,7 @@ static int device_init_td0_ring(struct vnt_private *priv)
- 	curr = priv->td0_pool_dma;
- 	for (i = 0; i < priv->opts.tx_descs[0];
- 	     i++, curr += sizeof(struct vnt_tx_desc)) {
--		desc = &priv->apTD0Rings[i];
-+		desc = &priv->ap_td0_rings[i];
- 		desc->td_info = kzalloc(sizeof(*desc->td_info), GFP_KERNEL);
- 		if (!desc->td_info) {
- 			ret = -ENOMEM;
-@@ -730,20 +730,20 @@ static int device_init_td0_ring(struct vnt_private *priv)
- 		desc->td_info->buf = priv->tx0_bufs + i * PKT_BUF_SZ;
- 		desc->td_info->buf_dma = priv->tx_bufs_dma0 + i * PKT_BUF_SZ;
- 
--		desc->next = &(priv->apTD0Rings[(i + 1) % priv->opts.tx_descs[0]]);
-+		desc->next = &(priv->ap_td0_rings[(i + 1) % priv->opts.tx_descs[0]]);
- 		desc->next_desc = cpu_to_le32(curr +
- 					      sizeof(struct vnt_tx_desc));
- 	}
- 
- 	if (i > 0)
--		priv->apTD0Rings[i - 1].next_desc = cpu_to_le32(priv->td0_pool_dma);
--	priv->tail_td[0] = priv->apCurrTD[0] = &priv->apTD0Rings[0];
-+		priv->ap_td0_rings[i - 1].next_desc = cpu_to_le32(priv->td0_pool_dma);
-+	priv->tail_td[0] = priv->apCurrTD[0] = &priv->ap_td0_rings[0];
- 
- 	return 0;
- 
- err_free_desc:
- 	while (i--) {
--		desc = &priv->apTD0Rings[i];
-+		desc = &priv->ap_td0_rings[i];
- 		kfree(desc->td_info);
- 	}
- 
-@@ -795,7 +795,7 @@ static void device_free_td0_ring(struct vnt_private *priv)
- 	int i;
- 
- 	for (i = 0; i < priv->opts.tx_descs[0]; i++) {
--		struct vnt_tx_desc *desc = &priv->apTD0Rings[i];
-+		struct vnt_tx_desc *desc = &priv->ap_td0_rings[i];
- 		struct vnt_td_info *td_info = desc->td_info;
- 
- 		dev_kfree_skb(td_info->skb);
+> Konrad
+
 -- 
-b1n
-
+மணிவண்ணன் சதாசிவம்
 
