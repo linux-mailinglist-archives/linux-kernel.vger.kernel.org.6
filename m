@@ -1,163 +1,186 @@
-Return-Path: <linux-kernel+bounces-327289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60F55977371
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:16:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD53197737C
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 23:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85A8F1C20DAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:16:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99134285399
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F041BE860;
-	Thu, 12 Sep 2024 21:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2681C1AC6;
+	Thu, 12 Sep 2024 21:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C/jcHDgz"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="PYfzeJNk"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B84B548E0;
-	Thu, 12 Sep 2024 21:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFB11C244D
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 21:16:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726175758; cv=none; b=C1gnTn0PcvHoHOQl+L5HYJuAb/5tY8LuxeWWd8iCsGKWQbIp5vp8XWq1Un8eNF1nUkxPVndDitQf4H372NtS+gRbJIZqatDMMDt20uT0Ad9XRGeWhEF9TuVS3eHV9f3N3Vrl3qzcVsNkMTDZLzBgkfCl8idCbPCdNfa1QyKEAUk=
+	t=1726175768; cv=none; b=UAl8QDNU0RJK/1cMVAjiNwO0OyoGPtnhcrYDcdqw7217B19p3NcGtKgGz6ByRa+I3xVDZijA6iV8hXfeMfAr1xtpq7H00ymiedz95UcdvrRUdI0EJ3LYE/UApj0bHQBmQOlLvfp6TaLUuIUerlwGKVmleQa8blL6+monea7E9WU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726175758; c=relaxed/simple;
-	bh=w45kFhbtOblz6hrNrwals70xyTiWgU0u4oHrmw7gONo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IFIvkSTeAcVQ/Axcps7L6oPz7f3HSodubiHD6lA0axd+kekU4gTch+gK5/WAzZIVTsPzv4VwXGpgrFzA0Z5jKk2uyQxXHGORvI91IBXL+VisnIV1x1otHVr1DP9QidFhufBSGmtOqllNwyoe6XtRVXy0dps2xW6jjtt29hF8DjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C/jcHDgz; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71911585911so1245292b3a.3;
-        Thu, 12 Sep 2024 14:15:56 -0700 (PDT)
+	s=arc-20240116; t=1726175768; c=relaxed/simple;
+	bh=uwUB51q/k9MKoVysVsXfFJYRoIhfFeIxpLFv0mHnq0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ctdW/WJV1WuhzrzsuElI4Pu3Q4oGJpPHTfSjhB7T0b4op6THziRqY2dfDx93EmkCkKwpWfJfwyF7HGW2slcDj7yjyKPNU078HdM6rlUWy3L2vpSVo95KPCObNfKvWtxzEuRM1RQK8RslKPz/0uVMt0cu88aHBj2HWXoY0Anpfrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=PYfzeJNk; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-206b9455460so12026115ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 14:16:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726175756; x=1726780556; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=J+V/SKmtoNTOu9JBLVfLgw76iJMJHqaec3jY8eBRImc=;
-        b=C/jcHDgzWFKbR82ygV0j8tGoES1G9MWLZQPNDDZQ+H4DViX6F2Uyfv0ujupXQkwzaJ
-         1rXtoTM5vqIQvPuSIGGGNVBA15fcE9+E+hPk05UVHyrHm1UJJlHHS6vhWOCrv3pTigYm
-         bbas/XGGuGFIesRW59ZTf6Jo/oBjc0tA0ICGdJUQiOL8X8jmK8yafqnAdlDkjtpxSCm9
-         TVC8+oI8qjv8EMEBBwP/ft5d+THosDX3ObSGeccPlHMVzcdhZJoBlZeLKT7D5+3wl6au
-         mRV88qbkXexacuH43xRWFIwgTwgBA7vZWNiT6V/8m6EF/36wNmkl2qvrw/D1VIdfwgt2
-         Zjbw==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1726175765; x=1726780565; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GAySjmj1C8RnCc99v/BjFAJ8TYbwKWl+6IomlsR+BoI=;
+        b=PYfzeJNkeYlagfTcD9k+8Dg1WLO+flkY3zQSaW+8PGOlzq/wp2a9it2QCIq2aqKzVs
+         w3vqRJ0ajqaVp2ZNbJp9l5rPY1pq8906LOkUWIGMqk5t+R/VSUAw5UdtxRCPmKmSR+qL
+         loW/2SYBtC040oB0A+FZAlR8KlagCM9FMTogwVcqi5kwWMOAY56LWKMgZdK0jvy07aIJ
+         BU4pzvCv+gp4Mj45Av2KxiJX5V6gvDGPrJqNMV2L7xqgRwfnDhDkDtEU7BbSLmjS5Kir
+         hHS89hng8L0DZmLgw1EITQUXJFGFrhk8eHWuuCNgiy9yeBDUUGtgg6tHc77RSVgkjMxk
+         A/4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726175756; x=1726780556;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1726175765; x=1726780565;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=J+V/SKmtoNTOu9JBLVfLgw76iJMJHqaec3jY8eBRImc=;
-        b=O4RW+xdrbFqwAAyLDZyD2dv9ycW2TvSa2H/TG8qSmizPuLZND3mrYK+qYa9OYx/u2y
-         9NE31to7HHYzdbStvEIhQgNV64S7ooRkdimw3KXwUZN1nnOEPjJdbKlWLooxmUGrwfDF
-         SgG+r060rgdr5+QNQeqCHIgXTbONB4qpTSNnl7ksP4gTiKzI6+xh+jkgeUlFmRW57msv
-         rURj0ALHrdcbTfrzb/SE4Cr5qun/8R06FHTQrtzdg2suVTOWCXF5kHq6FUoDawZlgfwZ
-         KBc5JRLmlJNQKwSJLiW98DbB7dhaS+AlvI88bmwCDSJcDmXWzHlVJI57rcbOBTDH314j
-         +FIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW60WHSr7vbakRbh81c4E+Z4afZP1Y1iO83PEa69YjF0+KfWf58h/wqblhO+TKmf0FBKBhRcWG3p5It4do=@vger.kernel.org, AJvYcCWhbR4bJ9AmQeAjZLoBYvZXCBtFveIjGR11gG0LQljbFA3LtLWijD8t9fvUyNq9lH0bLzX6BOv/k7HuExUfDZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxuxj3XRpQixw+gfepD8z5xV29s/NvQQb6f7XJLZKOfyWGjthWW
-	UEfhvNaGf+qDh3opZZ+vKKWgDEc3I6IUrF1CyAHpgSTDjIoIZGLU
-X-Google-Smtp-Source: AGHT+IFtZQwVAiKGWLSsA9/OucCp1ev6NRyH09SeqMNSET9MsvhbUbD0/7MT6fulB3jFFwL/3WLYAw==
-X-Received: by 2002:a05:6a00:815:b0:714:2881:44cc with SMTP id d2e1a72fcca58-7192606d9d1mr6507994b3a.10.1726175756407;
-        Thu, 12 Sep 2024 14:15:56 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-719090c37efsm4987079b3a.187.2024.09.12.14.15.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Sep 2024 14:15:55 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <cc652ed1-32c7-4ea2-b494-698b344f24a0@roeck-us.net>
-Date: Thu, 12 Sep 2024 14:15:54 -0700
+        bh=GAySjmj1C8RnCc99v/BjFAJ8TYbwKWl+6IomlsR+BoI=;
+        b=ZpHAWiGgop296NfIvMUvmuTB96QMlDp40nelRyDrAsSkenaJMN6wEVcWCKElsOJlzN
+         xm/Ug/kaZ7T3SeZ0LIAUtSBTiSqTCo+s+omfuT/od6a/wu54fbUpmbmJG6Dg9XFRVJPJ
+         WkehfMrgYjv+ASD3hQQmtLdIJr6Kw96y/ancgSm7+FRjZ/Ej2e5/ArBXNmDrqAMMBvME
+         sG9pnAJVP12dWPQ5SrWxW9YSlEFxzVeMHrsnV7SiOQFTjP+QCZ4HbL3WecuqDtN5PqJ1
+         VaXC0veev4r+VmrDDLgIQZeHMKrj9ezrdnddhZGD7yH6MX160LzNVG3WwSiEC7KuNpnw
+         5HOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXiIKjROx7jIKOlW7706PaG038xvofXm3amGpJ3/2bgx6XayOPPsjovGFngoshTb/z8Xkx42C/2XzpkZTw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt6oZ6t+zzKExrSJGRC75MxOeoihM2BU2nVuXR3Wkvv9vsZmsi
+	WZtQdgZFyrBWEKdfOoayZ2rFwbe7fh67+aWRm38B0qxn7KCBlWkaMoiktOHxFYk=
+X-Google-Smtp-Source: AGHT+IHUzjdPrj87uHlM3yWrW/J5uo4qx0FxZorL/y/ZhI47SL1dDJtb3OuvF/ucYmZPS3S517PhSQ==
+X-Received: by 2002:a17:903:41c9:b0:1fd:6033:f94e with SMTP id d9443c01a7336-2076e61ddabmr75358475ad.27.1726175764569;
+        Thu, 12 Sep 2024 14:16:04 -0700 (PDT)
+Received: from ghost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076af47662sm18233275ad.93.2024.09.12.14.16.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 14:16:03 -0700 (PDT)
+Date: Thu, 12 Sep 2024 14:15:59 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Arnd Bergmann <arnd@arndb.de>, guoren <guoren@kernel.org>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	"David S . Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	shuah <shuah@kernel.org>, Christoph Hellwig <hch@infradead.org>,
+	Michal Hocko <mhocko@suse.com>,
+	"Kirill A. Shutemov" <kirill@shutemov.name>,
+	Chris Torek <chris.torek@gmail.com>,
+	Linux-Arch <linux-arch@vger.kernel.org>,
+	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-abi-devel@lists.sourceforge.net
+Subject: Re: [PATCH RFC v3 1/2] mm: Add personality flag to limit address to
+ 47 bits
+Message-ID: <ZuNaD+zAXiAulc0n@ghost>
+References: <20240905-patches-below_hint_mmap-v3-1-3cd5564efbbb@rivosinc.com>
+ <9fc4746b-8e9d-4a75-b966-e0906187e6b7@app.fastmail.com>
+ <CAJF2gTTVX9CFM3oRZZP3hGExwVwA_=n1Lrq_0DQKWA+-ZbOekg@mail.gmail.com>
+ <f23b18c6-1856-4b59-9ba3-59809b425c81@app.fastmail.com>
+ <Ztrq8PBLJ3QuFJz7@arm.com>
+ <oshwto46wbbgneiayj63umllyozm3c4267rvpszqzaopwnt2l7@6mxl5vydtons>
+ <ZuDoExckq21fePoe@ghost>
+ <ZuHfp0_tAQhaymdy@arm.com>
+ <ZuKHpFB+uWuJe2xm@ghost>
+ <ZuLIPZId9aHcAY2j@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] iTCO_wdt: mask NMI_NOW bit for update_no_reboot_bit()
- call
-To: Oleksandr Ocheretnyi <oocheret@cisco.com>
-Cc: jdelvare@suse.de, linux-kernel@vger.kernel.org,
- linux-watchdog@vger.kernel.org, mika.westerberg@linux.intel.com,
- wim@linux-watchdog.org, wsa@kernel.org, xe-linux-external@cisco.com
-References: <9afcde72-6720-494e-9a02-b0089253c121@roeck-us.net>
- <20240912141931.2447826-1-oocheret@cisco.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240912141931.2447826-1-oocheret@cisco.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZuLIPZId9aHcAY2j@arm.com>
 
-On 9/12/24 07:19, Oleksandr Ocheretnyi wrote:
-> Commit da23b6faa8bf ("watchdog: iTCO: Add support for Cannon Lake
-> PCH iTCO") does not mask NMI_NOW bit during TCO1_CNT register's
-> value comparison for update_no_reboot_bit() call causing following
-> failure:
+On Thu, Sep 12, 2024 at 11:53:49AM +0100, Catalin Marinas wrote:
+> On Wed, Sep 11, 2024 at 11:18:12PM -0700, Charlie Jenkins wrote:
+> > Opting-in to the higher address space is reasonable. However, it is not
+> > my preference, because the purpose of this flag is to ensure that
+> > allocations do not exceed 47-bits, so it is a clearer ABI to have the
+> > applications that want this guarantee to be the ones setting the flag,
+> > rather than the applications that want the higher bits setting the flag.
 > 
->     ...
->     iTCO_vendor_support: vendor-support=0
->     iTCO_wdt iTCO_wdt: unable to reset NO_REBOOT flag, device
->                                      disabled by hardware/BIOS
->     ...
-> 
-> and this can lead to unexpected NMIs later during regular
-> crashkernel's workflow because of watchdog probe call failures.
-> 
-> This change masks NMI_NOW bit for TCO1_CNT register values to
-> avoid unexpected NMI_NOW bit inversions.
-> 
-> Fixes: da23b6faa8bf ("watchdog: iTCO: Add support for Cannon Lake PCH iTCO")
-> Signed-off-by: Oleksandr Ocheretnyi <oocheret@cisco.com>
-> ---
+> Yes, this would be ideal. Unfortunately those applications don't know
+> they need to set a flag in order to work.
 
-Oh, and change log goes here.
+It's not a regression, the applications never worked (on platforms that
+do not have this default). The 47-bit default would allow applications
+that didn't work to start working at the cost of a non-ideal ABI. That
+doesn't seem like a reasonable tradeoff to me.  If applications want to
+run on new hardware that has different requirements, shouldn't they be
+required to update rather than expect the kernel will solve their
+problems for them?
 
-Guenter
+> 
+> A slightly better option is to leave the default 47-bit at the kernel
+> ABI level and have the libc/dynamic loader issue the prctl(). You can
+> control the default with environment variables if needed.
 
+Having glibc set the 47-bit requirement could make it slightly easier
+for applications since they would only have to set the environment
+variable. After the kernel interface is approved I can look into
+supporting that.
+
+- Charlie
+
+> 
+> We do something similar in glibc for arm64 MTE. When MTE is enabled, the
+> top byte of an allocated pointer contains the tag that must not be
+> corrupted. We left the decision to the C library via the
+> glibc.mem.tagging tunable (Android has something similar via the app
+> manifest). An app can change the default if it wants but if you run with
+> old glibc or no environment variable to say otherwise, the default would
+> be safe. Distros can set the environment to be the maximum range by
+> default if they know the apps included have been upgraded and tested.
+> 
+> -- 
+> Catalin
 
