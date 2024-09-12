@@ -1,164 +1,131 @@
-Return-Path: <linux-kernel+bounces-327167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36DB3977165
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:21:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C446977167
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 21:21:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 695B31C23DA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:20:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC7001F2273A
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 19:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98521C68A8;
-	Thu, 12 Sep 2024 19:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2B31BC9F1;
+	Thu, 12 Sep 2024 19:18:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b="ZULENZAD"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c/IKxY21"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68F41C1731;
-	Thu, 12 Sep 2024 19:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35EB819FA86;
+	Thu, 12 Sep 2024 19:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726168590; cv=none; b=X3Kx80LmjEnf7inyRGycPNxWV9YrWysgZ4RiU1TV/t/ok0i1NxOZq7iVUEn1fJ9w8r3IlhvNy54XSAV/yJYOI4BeZDSYh+GmFVsFjgDu2lk9tAIyf1xpCMd44ZOP2hHNsMMUk+WWiU0PQ8MWHo6thubqwpF/Cm7000anq9BW2q4=
+	t=1726168737; cv=none; b=GvtJkqdtkHx5DNY9uFSQMzmgjiswsIlMhdsoSq6P7SDMWzlWKQRkn3e7T3xR6hJDHuuSCQPt5ZFfRN/hxXUzmu0l/70KNo1mcOKgvx2C+rD9gR/jKAmfyCfSjoBve1VHlHFAvXp5Y+DLbG9hB12U1U+GQyfmcL/vSiwRQzqbh64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726168590; c=relaxed/simple;
-	bh=EHbInnzeVOwdq+QTXFprolW5A83xLgCi7GxP2s/eGHs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GPqGTwAAHeK6TVq+RBbeQ4uc2XOmRLJoZF5CBdGBimUAISifa1V6KNqTiyoQOzBQlId32WPqEAkBw8u5D5rsmICfx/adGmpZVRtXosLWSKu4gVmSHEz78rGN9pw3Zhhz8+NThJGY91Cx31r1g4AEsLque2XFHbNuoC97BsR2FpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be; spf=pass smtp.mailfrom=krisman.be; dkim=pass (2048-bit key) header.d=krisman.be header.i=@krisman.be header.b=ZULENZAD; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=krisman.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=krisman.be
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9DF8040004;
-	Thu, 12 Sep 2024 19:16:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=krisman.be; s=gm1;
-	t=1726168586;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EhVEzySNXDFTJF7lljGKHlz+SIBbvJp0eSgo4Oo37/k=;
-	b=ZULENZADwMpQGMgo4yZ/4tnPL8DAAPc85CMRm+8URvtrlmis1HLvsdb5KjgeIqxhaeG9/C
-	JRcRYXRX8ehBz+0sfUrBhShbZACnMVTrlZUscCt3wkIFykU+TeDlsEeYvFcdCX8GXR2rHd
-	pdNVvQ425fwCgSGRb4lrXz/ZEXpt+dFFTh49dFocTy4Hf1Kt9BYKJeHXVux4VocdHNoRiw
-	ZiflCt4/ukJ7sHIXTDxIoQDOo2iCpUBgWZ2KCvzmqcZj1xUpGTbZ0sB0GSFfYKNp2eCQW/
-	gA3b6y8yXZPcgI1HghtM3KB7Pt6wPFhwONjA/U9NDBlf6Dhu1IQbvCuXpyHBZw==
-From: Gabriel Krisman Bertazi <gabriel@krisman.be>
-To: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>
-Cc: Hugh Dickins <hughd@google.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
-  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,
-  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org,  kernel-dev@igalia.com,  Daniel Rosenberg
- <drosen@google.com>,  smcv@collabora.com,  Christoph Hellwig <hch@lst.de>,
-  Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH v4 01/10] libfs: Create the helper function
- generic_ci_validate_strict_name()
-In-Reply-To: <20240911144502.115260-2-andrealmeid@igalia.com>
- (=?utf-8?Q?=22Andr=C3=A9?=
-	Almeida"'s message of "Wed, 11 Sep 2024 11:44:53 -0300")
-References: <20240911144502.115260-1-andrealmeid@igalia.com>
-	<20240911144502.115260-2-andrealmeid@igalia.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
-Date: Thu, 12 Sep 2024 15:16:22 -0400
-Message-ID: <87a5gck7i1.fsf@mailhost.krisman.be>
+	s=arc-20240116; t=1726168737; c=relaxed/simple;
+	bh=6VvmHk310H2pDM3uIfZd+otM8qPMdy6gwUmX7kT0Hkg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RT8DGSnZL7ovIVVmNGkX5XBiOYlAY7mQ2RKoqDcJTgIpi/XP7d9UQqB6qen99mFThiGCXWtodSbaiMTh3zrlwN8pib8dNhg0LYgj11k/TIHl50NSV6LiTFZqt8U+fJ6rrgOFTM8MUSIyRVVaq9ngXLqcOHaTpH43gRwszZsmiPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c/IKxY21; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E942C4CEC6;
+	Thu, 12 Sep 2024 19:18:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726168736;
+	bh=6VvmHk310H2pDM3uIfZd+otM8qPMdy6gwUmX7kT0Hkg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c/IKxY217iyVi5tdaS/n1i197pc4ox5J9FYqB89rtglw/I/3ZjIsOnus1+ZOBTCMe
+	 vSc8ggTPT182Ve84h63EHiXBpe+hOo8+3WYDAZzBW/9cK4V7nJRTPyixKy4Qf9SmHh
+	 SvodvKpsptYD4FquxQdas4SWsNn2wyywR9tvPQ6fJ/yuRFBI9BXZfAbwhy0UObOcxD
+	 iG1ca7KSk4CNdJDI4vqultZtZj2qFFghzSsFw2ltwERpbyVeiCcwaRsheGWz7lLJ5b
+	 xss6qSU/JXLiElPSrNGPfyH7afI9MTIECj2CsbUm95EARuMzdU/wH8eiqE/GMEZy7L
+	 YtmFiHfkftGpQ==
+Date: Thu, 12 Sep 2024 16:18:53 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Jing Zhang <renyu.zj@linux.alibaba.com>,
+	Xu Yang <xu.yang_2@nxp.com>, Sandipan Das <sandipan.das@amd.com>,
+	Benjamin Gray <bgray@linux.ibm.com>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	Howard Chu <howardchu95@gmail.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Yang Jihong <yangjihong@bytedance.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Veronika Molnarova <vmolnaro@redhat.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Changbin Du <changbin.du@huawei.com>, Ze Gao <zegao2021@gmail.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	=?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>,
+	Sun Haiyong <sunhaiyong@loongson.cn>,
+	Junhao He <hejunhao3@huawei.com>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 01/13] perf pmu: Simplify an asprintf error message
+Message-ID: <ZuM-natFYgtS5wwL@x1>
+References: <20240912190341.919229-1-irogers@google.com>
+ <20240912190341.919229-2-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: gabriel@krisman.be
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912190341.919229-2-irogers@google.com>
 
-Andr=C3=A9 Almeida <andrealmeid@igalia.com> writes:
+On Thu, Sep 12, 2024 at 12:03:28PM -0700, Ian Rogers wrote:
+> Use ifs rather than ?: to avoid a large compound statement.
 
-> Create a helper function for filesystems do the checks required for
-> casefold directories and strict encoding.
->
-> Suggested-by: Gabriel Krisman Bertazi <gabriel@krisman.be>
-> Signed-off-by: Andr=C3=A9 Almeida <andrealmeid@igalia.com>
+Cherry picked this one.
+
+- Arnaldo
+ 
+> Signed-off-by: Ian Rogers <irogers@google.com>
 > ---
-> Changes from v2:
-> - Moved function to libfs and adpated its name
-> - Wrapped at 72 chars column
-> - Decomposed the big if (...) to be more clear
-> ---
->  fs/libfs.c         | 38 ++++++++++++++++++++++++++++++++++++++
->  include/linux/fs.h |  1 +
->  2 files changed, 39 insertions(+)
->
-> diff --git a/fs/libfs.c b/fs/libfs.c
-> index 8aa34870449f..99fb36b48708 100644
-> --- a/fs/libfs.c
-> +++ b/fs/libfs.c
-> @@ -1928,6 +1928,44 @@ int generic_ci_match(const struct inode *parent,
->  	return !res;
->  }
->  EXPORT_SYMBOL(generic_ci_match);
-> +
-> +/**
-> + * generic_ci_validate_strict_name - Check if a given name is suitable
-> + * for a directory
-> + *
-> + * This functions checks if the proposed filename is valid for the
-> + * parent directory. That means that only valid UTF-8 filenames will be
-> + * accepted for casefold directories from filesystems created with the
-> + * strict encoding flag.  That also means that any name will be
-> + * accepted for directories that doesn't have casefold enabled, or
-> + * aren't being strict with the encoding.
-> + *
-> + * @dir: inode of the directory where the new file will be created
-> + * @name: name of the new file
-> + *
-> + * Return:
-> + * * True if the filename is suitable for this directory. It can be
-> + * true if a given name is not suitable for a strict encoding
-> + * directory, but the directory being used isn't strict
-> + * * False if the filename isn't suitable for this directory. This only
-> + * happens when a directory is casefolded and the filesystem is strict
-> + * about its encoding.
-> + */
-> +bool generic_ci_validate_strict_name(struct inode *dir, struct qstr *nam=
-e)
-> +{
-> +	if (!IS_CASEFOLDED(dir) || !sb_has_strict_encoding(dir->i_sb))
-> +		return true;
-> +
-> +	/*
-> +	 * A casefold dir must have a encoding set, unless the filesystem
-> +	 * is corrupted
-> +	 */
-> +	if (WARN_ON_ONCE(!dir->i_sb->s_encoding))
-> +		return true;
-> +
-> +	return utf8_validate(dir->i_sb->s_encoding, name);
-> +}
-> +EXPORT_SYMBOL(generic_ci_validate_strict_name);
->  #endif
->=20=20
->  #ifdef CONFIG_FS_ENCRYPTION
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index fd34b5755c0b..937142950dfe 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3385,6 +3385,7 @@ extern int generic_ci_match(const struct inode *par=
-ent,
->  			    const struct qstr *name,
->  			    const struct qstr *folded_name,
->  			    const u8 *de_name, u32 de_name_len);
-> +bool generic_ci_validate_strict_name(struct inode *dir, struct qstr *nam=
-e);
-
-As mentioned in the other patch, please make this an inline helper.  But
-also, the declaration needs to be guarded by CONFIG_UNICODE.
-
->=20=20
->  static inline bool sb_has_encoding(const struct super_block *sb)
->  {
-
---=20
-Gabriel Krisman Bertazi
+>  tools/perf/util/pmu.c | 13 ++++++-------
+>  1 file changed, 6 insertions(+), 7 deletions(-)
+> 
+> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+> index 61bdda01a05a..779db2ac06f0 100644
+> --- a/tools/perf/util/pmu.c
+> +++ b/tools/perf/util/pmu.c
+> @@ -1466,13 +1466,12 @@ static int pmu_config_term(const struct perf_pmu *pmu,
+>  		if (err) {
+>  			char *err_str;
+>  
+> -			parse_events_error__handle(err, term->err_val,
+> -				asprintf(&err_str,
+> -				    "value too big for format (%s), maximum is %llu",
+> -				    format->name, (unsigned long long)max_val) < 0
+> -				    ? strdup("value too big for format")
+> -				    : err_str,
+> -				    NULL);
+> +			if (asprintf(&err_str,
+> +				     "value too big for format (%s), maximum is %llu",
+> +				     format->name, (unsigned long long)max_val) < 0) {
+> +				err_str = strdup("value too big for format");
+> +			}
+> +			parse_events_error__handle(err, term->err_val, err_str, /*help=*/NULL);
+>  			return -EINVAL;
+>  		}
+>  		/*
+> -- 
+> 2.46.0.662.g92d0881bb0-goog
+> 
 
