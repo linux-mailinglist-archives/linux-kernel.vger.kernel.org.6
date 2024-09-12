@@ -1,81 +1,113 @@
-Return-Path: <linux-kernel+bounces-326955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E1F9976F06
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:46:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 691F7976F0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 18:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3965EB21DD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:46:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5820B22250
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 16:47:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50001BC9F1;
-	Thu, 12 Sep 2024 16:45:50 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14E4D1BC9F1;
+	Thu, 12 Sep 2024 16:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="b/+JTLk/"
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855B8155744;
-	Thu, 12 Sep 2024 16:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2534E185939;
+	Thu, 12 Sep 2024 16:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726159550; cv=none; b=SOvCYxDtAOrp/+E70doIkeojiIMJmGB0m1opFFr8ctVxEA4D2Gp5vfhfuScRSCm/dIpRGJ4R4uqJw1omCxo+kvtySaAywz7Dknk8rikycsSJjfkLAP1+QP/VSlj9mM76jlpQPv0qSHXTh4N4Egbjt34NNIML1hNEAd01Pf+RuXM=
+	t=1726159664; cv=none; b=nlI/yugaLU2+X0Jr8+XgNuFxP0gAHRIHkqNxLLKdcYePgbotWKV+ys5PYFyKZB/BNobNKuCYvX82OgcXsZU3BVniJ3bdatfPSdhTAlCC6vWT4iIEeWyLbXV1VPTLFzmF0Ml4rnhVeLCEH5rdwuhGOhHP2Y0wtUSWEy5naHVPsKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726159550; c=relaxed/simple;
-	bh=CfCqMSV7h/34cJgmDJBye6xtcKf+RsO81pTk+MVolLc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=da8REj3kTqGrn2T/4r+Sg3xswRpBYSCxVJ/+mrZCJIhxfbDdTmfvxjQmB4f5h6MBDEplwI4AGpBG+MEtKQvfS/Thbblhgen6/1cv7LoZ/F3Sc619t8ht52CCfQAzQ6zybTy4z1/xGntYHrART6KmHer8TBhD5IiqmGbit5g8uqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C998C4CEC3;
-	Thu, 12 Sep 2024 16:45:47 +0000 (UTC)
-Date: Thu, 12 Sep 2024 17:45:45 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Yury Khrustalev <yury.khrustalev@arm.com>,
-	Wilco Dijkstra <wilco.dijkstra@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH RFC 0/2] arm64: Add infrastructure for use of AT_HWCAP3
-Message-ID: <ZuMauVtQz21aBiAX@arm.com>
-References: <20240906-arm64-elf-hwcap3-v1-0-8df1a5e63508@kernel.org>
+	s=arc-20240116; t=1726159664; c=relaxed/simple;
+	bh=cKwzCUEYjKoPwIDNhCww9BvIKS25aLWnTmd4rd91Z4M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=nULClVva2rHJIfpgIigTGgol80mgz5kHzVJXpZaCpHzlSDFgtyoWDBxo2tAJV8d1OzpEG8WEysGzZ72M5q+71kmryA3P8QSKVjO66jhx+3MVQvm2/oe6rn3s/HnLC+RKyqQYxhYUwsoBsbIdq/4OMgjsQs2bzZrBiKrwsB+crpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=b/+JTLk/ reason="signature verification failed"; arc=none smtp.client-ip=18.132.163.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
+X-QQ-mid: bizesmtp83t1726159613to5d2kq4
+X-QQ-Originating-IP: //8ojEWj5zyik+IDOVW2+Nz6vwRhEBJ1fP4hKMrx43w=
+Received: from m16.mail.163.com ( [117.135.210.2])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 13 Sep 2024 00:46:51 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 8686062611762100577
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=rdcNj5uwJJEZjLv5Z3DsoThouba4FdiHltV8i8AMl18=; b=b
+	/+JTLk/7/Wbyp+yJX70aplaEvV24gSZ8L7a/2QssKIO+dNBAzaZpTpvLH0L9feel
+	YOt8WFbl6U61oy/7aIpQegBAFiufG5EToKJ/08KrD5Lk1x1xqVurwNfTf05GN9FY
+	5UQJDOG/rnTj/pccr4bRMbZepEaHDWuVbtKEtF9Cp4=
+Received: from kxwang23$m.fudan.edu.cn ( [104.238.222.239] ) by
+ ajax-webmail-wmsvr-40-136 (Coremail) ; Fri, 13 Sep 2024 00:46:15 +0800
+ (CST)
+Date: Fri, 13 Sep 2024 00:46:15 +0800 (CST)
+From: "Kaixin Wang" <kxwang23@m.fudan.edu.cn>
+To: "Przemek Kitszel" <przemyslaw.kitszel@intel.com>
+Cc: wtdeng24@m.fudan.edu.cn, 21210240012@m.fudan.edu.cn, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, edumazet@google.com, kuba@kernel.org, 
+	davem@davemloft.net
+Subject: Re: [PATCH] net: seeq: Fix use after free vulnerability in ether3
+ Driver Due to Race Condition
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <26614b92-4d24-4aff-8fc3-25aa8ed83cb6@intel.com>
+References: <20240909175821.2047-1-kxwang23@m.fudan.edu.cn>
+ <26614b92-4d24-4aff-8fc3-25aa8ed83cb6@intel.com>
+X-NTES-SC: AL_Qu2ZBP2etk0s4yabYOkXn0kbjug3WcW0u/0k3oJUNps0sSbJxCIce1FGAHTrzv+TMyOvnjaRQClvyeFHTa9cY5iDGeXF3HowFERebwPIor1Q
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240906-arm64-elf-hwcap3-v1-0-8df1a5e63508@kernel.org>
+Message-ID: <2BC065D799E6D23B+6fef9b03.c268.191e720da5e.Coremail.kxwang23@m.fudan.edu.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wDnr6vYGuNmEJAFAA--.2873W
+X-CM-SenderInfo: zprtkiiuqyikitw6il2tof0z/1tbiwh5Y2GWXw6aYUAAFsG
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:m.fudan.edu.cn:qybglogicsvrsz:qybglogicsvrsz4a-0
 
-On Fri, Sep 06, 2024 at 12:05:23AM +0100, Mark Brown wrote:
-> Since arm64 has now used all of AT_HWCAP2 it needs to either start using
-> AT_HWCAP3 (which was recently added for PowerPC) or start allocating
-> bits 32..61 of AT_HWCAP first.  Those are documented in elf_hwcaps.rst
-> as unused and in uapi/asm/hwcap.h as unallocated for potential use by
-> libc, glibc does currently use bits 62 and 63.  This series has the code
-> for enabling AT_HWCAP3 as a reference.
-> 
-> We will at some point need to bite this bullet but we need to decide if
-> it's now or later.  Given that we used the high bits of AT_HWCAP2 first
-> and AT_HWCAP3 is already defined it feels like that might be people's
-> preference, in order to minimise churn in serieses adding new HWCAPs
-> it'd be good to get consensus if that's the case or not.
-
-Since the arm64 ABI documents that only bits 62 and 63 from AT_HWCAP are
-reserved for glibc, I think we should start using the remaining 30 bits
-of AT_HWCAP first before going for AT_HWCAP3. I'm sure we'll go through
-them quickly enough, so these two patches will have to be merged at some
-point.
-
-We'll need an Ack from the (arm64) glibc people on the GCS patch series
-if we are going for bits 32+ in AT_HWCAP.
-
--- 
-Catalin
+CkF0IDIwMjQtMDktMTEgMTc6Mjk6NDQsICJQcnplbWVrIEtpdHN6ZWwiIDxwcnplbXlzbGF3Lmtp
+dHN6ZWxAaW50ZWwuY29tPiB3cm90ZToKPk9uIDkvOS8yNCAxOTo1OCwgS2FpeGluIFdhbmcgd3Jv
+dGU6Cj4+IEluIHRoZSBldGhlcjNfcHJvYmUgZnVuY3Rpb24sIGEgdGltZXIgaXMgaW5pdGlhbGl6
+ZWQgd2l0aCBhIGNhbGxiYWNrCj4+IGZ1bmN0aW9uIGV0aGVyM19sZWRvZmYsIGJvdW5kIHRvICZw
+cmV2KGRldiktPnRpbWVyLiBPbmNlIHRoZSB0aW1lciBpcwo+PiBzdGFydGVkLCB0aGVyZSBpcyBh
+IHJpc2sgb2YgYSByYWNlIGNvbmRpdGlvbiBpZiB0aGUgbW9kdWxlIG9yIGRldmljZQo+PiBpcyBy
+ZW1vdmVkLCB0cmlnZ2VyaW5nIHRoZSBldGhlcjNfcmVtb3ZlIGZ1bmN0aW9uIHRvIHBlcmZvcm0g
+Y2xlYW51cC4KPj4gVGhlIHNlcXVlbmNlIG9mIG9wZXJhdGlvbnMgdGhhdCBtYXkgbGVhZCB0byBh
+IFVBRiBidWcgaXMgYXMgZm9sbG93czoKPj4gCj4+IENQVTAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICBDUFUxCj4+IAo+PiAgICAgICAgICAgICAgICAgICAgICAgIHwgIGV0aGVy
+M19sZWRvZmYKPj4gZXRoZXIzX3JlbW92ZSAgICAgICAgIHwKPj4gICAgZnJlZV9uZXRkZXYoZGV2
+KTsgICB8Cj4+ICAgIHB1dF9kZXZpYyAgICAgICAgICAgfAo+PiAgICBrZnJlZShkZXYpOyAgICAg
+ICAgIHwKPj4gICB8ICBldGhlcjNfb3V0dyhwcml2KGRldiktPnJlZ3MuY29uZmlnMiB8PSBDRkcy
+X0NUUkxPLCBSRUdfQ09ORklHMik7Cj4+ICAgICAgICAgICAgICAgICAgICAgICAgfCAvLyB1c2Ug
+ZGV2Cj4+IAo+PiBGaXggaXQgYnkgZW5zdXJpbmcgdGhhdCB0aGUgdGltZXIgaXMgY2FuY2VsZWQg
+YmVmb3JlIHByb2NlZWRpbmcgd2l0aAo+PiB0aGUgY2xlYW51cCBpbiBldGhlcjNfcmVtb3ZlLgo+
+Cj50aGlzIGNvZGUgY2hhbmdlIGluZGVlZCBwcmV2ZW50cyBVQUYgYnVnCj5idXQgYXMgaXMsIHRo
+ZSBDRkcyX0NUUkxPIGZsYWcgb2YgUkVHX0NPTkZJRzIgd2lsbCBiZSBsZWZ0IGluIHN0YXRlICJP
+TiIKPgo+aXQgd291bGQgYmUgYmV0dGVyIHRvIGZpcnN0IHR1cm4gdGhlIExFRCBvZmYgdW5jb25k
+aXRpb25hbGx5Cj4KCkkgd2lsbCBmaXggaXQgaW4gdGhlIG5leHQgdmVyc2lvbiBvZiBwYXRjaC4K
+Cj4+IAo+PiBTaWduZWQtb2ZmLWJ5OiBLYWl4aW4gV2FuZyA8a3h3YW5nMjNAbS5mdWRhbi5lZHUu
+Y24+Cj4+IC0tLQo+PiAgIGRyaXZlcnMvbmV0L2V0aGVybmV0L3NlZXEvZXRoZXIzLmMgfCAxICsK
+Pj4gICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykKPj4gCj4+IGRpZmYgLS1naXQgYS9k
+cml2ZXJzL25ldC9ldGhlcm5ldC9zZWVxL2V0aGVyMy5jIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQv
+c2VlcS9ldGhlcjMuYwo+PiBpbmRleCBjNjcyZjkyZDY1ZTkuLmY5ZDI3YzlkNjgwOCAxMDA2NDQK
+Pj4gLS0tIGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvc2VlcS9ldGhlcjMuYwo+PiArKysgYi9kcml2
+ZXJzL25ldC9ldGhlcm5ldC9zZWVxL2V0aGVyMy5jCj4+IEBAIC04NTAsNiArODUwLDcgQEAgc3Rh
+dGljIHZvaWQgZXRoZXIzX3JlbW92ZShzdHJ1Y3QgZXhwYW5zaW9uX2NhcmQgKmVjKQo+PiAgIAll
+Y2FyZF9zZXRfZHJ2ZGF0YShlYywgTlVMTCk7Cj4+ICAgCj4+ICAgCXVucmVnaXN0ZXJfbmV0ZGV2
+KGRldik7Cj4+ICsJZGVsX3RpbWVyX3N5bmMoJnByaXYoZGV2KS0+dGltZXIpOwo+PiAgIAlmcmVl
+X25ldGRldihkZXYpOwo+PiAgIAllY2FyZF9yZWxlYXNlX3Jlc291cmNlcyhlYyk7Cj4+ICAgfQo+
+Cj4KVGhhbmtzIGZvciB0aGUgcmV2aWV3IQoKQmVzdCByZWdhcmRzLApLYWl4aW4gV2FuZwoK
 
