@@ -1,154 +1,112 @@
-Return-Path: <linux-kernel+bounces-326840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CD58976D97
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:20:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1724976D9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 17:20:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6182E1C23DE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:20:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C1D11F267FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 15:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 776B11B12E4;
-	Thu, 12 Sep 2024 15:19:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A901BAEE9;
+	Thu, 12 Sep 2024 15:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="IIHhLAYh"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C6B848E
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 15:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6DD126BE2;
+	Thu, 12 Sep 2024 15:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726154345; cv=none; b=S5fz2DUSffIP/JAjb6fgdNK5oG2FXLI8D+PWSaa7ITkKk+hmRMtpdlDUqgoIoLe2WND24sbh05DJu8FDe6fOIkMAPhLY/zr/73XsFqJiu3hz+rMae4NkWZy94yr0p61PuFsXQhSZ0htwOU/etoypDAHpBzX/4b9g0v5/3RpAJnE=
+	t=1726154393; cv=none; b=CGwb3zCaNEtI7x75QSIYbLzJnxYCzeYVaDMa8q3Br5CzrVLXrr6ycX05IB5b97QYhNWGqzRvocnfPTQa4x+W4wAUu1F0zOuldwkpyj/HnYnQwLqmv7TyKYzczvPjY8CaSzptNmroO+zmjkkKdGfI4aLOzxIql94AfVT4eat6WPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726154345; c=relaxed/simple;
-	bh=STV8om1P7iMadYlrC1Ov5g6TtswUDp7aufrENClQUw0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=cwjFAQWUVoK77PLpM9EFevlvFrK41FNVAoIcWTN7DQNr18i/kgbBgceREceajLnGdveLLqGAtpKXpfrKEFl1byunhK81lDtoeCYbEc22sG2uxzXXNAMa3o8kFhk49TV3uEPaQS8fzK/OpGx+8jfnl4JfW0Eonntu36zm7/JMlqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39d49576404so11812885ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:19:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726154342; x=1726759142;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7mYGFi5Rv2ZCy/t4Eijr16i9h0twm2O5R16/L7rUMjs=;
-        b=aYqS/wgpqekKCxVjAS5Ybssp2r2tWqnWTXXnSv8YXZ7+3DFKDLX4015617y/C4qdKX
-         +c5UWN5D9LkVb2d41gLuGehO1gHKCKwinDwTjgmEjTaudPXmSGs1Dxe7elnHJ6KynhKe
-         VtDHEEIcsOgTkwYkzqAjp+WlEeuMBA2Mbe5peHv1SPC64xVye4xBLAHqG3IPvTae5AKy
-         0nR4EesI7mlyO7ZK8wm0MvHx0htPN6r3UmrZxFiy34D9pSIuXh75usRVz/JGQhv5VOGZ
-         wUYkj05jZ6MCDeX89TzjHPV6cT4lPeaXh1gT1/2JNJyMn6dpCEl7DDP+ENI0u+6OOzZF
-         KbVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLPloSHKqSGepQ5/g1UQ2uTObh4KK3xail497YUde1hLlgw5zbg98bzUVdMUD3jVX/1ILRrF9K1T/baoA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiaqE6CiY3TiEv516S4jKKQmPeRx4FWi/8flBTLoh5fw6m1fUh
-	BLZt4vVnExg40b0JWZ73e1bkVPjLI6LTttzVp5ku5k0ts0JmhawHfva0bl36x/ogrWMoMuT7Ixk
-	hSyJ761o5axTw2ypIgmKSFHEhiOrVNmCeS5v55rUAhsWcMaJm675aluc=
-X-Google-Smtp-Source: AGHT+IFt8aUqyC+nBbSueG12rEXJ2jmU3hElZUDMXnoWgq7lVYMH3qmZ64vb3Dj64xbadclXvHxKIEwSs77S8fmOKG4+oEaHYNhu
+	s=arc-20240116; t=1726154393; c=relaxed/simple;
+	bh=/OXhOlV9Y45rThy6liriw9VPETV5rNH9lt4zzjrFg5M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TRaSLiX2yF3F9kn8Iq3BSFDsFlU8zn+KAXmDH07p9SUyCLZglvbNCQ0XRjO+yD+11Ka+nhVqiHTwL+Ra9mloBF8YmqOw6HcEvFulU1dVRxIjzieDXxz0u1bdDzHvCx3oWMq4IF8E45h5hSCFudJnTA1xJFGjltg77pWJgKEqTu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=IIHhLAYh; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=6faEgCEj/9OUXs3v+131xY7iaDYBTFMaSLrdrzCB6GE=; b=IIHhLAYh3H2EUb5pYmaSbUCWrM
+	vIQ0zYl1dP8lCQmbMFJ7fqRIT4qs4k7B466OXjiz+M5J5ua7m0S6w7Xx21xz9UeYU4cQUWf0UOYqa
+	WDFLahKhUZ81K9nuKNC1odxhb+TdbZq/saNzg+p+bldCGMxdTA9+KLz+G/ce2RKZqkmg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1solbd-007Jmx-Cl; Thu, 12 Sep 2024 17:19:37 +0200
+Date: Thu, 12 Sep 2024 17:19:37 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, bryan.whitehead@microchip.com,
+	UNGLinuxDriver@microchip.com, linux@armlinux.org.uk,
+	maxime.chevallier@bootlin.com, rdunlap@infradead.org,
+	Steen.Hegelund@microchip.com, daniel.machon@microchip.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next V2 2/5] net: lan743x: Add support to
+ software-nodes for sfp
+Message-ID: <016f93bc-3177-412c-9441-d1a6cd2b466e@lunn.ch>
+References: <20240911161054.4494-1-Raju.Lakkaraju@microchip.com>
+ <20240911161054.4494-3-Raju.Lakkaraju@microchip.com>
+ <cb39041e-9b72-4b76-bfd7-03f825b20f23@lunn.ch>
+ <ZuKMcMexEAqTLnSc@HYD-DK-UNGSW21.microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1846:b0:3a0:72d5:185a with SMTP id
- e9e14a558f8ab-3a0849552d0mr36954395ab.16.1726154342457; Thu, 12 Sep 2024
- 08:19:02 -0700 (PDT)
-Date: Thu, 12 Sep 2024 08:19:02 -0700
-In-Reply-To: <20240912141621.7782-1-aha310510@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000068f3710621eda08c@google.com>
-Subject: Re: [syzbot] [usb?] KMSAN: kernel-infoleak in iowarrior_read
-From: syzbot <syzbot+b8080cbc8d286a5fa23a@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZuKMcMexEAqTLnSc@HYD-DK-UNGSW21.microchip.com>
 
-Hello,
+On Thu, Sep 12, 2024 at 12:08:40PM +0530, Raju Lakkaraju wrote:
+> Hi Andrew,
+> 
+> The 09/11/2024 19:17, Andrew Lunn wrote:
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+> > 
+> > > diff --git a/drivers/net/ethernet/microchip/Kconfig b/drivers/net/ethernet/microchip/Kconfig
+> > > index 2e3eb37a45cd..9c08a4af257a 100644
+> > > --- a/drivers/net/ethernet/microchip/Kconfig
+> > > +++ b/drivers/net/ethernet/microchip/Kconfig
+> > > @@ -50,6 +50,8 @@ config LAN743X
+> > >       select CRC16
+> > >       select CRC32
+> > >       select PHYLINK
+> > > +     select I2C_PCI1XXXX
+> > > +     select GP_PCI1XXXX
+> > 
+> > GP_ is odd. GPIO drivers usually use GPIO_. Saying that, GPIO_PCI1XXXX
+> > is not in 6.11-rc7. Is it in gpio-next?
+> > 
+> 
+> Yes. But GPIO driver developer use this.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: kernel-infoleak in iowarrior_read
+And the GPIO Maintainer accepted this, despite it not being the same
+as every other GPIO driver?
 
-=====================================================
-BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/instrumented.h:114 [inline]
-BUG: KMSAN: kernel-infoleak in _inline_copy_to_user include/linux/uaccess.h:180 [inline]
-BUG: KMSAN: kernel-infoleak in _copy_to_user+0xbc/0x110 lib/usercopy.c:26
- instrument_copy_to_user include/linux/instrumented.h:114 [inline]
- _inline_copy_to_user include/linux/uaccess.h:180 [inline]
- _copy_to_user+0xbc/0x110 lib/usercopy.c:26
- copy_to_user include/linux/uaccess.h:209 [inline]
- iowarrior_read+0xb02/0xdc0 drivers/usb/misc/iowarrior.c:326
- vfs_read+0x2a1/0xf60 fs/read_write.c:474
- ksys_read+0x20f/0x4c0 fs/read_write.c:619
- __do_sys_read fs/read_write.c:629 [inline]
- __se_sys_read fs/read_write.c:627 [inline]
- __x64_sys_read+0x93/0xe0 fs/read_write.c:627
- x64_sys_call+0x3055/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:1
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Ah, there is no Acked-by: from anybody i recognise as a GPIO
+maintainer. Was it even reviewed by GPIO people? And why is it hiding
+in driver/misc? I don't see any reason it cannot be in drivers/gpio,
+which is where i looked for it. There are other auxiliary_driver in
+drivers/gpio.
 
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:3998 [inline]
- slab_alloc_node mm/slub.c:4041 [inline]
- __do_kmalloc_node mm/slub.c:4161 [inline]
- __kmalloc_noprof+0x661/0xf30 mm/slub.c:4174
- kmalloc_noprof include/linux/slab.h:685 [inline]
- kmalloc_array_noprof include/linux/slab.h:726 [inline]
- iowarrior_probe+0x10ea/0x1b90 drivers/usb/misc/iowarrior.c:836
- usb_probe_interface+0xd6f/0x1350 drivers/usb/core/driver.c:399
- really_probe+0x4db/0xd90 drivers/base/dd.c:657
- __driver_probe_device+0x2ab/0x5d0 drivers/base/dd.c:799
- driver_probe_device+0x72/0x890 drivers/base/dd.c:829
- __device_attach_driver+0x568/0x9e0 drivers/base/dd.c:957
- bus_for_each_drv+0x403/0x620 drivers/base/bus.c:457
- __device_attach+0x3c1/0x650 drivers/base/dd.c:1029
- device_initial_probe+0x32/0x40 drivers/base/dd.c:1078
- bus_probe_device+0x3dc/0x5c0 drivers/base/bus.c:532
- device_add+0x13aa/0x1ba0 drivers/base/core.c:3682
- usb_set_configuration+0x31c9/0x38d0 drivers/usb/core/message.c:2210
- usb_generic_driver_probe+0x109/0x2a0 drivers/usb/core/generic.c:254
- usb_probe_device+0x3a7/0x690 drivers/usb/core/driver.c:294
- really_probe+0x4db/0xd90 drivers/base/dd.c:657
- __driver_probe_device+0x2ab/0x5d0 drivers/base/dd.c:799
- driver_probe_device+0x72/0x890 drivers/base/dd.c:829
- __device_attach_driver+0x568/0x9e0 drivers/base/dd.c:957
- bus_for_each_drv+0x403/0x620 drivers/base/bus.c:457
- __device_attach+0x3c1/0x650 drivers/base/dd.c:1029
- device_initial_probe+0x32/0x40 drivers/base/dd.c:1078
- bus_probe_device+0x3dc/0x5c0 drivers/base/bus.c:532
- device_add+0x13aa/0x1ba0 drivers/base/core.c:3682
- usb_new_device+0x15f4/0x2470 drivers/usb/core/hub.c:2651
- hub_port_connect drivers/usb/core/hub.c:5521 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5661 [inline]
- port_event drivers/usb/core/hub.c:5821 [inline]
- hub_event+0x4ffb/0x72d0 drivers/usb/core/hub.c:5903
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
- worker_thread+0xea7/0x14d0 kernel/workqueue.c:3389
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> I have to use the same here.
 
-Bytes 0-72 of 73 are uninitialized
-Memory access of size 73 starts at ffff88811bbc6000
-Data copied to user address 0000000020000000
+Unfortunately, i have to agree, for the moment.
 
-CPU: 0 UID: 0 PID: 5938 Comm: syz.0.15 Not tainted 6.11.0-rc7-syzkaller-g77f587896757 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-=====================================================
+But it would be good to clean it up. I _think_ mchp_pci1xxxx_gpio.c
+can be moved into driver/gpio, given the expected Kconfig symbol
+GPIO_PCI1XXXX and depends on GP_PCI1XXXX. It would then also get
+reviewed by the GPIO Maintainers, which you probably want.
 
-
-Tested on:
-
-commit:         77f58789 Merge tag 'arm-fixes-6.11-3' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14c860a9980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ea008021530b2de3
-dashboard link: https://syzkaller.appspot.com/bug?extid=b8080cbc8d286a5fa23a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
+	Andrew
 
