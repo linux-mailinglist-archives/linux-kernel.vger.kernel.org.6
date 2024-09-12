@@ -1,83 +1,63 @@
-Return-Path: <linux-kernel+bounces-326199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 070049764C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:45:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0E519764CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 10:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A64B91F249B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:45:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5195285DE9
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 08:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133EC1922E3;
-	Thu, 12 Sep 2024 08:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F1C19005A;
+	Thu, 12 Sep 2024 08:47:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OE35+moa"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kkoR83+B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625C91922C0
-	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 08:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49E0E374F6;
+	Thu, 12 Sep 2024 08:47:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726130708; cv=none; b=mZ2+RjjZ1luKZE1FlUK5QRAh1IdI5FZCRHO63uk7+3zHQHpXdSDSB/eV6zoAb5oeIt0V65Z1WWp1lzBzKXnc3YYzv4um4SRLcGRFUVf80+RpSEjTolCthMaO/Vh4lQwcQauXBTxnyJe18f9gKFruGIfHmuNH0d1jCz8oZ7jeX64=
+	t=1726130836; cv=none; b=DzX7yhlAG2wxgR4qYqWQh4sdjc9pk3327ARmkyFGqKxV/omtf4o8SU1TUBe7UpZb/VBAUtJoI1hg6Tq+9iPSGTUKj7CLeE+DWFgU6pSRo3rdh7liPYwPsndOwVojhy/sNEFSyReoa8gkN2PfmJNG94Nj+kxa6/UfZLxuqQ+GYMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726130708; c=relaxed/simple;
-	bh=mOqvLpNO+BNetEeobtLxC6/KmXf0MhVchHjd7Fyzcq4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=eNn74U73yz3LZ6yys043n9+mXOcutjJlHVTJmrcVO6qJ9bV6vKjDc1DuKU+qNvsE+8cTWMH4DqrGAaGMwTiV9U0wOO/Umm2I+3iu7HOsLPyiNkbGsT/ii0/on2N1vVP5gXfyuB/ManMpCsZGSv1lDFMZfJEvb6aPlxGuzq4nrVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OE35+moa; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-42cbface8d6so7373685e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 01:45:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726130704; x=1726735504; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Iwn1or/bBYSNEeUGyuhOfxUWx3sWzISGdpZDtEwQt38=;
-        b=OE35+moaE2ufayZNtLkRSoaoIlRDpTm0v5D6Iuvv4tjQMj3dp6cVHLhInIqNX869Fg
-         nAphBFnQhWj8EkCiBf29MN+xLtpWoDWFgAWxn3HwYU4A8as2uvinfeycYTMSBfPLKOM9
-         Ek4GgYmaJYuglzaAMgcchOSM6IBSPhVJab6pz30aNkY1Bqze15RaDCB23uwZ52ZiQnuT
-         Fm51aSf1ghczKBubYkoSQ9oQ58oOW/YB/oUwbvmiIDwDWSANGQXFF4xoegXrA+KT7uMW
-         Nx0wVddxeoRU1ZYFVw0J6x0EIgoae+3Jtk4lnhlLP7nnByGi3amVsQO0xtevw9wgcD00
-         woBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726130704; x=1726735504;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Iwn1or/bBYSNEeUGyuhOfxUWx3sWzISGdpZDtEwQt38=;
-        b=N4GS3Gfx8AlZhJEKjga8F+I05rwPQmyA28eAH7WxnsKzJXNFrL824jEato8R99f0GG
-         SM8fvuVUAz+EgT4EVmbGos7+GCbvlogJxH0XjtkfE/sEKO0QV51x0G8YDWQgnESBrZ0H
-         yCQMCics0k0h8ZRKy/LCKY745Ty2QMNTtbad6iZqGxfNkLiJbkVJFlvv+nrK6JdDu6Ed
-         I3Gk02f1TZqUXRPvp+OZgiGPGfDV2l4Hlbo8MVgt1gDFzva6o3pA4OGNG0jTVuBZ94Xt
-         88Y9GBXH0YOT65dgy9w03SfGXpuMfTfVTTjtfhpe1rlYJVeive7qzxWCFejYAgfCOJ03
-         V+/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUQOKdZoHvbQAr+ieplzF+2s9iT5/zSCmwCXQxaskzZoXw9/TuUQ/3MV5nrh1p6EpRWD1oCkUs4tOSf9KI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb7qBxWeW1qYlii/0b53Sa6jqltWAsY1UbzTJkWveEyIXhAzxO
-	glhE3tXbnJBjjgZ8FD3Tr/H8GRrY81QOk1UAGEp6Fz28TUhEPiqlTooUWfPOZVg=
-X-Google-Smtp-Source: AGHT+IE3jIKp1LsMR7cNfJjwontG8p+Vo7dQ6rcRj2YQpKpztKUglDivYbVOWQlxSgzVuxQlXUEEiQ==
-X-Received: by 2002:adf:ae51:0:b0:374:c7f8:3d50 with SMTP id ffacd0b85a97d-378c2d588d5mr1389741f8f.58.1726130703593;
-        Thu, 12 Sep 2024 01:45:03 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956de262sm13712489f8f.112.2024.09.12.01.45.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 01:45:03 -0700 (PDT)
-Date: Thu, 12 Sep 2024 11:44:59 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kernel-janitors@vger.kernel.org,
-	Jason-JH Lin =?utf-8?B?KOael+edv+elpSk=?= <Jason-JH.Lin@mediatek.com>
-Subject: [PATCH] drm/mediatek: Fix potential NULL dereference in
- mtk_crtc_destroy()
-Message-ID: <cc537bd6-837f-4c85-a37b-1a007e268310@stanley.mountain>
+	s=arc-20240116; t=1726130836; c=relaxed/simple;
+	bh=i0CNHHFTOhKkqY5aND8P+QYFqt6olhaiseKhzencGF0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p+z6yBLgLooCWtk+SdGfkFymFdeJGFQ2KGk8i99/N+JJA41EJRuRHqbkNcKTjtGNs3eIcmSmc/pOooAMsIciIpBcfHEIkyV1+MRZRdsG+92Ak2DOY7PirXfuB+HVUZLrwR/E1Lu8k1GxhE7+NaGKu8CCELnssh7Cx5UFhynYtYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kkoR83+B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E10EC4CEC3;
+	Thu, 12 Sep 2024 08:47:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726130835;
+	bh=i0CNHHFTOhKkqY5aND8P+QYFqt6olhaiseKhzencGF0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kkoR83+BFUXOwLV646gTExq9075bH58xAdvKY0YV6Klx6pVxiG0MKpZw2mDUfZdWx
+	 JgxiWbRxqXc97YWp8RoYEfmKtetg/mVSznfRm5YkGNMcpTABJRAIFtLSjUGNnY5Dby
+	 UAPpoIS5rP4oMWGrzaqkrmfv0Y1YUdnv7A+M3A5wlmS2bQ9OlJjGETAEbSTmW+/XrV
+	 VtIv2gumdLIG98bGc9+6wCX9H3AGkYJ8DpMLL76dbM8oU7zFpB6hQ/3qrFVIeK303+
+	 3BWAH/Jwtws8GQGLPJuXo5FoSrxqzxZBo1DQijQM1uqDMmwyNDtzwVZuSm0JZhTC04
+	 Hgz4CkJVhI6xg==
+Date: Thu, 12 Sep 2024 09:47:10 +0100
+From: Simon Horman <horms@kernel.org>
+To: Suraj Jaiswal <quic_jsuraj@quicinc.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Prasad Sodagudi <psodagud@quicinc.com>,
+	Andrew Halaney <ahalaney@redhat.com>, Rob Herring <robh@kernel.org>,
+	kernel@quicinc.com
+Subject: Re: [PATCH v2] net: stmmac: allocate separate page for buffer
+Message-ID: <20240912084710.GE572255@kernel.org>
+References: <20240910124841.2205629-1-quic_jsuraj@quicinc.com>
+ <20240910124841.2205629-2-quic_jsuraj@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,39 +66,174 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <20240910124841.2205629-2-quic_jsuraj@quicinc.com>
 
-In mtk_crtc_create(), if the call to mbox_request_channel() fails then we
-set the "mtk_crtc->cmdq_client.chan" pointer to NULL.  In that situation,
-we do not call cmdq_pkt_create().
+On Tue, Sep 10, 2024 at 06:18:41PM +0530, Suraj Jaiswal wrote:
+> Currently for TSO page is mapped with dma_map_single()
+> and then resulting dma address is referenced (and offset)
+> by multiple descriptors until the whole region is
+> programmed into the descriptors.
+> This makes it possible for stmmac_tx_clean() to dma_unmap()
+> the first of the already processed descriptors, while the
+> rest are still being processed by the DMA engine. This leads
+> to an iommu fault due to the DMA engine using unmapped memory
+> as seen below:
+> 
+> arm-smmu 15000000.iommu: Unhandled context fault: fsr=0x402,
+> iova=0xfc401000, fsynr=0x60003, cbfrsynra=0x121, cb=38
+> 
+> Descriptor content:
+>      TDES0       TDES1   TDES2   TDES3
+> 317: 0xfc400800  0x0     0x36    0xa02c0b68
+> 318: 0xfc400836  0x0     0xb68   0x90000000
+> 
+> As we can see above descriptor 317 holding a page address
+> and 318 holding the buffer address by adding offset to page
+> addess. Now if 317 descritor is cleaned as part of tx_clean()
 
-During the cleanup, we need to check if the "mtk_crtc->cmdq_client.chan"
-is NULL first before calling cmdq_pkt_destroy().  Calling
-cmdq_pkt_destroy() is unnecessary if we didn't call cmdq_pkt_create() and
-it will result in a NULL pointer dereference.
+Hi Suraj,
 
-Fixes: 7627122fd1c0 ("drm/mediatek: Add cmdq_handle in mtk_crtc")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/gpu/drm/mediatek/mtk_crtc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+As it looks like there will be a v3 anyway, some minor nits from my side.
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_crtc.c b/drivers/gpu/drm/mediatek/mtk_crtc.c
-index 175b00e5a253..c15013792583 100644
---- a/drivers/gpu/drm/mediatek/mtk_crtc.c
-+++ b/drivers/gpu/drm/mediatek/mtk_crtc.c
-@@ -127,9 +127,8 @@ static void mtk_crtc_destroy(struct drm_crtc *crtc)
- 
- 	mtk_mutex_put(mtk_crtc->mutex);
- #if IS_REACHABLE(CONFIG_MTK_CMDQ)
--	cmdq_pkt_destroy(&mtk_crtc->cmdq_client, &mtk_crtc->cmdq_handle);
--
- 	if (mtk_crtc->cmdq_client.chan) {
-+		cmdq_pkt_destroy(&mtk_crtc->cmdq_client, &mtk_crtc->cmdq_handle);
- 		mbox_free_channel(mtk_crtc->cmdq_client.chan);
- 		mtk_crtc->cmdq_client.chan = NULL;
- 	}
--- 
-2.45.2
+addess -> address
 
+Flagged by checkpatch.pl --codespell
+
+> then we will get SMMU fault if 318 descriptor is getting accessed.
+> 
+> To fix this, let's map each descriptor's memory reference individually.
+> This way there's no risk of unmapping a region that's still being
+> referenced by the DMA engine in a later descriptor.
+> 
+> Signed-off-by: Suraj Jaiswal <quic_jsuraj@quicinc.com>
+> ---
+> 
+> Changes since v2:
+> - Update commit text with more details.
+> - fixed Reverse xmas tree order issue.
+> 
+> 
+> Changes since v1:
+> - Fixed function description 
+> - Fixed handling of return value.
+> 
+> 
+>  .../net/ethernet/stmicro/stmmac/stmmac_main.c | 63 ++++++++++++-------
+>  1 file changed, 42 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> index 83b654b7a9fd..98d5a4b64cac 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> @@ -4136,21 +4136,25 @@ static bool stmmac_vlan_insert(struct stmmac_priv *priv, struct sk_buff *skb,
+>  /**
+>   *  stmmac_tso_allocator - close entry point of the driver
+>   *  @priv: driver private structure
+> - *  @des: buffer start address
+> + *  @addr: Contains either skb frag address or skb->data address
+>   *  @total_len: total length to fill in descriptors
+>   *  @last_segment: condition for the last descriptor
+>   *  @queue: TX queue index
+> + * @is_skb_frag: condition to check whether skb data is part of fragment or not
+>   *  Description:
+>   *  This function fills descriptor and request new descriptors according to
+>   *  buffer length to fill
+> + *  This function returns 0 on success else -ERRNO on fail
+
+Please consider using a "Return:" or "Returns:" section to document
+return values.
+
+Flagged by ./scripts/kernel-doc -none -Wall .../stmmac_main.c
+
+>   */
+> -static void stmmac_tso_allocator(struct stmmac_priv *priv, dma_addr_t des,
+> -				 int total_len, bool last_segment, u32 queue)
+> +static int stmmac_tso_allocator(struct stmmac_priv *priv, void *addr,
+> +				int total_len, bool last_segment, u32 queue, bool is_skb_frag)
+
+The line above could be trivially wrapped to <= 80 columns wide, as is
+still preferred for networking code. Likewise a little further below.
+
+Likewise elsewhere in this patch.
+
+You can pass an option to checkpatch.pl to check for this.
+
+>  {
+>  	struct stmmac_tx_queue *tx_q = &priv->dma_conf.tx_queue[queue];
+>  	struct dma_desc *desc;
+>  	u32 buff_size;
+>  	int tmp_len;
+> +	unsigned char *data = addr;
+> +	unsigned int offset = 0;
+
+Please consider arranging local variables in Networking code in
+reverse xmas tree order - longest line to shortest.
+
+Edward Cree's xmastree tool can be of assistance here:
+https://github.com/ecree-solarflare/xmastree
+
+>  
+>  	tmp_len = total_len;
+>  
+> @@ -4161,20 +4165,44 @@ static void stmmac_tso_allocator(struct stmmac_priv *priv, dma_addr_t des,
+>  						priv->dma_conf.dma_tx_size);
+>  		WARN_ON(tx_q->tx_skbuff[tx_q->cur_tx]);
+>  
+> +		buff_size = tmp_len >= TSO_MAX_BUFF_SIZE ? TSO_MAX_BUFF_SIZE : tmp_len;
+
+		FWIIW, I think that min() would allow this the intent
+		of the line above to be expressed more succinctly.
+
+> +
+>  		if (tx_q->tbs & STMMAC_TBS_AVAIL)
+>  			desc = &tx_q->dma_entx[tx_q->cur_tx].basic;
+>  		else
+>  			desc = &tx_q->dma_tx[tx_q->cur_tx];
+>  
+> -		curr_addr = des + (total_len - tmp_len);
+> +		offset = total_len - tmp_len;
+> +		if (!is_skb_frag) {
+> +			curr_addr = dma_map_single(priv->device, data + offset, buff_size,
+> +						   DMA_TO_DEVICE);
+> +
+> +			if (dma_mapping_error(priv->device, curr_addr))
+> +				return -ENOMEM;
+> +
+> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].buf = curr_addr;
+> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].len = buff_size;
+> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].map_as_page = false;
+> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].buf_type = STMMAC_TXBUF_T_SKB;
+> +		} else {
+> +			curr_addr = skb_frag_dma_map(priv->device, addr, offset,
+> +						     buff_size,
+> +						     DMA_TO_DEVICE);
+> +
+> +			if (dma_mapping_error(priv->device, curr_addr))
+> +				return -ENOMEM;
+> +
+> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].buf = curr_addr;
+> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].len = buff_size;
+> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].map_as_page = true;
+> +			tx_q->tx_skbuff_dma[tx_q->cur_tx].buf_type = STMMAC_TXBUF_T_SKB;
+> +		}
+
+Maybe my eyes are deceiving me, but there seems to be quite a lot of
+repetition in the two arms of the if/else condition above. If so, can it be
+consolidated by moving everything other than the assignment of curr out of
+the conditional blocks?  (And dropping the {}.)
+
+> +
+>  		if (priv->dma_cap.addr64 <= 32)
+>  			desc->des0 = cpu_to_le32(curr_addr);
+>  		else
+>  			stmmac_set_desc_addr(priv, desc, curr_addr);
+>  
+> -		buff_size = tmp_len >= TSO_MAX_BUFF_SIZE ?
+> -			    TSO_MAX_BUFF_SIZE : tmp_len;
+> -
+>  		stmmac_prepare_tso_tx_desc(priv, desc, 0, buff_size,
+>  				0, 1,
+>  				(last_segment) && (tmp_len <= TSO_MAX_BUFF_SIZE),
+
+...
 
