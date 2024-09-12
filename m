@@ -1,124 +1,137 @@
-Return-Path: <linux-kernel+bounces-327234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FB779772A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:17:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 008CE9772A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 22:18:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D146F1C23C03
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:17:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AABDE1F22D03
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 20:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8881C174B;
-	Thu, 12 Sep 2024 20:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFB451C1734;
+	Thu, 12 Sep 2024 20:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WULTLVTq"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="R8+YILA+"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724701BE860;
-	Thu, 12 Sep 2024 20:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559FF6F2E8
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 20:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726172240; cv=none; b=Wbs4BmeTpyVBIFp3D8OJfrg4teQ4uY8c44/v4ZMxC12hdYjx6qCAHCpZLlTOSSMZ7xiv8X0ITya0G8LpPlOBm4QGHD5vkswwIVyH3BuPOhb4Uy3Q8ZAHfsXGrca0QyK0T0kH2V6iGZnkDqMbRv71L4qqN1xmbTx0Xt/C2/LfXVs=
+	t=1726172307; cv=none; b=IKISFfTI3MjRKAvz612Qtr0OzN/J99E477i/jbYij9DyFdv3tsC3FIZCugClNt7G3qoa5Ci0AEiDGdKCrY7ELdbTvihapBP37UYxeNEkMF/tUqVSjwT1tXueCN3yO4wYyUYAHRWgu+TUKvHwU6e/6hwar71RjxhIN8LvW6rdhj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726172240; c=relaxed/simple;
-	bh=8a+l0yLQWur4LKXx0doeTxIU/vtMw8YiiyuXqMHBOm8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=laDS/M1DBoa02t3/aIzsmBy/Jt62e3TeNcSPNyPCUEUKqZFwjDPU7wHPUCtZl/ta3WyOoyxGG42cbJBVc6aaBaGeqZ9GAbabbhMrKxy5pyNeofZ0Lxb32W+03qw/SGD3WAVCa72QS20TxS2/0l60LWjlC1Q7CpZUattGLGur76s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WULTLVTq; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 882071C0006;
-	Thu, 12 Sep 2024 20:17:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1726172235;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7FHWP2eO7j89fwZAZ2ZAC37i/e8x92BhFYNL0dz2678=;
-	b=WULTLVTq388DEtesiWaluvko106Vc8fjvhyDgcRAkDTUIiVTQUDeS7cQsYUzzRQgRINdNH
-	aP/VJwKcLnrdxdT5kcepfLfN6O77qjqXgcNWQZApBtwB4PTxD6wA0/mEUVHs5s0VwBfIL+
-	E/UFoGRbRqYBZYTCe1INUtZULUN1aQcvpnIi2nRABJLc/u8p8zAF3OrHOC/zI1V4vTMMM8
-	YyUtV7IRT55KKuowZHylQ9bNrlL5jR3aCXWDyLn9W3ZZc77a785ZD1tVmRGd8pFvFbXjrW
-	j6XWVYAg5bHMbNwzMseRWtT/hDbC79IQ60SA5lPxk+wgpzU12RdIUcfdzNZHqg==
-Message-ID: <fb7db9a9-5b9a-4b77-8dc6-f30b839bec27@bootlin.com>
-Date: Thu, 12 Sep 2024 22:17:13 +0200
+	s=arc-20240116; t=1726172307; c=relaxed/simple;
+	bh=sqEGLsiVe1px2T7K/5jR6/t8UKmJUdNGHqzq6qUMBDo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MYFxqfewCyt7WXLAfMAzfh84yxEF9+2AMr9BXtTWC7WtKYJHSOnYL5o5FrWzS7TyOm03YpYpB4MbjwdEOcSj5NQQPhdgmQmVakECgB5KCoRjM/W82eds2pTCxq/+7FCrTwt4WeiY46sNwkrBOZ1DGYvX/LntRTfcHnU2jj+eiEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=R8+YILA+; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1726172303; x=1726431503;
+	bh=sqEGLsiVe1px2T7K/5jR6/t8UKmJUdNGHqzq6qUMBDo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=R8+YILA+dKmb1Ok6pCZCJXvNQJMqwlQRmIip7KIIsQJ6LuxP0rU4HUqHGnxXd5aRn
+	 msytPCvs2JN0+0FOVqtv335B9s8uXkScF91IERSHWNy7clg/vVoZF94GPnSfJfCM7L
+	 I9O1+aKpbgTnYEzA/4EGNsA/18M5VQp54li3wYsep74kYH31vVHjpb9WTvRoPH9NfB
+	 dFpyygy6MuC9yruJseELMP6tCpqF5d9HRnB0TVoY1HZs26is4oRtRW+F0QKT2iAMYe
+	 9ziCLqaIiGozewN3lwXjikpKKVneH0Gi+r7xtpIS7j325R9AvsNHOZcALExpv+ByJj
+	 BvmYkoi1kDDRA==
+Date: Thu, 12 Sep 2024 20:18:18 +0000
+To: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+From: =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
+Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: vt6655: mac.h: Fix possible precedence issue in macros
+Message-ID: <ILhrP61gFh-bKmnqG1DTIWCjW8yXNVEI1mGa2Fm-y_yhZ4kV-WCxXoid_Yuy7w4-kyH4QVT7B3h-OUUBH0rAtjCM8P5tMQxG_zLjKrq4NEM=@protonmail.com>
+In-Reply-To: <f4e58090-0229-4a72-9bb6-d57757eb708c@gmail.com>
+References: <20240911180149.14474-1-dominik.karol.piatkowski@protonmail.com> <f4e58090-0229-4a72-9bb6-d57757eb708c@gmail.com>
+Feedback-ID: 117888567:user:proton
+X-Pm-Message-ID: 27318e477fc62929080976404587b24280042317
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v2] selftests/bpf: convert test_xdp_features.sh
- to test_progs
-To: Simon Horman <horms@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Jakub Kicinski <kuba@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>,
- Lorenzo Bianconi <lorenzo@kernel.org>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>, ebpf@linuxfoundation.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, netdev@vger.kernel.org
-References: <20240910-convert_xdp_tests-v2-1-a46367c9d038@bootlin.com>
- <20240911141824.GZ572255@kernel.org>
-From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-Content-Language: en-US
-In-Reply-To: <20240911141824.GZ572255@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alexis.lothore@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Simon,
+On Thursday, September 12th, 2024 at 21:29, Philipp Hortmann <philipp.g.hor=
+tmann@gmail.com> wrote:
 
-On 9/11/24 16:18, Simon Horman wrote:
+>=20
+>=20
+> On 9/11/24 20:02, Dominik Karol Pi=C4=85tkowski wrote:
+>=20
+> > It is safer to put macro arguments in parentheses. This way, accidental
+> > operator precedence issues can be avoided.
+> >=20
+> > Signed-off-by: Dominik Karol Pi=C4=85tkowski dominik.karol.piatkowski@p=
+rotonmail.com
+> > ---
+> > drivers/staging/vt6655/mac.h | 4 ++--
+> > 1 file changed, 2 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/staging/vt6655/mac.h b/drivers/staging/vt6655/mac.=
+h
+> > index acf931c3f5fd..a33af2852227 100644
+> > --- a/drivers/staging/vt6655/mac.h
+> > +++ b/drivers/staging/vt6655/mac.h
+> > @@ -537,9 +537,9 @@
+> >=20
+> > /--------------------- Export Macros ------------------------------/
+> >=20
+> > -#define VT6655_MAC_SELECT_PAGE0(iobase) iowrite8(0, iobase + MAC_REG_P=
+AGE1SEL)
+> > +#define VT6655_MAC_SELECT_PAGE0(iobase) iowrite8(0, (iobase) + MAC_REG=
+_PAGE1SEL)
+> >=20
+> > -#define VT6655_MAC_SELECT_PAGE1(iobase) iowrite8(1, iobase + MAC_REG_P=
+AGE1SEL)
+> > +#define VT6655_MAC_SELECT_PAGE1(iobase) iowrite8(1, (iobase) + MAC_REG=
+_PAGE1SEL)
+> >=20
+> > #define MAKEWORD(lb, hb) \
+> > ((unsigned short)(((unsigned char)(lb)) | (((unsigned short)((unsigned =
+char)(hb))) << 8)))
+>=20
+>=20
+>=20
+> Hi Dominik,
+>=20
+> git shows your name with the following characters:
+>=20
+> Author: Dominik Karol Pi^Etkowski dominik.karol.piatkowski@protonmail.com
+>=20
+>=20
+> I think it is better to change your name to only english letters.
+>=20
+> If you send in a second version of this patch please use a change
+> history. Description from Dan under:
+> https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
+>=20
+> Thanks for your support.
+>=20
+> Bye Philipp
 
-[...]
+Hi Philipp,
 
->> diff --git a/tools/testing/selftests/bpf/prog_tests/xdp_features.c b/tools/testing/selftests/bpf/prog_tests/xdp_features.c
->> new file mode 100644
->> index 000000000000..bcb36a2d2767
->> --- /dev/null
->> +++ b/tools/testing/selftests/bpf/prog_tests/xdp_features.c
->> @@ -0,0 +1,446 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +/**
->> + * Test XDP features
->> + *
->> + * Sets up a veth pair, and for each xdp feature under test:
->> + * - asks the tested interface its xdp capabilities through bpf_xdp_query
->> + * - attach and run some specific programs on both interfaces to check if
->> + *   announced capability is respected
->> + */
-> 
-> Hi Alexis,
-> 
-> This is neither a full review nor an issue that needs to block progress.
-> But, FWIIW, the comment above is not a Kernel doc, yet starts with '/**'.
-> I suggest that it should start with '/*' instead.
+Thanks for testing my patch.
 
-ACK. I'll wait for more comments on the series, and add the fix to the
-corresponding revision, if any.
+About the mangled author field - it was sent as
+"From: =3D?UTF-8?q?Dominik=3D20Karol=3D20Pi=3DC4=3D85tkowski?=3D <dominik.k=
+arol.piatkowski@protonmail.com>"
+and =3DC4=3D85 in UTF-8 is indeed '=C4=85' character. When looking at linux=
+-next tree,
+previously accepted patches also seem to have '=C4=85' as intended. I am no=
+t sure
+why you are seeing "^E" instead.
 
 Thanks,
-
-Alexis
-
--- 
-Alexis Lothoré, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+Dominik Karol
 
