@@ -1,118 +1,131 @@
-Return-Path: <linux-kernel+bounces-326134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-326133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87239976384
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:53:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 506B9976382
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 09:53:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 257FB286567
-	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:53:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C9B81C22F11
+	for <lists+linux-kernel@lfdr.de>; Thu, 12 Sep 2024 07:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CD6188A00;
-	Thu, 12 Sep 2024 07:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE9B18E764;
+	Thu, 12 Sep 2024 07:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ezeEtbe5"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CCFC18890E;
-	Thu, 12 Sep 2024 07:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qjbKfsr9"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580DA18C915
+	for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 07:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726127610; cv=none; b=UsiGZ3UNzQ/1PF9ikU5sGWRlgrWucHBTJvkITn3Lg7KvSkS41fldtS1t6CIDWx4sDJpWqyHvvqFvavLU5jH+gkOdEBa3g8f2KUiRIl2LtVUVqisHIp0YMuxABt1R+6vviw/o+syM6Ntj8KIktrteIZFgbt7uAic+GNQFSTLcye8=
+	t=1726127587; cv=none; b=Ls97Aq+2g5ukE1YvKTy0cR7TWBwnt+ycTBI5YOMUjJbraG1559IoTnLob/fLKTdKQ/lqM6pkXQZa86Mj4ZYY0v0k7DzIGZlfq+24C26Oi+Y+L5uGDM9zXewh/KJcdammjB8iPZPFMEpDLu1pf6bLMwkKwj9chMRgFTKMjboZWYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726127610; c=relaxed/simple;
-	bh=/aRQSdSoUzmofDObR818YvbEyGDSFtOn6CKgE8h2F7s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lLuCgVgOFsMg7SmDwLMRobl65kdCZx+0G6Z9agkdxPuUsxKJORcTciIGeTRjp0/oip32fROcP5XL0lljYWfwDuhBVH7TGnEsDJ+Supe2VwLnlckcQWt8zH7RgEhQyBe+ql3EyqhrBxerY3PcDsZ2LA+doiDBYDtg2KvFidvs740=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ezeEtbe5; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=eYuz3
-	1bH0CjNUsYyIVrv4KGMsrjrng9lixjsn5eVDEs=; b=ezeEtbe5QSPbVtjZUKK6S
-	pi87kq53Yer8lgbooq6mRcLlBb1rfu88WCX1mPtAUuAUzWjGnkuC4zRnsm2ifmYT
-	kfVBDyuBSlLkDEB9KMqqgqvXb2XS8cpbiInyQdOQcwmHCkJNpDs2Skyjormjuask
-	mvkcqDg+y7IJfgeEyrox8k=
-Received: from localhost.localdomain (unknown [111.35.191.143])
-	by gzga-smtp-mta-g3-4 (Coremail) with SMTP id _____wD3P7fOneJmyoVFDg--.56236S4;
-	Thu, 12 Sep 2024 15:53:02 +0800 (CST)
-From: David Wang <00107082@163.com>
-To: kent.overstreet@linux.dev
-Cc: linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [BUG?] bcachefs performance: read is way too slow when a file has no overwrite.
-Date: Thu, 12 Sep 2024 15:52:46 +0800
-Message-Id: <20240912075246.5810-1-00107082@163.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <f69544.2e70.191e419e656.Coremail.00107082@163.com>
-References: <f69544.2e70.191e419e656.Coremail.00107082@163.com>
+	s=arc-20240116; t=1726127587; c=relaxed/simple;
+	bh=tEbEuuKZpwAnFVH5hSfQscYydf1M6jbKUfNey+GAKPg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LuxOgx5rbjaTuzYapi/3V3j34UuoCmAwk2qk6iTR/nSokFiU15pf4wXSvp81otcgWWZL0lTH9CEl0OVJumkFkBlcU1dvdSiAzv0iweTqp+FChEM0mU/c9tKR6ky0F6Sha4F3Xe7FUXYphCOGZrQdAfTqwK4qGDvns1sUEgQyKYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qjbKfsr9; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f761461150so9597161fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 00:53:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726127584; x=1726732384; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=plV9zVWaER2nVL76z2wZIDE0Ej/fFWbWekwnS0bRoPg=;
+        b=qjbKfsr9aRhV9tYkJdEOurMU6qHFa2xjFrGEVyN05uwA2hn60kshKNdgRR6N4jGbdB
+         fYzQtW1OdkiTOD2PQsYBCAV6nAapiRAy+0iwE0D18kW1lzF34gpiFTp3hNT9kLT1GSIH
+         ZIiJPD8CTVjnbhrnRGuU02UK6DwmxwzqQwrDMq2pzXKFTNEeKw2ZNrT+TgxB+zcQUxh9
+         fP/2ZdTYKB1EFvNJsEUdjfglonqxHVWAORccmwe7QNONj9SQ9KfB39v5bpyEiPcEC/wL
+         l8PDoj6WtZ0qIP6xAEo/Fcoad0z1pQ1pwN7ueMS5lGEOmnYA0s291IQxIF6WZqo9ssZ2
+         CD3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726127584; x=1726732384;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=plV9zVWaER2nVL76z2wZIDE0Ej/fFWbWekwnS0bRoPg=;
+        b=hGqLIw/gNQ3vWjS0TVYsF/BDC0VduUCUOpQKeU+knH13vXpFehAAHnA71Mvxz8Fpmc
+         8e/ieEA+GNGpVmcelt39mnATdfoMc1KsHuRTSDPFv/2MzrO9P0s4ykIVzDxOI4TiwcFY
+         3sl7Fu0GFgbLJBk41jIQGGMndqMcREasU98SXEXCXxvhUctkHjtv9XsrSATZMLg/n/bt
+         IbN6BotEBXAV1eobBbkNfAwCqjf2yjzt8Izzg7t4GSrt/zP3UHu84YMOVVVS0nVP5oxr
+         dGy3ZRaQ9+F/CSh81bM6rGDAXnaNsO9rkhp7bi82sNAbpy4E/GN3iUH+Fg8Yo+N8nf3z
+         hhKg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNyNE8usa3J9auYE14idB4PHhYiGYNd1UzkNoZkSW1Dz1fVHVF6QO+qMsWD/3FoMDyur1bN3nxbG+bAUQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxqe2c/FWE4HS6QsbmFsswYsAkuuMvWzyPFlg8Fqiy0VnKicJ53
+	2dZQagOx+L2G+zrodh2ul+hSBc+5Nq7DaJDYyPsQrF/ioLru6p0knsuX1OSnU4Y=
+X-Google-Smtp-Source: AGHT+IGNAjjrqwXcc00olSCpw8KkiqSQhqCV9M6o89EyqQyNZCGyom+XQTk0RI8UmFhrk56pycAn7Q==
+X-Received: by 2002:a2e:a7c1:0:b0:2f6:4a89:9afa with SMTP id 38308e7fff4ca-2f78e18c52bmr1151811fa.22.1726127584296;
+        Thu, 12 Sep 2024 00:53:04 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f75bffe937sm18013361fa.55.2024.09.12.00.53.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 00:53:03 -0700 (PDT)
+Date: Thu, 12 Sep 2024 10:53:02 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Mahadevan <quic_mahap@quicinc.com>
+Cc: robdclark@gmail.com, quic_abhinavk@quicinc.com, sean@poorly.run, 
+	marijn.suijten@somainline.org, airlied@gmail.com, daniel@ffwll.ch, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, swboyd@chromium.org, 
+	konrad.dybcio@linaro.org, danila@jiaxyga.com, bigfoot@classfun.cn, 
+	neil.armstrong@linaro.org, mailingradian@gmail.com, quic_jesszhan@quicinc.com, 
+	andersson@kernel.org, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_kalyant@quicinc.com, quic_jmadiset@quicinc.com, quic_vpolimer@quicinc.com
+Subject: Re: [PATCH 0/5] Add display support for Qualcomm SA8775P platform
+Message-ID: <3cpxwtqxapxhvg3w323xr7drv7p5sozrlwgoqscz4dqyuqft5x@x3pqxdjbpca6>
+References: <20240912071437.1708969-1-quic_mahap@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3P7fOneJmyoVFDg--.56236S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7KFy5uF4UXr1ktw1UXFW3Awb_yoW8uF4Upr
-	WSgr13Jr1xKrn5Zw4jk3y0gw43Jw1rAF12yFy8try8Zrn8AwnYvFZ5tryrWFWkCrZ7XF1k
-	Z3yqk3s5Ja4Fvw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRF38OUUUUU=
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqQRYqmVOC1MgYAAAss
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912071437.1708969-1-quic_mahap@quicinc.com>
 
+On Thu, Sep 12, 2024 at 12:44:32PM GMT, Mahadevan wrote:
+> Add support for mdss and dpu driver on Qualcomm SA8775P platform.
 
-Hi, 
+You can not support a driver. Also, MDSS, DPU.
 
-> I made some debug, when performance is bad, the conditions
-> bvec_iter_sectors(iter) != pick.crc.uncompressed_size and 
-> bvec_iter_sectors(iter) != pick.crc.live_size are "almost" always both "true",
-> while when performance is good (after "thorough" write), they are only little
-> percent (~350 out of 1000000)  to be true.
 > 
-> And if those conditions are "true", "bounce" would be set and code seems to run
-> on a time consuming path.
+> ---
+> This series depends on following series:
+> https://lore.kernel.org/all/20240816-sa8775p-mm-v3-v1-0-77d53c3c0cef@quicinc.com/
+> ---
 > 
-> I suspect "merely read" could never change those conditions, but "write" can?
+> Mahadevan (5):
+>   dt-bindings: display/msm: Document MDSS on SA8775P
+>   dt-bindings: display/msm: Document the DPU for SA8775P
+>   drm/msm: mdss: Add SA8775P support
+>   drm/msm/dpu: Add SA8775P support
+>   arm64: dts: qcom: sa8775p: add display dt nodes
+> 
+>  .../display/msm/qcom,sa8775p-dpu.yaml         | 120 +++++
+>  .../display/msm/qcom,sa8775p-mdss.yaml        | 225 ++++++++
+>  arch/arm64/boot/dts/qcom/sa8775p.dtsi         |  85 +++
+>  .../msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h   | 485 ++++++++++++++++++
+>  .../gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c    |   3 +-
+>  .../gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h    |   3 +-
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c       |   3 +-
+>  drivers/gpu/drm/msm/msm_mdss.c                |  10 +
+>  8 files changed, 931 insertions(+), 3 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/display/msm/qcom,sa8775p-dpu.yaml
+>  create mode 100644 Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.yaml
+>  create mode 100644 drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h
+> 
+> -- 
+> 2.34.1
 > 
 
-More update: 
-
-1. Without a "thorough" write, it seems no matter what the prepare write size is,
-crc.compressed_size is always 128 sectors = 64K?
-2. With a "thorough" write with 4K block size, crc.compressed_size mostly descreases to 4K,
-only a few crc.compressed_size left with 8/12/16/20K...
-3. If a 4K-thorough-write followed by 40K-thorough-write, crc.compressed_size then 
-increases to 40K, and 4K direct read suffers again....
-4. A 40K-through-write followed by 256K-thorough-write, crc.compressed_size only
-increase to 64K, I guess 64K is maximum crc.compressed_size.
-
-
-So I think current conclusion is:
-1. The initial crc.compressed_size is always 64K when file was created/prepared.
-2. Afterward writes can change crc size based on write size. (optimized for write?)
-3. Direct read performance is sensitive to this crc size, more test result:
-	+-----------+--------+----------+
-	| rand read |  IOPS  |    BW    |
-	+-----------+--------+----------+
-	|   4K !E   | 24.7K  | 101MB/s  |
-	|   16K !E  | 24.7K  | 404MB/s  |
-	|   64K !E  | 24.7K  | 1617MB/s |
-	|    4K E   | ~220K  | ~900MB/s |
-	|   16K E   |  ~55K  | ~900MB/s |
-	|   64K E   | ~13.8K | ~900MB/s |
-	+-----------+--------+----------+
-E stands for the event that a "thorough" 4k write happened before the test.
-Or put it more specific:
-E: lots of rand 4k-write, crc.compressed_size = 4K
-!E: file was just created, crc.compressed_size = 64K
-
-
-The behavior seems reasonable from write's point of view, but for read it
-dose not sounds good....If a mmaped readonly file, page in less than
-16 pages, those extra data would waste lots of disk bandwidth.
-
-
-David
-
+-- 
+With best wishes
+Dmitry
 
