@@ -1,307 +1,224 @@
-Return-Path: <linux-kernel+bounces-328126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E14EA977F31
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:04:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31006977F36
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:04:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68D10288E58
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:04:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D5E11C21C15
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7AF1D88D3;
-	Fri, 13 Sep 2024 12:03:30 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 437651D86EC;
+	Fri, 13 Sep 2024 12:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="QPaFNfe/"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6952B1D86FA
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D72F1D88D4
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726229010; cv=none; b=nxX/5pl93mWcVGKrqD6oA1OEQev/VhD826ReMb1fjU0e0tzVM7JfLyAIIz3cNRgkvpOQ49PYY84ztq9YBJa7Kd2wVAeCWHP973yXDDGlV8gGPOMHslCE2804CsUMc1IjLbAV0uHKrDuNj44/sgsohejlVCaHibAuqcEELheR1Og=
+	t=1726229055; cv=none; b=fj2VgBItDwzPWXPWZcR5z4Vezms84O3r5X+UUO35k6iLOtn/79ZXyCswhEunRoUeAjll9M1FrJOTb827MfwA8NDTnkNDwXL4FjbRSzapZ5FYvIwR+f6NDd1ajCe4Jqt83LFA+VGSTkoycu1eYQGJeXCjuQPgzPn6VxZKdStsUbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726229010; c=relaxed/simple;
-	bh=tNgeMXjDvL+TiCNwcR0o27mAcbyPcG76nRJvv8yT4N4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Sy8cJuU1alRmltXO4VZeL7RVNlbODfca3hs21+FyBDQiLWwNCKp1zblZb6VAzclOdFGMoDxBslv4yMs91zv8nlrR8oCgt8Rnkaycci5unhruFfAnq0zuNDCVdCrYQ6l+Z3HcA5KWXdCEis3jTxODYqLD7is0oz8NyjIRL3Xxc6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a043f8e2abso27644355ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 05:03:28 -0700 (PDT)
+	s=arc-20240116; t=1726229055; c=relaxed/simple;
+	bh=k9kZPHPhjlFedxi2BTcX+2wc3SebhNfzustyrKJeAmM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=DeTevvHxD8eN5Pf/lTfTwCVdCYSlE4evzCwwVdCGkEK52jsEoagXp6YoHc6cF1rCiyg+C028cQV3m0EJ6SNjPND4VfU/nePfa1NSbrY11Sms9bTR/gR+dcdEpVcoH8zTiqVjG9bU1F+l7qqD/UyfA5rbWIdbnGDINNvXjWhkXgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=QPaFNfe/; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cb806623eso18851185e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 05:04:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726229050; x=1726833850; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XGSAMjSOLd61VP4y6gqf8nhkY/Om2FO5l8i4tEiPSrQ=;
+        b=QPaFNfe/Nss2JR5mABWmHv5joXy2v2KumpzdT2xz9gMywbZPQrWbaM8i5UTMMAgqhe
+         mmnHDb39K2emPhmb5MOMQmrXDJeCe0wsZMNQO4BbKgrZmOsfxhOoZbsWl7IJod0i8075
+         cmj59utulQZF5d1ymJmSnn6a8weHgCOqKS0uxXHSTZN5a370WkqG1q0Z5WODRgntyMz4
+         LEid829yPzbiOX1tPWIkhzpx9xsJW3v40IqPlr/rZVQff4gp41JXXEL2yu4WexbNqecF
+         41jb+L8bKUpVBPbSCkwYmalAl2F8GWBAVNuiLeC6/CvP0RCCo1JBGWaXbK61+ejtd3CU
+         Jtxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726229007; x=1726833807;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0CuCss4hcQXYo8gXczpusioqUfuxAee/T4Hca5JUlQU=;
-        b=uYtyI78bvkQa25O4scbPA14lMzexKPOTa+E/UcEYh9ZZto+q0cNcmX3tMO1IAudcfJ
-         GIGAw9I7dkVrJ+t0VJTHbtPzVRcdWzEhrln1sQom0Bh6Aig6+IorsMDmxF6xkl+0iQiV
-         ldsO1TWCMKD6x5FVhQ5T37Xx9eQU27aDUYed9TelswOvSR8WUoGtXhd+mxtuL3hjAP3j
-         yCSxBX2ysNKCcOtlNjczIY8sXWT3Fev0TQMABbM80rceTJYEekv0015yeXkIVm0LN+jL
-         vif5wYjcfxLUEqdYzOvbE/EBTg6GfabtDRN34NBdjkdY+DYE/RzVO+R1ylzvoL9DOPmE
-         uQrA==
-X-Forwarded-Encrypted: i=1; AJvYcCVK03qy06qoO/0iE/2fMWHU3g23FTeU/Decsm94LKLRgPNLHrm7Tp5xmRsNSN6aT+qnXKvh8784zUJ7BqM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywu+32ypNtD9eZ0m1BwKQ2fQRyCyeGapcfggxzXEF7MwfbZ2Dng
-	lWT8vPrtwA1cK5sjO2EFYB89qpZKKAq3sjGsA2jcvCygZ2SagH7HQxmI1lSraql39sZK05fNmmD
-	+vl2o6Kvm4UvoIqZn7xlXTsklyOe/SikaK7SKxH6eOA/AEZH8UQ/f7i8=
-X-Google-Smtp-Source: AGHT+IGGaUN+oyMIHh+Qc1534VLV8yzOBew362REdz+8Ssxd+a36G1/CAVGK60TTQ6eX9OsBxlCqIVYfccQR+K9InqaZpz7vb4aJ
+        d=1e100.net; s=20230601; t=1726229050; x=1726833850;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XGSAMjSOLd61VP4y6gqf8nhkY/Om2FO5l8i4tEiPSrQ=;
+        b=dP5xg0J16oKddpeddrONuNcNGF64Zeoj6KEjay/Bm9HZHy8LtY8qxkvdID8kGaGCrM
+         cVHGtG2IZNn4zOgzfMHW819Fk1wJpJOO3WUCF/c9KSZlvR7XNv3HT76F9DGlisw3VRkj
+         DFczDY1HMfjvDFF7DK1obes+zJi0YD9o45+5osVM+zbK+57aTlzRg9PUrVzm1Cxxuvxp
+         oD4wn4joFTNb1TgRFguh9ky5FzYy349KbIB6BeP8N1Jv2zVgJHr/87/8wce3PzxqtcjK
+         cocYArCqKK7YH6lYULEQcf4/c1WWJHA6RD9vknOy5dhwIl6QSHl/97LBCAccGHoWt256
+         b8gg==
+X-Forwarded-Encrypted: i=1; AJvYcCXcsR6+BX2JBE+GQQgDYCqZ5Uuhly/+CPrp1W3xkpjjSCmqiD/i3iMHAtltw7s+MALDS1xFhFvflnLx+2Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyryn8nuybr/wmsX5UCGK32naXzu1UFszQd0LHS8tSybt4JL6Ho
+	5DbYIHaJG6fUgo8rRfmHejlld+mWaxnDwaqgb7aVWNKQYb7xqL02dNKnatOaWzc=
+X-Google-Smtp-Source: AGHT+IHZnZr0EqY02Ab2sJcM/6QWgSbf9WyIXNplySB+jxpY2oqGPEbn2ZL+hIT8UFSIR08Co35uCA==
+X-Received: by 2002:adf:f94f:0:b0:371:8e0d:c1d9 with SMTP id ffacd0b85a97d-378c2d07281mr3732080f8f.19.1726229050140;
+        Fri, 13 Sep 2024 05:04:10 -0700 (PDT)
+Received: from localhost (amontpellier-556-1-151-252.w109-210.abo.wanadoo.fr. [109.210.7.252])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d3738sm16689605f8f.69.2024.09.13.05.04.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Sep 2024 05:04:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2145:b0:39f:7183:adfb with SMTP id
- e9e14a558f8ab-3a0848aff16mr57967665ab.2.1726229007457; Fri, 13 Sep 2024
- 05:03:27 -0700 (PDT)
-Date: Fri, 13 Sep 2024 05:03:27 -0700
-In-Reply-To: <000000000000ac4a9d062044e498@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ca7a2a0621ff0292@google.com>
-Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_reserve_local_alloc_bits
-From: syzbot <syzbot+843fa26882088a9ee7e3@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 13 Sep 2024 12:04:08 +0000
+Message-Id: <D4554LAXBVEX.2Z0H6XMUIPOUB@baylibre.com>
+Cc: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH 2/6] iio: adc: ad4030: add driver for ad4030-24
+From: "Esteban Blanc" <eblanc@baylibre.com>
+To: =?utf-8?q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>, "David Lechner"
+ <dlechner@baylibre.com>, "Lars-Peter Clausen" <lars@metafoo.de>, "Michael
+ Hennerich" <Michael.Hennerich@analog.com>, "Jonathan Cameron"
+ <jic23@kernel.org>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Nuno Sa"
+ <nuno.sa@analog.com>, "Jonathan Corbet" <corbet@lwn.net>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20240822-eblanc-ad4630_v1-v1-0-5c68f3327fdd@baylibre.com>
+ <20240822-eblanc-ad4630_v1-v1-2-5c68f3327fdd@baylibre.com>
+ <28fa2ba9-9b02-43ac-b070-85a173a5db60@baylibre.com>
+ <3c2e0d65225f20c04722f017f7866a47c346782e.camel@gmail.com>
+In-Reply-To: <3c2e0d65225f20c04722f017f7866a47c346782e.camel@gmail.com>
 
-syzbot has found a reproducer for the following issue on:
+On Fri Sep 13, 2024 at 10:22 AM UTC, Nuno S=C3=A1 wrote:
+> Hi Esteban,
+>
+> Just one remark...
+>
+> On Thu, 2024-08-22 at 14:39 -0500, David Lechner wrote:
+> > On 8/22/24 7:45 AM, Esteban Blanc wrote:
+> > > This adds a new driver for the Analog Devices INC. AD4030-24 ADC.
+> > >=20
+> > > The driver implements basic support for the AD4030-24 1 channel
+> > > differential ADC with hardware gain and offset control.
+> > >=20
+> > > Signed-off-by: Esteban Blanc <eblanc@baylibre.com>
+> > > ---
+> > > =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> > > =C2=A0drivers/iio/adc/Kconfig=C2=A0 |=C2=A0 13 +
+> > > =C2=A0drivers/iio/adc/Makefile |=C2=A0=C2=A0 1 +
+> > > =C2=A0drivers/iio/adc/ad4030.c | 854 ++++++++++++++++++++++++++++++++=
++++++++++++++++
+> > > =C2=A04 files changed, 869 insertions(+)
+> > >=20
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index f17c42bea19c..6a5a0e7b7a51 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -420,6 +420,7 @@ R:	Esteban Blanc <eblanc@baylibre.com>
+> > > =C2=A0S:	Supported
+> > > =C2=A0W:	https://ez.analog.com/linux-software-drivers
+> > > =C2=A0F:	Documentation/devicetree/bindings/iio/adc/adi,ad4030.yaml
+> > > +F:	drivers/iio/adc/ad4030.c
+> > > =C2=A0
+> > > =C2=A0AD5110 ANALOG DEVICES DIGITAL POTENTIOMETERS DRIVER
+> > > =C2=A0M:	Mugilraj Dhavachelvan <dmugil2000@gmail.com>
+> > > diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> > > index 88e8ce2e78b3..f4bd05780f6f 100644
+> > > --- a/drivers/iio/adc/Kconfig
+> > > +++ b/drivers/iio/adc/Kconfig
+> > > @@ -33,6 +33,19 @@ config AD4000
+> > > =C2=A0	=C2=A0 To compile this driver as a module, choose M here: the =
+module will be
+> > > =C2=A0	=C2=A0 called ad4000.
+> > > =C2=A0
+> > > +config AD4030
+> > > +	tristate "Analog Device AD4630 ADC Driver"
+> > > +	depends on SPI
+> > > +	depends on GPIOLIB
+> > > +	select REGMAP_SPI
+> >=20
+> > It looks like we are just using REGMAP, not REGMAP_SPI.
+> >=20
+> > > +	select IIO_BUFFER
+> >=20
+> > And also select IIO_TRIGGERED_BUFFER?
+> >=20
+> > > +	help
+> > > +	=C2=A0 Say yes here to build support for Analog Devices AD4030 and =
+AD4630
+> > > high speed
+> > > +	=C2=A0 SPI analog to digital converters (ADC).
+> > > +
+> > > +	=C2=A0 To compile this driver as a module, choose M here: the modul=
+e will be
+> > > +	=C2=A0 called ad4030.
+> > > +
+> > > =C2=A0config AD4130
+> > > =C2=A0	tristate "Analog Device AD4130 ADC Driver"
+> > > =C2=A0	depends on SPI
+> > > diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
+> > > index 8b80664c6d6b..0e4f833abf0b 100644
+> > > --- a/drivers/iio/adc/Makefile
+> > > +++ b/drivers/iio/adc/Makefile
+> > > @@ -7,6 +7,7 @@
+> > > =C2=A0obj-$(CONFIG_AB8500_GPADC) +=3D ab8500-gpadc.o
+> > > =C2=A0obj-$(CONFIG_AD_SIGMA_DELTA) +=3D ad_sigma_delta.o
+> > > =C2=A0obj-$(CONFIG_AD4000) +=3D ad4000.o
+> > > +obj-$(CONFIG_AD4030) +=3D ad4030.o
+> > > =C2=A0obj-$(CONFIG_AD4130) +=3D ad4130.o
+> > > =C2=A0obj-$(CONFIG_AD4695) +=3D ad4695.o
+> > > =C2=A0obj-$(CONFIG_AD7091R) +=3D ad7091r-base.o
+> > > diff --git a/drivers/iio/adc/ad4030.c b/drivers/iio/adc/ad4030.c
+> > > new file mode 100644
+> > > index 000000000000..a981dce988e5
+> > > --- /dev/null
+> > > +++ b/drivers/iio/adc/ad4030.c
+> > > @@ -0,0 +1,854 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > +/*
+> > > + * Analog Devices AD4030 and AD4630 ADC family driver.
+> > > + *
+> > > + * Copyright 2024 Analog Devices, Inc.
+> > > + * Copyright 2024 BayLibre, SAS
+> > > + *
+> > > + * based on code from:
+> > > + *	Analog Devices, Inc.
+> > > + *	=C2=A0 Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+> > > + *	=C2=A0 Nuno Sa <nuno.sa@analog.com>
+> > > + *	=C2=A0 Marcelo Schmitt <marcelo.schmitt@analog.com>
+> > > + *	=C2=A0 Liviu Adace <liviu.adace@analog.com>
+> > > + */
+> > > +	.type =3D IIO_VOLTAGE,						\
+> > > +	.indexed =3D 1,							\
+> > > +	.channel =3D _idx * 2 + 2,					\
+> > > +	.scan_index =3D _idx * 2 + 1,					\
+> > > +	.extend_name =3D "Channel" #_idx " common byte part",		\
+> >=20
+> > Labels are usually one word and reflect the datasheet name.
+> >=20
+> > Suggest `"common-mode" #_idx` or `"CM" #_idx` for this one.
+> >=20
+>
+> Also, .extend_name is not to be used anymore... In the end of the day IIO=
+ will create
+> label files anyways but from what I remember about this, extend_name is n=
+ot to be
+> directly used this anymore (so other think it's still fine). Instead, use=
+ the label
+> callback.
 
-HEAD commit:    df54f4a16f82 Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=1297f100580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dde5a5ba8d41ee9e
-dashboard link: https://syzkaller.appspot.com/bug?extid=843fa26882088a9ee7e3
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e127c7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13587807980000
+Yeah, Jonathan or David mentioned it. I'm using `.read_label` callback
+now.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/aa2eb06e0aea/disk-df54f4a1.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/14728733d385/vmlinux-df54f4a1.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/99816271407d/Image-df54f4a1.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/421959d04855/mount_0.gz
+Thanks for your time,
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+843fa26882088a9ee7e3@syzkaller.appspotmail.com
+--=20
+Esteban Blanc
+BayLibre
 
-=======================================================
-ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-rc5-syzkaller-gdf54f4a16f82 #0 Not tainted
-------------------------------------------------------
-syz-executor319/6389 is trying to acquire lock:
-ffff0000dee22640 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#5){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:799 [inline]
-ffff0000dee22640 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#5){+.+.}-{3:3}, at: ocfs2_reserve_local_alloc_bits+0xfc/0x247c fs/ocfs2/localalloc.c:636
-
-but task is already holding lock:
-ffff0000dee231b8 (&oi->ip_xattr_sem){+.+.}-{3:3}, at: ocfs2_xattr_set+0x4e0/0x1448 fs/ocfs2/xattr.c:3584
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #4 (&oi->ip_xattr_sem){+.+.}-{3:3}:
-       down_write+0x50/0xc0 kernel/locking/rwsem.c:1579
-       ocfs2_xattr_set_handle+0x40c/0x824 fs/ocfs2/xattr.c:3502
-       ocfs2_init_security_set+0xb4/0xd8 fs/ocfs2/xattr.c:7326
-       ocfs2_mknod+0x1408/0x243c fs/ocfs2/namei.c:417
-       ocfs2_create+0x194/0x4e0 fs/ocfs2/namei.c:672
-       lookup_open fs/namei.c:3578 [inline]
-       open_last_lookups fs/namei.c:3647 [inline]
-       path_openat+0xfb4/0x29f8 fs/namei.c:3883
-       do_filp_open+0x1bc/0x3cc fs/namei.c:3913
-       do_sys_openat2+0x124/0x1b8 fs/open.c:1416
-       do_sys_open fs/open.c:1431 [inline]
-       __do_sys_openat fs/open.c:1447 [inline]
-       __se_sys_openat fs/open.c:1442 [inline]
-       __arm64_sys_openat+0x1f0/0x240 fs/open.c:1442
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
-       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
--> #3 (jbd2_handle){.+.+}-{0:0}:
-       start_this_handle+0xf34/0x11c4 fs/jbd2/transaction.c:448
-       jbd2__journal_start+0x298/0x544 fs/jbd2/transaction.c:505
-       jbd2_journal_start+0x3c/0x4c fs/jbd2/transaction.c:544
-       ocfs2_start_trans+0x3d0/0x71c fs/ocfs2/journal.c:352
-       ocfs2_block_group_alloc fs/ocfs2/suballoc.c:685 [inline]
-       ocfs2_reserve_suballoc_bits+0x840/0x4288 fs/ocfs2/suballoc.c:832
-       ocfs2_reserve_new_metadata_blocks+0x384/0x848 fs/ocfs2/suballoc.c:982
-       ocfs2_mknod+0xdc8/0x243c fs/ocfs2/namei.c:345
-       ocfs2_create+0x194/0x4e0 fs/ocfs2/namei.c:672
-       lookup_open fs/namei.c:3578 [inline]
-       open_last_lookups fs/namei.c:3647 [inline]
-       path_openat+0xfb4/0x29f8 fs/namei.c:3883
-       do_filp_open+0x1bc/0x3cc fs/namei.c:3913
-       do_sys_openat2+0x124/0x1b8 fs/open.c:1416
-       do_sys_open fs/open.c:1431 [inline]
-       __do_sys_openat fs/open.c:1447 [inline]
-       __se_sys_openat fs/open.c:1442 [inline]
-       __arm64_sys_openat+0x1f0/0x240 fs/open.c:1442
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
-       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
--> #2 (&journal->j_trans_barrier){.+.+}-{3:3}:
-       down_read+0x58/0x2fc kernel/locking/rwsem.c:1526
-       ocfs2_start_trans+0x3c4/0x71c fs/ocfs2/journal.c:350
-       ocfs2_block_group_alloc fs/ocfs2/suballoc.c:685 [inline]
-       ocfs2_reserve_suballoc_bits+0x840/0x4288 fs/ocfs2/suballoc.c:832
-       ocfs2_reserve_new_metadata_blocks+0x384/0x848 fs/ocfs2/suballoc.c:982
-       ocfs2_mknod+0xdc8/0x243c fs/ocfs2/namei.c:345
-       ocfs2_create+0x194/0x4e0 fs/ocfs2/namei.c:672
-       lookup_open fs/namei.c:3578 [inline]
-       open_last_lookups fs/namei.c:3647 [inline]
-       path_openat+0xfb4/0x29f8 fs/namei.c:3883
-       do_filp_open+0x1bc/0x3cc fs/namei.c:3913
-       do_sys_openat2+0x124/0x1b8 fs/open.c:1416
-       do_sys_open fs/open.c:1431 [inline]
-       __do_sys_openat fs/open.c:1447 [inline]
-       __se_sys_openat fs/open.c:1442 [inline]
-       __arm64_sys_openat+0x1f0/0x240 fs/open.c:1442
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
-       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
--> #1 (sb_internal#2){.+.+}-{0:0}:
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1675 [inline]
-       sb_start_intwrite include/linux/fs.h:1858 [inline]
-       ocfs2_start_trans+0x244/0x71c fs/ocfs2/journal.c:348
-       ocfs2_mknod+0xe58/0x243c fs/ocfs2/namei.c:359
-       ocfs2_create+0x194/0x4e0 fs/ocfs2/namei.c:672
-       lookup_open fs/namei.c:3578 [inline]
-       open_last_lookups fs/namei.c:3647 [inline]
-       path_openat+0xfb4/0x29f8 fs/namei.c:3883
-       do_filp_open+0x1bc/0x3cc fs/namei.c:3913
-       do_sys_openat2+0x124/0x1b8 fs/open.c:1416
-       do_sys_open fs/open.c:1431 [inline]
-       __do_sys_openat fs/open.c:1447 [inline]
-       __se_sys_openat fs/open.c:1442 [inline]
-       __arm64_sys_openat+0x1f0/0x240 fs/open.c:1442
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
-       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
--> #0 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#5){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3133 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
-       validate_chain kernel/locking/lockdep.c:3868 [inline]
-       __lock_acquire+0x33d8/0x779c kernel/locking/lockdep.c:5142
-       lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5759
-       down_write+0x50/0xc0 kernel/locking/rwsem.c:1579
-       inode_lock include/linux/fs.h:799 [inline]
-       ocfs2_reserve_local_alloc_bits+0xfc/0x247c fs/ocfs2/localalloc.c:636
-       ocfs2_reserve_clusters_with_limit+0x194/0xabc fs/ocfs2/suballoc.c:1166
-       ocfs2_reserve_clusters+0x3c/0x50 fs/ocfs2/suballoc.c:1227
-       ocfs2_init_xattr_set_ctxt+0x404/0x968 fs/ocfs2/xattr.c:3287
-       ocfs2_xattr_set+0xbe0/0x1448 fs/ocfs2/xattr.c:3635
-       ocfs2_xattr_trusted_set+0x4c/0x64 fs/ocfs2/xattr.c:7355
-       __vfs_setxattr+0x3d8/0x400 fs/xattr.c:200
-       __vfs_setxattr_noperm+0x110/0x578 fs/xattr.c:234
-       __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
-       vfs_setxattr+0x1a8/0x344 fs/xattr.c:321
-       do_setxattr fs/xattr.c:629 [inline]
-       path_setxattr+0x30c/0x428 fs/xattr.c:658
-       __do_sys_setxattr fs/xattr.c:676 [inline]
-       __se_sys_setxattr fs/xattr.c:672 [inline]
-       __arm64_sys_setxattr+0xbc/0xd8 fs/xattr.c:672
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
-       el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
-       el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
-other info that might help us debug this:
-
-Chain exists of:
-  &ocfs2_sysfile_lock_key[args->fi_sysfile_type]#5 --> jbd2_handle --> &oi->ip_xattr_sem
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&oi->ip_xattr_sem);
-                               lock(jbd2_handle);
-                               lock(&oi->ip_xattr_sem);
-  lock(&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#5);
-
- *** DEADLOCK ***
-
-3 locks held by syz-executor319/6389:
- #0: ffff0000d9cc4420 (sb_writers#8){.+.+}-{0:0}, at: mnt_want_write+0x44/0x9c fs/namespace.c:515
- #1: ffff0000dee23480 (&sb->s_type->i_mutex_key#16){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:799 [inline]
- #1: ffff0000dee23480 (&sb->s_type->i_mutex_key#16){+.+.}-{3:3}, at: vfs_setxattr+0x17c/0x344 fs/xattr.c:320
- #2: ffff0000dee231b8 (&oi->ip_xattr_sem){+.+.}-{3:3}, at: ocfs2_xattr_set+0x4e0/0x1448 fs/ocfs2/xattr.c:3584
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 6389 Comm: syz-executor319 Not tainted 6.11.0-rc5-syzkaller-gdf54f4a16f82 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Call trace:
- dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:119
- dump_stack+0x1c/0x28 lib/dump_stack.c:128
- print_circular_bug+0x150/0x1b8 kernel/locking/lockdep.c:2059
- check_noncircular+0x310/0x404 kernel/locking/lockdep.c:2186
- check_prev_add kernel/locking/lockdep.c:3133 [inline]
- check_prevs_add kernel/locking/lockdep.c:3252 [inline]
- validate_chain kernel/locking/lockdep.c:3868 [inline]
- __lock_acquire+0x33d8/0x779c kernel/locking/lockdep.c:5142
- lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5759
- down_write+0x50/0xc0 kernel/locking/rwsem.c:1579
- inode_lock include/linux/fs.h:799 [inline]
- ocfs2_reserve_local_alloc_bits+0xfc/0x247c fs/ocfs2/localalloc.c:636
- ocfs2_reserve_clusters_with_limit+0x194/0xabc fs/ocfs2/suballoc.c:1166
- ocfs2_reserve_clusters+0x3c/0x50 fs/ocfs2/suballoc.c:1227
- ocfs2_init_xattr_set_ctxt+0x404/0x968 fs/ocfs2/xattr.c:3287
- ocfs2_xattr_set+0xbe0/0x1448 fs/ocfs2/xattr.c:3635
- ocfs2_xattr_trusted_set+0x4c/0x64 fs/ocfs2/xattr.c:7355
- __vfs_setxattr+0x3d8/0x400 fs/xattr.c:200
- __vfs_setxattr_noperm+0x110/0x578 fs/xattr.c:234
- __vfs_setxattr_locked+0x1ec/0x218 fs/xattr.c:295
- vfs_setxattr+0x1a8/0x344 fs/xattr.c:321
- do_setxattr fs/xattr.c:629 [inline]
- path_setxattr+0x30c/0x428 fs/xattr.c:658
- __do_sys_setxattr fs/xattr.c:676 [inline]
- __se_sys_setxattr fs/xattr.c:672 [inline]
- __arm64_sys_setxattr+0xbc/0xd8 fs/xattr.c:672
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
