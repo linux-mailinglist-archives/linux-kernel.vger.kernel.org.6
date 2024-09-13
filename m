@@ -1,99 +1,89 @@
-Return-Path: <linux-kernel+bounces-328630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9969397869C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:23:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BB379786A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4335F1F25E2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:23:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BBE61C2243C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0D3824A1;
-	Fri, 13 Sep 2024 17:23:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C01839F4;
+	Fri, 13 Sep 2024 17:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m75UqRQW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Yk6uccGY"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A8C80BEC;
-	Fri, 13 Sep 2024 17:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B601EEE4;
+	Fri, 13 Sep 2024 17:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726248208; cv=none; b=iN8QlpjB+t5rWtkqol/v+gJ0w4VDmSLpOixXUjyjlJz+9DyrbwDTvVSrsQgH3kW2K9L6IIpOF65deGhEScuhS9wQ/1GotIVdsquZuVRys28FijUB1RcZnUxW3IANL7T5bROulyOkih3jW4FYvqtgGRDmdrBaCuHDDkwhzZ7YkoY=
+	t=1726248266; cv=none; b=eiZRiXLjvxikoYyrvwx9YewrJmswrlsBwyLIpqzQWAB5Mf3Zxuz1lsyS/jWfMLbd5CTQmof06xfVyb84+If0t9Nyq10vK9phk4aNB+vQrryABqNuYF/di+UN4oUzuUjNlpzP/r9pGzeRf3k1e6iwmfPsLMooSOoKkw9rIvmiDVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726248208; c=relaxed/simple;
-	bh=fuW1xLrho8ZyDrDvp5KKZrf25rnUr95/sDyzrJYGWrU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FVXhg/umsH4XX/b87qHwrR3U5sre92tKoSMOyEVAb1QydF3Llnv4RFQeCEj74yrr1rvrpyL9NL138Q+iCyjpz+exRE0ydCZNnF8GTQzO9SrCWER7qMkXsu05MLkmNwAwG2Wb1e5YDQwMJgNnbmBVVQ31wcHEOiWwkg7jGvoaJgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m75UqRQW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A1B5C4CEC0;
-	Fri, 13 Sep 2024 17:23:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726248207;
-	bh=fuW1xLrho8ZyDrDvp5KKZrf25rnUr95/sDyzrJYGWrU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m75UqRQWWxQp01qjARhuOIj1koH4iP0Z/IzXhjrfwrdVTmM7CT0ME4vGilO1Pk9s/
-	 l7wq7xQnweGsXOIUNv8beN6zhA5shqaBX8YOpa3Kcwsi7KgLxRZIOBqodDugM1D/sk
-	 VhmrsY86lrWyOOqKUg9pM9kRVx4zMHGP6eryiHfQazuud15bQMJ1a4n0sXXn307sia
-	 onR5LtCFt1XiPTtFyYwWJrCyXEt9Y5V9qsbseC+2qCTtg/ThpPioUyVGjaBw1Bmoi5
-	 TRrweKQW8xVX9MN5+vU1TMDbwQ3zU1FoFy4Veflw9w+WLB1GY6QIxhF0WG4VJGKSqi
-	 nihueE8U/RYbw==
-Date: Fri, 13 Sep 2024 18:23:22 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-Cc: Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-amlogic@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [RFC PATCH v4 3/5] dt-bindings: clock: axg-audio: document A1
- SoC audio clock controller driver
-Message-ID: <20240913-drainpipe-retrial-0167665f605f@spud>
-References: <20240913121152.817575-1-jan.dakinevich@salutedevices.com>
- <20240913121152.817575-4-jan.dakinevich@salutedevices.com>
+	s=arc-20240116; t=1726248266; c=relaxed/simple;
+	bh=sllu2LtMOhcdH/FD8wUSmEhJWjy45HTpNiNXgVAUspU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W6d9rI4buhMyghtEFb88LzzWRx9F2PcRgSxcJMe2F2jElJK0OA24kGShvjrV9c4AOranFtFORK1KynlSBuB+oJ9aYbvjlI56KQRMKh2ouOyUAxw/xeOoBigF/682Cwiy+ik6lHozrKC6LS1+OEsdl88taFwjudnptWVj+2M9ueE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Yk6uccGY; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <e1435276-d106-411f-9c0f-c98abd2bce08@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1726248260;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eUlMI/VUG0tbtBW/0vyoiiaa/eRH5yrftzcJDI7pfa4=;
+	b=Yk6uccGYN6b+Y8rna0u6tXJc1FyRwl3xoyTZX3NS+dAPIOwIqURDELqvdltb8saVILHLKL
+	7PBy7oqaLuG2UqwAsSfCyCvkQrO2/FVD+0bJ2DQDaFpSTgZdACLrpjp96GU8e8GHJWLCxP
+	bVc3vdUJ6gUo+6M8+OEDHunEIIMXq48=
+Date: Fri, 13 Sep 2024 10:24:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="jIzR0wEIk82J930S"
-Content-Disposition: inline
-In-Reply-To: <20240913121152.817575-4-jan.dakinevich@salutedevices.com>
+Subject: Re: [PATCH net] netkit: Assign missing bpf_net_context
+To: Breno Leitao <leitao@debian.org>
+Cc: kuba@kernel.org, bpf@vger.kernel.org,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Nikolay Aleksandrov <razor@blackwall.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
+ =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ vadim.fedorenko@linux.dev, andrii@kernel.org,
+ "open list:BPF [NETKIT] (BPF-programmable network device)"
+ <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20240912155620.1334587-1-leitao@debian.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <20240912155620.1334587-1-leitao@debian.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
+On 9/12/24 8:56 AM, Breno Leitao wrote:
+> During the introduction of struct bpf_net_context handling for
+> XDP-redirect, the netkit driver has been missed, which also requires it
+> because NETKIT_REDIRECT invokes skb_do_redirect() which is accessing the
+> per-CPU variables. Otherwise we see the following crash:
+> 
+> 	BUG: kernel NULL pointer dereference, address: 0000000000000038
+> 	bpf_redirect()
+> 	netkit_xmit()
+> 	dev_hard_start_xmit()
+> 
+> Set the bpf_net_context before invoking netkit_xmit() program within the
+> netkit driver.
 
---jIzR0wEIk82J930S
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Martin KaFai Lau <martin.lau@kernel.org>
 
-On Fri, Sep 13, 2024 at 03:11:50PM +0300, Jan Dakinevich wrote:
-> Add device tree bindings for A1 SoC audio clock and reset controllers.
->=20
-> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---jIzR0wEIk82J930S
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuR1CgAKCRB4tDGHoIJi
-0pvFAP9kr7mdO9xRNEDwdDAwPHjyoLrlCTzOaiy+CSVAUFoI3QEAvZcerXPm4xol
-wOmsRIFe78YlrZGiXEc6w5Rk4pTHPgE=
-=Vt66
------END PGP SIGNATURE-----
-
---jIzR0wEIk82J930S--
 
