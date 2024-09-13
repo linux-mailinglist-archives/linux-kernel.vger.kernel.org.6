@@ -1,151 +1,130 @@
-Return-Path: <linux-kernel+bounces-328905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95A1F978AA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:34:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23476978A88
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10C031F257CB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:34:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5573C1C21FA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EB717C9A0;
-	Fri, 13 Sep 2024 21:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C9A1553A1;
+	Fri, 13 Sep 2024 21:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b="ovws2alu"
-Received: from sonic309-19.consmr.mail.sg3.yahoo.com (sonic309-19.consmr.mail.sg3.yahoo.com [106.10.244.82])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="dOXPS2ct"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307CE1741D2
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 21:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.244.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD871465A5
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 21:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726263215; cv=none; b=s4ctS0mmqo15JpyAAxzstmXbIw3RNHGjdrdD0IMYxnJrMTj96mWE/owAemgk84lSS8uHs9ikBRdUbAjsV5KwXFX70owwLHuYlNreZW7cz8/htbQ+fDA1sUKA2gLYTKMAarV/oUdE4K0j0DvJ+W0LB8BrFvlXtzyXyZQnP8ml9Bc=
+	t=1726262667; cv=none; b=M6OL9tGr4klWoVU+F49hkKtKLbKEq6RmNF7XZ6TvEjLWiyKmXo+WqpWRIH6MUsuhtyeD5Ecjir2+wse3MdP1k/MYZ1oEkNdmVtY+V8gm1Cd2tnmDX276SstmY5FAAgEDLX3FeUI3RFbB3svtwVoOoNj4lJEa28XC/vgcaRlCsj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726263215; c=relaxed/simple;
-	bh=GmIrA2s4GY1oMRi4z6JkX5QRAl/IPOLLybRw1y5NcVQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NK44ohNqGYrbkhPcT590c4/ZdjUfiXQKSTa4ckjW7ckXigm40c3n9E6pOYx3y812c5Tx+vJKeG9LqVOYsdVumdXjyQnqJyPmTVb2kX9pdPvJP3grNKmqYzIGBAD4JLqM0VQJlTWa4s/hWHgd2R7tiX0zJVyhW9+ngei6NloeOrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com; spf=pass smtp.mailfrom=myyahoo.com; dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b=ovws2alu; arc=none smtp.client-ip=106.10.244.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=myyahoo.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=myyahoo.com; s=s2048; t=1726263211; bh=Xu6GHo+mOurlZPXAopl8mYcnnDPP7yNRQ27zJInbkvY=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject:Reply-To; b=ovws2aluJX84q4OF9a8PK/yZPP4zGZ/2BbuMXgaTw0f0w2mOOW1i9j0+uAttYumcKVvbkqdhu9m548r05R5KFU5ObslqjBIFTrbLCz4zRvV11oQuZgUbRq6UF8V8/kHC4DndjUN6ua7tAo9Ko/qdHLEhRmh0U4w3WYr7ceB0MUSfm36qhBO7qYnUVqYPRKP+2ni3tEseZ52vx/QW8aTbnljVOBW2x1VY021PLZwu0zwTq3Bfi2oy26RTu0iyfgci6yEb9YmOi7bh+kI0ORCKxtQz28M7h171Gm9V3sFRLg6xsAuICCcX8FoHVpDfRUbAXbsfEGot75bfvO7OGI3jJQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1726263211; bh=PfbRB7vgrVdrI4vTmgQCWvZcOdT6RffN270agaf11xu=; h=X-Sonic-MF:Date:From:To:Subject:From:Subject; b=W6Htk5US/yMncwV3B1zHcwR01qW/+h0T6g+vWlVU9Q3V4vJ1WDkzWscnZJRfFG2MtKllERkhij6zZgbjzezxVp1vXKJMgOfPcUAGa0cMeq4nCuPMJQY5wcs0ORv8ns8M1Qb4XB0FgMBTQWSQ1btXQAUz5CiGJJXirvE1kp64lT4+6MTA5Cs10noBKQDnd1aBnIaCYB+36NswjcixxghjOJvBC7cEz913ZJo/IvA7jPXC/9S44DrNyG0UiH3iDNAh3siTPsGGaw7BnHb9S/UGrjHnBZgQIUw3CgflAAZ+NbwPFy88D2s2rKpCbeZuX6kP09xgaFMkBx0BzhT4Uwkveg==
-X-YMail-OSG: T1a7AU8VM1nEBDDmRIEmB83gfcR6TEZnkGY.R59_IFXClwu1o174uY7gEWGL_ui
- q6sqI1JYbvvbM.zu8nSQpDYRf5TOz_O.IzxHN2c3S6AronuxLTS.xqo7YohS3UDo8FvPzv8rSKLR
- CylFbbAhUHeg4LCYDnTmaBthPgq6DGdBOdsfxwpth0RqjgavOKos0SI83lw5ym1JumyyZZISX5xf
- vxkZLp0FDJclq8jVdYKqkT6KwsmOsl5H1YoJumjfOT5b.LiSw6ZCuMnmFE1Kx4O7GyAw7bb4BAKF
- xqX5c8lapGIqUttTGmx1rWfK56GjEgtX5AZq.rMGcuiP01KuCQ_KByvEeaI_LWerSBtssr2SBZFX
- mskZRxCeaGyNNVBNsqDC_QmFQfwTRZYElHgBTpYF_6q2R9omXNwA83bRfc7XMAydO4r4seFUYRu5
- NyW3S4u4DX3RBWq.vl0pWVWuuJb476GwVvTf7luAL6Q14EfudG5.cpWBPIdd7_6.U5USV1hUuMwG
- SNQ0oIHChAYcrvMt3cPgys5.GacrlRiqDa3Orn72_alVdgdTGMnjFj_b6Y0N.jqeZaQ9M0.AyYkK
- _7xUcw3Z.khd844wb4f2TWTGTBBna4ATRDshHqZ5VLTfHA228XP2Pb1jD_oAy48GE9nraDecmNRW
- X_mBZm7zmG3kRS6XW7vdkkMWl32YrHxIEUGTSVVqM9bF0M5DwaOunEPouq64nLac.oHxwHFX8NYS
- AkbESaevCFN1EF6CSW1OOXkMOLNkNAyZRI0d6ccx7SbSUuvUp_giXQifKL1NqlaaCVbQb1xLDiYQ
- mcJAGaI6RXMGfMFp2a7iBGlTH677SjCCgVRmxng5q5g8xG5DPkciCiI28H8AclzcqjUTw9XBecwR
- 2oF1BO9e8HI9Iw0e2AIkwrHPpoNVinmgg4XHQnblWRYdl9SOE2OVkQ0d5k51dlLMjM44WCsUCsZk
- .1UzcepNGWbk.W4hhJDy4pVRsm8jrVmKZwcgtqR66i_B4gzE7LZ1bDJQlddTjAR1XTpbX7zFspsL
- qwqC0l1yUcTi4wtsttkg0.dvQsArtlB6BfLaPBG4yMFX3HmcS.A7WjNCMDAzqdZa3u6jWSV2h3SV
- cZnNOwFV7lHnYNIAZA01TKqKCutP8WZv8a6Y0lil5swZVv1zZatF4KbuCqK2Yj8ZoaI6FgkyOGz3
- MRfEy3cLcSiLrIkuCVtfgyM7Kj2uzqbIUvBKm5eyrsa.hZjnvJf3bHEdnF_60aNLYIHPHE.Ot70.
- PkOk9jhWxnW6KQqcroDvIftmKhQWGEEl74kE6GoBQBZ840SKO3VkRP0e8Ml4Ta0cl1bVrmRY5mev
- XqYWuIiwsAwPgfalpRe6X6TISReMLrCALRyDtMqECBDDzsiDN9hHlI_KyKE3K9b5TplH_dNDtf9s
- 0rDmN3FNKa8owfVV_gBMJK_H0DcWYKqhm_zt6dQ1PAluT3FcGTBibvCUWoAUGFVg0P0qNTIsbOvk
- oMQoY.6WTshG0csW1YuVsoRhAC9S3aj4lrzvY9PV7Qg7cPn6JHlJ9m7QAev1GLlAZyCm4NmU5PEh
- vxOMw.X.3BS31g92QJVgckUiyJuR_HVBzjwk.PgXJOvJj71ZuxqW2zDkfjibx_cspYsaEU91eaK8
- ZsNckF2fgJEsnTm9Ypm8CuN_tgBD15ne_ax.OuIj3a.HoSfHG8pq6I1pinFpl2Am7C8jRZEIV1p2
- 5INdxkdrOSOl5rzMqiG.LFxIfCP94iDghYEFVmD1zpvRrogWKwi5ffRLwATdy_Tu8IYffAdf3X4x
- hShfmcmJx04Qn0wFGhxdCHvxkzqdyInsgf5R8GPhD2EqacPk8ruJqloEQKV9q8.9KqK9b_1Tg44s
- YcZuQlJ_5N3Mf9SGLaZSxrJRPeRJMoMWFazD2DAVX2e.eSuaNC85ge1BTWjsy7Stt3tvXBEItpg7
- GsjNSqQl00HXOPGHmgCNGnDf0XfBhu9evSGSKtR1D2nvb.lxVokFMVtjIULQWwsBbb.M2p6uiTNn
- tDKeyIp6qdcuArb4c2sk8jUjhbgMQ41RlGbMwQdPOwYXlygRLgN46DiAUCbpB5j.MSzksOQQ0.7S
- 6c1pKYSLAfN52XFgh6ori3SrxZlegEJxBW8A36izopVOIKgvjuQZcp4mmvZ79SADs_7HU_Px1K_F
- PCm1YTgtGK3WHAr8YMEfRHlOAYHZBiljPihzSPgUjmlbRw794n6BX9yb2uqobpi8SkDYJv4eMcNA
- V7m1iAOil4ic2noAR9FjLJQoPWHz.cnPtQGMxc47ndoM2p6RdoBY-
-X-Sonic-MF: <abdul.rahim@myyahoo.com>
-X-Sonic-ID: 17a4e484-a3c1-4e96-8a9c-8efecad89cbd
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.sg3.yahoo.com with HTTP; Fri, 13 Sep 2024 21:33:31 +0000
-Received: by hermes--production-sg3-fc85cddf6-nnv8r (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 29fab85ab6d70373e5252eb4a6688490;
-          Fri, 13 Sep 2024 21:23:21 +0000 (UTC)
-Date: Sat, 14 Sep 2024 02:53:17 +0530
-From: Abdul Rahim <abdul.rahim@myyahoo.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: rafael@kernel.org, rui.zhang@intel.com, lenb@kernel.org, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ACPI: thermal: Use strscpy() instead of strcpy()
-Message-ID: <pjfihdom7drxw5jse7kd2w5umjavlu5vb7v2p3svwz4eymqfkf@artgu4pefe5k>
-References: <20240913191249.51822-1-abdul.rahim.ref@myyahoo.com>
- <20240913191249.51822-1-abdul.rahim@myyahoo.com>
- <c4e7b3ac-d8fa-47b9-84f6-e3332bb54e12@wanadoo.fr>
+	s=arc-20240116; t=1726262667; c=relaxed/simple;
+	bh=ZYhLlCfJubXl2lpFJkootrsMtKBVHk6xopFryr344Jw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jLPp0ZXwelXGODwcgzkGCoerfvP+3re5eYJy9/cNFrkwiWFtwIIJv8Zq/1QatIPKxDGGVXhioBcXiVFZc6RrXCI7ANx/CxryLyyXrBr/BHYqlqdehhO9yuj0CkMwpClZ3E4XS63O4FosUY4ryqOuTQ2Q94zSR2cMEtr0CLm22YM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=dOXPS2ct; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5365cc68efaso2838770e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:24:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1726262662; x=1726867462; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=xRuFfVQTrS2LaFQHsAbqiDg4XIXZJlnGtDFvh2VKrJg=;
+        b=dOXPS2ctuH/ZJu0xW6+f9l/5uP8WwekX4KBkgSF9NNXokVP6l0rhP5JPeiR39fnwis
+         0smUoOPmopxYjX9xHydq9PLm6KpGHuB7HngkdoX9C9Opr5jtwHAk34mA8LbH9VDjKaup
+         Fk+WWYnlYtVFc5kvyB6e/Q0OApzCLqrfNjVfQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726262662; x=1726867462;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xRuFfVQTrS2LaFQHsAbqiDg4XIXZJlnGtDFvh2VKrJg=;
+        b=WHi1mIta9fWNfwMgmW2KCzk/84KCjMxeNTYoUDDX/e7i2QofE4pzw1GCa/zQjnHzjn
+         /5cjmpnOi1jR/4qSpoKlY0Bq76aQGOjYOPJZJAVN3wNYkLm/UE31CuO53VCnse+whxbg
+         2VoYrtlcp3TbxdOOC79BJrlgfamsnLsrk16FhPZ2cDa3MSVz7JozUxmCht35gCJVXDKg
+         vMnk5+nais4xiIhB8bvIAsNlxBNURfzRZwvfjIl5U2ScdrAa0XwCP6Xbwg5LGWoPcr1r
+         UbPOXhieNW/qFfpN2UQY5euBy6b2zF1OekgYa0HRkwJf/TXI5q5guNcok5dhhqdOTuF2
+         aFOA==
+X-Forwarded-Encrypted: i=1; AJvYcCW1l7enN73LAKJSCC8V0Gi3fpacxUHQfN+nYD6YUhgrQAVZYf3ynTvNKiU7KVh08l9w5MfKglkwHQgzJ8E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHXRP/UlIBRGGybu/VJBP37tq2OSziKrE0+mwF4pqms8VKw9Dl
+	0o9nfRG8C/z2+CIU0kOsmE4LBujjyPG70szXbtKDSbI6OYeXQ8YUUCl1+gvd0yoycQXxssdRCbv
+	RL/k=
+X-Google-Smtp-Source: AGHT+IHb5LognD//GpPD0o/oZ790m59Ttpup4RmvqkXga3OWJ/zKHtvoG0w0eAf7tIlZwEZLJo4rHQ==
+X-Received: by 2002:a05:6512:10cb:b0:52e:be50:9c55 with SMTP id 2adb3069b0e04-53678ff327amr5556812e87.52.1726262662152;
+        Fri, 13 Sep 2024 14:24:22 -0700 (PDT)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5368704da94sm33060e87.89.2024.09.13.14.24.20
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Sep 2024 14:24:20 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f75c205e4aso30663331fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:24:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWCiCDsGCykky3TGxe+PrLcSd425GqQHivEpAMjaThx6ZSRqKCrZBULCCYpzzkA4rXFzpygSvWy3SrnVbM=@vger.kernel.org
+X-Received: by 2002:a2e:7c0d:0:b0:2f5:11f6:1b24 with SMTP id
+ 38308e7fff4ca-2f787dd0941mr36494131fa.18.1726262659861; Fri, 13 Sep 2024
+ 14:24:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c4e7b3ac-d8fa-47b9-84f6-e3332bb54e12@wanadoo.fr>
-X-Mailer: WebService/1.1.22645 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <A5A976CB-DB57-4513-A700-656580488AB6@flyingcircus.io>
+ <ZuNjNNmrDPVsVK03@casper.infradead.org> <0fc8c3e7-e5d2-40db-8661-8c7199f84e43@kernel.dk>
+ <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
+ <d4a1cca4-96b8-4692-81f0-81c512f55ccf@meta.com> <ZuRfjGhAtXizA7Hu@casper.infradead.org>
+ <b40b2b1c-3ed5-4943-b8d0-316e04cb1dab@meta.com> <ZuSBPrN2CbWMlr3f@casper.infradead.org>
+In-Reply-To: <ZuSBPrN2CbWMlr3f@casper.infradead.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 13 Sep 2024 14:24:02 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh=_n1jfSRw2tyS0w85JpHZvG9wNynOB_141C19=RuJvQ@mail.gmail.com>
+Message-ID: <CAHk-=wh=_n1jfSRw2tyS0w85JpHZvG9wNynOB_141C19=RuJvQ@mail.gmail.com>
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Chris Mason <clm@meta.com>, Jens Axboe <axboe@kernel.dk>, Christian Theune <ct@flyingcircus.io>, 
+	linux-mm@kvack.org, "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Daniel Dao <dqminh@cloudflare.com>, Dave Chinner <david@fromorbit.com>, regressions@lists.linux.dev, 
+	regressions@leemhuis.info
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 13, 2024 at 09:31:57PM GMT, Christophe JAILLET wrote:
-> Le 13/09/2024 � 21:12, Abdul Rahim a �crit�:
-> > strcpy() is generally considered unsafe and use of strscpy() is
-> > recommended [1]
-> > 
-> > this fixes checkpatch warning:
-> >      WARNING: Prefer strscpy over strcpy
-> > 
-> > Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strcpy [1]
-> > Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
-> 
-> Hi,
-> 
-> in order to ease the review process, when you send a new version of a patch,
-> the subject line should state the version: (i.e.: [PATCH v2] ...)
-> 
-> 
-> It is also a good practice to explain what has changed with the previous
-> version.
-> Finally, it is nice to provide the link on lore to the previous version.
-> All this should added below the first ---.
-> Here it could look like:
-> 
-> > ---
-> 
-> Changes in v2:
->   - Remove an unneeded extra parameter (MAX_ACPI_DEVICE_NAME_LEN) in the 2nd
-> strscpy() call
-> 
-> v1:
-> https://lore.kernel.org/all/20240912205922.302036-1-abdul.rahim@myyahoo.com/
-> 
-> CJ
-> 
-> >   drivers/acpi/thermal.c | 6 +++---
-> >   1 file changed, 3 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/acpi/thermal.c b/drivers/acpi/thermal.c
-> > index 78db38c7076e..6671537cb4b7 100644
-> > --- a/drivers/acpi/thermal.c
-> > +++ b/drivers/acpi/thermal.c
-> > @@ -796,9 +796,9 @@ static int acpi_thermal_add(struct acpi_device *device)
-> >   		return -ENOMEM;
-> >   	tz->device = device;
-> > -	strcpy(tz->name, device->pnp.bus_id);
-> > -	strcpy(acpi_device_name(device), ACPI_THERMAL_DEVICE_NAME);
-> > -	strcpy(acpi_device_class(device), ACPI_THERMAL_CLASS);
-> > +	strscpy(tz->name, device->pnp.bus_id);
-> > +	strscpy(acpi_device_name(device), ACPI_THERMAL_DEVICE_NAME);
-> > +	strscpy(acpi_device_class(device), ACPI_THERMAL_CLASS);
-> >   	device->driver_data = tz;
-> >   	acpi_thermal_aml_dependency_fix(tz);
-> 
-> 
+On Fri, 13 Sept 2024 at 11:15, Matthew Wilcox <willy@infradead.org> wrote:
+>
+> Oh!  I think split is the key.  Let's say we have an order-6 (or
+> larger) folio.  And we call split_huge_page() (whatever it's called
+> in your kernel version).  That calls xas_split_alloc() followed
+> by xas_split().  xas_split_alloc() puts entry in node->slots[0] and
+> initialises node->slots[1..XA_CHUNK_SIZE] to a sibling entry.
 
-Thanks CJ,
+Hmm. The splitting does seem to be not just indicated by the debug
+logs, but it ends up being a fairly complicated case. *The* most
+complicated case of adding a new folio by far, I'd say.
 
-https://lore.kernel.org/all/20240913211156.103864-1-abdul.rahim@myyahoo.com/
+And I wonder if it's even necessary?
+
+Because I think the *common* case is through filemap_add_folio(),
+isn't it? And that code path really doesn't care what the size of the
+folio is.
+
+So instead of splitting, that code path would seem to be perfectly
+happy with instead erroring out, and simply re-doing the new folio
+allocation using the same size that the old conflicting folio had (at
+which point it won't be conflicting any more).
+
+No?
+
+It's possible that I'm entirely missing something, but at least the
+filemap_add_folio() case looks like it really would actually be
+happier with a "oh, that size conflicts with an existing entry, let's
+just allocate a smaller size then"
+
+                Linus
 
