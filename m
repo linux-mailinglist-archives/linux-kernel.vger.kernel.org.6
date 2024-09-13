@@ -1,106 +1,103 @@
-Return-Path: <linux-kernel+bounces-328766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B1F097888A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:10:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDBDF97888D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10BAF1F2402B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:10:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33D891C22177
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:11:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5077224CF;
-	Fri, 13 Sep 2024 19:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA1F145B38;
+	Fri, 13 Sep 2024 19:11:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XwmVDq7R"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="Dkzflssa"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D545912C530
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 19:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A06A12A14C
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 19:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726254636; cv=none; b=jaixM0HTxj0+OTFincUJ/r9zCZAvfbGqctmPjonki+TAne+cRfXE2v9fo44Wt7fZF0ggDHoki8GObsCPuO2EmPcSrzaekoUZS5TP/lZ0ancyDJCYlDvnbK8ktMmJ65XPr9FLTtAMKLKe9q+mRfzxW84R2//XxFvgylUsxgq1lX0=
+	t=1726254677; cv=none; b=embTwbUzaJ0O+u14oiHYAnI6lSMfc92efvtGHbQKwUq8jYODTBF/iMYd1Efu5q6EMJAl65RHlNroJcqTZB9cuYZxwQEhuf8JV9PdlyNmDhN6bWMN7A3n2ZUoIO1TTavHGz3/yvsD57zeJp8GsFEjHRFo6slx2UA2HvJFORR4H0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726254636; c=relaxed/simple;
-	bh=yI3QrCp/pi0JzzZON7++Qj46ldFDtiheKOj7nGwj0Nk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MvbLfDuGViYsnE7H+Hee0uiUliMQMjRJo+xJqI1lP9PEBSdCSYa5Jy4xZnX4LCqwXE82g7A+naczLs6brwKeG/ij0p/X82JqZj+BHx/wAPzGoGetZ9MCHe50nZpb9NwSGcuvDU58kxdJG8P1uyBlHtrl4kSfIyypci6b9WOJm3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XwmVDq7R; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726254635; x=1757790635;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yI3QrCp/pi0JzzZON7++Qj46ldFDtiheKOj7nGwj0Nk=;
-  b=XwmVDq7RMhc6gpT+FIPNV/hPtJPWzZJThtA4VhDLBVt8vMS7oJO5BjsF
-   RqWvRamX29aAUzbk6lW23kddjjpcGRSpjT2HnnHvKkhHApXMNBYJKrJ3H
-   kmZvnKaflNrMHtXud0xF1nfrM4u8DEMHLd/0Nta2ExsD6KcelX3BT0mQD
-   JLYsvVPuj+IG8r7sEXpYKso+p8c+9phBz0NVoUtV3gcvr5M695Ldm9UkE
-   t1e2jRYLnbHjZKed5Icu8ltRUsyWhRmceUpH3YG4+f3oSI0meNQmjTCLN
-   Jho90p9SJJwUn3OoWXGgdigbMKFlvAzJYpPh66WrdIhzlk7HU7dXIrVud
-   w==;
-X-CSE-ConnectionGUID: xnHNCkF8QriKMcJR65+Trw==
-X-CSE-MsgGUID: TPl5dRy7SRmU4ademcPzQw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="24993559"
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="24993559"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 12:10:35 -0700
-X-CSE-ConnectionGUID: 5I9Jfr7gTHSUutMi6V5I2g==
-X-CSE-MsgGUID: kgRR71QhRPGOwzgNvf+mmA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="73169267"
-Received: from tbrumzie-mobl2.amr.corp.intel.com (HELO desk) ([10.125.147.158])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 12:10:34 -0700
-Date: Fri, 13 Sep 2024 12:10:22 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	linux-kernel@vger.kernel.org, x86@kernel.org,
-	Robert Gill <rtgill82@gmail.com>,
-	Jari Ruusu <jariruusu@protonmail.com>,
-	Brian Gerst <brgerst@gmail.com>,
-	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
-	antonio.gomez.iglesias@linux.intel.com,
-	daniel.sneddon@linux.intel.com
-Subject: Re: [PATCH v6 1/3] x86/entry_32: Do not clobber user EFLAGS.ZF
-Message-ID: <20240913191022.fqipwsazkkrm5x67@desk>
-References: <20240905-fix-dosemu-vm86-v6-0-7aff8e53cbbf@linux.intel.com>
- <20240905-fix-dosemu-vm86-v6-1-7aff8e53cbbf@linux.intel.com>
- <cd2897c7-2479-4358-bd5e-b55ec84db2ce@intel.com>
+	s=arc-20240116; t=1726254677; c=relaxed/simple;
+	bh=ecDPfmv5oBvejMprBf0n9OyHO3jkRHKSg8K7ZpLhIXo=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=idkHf+B7YzQJyV1PIwH42AKwmQd1Jd3pA7WG9QNVNswoziYax2HkQLConEyyp/25FJkDXzruItQcwQw2cN0lKowdR+kUBIQprSu80VLbjfNiD9kCSMJwDBiqT9vn9a1alXUWCogjYWwF/WZE42vNqpmYGrpPGRPMOeX1MVbFP70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=Dkzflssa; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1726254673; x=1726513873;
+	bh=/cB6MnxPg6xRdDI3dYn57hNwohgOxXQxubyUmHswtmo=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=DkzflssaTuwOcmV2aZjNzlDdhaoPRyHrlZk+UswyurIMxFz70FHS8J6IDTPBD+wMF
+	 FrPlzAXS+GOa6WDW59xCByWUicgUpAnjv2QgFtl8q7oMsR5p2tsNp056ykB0ZtMDpZ
+	 vEqUlnFEk/IQTqJ9H5OKj1f5YKP0UbKDaYkb5auE+tXbuJRwy+5q47uVE5CbSOt9JO
+	 PWEpMp0xOQtk9F3Zkjfj4bGAToSV13BFfybD4nZb14blykAfpvrm5XI72fayF+QK3A
+	 xivGa+0jZajvXvPGlBE90QaCjbZDwVWFouVyuXKsb+8mJI4NtP6NZyF1lSURqQA46q
+	 oNdCxUDVuq5wQ==
+Date: Fri, 13 Sep 2024 19:11:08 +0000
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>
+From: Harry Austen <hpausten@protonmail.com>
+Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Harry Austen <hpausten@protonmail.com>
+Subject: [PATCH v2 0/6] clk: clocking-wizard: modernize probe
+Message-ID: <20240913191037.2690-1-hpausten@protonmail.com>
+Feedback-ID: 53116287:user:proton
+X-Pm-Message-ID: 1a60525dea657e1e8bdb7c85d87494262d45d5f2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cd2897c7-2479-4358-bd5e-b55ec84db2ce@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 12, 2024 at 10:45:23AM -0700, Dave Hansen wrote:
-> On 9/5/24 09:00, Pawan Gupta wrote:
-> > Opportunistic SYSEXIT executes VERW to clear CPU buffers after user EFLAGS
-> > are restored. This can clobber user EFLAGS.ZF.
-> > 
-> > Move CLEAR_CPU_BUFFERS before the user EFLAGS are restored. This ensures
-> > that the user EFLAGS.ZF is not clobbered.
-> 
-> Just to be clear, the new (later) location is also safe for RFDS because
-> it only exposes the contents of EFLAGS (not sensitive) and RAX.
+Improve utilised clk/notifier APIs, making use of device managed versions
+of functions and make dynamic reconfiguration support optional (because it =
+is
+in hardware).
 
-Right.
+This is currently untested on hardware, so any help testing this would be
+much appreciated!
 
-> RAX might leak the old or new values of CR3, which do not seem super
-> valuable to me.
-> 
-> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+This patchset is based on a previous one [1] ([PATCH v3 0/9] clk:
+clocking-wizard: add user clock monitor support), whereby I was attempting =
+to
+add support for the user clock monitor functionality. Those three patches (=
+DT
+binding, clk driver and UIO driver) have now been removed, with the intenti=
+on of
+getting these simpler tidyup changes merged first, while reworking the desi=
+gn of
+the user clock monitor support.
 
-Thanks.
+Changes from v1 [2]:
+- Invert DT property (patch 5/6)
+- Update driver with inverted DT property (patch 6/6)
+
+[1] https://lore.kernel.org/20240826123602.1872-1-hpausten@protonmail.com
+[2] https://lore.kernel.org/20240831111056.3864-1-hpausten@protonmail.com
+
+Harry Austen (6):
+  clk: clocking-wizard: simplify probe/remove with devres helpers
+  clk: clocking-wizard: use newer clk_hw API
+  clk: clocking-wizard: use devres versions of clk_hw API
+  clk: clocking-wizard: move clock registration to separate function
+  dt-bindings: clock: xilinx: describe whether dynamic reconfig is
+    enabled
+  clk: clocking-wizard: move dynamic reconfig setup behind flag
+
+ .../bindings/clock/xlnx,clocking-wizard.yaml  |   6 +
+ drivers/clk/xilinx/clk-xlnx-clock-wizard.c    | 281 ++++++++----------
+ 2 files changed, 127 insertions(+), 160 deletions(-)
+
+--=20
+2.46.0
+
+
 
