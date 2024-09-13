@@ -1,58 +1,80 @@
-Return-Path: <linux-kernel+bounces-328459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76F48978494
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:20:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70B5897849D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7AF8B24F1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:20:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E95D4B25487
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFF07580A;
-	Fri, 13 Sep 2024 15:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD54478C92;
+	Fri, 13 Sep 2024 15:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mND7YPrs"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="DI9NeCf/"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D933F74070
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 15:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A6E482E2
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 15:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726240206; cv=none; b=oFqLPhlnGi5YdtCa1Z6wqi6sYug5hZvCv4LKggnGRfTVYRFblsd5I3Hpp6pwDNSN8yfQaFYgBORqAUQizzqczvt5uI0nMAy+2T2xh9WFZJWLBQ7uEqeAjvhiiDgpKBRqIWy0u+rRNb94F6Z8aSQRbjmq6H3MxP9gh90aXal32B8=
+	t=1726240452; cv=none; b=c/Qw0BaZjNC7P+1GRsB7Fsa6DCz3ZkjKRNMa0X2j/apxECNam9tg+bfHzh3l9ITIJfgsU6qouJKsZL73Q126JsifBg+yVflj/RPSvbcDkte/hkjH4rCfgCJM3rKK1RwdnBXF9BvCiXIpzOkLwLADsAEtp7XCQPP8ZI5148qTK3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726240206; c=relaxed/simple;
-	bh=8iHqyf28YKFRsnV2YBnaI3Uiw/x74M7EtHF5mD34DBU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uRox/lFBH1J+7ATQ/99hBGtUSeSpzAl+xmQ6mO8MKiViQrjg844uHIRZ1D19KGt6HnaNBb8jgllsYei04uBLaHZrM1VK4g709q0PTnB4BBX9lDaFYs0hPJzN2YEFyqDNA6tZ+gcJWJYZJemSLSeWCN8+Woq1V5sGRxA9A/bTJkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mND7YPrs; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726240201;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=sP2tPqwjPSBxzNzPyIXJccpmcKHD8PFBIGiTube1DWc=;
-	b=mND7YPrssgt49zQASZVtiP7e1ihrGquX1VtNMc3E6JF6v4wIhaXIUr+K+FbtQN8XB24VJQ
-	4abZ+Vdmab484yOyA0mQqYGrUoXnbg86iL2HQ2M87pS9O98dnkh8w5OJ0ehW5epLNGezVe
-	IKJJunf+SXSJzaUIFPcPRy2pyp8cRh8=
-From: Sean Anderson <sean.anderson@linux.dev>
-To: "David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
-Cc: Juri Lelli <juri.lelli@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	s=arc-20240116; t=1726240452; c=relaxed/simple;
+	bh=ObR1hv+IAKGE5+n+M0is6uawqsDYZfHJC1dew87zhrY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=loajX5TRFuF8Paw1LVcz+b49zxg+5S4wSj5HLb0RxAg24HjR0jve/p1OKH89QYjehGMoJHFX9OjBrNoVTuKr/gj3t724PlEdOmMz0VfOUfWMHAFxT9hBPMzDSkQ9xkQkSx+3U1RPbMplXaU6JtfWL90YtjxyXCb9AHMgDD4+1kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=DI9NeCf/; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a8629ddffbaso25863666b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 08:14:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1726240449; x=1726845249; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=L8fdMxO/k8qc0ST3VA5tQCvA2jXHRUDqzGSRYQgGklM=;
+        b=DI9NeCf/JleUTkjvFLXhpFxVjPOCJs09HPZYA4fik/tv2xWAvn9EsO6HK3xNMDmJzK
+         oD61fQ/tviTBSWdX8DlUxyonVu+buXIO9P5aPsnrL962OzmU9U4bOWNUUiW5QhZyAlTa
+         4huhQY+cFG4LWoAkaPq/19p9cRj+Ny5PYLSbjG2MH2L7SnpsNZl/NPUUCstfXfpZHBGI
+         8tnxuooQ0HfF/5ItV4/bCkoHaHVgTvhferw19akLP4PYkrdnoWwQ9GdFAuYLM7X7lB2e
+         1xyXqN9HSO3BZKvC66+W08GGHAxE6Q0ubnWQrGEYPaoZDKQFqEaeEEysi4xl9o+ccnmo
+         z4SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726240449; x=1726845249;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L8fdMxO/k8qc0ST3VA5tQCvA2jXHRUDqzGSRYQgGklM=;
+        b=qRsYhugKP+f5IsLd3z2fA+/Ui8KRyTUAXbBUr1AFCnBS4+8SltnI8rqmYC6ugRA91t
+         xI6uP5bQxoHb30NA2ozyFcZh5o+dqmgVzy5JI7PD+49MQV+3eAHOJpwDwx5/x+DeCwmz
+         KygDTJ+EZ3K/clKbKFl+Y24cZjL2MvNwActCKBirCPnprqSsAneTlcbJK/cUKtiXVfio
+         8ADxi0QMY7j3utvEbuVZmiE/q9oxUU+sudPwOmXjqN/zMaIHeat9xxUOabogDghaSgY+
+         kL8hnVSLb8MPJIVnDi+Z2SnZe70ZIhE/xCTTzz7N7NHMopv7hMwiiuvsmz0DZYD9SH4y
+         Bo9w==
+X-Forwarded-Encrypted: i=1; AJvYcCWgxvr5nJUDZ9M1h2U/DxQXKrEcDO/wLgoqiYDUIJU6dbgNH9fXZxkLlb8jwN1V5Cz6o+1jLKk5z9J6UcA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOcsLtcWVvg6wIoCGqc6YIpKyqFVue46wh6bTDmVNiVWoAFKYo
+	hKjaSNIahrqh8JhLH1FOASArKnvmlaPvoK/ab9WnfBl/WUzuf5cdUv2YnYkpDLE=
+X-Google-Smtp-Source: AGHT+IESEFf52KK3gQ6/Obz07u+t22G9YTRLjzPmfPgKfr3PV7ud54s1CMUB0Y1gA83xviOaxXi6FQ==
+X-Received: by 2002:a17:907:9810:b0:a90:136a:4de2 with SMTP id a640c23a62f3a-a9029435418mr282112666b.5.1726240448587;
+        Fri, 13 Sep 2024 08:14:08 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-62-216-208-245.dynamic.mnet-online.de. [62.216.208.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d5491asm876222966b.198.2024.09.13.08.14.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 08:14:08 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: code@tyhicks.com,
+	brian@kubisiak.com,
+	brauner@kernel.org
+Cc: ecryptfs@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Sean Anderson <sean.anderson@linux.dev>
-Subject: [PATCH] net: Handle threadirqs in __napi_schedule_irqoff
-Date: Fri, 13 Sep 2024 11:09:54 -0400
-Message-Id: <20240913150954.2287196-1-sean.anderson@linux.dev>
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] ecryptfs: Fix packet format comment in parse_tag_67_packet()
+Date: Fri, 13 Sep 2024 17:12:22 +0200
+Message-ID: <20240913151220.2688-3-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,33 +82,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-The threadirqs kernel parameter can be used to force threaded IRQs even
-on non-PREEMPT_RT kernels. Use force_irqthreads to determine if we can
-skip disabling local interrupts. This defaults to false on regular
-kernels, and is always true on PREEMPT_RT kernels.
+s/TAG 65/TAG 67/
 
-Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 ---
-
- net/core/dev.c | 2 +-
+ fs/ecryptfs/keystore.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/core/dev.c b/net/core/dev.c
-index 1e740faf9e78..112e871bc2b0 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -6202,7 +6202,7 @@ EXPORT_SYMBOL(napi_schedule_prep);
-  */
- void __napi_schedule_irqoff(struct napi_struct *n)
- {
--	if (!IS_ENABLED(CONFIG_PREEMPT_RT))
-+	if (!force_irqthreads())
- 		____napi_schedule(this_cpu_ptr(&softnet_data), n);
- 	else
- 		__napi_schedule(n);
+diff --git a/fs/ecryptfs/keystore.c b/fs/ecryptfs/keystore.c
+index 7f9f68c00ef6..7266fc1a5fc4 100644
+--- a/fs/ecryptfs/keystore.c
++++ b/fs/ecryptfs/keystore.c
+@@ -355,7 +355,7 @@ parse_tag_67_packet(struct ecryptfs_key_record *key_rec,
+ 	int rc;
+ 
+ 	/*
+-	 *              ***** TAG 65 Packet Format *****
++	 *              ***** TAG 67 Packet Format *****
+ 	 *    | Content Type                       | 1 byte       |
+ 	 *    | Status Indicator                   | 1 byte       |
+ 	 *    | Encrypted File Encryption Key Size | 1 or 2 bytes |
 -- 
-2.35.1.1320.gc452695387.dirty
+2.46.0
 
 
