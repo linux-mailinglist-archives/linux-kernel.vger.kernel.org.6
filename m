@@ -1,176 +1,112 @@
-Return-Path: <linux-kernel+bounces-328353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0ECA97825C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:14:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9B1F97825D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:14:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97A4B1F254B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:14:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F6161F2508E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616391DC054;
-	Fri, 13 Sep 2024 14:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901381DC054;
+	Fri, 13 Sep 2024 14:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="DYVv36fL"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="SvUs1FdG"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA361D86D1;
-	Fri, 13 Sep 2024 14:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D481D86D1;
+	Fri, 13 Sep 2024 14:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726236856; cv=none; b=HDnxxtHJvKFtM7SjE7EJ96WPXIENenRxt9cU1DbND5lQD8P4do1oe1L3sD9Otk43YXDxc5SvaaRBK5Nlu1deRHVIYz2RiUCmylA1OE3biNVYtG5D1OoKZlnFML4zbfUXFxfaZ7N9IMzEdmkp6ExIoQj302EfFjUY3g55B9GhiHg=
+	t=1726236882; cv=none; b=Ap61gUAKpNt+/PQ/zslqMUtvw2RFtlYozsaVtncYnlV4sq8Eqs7op193sbqUDzDGNaW8Olmvp+p+EHdkF23kkceDGSCZcQpN5//l/1ZnuGaJZXrauF/HWxLaLs0nF0aSTWdL11GqF5VHw4ucpHVtrRNpLsagAIkDZhmi1STXYqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726236856; c=relaxed/simple;
-	bh=iFQwqzYIMnfWi5KAOvdD18pv2NdDRbClhMQeK/FJXjk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GyVIhvpq6dwmFad95yFh9+tqHiVVxBC3ibQr7W0KgyQjnyZF9RMRrNJFpjF2myYsHSftANpJXMYgghz9rQjL4PxnduH7yxGvW/FEwp481Iaa+dQ7xey5K1PfE6nh44qT48/GxaM5oGvdgFbjXwQETytnq+ZMiyAGRWLzlgrOwa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=DYVv36fL; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1726236852;
-	bh=iFQwqzYIMnfWi5KAOvdD18pv2NdDRbClhMQeK/FJXjk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DYVv36fLb0UKMFETQMDs1YhdloUGyhfJYnvH0CZK/wQtXxCUvx1goOdJNz4mtN4yQ
-	 a3ZjDOZmnDJaRsyqF482iciDRBGXvsRwkKtsDFj3qt+HUkdMFzcwOjo6WOSisW/U9B
-	 vAhl3STDukEzFW5f7zgpy+Hsq0EGw7YiU5hKIOBWgfleWV/5zboi0NyFOPWwbiS8VV
-	 tfkXUi04/jZIHcqCcvqnOeGLh3y5wFixdTtzKhHpNLO0NTw7LHsrUuGQ2bNYvZWcH6
-	 usGy3JnJJznZXIzypM/wR8qiCff4o7cdh+wkiZjccheZIEb8l+uiY2OHlqRCwUgKfk
-	 IpxIYrXoAFy9A==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 00CB517E1524;
-	Fri, 13 Sep 2024 16:14:11 +0200 (CEST)
-Date: Fri, 13 Sep 2024 16:14:07 +0200
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sumit Semwal
- <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
- <christian.koenig@amd.com>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v6 2/5] drm/panthor: record current and maximum device
- clock frequencies
-Message-ID: <20240913161407.0a30b68f@collabora.com>
-In-Reply-To: <20240913124857.389630-3-adrian.larumbe@collabora.com>
-References: <20240913124857.389630-1-adrian.larumbe@collabora.com>
-	<20240913124857.389630-3-adrian.larumbe@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1726236882; c=relaxed/simple;
+	bh=JGJr3hZsfcYd0hp9+8waZWWoezY4Y5ENA/y/vEDUmIk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oWRuti7N2t5FwfxOs4hCcSyDTgrERLYXpJdVXzrmeLSX8/4ItvV98vg2ErJec1CyB2FpRMBSEgvwruhSZ4iFQzb37JSF07MBmTzw2n9s+2Lgn70htmjplv+BZ0OLovPun9dRwevkjp/0mIQyYV/oaLjx9/dFCnt4z1unoIyPnSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=SvUs1FdG; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1726236878; x=1726496078;
+	bh=Er4z/TlLjMShQEFQyDcXytiAA2ZIFl92Wj8NPFuIWds=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=SvUs1FdG2LMmroV5i4IlyW3vnUHGLqWnjtzFbo1YjvTgS3ucNuyIP8D6s6cfmQSPY
+	 tt9HC6UPe8v5R8OTafzpE4cR3PWLfOtxyCv52ZiLE5Miub3sscFpblQksre1zhtH9T
+	 KWl/wiTyopye5H4iTRZGarTMt8F3gqylyKTfUhOc+/insjwTyerhOiyoCeSC5sApoc
+	 1i+093U/dZahXj5uj+lTfaWhs8LHTfud9hBP67LhrRNhMthRXKolSEj8SP9FwU0yU+
+	 5tZR553AF0AuUU1dLldQjppxjbwZGGvi4321DACrOyBsCcdiY1Ap8t1OgZYUEPmFDS
+	 RdnkN1+MhN7og==
+Date: Fri, 13 Sep 2024 14:14:29 +0000
+To: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Valentin Obst <kernel@valentinobst.de>
+Subject: Re: [PATCH v5 2/3] rust: sync: Introduce lock::Backend::Context
+Message-ID: <61f87861-db95-4524-99e9-b552c4cefd3e@proton.me>
+In-Reply-To: <20240912190540.53221-3-lyude@redhat.com>
+References: <20240912190540.53221-1-lyude@redhat.com> <20240912190540.53221-3-lyude@redhat.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 824055d6ec1214d8800ff2fe4fe19bad3e748fbe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, 13 Sep 2024 13:42:10 +0100
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
-
-> In order to support UM in calculating rates of GPU utilisation, the curre=
-nt
-> operating and maximum GPU clock frequencies must be recorded during device
-> initialisation, and also during OPP state transitions.
+On 12.09.24 21:04, Lyude Paul wrote:
+> Now that we've introduced an `IrqDisabled` token for marking contexts in
+> which IRQs are disabled, we need a way to be able to pass it to locks tha=
+t
+> require that IRQs are disabled. In order to continue using the
+> `lock::Backend` type instead of inventing our own thing, we accomplish th=
+is
+> by adding the associated Context type, along with a `lock_with()` functio=
+n
+> that can accept a Context when acquiring a lock. To allow current users o=
+f
+> context-less locks to keep using the normal `lock()` method, we take an
+> example from Wedson Almeida Filho's work and add a `where T<'a>: Default`
+> bound to `lock()` so that it can only be called on lock types where the
+> context is simply a placeholder value, then re-implement it through the n=
+ew
+> `lock_with()` function.
 >=20
-> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+>=20
+> ---
+>=20
+> V3:
+> * Use explicit lifetimes in lock_with() to ensure self and _context have
+>   the same lifetime (Benno)
+> * Use () for locks that don't need a Context instead of PhantomData (Benn=
+o)
+> V4:
+> * Fix typo (Dirk)
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
 
-Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+I don't think that you need your SOB twice.
 
 > ---
->  drivers/gpu/drm/panthor/panthor_devfreq.c | 18 +++++++++++++++++-
->  drivers/gpu/drm/panthor/panthor_device.h  |  6 ++++++
->  2 files changed, 23 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/panthor/panthor_devfreq.c b/drivers/gpu/drm/=
-panthor/panthor_devfreq.c
-> index c6d3c327cc24..9d0f891b9b53 100644
-> --- a/drivers/gpu/drm/panthor/panthor_devfreq.c
-> +++ b/drivers/gpu/drm/panthor/panthor_devfreq.c
-> @@ -62,14 +62,20 @@ static void panthor_devfreq_update_utilization(struct=
- panthor_devfreq *pdevfreq)
->  static int panthor_devfreq_target(struct device *dev, unsigned long *fre=
-q,
->  				  u32 flags)
->  {
-> +	struct panthor_device *ptdev =3D dev_get_drvdata(dev);
->  	struct dev_pm_opp *opp;
-> +	int err;
-> =20
->  	opp =3D devfreq_recommended_opp(dev, freq, flags);
->  	if (IS_ERR(opp))
->  		return PTR_ERR(opp);
->  	dev_pm_opp_put(opp);
-> =20
-> -	return dev_pm_opp_set_rate(dev, *freq);
-> +	err =3D dev_pm_opp_set_rate(dev, *freq);
-> +	if (!err)
-> +		ptdev->current_frequency =3D *freq;
-> +
-> +	return err;
->  }
-> =20
->  static void panthor_devfreq_reset(struct panthor_devfreq *pdevfreq)
-> @@ -130,6 +136,7 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
->  	struct panthor_devfreq *pdevfreq;
->  	struct dev_pm_opp *opp;
->  	unsigned long cur_freq;
-> +	unsigned long freq =3D ULONG_MAX;
->  	int ret;
-> =20
->  	pdevfreq =3D drmm_kzalloc(&ptdev->base, sizeof(*ptdev->devfreq), GFP_KE=
-RNEL);
-> @@ -161,6 +168,7 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
->  		return PTR_ERR(opp);
-> =20
->  	panthor_devfreq_profile.initial_freq =3D cur_freq;
-> +	ptdev->current_frequency =3D cur_freq;
-> =20
->  	/* Regulator coupling only takes care of synchronizing/balancing voltage
->  	 * updates, but the coupled regulator needs to be enabled manually.
-> @@ -204,6 +212,14 @@ int panthor_devfreq_init(struct panthor_device *ptde=
-v)
-> =20
->  	dev_pm_opp_put(opp);
-> =20
-> +	/* Find the fastest defined rate  */
-> +	opp =3D dev_pm_opp_find_freq_floor(dev, &freq);
-> +	if (IS_ERR(opp))
-> +		return PTR_ERR(opp);
-> +	ptdev->fast_rate =3D freq;
-> +
-> +	dev_pm_opp_put(opp);
-> +
->  	/*
->  	 * Setup default thresholds for the simple_ondemand governor.
->  	 * The values are chosen based on experiments.
-> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/p=
-anthor/panthor_device.h
-> index a48e30d0af30..2109905813e8 100644
-> --- a/drivers/gpu/drm/panthor/panthor_device.h
-> +++ b/drivers/gpu/drm/panthor/panthor_device.h
-> @@ -184,6 +184,12 @@ struct panthor_device {
-> =20
->  	/** @profile_mask: User-set profiling flags for job accounting. */
->  	u32 profile_mask;
-> +
-> +	/** @current_frequency: Device clock frequency at present. Set by DVFS*/
-> +	unsigned long current_frequency;
-> +
-> +	/** @fast_rate: Maximum device clock frequency. Set by DVFS */
-> +	unsigned long fast_rate;
->  };
-> =20
->  /**
+>  rust/kernel/sync/lock.rs          | 17 +++++++++++++++--
+>  rust/kernel/sync/lock/mutex.rs    |  1 +
+>  rust/kernel/sync/lock/spinlock.rs |  1 +
+>  3 files changed, 17 insertions(+), 2 deletions(-)
+
+This looks good:
+
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+
+---
+Cheers,
+Benno
 
 
