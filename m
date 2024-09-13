@@ -1,105 +1,91 @@
-Return-Path: <linux-kernel+bounces-328476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A40C39784C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:25:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B91C9784C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:25:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 346D3B273B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:25:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81FCA1C22D56
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463B541C6D;
-	Fri, 13 Sep 2024 15:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C377655893;
+	Fri, 13 Sep 2024 15:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="kcj+StYk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i10wbSEX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B18ADF60;
-	Fri, 13 Sep 2024 15:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2172EDF60;
+	Fri, 13 Sep 2024 15:24:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726241061; cv=none; b=uqlHgrgCV1uowwFilPhhdg3sfg4IevKLpFSZpsLJKk2JzgBO4K9xBYhruS9GqGcRiHATocNQyySRkel8oYWY1+KI6SdpeA/4CTN68VrYJtRU/49pVlvbY6phPTcq3OqUwVDqyjFhPTxLxN3QdAAnREYLOTNRJ7jFXtWC6XGVTME=
+	t=1726241073; cv=none; b=oHmu/b65PMfNy93WSTqL6o1AFubaCpu+uYV4f9G/wUXgrH67SD+5P6/X7alvfll+c4NjFv49Qfbxz5pW1b3spZJxCtSGbHNLKchZ9eL3ySSQ4gLtzWGtay2KJVx7vnRryeQwtyErew44POkCbJxmNx1AGqrpoVdESk5jRV+FGw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726241061; c=relaxed/simple;
-	bh=TMNMs4HtYJvT6NaxwWsmzpLmeJxFJfj5zW4IvRl5s9E=;
+	s=arc-20240116; t=1726241073; c=relaxed/simple;
+	bh=xlpLRV9hViJBcrtkalP94EioikNI5rImcEjIIh9vJeY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f027HhCi2CRdQ0NDzER4XqRyYxtFlQ9kQbm/wyElzKj+Dn0ubmfseZgNZiDbJLV8cfgzE6AAlRwvSPYIpTguiNP8e+B87LaC3xPpzJ31uyP4ZMgLyiYH7uRVxE7hy9tKTJngBgKbLsN+W+19KvwnGoCF+dYVqiMPpsRNUrY5vnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=kcj+StYk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AB2BC4CEC5;
-	Fri, 13 Sep 2024 15:24:19 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="kcj+StYk"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1726241058;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6kImf0YUfHWU4wjUSEueON/4b/Zh/8CSocVTzKpWd90=;
-	b=kcj+StYkkcTMCbpR8WtjaAX0JckGaUOvQ+4jkXuz8aU4z+bCwCM9mWtQcgBqxRaCoptbHt
-	kcJlLxMkXx2AaDRQE6wuFOnGIk6yzfjE9/YTHxCEcK1F8zjKAi5Re30iEbB+5gCjMpTG26
-	JQD+grpCggNPIMbZYrLOgqHq/x8TJuw=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id e581d9a2 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Fri, 13 Sep 2024 15:24:18 +0000 (UTC)
-Date: Fri, 13 Sep 2024 17:24:16 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Harald Freudenberger <freude@linux.ibm.com>,
-	Stefan Liebler <stli@linux.ibm.com>, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH 7/7] s390/vdso: Wire up getrandom() vdso implementation
-Message-ID: <ZuRZIPNBO1BMznUL@zx2c4.com>
-References: <20240913130544.2398678-1-hca@linux.ibm.com>
- <20240913130544.2398678-8-hca@linux.ibm.com>
- <ZuRWmJTWqmD92D8d@zx2c4.com>
- <ZuRYoVIrg28kBKqb@zx2c4.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kepuyt7fZ7UVKz+cC0jB6X6+2pXmiG2+W9I/L+cMSsiqO0r8/SPiw0rM8GUBMRDFDRDTpBlmguf5/B99gFeVw8daoAkJ9l/VOFqEihbZS11kvaohPvi+zxEdCZn+LDNUPHQe0rQXMVKggtNDewLIx/ILrgS/kRrkc/84J07UM+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i10wbSEX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCF77C4CEC0;
+	Fri, 13 Sep 2024 15:24:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726241072;
+	bh=xlpLRV9hViJBcrtkalP94EioikNI5rImcEjIIh9vJeY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i10wbSEXjicEZUx5Q3t5Ko31o/Rmll4l/df1dDvTnAuLmCzz1wPpYXc3xBV0n+b+Q
+	 o8JFVG+3OqAoXPG98QGh5K6y9mYYLIKNF70r9PPQTCT9NuXge1HsFkxJmkyVG7+kx4
+	 e3K/eS7MCvCIwBTePFYz7RPka4apRYx9aRtyVarQJr2sg+013QPwJvR8pCL0PnB0QQ
+	 nQb1L2KNZPOlCNDhCWbQ9QLmmhW2R+zznvLHh45MPtjNy8JhmLJNqETNOPX7PVaJwq
+	 FoMYYVTFOPJ4KNWsREtZcg9T4cfmuHp0CkUXXBtxtfHFvW/RKH+EQIavr68RkEiEnK
+	 Ydq59DcQXmh3g==
+Date: Fri, 13 Sep 2024 09:24:29 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Nirmal Patel <nirmal.patel@linux.intel.com>,
+	jonathan.derrick@linux.dev, acelan.kao@canonical.com,
+	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kaihengfeng@gmail.com
+Subject: Re: [PATCH] PCI: vmd: Delay interrupt handling on MTL VMD controller
+Message-ID: <ZuRZLRFrCjXlrd4w@kbusch-mbp>
+References: <20240903025544.286223-1-kai.heng.feng@canonical.com>
+ <20240903042852.v7ootuenihi5wjpn@thinkpad>
+ <CAAd53p4EWEuu-V5hvOHtKZQxCJNf94+FOJT+_ryu0s2RpB1o-Q@mail.gmail.com>
+ <ZtciXnbQJ88hjfDk@kbusch-mbp>
+ <CAAd53p4cyOvhkorHBkt227_KKcCoKZJ+SM13n_97fmTTq_HLuQ@mail.gmail.com>
+ <20240904062219.x7kft2l3gq4qsojc@thinkpad>
+ <CAAd53p5ox-CiNd6nHb4ogL-K2wr+dNYBtRxiw8E6jf7HgLsH-A@mail.gmail.com>
+ <20240912104547.00005865@linux.intel.com>
+ <CAAd53p698eNQdZqPFHCmpPQ7pkDoyT4_C9ERXJ4X=V_8QFO8pQ@mail.gmail.com>
+ <20240913111142.4cgrmirofhhgrbqm@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZuRYoVIrg28kBKqb@zx2c4.com>
+In-Reply-To: <20240913111142.4cgrmirofhhgrbqm@thinkpad>
 
-On Fri, Sep 13, 2024 at 05:22:09PM +0200, Jason A. Donenfeld wrote:
-> On Fri, Sep 13, 2024 at 05:13:28PM +0200, Jason A. Donenfeld wrote:
-> > On Fri, Sep 13, 2024 at 03:05:43PM +0200, Heiko Carstens wrote:
-> > > The vdso testcases vdso_test_getrandom and vdso_test_chacha pass.
-> > 
-> > I'm trying to cross compile this but I'm getting:
-> > 
-> >   CC       vdso_test_chacha
-> > /home/zx2c4/Projects/random-linux/tools/testing/selftests/../../../tools/arch/s390/vdso/vgetrandom-chacha.S: Assembler messages:
-> > /home/zx2c4/Projects/random-linux/tools/testing/selftests/../../../tools/arch/s390/vdso/vgetrandom-chacha.S:147: Error: Unrecognized opcode: `alsih'
-> > 
-> > Any idea what's up?
+On Fri, Sep 13, 2024 at 04:41:42PM +0530, Manivannan Sadhasivam wrote:
+> I'm not able to understand the bug properly. The erratum indicates that the MSI
+> from device reaches the VMD before other writes to the registers. So this is an
+> ordering issue as MSI takes precedence over other writes from the device.
 > 
-> Looks like I needed `-march=arch9`. I can potentially rebuild my
-> toolchains to do this by default, though, if that's a normal thing to
-> have and this is just my toolchain being crappy. Or, if it's not a
-> normal thing to have, do we need to add it to the selftests Makefile?
+> So the workaround is to read the device register in the MSI handler to make sure
+> the previous writes from the device are flushed. IIUC, once the MSI reaches the
+> VMD, it will trigger the IRQ handler in the NVMe driver and in the handler, CQE
+> status register is read first up. This flow matches with the workaround
+> suggested.
+> 
+> Is any write being performed to the NVMe device before reading any register in
+> the MSI handler? Or the current CQE read is not able to satisfy the workaround?
+> Please clarify.
 
-I can squash this into the commit, for example:
-
-diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
-index af9cedbf5357..66a825278b36 100644
---- a/tools/testing/selftests/vDSO/Makefile
-+++ b/tools/testing/selftests/vDSO/Makefile
-@@ -43,3 +43,6 @@ $(OUTPUT)/vdso_test_chacha: CFLAGS += -idirafter $(top_srcdir)/tools/include \
-                                       -idirafter $(top_srcdir)/arch/$(SRCARCH)/include \
-                                       -idirafter $(top_srcdir)/include \
-                                       -D__ASSEMBLY__ -Wa,--noexecstack
-+ifeq ($(ARCH),s390)
-+$(OUTPUT)/vdso_test_chacha: CFLAGS += -march=arch9
-+endif
-
+The CQE is not a device register. It exists in host memory, so reading
+that from the driver isn't going to flush writes from IO devices.
 
