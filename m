@@ -1,113 +1,149 @@
-Return-Path: <linux-kernel+bounces-327558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 926F3977797
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:55:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE3E697779E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:56:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BAF8286EED
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:55:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 819BC1F256F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ABFB1BC078;
-	Fri, 13 Sep 2024 03:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBD61D12EA;
+	Fri, 13 Sep 2024 03:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DpB5Svfp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Nir4rlgq"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CAF21AED49;
-	Fri, 13 Sep 2024 03:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014C83716D;
+	Fri, 13 Sep 2024 03:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726199702; cv=none; b=XgbN6Ei5ptuGtN6/tJWCPwe2rdAN8nCw18wRgpU9wJzKqxYem6nXrCFU9+YJnAYiJunW+I8DnbZP6YrlLuUFxbQ5t/MBUyj/54cq0k43m64rE2Q/0YtA0QZ07+zGmHgLxpw43tl1Iyad6wTvQzinAgQmx4HZhSBq91Wpk7toFnE=
+	t=1726199759; cv=none; b=Ybkw3R+xB+oPCVKq6G0IQ0Zbdul3WKNBiIij7ehLLwaYxPls6qU1WSdydTIx2zFrKDoPOaA7HPMkch+4R1PVsL4I3Eg0CuLbgu4vbpbRUXMOhhXcSXsu0LNXqRKYVepBVpSELdniB5lBQ2UI62tzfrRLbo4hhZ4vp1fZMIX8jxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726199702; c=relaxed/simple;
-	bh=x+iVIu+R8bVjJ0KOFX55GeWTxdccM9M3Q2qzG1lmGpM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tOG2gadAK0ZZv7+upeH+zh0yblzHFMNqm3i8Ut7yRpWzH3aEsLJYsyjfjLd/bcp11SsGNj4Idgu73Vggpr6RzHrhWCVRhgVh/hDJ3zxKLY+p1XJFDgdv/BDGIA1S6iRQo/OmpKTx10FjYjvoXee9oUS9n5hMITeZ/H7GfzLEUx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DpB5Svfp; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726199701; x=1757735701;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=x+iVIu+R8bVjJ0KOFX55GeWTxdccM9M3Q2qzG1lmGpM=;
-  b=DpB5SvfpeVwLoohWIc7HyC9cSHzEnq4P78FrimfLnimy5yq8Hvau8UEN
-   xpNUfk3A73JRsiJljTOFuODogXyRBJ954cCY/lPSh3+7R6ldTeiZPNb+q
-   u37AkRVuPlAZl3Q3VX7PT9Mdv5wAcq9qYfBbLNmtCZKZBsG0tp2jk2ChR
-   L6AtgCt7T56rHW8b7y0VOz4O2cNSsBV7dc+9yuTAOnig4UjAOV5bdE49M
-   0ZSvn9CqK1aeyXobPeY2BQ0xQT43NbIcc/mtlN+US+Pz0gYBj++9XPT9m
-   vp+GpZazLeSsQUadE4Y3OcVgXpym3c9VGpjsf+4XH3J5ge82pE+n/wVhQ
-   w==;
-X-CSE-ConnectionGUID: kSLe/KxATPGRE9FOl98g8Q==
-X-CSE-MsgGUID: Ayihkq+YS32EVP+ZoBoPUA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="36466598"
-X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
-   d="scan'208";a="36466598"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 20:55:00 -0700
-X-CSE-ConnectionGUID: CkpM+50KTxuronlFsPj+Iw==
-X-CSE-MsgGUID: CS2zJcFbTvaAXCLEXysEZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
-   d="scan'208";a="68698681"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.224.38]) ([10.124.224.38])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 20:54:59 -0700
-Message-ID: <36289f8c-85e1-4bb9-aff3-648ead059cd0@intel.com>
-Date: Fri, 13 Sep 2024 11:54:55 +0800
+	s=arc-20240116; t=1726199759; c=relaxed/simple;
+	bh=XEf+xBWqSZosQFjsRQCHe7OPs4kOLwcwmr/7EEWmscU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=d+L4CtOeyW65BdqEQDE/V+0ZA0KLsBOGbmJ/SLCcVkef+HBCh7yJ+zYbavycs0u+0KI4kj/CxhSXH7fHEqmC27NiI8sH8+WZ3eFQYtcZ5uYkT8IqW/4IalStELqJImb422Btf9Tkhry3ZWZBuPf4myQJvAigXQWQ3vBo6dYKGNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Nir4rlgq; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726199753;
+	bh=SVVUXGwkJdQgfUdfteDebc7NB12XpEgE4fZlbLLMeoI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Nir4rlgqnHFqA8NozeRB0Iumduyt4/OkXNFuVSLnUksJcV5SWfZZW/a/wYvbYV3cZ
+	 RXX3l/ehTFfmwKBPi0mpxFPl+kpUtDjlX0SdAALD1jIL/UOndfUskYXak4s0akFdtn
+	 T7wqpocXR5lwYSIhHV7SmXO+384RsSqOXbJu6oCkWagBDWdIiR42b3HAb0GCaTj4iY
+	 JVZJWJgLK3yu9PcYayaA+V5QfXO0/2oYieyuPuHklTczZZZQ2N6ImkIQM8cNNR/EUD
+	 nF1pwAOShdFMMb6k8jcCRSOEPGQB7i+YUKdViIxkErdVjUWMeX1wJqG1CanHJcWlvc
+	 v5xGtUTDuXz9w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X4gT41v80z4wy9;
+	Fri, 13 Sep 2024 13:55:52 +1000 (AEST)
+Date: Fri, 13 Sep 2024 13:55:51 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov
+ <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, David Chinner
+ <david@fromorbit.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Al Viro
+ <viro@zeniv.linux.org.uk>, <linux-xfs@vger.kernel.org>, bpf
+ <bpf@vger.kernel.org>, Networking <netdev@vger.kernel.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the bpf-next tree
+Message-ID: <20240913135551.4156251c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 25/25] KVM: x86: Add CPUID bits missing from
- KVM_GET_SUPPORTED_CPUID
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, kvm@vger.kernel.org,
- kai.huang@intel.com, isaku.yamahata@gmail.com,
- tony.lindgren@linux.intel.com, linux-kernel@vger.kernel.org
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-26-rick.p.edgecombe@intel.com>
- <05cf3e20-6508-48c3-9e4c-9f2a2a719012@redhat.com>
- <cd236026-0bc9-424c-8d49-6bdc9daf5743@intel.com>
- <CABgObfbyd-a_bD-3fKmF3jVgrTiCDa3SHmrmugRji8BB-vs5GA@mail.gmail.com>
- <df05e4fe-a50b-49a8-9ea0-2077cb061c44@intel.com>
- <CABgObfZ5ssWK=Beu7t+7RqyZGMiY2zbmAKPy_Sk0URDZ9zbhJA@mail.gmail.com>
- <ZuMZ2u937xQzeA-v@google.com>
- <CABgObfZV3-xRSALfS6syL3pzdMoep82OjWT4m7=4fLRaiWp=XQ@mail.gmail.com>
- <ZuM12EFbOXmpHHVQ@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <ZuM12EFbOXmpHHVQ@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/rXB2FGQB1LHlS=gzzOd7Q/.";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 9/13/2024 2:41 AM, Sean Christopherson wrote:
->>> CET might be a bad example because it looks like it's controlled by TDCS.XFAM, but
->>> presumably there are other CPUID-based features that would actively enable some
->>> feature for a TDX VM.
->> XFAM is controlled by userspace though, not KVM, so we've got no
->> control on that either.
-> I assume it's plain text though?  I.e. whatever ioctl() sets TDCS.XFAM can be
-> rejected by KVM if it attempts to enable unsupported features?
+--Sig_/rXB2FGQB1LHlS=gzzOd7Q/.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-yes. XFAM is validated by KVM actually in this series.
+Hi all,
 
-KVM reports supported_xfam via KVM_TDX_CAPABILITIES and userspace sets 
-XFAM via ioctl(KVM_TDX_VM_INIT). If userspace sets any bits beyond the 
-supported_xfam, KVM returns -EINVAL.
+After merging the bpf-next tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
-The same for attributes.
+fs/xfs/xfs_exchrange.c: In function 'xfs_ioc_commit_range':
+fs/xfs/xfs_exchrange.c:938:19: error: 'struct fd' has no member named 'file'
+  938 |         if (!file1.file)
+      |                   ^
+fs/xfs/xfs_exchrange.c:940:26: error: 'struct fd' has no member named 'file'
+  940 |         fxr.file1 =3D file1.file;
+      |                          ^
 
-> I don't expect that we'll want KVM to gatekeep many, if any features, but I do
-> think we should require explicit enabling in KVM whenever possible, even if the
-> enabling is boring and largely ceremonial.
-+1
+Caused by commit
+
+  1da91ea87aef ("introduce fd_file(), convert all accessors to it.")
+
+interacting with commit
+
+  398597c3ef7f ("xfs: introduce new file range commit ioctls")
+
+I have applied the following patch for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 13 Sep 2024 13:53:35 +1000
+Subject: [PATCH] fix up 3 for "introduce fd_file(), convert all accessors to
+ it."
+
+interacting with commit "xfs: introduce new file range commit ioctls"
+from the xfs tree.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ fs/xfs/xfs_exchrange.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/xfs/xfs_exchrange.c b/fs/xfs/xfs_exchrange.c
+index 39fe02a8deac..75cb53f090d1 100644
+--- a/fs/xfs/xfs_exchrange.c
++++ b/fs/xfs/xfs_exchrange.c
+@@ -935,9 +935,9 @@ xfs_ioc_commit_range(
+ 	fxr.file2_ctime.tv_nsec	=3D kern_f->file2_ctime_nsec;
+=20
+ 	file1 =3D fdget(args.file1_fd);
+-	if (!file1.file)
++	if (fd_empty(file1))
+ 		return -EBADF;
+-	fxr.file1 =3D file1.file;
++	fxr.file1 =3D fd_file(file1);
+=20
+ 	error =3D xfs_exchange_range(&fxr);
+ 	fdput(file1);
+--=20
+2.45.2
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/rXB2FGQB1LHlS=gzzOd7Q/.
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbjt8cACgkQAVBC80lX
+0GyDNAf+LQQb+QL9TMZKMLzFxlsmKmHfGwNU9a4yhYswnkWHszjKPEzU8wZlkjcK
+MUk0qywdEGYTO8Qvk9d9/ZJLtvUVp5eLS6mH4637OGAB5JrgPF3rHFujLaMNQXmg
+6lRXcz2YL1GGwPr/RZjey7AcBWz93hUEbKccCnJ8Sm1wGNwDOmw4Rab/A/ybHrZh
+a4omj+z+MnjtckezzzwTwbmVmmD7mKOf6RZC242PF1hPjvMV//wYJ9B/Odw/nU+Q
+OVtCAtFidN1hR1avssCcsPqnmsRzrm1o1E8WydakC++DPqld3S/AU0rhAI/ehORG
+wxJgS9CDBGYAytFOombExKjZYAfp3w==
+=wx01
+-----END PGP SIGNATURE-----
+
+--Sig_/rXB2FGQB1LHlS=gzzOd7Q/.--
 
