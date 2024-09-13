@@ -1,124 +1,90 @@
-Return-Path: <linux-kernel+bounces-327708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4061977A1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:46:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17D6D977A39
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67681288FC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:46:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8AB71F25FAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7671D54F4;
-	Fri, 13 Sep 2024 07:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MoWxUrnX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E1D1D6C4F;
+	Fri, 13 Sep 2024 07:43:56 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161281BDAA7;
-	Fri, 13 Sep 2024 07:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060C31D67A1;
+	Fri, 13 Sep 2024 07:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726213409; cv=none; b=RKk0DC15qV7M0mtJKUukJctl5pENgB0m38roMrqY69oy8H5w+T8/LMJ7zgoDZ9gkF1NEvbV2C5J3GbWHXsV7zENqoq1wx4ctBWeRT/8gt0xWFPM1nVxIZs1ydDSO8p/RRB1qNJXQtdf35mJ/Qc4LvwOucjdNRBCdUPkofH3RokY=
+	t=1726213436; cv=none; b=PPmYxpgtnlvAqHwb95bc8j+VPFS1SMPny2Ps+ayxBJPrky8KUAXGOadcPNjqAgHMkpxm4PXikOoiWFFyNwfcMOLvcTEEc5LIHpVo845e3tXluKKi3rxgrunZqRvwMBZIHLrFxQFReq3o0XOCruxSa0238ieeZPPPo6NskxbcmcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726213409; c=relaxed/simple;
-	bh=kwzdX+8F7dVZ3+T9RXxURmOh+xGEJSRS6RIzA7Wna7U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FrANwNdP5P250Il4TU1t6ecWJaEzgbg6HCg9aXrBs7L9r4OKDVYrLPd+fFaJoYG4GZwytP+RaZXTTMwbNWmj8gIgOpSkT9K3T86ZSvcNHubG8gGLbpZrLz4oA/tWPviyTu/SOfuDLF4p0kIGRQiyWoMOc2+vvvDklYeprpQYGgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MoWxUrnX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF9C7C4CECC;
-	Fri, 13 Sep 2024 07:43:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726213408;
-	bh=kwzdX+8F7dVZ3+T9RXxURmOh+xGEJSRS6RIzA7Wna7U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MoWxUrnXrzn3U/spGO0uvUs+CynPY+zyG2UkU7vHSUI2KEEGgvWahTxE3NFeFRQjv
-	 PBQs45DqyDoKMRP1n4XXy9xmCcnfE/VJl2qqx2MwigV7ub98MkjnBEa2/Y+3d1zZeo
-	 TDLDTKD5A8njD2PwM6z/D5Fcd38fG9rlSsmuscS1//LxwqZ4gq0w/1+xJuvjCcozPR
-	 a3wMyXnq6+Mn3UxkRE/v/hnnZUsRFHa4arKLYxCaPN2qKyRzzvpzem8Ojfe/a+sEKg
-	 bK/LrB5D786DwT2W6dKKpUYuDnml644KO/XpFD6mpqiVoLp/pwk0KDBb8bpz1e6cIY
-	 0JOTJTneAhpqA==
-Date: Fri, 13 Sep 2024 08:43:24 +0100
-From: Simon Horman <horms@kernel.org>
-To: Justin Stitt <justinstitt@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH] caif: replace deprecated strncpy with strscpy_pad
-Message-ID: <20240913074324.GA1132019@kernel.org>
-References: <20240909-strncpy-net-caif-chnl_net-c-v1-1-438eb870c155@google.com>
- <20240910093751.GA572255@kernel.org>
- <CAFhGd8qQ_e_rh1xQqAnaAZmA7R+ftRGjprxGp+njoqg_FGMCSw@mail.gmail.com>
- <CAFhGd8r2PO9qLej9okVpwcfL2Kz5oCahdnzEVRpCJVm+b5g-Bw@mail.gmail.com>
+	s=arc-20240116; t=1726213436; c=relaxed/simple;
+	bh=mWSB1XMDhHeGBYjyYbgZbOwSOjdzslXPWRy2WhfYvXQ=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Yn52X4V1NzV9gjvSlWtauSva2xE01dKMxAqQUGzKuEWbTA2sU64BBYbzhs7n3HuusNJrWHpHHoeoUfpfVCl7QrqwfUrjx6vmyBt1JtzmwaYN9XDmIWYzOXTYwgleSjOlRvAwICR+33FQxGYB/wStxK6gWRkqDx2xKEvD0Bn9t5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Fri, 13 Sep
+ 2024 15:43:26 +0800
+Received: from mail.aspeedtech.com (192.168.10.10) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
+ Transport; Fri, 13 Sep 2024 15:43:26 +0800
+From: Billy Tsai <billy_tsai@aspeedtech.com>
+To: <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <joel@jms.id.au>,
+	<andrew@codeconstruct.com.au>, <linux-gpio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+	<BMC-SW@aspeedtech.com>, <Peter.Yin@quantatw.com>
+Subject: [PATCH v3 6/6] gpio: aspeed: Add the flush write to ensure the write complete.
+Date: Fri, 13 Sep 2024 15:43:25 +0800
+Message-ID: <20240913074325.239390-7-billy_tsai@aspeedtech.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240913074325.239390-1-billy_tsai@aspeedtech.com>
+References: <20240913074325.239390-1-billy_tsai@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="yes"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFhGd8r2PO9qLej9okVpwcfL2Kz5oCahdnzEVRpCJVm+b5g-Bw@mail.gmail.com>
 
-On Thu, Sep 12, 2024 at 01:47:22PM -0700, Justin Stitt wrote:
-> On Thu, Sep 12, 2024 at 1:43 PM Justin Stitt <justinstitt@google.com> wrote:
-> >
-> > Hi,
-> >
-> > On Tue, Sep 10, 2024 at 2:37 AM Simon Horman <horms@kernel.org> wrote:
-> > >
-> > > On Mon, Sep 09, 2024 at 04:39:28PM -0700, Justin Stitt wrote:
-> > > > strncpy() is deprecated for use on NUL-terminated destination strings [1] and
-> > > > as such we should prefer more robust and less ambiguous string interfaces.
-> > > >
-> > > > Towards the goal of [2], replace strncpy() with an alternative that
-> > > > guarantees NUL-termination and NUL-padding for the destination buffer.
-> > >
-> > > Hi Justin,
-> > >
-> > > I am curious to know why the _pad variant was chosen.
-> >
-> > I chose the _pad variant as it matches the behavior of strncpy in this
-> > context, ensuring minimal functional change. I think the point you're
-> > trying to get at is that the net_device should be zero allocated to
-> > begin with -- rendering all thus NUL-padding superfluous. I have some
-> > questions out of curiosity: 1) do all control paths leading here
-> > zero-allocate the net_device struct? and 2) does it matter that this
-> > private data be NUL-padded (I assume not).
-> >
-> > With all that being said, I'd be happy to send a v2 using the regular
-> > strscpy variant if needed.
-> 
-> I just saw [1] so let's go with that, obviously.
+Performing a dummy read ensures that the register write operation is fully
+completed, mitigating any potential bus delays that could otherwise impact
+the frequency of bitbang usage. E.g., if the JTAG application uses GPIO to
+control the JTAG pins (TCK, TMS, TDI, TDO, and TRST), and the application
+sets the TCK clock to 1 MHz, the GPIO’s high/low transitions will rely on
+a delay function to ensure the clock frequency does not exceed 1 MHz.
+However, this can lead to rapid toggling of the GPIO because the write
+operation is POSTed and does not wait for a bus acknowledgment.
 
-Hi Justin,
+Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+---
+ drivers/gpio/gpio-aspeed.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Yes, right, let's go with that.
+diff --git a/drivers/gpio/gpio-aspeed.c b/drivers/gpio/gpio-aspeed.c
+index d322c03481a8..d1e61ee48da2 100644
+--- a/drivers/gpio/gpio-aspeed.c
++++ b/drivers/gpio/gpio-aspeed.c
+@@ -406,6 +406,8 @@ static void __aspeed_gpio_set(struct gpio_chip *gc, unsigned int offset,
+ 	gpio->dcache[GPIO_BANK(offset)] = reg;
+ 
+ 	gpio->config->llops->reg_bits_set(gpio, offset, reg_val, val);
++	// flush write
++	gpio->config->llops->reg_bits_read(gpio, offset, reg_val);
+ }
+ 
+ static void aspeed_gpio_set(struct gpio_chip *gc, unsigned int offset,
+-- 
+2.25.1
 
-But as I asked some questions, and you provided your own, let me see if I
-can respond appropriately as although the answers are specific to this
-patch the questions seem more generally applicable.
-
-1) It seems to me that the priv data is allocated by alloc_netdev_mqs()
-   which makes the allocation using kvzalloc(). So I believe the answer
-   is that the allocation of name is zeroed.
-
-   My analysis is based on ops->priv_size being passed
-   to rtnl_create_link() by rtnl_create_link().
-
-   And ops being registered using rtnl_link_register()
-   by chnl_init_module().
-
-   Of course, I could be missing something here.
-
-2) Regarding a requirement to NUL-pad. FWIIW, this is what I had in mind
-   when I asked my question. But perhaps given 1) it is moot.
-
-   In any event we now know, thanks to Jakub's investigation [1],
-   that the answer must be no. For the trivial reason that name isn't used.
 
