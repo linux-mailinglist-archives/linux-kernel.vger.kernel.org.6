@@ -1,207 +1,179 @@
-Return-Path: <linux-kernel+bounces-327446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A633797761E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:32:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26C0B977624
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:36:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31FED1F25051
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:32:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D979628676F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:36:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106793C17;
-	Fri, 13 Sep 2024 00:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2512333EC;
+	Fri, 13 Sep 2024 00:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="S8wURHE9";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ItPVvJwA"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b="ENsJ49sY"
+Received: from sender4-of-o51.zoho.com (sender4-of-o51.zoho.com [136.143.188.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2CD31373;
-	Fri, 13 Sep 2024 00:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2308410F7;
+	Fri, 13 Sep 2024 00:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.51
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726187536; cv=fail; b=QPMgYyG6vLR314kW61qcOPoDWJ7keE+P+TekVurFkimJrtBeoci8neQkebnn7tRlZYHBBmHIEo1cfDkazomqRxnLMUcx8mgeZkxvIApbT3xRejJEBKIzDNcCtkuY0H3vej6TjVF3lKTMUmxKXqxXwYpJp4MQXuu7YTKOaAijxDU=
+	t=1726187757; cv=pass; b=KulBmDvIUYPDFVvWlIh9JSnkO9+iWru/k5+FH8ex1wlzhi+dCXIgsM2ru+khLjmN7+JX5HZ+pSmNAN+TTjBUImLqrySKsdeyxQbLJd/ig7xFYijdXDe2ErE2XT86ZzXo5aai1mFoMnKWW6zx8J96YHO00U1NP03QJ6d1Q8uHnjI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726187536; c=relaxed/simple;
-	bh=XQc+ll6usGvea9lWEL194UcLMfPzm9rKWwjdfL+6WTo=;
-	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
-	 Content-Type:MIME-Version; b=c0wG0JWq6YDjUOaUWnjGcyf5+iFD7+FFsnyQ7Co1KHqBmlrQQ2oCXrjhgJ3CnEwXOrQoyjhx3NpRolhC4IOBxPZoiX6nxENIkYSUuUrrUfV7ZyoGMp8ny10tdYpP5hk0mjQYLwErXvJTiEVB6TQKChQ123QQXNDPt6sXaDAq5t8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=S8wURHE9; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ItPVvJwA; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48CMBbrL010076;
-	Fri, 13 Sep 2024 00:32:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to
-	:cc:subject:from:in-reply-to:message-id:references:date
-	:content-type:mime-version; s=corp-2023-11-20; bh=K1Isv6fO6R+iUC
-	Sxthwdwki5Fg3GM0Eu7k123LFzGhM=; b=S8wURHE9UWjYJFavOC/Rf5GGxHhlak
-	/uD+s3q4S+dVkBfMfSiFl/ipq+Bc0FQNgcFyVvRZfeWLpOBAL5Aw2GPaoIp9ZjfO
-	LnhQG++Ed4JrGwPnOnupYaQguEyvH4/PU1XCoAGGWHeR+XIIsx8kYTijn17+56fa
-	OJ5WetZ+jCdd9XwRij6T6f44/deuEgrPSG2sD8CVY5m+aToAkdiRpKe/6xrJh6zy
-	65ZBvXIuaCZHSQC0TI+g06dtIn/oHs7zRfExgntMGTbxYUjsKei90oLwznX26z6E
-	bj9ofCWawnZSu6sia8v3wmF6znCswXY0CeOLjkDRxf2MRQzypL4G5EOQ==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41gdrbc85j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Sep 2024 00:32:10 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48D0ANaG033561;
-	Fri, 13 Sep 2024 00:32:09 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2172.outbound.protection.outlook.com [104.47.56.172])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41gd9c0e45-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Sep 2024 00:32:09 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wS+ZinxOFmucBzUoXxNKzhxBlKYmvPC3pAwkXDHXgfHkNqlbYCj//3GH5hTNv7YpuZLheAdG18IXP9mE3FIxWevwS4ngH0RJRm5T2BDaixNYwiMpSl9YkfboRPuXidJW2D+uqxQiZBVrJ+vpyfng9tb/qN9q4fGrGjARviemdEvPZo2wAbHpDw6CiDVlx2Uoegl8Qv9C7kHeIDxi9P6mf2Z1rGbLNdmNZJTyvawtb6E+ccLUHuGCIW4tjTXApEe/3G5TkvBPXCm3YwyovQcMeIS4C7t6CKIvt6hRIP+anOLgF/mmJ+G0Zx0hjAKpC572AgmnEIVjosvwdhGDnEvmIw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=K1Isv6fO6R+iUCSxthwdwki5Fg3GM0Eu7k123LFzGhM=;
- b=f6ci3lFyIltS1BwTChHooRjvkQZpF67NCfTV7Y3uDqSwK48BoAzrcWjXbDn81xSeY/CVONxwvycCCZDsVvqiUdVKtVRS59bLzWpNCcHB5iH7g9TwFNxeODK3I1mN8NhJMrcSYoknNif0PTOHufn70SCyzfwat+yqbQH+Odnx9SVBvS4RFl8g2VrUsxqiuPgxLnyzWxwCAXaXP4GwpKVt0fgiMjTznF3O8EwsGYAPso1GnfJP6i/OB1z3bx0znR4CWLpHq6KRBto4t5Hdptqc2ejmwpChnjfuzuAJTCmY5ZdzHwmSE/rfC9p7ClKNNbdRLhDoCDBEKcYn2PR0f9iHwg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=K1Isv6fO6R+iUCSxthwdwki5Fg3GM0Eu7k123LFzGhM=;
- b=ItPVvJwAD1Tev9trxIVCeHqR24klX081/kboKbIxecxkecJwkZF/D+sBmD5FAPHE22o3QPniImO4+FzuaXGfG/TbUWC4VoaLGtygI+AAVzvUnOCgcPcntLs34v6bRE9Wmlxa2jdpLVBTqHJmH1LZTZm355gP4SGxjvRIf+ir1Ko=
-Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
- by CH3PR10MB7161.namprd10.prod.outlook.com (2603:10b6:610:12b::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.8; Fri, 13 Sep
- 2024 00:32:07 +0000
-Received: from PH0PR10MB4759.namprd10.prod.outlook.com
- ([fe80::5c74:6a24:843e:e8f7]) by PH0PR10MB4759.namprd10.prod.outlook.com
- ([fe80::5c74:6a24:843e:e8f7%3]) with mapi id 15.20.7962.016; Fri, 13 Sep 2024
- 00:32:07 +0000
-To: Manish Pandey <quic_mapa@quicinc.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        "James E.J.
- Bottomley" <James.Bottomley@HansenPartnership.com>,
-        "Martin K. Petersen"
- <martin.petersen@oracle.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_nitirawa@quicinc.com>,
-        <quic_bhaskarv@quicinc.com>, <quic_narepall@quicinc.com>,
-        <quic_rampraka@quicinc.com>, <quic_cang@quicinc.com>,
-        <quic_nguyenb@quicinc.com>, <stable@vger.kernel.org>
-Subject: Re: [PATCH V6] scsi: ufs: qcom: update MODE_MAX cfg_bw value
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-In-Reply-To: <20240903063709.4335-1-quic_mapa@quicinc.com> (Manish Pandey's
-	message of "Tue, 3 Sep 2024 12:07:09 +0530")
-Organization: Oracle Corporation
-Message-ID: <yq1a5gcxukh.fsf@ca-mkp.ca.oracle.com>
-References: <20240903063709.4335-1-quic_mapa@quicinc.com>
-Date: Thu, 12 Sep 2024 20:32:05 -0400
-Content-Type: text/plain
-X-ClientProxiedBy: MN2PR18CA0008.namprd18.prod.outlook.com
- (2603:10b6:208:23c::13) To PH0PR10MB4759.namprd10.prod.outlook.com
- (2603:10b6:510:3d::12)
+	s=arc-20240116; t=1726187757; c=relaxed/simple;
+	bh=ZQqJrDgJY1iWaRecpkr7fz44BBb5Dlfw1AQRQgPg2hQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=FC1j6id+k4Ka9kWjwgXkmQeUqNJuWA9+9/1DAUW1XX9z9n66qgJqG90cn/Y5sGW7NBEW6oGNWxjmShXUOkGYGF/JP7+lqJXax9vYKhVQJUbQ4ovYrrdPmixJrTIyG3tvN3/tw4woutdjdeYiiiOGTnwXy65elUApCRHFKYMmQL8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com; spf=pass smtp.mailfrom=apertussolutions.com; dkim=pass (1024-bit key) header.d=apertussolutions.com header.i=dpsmith@apertussolutions.com header.b=ENsJ49sY; arc=pass smtp.client-ip=136.143.188.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=apertussolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=apertussolutions.com
+ARC-Seal: i=1; a=rsa-sha256; t=1726187681; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=TQZZoO1GdRMjOMaE+32jcQqZlBE73nFdLQLrlJHHDwWHrSfD9G37df/k8dYYievD5ey3GnDo4v/Torjz4Ea3uaaA4pEISHQTBYWhK6RFiJDXwOyaR+Z5D4O8HOSYtc9eBoQW7I9KYEL6pozwsRcu5nCT+kPD+JpbQg0hMPRorIc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1726187681; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=T7p1rwwLWDZqzIO3KBZ6In4AI2NiE3aqshFaj7LI/og=; 
+	b=aJeQ6mVd6eTC96nOK3A63MwDgR17ENPkwQ5IGnCiFEQb/5PrXVw3day5oh/tQhHSKA5pg2T68lu3LNAZ/9eUBAqQs63Cklp62sbpfLON6Z27CJn6Sp9uy0KJ+Jv6HbM43ls6ROmbRzIe7Ai6ms7jxnHg7Op9X6nZaD6qiQcB0vg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=apertussolutions.com;
+	spf=pass  smtp.mailfrom=dpsmith@apertussolutions.com;
+	dmarc=pass header.from=<dpsmith@apertussolutions.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726187681;
+	s=zoho; d=apertussolutions.com; i=dpsmith@apertussolutions.com;
+	h=Message-ID:Date:Date:MIME-Version:From:From:Subject:Subject:To:To:Cc:Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=T7p1rwwLWDZqzIO3KBZ6In4AI2NiE3aqshFaj7LI/og=;
+	b=ENsJ49sYMCyT34DFM1kNtaKzqa3g/gukXlVy0JpcXNWf9vA5ZxzXwD1YpEeUrVNU
+	Qw0BcfCtgT3WRPi8PdBCfUIMhG4jcb5wLNncyYgsNPbG5B3OT1aeO8tCHORURMWFpti
+	YHn/c9fTDv3V09tC5K+Yb8eBRUyr4hO40Eyu1rHw=
+Received: by mx.zohomail.com with SMTPS id 1726187680192286.84244920487254;
+	Thu, 12 Sep 2024 17:34:40 -0700 (PDT)
+Message-ID: <8a0b59a4-a5a2-42ae-bc1c-1ddc8f2aad16@apertussolutions.com>
+Date: Thu, 12 Sep 2024 20:34:31 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB4759:EE_|CH3PR10MB7161:EE_
-X-MS-Office365-Filtering-Correlation-Id: 856231f0-85f8-40d1-a3b6-08dcd38b7f6b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?c3c1609O8T3XQ5/WPuab5FMmVtdYWInnugy7WhhMgjE5rikO/dJ48phee5JJ?=
- =?us-ascii?Q?xIkluM3tiULbozQmrTD7/GMmT4ptCigc1p1MOq2wKbhUFmaTCuvp56iVMocU?=
- =?us-ascii?Q?jatt0qdkba1nYZNU5raT0OgXLXMFreWSNY+4nyWEF1tN5og+imevvlpvQNms?=
- =?us-ascii?Q?Qk9mmellndi8Lqf7ZQOLqCkM2jbJg/7JhMa2xVo5TI4YFl9DlHAJXtQAG1q4?=
- =?us-ascii?Q?LzVXwZlxOmEnKAn75bP71SZmsEp/d0I/HAKFwBb8cUog8GRiPBnkEyQPrve7?=
- =?us-ascii?Q?LjgKqx2qytWaJVzL5R/Uxc5gOYhuonv9+n4JJ3klDlv6fZ012Z2/2SZ8S/Gd?=
- =?us-ascii?Q?OyMk6PMz2FlWbCDUwo+ZcvQuxXP+hlQmTfT21lQ1zTmcCQ7VUUIly0MlHq4e?=
- =?us-ascii?Q?p3WFhs8maZZbJYJLFmMD37BghWrQTVjPKIJgCphqiPq4JjGDHazGEiDpmX1N?=
- =?us-ascii?Q?4/hJNaZUDSFkrkJUBjFc3FgcUtrAA43ZUAc8CJo5gttxURgIe6LUSLfd22Ta?=
- =?us-ascii?Q?IrhZr/8YQlFgZBBmwUcds9AdpRPrD68fkj8t78QeRJeVd0VdDp+/RtizFjVQ?=
- =?us-ascii?Q?AjbrJkc4GNdXCm2S76Gn9uzfD6KwB90Aif2IqoY2wio1aTlktG1iXhQv8+Q3?=
- =?us-ascii?Q?J7d90LmAAT8V4TPZoI+BmMvtUWw2Rv5VC5Ji0pUaX4egM9DSSsPyVdjcfqLz?=
- =?us-ascii?Q?vVKmJ4K7hfAoNABBVSU2xFPq0Od5UfcvLsPLFg16r4nw4oQM+eVEqThmO/bz?=
- =?us-ascii?Q?9kAfVI47dTFI1Vs2hcjRUvjMqRxaz0Lhc7o0rLVUrnmDnnpZVQ/yQQtVKSNF?=
- =?us-ascii?Q?1lk1XgqebhrwiQtE4aZfOMdbkZZwPDegniGxtcdu2KUXnYhCCVgy4+tRKCNY?=
- =?us-ascii?Q?UZV+tvpbDDK4irlZu24QCl4hhJbjbc8jOsi1W+HBVqvsQ5Sc3Itv4a9NkYdI?=
- =?us-ascii?Q?l1KinUKJ6ezJjDiHeQcV9RfMWaemNsS4E9PfhtdHMSBVopCN99+zZTRjisFA?=
- =?us-ascii?Q?7Zv/3sk8/d5gmSntS8Z9PeWWZ9hSrWHcBQ2iYlMgAuaWNMatmzV9ULHh4Fen?=
- =?us-ascii?Q?mwAmlUompNhp1Bt9jb2A3sMP7q/lBM7B18t7Z0mLipB1vT05uj5mRjqcsi+g?=
- =?us-ascii?Q?lBTrE49gSjrXnaIo7YKypjhuAUctXZMDHXY3JZrFLl1xJn9Ts7Q9AEz9G9FT?=
- =?us-ascii?Q?ZIjtbU0OiJUC8wwvtVbQIcEOL+iBguPoTlzR28M7tMvtRF7x+5XK/P73dAb2?=
- =?us-ascii?Q?lW4pTreRnH4u/ZLs9dpxCaTSb5sEa2WF+JL3Rln7rstpmu/7VAEj7yahQUJW?=
- =?us-ascii?Q?UGTqaHCHhXvUdlfi/5PjBcArdmZgg5Ug6OdbbbObTIxx7A=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?tj1zbNO24VVT+C47L6OCVFgLQ0J7O3OdUidqnRCTf6rZ6xEejHRCRU9m8d8U?=
- =?us-ascii?Q?SoTsoS6IJHHf5fkOm3N4V0PfsdztL+v/t714zcGXAGxvaM0wKHih+On1GOlh?=
- =?us-ascii?Q?9VRiWpbTq3uWUpI+b6ZLA8kFSaDMITY2EKo0PVk897rBzgzlKcVyHf4K1vcu?=
- =?us-ascii?Q?Ul+DIK7Ge0wwfE9Opd73D2kHZXk8f4sea0VxmGkPpl1GSu6Ha7Q4WDdKm/Ip?=
- =?us-ascii?Q?8DjM/mhCahtPwTGgtcPR4/D8vHKPiY4vn8xQAVCMXmQvWh5qlvK8AxTKw2eY?=
- =?us-ascii?Q?J2GJSKKTpToQ8+TNlM69qe+YWWouRrncEU5qH0jBG4WfO78a8ADOhaj90N9j?=
- =?us-ascii?Q?UEb3SG9MTpGaHnP0DXUbJ0eV3oy/ZTXLlnUT2niTEcD5ixltUDaDs47M4nT1?=
- =?us-ascii?Q?mtXRvevUbIywYP8t3G6qSwr1yqyg+RI9HsdwOPCWJ63LdZGVEj1dd5CMNbY0?=
- =?us-ascii?Q?Zic1pccnRi0aiir38yoq4x1DTh/f8KUS39TO8+gn+uTjP5PQCEB9HlcnFber?=
- =?us-ascii?Q?maNM9uSAz8BIP3IL4kG3P/0wXJAoYiLkMzbnmienlFiIB4e4O6kX+mNgLxSR?=
- =?us-ascii?Q?PR+oJvqle3vkS5vIauKTwVAIdADIGKlwcyk4GX5IfAYNillJERLkLTTISwRO?=
- =?us-ascii?Q?TNaX2+K+2B17BM8ZLT8aYpoS3LWG9KpvaoPUuu/poj9eEe6xbKEmCzHpnb3m?=
- =?us-ascii?Q?hZEu7YhbQYLmC4zAj7qw7OPIfZzCoOyJa/0Jyiqi0yiaLgRPFSj4/bxcjx1c?=
- =?us-ascii?Q?SrTjWnfmpsoWVaIIYyWR8TWFlrK7yKgdFz7ndaWbKeYYiRhMLPUC6WQIwqJK?=
- =?us-ascii?Q?10BziFYUy1QHPBv1APnDoc+1jXM690NoyW9D/ai9QjvUhXo5otwpOsK9WGv/?=
- =?us-ascii?Q?U/vXc+YmTc9TPP1dn+W2+9N630ktNiy6CPzoemeaqtW1HQ9dQf/nL+z31L2V?=
- =?us-ascii?Q?DLcjpCEFPm4xeF224zdrSaHCbXH2UoCBD9jO9YaFCRd1oSwhDlsa+Iri4UL6?=
- =?us-ascii?Q?GFPJ9rif3wOSyjjBrYFU0lg18m2ftOkbo03izkwjMl94lFbJuDad5ek72jqv?=
- =?us-ascii?Q?WmGp8cUCK4XfWauogquLYGhhbYcyju7McNPDlQRNRrs0+Ysh5pMUmebb02Cx?=
- =?us-ascii?Q?XMB1tTEeqsfsvcrdh+2erOnY9/fi1zeYxgFJLUhk79LT1BvSAYAT3i3MeARv?=
- =?us-ascii?Q?ke78VZA6HECCxgExbCu5dRUPi7g78WDASv+cbz7K2kVtMdjVXib6zcUegK9w?=
- =?us-ascii?Q?750So/vz21ZWBzUBLBVm3EVEa/MZE7hY21ZveiA3lfc1rVXsgW0LF1B7q07e?=
- =?us-ascii?Q?D5XXnRVRcuZd3iEDovKJgUQcvRG8lD34vffFHbZv/8t7p++cmi8hXr7tz9Md?=
- =?us-ascii?Q?0ypvuhomZT2rTBwMSk04ozALjwqhFEsX3cfPdrN+CJZtwmaiq89yYNn4Ui49?=
- =?us-ascii?Q?eoNQTNRx2nio/3+i8oxIcD9SYpwNX37rKbm2vohIM4ZF9vAkmtw59wbfkOC0?=
- =?us-ascii?Q?A5nTcxCAkJa+etpRetzQtjOgzFP//+JU1rBlK/aAeSXyVs48xoS5C0nA3s/o?=
- =?us-ascii?Q?XF/bEQYBkvyBdPSXkKsGeP7R+pPjMW1CD2MAzpfrscl0Bs+D07T1dDIehpQp?=
- =?us-ascii?Q?/w=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	74TGH07fGHOPLJR6bYAn2KSD+nkbIKsb/mzBasiNhs0b1d2z91bkMTxPsO16+YMeGE1M+oeVL0TFCv/TT8WUOK01GN46t7sv/cTVbHzFNY8IDDd+rM1k693LdfcIRLlkOiA5pyqrmwEluWEQN7sT3U5Q7o8/2sujRR3YaRtHyZZz4SsXvnnuq88MhfYLUsmreYFPBDNvjim47L4CU2P86m/igbChBzE8Zxw/IeKNwW+35NrD8PcRU1SumHx22GbUUxnlfV1T91K5v9j5X+4mQFCBeUJgsNUUNWKHjgFH6GG3Aq7rYPJVMkUaIJgcjtH2Uc3JZrrst8AIZkqcU56riRxN6lcbTDpAjzvvjj81sKWfw7xOrplXs5429f2McGPcvL1GszmdCSa151MO/LnrBCOXOUF4ea8btyw95MKzVKm0XuL8Occ2pvP0QMS7iiTktZjWovCcEpieGhaEJEhs4AtNUcnPbYHA6IU5Qpfw/svTysiJFudJLwXyBUlofSSo/gPol9FH3cRmdQIqo4xwHoSKsR7GiNoK3W1iUrTfFbUt1wpFkSRX47G41B55DMUxhHFGDl0kwbzU8Td6tFtcYk1h4KyI4FuZ8OOlVMlP6T8=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 856231f0-85f8-40d1-a3b6-08dcd38b7f6b
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 00:32:07.2298
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dbgKn7Y5K9UAF78OYi1oeHG3EXCtGaCrQsu5rmOVUAWyDn769VMvLv/xYsckr0WWHEVMa450yeIVd/u0fFRW//8M9lDYo/Ij+51Z01yWAyQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7161
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-12_10,2024-09-12_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0 phishscore=0
- spamscore=0 malwarescore=0 adultscore=0 mlxscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2408220000
- definitions=main-2409130002
-X-Proofpoint-ORIG-GUID: zQpEEgRX1k5i6KnnUJAxxnBv2dPYjUXE
-X-Proofpoint-GUID: zQpEEgRX1k5i6KnnUJAxxnBv2dPYjUXE
+User-Agent: Mozilla Thunderbird
+From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
+Subject: Re: [PATCH v9 06/19] x86: Add early SHA-1 support for Secure Launch
+ early measurements
+To: Andy Lutomirski <luto@amacapital.net>,
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+ Eric Biggers <ebiggers@kernel.org>,
+ Ross Philipson <ross.philipson@oracle.com>, linux-kernel@vger.kernel.org,
+ x86@kernel.org, linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+ linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
+ mingo@redhat.com, bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
+ ardb@kernel.org, mjg59@srcf.ucam.org, James.Bottomley@hansenpartnership.com,
+ peterhuewe@gmx.de, jarkko@kernel.org, jgg@ziepe.ca, nivedita@alum.mit.edu,
+ herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net,
+ dwmw2@infradead.org, baolu.lu@linux.intel.com, kanth.ghatraju@oracle.com,
+ andrew.cooper3@citrix.com, trenchboot-devel@googlegroups.com
+References: <20240531010331.134441-1-ross.philipson@oracle.com>
+ <20240531010331.134441-7-ross.philipson@oracle.com>
+ <20240531021656.GA1502@sol.localdomain>
+ <874jaegk8i.fsf@email.froward.int.ebiederm.org>
+ <5b1ce8d3-516d-4dfd-a976-38e5cee1ef4e@apertussolutions.com>
+ <87ttflli09.ffs@tglx>
+ <CALCETrXQ7rChWLDqTG0+KY7rsfajSPguMnHO1G4VJi_mgwN9Zw@mail.gmail.com>
+ <1a1f0c41-70de-4f46-b91d-6dc7176893ee@apertussolutions.com>
+Content-Language: en-US
+In-Reply-To: <1a1f0c41-70de-4f46-b91d-6dc7176893ee@apertussolutions.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
+Hey again,
 
-Manish,
+On 9/4/24 21:01, Daniel P. Smith wrote:
+> Hi Luto.
+> 
+> On 8/28/24 23:17, Andy Lutomirski wrote:
+>> On Thu, Aug 15, 2024 at 12:10 PM Thomas Gleixner <tglx@linutronix.de> 
+>> wrote:
+>>>
+>>> On Thu, Aug 15 2024 at 13:38, Daniel P. Smith wrote:
+>>>> On 5/31/24 09:54, Eric W. Biederman wrote:
+>>>>> Eric Biggers <ebiggers@kernel.org> writes:
+>>>>>> That paragraph is also phrased as a hypothetical, "Even if we'd 
+>>>>>> prefer to use
+>>>>>> SHA-256-only".  That implies that you do not, in fact, prefer 
+>>>>>> SHA-256 only.  Is
+>>>>>> that the case?  Sure, maybe there are situations where you *have* 
+>>>>>> to use SHA-1,
+>>>>>> but why would you not at least *prefer* SHA-256?
+>>>>>
+>>>>> Yes.  Please prefer to use SHA-256.
+>>>>>
+>>>>> Have you considered implementing I think it is SHA1-DC (as git has) 
+>>>>> that
+>>>>> is compatible with SHA1 but blocks the known class of attacks where
+>>>>> sha1 is actively broken at this point?
+>>>>
+>>>> We are using the kernel's implementation, addressing what the kernel
+>>>> provides is beyond our efforts. Perhaps someone who is interested in
+>>>> improving the kernel's SHA1 could submit a patch implementing/replacing
+>>>> it with SHA1-DC, as I am sure the maintainers would welcome the help.
+>>>
+>>> Well, someone who is interested to get his "secure" code merged should
+>>> have a vested interested to have a non-broken SHA1 implementation if
+>>> there is a sensible requirement to use SHA1 in that new "secure" code,
+>>> no?
+>>>
+>>> Just for the record. The related maintainers can rightfully decide to
+>>> reject known broken "secure" code on a purely technical argument.
+>>>
+>>
+>> Wait, hold on a second.
+>>
+>> SHA1-DC isn't SHA1.  It's a different hash function that is mostly
+>> compatible with SHA1, is different on some inputs, and is maybe more
+>> secure.  But the _whole point_ of using SHA1 in the TPM code (well,
+>> this really should be the whole point for new applications) is to
+>> correctly cap the SHA1 PCRs so we can correctly _turn them off_ in the
+>> best way without breaking compatibility with everything that might
+>> read the event log.  I think that anyone suggesting using SHA1-DC for
+>> this purpose should give some actual analysis as to why they think
+>> it's an improvement, let alone even valid.
+> 
+> I would say at a minimum it is to provide a means to cap the PCRs. 
+> Devices with TPM1.2 are still prevalent in the wild for which members of 
+> the TrenchBoot community support, and there are still valid (and secure) 
+> verification uses for SHA1 that I outlined in my previous response.
+> 
+>> Ross et al, can you confirm that your code actually, at least by
+>> default and with a monstrous warning to anyone who tries to change the
+>> default, caps SHA1 PCRs if SHA256 is available?  And then can we maybe
+>> all stop hassling the people trying to develop this series about the
+>> fact that they're doing their best with the obnoxious system that the
+>> TPM designers gave them?
+> 
+> Our goal is to keep control in the hands of the user, not making 
+> unilateral decisions on their behalf. In the currently deployed 
+> solutions it is left to the initrd (user) to cap the PCRs. After some 
+> thinking, we can still ensure user control and give an option to cap the 
+> PCRs earlier. We hope to post a v11 later this week or early next week 
+> that introduces a new policy field to the existing measurement policy 
+> framework. Will add/update the kernel docs with respect to the policy 
+> expansion. We are also looking the best way we might add a warning to 
+> the kernel log if the SHA1 bank is used beyond capping the PCRs.
 
-> Commit 8db8f6ce556a ("scsi: ufs: qcom: Add missing interconnect
-> bandwidth values for Gear 5") updated the ufs_qcom_bw_table for Gear
-> 5. However, it missed updating the cfg_bw value for the max mode.
+As the attempt was made to lay in the policy logic, it started to become 
+convoluted and unnecessarily complicated. Thus creating more risk with 
+all the bookkeeping and yet sha1 hashes still have to be sent, the null 
+hash in this case, since the TPM driver will reject extends that do not 
+have hashes for all active banks. At this point, we have opted to keep 
+the logic simple and add a section to our documentation advising of the 
+potential risk should one choose to incorporate SHA1 in their 
+attestations of the platform.
 
-Applied to 6.12/scsi-staging, thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+v/r,
+dps
 
