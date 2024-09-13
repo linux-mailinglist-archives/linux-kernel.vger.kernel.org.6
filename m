@@ -1,130 +1,110 @@
-Return-Path: <linux-kernel+bounces-328139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5AAC977F63
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:13:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA75977FAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C53212817B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:13:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 844F21C209D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:18:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64BE91D9329;
-	Fri, 13 Sep 2024 12:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H1hLH81i"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD621D9324;
+	Fri, 13 Sep 2024 12:15:50 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8021D933E
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918781C1AC2
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726229611; cv=none; b=fR+zszfhb+UXUxibMLHuzy5iSDcDUfhO3xsr3mfYnmOidy/uk3aItmyepMwcODHN0RStPKAliBD9XN3dh70c+6CAk+gEyQx7zd0I4PDKO/0MvwF8VhSqltvwKiw29TYZRvYrNE6d1EV/oVTQFqT31Tj+ylBpoi/4+VTZiDBC1CY=
+	t=1726229750; cv=none; b=ZCHLPdtxuXR/xtSvepljVMmsfukANMI3A/jn/iSQaT67XV4gAnZJ168TA6g2LlzNoZgsj4qOXTtPNWUs8Y0PioNo1sDdJFHGsVnIxpLY3AyYHXEyiGpRWk2cR8u78xcnFa/eKqr3it384jFvu4yjolhfL7PfStotS7ZhOb2mWRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726229611; c=relaxed/simple;
-	bh=WW7fLZZ8VgKohsiVkYZgDdgXl3w5a1PmghDLoJsRYXE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HQal2ldB0P+cS4KIIm6OHAoWwfZ/ZCF7ohWnWT7jY/8j1KY20Pk+bzNZIAcfBHlz4vtYeW7IbljRFA2xsQpVkI9NF7X5bEhM6ffrLVQBcBd4ah7BX4uf1Uxxo7SFAjG+ZxulkcjhLs1NicF6dSZw5tPz4b7y9ECSrmxa2ulaim4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H1hLH81i; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e03caab48a2so1541482276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 05:13:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726229609; x=1726834409; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TX9ih1ubYMKW2iVGMJX/IFiFekSGf836KE5EslMkk1U=;
-        b=H1hLH81iyhRIRJyGESMHkbTHfd9eZRtzg9r/AuRiGLvu1JY2UzxjU27AepNkgMvR4g
-         eutxcuc/HykSofbqL25BhwO/NcMaj0xRAhXCDZ0nsebTQRLRW91twdhCkWmD2xv3Jfur
-         LQotK++WsHGyXFRRmdHXvawLDhmvFHH82PYZdyg+0Xj2WtAjYD/w+S1SHLel2Xipg/X/
-         TpkS4tgwnifKpETI1fxtvj10Yvym01YN0bh8EM+5Pa80XD4v5hUH8AaQedfCEfAbpUzT
-         cU2AX5Rp2GkeHTAz0eeBMrCgBsG/FxCiOkKjw/aiyhMDILtQeHgk/yKF/mTfH+Mvl6Uw
-         B+8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726229609; x=1726834409;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TX9ih1ubYMKW2iVGMJX/IFiFekSGf836KE5EslMkk1U=;
-        b=TX4RmkKqPfBkRl7Z8dszk/n46j7D0kxrHXWUmax76/w0p4tUuVZcCCgGWHGgRksdxN
-         hZRqnYBMNlr9htM2KKdvX+YWoWmN7AXBk6BmemO8fSIMnTIsR75uwOfCu6on64sQszsK
-         FdlC6H+5C6iIZ27bagdJpeI+5+PiG6xPRDziXIMZCsgfzhDcjOwIpvRtuIr23UKifis4
-         cYMCR1/LGq6UeUee+nKncR+9fProopZFG1QZLMCzLsu8wOfzhOqRV5hzqQGz+EZOIF8J
-         LUX6hKavjF/g41eP+sWedFVd1hLVCBdqzOzmYdBrClaG39ZFmoCcudqGSDecPOtWB+3N
-         yl5g==
-X-Forwarded-Encrypted: i=1; AJvYcCWtr0wyF4ZFf0xInxfzcM6XZ/ilJKixrliDO1iNPgJ0PrXPbHTnwFBE7hMg3S3A9pm6ND5Bh27/dUoR8oE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBN3EUAOTlFtvVcmBokt/IHRWAKV4zoXGwkqSFpdWYtRQ0rD4G
-	JxJ1dSBPvibDFsPXrEBc9UNdl7viTHJJaDbUz03AD7BDhhMp6EteqYN2aNo9zPrUMoUe+zNQGns
-	Uka6ywOPHs72GPThIXVD8Dq8GB8yFWapJRKfwk+jfCTldEfch
-X-Google-Smtp-Source: AGHT+IHgDN2jdvDiw5yXIWHXJe2wI/6BK/3bUrx0vNc1IhCHnapZTBft52RHjxYmhEcK+zl1z3ewNSe+NEDA7nkf7cw=
-X-Received: by 2002:a05:6902:dc1:b0:e1c:fbe6:b11a with SMTP id
- 3f1490d57ef6-e1d79c15538mr10891169276.0.1726229609197; Fri, 13 Sep 2024
- 05:13:29 -0700 (PDT)
+	s=arc-20240116; t=1726229750; c=relaxed/simple;
+	bh=bIIXpFBcy9JQN6Eq1rXBhck4SQov32Ei9qIPZHwLGC4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZUdg9EYaz1CndWa6mP6gW4neqQFVeuSmlUH3pRbzNBFlAv5v1U+bnlFDFHWm/WO7PnSVlAT97szd4ZuPmkd8p8OnNYw5A2X3lOo7foKtlEAi6J9jwr33nVGPGpBcxrycN8NzbKDXJx3d1Xl01KOiWQMUkWi3Hquvg61SUz6K7V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4X4tYm6ccqz9sfV;
+	Fri, 13 Sep 2024 14:15:40 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id XiImRg9SP39k; Fri, 13 Sep 2024 14:15:40 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4X4tYm5mBbz9sZX;
+	Fri, 13 Sep 2024 14:15:40 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id B657B8B77A;
+	Fri, 13 Sep 2024 14:15:40 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id lNQyLDOf4yiZ; Fri, 13 Sep 2024 14:15:40 +0200 (CEST)
+Received: from [192.168.233.70] (unknown [192.168.233.70])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5D3688B766;
+	Fri, 13 Sep 2024 14:15:40 +0200 (CEST)
+Message-ID: <81200b50-eaec-4cfd-9121-f661f3065572@csgroup.eu>
+Date: Fri, 13 Sep 2024 14:15:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911090910.3060749-1-alexander.stein@ew.tq-group.com>
-In-Reply-To: <20240911090910.3060749-1-alexander.stein@ew.tq-group.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 13 Sep 2024 14:12:53 +0200
-Message-ID: <CAPDyKFo-8=UOH7ZLNDZ8+zLCLSW-f_-JvjUQFC26OtVpeT2oFA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] mmc: core: Use dev_err_probe for deferred regulators
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-
-On Wed, 11 Sept 2024 at 11:09, Alexander Stein
-<alexander.stein@ew.tq-group.com> wrote:
->
-> In case vmmc or vqmmc regulator is not available yet, use dev_err_probe
-> in order to set a deferred probe reason. This is a helpful hint in
-> /sys/kernel/debug/devices_deferred
->
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-
-Applied for next, thanks!
-
-Kind regards
-Uffe
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] powerpc/entry: convert to common and generic entry
+To: Luming Yu <luming.yu@shingroup.cn>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ mpe@ellerman.id.au, npiggin@gmail.com, jialong.yang@shingroup.cn,
+ luming.yu@gmail.com
+References: <B4ABABEA5F13B86A+20240912082500.1469-1-luming.yu@shingroup.cn>
+ <fc509bcd-5ca0-4dc2-962e-766a01cbe4fb@csgroup.eu>
+ <153FD6B5CE4F97D9+ZuOYDQ-iHIIwJjbh@HX09040029.powercore.com.cn>
+ <95ced963-b584-4ccf-ba34-8f2ba99172f4@csgroup.eu>
+ <0332BAE1905768B6+ZuPsBvgv0nwmFAjW@HX09040029.powercore.com.cn>
+ <854eef54-4779-4233-a958-0c98ae5fcb7e@csgroup.eu>
+ <F81D1486B7B82141+ZuQp4YQkAA2cB9Rw@HX09040029.powercore.com.cn>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <F81D1486B7B82141+ZuQp4YQkAA2cB9Rw@HX09040029.powercore.com.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-> ---
->  drivers/mmc/core/regulator.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/core/regulator.c b/drivers/mmc/core/regulator.c
-> index 005247a49e51b..01747ab1024ec 100644
-> --- a/drivers/mmc/core/regulator.c
-> +++ b/drivers/mmc/core/regulator.c
-> @@ -255,7 +255,9 @@ int mmc_regulator_get_supply(struct mmc_host *mmc)
->
->         if (IS_ERR(mmc->supply.vmmc)) {
->                 if (PTR_ERR(mmc->supply.vmmc) == -EPROBE_DEFER)
-> -                       return -EPROBE_DEFER;
-> +                       return dev_err_probe(dev, -EPROBE_DEFER,
-> +                                            "vmmc regulator not available\n");
-> +
->                 dev_dbg(dev, "No vmmc regulator found\n");
->         } else {
->                 ret = mmc_regulator_get_ocrmask(mmc->supply.vmmc);
-> @@ -267,7 +269,9 @@ int mmc_regulator_get_supply(struct mmc_host *mmc)
->
->         if (IS_ERR(mmc->supply.vqmmc)) {
->                 if (PTR_ERR(mmc->supply.vqmmc) == -EPROBE_DEFER)
-> -                       return -EPROBE_DEFER;
-> +                       return dev_err_probe(dev, -EPROBE_DEFER,
-> +                                            "vqmmc regulator not available\n");
-> +
->                 dev_dbg(dev, "No vqmmc regulator found\n");
->         }
->
-> --
-> 2.34.1
->
+
+Le 13/09/2024 à 14:02, Luming Yu a écrit :
+
+>> ...
+>> nothing happens after that.
+> reproduced with ppc64_defconfig
+> [    0.818972][    T1] Run /init as init process
+> [    5.851684][  T240] request_module: modprobe binfmt-4c46 cannot be processed, kmod busy with 50 threads for more than 5 seconds now
+> [    5.851742][  T240] kworker/u33:18 (240) used greatest stack depth: 13584 bytes left
+> [    5.860081][  T232] kworker/u33:16 (232) used greatest stack depth: 13072 bytes left
+> [    5.863145][  T210] kworker/u35:13 (210) used greatest stack depth: 12928 bytes left
+> [    5.865000][    T1] Failed to execute /init (error -8)
+> [    5.868897][    T1] Run /sbin/init as init process
+> [   10.891673][  T315] request_module: modprobe binfmt-4c46 cannot be processed, kmod busy with 50 threads for more than 5 seconds now
+> [   10.894036][    T1] Starting init: /sbin/init exists but couldn't execute it (error -8)
+> [   10.901455][    T1] Run /etc/init as init process
+> [   10.903154][    T1] Run /bin/init as init process
+> [   10.904747][    T1] Run /bin/sh as init process
+> [   15.931679][  T367] request_module: modprobe binfmt-4c46 cannot be processed, kmod busy with 50 threads for more than 5 seconds now
+> [   15.934689][    T1] Starting init: /bin/sh exists but couldn't execute it (error -8)
+
+That's something different, this is because you built a big-endian 
+kernel and you are trying to run a little-endian userspace.
+
+Does it work with ppc64le_defconfig ?
+
+On my side there is absolutely nothing happening after the last line, 
+the screen remains steady.
+
+
+Christophe
 
