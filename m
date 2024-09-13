@@ -1,123 +1,173 @@
-Return-Path: <linux-kernel+bounces-327849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14231977BE8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:09:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 689D5977BEA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:09:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7E1C282BDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:09:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E95DF1F277E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3793B1D798F;
-	Fri, 13 Sep 2024 09:08:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5981BD4EA;
+	Fri, 13 Sep 2024 09:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C/WM/87y"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yUGmf3yQ"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBD11D7984
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553F01BFE12
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726218528; cv=none; b=scW+XT+FLr/Vp8l19LSoD2RLx0r6I7Hwl1hsg6CK+olKYHHT7t87GUmZDeM3RD23loV1gFmT0edpKBDPAlCuTmHMtATSZ4Mikm6gQMGmBkeS8gzoIdIg14ALMpTax8dmv/OeQ9ORB2l+olqb3MZK0qdTT98QeZAc5Rzt1HWvlKk=
+	t=1726218565; cv=none; b=t33ei0lQxk1EkYcoM445vfLykg+N4qft+eGv1FG5DlPRmJfdRr4Hk0CaPw/lUNTdIR8m21UYjJaPxGDu/1KHw86HaaOhNM912cpMane6o1VSJjdmj+5TqaBTyyx8J13ZO+PSSxOc9gDmfXehdAHcMfzWhtuJ8JRI/O8fwfNaMUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726218528; c=relaxed/simple;
-	bh=gUf1P6a051fpQa+Zsx4o/CGIDi47nKng+PxliLFNe8E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZzeUO24v2Bq40PyrtNrstwBCRn3zmg6YsSlXNmQhsUPKf91hY6bwkw3tiWVEGefnTB6KW95+WNbOMrbMnXEUp9Y2FEXEx1K0aDwsKa2NZomPp+PvF65TzyRw1Tk9Fr6XVBsx+HJaL98L2i6vxu/W5G2aaqZ6Ewg6BweoVamPW/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C/WM/87y; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c3ca32971cso2351520a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 02:08:46 -0700 (PDT)
+	s=arc-20240116; t=1726218565; c=relaxed/simple;
+	bh=VR77kTkSj9mtdPER9rfxtV81rr43X9QpLa8jlgRjBCw=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Z8l3YoicV3S7ayDDynIg06SYVawGrEjHB2+fS9uA0PzPLWOCkke07riFYAB0LJ1fDDWN7k1Ov/L6m/mgqnG1HJC+hybV1pM7wGVgFTz1BSx45ZVrzIaL0C/Y+h/3zxkgXeNNZCg0zQ+MtWUCtXLE2Bz2fBQA2Tst9Y+x1V18N7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yUGmf3yQ; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cae6bb895so18189855e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 02:09:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726218525; x=1726823325; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=if6lVwBQ3rYN29cQP9B8Wl2cgILO0Izj1asDZSpYXBY=;
-        b=C/WM/87yoaDU/19p66AEaOh1TG4HZ79GogVWo3iZwG7abjhkQJVP8ZFN6JaC+7ViyH
-         5wv/z6IYJuv8hCdbwrtGWkaUuHbsPjbu8ppOjV6T0cDD5vvxdZaEQdruKQTbPdcBDVhu
-         UoIC08JXAmXgvd3w6Du9tl8+Q0UBQzUoqnhLSp/mqP96HwKrMPtX08lV8BKQMGRqvE3g
-         A/C/h/6VWLVGR+gy3m8Gqo/WrxhDOIp9EiniFE0h9YduKfJM1oifgFhNfvTkMOcEfoci
-         EncgFnTMD3iIm35Abl0vW8kk97bz3Cj0x6otmW+L23mgoJk2IlBpHKbZBbUt5h3+qxxy
-         KwkA==
+        d=linaro.org; s=google; t=1726218562; x=1726823362; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0Px7P8vUhtcnumZBZibQpbbgvjXBl3y0kO8YYM/2s24=;
+        b=yUGmf3yQ8M6ILX9AJdsG5SyFOqAjjy2ICS+gKubVl2kf+2G/sWfj/BIblGt1BgQFZM
+         Rp0i3X50dVhT7TbIsAeZpYUIptqsmRBlR5pjbR6Bg5Tmfv/Wo/uS1dPDMwT+7EWHPoqW
+         ++c8JlndyvWTLpULRqrR/uXWuOLQcZaZNxVTLbLAXnRd40xkDuD+6VYwSQZpdJxQ1A4U
+         o+ekITT9C//i4YI4Gw1VqiILyx/crH+B00QfYuOGkAQ8JgAtTViTi/YpeOTOmux0X1O1
+         cB/fFRL6QGCWCKsIijtJwDUndUY5/+SFjhq3EmAEmOIjumS9AqKawIIzBMTuN+rBCAZn
+         riHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726218525; x=1726823325;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=if6lVwBQ3rYN29cQP9B8Wl2cgILO0Izj1asDZSpYXBY=;
-        b=U503pixHVejtZR9ZRhm1kQ+LKfEVWOlL1Yb+z+B5mtNyjDlAUJZzf0SMgkpJuFB2V2
-         CyVwI0Ftn36HhefDS8swo6Ra7vquBzG7SGDkeC5pcfl80wq4YLmwjJ8MOvrG2/Kt5o+s
-         sMCPT6uL++FXhjN31npB+wXyvpfLdJN2Dj7tAlAcpheQvX8q+aa09epR2ky4Q1e/Xblh
-         sRW/UexJSkxaX3arHj1fd9H4NBpS5vcoeY24Iq6OmgEK/k03ADksZpIAYzp6E15Th5rE
-         gF3o3oV9yNqrNjtNETF/qGB+ePraO0OB5TvLt0IXeOaJOmqVzLIJB+8C8f3SZm/Mj74s
-         ExcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWK3MxvXKr8CCKGtDqAd4qGA1r3/okZelvQFpEPhSeRIf9An1JuqnxjRdyBn3d2yk7h7mLUWi8MGJ87yJM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxy3cqspZKy5cdmiu6lbhydv++a2fQk+NmQgHcUTUUJ7JRjM9Si
-	7LwZ9SEfcmsQBURUOF07+3oqRnEhBTk7eiYzgTAy6UZdM+7ZSwSt/KuNaA5tCK/fp3Ni8umU7VG
-	7K9C9Yh1TdTVLaSMtxWxynTAnh8mGfvZ+A4sM
-X-Google-Smtp-Source: AGHT+IEp8fqNCUqCMu3S2VVPPVgj29Eg5Ceh1YsoPj1klDAxZJW1PBj/acrZ8GrRoLISfm8K+ddcAGtOTLtR5KhCm/U=
-X-Received: by 2002:a17:907:60d4:b0:a86:a56d:c4eb with SMTP id
- a640c23a62f3a-a902973187dmr559124966b.61.1726218524456; Fri, 13 Sep 2024
- 02:08:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726218562; x=1726823362;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0Px7P8vUhtcnumZBZibQpbbgvjXBl3y0kO8YYM/2s24=;
+        b=ZQNchFnvR1walvXmfEJj6R3ZhefNKKkQaNBH21cv/npCyMubMdnpTdCri1p/hx/rbK
+         ltZJsNBwfEAtjMzxFkbuHBWZ1MjU1Wn+uaAMGiHcLD//OtJ2V1iQVaTSfZgBefEgOAOq
+         B3YsilolK+De1/cUzP65MOJlIXMvkIpJ9+ewMyXAWDbEzVoaJrtnrWHR955SMSYYG3yj
+         7odG3FyYM3n9dP3dWs/UCOobKecyEVHWCDN/4JMctjs3IhdaNKEOhA3FX5RqaEhhJZEg
+         0sP+4zPRlVFyzxvxFRZ9Lzw9HgQer+P/ePXZmfh3uZEcvSR0st6je5iiKyQBQ7Ii36Uv
+         KSBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/JN89gIAW9+NghcAsSLNUJPBKOsSJ/oMGeC69BX4SnDzd9mDdcGSFJJZ8+ohQlQs6gr3KR8wtbxue7FI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqvYtyn/D259DezLd1qWAdgRC91jn6JYQlxlP44b8bedHv7BSU
+	cQTjd7TWZ6liArCSFawzjFa+ukRLjZvPI/jG3NcdRVpWmctCK1KYow9VWxdgcTY=
+X-Google-Smtp-Source: AGHT+IH7SyOewl5IXKTi3cewOPHM7wrZGefNZMT6Npms0fzQJ1acd3Jey9j4PucxqZTn0IAqCKo78g==
+X-Received: by 2002:a7b:c386:0:b0:42c:baf9:bee7 with SMTP id 5b1f17b1804b1-42cdb67b16bmr40882295e9.12.1726218561024;
+        Fri, 13 Sep 2024 02:09:21 -0700 (PDT)
+Received: from [192.168.7.202] ([212.114.21.58])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b18202fsm17354465e9.42.2024.09.13.02.09.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Sep 2024 02:09:20 -0700 (PDT)
+Message-ID: <e6d37d13-a150-468f-93c8-f8109996b974@linaro.org>
+Date: Fri, 13 Sep 2024 11:09:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0000000000005348f9061ab8df82@google.com> <00000000000011b0080621f73dd2@google.com>
-In-Reply-To: <00000000000011b0080621f73dd2@google.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Fri, 13 Sep 2024 11:08:31 +0200
-Message-ID: <CANn89iL0eakKDx9WvrP5zmMJV6=N75PAuTtDx3M=VfUbpXs4xQ@mail.gmail.com>
-Subject: Re: [syzbot] [net?] INFO: rcu detected stall in neigh_timer_handler (8)
-To: syzbot <syzbot+5127feb52165f8ab165b@syzkaller.appspotmail.com>
-Cc: davem@davemloft.net, gregkh@linuxfoundation.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, marcello.bauer@9elements.com, 
-	netdev@vger.kernel.org, pabeni@redhat.com, stern@rowland.harvard.edu, 
-	sylv@sylv.io, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] drm: panel: nt36523: use devm_mipi_dsi_* function to
+ register and attach dsi
+To: Jianhua Lu <lujianhua000@gmail.com>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240904142907.367786-1-lujianhua000@gmail.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240904142907.367786-1-lujianhua000@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 13, 2024 at 4:47=E2=80=AFAM syzbot
-<syzbot+5127feb52165f8ab165b@syzkaller.appspotmail.com> wrote:
->
-> syzbot suspects this issue was fixed by commit:
->
-> commit 22f00812862564b314784167a89f27b444f82a46
-> Author: Alan Stern <stern@rowland.harvard.edu>
-> Date:   Fri Jun 14 01:30:43 2024 +0000
->
->     USB: class: cdc-wdm: Fix CPU lockup caused by excessive log messages
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D17eae0a998=
-0000
-> start commit:   dc772f8237f9 Merge tag 'mm-hotfixes-stable-2024-06-07-15-=
-2..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D333ebe38d43c4=
-2e2
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D5127feb52165f8a=
-b165b
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D17398dce980=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D112fa5ac98000=
-0
->
-> If the result looks correct, please mark the issue as fixed by replying w=
-ith:
->
-> #syz fix: USB: class: cdc-wdm: Fix CPU lockup caused by excessive log mes=
-sages
->
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
-ion
+On 04/09/2024 16:29, Jianhua Lu wrote:
+> Switch to devm_mipi_dsi_* function, we don't need to detach and
+> unregister dsi manually any more.
+> 
+> Signed-off-by: Jianhua Lu <lujianhua000@gmail.com>
+> ---
+>   drivers/gpu/drm/panel/panel-novatek-nt36523.c | 16 ++--------------
+>   1 file changed, 2 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panel/panel-novatek-nt36523.c b/drivers/gpu/drm/panel/panel-novatek-nt36523.c
+> index 18bd2ee71201..04f1d2676c78 100644
+> --- a/drivers/gpu/drm/panel/panel-novatek-nt36523.c
+> +++ b/drivers/gpu/drm/panel/panel-novatek-nt36523.c
+> @@ -1095,18 +1095,6 @@ static int nt36523_unprepare(struct drm_panel *panel)
+>   static void nt36523_remove(struct mipi_dsi_device *dsi)
+>   {
+>   	struct panel_info *pinfo = mipi_dsi_get_drvdata(dsi);
+> -	int ret;
+> -
+> -	ret = mipi_dsi_detach(pinfo->dsi[0]);
+> -	if (ret < 0)
+> -		dev_err(&dsi->dev, "failed to detach from DSI0 host: %d\n", ret);
+> -
+> -	if (pinfo->desc->is_dual_dsi) {
+> -		ret = mipi_dsi_detach(pinfo->dsi[1]);
+> -		if (ret < 0)
+> -			dev_err(&pinfo->dsi[1]->dev, "failed to detach from DSI1 host: %d\n", ret);
+> -		mipi_dsi_device_unregister(pinfo->dsi[1]);
+> -	}
+>   
+>   	drm_panel_remove(&pinfo->panel);
+>   }
+> @@ -1251,7 +1239,7 @@ static int nt36523_probe(struct mipi_dsi_device *dsi)
+>   		if (!dsi1_host)
+>   			return dev_err_probe(dev, -EPROBE_DEFER, "cannot get secondary DSI host\n");
+>   
+> -		pinfo->dsi[1] = mipi_dsi_device_register_full(dsi1_host, info);
+> +		pinfo->dsi[1] = devm_mipi_dsi_device_register_full(dev, dsi1_host, info);
+>   		if (IS_ERR(pinfo->dsi[1])) {
+>   			dev_err(dev, "cannot get secondary DSI device\n");
+>   			return PTR_ERR(pinfo->dsi[1]);
+> @@ -1288,7 +1276,7 @@ static int nt36523_probe(struct mipi_dsi_device *dsi)
+>   		pinfo->dsi[i]->format = pinfo->desc->format;
+>   		pinfo->dsi[i]->mode_flags = pinfo->desc->mode_flags;
+>   
+> -		ret = mipi_dsi_attach(pinfo->dsi[i]);
+> +		ret = devm_mipi_dsi_attach(dev, pinfo->dsi[i]);
+>   		if (ret < 0)
+>   			return dev_err_probe(dev, ret, "cannot attach to DSI%d host.\n", i);
+>   	}
 
-#syz fix: USB: class: cdc-wdm: Fix CPU lockup caused by excessive log messa=
-ges
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
