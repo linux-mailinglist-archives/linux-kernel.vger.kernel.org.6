@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-327837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7546977BCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:02:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C735E977BC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:01:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFAF01C2209E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:02:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 625C3B279D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:01:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBC2E1D5CC1;
-	Fri, 13 Sep 2024 09:02:05 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A88A1BD4EA;
+	Fri, 13 Sep 2024 09:01:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fuO7eJ50";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="KVrbvgws"
+Received: from a7-47.smtp-out.eu-west-1.amazonses.com (a7-47.smtp-out.eu-west-1.amazonses.com [54.240.7.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A82384D2C;
-	Fri, 13 Sep 2024 09:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557A584D2C
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726218125; cv=none; b=UGdhuc2E1lUlj8gZzGYure/pXdU5BuO16pnvVC/0PKBZ6o22/D0UWzEcbijmHA3ewubiZREhzXG/oili905Vx6LS3gyoEhWkGtusHith9TTdhNz23zQqUivXTsUo1qomO9MfTCBmdNZhYeLxYIQwfZUMM0HvrAXefbH8UCts1FQ=
+	t=1726218110; cv=none; b=pSat+DT4mmSrn35UfZu1sP3pcZ+s8I7bwQQ0m/YPZ7DlarUepuSTF7i+/T1JsvV4Z8rDo/EsKQiBbUyl9iFELRtWWxwb7uUpoAMJTl9KZ0CQiIeJ1dAJX2Ea9wB4Cu5nvEq818aB+QPtEB1BOV4U1VJFuioAvU76nQ+WyFZm0Vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726218125; c=relaxed/simple;
-	bh=4NBhd1tsPnxQCaBwlSTHauJZXi2qgEGUKQStpJhufeI=;
+	s=arc-20240116; t=1726218110; c=relaxed/simple;
+	bh=k3tL55Eci+GrdjJeRvNVxOv50wV+NoVOHuN5tAfMyJ0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sJZSy0CmN4XHXeE0mxW5GK4pkLLdrqrdCrRwcsAXxjpA2ebTafpgOJ92HeMXzE6tV7S9t1Ne1/riqMcQZTEKpBef7JNU+dikB+BcTikuK/+IEVAAQeBFguN/BIjhG9NFR9NE4tXt7ZUD8KEYsCf+KfMFhqZZxs5Hb7M8OaozktI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4X4pGK5xyMz9sxH;
-	Fri, 13 Sep 2024 11:02:01 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id dBvfAPALQGjL; Fri, 13 Sep 2024 11:02:01 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4X4pFq6fvmz9sxG;
-	Fri, 13 Sep 2024 11:01:35 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id D0CC18B77A;
-	Fri, 13 Sep 2024 11:01:35 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id xZzjn-Q6tBsn; Fri, 13 Sep 2024 11:01:35 +0200 (CEST)
-Received: from [192.168.233.70] (unknown [192.168.233.70])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4B9198B766;
-	Fri, 13 Sep 2024 11:01:35 +0200 (CEST)
-Message-ID: <87bc0aba-2984-459e-b0d6-d9bf7b9497b4@csgroup.eu>
-Date: Fri, 13 Sep 2024 11:01:35 +0200
+	 In-Reply-To:Content-Type; b=DfDzeTwSZAGdO2cRXSvOhesrVH3261C+IHvIeqN4+8XaKB6kE3B9wIVVNP+x6NWJBLblwMgrcpk8g24YBRTZ6cJs760V85tYLP6jKGgcn2cXaSCIIzGF+s2NN87xo1hNOsR1E6YsMgjEqePRLaROr055yE9Fb425MtUPneLteFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fuO7eJ50; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=KVrbvgws; arc=none smtp.client-ip=54.240.7.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1726218107;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=k3tL55Eci+GrdjJeRvNVxOv50wV+NoVOHuN5tAfMyJ0=;
+	b=fuO7eJ501oL0ElFCUp2urGs80t+x6VRxS19JGryle7WtV7CtQp63AOyuy39S4m0k
+	SQ6RAnQmH30Gnxsx4XdhI5aBqMRcCAFiVKhGyaQNPtovm60uLPi18jR1XJiISXX06pf
+	IWYgjw8GWcw4arOSMCD6meKvBsdjdUK/RaHBJmrXV0ipwQPUoyA+biHssrcrRFfiMu0
+	QI8dd7m61u7pI96wUmIpALFtvu8xlz09R3plLjBDL9AGzBiKpT5fA6I2Pmi9WxqXEYU
+	/doNtvS4xzLMYYCcLavl/sooQqufR58/+tTU0Ohy0gCy7gZYhvypBeeQjweYGbKyTKG
+	94JU4M8Y2g==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1726218107;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
+	bh=k3tL55Eci+GrdjJeRvNVxOv50wV+NoVOHuN5tAfMyJ0=;
+	b=KVrbvgwsi7nFHc8gG1MYkCmJ2+r7AhCxY+SZj+qUHiCWIMRGiOM/M8lpRTLwhrj1
+	DOynYf4/kk+jqVT0Jo9+GsqJml732mPbpaVHMnlsJU5Qpx98bTW5vt3hzSZbjsWNFhX
+	V4EU+5hqnuPYk7FF87QqDaklS7ay0GKHh5ZzC8Zc=
+Message-ID: <01020191ea9dface-81c48f9d-4cf2-4f96-a1cd-59c11fa810ff-000000@eu-west-1.amazonses.com>
+Date: Fri, 13 Sep 2024 09:01:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,123 +57,109 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] powerpc/vpa_pmu: Add interface to expose vpa counters
- via perf
-To: kajoljain <kjain@linux.ibm.com>, mpe@ellerman.id.au
-Cc: atrajeev@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, maddy@linux.ibm.com,
- disgoel@linux.ibm.com, linuxppc-dev@lists.ozlabs.org,
- hbathini@linux.ibm.com, adubey@linux.ibm.com
-References: <20240828102141.1052332-1-kjain@linux.ibm.com>
- <56b53876-0838-416f-adce-b1ffbd0916fc@csgroup.eu>
- <9c18c4d4-ee60-4543-8bbb-ddc729c0a0f5@linux.ibm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <9c18c4d4-ee60-4543-8bbb-ddc729c0a0f5@linux.ibm.com>
+Subject: Re: [PATCH v4 0/5] Support alpha blending in MTK display driver
+To: Alper Nebi Yasak <alpernebiyasak@gmail.com>, 
+	linux-mediatek@lists.infradead.org, 
+	=?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>
+Cc: linux-kernel@vger.kernel.org, Chen-Yu Tsai <wenst@chromium.org>, 
+	Daniel Vetter <daniel@ffwll.ch>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, 
+	Hsiao Chien Sung <shawn.sung@mediatek.corp-partner.google.com>, 
+	dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	David Airlie <airlied@gmail.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+	=?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>, 
+	=?UTF-8?B?U2hhd24gU3VuZyAo5a6L5a2d6KyZKQ==?= <Shawn.Sung@mediatek.com>
+References: <20240717-alpha-blending-v4-0-4b1c806c0749@mediatek.com>
+ <CAAOTY_8ThuusfHk9Gd5pFP8VhJkG2seuJmkFiruK1rPQFZGBzg@mail.gmail.com>
+ <6c9b7f85-f92d-44ed-ae9d-00f6d55ea614@gmail.com>
+ <a2cf4e9b9c3343a7398521760934f1740505aa13.camel@mediatek.com>
+ <13f6dbc5d460e746352f68b001e85f870c89993d.camel@mediatek.com>
+ <69776448-0328-4880-9108-54466e40ddd9@gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <69776448-0328-4880-9108-54466e40ddd9@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.09.13-54.240.7.47
 
-
-
-Le 13/09/2024 à 10:35, kajoljain a écrit :
+Il 13/09/24 07:40, Alper Nebi Yasak ha scritto:
+> Hi,
 > 
-> 
-> On 9/13/24 12:00, Christophe Leroy wrote:
+> On 2024-09-13 05:56 +03:00, Jason-JH Lin (林睿祥) wrote:
+>> Hi Alper,
 >>
+>> I think that's a platform issue because it works find in my MT8188
+>> platform, but I don't have any MT8173 platform.
 >>
->> Le 28/08/2024 à 12:21, Kajol Jain a écrit :
->>> The pseries Shared Processor Logical Partition(SPLPAR) machines
->>> can retrieve a log of dispatch and preempt events from the
->>> hypervisor using data from Disptach Trace Log(DTL) buffer.
->>> With this information, user can retrieve when and why each dispatch &
->>> preempt has occurred. Added an interface to expose the Virtual Processor
->>> Area(VPA) DTL counters via perf.
->>>
->>> The following events are available and exposed in sysfs:
->>>
->>>    vpa_dtl/dtl_cede/ - Trace voluntary (OS initiated) virtual processor
->>> waits
->>>    vpa_dtl/dtl_preempt/ - Trace time slice preempts
->>>    vpa_dtl/dtl_fault/ - Trace virtual partition memory page faults.
->>>    vpa_dtl/dtl_all/ - Trace all (dtl_cede/dtl_preempt/dtl_fault)
->>>
->>> Added interface defines supported event list, config fields for the
->>> event attributes and their corresponding bit values which are exported
->>> via sysfs. User could use the standard perf tool to access perf events
->>> exposed via vpa-dtl pmu.
->>>
->>> The VPA DTL PMU counters do not interrupt on overflow or generate any
->>> PMI interrupts. Therefore, the kernel needs to poll the counters, added
->>> hrtimer code to do that. The timer interval can be provided by user via
->>> sample_period field in nano seconds.
->>>
->>> Result on power10 SPLPAR system with 656 cpu threads.
->>> In the below perf record command with vpa_dtl pmu, -c option is used
->>> to provide sample_period whch corresponding to 1000000000ns i.e; 1sec
->>> and the workload time is also 1 second, hence we are getting 656 samples:
->>>
->>> [command] perf record -a -R -e vpa_dtl/dtl_all/ -c 1000000000 sleep 1
->>> [ perf record: Woken up 1 times to write data ]
->>> [ perf record: Captured and wrote 0.828 MB perf.data (656 samples) ]
->>>
->>> There is one hrtimer added per vpa-dtl pmu thread. Code added to handle
->>> addition of dtl buffer data in the raw sample. Since DTL does not provide
->>> IP address for a sample and it just have traces on reason of
->>> dispatch/preempt, we directly saving DTL buffer data to perf.data file as
->>> raw sample. For each hrtimer restart call, interface will dump all the
->>> new dtl entries added to dtl buffer as a raw sample.
->>>
->>> To ensure there are no other conflicting dtl users (example: debugfs dtl
->>> or /proc/powerpc/vcpudispatch_stats), interface added code to use
->>> "down_write_trylock" call to take the dtl_access_lock. The
->>> dtl_access_lock
->>> is defined in dtl.h file. Also added global reference count variable
->>> called
->>> "dtl_global_refc", to ensure dtl data can be captured per-cpu. Code also
->>> added global lock called "dtl_global_lock" to avoid race condition.
->>>
->>> Signed-off-by: Kajol Jain <kjain@linux.ibm.com>
->>> ---
->>> Notes:
->>>
->>> - Made code changes on top of recent fix sent by Michael Ellerman.
->>>     Link to the patch:
->>> https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatchwork.ozlabs.org%2Fproject%2Flinuxppc-dev%2Fpatch%2F20240819122401.513203-1-mpe%40ellerman.id.au%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C95cfb2842b2a44907c9108dcd3cf0b12%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638618133431151306%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=IqFjcvT9G0HYGIbuUWhCrnXkFr9yMtSC1mGFFKZ66MI%3D&reserved=0
->>>
->>>    arch/powerpc/perf/Makefile  |   2 +-
->>>    arch/powerpc/perf/vpa-pmu.c | 469 ++++++++++++++++++++++++++++++++++++
->>>    include/linux/cpuhotplug.h  |   1 +
->>>    3 files changed, 471 insertions(+), 1 deletion(-)
->>>    create mode 100644 arch/powerpc/perf/vpa-pmu.c
->>
->>
->> Seems like it doesn't build on PPC64:
->>
->> arch/powerpc/perf/vpa-pmu.c#L212
->> passing argument 1 of 'up_write' from incompatible pointer type
->> [-Wincompatible-pointer-types]
->>
->> arch/powerpc/perf/vpa-pmu.c#L261
->> passing argument 1 of 'down_write_trylock' from incompatible pointer
->> type [-Wincompatible-pointer-types]
->>
->> arch/powerpc/perf/vpa-pmu.c#L402
->> passing argument 1 of 'up_write' from incompatible pointer type
->> [-Wincompatible-pointer-types]
-> 
-> Hi Christophe,
->     Thanks for checking the patch. These changes are on top of fix patch
-> sent by Michael Ellerman
-> https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fpatchwork.ozlabs.org%2Fproject%2Flinuxppc-dev%2Fpatch%2F20240819122401.513203-1-mpe%40ellerman.id.au%2F&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C95cfb2842b2a44907c9108dcd3cf0b12%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638618133431160525%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=r1vQxb%2F8IXBRffDtFMwiqbKnFZ4iiqer6cLykT00%2Bew%3D&reserved=0
-> 
-> Since he changed the dtl_access_lock to be a rw_semaphore.
-> 
-> Are you trying with Michael patch changes?
+>> Can you help me test the fix patch in your MT8173 platform?
+>> I'll provide a fix patch in 2 weeks via Google Chat.
 
-No, I only saw CI test failure here : 
-https://github.com/linuxppc/linux-snowpatch/actions/runs/10594868105
+Jason, Two weeks is a bit too late as CK already picked your series: reverting
+and reapplying creates noise in the commit log, and when this can be avoided it
+should be avoided.
 
-Sorry I didn't see you mentioned it in a note.
+Since upstream is broken, please understand that this fix should be developed
+with *highest* priority (so, as immediate as possible).
 
-Christophe
+Thanks,
+Angelo
+
+>>
+>> Regards,
+>> Jason-JH.Lin
+> 
+> I replied over Google Chat, but to make it clear for others on the
+> mailing list: Yes, I'll try to test patches when you send them.
+> 
+>> On Fri, 2024-09-13 at 01:25 +0000, CK Hu (胡俊光) wrote:
+>>> Hi, Jason:
+>>>
+>>> Please help to fix this issue.
+>>> Otherwise, I would revert this series.
+>>>
+>>> Regards,
+>>> CK
+>>>
+>>> On Thu, 2024-09-12 at 23:29 +0300, Alper Nebi Yasak wrote:
+>>>>    
+>>>> External email : Please do not click links or open attachments
+>>>> until you have verified the sender or the content.
+>>>>   Hi,
+>>>>
+>>>> On 2024-07-31 16:34 +03:00, Chun-Kuang Hu wrote:
+>>>>> Hi, Shawn:
+>>>>>
+>>>>> Hsiao Chien Sung via B4 Relay
+>>>>> <devnull+shawn.sung.mediatek.com@kernel.org> 於 2024年7月17日 週三
+>>>>> 下午1:24寫道：
+>>>>>>
+>>>>>> Support "Pre-multiplied" and "None" blend mode on MediaTek's
+>>>>>> chips by
+>>>>>> adding correct blend mode property when the planes init.
+>>>>>> Before this patch, only the "Coverage" mode (default) is
+>>>>>> supported.
+>>>>>
+>>>>> For the whole series, applied to mediatek-drm-next [1], thanks.
+>>>>>
+>>>>> [1]
+>>>>> https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/log/?h=mediatek-drm-next
+>>>>
+>>>> I am seeing broken colors on an MT8173 Chromebook with next-
+>>>> 20240912,
+>>>> which goes away if I git-revert this series (commits 1f66fe62cc09
+>>>> eb17c5909481 a3f7f7ef4bfe 59e9d9de25f0 4225d5d5e779).
+>>>>
+>>>> To illustrate, I took a picture [1] of some color mixing diagrams
+>>>> from
+>>>> Wikipedia [2]. Do you have an idea of what goes wrong?
+>>>>
+>>>> (I'm busy with too many things so I don't want to debug it now...)
+>>>>
+>>>> [1] https://i.imgur.com/tNFvovB.jpeg
+>>>> [2] https://en.wikipedia.org/wiki/Color_space#Generic
+
 
