@@ -1,108 +1,178 @@
-Return-Path: <linux-kernel+bounces-327563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 766889777AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:00:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAA959777B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:04:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FFA81C245FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:00:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84ECF287422
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461141D3198;
-	Fri, 13 Sep 2024 04:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="urLiEuAX"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B811BF7F9;
+	Fri, 13 Sep 2024 04:03:57 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD5E3EA64;
-	Fri, 13 Sep 2024 04:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0E218C902
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 04:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726200045; cv=none; b=uLhibFLboIVpnunwWDl7xphTiN5oHpfXn5vG7l/PslbvDDpYf2eNMkieK7IifBOuafqMd6h17b2rDsSG1BJOEpZH8Yus6gJQ5vYttlo1afQSF9FyTnO1bLIzDJUMw/Cpckcr0r0f0qmyMkO7oFn9ddPY3CIV2Q9EAAMgpesbcb4=
+	t=1726200236; cv=none; b=QhQNXkXrSrDtkSQ+e+EdLq81DNa5vHqg5DY1J+se7kZoI+6m9YV+qDCZz7Ke6ZR56IewHw2lWIneJyjaJnqdHHvhh8+ugcwxi6UI+X4olJTB4ILxbOR3w4fTRkQQm7W5Q+5WbfTsLDr84JuXNGqVIpDmdmRA+CLX79Ny12LCJWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726200045; c=relaxed/simple;
-	bh=NDdDwRKXFJ3ocb6cN2CztDmPZDA7oAIZ3KD1av78vT8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qdJRJvbZ4mSXu1SHo9gx+NIwO+WHU9TGM4VS/pxS28uOziSJycMzHzsGL5rySdtNtaXuPbeYol3NcacilcLo+FHoTHgRPyBTY6yj+X/CVL2VwHGNlNUpwHlER1Qp3a0tZ1tdWuoQeYNe/qIzzm7xleCnqkBnl3z4cnkKXo7ZQc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=urLiEuAX; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=J3qNUqZNVfiEFOTw9vbZilF7Sw8A1fnMeukG9fY96Hc=; b=urLiEuAX8Z5EV2SFvXDVz0TGeZ
-	FXG02diij3n5guLGpivutfmnI+QUlbneHLpgfJ1wgmR/voRts4QyOL+iuDgzuyEcwLTKBrvxMMwPT
-	CIPxmtej9k7rIkrS7VK6vybr5lkKwHch7dKSdZAmP50aDYebwrD7zvfAObXnlRLCmEerZzezRUPKc
-	YcHn7VLr76YO2TcgyZ5vXSYvGDRICj8nA2xGlXHsRzfbuGTUVPARey6d8I2LxcwlJiysIkALhTESJ
-	PgSOHobz6E1oc7ycbYJM1hv5zD50juaf9HiOjJMVjOe0CCoELa7hHh7v6GDitk569bLWCjT/CYN/3
-	+hVaU4MQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1soxU6-0000000BsPr-3aRW;
-	Fri, 13 Sep 2024 04:00:38 +0000
-Date: Fri, 13 Sep 2024 05:00:38 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Borkmann <daniel@iogearbox.net>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	David Chinner <david@fromorbit.com>,
-	"Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
-	bpf <bpf@vger.kernel.org>, Networking <netdev@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the bpf-next tree
-Message-ID: <20240913040038.GA2825852@ZenIV>
-References: <20240913135551.4156251c@canb.auug.org.au>
+	s=arc-20240116; t=1726200236; c=relaxed/simple;
+	bh=8pWpXeBox2Y+jRM6HjWyWrmbWbyUqgT6yE7fxROn93M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EyPddXU9U2EunzWGoHiT8qfexVt5A6UmsSaYKSiVV7jRdcbxV/+aHHLhlsouTCzOMlrjbD/D3WjxZAryI+T/XD8EE5vkTRlikfwlqJHVFKjY47hNubNueYHcEOTijsBgZRce1Y3pdMr7sg5U62r4lQz0nMfIyLIRqy3jId+l3Ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4X4gf82qR8z1yls6;
+	Fri, 13 Sep 2024 12:03:44 +0800 (CST)
+Received: from kwepemd500019.china.huawei.com (unknown [7.221.188.86])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3F38318001B;
+	Fri, 13 Sep 2024 12:03:45 +0800 (CST)
+Received: from [10.67.109.61] (10.67.109.61) by kwepemd500019.china.huawei.com
+ (7.221.188.86) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 13 Sep
+ 2024 12:03:44 +0800
+Message-ID: <9982cb8d-9346-0640-dd9f-f68390f922e9@huawei.com>
+Date: Fri, 13 Sep 2024 12:03:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913135551.4156251c@canb.auug.org.au>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.7.0
+Subject: =?UTF-8?Q?=5bQuestion=5d_sched=ef=bc=9athe_load_is_unbalanced_in_th?=
+ =?UTF-8?Q?e_VM_overcommitment_scenario?=
+To: Waiman Long <longman@redhat.com>, <peterz@infradead.org>,
+	<juri.lelli@redhat.com>, <vincent.guittot@linaro.org>,
+	<dietmar.eggemann@arm.com>, <rostedt@goodmis.org>, <bsegall@google.com>,
+	<mgorman@suse.de>, <vschneid@redhat.com>, <oleg@redhat.com>, Frederic
+ Weisbecker <frederic@kernel.org>, <mingo@kernel.org>, <peterx@redhat.com>,
+	<tj@kernel.org>, <tjcao980311@gmail.com>, <vincent.guittot@linaro.org>,
+	zhengzucheng <zhengzucheng@huawei.com>
+CC: <linux-kernel@vger.kernel.org>
+References: <20240725120315.212428-1-zhengzucheng@huawei.com>
+ <3e68ccda-1606-9494-f57a-75be9668b83d@huawei.com>
+ <cb3a3f3e-727a-4cbb-b4a8-f9469ed4f08d@redhat.com>
+From: zhengzucheng <zhengzucheng@huawei.com>
+In-Reply-To: <cb3a3f3e-727a-4cbb-b4a8-f9469ed4f08d@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd500019.china.huawei.com (7.221.188.86)
 
-On Fri, Sep 13, 2024 at 01:55:51PM +1000, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the bpf-next tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
-> 
-> fs/xfs/xfs_exchrange.c: In function 'xfs_ioc_commit_range':
-> fs/xfs/xfs_exchrange.c:938:19: error: 'struct fd' has no member named 'file'
->   938 |         if (!file1.file)
->       |                   ^
-> fs/xfs/xfs_exchrange.c:940:26: error: 'struct fd' has no member named 'file'
->   940 |         fxr.file1 = file1.file;
->       |                          ^
-> 
-> Caused by commit
-> 
->   1da91ea87aef ("introduce fd_file(), convert all accessors to it.")
-> 
-> interacting with commit
-> 
->   398597c3ef7f ("xfs: introduce new file range commit ioctls")
-> 
-> I have applied the following patch for today.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 13 Sep 2024 13:53:35 +1000
-> Subject: [PATCH] fix up 3 for "introduce fd_file(), convert all accessors to
->  it."
-> 
-> interacting with commit "xfs: introduce new file range commit ioctls"
-> from the xfs tree.
+In the VM overcommitment scenario, the overcommitment ratio is 1:2, 8 
+CPUs are overcommitted to 2 x 8u VMs,
+and 16 vCPUs are bound to 8 cpu. However, one VM obtains only 2 CPUs 
+resources, the other VM has 6 CPUs.
+The host is configured with 80 CPUs in a sched domain and other CPUs are 
+in the idle state.
+The root cause is that the load of the host is unbalanced, some vCPUs 
+exclusively occupy CPU resources.
+when the CPU that triggers load balance calculates imbalance value, 
+env->imbalance = 0 is calculated because of
+local->avg_load > sds->avg_load. As a result, the load balance fails.
+The processing logic: 
+https://github.com/torvalds/linux/commit/91dcf1e8068e9a8823e419a7a34ff4341275fb70
 
-... and the same for io_uring/rsrc.c, conflict with "io_uring: add IORING_REGISTER_COPY_BUFFERS method".
 
-FWIW, that (sub)series is in viro/vfs.git#for-next - I forgot to put it
-there, so when bpf tree reorgs had lost their branch on top of that thing,
-the conflict fixes got dropped from -next.  Sorry... ;-/
+It's normal from kernel load balance, but it's not reasonable from the 
+perspective of VM users.
+In cgroup v1, set cpuset.sched_load_balance=0 to modify the schedule 
+domain to fix it.
+Is there any other method to fix this problem? thanks.
+
+Abstracted reproduction case：
+1.environment information：
+
+[root@localhost ~]# cat /proc/schedstat
+
+cpu0
+domain0 00000000,00000000,00010000,00000000,00000001
+domain1 00000000,00ffffff,ffff0000,000000ff,ffffffff
+domain2 ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+cpu1
+domain0 00000000,00000000,00020000,00000000,00000002
+domain1 00000000,00ffffff,ffff0000,000000ff,ffffffff
+domain2 ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+cpu2
+domain0 00000000,00000000,00040000,00000000,00000004
+domain1 00000000,00ffffff,ffff0000,000000ff,ffffffff
+domain2 ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+cpu3
+domain0 00000000,00000000,00080000,00000000,00000008
+domain1 00000000,00ffffff,ffff0000,000000ff,ffffffff
+domain2 ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
+
+2.test case:
+
+vcpu.c
+#include <stdio.h>
+#include <unistd.h>
+
+int main()
+{
+         sleep(20);
+         while (1);
+         return 0;
+}
+
+gcc vcpu.c -o vcpu
+-----------------------------------------------------------------
+test.sh
+
+#!/bin/bash
+
+#vcpu1
+mkdir /sys/fs/cgroup/cpuset/vcpu_1
+echo '0-3, 80-83' > /sys/fs/cgroup/cpuset/vcpu_1/cpuset.cpus
+echo 0 > /sys/fs/cgroup/cpuset/vcpu_1/cpuset.mems
+for i in {1..8}
+do
+         ./vcpu &
+         pid=$!
+         sleep 1
+         echo $pid > /sys/fs/cgroup/cpuset/vcpu_1/tasks
+done
+
+#vcpu2
+mkdir /sys/fs/cgroup/cpuset/vcpu_2
+echo '0-3, 80-83' > /sys/fs/cgroup/cpuset/vcpu_2/cpuset.cpus
+echo 0 > /sys/fs/cgroup/cpuset/vcpu_2/cpuset.mems
+for i in {1..8}
+do
+         ./vcpu &
+         pid=$!
+         sleep 1
+         echo $pid > /sys/fs/cgroup/cpuset/vcpu_2/tasks
+done
+------------------------------------------------------------------
+[root@localhost ~]# ./test.sh
+
+[root@localhost ~]# top -d 1 -c -p $(pgrep -d',' -f vcpu)
+
+14591 root      20   0    2448   1012    928 R 100.0   0.0 13:10.73 ./vcpu
+14582 root      20   0    2448   1012    928 R 100.0   0.0 13:12.71 ./vcpu
+14606 root      20   0    2448    872    784 R 100.0   0.0 13:09.72 ./vcpu
+14620 root      20   0    2448    916    832 R 100.0   0.0 13:07.72 ./vcpu
+14622 root      20   0    2448    920    836 R 100.0   0.0 13:06.72 ./vcpu
+14629 root      20   0    2448    920    832 R 100.0   0.0 13:05.72 ./vcpu
+14643 root      20   0    2448    924    836 R  21.0   0.0 2:37.13 ./vcpu
+14645 root      20   0    2448    868    784 R  21.0   0.0 2:36.51 ./vcpu
+14589 root      20   0    2448    900    816 R  20.0   0.0 2:45.16 ./vcpu
+14608 root      20   0    2448    956    872 R  20.0   0.0 2:42.24 ./vcpu
+14632 root      20   0    2448    872    788 R  20.0   0.0 2:38.08 ./vcpu
+14638 root      20   0    2448    924    840 R  20.0   0.0 2:37.48 ./vcpu
+14652 root      20   0    2448    928    844 R  20.0   0.0 2:36.42 ./vcpu
+14654 root      20   0    2448    924    840 R  20.0   0.0 2:36.14 ./vcpu
+14663 root      20   0    2448    900    816 R  20.0   0.0 2:35.38 ./vcpu
+14669 root      20   0    2448    868    784 R  20.0   0.0 2:35.70 ./vcpu
+
 
