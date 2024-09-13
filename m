@@ -1,101 +1,133 @@
-Return-Path: <linux-kernel+bounces-327834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A74D4977BC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:00:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28F55977BBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:59:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1B3D1C242BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:00:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0F2E2845D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB3F1D6DA1;
-	Fri, 13 Sep 2024 09:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E671D6C7C;
+	Fri, 13 Sep 2024 08:59:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="nNSGyQU8"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="frq4NGj3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8065D80B;
-	Fri, 13 Sep 2024 09:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8463215443F;
+	Fri, 13 Sep 2024 08:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726218047; cv=none; b=PVoK63lrWno2lcu/+Vfg2i/4/WnvxqMhX1ExCa//qkutaUD+uIM1WkkQM2h/KcUc3h9/zNv0GXxf7fBFY+JImmNkI+6s9sCcPNuylaV3yTtQIR2AhtjKIZ3RgGzAHauI3S451aSce+QXdNvRyrQmbo1Qsdml9jugnqI+TOphn00=
+	t=1726217968; cv=none; b=ebQqz1mXgi2eklQ6154+J3HwDHzvCNc6gvDIR2weqih7s+ewFRFHbB9Vi8qiQX+cPJJA2QMWTC2dt0hFtO9RCjkGH5rpe+8+RJFq9ixoMwFkIlYnkB6ocAP1CI/eqZNO9UAc4dJyyi7lvHoXfFLjFNQ7U8sGFyZ36nFwfoiOHqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726218047; c=relaxed/simple;
-	bh=9mwIPwycXYHl62D/Pxz4s9W4RXPDCPT8rj1Dc6NWpT4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iKa//rXlHqXsEeO/mhcdbf0Kg7w6D7tVrl2eTWISgNaUIlzQues5F5ClPW6EopEEkeYtiqbW8TeIhAgxh77m2TwnzFl+SdAFr9kYGRi4ozjWGikEQB+YUewhDkGh3tfgUtNlfm902UkD2mMymrnfG+0JNipM1ZtFUVa0Nu+WezI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=nNSGyQU8; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=CXayANdcDzJbMK17VtTXzWOx42S2gU6Wscove87433E=; b=nNSGyQU8+aBaLQuObtYnyCHjIe
-	a73fgw1TGGfEOW0tWCrWDpxhe2U6nAsuPzYDXFlFSOAY0X7krSAjLo+1kJzijEeIAQq+yRvekNNhn
-	NBXLLMuA5DC7Uxix6+LwP2pJxTpqp/4Cbe8k0rvP7CFJbG7KLuzoB5S/Lruqu9cn8GZIRascFZ807
-	/rv/SOAi9FZnJeoAg72CMicOXJZQRDVDwmDrRYIju5zHNd7y6jU3V6QlZpvobi6rp9q26JG1ju0U/
-	guMYikBaMF9DLhmXk+prSWGDE3eUBF8JJ2rxx00ogOh+uk2xhb+dGfnxRjEUrWTaCTeOV/FRJ6NC9
-	jZ7M2EOg==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sp209-002CSQ-1H;
-	Fri, 13 Sep 2024 17:00:16 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 13 Sep 2024 17:00:15 +0800
-Date: Fri, 13 Sep 2024 17:00:15 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: dhowells@redhat.com, dwmw2@infradead.org, davem@davemloft.net,
-	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-	linux-crypto@vger.kernel.org, zohar@linux.ibm.com,
-	linux-integrity@vger.kernel.org, torvalds@linux-foundation.org,
-	roberto.sassu@huawei.com, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 00/14] KEYS: Add support for PGP keys and signatures
-Message-ID: <ZuP_H2V60PlrCz4x@gondor.apana.org.au>
-References: <ZuPDZL_EIoS60L1a@gondor.apana.org.au>
- <b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com>
+	s=arc-20240116; t=1726217968; c=relaxed/simple;
+	bh=zRkh1Ji+XJM1QVnhjaVembi9RZTPeDYx7ZVLPItSeJ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NKlcynR2bmAqe170SJ8RDCTwUleyWkKFATugTlVRcmk3UhKFZwhOHwDzgR+TKfvc0c2Ss+1wvm5uTIfnxZKB5Rt51bwheLlVVIxfKhpDbr4v81A4pBz1sgpNouGJtjlODlvei5Gb7DqrxuRXRtdBTwrIfKbe4cZbLDAKJaJkFJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=frq4NGj3; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726217966; x=1757753966;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=zRkh1Ji+XJM1QVnhjaVembi9RZTPeDYx7ZVLPItSeJ4=;
+  b=frq4NGj3b4BLxL/1iT7p6kWX2qr00W4qu6VqdUXeV+EJkjm3OCO+r378
+   hy1m2yMP23g3k4IbSjpvRH+JZ070V3fWp/PmMiA553icPQP5cIy+KQyL/
+   a7HW+Lsw3/Gh74+70NWK28JiW5h6KictKo6p5Cq0eB00lUhuycFvRMkgL
+   XXsjr5iHpx2mIpAFP0tVkWfcGkn5bMWY82BVztYzM7XWf7vq/hXSFbxqk
+   GD6pGzJnmAnMBTaNYKbKDDJWC5/1f6Iq7cq+SR3cqMt4dzzYjU9GyK/Bi
+   WekFNkJ4vHoJyg5slbjKc1U6RLw3ZSbE+UZS8qQFhh87nSC5YHyFLebBs
+   Q==;
+X-CSE-ConnectionGUID: qUaf1PLWQQSQv/knTwHUHw==
+X-CSE-MsgGUID: F1IfLTdhR9CQqmJ0AlSLvg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="29004358"
+X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
+   d="scan'208";a="29004358"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 01:59:25 -0700
+X-CSE-ConnectionGUID: RWGsGADGS/aa0PhV8zUxIw==
+X-CSE-MsgGUID: j/LSU4Q5QsKg8MOzQAm9/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
+   d="scan'208";a="67834021"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.199]) ([10.237.72.199])
+  by orviesa010.jf.intel.com with ESMTP; 13 Sep 2024 01:59:24 -0700
+Message-ID: <7e73a66f-e853-4da5-bb95-f28c75d993f2@linux.intel.com>
+Date: Fri, 13 Sep 2024 12:01:30 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usb: xhci: fix loss of data on Cadence xHC
+To: Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Pawel Laszczak <pawell@cadence.com>
+Cc: "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "peter.chen@kernel.org" <peter.chen@kernel.org>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>
+References: <20240905065716.305332-1-pawell@cadence.com>
+ <PH7PR07MB9538584F3C0AD11119403F11DD9D2@PH7PR07MB9538.namprd07.prod.outlook.com>
+ <PH7PR07MB9538734A9BC4FA56E34998EEDD9D2@PH7PR07MB9538.namprd07.prod.outlook.com>
+ <ZuMOfHp9j_6_3-WC@surfacebook.localdomain>
+Content-Language: en-US
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+In-Reply-To: <ZuMOfHp9j_6_3-WC@surfacebook.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 13, 2024 at 10:30:11AM +0200, Roberto Sassu wrote:
->
-> The second problem is, assuming that the task is verified through other
-> means other than PGP (but again, we are still relying on the public
-> crypto functionality to be performed by the kernel, for this to work),
-> that I didn't get a confirmation that user space can have equivalent
-> isolation guarantees as the kernel:
+On 12.9.2024 18.53, Andy Shevchenko wrote:
+> Thu, Sep 05, 2024 at 07:06:48AM +0000, Pawel Laszczak kirjoitti:
+>> Please ignore this patch. I send it again with correct version in subject.
 > 
-> https://lore.kernel.org/linux-integrity/eb31920bd00e2c921b0aa6ebed8745cb0130b0e1.camel@huaweicloud.com/
+> It seems it's in Mathias' tree, never the less, see also below.
 > 
+> ...
 > 
-> Please, keep in mind that I already proposed what you suggested:
+>>> +#define PCI_DEVICE_ID_CADENCE				0x17CD
 > 
-> https://lore.kernel.org/linux-kernel/20230317145240.363908-1-roberto.sassu@huaweicloud.com/#r
+> First of all this is misleadig as this is VENDOR_ID, second, there is official
+> ID constant for Cadence in pci_ids.h.
 > 
+> #define PCI_VENDOR_ID_CDNS              0x17cd
 > 
-> After discussing with some kernel developers, the outcome was that a
-> better choice would be to put the code in the kernel, if I want
-> reasonable tamperproof guarantees.
 
-Where is this discussion? I clicked through the two links above
-and everyone seems to agree that putting it in user-space is a good
-idea.
+Thanks, fixed and rebased.
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Changes:
+
+diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+index 5e7747f80762..4bc6ee57ec42 100644
+--- a/drivers/usb/host/xhci-pci.c
++++ b/drivers/usb/host/xhci-pci.c
+@@ -78,8 +78,7 @@
+  #define PCI_DEVICE_ID_ASMEDIA_2142_XHCI                        0x2142
+  #define PCI_DEVICE_ID_ASMEDIA_3242_XHCI                        0x3242
+  
+-#define PCI_DEVICE_ID_CADENCE                          0x17CD
+-#define PCI_DEVICE_ID_CADENCE_SSP                      0x0200
++#define PCI_DEVICE_ID_CDNS_SSP                         0x0200
+  
+  static const char hcd_name[] = "xhci_hcd";
+  
+@@ -470,8 +469,8 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
+                         xhci->quirks |= XHCI_ZHAOXIN_TRB_FETCH;
+         }
+  
+-       if (pdev->vendor == PCI_DEVICE_ID_CADENCE &&
+-           pdev->device == PCI_DEVICE_ID_CADENCE_SSP)
++       if (pdev->vendor == PCI_VENDOR_ID_CDNS &&
++           pdev->device == PCI_DEVICE_ID_CDNS_SSP)
+                 xhci->quirks |= XHCI_CDNS_SCTX_QUIRK;
+-Mathias
+
 
