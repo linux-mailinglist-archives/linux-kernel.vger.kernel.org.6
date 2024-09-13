@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-327636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9F6697789C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:06:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8711497789E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:06:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F392B1C22093
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:06:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C8F11F25B7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243791A4E86;
-	Fri, 13 Sep 2024 06:06:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D85E21A0BF6;
+	Fri, 13 Sep 2024 06:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hp.com header.i=@hp.com header.b="krppPV00"
+	dkim=pass (1024-bit key) header.d=hp.com header.i=@hp.com header.b="gMP7rxpX"
 Received: from us-smtp-delivery-162.mimecast.com (us-smtp-delivery-162.mimecast.com [170.10.133.162])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEF815666D
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 06:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A51F185B7F
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 06:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.162
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726207584; cv=none; b=BBjrhkT8ZVaDcpaP1P3GXcYaaTyTjhpkk1bPcDY45+KjqyBToQvZhLCEHeI0qUdMlSnB0WblSQad+wloydYoIj0o++GZQaI/VyO/FwTdK9Ynt4IFxNQYyPWG8s03KdoNLUEiUNUmLD/LZ1PEglhJzJZFamY0hDCT2KJMTA2K0mo=
+	t=1726207595; cv=none; b=fWAIxqatZTgte0cmIRXgWBk1iPrmEPR4bX1KJUqCI9AzeT2mAieJ9amM5Op+d1rYKOQAqsL48VBTGjVEmQDc6gaX3GKJpf7O/4oGOvq9FgwW/nU4dbOUhyoHLzApHNAemNjpqYqdi+8LrlRxpJZwI4+wbot07V2VSu+AAju/EgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726207584; c=relaxed/simple;
-	bh=T2WVPeItws/8KSshd4JJuacLfIblNmrXh3m4eR9SqGM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=nBjAVgVP5jelIWRNMQ8qdAL21WFlODtlro8tAcK1SGsvUqAUzpu99w1jYFr06GHebUW8B4uXP12WI3Iigy+sCeLJZC6g/GOaVjE/Lrtuz+JNcg8VXrqLl6spDf5P48MLUtmcV9LW/PO2632KaQetERL+SDgWpYyH4EmprrEoBuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hp.com; spf=pass smtp.mailfrom=hp.com; dkim=pass (1024-bit key) header.d=hp.com header.i=@hp.com header.b=krppPV00; arc=none smtp.client-ip=170.10.133.162
+	s=arc-20240116; t=1726207595; c=relaxed/simple;
+	bh=c6Hu5CnM4BdwvovbL1B+FTv8bvzkAJlZ365AHjO9B58=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=reVcxH2yD55iABBUgq5ja350x2VXckQacCe6UTC5EUcYELv3RHmUL49+1A3OkA8QYmwkfikhXjD7J+XIMDls7w6hHVDLeuQ7PiNG7rJ6HnenKI0i4o4xpYeicLFNjoG+oRuQu16Dhbaimd5Cfa8BQYm7k47vFPJ3MUX0E3lx7NE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hp.com; spf=pass smtp.mailfrom=hp.com; dkim=pass (1024-bit key) header.d=hp.com header.i=@hp.com header.b=gMP7rxpX; arc=none smtp.client-ip=170.10.133.162
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hp.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hp.com; s=mimecast20180716;
-	t=1726207580;
+	t=1726207592;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=u5UMeaxqG4NmIWc0i5zrZ9ZlV9cl6Ku3OxStJMFQQko=;
-	b=krppPV00SjPB4FJiDdxtjfNnWFNruuirS46hYKUjU2I9L7exk1EV0UOdoM9QyzN5yE1ELY
-	V7whuk2rAOQSkjSD6U1Z7JRW5UYJp/nJddMdIK//ZVlpFkdsMd+w5d3gTC1dX8g7UR8VSs
-	Ie2GdrObRUEcUQIoss91+T9xnLQziuU=
-Received: from g8t13017g.inc.hp.com (g8t13017g.inc.hp.com [15.72.64.135]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-350-KkGqon8TN8qbvEYjHahyow-1; Fri,
- 13 Sep 2024 02:06:19 -0400
-X-MC-Unique: KkGqon8TN8qbvEYjHahyow-1
+	bh=c6Hu5CnM4BdwvovbL1B+FTv8bvzkAJlZ365AHjO9B58=;
+	b=gMP7rxpXEXTt10gACyvMldvmjGunKKU7c6Z/spqA7qFs+8TIuw8N6TgN45dAA17gcpMWOL
+	+g+4as4y1jHjmVSVLadoL4yI+OO6psLCjzqkWmjCp0bX5ppBOQ/8n72AfYaMYbGH5FtMtr
+	bzf5aMG+GSxcr7Wf+Z55G032KQA5aVY=
+Received: from g7t16451g.inc.hp.com (hpifallback.mail.core.hp.com
+ [15.73.128.137]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-434-ZHRi_eTnNJmDdQywcIsKjw-1; Fri, 13 Sep 2024 02:06:30 -0400
+X-MC-Unique: ZHRi_eTnNJmDdQywcIsKjw-1
 Received: from g8t01565g.inc.hpicorp.net (g8t01565g.inc.hpicorp.net [15.60.11.226])
 	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by g8t13017g.inc.hp.com (Postfix) with ESMTPS id D6C796000C02;
-	Fri, 13 Sep 2024 06:06:18 +0000 (UTC)
+	by g7t16451g.inc.hp.com (Postfix) with ESMTPS id 7B19C6000C98;
+	Fri, 13 Sep 2024 06:06:29 +0000 (UTC)
 Received: from mail.hp.com (unknown [15.32.134.51])
 	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by g8t01565g.inc.hpicorp.net (Postfix) with ESMTPS id 374F2212D3;
-	Fri, 13 Sep 2024 06:06:17 +0000 (UTC)
+	by g8t01565g.inc.hpicorp.net (Postfix) with ESMTPS id 90180212D3;
+	Fri, 13 Sep 2024 06:06:28 +0000 (UTC)
 Received: from cdc-linux-buildsrv17.. (localhost [127.0.0.1])
-	by mail.hp.com (Postfix) with ESMTP id E83BAA40465;
-	Fri, 13 Sep 2024 13:58:41 +0800 (CST)
+	by mail.hp.com (Postfix) with ESMTP id 6A80DA40465;
+	Fri, 13 Sep 2024 13:58:53 +0800 (CST)
 From: Wade Wang <wade.wang@hp.com>
 To: jikos@kernel.org,
 	bentiss@kernel.org,
@@ -63,9 +63,9 @@ To: jikos@kernel.org,
 	linux-kernel@vger.kernel.org,
 	wade.wang@hp.com
 Cc: stable@vger.kernel.org
-Subject: [PATCH] HID: plantronics: Additional PID for double volume key presses quirk
-Date: Fri, 13 Sep 2024 13:58:31 +0800
-Message-Id: <20240913055831.1322457-1-wade.wang@hp.com>
+Subject: [PATCH] HID: plantronics: Update to map micmute controls
+Date: Fri, 13 Sep 2024 13:58:51 +0800
+Message-Id: <20240913055851.1322592-1-wade.wang@hp.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -78,82 +78,35 @@ X-Mimecast-Originator: hp.com
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=WINDOWS-1252; x-default=true
 
-Add the below headsets for double volume key presses quirk
-        Plantronics EncorePro 500 Series  (047f:431e)
-        Plantronics Blackwire_3325 Series (047f:430c)
-
-Quote from previous patch by Maxim Mikityanskiy and Terry Junge
-=09'commit f567d6ef8606 ("HID: plantronics: Workaround for double volume
-=09 key presses")'
-=09'commit 3d57f36c89d8 ("HID: plantronics: Additional PIDs for double
-=09 volume key presses quirk")'
-These Plantronics Series headset sends an opposite volume key following
-each volume key press. This patch adds a quirk to hid-plantronics for this
-product ID, which will ignore the second opposite volume key press if it
-happens within 250 ms from the last one that was handled.
+telephony page of Plantronics headset is ignored currently, it caused
+micmute button no function, Now follow native HID key mapping for
+telephony page map, telephony micmute key is enabled by default
 
 Signed-off-by: Wade Wang <wade.wang@hp.com>
 ---
- drivers/hid/hid-ids.h         |  2 ++
- drivers/hid/hid-plantronics.c | 11 +++++++++++
- 2 files changed, 13 insertions(+)
+ drivers/hid/hid-plantronics.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 781c5aa29859..a0aaac98a891 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -1050,6 +1050,8 @@
- #define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3220_SERIES=090xc056
- #define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3215_SERIES=090xc057
- #define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3225_SERIES=090xc058
-+#define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3325_SERIES=090x430c
-+#define USB_DEVICE_ID_PLANTRONICS_ENCOREPRO_500_SERIES=09=090x431e
-=20
- #define USB_VENDOR_ID_PANASONIC=09=090x04da
- #define USB_DEVICE_ID_PANABOARD_UBT780=090x1044
 diff --git a/drivers/hid/hid-plantronics.c b/drivers/hid/hid-plantronics.c
-index 3d414ae194ac..2a19f3646ecb 100644
+index 2a19f3646ecb..2d17534fce61 100644
 --- a/drivers/hid/hid-plantronics.c
 +++ b/drivers/hid/hid-plantronics.c
-@@ -38,8 +38,10 @@
- =09=09=09    (usage->hid & HID_USAGE_PAGE) =3D=3D HID_UP_CONSUMER)
-=20
- #define PLT_QUIRK_DOUBLE_VOLUME_KEYS BIT(0)
-+#define PLT_QUIRK_FOLLOWED_VOLUME_UP_DN_KEYS BIT(1)
-=20
- #define PLT_DOUBLE_KEY_TIMEOUT 5 /* ms */
-+#define PLT_FOLLOWED_KEY_TIMEOUT 250 /* ms */
-=20
- struct plt_drv_data {
- =09unsigned long device_type;
-@@ -134,6 +136,9 @@ static int plantronics_event(struct hid_device *hdev, s=
-truct hid_field *field,
- =09=09cur_ts =3D jiffies;
- =09=09if (jiffies_to_msecs(cur_ts - prev_ts) <=3D PLT_DOUBLE_KEY_TIMEOUT)
- =09=09=09return 1; /* Ignore the repeated key. */
-+=09=09if ((drv_data->quirks & PLT_QUIRK_FOLLOWED_VOLUME_UP_DN_KEYS)
-+=09=09 && jiffies_to_msecs(cur_ts - prev_ts) <=3D PLT_FOLLOWED_KEY_TIMEOUT=
-)
-+=09=09=09return 1; /* Ignore the followed volume key. */
-=20
- =09=09drv_data->last_volume_key_ts =3D cur_ts;
+@@ -77,10 +77,10 @@ static int plantronics_input_mapping(struct hid_device =
+*hdev,
+ =09=09}
  =09}
-@@ -210,6 +215,12 @@ static const struct hid_device_id plantronics_devices[=
-] =3D {
- =09{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
- =09=09=09=09=09 USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3225_SERIES),
- =09=09.driver_data =3D PLT_QUIRK_DOUBLE_VOLUME_KEYS },
-+=09{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
-+=09=09=09=09=09 USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3325_SERIES),
-+=09=09.driver_data =3D PLT_QUIRK_DOUBLE_VOLUME_KEYS|PLT_QUIRK_FOLLOWED_VOL=
-UME_UP_DN_KEYS },
-+=09{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
-+=09=09=09=09=09 USB_DEVICE_ID_PLANTRONICS_ENCOREPRO_500_SERIES),
-+=09=09.driver_data =3D PLT_QUIRK_DOUBLE_VOLUME_KEYS|PLT_QUIRK_FOLLOWED_VOL=
-UME_UP_DN_KEYS },
- =09{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS, HID_ANY_ID) },
- =09{ }
- };
+ =09/* handle standard types - plt_type is 0xffa0uuuu or 0xffa2uuuu */
+-=09/* 'basic telephony compliant' - allow default consumer page map */
++=09/* 'basic telephony compliant' - allow default consumer & telephony pag=
+e map */
+ =09else if ((plt_type & HID_USAGE) >=3D PLT_BASIC_TELEPHONY &&
+ =09=09 (plt_type & HID_USAGE) !=3D PLT_BASIC_EXCEPTION) {
+-=09=09if (PLT_ALLOW_CONSUMER)
++=09=09if (PLT_ALLOW_CONSUMER || (usage->hid & HID_USAGE_PAGE) =3D=3D HID_U=
+P_TELEPHONY)
+ =09=09=09goto defaulted;
+ =09}
+ =09/* not 'basic telephony' - apply legacy mapping */
 --=20
 2.34.1
 
