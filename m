@@ -1,127 +1,132 @@
-Return-Path: <linux-kernel+bounces-328729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53FCC9787F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:33:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD56F9787EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:33:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1789928658B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:33:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 133AC1C22E4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F7413B7BE;
-	Fri, 13 Sep 2024 18:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F4012A14C;
+	Fri, 13 Sep 2024 18:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="Ilt/Ipsv"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PAizeBNH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5DD613AD0F
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 18:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8AA92AD33;
+	Fri, 13 Sep 2024 18:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726252410; cv=none; b=XX+YhpsW6pdwp/QxQzqQNxRHElwBjaMrcuXksuwUj7BogRfZAc8WSJBdeHAn7xOCtessWXwOasNT7EWpdZBEH5XKr4cT3JO4LUavDkuYZh5qZb4N/uvbHDDvEOCKya1J9ysuBYlGQ9nazBS65QS/J5qIbr3vWtJbOsYk3ssQj+k=
+	t=1726252376; cv=none; b=DlwVgka8a1EFip4753eFtDFgjnU6T6fg4fkebGEeJUqQ3FCwjWisW5xt1YcD+VMLe4TBUaMq4ypySLX6isUJirsaR/crjbQ621c1fKKwuuh/HX6W78ymMFexh1hX1rf7aWCkuBX8oZWChlKmJmX4G1de/lmV+jApexS2ZofZHO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726252410; c=relaxed/simple;
-	bh=KWGgAMhSiiyP8L31h701ZTjtJNsOy0WoTQfM158fupU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F17L2u2+6t4qHB5sYBw3ZngUmUjym/ZdqjCNJdgCShaMM1FneGhysXG6elINQvXrKtu/zfmThv1qH/nsnfiz5pfdVDsoKKlBqZM6eZ2/MWigL1jybGG1dVsfgT8F4fZwzESooYa8jd5ZIEcRivbHCAZ38ZawA3OSVnjg9JZSLes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=Ilt/Ipsv; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-45821eb62daso14261051cf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 11:33:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1726252407; x=1726857207; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2v0+dGtW112yh7kuPl9jbngDqDOI2CHxz8mSzSdgOgk=;
-        b=Ilt/IpsvgH7nywcfAmar9EChYlPG/WaDk8pNHxHYrG8cDXcicnSGPF86dAejeTfMW5
-         uXt5pDCoWTs2HhQOe2Ddaqx4+ZSPknOrDawcpyHCTK/ZU+3tZpcMi/uOckGPTu+Th2oV
-         RQ2eSBCtIw8BQNBqzEfvzETJYzoVboYgeDzuqL+hCGva1tnN0r7XLJ5f1p5H5geEXjVe
-         4wDSvkPnP+SWd8SzEIiQVtHmuBIk2qRq3Lpt1MYZ60lydbdIxAVaqDRqQrQ/NvWxbbSa
-         qUPR4SqHvQPKWfBqQOsdzQvNyisQ09sREL72jJWRv6y3s5cQQzOtL7ZH4HDeX6+GXNGZ
-         THRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726252407; x=1726857207;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2v0+dGtW112yh7kuPl9jbngDqDOI2CHxz8mSzSdgOgk=;
-        b=KwEqb36OFwlodApT9+hpaYC+LAQFPj8P+W4P+PHUsEjKaeiHUmqESZje8aVP7unfmA
-         /8zCvxMujTVSiW1mt0opCGiFM4vnf4TyzDdVOmNR2bT6Dg4opeZG1pZtwCVXZRe8yiVZ
-         CYe6lhNr+3eDBH4HGG+c9Y676m3dWCabzDcnxXlsI0G4oEkx+pEGwMs2aQF4XNQv7LZ0
-         BPfkxVHB5ZuGQoXQ5LViKBq6sdWu8KRbeLGV/JSgk5Ej1rVAlL7WT2LLEn/0bvWV9vbX
-         vVMlFkFmQk0SrdkrmNgUASjDAHQlQ1E9JEi+igjdRxvbi4tn9FM7NiwVY0Rtn2C9IlqN
-         ClKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ7twWz0R0WyyQgoE5DIJR9B+q2g6B+bj8mYWVZoh6+ThWE0iScLSfd6W6Q+S4zH2OkHAqicBO8Z1lCZ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQNbBA/MCkJFIHwiqsG/2vyt/+DunCy6BH1GD4ew+8mu1OeJ+a
-	B4Mucv7zKrhofr0T2B3lbAhomGIb4DcosgdLyQYwWAHDMSP+6otU1r56d8G1Jlo=
-X-Google-Smtp-Source: AGHT+IGvC/54/kqTEqx6TS/kP3pJhDLE6A7PbErUo3HvjAsjov75/IPAU3sCI8+hL1thXWjQYgmYEQ==
-X-Received: by 2002:ac8:584d:0:b0:458:35fe:51d with SMTP id d75a77b69052e-4586045e50cmr79001221cf.60.1726252407607;
-        Fri, 13 Sep 2024 11:33:27 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-45822f61ac7sm68596801cf.71.2024.09.13.11.33.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 11:33:27 -0700 (PDT)
-From: Gregory Price <gourry@gourry.net>
-To: linux-pci@vger.kernel.org
-Cc: linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bhelgaas@google.com,
-	dan.j.williams@intel.com,
-	dave@stgolabs.net,
-	jonathan.cameron@huawei.com,
-	dave.jiang@intel.com,
-	vishal.l.verma@intel.com
-Subject: [PATCH] pci/doe: add a 1 second retry window to pci_doe
-Date: Fri, 13 Sep 2024 14:32:41 -0400
-Message-ID: <20240913183241.17320-1-gourry@gourry.net>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726252376; c=relaxed/simple;
+	bh=znnVx+uRElVywTjUapcfKJ0/15Z+HLxKd6BG/S5a4M0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hzEp/JfJsBpCYQR/kq1eDoR86QipLKtaLNEKkgUwuZk9E0JeSAv1lG+/Tb2VleuuAqwMc0IFYbNME7fwBygOOffFx+OKxCprSFpwwhWepxFKS5et0EwxSUGVnOG+AH6jE2xm7U1zSavfNhi86j0OFA76rCAIzs0KyeFi3/zA8gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PAizeBNH; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726252375; x=1757788375;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=znnVx+uRElVywTjUapcfKJ0/15Z+HLxKd6BG/S5a4M0=;
+  b=PAizeBNHTm7DjDdK+Xu7928v+WVrhQ/qhoKIXAiQAagiWt7xsdOkHhjw
+   9GlTChwdQUo1w/lSxTNjC+QS6PeJZiniHi3HYIvY8bgV7UScjxqDmWac5
+   uQhkNPmQAlsSKX7iDSXEGP1nnZJF7XP2sCPgp7fpP4pj3hRAkieT0mzXd
+   h599+Bjypqd9poqub8YPhQ4rIiXvLZAkjeTRXplB/dO8pVHMoNlLJk00E
+   a+j/lsLlXMRPx2eBNk6Q1Ya8lU5vOYKIHap3YK/Ns8yIYhbF+XFIyBGX9
+   8DaGOgyd16zZ56Lrg1eeyZU6KqIxNPyuMH6RMcjHCkJf4y40lFWEsSKcc
+   Q==;
+X-CSE-ConnectionGUID: iwAKvfuzSxSWYpdVExIhFw==
+X-CSE-MsgGUID: J+uDHX3bTtGm9shtwk/4nw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25261411"
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="25261411"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 11:32:54 -0700
+X-CSE-ConnectionGUID: j+lir26ERx2OTTkmcaTa/A==
+X-CSE-MsgGUID: z8VyUXDqS6y4Ie9aPyw45A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="72524838"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 11:32:52 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1spB69-00000008OIL-1yG8;
+	Fri, 13 Sep 2024 21:32:49 +0300
+Date: Fri, 13 Sep 2024 21:32:49 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Parker Newman <parker@finest.io>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	Parker Newman <pnewman@connecttech.com>
+Subject: Re: [PATCH v1 1/6] misc: eeprom: eeprom_93cx6: Add quirk for extra
+ read clock cycle
+Message-ID: <ZuSFUQPp0BdcFpx9@smile.fi.intel.com>
+References: <cover.1726237379.git.pnewman@connecttech.com>
+ <d0818651c4a58d0162a898c3ba3dd8abf9f95272.1726237379.git.pnewman@connecttech.com>
+ <ZuR600QgWi6oQcau@smile.fi.intel.com>
+ <20240913142420.675faf80@SWDEV2.connecttech.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240913142420.675faf80@SWDEV2.connecttech.local>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Depending on the device, sometimes firmware clears the busy flag
-later than expected.  This can cause the device to appear busy when
-calling multiple commands in quick sucession. Add a 1 second retry
-window to all doe commands that end with -EBUSY.
+On Fri, Sep 13, 2024 at 02:24:20PM -0400, Parker Newman wrote:
+> On Fri, 13 Sep 2024 20:48:03 +0300
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > On Fri, Sep 13, 2024 at 10:55:38AM -0400, Parker Newman wrote:
 
-Signed-off-by: Gregory Price <gourry@gourry.net>
----
- drivers/pci/doe.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+...
 
-diff --git a/drivers/pci/doe.c b/drivers/pci/doe.c
-index 652d63df9d22..5573fa1a0008 100644
---- a/drivers/pci/doe.c
-+++ b/drivers/pci/doe.c
-@@ -647,12 +647,16 @@ int pci_doe(struct pci_doe_mb *doe_mb, u16 vendor, u8 type,
- 		.private = &c,
- 	};
- 	int rc;
-+	unsigned long timeout_jiffies = jiffies + (PCI_DOE_TIMEOUT * 1);
- 
--	rc = pci_doe_submit_task(doe_mb, &task);
--	if (rc)
--		return rc;
-+	do {
-+		rc = pci_doe_submit_task(doe_mb, &task);
-+
-+		if (rc)
-+			return rc;
- 
--	wait_for_completion(&c);
-+		wait_for_completion(&c);
-+	} while (task.rv == -EBUSY && !time_after(jiffies, timeout_jiffies));
- 
- 	return task.rv;
- }
+> > > Link: https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-5193-SEEPROM-AT93C46D-Datasheet.pdf
+> >
+> > Make it a tag (i.e. locate just above your SoB tag)
+> 
+> Sorry, not 100% sure what you mean by tag? Do I just need to move the Link: entry
+> to be above my Sign-off? Or is there something else? Thanks!
+
+Make it like
+
+  ...Summary...
+  <blank line>
+  ...commit message text...
+  <blank line>
+  Link: ...
+  Signed-off-by: ...
+
+...
+
+> > > +	if (has_quirk_extra_read_cycle(eeprom)) {
+> > > +		eeprom_93cx6_pulse_high(eeprom);
+> >
+> > No additional delay is needed?
+> 
+> Should not need any extra delay as both pulse high/low functions have the worst case
+> 450ns delay after the register write. It was working well on my test cards.
+
+OK!
+
+> > > +		eeprom_93cx6_pulse_low(eeprom);
+> > > +	}
+
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
 
