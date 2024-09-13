@@ -1,253 +1,142 @@
-Return-Path: <linux-kernel+bounces-327575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAC7B9777E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:27:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B2E99777E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:27:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FC4AB21BCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:27:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97345B21FCC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF021D414F;
-	Fri, 13 Sep 2024 04:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECF11D54C5;
+	Fri, 13 Sep 2024 04:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ipG14bHv"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2045.outbound.protection.outlook.com [40.107.92.45])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="ZA269dzg"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32001C461C;
-	Fri, 13 Sep 2024 04:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726201628; cv=fail; b=haH3JFZkkjbn9Yp6AEQMCCWcq183XwyTDKe7OGqp3YLEAANCh0FOUu8yvPgwREu+bIV5LsrWy1VXjLxxoluZh4Q/Q8FN/MkmuLXaVXiwBf10mJOuaJn2udItlTtXAvx0YL0nr9/M+4Ai11aao+tCs59pTtu+rvs/NOjFwiRqdJE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726201628; c=relaxed/simple;
-	bh=pJFhok5GOEml9U4cBy8LiMW+QiF1Usy6YYL4stXoHjE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=c0QJ1xc3PUMFK3+BcRCk2YRgQoYSClAMT4tNMz2YMPgp2Aztbo+N21FWenqDWZsw62FFQWWw4+WKKpML6jSnocYyte4BZdcfE4YFb24A2c6lDVCAhYmoxVziGhePFVrYviuNieON5N6UgJ8ysBTKnW9tePiv1CoOXrGl+f3Q71k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ipG14bHv; arc=fail smtp.client-ip=40.107.92.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Iizw+EgKco5pijP2Hn4osvvJCHriJ660F60uKp5dCOt6bLj21qANB6OxOpNqZ562OGXmmr8i3xxVmH7izDdnKrObRSCq+SmMBDn0IPf0UfpVmExsP8QAn78QuVmlCPLbZYv4/OYqCH1V+cYznxpQrXbWarF5mDUOCw3VbkXu70G4TpB+EvLWayLebij2Uom7mWgoZWHMRZKyUiObNeiIcucon7r3o8JPUhanwU1zOOn39LoTOiVnh4+jhQUlQT64AoKirPYO5NsyR5jS7EfAdlqbXbuGBLGXJto7x9zXUfzEsSRIzq3J6UazJ1Zf1Ec3J+g25EONqVKB0vb6KwdRaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0uXBemPPfVkfH15v/DxLzTOB2Er1JuL18lzcKqsx8/U=;
- b=tW/Goci+1xbJKwNAx9HC3mNtjAe98Z9v7yhE24uq78DULmjPg12FIyiRDd5zRiRE3X4kxJScxvl4OjgxHN9e2Mv8y6FGfz4Np3e6ZH8qz3esKuVy425jiEdvUaKUpemg0eEgs4/xUls1cINWUd+NB8GTxQmfYZB/eGYAZP1gorN7mkINyjTq2a2yaWvlL1Qv2dNUEm7083BFOt3JRUHO8PYY6tmf8/FFPaZyWsJkMtpZy5QnQbW9y2Dly/57C5iS2yH6c5diLOyEvUUgZI1d9V6O0ZMhpnjhbmbGhWt26tFRbx039nJmwHU8PUZI9FNfHGjvq4oYXwQPzu+Pc5ZFLg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0uXBemPPfVkfH15v/DxLzTOB2Er1JuL18lzcKqsx8/U=;
- b=ipG14bHvLX5CsZ9ORu6KjhVMS+D2GQ/E2cxt49axmqYlU1/x+nTQcu99doV45KCsBLzBe7Dt95lWv3jeXQX2zsoTT8UJAG+H83ycbDoLB2hw1IIQDCldpXcRSVFsiz2dISi/utj6LPXZGfID0g3boFHpdwiLzLNfboFPo87+cpQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6309.namprd12.prod.outlook.com (2603:10b6:8:96::19) by
- SJ0PR12MB6943.namprd12.prod.outlook.com (2603:10b6:a03:44b::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24; Fri, 13 Sep
- 2024 04:27:03 +0000
-Received: from DS7PR12MB6309.namprd12.prod.outlook.com
- ([fe80::b890:920f:cf3b:5fec]) by DS7PR12MB6309.namprd12.prod.outlook.com
- ([fe80::b890:920f:cf3b:5fec%5]) with mapi id 15.20.7962.018; Fri, 13 Sep 2024
- 04:27:03 +0000
-Message-ID: <a826082f-d80e-4aa3-982e-df7c723e2d2b@amd.com>
-Date: Fri, 13 Sep 2024 09:56:52 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH v11 09/20] virt: sev-guest: Reduce the scope of SNP
- command mutex
-To: Tom Lendacky <thomas.lendacky@amd.com>, linux-kernel@vger.kernel.org,
- bp@alien8.de, x86@kernel.org, kvm@vger.kernel.org
-Cc: mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
- pgonda@google.com, seanjc@google.com, pbonzini@redhat.com
-References: <20240731150811.156771-1-nikunj@amd.com>
- <20240731150811.156771-10-nikunj@amd.com>
- <30a5505f-8c9c-6f13-6f90-8d5b6826acb5@amd.com>
-From: "Nikunj A. Dadhania" <nikunj@amd.com>
-In-Reply-To: <30a5505f-8c9c-6f13-6f90-8d5b6826acb5@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0240.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:eb::17) To DS7PR12MB6309.namprd12.prod.outlook.com
- (2603:10b6:8:96::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7F91C68A3
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 04:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726201632; cv=none; b=hME2WTbrgo8F6ySQA+iraDvEn54ZI1CcVd1c99z4Y9JFPTJLaUUgKJraX/ynP46pxk2Nanje1duvi1tm8JO7/2gUwNiXxmukqqkePfioHzAmgsjD5VO4tuE5uhe5JHq+oPX3pefPFYBwz/PEWaKqa3w9e1xsEeuSl1IAlniIrQc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726201632; c=relaxed/simple;
+	bh=QWltAUqEPTJdDSYi9Mp1jea2uT6Ze1iq68fk+NRCq6I=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=oRcynbh7/0IhIIa6zAs5yRxDa3F4TEAc/Txn1qGThOZ8qcrL7brB903294x6xakRJPqon12LSQSVLu1kgTemd70ABrY/sPCf0BC7q57LJCZFng+O4FYC+1hKnuiPcMoS0g2ZkKg4dtBczUjEDVKlZDIQOZSYoBwKFRbTV3lSPyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=ZA269dzg; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id D7FCB2C0272;
+	Fri, 13 Sep 2024 16:27:04 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1726201624;
+	bh=QWltAUqEPTJdDSYi9Mp1jea2uT6Ze1iq68fk+NRCq6I=;
+	h=Date:To:Cc:From:Subject:From;
+	b=ZA269dzgHgANNdzo+JjSrL8hms4craATnHgIvvH2RSOmIpdm0JL6Wv9oE+FxyLjTF
+	 rVP72x2Agb1eR9y5+JU0VY0MV4TOdtDqkNilgudQlJ4Qwb3EKA/45GTX+Pn1I79Mlp
+	 KxtOSdAMPZxfV1SwDU1bkdp9kN9MzKXJJ34Vh7EZjLm6e2rYZ8TaYDPuElSGiBOc7X
+	 vbczE38vxE8rlT6uVxsuFe1wAHunccLFKNBp/h7znuupltkDbULqBmF7gODR93uVRW
+	 Mjhg9ondAJ5OCry+uLd7CDVcYpie9SdLLu65GPdEIOByYar4ENUP3q69KO72Z5yjgQ
+	 W3Yvaz2KZZ7JA==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B66e3bf180000>; Fri, 13 Sep 2024 16:27:04 +1200
+Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id B400213ED8D;
+	Fri, 13 Sep 2024 16:27:04 +1200 (NZST)
+Message-ID: <16abd358-f05c-4ddc-b776-2986dbdc175d@alliedtelesis.co.nz>
+Date: Fri, 13 Sep 2024 16:27:04 +1200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6309:EE_|SJ0PR12MB6943:EE_
-X-MS-Office365-Filtering-Correlation-Id: cdfe7eea-a2eb-436b-d776-08dcd3ac5123
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bjBnT1NxRnBCNDdPQk8rMXY0elM3K09oU1RsdDIzSVlIQmQ4TW1qNjlveStO?=
- =?utf-8?B?ZzFFdHE3OWVKejc4d1BuVmxrQm1tVlN4Z09Da1l3bTRia0swa0p2SFQ1cEll?=
- =?utf-8?B?OVI4eEs2blFuS0pMbjBsMWNIODJNMG9Ed1N3K1FjSExBZTdHOUNSbW5lckMv?=
- =?utf-8?B?WnhFK0RIWjdjTWY2REVCcUhobmF3VjhzSkxwMnNZV3ArNEJsdlhKM1hDTlpu?=
- =?utf-8?B?NGdUNGZoczU3Uk1OUjhXNTdLNWFIVDlFOWs2Q2VUUXU5QUpHYU8wb01EUDR2?=
- =?utf-8?B?SzNveWUyb3BMcjlpYktSVFNHZ01pNFRDeThVaUdxNVdqMHVLY0lZZEc5K0NT?=
- =?utf-8?B?TEtIbkk2Nno1aUwwT291ZDlGRXExVU9zeVhmdEZnNldFMWdHQWkyOWoyUVkv?=
- =?utf-8?B?c3pDZ1R4NFR5a08rYTN4RXg4c1paT29YRUw3ZCt4MW56UFp1NzVUQVJsNG0r?=
- =?utf-8?B?d2ZuamI3QTlQK1lkdUo2TnNxY29GbW15eiszVC9aZG5peDhVUnIzbHF5R3NL?=
- =?utf-8?B?SU02UzZqRngvNW9mNEVyUnJxWTQ2Sng4WWFVVS9ydXc1a0NLaWpFWk1VNUpp?=
- =?utf-8?B?OFYyOExxRk5hVFZoeWVYMHJ2UlBhWWRrM1FzWklpTU9qSGJpcGJNM2I3aTlM?=
- =?utf-8?B?ZFFIZHVWNVY3S2dlOXNzcyt6QU1wTkIxMjhWYlVONVVINU5CK3NZczY1OEpp?=
- =?utf-8?B?ZWtKeVNiNHhDdDdieFB0RWdiOGZBVGMrbU1XYzEvUm5TZzRKRU5DdjRtemZv?=
- =?utf-8?B?b0E1MjYxUy9hbnp4U01BYUNLYzZkd2pFNEdVcEdwR2hGbkx2UjVDckxuU1FW?=
- =?utf-8?B?WkNZMG1ITXI1S2ZQN0ZFZ01ubStGdk1Ca2V5VFZ1Mm50TWN6U0VoY2h3Snp2?=
- =?utf-8?B?YW1SaTF3aVh0OGNPWlJzNTRMRDNuTHhjWGk4aWRpRWxCRGpHZlV3bFExakQ0?=
- =?utf-8?B?QWFqNkJLd3d2UU5YbXNzQ2IrWVNEd2NoRGpQWTNnaGxIc21jZlNENE5Xc3I1?=
- =?utf-8?B?dDc2WmRsZHpOaURROFk4NnczWTc1c1VkU083K0FUVThiNWhzTVQ5QWd6d2lw?=
- =?utf-8?B?OURTUzU2N2VOQnoxVkhGVDRaaExZU3N1T3p2YmdYSlRYdlBndzRpVlZmYWFI?=
- =?utf-8?B?UFBmczBpMTArRVo2K1dWa1pOTzkrVmo3ZlJCR3dIUDVEaS80YkdsOFl0VDNl?=
- =?utf-8?B?N0ZGNGdWS2dSU3BpeHhSOGdrbkREWG9jZmQ4UkZybnRUWkljei9ONVAzQlQ5?=
- =?utf-8?B?VkF2U2pOM2IwaG5iTkNLeTIweGl1bTRUQWJIWnB3LzZwaXNGTUJaL0VDc2Y0?=
- =?utf-8?B?bHR0YnBWV2RGbll4L0VxNmJGWExTVTFWamR0WUlod3U5SGQwWlVjM2l1b1cx?=
- =?utf-8?B?bk1oYmNTMWNwZzBncEZ4dDZINmltMU4xeXJraFFETjVqT3gwRmVJVkQ1bDM5?=
- =?utf-8?B?QmJnNXZ6bmt3RUl4cXE3WGorNnJSeWJ6eTZUbG9rTE5WaVNydjVVV28xbmZj?=
- =?utf-8?B?S0Mzc3VweExEQzJ5S2U1RjczK1VpTTRSYzFrektWa01EdmNMaXJnTnllYTFw?=
- =?utf-8?B?eDBmTHZqUGJieHdpZURaQi9TQjl5bzJyY2w1cTJlQWVZUVdQQlZGV3dVTXVj?=
- =?utf-8?B?dVdwcGFSZlc4L1c2OGt2NTRKTkovTkVab3YwL2NJVkNWbkZNS3crNUxhWi9y?=
- =?utf-8?B?RXdWZGIwMGYvNXMzc1RtTm1yamZUeXNvUmZIcWVndGhCY2ZxTW1xSEpiUTJ4?=
- =?utf-8?B?THBYVnJZRzQyVDJCWmhqbzNSYnhXdXp6VTFxckdiYjh0UWN1d0QvbHFTTW1C?=
- =?utf-8?B?aitZdTB5QmpxOHJGZ3k4UT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6309.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?T0J5VUhFL1NjbmpPcENLQ2dDd1d1SmJmL1gvM016U3pRRUV5WE5CZ3dqMGdn?=
- =?utf-8?B?eGRBU3dVeWpROWFaOVY2UU5Hck8yQWFNTWlCVHFrV252MFNMUHhyNjRmdm9j?=
- =?utf-8?B?dTU0Wk5lZEk5RkNHeERkNnlUU242cGFaWjZEWEhvZndGRzNoNDF1WlJRcU40?=
- =?utf-8?B?cFA2aDNxN21XekEzYWdtK1JveTZ6SHhZL2Y1RHE5aXRXRk9IM1E3SkJEWFN2?=
- =?utf-8?B?eVF2VWFaSTJoZDFOcnRwaHVnanc1Y1V4RmJZcXdXMU8zZDZQcnNVUGEvRnAy?=
- =?utf-8?B?dVhSczFpekp4SFBkdWszVVNvL0pLUVQ0S0MwMGRjUktBNWRDYTFFQ1EyOHhV?=
- =?utf-8?B?NnV4WnhRNk5sdTY1WGdzZkJhNnhybDc3anR3cHBGRytadlFOSXNRZC9aa1VK?=
- =?utf-8?B?enRpdldBR2tOQ1k5V3VGNnFYY1FKNGNzSC9HRmVpOGhsVnF0VGZtKzlJSW5Z?=
- =?utf-8?B?M0FuTzZuU240Um90U21VK2VwUWpiUG9pb0liY05YdjdNbDdvbzdRRXlVZllY?=
- =?utf-8?B?a1NRNHVuL3RBRXZkRjlUUktYTTBXeVNlV2xUd1ZQaFA1YXo3SFg2Rk0rSFBo?=
- =?utf-8?B?NDIrMUpDSlc4TTVXeVNJazhFY0VwSU5uSVloa3JYMVUxU3FmRHljTVoyY0Z5?=
- =?utf-8?B?dUcvaTlWUit1UzRhTXRiNEdSeTB3ODNERnQ4THp1REVQVHBLMHZaSnVXd3c3?=
- =?utf-8?B?ZmpGbStLZ2RNU2lXR1YwWkhQY0drK0xkSU9lNXVvazVUT0JOVHBielFoTUZ3?=
- =?utf-8?B?MW9GMElNNEZ6NXNGeGFoUE94M0FNM3llaGVuZlFSSkhnV2RNRlpma0VoLy83?=
- =?utf-8?B?Sld5MEo5ZzExdXBzZXVoR2VyUjdSK1NEbE1MZnVsc1hsNVN1c29lbDRoNUxO?=
- =?utf-8?B?NHVzMFdyRndCSDFZMjk1UG9LVmd1Mk9ORUY0NWtDTjN4djNxa29UNS8weGlI?=
- =?utf-8?B?ZmZHekh5R3gwZWFwMVcvbXU2K2N6TkdTdiswUkJiVlVrSnd2N3FqNTZ4dERL?=
- =?utf-8?B?dW5xbWNyNHRTeldYNFlkNFpiMUk0aXZWVE5PZ2ZaNHBVZmJ2NTJCc2xxazdN?=
- =?utf-8?B?L3k3eVV5M0Nid2QxdjJDK0Z1d25WeFJLcXJGRE52Nk9raWlOSzkxMkwrYkJj?=
- =?utf-8?B?Q3REZWwwdTRpQ2JEb2pmSGV5djQ4OFZQUW1mWExYZVlLSWQ4SWFBOEU5MWd2?=
- =?utf-8?B?dWswd0JmM2J3cHR3Q1cyREd6M0U4VC9MNmVRN3gvdy84cUlkTEY4dHFRQm9J?=
- =?utf-8?B?UmRtY1MrbW1mbWIvcjNhSGVRZVNvTGJ0blE1ZUtPM2pqMStBOGtWYTZteVA5?=
- =?utf-8?B?ZkRZenZVT1JYenZCa2tWZU9rQmgyTTQvTFV2WTR1Y21WbVRPSWJqZm8wcUh0?=
- =?utf-8?B?aGptbzY2ZFh5bExDbTkvd2xrNGR6NjZSQnpwZDNsQlgyTFlnQUN5SFlYakVh?=
- =?utf-8?B?dzRsVk1FN0NPaG8yVGFnaHdrMkJtSml6T0JuT0pScmhPMDJZNFV6bWwyNEtR?=
- =?utf-8?B?Tm1XRjhyMXNsWUZpa2FjS3hmbXJYUnN2RzFPbEVpajVmS1VsVmRaTWRQbjY5?=
- =?utf-8?B?dU96ZnRPd2FNK0VOTmc2OFFvTDcyWElFYytuVTZQcGVwZndYYnhJY010USt5?=
- =?utf-8?B?eDVtVWhmSldiTmR5K2ZCelp6emJVbzduU1J2ZVJRVnJGekFZM0JpSFJwK2Rv?=
- =?utf-8?B?dVU0bFZFMW41a1IyckhYNVArS0paemh3THo0dGVFTnZPOHJqSVMvaVVrZmtD?=
- =?utf-8?B?RjRZclQyM2dhTG0zdmpFaGVuWDVxZjhtcjRyMExoVFd1bTd0dVJBRS9HN2U5?=
- =?utf-8?B?UmhzRFFyaE53V1M3N1Q4ZVpteE9aeHRkSEdaWTdmYXFNdkJPbkhCeXY1MVB2?=
- =?utf-8?B?SmZKRWVDR250QWdCaElhaTRHMGh4VXFBS2pTVzZkRm1HRUkvd0VXaEhCY21m?=
- =?utf-8?B?R2hmOExmRjFNa0ZpWlp1YjViQk1DTGRNajJsdk9Wb0E5YldZYURSWjFEalJP?=
- =?utf-8?B?bDVSMTZQV0FvVDFOUzkrSWhGcm1kT2x0ZzNkZ1R3VmQ2MVJXNDB6V0RTNTAz?=
- =?utf-8?B?NE52bHdjWnB1QUxyU0lrQjBGWjBkbDVheU9NUXN2NUYxNUtHajBQMElpMllv?=
- =?utf-8?Q?BBcJm94OEvao1458Vqp0CBSwE?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cdfe7eea-a2eb-436b-d776-08dcd3ac5123
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6309.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 04:27:03.2382
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: D/NnK5bWT/XIWlFWABbFLXcega0Ft9flyO9dNpIv3Q8HwVIB8a5JDK95gZl5hDNYSTaL62UWX9fxYZLAOe8mNg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6943
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: Representing an unusual I2C controller
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=Id0kWnqa c=1 sm=1 tr=0 ts=66e3bf18 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=jdP34snFAAAA:8 a=IBR-84ujcIp40Wy1zDAA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=jlphF6vWLdwq7oh3TaWq:22
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-Hi Tom,
+Hi I2C Enthusiasts,
 
-On 9/13/2024 3:24 AM, Tom Lendacky wrote:
-> On 7/31/24 10:08, Nikunj A Dadhania wrote:
->> @@ -590,12 +586,9 @@ static long snp_guest_ioctl(struct file *file, unsigned int ioctl, unsigned long
->>  	if (!input.msg_version)
->>  		return -EINVAL;
->>  
->> -	mutex_lock(&snp_cmd_mutex);
->> -
->>  	/* Check if the VMPCK is not empty */
->>  	if (is_vmpck_empty(snp_dev)) {
-> 
-> Are we ok with this being outside of the lock now?
+I'm starting to look at supporting the I2C controller on the Realtek=20
+RTL9300 and I'm struggling a little bit to figure out how to represent=20
+it. It's a bit odd in that there are basically two I2C controllers which=20
+have a SCL pin each but then there are 8 common SDA pins that can be=20
+split between the two controllers to give a level of muxing and/or=20
+concurrency.
 
-We can move the check inside the lock, and get_* will try to prepare
-the message and after grabbing the lock if the the VMPCK is empty we
-would fail. Something like below:
+Basically I can have: SDA[0:7] + SCL8 or SDA[0:7] + SCL17 or any of the=20
+possible permutations. I could be accessing SDA0+SCL8 and SCL1+SDA17=20
+concurrently but if the hardware were connected as SDA0+SCL8 and=20
+SCL1+SDA8 I'd have to make those mutually exclusive.
 
-diff --git a/drivers/virt/coco/sev-guest/sev-guest.c b/drivers/virt/coco/sev-guest/sev-guest.c
-index 8a2d0d751685..537f59358090 100644
---- a/drivers/virt/coco/sev-guest/sev-guest.c
-+++ b/drivers/virt/coco/sev-guest/sev-guest.c
-@@ -347,6 +347,12 @@ static int snp_send_guest_request(struct snp_guest_dev *snp_dev, struct snp_gues
- 
- 	guard(mutex)(&snp_cmd_mutex);
- 
-+	/* Check if the VMPCK is not empty */
-+	if (is_vmpck_empty(snp_dev)) {
-+		dev_err_ratelimited(snp_dev->dev, "VMPCK is disabled\n");
-+		return -ENOTTY;
-+        }
-+
- 	/* Get message sequence and verify that its a non-zero */
- 	seqno = snp_get_msg_seqno(snp_dev);
- 	if (!seqno)
-@@ -594,12 +600,6 @@ static long snp_guest_ioctl(struct file *file, unsigned int ioctl, unsigned long
- 	if (!input.msg_version)
- 		return -EINVAL;
- 
--	/* Check if the VMPCK is not empty */
--	if (is_vmpck_empty(snp_dev)) {
--		dev_err_ratelimited(snp_dev->dev, "VMPCK is disabled\n");
--		return -ENOTTY;
--	}
--
- 	switch (ioctl) {
- 	case SNP_GET_REPORT:
- 		ret = get_report(snp_dev, &input);
-@@ -869,12 +869,6 @@ static int sev_report_new(struct tsm_report *report, void *data)
- 	if (!buf)
- 		return -ENOMEM;
- 
--	/* Check if the VMPCK is not empty */
--	if (is_vmpck_empty(snp_dev)) {
--		dev_err_ratelimited(snp_dev->dev, "VMPCK is disabled\n");
--		return -ENOTTY;
--	}
--
- 	cert_table = buf + report_size;
- 	struct snp_ext_report_req ext_req = {
- 		.data = { .vmpl = desc->privlevel },
+I think it might just make sense to represent the two entities that own=20
+the SCL pins as separate controllers but then it'd be hard to enforce=20
+the fact that the individual SDA pins can only belong to one controller.=20
+Complicating things a bit further there is a common register that says=20
+whether the pins are being used for SDA or as GPIO (that can probably=20
+just be handled with pinctrl).
 
+So I was thinking something like
 
-> I believe is_vmpck_empty() can get a false and then be waiting on the
-> mutex while snp_disable_vmpck() is called. Suddenly the code thinks the
-> VMPCK is valid when it isn't anymore. Not sure if that matters, as the
-> guest request will fail anyway?
+i2c@36c {
+ =C2=A0 reg =3D <0x36c 0x14>
+ =C2=A0 compatible =3D "realtek,rtl9300-i2c";
+ =C2=A0 scl-pin =3D <8>;
 
-The above code will fail early.
+ =C2=A0 i2c@0 {
+ =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sda-pin =3D <0>; // could use reg instead=
+ of scl-pin
+ =C2=A0 }
+ =C2=A0 i2c@1 {
+ =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sda-pin =3D <1>;
+ =C2=A0 }
+};
 
-> 
-> Thanks,
-> Tom
-> 
+i2c@388 {
+ =C2=A0 reg =3D <0x388 0x14>
+ =C2=A0 scl-pin =3D <17>;
+ =C2=A0 compatible =3D "realtek,rtl9300-i2c";
 
-Regards
-Nikunj
+ =C2=A0 i2c@2 {
+ =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sda-pin =3D <2>;
+ =C2=A0 }
+ =C2=A0 i2c@3 {
+ =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sda-pin =3D <3>;
+ =C2=A0 }
+};
+
+Does that make sense? I'm not entirely sure how I can have those root=20
+controllers as something the I2C framework knows about without them=20
+being adapters in their own right (they can't have any devices attached=20
+directly that'd need to be done on one of the channels).
+
+There are drivers for this in openwrt[1][2] but they ignore the fact=20
+that there are multiple controllers and the muxing is done separately. I=20
+was planning on using them for a bit of inspiration.
+
+[1] -=20
+https://git.openwrt.org/?p=3Dopenwrt/openwrt.git;a=3Dblob;f=3Dtarget/linu=
+x/realtek/files-5.15/drivers/i2c/busses/i2c-rtl9300.c
+[2] -=20
+https://git.openwrt.org/?p=3Dopenwrt/openwrt.git;a=3Dblob;f=3Dtarget/linu=
+x/realtek/files-5.15/drivers/i2c/muxes/i2c-mux-rtl9300.c
+
+Thanks,
+Chris
 
 
