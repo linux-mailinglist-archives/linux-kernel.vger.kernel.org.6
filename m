@@ -1,143 +1,196 @@
-Return-Path: <linux-kernel+bounces-327679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AE1997798A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:24:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A429B977991
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:24:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A986E1F242D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:24:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 306061F26758
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:24:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA7431BC079;
-	Fri, 13 Sep 2024 07:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036EF1BC9E0;
+	Fri, 13 Sep 2024 07:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CElDnCGe"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g/zMCV6Y"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EEE77107;
-	Fri, 13 Sep 2024 07:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91D511BBBF5
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 07:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726212243; cv=none; b=AD9kmmjHOkTv6RdCwlSw0JfC/gKDsP4e5ZvhV1le5R2yKJkuc4ewyj+Z/QJ42UmTH6jLUjrSxJS4SUuR1Ug+XOsJk32fBoTxyq9yMV0aogb7eOeBXGwB3dBJyginjZG1gETkPETiqN9AY18Mh1YgpvkyUOyvA+kZt3LiO+JgeKU=
+	t=1726212285; cv=none; b=H3q9ZC2dyPyaAUwvvxdUxVyy3LmdfPyvWmoHSfQpv0nmQht0RwSBOAaexn/sjSX8tn7XPxdELLHH8WTwTbgjUuUh0EzTbBcWtqzSwcru/PY12FnyqhSMZkwjCfVKRRcwsedunC5W1ihVnQ/Es4nBJZb+HdSi7HKbFPB2FPVZR4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726212243; c=relaxed/simple;
-	bh=iPvd+9z6NuPIzam4+usKWHP3bX8Hx0aJk/Uu79HF2cQ=;
+	s=arc-20240116; t=1726212285; c=relaxed/simple;
+	bh=cAJ2hc6styUeyvqM7IkmTg7zicHXIvNVTcF+iiLVlH0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S8A1gyKFn1ssX2IKgYOXgfF+6faZfDCtPTfjb8Q2w7ixBAQCvaxKoIAGSbTNKX6Zz0N+GN7YVVkJqZgEyvfcPYNkyKyk6pMF2oC1OcSNJV43ExcAswF0lbLt1zTrPXv7EBgimIgSK18DaM/j+gZ9+lXM4aGS3G2bsO3zYwBKHf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CElDnCGe; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=j/9d6sm961OtWoyzCe9x3vRD2pKvC2XN/iw6psGo389bFK2rKbWGVDEuqU7iP/BpzOPRTDIuMQnVfl8mpA0Bsifas7OYH7iWhbT2lUPbEs/i6hjIvxLo4HXOA8UVsDF3BAf72tJVWeUO2rEp5eFlWsrnIzLPf42V3n5vVs8eEdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g/zMCV6Y; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726212242; x=1757748242;
+  t=1726212283; x=1757748283;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=iPvd+9z6NuPIzam4+usKWHP3bX8Hx0aJk/Uu79HF2cQ=;
-  b=CElDnCGeCEIJDuWLjrrSJT9s/4bj3VfPIsJSZ07npCeoIiAhNSMR3e+H
-   cUEfcGAQv12dxckwnxa/IotHwdVLek7KvDt7UxqWVbbbPc5zXmR2xIxlJ
-   khtb+AnCuGMz1QEW2ekpR4jICXtg3YI0JfD7caQ0uPCjLp8/K+nYzPpts
-   Mi30Li6RQ5IBzjEUKo96EpwiCU0HfoBIj+nwRqV9Yu8nkjq2AlchGkK9j
-   j/vgEWf36lWFYdGDlkSCjC7pNkYhidI49cpLjef6eWMIuL1eFSEgKuNSK
-   gYQcW7Dg2VzAqvdJB1u8/bVDp78exnQqe3itMcV7mZGXcWC7b5JFV1lpf
-   A==;
-X-CSE-ConnectionGUID: lUUAcCy3T9ygMX7e+UBLEw==
-X-CSE-MsgGUID: lse/c7hXSwyspobCD9AAcg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="47618229"
+  bh=cAJ2hc6styUeyvqM7IkmTg7zicHXIvNVTcF+iiLVlH0=;
+  b=g/zMCV6Y3gnx94Flp4rGlYVlONYRPTG5Ae7dlttVVBeoFTpvku+30+ET
+   w8ZOx6B9WKSrBPKnPCqWwVN8SbKg0vmNwFMSONJhplKfYs/3wthNUo41Z
+   yPAxdOID5AQ00xn0nNk6Xz+XA6ep2sD78Aq30seKeEOSs9P/lwXseFG91
+   zS1WqxpV++DpDyHbuaYb1ybzVUYrJ2Oy/yFjI368r5r3vz6SiDyrCdLML
+   WxzYytd7nIWQtmqsgFa5PWJu6rRAEEL7pEEpsNubzU7SbgIXxL/AF8Vjb
+   4sQH60djr8PEwYJ1Vun81/sjExhw+Yl6SAwiJgiZZONfod4QYD8JClEnw
+   w==;
+X-CSE-ConnectionGUID: JZpQ1QgcQw+X9NkwFR8Ydg==
+X-CSE-MsgGUID: 1yzv85ZtS6OmnPE+7MZzjQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="36449455"
 X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="47618229"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 00:24:01 -0700
-X-CSE-ConnectionGUID: oHG4PVODQ7GpA5DverliGg==
-X-CSE-MsgGUID: LJV4th+PRpCy+8quuV7LfA==
+   d="scan'208";a="36449455"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 00:24:42 -0700
+X-CSE-ConnectionGUID: Ap6loFj6TAau8vbuXS7KOQ==
+X-CSE-MsgGUID: fLxY4fpNQv2k4at0hR2Z6w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="105429499"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa001.jf.intel.com with ESMTP; 13 Sep 2024 00:23:58 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id DCA0732A; Fri, 13 Sep 2024 10:23:56 +0300 (EEST)
-Date: Fri, 13 Sep 2024 10:23:56 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, Gary Li <Gary.Li@amd.com>,
-	Mario Limonciello <superm1@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Mathias Nyman <mathias.nyman@intel.com>,
-	"open list : PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list : USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
-	Daniel Drake <drake@endlessos.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Subject: Re: [PATCH v5 2/5] PCI: Check PCI_PM_CTRL instead of PCI_COMMAND in
- pci_dev_wait()
-Message-ID: <20240913072356.GO275077@black.fi.intel.com>
-References: <20240903182509.GA260253@bhelgaas>
- <525214d1-793e-412c-b3b2-b7e20645b9cf@amd.com>
- <20240904120545.GF1532424@black.fi.intel.com>
- <2bf715fb-509b-4b00-a28d-1cc83c0bb588@amd.com>
- <20240905093325.GJ1532424@black.fi.intel.com>
- <b4237bef-809f-4d78-8a70-d962e7eb467b@amd.com>
- <20240910091329.GI275077@black.fi.intel.com>
- <66019fa3-2f02-4b03-9eb7-7b0bed0fd044@amd.com>
- <20240913045807.GM275077@black.fi.intel.com>
+   d="scan'208";a="72565824"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 13 Sep 2024 00:24:39 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sp0fV-00068O-2s;
+	Fri, 13 Sep 2024 07:24:37 +0000
+Date: Fri, 13 Sep 2024 15:24:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wu Bo <bo.wu@vivo.com>, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <yuchao0@huawei.com>, Chao Yu <chao@kernel.org>,
+	linux-f2fs-devel@lists.sourceforge.net, Wu Bo <wubo.oduw@gmail.com>
+Subject: Re: [PATCH v2 13/13] f2fs: implement inline tail forward recovery
+Message-ID: <202409131549.6E5c04Zg-lkp@intel.com>
+References: <57e1dbb2f348ab61cbc82be7161d788a08b5fbed.1726024117.git.bo.wu@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240913045807.GM275077@black.fi.intel.com>
+In-Reply-To: <57e1dbb2f348ab61cbc82be7161d788a08b5fbed.1726024117.git.bo.wu@vivo.com>
 
-Hi again,
+Hi Wu,
 
-On Fri, Sep 13, 2024 at 07:58:07AM +0300, Mika Westerberg wrote:
-> Yeah, I agree now. It does not look like the methods are messing each
-> other here. We don't see the GPE handler being run but I don't think it
-> matters here. For some reason the device just is not yet ready when it
-> is supposed to be in D0.
-> 
-> Sorry for wasting your time with these suspects.
+kernel test robot noticed the following build warnings:
 
-One more suggestion though ;-) I realized that my hack patch to disable
-I/O and MMIO did not actually do that because it looks like we don't
-clear those bits ever. I wonder if you could still check if the below
-changes anything? At least it should now "disable" the device to follow
-the spec.
+[auto build test WARNING on 67784a74e258a467225f0e68335df77acd67b7ab]
 
-diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-index f412ef73a6e4..79a566376301 100644
---- a/drivers/pci/pci-driver.c
-+++ b/drivers/pci/pci-driver.c
-@@ -1332,6 +1332,7 @@ static int pci_pm_runtime_suspend(struct device *dev)
- 
- 	if (!pci_dev->state_saved) {
- 		pci_save_state(pci_dev);
-+		pci_pm_default_suspend(pci_dev);
- 		pci_finish_runtime_suspend(pci_dev);
- 	}
- 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index ffaaca0978cb..91f4e7a03c94 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -2218,6 +2218,13 @@ static void do_pci_disable_device(struct pci_dev *dev)
- 		pci_command &= ~PCI_COMMAND_MASTER;
- 		pci_write_config_word(dev, PCI_COMMAND, pci_command);
- 	}
-+	/*
-+	 * PCI PM 1.2 sec 8.2.2 says that when a function is put into D3
-+	 * the OS needs to disable I/O and MMIO space in addition to bus
-+	 * mastering so do that here.
-+	 */
-+	pci_command &= ~(PCI_COMMAND_IO | PCI_COMMAND_MEMORY);
-+	pci_write_config_word(dev, PCI_COMMAND, pci_command);
- 
- 	pcibios_disable_device(dev);
- }
+url:    https://github.com/intel-lab-lkp/linux/commits/Wu-Bo/f2fs-add-inline-tail-mount-option/20240911-114705
+base:   67784a74e258a467225f0e68335df77acd67b7ab
+patch link:    https://lore.kernel.org/r/57e1dbb2f348ab61cbc82be7161d788a08b5fbed.1726024117.git.bo.wu%40vivo.com
+patch subject: [PATCH v2 13/13] f2fs: implement inline tail forward recovery
+config: x86_64-randconfig-121-20240913 (https://download.01.org/0day-ci/archive/20240913/202409131549.6E5c04Zg-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240913/202409131549.6E5c04Zg-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409131549.6E5c04Zg-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> fs/f2fs/inline.c:457:27: sparse: sparse: cast to restricted __le32
+
+vim +457 fs/f2fs/inline.c
+
+   416	
+   417	int f2fs_recover_inline_tail(struct inode *inode, struct page *npage)
+   418	{
+   419		struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+   420		struct f2fs_inode *ri = NULL;
+   421		void *src_addr, *dst_addr;
+   422		struct page *ipage;
+   423	
+   424		if (IS_INODE(npage))
+   425			ri = F2FS_INODE(npage);
+   426	
+   427		if (f2fs_has_inline_tail(inode) &&
+   428				ri && (le32_to_cpu(ri->i_flags) & F2FS_INLINE_TAIL)) {
+   429	process_inline:
+   430			if (!(ri->i_inline & F2FS_DATA_EXIST))
+   431				return 0;
+   432	
+   433			ipage = f2fs_get_node_page(sbi, inode->i_ino);
+   434			if (IS_ERR(ipage))
+   435				return PTR_ERR(ipage);
+   436	
+   437			f2fs_wait_on_page_writeback(ipage, NODE, true, true);
+   438	
+   439			src_addr = inline_data_addr(inode, npage);
+   440			dst_addr = inline_data_addr(inode, ipage);
+   441			memcpy(dst_addr, src_addr, MAX_INLINE_DATA(inode));
+   442	
+   443			set_inode_flag(inode, FI_DATA_EXIST);
+   444	
+   445			set_page_dirty(ipage);
+   446			f2fs_put_page(ipage, 1);
+   447			return 0;
+   448		}
+   449	
+   450		if (f2fs_has_inline_tail(inode)) {
+   451			ipage = f2fs_get_node_page(sbi, inode->i_ino);
+   452			if (IS_ERR(ipage))
+   453				return PTR_ERR(ipage);
+   454			f2fs_truncate_inline_inode(inode, ipage, 0);
+   455			clear_inode_flag(inode, FI_INLINE_TAIL);
+   456			f2fs_put_page(ipage, 1);
+ > 457		} else if (ri && (le32_to_cpu(ri->i_inline) & F2FS_INLINE_TAIL)) {
+   458			int ret;
+   459	
+   460			ret = f2fs_truncate_blocks(inode,
+   461					COMPACT_ADDRS_PER_INODE >> PAGE_SHIFT, false);
+   462			if (ret)
+   463				return ret;
+   464			goto process_inline;
+   465		}
+   466		return 0;
+   467	}
+   468	struct f2fs_dir_entry *f2fs_find_in_inline_dir(struct inode *dir,
+   469						const struct f2fs_filename *fname,
+   470						struct page **res_page)
+   471	{
+   472		struct f2fs_sb_info *sbi = F2FS_SB(dir->i_sb);
+   473		struct f2fs_dir_entry *de;
+   474		struct f2fs_dentry_ptr d;
+   475		struct page *ipage;
+   476		void *inline_dentry;
+   477	
+   478		ipage = f2fs_get_node_page(sbi, dir->i_ino);
+   479		if (IS_ERR(ipage)) {
+   480			*res_page = ipage;
+   481			return NULL;
+   482		}
+   483	
+   484		inline_dentry = inline_data_addr(dir, ipage);
+   485	
+   486		make_dentry_ptr_inline(dir, &d, inline_dentry);
+   487		de = f2fs_find_target_dentry(&d, fname, NULL);
+   488		unlock_page(ipage);
+   489		if (IS_ERR(de)) {
+   490			*res_page = ERR_CAST(de);
+   491			de = NULL;
+   492		}
+   493		if (de)
+   494			*res_page = ipage;
+   495		else
+   496			f2fs_put_page(ipage, 0);
+   497	
+   498		return de;
+   499	}
+   500	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
