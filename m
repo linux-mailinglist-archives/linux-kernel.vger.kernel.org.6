@@ -1,115 +1,105 @@
-Return-Path: <linux-kernel+bounces-328475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E9149784C2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:25:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A40C39784C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:25:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C142F284F5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:25:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 346D3B273B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1BA6E61B;
-	Fri, 13 Sep 2024 15:23:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 463B541C6D;
+	Fri, 13 Sep 2024 15:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UTdiVRoN"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="kcj+StYk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB02A8120D
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 15:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B18ADF60;
+	Fri, 13 Sep 2024 15:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726241005; cv=none; b=dTZp/9+2G/fccG9xp6UwuQHEYPGD5T75pqVe7/bZCQgDIyr7XkmuZkzUXbuP1r38mJ4zpIX6R7ziwQSCmbVGhpi80S2pdi7GiQ8bubVJghHN5cH+4o1wPH6ZFywMC2EdiNYtpXU1qL84ExOeE5YRk2V4m3jYhc06TJ6z3/ihT9E=
+	t=1726241061; cv=none; b=uqlHgrgCV1uowwFilPhhdg3sfg4IevKLpFSZpsLJKk2JzgBO4K9xBYhruS9GqGcRiHATocNQyySRkel8oYWY1+KI6SdpeA/4CTN68VrYJtRU/49pVlvbY6phPTcq3OqUwVDqyjFhPTxLxN3QdAAnREYLOTNRJ7jFXtWC6XGVTME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726241005; c=relaxed/simple;
-	bh=3S58DXY55WpwVXDEntOH0JH7i3ZkHdmJYfPiFp2ysHg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d2cDy0aCZZmN28WJ9aRpaYVhiu8U1W5rMOUw8ZDqlcPjWcQMUiFuE4OQKUPkrLp7GccGhOPwt4I7YnlEFNy89gxISRP3igkis5FZ2ESoHe+q2jT3+sOKzHfJSMfKwWX7pW2MI2uZjT9J802JjfAGSgZ5j+OtJbQgyYim0jXfLQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UTdiVRoN; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <e127f072-e034-4d21-a71f-4b140102118f@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726241001;
+	s=arc-20240116; t=1726241061; c=relaxed/simple;
+	bh=TMNMs4HtYJvT6NaxwWsmzpLmeJxFJfj5zW4IvRl5s9E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f027HhCi2CRdQ0NDzER4XqRyYxtFlQ9kQbm/wyElzKj+Dn0ubmfseZgNZiDbJLV8cfgzE6AAlRwvSPYIpTguiNP8e+B87LaC3xPpzJ31uyP4ZMgLyiYH7uRVxE7hy9tKTJngBgKbLsN+W+19KvwnGoCF+dYVqiMPpsRNUrY5vnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=kcj+StYk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AB2BC4CEC5;
+	Fri, 13 Sep 2024 15:24:19 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="kcj+StYk"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1726241058;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=KjiZRz1f1ZhW4Id2MWE6ZKYWVTPhf2b5fR7566irLyc=;
-	b=UTdiVRoN5Kns2ogC5NuLANhV8zVT0NAmqMISysZyEgW1uBQbSdd01qOu/R6++bm5k/XfzZ
-	f97j6ICqdtpJg2MgRujFvbLAi8ThoS5lgqyxSsm8txAIrEaiK6eD02RtEvi0/1X7g0BZ4Q
-	s5AXRoF+tVCoyDIvpjP9/aqJettwq7A=
-Date: Fri, 13 Sep 2024 11:23:16 -0400
+	bh=6kImf0YUfHWU4wjUSEueON/4b/Zh/8CSocVTzKpWd90=;
+	b=kcj+StYkkcTMCbpR8WtjaAX0JckGaUOvQ+4jkXuz8aU4z+bCwCM9mWtQcgBqxRaCoptbHt
+	kcJlLxMkXx2AaDRQE6wuFOnGIk6yzfjE9/YTHxCEcK1F8zjKAi5Re30iEbB+5gCjMpTG26
+	JQD+grpCggNPIMbZYrLOgqHq/x8TJuw=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id e581d9a2 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Fri, 13 Sep 2024 15:24:18 +0000 (UTC)
+Date: Fri, 13 Sep 2024 17:24:16 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Harald Freudenberger <freude@linux.ibm.com>,
+	Stefan Liebler <stli@linux.ibm.com>, linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH 7/7] s390/vdso: Wire up getrandom() vdso implementation
+Message-ID: <ZuRZIPNBO1BMznUL@zx2c4.com>
+References: <20240913130544.2398678-1-hca@linux.ibm.com>
+ <20240913130544.2398678-8-hca@linux.ibm.com>
+ <ZuRWmJTWqmD92D8d@zx2c4.com>
+ <ZuRYoVIrg28kBKqb@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] net: Handle threadirqs in __napi_schedule_irqoff
-To: Eric Dumazet <edumazet@google.com>
-Cc: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
- Juri Lelli <juri.lelli@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- linux-kernel@vger.kernel.org
-References: <20240913150954.2287196-1-sean.anderson@linux.dev>
- <CANn89iL-fgyZo=NbyDFA5ebSn4nqvNASFyXq2GVGpCpH049+Lg@mail.gmail.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <CANn89iL-fgyZo=NbyDFA5ebSn4nqvNASFyXq2GVGpCpH049+Lg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZuRYoVIrg28kBKqb@zx2c4.com>
 
-On 9/13/24 11:16, Eric Dumazet wrote:
-> On Fri, Sep 13, 2024 at 5:10 PM Sean Anderson <sean.anderson@linux.dev> wrote:
->>
->> The threadirqs kernel parameter can be used to force threaded IRQs even
->> on non-PREEMPT_RT kernels. Use force_irqthreads to determine if we can
->> skip disabling local interrupts. This defaults to false on regular
->> kernels, and is always true on PREEMPT_RT kernels.
->>
->> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
->> ---
->>
->>  net/core/dev.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/net/core/dev.c b/net/core/dev.c
->> index 1e740faf9e78..112e871bc2b0 100644
->> --- a/net/core/dev.c
->> +++ b/net/core/dev.c
->> @@ -6202,7 +6202,7 @@ EXPORT_SYMBOL(napi_schedule_prep);
->>   */
->>  void __napi_schedule_irqoff(struct napi_struct *n)
->>  {
->> -       if (!IS_ENABLED(CONFIG_PREEMPT_RT))
->> +       if (!force_irqthreads())
->>                 ____napi_schedule(this_cpu_ptr(&softnet_data), n);
->>         else
->>                 __napi_schedule(n);
->> --
->> 2.35.1.1320.gc452695387.dirty
->>
+On Fri, Sep 13, 2024 at 05:22:09PM +0200, Jason A. Donenfeld wrote:
+> On Fri, Sep 13, 2024 at 05:13:28PM +0200, Jason A. Donenfeld wrote:
+> > On Fri, Sep 13, 2024 at 03:05:43PM +0200, Heiko Carstens wrote:
+> > > The vdso testcases vdso_test_getrandom and vdso_test_chacha pass.
+> > 
+> > I'm trying to cross compile this but I'm getting:
+> > 
+> >   CC       vdso_test_chacha
+> > /home/zx2c4/Projects/random-linux/tools/testing/selftests/../../../tools/arch/s390/vdso/vgetrandom-chacha.S: Assembler messages:
+> > /home/zx2c4/Projects/random-linux/tools/testing/selftests/../../../tools/arch/s390/vdso/vgetrandom-chacha.S:147: Error: Unrecognized opcode: `alsih'
+> > 
+> > Any idea what's up?
 > 
-> Seems reasonable, can you update the comment (kdoc) as well ?
-> 
-> It says :
-> 
->  * On PREEMPT_RT enabled kernels this maps to __napi_schedule()
->  * because the interrupt disabled assumption might not be true
->  * due to force-threaded interrupts and spinlock substitution.
+> Looks like I needed `-march=arch9`. I can potentially rebuild my
+> toolchains to do this by default, though, if that's a normal thing to
+> have and this is just my toolchain being crappy. Or, if it's not a
+> normal thing to have, do we need to add it to the selftests Makefile?
 
-OK
+I can squash this into the commit, for example:
 
-> Also always specify net or net-next for networking patches.
-
-Ah, sorry. Should be net-next.
-
---Sean
+diff --git a/tools/testing/selftests/vDSO/Makefile b/tools/testing/selftests/vDSO/Makefile
+index af9cedbf5357..66a825278b36 100644
+--- a/tools/testing/selftests/vDSO/Makefile
++++ b/tools/testing/selftests/vDSO/Makefile
+@@ -43,3 +43,6 @@ $(OUTPUT)/vdso_test_chacha: CFLAGS += -idirafter $(top_srcdir)/tools/include \
+                                       -idirafter $(top_srcdir)/arch/$(SRCARCH)/include \
+                                       -idirafter $(top_srcdir)/include \
+                                       -D__ASSEMBLY__ -Wa,--noexecstack
++ifeq ($(ARCH),s390)
++$(OUTPUT)/vdso_test_chacha: CFLAGS += -march=arch9
++endif
 
 
