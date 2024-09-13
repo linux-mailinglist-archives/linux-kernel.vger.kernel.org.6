@@ -1,186 +1,271 @@
-Return-Path: <linux-kernel+bounces-327752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10145977AB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:10:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAE86977AB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:11:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50E67B2490F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:10:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66940287A14
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C814D1D58A9;
-	Fri, 13 Sep 2024 08:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78291D5CC5;
+	Fri, 13 Sep 2024 08:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YItY9byr"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="YBSvwQun"
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A961BDA95
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 08:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710E11D58B9
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 08:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726215049; cv=none; b=lhUF7T6v6/lIO1qy1Y1JmW9csphnZm6od7U3cEiBYnbhcljk1usvWcBBojCS+eO8+gbaCrn0kiTJuY5xneXHbT1KJx4JiMnFcOjRiTBd3KG2pwimv3WQPCIMQ6/rwzudlgRh8QxyyNeP5rxhVD/I6fNdqBKt+GN4hxuA5/so0t0=
+	t=1726215053; cv=none; b=JHf50i9nYSayf7vnOyoR4B5GNUF5RCR2Q9o7WXa1aWylOmQ3HddeK9S1IqJKfBojd+ROSv9VJvBFmNvjSQI1cL95m8DIrlI0eM2Ymtc9DhMAfLpjw8K+BtlQpG+aH6R4WEWfbOUGYQSkfkSF26gRJOIM4971N9VUjsPP8dN0UjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726215049; c=relaxed/simple;
-	bh=GLAwdBVmQBM3uMerZKEaJAKisf0sMNblah/YnB60sqw=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=rtg5CFURFAMrjD+sbuvm/OSyHNKyWKA//Hl2aNtg3oN/VHmq9fzv+SGg+fHJTbaOKKHw0wRyJ2nfMmgDVwH0iIjGaeoes3AMR7FDKOL7+7r9HAGnOUebq2xd3urUc8f/Ff6YX1ut9hv5KxyvXWG5VcYN+9F0WquzGpjxyhE9HRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YItY9byr; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240913080214euoutp011199ed3152974b0e36108a3257799928~0vvkUKRua3035030350euoutp016
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 08:02:14 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240913080214euoutp011199ed3152974b0e36108a3257799928~0vvkUKRua3035030350euoutp016
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1726214534;
-	bh=wqIKLmipUzFEumj/aGaOE3PtlZoHysJtCW/soSc1VS8=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=YItY9byrKpMcF8iFUkMNVGgqZ0J0mmJHDHx+Mhw4117qHL096bhQ/dd1VoUYE0sjF
-	 EYHtw/zYkbDshhPSXL7R1zFZKCX7C+a3oI8PEgeHFYhSUWUx0POdoduaGarhQjcYCc
-	 IZTXH+CFDk9O2di1v9MdUQdPq1DN4ynMV7gSu7po=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240913080213eucas1p288639b80944329559046c3f25f51ab8b~0vvkAF80K2938329383eucas1p2Q;
-	Fri, 13 Sep 2024 08:02:13 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id AC.75.09624.581F3E66; Fri, 13
-	Sep 2024 09:02:13 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240913080213eucas1p297c283929ad0cbd0a1718ba86e3ba0a9~0vvjeoJZ_0773807738eucas1p2L;
-	Fri, 13 Sep 2024 08:02:13 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240913080213eusmtrp295538d8696a226ff6b8b67f7a41a0cf1~0vvjdrSa43231132311eusmtrp2Q;
-	Fri, 13 Sep 2024 08:02:13 +0000 (GMT)
-X-AuditID: cbfec7f2-bfbff70000002598-15-66e3f185dfc4
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 93.82.19096.581F3E66; Fri, 13
-	Sep 2024 09:02:13 +0100 (BST)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240913080212eusmtip22e6eb2b86bd3b4e7c72f80fc28e30434~0vvjHaXv_1052710527eusmtip2l;
-	Fri, 13 Sep 2024 08:02:12 +0000 (GMT)
-Received: from localhost (106.110.32.44) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Fri, 13 Sep 2024 09:02:11 +0100
-Date: Fri, 13 Sep 2024 10:02:08 +0200
-From: Joel Granados <j.granados@samsung.com>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-CC: David Woodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Jason
-	Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, Klaus Jensen
-	<its@irrelevant.dk>, <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
-Subject: Re: [PATCH 5/6] iommu: init pasid array while doing domain_replace
- and iopf is active
-Message-ID: <20240913080208.t4tbqskmuyaozhyw@joelS2.panther.com>
+	s=arc-20240116; t=1726215053; c=relaxed/simple;
+	bh=bm0JrAOh22eMu3dJ7cStSs9X0hitNAj/hOSXsbUVBd0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u+LpYlNjEQarNQOpm3unjowfphmHLvjUI6ByBratk5BbN3e1ZId+91TRGTIKCG8Bg3HdR3CUV+wKaHGS1LEnqUwF1RWYUpE2ILMM21aP1GXTmQU3es58CalyqyGZ/kSoz02E9XWrMmCjCf7Ioszr85TwuAFPJs+kFIZJ0our4vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=YBSvwQun; arc=none smtp.client-ip=35.89.44.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-5005a.ext.cloudfilter.net ([10.0.29.234])
+	by cmsmtp with ESMTPS
+	id om0FsDCkkumtXp1O9saRNk; Fri, 13 Sep 2024 08:10:45 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id p1O8sWJ3CeCxMp1O8sUlbv; Fri, 13 Sep 2024 08:10:45 +0000
+X-Authority-Analysis: v=2.4 cv=M/yGKDws c=1 sm=1 tr=0 ts=66e3f385
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=rpUMG24A1zG+UrzXDtAMsg==:17
+ a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=9OA2k-xDzDUK-BUy8SkA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=1G59LJMSYivR08X+18CcLBybb5tZQUn1LSKdgrtgB30=; b=YBSvwQunKc8b9LdviI/QHVj+1t
+	X5fVKu0Ox2tyTnevFtmhS0YDWNy1EioVVaJ0mtpfxlhcU7RkOMTKzcB6N/X80qMZxAPLHD5O2vQt7
+	LYs9OB42/E40q0iCdZZeH/g2LBWWDdVYC7p5NC236pfEky/z+v57lQCUa0bjOp6XuFgo6JrWqVams
+	yIyd0GSgHv6Hrtbo4YF/svTpnR8UwrwHavQmRwyiqBS5eH17r7yESkNqLwrHdktpr6cGuFQF2R9PU
+	j/lKJ0HnIFCMoE1TrKpK6BLubY6nHNfTGnL7TbgoqVF7GS0A8R900PMD/bcedfGKCZmCzBmJyw0XC
+	GXlKuCtQ==;
+Received: from [185.44.53.103] (port=32866 helo=[192.168.1.187])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1sp1O7-003nYS-2g;
+	Fri, 13 Sep 2024 03:10:44 -0500
+Message-ID: <5a438394-ae88-4d72-a56e-6886d06b0a84@embeddedor.com>
+Date: Fri, 13 Sep 2024 10:10:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <71f61d8a-9188-4e67-88ca-e5b48a91e6b5@linux.intel.com>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOKsWRmVeSWpSXmKPExsWy7djPc7qtHx+nGWz4qG2xeeJWNouJKycz
-	W/z6YmGx/+A3VouZM04wWnTO3sBusfTtVnaLy7vmsFkc/PCE1aLljqkDl8eTg/OYPNbMW8Po
-	sXmFlsfiPS+ZPM7tOM/usWlVJ5vHvJOBHi82z2T0+LxJzmPr59ssAVxRXDYpqTmZZalF+nYJ
-	XBl3utoYC9bwVHT1zGNuYHzH2cXIySEhYCLxbvErxi5GLg4hgRWMEpNevmCGcL4wStzc1McO
-	UiUk8JlRome6N0zH2v/7oOLLGSX6NhpDNADVtM+4zQrhbGaUWDFvDytIFYuAqsTbuxOYQGw2
-	AR2J82/uMIPYIgLqEk2Ne9lAGpgFNjJJzP13GCwhLJAgMfPvGbAGXgEHiam9MxkhbEGJkzOf
-	sIDYzECDFuz+BNTMAWRLSyz/xwES5hRwlvg/5w8rxKWKEl8X32OBsGslTm25xQSyS0JgNqdE
-	16WrTBAJF4nmr8fYIGxhiVfHt7BD2DIS/3fOh2qYzCix/98HdghnNaPEssavUN3WEi1XnkB1
-	OEr0fe5mArlIQoBP4sZbQYhD+SQmbZvODBHmlehoE4KoVpNYfe8NywRG5VlIXpuF5LVZCK8t
-	YGRexSieWlqcm55abJiXWq5XnJhbXJqXrpecn7uJEZi2Tv87/mkH49xXH/UOMTJxMB5ilOBg
-	VhLhncT2KE2INyWxsiq1KD++qDQntfgQozQHi5I4r2qKfKqQQHpiSWp2ampBahFMlomDU6qB
-	qe5g75ENhX0stg7erdqHFFViL/xV6fB57KoxZf2BKXvj90U8nLb1bcek8l3+sk6VLOtcNxbm
-	WB6eHnpJKr8+yzOlpbBF/CvrOr2Nwi90eaYt2DfRKO/6Q6mfl340fj3G/irryspvyzuiJgTt
-	vF7x6sSf4I83wo5mhBiEagmGZh6aEP5nobPA06j04pM/J5nu/WHfH7ImddKJiMXTCxuV77Qt
-	i7ffHz/l8zUx1zU7Pl9XT13L6sO56IXWaw0Rttg7Dt9WZycuY5niIeVrZRZsmeLwsYZDfZpU
-	6a4T27dcv7hPriPZ5kh9VnfgjftbHr+wWiUj0HLfRNL5RH+bkVnMU6e9Sz7y3PAuC/Gr2Jld
-	o8RSnJFoqMVcVJwIAIzWe9vKAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKIsWRmVeSWpSXmKPExsVy+t/xe7qtHx+nGaxdxGaxeeJWNouJKycz
-	W/z6YmGx/+A3VouZM04wWnTO3sBusfTtVnaLy7vmsFkc/PCE1aLljqkDl8eTg/OYPNbMW8Po
-	sXmFlsfiPS+ZPM7tOM/usWlVJ5vHvJOBHi82z2T0+LxJzmPr59ssAVxRejZF+aUlqQoZ+cUl
-	tkrRhhZGeoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehl3utoYC9bwVHT1zGNuYHzH
-	2cXIySEhYCKx9v8+9i5GLg4hgaWMEmsOLGaDSMhIbPxylRXCFpb4c62LDaLoI6NEy+rDUB2b
-	GSUaVu1gAqliEVCVeHt3ApjNJqAjcf7NHWYQW0RAXaKpcS9YN7PARiaJG+eawIqEBRIkZv49
-	A2bzCjhITO2dyQgx9RGzxN+ut2wQCUGJkzOfsIDYzEBTF+z+BBTnALKlJZb/4wAJcwo4S/yf
-	8wfqVEWJr4vvsUDYtRKf/z5jnMAoPAvJpFlIJs1CmLSAkXkVo0hqaXFuem6xkV5xYm5xaV66
-	XnJ+7iZGYPxuO/Zzyw7Gla8+6h1iZOJgPMQowcGsJMI7ie1RmhBvSmJlVWpRfnxRaU5q8SFG
-	U2BYTGSWEk3OByaQvJJ4QzMDU0MTM0sDU0szYyVxXrYr59OEBNITS1KzU1MLUotg+pg4OKUa
-	mOw/vwq85JrqYj3xuEpfSBxH2h+zJ/V+G27ttWnSmHjln2r+Elv+KW8jM2YlLJrmxmJ5uUx4
-	2eU9H5QPHW5iPjuT+ZO84+tEFx0778jcuOv3L7GeF2c4Om/t4bPtMfcO1lh48v33snug/zTu
-	zbxLDa0sDxjXJK3Tvbxtcyvz8p4cG/5/PueVlm88FtcbxdlxRdL76V1v/2/vG62+/HIKZ1B5
-	+lDsxrw99RMWORk6MM2/U3FJY3HnvMnsdzt1grmieGri7zocmjGt8XX2Ve59OzsP6m6ZsuPM
-	ngvR/7ldjqY1Ls1MvbLtk7NladKEn7durjw9ccqmvYbXHtWejfY/KC8sZrr0w4KNdWfdtCYH
-	hN9QYinOSDTUYi4qTgQAvL6smmgDAAA=
-X-CMS-MailID: 20240913080213eucas1p297c283929ad0cbd0a1718ba86e3ba0a9
-X-Msg-Generator: CA
-X-RootMTR: 20240905033408eucas1p2ad508d4f3377f4daa38f28bf6c3d1118
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240905033408eucas1p2ad508d4f3377f4daa38f28bf6c3d1118
-References: <20240904-jag-iopfv8-v1-0-e3549920adf3@samsung.com>
-	<20240904-jag-iopfv8-v1-5-e3549920adf3@samsung.com>
-	<CGME20240905033408eucas1p2ad508d4f3377f4daa38f28bf6c3d1118@eucas1p2.samsung.com>
-	<c2e765a8-d935-42db-bd22-c12e7960f2f0@linux.intel.com>
-	<20240911105657.iesajd4d5va3wc5y@joelS2.panther.com>
-	<b7a68539-3a3c-4cd9-922b-bfb9db8e7e0b@linux.intel.com>
-	<20240912082512.ydzmmlwpvkcukbt2@joelS2.panther.com>
-	<71f61d8a-9188-4e67-88ca-e5b48a91e6b5@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] rpmsg: glink: Avoid -Wflex-array-member-not-at-end
+ warnings
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <ZrOQa2gew5yadyt3@cute>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <ZrOQa2gew5yadyt3@cute>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 185.44.53.103
+X-Source-L: No
+X-Exim-ID: 1sp1O7-003nYS-2g
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.187]) [185.44.53.103]:32866
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 31
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfOUJWQbVhHGkhxa6MDxNCKs2C1ZrH/2dIoE2w2JECz38Wu3/zT9NwR1XC4vbm8Vf39EIH92a5Gq6h+1/ry8TkMOwmZz+JrQp5TaNVUN3T/dD10rce+pM
+ 7vjb9hcbNPDFRfd8yogxitM0UjzyRtzUmwXtKX+0XgMOAgrN5l8qKbEqVcTEamfu8QkwPIYayBY6vlfiZ1cC2u/SBR5TRmZxsXeNEe1xAwcNRxcSLp9B4v1T
 
-On Thu, Sep 12, 2024 at 07:22:30PM +0800, Baolu Lu wrote:
-> On 2024/9/12 16:25, Joel Granados wrote:
-> >   /**
-> >    * iommu_attach_group_handle - Attach an IOMMU domain to an IOMMU group
-> >    * @domain: IOMMU domain to attach
-> > diff --git i/drivers/iommu/iommufd/fault.c w/drivers/iommu/iommufd/fault.c
-> > index ea7f1bf64892..51cb70465b87 100644
-> > --- i/drivers/iommu/iommufd/fault.c
-> > +++ w/drivers/iommu/iommufd/fault.c
-> > @@ -189,8 +189,15 @@ static int iommufd_init_pasid_array(struct iommu_domain *domain,
-> >   	if (!handle)
-> >   		return -ENOMEM;
-> >   	handle->idev = idev;
-> > +	handle->handle.domain = domain;
-> > +
-> > +	mutex_lock(&group->mutex);
-> > +	ret = xa_insert(&group->pasid_array, IOMMU_NO_PASID, handle, GFP_KERNEL);
-> > +	mutex_unlock(&group->mutex);
-> > +
-> > +	if (ret == -EBUSY)
-> > +		ret = 0;
-> >   
-> > -	ret = iommu_init_pasid_array(domain, group, &handle->handle);
-> >   	if (ret)
-> >   		kfree(handle);
+Hi all,
+
+Friendly ping: who can take this, please? 🙂
+
+Thanks
+-Gustavo
+
+On 07/08/24 17:19, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
 > 
-> This is supposed to be done automatically when an iopf capable domain is
-> attached to or replaced with a device. Please refer to
-> iommufd_fault_domain_attach_dev() and
-> iommufd_fault_domain_replace_dev().
+> So, in order to avoid ending up with a flexible-array member in the
+> middle of multiple other structs, we use the `__struct_group()`
+> helper to create a new tagged `struct glink_msg_hdr`. This structure
+> groups together all the members of the flexible `struct glink_msg`
+> except the flexible array.
 > 
-> Is there anything preventing this from happening?
-Nope, You are correct. This does indeed happen through
-iommufd_fault_domain_replace_dev
-  -> __fault_domain_replace_dev
-    -> iommu_replace_group_handle.
-
-This was probably left from trying to do this outside the replace path.
-Sorry for the noise; will remove it in V2.
-
-Thx for the review
-
-Best
-
--- 
-
-Joel Granados
+> As a result, the array is effectively separated from the rest of the
+> members without modifying the memory layout of the flexible structure.
+> We then change the type of the middle struct members currently causing
+> trouble from `struct glink_msg` to `struct glink_msg_hdr`.
+> 
+> We also want to ensure that when new members need to be added to the
+> flexible structure, they are always included within the newly created
+> tagged struct. For this, we use `static_assert()`. This ensures that the
+> memory layout for both the flexible structure and the new tagged struct
+> is the same after any changes.
+> 
+> This approach avoids having to implement `struct glink_msg_hdr` as a
+> completely separate structure, thus preventing having to maintain two
+> independent but basically identical structures, closing the door to
+> potential bugs in the future.
+> 
+> We also use `container_of()` whenever we need to retrieve a pointer to
+> the flexible structure, through which we can access the flexible-array
+> member, if necessary.
+> 
+> Additionally, we use the `DEFINE_RAW_FLEX()` helper for an on-stack
+> definition of a flexible structure where the size for the flexible-array
+> member is known at compile-time.
+> 
+> So, with these changes, fix the following warnings:
+> drivers/rpmsg/qcom_glink_native.c:51:26: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/rpmsg/qcom_glink_native.c:459:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/rpmsg/qcom_glink_native.c:846:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/rpmsg/qcom_glink_native.c:968:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/rpmsg/qcom_glink_native.c:1380:34: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+>   drivers/rpmsg/qcom_glink_native.c | 42 +++++++++++++++++--------------
+>   1 file changed, 23 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
+> index 82d460ff4777..ed89b810f262 100644
+> --- a/drivers/rpmsg/qcom_glink_native.c
+> +++ b/drivers/rpmsg/qcom_glink_native.c
+> @@ -30,11 +30,16 @@
+>   #define RPM_GLINK_CID_MAX	65536
+>   
+>   struct glink_msg {
+> -	__le16 cmd;
+> -	__le16 param1;
+> -	__le32 param2;
+> +	/* New members MUST be added within the __struct_group() macro below. */
+> +	__struct_group(glink_msg_hdr, hdr, __packed,
+> +		__le16 cmd;
+> +		__le16 param1;
+> +		__le32 param2;
+> +	);
+>   	u8 data[];
+>   } __packed;
+> +static_assert(offsetof(struct glink_msg, data) == sizeof(struct glink_msg_hdr),
+> +	      "struct member likely outside of __struct_group()");
+>   
+>   /**
+>    * struct glink_defer_cmd - deferred incoming control message
+> @@ -48,7 +53,7 @@ struct glink_msg {
+>   struct glink_defer_cmd {
+>   	struct list_head node;
+>   
+> -	struct glink_msg msg;
+> +	struct glink_msg_hdr msg;
+>   	u8 data[];
+>   };
+>   
+> @@ -455,12 +460,9 @@ static void qcom_glink_intent_req_abort(struct glink_channel *channel)
+>   static int qcom_glink_send_open_req(struct qcom_glink *glink,
+>   				    struct glink_channel *channel)
+>   {
+> -	struct {
+> -		struct glink_msg msg;
+> -		u8 name[GLINK_NAME_SIZE];
+> -	} __packed req;
+> +	DEFINE_RAW_FLEX(struct glink_msg, req, data, GLINK_NAME_SIZE);
+>   	int name_len = strlen(channel->name) + 1;
+> -	int req_len = ALIGN(sizeof(req.msg) + name_len, 8);
+> +	int req_len = ALIGN(sizeof(*req) + name_len, 8);
+>   	int ret;
+>   	unsigned long flags;
+>   
+> @@ -476,12 +478,12 @@ static int qcom_glink_send_open_req(struct qcom_glink *glink,
+>   
+>   	channel->lcid = ret;
+>   
+> -	req.msg.cmd = cpu_to_le16(GLINK_CMD_OPEN);
+> -	req.msg.param1 = cpu_to_le16(channel->lcid);
+> -	req.msg.param2 = cpu_to_le32(name_len);
+> -	strcpy(req.name, channel->name);
+> +	req->cmd = cpu_to_le16(GLINK_CMD_OPEN);
+> +	req->param1 = cpu_to_le16(channel->lcid);
+> +	req->param2 = cpu_to_le32(name_len);
+> +	strcpy(req->data, channel->name);
+>   
+> -	ret = qcom_glink_tx(glink, &req, req_len, NULL, 0, true);
+> +	ret = qcom_glink_tx(glink, req, req_len, NULL, 0, true);
+>   	if (ret)
+>   		goto remove_idr;
+>   
+> @@ -826,7 +828,9 @@ static int qcom_glink_rx_defer(struct qcom_glink *glink, size_t extra)
+>   
+>   	INIT_LIST_HEAD(&dcmd->node);
+>   
+> -	qcom_glink_rx_peek(glink, &dcmd->msg, 0, sizeof(dcmd->msg) + extra);
+> +	qcom_glink_rx_peek(glink,
+> +			   container_of(&dcmd->msg, struct glink_msg, hdr), 0,
+> +			   sizeof(dcmd->msg) + extra);
+>   
+>   	spin_lock(&glink->rx_lock);
+>   	list_add_tail(&dcmd->node, &glink->rx_queue);
+> @@ -843,7 +847,7 @@ static int qcom_glink_rx_data(struct qcom_glink *glink, size_t avail)
+>   	struct glink_core_rx_intent *intent;
+>   	struct glink_channel *channel;
+>   	struct {
+> -		struct glink_msg msg;
+> +		struct glink_msg_hdr msg;
+>   		__le32 chunk_size;
+>   		__le32 left_size;
+>   	} __packed hdr;
+> @@ -965,7 +969,7 @@ static void qcom_glink_handle_intent(struct qcom_glink *glink,
+>   	};
+>   
+>   	struct {
+> -		struct glink_msg msg;
+> +		struct glink_msg_hdr msg;
+>   		struct intent_pair intents[];
+>   	} __packed * msg;
+>   
+> @@ -1377,7 +1381,7 @@ static int __qcom_glink_send(struct glink_channel *channel,
+>   	struct glink_core_rx_intent *tmp;
+>   	int iid = 0;
+>   	struct {
+> -		struct glink_msg msg;
+> +		struct glink_msg_hdr msg;
+>   		__le32 chunk_size;
+>   		__le32 left_size;
+>   	} __packed req;
+> @@ -1685,7 +1689,7 @@ static void qcom_glink_work(struct work_struct *work)
+>   		list_del(&dcmd->node);
+>   		spin_unlock_irqrestore(&glink->rx_lock, flags);
+>   
+> -		msg = &dcmd->msg;
+> +		msg = container_of(&dcmd->msg, struct glink_msg, hdr);
+>   		cmd = le16_to_cpu(msg->cmd);
+>   		param1 = le16_to_cpu(msg->param1);
+>   		param2 = le32_to_cpu(msg->param2);
 
