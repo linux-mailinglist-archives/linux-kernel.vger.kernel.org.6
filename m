@@ -1,234 +1,164 @@
-Return-Path: <linux-kernel+bounces-328870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E774978A2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:46:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5010A978A2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:46:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C176B2816A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:46:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3597B24995
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D1C148855;
-	Fri, 13 Sep 2024 20:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58CD914AD0C;
+	Fri, 13 Sep 2024 20:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ADhYcxpo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dVzIps/x"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB6A42042;
-	Fri, 13 Sep 2024 20:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726260363; cv=fail; b=dFE933i+Pfm88OBppY+JqO6LJdNICwrmpItggvPS1JCZvjno1A0/A/lV6vqpr5ELZMsEc0u6SeE5vhuIKWpulIuNRBju8FH0Ber6DD9XKPLP+WvnruTMyJfQXgx3PTFydrZmVZKu9Mg9qdgeXmtXJzWdHrQM01/knIsPAD35L4s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726260363; c=relaxed/simple;
-	bh=ERymliSLD+uWTd+a4ixibeun4YW99AznSrNesgIBS+g=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=CikGmw73UNAUwo9oanxzGgHqT6Murp/1nP4zVjQZhZprI2Ik0hrHZ1zsARp6CC+RMc7QcRZvsyVhKeyddyJiyaF8d1MBfHvHaHLx+WR4cv1YKxJU3eMjuzPr/GMegjN0TlTMdc/mYC3hhDSEdf0LIO2U4gYGzEoMoZDbcH8jYLg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ADhYcxpo; arc=fail smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726260362; x=1757796362;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=ERymliSLD+uWTd+a4ixibeun4YW99AznSrNesgIBS+g=;
-  b=ADhYcxpoBYcYlzUKVXeguVbqHMUv5Ij+N2EWRgte5yJJWNQLvIN8prJq
-   F0prE5KEtEy8k5InC8B3qpIWpYgP+GGUtLP40hbcPksQm/63mdTKqebUj
-   Wj2gCDeMiU4y11pyJl0xkmoWycWH9laMNBTBoWnjOQcBNe2YdUtNs5BkK
-   aQeRQDeEZvl7AHQE8kRbQ0UYvGnRdcGMKN1FYH4UwPw1Gi0ehf0mfXnR7
-   7/wTRvU6S2+fheK5MEc2xI2Vt2ptlrmqSYwrRNRpqk7uiQ+uceMEKAnoT
-   DxLFpbTzjfsB84V4DRoz+yco9B12ExVNmE6t9d8g2iNmeJMDx1w0CKIud
-   Q==;
-X-CSE-ConnectionGUID: /Ld9Mw12Rsy91EHpEbu50A==
-X-CSE-MsgGUID: sZeo4/DITLKnjWqhJ6lzUQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25001939"
-X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
-   d="scan'208";a="25001939"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 13:46:01 -0700
-X-CSE-ConnectionGUID: Ky3xZDmYR7a35gk7s/uGqw==
-X-CSE-MsgGUID: bX0kgAWYTIGYKZ3eE6gCKQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
-   d="scan'208";a="91462971"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 13 Sep 2024 13:46:01 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 13 Sep 2024 13:46:00 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 13 Sep 2024 13:46:00 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.168)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 13 Sep 2024 13:46:00 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Y2cslrwtkjWznPKfhGhlkNCJg3jziHLGZZFRLvHp3qv5KeD68MT3wFkyoKMhVuOsg2FR44pupuUtOv5d4vlpcgih+kHZfYz0BNNeK3NFtEoJnfXsZwnR274hL7oXp8P7ssgLsOz3YAYGpRw8gBIVybmr+2rSYruPRYbTMBXUsdkSTnkvu2CWwLYO/kbVc26WGM4v+HoUyrdPdoRil5hiW3JHByD8r9Ev+b9FXmyVfeKp5gauuDAZ9PReeGcpT0AOPVLBVG+fAeMqsjPL+34jJrD9ZWEZ7xS8CVcDK4Ia2ubJz21iK1EbWUnzQ1JVx50d5Kl5aKljhn/qI8eq5I8MTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ERymliSLD+uWTd+a4ixibeun4YW99AznSrNesgIBS+g=;
- b=oyMi3KMatLdxtk2JLCPZbCetESKCRXPsS94G2DbP+1AAoonN6A1kC9e01Rss3JSfe8YWBE0hlGd6dXWKQg1wIkDSeKTHH24bovY9Cj/e2AMtzC/NfJfAgnx5zsC5swzX9CuIGNB1fACJfsedOyhbbvSycqbpNT9jGWkBKSo/SidEncVc7LaPbIga1X9qOfCpS9grrSfKvZ46JCFq+mlE/8GyP+i0fgmRS6hTRMiUNz3vFk+r4fbqbF/J0H9nC/qUlN5iL+5nhE5tvuh/ZJ/842UVdAT2Kp0YVmdWxhKbV5UqtUMgjt6ULoLwu08+Mw90ryb9Ct7Lhu3oK2W3l8lX2g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by IA1PR11MB7293.namprd11.prod.outlook.com (2603:10b6:208:42a::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.17; Fri, 13 Sep
- 2024 20:45:57 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7939.022; Fri, 13 Sep 2024
- 20:45:57 +0000
-Message-ID: <254da029-81b2-4745-bc78-5aefeb33adb0@intel.com>
-Date: Fri, 13 Sep 2024 13:45:54 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] x86/resctrl: Introduce sdciae_capable in rdt_resource
-To: Babu Moger <babu.moger@amd.com>, <corbet@lwn.net>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>
-CC: <fenghua.yu@intel.com>, <hpa@zytor.com>, <paulmck@kernel.org>,
-	<thuth@redhat.com>, <xiongwei.song@windriver.com>, <ardb@kernel.org>,
-	<pawan.kumar.gupta@linux.intel.com>, <daniel.sneddon@linux.intel.com>,
-	<sandipan.das@amd.com>, <kai.huang@intel.com>, <peterz@infradead.org>,
-	<kan.liang@linux.intel.com>, <pbonzini@redhat.com>, <xin3.li@intel.com>,
-	<ebiggers@google.com>, <alexandre.chartre@oracle.com>, <perry.yuan@amd.com>,
-	<tan.shaopeng@fujitsu.com>, <james.morse@arm.com>, <tony.luck@intel.com>,
-	<maciej.wieczor-retman@intel.com>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <peternewman@google.com>,
-	<eranian@google.com>
-References: <cover.1723824984.git.babu.moger@amd.com>
- <cf9e47bbd66dbbdb76f0124620fad2f1b06e977e.1723824984.git.babu.moger@amd.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <cf9e47bbd66dbbdb76f0124620fad2f1b06e977e.1723824984.git.babu.moger@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR03CA0318.namprd03.prod.outlook.com
- (2603:10b6:303:dd::23) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5994242042;
+	Fri, 13 Sep 2024 20:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726260405; cv=none; b=GOKwKcioVrx2bYm2t9rvAzpZ2dVL0+B1Lg+kXJ9yh2rHJVKuOXlx1ymPqDNynNySDRV+jWfZR426HPiKIsczH55OEcVwIYg1fnaH9mCjWaV0heCWaKUq1w42/OcM54SMMqtbbKuku6p8H5oxjtVg1y2X9b+qH+kZIBEyYFk+QLk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726260405; c=relaxed/simple;
+	bh=8QO493V5gDQW1JwVI7PbImqe0AmlBESE61nMl2OdgDY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HrlLROsYWY0yiT9auF3TQMrjjYCtJQ4uSxSq+2ENxDqOmAcqw0APPXBxrKi8+csG4VNrzrf8uTVLhB/Xv3bX1Coes9h6EGbqdK5AIYXaMJ7+cx/mw/qWCqJPq7dPj0miB5rnuYuz0VgGgpS7F7rpHJnofzM+U2lSY+tVBYmxkBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dVzIps/x; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2d889ba25f7so1061553a91.0;
+        Fri, 13 Sep 2024 13:46:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726260403; x=1726865203; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g1rIisakoYY0JHr3z7K81gp3DmWikTdWj2NdLF7eWas=;
+        b=dVzIps/xQNAHrpdS+yHmP02mZSIeQwC4MeGA9V28irm99LGVphDhUA0nxQfDxr62Go
+         IhcSeT8MVXfhQlBoEny83JNfeFznmAwdRrr+/AIW7c/lZHOH1Jv5B5zY1YOW8Y1ZcJ60
+         KIJ/iQtGx4Fb35LkM5w/Wy0SBmupUllHIcc4iNHRTxjkkdNN7Czie/LXBaDGiR/YG//y
+         gDMue4augq94KGuH+55Bm1gt03levs8FlcuPy9x0zlnO4p6NCTFqLqRF/yNDm30Y6vf+
+         yTjSH0yhE5K6+ChAImCITwKyyDRf0We3EBuxGtrVSbYcoB1UAzoRA2j9iURCUrpZgJIN
+         kb8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726260403; x=1726865203;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g1rIisakoYY0JHr3z7K81gp3DmWikTdWj2NdLF7eWas=;
+        b=YZnmJmSPROSUrlCiT45QNQYEcHsRCzC2fU16j3R7b9vx2AUI9/lM3uqPrZo286tFG7
+         7EdcmFpvFxe/93I0LaHJ0Lzdk+woYbuFT41kT0Y3btU/RbTQYTI9MerRydXHpoR262FH
+         hspypiscc99rMy/SHMFSAIhw/RpWI4FmVRJI5rpjnV39bPHOD4UjM7BJTTo4TuGe3F28
+         tqtMmkgmxxTTkpzhZdyDjCa7dRlFmAmbYlEilt12j/RqCZB+xvAXjudn7ksKZWB1B5bz
+         4GSTGWnPOfkWxH+Tf3CvsLuz2/mqI3ZRJJgVilbTAvlSegjxK/c3zdXSiWlEtrHvS4rX
+         vgWA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPgR4KgjYMO6AvIvr1bux/KnhCIs0vPrCCZftLxP10nz3G6EhB+zDjlBCGdpCkQW3TME4=@vger.kernel.org, AJvYcCWrZdAevcefK0Vnog6SMHLwB49b1h5tiaOIWqb2IvM2hABcHV3wyncrOH4Vlv3xus9pwN3+IwkzYr7c0NGU@vger.kernel.org
+X-Gm-Message-State: AOJu0YxePOot3wpuLOgLcfdQAFnwv52vO9c8RNfQCGxQGuwjQPwWowoI
+	pZHgH1uLncQTB0RD58ApVirhXr7KNuLaIN5Jkpaik9bZ2TwCZU5fQqpy16vcjS0bUGUi06rXnpa
+	kiwTdx9/bWA7etTjDJYO1JROGEVQ=
+X-Google-Smtp-Source: AGHT+IGOu4nS4TWR5RHP+/GEUmcs0XBWbnbqRXt0TtO6FXHPfmHgiGwUxBc12KdF0h3K94dkAuOlZBCYOsCJniaPGBE=
+X-Received: by 2002:a17:90a:cf0f:b0:2d8:8ce3:1e9d with SMTP id
+ 98e67ed59e1d1-2dbb9dbda04mr4687116a91.3.1726260403402; Fri, 13 Sep 2024
+ 13:46:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|IA1PR11MB7293:EE_
-X-MS-Office365-Filtering-Correlation-Id: cd319ba6-557e-4a37-11b2-08dcd43511bb
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?T2l5QU56c1oydGdUUDZzRGFQMkgxUjRtMlFSR0pqVlUvNFBMK01YUktyMkJQ?=
- =?utf-8?B?T05nUU5sdjVFcUJGNkIzYjhRbUFIMEx1enRxYzkyOWlHVmNIQUdXYVVWbnBv?=
- =?utf-8?B?OFZTM0hFd3l0aFpLTlJvN2ptNWh4V0VMWUJPRUVZQkN2MU9tVG5CdjlNb2to?=
- =?utf-8?B?ZXNVMklobERpbVg3Zm45UEFvaUZQR3VpM3cxWitaWXVlekFSNFByS2JYMmFI?=
- =?utf-8?B?NmtOK1pOSXU4MEFYeW9OV0dWZ2NaNGdCVmpSN3BaQ2JoSndzb3k3Zkw5WVFx?=
- =?utf-8?B?ck84ZTNTMDZDZWFOQU95VHBPVGpIbVhYZEZDeml4VHA1TEJURmovR3M1NU5z?=
- =?utf-8?B?NkRwdmxCdFg2a3hhOGFRRDVGcnl1bWI5RTFYRnRBQXdLaG0zbXh5dXZrdDRx?=
- =?utf-8?B?c1BTN3hmUUEvM2thMTVpRFUwdnQ2em9ZN2NDd2puWXRseUVhb09FcHEwYldw?=
- =?utf-8?B?bDV6ZkFST0RudlJ3Y1lTR05kTVhaUWw1OTRFdXlscjVNTkhhdmN6Q3BoQjhm?=
- =?utf-8?B?cFdIUm5BQm9HKzQySWtGUGRxMEQ5d1RTb01xTHJwZVRhNGk1U3ZtMWRlS1ZM?=
- =?utf-8?B?VFdLTmNRKzNWZDc4bUMycjhaTFAzMENFcFhyT1BTM3piY0pXcXE5bXgyR3JP?=
- =?utf-8?B?R2dhQk01SktaajRqOFdjTTJMMnhla3o5Ty9DcVU3RVUwaHY5d1pvQTBuOTVu?=
- =?utf-8?B?ZkU5TXpvOVh4dmpqU2lBMEYxRkhIMDBJTTZMSU00RldGN1pGQ0tWRUphU2N3?=
- =?utf-8?B?RVBxTVBIaG1nQjhJZGdpTlFrVHFpbElJQ3hvZ3RGbXFFVjQram1KVGhOdDhI?=
- =?utf-8?B?MnJmWFFiUUxhODNHQ0xQTE9Sb3lheXJwTlI2TG83aTVIcCtHU0lDOVNvSXlq?=
- =?utf-8?B?Q21lODFvSDFKcCtjWE9yNm5OUy9UNmVoQ3Q3VGF0aEE5ZWlrenAwcVNkSVNr?=
- =?utf-8?B?YW4ycW1mTjRqZGg1VzN0djVOdFRkaEVDbGJCeTdHY1phQ240VDJiMGw1Sklw?=
- =?utf-8?B?SHBVZjVFWlJjbUZha0lOamRHbFFxSkFtMlVnVXpKNnd0TXBPdGtJcEZHQTFq?=
- =?utf-8?B?UzdLMXgrMXViTTB6czJRbUFnZVJ2THZiWWdGRm9qcmFjVFBSZlh0dVJ5b3VQ?=
- =?utf-8?B?YzQ5RDl0UnQ3NkFRSFMxQVgyUUdVcFdCeVROUy9mUUdNbnF0QlFIVkhyZVVo?=
- =?utf-8?B?cm5aSTBqeEZnZGd2UGhOYnJkelRnK1BBMnpYd1N0ZXZKZisvU3lIL0gvbkJM?=
- =?utf-8?B?NGdNUFMwMnZIWkZYelNQTWZiMUwxUDNCYnBmQkIxb1BqSTJPN2VjbmxsdG9h?=
- =?utf-8?B?bTl0ZExCTzVSUDFDcDV3Y01BZVd0VFphWEhneVRQTTNjdjRXYjZUNFZYUElW?=
- =?utf-8?B?MzlYT1FsM3BsemZ2R1RnYlF1eTJWVmluUElZZ00ranRNekppNHdKcWVlL1VO?=
- =?utf-8?B?a3NlY0IzdDJ3WHhuWUZNbjBibmFZZ0p3TUpvakRta3ZER3ptOC9HS3JvRDI4?=
- =?utf-8?B?Z2JLeDJTTEZTTWRIMGg0SlpoOUIyUzB0eWV6RXI4dUtjZ1ovUmFZRXdadmFL?=
- =?utf-8?B?bDZYVzFtcmpHckFST1pkOHFUSzlXTVNnb0k1N3l0M05GbWtvMlB2SFFhSS8r?=
- =?utf-8?B?OXk0NXVQQnIwU05sRXR2MmQyUFZOMTVPakpLbjdGaDMrQ2JadEZzWU95YnNP?=
- =?utf-8?B?SFRMdzhyT1FCVlVYWmt5VytRYkQ2c2VrVnErcVhENGp1OVhEWFdocUlBanFG?=
- =?utf-8?B?YWhvQjdOaUhvTVpxY2x6QkFlMUVkc1d0dWFiVUpEbWI5Uk56ZG9DaFg0cUdT?=
- =?utf-8?B?MFBsWmVuQ1hKZC9XU1dxZz09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?eUQzSkdzT3BhYjhGajV0YW0zUXlqNkszWjVndDFlMFFuaUU3R2tVckpaMmxh?=
- =?utf-8?B?TG5VRG5CQXA5Qk5naU8zTWNiWTArRnpWaEtFR1kzbkIzaHgxWDYwM0V3YVZR?=
- =?utf-8?B?UitQUFhIL1AzUW1SR09aT0djdGpZNXF4elk1R0YyK2x0SDdTb20yeS85YXlY?=
- =?utf-8?B?dkZsd1ZHMlBzUTI2YUJuWVFOT3dlQmFaSHcwV3N6cUtxTTJ4bWFYNi9FWlAz?=
- =?utf-8?B?em0xWmNKNjhnUHEwWHNKR0lFN0cwdmk4NExWME5zOGk1ek5yRWM1YnIzTmJI?=
- =?utf-8?B?OXdOWmxkNDl1LzEwS0ZSaXRDMGJsaWx2eXd2Q0IraTFKdEhmVUxlV1lndVI1?=
- =?utf-8?B?R0RDMk9vZXNMSnpmelBYT2ZPTWRyWVRRMkpTOTNuc2o0cEhkRWgySGtleHBR?=
- =?utf-8?B?eUtTa0h3bGxYU3RzVkpDdk1iSFpNaGwxN2xyODRoMEU2OTJpS3R1dm9NQmJS?=
- =?utf-8?B?Zk84MjhLQXlQcFBtaklFamZ0WWM1SzVCZ2tLa0lXcFFaeWUxS2ExcnhXU3ZL?=
- =?utf-8?B?VE9zRGFYTnprR2NqTHhqK0N6TUxDeWllK0J2SWtsTWNuYXdTdnd3cnJoaEx4?=
- =?utf-8?B?YVdCME01c2xNYy93c3BMNitiSFczYTlKSHpLZnN6V3lJNFZBaDFkT2N2VVhQ?=
- =?utf-8?B?SE1FRHBWZXcvVzI0akhwTGs4SXc3cU5CY1Q2MFV3cktBZHJmdjhmenpoWlpw?=
- =?utf-8?B?U25xRGVRSkhqWnRVd3JMbThzRmJLMHlrc0dyaVdRTDM4eW01L05xTVVOWWNS?=
- =?utf-8?B?Q2krdXkySzVodDdiOTBXOGVQOTNUWGRDcllMV2lSYm9ibE9jc2QrODFhZWtw?=
- =?utf-8?B?bTI1czVjLzNhOTNkWnQwcDV6anpBTEZoS2JEeFZqSkMwNTJCQUdvTHQ3eU5n?=
- =?utf-8?B?MnFaMFdMY3pNbDhmOEtDNnpJQWtUMUlNb3JLcVpKZVhxNlN2dXFHV2RCdGlE?=
- =?utf-8?B?dTNOQ01oeU1HSjBFODJtNHNHdmlXaUZTb0UvVnlRazhXNkZvbXVuMm4rWjZy?=
- =?utf-8?B?NTFyZXowY3NoelJGd0loeHJXYlV4UHhtWGwxL3Q5VEpOWnZkUWNVWmh6cm1T?=
- =?utf-8?B?YU95YVJFUHppdmh4UEk2SXBqdVJhMWVZTkFseTJaaE9La3lySVk5bTc1YVE4?=
- =?utf-8?B?a1VBdWhISTBFOG9XbmtMZWJuNVRKVk9YaDlNN2NTcCtrT0dHeG1tK29uQUpC?=
- =?utf-8?B?bEhsWXNrM0Mzc1ROWHY0RGcwZ3l2MUZWbWdPNTg5MmUyY09oN20zMWdZaHFm?=
- =?utf-8?B?R216NzEvMjd0ejBGcnA3alhMOTZrOGpvZkhpK0JGWi9OV0lXY3hXbE11QXp3?=
- =?utf-8?B?eElweXJmVy84KzRLTmdJMVpldDBjTE9WNmREVkVjSlVLVnpKV0V4WjJYNytv?=
- =?utf-8?B?bEYzZzVlM0JGNjFuZCtJcmhxdnI4NWJnWXRYQ3FZRUJ1OWwrdEZ2SjkyS0xR?=
- =?utf-8?B?M1BvVEVORXdKdTR4NFZDakxLckR1bUgxTVpsZ2M4eldpTHRQRitmZ2xnS3Nw?=
- =?utf-8?B?dUVnUEVwVC9PUG5QdXA1dWtYTGk0YUhwMktIcFFoUEFGK0x4YzFpVlUzb3R2?=
- =?utf-8?B?YWpFSURrTGRWU252bWNOVnhzZjRsZzN6aVVxT3lBaDU5a0wyVFJvNGR5VmJm?=
- =?utf-8?B?RnZwb1RqK2NQZlBrak9jN0ptUXFtVXNuZGlYTXRYM1QzKzkzcUovOXJtUzFr?=
- =?utf-8?B?c2VTUEVmb1VqSTlYcC9BalBzQ0pRd3loYnJPTVpSaTQrVWxmeXE0bENxZWtZ?=
- =?utf-8?B?RnFlMXFTYUUrSXhlSWhqaU9JY01vNmMvVFVINjNhNW93czFWOEFnUGpnNmdr?=
- =?utf-8?B?K1VRN0Z2cExMYjRYd1N3QzlwMXJXYkdvTURMQXJibVViaDFUR3d0MXM4U1Zy?=
- =?utf-8?B?elFlbzlCVGp5WldXVytzVFduRkFXM211NFNLbWgvWkExTEEyOEQydmVGOFlr?=
- =?utf-8?B?OURpaHdzTU9GcDFmbGdRUFVkK2NoNmVmRktmT1dEanM2WWxYd3EveHhwcE56?=
- =?utf-8?B?eWxEcC9VWmQ4TmZKdXppWmJqdlhtWTYwczVGOWJteWtwSGdKRWpVL09xNHAr?=
- =?utf-8?B?ZjMrc0k4aTlDck1weUFuZkhVOWttbUxyNzlnZldUcVppOEJtZHNBOStENjZG?=
- =?utf-8?B?QnNtR0ZmT1dyZkNZanFlVTFaL0x4SGJRL2NNRTRLWUdnN095YlREY25rVFhl?=
- =?utf-8?B?NFE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: cd319ba6-557e-4a37-11b2-08dcd43511bb
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 20:45:57.7749
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3kXbvt6iJsPmHsqRnf5OzmAtQ9643iXDFxFfw8zuqRT1GDmturoMr9j6QIqn2F/d+4PgUMHEhYmfTRjg8JYcx71SmyuiO4IQ0rBQGLkznH4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7293
-X-OriginatorOrg: intel.com
+References: <20240913164355.176021-1-chen.dylane@gmail.com>
+In-Reply-To: <20240913164355.176021-1-chen.dylane@gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 13 Sep 2024 13:46:31 -0700
+Message-ID: <CAEf4BzZk4onktrnK-i7CQUrFAPEo24G9p5RZhpg0nrhYxU5EvA@mail.gmail.com>
+Subject: Re: [PATCH bpf-next RESEND v2] libbpf: Fix expected_attach_type set
+ when kernel not support
+To: Tao Chen <chen.dylane@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Babu,
+On Fri, Sep 13, 2024 at 9:44=E2=80=AFAM Tao Chen <chen.dylane@gmail.com> wr=
+ote:
+>
+> The commit "5902da6d8a52" set expected_attach_type again with
+> filed of bpf_program after libpf_prepare_prog_load, which makes
+> expected_attach_type =3D 0 no sense when kenrel not support the
+> attach_type feature, so fix it.
+>
+> Fixes: 5902da6d8a52 ("libbpf: Add uprobe multi link support to bpf_progra=
+m__attach_usdt")
+> Suggested-by: Jiri Olsa <jolsa@kernel.org>
+> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+> ---
+>  tools/lib/bpf/libbpf.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> Change list:
+> - v1 -> v2:
+>     - restore the original initialization way suggested by Jiri
+>
+> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> index 219facd0e66e..df2244397ba1 100644
+> --- a/tools/lib/bpf/libbpf.c
+> +++ b/tools/lib/bpf/libbpf.c
+> @@ -7353,7 +7353,7 @@ static int libbpf_prepare_prog_load(struct bpf_prog=
+ram *prog,
+>
+>         /* special check for usdt to use uprobe_multi link */
+>         if ((def & SEC_USDT) && kernel_supports(prog->obj, FEAT_UPROBE_MU=
+LTI_LINK))
+> -               prog->expected_attach_type =3D BPF_TRACE_UPROBE_MULTI;
+> +               opts->expected_attach_type =3D BPF_TRACE_UPROBE_MULTI;
+>
 
-On 8/16/24 9:16 AM, Babu Moger wrote:
-> Detect SDCIAE`(L3 Smart Data Cache Injection Allocation Enforcement)
+Ok, took me a bit to understand what the issue is. But the above is
+not quite correct, for the above case of setting
+BPF_TRACE_UPROBE_MULTI we do want to record BPF_TRACE_UPROBE_MULTI in
+prog->expected_attach_type, because user might want to query that
+later.
 
-(stray ` char)
+So I agree with the part of the fix below, but here I think we need
+*both* update opts' and prog's expected_attach_type, so we will have:
 
-> feature and initialize sdciae_capable.
+       prog->expected_attach_type =3D BPF_TRACE_UPROBE_MULTI;
+       opts->expected_attach_type =3D BPF_TRACE_UPROBE_MULTI;
 
-(This is a repeat of the discussion we had surrounding the ABMC feature.)
+pw-bot: cr
 
-By adding "sdciae_capable" to struct rdt_resource the "sdciae" feature
-becomes a resctrl fs feature. Any other architecture that has a "similar
-but perhaps not identical feature to AMD's SDCIAE" will be forced to also
-call it "sdciae" ... sdciae seems like a marketing name to me and resctrl
-needs something generic that could later be built on (if needed) by other
-architectures.
-
-Reinette
+>         if ((def & SEC_ATTACH_BTF) && !prog->attach_btf_id) {
+>                 int btf_obj_fd =3D 0, btf_type_id =3D 0, err;
+> @@ -7443,6 +7443,7 @@ static int bpf_object_load_prog(struct bpf_object *=
+obj, struct bpf_program *prog
+>         load_attr.attach_btf_id =3D prog->attach_btf_id;
+>         load_attr.kern_version =3D kern_version;
+>         load_attr.prog_ifindex =3D prog->prog_ifindex;
+> +       load_attr.expected_attach_type =3D prog->expected_attach_type;
+>
+>         /* specify func_info/line_info only if kernel supports them */
+>         if (obj->btf && btf__fd(obj->btf) >=3D 0 && kernel_supports(obj, =
+FEAT_BTF_FUNC)) {
+> @@ -7474,9 +7475,6 @@ static int bpf_object_load_prog(struct bpf_object *=
+obj, struct bpf_program *prog
+>                 insns_cnt =3D prog->insns_cnt;
+>         }
+>
+> -       /* allow prog_prepare_load_fn to change expected_attach_type */
+> -       load_attr.expected_attach_type =3D prog->expected_attach_type;
+> -
+>         if (obj->gen_loader) {
+>                 bpf_gen__prog_load(obj->gen_loader, prog->type, prog->nam=
+e,
+>                                    license, insns, insns_cnt, &load_attr,
+> --
+> 2.25.1
+>
 
