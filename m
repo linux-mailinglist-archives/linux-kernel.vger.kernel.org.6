@@ -1,170 +1,115 @@
-Return-Path: <linux-kernel+bounces-328114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3371C977F0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:58:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E4C3977F10
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:58:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97469B22E30
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:58:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C3E9287D3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397F51D932A;
-	Fri, 13 Sep 2024 11:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b="BsYxhAdM"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBCC1D88C7;
+	Fri, 13 Sep 2024 11:57:58 +0000 (UTC)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DF81D9323
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 11:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69292762D7;
+	Fri, 13 Sep 2024 11:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726228591; cv=none; b=t1wdMJHX2jFap5bI/pGWDQU7S+Qdo0D+7MMjPZBGI0YWlhJ74pG2dehp+ZUQczHsGFVZe/fjmZsQtb68I3N3Vx7CVDKWXXZp8oUmlxAJ1JPKcGA2GKG17/3uNoCDAfu7siGGEc+wEUVC+UO/tBYEsAheYGFyrQNSsQxP7AsFGXo=
+	t=1726228677; cv=none; b=ehCL7sLo02FuPxhhrRfVqYDolO9fD6quBOmolL+mtAsq5Qhlpk1CRd/uFO1iIed3MJGAkesI4SNfPhPut6qXnocOtTqGrDg5Z0ChkntpTR/NEPlkmmEHj1jOIjTVkbM62ReItpD4z0EL2fmpOonb4dSXPNBkJ21LCCpmO5iiCwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726228591; c=relaxed/simple;
-	bh=avfI9NP7nnkIB/v2i9vFydmiMri+7Ngcy+APR4Q4/No=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nXgiP9uXybCX0nwYegllaY6WTKtwbiYI1E8/jY1bB6zytanfv6rIS6P18zrqXVti2fo8ggHZbpi9bgmvly357aKbj+c0va+R1AjNtLggEKhqJQvaxymJuHRjtYe487Lqsi2ibueR4v7Uo5T5v+U5zVZlUKnO7Olj1YV3XdaE7Zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net; spf=none smtp.mailfrom=ursulin.net; dkim=pass (2048-bit key) header.d=ursulin-net.20230601.gappssmtp.com header.i=@ursulin-net.20230601.gappssmtp.com header.b=BsYxhAdM; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ursulin.net
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ursulin.net
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso19816595e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 04:56:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ursulin-net.20230601.gappssmtp.com; s=20230601; t=1726228588; x=1726833388; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=b28g9Qh6wbp8sFAAmBj0WXV4vMJYAGNB1czPJCNOJh8=;
-        b=BsYxhAdM5R4iyXPCy/gQI5FtOO39XuVhEExh3X+uUEYkl/OYYuUx4rgSTDXnZEwRES
-         r6k3EqliM8SFxSj3JHQlK9u5D5T0mIyWtZcShiv0sIuX/HQginhlXvI1z6UXaU3iMcjD
-         eTL1tY/tKdFxMTkXN/+jIW/PtsxAstlsqwzIEq/LnJTH/GxkufAznK4vLxbpXEZybZIA
-         3nII60rc7TPPAVetArZCGKDKih1yWytnn8tiRIYKDfuc3gDGripQ3zOOHjmAvwbUlEYo
-         2S1I9NFmcjZeztRP+xB4j0N960M4sct8/eDASn9T2QR8/YeUF8uAXUJKTbk61a8cYxS1
-         LcuQ==
+	s=arc-20240116; t=1726228677; c=relaxed/simple;
+	bh=ATeSZViA4hCQ8XnTQ0/d5V84KzTJBWaovYskqkYRslQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LqNJqOc79aohFf5TkWlUMr5R5Yv9M1nIccAiSBppvQ7n/fgozRwGcq+aH8eOSu4oePgsjKEZ6v9dFYNJGl6FedsvcQ08nEAXGYCyxZceq92JPQ2fVt7OkFx4c8C+YvRXkLBMj9BxLbgEe/ykT8fRviqMPy99O9ROm0hQfQalAhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a8ce5db8668so322775766b.1;
+        Fri, 13 Sep 2024 04:57:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726228588; x=1726833388;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b28g9Qh6wbp8sFAAmBj0WXV4vMJYAGNB1czPJCNOJh8=;
-        b=rtasKUrwt7OUkQVjqUWkOAmCREp+f2XaxzW/Gap9+UX6TojLRf54UnSalEk5V3V9zb
-         HEuPOVUMCJvRfJri9jHYxujGHn9GpvLKORDwUf160lrYIKWcvf2cdvdhEwVTBQnDlDHo
-         tonAMrRWbRBLWXmip5/US78cruz8C5Rfwhf5gJ4qqDP+jqfUWTFvNR8H+doqdwdA5I6u
-         MTm4gcoE4HL5PKZMqxezYOqN4yYply+sWs5x//LhNjS1GUsiFraU1wd6rBAIQpVCiqAY
-         EFcXKU0qGliZ5pvErQ6Y5e7waJznk9Hu0XKL2T5FmYDrYV0JPH5Tr4JIgz4MkY7WB3DU
-         RU1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXFBM0bqChkzIXncM9kxpHThNWiDYImMVLKDX7lTzv9DuULVPQwIFE/zaRHV1yx9W+AEaY8Q5W0sdcECBg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwT+8wSeaqGXW3WjeUiL3IeD/Bk4BTe+9IwmEEEIFpIqPQrF/Sg
-	W+UjJBSS7P+GqgIS9CBO/EXDCKkBg/cZVZP9K6BkA4XbVS8iHUCXlW+3obAzWp4=
-X-Google-Smtp-Source: AGHT+IHcUXeBZBOEM+H7QN71Pqp8IN5OgZbq+vY6D+e8DBFynITqywYcxExRNOpgBMESa2uv7BiL6g==
-X-Received: by 2002:a05:600c:19ce:b0:42c:b4f2:7c30 with SMTP id 5b1f17b1804b1-42cdb56ae9bmr50228735e9.23.1726228587234;
-        Fri, 13 Sep 2024 04:56:27 -0700 (PDT)
-Received: from [192.168.0.101] ([90.241.98.187])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b05a6f5sm22478835e9.4.2024.09.13.04.56.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Sep 2024 04:56:26 -0700 (PDT)
-Message-ID: <92a123f1-73c9-45a1-8e0a-af72dd0a70e7@ursulin.net>
-Date: Fri, 13 Sep 2024 12:56:25 +0100
+        d=1e100.net; s=20230601; t=1726228675; x=1726833475;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zI+zHtk2NVADatDuI+y5aY9OMDmt/UoADnsxa7QwLCs=;
+        b=c+0r2Cw6VXU7o4Qsy/5+xm15uhJjMFSIG2CKRGl7aibEbE0isJaCIt5Q7yOckFEsyp
+         POS1yp/zQgiuYP7xJUKGUx1zxb+hkg6jlYe5ZNgaTfykSrz3QPIWgrFjnXFyqaUuEDUr
+         IZsvMTmtBYylRzSaJfsvBg7ImpH3HI8AfVWruGNEY4cvarKJ8vMqFNBDrVSBtubro2L+
+         kC/2F1nRz7Qhz6wJd2CUwHqJCgkztWgQ7fMolzkAjjPHCIWudf8cFD2DTWsv4XikaJGo
+         bScJdDbVNuX26n0gDAyrpqr9DLrdmIASNwNCLXkdNuUngtcli93lu1esU6KPxJxDsWL8
+         kZHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUp1zEgNEHj7nuBQlXGg3tTdIw3ELQe+EuUW4mkGawllfncwdC96ep3+VKFGmLyCZxcRgq7Sxfd1/fVZx/G@vger.kernel.org, AJvYcCXJw5L9GaHjoGlTSYnrlr/7TO/qpD4edXNMFP2uEMLbCmVqAr04OG/7IbuRTxkw4zh/RJNvDfxZ/2Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvvTBpHLW1/dEiRzJ4St1z6OsUdnIfTs0ryuNjyaJMDQtNDEcy
+	ql6DkVizP4vrOi5GAjLlVVP4onSkROCUsN2gQFjQlsQZwBQRFJ2Kxv23CA==
+X-Google-Smtp-Source: AGHT+IFcfcf4C/OELpfH9TlUaARgUApLjqP4fVLpMOOD5SV7QEG5XU93VRdxoBgDgJgZt/M1wJCrxQ==
+X-Received: by 2002:a17:906:730d:b0:a86:ab84:7fc1 with SMTP id a640c23a62f3a-a9029620359mr724581466b.50.1726228674122;
+        Fri, 13 Sep 2024 04:57:54 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-113.fbsv.net. [2a03:2880:30ff:71::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25831827sm857132766b.20.2024.09.13.04.57.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 04:57:53 -0700 (PDT)
+Date: Fri, 13 Sep 2024 04:57:51 -0700
+From: Breno Leitao <leitao@debian.org>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Usama Arif <usamaarif642@gmail.com>,
+	linux-efi@vger.kernel.org, kexec@lists.infradead.org,
+	ebiederm@xmission.com, bhe@redhat.com, vgoyal@redhat.com,
+	tglx@linutronix.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	linux-kernel@vger.kernel.org, rmikey@meta.com, gourry@gourry.net
+Subject: Re: [RFC] efi/tpm: add efi.tpm_log as a reserved region in
+ 820_table_firmware
+Message-ID: <20240913-careful-maroon-crab-8a0541@leitao>
+References: <20240911104109.1831501-1-usamaarif642@gmail.com>
+ <CAMj1kXFVyQEwBTf2bG8yBXUktM16dzrcPH-Phz_toAsCK-NfMA@mail.gmail.com>
+ <2542182d-aa79-4705-91b6-fa593bacffa6@gmail.com>
+ <CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
+ <20240912-wealthy-gabby-tamarin-aaba3c@leitao>
+ <d9df5012cd3306afa2eddd5187e643a3bbdfd866.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] drm/sched: memset() 'job' in drm_sched_job_init()
-To: Philipp Stanner <pstanner@redhat.com>, Luben Tuikov
- <ltuikov89@gmail.com>, Matthew Brost <matthew.brost@intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Danilo Krummrich <dakr@redhat.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240828094133.17402-2-pstanner@redhat.com>
-Content-Language: en-GB
-From: Tvrtko Ursulin <tursulin@ursulin.net>
-In-Reply-To: <20240828094133.17402-2-pstanner@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d9df5012cd3306afa2eddd5187e643a3bbdfd866.camel@HansenPartnership.com>
 
+Hello James,
 
-Hi,
-
-On 28/08/2024 10:41, Philipp Stanner wrote:
-> drm_sched_job_init() has no control over how users allocate struct
-> drm_sched_job. Unfortunately, the function can also not set some struct
-> members such as job->sched.
-
-job->sched usage from within looks like a bug. But not related to the 
-memset you add.
-
-For this one something like this looks easiest for a start:
-
-diff --git a/drivers/gpu/drm/scheduler/sched_main.c 
-b/drivers/gpu/drm/scheduler/sched_main.c
-index ab53ab486fe6..877113b01af2 100644
---- a/drivers/gpu/drm/scheduler/sched_main.c
-+++ b/drivers/gpu/drm/scheduler/sched_main.c
-@@ -788,7 +788,7 @@ int drm_sched_job_init(struct drm_sched_job *job,
-                  * or worse--a blank screen--leave a trail in the
-                  * logs, so this can be debugged easier.
-                  */
--               drm_err(job->sched, "%s: entity has no rq!\n", __func__);
-+               pr_err("%s: entity has no rq!\n", __func__);
-                 return -ENOENT;
-         }
-
-Fixes: 56e449603f0a ("drm/sched: Convert the GPU scheduler to variable 
-number of run-queues")
-Cc: <stable@vger.kernel.org> # v6.7+
-
-> This could theoretically lead to UB by users dereferencing the struct's
-> pointer members too early.
-
-Hmm if drm_sched_job_init returned an error callers should not 
-dereference anything. What was actually the issue you were debugging?
-
-Adding a memset is I think not the best solution since it is very likely 
-redundant to someone doing a kzalloc in the first place.
-
-Regards,
-
-Tvrtko
-
-> It is easier to debug such issues if these pointers are initialized to
-> NULL, so dereferencing them causes a NULL pointer exception.
-> Accordingly, drm_sched_entity_init() does precisely that and initializes
-> its struct with memset().
+On Thu, Sep 12, 2024 at 12:22:01PM -0400, James Bottomley wrote:
+> On Thu, 2024-09-12 at 06:03 -0700, Breno Leitao wrote:
+> > Hello Ard,
+> > 
+> > On Thu, Sep 12, 2024 at 12:51:57PM +0200, Ard Biesheuvel wrote:
+> > > I don't see how this could be an EFI bug, given that it does not
+> > > deal with E820 tables at all.
+> > 
+> > I want to back up a little bit and make sure I am following the
+> > discussion.
+> > 
+> > From what I understand from previous discussion, we have an EFI bug
+> > as the root cause of this issue.
+> > 
+> > This happens because the EFI does NOT mark the EFI TPM event log
+> > memory region as reserved (EFI_RESERVED_TYPE). Not having an entry
+> > for the event table memory in EFI memory mapped, then libstub will
+> > ignore it completely (the TPM event log memory range) and not
+> > populate e820 table with it.
 > 
-> Initialize parameter "job" to 0 in drm_sched_job_init().
-> 
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> ---
-> No changes in v2.
-> ---
->   drivers/gpu/drm/scheduler/sched_main.c | 8 ++++++++
->   1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-> index 356c30fa24a8..b0c8ad10b419 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -806,6 +806,14 @@ int drm_sched_job_init(struct drm_sched_job *job,
->   		return -EINVAL;
->   	}
->   
-> +	/*
-> +	 * We don't know for sure how the user has allocated. Thus, zero the
-> +	 * struct so that unallowed (i.e., too early) usage of pointers that
-> +	 * this function does not set is guaranteed to lead to a NULL pointer
-> +	 * exception instead of UB.
-> +	 */
-> +	memset(job, 0, sizeof(*job));
-> +
->   	job->entity = entity;
->   	job->credits = credits;
->   	job->s_fence = drm_sched_fence_alloc(entity, owner);
+> Wait, that's not correct.  The TPM log is in memory that doesn't
+> survive ExitBootServices (by design in case the OS doesn't care about
+> it).  So the EFI stub actually copies it over to a new configuration
+> table that is in reserved memory before it calls ExitBootServices. 
+> This new copy should be in kernel reserved memory regardless of its
+> e820 map status.
+
+First of all, thanks for clarifying some points here.
+
+How should the TPM log table be passed to the next kernel when
+kexecing() since it didn't surive ExitBootServices?
 
