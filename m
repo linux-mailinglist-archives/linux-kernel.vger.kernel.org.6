@@ -1,177 +1,153 @@
-Return-Path: <linux-kernel+bounces-327696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D26BF9779D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:41:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87CB99779D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:39:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 411671F270AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:41:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 459F5280F3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5251BC9E1;
-	Fri, 13 Sep 2024 07:40:50 +0000 (UTC)
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 157831BCA05;
+	Fri, 13 Sep 2024 07:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="A+0QKa3F";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="c5BSoSaD"
+Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772B777107
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 07:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB5D77107;
+	Fri, 13 Sep 2024 07:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726213250; cv=none; b=pKkUjb2ya6X+ln/WMByuwtTopbrDlMuPqx/lOnqiVbiTdmbvBSOtVr/6SrNwbe2wdnNci49p/HBPPJ2FDqqC3zVE1l4yWetKq6rDK1a/JfFOhvBzl/rzzlABERAIadDrkgs5ITxy+nJ+vB42NKsOT7s52GV/kE2PhYc7BbyzQN4=
+	t=1726213156; cv=none; b=Zd8Syj4jcS8gq/3oOe12WTjazhG8QsOh1cMSDLb+fpLegNaqEuB5HDlC9qAQEFu2xE5g+eNjOxgEnh0wJiVjbPpc/zKR8Jh1YYqpZjGJ6SiZIp/N23JvuZMoo2a44qsGbiUxbxM7BYBceyInsNOb7I1NB9V/XRF2UzoaYRv7cLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726213250; c=relaxed/simple;
-	bh=2zfE4ILGPGAU2NpSG2y/KgOC2IQ1S+40FSjB24ej8f8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eSYa6OfsAENdCjgpC3GQkT+8pTdUpJMty3KyCkyMStxCBj51U3a4UXXmv2Tit3T6wYPiLoSHA/flul3WhX3SWROJK98JY744mwxg1/68q/IKLxgEGxy/G+rOEXzDb7U/d0WYVsJcJYyOrIMvBTKQsXJepPRLxEOpCaccA09qD+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=54.92.39.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shingroup.cn
-X-QQ-mid: bizesmtpsz7t1726213162tuds4k5
-X-QQ-Originating-IP: KmCwuRb/6WJmVQEoRI44lstEwjYbnExTEZvKu75TRkg=
-Received: from HX09040029.powercore.com.cn ( [180.171.104.254])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 13 Sep 2024 15:39:11 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 4060486937568160866
-Date: Fri, 13 Sep 2024 15:38:46 +0800
-From: Luming Yu <luming.yu@shingroup.cn>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	mpe@ellerman.id.au, npiggin@gmail.com, jialong.yang@shingroup.cn,
-	luming.yu@gmail.com
-Subject: Re: [PATCH 1/2] powerpc/entry: convert to common and generic entry
-Message-ID: <0332BAE1905768B6+ZuPsBvgv0nwmFAjW@HX09040029.powercore.com.cn>
-References: <B4ABABEA5F13B86A+20240912082500.1469-1-luming.yu@shingroup.cn>
- <fc509bcd-5ca0-4dc2-962e-766a01cbe4fb@csgroup.eu>
- <153FD6B5CE4F97D9+ZuOYDQ-iHIIwJjbh@HX09040029.powercore.com.cn>
- <95ced963-b584-4ccf-ba34-8f2ba99172f4@csgroup.eu>
+	s=arc-20240116; t=1726213156; c=relaxed/simple;
+	bh=uSyl591C5MSuYYRCXat18gjmBfYxAn2yaEESrJ+vCXI=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=H2S5Yl46N2s+LbhEeckhI6B39PVwKb9HEMfkDqdggTpmKl0N3VEZv+Bs6hcLdOc7FJVg3s2Lxf/jfUaVQ9HMDq2/pBhLioi7DLZYKydkB/5UP2DTN6agr9JK0vissUoV9VdkT+MoZLtW/5ubqm88pmHv022OB9OkMTyGC06JX+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=A+0QKa3F; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=c5BSoSaD; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id 113AB13805FD;
+	Fri, 13 Sep 2024 03:39:14 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Fri, 13 Sep 2024 03:39:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1726213154;
+	 x=1726299554; bh=4RxENSVw+QennMKyvBqiq7B8zuv7KrZS6yfqHV9YR9U=; b=
+	A+0QKa3F2pM5dRKOawqql+cT7ZceMYNyLwbR0eDvRxpXMYTtnpBhHp0qnpORpbsN
+	ZZrmYqbMHAax8SZV7XJABh4JSIl1t6hJICfvKP+xhjIuYHYwW/K9XEAIy4fBKyZf
+	/nj+EZoKL+MAQk+gtx9aPHkcqYE6476vp4NH2EY6R7KZu5QtCAK7WpXZUlEAieZO
+	0j2H/D9fpop//Bx80Rfm8X/jfY2KrhpGY6wW8HMHcmP0Pu/xjAXX69G9buVoMngu
+	esoH2b/sBLP5PIkYHALp5Ina4LYOCRNSFCD+iJb4S/1v7utolwoYxudoXQvINCwX
+	bzVHl5FA6ERa/9o8X/T+7A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726213154; x=
+	1726299554; bh=4RxENSVw+QennMKyvBqiq7B8zuv7KrZS6yfqHV9YR9U=; b=c
+	5BSoSaDhmXTG7OlfFJgDKDzVpptqCJUOw4Ce4j8KDHEX4CfgLmG/ntkxgipb5zgB
+	UAaNycUggiC8uu0FWT8vc12OmViPHGlfxHXpvhQOQnFmMV3tBr5TfOgySUj+k9+e
+	yxg1o2Ouoatnc1VI5VFCvCbsUFtmTXUA8mKC5ghGqSWoxwXzzcQlRqyFqdZvoFe2
+	qYrvalDDgXq5yne3X7XPefiGkPib4B/6/2iT/BEZSMLStoQFjzTI4lI1biAgtsEd
+	Ka09afVhgmvSsrjWa33CpnCKvbTJl5upWx07OZr5iQClYe3ejR3osfcP/oaUA3Pd
+	QFRUXsOxFDImgR3J3D4NA==
+X-ME-Sender: <xms:IezjZkCY-f70XXtoh1HY7thk-2E9Mjo4cb5sSxBibhQ-DhdGD3fdbQ>
+    <xme:IezjZmhvBfI3VksaG__iCI3SyprACwGI71D9JL2pLyPxbLJuiPcECqlVYqx3RX60N
+    UQHAesG1UnxSeKK6AY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejiedggedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvdek
+    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehuthhsrghvrdgrghgrrhifrghlse
+    grnhgrlhhoghdrtghomhdprhgtphhtthhopegrughsphdqlhhinhhugiesrghnrghlohhg
+    rdgtohhmpdhrtghpthhtoheprghrthhurhhsrdgrrhhtrghmohhnohhvshesrghnrghloh
+    hgrdgtohhmpdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtgho
+    mhdprhgtphhtthhopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtg
+    hpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopegrnhguihdrshhhhiht
+    iheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopehjihhrihhslhgrsgihsehkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:IezjZnk3qMnTs5XWgatW-u5DyZRYpFQdHF6YBY16xqm6b6mDp8i_7g>
+    <xmx:IezjZqzA5VSunTV1liWFxn2qW3dSXNzo5wMlrWN0N-A9roY1JAD6dQ>
+    <xmx:IezjZpRVwZNheubIFdTyqBmOYVB7HNr30FysEXnF2C-qaWLgHKue7w>
+    <xmx:IezjZlYEi1kcvMrentfAR8G9imhoUl5ObSd0qBMnKOw42mTnxwplwg>
+    <xmx:IuzjZhwUxK209n_amf5mB7GWxjlRzisayn2CeEK2oNmxgA7brD6HQ4-J>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 9A1EB222006F; Fri, 13 Sep 2024 03:39:13 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <95ced963-b584-4ccf-ba34-8f2ba99172f4@csgroup.eu>
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:shingroup.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
+Date: Fri, 13 Sep 2024 07:38:51 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: arturs.artamonovs@analog.com, "Catalin Marinas" <catalin.marinas@arm.com>,
+ "Will Deacon" <will@kernel.org>, "Greg Malysa" <greg.malysa@timesys.com>,
+ "Philipp Zabel" <p.zabel@pengutronix.de>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "Utsav Agarwal" <Utsav.Agarwal@analog.com>,
+ "Michael Turquette" <mturquette@baylibre.com>,
+ "Stephen Boyd" <sboyd@kernel.org>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Thomas Gleixner" <tglx@linutronix.de>, "Andi Shyti" <andi.shyti@kernel.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Jiri Slaby" <jirislaby@kernel.org>, "Olof Johansson" <olof@lixom.net>,
+ soc@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org,
+ adsp-linux@analog.com,
+ "Nathan Barrett-Morrison" <nathan.morrison@timesys.com>
+Message-Id: <c01bf7be-415a-4653-a122-d24f2d764b2a@app.fastmail.com>
+In-Reply-To: <20240912-test-v1-9-458fa57c8ccf@analog.com>
+References: <20240912-test-v1-0-458fa57c8ccf@analog.com>
+ <20240912-test-v1-9-458fa57c8ccf@analog.com>
+Subject: Re: [PATCH 09/21] gpio: add driver for ADI ADSP-SC5xx platform
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 13, 2024 at 08:54:12AM +0200, Christophe Leroy wrote:
-> 
-> 
-> Le 13/09/2024 à 03:40, Luming Yu a écrit :
-> > On Thu, Sep 12, 2024 at 12:23:29PM +0200, Christophe Leroy wrote:
-> > > 
-> > > 
-> > > Le 12/09/2024 à 10:24, Luming Yu a écrit :
-> > > > From: Yu Luming <luming.yu@gmail.com>
-> > > > 
-> > > > convert powerpc entry code in syscall and fault to use syscall_work
-> > > > and irqentry_state as well as common calls from generic entry infrastructure.
-> > > > 
-> > > > Signed-off-by: Luming Yu <luming.yu@shingroup.cn>
-> > > > ---
-> > > >    arch/powerpc/Kconfig                   | 1 +
-> > > >    arch/powerpc/include/asm/hw_irq.h      | 5 +++++
-> > > >    arch/powerpc/include/asm/processor.h   | 6 ++++++
-> > > >    arch/powerpc/include/asm/syscall.h     | 5 +++++
-> > > >    arch/powerpc/include/asm/thread_info.h | 1 +
-> > > >    arch/powerpc/kernel/syscall.c          | 6 +++++-
-> > > >    arch/powerpc/mm/fault.c                | 5 +++++
-> > > >    7 files changed, 28 insertions(+), 1 deletion(-)
-> > > 
-> > > There is another build problem:
-> > > 
-> > >    CC      kernel/entry/common.o
-> > > kernel/entry/common.c: In function 'irqentry_exit':
-> > > kernel/entry/common.c:335:21: error: implicit declaration of function
-> > > 'regs_irqs_disabled'; did you mean 'raw_irqs_disabled'?
-> > > [-Werror=implicit-function-declaration]
-> > >    335 |         } else if (!regs_irqs_disabled(regs)) {
-> > >        |                     ^~~~~~~~~~~~~~~~~~
-> > >        |                     raw_irqs_disabled
-> > > 
-> > > 
-> > > You have put regs_irqs_disabled() in a section dedicated to PPC64, so it
-> > > fails on PPC32.
-> > > 
-> > > 
-> > > After fixing this problem and providing an empty asm/entry-common.h it is
-> > > now possible to build the kernel. But that's not enough, the board is stuck
-> > > after:
-> > > 
-> > > ...
-> > > [    2.871391] Freeing unused kernel image (initmem) memory: 1228K
-> > > [    2.877990] Run /init as init process
-> > 
-> > Thanks for these questions. :-)
-> > I haven't gotten chance to run it in ppc32 qemu.
-> > the common syscall trace enter lost this hunk
-> > -       if (!is_32bit_task())
-> > -               audit_syscall_entry(regs->gpr[0], regs->gpr[3], regs->gpr[4],
-> > -                                   regs->gpr[5], regs->gpr[6]);
-> > -       else
-> > -               audit_syscall_entry(regs->gpr[0],
-> > -                                   regs->gpr[3] & 0xffffffff,
-> > -                                   regs->gpr[4] & 0xffffffff,
-> > -                                   regs->gpr[5] & 0xffffffff,
-> > -                                   regs->gpr[6] & 0xffffffff);
-> > which I don't understand whether we need a arch callbacks for it.
-> 
-> I don't thing so.
-> 
-> As far as I can see, audit_syscall_entry() is called by
-> syscall_enter_audit() in kernel/entry/common.c
-> 
-> And the masking of arguments based on is_32bit_task() is done in
-> syscall_get_arguments() with is called by
-> syscall_enter_audit() just before calling audit_syscall_entry() and which is
-> an arch callback that does the same as the removed hunk.
-so, syscall_get_arguments is the ppc arch callback. thanks. :-)
-> > 
-> > Before I sent out the RFC patch set, the very limited compile and boot test goes well with a ppc64 qemu VM. Surely, there will be a lot of test, debug and following up patch set update that is necessary to make it a complete convert.
-> 
-> Even on ppc64 it doesn't build, at the first place because
-> arch/powerpc/include/asm/entry-common.h is missing in your patch. Did you
-> forget to 'git add' it ?
-oh, I forget that I was testing this patch on top of the early user notifier patch:
-https://github.com/linuxppc/issues/issues/477, https://patchwork.ozlabs.org/project/linuxppc-dev/patch/1FD36D52828D2506+20231218031309.2063-1-luming.yu@shingroup.cn/ 
-and the entry-common.h is as follows:
-[root@localhost linux]# cat arch/powerpc/include/asm/entry-common.h
-/* SPDX-License-Identifier: GPL-2.0 */
-#ifndef ARCH_POWERPC_ENTRY_COMMON_H
-#define ARCH_POWERPC_ENTRY_COMMON_H
+On Thu, Sep 12, 2024, at 18:24, Arturs Artamonovs via B4 Relay wrote:
+> +
+> +#include <linux/device.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/soc/adi/adsp-gpio-port.h>
+> +#include "gpiolib.h"
+> +
+> +static int adsp_gpio_direction_input(struct gpio_chip *chip, unsigned 
+> int offset)
+> +{
+> +	struct adsp_gpio_port *port = to_adsp_gpio_port(chip);
+> +
+> +	__adsp_gpio_writew(port, BIT(offset), ADSP_PORT_REG_DIR_CLEAR);
+> +	__adsp_gpio_writew(port, BIT(offset), ADSP_PORT_REG_INEN_SET);
+> +	return 0;
 
-#include <linux/user-return-notifier.h>
+What is the purpose of these __adsp_gpio_writew() in a global header?
+Can't those be moved into this file directly?
 
-static inline void arch_exit_to_user_mode_prepare(struct pt_regs *regs,
-                                                  unsigned long ti_work)
-{
-        if (ti_work & _TIF_USER_RETURN_NOTIFY)
-                fire_user_return_notifiers();
-}
+> \ No newline at end of file
 
-#define arch_exit_to_user_mode_prepare arch_exit_to_user_mode_prepare
+Whitespace damage?
 
-#endif
-
-As you could see , it looks irrelevant.
-> 
-> And same as with PPC32, when I build PPC64 with an empty asm/entry-common.h,
-> it doesn't work. So, I guess you had some needed code in that file and you
-> have to send it.
-
-please send me your kernel config and let me reproduce and double check 
-if there could be another bit of code make the difference. My test p8 64bit VM boots
-an unmodified fedora 38 user space just fine with the patch. 
-After boot, the only difference is make install of kernel could hang for a while, that 
-I'm not sure how that could happen yet. and I plan to do some unit test for many common
-features like : lockdep, ptrace, rcu, audit...
-> 
-
+   Arnd
 
