@@ -1,214 +1,275 @@
-Return-Path: <linux-kernel+bounces-327507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BDEA9776F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:35:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A61EE9776F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:36:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F2112865BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:35:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 320DD1F2397B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD011AE87C;
-	Fri, 13 Sep 2024 02:35:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D5C1B12C4;
+	Fri, 13 Sep 2024 02:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Evfkub3V"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iwKjNqPM"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8D9F1A08AF;
-	Fri, 13 Sep 2024 02:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726194939; cv=fail; b=cdAvf7xFFPa1HQaM06PEid5h9CP/T5dM3yMGUOY7lisplncAbEhyX08hw6sFtGWguvtrTl3MmkAplCSJ/JXLX6YW74g0rFkS1fPhPoiGbljgJ+eMTFBjmez1K2qKYai26HjiBWSEZEiZnowzNiTXpyS6eNGDLd4CjSdXfL404G8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726194939; c=relaxed/simple;
-	bh=s+Q9QKQijSRqbV5ONDKyJnc6hfZ2D+/2NPvnv54XntA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=XkXMyrimkq/ZAVnrvY92EX0gukEu2ZsXiKcHtIukTN4c6nLYPXvdhxNKHRCW3Ne7lHTUlRSWBWZr7EsPZAurW7dCHBvqr3sL51pY2rjl73/+8Tueq6xITEnZPZsr7P2gKTgNPvLGG2civeUIpdqfsmMazpsinKZdYI+waYqwJNU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Evfkub3V; arc=fail smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726194937; x=1757730937;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=s+Q9QKQijSRqbV5ONDKyJnc6hfZ2D+/2NPvnv54XntA=;
-  b=Evfkub3VtbI/u4bQD/Hz9SlSeHSu2WfBQGC1tPT8B1bx7B6lE+SAcTJj
-   vDZX6QMoavGvgkYnHq0529cNLGU+AVpBk2bAjR/VTFlJnhdcmxj9kJPz2
-   p8QGUZGDFYqvPwadiB0js+o8A015IuggJIYMhDl1+jtTHf3ApyFk5ojIb
-   jD9wj1qavm0pwZQC8n0CqC/u1H+zHr/fBFdgDO8k9a5aVk1NPklLh74YI
-   hxhOGLkTjsdynmvvrHzrpTonQDREN0/OBFn45ORATKW1YV+aw8ZR1dEA/
-   ljoW2tzqwzTDN3taIyBPA0gtxakeP9+5pkrZIeiZMye0H2xYupG172kcI
-   Q==;
-X-CSE-ConnectionGUID: LSZBukbbSHSYtyZh6UBqOw==
-X-CSE-MsgGUID: dvIsf8rfSnOQ6DkIJ40S+Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="36431569"
-X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
-   d="scan'208";a="36431569"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 19:35:37 -0700
-X-CSE-ConnectionGUID: bZfdZ6sxT/qgWWvhmKbipw==
-X-CSE-MsgGUID: 0u+7lC8GS4OKwBIAuLiVOA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
-   d="scan'208";a="72686148"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Sep 2024 19:35:37 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 12 Sep 2024 19:35:35 -0700
-Received: from orsmsx602.amr.corp.intel.com (10.22.229.15) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 12 Sep 2024 19:35:35 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 12 Sep 2024 19:35:35 -0700
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.46) by
- edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 12 Sep 2024 19:35:32 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=enKk4/YmwaC3BuPEC+cumPR/WtKwJOZkkYfZrIVqseG1ux3535bQIJ7KvKpG4fQmF++jvAjDH5/68ODm+ebBN5x8PSL0ot9uugsGUFkJACstWMnMpYnI6mGgN5zKcWocbW0cy+vc8tgZ8q+/ADbpdN4ohhiFdIeoUVCccyOsksL81kYQZfame1sZ4W0dIdyDOSohbfFTmPNo6Ooy/hh5QFU39e7UocP43+yRm52zXbwuL2ieQ00pobCCXtGNwO5VVezy5bxNBmSzBxdMMys+mWJo5KvE0dntTTKqrgPtl9kAJF4XxTPBfVyVrshJMpnImtBG/NhlHbbYvn9rkEW2TA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=s+Q9QKQijSRqbV5ONDKyJnc6hfZ2D+/2NPvnv54XntA=;
- b=pU92Fu/8VH2msGSkZaR4wEAKNGLcQNQuLxGftenjVZG53tlnGxLPAcGDgUhjtSZIr0Z1SVitPaqHvRIaopxu/OgACKaGmTy3D2qkRq/8BFUgdxud+xNnrJSdiZmm1Zh+O0iGZ5BDLDXBzL7JaCI0zMn1X9nn+uiTQrk+0n9Tj7VxRqhQ/vD1GfvsF28IB6pW+fV7t5A9fMe8VGpoL+qv2Qo3BqOpQbCPvPVwKhjS3YImxwS7/cu4HJnoa5aqKv5Ig9USmQjqqYwh4s1qRqmOfPqtD4nsl9jdGc60lAtOoE7V7d5TyLYNETYEy8dfQ3qDXo0xZnXMM/pXYeh9rNl0ng==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by MW3PR11MB4650.namprd11.prod.outlook.com (2603:10b6:303:54::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.19; Fri, 13 Sep
- 2024 02:35:26 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.7962.016; Fri, 13 Sep 2024
- 02:35:25 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Nicolin Chen <nicolinc@nvidia.com>, "jgg@nvidia.com" <jgg@nvidia.com>
-CC: "corbet@lwn.net" <corbet@lwn.net>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "Liu, Yi L" <yi.l.liu@intel.com>,
-	"eric.auger@redhat.com" <eric.auger@redhat.com>,
-	"shameerali.kolothum.thodi@huawei.com"
-	<shameerali.kolothum.thodi@huawei.com>, "smostafa@google.com"
-	<smostafa@google.com>, "baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>
-Subject: RE: [PATCH v2] Documentation: userspace-api: iommufd: Update
- HWPT_PAGING and HWPT_NESTED
-Thread-Topic: [PATCH v2] Documentation: userspace-api: iommufd: Update
- HWPT_PAGING and HWPT_NESTED
-Thread-Index: AQHbBLmuk2HPDNlxXEeQ2yhqgU3VPLJVAaTg
-Date: Fri, 13 Sep 2024 02:35:25 +0000
-Message-ID: <BN9PR11MB5276772E2863D11349906D388C652@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <20240912021503.205502-1-nicolinc@nvidia.com>
-In-Reply-To: <20240912021503.205502-1-nicolinc@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|MW3PR11MB4650:EE_
-x-ms-office365-filtering-correlation-id: dde2f9d5-42f3-44aa-99b1-08dcd39cb942
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?kpirfyhjpE444GKOSjYs8FwmHo5Lw8Nn3xM4zISEWVUA8hFotklUK/wESA25?=
- =?us-ascii?Q?4DJhU+lAyejZPpATQoSv4S7ugT0J3W8SOQ3B4cU3VhuIONU4tW2gO4o8ult3?=
- =?us-ascii?Q?kGAvAyuaHBzcf41vrb8kAxfIpnMcXdX84uC/wN2YwxQFDd9rrmM189/QcI8T?=
- =?us-ascii?Q?I/ljCeIi8+XwKIXtahBS5d5uUJe7vPTTGsD9YmtcOBu0iMe+3FihScKCOUhc?=
- =?us-ascii?Q?clrMRedfS6L3TYJOj35k3UaF+oBaNKH4JNH2A8enyRungq72cQkju76KQsiu?=
- =?us-ascii?Q?Eg+S3vyrgBW6wlYPLZkqS6ed0RAMtG5LLS2UeLcaoaiQ7kGQkFV8PzPta1yB?=
- =?us-ascii?Q?3pUAm/rp8ydbLYJs/juXomLD3DblFvtU0LaRnCxrnAbzDMNqo2LzjQ6nRUdL?=
- =?us-ascii?Q?+qrLdwFPTFxxakD7OMJDUDLdYej0CG32m81mkpr9aAfJWt/e2ATViXK9pIQs?=
- =?us-ascii?Q?tYqNRMNT+FbWmTlrldLk308bR2mk11JEXWYOkjbl3K46GxnyvyeHdT/6qE5p?=
- =?us-ascii?Q?4WW0SSgQb8LFUIn//cAppgGocPICJtrdjyZhsq90GDJiYN1ppZ2rRrdv2GX0?=
- =?us-ascii?Q?0fXUkSiBmm+ivfV+TRR9guClq2Al6F1yArIwD/Zod+qAVCfrd6OaMiyRsXhr?=
- =?us-ascii?Q?ExNA/Q0h3ND9/1+PbBMbcVUz3CZ/cunrZu2nVYsg9tFt//obYYfgvF8tHirR?=
- =?us-ascii?Q?rfu1EDr1gQNcVpBokWOC+xb3ObnhrdUtMgKO6WetTyzrbNxILDi5M9TyEGIE?=
- =?us-ascii?Q?NaL8H5bojnvp+j6LXm21mIzvx65BWZ28OqPpTUF57subp+Dg1mcFZkU8CG47?=
- =?us-ascii?Q?0LHpJ9B2rM+diY9O0GSTIJ3AbfyT2CSSCeQA5ycK22eU0FJ+Dpw+cWf9bdix?=
- =?us-ascii?Q?7tTfoZ12cbrtNnO6k9cbIQWZrJubvemVNtUcyapXXCLGegxx6+mM9CcrsxO0?=
- =?us-ascii?Q?g0Q0BrLXeLkvtmYuLRDxlpLM8/7cMis8xOYux+xsI9NIqi/DoSjX4+uXi0yQ?=
- =?us-ascii?Q?eH6zVPsA1Y056Ved0fvknyvDnmKmYNRBu7W68/5hLErgaXajJmM5EX+rbxHo?=
- =?us-ascii?Q?IejOIkI4zth43lD4eXR/nXW4H81T/bqpyyDJiwG6qM7NNuPAfSKQ0Ay7fJIB?=
- =?us-ascii?Q?w9QLlqI/RJyzD+jct9M1PrkmuAyhlKy8FDRgnkevgfcT1v+9pD2OhPMrbAjZ?=
- =?us-ascii?Q?vPQarEYcWmEXLVI2bg6kjEQB8Tsr8umRMZ+C2Wy4UJYOZ+KUHn6X6BTMI8Ve?=
- =?us-ascii?Q?HbFRi9UvlE87NzQ9sdyw3I/URwd/l9CSM4PKQe1ywJPT4MeBerUmKZrwUO5v?=
- =?us-ascii?Q?zoi0k1UQkbYJmIq96IqVoI5lik6wgs6CFc/VgSYCLkD3OIlI1oTEoKvDvKmz?=
- =?us-ascii?Q?cWc9y+/klBHkJuzcgdIr732zAftTSlX1bLVNFW/rNd5poMPVVg=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Wgj6nGBKbFXYHlk37xAZEfkamjy2r1Ei1LeqOk2uP8aJuxk1PYf2n5dz1C0X?=
- =?us-ascii?Q?gDbE52DGkTK+ZvBdKOO+qItJTnPq51WEE7M04a9LGBnWlSfJsWy/hOrXBJrp?=
- =?us-ascii?Q?Al2UGuqiEgL5YSCaz3s9sboLE/uvY22nCiHG8Dnl13aMFJbWj8n8cJd2EMST?=
- =?us-ascii?Q?Tw68RAN4AMNBocj4ByvRJLmu5stwdIDK1IYZCSiUqR0iF8qzR6u6QyCel6Ci?=
- =?us-ascii?Q?OA/zi2eoXX6Dg0iXKyAuXXLtPwaKLf8JfGyvpjPIyNwKM/8rzcrw4bzME+nq?=
- =?us-ascii?Q?zlp+8XP61OJbGKgAbFaWOMVDAtOrckuOtyuNr9n/GVcTwT3z5fI0Hk5xZ3vv?=
- =?us-ascii?Q?OtQTslALCOQV9Q8NIURPJas1ygVRmzlMLZ3e29W3zSKX9IIbb84ueNSOcgwJ?=
- =?us-ascii?Q?nOjDbIYn/qkluUbIbmtKSfc/1SseOdMCV87MiWxgH+TumpxE47TKy6LIMxD2?=
- =?us-ascii?Q?P34uYJ3dsvkB9YBlMoEe+WUIUKVYFseVgE9MxX2eyuxzPv+TlKqzjBhhJB59?=
- =?us-ascii?Q?VJAHS6eSTGzdNny1Dr+5YcxPFbILz3RKmjDTM2eIC96Vp5w3o+KLog7xlPJg?=
- =?us-ascii?Q?q59SkWSZpmJ5WiXUhubm15/usDCqNP8CqWSw60m7i/BJG7UYFsjfyde210M0?=
- =?us-ascii?Q?p7vIb0NFb2OLqYk0KcNSLyhgiGRHIOHZ+5wQDcSn9wCxn06qH42CjFtQa7y3?=
- =?us-ascii?Q?E3MOuzXfXPW2Dq7PeaT/W3D/NzIrRaTUQkrACUlV3lK1MKy562NPH1gnlFlO?=
- =?us-ascii?Q?hlT5QcYzjSmUDHRdjen+vwwtwAePLrUgG/CiAAgWD1uv6JbIayVIewCRnHQD?=
- =?us-ascii?Q?5h+f5RaB1q0RTkBanO6SifYHbRcwuJIIbTTIqecB8Gt0W+vjfpDXHCV4yyA9?=
- =?us-ascii?Q?TI8OwUI2hHLojfqVmayd9EwHSbHden7wgZrmR87LGiawF6KCTb5T+hGbRNqx?=
- =?us-ascii?Q?nTiV1F9yXmw9t7c7Z1eJ7O+1N3flO6b/3Vy5kmi/gRKhJXxsIc8igCRynfTZ?=
- =?us-ascii?Q?5kCDFuxOAGXdHOBdkpVsuDXNnJXN6KYDCw0S5BiSiIa2IyZpD4pUHF2jiJ13?=
- =?us-ascii?Q?g95lkSH9zGNw1e7wySfS7f6/2h3F3SWA2iSA0ION7pnBn9OoGKFyiNwAMa6i?=
- =?us-ascii?Q?LHBME5ZOGMX6hoLYiUaNtnvUgTKr6IEplruWqgpmSWdqYRhERY+l/Kyn6faL?=
- =?us-ascii?Q?M54PaxEWR/yCLKXMBSRwtwToBlW1SweyBn8zs8fGK+dcitFQ4bnMy/S+CKpJ?=
- =?us-ascii?Q?mgUvi+p1UD8PK94J9VlR1Y5LvFdSJCX2/rJXPDGZrXXbYyzcQbjtFGb7tBtE?=
- =?us-ascii?Q?eG9BbtsO/SAL6m9uWOMe4mFzXU7u++21/V/GqSGOO31Ie2+VGoGgbkkCbZEZ?=
- =?us-ascii?Q?HRCU3Xbri16Bgu8djDXAHh+2w+QvNKgvIBGdkPKi8OIFU6bsZUCJt3tIVmZ6?=
- =?us-ascii?Q?yppfNkApFonJRIjbnDVfK+zRri/KA6quhrpP3A5M3I7FlQCgu3XBAL1/rNwo?=
- =?us-ascii?Q?Ga4JQ6zjBHlm+WH1hWO/utUNIJknRz0+I3xIE+tC03TPZp/ZWpP4j6HFjwuv?=
- =?us-ascii?Q?9zdyBomyeYVDIVeVu+acqLZrpxTYEdLKPINTxkuY?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F155E1A08AF;
+	Fri, 13 Sep 2024 02:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726194980; cv=none; b=k/arpFiy+UYFsAcZaR16cz3rwoWYiC7xAiDa5CKdMLuthNfx0lPFAYqGIg1dtZ27XWrjNeQFVLOXibTWfcqGLVnGbbKegLnE/LF+dHAxXxT1CLEJfcjRftCddJq5r0lefAQLEt7FQxzxZHn1tdEKDJnrsuoKjvHAyT2OCEbIXUs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726194980; c=relaxed/simple;
+	bh=UJ4halBqLeahXAKe7jj1N0wNu3uOCW51Ndg589XE+Co=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PiNKIKymzoMOTfN/q1i1Z9yc/G47ZzjQGuAxG1K7lFy9L9+KIxDL7L+XvDB0yydSWUdeUD9/WQLhPsBo3Nh+Wl1Bk+NG5OuSSIuHloE6lrvjfUKExDEqnfjzJuUKTQ2bCbX68QfnO+eft8LOIY59K3PnQrW2j6+oUy4baaH08Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iwKjNqPM; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6b47ff8a59aso3780367b3.2;
+        Thu, 12 Sep 2024 19:36:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726194978; x=1726799778; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aR8OlrtEVAckklbppGR2MTY9nvy6Nn5gypXETkHfWkA=;
+        b=iwKjNqPMCZp9q/Uz4RRvO35IzcjKUblHgc3/EeSpAaN7mvK06zL4pKKRiUYhGlJ6R9
+         XT+3Xyp7wGGYPrzog7s0axe8ZP/qkJE4mLUcrXDm8mldHwcmXpnYf1IH/eX7hyoDoy7Z
+         KFY+wcpoN3OYKle1qi9MLlGODY0IIjuDnA9+cDkpkiTTEACizX5IsWyPos9EsvgNCZpn
+         qDPDwU0EkBSojDJ5MXNVaekX257NSnNeaPr5mwCF8QSVZdlr++IVFpSjhfjxPPBLrNnD
+         BhAnBwJy44StQrfgZExXL8AwlTXqyx7Adf9veN81lob7w8pe69Yg6URw1lPrr42Vp62D
+         4rIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726194978; x=1726799778;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aR8OlrtEVAckklbppGR2MTY9nvy6Nn5gypXETkHfWkA=;
+        b=NeZstttOUz4+GVKD1N14/QzTZakcjxMCccCr8yok8iV/73+kTKEloUN8/55D7GnZOS
+         4y9wqW4KD06mNI7YRrDqzdigZ946FMJZDtsIVv9JNbuXBwg6KtMsVu0/v0+oEiU/BxkY
+         xPUQrmjNjXfsZeyonfQI9E/Ww6lLfAYOyxCZaHbXeFn1FzNOw4bjewd5Yc30uiK/FlKA
+         pL2kBOF9KodkOZBtza4GCUgrqn8xbHqB3xlOlUu8NQVnTIcrp46z0Lne2DXvtADIi4nq
+         Qy1Xh+POsagV9ovuNm2gE72L1OX3SqLj7WCcD1k/oh4/CXxuCzDatSirnVkh+z1Uu4p9
+         67Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBoYOoMkvBGOH4A9H7Fq8R6aDGwTay6NP3mqCgBOC9P82XxQXef36W4BPoecWwublk9ZSBtpIU@vger.kernel.org, AJvYcCXhaGrmEKzELpcI++M3IqKTF0CzxlHWkd5j8olglyK7cRK1kwu8qp7633+sk8NGJA64W/B4/owlHnZIHY4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0bmMtzvfy9XR2xsRQPr/VdaRfBgDBrtOdD/s3p4iDBW70n+gL
+	+aAUkroda6Zm91V4OQ2j+rdhQJjyweawdw/KFDCXz9YGgEY5DbRQg2B3ofDI11pyybNkjTMDvYL
+	ZgmqGl12mujnWL48ybMd+iekT6qE=
+X-Google-Smtp-Source: AGHT+IHgenMOWl5KC6OZc+0SqjGUEEDC1Lj7J9oksQ1NtQfn9+fTZ6q9QH71gl2GEm09OPZnTOd8YHRyzAXWs6aqK1w=
+X-Received: by 2002:a05:690c:f0e:b0:65f:a0e5:8324 with SMTP id
+ 00721157ae682-6dbcc22fdb7mr14925627b3.4.1726194977837; Thu, 12 Sep 2024
+ 19:36:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dde2f9d5-42f3-44aa-99b1-08dcd39cb942
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Sep 2024 02:35:25.6126
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: M3OFyZhH/120DCfwhCFaf37q6sLRZCVgQhCvAhmH1bTAx2KiUYhH4Vd2EHUcV3JcqZOgvCywtvUu9Vvih8/dmg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4650
-X-OriginatorOrg: intel.com
+References: <20240912064043.36956-1-suresh2514@gmail.com> <397121.1726186016@famine>
+In-Reply-To: <397121.1726186016@famine>
+From: suresh ks <suresh2514@gmail.com>
+Date: Fri, 13 Sep 2024 08:06:06 +0530
+Message-ID: <CABAyFk4dzN_Oprod1LM_X1x+-bHg8HxnJ1OzhLRD092mY4ON3w@mail.gmail.com>
+Subject: Re: [PATCH] net: bonding: do not set force_primary if reselect is set
+ to failure
+To: Jay Vosburgh <jv@jvosburgh.net>
+Cc: andy@greyhouse.net, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> From: Nicolin Chen <nicolinc@nvidia.com>
-> Sent: Thursday, September 12, 2024 10:15 AM
->=20
-> The previous IOMMUFD_OBJ_HW_PAGETABLE has been reworked to two
-> separated
-> objects: IOMMUFD_OBJ_HWPT_PAGING and IOMMUFD_OBJ_HWPT_NESTED
-> in order to
-> support a nested translation context.
->=20
-> Corresponding to the latest iommufd APIs and uAPIs, update the doc so as
-> to reflect the new design.
->=20
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+Hi,
 
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+Thanks  a lot for reviewing.
+
+I was working for a customer issue where they removed a primary NIC for swi=
+tch
+maintenance and when added back, it caused iscsi storage outage because the=
+y
+did not expect the bod to do a failover.
+
+So bonding is behaving as default. But then I thought maybe we can do
+something to cater for such scenarios and came up with this idea.  But
+I agree my
+testing was not a failure as I see ""Link Failure Count: 0" there.  I
+used the below
+command from my kvm host to simulate a link down and up.
+
+     virsh  detach-interface testvm1  --type network --mac 52:54:00:d7:a7:2=
+a
+
+and attached it back with:
+
+    virsh  attach-interface testvm1 --type network --source default
+--mac 52:54:00:d7:a7:2a
+     --model e1000e --config --live
+
+So what would be the best solution here if I want to take out a
+primary NIC for maintenance,
+and then add it back ?.  I was also  trying with 'ifenslave'  to first
+make secondary NIC active
+and then remove primary NIC.
+
+   ifenslave -d bond0 enp1s0
+
+The interface changed to 'down', but immediately it came back up and
+became active again.
+I don't know why. The journal logs suggest my NetworkManager is
+autoactivating it again :)
+
+Thanks a lot for your time again.
+
+- Suresh
+
+On Fri, Sep 13, 2024 at 5:36=E2=80=AFAM Jay Vosburgh <jv@jvosburgh.net> wro=
+te:
+>
+> Suresh Kumar <suresh2514@gmail.com> wrote:
+>
+> >when bond_enslave() is called, it sets bond->force_primary to true
+> >without checking if primary_reselect is set to 'failure' or 'better'.
+> >This can result in primary becoming active again when link is back which
+> >is not what we want when primary_reselect is set to 'failure'
+>
+>         The current behavior is by design, and is documented in
+> Documentation/networking/bonding.rst:
+>
+>
+>         The primary_reselect setting is ignored in two cases:
+>
+>                 If no slaves are active, the first slave to recover is
+>                 made the active slave.
+>
+>                 When initially enslaved, the primary slave is always made
+>                 the active slave.
+>
+>
+>         Your proposed change would cause the primary to never be made
+> the active interface when added to the bond for the primary_reselect
+> "better" and "failure" settings, unless the primary interface is added
+> to the bond first or all other interfaces are down.
+>
+>         Also, your description above and the test example below use the
+> phrases "link is back" and "primary link failure" but the patch and test
+> context suggest that the primary interface is being removed from the
+> bond and then later added back to the bond, which is not the same thing
+> as a link failure.
+>
+>         -J
+>
+> >Test
+> >=3D=3D=3D=3D
+> >Ethernet Channel Bonding Driver: v3.7.1 (April 27, 2011)
+> >
+> >Bonding Mode: fault-tolerance (active-backup)
+> >Primary Slave: enp1s0 (primary_reselect failure)
+> >Currently Active Slave: enp1s0
+> >MII Status: up
+> >MII Polling Interval (ms): 100
+> >Up Delay (ms): 0
+> >Down Delay (ms): 0
+> >Peer Notification Delay (ms): 0
+> >
+> >Slave Interface: enp1s0
+> >MII Status: up
+> >Speed: 1000 Mbps
+> >Duplex: full
+> >Link Failure Count: 0
+> >Permanent HW addr: 52:54:00:d7:a7:2a
+> >Slave queue ID: 0
+> >
+> >Slave Interface: enp9s0
+> >MII Status: up
+> >Speed: 1000 Mbps
+> >Duplex: full
+> >Link Failure Count: 0
+> >Permanent HW addr: 52:54:00:da:9a:f9
+> >Slave queue ID: 0
+> >
+> >
+> >After primary link failure:
+> >
+> >Bonding Mode: fault-tolerance (active-backup)
+> >Primary Slave: None
+> >Currently Active Slave: enp9s0 <---- secondary is active now
+> >MII Status: up
+> >MII Polling Interval (ms): 100
+> >Up Delay (ms): 0
+> >Down Delay (ms): 0
+> >Peer Notification Delay (ms): 0
+> >
+> >Slave Interface: enp9s0
+> >MII Status: up
+> >Speed: 1000 Mbps
+> >Duplex: full
+> >Link Failure Count: 0
+> >Permanent HW addr: 52:54:00:da:9a:f9
+> >Slave queue ID: 0
+> >
+> >
+> >Now add primary link back and check bond status:
+> >
+> >Bonding Mode: fault-tolerance (active-backup)
+> >Primary Slave: enp1s0 (primary_reselect failure)
+> >Currently Active Slave: enp1s0  <------------- primary is active again
+> >MII Status: up
+> >MII Polling Interval (ms): 100
+> >Up Delay (ms): 0
+> >Down Delay (ms): 0
+> >Peer Notification Delay (ms): 0
+> >
+> >Slave Interface: enp9s0
+> >MII Status: up
+> >Speed: 1000 Mbps
+> >Duplex: full
+> >Link Failure Count: 0
+> >Permanent HW addr: 52:54:00:da:9a:f9
+> >Slave queue ID: 0
+> >
+> >Slave Interface: enp1s0
+> >MII Status: up
+> >Speed: 1000 Mbps
+> >Duplex: full
+> >Link Failure Count: 0
+> >Permanent HW addr: 52:54:00:d7:a7:2a
+> >Slave queue ID: 0
+> >
+> >Signed-off-by: Suresh Kumar <suresh2514@gmail.com>
+> >---
+> > drivers/net/bonding/bond_main.c | 4 +++-
+> > 1 file changed, 3 insertions(+), 1 deletion(-)
+> >
+> >diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_=
+main.c
+> >index bb9c3d6ef435..731256fbb996 100644
+> >--- a/drivers/net/bonding/bond_main.c
+> >+++ b/drivers/net/bonding/bond_main.c
+> >@@ -2146,7 +2146,9 @@ int bond_enslave(struct net_device *bond_dev, stru=
+ct net_device *slave_dev,
+> >               /* if there is a primary slave, remember it */
+> >               if (strcmp(bond->params.primary, new_slave->dev->name) =
+=3D=3D 0) {
+> >                       rcu_assign_pointer(bond->primary_slave, new_slave=
+);
+> >-                      bond->force_primary =3D true;
+> >+            if (bond->params.primary_reselect !=3D BOND_PRI_RESELECT_FA=
+ILURE  &&
+> >+                bond->params.primary_reselect !=3D BOND_PRI_RESELECT_BE=
+TTER)
+> >+                          bond->force_primary =3D true;
+> >               }
+> >       }
+> >
+> >--
+> >2.43.0
+> >
+>
+> ---
+>         -Jay Vosburgh, jv@jvosburgh.net
 
