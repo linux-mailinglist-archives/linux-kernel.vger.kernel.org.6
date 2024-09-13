@@ -1,91 +1,76 @@
-Return-Path: <linux-kernel+bounces-328041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22325977E25
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:03:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 509DB977E2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA48B286648
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:03:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2D9C1F26BFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:05:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E53B81D7E4B;
-	Fri, 13 Sep 2024 11:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D934B1D86E1;
+	Fri, 13 Sep 2024 11:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KKQKSV1K"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I5LvGTxz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108543716D;
-	Fri, 13 Sep 2024 11:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868A11B983D;
+	Fri, 13 Sep 2024 11:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726225418; cv=none; b=gBKSoG6m2wsuUuWjYPFpHgryuCubesynOUyM87n7eWtIlYsuUdiwkR68ZmfYeB/ZrUSvIOQlvJuoRzMbvsAS21cIf2h5yiCK3uYW68+cNWQviWb+SHaLVjeNdinjx6MO9Soz2mRRUGU3ZKHtCY6OEwFiRtLvtpMIjxIViYaZzIs=
+	t=1726225533; cv=none; b=mwZOPAJPDD0iYxBqSrX8UrJQJeqFIVhBZOe5p56Jwwv1nfPNG7akSvY7OiN5mvodcMGKknWHE5WT9Ea+g80zdmzU+7oQaEkllc/uNXOTNlHJoiyD986ZQfmGZSD4FX3WkKvHSbwMMndbqs5qZH3DurZstVIGpUC4MpCKxidRubw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726225418; c=relaxed/simple;
-	bh=tGroz9xO+4pLwYkYzjpk5tj4Try4hVWwSk5qr61pvLM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UBLkZ9Xmcq0sMk9S5sRRtGbVhsPISIShLExKdLQCEkosJ/cpQ4Z6pEr4aarL1YXKe6kzqFtn4Tw0J+FyMYb1R4cKu7XB/Gfs0mGU4STTA40nE6e0k2m5bEaUoaoGIZKgh+fhnDrm6wiVJKIJyM+5h3MAYnv+tJdAl2lJl0Vefwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KKQKSV1K; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-718a3b8a2dcso625990b3a.2;
-        Fri, 13 Sep 2024 04:03:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726225416; x=1726830216; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kekk9n1SKeIq8mwQfBadmC6X0rQ17ZPly6vPtHna6So=;
-        b=KKQKSV1KtqsNBto+NNz3oSl2+WYgaCIBqcYWL8XekE6Vg63ZqD4h4aO4hHr33wqFv8
-         IQZM/Rm6vvdWISnYrpAwBqgydDhfYQLrobwO7r5fT32U8e/ZJdjL4MKpsEUBpb2JPh/x
-         Kz+BblQOxUmtwxm9SwcDlRtUIZVrIzKuHgkSJF8haJhJiNJkM3p8Y/n5y8rQd2upOtUT
-         Tld6hrEvmVHaW9wInjWciFphfUQVvJwEsIup0Exbs5Fo5vyWCb0LM0m7Oqn6D4hjPgIt
-         OR4eehQxqJyLcA3FXZNko5GYHCUMgDrI8NwkvB27+RxrqtzwM8aKzrrZpoVJWot7MZz6
-         AHPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726225416; x=1726830216;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kekk9n1SKeIq8mwQfBadmC6X0rQ17ZPly6vPtHna6So=;
-        b=wPzcyLjTM0TRwSc2XJDuykX+2yKZkjaS4uDvbHR8yteCDl6T0SeufZ0IiATYs+WJdC
-         wc6vszFJ4g8fv04hIA6juCY0cA+E6E9nEIuFbw0eVn9AICQv+T1vVSeuSxV9P0gAH2Ee
-         MleyLx4kJ04frqadJ0lk64TmSw69iY0/7gtyC+kKDlETCyvB2xYIYJV/nFsfG9P4QuEb
-         C2dDiO7Ya/4qEiUPqyJzDmnLC53lg+27ti3dtB7mYckGfUcbxrNbjpXO9mUzGdLgntqF
-         30NnZrK/OJ2lz6lC4TTd+pHyVhgHba3T/UqU/EWJRm3hJ14SH6prm2+0A227eN9nxFIo
-         9kRA==
-X-Forwarded-Encrypted: i=1; AJvYcCXV87BLd+L/en0lcnK3YW/IB8ddczvlTd+ZFxZwLtjCqqXR2jOI33U+Sb4i3ume1Fw96jsruddJ2DQMseE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz145OwxN/cMM25feOs5No8mTbQMJbYISpdivgILoxv5G8Jq2Vt
-	xcP47PJufGg6epXZkX6+VZS+ElW91Ivaf9GG0i31mDigAzlS8dGu
-X-Google-Smtp-Source: AGHT+IGwEoyrvESSqovr/1cjtEp4lX2jChUMznGaRwX1hjVp0qpnhQ9RUdRvLc6shj18XvoBOrPGEg==
-X-Received: by 2002:a05:6a00:23c3:b0:718:ea3c:35c3 with SMTP id d2e1a72fcca58-71936a5e2d6mr3704608b3a.15.1726225415732;
-        Fri, 13 Sep 2024 04:03:35 -0700 (PDT)
-Received: from localhost.localdomain ([129.146.253.192])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-71909092560sm5882778b3a.138.2024.09.13.04.03.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 04:03:35 -0700 (PDT)
-From: Furong Xu <0x1207@gmail.com>
-To: Ong Boon Leong <boon.leong.ong@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Joao Pinto <jpinto@synopsys.com>
-Cc: netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	rmk+kernel@armlinux.org.uk,
-	linux@armlinux.org.uk,
-	xfr@outlook.com,
-	Furong Xu <0x1207@gmail.com>
-Subject: [PATCH net v1] net: stmmac: set PP_FLAG_DMA_SYNC_DEV only if XDP is enabled
-Date: Fri, 13 Sep 2024 19:02:59 +0800
-Message-Id: <20240913110259.1220314-1-0x1207@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726225533; c=relaxed/simple;
+	bh=ewzilHymwJkVYJD/EBs/SQy+YwQAnMiz205hV0F9T1M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KtHWkUCEmLnXOvkOImeDyLu3x3j8ay7/+LReQpMq+liBVmAK3UD/yVsidHUEEn//x9dbH1i0zMbhunlUnk7jI6HD78/F39EMsnQwn2iSTBUB1bIbB8zNGwVUDAAO38+2CmgABNUoQ2VyQzR7TWXOwKk+kUMPphZLVNNpmwx8ZEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I5LvGTxz; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726225531; x=1757761531;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ewzilHymwJkVYJD/EBs/SQy+YwQAnMiz205hV0F9T1M=;
+  b=I5LvGTxzva756Vv+tNQe2+gozIF/VZwT1CimGPld+4GAoLHrSnaFhkr7
+   Prv6dNzZVisqchAW4PGwftHw6zCvaO+qzy0glLBVZ06uaNs54JMWOr7DJ
+   gUgxm5FTQCwtndG5XwAbFATMJ3PpHOxYxSj4DohojO6dMvBiezsoHoNzC
+   7pLwdBnwsPs9iz2ExGmK8YcMQ7h3BIsccJpqp5cu1dVq+xrdMW1+Xc/KO
+   5aUlrTfYxhUom8DdHpFPbPP9YFIqohNRgCe4rswL0c1Wqwr6i1wLN7JMJ
+   ObTp5wLcJRHatvaE6qEcof4CabVWWRc5pwHI8Ua/9MDERDujFQkb6PgRu
+   A==;
+X-CSE-ConnectionGUID: vYChR0jrRN+UAeBU1WWX8g==
+X-CSE-MsgGUID: tQqqWM/cSXu0d2VV+A5v2A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="35787433"
+X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
+   d="scan'208";a="35787433"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 04:05:30 -0700
+X-CSE-ConnectionGUID: +KILJ2epSlevX+/Je2ukLQ==
+X-CSE-MsgGUID: D22jCgLxQ2G/j+Z14qWaEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
+   d="scan'208";a="72384256"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa005.fm.intel.com with ESMTP; 13 Sep 2024 04:05:28 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 6E4F9387; Fri, 13 Sep 2024 14:05:27 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Subject: [PATCH v1 1/1] software node: Simplify swnode_register() a bit
+Date: Fri, 13 Sep 2024 14:05:23 +0300
+Message-ID: <20240913110523.3584749-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,34 +79,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When XDP is not enabled, the page which holds the received buffer
-will be recycled once the buffer is copied into SKB by
-skb_copy_to_linear_data(), then the MAC core will never reuse this
-page any longer. Set PP_FLAG_DMA_SYNC_DEV wastes CPU cycles.
+By introducing two temporary variables simplify swnode_register() a bit.
+No functional change intended.
 
-This patch brings up to 9% noticeable performance improvement on
-certain platforms.
-
-Fixes: 5fabb01207a2 ("net: stmmac: Add initial XDP support")
-Signed-off-by: Furong Xu <0x1207@gmail.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/base/swnode.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index f3a1b179aaea..95d3d1081727 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -2022,7 +2022,7 @@ static int __alloc_dma_rx_desc_resources(struct stmmac_priv *priv,
- 	rx_q->queue_index = queue;
- 	rx_q->priv_data = priv;
+diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
+index b0be765b12da..810c27a8c9c1 100644
+--- a/drivers/base/swnode.c
++++ b/drivers/base/swnode.c
+@@ -908,6 +908,7 @@ static struct fwnode_handle *
+ swnode_register(const struct software_node *node, struct swnode *parent,
+ 		unsigned int allocated)
+ {
++	struct kobject *kobj_parent = parent ? &parent->kobj : NULL;
+ 	struct swnode *swnode;
+ 	int ret;
  
--	pp_params.flags = PP_FLAG_DMA_MAP | PP_FLAG_DMA_SYNC_DEV;
-+	pp_params.flags = PP_FLAG_DMA_MAP | (xdp_prog ? PP_FLAG_DMA_SYNC_DEV : 0);
- 	pp_params.pool_size = dma_conf->dma_rx_size;
- 	num_pages = DIV_ROUND_UP(dma_conf->dma_buf_sz, PAGE_SIZE);
- 	pp_params.order = ilog2(num_pages);
+@@ -934,12 +935,10 @@ swnode_register(const struct software_node *node, struct swnode *parent,
+ 
+ 	if (node->name)
+ 		ret = kobject_init_and_add(&swnode->kobj, &software_node_type,
+-					   parent ? &parent->kobj : NULL,
+-					   "%s", node->name);
++					   kobj_parent, "%s", node->name);
+ 	else
+ 		ret = kobject_init_and_add(&swnode->kobj, &software_node_type,
+-					   parent ? &parent->kobj : NULL,
+-					   "node%d", swnode->id);
++					   kobj_parent, "node%d", swnode->id);
+ 	if (ret) {
+ 		kobject_put(&swnode->kobj);
+ 		return ERR_PTR(ret);
 -- 
-2.34.1
+2.43.0.rc1.1336.g36b5255a03ac
 
 
