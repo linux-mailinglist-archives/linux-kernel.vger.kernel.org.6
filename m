@@ -1,111 +1,101 @@
-Return-Path: <linux-kernel+bounces-328677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D2897873F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:54:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 562C2978742
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:54:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52B011C22049
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:54:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90A371C20DA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:54:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAC385283;
-	Fri, 13 Sep 2024 17:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A191126BEA;
+	Fri, 13 Sep 2024 17:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i/fn7ROv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tonB9dQk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A698F6A;
-	Fri, 13 Sep 2024 17:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F76B79B8E;
+	Fri, 13 Sep 2024 17:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726250052; cv=none; b=j/PMhyFqOgCQL1fmMnnlWNaNStl4MuX3G8yYIUjVvYIFZ4KcYdQH2T87bxVRqGmTLwAylBpF/edt7YZjy2lqhq73/05C7vrB9vT00FM39cVcY3CnkFXeAUjAekKhMPntL992CKlP2BtnHGwMY/3uoqXdiQrD/KKIE/1CuzHNOXM=
+	t=1726250064; cv=none; b=FfoEBPSUm2YpoDQQWnp1UBXkYJjciWGm7Ut7lGDKqZYDW3iJRh/Al3pWHJG1+NG8EwuVrOK9ZTMPsctjfXs/frjkixcqdDuXYVnM2S3vS7uPWCrFa8HJbO+xNQ1jilaLK18W6KsMy7UgefcPEKrxPjnW6kVSCOawthnmwf4W6QI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726250052; c=relaxed/simple;
-	bh=DPn77RDnAQjza0qPZXvs9M0fX3yEcxk4OayaSfEDzDc=;
+	s=arc-20240116; t=1726250064; c=relaxed/simple;
+	bh=jWbhiLUcKqWQFU/Im3tjU43mzSy2oUxa2unp1sbQcmM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cVGb6Ni3x03cIVoS0fa3vScto6B58snUFtkY1KDPiu3/jB5ane2XTBI2BR9G65mMmaEVCgcDhE7KFe761RelzU/m1kXUFsxEM33Q13YDpSVE6281mM5A4aj2/oJ+TRQQgLMwAA543cOJjzOa573hdmlO0/alrmT8aJz5/sALDA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i/fn7ROv; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726250051; x=1757786051;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DPn77RDnAQjza0qPZXvs9M0fX3yEcxk4OayaSfEDzDc=;
-  b=i/fn7ROvO3vn8cLf8gN8BtGDmQGKyj8TCntGr4AqmS9bKQZcdq9icYeq
-   wogJv8yXuyKOvcaU2Z/gwvOhDxLaQAW2kuXQiL5RENZUBrR2R7zUcqVVb
-   glihGT7sPD+uj1L+xdmdFAd0Jo3t+TK+J8kPzBGXTMA7bfOdpC7MHzQCg
-   Y1Nkt8ZhaYqSctIhfbSkaDtHV84uawMGb9g6lZanCcyaJQcxxv3AyvJX2
-   0l/PUIzU/qaHXylwJGUmeawxB6FiVnK56tZDFmwGS3b+R4bCDFwi0o7YC
-   lMU4lyV7nMN/tkHvDN3GssihvsVVUY690r6n7o88HkmrvtI8aQf0zUuhr
-   Q==;
-X-CSE-ConnectionGUID: RZ9Zy0yuRK2/9+hG7kNLFg==
-X-CSE-MsgGUID: peUYoF1DQGi0BdZIIGXIUQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25043031"
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="25043031"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 10:54:10 -0700
-X-CSE-ConnectionGUID: 18zqhmHBRCOJTpUdfQH4Cw==
-X-CSE-MsgGUID: b91DdrCoSpOde/LgZRfLLQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="72963644"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 10:54:09 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1spAUf-00000008NWj-2OFb;
-	Fri, 13 Sep 2024 20:54:05 +0300
-Date: Fri, 13 Sep 2024 20:54:05 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Parker Newman <parker@finest.io>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	Parker Newman <pnewman@connecttech.com>
-Subject: Re: [PATCH v1 3/6] misc: eeprom: eeprom_93cx6: Replace
- printk(KERN_ERR ...) with pr_err()
-Message-ID: <ZuR8PawGrcDxCioi@smile.fi.intel.com>
-References: <cover.1726237379.git.pnewman@connecttech.com>
- <127dcc7f60d15a1cc9007c9e5b06a1aa2b170e19.1726237379.git.pnewman@connecttech.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=az8kRj8RHqZXlrXT53MKn1G3lpmGeh885Io2vtieN/nvyp/ABGR9SlPxUpjNg7jlc8NMo+O9gn+iDvynICjDWuKnlESnUe5bUdjaUTmeNSUbtC5lJqfHADBURT0yauFUltpDnV0/SwY7RoyjefgaugyaMDVL4iDfKI5egIYu45A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tonB9dQk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9B5CC4CEC0;
+	Fri, 13 Sep 2024 17:54:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726250064;
+	bh=jWbhiLUcKqWQFU/Im3tjU43mzSy2oUxa2unp1sbQcmM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tonB9dQkOKGOFVpWKBM6VU/AgQmpp1sxg0nD0Qqh+HyIhB41icueet53d7U3bqgsL
+	 A8Cw9PKUvy/akQHPWDW74KILBUZ7iq5RhrHxDCvRVxpw/lniL4AXrYvSaXBSjpRDZ4
+	 vzgp3tag/OuWjrEYjYxY3MOq0xOGE54IdO0xlFAtzaq2MZSMGEhrmzyQpZ/TWT0agS
+	 8LRJNjz0scmU+CApaAGyVe/fvvyqcRK+AW6eBcPLWGQHmKGxln8AjIrYqczWptGbb9
+	 +iCpsYHJOTLc3oO03yz3J8OfDrLyXeEQAQ4YKDwmhrPknLZcq8bFFtgvniMT9+KWnP
+	 ohVaxZK1g/y0A==
+Date: Fri, 13 Sep 2024 18:54:19 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Jianping.Shen@de.bosch.com
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, dima.fedrau@gmail.com,
+	marcelo.schmitt1@gmail.com, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Christian.Lorenz3@de.bosch.com, Ulrike.Frauendorf@de.bosch.com,
+	Kai.Dolde@de.bosch.com
+Subject: Re: [PATCH v7 1/2] dt-bindings: iio: imu: smi240: add Bosch smi240
+Message-ID: <20240913-curled-cement-0434c7b56e17@spud>
+References: <20240913100011.4618-1-Jianping.Shen@de.bosch.com>
+ <20240913100011.4618-2-Jianping.Shen@de.bosch.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="AXiKi4ZW8chzwwN0"
+Content-Disposition: inline
+In-Reply-To: <20240913100011.4618-2-Jianping.Shen@de.bosch.com>
+
+
+--AXiKi4ZW8chzwwN0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <127dcc7f60d15a1cc9007c9e5b06a1aa2b170e19.1726237379.git.pnewman@connecttech.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 13, 2024 at 10:55:40AM -0400, Parker Newman wrote:
-> From: Parker Newman <pnewman@connecttech.com>
-> 
-> Replace printk(KERN_ERR ...) with pr_err() to improve readability.
-> 
-> Fixes checkpatch warning:
-> 
-> WARNING: Prefer [subsystem eg: netdev]_err([subsystem]dev, ... then
-> dev_err(dev, ... then pr_err(...  to printk(KERN_ERR ...
-> +			printk(KERN_ERR "%s: timeout\n", __func__);
+On Fri, Sep 13, 2024 at 12:00:10PM +0200, Jianping.Shen@de.bosch.com wrote:
+> From: Shen Jianping <Jianping.Shen@de.bosch.com>
+>=20
+> add devicetree binding for Bosch imu smi240.
+> The smi240 is a combined three axis angular rate and
+> three axis acceleration sensor module.
+>=20
+> * The smi240 requires VDD and VDDIO
+> * Provides only spi interface.
+>=20
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-First of all, you probably want pr_fmt() to be defined.
-Second, I would replace the entire while loop by the read_poll_timeout() macro
-from iopoll.h (note to use "true" for sleep before check and drop that one from
-before the loop in the driver).
-Naturally the pr_err() change can be combined with read_poll_timeout(), but
-if you go with pr_fmt() perhaps it still makes sense to have separate changes.
-I dunno which one is better, up to you.
+3 reviews? Doing well for yourself!
 
--- 
-With Best Regards,
-Andy Shevchenko
+--AXiKi4ZW8chzwwN0
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuR8SwAKCRB4tDGHoIJi
+0rYhAP421mgiPxEooyVr0qa0SKv/HJnWIRqtrqEyUp3WPMZyQAEA9J2GdM5juRGy
+23tBvqwM6eXl29w7HIln0TsNoeryiwA=
+=wPVg
+-----END PGP SIGNATURE-----
+
+--AXiKi4ZW8chzwwN0--
 
