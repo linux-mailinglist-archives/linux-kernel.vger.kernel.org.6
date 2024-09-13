@@ -1,174 +1,98 @@
-Return-Path: <linux-kernel+bounces-328085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2484C977EAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:42:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B211977E8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:37:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4512284762
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:42:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20BD628289C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:37:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC921D9324;
-	Fri, 13 Sep 2024 11:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218511D88DF;
+	Fri, 13 Sep 2024 11:37:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="U793wdS3"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2077.outbound.protection.outlook.com [40.107.237.77])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FnXBoyDk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041A81D88C1;
-	Fri, 13 Sep 2024 11:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726227706; cv=fail; b=uVCNuZ2c7ZZgYBeCx1JJqkKe7/seOohq3PyLbbPy2BCiXdlEkwQ4B43IvooALaJB0dlcbIpZq65/+htDuSTKjEkf41woiP5t3eWH+bPPBfLOocLTFvpUYTPioc7S0ZWbn47vTlBLnqgLk1nxyGR/7EZcezEoy+mI2idYN4ixdkc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726227706; c=relaxed/simple;
-	bh=24Dyrgs4MCvn687dRMkmhZDqzozRLzvpCXHVWNpOwFw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E3z7iYAJypz4HYarXZ1b0FWirQ4kC8UcTSaycsbpHUTMuZnrWEuRuqHKLEEOIhftHFnjVW9gs93aaw93DJ3US/69JwKE991eojaAA/+g2Ww5FEVY6iS3apaxI89O+DJDJIsmc0X2tYdR5ZmyRuq8UK/x9OAxe6hF6GzgBFW3s0w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=U793wdS3; arc=fail smtp.client-ip=40.107.237.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QZpB1ZUtd4h+E9OlRtdwJbQ35aZOuPK/ZGO1wt4WYeJERhBhMbP4vS9fcCRxD0n/CJbUNllIrKvOuOqtWNInoDd7E7rMrG0SOsOT8aQNHakWJ1m3EI76jE2iKtkg+bAsOrR1+cYyZ1cX9WUe7BsbEvNn3AqnOwe1I3hnTB2fMu8Oti4wtD8Y1e9VuaYMTCosOVP+U3i3UvcMovLcDAmrO/CXDA76bXySXD1z6EBuU70OTlflT3i5+wZzXFg2WM6Ng6rLCvo0sVQkuzuaCZwBkLgFP5yr8/Ctse2728O93kxrGSxB0RN5J18/dyquzICrJ1SGqg/EXxkJU0/XusBN/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=v1KpV7nmNR/O98BSTyWcSRz2cmOxmsrvJOTtk/1fLhQ=;
- b=GY16h8u8Tpxb+c4eXaSmUMMvelrpQkgKt2a5rNCI0mryDPWSboc1NYpSWbdfQaBbsjMhKEzfOKastwA1smwUvQ+oprR61q+5vlGq8mg+P9q9Bgcl8k8g7SvviLW7hf75fBkiWv9jVKps7PSQp767s8g5xgh+1MDnSypP8VN70uXfy5TtdSaM9KJYlzonJoSxl+HN5H/3hG7fr8f2YYp0Ij7yxiQs9yp4V35pi4PM0DS6Ox369rm0Bzp/l7TtsjtW3d70/80fj00gS3kbrmSqjbwnCmxGyM+eRMffi/5YR4Lei0ZkKXF1z44EKx6xLR3mGtHOzFlJ7nRHMZ5JnNlbWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v1KpV7nmNR/O98BSTyWcSRz2cmOxmsrvJOTtk/1fLhQ=;
- b=U793wdS3vfUScGUfC6w3S8m4W1cWxtJDWVl5kDUMCNROf6YpyJyVwiZ0fOrQh4aGBqNRNmEMOnt4Zv21F3waCqwFXbxy5qvkxRIA6MvuaWwF/Z17ir9o1YbwY7H9E7i46yaPCXvNBrBu2uJB8QdkSjDZZ0FgehTPVPgb/iEytEo=
-Received: from BN0PR04CA0160.namprd04.prod.outlook.com (2603:10b6:408:eb::15)
- by SA1PR12MB7410.namprd12.prod.outlook.com (2603:10b6:806:2b4::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.20; Fri, 13 Sep
- 2024 11:41:41 +0000
-Received: from BN1PEPF0000467F.namprd03.prod.outlook.com
- (2603:10b6:408:eb:cafe::f5) by BN0PR04CA0160.outlook.office365.com
- (2603:10b6:408:eb::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24 via Frontend
- Transport; Fri, 13 Sep 2024 11:41:41 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN1PEPF0000467F.mail.protection.outlook.com (10.167.243.84) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Fri, 13 Sep 2024 11:41:41 +0000
-Received: from BLR-L-NUPADHYA.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 13 Sep
- 2024 06:41:36 -0500
-From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-To: <linux-kernel@vger.kernel.org>
-CC: <tglx@linutronix.de>, <mingo@redhat.com>, <dave.hansen@linux.intel.com>,
-	<Thomas.Lendacky@amd.com>, <nikunj@amd.com>, <Santosh.Shukla@amd.com>,
-	<Vasant.Hegde@amd.com>, <Suravee.Suthikulpanit@amd.com>, <bp@alien8.de>,
-	<David.Kaplan@amd.com>, <x86@kernel.org>, <hpa@zytor.com>,
-	<peterz@infradead.org>, <seanjc@google.com>, <pbonzini@redhat.com>,
-	<kvm@vger.kernel.org>
-Subject: [RFC 14/14] x86/sev: Indicate SEV-SNP guest supports Secure AVIC
-Date: Fri, 13 Sep 2024 17:07:05 +0530
-Message-ID: <20240913113705.419146-15-Neeraj.Upadhyay@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
-References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804231BD4E4;
+	Fri, 13 Sep 2024 11:37:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726227451; cv=none; b=XwwzYZjqagrpooPP8pfU5q7cXgxuuappUmky5Vcq5Ykcg3F67pdhMoEcyJ9cSHSi6BrH2sAg1fFHD+BzkGvTRWifuCVtkdt7KP8tMWwfMx7rU2RmWcjPy5mtBVgYQVt0z8iIZ6siQgA1rmp8kW452VvKR6nw6xrkDvn9sE00ELA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726227451; c=relaxed/simple;
+	bh=9/pekRjHqpcBVcnkLOUUKkxWln7sVWOI9vseeK/GQ9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cP55ZIVCo7MEGEOFoLVwO2MrpFFEKdcFQ2YuHdAiDjWNdME85IQVDY2OnJIfawkYXKL1yed1mKUfXj09E38LWmCLoxHHbmLsvDA2JOotyjTdxKNrdr7QM61D/kfCdeuT+P8ZwqaVXQAmlgeN7mQO5vESaUR6Nf3P/rzI/+d2jb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FnXBoyDk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67FBBC4CEC0;
+	Fri, 13 Sep 2024 11:37:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726227451;
+	bh=9/pekRjHqpcBVcnkLOUUKkxWln7sVWOI9vseeK/GQ9U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FnXBoyDkN2YOmW0+EIyLUILqERRz91M6LAaxlSS6M9C86Kxu/fZK/cPY5A1gMsrOF
+	 pQ1ZoewiAKSjIiVn9DG/w2kq9hbvSuiQUDtspS+C5D8zN0c4d65ljnR35X4J0XPjoD
+	 HGazJgDxpNQSDTZeV/iLgXGBlK+f1HqtegZl8QfNNTD9xOWnU6XT/VowFCRimSY1KZ
+	 ICm6mSLYR93lqDXsrkz/s/ZsRu/uh5XvpxFSbe1Kki4t1Ifv+O4+BTOlT2H5Xhg5sI
+	 /5WCEEKf0rgdrdsylOPN6WaJ/rEnV2n8n3boLbCdkYuAGWKZr99320z98OpV74gW7L
+	 5WgT4lUCqgTYw==
+Date: Fri, 13 Sep 2024 12:37:27 +0100
+From: Simon Horman <horms@kernel.org>
+To: Kaixin Wang <kxwang23@m.fudan.edu.cn>
+Cc: davem@davemloft.net, wtdeng24@m.fudan.edu.cn,
+	21210240012@m.fudan.edu.cn, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, edumazet@google.com, kuba@kernel.org
+Subject: Re: [PATCH] net: seeq: Fix use after free vulnerability in ether3
+ Driver Due to Race Condition
+Message-ID: <20240913113727.GX572255@kernel.org>
+References: <20240909175821.2047-1-kxwang23@m.fudan.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN1PEPF0000467F:EE_|SA1PR12MB7410:EE_
-X-MS-Office365-Filtering-Correlation-Id: d414d01d-2781-40fe-9bb6-08dcd3e90902
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?cDZ+wJqiMA6gOxxBYObFvCZtnFVO8a8d18wIxbxrnPIWUPSZmRRsf2C9TQHx?=
- =?us-ascii?Q?q8Rk/t2MmDHY910oQN+lJtw7xT7egIO46KB3Ax5EoeU8plgMlHy5kWjMkzzP?=
- =?us-ascii?Q?GtpAIEHrX2refuApvMWKH1hLxE0j9AgSTr56gCPVVzdV12PkHLB+z6Y3mkgm?=
- =?us-ascii?Q?9Lp6TNZGQlqu7Ka5InTIyWHkHNX09YOn/W32DfJJrIa0EhWhI0ObLGugl8MR?=
- =?us-ascii?Q?ol2nupusJOF/yPGa6tWVn0s2cMaj3IYcDXGjTJKq/WKij5A6zswPkTjkg/kR?=
- =?us-ascii?Q?Nrjo6Dh+yX3fomz4N41rIC9hZEt7K7XNn2w4yQsWPDdbgUa00Yy5V4B5hopQ?=
- =?us-ascii?Q?T9FEm/SQKMZV5Fh3SefoonMwomf82kGrkVZSlNlLzT5q23PGNeAsaofoFQZz?=
- =?us-ascii?Q?O3+Cd9GB7WakzdAjdThxrvgf0KoGHspWu8XMN25xfODLz5LRQ7yj33+5jpl8?=
- =?us-ascii?Q?KbJyIVXXY0w4tTz/7cd2ebFMAb4Q1D722VlbLtFezeZsZVsUuaY3bHzYPWDH?=
- =?us-ascii?Q?e79+fB4ujh1BSPPh3tZQL1W+YkmxB8dXtwQUwIKQWWDk2LTpvGMTApmIC5ba?=
- =?us-ascii?Q?KIwwMkSqH4uLbfkX6OlM1e9akkY24Jqg4BQrYMbctoDgzTBSTDScBsB8STS3?=
- =?us-ascii?Q?XfLmUOsMkkdHERsPniHbM4MBrtx+hKkvCj4QkX+FQ0aUfven79UArkHrmIH8?=
- =?us-ascii?Q?O4cEg+NI5rOARihEr55FWyce8QMedgAbcQ/scXVH0jo4483lihzfh9k3Zs1u?=
- =?us-ascii?Q?I3UWv/OMRzUqVQWET1B7PeD6qpFsHnWUJGlsTCAzUZLXbUJO4d+OOObm3DJf?=
- =?us-ascii?Q?hcUZN2Ow22C+nuqhz/ojNoWDnDf0HbbSc3dNsA6CVKDx97GbF6CVWffMy3gq?=
- =?us-ascii?Q?jBDd/7PrcM/xsKEwG75VE4Ux+VSbWOsulJJztdJPq8rqmhDc2Mp3Mqk1dLr7?=
- =?us-ascii?Q?6fzJQbIDysnQxV6gwWBacHqpFKYYv02lsd6UoJMDVmV7PDfQh65viLRPhCBM?=
- =?us-ascii?Q?1NIzzPuPQsRe2FD6o0TaUmeZOzJ6Qu3WcAAi/j5bxZSgZylsF56uI31k7MnK?=
- =?us-ascii?Q?AJonRhQ3dWpQTwi31wTqnqp6DA4Cqssbln5nYnIZ3RQL/yL2dJmbwuVM7ogJ?=
- =?us-ascii?Q?RipZ6XhcMF4WY8HF+r/I7Yep0JWx15aMvrU7UBpmVuERC6vjBGT/HQCQrDEr?=
- =?us-ascii?Q?n924SAFCQ+d8D4paR4EeJQenIJloVHPf7WeylFVEg6SRYlXlHR4NR7uc3FPZ?=
- =?us-ascii?Q?jfmIdXT1rO6fciYINtEN17QUEWsDY3pvucZbjr3U0sNiMpG11uJuCypFuVm4?=
- =?us-ascii?Q?5meIGYBm1B9leSTnAt9cJ+elu7O1Q8ZxUC1UZBEehDyf6VqsRhfRL8VJqJdj?=
- =?us-ascii?Q?Z+beE28+wVWIOEHbARmgOhhZZoNOtSm9fEB3VIjTL9E64z9vC9Uc62E7CcyA?=
- =?us-ascii?Q?YcmnzP3csUyvH458b5Bj/m7M259UV32D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 11:41:41.1149
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d414d01d-2781-40fe-9bb6-08dcd3e90902
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN1PEPF0000467F.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7410
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909175821.2047-1-kxwang23@m.fudan.edu.cn>
 
-From: Kishon Vijay Abraham I <kvijayab@amd.com>
+On Tue, Sep 10, 2024 at 01:58:21AM +0800, Kaixin Wang wrote:
+> In the ether3_probe function, a timer is initialized with a callback
+> function ether3_ledoff, bound to &prev(dev)->timer. Once the timer is
+> started, there is a risk of a race condition if the module or device
+> is removed, triggering the ether3_remove function to perform cleanup.
+> The sequence of operations that may lead to a UAF bug is as follows:
+> 
+> CPU0                                    CPU1
+> 
+>                       |  ether3_ledoff
+> ether3_remove         |
+>   free_netdev(dev);   |
+>   put_devic           |
+>   kfree(dev);         |
+>  |  ether3_outw(priv(dev)->regs.config2 |= CFG2_CTRLO, REG_CONFIG2);
+>                       | // use dev
+> 
+> Fix it by ensuring that the timer is canceled before proceeding with
+> the cleanup in ether3_remove.
+> 
+> Signed-off-by: Kaixin Wang <kxwang23@m.fudan.edu.cn>
 
-Now that Secure AVIC support is added in the guest, indicate SEV-SNP
-guest supports Secure AVIC.
+This seems like it is a bug fix to me.  If so, it should have a Fixes tag
+(immediately above your Signed-off-by line, no blank line in between). And
+be targeted at net.
 
-Without this, the guest terminates booting with Non-Automatic Exit(NAE)
-termination request event.
+	Subject: [PATCH net] ...
 
-Signed-off-by: Kishon Vijay Abraham I <kvijayab@amd.com>
-Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
----
- arch/x86/boot/compressed/sev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Unless the bug only exists in net-next.
 
-diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
-index ec038be0a048..fa5f1dc94e2b 100644
---- a/arch/x86/boot/compressed/sev.c
-+++ b/arch/x86/boot/compressed/sev.c
-@@ -402,7 +402,7 @@ void do_boot_stage2_vc(struct pt_regs *regs, unsigned long exit_code)
-  * by the guest kernel. As and when a new feature is implemented in the
-  * guest kernel, a corresponding bit should be added to the mask.
-  */
--#define SNP_FEATURES_PRESENT	MSR_AMD64_SNP_DEBUG_SWAP
-+#define SNP_FEATURES_PRESENT	(MSR_AMD64_SNP_DEBUG_SWAP | MSR_AMD64_SNP_SECURE_AVIC_ENABLED)
- 
- u64 snp_get_unsupported_features(u64 status)
- {
--- 
-2.34.1
+	Subject: [PATCH net-next] ...
 
+Link: https://docs.kernel.org/process/maintainer-netdev.html
+
+...
 
