@@ -1,152 +1,116 @@
-Return-Path: <linux-kernel+bounces-328751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7440297884A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:57:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2AF397884B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:58:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 332132880EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:57:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C39A1F27A47
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:58:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E2913BC11;
-	Fri, 13 Sep 2024 18:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2791513C690;
+	Fri, 13 Sep 2024 18:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GgLX700B"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DRsXWfhJ"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773A513AA4C
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 18:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E7A83CD6
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 18:58:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726253852; cv=none; b=Cw9TyigramlGtvAqf3Q/SCLP8VyqVbfQNmuy4v885H14MKV3lWNHBIV4y/JsDoxkQZl69mygnFDkrWhUIzQXJkAXwvQBgOkdb0/BV8UJbgpWjUvE17VKzQWGfCB5faAiYA41j9nrJ4NP6HVFOyLRgrbaoPBOhglqvzT4oDR6sx4=
+	t=1726253903; cv=none; b=ClD2aErktIwcPA9m6vcw3/9qZdv6IzjV9qKeffaS6xHg2NkbuPzqWw9x0oWdyIn29VB1PrNCWm77hxS07kpL2ob99rpbceQPbcf6hfNOYiLo/uTAlYcelS1tShEjaG7BFyiE0qjhUqbtdSCZMo7ZjgdgYPYDTnTSFCeIx1DTSoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726253852; c=relaxed/simple;
-	bh=tSlnQ0F5ioJKvWE3fPpk/dLjVumOoGJmBqR2+B7VmyM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p0UBjUW+lAQaE6qz4IGj8PRI8mJflExTGUVFISIyXsBy8lII9iymaU7uwu4IysG07ZcSL8RC8Er065ouLoY/8jhD+zvnCTr7gMG1gyAK0G5RvwNgXw+CkIwAX5EKGecNNcZYEh6QyC7rVbLVX5Up09T/9kA5lZOn+uhetScinEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GgLX700B; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726253849;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vBOmlPn6J7XlQt2S4vXhT1ao4Tt2/DiQ3amK9nkmaP8=;
-	b=GgLX700BM3TH5beZENQ81pa3MPuVSP0OoC3efYQRb9YSI488PfdNg/eNssj/nqV1Hmmqqy
-	LGzrK8TejVgSlqaMYvrKeEySSd5DA7ijXSzl83N+s5rMpqwgCf9Rpx/Ezqw8COAHSwoy7b
-	YycLAkdWREG32p0QIV9qvfC0I5G8jtQ=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-103-o-kym7a0NxuiIvZAWzWGEw-1; Fri, 13 Sep 2024 14:57:28 -0400
-X-MC-Unique: o-kym7a0NxuiIvZAWzWGEw-1
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7a9aae6728aso751222685a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 11:57:28 -0700 (PDT)
+	s=arc-20240116; t=1726253903; c=relaxed/simple;
+	bh=fOQe/MFa6wz9Dv/6AV8Uxi9LSglbhZWH8boe0/4m5vo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VDal0vhIkvlPipJ4cTuKFq+uCkfsChFl75QaHq1N88Fluss8ijxbkShH2fa5u8sbYqfFDD5V0FuXYWmRtGTk+2UEtDRqhLc8Dr7OngIdCVjtlsWrt6eCxhi9kOBKVDkEaqVUsI1JlNI6zBnJrOhdcJFvf+n5M2VyiD0uXXkrC4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DRsXWfhJ; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-535dc4ec181so2247216e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 11:58:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1726253900; x=1726858700; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=T3J4NFIOs0+/FX7PgSd9/Ty6QD31sDeKjmeTpTdP0F8=;
+        b=DRsXWfhJ+Vm4AbjlmFP3Qta3Me8nKSlLAwhO3TQuW5GK4HX4WQWd5eqytUg/V0Us0o
+         Els3eaW9iGHyphOZG4biHXQzSZOVweMdFWxvfxMTuOFnKJ7W5UAT480iOz/cnGi9w7T4
+         b6wyNcsF3zbUuM85ltyr94IBuUJ0QUKcA9ufabnc2SQ0GePqck4ttG26n7an9uQUEm99
+         MI8taczgeXfmsLU2BJoGd13pVvqYS8v4HLrkOPjSqJTswQ5jwIzntj+SLwyIXSY5AUk3
+         1hPJM5oE64L8sD1X3aUh1MzwPqCgc4cPiUAfwL4Qa79Orl7qSBgZZXdic266nrCXDPQH
+         SMZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726253848; x=1726858648;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vBOmlPn6J7XlQt2S4vXhT1ao4Tt2/DiQ3amK9nkmaP8=;
-        b=oS5+GZwP36lduWy8pBfCK0uB2n1TU/n5Xsa9CC2JiKI00ETgW1sYlGCJTs72TDKiMC
-         p8WBphiP7/GUxado/lJAazwlIwDH+fg6M/+wj1ht91j1vSP1+pCnwZokan7xkS4G5vWm
-         DZh/nOGiDpQET4oo6IlknFd3q8AAmXL0LfYaD6Ox3f3dYC0JhaUbaAeibVBONPbY/uQi
-         epkN+kz/CywIlug0R+aC8Xjhm+hbAf4foGpEHlzt3YGaVeePZjwgrrbgP4oAvBQS+DiX
-         u1GQ1fdyGt6IN1XDcewNAibWB6Lp1hy12Q7nhMVYlOQy18Qz3de97TKJmyZQNwbe9jUc
-         3nkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHbmks0xDXwPaBShCqTCefYUqpFkzjjvquPDtJDcZrquOb92n3DLhH+ILt+0xVETVmSC+EkxkufX8nyiE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2w2dqAwax8JXMqXXwfwkcrzZfC9+luoRAVzuu/OW0YWeUDntE
-	+Ewif8KoC+QykfV85fEiciX4fzyi91i652lQYqLWpygbMWko/rBko4RDU1Nm8cLvea5+jBGA+v1
-	GC+lfuq49n/p2Jin6mQ5v8eeo7apuL1WSgNAVdxmJ4I6czUUV6REEIamtmOImdQ==
-X-Received: by 2002:a05:620a:29c5:b0:7a1:e341:d543 with SMTP id af79cd13be357-7a9bf9cac58mr2578235485a.28.1726253847736;
-        Fri, 13 Sep 2024 11:57:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGD07RKZhSt9zPcXCD8OnyfOPn0msr/udZWBZaNQmQDKlgYn7gq7OjIujdXQYCwD8pJJkUdnw==
-X-Received: by 2002:a05:620a:29c5:b0:7a1:e341:d543 with SMTP id af79cd13be357-7a9bf9cac58mr2578230885a.28.1726253847300;
-        Fri, 13 Sep 2024 11:57:27 -0700 (PDT)
-Received: from x1gen2nano ([2600:1700:1ff0:d0e0::33])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a9c61eec6asm431545185a.60.2024.09.13.11.57.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 11:57:26 -0700 (PDT)
-Date: Fri, 13 Sep 2024 13:57:24 -0500
-From: Andrew Halaney <ahalaney@redhat.com>
-To: Beleswar Prasad Padhi <b-padhi@ti.com>
-Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Keerthy <j-keerthy@ti.com>, 
-	Neha Malcom Francis <n-francis@ti.com>, Eric Chanudet <echanude@redhat.com>, 
-	Enric Balletbo <eballetb@redhat.com>, Udit Kumar <u-kumar1@ti.com>, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] arm64: dts: ti: k3-j784s4-evm: Mark tps659413
- regulators as bootph-all
-Message-ID: <zlgo4e5qwg352tsadvw43oj7vlekefuqe66ckokyo6aba47z6o@2wwbyrfjkstz>
-References: <20240911-j784s4-tps6594-bootph-v2-0-a83526264ab1@redhat.com>
- <20240911-j784s4-tps6594-bootph-v2-1-a83526264ab1@redhat.com>
- <c4ace228-ea32-4760-b6af-f7555b68063a@ti.com>
+        d=1e100.net; s=20230601; t=1726253900; x=1726858700;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T3J4NFIOs0+/FX7PgSd9/Ty6QD31sDeKjmeTpTdP0F8=;
+        b=Y7c5pYC1JUKtMpifs+PX1Ci534Avgp7yaxjO0Zr8miJYtUeYD2YACy2en9vkhEjVcB
+         ituv7hgdlF/ZQ52ZyYFz4Y3M36ilK7TquGodtAa2JQC68i0698MC1Tp0ATw9sR30voTf
+         GHfeu2Ep9wKEPqIRTbMIKC7+aFjcz+TdygGKhXeVqot19oFr5jG7VYJci63anXaXsSpt
+         Wwgq+3qYLMv5GSgu4heGvymBZHO2tx7lz5hPpLbkZI0E1f17vd7tUzsEDa1m41uvh3ai
+         rN9M/9cSEkYhn4CbJ1swcG/QaRRjnyljWRiCIunPj84x9TjfszBs5tOJ6q388HFQhCzK
+         DWMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmwurpyhTFRA801LLI/NaElaoBlorEfkMmyIsmsOA6QmMZvEwXhCWxrsedg/rAvCoNlXSw+pSHkqtHGgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXTsSGcKSI+cS9MVE5dy3/lu8aEnabKjEDsdWgoOFNOjLL0Pz0
+	gYBZG6h/xM6Kv+6wfeasdtD5hm0LOF1NFcXF0ecYhUHXbuxdW17HkYzzghVXyQ==
+X-Google-Smtp-Source: AGHT+IF5N3upnOExA4ETmw6SPMAW1YtxHaD4AcLqU3pOspc/IzZqS/Fny+Rg32WkLJRydanP7pzleQ==
+X-Received: by 2002:a05:6512:220c:b0:52f:df:db40 with SMTP id 2adb3069b0e04-53678fec496mr4582246e87.56.1726253899415;
+        Fri, 13 Sep 2024 11:58:19 -0700 (PDT)
+Received: from [172.31.47.100] ([193.118.249.27])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25835abbsm899355366b.9.2024.09.13.11.58.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Sep 2024 11:58:19 -0700 (PDT)
+Message-ID: <a0b0dec5-03c1-4b69-aa0e-65771251d859@suse.com>
+Date: Fri, 13 Sep 2024 20:58:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c4ace228-ea32-4760-b6af-f7555b68063a@ti.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] xen/swiotlb: add alignment check for dma buffers
+To: Juergen Gross <jgross@suse.com>
+Cc: Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+ xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev
+References: <20240913145655.10076-1-jgross@suse.com>
+Content-Language: en-US
+From: Jan Beulich <jbeulich@suse.com>
+In-Reply-To: <20240913145655.10076-1-jgross@suse.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 13, 2024 at 04:27:47PM GMT, Beleswar Prasad Padhi wrote:
-> Hi Andrew,
-> 
-> On 11/09/24 22:49, Andrew Halaney wrote:
-> > In order for the MCU domain to access this PMIC, a regulator
-> > needs to be marked appropriately otherwise it is not seen by SPL and
-> > therefore not configured.
-> > 
-> > This is necessary if the MCU domain is to program the TPS6594 MCU ESM
-> > state machine, which is required to wire up the watchdog in a manner
-> > that will reset the board.
-> > 
-> > Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
-> > ---
-> >   arch/arm64/boot/dts/ti/k3-j784s4-evm.dts | 8 ++++++++
-> >   1 file changed, 8 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
-> > index 6695ebbcb4d0..6ed628c2884e 100644
-> > --- a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
-> > +++ b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
-> > @@ -663,6 +663,7 @@ tps659413: pmic@48 {
-> >   		regulators {
-> >   			bucka12: buck12 {
-> > +				bootph-all;
-> >   				regulator-name = "vdd_ddr_1v1";
-> >   				regulator-min-microvolt = <1100000>;
-> >   				regulator-max-microvolt = <1100000>;
-> 
-> 
-> In my opinion, bootph-all property should come after other standard
-> properties like regulator-name etc., as it is least important to Linux. Same
-> comment for other nodes wherever applicable. What is your opinion?
-> 
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n130
+On 13.09.2024 16:56, Juergen Gross wrote:
+> --- a/drivers/xen/swiotlb-xen.c
+> +++ b/drivers/xen/swiotlb-xen.c
+> @@ -78,9 +78,15 @@ static inline int range_straddles_page_boundary(phys_addr_t p, size_t size)
+>  {
+>  	unsigned long next_bfn, xen_pfn = XEN_PFN_DOWN(p);
+>  	unsigned int i, nr_pages = XEN_PFN_UP(xen_offset_in_page(p) + size);
+> +	unsigned int order = get_order(size);
+>  
+>  	next_bfn = pfn_to_bfn(xen_pfn);
+>  
+> +	/* If buffer is physically aligned, ensure DMA alignment. */
+> +	if (IS_ALIGNED(p, 1UL << (order + PAGE_SHIFT)) &&
 
-I think that does align better with the dts-coding-style doc!
+Why this check? xen_swiotlb_alloc_coherent() guarantees it, while
+xen_swiotlb_free_coherent() only checks properties of the original
+allocation. And for xen_swiotlb_map_page() this looks actively
+wrong to me, in case that function was called with offset non-zero.
 
-Looking at the tree though, the standard currently in the TI folder
-is to put it first. In my opinion if changing the ordering is desired
-it should be done in one fell swoop (outside this series). I'd do
-it one big patch, but I'm curious if that's decided the way forward what
-the TI maintainers would like to see. I can send that patch if desired.
+Unrelated to this, but in related code: xen_swiotlb_alloc_coherent()
+can't validly use XEN_PAGE_SHIFT, can it (in the way it does at
+least)? If XEN_PAGE_SHIFT < PAGE_SHIFT, and with order calculated
+from the latter, the used size will be too small afaict.
 
-For now I think sticking with the current practice in this series
-makes sense until that fell swoop happens.
-
-Please let me know if you feel strongly otherwise.
-
-Thanks,
-Andrew
-
+Jan
 
