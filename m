@@ -1,208 +1,176 @@
-Return-Path: <linux-kernel+bounces-328352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC455978259
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:14:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0ECA97825C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:14:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21490B213A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:13:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97A4B1F254B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93C01DC04F;
-	Fri, 13 Sep 2024 14:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 616391DC054;
+	Fri, 13 Sep 2024 14:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GxbVG2+h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="DYVv36fL"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095451D86D1;
-	Fri, 13 Sep 2024 14:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA361D86D1;
+	Fri, 13 Sep 2024 14:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726236830; cv=none; b=dbTNjVFSYOns623cXtv8XU8nQUR/3gBdBSYgZqClIIVxzLDv2n3AtFQSQ67pna8ypYc7VhRJKmzCsVEKqsIsEvUTErZ1Yzj6N7faysLNZBXgEjFjouPAsMy0hBiMz5xFq5nLYF5Qlf6Slx1goq45JNxL7nXO2QJR/YBSvNFfi6g=
+	t=1726236856; cv=none; b=HDnxxtHJvKFtM7SjE7EJ96WPXIENenRxt9cU1DbND5lQD8P4do1oe1L3sD9Otk43YXDxc5SvaaRBK5Nlu1deRHVIYz2RiUCmylA1OE3biNVYtG5D1OoKZlnFML4zbfUXFxfaZ7N9IMzEdmkp6ExIoQj302EfFjUY3g55B9GhiHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726236830; c=relaxed/simple;
-	bh=rzh+ZplpHkGn5/za9ywrJDHUn0bLFa2FobPA7fn0fP8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rzEcT23FOf60nBid3PGDqyq9wcAWxbKTq/xCY2EY7nGaTnYI8W7uQb4lxVJXq3Olen0NX+0hvDoPucrT9tTavQih4k33EEvECfoeUCFEDxPWBek/rQ0Pdcy1XRNHNRMprDWef/+zpz55s1UxdBYRSipYURkwd3s9mPWNxofJptg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GxbVG2+h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B160DC4CEC0;
-	Fri, 13 Sep 2024 14:13:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726236829;
-	bh=rzh+ZplpHkGn5/za9ywrJDHUn0bLFa2FobPA7fn0fP8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GxbVG2+hMBHOO59cV0kjfZdOjGjr0NRvVwokBjnYh06AwU3G6TfSEFPWKYQtDxPPT
-	 Gu/ZYLSzdalFxe2usKX9RVOWKzi8gEWj80LT/4hYEWXM2yenRMO+46t+eRi0+MGyWs
-	 W3x17VPBTZ2tZzRIYZGvTx+Q8IfO59gP9CWyMPbRB8Tkct/GXI0Q+Po4gVBm/gbNDC
-	 T3RLQLCpqOT/bT75Ja4LM9YAtPMqEzw/b+e6YnrEhJoBQpcXJCE0Wkr6cubNaRdZxQ
-	 uF87yFDCsQU9Uvp30qTtf85jA88eW1Zc2d8geGUdshY65Y1w+Or6MP/2F+ixSaG0Si
-	 yGI7uwXuLlLmg==
-Date: Fri, 13 Sep 2024 09:13:48 -0500
-From: Rob Herring <robh@kernel.org>
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chester Lin <chester62515@gmail.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	NXP S32 Linux Team <s32@nxp.com>
-Subject: Re: [PATCH v2 2/4] dt-bindings: gpio: add support for NXP
- S32G2/S32G3 SoCs
-Message-ID: <20240913141348.GA3927538-robh@kernel.org>
-References: <20240913082937.444367-1-andrei.stefanescu@oss.nxp.com>
- <20240913082937.444367-3-andrei.stefanescu@oss.nxp.com>
+	s=arc-20240116; t=1726236856; c=relaxed/simple;
+	bh=iFQwqzYIMnfWi5KAOvdD18pv2NdDRbClhMQeK/FJXjk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GyVIhvpq6dwmFad95yFh9+tqHiVVxBC3ibQr7W0KgyQjnyZF9RMRrNJFpjF2myYsHSftANpJXMYgghz9rQjL4PxnduH7yxGvW/FEwp481Iaa+dQ7xey5K1PfE6nh44qT48/GxaM5oGvdgFbjXwQETytnq+ZMiyAGRWLzlgrOwa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=DYVv36fL; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1726236852;
+	bh=iFQwqzYIMnfWi5KAOvdD18pv2NdDRbClhMQeK/FJXjk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DYVv36fLb0UKMFETQMDs1YhdloUGyhfJYnvH0CZK/wQtXxCUvx1goOdJNz4mtN4yQ
+	 a3ZjDOZmnDJaRsyqF482iciDRBGXvsRwkKtsDFj3qt+HUkdMFzcwOjo6WOSisW/U9B
+	 vAhl3STDukEzFW5f7zgpy+Hsq0EGw7YiU5hKIOBWgfleWV/5zboi0NyFOPWwbiS8VV
+	 tfkXUi04/jZIHcqCcvqnOeGLh3y5wFixdTtzKhHpNLO0NTw7LHsrUuGQ2bNYvZWcH6
+	 usGy3JnJJznZXIzypM/wR8qiCff4o7cdh+wkiZjccheZIEb8l+uiY2OHlqRCwUgKfk
+	 IpxIYrXoAFy9A==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 00CB517E1524;
+	Fri, 13 Sep 2024 16:14:11 +0200 (CEST)
+Date: Fri, 13 Sep 2024 16:14:07 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
+ <christian.koenig@amd.com>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v6 2/5] drm/panthor: record current and maximum device
+ clock frequencies
+Message-ID: <20240913161407.0a30b68f@collabora.com>
+In-Reply-To: <20240913124857.389630-3-adrian.larumbe@collabora.com>
+References: <20240913124857.389630-1-adrian.larumbe@collabora.com>
+	<20240913124857.389630-3-adrian.larumbe@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913082937.444367-3-andrei.stefanescu@oss.nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 13, 2024 at 11:29:33AM +0300, Andrei Stefanescu wrote:
-> Add support for the GPIO driver of the NXP S32G2/S32G3 SoCs.
-> 
-> Signed-off-by: Phu Luu An <phu.luuan@nxp.com>
-> Signed-off-by: Larisa Grigore <larisa.grigore@nxp.com>
-> Signed-off-by: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+On Fri, 13 Sep 2024 13:42:10 +0100
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
+
+> In order to support UM in calculating rates of GPU utilisation, the curre=
+nt
+> operating and maximum GPU clock frequencies must be recorded during device
+> initialisation, and also during OPP state transitions.
+>=20
+> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
+
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+
 > ---
->  .../bindings/gpio/nxp,s32g2-siul2-gpio.yaml   | 106 ++++++++++++++++++
->  1 file changed, 106 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/gpio/nxp,s32g2-siul2-gpio.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/nxp,s32g2-siul2-gpio.yaml b/Documentation/devicetree/bindings/gpio/nxp,s32g2-siul2-gpio.yaml
-> new file mode 100644
-> index 000000000000..8be8eb3a971d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/nxp,s32g2-siul2-gpio.yaml
-> @@ -0,0 +1,106 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-3-Clause
-> +# Copyright 2024 NXP
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/gpio/nxp,gpio-siul2-s32g2.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>  drivers/gpu/drm/panthor/panthor_devfreq.c | 18 +++++++++++++++++-
+>  drivers/gpu/drm/panthor/panthor_device.h  |  6 ++++++
+>  2 files changed, 23 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/panthor/panthor_devfreq.c b/drivers/gpu/drm/=
+panthor/panthor_devfreq.c
+> index c6d3c327cc24..9d0f891b9b53 100644
+> --- a/drivers/gpu/drm/panthor/panthor_devfreq.c
+> +++ b/drivers/gpu/drm/panthor/panthor_devfreq.c
+> @@ -62,14 +62,20 @@ static void panthor_devfreq_update_utilization(struct=
+ panthor_devfreq *pdevfreq)
+>  static int panthor_devfreq_target(struct device *dev, unsigned long *fre=
+q,
+>  				  u32 flags)
+>  {
+> +	struct panthor_device *ptdev =3D dev_get_drvdata(dev);
+>  	struct dev_pm_opp *opp;
+> +	int err;
+> =20
+>  	opp =3D devfreq_recommended_opp(dev, freq, flags);
+>  	if (IS_ERR(opp))
+>  		return PTR_ERR(opp);
+>  	dev_pm_opp_put(opp);
+> =20
+> -	return dev_pm_opp_set_rate(dev, *freq);
+> +	err =3D dev_pm_opp_set_rate(dev, *freq);
+> +	if (!err)
+> +		ptdev->current_frequency =3D *freq;
 > +
-> +title: NXP S32G2 SIUL2 GPIO controller
+> +	return err;
+>  }
+> =20
+>  static void panthor_devfreq_reset(struct panthor_devfreq *pdevfreq)
+> @@ -130,6 +136,7 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
+>  	struct panthor_devfreq *pdevfreq;
+>  	struct dev_pm_opp *opp;
+>  	unsigned long cur_freq;
+> +	unsigned long freq =3D ULONG_MAX;
+>  	int ret;
+> =20
+>  	pdevfreq =3D drmm_kzalloc(&ptdev->base, sizeof(*ptdev->devfreq), GFP_KE=
+RNEL);
+> @@ -161,6 +168,7 @@ int panthor_devfreq_init(struct panthor_device *ptdev)
+>  		return PTR_ERR(opp);
+> =20
+>  	panthor_devfreq_profile.initial_freq =3D cur_freq;
+> +	ptdev->current_frequency =3D cur_freq;
+> =20
+>  	/* Regulator coupling only takes care of synchronizing/balancing voltage
+>  	 * updates, but the coupled regulator needs to be enabled manually.
+> @@ -204,6 +212,14 @@ int panthor_devfreq_init(struct panthor_device *ptde=
+v)
+> =20
+>  	dev_pm_opp_put(opp);
+> =20
+> +	/* Find the fastest defined rate  */
+> +	opp =3D dev_pm_opp_find_freq_floor(dev, &freq);
+> +	if (IS_ERR(opp))
+> +		return PTR_ERR(opp);
+> +	ptdev->fast_rate =3D freq;
 > +
-> +maintainers:
-> +  - Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
-> +  - Larisa Grigore <larisa.grigore@nxp.com>
-> +  - Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+> +	dev_pm_opp_put(opp);
 > +
-> +description:
-> +  Support for the SIUL2 GPIOs found on the S32G2 and S32G3
-> +  chips. It includes an IRQ controller for all pins which have
-> +  an EIRQ associated.
+>  	/*
+>  	 * Setup default thresholds for the simple_ondemand governor.
+>  	 * The values are chosen based on experiments.
+> diff --git a/drivers/gpu/drm/panthor/panthor_device.h b/drivers/gpu/drm/p=
+anthor/panthor_device.h
+> index a48e30d0af30..2109905813e8 100644
+> --- a/drivers/gpu/drm/panthor/panthor_device.h
+> +++ b/drivers/gpu/drm/panthor/panthor_device.h
+> @@ -184,6 +184,12 @@ struct panthor_device {
+> =20
+>  	/** @profile_mask: User-set profiling flags for job accounting. */
+>  	u32 profile_mask;
 > +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: nxp,s32g2-siul2-gpio
+> +	/** @current_frequency: Device clock frequency at present. Set by DVFS*/
+> +	unsigned long current_frequency;
 > +
-> +  reg:
-> +    items:
-> +      - description: PGPDO (output value) registers for SIUL2_0
-> +      - description: PGPDO (output value) registers for SIUL2_1
-> +      - description: PGPDI (input value) registers for SIUL2_0
-> +      - description: PGPDI (input value) registers for SIUL2_1
-> +      - description: EIRQ (interrupt) configuration registers from SIUL2_1
-> +      - description: EIRQ IMCR registers for interrupt muxing between pads
-> +
-> +  reg-names:
-> +    items:
-> +      - const: opads0
-> +      - const: opads1
-> +      - const: ipads0
-> +      - const: ipads1
-> +      - const: eirqs
-> +      - const: eirq-imcrs
-> +
-> +  gpio-controller: true
-> +
-> +  '#gpio-cells':
-> +    const: 2
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  interrupt-controller: true
-> +
-> +  "#interrupt-cells":
-> +    const: 2
-> +
-> +  gpio-ranges:
-> +    minItems: 2
+> +	/** @fast_rate: Maximum device clock frequency. Set by DVFS */
+> +	unsigned long fast_rate;
+>  };
+> =20
+>  /**
 
-This gets expanded to 'maxItems: 2'. Is that what you want? If not, 
-maxItems should be explicit.
-
-> +
-> +  gpio-reserved-ranges:
-> +    minItems: 2
-> +
-> +patternProperties:
-> +  "-hog(-[0-9]+)?$":
-> +    required:
-> +      - gpio-hog
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - gpio-controller
-> +  - "#gpio-cells"
-> +  - gpio-ranges
-> +  - gpio-reserved-ranges
-> +  - interrupts
-> +  - interrupt-controller
-> +  - "#interrupt-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    gpio: siul2-gpio@4009d700 {
-
-gpio@...
-
-Drop unused label.
-
-> +        compatible = "nxp,s32g2-siul2-gpio";
-> +        reg = <0x4009d700 0x10>,
-> +              <0x44011700 0x18>,
-> +              <0x4009d740 0x10>,
-> +              <0x44011740 0x18>,
-> +              <0x44010010 0xb4>,
-> +              <0x44011078 0x80>;
-> +        reg-names = "opads0", "opads1", "ipads0",
-> +                    "ipads1", "eirqs", "eirq-imcrs";
-> +        gpio-controller;
-> +        #gpio-cells = <2>;
-> +                      /* GPIO 0-101 */
-> +        gpio-ranges = <&pinctrl 0   0   102>,
-> +                      /* GPIO 112-190 */
-> +                      <&pinctrl 112 112 79>;
-> +        gpio-reserved-ranges = <102 10>, <123 21>;
-> +        interrupts = <GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH>;
-> +        interrupt-controller;
-> +        #interrupt-cells = <2>;
-> +    };
-> -- 
-> 2.45.2
-> 
 
