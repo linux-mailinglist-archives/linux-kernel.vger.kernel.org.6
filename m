@@ -1,158 +1,94 @@
-Return-Path: <linux-kernel+bounces-327466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3B69977658
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:18:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13B1697765C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 228611C238A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:18:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD8651F24633
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94B14A11;
-	Fri, 13 Sep 2024 01:18:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4874A3E;
+	Fri, 13 Sep 2024 01:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="cflh8pVu"
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="LWi9plxG"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF163D62
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 01:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99831FA5;
+	Fri, 13 Sep 2024 01:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726190318; cv=none; b=X2wC8Gx6thXzVP+y29kAwyflMqLHwUGdi/ZSc3RS1yr6/CQrC4Cdbklyt6uTTMby7W30meCAn4PKUNiMUouIya+bxGXB+Y4SV8p8kFh4lVxoFhqwfWmA5JBxDDLVOVpSpL5Z8oKbdIaYgqJMZoG/uuwk2d+MpYXeFL4bs/NwwWg=
+	t=1726190463; cv=none; b=HwbopeMdQS/EnK4uv6wRw+7aKRW8whHNm6dXWwJoenaUEXBajwypz4nlTN6j+guDyfp0qRYwaljwrMsIqE9K9q4ZA4ZA165pWml33MJFasytmJyBjpsAMopfAlAd5JDanyRUq5A3NCkX8h0IE6V56RpVL6aKitMWgjY7jA+8xw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726190318; c=relaxed/simple;
-	bh=NA6fdfMXOcNcjOXQj/GmFhALd+tPv0w1x2df+NW4U5w=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=HYXHt92DnIKgYPenIiJBPG9Yrp+UgjkJUo19e6aOYxnyGKc6p6qI8OffNoATAr30MwNSXki79MQnqjDxqXUDuYtRxdC5/dMIsr1y/MNKXFsj7Uk5sHniuEHqW7YxVQZ4OI5GjMnIcmVcBtErOy+aGVDTCQfWQOlOHhlCmlEU2z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=cflh8pVu; arc=none smtp.client-ip=209.85.222.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7a99c99acf7so151151785a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 18:18:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1726190315; x=1726795115; darn=vger.kernel.org;
-        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5YKYyd6pVgIHHfDYldydf/l8er/9vTj3rQlAXSuFfGs=;
-        b=cflh8pVuG5RqHpTuNzUq2VoXtKga8iaN+6rudvjfbuVhaSz2vWTCs8YdCE+j1J+2JV
-         8Z34A29jxmgT9Stz6u/w96X++iLBVbHE70daXGl8VmoESBVIcC1vPn5rmOlHQyYG8gCm
-         fvOiJN7DkeM00NVckUvOcp8TswhgLz4luI7UBrPzdKvaxZ4rRii0DXCVyynDaulitMlT
-         PUJ4QaI+FYGjsXakfkqqW0ECqP9y9gHbTvBcL+otiL58s+0FE1DxYcfvDfpCcbQOL4EL
-         M8s4N0joI1c6oV4qsO9xT6T1MC7zNmRtYT6jO16cL9d0WTmv+ai02AZNEgo4PDRf9XHK
-         omkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726190315; x=1726795115;
-        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5YKYyd6pVgIHHfDYldydf/l8er/9vTj3rQlAXSuFfGs=;
-        b=HB1D2MFPyYgRFr15lkTE4112VW1SNt5YcWiYUs7DVvIaMniUS7NTRND/X26xqROoai
-         eLkqxU68JN1g4kJ39l/0M8MqyUvhwbjaf4gjA48hSMhMJ5s5l3Y/1LzU0GLtgN8SZWna
-         R0DT5xdhOBTmIZbxv2hVxpVfj4U4DDmiH12oi9ovNDGEs5NA3rfb+4rUyC1P0+ZR9aGS
-         Bgu5MsnzWPnkP3j/GGY0tiIJHL2P/wF6j2i8HzOf1YWP+1CUl1k+aVbI1UD4S8W343EF
-         7Oa9R1UdQs+Ywm2yQ+82D4rBtU88ozshBnbE1LzHbSd9/Xba0gmW0H2bXRGvzqkDV07Y
-         BZDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUvfvJ43x9kCYXJDcFQD3njEmQWeDW3C+jD0XP79uK6ECTPSCfDYovJJA6ppi8LTJMDyt2K/+B2dgvzdrI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzinrxTD5ul9lQr3R/ubf9QS2lqgGJnQLBOUadGRc8+Kt9pD88q
-	04P/IMt2fjWzkGx17XBmJqP5bD0bEdZh/D05ZW4TRU/LdIyabVS8TZboGMQbxw==
-X-Google-Smtp-Source: AGHT+IHp1hgkE96Wih0ITNuYvZtXTJ9Giba/CeSTfOTehlb9V+ct3FfrhjuOdJRzHqnTPSuI/KacTw==
-X-Received: by 2002:a05:620a:4086:b0:7a9:c160:c80b with SMTP id af79cd13be357-7a9e5ee70f9mr826282985a.8.1726190314835;
-        Thu, 12 Sep 2024 18:18:34 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a9a7946afbsm600876785a.3.2024.09.12.18.18.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 18:18:34 -0700 (PDT)
-Date: Thu, 12 Sep 2024 21:18:33 -0400
-Message-ID: <c6139509267be86f56f189c243d57426@paul-moore.com>
-From: Paul Moore <paul@paul-moore.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] selinux/selinux-pr-20240911
+	s=arc-20240116; t=1726190463; c=relaxed/simple;
+	bh=yi8Fzl1i9+PpIayISuMGypW4nou4TzFzAOOdTRRgHKA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=JGmuDauVAkcRYn3Mue+pd2CugVy+UthqaPdWxwlV1n6uwJWXfG22uJm852hk4gswEHrVE8uchb5yI/0soxbfBRPbPKQKvk4L4rgRwRt1J4H+q9y13YYiNc/T94fSlTHf0oBPEp4ZJw1LEfTFgXyE6JFS66OkzdZHFUf/rw6T9NY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=LWi9plxG; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 48D1KkqK62078355, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1726190446; bh=yi8Fzl1i9+PpIayISuMGypW4nou4TzFzAOOdTRRgHKA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=LWi9plxGemzbyTJXxQlYHEW4SoAkNMl0ED0UlljpugELLwKj6tauOrYUmlpSbQj9d
+	 8eI3kIAnXxNU4F1gYpK+3wvXO7ppMHd4mfV9ObwVxeKDrLcMxDVT6v39B4hB9LG+dd
+	 igrW9dtsypA/H1YOQ+lgCBxiOn7q1dYdrOs+qAIeqzR6sOgFgvSquabO3k+ph/NsAJ
+	 rUf1YR7Ww7E8+phWreOvlyCNRUm2TfjRQQJwy41/LPXEFIVgcdvO10yZmQvfZt87JJ
+	 JJAQyVq1MGynwLhgO2H8iH8M4OkaFkiTHrQQQKA7HrGq7/9oR1+hvWZX36uVkMKQ2e
+	 swp1vcTLM+4LQ==
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/3.05/5.92) with ESMTPS id 48D1KkqK62078355
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Sep 2024 09:20:46 +0800
+Received: from RTEXMBS02.realtek.com.tw (172.21.6.95) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 13 Sep 2024 09:20:45 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS02.realtek.com.tw (172.21.6.95) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Fri, 13 Sep 2024 09:20:45 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f]) by
+ RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f%11]) with mapi id
+ 15.01.2507.035; Fri, 13 Sep 2024 09:20:45 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Colin Ian King <colin.i.king@gmail.com>, Kalle Valo <kvalo@kernel.org>,
+        Dmitry Antipov <dmantipov@yandex.ru>,
+        "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>
+CC: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH][next] wifi: rtlwifi: make read-only arrays static const
+Thread-Topic: [PATCH][next] wifi: rtlwifi: make read-only arrays static const
+Thread-Index: AQHbBRsuUlJ76Z1Mb0GnQxRPAMYupbJU6//g
+Date: Fri, 13 Sep 2024 01:20:45 +0000
+Message-ID: <05085e265b174d6482b108f6378921b9@realtek.com>
+References: <20240912135335.590464-1-colin.i.king@gmail.com>
+In-Reply-To: <20240912135335.590464-1-colin.i.king@gmail.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+x-kse-serverinfo: RTEXMBS02.realtek.com.tw, 9
+x-kse-antispam-interceptor-info: fallback
+x-kse-antivirus-interceptor-info: fallback
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
-Linus,
-
-A number of small SELinux patches for the v6.12 merge window:
-
-* Ensure that both IPv4 and IPv6 connections are properly initialized
-
-While we always properly initialized IPv4 connections early in their
-life, we missed the necessary IPv6 change when we were adding IPv6
-support.
-
-* Annotate the SELinux inode revalidation function to quiet KCSAN 
-
-KCSAN correctly identifyies a race in __inode_security_revalidate() when
-we check to see if an inode's SELinux has been properly initialized.
-While KCSAN is correct, it is an intentional choice made for performance
-reasons; if necessary, we check the state a second time, this time with a
-lock held, before initializing the inode's state.
-
-* Code cleanups, simplification, etc.
-
-A handful of individual patches to simplify some SELinux kernel logic,
-improve return code granularity via ERR_PTR(), follow the guidance on
-using KMEM_CACHE(), and correct some minor style problems.
-
--Paul
-
---
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
-
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-    tags/selinux-pr-20240911
-
-for you to fetch changes up to d19a9e25a722d629041ac8fd320a86c016e349d1:
-
-  selinux: fix style problems in security/selinux/include/audit.h
-    (2024-09-03 18:54:38 -0400)
-
-----------------------------------------------------------------
-selinux/stable-6.12 PR 20240911
-----------------------------------------------------------------
-
-Canfeng Guo (1):
-      selinux: Streamline type determination in security_compute_sid
-
-Eric Suen (1):
-      selinux: replace kmem_cache_create() with KMEM_CACHE()
-
-Gaosheng Cui (1):
-      selinux: refactor code to return ERR_PTR in
-         selinux_netlbl_sock_genattr
-
-Guido Trentalancia (1):
-      selinux: mark both IPv4 and IPv6 accepted connection sockets as
-         labeled
-
-Paul Moore (1):
-      selinux: fix style problems in security/selinux/include/audit.h
-
-Stephen Smalley (1):
-      selinux: annotate false positive data race to avoid KCSAN warnings
-
-Zhen Lei (1):
-      selinux: simplify avc_xperms_audit_required()
-
- security/selinux/avc.c           |   20 ++++---------
- security/selinux/hooks.c         |    7 ++++
- security/selinux/include/audit.h |   46 +++++++++++++++----------------
- security/selinux/netlabel.c      |   20 ++++++-------
- security/selinux/ss/avtab.c      |    7 +---
- security/selinux/ss/ebitmap.c    |    4 --
- security/selinux/ss/hashtab.c    |    4 --
- security/selinux/ss/services.c   |   36 ++++++++++++------------
- 8 files changed, 68 insertions(+), 76 deletions(-)
-
---
-paul-moore.com
+Q29saW4gSWFuIEtpbmcgPGNvbGluLmkua2luZ0BnbWFpbC5jb20+IHdyb3RlOg0KPiBEb24ndCBw
+b3B1bGF0ZSB0aGUgcmVhZC1vbmx5IGFycmF5cyBwYXJhbXMsIHRvc2hpYmFfc21pZDEsIHRvc2hp
+YmFfc21pZDIsDQo+IHNhbXN1bmdfc21pZCBhbmQgbGVub3ZvX3NtaWQgb24gdGhlIHN0YWNrIGF0
+IHJ1biB0aW1lLCBpbnN0ZWFkIG1ha2UgdGhlbQ0KPiBzdGF0aWMgY29uc3QuDQo+IA0KPiBTaWdu
+ZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4uaS5raW5nQGdtYWlsLmNvbT4NCg0KQWNr
+ZWQtYnk6IFBpbmctS2UgU2hpaCA8cGtzaGloQHJlYWx0ZWsuY29tPg0KDQoNCg==
 
