@@ -1,121 +1,148 @@
-Return-Path: <linux-kernel+bounces-328637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E92D9786B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:27:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E12DB9786C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24BB8B23387
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:27:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2648B1C21634
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC7684A21;
-	Fri, 13 Sep 2024 17:27:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C846083A17;
+	Fri, 13 Sep 2024 17:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Hfo6QdCJ"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F8eBjZa9"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8978877F2F;
-	Fri, 13 Sep 2024 17:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D1B77F2F
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 17:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726248420; cv=none; b=VL+3NfqwrYuU/cg/aJ3DmsQceNdjEKG47HULqddvokvSvrWJC+2NQUcK6ySdTCX3Qo1TiWpUmPg21+a3N3/IL2IwI0b8YeUhpaBrWMe9tITMOhZn97j/VTQv5sXneUr7qUX0EsI4adITMCWM7m/PNr4iV3vgFbN41yEmDQbrRP4=
+	t=1726248541; cv=none; b=iuEs7f05hWe5AWIndiv1ARehl/DBN/e7/c1KEvEnL7zQYddM1GdgZYXkOWFGMpgez5Ap+CTsZJb5E0TcZjiIB4ybkROHrRY/A/tz1yomSbec4cQm/mGP3fU2L2BV5+NnVO1FwEojjE3TwzDCK0jgBwgxR63/XWBIf5HEPKyVgfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726248420; c=relaxed/simple;
-	bh=NVHDT0pZ1zHz5uTG07jzhk7YNB3Ko4HEeOjB7XAzKsc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fLwv7rwdHi+/Zsrb3cGK1mo0owjC/MptFpdKQihv0JNjGEdikQaVaqMXp+/3WkNcO1UQaE/gadZqm2yqeg6zXCYxG/K42uMK3tnH3NbBh5ogq0+JV1oaVp0bA1xw4FctO4WEixnzLGpCqWyVNgLgSON3aXTZVhv90D2C/9veS3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Hfo6QdCJ; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=32UdeEDTGODPOGNxUz6i5sSk42ZhPb7Adwn/D1E2ONc=; b=Hfo6QdCJ9MxMuSWa/bGCLd/vhE
-	hMmQl8h6OyrZLJ2CqQapkX6NNQVg1xyHAGTRyy8ACqFSPvYZS6obUAzLBnd8qwOPKUVXbs41ySUSr
-	BPR449SLMCHqcu8I8wDTNeNWO5fxd11OFmDs1mmSUYk32iJwfMkClShPysvjpPC/pMpU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1spA4H-007PWh-HE; Fri, 13 Sep 2024 19:26:49 +0200
-Date: Fri, 13 Sep 2024 19:26:49 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Conor Dooley <conor@kernel.org>
-Cc: Vladimir Oltean <vladimir.oltean@nxp.com>, netdev@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/4] dt-bindings: net: dsa: the adjacent DSA
- port must appear first in "link" property
-Message-ID: <c2244d42-eda4-4bbc-9805-cc2c2ae38109@lunn.ch>
-References: <20240913131507.2760966-1-vladimir.oltean@nxp.com>
- <20240913131507.2760966-3-vladimir.oltean@nxp.com>
- <20240913-estimate-badland-5ab577e69bab@spud>
+	s=arc-20240116; t=1726248541; c=relaxed/simple;
+	bh=Dh2huT3jtyZY7aIpGjSTeQAfUC71P2va5TA5XWctJW4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SAF0ZI0gFxLdtTHdeti3drF9vPigGzZAWEXe4VPmRM1dIS5DKtqmMKV9CwfHwWjzIpcseq0RO2Z4uBAcdwUamwyOhztvdwv5I3TxFACG6rxZOJu3z812tC5bDfmsd3VEpP3hHP8ipy44GvtPGSz22jRw1WH9aK/QLz2I7ryqDYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F8eBjZa9; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-39f4fed788bso4788815ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 10:28:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726248538; x=1726853338; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IxOXBnMiL21PBJM6uKoe7HLZ86EpzfC5VehNtOteI+g=;
+        b=F8eBjZa91V7751+z4hEus1slKYr3gE1cf9QkczIGY7+GHSGLsxGcjbTo/sXRPEEqLX
+         nNLYFuQTNdBQbMx9txnuLiAlqmCFOO0rOBtr7rG8Zlruz+U4tgJ1QtY4FuFo7YbH3hF6
+         qJCV/xYJ5UOZ/TiGdrchE74yWQgNyPlaXiRugcb3qDg1QFIojhjkCEoUvdhPL+LxGXtx
+         tLFBa8yMfYRGCuAYdLBi/oRtDkyMcT8wNK2uHk682T6o37sQS0pou0OUogpkxbqnNCWa
+         qzQVO/w1S9K1BrgWUxGkiiMfXdQuUYxhSvLXNpzmtGq5czAYMlk7sS3zgNLjlRf/Al1m
+         PVLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726248538; x=1726853338;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IxOXBnMiL21PBJM6uKoe7HLZ86EpzfC5VehNtOteI+g=;
+        b=XIe6/3UVZAUC0lo8PxAwHVK0pEwWulm8hNXEPUFtksH3Q2mRx8r9PfOe5FX+FeNdZm
+         5QQcB1mBcHScwoGkDnts8bzVs0jzN5maGLCn+gxc5quanzTVJdbgXRoYYrflXTcdayxy
+         nmnF0UNqYYdA0N/OrnuzGWO3sg0q4HFLJiwLSAIq921JH1jVIMpOya7z2zbPPvwKU2Ua
+         d5WKFHT6Q2EFA2x3FwjT4g+RsFGCpCov27uNUNxRf09Ck9+uwnIvWiFnBHef2Ev7OWO4
+         UZBkujMFiTXGgYnahbBMIQ1bEiBmuEjynxnng+8RVCiBF9+H87RIwuB85qi3WZ8ReqrZ
+         x5hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNDO3RkXcKf0EgdgtNFSw872llWUQsltWrVGTgX17Wm8YJ67eWtwcYWlfC5wWizu9b9NbuWiTjbmGTsXs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzvh5r71CH1LG5w2h9qKe5YnHogFvJ4irw19lUiFjYl1Cwm8KzO
+	N34G+FxWg12EvEHloScE9XtiI5T/fWG0VqfVbbApISrYD8VMrjaJ1EYsg+99FV2UgvfcZdt9+ca
+	9Bvz6Hv1PPKhWWpRQpi5W+sT3JTI=
+X-Google-Smtp-Source: AGHT+IEKX2EIDXwhlSkFf4Al7/dq4lAUUmNHq96waCVvHxlWAdUIptNZ7AMZnQS7FMl3hYwUP2PcTwOAHigWf/TpBXo=
+X-Received: by 2002:a92:c548:0:b0:3a0:8dcb:b033 with SMTP id
+ e9e14a558f8ab-3a08dcbb224mr22846555ab.24.1726248538452; Fri, 13 Sep 2024
+ 10:28:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913-estimate-badland-5ab577e69bab@spud>
+References: <20240913165326.8856-1-robdclark@gmail.com> <fa243d3e-abe2-47d9-928f-70e24065baf1@mailbox.org>
+In-Reply-To: <fa243d3e-abe2-47d9-928f-70e24065baf1@mailbox.org>
+From: Rob Clark <robdclark@gmail.com>
+Date: Fri, 13 Sep 2024 10:28:46 -0700
+Message-ID: <CAF6AEGtFJu5DEuA+Urv7zdrsO-zV-y0o0wQnTdGojTNjwwRqNQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/sched: Fix dynamic job-flow control race
+To: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>
+Cc: dri-devel@lists.freedesktop.org, Rob Clark <robdclark@chromium.org>, 
+	Asahi Lina <lina@asahilina.net>, Luben Tuikov <ltuikov89@gmail.com>, 
+	Matthew Brost <matthew.brost@intel.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Danilo Krummrich <dakr@redhat.com>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 13, 2024 at 06:04:17PM +0100, Conor Dooley wrote:
-> On Fri, Sep 13, 2024 at 04:15:05PM +0300, Vladimir Oltean wrote:
-> > If we don't add something along these lines, it is absolutely impossible
-> > to know, for trees with 3 or more switches, which links represent direct
-> > connections and which don't.
-> > 
-> > I've studied existing mainline device trees, and it seems that the rule
-> > has been respected thus far. I've actually tested such a 3-switch setup
-> > with the Turris MOX.
-> 
-> What about out of tree (so in u-boot or the likes)? Are there other
-> users that we need to care about?
-> 
-> This doesn't really seem like an ABI change, if this is the established
-> convention, but feels like a fixes tag and backports to stable etc are
-> in order to me.
+On Fri, Sep 13, 2024 at 10:03=E2=80=AFAM Michel D=C3=A4nzer
+<michel.daenzer@mailbox.org> wrote:
+>
+> On 2024-09-13 18:53, Rob Clark wrote:
+> > From: Rob Clark <robdclark@chromium.org>
+> >
+> > Fixes a race condition reported here: https://github.com/AsahiLinux/lin=
+ux/issues/309#issuecomment-2238968609
+> >
+> > The whole premise of lockless access to a single-producer-single-
+> > consumer queue is that there is just a single producer and single
+> > consumer.  That means we can't call drm_sched_can_queue() (which is
+> > about queueing more work to the hw, not to the spsc queue) from
+> > anywhere other than the consumer (wq).
+> >
+> > This call in the producer is just an optimization to avoid scheduling
+> > the consuming worker if it cannot yet queue more work to the hw.  It
+> > is safe to drop this optimization to avoid the race condition.
+> >
+> > Suggested-by: Asahi Lina <lina@asahilina.net>
+> > Fixes: a78422e9dff3 ("drm/sched: implement dynamic job-flow control")
+> > Signed-off-by: Rob Clark <robdclark@chromium.org>
+> > ---
+> >  drivers/gpu/drm/scheduler/sched_main.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/s=
+cheduler/sched_main.c
+> > index ab53ab486fe6..1af1dbe757d5 100644
+> > --- a/drivers/gpu/drm/scheduler/sched_main.c
+> > +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> > @@ -1020,8 +1020,7 @@ EXPORT_SYMBOL(drm_sched_job_cleanup);
+> >  void drm_sched_wakeup(struct drm_gpu_scheduler *sched,
+> >                     struct drm_sched_entity *entity)
+> >  {
+> > -     if (drm_sched_can_queue(sched, entity))
+> > -             drm_sched_run_job_queue(sched);
+> > +     drm_sched_run_job_queue(sched);
+> >  }
+> >
+> >  /**
+>
+> The entity parameter is unused now.
 
-Looking at the next patch, it does not appear to change the behaviour
-of existing drivers, it just adds additional information a driver may
-choose to use.
+Right.. and we probably should collapse drm_sched_wakeup() and
+drm_sched_run_job_queue()..
 
-As Vladimir says, all existing instances already appear to be in this
-order, but that is just happen stance, because it does not matter. So
-i would be reluctant to say there is an established convention.
+But this fix needs to be cherry picked back to a bunch of release
+branches, so I intentionally avoided refactoring as part of the fix.
 
-The mv88e6xxx driver does not care about the order of the list, and
-this patch series does not appear to change that. So i'm O.K. with the
-code changes.
+BR,
+-R
 
-> > -      Should be a list of phandles to other switch's DSA port. This
-> > -      port is used as the outgoing port towards the phandle ports. The
-> > -      full routing information must be given, not just the one hop
-> > -      routes to neighbouring switches
-> > +      Should be a list of phandles to other switch's DSA port. This port is
-> > +      used as the outgoing port towards the phandle ports. In case of trees
-> > +      with more than 2 switches, the full routing information must be given.
-> > +      The first element of the list must be the directly connected DSA port
-> > +      of the adjacent switch.
-
-I would prefer to weaken this, just to avoid future backwards
-compatibility issues. `must` is too strong, because mv88e6xxx does not
-care, and there could be DT blobs out there which do not conform to
-this. Maybe 'For the SJA1105, the first element ...".
-
-What i don't want is some future developer reading this, assume it is
-actually true when it maybe is not, and making use of it in the
-mv88e6xxx or the core, breaking backwards compatibility.
-
-	Andrew
+>
+>
+> --
+> Earthling Michel D=C3=A4nzer       \        GNOME / Xwayland / Mesa devel=
+oper
+> https://redhat.com             \               Libre software enthusiast
 
