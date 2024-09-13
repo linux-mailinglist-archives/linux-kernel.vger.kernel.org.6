@@ -1,260 +1,217 @@
-Return-Path: <linux-kernel+bounces-328842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B62C29789BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:16:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 164C7978952
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:07:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1D8E1C2180C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:16:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 671BE28318A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:07:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C10E1581E5;
-	Fri, 13 Sep 2024 20:14:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2991482E5;
+	Fri, 13 Sep 2024 20:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="nMkqisAw"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DDaE9vK4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3086154BEA;
-	Fri, 13 Sep 2024 20:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74853BA2E;
+	Fri, 13 Sep 2024 20:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726258451; cv=none; b=XjoOwlRcWZ0a2tovgPJPFabuKPRrtbnzAVVb5ZeAYBDSc94yrqB9vKE51Wcok8+lA27vYGt5f4dg5ObFwzy+Xkz6/B1fXnnGoDjXXa2pjKJlIm2k+k1CAUAFaZI/zenvg66R+WfJdWdahOstcvf65q4Jl4Bvbis5y/xBLRP7avc=
+	t=1726258047; cv=none; b=tRMU+xnIARfVjDvGaQmvkqLPxsioBoNlv0vaWjk9YZQt1TjRzz8JR5+JiEpIifUrtjH6rb4KyYM52gKh/TrGBwwZyIew5d4Ly4KJA9L/6QldvV5zsW/TuqSjtQVo+s/OFU9JP1LLfaiEe984Gip7TQ8E44rnx1+BNot4Q2Ceq9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726258451; c=relaxed/simple;
-	bh=sOk43r6vmFxmdtIXNcG4EaKtbQdXQhOxZVsz4aP4vhw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JLPMRquTfGsLKi1MFlSsbiEVdEwUUgmE4EvuGwbXuQTS4wX4KUrY20hlyCZwhd/m8TpJHwPLAb8hmHm1m7Lbcei0RrPPEIYhx+RSrpJmV/wBWd4S9a968fiA5CgLRt95H+KsqTi7z/oVXUuJncQVHe4zg9BGwGhPqx8xwsNIz9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=nMkqisAw; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48DJ0oB9030201;
-	Fri, 13 Sep 2024 20:13:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=corp-2023-11-20; bh=Y
-	Nv2wwZ99egsX3bHuUPzbFYitff09OWNP/lW0iaYo1Q=; b=nMkqisAw4rBgWVKtx
-	ALxzYUEvvjwLojF6KN0oOhpBt/M0SUOWZLUk7ZwZGHSFIV584Y1TMIIAFl3O0i2c
-	mbTcBVHrLYz/mPIilqoyvaBA4oBkQOdMJ0XDsPwNYfMLsgRqujle/LN2LVe7ISjG
-	7UaeFsVTvOgJ4lqni9ygKmEuSUAAmKfrELrPC38uxzJjDgrFk4lKZcRO4x+MMl1z
-	qe/omF1a/ztXURay0TIjPhjohaEQrZoQowIYroONUOWbPNbV7v4n580NsPVsscaj
-	VP6qm3Z8mZOkIYgGwmJhNLYpslGQDOjuGMqV3u8iWGYT3zGEW4YxqAn5GHY83q55
-	WcYZQ==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41gjbux97g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Sep 2024 20:13:22 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48DKCr13040758;
-	Fri, 13 Sep 2024 20:13:21 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41gd9etg7s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 13 Sep 2024 20:13:21 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48DKDKtL029564;
-	Fri, 13 Sep 2024 20:13:20 GMT
-Received: from localhost.us.oracle.com (bur-virt-x6-2-100.us.oracle.com [10.153.92.40])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41gd9etg5a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 13 Sep 2024 20:13:20 +0000
-From: Ross Philipson <ross.philipson@oracle.com>
-To: linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
-        linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: ross.philipson@oracle.com, dpsmith@apertussolutions.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        dave.hansen@linux.intel.com, ardb@kernel.org, mjg59@srcf.ucam.org,
-        James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
-        jarkko@kernel.org, jgg@ziepe.ca, luto@amacapital.net,
-        nivedita@alum.mit.edu, herbert@gondor.apana.org.au,
-        davem@davemloft.net, corbet@lwn.net, ebiederm@xmission.com,
-        dwmw2@infradead.org, baolu.lu@linux.intel.com,
-        kanth.ghatraju@oracle.com, andrew.cooper3@citrix.com,
-        trenchboot-devel@googlegroups.com
-Subject: [PATCH v11 20/20] x86/efi: EFI stub DRTM launch support for Secure Launch
-Date: Fri, 13 Sep 2024 13:05:17 -0700
-Message-Id: <20240913200517.3085794-21-ross.philipson@oracle.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20240913200517.3085794-1-ross.philipson@oracle.com>
-References: <20240913200517.3085794-1-ross.philipson@oracle.com>
+	s=arc-20240116; t=1726258047; c=relaxed/simple;
+	bh=OwucU7JylqM1ydEUxbib2Jfrw6rQelxxFrVsFvAgrAE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BsjBqTprdOmTDL5QWmqmCFkIi0CSV8PPOqUCvONTCLnbk4ArNizIBoiMee+h2f6hBd9TCZF5tn2hI3N+7Mj1zQUBDMUF8tKdujCBJhOVt8Oz4vuw/TBDejtJqKJSUraK/ja7PtZVGmdUjUK3V5qoTH20gjqlGO1RibSZNezq304=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DDaE9vK4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06D16C4CEC6;
+	Fri, 13 Sep 2024 20:07:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726258047;
+	bh=OwucU7JylqM1ydEUxbib2Jfrw6rQelxxFrVsFvAgrAE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DDaE9vK4/fYXrY5jQuv5XvJIYTgAHm/+XAvt8nuqNsR7FVsbuu9wIJnGkMmzgPmwZ
+	 jvLyFv9r7CilTbYqOTaC6p0S7yG282C4bEBGKl+WVukEqTWDYaX8sMKaqhwWI97Ys9
+	 WNMu/c90FGEMD/aVR3gs0AqS2I3DITpviDpFdnRd/VQv3+WbYfi+DKCsqo5pWM5/w5
+	 L4ktgFo7een+hTdF09KPBNZZPPrwUP3ypu8GKIoXy7MHYFMK2bkJ+6uxvu2iR3ELx3
+	 Mti+sy7tdB65yuSS7fbecEA66+QTSV0nX83UTa+x1t2ARjIS3C4rYMO0yJ180UBe0C
+	 hDwqoDw+Uj2Eg==
+Received: by pali.im (Postfix)
+	id 0B00C725; Fri, 13 Sep 2024 22:07:22 +0200 (CEST)
+Date: Fri, 13 Sep 2024 22:07:21 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>
+Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] cifs: Fix creating of SFU fifo and socket special
+ files
+Message-ID: <20240913200721.7egunkwp76qo5yy7@pali>
+References: <20240912120548.15877-1-pali@kernel.org>
+ <20240912120548.15877-7-pali@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-13_11,2024-09-13_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
- mlxlogscore=999 mlxscore=0 malwarescore=0 phishscore=0 adultscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2408220000 definitions=main-2409130143
-X-Proofpoint-GUID: FHwIIj5XO5_PqZa7Fmt9wI4g6gsR6zGP
-X-Proofpoint-ORIG-GUID: FHwIIj5XO5_PqZa7Fmt9wI4g6gsR6zGP
+In-Reply-To: <20240912120548.15877-7-pali@kernel.org>
+User-Agent: NeoMutt/20180716
 
-This support allows the DRTM launch to be initiated after an EFI stub
-launch of the Linux kernel is done. This is accomplished by providing
-a handler to jump to when a Secure Launch is in progress. This has to be
-called after the EFI stub does Exit Boot Services.
+On Thursday 12 September 2024 14:05:47 Pali Rohár wrote:
+> SFU-style fifo is empty file with system attribute set. This format is used
+> by old Microsoft POSIX subsystem and later also by OpenNT/Interix subsystem
+> (which replaced Microsoft POSIX subsystem and is part of Microsoft SFU).
+> 
+> SFU-style socket is file which has system attribute set and file content is
+> one zero byte. This format was introduced in Interix 3.0 subsystem, as part
+> of the Microsoft SFU 3.0 and is used also by all later versions. Previous
+> versions had no UNIX domain socket support.
+> 
+> Currently when sfu mount option is specified then CIFS creates fifo and
+> socket special files with some strange LnxSOCK or LnxFIFO content which is
+> not compatible with Microsoft SFU and neither recognized by other SMB
+> implementations which have some SFU support, including older Linux cifs
+> implementations.
+> 
+> So when sfu mount option is specified, create all fifo and socket special
+> files compatible with SFU format to achieve SFU interop, as it is expected
+> by sfu mount option.
+> 
+> Signed-off-by: Pali Rohár <pali@kernel.org>
 
-Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
----
- drivers/firmware/efi/libstub/efistub.h  |  8 ++
- drivers/firmware/efi/libstub/x86-stub.c | 99 +++++++++++++++++++++++++
- 2 files changed, 107 insertions(+)
+Fixes: 72bc63f5e23a ("smb3: fix creating FIFOs when mounting with "sfu" mount option")
+Fixes: 518549c120e6 ("cifs: fix creating sockets when using sfu mount options")
 
-diff --git a/drivers/firmware/efi/libstub/efistub.h b/drivers/firmware/efi/libstub/efistub.h
-index d33ccbc4a2c6..baf42d6d0796 100644
---- a/drivers/firmware/efi/libstub/efistub.h
-+++ b/drivers/firmware/efi/libstub/efistub.h
-@@ -135,6 +135,14 @@ void efi_set_u64_split(u64 data, u32 *lo, u32 *hi)
- 	*hi = upper_32_bits(data);
- }
- 
-+static inline
-+void efi_set_u64_form(u32 lo, u32 hi, u64 *data)
-+{
-+	u64 upper = hi;
-+
-+	*data = lo | upper << 32;
-+}
-+
- /*
-  * Allocation types for calls to boottime->allocate_pages.
-  */
-diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi/libstub/x86-stub.c
-index f8e465da344d..2e063bce1080 100644
---- a/drivers/firmware/efi/libstub/x86-stub.c
-+++ b/drivers/firmware/efi/libstub/x86-stub.c
-@@ -9,6 +9,8 @@
- #include <linux/efi.h>
- #include <linux/pci.h>
- #include <linux/stddef.h>
-+#include <linux/slr_table.h>
-+#include <linux/slaunch.h>
- 
- #include <asm/efi.h>
- #include <asm/e820/types.h>
-@@ -923,6 +925,98 @@ static efi_status_t efi_decompress_kernel(unsigned long *kernel_entry)
- 	return efi_adjust_memory_range_protection(addr, kernel_text_size);
- }
- 
-+#if (IS_ENABLED(CONFIG_SECURE_LAUNCH))
-+static bool efi_secure_launch_update_boot_params(struct slr_table *slrt,
-+						 struct boot_params *boot_params)
-+{
-+	struct slr_entry_intel_info *txt_info;
-+	struct slr_entry_policy *policy;
-+	struct txt_os_mle_data *os_mle;
-+	bool updated = false;
-+	int i;
-+
-+	txt_info = slr_next_entry_by_tag(slrt, NULL, SLR_ENTRY_INTEL_INFO);
-+	if (!txt_info)
-+		return false;
-+
-+	os_mle = txt_os_mle_data_start((void *)txt_info->txt_heap);
-+	if (!os_mle)
-+		return false;
-+
-+	os_mle->boot_params_addr = (u64)boot_params;
-+
-+	policy = slr_next_entry_by_tag(slrt, NULL, SLR_ENTRY_ENTRY_POLICY);
-+	if (!policy)
-+		return false;
-+
-+	for (i = 0; i < policy->nr_entries; i++) {
-+		if (policy->policy_entries[i].entity_type == SLR_ET_BOOT_PARAMS) {
-+			policy->policy_entries[i].entity = (u64)boot_params;
-+			updated = true;
-+			break;
-+		}
-+	}
-+
-+	/*
-+	 * If this is a PE entry into EFI stub the mocked up boot params will
-+	 * be missing some of the setup header data needed for the second stage
-+	 * of the Secure Launch boot.
-+	 */
-+	if (image) {
-+		struct setup_header *hdr = (struct setup_header *)((u8 *)image->image_base +
-+					    offsetof(struct boot_params, hdr));
-+		u64 cmdline_ptr;
-+
-+		boot_params->hdr.setup_sects = hdr->setup_sects;
-+		boot_params->hdr.syssize = hdr->syssize;
-+		boot_params->hdr.version = hdr->version;
-+		boot_params->hdr.loadflags = hdr->loadflags;
-+		boot_params->hdr.kernel_alignment = hdr->kernel_alignment;
-+		boot_params->hdr.min_alignment = hdr->min_alignment;
-+		boot_params->hdr.xloadflags = hdr->xloadflags;
-+		boot_params->hdr.init_size = hdr->init_size;
-+		boot_params->hdr.kernel_info_offset = hdr->kernel_info_offset;
-+		efi_set_u64_form(boot_params->hdr.cmd_line_ptr, boot_params->ext_cmd_line_ptr,
-+				 &cmdline_ptr);
-+		boot_params->hdr.cmdline_size = strlen((const char *)cmdline_ptr);
-+	}
-+
-+	return updated;
-+}
-+
-+static void efi_secure_launch(struct boot_params *boot_params)
-+{
-+	struct slr_entry_dl_info *dlinfo;
-+	efi_guid_t guid = SLR_TABLE_GUID;
-+	dl_handler_func handler_callback;
-+	struct slr_table *slrt;
-+
-+	/*
-+	 * The presence of this table indicated a Secure Launch
-+	 * is being requested.
-+	 */
-+	slrt = (struct slr_table *)get_efi_config_table(guid);
-+	if (!slrt || slrt->magic != SLR_TABLE_MAGIC)
-+		return;
-+
-+	/*
-+	 * Since the EFI stub library creates its own boot_params on entry, the
-+	 * SLRT and TXT heap have to be updated with this version.
-+	 */
-+	if (!efi_secure_launch_update_boot_params(slrt, boot_params))
-+		return;
-+
-+	/* Jump through DL stub to initiate Secure Launch */
-+	dlinfo = slr_next_entry_by_tag(slrt, NULL, SLR_ENTRY_DL_INFO);
-+
-+	handler_callback = (dl_handler_func)dlinfo->dl_handler;
-+
-+	handler_callback(&dlinfo->bl_context);
-+
-+	unreachable();
-+}
-+#endif
-+
- static void __noreturn enter_kernel(unsigned long kernel_addr,
- 				    struct boot_params *boot_params)
- {
-@@ -1050,6 +1144,11 @@ void __noreturn efi_stub_entry(efi_handle_t handle,
- 		goto fail;
- 	}
- 
-+#if (IS_ENABLED(CONFIG_SECURE_LAUNCH))
-+	/* If a Secure Launch is in progress, this never returns */
-+	efi_secure_launch(boot_params);
-+#endif
-+
- 	/*
- 	 * Call the SEV init code while still running with the firmware's
- 	 * GDT/IDT, so #VC exceptions will be handled by EFI.
--- 
-2.39.3
+I located commits which introduced those strange LnxSOCK or LnxFIFO
+types which are not compatible with SFU. I would suggest to add those
+two Fixes: tags into commit message for reference.
 
+> ---
+>  fs/smb/client/cifssmb.c |  8 ++++----
+>  fs/smb/client/smb1ops.c |  2 +-
+>  fs/smb/client/smb2ops.c | 29 +++++++++++++++++++----------
+>  3 files changed, 24 insertions(+), 15 deletions(-)
+> 
+> diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
+> index cfae2e918209..0ffc45aa5e2c 100644
+> --- a/fs/smb/client/cifssmb.c
+> +++ b/fs/smb/client/cifssmb.c
+> @@ -1076,8 +1076,8 @@ SMBLegacyOpen(const unsigned int xid, struct cifs_tcon *tcon,
+>  	pSMB->OpenFlags |= cpu_to_le16(REQ_MORE_INFO);
+>  	pSMB->Mode = cpu_to_le16(access_flags_to_smbopen_mode(access_flags));
+>  	pSMB->Mode |= cpu_to_le16(0x40); /* deny none */
+> -	/* set file as system file if special file such
+> -	   as fifo and server expecting SFU style and
+> +	/* set file as system file if special file such as fifo,
+> +	 * socket, char or block and server expecting SFU style and
+>  	   no Unix extensions */
+>  
+>  	if (create_options & CREATE_OPTION_SPECIAL)
+> @@ -1193,8 +1193,8 @@ CIFS_open(const unsigned int xid, struct cifs_open_parms *oparms, int *oplock,
+>  	req->AllocationSize = 0;
+>  
+>  	/*
+> -	 * Set file as system file if special file such as fifo and server
+> -	 * expecting SFU style and no Unix extensions.
+> +	 * Set file as system file if special file such as fifo, socket, char
+> +	 * or block and server expecting SFU style and no Unix extensions.
+>  	 */
+>  	if (create_options & CREATE_OPTION_SPECIAL)
+>  		req->FileAttributes = cpu_to_le32(ATTR_SYSTEM);
+> diff --git a/fs/smb/client/smb1ops.c b/fs/smb/client/smb1ops.c
+> index e1f2feb56f45..e03c91a49650 100644
+> --- a/fs/smb/client/smb1ops.c
+> +++ b/fs/smb/client/smb1ops.c
+> @@ -1078,7 +1078,7 @@ cifs_make_node(unsigned int xid, struct inode *inode,
+>  	/*
+>  	 * Check if mounted with mount parm 'sfu' mount parm.
+>  	 * SFU emulation should work with all servers, but only
+> -	 * supports block and char device (no socket & fifo),
+> +	 * supports block and char device, socket & fifo,
+>  	 * and was used by default in earlier versions of Windows
+>  	 */
+>  	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_UNX_EMUL))
+> diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
+> index 9c2d065d3cc4..9e90672caf60 100644
+> --- a/fs/smb/client/smb2ops.c
+> +++ b/fs/smb/client/smb2ops.c
+> @@ -5066,26 +5066,32 @@ static int __cifs_sfu_make_node(unsigned int xid, struct inode *inode,
+>  	struct cifs_fid fid;
+>  	unsigned int bytes_written;
+>  	struct win_dev pdev = {};
+> +	size_t pdev_len = 0;
+>  	struct kvec iov[2];
+>  	__u32 oplock = server->oplocks ? REQ_OPLOCK : 0;
+>  	int rc;
+>  
+>  	switch (mode & S_IFMT) {
+>  	case S_IFCHR:
+> +		pdev_len = sizeof(pdev);
+>  		memcpy(pdev.type, "IntxCHR\0", 8);
+>  		pdev.major = cpu_to_le64(MAJOR(dev));
+>  		pdev.minor = cpu_to_le64(MINOR(dev));
+>  		break;
+>  	case S_IFBLK:
+> +		pdev_len = sizeof(pdev);
+>  		memcpy(pdev.type, "IntxBLK\0", 8);
+>  		pdev.major = cpu_to_le64(MAJOR(dev));
+>  		pdev.minor = cpu_to_le64(MINOR(dev));
+>  		break;
+>  	case S_IFSOCK:
+> -		strscpy(pdev.type, "LnxSOCK");
+> +		/* SFU socket is system file with one zero byte */
+> +		pdev_len = 1;
+> +		pdev.type[0] = '\0';
+>  		break;
+>  	case S_IFIFO:
+> -		strscpy(pdev.type, "LnxFIFO");
+> +		/* SFU fifo is system file which is empty */
+> +		pdev_len = 0;
+>  		break;
+>  	default:
+>  		return -EPERM;
+> @@ -5100,14 +5106,17 @@ static int __cifs_sfu_make_node(unsigned int xid, struct inode *inode,
+>  	if (rc)
+>  		return rc;
+>  
+> -	io_parms.pid = current->tgid;
+> -	io_parms.tcon = tcon;
+> -	io_parms.length = sizeof(pdev);
+> -	iov[1].iov_base = &pdev;
+> -	iov[1].iov_len = sizeof(pdev);
+> +	if (pdev_len > 0) {
+> +		io_parms.pid = current->tgid;
+> +		io_parms.tcon = tcon;
+> +		io_parms.length = pdev_len;
+> +		iov[1].iov_base = &pdev;
+> +		iov[1].iov_len = pdev_len;
+> +
+> +		rc = server->ops->sync_write(xid, &fid, &io_parms,
+> +					     &bytes_written, iov, 1);
+> +	}
+>  
+> -	rc = server->ops->sync_write(xid, &fid, &io_parms,
+> -				     &bytes_written, iov, 1);
+>  	server->ops->close(xid, tcon, &fid);
+>  	return rc;
+>  }
+> @@ -5149,7 +5158,7 @@ static int smb2_make_node(unsigned int xid, struct inode *inode,
+>  	/*
+>  	 * Check if mounted with mount parm 'sfu' mount parm.
+>  	 * SFU emulation should work with all servers, but only
+> -	 * supports block and char device (no socket & fifo),
+> +	 * supports block and char device, socket & fifo,
+>  	 * and was used by default in earlier versions of Windows
+>  	 */
+>  	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_UNX_EMUL) {
+> -- 
+> 2.20.1
+> 
 
