@@ -1,145 +1,184 @@
-Return-Path: <linux-kernel+bounces-328133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49252977F45
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:09:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B6FF977F49
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:10:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 153672836AA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:09:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FB7E1F21587
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08111DA0E1;
-	Fri, 13 Sep 2024 12:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18EAF1D9324;
+	Fri, 13 Sep 2024 12:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qt43WVVC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DA79J4ew"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C721D9354;
-	Fri, 13 Sep 2024 12:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C631D88DD
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726229365; cv=none; b=P/g0RlB9vIKxzZcCsACPhTqU+ZkkdKfc61SNCE1WUUtPVX32G0RLrdcbybe1+Wldx7cFkym48yQ2iPjp1g79yUJuSOFD+0Sv/Fela9yWYfuCGJhi5bFe1uhcQraevwJxBY7sGsQPVaIDEDZNst/smjslMptxmS78hKztFKScCA0=
+	t=1726229404; cv=none; b=ppdQlBB7Mojr8OEyPibyEcxRII3QZ5cI3bHNlxLDUAjQV0cM4SC5p3EIWjrfdQGAz/jb4aQNB2+IqAZ8AA/XGUpvD85C7BzbYbfQGs2VHGjCpIwnntDVOySwSToOZgUcOVaAQV32o+dh+/Y5yrO1FVdRoFNpKQeXpTFDUslsz/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726229365; c=relaxed/simple;
-	bh=UOptbxQ899uu2tULQrr+slKxaEOCsSD5y1TsMVN0amk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kkZv7/x1r2XRyExIr0we1ryuRWjUc58IF/D4ULN4mdc6A331jq3e5awluTxpwhCIGxUOoB0P74kd9sT6QFaPQO3hZ7ZGSA5IKx4Vyt9A7FN7775j4H69qAc7491kfLb6lRm4Syr+CjPWrFdtqba8jBHHK9dGf7Y7ocVpGAR2SeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qt43WVVC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B6AEC4CEC0;
-	Fri, 13 Sep 2024 12:09:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726229364;
-	bh=UOptbxQ899uu2tULQrr+slKxaEOCsSD5y1TsMVN0amk=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=qt43WVVCBaWI/VzTf+dDIC5hKoyLG/7taAcJvXb1q13rcMkBOXuqUYg6dxow+0XhY
-	 S5LNY6g7xVX/7WMJqe+9cvRH4urgsWA4HMi10xgN1R9Lj/GiWc7xF/FFhaWgzRYjJz
-	 8LmBQpA4OOzmd1NdxFjZIM9ePDwUWdXTQxYoYcUlidR+ui8UH+urIeY2fi2xh59wuL
-	 NSHtIOmT0RFVWD9NRFOULDjvENxy9s7Kod0j/9d2LMDa2bxT0rzOZOi7+TnLIZlJ++
-	 cfY0W+QnSY19LZ5c6SvRLslJtnJ907uGx1tw/6BNHvyMk8V+BCZTvXhJonCiRoOtZE
-	 zwL9dwuLzWBmQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 7D8FFCE1257; Fri, 13 Sep 2024 05:09:22 -0700 (PDT)
-Date: Fri, 13 Sep 2024 05:09:22 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	kan.liang@linux.intel.com, mingo@redhat.com, acme@kernel.org,
-	namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com
-Subject: Re: [BUG BISECTED] Missing RCU reader in perf_event_setup_cpumask()
-Message-ID: <e0260345-5069-43c8-bf90-96f6c0c22a33@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <2b66dff8-b827-494b-b151-1ad8d56f13e6@paulmck-laptop>
- <20240913104752.GU4723@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1726229404; c=relaxed/simple;
+	bh=RVBFsKRHivW7wS0uIf4XmR++ZKHGlfVvI9BxxXs1Bkw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KYGXSPCDrdp/FskJ4BviXR9W8OJfpzhNBJhRHovPh1ELCRdHOXxA9xTpZ1O4UihWGUu5xSlTqUVWTkwvF4wmPW/vI9SsTdoC9La96L/HydCiazE7HMahV/9xX3O2ZVQphKjPXDgU2XrC2tJlmh0mHxh1eOOV5dRKmh/GCRF6bGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DA79J4ew; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7cd8803fe0aso1536805a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 05:10:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726229402; x=1726834202; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=RVBFsKRHivW7wS0uIf4XmR++ZKHGlfVvI9BxxXs1Bkw=;
+        b=DA79J4ewoyNXuj0y09nb6SHeW2KLGXJ11QZlgstLdDOLdcTa0qhxvNGSLBpwwliDfN
+         68pTf4et1aSoqusv2Z4Z9966iCZSVAF6ZABjZv+WTQ2rrxEHennFc/3VuzX2I1JAubq7
+         z7PXWo3L1i/cWIyapHLpi4QOqfJ13tNFe64luR7MOFWHzaL359Z/4rePz2XvSMcmRrNv
+         5W8AhYpHEsikMDL0fBNWXK216UYvxw0gLKvjdDf1nUzrAvskvOMJGBotljMeErVB40BO
+         gOKVjzpOMAQGtUzdFOZeKcA2/FFm09eES5A/3wF3HkybzVqrNxyWflocgeu0NNM7kbiB
+         AW5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726229402; x=1726834202;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RVBFsKRHivW7wS0uIf4XmR++ZKHGlfVvI9BxxXs1Bkw=;
+        b=d2Qhyuz/O1WIHte32dZ364niGHWY1htWTfy2CabKUts7rdzCudIspfmj31a35uxVFC
+         MVXAj141g1Jb+iSzSm5gJpGMuSQgPWizBqX4Q2wqWU6JZYU1NpXbPfnBw07S9kw6JG8b
+         FdO+vEibhBAs8YSJKfI6crv/m3wHx2cRh9AsdxfgY14RYzaahI2VZFYkpwvO0G+YJch4
+         TqEhmUoPHM4/JAd4NkYMivrUIM5yRyS6cfojNqmCeXYyyNdJ4y/vv81KeqpXDxDZRdUx
+         Tjdl31HaY4vp1l/eaLDPtFhqGGwSw8+Bf8CksTfTDD8rK9CNnCoLrEkob2qtAxpO5UZ2
+         hQvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSxp3fzwUMrjX8uA2w7psEJ5o3GQT+gPLHAJmoJohhtSByEgp7Q0azHq2XznU1zmGy/5tKyY8z6aDmaVs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyb3d2JmF3clpfZ0JlN5iuEKmc3TOGnj+yV1yntVXDwB/vUaiLn
+	jIltcSE4+zvWXenv/l2iDEpw32H6XiJ01U61e7pprx/5RQ+uEGfh4E86xy7NZkhT7fxoeWbbtAD
+	0wNRSO+MZKJrmvODnL7y8YR7ETeIIBDpBo/Kc
+X-Google-Smtp-Source: AGHT+IEC73WGRbYNDi25kqGj4Gj8f6UkyfsTXwUWZe7ltTL9Tzoe7ToEYY/JQx/u7bcJ4ek+vcoFa9/so8xyi0qdIq4=
+X-Received: by 2002:a17:90a:8814:b0:2d8:94d6:3499 with SMTP id
+ 98e67ed59e1d1-2dba0068106mr6358748a91.37.1726229401632; Fri, 13 Sep 2024
+ 05:10:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913104752.GU4723@noisy.programming.kicks-ass.net>
+References: <20240909211506.326648-1-mathieu.desnoyers@efficios.com>
+ <20240909211506.326648-2-mathieu.desnoyers@efficios.com> <CANpmjNMjndyBAO3HKHkC+v7zNZv1XHvH5Fjd9S5q0Jj-sEkx-w@mail.gmail.com>
+ <0edc398e-d193-4c2d-907e-f5db93143f79@efficios.com>
+In-Reply-To: <0edc398e-d193-4c2d-907e-f5db93143f79@efficios.com>
+From: Marco Elver <elver@google.com>
+Date: Fri, 13 Sep 2024 14:09:25 +0200
+Message-ID: <CANpmjNOPJm7nfzuF2VXLmixBZ0ygQ84AkxG8jH0E79XzWPu8xQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] sched: Improve cache locality of RSEQ concurrency
+ IDs for intermittent workloads
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, 
+	Valentin Schneider <vschneid@redhat.com>, Mel Gorman <mgorman@suse.de>, 
+	Steven Rostedt <rostedt@goodmis.org>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, 
+	Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Dmitry Vyukov <dvyukov@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 13, 2024 at 12:47:52PM +0200, Peter Zijlstra wrote:
-> On Fri, Sep 13, 2024 at 01:00:44AM -0700, Paul E. McKenney wrote:
-> > Hello!
-> > 
-> > On next-20240912 running rcutorture scenario TREE05, I see this
-> > deterministically:
-> > 
-> > [   32.603233] =============================
-> > [   32.604594] WARNING: suspicious RCU usage
-> > [   32.605928] 6.11.0-rc5-00040-g4ba4f1afb6a9 #55238 Not tainted
-> > [   32.607812] -----------------------------
-> > [   32.609140] kernel/events/core.c:13946 RCU-list traversed in non-reader section!!
-> > [   32.611595]
-> > [   32.611595] other info that might help us debug this:
-> > [   32.611595]
-> > [   32.614247]
-> > [   32.614247] rcu_scheduler_active = 2, debug_locks = 1
-> > [   32.616392] 3 locks held by cpuhp/4/35:
-> > [   32.617687]  #0: ffffffffb666a650 (cpu_hotplug_lock){++++}-{0:0}, at: cpuhp_thread_fun+0x4e/0x200
-> > [   32.620563]  #1: ffffffffb666cd20 (cpuhp_state-down){+.+.}-{0:0}, at: cpuhp_thread_fun+0x4e/0x200
-> > [   32.623412]  #2: ffffffffb677c288 (pmus_lock){+.+.}-{3:3}, at: perf_event_exit_cpu_context+0x32/0x2f0
-> > [   32.626399]
-> > [   32.626399] stack backtrace:
-> > [   32.627848] CPU: 4 UID: 0 PID: 35 Comm: cpuhp/4 Not tainted 6.11.0-rc5-00040-g4ba4f1afb6a9 #55238
-> > [   32.628832] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
-> > [   32.628832] Call Trace:
-> > [   32.628832]  <TASK>
-> > [   32.628832]  dump_stack_lvl+0x83/0xa0
-> > [   32.628832]  lockdep_rcu_suspicious+0x143/0x1a0
-> > [   32.628832]  perf_event_exit_cpu_context+0x2e5/0x2f0
-> > [   32.628832]  ? __pfx_perf_event_exit_cpu+0x10/0x10
-> > [   32.628832]  perf_event_exit_cpu+0x9/0x10
-> > [   32.628832]  cpuhp_invoke_callback+0x130/0x2a0
-> > [   32.628832]  ? lock_release+0xc7/0x290
-> > [   32.628832]  ? cpuhp_thread_fun+0x4e/0x200
-> > [   32.628832]  cpuhp_thread_fun+0x183/0x200
-> > [   32.628832]  smpboot_thread_fn+0xd8/0x1d0
-> > [   32.628832]  ? __pfx_smpboot_thread_fn+0x10/0x10
-> > [   32.628832]  kthread+0xd4/0x100
-> > [   32.628832]  ? __pfx_kthread+0x10/0x10
-> > [   32.628832]  ret_from_fork+0x2f/0x50
-> > [   32.628832]  ? __pfx_kthread+0x10/0x10
-> > [   32.628832]  ret_from_fork_asm+0x1a/0x30
-> > [   32.628832]  </TASK>
-> > 
-> > I bisected this to:
-> > 
-> > 4ba4f1afb6a9 ("perf: Generic hotplug support for a PMU with a scope")
-> > 
-> > This adds a perf_event_setup_cpumask() function that uses
-> > list_for_each_entry_rcu() without an obvious RCU read-side critical
-> > section, so the fix might be as simple as adding rcu_read_lock() and
-> > rcu_read_unlock().  In the proper places, of course.  ;-)
-> 
-> IIRC that condition should be:
-> 
->   lockdep_is_held(&pmus_srcu) || lockdep_is_held(&pmus_lock)
-> 
-> And at this pooint we actually do hold pmus_lock.
-> 
-> But that all begs the question why we're using RCU iteration here to
-> begin with, as this code seems to be only called from this context.
-> 
-> Kan, is the simple fix to do:
-> 
-> -	list_for_each_entry_rcu(pmu, &pmus, entry, lockdep_is_held(&pmus_srcu)) {
-> +	list_for_each_entry(pmu, &pmus, entry) {
-> 
-> ?
+On Thu, 12 Sept 2024 at 19:34, Mathieu Desnoyers
+<mathieu.desnoyers@efficios.com> wrote:
+>
+> On 2024-09-12 12:38, Marco Elver wrote:
+> > On Mon, 9 Sept 2024 at 23:15, Mathieu Desnoyers
+> > <mathieu.desnoyers@efficios.com> wrote:
+> >>
+> >> commit 223baf9d17f25 ("sched: Fix performance regression introduced by mm_cid")
+> >> introduced a per-mm/cpu current concurrency id (mm_cid), which keeps
+> >> a reference to the concurrency id allocated for each CPU. This reference
+> >> expires shortly after a 100ms delay.
+> >>
+> >> These per-CPU references keep the per-mm-cid data cache-local in
+> >> situations where threads are running at least once on each CPU within
+> >> each 100ms window, thus keeping the per-cpu reference alive.
+> >
+> > One orthogonal idea that I recall: If a thread from a different thread
+> > group (i.e. another process) was scheduled on that CPU, the CID can
+> > also be invalidated because the caches are likely polluted. Fixed
+> > values like 100ms seem rather arbitrary and it may work for one system
+> > but not another.
+>
+> That depends on the cache usage pattern of the different thread group:
+> it's also possible that the other thread group does not perform that
+> many stores to memory before the original thread group is scheduled
+> back, thus keeping the cache content untouched.
+>
+> The ideal metric there would probably be based on PMU counters, but
+> I doubt we want to go there.
+>
+> [...]
+> >
+> > I like the simpler and more general approach vs. the NUMA-only
+> > approach! Attempting to reallocate the previously assigned CID seems
+> > to go a long way.
+>
+> Indeed it does!
+>
+> >
+> > However, this doesn't quite do L3-awareness as mentioned in [1], right?
+> > What I can tell is that this patch improves cache locality for threads
+> > scheduled back on the _same CPU_, but not if those threads are
+> > scheduled on a _set of CPUs_ sharing the _same L3_ cache. So if e.g. a
+> > thread is scheduled from CPU2 to CPU3, but those 2 CPUs share the same
+> > L3 cache, that thread will get a completely new CID and is unlikely to
+> > hit in the L3 cache when accessing the per-CPU data.
+> >
+> > [1] https://github.com/google/tcmalloc/issues/144#issuecomment-2307739715
+> >
+> > Maybe I missed it, or you are planning to add it in future?
+>
+> In my benchmarks, I noticed that preserving cache-locality at the L1 and
+> L2 levels was important as well.
+>
+> I would like to understand better the use-case you refer to for L3
+> locality. AFAIU, this implies a scenario where the scheduler migrates
+> a thread from CPU 2 to CPU 3 (both with the same L3), and you would
+> like to migrate the concurrency ID along.
 
-It does pass a quick test, for whatever that might be worth.  ;-)
+Either migrate it along, _or_ pick a CID from a different thread that
+ran on a CPU that shares this L3. E.g. if T1 is migrated from CPU2 to
+CPU3, and T2 ran on CPU3 before, then it would be ok for T1 to get its
+previous CID or T2's CID from when it ran on CPU3. Or more simply,
+CIDs aren't tied to particular threads, but tied to a subset of CPUs
+based on topology. If the user could specify that topology / CID
+affinity would be nice.
 
-So if this turns out to be the right approach:
+> When the number of threads is < number of mm allowed cpus, the
+> migrate hooks steal the concurrency ID from CPU 2 and moves it to
+> CPU 3 if there is only a single thread from that mm on CPU 2, which
+> does what you wish.
 
-Tested-by: Paul E. McKenney <paulmck@kernel.org>
+Only if the next CPU shares the cache. What if it moves the thread to
+a CPU where that CPU's L3 cache != the previous CPU's L3 cache. In
+that case, it'd be preferable to pick a last-used CID from the set of
+CPUs that are grouped under that L3 cache.
 
-							Thanx, Paul
+> When the number of threads is >= number of mm allowed cpus, the
+> migrate hook is skipped, and the concurrency ID from CPU 2 is
+> left in place, favoring cache locality at L1/L2 levels.
+
+... and any higher level caches, too, I'd assume.
+
+> In that
+> case it's the scheduler's decision to migrate the thread from
+> CPU 2 to CPU 3, so I would think improving the scheduler decisions
+> about migration and minimizing thread movement would be more
+> relevant than trying to optimize concurrency ID movement.
+
+From what I gather, if the CID is left in place on a CPU, and the next
+thread just grabs it, that's already optimal AFAIK.
+
+Thanks,
+-- Marco
 
