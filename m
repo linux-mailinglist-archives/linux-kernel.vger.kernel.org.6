@@ -1,173 +1,129 @@
-Return-Path: <linux-kernel+bounces-328515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AC60978529
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:51:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2063697852B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:52:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E29D82875B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:51:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 982861F20614
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:52:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B21C6E2BE;
-	Fri, 13 Sep 2024 15:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216096F2EE;
+	Fri, 13 Sep 2024 15:51:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kf8x/i6s"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="onxuXcui"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108D358AD0;
-	Fri, 13 Sep 2024 15:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E8A55898;
+	Fri, 13 Sep 2024 15:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726242699; cv=none; b=tTcH2xxaQwXUNi2MfBv+e1fE+KkCB0MzyETTuGK7sXo+L+zuZHB31FprNrV9US5r//Eo3yr3D3MEYZ1gTQ0QLujD4u/piaFjNOFdDn6/yzU7ac5L70uwX20cFYT+mG05Z6votWPDxD2Pqv2RtSO0tJKX5yWm1XkRWXetp+HHEpw=
+	t=1726242709; cv=none; b=hz0gHuSMmiGEjMqIUW5ltG/aR12wCYeK2P4W+mY8PissC/ErQLEWvkjW2D6hvxU9c+LngTe+AfgkZHazbdCynl2v4lnFf391dbLJ0c4s0A48iJvvF58eCeMOv71qqzIXle3CjfN3CV4ry1uLCz5kAIUJ9GYk/YpGHi1Bzo03TY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726242699; c=relaxed/simple;
-	bh=GAmUucMy9vuLeh91K6btHFOEbFl/PyM0yqJoMR0hgjs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Eiua4MOUcm0snDLnUlGZNUw/OWkVScsmjSV9xl2LW6hUpTIbiDg5LBVSXIBUVxplfHytv/29VCO/bIFxxPgqURoZd8ppKXM405W8HxTfoqYTaRZ822w9v4OD080MnFumqx1qKdhduZ841iVW1xt/1v9ixpfYpMVGh8lwcrJ3Fqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kf8x/i6s; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726242698; x=1757778698;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=GAmUucMy9vuLeh91K6btHFOEbFl/PyM0yqJoMR0hgjs=;
-  b=kf8x/i6sm2AJNPH73Z2fyG7AVL/4O6zIF48jrTqm5ImKd5tXrgD6Val5
-   5M83uoTf2cOtJfZy/BZr/UdtxlTupXGfhlhBySkuNcDpJZVVgnuhWuR83
-   uO2pCguPsrBUBQozY1OTltz/tUM1IST9AzIjtzOal0VyuM8h6LAqLtvTY
-   3BuibHhrCzcr9ECT2YPWT2TY6UXVj93PXGjlsXWuMAqIFtvrdv1YfnYci
-   cdAVxkWVhZnxf81/t8liNcD+/qr9IyPb/0A2T//JhlipIHMtTAVWIOkib
-   w3dmqfer5mYv3OdRxWpzQ0OZ0r1ThHuvpJQlu+hypshm+D4u5yvyn5jKn
-   A==;
-X-CSE-ConnectionGUID: th7AMbPZSm+aT+vJ82voqw==
-X-CSE-MsgGUID: SbfXi+l3QJewaHx7zAxiEQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25347411"
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="25347411"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 08:51:38 -0700
-X-CSE-ConnectionGUID: 8BmZfTWZTNaiueaoRACoKA==
-X-CSE-MsgGUID: sorbTAXYTgSt0vskP4Noig==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="91360656"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 08:51:37 -0700
-Received: from [10.212.21.130] (kliang2-mobl1.ccr.corp.intel.com [10.212.21.130])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 8955820CFED7;
-	Fri, 13 Sep 2024 08:51:35 -0700 (PDT)
-Message-ID: <8a9dabcd-023a-4e8f-8570-3c69a9cf0c0a@linux.intel.com>
-Date: Fri, 13 Sep 2024 11:51:34 -0400
+	s=arc-20240116; t=1726242709; c=relaxed/simple;
+	bh=DbKdUFxvl0YljeqPV9VUG4Dgd2JUR0xiij/qkMUoEZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uEUIm9ZFe2YpQQ2hH7n7UmGM8A20iW7Icgsqmgp2Y8DrTjKA7NqhKAHdiT85AObYhbWvx1g1+y+QZyl5zRXxBJuVgBhqriHcfAZq8Dg1p80CSF8YaUHk2AZktZpPdJlU73wknoyZUkGGCf76z/xZCxrhNNVl3rB3vxeygd3xvy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=onxuXcui; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=GeAnsuP8aeMkI3YdnhdkdYt/fm3JMpOCpvH3j/+kM8o=; b=onxuXcui/ywqsVP8qdl3qOka6P
+	+/qucTGwlgBgjjB4pksKLZDtxPZPYkS7GutVyb6OLmyESTUiJzbj6i7SsCXqYvmQLl3fQSfLsaOht
+	FOszvAJkqNp1rEJXnouqSUQ0F1EpI0pK4MzWb7b5CBJ3aKLY7L+LldZnjWP1CUwpAQ2kn/lP52UEz
+	qI3kw3VisV28jPeHYZDFAW5DUdEy4u4erPytpG+ic1WQAw9QQLbsodh4fUj8U4edFwPNF1WcWmVp+
+	gg/uPT4uvqSZ/PXcE+L4yBNGuksMGWJERGN4Yv6NNJoiay6VUSU1KwywdW0NVmowue1iB/1vLN6sa
+	IxsiuHsg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sp8aC-0000000Gk78-2M7t;
+	Fri, 13 Sep 2024 15:51:40 +0000
+Date: Fri, 13 Sep 2024 16:51:40 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Chris Mason <clm@meta.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>, Christian Theune <ct@flyingcircus.io>,
+	linux-mm@kvack.org,
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Daniel Dao <dqminh@cloudflare.com>,
+	Dave Chinner <david@fromorbit.com>, regressions@lists.linux.dev,
+	regressions@leemhuis.info
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+Message-ID: <ZuRfjGhAtXizA7Hu@casper.infradead.org>
+References: <A5A976CB-DB57-4513-A700-656580488AB6@flyingcircus.io>
+ <ZuNjNNmrDPVsVK03@casper.infradead.org>
+ <0fc8c3e7-e5d2-40db-8661-8c7199f84e43@kernel.dk>
+ <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
+ <d4a1cca4-96b8-4692-81f0-81c512f55ccf@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG BISECTED] Missing RCU reader in perf_event_setup_cpumask()
-To: Peter Zijlstra <peterz@infradead.org>,
- "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
- mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
- irogers@google.com, adrian.hunter@intel.com
-References: <2b66dff8-b827-494b-b151-1ad8d56f13e6@paulmck-laptop>
- <20240913104752.GU4723@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240913104752.GU4723@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d4a1cca4-96b8-4692-81f0-81c512f55ccf@meta.com>
 
+On Fri, Sep 13, 2024 at 11:30:41AM -0400, Chris Mason wrote:
+> I've mentioned this in the past to both Willy and Dave Chinner, but so
+> far all of my attempts to reproduce it on purpose have failed.  It's
+> awkward because I don't like to send bug reports that I haven't
+> reproduced on a non-facebook kernel, but I'm pretty confident this bug
+> isn't specific to us.
 
+I don't think the bug is specific to you either.  It's been hit by
+several people ... but it's really hard to hit ;-(  
 
-On 2024-09-13 6:47 a.m., Peter Zijlstra wrote:
-> On Fri, Sep 13, 2024 at 01:00:44AM -0700, Paul E. McKenney wrote:
->> Hello!
->>
->> On next-20240912 running rcutorture scenario TREE05, I see this
->> deterministically:
->>
->> [   32.603233] =============================
->> [   32.604594] WARNING: suspicious RCU usage
->> [   32.605928] 6.11.0-rc5-00040-g4ba4f1afb6a9 #55238 Not tainted
->> [   32.607812] -----------------------------
->> [   32.609140] kernel/events/core.c:13946 RCU-list traversed in non-reader section!!
->> [   32.611595]
->> [   32.611595] other info that might help us debug this:
->> [   32.611595]
->> [   32.614247]
->> [   32.614247] rcu_scheduler_active = 2, debug_locks = 1
->> [   32.616392] 3 locks held by cpuhp/4/35:
->> [   32.617687]  #0: ffffffffb666a650 (cpu_hotplug_lock){++++}-{0:0}, at: cpuhp_thread_fun+0x4e/0x200
->> [   32.620563]  #1: ffffffffb666cd20 (cpuhp_state-down){+.+.}-{0:0}, at: cpuhp_thread_fun+0x4e/0x200
->> [   32.623412]  #2: ffffffffb677c288 (pmus_lock){+.+.}-{3:3}, at: perf_event_exit_cpu_context+0x32/0x2f0
->> [   32.626399]
->> [   32.626399] stack backtrace:
->> [   32.627848] CPU: 4 UID: 0 PID: 35 Comm: cpuhp/4 Not tainted 6.11.0-rc5-00040-g4ba4f1afb6a9 #55238
->> [   32.628832] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
->> [   32.628832] Call Trace:
->> [   32.628832]  <TASK>
->> [   32.628832]  dump_stack_lvl+0x83/0xa0
->> [   32.628832]  lockdep_rcu_suspicious+0x143/0x1a0
->> [   32.628832]  perf_event_exit_cpu_context+0x2e5/0x2f0
->> [   32.628832]  ? __pfx_perf_event_exit_cpu+0x10/0x10
->> [   32.628832]  perf_event_exit_cpu+0x9/0x10
->> [   32.628832]  cpuhp_invoke_callback+0x130/0x2a0
->> [   32.628832]  ? lock_release+0xc7/0x290
->> [   32.628832]  ? cpuhp_thread_fun+0x4e/0x200
->> [   32.628832]  cpuhp_thread_fun+0x183/0x200
->> [   32.628832]  smpboot_thread_fn+0xd8/0x1d0
->> [   32.628832]  ? __pfx_smpboot_thread_fn+0x10/0x10
->> [   32.628832]  kthread+0xd4/0x100
->> [   32.628832]  ? __pfx_kthread+0x10/0x10
->> [   32.628832]  ret_from_fork+0x2f/0x50
->> [   32.628832]  ? __pfx_kthread+0x10/0x10
->> [   32.628832]  ret_from_fork_asm+0x1a/0x30
->> [   32.628832]  </TASK>
->>
->> I bisected this to:
->>
->> 4ba4f1afb6a9 ("perf: Generic hotplug support for a PMU with a scope")
->>
->> This adds a perf_event_setup_cpumask() function that uses
->> list_for_each_entry_rcu() without an obvious RCU read-side critical
->> section, so the fix might be as simple as adding rcu_read_lock() and
->> rcu_read_unlock().  In the proper places, of course.  ;-)
-> 
-> IIRC that condition should be:
-> 
->   lockdep_is_held(&pmus_srcu) || lockdep_is_held(&pmus_lock)
-> 
-> And at this pooint we actually do hold pmus_lock.
-> 
-> But that all begs the question why we're using RCU iteration here to
-> begin with, as this code seems to be only called from this context.
+> I'll double down on repros again during plumbers and hopefully come up
+> with a recipe for explosions.  On other important datapoint is that we
 
-I think I just copied and paste the PMU iterate code here, and forget to
-add the srcu_read_lock(). Sorry for it.
+I appreciate the effort!
 
+> The issue looked similar to Christian Theune's rcu stalls, but since it
+> was just one CPU spinning away, I was able to perf probe and drgn my way
+> to some details.  The xarray for the file had a series of large folios:
 > 
-> Kan, is the simple fix to do:
+> [ index 0 large folio from the correct file ]
+> [ index 1: large folio from the correct file ]
+> ...
+> [ index N: large folio from a completely different file ]
+> [ index N+1: large folio from the correct file ]
 > 
-> -	list_for_each_entry_rcu(pmu, &pmus, entry, lockdep_is_held(&pmus_srcu)) {
-> +	list_for_each_entry(pmu, &pmus, entry) {
-> 
-> ?
->   
+> I'm being sloppy with index numbers, but the important part is that
+> we've got a large folio from the wrong file in the middle of the bunch.
 
-Yes, the &pmus_lock protect is good enough. we don't need the rcu here.
-I will post a patch with the suggested fix.
+If you could get the precise index numbers, that would be an important
+clue.  It would be interesting to know the index number in the xarray
+where the folio was found rather than folio->index (as I suspect that
+folio->index is completely bogus because folio->mapping is wrong).
+But gathering that info is going to be hard.
 
-Thanks,
-Kan
+Maybe something like this?
+
++++ b/mm/filemap.c
+@@ -2317,6 +2317,12 @@ static void filemap_get_read_batch(struct address_space *mapping,
+                if (unlikely(folio != xas_reload(&xas)))
+                        goto put_folio;
+
++{
++       struct address_space *fmapping = READ_ONCE(folio->mapping);
++       if (fmapping != NULL && fmapping != mapping)
++               printk("bad folio at %lx\n", xas.xa_index);
++}
++
+                if (!folio_batch_add(fbatch, folio))
+                        break;
+                if (!folio_test_uptodate(folio))
+
+(could use VM_BUG_ON_FOLIO() too, but i'm not sure that the identity of
+the bad folio we've found is as interesting as where we found it)
 
 
