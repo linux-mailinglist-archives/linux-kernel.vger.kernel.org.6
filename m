@@ -1,158 +1,112 @@
-Return-Path: <linux-kernel+bounces-328246-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D455A978105
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:21:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA11978107
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 893931F26EB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:21:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2E1B28771F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:21:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0B41DA631;
-	Fri, 13 Sep 2024 13:20:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87111DA60C;
-	Fri, 13 Sep 2024 13:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B05B1DB547;
+	Fri, 13 Sep 2024 13:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MI1bXRtG"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8141DB538
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 13:21:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726233650; cv=none; b=kWfWnggZG7bej3g4BuuR6oyf2IiCj4w0FExcx1MLy+9ujIs9FM5H7TNdP4849gg2UNzWv1AXTyHw/wGXIUdK6c2IDZoZ3e0j4mUNUZHQa5PSfWUmKTZyk/tFOiAZMEj8pE8ojUjj2ufZJDZ3jut/bnjycDXGtV15nfnaLsf5q0c=
+	t=1726233676; cv=none; b=IkAJahfAgXyEJGvqi48XyQnL4IfxbP4xgCdtiRUqaf5wU3nWH5Bb3Lx87ivwEtnrwelid2FqAGQ3jW/tTf2N8XQThDH7rR0MOAoWJx3TTtAkpS7ZeYvKz6yYPMwA8UYa8Ft4ZwftlT1Q1fS792yo1OZwYToBbBlnrh6vzjfCcdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726233650; c=relaxed/simple;
-	bh=Pux9vGJIxSvJffdRQ6pJ5IpXFb74LMLn76OPxBtyAOI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mSF9ZrDhqgj+gutHLWo18hKRzj0u6WPbxZBvs07WqiF8ojbllaObT/yAy5uuEtlYEezN7vLAF+y46tffPIzOj35vnE2fji8WMD2wP4QN0snHg+HX5NyHAS9FETAFdcix8N9nH/z57dJWPfbUJVGOAkZi6j8bHULxqDZmFb2Ep+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 62C5D13D5;
-	Fri, 13 Sep 2024 06:21:17 -0700 (PDT)
-Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 12E223F73B;
-	Fri, 13 Sep 2024 06:20:44 -0700 (PDT)
-Message-ID: <11bca9b1-7eb1-4a13-8f05-9ba5b9c46d24@arm.com>
-Date: Fri, 13 Sep 2024 14:20:43 +0100
+	s=arc-20240116; t=1726233676; c=relaxed/simple;
+	bh=D0f1PuT9jXBwBOm3nTsBr0JjPgQVpuzPalotUDBLBts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OGkrgen8H32Tkjz3/3oHahNBeJCreNClaGPflNvaVEZB5rZv4YDKxtGPzkapikKSte0PregHKRErrbj2n57dqXsUC65n5UmOTv4m+6cZ4TImurhGPqpPHL7W8Eg4jYIK4UPHoMTnqY+v54IBgH41QXWuEKAetKj+6/e8xs7jahM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MI1bXRtG; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a8a7903cb7dso53073766b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 06:21:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726233670; x=1726838470; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XhdGDbYhYo4L16IpPIGGru0i2V684mpbk3Fjn0fs3A4=;
+        b=MI1bXRtGN+e041M+4T5p37hH3SfQSgFeuyOFtKgjjbvFEucv1HTiFjZgdP83w1lzDF
+         ZYJ3cmqCVvFwcJQGpPwCP+BvRxG5/2uxQk02i+itqm88LjduYKDQ/B3kfxC803fA6Zxg
+         C4XyNng9syJcSkAnydG+p/eko7Yl1Lk/9WeAjTbccoNqMsBVxqFoe9P3rC56jtG1sT8t
+         AvBYWEhYR55X0intkYJHjzk3xg6PYWlpiuAJM/ZK6q21PHnx0gFFM34naXTmmtrNliG2
+         +9MW11u28bXVENFQ+ROfDighjJLu/xZyHShSL/4ebYmQpwMW099yXvu/c2+Z64FP993L
+         DNxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726233670; x=1726838470;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XhdGDbYhYo4L16IpPIGGru0i2V684mpbk3Fjn0fs3A4=;
+        b=JVpvBTSAAI+CvLzVa57FfAr6l4H7nOhYpr6vU9211PbPhhTcKR7Ofps4XDEgKA9tW9
+         HGrmLOwCZMXByC/caZskjx30ZVvKprJLsk77pCwodZjXZ3qcb+NTcq6yMUl16zWKLHhU
+         NFGvc25f5Dda/HmghwOBedCZBoXnr8jsOacVS5k/Q/KyxVW9B+LlmzFkP5be6twAACqR
+         3wzHKxgdpPAgggk5Fs5BhQK/EH81LayvEgMPGWUX1zA0dp9uoQJ6/4liiFZaXPA7rteF
+         xTnVb6glc18YsK4FHhpyz/cqZELy8TmJj36GlCRlsLFemJkZ6xVYqvXLqia7is4RroYk
+         pc2g==
+X-Forwarded-Encrypted: i=1; AJvYcCXbUiFTC+NwOEz0xr4oqZSs2g94FibrLMdi+tIAMc3CSTbiyOCy2soqPJgDPPSS9tZSYfwpJyGbT3g05XU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2HwHCCLOlssat8kQi76OwpvkfLMkJRAwm4POVDYDzK2qD7mID
+	Igssux5yRGAlbxz0ZSaBZWRGUtYNoOnK5uL103EQ4LREvThX5irYqGSg4Ic/c+A=
+X-Google-Smtp-Source: AGHT+IHcJ56NtIk9V3Z+A3QtoEu3bfPgHzOA+efDcloNtpUGHKdEpTOJ3QrRsGllAAeULwcGZII6kA==
+X-Received: by 2002:a05:6402:2687:b0:5c4:2448:87e9 with SMTP id 4fb4d7f45d1cf-5c424488a68mr872652a12.0.1726233669912;
+        Fri, 13 Sep 2024 06:21:09 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd76efbsm7653417a12.67.2024.09.13.06.21.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 06:21:09 -0700 (PDT)
+Date: Fri, 13 Sep 2024 16:21:05 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Qianqiang Liu <qianqiang.liu@163.com>
+Cc: ematsumiya@suse.de, sfrench@samba.org, linux-cifs@vger.kernel.org,
+	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] smb: client: compress: fix an "illegal accesses" issue
+Message-ID: <63aacc6d-8e3c-476d-938f-cce25d74a6b5@stanley.mountain>
+References: <20240913032750.175840-1-qianqiang.liu@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/7] perf scripts python cs-etm: Add start and stop
- arguments
-To: James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org,
- gankulkarni@os.amperecomputing.com, coresight@lists.linaro.org,
- scclevenger@os.amperecomputing.com
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
- <mike.leach@linaro.org>, John Garry <john.g.garry@oracle.com>,
- Will Deacon <will@kernel.org>, Leo Yan <leo.yan@linux.dev>,
- Ben Gainey <ben.gainey@arm.com>, Ruidong Tian
- <tianruidong@linux.alibaba.com>, Benjamin Gray <bgray@linux.ibm.com>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240912151143.1264483-1-james.clark@linaro.org>
- <20240912151143.1264483-7-james.clark@linaro.org>
-Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <20240912151143.1264483-7-james.clark@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240913032750.175840-1-qianqiang.liu@163.com>
 
-On 9/12/24 16:11, James Clark wrote:>
-> Make it possible to only disassemble a range of timestamps or sample
-> indexes. This will be used by the test to limit the runtime, but it's
-> also useful for users.
+On Fri, Sep 13, 2024 at 11:27:51AM +0800, Qianqiang Liu wrote:
+> Using uninitialized value "bkt" when calling "kfree"
 > 
-> Signed-off-by: James Clark <james.clark@linaro.org>
-> ---
->   .../scripts/python/arm-cs-trace-disasm.py     | 22 +++++++++++++++++--
->   1 file changed, 20 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/scripts/python/arm-cs-trace-disasm.py b/tools/perf/scripts/python/arm-cs-trace-disasm.py
-> index 02e957d037ea..a097995d8e7b 100755
-> --- a/tools/perf/scripts/python/arm-cs-trace-disasm.py
-> +++ b/tools/perf/scripts/python/arm-cs-trace-disasm.py
-> @@ -55,6 +55,11 @@ args.add_argument("-k", "--vmlinux",
->   args.add_argument("-d", "--objdump", nargs="?", const=default_objdump(),
->                    help="Show disassembly. Can also be used to change the objdump path"),
->   args.add_argument("-v", "--verbose", action="store_true", help="Enable debugging log")
-> +args.add_argument("--start-time", type=int, help="Time of sample to start from")
-> +args.add_argument("--stop-time", type=int, help="Time of sample to stop at")
-> +args.add_argument("--start-sample", type=int, help="Index of sample to start from")
-> +args.add_argument("--stop-sample", type=int, help="Index of sample to stop at")
-> +
+> Fixes: 13b68d44990d9 ("smb: client: compress: LZ77 code improvements cleanup")
+> Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
 
-It is good to validate the ranges for time and sample indexes, in case
-the user passes unexpected values and can directly report the error.
+Thanks.
 
-BTW, I think it is good to clarify the time is based on monotonic clock
-but not wall-clock time.
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-With above changes, LGTM:
+I was reviewing this static checker warning.  I also have an unpublished warning
+which complains about collect_sample().
 
-Reviewed-by: Leo Yan <leo.yan@arm.com>
+fs/smb/client/compress.c:207 collect_sample() warn: should we be adding 'len' of the min_t value?
 
->   options = args.parse_args()
-> 
->   # Initialize global dicts and regular expression
-> @@ -63,6 +68,7 @@ cpu_data = dict()
->   disasm_re = re.compile(r"^\s*([0-9a-fA-F]+):")
->   disasm_func_re = re.compile(r"^\s*([0-9a-fA-F]+)\s.*:")
->   cache_size = 64*1024
-> +sample_idx = -1
-> 
->   glb_source_file_name   = None
->   glb_line_number                = None
-> @@ -151,10 +157,10 @@ def print_disam(dso_fname, dso_start, start_addr, stop_addr):
-> 
->   def print_sample(sample):
->          print("Sample = { cpu: %04d addr: 0x%016x phys_addr: 0x%016x ip: 0x%016x " \
-> -             "pid: %d tid: %d period: %d time: %d }" % \
-> +             "pid: %d tid: %d period: %d time: %d index: %d}" % \
->                (sample['cpu'], sample['addr'], sample['phys_addr'], \
->                 sample['ip'], sample['pid'], sample['tid'], \
-> -              sample['period'], sample['time']))
-> +              sample['period'], sample['time'], sample_idx))
-> 
->   def trace_begin():
->          print('ARM CoreSight Trace Data Assembler Dump')
-> @@ -216,6 +222,7 @@ def print_srccode(comm, param_dict, sample, symbol, dso):
->   def process_event(param_dict):
->          global cache_size
->          global options
-> +       global sample_idx
-> 
->          sample = param_dict["sample"]
->          comm = param_dict["comm"]
-> @@ -231,6 +238,17 @@ def process_event(param_dict):
->          ip = sample["ip"]
->          addr = sample["addr"]
-> 
-> +       sample_idx += 1
-> +
-> +       if (options.start_time and sample["time"] < options.start_time):
-> +               return
-> +       if (options.stop_time and sample["time"] > options.stop_time):
-> +               exit(0)
-> +       if (options.start_sample and sample_idx < options.start_sample):
-> +               return
-> +       if (options.stop_sample and sample_idx > options.stop_sample):
-> +               exit(0)
-> +
->          if (options.verbose == True):
->                  print("Event type: %s" % name)
->                  print_sample(sample)
-> --
-> 2.34.1
-> 
+It's a bit weird to sample data from each page.  Could we add some comments at
+the top of the function explaining what the function does.
+
+/*
+ * This reads a 2k sample from the start of each page to see the data is already
+ * compressed or whether we can compress it further.
+ */
+
+regards,
+dan carpenter
+
 
