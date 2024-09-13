@@ -1,102 +1,165 @@
-Return-Path: <linux-kernel+bounces-328276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A52F978157
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:39:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E25D978176
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 013C81F22E30
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:39:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 344AD1F259B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:47:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AFA01DB55F;
-	Fri, 13 Sep 2024 13:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D841DC04A;
+	Fri, 13 Sep 2024 13:47:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bs/fFwqb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C231D6C7A;
-	Fri, 13 Sep 2024 13:38:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b="NbE6FoEO"
+Received: from mail.katalix.com (mail.katalix.com [3.9.82.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2CCB1DB944;
+	Fri, 13 Sep 2024 13:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.9.82.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726234738; cv=none; b=MUZYsl3k4gBNfwOwaEKJ2TjoRyQSyAPaeby9/WPi9m5fqCvzBr0Ceiy+ZN1FsunKGslofnB/8BVaK9sVutMfZ2njcmEEaOnVZLN6r/jacwma8XhAkUzIkIw6RAVoUaTC1Ngp8tgFNpl1Nq5ouH/j+zrxQ3c/9W/NDuAdrdSD+e4=
+	t=1726235233; cv=none; b=O1KBvnPhWzr8J4DfSPtZKLBVrOh+d3F8UdG8NHnLAnNYUfYe2YAuHZ6X53Bvy6IxrlJOeleRPrIyyIFr//+G/kJe/lEfR8rumtZocF7EgLf/C53h/UMShQypG+2HrGpxYoNHipr+NJ8z0c18m6fZXX3kZSGGOXBtwuf340/46w4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726234738; c=relaxed/simple;
-	bh=/KYBSsDBCUsu+s6eKQzz/C+xxOtD1VUVkICShhczuto=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=PdhHl2bzhdJb5TXUPM/PmIqt76ySRJBp0k4DU0L89zGzqJf5b/QM8eN8od9d/NuQiU6nJC4dNwzgarXfzYzxT1NbIzZn+W5CEhXJ0Bq6rIms5Mg7T9Ys/qfMLj1aXKL8ZJA0zs6csFEDCKBWgfk40IGrs2yaV6BzaVXjunM4Ff8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bs/fFwqb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34808C4CEC0;
-	Fri, 13 Sep 2024 13:38:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726234738;
-	bh=/KYBSsDBCUsu+s6eKQzz/C+xxOtD1VUVkICShhczuto=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Bs/fFwqbdW6dlxBnItsXK36LvRQXPXcToYHuJUWFx6tvZ+ExVwLy+TlJyf+jFxlf0
-	 68TsjIdQub/qzqSm6R/Ym1o0APmC8da4YOjZOgiFrHMPvaoAFDTNyXnf2dpdDFRnQJ
-	 md/lYpfK1c1N0fV3phv+O+kGwE02CYfXL2IBShc7hbPsmaA/TWfbExj5Ji4GOyxRGh
-	 LQLWGUfT/Xz/oZYLO81dyF2eBXZsz8gqdtK9usPTcPGRUDDQcpoAW0qEMUedfirquF
-	 7i83vW4pBF0H8OiPYo6E8W8fQfM7wKjMzuqLAU61rjuq2g+Tv2tkrQMWYBgAkeHijU
-	 +I64sUZR7hjsQ==
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>, 
- Peter Hutterer <peter.hutterer@who-t.net>, Vicki Pfau <vi@endrift.com>, 
- Shuah Khan <shuah@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
-Cc: linux-input@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-In-Reply-To: <20240910-hid-bpf-hid-generic-v2-0-083dfc189e97@kernel.org>
-References: <20240910-hid-bpf-hid-generic-v2-0-083dfc189e97@kernel.org>
-Subject: Re: (subset) [PATCH HID v2 00/11] HID: bpf: add a new hook to
- control hid-generic
-Message-Id: <172623473588.1192461.11090201509053454593.b4-ty@kernel.org>
-Date: Fri, 13 Sep 2024 15:38:55 +0200
+	s=arc-20240116; t=1726235233; c=relaxed/simple;
+	bh=gSKF73ELRYiPVfunTe9d06F2jJrVWK3PzdtJcZYhfkc=;
+	h=Message-ID:Date:MIME-Version:To:References:From:Subject:
+	 In-Reply-To:Content-Type; b=Gr7RftJXgxgbNTuLvKebviCnkMfPSmcj6uh/Mapw9B9b7OuT/pu4U7v49Bmqx0l5o2aJ0lWp+MqawsBDaY2+7lg2MqRSp+RYcwRbcHyhWoRCl3oKiZ8Gmu9EtzK0xIYvr6QsKt2VT3Rr5wynDIN+NsKFYzc/Qgb0cTU9FdlSHPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com; spf=pass smtp.mailfrom=katalix.com; dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b=NbE6FoEO; arc=none smtp.client-ip=3.9.82.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=katalix.com
+Received: from [IPV6:2a02:8010:6359:2:fd3b:359b:7b1f:f7be] (unknown [IPv6:2a02:8010:6359:2:fd3b:359b:7b1f:f7be])
+	(Authenticated sender: james)
+	by mail.katalix.com (Postfix) with ESMTPSA id D133C7D0D4;
+	Fri, 13 Sep 2024 14:39:01 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=katalix.com; s=mail;
+	t=1726234742; bh=gSKF73ELRYiPVfunTe9d06F2jJrVWK3PzdtJcZYhfkc=;
+	h=Message-ID:Date:MIME-Version:To:References:From:Subject:
+	 In-Reply-To:From;
+	z=Message-ID:=20<237e9f5f-4605-8873-2260-c7e5ddac9795@katalix.com>|
+	 Date:=20Fri,=2013=20Sep=202024=2014:39:01=20+0100|MIME-Version:=20
+	 1.0|To:=20syzbot=20<syzbot+332fe1e67018625f63c9@syzkaller.appspotm
+	 ail.com>,=0D=0A=20davem@davemloft.net,=20edumazet@google.com,=20ku
+	 ba@kernel.org,=0D=0A=20linux-kernel@vger.kernel.org,=20netdev@vger
+	 .kernel.org,=20pabeni@redhat.com,=0D=0A=20syzkaller-bugs@googlegro
+	 ups.com|References:=20<0000000000005423e30621f745ff@google.com>|Fr
+	 om:=20James=20Chapman=20<jchapman@katalix.com>|Subject:=20Re:=20[s
+	 yzbot]=20[net?]=20WARNING=20in=20l2tp_exit_net|In-Reply-To:=20<000
+	 0000000005423e30621f745ff@google.com>;
+	b=NbE6FoEOhDTedLLrdww0gCtBB1iYleifysjr0BpqyO8xqOyO7EgMsBNJYDjhgJW+k
+	 jH7b5Wp4LhZNQ1pEyEijwaR7E/49d5EW3p4SDqx4YJpNC70/ydouuprPXIfhepaHVE
+	 rueSLmmMHP0dBWqoGGFTMToLIDDNnre/9j2Sxi8nNwUqX6m9Xn3Pfj9U/yD/fL0tug
+	 gJwKAlTTiQ2KNaKGNwV/wNr70W2AY/I/5CHyzhwwIxOORUhBE24yHzFRNb4f0sI2gS
+	 J8MLSafSyeM0i1QhDA/inR3wYbKW+Bw4gpKbXfQ1Dav7ZPIlunKiKzMGZbmlEO/+UN
+	 lRDh181ACPmMw==
+Message-ID: <237e9f5f-4605-8873-2260-c7e5ddac9795@katalix.com>
+Date: Fri, 13 Sep 2024 14:39:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Content-Language: en-US
+To: syzbot <syzbot+332fe1e67018625f63c9@syzkaller.appspotmail.com>,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
+ syzkaller-bugs@googlegroups.com
+References: <0000000000005423e30621f745ff@google.com>
+From: James Chapman <jchapman@katalix.com>
+Organization: Katalix Systems Ltd
+Subject: Re: [syzbot] [net?] WARNING in l2tp_exit_net
+In-Reply-To: <0000000000005423e30621f745ff@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
 
-On Tue, 10 Sep 2024 23:43:36 +0900, Benjamin Tissoires wrote:
-> This is a slight change from the fundamentals of HID-BPF.
-> In theory, HID-BPF is abstract to the kernel itself, and makes
-> only changes at the HID level (through report descriptors or
-> events emitted to/from the device).
+On 13/09/2024 03:49, syzbot wrote:
+> Hello,
 > 
-> However, we have seen a few use cases where HID-BPF might interact with
-> the running kernel when the target device is already handled by a
-> specific device.
+> syzbot found the following issue on:
 > 
-> [...]
+> HEAD commit:    f3b6129b7d25 Merge branch '100GbE' of git://git.kernel.org..
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=144ba477980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=37742f4fda0d1b09
+> dashboard link: https://syzkaller.appspot.com/bug?extid=332fe1e67018625f63c9
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/a742e7b2e0d2/disk-f3b6129b.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/6982186745fb/vmlinux-f3b6129b.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/5fd38b217bb5/bzImage-f3b6129b.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+332fe1e67018625f63c9@syzkaller.appspotmail.com
+> 
+> bond0 (unregistering): (slave dummy0): Releasing backup interface
+> bond0 (unregistering): Released all slaves
+> tipc: Disabling bearer <eth:batadv0>
+> tipc: Disabling bearer <udp:syz0>
+> tipc: Left network mode
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 17026 at net/l2tp/l2tp_core.c:1881 l2tp_exit_net+0x165/0x170 net/l2tp/l2tp_core.c:1881
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 17026 Comm: kworker/u8:36 Not tainted 6.11.0-rc6-syzkaller-01324-gf3b6129b7d25 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
+> Workqueue: netns cleanup_net
+> RIP: 0010:l2tp_exit_net+0x165/0x170 net/l2tp/l2tp_core.c:1881
+> Code: 0f 0b 90 e9 3b ff ff ff e8 48 a4 b0 f6 eb 05 e8 41 a4 b0 f6 90 0f 0b 90 e9 7a ff ff ff e8 33 a4 b0 f6 eb 05 e8 2c a4 b0 f6 90 <0f> 0b 90 eb b5 66 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90
+> RSP: 0018:ffffc9000ae07a98 EFLAGS: 00010293
+> RAX: ffffffff8ae2e87d RBX: ffff8880797c0888 RCX: ffff88806dbbda00
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000002
+> RBP: ffffc9000ae07bb0 R08: ffffffff8bb2ce16 R09: 1ffffffff2031025
+> R10: dffffc0000000000 R11: fffffbfff2031026 R12: dffffc0000000000
+> R13: 1ffffffff1fd274c R14: ffff8880797c0930 R15: ffff8880797c0840
+> FS:  0000000000000000(0000) GS:ffff8880b8800000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000000110c3831d6 CR3: 000000000e734000 CR4: 00000000003506f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>   <TASK>
+>   ops_exit_list net/core/net_namespace.c:173 [inline]
+>   cleanup_net+0x802/0xcc0 net/core/net_namespace.c:626
+>   process_one_work kernel/workqueue.c:3231 [inline]
+>   process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+>   worker_thread+0x86d/0xd10 kernel/workqueue.c:3389
+>   kthread+0x2f0/0x390 kernel/kthread.c:389
+>   ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+>   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>   </TASK>
 
-Applied to hid/hid.git (for-6.12/bpf), thanks!
+This warning is l2tp checking that there are no l2tp tunnels left when 
+l2tp_exit_net is called and finding one or more tunnels still in its IDR 
+list. These should be removed by l2tp_pre_exit_net.
 
-[01/11] HID: bpf: move HID-BPF report descriptor fixup earlier
-        https://git.kernel.org/hid/hid/c/f10a11b7b599
-[02/11] HID: core: save one kmemdup during .probe()
-        https://git.kernel.org/hid/hid/c/6941754dbbc7
-[03/11] HID: core: remove one more kmemdup on .probe()
-        https://git.kernel.org/hid/hid/c/4fe29f36d2a3
-[04/11] HID: bpf: allow write access to quirks field in struct hid_device
-        https://git.kernel.org/hid/hid/c/b722f588adc6
-[05/11] selftests/hid: add dependency on hid_common.h
-        https://git.kernel.org/hid/hid/c/3d816765e12e
-[06/11] selftests/hid: cleanup C tests by adding a common struct uhid_device
-        https://git.kernel.org/hid/hid/c/28023a0f99d1
-[07/11] selftests/hid: allow to parametrize bus/vid/pid/rdesc on the test device
-        https://git.kernel.org/hid/hid/c/10d3147f9bb1
-[08/11] HID: add per device quirk to force bind to hid-generic
-        https://git.kernel.org/hid/hid/c/d030f826ea47
-[09/11] selftests/hid: add test for assigning a given device to hid-generic
-        https://git.kernel.org/hid/hid/c/10929078201f
+I'll review l2tp code and watch this one.
 
-Cheers,
--- 
-Benjamin Tissoires <bentiss@kernel.org>
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
+> 
 
 
