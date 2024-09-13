@@ -1,111 +1,106 @@
-Return-Path: <linux-kernel+bounces-327550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA1C7977770
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:42:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07A6A977773
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 544F21F23C90
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:42:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83D0AB22868
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8922D1C5788;
-	Fri, 13 Sep 2024 03:41:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71351C68A3;
+	Fri, 13 Sep 2024 03:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J9qbmf7V"
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JOdq7coC"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875588827;
-	Fri, 13 Sep 2024 03:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD5C8827;
+	Fri, 13 Sep 2024 03:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726198914; cv=none; b=Z29h1ZwCIt9JV/OT1GuMsUQqdUdHPmR6DpubAFxY6df/6J0d6dJ6s+O0FA7v2/knMCYijUsWUVZ/P6lDxCSnFvrvYxZXUevJMpw/+R1CzBX9zlCKykrbOpB47r1a9paT1u+LHIEeocahZAATpwizarb8e6r2dWfyMFZwXi6rd28=
+	t=1726199066; cv=none; b=AV205LqqXDD1zdFW+crscVN4OSC0189SI14lBLnoRMFxAzH7eb3rv95DwZaWcQ9uKxJ9MGtWe39aRDiIsc64NJ/2PZvWfpSKshZ8tiRG3xZHU6FrcpRBiclGVBC3vBXhyuhTyVf7N+bm4BWCSvuuSxxC4hKp8IT7DqQWaCbrN6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726198914; c=relaxed/simple;
-	bh=WiG+fM+7N9Q40JfTc9raIwTA9+J99+5kuXFj+tWJcxo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yus5JDmE0Rh+u2k5oWdhpazE77In3LlymjI98XD+eAFkOF2/yUkvDQhKWVBtWqUYS0VjFTs6mfNpa55RgxzgsLaYWLYOcwsqXt+ztN7K5dJURjStuOqMpLTzjFxVt8AkhMOMed7MFjYjt2Vja3MbDLztcfgTzztII056dKCheE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J9qbmf7V; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3e04801bb65so230510b6e.0;
-        Thu, 12 Sep 2024 20:41:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726198911; x=1726803711; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=WiG+fM+7N9Q40JfTc9raIwTA9+J99+5kuXFj+tWJcxo=;
-        b=J9qbmf7VqLdUqE6aFJEeSQpw0yTHFLfB+E1LyS40l5DuWdn4kp+9J5CYSU/nMCCYyE
-         rZaxU3h1lk9l8lh1q6bQX18MVm9XYtdQ84Ee4QSRJtVowkt6ShxTlmsGsonmZw4EsfqQ
-         MlcGSXam8KrcSRBo43jMN71D4HMjT/2TDNoIK0HZa2bmyKvjuLIfhpaGTgBgbCl2nOJy
-         A8PBX9UMnwpDvleHonXD7BBE2LHixTvmpODqsHNz7rCieuTbh1rMZ20Xfov/X87DjSns
-         sEZ1B9/s+TRHoB4IPhNUTOSn1lbHbPiU9r6twdNYx2PwW2qS6OfnL8+XEIajl6IrJUz2
-         amdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726198911; x=1726803711;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WiG+fM+7N9Q40JfTc9raIwTA9+J99+5kuXFj+tWJcxo=;
-        b=rISF7FWNK9jZ+fZwti1ept/KCPbU98R7ec01hPMGFaW+zKwakG0HYmhGf480djx752
-         KmgOPpv9mGPAcfUAZDiYUAhAd63XxFl/0mjfMMxMewJJyP3whRbHAPyaRGFyksOzIxU6
-         NGGfYpdfjsXRxKdjRoo3ntXkktLIUGSb2F5jAIKxzkuhojepkC4tl3Td7eBB65tqJgUF
-         Eux3CyX2J/SYQd+7y05R+2/4NBvKpC5A4tp9FbeeL0AcX9oNX2vV1s6j6lisqY0Wa0wa
-         VOXGQY9sxKclKAaGKdahzFuwgBp5eCPiACj4t6z1wTJzLchDcQHZpFWhmxvOg1QgnCjD
-         N5jA==
-X-Forwarded-Encrypted: i=1; AJvYcCXqgCJ8gcB0N6qe4Y3hZ34edUUq1CtdgCMhVqc7fzzeGVen4m2HpkipvN06QJUM7NdKTiuTCr1RQfkU6dB3ItVd@vger.kernel.org, AJvYcCXye9/nouwswlb4g2G0kOZFkpMgvdAXxYutoBh5nTdMu/zM5bot+JoE6+Ih4oR5uZNS6AkwJupvfi41C80=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNUkY7Y//E/pyQtPleXlC3ieynzc/c7gfrEy4X9MYgk+AkP5jQ
-	YnR3zfyqrQ0oxbmPjD2Y8MeeJ+x6XJiOiSdS0Kdj2+Q4RHb61vCGVONcqv6imKdEG6C+lBcwnCP
-	3J9Zf3wU8WMM+lUv6MwIKLYSKoo8=
-X-Google-Smtp-Source: AGHT+IFapc1fMjHxFBGJ0qkUtd+XJG4w0zAhtt6ixANanpzleOSJATkFV4GdeXlL/n6mICeMMpYCQrQW1V9fRfCBD5k=
-X-Received: by 2002:a05:6808:192a:b0:3e0:45ea:7fbe with SMTP id
- 5614622812f47-3e07a1103c3mr858054b6e.13.1726198911381; Thu, 12 Sep 2024
- 20:41:51 -0700 (PDT)
+	s=arc-20240116; t=1726199066; c=relaxed/simple;
+	bh=/m4GfWd3oU9aBz87wq0gfZPIiwHASnEq9/Vz2lV/oe4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nfRFNPkNs4FlVyQ0Wbi1VSC/d5JV0OgIalJwI5jyh/9/sT/dSmL7dcLl+88jimQH+GE8lI2t/dxl/hSxCnTPBe14q0zAjoO+2ciqDAMewiFFETh68jpX8LbmilUXi0IFkuvgFmEEg0lapCaXfXWfDWlv8n79fyOon5X9kxOpnxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JOdq7coC; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=RvfXQ9uvEs2BWWmkp13Rn+2w03z6x8sxWgVmbE+dLsk=; b=JOdq7coCdU6dtWavSvoUMfgrkb
+	HkADbUmaigqOAD9xt0G4oLZPvfAPkdxAFR/9izSAnmePGYc1AvjFz080+NLrvCIcADY9LkHjCTjCh
+	1zmlQw1FsW0jgAUWCa6Gk7b8eAelPrR1BjOU1mK+mIEhAMXWWMFRsyFs/578cNsU7Zpd2IB6iz7Vx
+	IXiLEB7YFP9nr9k/lVXJ6uAJ1oHMCv5UiinGibHQFfuMLsvsn6AD5/JiotmGckfolhF0U7L0Z7zEo
+	8ytsOnorp5ox7o3K1IJaEBqylesxq0Um4ewmL6vrPDszY7tbyJ0Ou+C1oBbY2SP3nFCDB1+7X3BFe
+	8fpoFTGg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1soxEA-0000000G4tf-1dYV;
+	Fri, 13 Sep 2024 03:44:10 +0000
+Date: Fri, 13 Sep 2024 04:44:10 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Christian Theune <ct@flyingcircus.io>,
+	linux-mm@kvack.org,
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Daniel Dao <dqminh@cloudflare.com>,
+	Dave Chinner <david@fromorbit.com>, clm@meta.com,
+	regressions@lists.linux.dev, regressions@leemhuis.info
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+Message-ID: <ZuO1CtpGgwyf8Hui@casper.infradead.org>
+References: <A5A976CB-DB57-4513-A700-656580488AB6@flyingcircus.io>
+ <ZuNjNNmrDPVsVK03@casper.infradead.org>
+ <0fc8c3e7-e5d2-40db-8661-8c7199f84e43@kernel.dk>
+ <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
+ <415b0e1a-c92f-4bf9-bccd-613f903f3c75@kernel.dk>
+ <CAHk-=wg51pT_b+tgHuAaO6O0PT19WY9p3CXEqTn=LO8Zjaf=7A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240913022635.751505-1-zhangchunyan@iscas.ac.cn>
- <20240913022635.751505-2-zhangchunyan@iscas.ac.cn> <ZuOv55YsorfvhlQi@ghost>
-In-Reply-To: <ZuOv55YsorfvhlQi@ghost>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Fri, 13 Sep 2024 11:41:15 +0800
-Message-ID: <CAAfSe-vQCG=RRGwxEEWR-HE5LGH4XniMWi=nTzOOQMrW_fvRUQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] selftests/mm: skip virtual_address_range tests on riscv
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Chunyan Zhang <zhangchunyan@iscas.ac.cn>, Andrew Morton <akpm@linux-foundation.org>, 
-	Shuah Khan <shuah@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, linux-mm@kvack.org, 
-	linux-kselftest@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wg51pT_b+tgHuAaO6O0PT19WY9p3CXEqTn=LO8Zjaf=7A@mail.gmail.com>
 
-Hi Charlie,
-
-On Fri, 13 Sept 2024 at 11:22, Charlie Jenkins <charlie@rivosinc.com> wrote:
->
-> On Fri, Sep 13, 2024 at 10:26:35AM +0800, Chunyan Zhang wrote:
-> > RISC-V doesn't currently have the behavior of restricting the virtual
-> > address space which virtual_address_range tests check, this will
-> > cause the tests fail. So lets disable the whole test suite for riscv64
-> > for now, not build it and run_vmtests.sh will skip it if it is not present.
+On Thu, Sep 12, 2024 at 03:56:17PM -0700, Linus Torvalds wrote:
+> On Thu, 12 Sept 2024 at 15:30, Jens Axboe <axboe@kernel.dk> wrote:
 > >
-> > Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
->
-> Which tree does this apply onto? It is failing to apply on -rc7. Also,
+> > It might be an iomap thing... Other file systems do use it, but to
+> > various degrees, and XFS is definitely the primary user.
+> 
+> I have to say, I looked at the iomap code, and it's disgusting.
 
-Oh, it applies to -rc1.
+I'm not going to comment on this because I think it's unrelated to
+the problem.
 
-> since this is the second version of this patch it is good practice to
-> put v2 in the subject like [PATCH v2 2/2]. Anyways, the content of this
-> patch looks good!
->
-> Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+We have reports of bad entries being returned from page cache lookups.
+Sometimes they're pages which have been freed, sometimes they're pages
+which are very definitely in use by a different filesystem.
 
-Thanks,
-Chunyan
+I think that's what the underlying problem is here (or else we have
+two problems).  I'm not convinced that it's necessarily related to large
+folios, but it's certainly easier to reproduce with large folios.
+
+I've looked at a number of explanations for this.  Could it be a page
+that's being freed without being removed from the xarray?  We seem to
+have debug that would trigger in that case, so I don't think so.
+
+Could it be a page with a messed-up refcount?  Again, I think we'd
+notice the VM_BUG_ON_PAGE() in put_page_testzero(), so I don't think
+it's that either.
+
+My current best guess is that we have an xarray node with a stray pointer
+in it; that the node is freed from one xarray, allocated to a different
+xarray, but not properly cleared.  But I can't reproduce the problem,
+so that's pure speculation on my part.
 
