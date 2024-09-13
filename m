@@ -1,68 +1,86 @@
-Return-Path: <linux-kernel+bounces-328568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26B8E9785E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:35:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 872B49785DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:35:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD89928B409
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:35:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C13528B460
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61497DA95;
-	Fri, 13 Sep 2024 16:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BF66BB5B;
+	Fri, 13 Sep 2024 16:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="X6kBPxs7"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZwCkt2Wu"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D5A42042;
-	Fri, 13 Sep 2024 16:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E3B66F077
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 16:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726245333; cv=none; b=Q8U8Z3a8VAgJSZMWeEx0TZPZFyNqy7WMdM8zhojX1wRui64vQtbaFO4a7COf77wA6qPB/FrrwAPRuqamvIQ4w3Szop0Y+1Z3K6NlgIjoQKV8PzqECyon3pLC0tox0omt+vag+aZvY8RmiYmpBegZ1CGbTvuqQXigSahM/hs5css=
+	t=1726245331; cv=none; b=pgtFGfBFtEf1isqYjG65HBpBKejourH8BkCuOIT7ZtyrWF9keR5/6uAq9kAljYpfjnpZ2g+wKozeKkm21DjmTEEQetPXDqQFjtsWUBuCGdM74DYlmthwvrnIZHF8btlCUhQy+w34blkvAk/O2gnHHBMGN/7EAucUUWjWNOizalQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726245333; c=relaxed/simple;
-	bh=T2pd9fU2uXhAhd/79ReNX8YL90EYw1Bh8Hxy1xPrjuA=;
+	s=arc-20240116; t=1726245331; c=relaxed/simple;
+	bh=g+9WJ1ZXHQDkBth9rUa5BTms3cYhZcfpjLiOxYbR0kU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=toIwgSgRy+WslUX5Q4tjRY91gwkIse2VJpkIzMrPkRaozXBDWdCpv7R4HuGFVrvv8UXBqDCCWztxlg/BzBHKCriONzjfAs5DL8uEFuT1/loKtw9/DUezGc9TzaKkGyUDqr5K/Q/aKOldYt1Obn+4rEeXSanI806ahQR0xvD3txc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=X6kBPxs7; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=NvQeKqINDe9BGuZt2sVV/yzBJPL+/sx73RLk8FZnAxs=; b=X6kBPxs781s6RhYdKmpKavptU5
-	ynqbtxTZN+YoNOpiiO6HxFGUoTJZFdbOOXMtIaH04XLVqI7k9sbYqy/b/B+cwBrc6sDVwcfpAjAii
-	q3HgtF/iqDku/kBnEbWN//fq/khFoWUYts4o0bP2zlZ1SXrbCaHZb1oLAKNiWB/qRykM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sp9GP-007PKM-5J; Fri, 13 Sep 2024 18:35:17 +0200
-Date: Fri, 13 Sep 2024 18:35:17 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Abhishek Chauhan (ABC)" <quic_abchauha@quicinc.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andrew Halaney <ahalaney@redhat.com>,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-	Brad Griffis <bgriffis@nvidia.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	Jon Hunter <jonathanh@nvidia.com>, kernel@quicinc.com
-Subject: Re: [RFC PATCH net v1] net: phy: aquantia: Set phy speed to 2.5gbps
- for AQR115c
-Message-ID: <c6cc025a-ff13-46b8-97ac-3ad9df87c9ff@lunn.ch>
-References: <20240913011635.1286027-1-quic_abchauha@quicinc.com>
- <20240913100120.75f9d35c@fedora.home>
- <eb601920-c2ea-4ef6-939b-44aa18deed82@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PkNSZLBeQvXxHSLAhLJO/glKe1iYk5sK1ObljtVS3OKyCbivOyckAJuRrsMQSmuxGO/ZUNkhYJi+bomFI9zDbi3LfqCbwxb82qYjKsjUeeSiQdroMtx6RSlyjLCx6/dJUZefQR8OFKYDt9lSC61JZ+KzaHgrpsDZnoFSlkRwdHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZwCkt2Wu; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726245329;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kDxK8mYG6+G6vlDOXCZbx04chuhu3gLUGaNlsKs/16o=;
+	b=ZwCkt2WuIz25Cf5xXjyl2pweOAdJ9itZ9zZi3C4Rsfo8533KG1xmHRe6D7wT7NfKPAgbcb
+	ZnXnybvZVurBNtV47TZ22arUX3/o5zU5AVcIbfghIj8x4t+n393E9opGLRLovuTBKz6r3i
+	RYD8GhgaRis/Gf0jBCYlMs6v/hTUmgQ=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-482-valFor-RMlmyvxGfnHO86Q-1; Fri, 13 Sep 2024 12:35:27 -0400
+X-MC-Unique: valFor-RMlmyvxGfnHO86Q-1
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7a9b86db6cdso412021285a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:35:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726245327; x=1726850127;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kDxK8mYG6+G6vlDOXCZbx04chuhu3gLUGaNlsKs/16o=;
+        b=JSKwHsx+FzNYKiMIeX6v70dQRAAp2sz/u/IJpNsc5x/QOPWXGTgxI4SkgJJH2KQP7d
+         NzlBzAAP8qD44USEkFPa3hNFtTc02EoYgaONApDZbxms5SBoiEhiT6ZqSbxPZVosJRAq
+         hg8VxRGoUOonZQmn21GMzGL16kLNpJxg6zKXa1+A9qHmW3YHQVt1pFfhozbXbxCGhmUi
+         xh5EzXj4Rp1zL1CkC71TbABl+MPuZCfqgrHsqKq31Tcu63YfIlJrBuxmTHjjgd6J+3dG
+         RU+shCz1k3uPSyUawohbarTGaqKd50TnMgo+4WNriAblDybQmsW7BDh9hyYIt2Ibp6TI
+         3QDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmKgVvqqeo+5umaX6LagbMZ4hRwv8svZM5B1KgafgjUYdlUV4BP/Uv8FulcIM1ftk98oYlYRllu7wfQew=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNSHooVkr/kS6B+uSfkeAdfyo28ShZtCVkcu5NUvwNdhaJc1x8
+	csIwUZ9zKi+XJkVmkhxDvS6yAEK7z35M6t20qTeoo/opDk7wrUMv22tEuI8ovCavAMkiGEdsnm7
+	EsS+vmg8aWbhbckZFOB0OAB518yoO0iwMK93+gBsWYKEyEvhAEoGsUYZ4RHr+Lw==
+X-Received: by 2002:a05:620a:4105:b0:7a9:c203:7c2f with SMTP id af79cd13be357-7a9e5eea55amr1057643285a.4.1726245327249;
+        Fri, 13 Sep 2024 09:35:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEUA4jq/HTwpUoDP/NCE+TdCvRhLcB988bjHCTl7We+QqORja2JYbRSce87B0DnDzhAzLv9IQ==
+X-Received: by 2002:a05:620a:4105:b0:7a9:c203:7c2f with SMTP id af79cd13be357-7a9e5eea55amr1057640185a.4.1726245326926;
+        Fri, 13 Sep 2024 09:35:26 -0700 (PDT)
+Received: from rhfedora ([71.217.60.247])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a9a7995e50sm679514285a.63.2024.09.13.09.35.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 09:35:26 -0700 (PDT)
+Date: Fri, 13 Sep 2024 12:35:24 -0400
+From: "John B. Wyatt IV" <jwyatt@redhat.com>
+To: Min-Hua Chen <minhuadotchen@gmail.com>
+Cc: skhan@linuxfoundation.org, jkacur@redhat.com,
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+	shuah@kernel.org, trenn@suse.com
+Subject: Re: [RFC PATCH for-next] pm: cpupower: rename raw_pylibcpupower.i
+Message-ID: <ZuRpzN2OKHQ75GZW@rhfedora>
+References: <b64402ad-4c0d-4f5f-939b-4be1a7855e4a@linuxfoundation.org>
+ <20240912225519.119392-1-minhuadotchen@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,76 +89,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <eb601920-c2ea-4ef6-939b-44aa18deed82@quicinc.com>
+In-Reply-To: <20240912225519.119392-1-minhuadotchen@gmail.com>
 
-On Fri, Sep 13, 2024 at 09:12:13AM -0700, Abhishek Chauhan (ABC) wrote:
-> 
-> 
-> On 9/13/2024 1:01 AM, Maxime Chevallier wrote:
-> > Hi,
-> > 
-> > On Thu, 12 Sep 2024 18:16:35 -0700
-> > Abhishek Chauhan <quic_abchauha@quicinc.com> wrote:
-> > 
-> >> Recently we observed that aquantia AQR115c always comes up in
-> >> 100Mbps mode. AQR115c aquantia chip supports max speed up to
-> >> 2.5Gbps. Today the AQR115c configuration is done through
-> >> aqr113c_config_init which internally calls aqr107_config_init.
-> >> aqr113c and aqr107 are both capable of 10Gbps. Whereas AQR115c
-> >> supprts max speed of 2.5Gbps only.
-> >>
-> >> Fixes: 0ebc581f8a4b ("net: phy: aquantia: add support for aqr115c")
-> >> Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
-> >> ---
-> >>  drivers/net/phy/aquantia/aquantia_main.c | 7 +++++++
-> >>  1 file changed, 7 insertions(+)
-> >>
-> >> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
-> >> index e982e9ce44a5..9afc041dbb64 100644
-> >> --- a/drivers/net/phy/aquantia/aquantia_main.c
-> >> +++ b/drivers/net/phy/aquantia/aquantia_main.c
-> >> @@ -499,6 +499,12 @@ static int aqr107_config_init(struct phy_device *phydev)
-> >>  	if (!ret)
-> >>  		aqr107_chip_info(phydev);
-> >>  
-> >> +	/* AQR115c supports speed up to 2.5Gbps */
-> >> +	if (phydev->interface == PHY_INTERFACE_MODE_2500BASEX) {
-> >> +		phy_set_max_speed(phydev, SPEED_2500);
-> >> +		phydev->autoneg = AUTONEG_ENABLE;
-> >> +	}
-> >> +
-> > 
-> > If I get your commit log right, the code above will also apply for
-> > ASQR107, AQR113 and so on, don't you risk breaking these PHYs if they
-> > are in 2500BASEX mode at boot?
-> > 
-> 
-> I was thinking of the same. That this might break something here for other Phy chip. 
-> As every phy shares the same config init. Hence the reason for RFC. 
-> 
-> > Besides that, if the PHY switches between SGMII and 2500BASEX
-> > dynamically depending on the link speed, it could be that it's
-> > configured by default in SGMII, hence this check will be missed.
-> > 
-> > 
-> I think the better way is to have AQR115c its own config_init which sets 
-> the max speed to 2.5Gbps and then call aqr113c_config_init . 
+On Fri, Sep 13, 2024 at 06:55:19AM +0800, Min-Hua Chen wrote:
+> AFAIK,
+> raw_pylibcpupower.i is not a generated file, it is a interface file
+> for swig.
 
-phy_set_max_speed(phydev, SPEED_2500) is something a MAC does, not a
-PHY. It is a way for the MAC to say is supports less than the PHY. I
-would say the current aqcs109_config_init() is doing this wrong.
+That is correct. You can do more advanced things to help SWIG handle
+different languages, but so far with the script I wrote for libcpupower
+simply copying the definition files as worked for me for the .i file.
 
-> > Is the AQR115c in the same situation as AQR111 for example, where the
-> > PMA capabilities reported are incorrect ?
+See:
+https://www.swig.org/Doc4.2/Preprocessor.html#Preprocessor
 
-This is the approach to follow. The PHY registers should report what
-it is actually capable of. But some aquantia PHYs get this
-wrong. Please check if this is also true for your PHY. Look at what
-genphy_c45_pma_read_abilities() is doing.
+> The *.i file extension is also used for pre-processor output
+> (single target build) and all *.i files are removed by 'make mrproper',
+> including raw_pylibcpupower.i (should not be removed).
 
-You might need to implement a .get_feature callback for this PHY which
-first calls genphy_c45_pma_read_abilities() and then manually fixes up
-what the PHY gets wrong.
+That would explain it. Not just 'make mrproper', but 'make clean'
+in the root removes the file as well. 'make clean' in the tools
+directory does not affect it.
 
-	Andrew     	
+From 'man gcc':
+
+       file.i
+           C source code that should not be preprocessed.
+
+> >
+> >> I have reviewed and tested and this. I am good with it being a stopgap.
+> >
+> >I am okay with the stopgap, but I do want i explore other solutions.
+
+Reviewing the documentation a better solution would be to rename it to .swg
+
+'''
+5.1.1 Input format
+
+As input, SWIG expects a file containing ISO C/C++ declarations and special
+SWIG directives. More often than not, this is a special SWIG interface file
+which is usually denoted with a special .i or .swg suffix.
+'''
+
+https://www.swig.org/Doc4.2/SWIG.html
+
+-- 
+Sincerely,
+John Wyatt
+Software Engineer, Core Kernel
+Red Hat
+
 
