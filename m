@@ -1,121 +1,187 @@
-Return-Path: <linux-kernel+bounces-328563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FF239785CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:30:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41A629785F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40AAC28AB31
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:30:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9BB21F249B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24955770FD;
-	Fri, 13 Sep 2024 16:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32CF478276;
+	Fri, 13 Sep 2024 16:40:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="NHnBJTqu"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="WIY7Z/3I"
+Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [83.166.143.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879D042042;
-	Fri, 13 Sep 2024 16:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB87745CB
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 16:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726245039; cv=none; b=V8gCFmf8XnIXKNmTQcaCoSIHidKrRrbi6PjoLM+rYZIWBD+SpnaRlw6Evo0gB8VOBTsvLLokaKNa0h1QYeDGBc83SXMNuTKDpVgKvWZG8X8y2EZpioJbgKcolqDKYGT9EyLPQyVQeWc9UHjRfhkwUix/UcuFMZG4iInkb57qzvM=
+	t=1726245619; cv=none; b=hxPO0ElbqDwyGhbao9rA1UYrm14k2fgBqs575UWEuZxQAnSNKCNnBb/HPwzbmVKlVMeedIZlqS10a7+vB9TOQdOLGIx4AaG3wUAs+j3fz5+lZhIBiReijWMaF9f6NjmJ9nBBzeBaW4cVjv+w2nYj8zs8m27BLphQfVdt0ADzXMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726245039; c=relaxed/simple;
-	bh=aKK46FKilK+bKnoX2daqexXas1ZpJ5Ewg8DpXYBnFJ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=g8MzZ/XdtJYj370i4zCp5MIEPhUSAN6Hb2VH0Lm7u34rQFyuZA9CYKHqTz+tu2ODzaC+C9l0lvnFB4sDY6L2y9D2tCtbdH1ZK8yXYIlPza+pEhQFC+KIFjn3baIgNA/sprxL8gsYUlmJ52IHSkYS+dCS/lzEvEauVNbgMqr2igc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=NHnBJTqu; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 7c1f77ec71ed11efb66947d174671e26-20240914
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=5/b8q4BoSrQ3NlAvsKLlfGTvGmk5/ocjY5IDio7BDIk=;
-	b=NHnBJTquKlPLrnfIzK6mPmMknXBJBhSWyH7Jg3GU1n3lOvXOyjSPbc5Tbdj2Oosvb1Lwf1nu+yUIaa6e3pqJjc16Swlf7Rli+aL5y6nijsJx6p6Mjj5o0gOpsTFQmo8HBinSCxz6/PNd+QWzhYQb5IRE14fX37lcxaLcXu5piq0=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:b312c942-3092-41ab-8541-c4ec0f873cc5,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:233ffcb6-8c4d-4743-b649-83c6f3b849d4,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 7c1f77ec71ed11efb66947d174671e26-20240914
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1165984055; Sat, 14 Sep 2024 00:30:27 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Sat, 14 Sep 2024 00:30:25 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkmbs11n2.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
- Transport; Sat, 14 Sep 2024 00:29:53 +0800
-Message-ID: <d77b6a8c-f499-7980-868d-7717046ec3e3@mediatek.com>
-Date: Sat, 14 Sep 2024 00:29:48 +0800
+	s=arc-20240116; t=1726245619; c=relaxed/simple;
+	bh=f+359BLhYQ/Pg24mzq1ifHF0ls/rX9zTnkmJM6Jpxkc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RYgPfoWwCdeHeFpgDsD8rnsY/sC+G3cyy+qrlqLMIHdudvTzdSOb9B1/KC1F0l2CzW7IWpJgk7iFkouqxx0eCMWOF7FbfN8pWH/A1Hl8asN6glPutlucQ8oTjihQJ4KSw5/jOjjMBj4quJ5QvOBr0K2xJx6MAGKDS5SXMJBcKQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=WIY7Z/3I; arc=none smtp.client-ip=83.166.143.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X50Gw0wvPz9ZT;
+	Fri, 13 Sep 2024 18:33:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1726245192;
+	bh=jL3SgGv5TLclTQUubcFPqq833ZrkKmojbZCL1JIDaHg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WIY7Z/3IAa1GQIu+Lv08iD0+3zMhCcwthtjR8rC73MwiT6LKOiStafOZpFbSedAeJ
+	 DVXoy+jV6k49dVfznUPANh0X3SbBACoUO38ERyTmWkEyCKp4PvWuPS33Vu6pklZBuA
+	 HYn/eLOZsxDQPDEcJiB+Ir1yXUiVUDJLEckTDRCo=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4X50Gv0fyVzJ4f;
+	Fri, 13 Sep 2024 18:33:11 +0200 (CEST)
+Date: Fri, 13 Sep 2024 18:33:03 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v11 0/8] Landlock: Add abstract UNIX socket restriction
+Message-ID: <20240913.Doof4aiK8soh@digikod.net>
+References: <cover.1725494372.git.fahimitahera@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v2 3/7] dt-bindings: rtc: mt6397: merge to MFD
- mediatek,mt6397 DT schema
-Content-Language: en-US
-To: Rob Herring <robh@kernel.org>
-CC: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	<linux-leds@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
-	<broonie@kernel.org>, Sebastian Reichel <sre@kernel.org>, Pavel Machek
-	<pavel@ucw.cz>, Sean Wang <sean.wang@mediatek.com>, Lee Jones
-	<lee@kernel.org>, Alexandre Mergnat <amergnat@baylibre.com>, Flora Fu
-	<flora.fu@mediatek.com>, Bear Wang <bear.wang@mediatek.com>, Pablo Sun
-	<pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, Sen Chu
-	<sen.chu@mediatek.com>, Chris-qj chen <chris-qj.chen@mediatek.com>, MediaTek
- Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-	<linux-rtc@vger.kernel.org>, <linux-sound@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, Chen-Yu Tsai <wenst@chromium.org>
-References: <20240830110732.30080-1-macpaul.lin@mediatek.com>
- <20240830110732.30080-3-macpaul.lin@mediatek.com>
- <20240830153437.GB4175444-robh@kernel.org>
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-In-Reply-To: <20240830153437.GB4175444-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <cover.1725494372.git.fahimitahera@gmail.com>
+X-Infomaniak-Routing: alpha
 
+I have reworked a bit the patches, including the signal scoping ones,
+and they are here:
+https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
 
-On 8/30/24 23:34, Rob Herring wrote:
-> 	
+This is based on a manual merge of some VFS changes and LSM changes
+required for this patch series:
+https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/commit/?h=next&id=24dfe95e493086a99acf7df1ef23d9f21f8cdec7
+
+My changes are explained in the "[mic: ...]" part of the commit
+messages. Please send two last patch series, with this changes and reply
+to it with your comments if any.
+
+On Wed, Sep 04, 2024 at 06:13:54PM -0600, Tahera Fahimi wrote:
+> This patch series adds scoping mechanism for abstract UNIX sockets.
+> Closes: https://github.com/landlock-lsm/linux/issues/7
 > 
-> External email : Please do not click links or open attachments until you 
-> have verified the sender or the content.
+> Problem
+> =======
 > 
-> On Fri, Aug 30, 2024 at 07:07:28PM +0800, Macpaul Lin wrote:
->> Convert rtc-mt6397.txt be compatible with the DT schema.
->> Since this is a simple RTC device node, merge it into parent
->> mediatek,mt6397.yaml. Subsequently, remove rtc-mt6397.txt with a
->> separate patch.
+> Abstract UNIX sockets are used for local inter-process communications
+> independent of the filesystem. Currently, a sandboxed process can
+> connect to a socket outside of the sandboxed environment, since Landlock
+> has no restriction for connecting to an abstract socket address(see more
+> details in [1,2]). Access to such sockets for a sandboxed process should
+> be scoped the same way ptrace is limited.
 > 
-> This doesn't match what the patch does. You can just squash this into
-> the MFD patch where you add the schema.
+> [1] https://lore.kernel.org/all/20231023.ahphah4Wii4v@digikod.net/
+> [2] https://lore.kernel.org/all/20231102.MaeWaepav8nu@digikod.net/
 > 
-
-[snip]
-
-Will squash the other patches for removing text format files in to the 
-MFD patch in next (v3) version. Thanks!
-
-Regards,
-Macpaul Lin
+> Solution
+> ========
+> 
+> To solve this issue, we extend the user space interface by adding a new
+> "scoped" field to Landlock ruleset attribute structure. This field can
+> contains different rights to restrict different functionalities. For
+> abstract UNIX sockets, we introduce
+> "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" field to specify that a ruleset
+> will deny any connection from within the sandbox domain to its parent
+> (i.e. any parent sandbox or non-sandbox processes).
+> 
+> Example
+> =======
+> 
+> Starting a listening socket with socat(1):
+>         socat abstract-listen:mysocket -
+> 
+> Starting a sandboxed shell from $HOME with samples/landlock/sandboxer:
+>         LL_FS_RO=/ LL_FS_RW=. LL_SCOPED="a" ./sandboxer /bin/bash
+> 
+> If we try to connect to the listening socket, the connection gets
+> refused.
+>         socat - abstract-connect:mysocket --> fails
+> 
+> 
+> Notes of Implementation
+> =======================
+> 
+> * Using the "scoped" field provides enough compatibility and flexibility
+>   to extend the scoping mechanism for other IPCs(e.g. signals).
+> 
+> * To access the domain of a socket, we use its credentials of the file's
+>   FD which point to the credentials of the process that created the
+>   socket (see more details in [3]). Cases where the process using the
+>   socket has a different domain than the process created it are covered
+>   in the "outside_socket" test.
+> 
+> [3]https://lore.kernel.org/all/20240611.Pi8Iph7ootae@digikod.net/
+> 
+> Previous Versions
+> =================
+> v10:https://lore.kernel.org/all/cover.1724125513.git.fahimitahera@gmail.com/
+> v9: https://lore.kernel.org/all/cover.1723615689.git.fahimitahera@gmail.com/
+> v8: https://lore.kernel.org/all/cover.1722570749.git.fahimitahera@gmail.com/
+> v7: https://lore.kernel.org/all/cover.1721269836.git.fahimitahera@gmail.com/
+> v6: https://lore.kernel.org/all/Zn32CYZiu7pY+rdI@tahera-OptiPlex-5000/
+> and https://lore.kernel.org/all/Zn32KKIJrY7Zi51K@tahera-OptiPlex-5000/
+> v5: https://lore.kernel.org/all/ZnSZnhGBiprI6FRk@tahera-OptiPlex-5000/
+> v4: https://lore.kernel.org/all/ZnNcE3ph2SWi1qmd@tahera-OptiPlex-5000/
+> v3: https://lore.kernel.org/all/ZmJJ7lZdQuQop7e5@tahera-OptiPlex-5000/
+> v2: https://lore.kernel.org/all/ZgX5TRTrSDPrJFfF@tahera-OptiPlex-5000/
+> v1: https://lore.kernel.org/all/ZgXN5fi6A1YQKiAQ@tahera-OptiPlex-5000/
+> 
+> Tahera Fahimi (8):
+>   Landlock: Add abstract UNIX socket restriction
+>   selftests/landlock: Add test for handling unknown scope
+>   selftests/landlock: Add abstract UNIX socket restriction tests
+>   selftests/landlock: Add tests for UNIX sockets with any address
+>     formats
+>   selftests/landlock: Test connected vs non-connected datagram UNIX
+>     socket
+>   selftests/landlock: Restrict inherited datagram UNIX socket to connect
+>   sample/landlock: Add support abstract UNIX socket restriction
+>   Landlock: Document LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET and ABI
+>     version
+> 
+>  Documentation/userspace-api/landlock.rst      |  45 +-
+>  include/uapi/linux/landlock.h                 |  28 +
+>  samples/landlock/sandboxer.c                  |  61 +-
+>  security/landlock/limits.h                    |   3 +
+>  security/landlock/ruleset.c                   |   7 +-
+>  security/landlock/ruleset.h                   |  24 +-
+>  security/landlock/syscalls.c                  |  17 +-
+>  security/landlock/task.c                      | 136 +++
+>  tools/testing/selftests/landlock/base_test.c  |   2 +-
+>  tools/testing/selftests/landlock/common.h     |  38 +
+>  tools/testing/selftests/landlock/net_test.c   |  31 +-
+>  .../landlock/scoped_abstract_unix_test.c      | 993 ++++++++++++++++++
+>  .../selftests/landlock/scoped_base_variants.h | 154 +++
+>  .../selftests/landlock/scoped_common.h        |  28 +
+>  .../scoped_multiple_domain_variants.h         | 154 +++
+>  .../testing/selftests/landlock/scoped_test.c  |  33 +
+>  16 files changed, 1709 insertions(+), 45 deletions(-)
+>  create mode 100644 tools/testing/selftests/landlock/scoped_abstract_unix_test.c
+>  create mode 100644 tools/testing/selftests/landlock/scoped_base_variants.h
+>  create mode 100644 tools/testing/selftests/landlock/scoped_common.h
+>  create mode 100644 tools/testing/selftests/landlock/scoped_multiple_domain_variants.h
+>  create mode 100644 tools/testing/selftests/landlock/scoped_test.c
+> 
+> -- 
+> 2.34.1
+> 
 
