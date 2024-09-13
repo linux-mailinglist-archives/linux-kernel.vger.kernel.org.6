@@ -1,164 +1,147 @@
-Return-Path: <linux-kernel+bounces-328087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1781977EB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:44:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DB11977EBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD8C91C217A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:44:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7819C1C21036
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580C51D86F1;
-	Fri, 13 Sep 2024 11:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17601BE872;
+	Fri, 13 Sep 2024 11:44:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I7oqb9B1"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="btETFu/e"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C4B1BE872
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 11:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915A31D86E9
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 11:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726227847; cv=none; b=CGiGowv9pwhvHMF736FV3fb9kKh5eLxrlvfgeqRxcMj/x3WW2tT/+V5gOIuA20RTbzBVdZOuiXCFaam7ceUyXIRldM7q4Q1z7xMW6XmkviICLAv0nq0aAcMzD9UyRGzsJ/ImxE6GX3XO35VDdAVcSjfNdr6RQtzDik9q3WWvpoE=
+	t=1726227860; cv=none; b=UUVlIMwhblpPyq6DY0IJOPrQDmGVL+G+51kRabOhhRc4OHrISQJ4upvN2KnPx1jxLrYonQQEL39abCl5nG7Lbbgd7jtQJt0Bc2Xb83fkG/CgEwJ6mvo0FtDbbn9/sGYsLeQZP4RfN14NvA43h2h1XVXLIo6n7BFPhvBg+GaKh6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726227847; c=relaxed/simple;
-	bh=Jut2JJvS8BiaXRNKbc2eNw8lvcDiJ+FvNNwMY8axnGs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=rHjuwmhq6wWiy9RjrzQeWtHMVwjrnCLqt7POtD0xY5PEbia281F7u87WeuHS59pPn+oWREau1BA75/NPOE6jwcBFUyQBZdXxSkGd2bJRO6tam3tdCGrLKKAJR2b0jyxutPp8/WNIjfMAJ0ZfUsAF0kFEcWc6KWuNMPL2b8KeuX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I7oqb9B1; arc=none smtp.client-ip=209.85.208.50
+	s=arc-20240116; t=1726227860; c=relaxed/simple;
+	bh=WVlZCBI9rR2tjRj8gt8fXMMXF7h6R8iX/uuUUMIMVB8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=alMk059qlAikQecO7RwOagfOTmriOYaDGLb+rD4esHw2B+AY7TvXM/EgIRfZ+gK0d88lQoUI6gJrorFveDXgp16b6+lOSOiOeLHSi6U191DMwIuB7XgkazM+fbAypISA7PG3Usa47pgMamGS6XbmtMzEcVv1uLiNRaPUuo8sTPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=btETFu/e; arc=none smtp.client-ip=209.85.128.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c3ed267a7bso2288967a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 04:44:05 -0700 (PDT)
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6daf46ee332so6712397b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 04:44:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726227844; x=1726832644; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qlYXu9wdGGHl/oITpGKAFgbisLnw4KYV2wASACpU2Lc=;
-        b=I7oqb9B1VADqDrQwglTnodY7wgRLuyFhi3wC0vvSJNoHtrvCiZie+iF2o+HBwKwooA
-         Gj38bcK9mQHAaHveTW5swYjeufEpJbgkKtJHJtFIe3KsLr15/2Il6DAGSmZnLAB76zpm
-         +NMhwZrts8dXCkPQyD0PNsbsbCMH0JQHMUuDmvo6FjHCybsITm9qKA/Qn3da4qMTI4TQ
-         9/BA1JYQDLL++P48UURp8YMpVq44LNfoA666vM6lgb0FLse0RXjf2/2+t3L8bfbar+Xa
-         7AWcjdyDM1u1i+cnD84XR0qLRW53I26kdp4sU0Cin+GZ4Trrt70qQ0A+ghPC/b65YP96
-         24xg==
+        d=linaro.org; s=google; t=1726227857; x=1726832657; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bpGVAz7F68gq4K0wsGbVi84hQs0Zw4wJBgelJinUR+M=;
+        b=btETFu/eJkaWeaPR4uNkeJRV3qiNNP2xq8PaYYDqHkY1Moy2uAaYuVyB9F+XRXX6bs
+         RbOdB/Yvyj4CVE1GMyWmbHANPUnpsy1Z0d5tBtNHqclHvaYofO7t7wb118hgGfkvipQp
+         /OtNq04hLtp4P5oZ2xNU8/QiSn8vS57lIB8mBaBFMg1ZNGC8/lGg+6UA2bi9z/lACDrK
+         IfT0AS0WXLbilyN44jO/vnV9tl3pg3gge//J07idEmv1ecMqPSXBtQKSm+39/XXIw5Ou
+         axC9lgFoUphFrImX0rsLcaGB7my3oQpET+7mztrehV7E8QQvkEFuntzobZBZaaUvFMQC
+         nf+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726227844; x=1726832644;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1726227857; x=1726832657;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=qlYXu9wdGGHl/oITpGKAFgbisLnw4KYV2wASACpU2Lc=;
-        b=XdoFM1MMpwfU6417j5yEL2CMEe2iew1zPlUJyXc+OqRhxRqekyLv8905vVzePJYnCD
-         CxtS37gc98JrMhvN3TmbTOsHu/RyPDUUmqOnFnGaCWnEDS0Xd4nQwTBewWAK+u3Iot/g
-         kV0G0nYROeegzZPX/EFS1eE7zqbxA3rK9jRtidARrGHdgag5onSjyrm5W9mM/K1hBFq4
-         hhplKdDm3rVGp3nNlAqqBFJzCT//B5lcavPTgF1aBUxFt7KX4MgFIKDf3zCn6ZczwQYj
-         GG5+InSFA5eDrBfkYNedIpoBiIUBMDkrZ+cf4mDPPLStwWPUDNiWDiAdUHFSVXEUBOGw
-         TJsA==
-X-Gm-Message-State: AOJu0YzFFNxOIeVkQgk9VSRFAut46TzGHT51+lTNmH7IBNDEmpgDl5fh
-	ncSIvzbJxwwvA+QqgYwV+oSGWz8/jmDSUGbL9D5wi5wdN1mbl74CTOEmM6KDi2Q=
-X-Google-Smtp-Source: AGHT+IFgdBHhnRR181adepCCcniOpts8e4r4NbrXOVCetFZwhxCcF3N/3TnCcklxP7H8J5/0vsGvgw==
-X-Received: by 2002:a05:6402:295:b0:5c2:7727:6109 with SMTP id 4fb4d7f45d1cf-5c413e53f72mr3628609a12.30.1726227843865;
-        Fri, 13 Sep 2024 04:44:03 -0700 (PDT)
-Received: from puffmais.c.googlers.com (30.171.91.34.bc.googleusercontent.com. [34.91.171.30])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd8ad51sm7570249a12.79.2024.09.13.04.44.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 04:44:03 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Fri, 13 Sep 2024 12:43:58 +0100
-Subject: [PATCH] regulator: update some comments ([gs]et_voltage_vsel vs
- [gs]et_voltage_sel)
+        bh=bpGVAz7F68gq4K0wsGbVi84hQs0Zw4wJBgelJinUR+M=;
+        b=EednYozYadaiCp7gQgzpd7WaKoBopdLSjEmBH4ZQKKMkuKQ+nTXZuuWkeEKkiVD8q/
+         3IPQwadZpM0Pt/dN7KzjksuJ7UplSx8tgGN96yrlfMg1ypn5DU73gADViHTvh1Y/+tjy
+         u16YuGqY+9IFM9xrH69R/MhBCwudT9Y3s6yIxEMStF2cLynJf738qQpk7Z+MNYCTLVmt
+         LWt9SCgPO9YRIv/fRGyf9SFher+IkLHaAX1spBS8pNe3cQgsFfE0nmUJsSMaW/CgKR3P
+         8McIVxeFG1Qp8DIoPIN3Na/BAUWh2Nh/E5WeTf6xe2+tsHE382QojTqQCnS50m8R2D28
+         q9lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxVATvFp6YNdudfTd0DROxhOlcQSPjQNQbKOdqJ6w6/2v4vyhIbkGg4iZljwPWWF2Kr+vZxkGW+na5784=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSG4UiVB246SRhvVp5yMpJHN11RHiZIxfhQB79P0XzopGftQSb
+	6yj0Rr0o2K2q2iZrm20CjmRo9HyQTVtODGLmpKzIHvvf311HxHvQykcQ6CDJv7mNsDGFW1x2+up
+	wMViUhwHd/99XuMMZ1+1aA07SIeZzho/wDZ+Ctw==
+X-Google-Smtp-Source: AGHT+IE+HCTz9/Hpne7uiESMruAIZ8sOYY9ablamvHhKXDnIFQMaJZtzXwjRu+Y8yXtv+wftvk256sWwlMRwxMdIsno=
+X-Received: by 2002:a05:690c:3708:b0:62f:aaaa:187a with SMTP id
+ 00721157ae682-6dbcc26265bmr21823667b3.14.1726227857290; Fri, 13 Sep 2024
+ 04:44:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240913-regulator-typos-v1-1-92781c93f638@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAH4l5GYC/x3MQQqAIBBA0avErBO0ErSrRAupyQZCY6wowrsnL
- d/i/xcSMmGCvnqB8aJEMRSouoJpdcGjoLkYGtl00qpWMPpzc0dkcTx7TEJPVhlrNFqFUKqdcaH
- 7Pw5jzh/BUQUkYQAAAA==
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.13.0
+References: <20240913103755.7290-1-quic_mukhopad@quicinc.com> <20240913103755.7290-6-quic_mukhopad@quicinc.com>
+In-Reply-To: <20240913103755.7290-6-quic_mukhopad@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 13 Sep 2024 14:44:06 +0300
+Message-ID: <CAA8EJpqyr0b4zUZ3h+bTASru74fm1U9LGJkpqcQhEChH2EexXQ@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] drm/msm/dp: Add DisplayPort controller for SA8775P
+To: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, konradybcio@kernel.org, 
+	andersson@kernel.org, simona@ffwll.ch, abel.vesa@linaro.org, 
+	robdclark@gmail.com, quic_abhinavk@quicinc.com, sean@poorly.run, 
+	marijn.suijten@somainline.org, airlied@gmail.com, daniel@ffwll.ch, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	quic_khsieh@quicinc.com, konrad.dybcio@linaro.org, quic_parellan@quicinc.com, 
+	quic_bjorande@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, quic_riteshk@quicinc.com, 
+	quic_vproddut@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 
-Some comments here are referring to a non-existent
-regulator_ops::get_voltage_vsel() where ::get_voltage_sel() is meant,
-and similar for ::set_voltage_vsel() / ::set_voltage_sel().
+On Fri, 13 Sept 2024 at 13:38, Soutrik Mukhopadhyay
+<quic_mukhopad@quicinc.com> wrote:
+>
+> The Qualcomm SA8775P platform comes with a DisplayPort controller
+> with a different base offset than the previous SoCs,
+> add support for this in the DisplayPort driver.
+>
+> Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+> ---
+> v2: No change
+>
+> ---
+>  drivers/gpu/drm/msm/dp/dp_display.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
+> index e1228fb093ee..e4954fd99eb0 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_display.c
+> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
+> @@ -118,6 +118,12 @@ struct msm_dp_desc {
+>         bool wide_bus_supported;
+>  };
+>
+> +static const struct msm_dp_desc sa8775p_dp_descs[] = {
+> +       { .io_start = 0xaf54000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported = true },
+> +       { .io_start = 0xaf5c000, .id = MSM_DP_CONTROLLER_1, .wide_bus_supported = true },
 
-Update the comments.
+Please wait for the discussion to end before posting new iterations.
+In this case Bjorn pointed out that this is not the full
+configuration. Please add a comment, describing that there is a second
+MDSS, which isn't declared here as it wasn't validated.
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/regulator/helpers.c          | 8 ++++----
- drivers/regulator/mt6357-regulator.c | 2 +-
- 2 files changed, 5 insertions(+), 5 deletions(-)
+> +       {}
+> +};
+> +
+>  static const struct msm_dp_desc sc7180_dp_descs[] = {
+>         { .io_start = 0x0ae90000, .id = MSM_DP_CONTROLLER_0, .wide_bus_supported = true },
+>         {}
+> @@ -162,6 +168,7 @@ static const struct msm_dp_desc x1e80100_dp_descs[] = {
+>  };
+>
+>  static const struct of_device_id dp_dt_match[] = {
+> +       { .compatible = "qcom,sa8775p-dp", .data = &sa8775p_dp_descs },
+>         { .compatible = "qcom,sc7180-dp", .data = &sc7180_dp_descs },
+>         { .compatible = "qcom,sc7280-dp", .data = &sc7280_dp_descs },
+>         { .compatible = "qcom,sc7280-edp", .data = &sc7280_dp_descs },
+> --
+> 2.17.1
+>
 
-diff --git a/drivers/regulator/helpers.c b/drivers/regulator/helpers.c
-index 6e1ace660b8c..0def82eb8b46 100644
---- a/drivers/regulator/helpers.c
-+++ b/drivers/regulator/helpers.c
-@@ -125,7 +125,7 @@ static int regulator_range_selector_to_index(struct regulator_dev *rdev,
-  *
-  * Regulators that use regmap for their register I/O and use pickable
-  * ranges can set the vsel_reg, vsel_mask, vsel_range_reg and vsel_range_mask
-- * fields in their descriptor and then use this as their get_voltage_vsel
-+ * fields in their descriptor and then use this as their get_voltage_sel
-  * operation, saving some code.
-  */
- int regulator_get_voltage_sel_pickable_regmap(struct regulator_dev *rdev)
-@@ -195,7 +195,7 @@ static int write_separate_vsel_and_range(struct regulator_dev *rdev,
-  *
-  * Regulators that use regmap for their register I/O and use pickable
-  * ranges can set the vsel_reg, vsel_mask, vsel_range_reg and vsel_range_mask
-- * fields in their descriptor and then use this as their set_voltage_vsel
-+ * fields in their descriptor and then use this as their set_voltage_sel
-  * operation, saving some code.
-  */
- int regulator_set_voltage_sel_pickable_regmap(struct regulator_dev *rdev,
-@@ -250,7 +250,7 @@ EXPORT_SYMBOL_GPL(regulator_set_voltage_sel_pickable_regmap);
-  *
-  * Regulators that use regmap for their register I/O can set the
-  * vsel_reg and vsel_mask fields in their descriptor and then use this
-- * as their get_voltage_vsel operation, saving some code.
-+ * as their get_voltage_sel operation, saving some code.
-  */
- int regulator_get_voltage_sel_regmap(struct regulator_dev *rdev)
- {
-@@ -276,7 +276,7 @@ EXPORT_SYMBOL_GPL(regulator_get_voltage_sel_regmap);
-  *
-  * Regulators that use regmap for their register I/O can set the
-  * vsel_reg and vsel_mask fields in their descriptor and then use this
-- * as their set_voltage_vsel operation, saving some code.
-+ * as their set_voltage_sel operation, saving some code.
-  */
- int regulator_set_voltage_sel_regmap(struct regulator_dev *rdev, unsigned sel)
- {
-diff --git a/drivers/regulator/mt6357-regulator.c b/drivers/regulator/mt6357-regulator.c
-index c0439a4e0b50..1eb69c7a6acb 100644
---- a/drivers/regulator/mt6357-regulator.c
-+++ b/drivers/regulator/mt6357-regulator.c
-@@ -123,7 +123,7 @@ struct mt6357_regulator_info {
-  *
-  * Regulators that use regmap for their register I/O can set the
-  * da_vsel_reg and da_vsel_mask fields in the info structure and
-- * then use this as their get_voltage_vsel operation.
-+ * then use this as their get_voltage_sel operation.
-  */
- static int mt6357_get_buck_voltage_sel(struct regulator_dev *rdev)
- {
 
----
-base-commit: 5acd9952f95fb4b7da6d09a3be39195a80845eb6
-change-id: 20240913-regulator-typos-5c918985e91e
-
-Best regards,
 -- 
-André Draszik <andre.draszik@linaro.org>
-
+With best wishes
+Dmitry
 
