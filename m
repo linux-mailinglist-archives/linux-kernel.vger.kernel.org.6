@@ -1,115 +1,156 @@
-Return-Path: <linux-kernel+bounces-327642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DCB49778B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:15:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 325269778B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:14:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7C491F25E59
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:15:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C3321C2128F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06DEA1AB6FA;
-	Fri, 13 Sep 2024 06:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hp.com header.i=@hp.com header.b="aS1/dJjK"
-Received: from us-smtp-delivery-162.mimecast.com (us-smtp-delivery-162.mimecast.com [170.10.133.162])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EFB1AD241;
+	Fri, 13 Sep 2024 06:14:40 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8EE154BE9
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 06:15:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.162
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C904B1A0BF6
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 06:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726208144; cv=none; b=lpjm2AvEGzme3i1/XrLbyTm8tUmkrxGbF+mbHw02tK5JhMdlgJsLWk6AYfgy9ZoSZE73uHImNwqXh8ST8YUPNw6Qmg0HdLm1nR6s3G0Y+vHY9q0mPL0c45CckTi5Y7p3BPpYHHNyN/SsleuWSGWdjKiV6hm9St/+LUwW3UZsJKE=
+	t=1726208080; cv=none; b=J1oHQ1fXcijdCuKE7o76d7fIrrLzKLTfCRQGnHxmeCcv9a4ZhpPbMYcUWP3dSVx+HRfqISqmlUt4jDPoWryLKCdKOPBNDtZ//2lascIX45S21JRlPnwHW01aZvESEcZbohfr0UV2jp0NVFd7vhD7NeipTFFD8UuSXfEG8p6+b44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726208144; c=relaxed/simple;
-	bh=dSSZCLqJrCrxAWOzdFx7LtvdZ65kcJjv55yZSeigVKs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=cdulhR/9UELIJf4M2YTzyWhBL/RiLXS+6pfy8A+n5XY9nIRIqJn80OOAku/4jutqa8JRGAATmBlnf0Ynm7Bmw+CZlklu2z9+lvGh4WfJyvP+Ct+qmQHaxbn7nWsprGRzsODFfghda59URx8spmDHIebEk44KCPC84nwQ/yGl9FA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hp.com; spf=pass smtp.mailfrom=hp.com; dkim=pass (1024-bit key) header.d=hp.com header.i=@hp.com header.b=aS1/dJjK; arc=none smtp.client-ip=170.10.133.162
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hp.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hp.com; s=mimecast20180716;
-	t=1726208142;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=dSSZCLqJrCrxAWOzdFx7LtvdZ65kcJjv55yZSeigVKs=;
-	b=aS1/dJjKF88akMTGbJrWP3soOivWNgGybmSi5MPAoepCs+W4tuYw8bCL8NQPbpeFvdh3JW
-	Ag86+zArDhXLc0u1eSI0Jz0xH9zkwzL+AHuts2N4fYxQYZ1C8sf4jXkSVddQdkdeesJgyw
-	j6+tz+m3VeUpNc9t8ZUqDfCyev2bWBE=
-Received: from g7t14361s.inc.hp.com (hpifallback.mail.core.hp.com
- [15.73.128.136]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-576-R6_kcrN8N6WC44JbgxhUEw-1; Fri, 13 Sep 2024 02:15:40 -0400
-X-MC-Unique: R6_kcrN8N6WC44JbgxhUEw-1
-Received: from g7t16458g.inc.hpicorp.net (g7t16458g.inc.hpicorp.net [15.63.18.16])
-	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by g7t14361s.inc.hp.com (Postfix) with ESMTPS id C4DB220298;
-	Fri, 13 Sep 2024 06:15:39 +0000 (UTC)
-Received: from mail.hp.com (unknown [15.32.134.51])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by g7t16458g.inc.hpicorp.net (Postfix) with ESMTPS id D3A2D6000092;
-	Fri, 13 Sep 2024 06:15:38 +0000 (UTC)
-Received: from cdc-linux-buildsrv17.. (localhost [127.0.0.1])
-	by mail.hp.com (Postfix) with ESMTP id AFDC0A40465;
-	Fri, 13 Sep 2024 14:08:02 +0800 (CST)
-From: Wade Wang <wade.wang@hp.com>
-To: jikos@kernel.org,
-	bentiss@kernel.org,
-	linux-input@vger.kernel.org,
+	s=arc-20240116; t=1726208080; c=relaxed/simple;
+	bh=ue4rH+i1tHnl4doLUOAue2Eqx2y0vQEBqittaq3A0AI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ud5AiwwkexXwau7MxSeyTIlunjsxCZSq7eHmi/LOZY9XTnwmcIvvr78v+CUSloKsmT5onOtuwElxXTz2EoWMcLlL+tGPt7YG6UGWqw8fM1BsRMuDh8HMh1mqib8nTomQG5DXmNDEIQW/VmM2VrXbgWHma/+d6robXis+qWJ6mtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4X4kY85Gs0z9sxD;
+	Fri, 13 Sep 2024 08:14:36 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id qFt_Fj9D9qCj; Fri, 13 Sep 2024 08:14:36 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4X4kY848K4z9sx8;
+	Fri, 13 Sep 2024 08:14:36 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7D2EE8B77A;
+	Fri, 13 Sep 2024 08:14:36 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id BwLdywYuVOlU; Fri, 13 Sep 2024 08:14:36 +0200 (CEST)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.233.70])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 1A8C68B766;
+	Fri, 13 Sep 2024 08:14:36 +0200 (CEST)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
 	linux-kernel@vger.kernel.org,
-	wade.wang@hp.com
-Cc: stable@vger.kernel.org
-Subject: [PATCH] HID: plantronics: Update to map micmute controls
-Date: Fri, 13 Sep 2024 14:08:00 +0800
-Message-Id: <20240913060800.1325954-1-wade.wang@hp.com>
-X-Mailer: git-send-email 2.34.1
+	linuxppc-dev@lists.ozlabs.org
+Subject: [RFC PATCH] powerpc/vdso: Should VDSO64 functions be flagged as functions like VDSO32 ?
+Date: Fri, 13 Sep 2024 08:14:33 +0200
+Message-ID: <6fa86f3de610ffc180ae0f5dbd511453e7473b36.1726208058.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: hp.com
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=WINDOWS-1252; x-default=true
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726208074; l=3666; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=ue4rH+i1tHnl4doLUOAue2Eqx2y0vQEBqittaq3A0AI=; b=x1ACUxhbKyS0F6m6D9/E+pdOtiUKCKgyq+c+UoEIEdJ784NuDI8QVbGYviqXwWUzp2IixT2Nm TDxkPaan0lcDAJdyhnAPGE9uyUxA35gFhTayTPr9Glc2mlyJr+YYede
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-telephony page of Plantronics headset is ignored currently, it caused
-micmute button no function, Now follow native HID key mapping for
-telephony page map, telephony micmute key is enabled by default
+On powerpc64 as shown below by readelf, vDSO functions symbols have
+type NOTYPE.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Wade Wang <wade.wang@hp.com>
+$ powerpc64-linux-gnu-readelf -a arch/powerpc/kernel/vdso/vdso64.so.dbg
+ELF Header:
+  Magic:   7f 45 4c 46 02 02 01 00 00 00 00 00 00 00 00 00
+  Class:                             ELF64
+  Data:                              2's complement, big endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              DYN (Shared object file)
+  Machine:                           PowerPC64
+  Version:                           0x1
+...
+
+Symbol table '.dynsym' contains 12 entries:
+   Num:    Value          Size Type    Bind   Vis      Ndx Name
+...
+     1: 0000000000000524    84 NOTYPE  GLOBAL DEFAULT    8 __[...]@@LINUX_2.6.15
+...
+     4: 0000000000000000     0 OBJECT  GLOBAL DEFAULT  ABS LINUX_2.6.15
+     5: 00000000000006c0    48 NOTYPE  GLOBAL DEFAULT    8 __[...]@@LINUX_2.6.15
+
+Symbol table '.symtab' contains 56 entries:
+   Num:    Value          Size Type    Bind   Vis      Ndx Name
+...
+    45: 0000000000000000     0 OBJECT  GLOBAL DEFAULT  ABS LINUX_2.6.15
+    46: 00000000000006c0    48 NOTYPE  GLOBAL DEFAULT    8 __kernel_getcpu
+    47: 0000000000000524    84 NOTYPE  GLOBAL DEFAULT    8 __kernel_clock_getres
+
+To overcome that, commit ba83b3239e65 ("selftests: vDSO: fix vDSO
+symbols lookup for powerpc64") was proposed to make selftests also
+look for NOTYPE symbols, but is it the correct fix ?
+
+VDSO32 functions are flagged as functions, why not VDSO64 functions ?
+Is it because VDSO functions are not traditional C functions using
+the standard API ? But it is exactly the same for VDSO32 functions,
+allthough they are flagged as functions.
+
+So lets flag them as functions and revert the selftest change.
+
+What's your opinion on that ?
+
+It predates git kernel history and both VDSO32 and VDSO64 were brough by
+arch/ppc64/ with that difference already.
+
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- drivers/hid/hid-plantronics.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+commit ba83b3239e65 is in random git tree at the moment : https://git.kernel.org/pub/scm/linux/kernel/git/crng/random.git/commit/?id=ba83b3239e657469709d15dcea5f9b65bf9dbf34
+On the list at : https://lore.kernel.org/lkml/fc1a0862516b1e11b336d409f2cb8aab10a97337.1725020674.git.christophe.leroy@csgroup.eu/T/#u
+---
+ arch/powerpc/include/asm/vdso.h           | 1 +
+ tools/testing/selftests/vDSO/parse_vdso.c | 3 +--
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hid/hid-plantronics.c b/drivers/hid/hid-plantronics.c
-index 2a19f3646ecb..2d17534fce61 100644
---- a/drivers/hid/hid-plantronics.c
-+++ b/drivers/hid/hid-plantronics.c
-@@ -77,10 +77,10 @@ static int plantronics_input_mapping(struct hid_device =
-*hdev,
- =09=09}
- =09}
- =09/* handle standard types - plt_type is 0xffa0uuuu or 0xffa2uuuu */
--=09/* 'basic telephony compliant' - allow default consumer page map */
-+=09/* 'basic telephony compliant' - allow default consumer & telephony pag=
-e map */
- =09else if ((plt_type & HID_USAGE) >=3D PLT_BASIC_TELEPHONY &&
- =09=09 (plt_type & HID_USAGE) !=3D PLT_BASIC_EXCEPTION) {
--=09=09if (PLT_ALLOW_CONSUMER)
-+=09=09if (PLT_ALLOW_CONSUMER || (usage->hid & HID_USAGE_PAGE) =3D=3D HID_U=
-P_TELEPHONY)
- =09=09=09goto defaulted;
- =09}
- =09/* not 'basic telephony' - apply legacy mapping */
---=20
-2.34.1
+diff --git a/arch/powerpc/include/asm/vdso.h b/arch/powerpc/include/asm/vdso.h
+index 7650b6ce14c8..8d972bc98b55 100644
+--- a/arch/powerpc/include/asm/vdso.h
++++ b/arch/powerpc/include/asm/vdso.h
+@@ -25,6 +25,7 @@ int vdso_getcpu_init(void);
+ #ifdef __VDSO64__
+ #define V_FUNCTION_BEGIN(name)		\
+ 	.globl name;			\
++	.type name,@function; 		\
+ 	name:				\
+ 
+ #define V_FUNCTION_END(name)		\
+diff --git a/tools/testing/selftests/vDSO/parse_vdso.c b/tools/testing/selftests/vDSO/parse_vdso.c
+index d9ccc5acac18..4ae417372e9e 100644
+--- a/tools/testing/selftests/vDSO/parse_vdso.c
++++ b/tools/testing/selftests/vDSO/parse_vdso.c
+@@ -216,8 +216,7 @@ void *vdso_sym(const char *version, const char *name)
+ 		ELF(Sym) *sym = &vdso_info.symtab[chain];
+ 
+ 		/* Check for a defined global or weak function w/ right name. */
+-		if (ELF64_ST_TYPE(sym->st_info) != STT_FUNC &&
+-		    ELF64_ST_TYPE(sym->st_info) != STT_NOTYPE)
++		if (ELF64_ST_TYPE(sym->st_info) != STT_FUNC)
+ 			continue;
+ 		if (ELF64_ST_BIND(sym->st_info) != STB_GLOBAL &&
+ 		    ELF64_ST_BIND(sym->st_info) != STB_WEAK)
+-- 
+2.44.0
 
 
