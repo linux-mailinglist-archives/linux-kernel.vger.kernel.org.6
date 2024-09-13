@@ -1,156 +1,113 @@
-Return-Path: <linux-kernel+bounces-327771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 664CF977AEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:26:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 718D6977B1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:32:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4DBB2841FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:26:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABDD01C2074F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713281D6DA6;
-	Fri, 13 Sep 2024 08:26:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063111D6C64;
+	Fri, 13 Sep 2024 08:32:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SWk22Rrs"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jhx/fTcJ"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6883D1D6C58
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 08:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC7A1BD510;
+	Fri, 13 Sep 2024 08:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726215977; cv=none; b=pEOdqXHc3OoRohFytodLEhEVsg/mb23o243gObZy4KLcfyZQtWMa5aQAmfgJEj6LlnFbIhrr69tjBn80NgWFqDGhwppogkkOjwQtYUziplGZlVGJbLMvc/hZtnJgE+sDs36bCubkggjuj1ND8btFIvmTFZn0bZ+hylVPYa/sGe8=
+	t=1726216368; cv=none; b=GB4Z6Ja+NmWQG1gQi6BwOnJuJJ07Q/bBCha60r2WMom1HcrXzXg7QHfOi2dJahpK6tQv8z4IqYnJVoDNRKwNyBeDHIp8JnYPXMe+aIpwDBmv6Yhu5DSieO9EqSeZbqeceCLlYjO8TZneZ2zJN9OMGa3hH5rHMh64dhSzIDOjG3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726215977; c=relaxed/simple;
-	bh=IoEbX8ulS4nbWpyE+m+Af6Xb8Zi/WPdDMRA2qcoZ2Vk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Or3j6fxz0ffcGAIGeI5wSUTHRfdZ6n35P1JI5zayl/7N9LrAFWOWjjnDF1bC1OW43Khh4gWQ5jy0Z+iOuCEcxgbhMt1+AhbcQsQP+wk1N+iqweCJD7JIhzAC5BhCTXoc3mtCtmZL9HPK1QNuVmEjpghivABh6K8D7WSlbhP+GiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SWk22Rrs; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726215976; x=1757751976;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=IoEbX8ulS4nbWpyE+m+Af6Xb8Zi/WPdDMRA2qcoZ2Vk=;
-  b=SWk22RrsJp3MIbIh07EGCRgFBuuqX0G+zqRl2kDdSvaYB3rZp10afpWG
-   QhxQIM/PzspU0wVSTJREGslNgjUGD3m9J9LgaEzbe0hBeFhmT3nbyZOxJ
-   mX4zEzZnHUILRf6gG87QvDmQ7e1NPLVuSG9USICe5AaWz7Cu2kiD1d8i0
-   eGRT5MvAze31Jfy3LyfDW2LeSTT0Lf1JZdIWARHG3bLoh/P8ySvKVC10d
-   +WmpAQKXAHryj09jKfLOjAz9vRGqTct71iRt7gv2kwRXPFSYE6bhVqlyz
-   gCpE4nFKshspOnuCq2zqEx0sQPUuWGxrv7fbBu0YRmogsGbehuOs6tYjm
-   w==;
-X-CSE-ConnectionGUID: Dj+LItcpTJeUK35COsSuMg==
-X-CSE-MsgGUID: SLDCI23MTryT7pVfDTlbFA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="24977584"
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="24977584"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 01:26:14 -0700
-X-CSE-ConnectionGUID: 8MuaZbElSnmVru6ZKiyLgg==
-X-CSE-MsgGUID: Cqe4l4oeQB2xCFCi1JsDVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="68485439"
-Received: from ranerica-svr.sc.intel.com ([172.25.110.23])
-  by orviesa007.jf.intel.com with ESMTP; 13 Sep 2024 01:26:13 -0700
-From: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To: x86@kernel.org
-Cc: Andreas Herrmann <aherrmann@suse.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Chen Yu <yu.c.chen@intel.com>,
-	Len Brown <len.brown@intel.com>,
-	Radu Rendec <rrendec@redhat.com>,
-	Pierre Gondois <Pierre.Gondois@arm.com>,
-	Pu Wen <puwen@hygon.cn>,
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	Will Deacon <will@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Huang Ying <ying.huang@intel.com>,
-	Ricardo Neri <ricardo.neri@intel.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v7 3/3] x86/cacheinfo: Clean out init_cache_level()
-Date: Fri, 13 Sep 2024 01:31:55 -0700
-Message-Id: <20240913083155.9783-4-ricardo.neri-calderon@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240913083155.9783-1-ricardo.neri-calderon@linux.intel.com>
-References: <20240913083155.9783-1-ricardo.neri-calderon@linux.intel.com>
+	s=arc-20240116; t=1726216368; c=relaxed/simple;
+	bh=DmD/oFS9ztHwN6LHCihrKLQc89zTH//9v3d7Pudf0gE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type; b=ExR9PH9Cx3NzViorSwBLe9VVppdJWLLsAavJ8abUytViDxbY5D8f3gUr1irXBN5vLR5TZLGcDs/YpnUi+F/vyjz0HxlUSWzp1qcyo1Sjvd4K4HQbK4qJgY+hl5qW8SDVf+xGJK2OcoLdc/NcuhNamr8KwR7gDrGR/BrlVvTDZ68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jhx/fTcJ; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42bb7298bdeso8398455e9.1;
+        Fri, 13 Sep 2024 01:32:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726216364; x=1726821164; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:in-reply-to:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wp9Y737ViR4EfOInl3nplGoJAcdlB+yuFRrQ0BSzktk=;
+        b=Jhx/fTcJPNndRUuB9lLIkr6H2oVl3Y3IgpPLrXQ+E1a0nBioMhXnID93eZbuFyCWts
+         mG7zgAbtomkavBn8aZdut71HWvmuL0jnSka1+IgbriASbZudnlAihbnT7Ee10MBQhr0Z
+         fRCKmBjgb+G0rmPAnt7Cs0mXneVLBEyyumOOLwsYDOWS14TWfcQBoTK+MrSGbHKTdpF2
+         1xrXWzDvsn7t3SdZovQQVffRdpTFRoJsmyWqc7JS3svST+2mGmIdJUU6iP1fK+E7FEks
+         Q2ytItjS5b7uf5IYPjjdKMwtO/ltg8YmuXiqyEOoTI5+R7uDRewheb9X4LQuraJi8ogO
+         q9YA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726216364; x=1726821164;
+        h=content-transfer-encoding:mime-version:in-reply-to:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Wp9Y737ViR4EfOInl3nplGoJAcdlB+yuFRrQ0BSzktk=;
+        b=CC2kPq0NMpoQlyvwwQGJ5vEUO0TSKAQH1rh87lfmxyC95t99ic+JyaUzFove18EiD+
+         ZUyzw1cHZlmVFGc7x6gbOmzgPTvDP/EnhsnvP+DNeg3Xn+xyKYj+Ro8j1nkgK3EU0rVp
+         C4SDNyGL8cQBThaF115qzW7tr8DHYBlwhrCrnAIf9qsCOj0zvnrTq9jklqmXSD3cfBfK
+         BaQLmiwTbppqxkyALFKkBp86519C7zGjephYCDFMSUc1C03UMhUnPVSVtnbulhY6DcqP
+         9S3X1PNxNmeclJ9WZv88hOhncNnkITcT+XTlV1x5JM46e0hwrgilXFOQ00UKpC/7+0PA
+         jkZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIlyw8Iqifmi6QO3W27gpL5Yps4Umbel6VfeHenqDICDkRCf4GOEb5uZgUTuXPvp+AdepMo5MD8tdKs01X@vger.kernel.org, AJvYcCVZhtCsE7fBQBoh9sEfBVptj41j3+fAbDhSJe69+D2YXrCjgfEVEgROnTtaxZyDNBxarIHYQ4f+7LQZ@vger.kernel.org, AJvYcCVgwjQVBFTp3C5NMyVk9yyRFMN8JuC3KojXOZIvdBAxBWLGLDQNGbcRHi3Fjtwb47nMOEXeHi16dQul@vger.kernel.org, AJvYcCWZm4I9Psi60SeNFjWZ7cFwDORxH+zRMM849RkJ8171oHYqXKjV7ZSjQ6wSq5YhvKr4SNlbtOdOLc+cYk9ARQ==@vger.kernel.org, AJvYcCWwEPwpvI3d+Q/A5RLV9L0UySQGRUzvaMqHrlJ0ym9jM6Ep1BoL81xWty5bwfnyezFEOd6CYJW9Fp5Y@vger.kernel.org, AJvYcCXAtFR1aRpti65x7wjtc1ykiku5SrqYe8c1YRRpzkbgBxjqBHUipS9Y+EHuE2LCcneUSH5O4X5pKln/IJs=@vger.kernel.org, AJvYcCXQ9Zm3YR3Wdqj/qTd4FAKG4E3bCHA0bxcdZfdJXQP/IXADUeyzUvVnJVBsWXLy7IjpiHW3p/rMzMXDHgg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoXlD9a7RE+14evReJdk7rJUMOEwqyQ5v3PaDxvLSfJe+SEOkd
+	Z3TnVu8LxefjBRrXOnnvBAyqaMlT9ZIRmNXhcySWedeVszspEWFq
+X-Google-Smtp-Source: AGHT+IE2Ku5Yqa7DnoqdH5xDY5dD9ozv14FV0pNO09UH2LmGbvbqmw1nTSHM8AvIojolJCXpaHwH8w==
+X-Received: by 2002:a5d:5150:0:b0:374:bd48:fae8 with SMTP id ffacd0b85a97d-378d61f090fmr1570895f8f.25.1726216363746;
+        Fri, 13 Sep 2024 01:32:43 -0700 (PDT)
+Received: from foxbook (bio60.neoplus.adsl.tpnet.pl. [83.28.130.60])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25cf03ccsm846921566b.183.2024.09.13.01.32.41
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Fri, 13 Sep 2024 01:32:43 -0700 (PDT)
+Date: Fri, 13 Sep 2024 10:32:37 +0200
+From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
+To: quic_wcheng@quicinc.com, mathias.nyman@linux.intel.com
+Cc: Thinh.Nguyen@synopsys.com, alsa-devel@alsa-project.org,
+ bgoswami@quicinc.com, broonie@kernel.org, conor+dt@kernel.org,
+ corbet@lwn.net, devicetree@vger.kernel.org, dmitry.torokhov@gmail.com,
+ gregkh@linuxfoundation.org, krzk+dt@kernel.org, lgirdwood@gmail.com,
+ linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
+ mathias.nyman@intel.com, perex@perex.cz,
+ pierre-louis.bossart@linux.intel.com, robh@kernel.org,
+ srinivas.kandagatla@linaro.org, tiwai@suse.com
+Subject: Re: [PATCH v27 01/32] xhci: add helper to stop endpoint and wait
+ for completion
+Message-ID: <20240913103237.2f5dc796@foxbook>
+In-Reply-To: <20240912193935.1916426-2-quic_wcheng@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-init_cache_level() no longer has a purpose on x86. It no longer needs to
-set num_leaves, and it never had to set num_levels, which was unnecessary
-on x86.
+Hi,
 
-Replace it with "return 0" simply to override the weak function, which
-would return an error.
+> Expose xhci_stop_endpoint_sync() which is a synchronous variant of
+> xhci_queue_stop_endpoint().  This is useful for client drivers that are
+> using the secondary interrupters, and need to stop/clean up the current
+> session.  The stop endpoint command handler will also take care of
+> cleaning up the ring.
 
-Reviewed-by: Andreas Herrmann <aherrmann@suse.de>
-Reviewed-by: Len Brown <len.brown@intel.com>
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
-Tested-by: Andreas Herrmann <aherrmann@suse.de>
-Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
----
-Cc: Andreas Herrmann <aherrmann@suse.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Chen Yu <yu.c.chen@intel.com>
-CC: Huang Ying <ying.huang@intel.com>
-Cc: Len Brown <len.brown@intel.com>
-Cc: Nikolay Borisov <nik.borisov@suse.com>
-Cc: Radu Rendec <rrendec@redhat.com>
-Cc: Pierre Gondois <Pierre.Gondois@arm.com>
-Cc: Pu Wen <puwen@hygon.cn>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Zhang Rui <rui.zhang@intel.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: stable@vger.kernel.org # 6.3+
----
-Changes since v5:
- * Added Reviewed-by tag from Nikolay and Andreas. Thanks!
+I'm not entirely sure what you meant by "cleaning up the ring" (maybe a
+comment would be in order?), but I see nothing being done here after the
+command completes and FYI xhci-ring.c will not run the default handler if
+the command is queued with a completion, like here.
 
-Changes since v4:
- * None
+At least that's the case for certain command types and there is probably
+a story behind each of them. I know that xhci_stop_device() queues a
+Stop EP with completion (and also a few without(?)). Maybe it's a bug...
 
-Changes since v3:
- * Rebased on v6.7-rc5.
-
-Changes since v2:
- * None
-
-Changes since v1:
- * Introduced this patch.
----
- arch/x86/kernel/cpu/cacheinfo.c | 5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-index 182cacd772b8..2a37f14cc6b1 100644
---- a/arch/x86/kernel/cpu/cacheinfo.c
-+++ b/arch/x86/kernel/cpu/cacheinfo.c
-@@ -1002,11 +1002,6 @@ static void ci_leaf_init(struct cacheinfo *this_leaf,
- 
- int init_cache_level(unsigned int cpu)
- {
--	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
--
--	if (!this_cpu_ci)
--		return -EINVAL;
--	this_cpu_ci->num_levels = 3;
- 	return 0;
- }
- 
--- 
-2.34.1
-
+Regards,
+Michal
 
