@@ -1,356 +1,379 @@
-Return-Path: <linux-kernel+bounces-328307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FBA39781D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:58:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E6C977F44
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:09:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC40C1C21F28
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:58:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC7D7B2353C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26A41E0B8B;
-	Fri, 13 Sep 2024 13:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960C31D933F;
+	Fri, 13 Sep 2024 12:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nuvoton.onmicrosoft.com header.i=@nuvoton.onmicrosoft.com header.b="f2qyPwqK"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01rlnn2087.outbound.protection.outlook.com [40.95.54.87])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="i3rdS5Jn";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="lmtqrpRK"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18941E008D;
-	Fri, 13 Sep 2024 13:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.95.54.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C00F1D86EC;
+	Fri, 13 Sep 2024 12:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726235683; cv=fail; b=rrYT/ivBLUNdgt3XAY0f2sEDBGBjL1I0KriHgKDmgfCpHXxmwTky3dhsmvcxRrUDPjIVK0MtkFAms5eilE/VFF7n2IkU8kc2NIl2YLFlfjnSHimXHNK/BdFYjiSKdMDamOwsSvR2JiLZ7vk7r9KQ+hhW1Bcv3OQv8TIRsfWQaGI=
+	t=1726229360; cv=fail; b=ZUrWBPQSQnPoE/xR4y8xAfJCxJFEgdWU++H7LH1Bg0hOdhY1GecQHFFvCBjzoDmq+E8lZCi3OCDc6aM/qBX3Ic8DEcZ1nYLxhHig+Doj6puuUChVle8DWP/6EP2Bwv4oYJYB6WAvnmioRdMch1pTmzDFi6wwG0Iks5atgONxdQs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726235683; c=relaxed/simple;
-	bh=HxtHT+lh7P+mu0HZBa+yw8sq3aLSyvtXJfmRiQaQIJY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QFGuigpPmDKKdLa280ZJegfr0grWFpWnYqrAmdOyfvXjqUklmlBgIAaW64wPo9w3ZfyTa4ntvaXboNy4NcsuxG6so/cTTsmewJP0Eg+AUbvD924RYNmkTz/yfTsEczSIqqHE8zCsjkKeinbmiQL518Webj3sia80Bz8ucj5LMkw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=taln60.nuvoton.co.il; dkim=pass (1024-bit key) header.d=nuvoton.onmicrosoft.com header.i=@nuvoton.onmicrosoft.com header.b=f2qyPwqK; arc=fail smtp.client-ip=40.95.54.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=taln60.nuvoton.co.il
-Received: from SG2PR03MB6730.apcprd03.prod.outlook.com (2603:1096:4:1d5::9) by
- SEZPR03MB8382.apcprd03.prod.outlook.com (2603:1096:101:21f::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7962.19; Fri, 13 Sep 2024 06:17:53 +0000
+	s=arc-20240116; t=1726229360; c=relaxed/simple;
+	bh=ug4hGHbvCJJ3QSQh6RmDe4dde4n5RRVtqOSGRIcX2L0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=GfNSHimtd6LZflAZpwb9rXylI2+VYp5GHsaAbJ07qfrYJmFGEg5XiZwx+xX6Bk1HYGofFN1dkOM/Bip/L1A2c5QgyLilAryUdIntVveYV1SCEE07Gp7g2glFCkWP/iGEp5MSzbLq91KjcQ+e3gRWRk49X/vWGp9vCb/jx+1PD7c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=i3rdS5Jn; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=lmtqrpRK; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48D9YLbB008399;
+	Fri, 13 Sep 2024 12:09:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=
+	corp-2023-11-20; bh=25kp2z5AN5PdrShCiEZUxNNOxTF6u8ptRh/+OWB8mjU=; b=
+	i3rdS5JnCWkxRySVpBL7joxAukLp0KLMxOq1RiOarhTtrMgdgD7pIScz1MvBKhhE
+	/JX7No6b2jX+3IOHX5MYwBy42eW8Y1k4eJNo654lvwmZsJxhCkNB+/30VI9O4LuF
+	uzUb12xWv+P4aLuPcuAvUQQXVF2TrNeNECwJ/CouFk9ZPN3S6ex6tvI2ebg7vqvZ
+	9zK8jbU3kF9tFfN4AYrXL656fWCOx9BHALLDIEinc+OH8GjHKihUFuS8l+oGgEJ+
+	ZGA1fwRzyUB1bpx5SjOkGqM9CZFpFXk/rR2S7vUZq4D1YM/aApJ9OhB2rlS4xt4G
+	7dwLi3GXZKBB13d6JUiIkw==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41gdrbde0t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Sep 2024 12:09:02 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48DC6Hb4033021;
+	Fri, 13 Sep 2024 12:09:01 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2176.outbound.protection.outlook.com [104.47.56.176])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 41gd9jw4ta-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Sep 2024 12:09:00 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=elCyHkojbI/z9NcyxaWvw8xrMfofl77yOQ1o3IvJBE2iN88EOkZoVK8l/tAYYoebVC41RSRZb8VVFJtrrFiWFGDbKptEJm3Wy8s5Hp0pzPQ0QidY6qaPGo32KCNRukP+Qp9BXVr6iyCfjsGAy3w8MqTq3EcxmYYjMwPjt70mvYIz3u5bN/IlYXkwLmL1lWkDG2I5aPVP8rklC7iHEKOmBpNNTEkhBzr0GbTY+QvkxWSEFG0L3QiZ7FHUOJ6S4puwas6oe/GBTDdCOj9uyzq9nilpl0C/UiBXSgTJ0PGWS8M6GcWBHO8DtP8B5b4ONDKn/FyjBekuWZsNRRlVObDfuQ==
+ b=mkZixUmpXWEkeZwchqKmmW5YlCE735OoN54BhaYk2QezqqZ4OZHzbZeSxrH5kyNNt2Ah5NhrpI+U9H3dacUDOzFTGpbbXglNE6wUJ51T4SzvoRc5HMtz2ydb9JmB8ReAvMHYl789QTQF7r25ur4sdgGiQdKTDYeCQ+6dXkvtV5CcIIvyWbgtUr/QHVYGGvAWTWI5jYNw7t1F+og/DVMZz1f2X5/4Gr7dp0Wno2YsZzuQUacfoPB3/qmTzSuZ4UYdAD4cMrhoiR5slDMTkYFcM/Am/lEAImi56TkL8a51P9rqA+7Pvo9LN7VsCSiT2EoLBHEfhiax4vdF5H/t9TTDwg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VpMR6qv6JfKvXmGBithJY0XJ7ElRCqqOb8zsavege9c=;
- b=j2BFOJTHAgemVXGxB02U4zSrFJC0gC3n3vukS/4F1IMChPQX/r2sbEsVBUZJQa1XZ3dUcKFtaC1z4pYMCkQ1MSLQngoL6cAbyw+Q7HLO/phTfsARH+lQaZVXj7j66Zk2tPmfd9sVJWsvQFqVnX37396uv+l4iE9B86lZ8QX/plUqP+q06tTb/EUHUHbVOu+xlX0E8vf2h/hjtD6LOGntDLRpsEzYBtOji2YHI1qM2YXoM8ZQknM0jb8A0wg2F6G1CAZ4cifuwTmMvisW/J55kVk0EPKW9DCtH5WDJsPyvi2OwzdAXqygsQWe3IxdwntgqGDPHswVVI+tCkKt7SAZGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
- 211.75.126.7) smtp.rcpttodomain=baylibre.com
- smtp.mailfrom=taln60.nuvoton.co.il; dmarc=fail (p=none sp=quarantine pct=100)
- action=none header.from=gmail.com; dkim=none (message not signed); arc=none
- (0)
+ bh=25kp2z5AN5PdrShCiEZUxNNOxTF6u8ptRh/+OWB8mjU=;
+ b=aDG3HD+tYp2TaPaHStzZ/20nYinhscLVqn7UC/med75W77HO53mxD3s+8qE2u3GMCH9qNM/KEzdshLCEnL+49ZLWSc2IPIdI9bXRKtks+ZBm/e2EYuhEjlCh48jowaXnCrt9U5cRtjS59ge5ck/iKL8eqYhAfC3SET9lu5j7jCvKIS3SoB6TcoHkigp8HRXQ15wE6oAfucJRDpBVXl0Ha/jV4vSgV1P81wraV/AI0dTSODYO5lV3yB5Hz+LTi/Wmtgr5cTYifM30QvWomZfAdz+hF1afLa/Yc2+613GrRoT3HwL0neA+Mzzwid7PvLYQ2LMUV+nl5XD6EtL98TMSZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=nuvoton.onmicrosoft.com; s=selector2-nuvoton-onmicrosoft-com;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VpMR6qv6JfKvXmGBithJY0XJ7ElRCqqOb8zsavege9c=;
- b=f2qyPwqK7BM4Ut8qDt0F/hwFMJFNqeNwIqnkFXdN3gFJJ8UG0231XNiqZmOmJ0wTDw6of6JeisO2ovG/EdGL9NQWc+IL+Cm2IONwrr0dSyQleCmuB5dZ48glOrF2C9zMldN4Wi2JbzuMDEGU6Ms69+ssMfajwLhbOW6PRAtP2Dw=
-Received: from SI2P153CA0015.APCP153.PROD.OUTLOOK.COM (2603:1096:4:140::21) by
- SG2PR03MB6730.apcprd03.prod.outlook.com (2603:1096:4:1d5::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7939.23; Thu, 12 Sep 2024 19:10:46 +0000
-Received: from SG1PEPF000082E1.apcprd02.prod.outlook.com
- (2603:1096:4:140:cafe::3e) by SI2P153CA0015.outlook.office365.com
- (2603:1096:4:140::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.9 via Frontend
- Transport; Thu, 12 Sep 2024 19:10:46 +0000
-X-MS-Exchange-Authentication-Results: spf=none (sender IP is 211.75.126.7)
- smtp.mailfrom=taln60.nuvoton.co.il; dkim=none (message not signed)
- header.d=none;dmarc=fail action=none header.from=gmail.com;
-Received-SPF: None (protection.outlook.com: taln60.nuvoton.co.il does not
- designate permitted sender hosts)
-Received: from NTHCCAS01.nuvoton.com (211.75.126.7) by
- SG1PEPF000082E1.mail.protection.outlook.com (10.167.240.4) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7918.13 via Frontend Transport; Thu, 12 Sep 2024 19:10:46 +0000
-Received: from NTHCML01B.nuvoton.com (10.1.8.178) by NTHCCAS01.nuvoton.com
- (10.1.8.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 13 Sep
- 2024 03:10:41 +0800
-Received: from NTHCCAS01.nuvoton.com (10.1.8.28) by NTHCML01B.nuvoton.com
- (10.1.8.178) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 13 Sep
- 2024 03:10:41 +0800
-Received: from taln58.nuvoton.co.il (10.191.1.178) by NTHCCAS01.nuvoton.com
- (10.1.8.28) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Fri, 13 Sep 2024 03:10:40 +0800
-Received: from taln60.nuvoton.co.il (taln60 [10.191.1.180])
-	by taln58.nuvoton.co.il (Postfix) with ESMTP id 15EED5F5B8;
-	Thu, 12 Sep 2024 22:10:40 +0300 (IDT)
-Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
-	id 021B3DC0800; Thu, 12 Sep 2024 22:10:39 +0300 (IDT)
-From: Tomer Maimon <tmaimon77@gmail.com>
-To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <p.zabel@pengutronix.de>,
-	<robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-	<tali.perry1@gmail.com>, <joel@jms.id.au>, <venture@google.com>,
-	<yuenn@google.com>, <benjaminfair@google.com>
-CC: <openbmc@lists.ozlabs.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Tomer Maimon
-	<tmaimon77@gmail.com>
-Subject: [PATCH v28 0/3] Introduce Nuvoton Arbel NPCM8XX BMC SoC
-Date: Thu, 12 Sep 2024 22:10:35 +0300
-Message-ID: <20240912191038.981105-1-tmaimon77@gmail.com>
-X-Mailer: git-send-email 2.34.1
+ bh=25kp2z5AN5PdrShCiEZUxNNOxTF6u8ptRh/+OWB8mjU=;
+ b=lmtqrpRKgfG83rUfee6xqpj+hSc7SpKWRgGR9oPDs7KB5FPtk7KH+4M8v+dkMxbivMBJAU61jeebsqx1NnLngFrthe7+TZd3kSvzyJJ8qb42Iky5NYfZNyi50HKiUcmSZuUQjrY16Mkctxfi2gIFsi36nIVmxwlmNuyqG/5I9A4=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by CH0PR10MB5052.namprd10.prod.outlook.com (2603:10b6:610:de::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.11; Fri, 13 Sep
+ 2024 12:08:57 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%3]) with mapi id 15.20.7982.008; Fri, 13 Sep 2024
+ 12:08:57 +0000
+Message-ID: <77f6fd38-e216-47cf-8ceb-930395614aca@oracle.com>
+Date: Fri, 13 Sep 2024 13:08:34 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] block: trace: add block alignment information
+To: Daniel Gomez <da.gomez@samsung.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, gost.dev@samsung.com,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Pankaj Raghav <p.raghav@samsung.com>,
+        Dave Chinner <dchinner@redhat.com>, Daniel Gomez <d@kruces.com>
+References: <20240912-add-blkalgn-block-trace-v1-1-335dd6eea557@samsung.com>
+ <CGME20240913085931eucas1p25bf5b7cb054cd5d9cc85b8b82097e997@eucas1p2.samsung.com>
+ <a7f9079f-6f47-4a47-a327-98497bd33dfe@oracle.com>
+ <20240913112626.mmr27xzxicyf37kh@AALNPWDAGOMEZ1.aal.scsc.local>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <20240913112626.mmr27xzxicyf37kh@AALNPWDAGOMEZ1.aal.scsc.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P302CA0031.GBRP302.PROD.OUTLOOK.COM
+ (2603:10a6:600:317::18) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-NotSetDelaration: True
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic:
-	SG1PEPF000082E1:EE_|SG2PR03MB6730:EE_|SEZPR03MB8382:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0daf0209-f5dd-4059-ac57-08dcd35e9b47
-X-MS-Exchange-SenderADCheck: 2
-X-MS-Exchange-AntiSpam-Relay: 1
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|35950700016|48200799018|82310400026|7093399012|7416014|376014|61400799027|921020|35450700002;
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|CH0PR10MB5052:EE_
+X-MS-Office365-Filtering-Correlation-Id: 97c1dec0-9a4b-4df7-fcfc-08dcd3ecccd7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
 X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?OEdCM3YwS2tHU2swckdmSS85NC9Wc1FpMUswK09UTGRSTit5czBIcjcyTXBp?=
- =?utf-8?B?Njc3TDFGblF2di9Pd3NpY3FoN01Jb2V0bCsydWE1WXh1YnZIV0Q2RDJtSzJN?=
- =?utf-8?B?V0dsWFFzV3dIUThLOHZiT2NSVThTaWh1bEN1blpRQ2FnRHNEMDJPaVh5NEFF?=
- =?utf-8?B?STVCcjJUWGhHNG9TbWNPM2t6cDFMeVphQXpPOEZvMEE2K1FFY0lCVFZqZmhS?=
- =?utf-8?B?NkQrSExNT1NBRXUrMEhEaTBCNFh1VFFOejFjOEUyR3Y0T00yRmZ6S3hnUFVU?=
- =?utf-8?B?elBDZHZqanAvcmN2TFp6dnNQdVBtSEh5NVBuYVBJcmNkU09DZE9ZVTc4eFhZ?=
- =?utf-8?B?akVHdTZLN1I5WnJiOFQ1a01uZDhDVFE2YTd6MzFPUGtlTEx5c1dWOENTNDd4?=
- =?utf-8?B?NGNhclU4RFFSeE5zOVc3R3daMGxtQk96cVpJVythQnNxc3IxVjRtWDk4MEFK?=
- =?utf-8?B?T3VZQ0puSnB6UE85dUIyaWc2WCt4Vlh3UHRmRUdxSzgrZ1JXWWgvVGRCdzEv?=
- =?utf-8?B?T3d4VzNiaDBkZHI3dC9wcXIxbFBNcWhJYVZJd0hpK0w3UTRTSzBNUWM4Smtm?=
- =?utf-8?B?YnViZE93dWJZcXFVNmMrczVvb2g2VThiS2NxU1FZTERmQm1NSVNra3hQUVAy?=
- =?utf-8?B?UEdFVVBjVDgwVU5sQ1ZnZEVQTE8yUUZLZUlTSmx2akljcm9uUUxXZFN6aVYz?=
- =?utf-8?B?dllPV1NyZllzVCt2cmg1Vkxtano2YTFnRllQa0E5cHBrMEpjZ0srYll2UThx?=
- =?utf-8?B?Z0VlRG9PR3BhUWtZNWRnSHBuYUJWZXBDd21yQ3ZWek4xSFRuTnVRb3VTMDFW?=
- =?utf-8?B?Ny9lZGFwVFFIRlVDNFFKenFZZU9PcU5KL0kwWU85OSthUWp2TFpjM21TS1ZU?=
- =?utf-8?B?Uy8wd3pqVDBKZDZmZk1sNG1pNXk5ZkJheUNUcDJNRnlIWmpzbkxrTXV5Ympt?=
- =?utf-8?B?Y3BDVUovTjFNWldWbVZGdzZTeDB5NHJ6RHZKdDM2SExjTlowSlExeEloVXYz?=
- =?utf-8?B?Q00rR2Q0WVlNL1NUZTBxWmdjYW9sMlBRbzlDZGhvUC9hZG1RWjJ6V3RyaURs?=
- =?utf-8?B?ODZaWFQvTUUrc3F1RG9pZlpVR1RaZmVNMlptSVRGdkdVSzR3TFV3SktzdC81?=
- =?utf-8?B?N3VxeHdTK1VKbFFKcHJIYjJxR1M3OE9rMUZRdFZNeStmUEN1UXVxZFhuUjRH?=
- =?utf-8?B?RmlDUGI2eW5BTXh4RDNHVDZCUFp5dGdBSHp6QWtEbHJzTUN1YnN2MzNYd082?=
- =?utf-8?B?VmRiVWpOV2w0bForb3pYenptc24zS2tEcVNVUnQzM1JEeWNuNEJyUlJqb0Js?=
- =?utf-8?B?TlNvWXBFa2xwRkZLSFkvRDNrZnQxeGk5UHJtcWtEc2dxNWpNUlMzdXlDZ1M3?=
- =?utf-8?B?YmgxZzQyUWlTNHlReWhWNmFkODlrRXM2bUZOLzFEVjY2d3hYL3NrZEkwa2JU?=
- =?utf-8?B?c0M5OTZtZzZTRlc2UWVBMnRGK1FpZzlmQTByeFBuRVVtaW5Tb1BpL2kvOGty?=
- =?utf-8?B?ekt6K2hYTlFiVzZQUWlGeG80cEJDR1h4b2o3SjhSa01BOG81S3lkYUJBTHg4?=
- =?utf-8?B?YUN5d2h5NXFWWkxBMUF1WmMxN1pKbHp3Z2NCN2c4S1BzS3pjVnBMQUtWQThX?=
- =?utf-8?B?SWdIcE1Nb2tnK3JlWGpkV3VyRVoyWWdNMkMrTXN4V0owUTlxcEFZNjczcHUw?=
- =?utf-8?B?TStnQnc1c0JMRStQL3N0ZCtNdmdvUnIrWjI0VkhOS0VlUEN4UnlORGEvdGta?=
- =?utf-8?B?a1VlQkhFSnVkUVZSUkdiTWk2NVNXMkRyN3kyM0xMcHF1WjVYamNORWhsRmVL?=
- =?utf-8?B?Smk0YUcxY2dXSHpkQ1B0STRyMzhjNE5qL1A4dC8wb2JZNGh1b09MSEhoeXVR?=
- =?utf-8?B?Mk5UajZ5S01lcm9iM0c4SlJ4cThheVFXT0pIaVlNL3ZGUDRIT1p2SDlHa2J5?=
- =?utf-8?B?dDVMamIySmNGUzlrTFM2bXdlODFNV0QwUkllcUJ5TUQ4eHBzS1BoYVI2akly?=
- =?utf-8?Q?n2ZbCe4ibLDShw0UisRotjb3QwiEec=3D?=
+	=?utf-8?B?RzFVNWF5REVYUi8xYVRNaDdDcGF2UEZ2K213cEgwVmlmcjlvTEpxQzJVeDJw?=
+ =?utf-8?B?QXRIYTdqdk1tK0NHbWVPazBMMU9kZXBaTHdHaWMzbTN6L2drN0pGWENiMjU3?=
+ =?utf-8?B?L0I3UjBtbzlRbDVzcVZZZmEwL2VLU3hGSkJOUGFrSU9GWUNtdW1DdEwwcDZw?=
+ =?utf-8?B?MHEvQWIxbXVoUUpyZ0FYYUtGd2laYTBtMTArSGt0QURrQXcvUk9HUzhnaXRi?=
+ =?utf-8?B?K0lDRzkxRk82WTJSMnMvVHJqWHQvbEgzcEZ3bVVXblBCR2dhUTl3aVd6MUpH?=
+ =?utf-8?B?Vm5UUFBIVEZ0RXExSTBHVHEybUloeW15cDBmcjhrRlFhNzVBbC83Z3ZrVHZJ?=
+ =?utf-8?B?OUd6K1kyVHV1ZXV6aUNHK1RnYmlrMzJmQW1mOTlFOFZCNWJyTXJuTmJ3T0gz?=
+ =?utf-8?B?VGx1TTlzR3psYjNkK20zODdNbzI2anEvVXQ3eEJFZitmeGh5cUxwZS94TjBJ?=
+ =?utf-8?B?UGpmUU5JNWtGVzYxb0JOcWFaWG5Cazdwd1N1REVFUHFQZ2pSMEpaa0dPYWdM?=
+ =?utf-8?B?ZUVrOFYvZTl1NGdrcW9IanIzWTJpNVpiaytxUXNILzJmOHdBN3dDZkpEWG4y?=
+ =?utf-8?B?ZXUyTEIzZ2RaUzZSa3ZWZEI5RldGZDE4YTR5clFndmdYVDh0T0RiTkpZK1lX?=
+ =?utf-8?B?ZytGYldqNzcvcXpXbERpOWhoZzh4MlE4WEdRYVBRWDJoSnllZVN4d29MK1VP?=
+ =?utf-8?B?Nm5IWkVpUDNEdndiQmxHV0lGRjhoamJjalEwbnhGUXpwWXY2b0FJTGN1UEh3?=
+ =?utf-8?B?cFZpT25vdFZqWEhjYTNkUEVoTllEUmhzVEJJc0czVGJZc09ENklyby9yRlU2?=
+ =?utf-8?B?bDBOMkRISTZCRi85VXkxUlFKcDJpbGpISzgyOHNZcUNaaXdISm9ZdWNPMEIv?=
+ =?utf-8?B?UHJUK3M1VHo5VWtEMVVPR1N4SlRXV25INzRTUmpQNUZTS0ZBdjZCNDkxU0sy?=
+ =?utf-8?B?bnNuMGpBcG1IYXQ5WFJtWENYSzVrRkVLV09peXBUUHNuL25xNXZLNUl5aHlN?=
+ =?utf-8?B?YThaRjRtOE9IbDg1YVJpUVkzblR3d2dUSnRHSW1UQzlGZXhUZzRhVWNSS2sz?=
+ =?utf-8?B?Z2hqQnN1VmxRVW5TT2ZIZW1HcmZPcXJaM3RPeW50UHJPdDRhR21pMHZpVDU5?=
+ =?utf-8?B?V2IxZFVXNkd1NHBFVXUzTnhnSHgybFF1MnZOaG1zaWpxaVZRR1RPd1VwU0F3?=
+ =?utf-8?B?ekpYNllNbEZpc0VvdVQ2c1dZcTBKVndha1NMcjRjSEs3Szh1aUtkd0lvR1lS?=
+ =?utf-8?B?TnBtRmx6L3B6OVdkV2NjL1JaaE04bW5HZ3pCTXNNZ1ZtT0t0a0xTM3JFaW5n?=
+ =?utf-8?B?N21heEdKdTFpR3ViR3RMbVBnSEFhT2E2Z2V2dFVtZ1FvdmRacUR1VDhVOGs1?=
+ =?utf-8?B?VFAwYVpBODFobnpYRHhNVk9pVEFTWUpEeXRvMC93MzV4YXlYbkwzSEhsQlVo?=
+ =?utf-8?B?WHBkQ1pnWnE1dm5BMWovQjBnUTY3cmJwcVpnZnlESE9uVWhIOFlVcnpWV09O?=
+ =?utf-8?B?Zjlwb3Q3THVUTytSTWswNkE5enRobHg4M2NNVjEzc2NOQ0NUa2dWeVRvSXk3?=
+ =?utf-8?B?MjhCUEFtMjJFSzRjUEY5M214eUVBUVFIZDRxaGVwZFRFMTNYSm9HYWIrRDZ4?=
+ =?utf-8?B?Y1lJNGY4ZU11QWRMdkcwY25rRkhkMFRrc1RENXg0N3hkM2RzUWp4eFREU1RR?=
+ =?utf-8?B?YzhiSlFkUkhVSVRZNks4RGZKVnlvRXR1elczNU1HVFEyQVNZOHNBc1RoNy9P?=
+ =?utf-8?Q?H514SSAjJOgo0FXmng=3D?=
 X-Forefront-Antispam-Report:
- CIP:211.75.126.7;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:NTHCCAS01.nuvoton.com;PTR:211-75-126-7.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(35950700016)(48200799018)(82310400026)(7093399012)(7416014)(376014)(61400799027)(921020)(35450700002);DIR:OUT;SFP:1022;
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Sep 2024 19:10:46.4226
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?NkROZWQyaHdZRFlIQUZuaFNKRUdvWVJmemp3SUlhOXhMZDl5cTB1WEpnVVA2?=
+ =?utf-8?B?dXBqRHg1MFBmL2FuTG45Mzl3Und4VzZoZ1IzQkFwVzdPUVV6cGVoS0NISlhR?=
+ =?utf-8?B?SzZpY2RhQ1VWdWRVdm9nejRxNnZIYVorNmx2ZXgzY3dyRStoM3pMQlBKcVFZ?=
+ =?utf-8?B?cnlybU1SaGp4eDduQSsxRHhvcWRQWmVvWU15aTVwbG9Rb28zOFd0K1lOUTM3?=
+ =?utf-8?B?c21yK3dwVGgyY0IvZlpNRmkwZVcxM0Z4QUhTNVJOaHUzZGFHellpSUgzR0JS?=
+ =?utf-8?B?bWt4ZllxcFVrMDNISTN6TjE2NU4yNUp6c1BBbTBsWnMwOEN6K2JFK0QvYjZD?=
+ =?utf-8?B?cDJxOWZQNEw1aE1IVjhFRGxlMEFkUC9sZXBYcmxTS2N1OXFEYTNKZHk2aFJz?=
+ =?utf-8?B?a2N4cndaOVNxcnpzb2Z0TDJuWEs1clNKQ25HSTBSU215UmxJWmtXMjFQdHZ2?=
+ =?utf-8?B?WUM3VVBMMklLdTF4VlE2VDhDRnhDMEV4WjN5eEx6NVczMGtpVHBSUlNCT1Jn?=
+ =?utf-8?B?V2oyNzVIdCtBbyt5dVhiQUNyV3ZOaHYvSlhNbXhmanVndmNDcFhlUzRoY29v?=
+ =?utf-8?B?V3lFUnNVUWpieEpRV2UzYjliQ3FUREhZRW1jQWdxWG5qb3ArdXYvMVM2Ujlk?=
+ =?utf-8?B?Y2svY3BNTHFvS3ZnbHhUZi94YmlNNGxxNkh2YVJ3UkdTM01FaXZWRFZWMHBu?=
+ =?utf-8?B?eWl0TmJwUzMwblRUUFBBV2tWU2EvT040VWVSNlF1eEdsREdzSnZZa1JzYUo2?=
+ =?utf-8?B?RXlvNmFYWEFwdWorUkIvajVqZXQwN2VmK1RZT0x6cWlnWXkzeFIwajNWL29z?=
+ =?utf-8?B?WXFJZEpzRng2VGlwT3BndkduOGJTZ3h4czlwVkl2STBraFZlVEVQRUkrOVRa?=
+ =?utf-8?B?djlBK01oNkYvVVJRdnJiam0ySExQYktVd0hFT1dXSnc4eEF2WHl4eGt4YkxT?=
+ =?utf-8?B?RFV2dFBySVhscTlNNjBPTHppYXJhS1BvZlhTUnVHSDZEbkRCcVNsQVV3eFRv?=
+ =?utf-8?B?U29NR2M2d0xHNjBGZHE2Vk53Yy9wQmxaMFlNczM1MUJxclo4QjgrYVZGT2c0?=
+ =?utf-8?B?bDJEbURjenBzY0R5Y0RpbFZ2TEl0VUo5M2VRTWQ3a2U4bktkcHdrTm9laE12?=
+ =?utf-8?B?V3hCbTBHcFdvZU9LRzd4YmwwUjN3ckFyaW9OTnJOV3BIMlgxM0xsRGV4akIy?=
+ =?utf-8?B?Nko1aTczTFhObHZXWGxvUElEWnM4UVAyMHVGRW0wZnlVeGJRUnBEQ0V4elF1?=
+ =?utf-8?B?NmJQb21MKzNFSHh3V0Y4NFROdDB0NVIwdFhPa0gvVGYvaEVqRjJGczdQYkRj?=
+ =?utf-8?B?dzNNOTFvMFkyUGphRG5pYTY2T3dIbENqOGNHVXh2d0pCTTVXVHV6Tk1OSUF4?=
+ =?utf-8?B?aDRWaHAxVWQ3M0FHWjBhQzV3RVgyaHBzUmVnbU9ZMHE2U0RjMFBNT1FaaVNK?=
+ =?utf-8?B?Y1BKVjNGSjJIZktxbnZFSzEreVpycnF2a1Y2bHY4NGtXOUVILzJxOG5KdHpN?=
+ =?utf-8?B?OVVpdzVrc1A4MVRvYWV5b25aMWg3V2U0dWNtZ29qeis2aElIcUVVRkw0Szhs?=
+ =?utf-8?B?R1RRd1pDMHlxdlhQbFNHVFdsZVFhajhEalJ2c2RSZWpSRm1ZYkZiVWhkZDVK?=
+ =?utf-8?B?WFFNSGNjcnR5MUlOajRHSkcyOEtsUmVDRnlCMGRJN2RKSDlqVFdwaC8zSGtI?=
+ =?utf-8?B?MUNVMllXZUd1Nmo4VGhobGVPQ3FLZjA4VWprMzV5dWR1RWJNNjUrdTFVQ3lr?=
+ =?utf-8?B?WEJyaGRhYlFLbW5TQkhuQTFzblFuaWk5dHduL2ZKWTVOZjJiY3RHQXV2cG1G?=
+ =?utf-8?B?S1RvNEdUT1Q1cVVkZ0JhVllXRFhiWGVEUUczM25jRjNUc01OWFJtWllrb0V2?=
+ =?utf-8?B?a0lxSkVvaGljTGttaTJaOXBINDd4NHdPWFhZQ1AyeVAxb3kxY2lGYjdwQnRs?=
+ =?utf-8?B?MndnYWFHMlJGckxIQ2FBZHRBNnl2czZudHZiSi8rVFJsWVJ5a2ZsNTFWMUVq?=
+ =?utf-8?B?RVJ4YnZueWNSTkt1bGt5RWhoVTM1SUxyUUtDQmlqMUE4cCtjeGMySnJOMHFa?=
+ =?utf-8?B?c01oUkJVOFBaMnNWZ3UxVWtRbzlJU3BMVmhQVE0xMUdDNHhLMmFyVWRPTSth?=
+ =?utf-8?Q?lMo4DCY4sNGvcOhfZUysbVlEq?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	NfDCCiKjML1+GSFIyIFNK8OYYzu8EkDLP0oTgad7QZ7Bfw5UrOcFiBY6RP2s0inHvB++QtWwoEoJuAYdsQGsCW+0NY6khdSZDSLl/3cxZFe/qOGpjIAB2QZwUIh8sOsNxClYDHK/e3sOfB9ky0+VPnAu/aVv8oBSHuv3MN0HBWq0cOAp9UoVAape//gH2iI4U3lfSO/ozeo3CSzoQD6lU9kb0hCzEiv95SDGeZjgpOTTRkueH3ZvMm4SY5KbkO7yQ5oETtgyo+B5YcEaNVCANHGZycvuE+qisTJ91cVDUYF1A95LlKpmIIwH+MbwE6KETL/4hlZ0zYQHBW12hsIzsBx47AR+69cYmx8DqmWiR50L80bRviz49nVav5wgmiLqb6FF3up3CGJemrBiJkZx+vCjodCxOZ36dQP+1a66nXunoo1TsbOxGs6dLFw5B5ox+K0phSMAAjweomd27NcxoAvHrwNc9CjMc36MTAyl8TrB/A3ql2QW0eYooS3PRNcThqmup85Un30IBXLYXNC/EUVFbyA2GyUxBpB3VvQgw3t6fYerTrx5Si8fff5uW7DmeXl6ccTL1uG/8nOfepPgPCfBI5I4OLq/Kwg1Nr3TBQ4=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 97c1dec0-9a4b-4df7-fcfc-08dcd3ecccd7
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 12:08:57.6834
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0daf0209-f5dd-4059-ac57-08dcd35e9b47
-X-MS-Exchange-CrossTenant-Id: a3f24931-d403-4b4a-94f1-7d83ac638e07
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=a3f24931-d403-4b4a-94f1-7d83ac638e07;Ip=[211.75.126.7];Helo=[NTHCCAS01.nuvoton.com]
-X-MS-Exchange-CrossTenant-AuthSource:
- SG1PEPF000082E1.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR03MB6730
-X-OriginatorOrg: nuvoton.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EsLlHHRUWDhM67jc7/lSzHelxTnvhNLlpbvhRFNo+54pqyNQ/84wDzI1u0Mg9w1LYQe4+dQ7xMtSTPSKsLE7bg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB5052
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-13_09,2024-09-13_02,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0
+ mlxlogscore=999 malwarescore=0 bulkscore=0 spamscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2408220000 definitions=main-2409130084
+X-Proofpoint-ORIG-GUID: l4-oBGCYFIGnb2V-fN68URqAIiG2h2lW
+X-Proofpoint-GUID: l4-oBGCYFIGnb2V-fN68URqAIiG2h2lW
 
-This patchset adds clock support for the Nuvoton 
-Arbel NPCM8XX Board Management controller (BMC) SoC family.
+On 13/09/2024 12:26, Daniel Gomez wrote:
+> On Fri, Sep 13, 2024 at 09:59:08AM +0100, John Garry wrote:
+>> On 12/09/2024 21:48, Daniel Gomez via B4 Relay wrote:
+>>> From: Daniel Gomez <da.gomez@samsung.com>
+>>>
+>>> Report block alignment in terms of LBA and size during block tracing for
+>>> block_rq. Calculate alignment only for read/writes where the length is
+>>> greater than 0. Otherwise, report 0 to indicate no alignment calculated.
+>>>
+>>> Suggested-by: Dave Chinner <dchinner@redhat.com>
+>>> Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
+>>> ---
+>>> This patch introduces LBA and size alignment information for
+>>> the block_rq tracepoints (block_rq{insert, issue, merge} and
+>>> block_{io_start, io_done}).
+>>
+>> eh, shouldn't this belong in the description of the patch?
+> 
+> Yes. I'll move this to the commit message.
+> 
+>>
+>> And I still don't know what we mean by alignment in this context.
+>>
+>>  From looking at the code, it seems to be the max detected block size
+>> granularity. For example, for a 64KB write at a 32KB offset, that would give
+>> a 32KB "alignment". But a 64KB write at a 64KB offset would be "64KB"
+>> alignment. While a 8KB write at 64KB offset would be 8KB "alignment". And a
+>> 24KB write at offset 0 is a 8KB "alignment", as 8KB is the lowest power-of-2
 
-The NPCM8xx clock controller is created using the auxiliary device framework
-and set up in the npcm reset driver since the NPCM8xx clock is using the
-same register region.
+note: I meant "8KB is the largest power-of-2"
 
-This patchset cover letter is based from the initial support for NPCM8xx BMC to
-keep tracking the version history.
+>> which is divisible into 24KB. Is this a correct understanding?
+> 
+> That is correct. 
 
-This patchset was tested on the Arbel NPCM8XX evaluation board.
+So maybe it's me, but I just find it odd to call this information 
+"alignment". To me, what you are looking for is largest block size 
+granularity.
 
-All patches have been reviewed by the maintainers, 
-the clock driver can be applied :-)
+ > Do you think adding examples like yours can help to explain
+ > this better?
+> Below the same examples using fio with the trace output:
+> 
+> 
+> 	sudo fio -bs=64k -size=64k -offset=32k -rw=write \
+> 	-direct=1 -filename=/dev/nvme0n1 -iodepth=1 -ioengine=sync -name=sync
+> 	
+> 	sudo fio -bs=64k -size=64k -offset=64k -rw=write \
+> 	-direct=1 -filename=/dev/nvme0n1 -iodepth=1 -ioengine=sync -name=sync
+> 	
+> 	sudo fio -bs=8k -size=8k -offset=64k -rw=write \
+> 	-direct=1 -filename=/dev/nvme0n1 -iodepth=1 -ioengine=sync -name=sync
+> 	
+> 	sudo fio -bs=24k -size=24k -offset=0k -rw=write \
+> 	-direct=1 -filename=/dev/nvme0n1 -iodepth=1 -ioengine=sync -name=sync
+> 
+> 	fio-789     [000] .....  4455.092003: block_rq_issue: 259,0 WS 65536 () 64 + 128 none,0,0 |32768| [fio]
+> 	fio-801     [000] .....  4455.474826: block_rq_issue: 259,0 WS 65536 () 128 + 128 none,0,0 |65536| [fio]
+> 	fio-813     [000] .....  4455.855143: block_rq_issue: 259,0 WS 8192 () 128 + 16 none,0,0 |8192| [fio]
+> 	fio-825     [000] .....  4456.235595: block_rq_issue: 259,0 WS 24576 () 0 + 48 none,0,0 |8192| [fio]
+> 
+> 
+> Also, the motivation behind this is explained in the LBS RFC [1] and I should
+> have included it here for context. I hope [1] and my description below helps to
+> explain what alignment means and why is needed:
+> 
+> [1] Subject: [RFC 00/23] Enable block size > page size in XFS
+> https://urldefense.com/v3/__https://lore.kernel.org/lkml/20230915183848.1018717-1-kernel@pankajraghav.com/__;!!ACWV5N9M2RV99hQ!NoMpDxzuA5uKlv0RAWE5UtOQKOrNB2zv8PHmOLWxfGCEzw5WpyyvonfhcMi0REPjCgF8pgBvEO9kyhTPO8z1$
+> 
+> Tracing alignment information is important for high-capacity and QLC SSDs with
+> Indirection Units greater than 4 KiB. These devices are still 4 KiB in Logical
+> Block Size (LBS) but because they work at higher IUs, unaligned writes to the IU
+> boundaries can imply in a read-modify-write (RMW).
 
-Addressed comments from:
-Philipp Zabel: https://www.spinics.net/lists/linux-clk/msg103946.html
+Yes, I get that this might be important to know.
 
-Changes since version 27:
- - Use inline function in container_of.
- - fix missing return in the probe function.
- 
-No Changes in version 26:
- 
-Changes since version 25:
- - Add select AUXILIARY_BUS to npcm_reset kconfig.
- - Include <linux/auxiliary_bus.h> and <linux/slab.h> in reset and clock driver.
- 
-Changes since version 24:
- - Keep clock npcm8xx dt-binding to avoid ABI break.
- - Fix kfree parameter.
- - Correct reference.
- - Modify commit message.
- 
-Changes since version 23:
- - NPCM8xx clock controller using the auxiliary device framework.
- - Add NPCM8xx clock controller aux device registration support in npcm reset driver.
- - Remove unused nuvoton,npcm845 clk bindings.
- - Remove all string #define 
- 
-Changes since version 22:
- - Modify commit message to explain broken ABI in dt-binding
- - Using regmap parenet regmap memory therefore remove use of npcm8xx rst-clock patch.
- - Leave npcm7xx rst node as is
- 
-Changes since version 21:
- - Since using regmap instead of ioremap replace reg to syscon 
-   property in dt-bindings and dts.
- - Add reference clock property to the dt-bindings and dts.
- - Using .index instead of .name in clk_parent_data structures.
- - Using string where any macros are used once.
+> 
+> The graph below is a representation of the device IU vs an I/O block aligned/
+> unaligned.
+> 
+>      |--- IU Boundaries ----|      |-PS-|
+> a)  [====][====][====][====][····][····][····]--
+>      |                      |
+> b)  [····][====][====][====][====][····][····]--
+>      |                      |
+> c)  [====][====][====][====][····][====][====]--
 
-Changes since version 20:
- - Using regmap instead of ioremap.
-   the clock and reset modules are sharing the same memory region 
-   and cause failure when using devm_platform_ioremap_resource
-   function, this version uses regmap to handle shared 
-   reset and clock memory region, in case it is approved I will
-   modify the reset driver to use the regmap as well.
- - Using clk_hw instead of clk_parent_data structre.
- - Divider clock definition to one line
+is there meant to be a gap at page index #4?
 
-Changes since version 19:
- - Remove unnecessary free command.
- - Defining pr_fmt().
- - Using dev_err_probe.
- - Return zero in the end of the probe function.
+>      |                      |
+> d)  [····][····][====][====][····][····][····]--
+>      |                      |
+> LBA 0                      4
+>    
+>      Key:
+>      [====] = I/O Block
+>      [····] = Memory in Page Size (PS) chunks
+> 
+> a) I/O matches IU boundaries (LBA and block size). I/O is aligned.
+> b) The size of the I/O matches the IU size but the I/O is not aligned to the
+> IU boundaries. I/O is unaligned.
+> c) I/O does not match in either size or LBA. I/O is unaligned.
 
-Changes since version 18:
- - NPCM8XX clock driver did not changed from version 18 only build and tested under kernel 6.6-rc1.
+what about d)? Not aligned to IU, I assume.
 
-Changes since version 17:
- - NPCM8XX clock driver did not changed from version 17 only build and tested under kernel 6.5-rc3.
+> 
+>>
+>>>
+>>> The idea of reporting alignment in a tracepoint was first suggested in
+>>> this thread [1] by Dave Chinner. Additionally, an eBPF-based equivalent
+>>> tracing tool [2] was developed and used during LBS development, as
+>>> mentioned in the patch series [3] and in [1].
+>>>
+>>> With this addition, users can check block alignment directly through the
+>>> block layer tracepoints without needing any additional tools.
+>>>
+>>> In case we have a use case, this can be extended to other tracepoints,
+>>> such as complete and error.
+>>>
+>>> Another potential enhancement could be the integration of this
+>>> information into blktrace. Would that be a feasible option to consider?
+>>>
+>>> [1] https://urldefense.com/v3/__https://lore.kernel.org/all/ZdvXAn1Q*2F*QX5sPQ@dread.disaster.area/__;JSs!!ACWV5N9M2RV99hQ!P1ZM_E9uBSDLzz6M0dLc_vgEGWEY2HPBXJvEJLWp7w0l_G_r9Gvkm2kQiN586NSIH-JMx_YiCFy_6qdklHFY3pXtYsRb3aY$
+>>> [2] blkalgn tool written in eBPF/bcc:
+>>> https://urldefense.com/v3/__https://github.com/dkruces/bcc/tree/lbs__;!!ACWV5N9M2RV99hQ!P1ZM_E9uBSDLzz6M0dLc_vgEGWEY2HPBXJvEJLWp7w0l_G_r9Gvkm2kQiN586NSIH-JMx_YiCFy_6qdklHFY3pXthE7cfng$
+>>> [3] https://urldefense.com/v3/__https://lore.kernel.org/all/20240822135018.1931258-1-kernel@pankajraghav.com/__;!!ACWV5N9M2RV99hQ!P1ZM_E9uBSDLzz6M0dLc_vgEGWEY2HPBXJvEJLWp7w0l_G_r9Gvkm2kQiN586NSIH-JMx_YiCFy_6qdklHFY3pXtqQ5uwAE$
+>>> ---
+>>>    block/blk-mq.c               | 29 +++++++++++++++++++++++++++++
+>>>    include/linux/blk-mq.h       | 11 +++++++++++
+>>>    include/linux/blkdev.h       |  6 ++++++
+>>>    include/trace/events/block.h |  7 +++++--
+>>>    4 files changed, 51 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/block/blk-mq.c b/block/blk-mq.c
+>>> index 831c5cf5d874..714452bc236b 100644
+>>> --- a/block/blk-mq.c
+>>> +++ b/block/blk-mq.c
+>>> @@ -4920,6 +4920,35 @@ int blk_rq_poll(struct request *rq, struct io_comp_batch *iob,
+>>>    }
+>>>    EXPORT_SYMBOL_GPL(blk_rq_poll);
+>>> +u32 __blk_rq_lba_algn(struct request *req)
+>>
+>> why use "algn", and not "align"?
+>>
+>> "algn" is not a natural abbreviation of "alignment".
+> 
+> That's okay with me, changing the var name to a more natural abbreviation.
+> 
+>>
+>> And why can't userspace figure this out? All the info is available already,
+>> right?
+> 
+> We are interested in the block alignment (LBA and size) at block device driver
+> level, not userspace level. That is, everything that is going out from the block
+> layer. Using the block tracing points currently available makes it block-driver
+> generic.
 
-Changes since version 16:
- - NPCM8XX clock driver
-	- Using devm_kzalloc instead kzalloc.
-	- Remove unnecessary parenthesis.
-	- Modify incorrect spelling.
+I am just saying that the information already present in the block trace 
+point can be used to get this "alignment" info, right? And userspace can 
+do the work of reading those trace events to find this "alignment" info.
 
-Changes since version 15:
- - NPCM8XX clock driver
-	- Remove unused regs parameter from npcm8xx_pll_data structure.
-	- Using index and clk_hw parameters to set the clock parent in the clock structures.
-
-Changes since version 14:
- - NPCM8XX clock driver
-	- Remove unnecessary register definitions.
-	- Remove the internal reference clock, instead use the external DT reference clock.
-	- rearrange the driver.
-	- using .names parameter in DT to define clock (refclk).
-
-Changes since version 13:
- - NPCM8XX clock driver
-	- Remove unnecessary definitions and add module.h define
-	- Use in clk_parent_data struct.fw_name and .name.
-	- Add module_exit function.
-	- Add const to divider clock names.
-	- Add MODULE_DESCRIPTION and MODULE_LICENSE
-
-Changes since version 12:
- - NPCM8XX clock driver
-	- Use clk_parent_data in mux and div clock structure.
-	- Add const to mux tables.
-	- Using devm_clk_hw_register_fixed_rate function.
-	- use only .name clk_parent_data instead .name and .fw_name.
-	- Modify mask values in mux clocks. 
-
-Changes since version 11:
- - NPCM8XX clock driver
-	- Modify Kconfig help.
-	- Modify loop variable to unsigned int.
-
-Changes since version 11:
- - NPCM8XX clock driver
-	- Modify Kconfig help.
-	- Modify loop variable to unsigned int.
-
-Changes since version 10:
- - NPCM8XX clock driver
-	- Fix const warning.
-
-Changes since version 9:
- - NPCM8XX clock driver
-	- Move configuration place.
-	- Using clk_parent_data instead of parent_name
-	- using devm_ioremap instead of ioremap. deeply sorry, I know we had
-	 a long discussion on what should the driver use, from other examples 
-	 (also in other clock drivers) I see the combination of 
-	 platform_get_resource and devm_ioremap are commonly used and it answer
-	 the reset and clock needs.
-
-Changes since version 8:
- - NPCM8XX clock driver
-	- Move configuration place.
-	- Add space before and aftre '{' '}'.
-	- Handle devm_of_clk_add_hw_provider function error.
-
-Changes since version 7:
- - NPCM8XX clock driver
-	- The clock and reset registers using the same memory region, 
-	  due to it the clock driver should claim the ioremap directly 
-	  without checking the memory region.
-
-Changes since version 5:
- - NPCM8XX clock driver
-	- Remove refclk if devm_of_clk_add_hw_provider function failed.
-
-Changes since version 4:
- - NPCM8XX clock driver
-	- Use the same quote in the dt-binding file.
-
-Changes since version 3:
- - NPCM8XX clock driver
-	- Rename NPCM8xx clock dt-binding header file.
-	- Remove unused structures.
-	- Improve Handling the clocks registration.
-
-Changes since version 2:
- - NPCM8XX clock driver
-	- Add debug new line.
-	- Add 25M fixed rate clock.
-	- Remove unused clocks and clock name from dt-binding.
-
-Changes since version 1:
- - NPCM8XX clock driver
-	- Modify dt-binding.
-	- Remove unsed definition and include.
-	- Include alphabetically.
-	- Use clock devm.
-
-Tomer Maimon (3):
-  dt-bindings: reset: npcm: add clock properties
-  reset: npcm: register npcm8xx clock auxiliary bus device
-  clk: npcm8xx: add clock controller
-
- .../bindings/reset/nuvoton,npcm750-reset.yaml |  18 +
- drivers/clk/Kconfig                           |   8 +
- drivers/clk/Makefile                          |   1 +
- drivers/clk/clk-npcm8xx.c                     | 430 ++++++++++++++++++
- drivers/reset/Kconfig                         |   1 +
- drivers/reset/reset-npcm.c                    |  78 +++-
- include/soc/nuvoton/clock-npcm8xx.h           |  18 +
- 7 files changed, 552 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/clk-npcm8xx.c
- create mode 100644 include/soc/nuvoton/clock-npcm8xx.h
-
--- 
-2.34.1
+Thanks,
+John
 
 
