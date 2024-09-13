@@ -1,234 +1,216 @@
-Return-Path: <linux-kernel+bounces-327744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 016DF977A9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:06:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C51D977AA3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:06:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1A9F287D9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:06:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0683D1F2708E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB781BDA9D;
-	Fri, 13 Sep 2024 08:05:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71141BD4F4;
+	Fri, 13 Sep 2024 08:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I2JSEzzs"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bGvGZp99"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC2E1BD4F7
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 08:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B5D19F41A;
+	Fri, 13 Sep 2024 08:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726214757; cv=none; b=iONa0TX25d7IC5TOA0ifiPgunKF/kcjfAiAwQvtQj1IPCAecAKKeH2ea1/nPqRCsaH4Uswy5mgumo4RIT232QbTC4xh4+B+mieCuRw1a9gxZ870c6J0q5RYx24Tcwqgnr8Xrc0dxImwSuMWh/OXzWy8vhVMOYuALdhdhaxAoGI4=
+	t=1726214802; cv=none; b=gACHTFs6M4DDRHS/A3bJoVAoQdiIAfOjqdDeLIepS0TNrdoVqI88T0HJSVcy77wK0yqsXfDDCe+r3DIWfdA+WEeRTNNKlGH4AqBG9bG1SQ/c45o35iDW7Pp0zxthYTqvFTQtXxjthHkWGyiv05giaiW49MBXSlLw3FCK8o267TU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726214757; c=relaxed/simple;
-	bh=Q4LWbd7exzTRye03LcVI6bK7n6aKJKoqRFoikwXsh6w=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=YZW3WjtyD4Hneb0dI9So/ndh4bUDX1uCheWJgFq3loV0IBveTlOCV2vo468u5EaLwzDfUqcLyNZXsx5lrOfn6zJyz6X8e3MjrVkqhCSgUzzB0Lt6+cd495wWo8HhAcARvOMXzieTI6CNp5zFpPBQjuDpjYCCFaqXEv1Pmps0TYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I2JSEzzs; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-374b9761eecso1497964f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 01:05:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726214754; x=1726819554; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YpaBa3rXzcmPvmVGwgNwO7QYicep+zX2dSIy24NgTYE=;
-        b=I2JSEzzsciOPTmoPnhx9NTMzUQ6pJrJRPspiRdUSi5kp9wVYbV7GwuBp2VRSXfENKJ
-         FQloYFgQUsHxSZxlEqGaRq4LiY6qU3D05IFsApPJgjLVbwp/I/uPDl0gCI/htg9Y1Fmg
-         rr4uEOf2g80qkGvzGl/3l98BtbkNyfS6StGRrQFtsW1zQGDkE527kGF9IHw5ytJt3pYJ
-         UyPaPVFfzzZaz/+5GjRBdPLAlRyMOLXkI7DvZwvQ/cZhBPv94V/HtSJYS4TGLOWijPG/
-         3GtIHVZX2OFS96Hc0sW9kxjJ72seM6ybJXw5o44CwTQg5YR1ozdm17UJv9w1AhGXE/xN
-         sm8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726214754; x=1726819554;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=YpaBa3rXzcmPvmVGwgNwO7QYicep+zX2dSIy24NgTYE=;
-        b=DrNlSUI4mD06XKZiVdYvbeM8DD8hUPBB0B4DPmmfljpQCVaInZ1yew8bQrgemuLC0X
-         x0u/RnX/E/nRdD6pqOoahgv8g/t0DtKD+5THYd1/c1x1ZOOPlOSlsl4QZ3NpgDPOWJZv
-         sYkWBJ+U9iggR+eOoyDWsgrb3i2f8z3vl5Yo2Sq4HEkaRFk2yL3g+8kcprhR0iy2smZB
-         sNV9qYfZhvZ6PbP5/wm/Fs8L5DDYbDOE1aThLHGmM+VF2u9V8Mr+LvDmFnzLUxl0woLm
-         nVcGNXbmnGr/hpGFSwu+yoeRL58uqbTMfLOGNCdVt1N/hdwAQZjJRXIWvQUG9m3FxFdg
-         J0LA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7FEb/WQbFbJwrRY1Mgoz4GFuj3lPt+1f5THisRwAUFCt/2s0aIol4N8vgnytWvkglFwFzVz7WnPaJhMU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywnf1Beinq9zX5hNO2E/LZzhyZXtPU95AGc5UBHliL3YMFSJC28
-	rDqf8A0IeoVik4g1F/trh4uRblRtpoQX20L9/Pxc01qdwGSariQbSgzAfLYoMYU=
-X-Google-Smtp-Source: AGHT+IFL22svDjzCRrUXs2QqC+xPgNTUGDJOJrl+aZeS9c8hKYkQUJ+F4J7YvEpATOxHxMm5RmaV9w==
-X-Received: by 2002:adf:efca:0:b0:371:9362:c286 with SMTP id ffacd0b85a97d-378c2cd3ee8mr3375083f8f.4.1726214753750;
-        Fri, 13 Sep 2024 01:05:53 -0700 (PDT)
-Received: from [192.168.7.202] ([212.114.21.58])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789564a1a0sm16047177f8f.23.2024.09.13.01.05.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Sep 2024 01:05:53 -0700 (PDT)
-Message-ID: <8a7da0a7-1234-4343-8538-9f7230024ca7@linaro.org>
-Date: Fri, 13 Sep 2024 10:05:52 +0200
+	s=arc-20240116; t=1726214802; c=relaxed/simple;
+	bh=MD2l9SNyu3ZBsypMQ+/IoqBO3U05pD4HilLDqHU29Co=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a6n7t564UkEhvmLnQu9J7uPLUivDjq9XyJp+H3ziayFLPGxUcPPS0y9I+z7keImWPxDuG5pycAatQaZpkJOpf1NhMY6/MbsJ0Min1LFND4Z3PuIn+ifZz1smfJg/JN4ll2OM3u+LUDPHYqPeY+xsfvuw+mHHkUIPqGypEABCl5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bGvGZp99; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC520C4CEC6;
+	Fri, 13 Sep 2024 08:06:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726214801;
+	bh=MD2l9SNyu3ZBsypMQ+/IoqBO3U05pD4HilLDqHU29Co=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=bGvGZp99SbVtQpeHaM7zdcP57XEMMLY97hYIa0gJd9KxqkGK9e83aRzmj3bH53b/K
+	 do6e8l1Xt26qdOow90ho6hqT8u+fy2dyZ5n0V2o/CFJ/3+Hm1HmnfkVyCdzEEzQuY0
+	 psfVXPxVsSQ/HFg36bB9hnwOBhSLo3EBYsxuVZo6SzwBRlLNdm2lD5D8BXxIbF7htn
+	 sRh7dkoEmXhCYJ66fFRZHeFn+GhBGbafhP5nNumGj7F494p9nXXzPWnPv8B/B5qpxR
+	 xD1HbVOkgUMHflJAL4/SMtwfHuiP1mmD/nmgRxJgOWPy11alGmcQiQ7cebIovrGy5Z
+	 XJUS1ADh8XZjg==
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f752d9ab62so7377331fa.3;
+        Fri, 13 Sep 2024 01:06:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUvk+Wd/XflD8PbEyzyDIirAsSk1iKZAh35ytpLDUJM0v796zAnDUU+PzNTE07gq8kOXPZmBNB3@vger.kernel.org, AJvYcCV3IGuCba47dyoDzwtnn2xqmcc002ojEk42+hg1qAiVuEhMNWQlGOEU9WvxIRUeXYm8smDU3KS7r+rW@vger.kernel.org, AJvYcCWYyJtmVP+1HaBYyHJaEz5a5QUzqqBMKUUvaO5Edk9ZmJG6CHbYKhaR8/w2toZg+NU0H+zdO1Ac9qKBLlE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF1Vh5i4b9Pa7VroQE0Lf1zLiFkFNZOQO5RGGUh9841jpw8WPx
+	fAwq9IAgU0wdPZPhPEr8vLgQPqUGBTiN8FaEHOOqlepoNF+Xq9vpuYYW7bCq4YcUqEXniPM9wZ0
+	fZnvzOF3A9ptohezZ7c6eQFrHY1c=
+X-Google-Smtp-Source: AGHT+IE+ew2Mze9IQbmxClloe150YR5hrRkN14wPCpHG6zdeQ278SlShgZBB2SsagYMEaI/XbGylMVtilhQJI+JUBlg=
+X-Received: by 2002:a05:6512:10d0:b0:536:5515:e9b5 with SMTP id
+ 2adb3069b0e04-5367ff3230fmr1083447e87.52.1726214800188; Fri, 13 Sep 2024
+ 01:06:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2 03/10] drm: bridge: dw_hdmi: Call poweron/poweroff from
- atomic enable/disable
-To: Jonas Karlman <jonas@kwiboo.se>, Andrzej Hajda <andrzej.hajda@intel.com>,
- Robert Foss <rfoss@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: Christian Hewitt <christianshewitt@gmail.com>,
- Diederik de Haas <didi.debian@cknow.org>,
- Christopher Obbard <chris.obbard@collabora.com>,
- dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240908132823.3308029-1-jonas@kwiboo.se>
- <20240908132823.3308029-4-jonas@kwiboo.se>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240908132823.3308029-4-jonas@kwiboo.se>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240613074258.4124603-1-zhanghongchen@loongson.cn>
+ <a50b3865-8a04-4a9a-8d27-b317619a75c0@linux.intel.com> <7340a27e-67c1-c0c3-9304-77710dc44f7f@loongson.cn>
+ <670927f1-42d8-40bc-bd79-55e178bd907a@linux.intel.com> <0052b62b-aafe-e2eb-6d66-4ad0178bdae1@loongson.cn>
+ <db628499-6faf-43c8-93e5-c24208ca0578@linux.intel.com> <ea5a5c52-69ca-9504-dd80-a90c3000d9c6@loongson.cn>
+In-Reply-To: <ea5a5c52-69ca-9504-dd80-a90c3000d9c6@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Fri, 13 Sep 2024 16:06:28 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4KAnqCFDQ8Lg=9jBdQ3CNOLU8CKe8_7Px4VCmgKG_b5w@mail.gmail.com>
+Message-ID: <CAAhV-H4KAnqCFDQ8Lg=9jBdQ3CNOLU8CKe8_7Px4VCmgKG_b5w@mail.gmail.com>
+Subject: Re: [PATCH v3] PCI: pci_call_probe: call local_pci_probe() when
+ selected cpu is offline
+To: Hongchen Zhang <zhanghongchen@loongson.cn>
+Cc: Ethan Zhao <haifeng.zhao@linux.intel.com>, Markus Elfring <Markus.Elfring@web.de>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Alex Belits <abelits@marvell.com>, 
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Nitesh Narayan Lal <nitesh@redhat.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
+	stable@vger.kernel.org, Huacai Chen <chenhuacai@loongson.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/09/2024 15:28, Jonas Karlman wrote:
-> Change to only call poweron/poweroff from atomic_enable/atomic_disable
-> ops instead of trying to be clever by keeping a bridge_is_on state and
-> poweron/off in the hotplug irq handler.
-> 
-> The bridge is already enabled/disabled depending on connection state
-> with the call to drm_helper_hpd_irq_event() in hotplug irq handler.
-> 
-> A benefit of this is that drm mode_config mutex is always held at
-> poweron/off, something that may reduce the need for our own mutex.
-> 
-> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
-> ---
-> v2: Update commit message
-> ---
->   drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 33 ++---------------------
->   1 file changed, 2 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> index 055fc9848df4..5b67640b1d0a 100644
-> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> @@ -169,7 +169,6 @@ struct dw_hdmi {
->   	enum drm_connector_force force;	/* mutex-protected force state */
->   	struct drm_connector *curr_conn;/* current connector (only valid when !disabled) */
->   	bool disabled;			/* DRM has disabled our bridge */
-> -	bool bridge_is_on;		/* indicates the bridge is on */
->   	bool rxsense;			/* rxsense state */
->   	u8 phy_mask;			/* desired phy int mask settings */
->   	u8 mc_clkdis;			/* clock disable register */
-> @@ -2382,8 +2381,6 @@ static void initialize_hdmi_ih_mutes(struct dw_hdmi *hdmi)
->   
->   static void dw_hdmi_poweron(struct dw_hdmi *hdmi)
->   {
-> -	hdmi->bridge_is_on = true;
-> -
->   	/*
->   	 * The curr_conn field is guaranteed to be valid here, as this function
->   	 * is only be called when !hdmi->disabled.
-> @@ -2397,30 +2394,6 @@ static void dw_hdmi_poweroff(struct dw_hdmi *hdmi)
->   		hdmi->phy.ops->disable(hdmi, hdmi->phy.data);
->   		hdmi->phy.enabled = false;
->   	}
-> -
-> -	hdmi->bridge_is_on = false;
-> -}
-> -
-> -static void dw_hdmi_update_power(struct dw_hdmi *hdmi)
-> -{
-> -	int force = hdmi->force;
-> -
-> -	if (hdmi->disabled) {
-> -		force = DRM_FORCE_OFF;
-> -	} else if (force == DRM_FORCE_UNSPECIFIED) {
-> -		if (hdmi->rxsense)
-> -			force = DRM_FORCE_ON;
-> -		else
-> -			force = DRM_FORCE_OFF;
-> -	}
-> -
-> -	if (force == DRM_FORCE_OFF) {
-> -		if (hdmi->bridge_is_on)
-> -			dw_hdmi_poweroff(hdmi);
-> -	} else {
-> -		if (!hdmi->bridge_is_on)
-> -			dw_hdmi_poweron(hdmi);
-> -	}
->   }
->   
->   /*
-> @@ -2545,7 +2518,6 @@ static void dw_hdmi_connector_force(struct drm_connector *connector)
->   
->   	mutex_lock(&hdmi->mutex);
->   	hdmi->force = connector->force;
-> -	dw_hdmi_update_power(hdmi);
->   	dw_hdmi_update_phy_mask(hdmi);
->   	mutex_unlock(&hdmi->mutex);
->   }
-> @@ -2954,7 +2926,7 @@ static void dw_hdmi_bridge_atomic_disable(struct drm_bridge *bridge,
->   	mutex_lock(&hdmi->mutex);
->   	hdmi->disabled = true;
->   	hdmi->curr_conn = NULL;
-> -	dw_hdmi_update_power(hdmi);
-> +	dw_hdmi_poweroff(hdmi);
->   	dw_hdmi_update_phy_mask(hdmi);
->   	handle_plugged_change(hdmi, false);
->   	mutex_unlock(&hdmi->mutex);
-> @@ -2973,7 +2945,7 @@ static void dw_hdmi_bridge_atomic_enable(struct drm_bridge *bridge,
->   	mutex_lock(&hdmi->mutex);
->   	hdmi->disabled = false;
->   	hdmi->curr_conn = connector;
-> -	dw_hdmi_update_power(hdmi);
-> +	dw_hdmi_poweron(hdmi);
->   	dw_hdmi_update_phy_mask(hdmi);
->   	handle_plugged_change(hdmi, true);
->   	mutex_unlock(&hdmi->mutex);
-> @@ -3072,7 +3044,6 @@ void dw_hdmi_setup_rx_sense(struct dw_hdmi *hdmi, bool hpd, bool rx_sense)
->   		if (hpd)
->   			hdmi->rxsense = true;
->   
-> -		dw_hdmi_update_power(hdmi);
->   		dw_hdmi_update_phy_mask(hdmi);
->   	}
->   	mutex_unlock(&hdmi->mutex);
+Ping?
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+On Wed, Jul 24, 2024 at 3:05=E2=80=AFPM Hongchen Zhang
+<zhanghongchen@loongson.cn> wrote:
+>
+> On 2024/7/24 =E4=B8=8B=E5=8D=882:40, Ethan Zhao wrote:
+> > On 7/24/2024 11:09 AM, Hongchen Zhang wrote:
+> >> Hi Ethan,
+> >>
+> >> On 2024/7/24 =E4=B8=8A=E5=8D=8810:47, Ethan Zhao wrote:
+> >>> On 7/24/2024 9:58 AM, Hongchen Zhang wrote:
+> >>>> Hi Ethan,
+> >>>> On 2024/7/22 PM 3:39, Ethan Zhao wrote:
+> >>>>>
+> >>>>> On 6/13/2024 3:42 PM, Hongchen Zhang wrote:
+> >>>>>> Call work_on_cpu(cpu, fn, arg) in pci_call_probe() while the argum=
+ent
+> >>>>>> @cpu is a offline cpu would cause system stuck forever.
+> >>>>>>
+> >>>>>> This can be happen if a node is online while all its CPUs are
+> >>>>>> offline (We can use "maxcpus=3D1" without "nr_cpus=3D1" to reprodu=
+ce it).
+> >>>>>>
+> >>>>>> So, in the above case, let pci_call_probe() call local_pci_probe()
+> >>>>>> instead of work_on_cpu() when the best selected cpu is offline.
+> >>>>>>
+> >>>>>> Fixes: 69a18b18699b ("PCI: Restrict probe functions to
+> >>>>>> housekeeping CPUs")
+> >>>>>> Cc: <stable@vger.kernel.org>
+> >>>>>> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+> >>>>>> Signed-off-by: Hongchen Zhang <zhanghongchen@loongson.cn>
+> >>>>>> ---
+> >>>>>> v2 -> v3: Modify commit message according to Markus's suggestion
+> >>>>>> v1 -> v2: Add a method to reproduce the problem
+> >>>>>> ---
+> >>>>>>   drivers/pci/pci-driver.c | 2 +-
+> >>>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>>>>
+> >>>>>> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+> >>>>>> index af2996d0d17f..32a99828e6a3 100644
+> >>>>>> --- a/drivers/pci/pci-driver.c
+> >>>>>> +++ b/drivers/pci/pci-driver.c
+> >>>>>> @@ -386,7 +386,7 @@ static int pci_call_probe(struct pci_driver
+> >>>>>> *drv, struct pci_dev *dev,
+> >>>>>>           free_cpumask_var(wq_domain_mask);
+> >>>>>>       }
+> >>>>>> -    if (cpu < nr_cpu_ids)
+> >>>>>
+> >>>>> Why not choose the right cpu to callwork_on_cpu() ? the one that is
+> >>>>> online. Thanks, Ethan
+> >>>> Yes, let housekeeping_cpumask() return online cpu is a good idea,
+> >>>> but it may be changed by command line. so the simplest way is to
+> >>>> call local_pci_probe when the best selected cpu is offline.
+> >>>
+> >>> Hmm..... housekeeping_cpumask() should never return offline CPU, so
+> >>> I guess you didn't hit issue with the CPU isolation, but the followin=
+g
+> >>> code seems not good.
+> >> The issue is the dev node is online but the best selected cpu is
+> >> offline, so it seems that there is no better way to directly set the
+> >> cpu to nr_cpu_ids.
+> >
+> > I mean where the bug is ? you should debug more about that.
+> > just add one cpu_online(cpu) check there might suggest there
+> > is bug in the cpu selection stage.
+> >
+> >
+> > if (node < 0 || node >=3D MAX_NUMNODES || !node_online(node) ||
+> >          pci_physfn_is_probed(dev)) {
+> >          cpu =3D nr_cpu_ids; // <----- if you hit here, then
+> > local_pci_probe() should be called.
+> >      } else {
+> >          cpumask_var_t wq_domain_mask;
+> >
+> >          if (!zalloc_cpumask_var(&wq_domain_mask, GFP_KERNEL)) {
+> >              error =3D -ENOMEM;
+> >              goto out;
+> >          }
+> >          cpumask_and(wq_domain_mask,
+> >                  housekeeping_cpumask(HK_TYPE_WQ),
+> >                  housekeeping_cpumask(HK_TYPE_DOMAIN));
+> >
+> >          cpu =3D cpumask_any_and(cpumask_of_node(node),
+> >                        wq_domain_mask);
+> >          free_cpumask_var(wq_domain_mask);
+> >                  // <----- if you hit here, then work_on_cpu(cpu,
+> > local_pci_probe, &ddi) should be called.
+> Yes, but if the offline cpu is selected, local_pci_probe should be called=
+.
+> >                  // do you mean there one offline cpu is selected ?
+> Yes, the offline cpu is selected.
+> >
+> >      }
+> >
+> >      if (cpu < nr_cpu_ids)
+> >          error =3D work_on_cpu(cpu, local_pci_probe, &ddi);
+> >      else
+> >          error =3D local_pci_probe(&ddi);
+> >
+> >
+> > Thanks,
+> > Ethan
+> >
+> >>>
+> >>> ...
+> >>>
+> >>> if (node < 0 || node >=3D MAX_NUMNODES || !node_online(node) ||
+> >>>          pci_physfn_is_probed(dev)) {
+> >>>          cpu =3D nr_cpu_ids;
+> >>>      } else {
+> >>>
+> >>> ....
+> >>>
+> >>> perhaps you could change the logic there and fix it  ?
+> >>>
+> >>> Thanks
+> >>> Ethan
+> >>>
+> >>>
+> >>>
+> >>>>>
+> >>>>>> +    if ((cpu < nr_cpu_ids) && cpu_online(cpu))
+> >>>>>>           error =3D work_on_cpu(cpu, local_pci_probe, &ddi);
+> >>>>>>       else
+> >>>>>>           error =3D local_pci_probe(&ddi);
+> >>>>
+> >>>>
+> >>
+> >>
+>
+>
+> --
+> Best Regards
+> Hongchen Zhang
+>
+>
 
