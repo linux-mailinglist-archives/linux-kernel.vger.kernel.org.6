@@ -1,261 +1,266 @@
-Return-Path: <linux-kernel+bounces-327431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC4779775E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:07:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0470B9775E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:08:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0C071C2423D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:07:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 281B21C24235
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3219653;
-	Fri, 13 Sep 2024 00:07:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF627E1;
+	Fri, 13 Sep 2024 00:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jvosburgh.net header.i=@jvosburgh.net header.b="ZJOZDOKr";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dF7s8E3j"
-Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wirdfzHQ"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7858B376;
-	Fri, 13 Sep 2024 00:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93B0376
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 00:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726186021; cv=none; b=j62e+QKGfVVlZIe3b7B6napogj/A9JxJbGKVU3M1ZlUEMSNWZOHdjABLquNZ4xv0emLhXGEgKZJjtzElihGE7fudNyHvMeZ6fFCzooCgxpQOivEleHDglWt7uSZMrtA48o3EHJ3Vix2WB9h5oG+ypVR7VvDXl2n4PNDsz1q4LVU=
+	t=1726186081; cv=none; b=Xw0DhBC1uvkWLK5+MoxDWhhTIYwiUWVARTdtnis2By7fbdtBfM4GtzmUB0CZTfawjKi2WRwmjlr7wlh+lo4aJ2PKLL9r0J4sh7gJiJrMvmW9bBtTW4aluckOEpP9vomvr6KPhJzt9MWhZdZkh0hpA+WeAd6oWMr+EGO2cRmB4ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726186021; c=relaxed/simple;
-	bh=FvXbuDIYKjNAbAAcRxFAh7oxKSlBNc2itf3fVC7x4B8=;
-	h=From:To:cc:Subject:In-reply-to:References:MIME-Version:
-	 Content-Type:Date:Message-ID; b=b5v1xSxMPfaLqsESPwHR2EMeRFvFroOMPcZ+JswBv39d8qgM+KbzPbtX4wU53YfXi7jVvpOODIdb/SXOGLNnKcYhkNjcnKjbQIyVCld+MmiIqZFDSR5mBcYpZEHz0OY8JOqUCypQ5fsNo0shfqVFmHVzKYCcA+YK0SCauTMwzdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jvosburgh.net; spf=pass smtp.mailfrom=jvosburgh.net; dkim=pass (2048-bit key) header.d=jvosburgh.net header.i=@jvosburgh.net header.b=ZJOZDOKr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dF7s8E3j; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jvosburgh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jvosburgh.net
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfout.phl.internal (Postfix) with ESMTP id 6D5AF13800B5;
-	Thu, 12 Sep 2024 20:06:58 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-08.internal (MEProxy); Thu, 12 Sep 2024 20:06:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jvosburgh.net;
-	 h=cc:cc:content-id:content-transfer-encoding:content-type
-	:content-type:date:date:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to; s=fm3; t=1726186018; x=1726272418; bh=VIpDzQ5Q47McP90RMpSYT
-	K1CUPLCRSwo82eQcpu1SQI=; b=ZJOZDOKrKA03oR165BSNuW9IDaomh43JA0Z2Y
-	gSBm0dgshkYVZZ6mSlXd+Y4el06orAs9igwTVd9QKZsjZtFQrgjCFM85vZyME11B
-	Y4+QxqnSnm1OE9r1CoXliylu61+BesWPz9iqRJk80Zhl1W5HaghcK3K2MXWIQ1e8
-	hHp9L6p7ebcA2YkatyHLZmI8ME8J4oZxJ4+c9wK42rp5TbsF2C6l6CnT7/0gjcC0
-	QG4FbSms3xA0BeXnSLGvjY+EQt69ZR9XCqrA0Um+3E1TjGTvpUVxWSE+8LWdkIgA
-	qA82mHfP4dvW0snRSqtVIev7f4GAYLuzpxBLX5VgE84OkHgNw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-id
-	:content-transfer-encoding:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1726186018; x=1726272418; bh=VIpDzQ5Q47McP90RMpSYTK1CUPLC
-	RSwo82eQcpu1SQI=; b=dF7s8E3ji2RP1jjjkTdmLe1c+lmHTYyYB2mrgOhkWe+u
-	dMvFH/oxSm8nIrhwNWG9bb/dnvH4h9qgCuJQxpEwUL2cZjGabDtFJhatIKnCcyMI
-	K7PS7soWiHVMN/3EHNEcyxKvfl5j7dpaHn79kWqXJ6P4wVNI0KNm66FCf7VXpGCy
-	vZ8QzLuMOPwiiLnjd5ho3x/iSE8PDHkwmGjzui4hhrahP9SeR+ul8sVb+j7XyfMy
-	G5ORrwoySaPMJ6Zs0OnU24mlfqFX2M43NCSPvG67eBo8kjtDmnfTzrJIj37I7l8V
-	0KGXutApU6l/h6v3dPy7HmMmydaevRTLqoid9cOB/Q==
-X-ME-Sender: <xms:IYLjZhQQCNfafdql9BRKI7ssAXB7xGyqrIWpfsuarrBszhKiMFj7Cg>
-    <xme:IYLjZqzsRj9kBBjyyNg9aN1WxPSDi5hPN3ayG5i-KcIY_cK7GX-66cIJPKRW3zLE3
-    -k5za5ZOS_vexQ6TAk>
-X-ME-Received: <xmr:IYLjZm2lxff8WdXuDR3m226RucwbrFGjXTelG1zsfZVm1Qrlu13ILbZ29APegV0BKArDZw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejgedgfedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhephffvvefujghfofggtgfgfffksehtqhertdertddv
-    necuhfhrohhmpeflrgihucggohhssghurhhghhcuoehjvhesjhhvohhssghurhhghhdrnh
-    gvtheqnecuggftrfgrthhtvghrnhepieefvdelfeeljeevtefhfeeiudeuiedvfeeiveel
-    ffduvdevfedtheffffetfeffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepjhhvsehjvhhoshgsuhhrghhhrdhnvghtpdhnsggprhgtphhtthho
-    peekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvvghmsegurghvvghmlh
-    hofhhtrdhnvghtpdhrtghpthhtohepshhurhgvshhhvdehudegsehgmhgrihhlrdgtohhm
-    pdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhope
-    grnhguhiesghhrvgihhhhouhhsvgdrnhgvthdprhgtphhtthhopehkuhgsrgeskhgvrhhn
-    vghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtph
-    htthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
-    phhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:IYLjZpDJJl0BhUj3jOy57IMZ3N4kWpcMMiilIQWTj2qU330C2iphMA>
-    <xmx:IYLjZqj2nm-26_C_rAx880Y-A0c-zJSbf9mbooWzq6TmsUVulRACww>
-    <xmx:IYLjZtqREOwMZSUJxTOamzgniKg_NQFi1nHSapTCBQJ5lT6niTPz5g>
-    <xmx:IYLjZliHrVligt1w_rirahdkFpOc0BM-irf6x1i1hxX1lo1cfpbAAg>
-    <xmx:IoLjZjXDjIFDTHGoMk1e75wJlrVxNqDNsc-J4WHJj2qtUdJNDuxtpbxG>
-Feedback-ID: i53714940:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 12 Sep 2024 20:06:57 -0400 (EDT)
-Received: by famine.localdomain (Postfix, from userid 1000)
-	id 2D0869FC93; Thu, 12 Sep 2024 17:06:56 -0700 (PDT)
-Received: from famine (localhost [127.0.0.1])
-	by famine.localdomain (Postfix) with ESMTP id 29BDB9FC92;
-	Thu, 12 Sep 2024 17:06:56 -0700 (PDT)
-From: Jay Vosburgh <jv@jvosburgh.net>
-To: Suresh Kumar <suresh2514@gmail.com>
-cc: andy@greyhouse.net, davem@davemloft.net, edumazet@google.com,
-    kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: bonding: do not set force_primary if reselect is set
- to failure
-In-reply-to: <20240912064043.36956-1-suresh2514@gmail.com>
-References: <20240912064043.36956-1-suresh2514@gmail.com>
-Comments: In-reply-to Suresh Kumar <suresh2514@gmail.com>
-   message dated "Thu, 12 Sep 2024 12:10:43 +0530."
-X-Mailer: MH-E 8.6+git; nmh 1.8+dev; Emacs 29.3
+	s=arc-20240116; t=1726186081; c=relaxed/simple;
+	bh=HnqZ+WQxTmhdX5AHMSykpvAerEB7h3ospCerp328K5g=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=UVUgVIsRzrMUoN82F5IxZ1xMThNSp1+X4ZlB2t0aVLsFv+cRKN4ao3mqkd5L4cOPMbPEc8ABhGrLmeSKMgSZVEWs+pwmm9GOTXxbySzOTberfI/vZRY8gNrHJNseCL6H+dq2zcz8lMD8+VnLqIvQ3rcB8AKythpHcGkQ6gCiSzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wirdfzHQ; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1ff24acb60dso14249415ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 17:07:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726186079; x=1726790879; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FV0xpAyRsnkvg2I8ID+gF0AA+BuNB8xDqvOjKUOupJw=;
+        b=wirdfzHQJ4+vCavXp/jlw5OWk84YzRIb/+Qc2QWdSalyvnB01+wNjM0UPmosotwsjS
+         oucz4EbfWo9Qvpedz4zYAG63EY3BEs8aLiknUF8Z8RNsxbjx6Iie9Nt3NiOolsjlHBpj
+         JT6k2uAlYGXPfKbAFBvZBc0XWOCvFOq05VBu0m25YpIVjNvaj25v4cvWgpOp15EZBV9W
+         vX3R533MgdCoUNxpuXR1EcMlGZWr/LOClGvp1Ba+dubyeyawj294MthRkxoryONTpyRA
+         GXAk7yXkwIPwRmncX9+EQ6tqqt/H4DC4T1blkDkyWcmGLKhcXnHzUEBsUOL2Y/3sGayR
+         DQXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726186079; x=1726790879;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FV0xpAyRsnkvg2I8ID+gF0AA+BuNB8xDqvOjKUOupJw=;
+        b=dQ/91rbd9YalACzc940KY4e9Vh3v9cuuC3BG3XlPn25mt3YPu0ibtWID3S9ecWxrGO
+         xEc+Ty2nxJ5idTOz4gIfAIkiG//Kp9/7YDzjftVMZZ8E+erzlSN5uIiFV+oX8kn9i4F6
+         yIvPxMRnFfuZkKIAxroY4Syd+Vt2iAmKafm0/Ku28H889cvBvrbNn7ITmkCVQvs8+v/j
+         NAyC6+N5dj8TUwOYI8ktEP4b7hgm643DwGMmK8qlj4+YmdQKdBssxotUVxxWTWSYAdWC
+         AoLhx+CKP0GSHraTcfqTrHUOUG8l8DE8XiBh6H+JPd8WzvkM5/+eOf/dNlROKCvbVTpY
+         uhCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMMBB20XzIcRH+bFipgSYaNEkZskB1hAF6P0HTHcCsERogZZK99mzEOCtFX3Gkni0+br/Uz/0xeqWqqGI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8m+vuyPrCQDjfQxFU4pW6gjfACpfWX4R9pdGJSQZ95sxddBf0
+	SNRTtyWJzn8yrxuaQXkNJYeQWURq243zsNtDTxacF0Tgc9KJV84ie/T6H4HnlLnpgT0pHyirEfh
+	7+A==
+X-Google-Smtp-Source: AGHT+IGPquyAWmRgRvPVm5oG0pkzuk76JVdxT2qdK+EbZAQCvazZOU7w0yp0FIdj678BpZ2KG/ZeC2SNH68=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:c386:b0:205:4fe5:8136 with SMTP id
+ d9443c01a7336-2074c6d7bd9mr297185ad.3.1726186078899; Thu, 12 Sep 2024
+ 17:07:58 -0700 (PDT)
+Date: Thu, 12 Sep 2024 17:07:57 -0700
+In-Reply-To: <6eecc450d0326c9bedfbb34096a0279410923c8d.1726182754.git.isaku.yamahata@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <6eecc450d0326c9bedfbb34096a0279410923c8d.1726182754.git.isaku.yamahata@intel.com>
+Message-ID: <ZuOCXarfAwPjYj19@google.com>
+Subject: Re: [PATCH] KVM: x86/tdp_mmu: Trigger the callback only when an
+ interesting change
+From: Sean Christopherson <seanjc@google.com>
+To: Isaku Yamahata <isaku.yamahata@intel.com>
+Cc: kvm@vger.kernel.org, sagis@google.com, chao.gao@intel.com, 
+	pbonzini@redhat.com, rick.p.edgecombe@intel.com, yan.y.zhao@intel.com, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <397120.1726186016.1@famine>
-Content-Transfer-Encoding: quoted-printable
-Date: Thu, 12 Sep 2024 17:06:56 -0700
-Message-ID: <397121.1726186016@famine>
 
-Suresh Kumar <suresh2514@gmail.com> wrote:
+On Thu, Sep 12, 2024, Isaku Yamahata wrote:
+> KVM MMU behavior
+> ================
+> The leaf SPTE state machine is coded in make_spte().  Consider AD bits and
+> the present bits for simplicity.  The two functionalities and AD bits
+> support are related in this context.  unsync (manipulate D bit and W bit,
+> and handle write protect fault) and access tracking (manipulate A bit and
+> present bit, and hand handle page fault).  (We don't consider dirty page
+> tracking for now as it's future work of TDX KVM.)
+> 
+> * If AD bit is enabled:
+> D bit state change for dirty page tracking
+> On the first EPT violation without prefetch,
+> - D bits are set.
+> - Make SPTE writable as TDX supports only RXW (or if write fault).
+>   (TDX KVM doesn't support write protection at this state. It's future work.)
+> 
+> On the second EPT violation.
+> - clear D bits if write fault.
 
->when bond_enslave() is called, it sets bond->force_primary to true
->without checking if primary_reselect is set to 'failure' or 'better'.
->This can result in primary becoming active again when link is back which
->is not what we want when primary_reselect is set to 'failure'
+Heh, I was literally just writing changelogs for patches to address this (I told
+Sagi I would do it "this week"; that was four weeks ago).
 
-	The current behavior is by design, and is documented in
-Documentation/networking/bonding.rst:
+This is a bug in make_spte().  Replacing a W=1,D=1 SPTE with a W=1,D=0 SPTE is
+nonsensical.  And I'm pretty sure it's an outright but for the TDP MMU (see below).
 
-
-	The primary_reselect setting is ignored in two cases:
-
-		If no slaves are active, the first slave to recover is
-		made the active slave.
-
-		When initially enslaved, the primary slave is always made
-		the active slave.
-
-
-	Your proposed change would cause the primary to never be made
-the active interface when added to the bond for the primary_reselect
-"better" and "failure" settings, unless the primary interface is added
-to the bond first or all other interfaces are down.
-
-	Also, your description above and the test example below use the
-phrases "link is back" and "primary link failure" but the patch and test
-context suggest that the primary interface is being removed from the
-bond and then later added back to the bond, which is not the same thing
-as a link failure.
-
-	-J
-
->Test
->=3D=3D=3D=3D
->Ethernet Channel Bonding Driver: v3.7.1 (April 27, 2011)
->
->Bonding Mode: fault-tolerance (active-backup)
->Primary Slave: enp1s0 (primary_reselect failure)
->Currently Active Slave: enp1s0
->MII Status: up
->MII Polling Interval (ms): 100
->Up Delay (ms): 0
->Down Delay (ms): 0
->Peer Notification Delay (ms): 0
->
->Slave Interface: enp1s0
->MII Status: up
->Speed: 1000 Mbps
->Duplex: full
->Link Failure Count: 0
->Permanent HW addr: 52:54:00:d7:a7:2a
->Slave queue ID: 0
->
->Slave Interface: enp9s0
->MII Status: up
->Speed: 1000 Mbps
->Duplex: full
->Link Failure Count: 0
->Permanent HW addr: 52:54:00:da:9a:f9
->Slave queue ID: 0
->
->
->After primary link failure:
->
->Bonding Mode: fault-tolerance (active-backup)
->Primary Slave: None
->Currently Active Slave: enp9s0 <---- secondary is active now
->MII Status: up
->MII Polling Interval (ms): 100
->Up Delay (ms): 0
->Down Delay (ms): 0
->Peer Notification Delay (ms): 0
->
->Slave Interface: enp9s0
->MII Status: up
->Speed: 1000 Mbps
->Duplex: full
->Link Failure Count: 0
->Permanent HW addr: 52:54:00:da:9a:f9
->Slave queue ID: 0
->
->
->Now add primary link back and check bond status:
->
->Bonding Mode: fault-tolerance (active-backup)
->Primary Slave: enp1s0 (primary_reselect failure)
->Currently Active Slave: enp1s0  <------------- primary is active again
->MII Status: up
->MII Polling Interval (ms): 100
->Up Delay (ms): 0
->Down Delay (ms): 0
->Peer Notification Delay (ms): 0
->
->Slave Interface: enp9s0
->MII Status: up
->Speed: 1000 Mbps
->Duplex: full
->Link Failure Count: 0
->Permanent HW addr: 52:54:00:da:9a:f9
->Slave queue ID: 0
->
->Slave Interface: enp1s0
->MII Status: up
->Speed: 1000 Mbps
->Duplex: full
->Link Failure Count: 0
->Permanent HW addr: 52:54:00:d7:a7:2a
->Slave queue ID: 0
->
->Signed-off-by: Suresh Kumar <suresh2514@gmail.com>
->---
-> drivers/net/bonding/bond_main.c | 4 +++-
-> 1 file changed, 3 insertions(+), 1 deletion(-)
->
->diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_m=
-ain.c
->index bb9c3d6ef435..731256fbb996 100644
->--- a/drivers/net/bonding/bond_main.c
->+++ b/drivers/net/bonding/bond_main.c
->@@ -2146,7 +2146,9 @@ int bond_enslave(struct net_device *bond_dev, struc=
-t net_device *slave_dev,
-> 		/* if there is a primary slave, remember it */
-> 		if (strcmp(bond->params.primary, new_slave->dev->name) =3D=3D 0) {
-> 			rcu_assign_pointer(bond->primary_slave, new_slave);
->-			bond->force_primary =3D true;
->+            if (bond->params.primary_reselect !=3D BOND_PRI_RESELECT_FAI=
-LURE  &&
->+                bond->params.primary_reselect !=3D BOND_PRI_RESELECT_BET=
-TER)
->+			    bond->force_primary =3D true;
-> 		}
-> 	}
-> =
-
->-- =
-
->2.43.0
->
+Right now, the fixes for make_spte() are sitting toward the end of the massive
+kvm_follow_pfn() rework (80+ patches and counting), but despite the size, I am
+fairly confident that series can land in 6.13 (lots and lots of small patches).
 
 ---
-	-Jay Vosburgh, jv@jvosburgh.net
+Author:     Sean Christopherson <seanjc@google.com>
+AuthorDate: Thu Sep 12 16:23:21 2024 -0700
+Commit:     Sean Christopherson <seanjc@google.com>
+CommitDate: Thu Sep 12 16:35:06 2024 -0700
+
+    KVM: x86/mmu: Flush TLBs if resolving a TDP MMU fault clears W or D bits
+    
+    Do a remote TLB flush if installing a leaf SPTE overwrites an existing
+    leaf SPTE (with the same target pfn) and clears the Writable bit or the
+    Dirty bit.  KVM isn't _supposed_ to clear Writable or Dirty bits in such
+    a scenario, but make_spte() has a flaw where it will fail to set the Dirty
+    if the existing SPTE is writable.
+    
+    E.g. if two vCPUs race to handle faults, the KVM will install a W=1,D=1
+    SPTE for the first vCPU, and then overwrite it with a W=1,D=0 SPTE for the
+    second vCPU.  If the first vCPU (or another vCPU) accesses memory using
+    the W=1,D=1 SPTE, i.e. creates a writable, dirty TLB entry, and that is
+    the only SPTE that is dirty at the time of the next relevant clearing of
+    the dirty logs, then clear_dirty_gfn_range() will not modify any SPTEs
+    because it sees the D=0 SPTE, and thus will complete the clearing of the
+    dirty logs without performing a TLB flush.
+    
+    Opportunistically harden the TDP MMU against clearing the Writable bit as
+    well, both to prevent similar bugs for write-protection, but also so that
+    the logic can eventually be deduplicated into spte.c (mmu_spte_update() in
+    the shadow MMU has similar logic).
+    
+    Fix the bug in the TDP MMU's page fault handler even though make_spte() is
+    clearly doing odd things, e.g. it marks the page dirty in its slot but
+    doesn't set the Dirty bit.  Precisely because replacing a leaf SPTE with
+    another leaf SPTE is so rare, the cost of hardening KVM against such bugs
+    is negligible.  The make_spte() will be addressed in a future commit.
+    
+    Fixes: bb18842e2111 ("kvm: x86/mmu: Add TDP MMU PF handler")
+    Cc: David Matlack <dmatlack@google.com>
+    Cc: stable@vger.kernel.org
+    Signed-off-by: Sean Christopherson <seanjc@google.com>
+
+diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
+index 3b996c1fdaab..7c6d1c610f0e 100644
+--- a/arch/x86/kvm/mmu/tdp_mmu.c
++++ b/arch/x86/kvm/mmu/tdp_mmu.c
+@@ -1038,7 +1038,9 @@ static int tdp_mmu_map_handle_target_level(struct kvm_vcpu *vcpu,
+        else if (tdp_mmu_set_spte_atomic(vcpu->kvm, iter, new_spte))
+                return RET_PF_RETRY;
+        else if (is_shadow_present_pte(iter->old_spte) &&
+-                !is_last_spte(iter->old_spte, iter->level))
++                (!is_last_spte(iter->old_spte, iter->level) ||
++                 (is_mmu_writable_spte(old_spte) && !is_writable_pte(new_spte)) ||
++                 (is_dirty_spte(old_spte) && !is_dirty_spte(new_spte))))
+                kvm_flush_remote_tlbs_gfn(vcpu->kvm, iter->gfn, iter->level);
+ 
+        /*
+---
+
+>  arch/x86/kvm/mmu/spte.h    |  6 ++++++
+>  arch/x86/kvm/mmu/tdp_mmu.c | 28 +++++++++++++++++++++++++---
+>  2 files changed, 31 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/mmu/spte.h b/arch/x86/kvm/mmu/spte.h
+> index a72f0e3bde17..1726f8ec5a50 100644
+> --- a/arch/x86/kvm/mmu/spte.h
+> +++ b/arch/x86/kvm/mmu/spte.h
+> @@ -214,6 +214,12 @@ extern u64 __read_mostly shadow_nonpresent_or_rsvd_mask;
+>   */
+>  #define FROZEN_SPTE	(SHADOW_NONPRESENT_VALUE | 0x5a0ULL)
+>  
+> +#define EXTERNAL_SPTE_IGNORE_CHANGE_MASK		\
+> +	(shadow_acc_track_mask |			\
+> +	 (SHADOW_ACC_TRACK_SAVED_BITS_MASK <<		\
+> +	  SHADOW_ACC_TRACK_SAVED_BITS_SHIFT) |		\
+
+Just make TDX require A/D bits, there's no reason to care about access tracking.
+
+> +	 shadow_dirty_mask | shadow_accessed_mask)
+> +
+>  /* Removed SPTEs must not be misconstrued as shadow present PTEs. */
+>  static_assert(!(FROZEN_SPTE & SPTE_MMU_PRESENT_MASK));
+>  
+> diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
+> index 019b43723d90..cfb82ede8982 100644
+> --- a/arch/x86/kvm/mmu/tdp_mmu.c
+> +++ b/arch/x86/kvm/mmu/tdp_mmu.c
+> @@ -503,8 +503,6 @@ static int __must_check set_external_spte_present(struct kvm *kvm, tdp_ptep_t sp
+>  	kvm_pfn_t new_pfn = spte_to_pfn(new_spte);
+>  	int ret = 0;
+>  
+> -	KVM_BUG_ON(was_present, kvm);
+> -
+>  	lockdep_assert_held(&kvm->mmu_lock);
+>  	/*
+>  	 * We need to lock out other updates to the SPTE until the external
+> @@ -519,10 +517,34 @@ static int __must_check set_external_spte_present(struct kvm *kvm, tdp_ptep_t sp
+>  	 * external page table, or leaf.
+>  	 */
+>  	if (is_leaf) {
+> -		ret = static_call(kvm_x86_set_external_spte)(kvm, gfn, level, new_pfn);
+> +		/*
+> +		 * SPTE is state machine with software available bits used.
+> +		 * Check if the change is interesting to the backend.
+> +		 */
+> +		if (!was_present)
+> +			ret = static_call(kvm_x86_set_external_spte)(kvm, gfn, level, new_pfn);
+> +		else {
+> +			/*
+> +			 * The external PTEs don't need updates for some bits,
+> +			 * but if others are changed, bug the VM.
+> +			 */
+> +			if (KVM_BUG_ON(~EXTERNAL_SPTE_IGNORE_CHANGE_MASK &
+
+There's no reason to bug the VM.  WARN, yes (maybe), but not bug the VM.  And I
+think this should be short-circuited somewhere further up the chain, i.e. not
+just for TDX.
+
+One idea would be to WARN and skip setting the SPTE in tdp_mmu_map_handle_target_level().
+I.e. WARN and ignore 1=>0 transitions for Writable and Dirty bits, and then drop
+the TLB flush (assuming the above patch lands).
+
+> +				       (old_spte ^ new_spte), kvm)) {
+
+Curly braces are unnecessary.
+
+> +				ret = -EIO;
+> +			}
+> +		}
+> +
+> +		/*
+> +		 * The backend shouldn't return an error except EAGAIN.
+> +		 * It's hard to debug without those info.
+> +		 */
+> +		if (ret && ret != EAGAIN)
+> +			pr_debug("gfn 0x%llx old_spte 0x%llx new_spte 0x%llx level %d\n",
+> +				 gfn, old_spte, new_spte, level);
+
+Please no.  Not in upstream.  Yeah, for development it's fine, but sprinkling
+printks all over the MMU eventually just results in stale printks, e.g. see all
+of the pgprintk crud that got ripped out a while back.
+
+>  	} else {
+>  		void *external_spt = get_external_spt(gfn, new_spte, level);
+>  
+> +		KVM_BUG_ON(was_present, kvm);
+>  		KVM_BUG_ON(!external_spt, kvm);
+>  		ret = static_call(kvm_x86_link_external_spt)(kvm, gfn, level, external_spt);
+>  	}
+> 
+> base-commit: d2c7662a6ea1c325a9ae878b3f1a265264bcd18b
+> -- 
+> 2.45.2
+> 
 
