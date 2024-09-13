@@ -1,105 +1,168 @@
-Return-Path: <linux-kernel+bounces-328289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BE33978179
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:48:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF2BE97817C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E25231F2538B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:48:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5C6EB24648
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5E51DB93B;
-	Fri, 13 Sep 2024 13:47:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9912A1DB52E;
+	Fri, 13 Sep 2024 13:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="bdDo9gnE"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B/NGqr5H"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25F51BDA85;
-	Fri, 13 Sep 2024 13:47:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6FD43144;
+	Fri, 13 Sep 2024 13:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726235243; cv=none; b=R+GNnOIf+Wybpmyetm0SGapYdIEkKtb9NHrSWXxBBMKO54fW3uPsdqxkjgJTgaYE8jg+4J9BlykkW4z83Xzyl9HJ7YZNOcHnFxihzsnrcFJ30k1M2yo4LR7jwzJ3PdX+N7tAGDngGmw4LUPzr2cdo8YtPTnW/pkvEcZJOao9xeg=
+	t=1726235334; cv=none; b=n1jcT4u83j3pc1pezYKJ/fY7Jzxo1lm0CrSn+6yaZCL2J6FWSec4PjGncXI6xJb8B5+xk/mhWYrJUl8RHaHGFXaen4+afYiieDdZi5TcjQCrGBnLrY4rq1oVgqddWMLxHAOYaGKCV658e5q0IPy3B6csKxbs+5KB0Zg6ufwSqaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726235243; c=relaxed/simple;
-	bh=WYyA5Vp4yB2SzAq5FgsNLkWXyhNzcdO7XMVLMGkAFZE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gfBqMFN8kXF/Pz9Jcauwss8NyHJwW0zIyNC81Ydn2Jzh5AATJ2rW5wXZccSdGYcwxK9w+G3TVdScv0KdAtvwFxVuSOxIADlU2NN0UDgtQDtUqbBATxm8rVLCokjSz0EjxGK+bnUD8JNzoHTHL6Xn8TdLsQGib66DztgVwlrVFH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=bdDo9gnE; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=t23qmclnbfdk7ikjffltxnilny.protonmail; t=1726235239; x=1726494439;
-	bh=SL3UlF5etkuUcpUbBrRU6HGec8qwa3J9DFhxx6wKbmg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=bdDo9gnE0o/bZQrzRUryK5khH6tmq6pRw9ow7rtComZG5xYF5MofCkMkRo6s+400+
-	 KOW+nAfCyf9TTWTPnjlmcwwbCn6mZzRfKnVBqTTO0u9Qo1Kma5GcwfqFbf6rQWTxhq
-	 ZUvM7jhMawYmJuvZO9LgwQ21IhKXBY/oCCSd2IbsPvq2IHKC0m5lk28qtHzVcDAJjq
-	 fFfLXH+Z2MBynPPx9gAwQogl6tkC2Mat1sY0JZLi9fkxu/TjOyRKsqNjhZijGXIDRr
-	 7X9zF7ZbWCj6kTlGgT0wthPdu2+Jvm7APrns1QuThmXZS5UIHDsXESoNq+f9MNgQ5E
-	 JWux13PkN42VQ==
-Date: Fri, 13 Sep 2024 13:47:15 +0000
-To: Finn Behrens <me@kloenk.dev>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] rust: add untrusted data abstraction
-Message-ID: <5f60a885-733e-4434-ac5e-a70005f11382@proton.me>
-In-Reply-To: <EE2A76E7-58E6-40E5-9075-48A169292250@kloenk.dev>
-References: <20240913112643.542914-1-benno.lossin@proton.me> <20240913112643.542914-2-benno.lossin@proton.me> <EE2A76E7-58E6-40E5-9075-48A169292250@kloenk.dev>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: dcd4c3c2fd7e5b9edafd8fb86ab173433798d0dc
+	s=arc-20240116; t=1726235334; c=relaxed/simple;
+	bh=w9FExomQkO9zLed5+T4zKe7DEkRTD9fEAbX+qeHNS4o=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rvi8FlFGkfytNQUXU00MMLnJLhysXs1v+iuXpXlWfkc2Z7z5nCfh4InYPuocPTTpjZUNatY8anUyNXq/hiGjE11KA6E1eXK/UVTcd00U/JG21Bw30VcWYJ8E42LeT/dQ1JO3VIM8V+KCgZCscHAUa3GJRHA894/JlD/5eY8g3fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B/NGqr5H; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53654e2ed93so2567769e87.0;
+        Fri, 13 Sep 2024 06:48:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726235330; x=1726840130; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qoTX/lGS0Vd1haNlwbKVAGI/z8WWxdqBKXR6G9V4jtU=;
+        b=B/NGqr5HRz3uMZUe9BBud/TV8aRnlYPBgq+UDrc4cGqEZYqFy+DA8Z70jKXtdtVGL+
+         42rvmsL6TpWcAMNoAlmDovsVdvPSuBgHa9YsYlUmXwEIYT7jk7xxWtgVXM1tOkhNqpxY
+         OUYTUQ1itOeXEDEdhRyNZy3qPyxdyrYkS7dKMeSU+vppJJ3GSpcqC1jp8jvZolFJp446
+         s8hIVCfOUApix34yeFp+wwbCZqrqnYNLB2KhYDfggqpkFiDBh5aybOOdH7z9lnzkYTiI
+         qRSnHUsKrd8w+cFr0CqMa794jp3dXd3sFlrNECs1Hv8AMh6eQPbzSzIZa7q/tSCxcOdA
+         W0VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726235330; x=1726840130;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qoTX/lGS0Vd1haNlwbKVAGI/z8WWxdqBKXR6G9V4jtU=;
+        b=QMd2m6sMPtDkVcL3uePmogiZcsUsOF7ABAlwKgJwCiNjOChL7mvG8UFXgufTyYuKhP
+         VSnS2WIJdFjA+MtV9fEs1wvjoN7zRoWPfKdjUydhMwQumB6PJJD5bfN6NzdE9U4edDHI
+         H97zG75KTzwy0JSZoNiIuRbnbxShSYHqkdhkklvDMV+kOGKR5m1XKitKeNMQKgp2GBMl
+         EKpcspKPlktFr4wHL2U/5EepmKtZPcEY/N3thR4EVHHQTn3vhrfb6HHV7sNunpfVvBPn
+         1kmE86QYlDnHACy2hak7hjrt2Etd/aFmHhNUowI5XFrnrALWQ7gYyXtuVWPf0VrTKRdu
+         Txmw==
+X-Forwarded-Encrypted: i=1; AJvYcCWywM1F9WF8zaSSnbofbC8c5o+Vd92aCarr+wL2cWNO1jbhhCd0TcFCswCysYm3Hen6cLI=@vger.kernel.org, AJvYcCX3eyr9yEnOtqtVrllo1QqOQbrLsqMIbTUg+miaKxbb0SuXolbuKekEYae/GgWSzzdYRxORpSvTxPfChr78@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8tFvF/HUWQvzqGLWG1iuwUBr0+Cc1r3ZrWOse2och4KbCF8HO
+	Y/RNT2LwoH0XslIVz19s3+FP7PFPPo5nS5q2WNrgkylWemrNEn00
+X-Google-Smtp-Source: AGHT+IE6PX99BZKkzzTURystMGMFz8NkzEnOs36bsRarMxVipYoi3GfMiI0aeU4VKeXVzd9tFr9CQA==
+X-Received: by 2002:a05:6512:4013:b0:52c:842b:c276 with SMTP id 2adb3069b0e04-53678ff49cdmr4297716e87.53.1726235329599;
+        Fri, 13 Sep 2024 06:48:49 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25a258a3sm868657566b.89.2024.09.13.06.48.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 06:48:49 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Fri, 13 Sep 2024 15:48:46 +0200
+To: Tao Chen <chen.dylane@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf-next] libbpf: Fix expected_attach_type set when
+ kernel not support
+Message-ID: <ZuRCO3_075wY2zbG@krava>
+References: <20240913121627.153898-1-chen.dylane@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240913121627.153898-1-chen.dylane@gmail.com>
 
-On 13.09.24 15:41, Finn Behrens wrote:
-> On 13 Sep 2024, at 13:26, Benno Lossin wrote:
->> +pub trait Validator {
->> +    /// Type of the input data that is untrusted.
->> +    type Input: ?Sized;
->=20
-> I would like to explore this trait with being generic over Input, instead=
- of having Input as an associated type. Might be nicer to have Validators f=
-or different input types if the valid data is always the same?
+On Fri, Sep 13, 2024 at 08:16:27PM +0800, Tao Chen wrote:
+> The commit "5902da6d8a52" set expected_attach_type again with
+> filed of bpf_program after libpf_prepare_prog_load, which makes
+> expected_attach_type = 0 no sense when kenrel not support the
+> attach_type feature, so fix it.
+> 
+> Fixes: 5902da6d8a52 ("libbpf: Add uprobe multi link support to bpf_program__attach_usdt")
+> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+> ---
+>  tools/lib/bpf/libbpf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+> index 219facd0e66e..9035edf763a3 100644
+> --- a/tools/lib/bpf/libbpf.c
+> +++ b/tools/lib/bpf/libbpf.c
+> @@ -7343,7 +7343,7 @@ static int libbpf_prepare_prog_load(struct bpf_program *prog,
+>  
+>  	/* old kernels might not support specifying expected_attach_type */
+>  	if ((def & SEC_EXP_ATTACH_OPT) && !kernel_supports(prog->obj, FEAT_EXP_ATTACH_TYPE))
+> -		opts->expected_attach_type = 0;
+> +		prog->expected_attach_type = 0;
+>  
+>  	if (def & SEC_SLEEPABLE)
+>  		opts->prog_flags |= BPF_F_SLEEPABLE;
+> -- 
+> 2.25.1
+> 
 
-I think I have changed my opinion on this from Kangrejos, I like the
-idea. Then we would also be able to do something like this:
+good catch! thanks
 
-    impl<I> Validator<I> for Foo
-    where
-        I: Deref<Target =3D [u8]>,
-    {
-        /* ... */
-    }
+I can't remember why it was needed, perhaps we should go back to where it 
+was before?
+
+I'm guessing prog->expected_attach_type might not get updated properly and
+that might cause issues, not sure
+
+thanks,
+jirka
+
 
 ---
-Cheers,
-Benno
-
->> +    /// Type of the validated data.
->> +    type Output;
->> +    /// Validation error.
->> +    type Err;
->> +
->> +    /// Validate the given untrusted data and parse it into the output =
-type.
->> +    ///
->> +    /// When implementing this function, you can use [`Untrusted::untru=
-sted()`] to get access to
->> +    /// the raw untrusted data.
->> +    fn validate(untrusted: &Untrusted<Self::Input>) -> Result<Self::Out=
-put, Self::Err>;
->> +}
->> --
->> 2.46.0
-
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 219facd0e66e..df2244397ba1 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -7353,7 +7353,7 @@ static int libbpf_prepare_prog_load(struct bpf_program *prog,
+ 
+ 	/* special check for usdt to use uprobe_multi link */
+ 	if ((def & SEC_USDT) && kernel_supports(prog->obj, FEAT_UPROBE_MULTI_LINK))
+-		prog->expected_attach_type = BPF_TRACE_UPROBE_MULTI;
++		opts->expected_attach_type = BPF_TRACE_UPROBE_MULTI;
+ 
+ 	if ((def & SEC_ATTACH_BTF) && !prog->attach_btf_id) {
+ 		int btf_obj_fd = 0, btf_type_id = 0, err;
+@@ -7443,6 +7443,7 @@ static int bpf_object_load_prog(struct bpf_object *obj, struct bpf_program *prog
+ 	load_attr.attach_btf_id = prog->attach_btf_id;
+ 	load_attr.kern_version = kern_version;
+ 	load_attr.prog_ifindex = prog->prog_ifindex;
++	load_attr.expected_attach_type = prog->expected_attach_type;
+ 
+ 	/* specify func_info/line_info only if kernel supports them */
+ 	if (obj->btf && btf__fd(obj->btf) >= 0 && kernel_supports(obj, FEAT_BTF_FUNC)) {
+@@ -7474,9 +7475,6 @@ static int bpf_object_load_prog(struct bpf_object *obj, struct bpf_program *prog
+ 		insns_cnt = prog->insns_cnt;
+ 	}
+ 
+-	/* allow prog_prepare_load_fn to change expected_attach_type */
+-	load_attr.expected_attach_type = prog->expected_attach_type;
+-
+ 	if (obj->gen_loader) {
+ 		bpf_gen__prog_load(obj->gen_loader, prog->type, prog->name,
+ 				   license, insns, insns_cnt, &load_attr,
 
