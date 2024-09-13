@@ -1,120 +1,161 @@
-Return-Path: <linux-kernel+bounces-328329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B3FA97821F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:04:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93FBE978222
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:04:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 220AE1F21492
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:04:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5440D2810C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BA11E133A;
-	Fri, 13 Sep 2024 13:59:17 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05EE11E1322;
-	Fri, 13 Sep 2024 13:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984091DB555;
+	Fri, 13 Sep 2024 14:01:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YgXU3Q1a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC87F2E419;
+	Fri, 13 Sep 2024 14:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726235957; cv=none; b=NW2AKmR4TLp6KQabGvcuS4VtsoT4q3baRe83+2rJ1GRCiHpcxzlH3cEWI5lIzzrTiW+5n/udjAGFdN2mXx0gzoxjo+sJzCYX3KKgDNRm2J3wuF++p3+AMk/it5u3IKpM5F1xNuQPl4lVM8bRm6g//C2GQdA5T1ImdOaAjwqH5Lg=
+	t=1726236080; cv=none; b=qRg4y/5XutSwGeGrkM6pTQYkqNNyoT32EP7wtV3J8Ky+V9rM1NMLGkuIpiPUuQokkLt9G0ZsX+YK0AIazC1m4NVfHieG8lDNg2mVVp8oK9O1fWaAOB5nM6Fr9aPzZf9Na5y3MT2/mUL7DCDhpWDs8ur6kGL0IUrsGqG2PBttveQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726235957; c=relaxed/simple;
-	bh=TqGv/vktL2snc2i6wZRpqz0m2qfRkLuGeBy7bQbX/ew=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DWzC6necJh6jS0e706rVqj1yqBB03WrSL9hTacR2Xa5LyGerV2iqdX3phnn4pKKshtDrGJUzJLsE/31zzr8edry2Fh7Grskwz4jE/8aiZI7c2Ft7xjLMmA9XGSZSdypkbFgtwd7MpZ/ZUA3DmfBjZnQammoku6KN9rSWkfn2lQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DB9B713D5;
-	Fri, 13 Sep 2024 06:59:44 -0700 (PDT)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7AD4B3F73B;
-	Fri, 13 Sep 2024 06:59:13 -0700 (PDT)
-From: Levi Yun <yeoreum.yun@arm.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	james.clark@linaro.org,
-	asmadeus@codewreck.org
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	nd@arm.com,
-	Levi Yun <yeoreum.yun@arm.com>
-Subject: [PATCH v4 2/2] perf stat: Stop repeating when ref_perf_stat() returns -1
-Date: Fri, 13 Sep 2024 14:59:07 +0100
-Message-Id: <20240913135907.648734-3-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240913135907.648734-1-yeoreum.yun@arm.com>
-References: <20240913135907.648734-1-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1726236080; c=relaxed/simple;
+	bh=ZxGjiwZDKq8/YBFmAdBNCBZA8mh1AZpAUvogJCJMdAo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QTjKxlpwiZBAwGAAHHSWmqm9dIBd8ymOju31qHcsl4pGCgnOO3xNu6M1LYJh9PgTU+f2Z2z9tHtsab0hFC5nOZ8cU2WrJ8MLcQaclgtqrKLyM/23b42DNkczYXDZXbp4RfMgMBuuFAJ73weGAGB99JTJ8AoumuW1qhEggWqKlzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YgXU3Q1a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A75FC4CEC7;
+	Fri, 13 Sep 2024 14:01:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726236079;
+	bh=ZxGjiwZDKq8/YBFmAdBNCBZA8mh1AZpAUvogJCJMdAo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YgXU3Q1ajx3+U30ahpa1or5YAv1B8ruilxqDwWPvhVpZLju7H/jHLmbmaVGiC3nCJ
+	 uXSrPolxON/+IcByaWhmZT9F7WwXglFCEez/QOP9l0FJE3fkcYrY5+ydVY0ORYDEQl
+	 KtpXdcWPciKfwZ5bJ8SgRx4Yb6Ze7fuJIlF8ZZr82Ocs8YdFFjtuHadz/CdRwDb0h/
+	 PHTUSKFJbkWH3xDGfbPBeqhUcsl9KO6XOAZ1N4I4FAvCLsH4fkYe2WmW5//X1ZsULI
+	 PGh5LoKTZENi/yMPqTzAMMotqK2muIlUANZvv9PL0BthhAFcf9gevBEWYuKOLS/S80
+	 Izs8l/aNqDmCQ==
+Date: Fri, 13 Sep 2024 16:01:15 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Wade Wang <wade.wang@hp.com>
+Cc: jikos@kernel.org, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] HID: plantronics: Additional PID for double volume key
+ presses quirk
+Message-ID: <kn7ykebpcapwnwhof2wlquko6zzjtfgn3xdwcfd2e6eyytzu32@wh3tck74weut>
+References: <20240913060710.1325640-1-wade.wang@hp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240913060710.1325640-1-wade.wang@hp.com>
 
-Exit when run_perf_stat() returns an error to avoid continuously
-repeating the same error message. It's not expected that COUNTER_FATAL
-or internal errors are recoverable so there's no point in retrying.
+On Sep 13 2024, Wade Wang wrote:
+> Add the below headsets for double volume key presses quirk
+>         Plantronics EncorePro 500 Series  (047f:431e)
+>         Plantronics Blackwire_3325 Series (047f:430c)
+> 
+> Quote from previous patch by Maxim Mikityanskiy and Terry Junge
+> 	'commit f567d6ef8606 ("HID: plantronics: Workaround for double volume
+> 	 key presses")'
+> 	'commit 3d57f36c89d8 ("HID: plantronics: Additional PIDs for double
+> 	 volume key presses quirk")'
+> These Plantronics Series headset sends an opposite volume key following
+> each volume key press. This patch adds a quirk to hid-plantronics for this
+> product ID, which will ignore the second opposite volume key press if it
+> happens within 250 ms from the last one that was handled.
 
-This fixes the following flood of error messages for permission issues,
-for example when perf_event_paranoid==3:
-  perf stat -r 1044 -- false
+This commit message is very confusing:
+- you mention that you are quoting 2 commits,
+- but then you don't quote them but slightly reword the content
+- and then, and most of all, you insert in the driver a new timeout of
+  250 ms, which seems to not be with the same bases than f567d6ef8606
+  where it is mentioned that "Auto-repeat (when a key is held pressed)
+  is not affected, because the rate is about 3 times per second, which
+  is far less frequent than once in 5 ms." -> 250 ms gets in the roughly
+  same range than 3 times per seconds, so some more explanations is
+  required
 
-  Error:
-  Access to performance monitoring and observability operations is limited.
-  ...
-  Error:
-  Access to performance monitoring and observability operations is limited.
-  ...
-  (repeating for 1044 times).
+Please also follow Greg's advice and, as you replied in your last message
+that didn't made the list (HTML), please resubmit the series with a
+clear v3 indicator and a description of changes.
 
-Signed-off-by: Levi Yun <yeoreum.yun@arm.com>
-Reviewed-by: James Clark <james.clark@linaro.org>
----
- tools/perf/builtin-stat.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+Ideally, I'd like to also have the other plantronics patch you sent
+today in the same series, so I know which order I should apply them, in
+case one rely on the other.
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 954eb37ce7b8..8b7fc1e3c390 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -948,6 +948,14 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
- 	return WEXITSTATUS(status);
- }
- 
-+/*
-+ * Returns -1 for fatal errors which signifies to not continue
-+ * when in repeat mode.
-+ *
-+ * Returns < -1 error codes when stat record is used. These
-+ * result in the stat information being displayed, but writing
-+ * to the file fails and is non fatal.
-+ */
- static int run_perf_stat(int argc, const char **argv, int run_idx)
- {
- 	int ret;
-@@ -2875,7 +2883,10 @@ int cmd_stat(int argc, const char **argv)
- 			evlist__reset_prev_raw_counts(evsel_list);
- 
- 		status = run_perf_stat(argc, argv, run_idx);
--		if (forever && status != -1 && !interval) {
-+		if (status == -1)
-+			break;
-+
-+		if (forever && !interval) {
- 			print_counters(NULL, argc, argv);
- 			perf_stat__reset_stats();
- 		}
--- 
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
-
+Cheers,
+Benjamin
+  
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Wade Wang <wade.wang@hp.com>
+> ---
+>  drivers/hid/hid-ids.h         |  2 ++
+>  drivers/hid/hid-plantronics.c | 11 +++++++++++
+>  2 files changed, 13 insertions(+)
+> 
+> diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+> index 781c5aa29859..a0aaac98a891 100644
+> --- a/drivers/hid/hid-ids.h
+> +++ b/drivers/hid/hid-ids.h
+> @@ -1050,6 +1050,8 @@
+>  #define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3220_SERIES	0xc056
+>  #define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3215_SERIES	0xc057
+>  #define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3225_SERIES	0xc058
+> +#define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3325_SERIES	0x430c
+> +#define USB_DEVICE_ID_PLANTRONICS_ENCOREPRO_500_SERIES		0x431e
+>  
+>  #define USB_VENDOR_ID_PANASONIC		0x04da
+>  #define USB_DEVICE_ID_PANABOARD_UBT780	0x1044
+> diff --git a/drivers/hid/hid-plantronics.c b/drivers/hid/hid-plantronics.c
+> index 3d414ae194ac..2a19f3646ecb 100644
+> --- a/drivers/hid/hid-plantronics.c
+> +++ b/drivers/hid/hid-plantronics.c
+> @@ -38,8 +38,10 @@
+>  			    (usage->hid & HID_USAGE_PAGE) == HID_UP_CONSUMER)
+>  
+>  #define PLT_QUIRK_DOUBLE_VOLUME_KEYS BIT(0)
+> +#define PLT_QUIRK_FOLLOWED_VOLUME_UP_DN_KEYS BIT(1)
+>  
+>  #define PLT_DOUBLE_KEY_TIMEOUT 5 /* ms */
+> +#define PLT_FOLLOWED_KEY_TIMEOUT 250 /* ms */
+>  
+>  struct plt_drv_data {
+>  	unsigned long device_type;
+> @@ -134,6 +136,9 @@ static int plantronics_event(struct hid_device *hdev, struct hid_field *field,
+>  		cur_ts = jiffies;
+>  		if (jiffies_to_msecs(cur_ts - prev_ts) <= PLT_DOUBLE_KEY_TIMEOUT)
+>  			return 1; /* Ignore the repeated key. */
+> +		if ((drv_data->quirks & PLT_QUIRK_FOLLOWED_VOLUME_UP_DN_KEYS)
+> +		 && jiffies_to_msecs(cur_ts - prev_ts) <= PLT_FOLLOWED_KEY_TIMEOUT)
+> +			return 1; /* Ignore the followed volume key. */
+>  
+>  		drv_data->last_volume_key_ts = cur_ts;
+>  	}
+> @@ -210,6 +215,12 @@ static const struct hid_device_id plantronics_devices[] = {
+>  	{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
+>  					 USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3225_SERIES),
+>  		.driver_data = PLT_QUIRK_DOUBLE_VOLUME_KEYS },
+> +	{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
+> +					 USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3325_SERIES),
+> +		.driver_data = PLT_QUIRK_DOUBLE_VOLUME_KEYS|PLT_QUIRK_FOLLOWED_VOLUME_UP_DN_KEYS },
+> +	{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
+> +					 USB_DEVICE_ID_PLANTRONICS_ENCOREPRO_500_SERIES),
+> +		.driver_data = PLT_QUIRK_DOUBLE_VOLUME_KEYS|PLT_QUIRK_FOLLOWED_VOLUME_UP_DN_KEYS },
+>  	{ HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS, HID_ANY_ID) },
+>  	{ }
+>  };
+> -- 
+> 2.34.1
+> 
 
