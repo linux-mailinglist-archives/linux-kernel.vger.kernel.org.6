@@ -1,207 +1,330 @@
-Return-Path: <linux-kernel+bounces-328933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5003F978AF8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:56:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A58A0978AF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:56:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DFE4B25724
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:56:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB79FB2329A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA888186613;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1031B178CDF;
 	Fri, 13 Sep 2024 21:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ga52wdaJ"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WcQMUsYv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3580A16F84F;
-	Fri, 13 Sep 2024 21:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DEA617BEC7;
+	Fri, 13 Sep 2024 21:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726264524; cv=none; b=foDjkh7B7aDatEnhpbr36kaMWhuN7QFojsn1TYNM3bXxPegVRdg+T7h/HdreRujee089GHcOXyKNOy38zYQP3QiKcBZTb4AnUmfxMyz2MublgqAbSifo4IJLhrEA4+0Ht0jhrSYh6aEBoXAEtjMZtmhPJRS8uUxVxR5hwANbKRY=
+	t=1726264523; cv=none; b=MVvSHcovw5Yi2KV6/lWKKPJ4C8zGS2BTTD0ZfClMlWEAROPZH2rpboO6sFjGwdFGvxY58i7SkIiSgJD/SvNAMRmhFfr3I+uEXv89vhpJrCqOyniuAu8qPgtR5ckrJcw/GHuRSWMdy8b6UpOdj3vDfiUmBgJuaz4Q1yd+pg4ekYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726264524; c=relaxed/simple;
-	bh=u+MeCczZIYRaXjrE0FY2iIhDa3bIycs/8aC+H36FxAo=;
+	s=arc-20240116; t=1726264523; c=relaxed/simple;
+	bh=q6149tWf9a83IHhHEMU2VwoiZlrZy13ezqBewO8qXZM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TagWwzh8PngqwSEAK80ceLFgS47Nd4qKfEgf9r6+g9u1OI0ckiM9oMXfBjO0DQ85N2nnFLItCi+SsI4wpgR7cZe8JtSPJveVaF7MU7i4abiO7UQ1tHKwop5YmguQF9PAVT1VEVzKnO+jZ3C49QblBq9QWYnu87bj27jGc0BLR70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ga52wdaJ; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2055136b612so33563845ad.0;
-        Fri, 13 Sep 2024 14:55:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726264520; x=1726869320; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=c4PTjS5fX5Q389WHB/etaU28p0uL2TY5wkUk4Exja9I=;
-        b=Ga52wdaJsZWAA/dqxHtDM8mjfPPeU7CzDAszxUUQhU6FybrcDpH1lEEEJNdyDqIz7X
-         vAIfh2NyiJv9i9G3pln7mdG29AVeKfLal12X08mAP010NDAw9QDFvWgKVJ9Z6icWcQiT
-         bg1ZlUzmRPIanFz+fAw4yYCt/kYBA8/UkVnk300jk3uB5sP/7N17H+XtfepUPqlOlCH+
-         YLq7nwBaiczUdO/OPUgEjaGjnD81XtIpvRq9Xkf7Hz9MnmhMIHj8P/z5rbYG/9yochwY
-         qhC2Yx49Lp2Non7FSE/iboN7bvWu1E05Aasl+B1HlU7W2aVpZNYUZRGO1wKDShaKmGVo
-         APDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726264520; x=1726869320;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c4PTjS5fX5Q389WHB/etaU28p0uL2TY5wkUk4Exja9I=;
-        b=fuR4WJkT82ZXhnzDNAnUwjZ25hLEz0XAPBq6q7EoNgM2nSAqvMI/hyPVAGaYppj3po
-         WHvJTtfY3wa22sklbGI7Rc6eAdsOmlkdO9LSpjYMy6yHYatb3ZtonLT9dymzSkiOG0Xa
-         8J+B9c2A0LUjU8thH3HHAzb3C1KoeEFG5ULPjv9Ilcs4EDCO9+GEFN/INXeUfTbhoVoH
-         aWQ270CfNFRnAbyE5Gf0EX+hHlkgxkscLXaKzqOEr1mF7ETn5/mOIqCL3pX+no/VAR/s
-         BJ1zg1ukmGdL9W2hLEiisp9ae0ftn2Ss+0bB9vNvmzPatEWdcenG/LqMeg4TKtzgeanU
-         GqcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUuLUkTfS2781CePtm/ZyLC5CGYiI9kNF736G8afjzL8l44O/QpNYBMwr47cYVW891Jr2+i2iIskVdkcg==@vger.kernel.org, AJvYcCWeJ5Q3FJFu6jk4m1oYbe4s7wvWp0tRU9Y8p2pzzEZhkp9Dr+8ntdyiumsI37+LFhQWm2SPdgd7WT7RPhA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1XuvLJHQoW7E24a6Su4Tlmc/OOShODiKTFAd+MjmvZvujgvBQ
-	5p8U/Ib69iPtGTrBpd+yDv6FV3Lg/Y+FJ9W0Z0JsKt+v7N28vsM=
-X-Google-Smtp-Source: AGHT+IH5BwiPmrclx07PBc1QAqEq+dk1qo/Lw7Ssd5LW8hV09kF4E4owLL0iuRHRj3mllCztINhnDQ==
-X-Received: by 2002:a17:902:d510:b0:206:b4cf:3107 with SMTP id d9443c01a7336-2076e422055mr128280685ad.49.1726264520410;
-        Fri, 13 Sep 2024 14:55:20 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207946d668bsm845185ad.141.2024.09.13.14.55.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 14:55:20 -0700 (PDT)
-Date: Fri, 13 Sep 2024 14:55:19 -0700
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH net-next v2] page_pool: fix build on powerpc with GCC 14
-Message-ID: <ZuS0x5ZRCGyzvTBg@mini-arch>
-References: <20240913213351.3537411-1-almasrymina@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dcsuYDbuWAUT87YcEqOy+FEPIAKObB1KrATnnyCW0rBG6ubFiXKzrgraCnr5P8DX2JQnMsWSK5/p9BGKIOCy0q0FRSOARE5xH4y9VRLbXCLXeZyNAsdyByWEfeZoV8JypDfeGWMZMdf7LWYjedBmjkfBPiRGjJrsctihbkobcmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WcQMUsYv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66B8EC4CECC;
+	Fri, 13 Sep 2024 21:55:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726264522;
+	bh=q6149tWf9a83IHhHEMU2VwoiZlrZy13ezqBewO8qXZM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WcQMUsYvo9iMfCXqKzz6WfBOeSf3QnxCe7qBB55jtluaLCdkajX3PK+h6pyWyBX07
+	 PnEet5lNBh2xMOHyEUtFlosiTzo3hwcMA6t3RS+egfoow2NGG+5Npxa7L2SoCr/Fwq
+	 +7PxDup8jdlmXiDh0wY+Xr8SAzjC+G1FGXhlQ9FtrV5qrJACiTJ7rzq5GLGeGaPylO
+	 GB8gfB5GU9GIUuRgX2zsW3uP0oSuG9V+oz/AGRvxv9tI7ACCSGFP0+5eFAjyG+icUO
+	 Rv2Mvreqixc/gkn8utok04BwajsZETiwRjz2Yoy/B6F6jeyNk8jWAZP9/okZ+fjhXI
+	 EJdZKnyjanX/A==
+Date: Fri, 13 Sep 2024 16:55:21 -0500
+From: Rob Herring <robh@kernel.org>
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	cros-qcom-dts-watchers@chromium.org,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Simona Vetter <simona.vetter@ffwll.ch>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v4 05/27] dt-bindings: mfd: add maxim,max77705
+Message-ID: <20240913215521.GA864207-robh@kernel.org>
+References: <20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com>
+ <20240913-starqltechn_integration_upstream-v4-5-2d2efd5c5877@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240913213351.3537411-1-almasrymina@google.com>
+In-Reply-To: <20240913-starqltechn_integration_upstream-v4-5-2d2efd5c5877@gmail.com>
 
-On 09/13, Mina Almasry wrote:
-> Building net-next with powerpc with GCC 14 compiler results in this
-> build error:
+On Fri, Sep 13, 2024 at 06:07:48PM +0300, Dzmitry Sankouski wrote:
+> Add maxim,max77705 core binding part.
 > 
-> /home/sfr/next/tmp/ccuSzwiR.s: Assembler messages:
-> /home/sfr/next/tmp/ccuSzwiR.s:2579: Error: operand out of domain (39 is
-> not a multiple of 4)
-> make[5]: *** [/home/sfr/next/next/scripts/Makefile.build:229:
-> net/core/page_pool.o] Error 1
-> 
-> Root caused in this thread:
-> https://lore.kernel.org/netdev/913e2fbd-d318-4c9b-aed2-4d333a1d5cf0@cs-soprasteria.com/
-> 
-> We try to access offset 40 in the pointer returned by this function:
-> 
-> static inline unsigned long _compound_head(const struct page *page)
-> {
->         unsigned long head = READ_ONCE(page->compound_head);
-> 
->         if (unlikely(head & 1))
->                 return head - 1;
->         return (unsigned long)page_fixed_fake_head(page);
-> }
-> 
-> The GCC 14 (but not 11) compiler optimizes this by doing:
-> 
-> ld page + 39
-> 
-> Rather than:
-> 
-> ld (page - 1) + 40
-> 
-> And causing an unaligned load. Get around this by issuing a READ_ONCE as
-> we convert the page to netmem.  That disables the compiler optimizing the
-> load in this way.
-> 
-> Cc: Simon Horman <horms@kernel.org>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: David Miller <davem@davemloft.net>
-> Cc: Paolo Abeni <pabeni@redhat.com>
-> Cc: Networking <netdev@vger.kernel.org>
-> Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-> Cc: Linux Next Mailing List <linux-next@vger.kernel.org>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> 
-> Suggested-by: Jakub Kicinski <kuba@kernel.org>
-> Signed-off-by: Mina Almasry <almasrymina@google.com>
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
 > 
 > ---
-> 
-> v2: https://lore.kernel.org/netdev/20240913192036.3289003-1-almasrymina@google.com/
-> 
-> - Work around this issue as we convert the page to netmem, instead of
->   a generic change that affects compound_head().
+> Changes in v4:
+> - change dts example intendation from tabs
+>  to spaces
+> - remove interrupt-names property
+> - remove obvious reg description
+> - split long(>80) lines
 > ---
->  net/core/page_pool.c | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
+>  .../devicetree/bindings/mfd/maxim,max77705.yaml    | 169 +++++++++++++++++++++
+>  MAINTAINERS                                        |   1 +
+>  2 files changed, 170 insertions(+)
 > 
-> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-> index a813d30d2135..74ea491d0ab2 100644
-> --- a/net/core/page_pool.c
-> +++ b/net/core/page_pool.c
-> @@ -859,12 +859,25 @@ void page_pool_put_page_bulk(struct page_pool *pool, void **data,
->  {
->  	int i, bulk_len = 0;
->  	bool allow_direct;
-> +	netmem_ref netmem;
-> +	struct page *page;
->  	bool in_softirq;
->  
->  	allow_direct = page_pool_napi_local(pool);
->  
->  	for (i = 0; i < count; i++) {
-> -		netmem_ref netmem = page_to_netmem(virt_to_head_page(data[i]));
-> +		page = virt_to_head_page(data[i]);
+> diff --git a/Documentation/devicetree/bindings/mfd/maxim,max77705.yaml b/Documentation/devicetree/bindings/mfd/maxim,max77705.yaml
+> new file mode 100644
+> index 000000000000..40a67d15e312
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/maxim,max77705.yaml
+> @@ -0,0 +1,169 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mfd/maxim,max77705.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +		/* GCC 14 powerpc compiler will optimize reads into the
-> +		 * resulting netmem_ref into unaligned reads as it sees address
-> +		 * arithmetic in _compound_head() call that the page has come
-> +		 * from.
-> +		 *
-> +		 * The READ_ONCE here gets around that by breaking the
-> +		 * optimization chain between the address arithmetic and later
-> +		 * indexing.
-> +		 */
-> +		netmem = page_to_netmem(READ_ONCE(page));
->  
->  		/* It is not the last user for the page frag case */
->  		if (!page_pool_is_last_ref(netmem))
+> +title: Maxim MAX77705 Companion Power Management IC and USB Type-C interface IC
+> +
+> +maintainers:
+> +  - Dzmitry Sankouski <dsankouski@gmail.com>
+> +
+> +description: |
+> +  This is a part of device tree bindings for Maxim MAX77705 multi functional
+> +  device.
+> +
+> +  The Maxim MAX77705 is a Companion Power Management and Type-C
+> +  interface IC which includes charger, fuelgauge, LED, haptic motor driver and
+> +  Type-C management IC.
+> +
+> +properties:
+> +  compatible:
+> +    const: maxim,max77705
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  charger:
+> +    $ref: /schemas/power/supply/power-supply.yaml
+> +    additionalProperties: true
 
-Are we sure this is the only place where we can hit by this?
-Any reason not to hide this inside page_to_netmem?
+No, true is only valid for incomplete schemas (i.e. common ones included 
+by another complete schema).
 
-diff --git a/include/net/netmem.h b/include/net/netmem.h
-index 8a6e20be4b9d..46bc362acec4 100644
---- a/include/net/netmem.h
-+++ b/include/net/netmem.h
-@@ -100,7 +100,7 @@ static inline netmem_ref net_iov_to_netmem(struct net_iov *niov)
+And since you reference another schema, you want 'unevaluatedProperties' 
+instead if you want to use any properties defined in power-supply.yaml.
 
- static inline netmem_ref page_to_netmem(struct page *page)
- {
--       return (__force netmem_ref)page;
-+       return (__force netmem_ref)READ_ONCE(page);
- }
+> +    properties:
+> +      compatible:
+> +        const: maxim,max77705-charger
+> +
+> +    required:
+> +      - compatible
+> +      - monitored-battery
+> +
+> +  fuel_gauge:
 
- static inline int netmem_ref_count(netmem_ref netmem)
+fuel-gauge
 
-Is it gonna generate slower code elsewhere?
+> +    $ref: /schemas/power/supply/power-supply.yaml
+> +    type: object
+> +    additionalProperties: true
+> +    description: MAX77705 fuel gauge with ModelGauge m5 EZ algorithm support.
+
+blank line
+
+> +    properties:
+> +      compatible:
+> +        const: maxim,max77705-fuel-gauge
+> +
+> +      shunt-resistor-micro-ohms:
+> +        description: |
+
+Don't need '|'.
+
+> +          The value of current sense resistor in microohms.
+> +
+> +    required:
+> +      - compatible
+> +      - shunt-resistor-micro-ohms
+> +      - monitored-battery
+> +      - power-supplies
+> +
+> +  haptic:
+> +    type: object
+> +    additionalProperties: false
+
+blank line
+
+> +    properties:
+> +      compatible:
+> +        const: maxim,max77705-haptic
+> +
+> +      haptic-supply: true
+> +
+> +      pwms:
+> +        maxItems: 1
+> +
+> +    required:
+> +      - compatible
+> +      - haptic-supply
+> +      - pwms
+> +
+> +  leds:
+> +    type: object
+> +    additionalProperties: false
+> +    description:
+> +      Up to 4 LEDs supported. One LED is represented by one child node.
+
+blank line
+
+> +    properties:
+> +      compatible:
+> +        const: maxim,max77705-led
+> +
+> +      "#address-cells":
+> +        const: 1
+> +
+> +      "#size-cells":
+> +        const: 0
+> +
+> +    patternProperties:
+> +      "^led@[0-3]$":
+> +        type: object
+> +        $ref: /schemas/leds/common.yaml#
+
+blank line
+
+> +        properties:
+> +          reg:
+> +            description:
+> +              LED index.
+
+blank line
+
+> +        unevaluatedProperties: false
+
+blank line
+
+> +        required:
+> +          - reg
+> +
+> +    required:
+> +      - compatible
+> +
+> +required:
+> +  - compatible
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/leds/common.h>
+> +
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        pmic@66 {
+> +            compatible = "maxim,max77705";
+> +            reg = <0x66>;
+> +            interrupt-parent = <&pm8998_gpios>;
+> +            interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
+> +            pinctrl-0 = <&chg_int_default>;
+> +            pinctrl-names = "default";
+> +
+> +            leds {
+> +                compatible = "maxim,max77705-led";
+> +                #address-cells = <1>;
+> +                #size-cells = <0>;
+> +
+> +                led@1 {
+> +                    reg = <1>;
+> +                    label = "red:usr1";
+> +                };
+> +
+> +                led@2 {
+> +                    reg = <2>;
+> +                    label = "green:usr2";
+> +                };
+> +
+> +                led@3 {
+> +                    reg = <3>;
+> +                    label = "blue:usr3";
+> +                };
+> +            };
+> +
+> +            max77705_charger: charger {
+> +                compatible = "maxim,max77705-charger";
+> +                monitored-battery = <&battery>;
+> +            };
+> +
+> +            fuel_gauge {
+> +                compatible = "maxim,max77705-fuel-gauge";
+> +                monitored-battery = <&battery>;
+> +                power-supplies = <&max77705_charger>;
+> +                rsense = <5>;
+
+Not documented.
+
+> +            };
+> +
+> +
+> +            haptic {
+> +                compatible = "maxim,max77705-haptic";
+> +                haptic-supply = <&vib_regulator>;
+> +                pwms = <&vib_pwm 0 50000>;
+> +            };
+> +        };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index b65cfa1d322d..59d027591e34 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14064,6 +14064,7 @@ B:	mailto:linux-samsung-soc@vger.kernel.org
+>  F:	Documentation/devicetree/bindings/*/maxim,max14577.yaml
+>  F:	Documentation/devicetree/bindings/*/maxim,max77686.yaml
+>  F:	Documentation/devicetree/bindings/*/maxim,max77693.yaml
+> +F:	Documentation/devicetree/bindings/*/maxim,max77705*.yaml
+>  F:	Documentation/devicetree/bindings/*/maxim,max77843.yaml
+>  F:	Documentation/devicetree/bindings/clock/maxim,max77686.txt
+>  F:	drivers/*/*max77843.c
+> 
+> -- 
+> 2.39.2
+> 
 
