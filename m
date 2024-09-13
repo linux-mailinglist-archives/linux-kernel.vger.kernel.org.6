@@ -1,238 +1,200 @@
-Return-Path: <linux-kernel+bounces-327668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3AA2977917
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:04:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C26EA97791C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41E34B21FF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:04:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5395D1F2573C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753071B9B33;
-	Fri, 13 Sep 2024 07:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215F51AE845;
+	Fri, 13 Sep 2024 07:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eEUH6I66"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i1ESWYNT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8082AE9F
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 07:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE3A18A6D6
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 07:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726211068; cv=none; b=ZjVJCwqfOvUCauYTvc85fdNoPST3JB0DNJFQdS3k5GOv7f+Lc/9P3uQ10GzBGyL/XqnHYs4D/bGQnHMMfHkOTstheDXJNMuB3D/+Uu9ixmMKACsLfXk+kNy+jehwtKSGGN/C1InVhzJJWGkdLUMrEMJ/iZQHRJX4lomSv9JUshI=
+	t=1726211158; cv=none; b=FY5nbCJJCnfpKYxmUshz3tR3F3iAU8NyCP0+oT9WjXT2J7v5ls0wDZSWbaTtKpLLJ295nKZn0IEuSeNFFZ3dwiZ3i+ATLswdZ4w+eggVbjNv2K1Ottd/bUn9D+QxXyxF3UF5S8DES0FW8qOpxyGWyx/zJBjdtyp9+xBPnacdVtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726211068; c=relaxed/simple;
-	bh=m/TOhyo0qKcdGuE7mAMClBcuUU734KCqRwHn/Mlgx/8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ssKgJep1pqPzYeR2vB6psC9aTDoyVfxh1LNgmcHaxliO6LFDzpHzAHGPn8YJJtPZ0831a48/M9jDKqytOXthu6G/U4Iezm6f8jMwSLWDOoTvoBHBS+HqUMER37O2Awr3FKEvAX87DwmBl+2/loB3ev+u2YScAjfoH10oBYR5hZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eEUH6I66; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a90349aa7e5so172982566b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 00:04:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726211065; x=1726815865; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R3fiUxlmnWbOkPAF/rcX2d12DUilbuUA9cQJiukPHxA=;
-        b=eEUH6I66uaHIaHVEh1kgtUjzHFlBRK95eR9aHMsCXkeZ35WlZyGAVkEfi3C9A+Znn7
-         vxnEKx2fcwGiSYDthcW7e8nmL5G9EhW2EySC1FSUg+04o642Xdm3HDGLUYOMVd3xLJcr
-         tn3WF+MbGAEgkXQ0BbDOreLkVMrk2m6cKS74EQ4yoDab8HxB5uFNyyxGHFcxEllOOSz/
-         ePgeQ53L4rOu4lQOFp0ZmSG29IHDAYrmet9oK4UefM50EPzCtDgpRpCGQy3ZrvkYWOya
-         hOK+OpeV3zCQwsNAD/6gyV/uuX/93UGkkmrdtJzYyCzzHd5EfC0PrRSYPPtMfsIZkUrG
-         6XEg==
+	s=arc-20240116; t=1726211158; c=relaxed/simple;
+	bh=3+bzYuJJdSK+3aHoFavGxC3ix3u6G0o/u+gZva5HlmY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LigFe3VdMIaXfEzMRuSMDaO86SuYWj1XKV3q4HnS4u7vKOVfwrK3GWTiZxIT2gcEd+8JmdAn7qMAo2BuVAhT4/MB8kDrtGVh+xdnm5wAbPyDYKFdXJz+KUsfccl3h0L9WmwEt1l2IFBvrFIw5f1wPNhPeo1utZxevkKEyuwvPKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i1ESWYNT; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726211155;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JUxInk0S7cxq8bV5NiblehkhBP73tYJxMaYlFtxjxPg=;
+	b=i1ESWYNTabGVFhmtlWyCjKkUPxMciB0SK5h0uJKHhfYLSatnq2fK02mPXGjtqsUMlAcS1/
+	6CnlcGRVVw2Evyen1B4+953TTzuzXjyJUIeS+OsTZt9PFaOJ45hx+TYVSVKfO36lkrQywC
+	G6chNd+LxAwMJArrutQlNO4w5MBuppg=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-396-sDcROx9NMeW_vHps-VDXmA-1; Fri, 13 Sep 2024 03:05:54 -0400
+X-MC-Unique: sDcROx9NMeW_vHps-VDXmA-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42cacba219cso4111445e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 00:05:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726211065; x=1726815865;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R3fiUxlmnWbOkPAF/rcX2d12DUilbuUA9cQJiukPHxA=;
-        b=VbUPYtt5g7uXx5FYn6zwAylPm/gnrX4RVctLULpTeqLZGcFj23f/yv+skj+pz9YZBB
-         y3w8cQKMch2h3kyzIqU0fRNgRYomBsIpwOgnmCFn79VGp0CnMdoeHmU8r7zTr5xeU6v2
-         N18zg+oXpzSTwq7vUUW5+yW2z/pkGn08T9kfdgbjHxcpSWGI4l8QepyISTE19icmT/mr
-         PQnynd/f7W6EReRcYzzNtQL+A1vYZXscF3rwvE59HAXDeoX8DyEpHEXIVTg09HpxJNI6
-         6CQDG615iaG+zSYYiZmYnCVabQTr+e7RZEsaVMboXYRdwk9PI8OHh+Ztu9B7muWhsSJR
-         iBGA==
-X-Forwarded-Encrypted: i=1; AJvYcCX3JK9oHxt14RdURiX70Uaf88b6q+8cEJovvOZ57Nt7jfUB3eMmpLuKw1ABJZq5ObMKXMfIYpX1sI8cxUQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG0XIUfJ10CuzJ70QKX0ZpQu+iv4+K7lTkAB0UOqUZvocfnpBQ
-	UnJYuadOeL2l4mvONiVY1k7Kfyk/YscezWu1K0YKUJjJR7Qzp2HA2LJ1AEOhcOoNtPxTPfAuDWc
-	ZOCXWa1bcujXJs8XtLhL7z6s3i4a84AAl3h2A
-X-Google-Smtp-Source: AGHT+IFfIkdMeP+q1BiNxdtlpV7FksQb6qKgBhZ9q6gP8JrzL/nQOkgybAHK4q4dlI29lKF1+RA035HOh1/2y/q5QdQ=
-X-Received: by 2002:a17:907:f1c6:b0:a86:a30f:4aef with SMTP id
- a640c23a62f3a-a9029446fdbmr463847166b.22.1726211064188; Fri, 13 Sep 2024
- 00:04:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726211153; x=1726815953;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JUxInk0S7cxq8bV5NiblehkhBP73tYJxMaYlFtxjxPg=;
+        b=hQW4aUlvXmNdgJ8jJYyNsOKAfOBLyu3OXTyjhu2wtXIKCzY9WI0eqGoraJw5WP8nYa
+         4j8q+1xmnpxGP1I/KgV18ghXRaK0zVMPDDKRGfTTRVsL2qZpUcAbvTO8C+9AQ8zPRcM/
+         FIALwTIBy3PKkfJXz2WslhDSv1sjWgpMyIY18VJiUUyYwxdNGgVhu5l47EihzxlpAZK0
+         l/NzkSVQ7z5nghPrNEiWaG9lB3uLZxi2KRZLlKElVU69+1xfPiaH0m86Nqv0alpGl6dM
+         PovYnG1j4i1iqA8DBhvqw73zYj8CeWaRBA951RSKKuLzUdZBmJMCrIPnD3Ud8YzbPNpq
+         /fvw==
+X-Forwarded-Encrypted: i=1; AJvYcCWWLcQlYN35vpyc6QJCmLpKsNgkVHgIZGbcLKFSOblM/1YN03tl3Z+hL7cGhJhlzva2gD0ABJ2a8HYoyVc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7Y5R2I/qY64k/jYWdkT8BkYTvM3/Gm9+nZJnpwfUxGAqBX7JC
+	NnCA9QJHbtdNavfWcs2oRDM5zfgrh4yS7cPTFasV7MIOjIx397CHPw+YGmfglTMi3u7VPhFWj7B
+	ZBDjVOoicRR93TH1LMI3w8wLWLuhtpC5KecxNpVdwu//4XaajZrrVQCDA6WyHKg==
+X-Received: by 2002:a05:600c:3490:b0:42c:cd88:d0f7 with SMTP id 5b1f17b1804b1-42d9072211bmr12409455e9.10.1726211152892;
+        Fri, 13 Sep 2024 00:05:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF7ixvDig6mKPxUj06bVVHzX7pqCmSzpaF/KDzUc+5ujBIqwcPkJ/QygFJDl0Ehw9m+hB1r+A==
+X-Received: by 2002:a05:600c:3490:b0:42c:cd88:d0f7 with SMTP id 5b1f17b1804b1-42d9072211bmr12409095e9.10.1726211152304;
+        Fri, 13 Sep 2024 00:05:52 -0700 (PDT)
+Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d37a1sm15945167f8f.77.2024.09.13.00.05.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 00:05:51 -0700 (PDT)
+From: Javier Martinez Canillas <javierm@redhat.com>
+To: Thomas Zimmermann <tzimmermann@suse.de>, Julius Werner
+ <jwerner@chromium.org>
+Cc: Brian Norris <briannorris@chromium.org>, Borislav Petkov <bp@alien8.de>,
+ Hugues Bruant <hugues.bruant@gmail.com>, stable@vger.kernel.org,
+ regressions@lists.linux.dev, linux-kernel@vger.kernel.org, Fenghua Yu
+ <fenghua.yu@intel.com>, Reinette Chatre <reinette.chatre@intel.com>, Tony
+ Luck <tony.luck@intel.com>, Tzung-Bi Shih <tzungbi@kernel.org>,
+ chrome-platform@lists.linux.dev, Jani Nikula
+ <jani.nikula@linux.intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org
+Subject: Re: [NOT A REGRESSION] firmware: framebuffer-coreboot: duplicate
+ device name "simple-framebuffer.0"
+In-Reply-To: <6bf656e0-e0b6-4b97-b7a2-ff0bdc86b098@suse.de>
+References: <CALvjV29jozswRtmYxDur2TuEQ=1JSDrM+uWVHmghW3hG5Y9F+w@mail.gmail.com>
+ <20240909080200.GAZt6reI9c98c9S_Xc@fat_crate.local>
+ <ZuCGkjoxKxpnhEh6@google.com>
+ <87jzfhayul.fsf@minerva.mail-host-address-is-not-set>
+ <CAODwPW8P+jcF0erUph5XyWoyQgLFbZWxEM6Ygi_LFCCTLmH89Q@mail.gmail.com>
+ <87mskczv9l.fsf@minerva.mail-host-address-is-not-set>
+ <6bf656e0-e0b6-4b97-b7a2-ff0bdc86b098@suse.de>
+Date: Fri, 13 Sep 2024 09:05:50 +0200
+Message-ID: <87jzfgyqwh.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912071702.221128-1-en-wei.wu@canonical.com>
- <20240912113518.5941b0cf@gmx.net> <CANn89iK31kn7QRcFydsH79Pm_FNUkJXdft=x81jvKD90Z5Y0xg@mail.gmail.com>
- <CAMqyJG1W1ER0Q_poS7HQhsogxr1cBo2inRmyz_y5zxPoMtRhrA@mail.gmail.com>
-In-Reply-To: <CAMqyJG1W1ER0Q_poS7HQhsogxr1cBo2inRmyz_y5zxPoMtRhrA@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Fri, 13 Sep 2024 09:04:09 +0200
-Message-ID: <CANn89iJ+ijDsTebhKeviXYyB=NQxP2=srpZ99Jf677+xTe7wqg@mail.gmail.com>
-Subject: Re: [PATCH ipsec v2] xfrm: check MAC header is shown with both
- skb->mac_len and skb_mac_header_was_set()
-To: En-Wei WU <en-wei.wu@canonical.com>
-Cc: Peter Seiderer <ps.report@gmx.net>, steffen.klassert@secunet.com, 
-	herbert@gondor.apana.org.au, davem@davemloft.net, kuba@kernel.org, 
-	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kai.heng.feng@canonical.com, chia-lin.kao@canonical.com, 
-	anthony.wong@canonical.com, kuan-ying.lee@canonical.com, 
-	chris.chiu@canonical.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Fri, Sep 13, 2024 at 7:29=E2=80=AFAM En-Wei WU <en-wei.wu@canonical.com>=
- wrote:
->
-> > Could you try the following patch, and compile your test kernel with
-> > CONFIG_DEBUG_NET=3Dy ?
-> [  323.870221] ------------[ cut here ]------------
-> [  323.870226] WARNING: CPU: 2 PID: 26 at include/linux/skbuff.h:2904
-> __netif_receive_skb_core.constprop.0+0x201/0x39d0
-> [  323.870369] CPU: 2 UID: 0 PID: 26 Comm: ksoftirqd/2 Not tainted
-> 6.11.0-rc6-c763c4339688+ #12
-> [  323.870372] Hardware name: Dell Inc. Latitude 5340/0SG010, BIOS
-> 1.15.0 07/15/2024
-> [  323.870373] RIP: 0010:__netif_receive_skb_core.constprop.0+0x201/0x39d=
-0
-> [  323.870376] Code: 03 0f b6 14 02 48 89 f8 83 e0 07 83 c0 01 38 d0
-> 7c 08 84 d2 0f 85 b4 24 00 00 41 0f b7 87 ba 00 00 00 29 c3 66 83 f8
-> ff 75 04 <0f> 0b 31 db 48 b8 00 00 00 00 00 fc ff df 49 8d 7f 78 48 89
-> fa 48
-> [  323.870378] RSP: 0018:ffffc90000377838 EFLAGS: 00010246
-> [  323.870380] RAX: 000000000000ffff RBX: 00000000ffff0061 RCX: ffff88876=
-cf48090
-> [  323.870381] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff88817=
-56b2e7a
-> [  323.870382] RBP: ffffc90000377a88 R08: ffff88876cf48184 R09: 000000000=
-0000000
-> [  323.870383] R10: 0000000000000000 R11: 1ffff1102ead65b9 R12: ffff88817=
-56b2dc0
-> [  323.870384] R13: ffffc90000377b20 R14: ffff8881635ca000 R15: ffff88817=
-56b2dc0
-> [  323.870385] FS:  0000000000000000(0000) GS:ffff88876cf00000(0000)
-> knlGS:0000000000000000
-> [  323.870387] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  323.870388] CR2: 0000769acfa9d080 CR3: 0000000712498000 CR4: 000000000=
-0f50ef0
-> [  323.870389] PKRU: 55555554
-> [  323.870390] Call Trace:
-> [  323.870391]  <TASK>
-> [  323.870393]  ? show_regs+0x71/0x90
-> [  323.870397]  ? __warn+0xce/0x270
-> [  323.870399]  ? __netif_receive_skb_core.constprop.0+0x201/0x39d0
-> [  323.870401]  ? report_bug+0x2ad/0x300
-> [  323.870404]  ? handle_bug+0x46/0x90
-> [  323.870407]  ? exc_invalid_op+0x19/0x50
-> [  323.870409]  ? asm_exc_invalid_op+0x1b/0x20
-> [  323.870413]  ? __netif_receive_skb_core.constprop.0+0x201/0x39d0
-> [  323.870415]  ? intel_iommu_iotlb_sync_map+0x1a/0x30
-> [  323.870418]  ? iommu_map+0xab/0x140
-> [  323.870421]  ? __pfx___netif_receive_skb_core.constprop.0+0x10/0x10
-> [  323.870423]  ? iommu_dma_map_page+0x159/0x720
-> [  323.870425]  ? dma_map_page_attrs+0x568/0xdc0
-> [  323.870427]  ? __kasan_slab_alloc+0x9d/0xa0
-> [  323.870430]  ? __pfx_dma_map_page_attrs+0x10/0x10
-> [  323.870431]  ? __kasan_check_write+0x14/0x30
-> [  323.870434]  ? __build_skb_around+0x23a/0x350
-> [  323.870437]  __netif_receive_skb_one_core+0xb4/0x1d0
-> [  323.870439]  ? __pfx___netif_receive_skb_one_core+0x10/0x10
-> [  323.870441]  ? __kasan_check_write+0x14/0x30
-> [  323.870443]  ? _raw_spin_lock_irq+0x8b/0x100
-> [  323.870445]  __netif_receive_skb+0x21/0x160
-> [  323.870447]  process_backlog+0x1c0/0x590
-> [  323.870449]  __napi_poll+0xab/0x560
-> [  323.870451]  net_rx_action+0x53e/0xd10
-> [  323.870453]  ? __pfx_net_rx_action+0x10/0x10
-> [  323.870455]  ? __pfx_wake_up_var+0x10/0x10
-> [  323.870457]  ? tasklet_action_common.constprop.0+0x22c/0x670
-> [  323.870461]  handle_softirqs+0x18f/0x5d0
-> [  323.870463]  ? __pfx_run_ksoftirqd+0x10/0x10
-> [  323.870465]  run_ksoftirqd+0x3c/0x60
-> [  323.870467]  smpboot_thread_fn+0x2f3/0x700
-> [  323.870470]  kthread+0x2b5/0x390
-> [  323.870472]  ? __pfx_smpboot_thread_fn+0x10/0x10
-> [  323.870474]  ? __pfx_kthread+0x10/0x10
-> [  323.870476]  ret_from_fork+0x43/0x90
-> [  323.870478]  ? __pfx_kthread+0x10/0x10
-> [  323.870480]  ret_from_fork_asm+0x1a/0x30
-> [  323.870483]  </TASK>
-> [  323.870484] ---[ end trace 0000000000000000 ]---
-> [  350.300485] Initializing XFRM netlink socket
-> [  351.586993] ------------[ cut here ]------------
-> [  351.586999] WARNING: CPU: 2 PID: 26 at include/linux/skbuff.h:2904
-> dev_gro_receive+0x172c/0x2860
-> [  351.587141] CPU: 2 UID: 0 PID: 26 Comm: ksoftirqd/2 Tainted: G
->   W          6.11.0-rc6-c763c4339688+ #12
-> [  351.587144] Tainted: [W]=3DWARN
-> [  351.587145] Hardware name: Dell Inc. Latitude 5340/0SG010, BIOS
-> 1.15.0 07/15/2024
-> [  351.587147] RIP: 0010:dev_gro_receive+0x172c/0x2860
-> [  351.587149] Code: 07 83 c2 01 38 ca 7c 08 84 c9 0f 85 d2 09 00 00
-> 8d 14 c5 00 00 00 00 41 0f b6 45 46 83 e0 c7 09 d0 41 88 45 46 e9 ee
-> f9 ff ff <0f> 0b 45 31 f6 e9 64 f7 ff ff 45 31 e4 81 e3 c0 00 00 00 41
-> 0f 95
-> [  351.587151] RSP: 0018:ffffc90000377aa8 EFLAGS: 00010246
-> [  351.587153] RAX: ffff888128d72840 RBX: ffffffff95a0d9c0 RCX: 000000000=
-0000000
-> [  351.587154] RDX: 000000000000ffff RSI: ffff88876cf52418 RDI: ffff88815=
-880ad3a
-> [  351.587155] RBP: ffffc90000377b48 R08: 0000000000000000 R09: 000000000=
-0000000
-> [  351.587156] R10: 1ffff110ed9ea481 R11: 0000000000000000 R12: ffffffff9=
-5a0d9d0
-> [  351.587157] R13: ffff88815880ac80 R14: 00000000ffff008d R15: ffff88815=
-880acb8
-> [  351.587159] FS:  0000000000000000(0000) GS:ffff88876cf00000(0000)
-> knlGS:0000000000000000
-> [  351.587160] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  351.587161] CR2: 000078e9ea9e25b0 CR3: 0000000712498000 CR4: 000000000=
-0f50ef0
-> [  351.587163] PKRU: 55555554
-> [  351.587163] Call Trace:
-> [  351.587164]  <TASK>
-> [  351.587167]  ? show_regs+0x71/0x90
-> [  351.587171]  ? __warn+0xce/0x270
-> [  351.587173]  ? dev_gro_receive+0x172c/0x2860
-> [  351.587175]  ? report_bug+0x2ad/0x300
-> [  351.587178]  ? handle_bug+0x46/0x90
-> [  351.587181]  ? exc_invalid_op+0x19/0x50
-> [  351.587182]  ? asm_exc_invalid_op+0x1b/0x20
-> [  351.587187]  ? dev_gro_receive+0x172c/0x2860
-> [  351.587188]  ? dev_gro_receive+0xcdd/0x2860
-> [  351.587190]  ? __pfx___netif_receive_skb_one_core+0x10/0x10
-> [  351.587192]  ? __mutex_lock.constprop.0+0x150/0x1180
-> [  351.587195]  napi_gro_receive+0x3a2/0x900
-> [  351.587197]  gro_cell_poll+0xe5/0x1d0
-> [  351.587200]  __napi_poll+0xab/0x560
-> [  351.587202]  net_rx_action+0x53e/0xd10
-> [  351.587204]  ? __pfx_net_rx_action+0x10/0x10
-> [  351.587206]  ? __pfx_wake_up_var+0x10/0x10
-> [  351.587209]  ? tasklet_action_common.constprop.0+0x22c/0x670
-> [  351.587212]  handle_softirqs+0x18f/0x5d0
-> [  351.587214]  ? __pfx_run_ksoftirqd+0x10/0x10
-> [  351.587216]  run_ksoftirqd+0x3c/0x60
-> [  351.587218]  smpboot_thread_fn+0x2f3/0x700
-> [  351.587220]  kthread+0x2b5/0x390
-> [  351.587223]  ? __pfx_smpboot_thread_fn+0x10/0x10
-> [  351.587224]  ? __pfx_kthread+0x10/0x10
-> [  351.587226]  ret_from_fork+0x43/0x90
-> [  351.587229]  ? __pfx_kthread+0x10/0x10
-> [  351.587231]  ret_from_fork_asm+0x1a/0x30
-> [  351.587234]  </TASK>
-> [  351.587235] ---[ end trace 0000000000000000 ]---
->
-> Seems like the __netif_receive_skb_core() and dev_gro_receive() are
-> the places where it calls skb_reset_mac_len() with skb->mac_header =3D
-> ~0U.
+Thomas Zimmermann <tzimmermann@suse.de> writes:
 
-Ouch, let me take a look.
+Hello Thomas,
+
+> Hi Javier,
+>
+> thanks for the patch.
+>
+
+Thanks for your feedback.
+
+> Am 12.09.24 um 18:33 schrieb Javier Martinez Canillas:
+>> Julius Werner <jwerner@chromium.org> writes:
+
+[...]
+
+>> ---
+>>   drivers/firmware/google/framebuffer-coreboot.c | 16 ++++++++++++++++
+>>   1 file changed, 16 insertions(+)
+>>
+>> diff --git a/drivers/firmware/google/framebuffer-coreboot.c b/drivers/firmware/google/framebuffer-coreboot.c
+>> index daadd71d8ddd..4e50da17cd7e 100644
+>> --- a/drivers/firmware/google/framebuffer-coreboot.c
+>> +++ b/drivers/firmware/google/framebuffer-coreboot.c
+>> @@ -15,6 +15,7 @@
+>>   #include <linux/module.h>
+>>   #include <linux/platform_data/simplefb.h>
+>>   #include <linux/platform_device.h>
+>> +#include <linux/screen_info.h>
+>>   
+>>   #include "coreboot_table.h"
+>>   
+>> @@ -27,6 +28,7 @@ static int framebuffer_probe(struct coreboot_device *dev)
+>>   	int i;
+>>   	u32 length;
+>>   	struct lb_framebuffer *fb = &dev->framebuffer;
+>> +	struct screen_info *si = &screen_info;
+>
+> Probably 'const'.
+>
+
+Ok.
+
+>>   	struct platform_device *pdev;
+>>   	struct resource res;
+>>   	struct simplefb_platform_data pdata = {
+>> @@ -36,6 +38,20 @@ static int framebuffer_probe(struct coreboot_device *dev)
+>>   		.format = NULL,
+>>   	};
+>>   
+>> +	/*
+>> +	 * If the global screen_info data has been filled, the Generic
+>> +	 * System Framebuffers (sysfb) will already register a platform
+>> +	 * and pass the screen_info as platform_data to a driver that
+>> +	 * could scan-out using the system provided framebuffer.
+>> +	 *
+>> +	 * On Coreboot systems, the advertise LB_TAG_FRAMEBUFFER entry
+>> +	 * in the Coreboot table should only be used if the payload did
+>> +	 * not set video mode info and passed it to the Linux kernel.
+>> +	 */
+>> +	if (si->orig_video_isVGA == VIDEO_TYPE_VLFB ||
+>> +            si->orig_video_isVGA == VIDEO_TYPE_EFI)
+>
+> Rather call screen_info_video_type(si) [1] to get the type. If it
+
+Indeed. I missed that helper, I'll change it.
+
+> returns 0, the screen_info is unset and the corebios code can handle the 
+> framebuffer. In any other case, the framebuffer went through a 
+> bootloader, which might have modified it. This also handles awkward 
+> cases, such as if the bootloader programs a VGA text mode.
+>
+> [1] 
+> https://elixir.bootlin.com/linux/v6.10.10/source/include/linux/screen_info.h#L92
+>
+> With these changes:
+>
+> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+>
+
+Thanks. I'll wait for others in this thread to comment and if all agree
+with the solution, I'll post a proper patch (addressing your comments).
+
+> Best regards
+> Thomas
+>
+
+-- 
+Best regards,
+
+Javier Martinez Canillas
+Core Platforms
+Red Hat
+
 
