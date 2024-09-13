@@ -1,91 +1,88 @@
-Return-Path: <linux-kernel+bounces-327571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A8809777D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:18:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA3FD9777CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E76AF28747B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:17:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 744752873C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617991D414D;
-	Fri, 13 Sep 2024 04:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AC51D31B8;
+	Fri, 13 Sep 2024 04:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cNH6pXjx"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SSnzqgFm"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703FC1D3180;
-	Fri, 13 Sep 2024 04:17:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F5E78B4E
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 04:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726201060; cv=none; b=BvI5DSm66OkYMa46pRxXvFLRhUcGfte/uGqku+2fEw5Tuv1vtEciyv8CISJzDq6efpiHgghjLbzYQAqgtCFI+8T5SIVvbDuQJARnsr2oZR69LFE1GAT7DO/BIyT7PdCge0gb/yAsVMp5okX7+t2IySBSBN4RUiIRym9yslZhdwY=
+	t=1726201046; cv=none; b=H26DGIVrFxlfWw/sgS7Qw3avwoKVPcuw0ZKCQCuN/XkOgzHr9y78a1koN200DZ2QQqqgiTIUJO74k6QPTHnleW+2QPanGyckDXfTseJ5jMAnGTljLZHI7dt8zEiMpEGdk1n3b1k3G8d3BXHuzRR3sM2ATUnm3A7/9l3N1mgKs6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726201060; c=relaxed/simple;
-	bh=S6IS0/dc6jPqT0X5YnU7M+Sh2Oaf4b+CDbvVMXZru6A=;
+	s=arc-20240116; t=1726201046; c=relaxed/simple;
+	bh=aM2JA62bwsTf/mFEE3ERvJ911Rrl9INEVCFzTU5RMo8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mi46wO6eFfIhSePvD4Rp1UxSl64qpjeBc/zG2plZhQAYK0lzMN4LpJ0IS5VxOujPprtQ8ldsKtDBKt++GF0mo0oOcDsErpoOEhWO5xYpn9dWX4T9nOmikGX0EMLMJWHc/RbtqN9PRS8BiPpMbghL6S7D6IDiWF1hag1KCi3ChGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cNH6pXjx; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726201059; x=1757737059;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=S6IS0/dc6jPqT0X5YnU7M+Sh2Oaf4b+CDbvVMXZru6A=;
-  b=cNH6pXjxOeUSm/aJ9bwzs8bpkVr7Ea5VQ0zXXila9pWqNBTv08GEampR
-   7fPJm/ypq4wJOew6Fum9fUQZ3I87UgTAndB3AbHySSyzSRBtVsqS2wXpN
-   FvBCGZ49MrezrHA3W0fXTnrv4F5xv8T7mM7T6xO6gRwBEi1pSSj7apsla
-   2AwkUclPH+MOcGEjTCfbO07hU7TzhOT6wRGaKowtklBiuqgYFCR9srhtH
-   7Z5lKL+aPxRo6jVBG7OzMnxfvTkdc3k0/Tko7fPxn3xzgUTkpSXdk5sSK
-   WT06JVdH+ojlFXnjSs2LnB2bMD3h3TjlwTrQRm9nKjlnkDkVnoom+cOxQ
-   g==;
-X-CSE-ConnectionGUID: Q+Nq14MFSo24YpydrBV9VA==
-X-CSE-MsgGUID: dlEK2mZ1RaGkUYh9YRAk1g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="42564412"
-X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
-   d="scan'208";a="42564412"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 21:17:38 -0700
-X-CSE-ConnectionGUID: jxIOVqy1Tom4J+bpPhXlWw==
-X-CSE-MsgGUID: w9GyVT6yRV+ITkp8Wm6aRw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
-   d="scan'208";a="67766196"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 12 Sep 2024 21:17:33 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1soxkR-0005zz-0g;
-	Fri, 13 Sep 2024 04:17:31 +0000
-Date: Fri, 13 Sep 2024 12:16:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ramona Alexandra Nechita <ramona.nechita@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Cosmin Tanislav <cosmin.tanislav@analog.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	Matteo Martelli <matteomartelli3@gmail.com>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	Mike Looijmans <mike.looijmans@topic.nl>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v5 2/3] Documentation: ABI: added filter mode doc in
- sysfs-bus-iio
-Message-ID: <202409131243.olYA3Qdt-lkp@intel.com>
-References: <20240912121609.13438-3-ramona.nechita@analog.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=flCR9Mi8Nkl+HZAUp+pkFxfBOb2O9BMg3IQ9WLJb4IQO+uK9GXOLU9+xONRp5HlKgw0dJdgfGJlFOTtVcHQYPE5UjC6/vqibCwjlRQfpj+SoUALRTNXpitNxV6BQvl2CqPjlNqYy7DK8mW6V5Lih9Al6zdtt/+s37vt5dhTYYdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SSnzqgFm; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53661a131b4so680366e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 21:17:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726201043; x=1726805843; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2VLJt3GjYxxx/2ULy4tfS3vYUKWoTa4Wu7pIKq+KoC4=;
+        b=SSnzqgFmY1va/31dRWURYlmGkqGQRCWGYAXRGEvuIc2EX4t9Vfs9jZFhtIGzuy2KhB
+         uzFBgL1syNQspQhfExJjxGaO2pkVLciT8A3rROyY789M6kgK7JP7m6EVXJhh3PTkrpcC
+         F9ASGyCfRv9JinfsRzijssph9vbaxit+SXC4oocML2AqZWYLWJFZUd2TDsoaNRxguPPs
+         kY/5smtnNl87zknpp3DJuiY9g+H+FgY0TUE+baY6uYCMf8XyXBItCmNwCcWVyJ1b28Z8
+         LVO5zhsvFCtUPql0IwWtUfJTlzYMMA45/rfJ4ZC/eR2y21Ev9BbAdSkOseZz/T4GcNZx
+         M2/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726201043; x=1726805843;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2VLJt3GjYxxx/2ULy4tfS3vYUKWoTa4Wu7pIKq+KoC4=;
+        b=joJWyvJcFonw6S9/+TRhAcg3d0mtR+J6weMW7GhICZ6oXR2d3Il6opP+ft2TKkIOPd
+         PFLS6ylRMxBUlJYLRexfaKPVBLEQtQEDD1ee/NR1xOtdSSUfq9q8D9sD+mwZ6Cs7kXpS
+         0TSXiZrQh90hvwbGR8LzKhu1kM8LfVWBXp/3lKbNRNjeGy755KZsNpgaOrheCV/FOL/Q
+         sGZyqNo1nw67uxezdQtvgyoUspSZIq+6gBhVf5lffNFcQbm0bpE08OCFrEtIgJS8R2uC
+         0pziuz4YDRdYc4SyCh66+33NUpolNTiZrfA2w4DVBa7mKbT2TYj2wH7Vyx+geeT18Ctk
+         gd2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU5DgqlJeUAQFQ029zL/CxOkBAk1iSof36LVfmlA2TfWnF8bbN9hWr0rqAxQvAT5Wg7dqxFI7pj8GS05NA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1WU1vsqiwYkVF7SzSmTuqUZwjilY9bKC9bZvT5NIfVX8ZTvSd
+	I09bukfXgiaTjhXj22uDJCS+bOFZ5Zx+UzIG33tClCXJkKfm5y1O1ZTOqoRZe8s=
+X-Google-Smtp-Source: AGHT+IGH8yA1KtIzAhW/xFxsftx+1xAYzqN5yLnfjaIyj9mrJlEqDozfPTmDUZXzB01URaqg+7Cziw==
+X-Received: by 2002:a05:6512:10d2:b0:535:d4e9:28ca with SMTP id 2adb3069b0e04-5367ff33836mr839053e87.55.1726201041834;
+        Thu, 12 Sep 2024 21:17:21 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f90404fsm2106513e87.234.2024.09.12.21.17.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 21:17:21 -0700 (PDT)
+Date: Fri, 13 Sep 2024 07:17:19 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+	Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org, todor.too@gmail.com, mchehab@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	Neil Armstrong <neil.armstrong@linaro.org>, linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@quicinc.com, 
+	Yongsheng Li <quic_yon@quicinc.com>
+Subject: Re: [PATCH 07/13] dt-bindings: media: camss: Add qcom,sm8550-camss
+ binding
+Message-ID: <laoud3fhqgrcnkbwasij3vrpvz5pqphcslrb3kka6zshiqqlkz@pqt2iotmnz7m>
+References: <20240812144131.369378-1-quic_depengs@quicinc.com>
+ <20240812144131.369378-8-quic_depengs@quicinc.com>
+ <b1b4a866-fa64-4844-a49b-dfdcfca536df@linaro.org>
+ <82dd61ab-83c0-4f9c-a2ee-e00473f4ff23@linaro.org>
+ <da60cf71-13a4-465d-a0ee-ca2ad3775262@linaro.org>
+ <97e4f888-1ed7-4d82-b972-3e0b95610198@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,42 +91,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240912121609.13438-3-ramona.nechita@analog.com>
+In-Reply-To: <97e4f888-1ed7-4d82-b972-3e0b95610198@linaro.org>
 
-Hi Ramona,
+On Thu, Sep 12, 2024 at 04:11:58PM GMT, Bryan O'Donoghue wrote:
+> On 12/09/2024 13:44, Vladimir Zapolskiy wrote:
+> > > csiphy0
+> > > 
+> > > vdda-phy-supply = <&vreg_l2c_0p9>;
+> > > vdda-pll-supply = <&vreg_l1c_1p2>;
+> > > 
+> > > This is also the case for csiphy 1/2/4
+> > > 
+> > > So, I _don't_ believe this is work we need to do, since its the same
+> > > regulator for each PHY.
+> > 
+> > This is board specific, and even if the separation is not needed on the
+> > boards
+> > you have just checked, still it may be needed on some boards, which are
+> > not yet
+> > checked/not yet known.
+> 
+> There is a Power Grid Analysis document which specifies these rails @ the
+> SoC level and assumes you've used the Qcom PMIC to power, moreover the PGA
+> re-uses the same regulator over and over again.
+> 
+> You _could_ provide that power from your own PMIC which provides the same
+> voltage range as the Qcom PMIC you haven't used. Even if you did provide
+> that from your own PMIC you'd have to provide _separate_ rails for the
+> various CSIPHYs before it would be required to have a per PHY rail
+> requirement on this SoC.
+> 
+> Are people really powering these SoCs with their own PMICs ?
+> No probably not.
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on jic23-iio/togreg]
-[also build test WARNING on robh/for-next linus/master v6.11-rc7 next-20240912]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Ramona-Alexandra-Nechita/dt-bindings-iio-adc-add-a7779-doc/20240912-201936
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-patch link:    https://lore.kernel.org/r/20240912121609.13438-3-ramona.nechita%40analog.com
-patch subject: [PATCH v5 2/3] Documentation: ABI: added filter mode doc in sysfs-bus-iio
-reproduce: (https://download.01.org/0day-ci/archive/20240913/202409131243.olYA3Qdt-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409131243.olYA3Qdt-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   Warning: Documentation/devicetree/bindings/power/wakeup-source.txt references a file that doesn't exist: Documentation/devicetree/bindings/input/qcom,pm8xxx-keypad.txt
-   Warning: Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
-   Warning: Documentation/hwmon/g762.rst references a file that doesn't exist: Documentation/devicetree/bindings/hwmon/g762.txt
->> Warning: MAINTAINERS references a file that doesn't exist: Documentation/ABI/testing/sysfs-bus-iio-adc-ad4130
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/reserved-memory/qcom
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/display/exynos/
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
-   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/nvmem/u-boot,env.yaml
-   Using alabaster theme
+Yes, they are.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+With best wishes
+Dmitry
 
