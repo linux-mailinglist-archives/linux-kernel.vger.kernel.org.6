@@ -1,379 +1,155 @@
-Return-Path: <linux-kernel+bounces-328132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99E6C977F44
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:09:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F36B6977F42
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:09:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC7D7B2353C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:09:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B19E3280E05
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 960C31D933F;
-	Fri, 13 Sep 2024 12:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64F01D9328;
+	Fri, 13 Sep 2024 12:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="i3rdS5Jn";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="lmtqrpRK"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LGZnmWIS"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C00F1D86EC;
-	Fri, 13 Sep 2024 12:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726229360; cv=fail; b=ZUrWBPQSQnPoE/xR4y8xAfJCxJFEgdWU++H7LH1Bg0hOdhY1GecQHFFvCBjzoDmq+E8lZCi3OCDc6aM/qBX3Ic8DEcZ1nYLxhHig+Doj6puuUChVle8DWP/6EP2Bwv4oYJYB6WAvnmioRdMch1pTmzDFi6wwG0Iks5atgONxdQs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726229360; c=relaxed/simple;
-	bh=ug4hGHbvCJJ3QSQh6RmDe4dde4n5RRVtqOSGRIcX2L0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=GfNSHimtd6LZflAZpwb9rXylI2+VYp5GHsaAbJ07qfrYJmFGEg5XiZwx+xX6Bk1HYGofFN1dkOM/Bip/L1A2c5QgyLilAryUdIntVveYV1SCEE07Gp7g2glFCkWP/iGEp5MSzbLq91KjcQ+e3gRWRk49X/vWGp9vCb/jx+1PD7c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=i3rdS5Jn; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=lmtqrpRK; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48D9YLbB008399;
-	Fri, 13 Sep 2024 12:09:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=
-	corp-2023-11-20; bh=25kp2z5AN5PdrShCiEZUxNNOxTF6u8ptRh/+OWB8mjU=; b=
-	i3rdS5JnCWkxRySVpBL7joxAukLp0KLMxOq1RiOarhTtrMgdgD7pIScz1MvBKhhE
-	/JX7No6b2jX+3IOHX5MYwBy42eW8Y1k4eJNo654lvwmZsJxhCkNB+/30VI9O4LuF
-	uzUb12xWv+P4aLuPcuAvUQQXVF2TrNeNECwJ/CouFk9ZPN3S6ex6tvI2ebg7vqvZ
-	9zK8jbU3kF9tFfN4AYrXL656fWCOx9BHALLDIEinc+OH8GjHKihUFuS8l+oGgEJ+
-	ZGA1fwRzyUB1bpx5SjOkGqM9CZFpFXk/rR2S7vUZq4D1YM/aApJ9OhB2rlS4xt4G
-	7dwLi3GXZKBB13d6JUiIkw==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41gdrbde0t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Sep 2024 12:09:02 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48DC6Hb4033021;
-	Fri, 13 Sep 2024 12:09:01 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2176.outbound.protection.outlook.com [104.47.56.176])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 41gd9jw4ta-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Sep 2024 12:09:00 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mkZixUmpXWEkeZwchqKmmW5YlCE735OoN54BhaYk2QezqqZ4OZHzbZeSxrH5kyNNt2Ah5NhrpI+U9H3dacUDOzFTGpbbXglNE6wUJ51T4SzvoRc5HMtz2ydb9JmB8ReAvMHYl789QTQF7r25ur4sdgGiQdKTDYeCQ+6dXkvtV5CcIIvyWbgtUr/QHVYGGvAWTWI5jYNw7t1F+og/DVMZz1f2X5/4Gr7dp0Wno2YsZzuQUacfoPB3/qmTzSuZ4UYdAD4cMrhoiR5slDMTkYFcM/Am/lEAImi56TkL8a51P9rqA+7Pvo9LN7VsCSiT2EoLBHEfhiax4vdF5H/t9TTDwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=25kp2z5AN5PdrShCiEZUxNNOxTF6u8ptRh/+OWB8mjU=;
- b=aDG3HD+tYp2TaPaHStzZ/20nYinhscLVqn7UC/med75W77HO53mxD3s+8qE2u3GMCH9qNM/KEzdshLCEnL+49ZLWSc2IPIdI9bXRKtks+ZBm/e2EYuhEjlCh48jowaXnCrt9U5cRtjS59ge5ck/iKL8eqYhAfC3SET9lu5j7jCvKIS3SoB6TcoHkigp8HRXQ15wE6oAfucJRDpBVXl0Ha/jV4vSgV1P81wraV/AI0dTSODYO5lV3yB5Hz+LTi/Wmtgr5cTYifM30QvWomZfAdz+hF1afLa/Yc2+613GrRoT3HwL0neA+Mzzwid7PvLYQ2LMUV+nl5XD6EtL98TMSZA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B031D86EC
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726229337; cv=none; b=Q2C7VAAB5yFIZ8VduT8vjOV/8nNEKJm3oTuDoLds7JJBEVwW8avzSrWjgz/8UTQ/3InvcnXwNSuCJe35cXtzfeNjAZbU+pM6/tqAcR5wtJFWn0e7fnNdkKe5Jri7VazIza5r//jpKFlI75tPDG8KwjG7kape1ssUxbuAnmXbIPM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726229337; c=relaxed/simple;
+	bh=DHls9ncs43N2cY+KBhoDz5LT8cdPXxKz8OG5NtYGIzo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z2bMV56m0wlDCzUy8eI0Raim/xJeYxudOtox59yrJO1fqcDEqwjRxj7F+4aDhJBVHLs2V04mh9hHFpLxy9+v7It5FAzRG3hTDupRokv3ou1/4uu6y1O/dLmy1tdNhZTXjp6dIsHBdDfUxZe+8OLMuoLu0MwZnJWGlXXflqxnu+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LGZnmWIS; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53653ee23adso1881412e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 05:08:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=25kp2z5AN5PdrShCiEZUxNNOxTF6u8ptRh/+OWB8mjU=;
- b=lmtqrpRKgfG83rUfee6xqpj+hSc7SpKWRgGR9oPDs7KB5FPtk7KH+4M8v+dkMxbivMBJAU61jeebsqx1NnLngFrthe7+TZd3kSvzyJJ8qb42Iky5NYfZNyi50HKiUcmSZuUQjrY16Mkctxfi2gIFsi36nIVmxwlmNuyqG/5I9A4=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by CH0PR10MB5052.namprd10.prod.outlook.com (2603:10b6:610:de::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.11; Fri, 13 Sep
- 2024 12:08:57 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%3]) with mapi id 15.20.7982.008; Fri, 13 Sep 2024
- 12:08:57 +0000
-Message-ID: <77f6fd38-e216-47cf-8ceb-930395614aca@oracle.com>
-Date: Fri, 13 Sep 2024 13:08:34 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] block: trace: add block alignment information
-To: Daniel Gomez <da.gomez@samsung.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-trace-kernel@vger.kernel.org, gost.dev@samsung.com,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Pankaj Raghav <p.raghav@samsung.com>,
-        Dave Chinner <dchinner@redhat.com>, Daniel Gomez <d@kruces.com>
-References: <20240912-add-blkalgn-block-trace-v1-1-335dd6eea557@samsung.com>
- <CGME20240913085931eucas1p25bf5b7cb054cd5d9cc85b8b82097e997@eucas1p2.samsung.com>
- <a7f9079f-6f47-4a47-a327-98497bd33dfe@oracle.com>
- <20240913112626.mmr27xzxicyf37kh@AALNPWDAGOMEZ1.aal.scsc.local>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <20240913112626.mmr27xzxicyf37kh@AALNPWDAGOMEZ1.aal.scsc.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO4P302CA0031.GBRP302.PROD.OUTLOOK.COM
- (2603:10a6:600:317::18) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+        d=linaro.org; s=google; t=1726229333; x=1726834133; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bfq+W44YecCwDojJhg+2LqlC6kM/7W6GIy5oGme1yFc=;
+        b=LGZnmWIShFurSOPR3clYP2LLIziJY88g+HdgyuGYiN618/LUNjNH2ve57Fdyo6d8Pd
+         8eQcs6EcqS5qY/MTOBFZPxPxZ5oCA04lLwrnbRvvgyLrKo9lQ7XrrpTHaerK96SrUjZ/
+         FXfEW1wcl8xHFJX3tbx1W57YH0XWiiV5/0Iezkd7Ws6K/XtJrTHBBNjoWffF8sYlWyfz
+         TUpwiGC1x+Uowh7LcGPVMCEsgq1MDU9EHgQq6peNSAjlL87tlgbLsfvPWtiI5Q2lr5tx
+         l/AoM6exobtBi4joklN8z2Y3oUGgUGch9VmxtJEG+vcIiN51YmLMge+c87CalcMs0lSB
+         duWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726229333; x=1726834133;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bfq+W44YecCwDojJhg+2LqlC6kM/7W6GIy5oGme1yFc=;
+        b=T5sItSd29MMLG3I4Se7N/0qsQUmRYEbta0HvMTN9/VPyH+OKwIDzZ7Suhhr65A+lMC
+         Wy/o4wDo/Dpk5gJiBWq48flQ1PKwHYwoxvipaNhbrK1LqYaZyMf/ClCV17zKOY/S8Q1r
+         pIWrFUrmiMGG69F8RBOoQ3L3hsg8bfOQAw+g5pR7zyJ8bEP5qsuPN19qHctApitdIMnm
+         NLX+8ln1tVv3BsBW56sygbjwjyRbwSb1X1Bd7+jK37em7JWr0LaHJzQ8TEgWsHicwjp3
+         8cRQcbjNDyxIVc86nRViu8o8EQYYuWIj0ua7hqbWJBAxacOEXtLI/1VAO4yCSGGEHEAB
+         aU1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUnDBfHl9/Xh59fGKY3soMQHTeVjiVEyO5TDWIpCgVcLJxLeG7+sgTaxKetBMBZqbiDO1moYCzdwtv7Z+Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZtHGEn6HtBRhtIHokHbvVILuawbfJqAzGuxYaJZ0/ZUbdTL4V
+	WVDkT9SvXGk7wTjGKeaU9QutnEQGdWZ+5e5sh0syISrJx0an6FWV50Kn8j/E36I=
+X-Google-Smtp-Source: AGHT+IG9DtgFArBOo022Muf8Kgfs3Z0aaLcxTYPJCojGCGGF/d87glnhK4hXOB6oeIn6TBebTBMaHA==
+X-Received: by 2002:a05:6512:3b23:b0:52c:e086:7953 with SMTP id 2adb3069b0e04-53678fb1ddfmr3964807e87.4.1726229332734;
+        Fri, 13 Sep 2024 05:08:52 -0700 (PDT)
+Received: from [192.168.1.61] ([84.67.228.188])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b179b29sm23367705e9.34.2024.09.13.05.08.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Sep 2024 05:08:52 -0700 (PDT)
+Message-ID: <332e0654-df8c-44b1-8e55-398aeba37b08@linaro.org>
+Date: Fri, 13 Sep 2024 13:09:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|CH0PR10MB5052:EE_
-X-MS-Office365-Filtering-Correlation-Id: 97c1dec0-9a4b-4df7-fcfc-08dcd3ecccd7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RzFVNWF5REVYUi8xYVRNaDdDcGF2UEZ2K213cEgwVmlmcjlvTEpxQzJVeDJw?=
- =?utf-8?B?QXRIYTdqdk1tK0NHbWVPazBMMU9kZXBaTHdHaWMzbTN6L2drN0pGWENiMjU3?=
- =?utf-8?B?L0I3UjBtbzlRbDVzcVZZZmEwL2VLU3hGSkJOUGFrSU9GWUNtdW1DdEwwcDZw?=
- =?utf-8?B?MHEvQWIxbXVoUUpyZ0FYYUtGd2laYTBtMTArSGt0QURrQXcvUk9HUzhnaXRi?=
- =?utf-8?B?K0lDRzkxRk82WTJSMnMvVHJqWHQvbEgzcEZ3bVVXblBCR2dhUTl3aVd6MUpH?=
- =?utf-8?B?Vm5UUFBIVEZ0RXExSTBHVHEybUloeW15cDBmcjhrRlFhNzVBbC83Z3ZrVHZJ?=
- =?utf-8?B?OUd6K1kyVHV1ZXV6aUNHK1RnYmlrMzJmQW1mOTlFOFZCNWJyTXJuTmJ3T0gz?=
- =?utf-8?B?VGx1TTlzR3psYjNkK20zODdNbzI2anEvVXQ3eEJFZitmeGh5cUxwZS94TjBJ?=
- =?utf-8?B?UGpmUU5JNWtGVzYxb0JOcWFaWG5Cazdwd1N1REVFUHFQZ2pSMEpaa0dPYWdM?=
- =?utf-8?B?ZUVrOFYvZTl1NGdrcW9IanIzWTJpNVpiaytxUXNILzJmOHdBN3dDZkpEWG4y?=
- =?utf-8?B?ZXUyTEIzZ2RaUzZSa3ZWZEI5RldGZDE4YTR5clFndmdYVDh0T0RiTkpZK1lX?=
- =?utf-8?B?ZytGYldqNzcvcXpXbERpOWhoZzh4MlE4WEdRYVBRWDJoSnllZVN4d29MK1VP?=
- =?utf-8?B?Nm5IWkVpUDNEdndiQmxHV0lGRjhoamJjalEwbnhGUXpwWXY2b0FJTGN1UEh3?=
- =?utf-8?B?cFZpT25vdFZqWEhjYTNkUEVoTllEUmhzVEJJc0czVGJZc09ENklyby9yRlU2?=
- =?utf-8?B?bDBOMkRISTZCRi85VXkxUlFKcDJpbGpISzgyOHNZcUNaaXdISm9ZdWNPMEIv?=
- =?utf-8?B?UHJUK3M1VHo5VWtEMVVPR1N4SlRXV25INzRTUmpQNUZTS0ZBdjZCNDkxU0sy?=
- =?utf-8?B?bnNuMGpBcG1IYXQ5WFJtWENYSzVrRkVLV09peXBUUHNuL25xNXZLNUl5aHlN?=
- =?utf-8?B?YThaRjRtOE9IbDg1YVJpUVkzblR3d2dUSnRHSW1UQzlGZXhUZzRhVWNSS2sz?=
- =?utf-8?B?Z2hqQnN1VmxRVW5TT2ZIZW1HcmZPcXJaM3RPeW50UHJPdDRhR21pMHZpVDU5?=
- =?utf-8?B?V2IxZFVXNkd1NHBFVXUzTnhnSHgybFF1MnZOaG1zaWpxaVZRR1RPd1VwU0F3?=
- =?utf-8?B?ekpYNllNbEZpc0VvdVQ2c1dZcTBKVndha1NMcjRjSEs3Szh1aUtkd0lvR1lS?=
- =?utf-8?B?TnBtRmx6L3B6OVdkV2NjL1JaaE04bW5HZ3pCTXNNZ1ZtT0t0a0xTM3JFaW5n?=
- =?utf-8?B?N21heEdKdTFpR3ViR3RMbVBnSEFhT2E2Z2V2dFVtZ1FvdmRacUR1VDhVOGs1?=
- =?utf-8?B?VFAwYVpBODFobnpYRHhNVk9pVEFTWUpEeXRvMC93MzV4YXlYbkwzSEhsQlVo?=
- =?utf-8?B?WHBkQ1pnWnE1dm5BMWovQjBnUTY3cmJwcVpnZnlESE9uVWhIOFlVcnpWV09O?=
- =?utf-8?B?Zjlwb3Q3THVUTytSTWswNkE5enRobHg4M2NNVjEzc2NOQ0NUa2dWeVRvSXk3?=
- =?utf-8?B?MjhCUEFtMjJFSzRjUEY5M214eUVBUVFIZDRxaGVwZFRFMTNYSm9HYWIrRDZ4?=
- =?utf-8?B?Y1lJNGY4ZU11QWRMdkcwY25rRkhkMFRrc1RENXg0N3hkM2RzUWp4eFREU1RR?=
- =?utf-8?B?YzhiSlFkUkhVSVRZNks4RGZKVnlvRXR1elczNU1HVFEyQVNZOHNBc1RoNy9P?=
- =?utf-8?Q?H514SSAjJOgo0FXmng=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NkROZWQyaHdZRFlIQUZuaFNKRUdvWVJmemp3SUlhOXhMZDl5cTB1WEpnVVA2?=
- =?utf-8?B?dXBqRHg1MFBmL2FuTG45Mzl3Und4VzZoZ1IzQkFwVzdPUVV6cGVoS0NISlhR?=
- =?utf-8?B?SzZpY2RhQ1VWdWRVdm9nejRxNnZIYVorNmx2ZXgzY3dyRStoM3pMQlBKcVFZ?=
- =?utf-8?B?cnlybU1SaGp4eDduQSsxRHhvcWRQWmVvWU15aTVwbG9Rb28zOFd0K1lOUTM3?=
- =?utf-8?B?c21yK3dwVGgyY0IvZlpNRmkwZVcxM0Z4QUhTNVJOaHUzZGFHellpSUgzR0JS?=
- =?utf-8?B?bWt4ZllxcFVrMDNISTN6TjE2NU4yNUp6c1BBbTBsWnMwOEN6K2JFK0QvYjZD?=
- =?utf-8?B?cDJxOWZQNEw1aE1IVjhFRGxlMEFkUC9sZXBYcmxTS2N1OXFEYTNKZHk2aFJz?=
- =?utf-8?B?a2N4cndaOVNxcnpzb2Z0TDJuWEs1clNKQ25HSTBSU215UmxJWmtXMjFQdHZ2?=
- =?utf-8?B?WUM3VVBMMklLdTF4VlE2VDhDRnhDMEV4WjN5eEx6NVczMGtpVHBSUlNCT1Jn?=
- =?utf-8?B?V2oyNzVIdCtBbyt5dVhiQUNyV3ZOaHYvSlhNbXhmanVndmNDcFhlUzRoY29v?=
- =?utf-8?B?V3lFUnNVUWpieEpRV2UzYjliQ3FUREhZRW1jQWdxWG5qb3ArdXYvMVM2Ujlk?=
- =?utf-8?B?Y2svY3BNTHFvS3ZnbHhUZi94YmlNNGxxNkh2YVJ3UkdTM01FaXZWRFZWMHBu?=
- =?utf-8?B?eWl0TmJwUzMwblRUUFBBV2tWU2EvT040VWVSNlF1eEdsREdzSnZZa1JzYUo2?=
- =?utf-8?B?RXlvNmFYWEFwdWorUkIvajVqZXQwN2VmK1RZT0x6cWlnWXkzeFIwajNWL29z?=
- =?utf-8?B?WXFJZEpzRng2VGlwT3BndkduOGJTZ3h4czlwVkl2STBraFZlVEVQRUkrOVRa?=
- =?utf-8?B?djlBK01oNkYvVVJRdnJiam0ySExQYktVd0hFT1dXSnc4eEF2WHl4eGt4YkxT?=
- =?utf-8?B?RFV2dFBySVhscTlNNjBPTHppYXJhS1BvZlhTUnVHSDZEbkRCcVNsQVV3eFRv?=
- =?utf-8?B?U29NR2M2d0xHNjBGZHE2Vk53Yy9wQmxaMFlNczM1MUJxclo4QjgrYVZGT2c0?=
- =?utf-8?B?bDJEbURjenBzY0R5Y0RpbFZ2TEl0VUo5M2VRTWQ3a2U4bktkcHdrTm9laE12?=
- =?utf-8?B?V3hCbTBHcFdvZU9LRzd4YmwwUjN3ckFyaW9OTnJOV3BIMlgxM0xsRGV4akIy?=
- =?utf-8?B?Nko1aTczTFhObHZXWGxvUElEWnM4UVAyMHVGRW0wZnlVeGJRUnBEQ0V4elF1?=
- =?utf-8?B?NmJQb21MKzNFSHh3V0Y4NFROdDB0NVIwdFhPa0gvVGYvaEVqRjJGczdQYkRj?=
- =?utf-8?B?dzNNOTFvMFkyUGphRG5pYTY2T3dIbENqOGNHVXh2d0pCTTVXVHV6Tk1OSUF4?=
- =?utf-8?B?aDRWaHAxVWQ3M0FHWjBhQzV3RVgyaHBzUmVnbU9ZMHE2U0RjMFBNT1FaaVNK?=
- =?utf-8?B?Y1BKVjNGSjJIZktxbnZFSzEreVpycnF2a1Y2bHY4NGtXOUVILzJxOG5KdHpN?=
- =?utf-8?B?OVVpdzVrc1A4MVRvYWV5b25aMWg3V2U0dWNtZ29qeis2aElIcUVVRkw0Szhs?=
- =?utf-8?B?R1RRd1pDMHlxdlhQbFNHVFdsZVFhajhEalJ2c2RSZWpSRm1ZYkZiVWhkZDVK?=
- =?utf-8?B?WFFNSGNjcnR5MUlOajRHSkcyOEtsUmVDRnlCMGRJN2RKSDlqVFdwaC8zSGtI?=
- =?utf-8?B?MUNVMllXZUd1Nmo4VGhobGVPQ3FLZjA4VWprMzV5dWR1RWJNNjUrdTFVQ3lr?=
- =?utf-8?B?WEJyaGRhYlFLbW5TQkhuQTFzblFuaWk5dHduL2ZKWTVOZjJiY3RHQXV2cG1G?=
- =?utf-8?B?S1RvNEdUT1Q1cVVkZ0JhVllXRFhiWGVEUUczM25jRjNUc01OWFJtWllrb0V2?=
- =?utf-8?B?a0lxSkVvaGljTGttaTJaOXBINDd4NHdPWFhZQ1AyeVAxb3kxY2lGYjdwQnRs?=
- =?utf-8?B?MndnYWFHMlJGckxIQ2FBZHRBNnl2czZudHZiSi8rVFJsWVJ5a2ZsNTFWMUVq?=
- =?utf-8?B?RVJ4YnZueWNSTkt1bGt5RWhoVTM1SUxyUUtDQmlqMUE4cCtjeGMySnJOMHFa?=
- =?utf-8?B?c01oUkJVOFBaMnNWZ3UxVWtRbzlJU3BMVmhQVE0xMUdDNHhLMmFyVWRPTSth?=
- =?utf-8?Q?lMo4DCY4sNGvcOhfZUysbVlEq?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	NfDCCiKjML1+GSFIyIFNK8OYYzu8EkDLP0oTgad7QZ7Bfw5UrOcFiBY6RP2s0inHvB++QtWwoEoJuAYdsQGsCW+0NY6khdSZDSLl/3cxZFe/qOGpjIAB2QZwUIh8sOsNxClYDHK/e3sOfB9ky0+VPnAu/aVv8oBSHuv3MN0HBWq0cOAp9UoVAape//gH2iI4U3lfSO/ozeo3CSzoQD6lU9kb0hCzEiv95SDGeZjgpOTTRkueH3ZvMm4SY5KbkO7yQ5oETtgyo+B5YcEaNVCANHGZycvuE+qisTJ91cVDUYF1A95LlKpmIIwH+MbwE6KETL/4hlZ0zYQHBW12hsIzsBx47AR+69cYmx8DqmWiR50L80bRviz49nVav5wgmiLqb6FF3up3CGJemrBiJkZx+vCjodCxOZ36dQP+1a66nXunoo1TsbOxGs6dLFw5B5ox+K0phSMAAjweomd27NcxoAvHrwNc9CjMc36MTAyl8TrB/A3ql2QW0eYooS3PRNcThqmup85Un30IBXLYXNC/EUVFbyA2GyUxBpB3VvQgw3t6fYerTrx5Si8fff5uW7DmeXl6ccTL1uG/8nOfepPgPCfBI5I4OLq/Kwg1Nr3TBQ4=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 97c1dec0-9a4b-4df7-fcfc-08dcd3ecccd7
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 12:08:57.6834
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EsLlHHRUWDhM67jc7/lSzHelxTnvhNLlpbvhRFNo+54pqyNQ/84wDzI1u0Mg9w1LYQe4+dQ7xMtSTPSKsLE7bg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB5052
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-13_09,2024-09-13_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 suspectscore=0
- mlxlogscore=999 malwarescore=0 bulkscore=0 spamscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2408220000 definitions=main-2409130084
-X-Proofpoint-ORIG-GUID: l4-oBGCYFIGnb2V-fN68URqAIiG2h2lW
-X-Proofpoint-GUID: l4-oBGCYFIGnb2V-fN68URqAIiG2h2lW
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/7] perf cs-etm: Use new OpenCSD consistency checks
+To: Leo Yan <leo.yan@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, John Garry <john.g.garry@oracle.com>,
+ Will Deacon <will@kernel.org>, Leo Yan <leo.yan@linux.dev>,
+ Ben Gainey <ben.gainey@arm.com>, Ruidong Tian
+ <tianruidong@linux.alibaba.com>, Benjamin Gray <bgray@linux.ibm.com>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
+ gankulkarni@os.amperecomputing.com, coresight@lists.linaro.org,
+ scclevenger@os.amperecomputing.com
+References: <20240912151143.1264483-1-james.clark@linaro.org>
+ <20240912151143.1264483-3-james.clark@linaro.org>
+ <cfad80e4-3ee8-4a55-9dee-41d0d0256c04@arm.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <cfad80e4-3ee8-4a55-9dee-41d0d0256c04@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 13/09/2024 12:26, Daniel Gomez wrote:
-> On Fri, Sep 13, 2024 at 09:59:08AM +0100, John Garry wrote:
->> On 12/09/2024 21:48, Daniel Gomez via B4 Relay wrote:
->>> From: Daniel Gomez <da.gomez@samsung.com>
->>>
->>> Report block alignment in terms of LBA and size during block tracing for
->>> block_rq. Calculate alignment only for read/writes where the length is
->>> greater than 0. Otherwise, report 0 to indicate no alignment calculated.
->>>
->>> Suggested-by: Dave Chinner <dchinner@redhat.com>
->>> Signed-off-by: Daniel Gomez <da.gomez@samsung.com>
->>> ---
->>> This patch introduces LBA and size alignment information for
->>> the block_rq tracepoints (block_rq{insert, issue, merge} and
->>> block_{io_start, io_done}).
+
+
+On 13/09/2024 12:54, Leo Yan wrote:
+> On 9/12/24 16:11, James Clark wrote:>
 >>
->> eh, shouldn't this belong in the description of the patch?
-> 
-> Yes. I'll move this to the commit message.
-> 
+>> Previously when the incorrect binary was used for decode, Perf would
+>> silently continue to generate incorrect samples. With OpenCSD 1.5.4 we
+>> can enable consistency checks that do a best effort to detect a mismatch
+>> in the image. When one is detected a warning is printed and sample
+>> generation stops until the trace resynchronizes with a good part of the
+>> image.
 >>
->> And I still don't know what we mean by alignment in this context.
+>> Reported-by: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+>> Closes: 
+>> https://lore.kernel.org/all/20240719092619.274730-1-gankulkarni@os.amperecomputing.com/
+>> Signed-off-by: James Clark <james.clark@linaro.org>
+>> ---
+>>   tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 7 ++++++-
+>>   1 file changed, 6 insertions(+), 1 deletion(-)
 >>
->>  From looking at the code, it seems to be the max detected block size
->> granularity. For example, for a 64KB write at a 32KB offset, that would give
->> a 32KB "alignment". But a 64KB write at a 64KB offset would be "64KB"
->> alignment. While a 8KB write at 64KB offset would be 8KB "alignment". And a
->> 24KB write at offset 0 is a 8KB "alignment", as 8KB is the lowest power-of-2
-
-note: I meant "8KB is the largest power-of-2"
-
->> which is divisible into 24KB. Is this a correct understanding?
-> 
-> That is correct. 
-
-So maybe it's me, but I just find it odd to call this information 
-"alignment". To me, what you are looking for is largest block size 
-granularity.
-
- > Do you think adding examples like yours can help to explain
- > this better?
-> Below the same examples using fio with the trace output:
-> 
-> 
-> 	sudo fio -bs=64k -size=64k -offset=32k -rw=write \
-> 	-direct=1 -filename=/dev/nvme0n1 -iodepth=1 -ioengine=sync -name=sync
-> 	
-> 	sudo fio -bs=64k -size=64k -offset=64k -rw=write \
-> 	-direct=1 -filename=/dev/nvme0n1 -iodepth=1 -ioengine=sync -name=sync
-> 	
-> 	sudo fio -bs=8k -size=8k -offset=64k -rw=write \
-> 	-direct=1 -filename=/dev/nvme0n1 -iodepth=1 -ioengine=sync -name=sync
-> 	
-> 	sudo fio -bs=24k -size=24k -offset=0k -rw=write \
-> 	-direct=1 -filename=/dev/nvme0n1 -iodepth=1 -ioengine=sync -name=sync
-> 
-> 	fio-789     [000] .....  4455.092003: block_rq_issue: 259,0 WS 65536 () 64 + 128 none,0,0 |32768| [fio]
-> 	fio-801     [000] .....  4455.474826: block_rq_issue: 259,0 WS 65536 () 128 + 128 none,0,0 |65536| [fio]
-> 	fio-813     [000] .....  4455.855143: block_rq_issue: 259,0 WS 8192 () 128 + 16 none,0,0 |8192| [fio]
-> 	fio-825     [000] .....  4456.235595: block_rq_issue: 259,0 WS 24576 () 0 + 48 none,0,0 |8192| [fio]
-> 
-> 
-> Also, the motivation behind this is explained in the LBS RFC [1] and I should
-> have included it here for context. I hope [1] and my description below helps to
-> explain what alignment means and why is needed:
-> 
-> [1] Subject: [RFC 00/23] Enable block size > page size in XFS
-> https://urldefense.com/v3/__https://lore.kernel.org/lkml/20230915183848.1018717-1-kernel@pankajraghav.com/__;!!ACWV5N9M2RV99hQ!NoMpDxzuA5uKlv0RAWE5UtOQKOrNB2zv8PHmOLWxfGCEzw5WpyyvonfhcMi0REPjCgF8pgBvEO9kyhTPO8z1$
-> 
-> Tracing alignment information is important for high-capacity and QLC SSDs with
-> Indirection Units greater than 4 KiB. These devices are still 4 KiB in Logical
-> Block Size (LBS) but because they work at higher IUs, unaligned writes to the IU
-> boundaries can imply in a read-modify-write (RMW).
-
-Yes, I get that this might be important to know.
-
-> 
-> The graph below is a representation of the device IU vs an I/O block aligned/
-> unaligned.
-> 
->      |--- IU Boundaries ----|      |-PS-|
-> a)  [====][====][====][====][····][····][····]--
->      |                      |
-> b)  [····][====][====][====][====][····][····]--
->      |                      |
-> c)  [====][====][====][====][····][====][====]--
-
-is there meant to be a gap at page index #4?
-
->      |                      |
-> d)  [····][····][====][====][····][····][····]--
->      |                      |
-> LBA 0                      4
->    
->      Key:
->      [====] = I/O Block
->      [····] = Memory in Page Size (PS) chunks
-> 
-> a) I/O matches IU boundaries (LBA and block size). I/O is aligned.
-> b) The size of the I/O matches the IU size but the I/O is not aligned to the
-> IU boundaries. I/O is unaligned.
-> c) I/O does not match in either size or LBA. I/O is unaligned.
-
-what about d)? Not aligned to IU, I assume.
-
-> 
+>> diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c 
+>> b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+>> index b78ef0262135..b85a8837bddc 100644
+>> --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+>> +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+>> @@ -685,9 +685,14 @@ cs_etm_decoder__create_etm_decoder(struct 
+>> cs_etm_decoder_params *d_params,
+>>          }
 >>
->>>
->>> The idea of reporting alignment in a tracepoint was first suggested in
->>> this thread [1] by Dave Chinner. Additionally, an eBPF-based equivalent
->>> tracing tool [2] was developed and used during LBS development, as
->>> mentioned in the patch series [3] and in [1].
->>>
->>> With this addition, users can check block alignment directly through the
->>> block layer tracepoints without needing any additional tools.
->>>
->>> In case we have a use case, this can be extended to other tracepoints,
->>> such as complete and error.
->>>
->>> Another potential enhancement could be the integration of this
->>> information into blktrace. Would that be a feasible option to consider?
->>>
->>> [1] https://urldefense.com/v3/__https://lore.kernel.org/all/ZdvXAn1Q*2F*QX5sPQ@dread.disaster.area/__;JSs!!ACWV5N9M2RV99hQ!P1ZM_E9uBSDLzz6M0dLc_vgEGWEY2HPBXJvEJLWp7w0l_G_r9Gvkm2kQiN586NSIH-JMx_YiCFy_6qdklHFY3pXtYsRb3aY$
->>> [2] blkalgn tool written in eBPF/bcc:
->>> https://urldefense.com/v3/__https://github.com/dkruces/bcc/tree/lbs__;!!ACWV5N9M2RV99hQ!P1ZM_E9uBSDLzz6M0dLc_vgEGWEY2HPBXJvEJLWp7w0l_G_r9Gvkm2kQiN586NSIH-JMx_YiCFy_6qdklHFY3pXthE7cfng$
->>> [3] https://urldefense.com/v3/__https://lore.kernel.org/all/20240822135018.1931258-1-kernel@pankajraghav.com/__;!!ACWV5N9M2RV99hQ!P1ZM_E9uBSDLzz6M0dLc_vgEGWEY2HPBXJvEJLWp7w0l_G_r9Gvkm2kQiN586NSIH-JMx_YiCFy_6qdklHFY3pXtqQ5uwAE$
->>> ---
->>>    block/blk-mq.c               | 29 +++++++++++++++++++++++++++++
->>>    include/linux/blk-mq.h       | 11 +++++++++++
->>>    include/linux/blkdev.h       |  6 ++++++
->>>    include/trace/events/block.h |  7 +++++--
->>>    4 files changed, 51 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/block/blk-mq.c b/block/blk-mq.c
->>> index 831c5cf5d874..714452bc236b 100644
->>> --- a/block/blk-mq.c
->>> +++ b/block/blk-mq.c
->>> @@ -4920,6 +4920,35 @@ int blk_rq_poll(struct request *rq, struct io_comp_batch *iob,
->>>    }
->>>    EXPORT_SYMBOL_GPL(blk_rq_poll);
->>> +u32 __blk_rq_lba_algn(struct request *req)
->>
->> why use "algn", and not "align"?
->>
->> "algn" is not a natural abbreviation of "alignment".
+>>          if (d_params->operation == CS_ETM_OPERATION_DECODE) {
+>> +               int decode_flags = OCSD_CREATE_FLG_FULL_DECODER;
+>> +#ifdef OCSD_OPFLG_N_UNCOND_DIR_BR_CHK
+>> +               decode_flags |= OCSD_OPFLG_N_UNCOND_DIR_BR_CHK | 
+>> OCSD_OPFLG_CHK_RANGE_CONTINUE |
+>> +                               ETM4_OPFLG_PKTDEC_AA64_OPCODE_CHK;
+>> +#endif
 > 
-> That's okay with me, changing the var name to a more natural abbreviation.
+> Looks good to me.
 > 
->>
->> And why can't userspace figure this out? All the info is available already,
->> right?
+> Just one question: should the flag ETM4_OPFLG_PKTDEC_AA64_OPCODE_CHK be set
+> according to ETM version? E.g. it should be only set for ETMv4 or this is
+> fine for ETE as well.
 > 
-> We are interested in the block alignment (LBA and size) at block device driver
-> level, not userspace level. That is, everything that is going out from the block
-> layer. Using the block tracing points currently available makes it block-driver
-> generic.
+> Thanks,
+> Leo
+> 
 
-I am just saying that the information already present in the block trace 
-point can be used to get this "alignment" info, right? And userspace can 
-do the work of reading those trace events to find this "alignment" info.
-
-Thanks,
-John
-
+I asked Mike the same question about ETMv3 and he said none of the flags 
+overlap and it was ok to always pass them. So I assume the same applies 
+to ETE as well.
 
