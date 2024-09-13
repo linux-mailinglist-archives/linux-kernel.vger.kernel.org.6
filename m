@@ -1,169 +1,128 @@
-Return-Path: <linux-kernel+bounces-328739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE7AC978812
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:45:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94DEB978824
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:51:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25E851C20DFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:45:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE4621C220D4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2059F12C552;
-	Fri, 13 Sep 2024 18:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39987136671;
+	Fri, 13 Sep 2024 18:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="YFLfK5Jq"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="sPK0DUih"
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC90BBA37
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 18:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049BA82D70;
+	Fri, 13 Sep 2024 18:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726253122; cv=none; b=smNQXCU38C12Ebp9SPSslS2wbBcurFYvBkO22t/dlqAeh+zVEmSIGDymarubukzyGPVcJLXLDLovSfWiTMRXarMyBlisdDGbWO2XMvDeYG8jA23ldhC7j5kW7flR1dY8zvUhlrGEJVaHwYJfeiaYH6RmY83oU1UBexLhL9k8iZk=
+	t=1726253463; cv=none; b=PKGKDjtzcBCnrQU6gfCbEGz001lpbxz4f2YsGXsVtt6SrrzKVtWxKUllbSw0VydBOsS4cSGu/49HQQ5DPenBz2yF88+y9y8TexYIzzQr14iSRCdy03REIvX2LyNScVMNoAW+VeHdjXfDOjJr/zliC8c0FSF4ccfHYYMher7IAo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726253122; c=relaxed/simple;
-	bh=GlBvP3ViV9KPWtoucCkWNwSLKlfFG/0mIg/gEdqo61M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NzwkT/LqrxrCiHXIj2x/mXkuvfcPNMVFPZRvZ0mOnyuff+YqkwOkydR1T2LR8l2EhkSP1tIoYLiiYHUK9dU6EFusNnR7cXdpZE1Q0Wowcpjp0nKgXVaxDjP42G6mJpVc17QekjlCUNBajBqKKqqBp5t80hC+2dHgT0CQ7vE8Tx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=YFLfK5Jq; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42cb1e623d1so24143875e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 11:45:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1726253119; x=1726857919; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MSzjfySTjvZJGJIQqb4ynY2CDR7SAt/ILMEUtxFMYeE=;
-        b=YFLfK5JqKannNOx07APWZygbKmCAMb6NOqUFEZsWYDWzi1/KWoJtMxKmBaVRnhtPIn
-         r9medNucrg+cbHiR2iP6Ja2bGK/uCK6hznXX11EB6dT1YZpnvKi/134sHKPy5+RSzvSH
-         BTKdT7WJB33NgfHkVeyahrhsIRStu5LtBrCYU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726253119; x=1726857919;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MSzjfySTjvZJGJIQqb4ynY2CDR7SAt/ILMEUtxFMYeE=;
-        b=nzKfKoGX+d3GLtifl2Kx7Kgbi9LRi1xAKUs1ZdqkLVnnMWAYKDv/hVmuwyMeKOWtUL
-         BH6gcrXBkMNrSSH10qkvUULnNZGld7u9o2KfC9J/615WR9XV3x9nQ2erxJUVxviDm/In
-         knT6S1U77g3nwgqK+MI624Foz+9AdAd7z9V2nldZbu36YM0pZQCHtnfyhSnZJEiltiEY
-         sI9gK67GxYhcsj5I3qB4eIMUylR/Y0gCWphqxy3EiLGolTdGmbj4zdtmDAvNlsjAejvH
-         IwDl9x3qOa2siP374chdviuEH5B/X3OaZnvmRyQWX6EYHUCAKvCklriKQV3i9YYeooIs
-         Y1Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJfmqnHhRnD07UbM/ndifdRDM/GKqtYbkLg3n6ATZEgFA37on8hik9poHhZxam1h8H3i3WI7RL8CqCAnw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxp82841UPCDwKNbheNCpH2aHKtjsIDBpgNRa8582bMgnpbJzMG
-	WqXcD6wQW1D/sfs7aXi3WtQSiSpI06E/WiPRNqH0StcenJhc90mEYhB6IhCivDU=
-X-Google-Smtp-Source: AGHT+IFPN0GwoCbn4Rkz9K4zq2VjUv9KlAEsC/5ciNxXM3x3Pn5uZy49vr9hXmEsYYlJz6eJPjBoDg==
-X-Received: by 2002:a05:600c:6b0b:b0:42c:bb41:a077 with SMTP id 5b1f17b1804b1-42cdb56daacmr58188035e9.23.1726253118897;
-        Fri, 13 Sep 2024 11:45:18 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37895665632sm17538008f8f.37.2024.09.13.11.45.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 11:45:18 -0700 (PDT)
-Date: Fri, 13 Sep 2024 20:45:16 +0200
-From: Simona Vetter <simona.vetter@ffwll.ch>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] rust: sync: fix incorrect Sync bounds for LockedBy
-Message-ID: <ZuSIPIHn4gDLm4si@phenom.ffwll.local>
-Mail-Followup-To: Alice Ryhl <aliceryhl@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-References: <20240912-locked-by-sync-fix-v1-1-26433cbccbd2@google.com>
+	s=arc-20240116; t=1726253463; c=relaxed/simple;
+	bh=jRSiZboWWwNqI3fzr+wltOm9Xr75AofUf2tdZLQMYlE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=crN4s3Ck/xJAdt1idlQBg7eadgRZ4JZXrlyOIowXJJSvv4xZOEXE7dKygJcyIlZ6u8aOHCBeHZ50t0sLYE/mvVA9JTCmwyKYKl/wxgjYwRikVdvqCdDuoviP9K5dpNOoORSBHDNcsJmSkco//uQnNERNAbU0b9rnyP4RI4rVowU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=sPK0DUih; arc=none smtp.client-ip=74.208.4.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
+	s=s1-ionos; t=1726253450; x=1726858250; i=parker@finest.io;
+	bh=jRSiZboWWwNqI3fzr+wltOm9Xr75AofUf2tdZLQMYlE=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=sPK0DUihSR8Cf2cBrRE61dUxW7gt4llMizphwNThye+4f1c0l1j1k/gpz9zC6+YB
+	 nUDPJS/ckvoMjra7Lxn0nI7pN0LuhOevWeeVX0b0FELWvyv02yWsjIcCgRGQ5qIU0
+	 tM0NM5TwRsDPDNPNzAL6SyobDBDqOkOsfqkRZj+xh1KkXZHCGngmU+jkWb1Vb7hY5
+	 SsAJm1rVXT3p8ZEpKV5/zOj58WXfBLngfVfzmzNXTonv7Xl/WVGMKPnizE5ucIZE5
+	 OcWlMIEto1IA3cYO0rxToPg3hYfBVYB+glOA9nLjcQYjl8857X+eIskdKIY+cHw4+
+	 S9HT7I/09XjuNCf07A==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from SWDEV2.connecttech.local ([98.159.241.229]) by
+ mrelay.perfora.net (mreueus002 [74.208.5.2]) with ESMTPSA (Nemesis) id
+ 0LwsP8-1rw9zd3IeO-00qnjy; Fri, 13 Sep 2024 20:50:49 +0200
+Date: Fri, 13 Sep 2024 14:50:48 -0400
+From: Parker Newman <parker@finest.io>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Parker Newman
+ <pnewman@connecttech.com>
+Subject: Re: [PATCH v1 0/6] serial: 8250_exar: Replace custom EEPROM code
+ with eeprom_93cx6
+Message-ID: <20240913145048.1f5d4141@SWDEV2.connecttech.local>
+In-Reply-To: <ZuR_-cV5zy1mwel3@smile.fi.intel.com>
+References: <cover.1726237379.git.pnewman@connecttech.com>
+	<ZuR_-cV5zy1mwel3@smile.fi.intel.com>
+Organization: Connect Tech Inc.
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240912-locked-by-sync-fix-v1-1-26433cbccbd2@google.com>
-X-Operating-System: Linux phenom 6.9.12-amd64 
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:+0MUIOtggsbR/T1fH1riCcFCl9l335qeqEDC8bHXRQKvSS0kRFJ
+ T0Upr61X2VG0gP35/VU+flzScSRDlgH5fwFnIolnsmmOEHyXnfdctRgbuuejHgUcJ7Plvd3
+ R2AfoLYVidCwhDtDPeA7oFeUOSShBmDtgZ63yDVSjbXPGcopp8grvCFwZwZapZ8Ab1U0zyt
+ RLjQYuqqA6PEAKcivUOMg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:BR0tYh5aNk0=;s+D2d+KBW0JEmaawC4e5OhGfwm6
+ ggvrFi3P14CK4pCo0lboKRyVu7QVNM80pViyvnDZDodnZXqjIcDUiN9DnK1IJq3KhPY5RSymI
+ LdvhWLfIcibk9QsvWoGAxyM++7Mdo206a3WYdozGWEznpytL1GCP6OXbZ/JHo/utwP+u4rHXH
+ UUGMhC1/OyyL4/w39i08V2RWtCoSmHPNGNxBpTGRZVheVxuv0Bv7fs1yB73OH30evYc0H+3S1
+ 3LaofTjz8ZV+XxtogO0Q9DIITzYJJPfSraTU7xyI1hktcmtAhS82ZnsZIB4GK0aeqphcnOSNI
+ SzbQ6n5iO94ndthYCcVaB/BenmTx4UjiCZIqg2CddauZ8GHDgP6pR+0+QEzhucr/hJuiYGHgM
+ oqAxLhDlS2oi/ks2DlLw6FAXQaacwlEBTxZIxqCH1fZ7KBRJaPibngRusTaI+zUBn4SiHda/l
+ d0q0od48/om21l7Q2O0BYa2Vor1q7lYSbkZvRKRRfFf15mjGrtUhPDLjHsqb5AN1CDaC/DqUb
+ 3Bq3KkABWhJ2k/uozmVBcUgi6zgSBIKVvVIbb507SwmAVbZBdubTkNEEytYbCpvq11t/dpHL7
+ th+AbHXFhAO8SjXiRz6IgI8IMiM+uTgvB+/9rUfkzHup/MKJxyF14DpiJJtAD5Nqmmqs+vKwu
+ apHDSrdtRKMWVX+U64kAkvslWnetdK3oUBz1ua2Qvnl2qWIonZbXUYI32idluWTgs0LO3GWtY
+ YlOla8y4sFN1mQRRJ9Bcw51XhnLgOUv7g==
 
-On Thu, Sep 12, 2024 at 02:20:06PM +0000, Alice Ryhl wrote:
-> The `impl Sync for LockedBy` implementation has insufficient trait
-> bounds, as it only requires `T: Send`. However, `T: Sync` is also
-> required for soundness because the `LockedBy::access` method could be
-> used to provide shared access to the inner value from several threads in
-> parallel.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 7b1f55e3a984 ("rust: sync: introduce `LockedBy`")
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+On Fri, 13 Sep 2024 21:10:01 +0300
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-So I was pondering this forever, because we don't yet have read locks and
-for exclusive locks Send is enough. But since Arc<T> allows us to build
-really funny read locks already we need to require Sync for LockedBy,
-unlike Lock.
+> On Fri, Sep 13, 2024 at 10:55:37AM -0400, Parker Newman wrote:
+> > From: Parker Newman <pnewman@connecttech.com>
+> >
+> > This series of patches replaces the custom 93cx6 EEPROM read functions=
+ in
+> > the 8250_exar driver with the eeprom_93cx6 driver. This removes duplic=
+ate code
+> > and improves code readability.
+> >
+> > In order to use the eeprom_93cx6 driver a quirk needed to be added to =
+add an
+> > extra clock cycle before reading from the EEPROM. This is similar to t=
+he
+> > quirk in the eeprom_93xx46 driver.
+> >
+> > More details in associated patch and mailing list discussion with
+> > Andy Shevchenko about these changes:
+> > Link: https://lore.kernel.org/linux-serial/Ztr5u2wEt8VF1IdI@black.fi.i=
+ntel.com/
+>
+> Thanks for the prompt update!
+>
+> However we are close to the merge window, I think Greg won't accept this=
+ until
+> v6.12-rc1 is out. So, we have a two or three weeks of time.
+>
+> Meanwhile I have some (small) comments, I just sent in individual replie=
+s.
+> Overall, LGTM.
+>
 
-We could split access and access_mut up with a newtype so that Sync is
-only required when needed, but that's not too hard to sneak in when we
-actually need it.
-
-Reviewed-by: Simona Vetter <simona.vetter@ffwll.ch>
-
-> ---
->  rust/kernel/sync/locked_by.rs | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/rust/kernel/sync/locked_by.rs b/rust/kernel/sync/locked_by.rs
-> index babc731bd5f6..153ba4edcb03 100644
-> --- a/rust/kernel/sync/locked_by.rs
-> +++ b/rust/kernel/sync/locked_by.rs
-> @@ -83,9 +83,10 @@ pub struct LockedBy<T: ?Sized, U: ?Sized> {
->  // SAFETY: `LockedBy` can be transferred across thread boundaries iff the data it protects can.
->  unsafe impl<T: ?Sized + Send, U: ?Sized> Send for LockedBy<T, U> {}
->  
-> -// SAFETY: `LockedBy` serialises the interior mutability it provides, so it is `Sync` as long as the
-> -// data it protects is `Send`.
-> -unsafe impl<T: ?Sized + Send, U: ?Sized> Sync for LockedBy<T, U> {}
-> +// SAFETY: Shared access to the `LockedBy` can provide both `&mut T` references in a synchronized
-> +// manner, or `&T` access in an unsynchronized manner. The `Send` trait is sufficient for the first
-> +// case, and `Sync` is sufficient for the second case.
-> +unsafe impl<T: ?Sized + Send + Sync, U: ?Sized> Sync for LockedBy<T, U> {}
->  
->  impl<T, U> LockedBy<T, U> {
->      /// Constructs a new instance of [`LockedBy`].
-> @@ -127,7 +128,7 @@ pub fn access<'a>(&'a self, owner: &'a U) -> &'a T {
->              panic!("mismatched owners");
->          }
->  
-> -        // SAFETY: `owner` is evidence that the owner is locked.
-> +        // SAFETY: `owner` is evidence that there are only shared references to the owner.
->          unsafe { &*self.data.get() }
->      }
->  
-> 
-> ---
-> base-commit: 93dc3be19450447a3a7090bd1dfb9f3daac3e8d2
-> change-id: 20240912-locked-by-sync-fix-07193df52f98
-> 
-> Best regards,
-> -- 
-> Alice Ryhl <aliceryhl@google.com>
-> 
-
--- 
-Simona Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Thanks for the review! I will create a v2 with your feedback some time nex=
+t week.
+Parker
 
