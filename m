@@ -1,126 +1,130 @@
-Return-Path: <linux-kernel+bounces-327461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2547F97764B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:14:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E19E97764D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:15:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5825C1C237C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:14:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3273D28198E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857BF3FE4;
-	Fri, 13 Sep 2024 01:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE31D2C95;
+	Fri, 13 Sep 2024 01:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CuS6415l"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Atcc0l6v"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 542C83D66;
-	Fri, 13 Sep 2024 01:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741C4632
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 01:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726190058; cv=none; b=DrpoaML073rnARTJmSgnOhuY+fmVcvuciA9LeeXv7maEYX3LR1+fwr5noqhOwp8xGBuzeMNLnaHZ+Bj4yJyX12o4/Ko1JXbE54TJNXmb4MC/OYbIkwh9VqfllE7kkoaRjkaCuaX1hFlu2Pm2tBluukfaiNHAvZFUMZeBx9q6vs0=
+	t=1726190150; cv=none; b=NVehLMpXbiO1ZIBa0DQfQSD1vmR5NCpveP+T+Y3agE6cvS5i/9wykhZ3VqAZAGebLl6dpc0aQG94AzJGCUY7lfwkxWk7GerSdn0SNsv96q39kM41i84HkwkjWPIMpDw7Ov4MA7r+7MPumFSoObe470BnnbCpty/tz7sQEnqADwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726190058; c=relaxed/simple;
-	bh=c0yaicf4NJPfYOK4lcoT2jZH6xYResdEE1c5u5X8Y18=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lrIzw7797vqKtgkZFo8avsL0e5QdF30tl+cKoCQ/3GupJIiIc6excH4DWcNhnvoNtCCmR73PyweOkxT8YwQabukh1EIncZW/5JbgY+CzoZypt1iccKCVbl4lD40IJMPYsjz+iar2OW9gRL86oRG9S64sTCFq/70qka59jekrwZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CuS6415l; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53654e2ed93so1884390e87.0;
-        Thu, 12 Sep 2024 18:14:16 -0700 (PDT)
+	s=arc-20240116; t=1726190150; c=relaxed/simple;
+	bh=rlzkBySVRuwmCtSDu/RMw8JwLzemasjwgXGF+1VZFVs=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=Hi7a7yOniZjcEXlH6MFeLFerJvSXvqO+wdtS5CBfZjIyjFG7GKXyTExyBhk2M6rtVG18oPLe0cl7UKNN7Rg3M/FUxGQsmoJ3PBcFoNZCDsAiFJ9s0Nnc97Ub3CrX1eqNpWGIp4M43br8hrV5WwFepJgHMpPZmBKDw/MuT52md20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Atcc0l6v; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6c35427935eso9302926d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 18:15:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726190054; x=1726794854; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1726190147; x=1726794947; darn=vger.kernel.org;
+        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gAgjzjVLvrd0brRCe5Bge88sB90MQTZTYNADq3HWyr4=;
-        b=CuS6415lZWkDohbUnKiD8FkuEIImDaUHDoSeaD3+VriWLgPKT8+SeN0fPz8odMHRU7
-         G+sKBJTwBHJPzmbdDAhLNPDFP5mP9TUg1OWvwZPMq2zi/2caMrVCdJ5wSNv/Ss12QTXt
-         6A490zEwqiCZt5dql+NkXp9/+mAwsbIEgF05+ScC/ODsUEmhfrrWHptvkuT+CnZmvme3
-         3ktfVXEQnhothx5fZauh20FQuRF6XwXsHCw+g9+X/KQVeC1TIV2mFkrKQTOqbB3u2Xqi
-         Nrtl2+4E2/+V75Ms2Oj8V71/peQwVe0FWq+D7VnLdvVoDy+GiaZ61aJcoK0LukQ6+6DA
-         YQbw==
+        bh=mQTH8yuvjn5x+BE563sk/xQZpgNg0CR2xe6GnbO5beQ=;
+        b=Atcc0l6vDWRCuU93irXYCDD+xE42heUVBXaMyeMg1PtZuc0Q1ZciADrj7tggVuBwRB
+         MRdopWp2fcdktSZ7oHuWsjqcC642Jrg8UBWLvJ6L4yf2nw+DpkvsPWbox/Z7Zk4UNXPJ
+         Ic3a3W9yJTwbPdp18S+j6JjS3zQ83gc75QgKbEmllwKqaYenOgOaRTblUvihslq66ugj
+         B1+AAjt3Pc9bQr1jsAkgKVp5fsVehTYrZeA9+YukmqTVV4SL0MpuQLcZMsjPO7cpsbQW
+         b1s7cKoa136qBeztBO4HNqNzlT5d1Xep5kciudJ25RIth1k73JoE2fc4Z9KVkeIqWWsL
+         +4Lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726190054; x=1726794854;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1726190147; x=1726794947;
+        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gAgjzjVLvrd0brRCe5Bge88sB90MQTZTYNADq3HWyr4=;
-        b=Zl9NkKkuFF+QtRDih7WJHyV+4n6PDaTMf06FBaaqlG7GFKvRvWDPlIDTUhaa2o9GIS
-         lpRFm3fQcOy7DJcS6xhra7z9RIK5NXYVqiLxUCuI3729xeQCExZB/fxbP1WUqWh0d7u9
-         obeMdU64ZV21voBmIQbHJskvGytF/W2L896yjzQpG/8tgmYyaypH6pVHkjKYNaQ/QuKl
-         8zS4Wqdy0OV6d2ehPpW9mktn3uXAAbH1X2jFDaUvds2F5Aw5ywIPa2tCzUd/sazggEps
-         rQVhuDteppwk195LFKqmHIvos/Mkn1yVZ3DGhmFAhBk0FaRTr+N8WZ4ZQ13Krn+WQstl
-         Hk3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVadYT3czHxrt/iuTNVaOaMurHDXcwaiHf6SmahotiBFc53QHFTvJmoJYT4Ih++q9Ajkc84Hm/zIFB5@vger.kernel.org, AJvYcCWSODorusE0GecvyYGtn19uxSPMc5a0ZpeO9OkD1tlG7TJYBLEvofr4ERi+hliU3u2oX2AQoSBQWXQRRq1v@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF4FAu7oS4d3GAay/K5FIRyVSt/SHWkZ3AkbUXylyUz4hNP5Ah
-	tr7KJ77plQOMfaZqmvzT3IiEz5mdkN4qJoEKlAyLNf9vulq4szgWtPpvhpk81ywz1mntBTvM3yM
-	Z/S+hGAPhMjWoZ74DK4XoTtp7MdE=
-X-Google-Smtp-Source: AGHT+IGlElygHVCvY0Le33o89IgiMFttT6HzN3W3uVWF3oe3t7E2JSa0on0oe9QBj841OoS5+B8fw2UwWTAdQvK5aa0=
-X-Received: by 2002:a05:6512:12c4:b0:52c:db0a:a550 with SMTP id
- 2adb3069b0e04-53678feb66dmr2789764e87.42.1726190054084; Thu, 12 Sep 2024
- 18:14:14 -0700 (PDT)
+        bh=mQTH8yuvjn5x+BE563sk/xQZpgNg0CR2xe6GnbO5beQ=;
+        b=AM0NiKAzyjC52lnCnchqa4sx5t0A92lgsN0y+Y8w9fAi/KPcDcXwZ96Xq+nhOo9RTs
+         Ze37fdAulr9JzMOREtFC1cLQcDCXRFAEuZYxzcdWhUf9trXFXvE1pew4ObW/5n66rIYC
+         A5EXcbXKSQfNbIpiU0mycGsa8xBvgbLqNTGIkzmUmUD6V6vzQvpj0teeOTzUuvr1og/z
+         qEynxQ3VL+ArNfIrFBNagfQA+c1/S+bU1qhXNv7F7l5XIZxe32A8lBIiKeJ2tzMVtUJm
+         Yw+rXZL3kVvV4u9qIbyRiyWVKtxBJDudpcT1Pt3K+rSJVqVpu3Q7NPlnzIAZXrlBy1wz
+         2BBg==
+X-Forwarded-Encrypted: i=1; AJvYcCWxYAHusCo1TmC9boGStghiIGHWJLsMPcQ3PqPaPhUboC5ZIDY5ue0A8D2r384kLjrz9tlC0NUXQPk8NdE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZQl/nVg/Tjlc7Oz6zL5YzTSlMMNVZkFagyAU/daV5ObroRfsA
+	4CMevW9AC2/2Gk9wvBGdWMADoFvoMjvq3OPwqcLtu2g+tPZfAJzRqGgyXQzAL59pC1IOQsfswmw
+	=
+X-Google-Smtp-Source: AGHT+IG58brN7hCe2TUxpiygIKcM0OSPhX0L+96LR9UDHec38zsCfwW21rqasL+X3Vh2daQ8D0ul8A==
+X-Received: by 2002:a05:6214:1911:b0:6c5:7c2f:7376 with SMTP id 6a1803df08f44-6c57c2f75e5mr19748736d6.23.1726190147145;
+        Thu, 12 Sep 2024 18:15:47 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c53474d632sm60074496d6.89.2024.09.12.18.15.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 18:15:46 -0700 (PDT)
+Date: Thu, 12 Sep 2024 21:15:46 -0400
+Message-ID: <5b03d15a5ff1840820e59d41ba1fc9c1@paul-moore.com>
+From: Paul Moore <paul@paul-moore.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: audit@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] audit/audit-pr-20240911
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240913000053.123052-1-qianqiang.liu@163.com>
-In-Reply-To: <20240913000053.123052-1-qianqiang.liu@163.com>
-From: Steve French <smfrench@gmail.com>
-Date: Thu, 12 Sep 2024 20:14:02 -0500
-Message-ID: <CAH2r5mvsuTE=DoP-TwzSsREbGTgnsdNMMnPzK2ypLts6YuX_dg@mail.gmail.com>
-Subject: Re: [PATCH] smb: client: compress: fix a potential issue of freeing
- an invalid pointer
-To: Qianqiang Liu <qianqiang.liu@163.com>
-Cc: ematsumiya@suse.de, sfrench@samba.org, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Good catch.
+Linus,
 
-Added to cifs-2.6.git for-next
+Two audit patches for the v6.12 merge window:
 
-On Thu, Sep 12, 2024 at 7:02=E2=80=AFPM Qianqiang Liu <qianqiang.liu@163.co=
-m> wrote:
->
-> The dst pointer may not be initialized when calling kvfree(dst)
->
-> Fixes: 13b68d44990d9 ("smb: client: compress: LZ77 code improvements clea=
-nup")
-> Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
-> ---
->  fs/smb/client/compress.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/smb/client/compress.c b/fs/smb/client/compress.c
-> index 65d3d219e8bc..daf84e39861c 100644
-> --- a/fs/smb/client/compress.c
-> +++ b/fs/smb/client/compress.c
-> @@ -318,7 +318,7 @@ int smb_compress(struct TCP_Server_Info *server, stru=
-ct smb_rqst *rq, compress_s
->  {
->         struct iov_iter iter;
->         u32 slen, dlen;
-> -       void *src, *dst;
-> +       void *src, *dst =3D NULL;
->         int ret;
->
->         if (!server || !rq || !rq->rq_iov || !rq->rq_iov->iov_base)
-> --
-> 2.34.1
->
->
+* Fix some remaining problems with PID/TGID reporting
 
+When most users think about PIDs, what they are really thinking about is
+the TGID.  This commit shifts the audit PID logging and filtering to use
+the TGID value which should provide a more meaningful audit stream and
+filtering experience for users.
 
---=20
-Thanks,
+* Migrate to the str_enabled_disabled() helper
 
-Steve
+Evidently we have helper functions that help ensure if we mistype
+"enabled" or "disabled" it is now caught at compile time.  I guess we're
+fancy now.
+
+-Paul
+
+--
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git
+    tags/audit-pr-20240911
+
+for you to fetch changes up to 8c1867a2f0fd4235b84da6b204519e830b551988:
+
+  audit: Make use of str_enabled_disabled() helper
+    (2024-09-03 16:35:16 -0400)
+
+----------------------------------------------------------------
+audit/stable-6.12 PR 20240911
+----------------------------------------------------------------
+
+Hongbo Li (1):
+      audit: Make use of str_enabled_disabled() helper
+
+Ricardo Robaina (1):
+      audit: use task_tgid_nr() instead of task_pid_nr()
+
+ kernel/audit.c       |    4 ++--
+ kernel/auditfilter.c |    2 +-
+ kernel/auditsc.c     |    2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+--
+paul-moore.com
 
