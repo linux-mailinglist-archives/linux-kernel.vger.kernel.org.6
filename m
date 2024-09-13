@@ -1,123 +1,107 @@
-Return-Path: <linux-kernel+bounces-327862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88D15977C01
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:15:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F65A977C05
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:16:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F0381F27530
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:15:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 893641C24838
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACFA91D6DBA;
-	Fri, 13 Sep 2024 09:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54C71D6DA7;
+	Fri, 13 Sep 2024 09:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="hcW6oCG7"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ChTwYdiF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qYcQqvQt"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814A11D67BE
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E81175D45;
+	Fri, 13 Sep 2024 09:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726218938; cv=none; b=Z9+IhmBjviMpPwj2MYGkopJ2z07vFsrOMGMxC3FuL3NWMN2f0JX2q4YGcTeoFSYhYvNWEl5uXWMANq2F2BEJ3SO0OoZuBl0X4BoBSB5D/voefoqYxmjIJ3HQdw2i1HNkxrP+j9AifpyHuguLOP8KXhBnSsiQhBc7Wym06Uf4Jtg=
+	t=1726219007; cv=none; b=FENp/k7Z2StfxqhSQb0ErWoCYRdzmAA4n0mqs0FckZkVEuus4sVCvU+tZI3Dn35LwEmOIIWfQkSJAW6sdPkfJrRkAk5+O6A3g1aqFnC2gr/LrGk+RsnJv7ecs/8eN8dE7aMehMlCVicVv60uJ2jQx+fknFr26vFgo/5GN2VeIy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726218938; c=relaxed/simple;
-	bh=yjxj0FSJpzDqTDqbkb+Ys5lDxT533fcsCSKxOxLDXqE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=czNilRDgTFjEKZcI4ETJB5mb7c6LxmMQbVa3LzjeSuCwcOIi8WkU5MiLuJsVoS0+NDBptgYyGXnbNI4AEWuEdshkwWG7aTK7u1WTNWUpTi1uoDCgPwouhNkiH1K+kEK2bFZ2Efj2pAS0TynaJmy8rkIK6GmyKR2l0ciCKnDMNrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=hcW6oCG7; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c26311c6f0so2478739a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 02:15:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1726218935; x=1726823735; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zP7o2lXiLqDCW/l4Y6N12juw+Nevs/iHS84Bz9Lspa0=;
-        b=hcW6oCG7UsWg8lqj1SfpbfEYgFYHzvc8MRSQFB/afVCmLbLYKL3MiCqkl0d2emVWYd
-         nvRqV4ojd/+Jau6JFuxvGJQ/zAcn/TBhb30ud/kQU0eMb7Syuge/REB/v+24vztNWFQf
-         oPaCyMD344Upcg6J8Hz/T0hGkfk0G423DJ6z3OEjZkU+UGNtPTgX8MxtjITkyWu8OByq
-         ZJSitXmGPA08O1Z+lpNt3Qfkew2x93D1PmszK16drxktOqGBp3kKx4CzlqY/3o44X35c
-         deotYhfUvTwHgmYn3VNqPtXGtRdfKuFoA6b/7OJ1O/aWJcJRNKrPSx1mVk/UtVnhEOF2
-         eB7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726218935; x=1726823735;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zP7o2lXiLqDCW/l4Y6N12juw+Nevs/iHS84Bz9Lspa0=;
-        b=IVCKQO0tDR7mNUvQR4PQtwkQcAZTlQoqS2KdgJ30KtMOpyMO8A3j4i+jG3HsjhBjHB
-         HpPeFSLMQ/ArPue4zaP96EaOYxiMli3qsPkBPzUqjXVQiAEL835E+Ic9Cy17p2ltSSTg
-         DUoPdCBe3NG4zYpf2dlbrHvd7zMk6HyIokzUd4iYvY0qbzAaLHqByjNVMpJRtE8SPQjt
-         x6M8xkoeoAT9z4ZQut4aSA0nHYFy8tuvz5asth+DZCBOXHcMdi2pfR+VTSvH2PFlB0Nr
-         0QbPF+dZt2hOzy70nj7HG/vW6vT8iz5zx3v146O0W0VEzFZk534WNVuQskZYpFPzbT9m
-         bH1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXGpx291M5Jkxpt1KWys6+U2yY7CRxd1/dGJZtKv7wiQWOrPsWwHsJWl7kQq3JixqCixXV91EbKfRR9CUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy08OzhhPWkteeE6eTklpa71uVr3H9YIfkBsv6IFJ2vpfxd49Ai
-	rGSvyMm3nJg++Pa+aCuaY60q8OjLkhIz/ySqn3Nc9ht/NiQ0gt4mgKlO84+N0Dg=
-X-Google-Smtp-Source: AGHT+IFVFni4KQY31tZpsekaGm1UaBb7ZpdiuaYbjs6baOy/7SSOoWK2lsopYFzaF0hFcAvrJOrKow==
-X-Received: by 2002:a17:907:3e1d:b0:a83:8591:7505 with SMTP id a640c23a62f3a-a902966f459mr584642266b.59.1726218933949;
-        Fri, 13 Sep 2024 02:15:33 -0700 (PDT)
-Received: from [192.168.0.148] ([93.93.8.5])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25c72e9asm849536866b.115.2024.09.13.02.15.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Sep 2024 02:15:33 -0700 (PDT)
-Message-ID: <8cf0b25f-2b7f-478e-af14-b0ebd5905a79@blackwall.org>
-Date: Fri, 13 Sep 2024 12:15:30 +0300
+	s=arc-20240116; t=1726219007; c=relaxed/simple;
+	bh=/Yk90DKc/aneH7dYVNaU3ZDhP6KYYsYr1uFKvAyo0no=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=li5PTN4KdPnNUZewTYIT7Z/VCbOwDHU1eUSG1izl2FeeI8zHRsfyOtjCSZwE+0Qa9wgewUPYCJHWo1XMgowD53nSNE/Cnh3rcHUhM9zu5gYYJMn8/JfuNhJS1XWTm08CiYs0Qi832TelGa7xGFHlCb4s629yg4OhZID8Gy9Eg44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ChTwYdiF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qYcQqvQt; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Anna-Maria Behnsen <anna-maria@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1726218998;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G/oB0qcVCjY5nSby5hZFJsFPaIcuJMtrbm7MdwgCGjo=;
+	b=ChTwYdiFoDXBoZSPzAtIO2hqcg/le2NASqyPjsham+vtt5ZTXpryTLGPcpKf/7qw8Ivi54
+	pJbEkt4tRaqNHgoWaL7y/4akgB4z7pID44p8lqvpc2xvh1x751YEkcDtermDR+Zct9o5/H
+	4Pst2R58iBEom1R71WnwTJtNfph7MzkdNuzzS+prkvzubruBnQMuf2T8ze80aC46BQcRLC
+	zPHbl+2ejsB9hpRrj7I1rOhopPMWnFykQYNJ0xrDDQJOUXyL1VfaHA3tsdJ2HgejPEA5Sw
+	sSoINymcgBpbDUVhxwzWIEQqX1G5jKEKJPDLn9hPsPl/0ozuKfoxdiqvu6KHvg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1726218998;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G/oB0qcVCjY5nSby5hZFJsFPaIcuJMtrbm7MdwgCGjo=;
+	b=qYcQqvQtDx8MnD6YedZOQJz09OomVNoX1NDJQmjwvB4ceHq7jMG2NpiOsVma2Dhy0uCHZF
+	0dah6qOBkiM/ZWDQ==
+To: Simon Horman <horms@kernel.org>
+Cc: John Stultz <jstultz@google.com>, Frederic Weisbecker
+ <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, Miroslav Lichvar
+ <mlichvar@redhat.com>, Richard Cochran <richardcochran@gmail.com>,
+ Christopher S Hall <christopher.s.hall@intel.com>
+Subject: Re: [PATCH 10/24] timekeeping: Define a struct type for tk_core to
+ make it reusable
+In-Reply-To: <20240912073828.GC572255@kernel.org>
+References: <20240911-devel-anna-maria-b4-timers-ptp-timekeeping-v1-0-f7cae09e25d6@linutronix.de>
+ <20240911-devel-anna-maria-b4-timers-ptp-timekeeping-v1-10-f7cae09e25d6@linutronix.de>
+ <20240912073828.GC572255@kernel.org>
+Date: Fri, 13 Sep 2024 11:16:37 +0200
+Message-ID: <87jzffj4lm.fsf@somnus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] netkit: Assign missing bpf_net_context
-To: Breno Leitao <leitao@debian.org>, kuba@kernel.org, bpf@vger.kernel.org,
- Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
- =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: vadim.fedorenko@linux.dev, andrii@kernel.org,
- "open list:BPF [NETKIT] (BPF-programmable network device)"
- <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-References: <20240912155620.1334587-1-leitao@debian.org>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <20240912155620.1334587-1-leitao@debian.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 9/12/24 18:56, Breno Leitao wrote:
-> During the introduction of struct bpf_net_context handling for
-> XDP-redirect, the netkit driver has been missed, which also requires it
-> because NETKIT_REDIRECT invokes skb_do_redirect() which is accessing the
-> per-CPU variables. Otherwise we see the following crash:
-> 
-> 	BUG: kernel NULL pointer dereference, address: 0000000000000038
-> 	bpf_redirect()
-> 	netkit_xmit()
-> 	dev_hard_start_xmit()
-> 
-> Set the bpf_net_context before invoking netkit_xmit() program within the
-> netkit driver.
-> 
-> Fixes: 401cb7dae813 ("net: Reference bpf_redirect_info via task_struct on PREEMPT_RT.")
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> Acked-by: Daniel Borkmann <daniel@iogearbox.net>
-> Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> ---
->  drivers/net/netkit.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
+Simon Horman <horms@kernel.org> writes:
 
+> On Wed, Sep 11, 2024 at 03:29:54PM +0200, Anna-Maria Behnsen wrote:
+>> The struct tk_core uses is not reusable. As long as there is only a single
+>> timekeeper, this is not a problem. But when the timekeeper infrastructure
+>> will be reused for per ptp clock timekeepers, an explicit struct type is
+>> required.
+>> 
+>> Define struct tk_data as explicit struct type for tk_core.
+>> 
+>> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+>
+> ...
+>
+> Hi Anna-Maria,
+>
+> I wonder if the order of this and the previous patch should
+> be reversed, or the two patches should be squashed together.
+>
+> I am seeing a build failure with only patches 01-09/24 of this series
+> applied, which seem to be resolved by applying this patch.
+>
+> .../timekeeping.c:1735:43: warning: declaration of 'struct tk_data' will not be visible outside of this function [-Wvisibility]
+>  1735 | static __init void tkd_basic_setup(struct tk_data *tkd)
+> ...
 
-Acked-by: Nikolay Aleksandrov <razor@blackwall.org>
+Oh, I'm sorry. I mixed something up. Thanks for letting me know, I'll
+have a look at it and fix it!
 
+	Anna-Maria
 
 
