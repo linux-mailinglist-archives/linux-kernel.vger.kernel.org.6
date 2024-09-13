@@ -1,111 +1,143 @@
-Return-Path: <linux-kernel+bounces-327573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 581919777D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:19:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9212E9777E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:26:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AC811C24764
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:19:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9362C1F258C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D2D1D31BD;
-	Fri, 13 Sep 2024 04:19:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70AA11D47AA;
+	Fri, 13 Sep 2024 04:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FZ6H9uT4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mUZVsg0E"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936191B12C2;
-	Fri, 13 Sep 2024 04:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617B713A87C;
+	Fri, 13 Sep 2024 04:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726201175; cv=none; b=X+Qni7V0oSpEdLO0VnLIXFm7K7bwyrCVVFcTwIzQ+8LMFIz2HtpWosNZZZeJGK+uc29FykyJdrXmwPbrfp4dShDijPZahDsL3cV9VW4q3p0q6f940+MAugr8UMK0OWBV4k4eqVju+J1LSmZmoO5tob8L5aKH99CAakmRAgCQ4KI=
+	t=1726201605; cv=none; b=DOSw36UWR/t6/TDpLDXFFZvauH6HQFOZWPgwLfXPnG1DpjNvaCEi4iCxyjzqddTj1rmmtWJ9J/GY3Ab6FYvA3R2r3w95+H61agbSKJh1ISmNQ5yE8FKs3TOZYmtA4Y0NYlSnWx73/NRZxy637fSFWb5Lu7gu/Zi+ROMwRuPalO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726201175; c=relaxed/simple;
-	bh=BwZAQlawwtJ/q87nXgJJXJ+mqLNITzvaxgQH1UqKaf4=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=F5sdwDArMkAUKvKW1WJZMXeeSybFpGwniZuateWsP4vUa4z+FygYcc0nzLYEshbN7UDyZtE+h/ZnR1X0Cmd7vbG1XlHi1i+Rf5fb9VwheVYqt6h/K4+wprT6sWnjJrd9LDV8HRwlH6M+/qXV20TGDDBVfz/GInjyc4LZjPGSh9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FZ6H9uT4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE3C4C4CEC0;
-	Fri, 13 Sep 2024 04:19:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726201175;
-	bh=BwZAQlawwtJ/q87nXgJJXJ+mqLNITzvaxgQH1UqKaf4=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=FZ6H9uT4fyCdVibC10b6uoEoGdvwNMCBLVgZ7+F3ysLcGOoOknjntS5FCtPe8irMU
-	 6rIW1RjPbFzbTEQJDapFqx+ayVE9GuuJ6UD0NVDc5wqRklHnQNggAtdbJfzfsK7ivi
-	 jMpPIhvvz2+u5cfHWwW7IHY8Zt7f8RMw95mAcqsRbLlgRPUi2TJ0AlOMuBQYcYcIsr
-	 IVX61M+DoonaSzMp5Rc0QNtZTUHzkQXZnjR1lV2u6BIao26mXQYoWhx5eHZ6ya8CHQ
-	 UgO3gnC9AD1SMxSNognQSBKeHPtUiXLmm0g/MI0mIXkTtmZGPcvMpQUoULsa2fr+Nl
-	 m5xfjMsJUNmPQ==
-Date: Thu, 12 Sep 2024 23:19:33 -0500
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1726201605; c=relaxed/simple;
+	bh=s8y2LxutHw1JNq+rOeyZekzVclfC3r0yw8vj7dA/mZw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E6W4QsiTD/U+xGUnKSUzxeJx9KMRl6VeB2gTSJRObeqmy/XOS5WBBiV/n57r+CiNDHX1Op+a7eADYtG8O/cOSnDfAvTUvUYLo0vGqoo3bp4r6To4aaIN11EEsigYV5+zTUFjzuxxDSPxTwyyTT4F3x5LyNTFi4nJBDmfN3dmEyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mUZVsg0E; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7d4fa972cbeso1408611a12.2;
+        Thu, 12 Sep 2024 21:26:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726201603; x=1726806403; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5UCSDqZtrxdlfDIyJ4PYB/eyUMcd92kaOx6CvjF7g6Q=;
+        b=mUZVsg0EwYhnVfcoijV8d9hLFYJTm/+8ieqhD8mY4cu9DKfZ7O1zmUJxrIvFSDWfmJ
+         78HtAIZKakLdpJKsqn/AXodpdTMKlMBP7w5oIUsbctitPlJKNRtXYbD8xxN/vSV8RZtw
+         94dKUeHFWLCMNgKJ22DrYMwffXoRiVwMb5TuWbITQfJY3UYlrMVCUcNq7VoE8ZljFNkw
+         jqr8q8H/sxEZRLmCsVigS+zcef5WKMX2ixapRaL7CkklMAg1mBX1zcAk+kJUhjIQYUa2
+         kieuW5cTv5pmHzD+eTsqTvWLDAoHVpX6/sucafaXiyNaRhkYrMp4tix4coSp8K4HgXfR
+         0dcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726201603; x=1726806403;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5UCSDqZtrxdlfDIyJ4PYB/eyUMcd92kaOx6CvjF7g6Q=;
+        b=HwnYjJeTBrqfpBiVZLVoBt5NcsDqVLDQ89SWf/XO33Ra+GbHE3+ZXX3fENSbhR3TaW
+         FL6v3dlAoOi/MhRZsB0L+YWaQkUjbljRzs+EAQ0pOxFXrqrVs4HsSJpOBoVrppGyTEoC
+         L9RPQmrRkUmKiISNIohSfcx5SUYbpAGt3hP0gEsLsNOBKasUCsawsAsdXeu43GAlIqAb
+         yAcUBzOTvJKle/+jGuMYnN2eHBxFU8m/tSv0N9H3nKKv8W+FMVu60Vcx83zGTyFu0hlQ
+         PvlNGRzDckfi+j6uSiDH/xKQrJQmC3Q0FsQ8TSSynCek4l/Re9Ob48awt8NQoT80QOX/
+         GUgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUgPhdvogtUSAJmXILqSBNzubfNx8IMvJyBrY0zjjLuBpYMUjO0uOtD5gX1kQqEEXD0/R8=@vger.kernel.org, AJvYcCVcLOeFLil3lCgEfpOgz2pZRJWJU0KuFinG+LK4833749h2KeGODKsLZt6YdkAcUO6emVAYVJS+WxypTgeU@vger.kernel.org, AJvYcCVqH7cMQuSTe2b5AmNEuq9H71F59DMKplE39K+nkN9Epim3KUvXFf/O8d6scCENpWU9QdCn7b/sg2rPSQ==@vger.kernel.org, AJvYcCWEsWbMseyzJaS01AfkjutTTTdmk6I4mx3aGyHGe4o/Rmtil0ja109lLd4nRZ6NcI1jFmZs0n1U+Re+@vger.kernel.org, AJvYcCXI1yOdfxOSvTVJZ5er3GQmG7ty+q1edADSOAiTaixX1FoUoaD+PIeLM2NJg4CEJCVlQ//LeiEM@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCEP5Uw8tuF5SegdBl6E/OZz3byKAXN5giljnW2wfco3VEGMk1
+	OA75ZrwXnnbV+IY7i5E2J6DhPmveBjTIIfwD4ULmT4am5/G2e6DeXNaclPYvRxa7oAb5qYe9tzo
+	iM/fKQz5Pk6hh5uaMH+4d1NChMIo=
+X-Google-Smtp-Source: AGHT+IHwOdOFteLST4od4RwYt9rmDfY2JPAQXl9/wd1FLajiqtRgjBhS0MTgoNifm/7YfojeHqx1nMXkbHKudo7SzyM=
+X-Received: by 2002:a17:90a:9384:b0:2c9:7e9d:8424 with SMTP id
+ 98e67ed59e1d1-2dba0067fa7mr5810882a91.30.1726201603388; Thu, 12 Sep 2024
+ 21:26:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: tsbogend@alpha.franken.de, conor+dt@kernel.org, 
- devicetree@vger.kernel.org, lee@kernel.org, linux-mips@vger.kernel.org, 
- linux-kernel@vger.kernel.org, krzk+dt@kernel.org
-In-Reply-To: <20240913024948.1317786-2-chris.packham@alliedtelesis.co.nz>
-References: <20240913024948.1317786-1-chris.packham@alliedtelesis.co.nz>
- <20240913024948.1317786-2-chris.packham@alliedtelesis.co.nz>
-Message-Id: <172620117395.1580323.932321359938489958.robh@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: mfd: Add Realtek switch
+References: <20240913135551.4156251c@canb.auug.org.au> <20240913040038.GA2825852@ZenIV>
+In-Reply-To: <20240913040038.GA2825852@ZenIV>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 12 Sep 2024 21:26:31 -0700
+Message-ID: <CAEf4BzashWCozzD7KetgC0Wya-KqUzj0omguAOt+oUVDzHys=Q@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the bpf-next tree
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, David Chinner <david@fromorbit.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org, bpf <bpf@vger.kernel.org>, 
+	Networking <netdev@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Sep 12, 2024 at 9:00=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> w=
+rote:
+>
+> On Fri, Sep 13, 2024 at 01:55:51PM +1000, Stephen Rothwell wrote:
+> > Hi all,
+> >
+> > After merging the bpf-next tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
+> >
+> > fs/xfs/xfs_exchrange.c: In function 'xfs_ioc_commit_range':
+> > fs/xfs/xfs_exchrange.c:938:19: error: 'struct fd' has no member named '=
+file'
+> >   938 |         if (!file1.file)
+> >       |                   ^
+> > fs/xfs/xfs_exchrange.c:940:26: error: 'struct fd' has no member named '=
+file'
+> >   940 |         fxr.file1 =3D file1.file;
+> >       |                          ^
+> >
+> > Caused by commit
+> >
+> >   1da91ea87aef ("introduce fd_file(), convert all accessors to it.")
+> >
+> > interacting with commit
+> >
+> >   398597c3ef7f ("xfs: introduce new file range commit ioctls")
+> >
+> > I have applied the following patch for today.
+> >
+> > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > Date: Fri, 13 Sep 2024 13:53:35 +1000
+> > Subject: [PATCH] fix up 3 for "introduce fd_file(), convert all accesso=
+rs to
+> >  it."
+> >
+> > interacting with commit "xfs: introduce new file range commit ioctls"
+> > from the xfs tree.
+>
+> ... and the same for io_uring/rsrc.c, conflict with "io_uring: add IORING=
+_REGISTER_COPY_BUFFERS method".
+>
+> FWIW, that (sub)series is in viro/vfs.git#for-next - I forgot to put it
+> there, so when bpf tree reorgs had lost their branch on top of that thing=
+,
+> the conflict fixes got dropped from -next.  Sorry... ;-/
 
-On Fri, 13 Sep 2024 14:49:47 +1200, Chris Packham wrote:
-> Add device tree schema for the Realtek switch. Currently the only
-> supported feature is the syscon-reboot which is needed to be able to
-> reboot the board.
-> 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ---
-> 
-> Notes:
->     Changes in v2:
->     - use filename that matches the compatible
->     - put maintainers after title
->     - remove unnecessary label in example
->     - Rework description to focus on what is implemented rather than what
->       may be implemented in the future.
-> 
->  .../bindings/mfd/realtek,rtl9302c-switch.yaml | 50 +++++++++++++++++++
->  1 file changed, 50 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/realtek,rtl9302c-switch.yaml
-> 
+Should I take out the following from bpf-next/for-next for now?
 
-My bot found errors running 'make dt_binding_check' on your patch:
+a8e40fd0f127 ("Merge branch 'bpf-next/struct_fd' into for-next")
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/realtek,rtl9302c-switch.yaml: $id: Cannot determine base path from $id, relative path/filename doesn't match actual path or filename
- 	 $id: http://devicetree.org/schemas/mfd/realtek,switch.yaml
- 	file: /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/realtek,rtl9302c-switch.yaml
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240913024948.1317786-2-chris.packham@alliedtelesis.co.nz
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Al, currently I'm basing my patches on top of your stable-struct_fd
+branch. If you need to update it, I think that's fine, I can rebase on
+top of the updated branch, given my patches weren't yet merged
+anywhere. Let me know.
 
