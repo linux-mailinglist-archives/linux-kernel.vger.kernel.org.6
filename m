@@ -1,152 +1,119 @@
-Return-Path: <linux-kernel+bounces-328641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43AE59786D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:32:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36E139786D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:33:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D7E71C21B86
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:32:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1505286584
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259058289E;
-	Fri, 13 Sep 2024 17:32:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F3A84A39;
+	Fri, 13 Sep 2024 17:32:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SeVAv5rb"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="niQwaI9+"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778521EEE4;
-	Fri, 13 Sep 2024 17:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477851EEE4
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 17:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726248737; cv=none; b=nrys01oYlUfyCCGm1Anrss1heM/LVCJ0otOcKf06QjWVwOKUUP/cJ1PRw7IWoeNbQzEI0g3yBewJUEsuP/Y8Ylk+B7BpWNsVQ/jwA6XBZHG8Vw6HCveS9qJcxXJcvDNMUX3eSIwQzNqKHqHJGhJm92sFV77fRR/e1eCUIZ+Au2w=
+	t=1726248772; cv=none; b=E+C2xWX1GwC0QLy6js1KUQvLk5KLOoe8oW8NTwLAZhvcTgR1Zxg+EF0kqRAcUeR/Z/u/gPhmDVnC+SKXY+BKmnn5Cqd4VN/FXsa2l/dn0fazup+qciTRIaretC2rIAHeczd/9l39T+IS2XHIP9zRX/jylN4mCPZAkKZPRhv0zpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726248737; c=relaxed/simple;
-	bh=pzA7ZMZZoVgNpmaWFc0CC225Ch3A3u6mzfsVUDrccy0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FU4z9DP5kG9za5wbVc2lU61oupeB6Pks77rjT5im6gHqZgCeILqPvPv9dyWiZe0G4QfOGGmtOVpT9bSOgan5HraY63zA0fG8UqQ6toZwetnbb1LjmbNa7+6yva9aGSpPNqBTuJxroCh8jbWkMW7sNpzR1IPlrDA2tg3LgCHRyqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SeVAv5rb; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48DHLhtX025025;
-	Fri, 13 Sep 2024 17:32:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=QnKufj0sD+PZoQG/V9Fz2QjNWrI
-	8Gvwt12+jULSnV+0=; b=SeVAv5rbtltW6SAgQMF+DzHSgsRDHIGUsCnOuFBenmE
-	UBDwWoEzNix9XtZBs8kuNCYbw3Vv5vG7g5WACVneFb6UhMWSV8pjoDNXtBBO/v/Y
-	ETGD+OG/L2RO37S4ewyYCwQXMkSOr5GD3Ql4999FGLepgiqiKlfCXI+64U7Wqeyp
-	qXUszcKqmmkn9ntsN3kExYN9qzc93SZKwPSqUiHMbdsJALyjriwgEY303mNMA7tD
-	o5ImiZ7sB3u05Bo3zL+SJHDXRwuUElUpKQa2AD5xgefL9IIolhw9OjXOWiXuYuIE
-	8oeB8VUlTczvJJj9fbkua/iSPAIeEWMFYfR3SBHRvAA==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gc8qusv7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Sep 2024 17:32:13 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48DFGMtg010729;
-	Fri, 13 Sep 2024 17:32:12 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41kmb7391e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Sep 2024 17:32:12 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48DHW8b253215732
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Sep 2024 17:32:08 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7590A20043;
-	Fri, 13 Sep 2024 17:32:08 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D301320040;
-	Fri, 13 Sep 2024 17:32:07 +0000 (GMT)
-Received: from osiris (unknown [9.171.6.86])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 13 Sep 2024 17:32:07 +0000 (GMT)
-Date: Fri, 13 Sep 2024 19:32:06 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Stefan Liebler <stli@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH 7/7] s390/vdso: Wire up getrandom() vdso implementation
-Message-ID: <20240913173206.30385-C-hca@linux.ibm.com>
-References: <20240913130544.2398678-1-hca@linux.ibm.com>
- <20240913130544.2398678-8-hca@linux.ibm.com>
- <ZuRWmJTWqmD92D8d@zx2c4.com>
- <ZuRYoVIrg28kBKqb@zx2c4.com>
+	s=arc-20240116; t=1726248772; c=relaxed/simple;
+	bh=lyEUOp7yyG5TGF+bGoNH8TP17o0yuwPTlbekxn+hnYo=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=UeT7Oc9Go0hB0JpRoWs5JMFoBCxV2gSB1Vqw1RYqWvlWLG0KPLmzPqo+x4DzEOz1XA4MpdfpFgNceNJKfx/rNoYuWeiOiW5dz9c+BZ+K3Lj29bp9mfnfj++rxiiN+CWzS6NXW85K2IaVNejhyoC3j8/0NjWz+NlIDMUFfR368OQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=niQwaI9+; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-71794969d71so1749647b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 10:32:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726248770; x=1726853570; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=91RTRIi5vowPNp8C9+ogp2zeY4jmVB+O69eyfUOWRpA=;
+        b=niQwaI9++RfA2O0Yu+RAG6O6HRM5v9EFQLXapAd57WuBP4u9Wm9HhKCR5kN30RwnYD
+         X8G8B/bLsOXj4m2P9rq+49D8gAZYVjUSYpH9EI22xEUmSAP7jhPTzeZWQFb4b8ZvqGIT
+         rdatnV5AAexY9qzkWd9ylyRcQilz91amza7GqcKSwb6yV/O2lXJrIxP8ZCciZh5nCOAZ
+         yKcMj7oXDDgATmshch0dkrOwV7XaW3MDbEtBmE/pj9ZvMa1V7Wa2VboyCmZROYKmvsgS
+         uJWrjE6WO/mDd8SGyT0nRq176p4HGAY4asSB+zTqX+v/QhnnxQk7Zs08bydMlz77JBkb
+         ECiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726248770; x=1726853570;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=91RTRIi5vowPNp8C9+ogp2zeY4jmVB+O69eyfUOWRpA=;
+        b=goO9HYqSe6i4PljaO7X9NS1T2LIZMyxwIzVQCYbzJcDhty6wyv2oFVGApoKhYi4TlU
+         sO4v3PLdeR0x03KoZcTMnLdFJm9OmLoovJFrLOJbQyWSdY3/7naPH8Dr8BhGasiJppTX
+         Vb4m8pvLMA7Fd9CGVB6rkFrQ2BrGpLfd9Rx2ytaB2gYmemwq6s7hDO3EPnocjmyWYLTS
+         SoQmJ1UW59ej5N+Z+Fa1zNACtViZemKfqhVM0bDB6X9lvDYRzJvRNCtnSWbVbeNh9kfW
+         HX+dOLhtm30szKC/cDxvKwbu9dSPd0puq+Y2FXy0WBmARnGwz1/loMubRslu4FAYRvQ8
+         CpkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0Rg7GSDTyCCMM7Ha6a4Jnm88ZgAxNdV4YPtx8IH8DWgRZoEF6RQzQj5eoI7TZwzAtJJEZfaJDNygNfmc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvAq3t32Hard6DPQDRHvZOpSrqm21p+Yiyumk7uSZMN4uDl0xm
+	5lhInYZngsmz5kvXE9Fh1YwkVZr5Vhm3yPfQSS8ABqtAlbnAt8qYtb64ZHpsR2sUwNrPKGCn3wL
+	2T6jTWnH1zg==
+X-Google-Smtp-Source: AGHT+IG1pwPz6NYQtTl15SBWiF6NhPLYBGU7lbYLmwsArhUnps0AUyBOh5iGDwxbKPx/1KBqTdSDdJ5gbSx0pg==
+X-Received: from loggerhead.c.googlers.com ([fda3:e722:ac3:cc00:f3:525d:ac13:60e1])
+ (user=jmattson job=sendgmr) by 2002:a62:ab11:0:b0:718:d519:20e2 with SMTP id
+ d2e1a72fcca58-7192634303bmr13511b3a.5.1726248770272; Fri, 13 Sep 2024
+ 10:32:50 -0700 (PDT)
+Date: Fri, 13 Sep 2024 10:32:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZuRYoVIrg28kBKqb@zx2c4.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: eTsnFCQgIgAm6HIewvB69RXkhB0rMtH1
-X-Proofpoint-ORIG-GUID: eTsnFCQgIgAm6HIewvB69RXkhB0rMtH1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-13_11,2024-09-13_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
- mlxscore=0 lowpriorityscore=0 impostorscore=0 priorityscore=1501
- malwarescore=0 adultscore=0 clxscore=1015 mlxlogscore=610 suspectscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409130121
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.662.g92d0881bb0-goog
+Message-ID: <20240913173242.3271406-1-jmattson@google.com>
+Subject: [PATCH v4 0/3] Distinguish between variants of IBPB
+From: Jim Mattson <jmattson@google.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Jim Mattson <jmattson@google.com>, Sandipan Das <sandipan.das@amd.com>, 
+	Kai Huang <kai.huang@intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 13, 2024 at 05:22:09PM +0200, Jason A. Donenfeld wrote:
-> On Fri, Sep 13, 2024 at 05:13:28PM +0200, Jason A. Donenfeld wrote:
-> > On Fri, Sep 13, 2024 at 03:05:43PM +0200, Heiko Carstens wrote:
-> > > The vdso testcases vdso_test_getrandom and vdso_test_chacha pass.
-> > 
-> > I'm trying to cross compile this but I'm getting:
-> > 
-> >   CC       vdso_test_chacha
-> > /home/zx2c4/Projects/random-linux/tools/testing/selftests/../../../tools/arch/s390/vdso/vgetrandom-chacha.S: Assembler messages:
-> > /home/zx2c4/Projects/random-linux/tools/testing/selftests/../../../tools/arch/s390/vdso/vgetrandom-chacha.S:147: Error: Unrecognized opcode: `alsih'
-> > 
-> > Any idea what's up?
-> 
-> Looks like I needed `-march=arch9`. I can potentially rebuild my
-> toolchains to do this by default, though, if that's a normal thing to
-> have and this is just my toolchain being crappy. Or, if it's not a
-> normal thing to have, do we need to add it to the selftests Makefile?
+Prior to Zen4, AMD's IBPB did not flush the RAS (or, in Intel
+terminology, the RSB). Hence, the older version of AMD's IBPB was not
+equivalent to Intel's IBPB. However, KVM has been treating them as
+equivalent, synthesizing Intel's CPUID.(EAX=7,ECX=0):EDX[bit 26] on any
+platform that supports the synthetic features X86_FEATURE_IBPB and
+X86_FEATURE_IBRS.
 
-That needs to be fixed differently, since the kernel build would also
-fail when building for z10. Could you squash the below fix into this
-patch, please?
+Equivalence also requires a previously ignored feature on the AMD side,
+CPUID Fn8000_0008_EBX[IBPB_RET], which is enumerated on Zen4.
 
-That way the compiler will still generate the correct code even if
-compiled with a lower march flag. There is already a guard in place
-(test_facility()), which prevents that this code will be executed if
-the machine does not know the instruction.
+v4: Added "guaranteed" to X86_FEATURE_IBPB comment [Pawan]
+    Changed logic for deducing AMD IBPB features from Intel IBPB features
+    in kvm_set_cpu_caps [Tom]
+    Intel CPUs that suffer from PBRSB can't claim AMD_IBPB_RET [myself]
 
-So for the kernel itself including the vdso code, everything is
-correct now. But similar checks are missing within vdso_test_chacha.c.
-I'll provide something for that, so that the test case will be skipped
-if the required instructions are missing, but not today.
+v3: Pass through IBPB_RET from hardware to userspace. [Tom]
+    Derive AMD_IBPB from X86_FEATURE_SPEC_CTRL rather than
+    X86_FEATURE_IBPB. [Tom]
+    Clarify semantics of X86_FEATURE_IBPB.
 
-diff --git a/arch/s390/kernel/vdso64/vgetrandom-chacha.S b/arch/s390/kernel/vdso64/vgetrandom-chacha.S
-index ecd44cf0eaba..d802b0a96f41 100644
---- a/arch/s390/kernel/vdso64/vgetrandom-chacha.S
-+++ b/arch/s390/kernel/vdso64/vgetrandom-chacha.S
-@@ -144,7 +144,8 @@ SYM_FUNC_START(__arch_chacha20_blocks_nostack)
- .Lstoredone:
- 
- 	/* ++COPY3.COUNTER */
--	alsih	%r3,1
-+	/* alsih %r3,1 */
-+	.insn	rilu,0xcc0a00000000,%r3,1
- 	alcr	%r3,%r1
- 	VLVGG	COPY3,%r3,0
- 
+v2: Use IBPB_RET to identify semantic equality. [Venkatesh]
+
+Jim Mattson (3):
+  x86/cpufeatures: Define X86_FEATURE_AMD_IBPB_RET
+  KVM: x86: Advertise AMD_IBPB_RET to userspace
+  KVM: x86: AMD's IBPB is not equivalent to Intel's IBPB
+
+ arch/x86/include/asm/cpufeatures.h |  3 ++-
+ arch/x86/kvm/cpuid.c               | 12 +++++++++---
+ 2 files changed, 11 insertions(+), 4 deletions(-)
+
+-- 
+2.46.0.662.g92d0881bb0-goog
+
 
