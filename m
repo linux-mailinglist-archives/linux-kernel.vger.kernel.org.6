@@ -1,127 +1,136 @@
-Return-Path: <linux-kernel+bounces-328775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E0F9788A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:13:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DD2F9788A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:13:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D77DA285910
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:13:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E20EC286A1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:13:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1905B1465BD;
-	Fri, 13 Sep 2024 19:12:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 565291487CE;
+	Fri, 13 Sep 2024 19:12:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="djnJnZuT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="VMzpyeRN"
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123FA824A1;
-	Fri, 13 Sep 2024 19:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BBCD126C01;
+	Fri, 13 Sep 2024 19:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726254747; cv=none; b=FkebZY7bt3vHucSi5WzylRTNPZmOgEWlsX7E6vOGyowROmOkI3q+mydTWEOkuhLYhd229fwyV04khBvs+qP5m5BDde88pTXrOc4LeoNC36ccOZp07o32lFTIuLFuqCL+7zwOdi5AZKIhBujIKXUbIz8pkAixLfEhl3HgmQFmtCA=
+	t=1726254761; cv=none; b=C3J4tAZnv8iabrMEljKAhQFXBVQh2dQQXJ9RpKg7doOU0jvlK0GkdvNzElTJHDYpwzgBBf3AkXxuiEK8UWdCxNd9i8Gwoq/OXF3PpPeh9YpkgDHmkp8fweusuJ9qsAtI56FmW0TNpG7uTQr/lOFZSFFi41QXaF8sRpjJ6o2l+/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726254747; c=relaxed/simple;
-	bh=Sb4+U4yLLBbIdHQbNqHJRVnEI2OoGlJZVmeNGxBQVfw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O6eCKcSaAQ/KmbnaaAI7H1QaMgGA7Lvd23n1JKk9b7UpOefw/38SSOBrDQZNaZDmWJ/jMXB4ZbBNBEhvK2GfvSjed6700K54YKKIz7IBNTDIfItMDz+G23vTB1DoyccfqCB7KLMjg9OL7Oau4v8rKXWeZltKRG4frjoDqVQI48s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=djnJnZuT; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726254746; x=1757790746;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Sb4+U4yLLBbIdHQbNqHJRVnEI2OoGlJZVmeNGxBQVfw=;
-  b=djnJnZuTdho61ECd8kSJrCn3Q3CNveE61Dosie6cy1+irxB/TwY8S5Nu
-   IrfWCwm4cujrQxqZp9A6KzNAVc6irr7eKL9ynzzyqM2oDV4f6P4oc6geq
-   fx4xNpoLf/53RO27yjRYA8z+565+qoe1Pn6tJMrnL81eFFyyWOkRW05an
-   YhDVBEhO9vOtiZr3hWA7sJ+DgCZ87bXTk5mM42EfNNhFR6lNlZGb2DS1D
-   2NdkaFFM5iMRsZhFkGYz1UHvQGwoWsnQm9LoABuUSSWfJ2L0TRUB4XuUE
-   51xMlzHrhAFnJ1wDWlalwjxO9ZN99vbd2HAMiD/ism+ILFxrXjpWAmOE9
-   w==;
-X-CSE-ConnectionGUID: awwraUMMTjyLvDECYh2Uog==
-X-CSE-MsgGUID: AX9E4+IaTwqQeXm0fIqCqA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="42678170"
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="42678170"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 12:12:16 -0700
-X-CSE-ConnectionGUID: xncgdaqeQZGRFzl9BR+Qjw==
-X-CSE-MsgGUID: 0ZoL7sxoSLK4ctgPWWQiEg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="72930342"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 12:12:14 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1spBiF-00000008OxM-1Mtp;
-	Fri, 13 Sep 2024 22:12:11 +0300
-Date: Fri, 13 Sep 2024 22:12:11 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, kees@kernel.org,
-	gustavoars@kernel.org, mcgrof@kernel.org,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RESEND PATCH v2] params: Annotate struct module_param_attrs
- with __counted_by()
-Message-ID: <ZuSOi0Hj16oTrHGU@smile.fi.intel.com>
-References: <20240909162725.1805-2-thorsten.blum@toblux.com>
- <20240913164630.GA4091534@thelio-3990X>
- <ZuSHB2v7OLvagZnn@smile.fi.intel.com>
- <B46D6F09-6F81-45B3-833F-9785BBBC146F@toblux.com>
- <ZuSN5L908dFtxMVu@smile.fi.intel.com>
+	s=arc-20240116; t=1726254761; c=relaxed/simple;
+	bh=i/WaPSFd1chhL2mX04X6RMIpG+jLWmtttFyp9XWK2ns=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bF6tm+u31hAmj6niHFNKwamj/5as3S3HMIS+KWvcJM17U9ojKXWJOtrNx3ZJjoPMtD1I1yHNM/F/k3lSogeAHeIKQvFRSMakfJUfCTWmRYweCxRmozkfdt6Adklohseul4QRmswc9K5fFvB2Hwsg7DvvqfMhWkKC3CnwOFzHYpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=VMzpyeRN; arc=none smtp.client-ip=74.208.4.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
+	s=s1-ionos; t=1726254750; x=1726859550; i=parker@finest.io;
+	bh=dVQ9rbg+bDpJXJkFTaMWlx9VfHsJREbbaLMzU4KTkSs=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=VMzpyeRNOQmqBwiChX3m5oke9v8FWEQDihqtZnSWSiXNe6xdyXvwteRhI7SVNRxQ
+	 CeTiL7aEu07jlxXLSv+uVGZC43ZobKt8infaCIFqiYULvKcuHJZCvmIpoKRgwpZts
+	 cadQZhKYXFmVS3tFKRpDzxwzGsU5x+hgJ8nQwkBiwbDyENFByK5w+p6z3NFmt2m4y
+	 UcGy4rrHcV4/YEmC9T90c8jcFKtnNXfvDzgxcbTCGFFJg95dxFS3CmdJfb2DYo1s5
+	 CYH+tHAc9t2gQDYsxJqqkznJMZ5OzQsaTTsmPSP+pjeHEfZnj2pb671kjQzH1PALh
+	 /prAZKpHMlvsJuXF/Q==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from SWDEV2.connecttech.local ([98.159.241.229]) by
+ mrelay.perfora.net (mreueus002 [74.208.5.2]) with ESMTPSA (Nemesis) id
+ 0LtZ1G-1roS9y2cDs-00yWpV; Fri, 13 Sep 2024 21:12:30 +0200
+Date: Fri, 13 Sep 2024 15:12:28 -0400
+From: Parker Newman <parker@finest.io>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Parker Newman
+ <pnewman@connecttech.com>
+Subject: Re: [PATCH v1 3/6] misc: eeprom: eeprom_93cx6: Replace
+ printk(KERN_ERR ...) with pr_err()
+Message-ID: <20240913151228.2b312e9b@SWDEV2.connecttech.local>
+In-Reply-To: <ZuR8PawGrcDxCioi@smile.fi.intel.com>
+References: <cover.1726237379.git.pnewman@connecttech.com>
+	<127dcc7f60d15a1cc9007c9e5b06a1aa2b170e19.1726237379.git.pnewman@connecttech.com>
+	<ZuR8PawGrcDxCioi@smile.fi.intel.com>
+Organization: Connect Tech Inc.
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZuSN5L908dFtxMVu@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Pi22FxzqxwJEmtkGCaJx+76+eCuRmwhpcgHleOBQ6l0G+YnqCOZ
+ 2UOLuKyeBKC/5yq72+/O6Guggptgaue87OwBXyyJgBHjOi6RXA8PZOTq2X0Gxq855+77yDo
+ PSPvXoXZ95MOP9RZwpaHdElYIhPWUuzrmKIamvwjUd6gokcvsAT9VQlU18ShuSpoS5I1Hgi
+ 7HaV4BXENsiy8rPrSwwAA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:It7dLGnhpkY=;f5hJPByBkGaRzYFI0ZHca8Ptrsh
+ OWU2f8xOnOPZnHzpN+KXzIwvA7YHEoo0tIAT3rSGEkmeRZ6ZXxKQiWOln/VyuZgbQDL4UATtn
+ rTWnXNAlfHLkFYWTx78iWwRf5ydoQlzwSUHlZhQAR1v2DfqPxNtkft76QbSG3PeJX7/8GzpzP
+ O8NQUpFoUEbv3JllIPMYiTvT+MDa1rjHA7Qe5l+Ooa/egJJiJDUZVS5WRwZawlan/LrBIyN3f
+ slSAFNdKCreXeJzus9a1jiFRX44UPnG+leMw+N/Ka4VxmlTgJooqTADzfKSxocyja2EZaSPG+
+ z83FEkepBZG7AzHnSG9QhawTv+2VYNJlc2AgxYnPpBq73xduJE9m6zZxgMEJKeP1ABFgsoeLY
+ dlOdUXD3/24bmfjKxCNEWx+pKzEhEuZh2SbKUvEu/7bm868vuPKdwWdk+u5A2HqLLiiNGVuCA
+ n0mskd7xsvhMZF5Nu37hwve1cyR6C5s+NS3FpRN1qNtFHdhDJaV3EcmWMSSYNX/uc83MK/ukt
+ 2OyQXYXqT00RvI4qg82v0CJcrBzLUF4LS4jSWcymkHondHZ/uC2O2ftMXHLDMdDJcSNo7O4nA
+ 2C55iTKj0SY77tBX5kBVtbKklCXefRK2UFET6cTDSRiF7i8fPiRVzvT+AoAb1fq24Mp2Twb/C
+ /SJ8bzkX24wmzUnV59FVaDz+7qu3Lmebsdjlgz1nO2IR8gVB9iY1t1crCoMXJx9cX/0hMs/ng
+ gQBllGD4J2bcNJ1KvOzFyZIIUwv5rWENA==
 
-On Fri, Sep 13, 2024 at 10:09:25PM +0300, Andy Shevchenko wrote:
-> On Fri, Sep 13, 2024 at 09:03:06PM +0200, Thorsten Blum wrote:
-> > On 13. Sep 2024, at 20:40, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > > On Fri, Sep 13, 2024 at 09:46:30AM -0700, Nathan Chancellor wrote:
-> > >> On Mon, Sep 09, 2024 at 06:27:26PM +0200, Thorsten Blum wrote:
-> > >>> Add the __counted_by compiler attribute to the flexible array member
-> > >>> attrs to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-> > >>> CONFIG_FORTIFY_SOURCE.
-> > >>> 
-> > >>> Increment num before adding a new param_attribute to the attrs array and
-> > >>> adjust the array index accordingly. Increment num immediately after the
-> > >>> first reallocation such that the reallocation for the NULL terminator
-> > >>> only needs to add 1 (instead of 2) to mk->mp->num.
-> > >>> 
-> > >>> Use struct_size() instead of manually calculating the size for the
-> > >>> reallocation.
-> > >>> 
-> > >>> Use krealloc_array() for the additional NULL terminator.
-> > > 
-> > >>> /* Fix up all the pointers, since krealloc can move us */
-> > >>> for (i = 0; i < mk->mp->num; i++)
-> > > 
-> > > Shouldn't this for loop and followed by assignment also be -1:ed?
-> > 
-> > That should be fine as mk->mp->num was already incremented before the
-> > for-loop.
-> 
-> Exactly my point. This is behavioural change AFAICS as the original code used
-> the old (-1:ed) value, no?
+On Fri, 13 Sep 2024 20:54:05 +0300
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-Ah, I see now. It was in the original code, but closer to that loop...
+> On Fri, Sep 13, 2024 at 10:55:40AM -0400, Parker Newman wrote:
+> > From: Parker Newman <pnewman@connecttech.com>
+> >
+> > Replace printk(KERN_ERR ...) with pr_err() to improve readability.
+> >
+> > Fixes checkpatch warning:
+> >
+> > WARNING: Prefer [subsystem eg: netdev]_err([subsystem]dev, ... then
+> > dev_err(dev, ... then pr_err(...  to printk(KERN_ERR ...
+> > +			printk(KERN_ERR "%s: timeout\n", __func__);
+>
+> First of all, you probably want pr_fmt() to be defined.
 
+Good point, I will add.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> Second, I would replace the entire while loop by the read_poll_timeout()=
+ macro
+> from iopoll.h (note to use "true" for sleep before check and drop that o=
+ne from
+> before the loop in the driver).
 
+Good idea.
 
+> Naturally the pr_err() change can be combined with read_poll_timeout(), =
+but
+> if you go with pr_fmt() perhaps it still makes sense to have separate ch=
+anges.
+> I dunno which one is better, up to you.
+>
+
+Sorry if I am miss-reading but do you mean the pr_err() and pr_fmt() can b=
+e combined
+and the read_poll_timeout() change should be made in a separate patch afte=
+r?
+
+Or should I be adding the pr_fmt() define in its own patch, followed by th=
+e pr_err()
+and read_poll_timeout() in a patch?
+
+Thanks,
+Parker
 
