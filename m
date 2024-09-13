@@ -1,75 +1,74 @@
-Return-Path: <linux-kernel+bounces-327895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F263D977C64
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:41:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C3A6977C68
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:41:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32EA31C244E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:41:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E57BB26778
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8F11D88D9;
-	Fri, 13 Sep 2024 09:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014D51D9344;
+	Fri, 13 Sep 2024 09:39:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="Nlvw6BYZ"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="L6C0V1B9"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB411D7E21
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:39:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39D31D7E33
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726220369; cv=none; b=sZCjVXk0defPuqpRMosxQ+CX3D3pCFNIs+5mY2jZAWbUjO+7x3953dHe624Rn0CDVsyB7tOIlY0IRAIgRAiSyXr9CKiQEFC1PY2opfjdSBh6ebt9fch5m3bcbrZ1QT4iRsbuh1eJSE4V7uuvmsBF1ActwJ6++HYzxezDOYk2XCA=
+	t=1726220370; cv=none; b=f1BaaRlzF4PQCXrvC9kIiya9PNRLmKUdv6DWcYNjQumhGGtEC6M7TsLw0LBcOqf5pDfzZXeHfmxyDkaaryBAUqCiYk5TgYlTlnK2CURb90wmAQgCDt1ZJZM0VPOHMavdkDllvHV15vY8AeI+2cdE38L464q/mp1EkR7BZgSpz2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726220369; c=relaxed/simple;
-	bh=Tw4uEMSI5Dr5SJ/9tx+GPhyTrfSGhN6/WFouKDUT30Q=;
+	s=arc-20240116; t=1726220370; c=relaxed/simple;
+	bh=14Em+5LUfU07AZhRuhVZlV8I2kuQVcaRcYhuB3emakA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QTn+m/PX9JIID4c8EHrAQ4wAVrCba+CyLpMQV7FCn5w/xUkEBz4vM9Ywxs9kOqcnk7Uh3baMteeq7iPENKvsaZoUG+/Dp86s5+NmXi/h0+AgDQgs7OG8j0EpHyyC6cFOeDfMayUQ+tOLtxF8OZUW5TLI1BeE/EvflhCn5v5m9ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=Nlvw6BYZ; arc=none smtp.client-ip=209.85.128.41
+	 In-Reply-To:To:Cc; b=BO/c3GespiYYZtqWD2jb6rewj+YCmZBf3EnJcB1Ozmgc2JRGCYxQX6beSvzc4VA0Z9bMI3qDFZgNV6mETFuWspDzajcXJOauygMqT17+t4EFwW+kPSSDgaIlpEI6WiSCdi2p4wcLvu1VabZWAlXWhPx6TEoz4tMLb3sM2gYNR+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=L6C0V1B9; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cb60aff1eso18612145e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 02:39:26 -0700 (PDT)
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3770320574aso1379363f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 02:39:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1726220365; x=1726825165; darn=vger.kernel.org;
+        d=cloudflare.com; s=google09082023; t=1726220366; x=1726825166; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=f/F5VsUKzBY+Gvp0nTts52JPym3MtK6dVK27Lo+tSTM=;
-        b=Nlvw6BYZ76+Y74dwpyYMfEt793vm8RH9JUskZ/y3SLWDL2ffYuTq0Kdto4x1Hm+oAo
-         nNT3WMGg+nqEC1uVEqORAv9T6Tc3T6KI4Fsrh91vb+uBiZFogAgr+I+e3h6UIcZFVXfs
-         uqm5XKWevnyBcafDgvxgrW0lVbMED9g2LVfrXtGNl6g4eI48G5nxv8/SsXlZCBHQG6UJ
-         YbM+iqovUVTTjHy9c1SIZJB4aEiyrOmVYFlluDB8/igdjUB4df4HbnQx/dfXQA44BGKE
-         9QC0iF9to+jQp0hG8SPx/xFEdV9z8al62X8Zj2GKfXRPBC2NEUII9DbxfsTnABorKEl0
-         iRnA==
+        bh=8SPUqN3GZrlcNjwE+u8cOJWfk91PGP0vK3hoXybkak4=;
+        b=L6C0V1B9ThCrvHNddoT3ljveUKthVAwHmpOMbVvijk+yXwYtNmcNyorq7uVlnS/XEh
+         I2YxoCo/5/SqWFzdfSvLSdu1rD+e/6HrZm5O6ClpO3KujnXuAUjUvRghtp4nzfs5MvqA
+         B0XmM0avdW7fy2vNtkvckbZ42nK+93NKL+m9OnCBPR6pEvuSMXzNSI4A3Mp7DfnkZ89Z
+         F9/jV66nd5IGX3oOReLmT3dFnADxYDXr7VneQqkap225cS33dXbNtWDYjV4GUN9Yfr1u
+         nvyspk7NYMTVdKHRKEcg7lMmTzZJO9U55IeFyt2CAIh8EmdwGKc3tfQo3qCBa+ZjVbtZ
+         014g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726220365; x=1726825165;
+        d=1e100.net; s=20230601; t=1726220366; x=1726825166;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=f/F5VsUKzBY+Gvp0nTts52JPym3MtK6dVK27Lo+tSTM=;
-        b=NdDSWxyoF+lEJZSd9OWcwek0cQ7r8CgWOSbwROFaix8cfuwL52xBRQPIKI2pyV1HqX
-         J94vlkvTQgJft+xtWc0OZFGryMFpMdyQI4Vaf4Xnf1d4YGUNckfb6hSqMrmPxOjm2W1C
-         70GRmw50LtEMQFngusNnq+PHVh5UVw3oHvc6O7CdacLJsVrEpsaKSzRRqxaBBhcuCY6C
-         NxSoS5VMOYwk4zdz1e8KJ2Kyb1S3wJykskyfhtUaBlUp9OCGO2InpR6ylhuQyLRANkoH
-         OkenkRPouCIS15QlMo8FhuEVBNzh+3PuQcox9OtDxWcB4BGFprgNOS66xlsKsp759Lol
-         YRvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUvI3FP/qu9oL3Mor4CGJx9s8nSVPNcXU269NUba188V1GLeuobgvv+vkggfhcyia908rlWpti9T223eRc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd+Up1OfAnLGwO/1kTvN9vQRWGdfv45D5Tkv1pVIJwZFYA0LfL
-	mmYNBaRIwfOz3Muk41oJ1VAqmCLEPTHbnxcPrBJsEE2e1iy/5KWjy+psq8aKegQJ5Q35RUm6Oas
-	ux1ZvHg==
-X-Google-Smtp-Source: AGHT+IFCLnGFac4d/lytgKhxj1y4y6Vc0xqjrzbKxpeoAAZXwZWlNKOpOSOEZ8fmlHYwc00Ryjx6Ug==
-X-Received: by 2002:a05:600c:3505:b0:42c:a8d5:2df5 with SMTP id 5b1f17b1804b1-42cdb586ee0mr45446675e9.24.1726220364867;
-        Fri, 13 Sep 2024 02:39:24 -0700 (PDT)
+        bh=8SPUqN3GZrlcNjwE+u8cOJWfk91PGP0vK3hoXybkak4=;
+        b=c1JAzuKELd73NwodGDU7eSuQY9okCqqPdSn29UF/RC5YzD6OjCvu4kew80CONM7yFG
+         RLNjo58ZVGbw+8QjNI9pggSCMM3ZldGeB3kpllNtyzLyyvA8U90tnhQFuqAprlA984fg
+         jAVsa9sfANbrSfZincVJDuZXTSLJH8tIrHlL/tapNz/Sj2GcnMxWMqL+Z3Ld3Gs4SIx9
+         RTI1/mADLgoPCOS9JgzIiBIv/aMFJCiW9nJ+FyIWZLEHi1ne82yXzvsg/bK6XSh8RYkR
+         hrV1MQ4PiUHRV0O7eBo9Z3gLGmTNVIsqRsl1DV3ZeGzUIibRWA2/Z5XSohWnwRfL9ahL
+         RLvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIib4izTgULI0x3CNaVrqzT8Wr305WSQH0vdLg8uAvn8hp/gi6psOK6qlY+fI5rlaXpO95TSO9ydjtBW4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGFctqjYLsiBgG9Q5ZmWpDZlazT2p6qZ7dmGnN693o7oRplhla
+	ixwslxD8mHvZcDezeQ44e600CFRC5R7tpLQrPop2qTG6EaYLRo4KY1cbwqnNDfw=
+X-Google-Smtp-Source: AGHT+IEP6gH+9G56Ca89xPoHtYf+GM04fd32svCb2j76cjibtD28Ka5SMKWWnsCP22WUeZmsjTzWEA==
+X-Received: by 2002:a05:6000:e09:b0:374:ca92:5e44 with SMTP id ffacd0b85a97d-378c2d121d6mr3535737f8f.32.1726220365954;
+        Fri, 13 Sep 2024 02:39:25 -0700 (PDT)
 Received: from [127.0.1.1] ([2a09:bac5:3802:d2::15:37a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37895665548sm16474484f8f.34.2024.09.13.02.39.23
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37895665548sm16474484f8f.34.2024.09.13.02.39.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 02:39:24 -0700 (PDT)
+        Fri, 13 Sep 2024 02:39:25 -0700 (PDT)
 From: Tiago Lam <tiagolam@cloudflare.com>
-Date: Fri, 13 Sep 2024 10:39:19 +0100
-Subject: [RFC PATCH 1/3] ipv4: Run a reverse sk_lookup on sendmsg.
+Date: Fri, 13 Sep 2024 10:39:20 +0100
+Subject: [RFC PATCH 2/3] ipv6: Run a reverse sk_lookup on sendmsg.
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240913-reverse-sk-lookup-v1-1-e721ea003d4c@cloudflare.com>
+Message-Id: <20240913-reverse-sk-lookup-v1-2-e721ea003d4c@cloudflare.com>
 References: <20240913-reverse-sk-lookup-v1-0-e721ea003d4c@cloudflare.com>
 In-Reply-To: <20240913-reverse-sk-lookup-v1-0-e721ea003d4c@cloudflare.com>
 To: "David S. Miller" <davem@davemloft.net>, 
@@ -100,124 +99,145 @@ Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
  kernel-team@cloudflare.com
 X-Mailer: b4 0.14.1
 
-In order to check if egress traffic should be allowed through, we run a
-reverse socket lookup (i.e. normal socket lookup with the src/dst
-addresses and ports reversed) to check if the corresponding ingress
-traffic is allowed in.  Thus, if there's a sk_lookup reverse call
-returns a socket that matches the egress socket, we also let the egress
-traffic through - following the principle of, allowing return traffic to
-proceed if ingress traffic is allowed in.  The reverse lookup is only
-performed in case an sk_lookup ebpf program is attached and the source
-address and/or port for the return traffic have been modified.
+This follows the same rationale provided for the ipv4 counterpart, where
+it now runs a reverse socket lookup when source addresses and/or ports
+are changed, on sendmsg, to check whether egress traffic should be
+allowed to go through or not.
 
-The src address and port can be modified by using ancilliary messages.
-Up until now, it was possible to specify a different source address to
-sendmsg by providing it in an IP_PKTINFO anciliarry message, but there's
-no way to change the source port. This patch also extends the ancilliary
-messages supported by sendmsg to support the IP_ORIGDSTADDR ancilliary
-message, reusing the same cmsg and struct used in recvmsg - which
-already supports specifying a port.
+As with ipv4, the ipv6 sendmsg path is also extended here to support the
+IPV6_ORIGDSTADDR ancilliary message to be able to specify a source
+address/port.
 
 Suggested-by: Jakub Sitnicki <jakub@cloudflare.com>
 Signed-off-by: Tiago Lam <tiagolam@cloudflare.com>
 ---
- include/net/ip.h       |  1 +
- net/ipv4/ip_sockglue.c | 11 +++++++++++
- net/ipv4/udp.c         | 33 ++++++++++++++++++++++++++++++++-
- 3 files changed, 44 insertions(+), 1 deletion(-)
+ net/ipv6/datagram.c | 76 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ net/ipv6/udp.c      |  8 ++++--
+ 2 files changed, 82 insertions(+), 2 deletions(-)
 
-diff --git a/include/net/ip.h b/include/net/ip.h
-index c5606cadb1a5..e5753abd7247 100644
---- a/include/net/ip.h
-+++ b/include/net/ip.h
-@@ -75,6 +75,7 @@ static inline unsigned int ip_hdrlen(const struct sk_buff *skb)
- struct ipcm_cookie {
- 	struct sockcm_cookie	sockc;
- 	__be32			addr;
-+	__be16			port;
- 	int			oif;
- 	struct ip_options_rcu	*opt;
- 	__u8			protocol;
-diff --git a/net/ipv4/ip_sockglue.c b/net/ipv4/ip_sockglue.c
-index cf377377b52d..6e55bd25b5f7 100644
---- a/net/ipv4/ip_sockglue.c
-+++ b/net/ipv4/ip_sockglue.c
-@@ -297,6 +297,17 @@ int ip_cmsg_send(struct sock *sk, struct msghdr *msg, struct ipcm_cookie *ipc,
- 			ipc->addr = info->ipi_spec_dst.s_addr;
- 			break;
- 		}
-+		case IP_ORIGDSTADDR:
-+		{
-+			struct sockaddr_in *dst_addr;
-+
-+			if (cmsg->cmsg_len != CMSG_LEN(sizeof(struct sockaddr_in)))
-+				return -EINVAL;
-+			dst_addr = (struct sockaddr_in *)CMSG_DATA(cmsg);
-+			ipc->port = dst_addr->sin_port;
-+			ipc->addr = dst_addr->sin_addr.s_addr;
-+			break;
-+		}
- 		case IP_TTL:
- 			if (cmsg->cmsg_len != CMSG_LEN(sizeof(int)))
- 				return -EINVAL;
-diff --git a/net/ipv4/udp.c b/net/ipv4/udp.c
-index 49c622e743e8..b9dc0a88b0c6 100644
---- a/net/ipv4/udp.c
-+++ b/net/ipv4/udp.c
-@@ -1060,6 +1060,7 @@ int udp_sendmsg(struct sock *sk, struct msghdr *msg, size_t len)
- 	DECLARE_SOCKADDR(struct sockaddr_in *, usin, msg->msg_name);
- 	struct flowi4 fl4_stack;
- 	struct flowi4 *fl4;
-+	__u8 flow_flags = inet_sk_flowi_flags(sk);
- 	int ulen = len;
- 	struct ipcm_cookie ipc;
- 	struct rtable *rt = NULL;
-@@ -1179,6 +1180,37 @@ int udp_sendmsg(struct sock *sk, struct msghdr *msg, size_t len)
- 		}
- 	}
+diff --git a/net/ipv6/datagram.c b/net/ipv6/datagram.c
+index fff78496803d..4214dda1c320 100644
+--- a/net/ipv6/datagram.c
++++ b/net/ipv6/datagram.c
+@@ -756,6 +756,27 @@ void ip6_datagram_recv_ctl(struct sock *sk, struct msghdr *msg,
+ }
+ EXPORT_SYMBOL_GPL(ip6_datagram_recv_ctl);
  
-+	/* If we're egressing with a different source address and/or port, we
-+	 * perform a reverse socket lookup.  The rationale behind this is that we
-+	 * can allow return UDP traffic that has ingressed through sk_lookup to
-+	 * also egress correctly. In case this the reverse lookup fails.
-+	 *
-+	 * The lookup is performed if either source address and/or port changed, and
-+	 * neither is "0".
-+	 */
++static inline bool reverse_sk_lookup(struct flowi6 *fl6, struct sock *sk,
++				     struct in6_addr *saddr, __be16 sport)
++{
 +	if (static_branch_unlikely(&bpf_sk_lookup_enabled) &&
-+	    !connected &&
-+	    (ipc.port && ipc.addr) &&
-+	    (inet->inet_saddr != ipc.addr || inet->inet_sport != ipc.port)) {
++	    (saddr && sport) &&
++	    (ipv6_addr_cmp(&sk->sk_v6_rcv_saddr, saddr) || inet_sk(sk)->inet_sport != sport)) {
 +		struct sock *sk_egress;
 +
-+		bpf_sk_lookup_run_v4(sock_net(sk), IPPROTO_UDP,
-+				     daddr, dport, ipc.addr, ntohs(ipc.port), 1, &sk_egress);
-+		if (IS_ERR_OR_NULL(sk_egress) ||
-+		    atomic64_read(&sk_egress->sk_cookie) != atomic64_read(&sk->sk_cookie)) {
-+			net_info_ratelimited("No reverse socket lookup match for local addr %pI4:%d remote addr %pI4:%d\n",
-+					     &ipc.addr, ntohs(ipc.port), &daddr, ntohs(dport));
-+		} else {
-+			/* Override the source port to use with the one we got in cmsg,
-+			 * and tell routing to let us use a non-local address. Otherwise
-+			 * route lookups will fail with non-local source address when
-+			 * IP_TRANSPARENT isn't set.
-+			 */
-+			inet->inet_sport = ipc.port;
-+			flow_flags |= FLOWI_FLAG_ANYSRC;
-+		}
++		bpf_sk_lookup_run_v6(sock_net(sk), IPPROTO_UDP, &fl6->daddr, fl6->fl6_dport,
++				     saddr, ntohs(sport), 0, &sk_egress);
++		if (!IS_ERR_OR_NULL(sk_egress) &&
++		    atomic64_read(&sk_egress->sk_cookie) == atomic64_read(&sk->sk_cookie))
++			return true;
++
++		net_info_ratelimited("No reverse socket lookup match for local addr %pI6:%d remote addr %pI6:%d\n",
++				     &saddr, ntohs(sport), &fl6->daddr, ntohs(fl6->fl6_dport));
 +	}
 +
- 	saddr = ipc.addr;
- 	ipc.addr = faddr = daddr;
++	return false;
++}
++
+ int ip6_datagram_send_ctl(struct net *net, struct sock *sk,
+ 			  struct msghdr *msg, struct flowi6 *fl6,
+ 			  struct ipcm6_cookie *ipc6)
+@@ -844,7 +865,62 @@ int ip6_datagram_send_ctl(struct net *net, struct sock *sk,
  
-@@ -1223,7 +1255,6 @@ int udp_sendmsg(struct sock *sk, struct msghdr *msg, size_t len)
+ 			break;
+ 		    }
++		case IPV6_ORIGDSTADDR:
++			{
++			struct sockaddr_in6 *sockaddr_in;
++			struct net_device *dev = NULL;
++
++			if (cmsg->cmsg_len < CMSG_LEN(sizeof(struct sockaddr_in6))) {
++				err = -EINVAL;
++				goto exit_f;
++			}
++
++			sockaddr_in = (struct sockaddr_in6 *)CMSG_DATA(cmsg);
++
++			addr_type = __ipv6_addr_type(&sockaddr_in->sin6_addr);
++
++			if (addr_type & IPV6_ADDR_LINKLOCAL)
++				return -EINVAL;
++
++			/* If we're egressing with a different source address and/or port, we
++			 * perform a reverse socket lookup.  The rationale behind this is that we
++			 * can allow return UDP traffic that has ingressed through sk_lookup to
++			 * also egress correctly. In case the reverse lookup fails, we
++			 * continue with the normal path.
++			 *
++			 * The lookup is performed if either source address and/or port changed, and
++			 * neither is "0".
++			 */
++			if (reverse_sk_lookup(fl6, sk, &sockaddr_in->sin6_addr,
++					      sockaddr_in->sin6_port)) {
++				/* Override the source port and address to use with the one we
++				 * got in cmsg and bail early.
++				 */
++				fl6->saddr = sockaddr_in->sin6_addr;
++				fl6->fl6_sport = sockaddr_in->sin6_port;
++				break;
++			}
  
- 	if (!rt) {
- 		struct net *net = sock_net(sk);
--		__u8 flow_flags = inet_sk_flowi_flags(sk);
++			if (addr_type != IPV6_ADDR_ANY) {
++				int strict = __ipv6_addr_src_scope(addr_type) <= IPV6_ADDR_SCOPE_LINKLOCAL;
++
++				if (!ipv6_can_nonlocal_bind(net, inet_sk(sk)) &&
++				    !ipv6_chk_addr_and_flags(net,
++							     &sockaddr_in->sin6_addr,
++							     dev, !strict, 0,
++							     IFA_F_TENTATIVE) &&
++				    !ipv6_chk_acast_addr_src(net, dev,
++							     &sockaddr_in->sin6_addr))
++					err = -EINVAL;
++				else
++					fl6->saddr = sockaddr_in->sin6_addr;
++			}
++
++			if (err)
++				goto exit_f;
++
++			break;
++			}
+ 		case IPV6_FLOWINFO:
+ 			if (cmsg->cmsg_len < CMSG_LEN(4)) {
+ 				err = -EINVAL;
+diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
+index 6602a2e9cdb5..6121cbb71ad3 100644
+--- a/net/ipv6/udp.c
++++ b/net/ipv6/udp.c
+@@ -1476,6 +1476,12 @@ int udpv6_sendmsg(struct sock *sk, struct msghdr *msg, size_t len)
  
- 		fl4 = &fl4_stack;
+ 	fl6->flowi6_uid = sk->sk_uid;
  
++	/* We use fl6's daddr and fl6_sport in the reverse sk_lookup done
++	 * within ip6_datagram_send_ctl() now.
++	 */
++	fl6->daddr = *daddr;
++	fl6->fl6_sport = inet->inet_sport;
++
+ 	if (msg->msg_controllen) {
+ 		opt = &opt_space;
+ 		memset(opt, 0, sizeof(struct ipv6_txoptions));
+@@ -1511,10 +1517,8 @@ int udpv6_sendmsg(struct sock *sk, struct msghdr *msg, size_t len)
+ 
+ 	fl6->flowi6_proto = sk->sk_protocol;
+ 	fl6->flowi6_mark = ipc6.sockc.mark;
+-	fl6->daddr = *daddr;
+ 	if (ipv6_addr_any(&fl6->saddr) && !ipv6_addr_any(&np->saddr))
+ 		fl6->saddr = np->saddr;
+-	fl6->fl6_sport = inet->inet_sport;
+ 
+ 	if (cgroup_bpf_enabled(CGROUP_UDP6_SENDMSG) && !connected) {
+ 		err = BPF_CGROUP_RUN_PROG_UDP6_SENDMSG_LOCK(sk,
 
 -- 
 2.34.1
