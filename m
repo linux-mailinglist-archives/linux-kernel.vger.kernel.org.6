@@ -1,445 +1,145 @@
-Return-Path: <linux-kernel+bounces-328629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B39C978699
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:23:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BBEC97869D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:23:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2147628635B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:23:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 774911C209B7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786E483A17;
-	Fri, 13 Sep 2024 17:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F1180BEC;
+	Fri, 13 Sep 2024 17:23:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kMZUTS2n"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GKGKuXZH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7AA5E093
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 17:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4E683A09;
+	Fri, 13 Sep 2024 17:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726248185; cv=none; b=TtaMKSxNHhAQfUUBbC/nXbu/P2JzmzZjuCKaePzsSt6RR3wPr+0HbOh7j0dP/QcPoUYhuPcXPFwbLhPi9g8wGgFP9L2ji1BGLUmrT871j40ZhkJ6xnTpQNDABdMLrJ5HIgOajO+OKhEqrvZcfJQaQrtCnJMFeG8cS0YNU1p9FMM=
+	t=1726248210; cv=none; b=bXzk8OM53WLny7AsNhxxB+4hn9Xmvfjyr3x5p/Mnzub4wsRCoSvYmrs+jMjjA9JoUR5sywhBSWmTEBsSZRJspShRvvvsn3ZNWNT1UsBPpA0VJ8KswfALUf/ksQKZChrp/rsUallHzENtyOprCevlEUtbOzQGRjiEKyf5ESsgV8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726248185; c=relaxed/simple;
-	bh=oRkocJSd/7+lOuq/Aj61DDshaRehSqcZE15uZ57g48M=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=oHKlCsr/VNKJQWQalICnC3/luWxpBXTXwuN3L4YtGXOptvbS5eatmdCm4iIk+brjaAh8blIp7l8yW9qf/Y/5bRlLOJ/XIoBrJYoyejXzSqm6Nh3GWD0xZZj9+SUFCdPxTo/u0Ij6uimQrhN9LIOloQfPN22Fu9QB1TyreukKaxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kMZUTS2n; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-207510f3242so14316285ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 10:23:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726248182; x=1726852982; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wT+cOzEvcG5FJbo1fU+OYHQAxhT9UkXErX1ndZGNr/0=;
-        b=kMZUTS2nrYqiFEzzXSeKXPrrgobivB6i+IuOUagxPNzy+xuot1Qf80rplpq7KlSfU2
-         mbWpzhzZcEkZe0FGGD6ZuNRHeDrk7+Z1Z15k2c8IM6kNn3mQ1m9uFDmNBfGuArrBVck4
-         ggsUDVcLlsigN+lgZ067EJlk2ZMlFfhHjIogPipC0ezBVTDfbsIQPeEhnBm4K4lA/WCp
-         GZM7tyMouWXdetSQ6Nm/XBqj81CDPgi4BTgGIubNhWh+NfzENEj6jJ+7iFmq5mnkzNgS
-         onVZeR1q0+McTt3cY34A8UALW+rcro6Xg0N/BrwtpY0Qpkrd3DKmEdLfg6uwHMEfRgrg
-         ilJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726248182; x=1726852982;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wT+cOzEvcG5FJbo1fU+OYHQAxhT9UkXErX1ndZGNr/0=;
-        b=ogwQL3qz29Gk83kK00qwKMSagcqmAozDHZEW1oE/4zuQdpxGAY8VF1gGoSZpoddAiL
-         HvvPVyfrYeQz0KEJWWelTpK71YbuCFUNcWHhLpZ1X35GO1NgkAQsTeQggeu0HYK7I+CC
-         FAAzh4URWFerBuQLaZlGPH1t7i0clKUbM2hzxkvT4DnOJQco4ynacsc8R5owr9ikRHoC
-         8+V1Eph5w2bequrO8rSGCBtFceRJ5r1P93ul/JNjQ2tt0HpC0LDdwMgQTw45QVZHnWu5
-         b0aLUrsAgSsa+ylxw3/Fo2E3plbVAAf8sRfxqm/y7G/QZAB/wBnF14/Ax6N921ti35q/
-         u4xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKiEn5tDfoNtWSHSKvZPsUl+JtN3dvBlX5IqkA/F5Ljk1KvoozDft8TWqxltw5Rp2ISBwimfDPTC1i5zg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7un1ciunhh31p+cAIhHjmD7w6XXC3Ijpvip2lWLt9hbS4r3Wi
-	mvopoV8jBjnbaVVDp3SBIt4IyhLGJx7+eIJ0o7ncjsu+xLK3IIYaLfbu/rBdlJspjYNQdS91LM/
-	Ogg==
-X-Google-Smtp-Source: AGHT+IHw+cTGHlKYQRf5nJBmRxFXQ4dq11AW/LKUU4aY68mu8lAywm+kQXeXAdqpiw1qAoMzo6VA/cjdk8Y=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:903:2302:b0:206:a6c5:d2a5 with SMTP id
- d9443c01a7336-20782bc1d2amr1943625ad.11.1726248181980; Fri, 13 Sep 2024
- 10:23:01 -0700 (PDT)
-Date: Fri, 13 Sep 2024 10:23:00 -0700
-In-Reply-To: <ZuP5eNXFCljzRgWo@yzhao56-desk.sh.intel.com>
+	s=arc-20240116; t=1726248210; c=relaxed/simple;
+	bh=I0UV8Tw3BxBdPIsVqWhTYO5nLNoEjYYcamPX9Hh+ADw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jyypaw2WK0X+TxEalj32GDEimfs3TG3FeYMB3zspqcrieSMPjv+FltwhvLWJkEktO6fbYVq4+LPRCrLPoGKWdvr80c1O464DBiDrHSGqdlj/fBLAwJErlTw7Kqn/G/HEWu9LjH8USW2fGa7dGhzoOBHR7r675hofSFC1IXgu80Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GKGKuXZH; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726248209; x=1757784209;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=I0UV8Tw3BxBdPIsVqWhTYO5nLNoEjYYcamPX9Hh+ADw=;
+  b=GKGKuXZHqle5MUSPRgOAHWBMW2xA9zUQXL+OsamycTtSZUrBTSDcrGqm
+   T5QyXz1+NlOgh2CLzMMVA0QC/KTt0pIfhvLj3P0Ogo8DJBZZP1wMy47Bq
+   jIlKzDNAnZ49rhkcmZJZ0q2EPXlmwBQRDGpy8hzlA0FDFbHwOhSprLDm+
+   Kp9zLDjT+pd1OmspP/RjUjVvNGrNO41zeJtKtSMBtGA/6CHYYa+uJdgaL
+   SllBcvTTHi2LW5H1PeC4xmgrNAUWjKqo6zOsICCWfAta+IkS7OX5sOBPI
+   v58+Vah1S3uroLVFnVagcJXHkQm6Ehaz+iuVQYooqHN9kjJIsRi668CLd
+   Q==;
+X-CSE-ConnectionGUID: x2RWrNWdTkCF7tj2hP+cDA==
+X-CSE-MsgGUID: fQdyXTMvQziFJzO1X+eLyA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="13515768"
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="13515768"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 10:23:28 -0700
+X-CSE-ConnectionGUID: 8mpxKhqYR5WfdRAun5ktnQ==
+X-CSE-MsgGUID: muCD5ygXQZGAiIe9WgOPrQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="98978799"
+Received: from ccbilbre-mobl3.amr.corp.intel.com (HELO [10.124.220.219]) ([10.124.220.219])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 10:23:28 -0700
+Message-ID: <e02558e6-d315-4b0e-bc0c-fb4d8a043c10@intel.com>
+Date: Fri, 13 Sep 2024 10:23:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <6449047b-2783-46e1-b2a9-2043d192824c@redhat.com>
- <b012360b4d14c0389bcb77fc8e9e5d739c6cc93d.camel@intel.com>
- <Zt9kmVe1nkjVjoEg@google.com> <1bbe3a78-8746-4db9-a96c-9dc5f1190f16@redhat.com>
- <ZuBQYvY6Ib4ZYBgx@google.com> <CABgObfayLGyWKERXkU+0gjeUg=Sp3r7GEQU=+13sUMpo36weWg@mail.gmail.com>
- <ZuBsTlbrlD6NHyv1@google.com> <655170f6a09ad892200cd033efe5498a26504fec.camel@intel.com>
- <ZuCE_KtmXNi0qePb@google.com> <ZuP5eNXFCljzRgWo@yzhao56-desk.sh.intel.com>
-Message-ID: <ZuR09EqzU1WbQYGd@google.com>
-Subject: Re: [PATCH 09/21] KVM: TDX: Retry seamcall when TDX_OPERAND_BUSY with
- operand SEPT
-From: Sean Christopherson <seanjc@google.com>
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	Yuan Yao <yuan.yao@intel.com>, Kai Huang <kai.huang@intel.com>, 
-	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"dmatlack@google.com" <dmatlack@google.com>, "nik.borisov@suse.com" <nik.borisov@suse.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/6] x86/tdx: Fix "in-kernel MMIO" check
+To: Alexey Gladkov <legion@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-coco@lists.linux.dev
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Yuan Yao <yuan.yao@intel.com>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, Yuntao Wang <ytcoode@gmail.com>,
+ Kai Huang <kai.huang@intel.com>, Baoquan He <bhe@redhat.com>,
+ Oleg Nesterov <oleg@redhat.com>, cho@microsoft.com, decui@microsoft.com,
+ John.Starks@microsoft.com, stable@vger.kernel.org
+References: <cover.1725622408.git.legion@kernel.org>
+ <cover.1726237595.git.legion@kernel.org>
+ <565a804b80387970460a4ebc67c88d1380f61ad1.1726237595.git.legion@kernel.org>
+ <385cb72c-1220-484a-80db-9f5aeeca8484@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <385cb72c-1220-484a-80db-9f5aeeca8484@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 13, 2024, Yan Zhao wrote:
-> This is a lock status report of TDX module for current SEAMCALL retry issue
-> based on code in TDX module public repo https://github.com/intel/tdx-module.git
-> branch TDX_1.5.05.
+On 9/13/24 10:18, Dave Hansen wrote:
+...
+>> Ensure that the target MMIO address is within the kernel before decoding
+>> instruction.
 > 
-> TL;DR:
-> - tdh_mem_track() can contend with tdh_vp_enter().
-> - tdh_vp_enter() contends with tdh_mem*() when 0-stepping is suspected.
+> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
 
-The zero-step logic seems to be the most problematic.  E.g. if KVM is trying to
-install a page on behalf of two vCPUs, and KVM resumes the guest if it encounters
-a FROZEN_SPTE when building the non-leaf SPTEs, then one of the vCPUs could
-trigger the zero-step mitigation if the vCPU that "wins" and gets delayed for
-whatever reason.
+Oh, and please add these to anything you cc:stable@ on:
 
-Since FROZEN_SPTE is essentially bit-spinlock with a reaaaaaly slow slow-path,
-what if instead of resuming the guest if a page fault hits FROZEN_SPTE, KVM retries
-the fault "locally", i.e. _without_ redoing tdh_vp_enter() to see if the vCPU still
-hits the fault?
-
-For non-TDX, resuming the guest and letting the vCPU retry the instruction is
-desirable because in many cases, the winning task will install a valid mapping
-before KVM can re-run the vCPU, i.e. the fault will be fixed before the
-instruction is re-executed.  In the happy case, that provides optimal performance
-as KVM doesn't introduce any extra delay/latency.
-
-But for TDX, the math is different as the cost of a re-hitting a fault is much,
-much higher, especially in light of the zero-step issues.
-
-E.g. if the TDP MMU returns a unique error code for the frozen case, and
-kvm_mmu_page_fault() is modified to return the raw return code instead of '1',
-then the TDX EPT violation path can safely retry locally, similar to the do-while
-loop in kvm_tdp_map_page().
-
-The only part I don't like about this idea is having two "retry" return values,
-which creates the potential for bugs due to checking one but not the other.
-
-Hmm, that could be avoided by passing a bool pointer as an out-param to communicate
-to the TDX S-EPT fault handler that the SPTE is frozen.  I think I like that
-option better even though the out-param is a bit gross, because it makes it more
-obvious that the "frozen_spte" is a special case that doesn't need attention for
-most paths.
-
-> - tdg_mem_page_accept() can contend with other tdh_mem*().
-> 
-> Proposal:
-> - Return -EAGAIN directly in ops link_external_spt/set_external_spte when
->   tdh_mem_sept_add()/tdh_mem_page_aug() returns BUSY.
-
-What is the result of returning -EAGAIN?  E.g. does KVM redo tdh_vp_enter()?
-
-Also tdh_mem_sept_add() is strictly pre-finalize, correct?  I.e. should never
-contend with tdg_mem_page_accept() because vCPUs can't yet be run.
-
-Similarly, can tdh_mem_page_aug() actually contend with tdg_mem_page_accept()?
-The page isn't yet mapped, so why would the guest be allowed to take a lock on
-the S-EPT entry?
-
-> - Kick off vCPUs at the beginning of page removal path, i.e. before the
->   tdh_mem_range_block().
->   Set a flag and disallow tdh_vp_enter() until tdh_mem_page_remove() is done.
-
-This is easy enough to do via a request, e.g. see KVM_REQ_MCLOCK_INPROGRESS.
-
->   (one possible optimization:
->    since contention from tdh_vp_enter()/tdg_mem_page_accept should be rare,
->    do not kick off vCPUs in normal conditions.
->    When SEAMCALL BUSY happens, retry for once, kick off vCPUs and do not allow
-
-Which SEAMCALL is this specifically?  tdh_mem_range_block()?
-
->    TD enter until page removal completes.)
-
-
-Idea #1:
----
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index b45258285c9c..8113c17bd2f6 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -4719,7 +4719,7 @@ static int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code,
-                        return -EINTR;
-                cond_resched();
-                r = kvm_mmu_do_page_fault(vcpu, gpa, error_code, true, NULL, level);
--       } while (r == RET_PF_RETRY);
-+       } while (r == RET_PF_RETRY || r == RET_PF_RETRY_FOZEN);
- 
-        if (r < 0)
-                return r;
-@@ -6129,7 +6129,7 @@ int noinline kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 err
-                vcpu->stat.pf_spurious++;
- 
-        if (r != RET_PF_EMULATE)
--               return 1;
-+               return r;
- 
- emulate:
-        return x86_emulate_instruction(vcpu, cr2_or_gpa, emulation_type, insn,
-diff --git a/arch/x86/kvm/mmu/mmu_internal.h b/arch/x86/kvm/mmu/mmu_internal.h
-index 8d3fb3c8c213..690f03d7daae 100644
---- a/arch/x86/kvm/mmu/mmu_internal.h
-+++ b/arch/x86/kvm/mmu/mmu_internal.h
-@@ -256,12 +256,15 @@ int kvm_tdp_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault);
-  * and of course kvm_mmu_do_page_fault().
-  *
-  * RET_PF_CONTINUE: So far, so good, keep handling the page fault.
-+ * RET_PF_FIXED: The faulting entry has been fixed.
-  * RET_PF_RETRY: let CPU fault again on the address.
-+ * RET_PF_RETRY_FROZEN: One or more SPTEs related to the address is frozen.
-+ *                     Let the CPU fault again on the address, or retry the
-+ *                     fault "locally", i.e. without re-entering the guest.
-  * RET_PF_EMULATE: mmio page fault, emulate the instruction directly.
-  * RET_PF_WRITE_PROTECTED: the gfn is write-protected, either unprotected the
-  *                         gfn and retry, or emulate the instruction directly.
-  * RET_PF_INVALID: the spte is invalid, let the real page fault path update it.
-- * RET_PF_FIXED: The faulting entry has been fixed.
-  * RET_PF_SPURIOUS: The faulting entry was already fixed, e.g. by another vCPU.
-  *
-  * Any names added to this enum should be exported to userspace for use in
-@@ -271,14 +274,18 @@ int kvm_tdp_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault);
-  * on -errno return values.  Somewhat arbitrarily use '0' for CONTINUE, which
-  * will allow for efficient machine code when checking for CONTINUE, e.g.
-  * "TEST %rax, %rax, JNZ", as all "stop!" values are non-zero.
-+ *
-+ * Note #2, RET_PF_FIXED _must_ be '1', so that KVM's -errno/0/1 return code
-+ * scheme, where 1==success, translates '1' to RET_PF_FIXED.
-  */
- enum {
-        RET_PF_CONTINUE = 0,
-+       RET_PF_FIXED    = 1,
-        RET_PF_RETRY,
-+       RET_PF_RETRY_FROZEN,
-        RET_PF_EMULATE,
-        RET_PF_WRITE_PROTECTED,
-        RET_PF_INVALID,
--       RET_PF_FIXED,
-        RET_PF_SPURIOUS,
- };
- 
-diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-index 5a475a6456d4..cbf9e46203f3 100644
---- a/arch/x86/kvm/mmu/tdp_mmu.c
-+++ b/arch/x86/kvm/mmu/tdp_mmu.c
-@@ -1174,6 +1174,8 @@ int kvm_tdp_mmu_map(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
- 
- retry:
-        rcu_read_unlock();
-+       if (ret == RET_PF_RETRY && is_frozen_spte(iter.old_spte))
-+               return RET_PF_RETRY_FOZEN;
-        return ret;
- }
- 
----
-
-
-Idea #2:
----
- arch/x86/include/asm/kvm_host.h |  2 +-
- arch/x86/kvm/mmu/mmu.c          | 12 ++++++------
- arch/x86/kvm/mmu/mmu_internal.h | 15 ++++++++++++---
- arch/x86/kvm/mmu/tdp_mmu.c      |  1 +
- arch/x86/kvm/svm/svm.c          |  2 +-
- arch/x86/kvm/vmx/vmx.c          |  4 ++--
- 6 files changed, 23 insertions(+), 13 deletions(-)
-
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 46e0a466d7fb..200fecd1de88 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -2183,7 +2183,7 @@ unsigned long __kvm_emulate_hypercall(struct kvm_vcpu *vcpu, unsigned long nr,
- int kvm_emulate_hypercall(struct kvm_vcpu *vcpu);
- 
- int kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 error_code,
--		       void *insn, int insn_len);
-+		       void *insn, int insn_len, bool *frozen_spte);
- void kvm_mmu_print_sptes(struct kvm_vcpu *vcpu, gpa_t gpa, const char *msg);
- void kvm_mmu_invlpg(struct kvm_vcpu *vcpu, gva_t gva);
- void kvm_mmu_invalidate_addr(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index b45258285c9c..207840a316d3 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -4283,7 +4283,7 @@ void kvm_arch_async_page_ready(struct kvm_vcpu *vcpu, struct kvm_async_pf *work)
- 		return;
- 
- 	r = kvm_mmu_do_page_fault(vcpu, work->cr2_or_gpa, work->arch.error_code,
--				  true, NULL, NULL);
-+				  true, NULL, NULL, NULL);
- 
- 	/*
- 	 * Account fixed page faults, otherwise they'll never be counted, but
-@@ -4627,7 +4627,7 @@ int kvm_handle_page_fault(struct kvm_vcpu *vcpu, u64 error_code,
- 		trace_kvm_page_fault(vcpu, fault_address, error_code);
- 
- 		r = kvm_mmu_page_fault(vcpu, fault_address, error_code, insn,
--				insn_len);
-+				       insn_len, NULL);
- 	} else if (flags & KVM_PV_REASON_PAGE_NOT_PRESENT) {
- 		vcpu->arch.apf.host_apf_flags = 0;
- 		local_irq_disable();
-@@ -4718,7 +4718,7 @@ static int kvm_tdp_map_page(struct kvm_vcpu *vcpu, gpa_t gpa, u64 error_code,
- 		if (signal_pending(current))
- 			return -EINTR;
- 		cond_resched();
--		r = kvm_mmu_do_page_fault(vcpu, gpa, error_code, true, NULL, level);
-+		r = kvm_mmu_do_page_fault(vcpu, gpa, error_code, true, NULL, level, NULL);
- 	} while (r == RET_PF_RETRY);
- 
- 	if (r < 0)
-@@ -6073,7 +6073,7 @@ static int kvm_mmu_write_protect_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
- }
- 
- int noinline kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 error_code,
--		       void *insn, int insn_len)
-+				void *insn, int insn_len, bool *frozen_spte)
- {
- 	int r, emulation_type = EMULTYPE_PF;
- 	bool direct = vcpu->arch.mmu->root_role.direct;
-@@ -6109,7 +6109,7 @@ int noinline kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 err
- 		vcpu->stat.pf_taken++;
- 
- 		r = kvm_mmu_do_page_fault(vcpu, cr2_or_gpa, error_code, false,
--					  &emulation_type, NULL);
-+					  &emulation_type, NULL, frozen_spte);
- 		if (KVM_BUG_ON(r == RET_PF_INVALID, vcpu->kvm))
- 			return -EIO;
- 	}
-@@ -6129,7 +6129,7 @@ int noinline kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 err
- 		vcpu->stat.pf_spurious++;
- 
- 	if (r != RET_PF_EMULATE)
--		return 1;
-+		return r;
- 
- emulate:
- 	return x86_emulate_instruction(vcpu, cr2_or_gpa, emulation_type, insn,
-diff --git a/arch/x86/kvm/mmu/mmu_internal.h b/arch/x86/kvm/mmu/mmu_internal.h
-index 8d3fb3c8c213..5b1fc77695c1 100644
---- a/arch/x86/kvm/mmu/mmu_internal.h
-+++ b/arch/x86/kvm/mmu/mmu_internal.h
-@@ -247,6 +247,9 @@ struct kvm_page_fault {
- 	 * is changing its own translation in the guest page tables.
- 	 */
- 	bool write_fault_to_shadow_pgtable;
-+
-+	/* Indicates the page fault needs to be retried due to a frozen SPTE. */
-+	bool frozen_spte;
- };
- 
- int kvm_tdp_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault);
-@@ -256,12 +259,12 @@ int kvm_tdp_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault);
-  * and of course kvm_mmu_do_page_fault().
-  *
-  * RET_PF_CONTINUE: So far, so good, keep handling the page fault.
-+ * RET_PF_FIXED: The faulting entry has been fixed.
-  * RET_PF_RETRY: let CPU fault again on the address.
-  * RET_PF_EMULATE: mmio page fault, emulate the instruction directly.
-  * RET_PF_WRITE_PROTECTED: the gfn is write-protected, either unprotected the
-  *                         gfn and retry, or emulate the instruction directly.
-  * RET_PF_INVALID: the spte is invalid, let the real page fault path update it.
-- * RET_PF_FIXED: The faulting entry has been fixed.
-  * RET_PF_SPURIOUS: The faulting entry was already fixed, e.g. by another vCPU.
-  *
-  * Any names added to this enum should be exported to userspace for use in
-@@ -271,14 +274,17 @@ int kvm_tdp_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault);
-  * on -errno return values.  Somewhat arbitrarily use '0' for CONTINUE, which
-  * will allow for efficient machine code when checking for CONTINUE, e.g.
-  * "TEST %rax, %rax, JNZ", as all "stop!" values are non-zero.
-+ *
-+ * Note #2, RET_PF_FIXED _must_ be '1', so that KVM's -errno/0/1 return code
-+ * scheme, where 1==success, translates '1' to RET_PF_FIXED.
-  */
- enum {
- 	RET_PF_CONTINUE = 0,
-+	RET_PF_FIXED    = 1,
- 	RET_PF_RETRY,
- 	RET_PF_EMULATE,
- 	RET_PF_WRITE_PROTECTED,
- 	RET_PF_INVALID,
--	RET_PF_FIXED,
- 	RET_PF_SPURIOUS,
- };
- 
-@@ -292,7 +298,8 @@ static inline void kvm_mmu_prepare_memory_fault_exit(struct kvm_vcpu *vcpu,
- 
- static inline int kvm_mmu_do_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
- 					u64 err, bool prefetch,
--					int *emulation_type, u8 *level)
-+					int *emulation_type, u8 *level,
-+					bool *frozen_spte)
- {
- 	struct kvm_page_fault fault = {
- 		.addr = cr2_or_gpa,
-@@ -341,6 +348,8 @@ static inline int kvm_mmu_do_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
- 		*emulation_type |= EMULTYPE_WRITE_PF_TO_SP;
- 	if (level)
- 		*level = fault.goal_level;
-+	if (frozen_spte)
-+		*frozen_spte = fault.frozen_spte;
- 
- 	return r;
- }
-diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-index 5a475a6456d4..e7fc5ea4b437 100644
---- a/arch/x86/kvm/mmu/tdp_mmu.c
-+++ b/arch/x86/kvm/mmu/tdp_mmu.c
-@@ -1174,6 +1174,7 @@ int kvm_tdp_mmu_map(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
- 
- retry:
- 	rcu_read_unlock();
-+	fault->frozen_spte = is_frozen_spte(iter.old_spte);
- 	return ret;
- }
- 
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 38723b0c435d..269de6a9eb13 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -2075,7 +2075,7 @@ static int npf_interception(struct kvm_vcpu *vcpu)
- 	rc = kvm_mmu_page_fault(vcpu, fault_address, error_code,
- 				static_cpu_has(X86_FEATURE_DECODEASSISTS) ?
- 				svm->vmcb->control.insn_bytes : NULL,
--				svm->vmcb->control.insn_len);
-+				svm->vmcb->control.insn_len, NULL);
- 
- 	if (rc > 0 && error_code & PFERR_GUEST_RMP_MASK)
- 		sev_handle_rmp_fault(vcpu, fault_address, error_code);
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 368acfebd476..fc2ff5d91a71 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -5822,7 +5822,7 @@ static int handle_ept_violation(struct kvm_vcpu *vcpu)
- 	if (unlikely(allow_smaller_maxphyaddr && !kvm_vcpu_is_legal_gpa(vcpu, gpa)))
- 		return kvm_emulate_instruction(vcpu, 0);
- 
--	return kvm_mmu_page_fault(vcpu, gpa, error_code, NULL, 0);
-+	return kvm_mmu_page_fault(vcpu, gpa, error_code, NULL, 0, NULL);
- }
- 
- static int handle_ept_misconfig(struct kvm_vcpu *vcpu)
-@@ -5843,7 +5843,7 @@ static int handle_ept_misconfig(struct kvm_vcpu *vcpu)
- 		return kvm_skip_emulated_instruction(vcpu);
- 	}
- 
--	return kvm_mmu_page_fault(vcpu, gpa, PFERR_RSVD_MASK, NULL, 0);
-+	return kvm_mmu_page_fault(vcpu, gpa, PFERR_RSVD_MASK, NULL, 0, NULL);
- }
- 
- static int handle_nmi_window(struct kvm_vcpu *vcpu)
-
-base-commit: bc87a2b4b5508d247ed2c30cd2829969d168adfe
--- 
+Fixes: 31d58c4e557d ("x86/tdx: Handle in-kernel MMIO")
 
 
