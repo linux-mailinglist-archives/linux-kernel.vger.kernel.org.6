@@ -1,434 +1,110 @@
-Return-Path: <linux-kernel+bounces-328002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2758977D95
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:35:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6327977D66
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE6341C20FF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:35:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 513BA1F21332
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B169C1DCB07;
-	Fri, 13 Sep 2024 10:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B571DA0E9;
+	Fri, 13 Sep 2024 10:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h+jN4lGl"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WI5xJa3G"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64E91DC73E;
-	Fri, 13 Sep 2024 10:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927921D86D4;
+	Fri, 13 Sep 2024 10:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726223422; cv=none; b=deEOGBm/sC06TYCNi+bYED4Q3xaK1CvWjUsR8+K2Os6Q2CuFC7dacVC/ntD9Ok7fJI2ZUluIzfgN/707Sp+gBwh6bGKJPI8UYnlVahKPSEEU/3onmbr/JbI4kBmo59ajQvcPh16I+e/0zkF7wWcN0EjZFVmQIW4u0q4hpVj52C8=
+	t=1726223355; cv=none; b=LRD9EBTDdmKkkWeZzEnYWAjmU5g4dlPlKnDhDFFqmFg2XuJrsr9KmbtQMAxO6rWvdiD6J7R34Ij1VpdyEjnSzTC4/4RMOEkYcbXspPPU1vl4QNrBPSH8oNOabrTVtKtIQv4NjKmbO5bT84P+g8hcZrhhfLEv6UqmSMZXcp3d5gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726223422; c=relaxed/simple;
-	bh=qmf9WfIviTtJwSgU5Q0mUQTSQ+PhALIXkUuHCsZsb04=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=j/Kvcxippozd3Q5aZSA7epXnCzAwtkNtrZkJMXzDWwqChNTtY8EcM+4xS+A3fHZKfGRc4oXm9YJF3ZMY/uTdaprJqLs0sV/jV7V0HnmIDUqpNt5AZuEDgkcAN7LITgkqO/e6VAS7m/FasMS+SKMXcX3q1yCQ16DlNToGePjul1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h+jN4lGl; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71798661a52so1514827b3a.0;
-        Fri, 13 Sep 2024 03:30:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726223420; x=1726828220; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gbe7qhvT8ntO58X7PAXaQ3B+VwyPxi6oPgIOkOOFc4A=;
-        b=h+jN4lGl6bRizy1wjjrVsXaYoQdpbD8ZP4kb8OTU1CoNJXc0qWuSj6h/m+HM9oxxK1
-         g2QkqOvvfsuRFqRNQ2EGBkXbSZ0+6hEvOWhu2nK/pTbK5sxKAnIU9vvdu+0HjIaPG1qe
-         eoFH1bbWOEbuvO7z80a8tI6sOZ6l2KFgwMHiFFrzxKl/A32A8P2/9z6iWPnIg7EiTGvM
-         YLIBZhuhxfpto+wjqaNptmu2WZnlTpva7QYwGVmzn2AG47P3J2QxqNXC7O9DYSPluMZ5
-         wIFoiawLnKDbJBTF4yXKw1aM+lwpM3cDNPMhzps8sHdWG/l51O1IKaLEkdzbhWjQAK60
-         tH7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726223420; x=1726828220;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gbe7qhvT8ntO58X7PAXaQ3B+VwyPxi6oPgIOkOOFc4A=;
-        b=FDBkZUfyD/EkIH/AQW48Sfx7tjDXh0pckdOdHitz2o/3MQF04HXh7RHlRs+51Hko6l
-         8GV1qD1kmqv12g4YSOVMK5H3kU2FXpWCDLRr6cPrqc1YSjNpQQtWPCRJFJVduTDoGfpB
-         50blpaQVriSBn8aBzwh6T9o2y9i48t78g8uzEQUbXGoCKY6vZJ5T02AOIr3hFAGbyqrY
-         0YKHg/j/mz24b5dGanKDO7S3JAQ0VNmepns3AqWZgBRdnTwuOZ1Tuph+SIHBSFsrwq3b
-         0IGya8b1EaR3e9gC8v6COX+qHnIcMsUHHZ5TM2Kr0em+HcorOTmlOele1hpcGV5iXLKZ
-         3i4A==
-X-Forwarded-Encrypted: i=1; AJvYcCUpqB/C1KtkE33cvbkGOGcOsgF6dRyZ9P0Ebca0L6BMgh2lBjAxVfTc/gminQf3KK4PWOCb7wXOXpW07Oc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJpqq3p5x2+ZcCdbJFpKY2uDIW99Wzlbbn77jm2VXTgrFm/kKn
-	t27n/1iPnHl7VCf/sZP+vCupymipExa/Ne62xEXhVy2C2uX18heg
-X-Google-Smtp-Source: AGHT+IHxTFxmRKrnbhleEqE6JxqzNirwwJ12/WWWr2Ot9bMNvdHIfhdDoOCmOr0EuN42c59dGphWcQ==
-X-Received: by 2002:a05:6a00:1d96:b0:714:2336:fa91 with SMTP id d2e1a72fcca58-71907f71a66mr24166023b3a.14.1726223420064;
-        Fri, 13 Sep 2024 03:30:20 -0700 (PDT)
-Received: from localhost.localdomain ([2402:7500:568:acb8:4bcf:ada3:4620:3cfb])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7db1fad0ac6sm3137683a12.0.2024.09.13.03.30.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 03:30:19 -0700 (PDT)
-From: Victor Shih <victorshihgli@gmail.com>
-To: ulf.hansson@linaro.org,
-	adrian.hunter@intel.com
-Cc: linux-mmc@vger.kernel.org,
+	s=arc-20240116; t=1726223355; c=relaxed/simple;
+	bh=i6ULjdQFx3hSTUi2FClPl+Wv7jWBPBdc7fIJZO9A84g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K3aSvwlVMEMc1SVuW21aP+EJ2fYe+AA+tjtgPWtGAndiKjH3EmBXdFlPW9eKoBWKzgsz+8AGDInnR60kM/wA0jPMM2YJsJtQAHBTGFQIGWygGTI/3S9MvHZvQzF45XgR93HlGJcY/VmSMqhvADWiQT8WauQXw0/LlYO4eiDiqQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WI5xJa3G; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726223354; x=1757759354;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=i6ULjdQFx3hSTUi2FClPl+Wv7jWBPBdc7fIJZO9A84g=;
+  b=WI5xJa3GIm2KlkEQiwKe1gntB9pJOOrkxdt0yWV1xXnOnyHleR/Um+9w
+   W/ir2YY/biT9VD2VFwo9a/d8tQfWysyaOO6mWNIdM0sQr3qxv2kdDRABb
+   UqrU9zsaSTl4AUD44J0Ac+Gy919VzYFev8g1OaT46QxP2kpQ4KJ/D/Lrm
+   rREJAJ7WhtszC36OSuA1Lwz3QOrXhTgXTpoBDQqvOehO31Q8Y1xDNrT/r
+   qjv+mEK2J3/ncmBo5vqJlTBiknpiujFVIAe4DVmR7TAhwPS5ZFnyOR/II
+   QpuF+BbuD/bAlAQCBXf6NYxU03mN3I1TAMKe9tZHd8QovMB+/1VZXBE/m
+   A==;
+X-CSE-ConnectionGUID: sInzwkqYRrSQpWgtVf8hhQ==
+X-CSE-MsgGUID: jqWV+U2zQ9ScdxAvxHziog==
+X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="25271986"
+X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
+   d="scan'208";a="25271986"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 03:29:13 -0700
+X-CSE-ConnectionGUID: +ctQAAoLTYehwwW77k+SjQ==
+X-CSE-MsgGUID: eaMqxQcmT3O+2Qu47QihrA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
+   d="scan'208";a="67978143"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 03:29:08 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sp3Y1-00000008GGM-1jvO;
+	Fri, 13 Sep 2024 13:29:05 +0300
+Date: Fri, 13 Sep 2024 13:29:05 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Tyrone Ting <warp5tw@gmail.com>
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
+	venture@google.com, yuenn@google.com, benjaminfair@google.com,
+	andi.shyti@kernel.org, wsa@kernel.org, rand.sec96@gmail.com,
+	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com,
+	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com,
+	KWLIU@nuvoton.com, JJLIU0@nuvoton.com, kfting@nuvoton.com,
+	openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	benchuanggli@gmail.com,
-	Lucas.Lai@genesyslogic.com.tw,
-	HL.Liu@genesyslogic.com.tw,
-	Greg.tu@genesyslogic.com.tw,
-	dlunev@chromium.org,
-	Victor Shih <victorshihgli@gmail.com>,
-	Ben Chuang <ben.chuang@genesyslogic.com.tw>,
-	Victor Shih <victor.shih@genesyslogic.com.tw>,
-	Lucas Lai <lucas.lai@genesyslogic.com.tw>
-Subject: [PATCH V22 22/22] mmc: sdhci-pci-gli: enable UHS-II mode for GL9767
-Date: Fri, 13 Sep 2024 18:28:36 +0800
-Message-Id: <20240913102836.6144-23-victorshihgli@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240913102836.6144-1-victorshihgli@gmail.com>
-References: <20240913102836.6144-1-victorshihgli@gmail.com>
+	Charles Boyer <Charles.Boyer@fii-usa.com>,
+	Vivekanand Veeracholan <vveerach@google.com>
+Subject: Re: [PATCH v3 6/6] i2c: npcm: Enable slave in eob interrupt
+Message-ID: <ZuQT8YfVetrkMotQ@smile.fi.intel.com>
+References: <20240913101532.16571-1-kfting@nuvoton.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240913101532.16571-1-kfting@nuvoton.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Victor Shih <victor.shih@genesyslogic.com.tw>
+On Fri, Sep 13, 2024 at 06:15:32PM +0800, Tyrone Ting wrote:
+> From: Charles Boyer <Charles.Boyer@fii-usa.com>
+> 
+> Nuvoton slave enable was in user space API call master_xfer, so it is
+> subject to delays from the OS scheduler. If the BMC is not enabled for
+> slave mode in time for master to send response, then it will NAK the
+> address match. Then the PLDM request timeout occurs.
+> 
+> If the slave enable is moved to the EOB interrupt service routine, then
+> the BMC can be ready in slave mode by the time it needs to receive a
+> response.
 
-Changes are:
- * Enable the internal clock when do reset on UHS-II mode.
- * Increase timeout value before detecting UHS-II interface.
- * Add vendor settings for UHS-II mode.
- * Use the function sdhci_gli_wait_software_reset_done() for gl9767 reset.
- * Remove unnecessary code from sdhci_gl9767_reset().
+Fixes tag?
 
-Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
-Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
-Signed-off-by: Lucas Lai <lucas.lai@genesyslogic.com.tw>
---
-
-Updates in V21:
- - Remove unnecessary code from sdhci_gl9767_reset().
-
-Updates in V20:
- - Use the function sdhci_gli_wait_software_reset_done() for gl9767 reset.
-
-Updates in V19:
- - Use sdhci_gli_enable_internal_clock() to simplify the code
-   in the sdhci_gl9767_reset().
- - Directly reading the SDHCI_PRESENT_STATE register to replace
-   the get_cd() avoids the possibility of the get_cd() sleeping
-   in the sdhci_gl9767_set_card_detect_debounce_time().
- - Refine the position of gli_set_9767() in the sdhci_gl9767_reset().
-
-Updates in V18:
- - Add new register settings for gl9767.
- - Add card_event in the sdhci_ops for gl9767.
- - Add sdhci_gl9767_set_card_detect_debounce_time()
-   to configure the gl9767.
- - Adjust the sdhci_gl9767_reset() process for gl9767.
-
-Updates in V17:
- - Use mmc_card_uhs2() to simplify the code in the sdhci_gl9767_reset().
- - Use mmc_card_uhs2() to simplify the code in the
-   sdhci_gl9767_set_power().
- - Add sdhci_gli_overcurrent_event_enable() to sdhci_gl9767_set_power().
-
-Updates in V15:
- - Add gl9767 to support uhs2 function.
-
----
-
- drivers/mmc/host/sdhci-pci-gli.c | 202 ++++++++++++++++++++++++++++++-
- 1 file changed, 201 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-pci-gli.c
-index 708138eecaa7..cf2486ec7b9a 100644
---- a/drivers/mmc/host/sdhci-pci-gli.c
-+++ b/drivers/mmc/host/sdhci-pci-gli.c
-@@ -174,6 +174,15 @@
- #define PCI_GLI_9755_MISC	    0x78
- #define   PCI_GLI_9755_MISC_SSC_OFF    BIT(26)
- 
-+#define SDHCI_GLI_9767_SD_HOST_OPERATION_CTL				0x508
-+#define   SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_CMD_CONFLICT_CHECK	  BIT(0)
-+#define   SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE			  GENMASK(21, 16)
-+#define   SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_PLUG_IN_VALUE	  0x05
-+#define   SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_PLUG_OUT_VALUE	  0x3F
-+#define   SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_SCALE		  GENMASK(23, 22)
-+#define   SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_SCALE_1MS	  0x2
-+#define   SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_SCALE_10MS	  0x3
-+
- #define SDHCI_GLI_9767_GM_BURST_SIZE			0x510
- #define   SDHCI_GLI_9767_GM_BURST_SIZE_AXI_ALWAYS_SET	  BIT(8)
- 
-@@ -210,6 +219,13 @@
- #define   PCIE_GLI_9767_SCR_CORE_PWR_D3_OFF		  BIT(21)
- #define   PCIE_GLI_9767_SCR_CFG_RST_DATA_LINK_DOWN	  BIT(30)
- 
-+#define PCIE_GLI_9767_RESET_REG				0x8E4
-+#define   PCIE_GLI_9767_RESET_REG_SD_HOST_SW_RESET	  BIT(0)
-+
-+#define PCIE_GLI_9767_UHS2_PHY_SET_REG1				0x90C
-+#define   PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR		  GENMASK(31, 29)
-+#define   PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR_VALUE	  0x3
-+
- #define PCIE_GLI_9767_SDHC_CAP			0x91C
- #define   PCIE_GLI_9767_SDHC_CAP_SDEI_RESULT	  BIT(5)
- 
-@@ -228,9 +244,15 @@
- #define   PCIE_GLI_9767_SD_EXPRESS_CTL_SD_EXPRESS_MODE	  BIT(1)
- 
- #define PCIE_GLI_9767_SD_DATA_MULTI_CTL				0x944
-+#define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_SELECT_UHS2		  BIT(5)
-+#define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_UHS2_SWITCH_CTL	  BIT(8)
- #define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_DISCONNECT_TIME	  GENMASK(23, 16)
- #define   PCIE_GLI_9767_SD_DATA_MULTI_CTL_DISCONNECT_TIME_VALUE	  0x64
- 
-+#define PCIE_GLI_9767_UHS2_PHY_SET_REG2					0x948
-+#define   PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING		  GENMASK(22, 21)
-+#define   PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING_VALUE		  0x0
-+
- #define PCIE_GLI_9767_NORMAL_ERR_INT_STATUS_REG2			0x950
- #define   PCIE_GLI_9767_NORMAL_ERR_INT_STATUS_REG2_SDEI_COMPLETE	  BIT(0)
- 
-@@ -240,6 +262,28 @@
- #define PCIE_GLI_9767_NORMAL_ERR_INT_SIGNAL_EN_REG2				0x958
- #define   PCIE_GLI_9767_NORMAL_ERR_INT_SIGNAL_EN_REG2_SDEI_COMPLETE_SIGNAL_EN	  BIT(0)
- 
-+#define PCIE_GLI_9767_UHS2_CTL1				0x95C
-+#define   PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS		  BIT(5)
-+#define   PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS_VALUE	  0x1
-+#define   PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL		  BIT(6)
-+#define   PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL_VALUE	  0x1
-+#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN		  GENMASK(10, 7)
-+#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN_VALUE	  0x3
-+#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV		  GENMASK(14, 11)
-+#define   PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV_VALUE	  0xf
-+#define   PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS		  GENMASK(16, 15)
-+#define   PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS_VALUE	  0x0
-+#define   PCIE_GLI_9767_UHS2_CTL1_DIR_RECV		  GENMASK(18, 17)
-+#define   PCIE_GLI_9767_UHS2_CTL1_DIR_RECV_VALUE	  0x0
-+#define   PCIE_GLI_9767_UHS2_CTL1_PDRST			  BIT(25)
-+#define   PCIE_GLI_9767_UHS2_CTL1_PDRST_VALUE		  0x1
-+
-+#define PCIE_GLI_9767_UHS2_CTL2			0x964
-+#define   PCIE_GLI_9767_UHS2_CTL2_ZC		  GENMASK(3, 0)
-+#define   PCIE_GLI_9767_UHS2_CTL2_ZC_VALUE	  0xb
-+#define   PCIE_GLI_9767_UHS2_CTL2_ZC_CTL	  BIT(6)
-+#define   PCIE_GLI_9767_UHS2_CTL2_ZC_CTL_VALUE	  0x1
-+
- #define GLI_MAX_TUNING_LOOP 40
- 
- /* Genesys Logic chipset */
-@@ -1155,6 +1199,31 @@ static void sdhci_gl9767_set_clock(struct sdhci_host *host, unsigned int clock)
- 	gl9767_vhs_read(pdev);
- }
- 
-+static void sdhci_gl9767_set_card_detect_debounce_time(struct sdhci_host *host)
-+{
-+	u32 value;
-+
-+	value = sdhci_readl(host, SDHCI_GLI_9767_SD_HOST_OPERATION_CTL);
-+	value &= ~(SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE |
-+		   SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_SCALE);
-+	if (sdhci_readl(host, SDHCI_PRESENT_STATE) & SDHCI_CARD_PRESENT)
-+		value |= FIELD_PREP(SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE,
-+				    SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_PLUG_IN_VALUE) |
-+			 FIELD_PREP(SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_SCALE,
-+				    SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_SCALE_1MS);
-+	else
-+		value |= FIELD_PREP(SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE,
-+				    SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_PLUG_OUT_VALUE) |
-+			 FIELD_PREP(SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_SCALE,
-+				    SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_DEBOUNCE_SCALE_10MS);
-+	sdhci_writel(host, value, SDHCI_GLI_9767_SD_HOST_OPERATION_CTL);
-+}
-+
-+static void sdhci_gl9767_card_event(struct sdhci_host *host)
-+{
-+	sdhci_gl9767_set_card_detect_debounce_time(host);
-+}
-+
- static void gli_set_9767(struct sdhci_host *host)
- {
- 	u32 value;
-@@ -1162,6 +1231,12 @@ static void gli_set_9767(struct sdhci_host *host)
- 	value = sdhci_readl(host, SDHCI_GLI_9767_GM_BURST_SIZE);
- 	value &= ~SDHCI_GLI_9767_GM_BURST_SIZE_AXI_ALWAYS_SET;
- 	sdhci_writel(host, value, SDHCI_GLI_9767_GM_BURST_SIZE);
-+
-+	value = sdhci_readl(host, SDHCI_GLI_9767_SD_HOST_OPERATION_CTL);
-+	value &= ~SDHCI_GLI_9767_SD_HOST_OPERATION_CTL_CMD_CONFLICT_CHECK;
-+	sdhci_writel(host, value, SDHCI_GLI_9767_SD_HOST_OPERATION_CTL);
-+
-+	sdhci_gl9767_set_card_detect_debounce_time(host);
- }
- 
- static void gl9767_hw_setting(struct sdhci_pci_slot *slot)
-@@ -1200,7 +1275,43 @@ static void gl9767_hw_setting(struct sdhci_pci_slot *slot)
- 
- static void sdhci_gl9767_reset(struct sdhci_host *host, u8 mask)
- {
--	sdhci_reset(host, mask);
-+	struct sdhci_pci_slot *slot = sdhci_priv(host);
-+	struct pci_dev *pdev = slot->chip->pdev;
-+	u32 value;
-+
-+	/* need internal clock */
-+	if (mask & SDHCI_RESET_ALL) {
-+		sdhci_gli_enable_internal_clock(host);
-+
-+		gl9767_vhs_write(pdev);
-+
-+		pci_read_config_dword(pdev, PCIE_GLI_9767_RESET_REG, &value);
-+		value &= ~PCIE_GLI_9767_RESET_REG_SD_HOST_SW_RESET;
-+		pci_write_config_dword(pdev, PCIE_GLI_9767_RESET_REG, value);
-+
-+		if (read_poll_timeout_atomic(pci_read_config_dword, value,
-+					     !(value & PCIE_GLI_9767_RESET_REG_SD_HOST_SW_RESET),
-+					     1, 5, true, pdev, PCIE_GLI_9767_RESET_REG, &value)) {
-+			pr_warn("%s: %s: Reset SDHC AHB and TL-AMBA failure.\n",
-+				__func__, mmc_hostname(host->mmc));
-+			gl9767_vhs_read(pdev);
-+			return;
-+		}
-+		gl9767_vhs_read(pdev);
-+	}
-+
-+	if (mmc_card_uhs2(host->mmc)) {
-+		if (mask & (SDHCI_RESET_CMD | SDHCI_RESET_DATA)) {
-+			sdhci_writeb(host, mask, SDHCI_SOFTWARE_RESET);
-+			sdhci_gli_uhs2_reset_sd_tran(host);
-+			sdhci_gli_wait_software_reset_done(host, mask);
-+		} else {
-+			sdhci_uhs2_reset(host, mask);
-+		}
-+	} else {
-+		sdhci_reset(host, mask);
-+	}
-+
- 	gli_set_9767(host);
- }
- 
-@@ -1291,6 +1402,86 @@ static int gl9767_init_sd_express(struct mmc_host *mmc, struct mmc_ios *ios)
- 	return 0;
- }
- 
-+static void gl9767_vendor_init(struct sdhci_host *host)
-+{
-+	struct sdhci_pci_slot *slot = sdhci_priv(host);
-+	struct pci_dev *pdev = slot->chip->pdev;
-+	u32 value;
-+
-+	gl9767_vhs_write(pdev);
-+
-+	pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG1, &value);
-+	value |= FIELD_PREP(PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR,
-+			    PCIE_GLI_9767_UHS2_PHY_SET_REG1_SERDES_INTR_VALUE);
-+	pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG1, value);
-+
-+	pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG2, &value);
-+	value |= FIELD_PREP(PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING,
-+			    PCIE_GLI_9767_UHS2_PHY_SET_REG2_SSC_PPM_SETTING_VALUE);
-+	pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_PHY_SET_REG2, value);
-+
-+	pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL1, &value);
-+	value |= FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS,
-+			    PCIE_GLI_9767_UHS2_CTL1_TRANS_PASS_VALUE) |
-+		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL,
-+			    PCIE_GLI_9767_UHS2_CTL1_DECODING_CTL_VALUE) |
-+		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN,
-+			    PCIE_GLI_9767_UHS2_CTL1_SERDES_TRAN_VALUE) |
-+		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV,
-+			    PCIE_GLI_9767_UHS2_CTL1_SERDES_RECV_VALUE) |
-+		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS,
-+			    PCIE_GLI_9767_UHS2_CTL1_DIR_TRANS_VALUE) |
-+		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_DIR_RECV,
-+			    PCIE_GLI_9767_UHS2_CTL1_DIR_RECV_VALUE) |
-+		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL1_PDRST,
-+			    PCIE_GLI_9767_UHS2_CTL1_PDRST_VALUE);
-+	pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL1, value);
-+
-+	pci_read_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, &value);
-+	value |= FIELD_PREP(PCIE_GLI_9767_UHS2_CTL2_ZC,
-+			    PCIE_GLI_9767_UHS2_CTL2_ZC_VALUE) |
-+		 FIELD_PREP(PCIE_GLI_9767_UHS2_CTL2_ZC_CTL,
-+			    PCIE_GLI_9767_UHS2_CTL2_ZC_CTL_VALUE);
-+	pci_write_config_dword(pdev, PCIE_GLI_9767_UHS2_CTL2, value);
-+
-+	gl9767_vhs_read(pdev);
-+}
-+
-+static void sdhci_gl9767_set_power(struct sdhci_host *host, unsigned char mode,	unsigned short vdd)
-+{
-+	struct sdhci_pci_slot *slot = sdhci_priv(host);
-+	struct pci_dev *pdev = slot->chip->pdev;
-+	u32 value;
-+
-+	if (mmc_card_uhs2(host->mmc)) {
-+		gl9767_vhs_write(pdev);
-+
-+		pci_read_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_CTL, &value);
-+		value |= PCIE_GLI_9767_SD_DATA_MULTI_CTL_SELECT_UHS2 |
-+			 PCIE_GLI_9767_SD_DATA_MULTI_CTL_UHS2_SWITCH_CTL;
-+		pci_write_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_CTL, value);
-+
-+		gl9767_vhs_read(pdev);
-+
-+		sdhci_gli_overcurrent_event_enable(host, false);
-+		sdhci_uhs2_set_power(host, mode, vdd);
-+		sdhci_gli_overcurrent_event_enable(host, true);
-+	} else {
-+		gl9767_vhs_write(pdev);
-+
-+		pci_read_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_CTL, &value);
-+		value &= ~(PCIE_GLI_9767_SD_DATA_MULTI_CTL_SELECT_UHS2 |
-+			   PCIE_GLI_9767_SD_DATA_MULTI_CTL_UHS2_SWITCH_CTL);
-+		pci_write_config_dword(pdev, PCIE_GLI_9767_SD_DATA_MULTI_CTL, value);
-+
-+		gl9767_vhs_read(pdev);
-+
-+		sdhci_gli_overcurrent_event_enable(host, false);
-+		sdhci_set_power(host, mode, vdd);
-+		sdhci_gli_overcurrent_event_enable(host, true);
-+	}
-+}
-+
- static int gli_probe_slot_gl9750(struct sdhci_pci_slot *slot)
- {
- 	struct sdhci_host *host = slot->host;
-@@ -1327,6 +1518,7 @@ static int gli_probe_slot_gl9767(struct sdhci_pci_slot *slot)
- 	host->mmc->caps2 |= MMC_CAP2_SD_EXP;
- 	host->mmc_host_ops.init_sd_express = gl9767_init_sd_express;
- 	sdhci_enable_v4_mode(host);
-+	gl9767_vendor_init(host);
- 
- 	return 0;
- }
-@@ -1830,12 +2022,20 @@ static const struct sdhci_ops sdhci_gl9767_ops = {
- 	.reset			 = sdhci_gl9767_reset,
- 	.set_uhs_signaling	 = sdhci_set_uhs_signaling,
- 	.voltage_switch		 = sdhci_gl9767_voltage_switch,
-+	.dump_uhs2_regs		 = sdhci_uhs2_dump_regs,
-+	.set_timeout		 = sdhci_uhs2_set_timeout,
-+	.irq			 = sdhci_uhs2_irq,
-+	.set_power		 = sdhci_gl9767_set_power,
-+	.uhs2_pre_detect_init	 = sdhci_gli_pre_detect_init,
-+	.card_event		 = sdhci_gl9767_card_event,
- };
- 
- const struct sdhci_pci_fixes sdhci_gl9767 = {
- 	.quirks		= SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC,
- 	.quirks2	= SDHCI_QUIRK2_BROKEN_DDR50,
- 	.probe_slot	= gli_probe_slot_gl9767,
-+	.add_host	= sdhci_pci_uhs2_add_host,
-+	.remove_host	= sdhci_pci_uhs2_remove_host,
- 	.ops		= &sdhci_gl9767_ops,
- #ifdef CONFIG_PM_SLEEP
- 	.resume		= sdhci_pci_gli_resume,
 -- 
-2.25.1
+With Best Regards,
+Andy Shevchenko
+
 
 
