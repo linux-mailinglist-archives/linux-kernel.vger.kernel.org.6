@@ -1,132 +1,92 @@
-Return-Path: <linux-kernel+bounces-328032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3C2F977DFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:50:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48984977E06
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6786DB29C55
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:50:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F41E41F27633
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011061D7E5F;
-	Fri, 13 Sep 2024 10:50:11 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53B2B1D58A8;
-	Fri, 13 Sep 2024 10:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368101D88AD;
+	Fri, 13 Sep 2024 10:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="u3WHqgty"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B7C1D86EA
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 10:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726224610; cv=none; b=rWLrYQXIeTonX4ANFFkmgEFgRUFJHPGWXADiRz0R7jSdzNfKuSeYSyVlPWje1zukGswWacgzTLkwq78+CEf05XjmdGTVgQHl+xzyl6mqz6b6eMepPQmM+gIae2XBD/V890d8h58hE0FjRoazcSPspZAVJPJu6Td5bz64pLnXnVk=
+	t=1726224779; cv=none; b=CkDogmb3ANvzIzJokPQSoOC8ZhbCnVouOToMGjY8CMCFqKnwqr1ElxxYieHVYwYS0zpYVUmXVTqeW0g5Aat9pnRT18FkXpfVvtNwwntBfe1QMpT5ZqYuyMyHYCq37eu9JHHRPqDosH9Q9VKOGLZ/uNwBFfU8IOhnMdelGif2XEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726224610; c=relaxed/simple;
-	bh=L83lR63io4j6s3xsgeWE51cq/fz1EEAeJRfd02TCykM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GC/7ilBbXbyeuSMLd1rkg7mL97LXMH33j6XYh8QGb8NA4HLo773SUTWM0c9ucEO5lPbC5xdxOV5KngFOxWUxyPtNTkfubms3f7JUAg0FnV1Fbd6Io2E8BIZ1tXwoXIBIVMdN6DsD5XQAPZddIHTyPvgFQHNHj4Qthv2NIiM40Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4X4rdy1j1mzyRyb;
-	Fri, 13 Sep 2024 18:49:10 +0800 (CST)
-Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2B89B18010B;
-	Fri, 13 Sep 2024 18:49:58 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 13 Sep 2024 18:49:57 +0800
-Message-ID: <e4cb7950-c88b-478a-80cc-ef2f244bf484@huawei.com>
-Date: Fri, 13 Sep 2024 18:49:57 +0800
+	s=arc-20240116; t=1726224779; c=relaxed/simple;
+	bh=8nuPxD0KMZzStq3Vcl57U2imZIhTNkGHKt5jWJmv3Zs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rh4XQKGtpXVSFuqaLaTDON8AIiyy8b+91DWcbcSuzxj7k7V7+AZOdWAr/9ZX0l4cQoh5O/eURSZNPDfFa3xh8w2nQ98GxQOmYi8Hwbt03glDOUkoKfaSXOtiJDCwMjg+DX83TCASsRMb6LybE4jjkn3VctD60YbD+ZDe0S3mXUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=u3WHqgty; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p4ffe1f47.dip0.t-ipconnect.de [79.254.31.71])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 53D9C289CFD;
+	Fri, 13 Sep 2024 12:52:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1726224767;
+	bh=8nuPxD0KMZzStq3Vcl57U2imZIhTNkGHKt5jWJmv3Zs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u3WHqgtygjKZ5l1QGvnZPiGQzZ8Fkf8cj9Teckcla7xmY0CFM2iO3+uKcUKLFovaw
+	 sA5SmP6gNbWmlYPa3U5yQQsH+KFLW/illd10SwyVx4uwo4hcDh+ObkBSPqSqG8nVTv
+	 rOmJ9/sI+Z3rsykikd4lMWPGCaycBSNUetLNBrTaC9c+QlPYz+at2GG0vvs10KzCHn
+	 XTmrRFtb3pOtop1+LHWW0eYVYBzWiRcYOY44sF4/qyqU1I3+3WwYkQtc2CtjPboMWY
+	 HutfyIkgJt+DOFhJX3Mo2TD6YZun09NS5jQ7HI4uv0Qd7a4NE8ym4ljrdsLDTe1pbT
+	 bbt/CdUV4LPbg==
+Date: Fri, 13 Sep 2024 12:52:45 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Will Deacon <will@kernel.org>
+Cc: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, robin.murphy@arm.com,
+	kernel-team@android.com
+Subject: Re: [GIT PULL] iommu/arm-smmu: Updates for 6.12
+Message-ID: <ZuQZfaa3BldIgc-Q@8bytes.org>
+References: <20240912125934.GA23244@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bcachefs: Change opts param to const pointer in
- bch2_opts_to_text
-To: Riyan Dhiman <riyandhiman14@gmail.com>, <kent.overstreet@linux.dev>
-CC: <linux-bcachefs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240912183545.41669-2-riyandhiman14@gmail.com>
-Content-Language: en-US
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <20240912183545.41669-2-riyandhiman14@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpeml500022.china.huawei.com (7.185.36.66)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912125934.GA23244@willie-the-truck>
 
+Hi Will,
 
-
-On 2024/9/13 2:35, Riyan Dhiman wrote:
-> Convert struct bch_opts opts to const struct bch_opts *opts in
-> bch2_opts_to_text() function paramter. This improves efficiency by
-> avoiding structure copying and reflects the function's read-only
-> access to opts.
+On Thu, Sep 12, 2024 at 01:59:35PM +0100, Will Deacon wrote:
+> Please pull these Arm SMMU updates for v6.12. The big new feature is
+> support for NVIDIA's virtual command queue implementation for SMMUv3,
+> but everything is summarised in the tag.
 > 
-> Fixes: 283ba1b92b1c (bcachefs: bch2_opts_to_text())
-> Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
-> ---
-> Compile tested only.
-> 
->   fs/bcachefs/fs.c   | 2 +-
->   fs/bcachefs/opts.c | 4 ++--
->   fs/bcachefs/opts.h | 2 +-
->   3 files changed, 4 insertions(+), 4 deletions(-)
-> 
+> ** Please note **: I've already pushed this to the arm/smmu branch for
+> -next coverage, but I thought sending a pull request was still useful
+> for the records and the signed tag. If you want to recreate the branch,
+> please feel free.
 
-Reviewed-by: Hongbo Li <lihongbo22@huawei.com>
+To cite "git-pull":
 
-> diff --git a/fs/bcachefs/fs.c b/fs/bcachefs/fs.c
-> index e44794f7c6a0..1a2ba8472cb1 100644
-> --- a/fs/bcachefs/fs.c
-> +++ b/fs/bcachefs/fs.c
-> @@ -1924,7 +1924,7 @@ static int bch2_show_options(struct seq_file *seq, struct dentry *root)
->   	struct bch_fs *c = root->d_sb->s_fs_info;
->   	struct printbuf buf = PRINTBUF;
->   
-> -	bch2_opts_to_text(&buf, c->opts, c, c->disk_sb.sb,
-> +	bch2_opts_to_text(&buf, &c->opts, c, c->disk_sb.sb,
->   			  OPT_MOUNT, OPT_HIDDEN, OPT_SHOW_MOUNT_STYLE);
->   	printbuf_nul_terminate(&buf);
->   	seq_puts(seq, buf.buf);
-> diff --git a/fs/bcachefs/opts.c b/fs/bcachefs/opts.c
-> index 232be8a44051..6216ab5d5c81 100644
-> --- a/fs/bcachefs/opts.c
-> +++ b/fs/bcachefs/opts.c
-> @@ -444,7 +444,7 @@ void bch2_opt_to_text(struct printbuf *out,
->   }
->   
->   void bch2_opts_to_text(struct printbuf *out,
-> -		       struct bch_opts opts,
-> +		       const struct bch_opts *opts,
->   		       struct bch_fs *c, struct bch_sb *sb,
->   		       unsigned show_mask, unsigned hide_mask,
->   		       unsigned flags)
-> @@ -457,7 +457,7 @@ void bch2_opts_to_text(struct printbuf *out,
->   		if ((opt->flags & hide_mask) || !(opt->flags & show_mask))
->   			continue;
->   
-> -		u64 v = bch2_opt_get_by_id(&opts, i);
-> +		u64 v = bch2_opt_get_by_id(opts, i);
->   		if (v == bch2_opt_get_by_id(&bch2_opts_default, i))
->   			continue;
->   
-> diff --git a/fs/bcachefs/opts.h b/fs/bcachefs/opts.h
-> index cb2e244a2429..78e1991dc4be 100644
-> --- a/fs/bcachefs/opts.h
-> +++ b/fs/bcachefs/opts.h
-> @@ -606,7 +606,7 @@ int bch2_opt_parse(struct bch_fs *, const struct bch_option *,
->   void bch2_opt_to_text(struct printbuf *, struct bch_fs *, struct bch_sb *,
->   		      const struct bch_option *, u64, unsigned);
->   void bch2_opts_to_text(struct printbuf *,
-> -		       struct bch_opts,
-> +		       const struct bch_opts *,
->   		       struct bch_fs *, struct bch_sb *,
->   		       unsigned, unsigned, unsigned);
->   
+	Already up to date.
+
+So everything already there, will re-create next and prepare the pull
+request for Monday.
+
+> See you at LPC!
+
+Yeah, see you next week!
+
+Regards,
+
+	Joerg
 
