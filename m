@@ -1,95 +1,84 @@
-Return-Path: <linux-kernel+bounces-327450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AC5C97762D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:42:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53F5F977631
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 217FE1F25C0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:42:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D27AAB23B8A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F896323D;
-	Fri, 13 Sep 2024 00:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F02182F24;
+	Fri, 13 Sep 2024 00:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ikABmw1b"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="NZ/wcpvm"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9CBC10F7;
-	Fri, 13 Sep 2024 00:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B991FA5;
+	Fri, 13 Sep 2024 00:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726188144; cv=none; b=Y+BijjVHwLj0RQD42eXycIC9de9jFLmo8tOGVtkx8znoNmFqiTxkkm+FRM0dGZxRIRHvRFcHKts4vMTt+ZE6ESVLgpm89MIuLtnfbvO9COw3lzXh7+8iZVkBfK7HSxhqy+NwcjjtVGQayLGb+rtVWo8atQMs+MEmhNnbRgPcmak=
+	t=1726188292; cv=none; b=qYAm5XblrgVB+e3N/eino1ZJYygpXouHf4+yXPqjdb4Io/dF9UB/sf2lZw1vuO5Wo+Mj8GUAYrdKmIItQ3pUykdKnFmN4Oc8Q7JZOul3CTKBCdYMhHM395Lsm5lT+JQT06wwxYS1y5MtocYNLuJAILC9J09nQ8hiF8mNFV0KKQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726188144; c=relaxed/simple;
-	bh=hwEO70+fmwgdu7QAwo87E6/1Hd/d5wRAwravRDMb46c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oJD78jnIvkcLdkUxPLOeJK3jgIjuYp7Lez6Ese69DFphKNlO6Uk3CZeq1MFPyF/i6AIUDdL2x6WvjkfwRZUexj6IIRv6iZc1qlM2kdZQeYIMC58V5NnRIE41YMYuHU1BAuwU6bSZ0xK2oaf+ER5ePev7sI+yW2OKI/ilcUUfI2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ikABmw1b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3A8BC4CEC3;
-	Fri, 13 Sep 2024 00:42:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726188143;
-	bh=hwEO70+fmwgdu7QAwo87E6/1Hd/d5wRAwravRDMb46c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ikABmw1bgZunfRYPAcTylVOiG5bVmIE9tXtMvkhr/ZEmigt2ZjwtB6p019BMBuFwg
-	 L7m82lrXz/+BWA2sibjGp+ZtcNL+BbnM40YNnjRrcTKtZlVV35Xd9GgljCq38Mus/H
-	 km0U0Llq4HO+L5dDvXLDfjGGIgR7xNfuhtNOh5W1YGphnD52XcNEdX/dmi7UsH5m84
-	 FIY4wZeXlFfu4OMT/HcmZvwejYYPUb5EHAADfexd+KiQw6CBGH4fOn8g4iEnE8X9b8
-	 vVj/Gve9FF9NTqEfn9VTp/hRkYOwTIKZX2zm8nKFE6wyuM1nTPQT92Y8gqFqLypBze
-	 +/QoP+99usTPg==
-Date: Thu, 12 Sep 2024 17:42:22 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: Eric Dumazet <edumazet@google.com>, Oleksij Rempel
- <o.rempel@pengutronix.de>, Qianqiang Liu <qianqiang.liu@163.com>, Chris
- Snook <chris.snook@gmail.com>, "David S. Miller" <davem@davemloft.net>,
- Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
- kernel@collabora.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] net: ethernet: ag71xx: Remove dead code
-Message-ID: <20240912174222.6de55d16@kernel.org>
-In-Reply-To: <CANn89i+xYSEw0OX_33=+R0uTPCRgH+kWMEVsjh=ec2ZHMPsKEw@mail.gmail.com>
-References: <20240911135828.378317-1-usama.anjum@collabora.com>
-	<ZuHfcDLty0IULwdY@pengutronix.de>
-	<CANn89i+xYSEw0OX_33=+R0uTPCRgH+kWMEVsjh=ec2ZHMPsKEw@mail.gmail.com>
+	s=arc-20240116; t=1726188292; c=relaxed/simple;
+	bh=1Ch0jjyf5x6nSU2AeJM+N0zEUfNXJjTCfAW/HICyh7g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tytLMDKz6sKDG7iWTcm5E/Dl8YveuoAV9ptpkwK/Z4JwZGKXcmtKRvMJdu5J5jUHVSGtz0t0fB3PjqPQ7ljYWWeyXd3lA5G4kvRylchPFLPqq6NQTJKPP6MQ+v+KU5XydU57cNVXw89Tjige7ETPmUF6wJnXJJsPmhw3bNZVUzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=NZ/wcpvm; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1726188280; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=7iTqFP/J3HQR+eE9IaYc8M8SgxVo/tnTpTHFZ/Ei8pI=;
+	b=NZ/wcpvmQDW66ziHWfRHH4Zf5zhSWazuiGjIg93HssbE9X/Qe/+Dr4onlJY/v7P9P8xs/cFykdpOSjGYxieincpRCkT77M4Z9m83xGWhham8ZXWeAzvsgYes2ydBQE6OdiCgvaoKFE54yhGtHUyhU1n4tRru0Z/EnTYPysYKlOs=
+Received: from localhost(mailfrom:yang.lee@linux.alibaba.com fp:SMTPD_---0WEsaR-l_1726188279)
+          by smtp.aliyun-inc.com;
+          Fri, 13 Sep 2024 08:44:40 +0800
+From: Yang Li <yang.lee@linux.alibaba.com>
+To: kvalo@kernel.org,
+	miriam.rachel.korenblit@intel.com
+Cc: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yang Li <yang.lee@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] wifi: iwlwifi: Remove duplicated include in regulatory.h
+Date: Fri, 13 Sep 2024 08:44:38 +0800
+Message-Id: <20240913004438.93767-1-yang.lee@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, 12 Sep 2024 17:56:11 +0200 Eric Dumazet wrote:
-> On Wed, Sep 11, 2024 at 8:20=E2=80=AFPM Oleksij Rempel <o.rempel@pengutro=
-nix.de> wrote:
-> > On Wed, Sep 11, 2024 at 06:58:27PM +0500, Muhammad Usama Anjum wrote: =
-=20
-> > > The err variable isn't being used anywhere other than getting
-> > > initialized to 0 and then it is being checked in if condition. The
-> > > condition can never be true. Remove the err and deadcode.
-> > >
-> > > Move the rx_dropped counter above when skb isn't found.
-> > >
-> > > Fixes: d51b6ce441d3 ("net: ethernet: add ag71xx driver")
-> > > Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com> =20
-> >
-> > Reviewed-by: Oleksij Rempel <o.rempel@pengutronix.de>
->=20
-> I do not see any credits given to  Qianqiang Liu, who is desperate to get=
- his
-> first linux patch...
->=20
-> https://lore.kernel.org/netdev/20240910152254.21238-1-qianqiang.liu@163.c=
-om/
+The header files img.h is included twice in regulatory.h,
+so one inclusion of each can be removed.
 
-Right, odd, is there a reason you took over from Qianqiang Liu?
-Otherwise I'd prefer if they could send the next version.
-Last thing we need is arguments about ownership of trivial
-patches.
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=10844
+Signed-off-by: Yang Li <yang.lee@linux.alibaba.com>
+---
+ drivers/net/wireless/intel/iwlwifi/fw/regulatory.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-This v2 has an unnecessary Fixes tag, this is not a fix.
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/regulatory.h b/drivers/net/wireless/intel/iwlwifi/fw/regulatory.h
+index 81787501d4a4..11704163876b 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/regulatory.h
++++ b/drivers/net/wireless/intel/iwlwifi/fw/regulatory.h
+@@ -12,7 +12,6 @@
+ #include "fw/api/phy.h"
+ #include "fw/api/config.h"
+ #include "fw/api/nvm-reg.h"
+-#include "fw/img.h"
+ #include "iwl-trans.h"
+ 
+ #define BIOS_SAR_MAX_PROFILE_NUM	4
+-- 
+2.32.0.3.g01195cf9f
+
 
