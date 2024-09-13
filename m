@@ -1,93 +1,242 @@
-Return-Path: <linux-kernel+bounces-328356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71783978261
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:15:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC9C3978264
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:16:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3376D285CBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:15:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CCA8B22AC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436A48F47;
-	Fri, 13 Sep 2024 14:15:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABEA945A;
+	Fri, 13 Sep 2024 14:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="H70LYXQU"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Q0qow9oX"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E98C4DF60
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:15:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0EF10A12;
+	Fri, 13 Sep 2024 14:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726236954; cv=none; b=j79iB3yGhx8RMqGkHFWuNDnhotngajyo0oCv78KgVz2vu21rDDomLl+3ZkiHnTodsh8n7fxRejAN+1u2Iv44Lmin2k6lXGybE8iYaTaJRYqmsKuuk9uiq6b4iwy/ZN8SCmIDrIfnqA++Ez69rGpYdscMGBYfioVVDJjfKDPwgEU=
+	t=1726236965; cv=none; b=a3Ou4k0c+jQZVenTTQiBUsWzl3BUVgd6hQ1JYyIix47zniGi30kcbbcr/SEU3z3XmWy87jCl25ObdXKJNIg3mC6lL+R+P/kCvEXINdLfO9eYch8v581KbhT9UTyyltrZqmB1rhwCchLRYNyimWql0JN8Qkw6IJiatdW7A0Pc9bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726236954; c=relaxed/simple;
-	bh=XPN8oqe/Nd2VGNTD5lsFfcllQTrbIOku5dzm8/IrMoo=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KJN66JWOBPr0eteobJxa9FuVhg9H1shoioLe3infudMP2xmIH2xyChWrJAnP6UUa1yruTQGYtOwjE8JXQXGbFtiVJvEBZ1sy31P4lkUkaIwmSUHj+CKgVeVnKqDfLsjrUC0/ceMeTgYf4dy5wBt5Jq4n36jzvvW5sISnZ2xoD+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=H70LYXQU; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1726236951; x=1726496151;
-	bh=pgg37Csd/pbMYJpE4NPiNE3WqHfYEli7aN12vFgrzHU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=H70LYXQUqs62wFgmwOmk5FP6y9NruiCPCTQjz2+rCR0Vt3aUyjuNikg1JuoaZgm/p
-	 C3nVI0JRcukF98ge0kOr4bnrN6KffnH2hIkb19/rLZlRTgh00B5nGxOe82VqLj0rt7
-	 DlF587ViZRMjeoewnWuRUkBogH0kq3SX1lIYW9QHa0rdDOvGw/+2W2tANPVQv5UcLq
-	 zlije3UGkiNHjvMqvAgX6wUT5l1WkJ4a7lI2C58zTe68oAyceV8mGOGzOqEtWyNGRG
-	 ikGVNnetno0JBYAnjXreM65Z0SwIfPub3lgh5Ch2WIkTU+3ZX9URfIyIs1sHJJqHSE
-	 Em5s0D2Gibo6w==
-Date: Fri, 13 Sep 2024 14:15:45 +0000
-To: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Valentin Obst <kernel@valentinobst.de>
-Subject: Re: [PATCH v5 3/3] rust: sync: Add SpinLockIrq
-Message-ID: <30da83b3-5be0-431b-b57c-c9d371747e7d@proton.me>
-In-Reply-To: <20240912190540.53221-4-lyude@redhat.com>
-References: <20240912190540.53221-1-lyude@redhat.com> <20240912190540.53221-4-lyude@redhat.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 1391b8127f473441273a0e6410657bbe61568de2
+	s=arc-20240116; t=1726236965; c=relaxed/simple;
+	bh=Tqd+HyNhO+4ubB7mpWmepdMwImsFgbJry9rfO1wr//E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MgQr4/nhTcL5wk2Hh6+fJDvj2Buvp4CTCZK7JDBUsOhnVRnH8tWt9I9HSiTIW0SgrlB+fvo/XPG3VqaWd64XRUhIogqbHok5KdRobJSAPa/JZeK0G/Y8xyHAZvZoySQc8rVKIKt1wf+/qFPLqxvDWbVAVhBGc6A4lVQe6f0u3v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Q0qow9oX; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1726236962;
+	bh=Tqd+HyNhO+4ubB7mpWmepdMwImsFgbJry9rfO1wr//E=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Q0qow9oXoLh0ZnwwfvbFY9DYepfSEMY8xkk2VlHEvf53twCvMToV5CM58JAI3qn4v
+	 tJy4l4z9lV4iqIuHwYWFktE4/Kx3rmL0l7Tgk3UdooYm2cQyXBC9OpxFy0nx81W+aZ
+	 Rrl5IjNnFji9PlR563cB9pgEgPrRVtr/npVpFAheJwkqtjyKF/InHhYzoB9HliiZuT
+	 YWHS0W7CibLiXdmU/I/sF2t/3TdskFTdXtjWJBL5sUNWCfFVZZGcvbWUBkrnijfzIM
+	 CR9baYmW2/hKce5IJDVAWqZhy/e2DpSIor+ygnyD7HZTvP1TA5RteEtsPeVCytIpqs
+	 m0FsKW85Pu7Sw==
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bbrezillon)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id B690717E1524;
+	Fri, 13 Sep 2024 16:16:01 +0200 (CEST)
+Date: Fri, 13 Sep 2024 16:15:57 +0200
+From: Boris Brezillon <boris.brezillon@collabora.com>
+To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
+Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Sumit Semwal
+ <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
+ <christian.koenig@amd.com>, kernel@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v6 5/5] drm/panthor: add sysfs knob for enabling job
+ profiling
+Message-ID: <20240913161557.6fee852c@collabora.com>
+In-Reply-To: <20240913124857.389630-6-adrian.larumbe@collabora.com>
+References: <20240913124857.389630-1-adrian.larumbe@collabora.com>
+	<20240913124857.389630-6-adrian.larumbe@collabora.com>
+Organization: Collabora
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On 12.09.24 21:04, Lyude Paul wrote:
-> A variant of SpinLock that is expected to be used in noirq contexts, and
-> thus requires that the user provide an kernel::irq::IrqDisabled to prove
-> they are in such a context upon lock acquisition. This is the rust
-> equivalent of spin_lock_irqsave()/spin_lock_irqrestore().
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
->=20
-> ---
->=20
-> V2:
-> * s/IrqSpinLock/SpinLockIrq/
-> * Implement `lock::Backend` now that we have `Context`
-> * Add missing periods
-> * Make sure rustdoc examples compile correctly
-> * Add documentation suggestions
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
->  rust/kernel/sync.rs               |   2 +-
->  rust/kernel/sync/lock/spinlock.rs | 104 ++++++++++++++++++++++++++++++
->  2 files changed, 105 insertions(+), 1 deletion(-)
+On Fri, 13 Sep 2024 13:42:13 +0100
+Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
 
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> This commit introduces a DRM device sysfs attribute that lets UM control
+> the job accounting status in the device. The knob variable had been broug=
+ht
+> in as part of a previous commit, but now we're able to fix it manually.
+>=20
+> As sysfs files are part of a driver's uAPI, describe its legitimate input
+> values and output format in a documentation file.
+>=20
+> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
+> Reviewed-by: Steven Price <steven.price@arm.com>
 
----
-Cheers,
-Benno
+Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+
+> ---
+>  .../testing/sysfs-driver-panthor-profiling    | 10 ++++
+>  Documentation/gpu/panthor.rst                 | 46 +++++++++++++++++++
+>  drivers/gpu/drm/panthor/panthor_drv.c         | 39 ++++++++++++++++
+>  3 files changed, 95 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-driver-panthor-profil=
+ing
+>  create mode 100644 Documentation/gpu/panthor.rst
+>=20
+> diff --git a/Documentation/ABI/testing/sysfs-driver-panthor-profiling b/D=
+ocumentation/ABI/testing/sysfs-driver-panthor-profiling
+> new file mode 100644
+> index 000000000000..af05fccedc15
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-driver-panthor-profiling
+> @@ -0,0 +1,10 @@
+> +What:		/sys/bus/platform/drivers/panthor/.../profiling
+> +Date:		September 2024
+> +KernelVersion:	6.11.0
+> +Contact:	Adrian Larumbe <adrian.larumbe@collabora.com>
+> +Description:
+> +		Bitmask to enable drm fdinfo's job profiling measurements.
+> +		Valid values are:
+> +		0: Don't enable fdinfo job profiling sources.
+> +		1: Enable GPU cycle measurements for running jobs.
+> +		2: Enable GPU timestamp sampling for running jobs.
+> diff --git a/Documentation/gpu/panthor.rst b/Documentation/gpu/panthor.rst
+> new file mode 100644
+> index 000000000000..cbf5c4429a2d
+> --- /dev/null
+> +++ b/Documentation/gpu/panthor.rst
+> @@ -0,0 +1,46 @@
+> +.. SPDX-License-Identifier: GPL-2.0+
+> +
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+> + drm/Panthor CSF driver
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+> +
+> +.. _panfrost-usage-stats:
+> +
+> +Panthor DRM client usage stats implementation
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +The drm/Panthor driver implements the DRM client usage stats specificati=
+on as
+> +documented in :ref:`drm-client-usage-stats`.
+> +
+> +Example of the output showing the implemented key value pairs and entire=
+ty of
+> +the currently possible format options:
+> +
+> +::
+> +     pos:    0
+> +     flags:  02400002
+> +     mnt_id: 29
+> +     ino:    491
+> +     drm-driver:     panthor
+> +     drm-client-id:  10
+> +     drm-engine-panthor:     111110952750 ns
+> +     drm-cycles-panthor:     94439687187
+> +     drm-maxfreq-panthor:    1000000000 Hz
+> +     drm-curfreq-panthor:    1000000000 Hz
+> +     drm-total-memory:       16480 KiB
+> +     drm-shared-memory:      0
+> +     drm-active-memory:      16200 KiB
+> +     drm-resident-memory:    16480 KiB
+> +     drm-purgeable-memory:   0
+> +
+> +Possible `drm-engine-` key names are: `panthor`.
+> +`drm-curfreq-` values convey the current operating frequency for that en=
+gine.
+> +
+> +Users must bear in mind that engine and cycle sampling are disabled by d=
+efault,
+> +because of power saving concerns. `fdinfo` users and benchmark applicati=
+ons which
+> +query the fdinfo file must make sure to toggle the job profiling status =
+of the
+> +driver by writing into the appropriate sysfs node::
+> +
+> +    echo <N> > /sys/bus/platform/drivers/panthor/[a-f0-9]*.gpu/profiling
+> +
+> +Where `N` is a bit mask where cycle and timestamp sampling are respectiv=
+ely
+> +enabled by the first and second bits.
+> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/pant=
+hor/panthor_drv.c
+> index 233b265c0819..6f47d9d1d86a 100644
+> --- a/drivers/gpu/drm/panthor/panthor_drv.c
+> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
+> @@ -1513,6 +1513,44 @@ static void panthor_remove(struct platform_device =
+*pdev)
+>  	panthor_device_unplug(ptdev);
+>  }
+> =20
+> +static ssize_t profiling_show(struct device *dev,
+> +			      struct device_attribute *attr,
+> +			      char *buf)
+> +{
+> +	struct panthor_device *ptdev =3D dev_get_drvdata(dev);
+> +
+> +	return sysfs_emit(buf, "%d\n", ptdev->profile_mask);
+> +}
+> +
+> +static ssize_t profiling_store(struct device *dev,
+> +			       struct device_attribute *attr,
+> +			       const char *buf, size_t len)
+> +{
+> +	struct panthor_device *ptdev =3D dev_get_drvdata(dev);
+> +	u32 value;
+> +	int err;
+> +
+> +	err =3D kstrtou32(buf, 0, &value);
+> +	if (err)
+> +		return err;
+> +
+> +	if ((value & ~PANTHOR_DEVICE_PROFILING_ALL) !=3D 0)
+> +		return -EINVAL;
+> +
+> +	ptdev->profile_mask =3D value;
+> +
+> +	return len;
+> +}
+> +
+> +static DEVICE_ATTR_RW(profiling);
+> +
+> +static struct attribute *panthor_attrs[] =3D {
+> +	&dev_attr_profiling.attr,
+> +	NULL,
+> +};
+> +
+> +ATTRIBUTE_GROUPS(panthor);
+> +
+>  static const struct of_device_id dt_match[] =3D {
+>  	{ .compatible =3D "rockchip,rk3588-mali" },
+>  	{ .compatible =3D "arm,mali-valhall-csf" },
+> @@ -1532,6 +1570,7 @@ static struct platform_driver panthor_driver =3D {
+>  		.name =3D "panthor",
+>  		.pm =3D pm_ptr(&panthor_pm_ops),
+>  		.of_match_table =3D dt_match,
+> +		.dev_groups =3D panthor_groups,
+>  	},
+>  };
+> =20
 
 
