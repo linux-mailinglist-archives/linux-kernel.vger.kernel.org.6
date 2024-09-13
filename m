@@ -1,200 +1,133 @@
-Return-Path: <linux-kernel+bounces-327669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C26EA97791C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:06:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2A37977941
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:18:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5395D1F2573C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:06:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 439C7B23F7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 215F51AE845;
-	Fri, 13 Sep 2024 07:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i1ESWYNT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D0C1BC065;
+	Fri, 13 Sep 2024 07:17:40 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE3A18A6D6
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 07:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F05C777107;
+	Fri, 13 Sep 2024 07:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726211158; cv=none; b=FY5nbCJJCnfpKYxmUshz3tR3F3iAU8NyCP0+oT9WjXT2J7v5ls0wDZSWbaTtKpLLJ295nKZn0IEuSeNFFZ3dwiZ3i+ATLswdZ4w+eggVbjNv2K1Ottd/bUn9D+QxXyxF3UF5S8DES0FW8qOpxyGWyx/zJBjdtyp9+xBPnacdVtc=
+	t=1726211860; cv=none; b=RT4mb8QNrt2efQ/bHMRFSf2RYQKy/Am2EVWDwZO+av1EJBOEDfKkDg8M8b1eq3qVq8HwyGKOWMlgzLav9nuW382I3lERVQgspo+mP+ehNn2PbQGC0quxO9V987N8l3hgqzlg9KMuFyCLwZ6N/mRoq7FbqiyxR4KtYZCwJmRFbeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726211158; c=relaxed/simple;
-	bh=3+bzYuJJdSK+3aHoFavGxC3ix3u6G0o/u+gZva5HlmY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LigFe3VdMIaXfEzMRuSMDaO86SuYWj1XKV3q4HnS4u7vKOVfwrK3GWTiZxIT2gcEd+8JmdAn7qMAo2BuVAhT4/MB8kDrtGVh+xdnm5wAbPyDYKFdXJz+KUsfccl3h0L9WmwEt1l2IFBvrFIw5f1wPNhPeo1utZxevkKEyuwvPKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i1ESWYNT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726211155;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JUxInk0S7cxq8bV5NiblehkhBP73tYJxMaYlFtxjxPg=;
-	b=i1ESWYNTabGVFhmtlWyCjKkUPxMciB0SK5h0uJKHhfYLSatnq2fK02mPXGjtqsUMlAcS1/
-	6CnlcGRVVw2Evyen1B4+953TTzuzXjyJUIeS+OsTZt9PFaOJ45hx+TYVSVKfO36lkrQywC
-	G6chNd+LxAwMJArrutQlNO4w5MBuppg=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-396-sDcROx9NMeW_vHps-VDXmA-1; Fri, 13 Sep 2024 03:05:54 -0400
-X-MC-Unique: sDcROx9NMeW_vHps-VDXmA-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42cacba219cso4111445e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 00:05:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726211153; x=1726815953;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JUxInk0S7cxq8bV5NiblehkhBP73tYJxMaYlFtxjxPg=;
-        b=hQW4aUlvXmNdgJ8jJYyNsOKAfOBLyu3OXTyjhu2wtXIKCzY9WI0eqGoraJw5WP8nYa
-         4j8q+1xmnpxGP1I/KgV18ghXRaK0zVMPDDKRGfTTRVsL2qZpUcAbvTO8C+9AQ8zPRcM/
-         FIALwTIBy3PKkfJXz2WslhDSv1sjWgpMyIY18VJiUUyYwxdNGgVhu5l47EihzxlpAZK0
-         l/NzkSVQ7z5nghPrNEiWaG9lB3uLZxi2KRZLlKElVU69+1xfPiaH0m86Nqv0alpGl6dM
-         PovYnG1j4i1iqA8DBhvqw73zYj8CeWaRBA951RSKKuLzUdZBmJMCrIPnD3Ud8YzbPNpq
-         /fvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWWLcQlYN35vpyc6QJCmLpKsNgkVHgIZGbcLKFSOblM/1YN03tl3Z+hL7cGhJhlzva2gD0ABJ2a8HYoyVc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7Y5R2I/qY64k/jYWdkT8BkYTvM3/Gm9+nZJnpwfUxGAqBX7JC
-	NnCA9QJHbtdNavfWcs2oRDM5zfgrh4yS7cPTFasV7MIOjIx397CHPw+YGmfglTMi3u7VPhFWj7B
-	ZBDjVOoicRR93TH1LMI3w8wLWLuhtpC5KecxNpVdwu//4XaajZrrVQCDA6WyHKg==
-X-Received: by 2002:a05:600c:3490:b0:42c:cd88:d0f7 with SMTP id 5b1f17b1804b1-42d9072211bmr12409455e9.10.1726211152892;
-        Fri, 13 Sep 2024 00:05:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF7ixvDig6mKPxUj06bVVHzX7pqCmSzpaF/KDzUc+5ujBIqwcPkJ/QygFJDl0Ehw9m+hB1r+A==
-X-Received: by 2002:a05:600c:3490:b0:42c:cd88:d0f7 with SMTP id 5b1f17b1804b1-42d9072211bmr12409095e9.10.1726211152304;
-        Fri, 13 Sep 2024 00:05:52 -0700 (PDT)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d37a1sm15945167f8f.77.2024.09.13.00.05.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 00:05:51 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Thomas Zimmermann <tzimmermann@suse.de>, Julius Werner
- <jwerner@chromium.org>
-Cc: Brian Norris <briannorris@chromium.org>, Borislav Petkov <bp@alien8.de>,
- Hugues Bruant <hugues.bruant@gmail.com>, stable@vger.kernel.org,
- regressions@lists.linux.dev, linux-kernel@vger.kernel.org, Fenghua Yu
- <fenghua.yu@intel.com>, Reinette Chatre <reinette.chatre@intel.com>, Tony
- Luck <tony.luck@intel.com>, Tzung-Bi Shih <tzungbi@kernel.org>,
- chrome-platform@lists.linux.dev, Jani Nikula
- <jani.nikula@linux.intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org
-Subject: Re: [NOT A REGRESSION] firmware: framebuffer-coreboot: duplicate
- device name "simple-framebuffer.0"
-In-Reply-To: <6bf656e0-e0b6-4b97-b7a2-ff0bdc86b098@suse.de>
-References: <CALvjV29jozswRtmYxDur2TuEQ=1JSDrM+uWVHmghW3hG5Y9F+w@mail.gmail.com>
- <20240909080200.GAZt6reI9c98c9S_Xc@fat_crate.local>
- <ZuCGkjoxKxpnhEh6@google.com>
- <87jzfhayul.fsf@minerva.mail-host-address-is-not-set>
- <CAODwPW8P+jcF0erUph5XyWoyQgLFbZWxEM6Ygi_LFCCTLmH89Q@mail.gmail.com>
- <87mskczv9l.fsf@minerva.mail-host-address-is-not-set>
- <6bf656e0-e0b6-4b97-b7a2-ff0bdc86b098@suse.de>
-Date: Fri, 13 Sep 2024 09:05:50 +0200
-Message-ID: <87jzfgyqwh.fsf@minerva.mail-host-address-is-not-set>
+	s=arc-20240116; t=1726211860; c=relaxed/simple;
+	bh=/aB7KyuDzWiiD7QCWbP9P8AiK+96dTijvv1tTPSwsxU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=thDljgbcocZWqxpvKCycMMjsJkXgaGhSl3H7yIpeBNAs5SZMcxl6G3Pu7hDMf0RyLLRzNIdpOSd4mSu0gNE5EskBk7D4JLl9APUTsAC0TAZdVnnLzbgbAhLpphkYYQiX8awX59FD4zur0e7ydW/jP/sibBU9pEWA0g2tgMH7AqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4X4lxd6Wngz69N3;
+	Fri, 13 Sep 2024 15:17:25 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2031518006C;
+	Fri, 13 Sep 2024 15:17:34 +0800 (CST)
+Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Fri, 13 Sep
+ 2024 15:17:33 +0800
+From: Chen Ridong <chenridong@huawei.com>
+To: <dhowells@redhat.com>, <jarkko@kernel.org>, <paul@paul-moore.com>,
+	<jmorris@namei.org>, <serge@hallyn.com>
+CC: <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <chenridong@huaweicloud.com>
+Subject: [PATCH] security/keys: fix slab-out-of-bounds in key_task_permission
+Date: Fri, 13 Sep 2024 07:09:28 +0000
+Message-ID: <20240913070928.1670785-1-chenridong@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-Thomas Zimmermann <tzimmermann@suse.de> writes:
+We meet the same issue with the LINK, which reads memory out of bounds:
+BUG: KASAN: slab-out-of-bounds in __kuid_val include/linux/uidgid.h:36
+BUG: KASAN: slab-out-of-bounds in uid_eq include/linux/uidgid.h:63 [inline]
+BUG: KASAN: slab-out-of-bounds in key_task_permission+0x394/0x410
+security/keys/permission.c:54
+Read of size 4 at addr ffff88813c3ab618 by task stress-ng/4362
 
-Hello Thomas,
+CPU: 2 PID: 4362 Comm: stress-ng Not tainted 5.10.0-14930-gafbffd6c3ede #15
+Call Trace:
+ __dump_stack lib/dump_stack.c:82 [inline]
+ dump_stack+0x107/0x167 lib/dump_stack.c:123
+ print_address_description.constprop.0+0x19/0x170 mm/kasan/report.c:400
+ __kasan_report.cold+0x6c/0x84 mm/kasan/report.c:560
+ kasan_report+0x3a/0x50 mm/kasan/report.c:585
+ __kuid_val include/linux/uidgid.h:36 [inline]
+ uid_eq include/linux/uidgid.h:63 [inline]
+ key_task_permission+0x394/0x410 security/keys/permission.c:54
+ search_nested_keyrings+0x90e/0xe90 security/keys/keyring.c:793
+ keyring_search_rcu+0x1b6/0x310 security/keys/keyring.c:922
+ search_cred_keyrings_rcu+0x111/0x2e0 security/keys/process_keys.c:459
+ search_process_keyrings_rcu+0x1d/0x310 security/keys/process_keys.c:544
+ lookup_user_key+0x782/0x12e0 security/keys/process_keys.c:762
+ keyctl_invalidate_key+0x20/0x190 security/keys/keyctl.c:434
+ __do_sys_keyctl security/keys/keyctl.c:1978 [inline]
+ __se_sys_keyctl+0x1de/0x5b0 security/keys/keyctl.c:1880
+ do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
+ entry_SYSCALL_64_after_hwframe+0x67/0xd1
 
-> Hi Javier,
->
-> thanks for the patch.
->
+However, we can't reproduce this issue.
+After our analysis, it can make this issue by following steps.
+1.As syzkaller reported, the memory is allocated for struct
+  assoc_array_shortcut in the assoc_array_insert_into_terminal_node
+  functions.
+2.In the search_nested_keyrings, when we go through the slots in a node,
+  (bellow tag ascend_to_node), and the slot ptr is meta and
+  node->back_pointer != NULL, we will proceed to  descend_to_node.
+  However, there is an exception. If node is the root, and one of the
+  slots points to a shortcut, it will be treated as a keyring.
+3.Whether the ptr is keyring decided by keyring_ptr_is_keyring function.
+  However, KEYRING_PTR_SUBTYPE is 0x2UL, the same as
+  ASSOC_ARRAY_PTR_SUBTYPE_MASK,
+4.As mentioned above, If a slot of the root is a shortcut, it may be
+  mistakenly be transferred to a key*, leading to an read out-of-bounds
+  read.
 
-Thanks for your feedback.
+To fix this issue, one should jump to descend_to_node if the pointer is a
+shortcut.
 
-> Am 12.09.24 um 18:33 schrieb Javier Martinez Canillas:
->> Julius Werner <jwerner@chromium.org> writes:
+Link: https://syzkaller.appspot.com/bug?id=68a5e206c2a8e08d317eb83f05610c0484ad10b9
+Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
+Signed-off-by: Chen Ridong <chenridong@huawei.com>
+---
+ security/keys/keyring.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-[...]
-
->> ---
->>   drivers/firmware/google/framebuffer-coreboot.c | 16 ++++++++++++++++
->>   1 file changed, 16 insertions(+)
->>
->> diff --git a/drivers/firmware/google/framebuffer-coreboot.c b/drivers/firmware/google/framebuffer-coreboot.c
->> index daadd71d8ddd..4e50da17cd7e 100644
->> --- a/drivers/firmware/google/framebuffer-coreboot.c
->> +++ b/drivers/firmware/google/framebuffer-coreboot.c
->> @@ -15,6 +15,7 @@
->>   #include <linux/module.h>
->>   #include <linux/platform_data/simplefb.h>
->>   #include <linux/platform_device.h>
->> +#include <linux/screen_info.h>
->>   
->>   #include "coreboot_table.h"
->>   
->> @@ -27,6 +28,7 @@ static int framebuffer_probe(struct coreboot_device *dev)
->>   	int i;
->>   	u32 length;
->>   	struct lb_framebuffer *fb = &dev->framebuffer;
->> +	struct screen_info *si = &screen_info;
->
-> Probably 'const'.
->
-
-Ok.
-
->>   	struct platform_device *pdev;
->>   	struct resource res;
->>   	struct simplefb_platform_data pdata = {
->> @@ -36,6 +38,20 @@ static int framebuffer_probe(struct coreboot_device *dev)
->>   		.format = NULL,
->>   	};
->>   
->> +	/*
->> +	 * If the global screen_info data has been filled, the Generic
->> +	 * System Framebuffers (sysfb) will already register a platform
->> +	 * and pass the screen_info as platform_data to a driver that
->> +	 * could scan-out using the system provided framebuffer.
->> +	 *
->> +	 * On Coreboot systems, the advertise LB_TAG_FRAMEBUFFER entry
->> +	 * in the Coreboot table should only be used if the payload did
->> +	 * not set video mode info and passed it to the Linux kernel.
->> +	 */
->> +	if (si->orig_video_isVGA == VIDEO_TYPE_VLFB ||
->> +            si->orig_video_isVGA == VIDEO_TYPE_EFI)
->
-> Rather call screen_info_video_type(si) [1] to get the type. If it
-
-Indeed. I missed that helper, I'll change it.
-
-> returns 0, the screen_info is unset and the corebios code can handle the 
-> framebuffer. In any other case, the framebuffer went through a 
-> bootloader, which might have modified it. This also handles awkward 
-> cases, such as if the bootloader programs a VGA text mode.
->
-> [1] 
-> https://elixir.bootlin.com/linux/v6.10.10/source/include/linux/screen_info.h#L92
->
-> With these changes:
->
-> Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
->
-
-Thanks. I'll wait for others in this thread to comment and if all agree
-with the solution, I'll post a proper patch (addressing your comments).
-
-> Best regards
-> Thomas
->
-
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index 4448758f643a..7958486ac834 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -772,7 +772,9 @@ static bool search_nested_keyrings(struct key *keyring,
+ 	for (; slot < ASSOC_ARRAY_FAN_OUT; slot++) {
+ 		ptr = READ_ONCE(node->slots[slot]);
+ 
+-		if (assoc_array_ptr_is_meta(ptr) && node->back_pointer)
++		if ((assoc_array_ptr_is_meta(ptr) && node->back_pointer) ||
++		    (assoc_array_ptr_is_meta(ptr) &&
++		     assoc_array_ptr_is_shortcut(ptr)))
+ 			goto descend_to_node;
+ 
+ 		if (!keyring_ptr_is_keyring(ptr))
 -- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
+2.34.1
 
 
