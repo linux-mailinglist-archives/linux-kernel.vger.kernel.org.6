@@ -1,91 +1,103 @@
-Return-Path: <linux-kernel+bounces-327764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35A8D977ADF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:23:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3438C977AE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A956C1F27796
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:23:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEE4AB25CF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B75D1D6C46;
-	Fri, 13 Sep 2024 08:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FBAF1D6C46;
+	Fri, 13 Sep 2024 08:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f0NrrPy7"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="Fs8Qs5dt";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="am7Pq2HX"
+Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078A51BC088;
-	Fri, 13 Sep 2024 08:23:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11151BA872;
+	Fri, 13 Sep 2024 08:23:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726215794; cv=none; b=DAuFv18X4DE3NLwSfC8ty/GDl0qrb+UI14KK/FpP4zi8WCRBl9p6hIHbUkIE1Kl37gahS0TqbcRglT3VIWuELGNLgzaSA8ljYrabXOE8uv6OcEu1JfiMLf2xSrbpWI/gB7XTaP+kHhoGph7+9HeFoMYowFaXuBI0b518G/WKSdE=
+	t=1726215840; cv=none; b=Is/c1RffxDsz/lxrFUlmZgX3ZBC/G4cCW6wdLXBg9vvRbOENIJ85d1/8ls4Qqud+9fENz2Nzk29DMOV/2M7bAbj0zrgJFr23Pd3TKkqShuNd/ti+bMNsA/x2bub0iWHth1eqioPT2FiFsvjTzWISG1oNinsUDgFyduBlAsziAbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726215794; c=relaxed/simple;
-	bh=F9WMN1ar99DkIYhBr9lSSfqYhs+Ra4MDhT7JouB7i88=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JpFKFluv7Loy+NbACwfS0AMtZapt8lF8tA1KgRnKYjAGQAPWAszisnbXu4rW1h7zBFcvPDiqWwNXY4lv42TTDLps7CNQQgjyp4HCPugcD5Wer/IjO05zqIH3U6sPZaq9FxxaM9MEVIEtSD4Aivqcrvlw8qnMLvV737UNfdkBznA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f0NrrPy7; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cbe624c59so5320285e9.3;
-        Fri, 13 Sep 2024 01:23:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726215791; x=1726820591; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=U+GhRQ3oG4bnaBAL9utcWm2F6HSh4ooNGToRsTRm4Zs=;
-        b=f0NrrPy7Kd5Yfrx2F9q5HwV6+yA14i7gQBZPCHrp5EffxhUYIGUuhXfFWDKETyXDyf
-         5ia7sWP1vuI3hLXmEJnl1rKM0dOHFCWVzILtJbTxUm8H3es2HfYpPcupSUoKSQQGIg0s
-         0YrfYwb76ztu54TdxEJSpqcKioOWOnUEEgHDsv+ciPmkViGB4I7Kf9hBPnYa3b6X7weZ
-         +G1oRzg1A+7hhW7DWKdzBuKKTIbqcsBCSHZuhaFo4yutQU6iQxni3Zp6+EHSvz9/DD8e
-         Ihg0JhXvaxJsp2Wjdz0CHARRPHlCaDFnrLISkQq6b5vRx1kGlaYM05BmnYcTVA5misM5
-         r1Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726215791; x=1726820591;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U+GhRQ3oG4bnaBAL9utcWm2F6HSh4ooNGToRsTRm4Zs=;
-        b=WEpyaJFWA0UvoHE6HfnbrXGGovbmGzCa6VGnc8j9tYB1HC4KIk/QUS51N3BQXYa1rW
-         xFEjZ6suR6IdZD2t2nbtufZz6CbdNc7bBP6RsdQpL0qUoo0JG61dig7F261BCpYN8DdK
-         qS+8iSLntdFSF4sAtKAbXU1dvH1O0n2IpWiYoAsF8QDgFaZ+ipa/J7a83CZuqa7LASSO
-         5XQRE8KrsbNXhp2K4pfN5/4Xg/3CshqPu676l4NI/Y0rMefNNmG43Z9rmmryYNoXX14h
-         R4fWZUiqBCspNkNMUxY5U5bYv0lDPVmt2OkFTbVqfVGV2yCvgiViulQ/xZhQB3rEP7OF
-         RzMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUU9hJW+f2e/zgVjhN1pFoEKItDBxL5iWyvyvnhkXHqC57mLqo/n2+U2LeVRzN/32iACxbTOt+j2r9F0Frw@vger.kernel.org, AJvYcCVPO+JAeblaBE3YmPgC1X62DJJBthOcLQM3ujtzLjts1xSkRCWe3c9xGMtpa0C4akU0o7rS3kV12ysd56xp6up9yMDz@vger.kernel.org, AJvYcCX/DlcuOJkMOTxD9Ro0CuHeSvxBb92bhgq4sCgx7ZNevpiI5mtsFe6FAnaAtFV6wpkWTNo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMPGhnrXdWBCsv2v8hdrqRbDXl1+p9sdhCEQGS8RfVpuNCtynO
-	VsEfkoijgyDqrd2GVq/Zl3yqJubw4KXfwH4nuiENZH3ug9f3u1MT
-X-Google-Smtp-Source: AGHT+IFqprEtHj/Ro4u+NSmvptLWA2EfkQYvDkdx7Rg+9np0yb2C4ytgTh1UjsimnK8NSXoqMHjiPQ==
-X-Received: by 2002:a05:600c:350a:b0:42c:dce1:8915 with SMTP id 5b1f17b1804b1-42d964f84cbmr11969125e9.33.1726215790769;
-        Fri, 13 Sep 2024 01:23:10 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b189a6asm15595165e9.38.2024.09.13.01.23.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 01:23:10 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Fri, 13 Sep 2024 10:22:56 +0200
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCHv3 1/7] uprobe: Add support for session consumer
-Message-ID: <ZuP2YFruQDXTRi25@krava>
-References: <20240909074554.2339984-1-jolsa@kernel.org>
- <20240909074554.2339984-2-jolsa@kernel.org>
- <20240912162028.GD27648@redhat.com>
+	s=arc-20240116; t=1726215840; c=relaxed/simple;
+	bh=T56r7TRZFXIc4E9GL2z4PK5wXtFw6xNEFlJ6xFzUhr0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ow6eFr6lk3xqBgzLqubpYAIMkhmhiDmb0JiavFEfWri+ghkG2RaJ7308ByQRPtkng4kq/etUOzXihROq6hmkgOX9oX6mPCwGBkcbuBoKr/oQ2nhuVoZb2W2xqleAufX8vXgF2TCqICtN/EjL+dUaxnMU1FrzIoJ1YchcYK2W8HI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=Fs8Qs5dt; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=am7Pq2HX; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id CCA1B1140210;
+	Fri, 13 Sep 2024 04:23:57 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Fri, 13 Sep 2024 04:23:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1726215837; x=1726302237; bh=TIGRAXoEQh
+	VL3BhpEp5wxQ56auHwr8BScMmt51FCbXI=; b=Fs8Qs5dtOiEZc8eXvQskydRu1P
+	iV8uZVAt0NJKtNLXeTb23up15Ycd9kWBEQg/aYIzbyxDdw+hdO4zFWV0Q2bYl/rH
+	6L7+3NHm+gay6Yy67s8lLVqmp+biKAFYjffCe9V/1kdon/U+E3qaK7A4HyUOh734
+	HOmjffyeDlq4Rt5Z2knytPqe5nxwsoXw4pvwzDREaGB08YE7ae3s6i5TZ9m6d++7
+	UZIWiP6Bv7R8ddUkZX6rXwRO6hMKlZsFoz0n26SBkbHlHah1kkkJ6GonOxZLli7x
+	1ddYyH+b+TEmLtsfznCgr4dqOhVF+p568po7ci3vv1F2KCG5cFd1mc9uRqCQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1726215837; x=1726302237; bh=TIGRAXoEQhVL3BhpEp5wxQ56auHw
+	r8BScMmt51FCbXI=; b=am7Pq2HXIlJxnNWRjaH8+Z1wsnTa9b6/nM1TAjAC9orc
+	ek05UrB4ehrq5HuNZbjIEanm0Fb1GLYMxGGoxeWiJ+C98UDK10kOLIJ9BIPVbHX7
+	GqkzwYw4KbCJCb+4kaY0PJ2gmrqKhFckqL0D/LmX63xaCtEDo8gjGBzXu5UsP+Z2
+	8vKsHhoS/w1uHk5kAFsyvrOXKUkTfpUwqJZEjCqeLG+vdy7J2AEtlAP/TqFMCAdn
+	y9XJeDE8h2RhN99bSnQ6jC8ljSwuKNW5Xf09eGtSh5z7GKi4YlScJzLKszihCrjs
+	f5jVIxqEzF0el2wSKR/OcHLjx+YB94lpn1AH3KhUZg==
+X-ME-Sender: <xms:nfbjZgvE80tjSEv4Q_GYB5Br0HSTVfhi6n4vuKy6o3EAvTKbFKn4xg>
+    <xme:nfbjZtd2BuX7A6lb5vAsMk7KKioaUM9i5QvUvkufe40Wzwl_sYLvK-YMnhmna8pKr
+    riyuk6TJ5Wpwg>
+X-ME-Received: <xmr:nfbjZrwbGkqiXGM-ERKJ_HNx65PcwAFeJ_4oiMepzoSRxDU-caXr49AX5bDzxvQd7nuGT91ZtIH3ldjAidpqUGDi2CF4PwOTMd3Ykw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejjedgtdduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrf
+    grthhtvghrnhepheegvdevvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefh
+    gfehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopeduvddpmhhouggvpehs
+    mhhtphhouhhtpdhrtghpthhtohepfigruggvrdifrghngheshhhprdgtohhmpdhrtghpth
+    htohepjhhikhhosheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepsggvnhhtihhsshes
+    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqihhnphhuthesvhhgvghrrd
+    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghr
+    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehsthgrsghlvgesvhhgvghrrdhkvghrnh
+    gvlhdrohhrgh
+X-ME-Proxy: <xmx:nfbjZjMjPOCzvhv4Es7vg48zSoiXhsxzsEjodtintyFjyc3FX3oxeA>
+    <xmx:nfbjZg-Tgmqwj0HBxVufombxWKG2pS9nzzT_-11HENhAoHdlG2_jig>
+    <xmx:nfbjZrWzcr5YcYI3XaMQSEcu0vZyPqEAxPSHeRyUi0wPkSL9v3M5UA>
+    <xmx:nfbjZpezxDcdmOH8Q80PglHcati40mMRiObRZIXOZ1hc0vRzlYGlmQ>
+    <xmx:nfbjZrXHcFn8cx7fgmoNW5Wacwl40uYjT7isqfZ8y2DwFAToXq2eRwEi>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 13 Sep 2024 04:23:56 -0400 (EDT)
+Date: Fri, 13 Sep 2024 10:23:54 +0200
+From: Greg KH <greg@kroah.com>
+To: "Wang, Wade" <wade.wang@hp.com>
+Cc: "jikos@kernel.org" <jikos@kernel.org>,
+	"bentiss@kernel.org" <bentiss@kernel.org>,
+	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH] HID: plantronics: Additional PID for double volume key
+ presses quirk
+Message-ID: <2024091345-sliceable-magnetize-190a@gregkh>
+References: <20240913060710.1325640-1-wade.wang@hp.com>
+ <2024091355-antitrust-retiree-1299@gregkh>
+ <EA2PR84MB37800B3DCB1F28FAAF266FC18B652@EA2PR84MB3780.NAMPRD84.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,110 +106,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240912162028.GD27648@redhat.com>
+In-Reply-To: <EA2PR84MB37800B3DCB1F28FAAF266FC18B652@EA2PR84MB3780.NAMPRD84.PROD.OUTLOOK.COM>
 
-On Thu, Sep 12, 2024 at 06:20:29PM +0200, Oleg Nesterov wrote:
-> On 09/09, Jiri Olsa wrote:
-> >
-> >  static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
-> >  {
-> >  	struct uprobe_consumer *uc;
-> >  	int remove = UPROBE_HANDLER_REMOVE;
-> > -	bool need_prep = false; /* prepare return uprobe, when needed */
-> > +	struct return_consumer *ric = NULL;
-> > +	struct return_instance *ri = NULL;
-> >  	bool has_consumers = false;
-> >
-> >  	current->utask->auprobe = &uprobe->arch;
-> >
-> >  	list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
-> >  				 srcu_read_lock_held(&uprobes_srcu)) {
-> > +		__u64 cookie = 0;
-> >  		int rc = 0;
-> >
-> >  		if (uc->handler) {
-> > -			rc = uc->handler(uc, regs);
-> > -			WARN(rc & ~UPROBE_HANDLER_MASK,
-> > +			rc = uc->handler(uc, regs, &cookie);
-> > +			WARN(rc < 0 || rc > 2,
-> >  				"bad rc=0x%x from %ps()\n", rc, uc->handler);
-> >  		}
-> >
-> > -		if (uc->ret_handler)
-> > -			need_prep = true;
-> > -
-> > +		/*
-> > +		 * The handler can return following values:
-> > +		 * 0 - execute ret_handler (if it's defined)
-> > +		 * 1 - remove uprobe
-> > +		 * 2 - do nothing (ignore ret_handler)
-> > +		 */
-> >  		remove &= rc;
-> >  		has_consumers = true;
-> > +
-> > +		if (rc == 0 && uc->ret_handler) {
-> 
-> should we enter this block if uc->handler == NULL?
+Please do not top-post.
 
-yes, consumer can have just ret_handler defined
+On Fri, Sep 13, 2024 at 07:16:13AM +0000, Wang, Wade wrote:
+> Hi Greg,
+> 
+> Just add "Cc: stable@vger.kernel.org" in 2nd patch submission, because kernel test robot required. Any other thing I need to do for your question now? Thanks
 
-> 
-> > +			/*
-> > +			 * Preallocate return_instance object optimistically with
-> > +			 * all possible consumers, so we allocate just once.
-> > +			 */
-> > +			if (!ri) {
-> > +				ri = alloc_return_instance(uprobe->consumers_cnt);
-> 
-> This doesn't look right...
-> 
-> Suppose we have a single consumer C1, so uprobe->consumers_cnt == 1 and
-> alloc_return_instance() allocates return_instance with for a single consumer,
-> so that only ri->consumers[0] is valid.
-> 
-> Right after that uprobe_register()->consumer_add() adds another consumer
-> C2 with ->ret_handler != NULL.
-> 
-> On the next iteration return_consumer_next() will return the invalid addr
-> == &ri->consumers[1].
-> 
-> perhaps this needs krealloc() ?
+That's a great start, but you need to document the difference when you
+do this, as the documentation says to do so, below the --- line.
+Otherwise maintainers have no idea what changed, and what version of a
+patch to take.
 
-damn.. there used to be a lock ;-) ok, for some reason I thought we are safe
-in that list iteration and we are not.. I just made selftest that triggers that
-
-I'm not sure the realloc will help, I feel like we need to allocate return
-consumer for each called handler separately to be safe
-
-> 
-> > +				if (!ri)
-> > +					return;
-> 
-> Not sure we should simply return if kzalloc fails... at least it would be better
-> to clear current->utask->auprobe.
-> 
-> > +	if (ri && !remove)
-> > +		prepare_uretprobe(uprobe, regs, ri); /* put bp at return */
-> > +	else
-> > +		kfree(ri);
-> 
-> Well, if ri != NULL then remove is not possible, afaics... ri != NULL means
-> that at least one ->handler() returned rc = 0, thus "remove" must be zero.
-> 
-> So it seems you can just do
-> 
-> 	if (ri)
-> 		prepare_uretprobe(...);
-
-true, I think that should be enough
+Think about what you would want to see if you got 1000 emails a day to
+do something with?
 
 thanks,
-jirka
 
-> 
-> 
-> Didn't read other parts of your patch yet ;)
-> 
-> Oleg.
-> 
+greg k-h
 
