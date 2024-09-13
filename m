@@ -1,144 +1,118 @@
-Return-Path: <linux-kernel+bounces-328553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 211CE9785B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:26:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD8FA9785B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97247B21E6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:26:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 781EC1F25C43
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D5D26F2E7;
-	Fri, 13 Sep 2024 16:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24CF574070;
+	Fri, 13 Sep 2024 16:26:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bz+F0br5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p16OlQEp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726E055769;
-	Fri, 13 Sep 2024 16:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655D114A85;
+	Fri, 13 Sep 2024 16:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726244764; cv=none; b=n5YXnC32YrNS3J149+XkYg0NoxSQ+gsauXrO2JGJwdnGTQRPwFu57YgMmqyOR7iZotgKPDFtRzqjBQhXBwN9NiZHleEPSc4Hh/IcQUQwCo0qhS6xvCekTI50bf+u0Y7mfQhSumVIBdA9dbDsKCkfivEOmerTqdYdCP79uGujF0g=
+	t=1726244817; cv=none; b=efPmtKVwStzx5yYJ01HifOnxksYX2SUowMLBDGAQiHrYdMX3cPN2TxRcNliXbmqd2ap7laG+wDFiDQbU5pB3+Fu8wHOWRzqvTYj4a+UfeNyDFPy6m8Spe+cnS8jfkI7OeW0ARNQ8SKGVIkSH+7lp8Qx3+tcUBCuZjZQQFjJHS+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726244764; c=relaxed/simple;
-	bh=oFRf8tXKeLenrtsTnrJ7yhMAKhNUViGXhcqFwNqqFj8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aJtBOGv+ERV5S9Z1V56uMsX0/NrwSUl/o5TY0pq7vrW2KA654ViEULwzcHReDXf7byIIu/d9kMALKRwoVrjJ2BdrIOoEu8sw/5ppphVARTtKWMRi57JZBRzwOAfEX7lTGgcldSnkooubma4Ls6opAVfMkPAAyOgDzc7HDxmwrys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bz+F0br5; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726244762; x=1757780762;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=oFRf8tXKeLenrtsTnrJ7yhMAKhNUViGXhcqFwNqqFj8=;
-  b=Bz+F0br53Zw+03MDtc06A+QhxsuhR1forzDb6+VMy7ShYOUg5229kRMC
-   yb2DUozK2arL/DhLNNrPaa7zKNnSuVT7O3A/V/QBPIPjStncJq8ypYX6Y
-   gXpp0LRjYoqQP5sYXveTVsyk8TX5IJhEsf+razfkYjvtDCO+d9KJ27lGG
-   65zM6fYwLP4mmCU/wAH7cG2hqYAVx37dt6wC0W4hVFT1DPfTTEtOHSeW2
-   NrLoqNlvnWrf3EiFC8tVb1RjnHcLVZF4Dn1PCGPji5ptbDLSTuTORqMUW
-   YLh4f10XidP0GI4aSUk1pyIXqXtPTCmIChiIoU15AOs/OXmtuTAlLz7ZI
-   Q==;
-X-CSE-ConnectionGUID: 5z62UmenSIGK2aDobYfQkA==
-X-CSE-MsgGUID: KNxFj2h7Qlern5OG+t4/FA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="28898345"
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="28898345"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 09:26:02 -0700
-X-CSE-ConnectionGUID: Z2rLzcX8Q9OblMD/d2yKGw==
-X-CSE-MsgGUID: AUGOwtgFTdKCTIxj1NShIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="68884213"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 09:26:02 -0700
-Received: from [10.212.21.130] (kliang2-mobl1.ccr.corp.intel.com [10.212.21.130])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id CE24220CFEDA;
-	Fri, 13 Sep 2024 09:26:00 -0700 (PDT)
-Message-ID: <39bb4c06-a8e8-4eef-8659-534939c9987f@linux.intel.com>
-Date: Fri, 13 Sep 2024 12:25:59 -0400
+	s=arc-20240116; t=1726244817; c=relaxed/simple;
+	bh=N/dGWdelfzW1jn7M+zLDe+HuQdFpqVd7x9gArCb5Jvk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=hbGsWCQKSiFsIUwZxrjdhPIghitQNQExh8kMlXbVMnetr9zqQx/se1n32JjAtKwqSfkZ8M1WZOCoTYQ3+0JliMSVWxgz0qDGFGFSUAXYWWKqyUoVKUNtaNfi12ACuoXT8U305o1DFWGI3UqqqKqtcCNfwFp8tiH6LAzQFodqMIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p16OlQEp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AB45C4CEC0;
+	Fri, 13 Sep 2024 16:26:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726244816;
+	bh=N/dGWdelfzW1jn7M+zLDe+HuQdFpqVd7x9gArCb5Jvk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=p16OlQEpr5SAw2jRw6O1xDg5YWbgxPDunmMZ0Sn3z1WK70qMRUtRnSYItwlFquMz3
+	 yy4fHiskNpy9vZ9R1OjKG5XM0WxfZrYDWZKb0/As8aq94zr9scbWbt4bcAzJIjgR88
+	 Rpbj1q+5++m00rAm0WVpOv4NyToZ4Zs9gpW7nXXy1aFahtHGMLJMOb9K4DhJodJ44o
+	 Ymz5cLXQGYn455KbAHQXACFdINjTucrcbGxpjP5qo4i31T6pcHJLE7KUsZhVJvVybl
+	 9F9bT9d/Q9e61kw/fi3+lyZzn7S7xg7lmIfws5NMXaF0gXVof2qb/XTgtciVCdizFe
+	 7v8BBeLtvAgVA==
+Date: Fri, 13 Sep 2024 11:26:54 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Daniel Wagner <wagi@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	virtualization@lists.linux.dev, linux-scsi@vger.kernel.org,
+	megaraidlinux.pdl@broadcom.com, mpi3mr-linuxdrv.pdl@broadcom.com,
+	MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com,
+	linux-nvme@lists.infradead.org, Daniel Wagner <dwagner@suse.de>,
+	20240912-do-not-overwrite-pci-mapping-v1-1-85724b6cec49@suse.de,
+	Ming Lei <ming.lei@redhat.com>
+Subject: Re: [PATCH 1/6] blk-mq: introduce blk_mq_hctx_map_queues
+Message-ID: <20240913162654.GA713813@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf: Fix missing RCU reader protection in
- perf_event_clear_cpumask()
-To: peterz@infradead.org, mingo@redhat.com, linux-kernel@vger.kernel.org,
- linux-next@vger.kernel.org, linux-perf-users@vger.kernel.org
-Cc: "Paul E . McKenney" <paulmck@kernel.org>,
- kernel test robot <oliver.sang@intel.com>
-References: <20240913162340.2142976-1-kan.liang@linux.intel.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240913162340.2142976-1-kan.liang@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240913-refactor-blk-affinity-helpers-v1-1-8e058f77af12@suse.de>
 
+On Fri, Sep 13, 2024 at 09:41:59AM +0200, Daniel Wagner wrote:
+> From: Ming Lei <ming.lei@redhat.com>
+> 
+> blk_mq_pci_map_queues and blk_mq_virtio_map_queues will create a CPU to
+> hardware queue mapping based on affinity information. These two
+> function share code which only differs on how the affinity information
+> is retrieved. Also there is the hisi_sas which open codes the same loop.
+> 
+> Thus introduce a new helper function for creating these mappings which
+> takes an callback function for fetching the affinity mask. Also
+> introduce common helper function for PCI and virtio devices to retrieve
+> affinity masks.
 
-
-On 2024-09-13 12:23 p.m., kan.liang@linux.intel.com wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
-> 
-> Running rcutorture scenario TREE05, the below warning is triggered.
-> 
-> [   32.604594] WARNING: suspicious RCU usage
-> [   32.605928] 6.11.0-rc5-00040-g4ba4f1afb6a9 #55238 Not tainted
-> [   32.607812] -----------------------------
-> [   32.609140] kernel/events/core.c:13946 RCU-list traversed in non-reader section!!
-> [   32.611595] other info that might help us debug this:
-> [   32.614247] rcu_scheduler_active = 2, debug_locks = 1
-> [   32.616392] 3 locks held by cpuhp/4/35:
-> [   32.617687]  #0: ffffffffb666a650 (cpu_hotplug_lock){++++}-{0:0}, at: cpuhp_thread_fun+0x4e/0x200
-> [   32.620563]  #1: ffffffffb666cd20 (cpuhp_state-down){+.+.}-{0:0}, at: cpuhp_thread_fun+0x4e/0x200
-> [   32.623412]  #2: ffffffffb677c288 (pmus_lock){+.+.}-{3:3}, at: perf_event_exit_cpu_context+0x32/0x2f0
-> 
-> In perf_event_clear_cpumask(), uses list_for_each_entry_rcu() without an
-> obvious RCU read-side critical section.
-> 
-> Either pmus_srcu or pmus_lock is good enough to protect the pmus list.
-> In the current context, pmus_lock is already held. The
-> list_for_each_entry_rcu() is not required.
-> 
-> Fixes: 4ba4f1afb6a9 ("perf: Generic hotplug support for a PMU with a scope")
-> Reported-by: Paul E. McKenney <paulmck@kernel.org>
-> Closes: https://lore.kernel.org/lkml/2b66dff8-b827-494b-b151-1ad8d56f13e6@paulmck-laptop/
-> Tested-by: Paul E. McKenney <paulmck@kernel.org>
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Closes: https://lore.kernel.org/oe-lkp/202409131559.545634cc-oliver.sang@intel.com
-
-Forgot to add the below tag, please fold it.
-
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-
-Thanks,
-Kan
-> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-> ---
->  kernel/events/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 20e97c1aa4d6..5ba9934b49df 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -13912,7 +13912,7 @@ static void perf_event_clear_cpumask(unsigned int cpu)
->  	}
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index e3a49f66982d..84f9c16b813b 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -6370,6 +6370,26 @@ int pci_set_vga_state(struct pci_dev *dev, bool decode,
+>  	return 0;
+>  }
 >  
->  	/* migrate */
-> -	list_for_each_entry_rcu(pmu, &pmus, entry, lockdep_is_held(&pmus_srcu)) {
-> +	list_for_each_entry(pmu, &pmus, entry) {
->  		if (pmu->scope == PERF_PMU_SCOPE_NONE ||
->  		    WARN_ON_ONCE(pmu->scope >= PERF_PMU_MAX_SCOPE))
->  			continue;
+> +#ifdef CONFIG_BLK_MQ_PCI
+> +/**
+> + * pci_get_blk_mq_affinity - get affinity mask queue mapping for PCI device
+> + * @dev_data:	Pointer to struct pci_dev.
+> + * @offset:	Offset to use for the pci irq vector
+> + * @queue:	Queue index
+> + *
+> + * This function returns for a queue the affinity mask for a PCI device.
+> + * It is usually used as callback for blk_mq_hctx_map_queues().
+> + */
+> +const struct cpumask *pci_get_blk_mq_affinity(void *dev_data, int offset,
+> +					      int queue)
+> +{
+> +	struct pci_dev *pdev = dev_data;
+> +
+> +	return pci_irq_get_affinity(pdev, offset + queue);
+> +}
+> +EXPORT_SYMBOL_GPL(pci_get_blk_mq_affinity);
+> +#endif
+
+IMO this doesn't really fit well in drivers/pci since it doesn't add
+any PCI-specific knowledge or require any PCI core internals, and the
+parameters are blk-specific.  I don't object to the code, but it seems
+like it could go somewhere in block/?
+
+Bjorn
 
