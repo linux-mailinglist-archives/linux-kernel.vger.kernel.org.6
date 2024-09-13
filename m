@@ -1,305 +1,156 @@
-Return-Path: <linux-kernel+bounces-327949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB45977D04
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:14:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7A68977D07
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9E6D1C2467E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:14:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AFDE1F288D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:15:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770721D86C2;
-	Fri, 13 Sep 2024 10:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28BB41D7E51;
+	Fri, 13 Sep 2024 10:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="dVCn/rys"
-Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bYM6W6mq"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47481D7E42
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 10:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053AF1D7E42;
+	Fri, 13 Sep 2024 10:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726222462; cv=none; b=Wo/ZZ4btR+j+H+yYPgFWirHUc2XnofD3yTf/VkQND8rNZAUkt0btO1uHgY5XZ4gS2qZrv/dGoCYttKBhQw+CIvsmQIbgpbMuc1D+7kIKt0CwwVcIkiWiR1kU4PHIVl1vXxDXZvaG29rMTop0if+uNzCAVUxmMF/IrNnnwNwrIsY=
+	t=1726222493; cv=none; b=TCoX0HYwRR8wAZlL6bs4QVCjgTkWV3UDONeIbvUUOBhICK4y5c1gsRnj3Ebw4HivhPPUwjukU2RcXT9NWU1NMyHYjDMSIXfGhwtYM06tSfy5LAqkT4Gp0sb8mDE7Pi9fltdXrdzzaa8nQfdt6Peje6BK/I6bZkGzZO3BVi/K79Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726222462; c=relaxed/simple;
-	bh=jwnUKFwawSYD1vuSblqX+PfrC395ExZkCFFaSIohnmw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qbpUoNPpEdP9SdIlaUJ7c2A2okUOx6fLWVKIweNnchoT60ovFGA94h507bTYOZL9yMH4aRzAtRp9JJq0ymz3aiigXTCv4IhVWbvtv9/trzylk+BnR2nFB1yg9IKVOKQxT2ioVQmrkzFyEUrxyNiaipcYK9rDYlO9BxVY3IbxmhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=dVCn/rys; arc=none smtp.client-ip=35.89.44.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5008a.ext.cloudfilter.net ([10.0.29.246])
-	by cmsmtp with ESMTPS
-	id odcVsWt3dqvuop3JksZ0b1; Fri, 13 Sep 2024 10:14:20 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id p3JjsGqRXHGLjp3Jjs2b37; Fri, 13 Sep 2024 10:14:19 +0000
-X-Authority-Analysis: v=2.4 cv=VaHxPkp9 c=1 sm=1 tr=0 ts=66e4107b
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=rpUMG24A1zG+UrzXDtAMsg==:17
- a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=7T7KSl7uo7wA:10 a=anyJmfQTAAAA:8
- a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=i3X5FwGiAAAA:8 a=QyXUC8HyAAAA:8
- a=Co-KuMXxJcsvc7DC3HAA:9 a=QEXdDO2ut3YA:10 a=mmqRlSCDY2ywfjPLJ4af:22
- a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=/i8RPO9eFL0DrWzxkq+6NW6yIxztwoW7oSYVe/XjxhU=; b=dVCn/rys8mxpvhTDhfDYs3l5Xq
-	788w1/MnJX0vAj7vyX6Q1iaeQ4CmVKXq3a6BH5yIn/Sv4SiXLVZHYZVBi8IZWJyLAZnKNv935qsJ1
-	aK9/K2DT1gCz5WL8grPJNGma3y52tUxbrkFoNn9P45lAj3NH8gM9eiEDa8RlsdymGCkMDjomH8Aip
-	BrfPFBlhpgztlI7kyphcRu28QcXy2N3ITByp56x+kgkNb0wotj1hoeQVuzI39u0M3N/6vUw+Cex0h
-	q44r37cmljPwp7qUycQ07vm/MxwBoKAWTUYvtx96mbIpwnk9YvJrmsYxbXNPvn713tSXofLP/HIXZ
-	1oS0nlmQ==;
-Received: from [185.44.53.103] (port=34042 helo=[192.168.1.187])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1sp3Jg-001LX5-1t;
-	Fri, 13 Sep 2024 05:14:17 -0500
-Message-ID: <7e1d4077-51d7-45ce-bab4-efec875b36f2@embeddedor.com>
-Date: Fri, 13 Sep 2024 12:14:03 +0200
+	s=arc-20240116; t=1726222493; c=relaxed/simple;
+	bh=CRudJVWUDQLzsnW4V+Kg/z8JiBN3j0Vm0hrJgzryFy0=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=lJGepgStOP17R8NMfEz1RwCUETWVeAUSFLkq2XG1HDF7jNPkID9AbKs9NcHTZhyK9zRdJ+SEQf04oKBGYWG/YqKIMyD94BC2IjAEDmTvj2lY3nVV74E6q6u7nQRLZ+AKxSqKS+Q6deHMxFvAI5cC8qsRWUAjWnmQCCDwMPKau10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bYM6W6mq; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-206bd1c6ccdso6412345ad.3;
+        Fri, 13 Sep 2024 03:14:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726222491; x=1726827291; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fG6tr1CEMYW+hGol0y7P6nh0VSGKd7m23E/GKIsNqpE=;
+        b=bYM6W6mq+kdMI26Nx/MpkM7u4006tsiC0ZMZqqQEfr+XDjbCYM1J9rr1JvtUQCKR05
+         MRDVo821T8Kdhg5zmCjyv7ndIENXp9pVtRK16sVkv0k8M9fpOIV7euI+spEIrPmZD07E
+         V8mVVM+dPdE8ih7FMqdpkSzU0TRpRHVTbpZNH4qe505bgEzkIlT6TZIc+/Fyra95XIj3
+         W/Etd6wsVCRpHhKXe84Al94uE5PJR2GxNA9jMpgoty+464rCZfN6PSD48pSkTV+enpNe
+         ZJc7E9lXPDOmHbLlfyMSPigwhw/TgxYuABXIpoGqm88Ts49ROQmD3nOITRWjqyOUo0CC
+         AvnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726222491; x=1726827291;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fG6tr1CEMYW+hGol0y7P6nh0VSGKd7m23E/GKIsNqpE=;
+        b=J7B6YSbqfcNH5TIcjMYfRNwukYYPWsJhS3N6v7ST/OJerruXKdrJUfkbH00aQd6y8k
+         Jre68LR2so2VXt3ysJOS1lVLauQB4G/vqal25sIXygMmxbNyGaVJ/TVCMYix5g8vQfdP
+         KXcjKkXu2D0kSRz8Y37nYMRxUc3JU05ArleLbuMXoENoYuuGcIsLa7AZl5Iy9igvW9Ik
+         ssmmL+AfQTZRduQLLveiaFJItdOJJkqROXq7zZPn2oBYOMyp2ZCRN+WRs8a0heKl0mU6
+         pmq9OYzsATbM9IaUWm43GAG4UxtnSOu00PZiztcIC9vocYSz46yMMkD065P1xcKVAZpi
+         iEJg==
+X-Forwarded-Encrypted: i=1; AJvYcCWLNRBrNl5nCm2V/w46rHBnf2MUMs9amZl6/UF/9Hawp6h47P82FUnF0fZATpe2T155JzXHNQDwGpU=@vger.kernel.org, AJvYcCXhNIT5rEYh0eEVm7RdesTbs4mxmKFGpS93nX3fBXIDdXBRUVv3HK4sJdAt9lc+IoHN3IiY2vSLFJIp4BH8@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxjurh1vaG8yQJfycb96javOWDzW+UNfgjTYcqZW5XPri/iCcgR
+	5J9f+KXmEec6TlP2f2V2sji23fgjVb5Ut5sDoQyj1/8qFtQt6Ms5rfNm4nk=
+X-Google-Smtp-Source: AGHT+IGe7fD6EqPAmOXxGUzdjT+wv0BtZDhatz1LkOcMyllPOxfMDoG9hDmkUDaXk7n+6F8ZAqv4cQ==
+X-Received: by 2002:a17:902:e88a:b0:206:ba7c:9f2e with SMTP id d9443c01a7336-207822414b5mr31809455ad.25.1726222491019;
+        Fri, 13 Sep 2024 03:14:51 -0700 (PDT)
+Received: from localhost (2001-b400-e334-c33a-b4cd-4a8f-209a-cf54.emome-ip6.hinet.net. [2001:b400:e334:c33a:b4cd:4a8f:209a:cf54])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076af250f2sm25787545ad.61.2024.09.13.03.14.50
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 13 Sep 2024 03:14:50 -0700 (PDT)
+From: warp5tw@gmail.com
+X-Google-Original-From: kfting@nuvoton.com
+To: avifishman70@gmail.com,
+	tmaimon77@gmail.com,
+	tali.perry1@gmail.com,
+	venture@google.com,
+	yuenn@google.com,
+	benjaminfair@google.com,
+	andi.shyti@kernel.org,
+	andriy.shevchenko@linux.intel.com,
+	wsa@kernel.org,
+	rand.sec96@gmail.com,
+	wsa+renesas@sang-engineering.com,
+	warp5tw@gmail.com,
+	tali.perry@nuvoton.com,
+	Avi.Fishman@nuvoton.com,
+	tomer.maimon@nuvoton.com,
+	KWLIU@nuvoton.com,
+	JJLIU0@nuvoton.com,
+	kfting@nuvoton.com
+Cc: openbmc@lists.ozlabs.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/6] i2c: npcm: Bug fixes read/write operation, checkpatch
+Date: Fri, 13 Sep 2024 18:14:40 +0800
+Message-Id: <20240913101445.16513-1-kfting@nuvoton.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2][next] wifi: iwlwifi: mvm: Use __counted_by() and avoid
- -Wfamnae warnings
-To: kernel test robot <lkp@intel.com>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Miri Korenblit <miriam.rachel.korenblit@intel.com>,
- Kalle Valo <kvalo@kernel.org>, Johannes Berg <johannes@sipsolutions.net>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
- netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <ZrZs5KL5Pz9tIinr@cute> <202408110634.V68RFEtW-lkp@intel.com>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <202408110634.V68RFEtW-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 185.44.53.103
-X-Source-L: No
-X-Exim-ID: 1sp3Jg-001LX5-1t
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.187]) [185.44.53.103]:34042
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfKd7l0Frfshza38a+hXHlp8zeVFhwFiODrx/Dbna3YwAw5SlC7fejYPWJrBNNDWdVE23ftAHRIIVkIISOjmx+S/oA969K8QTjIjwW3MpHiEQ7yAr4F1C
- g0LSguoFxeZD0rxAcwE31sgN75YrJjfXQMu6bo2knfuNmWSVYkdE5k2uoXNQX0df2jW2D1PmXEoKyxYUK2B3k+BqquUqO8SB9tIHUmQbikYzI8j5LXBxk/As
+
+From: Tyrone Ting <kfting@nuvoton.com>
+
+This patchset includes the following fixes:
+
+- Enable the target functionality in the interrupt handling routine 
+  when the i2c transfer is about to finish.
+- Correct the read/write operation procedure.
+- Introduce a software flag to handle the bus error (BER) condition
+  which is not caused by the i2c transfer.
+- Modify timeout calculation.
+- Assign the client address earlier logically.
+- Use an i2c frequency table for the frequency parameters assignment.
+- Coding style fix.
+
+The NPCM I2C driver is tested on NPCM750 and NPCM845 evaluation boards.
+
+Addressed comments from:
+- Andi Shyti : https://lore.kernel.org/lkml/
+  cfdfldh5tuhb4r5pdpgolcr2roeewsobedet2uvmpbnqlw5yh4@c4a2szsbs2r2/
+- Andi Shyti : https://lore.kernel.org/lkml/
+  stnyjmnqdobzq2f2ntq32tu4kq6ohsxyevjn5rgz3uu2qncuzl@nt4ifscgokgj/
+- Andy Shevchenko : https://lore.kernel.org/lkml/ZtWnd8bmiu-M4fQg
+  @smile.fi.intel.com/
+- Andy Shevchenko : https://lore.kernel.org/lkml/Zt7Nn9uJSeHFUZZF
+  @smile.fi.intel.com/
+- Andi Shyti : https://lore.kernel.org/lkml/
+  2kqhf2ad3omx3dsjucrqhtnonnox7ghtp7vkogrwrdfh3dgg2o@4cpa4gfg6c3f/
+
+Changes since version 2:
+- Add more explanations in the commit message and code modification.
+- Use lower character names for declarations.
+- Remove Fixes tags in commits which are not to fix bugs.
+
+Changes since version 1:
+- Restore the npcm_i2caddr array length to fix the smatch warning.
+- Remove unused variables.
+- Handle the condition where scl_table_cnt reaches to the maximum value.
+- Fix the checkpatch warning.
+
+Charles Boyer (1):
+  i2c: npcm: Enable slave in eob interrupt
+
+Tyrone Ting (5):
+  i2c: npcm: correct the read/write operation procedure
+  i2c: npcm: use a software flag to indicate a BER condition
+  i2c: npcm: Modify timeout evaluation mechanism
+  i2c: npcm: Modify the client address assignment
+  i2c: npcm: use i2c frequency table
+
+ drivers/i2c/busses/i2c-npcm7xx.c | 281 ++++++++++++++++++++-----------
+ 1 file changed, 179 insertions(+), 102 deletions(-)
 
 
+base-commit: 48b83f5f68edb4d19771d5ecc54bbbc37166f753
+-- 
+2.34.1
 
-On 10/08/24 22:26, kernel test robot wrote:
-> Hi Gustavo,
-> 
-> kernel test robot noticed the following build errors:
-> 
-> [auto build test ERROR on wireless-next/main]
-> [also build test ERROR on wireless/main linus/master v6.11-rc2 next-20240809]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Gustavo-A-R-Silva/wifi-iwlwifi-mvm-Use-__counted_by-and-avoid-Wfamnae-warnings/20240810-103759
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git main
-> patch link:    https://lore.kernel.org/r/ZrZs5KL5Pz9tIinr%40cute
-> patch subject: [PATCH v2][next] wifi: iwlwifi: mvm: Use __counted_by() and avoid -Wfamnae warnings
-> config: riscv-allmodconfig (https://download.01.org/0day-ci/archive/20240811/202408110634.V68RFEtW-lkp@intel.com/config)
-> compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project f86594788ce93b696675c94f54016d27a6c21d18)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240811/202408110634.V68RFEtW-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202408110634.V68RFEtW-lkp@intel.com/
-> 
-> All errors (new ones prefixed by >>):
-> 
->     In file included from drivers/net/wireless/intel/iwlwifi/mvm/d3.c:7:
->     In file included from include/linux/etherdevice.h:20:
->     In file included from include/linux/if_ether.h:19:
->     In file included from include/linux/skbuff.h:17:
->     In file included from include/linux/bvec.h:10:
->     In file included from include/linux/highmem.h:8:
->     In file included from include/linux/cacheflush.h:5:
->     In file included from arch/riscv/include/asm/cacheflush.h:9:
->     In file included from include/linux/mm.h:2228:
->     include/linux/vmstat.h:500:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
->       500 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
->           |                            ~~~~~~~~~~~~~~~~~~~~~ ^
->       501 |                            item];
->           |                            ~~~~
->     include/linux/vmstat.h:507:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
->       507 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
->           |                            ~~~~~~~~~~~~~~~~~~~~~ ^
->       508 |                            NR_VM_NUMA_EVENT_ITEMS +
->           |                            ~~~~~~~~~~~~~~~~~~~~~~
->     include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
->       514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
->           |                               ~~~~~~~~~~~ ^ ~~~
->     include/linux/vmstat.h:519:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
->       519 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
->           |                            ~~~~~~~~~~~~~~~~~~~~~ ^
->       520 |                            NR_VM_NUMA_EVENT_ITEMS +
->           |                            ~~~~~~~~~~~~~~~~~~~~~~
->     include/linux/vmstat.h:528:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
->       528 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
->           |                            ~~~~~~~~~~~~~~~~~~~~~ ^
->       529 |                            NR_VM_NUMA_EVENT_ITEMS +
->           |                            ~~~~~~~~~~~~~~~~~~~~~~
->>> drivers/net/wireless/intel/iwlwifi/mvm/d3.c:2149:2: error: call to '__compiletime_assert_1044' declared with 'error' attribute: BUILD_BUG_ON failed: conf->keylen < WLAN_KEY_LEN_GCMP_256
->      2149 |         BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_GCMP_256);
->           |         ^
->     include/linux/build_bug.h:50:2: note: expanded from macro 'BUILD_BUG_ON'
->        50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
->           |         ^
->     include/linux/build_bug.h:39:37: note: expanded from macro 'BUILD_BUG_ON_MSG'
->        39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
->           |                                     ^
->     include/linux/compiler_types.h:510:2: note: expanded from macro 'compiletime_assert'
->       510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
->           |         ^
->     include/linux/compiler_types.h:498:2: note: expanded from macro '_compiletime_assert'
->       498 |         __compiletime_assert(condition, msg, prefix, suffix)
->           |         ^
->     include/linux/compiler_types.h:491:4: note: expanded from macro '__compiletime_assert'
->       491 |                         prefix ## suffix();                             \
->           |                         ^
->     <scratch space>:38:1: note: expanded from here
->        38 | __compiletime_assert_1044
->           | ^
->>> drivers/net/wireless/intel/iwlwifi/mvm/d3.c:2148:2: error: call to '__compiletime_assert_1043' declared with 'error' attribute: BUILD_BUG_ON failed: conf->keylen < WLAN_KEY_LEN_CCMP
->      2148 |         BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_CCMP);
->           |         ^
->     include/linux/build_bug.h:50:2: note: expanded from macro 'BUILD_BUG_ON'
->        50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
->           |         ^
->     include/linux/build_bug.h:39:37: note: expanded from macro 'BUILD_BUG_ON_MSG'
->        39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
->           |                                     ^
->     include/linux/compiler_types.h:510:2: note: expanded from macro 'compiletime_assert'
->       510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
->           |         ^
->     include/linux/compiler_types.h:498:2: note: expanded from macro '_compiletime_assert'
->       498 |         __compiletime_assert(condition, msg, prefix, suffix)
->           |         ^
->     include/linux/compiler_types.h:491:4: note: expanded from macro '__compiletime_assert'
->       491 |                         prefix ## suffix();                             \
->           |                         ^
->     <scratch space>:34:1: note: expanded from here
->        34 | __compiletime_assert_1043
->           | ^
->     5 warnings and 2 errors generated.
-> 
-> 
-> vim +2149 drivers/net/wireless/intel/iwlwifi/mvm/d3.c
-> 
->    2134	
->    2135	static bool iwl_mvm_gtk_rekey(struct iwl_wowlan_status_data *status,
->    2136				      struct ieee80211_vif *vif,
->    2137				      struct iwl_mvm *mvm, u32 gtk_cipher)
->    2138	{
->    2139		int i, j;
->    2140		struct ieee80211_key_conf *key;
->    2141		DEFINE_FLEX(struct ieee80211_key_conf, conf, key, keylen,
->    2142			    WOWLAN_KEY_MAX_SIZE);
->    2143		int link_id = vif->active_links ? __ffs(vif->active_links) : -1;
-
-
-Holy molly guaca-guaca... swapping the above two lines fixes the issue:
-
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
-index 581455ab5e6d..764580cf6c58 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/d3.c
-@@ -2138,9 +2138,8 @@ static bool iwl_mvm_gtk_rekey(struct iwl_wowlan_status_data *status,
-  {
-         int i, j;
-         struct ieee80211_key_conf *key;
--       DEFINE_FLEX(struct ieee80211_key_conf, conf, key, keylen,
--                   WOWLAN_KEY_MAX_SIZE);
-         int link_id = vif->active_links ? __ffs(vif->active_links) : -1;
-+       DEFINE_FLEX(struct ieee80211_key_conf, conf, key, keylen, WOWLAN_KEY_MAX_SIZE);
-
-         conf->cipher = gtk_cipher;
-
-
-This is the first time I've seen this compiler behavior when building DEFINE_FLEX() changes...
-
---
-Gustavo
-
->    2144	
->    2145		conf->cipher = gtk_cipher;
->    2146	
->    2147		BUILD_BUG_ON(WLAN_KEY_LEN_CCMP != WLAN_KEY_LEN_GCMP);
->> 2148		BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_CCMP);
->> 2149		BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_GCMP_256);
->    2150		BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_TKIP);
->    2151		BUILD_BUG_ON(conf->keylen < sizeof(status->gtk[0].key));
->    2152	
->    2153		switch (gtk_cipher) {
->    2154		case WLAN_CIPHER_SUITE_CCMP:
->    2155		case WLAN_CIPHER_SUITE_GCMP:
->    2156			conf->keylen = WLAN_KEY_LEN_CCMP;
->    2157			break;
->    2158		case WLAN_CIPHER_SUITE_GCMP_256:
->    2159			conf->keylen = WLAN_KEY_LEN_GCMP_256;
->    2160			break;
->    2161		case WLAN_CIPHER_SUITE_TKIP:
->    2162			conf->keylen = WLAN_KEY_LEN_TKIP;
->    2163			break;
->    2164		default:
->    2165			WARN_ON(1);
->    2166		}
->    2167	
->    2168		for (i = 0; i < ARRAY_SIZE(status->gtk); i++) {
->    2169			if (!status->gtk[i].len)
->    2170				continue;
->    2171	
->    2172			conf->keyidx = status->gtk[i].id;
->    2173			IWL_DEBUG_WOWLAN(mvm,
->    2174					 "Received from FW GTK cipher %d, key index %d\n",
->    2175					 conf->cipher, conf->keyidx);
->    2176			memcpy(conf->key, status->gtk[i].key,
->    2177			       sizeof(status->gtk[i].key));
->    2178	
->    2179			key = ieee80211_gtk_rekey_add(vif, conf, link_id);
->    2180			if (IS_ERR(key))
->    2181				return false;
->    2182	
->    2183			for (j = 0; j < ARRAY_SIZE(status->gtk_seq); j++) {
->    2184				if (!status->gtk_seq[j].valid ||
->    2185				    status->gtk_seq[j].key_id != key->keyidx)
->    2186					continue;
->    2187				iwl_mvm_set_key_rx_seq_idx(key, status, j);
->    2188				break;
->    2189			}
->    2190			WARN_ON(j == ARRAY_SIZE(status->gtk_seq));
->    2191		}
->    2192	
->    2193		return true;
->    2194	}
->    2195	
-> 
 
