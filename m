@@ -1,111 +1,162 @@
-Return-Path: <linux-kernel+bounces-328163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E5EA977FCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:26:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC4F977FD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:27:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 882AF1C21A65
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:26:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10A0B2892F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37FA81D9336;
-	Fri, 13 Sep 2024 12:25:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58581D932F;
+	Fri, 13 Sep 2024 12:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dqWdF1Pf"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Ou1wOFkE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9176F1C2BF;
-	Fri, 13 Sep 2024 12:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CED1C2319;
+	Fri, 13 Sep 2024 12:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726230356; cv=none; b=cTuQVN3JJBUuNbtWN3re/gVUazFnNkcoEr1EEJCOl7rP8JZDZvGxjaMImRLhVjAUEQCI2KaPZQexZKaqX+XPM1cRzX7hupCgkGuxfJ1Pv5mgR1iV+UbsbsCN86kJm3V6eCZGuAplsoSkbnrb4bSiqGVVzXZB2SoW8nVBNsPkfYM=
+	t=1726230455; cv=none; b=l2FzUwIYjFe4ahEZuL+QRyaApB0DOHh7nJSzKKCLiuLv3mqo4BHZsvUBjyIdK6FG92zq6L44Qu2PD4mKwEGz9LrTy+CbLM5OmPF+IM+opPI15kqm7M5wnblueK3PUlc4qKI+TQslz0AZ6/DwE8tYrvdk5lKXXPhqy1+693LKAJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726230356; c=relaxed/simple;
-	bh=MKhVqQn9naKipl16z0G0brZ2rK+2vxoKridIOshtSSM=;
+	s=arc-20240116; t=1726230455; c=relaxed/simple;
+	bh=Xn7ahkD5Ei/452KsEUp8graRPSBFcovTP+7QMOXhAgo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=meh3Etfzp77n781yDxRgjiMmWJTG15R8WrRzNrj45hy3TUb0338nJ6ZnEuz56AoYWBfUJK5Ih9Gv+GobXiFEkR7yJKgDOrqI8q5uffv0ZYSe2/UTddaGCQvrPWOzo81NelZuXqvz+OyA+GcyQgvyV2x9ISKI0TDFILH8BeJxuOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dqWdF1Pf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81C76C4CEC0;
-	Fri, 13 Sep 2024 12:25:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726230356;
-	bh=MKhVqQn9naKipl16z0G0brZ2rK+2vxoKridIOshtSSM=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q09Io+2rxY9TDwOkHqxixM+4JYX72vntbBXQ6Hte2Yp14gBOEIpYbPGeKmX1WlOvonMWNa7uhA3+GPzcTQMRoh7cEJM4f1uYBiYy+xtdTPbDmchwkewJXU4a7QF6cVp+Wjc25YACd5y5Anhg7+SWnAPDhyeWiGOqdXJV+8/nblc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Ou1wOFkE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AF01C4CEC0;
+	Fri, 13 Sep 2024 12:27:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1726230454;
+	bh=Xn7ahkD5Ei/452KsEUp8graRPSBFcovTP+7QMOXhAgo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dqWdF1Pf5siAOWSfSX6wxCYylknilZIwZfSBj0ojarzojNtTYhN9scUOWtsgBxQvg
-	 y6mNppOfqXLUF9p6uqH4QyHrZgBaN8twMAzdi9p96YcN2sBVqMMv6EStoPSRd38fQ6
-	 mxz5QhQy88EnSeC/m1aeIAsC4oW7FR5o5C9K0Sh881d28eeAfF9VERCmBqQwMnB2+d
-	 5P3AQr8IWy6xUaHlDfdflR2CPR9mZJJHoX2vc9KWVBELfnuceadJRMVSYHBsNz3sca
-	 3kye4WK9q/Sq/LFbtMGidu3zFk2Q96xnhHUAvx+VOKuEkxWzoGP8TuFHgu+I3LwT1M
-	 u0iDseFweMjsg==
-Date: Fri, 13 Sep 2024 13:25:52 +0100
-From: Simon Horman <horms@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jakub Kicinski <kuba@kernel.org>, Mina Almasry <almasrymina@google.com>,
-	David Miller <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>,
-	Networking <netdev@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Message-ID: <20240913122552.GZ572255@kernel.org>
-References: <20240913125302.0a06b4c7@canb.auug.org.au>
- <20240912200543.2d5ff757@kernel.org>
- <CAHS8izN0uCbZXqcfCRwL6is6tggt=KZCYyheka4CLBskqhAiog@mail.gmail.com>
- <20240912210008.35118a91@kernel.org>
- <20240913141317.3309f1c6@canb.auug.org.au>
+	b=Ou1wOFkE6y1fntz+hYhajiflE8pyAvzS0XPDmz228CZ8slRjsUrzKpnc158hiWaWt
+	 ZzYLSlM/9y5gGQxLnthhpQQR66Gw9vxYD2SGI7bXcx4qQ5fngJ88W/S9behEP+PF2V
+	 2/MNBWbHpTcaYMnoVVRQmwmDWLhCi3wRudn15Jpk=
+Date: Fri, 13 Sep 2024 14:27:31 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 4.19 00/95] 4.19.322-rc2 review
+Message-ID: <2024091329-clambake-lion-860a@gregkh>
+References: <20240910094253.246228054@linuxfoundation.org>
+ <CA+G9fYtxOA7Ee1omhLT-fMaaBPqNEZQYVHXovLtGgv9jbuxQLA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240913141317.3309f1c6@canb.auug.org.au>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+G9fYtxOA7Ee1omhLT-fMaaBPqNEZQYVHXovLtGgv9jbuxQLA@mail.gmail.com>
 
-On Fri, Sep 13, 2024 at 02:13:17PM +1000, Stephen Rothwell wrote:
-> Hi Jakub,
-> 
-> On Thu, 12 Sep 2024 21:00:08 -0700 Jakub Kicinski <kuba@kernel.org> wrote:
+On Wed, Sep 11, 2024 at 08:44:13PM +0530, Naresh Kamboju wrote:
+> On Tue, 10 Sept 2024 at 16:18, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
 > >
-> > On Thu, 12 Sep 2024 20:14:06 -0700 Mina Almasry wrote:
-> > > > On Fri, 13 Sep 2024 12:53:02 +1000 Stephen Rothwell wrote:    
-> > > > > /home/sfr/next/tmp/ccuSzwiR.s: Assembler messages:
-> > > > > /home/sfr/next/tmp/ccuSzwiR.s:2579: Error: operand out of domain (39 is not a multiple of 4)
-> > > > > make[5]: *** [/home/sfr/next/next/scripts/Makefile.build:229: net/core/page_pool.o] Error 1    
-> > > >
-> > > > Ugh, bad times for networking, I just "fixed" the HSR one a few hours
-> > > > ago. Any idea what line of code this is? I'm dusting off my powerpc
-> > > > build but the error is somewhat enigmatic.    
-> > > 
-> > > FWIW I couldn't reproduce this with these steps on top of
-> > > net-next/main (devmem TCP is there):
-> > > 
-> > > make ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- ppc64_defconfig
-> > > make ARCH=powerpc CROSS_COMPILE=powerpc-linux-gnu- -j80
-> > > 
-> > > (build succeeds)
-> > > 
-> > > What am I doing wrong?  
-> > 
-> > I don't see it either, gcc 11.1. Given the burst of powerpc build
-> > failures that just hit the list I'm wondering if this is real.
+> > This is the start of the stable review cycle for the 4.19.322 release.
+> > There are 95 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Thu, 12 Sep 2024 09:42:36 +0000.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.322-rc2.gz
+> > or in the git tree and branch at:
+> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
+> > and the diffstat can be found below.
+> >
+> > thanks,
+> >
+> > greg k-h
 > 
-> $ gcc --version
-> gcc (Debian 14.2.0-3) 14.2.0
-> $ ld --version
-> GNU ld (GNU Binutils for Debian) 2.43.1
-> $ as --version
-> GNU assembler (GNU Binutils for Debian) 2.43.1
 > 
-> All on a Powerpc 64 LE host.
+> Results from Linaro’s test farm.
+> No regressions on arm64, arm, x86_64, and i386.
+> 
+> Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> 
+> ## Build
+> * kernel: 4.19.322-rc2
+> * git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> * git commit: 00a71bfa9b89c96b41773efee1cca378cc1fa5e6
+> * git describe: v4.19.321-96-g00a71bfa9b89
+> * test details:
+> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-4.19.y/build/v4.19.321-96-g00a71bfa9b89
+> 
+> ## Test Regressions (compared to v4.19.320-99-g0cc44dd838a6)
+> 
+> ## Metric Regressions (compared to v4.19.320-99-g0cc44dd838a6)
+> 
+> ## Test Fixes (compared to v4.19.320-99-g0cc44dd838a6)
+> 
+> ## Metric Fixes (compared to v4.19.320-99-g0cc44dd838a6)
+> 
+> ## Test result summary
+> total: 116497, pass: 103587, fail: 542, skip: 12283, xfail: 85
+> 
+> ## Build Summary
+> * arc: 20 total, 20 passed, 0 failed
+> * arm: 204 total, 192 passed, 12 failed
+> * arm64: 54 total, 44 passed, 10 failed
+> * i386: 30 total, 24 passed, 6 failed
+> * mips: 40 total, 40 passed, 0 failed
+> * parisc: 6 total, 0 passed, 6 failed
+> * powerpc: 48 total, 48 passed, 0 failed
+> * s390: 12 total, 12 passed, 0 failed
+> * sh: 20 total, 20 passed, 0 failed
+> * sparc: 12 total, 12 passed, 0 failed
+> * x86_64: 46 total, 36 passed, 10 failed
+> 
+> ## Test suites summary
+> * boot
+> * kunit
+> * libhugetlbfs
+> * log-parser-boot
+> * log-parser-test
+> * ltp-commands
+> * ltp-containers
+> * ltp-controllers
+> * ltp-cpuhotplug
+> * ltp-crypto
+> * ltp-cve
+> * ltp-dio
+> * ltp-fcntl-locktests
+> * ltp-fs
+> * ltp-fs_bind
+> * ltp-fs_perms_simple
+> * ltp-hugetlb
+> * ltp-ipc
+> * ltp-math
+> * ltp-mm
+> * ltp-nptl
+> * ltp-pty
+> * ltp-sched
+> * ltp-smoke
+> * ltp-syscalls
+> * ltp-tracing
+> * rcutorture
+> 
+> --
+> Linaro LKFT
+> https://lkft.linaro.org
+> 
 
-FIIW, I have been able to reproduce this locally, on x86_64,
-using the powerpc64 GCC-14.2.0 cross compiler from
-https://mirrors.edge.kernel.org/pub/tools/crosstool/
+Thanks for testing and letting me know,
 
-make ARCH=powerpc CROSS_COMPILE=powerpc64-linux- ppc64_defconfig
-make ARCH=powerpc CROSS_COMPILE=powerpc64-linux-
+greg k-h
 
