@@ -1,223 +1,141 @@
-Return-Path: <linux-kernel+bounces-328540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8486F97857D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:10:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE53597857E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AECC81C21789
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:10:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83D4E1F244A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9DE6F2E0;
-	Fri, 13 Sep 2024 16:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB33F6F31E;
+	Fri, 13 Sep 2024 16:10:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qgs2YNIy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zhnPs8Ke"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCBF9D502;
-	Fri, 13 Sep 2024 16:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC8A4778C
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 16:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726243805; cv=none; b=uCpR4qZEo8M44nDCldKOtxvotMx0K9Aj2wU3Gkap6CIf6GYeazo5oVIen8RjFHjqEXPz94VR7LrO+LI6+WqCQ2rv6VzDLb3uBm1L+4doQrvo9LLxDmW7pWANQ6SjBA/Reuw9UzCyz069/Qzlm8DHBiI7uiJ/AqBpEZ/WWTfQTLg=
+	t=1726243820; cv=none; b=rQrLafTGzijPjqxrttiZfxLvyjiInKNoHarcJW6xT9m0lyUlDRqfSZuRbWoVAjawwb9BY4nASS9d1NGgKGYdjO41Vxwj0CQcOsLWq5ysDqNueVP7YuRvo1FIcQOz8oLwA88XdJlL6nBMPbqeGiaIjBDmAsd7W+mMRy4LvZtuDW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726243805; c=relaxed/simple;
-	bh=vY7ACJ785S7B/v9wL6zLrZvfyiIPparAH0om2ZPmtsM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YrTpbFwdk4U+1Fow3RLs9HuZj2YjIroRNRQeVMM2t/ZclEH0CwOy7A050lhNvxkLRQnI388tnCjijPoEENXVGHYAoPLUOwkDhFtk+CFfvARUNh5SymGNK3AOI/Q2mM9Lw2FKvCp/jpP6a9hyyAJz9UIag8YmzDRvCqWjN3EWYF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qgs2YNIy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF02FC4CEC0;
-	Fri, 13 Sep 2024 16:10:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726243805;
-	bh=vY7ACJ785S7B/v9wL6zLrZvfyiIPparAH0om2ZPmtsM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qgs2YNIyEwOPm2c6pgsXpCRkxFo+6FGNZxDV6mDvGSMWcKNsn5Dn4MxdNkMz8UqYE
-	 YpB/B78kVuQlT023SgwrHwvWq+i7CvB17+U+YuXnF4/Bb6HAHh5zruPcHqeruO/Pk5
-	 YysKgf8eiiNUainHB5SyPZVOind1//sxb/pTq1dz3W24sDXBZKZFu+LkaKMqi87fzI
-	 afNJc1sN4BDQVIIbO1JGxiu45w4Y4dXAOfHf2h6JRfUlMvUcr5YVO3/GK8vWsFbQbG
-	 LNFCApJwm8GJSacX3j1O+/cH33ff3gmvHaae7HbxwEmWHi6UP9s7BofUqFaPsvAPlG
-	 UFvlmM8TITZPQ==
-Received: by pali.im (Postfix)
-	id 2606B725; Fri, 13 Sep 2024 18:10:00 +0200 (CEST)
-Date: Fri, 13 Sep 2024 18:10:00 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nfsd: Fill NFSv4.1 server implementation fields in
- OP_EXCHANGE_ID response
-Message-ID: <20240913161000.33ogsvxbe3njghhw@pali>
-References: <20240912220919.23449-1-pali@kernel.org>
- <ZuRX/QfG+OLm9fTR@tissot.1015granger.net>
- <20240913153631.2lqq5nybuitjiwmo@pali>
- <ZuRjSIyHguz3ult4@tissot.1015granger.net>
+	s=arc-20240116; t=1726243820; c=relaxed/simple;
+	bh=HzQHtI71T5x1HZfq4p6DIhs51q2q8ed5NmcYQ1uusi4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=Qppi2DEUeaZE//AafH+jJgqKk2iWRRSVt2vsi51xTDhFVfbwXjB1V0nkG1zY7FYOiDNjRruinC7+uTqPIfIry2nAi3IFmEe0SldRrkZeYUYd3Bn9/25Dp6AK/H3+CRM97HUQ1R6eSpZnxJxkQqeHkVDDd6USd6liWDV6Snk1B3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zhnPs8Ke; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cb2191107so19195415e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:10:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726243817; x=1726848617; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C7T9luSAaVlIhA7d3UIw5fj7z6n4alRbZ0/XmzJrXd4=;
+        b=zhnPs8KePGYa75HGCzn/1sEm8/SttLBH1qYnc1dBP457E9XgFh8EYaz+gx19EabbDe
+         zDrtnxDnrmSAR6K/nkqjhy23KNjDTxoPUT+60UvEtBW+KkhMoPk/KKpca7JxSi0U55ec
+         6GOC3c2oK3YfO/6Xw3RMobrxgzD94gvQleqJCrrop4o7ml7cTJTQGVUH0RBzTKH1ngH4
+         WdIcZVom0RjDjt3GaFlGaUGx2ra1ePpnD0FRKoqt6iH5vN9Lgb6938B3hxGt8A7O7oVM
+         jkyzUvwKPT2TCWEW1UlChpj+r8PFCUN+ZqBrrk3vRkv7NWm3fmbzLbeO6bdRZ3UBPhQp
+         /a4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726243817; x=1726848617;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C7T9luSAaVlIhA7d3UIw5fj7z6n4alRbZ0/XmzJrXd4=;
+        b=qVs+HxaBjZiYuP3t/PJJ5pwmXFaAA9ctC9sXcxTpnGPV8MM1o1GigvNYTU4oh/nIeu
+         Mh0gxQl9rridHJK47baPzV6y6fra5GRGXzEScL8gTePhP/RynHzlkOiKtEWHDK65NCC9
+         83hp73GslpA2bLn/DDUsVCJlRJFDeao5lgiJsRY4Z7dmYE8D0NeIc63Y8QBlAaVx4I0s
+         GtafWFW4sgEBWHtVXK3tGZ0lIWyoISiowIW9ru3l+ecAQ+fVBW1Ezk2K0DRToRRZF3l6
+         pWmd9ubbmPX6ez8s3j/ZWXW4muXzTjjMOo/I9Lmd568gzOZpweo3L0KkJBTqHWNYMXBN
+         QeJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVkcgG755MG5651uCIYOXP+2OBcnxvnuhl92BiAQvjDq7ZoFzU5S7pDOr1R71OrHpvty95P9mylwnkvkVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysG4+CfLmum6ytxZj/JqcIBK2pT57YCLAn1EoD7jVDysMvscXl
+	JM6T+6FTUz3dv53PKpsciWfl9lR5xjoCRR0LRialszjZCVhtFc6N30YJFuiSLMY4fxttbyCiDI9
+	Twi2ZgwHcL2PQBgnYuacIk2gylVe7I4HHp+tj
+X-Google-Smtp-Source: AGHT+IEMwzNhctE9Vd9/CQYgxczVUSiLZZlsHvPsvGiy+jwNnDlHpegTFJ26ElB32Zjjaug66jZzt7atNwESuScYM+4=
+X-Received: by 2002:a5d:4dc6:0:b0:374:c581:9f4f with SMTP id
+ ffacd0b85a97d-378c2d58d9cmr3887507f8f.55.1726243816503; Fri, 13 Sep 2024
+ 09:10:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZuRjSIyHguz3ult4@tissot.1015granger.net>
-User-Agent: NeoMutt/20180716
+References: <20240910-static-mutex-v3-1-5bebd11bdf3b@google.com> <ZuRh9niSrX6E5CWq@phenom.ffwll.local>
+In-Reply-To: <ZuRh9niSrX6E5CWq@phenom.ffwll.local>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 13 Sep 2024 18:10:03 +0200
+Message-ID: <CAH5fLgiaPYphXE-Azfb0MU1EzsNpAMFntDeAt8YAMj5KAxS_xA@mail.gmail.com>
+Subject: Re: [PATCH v3] rust: add global lock support
+To: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Friday 13 September 2024 12:07:36 Chuck Lever wrote:
-> On Fri, Sep 13, 2024 at 05:36:31PM +0200, Pali Rohár wrote:
-> > On Friday 13 September 2024 11:19:25 Chuck Lever wrote:
-> > > On Fri, Sep 13, 2024 at 12:09:19AM +0200, Pali Rohár wrote:
-> > > > NFSv4.1 OP_EXCHANGE_ID response from server may contain server
-> > > > implementation details (domain, name and build time) in optional
-> > > > nfs_impl_id4 field. Currently nfsd does not fill this field.
-> > > > 
-> > > > NFSv4.1 OP_EXCHANGE_ID call request from client may contain client
-> > > > implementation details and Linux NFSv4.1 client is already filling these
-> > > > information based on runtime module param "nfs.send_implementation_id" and
-> > > > build time Kconfig option "NFS_V4_1_IMPLEMENTATION_ID_DOMAIN". Module param
-> > > > send_implementation_id specify whether to fill implementation fields and
-> > > > Kconfig option "NFS_V4_1_IMPLEMENTATION_ID_DOMAIN" specify the domain
-> > > > string.
-> > > > 
-> > > > Do same in nfsd, introduce new runtime param "nfsd.send_implementation_id"
-> > > > and build time Kconfig option "NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN" and
-> > > > based on them fill NFSv4.1 server implementation details in OP_EXCHANGE_ID
-> > > > response. Logic in nfsd is exactly same as in nfs.
-> > > > 
-> > > > This aligns Linux NFSv4.1 server logic with Linux NFSv4.1 client logic.
-> > > > 
-> > > > NFSv4.1 client and server implementation fields are useful for statistic
-> > > > purposes or for identifying type of clients and servers.
-> > > 
-> > > NFSD has gotten along for more than a decade without returning this
-> > > information. The patch description should explain the use case in a
-> > > little more detail, IMO.
-> > > 
-> > > As a general comment, I recognize that you copied the client code
-> > > for EXCHANGE_ID to construct this patch. The client and server code
-> > > bases are somewhat different and have different coding conventions.
-> > > Most of the comments below have to do with those differences.
-> > 
-> > Ok, this can be adjusted/aligned.
-> > 
-> > > 
-> > > > Signed-off-by: Pali Rohár <pali@kernel.org>
-> > > > ---
-> > > >  fs/nfsd/Kconfig   | 12 +++++++++++
-> > > >  fs/nfsd/nfs4xdr.c | 55 +++++++++++++++++++++++++++++++++++++++++++++--
-> > > >  2 files changed, 65 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/fs/nfsd/Kconfig b/fs/nfsd/Kconfig
-> > > > index ec2ab6429e00..70067c29316e 100644
-> > > > --- a/fs/nfsd/Kconfig
-> > > > +++ b/fs/nfsd/Kconfig
-> > > > @@ -136,6 +136,18 @@ config NFSD_FLEXFILELAYOUT
-> > > >  
-> > > >  	  If unsure, say N.
-> > > >  
-> > > > +config NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN
-> > > > +	string "NFSv4.1 Implementation ID Domain"
-> > > > +	depends on NFSD_V4
-> > > > +	default "kernel.org"
-> > > > +	help
-> > > > +	  This option defines the domain portion of the implementation ID that
-> > > > +	  may be sent in the NFS exchange_id operation.  The value must be in
-> > > 
-> > > Nit: "that the server returns in its NFSv4 EXCHANGE_ID response."
-> > > 
-> > > 
-> > > > +	  the format of a DNS domain name and should be set to the DNS domain
-> > > > +	  name of the distribution.
-> > > 
-> > > Perhaps add: "See the description of the nii_domain field in Section
-> > > 3.3.21 of RFC 8881 for details."
-> > 
-> > Ok.
-> > 
-> > > But honestly, I'm not sure why nii_domain is parametrized at all, on
-> > > the client. Why not /always/ return "kernel.org" ?
-> > 
-> > I do not know. I just followed logic of client. In my opinion, it does
-> > not make sense to have different logic in client and server. If it is
-> > not needed, maybe remove it from client too?
-> 
-> > > What checking should be done to ensure that the value of this
-> > > setting is a valid DNS label?
-> > 
-> > Checking for valid DNS label is not easy. Client does not do it, so is
-> > it needed?
-> 
-> Input checking is always a good thing to do. But I haven't found a
-> compliance mandate in RFC 8881 for the content of nii_domain, so
-> maybe it doesn't matter.
-> 
-> One possibility would be to not add the parametrization of this
-> string on the server unless it is found to be needed. So, this
-> patch could simply always set "kernel.org", and then a Kconfig
-> option can be added by a subsequent patch if/when a use case ever
-> turns up.
+On Fri, Sep 13, 2024 at 6:02=E2=80=AFPM Simona Vetter <simona.vetter@ffwll.=
+ch> wrote:
+>
+> On Tue, Sep 10, 2024 at 02:23:34PM +0000, Alice Ryhl wrote:
+> > Add support for creating global variables that are wrapped in a mutex o=
+r
+> > spinlock. Optionally, the macro can generate a special LockedBy type
+> > that does not require a runtime check.
+> >
+> > The implementation here is intended to replace the global mutex
+> > workaround found in the Rust Binder RFC [1]. In both cases, the global
+> > lock must be initialized before first use. The macro is unsafe to use
+> > for the same reason.
+> >
+> > The separate initialization step is required because bindgen refuses to
+> > expose __ARCH_SPIN_LOCK_UNLOCKED to Rust as a compile-time constant. It
+> > just generates an `extern "C"` global reference instead. In the future,
+> > we could expose the value of __ARCH_SPIN_LOCK_UNLOCKED to Rust in a way
+> > that Rust can understand. This would remove the need for a separate
+> > initialization step.
+>
+> Yeah it's just a raw C struct initializer, I wouldn't even know how to
+> move that to rust.
+>
+> An absolute horrible idea, and I didn't try whether it's even possible:
+> - put all the global locks of a type into a special linker section (we
+>   need a macro anyway for them).
+> - patch them up with a horrible linker script objtool patching with an
+>   example lock initialized by the C macro.
+>
+> Even worse idea, on most architectures/config it's all zeros. Iirc the on=
+e
+> I've found that might matter a bit is CONFIG_SMP=3Dn with some lock
+> debugging enabled. We could make rust support conditional on those, and
+> then maybe a build-time check that it's actually all set to 0 ...
+>
+> Requiring the unsafe init just feels a bit disappointing to me, when the =
+C
+> side (including lockdep annotations) tries really hard to make global
+> locks a one-liner.
 
-No problem, I can drop it.
+I actually have a prototype lying around that gets rid of the
+initialization step. The idea is to define some new macros:
 
-> Or... NFSD could simply re-use the client's setting. I can't think
-> of a reason why the NFS client and NFS server in the same kernel
-> should report different nii_domain strings.
-> 
-> 
-> > > > +	  If the NFS server is unchanged from the upstream kernel, this
-> > > > +	  option should be set to the default "kernel.org".
-> > > > +
-> > > >  config NFSD_V4_2_INTER_SSC
-> > > >  	bool "NFSv4.2 inter server to server COPY"
-> > > >  	depends on NFSD_V4 && NFS_V4_2
-> > > > diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-> > > > index b45ea5757652..5e89f999d4c7 100644
-> > > > --- a/fs/nfsd/nfs4xdr.c
-> > > > +++ b/fs/nfsd/nfs4xdr.c
-> > > > @@ -62,6 +62,9 @@
-> > > >  #include <linux/security.h>
-> > > >  #endif
-> > > >  
-> > > > +static bool send_implementation_id = true;
-> > > > +module_param(send_implementation_id, bool, 0644);
-> > > > +MODULE_PARM_DESC(send_implementation_id, "Send implementation ID with NFSv4.1 exchange_id");
-> > > 
-> > > I'd rather not add a module parameter if we don't have to. Can you
-> > > explain why this new parameter is necessary? For instance, is there
-> > > a reason why an administrator who runs NFSD on a stock distro kernel
-> > > would want to change this setting to "false" ?
-> > 
-> > I really do not know. Client has this parameter, so I though it is a
-> > good idea to have it.
-> > 
-> > > If it turns out that the parameter is valuable, is there admin
-> > > documentation to go with it?
-> > 
-> > I'm not sure if client have documentation for it.
-> 
-> Again, if we don't have a clear use case in front of us, it is
-> sensible to postpone the addition of this parameter.
-> 
-> 
-> [ ... snip ... ]
-> 
-> > > Regarding the content of these fields: I don't mind filling in
-> > > nii_date, duplicating what might appear in the nii_name field, if
-> > > that is not a bother.
-> > 
-> > I looked at this, and getting timestamp in numeric form is not possible.
-> > Kernel utsname() and UTS functions provides date only in `date` format
-> > which is unsuitable for parsing in kernel and converting into seconds
-> > since epoch. Moreover uts structures are exported to userspace, so
-> > changing and providing numeric value would be harder.
-> 
-> Not a big deal. And, it's something that can be changed later if
-> someone finds a clean way to extract a numeric build time.
+ #define __ARCH_SPIN_LOCK_UNLOCKED      { 0 }
++#define __ARCH_SPIN_LOCK_UNLOCKED_TYP  unsigned int
++#define __ARCH_SPIN_LOCK_UNLOCKED_INT  0
 
-Ok.
+Rust then uses the two new #defines to initialize the raw spin lock to
+the right bytes. As long as __ARCH_SPIN_LOCK_UNLOCKED and
+__ARCH_SPIN_LOCK_UNLOCKED_INT are represented by the same sequence of
+bytes, it should work.
+
+Alice
 
