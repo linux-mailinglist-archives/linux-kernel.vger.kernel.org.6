@@ -1,129 +1,102 @@
-Return-Path: <linux-kernel+bounces-327560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AB9C9777A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:57:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 801E39777A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:59:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98FA5B2429C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:57:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 294EB286F8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E82BB1C5788;
-	Fri, 13 Sep 2024 03:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D96D1C5788;
+	Fri, 13 Sep 2024 03:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lNX/zvs1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZZYQ+Xdw"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB848827;
-	Fri, 13 Sep 2024 03:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4588827;
+	Fri, 13 Sep 2024 03:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726199828; cv=none; b=oMg6ebg/ElLAnGtZEXTQvh9bmigwZ1Bz1XYmkSzRDri2SdWtzmwvJBL6NtNiHTQC7G3PS8V7TZoV6ByJ56mmO1feRzQa9ExPt6ab268BxbpIsMGXQe21WW4Iy4GEMHBnrlkH7wwi1EKZK2dPnBxxOibknsY1gcR6tA4Iho8Bk/0=
+	t=1726199948; cv=none; b=GHoafOGmVJ9L44zfcXSo/dT72omWNR+zhvjLqfaajqsZVQBjOLiFFmSPQKP4WwuVz3lGWbAMJPQkpn+RP4HX58Ye6m1TplzGmiKdBg4Vv0i9FnEDR49vz6i+z0fPFCuJxdRY0nblIyhnqgFUs2iDtY0C1AHSppgTBdxns330KIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726199828; c=relaxed/simple;
-	bh=liKC1EKMRdqiBH2jb9JmSP9lhWJ6/iwlcLuKoJC0xUg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ePkWo1W8lKYDB+9HoyilAfQuFwFfoheXFFtQ1oTBLEomW4lcec4G32fUGM9iRO9UDWn1eSZN2oCsHPwsijTFNG9zsAoC9nKyarKvouxv7TcqgLkq6X9Tu7av1Bma5gbIbpHlVO4qu6CCeN7UR22onXqmqEM3xT5/qss4vggpG0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lNX/zvs1; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726199827; x=1757735827;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=liKC1EKMRdqiBH2jb9JmSP9lhWJ6/iwlcLuKoJC0xUg=;
-  b=lNX/zvs1vhGttEi5izMx27QAEhqZhOlTaJRVj8olfTcY68tFn/K2nS8V
-   5S/EOkbksErJ/TshNpvzC/TMxqboQ+xDcn3NW/Bu/ap+/nRMpYG/YnQEr
-   /O2ryy2o+/cpB3Q+tsvYwl7wTMjNGt2zssiSdmce/TxON2S+y7nyok8L7
-   7JXPHv6APIcvhXZl8UJC8gDrKh/WY3lwWMxmtmIKm/GB3DsuZ9oZe+sHq
-   g4R4Nu05olhfTHqpqyQ8L13SZKPQTUj3JgBcCwVfPOxR4+0ZOX9abyJJh
-   eDQG6P2w27JTJ7cyxOzyqSkUc4y3ZKlBaG+A+vo+SXII1yA+0obLASR0D
-   g==;
-X-CSE-ConnectionGUID: bA9+Nx4NTMe6XkLTXr6jyg==
-X-CSE-MsgGUID: TV4uLeBeRo+w13fSKdvLIw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="24962510"
-X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
-   d="scan'208";a="24962510"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 20:57:06 -0700
-X-CSE-ConnectionGUID: NaIflIlETj65yjXV3Y8A5Q==
-X-CSE-MsgGUID: MtqsJIkgRYWCl4t83rkITg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
-   d="scan'208";a="72727893"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.224.38]) ([10.124.224.38])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 20:57:03 -0700
-Message-ID: <33f21483-0e55-4370-8405-12ed7439c3e9@intel.com>
-Date: Fri, 13 Sep 2024 11:57:00 +0800
+	s=arc-20240116; t=1726199948; c=relaxed/simple;
+	bh=IzxT5gkhqp2J+sCRoxwmPWq6zoqDVYhumEnaZbg0CYM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pn1i0uAytc/8KKoOprXdsF5VMbD4hwXQZTlIoU/3yxIIp8EDVjfEzwsxXsi0GELa1b1qTfh5cjXNak4chmXBAXD9liKk1kw81MwK+HHy/OTQImKdClFfpgKJ+u0JdBH6dz4Rl0b2WCzf1sKp9JK4G+ScEnwmB2iBAH9yUDMYGZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZZYQ+Xdw; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71790ed8c2dso1430012b3a.3;
+        Thu, 12 Sep 2024 20:59:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726199947; x=1726804747; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IzxT5gkhqp2J+sCRoxwmPWq6zoqDVYhumEnaZbg0CYM=;
+        b=ZZYQ+Xdw/mjOt2LkzqMsLXzWi207E49Wm1E9x+AK/PDOASxdYJreLv6S/k9gIaybCA
+         BrDaIv1eFV2Y95wvMwera5KEiytnRnO0VqAtzb8QfHx30hmVYvHqV/SjAXou5TjOtWog
+         7IvpHktRPVINSdvdO0gKO2HY9zYFpMAu47g1hOAmQ0sacm/FUgqWuvyPzdQCuVD4zb8H
+         OPKBjpJ6/YRwUcNm5fIPUu3lE3D453YJLDU4pZZErLsLiyTE0TgnIDEbnwXnIFXnnbsw
+         R4D1xEA6ozlPZgPv2praOcPd7GeXeWfUpbHiRBOyxROYYqE1dq9hZrnubvi7Ce0PGqZg
+         4rXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726199947; x=1726804747;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IzxT5gkhqp2J+sCRoxwmPWq6zoqDVYhumEnaZbg0CYM=;
+        b=X2Q/+e5/zVUZkY7QJGHzEvQlC94r/JeFrVehZBh4/zhzy6inYhGzuy50YoiXYfQpgO
+         xLgHSgEAbtevYeHMeglMuu17Xs+JpzCK8CmRd+PGuVxGI1KSmoVLwxJ2LXr4IsfqPlBg
+         gz+dw86FU8Ns/z0+GbvbRokKIL0YiJGHVHDdibhBuEdRgVreA2BdEhXq0m8tByGNLJdp
+         9bgZJjI9MfKfC4wdQc7DbKWTZs5Sg6oCh/pCI79eWLne6oYyx3H6PHSJdWHKUtE12MCx
+         kR+/ZS2gakDSt/hvAv3CIJsCq6n0V9AFNGA5B0aLzROWqM32O0mJ3dMFX6Omc0i3eeUD
+         ryvg==
+X-Forwarded-Encrypted: i=1; AJvYcCWgMuG3fk+5CXxXFFUdFWDhIDH59hjm12IkfNMGM/ofAoZN1tdeCH9IoYKjvaV8kLg9JFdsMNwz@vger.kernel.org, AJvYcCWyCYzC7F6QGnbYKoDTgRuGbQfL9+aMQ2uYJpt/u6H43bU08vzVwyvsEr44k9LRmiIS/l1Xam/KRTMc0WY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQGDaokXX8w/mGstG04z4jhRv6fCI5r020dD/3C/mU8gp9+2zK
+	MErCNplt7LsLH0V7QJ2EGj/lSCS8FkuKw5pU12eewyB0Wq/2ftTd
+X-Google-Smtp-Source: AGHT+IFEi+dW0Ycy5VWpFJ7Od16TQ4UAfRiog3o2tMOTfn2qAAfQZ0erwWerN1rTFhkt7TZoP8X95A==
+X-Received: by 2002:a05:6a00:14d0:b0:717:9768:a4ed with SMTP id d2e1a72fcca58-7192609318dmr8855576b3a.16.1726199946712;
+        Thu, 12 Sep 2024 20:59:06 -0700 (PDT)
+Received: from hoboy.vegasvil.org ([2600:1700:2430:6f6f:e2d5:5eff:fea5:802f])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-719090cbca6sm5273151b3a.197.2024.09.12.20.59.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 20:59:06 -0700 (PDT)
+Date: Thu, 12 Sep 2024 20:59:04 -0700
+From: Richard Cochran <richardcochran@gmail.com>
+To: Miroslav Lichvar <mlichvar@redhat.com>
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	John Stultz <jstultz@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Christopher S Hall <christopher.s.hall@intel.com>
+Subject: Re: [PATCH 00/21] ntp: Rework to prepare support of indenpendent PTP
+ clocks
+Message-ID: <ZuO4iOyN2myqMdEW@hoboy.vegasvil.org>
+References: <20240911-devel-anna-maria-b4-timers-ptp-ntp-v1-0-2d52f4e13476@linutronix.de>
+ <ZuKii1KDGHSXElB6@localhost>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 25/25] KVM: x86: Add CPUID bits missing from
- KVM_GET_SUPPORTED_CPUID
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, kvm@vger.kernel.org,
- kai.huang@intel.com, isaku.yamahata@gmail.com,
- tony.lindgren@linux.intel.com, linux-kernel@vger.kernel.org
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-26-rick.p.edgecombe@intel.com>
- <05cf3e20-6508-48c3-9e4c-9f2a2a719012@redhat.com>
- <cd236026-0bc9-424c-8d49-6bdc9daf5743@intel.com>
- <CABgObfbyd-a_bD-3fKmF3jVgrTiCDa3SHmrmugRji8BB-vs5GA@mail.gmail.com>
- <df05e4fe-a50b-49a8-9ea0-2077cb061c44@intel.com>
- <CABgObfZ5ssWK=Beu7t+7RqyZGMiY2zbmAKPy_Sk0URDZ9zbhJA@mail.gmail.com>
- <ZuMZ2u937xQzeA-v@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <ZuMZ2u937xQzeA-v@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZuKii1KDGHSXElB6@localhost>
 
-On 9/13/2024 12:42 AM, Sean Christopherson wrote:
-> On Thu, Sep 12, 2024, Paolo Bonzini wrote:
->> On Thu, Sep 12, 2024 at 4:45 PM Xiaoyao Li <xiaoyao.li@intel.com> wrote:
->>>> KVM is not going to have any checks, it's only going to pass the
->>>> CPUID to the TDX module and return an error if the check fails
->>>> in the TDX module.
->>>
->>> If so, new feature can be enabled for TDs out of KVM's control.
->>>
->>> Is it acceptable?
->>
->> It's the same as for non-TDX VMs, I think it's acceptable.
-> 
-> No?  IIUC, it's not the same.
-> 
-> E.g. KVM doesn't yet support CET, and while userspace can enumerate CET support
-> to VMs all it wants, guests will never be able to set CR4.CET and thus can't
-> actually enable CET.
-> 
-> IIUC, the proposal here is to allow userspace to configure the features that are
-> exposed _and enabled_ for a TDX VM without any enforcement from KVM.
-> 
-> CET might be a bad example because it looks like it's controlled by TDCS.XFAM, but
-> presumably there are other CPUID-based features that would actively enable some
-> feature for a TDX VM.
-> 
-> For HYPERVISOR and TSC_DEADLINE_TIMER, I would much prefer to fix those KVM warts,
-> and have already posted patches[1][2] to do exactly that.
-> 
-> With those out of the way, are there any other CPUID-based features that KVM
-> supports, but doesn't advertise?  Ignore MWAIT, it's a special case and isn't
-> allowed in TDX VMs anyways.
+On Thu, Sep 12, 2024 at 10:12:59AM +0200, Miroslav Lichvar wrote:
+> I'm trying to understand what independent PTP clocks means here.
 
-Actually MWAIT becoems allowed by TDX and it's configurable.
+Me, too.
 
-> [1] https://lore.kernel.org/all/20240517173926.965351-34-seanjc@google.com
-> [2] https://lore.kernel.org/all/20240517173926.965351-35-seanjc@google.com
-> 
+It is not easy to see where this is going...
+
+Thanks,
+Richard
 
 
