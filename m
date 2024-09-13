@@ -1,80 +1,122 @@
-Return-Path: <linux-kernel+bounces-328811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E960D97892F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:55:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 676D0978936
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:59:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94C371F247DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:55:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 051AEB22E10
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13DFA14883C;
-	Fri, 13 Sep 2024 19:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D598814830D;
+	Fri, 13 Sep 2024 19:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c17QPk5x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LiqJgrq0"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629B01465A0;
-	Fri, 13 Sep 2024 19:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EF31487DC;
+	Fri, 13 Sep 2024 19:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726257327; cv=none; b=W0c1PXWOdOYy2ybHyKRLnv377/X4mGqu5KmomxQ7iYZGXL5zqK24zZ5nVy0j/QUNkgiXgBG77wpUfKt29HG1mcyk7eozGZYlNCify9oQGJi5fLzn8IvoTKcNCluot9BOReHjunPrfSEQ4k3Y1/946RH1ysTiG/Qz6XfeUWzWvO0=
+	t=1726257556; cv=none; b=OSGXRuHB3PaTKCrhhDia5s0H4iOG1w2cvWNLQhrQpN13xn7TGSym5o7PEWMYRlRDsST8rRuOuujnOxXKH0vScXwWBnt1C1N8MlhlORD1sFccEtZyi55fKAZVaUdvOV+sxZlJW4KrKvzrxcUbFziXLr0EA/G5rTnSSYP28HuLOFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726257327; c=relaxed/simple;
-	bh=058KE6hhnCiBs8UYiqbrPBuFQAXnVeXDBhu0hTz6HlQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=akovM8+jSO99M9fzfe04HwBL84fqb1oNjdcEAM9h0HilKZsoy8fNRChHZ94OGC5o1E+uvScIaqmuZne/ALDstmj6mYJ8hpWFLHyPoLVNK5J/7krkQ9afAYebWbF2FOFVV1cgNeT07gEGeKOwvnezZpZt8rV4vuT/UfOzC8pEiAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c17QPk5x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8D35C4CEC0;
-	Fri, 13 Sep 2024 19:55:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726257327;
-	bh=058KE6hhnCiBs8UYiqbrPBuFQAXnVeXDBhu0hTz6HlQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c17QPk5xNn1XQzLxDeKKSuQvCub8XBHSwjDHwJ/TFRMi0i9vtT8qk1n12Nn9jKl52
-	 902hkVF3yjuv2H5IqcdP4DFc4asxR4gEG/JLMeWjliddmy1zdMoLX+KpTUaVbLrT4H
-	 rlZusKYxQiuLROj7Yv7CXHQuocUnTSWTWgHoazFGdQvB1zctY1qb2wjJbTRZCBgJL4
-	 vJalTZaETVfCeZ7YHZ3c3UsNlG/axCaQxbF+0VoU5nS+jZ3aG7ZVQK2f7KAAAZG5o1
-	 nOWbWSFBEqups0ETbFCyUQVraJrkWBpFpYLhrh6LUnQZFMx1pZnic26XDTp1HiN4HK
-	 MCAyYwOUob4Yw==
-Date: Fri, 13 Sep 2024 14:55:26 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org,
-	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: cpu: Drop duplicate
- nvidia,tegra186-ccplex-cluster.yaml
-Message-ID: <172625732540.514644.9976932820524098634.robh@kernel.org>
-References: <20240910234422.1042486-1-robh@kernel.org>
+	s=arc-20240116; t=1726257556; c=relaxed/simple;
+	bh=QVoPu5UgDsOwNF+b+s5XZQ9uTM5s6DcN1EGM/gmFP0w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=MvExAEh1EBWATBvQ/frdGdGk6sjh+4H4WxMnl7X4pTinJQiD3PNb1EJrXCK3LuHSwRpt72sjsqxw6AbBmVdvwYLarM64qhmhEm5SY7aV7UrUxNirua4htBujJCxGMxQhUT9RisQLxkKR+RCB4VDjCjPkBIWvQW5DRlnRtfPcxZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LiqJgrq0; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2068bee21d8so28303115ad.2;
+        Fri, 13 Sep 2024 12:59:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726257554; x=1726862354; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QVoPu5UgDsOwNF+b+s5XZQ9uTM5s6DcN1EGM/gmFP0w=;
+        b=LiqJgrq0ECeNP51GQX6PXOXWRMsYn11w7byXxFGkLEV74UlnweXLW5ozVn+gOV9aFA
+         iBgpkcjlpoMf3VLvJvWsPshe0L4a46ZU1rEAOTm2Pk8DgOKUtgQcmhMd5UwGCIGAnU8Q
+         ZfU8AaXl4U/Q3ELrjENKXXdn++15Q3gI1rfRQ2tR3YS/vn1KBmfE8TvR44Ht6dGTTvnc
+         cHM6ys6+RfD4zA16rQ1vEA0Ty4jBV+Cu2EzKR5G0hxaYWnY2yJSfq3oJJx4BdcBDK5H3
+         OMq/JzXEygOfIemgNU1sSImV3cCPEuKPaDfbanCHZvNlaMztrd0IMZLlpYxEWwqEnwxl
+         j0+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726257554; x=1726862354;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QVoPu5UgDsOwNF+b+s5XZQ9uTM5s6DcN1EGM/gmFP0w=;
+        b=jbQZo+/FNfLI3hKV5q95E0TPPW2FkWFAqbugizbQ8LuvnkLewVcGvuk0zFlJxYS9eC
+         AWsSg5Y49IPyYDoBjfViaYff+RMDx0x9Q/E3xqvJ32Sy5BaxzIqzm0odswEJidEc8DQf
+         qpA8jzS5t7ABXLfZmuTqRSdaRNKnANQLQkBSV8CCT17cGwdrhCGvJzIGWoPFaBFiJkZI
+         Nw+yPD7qeSBT4LCoplWtGKa96YAtFv9UDAhKyIvCBEkgcsCjnamWJJ0E8XUB3q+sEtoP
+         FzFZkh80+JUNAJn2Zu3n2NVkeQ0mLB7t5RJi2o+9jpL1tZZdmUPXaspbn+l3+SDEp5SU
+         rHjA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6O4ckH8kmivp1ZlD68aNY4FLVaM+WAPuGsRnqd//4zeBdfKWRMDMx1K83l6swHUHkutis9v4kvAM=@vger.kernel.org, AJvYcCWUUtvs2Xquah0tX1TQoYyEsVgys4xLk84fMJpKmMW3ynyxoy0meMAb+Li4/LfskEhSuw5OmuLCBRB+rVE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaeWXZLi87JCkc0vd/a8+wqdEywAa3I0RDoHbocrJ+rlRRcVIS
+	JK5QBTyddcaB8SAEqot8XNS5nbZVBkGhf3WFXlGN5TRN3oYwY3gY
+X-Google-Smtp-Source: AGHT+IEcQ6djuD5zFPAim6v6THvher5zETymPAYgSd11RBJx1VLMGIexPb5FxwgF+tAvHyoinfHNrg==
+X-Received: by 2002:a17:902:d54a:b0:202:9b7:1dc with SMTP id d9443c01a7336-2076e44ba5emr92889665ad.54.1726257554153;
+        Fri, 13 Sep 2024 12:59:14 -0700 (PDT)
+Received: from localhost.localdomain (111-240-84-197.dynamic-ip.hinet.net. [111.240.84.197])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20794605706sm204985ad.117.2024.09.13.12.59.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 12:59:13 -0700 (PDT)
+From: Min-Hua Chen <minhuadotchen@gmail.com>
+To: jwyatt@redhat.com
+Cc: jkacur@redhat.com,
+	linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	minhuadotchen@gmail.com,
+	sageofredondo@gmail.com,
+	shuah@kernel.org,
+	trenn@suse.com
+Subject: Re: [PATCH v2 for-next] pm: cpupower: rename raw_pylibcpupower.i
+Date: Sat, 14 Sep 2024 03:58:49 +0800
+Message-ID: <20240913195849.805-1-minhuadotchen@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <ZuRqkbJixRQEScYA@rhfedora>
+References: <ZuRqkbJixRQEScYA@rhfedora>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910234422.1042486-1-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
+
+>On Fri, Sep 13, 2024 at 07:01:00AM +0800, Min-Hua Chen wrote:
+>
+>> To fix it, rename raw_pylibcpupower.i to raw_pylibcpupower.if.
+>
+>Would you please rename this to .swg instead?
+
+No problem, I will send patch v3 for this.
+
+>
+>'''
+>5.1.1 Input format
+>
+>As input, SWIG expects a file containing ISO C/C++ declarations and special
+>SWIG directives. More often than not, this is a special SWIG interface file
+>which is usually denoted with a special .i or .swg suffix.
+>'''
+
+Thanks for sharing the document, using .swg extension looks a better solution.
 
 
-On Tue, 10 Sep 2024 18:44:21 -0500, Rob Herring (Arm) wrote:
-> "nvidia,tegra186-ccplex-cluster" is also documented in
-> arm/tegra/nvidia,tegra-ccplex-cluster.yaml. As it covers Tegra234 as
-> well, drop nvidia,tegra186-ccplex-cluster.yaml.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../cpu/nvidia,tegra186-ccplex-cluster.yaml   | 37 -------------------
->  1 file changed, 37 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/cpu/nvidia,tegra186-ccplex-cluster.yaml
-> 
+cheers,
+Min-Hua
 
-Applied, thanks!
-
+>
+>https://www.swig.org/Doc4.2/SWIG.html
+>
+>I tested it and .swg is not removed by 'make clean' or 'make mrproper'.
+>
+>My apologies for the extra work Min-Hua. I can send a quick patch
+>instead if you wish.
 
