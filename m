@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-328366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 438DE97827B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:24:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A89C97827E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:24:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E6F61C21377
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:24:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27D411F25019
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:24:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEC6E567;
-	Fri, 13 Sep 2024 14:24:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698E817756;
+	Fri, 13 Sep 2024 14:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MjFjKh39"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="meSZYwll"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E5DBE68;
-	Fri, 13 Sep 2024 14:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A807D15E90;
+	Fri, 13 Sep 2024 14:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726237466; cv=none; b=iQDxH1wlc9lLQdaKgB62rbbN4p/6izCwXiWPAymMCRmgM1KEj5s6V8PKsvOtGJrOnPnzciY/rLAe/KDZK0S9Z8vNMvE2dDfLKObzi3Iv/OlClvzY6eeDfJjns+4TVs66hTZP0kVg1FXcuoYFRZ5QzIRW/tZezqqg6PesPi+SmQc=
+	t=1726237467; cv=none; b=WpcXcwx+04wpUpA58cUvrQFHg6ax52r97ZrPBBpQB0VhwDuDnFLJCWsguRAhuQfSEbqypSQvZ4bUjwfZu/HR9dSb0jCNMdvtmCBhFGBrmQXNIGnK5nPK073UGwbEgnC4/fX7DA7AlREJFm5dbL85co9STz8y9lj/aZzhaayYpno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726237466; c=relaxed/simple;
-	bh=CQBAbFrO+Yye4O/yy6p6cNcUXg4T9wjsgQNnXsGVLcY=;
+	s=arc-20240116; t=1726237467; c=relaxed/simple;
+	bh=6gImHD4TLppDz/pP9duxVYbJ8qiVvoa8rrFv+qH3Ijg=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=qrY1CPzFy5PbUvXzfUKncLAZPJsd78bXpJ3A70iA7hG+vwuVj8LKW29ubyHaWzqvg7XSBL/fZp9nogm4EH3CJTJ3Q+TyaflQFl32USgVFQ6FjhGuXan3wTpJtjvAS/DBMP3Dk2n0NRyl3qYog0uNfwEd4YqCjTjj+tYv55Cprfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MjFjKh39; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7DCBC4CECF;
-	Fri, 13 Sep 2024 14:24:25 +0000 (UTC)
+	 Message-Id:Subject; b=r+Ujbkoc1cwwCwSeqVLM8r4au4CtHdRKhl9keLFMWiJ2sOcMV2iv1khUVIH1XenKIHTzt15C0AuwVxKB8rWmIX4UGNQkHvZAsAtyW9l3WKFrmK2DRVfz/3ev14M3S9RK6UcRSVr3B0P9nv1g2M2nsZ/gXTDs4yodrUypzpSXYtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=meSZYwll; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07090C4CECC;
+	Fri, 13 Sep 2024 14:24:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726237465;
-	bh=CQBAbFrO+Yye4O/yy6p6cNcUXg4T9wjsgQNnXsGVLcY=;
+	s=k20201202; t=1726237467;
+	bh=6gImHD4TLppDz/pP9duxVYbJ8qiVvoa8rrFv+qH3Ijg=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=MjFjKh39C4b+me5ss60BUz+OCYMJsr9TqjrAIpOx2UxJzxMCybH6XLqwsmxMtEyZW
-	 Ez9PFNv4iCIiJOVCI+fusE/5AGCqA6RVYKXHifhyPVmZlMffPP3+IwtGIq+AW++a/T
-	 rgHE2B3+ucH6bOMubG+5tOumZ1Hp6+zHpojqZLnxPWoWIopFePdB8i4k7N6XN9/KWZ
-	 50FjQzq+5ucznY+rxTecaSQePN34zBuXYtTJ1vuQcRYNOTvYj/HmzwC85e8fEvSNeV
-	 NXP/Y4B4spAeJ2y5rWnipnOJ8nyyQlxi2oRfc7g6rKMGUo9zDLTw92EFaOsHmpVHEf
-	 RrBHYUCbbZ5JA==
-Date: Fri, 13 Sep 2024 09:24:24 -0500
+	b=meSZYwll/3peYROyCCJwMvnkpm7Zbt5FqN+WRmuMhdTomvvQ00RuF9ZnY7pw46M8P
+	 sSEEUn/CrrTiGCjrRDKIJ6/qcwRItEwOZ8ARgJAWtvgAPJM6qnopWfH6+D0HzBmc7l
+	 OMGcKFH++/jdi0lwO48DH48j6uHyzBy8wLGWn01RYsspurJ7crxNXgXo1nzsAKe3QT
+	 4KSwWRi+/pVGaV/cswfQiCIyw/D4/p1795b53bimKJqVn7EdyxuxWzllwtmY94vksW
+	 jIgHNblzda6Ill4j5GkTBGTGeK6Z1JZzGzkIJcK6bPpWEywEjpFrwTSXVmd/jkpDWW
+	 onPu9Sc8aCGUg==
+Date: Fri, 13 Sep 2024 09:24:26 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,30 +50,106 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Icenowy Zheng <uwu@icenowy.me>
-Cc: devicetree@vger.kernel.org, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-sunxi@lists.linux.dev, Andre Przywara <andre.przywara@arm.com>, 
- Samuel Holland <samuel@sholland.org>, Chen-Yu Tsai <wens@csie.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-In-Reply-To: <20240913104845.4112986-1-uwu@icenowy.me>
-References: <20240913104845.4112986-1-uwu@icenowy.me>
-Message-Id: <172623730520.4076253.7175037716930825765.robh@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: arm: sunxi: document RerVision
- A33-Vstar board
+To: Lijuan Gao <quic_lijuang@quicinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ devicetree@vger.kernel.org, kernel@quicinc.com, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+In-Reply-To: <20240913-add_initial_support_for_qcs615-v2-0-9236223e7dab@quicinc.com>
+References: <20240913-add_initial_support_for_qcs615-v2-0-9236223e7dab@quicinc.com>
+Message-Id: <172623730756.4076334.1076664597052385217.robh@kernel.org>
+Subject: Re: [PATCH v2 0/6] Add initial support for QCS615 SoC and QCS615
+ RIDE board
 
 
-On Fri, 13 Sep 2024 18:48:44 +0800, Icenowy Zheng wrote:
-> RerVision A33-Vstar is an evaluation board of their A33-Core1 SoM.
+On Fri, 13 Sep 2024 19:55:22 +0800, Lijuan Gao wrote:
+> This introduces the Device Tree for the QCS615 platform.
 > 
-> Add its compatible (with the SoM compatible) to the sunxi board DT
-> binding file.
+> Features added and enabled:
+> - CPUs with PSCI idle states
+> - Interrupt-controller with PDC wakeup support
+> - Timers, TCSR Clock Controllers
+> - Reserved Shared memory
+> - QFPROM
+> - TLMM
+> - Watchdog
+> - RPMH controller
+> - Sleep stats driver
 > 
-> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+> This series are splited into three parts:
+> - 1-3: Binding files for QCS615 SoC and PDC (Reviewed)
+> - 4  : Soc table entry (Reviewed)
+> - 5-6: Initial DTSI and RIDE board device tree
+> 
+> Bindings Dependencies:
+> watchdog: https://lore.kernel.org/all/20240912-add_watchdog_compatible_for_qcs615-v1-1-ec22b5ad9891@quicinc.com/
+> qfprom: https://lore.kernel.org/all/20240912-add_qfprom_compatible_for_qcs615-v1-1-9ef2e26c14ee@quicinc.com/
+> tcsr: https://lore.kernel.org/all/20240912-add_tcsr_compatible_for_qcs615-v1-1-5b85dd4d42ad@quicinc.com/
+> 
+> Build Dependencies:
+> tlmm: https://lore.kernel.org/all/20240910-add_qcs615_pinctrl_driver-v1-0-36f4c0d527d8@quicinc.com/
+> 
+> Patch made the following verifications:
+> - Successfully pass dt_binding_check with DT_CHECKER_FLAGS=-m for earch binding file
+> - Successfully pass dtbs_check with W=1 for dts
+> - Verified CPU Hotplug and online CPUs on QCS615 ride board
+> - Checked pinctrl-maps path
+> - Verified Watchdog functional with "echo 1 > /dev/watchdog", can trigger
+>   a watchdog bark and later bite
+> - Verified functional with DCC console function on QCS615 ride board
+> - RPMH controller driver probed successfully
+> - Sleep stats driver probed successfully and checked qcom_stats
+>   node on QCS615 ride board
+> 
+> Signed-off-by: Lijuan Gao <quic_lijuang@quicinc.com>
 > ---
->  Documentation/devicetree/bindings/arm/sunxi.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
+> Changes in v2:
+> - Collected reviewed-bys
+> - Removed extra blank line
+> - Removed redundant function
+> - Renamed xo-board to xo-board-clk and move it and sleep-clk to board dts
+> - Renamed system-sleep to cluster_sleep_2
+> - Removed cluster1
+> - Added entry-method for idle-states
+> - Added DTS chassis type
+> - Added TCSR Clock Controllers
+> - Added Reserved Shared memory
+> - Added QFPROM
+> - Added TLMM
+> - Added Watchdog
+> - Added RPMH controller
+> - Added Sleep stats driver
+> - Link to v1: https://lore.kernel.org/r/20240828-add_initial_support_for_qcs615-v1-0-5599869ea10f@quicinc.com
+> 
+> ---
+> Lijuan Gao (6):
+>       dt-bindings: arm: qcom: document QCS615 and the reference board
+>       dt-bindings: arm: qcom,ids: add SoC ID for QCS615
+>       dt-bindings: qcom,pdc: document QCS615 Power Domain Controller
+>       soc: qcom: socinfo: Add QCS615 SoC ID table entry
+>       arm64: dts: qcom: add initial support for QCS615 DTSI
+>       arm64: dts: qcom: add base QCS615 RIDE dts
+> 
+>  Documentation/devicetree/bindings/arm/qcom.yaml    |   6 +
+>  .../bindings/interrupt-controller/qcom,pdc.yaml    |   1 +
+>  arch/arm64/boot/dts/qcom/Makefile                  |   1 +
+>  arch/arm64/boot/dts/qcom/qcs615-ride.dts           |  34 ++
+>  arch/arm64/boot/dts/qcom/qcs615.dtsi               | 511 +++++++++++++++++++++
+>  drivers/soc/qcom/socinfo.c                         |   1 +
+>  include/dt-bindings/arm/qcom,ids.h                 |   1 +
+>  7 files changed, 555 insertions(+)
+> ---
+> base-commit: 100cc857359b5d731407d1038f7e76cd0e871d94
+> change-id: 20240910-add_initial_support_for_qcs615-1a96c3469728
+> 
+> Best regards,
+> --
+> Lijuan Gao <quic_lijuang@quicinc.com>
+> 
+> 
 > 
 
 
@@ -91,10 +167,26 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y allwinner/sun8i-a33-vstar.dtb' for 20240913104845.4112986-1-uwu@icenowy.me:
+New warnings running 'make CHECK_DTBS=y qcom/qcs615-ride.dtb' for 20240913-add_initial_support_for_qcs615-v2-0-9236223e7dab@quicinc.com:
 
-arch/arm/boot/dts/allwinner/sun8i-a33-vstar.dtb: hub@1: '#address-cells', '#size-cells', 'ethernet@4' do not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/usb/genesys,gl850g.yaml#
+arch/arm64/boot/dts/qcom/qcs615-ride.dtb: efuse@780000: compatible:0: 'qcom,qcs615-qfprom' is not one of ['qcom,apq8064-qfprom', 'qcom,apq8084-qfprom', 'qcom,ipq5332-qfprom', 'qcom,ipq6018-qfprom', 'qcom,ipq8064-qfprom', 'qcom,ipq8074-qfprom', 'qcom,ipq9574-qfprom', 'qcom,msm8226-qfprom', 'qcom,msm8916-qfprom', 'qcom,msm8974-qfprom', 'qcom,msm8976-qfprom', 'qcom,msm8996-qfprom', 'qcom,msm8998-qfprom', 'qcom,qcm2290-qfprom', 'qcom,qcs404-qfprom', 'qcom,sc7180-qfprom', 'qcom,sc7280-qfprom', 'qcom,sc8280xp-qfprom', 'qcom,sdm630-qfprom', 'qcom,sdm670-qfprom', 'qcom,sdm845-qfprom', 'qcom,sm6115-qfprom', 'qcom,sm6350-qfprom', 'qcom,sm6375-qfprom', 'qcom,sm8150-qfprom', 'qcom,sm8250-qfprom', 'qcom,sm8450-qfprom', 'qcom,sm8550-qfprom', 'qcom,sm8650-qfprom']
+	from schema $id: http://devicetree.org/schemas/nvmem/qcom,qfprom.yaml#
+arch/arm64/boot/dts/qcom/qcs615-ride.dtb: efuse@780000: Unevaluated properties are not allowed ('compatible' was unexpected)
+	from schema $id: http://devicetree.org/schemas/nvmem/qcom,qfprom.yaml#
+arch/arm64/boot/dts/qcom/qcs615-ride.dtb: /soc@0/efuse@780000: failed to match any schema with compatible: ['qcom,qcs615-qfprom', 'qcom,qfprom']
+arch/arm64/boot/dts/qcom/qcs615-ride.dtb: /soc@0/syscon@1fc0000: failed to match any schema with compatible: ['qcom,qcs615-tcsr', 'syscon']
+arch/arm64/boot/dts/qcom/qcs615-ride.dtb: /soc@0/pinctrl@3100000: failed to match any schema with compatible: ['qcom,qcs615-tlmm']
+arch/arm64/boot/dts/qcom/qcs615-ride.dtb: watchdog@17c10000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['qcom,apss-wdt-qcs615', 'qcom,kpss-wdt'] is too long
+	['qcom,apss-wdt-qcs615', 'qcom,kpss-wdt'] is too short
+	'qcom,apss-wdt-qcs615' is not one of ['qcom,kpss-wdt-ipq4019', 'qcom,apss-wdt-ipq5018', 'qcom,apss-wdt-ipq5332', 'qcom,apss-wdt-ipq9574', 'qcom,apss-wdt-msm8226', 'qcom,apss-wdt-msm8974', 'qcom,apss-wdt-msm8994', 'qcom,apss-wdt-qcm2290', 'qcom,apss-wdt-qcs404', 'qcom,apss-wdt-sa8255p', 'qcom,apss-wdt-sa8775p', 'qcom,apss-wdt-sc7180', 'qcom,apss-wdt-sc7280', 'qcom,apss-wdt-sc8180x', 'qcom,apss-wdt-sc8280xp', 'qcom,apss-wdt-sdm845', 'qcom,apss-wdt-sdx55', 'qcom,apss-wdt-sdx65', 'qcom,apss-wdt-sm6115', 'qcom,apss-wdt-sm6350', 'qcom,apss-wdt-sm8150', 'qcom,apss-wdt-sm8250']
+	'qcom,kpss-wdt' was expected
+	'qcom,scss-timer' was expected
+	'qcom,apss-wdt-qcs615' is not one of ['qcom,kpss-wdt-apq8064', 'qcom,kpss-wdt-ipq8064', 'qcom,kpss-wdt-mdm9615', 'qcom,kpss-wdt-msm8960']
+	'qcom,msm-timer' was expected
+	'qcom,kpss-timer' was expected
+	from schema $id: http://devicetree.org/schemas/watchdog/qcom-wdt.yaml#
+arch/arm64/boot/dts/qcom/qcs615-ride.dtb: /soc@0/watchdog@17c10000: failed to match any schema with compatible: ['qcom,apss-wdt-qcs615', 'qcom,kpss-wdt']
 
 
 
