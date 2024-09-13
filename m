@@ -1,101 +1,83 @@
-Return-Path: <linux-kernel+bounces-328417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA5BD978318
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:59:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AC7197831C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:59:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F41E289E0E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:59:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 372FB1F214B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578114AEE6;
-	Fri, 13 Sep 2024 14:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D11922B9C6;
+	Fri, 13 Sep 2024 14:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="VvfwAPwJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nWxOMY17"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994464D8BB;
-	Fri, 13 Sep 2024 14:57:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3155711187;
+	Fri, 13 Sep 2024 14:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726239472; cv=none; b=lOkZ5OBJexGHIST1MAdYCBRatZlYQg4cscONI8STSuccyAcDL9wmat8Kur1TZ0zxdCJzJUCyLnoY5YealfbmVBU43dQ35rxa6Lv6HAIipdlvZaEoWF3s0emSdMc5DB4WMPgF24+itq0CDLFel4oX8QpAzqMWw5etooTFmu9phVc=
+	t=1726239586; cv=none; b=ZMWhiT/6vIWoRlAhmKCI5pEl88iXvdlDkonHFG0n/3jytfYlRZrqjuIe8AFLcwid1Tuw34yf9iFUIf3DhqdCCspCHk3Pg476nc4XnSA6hc+drpzv1nj+S8QADwtftx5QCK7T3iiejysQAVJaZDSdnrKjrpaFV5VvAPwTBmVqcjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726239472; c=relaxed/simple;
-	bh=s71P89mZ3W54rQGJ2W+BW9+a5VW5k+C+l2iwCeyAKjk=;
+	s=arc-20240116; t=1726239586; c=relaxed/simple;
+	bh=GBR/ylUWELEf4Nvt0HwsmeixlCJh0DahxVeDrnHTK4o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dMDnJb0UgvGk4YfirjgC/CeCzbXUvK62qQNNNQ6P4XPOnHLIR11sW2Tood4elzDpbNKa51E/yZLd7vwOfgR5cGDughN4M8XB4kn3V2ELso5NbwxErQv1k/ZHisUKRRGz7cSs4uhbblTw/QgALrCVDjvDAmbiAnSmTVs2cf14Dzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=VvfwAPwJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CDD8C4CEC0;
-	Fri, 13 Sep 2024 14:57:51 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="VvfwAPwJ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-	t=1726239469;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cESnPJPd5KN2wqEJOEZA45EYxyB/wM6lqjeLiC/AT4s=;
-	b=VvfwAPwJn4tqAd97Od/1D43eDs6zlr0WjR4vUT4OFc5w3q8cT20r4RaJOM2IHHyLD/yNM1
-	DDnHK8O10oSelwqDAkFMj0FkXQCiesoT5o0mKStJ0vLLeximSPQtkeORhqHWIz26TiLNhU
-	Tuqdg0uQsSdt8DqPaYmEBa6ITnAXAmo=
-Received: 
-	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 37e3f428 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-	Fri, 13 Sep 2024 14:57:49 +0000 (UTC)
-Date: Fri, 13 Sep 2024 16:57:47 +0200
-From: "Jason A. Donenfeld" <Jason@zx2c4.com>
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Harald Freudenberger <freude@linux.ibm.com>,
-	Stefan Liebler <stli@linux.ibm.com>, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH 0/7] s390/vdso: getrandom() vdso implementation
-Message-ID: <ZuRS6wEa6lKOyuo9@zx2c4.com>
-References: <20240913130544.2398678-1-hca@linux.ibm.com>
- <ZuRDp4DPOz8BlGAz@zx2c4.com>
- <ZuREmWTzI3Vg7tZE@zx2c4.com>
- <20240913142924.30385-B-hca@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=s5BYc/ULbXY4+ndbSIWdzw+Gh7V8Iy3mwXJ5bSzw6bsyIhYUQZq+xzbzFq3n39RxmA4lKp76DPmIVKLGRM8HXzTgd/GLqUT0uf2e8li1lUcic+1SjbNd1RRGtjyz4EY6CSFSaEd384omHdnCWnskv8/jkzzA0ChHvfZ9UUHA9b4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nWxOMY17; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F454C4CEC0;
+	Fri, 13 Sep 2024 14:59:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726239586;
+	bh=GBR/ylUWELEf4Nvt0HwsmeixlCJh0DahxVeDrnHTK4o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nWxOMY176ksBiwhKWCrUFM7eTN7vl/Fdu2uY9KOP3YrBH58M7EsYQsOAgxsPceD4E
+	 zVv5xb6v5CkMxp9oA8Yl8KbjgiXIqPuCvrps5Zo/7TOgPyFRm2LfoiT+F6qx7WCJpA
+	 8V9kLoCD+9NtLISQFVtnqYbMgJ9yeQptoEV7Cb9P/7eTdre2lz9oPh7VrbFXtpdOjQ
+	 X8fnGTbqnqJ2y0mgoQ9qyraTMFVhLkxsPFVaNFJj8Pym5H8vQfbbChevZnz2WNCV2k
+	 8ZcxwYVTh+m4iXePzpQvqRrQU3B/yz1jRe+haxn6Y+EMElAJeNDmmaNPWWDUSD+7MN
+	 YN/u8jkKDhlVw==
+Date: Fri, 13 Sep 2024 16:59:42 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Wolfram Sang <wsa@kernel.org>, 
+	Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+	Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Douglas Anderson <dianders@chromium.org>, Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v7 05/10] i2c: core: Remove extra space in Makefile
+Message-ID: <q5g4lus3fifwtaypqvljtmw754px473mpx66b2vtemyivqfpm2@4q3mnojbfp66>
+References: <20240911072751.365361-1-wenst@chromium.org>
+ <20240911072751.365361-6-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240913142924.30385-B-hca@linux.ibm.com>
+In-Reply-To: <20240911072751.365361-6-wenst@chromium.org>
 
-On Fri, Sep 13, 2024 at 04:29:24PM +0200, Heiko Carstens wrote:
-> Hi Jason,
-> 
-> > > On first glance, this series looks perfect. I can't comment too much on
-> > > the s390 parts, but first pass of the crypto/vdso/api parts looks spot
-> > > on. Nice going.
-> > > 
-> > > Were you thinking you'd like me to take these via the random.git tree
-> > > for 6.12 next week, or were you thinking of delaying it a release and
-> > > taking it into the arch tree for 6.13?
-> > 
-> > If you did want it to be in 6.12, assuming this series continues to look
-> > good, I think we'd still want it to be in -next for at least a week, so
-> > maybe that'd take the form of me sending an additional late pull during
-> > the merge window for this. Either way, I'll defer to your judgement
-> > here, as most of these changes are fiddly s390 things more than anything
-> > else.
-> 
-> This series is intended to go into 6.12. I don't see a reason to delay
-> this for a full release cycle. If something breaks we'll fix it, as usual.
-> 
-> So a late pull request would be perfectly fine. Alternatively we can
-> take this via s390 also for a second pull request; whatever you prefer
-> and is less work for you.
+Hi Chen-Yu,
 
-Okay, great. I'll queue it up then in random.git.
+On Wed, Sep 11, 2024 at 03:27:43PM GMT, Chen-Yu Tsai wrote:
+> Some lines in the Makefile have a space before tabs. Remove those.
+> 
+> Reported-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Closes: https://lore.kernel.org/all/ZsdE0PxKnGRjzChl@smile.fi.intel.com/
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Jason
+Reviewed-by: Andi Shyti <andi.shyti@kernel.org>
+
+Thanks,
+Andi
 
