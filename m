@@ -1,130 +1,118 @@
-Return-Path: <linux-kernel+bounces-328701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B3B8978788
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:08:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EC04978785
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:08:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF8211F266AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:08:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3694A289FB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DA612E1E0;
-	Fri, 13 Sep 2024 18:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Czqfh0FE"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9958612C46D;
-	Fri, 13 Sep 2024 18:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB7712C552;
+	Fri, 13 Sep 2024 18:07:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1200E12CDBA
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 18:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726250888; cv=none; b=h5xU+QIRV1fgGSXy1+v4OuNZarNN8DGXoMZHEUlOvbtNLQL8/J6QzRb5Ya35D6UlgD9Fg/mRvIj7zH0q0KMZUprYiBB2K/DNZPxZ7MDP2n8Ie/joDpCKwWxWaBK9HTbMT38Vn34GTZQ9NmtaxpJl7mjrVJukixudHYpfRcU8PiA=
+	t=1726250869; cv=none; b=X1/1w9c4Vb6plf/8Uy+wXFO63H2baJpusUS72N4e+fxmttBW8FuYItOIgNuWRwbN2TUi1OGrlWBkeIbaWf2b49E8pklIRxijnGxqZ32OLlVuxE2eZQe9ipZe93FHwSOYMq/0QeWNKORQuLTRUzcLER/Y6zwv2WuhLilmI+M0SkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726250888; c=relaxed/simple;
-	bh=ojb72Ffjk93VhLheb1CEWgkxx0+qtLxx5Y/YZD7V794=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VkS6q3JQWqZRjY+BQNS0BEzODeel5xFmqI2n8AY17NIEiHd3dFeTYydlxfI+QAKDT5UG1Pwi71t0ssWxXtZxHu+B8f5ABBYJTlGFOfApLsQuPxYZSJPBsJhaV9ejvN+pvmq1Jm3srwzisMovkQK1A1BK4f3cOyA9I0hDiE3k7E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Czqfh0FE; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48DI7gWn089800;
-	Fri, 13 Sep 2024 13:07:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1726250862;
-	bh=Fg4nfT5Q2rXpOjg2NjjXyFPmQDkUbxQkY0WYprwTWag=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=Czqfh0FEOJdf7BoXAPDEGInkGvyxCjXAExHzwzZNeXcPyMuAxBBU/6/BFi+LsBYXf
-	 yWrkO+3JUGK5rEwJ891rCO2UdRvjTNsSmh4naBnDh4tZfpVZjrglvyjpVBjRqTGcfr
-	 bBALTJ45H8zed2+kEBYfcwL7UnSd3sJA6UoACrMk=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48DI7gZ1037131
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 13 Sep 2024 13:07:42 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 13
- Sep 2024 13:07:41 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 13 Sep 2024 13:07:41 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48DI7fJe085800;
-	Fri, 13 Sep 2024 13:07:41 -0500
-Date: Fri, 13 Sep 2024 13:07:41 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Garrett Giordano <ggiordano@phytec.com>
-CC: <vigneshr@ti.com>, <kristo@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <w.egorov@phytec.de>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>
-Subject: Re: [PATCH 2/2] arm64: dts: ti: Remove
- k3-am625-phyboard-lyra-1-4-ghz-opp overlay
-Message-ID: <20240913180741.4ntyw4c4f66o5hgk@lifter>
-References: <20240913175625.3190757-1-ggiordano@phytec.com>
- <20240913175625.3190757-3-ggiordano@phytec.com>
+	s=arc-20240116; t=1726250869; c=relaxed/simple;
+	bh=8EfGJnTNI4yWLL3tzGnT5AcRP0e1thHNsip9GYzI3b0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kt85SlC93vm6dnm3uWp/S37VpGxoCCbq8S+u3XWdFX2kbxfXUQDvSK3hdLzNBU12tyIlB7L/I3n1FJv8asFDJ1IB9qbtnBJDrBUYuHEgNAKqZNrLJ4OGlDs7Rd3Qhv43dhIhIy61d9v2v7afTQ0N9oRS1wjnQNH2D2T1lCORQ68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91F1713D5;
+	Fri, 13 Sep 2024 11:08:15 -0700 (PDT)
+Received: from [10.1.196.28] (eglon.cambridge.arm.com [10.1.196.28])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3B7423F64C;
+	Fri, 13 Sep 2024 11:07:43 -0700 (PDT)
+Message-ID: <8b7ffd4b-6e04-4c3a-bcc4-33d72139414f@arm.com>
+Date: Fri, 13 Sep 2024 19:07:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240913175625.3190757-3-ggiordano@phytec.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 08/39] x86/resctrl: Generate default_ctrl instead of
+ sharing it
+Content-Language: en-GB
+To: Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Fenghua Yu <fenghua.yu@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ H Peter Anvin <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
+ shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>
+References: <20240802172853.22529-1-james.morse@arm.com>
+ <20240802172853.22529-9-james.morse@arm.com>
+ <72e612b3-0840-4cbf-b5fb-85ed3be4cfc8@intel.com>
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <72e612b3-0840-4cbf-b5fb-85ed3be4cfc8@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 10:56-20240913, Garrett Giordano wrote:
-> Remove the k3-am625-phyboard-lyra-1-4-ghz-opp overlay. We now
-> configure the a53_opp_table to include a 1.4 GHz node and set our
-> VDD_CORE to 0.85v in the k3-am62-phycore-som.dtsi. This change is to
-> match our PMIC which is now set to output 0.85v by default.
-> 
-> Signed-off-by: Garrett Giordano <ggiordano@phytec.com>
-> ---
->  .../k3-am625-phyboard-lyra-1-4-ghz-opp.dtso   | 20 -------------------
->  1 file changed, 20 deletions(-)
->  delete mode 100644 arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-1-4-ghz-opp.dtso
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-1-4-ghz-opp.dtso b/arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-1-4-ghz-opp.dtso
-> deleted file mode 100644
-> index 6ec6d57ec49c..000000000000
-> --- a/arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-1-4-ghz-opp.dtso
-> +++ /dev/null
-> @@ -1,20 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0-only OR MIT
-> -/*
-> - * Copyright (C) 2024 PHYTEC America LLC
-> - * Author: Nathan Morrisson <nmorrisson@phytec.com>
-> - */
-> -
-> -/dts-v1/;
-> -/plugin/;
-> -
-> -&vdd_core {
-> -	regulator-min-microvolt = <850000>;
-> -	regulator-max-microvolt = <850000>;
-> -};
-> -
-> -&a53_opp_table {
-> -	opp-1400000000 {
-> -		opp-hz = /bits/ 64 <1400000000>;
-> -		opp-supported-hw = <0x01 0x0004>;
-> -	};
-> -};
-> -- 
-> 2.25.1
-> 
+Hi Reinette,
 
-Did you build test this? Reason I ask is because you might have missed
-the Makefile edits needed?
+On 14/08/2024 05:00, Reinette Chatre wrote:
+> On 8/2/24 10:28 AM, James Morse wrote:
+> 
+>> +/**
+>> + * resctrl_get_default_ctrl() - Return the default control value for this
+>> + *                              resource.
+>> + * @r:        The resource whose default control type is queried.
+>> + */
+>> +static inline u32 resctrl_get_default_ctrl(struct rdt_resource *r)
+>> +{
+>> +    switch (r->schema_fmt) {
+>> +    case RESCTRL_SCHEMA_BITMAP:
+>> +        return BIT_MASK(r->cache.cbm_len) - 1;
+>> +    case RESCTRL_SCHEMA_PERCENTAGE:
+>> +        return 100u;
+>> +    case RESCTRL_SCHEMA_MBPS:
+>> +        return r->membw.max_bw;
+>> +    }
+>> +
+>> +    return WARN_ON_ONCE(1);
+>> +}
+>> +
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+> I am concerned where this is headed. Since RESCTRL_SCHEMA_PERCENTAGE remains
+> in use when resctrl is mounted with mba_MBps the default cannot always
+> be 100u (it should be MBA_MAX_MBPS when software controller is active).
+
+I agree - and we can certainly tidy that up.
+But today when mba_sc is enable the bandwidth_gran and min-bandwidth files both report
+'10' (%?), which isn't particularly meaningful.
+I think these should both report '1'. There will be a minimum bandwidth, buts it not
+something that can be discovered by the mba_sc code.
+
+This was an oversight because the mba_sc mode doesn't update default_ctrl or the format
+strings - it hijacks the parsing elsewhere. The default_ctrl isn't visible to user-space,
+the value used when reading the schema file comes from the mbps_val array, instead of
+ctrl_val.
+
+
+Some of this has been booted over the horizon - I'll add straightening out the mba_sc
+behaviour here to that list.
+
+
+
+Thanks,
+
+James
 
