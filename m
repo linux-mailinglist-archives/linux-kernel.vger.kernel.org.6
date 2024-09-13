@@ -1,95 +1,131 @@
-Return-Path: <linux-kernel+bounces-327475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BFC897766A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:26:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BAC7977679
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:42:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84ABA1F2430C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:26:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E5BD1C24297
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5409D4A3E;
-	Fri, 13 Sep 2024 01:25:58 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E895F4A3E;
+	Fri, 13 Sep 2024 01:42:23 +0000 (UTC)
+Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A803443D
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 01:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41E13FE4
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 01:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726190758; cv=none; b=RGlolroS7qlesL3y1YpESpWmjv7lqkCYM1ZePlo4zpVWAy+ErpfMc2S48aRC2FgGPe96JoHS9SX3wxioKHLy4D5BRK48OyoEIyjijfgIvaUvFvYeETeDkNfgrSOuJVA6Vykbobr30hYGnvhr+xei9SQ/XkB9anpUW9UeqsCX0Sk=
+	t=1726191743; cv=none; b=P+IX112tmUcijUpZrQI8Nyv5w2YpVouS3VcgpxnI7QvIVP3Ar8WQgjWxRf9TfoM7e50q5u6FD+g0WtVV9gwMsaC7/HbB88FnoIiSSu6XD8Z77vOUMu/magTniqrIQ7nqVcjl1gSbay4k5ANhxJr3ZzEHpL94pVWyrqdCabu+heU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726190758; c=relaxed/simple;
-	bh=9vgVqu6YemcpCPzpG8tCwQdV08j/EigS60ejUpRid0I=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=az5kzJgBN67edAh/Q0+icQc05SqLx5kthoQrm9f3S0WNAP2wR9R37/ASBMOSZDoo5033l154WnUVvegZD2aYfGoBdfp7bPFb36MAA2W/CKOrKbEXw4xyDKAIsiLjTTrH47p8EmjFG3j1RrkPi/Eb1g6uRL4q6fqKnk5CCDOaWms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4X4c7N6SXyz2CpbF;
-	Fri, 13 Sep 2024 09:25:20 +0800 (CST)
-Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4ED551402E2;
-	Fri, 13 Sep 2024 09:25:52 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
- (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 13 Sep
- 2024 09:25:51 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <lgirdwood@gmail.com>, <broonie@kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH -next] regulator: max8973: Use irq_get_trigger_type() helper
-Date: Fri, 13 Sep 2024 09:35:03 +0800
-Message-ID: <20240913013503.3754712-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726191743; c=relaxed/simple;
+	bh=BVBPAKskZ2e4xhJDy2mkhR5EOL7VIVzmaqEZVTE+tEQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=soUdgbdwxOqXZQQhw61pD5Zd41kovhBYlvbvvTd8JvhyUp9YZuM7c17zg49kw+Ek5qchVx20C1tJC3TKdSxaJWhQ0+ivcz0MopvK9bXGNiOaElbKV93bJghQIs2e6/69IkA97xYZ83nBOEuYOLiD6e1gQbpwyAKk0fT/Qbk/Zik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=54.254.200.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shingroup.cn
+X-QQ-mid: bizesmtpsz10t1726191665tzs1mm
+X-QQ-Originating-IP: ntUUR5HCbH45R31EnJtFXoJQJMPf/PsHyejSfRzk1nE=
+Received: from HX09040029.powercore.com.cn ( [180.171.104.254])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 13 Sep 2024 09:40:53 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 6794888667536814964
+Date: Fri, 13 Sep 2024 09:40:29 +0800
+From: Luming Yu <luming.yu@shingroup.cn>
+To: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	mpe@ellerman.id.au, npiggin@gmail.com, jialong.yang@shingroup.cn,
+	luming.yu@gmail.com
+Subject: Re: [PATCH 1/2] powerpc/entry: convert to common and generic entry
+Message-ID: <153FD6B5CE4F97D9+ZuOYDQ-iHIIwJjbh@HX09040029.powercore.com.cn>
+References: <B4ABABEA5F13B86A+20240912082500.1469-1-luming.yu@shingroup.cn>
+ <fc509bcd-5ca0-4dc2-962e-766a01cbe4fb@csgroup.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemh500013.china.huawei.com (7.202.181.146)
+In-Reply-To: <fc509bcd-5ca0-4dc2-962e-766a01cbe4fb@csgroup.eu>
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:shingroup.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-Use irq_get_trigger_type() to replace irq_get_irq_data() and then
-irqd_get_trigger_type(), if the irq data is NULL it will return 0.
+On Thu, Sep 12, 2024 at 12:23:29PM +0200, Christophe Leroy wrote:
+> 
+> 
+> Le 12/09/2024 à 10:24, Luming Yu a écrit :
+> > From: Yu Luming <luming.yu@gmail.com>
+> > 
+> > convert powerpc entry code in syscall and fault to use syscall_work
+> > and irqentry_state as well as common calls from generic entry infrastructure.
+> > 
+> > Signed-off-by: Luming Yu <luming.yu@shingroup.cn>
+> > ---
+> >   arch/powerpc/Kconfig                   | 1 +
+> >   arch/powerpc/include/asm/hw_irq.h      | 5 +++++
+> >   arch/powerpc/include/asm/processor.h   | 6 ++++++
+> >   arch/powerpc/include/asm/syscall.h     | 5 +++++
+> >   arch/powerpc/include/asm/thread_info.h | 1 +
+> >   arch/powerpc/kernel/syscall.c          | 6 +++++-
+> >   arch/powerpc/mm/fault.c                | 5 +++++
+> >   7 files changed, 28 insertions(+), 1 deletion(-)
+> 
+> There is another build problem:
+> 
+>   CC      kernel/entry/common.o
+> kernel/entry/common.c: In function 'irqentry_exit':
+> kernel/entry/common.c:335:21: error: implicit declaration of function
+> 'regs_irqs_disabled'; did you mean 'raw_irqs_disabled'?
+> [-Werror=implicit-function-declaration]
+>   335 |         } else if (!regs_irqs_disabled(regs)) {
+>       |                     ^~~~~~~~~~~~~~~~~~
+>       |                     raw_irqs_disabled
+> 
+> 
+> You have put regs_irqs_disabled() in a section dedicated to PPC64, so it
+> fails on PPC32.
+> 
+> 
+> After fixing this problem and providing an empty asm/entry-common.h it is
+> now possible to build the kernel. But that's not enough, the board is stuck
+> after:
+> 
+> ...
+> [    2.871391] Freeing unused kernel image (initmem) memory: 1228K
+> [    2.877990] Run /init as init process
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- drivers/regulator/max8973-regulator.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+Thanks for these questions. :-)
+I haven't gotten chance to run it in ppc32 qemu.
+the common syscall trace enter lost this hunk
+-       if (!is_32bit_task())
+-               audit_syscall_entry(regs->gpr[0], regs->gpr[3], regs->gpr[4],
+-                                   regs->gpr[5], regs->gpr[6]);
+-       else
+-               audit_syscall_entry(regs->gpr[0],
+-                                   regs->gpr[3] & 0xffffffff,
+-                                   regs->gpr[4] & 0xffffffff,
+-                                   regs->gpr[5] & 0xffffffff,
+-                                   regs->gpr[6] & 0xffffffff);
+which I don't understand whether we need a arch callbacks for it.
 
-diff --git a/drivers/regulator/max8973-regulator.c b/drivers/regulator/max8973-regulator.c
-index 96ca146281d6..f68caa07f546 100644
---- a/drivers/regulator/max8973-regulator.c
-+++ b/drivers/regulator/max8973-regulator.c
-@@ -470,8 +470,7 @@ static const struct thermal_zone_device_ops max77621_tz_ops = {
- static int max8973_thermal_init(struct max8973_chip *mchip)
- {
- 	struct thermal_zone_device *tzd;
--	struct irq_data *irq_data;
--	unsigned long irq_flags = 0;
-+	unsigned long irq_flags;
- 	int ret;
- 
- 	if (mchip->id != MAX77621)
-@@ -489,9 +488,7 @@ static int max8973_thermal_init(struct max8973_chip *mchip)
- 	if (mchip->irq <= 0)
- 		return 0;
- 
--	irq_data = irq_get_irq_data(mchip->irq);
--	if (irq_data)
--		irq_flags = irqd_get_trigger_type(irq_data);
-+	irq_flags = irq_get_trigger_type(mchip->irq);
- 
- 	ret = devm_request_threaded_irq(mchip->dev, mchip->irq, NULL,
- 					max8973_thermal_irq,
--- 
-2.34.1
+Before I sent out the RFC patch set, the very limited compile and boot test goes well with a ppc64 qemu VM. Surely, there will be a lot of test, debug and following up patch set update that is necessary to make it a complete convert.
+
+And the patch set should really be re-named to RFC and v1. 
+
+Cheers  
+
+> 
+> 
+> Christophe
+> 
 
 
