@@ -1,109 +1,177 @@
-Return-Path: <linux-kernel+bounces-328134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35395977F48
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:10:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 236A4977F4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDCD1283672
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:09:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD2A61F21267
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F9B1D933E;
-	Fri, 13 Sep 2024 12:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DCAB1D9347;
+	Fri, 13 Sep 2024 12:10:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="dx6Z6IMn"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="tJ/HlPiy"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841FD1C175F;
-	Fri, 13 Sep 2024 12:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FB61C175F;
+	Fri, 13 Sep 2024 12:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726229384; cv=none; b=PcS+SU86yGEtC6+Rv7ABCnt4wgN6aIXZDRNAMkHwYhdq4BqENlXjIxRxX2gD6p+z81QqBxCgOaLI6KHrUkFgVygd2spo67nO+P+FJ2y5LwV8PUP2JZU48IDSqO+HNsiEsvs+6pri2Z3flXdqkbivtx35ziWZWjeciRZtPSxrNK4=
+	t=1726229439; cv=none; b=gsSFQ3rOondOT3FgrWT90cZA7fznPcTn+Kk3KfRLLDdgQ+LXMUjKI61mRNozUnQHw4pGZRPUNjrbt9twmWb8jXtXmaps0envqfe8a9vO5wXZzBl8EDlJ6OWX43nJpZVos7FzJ0ZFnqqFHCBuURRQmdtb6PqAnyLVEiHLNLuVE2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726229384; c=relaxed/simple;
-	bh=S8H6jPbmMZNantNVWPG0SCwOFatGJ6CawWw9Frt2PoI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Nt69/avCdTOa87/KuE/NZ1Vl8fwY4wBuGHgVy5cAfo/qk3/z14kTc1DSU6AyJtwIw+GDcG03VZnnG6dUD5HZjLQMUlcWR8zDKML9Jdi58Jwi+Hsjr7EjG9OlNl/4Rrhgd1Xjq9WxSzz6GcfUNU4EyjIPhvXcdDLtlWooNmm1Xps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=dx6Z6IMn; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=2FWF5Dq/3matU4oupKtZT7KL44HIaVi6C+3SXqNKXc0=; b=dx6Z6IMnRf3u1ptfPnpPqhLsFx
-	+w1bFwn6HoyUCcGRq6pq3v+SOshDBRAGp1aNWE5VdbuACTQ0KPZS+f82e4PjAhVz0/sKNEQ3Sv8du
-	pudssVcqIs9etPVBwpCCnI88oX8kRS3B6usMZxt2NNPeQiDOVWLGSn6Y9iWVyqa1Bxh9v0Z9W23mU
-	YGyewtGmRHbxPfuyJahBeBza3Jjg8uHX8r/chLJaIGG0VxFmOoYypX3+kusijEkcpuIMhxslWT4V5
-	M5pvckWGuuKPJKfQkc8tJoOPcZAUqBuLyTaEO5kzGfjmj3QDvmhIuGo5bo4tGJwbXlURpNcLX/Fvl
-	fm2UN5jw==;
-Date: Fri, 13 Sep 2024 14:09:34 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Reid Tonking <reidt@ti.com>, Tony Lindgren <tony@atomide.com>,
- "Raghavendra, Vignesh" <vigneshr@ti.com>, Aaro Koskinen
- <aaro.koskinen@iki.fi>, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
- Linux-OMAP <linux-omap@vger.kernel.org>, linux-i2c@vger.kernel.org, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] i2c: omap: Fix standard mode false ACK readings
-Message-ID: <20240913140934.29bb542b@akair>
-In-Reply-To: <664241E0-8D6B-4783-997B-2D8510ADAEA3@goldelico.com>
-References: <20230426194956.689756-1-reidt@ti.com>
-	<445b3cbf-ffbc-6f77-47db-c30fc599e88f@ti.com>
-	<20230428074330.GJ14287@atomide.com>
-	<20230428183037.wbhds54dz5l4v5xa@reidt-t5600.dhcp.ti.com>
-	<664241E0-8D6B-4783-997B-2D8510ADAEA3@goldelico.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1726229439; c=relaxed/simple;
+	bh=eKQp8WFIivIlz81KoAc08q+LcLeM6mnKsSpVWLX81KQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZPk5nlogtF4lF05ltEOrEshELdUND6KSuaqlCgRxgOo0GvcmhVLXQxhUqA1qN8Z2vTh+HUcsHC2jsqRkuES0xhATiS+X+ixXu6d8ehNWf29i8w1gAcsnJfCg4jHRfHNDXj+1GECyWV5vtf4gDTz3O5zSdxHt0rdTYQtnzh6Efvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=tJ/HlPiy; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1726229428; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=p9RxojJzKbhCDZ6wrWjhZvZmrSV8ktXcTQ8diFhFAdU=;
+	b=tJ/HlPiy+ZyoFbPBKnvDUHx6+Cle+ChCWkuhjl90CaCOBTCE056za0+UMx2H8fg6Q+o2XdSnRwCU7Qqw29lJTVsvqtDE8765m4PFSjewyKqRy8TREl8bqt1UlcKpvX4yarc299pOhcvU1AChfK1r8It0yvGHIu/VgRMN47mpiMU=
+Received: from 30.221.128.100(mailfrom:lulie@linux.alibaba.com fp:SMTPD_---0WEurYQC_1726229425)
+          by smtp.aliyun-inc.com;
+          Fri, 13 Sep 2024 20:10:26 +0800
+Message-ID: <8d5469d2-7525-420b-b506-8de2ecf04734@linux.alibaba.com>
+Date: Fri, 13 Sep 2024 20:10:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 3/3] bpf: Add sk_lookup test to use ORIGDSTADDR cmsg.
+To: Tiago Lam <tiagolam@cloudflare.com>, "David S. Miller"
+ <davem@davemloft.net>, David Ahern <dsahern@kernel.org>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Jakub Sitnicki <jakub@cloudflare.com>, kernel-team@cloudflare.com
+References: <20240913-reverse-sk-lookup-v1-0-e721ea003d4c@cloudflare.com>
+ <20240913-reverse-sk-lookup-v1-3-e721ea003d4c@cloudflare.com>
+From: Philo Lu <lulie@linux.alibaba.com>
+In-Reply-To: <20240913-reverse-sk-lookup-v1-3-e721ea003d4c@cloudflare.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Am Wed, 11 Sep 2024 11:40:04 +0200
-schrieb "H. Nikolaus Schaller" <hns@goldelico.com>:
+Hi Tiago,
 
-> Hi,
+On 2024/9/13 17:39, Tiago Lam wrote:
+> This patch reuses the framework already in place for sk_lookup, allowing
+> it now to send a reply from the server fd directly, instead of having to
+> create a socket bound to the original destination address and reply from
+> there. It does this by passing the source address and port from where to
+> reply from in a IP_ORIGDSTADDR ancilliary message passed in sendmsg.
 > 
-> > Am 28.04.2023 um 20:30 schrieb Reid Tonking <reidt@ti.com>:
-> > 
-> > On 10:43-20230428, Tony Lindgren wrote:  
-> >> * Raghavendra, Vignesh <vigneshr@ti.com> [230427 13:18]:  
-> >>> On 4/27/2023 1:19 AM, Reid Tonking wrote:  
-> >>>> Using standard mode, rare false ACK responses were appearing with
-> >>>> i2cdetect tool. This was happening due to NACK interrupt
-> >>>> triggering ISR thread before register access interrupt was
-> >>>> ready. Removing the NACK interrupt's ability to trigger ISR
-> >>>> thread lets register access ready interrupt do this instead.  
-> >> 
-> >> So is it safe to leave NACK interrupt unhandled until we get the
-> >> next interrupt, does the ARDY always trigger after hitting this?
-> >> 
-> >> Regards,
-> >> 
-> >> Tony  
-> > 
-> > Yep, the ARDY always gets set after a new command when register
-> > access is ready so there's no need for NACK interrupt to control
-> > this.  
+> Signed-off-by: Tiago Lam <tiagolam@cloudflare.com>
+> ---
+>   tools/testing/selftests/bpf/prog_tests/sk_lookup.c | 70 +++++++++++++++-------
+>   1 file changed, 48 insertions(+), 22 deletions(-)
 > 
-> I have tested one GTA04A5 board where this patch breaks boot on
-> v4.19.283 or v6.11-rc7 (where it was inherited from some earlier -rc
-> series).
-> 
-> The device is either stuck with no signs of activity or reports RCU
-> stalls after a 20 second pause.
-> 
-cannot reproduce it here. I had a patch to disable 1Ghz on that
-device in my tree. Do you have anything strange in your
-tree?
+> diff --git a/tools/testing/selftests/bpf/prog_tests/sk_lookup.c b/tools/testing/selftests/bpf/prog_tests/sk_lookup.c
+> index ae87c00867ba..b99aff2e3976 100644
+> --- a/tools/testing/selftests/bpf/prog_tests/sk_lookup.c
+> +++ b/tools/testing/selftests/bpf/prog_tests/sk_lookup.c
+> @@ -75,6 +75,7 @@ struct test {
+>   	struct inet_addr listen_at;
+>   	enum server accept_on;
+>   	bool reuseport_has_conns; /* Add a connected socket to reuseport group */
+> +	bool dont_bind_reply; /* Don't bind, send direct from server fd. */
+>   };
+>   
+>   struct cb_opts {
+> @@ -363,7 +364,7 @@ static void v4_to_v6(struct sockaddr_storage *ss)
+>   	memset(&v6->sin6_addr.s6_addr[0], 0, 10);
+>   }
+>   
+> -static int udp_recv_send(int server_fd)
+> +static int udp_recv_send(int server_fd, bool dont_bind_reply)
+>   {
+>   	char cmsg_buf[CMSG_SPACE(sizeof(struct sockaddr_storage))];
+>   	struct sockaddr_storage _src_addr = { 0 };
+> @@ -415,26 +416,41 @@ static int udp_recv_send(int server_fd)
+>   		v4_to_v6(dst_addr);
+>   	}
+>   
+> -	/* Reply from original destination address. */
+> -	fd = start_server_addr(SOCK_DGRAM, dst_addr, sizeof(*dst_addr), NULL);
+> -	if (!ASSERT_OK_FD(fd, "start_server_addr")) {
+> -		log_err("failed to create tx socket");
+> -		return -1;
+> -	}
+> +	if (dont_bind_reply) {
+> +		/* Reply directly from server fd, specifying the source address and/or
+> +		 * port in struct msghdr.
+> +		 */
+> +		n = sendmsg(server_fd, &msg, 0);
+> +		if (CHECK(n <= 0, "sendmsg", "failed\n")) {
+> +			log_err("failed to send echo reply");
+> +			return -1;
+> +		}
+> +	} else {
+> +		/* Reply from original destination address. */
+> +		fd = socket(dst_addr->ss_family, SOCK_DGRAM, 0);
+> +		if (CHECK(fd < 0, "socket", "failed\n")) {
+> +			log_err("failed to create tx socket");
+> +			return -1;
+> +		}
+>   
+Just curious, why not use start_server_addr() here like before?
 
-Regards,
-Andreas
+> -	msg.msg_control = NULL;
+> -	msg.msg_controllen = 0;
+> -	n = sendmsg(fd, &msg, 0);
+> -	if (CHECK(n <= 0, "sendmsg", "failed\n")) {
+> -		log_err("failed to send echo reply");
+> -		ret = -1;
+> -		goto out;
+> -	}
+> +		ret = bind(fd, (struct sockaddr *)dst_addr, sizeof(*dst_addr));
+> +		if (CHECK(ret, "bind", "failed\n")) {
+> +			log_err("failed to bind tx socket");
+> +			close(fd);
+> +			return ret;
+> +		}
+>   
+> -	ret = 0;
+> -out:
+> -	close(fd);
+> -	return ret;
+> +		msg.msg_control = NULL;
+> +		msg.msg_controllen = 0;
+> +		n = sendmsg(fd, &msg, 0);
+> +		if (CHECK(n <= 0, "sendmsg", "failed\n")) {
+> +			log_err("failed to send echo reply");
+> +			close(fd);
+> +			return -1;
+> +		}
+> +
+> +		close(fd);
+> +	}
+
+nit: "return 0" missed.
+
+>   }
+>   
+
+-- 
+Philo
+
 
