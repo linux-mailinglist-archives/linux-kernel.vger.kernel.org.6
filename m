@@ -1,127 +1,140 @@
-Return-Path: <linux-kernel+bounces-328652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A3AE9786F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:38:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A33F9786FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:39:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6013B21893
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:38:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64A791C23E70
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52CEF83CD9;
-	Fri, 13 Sep 2024 17:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24FCF839F4;
+	Fri, 13 Sep 2024 17:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VlKRSWa5"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l3Jadakx"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263571C14;
-	Fri, 13 Sep 2024 17:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0499979DC7
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 17:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726249087; cv=none; b=OAt5GOsWWdpQ/i/5EelzWW1PewpejryH0aQlRryAE/gfvfq3AdOR8lCoYwZDVMdEk60VNHN8knsYusnio7v+brRyw1bLhdYSoCInWrQ2y35P4ZXY8EnQK2p4FUcoUNeN4BHoXjWXSlxEMnVkopEOmNpOQ1iCiC7sQFHm1ShQDWU=
+	t=1726249160; cv=none; b=NSGQ7FnrlCcFdSmWzmVXLqvSXCG+hkBvvsamqmARlZVzF4DHiJakGiB8bN9l2UW9RQb0cSv+q7CCVoKF/DiwhZqYVngitUvZXCnea73mQ2CBbxNqR6f+t+2Oq0DrjQDleyixLiYkHrUI2BKSt6cBzFvhDZb7UapFE34xkE9Vgzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726249087; c=relaxed/simple;
-	bh=fY3qP5ltlCZX+yqPpCa+44KaFwjOZwWMYefZqtJZzKk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sFlYSyDGUKkJcuBByUm7G5u0MGqVJVAi8wCtbCBnvDK8hWFs2eMT5jgta5qFzTwtIEQRjpuWFlkZtZYd2NtRmpq0YdaKn0JMNxUpQWKKQCfS9NVBD6E8EQ4teUgVuTlBgk0I8sA+P2N+byunL6kdBOXcjd5W0cQX5OackJC3oCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VlKRSWa5; arc=none smtp.client-ip=209.85.218.48
+	s=arc-20240116; t=1726249160; c=relaxed/simple;
+	bh=Augwq6E3kJa+ITey02QUlXrj7/RSXf11V3IFqWKw0P4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AcNwdioj/LgrRNtTQyZ0Rua0cWIC8kzcYbJT0vtjULtzxpjNGx7LF4ke00j4VvaIYCreqZXfyw6Bu6Sgz0IGjKQChEH59ogDBJVFJ1VEHTu8TLP+txasBeoQucC+Ziv9VtcJwaGHjByXMNn+pgpKb6uYhLWmxKxEJEbWyWPbP5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l3Jadakx; arc=none smtp.client-ip=209.85.216.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a90349aa7e5so249833066b.0;
-        Fri, 13 Sep 2024 10:38:05 -0700 (PDT)
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2d86f71353dso1791621a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 10:39:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726249084; x=1726853884; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1ZYRNlSQLbgqSh8L6zRzv83U3SkXdqIYSdeXiPhSUzo=;
-        b=VlKRSWa5vmbSPZ89gmzFDrSV5ntEt9eFMzL9IK03AIniXn6XKDOx7lJxPMRa2jrlpJ
-         ejzMa/ThPSQDUhcS3k/RYcKBZfixifgTnzYT06Df9PJgrB6UC0FwNM6wXR35woZPaUbQ
-         Dj9l6wUurw6fz43LK67b8RHEAqyzM9Rtmwet1W2dfvn2sRBDHU2TWMv3H/8hv1RJmqXj
-         XunpfZJAlpAzr75moc3alrtTJ0tcCJbZaV1yvgN3MAMPMapaltECXew8SDrbi3kxXeQ7
-         fFoCprcZvJyo6hlyfvsciAb2UsN/wLcmetJfe9MbAIbQ88lp6rM+dmnF0I2XvFGqgIIS
-         oNrQ==
+        d=gmail.com; s=20230601; t=1726249158; x=1726853958; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bEraXErRXS1IWHSVQbtwA0Xnq/Dy63pRrYAxugf/Fok=;
+        b=l3Jadakxc703C2YfnITL03Vf2D0vufNo9FjDdcd30k82HPX2balfEc6RoAK/+WulA2
+         7LSn49XsMgorBmDgtLyKQPNhiUQQsrVYj5Dd6xOtrQMjGxA4REWy/gNP0Zww4x6Q8wbl
+         lgpSUSMk7hNbr+rAM7gWeYR0fRx27xzqz9unYhQG00XrTRqgw6Kg4TaznLmeuO8jrirc
+         rLiPSup+VZRZ2N04TDVVWYImyHnFfL6MBAqHLXQUmlxEIF8R6aAD+D3RoBEvc/ccvi4N
+         pk0r64e0B6zPT+/0tbCeZHxEBh3SD3IWSg2ngQmlwf867nha5JWZ5Rxjdo5DQwWI+Z5I
+         Un4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726249084; x=1726853884;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1ZYRNlSQLbgqSh8L6zRzv83U3SkXdqIYSdeXiPhSUzo=;
-        b=QQ2m/XDkau0RzH5AjZqC2k4v5xmkRBbVM16tAgij2ODNisg5yTZEp8miBMISgXGG52
-         RnX/+zeL9LN8I6bRjF1TwoIfAYz5Jgj3/ecCuYOU43vHB4vO7VM1i2we7/1YSnritDNV
-         MFg0QXXgZ2pTLW9gPqEyDBbFF8RPEPkW7b+iQr0oIJtzAit4V6d07Ijm9mgBqE280JIF
-         bTsZQhQ4V5Gwvoa6dMzVD8fwKRieHnLu+CcL4/voHMMefvdazlk1Q9bEPa/h7hfg7VOG
-         i2MX4rv396Psb1JDf8wRWxmZyc8uG5ZNrGFUmTAe0nfoBGIuoZil7cC74ne5usm4ZfQQ
-         6VZw==
-X-Forwarded-Encrypted: i=1; AJvYcCVPWlB9KCqVSnsNRxx6tziJ3hxK6DY02UbRnHzIayvjOArc5m74npvKkqBUAbHve9N3/hZ3ZT+kLuQNjj1Cac1C@vger.kernel.org, AJvYcCVt8h0lMX6WXFtSI8Taf+/q+WX9+2Ho9HlPocdh3Wj9YXP6QhDqjAEaMo6UkDAY47onlojgjbICsCM=@vger.kernel.org, AJvYcCWkFkVD67NWr0WRGNuqXBYtGzFO7Rthu1d8wrymAdQjEHlCW0XSjCG7+MfGy8gZpre88OTy3E5zSpnXY5tL@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLPJcypOHRSAmENZPUojP9gDWrzuHzy51Wc/YegjMrtbWoU6vS
-	RexuBgm6NIJlHhgY+zHtMRPPfhUYgvcVraZwXVOL4AeiNk+qiTd/mSKWFg==
-X-Google-Smtp-Source: AGHT+IHIPf2510kWSaFZLijAQCgplBcwd6nKeIqcCMsTFc9d1JBSI93TxnKzIR2l1szbD/0jgEvkWA==
-X-Received: by 2002:a17:907:f156:b0:a8d:11c2:2b5 with SMTP id a640c23a62f3a-a9029448c46mr615050166b.21.1726249084081;
-        Fri, 13 Sep 2024 10:38:04 -0700 (PDT)
-Received: from giga-mm-1.home ([2a02:1210:861b:6f00:82ee:73ff:feb8:99e3])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25835551sm895717866b.24.2024.09.13.10.38.03
+        d=1e100.net; s=20230601; t=1726249158; x=1726853958;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bEraXErRXS1IWHSVQbtwA0Xnq/Dy63pRrYAxugf/Fok=;
+        b=tl7Zv9EVEMD9ZP7rdnMGkBTXPdkObiZo8yLRvr4X5zTLOOimjrHNSGRcvcfylbvkb+
+         YKEggzcQibV9glNZA/DHoHJShu3mhfkceMoJSkcQBZHKeKD0k4M5fhmY1E2drJlHmNBT
+         Cpj+pq0aG6ZcRnk4kDVMPjWPZE5fGIwSSG58L8JwXAYwbLbcbyDzntadjPs4muXwFyZC
+         vF9b2BJi5bC8O4b5lZnjfqmfQqi79XGoeMgmw8XeDBq5ig4KT3FJE3NMMiIbPO/dUvwH
+         CVx0fsjOG5lqXF6cC70aa82eAKe5Or3gmJdk6R/h+GIRjxEwT3aagC7Sb3YzFWAiT3Jc
+         craA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2TL7UfOhL9Xl0vvGRyxrTU/Kvx8nRcLydvXGN1HmVQLooSEQgsuExZ8XS3wc00KnbvKfhFLKAMR1V+D8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylJRDCL9hf5LxTWTPFU6GNhrhguWVqGPacfqPaJ8Ingk8Mu9pr
+	j0vEGIk3Vy25hpjsNUjN1rIiPJvZW28ajOcL/4WJLFtBfGVS7SCc
+X-Google-Smtp-Source: AGHT+IGdrWJUip0k5onVVt8+KyGuKHHsOoDgu1ouQkt9rI2sfYjR5Qy4DdkJlOsDTq9v7ljf3kpYXQ==
+X-Received: by 2002:a17:90b:1e0a:b0:2da:8730:5683 with SMTP id 98e67ed59e1d1-2dba006a195mr7060228a91.39.1726249158005;
+        Fri, 13 Sep 2024 10:39:18 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:4c0d:1024:4781:3234])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbb9c8ca84sm2081922a91.19.2024.09.13.10.39.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 10:38:03 -0700 (PDT)
-Message-ID: <de829772e1928cb5707fdae9cb72fe5885216db7.camel@gmail.com>
-Subject: Re: [PATCH next] dmaengine: ep93xx: Fix a NULL vs IS_ERR() check in
- probe()
-From: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>, Nikita Shubin
-	 <nikita.shubin@maquefel.me>
-Cc: Vinod Koul <vkoul@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Date: Fri, 13 Sep 2024 19:39:10 +0200
-In-Reply-To: <459a965f-f49c-45b1-8362-5ac27b56f5ff@stanley.mountain>
-References: <459a965f-f49c-45b1-8362-5ac27b56f5ff@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 
+        Fri, 13 Sep 2024 10:39:17 -0700 (PDT)
+Date: Fri, 13 Sep 2024 10:39:15 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH v3] driver core: Explicitly initialize struct member
+ @data.have_async in __device_attach()
+Message-ID: <ZuR4w5l7kLkwSAQS@google.com>
+References: <20240913-fix_have_async-v3-1-793707cfc0d1@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240913-fix_have_async-v3-1-793707cfc0d1@quicinc.com>
 
-Hi Dan,
+Hi,
 
-thanks for fixing this!
-
-On Fri, 2024-09-13 at 17:35 +0300, Dan Carpenter wrote:
-> This was intended to be an IS_ERR() check, not a NULL check.=C2=A0 The
-> ep93xx_dma_of_probe() function doesn't return NULL pointers.
->=20
-> Fixes: 4e8ad5ed845b ("dmaengine: cirrus: Convert to DT for Cirrus EP93xx"=
-)
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-Reviewed-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-
+On Fri, Sep 13, 2024 at 10:05:38PM +0800, Zijun Hu wrote:
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> 
+> __device_attach() defines struct device_attach_data @data as auto
+> variable and needs to use both @data.want_async and @data.have_async
+> but it explicitly initializes the former and leaves compiler implicitly
+> initialize the later, that does not have an elegant look, solved by
+> explicitly initializing the later member as well that also makes @data
+> have full initialization.
+> 
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
 > ---
-> =C2=A0drivers/dma/ep93xx_dma.c | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/dma/ep93xx_dma.c b/drivers/dma/ep93xx_dma.c
-> index d084bd123c1c..ca86b2b5a913 100644
-> --- a/drivers/dma/ep93xx_dma.c
-> +++ b/drivers/dma/ep93xx_dma.c
-> @@ -1504,7 +1504,7 @@ static int ep93xx_dma_probe(struct platform_device =
-*pdev)
-> =C2=A0	int ret;
-> =C2=A0
-> =C2=A0	edma =3D ep93xx_dma_of_probe(pdev);
-> -	if (!edma)
-> +	if (IS_ERR(edma))
-> =C2=A0		return PTR_ERR(edma);
-> =C2=A0
-> =C2=A0	dma_dev =3D &edma->dma_dev;
+> IMO, this change still has a little bit of value as explained below:
+> 
+> - Looks at below similar commit:
+> Commit: 8f45f5071ad2 ("gpu: host1x: Explicitly initialize host1x_info structures")
+> 
+> - This change's initialization way is obvious better than
+> 
+> struct device_attach_data data = {
+> 	.dev = dev,
+> 	.check_async = allow_async,
+> };
+> 
+> which is better than current
+> 
+> struct device_attach_data data = {
+> 	.dev = dev,
+> 	.check_async = allow_async,
+> 	.want_async = false,
+> };
 
---=20
-Alexander Sverdlin.
+Unlike host1x_info structure from commit 8f45f5071ad2 that you
+referenced, which sole purpose is to describe hardware, this is an
+internal structure in drivers/base/dd.c that mixes together scan
+parameters and internal state/result. The scan parameters are
+initialized explicitly to convey the exact request (i.e.  for given
+device we want to try to attach a driver synchronously, but also we
+might be interested in knowing if there is a matching driver that
+supports asynchronous probe), the state is not mentioned not to draw
+attention from the particulars of the request.
 
+I'll leave this to Greg to decide if we wants to apply this change (I
+would not), but if you are doing this you need to make similar change
+for the 2nd instance of struct device_attach_data.
+
+Thanks.
+
+-- 
+Dmitry
 
