@@ -1,79 +1,65 @@
-Return-Path: <linux-kernel+bounces-328928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F21978AE3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:54:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06FA6978AEC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:55:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A34B01F23307
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:54:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B063C1F24B69
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704A0156236;
-	Fri, 13 Sep 2024 21:54:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE07E15B108;
+	Fri, 13 Sep 2024 21:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ElPd+2ko"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BftAYHJv"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75F4154BEC;
-	Fri, 13 Sep 2024 21:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC56154BEC;
+	Fri, 13 Sep 2024 21:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726264475; cv=none; b=JA9zoRUZbQ8bM2Aprldlf6NmhQePE61vbp2bTvIS7CCHWU2sr0CmxmeXsdNieNNiVXyBN8UqaGQPbH8G8GW0CxQKoiKZi/xLbcflfiAfp6eZA0bd+b65M7sS/CTH88PQYIGF6dPSo+upWWwrqCMy7gk8pthvS5pPbuBNKtj6ceY=
+	t=1726264520; cv=none; b=HNFiSW3+M6csNNhXHxF08uh+ameGMMRrYvloKAwuAwpkBG3eLnyuP0v/z2oj2Mwdn1vKyAiL7X5koimFMD1fs3dgzIPw99IXYaiJbKGVEQCeH2GtqBKP3O2f12KYBftf8Cx5sRARMQHfTKU5TIAAdnjk9aESrcNYf7YSRoVgoeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726264475; c=relaxed/simple;
-	bh=3lZUdhEvXyxFpVtcD0HH4jrUJUk05bEvQqokX6JrCz4=;
+	s=arc-20240116; t=1726264520; c=relaxed/simple;
+	bh=PXZ5bq/R8wismh4l/7Ni+PqfNAENhrhH2dY2aSjTRRs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qQDyHm6ZcsNWnINGY0hvCipxQ5sjAs79lqJm3JI5NHixvfREHrb5eB8YcH6dCZXEyR/jzVZsCnoysvaMVbZyEI8U6zH1c+OxWUyQyGbxFwzn++swgo6Q2wJ+pGKk5fsevbXtf6ZR43kUYbaCp1lS+ZNZ5n9XFC2ZlC9nplGucNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ElPd+2ko; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726264475; x=1757800475;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3lZUdhEvXyxFpVtcD0HH4jrUJUk05bEvQqokX6JrCz4=;
-  b=ElPd+2koc8YuwJQX8CUsp/A6xT4jSljKoWNpDTzzGmfdwJpFheAY3VXG
-   qk7BOT12nZ7mBVG6FwIA/Qj4V+RwCkoSA7JuRJr1x5Aa8IrZFlmRzqaVX
-   1awTZ9BMCDhFAMW3la11qhxu+7PWxZAhni9mnsMYLx2C6KGLkMy/uWFn/
-   s3gh0mbU/dLoXDOQg3R121CD2JIiRCP9dSeJLSKAYIGr7wJd0u+NIBki8
-   GJms7vQJr3BWWB8NRLRMNoj2MWPzcPOLUVVSkvBpDeILqvQWQWmHYtIeR
-   bBLi2DLKEfX4OVoV/Iotapo/3EbtNhoZu2EoKwKCFQHLGGTslC+JH5dkW
-   w==;
-X-CSE-ConnectionGUID: hYiEnINYTpCNfCjdBoGBxg==
-X-CSE-MsgGUID: 4xgU9nOoRA+K1pnmkUVJTA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="28964273"
-X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
-   d="scan'208";a="28964273"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 14:54:31 -0700
-X-CSE-ConnectionGUID: Gt72Uv39TH+t4tZEuHFxyQ==
-X-CSE-MsgGUID: L8tABuovQbKL349MY0ASiA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
-   d="scan'208";a="72802513"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 13 Sep 2024 14:54:28 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1spEFF-00074Y-1n;
-	Fri, 13 Sep 2024 21:54:25 +0000
-Date: Sat, 14 Sep 2024 05:54:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jesper Dangaard Brouer <hawk@kernel.org>, tj@kernel.org,
-	cgroups@vger.kernel.org, yosryahmed@google.com,
-	shakeel.butt@linux.dev
-Cc: oe-kbuild-all@lists.linux.dev, Jesper Dangaard Brouer <hawk@kernel.org>,
-	hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com,
-	kernel-team@cloudflare.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V11] cgroup/rstat: Avoid flushing if there is an ongoing
- root flush
-Message-ID: <202409140533.XqO09tth-lkp@intel.com>
-References: <172616070094.2055617.17676042522679701515.stgit@firesoul>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eIuEca9d1kz7FV/fpQc7haKhdgverA3szNeaWYt+qIrFjgyYMcYxPIN6RzWajBwttjpPHbXIh8tE91YMKG21I9ansV8PSaHv9z9K6zfhdTl4BCzJpJrMGjTA2TKmsW4o4CSO/E6KfruJw0M4+eSBTELVMwVDnQwiRJC8EDcB7XI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BftAYHJv; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=pYcOiVSFtM6gAUc1DuIBW9ANECfcrc43mQXwHg/pSfc=; b=BftAYHJvgSREGkU7w+OrOJ9pNl
+	l5QOEIvyUe0WReLuZVt+hsrsrsGdc7P9VrJN2u7GJDVsyZxaN2ANANJDephGlR1Nnfg2TKalfM7/o
+	IFN2mXqLRjEM4HS6WB8JVjVI6U+VDt+AyItBtOUZc4tpXtDNsKGkRhEo4SAcrpwy4nKJ/BzKUL3L4
+	oJwTH5wPCpm4CFi3OUFyTE3VGU5IOWXoE4cdhKjkyMiIVxufCwC5J6+jz/eHYJ3jEnV3OAJV8fACB
+	KjzfCS9qsu8m7590IaTeefwPOVOkbtU0fsOWV8k39vRqByFMlVqLcq8VbHgE5Jljv1YpJJZ1RB11T
+	6Zs++nPg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1spEG0-0000000H1xl-29kX;
+	Fri, 13 Sep 2024 21:55:12 +0000
+Date: Fri, 13 Sep 2024 22:55:12 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH net-next v2] page_pool: fix build on powerpc with GCC 14
+Message-ID: <ZuS0wKBUTSWvD_FZ@casper.infradead.org>
+References: <20240913213351.3537411-1-almasrymina@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,108 +68,103 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <172616070094.2055617.17676042522679701515.stgit@firesoul>
+In-Reply-To: <20240913213351.3537411-1-almasrymina@google.com>
 
-Hi Jesper,
+On Fri, Sep 13, 2024 at 09:33:51PM +0000, Mina Almasry wrote:
+> Building net-next with powerpc with GCC 14 compiler results in this
+> build error:
+> 
+> /home/sfr/next/tmp/ccuSzwiR.s: Assembler messages:
+> /home/sfr/next/tmp/ccuSzwiR.s:2579: Error: operand out of domain (39 is
+> not a multiple of 4)
+> make[5]: *** [/home/sfr/next/next/scripts/Makefile.build:229:
+> net/core/page_pool.o] Error 1
+> 
+> Root caused in this thread:
+> https://lore.kernel.org/netdev/913e2fbd-d318-4c9b-aed2-4d333a1d5cf0@cs-soprasteria.com/
 
-kernel test robot noticed the following build errors:
+It would be better to include a direct link to the GCC bugzilla.
 
-[auto build test ERROR on tj-cgroup/for-next]
-[also build test ERROR on axboe-block/for-next linus/master v6.11-rc7]
-[cannot apply to akpm-mm/mm-everything next-20240913]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Jesper-Dangaard-Brouer/cgroup-rstat-Avoid-flushing-if-there-is-an-ongoing-root-flush/20240913-010800
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-next
-patch link:    https://lore.kernel.org/r/172616070094.2055617.17676042522679701515.stgit%40firesoul
-patch subject: [PATCH V11] cgroup/rstat: Avoid flushing if there is an ongoing root flush
-config: i386-randconfig-141-20240914 (https://download.01.org/0day-ci/archive/20240914/202409140533.XqO09tth-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409140533.XqO09tth-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409140533.XqO09tth-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   mm/zswap.c: In function 'zswap_shrinker_count':
->> mm/zswap.c:1225:17: error: implicit declaration of function 'mem_cgroup_flush_stats_relaxed'; did you mean 'mem_cgroup_flush_stats_ratelimited'? [-Werror=implicit-function-declaration]
-    1225 |                 mem_cgroup_flush_stats_relaxed(memcg);
-         |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                 mem_cgroup_flush_stats_ratelimited
-   cc1: some warnings being treated as errors
-
-
-vim +1225 mm/zswap.c
-
-  1197	
-  1198	static unsigned long zswap_shrinker_count(struct shrinker *shrinker,
-  1199			struct shrink_control *sc)
-  1200	{
-  1201		struct mem_cgroup *memcg = sc->memcg;
-  1202		struct lruvec *lruvec = mem_cgroup_lruvec(memcg, NODE_DATA(sc->nid));
-  1203		unsigned long nr_backing, nr_stored, nr_freeable, nr_protected;
-  1204	
-  1205		if (!zswap_shrinker_enabled || !mem_cgroup_zswap_writeback_enabled(memcg))
-  1206			return 0;
-  1207	
-  1208		/*
-  1209		 * The shrinker resumes swap writeback, which will enter block
-  1210		 * and may enter fs. XXX: Harmonize with vmscan.c __GFP_FS
-  1211		 * rules (may_enter_fs()), which apply on a per-folio basis.
-  1212		 */
-  1213		if (!gfp_has_io_fs(sc->gfp_mask))
-  1214			return 0;
-  1215	
-  1216		/*
-  1217		 * For memcg, use the cgroup-wide ZSWAP stats since we don't
-  1218		 * have them per-node and thus per-lruvec. Careful if memcg is
-  1219		 * runtime-disabled: we can get sc->memcg == NULL, which is ok
-  1220		 * for the lruvec, but not for memcg_page_state().
-  1221		 *
-  1222		 * Without memcg, use the zswap pool-wide metrics.
-  1223		 */
-  1224		if (!mem_cgroup_disabled()) {
-> 1225			mem_cgroup_flush_stats_relaxed(memcg);
-  1226			nr_backing = memcg_page_state(memcg, MEMCG_ZSWAP_B) >> PAGE_SHIFT;
-  1227			nr_stored = memcg_page_state(memcg, MEMCG_ZSWAPPED);
-  1228		} else {
-  1229			nr_backing = zswap_total_pages();
-  1230			nr_stored = atomic_read(&zswap_stored_pages);
-  1231		}
-  1232	
-  1233		if (!nr_stored)
-  1234			return 0;
-  1235	
-  1236		nr_protected =
-  1237			atomic_long_read(&lruvec->zswap_lruvec_state.nr_zswap_protected);
-  1238		nr_freeable = list_lru_shrink_count(&zswap_list_lru, sc);
-  1239		/*
-  1240		 * Subtract the lru size by an estimate of the number of pages
-  1241		 * that should be protected.
-  1242		 */
-  1243		nr_freeable = nr_freeable > nr_protected ? nr_freeable - nr_protected : 0;
-  1244	
-  1245		/*
-  1246		 * Scale the number of freeable pages by the memory saving factor.
-  1247		 * This ensures that the better zswap compresses memory, the fewer
-  1248		 * pages we will evict to swap (as it will otherwise incur IO for
-  1249		 * relatively small memory saving).
-  1250		 *
-  1251		 * The memory saving factor calculated here takes same-filled pages into
-  1252		 * account, but those are not freeable since they almost occupy no
-  1253		 * space. Hence, we may scale nr_freeable down a little bit more than we
-  1254		 * should if we have a lot of same-filled pages.
-  1255		 */
-  1256		return mult_frac(nr_freeable, nr_backing, nr_stored);
-  1257	}
-  1258	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> We try to access offset 40 in the pointer returned by this function:
+> 
+> static inline unsigned long _compound_head(const struct page *page)
+> {
+>         unsigned long head = READ_ONCE(page->compound_head);
+> 
+>         if (unlikely(head & 1))
+>                 return head - 1;
+>         return (unsigned long)page_fixed_fake_head(page);
+> }
+> 
+> The GCC 14 (but not 11) compiler optimizes this by doing:
+> 
+> ld page + 39
+> 
+> Rather than:
+> 
+> ld (page - 1) + 40
+> 
+> And causing an unaligned load. Get around this by issuing a READ_ONCE as
+> we convert the page to netmem.  That disables the compiler optimizing the
+> load in this way.
+> 
+> Cc: Simon Horman <horms@kernel.org>
+> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: David Miller <davem@davemloft.net>
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> Cc: Networking <netdev@vger.kernel.org>
+> Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+> Cc: Linux Next Mailing List <linux-next@vger.kernel.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> 
+> Suggested-by: Jakub Kicinski <kuba@kernel.org>
+> Signed-off-by: Mina Almasry <almasrymina@google.com>
+> 
+> ---
+> 
+> v2: https://lore.kernel.org/netdev/20240913192036.3289003-1-almasrymina@google.com/
+> 
+> - Work around this issue as we convert the page to netmem, instead of
+>   a generic change that affects compound_head().
+> ---
+>  net/core/page_pool.c | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
+> 
+> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+> index a813d30d2135..74ea491d0ab2 100644
+> --- a/net/core/page_pool.c
+> +++ b/net/core/page_pool.c
+> @@ -859,12 +859,25 @@ void page_pool_put_page_bulk(struct page_pool *pool, void **data,
+>  {
+>  	int i, bulk_len = 0;
+>  	bool allow_direct;
+> +	netmem_ref netmem;
+> +	struct page *page;
+>  	bool in_softirq;
+>  
+>  	allow_direct = page_pool_napi_local(pool);
+>  
+>  	for (i = 0; i < count; i++) {
+> -		netmem_ref netmem = page_to_netmem(virt_to_head_page(data[i]));
+> +		page = virt_to_head_page(data[i]);
+> +
+> +		/* GCC 14 powerpc compiler will optimize reads into the
+> +		 * resulting netmem_ref into unaligned reads as it sees address
+> +		 * arithmetic in _compound_head() call that the page has come
+> +		 * from.
+> +		 *
+> +		 * The READ_ONCE here gets around that by breaking the
+> +		 * optimization chain between the address arithmetic and later
+> +		 * indexing.
+> +		 */
+> +		netmem = page_to_netmem(READ_ONCE(page));
+>  
+>  		/* It is not the last user for the page frag case */
+>  		if (!page_pool_is_last_ref(netmem))
+> -- 
+> 2.46.0.662.g92d0881bb0-goog
+> 
 
