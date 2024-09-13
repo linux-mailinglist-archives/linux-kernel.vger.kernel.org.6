@@ -1,50 +1,50 @@
-Return-Path: <linux-kernel+bounces-328145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 384B0977F86
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:15:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7959B977F8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:16:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0F0828A4D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:15:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3657028AE54
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:16:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF771DA63F;
-	Fri, 13 Sep 2024 12:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0287D1DB54F;
+	Fri, 13 Sep 2024 12:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="u88BGvsZ"
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="N+Avhbhp"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F071DA61F;
-	Fri, 13 Sep 2024 12:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC261DA0F5;
+	Fri, 13 Sep 2024 12:14:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726229647; cv=none; b=mmbA8rt75jHKmoxwYwaSnYTylw1dEKxrSIjpWFJf+IX1LdUooXRyLhAzDZxcFqr8D9MOsnVVb3G20mCfKI72WB2HmlI9y9drreZaraMlBvTd69Mo3WTIN1iG+Wx1lnPMeD6yeCB5Cxhwq54V+vQf7wBeTPTNGVvWqbHOwbkFFg8=
+	t=1726229649; cv=none; b=iztcROJyi3+Bx6bcbFzj6NRloXhArFcuqDqyWQBE1j+UsRhmstN8wwh5iH0ccY8HxnJuWeA3j3yhBnzTXzJUCuMebD+34AH5B1g2EGCxcYwd4lK+G2KFZhNsMRSeXti0cvGWIrDwsitWGRNtoWfRk+ZWS1pAJhCZ6r2s6lYMQc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726229647; c=relaxed/simple;
-	bh=7CuqfBP/27/r7OJDJK9qkeWYOpYfeDymAalIYlW0/6A=;
+	s=arc-20240116; t=1726229649; c=relaxed/simple;
+	bh=i2Du9mw9yK4xJHzCM3GmoAp0Fx/Tme8q7/RpqMbHqDM=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PPl8VQt2O4IrM8QqlTfa69N7XILP/iiWENil87gV+Db7deZcpDgooqzM6Y4HK79v0fxqcCfU+aJE3VUeCbW8DCZBxVBxOfPw4Hz+ggJ24dCvKtwsIfcG/k4RZzQ81Tep8WCtwUBLYM0oU4z6DgNqOpLjdpvVBWy7zRwQ3l7OOr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=u88BGvsZ; arc=none smtp.client-ip=37.18.73.165
+	 MIME-Version:Content-Type; b=byJ20B60NX3HwevIUt4h9hGROojf7UEstXNpbHxYZDbxDYOwFKrlj3xAg77uaBw7SiloGbBiECnFdCo6jjIrALJawUBinkE7JMkYmhzEjWqVMjolikUxDCF8SNdLLOoCjMVXZPgm4Fy3iUhXvGgrDvrLc35pSzGPPPr2VfHwyTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=N+Avhbhp; arc=none smtp.client-ip=45.89.224.132
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
-Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id A405C10002C;
-	Fri, 13 Sep 2024 15:13:53 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru A405C10002C
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 420FE12000B;
+	Fri, 13 Sep 2024 15:14:03 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 420FE12000B
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1726229633;
-	bh=rPQw2F08Uz4xjVSwdhVa7ZBFlR+M5A8/MM2JJ0d09Ek=;
+	s=mail; t=1726229643;
+	bh=cY3K3FQ81SKp3EdwKgsF2p7UTyEFyh0HPwCNPtrZSZI=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=u88BGvsZ7TlnGfnkgrQDbRP/2ei9GK8oGlsIr8txKU2lwG6DWZIqLa8nycsYdqKlv
-	 JA5OZCpgR2k+jjwGkNRVT4/KVexp8+m+/NKvMk6R+876EWY95DHXyC4Q6obsHu76xD
-	 jKtWsm0DJcx2Z3s86Lo5/lBJWJ8ud0+DINqcV+KXACfSEEO55/90NFuj01d/F7NMih
-	 ZLGl2OvULDnnJd6plIrVKpDiq5bve3DKm+aHHdcriqfmUA6oGR9T6HotpjVbR1J9IL
-	 rnPFn4E5nFCM4229RSljye7r5EAopOU5Er5s246pm7E0cZZZEkMJcStK6oh+LIFw/2
-	 VvVHuLMmJZG3g==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
+	b=N+AvhbhprNJCsvYayYKolVYcK4EE93Mlff1jejsx50VtnsXFiWqqRLtWnTe3x1Exj
+	 saeRC2XchKvxTOTjux/KhT+gruSv0eFcofJQO+RsVYDRbEfikBBamcgmMLAjaH+c/k
+	 xNH2WlpDH0jhfBU+qdw0xyMwCCiF2E171rzcUGUOUQ7tSnpyVsGGYVAFj6JDfWryxF
+	 0YyJrQ6T8X+VufuaGVpy17oTIv8z+/tAeElRPbfbfJo0wJ2Np42QHdviG0Ihw06EaF
+	 K9i43telf6W9RECZplPAOXBgNj796dHIGyof4R1vX4vbtn5RWfJ71U1pe1ipwrog55
+	 JhjsNX77CTadQ==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
 	by mx1.sberdevices.ru (Postfix) with ESMTPS;
@@ -60,9 +60,9 @@ To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Conor Dooley
 	<mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>,
 	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
 	Stephen Boyd <sboyd@kernel.org>
-Subject: [RFC PATCH v4 1/5] reset: amlogic: add support for A1 SoC in auxiliary reset driver
-Date: Fri, 13 Sep 2024 15:11:48 +0300
-Message-ID: <20240913121152.817575-2-jan.dakinevich@salutedevices.com>
+Subject: [RFC PATCH v4 2/5] clk: meson: axg: share the set of audio helper macro
+Date: Fri, 13 Sep 2024 15:11:49 +0300
+Message-ID: <20240913121152.817575-3-jan.dakinevich@salutedevices.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240913121152.817575-1-jan.dakinevich@salutedevices.com>
 References: <20240913121152.817575-1-jan.dakinevich@salutedevices.com>
@@ -85,49 +85,336 @@ X-KSMG-AntiSpam-Rate: 0
 X-KSMG-AntiSpam-Status: not_detected
 X-KSMG-AntiSpam-Method: none
 X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 34 0.3.34 8a1fac695d5606478feba790382a59668a4f0039, {Tracking_smtp_not_equal_from}, salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:7.1.1,5.0.1, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_sender_alignment_int}, {Tracking_white_helo}, FromAlignment: n
+X-KSMG-AntiSpam-Info: LuaCore: 34 0.3.34 8a1fac695d5606478feba790382a59668a4f0039, {Tracking_smtp_not_equal_from}, sberdevices.ru:5.0.1,7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_sender_alignment_int}, {Tracking_white_helo}, FromAlignment: n
 X-MS-Exchange-Organization-SCL: -1
 X-KSMG-AntiSpam-Interceptor-Info: scan successful
 X-KSMG-AntiPhishing: Clean
 X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/09/13 11:43:00 #26577866
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/09/13 10:05:00 #26575345
 X-KSMG-AntiVirus-Status: Clean, skipped
 
-Add support for the reset controller present in the audio clock
-controller of A1 SoC families, using the auxiliary bus.
+These macro will be used in upcoming audio clock controller
+for Meson A1 SoC.
 
 Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
 ---
- drivers/reset/amlogic/reset-meson-aux.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/clk/meson/axg-audio.c   | 138 +-----------------------------
+ drivers/clk/meson/meson-audio.h | 143 ++++++++++++++++++++++++++++++++
+ 2 files changed, 144 insertions(+), 137 deletions(-)
+ create mode 100644 drivers/clk/meson/meson-audio.h
 
-diff --git a/drivers/reset/amlogic/reset-meson-aux.c b/drivers/reset/amlogic/reset-meson-aux.c
-index dd8453001db9..a385c0125836 100644
---- a/drivers/reset/amlogic/reset-meson-aux.c
-+++ b/drivers/reset/amlogic/reset-meson-aux.c
-@@ -26,6 +26,12 @@ struct meson_reset_adev {
- #define to_meson_reset_adev(_adev) \
- 	container_of((_adev), struct meson_reset_adev, adev)
+diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
+index beda86349389..0d911e06a29f 100644
+--- a/drivers/clk/meson/axg-audio.c
++++ b/drivers/clk/meson/axg-audio.c
+@@ -16,6 +16,7 @@
+ #include <linux/slab.h>
  
-+static const struct meson_reset_param meson_a1_audio_param = {
-+	.reset_ops	= &meson_reset_toggle_ops,
-+	.reset_num	= 32,
-+	.level_offset	= 0x28,
-+};
+ #include "meson-clkc-utils.h"
++#include "meson-audio.h"
+ #include "axg-audio.h"
+ #include "clk-regmap.h"
+ #include "clk-phase.h"
+@@ -23,52 +24,6 @@
+ 
+ #include <dt-bindings/clock/axg-audio-clkc.h>
+ 
+-#define AUD_GATE(_name, _reg, _bit, _pname, _iflags) {			\
+-	.data = &(struct clk_regmap_gate_data){				\
+-		.offset = (_reg),					\
+-		.bit_idx = (_bit),					\
+-	},								\
+-	.hw.init = &(struct clk_init_data) {				\
+-		.name = "aud_"#_name,					\
+-		.ops = &clk_regmap_gate_ops,				\
+-		.parent_names = (const char *[]){ #_pname },		\
+-		.num_parents = 1,					\
+-		.flags = CLK_DUTY_CYCLE_PARENT | (_iflags),		\
+-	},								\
+-}
+-
+-#define AUD_MUX(_name, _reg, _mask, _shift, _dflags, _pdata, _iflags) {	\
+-	.data = &(struct clk_regmap_mux_data){				\
+-		.offset = (_reg),					\
+-		.mask = (_mask),					\
+-		.shift = (_shift),					\
+-		.flags = (_dflags),					\
+-	},								\
+-	.hw.init = &(struct clk_init_data){				\
+-		.name = "aud_"#_name,					\
+-		.ops = &clk_regmap_mux_ops,				\
+-		.parent_data = _pdata,					\
+-		.num_parents = ARRAY_SIZE(_pdata),			\
+-		.flags = CLK_DUTY_CYCLE_PARENT | (_iflags),		\
+-	},								\
+-}
+-
+-#define AUD_DIV(_name, _reg, _shift, _width, _dflags, _pname, _iflags) { \
+-	.data = &(struct clk_regmap_div_data){				\
+-		.offset = (_reg),					\
+-		.shift = (_shift),					\
+-		.width = (_width),					\
+-		.flags = (_dflags),					\
+-	},								\
+-	.hw.init = &(struct clk_init_data){				\
+-		.name = "aud_"#_name,					\
+-		.ops = &clk_regmap_divider_ops,				\
+-		.parent_names = (const char *[]){ #_pname },		\
+-		.num_parents = 1,					\
+-		.flags = (_iflags),					\
+-	},								\
+-}
+-
+ #define AUD_PCLK_GATE(_name, _reg, _bit) {				\
+ 	.data = &(struct clk_regmap_gate_data){				\
+ 		.offset = (_reg),					\
+@@ -82,97 +37,6 @@
+ 	},								\
+ }
+ 
+-#define AUD_SCLK_DIV(_name, _reg, _div_shift, _div_width,		\
+-		     _hi_shift, _hi_width, _pname, _iflags) {		\
+-	.data = &(struct meson_sclk_div_data) {				\
+-		.div = {						\
+-			.reg_off = (_reg),				\
+-			.shift   = (_div_shift),			\
+-			.width   = (_div_width),			\
+-		},							\
+-		.hi = {							\
+-			.reg_off = (_reg),				\
+-			.shift   = (_hi_shift),				\
+-			.width   = (_hi_width),				\
+-		},							\
+-	},								\
+-	.hw.init = &(struct clk_init_data) {				\
+-		.name = "aud_"#_name,					\
+-		.ops = &meson_sclk_div_ops,				\
+-		.parent_names = (const char *[]){ #_pname },		\
+-		.num_parents = 1,					\
+-		.flags = (_iflags),					\
+-	},								\
+-}
+-
+-#define AUD_TRIPHASE(_name, _reg, _width, _shift0, _shift1, _shift2,	\
+-		     _pname, _iflags) {					\
+-	.data = &(struct meson_clk_triphase_data) {			\
+-		.ph0 = {						\
+-			.reg_off = (_reg),				\
+-			.shift   = (_shift0),				\
+-			.width   = (_width),				\
+-		},							\
+-		.ph1 = {						\
+-			.reg_off = (_reg),				\
+-			.shift   = (_shift1),				\
+-			.width   = (_width),				\
+-		},							\
+-		.ph2 = {						\
+-			.reg_off = (_reg),				\
+-			.shift   = (_shift2),				\
+-			.width   = (_width),				\
+-		},							\
+-	},								\
+-	.hw.init = &(struct clk_init_data) {				\
+-		.name = "aud_"#_name,					\
+-		.ops = &meson_clk_triphase_ops,				\
+-		.parent_names = (const char *[]){ #_pname },		\
+-		.num_parents = 1,					\
+-		.flags = CLK_DUTY_CYCLE_PARENT | (_iflags),		\
+-	},								\
+-}
+-
+-#define AUD_PHASE(_name, _reg, _width, _shift, _pname, _iflags) {	\
+-	.data = &(struct meson_clk_phase_data) {			\
+-		.ph = {							\
+-			.reg_off = (_reg),				\
+-			.shift   = (_shift),				\
+-			.width   = (_width),				\
+-		},							\
+-	},								\
+-	.hw.init = &(struct clk_init_data) {				\
+-		.name = "aud_"#_name,					\
+-		.ops = &meson_clk_phase_ops,				\
+-		.parent_names = (const char *[]){ #_pname },		\
+-		.num_parents = 1,					\
+-		.flags = (_iflags),					\
+-	},								\
+-}
+-
+-#define AUD_SCLK_WS(_name, _reg, _width, _shift_ph, _shift_ws, _pname,	\
+-		    _iflags) {						\
+-	.data = &(struct meson_sclk_ws_inv_data) {			\
+-		.ph = {							\
+-			.reg_off = (_reg),				\
+-			.shift   = (_shift_ph),				\
+-			.width   = (_width),				\
+-		},							\
+-		.ws = {							\
+-			.reg_off = (_reg),				\
+-			.shift   = (_shift_ws),				\
+-			.width   = (_width),				\
+-		},							\
+-	},								\
+-	.hw.init = &(struct clk_init_data) {				\
+-		.name = "aud_"#_name,					\
+-		.ops = &meson_clk_phase_ops,				\
+-		.parent_names = (const char *[]){ #_pname },		\
+-		.num_parents = 1,					\
+-		.flags = (_iflags),					\
+-	},								\
+-}
+-
+ /* Audio Master Clocks */
+ static const struct clk_parent_data mst_mux_parent_data[] = {
+ 	{ .fw_name = "mst_in0", },
+diff --git a/drivers/clk/meson/meson-audio.h b/drivers/clk/meson/meson-audio.h
+new file mode 100644
+index 000000000000..cbcdbd487d4a
+--- /dev/null
++++ b/drivers/clk/meson/meson-audio.h
+@@ -0,0 +1,143 @@
++/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
 +
- static const struct meson_reset_param meson_g12a_audio_param = {
- 	.reset_ops	= &meson_reset_toggle_ops,
- 	.reset_num	= 26,
-@@ -40,6 +46,9 @@ static const struct meson_reset_param meson_sm1_audio_param = {
- 
- static const struct auxiliary_device_id meson_reset_aux_ids[] = {
- 	{
-+		.name = "a1-audio-clkc.rst-a1",
-+		.driver_data = (kernel_ulong_t)&meson_a1_audio_param,
-+	}, {
- 		.name = "axg-audio-clkc.rst-g12a",
- 		.driver_data = (kernel_ulong_t)&meson_g12a_audio_param,
- 	}, {
++#ifndef __MESON_AUDIO_H__
++#define __MESON_AUDIO_H__
++
++#define AUD_GATE(_name, _reg, _bit, _pname, _iflags) {			\
++	.data = &(struct clk_regmap_gate_data){				\
++		.offset = (_reg),					\
++		.bit_idx = (_bit),					\
++	},								\
++	.hw.init = &(struct clk_init_data) {				\
++		.name = "aud_"#_name,					\
++		.ops = &clk_regmap_gate_ops,				\
++		.parent_names = (const char *[]){ #_pname },		\
++		.num_parents = 1,					\
++		.flags = CLK_DUTY_CYCLE_PARENT | (_iflags),		\
++	},								\
++}
++
++#define AUD_MUX(_name, _reg, _mask, _shift, _dflags, _pdata, _iflags) {	\
++	.data = &(struct clk_regmap_mux_data){				\
++		.offset = (_reg),					\
++		.mask = (_mask),					\
++		.shift = (_shift),					\
++		.flags = (_dflags),					\
++	},								\
++	.hw.init = &(struct clk_init_data){				\
++		.name = "aud_"#_name,					\
++		.ops = &clk_regmap_mux_ops,				\
++		.parent_data = _pdata,					\
++		.num_parents = ARRAY_SIZE(_pdata),			\
++		.flags = CLK_DUTY_CYCLE_PARENT | (_iflags),		\
++	},								\
++}
++
++#define AUD_DIV(_name, _reg, _shift, _width, _dflags, _pname, _iflags) { \
++	.data = &(struct clk_regmap_div_data){				\
++		.offset = (_reg),					\
++		.shift = (_shift),					\
++		.width = (_width),					\
++		.flags = (_dflags),					\
++	},								\
++	.hw.init = &(struct clk_init_data){				\
++		.name = "aud_"#_name,					\
++		.ops = &clk_regmap_divider_ops,				\
++		.parent_names = (const char *[]){ #_pname },		\
++		.num_parents = 1,					\
++		.flags = (_iflags),					\
++	},								\
++}
++
++#define AUD_SCLK_DIV(_name, _reg, _div_shift, _div_width,		\
++		     _hi_shift, _hi_width, _pname, _iflags) {		\
++	.data = &(struct meson_sclk_div_data) {				\
++		.div = {						\
++			.reg_off = (_reg),				\
++			.shift   = (_div_shift),			\
++			.width   = (_div_width),			\
++		},							\
++		.hi = {							\
++			.reg_off = (_reg),				\
++			.shift   = (_hi_shift),				\
++			.width   = (_hi_width),				\
++		},							\
++	},								\
++	.hw.init = &(struct clk_init_data) {				\
++		.name = "aud_"#_name,					\
++		.ops = &meson_sclk_div_ops,				\
++		.parent_names = (const char *[]){ #_pname },		\
++		.num_parents = 1,					\
++		.flags = (_iflags),					\
++	},								\
++}
++
++#define AUD_TRIPHASE(_name, _reg, _width, _shift0, _shift1, _shift2,	\
++		     _pname, _iflags) {					\
++	.data = &(struct meson_clk_triphase_data) {			\
++		.ph0 = {						\
++			.reg_off = (_reg),				\
++			.shift   = (_shift0),				\
++			.width   = (_width),				\
++		},							\
++		.ph1 = {						\
++			.reg_off = (_reg),				\
++			.shift   = (_shift1),				\
++			.width   = (_width),				\
++		},							\
++		.ph2 = {						\
++			.reg_off = (_reg),				\
++			.shift   = (_shift2),				\
++			.width   = (_width),				\
++		},							\
++	},								\
++	.hw.init = &(struct clk_init_data) {				\
++		.name = "aud_"#_name,					\
++		.ops = &meson_clk_triphase_ops,				\
++		.parent_names = (const char *[]){ #_pname },		\
++		.num_parents = 1,					\
++		.flags = CLK_DUTY_CYCLE_PARENT | (_iflags),		\
++	},								\
++}
++
++#define AUD_PHASE(_name, _reg, _width, _shift, _pname, _iflags) {	\
++	.data = &(struct meson_clk_phase_data) {			\
++		.ph = {							\
++			.reg_off = (_reg),				\
++			.shift   = (_shift),				\
++			.width   = (_width),				\
++		},							\
++	},								\
++	.hw.init = &(struct clk_init_data) {				\
++		.name = "aud_"#_name,					\
++		.ops = &meson_clk_phase_ops,				\
++		.parent_names = (const char *[]){ #_pname },		\
++		.num_parents = 1,					\
++		.flags = (_iflags),					\
++	},								\
++}
++
++#define AUD_SCLK_WS(_name, _reg, _width, _shift_ph, _shift_ws, _pname,	\
++		    _iflags) {						\
++	.data = &(struct meson_sclk_ws_inv_data) {			\
++		.ph = {							\
++			.reg_off = (_reg),				\
++			.shift   = (_shift_ph),				\
++			.width   = (_width),				\
++		},							\
++		.ws = {							\
++			.reg_off = (_reg),				\
++			.shift   = (_shift_ws),				\
++			.width   = (_width),				\
++		},							\
++	},								\
++	.hw.init = &(struct clk_init_data) {				\
++		.name = "aud_"#_name,					\
++		.ops = &meson_clk_phase_ops,				\
++		.parent_names = (const char *[]){ #_pname },		\
++		.num_parents = 1,					\
++		.flags = (_iflags),					\
++	},								\
++}
++
++#endif /* __MESON_AUDIO_H__ */
 -- 
 2.34.1
 
