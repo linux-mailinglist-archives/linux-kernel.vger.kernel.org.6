@@ -1,186 +1,137 @@
-Return-Path: <linux-kernel+bounces-328923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 594E3978ACB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:45:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F949978ACE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:45:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBDBC1F2121C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:45:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E94341F22BD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996E816F85E;
-	Fri, 13 Sep 2024 21:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8043155324;
+	Fri, 13 Sep 2024 21:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IkR186KB"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="I12/DHD4"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306317F460
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 21:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794F5155A4F
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 21:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726263882; cv=none; b=VeFLK7Azd6YVVbTTsbQ6bcbK9icdkmlm5HVTwBalvmlJRoknNw+neyG1k94UKRYm8ewWKfQn10wa2r8YQtZAFj4R9eTiKJvBuwV2wFPCSeqCMbOckOL/eq06uhWwWQ184e0WmFgz5M555OBBkbf1PYBArOovEKLhhpo/UubPrBQ=
+	t=1726263916; cv=none; b=Cdfw3tDR+Vwn4FefbgoPqFHwxN1+SCZi2SXtcZ42e0jqMvJVLSrzGxGHWcr9y6NeONoLDONKEK7oA52eDQ4zE3uufhgWAMMD7pMrhCcD0iIxbzF9LkuuyEa3uhSV6eKP65Q3rPmUiH5m+i22U4jQ1fW9bMX2a4drg9h4+3kIaJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726263882; c=relaxed/simple;
-	bh=weOpgQgGVFeeHCvUfr70gOb841HLcQ83LvyuGQsmjS8=;
+	s=arc-20240116; t=1726263916; c=relaxed/simple;
+	bh=FRuh+KBT0a7k37NAtcwsuij34NzWTTyM/ab3DyrzLEQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M+Xq38K5xJI8XvXdrvw8zYaFa44zc9Ba2PvRm/b97eN/5rSnnuBVfPMCtJYI4vLWwfkvBKfQAycC58R8/EjWstopK3q25Hzb+JuyQrgbgZrK94Fd6mjrRZU6bcFOVneiY3GZNsvDkcM4IR4Cq0xo6bQmxhZZpHXjWX32aiBUCjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IkR186KB; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-374b5f27cf2so1824406f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:44:40 -0700 (PDT)
+	 To:Cc:Content-Type; b=S4NiyvQk+z5Njb658ZPrqJl9ge8bf780ExOdyGmZxgySlfFQxkxh+bf5SQWbyZk6bKBdvh8kDOWe6GeCwilZmbQ0i27zhcoNzHuXfcXYhllaIamwHfyo4zONdUdbqbsrPVphgiiddZtMsliUfDfaa2eAMcQJ1aX7zJl/RQx94JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=I12/DHD4; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e1a74ee4c75so1321521276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:45:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726263879; x=1726868679; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1726263913; x=1726868713; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vf45eyq3v7x3TRRfxhlxvxhoc9NAlP67nksFtDxcHog=;
-        b=IkR186KBfaQsAZ4xjhiDUpvS9xtesuAms4d5XDza895eRNp48p8HRby/UDmEgisjAX
-         aRf7cCRuU9temCBUViOeQlGnBGcvkrslfYV1F47WXtju1VtA291gpnrooloDCvqzyVOy
-         1QbLnKKv4xZxyP3nAI4PuBs71v3ljOPVqYXdS5zV6AkcKea4L5ut1CkjMX8QWZx2MXFU
-         vBYP8Sw7suty+scy1n+DUWdp8vAPHVaY+zeD8vevzRUf758RiF/VaK31VusoRhYCCYZu
-         8j9FHFxcsQra6ocXaMH1/fX22k9IOKJGUwSlRJvuvjeTnK2w0o66fJmwfoe/2kUlsyrZ
-         gmGA==
+        bh=Lwn37t/iSKoOZ7UvHqU4qQdhusIvGBPeQaXOibPFjp8=;
+        b=I12/DHD4bbOdwoFHzXxjuJmT6OqVkMcxItHTOZi0kXc9nf9xFq03PglVxV9EUeCgBD
+         n+sQRj+Z224C8/rtuBCqrE2HyjBtQ2QWZVevjOZd2Si4IhUahQ3C7nXrKTGtuMsYPX2I
+         eIhCvWPV+nt7yEKHE9YlM5/9I6fWx8ne2kfDYpf49/LfCgPSuKNGEurcN9MhGdKV5LTZ
+         LRAfsGuPWKgcFdrUk/6+M7SPcUt/PzKG+CyslKYjL7TITE994UCRBe34Kd77B7oVGl3Z
+         j1AT1uqjQLVQY8kFYauvF6xYnlGBRXCANrBTdmKN6SfMy3yj6AbspkbLT4ACarPeA/0g
+         a0Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726263879; x=1726868679;
+        d=1e100.net; s=20230601; t=1726263913; x=1726868713;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=vf45eyq3v7x3TRRfxhlxvxhoc9NAlP67nksFtDxcHog=;
-        b=IXxd2Di1fDEcunkEsIuGJp2wcGNtLwxvnIGyfD17/LI0Q23w8hS3AlXzz0xl+r4Ije
-         4Dv8M1FmbLDIY02+U1g/HHiyki5FsY2DikhK4wJCsjODgAIKcaVXmRQGbvFieNS+2CLr
-         ZB9GTLhHDaZfiTZy4Y4FQNyETA6xquP4jo1k7X6eoGBHwWJsGKR6s4v7BPUAhDw5iOn1
-         KlJHt5T71jyP96UqfVAlwRgo1otpY+isGshjYBUY3YDJZ7k2tinb3HX/NOy/TCxLAQCp
-         Odr+rm93COMkV/fMjNgdUdtItef+bqs3IblhzmWeIuhwAX50mSV0IabSUDy/ZThw+nj3
-         JVJA==
-X-Forwarded-Encrypted: i=1; AJvYcCXcfAcioW3I3Ben8r06Nb8cPRYRXWruSr7iwQhZED1br9pPlSuXURZzPF3v9NhvoHmdh2O1k4PPoAxUOGs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww0ZGMfY2Wmf3byX5vgT4eGsTcWZST8tcpp+JoyMzmiT4LsBXU
-	y1g/Q+XrdXH3Q6LP1SGEN+VWfqVLaXAouAo1ASXs+vic+OAmUg6OSgkxUfYRV6RtlOSH8wKf28g
-	c1lgI6GAR+oofitgYMlvyj8zbliJThDUfUX7a
-X-Google-Smtp-Source: AGHT+IEmwetFagY93QocO76IsaU0CwLVTVwEf+i4UEMkAx5533P8vYmTDozz/DvOPi7tFuew3ENtKMeHxf8V8bRaarI=
-X-Received: by 2002:a5d:5711:0:b0:374:b685:672 with SMTP id
- ffacd0b85a97d-378c2d04ad5mr4700069f8f.26.1726263879124; Fri, 13 Sep 2024
- 14:44:39 -0700 (PDT)
+        bh=Lwn37t/iSKoOZ7UvHqU4qQdhusIvGBPeQaXOibPFjp8=;
+        b=tLfExg48gWc/PQWF5HE9fPEwrAb+IGPUfMcHSXXndOoI7wu+DRZM466ErXU5Tt22+z
+         T3Euf9SpKeq5pRHkXoB9y+kqm8UaGOCZNLIC+QO8zc1gwagtkvoTFmuF2hn0GJ6I/Jgn
+         nwNNwa6IwHfTmJdRNmR2ZPBuBLWoggPX2v7+zb2Kz30pSu5zbpGruG0m/UmgH7uI78/Q
+         5/c7PcUXdLHT8V786LP7GUia8MRGaa/V4AKbA3kUfEnk2cbQ+WIw0hvAwLptu/CFf2T1
+         CS2JQaxFkVqadzX0J4KgjMlAo4ZzIm/E4cxhct3F+gwMD5OG1n/zYCz3yZ9xdaKSsZ5J
+         iS2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVZxZnQrJvKtMDGdem06+fhoAX7zmanRmYw8lyYYAqeAPOdILmUluOlKco2Z1c035tzwjc0aOVC92ZPD0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUokrJNkAjN0Hml1p3jp6e87tantx4PXF89EsWVUQf7J2K/m9T
+	O+/CAPHIa6gULcwhw8s1FgKJ7EL45o7c8XGXpRZYN5t9pURv8Gc2GXZEuxitHj8ySnTOfB99EH8
+	xHUQR6MVgoAlVh4ZLEy9wq8hVsrIYASAsqIIa
+X-Google-Smtp-Source: AGHT+IHVR8chyAryrgWoD0CfuiVCPSTNyXA8dqCpTcxPwQRyhtBbIrntDXbyeDkcU1pJ/lYcycmDXrk0C8l4LPdW6YQ=
+X-Received: by 2002:a05:6902:2186:b0:e1d:2261:cb25 with SMTP id
+ 3f1490d57ef6-e1db00c664amr3581421276.18.1726263913366; Fri, 13 Sep 2024
+ 14:45:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240829-shadow-call-stack-v7-1-2f62a4432abf@google.com>
- <CANiq72kNmvFOXhhAcQJQdMC872908=CWW15_bzyyt9ht2q=twQ@mail.gmail.com> <20240913-shack-estate-b376a65921b1@spud>
-In-Reply-To: <20240913-shack-estate-b376a65921b1@spud>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 13 Sep 2024 23:44:26 +0200
-Message-ID: <CAH5fLggX=Uw8T6EqyonJyOkjOVM7ELy4hK8NV80suvDEBnq_Lg@mail.gmail.com>
-Subject: Re: [PATCH v7] rust: support for shadow call stack sanitizer
-To: Conor Dooley <conor@kernel.org>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, 
-	Jamie Cunliffe <Jamie.Cunliffe@arm.com>, Sami Tolvanen <samitolvanen@google.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Marc Zyngier <maz@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Mark Brown <broonie@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Valentin Obst <kernel@valentinobst.de>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	rust-for-linux@vger.kernel.org, linux-riscv <linux-riscv@lists.infradead.org>
+References: <20240910184125.224651-1-casey@schaufler-ca.com>
+ <20240910184125.224651-2-casey@schaufler-ca.com> <2e1da617-c437-4ff9-93e0-e0e212aabfaa@swemel.ru>
+In-Reply-To: <2e1da617-c437-4ff9-93e0-e0e212aabfaa@swemel.ru>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 13 Sep 2024 17:45:02 -0400
+Message-ID: <CAHC9VhQfLRfKTjksZ=KxuNPHXXUAV_0Q0ejKEDmFXc82wOZu2g@mail.gmail.com>
+Subject: Re: [PATCH v3 01/13] LSM: Add the lsm_prop data structure.
+To: Konstantin Andreev <andreev@swemel.ru>
+Cc: Casey Schaufler <casey@schaufler-ca.com>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 13, 2024 at 11:18=E2=80=AFPM Conor Dooley <conor@kernel.org> wr=
-ote:
+On Fri, Sep 13, 2024 at 4:49=E2=80=AFPM Konstantin Andreev <andreev@swemel.=
+ru> wrote:
+> Casey Schaufler, 10 Sep 2024:
+> > ...
+> > The lsm_prop structure definition is intended to keep the LSM
+> > specific information private to the individual security modules.
+> > ...
+> > index 1390f1efb4f0..1027c802cc8c 100644
+> > --- a/include/linux/security.h
+> > +++ b/include/linux/security.h
+> > @@ -140,6 +144,22 @@ enum lockdown_reason {
+> > +
+> > +/*
+> > + * Data exported by the security modules
+> > + */
+> > +struct lsm_prop {
+> > +     struct lsm_prop_selinux selinux;
+> > +     struct lsm_prop_smack smack;
+> > +     struct lsm_prop_apparmor apparmor;
+> > +     struct lsm_prop_bpf bpf;
+> > +     struct lsm_prop_scaffold scaffold;
+> > +};
 >
-> On Fri, Sep 13, 2024 at 12:08:20AM +0200, Miguel Ojeda wrote:
-> > On Thu, Aug 29, 2024 at 10:23=E2=80=AFAM Alice Ryhl <aliceryhl@google.c=
-om> wrote:
-> > >
-> > > Add all of the flags that are needed to support the shadow call stack
-> > > (SCS) sanitizer with Rust, and updates Kconfig to allow only
-> > > configurations that work.
-> >
-> > Applied to `rust-next` -- thanks everyone!
-> >
-> > Paul/Palmer/Albert/RISC-V: I think you were not Cc'd (at least in this
-> > version?), so please shout if you have a problem with this.
+> This design prevents compiling and loading out-of-tree 3rd party LSM, am =
+I right?
 >
-> For some reason I deleted the series from my mailbox, must've been in
-> dt-binding review mode and hit ctrl + d. I've been away and busy, so my
-> apologies Alice for not trying this out sooner.
-> It's sorta annoying to test rust + scs on riscv, cos you need (unless I
-> am mistaken) llvm-19. llvm-18 + rust built fine, but has no SCS.
+> Out-of-tree LSM's were discussed recently at
 >
-> llvm-19 + rust failed to build for me riscv, producing:
+> https://lore.kernel.org/linux-security-module/efb8f264-f80e-43b2-8ea3-fcc=
+9789520ec@I-love.SAKURA.ne.jp/T/
+> https://lore.kernel.org/linux-security-module/960e740f-e5d9-409b-bb2a-8bd=
+ceffaae95@I-love.SAKURA.ne.jp/T/
 >
-> In file included from /stuff/linux/rust/helpers/helpers.c:22:
-> /stuff/linux/rust/helpers/spinlock.c:10:23: error: call to undeclared fun=
-ction 'spinlock_check'; ISO C99 and later do not support implicit function =
-declarations [-Wimplicit-function-declaration]
-> __raw_spin_lock_init(spinlock_check(lock), name, key, LD_WAIT_CONFIG);
-> ^
-> /stuff/linux/rust/helpers/spinlock.c:10:23: error: incompatible integer t=
-o pointer conversion passing 'int' to parameter of type 'raw_spinlock_t *' =
-(aka 'struct raw_spinlock *') [-Wint-conversion]
-> __raw_spin_lock_init(spinlock_check(lock), name, key, LD_WAIT_CONFIG);
-> ^~~~~~~~~~~~~~~~~~~~
-> /stuff/linux/include/linux/spinlock.h:101:52: note: passing argument to p=
-arameter 'lock' here
-> extern void __raw_spin_lock_init(raw_spinlock_t *lock, const char *name,
-> ^
-> 2 errors generated.
->
-> This occurs because I have DEBUG_SPINLOCK enabled. I didn't check why,
-> but Andreas seems to have introduced that code - luckily he's already on
-> CC here :)
->
-> With that disabled, there are dozens of warnings along the lines of:
-> /stuff/linux/rust/helpers/err.c:6:14: warning: symbol 'rust_helper_ERR_PT=
-R' was not declared. Should it be static?
-> If those are okay for rust code, it would be rather helpful if the
-> warnings could be disabled - otherwise they should really be fixed.
->
-> Following that, I got a build error:
->
-> error[E0425]: cannot find function `__mutex_init` in crate `bindings`
-> --> /stuff/linux/rust/kernel/sync/lock/mutex.rs:104:28
-> |
-> 104   |           unsafe { bindings::__mutex_init(ptr, name, key) }
-> |                              ^^^^^^^^^^^^ help: a function with a simil=
-ar name exists: `__mutex_rt_init`
-> |
-> ::: /stuff/brsdk/work/linux/rust/bindings/bindings_generated.rs:12907:5
-> |
-> 12907 | /     pub fn __mutex_rt_init(
-> 12908 | |         lock: *mut mutex,
-> 12909 | |         name: *const core::ffi::c_char,
-> 12910 | |         key: *mut lock_class_key,
-> 12911 | |     );
-> | |_____- similarly named function `__mutex_rt_init` defined here
->
-> error: aborting due to 1 previous error
+> but it looks like a final decision to ban them is not taken yet.
 
-This looks like an unrelated problem to me. This patch only changes
-the rustc flags, but these errors have to do with the Rust
-helpers/bindings, which get generated before the rustc flags are used
-at all. Most likely, there is a problem under the particular
-configuration you are using. Were you able to reproduce these errors
-without this patch?
+For those who haven't read my latest comment in the v6.12 merge window
+pull request, I'll copy-n-paste it here:
 
-> I stopped there, Space Marine 2 awaits.
->
-> Hopefully I'll get to say hello next week,
-> Conor.
+"My focus is on the upstream Linux kernel and ensuring that the
+upstream, in-tree LSMs have the best framework possible to ensure
+their proper operation and ease of development/maintenance.  While I
+have no intention to negatively impact out-of-tree LSMs, I will not
+harm the upstream code base solely to support out-of-tree LSMs.
+Further, if improvements to the upstream LSM framework are determined
+to harm out-of-tree LSMs, that shall be no reason to reject the
+upstream improvements.  I believe this policy is not only consistent
+with that of previous LSM maintainers, but of the general Linux kernel
+as well."
 
-Thanks for taking a look, and see you at Plumbers!
-
-Alice
+--=20
+paul-moore.com
 
