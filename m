@@ -1,169 +1,225 @@
-Return-Path: <linux-kernel+bounces-327629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A022C977884
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:47:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06A9097788A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CE371F24EAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:47:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3744728396E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76F8187334;
-	Fri, 13 Sep 2024 05:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FBA6187FF7;
+	Fri, 13 Sep 2024 05:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="OxBVVm6L"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="RpnuF73m"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1784183CB1;
-	Fri, 13 Sep 2024 05:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8BBB323D
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 05:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726206460; cv=none; b=cqmW1MIfPqTIkCNZ69YLMVW2lt5kxV+f8D6iHmFZmEKo98cFCB6iWTX9xQxLGmqXEVVTjGHZ6PP+N+vGIflJFSpIYTz526x3nQR74cjWIQARrci7nkvr7+THkKwj0l++YI+NnBZNdprjjs8m6KZZdMBAe17oxhK3G6UJeDlkoVg=
+	t=1726206969; cv=none; b=ej4c+FCp7zOW9aqriCHS6KSIrxD4tw4+QKoY5iO7XJu+H/DAnQyONmX6vEo1KyhqFG/E7o/pcCHIbYDYSpXv0zikG+y8mSYdiGFQ88rNRM5H8YpbCsuQMOA9637Eel5adeFs9WT5F0Dxgd/O18g8aJMr55RucGE8+QXNZdCiCws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726206460; c=relaxed/simple;
-	bh=lAMua73ejBJurk/Ie6xLFCg83ls2Ldu5/yxaZDQ0kHY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JTSgUBIAgj7wVGtORLKkBFcRRNNujWr1gBYje80Q9CFymH/L72tQ3xEJwFMrec2f+oGJZE1ssbDSaRSV0yNQ/4Zbiw/+/jIqP8f2N2QGeP4/Cpcs9h2sDwvv8a0CaUXjO1ud3CWYYDnQi7Pcl8WO7pDGunssVSMBaPjkYqK9qjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=OxBVVm6L; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1726206445; x=1726811245; i=quwenruo.btrfs@gmx.com;
-	bh=lAMua73ejBJurk/Ie6xLFCg83ls2Ldu5/yxaZDQ0kHY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=OxBVVm6L1Js2OSv5x+d3IZrU+jS3kG2Jk4KneMnIzwcYyiXcTEY/HQ00Sru4ZoMI
-	 dzh2RvsHHhudYOe6QECbMuqkYf0tNWFr4kL3fy26GIZfQIPXi3mLA8P64FyrghL9M
-	 L5mgn95ICclStLviPlf7i9KKwrtGiSyVWc938PmB1Gd7JL7KBB4tLM74BSA2UtnfF
-	 oW33PjBUzUbttCrONubaADGlkgGuY7WSaxGu6YUj9mbh8Cl2c02IZufHGk+cc95yB
-	 FS7UexkO7WjOnBfPvUqbC6O8HGZDL5DAqMZ3nLmwXF48NDCZoBxSA8k1zGTM8gfQf
-	 RDTp73paIwo1gfCC2g==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MgvrB-1sN4K11ebF-00mRsc; Fri, 13
- Sep 2024 07:47:24 +0200
-Message-ID: <85888aaa-c8f5-453b-8344-6cabc82f537e@gmx.com>
-Date: Fri, 13 Sep 2024 15:17:19 +0930
+	s=arc-20240116; t=1726206969; c=relaxed/simple;
+	bh=9sFRQkKy5bkcGcxXKZ1rQ7oNNx41RkufxbrMYDjNWf0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mMe/k8OfRKtVMKhOJIFvGAsx211LOMU3j20x4FRtcB3By9uzjCZMm1ck/httzIIcGfHTjA0pZ38h7hdcnJ+pp+1Z+4ILEkiman8H1EPTWmyPrNiugOezS+Dxy6hFPQYrfzV6KZ6dWZDO1Z0E8YexlSsrqfwAfNdm++W9jZqeyKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=RpnuF73m; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com [209.85.208.70])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id A58D13F5DE
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 05:56:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1726206963;
+	bh=5EFFOs7efFr4Ld8082jWwc8FabCSVm99KY4+yZAtolE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type;
+	b=RpnuF73mK2Jwtej4j6ttF0IG1k7j87W/ZrUHbFh3w9i7v98Bbp1J/bT/mk/NwKljy
+	 44TKkDCbOnelE/8hpOxc6wnm05/80BG6NIo7upSobEhqoN9hLopkys5Ng7v/0+RoP1
+	 i2/wdmiEmW/sv5N9djQH8PP8cUn1n9VPz/ETN8gxOk/wtqjvYu5hFrxyHzawMChGzE
+	 udvicoaelPnyxFFYwgACWp2X1TWbQfF2y/oIStLcKTFIq46stBIhq1DnHVMWIKcn6u
+	 ayt7RjztxBs4KdUlKSt0FWKiEIGMZ9ww9/SS1JStToOrmF0TQu+MJb8k/wqsikL8dU
+	 ezdchnwn+nb0w==
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5c3c205df73so897747a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 22:56:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726206963; x=1726811763;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5EFFOs7efFr4Ld8082jWwc8FabCSVm99KY4+yZAtolE=;
+        b=L7rlZiX3zkhFUwvFcHTEiXGV7NQjxpdV8PNb/UMB8YBayiPWHXryQ88x+c3dkTT4l8
+         uK65jo4BNyt/zIAi6E7jVMgXpV3eLSPEqfh2s8+zmrWgBRfStk8DES5M2LA+T+rgsN9A
+         yB7rw8gFU/TscR3FbUL+7rT3Z+z9pZcKtuz9dJYRtsDsPqq4yh3e4l0D+P4VKP2GSluR
+         OYEcqFYSnEN/8vU0rV/jJjb1FR9I8lIjdsljjztot+4S/GwudJK9gniPtaOg2XHvl46f
+         Bxao7gAtzpd/oYQq7ztTZQpsb5FpLqoLYuPdJKTjs1v/CGmjyuA2rmwQMi0k4BXdOUiz
+         ykYw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+I0FjC6IBOHCjbcUBpmyay4lyccMhSb+6MX4Q8gmgtYiS1gJvGndhoQR7UmquqHbrf2hcYFzzMeXloP8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqwX5swT/c5Bxw9XLp14+7qR5XCWaatf6nGs/ATwfpkceUeJCc
+	CAu/jUvSZ6ZNE+kunM8eHknv3AwyDClyhKLXHkkwtpwXI5axN9MErLH4/x3qzyW5GQ5wGd4Iv+L
+	dCoRwXtRNGJZzgpX8XnRFcnNlWpjKpBQGdzn2MlIrjocNrHpfxDMftt7+2q6IuCRDEYyxm4Wpvz
+	QmbQBwELQ98rX/PaMItu7TxSuilEVHthsYlQaoeRrUr7bDSmFEIV9F
+X-Received: by 2002:a05:6402:35ce:b0:5c4:95b:b186 with SMTP id 4fb4d7f45d1cf-5c413e0958amr3462313a12.6.1726206962637;
+        Thu, 12 Sep 2024 22:56:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEC2NRhInvexl5Lhlay7osyz26YHo8SHvD+HwckMmf2VYiqH9OESB/Yug3HDG1+xPGk/QAZwCaKnUZasLXH4+E=
+X-Received: by 2002:a05:6402:35ce:b0:5c4:95b:b186 with SMTP id
+ 4fb4d7f45d1cf-5c413e0958amr3462295a12.6.1726206962076; Thu, 12 Sep 2024
+ 22:56:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] btrfs: scrub: skip PREALLOC extents on RAID stripe-tree
-To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
- Johannes Thumshirn <jth@kernel.org>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
- "open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-Cc: WenRuo Qu <wqu@suse.com>
-References: <20240912143312.14442-1-jth@kernel.org>
- <a0d0fa88-e67c-4b35-88b4-74c5b15a16bb@gmx.com>
- <958f5586-c37a-4836-87a2-4530428b0a4e@wdc.com>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
- pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
- BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
- XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
- jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
- LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
- mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
- CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
- tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
- INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
- DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
- iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
-In-Reply-To: <958f5586-c37a-4836-87a2-4530428b0a4e@wdc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20240903025544.286223-1-kai.heng.feng@canonical.com>
+ <20240903042852.v7ootuenihi5wjpn@thinkpad> <CAAd53p4EWEuu-V5hvOHtKZQxCJNf94+FOJT+_ryu0s2RpB1o-Q@mail.gmail.com>
+ <ZtciXnbQJ88hjfDk@kbusch-mbp> <CAAd53p4cyOvhkorHBkt227_KKcCoKZJ+SM13n_97fmTTq_HLuQ@mail.gmail.com>
+ <20240904062219.x7kft2l3gq4qsojc@thinkpad> <CAAd53p5ox-CiNd6nHb4ogL-K2wr+dNYBtRxiw8E6jf7HgLsH-A@mail.gmail.com>
+ <20240912104547.00005865@linux.intel.com>
+In-Reply-To: <20240912104547.00005865@linux.intel.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Date: Fri, 13 Sep 2024 13:55:49 +0800
+Message-ID: <CAAd53p698eNQdZqPFHCmpPQ7pkDoyT4_C9ERXJ4X=V_8QFO8pQ@mail.gmail.com>
+Subject: Re: [PATCH] PCI: vmd: Delay interrupt handling on MTL VMD controller
+To: Nirmal Patel <nirmal.patel@linux.intel.com>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Keith Busch <kbusch@kernel.org>, 
+	jonathan.derrick@linux.dev, acelan.kao@canonical.com, lpieralisi@kernel.org, 
+	kw@linux.com, robh@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kaihengfeng@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:5wVcUuI1GXMVxdeNkUQATjTvVBMzNLFpNPQ8eIwvXFTUdatVbaC
- sl5NfNe3OkDrLxe0fKW79BS0rmo9JVBEIVHXQEnZ6WGHd95T8LqiTTKl2e9tfXciW/BPC9f
- dCUOK5dLbSWmT6mPnHcmFSKCzZRxwAPFSXNQznJTvPEauqaAgVseGc8mcYivD1soR2ERWiK
- oxl9qyG5l/peJTDwmCT6w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:yF2iUk9ITAQ=;GK0xtzAmesKahR10OBPz2IsDzNp
- VNqDA1MrCgijWpnK/6estQTuClGDIOMUFZYdoO3T1CaJ8exKElbSdJn8BtHTKaZS8AXlZhnvL
- yLm7b7Y3WQd2l+woQtejeNtcLtdcNUKSQ0UJIyjhLIPXwx+XmzOMFwBTni2h7MTRJ7nos91/X
- skSRbFdpR1LPjwYSfctmJ3pk048C5H87g/nbS7RDwJB8prDDp1/m/GeP9YXVlD/gNutIj8oxi
- UAgijv1gHQ62A77aZpeAQbZ8rbfbVFPFt1/b1o51AkmWeIkkQ7IlP2t4vrmlncZbcpKXtODz9
- G3G6dpaEz64drk5E2iWo3EzhMio4uYQ6qkj5I4SdYvWO6dRo9c45AT4+CiYXPHGGssFdOtfB+
- PwnPOTUtRekgAeySkcJvaIJoslwUCIzn0DZsw4NNEvnURqMkbmEEUzLGmuchzcLyHPasylvrr
- HZr5LD7OQJpUuCOAcUMqMpvEXNIvJmCVoVFEmfNezWGauSwQfAI3/ojN9Fh3MHqEcMrXxcEs2
- 9zhbaXPYFHnBTO67l2yuqiyW5alRI83/cHljz3I9LeK+8mkec5aZs8lQnePDTPHgqPxvsn9Yp
- U4KI0j2IcWFmjWKL8AFiHHRa4ZUrcAzZpRP5eHF/Sjx2iCVu5cFFczftqKUbSQ1itprjfpE/5
- qVw2MiyHBEBt5VyhWJbz4FuO0SbEJgcYowmGE1AjCLQBrBvVZ8WlR2CImHTcbj3M3SdX3A2P8
- V8/c1gxdD4soMfgb6CdKV63V05QL8V1l1R03Ngde8I3iE/AORuBmMnNbUqG/gbgqRk6B/ZKin
- MOeC2pld7s6UC59VfK8Ur8Fg==
 
+Hi Nirmal,
 
-
-=E5=9C=A8 2024/9/13 15:12, Johannes Thumshirn =E5=86=99=E9=81=93:
-> On 12.09.24 23:32, Qu Wenruo wrote:
->>
->>
->> =E5=9C=A8 2024/9/13 00:03, Johannes Thumshirn =E5=86=99=E9=81=93:
->>> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
->>>
->>> When scrubbing a RAID stripe-tree based filesystem with preallocated
->>> extents, the btrfs_map_block() called by
->>> scrub_submit_extent_sector_read() will return ENOENT, because there is
->>> no RAID stripe-tree entry for preallocated extents. This then causes
->>> the sector to be marked as a sector with an I/O error.
->>>
->>> To prevent this false alert don't mark secotors for that
->>> btrfs_map_block() returned an ENOENT as I/O errors but skip them.
->>>
->>> This results for example in errors in fstests' btrfs/060 .. btrfs/074
->>> which all perform fsstress and scrub operations. Whit this fix, these
->>> errors are gone and the tests pass again.
->>>
->>> Cc: Qu Wenru <wqu@suse.com>
->>
->> My concern is, ENOENT can be some real problems other than PREALLOC.
->> I'd prefer this to be the last-resort method.
+On Fri, Sep 13, 2024 at 1:45=E2=80=AFAM Nirmal Patel
+<nirmal.patel@linux.intel.com> wrote:
 >
-> Hm but what else could create an entry in the extent tree without having
-> it in the stripe tree? I can't really think of a situation creating this
-> layout.
+> On Fri, 6 Sep 2024 09:56:59 +0800
+> Kai-Heng Feng <kai.heng.feng@canonical.com> wrote:
+>
+> > On Wed, Sep 4, 2024 at 2:22=E2=80=AFPM Manivannan Sadhasivam
+> > <manivannan.sadhasivam@linaro.org> wrote:
+> > >
+> > > On Wed, Sep 04, 2024 at 09:57:08AM +0800, Kai-Heng Feng wrote:
+> > > > On Tue, Sep 3, 2024 at 10:51=E2=80=AFPM Keith Busch <kbusch@kernel.=
+org>
+> > > > wrote:
+> > > > >
+> > > > > On Tue, Sep 03, 2024 at 03:07:45PM +0800, Kai-Heng Feng wrote:
+> > > > > > On Tue, Sep 3, 2024 at 12:29=E2=80=AFPM Manivannan Sadhasivam
+> > > > > > <manivannan.sadhasivam@linaro.org> wrote:
+> > > > > > >
+> > > > > > > On Tue, Sep 03, 2024 at 10:55:44AM +0800, Kai-Heng Feng
+> > > > > > > wrote:
+> > > > > > > > Meteor Lake VMD has a bug that the IRQ raises before the
+> > > > > > > > DMA region is ready, so the requested IO is considered
+> > > > > > > > never completed: [   97.343423] nvme nvme0: I/O 259 QID 2
+> > > > > > > > timeout, completion polled [   97.343446] nvme nvme0: I/O
+> > > > > > > > 384 QID 3 timeout, completion polled [   97.343459] nvme
+> > > > > > > > nvme0: I/O 320 QID 4 timeout, completion polled [
+> > > > > > > > 97.343470] nvme nvme0: I/O 707 QID 5 timeout, completion
+> > > > > > > > polled
+> > > > > > > >
+> > > > > > > > The is documented as erratum MTL016 [0]. The suggested
+> > > > > > > > workaround is to "The VMD MSI interrupt-handler should
+> > > > > > > > initially perform a dummy register read to the MSI
+> > > > > > > > initiator device prior to any writes to ensure proper
+> > > > > > > > PCIe ordering." which essentially is adding a delay
+> > > > > > > > before the interrupt handling.
+> > > > > > >
+> > > > > > > Why can't you add a dummy register read instead? Adding a
+> > > > > > > delay for PCIe ordering is not going to work always.
+> > > > > >
+> > > > > > This can be done too. But it can take longer than 4us delay,
+> > > > > > so I'd like to keep it a bit faster here.
+> > > > >
+> > > > > An added delay is just a side effect of the read. The read
+> > > > > flushes pending device-to-host writes, which is most likely
+> > > > > what the errata really requires. I think Mani is right, you
+> > > > > need to pay that register read penalty to truly fix this.
+> > > >
+> > > > OK, will change the quirk to perform dummy register read.
+> > > >
+> > > > But I am not sure which is the "MSI initiator device", is it VMD
+> > > > controller or NVMe devices?
+> > > >
+> > >
+> > > 'MSI initiator' should be the NVMe device. My understanding is that
+> > > the workaround suggests reading the NVMe register from the MSI
+> > > handler before doing any write to the device to ensures that the
+> > > previous writes from the device are flushed.
+> >
+> > Hmm, it would be really great to contain the quirk in VMD controller.
+> > Is there anyway to do that right before generic_handle_irq()?
+> >
+> The bug is in hardware, I agree with Kai-Heng to contain it to VMD
+> controller.
 
-My concern is that, if by some other bug that certain writes didn't
-create needed RST entry, we will always treat them as preallocated
-during scrub.
+The problem I am facing right now is that I can't connect the virq to
+NVMe's struct device to implement the quirk.
 
-Thus it may be better to have a way to distinguish a real missing entry
-and preallocated extents.
+Do you have any idea how to achieve that?
+
+Kai-Heng
 
 >
+> > >
+> > > And this sounds like the workaround should be done in the NVMe
+> > > driver as it has the knowledge of the NVMe registers. But isn't the
+> > > NVMe driver already reading CQE status first up in the ISR?
+> >
+> > The VMD interrupt is fired before the CQE status update, hence the
+> > bug.
+> >
+> > Kai-Heng
+> >
+> > >
+> > > - Mani
+> > >
+> > > > Kai-Heng
+> > > >
+> > > > >
+> > > > > > > > +     /* Erratum MTL016 */
+> > > > > > > > +     VMD_FEAT_INTERRUPT_QUIRK        =3D (1 << 6),
+> > > > > > > >  };
+> > > > > > > >
+> > > > > > > >  #define VMD_BIOS_PM_QUIRK_LTR        0x1003  /* 3145728
+> > > > > > > > ns */ @@ -90,6 +94,8 @@ static
+> > > > > > > > DEFINE_IDA(vmd_instance_ida); */
+> > > > > > > >  static DEFINE_RAW_SPINLOCK(list_lock);
+> > > > > > > >
+> > > > > > > > +static bool interrupt_delay;
+> > > > > > > > +
+> > > > > > > >  /**
+> > > > > > > >   * struct vmd_irq - private data to map driver IRQ to
+> > > > > > > > the VMD shared vector
+> > > > > > > >   * @node:    list item for parent traversal.
+> > > > > > > > @@ -105,6 +111,7 @@ struct vmd_irq {
+> > > > > > > >       struct vmd_irq_list     *irq;
+> > > > > > > >       bool                    enabled;
+> > > > > > > >       unsigned int            virq;
+> > > > > > > > +     bool                    delay_irq;
+> > > > > > >
+> > > > > > > This is unused. Perhaps you wanted to use this instead of
+> > > > > > > interrupt_delay?
+> > > > > >
+> > > > > > This is leftover, will scratch this.
+> > > > >
+> > > > > Maybe you should actually use it instead of making a global?
+> > > > > The quirk says it is device specific, so no need to punish
+> > > > > every device if it doesn't need it (unlikely as it is to see
+> > > > > such a thing).
+> > >
+> > > --
+> > > =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=
+=A9=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=
+=AE=E0=AF=8D
 >
->> Would it be possible to create an RST entry for preallocated operations
->> manually? E.g. without creating a dummy OE, but just insert the needed
->> RST entries into RST tree at fallocate time?
->
-> Let me give it a try. But I'm a bit less happy to do so, as RST already
-> increases the write amplification.
-
-Well, write amplification is always a big problem for btrfs...
-
-Thanks,
-Qu
 
