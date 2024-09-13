@@ -1,194 +1,204 @@
-Return-Path: <linux-kernel+bounces-328045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 075AB977E31
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:07:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 152CF977E3C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16EC11C22A79
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:07:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C254B23521
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC6B1D86E6;
-	Fri, 13 Sep 2024 11:07:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917011D47BF;
+	Fri, 13 Sep 2024 11:11:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ap4lro+l"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mPNbQZVL"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DC91D47BF;
-	Fri, 13 Sep 2024 11:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2001D7997
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 11:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726225619; cv=none; b=UUuFwibM44xxdnxTWxmmQ9uDu78DaxUWjMsGdXKFAyL2t1fH9MChpHxrHaE+kM7+bK1C0z4Yq+SsvjgT7pyaize2dUZQSA1HKQ9X2zklVgHkFxpg4TDCMhqQTf4/XxaC0IF+AaYHOnBHcskL9xDTKsobtJMA9MnRYO6K99qE+1Y=
+	t=1726225909; cv=none; b=EGfRO/DzimEIkuLrhqozba60cTj+wV9QEsyOmY/JKED5vhaXyYgCcrFTwKsSplsg2/6k2caSgKMN7aBAe8d9Bf52YPRDBl7k/Q11Fap5Kkj4Lx0qBI87vdwmh8zczU/wPsmAtKTcshzJw4W0mPyPUrptkdfkTZD19Hrvh0Ow8tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726225619; c=relaxed/simple;
-	bh=SzZR+wWqtvbb6fL9dYQUHh5w7woOAMZa33MzsHXZ4dM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q/gsh/8p8lD2gEH8x7KODjTDcul3biehtcUDCRVOQkQF2FTY4hNqnKquzSoVcUEjt9ct8JHKKCTwhubGFHG3Bmn/OVgC5Ww+INdMJFqwyxfb8NO/XJnbWcYB2szWEXYiyRTYUdUDQP2UXDV2VNJ1eur50qkHNsB/dqcJXY/0TWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ap4lro+l; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a8a7cdfdd80so116169466b.0;
-        Fri, 13 Sep 2024 04:06:57 -0700 (PDT)
+	s=arc-20240116; t=1726225909; c=relaxed/simple;
+	bh=ftDg/13T5xxqPu8FO1+ZOPi5p+r72xa4zeeMuHSDunc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J/ddHkeEKYbLkCbspwdVgjqNW4ain2XgeGIPTDxNPVh+B1FS2Kdk6LlU9Wal0jUh0afO5WgLJF0cG1bSJz/0Avud/tX1B4K+LMthObRb9ziY5fPlvo3aqQTvd2xkeyBCXRH+elU/YUfqMblPIzbi9MzyvFbmh7M/40pb85kJtkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mPNbQZVL; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-718d962ad64so1639066b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 04:11:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726225616; x=1726830416; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CFdQ0EzFUbNiBdx0MjAaEserQ2Pnrtzma67XilXfJi8=;
-        b=ap4lro+lRMbLeGEhQHdG7HxMxjIIer0GsExdm1oNn1JtXeEGMR3ddHYvra8583qjFN
-         vFj//Q1JymR0SYR13gT1+DtpjxkJ23Dst5pfB/qAtX8/xVuB4BMYtYFCjZkppbB0q/bZ
-         lW6Rf0DdUHsYA9ZjVuo5bt6YsrTRODV7PmTWXw/GWXzW04bS5f5IJBdmEAC84OAw4mTd
-         MPLlZLBU1aFNlMXBZpZqzEkuV6M4uhMe0zhApA3U8LWHH9LbBqv/iJVTWluhjSb9+l8N
-         +jT/s1YCPFtTm3J9a5W0FGpbvGnKpvseN+AD6uuDrix8bwGsxp9FiNb4P7M8qhIgi8fQ
-         e1ZA==
+        d=linaro.org; s=google; t=1726225908; x=1726830708; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4WuhP0VB2LGXkpsyd3caHAv7pGnfI0FTdQ8HjWlE/qE=;
+        b=mPNbQZVLJorwBYwlyks5X48X5GZV3H8rrTvNhw/znyauYF11RZc0gzaa6WfrAPxXZ2
+         1BPuO4g+QE/bvDd4c3FihIbE/zR0Sr9tOJUKt13OtBReGvjdbo+o48VrfC46/zoi0p/d
+         E/rWwY8t5yein0o9okgVqAf2SSiki4svN51XRYmGO7HB3YSyv/ujrfVu/Qzu/J3jKeRR
+         fQmPuem0mLTiNEXC6wrcEB8mPHWR1CZ3smVxHXjzuYaQs83WTBsHkw2DEnRdOCs8RjZU
+         7BddnTuukP1RA3SMBy5QD4eWXjHAVuE3aS90pNElzXiJRM2SoFBMY6AeMqGeZUvZEv5q
+         IF8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726225616; x=1726830416;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1726225908; x=1726830708;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CFdQ0EzFUbNiBdx0MjAaEserQ2Pnrtzma67XilXfJi8=;
-        b=VpZY2ukw9YiUYPS2X3gSCF7NWo1h5n8LGGdleXsgqACKEOfIHLUL3HBsfpmXolpY8A
-         TtnjzVug/ppyzCzBOI2dV6l4lsHTP5pQ2O//pROFT2VBji3pb3rdGpHEi6hoYG4zMj7I
-         SI+0r20WqSiFIXo1ogJVXsPaYnqC+cxstHMihS/ArXgnsL6bIIh6NX4ylHjdoSoNtCEJ
-         G+u5wPkY4vxdiGszhe0gCtPyHHxl+7qlyYTpD6c2Omx1iLg2/M6qB5Y4Mmh4gnqiL01J
-         JPB9pnuDpmc/esaNkQcbHRi/uPdjhPDDgRUpVKznXn0W1GlzCyTD6yKFwlGUKv03j+bN
-         9nsw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0L87Blo6awsRN3XcnuWql/vowGuPjN26ZuJ6pFjcfqRYAOHYlRonL6GardU9ogbSo1bVFhwu0SOM=@vger.kernel.org, AJvYcCUIQ3e7By+qOnSM/YqrGnwCtztlVjXikYlWGmgqVd0s/AAS5dqhXynDB2+DjUKHIj+EcOHMdR+uSVZeGHmC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8gRdK+nODQcCyVSMbu44gsaMA+aMlHBGfd/pOzeHEAHPhtbOw
-	6+C7TTpHavtdf5o1yRERKQNCPhEHYCCxuC25T3GL6UjLxPQx32eb
-X-Google-Smtp-Source: AGHT+IEbuqZYHatkDhQKEvJhMn72YTY/AmGM3pWNQOzzeCGUq6TJmY5yCDpCdEfcdYIYgcHP9h/MNQ==
-X-Received: by 2002:a17:907:724e:b0:a8a:8c04:ce95 with SMTP id a640c23a62f3a-a90481087f5mr189076766b.43.1726225615341;
-        Fri, 13 Sep 2024 04:06:55 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::4:ee51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25953275sm859159266b.70.2024.09.13.04.06.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Sep 2024 04:06:54 -0700 (PDT)
-Message-ID: <1c37546a-e15e-465f-bcbb-6f39c0fcf82d@gmail.com>
-Date: Fri, 13 Sep 2024 12:06:54 +0100
+        bh=4WuhP0VB2LGXkpsyd3caHAv7pGnfI0FTdQ8HjWlE/qE=;
+        b=VMOTYpyylRc/Tj0pIsEc42AJwIQT7+ejyKBXk2oLRTVd2aO/W6AxCg1MmC2blg/IP6
+         SScjj829VXfPLGDdNJqa309W4Oki6OQLsO2GUUCkdVsYlONJVWewG5SZfBldTfeA2nRG
+         7F0SnsOZPXdQq0h6HlaQTAf6CIn6ugGKZEDGFYcuZcBWJzfqoZpyMkLq0baVovf2NU5B
+         I45VT0rGNdBrcbWn1+ujS/wPa++ClJ6jaXhJhXeNdazxC7fiD1zj8E92cnUbMOsVFBTB
+         SLAJjwOGh9irFRom86aB1RhE1i00BIss1QONa75Lb5pOqjLXvcHeOiSMRZvypbrFSdHd
+         LrIg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5UI1GA83EySsnKHdwQnnU9bm5PBBf38IxROqodAbgXLjjSRwH8iKlho/j4Y87qJ8TCjXwqoDrEHDuHY8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnMqgN4Zob1fVWVVQME3fBhOZ2ZPfJ03s57WJr3VJRduFQSM/c
+	plnWeyzeUuWTSo4iiAAW9jBuq4tv3VlZRntS3PG0VEQh8DHKZXpl6R/C0zspqg==
+X-Google-Smtp-Source: AGHT+IGKz9WzptWVNO9Zk3uVeShWL+DlgdyC8qF52qrFKeN6fzeWl1jtqiHFbePPdYangnFcrBJ36w==
+X-Received: by 2002:a05:6a00:1906:b0:70d:2621:5808 with SMTP id d2e1a72fcca58-7192607fcb9mr9003619b3a.9.1726225907400;
+        Fri, 13 Sep 2024 04:11:47 -0700 (PDT)
+Received: from thinkpad ([120.60.66.60])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71908fe2641sm5897353b3a.59.2024.09.13.04.11.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 04:11:46 -0700 (PDT)
+Date: Fri, 13 Sep 2024 16:41:42 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: Nirmal Patel <nirmal.patel@linux.intel.com>,
+	Keith Busch <kbusch@kernel.org>, jonathan.derrick@linux.dev,
+	acelan.kao@canonical.com, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kaihengfeng@gmail.com
+Subject: Re: [PATCH] PCI: vmd: Delay interrupt handling on MTL VMD controller
+Message-ID: <20240913111142.4cgrmirofhhgrbqm@thinkpad>
+References: <20240903025544.286223-1-kai.heng.feng@canonical.com>
+ <20240903042852.v7ootuenihi5wjpn@thinkpad>
+ <CAAd53p4EWEuu-V5hvOHtKZQxCJNf94+FOJT+_ryu0s2RpB1o-Q@mail.gmail.com>
+ <ZtciXnbQJ88hjfDk@kbusch-mbp>
+ <CAAd53p4cyOvhkorHBkt227_KKcCoKZJ+SM13n_97fmTTq_HLuQ@mail.gmail.com>
+ <20240904062219.x7kft2l3gq4qsojc@thinkpad>
+ <CAAd53p5ox-CiNd6nHb4ogL-K2wr+dNYBtRxiw8E6jf7HgLsH-A@mail.gmail.com>
+ <20240912104547.00005865@linux.intel.com>
+ <CAAd53p698eNQdZqPFHCmpPQ7pkDoyT4_C9ERXJ4X=V_8QFO8pQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] efi/tpm: add efi.tpm_log as a reserved region in
- 820_table_firmware
-To: Dave Young <dyoung@redhat.com>, Ard Biesheuvel <ardb@kernel.org>
-Cc: Breno Leitao <leitao@debian.org>, linux-efi@vger.kernel.org,
- kexec@lists.infradead.org, ebiederm@xmission.com, bhe@redhat.com,
- vgoyal@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
- x86@kernel.org, linux-kernel@vger.kernel.org, rmikey@meta.com,
- gourry@gourry.net
-References: <20240911104109.1831501-1-usamaarif642@gmail.com>
- <CAMj1kXFVyQEwBTf2bG8yBXUktM16dzrcPH-Phz_toAsCK-NfMA@mail.gmail.com>
- <2542182d-aa79-4705-91b6-fa593bacffa6@gmail.com>
- <CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
- <20240912-wealthy-gabby-tamarin-aaba3c@leitao>
- <CAMj1kXHh-Kov8c1pto0LJL6debugz1og6GFMYCwvfu+RiQGreA@mail.gmail.com>
- <6b2cc4c4-4354-4b29-bc73-c1384b90dfc6@gmail.com>
- <CAMj1kXG1hbiafKRyC5qM1Vj5X7x-dmLndqqo2AYnHMRxDz-80w@mail.gmail.com>
- <CAMj1kXFr+N9LMj0=wULchYosUpV0ygZSKUj1vdUP0KWEANKasw@mail.gmail.com>
- <CALu+AoS9+OxPmVJB9fAJFkjsX9xUVw6K_uXiOi0-XsK6-b4THg@mail.gmail.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <CALu+AoS9+OxPmVJB9fAJFkjsX9xUVw6K_uXiOi0-XsK6-b4THg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAAd53p698eNQdZqPFHCmpPQ7pkDoyT4_C9ERXJ4X=V_8QFO8pQ@mail.gmail.com>
 
-
-
-On 13/09/2024 11:56, Dave Young wrote:
-> On Thu, 12 Sept 2024 at 22:15, Ard Biesheuvel <ardb@kernel.org> wrote:
->>
->> (cc Dave)
+On Fri, Sep 13, 2024 at 01:55:49PM +0800, Kai-Heng Feng wrote:
+> Hi Nirmal,
 > 
-> Thanks for ccing me.
-> 
->>
->> Full thread here:
->> https://lore.kernel.org/all/CAMj1kXG1hbiafKRyC5qM1Vj5X7x-dmLndqqo2AYnHMRxDz-80w@mail.gmail.com/T/#u
->>
->> On Thu, 12 Sept 2024 at 16:05, Ard Biesheuvel <ardb@kernel.org> wrote:
->>>
->>> On Thu, 12 Sept 2024 at 15:55, Usama Arif <usamaarif642@gmail.com> wrote:
->>>>
->>>>
->>>>
->>>> On 12/09/2024 14:10, Ard Biesheuvel wrote:
->>>>> Does the below help at all?
->>>>>
->>>>> --- a/drivers/firmware/efi/tpm.c
->>>>> +++ b/drivers/firmware/efi/tpm.c
->>>>> @@ -60,7 +60,7 @@ int __init efi_tpm_eventlog_init(void)
->>>>>         }
->>>>>
->>>>>         tbl_size = sizeof(*log_tbl) + log_tbl->size;
->>>>> -       memblock_reserve(efi.tpm_log, tbl_size);
->>>>> +       efi_mem_reserve(efi.tpm_log, tbl_size);
->>>>>
->>>>>         if (efi.tpm_final_log == EFI_INVALID_TABLE_ADDR) {
->>>>>                 pr_info("TPM Final Events table not present\n");
->>>>
->>>> Unfortunately not. efi_mem_reserve updates e820_table, while kexec looks at /sys/firmware/memmap
->>>> which is e820_table_firmware.
->>>>
->>>> arch_update_firmware_area introduced in the RFC patch does the same thing as efi_mem_reserve does at
->>>> its end, just with e820_table_firmware instead of e820_table.
->>>> i.e. efi_mem_reserve does:
->>>>         e820__range_update(addr, size, E820_TYPE_RAM, E820_TYPE_RESERVED);
->>>>         e820__update_table(e820_table);
->>>>
->>>> while arch_update_firmware_area does:
->>>>         e820__range_update_firmware(addr, size, E820_TYPE_RAM, E820_TYPE_RESERVED);
->>>>         e820__update_table(e820_table_firmware);
->>>>
->>>
->>> Shame.
->>>
->>> Using efi_mem_reserve() is appropriate here in any case, but I guess
->>> kexec on x86 needs to be fixed to juggle the EFI memory map, memblock
->>> table, and 3 (!) versions of the E820 table in the correct way
->>> (e820_table, e820_table_kexec and e820_table_firmware)
->>>
->>> Perhaps we can put this additional logic in x86's implementation of
->>> efi_arch_mem_reserve()? AFAICT, all callers of efi_mem_reserve() deal
->>> with configuration tables produced by the firmware that may not be
->>> reserved correctly if kexec looks at e820_table_firmware[] only.
->>
-> 
-> I have not read all the conversations,  let me have a look and response later.
-> 
-> The first glance about the patch is that I think the kexec_file_load
-> syscall (default of latest kexec-tools) will not use
-> e820_table_firmware AFAIK.  it will only use e820_table_kexec.
-
-I initially thought that as well. But it looks like kexec just reads /sys/firmware/memmap
-
-https://github.com/horms/kexec-tools/blob/main/kexec/firmware_memmap.h#L29
-
-which is e820_table_firmware.
-
-The patch that Ard sent in https://lore.kernel.org/all/20240912155159.1951792-2-ardb+git@google.com/
-is the right approach to it I believe, and I dont see the issue anymore after applying that patch.
-
-> 
-> Usama, can you confirm how you tested this?
-> kexec -c -l  will use kexec_load syscall
-
-I am currently testing in my VM setup with kexec_load. But production is running
-kexec_file_load and has the same issue.
-
-Thanks,
-Usama
-
-> kexec [-s] -l will use kexec_file_load syscall
-> 
-> Thanks
-> Dave
+> On Fri, Sep 13, 2024 at 1:45 AM Nirmal Patel
+> <nirmal.patel@linux.intel.com> wrote:
+> >
+> > On Fri, 6 Sep 2024 09:56:59 +0800
+> > Kai-Heng Feng <kai.heng.feng@canonical.com> wrote:
+> >
+> > > On Wed, Sep 4, 2024 at 2:22 PM Manivannan Sadhasivam
+> > > <manivannan.sadhasivam@linaro.org> wrote:
+> > > >
+> > > > On Wed, Sep 04, 2024 at 09:57:08AM +0800, Kai-Heng Feng wrote:
+> > > > > On Tue, Sep 3, 2024 at 10:51 PM Keith Busch <kbusch@kernel.org>
+> > > > > wrote:
+> > > > > >
+> > > > > > On Tue, Sep 03, 2024 at 03:07:45PM +0800, Kai-Heng Feng wrote:
+> > > > > > > On Tue, Sep 3, 2024 at 12:29 PM Manivannan Sadhasivam
+> > > > > > > <manivannan.sadhasivam@linaro.org> wrote:
+> > > > > > > >
+> > > > > > > > On Tue, Sep 03, 2024 at 10:55:44AM +0800, Kai-Heng Feng
+> > > > > > > > wrote:
+> > > > > > > > > Meteor Lake VMD has a bug that the IRQ raises before the
+> > > > > > > > > DMA region is ready, so the requested IO is considered
+> > > > > > > > > never completed: [   97.343423] nvme nvme0: I/O 259 QID 2
+> > > > > > > > > timeout, completion polled [   97.343446] nvme nvme0: I/O
+> > > > > > > > > 384 QID 3 timeout, completion polled [   97.343459] nvme
+> > > > > > > > > nvme0: I/O 320 QID 4 timeout, completion polled [
+> > > > > > > > > 97.343470] nvme nvme0: I/O 707 QID 5 timeout, completion
+> > > > > > > > > polled
+> > > > > > > > >
+> > > > > > > > > The is documented as erratum MTL016 [0]. The suggested
+> > > > > > > > > workaround is to "The VMD MSI interrupt-handler should
+> > > > > > > > > initially perform a dummy register read to the MSI
+> > > > > > > > > initiator device prior to any writes to ensure proper
+> > > > > > > > > PCIe ordering." which essentially is adding a delay
+> > > > > > > > > before the interrupt handling.
+> > > > > > > >
+> > > > > > > > Why can't you add a dummy register read instead? Adding a
+> > > > > > > > delay for PCIe ordering is not going to work always.
+> > > > > > >
+> > > > > > > This can be done too. But it can take longer than 4us delay,
+> > > > > > > so I'd like to keep it a bit faster here.
+> > > > > >
+> > > > > > An added delay is just a side effect of the read. The read
+> > > > > > flushes pending device-to-host writes, which is most likely
+> > > > > > what the errata really requires. I think Mani is right, you
+> > > > > > need to pay that register read penalty to truly fix this.
+> > > > >
+> > > > > OK, will change the quirk to perform dummy register read.
+> > > > >
+> > > > > But I am not sure which is the "MSI initiator device", is it VMD
+> > > > > controller or NVMe devices?
+> > > > >
+> > > >
+> > > > 'MSI initiator' should be the NVMe device. My understanding is that
+> > > > the workaround suggests reading the NVMe register from the MSI
+> > > > handler before doing any write to the device to ensures that the
+> > > > previous writes from the device are flushed.
+> > >
+> > > Hmm, it would be really great to contain the quirk in VMD controller.
+> > > Is there anyway to do that right before generic_handle_irq()?
+> > >
+> > The bug is in hardware, I agree with Kai-Heng to contain it to VMD
+> > controller.
 > 
 
+I'd love to, but if I read the workaround correctly, it suggests reading the
+register of the MSI initiator device, which is NVMe. IDK, how you can read the
+NVMe register from the VMD driver.
+
+> The problem I am facing right now is that I can't connect the virq to
+> NVMe's struct device to implement the quirk.
+> 
+> Do you have any idea how to achieve that?
+> 
+> Kai-Heng
+> 
+> >
+> > > >
+> > > > And this sounds like the workaround should be done in the NVMe
+> > > > driver as it has the knowledge of the NVMe registers. But isn't the
+> > > > NVMe driver already reading CQE status first up in the ISR?
+> > >
+> > > The VMD interrupt is fired before the CQE status update, hence the
+> > > bug.
+
+I'm not able to understand the bug properly. The erratum indicates that the MSI
+from device reaches the VMD before other writes to the registers. So this is an
+ordering issue as MSI takes precedence over other writes from the device.
+
+So the workaround is to read the device register in the MSI handler to make sure
+the previous writes from the device are flushed. IIUC, once the MSI reaches the
+VMD, it will trigger the IRQ handler in the NVMe driver and in the handler, CQE
+status register is read first up. This flow matches with the workaround
+suggested.
+
+Is any write being performed to the NVMe device before reading any register in
+the MSI handler? Or the current CQE read is not able to satisfy the workaround?
+Please clarify.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
