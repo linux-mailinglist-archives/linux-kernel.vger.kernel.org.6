@@ -1,96 +1,105 @@
-Return-Path: <linux-kernel+bounces-327529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1CEF97772C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:00:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F163997772D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BC221F2514D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:00:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 457AF280216
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235071B12CC;
-	Fri, 13 Sep 2024 03:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4146C1A76C3;
+	Fri, 13 Sep 2024 03:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="XI8MblzZ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="ojcj7Uw3"
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A96233F7;
-	Fri, 13 Sep 2024 03:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F40933F7
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 03:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726196422; cv=none; b=tWdB9AgereOm4HVbcjm47kEBOWWRNpGvFwdKM8wl0G6CQmX2Xtm13Nx9ruSr+s0y223qyHVFdy7lw07oQM4kyLFCPhPde1VWd27tRnCnyUeER3IZYSCVq5oarIZVygsSBIP2+A6ZfV7yCb3Rx536TKPPOpsLSh3YmjfB39oqRzg=
+	t=1726196661; cv=none; b=G8AU3oRFdp5FWa0Lb76l6jaPqBLK8fXwHe3guvVwIu+j9h3THbc0/HXPAd/KoJylJyIlrWS3Hlq/Tgt69cfqxExU8vQVXyckcRL38I5dk7PtjB7DGhmIOLmB8+9AER2ZOdStS8nUGFOjvzeN70yDYPcL2XYAl06V/meoN+UidFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726196422; c=relaxed/simple;
-	bh=wGcW0ryoWSmMnOrWfzgUVtd4wXwz/mJPng33ojPskp4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=uyJj4qgDW+bIWvDGQ3m59drexGnpD3Md2GxiFboa+rlmNufzNPaJpl7KJvQPo3x2YWSncXbN5sYKDvKWvWM63BkGqTCAu6F20Its8oATdVg5Q1O+ENdiyxzMFDGr8pyLRcDRz4zBzaWxdWe1XCN277jwMB1nzhwiG5427JqEX2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=XI8MblzZ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1726196415;
-	bh=VhEvHeaOii1sg1WCaj1iaRY0Bf+Yt5n42VZMErYucL0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=XI8MblzZWDcLAgT7rI1fbJ9/KgWBSBAfmngFygl/fEKIMKL8TsRZdq4K7rhTAYh2I
-	 QNOMH2i+uemDMWG35kp/IgIo9D9FxLtx/IU3iM3Z3QTiA05RbYwc9VVBuVAt3q7yu0
-	 SlzY4hbBMns41/2Pq5pJvmSU3kl949tK4pceWfOJVslCAYzU/ilf78Dn09DTJ8XfA7
-	 hspqMQuxEd3c4UvqSdZyP1YBaJ0l0Ar8jidyZfJMCHWduZCzJkIIjl7EBaCUXfKX2R
-	 kvb1vnLiW9hhU6uxUsbKovn1NoUyzaqrfe/ynS2UAvH98DA1o++dXT6iWSLn4okxBY
-	 20S9pWjQJ/A3A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X4fDv2Brgz4x9D;
-	Fri, 13 Sep 2024 13:00:15 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Danny Tsen <dtsen@linux.ibm.com>, linux-crypto@vger.kernel.org
-Cc: herbert@gondor.apana.org.au, leitao@debian.org, nayna@linux.ibm.com,
- appro@cryptogams.org, linux-kernel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, ltcgcw@linux.vnet.ibm.com,
- dtsen@us.ibm.com, Danny Tsen <dtsen@linux.ibm.com>
-Subject: Re: [PATCH 1/1] crypto: Fix data mismatch over ipsec tunnel
- encrypted/decrypted with ppc64le AES/GCM module.
-In-Reply-To: <20240912174537.1409567-1-dtsen@linux.ibm.com>
-References: <20240912174537.1409567-1-dtsen@linux.ibm.com>
-Date: Fri, 13 Sep 2024 13:00:13 +1000
-Message-ID: <87seu4qmv6.fsf@mail.lhotse>
+	s=arc-20240116; t=1726196661; c=relaxed/simple;
+	bh=DGxeJgemhoDo5JKQYPlnG86DMJLcCfAUQs0cO+BoAK4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lFugbPQslGJqgPJcFF6hkyI9vfJ9GxzSmaWJPSzzRCPmqs9+C9Iv3XqUIZ9m9Y0p3MAFjfjTulGgK7g/m9FyhRsamFqSAcVRb9ZrZ6mVlm5vHzII4pPb3IMdRyemYQrxXEG3ORmJgi+QyfAluTLl/hEZybRbI+CBOb81eoBxvR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=ojcj7Uw3; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1726196649;
+	bh=SgCHUiz82lndKjTeNsmeInw+/PdasPiFZ+8EYbiHHVQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=ojcj7Uw3udYiK+hxRPrPYabf7JbOzaa1lhU+OMpDBsvHRbDend5VmcymxhLnSYmoU
+	 dvWJUMuKAMELdcNBPAMgKfzWjJsyMveO/BO61iUjzrosj1AK6+HK97JhYe2VQJ+sNs
+	 mDjGSwmJMRM+oBXF4aNFF3aYadQR2GBIJjwPL02A=
+X-QQ-mid: bizesmtp90t1726196628t7iilhir
+X-QQ-Originating-IP: GUdL1hsPtY1aBNPswyI4MhLRNR6/U4az5PKkdHFgePc=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 13 Sep 2024 11:03:46 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 1739587823698748596
+From: WangYuli <wangyuli@uniontech.com>
+To: paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	samuel.holland@sifive.com,
+	conor.dooley@microchip.com,
+	charlie@rivosinc.com,
+	macro@orcam.me.uk
+Cc: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	atish.patra@wdc.com,
+	anup@brainfault.org,
+	guanwentao@uniontech.com,
+	zhanjun@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>
+Subject: [PATCH v2] riscv: Use '%u' to format the output of 'cpu'
+Date: Fri, 13 Sep 2024 11:02:52 +0800
+Message-ID: <F5FDA7123183ED96+20240913030252.857482-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-Danny Tsen <dtsen@linux.ibm.com> writes:
-> This patch is to fix an issue when simd is not usable that data mismatch
-> may occur over ipsec tunnel. The fix is to register algs as SIMD modules
-> so that the algorithm is excecuted when SIMD instructions is usable.
->
-> A new module rfc4106(gcm(aes)) is also added. Re-write AES/GCM assembly
-> codes with smaller footprints and small performance gain.
->
-> This patch has been tested with the kernel crypto module tcrypt.ko and
-> has passed the selftest.  The patch is also tested with
-> CONFIG_CRYPTO_MANAGER_EXTRA_TESTS enabled.
->
-> Signed-off-by: Danny Tsen <dtsen@linux.ibm.com>
-> ---
->  arch/powerpc/crypto/Kconfig            |    1 +
->  arch/powerpc/crypto/aes-gcm-p10-glue.c |  141 +-
->  arch/powerpc/crypto/aes-gcm-p10.S      | 2421 +++++++++++-------------
->  3 files changed, 1187 insertions(+), 1376 deletions(-)
+'cpu' is an unsigned integer, so its conversion specifier should
+be %u, not %d.
 
-As this is a bug fix it should have a Fixes: tag, and probably a stable
-Cc as well.
+Suggested-by: Wentao Guan <guanwentao@uniontech.com>
+Suggested-by: Maciej W. Rozycki <macro@orcam.me.uk>
+Link: https://lore.kernel.org/all/alpine.DEB.2.21.2409122309090.40372@angie.orcam.me.uk/
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+Tested-by: Charlie Jenkins <charlie@rivosinc.com>
+---
+ arch/riscv/kernel/cpu-hotplug.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-But that diffstat is really large for a bug fix. Is there no way to fix
-the issue in a smaller patch? Even if that is just disabling the feature
-until it can be fixed in subsequent commits?
+diff --git a/arch/riscv/kernel/cpu-hotplug.c b/arch/riscv/kernel/cpu-hotplug.c
+index 28b58fc5ad19..a1e38ecfc8be 100644
+--- a/arch/riscv/kernel/cpu-hotplug.c
++++ b/arch/riscv/kernel/cpu-hotplug.c
+@@ -58,7 +58,7 @@ void arch_cpuhp_cleanup_dead_cpu(unsigned int cpu)
+ 	if (cpu_ops->cpu_is_stopped)
+ 		ret = cpu_ops->cpu_is_stopped(cpu);
+ 	if (ret)
+-		pr_warn("CPU%d may not have stopped: %d\n", cpu, ret);
++		pr_warn("CPU%u may not have stopped: %d\n", cpu, ret);
+ }
+ 
+ /*
+-- 
+2.45.2
 
-cheers
 
