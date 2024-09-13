@@ -1,116 +1,121 @@
-Return-Path: <linux-kernel+bounces-328825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4B05978966
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:11:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF58397895A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:10:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6074FB2178F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:11:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EF622868DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B8B15442A;
-	Fri, 13 Sep 2024 20:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBD314831E;
+	Fri, 13 Sep 2024 20:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ikorU5mW"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MDQnthqS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2441527B1;
-	Fri, 13 Sep 2024 20:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD57A146593;
+	Fri, 13 Sep 2024 20:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726258285; cv=none; b=ruM07gbvt4hBR9P3Do1R5WAsQkDrj4mXKc8Oh23a+fjMSU2mdNrwKF2R68N8Xi3LSqDcuBB6kdpJz1q4+NN56wKzwJG7BHT5gSsTEzB7bcgeReEwTw1vDDyqXuUMz5JkHXguEUpJng/QlGtfNzUvrveRnYLVk6jBeRyPAWNInag=
+	t=1726258246; cv=none; b=CU3NpvKb7PCanVet1oRSjo0vh+Q79+/83KNVgTjYRk4MEhBox6igp8IQa86L6ev/KEXYm3tkocrpJ8/79nshjxQvLQ3Esi/AODyztlyGPhvBGLdu0tPWgooj1Dm3e1CyirRLawt89VCp2TJUcdq1eUjwoEpNJXnxzokoVFg+FZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726258285; c=relaxed/simple;
-	bh=KrbMlRrWnddy/v2g9DYSFXsxpZtGqQACNSxfRkmK8MA=;
+	s=arc-20240116; t=1726258246; c=relaxed/simple;
+	bh=el57stphE57P23fGPJ9GNRj8pJO3kkwQwz6c6LYQ4Pc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a1+qLogqIGeyK9XdPodgpPhJYsep5XfruaTE3kKj8bBoNIEXfDVS+mesByzCrGPbXBVidywbLKK1oG/3mFRh0dj2WDgM23eGKqBAch9/2vd6tz62P84Y+UXOUQNaQX2wq+3qGxhyK62nikmHhb026xJnWhkHEEDLc1Ll4gtepTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ikorU5mW; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726258284; x=1757794284;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=KrbMlRrWnddy/v2g9DYSFXsxpZtGqQACNSxfRkmK8MA=;
-  b=ikorU5mWE80zrfEthi4LdbLQdFO52Zwthv9YiUCfk8thofBmobK95Xkt
-   xPxPvPGBW1yTiajQ8xQNBtu8oEuGRz6SWDqbqxDHh5wJOFj9hmeXC5OB5
-   eL0Fl2yRWBYatEQZXZH7RaXAQTUCF/0OYIZvoYWYtil1xjfs8thXqaTcC
-   Sy9eo1zNMFdxdljjJ6otdEEc6dKNhSFcoGWDxNDZnrMIQfZfZ8/fzzBvw
-   qFLiXCmgwxP7TejMG2CIJf0jn4JBrKW/kFhw8Zaaechkeotv7UyFUP9eR
-   9BHl4tcfLN6C7Dj3HM4SFGhSWv3xgmK/qh1ml1an58p0lupRarG7kK/+p
-   g==;
-X-CSE-ConnectionGUID: +9OXtRWKS0WXn0CEQF1+Iw==
-X-CSE-MsgGUID: ETEGM7fcTWulquKgPdTzeg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="24712405"
-X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
-   d="scan'208";a="24712405"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 13:11:22 -0700
-X-CSE-ConnectionGUID: p0m3HkP0T625lIOSnYXlsw==
-X-CSE-MsgGUID: lCn4N0rjRkqcbFadFfXsKg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
-   d="scan'208";a="72774956"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 13 Sep 2024 13:11:20 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1spCdR-0006wT-2I;
-	Fri, 13 Sep 2024 20:11:17 +0000
-Date: Sat, 14 Sep 2024 04:10:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Liao Chang <liaochang1@huawei.com>, rostedt@goodmis.org,
-	mhiramat@kernel.org, mark.rutland@arm.com,
-	mathieu.desnoyers@efficios.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH] function_graph: Simplify the initialization of fgraph
- LRU data
-Message-ID: <202409140325.G1zsZ0jL-lkp@intel.com>
-References: <20240912111550.1752115-1-liaochang1@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jbmBzAwQXM5Kla4afi01Iqv2JH9LkYGDW6O0p85Eie/EyeN6jzjIt8N97VYbCpZFWn6f7JzSTmUeFTR053fIeTExtZdX4k3ClNs8UMSU2gvbE+6rCHVtFVHBq5WdKq3CsQQVGrTGQ5nDswOpIXij3BbH/ykBEN9Ye5FBsDllq1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MDQnthqS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A754C4CEC0;
+	Fri, 13 Sep 2024 20:10:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726258246;
+	bh=el57stphE57P23fGPJ9GNRj8pJO3kkwQwz6c6LYQ4Pc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MDQnthqSJ37cmmadtQXjmxxeWDhenpK1Is/pcI5oiZ2hRPv1BftNDw0bixt6aa5lq
+	 H2uJHAiAxn79hqfQUZT2Ry8Yr7scAKIPGiqmiNyZGAo+B8Apwl7vAbJp7Lwhfz1oZH
+	 LyTvFvmFkdMl4FT2OPphfe7qgS+6zjrzImVkVRxHlzBQ/aR23g2WgtpsCwpcbdz6ig
+	 hZs0Xqt481VLSlsgmzIOBUSmxAHqDUpxR+uBOCAUJE1xcNOSNBo3d8kvOCsU9oQSjt
+	 oR0UkMlCrUDNoA0YWr5prNA6Bfr/6eu6V3iBGEicABYgLyv2SwJlqJ1cvprZ0fuE8c
+	 bFtSdgA5Sbi5A==
+Received: by pali.im (Postfix)
+	id 378FA725; Fri, 13 Sep 2024 22:10:41 +0200 (CEST)
+Date: Fri, 13 Sep 2024 22:10:41 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>
+Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cifs: Fix getting reparse points from server without WSL
+ support
+Message-ID: <20240913201041.cwueaflcxhewnvwj@pali>
+References: <20240913200204.10660-1-pali@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240912111550.1752115-1-liaochang1@huawei.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240913200204.10660-1-pali@kernel.org>
+User-Agent: NeoMutt/20180716
 
-Hi Liao,
+Paulo, please look at this patch as it is related to WSL attributes
+which you introduced in the mentioned commit. I think that the proper
+fix should be to change SMB2_OP_QUERY_WSL_EA code to not trigger that
+-EOPNOTSUPP error which is delivered to userspace. I just checked that
+this my patch works fine for Native NTFS symlinks and NFS-style reparse
+point special files.
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.11-rc7 next-20240913]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Liao-Chang/function_graph-Simplify-the-initialization-of-fgraph-LRU-data/20240912-193159
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20240912111550.1752115-1-liaochang1%40huawei.com
-patch subject: [PATCH] function_graph: Simplify the initialization of fgraph LRU data
-config: arm-randconfig-004-20240913 (https://download.01.org/0day-ci/archive/20240914/202409140325.G1zsZ0jL-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project bf684034844c660b778f0eba103582f582b710c9)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409140325.G1zsZ0jL-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409140325.G1zsZ0jL-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> ld.lld: error: undefined symbol: ftrace_graph_entry_stub
-   >>> referenced by arch/arm/kernel/entry-ftrace.o:(.text+0xB8) in archive vmlinux.a
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On Friday 13 September 2024 22:02:04 Pali Rohár wrote:
+> If SMB server does not support WSL EAs then for SMB2_OP_QUERY_WSL_EA
+> request it returns STATUS_EAS_NOT_SUPPORTED. Function smb2_compound_op()
+> translates STATUS_EAS_NOT_SUPPORTED to -EOPNOTSUPP which cause failure
+> during calling lstat() syscall from userspace on any reparse point,
+> including Native SMB symlink (which does not use any EAs). This issue
+> happen for example when trying to resolve Native NTFS symlink from SMB
+> server on Windows 8.
+> 
+> Avoid this problem by calling SMB2_OP_QUERY_WSL_EA only when detected
+> reparse point is of WSL type. Note that this is not solve this problem
+> fully as WSL reparse points can be created also on other SMB server
+> which do not support Extended Attributes at all.
+> 
+> Fixes: ea41367b2a60 ("smb: client: introduce SMB2_OP_QUERY_WSL_EA")
+> Signed-off-by: Pali Rohár <pali@kernel.org>
+> ---
+>  fs/smb/client/smb2inode.c | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
+> index 11a1c53c64e0..d65471aa55e6 100644
+> --- a/fs/smb/client/smb2inode.c
+> +++ b/fs/smb/client/smb2inode.c
+> @@ -941,7 +941,20 @@ int smb2_query_path_info(const unsigned int xid,
+>  		if (rc || !data->reparse_point)
+>  			goto out;
+>  
+> -		cmds[num_cmds++] = SMB2_OP_QUERY_WSL_EA;
+> +		/*
+> +		 * Skip SMB2_OP_QUERY_WSL_EA if reparse point is not WSL.
+> +		 * The server file system does not have to support Extended
+> +		 * Attributes and in this case returns STATUS_EAS_NOT_SUPPORTED
+> +		 * which smb2_compound_op() translate to -EOPNOTSUPP. This will
+> +		 * present failure during reading of non-WSL special files.
+> +		 */
+> +		if (data->reparse.tag == IO_REPARSE_TAG_LX_SYMLINK ||
+> +		    data->reparse.tag == IO_REPARSE_TAG_AF_UNIX ||
+> +		    data->reparse.tag == IO_REPARSE_TAG_LX_FIFO ||
+> +		    data->reparse.tag == IO_REPARSE_TAG_LX_CHR ||
+> +		    data->reparse.tag == IO_REPARSE_TAG_LX_BLK)
+> +			cmds[num_cmds++] = SMB2_OP_QUERY_WSL_EA;
+> +
+>  		/*
+>  		 * Skip SMB2_OP_GET_REPARSE if symlink already parsed in create
+>  		 * response.
+> -- 
+> 2.20.1
+> 
 
