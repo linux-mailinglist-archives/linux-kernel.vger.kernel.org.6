@@ -1,217 +1,198 @@
-Return-Path: <linux-kernel+bounces-328820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 164C7978952
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:07:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8143A978955
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:08:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 671BE28318A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:07:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8B3E1C22982
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2991482E5;
-	Fri, 13 Sep 2024 20:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E8C148318;
+	Fri, 13 Sep 2024 20:08:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DDaE9vK4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TM26i7vJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74853BA2E;
-	Fri, 13 Sep 2024 20:07:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70AABBA2E;
+	Fri, 13 Sep 2024 20:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726258047; cv=none; b=tRMU+xnIARfVjDvGaQmvkqLPxsioBoNlv0vaWjk9YZQt1TjRzz8JR5+JiEpIifUrtjH6rb4KyYM52gKh/TrGBwwZyIew5d4Ly4KJA9L/6QldvV5zsW/TuqSjtQVo+s/OFU9JP1LLfaiEe984Gip7TQ8E44rnx1+BNot4Q2Ceq9w=
+	t=1726258120; cv=none; b=jbCetfBz+w6Zp3T9l5iCII1ufcg0JcRGoWwtVD3NF862G+buR9t66HzbTIW0FYpBE8rbZttAPK/IUsrKF85HrIKiFS5AWrHLYlPyEmDNCl7K2xD+fXr5nJyiEJSrOdrcRYhYGHO0Nnma6fHPU8Ux7Znfc1kJowymraVjhm5+cjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726258047; c=relaxed/simple;
-	bh=OwucU7JylqM1ydEUxbib2Jfrw6rQelxxFrVsFvAgrAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BsjBqTprdOmTDL5QWmqmCFkIi0CSV8PPOqUCvONTCLnbk4ArNizIBoiMee+h2f6hBd9TCZF5tn2hI3N+7Mj1zQUBDMUF8tKdujCBJhOVt8Oz4vuw/TBDejtJqKJSUraK/ja7PtZVGmdUjUK3V5qoTH20gjqlGO1RibSZNezq304=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DDaE9vK4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06D16C4CEC6;
-	Fri, 13 Sep 2024 20:07:27 +0000 (UTC)
+	s=arc-20240116; t=1726258120; c=relaxed/simple;
+	bh=dxFpgDa+4nXBtmbI56A2QbjsBwTKl2xZ/2KbD9wx+r0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W3FyOPBSPSKH6SXJuBE2YtL4WiwxcZGSZWZRv25U6uMCCcYbFjqweY4jNsKmrI5McXznqc8FkgkGnghScgPg6SPr/j+WsDjy6+p9el96Ldi2N+uzJH4jHd7iA7v7Zfo8pQjjRE8M1EGHtKaWagge5RpczD1i/g2wnncBeLEajKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TM26i7vJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9AFAC4CEC0;
+	Fri, 13 Sep 2024 20:08:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726258047;
-	bh=OwucU7JylqM1ydEUxbib2Jfrw6rQelxxFrVsFvAgrAE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DDaE9vK4/fYXrY5jQuv5XvJIYTgAHm/+XAvt8nuqNsR7FVsbuu9wIJnGkMmzgPmwZ
-	 jvLyFv9r7CilTbYqOTaC6p0S7yG282C4bEBGKl+WVukEqTWDYaX8sMKaqhwWI97Ys9
-	 WNMu/c90FGEMD/aVR3gs0AqS2I3DITpviDpFdnRd/VQv3+WbYfi+DKCsqo5pWM5/w5
-	 L4ktgFo7een+hTdF09KPBNZZPPrwUP3ypu8GKIoXy7MHYFMK2bkJ+6uxvu2iR3ELx3
-	 Mti+sy7tdB65yuSS7fbecEA66+QTSV0nX83UTa+x1t2ARjIS3C4rYMO0yJ180UBe0C
-	 hDwqoDw+Uj2Eg==
-Received: by pali.im (Postfix)
-	id 0B00C725; Fri, 13 Sep 2024 22:07:22 +0200 (CEST)
-Date: Fri, 13 Sep 2024 22:07:21 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>
-Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/7] cifs: Fix creating of SFU fifo and socket special
- files
-Message-ID: <20240913200721.7egunkwp76qo5yy7@pali>
-References: <20240912120548.15877-1-pali@kernel.org>
- <20240912120548.15877-7-pali@kernel.org>
+	s=k20201202; t=1726258120;
+	bh=dxFpgDa+4nXBtmbI56A2QbjsBwTKl2xZ/2KbD9wx+r0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=TM26i7vJ0x94FaRh1n8zzhJ/I4T62T6iOXhlaIMsYfWNv+2ruRcxmqgmyf0JVmvAh
+	 yusD4EwybmdTyKHcDcY33cu7snLzI0IjsHWNKx9Jk1zy6pRbZJk0bEojV13p9Ua/IL
+	 jOcg51spC6rIYNzwN+Y5I3Da0zNodgKTuCK+OWkY6q/+InR/JIR2hQHQdEJvoNbdem
+	 8+E6yIt4W0kFB0stSEYILC+VERGKUC7xRmFAagGAh/j8WmpuIfpWHo+oFrUvN7i2bR
+	 M97lgoNpcxCUPDp85toxoEVjRvHwlCoZGnmfGYrwu8gsk7HkCR2HRyocFZ1Dm600dh
+	 Ceom9+YJUTRgg==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Laxman Dewangan <ldewangan@nvidia.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Thierry Reding <treding@nvidia.com>,
+	linux-input@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] input: tegra: Use of_property_read_variable_u32_array() and of_property_present()
+Date: Fri, 13 Sep 2024 15:08:26 -0500
+Message-ID: <20240913200827.546649-1-robh@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240912120548.15877-7-pali@kernel.org>
-User-Agent: NeoMutt/20180716
 
-On Thursday 12 September 2024 14:05:47 Pali Rohár wrote:
-> SFU-style fifo is empty file with system attribute set. This format is used
-> by old Microsoft POSIX subsystem and later also by OpenNT/Interix subsystem
-> (which replaced Microsoft POSIX subsystem and is part of Microsoft SFU).
-> 
-> SFU-style socket is file which has system attribute set and file content is
-> one zero byte. This format was introduced in Interix 3.0 subsystem, as part
-> of the Microsoft SFU 3.0 and is used also by all later versions. Previous
-> versions had no UNIX domain socket support.
-> 
-> Currently when sfu mount option is specified then CIFS creates fifo and
-> socket special files with some strange LnxSOCK or LnxFIFO content which is
-> not compatible with Microsoft SFU and neither recognized by other SMB
-> implementations which have some SFU support, including older Linux cifs
-> implementations.
-> 
-> So when sfu mount option is specified, create all fifo and socket special
-> files compatible with SFU format to achieve SFU interop, as it is expected
-> by sfu mount option.
-> 
-> Signed-off-by: Pali Rohár <pali@kernel.org>
+There's no need to get the length of an DT array property before
+parsing the array. of_property_read_variable_u32_array() takes a
+minimum and maximum length and returns the actual length (or error
+code).
 
-Fixes: 72bc63f5e23a ("smb3: fix creating FIFOs when mounting with "sfu" mount option")
-Fixes: 518549c120e6 ("cifs: fix creating sockets when using sfu mount options")
+This is part of a larger effort to remove callers of of_get_property()
+and similar functions. of_get_property() leaks the DT property data
+pointer which is a problem for dynamically allocated nodes which may
+be freed.
 
-I located commits which introduced those strange LnxSOCK or LnxFIFO
-types which are not compatible with SFU. I would suggest to add those
-two Fixes: tags into commit message for reference.
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+v2:
+ - Fix missing Sob
+---
+ drivers/input/keyboard/tegra-kbc.c | 72 +++++++++++-------------------
+ 1 file changed, 27 insertions(+), 45 deletions(-)
 
-> ---
->  fs/smb/client/cifssmb.c |  8 ++++----
->  fs/smb/client/smb1ops.c |  2 +-
->  fs/smb/client/smb2ops.c | 29 +++++++++++++++++++----------
->  3 files changed, 24 insertions(+), 15 deletions(-)
-> 
-> diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
-> index cfae2e918209..0ffc45aa5e2c 100644
-> --- a/fs/smb/client/cifssmb.c
-> +++ b/fs/smb/client/cifssmb.c
-> @@ -1076,8 +1076,8 @@ SMBLegacyOpen(const unsigned int xid, struct cifs_tcon *tcon,
->  	pSMB->OpenFlags |= cpu_to_le16(REQ_MORE_INFO);
->  	pSMB->Mode = cpu_to_le16(access_flags_to_smbopen_mode(access_flags));
->  	pSMB->Mode |= cpu_to_le16(0x40); /* deny none */
-> -	/* set file as system file if special file such
-> -	   as fifo and server expecting SFU style and
-> +	/* set file as system file if special file such as fifo,
-> +	 * socket, char or block and server expecting SFU style and
->  	   no Unix extensions */
->  
->  	if (create_options & CREATE_OPTION_SPECIAL)
-> @@ -1193,8 +1193,8 @@ CIFS_open(const unsigned int xid, struct cifs_open_parms *oparms, int *oplock,
->  	req->AllocationSize = 0;
->  
->  	/*
-> -	 * Set file as system file if special file such as fifo and server
-> -	 * expecting SFU style and no Unix extensions.
-> +	 * Set file as system file if special file such as fifo, socket, char
-> +	 * or block and server expecting SFU style and no Unix extensions.
->  	 */
->  	if (create_options & CREATE_OPTION_SPECIAL)
->  		req->FileAttributes = cpu_to_le32(ATTR_SYSTEM);
-> diff --git a/fs/smb/client/smb1ops.c b/fs/smb/client/smb1ops.c
-> index e1f2feb56f45..e03c91a49650 100644
-> --- a/fs/smb/client/smb1ops.c
-> +++ b/fs/smb/client/smb1ops.c
-> @@ -1078,7 +1078,7 @@ cifs_make_node(unsigned int xid, struct inode *inode,
->  	/*
->  	 * Check if mounted with mount parm 'sfu' mount parm.
->  	 * SFU emulation should work with all servers, but only
-> -	 * supports block and char device (no socket & fifo),
-> +	 * supports block and char device, socket & fifo,
->  	 * and was used by default in earlier versions of Windows
->  	 */
->  	if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_UNX_EMUL))
-> diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-> index 9c2d065d3cc4..9e90672caf60 100644
-> --- a/fs/smb/client/smb2ops.c
-> +++ b/fs/smb/client/smb2ops.c
-> @@ -5066,26 +5066,32 @@ static int __cifs_sfu_make_node(unsigned int xid, struct inode *inode,
->  	struct cifs_fid fid;
->  	unsigned int bytes_written;
->  	struct win_dev pdev = {};
-> +	size_t pdev_len = 0;
->  	struct kvec iov[2];
->  	__u32 oplock = server->oplocks ? REQ_OPLOCK : 0;
->  	int rc;
->  
->  	switch (mode & S_IFMT) {
->  	case S_IFCHR:
-> +		pdev_len = sizeof(pdev);
->  		memcpy(pdev.type, "IntxCHR\0", 8);
->  		pdev.major = cpu_to_le64(MAJOR(dev));
->  		pdev.minor = cpu_to_le64(MINOR(dev));
->  		break;
->  	case S_IFBLK:
-> +		pdev_len = sizeof(pdev);
->  		memcpy(pdev.type, "IntxBLK\0", 8);
->  		pdev.major = cpu_to_le64(MAJOR(dev));
->  		pdev.minor = cpu_to_le64(MINOR(dev));
->  		break;
->  	case S_IFSOCK:
-> -		strscpy(pdev.type, "LnxSOCK");
-> +		/* SFU socket is system file with one zero byte */
-> +		pdev_len = 1;
-> +		pdev.type[0] = '\0';
->  		break;
->  	case S_IFIFO:
-> -		strscpy(pdev.type, "LnxFIFO");
-> +		/* SFU fifo is system file which is empty */
-> +		pdev_len = 0;
->  		break;
->  	default:
->  		return -EPERM;
-> @@ -5100,14 +5106,17 @@ static int __cifs_sfu_make_node(unsigned int xid, struct inode *inode,
->  	if (rc)
->  		return rc;
->  
-> -	io_parms.pid = current->tgid;
-> -	io_parms.tcon = tcon;
-> -	io_parms.length = sizeof(pdev);
-> -	iov[1].iov_base = &pdev;
-> -	iov[1].iov_len = sizeof(pdev);
-> +	if (pdev_len > 0) {
-> +		io_parms.pid = current->tgid;
-> +		io_parms.tcon = tcon;
-> +		io_parms.length = pdev_len;
-> +		iov[1].iov_base = &pdev;
-> +		iov[1].iov_len = pdev_len;
-> +
-> +		rc = server->ops->sync_write(xid, &fid, &io_parms,
-> +					     &bytes_written, iov, 1);
-> +	}
->  
-> -	rc = server->ops->sync_write(xid, &fid, &io_parms,
-> -				     &bytes_written, iov, 1);
->  	server->ops->close(xid, tcon, &fid);
->  	return rc;
->  }
-> @@ -5149,7 +5158,7 @@ static int smb2_make_node(unsigned int xid, struct inode *inode,
->  	/*
->  	 * Check if mounted with mount parm 'sfu' mount parm.
->  	 * SFU emulation should work with all servers, but only
-> -	 * supports block and char device (no socket & fifo),
-> +	 * supports block and char device, socket & fifo,
->  	 * and was used by default in earlier versions of Windows
->  	 */
->  	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_UNX_EMUL) {
-> -- 
-> 2.20.1
-> 
+diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
+index 204ba189807e..6776dd94ce76 100644
+--- a/drivers/input/keyboard/tegra-kbc.c
++++ b/drivers/input/keyboard/tegra-kbc.c
+@@ -484,12 +484,10 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
+ 	struct device_node *np = kbc->dev->of_node;
+ 	u32 prop;
+ 	int i;
+-	u32 num_rows = 0;
+-	u32 num_cols = 0;
++	int num_rows;
++	int num_cols;
+ 	u32 cols_cfg[KBC_MAX_GPIO];
+ 	u32 rows_cfg[KBC_MAX_GPIO];
+-	int proplen;
+-	int ret;
+ 
+ 	if (!of_property_read_u32(np, "nvidia,debounce-delay-ms", &prop))
+ 		kbc->debounce_cnt = prop;
+@@ -503,56 +501,23 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
+ 	    of_property_read_bool(np, "nvidia,wakeup-source")) /* legacy */
+ 		kbc->wakeup = true;
+ 
+-	if (!of_get_property(np, "nvidia,kbc-row-pins", &proplen)) {
+-		dev_err(kbc->dev, "property nvidia,kbc-row-pins not found\n");
+-		return -ENOENT;
+-	}
+-	num_rows = proplen / sizeof(u32);
+-
+-	if (!of_get_property(np, "nvidia,kbc-col-pins", &proplen)) {
+-		dev_err(kbc->dev, "property nvidia,kbc-col-pins not found\n");
+-		return -ENOENT;
+-	}
+-	num_cols = proplen / sizeof(u32);
+-
+-	if (num_rows > kbc->hw_support->max_rows) {
+-		dev_err(kbc->dev,
+-			"Number of rows is more than supported by hardware\n");
+-		return -EINVAL;
+-	}
+-
+-	if (num_cols > kbc->hw_support->max_columns) {
+-		dev_err(kbc->dev,
+-			"Number of cols is more than supported by hardware\n");
+-		return -EINVAL;
+-	}
+-
+-	if (!of_get_property(np, "linux,keymap", &proplen)) {
++	if (!of_property_present(np, "linux,keymap")) {
+ 		dev_err(kbc->dev, "property linux,keymap not found\n");
+ 		return -ENOENT;
+ 	}
+ 
+-	if (!num_rows || !num_cols || ((num_rows + num_cols) > KBC_MAX_GPIO)) {
+-		dev_err(kbc->dev,
+-			"keypad rows/columns not properly specified\n");
+-		return -EINVAL;
+-	}
+-
+ 	/* Set all pins as non-configured */
+ 	for (i = 0; i < kbc->num_rows_and_columns; i++)
+ 		kbc->pin_cfg[i].type = PIN_CFG_IGNORE;
+ 
+-	ret = of_property_read_u32_array(np, "nvidia,kbc-row-pins",
+-				rows_cfg, num_rows);
+-	if (ret < 0) {
++	num_rows = of_property_read_variable_u32_array(np, "nvidia,kbc-row-pins",
++				rows_cfg, 1, KBC_MAX_GPIO);
++	if (num_rows < 0) {
+ 		dev_err(kbc->dev, "Rows configurations are not proper\n");
+-		return -EINVAL;
+-	}
+-
+-	ret = of_property_read_u32_array(np, "nvidia,kbc-col-pins",
+-				cols_cfg, num_cols);
+-	if (ret < 0) {
+-		dev_err(kbc->dev, "Cols configurations are not proper\n");
++		return num_rows;
++	} else if (num_rows > kbc->hw_support->max_rows) {
++		dev_err(kbc->dev,
++			"Number of rows is more than supported by hardware\n");
+ 		return -EINVAL;
+ 	}
+ 
+@@ -561,11 +526,28 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
+ 		kbc->pin_cfg[rows_cfg[i]].num = i;
+ 	}
+ 
++	num_cols = of_property_read_variable_u32_array(np, "nvidia,kbc-col-pins",
++				cols_cfg, 1, KBC_MAX_GPIO);
++	if (num_cols < 0) {
++		dev_err(kbc->dev, "Cols configurations are not proper\n");
++		return num_cols;
++	} else if (num_cols > kbc->hw_support->max_columns) {
++		dev_err(kbc->dev,
++			"Number of cols is more than supported by hardware\n");
++		return -EINVAL;
++	}
++
+ 	for (i = 0; i < num_cols; i++) {
+ 		kbc->pin_cfg[cols_cfg[i]].type = PIN_CFG_COL;
+ 		kbc->pin_cfg[cols_cfg[i]].num = i;
+ 	}
+ 
++	if (!num_rows || !num_cols || ((num_rows + num_cols) > KBC_MAX_GPIO)) {
++		dev_err(kbc->dev,
++			"keypad rows/columns not properly specified\n");
++		return -EINVAL;
++	}
++
+ 	return 0;
+ }
+ 
+-- 
+2.45.2
+
 
