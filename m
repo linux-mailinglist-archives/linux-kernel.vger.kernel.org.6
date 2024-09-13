@@ -1,71 +1,74 @@
-Return-Path: <linux-kernel+bounces-328146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D3B9977F89
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:15:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EE89977F66
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:13:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2F2F1F28AD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:15:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7957C1C21E58
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73AEB1DB52F;
-	Fri, 13 Sep 2024 12:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10ACC1DA0EC;
+	Fri, 13 Sep 2024 12:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="BtZXYPFW"
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hXRPwYOD"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6BD1DA108;
-	Fri, 13 Sep 2024 12:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A0D1D933F;
+	Fri, 13 Sep 2024 12:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726229647; cv=none; b=J/gLD8zvSxD4QGREQqa6g64KOfMNL3BUoMLpjK/K/mRoR8uUiD68uIf2fSxF8FIuq5K8QS+e77IKgFAAfYNEiQnOnUiyVLXJM/RTrRnH6taMw3F8i9UfOulZzhuiZBYxXt6W39I7FRs8ZE7QQUrbM6z53dQ0ZhDvAJgVN/FEBDg=
+	t=1726229612; cv=none; b=ceGYz4zx8fcsHOIeL60xjmo1TgY1HvvEM1UnQgY/nre4TqBxF6UHiK38p9/QxZcKHPGna/CTMlMiGG1i2qEohWE7Vmb1Gi3KjwYqQsBUVOQnMyn5h8nNvjlQqfWAj5HOjBCiVjS6+qx7ZvR2az2kg5z+L29r5+IkBwqZ/are6fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726229647; c=relaxed/simple;
-	bh=YptXm1pdutJEYoAwHFHCNY1So2+7HjXqhrl7NsdFzNI=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ib4q/a6jNVTbRuwC5HyvA5ubq8FGjK8ZoKAbO41CptSDq6+90/bM0Bnj7UrZbA1H90nuNWe0o9OnOYaj+0hpByZ7Q3txQPjDxGNJ/9IY6Qp9pWRc3w69xcHyEY8DQxGA1XP666FSpSie0zGYvJNO1XVhDV/xdR0GoLbMHhAglSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=BtZXYPFW; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id E0208120006;
-	Fri, 13 Sep 2024 15:13:54 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru E0208120006
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1726229634;
-	bh=e1P46PX2aQnH489x4gvHWHOmb6joxs+6jxfK9rLJ+Ao=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=BtZXYPFW52K6fY2h03emEVIjUjheq2zhTMJD2Fu7VpAK0T3w5UFXlqjpWhms0P0Rc
-	 0qFWEGO4temfj+DVouUhJJnviijLhCauHNPMRWgFvP8SA9Yt6/S5nvWOTkiSokgwHj
-	 WPfWemoxa7GlWt819iA6Dd+vHhFQwk08esnE6eXYTuW93bXBYraW/NLTP2z4RXYqTa
-	 6VeG4kSg3ELqHB1KG6G7iXk+8Cj00DGFYCTTcF5qzUWsgbhWuDz6iIDCPjDReRTkgN
-	 HndOLHGrLPMkypjyxxQNVB4YVIGGSX8N0CbtR8t5DfX2GQh7TyUww5kLvcsyfql4+m
-	 LKSthj61C0CKQ==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Fri, 13 Sep 2024 15:13:54 +0300 (MSK)
-From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Conor Dooley
-	<conor+dt@kernel.org>, <devicetree@vger.kernel.org>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Martin Blumenstingl
-	<martin.blumenstingl@googlemail.com>, Michael Turquette
-	<mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: [RFC PATCH v4 5/5] arm64: dts: meson: a1: add the audio clock controller
-Date: Fri, 13 Sep 2024 15:11:52 +0300
-Message-ID: <20240913121152.817575-6-jan.dakinevich@salutedevices.com>
+	s=arc-20240116; t=1726229612; c=relaxed/simple;
+	bh=mhIAv4H4bcwUpsqnF9Q4kf2CpyTFg5Lh7gP4ThHjIS4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=T5NA39K9v/vzvRoK9M/lGeAMMNg6XI6KLWjeoEUSihJEMnMlEzyvuDaxrAmMdy4liW6mEQbJGY5bPJOEi+hqwdQNaNgqw11CBBQosv+mCJnQ+kxwa/gU9NuXJ7F84sOvXzS8fNKUc+yWDpSW75m9xdsGGLmot5V8h+gvjbs22P0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hXRPwYOD; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48DABMIa005030;
+	Fri, 13 Sep 2024 12:13:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=1AooGth89JOfoojAJjcewv
+	cYbpjtGHpXrCI2N3XU/iw=; b=hXRPwYODX4YJcwpx30oYoD2tZB55qJfIvm0vrv
+	6jJUa53n3lftbsTM0Ru1XCny/zz2tPUz8kVyHLOJIOg1gOi1PLlIIO1ozbPugW7j
+	TUUjgw3U6V5OC74azB+MMOXPq6GzVE65jZschcB0lObhw4QbjORJsf+rWQSgEzRJ
+	wFGspGq20cBi9nEYB/hGiLqIL4CpN2cysuw845/H/v7s+ALoaZIeI1eKOC56MSg7
+	quqjQfnYSAbWG0/fftxgZ0yJhpSRoKK7AdlTYEwqmhayHMjT5CkEb0teMxx/Ya3p
+	1e5WCu1LO0+b9q45XHIAClq9p+Go9b5ccZwI9CFiiGYjypvQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41kvma49wp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 12:13:14 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48DCDCiq031299
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 12:13:12 GMT
+Received: from hu-srichara-blr.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 13 Sep 2024 05:13:06 -0700
+From: Sricharan R <quic_srichara@quicinc.com>
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <ulf.hansson@linaro.org>,
+        <linus.walleij@linaro.org>, <catalin.marinas@arm.com>,
+        <p.zabel@pengutronix.de>, <geert+renesas@glider.be>,
+        <dmitry.baryshkov@linaro.org>, <neil.armstrong@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC: <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
+Subject: [PATCH 0/8] Add minimal boot support for IPQ5424
+Date: Fri, 13 Sep 2024 17:42:42 +0530
+Message-ID: <20240913121250.2995351-1-quic_srichara@quicinc.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240913121152.817575-1-jan.dakinevich@salutedevices.com>
-References: <20240913121152.817575-1-jan.dakinevich@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,98 +77,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: p-i-exch-a-m1.sberdevices.ru (172.24.196.116) To
- p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 187732 [Sep 13 2024]
-X-KSMG-AntiSpam-Version: 6.1.1.5
-X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 34 0.3.34 8a1fac695d5606478feba790382a59668a4f0039, {Tracking_smtp_not_equal_from}, smtp.sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;salutedevices.com:7.1.1, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_sender_alignment_int}, {Tracking_white_helo}, FromAlignment: n
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/09/13 10:05:00 #26575345
-X-KSMG-AntiVirus-Status: Clean, skipped
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: bW8SnII2gw-AOFO15_z4RLMu-M2xaqEM
+X-Proofpoint-GUID: bW8SnII2gw-AOFO15_z4RLMu-M2xaqEM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ phishscore=0 mlxlogscore=631 bulkscore=0 priorityscore=1501 adultscore=0
+ mlxscore=0 spamscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409130085
 
-Add the bus and audio clock controllers' device tree nodes.
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
 
-Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
----
- arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 48 +++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+The IPQ5424 is Qualcomm's 802.11be SoC for Routers, Gateways and
+Access Points.
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-index e5366d4239b1..b22cd5330606 100644
---- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-@@ -5,6 +5,7 @@
- 
- #include <dt-bindings/clock/amlogic,a1-pll-clkc.h>
- #include <dt-bindings/clock/amlogic,a1-peripherals-clkc.h>
-+#include <dt-bindings/clock/amlogic,a1-audio-clkc.h>
- #include <dt-bindings/gpio/meson-a1-gpio.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-@@ -448,6 +449,53 @@ sd_emmc: mmc@10000 {
- 				power-domains = <&pwrc PWRC_SD_EMMC_ID>;
- 				status = "disabled";
- 			};
-+
-+			audio: bus@50000 {
-+				compatible = "simple-bus";
-+				#address-cells = <2>;
-+				#size-cells = <2>;
-+				ranges = <0x0 0x0 0x0 0x50000 0 0x4980>;
-+				power-domains = <&pwrc PWRC_AUDIO_ID>;
-+
-+				clkc_audio: clock-controller@0 {
-+					compatible = "amlogic,a1-audio-clkc";
-+					reg = <0x0 0x0 0x0 0xb0>;
-+					#clock-cells = <1>;
-+					#reset-cells = <1>;
-+					clocks = <&clkc_audio_vad AUD_CLKID_VAD_AUDIOTOP>,
-+						 <&clkc_periphs CLKID_DDS_IN>,
-+						 <&clkc_pll CLKID_FCLK_DIV2>,
-+						 <&clkc_pll CLKID_FCLK_DIV3>,
-+						 <&clkc_pll CLKID_HIFI_PLL>,
-+						 <&xtal>;
-+					clock-names = "pclk",
-+						      "mst_in0",
-+						      "mst_in1",
-+						      "mst_in2",
-+						      "mst_in3",
-+						      "mst_in4";
-+					resets = <&reset RESET_AUDIO>;
-+				};
-+
-+				clkc_audio_vad: clock-controller@4800 {
-+					compatible = "amlogic,a1-audio-vad-clkc";
-+					reg = <0x0 0x4800 0x0 0x20>;
-+					#clock-cells = <1>;
-+					clocks = <&clkc_periphs CLKID_AUDIO>,
-+						 <&clkc_periphs CLKID_DDS_IN>,
-+						 <&clkc_pll CLKID_FCLK_DIV2>,
-+						 <&clkc_pll CLKID_FCLK_DIV3>,
-+						 <&clkc_pll CLKID_HIFI_PLL>,
-+						 <&xtal>;
-+					clock-names = "pclk",
-+						      "mst_in0",
-+						      "mst_in1",
-+						      "mst_in2",
-+						      "mst_in3",
-+						      "mst_in4";
-+					resets = <&reset RESET_AUDIO_VAD>;
-+				};
-+			};
- 		};
- 
- 		usb: usb@fe004400 {
+This series adds minimal board boot support for ipq5424-rdp466 board.
+
+Depends upon [1]
+
+[1] https://patchwork.kernel.org/project/linux-clk/patch/20240626143302.810632-2-quic_devipriy@quicinc.com/
+
+Sricharan Ramabadhran (8):
+  dt-bindings: clock: Add Qualcomm IPQ5424 GCC
+  dt-bindings: pinctrl: qcom: add IPQ5332 pinctrl
+  dt-bindings: mmc: sdhci-msm: add IPQ5424 compatible
+  pinctrl: qcom: Introduce IPQ5424 TLMM driver
+  clk: qcom: add Global Clock controller (GCC) driver for IPQ5424 SoC
+  dt-bindings: qcom: Add ipq5424 boards
+  arm64: dts: qcom: add IPQ5424 SoC and rdp466 board support
+  arm64: defconfig: Enable IPQ5424 SoC base configs
+
+ .../devicetree/bindings/arm/qcom.yaml         |    6 +
+ .../bindings/clock/qcom,ipq5424-gcc.yaml      |   58 +
+ .../devicetree/bindings/mmc/sdhci-msm.yaml    |    1 +
+ .../bindings/pinctrl/qcom,ipq5424-tlmm.yaml   |  115 +
+ arch/arm64/boot/dts/qcom/Makefile             |    1 +
+ arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts   |   63 +
+ arch/arm64/boot/dts/qcom/ipq5424.dtsi         |  294 ++
+ arch/arm64/configs/defconfig                  |    2 +
+ drivers/clk/qcom/Kconfig                      |    7 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/gcc-ipq5424.c                | 3333 +++++++++++++++++
+ drivers/pinctrl/qcom/Kconfig.msm              |    9 +
+ drivers/pinctrl/qcom/Makefile                 |    1 +
+ drivers/pinctrl/qcom/pinctrl-ipq5424.c        |  792 ++++
+ include/dt-bindings/clock/qcom,ipq5424-gcc.h  |  156 +
+ include/dt-bindings/reset/qcom,ipq5424-gcc.h  |  310 ++
+ 16 files changed, 5149 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq5424-gcc.yaml
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq5424-tlmm.yaml
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq5424-rdp466.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/ipq5424.dtsi
+ create mode 100644 drivers/clk/qcom/gcc-ipq5424.c
+ create mode 100644 drivers/pinctrl/qcom/pinctrl-ipq5424.c
+ create mode 100644 include/dt-bindings/clock/qcom,ipq5424-gcc.h
+ create mode 100644 include/dt-bindings/reset/qcom,ipq5424-gcc.h
+
 -- 
 2.34.1
 
