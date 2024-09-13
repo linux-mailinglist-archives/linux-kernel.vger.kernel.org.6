@@ -1,184 +1,127 @@
-Return-Path: <linux-kernel+bounces-328794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF1B89788FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:32:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3549978901
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:34:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50C5F1F26EFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:32:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BD0028414A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F0C146A6B;
-	Fri, 13 Sep 2024 19:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8D9146D59;
+	Fri, 13 Sep 2024 19:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Yednq30N"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gMrBm0T5"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E86413AD03;
-	Fri, 13 Sep 2024 19:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0CAE12DD90;
+	Fri, 13 Sep 2024 19:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726255947; cv=none; b=UlTThsAOpEmr7eASh0WfP0ZOPgTj/uga48V6CKHhzv+7NsRAB2cTG4jafqmF9H7RU/WkrwvavP1AudHSI5ha39kR4oaqwvttgymE3EjjasiZld2k+TZdmWgwFF8LLe3dUIz4UIjCJYgF66HdKRhljAiXjj0/WumjYKifLEYHpFM=
+	t=1726256068; cv=none; b=YLuw2XpA+wOIeJb+Ni6v0RDmZk5mR0YnXVHEJ4ynEG2sbqTWqvWP6AhTEum+4MZQpNleTldAt6qgxwnsCW43w36mD70rHhhNq+Co3rKv1KDj7G/f/sy2I0kVeCUs4IgjNj+4xUsnrO1oQEC403jH0t5oNG89PFP1J7ngTybQJIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726255947; c=relaxed/simple;
-	bh=CAh7OJCKr+ZZWcKaCK8a8dneJu3h6r5pEUsUumEe//Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b6LMG1qL8zNafOZYNbmu7ivrByDMLMJSQhzCQnfybXGz7GProZWxhjqjclNI5i2NSm6Put1ZV1XTmkWNa2j/UgDoNdpcPJe8Zc8s7yyT3gcSPd4TzbrPgo/gk5phtAVUTOvPeaUVO5bjRqYiEVQVBA7177s/SdhQ/Kyno+5+fxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Yednq30N; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E834F60002;
-	Fri, 13 Sep 2024 19:32:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1726255942;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x2of1BdHGwZAspl/pHlPclrXtKEUjMefV4+slP9HEaE=;
-	b=Yednq30NTIRFFSqwaFEEiemih/JhA8Y5QpUO/NJaO7jdAS8ykd/LaJYepppl1vRMGh5Bu3
-	5KglUphzYAwMjRSJQoH+XEV6DIJ2Da+phyzUur5iMSwAYes2nj4VNsfsMmjF8Gl/HckJml
-	4DXajWu5uj5Q7VU9IkbYsigpcGBPxafH4Ds/RMHYuP0RYYsSNIaZntl4TYBgI+QTxfiN+I
-	jZGeTI4aD/dxORLSNAD0gP+9GaYgpk3yNBMWY+Ape+coSlLrilqrzBP3ZsyKCKyxqPIQKD
-	0KV3dJBNVEk8f5rUcpOiAGgZVV6iQLNL1fBSq4uuHfNd/Glll+yAyNdQEze0TA==
-Date: Fri, 13 Sep 2024 21:32:19 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- patches@lists.linux.dev, linux-arm-msm@vger.kernel.org, Douglas Anderson
- <dianders@chromium.org>, Krzysztof Kozlowski <krzk@kernel.org>, Marek
- Szyprowski <m.szyprowski@samsung.com>, Taniya Das <quic_tdas@quicinc.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 0/5] Fix a deadlock with clk_pm_runtime_get()
-Message-ID: <20240913213219.2d5efa2c@xps-13>
-In-Reply-To: <20240325054403.592298-1-sboyd@kernel.org>
-References: <20240325054403.592298-1-sboyd@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1726256068; c=relaxed/simple;
+	bh=58xEeBUkLGAvA3YTBf8guodbomstYwW1DUFe8yFZ6EA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QM/kCRvwTzIYIsaYRMDjmZWYWciNNdbe5LbAmVBHw5DQo476pOPDL1EW9kKLsPI7xMkKrDVdcLHIPuiqhAtxaCJFSg979svhZLPwk8w/0xhxF9Idss6KcGqqbnlGS7D0aHPYuyKo18TXCzgcnlTFLiPIocTHCnYOhd4tVRWeCYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gMrBm0T5; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-718d91eef2eso1657803b3a.1;
+        Fri, 13 Sep 2024 12:34:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726256067; x=1726860867; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1LSaQHVbC+YpoJ3RozOP+5aECp20xDoqhwrpbiQ2wDM=;
+        b=gMrBm0T5BMl46tl008+sUJASKyGnEWt85VL/pbD1Zncf9hnP/yEQ7xBgXkFv1xdBmI
+         xNUIYuz/1wImJzjpdS2ZdEUYPzZopFWhYtn+GUSzlQ3TnmJ3zYsIBGGkgeav9VTWH30S
+         M8VrQSbmrcgX/SIKSFTrq9b9jAD0lrWMxH7VhtmF0O2Ek9Dn53qH5NhYZIHda7L/tKFA
+         O0SOdF/d2irTY7rbcczhhCmqdgEaCHocluJ97c/KXOUyRlXssai6yyCVob3BA/Czo5hK
+         IW649jMhWoOsWUvFwzA6493ue8CFqS31qVn+Klwg/yejuY47Kg0UJPdEFXxnXnbWRvlB
+         juTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726256067; x=1726860867;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1LSaQHVbC+YpoJ3RozOP+5aECp20xDoqhwrpbiQ2wDM=;
+        b=YF1t3HH6Q33M5h//jhU1RbixaUe/vfQ/H3CvyDAkiUWa3Pvg6/+oxHIV/W0rn4QetR
+         wvka7j0vo8fyQhJNyQyXkplniAxgFh9eGmaTQ68dugXCKR3FtCqs+T3hdpEiICPFUflb
+         EOJjSLQZdxg2AwDM5LCcvdX3EqkyuACJYOXbir68t55kazwI+GeVbDW72t17cKuJMICd
+         CTdscLFdM+N1ijDME8TF81pmMI57Ik8CMis9jfZxzSb/yjuPy4fzyRYLmkUxGTg2NmdS
+         R+dp1qHRq+6Aqme6vh7jO/vAxrXXI11xCFP8qh5DU+A6uViw6BybTmPyzgaRJKlLzCCt
+         yJrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVH7U+0XTtaLCbBQj9gXRPEyG0yvyh6izJtR2M6NZg55/RUhy8110zY8wYmA5IWbfLAPWHlDM5dXcA9HUA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdbSIy8Om8q3RftCpCZyU5fI0RPTfuUnsvO6IbLzrv+hNG/noK
+	FioHoTHiEeA5ILdfC54GID4Af+zX5kmlG5qQg7IePVpAIFyqOyrOilFzVABk
+X-Google-Smtp-Source: AGHT+IFfjtobqQPMkb9OKLlg1I5PWajndb+eLtuLMdvhxBWmOQ4JJ0fKh+2FCmn3asUIzAuiLIKtnw==
+X-Received: by 2002:a05:6a00:2d05:b0:706:aa39:d5c1 with SMTP id d2e1a72fcca58-719263eab2cmr11149885b3a.8.1726256066430;
+        Fri, 13 Sep 2024 12:34:26 -0700 (PDT)
+Received: from amenon-us-dl.hsd1.ca.comcast.net ([2601:646:a002:44b0:385b:1e44:bb9b:db08])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-719090d08a5sm6407832b3a.212.2024.09.13.12.34.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 12:34:25 -0700 (PDT)
+From: Aakash Menon <aakash.r.menon@gmail.com>
+X-Google-Original-From: Aakash Menon <aakash.menon@protempis.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	lars.povlsen@microchip.com,
+	Steen.Hegelund@microchip.com,
+	daniel.machon@microchip.com,
+	UNGLinuxDriver@microchip.com,
+	aakash.menon@protempis.com,
+	horms@kernel.org,
+	horatiu.vultur@microchip.com
+Cc: netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] net: sparx5: Fix invalid timestamps
+Date: Fri, 13 Sep 2024 12:33:57 -0700
+Message-ID: <20240913193357.21899-1-aakash.menon@protempis.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Hi Stephen,
+Bit 270-271 are occasionally unexpectedly set by the hardware.
 
-I only discover this thread today, interesting read!
+This issue was observed with 10G SFPs causing huge time errors (> 30ms) in PTP.
 
-sboyd@kernel.org wrote on Sun, 24 Mar 2024 22:43:57 -0700:
+Only 30 bits are needed for the nanosecond part of the timestamp, clear 2 most significant bits before extracting timestamp from the internal frame header.
 
-> This patch series fixes a deadlock reported[1] on ChromeOS devices
-> (Qualcomm sc7180 Trogdor). To get there, we allow __clk_release() to run
+Signed-off-by: Aakash Menon <aakash.menon@protempis.com>
+---
+ drivers/net/ethernet/microchip/sparx5/sparx5_packet.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Not only ChromeOS devices are affected, there have been several reports
-with similar issues on the mailing list, especially on i.MX8MP, where
-the clock and power management domains are tightly connected.
+diff --git a/drivers/net/ethernet/microchip/sparx5/sparx5_packet.c b/drivers/net/ethernet/microchip/sparx5/sparx5_packet.c
+index f3f5fb420468..a05263488851 100644
+--- a/drivers/net/ethernet/microchip/sparx5/sparx5_packet.c
++++ b/drivers/net/ethernet/microchip/sparx5/sparx5_packet.c
+@@ -45,8 +45,12 @@ void sparx5_ifh_parse(u32 *ifh, struct frame_info *info)
+ 	fwd = (fwd >> 5);
+ 	info->src_port = FIELD_GET(GENMASK(7, 1), fwd);
+ 
++	/*
++	 * Bit 270-271 are occasionally unexpectedly set by the hardware,
++	 * clear bits before extracting timestamp
++	 */
+ 	info->timestamp =
+-		((u64)xtr_hdr[2] << 24) |
++		((u64)(xtr_hdr[2] & 0x3F) << 24) |
+ 		((u64)xtr_hdr[3] << 16) |
+ 		((u64)xtr_hdr[4] <<  8) |
+ 		((u64)xtr_hdr[5] <<  0);
+-- 
+2.46.0
 
-> without the prepare_lock held. Then we add runtime PM enabled clk_core
-> structs to a list that we iterate and enable runtime PM for each entry
-> before grabbing the prepare_lock to walk the clk tree. The details are
-> in patch #4.
-
-I am happy we ended-up leaning to the same solution: runtime PM calls
-should no longer happen after acquiring the prepare lock.
-
-> The patch after that is based on the analysis in the disable unused
-> patch. We similarly resume devices from runtime suspend when walking the
-> clk tree for the debugfs clk_summary.
->=20
-> Unfortunately this doesn't fix all problems with the usage of runtime PM
-> in the clk framework. We still have a problem if preparing a clk happens
-> in parallel to the device providing that clk runtime resuming or
-> suspending. In that case, the task will go to sleep waiting for the
-> runtime PM state to change, and we'll deadlock. This is primarily a
-> problem with the global prepare_lock. I suspect we'll be able to fix
-> this by implementing per-clk locking, because then we will be able to
-> split up the big prepare_lock into smaller locks that don't deadlock on
-> some device runtime PM transitions.
-
-I fear splitting the locks will actually not solve the problems we
-encounter on i.MX8.
-
-Let me quote some parts of your commit log in patch 4/5:
-
----8<---
-> This is a classic ABBA deadlock. To properly fix the deadlock, we
-> must never runtime PM resume or suspend a device with the clk
-> prepare_lock held. Actually doing that is near impossible today
-> because the global prepare_lock would have to be dropped in the
-> middle of the tree, the device runtime PM resumed/suspended, and then
-> the prepare_lock grabbed again to ensure consistency of the clk tree
-> topology. If anything changes with the clk tree in the meantime,
-> we've lost and will need to start the operation all over again.
->
-> Luckily, most of the time we're simply incrementing or decrementing
-> the runtime PM count on an active device, so we don't have the chance
-> to schedule away with the prepare_lock held. Let's fix this immediate
-> problem that can be triggered more easily by simply booting on
-> Qualcomm sc7180.
---->8---
-
-Regarding your former statement, I don't think it is impossible, this
-is what I've been trying to do recently. It is really impacting, and
-must be handled specifically for each situation: I am counting three of
-them depending on the action, where either the parents, or the
-children or both sides of the tree should be resumed before
-continuing (with optionally the new parent, when reparenting explicitly
-or doing some rate changes which also involve reparenting). I don't yet
-have a working proof-of-concept -I would have loved to before LPC- but
-this is promising and I believe doable.
-
-About your second paragraph however, I am asking whether being "most of
-the time" incrementing or decrementing the runtime PM count is
-acceptable, because if we ever perform a real state change within the
-right conditions, we will just deadlock the platform. This is
-theoretical and is unlikely to happen in general, I agree. But shall we
-consider this situation too unlikely from happening for just ignoring
-it? Shall we instead fix it properly and prepare ourselves for future
-power-optimized architecture with a lot of dependencies between clocks
-and other power-related subsystems? This is an open question.
-
-> I'll start working on that problem in earnest now because I'm worried
-> we're going to run into that problem very soon.
-
-Is there any public branch I could look into?
-
-On my side I tried to warn about this but got no feedback. I'd have
-loved to be pointed towards this patchset at that time :) Here is the
-report if you want to check it out. FYI, I was asking for feedback on
-very specific questions, which I consider now solved:
-https://lore.kernel.org/all/20240527181928.4fc6b5f0@xps-13/
-
-> Stephen Boyd (5):
->   clk: Remove prepare_lock hold assertion in __clk_release()
->   clk: Don't hold prepare_lock when calling kref_put()
->   clk: Initialize struct clk_core kref earlier
->   clk: Get runtime PM before walking tree during disable_unused
->   clk: Get runtime PM before walking tree for clk_summary
->=20
->  drivers/clk/clk.c | 142 +++++++++++++++++++++++++++++++++++++---------
->  1 file changed, 115 insertions(+), 27 deletions(-)
->=20
-> Cc: Douglas Anderson <dianders@chromium.org>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Taniya Das <quic_tdas@quicinc.com>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
->=20
-> [1] https://lore.kernel.org/all/20220922084322.RFC.2.I375b6b9e0a0a5348962=
-f004beb3dafee6a12dfbb@changeid/
->=20
-> base-commit: e8f897f4afef0031fe618a8e94127a0934896aba
-
-Thanks,
-Miqu=C3=A8l
 
