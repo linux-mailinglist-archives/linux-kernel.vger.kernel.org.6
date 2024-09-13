@@ -1,153 +1,191 @@
-Return-Path: <linux-kernel+bounces-327694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87CB99779D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:39:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 073A89779D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 459F5280F3B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:39:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8711F1F27091
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 157831BCA05;
-	Fri, 13 Sep 2024 07:39:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E388F1BC9ED;
+	Fri, 13 Sep 2024 07:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="A+0QKa3F";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="c5BSoSaD"
-Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q+RjVEEl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB5D77107;
-	Fri, 13 Sep 2024 07:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2591F77107;
+	Fri, 13 Sep 2024 07:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726213156; cv=none; b=Zd8Syj4jcS8gq/3oOe12WTjazhG8QsOh1cMSDLb+fpLegNaqEuB5HDlC9qAQEFu2xE5g+eNjOxgEnh0wJiVjbPpc/zKR8Jh1YYqpZjGJ6SiZIp/N23JvuZMoo2a44qsGbiUxbxM7BYBceyInsNOb7I1NB9V/XRF2UzoaYRv7cLY=
+	t=1726213235; cv=none; b=mR4sGA/XFqFmr2y8+Bepp7szuOzdtjRHQR5tRstAw+MdWPBYjA4LVVjk4TY/x13+RPtA8/w7hkAChIG1QNakc2/ZSXQj+KgVayY05ism9P+ifc+LfkbEbJdd8HLtqEvUPeloM41MPSZiDt5Pg7+Pw9YmuLhZBm59DkjIFpFJCJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726213156; c=relaxed/simple;
-	bh=uSyl591C5MSuYYRCXat18gjmBfYxAn2yaEESrJ+vCXI=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=H2S5Yl46N2s+LbhEeckhI6B39PVwKb9HEMfkDqdggTpmKl0N3VEZv+Bs6hcLdOc7FJVg3s2Lxf/jfUaVQ9HMDq2/pBhLioi7DLZYKydkB/5UP2DTN6agr9JK0vissUoV9VdkT+MoZLtW/5ubqm88pmHv022OB9OkMTyGC06JX+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=A+0QKa3F; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=c5BSoSaD; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 113AB13805FD;
-	Fri, 13 Sep 2024 03:39:14 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 13 Sep 2024 03:39:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1726213154;
-	 x=1726299554; bh=4RxENSVw+QennMKyvBqiq7B8zuv7KrZS6yfqHV9YR9U=; b=
-	A+0QKa3F2pM5dRKOawqql+cT7ZceMYNyLwbR0eDvRxpXMYTtnpBhHp0qnpORpbsN
-	ZZrmYqbMHAax8SZV7XJABh4JSIl1t6hJICfvKP+xhjIuYHYwW/K9XEAIy4fBKyZf
-	/nj+EZoKL+MAQk+gtx9aPHkcqYE6476vp4NH2EY6R7KZu5QtCAK7WpXZUlEAieZO
-	0j2H/D9fpop//Bx80Rfm8X/jfY2KrhpGY6wW8HMHcmP0Pu/xjAXX69G9buVoMngu
-	esoH2b/sBLP5PIkYHALp5Ina4LYOCRNSFCD+iJb4S/1v7utolwoYxudoXQvINCwX
-	bzVHl5FA6ERa/9o8X/T+7A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726213154; x=
-	1726299554; bh=4RxENSVw+QennMKyvBqiq7B8zuv7KrZS6yfqHV9YR9U=; b=c
-	5BSoSaDhmXTG7OlfFJgDKDzVpptqCJUOw4Ce4j8KDHEX4CfgLmG/ntkxgipb5zgB
-	UAaNycUggiC8uu0FWT8vc12OmViPHGlfxHXpvhQOQnFmMV3tBr5TfOgySUj+k9+e
-	yxg1o2Ouoatnc1VI5VFCvCbsUFtmTXUA8mKC5ghGqSWoxwXzzcQlRqyFqdZvoFe2
-	qYrvalDDgXq5yne3X7XPefiGkPib4B/6/2iT/BEZSMLStoQFjzTI4lI1biAgtsEd
-	Ka09afVhgmvSsrjWa33CpnCKvbTJl5upWx07OZr5iQClYe3ejR3osfcP/oaUA3Pd
-	QFRUXsOxFDImgR3J3D4NA==
-X-ME-Sender: <xms:IezjZkCY-f70XXtoh1HY7thk-2E9Mjo4cb5sSxBibhQ-DhdGD3fdbQ>
-    <xme:IezjZmhvBfI3VksaG__iCI3SyprACwGI71D9JL2pLyPxbLJuiPcECqlVYqx3RX60N
-    UQHAesG1UnxSeKK6AY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejiedggedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvdek
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehuthhsrghvrdgrghgrrhifrghlse
-    grnhgrlhhoghdrtghomhdprhgtphhtthhopegrughsphdqlhhinhhugiesrghnrghlohhg
-    rdgtohhmpdhrtghpthhtoheprghrthhurhhsrdgrrhhtrghmohhnohhvshesrghnrghloh
-    hgrdgtohhmpdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtgho
-    mhdprhgtphhtthhopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtg
-    hpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopegrnhguihdrshhhhiht
-    iheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehjihhrihhslhgrsgihsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:IezjZnk3qMnTs5XWgatW-u5DyZRYpFQdHF6YBY16xqm6b6mDp8i_7g>
-    <xmx:IezjZqzA5VSunTV1liWFxn2qW3dSXNzo5wMlrWN0N-A9roY1JAD6dQ>
-    <xmx:IezjZpRVwZNheubIFdTyqBmOYVB7HNr30FysEXnF2C-qaWLgHKue7w>
-    <xmx:IezjZlYEi1kcvMrentfAR8G9imhoUl5ObSd0qBMnKOw42mTnxwplwg>
-    <xmx:IuzjZhwUxK209n_amf5mB7GWxjlRzisayn2CeEK2oNmxgA7brD6HQ4-J>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 9A1EB222006F; Fri, 13 Sep 2024 03:39:13 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1726213235; c=relaxed/simple;
+	bh=TC8yWMCUzsIIOAoar6ERQxmmIV8IYqCvcb+0YU2s1js=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=skR7DT5kn01N3scER0VbprWhNMgW/Ih2h+fon2zavuMBCAPUUUPFn6wTQ+HRg469bvsk/JMSiq/3N6LPj9IzfIQCH/CklcN+Qapcu7D9tjMYu5D/A8Nj4eSfAWTxh3Q0ukW8h/5g/Cot+NhsSz3kt9B7D4EHxkizVXNQUtyhb+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q+RjVEEl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA72CC4CEC0;
+	Fri, 13 Sep 2024 07:40:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726213234;
+	bh=TC8yWMCUzsIIOAoar6ERQxmmIV8IYqCvcb+0YU2s1js=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=q+RjVEElEssIl0Jctkmcv2H0tOYqdArt7O7oJloCVEcH6w/hF45DWSiscBMu3dhBY
+	 rofysypEPkSFnoGzThTyKaSF1qQBDahh6rz0nQS6HOgDkcRRhCsmbPgPrnIBma9ZKf
+	 z8yGmoqGz+o1Hbf0QqQLsU/qZDAVpGHcPzJkDJdqYbIRKVPqL6QUAaDS14+hR0mYh+
+	 TGQKoO6oCcTeJ1KJXqJq6ho3WHgnjKT6l9PPhZB7vcF8fX4geQVqSGgF0Jfruye2rS
+	 n4wV/fP5C8Q0iTq6NXcmnkyO2f/QK8X8XfwT1EM8lkDM9JYHcKCP0S/5ctVa8OKnIQ
+	 nZ0ZyLvSPLQuQ==
+Date: Fri, 13 Sep 2024 09:40:30 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc: mszeredi@redhat.com, linux-fsdevel@vger.kernel.org, 
+	Miklos Szeredi <miklos@szeredi.hu>, Chandan Babu R <chandanbabu@kernel.org>, 
+	linux-kernel@vger.kernel.org, syzbot+20c7e20cc8f5296dca12@syzkaller.appspotmail.com
+Subject: Re: [PATCH] fs/fuse: fix null-ptr-deref when checking SB_I_NOIDMAP
+ flag
+Message-ID: <20240913-insasse-undeutlich-9b87a4b1c7fd@brauner>
+References: <20240912145824.187768-1-aleksandr.mikhalitsyn@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 13 Sep 2024 07:38:51 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: arturs.artamonovs@analog.com, "Catalin Marinas" <catalin.marinas@arm.com>,
- "Will Deacon" <will@kernel.org>, "Greg Malysa" <greg.malysa@timesys.com>,
- "Philipp Zabel" <p.zabel@pengutronix.de>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Utsav Agarwal" <Utsav.Agarwal@analog.com>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Andi Shyti" <andi.shyti@kernel.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Jiri Slaby" <jirislaby@kernel.org>, "Olof Johansson" <olof@lixom.net>,
- soc@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org,
- adsp-linux@analog.com,
- "Nathan Barrett-Morrison" <nathan.morrison@timesys.com>
-Message-Id: <c01bf7be-415a-4653-a122-d24f2d764b2a@app.fastmail.com>
-In-Reply-To: <20240912-test-v1-9-458fa57c8ccf@analog.com>
-References: <20240912-test-v1-0-458fa57c8ccf@analog.com>
- <20240912-test-v1-9-458fa57c8ccf@analog.com>
-Subject: Re: [PATCH 09/21] gpio: add driver for ADI ADSP-SC5xx platform
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240912145824.187768-1-aleksandr.mikhalitsyn@canonical.com>
 
-On Thu, Sep 12, 2024, at 18:24, Arturs Artamonovs via B4 Relay wrote:
-> +
-> +#include <linux/device.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/soc/adi/adsp-gpio-port.h>
-> +#include "gpiolib.h"
-> +
-> +static int adsp_gpio_direction_input(struct gpio_chip *chip, unsigned 
-> int offset)
-> +{
-> +	struct adsp_gpio_port *port = to_adsp_gpio_port(chip);
-> +
-> +	__adsp_gpio_writew(port, BIT(offset), ADSP_PORT_REG_DIR_CLEAR);
-> +	__adsp_gpio_writew(port, BIT(offset), ADSP_PORT_REG_INEN_SET);
-> +	return 0;
+On Thu, Sep 12, 2024 at 04:58:24PM GMT, Alexander Mikhalitsyn wrote:
+> It was reported [1] that on linux-next/fs-next the following crash
+> is reproducible:
+> 
+> [   42.659136] Oops: general protection fault, probably for non-canonical address 0xdffffc000000000b: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> [   42.660501] fbcon: Taking over console
+> [   42.660930] KASAN: null-ptr-deref in range [0x0000000000000058-0x000000000000005f]
+> [   42.661752] CPU: 1 UID: 0 PID: 1589 Comm: dtprobed Not tainted 6.11.0-rc6+ #1
+> [   42.662565] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.6.6 08/22/2023
+> [   42.663472] RIP: 0010:fuse_get_req+0x36b/0x990 [fuse]
+> [   42.664046] Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 8c 05 00 00 48 b8 00 00 00 00 00 fc ff df 48 8b 6d 08 48 8d 7d 58 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 4d 05 00 00 f6 45 59 20 0f 85 06 03 00 00 48 83
+> [   42.666945] RSP: 0018:ffffc900009a7730 EFLAGS: 00010212
+> [   42.668837] RAX: dffffc0000000000 RBX: 1ffff92000134eed RCX: ffffffffc20dec9a
+> [   42.670122] RDX: 000000000000000b RSI: 0000000000000008 RDI: 0000000000000058
+> [   42.672154] RBP: 0000000000000000 R08: 0000000000000001 R09: ffffed1022110172
+> [   42.672160] R10: ffff888110880b97 R11: ffffc900009a737a R12: 0000000000000001
+> [   42.672179] R13: ffff888110880b60 R14: ffff888110880b90 R15: ffff888169973840
+> [   42.672186] FS:  00007f28cd21d7c0(0000) GS:ffff8883ef280000(0000) knlGS:0000000000000000
+> [   42.672191] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   42.[ CR02: ;32m00007f3237366208 CR3: 0  OK  79e001 CR4: 0000000000770ef0
+> [   42.672214] PKRU: 55555554
+> [   42.672218] Call Trace:
+> [   42.672223]  <TASK>
+> [   42.672226]  ? die_addr+0x41/0xa0
+> [   42.672238]  ? exc_general_protection+0x14c/0x230
+> [   42.672250]  ? asm_exc_general_protection+0x26/0x30
+> [   42.672260]  ? fuse_get_req+0x77a/0x990 [fuse]
+> [   42.672281]  ? fuse_get_req+0x36b/0x990 [fuse]
+> [   42.672300]  ? kasan_unpoison+0x27/0x60
+> [   42.672310]  ? __pfx_fuse_get_req+0x10/0x10 [fuse]
+> [   42.672327]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   42.672333]  ? alloc_pages_mpol_noprof+0x195/0x440
+> [   42.672340]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   42.672345]  ? kasan_unpoison+0x27/0x60
+> [   42.672350]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   42.672355]  ? __kasan_slab_alloc+0x4d/0x90
+> [   42.672362]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   42.672367]  ? __kmalloc_cache_noprof+0x134/0x350
+> [   42.672376]  fuse_simple_background+0xe7/0x180 [fuse]
+> [   42.672406]  cuse_channel_open+0x540/0x710 [cuse]
+> [   42.672415]  misc_open+0x2a7/0x3a0
+> [   42.672424]  chrdev_open+0x1ef/0x5f0
+> [   42.672432]  ? __pfx_chrdev_open+0x10/0x10
+> [   42.672439]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   42.672443]  ? security_file_open+0x3bb/0x720
+> [   42.672451]  do_dentry_open+0x43d/0x1200
+> [   42.672459]  ? __pfx_chrdev_open+0x10/0x10
+> [   42.672468]  vfs_open+0x79/0x340
+> [   42.672475]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   42.672482]  do_open+0x68c/0x11e0
+> [   42.672489]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   42.672495]  ? __pfx_do_open+0x10/0x10
+> [   42.672501]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   42.672506]  ? open_last_lookups+0x2a2/0x1370
+> [   42.672515]  path_openat+0x24f/0x640
+> [   42.672522]  ? __pfx_path_openat+0x10/0x10
+> [   42.723972]  ? stack_depot_save_flags+0x45/0x4b0
+> [   42.724787]  ? __fput+0x43c/0xa70
+> [   42.725100]  do_filp_open+0x1b3/0x3e0
+> [   42.725710]  ? poison_slab_object+0x10d/0x190
+> [   42.726145]  ? __kasan_slab_free+0x33/0x50
+> [   42.726570]  ? __pfx_do_filp_open+0x10/0x10
+> [   42.726981]  ? do_syscall_64+0x64/0x170
+> [   42.727418]  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [   42.728018]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   42.728505]  ? do_raw_spin_lock+0x131/0x270
+> [   42.728922]  ? __pfx_do_raw_spin_lock+0x10/0x10
+> [   42.729494]  ? do_raw_spin_unlock+0x14c/0x1f0
+> [   42.729992]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   42.730889]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   42.732178]  ? alloc_fd+0x176/0x5e0
+> [   42.732585]  do_sys_openat2+0x122/0x160
+> [   42.732929]  ? __pfx_do_sys_openat2+0x10/0x10
+> [   42.733448]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   42.734013]  ? __pfx_map_id_up+0x10/0x10
+> [   42.734482]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   42.735529]  ? __memcg_slab_free_hook+0x292/0x500
+> [   42.736131]  __x64_sys_openat+0x123/0x1e0
+> [   42.736526]  ? __pfx___x64_sys_openat+0x10/0x10
+> [   42.737369]  ? __x64_sys_close+0x7c/0xd0
+> [   42.737717]  ? srso_alias_return_thunk+0x5/0xfbef5
+> [   42.738192]  ? syscall_trace_enter+0x11e/0x1b0
+> [   42.738739]  do_syscall_64+0x64/0x170
+> [   42.739113]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [   42.739638] RIP: 0033:0x7f28cd13e87b
+> [   42.740038] Code: 25 00 00 41 00 3d 00 00 41 00 74 4b 64 8b 04 25 18 00 00 00 85 c0 75 67 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 0f 87 91 00 00 00 48 8b 54 24 28 64 48 2b 14 25
+> [   42.741943] RSP: 002b:00007ffc992546c0 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+> [   42.742951] RAX: ffffffffffffffda RBX: 00007f28cd44f1ee RCX: 00007f28cd13e87b
+> [   42.743660] RDX: 0000000000000002 RSI: 00007f28cd44f2fa RDI: 00000000ffffff9c
+> [   42.744518] RBP: 00007f28cd44f2fa R08: 0000000000000000 R09: 0000000000000001
+> [   42.745211] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000002
+> [   42.745920] R13: 00007f28cd44f2fa R14: 0000000000000000 R15: 0000000000000003
+> [   42.746708]  </TASK>
+> [   42.746937] Modules linked in: cuse vfat fat ext4 mbcache jbd2 intel_rapl_msr intel_rapl_common kvm_amd ccp bochs drm_vram_helper kvm drm_ttm_helper ttm pcspkr i2c_piix4 drm_kms_helper i2c_smbus pvpanic_mmio pvpanic joydev sch_fq_codel drm fuse xfs nvme_tcp nvme_fabrics nvme_core sd_mod sg virtio_net net_failover virtio_scsi failover crct10dif_pclmul crc32_pclmul ata_generic pata_acpi ata_piix ghash_clmulni_intel virtio_pci sha512_ssse3 virtio_pci_legacy_dev sha256_ssse3 virtio_pci_modern_dev sha1_ssse3 libata serio_raw dm_multipath btrfs blake2b_generic xor zstd_compress raid6_pq sunrpc dm_mirror dm_region_hash dm_log dm_mod be2iscsi bnx2i cnic uio cxgb4i cxgb4 tls cxgb3i cxgb3 mdio libcxgbi libcxgb qla4xxx iscsi_boot_sysfs iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi qemu_fw_cfg aesni_intel crypto_simd cryptd
+> [   42.754333] ---[ end trace 0000000000000000 ]---
+> [   42.756899] RIP: 0010:fuse_get_req+0x36b/0x990 [fuse]
+> [   42.757851] Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 8c 05 00 00 48 b8 00 00 00 00 00 fc ff df 48 8b 6d 08 48 8d 7d 58 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 4d 05 00 00 f6 45 59 20 0f 85 06 03 00 00 48 83
+> [   42.760334] RSP: 0018:ffffc900009a7730 EFLAGS: 00010212
+> [   42.760940] RAX: dffffc0000000000 RBX: 1ffff92000134eed RCX: ffffffffc20dec9a
+> [   42.761697] RDX: 000000000000000b RSI: 0000000000000008 RDI: 0000000000000058
+> [   42.763009] RBP: 0000000000000000 R08: 0000000000000001 R09: ffffed1022110172
+> [   42.763920] R10: ffff888110880b97 R11: ffffc900009a737a R12: 0000000000000001
+> [   42.764839] R13: ffff888110880b60 R14: ffff888110880b90 R15: ffff888169973840
+> [   42.765716] FS:  00007f28cd21d7c0(0000) GS:ffff8883ef280000(0000) knlGS:0000000000000000
+> [   42.766890] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   42.767828] CR2: 00007f3237366208 CR3: 000000012c79e001 CR4: 0000000000770ef0
+> [   42.768730] PKRU: 55555554
+> [   42.769022] Kernel panic - not syncing: Fatal exception
+> [   42.770758] Kernel Offset: 0x7200000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+> [   42.771947] ---[ end Kernel panic - not syncing: Fatal exception ]---
+> 
+> It's obviously CUSE related callstack. For CUSE case, we don't have superblock and
+> our checks for SB_I_NOIDMAP flag does not make any sense. Let's handle this case gracefully.
+> 
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Chandan Babu R <chandanbabu@kernel.org>
+> Cc: <linux-fsdevel@vger.kernel.org>
+> Cc: <linux-kernel@vger.kernel.org>
+> Fixes: aa16880d9f13 ("fuse: add basic infrastructure to support idmappings")
+> Link: https://lore.kernel.org/linux-next/87v7z586py.fsf@debian-BULLSEYE-live-builder-AMD64/ [1]
+> Reported-by: Chandan Babu R <chandanbabu@kernel.org>
+> Reported-by: syzbot+20c7e20cc8f5296dca12@syzkaller.appspotmail.com
+> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+> ---
 
-What is the purpose of these __adsp_gpio_writew() in a global header?
-Can't those be moved into this file directly?
-
-> \ No newline at end of file
-
-Whitespace damage?
-
-   Arnd
+Looks good to me,
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 
