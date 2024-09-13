@@ -1,179 +1,171 @@
-Return-Path: <linux-kernel+bounces-328907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34BDC978AAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:34:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A8D1978AAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80163B253BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:34:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E6F41F21BDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509DB149C4A;
-	Fri, 13 Sep 2024 21:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7EB15575F;
+	Fri, 13 Sep 2024 21:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QoFQYjQl"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KTspgCEE"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7F1137905
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 21:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940CC1E884;
+	Fri, 13 Sep 2024 21:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726263236; cv=none; b=ilFYCbR1af0IgMV6WHzMZpm7Vy1qW6HiwQmH+RBZDc+2o75ynGQdLb2p5QQK4vbu27bILi7neMSQzXR7hJjx0SXFJA5A+MGbss1ReMTt1bX/Y7oW63xLaiKc9bSFAm/e2YM8afpAifQuFKlENzXi4DstgoAH3SXxhDnfNp6vAtA=
+	t=1726263427; cv=none; b=DOH0vIY3kJrXGVq2e2KTCIAhmm9WsJisWeZYvEbmuy62IgbJiH/wte6niVuaCd+bntu33cFeXNWW9Aah7abvMgSlr02U2fIjNm+XfCROrFWYvXEkxVK31TgBmJh4ajgppMGe0GoEzF61Qm99eKJrdMl+J7y+b9ZEba3wtzcUpKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726263236; c=relaxed/simple;
-	bh=MkfVfrMFBKZhPzzuv+Q0xVR3iXUZ+B4XFBxm6rOnls0=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=OeLZ0E/tKP909Zt8e2mupHUTrOMdYbGL3xllJi+AydWy1T9jj1dP45IJabHXK/+rlzBtqfz9z3BA93H0vDQpwUCZh+Z78hH3ciLFsruRhepiKduB5EU9Obavx1gvq+FQbKneiJP2ZrFRnIAdcYi2ZdzFsWyji/d8HwAgG9d5BZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QoFQYjQl; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e1a74f824f9so4777262276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:33:54 -0700 (PDT)
+	s=arc-20240116; t=1726263427; c=relaxed/simple;
+	bh=vb+rHDerVoW5b0X5DQj9tZH6EoL//ykjxLDpApsZaWI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=se7E4C1zWgNY+FVnEWqxVN5muNVHpxBlXk+f2iiOxkCPMIe2ZAPa4EWUgsGucQSXy9nQGwASfp0gdMkjjs3FgD2X4dRF6k69HPabIxRWuQX8MoBy+agvSye2uk6eGLNtU3nBJJQiyweo3AGP3lMLWoJP2nQUOmEM+xZmZDWNL8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KTspgCEE; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2d86f71353dso1930511a91.2;
+        Fri, 13 Sep 2024 14:37:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726263234; x=1726868034; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=C2T8h7PkrQu/P499dIgiz7AXqfHfFO+K5APloBO//pM=;
-        b=QoFQYjQl1+5kVQKjtEzm2JVSsopQvSglmU5Q7R2QcEcycNjdPMo01NbasT8U4dK3aq
-         7Vm+wXO5bhQb4dvmaSC1UyigjIy4S7d4zdt5qgWi0kZHi7R9uNlthux8EdlLOwAn3RWS
-         kk99W1ntSiv5iC1w3bl6ge6YaZjGdJrxaYBi1TkxiqrnRsLk0KWwJbFp4VpKm8/LWpL4
-         ai27a1ZQhcohisdk6R6F4RzOus4paD7pdZPZoJvywfe1Ps5TdxP0uIcaFLsgot7y5Wia
-         tja+8MJ4xYy2SKDwU/F9M0Y4mPF/GiEK1/0zM6faXGsc9bFnQ0S3ccQRSlRncCUdKV0Y
-         s7AQ==
+        d=gmail.com; s=20230601; t=1726263425; x=1726868225; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ufuODkYRAPVANRv1dPBGY6G0b9qqTcEIHXtDX+U2lRw=;
+        b=KTspgCEEdKH80GiOAYw+4j2CEy5Rfjt90hy5Hd+pjjVouG51ha2hZXLlp23defAs/a
+         1OzQDAAzSel38AB0AhBxt2X9pWg5Swvp+/+nLb9JVdfNdTbcnLtWN1JNBj9biUM0tJXb
+         l6IzxWKo9VJbcpIFs1/7XtxAOaBI6PR67itDk6cknAChDUB2YeA4+GqWMbyNIgsvXCbC
+         XRMwBLPRcoVTZoEXTMPGVLKfY9+fnX1FnCMoa9A+HlbmePUHngIObD11yT2GA+pwFr5J
+         OKEUeQ+xT4cKQu7VbmjAYSuiPmaJJMsm1i2CtNvY3VxO5ihORfGZI/mKKIp4SHjGpoL0
+         WrTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726263234; x=1726868034;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=C2T8h7PkrQu/P499dIgiz7AXqfHfFO+K5APloBO//pM=;
-        b=FUZTQCNT6UArsevXLDEPwStFt1LJ1ZmsIODR6Pp373h11hhcFJl9yA2uC7/jWZipqZ
-         UD2aBZTBqHZbVA4XLWnTa8mgGtx+KxmLDvgAL2WW7LxGaxYC3qII98f54s+2N3ophPY+
-         fDHfZT/bT6vzVGGcJ662sp0tUXfL3I8KXqhovOwcR7TdfmXl3nMI3VQmaLrjq2SFv5re
-         S4KEYIEJSKmMyW5Bu/Ml0e2GVxnkM7AlAT3kC8tBEkEhaDatfcL6O3Cn6/TSmdVg8LPP
-         0bw+kAKnk5uGcjFZYc6hDbHjphIF+r75IBwUgB+bAzjlBgPNHJd8lwesFFwcXylPMOTD
-         UnNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVCGCKQ1End7pjr76N+44CPh6kJmYeHz/Ha8ehSn9Lpm3bfwImUm6hxXYZ/4835R60pR36hFjIshJ2Fc5E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFMj6LzL0X1wFsHkvyVv7EzlIO6OuyNsBhViL48xsLEowAQQBs
-	rm8akc74N8uKtHQig+Dne5Ylr8dIgi9gJkY9m7QG0CDsMcb/EZWNiyIq/FW1uVSoCbDLT3+cavU
-	EdCS2vqheIw5Ot3+u2uBtdA==
-X-Google-Smtp-Source: AGHT+IGKRzJx5PjSFO3E8tqWdgVC95OAYqJ2OCpdJ9chaj4/FshFhL9QqOypm1YXq6OH+fxO5D7luhUe9GMEMnCStg==
-X-Received: from almasrymina.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:4bc5])
- (user=almasrymina job=sendgmr) by 2002:a25:cec3:0:b0:e1a:44fa:f09 with SMTP
- id 3f1490d57ef6-e1d9db95493mr10461276.2.1726263233997; Fri, 13 Sep 2024
- 14:33:53 -0700 (PDT)
-Date: Fri, 13 Sep 2024 21:33:51 +0000
+        d=1e100.net; s=20230601; t=1726263425; x=1726868225;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ufuODkYRAPVANRv1dPBGY6G0b9qqTcEIHXtDX+U2lRw=;
+        b=HWKifG54XysD3d52PmLd/dY7shoL0Ah3qDNgKw2ft3l5uHOCWHgsylDfaZEngs7qYu
+         lzFRFMIQr8xpa8FZkSWaDJjtN+MIH07iclJGTJ8iF+fxw2ld5M2VigD7Mn6JBZo0nqLx
+         mpEIzer1y00nJPx9MuwD7TF0sZbvA/tEOaD/aKgY7l4ELBjC09MOwRGMNJ0CV++AsDRC
+         0hvAmbQ0T6UXwEYtLIw97W4qbnJlfVK9pdGV/xs4tGIVTaSkeZ+SK6CoY6AUgFfCxzqQ
+         5OUjIPTdlo1GlCyFuHOf21OaMvKiD6SR9gJ+G7f3C07otgTxPIGoXfN5hehsxVgprlPN
+         /S8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV66e+3Z8DhUiZxjXP5U0ndvJdhoCxGLYqlCEGaQB3SuV9VIow+sv1VUMw3SRK01LHz2AE=@vger.kernel.org, AJvYcCWme7GTiFCg/ocpwTRpApdsgpNTsez5G8Q70k5vW+idYJNf95sOMp9JPWDH+GoZ13TQHqYLcN+uiKM7ahod@vger.kernel.org
+X-Gm-Message-State: AOJu0YwskOAk7AYBMXxZ0wA6tpsbQVGn34YNz86oFKN83MFINxALAHH2
+	9QmuTqj5QB5XGLjlwxJQDPiGec7SIBOjXZ7JbbqmL3z378iePa0/sVC8K0HWwFTDRRM+1i7FYC/
+	pvuMBG+nPvCFifKGnUK5QY2TVNo8=
+X-Google-Smtp-Source: AGHT+IEFKApS///oMb0n1UxSVQ36wqC+1R1mMCqxzCL4yxI+RigDDVRsD36joNxkerIubYatgYfo906sEC/GVrJjcSQ=
+X-Received: by 2002:a17:90a:a598:b0:2d8:f515:3169 with SMTP id
+ 98e67ed59e1d1-2db9ff79c90mr7418409a91.6.1726263424810; Fri, 13 Sep 2024
+ 14:37:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.662.g92d0881bb0-goog
-Message-ID: <20240913213351.3537411-1-almasrymina@google.com>
-Subject: [PATCH net-next v2] page_pool: fix build on powerpc with GCC 14
-From: Mina Almasry <almasrymina@google.com>
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Mina Almasry <almasrymina@google.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Matthew Wilcox <willy@infradead.org>
+MIME-Version: 1.0
+References: <20240910174312.3646590-1-andrii@kernel.org>
+In-Reply-To: <20240910174312.3646590-1-andrii@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 13 Sep 2024 14:36:52 -0700
+Message-ID: <CAEf4BzaVW_HXTCJDx=iHs9AJOSaUQq3Bwg+hFc3FCdqxb5Ah6Q@mail.gmail.com>
+Subject: Re: [PATCH] uprobes: switch to RCU Tasks Trace flavor for better performance
+To: Andrii Nakryiko <andrii@kernel.org>, peterz@infradead.org, mingo@kernel.org
+Cc: linux-trace-kernel@vger.kernel.org, oleg@redhat.com, rostedt@goodmis.org, 
+	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jolsa@kernel.org, paulmck@kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Building net-next with powerpc with GCC 14 compiler results in this
-build error:
+On Tue, Sep 10, 2024 at 10:43=E2=80=AFAM Andrii Nakryiko <andrii@kernel.org=
+> wrote:
+>
+> This patch switches uprobes SRCU usage to RCU Tasks Trace flavor, which
+> is optimized for more lightweight and quick readers (at the expense of
+> slower writers, which for uprobes is a fine tradeof) and has better
+> performance and scalability with number of CPUs.
+>
+> Similarly to baseline vs SRCU, we've benchmarked SRCU-based
+> implementation vs RCU Tasks Trace implementation.
+>
+> SRCU
+> =3D=3D=3D=3D
+> uprobe-nop      ( 1 cpus):    3.276 =C2=B1 0.005M/s  (  3.276M/s/cpu)
+> uprobe-nop      ( 2 cpus):    4.125 =C2=B1 0.002M/s  (  2.063M/s/cpu)
+> uprobe-nop      ( 4 cpus):    7.713 =C2=B1 0.002M/s  (  1.928M/s/cpu)
+> uprobe-nop      ( 8 cpus):    8.097 =C2=B1 0.006M/s  (  1.012M/s/cpu)
+> uprobe-nop      (16 cpus):    6.501 =C2=B1 0.056M/s  (  0.406M/s/cpu)
+> uprobe-nop      (32 cpus):    4.398 =C2=B1 0.084M/s  (  0.137M/s/cpu)
+> uprobe-nop      (64 cpus):    6.452 =C2=B1 0.000M/s  (  0.101M/s/cpu)
+>
+> uretprobe-nop   ( 1 cpus):    2.055 =C2=B1 0.001M/s  (  2.055M/s/cpu)
+> uretprobe-nop   ( 2 cpus):    2.677 =C2=B1 0.000M/s  (  1.339M/s/cpu)
+> uretprobe-nop   ( 4 cpus):    4.561 =C2=B1 0.003M/s  (  1.140M/s/cpu)
+> uretprobe-nop   ( 8 cpus):    5.291 =C2=B1 0.002M/s  (  0.661M/s/cpu)
+> uretprobe-nop   (16 cpus):    5.065 =C2=B1 0.019M/s  (  0.317M/s/cpu)
+> uretprobe-nop   (32 cpus):    3.622 =C2=B1 0.003M/s  (  0.113M/s/cpu)
+> uretprobe-nop   (64 cpus):    3.723 =C2=B1 0.002M/s  (  0.058M/s/cpu)
+>
+> RCU Tasks Trace
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> uprobe-nop      ( 1 cpus):    3.396 =C2=B1 0.002M/s  (  3.396M/s/cpu)
+> uprobe-nop      ( 2 cpus):    4.271 =C2=B1 0.006M/s  (  2.135M/s/cpu)
+> uprobe-nop      ( 4 cpus):    8.499 =C2=B1 0.015M/s  (  2.125M/s/cpu)
+> uprobe-nop      ( 8 cpus):   10.355 =C2=B1 0.028M/s  (  1.294M/s/cpu)
+> uprobe-nop      (16 cpus):    7.615 =C2=B1 0.099M/s  (  0.476M/s/cpu)
+> uprobe-nop      (32 cpus):    4.430 =C2=B1 0.007M/s  (  0.138M/s/cpu)
+> uprobe-nop      (64 cpus):    6.887 =C2=B1 0.020M/s  (  0.108M/s/cpu)
+>
+> uretprobe-nop   ( 1 cpus):    2.174 =C2=B1 0.001M/s  (  2.174M/s/cpu)
+> uretprobe-nop   ( 2 cpus):    2.853 =C2=B1 0.001M/s  (  1.426M/s/cpu)
+> uretprobe-nop   ( 4 cpus):    4.913 =C2=B1 0.002M/s  (  1.228M/s/cpu)
+> uretprobe-nop   ( 8 cpus):    5.883 =C2=B1 0.002M/s  (  0.735M/s/cpu)
+> uretprobe-nop   (16 cpus):    5.147 =C2=B1 0.001M/s  (  0.322M/s/cpu)
+> uretprobe-nop   (32 cpus):    3.738 =C2=B1 0.008M/s  (  0.117M/s/cpu)
+> uretprobe-nop   (64 cpus):    4.397 =C2=B1 0.002M/s  (  0.069M/s/cpu)
+>
+> Peak throughput for uprobes increases from 8 mln/s to 10.3 mln/s
+> (+28%!), and for uretprobes from 5.3 mln/s to 5.8 mln/s (+11%), as we
+> have more work to do on uretprobes side.
+>
+> Even single-thread (no contention) performance is slightly better: 3.276
+> mln/s to 3.396 mln/s (+3.5%) for uprobes, and 2.055 mln/s to 2.174 mln/s
+> (+5.8%) for uretprobes.
+>
+> We also select TASKS_TRACE_RCU for UPROBES in Kconfig due to the new
+> dependency.
+>
+> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> ---
+>  arch/Kconfig            |  1 +
+>  kernel/events/uprobes.c | 38 ++++++++++++++++----------------------
+>  2 files changed, 17 insertions(+), 22 deletions(-)
+>
 
-/home/sfr/next/tmp/ccuSzwiR.s: Assembler messages:
-/home/sfr/next/tmp/ccuSzwiR.s:2579: Error: operand out of domain (39 is
-not a multiple of 4)
-make[5]: *** [/home/sfr/next/next/scripts/Makefile.build:229:
-net/core/page_pool.o] Error 1
+Just in case this slipped through the cracks (and is not just waiting
+its turn to be applied), ping. It would be nice to have this patch
+with the rest of uprobe patches from the original patch set to go in
+together. Thanks!
 
-Root caused in this thread:
-https://lore.kernel.org/netdev/913e2fbd-d318-4c9b-aed2-4d333a1d5cf0@cs-soprasteria.com/
+> diff --git a/arch/Kconfig b/arch/Kconfig
+> index 975dd22a2dbd..a0df3f3dc484 100644
+> --- a/arch/Kconfig
+> +++ b/arch/Kconfig
+> @@ -126,6 +126,7 @@ config KPROBES_ON_FTRACE
+>  config UPROBES
+>         def_bool n
+>         depends on ARCH_SUPPORTS_UPROBES
+> +       select TASKS_TRACE_RCU
+>         help
+>           Uprobes is the user-space counterpart to kprobes: they
+>           enable instrumentation applications (such as 'perf probe')
 
-We try to access offset 40 in the pointer returned by this function:
-
-static inline unsigned long _compound_head(const struct page *page)
-{
-        unsigned long head = READ_ONCE(page->compound_head);
-
-        if (unlikely(head & 1))
-                return head - 1;
-        return (unsigned long)page_fixed_fake_head(page);
-}
-
-The GCC 14 (but not 11) compiler optimizes this by doing:
-
-ld page + 39
-
-Rather than:
-
-ld (page - 1) + 40
-
-And causing an unaligned load. Get around this by issuing a READ_ONCE as
-we convert the page to netmem.  That disables the compiler optimizing the
-load in this way.
-
-Cc: Simon Horman <horms@kernel.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: David Miller <davem@davemloft.net>
-Cc: Paolo Abeni <pabeni@redhat.com>
-Cc: Networking <netdev@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Cc: Matthew Wilcox <willy@infradead.org>
-
-Suggested-by: Jakub Kicinski <kuba@kernel.org>
-Signed-off-by: Mina Almasry <almasrymina@google.com>
-
----
-
-v2: https://lore.kernel.org/netdev/20240913192036.3289003-1-almasrymina@google.com/
-
-- Work around this issue as we convert the page to netmem, instead of
-  a generic change that affects compound_head().
----
- net/core/page_pool.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-index a813d30d2135..74ea491d0ab2 100644
---- a/net/core/page_pool.c
-+++ b/net/core/page_pool.c
-@@ -859,12 +859,25 @@ void page_pool_put_page_bulk(struct page_pool *pool, void **data,
- {
- 	int i, bulk_len = 0;
- 	bool allow_direct;
-+	netmem_ref netmem;
-+	struct page *page;
- 	bool in_softirq;
- 
- 	allow_direct = page_pool_napi_local(pool);
- 
- 	for (i = 0; i < count; i++) {
--		netmem_ref netmem = page_to_netmem(virt_to_head_page(data[i]));
-+		page = virt_to_head_page(data[i]);
-+
-+		/* GCC 14 powerpc compiler will optimize reads into the
-+		 * resulting netmem_ref into unaligned reads as it sees address
-+		 * arithmetic in _compound_head() call that the page has come
-+		 * from.
-+		 *
-+		 * The READ_ONCE here gets around that by breaking the
-+		 * optimization chain between the address arithmetic and later
-+		 * indexing.
-+		 */
-+		netmem = page_to_netmem(READ_ONCE(page));
- 
- 		/* It is not the last user for the page frag case */
- 		if (!page_pool_is_last_ref(netmem))
--- 
-2.46.0.662.g92d0881bb0-goog
-
+[...]
 
