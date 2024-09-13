@@ -1,165 +1,146 @@
-Return-Path: <linux-kernel+bounces-328980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A68978BAB
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 01:05:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 169B8978BBA
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 01:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6087B1C22BB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:05:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B88061F260DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:15:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6638E183CCE;
-	Fri, 13 Sep 2024 23:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90461714C6;
+	Fri, 13 Sep 2024 23:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HREQxMe2"
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="rYcLt+65"
+Received: from sonic311-31.consmr.mail.ne1.yahoo.com (sonic311-31.consmr.mail.ne1.yahoo.com [66.163.188.212])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1AC1527A7
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 23:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DDC284A5E
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 23:15:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726268710; cv=none; b=Z6Z6mDPz3gIEC6Dy4099mKJy5h5YfAY6QRH69JAPaltQ+jQpJcfaIksZObOcMdqO0Nb29Ms6OmIM//gUTdBCRWS+5MMpXAYpoAca7xwXCLNfoTb4WuzNxSr0gVFxyOJpKxv86iVejMLDLjoqRUvveMlvCeYtCC6xlYgUqfIc360=
+	t=1726269351; cv=none; b=snL02PQnujbUpDCfQPTm1LLQCFs9cUGe6OCyyPjmyZFC2BNfyoC7RBW4PDTLaFXYZtsui2bw1xPezuwZ5AK4bFqseIydeET8qBhrty+7eeKvEVeyRIw8NPeUjpcKjudzB62x7UnY630KpzPACh7vioO1d+tFdQBQS0pMXqqr39s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726268710; c=relaxed/simple;
-	bh=A4KpB9cU5hA2OJrw24+7NbE/kxvP7sQ4WJUyXP+ET/I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WjpZNfHrBPeDfWRW/huHSP+AtjvP/4z/YL5Y5B6JTVqjLnYv1JWTktJAVDGinrJos3UO6JVZBHyZnl0ny4PYWOszdibOmhofvskYLcuVx79lnpb3661vnipKNVq+ni1+Q8V4rdDP4466HxYmDexU0w+MCkV2wDOfjOOzucs+ajY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HREQxMe2; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3a045f08fd6so85475ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 16:05:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726268708; x=1726873508; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t/LLgDbhHhmWqLgtuLx+Is8IFl8BXUmoR6QEBZPHG94=;
-        b=HREQxMe2YOvL7dGOrCkuWizKLHRdEVXJ5jyN9hTBxlYJdfG1SbD17lJBC3HYaCLNEi
-         RPrC2Hp97HV0Udz6LN1NAcbX7ahZZ1t4wqtnbrrEomZotUiNrNWi94Wcr89ijl8Zp8TX
-         /CNKv7bQXlX+OIIf6Tu7FjYROQRypk/iUH73J7H69HanfpaibYE5wrBHUbMEPCJM7mkM
-         QWosV7QUEYFg0yCKBQHDv0i2tIx9RzW2hEhXNIfM8JrCAg0eXGnewi7eDDm4AXoyU3VF
-         4hfIfVOMo3YsRKJFWctaidCW4KgiXQALHB+M0YQOxtd0vhKowvbu0vIURwEaX4fyxZCk
-         f9eQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726268708; x=1726873508;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t/LLgDbhHhmWqLgtuLx+Is8IFl8BXUmoR6QEBZPHG94=;
-        b=m67ney7steyOLb5qIgniuMpIb/YrTzxPlzx2TJ3P2pKHflV98J2al3H/KTIK2LQw5U
-         5BQ69TzrHIcq19lxm2OuPnUGHiIuDd+d/HPDo9R+jKJfXIbsiQMauKULzvbSZu6Fg+UN
-         oaDyJ9UQF2OFGc1dm4Ul8haYIWMZjJBWpwd99VD00xykyayU3wy32xt27L0dsP/0Gt1V
-         8Lb12+CTXmPTecL1lVmdMZqzCc0yHvvcMUYKLYC515aHAnQV1PFFgmhHi6vugysbN6Na
-         Xr8vWlaTSbdmnMtDe4t3Ex8hNmkVbGx+FxshG1LsKC92NLEpaif0oAXWbzd+tbj2Jgc9
-         xVvA==
-X-Forwarded-Encrypted: i=1; AJvYcCW5MGbQtGSK0bTGru2CSt0HlRQt/bpR3LnfLDE7gpn49ncP4y2YtDowHgKyhk3ToqkItVkDKd8o1toCME0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQbk6ByUxKLemNm1io5t/zR5jnnQmmMYQ+Eu683snxCHvfZ1i2
-	n+AjHEkZ0925MoBjjVACHBC9yA2Cz9C7Fyt7k9azQpZaK7O3ia6zMyQ3o4onhP/um63nKh7AvKq
-	AlkC907RfLVrFpCQSb1xUMpqBds8YNwavpaj5
-X-Google-Smtp-Source: AGHT+IEIleSuC9f4gGuWQyJzHvX9+AYom/k5UJhlK6XKH0GPjZ6+sUYNxj5lfl0DNvWlKL7g+sgn2iA8tR8lTWVs9go=
-X-Received: by 2002:a05:6e02:214b:b0:3a0:44d1:dca4 with SMTP id
- e9e14a558f8ab-3a084702e91mr11603665ab.6.1726268708090; Fri, 13 Sep 2024
- 16:05:08 -0700 (PDT)
+	s=arc-20240116; t=1726269351; c=relaxed/simple;
+	bh=WLY/q4OQRCsJGzKS77pkbXdUjmJ8GF0xgDggIBghxfA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iEEef4+g1AKaYvo2neQBPIrZuTsum4/rBQSr4811hkgOW5Wjn2z/BT9PMfWELTpz7C5J4JK826/2oCSfxxlQZ3XAwKxHyapjGJrk75Slj5YQ5RC3XQ6a0lWjEu0TBFUWWOlPyG1aXjVcPJKn/hVvggUB6R/cSODKwgYPrM9BEz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=rYcLt+65; arc=none smtp.client-ip=66.163.188.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1726269348; bh=qkpcDaEMn0agB0sKrkgKSKBb2AUW3d0XoN2fWz60v2M=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=rYcLt+658BSIIKHXxR0KDIsJ4MiqUANJOYftANrhLUVjPUGyZnZ/N1AqyFmzMeSY36Wx8O8SV9XS0N0RQWS9dRHwCOCfXhick5NchzJ3QbxAKSgciQx0/rCSzRB5j46lfLQ0NEYfdlQTvnWWh2rbh+11fTae82Xj1dVqcOt/kJg1SLnlyhuHMuOpgTt0fB87ISRb8ooFzM3qajAqrZdkyvFo572Ax3m41RESnsIYU1xxs88196xwVouUaSAP2obI5vMBSj38Yxs8sdnu2xhjl8oG7tyas8H7L7nB1OskDrWAyWFRaxx65W2LE50NQ3Yo9meJhEvqcxIxj95hAwAOrw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1726269348; bh=+4vSwHjijdTV7i+LedGZApn+TYWVuMdw1Ewfiz4Hn9s=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=WdKLHecTunt9lR3sUijdcLBBR8q7VBrbprbKOzOf/ZouJ5NkPVhlesILZXzK6BsaWiytz6lzbjRUQUSlT+GARTUnuPapalaqKHbzSAVxOpO7OJYmONgMX5t/9YDanrn5pqAk0IvVF6wTfoCjRHLtssJVChJQ2YTLpf/3mK0jAduXrunkBu4dDfkVUuqFbVJjicMvn0doAp2KsQ9Hn36n/5j0NBl2cY0bnug1YGC/FigzNntPjZGJYoayP9SL7jpYktBUy3CbVFFmC57sM9q7nnnqgMa8ZMWo2X9MeizPjrINYVG3HpFshjMW9bvVW5CUU0QBVSNbtyqMMGyhI7WLqQ==
+X-YMail-OSG: OpAZDNYVM1m.A9yznG14JY5e5ReNVQLfohi4Yfvq1Hb3I0m1L1_U8y.jg_7Aki3
+ 3j5AwYak_wl8bXFfvU_eY.tND1Nzff49mJopPskhO2Oc1V8ph.unE.GFlVv2nu2gLhE9XQ_JwYkY
+ WXxF9jRRIeT6SMGnjLoL049hR9pgt.3DK2gzPHDm6mQPjHj3tN.hPzsqlsovPTUzBBfW6ob1CVOI
+ hwzzt.xbPY.1cmd_6xCFiPN_BAdd0djuCCrTUbhwSTZ8wh_A1WOgy_2HTH4r9TR8oqHl6A8j.RDe
+ JRMylCu78.1RQ4bK9bIdus2PMSH9OZNLHJIIjdk4ajSSBPuijZudCrlKqocuyUzmCHFAo6ywBM6z
+ cUBRn_MIyqB.NhzLlOiaA_AjqS3YRWy.ai4C2rZ4zJq162s6TBWt9lMwJEVadCT0u5cBIrwbtlfr
+ CdSzKr0iVDknRs._U71iSIG4jcYVxYnzrBNs7b4f79__eX9e.uLQCoScAP_ebGlt5Pc7Dhi3oiss
+ feeZbi6eP4SiGghyO0KvXbxi6Q8DXGYk1LTVxz4sE7AW6Gy2pBh9zKWeKokh1DzfSqOQGHfrppus
+ 1W5yEI11GOexJ_5zlrn24iW5_KH28fyyGK23ViQqv_2H51Z0ud_ZNPsgYsrmu3uRPnMH_1RpM__4
+ cOQnvOdtwvml8xCqLxwWcSNl9k566_ZRFoo7cXClsFDVt1e220Ia3Snveshao.ugtyvJW0KWmnQK
+ gYbyegY.gWm2RENFAQ85JavtxpVkzSs3MWqVZ7BtUU1VmYLHVkVlp6WI9C23fsbGLigvUhkM8fCN
+ fsJwXr7jbNiAT.w56fF06nGKfisbDOmlU8qVMnnKhO6ZmikvPK3.YGMc24jIO10hSbFH3sfYsnok
+ zjB5_N7Jl4i5buw3mFBzBciFa13llS5sMnleiK3mbnjRva.1tfcgIgpWkNyORBccGklPSX25aJlj
+ zJJnOjrRosLEJVao58HJRCQJlO9FseKl6DzQLu5FBw8FoS94fP0vmKjCXwCRmwnWzgf1h9ly5z3m
+ JzotXfpnknPxJLcSANnLiH8GIH77vUvPy7WBBHat.fjjZ_BFhGP9w8q2_8GoAU_9peX5saNICvG4
+ t2JzAIQHBUWKcpGMoUZEiQeRsRi3GtUjkqanF2SAvrwbkKYsnSg4d565v0UrrdcS6d0Ia9_U8QQb
+ BcNf_gyLKhcddK4nSx8j4OnGR8b51SClK7JzqR18e5kpWRUNz1ZbcmkaklarAP2EoqoYywRu_klt
+ cNLF4vK50QEtP9JfxUZy3S_wQKDmcj7UtH58IrwxeK3H2IKPxgOY_QAlofewPQM3XYb8DpnvtdVl
+ K2Fc6lTHcauU5TZJ_KQmK9bE09M2V3sQdmOEvssSe06QsBzSMERbOte4rMfx4K7c1PL2CcWcIlwX
+ UJPH4OkWk8eZT8FCaEJNenPn8rUNtQNsL11cwJIlTJ9VFIjH9QOajoRK8aIygzmUIiWmkR3aim76
+ aq7RQhv3wDcPjco9JGEwjU7n3vDC7qE4VyHHOaq_CYosC1HDwgD0NCfp4sg0jbwhMMXMnDJasj8M
+ iMx30.6tt9M_i1ABEc21fFmL7l11VvlO207n05OmvDSXtGc7yjH5o5Nu5UfWigghHnmby_K4g7B7
+ 5fYaqkgBCDY4aIGzPTI9KwJmt8i52D.4t7rKH.3CcKUJjIhSQqkND8govACr8XnRrBJrMSCx1qxK
+ tnrydWpM0eCzF3A1jAb_5IwmwklKmWKSfJ8UdenkkvyX0zjBasLXcGuAZpX6N1.Q0wcTNb6k1LBd
+ gw9RB4XtpDeUalh4PREKv3AfwNz6m1WHsbJE_u2VOX1.qR0QQZD4qWnXB1BbZZUtPfiOsNzxrdRG
+ ZOl1HwyuK4jLc7nbE2NyIfjSvoJqs4ngngqTDMIi9VqTYQWuNDSWOyb4Rg3qhBE03l83AZ0eFhcd
+ NknlgvD8EJ5oI5EnNq.AdVl43YnD5SKsuA_RB_QDZCfz14HYxiYpufTkelNvYulCUt.byBp3vLbh
+ Nn_v8y0bS.1DNa8b4iqTRaqadu5tD1_j_Rb.O8Ot8NUpWNy2hEkli2vks6MuP74yfDprExpjxZr1
+ uBpfR5Hr7d0nTAg5ZhphaSo4pEkrxmq0ZlJi_YfmDF.gBTKgBz3nwKhYyniYEyYGf7OlEpDKyNeu
+ A02X0xPrZCbq9vkWgfHdC6wHaUV12F6LVlVNibIkBiaUv7PLyRS3D3GfZZtt7dTLi_682eT7f8WW
+ CHts4w2OS4s5KSBmERsA1r26B_bPWtyQosURC0EKGPmXxxw8fiNs7blPTxD2x7o5BTtR37ruGAwx
+ 8oJaLVXjeFKX_YJM-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: e273a0d4-66ae-41ca-97fd-098d826e7005
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Fri, 13 Sep 2024 23:15:48 +0000
+Received: by hermes--production-gq1-5d95dc458-4tw7n (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID a0ab4237374df0b7c0c96d77aa7f6d2f;
+          Fri, 13 Sep 2024 23:05:36 +0000 (UTC)
+Message-ID: <d6de966e-ff67-41a4-8a37-1709119be9fd@schaufler-ca.com>
+Date: Fri, 13 Sep 2024 16:05:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912141156.231429-1-jon@nutanix.com> <20240912151410.bazw4tdc7dugtl6c@desk>
- <070B4F7E-5103-4C1B-B901-01CE7191EB9A@nutanix.com> <20240912162440.be23sgv5v5ojtf3q@desk>
- <ZuPNmOLJPJsPlufA@intel.com> <CALMp9eRDtcYKsxqW=z6m=OqF+kB6=GiL-XaWrVrhVQ_2uQz_nA@mail.gmail.com>
-In-Reply-To: <CALMp9eRDtcYKsxqW=z6m=OqF+kB6=GiL-XaWrVrhVQ_2uQz_nA@mail.gmail.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Fri, 13 Sep 2024 16:04:56 -0700
-Message-ID: <CALMp9eTQUznmXKAGYpes=A0b1BMbyKaCa+QAYTwwftMN3kufLA@mail.gmail.com>
-Subject: Re: [PATCH] x86/bhi: avoid hardware mitigation for 'spectre_bhi=vmexit'
-To: Chao Gao <chao.gao@intel.com>
-Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Jon Kohler <jon@nutanix.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, X86 ML <x86@kernel.org>, 
-	"H. Peter Anvin" <hpa@zytor.com>, LKML <linux-kernel@vger.kernel.org>, 
-	"kvm @ vger . kernel . org" <kvm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 01/13] LSM: Add the lsm_prop data structure.
+To: Konstantin Andreev <andreev@swemel.ru>, paul@paul-moore.com
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20240910184125.224651-1-casey@schaufler-ca.com>
+ <20240910184125.224651-2-casey@schaufler-ca.com>
+ <2e1da617-c437-4ff9-93e0-e0e212aabfaa@swemel.ru>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <2e1da617-c437-4ff9-93e0-e0e212aabfaa@swemel.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.22645 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Fri, Sep 13, 2024 at 11:39=E2=80=AFAM Jim Mattson <jmattson@google.com> =
-wrote:
+On 9/13/2024 1:49 PM, Konstantin Andreev wrote:
+> Casey Schaufler, 10 Sep 2024:
+>> ...
+>> The lsm_prop structure definition is intended to keep the LSM
+>> specific information private to the individual security modules.
+>> ...
+>> index 1390f1efb4f0..1027c802cc8c 100644
+>> --- a/include/linux/security.h
+>> +++ b/include/linux/security.h
+>> @@ -140,6 +144,22 @@ enum lockdown_reason {
+>> +
+>> +/*
+>> + * Data exported by the security modules
+>> + */
+>> +struct lsm_prop {
+>> +    struct lsm_prop_selinux selinux;
+>> +    struct lsm_prop_smack smack;
+>> +    struct lsm_prop_apparmor apparmor;
+>> +    struct lsm_prop_bpf bpf;
+>> +    struct lsm_prop_scaffold scaffold;
+>> +};
 >
-> On Thu, Sep 12, 2024 at 10:29=E2=80=AFPM Chao Gao <chao.gao@intel.com> wr=
-ote:
-> >
-> > On Thu, Sep 12, 2024 at 09:24:40AM -0700, Pawan Gupta wrote:
-> > >On Thu, Sep 12, 2024 at 03:44:38PM +0000, Jon Kohler wrote:
-> > >> > It is only worth implementing the long sequence in VMEXIT_ONLY mod=
-e if it is
-> > >> > significantly better than toggling the MSR.
-> > >>
-> > >> Thanks for the pointer! I hadn=E2=80=99t seen that second sequence. =
-I=E2=80=99ll do measurements on
-> > >> three cases and come back with data from an SPR system.
-> > >> 1. as-is (wrmsr on entry and exit)
-> > >> 2. Short sequence (as a baseline)
-> > >> 3. Long sequence
-> > >
-> > >I wonder if virtual SPEC_CTRL feature introduced in below series can
-> > >provide speedup, as it can replace the MSR toggling with faster VMCS
-> > >operations:
-> >
-> > "virtual SPEC_CTRL" won't provide speedup. the wrmsr on entry/exit is s=
-till
-> > need if guest's (effective) value and host's value are different.
+> This design prevents compiling and loading out-of-tree 3rd party LSM,
+> am I right?
+
+No more so than the existing implementation. An upstream acceptable
+scheme for loading out-of-tree LSMs has much bigger issues to address
+than adding an element to struct lsm_prop.
+
 >
-> I believe that is the case here. The guest's effective value is 1025.
-> If the guest knew about BHI_DIS_S, it would actually set it to 1025,
-> but older guests set it to 1.
+> Out-of-tree LSM's were discussed recently at
 >
-> The IA32_SPEC_CTRL mask and shadow fields should be perfect for this.
+> https://lore.kernel.org/linux-security-module/efb8f264-f80e-43b2-8ea3-fcc9789520ec@I-love.SAKURA.ne.jp/T/
+>
+> https://lore.kernel.org/linux-security-module/960e740f-e5d9-409b-bb2a-8bdceffaae95@I-love.SAKURA.ne.jp/T/
+>
+>
+> but it looks like a final decision to ban them is not taken yet.
 
-In fact, this is the guidance given in
-https://www.intel.com/content/www/us/en/developer/articles/technical/softwa=
-re-security-guidance/technical-documentation/branch-history-injection.html:
+There has never been (to my knowledge) an effort to "ban" out-of-tree
+LSMs. There has also not been interest in actively supporting them since
+the "L" in LSM changed from "Loadable" to "Linux", with the exception of
+Tetsuo Handa, who has been invited to suggest a viable mechanism. There
+is currently support for BPF based security implementations, which can
+be maintained out-of-tree. We are currently battling with the notion that
+the LSM infrastructure is an attack surface. We really don't want to do
+anything to increase that exposure.
 
-The VMM should use the =E2=80=9Cvirtualize IA32_SPEC_CTRL=E2=80=9D VM-execu=
-tion
-control to cause BHI_DIS_S to be set (see the VMM Support for
-BHB-clearing Software Sequences section) whenever:
-o The VMM is running on a processor for which the short software
-sequence may not be effective:
-  - Specifically, it does not enumerate BHI_NO, but does enumerate
-BHI_DIS_S, and is not an Atom-only processor.
-
-In other words, the VMM should set bit 10 in the IA32_SPEC_CTRL mask
-on SPR. As long as the *effective* guest IA32_SPEC_CTRL value matches
-the host value, there is no need to write the MSR on VM-{entry,exit}.
-
-There is no need to disable BHI_DIS_S on the host and use the TSX
-abort sequence in its place.
-
-Besides, with the TSX abort approach, what are you going to do about
-guests that *do* set BHI_DIS_S? If that bit is clear on the host,
-they'll suffer the overhead of writing the MSR on VM-{entry,exit}.
-
-> > "virtual SPEC_CTRL" just prevents guests from toggling some bits. It do=
-esn't
-> > switch the MSR between guest value and host value on entry/exit. so, KV=
-M has
-> > to do the switching with wrmsr/rdmsr instructions. A new feature, "load
-> > IA32_SPEC_CTRL" VMX control (refer to Chapter 15 in ISE spec[*]), can h=
-elp but
-> > it isn't supported on SPR.
-> >
-> > [*]: https://cdrdv2.intel.com/v1/dl/getContent/671368
-> >
-> > >
-> > >  https://lore.kernel.org/kvm/20240410143446.797262-1-chao.gao@intel.c=
-om/
-> > >
-> > >Adding Chao for their opinion.
-> >
+> -- 
+> Konstantin Andreev
+>
 
