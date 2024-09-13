@@ -1,204 +1,142 @@
-Return-Path: <linux-kernel+bounces-328046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 152CF977E3C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:12:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C22C977E40
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:12:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C254B23521
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:11:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C53A287060
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:12:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917011D47BF;
-	Fri, 13 Sep 2024 11:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16FDA1D86E9;
+	Fri, 13 Sep 2024 11:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mPNbQZVL"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gjGnN6Sg"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2001D7997
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 11:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002851C233D;
+	Fri, 13 Sep 2024 11:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726225909; cv=none; b=EGfRO/DzimEIkuLrhqozba60cTj+wV9QEsyOmY/JKED5vhaXyYgCcrFTwKsSplsg2/6k2caSgKMN7aBAe8d9Bf52YPRDBl7k/Q11Fap5Kkj4Lx0qBI87vdwmh8zczU/wPsmAtKTcshzJw4W0mPyPUrptkdfkTZD19Hrvh0Ow8tM=
+	t=1726225943; cv=none; b=k19g0djy/EwkcDMlJUrdjbVGJbYRO2NBI79tfT6v2TeIkGDXYOPHxhOgfQr5U6T87dnXlga6Vbo6c7Bsw4a2N5GMKm2K/Vjt8xqWw+kkbxs6RVrVPnOYR8nTSzUKmFEhwweb3x8kbjkmQj28bgzSWW05L1bpCiv0bdknsp/4Wlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726225909; c=relaxed/simple;
-	bh=ftDg/13T5xxqPu8FO1+ZOPi5p+r72xa4zeeMuHSDunc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J/ddHkeEKYbLkCbspwdVgjqNW4ain2XgeGIPTDxNPVh+B1FS2Kdk6LlU9Wal0jUh0afO5WgLJF0cG1bSJz/0Avud/tX1B4K+LMthObRb9ziY5fPlvo3aqQTvd2xkeyBCXRH+elU/YUfqMblPIzbi9MzyvFbmh7M/40pb85kJtkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mPNbQZVL; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-718d962ad64so1639066b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 04:11:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726225908; x=1726830708; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4WuhP0VB2LGXkpsyd3caHAv7pGnfI0FTdQ8HjWlE/qE=;
-        b=mPNbQZVLJorwBYwlyks5X48X5GZV3H8rrTvNhw/znyauYF11RZc0gzaa6WfrAPxXZ2
-         1BPuO4g+QE/bvDd4c3FihIbE/zR0Sr9tOJUKt13OtBReGvjdbo+o48VrfC46/zoi0p/d
-         E/rWwY8t5yein0o9okgVqAf2SSiki4svN51XRYmGO7HB3YSyv/ujrfVu/Qzu/J3jKeRR
-         fQmPuem0mLTiNEXC6wrcEB8mPHWR1CZ3smVxHXjzuYaQs83WTBsHkw2DEnRdOCs8RjZU
-         7BddnTuukP1RA3SMBy5QD4eWXjHAVuE3aS90pNElzXiJRM2SoFBMY6AeMqGeZUvZEv5q
-         IF8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726225908; x=1726830708;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4WuhP0VB2LGXkpsyd3caHAv7pGnfI0FTdQ8HjWlE/qE=;
-        b=VMOTYpyylRc/Tj0pIsEc42AJwIQT7+ejyKBXk2oLRTVd2aO/W6AxCg1MmC2blg/IP6
-         SScjj829VXfPLGDdNJqa309W4Oki6OQLsO2GUUCkdVsYlONJVWewG5SZfBldTfeA2nRG
-         7F0SnsOZPXdQq0h6HlaQTAf6CIn6ugGKZEDGFYcuZcBWJzfqoZpyMkLq0baVovf2NU5B
-         I45VT0rGNdBrcbWn1+ujS/wPa++ClJ6jaXhJhXeNdazxC7fiD1zj8E92cnUbMOsVFBTB
-         SLAJjwOGh9irFRom86aB1RhE1i00BIss1QONa75Lb5pOqjLXvcHeOiSMRZvypbrFSdHd
-         LrIg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5UI1GA83EySsnKHdwQnnU9bm5PBBf38IxROqodAbgXLjjSRwH8iKlho/j4Y87qJ8TCjXwqoDrEHDuHY8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnMqgN4Zob1fVWVVQME3fBhOZ2ZPfJ03s57WJr3VJRduFQSM/c
-	plnWeyzeUuWTSo4iiAAW9jBuq4tv3VlZRntS3PG0VEQh8DHKZXpl6R/C0zspqg==
-X-Google-Smtp-Source: AGHT+IGKz9WzptWVNO9Zk3uVeShWL+DlgdyC8qF52qrFKeN6fzeWl1jtqiHFbePPdYangnFcrBJ36w==
-X-Received: by 2002:a05:6a00:1906:b0:70d:2621:5808 with SMTP id d2e1a72fcca58-7192607fcb9mr9003619b3a.9.1726225907400;
-        Fri, 13 Sep 2024 04:11:47 -0700 (PDT)
-Received: from thinkpad ([120.60.66.60])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71908fe2641sm5897353b3a.59.2024.09.13.04.11.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 04:11:46 -0700 (PDT)
-Date: Fri, 13 Sep 2024 16:41:42 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: Nirmal Patel <nirmal.patel@linux.intel.com>,
-	Keith Busch <kbusch@kernel.org>, jonathan.derrick@linux.dev,
-	acelan.kao@canonical.com, lpieralisi@kernel.org, kw@linux.com,
-	robh@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kaihengfeng@gmail.com
-Subject: Re: [PATCH] PCI: vmd: Delay interrupt handling on MTL VMD controller
-Message-ID: <20240913111142.4cgrmirofhhgrbqm@thinkpad>
-References: <20240903025544.286223-1-kai.heng.feng@canonical.com>
- <20240903042852.v7ootuenihi5wjpn@thinkpad>
- <CAAd53p4EWEuu-V5hvOHtKZQxCJNf94+FOJT+_ryu0s2RpB1o-Q@mail.gmail.com>
- <ZtciXnbQJ88hjfDk@kbusch-mbp>
- <CAAd53p4cyOvhkorHBkt227_KKcCoKZJ+SM13n_97fmTTq_HLuQ@mail.gmail.com>
- <20240904062219.x7kft2l3gq4qsojc@thinkpad>
- <CAAd53p5ox-CiNd6nHb4ogL-K2wr+dNYBtRxiw8E6jf7HgLsH-A@mail.gmail.com>
- <20240912104547.00005865@linux.intel.com>
- <CAAd53p698eNQdZqPFHCmpPQ7pkDoyT4_C9ERXJ4X=V_8QFO8pQ@mail.gmail.com>
+	s=arc-20240116; t=1726225943; c=relaxed/simple;
+	bh=leVDogQs/XcJJFm1mFY1ASj8KE9FJeY3iXaZbhsn0WY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q9DOx7sgT8qiy4JhC1GMvIC6iaVuKCQyDYjDHhI3avF/pjgnaq9hZJqFFfkC2yRHHTt0Msb6NoXrJlq9y4od0VTzuhMs+VuURgW2meuOmFnavAcbf6csbOk/A8i01WjGTAgH1bmwjLWBDzaPVxDkA4U4RcUncmCwdmuLnPDiyYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gjGnN6Sg; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48DA9adk004900;
+	Fri, 13 Sep 2024 11:12:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=i
+	QhjEs8ki/xL/wsHpZzAsFpWHpcSNMnfW5ARyW8D1N8=; b=gjGnN6SgdzP1JyRO3
+	/JSnGmBTuD2hCa/XgyCDkJx0Lr8gPw7QxpthloLqqq5dC1x12VmD0o/eLpE7tJas
+	w61Jlf+vZ6DjGD9ZoXJ03KezbeYMhr6k2C+3upG7ZclTZ4pNQ7ZDMG2U953s1WSC
+	K5mvAk73Ev5p+Sqg/y5qSiFBS371cKvbwkr9rvqS7/sO+eDPdrvMAlxTz8QVVAZv
+	j0jctsSPROMr+Z7jch/F2z8LhFQLE9wvZ+UwXf74qtYqvwxTrDW0SzTFdAKpAkRR
+	//iSlsSAzQtkCZECfQW4WTpnOq7XM83iSxb+TyuLhTXqeBKMRcBFA2QQ0LK5qsIK
+	oKNmA==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gc8qsr6h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 11:12:03 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48D9dQue013566;
+	Fri, 13 Sep 2024 11:12:02 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 41h3cmngaa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 11:12:02 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48DBC0XW57934088
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Sep 2024 11:12:00 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 83CB658051;
+	Fri, 13 Sep 2024 11:12:00 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4B06058062;
+	Fri, 13 Sep 2024 11:12:00 +0000 (GMT)
+Received: from [9.61.250.246] (unknown [9.61.250.246])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 13 Sep 2024 11:12:00 +0000 (GMT)
+Message-ID: <3b3e019a-0576-4ef6-a5c7-aa5ebc35d600@linux.ibm.com>
+Date: Fri, 13 Sep 2024 06:12:00 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] crypto: Fix data mismatch over ipsec tunnel
+ encrypted/decrypted with ppc64le AES/GCM module.
+To: Michael Ellerman <mpe@ellerman.id.au>, linux-crypto@vger.kernel.org
+Cc: herbert@gondor.apana.org.au, leitao@debian.org, nayna@linux.ibm.com,
+        appro@cryptogams.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, ltcgcw@linux.vnet.ibm.com,
+        dtsen@us.ibm.com
+References: <20240912174537.1409567-1-dtsen@linux.ibm.com>
+ <87seu4qmv6.fsf@mail.lhotse>
+Content-Language: en-US
+From: Danny Tsen <dtsen@linux.ibm.com>
+In-Reply-To: <87seu4qmv6.fsf@mail.lhotse>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAAd53p698eNQdZqPFHCmpPQ7pkDoyT4_C9ERXJ4X=V_8QFO8pQ@mail.gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: DDi48tHiC1lCxZTBoadouUmG7ZywYP9p
+X-Proofpoint-ORIG-GUID: DDi48tHiC1lCxZTBoadouUmG7ZywYP9p
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-13_09,2024-09-13_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ mlxscore=0 lowpriorityscore=0 impostorscore=0 priorityscore=1501
+ malwarescore=0 adultscore=0 clxscore=1015 mlxlogscore=999 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409130076
 
-On Fri, Sep 13, 2024 at 01:55:49PM +0800, Kai-Heng Feng wrote:
-> Hi Nirmal,
-> 
-> On Fri, Sep 13, 2024 at 1:45 AM Nirmal Patel
-> <nirmal.patel@linux.intel.com> wrote:
-> >
-> > On Fri, 6 Sep 2024 09:56:59 +0800
-> > Kai-Heng Feng <kai.heng.feng@canonical.com> wrote:
-> >
-> > > On Wed, Sep 4, 2024 at 2:22 PM Manivannan Sadhasivam
-> > > <manivannan.sadhasivam@linaro.org> wrote:
-> > > >
-> > > > On Wed, Sep 04, 2024 at 09:57:08AM +0800, Kai-Heng Feng wrote:
-> > > > > On Tue, Sep 3, 2024 at 10:51 PM Keith Busch <kbusch@kernel.org>
-> > > > > wrote:
-> > > > > >
-> > > > > > On Tue, Sep 03, 2024 at 03:07:45PM +0800, Kai-Heng Feng wrote:
-> > > > > > > On Tue, Sep 3, 2024 at 12:29 PM Manivannan Sadhasivam
-> > > > > > > <manivannan.sadhasivam@linaro.org> wrote:
-> > > > > > > >
-> > > > > > > > On Tue, Sep 03, 2024 at 10:55:44AM +0800, Kai-Heng Feng
-> > > > > > > > wrote:
-> > > > > > > > > Meteor Lake VMD has a bug that the IRQ raises before the
-> > > > > > > > > DMA region is ready, so the requested IO is considered
-> > > > > > > > > never completed: [   97.343423] nvme nvme0: I/O 259 QID 2
-> > > > > > > > > timeout, completion polled [   97.343446] nvme nvme0: I/O
-> > > > > > > > > 384 QID 3 timeout, completion polled [   97.343459] nvme
-> > > > > > > > > nvme0: I/O 320 QID 4 timeout, completion polled [
-> > > > > > > > > 97.343470] nvme nvme0: I/O 707 QID 5 timeout, completion
-> > > > > > > > > polled
-> > > > > > > > >
-> > > > > > > > > The is documented as erratum MTL016 [0]. The suggested
-> > > > > > > > > workaround is to "The VMD MSI interrupt-handler should
-> > > > > > > > > initially perform a dummy register read to the MSI
-> > > > > > > > > initiator device prior to any writes to ensure proper
-> > > > > > > > > PCIe ordering." which essentially is adding a delay
-> > > > > > > > > before the interrupt handling.
-> > > > > > > >
-> > > > > > > > Why can't you add a dummy register read instead? Adding a
-> > > > > > > > delay for PCIe ordering is not going to work always.
-> > > > > > >
-> > > > > > > This can be done too. But it can take longer than 4us delay,
-> > > > > > > so I'd like to keep it a bit faster here.
-> > > > > >
-> > > > > > An added delay is just a side effect of the read. The read
-> > > > > > flushes pending device-to-host writes, which is most likely
-> > > > > > what the errata really requires. I think Mani is right, you
-> > > > > > need to pay that register read penalty to truly fix this.
-> > > > >
-> > > > > OK, will change the quirk to perform dummy register read.
-> > > > >
-> > > > > But I am not sure which is the "MSI initiator device", is it VMD
-> > > > > controller or NVMe devices?
-> > > > >
-> > > >
-> > > > 'MSI initiator' should be the NVMe device. My understanding is that
-> > > > the workaround suggests reading the NVMe register from the MSI
-> > > > handler before doing any write to the device to ensures that the
-> > > > previous writes from the device are flushed.
-> > >
-> > > Hmm, it would be really great to contain the quirk in VMD controller.
-> > > Is there anyway to do that right before generic_handle_irq()?
-> > >
-> > The bug is in hardware, I agree with Kai-Heng to contain it to VMD
-> > controller.
-> 
+Hi Michael,
 
-I'd love to, but if I read the workaround correctly, it suggests reading the
-register of the MSI initiator device, which is NVMe. IDK, how you can read the
-NVMe register from the VMD driver.
+I did think of that.  I can try to remove the feature first and apply 
+the subsequent changes.
 
-> The problem I am facing right now is that I can't connect the virq to
-> NVMe's struct device to implement the quirk.
-> 
-> Do you have any idea how to achieve that?
-> 
-> Kai-Heng
-> 
-> >
-> > > >
-> > > > And this sounds like the workaround should be done in the NVMe
-> > > > driver as it has the knowledge of the NVMe registers. But isn't the
-> > > > NVMe driver already reading CQE status first up in the ISR?
-> > >
-> > > The VMD interrupt is fired before the CQE status update, hence the
-> > > bug.
+Thanks.
 
-I'm not able to understand the bug properly. The erratum indicates that the MSI
-from device reaches the VMD before other writes to the registers. So this is an
-ordering issue as MSI takes precedence over other writes from the device.
+-Danny
 
-So the workaround is to read the device register in the MSI handler to make sure
-the previous writes from the device are flushed. IIUC, once the MSI reaches the
-VMD, it will trigger the IRQ handler in the NVMe driver and in the handler, CQE
-status register is read first up. This flow matches with the workaround
-suggested.
-
-Is any write being performed to the NVMe device before reading any register in
-the MSI handler? Or the current CQE read is not able to satisfy the workaround?
-Please clarify.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+On 9/12/24 10:00 PM, Michael Ellerman wrote:
+> Danny Tsen <dtsen@linux.ibm.com> writes:
+>> This patch is to fix an issue when simd is not usable that data mismatch
+>> may occur over ipsec tunnel. The fix is to register algs as SIMD modules
+>> so that the algorithm is excecuted when SIMD instructions is usable.
+>>
+>> A new module rfc4106(gcm(aes)) is also added. Re-write AES/GCM assembly
+>> codes with smaller footprints and small performance gain.
+>>
+>> This patch has been tested with the kernel crypto module tcrypt.ko and
+>> has passed the selftest.  The patch is also tested with
+>> CONFIG_CRYPTO_MANAGER_EXTRA_TESTS enabled.
+>>
+>> Signed-off-by: Danny Tsen <dtsen@linux.ibm.com>
+>> ---
+>>   arch/powerpc/crypto/Kconfig            |    1 +
+>>   arch/powerpc/crypto/aes-gcm-p10-glue.c |  141 +-
+>>   arch/powerpc/crypto/aes-gcm-p10.S      | 2421 +++++++++++-------------
+>>   3 files changed, 1187 insertions(+), 1376 deletions(-)
+> As this is a bug fix it should have a Fixes: tag, and probably a stable
+> Cc as well.
+>
+> But that diffstat is really large for a bug fix. Is there no way to fix
+> the issue in a smaller patch? Even if that is just disabling the feature
+> until it can be fixed in subsequent commits?
+>
+> cheers
+>
 
