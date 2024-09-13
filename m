@@ -1,105 +1,109 @@
-Return-Path: <linux-kernel+bounces-327878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BE0A977C2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:29:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31EB2977C32
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8BF4B20B67
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:29:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0FA928431F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C67C1D6DBB;
-	Fri, 13 Sep 2024 09:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926221C1AA4;
+	Fri, 13 Sep 2024 09:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P3kE5u6e"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FbG2uPdD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C831D6C67
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CED186E2C;
+	Fri, 13 Sep 2024 09:31:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726219781; cv=none; b=ru3I9Qo16b8Rdh2VYEJjiSTRoHwqNU5NPy3OkxVG9UGAwK/b/TLvR0xxIpJcd8wsN3Zgu6gMbsZk+FF+mNgPxuyds2Rvhsvjxl+dxkl82vMx9NJNWknMAMqJdQJc5jKQW7NgFX+WBAcQRQb9QHPhS8+vafzY1OuZm91gR4qWdZY=
+	t=1726219898; cv=none; b=YICBuq2NXAFsHVRKAIbExKJaLdyOtXh4OtzuswI8xh3bO2CFaZQaJktLJrUUqI+CQGZAaFufDCTN9e///WmjtE6ovZCnBG2zY8ofv+fvAtehtaH5MtpS2KghXu0MhQffysulZiHBuaiElXMLILYbKsgNimBQm2yzPay+MQhHsZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726219781; c=relaxed/simple;
-	bh=yfZrbgn3jpcUXaaZpUJrliWwD0Utzm2VwlMncZIaxrE=;
+	s=arc-20240116; t=1726219898; c=relaxed/simple;
+	bh=ekuvhHPYKge6NJXqTlLTzq+obp+wVk2Rpy5JOBXtHrw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fLsIyFw7VDY0DAXy2JJb6D7zpV3HokKl7Mb2FBxgZ/E3AXNzCYnRTf/g4ZG3d+pd3XxzGYLcxp4S7AxgGKwsgFWGUfxbtLBlAWYGVFFwWyjIdU8p+mZRQVYFqWibsKw8MQqS2+8pA/llZK1wqPlmdvMbnrafDyfIY0KoWsT+r4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P3kE5u6e; arc=none smtp.client-ip=192.198.163.16
+	 Content-Type:Content-Disposition:In-Reply-To; b=QBAFBSsrG4g0HBZF/1mASgMg7qG+SuKKH4G/pqcls/Ig6hUUkicoSZjB4as97mQS+SYIxKGHZyzxcR8EuWEvckt0m3+eQttvYiB3ojn7c/eDbBWzSEOba97EzjiLuisldoghKb9lkmJs6OwM3wfYgQ4O7/Ta8OiybA55+gAm5sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FbG2uPdD; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726219780; x=1757755780;
+  t=1726219897; x=1757755897;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=yfZrbgn3jpcUXaaZpUJrliWwD0Utzm2VwlMncZIaxrE=;
-  b=P3kE5u6eQ4LH/ycAWPft9T0952W8hEX8ZQKffgPknRQ5rFmyrTk4Rpi6
-   tNjONTYclAsgqJpCEbLmXk9TH4ZGykb0Y4zabgOS8PSZ/lNkWdeU33vY5
-   WpPa+mJweTXs7shd//fZZNGJ/IVF3qrYZAVLeV/LrsmgnVgdklFjV6kd5
-   MEoMWLNLCcSuMUVvt/S0geXKESlrpab6AT/ZGqBn1rKhNPcbbZ8XVDD7q
-   5kuZL+TdNTKtatLkJ+R1fuew+Z75DevPemj+m0O25FeescXqauQe1r0fK
-   imNZ4wzcK0rqh1MgXLQMOFP5mX3oa/byvnI9FTeRqpAHoJNp3U1NOSwiP
-   Q==;
-X-CSE-ConnectionGUID: FMF34kjxRDGm/RzJOLGNYQ==
-X-CSE-MsgGUID: hx2eP/ftQaehndMwEhjJFg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="13509517"
+   mime-version:in-reply-to;
+  bh=ekuvhHPYKge6NJXqTlLTzq+obp+wVk2Rpy5JOBXtHrw=;
+  b=FbG2uPdDONMKeV2L56ZvZzBdRFxxsYwZPY9wnXPGAXQ9dzhIi7nU1g+u
+   UvoiG/1ZS4HL6AmxaJ0MS1sC5DpoWMLq+iVYo8I9MlQRBe3mhuxhA9IT/
+   a1+jS/ZPHWLKPR5ebW90/yqrY2dV1KIakz7oJfXSMPfBqdIBqkPQWO9mc
+   YKEN8PtIVyeaR2g1xhpRaF5oPFpFZ+4nK6ocBKYv3CBKAhh1+xahfEHZ/
+   SNLpTUm+61MkfNcPCx3habbvnz0aWkQsqjIyJQgMhUAzjj1XymJZ7LKMg
+   Wu9c5RAMo1vMH+slRnVnsR220fsgMc8z+KpKttPZeoh6AJrrVudsfxoad
+   g==;
+X-CSE-ConnectionGUID: h7bmUtHjQ52xE03+xCoUHQ==
+X-CSE-MsgGUID: iTW0e8O1TTOaiMgR7n+MkA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="47628280"
 X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="13509517"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 02:29:39 -0700
-X-CSE-ConnectionGUID: /st1aPXhR3aBQ23tzbjCgQ==
-X-CSE-MsgGUID: YMUCbZPEQ+Kmnf8LSOo+pw==
+   d="scan'208";a="47628280"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 02:31:36 -0700
+X-CSE-ConnectionGUID: zDnRAEnSS4OgiTvHoCvpOQ==
+X-CSE-MsgGUID: IE1cu8MSSOy0Xr0N/6OfKQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="67842630"
+   d="scan'208";a="67616819"
 Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 02:29:38 -0700
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 02:31:34 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.98)
 	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sp2cR-00000008F8J-2K5W;
-	Fri, 13 Sep 2024 12:29:35 +0300
-Date: Fri, 13 Sep 2024 12:29:35 +0300
+	id 1sp2eJ-00000008FAi-2Iib;
+	Fri, 13 Sep 2024 12:31:31 +0300
+Date: Fri, 13 Sep 2024 12:31:31 +0300
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jens Wiklander <jens.wiklander@linaro.org>
-Cc: Rijo Thomas <Rijo-john.Thomas@amd.com>,
-	Devaraj Rangasamy <Devaraj.Rangasamy@amd.com>,
-	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org,
-	Sumit Garg <sumit.garg@linaro.org>
-Subject: Re: [PATCH v1 1/1] tee: amdtee: Use %pUl printk() format specifier
- to print GUIDs
-Message-ID: <ZuQF_w7G1A90tYG3@smile.fi.intel.com>
-References: <20240911204136.2887858-1-andriy.shevchenko@linux.intel.com>
- <CAHUa44G4O0JgqN=BwvshRXzUeEE1oXD1o8Yn-5X6p5qY8vkDQA@mail.gmail.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCH v1 1/1] iio: light: ltr501: Drop most likely fake ACPI ID
+Message-ID: <ZuQGcyrTFek1yExt@smile.fi.intel.com>
+References: <20240911212202.2892451-1-andriy.shevchenko@linux.intel.com>
+ <c45dd21c-493a-4e56-809e-85d6d7201254@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHUa44G4O0JgqN=BwvshRXzUeEE1oXD1o8Yn-5X6p5qY8vkDQA@mail.gmail.com>
+In-Reply-To: <c45dd21c-493a-4e56-809e-85d6d7201254@redhat.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Sep 12, 2024 at 07:50:08AM +0200, Jens Wiklander wrote:
-> On Wed, Sep 11, 2024 at 10:41 PM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> >
-> > Replace the custom approach with the %pUl printk() format specifier.
-> > No functional change intended.
+On Thu, Sep 12, 2024 at 03:51:09PM +0200, Hans de Goede wrote:
+> Hi,
+> 
+> On 9/11/24 11:22 PM, Andy Shevchenko wrote:
+> > The commit in question does not proove that ACPI ID exists.
+> > Quite likely it was a cargo cult addition while doint that
+> > for DT-based enumeration.  Drop most likely fake ACPI ID.
+> > 
+> > Googling for LTERxxxx gives no useful results in regard to DSDT.
+> > Moreover, there is no "LTER" official vendor ID in the registry.
+> > 
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> 
+> Thanks, patch looks good to me:
 
-> Thanks, the patch looks like a nice simplificatrion.
+Have you grepped over your collection of real DSDTs?
 
-Thank you for the review.
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-> Rijo, Devaraj, does this work for you?
-
-Yes, please test, because seems others use uuid_t (UUID BE) for TEE,
-but in this driver IIUC it's guid_t (UUID LE).
+Thank you!
 
 -- 
 With Best Regards,
