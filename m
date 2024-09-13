@@ -1,133 +1,206 @@
-Return-Path: <linux-kernel+bounces-328694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3457F978777
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:03:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 039B3978771
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:03:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68FAD1C215D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:03:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EA421C21631
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB8012C530;
-	Fri, 13 Sep 2024 18:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06A1126C08;
+	Fri, 13 Sep 2024 18:02:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YPFJlkA3"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eyd6t+6J"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C35B12C489
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 18:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1B4839EB
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 18:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726250593; cv=none; b=KHzTYhCpv/+1ogvFaAxzNf/xhxGfQ0XYmve6MIJ4kumf78XbTxK7DfbwwcaCs+s/tGJbl706wqbMmQ/Kqxxpa+cKQvfeNXCw0RVkY90cMPQIOlAbFhRZN1Mo55tAhpT+RB8M/LopAie8AUvhf9QdyvDie9QKqSMByWw39CKPPrk=
+	t=1726250573; cv=none; b=fUNGUWGUXqTnee9LABS9+SS3Q0q5YawQI5623wk0CtX/e4iFxKoVrk9yGrIdHGzk1of3HNJVwSal3tLP98hl5DW8UoarLCPVasf9DRuvYaculS32DVAndde5+RjNAYQEKXcbmmDM/f8xVm3nSdpAzWsvBFmtPR2NT4kp8XuL1aY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726250593; c=relaxed/simple;
-	bh=KIHeaeEayN+Ydo6yEdiNp00KP6cY+SrZfAAZnNbI0Aw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=IVseXEiKFGi9su2gAITSAsczi38dgLe1BXGOlrWNXl0eh1Bo44O+0s12d4FdYBaaCgkThjy6k7F2N0ucfNPqd4eK+OWNJ6/DGXQdyRknfzrTMrKaQYxLHPitp+b+Sv0kwyK0Ohv4RIt+nkYP7BkcIF9DEU/O1NKHX34rKpfU404=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YPFJlkA3; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48DAgZYZ005111;
-	Fri, 13 Sep 2024 18:03:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=Q/7ZcuILwZBV0A7i7UsOIq
-	P2Q3us8B88wOf2he08q5w=; b=YPFJlkA3tX6hGqhUMrPJ1UC5rCzWqRx8myoX4G
-	6/4prVVOxiC8mVW73B/njCIzLQ61lJOdqYHbIBHnCAPg4z4bxibl7s5RCcm62Tzb
-	BYDdTjWJv7hbU1i9RsnU1tia6oCfjYPPtRZXOXZAyqzk5Xiujig5AgjnrXMGte1I
-	Cwo7owqbna5S9Wl8BpFjFHuOLwkG9NsaRcLpZ741hcp9jZTFrrIs4U4rqkPf2jhz
-	mfEimP40AKH24Y/c6An52Z6zvQ0uxwKWIl96SA8fyhVlMsb6CZz/5IP1pG5UvyYC
-	CsdeCOmQJsvPE5hRb1Aam/GxMjTA23BEfEFMwlx83wAyFi/g==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy739rnf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Sep 2024 18:03:00 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48DI2weI019597
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Sep 2024 18:02:59 GMT
-Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 13 Sep 2024 11:02:56 -0700
-From: Taniya Das <quic_tdas@quicinc.com>
-Date: Fri, 13 Sep 2024 23:32:41 +0530
-Subject: [PATCH] arm64: defconfig: Enable sc7280 clock controllers
+	s=arc-20240116; t=1726250573; c=relaxed/simple;
+	bh=aGCUDXfV/u877/fkGI51wat4K8lT5ShFVAK8Wj6tNt4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Vra7RfR187Q67TT0/5tKF0s7rwwRjnAJdxqm4iasLyybRp032QZqZVCdPVPlsarn5pcvEE+I9kwBF0mrIIxpdHTktZYg6bAiWBmrPFSF26t8ldOsIBiqQATonaWoA/egyXgBIvV22RGyE/eJMrBsII3B2ReTdaoU6VCuqTLMojc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eyd6t+6J; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6d7124938d1so62318727b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 11:02:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726250570; x=1726855370; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SdKtMk3zFpIjWQQtYnxSCkrmfWA0I64F86jP4xgplJo=;
+        b=eyd6t+6J3YIemQOT4ft7gvNG0mImDRIyXa09JbpLgTu27NSWSJAVgBmhWv1qZtCjkX
+         xZprwB6PrcnusHDuVUbdr89Mo2i56cDpkfKWvb3SPEecYp2YLOJGJ4UL8yw/icFD56Pt
+         +S7ysWPwnnnTU3/fSTbe54r49ldVv3cRs2YV3cYOW+EbLDmGXKmQlfAitG2gkacCp7K8
+         yRKQ0unGkXReFP5wsrWe29ZQ+w7O3W1TOmPsN2kQ9AqbxxqDdFpZXbxiTmMwlchvsQJp
+         gaeLcW44zKdaCmzw1DbzEwtocX8NlebuTQrG8VM4NxeFVeapieboDeTZlqcPmqz41eiw
+         RBPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726250570; x=1726855370;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SdKtMk3zFpIjWQQtYnxSCkrmfWA0I64F86jP4xgplJo=;
+        b=f410aQideF8wtD0ER3L/ez/eOX8arlJi0C5Y8xLcj+cUtoc46vBdUzoXacoO/tBygo
+         mO0Hq/r41CyFT4Jo2cwKNkHBSB6HaqynOtha7yFNpDWtnU8IWszD+Pb56Ermgx2v54r+
+         HrtFyJxu0QK3BXO4ZVVJ/rI9Hw6AVKDl0NNorMYj5NdQuQDEpNghnQKvuYSHOCWxBIf1
+         +fVuTGvcdfNeKQhfJTxxlJbZHz4h1SdOiwmOxY4qRDDvSd1vHh0XKhKNEguNmLcmDfyR
+         yDhzNjc2xlByK8mo4edHHCATiL0h/vDvu8zVNGum36qoS9pzM9CzgGC+fP5AGGrE4/mv
+         hruQ==
+X-Gm-Message-State: AOJu0Yw9VzY05xGTkQeeEznVzASvO5DpFXbW1s5vxhmxqfL4/H9bLiCe
+	pIE64UDxYw3DVmp2yNl2r/jY/Nrc3kLIdqd/HaEr0teU9oCqqQbyP5sHpMOs3fsJoQ24iG06FEa
+	Erg==
+X-Google-Smtp-Source: AGHT+IGT5Cq9F/Hq6fJKYSOkySIR4cK8FdX4I3mm6MNrBQ/Kg+JyiB86l9pHtdUOjWBXR4MFXaP3rIm2mPU=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:4d43:b0:6db:cd39:4dad with SMTP id
+ 00721157ae682-6dbcd395214mr2114647b3.5.1726250570352; Fri, 13 Sep 2024
+ 11:02:50 -0700 (PDT)
+Date: Fri, 13 Sep 2024 11:02:48 -0700
+In-Reply-To: <20240609154945.55332-5-nsaenz@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240913-qcm6490-clock-configs-v1-1-1586c72ee641@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAEB+5GYC/y3MQQrCMBCF4auUWTswTaoQryIumnHSDmpiEy2F0
- rsbtMvvwftXKJJVCpybFbLMWjTFivbQAI99HAT1Vg2GTEeutTjx89Q5Qn4kviOnGHQoSMa6YMn
- 33h+hfl9Zgi6/7uX6d5bpU/Pvfdy2L54mUpB8AAAA
-To: Bjorn Andersson <andersson@kernel.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "Catalin Marinas" <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-X-Mailer: b4 0.14-dev-f7c49
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: b2y57yrrkRja2VXqj5bFvb0NAHtiL5Zz
-X-Proofpoint-GUID: b2y57yrrkRja2VXqj5bFvb0NAHtiL5Zz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
- impostorscore=0 lowpriorityscore=0 clxscore=1011 bulkscore=0
- malwarescore=0 adultscore=0 mlxlogscore=500 suspectscore=0
- priorityscore=1501 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2408220000 definitions=main-2409130129
+Mime-Version: 1.0
+References: <20240609154945.55332-1-nsaenz@amazon.com> <20240609154945.55332-5-nsaenz@amazon.com>
+Message-ID: <ZuR-SPaaTBwLTxW3@google.com>
+Subject: Re: [PATCH 04/18] KVM: x86: hyper-v: Introduce VTL awareness to
+ Hyper-V's PV-IPIs
+From: Sean Christopherson <seanjc@google.com>
+To: Nicolas Saenz Julienne <nsaenz@amazon.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, pbonzini@redhat.com, 
+	vkuznets@redhat.com, linux-doc@vger.kernel.org, linux-hyperv@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	graf@amazon.de, dwmw2@infradead.org, paul@amazon.com, mlevitsk@redhat.com, 
+	jgowans@amazon.com, corbet@lwn.net, decui@microsoft.com, tglx@linutronix.de, 
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
+	amoorthy@google.com
+Content-Type: text/plain; charset="us-ascii"
 
-Enable the SC7280 video, camera and audio clock controllers to enable
-the video, camera and audio functionalities on Qualcomm RB3gen2.
+On Sun, Jun 09, 2024, Nicolas Saenz Julienne wrote:
+> HvCallSendSyntheticClusterIpi and HvCallSendSyntheticClusterIpiEx allow
+> sending VTL-aware IPIs. Honour the hcall by exiting to user-space upon
+> receiving a request with a valid VTL target. This behaviour is only
+> available if the VSM CPUID flag is available and exposed to the guest.
+> It doesn't introduce a behaviour change otherwise.
+> 
+> User-space is accountable for the correct processing of the PV-IPI
+> before resuming execution.
+> 
+> Signed-off-by: Nicolas Saenz Julienne <nsaenz@amazon.com>
+> ---
+>  arch/x86/kvm/hyperv.c | 19 ++++++++++++++++++-
+>  1 file changed, 18 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+> index 42f44546fe79c..d00baf3ffb165 100644
+> --- a/arch/x86/kvm/hyperv.c
+> +++ b/arch/x86/kvm/hyperv.c
+> @@ -2217,16 +2217,20 @@ static void kvm_hv_send_ipi_to_many(struct kvm *kvm, u32 vector,
+>  
+>  static u64 kvm_hv_send_ipi(struct kvm_vcpu *vcpu, struct kvm_hv_hcall *hc)
+>  {
+> +	bool vsm_enabled = kvm_hv_cpuid_vsm_enabled(vcpu);
+>  	struct kvm_vcpu_hv *hv_vcpu = to_hv_vcpu(vcpu);
+>  	u64 *sparse_banks = hv_vcpu->sparse_banks;
+>  	struct kvm *kvm = vcpu->kvm;
+>  	struct hv_send_ipi_ex send_ipi_ex;
+>  	struct hv_send_ipi send_ipi;
+> +	union hv_input_vtl *in_vtl;
+>  	u64 valid_bank_mask;
+> +	int rsvd_shift;
+>  	u32 vector;
+>  	bool all_cpus;
+>  
+>  	if (hc->code == HVCALL_SEND_IPI) {
+> +		in_vtl = &send_ipi.in_vtl;
 
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
----
- arch/arm64/configs/defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+I don't see any value in having a local pointer to a union.  Just use send_ipi.in_vtl.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 5fdbfea7a5b2..844ff1a0dc14 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1323,6 +1323,7 @@ CONFIG_MSM_MMCC_8998=m
- CONFIG_QCM_GCC_2290=y
- CONFIG_QCM_DISPCC_2290=m
- CONFIG_QCS_GCC_404=y
-+CONFIG_SC_CAMCC_7280=m
- CONFIG_QDU_GCC_1000=y
- CONFIG_SC_CAMCC_8280XP=m
- CONFIG_SC_DISPCC_7280=m
-@@ -1336,6 +1337,8 @@ CONFIG_SC_GCC_8280XP=y
- CONFIG_SC_GPUCC_7280=m
- CONFIG_SC_GPUCC_8280XP=m
- CONFIG_SC_LPASSCC_8280XP=m
-+CONFIG_SC_LPASS_CORECC_7280=m
-+CONFIG_SC_VIDEOCC_7280=m
- CONFIG_SDM_CAMCC_845=m
- CONFIG_SDM_GPUCC_845=y
- CONFIG_SDM_VIDEOCC_845=y
+>  		if (!hc->fast) {
+>  			if (unlikely(kvm_read_guest(kvm, hc->ingpa, &send_ipi,
+>  						    sizeof(send_ipi))))
+> @@ -2235,16 +2239,22 @@ static u64 kvm_hv_send_ipi(struct kvm_vcpu *vcpu, struct kvm_hv_hcall *hc)
+>  			vector = send_ipi.vector;
+>  		} else {
+>  			/* 'reserved' part of hv_send_ipi should be 0 */
+> -			if (unlikely(hc->ingpa >> 32 != 0))
+> +			rsvd_shift = vsm_enabled ? 40 : 32;
+> +			if (unlikely(hc->ingpa >> rsvd_shift != 0))
+>  				return HV_STATUS_INVALID_HYPERCALL_INPUT;
 
----
-base-commit: 5acd9952f95fb4b7da6d09a3be39195a80845eb6
-change-id: 20240913-qcm6490-clock-configs-0239f30babb5
+The existing error handling doesn't make any sense to me.  Why is this the _only_
+path that enforces reserved bits?
 
-Best regards,
--- 
-Taniya Das <quic_tdas@quicinc.com>
+Regarding the shift, I think it makes more sense to do:
 
+			/* Bits 63:40 are always reserved. */
+			if (unlikely(hc->ingpa >> 40 != 0))
+				return HV_STATUS_INVALID_HYPERCALL_INPUT;
+
+			send_ipi.in_vtl.as_uint8 = (u8)(hc->ingpa >> 32);
+			if (unlikely(!vsm_enabled && send_ipi.in_vtl.as_uint8))
+				return HV_STATUS_INVALID_HYPERCALL_INPUT;
+
+so that it's more obvious exactly what is/isn't reserved when VSM isn't/is enabled.
+
+> +			in_vtl->as_uint8 = (u8)(hc->ingpa >> 32);
+>  			sparse_banks[0] = hc->outgpa;
+>  			vector = (u32)hc->ingpa;
+>  		}
+>  		all_cpus = false;
+>  		valid_bank_mask = BIT_ULL(0);
+>  
+> +		if (in_vtl->use_target_vtl)
+
+Due to the lack of error checking for the !hc->fast case, this will do the wrong
+thing if vsm_enabled=false.
+
+> +			return -ENODEV;
+> +
+>  		trace_kvm_hv_send_ipi(vector, sparse_banks[0]);
+>  	} else {
+> +		in_vtl = &send_ipi_ex.in_vtl;
+>  		if (!hc->fast) {
+>  			if (unlikely(kvm_read_guest(kvm, hc->ingpa, &send_ipi_ex,
+>  						    sizeof(send_ipi_ex))))
+> @@ -2253,8 +2263,12 @@ static u64 kvm_hv_send_ipi(struct kvm_vcpu *vcpu, struct kvm_hv_hcall *hc)
+>  			send_ipi_ex.vector = (u32)hc->ingpa;
+>  			send_ipi_ex.vp_set.format = hc->outgpa;
+>  			send_ipi_ex.vp_set.valid_bank_mask = sse128_lo(hc->xmm[0]);
+> +			in_vtl->as_uint8 = (u8)(hc->ingpa >> 32);
+>  		}
+>  
+> +		if (vsm_enabled && in_vtl->use_target_vtl)
+> +			return -ENODEV;
+> +
+>  		trace_kvm_hv_send_ipi_ex(send_ipi_ex.vector,
+>  					 send_ipi_ex.vp_set.format,
+>  					 send_ipi_ex.vp_set.valid_bank_mask);
+> @@ -2682,6 +2696,9 @@ int kvm_hv_hypercall(struct kvm_vcpu *vcpu)
+>  			break;
+>  		}
+>  		ret = kvm_hv_send_ipi(vcpu, &hc);
+> +		/* VTL-enabled ipi, let user-space handle it */
+> +		if (ret == -ENODEV)
+
+I generally don't love "magic" error codes, but I don't see an obvious better
+solution either.  The other weird thing is that "ret" is a u64, versus the more
+common int or even long.  I doubt it's problematic in practice, just a bit odd.
+
+> +			goto hypercall_userspace_exit;
+>  		break;
+>  	case HVCALL_POST_DEBUG_DATA:
+>  	case HVCALL_RETRIEVE_DEBUG_DATA:
+> -- 
+> 2.40.1
+> 
 
