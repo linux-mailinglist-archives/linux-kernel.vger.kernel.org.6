@@ -1,326 +1,102 @@
-Return-Path: <linux-kernel+bounces-328498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D15F9784FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:36:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D32F9784FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:38:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 890E41C229DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:36:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDFAD1F277E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1383BBE0;
-	Fri, 13 Sep 2024 15:36:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75624EB51;
+	Fri, 13 Sep 2024 15:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YN4MdyGt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sEtY0NeT"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868482EB02;
-	Fri, 13 Sep 2024 15:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB35B2B9C6
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 15:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726241798; cv=none; b=lmNcRvAQQSPn+wRyc2xW3lfrbW2N7gFeh2/aXhSJaT9xzcehrNzNMnsG/eyFhD92E9oS4RltYKzdK9HPe/2sRXaS8geLEMPcVfHK+w698t0ZsSW8mM9ee7OT+3K3sta7s8CAEj1Vw0WctE+NllsOmQS2AjSLnbLl64NyARPPhXs=
+	t=1726241870; cv=none; b=HVgl7Q7SCtFVkx9lcBvZ4W6JSWoZ30NdgYQpy1UjmJqVxVcsKLTIAKdtI+iZCCMwDZ3y/2D2XZ+1JNwvgM7XgCXYKxA5MKBsjw9D9Z8SFRJ6+bNKl39XcmSsEgzAb5mQyXZfzcTdbjerZ8Q89Cf0Ry4KOI80D61IefBi3k1Ix1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726241798; c=relaxed/simple;
-	bh=RVqRBRsVH1AVrSfltGecQSUntV2rlbNzyx87uddCwXs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T6ROeQJUsLsNJM1ph7gaNTp3p5CHwtWSFWcBAu1VpsgqV6lYv5AFWZSJNTWx8uwIFIaLZw+3M+qRdVsyrb7JLznJrfeuQZ06orJZu7WtwRD6TiEwx9KK8KnY4q1mHK1dJ61Vmrt807DHrcxPyEn54AK2Vqq8i1Z0KCUVOyRuKrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YN4MdyGt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD0FEC4CEC0;
-	Fri, 13 Sep 2024 15:36:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726241798;
-	bh=RVqRBRsVH1AVrSfltGecQSUntV2rlbNzyx87uddCwXs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YN4MdyGtpadj42zM4+5HVJIVGfP0SJREsjhkkU8DkQtJH4DYdjtCVhcocYIa4W3os
-	 WtnQc2zi3IeEEzGbijuW4Bw01AsOgJ281oXtkmUVyKJI0GRGSocI3jZWM/eykQynwU
-	 KISW3OFGskLuNEeUC+jJJGqgW0J77pd2VFreBooBXEBJO5kRInPwUwgV375+KzVypz
-	 vN7uu7vgGwBP7Q/sQKphWs/qj9Ld9J8TcUU9DbLLb2/SCw2uw5FqR8URb3ai9McfvG
-	 chQSRSk0cs0MxD0pdXCbtKZwJc7gp9nXH+E9gRZNl6bgsm2AGRkFjlm8N6vLyVv4Op
-	 D5JXZFZKLOm4g==
-Received: by pali.im (Postfix)
-	id DB449725; Fri, 13 Sep 2024 17:36:31 +0200 (CEST)
-Date: Fri, 13 Sep 2024 17:36:31 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nfsd: Fill NFSv4.1 server implementation fields in
- OP_EXCHANGE_ID response
-Message-ID: <20240913153631.2lqq5nybuitjiwmo@pali>
-References: <20240912220919.23449-1-pali@kernel.org>
- <ZuRX/QfG+OLm9fTR@tissot.1015granger.net>
+	s=arc-20240116; t=1726241870; c=relaxed/simple;
+	bh=8ixziJ+NoVh4KOQg8C8NgzofR7i3xJZLSc06BKDtxXE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mbd74ban0GGRyhNCRbnTsJNb+mUzOcp7PxRxo6sIvKvjB7OkjfxyMQKRAmQQ+xE3pS3Ubxszxd4XrdvLdSzAaY1OdlVmBVjE5ppIW1XbOu2Y7Lwlb/QCB4i8bj+weW/AlllBPzwYT0tMBvZvrQVB6ORb47lF8m1xrRd9yA0Z1jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sEtY0NeT; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c245c62362so2561435a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 08:37:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726241867; x=1726846667; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8ixziJ+NoVh4KOQg8C8NgzofR7i3xJZLSc06BKDtxXE=;
+        b=sEtY0NeTFRRF0/RcRwDu45eVUcbz3bjNqVmz2rjiT+avVsEusmNo6bkt4fy+GF8aw9
+         rPezas8OvrcZAwlq5yd7FzIT1E8puhG0yWxJU33qfvHCEW/u7nOoaTvz+bqW3dIE5A1X
+         YxrASmZCe+7/io1+HuIqLtPKWdFFVtfuhCuQFC6hN4zr8BxmQL/CC73LLJF7Umeml5B7
+         D9wai5DTnC+66bViMRa62HM/YNxEcf26j3mwzj+/IRs3yRYjukhn6/IMDkudU03RYi/4
+         jaDmp7mbReG1Nn1KVOVPrW/3aUta4/mChqitfQUhGnTSG5DtKevkR4sbEOmZe1Uft2Kn
+         mgaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726241867; x=1726846667;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8ixziJ+NoVh4KOQg8C8NgzofR7i3xJZLSc06BKDtxXE=;
+        b=PgK0D+XeGyn5458Cma+cEQeHtMCiFQEJIsiIKnpEK0S4SrNbwZldoLAFbovmNSOA2j
+         Ga4AcGvPm1nPwgIA2Zc5Pgcb3B+QCujla01izRY4evQT7tl3H9gCuAMJAkZlqLYCqh98
+         gIG1KUt72TmPY4uAeUJhEDAcTmCWJdOCDoXdBhoPojzyxI04tZsq7FVXbATiAhkjhCKO
+         s17m71mGz5tqnOKjrXqiGG+hbrWlv40ZA7ayEJmfL8TxC2YkkDXO/b8UADgjvTGQmQHn
+         5ZBwNeYv6iudiyOTowUhI04wHfF6YD/iGYx33JyozcLGHD6exhDkIo+0D+kbUh58z3Tk
+         rTSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWhP64xTNW9y6LzZM4MuXm4LuDto0k9GcG1ZeQ61JRn84WTqD1SjUU+x4at59E+b+iHswIgQWM/H9zOjjQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOyQfEXRzfBXzClemgp6Q3vP4/nn0PGGXk2Ac3LmUlW/tLXPGP
+	C7hO1bn4uIx7bYq/5nV/OhHlgjb34xUv00L4DOglhtBhY3ZCSfKcNvx6rDroQCgK1V1U8Qm7XKe
+	5h5LeCWK1ujexOX86d2NyPYeyJ4KcHanKZQs1
+X-Google-Smtp-Source: AGHT+IGb5+Ky2+5hGPg9TOJMT/1uVEafLvwFY32TQ483pUMrOKix9BbKOuCjTfYl0Y8ZspD31CnMtbkI1Ixvmdip3Nc=
+X-Received: by 2002:a17:907:e2cf:b0:a8c:d6a3:d03a with SMTP id
+ a640c23a62f3a-a902947d3f4mr643415066b.21.1726241866556; Fri, 13 Sep 2024
+ 08:37:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZuRX/QfG+OLm9fTR@tissot.1015granger.net>
-User-Agent: NeoMutt/20180716
+References: <20240913145711.2284295-1-sean.anderson@linux.dev>
+In-Reply-To: <20240913145711.2284295-1-sean.anderson@linux.dev>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 13 Sep 2024 17:37:35 +0200
+Message-ID: <CANn89i+BGju58H3u6-Z_tZApjaMC+LB5XEocPbuTWK9owHyM4Q@mail.gmail.com>
+Subject: Re: [PATCH net v2] net: xilinx: axienet: Schedule NAPI in two steps
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>, "David S . Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Michal Simek <michal.simek@amd.com>, 
+	linux-kernel@vger.kernel.org, Robert Hancock <robert.hancock@calian.com>, 
+	Shannon Nelson <shannon.nelson@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Friday 13 September 2024 11:19:25 Chuck Lever wrote:
-> On Fri, Sep 13, 2024 at 12:09:19AM +0200, Pali Rohár wrote:
-> > NFSv4.1 OP_EXCHANGE_ID response from server may contain server
-> > implementation details (domain, name and build time) in optional
-> > nfs_impl_id4 field. Currently nfsd does not fill this field.
-> > 
-> > NFSv4.1 OP_EXCHANGE_ID call request from client may contain client
-> > implementation details and Linux NFSv4.1 client is already filling these
-> > information based on runtime module param "nfs.send_implementation_id" and
-> > build time Kconfig option "NFS_V4_1_IMPLEMENTATION_ID_DOMAIN". Module param
-> > send_implementation_id specify whether to fill implementation fields and
-> > Kconfig option "NFS_V4_1_IMPLEMENTATION_ID_DOMAIN" specify the domain
-> > string.
-> > 
-> > Do same in nfsd, introduce new runtime param "nfsd.send_implementation_id"
-> > and build time Kconfig option "NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN" and
-> > based on them fill NFSv4.1 server implementation details in OP_EXCHANGE_ID
-> > response. Logic in nfsd is exactly same as in nfs.
-> > 
-> > This aligns Linux NFSv4.1 server logic with Linux NFSv4.1 client logic.
-> > 
-> > NFSv4.1 client and server implementation fields are useful for statistic
-> > purposes or for identifying type of clients and servers.
-> 
-> NFSD has gotten along for more than a decade without returning this
-> information. The patch description should explain the use case in a
-> little more detail, IMO.
-> 
-> As a general comment, I recognize that you copied the client code
-> for EXCHANGE_ID to construct this patch. The client and server code
-> bases are somewhat different and have different coding conventions.
-> Most of the comments below have to do with those differences.
+On Fri, Sep 13, 2024 at 4:57=E2=80=AFPM Sean Anderson <sean.anderson@linux.=
+dev> wrote:
+>
+> As advised by Documentation/networking/napi.rst, masking IRQs after
+> calling napi_schedule can be racy. Avoid this by only masking/scheduling
+> if napi_schedule_prep returns true.
+>
+> Fixes: 9e2bc267e780 ("net: axienet: Use NAPI for TX completion path")
+> Fixes: cc37610caaf8 ("net: axienet: implement NAPI and GRO receive")
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> Reviewed-by: Shannon Nelson <shannon.nelson@amd.com>
+> ---
 
-Ok, this can be adjusted/aligned.
-
-> 
-> > Signed-off-by: Pali Rohár <pali@kernel.org>
-> > ---
-> >  fs/nfsd/Kconfig   | 12 +++++++++++
-> >  fs/nfsd/nfs4xdr.c | 55 +++++++++++++++++++++++++++++++++++++++++++++--
-> >  2 files changed, 65 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/fs/nfsd/Kconfig b/fs/nfsd/Kconfig
-> > index ec2ab6429e00..70067c29316e 100644
-> > --- a/fs/nfsd/Kconfig
-> > +++ b/fs/nfsd/Kconfig
-> > @@ -136,6 +136,18 @@ config NFSD_FLEXFILELAYOUT
-> >  
-> >  	  If unsure, say N.
-> >  
-> > +config NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN
-> > +	string "NFSv4.1 Implementation ID Domain"
-> > +	depends on NFSD_V4
-> > +	default "kernel.org"
-> > +	help
-> > +	  This option defines the domain portion of the implementation ID that
-> > +	  may be sent in the NFS exchange_id operation.  The value must be in
-> 
-> Nit: "that the server returns in its NFSv4 EXCHANGE_ID response."
-> 
-> 
-> > +	  the format of a DNS domain name and should be set to the DNS domain
-> > +	  name of the distribution.
-> 
-> Perhaps add: "See the description of the nii_domain field in Section
-> 3.3.21 of RFC 8881 for details."
-
-Ok.
-
-> But honestly, I'm not sure why nii_domain is parametrized at all, on
-> the client. Why not /always/ return "kernel.org" ?
-
-I do not know. I just followed logic of client. In my opinion, it does
-not make sense to have different logic in client and server. If it is
-not needed, maybe remove it from client too?
-
-> What checking should be done to ensure that the value of this
-> setting is a valid DNS label?
-
-Checking for valid DNS label is not easy. Client does not do it, so is
-it needed?
-
-> 
-> > +	  If the NFS server is unchanged from the upstream kernel, this
-> > +	  option should be set to the default "kernel.org".
-> > +
-> >  config NFSD_V4_2_INTER_SSC
-> >  	bool "NFSv4.2 inter server to server COPY"
-> >  	depends on NFSD_V4 && NFS_V4_2
-> > diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
-> > index b45ea5757652..5e89f999d4c7 100644
-> > --- a/fs/nfsd/nfs4xdr.c
-> > +++ b/fs/nfsd/nfs4xdr.c
-> > @@ -62,6 +62,9 @@
-> >  #include <linux/security.h>
-> >  #endif
-> >  
-> > +static bool send_implementation_id = true;
-> > +module_param(send_implementation_id, bool, 0644);
-> > +MODULE_PARM_DESC(send_implementation_id, "Send implementation ID with NFSv4.1 exchange_id");
-> 
-> I'd rather not add a module parameter if we don't have to. Can you
-> explain why this new parameter is necessary? For instance, is there
-> a reason why an administrator who runs NFSD on a stock distro kernel
-> would want to change this setting to "false" ?
-
-I really do not know. Client has this parameter, so I though it is a
-good idea to have it.
-
-> If it turns out that the parameter is valuable, is there admin
-> documentation to go with it?
-
-I'm not sure if client have documentation for it.
-
-> 
-> >  #define NFSDDBG_FACILITY		NFSDDBG_XDR
-> >  
-> > @@ -4833,6 +4836,53 @@ nfsd4_encode_server_owner4(struct xdr_stream *xdr, struct svc_rqst *rqstp)
-> >  	return nfsd4_encode_opaque(xdr, nn->nfsd_name, strlen(nn->nfsd_name));
-> >  }
-> >  
-> > +#define IMPL_NAME_LIMIT (sizeof(utsname()->sysname) + sizeof(utsname()->release) + \
-> > +			 sizeof(utsname()->version) + sizeof(utsname()->machine) + 8)
-> > +
-> > +static __be32
-> > +nfsd4_encode_server_impl_id(struct xdr_stream *xdr)
-> > +{
-> 
-> The matching XDR decoder in fs/nfsd/nfs4xdr.c is:
-> 
->    static __be32 nfsd4_decode_nfs_impl_id4( ... )
-> 
-> The function name matches the name of the XDR type in the spec. So
-> let's call this function nfsd4_encode_nfs_impl_id4().
-
-Ok.
-
-> 
-> > +	char impl_name[IMPL_NAME_LIMIT];
-> > +	int impl_name_len;
-> > +	__be32 *p;
-> > +
-> > +	impl_name_len = 0;
-> > +	if (send_implementation_id &&
-> > +	    sizeof(CONFIG_NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN) > 1 &&
-> > +	    sizeof(CONFIG_NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN) <= NFS4_OPAQUE_LIMIT)
-> > +		impl_name_len = snprintf(impl_name, sizeof(impl_name), "%s %s %s %s",
-> > +			       utsname()->sysname, utsname()->release,
-> > +			       utsname()->version, utsname()->machine);
-> > +
-> > +	if (impl_name_len <= 0) {
-> > +		if (xdr_stream_encode_u32(xdr, 0) != XDR_UNIT)
-> > +			return nfserr_resource;
-> > +		return nfs_ok;
-> > +	}
-> 
-> IMPL_NAME_LIMIT looks like it could be hundreds of bytes. Probably
-> not good to put a character array that size on the stack.
-> 
-> I prefer that the construction and checking is done in
-> nfsd4_exchange_id() instead, and the content of these fields passed
-> to this encoder via struct nfsd4_exchange_id.
-> 
-> As a guideline, the XDR layer should be concerned solely with
-> marshaling and unmarshalling data types. The content of the
-> marshaled data fields should be handled by NFSD's proc layer
-> (fs/nfsd/nfs4proc.c).
-
-Ok, I could try to look at it.
-
-> 
-> > +
-> > +	if (xdr_stream_encode_u32(xdr, 1) != XDR_UNIT)
-> > +		return nfserr_resource;
-> 
-> A brief comment would help remind readers that what is encoded here
-> is an array item count, and not a string length or a "value follows"
-> boolean.
-> 
-> Nit: In fact, this value isn't really a part of the base
-> nfs_impl_id4 data type. Maybe better to do this bit of logic in the
-> caller nfsd4_encode_exchange_id().
-
-Ok, it is truth that array item could is not part of impl_id4.
-
-> 
-> > +
-> > +	p = xdr_reserve_space(xdr,
-> > +		4 /* nii_domain.len */ +
-> > +		(XDR_QUADLEN(sizeof(CONFIG_NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN) - 1) * 4) +
-> > +		4 /* nii_name.len */ +
-> > +		(XDR_QUADLEN(impl_name_len) * 4) +
-> > +		8 /* nii_time.tv_sec */ +
-> > +		4 /* nii_time.tv_nsec */);
-> > +	if (!p)
-> > +		return nfserr_resource;
-> > +
-> > +	p = xdr_encode_opaque(p, CONFIG_NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN,
-> > +				sizeof(CONFIG_NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN) - 1);
-> > +	p = xdr_encode_opaque(p, impl_name, impl_name_len);
-> > +	/* just send zeros for nii_date - the date is in nii_name */
-> > +	p = xdr_encode_hyper(p, 0); /* tv_sec */
-> > +	*p++ = cpu_to_be32(0); /* tv_nsec */
-> 
-> We no longer write raw encoders like this in NFSD code. This is
-> especially unnecessary because EXCHANGE_ID is not a hot path.
-> 
-> Instead, use the XDR utility functions to spell out the field names
-> and data types, for easier auditing. For instance, something like
-> this:
-> 
-> 	status = nfsd4_encode_opaque(xdr, exid->nii_domain.data,
-> 				     exid->nii_domain.len);        
-> 	if (status != nfs_ok)
-> 		return status;
-> 	status = nfsd4_encode_opaque(xdr, exid->nii_name.data,
-> 				     exid->nii_name.len);        
-> 	return nfsd4_encode_nfstime4(xdr, &exid->nii_date);
-
-Ok.
-
-> Regarding the content of these fields: I don't mind filling in
-> nii_date, duplicating what might appear in the nii_name field, if
-> that is not a bother.
-
-I looked at this, and getting timestamp in numeric form is not possible.
-Kernel utsname() and UTS functions provides date only in `date` format
-which is unsuitable for parsing in kernel and converting into seconds
-since epoch. Moreover uts structures are exported to userspace, so
-changing and providing numeric value would be harder.
-
-> 
-> > +
-> > +	return nfs_ok;
-> > +}
-> > +
-> >  static __be32
-> >  nfsd4_encode_exchange_id(struct nfsd4_compoundres *resp, __be32 nfserr,
-> >  			 union nfsd4_op_u *u)
-> > @@ -4867,8 +4917,9 @@ nfsd4_encode_exchange_id(struct nfsd4_compoundres *resp, __be32 nfserr,
-> >  	if (nfserr != nfs_ok)
-> >  		return nfserr;
-> >  	/* eir_server_impl_id<1> */
-> > -	if (xdr_stream_encode_u32(xdr, 0) != XDR_UNIT)
-> > -		return nfserr_resource;
-> > +	nfserr = nfsd4_encode_server_impl_id(xdr);
-> > +	if (nfserr != nfs_ok)
-> > +		return nfserr;
-> >  
-> >  	return nfs_ok;
-> >  }
-> > -- 
-> > 2.20.1
-> > 
-> 
-> -- 
-> Chuck Lever
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 
