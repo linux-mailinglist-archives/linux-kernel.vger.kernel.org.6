@@ -1,111 +1,143 @@
-Return-Path: <linux-kernel+bounces-328341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3295A97823C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:06:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43BFB97823E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:07:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 622C8B239D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:06:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B86F71F26483
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C42701DC1BD;
-	Fri, 13 Sep 2024 14:05:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719EC1DB559;
+	Fri, 13 Sep 2024 14:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IFp1Ksdd";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lPiu3/6x"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="MpiCBDvX"
+Received: from pv50p00im-hyfv10011601.me.com (pv50p00im-hyfv10011601.me.com [17.58.6.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923091DB94D;
-	Fri, 13 Sep 2024 14:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B621C2E419
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726236347; cv=none; b=gVjZZxVrVvh+Jp6z0wqmYVFErddTz0qfVC3Cky7jz5BAytOSTnLJ5EAo0+rYKTmOgEB76TNY5ynNsWIhF+zHLKD1XtD/sX1Mg/ktkw/fqqsDjJhX9yvKWKEGb0aEBL3aCIflhfigzKy03M9OFhtgle5DvAQG3nyQ8/kws/RKJfQ=
+	t=1726236366; cv=none; b=RspHEoH5QA/YKwDqXgQqeIMCxRu37z+CNrTC4IT+V7sNkhjryyB6YnDAxf4/8FeH0sZtVAP4THmV9R5qjEGE/QRcT19T7/ZZqD5z2cE7qRwOXcwriyyxVE+5gRnQuvgsodEdYFSBj5ywO+qdHf8bg9Mxmx6cocy9byGyBFXznLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726236347; c=relaxed/simple;
-	bh=qOLlB2ODIZHd9tadFjGmdop49h0yAytpCHar4CpvpYM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sks8Ky7pAM/FT83zkBSjSZpkfe7jSLjkwO8fDUdPqUDCiMRuG2q2lP2JM8w7TLVSJVuthpsmyIxvJ7NhYFU77SK8s1GXa908UNblBvDNj+6WGebJH/j2AZVOQo33FtZeRkhv3yZdL9TmjQx5OOkT+wtwgJLtuer1I66zpMb30r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IFp1Ksdd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lPiu3/6x; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1726236343;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P8MmvbSxGrzA2amsSYnDkpZhNgQm94vpI9KV4RVr0co=;
-	b=IFp1KsddfJeXyxTmgTnEHkZrw44Bgmp3mTutq06MHLiE3lyMlHOzyWLMlrDpwu3Cht4Puu
-	5fL9UMNfmfaz1GE6W9UxkDOSxU6yk9DlN46OX9N5rK6ljdxeBMOG7YYve1e36eXKUDF8Ex
-	y+oNqP/NKHvnnVXjPFrfWTo0c+VH1eLb+IW7aSsdCuXcOexR4ILFnp3PioLCst0odPNmzq
-	FqYOa7fcUdbwiLKFdvjz6i8j5V/KX4xJfO2DjfyWZA4qKc8VQY8o11SSs+KZFnwy8hyKbF
-	YBOff2m6TqO9WvuvE+ZFcT6kyghVqf8mBeqX46KOOxWA84jL5fA9jO+QJ9mk9g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1726236343;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P8MmvbSxGrzA2amsSYnDkpZhNgQm94vpI9KV4RVr0co=;
-	b=lPiu3/6xN4ewvXHEFOrqhvILd/pCS0vHbt8IFr5rLywXuK6mKdOYcdceBBIQNlnH9DhrLF
-	SlAG+xsowFGU6bDw==
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jirislaby@kernel.org>,
-	Petr Mladek <pmladek@suse.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Esben Haabendal <esben@geanix.com>,
-	linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Rengarajan S <rengarajan.s@microchip.com>,
-	Peter Collingbourne <pcc@google.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Serge Semin <fancer.lancer@gmail.com>
-Subject: [PATCH next v2 4/4] serial: 8250: Revert "drop lockdep annotation from serial8250_clear_IER()"
-Date: Fri, 13 Sep 2024 16:11:38 +0206
-Message-Id: <20240913140538.221708-5-john.ogness@linutronix.de>
-In-Reply-To: <20240913140538.221708-1-john.ogness@linutronix.de>
-References: <20240913140538.221708-1-john.ogness@linutronix.de>
+	s=arc-20240116; t=1726236366; c=relaxed/simple;
+	bh=8IfXxd5C0CAeXKIkfZAQxJGYyptP8S5ILxf2PeIDRI8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XyCka3PkSwK/r99+qn9LpUYTYvBNZ9AylLom2bBx6Emt4bXWcPIOjYNJrV0hWmFpWbgWDaMoi/jWj1QfpHa9iXLA0IId8GHp2dpHENnpPXtJeP0LYpo+h3jl2GzSJtPreFJfZhImPSFmnXUNSVztAtyBQ8J8W2RVHIsWdmEQklA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=MpiCBDvX; arc=none smtp.client-ip=17.58.6.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1726236362;
+	bh=ZYfUUZ141zHxiPPsqf0nTB169UUiFKPgVdLj8pY3QEg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
+	b=MpiCBDvXTNoItlfEhoRLK3R2NWzIQptDnQyKQx90p2nztr/k5FFlc0qOkvlyvxiMA
+	 SZ/TA1mZ2qrJqH3IaK6NfQ4Of/ATOQMqrZPYjjfn/3UPHYEBFcUMjWkMyW5D+OYi+2
+	 keQ8bCrFsAyNzk9Nz/uwLIToaJGpKrsjUnwAnTUwcacqYZv21O+6HXbtnlSdLJLI0H
+	 pDtukZAbaDlD5HKTSYQxPQJnPCc5FehzulPtdmc+crxmVV2h8DWgqsz8g6dVdp4P0v
+	 a2W5SJmY983O95QQ4iTWsQwNi9qhP6nJ/EDq602IkGML45FRiGKSDvBqMVkkqo3CVw
+	 iZ71ZnH7YRg3w==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-hyfv10011601.me.com (Postfix) with ESMTPSA id 519DAC8048C;
+	Fri, 13 Sep 2024 14:05:57 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Date: Fri, 13 Sep 2024 22:05:38 +0800
+Subject: [PATCH v3] driver core: Explicitly initialize struct member
+ @data.have_async in __device_attach()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240913-fix_have_async-v3-1-793707cfc0d1@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIALFG5GYC/33MQQ6CMBCF4auQrq1hOm0FV97DGFJKlVlYsNVGQ
+ ri7hZ0LXf6Ted/MogvkIjsWMwsuUaTB58BdwWxv/M1x6nIzUQpZVgL5ld5Nb5JrTJy85WgAlYa
+ qq6FleTQGlz828HzJ3VN8DmHa/ATr9SeVgAOXaFDJVmuQ7enxIkve7u1wZyuWxH9AZMB1UGKtx
+ AG1+gaWZfkAsoYw3e8AAAA=
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
+ Zijun Hu <quic_zijuhu@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Proofpoint-GUID: hzoEQMOsQd7s2kI0rYjA4eGjx2g_gZj2
+X-Proofpoint-ORIG-GUID: hzoEQMOsQd7s2kI0rYjA4eGjx2g_gZj2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-13_11,2024-09-13_02,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 malwarescore=0 phishscore=0
+ suspectscore=0 clxscore=1015 spamscore=0 mlxscore=0 adultscore=0
+ mlxlogscore=874 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2409130098
+X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-The 8250 driver no longer depends on @oops_in_progress and
-will no longer violate the port->lock locking constraints.
+From: Zijun Hu <quic_zijuhu@quicinc.com>
 
-This reverts commit 3d9e6f556e235ddcdc9f73600fdd46fe1736b090.
+__device_attach() defines struct device_attach_data @data as auto
+variable and needs to use both @data.want_async and @data.have_async
+but it explicitly initializes the former and leaves compiler implicitly
+initialize the later, that does not have an elegant look, solved by
+explicitly initializing the later member as well that also makes @data
+have full initialization.
 
-Signed-off-by: John Ogness <john.ogness@linutronix.de>
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
 ---
- drivers/tty/serial/8250/8250_port.c | 3 +++
- 1 file changed, 3 insertions(+)
+IMO, this change still has a little bit of value as explained below:
 
-diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-index d58a0fa95e3b..fdef0cd01b2d 100644
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -706,6 +706,9 @@ static void __serial8250_clear_IER(struct uart_8250_port *up)
+- Looks at below similar commit:
+Commit: 8f45f5071ad2 ("gpu: host1x: Explicitly initialize host1x_info structures")
+
+- This change's initialization way is obvious better than
+
+struct device_attach_data data = {
+	.dev = dev,
+	.check_async = allow_async,
+};
+
+which is better than current
+
+struct device_attach_data data = {
+	.dev = dev,
+	.check_async = allow_async,
+	.want_async = false,
+};
+---
+Changes in v3:
+- Correct commit message.
+- Link to v2: https://lore.kernel.org/r/20240823-fix_have_async-v2-1-ed1039527365@quicinc.com
+
+Changes in v2:
+- Remove both fix and stable tag
+- Correct both title and commit messages
+- Link to v1: https://lore.kernel.org/r/20240823-fix_have_async-v1-1-43a354b6614b@quicinc.com
+---
+ drivers/base/dd.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+index a7cc7ff0923b..9e8596773e7f 100644
+--- a/drivers/base/dd.c
++++ b/drivers/base/dd.c
+@@ -1021,6 +1021,7 @@ static int __device_attach(struct device *dev, bool allow_async)
+ 			.dev = dev,
+ 			.check_async = allow_async,
+ 			.want_async = false,
++			.have_async = false,
+ 		};
  
- static inline void serial8250_clear_IER(struct uart_8250_port *up)
- {
-+	/* Port locked to synchronize UART_IER access against the console. */
-+	lockdep_assert_held_once(&up->port.lock);
-+
- 	__serial8250_clear_IER(up);
- }
- 
+ 		if (dev->parent)
+
+---
+base-commit: efb0b309fa0d8a92f9b303d292944cda08349eed
+change-id: 20240823-fix_have_async-3a135618d91b
+
+Best regards,
 -- 
-2.39.2
+Zijun Hu <quic_zijuhu@quicinc.com>
 
 
