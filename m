@@ -1,124 +1,157 @@
-Return-Path: <linux-kernel+bounces-328816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 627B3978945
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:05:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 168A397894A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:06:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D32A1C22AC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:05:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9E751F241FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:06:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8481482E5;
-	Fri, 13 Sep 2024 20:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0C114EC60;
+	Fri, 13 Sep 2024 20:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="n8Dw7WDy"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="03l3JB0o"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D545BA2E;
-	Fri, 13 Sep 2024 20:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA0E136E01
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 20:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726257938; cv=none; b=a8gnWy9VGsQYVsPmU+8AznTSa1bEmi3P7ZZPJFh77ORj7vlYqxKPkwZ1h6A7FEN3lLI8oU7ylZws7DRtsYSu5PGQsfmYwmPNDANREfp5tWjYY+Qixq/11nqZNmBTbkgfm2uw2+J2pjJmBZOwYtHG9yD48CEC1gAT8qAmlqQxGSo=
+	t=1726257947; cv=none; b=VYXKNJJzuNHSOHDBE4ayaiejgnI1voWSJ9DO4dLp+nHdqlC7zQmBwNiTaxGBsxUXHwfSxuG/e8vTljvXcpza4TpsiQhXcOKeJoua7cOy+D+dJwnJfKBxdbA8K5KxnizPBg1k5+RdFAsnIuLTpd+cvbzLs0fSqPNa3JivFARZMzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726257938; c=relaxed/simple;
-	bh=88+WbYUILBPnMzh6jPB4Mj7NyId5g8mRCRkbvrT/nQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eE1RPSXGSP1f+uySFpg32ewvczDCBc4LH4ZM5KVXGkC+XBYF7y2ep2X3IpoN/Dg4lcV2w8k/qmDiWPuL72xbF27ZssHaPGWFufrJI3iJ4J20CLjVuX5XypUe+SUb3lAHnYs5ea6PHR6ED+jZlC74LAsXpQLisJGw6k+HCW9thzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=n8Dw7WDy; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=fdTfQKY0qkCMjwrdmN0Fuu0YLCsZGwp56cFev5joVpI=; b=n8Dw7WDyb8qe/vPk
-	zv/1LZwBTw68NIlZxHpBQEh4Oa7ShjOtFYOsru3+bCjk/h4lpiapemxcA2IQ/hfIwlTlDRwMPJTFK
-	9pldfEKL0sMlQ4tjm9JD0pvZl4B5xrjTZgS9nYX/SmKYzTQ8AXuJSwWuEdKyH0H1TWcxN6dqv7kEy
-	1+O9+KdqhyjZfD4NDHF05a4ej+P7upLyUztHVbXqb7RQfIPNkuUEKofjukBgjwp/HC8GsTHHBrewY
-	dbV2qY7UdZLdes6Y9TaKiWTwd1RvDdGUanxLi60ulWLKzIIzKnpjYFGGWqsiO4LA1SZbGGYuEnESA
-	AmLy17OzX6i0USUDtg==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1spCXr-005fFw-0D;
-	Fri, 13 Sep 2024 20:05:31 +0000
-Date: Fri, 13 Sep 2024 20:05:31 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Oliver Hartkopp <socketcan@hartkopp.net>
-Cc: mkl@pengutronix.de, linux-can@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: of alloc_canxl_skb
-Message-ID: <ZuSbC8iqeGcUnogC@gallifrey>
-References: <ZuRGRKU9bjgC52mD@gallifrey>
- <2540406e-8da3-4cb8-bd1a-30271dd6cc67@hartkopp.net>
+	s=arc-20240116; t=1726257947; c=relaxed/simple;
+	bh=JasvM0cGQ6Kp6s1RW9fXNSm51k0TxuA8UQb6JqCiRFE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y//pKh6GhQNx+5IsAAcOcAQuyvrFezgJfOd6IFTgbr1QRwwWjdZqSBPbf86y5HYWNsGl/MHsPcREJC31yWbMgh4wjLaJTy+20OF3ObY8aIwAaXokRvCo8E23kerfcVkch+CEFZzVlm8ceP/6OxcPCTbth3agVK9DkozL19Mhk+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=03l3JB0o; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4582fa01090so63711cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 13:05:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726257945; x=1726862745; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=428AI888COZr85p2dtQB4DhBQ69x1Du1oaYIZ9Pz7II=;
+        b=03l3JB0oHV2Hzye+RjF0fXtSXBf8IdJKdJpZEGnUWf765simsQiTi79LODJOhCO41f
+         k4AU+BVfkSgbft9guX75yRJ6kRfXrewdiAYsZzPiC3JjXtHP6z4+LUuCcstFCCFsicIZ
+         k27rF8uiuEU8rFr5gCNKITx/XY0eIw0nIj02hbY+cvY4ySBvGVjnIbiV3WarSxaPiqEd
+         n3WfMe/hAIAxFyIF23cT4cqxxId+MH/LhaHCAMraH0skq84ySZ9Ex3xO8+8Ba1Z7byM2
+         N5tllqqSNqBu75Za+IkBl9Ndpe2GfKqt2yO0sxaojazkPuTspH3al+YVfg09Gcl9t3lw
+         FXOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726257945; x=1726862745;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=428AI888COZr85p2dtQB4DhBQ69x1Du1oaYIZ9Pz7II=;
+        b=RBnEULNZzq/K9iq13JvKi3V4gnQDTUV4bv6c8NVANfPrlTHgzVQ2J9h5sLwmnQc4kQ
+         CQ9Y/qvOd76ZfRgO/RcOEhmqe4PT1+r671VDsvexA8UVJNr604boXNoU1xq4BbZYEl2v
+         rtL4Z7EtMODYpnxaAexhmzcWzBRNJeC6TvsFu4fTc15KDO7Z7Hvr++fGm3As+TEaCiND
+         JoDDz+UDUq21kk0dnXufnDxOohvYeSM97pgKXzN59lTUoOTgdCJJFV/VpHsDYKggBSAI
+         4Ay19V+A5gD3kTWNT8NsDucuAaTAIKd4jy/ASB01ZYLkE1QiU8RQoJFPdOlR7ez49q62
+         E6Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCWULIP2FBJUv4vr3blR0RDsDatIlZBM6c2f2MuXmDuRastZwgmlwRR408EYITIpVcrpODCA1FJz32p1sVs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwE4RDS/+mYauYhWnQ0aHThqriW/aDoIFqrQft0hpt40lZBKFa8
+	TJ3ugET/UuW91oPAHvod9yokBvUd0WBc3fxsB+luXg/+e9agyHoyly8jzJm2Tcl4LK+n+DM9+wP
+	wJM5oJYdx+J0zYDt1NP0QcuVAgBz3Jyv2PR73
+X-Google-Smtp-Source: AGHT+IF5n1mXupbErXFG4ufgiVBKgZXbeEDAnZXN3Paf7T9SpKrEw2qr89Hq947jCuTgHivZFmuNQ00T2DIMXKQJkVo=
+X-Received: by 2002:a05:622a:34a:b0:456:7ef1:929d with SMTP id
+ d75a77b69052e-4586079cda4mr8791071cf.12.1726257944603; Fri, 13 Sep 2024
+ 13:05:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <2540406e-8da3-4cb8-bd1a-30271dd6cc67@hartkopp.net>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 20:04:08 up 128 days,  7:18,  1 user,  load average: 0.02, 0.02,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+References: <20240913125302.0a06b4c7@canb.auug.org.au> <20240912200543.2d5ff757@kernel.org>
+ <20240913204138.7cdb762c@canb.auug.org.au> <20240913083426.30aff7f4@kernel.org>
+ <20240913084938.71ade4d5@kernel.org> <913e2fbd-d318-4c9b-aed2-4d333a1d5cf0@cs-soprasteria.com>
+ <CAHS8izPf29T51QB4u46NJRc=C77vVDbR1nXekJ5-ysJJg8fK8g@mail.gmail.com> <20240913113619.4bf2bf16@kernel.org>
+In-Reply-To: <20240913113619.4bf2bf16@kernel.org>
+From: Mina Almasry <almasrymina@google.com>
+Date: Fri, 13 Sep 2024 13:05:32 -0700
+Message-ID: <CAHS8izNSjZ9z2JfODbpo-ULgOcz1dGe5xe7_LKU-8LzJN_z-iw@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the net-next tree
+To: Jakub Kicinski <kuba@kernel.org>, Matthew Wilcox <willy@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, christophe.leroy2@cs-soprasteria.com, 
+	David Miller <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, 
+	Networking <netdev@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-* Oliver Hartkopp (socketcan@hartkopp.net) wrote:
-> Hi David,
+On Fri, Sep 13, 2024 at 11:36=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> w=
+rote:
+>
+> On Fri, 13 Sep 2024 09:27:17 -0700 Mina Almasry wrote:
+> > diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+> > index 5769fe6e4950..ea4005d2d1a9 100644
+> > --- a/include/linux/page-flags.h
+> > +++ b/include/linux/page-flags.h
+> > @@ -239,8 +239,8 @@ static inline unsigned long _compound_head(const
+> > struct page *page)
+> >  {
+> >         unsigned long head =3D READ_ONCE(page->compound_head);
+> >
+> > -       if (unlikely(head & 1))
+> > -               return head - 1;
+> > +       if (unlikely(head & 1UL))
+> > +               return head & ~1UL;
+> >         return (unsigned long)page_fixed_fake_head(page);
+> >  }
+> >
+> > Other than that I think this is a correct fix. Jakub, what to do here.
+> > Do I send this fix to the mm tree or to net-next?
+>
+> Yes, please, send this out and CC all the relevant people.
+> We can decide which tree it will go into once its reviewed.
+>
+> Stephen, would you be willing to slap this on top of linux-next for now?
+> I can't think of a better bandaid we could put in net-next,
+> and it'd be sad to revert a major feature because of a compiler bug(?)
 
-Hi Oliver,
+Change, got NAKed:
+https://lore.kernel.org/netdev/ZuSQ9BT9Vg7O2kXv@casper.infradead.org/
 
-> On 13.09.24 16:03, Dr. David Alan Gilbert wrote:
-> 
-> >    I'm doing some deadcode hunting and noticed that
-> > 
-> >    alloc_canxl_skb in drivers/net/can/dev/skb.c
-> > 
-> > looks unused in the main kernel tree; is that expected?
-> > I see it was added back in 2022 by
-> >    fb08cba12b52 ("can: canxl: update CAN infrastructure for CAN XL frames")
-> > 
-> > I know almost exactly nothing about CAN, so I thought it best
-> > to ask!
-> 
-> I created some slides so that you can get an introduction to the different
-> CAN protocols CAN CC (aka Classical CAN), CAN FD and CAN XL:
-> 
-> https://github.com/linux-can/can-doc/tree/master/presentations
+But AFAICT we don't really need to do this inside of mm, affecting
+things like compound_head. This equivalent change also makes the build
+pass. Does this look good?
 
-Thanks!
+diff --git a/include/net/netmem.h b/include/net/netmem.h
+index 8a6e20be4b9d..58f2120cd392 100644
+--- a/include/net/netmem.h
++++ b/include/net/netmem.h
+@@ -100,7 +100,15 @@ static inline netmem_ref net_iov_to_netmem(struct
+net_iov *niov)
 
-> The introduction of the CAN XL support lead to some clean up and rework also
-> for the former alloc_can_skb() and alloc_canfd_skb() helpers.
-> 
-> The function is currently not in use in net/can/raw.c as it is only needed
-> when a CAN XL frame is received from read hardware. But the patch also
-> contains the definition of ETH_P_CANXL to already handle CAN XL frames
-> properly inside the Linux kernel and e.g. for WireShark 4.4.
-> 
-> There are currently some CAN XL IP cores in development (see attached
-> picture with an FPGA based IP core) and I am working on the kernel
-> infrastructure (e.g. bitrate configuration enhancements) on this board. So
-> alloc_canxl_skb() is already in use on my desk and there will be some more
-> stuff showing up soon ;-)
+ static inline netmem_ref page_to_netmem(struct page *page)
+ {
+-       return (__force netmem_ref)page;
++       /* page* exported from the mm stack would not have the LSB set, but=
+ the
++        * GCC 14 powerpc compiler will optimize reads into this pointer in=
+to
++        * unaligned reads as it sees address arthemetic in _compound_head(=
+).
++        *
++        * Explicitly clear the LSB until what looks like a GCC compiler is=
+sue
++        * is resolved.
++        */
++       DEBUG_NET_WARN_ON_ONCE((unsigned long)page & 1UL);
++       return (__force netmem_ref)page & ~1UL;
+ }
 
-OK, great - I won't try and deadcode it then!
-
-Thanks again for the reply,
-
-Dave
-
-
-> Best regards,
-> Oliver
-
-
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+--
+Thanks,
+Mina
 
