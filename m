@@ -1,58 +1,57 @@
-Return-Path: <linux-kernel+bounces-328266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDAA0978139
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:33:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A726297813A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:34:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 868D7287698
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:33:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27A8F1F26019
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:34:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F1141DA61F;
-	Fri, 13 Sep 2024 13:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432D31DA62F;
+	Fri, 13 Sep 2024 13:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="rHKCAJL8"
-Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Op/BD4Ey"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2854443144;
-	Fri, 13 Sep 2024 13:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9437F43144
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 13:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726234401; cv=none; b=Qx7cQp4EnSPQFaGva+MaYo8cvW52xeLeraEjbo66ZmuJ2MLQHANLUmipL3yfz2gRrQ2rW4SPrn6wknOufHqB18IL9Dd33OqrdQU8681O3iXE5AAM0M9MvBnR9b16vLsMPB7LY+KOertdcJTIpGIOlfJe7P8nBVnAC/uqBYrniok=
+	t=1726234432; cv=none; b=K0m2evIpyT/vlxZKmsPYzrp5IT0o7+kppjvbC64euA3hs+ns55vwljCB40MWdfJfpRP1v1kpOfkKtT8Ti2c3I8uHSPEzkR8y5XyxSqVAk8Q3XZCkZYZSQ3BHn2b4kub5Ewcn7X1PLeV//S4FaVQ51hjvI5/nhoU7dzSJ8Mc8duw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726234401; c=relaxed/simple;
-	bh=FuLavyQvHtM8WNrI6vKqzszV+dUVTGkQOGNr5SLyZC4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fRn/Z/lt7KWEr6SfKPCL+2LcLtsj37JBrQXn0uxgxv4oziimxMA2NrQ08xkoKVn3O8NqvJKwxKvBYvVpNekkZQdsgJpddbHBUcfkc/7K9FOmIFLlFak8bpW7yDDyL8kgrKe5D1rfg1GJrVSQ4eGv9+81Vi3RrVNR2ZQWWHIeE3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=rHKCAJL8; arc=none smtp.client-ip=83.166.143.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X4wH83tfjzgWW;
-	Fri, 13 Sep 2024 15:33:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1726234388;
-	bh=MH8HjPJeBlhN/lWhWBgQcXkOURL5N2O7tfwxaECdnFQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rHKCAJL8t1bdaLNqjn89ZGONAIOviOasFHZS3MK8w73wdLPvihXWzz/n4NNcCC0ZD
-	 bOe9KY1bV3n04AQIH9Y/TK+opSL9NA/PLQdazDyfx9phHwm962fsuFzk97IPAIJ81o
-	 fCS3LXWubgoWrnYigeSczWA7VS6P8xC3tNYVGw0U=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4X4wH64ldfzZ9Z;
-	Fri, 13 Sep 2024 15:33:06 +0200 (CEST)
-Date: Fri, 13 Sep 2024 15:32:59 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>, linux-api@vger.kernel.org
-Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH v11 1/8] Landlock: Add abstract UNIX socket restriction
-Message-ID: <20240913.AmeeLo0aeheD@digikod.net>
-References: <cover.1725494372.git.fahimitahera@gmail.com>
- <5f7ad85243b78427242275b93481cfc7c127764b.1725494372.git.fahimitahera@gmail.com>
+	s=arc-20240116; t=1726234432; c=relaxed/simple;
+	bh=hnObRO+BR0d8TtaxjbeGnkgGTtnOe0unp/BiDBKXZVo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n3TkmJ38htN0yhuzdlhJLC6WlMGhJOyekbgpi1mhUGS1pC3b6jIkKnO6jKarM38QKQgIfsCWfP+YtGeRUzfL26Lx7JrsbJnkQCRdm2d/PzyMXLtWp0Wf1KDPUJB6Y6K7HO768A/t4Ql7fijJpv4I0i5JvkvmILhVlx06Rg28HM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Op/BD4Ey; arc=none smtp.client-ip=185.70.40.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1726234426; x=1726493626;
+	bh=T6OFiEYeegJIf9cPUv8SH8bEszc9kqwNM4Y0cpIi5Sk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=Op/BD4EyB6aV5cIBD3bMTqSvgwxg/Xmcu6RhWPU7BAYppO5fqYWz3go3deBu9e+a7
+	 bHesSrqDBfhhdCS/KMnR7kblwmMjiLYINCj/89TrvyeFLUkZl0Mid36316UmCjOYk9
+	 xeYUw5UI3193hZ06BcQ+Vh5C4KKTsjVR9z+3XdifT6/iBZfmxV1vexckTHKuEysdzy
+	 2ZJbI5meFiP5/cpFZjC7HxhZS4g09EE8ng9XItx/ekpJNvOnMBRbeo2j+gBDIdRYsK
+	 MNOyS2sLwH7nHk8vKA5tDrCHEVQcWRnB+2f4X2zcNWJvznLnhXRz016wuR/sA1lEZ9
+	 SVtI/YeQKvgUQ==
+Date: Fri, 13 Sep 2024 13:33:43 +0000
+To: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, FUJITA Tomonori <fujita.tomonori@gmail.com>, Valentin Obst <kernel@valentinobst.de>
+Subject: Re: [PATCH v5 1/3] rust: Introduce irq module
+Message-ID: <9e2716d8-ec2c-403b-9a3d-ae9784eb9e6f@proton.me>
+In-Reply-To: <20240912190540.53221-2-lyude@redhat.com>
+References: <20240912190540.53221-1-lyude@redhat.com> <20240912190540.53221-2-lyude@redhat.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 9bb89ce0d14944f3480f9531b3aa3766f34559aa
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,155 +59,182 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5f7ad85243b78427242275b93481cfc7c127764b.1725494372.git.fahimitahera@gmail.com>
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 04, 2024 at 06:13:55PM -0600, Tahera Fahimi wrote:
-> This patch introduces a new "scoped" attribute to the
-> landlock_ruleset_attr that can specify
-> "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to scope abstract UNIX sockets
-> from connecting to a process outside of the same Landlock domain. It
-> implements two hooks, unix_stream_connect and unix_may_send to enforce
-> this restriction.
-> 
-> Closes: https://github.com/landlock-lsm/linux/issues/7
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
-> 
+On 12.09.24 21:04, Lyude Paul wrote:
+> This introduces a module for dealing with interrupt-disabled contexts,
+> including the ability to enable and disable interrupts
+> (with_irqs_disabled()) - along with the ability to annotate functions as
+> expecting that IRQs are already disabled on the local CPU.
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+>=20
 > ---
-> v11:
-> - For a connected abstract datagram socket, the hook_unix_may_send
->   allows the socket to send a data. (it is treated as a connected stream
->   socket)
-> - Minor comment revision.
-> v10:
-> - Minor code improvement based on reviews on v9.
-> v9:
-> - Editting inline comments.
-> - Major refactoring in domain_is_scoped() and is_abstract_socket
-> v8:
-> - Code refactoring (improve code readability, renaming variable, etc.)
->   based on reviews by Mickaël Salaün on version 7.
-> - Adding warn_on_once to check (impossible) inconsistencies.
-> - Adding inline comments.
-> - Adding check_unix_address_format to check if the scoping socket is an
->   abstract UNIX sockets.
-> v7:
-> - Using socket's file credentials for both connected(STREAM) and
->   non-connected(DGRAM) sockets.
-> - Adding "domain_sock_scope" instead of the domain scoping mechanism
->   used in ptrace ensures that if a server's domain is accessible from
->   the client's domain (where the client is more privileged than the
->   server), the client can connect to the server in all edge cases.
-> - Removing debug codes.
-> v6:
-> - Removing curr_ruleset from landlock_hierarchy, and switching back to
->   use the same domain scoping as ptrace.
-> - code clean up.
-> v5:
-> - Renaming "LANDLOCK_*_ACCESS_SCOPE" to "LANDLOCK_*_SCOPE"
-> - Adding curr_ruleset to hierarachy_ruleset structure to have access
->   from landlock_hierarchy to its respective landlock_ruleset.
-> - Using curr_ruleset to check if a domain is scoped while walking in the
->   hierarchy of domains.
-> - Modifying inline comments.
-> v4:
-> - Rebased on Günther's Patch:
->   https://lore.kernel.org/all/20240610082115.1693267-1-gnoack@google.com/
->   so there is no need for "LANDLOCK_SHIFT_ACCESS_SCOPE", then it is
->   removed.
-> - Adding get_scope_accesses function to check all scoped access masks in
->   a ruleset.
-> - Using socket's file credentials instead of credentials stored in
->   peer_cred for datagram sockets. (see discussion in [1])
-> - Modifying inline comments.
-> V3:
-> - Improving commit description.
-> - Introducing "scoped" attribute to landlock_ruleset_attr for IPC
->   scoping purpose, and adding related functions.
-> - Changing structure of ruleset based on "scoped".
-> - Removing rcu lock and using unix_sk lock instead.
-> - Introducing scoping for datagram sockets in unix_may_send.
+>=20
 > V2:
-> - Removing wrapper functions
-> 
-> [1]https://lore.kernel.org/all/20240610.Aifee5ingugh@digikod.net/
+> * Actually make it so that we check whether or not we have interrupts
+>   disabled with debug assertions
+> * Fix issues in the documentation (added suggestions, missing periods, ma=
+de
+>   sure that all rustdoc examples compile properly)
+> * Pass IrqDisabled by value, not reference
+> * Ensure that IrqDisabled is !Send and !Sync using
+>   PhantomData<(&'a (), *mut ())>
+> * Add all of the suggested derives from Benno Lossin
+>=20
+> V3:
+> * Use `impl` for FnOnce bounds in with_irqs_disabled()
+> * Use higher-ranked trait bounds for the lifetime of with_irqs_disabled()
+> * Wording changes in the documentation for the module itself
+>=20
+> V4:
+> * Use the actual unsafe constructor for IrqDisabled in
+>   with_irqs_disabled()
+> * Fix comment style in with_irqs_disabled example
+> * Check before calling local_irq_restore() in with_irqs_disabled that
+>   interrupts are still disabled. It would have been nice to do this from =
+a
+>   Drop implementation like I hoped, but I realized rust doesn't allow tha=
+t
+>   for types that implement Copy.
+> * Document that interrupts can't be re-enabled within the `cb` provided t=
+o
+>   `with_irqs_disabled`, and link to the github issue I just filed about
+>   this that describes the solution for this.
+>=20
+> V5:
+> * Rebase against rust-next for the helpers split
+> * Fix typo (enabled -> disabled) - Dirk
+>=20
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
 > ---
->  include/uapi/linux/landlock.h                |  28 ++++
->  security/landlock/limits.h                   |   3 +
->  security/landlock/ruleset.c                  |   7 +-
->  security/landlock/ruleset.h                  |  24 +++-
->  security/landlock/syscalls.c                 |  17 ++-
->  security/landlock/task.c                     | 136 +++++++++++++++++++
->  tools/testing/selftests/landlock/base_test.c |   2 +-
->  7 files changed, 208 insertions(+), 9 deletions(-)
-> 
-> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> index 2c8dbc74b955..dfd48d722834 100644
-> --- a/include/uapi/linux/landlock.h
-> +++ b/include/uapi/linux/landlock.h
-> @@ -44,6 +44,12 @@ struct landlock_ruleset_attr {
->  	 * flags`_).
->  	 */
->  	__u64 handled_access_net;
-> +	/**
-> +	 * @scoped: Bitmask of scopes (cf. `Scope flags`_)
-> +	 * restricting a Landlock domain from accessing outside
-> +	 * resources(e.g. IPCs).
-> +	 */
-> +	__u64 scoped;
->  };
->  
->  /*
-> @@ -274,4 +280,26 @@ struct landlock_net_port_attr {
->  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
->  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
->  /* clang-format on */
+>  rust/helpers/helpers.c |  1 +
+>  rust/helpers/irq.c     | 22 +++++++++++
+>  rust/kernel/irq.rs     | 90 ++++++++++++++++++++++++++++++++++++++++++
+>  rust/kernel/lib.rs     |  1 +
+>  4 files changed, 114 insertions(+)
+>  create mode 100644 rust/helpers/irq.c
+>  create mode 100644 rust/kernel/irq.rs
+
+This looks pretty good, I have two documentation improvements below,
+with those fixed:
+
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+
+> diff --git a/rust/kernel/irq.rs b/rust/kernel/irq.rs
+> new file mode 100644
+> index 0000000000000..0673087161f08
+> --- /dev/null
+> +++ b/rust/kernel/irq.rs
+> @@ -0,0 +1,90 @@
+> +// SPDX-License-Identifier: GPL-2.0
 > +
-> +/**
-> + * DOC: scope
-> + *
-> + * Scope flags
-> + * ~~~~~~~~~~~
-> + *
-> + * These flags enable to restrict a sandboxed process from a set of IPC
-> + * actions. Setting a flag for a ruleset will isolate the Landlock domain
-> + * to forbid connections to resources outside the domain.
-> + *
-> + * IPCs with scoped actions:
-> + *
-> + * - %LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET: Restrict a sandboxed process
-> + *   from connecting to an abstract unix socket created by a process
-> + *   outside the related Landlock domain (e.g. a parent domain or a
-> + *   non-sandboxed process).
-> + */
-> +/* clang-format off */
-> +#define LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET		(1ULL << 0)
-
-Thinking more about it, it makes more sense to rename it to
-LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET (s/SCOPED/SCOPE/) because it
-express a scope (not a "scoped") and it allign with the current
-LANDLOCK_ACCESS_* and other internal variables such as
-LANDLOCK_LAST_SCOPE...
-
-However, it still makes sense to keep the "scoped" ruleset's field,
-which is pretty similar to the "handled_*" semantic: it describes what
-will be *scoped* by the ruleset.
-
-> +/* clang-format on*/
+> +//! Interrupt controls
+> +//!
+> +//! This module allows Rust code to control processor interrupts. [`with=
+_irqs_disabled()`] may be
+> +//! used for nested disables of interrupts, whereas [`IrqDisabled`] can =
+be used for annotating code
+> +//! that requires interrupts to be disabled.
 > +
->  #endif /* _UAPI_LINUX_LANDLOCK_H */
-> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
-> index 4eb643077a2a..eb01d0fb2165 100644
-> --- a/security/landlock/limits.h
-> +++ b/security/landlock/limits.h
-> @@ -26,6 +26,9 @@
->  #define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET << 1) - 1)
->  #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NET)
->  
-> +#define LANDLOCK_LAST_SCOPE		LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET
-> +#define LANDLOCK_MASK_SCOPE		((LANDLOCK_LAST_SCOPE << 1) - 1)
-> +#define LANDLOCK_NUM_SCOPE		__const_hweight64(LANDLOCK_MASK_SCOPE)
->  /* clang-format on */
+> +use bindings;
+> +use core::marker::*;
+> +
+> +/// A token that is only available in contexts where IRQs are disabled.
+> +///
+> +/// [`IrqDisabled`] is marker made available when interrupts are not act=
+ive. Certain functions take
+> +/// an [`IrqDisabled`] in order to indicate that they may only be run in=
+ IRQ-free contexts.
+
+I feel like "indicate" is not strong enough, how about using "require"?
+
+> +///
+> +/// This is a marker type; it has no size, and is simply used as a compi=
+le-time guarantee that
+> +/// interrupts are disabled where required.
+> +///
+> +/// This token can be created by [`with_irqs_disabled`]. See [`with_irqs=
+_disabled`] for examples and
+> +/// further information.
+> +#[derive(Copy, Clone, Debug, Ord, Eq, PartialOrd, PartialEq, Hash)]
+> +pub struct IrqDisabled<'a>(PhantomData<(&'a (), *mut ())>);
+
+
+
+> +/// Run the closure `cb` with interrupts disabled on the local CPU.
+> +///
+> +/// This creates an [`IrqDisabled`] token, which can be passed to functi=
+ons that must be run
+> +/// without interrupts. Note that interrupts must be disabled for the en=
+tire duration of `cb`, they
+> +/// cannot be re-enabled. In the future, this may be expanded on
+> +/// [as documented here](https://github.com/Rust-for-Linux/linux/issues/=
+1115).
+> +///
+> +/// # Examples
+> +///
+> +/// Using [`with_irqs_disabled`] to call a function that can only be cal=
+led with interrupts
+> +/// disabled:
+> +///
+> +/// ```
+> +/// use kernel::irq::{IrqDisabled, with_irqs_disabled};
+> +///
+> +/// // Requiring interrupts be disabled to call a function
+> +/// fn dont_interrupt_me(_irq: IrqDisabled<'_>) {
+> +///     // When this token is available, IRQs are known to be disabled. =
+Actions that rely on this
+> +///     // can be safely performed
+> +/// }
+> +///
+> +/// // Disabling interrupts. They'll be re-enabled once this closure com=
+pletes.
+
+Please change this to be "Disables interrupts, their previous state will
+be restored once the closure completes.".
+ie it is important to stress that this can be nested. Please also add
+this in a paragraph above the examples.
+
+---
+Cheers,
+Benno
+
+> +/// with_irqs_disabled(|irq| dont_interrupt_me(irq));
+> +/// ```
+> +#[inline]
+> +pub fn with_irqs_disabled<T>(cb: impl for<'a> FnOnce(IrqDisabled<'a>) ->=
+ T) -> T {
+> +    // SAFETY: FFI call with no special requirements
+> +    let flags =3D unsafe { bindings::local_irq_save() };
+> +
+> +    // SAFETY: We just disabled IRQs using `local_irq_save()`
+> +    let ret =3D cb(unsafe { IrqDisabled::new() });
+> +
+> +    // Confirm that IRQs are still disabled now that the callback has fi=
+nished
+> +    // SAFETY: FFI call with no special requirements
+> +    debug_assert!(unsafe { bindings::irqs_disabled() });
+> +
+> +    // SAFETY: `flags` comes from our previous call to local_irq_save
+> +    unsafe { bindings::local_irq_restore(flags) };
+> +
+> +    ret
+> +}
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index f10b06a78b9d5..df10c58e95c19 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -36,6 +36,7 @@
+>  pub mod firmware;
+>  pub mod init;
+>  pub mod ioctl;
+> +pub mod irq;
+>  #[cfg(CONFIG_KUNIT)]
+>  pub mod kunit;
+>  pub mod list;
+> --
+> 2.46.0
+>=20
+
 
