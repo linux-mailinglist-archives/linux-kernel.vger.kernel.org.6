@@ -1,161 +1,203 @@
-Return-Path: <linux-kernel+bounces-327763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27519977ADE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:21:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35A8D977ADF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:23:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 533E61C25720
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:21:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A956C1F27796
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6007D1D6C56;
-	Fri, 13 Sep 2024 08:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B75D1D6C46;
+	Fri, 13 Sep 2024 08:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="kbGjOGVL";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UJw/Imul"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f0NrrPy7"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2389B187334;
-	Fri, 13 Sep 2024 08:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078A51BC088;
+	Fri, 13 Sep 2024 08:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726215674; cv=none; b=SYlC5JNAtHvWrSUA9i0Iin1c3A34bbBtU3m94vmc/ARR083PchOc8HfU9lNlFkzw/nkbbTJxXOoblbRUeZfVMWeYZoUv5RL0Rnal0vM/adkY+HaJYEukNSHqkXcPfSBtpuEIWn/Pcwk97v69VrDDD0S2X0VUdzJ1xmEUGxWndQw=
+	t=1726215794; cv=none; b=DAuFv18X4DE3NLwSfC8ty/GDl0qrb+UI14KK/FpP4zi8WCRBl9p6hIHbUkIE1Kl37gahS0TqbcRglT3VIWuELGNLgzaSA8ljYrabXOE8uv6OcEu1JfiMLf2xSrbpWI/gB7XTaP+kHhoGph7+9HeFoMYowFaXuBI0b518G/WKSdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726215674; c=relaxed/simple;
-	bh=L6SHO/ASOpunCv90PNvWAR9ZJ3Yg7qSgEQqod3nc69o=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=kZR+WmhbzysGxOR5C+DnanjrzzpimxJZ9Gi95oMol/fjtrAV7OTgOtzymW/ZKFkFZucGI7rvceK1av9VoWfu/XL0+qNV2x15fbVeg50W+HyXZ0U1MagRaPlqqo1OEE1SNRXSjpko1i1fwczl3YeekpXOy7+qon/DcWU/OnKQkJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=kbGjOGVL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UJw/Imul; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 3BEE11380105;
-	Fri, 13 Sep 2024 04:21:12 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 13 Sep 2024 04:21:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1726215672;
-	 x=1726302072; bh=/y3Vva3fvwuIn0WsxTO61vMjrXBBZReSc8alqn8Lbu0=; b=
-	kbGjOGVLyhT5AcUPXyJX/gVgfzeBdBZ2k6n4152IS8zOQWEG8okL0/yZvqNsD7IH
-	KeEdZQsdgQvMFXh8G5fPdXJVjYYpt/r9ZDRYic+Uctjb/U0k732HbRI7X8yvPLI+
-	KA0QTRD3W+eLOGOjrHWXDKrp2SnbGrZ8yN1tWRSwhMm3sRG5ZS5/TuR1RvNXddjr
-	6JF8Ygk9qzotzdtnhTSo9RfcrDqv/kr0Iw/yMnpPKg6qruwwTWDSoOMyhR6WRnEI
-	kyK/JbR+DQseHUzuvppS7WMQWEZmE0yzjY9iNJG2Ff1RWEjsAdauGsVSWeIeu6uP
-	0gSzrn0meL79F4MxiO7v3Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726215672; x=
-	1726302072; bh=/y3Vva3fvwuIn0WsxTO61vMjrXBBZReSc8alqn8Lbu0=; b=U
-	Jw/ImulLkS2wu4z1qp6wWly45JBZEkJuLLDmbKcDG0nWZGIlUAgwrGJYiLe8Z60C
-	3VtBC1QbG4ZeF55S0fhcihHjbOfCEpnwMQFYrHhST1V0CtvV9Bv08QZAB+Rkfyr3
-	yPK7Klm8vuhWzr3A/8mI39horA5ad1kFHt8EuT6VbkdPDRvNLyFs7tE/XiQQSt1p
-	8WpEQsWU3k8QqVwgi0o9FtdH4NhaM5spI8YSTjdi4xF4if8PouuYUDlkThAtt9zm
-	JTgBI6YPGoQrUsV4CFopPzrP+AAF2x+Pt/ez6rA1g3P3kfuVoydiE49DmvDATo//
-	k7fhco4CuXNTMGGy8zRdA==
-X-ME-Sender: <xms:9_XjZkCgRF1iZ3oAoW_L2qCOTEgHS1CA0drG3I40ibgQypxTDxmL7g>
-    <xme:9_XjZmjXJ-GnfS05ap6o1adziZXxATnbClI1jk6qFcD-M-RvsLSW5juxF5iIqoNba
-    1CeXwr8KCium99e9vA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejjedgtdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvdek
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehuthhsrghvrdgrghgrrhifrghlse
-    grnhgrlhhoghdrtghomhdprhgtphhtthhopegrughsphdqlhhinhhugiesrghnrghlohhg
-    rdgtohhmpdhrtghpthhtoheprghrthhurhhsrdgrrhhtrghmohhnohhvshesrghnrghloh
-    hgrdgtohhmpdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtgho
-    mhdprhgtphhtthhopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtg
-    hpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopegrnhguihdrshhhhiht
-    iheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehjihhrihhslhgrsgihsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:9_XjZnl_vmTywlXfkHR0twrf-enV-y09jiqCQeMwODnswumrK-6X3A>
-    <xmx:9_XjZqxoEsIEsVLIsYlhqQ-mt8H6rV36MJQcBo1C4ZM9e6QCI1rl1g>
-    <xmx:9_XjZpTdtA4MGmDRMOmLLr4rmkQm_CSyR4BvlBkPZKavzFpOOgHeqQ>
-    <xmx:9_XjZlbsa9-hb7lXV4CQ-NFPblDP5Kdg1qdOJl13hfzfuBdnoffAVw>
-    <xmx:-PXjZhz8OH7XK6wXp5Q8Bo4xNSvBSow_1uq2TlBonecaO179HGuFosWU>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 885EE222006F; Fri, 13 Sep 2024 04:21:11 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1726215794; c=relaxed/simple;
+	bh=F9WMN1ar99DkIYhBr9lSSfqYhs+Ra4MDhT7JouB7i88=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JpFKFluv7Loy+NbACwfS0AMtZapt8lF8tA1KgRnKYjAGQAPWAszisnbXu4rW1h7zBFcvPDiqWwNXY4lv42TTDLps7CNQQgjyp4HCPugcD5Wer/IjO05zqIH3U6sPZaq9FxxaM9MEVIEtSD4Aivqcrvlw8qnMLvV737UNfdkBznA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f0NrrPy7; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42cbe624c59so5320285e9.3;
+        Fri, 13 Sep 2024 01:23:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726215791; x=1726820591; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=U+GhRQ3oG4bnaBAL9utcWm2F6HSh4ooNGToRsTRm4Zs=;
+        b=f0NrrPy7Kd5Yfrx2F9q5HwV6+yA14i7gQBZPCHrp5EffxhUYIGUuhXfFWDKETyXDyf
+         5ia7sWP1vuI3hLXmEJnl1rKM0dOHFCWVzILtJbTxUm8H3es2HfYpPcupSUoKSQQGIg0s
+         0YrfYwb76ztu54TdxEJSpqcKioOWOnUEEgHDsv+ciPmkViGB4I7Kf9hBPnYa3b6X7weZ
+         +G1oRzg1A+7hhW7DWKdzBuKKTIbqcsBCSHZuhaFo4yutQU6iQxni3Zp6+EHSvz9/DD8e
+         Ihg0JhXvaxJsp2Wjdz0CHARRPHlCaDFnrLISkQq6b5vRx1kGlaYM05BmnYcTVA5misM5
+         r1Xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726215791; x=1726820591;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U+GhRQ3oG4bnaBAL9utcWm2F6HSh4ooNGToRsTRm4Zs=;
+        b=WEpyaJFWA0UvoHE6HfnbrXGGovbmGzCa6VGnc8j9tYB1HC4KIk/QUS51N3BQXYa1rW
+         xFEjZ6suR6IdZD2t2nbtufZz6CbdNc7bBP6RsdQpL0qUoo0JG61dig7F261BCpYN8DdK
+         qS+8iSLntdFSF4sAtKAbXU1dvH1O0n2IpWiYoAsF8QDgFaZ+ipa/J7a83CZuqa7LASSO
+         5XQRE8KrsbNXhp2K4pfN5/4Xg/3CshqPu676l4NI/Y0rMefNNmG43Z9rmmryYNoXX14h
+         R4fWZUiqBCspNkNMUxY5U5bYv0lDPVmt2OkFTbVqfVGV2yCvgiViulQ/xZhQB3rEP7OF
+         RzMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUU9hJW+f2e/zgVjhN1pFoEKItDBxL5iWyvyvnhkXHqC57mLqo/n2+U2LeVRzN/32iACxbTOt+j2r9F0Frw@vger.kernel.org, AJvYcCVPO+JAeblaBE3YmPgC1X62DJJBthOcLQM3ujtzLjts1xSkRCWe3c9xGMtpa0C4akU0o7rS3kV12ysd56xp6up9yMDz@vger.kernel.org, AJvYcCX/DlcuOJkMOTxD9Ro0CuHeSvxBb92bhgq4sCgx7ZNevpiI5mtsFe6FAnaAtFV6wpkWTNo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMPGhnrXdWBCsv2v8hdrqRbDXl1+p9sdhCEQGS8RfVpuNCtynO
+	VsEfkoijgyDqrd2GVq/Zl3yqJubw4KXfwH4nuiENZH3ug9f3u1MT
+X-Google-Smtp-Source: AGHT+IFqprEtHj/Ro4u+NSmvptLWA2EfkQYvDkdx7Rg+9np0yb2C4ytgTh1UjsimnK8NSXoqMHjiPQ==
+X-Received: by 2002:a05:600c:350a:b0:42c:dce1:8915 with SMTP id 5b1f17b1804b1-42d964f84cbmr11969125e9.33.1726215790769;
+        Fri, 13 Sep 2024 01:23:10 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b189a6asm15595165e9.38.2024.09.13.01.23.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 01:23:10 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Fri, 13 Sep 2024 10:22:56 +0200
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCHv3 1/7] uprobe: Add support for session consumer
+Message-ID: <ZuP2YFruQDXTRi25@krava>
+References: <20240909074554.2339984-1-jolsa@kernel.org>
+ <20240909074554.2339984-2-jolsa@kernel.org>
+ <20240912162028.GD27648@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 13 Sep 2024 08:20:41 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: arturs.artamonovs@analog.com, "Catalin Marinas" <catalin.marinas@arm.com>,
- "Will Deacon" <will@kernel.org>, "Greg Malysa" <greg.malysa@timesys.com>,
- "Philipp Zabel" <p.zabel@pengutronix.de>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Utsav Agarwal" <Utsav.Agarwal@analog.com>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Andi Shyti" <andi.shyti@kernel.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Jiri Slaby" <jirislaby@kernel.org>, "Olof Johansson" <olof@lixom.net>,
- soc@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org,
- adsp-linux@analog.com,
- "Nathan Barrett-Morrison" <nathan.morrison@timesys.com>
-Message-Id: <2ad02a70-8926-45db-8ab5-503ec1e65552@app.fastmail.com>
-In-Reply-To: <20240912-test-v1-0-458fa57c8ccf@analog.com>
-References: <20240912-test-v1-0-458fa57c8ccf@analog.com>
-Subject: Re: [PATCH 00/21] Adding support of ADI ARMv8 ADSP-SC598 SoC.
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912162028.GD27648@redhat.com>
 
-On Thu, Sep 12, 2024, at 18:24, Arturs Artamonovs via B4 Relay wrote:
-> This set of patches based on ADI fork of Linux Kerenl that support 
-> family of ADSP-SC5xx
-> SoC's and used by customers for some time . Patch series contains 
-> minimal set
-> of changes to add ADSP-SC598 support to upstream kernel. This series 
-> include
-> UART,I2C,IRQCHIP,RCU drivers and device-tree to be able boot on 
-> EV-SC598-SOM
-> board into serial shell and able to reset the board. Current SOM board
-> requires I2C expander to enable UART output.
->
-> UART,I2C and PINCTRL drivers are based on old Blackfin drivers with
-> ADSP-SC5xx related bug fixes and improvments.
->
-> Signed-off-by: Arturs Artamonovs <arturs.artamonovs@analog.com>
+On Thu, Sep 12, 2024 at 06:20:29PM +0200, Oleg Nesterov wrote:
+> On 09/09, Jiri Olsa wrote:
+> >
+> >  static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
+> >  {
+> >  	struct uprobe_consumer *uc;
+> >  	int remove = UPROBE_HANDLER_REMOVE;
+> > -	bool need_prep = false; /* prepare return uprobe, when needed */
+> > +	struct return_consumer *ric = NULL;
+> > +	struct return_instance *ri = NULL;
+> >  	bool has_consumers = false;
+> >
+> >  	current->utask->auprobe = &uprobe->arch;
+> >
+> >  	list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
+> >  				 srcu_read_lock_held(&uprobes_srcu)) {
+> > +		__u64 cookie = 0;
+> >  		int rc = 0;
+> >
+> >  		if (uc->handler) {
+> > -			rc = uc->handler(uc, regs);
+> > -			WARN(rc & ~UPROBE_HANDLER_MASK,
+> > +			rc = uc->handler(uc, regs, &cookie);
+> > +			WARN(rc < 0 || rc > 2,
+> >  				"bad rc=0x%x from %ps()\n", rc, uc->handler);
+> >  		}
+> >
+> > -		if (uc->ret_handler)
+> > -			need_prep = true;
+> > -
+> > +		/*
+> > +		 * The handler can return following values:
+> > +		 * 0 - execute ret_handler (if it's defined)
+> > +		 * 1 - remove uprobe
+> > +		 * 2 - do nothing (ignore ret_handler)
+> > +		 */
+> >  		remove &= rc;
+> >  		has_consumers = true;
+> > +
+> > +		if (rc == 0 && uc->ret_handler) {
+> 
+> should we enter this block if uc->handler == NULL?
 
-Hi Arturs,
+yes, consumer can have just ret_handler defined
 
-Thanks for your submission. I've done a first pass of a review
-now, but the drivers will all need a more detailed review from
-the subsystem maintainers as well.
+> 
+> > +			/*
+> > +			 * Preallocate return_instance object optimistically with
+> > +			 * all possible consumers, so we allocate just once.
+> > +			 */
+> > +			if (!ri) {
+> > +				ri = alloc_return_instance(uprobe->consumers_cnt);
+> 
+> This doesn't look right...
+> 
+> Suppose we have a single consumer C1, so uprobe->consumers_cnt == 1 and
+> alloc_return_instance() allocates return_instance with for a single consumer,
+> so that only ri->consumers[0] is valid.
+> 
+> Right after that uprobe_register()->consumer_add() adds another consumer
+> C2 with ->ret_handler != NULL.
+> 
+> On the next iteration return_consumer_next() will return the invalid addr
+> == &ri->consumers[1].
+> 
+> perhaps this needs krealloc() ?
 
-For the drivers/soc and include/linux/soc portions, I need
-to do second review round when you have added a description
-about what these are used for, ideally I would hope that most
-of those can disappear from the final series when the required
-bits are moved into other drivers.
+damn.. there used to be a lock ;-) ok, for some reason I thought we are safe
+in that list iteration and we are not.. I just made selftest that triggers that
 
-I commented on one of the bindings about the compatible
-string, but later saw that the same issue is present in all
-of the bindings, which each need a more specific identifier
-for a particular piece of hardware they are compatible with.
+I'm not sure the realloc will help, I feel like we need to allocate return
+consumer for each called handler separately to be safe
 
-        Arnd
+> 
+> > +				if (!ri)
+> > +					return;
+> 
+> Not sure we should simply return if kzalloc fails... at least it would be better
+> to clear current->utask->auprobe.
+> 
+> > +	if (ri && !remove)
+> > +		prepare_uretprobe(uprobe, regs, ri); /* put bp at return */
+> > +	else
+> > +		kfree(ri);
+> 
+> Well, if ri != NULL then remove is not possible, afaics... ri != NULL means
+> that at least one ->handler() returned rc = 0, thus "remove" must be zero.
+> 
+> So it seems you can just do
+> 
+> 	if (ri)
+> 		prepare_uretprobe(...);
+
+true, I think that should be enough
+
+thanks,
+jirka
+
+> 
+> 
+> Didn't read other parts of your patch yet ;)
+> 
+> Oleg.
+> 
 
