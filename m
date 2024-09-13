@@ -1,103 +1,130 @@
-Return-Path: <linux-kernel+bounces-327496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E84599776C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:13:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA2379776C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:14:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 028A91C243D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:13:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 604231F23642
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC19D1D27AD;
-	Fri, 13 Sep 2024 02:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cK+WqHSB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3048455886;
-	Fri, 13 Sep 2024 02:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EAB01D279F;
+	Fri, 13 Sep 2024 02:13:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A1033C8;
+	Fri, 13 Sep 2024 02:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726193589; cv=none; b=PqNHkRPSABcU2e6jTBSOG+tUUEmAqLWOdbDKO0SDP475VTrYJjwZrq7SW2qxYDZuixzYs9MXacjQSTYQiLPp9o++izJvt7Axs4SMWlgYG2HYCPcqKZ4Le+LNzAgVymO6LHZu8/YZW2Z4bpCMNl4slumJXW0JsIYWLWZc3HNPP7U=
+	t=1726193634; cv=none; b=ZHhCPjCbE5+hoK/DaRvGo5SVcqq+RuZzoGCu/03/OfuY7yKx/VwX7O3j1PWaLv4Z0Wj6rK7FC0YDGZsVxqcDpPG/4ehELB5DnZtfCXdqiooBXmxce4PiryCU6d3iVca/XukQrEisV2TmFXeTYnKueBfteDGgJDiAZHK25GYLhmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726193589; c=relaxed/simple;
-	bh=TvUg8JpVDCWZbKxhwdcbMY2TgwsG2HjjEy20zkRhrEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o/3WDCcZYezs/jwMgGj4V5rBQEWSnBVruTCa/YAfi+SsW9bQy8xwRdVwNDUgivdUjwjpkzrd8gDjMhfY9qXwkPgc/TmpAJWZD4OUxcixGoaCFXeRpv0LLiehPQ7opmkLsOAW08VWWlk8wkBC0JnWaatpXStdiXwgocEI/IZjhMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cK+WqHSB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35308C4CEC3;
-	Fri, 13 Sep 2024 02:13:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726193588;
-	bh=TvUg8JpVDCWZbKxhwdcbMY2TgwsG2HjjEy20zkRhrEY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cK+WqHSBFZgbtB9lKdv4jslrMn6pHtJAp7iETp8ZTBGu0w82I6LSsG1u0dVw0l2T/
-	 zVrcr+uWZUTjyiqJMOgjl5yqNnf0+/XTDZkiGfLdyW+6KNaeMRrftCjXyW3YYCLY3r
-	 5c0qj8d2gBlH4JRFu+VGOgUAJXv8mEAX6RqkcP8b+AjLrA8j/JUZSRfHdSOPz8wY1F
-	 OOjFnhjZvToj9yFnHk6FY4U4SlEUkllFF9SIYFuNQn/3GzGydDOsISAp81EoXaLIqJ
-	 McqU8LG6Y/hbqLi+Tdk9/nXh/2SvBQZMByRcu+1cLRNMOVziv/kBfa2WBV368x+6hO
-	 qrGZL43FN594g==
-Date: Thu, 12 Sep 2024 19:13:06 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Mitchell Augustin <mitchell.augustin@canonical.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jiri Pirko
- <jiri@resnulli.us>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Jacob Martin <jacob.martin@canonical.com>,
- dann frazier <dann.frazier@canonical.com>
-Subject: Re: Namespaced network devices not cleaned up properly after
- execution of pmtu.sh kernel selftest
-Message-ID: <20240912191306.0cf81ce3@kernel.org>
-In-Reply-To: <CAHTA-uZDaJ-71o+bo8a96TV4ck-8niimztQFaa=QoeNdUm-9wg@mail.gmail.com>
-References: <CAHTA-uZDaJ-71o+bo8a96TV4ck-8niimztQFaa=QoeNdUm-9wg@mail.gmail.com>
+	s=arc-20240116; t=1726193634; c=relaxed/simple;
+	bh=jiLfsDjFmYbTok4lywR7Fe7cmBiUjCh3GrWHROoFkM4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rOR4BRslnFJqC7EPXG7fYJcdMdBGZ9t8Y8hBhvACDgLF3Kur5hlYeVh4Ta4KnlsObwlS0hmxoJjMvJ8TzhuUiCn0okYlUoIgEOTOYhqxuvloAJNlSNVT0szQBi0ijUIwIE6UKeQURgigIdthmo9bdi7IvspxPIUhsBI7xqNTI4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BCDFFDA7;
+	Thu, 12 Sep 2024 19:14:21 -0700 (PDT)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B781E3F66E;
+	Thu, 12 Sep 2024 19:13:50 -0700 (PDT)
+From: Levi Yun <yeoreum.yun@arm.com>
+To: rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	a.p.zijlstra@chello.nl,
+	mingo@elte.hu,
+	mark.rutland@arm.com,
+	james.clark@linaro.org
+Cc: nd@arm.com,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Levi Yun <yeoreum.yun@arm.com>
+Subject: [PATCH v2] trace/trace_event_perf: remove duplicate samples on the first tracepoint event
+Date: Fri, 13 Sep 2024 03:13:47 +0100
+Message-Id: <20240913021347.595330-1-yeoreum.yun@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, 11 Sep 2024 17:20:29 -0500 Mitchell Augustin wrote:
-> We recently identified a bug still impacting upstream, triggered
-> occasionally by one of the kernel selftests (net/pmtu.sh) that
-> sometimes causes the following behavior:
-> * One of this tests's namespaced network devices does not get properly
-> cleaned up when the namespace is destroyed, evidenced by
-> `unregister_netdevice: waiting for veth_A-R1 to become free. Usage
-> count = 5` appearing in the dmesg output repeatedly
-> * Once we start to see the above `unregister_netdevice` message, an
-> un-cancelable hang will occur on subsequent attempts to run `modprobe
-> ip6_vti` or `rmmod ip6_vti`
+When a tracepoint event is created with attr.freq = 1,
+'hwc->period_left' is not initialized correctly. As a result,
+in the perf_swevent_overflow() function, when the first time the event occurs,
+it calculates the event overflow and the perf_swevent_set_period() returns 3,
+this leads to the event are recorded for three duplicate times.
 
-Thanks for the report! We have seen it in our CI as well, it happens
-maybe once a day. But as you say on x86 is quite hard to reproduce,
-and nothing obvious stood out as a culprit.
+Step to reproduce:
+    1. Enable the tracepoint event & starting tracing
+         $ echo 1 > /sys/kernel/tracing/events/module/module_free
+         $ echo 1 > /sys/kernel/tracing/tracing_on
 
-> However, I can easily reproduce the issue on an Nvidia Grace/Hopper
-> machine (and other platforms with modern CPUs) with the performance
-> governor set by doing the following:
-> * Install/boot any affected kernel
-> * Clone the kernel tree just to get an older version of the test cases
-> without subtle timing changes that mask the issue (such as
-> https://git.launchpad.net/~ubuntu-kernel/ubuntu/+source/linux/+git/noble/tree/?h=Ubuntu-6.8.0-39.39)
-> * cd tools/testing/selftests/net
-> * while true; do sudo ./pmtu.sh pmtu_ipv6_ipv6_exception; done
+    2. Record with perf
+         $ perf record -a --strict-freq -F 1 -e "module:module_free"
 
-That's exciting! Would you be able to try to cut down the test itself
-(is quite long and has a ton of sub-cases). Figure out which sub-cases
-trigger this? And maybe with an even quicker repro we'll bisect or
-someone will correctly guess the fix?
+    3. Trigger module_free event.
+         $ modprobe -i sunrpc
+         $ modprobe -r sunrpc
 
-Somewhat tangentially but if you'd be willing I wouldn't mind if you
-were to send patches to break this test up upstream, too. It takes
-1h23m to run with various debug kernel options enabled. If we split 
-it into multiple smaller tests each running 10min or 20min we can 
-then spawn multiple VMs and get the results faster.
+Result:
+     - Trace pipe result:
+         $ cat trace_pipe
+         modprobe-174509  [003] .....  6504.868896: module_free: sunrpc
+
+     - perf sample:
+         modprobe  174509 [003]  6504.868980: module:module_free: sunrpc
+         modprobe  174509 [003]  6504.868980: module:module_free: sunrpc
+         modprobe  174509 [003]  6504.868980: module:module_free: sunrpc
+
+By setting period_left via perf_swevent_set_period() as other sw_event did,
+This problem could be solved.
+
+After patch:
+     - Trace pipe result:
+         $ cat trace_pipe
+         modprobe 1153096 [068] 613468.867774: module:module_free: xfs
+
+     - perf sample
+         modprobe 1153096 [068] 613468.867794: module:module_free: xfs
+
+Fixes: bd2b5b12849a ("perf_counter: More aggressive frequency adjustment")
+Signed-off-by: Levi Yun <yeoreum.yun@arm.com>
+---
+Changes in v2:
+  - Fix build error.
+---
+ kernel/trace/trace_event_perf.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/kernel/trace/trace_event_perf.c b/kernel/trace/trace_event_perf.c
+index 05e791241812..3ff9caa4a71b 100644
+--- a/kernel/trace/trace_event_perf.c
++++ b/kernel/trace/trace_event_perf.c
+@@ -352,10 +352,16 @@ void perf_uprobe_destroy(struct perf_event *p_event)
+ int perf_trace_add(struct perf_event *p_event, int flags)
+ {
+ 	struct trace_event_call *tp_event = p_event->tp_event;
++	struct hw_perf_event *hwc = &p_event->hw;
+
+ 	if (!(flags & PERF_EF_START))
+ 		p_event->hw.state = PERF_HES_STOPPED;
+
++	if (is_sampling_event(p_event)) {
++		hwc->last_period = hwc->sample_period;
++		perf_swevent_set_period(p_event);
++	}
++
+ 	/*
+ 	 * If TRACE_REG_PERF_ADD returns false; no custom action was performed
+ 	 * and we need to take the default action of enqueueing our event on
+--
+LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+
 
