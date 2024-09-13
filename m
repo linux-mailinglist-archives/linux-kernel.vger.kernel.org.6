@@ -1,122 +1,126 @@
-Return-Path: <linux-kernel+bounces-328165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0745977FD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:28:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C3E6977FD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:28:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 796DF1F21560
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:28:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5C332817AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5698A1D9323;
-	Fri, 13 Sep 2024 12:28:06 +0000 (UTC)
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0353A1D9343;
+	Fri, 13 Sep 2024 12:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eypy7Mmh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0851C2BF
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8C31C2BF
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:28:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726230486; cv=none; b=mA7jNV0c/F9uXfqPHTIeas1HK0oiNGS8E2+71084NidK0aklKhJMtKYBYTEDwYVss17kq2jNO4gaLCExbtXTzqDMEpmJqoXDQQTKSxhnZ8zvWTfwepBDSshdiKELhMGh8I7RUkjw2RuEmjtEGnRNJ8d7n9nbczl4DpFaNHfd4nA=
+	t=1726230498; cv=none; b=eJAMaHkNDjU6E/5w7bshCzg2Y1Ft2x5VgRz75YJeT4FNiTxdO0Ixm1TSPgS9LBfvPG8wxuRgbPvvs2Sq/dFOQclvMsV4ntqZuzCHw0jC1ad/z56N+5DgrfXcOwQ68BUlJUgic49Zc4i1jBCY14j9rE/vgGrshhPQlx8hxygNlPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726230486; c=relaxed/simple;
-	bh=RK5S3zrgomn9+skT4aQ4j9kXPhojcRKZuS90n34VDEM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ptnDjoLLnshC7qgcG2DrtOikgf9KxtR9fAUfZCKIblxTAqrv9oOi0Yhcf6n27xdK7HGXC8YHq7elnIcYgChagQ9bwmh7+/Q6uaPawTO6vFd/GIszoAmN0XF9M2cklX3dpVDR6uWFY9S43Baf2ue4ji5KYl5CSCX6HcrxaO4SwQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8d6ac24a3bso374974166b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 05:28:04 -0700 (PDT)
+	s=arc-20240116; t=1726230498; c=relaxed/simple;
+	bh=0iJqFXz26XdgCQSvH/h8w9WHh3L/KON+49FMx3a5V0A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z/ORk0PY8L5GMmZfA4w3njObcbn1tsxF/d0xAlY1DdrhiLxCFqd9O9H/iPLuIBqutY97B+ABil1cGeHifUREOgiQNhI7INWDYYsjtpXwSrGUINFQOkDOA9pfOotZvsi7r5qSwPP8z+3tFuRYwlFUjjmWNi63WTsh3kO1Bdjnkks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eypy7Mmh; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726230496;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0iJqFXz26XdgCQSvH/h8w9WHh3L/KON+49FMx3a5V0A=;
+	b=eypy7Mmh+A/DLsZg7d0NyZiyQdV+sqrnuxtztHg6OBNWIxAvH7B5lOI0T8KOA78HurYP2e
+	NOALvAlPJhGUoV0w3tzHCMve/577ncKWLX3qVkm/ywH8Z4gLZSG+MFq/4WHQm5O63bNGa7
+	wA63LAJGSNyhJnVb9U5hn6x3+Gza6is=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-310-KgaRvxp6MoGg7oLbCI_z1A-1; Fri, 13 Sep 2024 08:28:14 -0400
+X-MC-Unique: KgaRvxp6MoGg7oLbCI_z1A-1
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2d882c11ce4so2070004a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 05:28:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726230482; x=1726835282;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0PdiN7C66G4aok0RazPvpU2qA/vYlEOU5wuWR2Un29M=;
-        b=fDuNjmi9dmjod0rEe/c6icon0ZBT1/23AhVEa2pxJJAxoY0kL3if2EvZ7yvof8Li8T
-         y97W9Va8F2B0E1GDV4XhH43rEHD7pD0wsDAM4G+ZG3IWnTqcqElIypq9lK/9CJMc/H6A
-         hYQkqqgGcdGpYTzRFOuYf/amZLdFLu8mqnxBcL2JkuXDU7pYGu+KXLQjDsIA28Sq3jBC
-         p7884Szu9E9GpujqjlvoIIhLQbTxDNjzHWGTyiEZFkrgX+7KmLdCDCBcCITtTWI0YyX6
-         1xLfgprG05lIEJYU2iibMT+HAVyQkFM3B44WmY/wjVe5m03mX6+XLKFvoAgGmV+uBTTJ
-         52Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCXwEqRhGtnk3ICM5i62zC4MibhkXiUfgVa4btrFwyrG9tBAuw0ZfPgqiLvlvMrivBsRtEes/FPn9ycmPmc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSZo2nbM6lxplXp+X5XxdhP4Jy4RsHu2oiZoHZ9C5vyahOAjok
-	mATwQRMjV/1l9SO/XuNFSBeHhlLd10i4YTZBUTL0vKCyO5GxNEr2
-X-Google-Smtp-Source: AGHT+IHp7tyVCxPErikJEy3n9AhquE5p2KZrjNms5Lc1oV9O58Ce5kS9WM+Z1GqkpLzprbDkT8efJA==
-X-Received: by 2002:a17:907:9809:b0:a8d:29b7:ece3 with SMTP id a640c23a62f3a-a902a8f0940mr639289866b.33.1726230481932;
-        Fri, 13 Sep 2024 05:28:01 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-115.fbsv.net. [2a03:2880:30ff:73::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25cecc21sm862212966b.166.2024.09.13.05.28.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 05:28:01 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Cc: corbet@lwn.net,
-	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT))
-Subject: [PATCH] x86/bugs: Correct RSB terminology in Kconfig
-Date: Fri, 13 Sep 2024 05:27:53 -0700
-Message-ID: <20240913122754.249306-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.5
+        d=1e100.net; s=20230601; t=1726230494; x=1726835294;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0iJqFXz26XdgCQSvH/h8w9WHh3L/KON+49FMx3a5V0A=;
+        b=rtakNDkaIX/nv78dJlKCseFa3vjwim1geCRvzRo/qQFHDc4jEzEBHuXg9xyGSfL2sT
+         ZdZY/ZRw9Qks4sZH9wpyAEDrXo+EBmYViRUDowHC15qnTK4VKL8LtY2MSl85U9mNOMPF
+         IM8HH5ZrDQ/jKPUsoI0xWf0SedhmKr6WZyMd/yYkd4Pk46TV96sqKPl/SDttokfEfcQ0
+         QCJnXd2jkhSgYfMHRjMSbzri+GNC2lXQe0E9y/nPi89tNNYFelMxC6dlG1JCZM+P33/+
+         frhl8fh2VvJ4iG7z1KWDdlIBqjNtM/ST7S6zYFU+9NRf06kqIw46ZOwsxx5M/aYm18vA
+         8Eew==
+X-Forwarded-Encrypted: i=1; AJvYcCWf3eMWC52V0v0LIg3+XMJKL/lFj1ec1M/4+DsTUzPNmItUS6ol4x4KevHs3Uj0GX2dnV2/OjNs9PwKoKk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgvOuV+L1g0Wann/hNp44VwsCEA3xgu/M7VwgigPQuim7I1hSX
+	yyAqpZvH66RwtIHfwcXvbaxxAqL6e9Lk3I5vDgLyJua1pff0B/KCmspksM8/TTckYgBgzbUc2L4
+	GeyAsaGBshYfTUvwRyRqwCdaWybliir5BNzG4GUTuzb5cgd44FfK18l0lMRedytygxFFCXqxQOg
+	kvf5sZPHknt1ulCvC8hlEkOJAK+fwi0lYN4CzRFUE9I+Lh
+X-Received: by 2002:a17:90a:ac09:b0:2d8:898c:3e9b with SMTP id 98e67ed59e1d1-2dba0067f9amr6608900a91.25.1726230493773;
+        Fri, 13 Sep 2024 05:28:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHoTGktECP8iZMnogTt7kyrdxvDWlfqIbjHUry2VvX13OCACikqY9Yv9ppzeu9lYjEd+EdPSuCBCK9aAudcW8I=
+X-Received: by 2002:a17:90a:ac09:b0:2d8:898c:3e9b with SMTP id
+ 98e67ed59e1d1-2dba0067f9amr6608882a91.25.1726230493458; Fri, 13 Sep 2024
+ 05:28:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240913115021.58405-1-lukas.bulwahn@redhat.com> <d125b5a5-8118-48ec-8af4-243a217170df@app.fastmail.com>
+In-Reply-To: <d125b5a5-8118-48ec-8af4-243a217170df@app.fastmail.com>
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+Date: Fri, 13 Sep 2024 14:28:01 +0200
+Message-ID: <CAOc5a3NEJkHfmWymRsXa1AGLK1K6XOtT5yEsuaaqr9EarOArQg@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: move BK3 machine support to CREDITS
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Lukasz Majewski <lukma@denx.de>, Nikita Shubin <nikita.shubin@maquefel.me>, 
+	Hartley Sweeten <hsweeten@visionengravers.com>, 
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>, kernel-janitors@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-RSB stands for "Return Stack Buffer" in industry literature[1]. Update
-the kernel Kconfig to use this standard term instead of the current
-"Return-Speculation-Buffer".
+On Fri, Sep 13, 2024 at 2:25=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote=
+:
+>
+> On Fri, Sep 13, 2024, at 11:50, Lukas Bulwahn wrote:
+> > From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> >
+> > Commit 3e0bae7f35c9 ("ARM: ep93xx: delete all boardfiles") removes
+> > ts72xx.c, but misses to adjust the ARM/CIRRUS LOGIC BK3 MACHINE SUPPORT
+> > section, which is referring to this file. Hence,
+> > ./scripts/get_maintainer.pl --self-test=3Dpatterns complains about a br=
+oken
+> > reference.
+> >
+> > As the corresponding file of this section is gone, remove the whole sec=
+tion
+> > and note this previous contribution in the CREDITS instead.
+> >
+> > Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> > ---
+> > Arnd, please pick this quick administration fix on top of the commit
+> > above. Thanks.
+>
+> The machine should still work as before, I think we should
+> instead adapt the path to point to
+>
+> F: arch/arm/boot/dts/cirrus/ep93xx-bk3.dts
+> F: arch/arm/boot/dts/cirrus/ep93xx-ts7250.dts
+>
 
-This change aligns kernel documentation with widely accepted terminology.
+Okay, I will do that and send a v2.
 
-The line length reduction triggers text reformatting, but no functional
-text is altered.
-
-[1] https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/advisory-guidance/return-stack-buffer-underflow.html
-
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- arch/x86/Kconfig | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
-
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 007bab9f2a0e..5d87d5d7c6d0 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2554,15 +2554,14 @@ config MITIGATION_CALL_DEPTH_TRACKING
- 	default y
- 	help
- 	  Compile the kernel with call depth tracking to mitigate the Intel
--	  SKL Return-Speculation-Buffer (RSB) underflow issue. The
--	  mitigation is off by default and needs to be enabled on the
--	  kernel command line via the retbleed=stuff option. For
--	  non-affected systems the overhead of this option is marginal as
--	  the call depth tracking is using run-time generated call thunks
--	  in a compiler generated padding area and call patching. This
--	  increases text size by ~5%. For non affected systems this space
--	  is unused. On affected SKL systems this results in a significant
--	  performance gain over the IBRS mitigation.
-+	  SKL Return-Stack-Buffer (RSB) underflow issue. The mitigation is off
-+	  by default and needs to be enabled on the kernel command line via the
-+	  retbleed=stuff option. For non-affected systems the overhead of this
-+	  option is marginal as the call depth tracking is using run-time
-+	  generated call thunks in a compiler generated padding area and call
-+	  patching. This increases text size by ~5%. For non affected systems
-+	  this space is unused. On affected SKL systems this results in a
-+	  significant performance gain over the IBRS mitigation.
- 
- config CALL_THUNKS_DEBUG
- 	bool "Enable call thunks and call depth tracking debugging"
--- 
-2.43.5
+Lukas
 
 
