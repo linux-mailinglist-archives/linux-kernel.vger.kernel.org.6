@@ -1,141 +1,140 @@
-Return-Path: <linux-kernel+bounces-328426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6A5397834D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:07:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7075797834F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:07:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3F96B248F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:07:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB7C8B25407
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEFD13D966;
-	Fri, 13 Sep 2024 15:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D9F383A2;
+	Fri, 13 Sep 2024 15:07:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mhHyyols"
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="khX1Z+NY"
+Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDAC4776E;
-	Fri, 13 Sep 2024 15:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3223B4D8A7;
+	Fri, 13 Sep 2024 15:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726240010; cv=none; b=Epdl1p2d7lYKLo5Tgf3Y30I9W+4gMgL7PTtSZEDwg0X6IMqmFJP4MjO6Yikj6rhjmxrXB9GIgkjAXm+dj8z3bephUjNH2ouepIGGlKPfNGJW+LFxjC16nQXpKgXbriYdYNuBEz7VGdKz0CsXn/I1RTBZfF4lMFgkgHJfSw8iGuQ=
+	t=1726240019; cv=none; b=mAsHN47ak5ebvdVmatVguuVj4kXjCSSGrEqa8yxgbsBfWhAbELmVFTIzwdxbprrb/NvdN1W0hvarbCPj62SRMDqCba2yAl6EZ5id20FbldejSwej2Wk08Vvip3dvucfHTddRITpHgZY6YGX5UoT25yuf3ymSnuPeZwKgEz2QIhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726240010; c=relaxed/simple;
-	bh=wz+c8oAd6WLW7uFv0JHSMpd9jMorPWZVWklbkOfGZzI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ju58lvn7YIHrVyduBsH2z/5dySXl2eIirn9WoNcQF8PQUOyPYs+qxzb3ur/r+bGhV5GpZtaH0IM53PzWWjHiRWll1yl95npTCVsEZ9afja/AVMvxOnF5vaBEjFm8uJEMpp57tdq7KCap946ie1uHRKHInxXzIk1HwP4wpdqBSZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mhHyyols; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3e037b80140so900606b6e.3;
-        Fri, 13 Sep 2024 08:06:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726240007; x=1726844807; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s5xW7wFZXBPvsr8C7DrncpqkE2kHm1pCShCK0/i9/lc=;
-        b=mhHyyolss7hpb0ZSWogWNSNtwbNjPY6ufBUVPmmBMwaUpSzzWCHOO/UJEcZBLqw+8z
-         wI18IGq7b9e3lIeOfbPhehKiejs7W35gYdm170CiwgpPU4fpP5KOcxNTzrziFri/Y6Z8
-         lbqWkKM3mhNJLCy2gYtcXs4JSJZwIHhwB8MASVoG4BuBs9NZBry0e+di8NwrUrcqlskD
-         3keiaf3ogKG56B3hY0CnAttfYqE/460UzEhfJX985Vx8mF/B5Tgebmv/rk/nmyclhFoC
-         TWH6qWBc/rKxu6Uc1amqZ7k3aYisNKcy/ueRv4LzJzMqYm2ics6frIhXNw1kr+lDpxkj
-         SJCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726240007; x=1726844807;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s5xW7wFZXBPvsr8C7DrncpqkE2kHm1pCShCK0/i9/lc=;
-        b=qk7MkEiepCWw7kPnHggqoOc/ck4EfpxzGQufGirnsDaSdi3fVUMrEbETbu/Ld2RpNl
-         Owjwmoze9VbzjwpI0/yYg0dJqOyqKTlA0xl3r7lFb105BYeLXgITt/cBvH8hYfHw4NBc
-         7WtjBpFQbNo4VQ2u5mk3vLijzpacwCnQewLHhfBEQJ+/h1rRVWO58NN8Rt5Ck4uVaxT5
-         OkS5WQH3UvKMbImu6j2B0tgo0G2vErEwLmTXBoEOGsSgMx6nLnfqKObXYCQ+iERteZnB
-         skCitnhR0cY3WA4qr2CzQnITxojf1Cug7tpJEjZytKUAzJf3qdy3XzNlHyWno56SowH8
-         L6Gg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9il6q7gzf7DJ4vYA+l55I2ZXcprEaQ9rRiB5gOTPH1E82xN+MqsB6/vU86eA8b6vaxdk9C4Bb4eQkXQ==@vger.kernel.org, AJvYcCUAyW0LSzRSV24Qb7os/9WMFvS6ARJa40H+WMaToU6twBx20KLjLqyiea6YUjhR1oQcwfURtBnhB85pLrxAQPkrYjg=@vger.kernel.org, AJvYcCUTBS+HX+k3K3RdQa4IJMxJnDP/n09N6Je1+RkaMN2IdMjhuLcSsWVmzcsaeV/DLAxOauw1pSGL8RU=@vger.kernel.org, AJvYcCVePBL1qrrXLctZizepDh2yPM8zTmyk5ogDb+mjnCzSxQDxFxblro6zXzztnMP2sPE9/XxKpfHVRyJV56tlJA==@vger.kernel.org, AJvYcCWDU5dh8qC+vyVJEzxVqqKzf1sdgxUmuKb3ImODaLHJH8HYuaAHVTa80tt/itW8uKSS5f6da0ZRb5zzxR4=@vger.kernel.org, AJvYcCWEnFUbv9JFSez1ot4NZKyANTRwY2LRlMyj4mUUZ7MRGD+KFuXEHLA6xrYB6Y5wtiD8HzW7lucnYW9C@vger.kernel.org, AJvYcCWHVQLQ3j7fMWnHiaoRYdhQbfNqJVxZUyISIOFImd+dRBUSZ03Yy8hgMY3bL6rZHukOJ9MsKWfibMCeyTlq@vger.kernel.org, AJvYcCWJ8/YG5dQqwvyEi65coNdxK0b1ukTNAuAE5gKSX14l0dKLkvTr6wBRoUZW0RYPQcYFes4ttWdR9heI@vger.kernel.org, AJvYcCX8khivKX9Xhq+E/A9HsMuQv39ywUMbLKMR4UMqTWquyjlyhTjxZjDKOtb7x6QptiMKEJ8GHz7gC+zR@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCm/OLAD8E4Xo2kZRuXCjwQCshJW/BoyRE3L/WD5ApyLtgQ6j5
-	dHVu/ZuOe4o6oZqUtcl4DKJM4E3+jk+IfbQgQ9LjP0poZdhaRneZniSuubznee0PbgFEcZXIzIx
-	ufnYzlnRfTxK+o9btch7QTqKtatk=
-X-Google-Smtp-Source: AGHT+IHpQNpk1RPbqhgaZak33vQVpNCMrUXMzkQcxSmZLbxJpQEgL7VG8czofXsUN5d9oYR08U0ZzgsDFVqScsKOzcg=
-X-Received: by 2002:a05:6808:220b:b0:3d9:245c:4225 with SMTP id
- 5614622812f47-3e071a93899mr4047532b6e.6.1726240007552; Fri, 13 Sep 2024
- 08:06:47 -0700 (PDT)
+	s=arc-20240116; t=1726240019; c=relaxed/simple;
+	bh=cuAElOUq90nweBea2SqsM7p+rOnPpDpB7SfBb+vrRiY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KOMarMh9Af5YIP2/4Dx9aRLiRNguZOtQye1WbrMnnF1g5Y15blIOePZQxaMzretHrJGh07SlOEfjIXVeLH1Us/gXG6m2d81RrcIUeVQ7e43SnjAwPWcNAQiF/T+j3HUxiKSsgG7rM6GwuLD5onk08fubxkS28P5cACmmcvCt0zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=khX1Z+NY; arc=none smtp.client-ip=115.124.30.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1726240010; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
+	bh=cuAElOUq90nweBea2SqsM7p+rOnPpDpB7SfBb+vrRiY=;
+	b=khX1Z+NYcSX7I9xkUq4vy8NTl9TvkMCNgdCRX0uaw96Eah67EXYHFq9uL7Uy3uRg0UCoM9BWaOpsBBHwhJAiGFgqG8JDV1rmDloWWn4EMOl4Tm+aejoOAxrxthQQB7+WTdhtX9RCIaCUihPDyQiSQ6YMG2j1GmQQCqB+sZq1HIU=
+Received: from localhost(mailfrom:dust.li@linux.alibaba.com fp:SMTPD_---0WEv8PBG_1726240009)
+          by smtp.aliyun-inc.com;
+          Fri, 13 Sep 2024 23:06:50 +0800
+Date: Fri, 13 Sep 2024 23:06:49 +0800
+From: Dust Li <dust.li@linux.alibaba.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: Philo Lu <lulie@linux.alibaba.com>, netdev@vger.kernel.org,
+	willemdebruijn.kernel@gmail.com, davem@davemloft.net,
+	kuba@kernel.org, pabeni@redhat.com, dsahern@kernel.org,
+	antony.antony@secunet.com, steffen.klassert@secunet.com,
+	linux-kernel@vger.kernel.org, jakub@cloudflare.com
+Subject: Re: [RFC PATCH net-next] net/udp: Add 4-tuple hash for connected
+ socket
+Message-ID: <20240913150649.GB14069@linux.alibaba.com>
+Reply-To: dust.li@linux.alibaba.com
+References: <20240913100941.8565-1-lulie@linux.alibaba.com>
+ <CANn89iJuUFaM5whtsqA37vh6vUKUQJhgjV9Uqv6_ARpVGFjB2w@mail.gmail.com>
+ <20240913142155.GA14069@linux.alibaba.com>
+ <CANn89iL9EYX1EYLcrsXxz6dZX6eYyAi+u4uCZuYjg=y3tbgh6A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240719-starqltechn_integration_upstream-v4-0-a7f644821941@gmail.com>
- <20240719-starqltechn_integration_upstream-v4-27-a7f644821941@gmail.com> <uevafpb6r7rfutiqrm5asfvv7zfxcb3acrlxqpispele5er52x@eegonpzqlm7j>
-In-Reply-To: <uevafpb6r7rfutiqrm5asfvv7zfxcb3acrlxqpispele5er52x@eegonpzqlm7j>
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Fri, 13 Sep 2024 18:06:36 +0300
-Message-ID: <CABTCjFA+4+37+gF2FcvGVMLmzwM01MVvSjBDinVJyRaw007jTg@mail.gmail.com>
-Subject: Re: [PATCH v4 27/28] gcc-sdm845: Add general purpose clock ops
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: dmitry.baryshkov@linaro.org, Sebastian Reichel <sre@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Lee Jones <lee@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANn89iL9EYX1EYLcrsXxz6dZX6eYyAi+u4uCZuYjg=y3tbgh6A@mail.gmail.com>
 
-=D0=B2=D1=82, 10 =D1=81=D0=B5=D0=BD=D1=82. 2024=E2=80=AF=D0=B3. =D0=B2 12:5=
-9, Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>:
+On 2024-09-13 16:39:33, Eric Dumazet wrote:
+>On Fri, Sep 13, 2024 at 4:22 PM Dust Li <dust.li@linux.alibaba.com> wrote:
+>>
+>> On 2024-09-13 13:49:03, Eric Dumazet wrote:
+>> >On Fri, Sep 13, 2024 at 12:09 PM Philo Lu <lulie@linux.alibaba.com> wrote:
+>> >>
+>> >> This RFC patch introduces 4-tuple hash for connected udp sockets, to
+>> >> make udp lookup faster. It is a tentative proposal and any comment is
+>> >> welcome.
+>> >>
+>> >> Currently, the udp_table has two hash table, the port hash and portaddr
+>> >> hash. But for UDP server, all sockets have the same local port and addr,
+>> >> so they are all on the same hash slot within a reuseport group. And the
+>> >> target sock is selected by scoring.
+>> >>
+>> >> In some applications, the UDP server uses connect() for each incoming
+>> >> client, and then the socket (fd) is used exclusively by the client. In
+>> >> such scenarios, current scoring method can be ineffcient with a large
+>> >> number of connections, resulting in high softirq overhead.
+>> >>
+>> >> To solve the problem, a 4-tuple hash list is added to udp_table, and is
+>> >> updated when calling connect(). Then __udp4_lib_lookup() firstly
+>> >> searches the 4-tuple hash list, and return directly if success. A new
+>> >> sockopt UDP_HASH4 is added to enable it. So the usage is:
+>> >> 1. socket()
+>> >> 2. bind()
+>> >> 3. setsockopt(UDP_HASH4)
+>> >> 4. connect()
+>> >>
+>> >> AFAICT the patch (if useful) can be further improved by:
+>> >> (a) Support disable with sockopt UDP_HASH4. Now it cannot be disabled
+>> >> once turned on until the socket closed.
+>> >> (b) Better interact with hash2/reuseport. Now hash4 hardly affects other
+>> >> mechanisms, but maintaining sockets in both hash4 and hash2 lists seems
+>> >> unnecessary.
+>> >> (c) Support early demux and ipv6.
+>> >>
+>> >> Signed-off-by: Philo Lu <lulie@linux.alibaba.com>
+>> >
+>> >Adding a 4-tuple hash for UDP has been discussed in the past.
+>>
+>> Thanks for the information! we don't know the history.
+>>
+>> >
+>> >Main issue is that this is adding one cache line miss per incoming packet.
+>>
+>> What about adding something like refcnt in 'struct udp_hslot' ?
+>> if someone enabled uhash4 on the port, we increase the refcnt.
+>> Then we can check if that port have uhash4 enabled. If it's zero,
+>> we can just bypass the uhash4 lookup process and goto the current
+>> udp4_lib_lookup2().
+>>
 >
-> Hello,
->
-> On Fri, Jul 19, 2024 at 03:55:04PM +0300, Dzmitry Sankouski wrote:
-> > SDM845 has "General Purpose" clocks that can be muxed to
-> > SoC pins to clock various external devices.
-> > Those clocks may be used as e.g. PWM sources for external peripherals.
-> >
-> > GPCLK can in theory have arbitrary value depending on the use case, so
-> > the concept of frequency tables, used in rcg2 clock driver, is not
-> > efficient, because it allows only defined frequencies.
-> >
-> > Introduce clk_rcg2_gp_ops, which automatically calculate clock
-> > mnd values for arbitrary clock rate.
-> >
-> > Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> > ---
-> >  drivers/clk/qcom/clk-rcg.h    |   1 +
-> >  drivers/clk/qcom/clk-rcg2.c   | 162 ++++++++++++++++++++++++++++++++++=
-++++++--
-> >  drivers/clk/qcom/gcc-sdm845.c |  19 ++---
-> >  drivers/pwm/pwm-clk.c         |   5 ++
->
-> I don't understand why a change to some qcom clk implementation detail
-> needs a change to drivers/pwm/pwm-clk.c in the same commit. I guess if
-> the change to drivers/pwm/pwm-clk.c is needed it should better go into a
-> separate patch with an appropriate commit log?!
->
-You're right, I'll fix that. Also I heavily rewrote this patch, and
-included it in
-starqltechn patch series. Since this patch has the wrong version (sorry for=
- my
-mistake) and order numbering, please consider the next patch a successor of=
- it.
+>Reading anything (thus a refcnt) in 'struct udp_hslot' will need the
+>same cache line miss.
 
---=20
+hslot2->head in 'struct udp_hslot' will be read right away in
+udp4_lib_lookup2() in any case, it's just a few instructions
+later(about 20). So I think cache miss should not be a problem
+in this case.
+
+>
+>Note that udp_hslot already has a 'count' field
+
+Yes, but that's for uhash/uhash2. I'm thinking of adding something
+to indicate that uhash4 was enabled on this port. So we can avoid
+the extra memory footprint on some cold memory. Maybe 'struct udp_hslot'
+is not a good place.
 
 Best regards,
-Dzmitry
+Dust
+
 
