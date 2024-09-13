@@ -1,284 +1,197 @@
-Return-Path: <linux-kernel+bounces-327577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA0E9777EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:29:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 028B69777F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:32:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E84101F255E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:29:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 749AA1F21078
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:32:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC991D47DC;
-	Fri, 13 Sep 2024 04:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8BE1C5788;
+	Fri, 13 Sep 2024 04:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HYu5Si2V"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="qno/KKHG"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4BE3EA64
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 04:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1BD2F24
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 04:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726201728; cv=none; b=tdOAGv+MH7MpcGsG+rTKbXPstLxqTSULYPrnzpbmf9I1rOA4raFLDMwIeSiUzNEmSF+DIQtplhOY1EknuHWQVeLJ4G7B2V8BTEAdCdhXEBc8yaW/fBXqktcf2WcSVxu8fvOdLsLV7f4Y4JABwVeVrG6s+2ZVLR5r2pJvXl01hoA=
+	t=1726201962; cv=none; b=POSiXLrqT27OEstim99S9TtDYBQKu/HRmjMaawpGAqqxTpPO+9RFIXYJmVpJ5RVR/BG11G6lQI2yieyXkeLTk3pEPHFNVKWUnK0g81L1xFpkdlmq/RjDriFu0D/4xsEUgH1SxeLXC6KG8LcGwVvYLsNuauC6JX673y5c1s37x48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726201728; c=relaxed/simple;
-	bh=KusBDwUhmXYNVbr5wT6Kx07SJaf4b5aekkBhlWVphDw=;
+	s=arc-20240116; t=1726201962; c=relaxed/simple;
+	bh=7/sXqifHGzfl2SRL3Mw1Pln76S7FBnwdNmeHZ7WAGME=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aaJORHW6QPJAuVbQLmDEbNZC0yEXv6pCHbI3SlReiqjsv/ZpXNcEczVBncJfd472CPLmtTiXWVZRE0uCC6L8wlgmz84JXJYO3WWlURuggtnAwtlFx/9tOAQhuCO1hu7WchgXQ9O+swOR8VdMbCDzw4to+49QzSu3qoTyQz/Vqek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HYu5Si2V; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6db449f274fso3861857b3.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 21:28:46 -0700 (PDT)
+	 To:Cc:Content-Type; b=AoEfuLUZzqlP4nUpv67Y5u6edO7l0noX9Zkgm50+VkzrbqCiow7mPM94Teh6wr6eIL8OIV0kCMcEU8tq+FzN1yEgeq2uUZCQ92jNYmVaqTOTgs14Zh4rkEUE2EW18brG6+oU5FaiFD2k9KQn11Ml09qGKBHYxJ3N4eeEDwNhjQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=qno/KKHG; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-39d3872e542so6253105ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 21:32:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726201725; x=1726806525; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ilV+VFly+BddHOcgu7zM+rbXi0owQaWaE+7ozG8j1J8=;
-        b=HYu5Si2V9wHMJXg37JEYAMpMi4p0xE7k8YBCaZfu4ar9kgCrwllEiyVwwQDN1TzTHE
-         6in+IGJPT6X/9YyMULXvO/pgGnsn/KSfwLDeP//uEdQHMOr1t2L6eUA3sB/3dcdRdy5W
-         4QcpdFBmLvS9nycLTVeCCOnVZz+0jZmDIzrTJ2ZOF2GpxKPQSROeKPsvUVPduP6usS0T
-         4qUVwBH6zQc7tW8N51BKM0VBV4BLatOW4sI7LPmRuyABM4k1jmYZ2H13g/0YJbvKPgcy
-         lBYbCeo7qEvCPXJuLAZV6ImOOOC+m6/xl/zV02sA13QzAWWbWis//lFFyL4uhzN1iBR4
-         AusQ==
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1726201959; x=1726806759; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w54pp7KLxKfAIPY5581fcuCi0omX1JlS2WnZJ/hN1G4=;
+        b=qno/KKHG/cdhGE7KRcU9DH/rSJnZ0qJLaruKCVrItKzYUKphrwoLWN5WTgdHrlPFSi
+         be6qCoLmZ7PCWuOLf8YRBMAwJetYqaTTSmG3Ab7AQ7PoTNEX2u2osPY38nhM0xW2eQ4F
+         k/cpAF8qjTvNXdQCD/FxZnoageNlYQ3+1azbPh2NB3CZVxhj+Jw36FZ0H7AYGpuw7W0a
+         /tlI5rk+QWdGrxYZCbmIz2dYJbEybjPs5F9btB6Nbv2p7ddOYCMVgzO1qNukWkFytYAu
+         bjRPz8jJnb6qxQnR+aAnB1Tve6zsHo1PcRVlFdATPsgd6B0SWJs514aGrKc1GxOyhBH2
+         A6RA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726201725; x=1726806525;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ilV+VFly+BddHOcgu7zM+rbXi0owQaWaE+7ozG8j1J8=;
-        b=ag4uZSSeht5kEtHkiYDGtjhQOOiZFULQriUxEGQbWX4pxL4ICz9N40SFoD3KMtXxKO
-         MWWCELAvmCXKMztcNPH2Ggtjsx1ormcK4JH2jEwPrvK4Z56Lz3O9jOr8/68U6TffPwTl
-         AQVepmzFLC7Ibx6espbaMZIW4kSpwVsoi0ncR2h0pwVR+l/wxT2DN156f07aXDpFvqsB
-         zwvKrcfKtVLAQ/zOSvqrchWwmJo3wIZT5ZdODHbzpnh73sUNTaEeU87kPtsxzWOMmiDS
-         lQrYnuiDYpFt4C8qdYXjF3LDztexQlWndJP6OJlqOOabAkk2zIOpJTnALc49hJEodQk6
-         lmEw==
-X-Forwarded-Encrypted: i=1; AJvYcCWLgipIb/4BJyEgxQC4yHOJB96EU74mxxyWUj8Rxl+xeqBg2eeKDicaSb3YwyUpoR2qlI+fd5LDVLWmi7c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4FVSRs+DAvg5LS7ep/MxRUHNb8HE2WKU78p3nrTYx7HnYMr05
-	zx2JX3OosCxS1xFg1eAh3OuHS5ovKeH6pxUTqXoxwWqXlNax7V9NgZzzNY09/13A7wc2+6vIJue
-	E4L+4RrylybeXr9hNpBNOOOaZBUNz8YKoq6Hd/A==
-X-Google-Smtp-Source: AGHT+IEsYPDl84kDOiPKnhXshOf/uCpRkyFvSaITqHrLWdXFp4TssTeTFmIHAEsuuIC3R6E/DGx/E2qFx2ZnbYmwAgU=
-X-Received: by 2002:a05:690c:488a:b0:6b1:1476:d3c5 with SMTP id
- 00721157ae682-6dbcc29f47amr14189417b3.12.1726201724872; Thu, 12 Sep 2024
- 21:28:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726201959; x=1726806759;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w54pp7KLxKfAIPY5581fcuCi0omX1JlS2WnZJ/hN1G4=;
+        b=p78MSliJLZehtIpZ/sGTBclESZmw/xS/gn4wPIZSyatqWp13rAlTIgbDrQhQRP+yqJ
+         8VamXDksorbDeS9PAhJKc+foU1xx5wWPeQ52W3QK4Zip3yi48YzSwm11p9Dqj7MyWu2l
+         Qf5JLnfA+xNXdk9414x3ZXViSU1dW3Qwt1nMWLTu6ScPJGUHnnoY0TKxeLkfFF2ohlOS
+         6nb6LdUxhnxfA/Et8HJYNULNfDCu8FtIr8uRFZMsU+kohVYwf/qi+CiW/YhcZ8SFycMC
+         YU/O2neMMG5jq+B3CZKT+flgySbK2AyTOEnoXT7np9YhmU0ZegBVQgonSh0blkYdkcFK
+         SP8g==
+X-Forwarded-Encrypted: i=1; AJvYcCW9tl2YnNnhdKR8T8lvBzCwmXegMAi9pUzKg8hSYUQZZyw8jcZI57wi8AjZ56oppet04UHA1JUoNn5lt30=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3q2Vgosa2Xhnlob5ysNoWmQbO/gNZnCmVDpavhodD1oGJwk2h
+	HgBSZrEwI5cT+uYjB1ijJpQvVsERIKstLM54IGee8VqcIVOavIhYSS2inJY0sGYyMtrmkVZ5fKL
+	OccBQ7fO7HTwRBggoc8WHtsZ3h/9oczRHKpfqcA==
+X-Google-Smtp-Source: AGHT+IE+2QF6HwF17VErmVADwVFkI6DzAjV6r3QI8XJIUdFcDK2edj5QNTbv9dEzH2k7P2s7H77k2KRWduAraPSF2Sg=
+X-Received: by 2002:a05:6e02:154f:b0:3a0:4250:165f with SMTP id
+ e9e14a558f8ab-3a0847d0c17mr55015385ab.0.1726201959580; Thu, 12 Sep 2024
+ 21:32:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906-wrapped-keys-v6-0-d59e61bc0cb4@linaro.org>
- <20240906-wrapped-keys-v6-9-d59e61bc0cb4@linaro.org> <7uoq72bpiqmo2olwpnudpv3gtcowpnd6jrifff34ubmfpijgc6@k6rmnalu5z4o>
- <66953e65-2468-43b8-9ccf-54671613c4ab@linaro.org> <ivibs6qqxhbikaevys3iga7s73xq6dzq3u43gwjri3lozkrblx@jxlmwe5wiq7e>
- <98cc8d71d5d9476297a54774c382030d@quicinc.com> <CAA8EJpp_HY+YmMCRwdteeAHnSHtjuHb=nFar60O_PwLwjk0mNA@mail.gmail.com>
- <9bd0c9356e2b471385bcb2780ff2425b@quicinc.com> <20240912231735.GA2211970@google.com>
-In-Reply-To: <20240912231735.GA2211970@google.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 13 Sep 2024 07:28:33 +0300
-Message-ID: <CAA8EJpq3sjfB0BsJTs3_r_ZFzhrrpy-A=9Dx9ks2KrDNYCntdg@mail.gmail.com>
-Subject: Re: [PATCH v6 09/17] soc: qcom: ice: add HWKM support to the ICE driver
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: "Gaurav Kashyap (QUIC)" <quic_gaurkash@quicinc.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, 
-	Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
-	Mikulas Patocka <mpatocka@redhat.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Asutosh Das <quic_asutoshd@quicinc.com>, Ritesh Harjani <ritesh.list@gmail.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, "Theodore Y. Ts'o" <tytso@mit.edu>, 
-	Jaegeuk Kim <jaegeuk@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	"manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>, 
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, 
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"dm-devel@lists.linux.dev" <dm-devel@lists.linux.dev>, 
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, 
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, 
-	"linux-fscrypt@vger.kernel.org" <linux-fscrypt@vger.kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, 
-	"bartosz.golaszewski" <bartosz.golaszewski@linaro.org>
+References: <83c2234d582b7e823ce9ac9b73a6bbcf63971a29.1724911120.git.zhouquan@iscas.ac.cn>
+ <b5128162-278a-4284-8271-b2b91dc446e1@iscas.ac.cn> <380f4da9-50e9-4632-bdc8-b1723eb19ca5@sifive.com>
+In-Reply-To: <380f4da9-50e9-4632-bdc8-b1723eb19ca5@sifive.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Fri, 13 Sep 2024 10:02:28 +0530
+Message-ID: <CAAhSdy1zSTWuTW1KohUDXr9UXUx-QL1A30AUkTGoL7W2L7JWLQ@mail.gmail.com>
+Subject: Re: [PATCH] RISC-V: KVM: Redirect instruction access fault trap to guest
+To: Samuel Holland <samuel.holland@sifive.com>
+Cc: Quan Zhou <zhouquan@iscas.ac.cn>, ajones@ventanamicro.com, atishp@atishpatra.org, 
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 13 Sept 2024 at 02:17, Eric Biggers <ebiggers@kernel.org> wrote:
+On Fri, Sep 13, 2024 at 6:09=E2=80=AFAM Samuel Holland
+<samuel.holland@sifive.com> wrote:
 >
-> On Thu, Sep 12, 2024 at 10:17:03PM +0000, Gaurav Kashyap (QUIC) wrote:
+> On 2024-09-12 4:03 AM, Quan Zhou wrote:
 > >
-> > On Monday, September 9, 2024 11:29 PM PDT, Dmitry Baryshkov wrote:
-> > > On Tue, 10 Sept 2024 at 03:51, Gaurav Kashyap (QUIC)
-> > > <quic_gaurkash@quicinc.com> wrote:
-> > > >
-> > > > Hello Dmitry and Neil
-> > > >
-> > > > On Monday, September 9, 2024 2:44 AM PDT, Dmitry Baryshkov wrote:
-> > > > > On Mon, Sep 09, 2024 at 10:58:30AM GMT, Neil Armstrong wrote:
-> > > > > > On 07/09/2024 00:07, Dmitry Baryshkov wrote:
-> > > > > > > On Fri, Sep 06, 2024 at 08:07:12PM GMT, Bartosz Golaszewski wrote:
-> > > > > > > > From: Gaurav Kashyap <quic_gaurkash@quicinc.com>
-> > > > > > > >
-> > > > > > > > Qualcomm's ICE (Inline Crypto Engine) contains a proprietary
-> > > > > > > > key management hardware called Hardware Key Manager (HWKM).
-> > > > > > > > Add
-> > > > > HWKM
-> > > > > > > > support to the ICE driver if it is available on the platform.
-> > > > > > > > HWKM primarily provides hardware wrapped key support where
-> > > the
-> > > > > > > > ICE
-> > > > > > > > (storage) keys are not available in software and instead
-> > > > > > > > protected in
-> > > > > hardware.
-> > > > > > > >
-> > > > > > > > When HWKM software support is not fully available (from
-> > > > > > > > Trustzone), there can be a scenario where the ICE hardware
-> > > > > > > > supports HWKM, but it cannot be used for wrapped keys. In this
-> > > > > > > > case, raw keys have to be used without using the HWKM. We
-> > > > > > > > query the TZ at run-time to find out whether wrapped keys
-> > > > > > > > support is
-> > > > > available.
-> > > > > > > >
-> > > > > > > > Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
-> > > > > > > > Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
-> > > > > > > > Signed-off-by: Bartosz Golaszewski
-> > > > > > > > <bartosz.golaszewski@linaro.org>
-> > > > > > > > ---
-> > > > > > > >   drivers/soc/qcom/ice.c | 152
-> > > > > +++++++++++++++++++++++++++++++++++++++++++++++--
-> > > > > > > >   include/soc/qcom/ice.h |   1 +
-> > > > > > > >   2 files changed, 149 insertions(+), 4 deletions(-)
-> > > > > > > >
-> > > > > > > >   int qcom_ice_enable(struct qcom_ice *ice)
-> > > > > > > >   {
-> > > > > > > > + int err;
-> > > > > > > > +
-> > > > > > > >           qcom_ice_low_power_mode_enable(ice);
-> > > > > > > >           qcom_ice_optimization_enable(ice);
-> > > > > > > > - return qcom_ice_wait_bist_status(ice);
-> > > > > > > > + if (ice->use_hwkm)
-> > > > > > > > +         qcom_ice_enable_standard_mode(ice);
-> > > > > > > > +
-> > > > > > > > + err = qcom_ice_wait_bist_status(ice); if (err)
-> > > > > > > > +         return err;
-> > > > > > > > +
-> > > > > > > > + if (ice->use_hwkm)
-> > > > > > > > +         qcom_ice_hwkm_init(ice);
-> > > > > > > > +
-> > > > > > > > + return err;
-> > > > > > > >   }
-> > > > > > > >   EXPORT_SYMBOL_GPL(qcom_ice_enable);
-> > > > > > > > @@ -150,6 +282,10 @@ int qcom_ice_resume(struct qcom_ice
-> > > *ice)
-> > > > > > > >                   return err;
-> > > > > > > >           }
-> > > > > > > > + if (ice->use_hwkm) {
-> > > > > > > > +         qcom_ice_enable_standard_mode(ice);
-> > > > > > > > +         qcom_ice_hwkm_init(ice); }
-> > > > > > > >           return qcom_ice_wait_bist_status(ice);
-> > > > > > > >   }
-> > > > > > > >   EXPORT_SYMBOL_GPL(qcom_ice_resume);
-> > > > > > > > @@ -157,6 +293,7 @@ EXPORT_SYMBOL_GPL(qcom_ice_resume);
-> > > > > > > >   int qcom_ice_suspend(struct qcom_ice *ice)
-> > > > > > > >   {
-> > > > > > > >           clk_disable_unprepare(ice->core_clk);
-> > > > > > > > + ice->hwkm_init_complete = false;
-> > > > > > > >           return 0;
-> > > > > > > >   }
-> > > > > > > > @@ -206,6 +343,12 @@ int qcom_ice_evict_key(struct qcom_ice
-> > > > > > > > *ice,
-> > > > > int slot)
-> > > > > > > >   }
-> > > > > > > >   EXPORT_SYMBOL_GPL(qcom_ice_evict_key);
-> > > > > > > > +bool qcom_ice_hwkm_supported(struct qcom_ice *ice) {  return
-> > > > > > > > +ice->use_hwkm; }
-> > > > > EXPORT_SYMBOL_GPL(qcom_ice_hwkm_supported);
-> > > > > > > > +
-> > > > > > > >   static struct qcom_ice *qcom_ice_create(struct device *dev,
-> > > > > > > >                                           void __iomem *base)
-> > > > > > > >   {
-> > > > > > > > @@ -240,6 +383,7 @@ static struct qcom_ice
-> > > > > > > > *qcom_ice_create(struct
-> > > > > device *dev,
-> > > > > > > >                   engine->core_clk = devm_clk_get_enabled(dev, NULL);
-> > > > > > > >           if (IS_ERR(engine->core_clk))
-> > > > > > > >                   return ERR_CAST(engine->core_clk);
-> > > > > > > > + engine->use_hwkm = qcom_scm_has_wrapped_key_support();
-> > > > > > >
-> > > > > > > This still makes the decision on whether to use HW-wrapped keys
-> > > > > > > on behalf of a user. I suppose this is incorrect. The user must
-> > > > > > > be able to use raw keys even if HW-wrapped keys are available on
-> > > > > > > the platform. One of the examples for such use-cases is if a
-> > > > > > > user prefers to be able to recover stored information in case of
-> > > > > > > a device failure (such recovery will be impossible if SoC is
-> > > > > > > damaged and HW-
-> > > > > wrapped keys are used).
-> > > > > >
-> > > > > > Isn't that already the case ? the
-> > > BLK_CRYPTO_KEY_TYPE_HW_WRAPPED
-> > > > > size
-> > > > > > is here to select HW-wrapped key, otherwise the ol' raw key is passed.
-> > > > > > Just look the next patch.
-> > > > > >
-> > > > > > Or did I miss something ?
-> > > > >
-> > > > > That's a good question. If use_hwkm is set, ICE gets programmed to
-> > > > > use hwkm (see qcom_ice_hwkm_init() call above). I'm not sure if it
-> > > > > is expected to work properly if after such a call we pass raw key.
-> > > > >
-> > > >
-> > > > Once ICE has moved to a HWKM mode, the firmware key programming
-> > > currently does not support raw keys.
-> > > > This support is being added for the next Qualcomm chipset in Trustzone to
-> > > support both at he same time, but that will take another year or two to hit
-> > > the market.
-> > > > Until that time, due to TZ (firmware) limitations , the driver can only
-> > > support one or the other.
-> > > >
-> > > > We also cannot keep moving ICE modes, due to the HWKM enablement
-> > > being a one-time configurable value at boot.
-> > >
-> > > So the init of HWKM should be delayed until the point where the user tells if
-> > > HWKM or raw keys should be used.
+> > On 2024/8/29 14:20, zhouquan@iscas.ac.cn wrote:
+> >> From: Quan Zhou <zhouquan@iscas.ac.cn>
+> >>
+> >> The M-mode redirects an unhandled instruction access
+> >> fault trap back to S-mode when not delegating it to
+> >> VS-mode(hedeleg). However, KVM running in HS-mode
+> >> terminates the VS-mode software when back from M-mode.
+> >>
+> >> The KVM should redirect the trap back to VS-mode, and
+> >> let VS-mode trap handler decide the next step.
+> >>
+> >> Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
+> >> ---
+> >>   arch/riscv/kvm/vcpu_exit.c | 1 +
+> >>   1 file changed, 1 insertion(+)
+> >>
+> >> diff --git a/arch/riscv/kvm/vcpu_exit.c b/arch/riscv/kvm/vcpu_exit.c
+> >> index fa98e5c024b2..696b62850d0b 100644
+> >> --- a/arch/riscv/kvm/vcpu_exit.c
+> >> +++ b/arch/riscv/kvm/vcpu_exit.c
+> >> @@ -182,6 +182,7 @@ int kvm_riscv_vcpu_exit(struct kvm_vcpu *vcpu, str=
+uct
+> >> kvm_run *run,
+> >>       ret =3D -EFAULT;
+> >>       run->exit_reason =3D KVM_EXIT_UNKNOWN;
+> >>       switch (trap->scause) {
+> >> +    case EXC_INST_ACCESS:
 > >
-> > Ack.
-> > I'll work with Bartosz to look into moving to HWKM mode only during the first key program request
-> >
+> > A gentle ping, the instruction access fault should be redirected to
+> > VS-mode for handling, is my understanding correct?
 >
-> That would mean the driver would have to initially advertise support for both
-> HW-wrapped keys and raw keys, and then it would revoke the support for one of
-> them later (due to the other one being used).  However, runtime revocation of
-> crypto capabilities is not supported by the blk-crypto framework
-> (Documentation/block/inline-encryption.rst), and there is no clear path to
-> adding such support.  Upper layers may have already checked the crypto
-> capabilities and decided to use them.  It's too late to find out that the
-> support was revoked in the middle of an I/O request.  Upper layer code
-> (blk-crypto, fscrypt, etc.) is not prepared for this.  And even if it was, the
-> best it could do is cleanly fail the I/O, which is too late as e.g. it may
-> happen during background writeback and cause user data to be thrown away.
+> Yes, this looks correct. However, I believe it would be equivalent (and m=
+ore
+> efficient) to add EXC_INST_ACCESS to KVM_HEDELEG_DEFAULT in asm/kvm_host.=
+h.
+>
+> I don't understand why some exceptions are delegated with hedeleg and oth=
+ers are
+> caught and redirected here with no further processing. Maybe someone thou=
+ght
+> that it wasn't valid to set a bit in hedeleg if the corresponding bit was
+> cleared in medeleg? But this doesn't make sense, as S-mode cannot know wh=
+ich
+> bits are set in medeleg (maybe none are!).
+>
+> So the hypervisor must either:
+>  1) assume M-mode firmware checks hedeleg and redirects exceptions to VS-=
+mode
+>     regardless of medeleg, in which case all four of these exceptions can=
+ be
+>     moved to KVM_HEDELEG_DEFAULT and removed from this switch statement, =
+or
+>
+>  2) assume M-mode might not check hedeleg and redirect exceptions to VS-m=
+ode,
+>     and since no bits are guaranteed to be set in medeleg, any bit set in
+>     hedeleg must _also_ be handled in the switch case here.
+>
+> Anup, Atish, thoughts?
 
-Can we check crypto capabilities when the user sets the key?
+Any exception delegated to VS-mode via hedeleg means it is directly deliver=
+ed
+to VS-mode without any intervention of HS-mode. This aligns with the RISC-V
+priv specification and there is no alternate semantics assumed by KVM RISC-=
+V.
 
-Compare this to the actual HSM used to secure communication or
-storage. It has certain capabilities, which can be enumerated, etc.
-But then at the time the user sets the key it is perfectly normal to
-return an error because HSM is out of resources. It might even have
-spare key slots, but it might be not enough to be able to program the
-required key (as a really crazy example, consider the HSM having at
-this time a single spare DES key slot, while the user wants to program
-3DES key).
+At the moment, for KVM RISC-V we are converging towards the following
+approach:
+
+1) Only delegate "supervisor expected" traps to VS-mode via hedeleg
+which supervisor software is generally expected to directly handle such
+as breakpoint, user syscall, inst page fault, load page fault, and store
+page fault.
+
+2) Other "supervisor unexpected" traps are redirected to VS-mode via
+software in HS-mode because these are not typically expected by supervisor
+software and KVM RISC-V should at least gather some stats for such traps.
+Previously, we were redirecting such unexpect traps to KVM user space
+where the KVM user space tool will simply dump the VCPU state and kill
+the Guest/VM.
+
+The inst misaligned trap was historically always set in hedeleg but we
+should update it based on the above approach.
 
 >
-> So, the choice of support for HW-wrapped vs. raw will need to be made ahead of
-> time, rather than being implicitly set by the first use.  That is most easily
-> done using a module parameter like qcom_ice.hw_wrapped_keys=1.  Yes, it's a bit
-> inconvenient, but there's no realistic way around this currently.
+> Regards,
+> Samuel
+>
+> >
+> >>       case EXC_INST_ILLEGAL:
+> >>       case EXC_LOAD_MISALIGNED:
+> >>       case EXC_STORE_MISALIGNED:
+> >>
+> >> base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+> >
+> >
+> > _______________________________________________
+> > linux-riscv mailing list
+> > linux-riscv@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-riscv
+>
 
-This doesn't work for Android usecase. The user isn't able to setup modparams.
-
--- 
-With best wishes
-Dmitry
+Regards,
+Anup
 
