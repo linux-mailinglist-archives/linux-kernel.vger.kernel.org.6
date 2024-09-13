@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-328900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A29CD978A9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:32:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0681C978A9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:32:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E0AA288EB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:32:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12999B246DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D02D155C96;
-	Fri, 13 Sep 2024 21:32:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8901A14F9EE;
+	Fri, 13 Sep 2024 21:32:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="fXY8+xKk"
-Received: from CWXP265CU008.outbound.protection.outlook.com (mail-ukwestazon11020103.outbound.protection.outlook.com [52.101.195.103])
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="Tts2sw8c"
+Received: from LO3P265CU004.outbound.protection.outlook.com (mail-uksouthazon11020115.outbound.protection.outlook.com [52.101.196.115])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D9F2BB13;
-	Fri, 13 Sep 2024 21:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.195.103
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383092BB13;
+	Fri, 13 Sep 2024 21:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.196.115
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726263148; cv=fail; b=gQcJl+Jx5BHKiVDDC9AWmJIsAfS0tynj8BjENGCARBya3GWT/AZyW5POnksm6FClx3vS/W41UJvNGmJ/6coQk3cIlCy24tXvnswTH+h2B65yk2qNGrD9yznOBM4Em9jibSOLhr7Kri6++H5oZekepYk3ELRGVQGUBLFXuFjdVY4=
+	t=1726263154; cv=fail; b=uhu2RK9IVji9ZPU3r+gagqu89vPK4hXp8BtUU1/RiCcE7kJXUvjXWKdOXO7DUHjFHzXtKBVXMLm4TI1QkcuDy061rT0cL+PRv7Or/ALEFXAcV6WRRRoMMje02dZKe+8hXuxx0f8+n5uz5XQckuafi2x0vb7pxi/aRUTFkGHHk10=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726263148; c=relaxed/simple;
-	bh=PD1lw3UOEIEnVqfH+hu8jpKUwrFjwwrZ+oY+aOyBqv4=;
+	s=arc-20240116; t=1726263154; c=relaxed/simple;
+	bh=uek1ZI6pIhmKUJPiCSyQAoR8XPuWUxf/XM3sdjGd828=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EKu0fDxpN488Aocc72Tb5RdatN9NDSPvDP1lPaSeLG3gNEowFne3NToKVWOI9R0E4yvTK3vkOfYez49ZEiDXaxEzbwuo0BrepapufJIYgdiMeuqQSjdZdWChlj7vNUgOKiTxxMdgoRg66wN7ax2msyzmIbRnTESaBEp//umRy4k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=fXY8+xKk; arc=fail smtp.client-ip=52.101.195.103
+	 Content-Type:MIME-Version; b=S2YgnGbaN2eGFqUkx8HniVGukbm2iXCE7rf5HxQWyOeo/tT6M9dcwHLHZrx3lDNjsNX4QCwbntx/pm8GHcpFpsa/afWHkzP0qCuA6RqHUrJD6pfUoNEtNzgs5K/jqYZsJOkUQY98ymb8TsKQ1oa3KPRXZe6QkdY1+n4ouxFfwlA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=Tts2sw8c; arc=fail smtp.client-ip=52.101.196.115
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UrU+oMe7drjYVwvHFMMhB/SFNIN51LQtKxKduI3JToX5xtZ2faxjb/X+fXW6dzLeTpxqE8GR0aMuVtfVaTxAy6UwZGnvyM19dLePZFkCb41mvbr3pV78tPe1DJf5UGbkLA++BA4rYDJjYSwIh3zx2/isha+zJCJIFQ/GBCwZjwLhlarCnO7+55vei6b2ACVx1gSX9IhkAcY63zeCYul+4xumW0xQIwojtz31nwhYEKdCGbZFuno0eTjOBpJ4rLKx+FsrOPxZVAc7MJfmUuPS5T+pw3SKBqO4tvgYCDquVzzY1Q0CBd3ojPchEmxa564WadYv8yxOPRfEeaIKTQeWXw==
+ b=FYlHZ1HPULfVCHZ0RHav/VfBf0hPqHf4Y2DiS0NAq0U73+/Ge4smJOcUBDfocYSJw8UFjRAvmkypXesB6En7sGECH1hxGdKkplEJeSm4bpAw5H0rXD+akkdGlCbF3RAbJZrbt1uX5OXqiMdOyesx8bAUfUt3PYkf5ryHLWL1GpK9ilWOdouMKpKf0LexuyP2QGVyIOtgulJO4lGBcowGl993IwjrFxOhK7hx0dx07JNoNB7QqW3sgxhiOlOQGnDLJTvvgHLtbUXOCF40lX+h6jzLkU8f1hXrp7ExJiz9kRpIUus5N1RSVxAz/KENyD8HQr4I/KSpVCPemQf06qXBoQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ac0jSELi7yKkjeaDaZ7aCndbA2axL93+ElTQ00gNBHc=;
- b=URh+QawKMQ77vFsVRV/LmPEQlAD8bgTs2cJCcQt/d8mHhhhQRHUyqMZ1e/hRu18N2rKSlWVdQrtbvJhir+RQwCEs4B1vxY4dM6MLpiqinZYCMMKcusvr9Q19ILXXM0GLQcA58pwHYOaJY+qriDVXUSfrMDErGHeP0ZbdzHD69/UuQRwYmj/sGuqLBWp7DK5HET/cJvFIi4+DNaUAOtsvuAQTbneicCWciqq9IODlAJ/ZhpC8yJz3BYp4GfoHWp4pivq1FsDifaJ+4AsPCcS8SzA9vakuMfLqBwItjZEfefnN85GynDDw3Gp01LqVcna32+oAH2Z6CihbgMuin/nXbw==
+ bh=K9sT8eLnRPD3R09zIds6avWShMUwpd6aAoXNCTSLiWc=;
+ b=OY20IMDDHYj7DtBpT9RGPsDMIvZL8kNSswkNs0BVtxMf91K00J15l6PloVho8qfQDRNGFoFlqwf78ynGc8wGsz937q51Zs9X1nMBomNmtyvQcew0xmIdMMCD5TZuxNzn2FsmJi25Fd3RevhOV4ZbD8R+AEEb2Ufz36ZVppunT/kLDilzXvVjyXlkqrVPDncEp6EZJjM/v+n1RgTM03l+w7grgqg8I01lF8Yrn0JRIC25Mdswu3n5AzKbB8HmkESy3PKxPTS2uG6QqoTllCqyKMRrPOY3kO4BKs4TgudUMDA6TFWLK7IK9c/Qn1bSXE+gKQvrBd1zBGS0m2s88igisg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
  dkim=pass header.d=garyguo.net; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ac0jSELi7yKkjeaDaZ7aCndbA2axL93+ElTQ00gNBHc=;
- b=fXY8+xKk2/aLgGQEVSRls3VQ7r92nFXkE2BI6Glx2wWGCSrmGgLU7RzpmkdGA7S84nATaMGlctFMk0+nITh7AoiFYWT7arrh03iLpXyM7AnRa4xWIJb+4LIove8lbcijzHm1+Bcozoxa+AQDG2o0/CPb9DGmGw+qMdN75IiTU4I=
+ bh=K9sT8eLnRPD3R09zIds6avWShMUwpd6aAoXNCTSLiWc=;
+ b=Tts2sw8cHK8g5t+uJ16RVcn/tZ0dzkK+QIc+7pXgBezd/rWLQeFBPw4BMdq8OCVlNXvI3GGbhJ5w3I+my1Ixb1kBfun1qHVFQau9h4w0XJ2mcf7+LxUf9bf0y8IqjKEP/FttIHI1WcsqTTMfXN6dPgP97kItFvio6+/tX9Zt0S4=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=garyguo.net;
 Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
  by LO2P265MB3594.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:1a3::12) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.20; Fri, 13 Sep
- 2024 21:32:24 +0000
+ 2024 21:32:28 +0000
 Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
  ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
  ([fe80::1818:a2bf:38a7:a1e7%4]) with mapi id 15.20.7962.018; Fri, 13 Sep 2024
- 21:32:24 +0000
+ 21:32:28 +0000
 From: Gary Guo <gary@garyguo.net>
 To: Miguel Ojeda <ojeda@kernel.org>,
 	Alex Gaynor <alex.gaynor@gmail.com>,
@@ -67,16 +67,13 @@ To: Miguel Ojeda <ojeda@kernel.org>,
 	Andreas Hindborg <a.hindborg@samsung.com>,
 	Alice Ryhl <aliceryhl@google.com>,
 	Trevor Gross <tmgross@umich.edu>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
+	Finn Behrens <me@kloenk.dev>,
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>
 Cc: rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH 1/5] rust: fix size_t in bindgen prototypes of C builtins
-Date: Fri, 13 Sep 2024 22:29:21 +0100
-Message-ID: <20240913213041.395655-2-gary@garyguo.net>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/5] rust: map `__kernel_size_t` and friends also to usize/isize
+Date: Fri, 13 Sep 2024 22:29:22 +0100
+Message-ID: <20240913213041.395655-3-gary@garyguo.net>
 X-Mailer: git-send-email 2.44.1
 In-Reply-To: <20240913213041.395655-1-gary@garyguo.net>
 References: <20240913213041.395655-1-gary@garyguo.net>
@@ -93,129 +90,141 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LO2P265MB3594:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9e9972e4-0984-4cb0-e137-08dcd43b8eae
+X-MS-Office365-Filtering-Correlation-Id: aac52b7e-8ff3-4d11-097e-08dcd43b9150
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?LPxUhICkMEoNZPpUFld5bHQqJNyBbknk27CvNjZchNtKQTycrdWE33ZHo5HC?=
- =?us-ascii?Q?Kx80bdqmOo31fL5zHdtT8LNGTU9/Uodq7WiFZycy5Af85l46g5qiTWknFOFo?=
- =?us-ascii?Q?621aGZD+rS8DNOxqGRbiORSJV/6km/enf4YD7x2nKSVAXNbxVF05gFlaCF8s?=
- =?us-ascii?Q?a+swyrySxKfVb7uT7Tnoaf2SoLRmwM5X1Zex8zYGgsEhMU7rqYqzdosd3z93?=
- =?us-ascii?Q?MkwTqTYBUfn30EJsKft0Ba8+MxZbAyvo6IK9MWMDn3qagAptC0QBTDqj6DFo?=
- =?us-ascii?Q?/N7yLwIch04WNvOkWmJVv4jrrXSua7N9pTpvdyXfYLzGFlO0/AqhHuvkutKW?=
- =?us-ascii?Q?Vga985u0PjAi9eLbM6ma9eYWIG33fh0IPVfhbcigpZfB1gUD65YgXkJ3uAp0?=
- =?us-ascii?Q?9O71TOvCv83946eolZmls8L6tjgBS8MLk7R40Z5FH8kEttpvEE7t40w/It+1?=
- =?us-ascii?Q?WyROJyn3JFO5aTNLs8KyR81YiGRuwiVW4hIvDhJrxAMgKof5NAKrizunqiEn?=
- =?us-ascii?Q?hCrSl4eys9PrGaMy55vyGc9ZPXPf2vgArBHsquQEzmsOYURs+sFoipvIw+SU?=
- =?us-ascii?Q?/ilyQM/1Oebo7/zlRxbq1vlIIdNwgFwIS2I7vmH5q11Zaa83r8zYtxY48h0W?=
- =?us-ascii?Q?bVkR3EDRqzSb8yXixpvDQb1CXjWXF0Gfxsioy+fBE5bdlYbC9VUHyUAglnjQ?=
- =?us-ascii?Q?ZEmHBE8pv2kRFdcC5+o8/qnU/cqVz1lbhz9LIpYidveYJvBmGrgQS9BCGbkQ?=
- =?us-ascii?Q?1JaKAGzhKjm6ULJKJn3BN1Q5+E4PFIbe0LoxOIXAKXCqQoNZAEaBtFb28Ssw?=
- =?us-ascii?Q?mve+nNvetBzkqjSAih7a6h24G0NnH9RIngAGCT+lWv6lCYIZ551dzWqCE/nS?=
- =?us-ascii?Q?2o1sg9B9rKRZC/6FOE2CivFUbplDmnYR1sKA7VtKKrDzFpInN19ACTkVm1s9?=
- =?us-ascii?Q?0ZchtudkiX8HfZuBwKV+PZiT7J7l8OdFBub/NBsuL357F33NzlLVhejLd18i?=
- =?us-ascii?Q?yQhPTN5Sq8YIu4cFFDB51rCthm8uNN0xqg99TLMafLUyfHSCXN93LTUqgHsW?=
- =?us-ascii?Q?c/7Je15I1jhzZaRAoiJf4gDeC2tzG3hHHg1ruA/7Mc8JaieqSA/XSLh3Tpko?=
- =?us-ascii?Q?4h4vt8hUUwnx/HngnjPoP6+9P2R0e6XMCvduPMuxhJfWhxTexRgr8561lscA?=
- =?us-ascii?Q?OmHYz4/Xpx4aGwEjVOwSxaRHb749ji/K0WCHjERotV+xVW/vC9jeEy6xEncy?=
- =?us-ascii?Q?7yrVgkWnzK4DkfS9VacfYYy+flmOWCUMDkkfDZ74TIHOCLJKecCznJ7Ju+eK?=
- =?us-ascii?Q?j1YySB6/DOXeN9ISNn/PlDG+RengIofrX1WNT3sRlb56qj1uLAhq3j3el04Y?=
- =?us-ascii?Q?zsU9m7OuaTlNUQCBAO+sb3V3kOlU?=
+	=?us-ascii?Q?aE3n7UxNwvM3o1TQZfxof5IEEAR+iMJAZshLMIFNvEXN31rI+6Vk5EzijbqS?=
+ =?us-ascii?Q?JUElTwDU3diVJjqcsr+YThrmqIPz6lV1dnWYMDzLbehGBO1IvBq04nhfrqDd?=
+ =?us-ascii?Q?Ugu5huEccN+TK1wS/iUS+H2dwtWPfl/G+E4ap89EGBN45n8S/tvOlJQ5WWCE?=
+ =?us-ascii?Q?EBlRFsaCNPu++KbKAPrUxA+XAwc+bRjv6SRr2T1LMBBTY7Y11PcNpS6igoMR?=
+ =?us-ascii?Q?5kpjgi4xQVxybFiphSQoyeAO5TWJ893G9S/8knL2tTCo6XDduXeuZ4d0pjaL?=
+ =?us-ascii?Q?8F95ipLht3bHlxEEd+H3S2l+m4dS8yZ/nsZjHrNoG1RT6Cjufid49aZvB6GE?=
+ =?us-ascii?Q?0vgGPvVqgQGbAmzDMIm718068Am5siZRsgscpbWRtOocbCnToDV7Ttke972q?=
+ =?us-ascii?Q?ll83tOODFRpkt8jVzgKfNzyd9tgEiAaUj6OArfBfHf9pKCehFuqU+QvaT8Kz?=
+ =?us-ascii?Q?EV8zXPLya8HG7hZqazl/RduWRb7kQusCovr4nsvRFqFzqXDgFP6JFswZ98Pk?=
+ =?us-ascii?Q?3Y4hIJc54m2d7MlsuAQUpto08NSv1I1YCiEZEmmAdQsdHgVI1jkfsxkeK1YN?=
+ =?us-ascii?Q?jMyyWupG4C4FBXUqdgkwKSsKSKbNeaky6in6u1Z+fvNx/IfA0f66/YdNndZM?=
+ =?us-ascii?Q?qD5tcWBHFUaQ41yuU1IVULjwg35cXJjGQfkWUz3DkbWsksveLGK+c16ceBu1?=
+ =?us-ascii?Q?8mwEZEDmua93R1mWaULHuEZ5LTx7wMoWh52OU2OixcNi+6JcCGmJH7P1RqQe?=
+ =?us-ascii?Q?fsyIBD+cMaxn0S81M4R7LTx1Cnx4goRbX/ykM2+OxTT/UDu1LaWq73scrt/o?=
+ =?us-ascii?Q?r1zoqKniBzK/y3vp8QQLCPmINFFKdu2nW1sTdBOblSMC38mMd90bqRIpNt0C?=
+ =?us-ascii?Q?iEjm/vg9BKfJ2ciZcSjZsqE1rd5fqHwPkkFOXWTv7ee5haJq48RF4nHNWkut?=
+ =?us-ascii?Q?sbCjKgZezKkYW2x/BJa79Ouzwc6xvZdOL9ttSGdUpUdpKeDqxEDy/rIq7K0M?=
+ =?us-ascii?Q?nTxRAl4ZlecIntwUBHN9D/cPgVJ8U10hWkpJCfImQdLbskMQpW5kosbujPFf?=
+ =?us-ascii?Q?qxD4ZJzCE/GvY9gpJYvkXQznnozYmCapuXaUb3E25QiAl1+eHQ87cjLnHU1d?=
+ =?us-ascii?Q?56wmdfJpG9+Si0Rrjo97yciq9NDf1ZSlloYGln4qQvymjU9/JZ/2KAdJzDup?=
+ =?us-ascii?Q?UbZE+s7Cq1zcOpCLfKJAsG8cXXDrklbmwVLsx9lSkv1Wwi77g1w8ZjcP1cCm?=
+ =?us-ascii?Q?LohfZHznpIcQxn+X5tI4nVCXktmgbtteD5USSb9VHqCdxWdd3V/siL3kj3Am?=
+ =?us-ascii?Q?xWWuLZN57MPz75Nz4llieQyLCkVXzbINkV9E9ukltiEoz53Xlc/+AvEOPyc8?=
+ =?us-ascii?Q?UX/dGxWhRbbvWEzIrU1QivDdggjD?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?UIRLq5QHzZbhB5ersE3thw+3y36YoKG/X3AJCfF8574t7vzZekCkiRVm2SoS?=
- =?us-ascii?Q?/EMNLDgxIYfTbdKn0xF3mD7q7QW4uYttlDwdjReZt0Xrzmg+7rSElnltxpgL?=
- =?us-ascii?Q?/64DGm6bNXUja3L4itrRRFcxhP70w8XvvP8pomh5Oh27dWoqoJcrlIu6ZzHI?=
- =?us-ascii?Q?ftsMxniy9T2YVR94w29kXy0VGvq0sncpXz1X3vaeIgL65x0w0bH2U/Tng/5i?=
- =?us-ascii?Q?kUeFvYong8P9KnB7c3aYxxUVvqR9jt76P95oQV+jtTeMM3m5rIoDISHsCmos?=
- =?us-ascii?Q?geqZp13CRX57/bUkWEEluVgIA00ICGsu8fLabH9QLzndvPgrNJf1bneVJrjG?=
- =?us-ascii?Q?4thnK7B+WBv6+9IQ1yt6ymOcdqM6OTYaL3AVvIx5nNmmcTavJEHB3zYlSC13?=
- =?us-ascii?Q?70y7KLetEJtQsRVsa+QUH7k9kX1v4lu0pSw16ymCNX9JKVzMxQ++4pMKgjDA?=
- =?us-ascii?Q?/DMzV7C4H5sovZOBEqHvWIPnUqx/2JN8hR2VtMqdL0lJb9uCL8pDu6+0YuX0?=
- =?us-ascii?Q?LQRkQsJW3dwzQ3wpHxVLOrTjMnGQo3MIE9MhEJIMkDcATMAsGhR+3jRR7O95?=
- =?us-ascii?Q?fNEkCVDozoMNRW5ytyYtZEBnLH+kFVbSie4c1xG3yUNSW+LN2UAvNvXm3YMw?=
- =?us-ascii?Q?79FvxBrXgiIM+ClmfLLDfG2ZA4WX/GuGuUEzj0real+qc+V2N7gAdEGB+gbT?=
- =?us-ascii?Q?0G32D4VElHBrHlDuwTZWXmIfBe1HmiAsY13Wr/NJ9BHYh65Q+FWGsUOAW6A7?=
- =?us-ascii?Q?wfcukVQn9aatdS4CR4zYMTonMdELLsgP8KdBs67o3fG5b+jrMYaB6oFP524C?=
- =?us-ascii?Q?TmHdBS3oT+qtH+7xQLb2EiDpc+GEOCrk1YhxcGq4F1p5KQSkQD6J7hw9Oxd1?=
- =?us-ascii?Q?VNABjJbaiPW4gY+zgUFcyX1IOwFnfRbWL0VCdzuHEzv80LW6CdvmCrwtXMue?=
- =?us-ascii?Q?6f3xcQUsf9TVdcxfW7j01upsC3ufTkr8SahipRTApOWgFI8FduHpUbBISUB1?=
- =?us-ascii?Q?XozJa4Rs8X39b6/IXTf1nTCPzJNfbUXjlDU0dsRuyBO9Ik+WBhxAFyqbLSR4?=
- =?us-ascii?Q?elFzTgUjorzeMUL8jegtgES6bf2LjfrotxUip1ecZR9TSB45m85bW0vpOn9U?=
- =?us-ascii?Q?mGuS6L7jqcb5J9A/z89/SIhW+LHJv0pMYc0uBN36rKs3yYOd82Ci1XvEeev/?=
- =?us-ascii?Q?xzOfcI7K49J5HCkL1em+wA7ySZ5VaII5eMqlATM/7tus27Avs+pffV/DAYjn?=
- =?us-ascii?Q?de0iOz4VDV40y5FpVntUfh3fQoArk5jXZ/NrjbZmWdFVr7enn9x64n97gxcE?=
- =?us-ascii?Q?OAH5bXTcOZqzXiHKxTeQaq8VaMEnXjLt6Se4wUIkHVx1Ke4LkyNtSNLn43TW?=
- =?us-ascii?Q?HlH5mUB6bNKu4O5VeAlEOqHvIckm16DOopo0RPUx1RVcMEPr4OOlHB+Yzgju?=
- =?us-ascii?Q?nW6TFcCSPiMsxyIH/9lc7P3OPZggGNlNIqrdGlrYAR1ZSgkEyArD2bJgtIeQ?=
- =?us-ascii?Q?8ZWy2kq2K3+mw1WVG/D+xNOYCRA12rSOSChSEJWXyj3ibq0IWesHbeMLWEPg?=
- =?us-ascii?Q?Fs1Jqb7Foio4rAUmShW84jkXcsaRDRHKFDRGGWoJ?=
+	=?us-ascii?Q?Atwli1D8ieEZj5wcisMStYMnzHXe3FiPxGE/jY4iCctdnZS89kR7+pFGLoEr?=
+ =?us-ascii?Q?SA0rQuK2fwv94FEHUZlh7WipQqxxeXc+46z3pvTlZa4IoxPuVEeJJJOQ2yga?=
+ =?us-ascii?Q?1WEPeoT3utZxHpLgiXmrNQYV71kAijIIWCRkCBSD0OPujtUTyDcz2nlB/j0j?=
+ =?us-ascii?Q?QvVcaOzI1WijgMb2yMm0TwTpkev/x0AlDnpS8KvuQNJa3ulZMhUL9E6nRTqP?=
+ =?us-ascii?Q?0046ww9B1mg1Tw0hlhfb3NuWBKTHTL2C/u7TvbELIVeSvggr4nFihBU2q59q?=
+ =?us-ascii?Q?lhyFBzxaAQALra5SxozPoXuF/pSg76IPyC6vFnNvt9jvdBzE2G7mmK7s+NxE?=
+ =?us-ascii?Q?3sr6LACk0J608ZKkhmVceQL3ZR9M2cWWUpgx99RFITCBztKYEquv0dkH9X6y?=
+ =?us-ascii?Q?4ShK3UIEU5CpTVGc+RCwHIB70G6Pj+1QOuOB937x2oQbLl5NjWt2xMFPtrsI?=
+ =?us-ascii?Q?oAJbhzhLoZzKcxFdAxR9ayTr5s0cl9Cpwpuulq2bicqC81C+8sp47x3CNp6j?=
+ =?us-ascii?Q?C5cMD5XzvPHEHxl/VZScPs+jTek1T3ppDrsduvMFuYxVshxjtE7iTlyqKPrP?=
+ =?us-ascii?Q?METVT6+BZC05AO8ab+6wEENHIDWdMTFJI6iI3bqgsBuSgrsDgG0a4ZlYyg6D?=
+ =?us-ascii?Q?mBorEEYQk9JcIufeEgVrk0sNXm1jgyNYRBpsNhww9RklkWoxQ71rT743kXVt?=
+ =?us-ascii?Q?7EUlsCbxkm5j/lKpgNSrfnEIexYoVjmQBk5m6VaPxMmwpKHXBrIdF/g5CwyY?=
+ =?us-ascii?Q?RHSYkUZNrmq7pgsbSlcWH6PRTnb01PAcJ+OeIkACs36bE4gn/ZhXOQNEspB2?=
+ =?us-ascii?Q?5rpGbxpEj1IcAHJeUSvCCqJT9iSCz/Tio2tIeuf549HXC+9GvibTgzzYm0pm?=
+ =?us-ascii?Q?4mmXAsj4Ysv2Nq+6dol9VSCB+jGSRx5Fwfob+B85yjs3ppGZWYajlNrxCNHF?=
+ =?us-ascii?Q?OLiQCeRJA9fopJotRsQkp3ZMHHI2de7hHnleAHyqA/WvOcpTvdS60Km4mM98?=
+ =?us-ascii?Q?GzCSDZrqTpTDt56c7aLldjTIP33ukmUoZPzMV11qn8nos9c25SgpNFWCRH9r?=
+ =?us-ascii?Q?GXOMiuTa9UUTzY2x6UhTzsulPg7SDnNn8ebYsQd41ALztGRg1J4BgTJeVDzy?=
+ =?us-ascii?Q?P2GOA4+fXUYFJyHtXXZYooV+SzALdm4bV2idFvFhuasri/6s22Duw/q0jLIt?=
+ =?us-ascii?Q?tq6ucz69D7fXCXAfPAqoQ+FLdNHWHrqeFjkeX+glnTf3uBEbe0Euaf1mNzA4?=
+ =?us-ascii?Q?re0vk8SRrsjXsqwsmRoMl+vQBhayFSw2mlzvy2Ew1zy9L/PE1q9/Q4eMwAxB?=
+ =?us-ascii?Q?LniSGXRT/UhWpix8baK6lxfh20gpMhBx4n+p6HJ2uhDxU8slYwrhMFmM6L7Q?=
+ =?us-ascii?Q?ZxbASSIThMw7XQ9BYB5SZKo5wGLBmqNBm4U1PRowPuRJdKZtwTGR7ZZKro0S?=
+ =?us-ascii?Q?VJatas+IlN+DKlpd3IUdQeKN/4jQ7WwEcj0KCkSD7trOvGIdMcgyQQkGlhep?=
+ =?us-ascii?Q?CjhRmFInwjw8wpaWP6XGPAlGGFBu7yUdmbnagRLlxpoF7eEJEYre4J6t5NSz?=
+ =?us-ascii?Q?tU59SDoqYopYE1JPhhlGzhjlkg6DnIozueegClqVKTHtpxmGT8V/kJMUww/7?=
+ =?us-ascii?Q?Gw=3D=3D?=
 X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e9972e4-0984-4cb0-e137-08dcd43b8eae
+X-MS-Exchange-CrossTenant-Network-Message-Id: aac52b7e-8ff3-4d11-097e-08dcd43b9150
 X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 21:32:24.2998
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 21:32:28.7102
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gfi4eZ05+UzS1YYYPuh0JVXeEqlAuVWSiYhiUfdFmJSF8Rvvn2BkepY95iXzgwZTQidlqECM+R0hsw67ITqEOQ==
+X-MS-Exchange-CrossTenant-UserPrincipalName: QMiitYLM6hbstTZfvvNwygX67h4fpgSNWYA48MJ1Wh6U1zeysJ8io7JUqsF89Sr/e2s+k3BNgv4FyTSiuPxN/A==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO2P265MB3594
 
-Without `-fno-builtin`, for functions like memcpy/memmove (and many
-others), bindgen seems to be using the clang-provided prototype. This
-prototype is ABI-wise compatible, but the issue is that it does not have
-the same information as the source code w.r.t. typedefs.
+Currently bindgen has special logic to recognise `size_t` and `ssize_t`
+and map them to Rust `usize` and `isize`. Similarly, `ptrdiff_t` is
+mapped to `isize`.
 
-For example, bindgen generates the following:
-
-    extern "C" {
-        pub fn strlen(s: *const core::ffi::c_char) -> core::ffi::c_ulong;
-    }
-
-note that the return type is `c_ulong` (i.e. unsigned long), despite the
-size_t-is-usize behavior (this is default, and we have not opted out
-from it using --no-size_t-is-usize).
-
-Similarly, memchr's size argument should be of type `__kernel_size_t`,
-but bindgen generates `c_ulong` directly.
-
-We want to ensure any `size_t` is translated to Rust `usize` so that we
-can avoid having them be different type on 32-bit and 64-bit
-architectures, and hence would require a lot of excessive type casts
-when calling FFI functions.
-
-I found that this bindgen behavior (which probably is caused by
-libclang) can be disabled by `-fno-builtin`. Using the flag for compiled
-code can result in less optimisation because compiler cannot assume
-about their properties anymore, but this should not affect bindgen.
+However this falls short for `__kernel_size_t`, `__kernel_ssize_t` and
+`__kernel_ptrdiff_t`. To ensure that they are mapped to usize/isize
+rather than 32/64 integers depending on platform, blocklist them in
+bindgen parameters and manually provide their definition.
 
 Signed-off-by: Gary Guo <gary@garyguo.net>
 ---
- rust/Makefile | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ rust/bindgen_parameters | 5 +++++
+ rust/bindings/lib.rs    | 5 +++++
+ rust/uapi/lib.rs        | 5 +++++
+ 3 files changed, 15 insertions(+)
 
-diff --git a/rust/Makefile b/rust/Makefile
-index 4eae318f36ff7..863d87ad0ce68 100644
---- a/rust/Makefile
-+++ b/rust/Makefile
-@@ -265,7 +265,11 @@ else
- bindgen_c_flags_lto = $(bindgen_c_flags)
- endif
+diff --git a/rust/bindgen_parameters b/rust/bindgen_parameters
+index a721d466bee4b..756307dd59350 100644
+--- a/rust/bindgen_parameters
++++ b/rust/bindgen_parameters
+@@ -1,5 +1,10 @@
+ # SPDX-License-Identifier: GPL-2.0
  
--bindgen_c_flags_final = $(bindgen_c_flags_lto) -D__BINDGEN__
-+# `-fno-builtin` is passed to avoid bindgen from using clang builtin prototypes
-+# for functions like `memcpy` -- if this flag is not passed, bindgen-generated
-+# prototypes use `c_ulong` or `c_uint` depending on architecture instead of
-+# generating `usize`.
-+bindgen_c_flags_final = $(bindgen_c_flags_lto) -fno-builtin -D__BINDGEN__
++# We want to map these types to isize/usize manually, instead of
++# define them as int/long depending on platform bitwidth.
++--blocklist-type __kernel_s?size_t
++--blocklist-type __kernel_ptrdiff_t
++
+ --opaque-type xregs_state
+ --opaque-type desc_struct
+ --opaque-type arch_lbr_state
+diff --git a/rust/bindings/lib.rs b/rust/bindings/lib.rs
+index 93a1a3fc97bc9..9999c90e8db14 100644
+--- a/rust/bindings/lib.rs
++++ b/rust/bindings/lib.rs
+@@ -26,6 +26,11 @@
  
- quiet_cmd_bindgen = BINDGEN $@
-       cmd_bindgen = \
+ #[allow(dead_code)]
+ mod bindings_raw {
++    // Manual definition for blocklisted types.
++    type __kernel_size_t = usize;
++    type __kernel_ssize_t = isize;
++    type __kernel_ptrdiff_t = isize;
++
+     // Use glob import here to expose all helpers.
+     // Symbols defined within the module will take precedence to the glob import.
+     pub use super::bindings_helper::*;
+diff --git a/rust/uapi/lib.rs b/rust/uapi/lib.rs
+index 80a00260e3e7a..0eca836c0dbbb 100644
+--- a/rust/uapi/lib.rs
++++ b/rust/uapi/lib.rs
+@@ -24,4 +24,9 @@
+     unsafe_op_in_unsafe_fn
+ )]
+ 
++// Manual definition of blocklisted types.
++type __kernel_size_t = usize;
++type __kernel_ssize_t = isize;
++type __kernel_ptrdiff_t = isize;
++
+ include!(concat!(env!("OBJTREE"), "/rust/uapi/uapi_generated.rs"));
 -- 
 2.44.1
 
