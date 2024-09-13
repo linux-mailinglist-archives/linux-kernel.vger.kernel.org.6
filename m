@@ -1,139 +1,203 @@
-Return-Path: <linux-kernel+bounces-327784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B30BC977B27
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:35:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17B94977B29
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:35:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEEAA1C24C00
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:35:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9ACC284E67
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB77F1D6C5B;
-	Fri, 13 Sep 2024 08:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920B81D6C56;
+	Fri, 13 Sep 2024 08:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mk6T0X1r"
-Received: from mail-pg1-f194.google.com (mail-pg1-f194.google.com [209.85.215.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tlbE/jtu"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD8F15381F;
-	Fri, 13 Sep 2024 08:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D064F15381F;
+	Fri, 13 Sep 2024 08:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726216515; cv=none; b=UQ8IzHfXvBY59/Wzz+Vj3iRdLT0P5HObgrQEd5/Iem41mstDQpu0+/oxsPrlaLpZrmLBQJrWwHUFkM0zNXuk4vTMrpIACGDJ265xsimNlKl66DW5KLAUR0mYTwZCyjbfQdYmxijNMwMvrHfK63aITjNiFZdrmOPDXRiePqh6Ey4=
+	t=1726216549; cv=none; b=T3gUj4EybpAJfMOhMMRZJPBEjsjW5VBvUYmmIcxgPsgOQk4u1rnzHmi+YgasjZSsheqDjzThOsSZgAj/MVs/Mdhf9JZ2goRK93PxpF9dakCEz3ezB2cSGewOVtc/sOOKjZ9P7eJu0A1Jdn7zvH+B2LcNH0xdv0vbbAxDAIjF4MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726216515; c=relaxed/simple;
-	bh=ndTMI7Ta5mkzEp+G+rl2QJDEsX+BahwLi0B2IW6AhGQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Nzs5s6lFCc7NuVrD8CbOU2/rFbmmrtvYbORlmMZbCfVlfclWo38Us3FQKtOo3S1z2YzuJJ1ryKxnPvIFBaJqxvlHg4JvbMaLvjIblG9+qDxoz/1dsT8sqOs4vs0Q1Bj41FmtT70sj/WRZJev9N1A4xwqOXRA4e8S6qeSM/mOnQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mk6T0X1r; arc=none smtp.client-ip=209.85.215.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f194.google.com with SMTP id 41be03b00d2f7-7d4fbe62bf5so387316a12.0;
-        Fri, 13 Sep 2024 01:35:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726216513; x=1726821313; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kC1E6rGRaMKkAAHcPV87FQ7r8LHjz2Mgn/xn2HhiS4I=;
-        b=Mk6T0X1reQai0sHUmCP1/CQVNMAHsPXNoPSiXZCYDZ/rs5wc7KzJ1kjpneX0Tbal5X
-         YsD3YE7oszcDpZIklVQsWPYS1KN+UaKulOMBpu0oRRokI2j8L1SpGLECricP6oACUHWo
-         Yk1QK8/Uv0C8+axlA9jytAV1qrG6umw6phrhcEWYqykkUOdhYlXxpTifCl9imIEvUZse
-         Xv18pHQOn94ABX1oQ5I457n8AP2Gw2XEVsdNA8aKxfbPolCsnkG7nZQAeednWB+bOLFH
-         yAjyIXlJpdGhBU384f1AQtqmWrbjvEwIHdolq316rpkj4jLSe67k38bfVEf8JFQZjxa+
-         u1jA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726216513; x=1726821313;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kC1E6rGRaMKkAAHcPV87FQ7r8LHjz2Mgn/xn2HhiS4I=;
-        b=iZuE7/q2dYo6d3cjo3Fng5GmK3BFR7Qr+NDAWm4vioQ5yct+B0/QFE9pnSnDS5J+5u
-         jP/vt6Qaw9KV18QNoR1vHUBO4/2ICz1UfHkKGzd3QT9W21c68fVnvSC1pJtyMe0ODnSk
-         Ow2vyJ+eV38uJq0NFiwt4qNqkSnaAGGjNTq6ks5VMuVGMBbPjd42/om5rCxtMvwbAJYU
-         43xP6hDIOdfi+Q6d4MvQQP/cjPUM2vjex1vjTyiGDEzhYgdZVV06Lddt3HvbU4BNq+oz
-         ZsCxkn6EbBc2C2IE6M+QXcvLFj6/jtqVOKHgKyqxfxv9DwLvBp1CbeBz+RCAXDicfeUD
-         dKzw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCxP60pOxTt/hZovghpvgoN2vSTsu9Vr2uwIVTXoHOyvbVudbZEkgfDpLhI76LYgW5hdLy3A+oMluOYQ==@vger.kernel.org, AJvYcCVOrJh29PzK1Ci3YAvrthx2W1mTmTG8pTNrdhzEEkqM+PDrusWE827cKnHrU7VMkJHDhYSQw1Bo@vger.kernel.org, AJvYcCWfOw7glNO77xsTItTCVVT3dgpYCWvt392m2ht2Cqy+6q36aLEj0oggeC6RbK5AT4cR7Cx5zQ+b99OXXBO2@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI7fdesHS0izKyk9ECFQjN4Q4/eF3tXeu1oCOJOXq42bF270wK
-	05czGp1+o9xUpXCizIPFkFajE5mJ+w5F2gSSIFof1tNWrV8H6Tz3
-X-Google-Smtp-Source: AGHT+IGhOiHOH2ZzR9kqH7H6Mz2LbLdj+bggZwXEzS9FbvIrM15f4iZFYOTdBo7HUQ+io4t6nMbhvw==
-X-Received: by 2002:a17:90a:d149:b0:2c6:ee50:5af4 with SMTP id 98e67ed59e1d1-2dbb9dc1163mr2394189a91.6.1726216513004;
-        Fri, 13 Sep 2024 01:35:13 -0700 (PDT)
-Received: from tom-QiTianM540-A739.. ([106.39.42.164])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbb9d37e01sm1123613a91.52.2024.09.13.01.35.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 01:35:12 -0700 (PDT)
-From: Qiu-ji Chen <chenqiuji666@gmail.com>
-To: philipp.reisner@linbit.com,
-	lars.ellenberg@linbit.com,
-	christoph.boehmwalder@linbit.com,
-	axboe@kernel.dk
-Cc: drbd-dev@lists.linbit.com,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	baijiaju1990@gmail.com,
-	Qiu-ji Chen <chenqiuji666@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] drbd: Fix atomicity violation in drbd_uuid_set_bm()
-Date: Fri, 13 Sep 2024 16:35:04 +0800
-Message-Id: <20240913083504.10549-1-chenqiuji666@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726216549; c=relaxed/simple;
+	bh=nIVhhC7EKEXHr6XKVslBFMKfaG1cUvknvHTh4HqKeXc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=hQMAEYMfVM+bfKsyyLD8DUwtxq1UQjiV454cXIkcwnQgl4nudFkNk9DpntDpD1E8lT7SDhj/KPZtDCXc14b1EkMfiylzljK6x5/cw8pbax5dsht79/R9wR4ulHF/kINnUgkypcgI4gkHzZd7ALMzc0Fx3A0UE9eJiLxXXUfbGdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tlbE/jtu; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48D2t2J5027446;
+	Fri, 13 Sep 2024 08:35:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	StZG6R15DIf2nBirSiFNGX9i4sLjTFFP8nh2d5l3Q54=; b=tlbE/jtuJy3jDSu9
+	OdANTgMZeezdFERzqX+gLijW3+Rl9ztDybUMyXI7e8bbGwcs0Wk6IQS5ZY1mvK05
+	P4rSdnkHF/+5PdyK64fTHis7ZrjuyTTz8TgufRe2W9NcCTpS/nMHcNbJkmdi36i6
+	DBXJckS7K5SuRFoLh3B8cY3pVi61zycnY7DAglbogUymVxys2D4w1eU4XG4GiaJx
+	f70D3P/1vaC1S/Lhm9gblc9UEiCI+EXqdE62sElNqp5N3JQ8p9b3o7P24C82yraK
+	9b3Xf01TSDcKGEaci01GyXoKicLrwFLd6QblFj1yWnJ1V7UCagPe+RNi/qkrRbJD
+	SVR37w==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gejb0sav-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 08:35:35 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48D6Adux010729;
+	Fri, 13 Sep 2024 08:35:34 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41kmb70m9g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 08:35:33 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48D8ZU4L14680342
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Sep 2024 08:35:30 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F1A1E20040;
+	Fri, 13 Sep 2024 08:35:29 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 887B820043;
+	Fri, 13 Sep 2024 08:35:27 +0000 (GMT)
+Received: from [9.43.112.138] (unknown [9.43.112.138])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 13 Sep 2024 08:35:27 +0000 (GMT)
+Message-ID: <9c18c4d4-ee60-4543-8bbb-ddc729c0a0f5@linux.ibm.com>
+Date: Fri, 13 Sep 2024 14:05:26 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] powerpc/vpa_pmu: Add interface to expose vpa counters
+ via perf
+To: Christophe Leroy <christophe.leroy@csgroup.eu>, mpe@ellerman.id.au
+Cc: atrajeev@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org, maddy@linux.ibm.com,
+        disgoel@linux.ibm.com, linuxppc-dev@lists.ozlabs.org,
+        hbathini@linux.ibm.com, adubey@linux.ibm.com
+References: <20240828102141.1052332-1-kjain@linux.ibm.com>
+ <56b53876-0838-416f-adce-b1ffbd0916fc@csgroup.eu>
+Content-Language: en-US
+From: kajoljain <kjain@linux.ibm.com>
+In-Reply-To: <56b53876-0838-416f-adce-b1ffbd0916fc@csgroup.eu>
+Content-Type: text/plain; charset=UTF-8
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: pdNkXY-ly2RFLAqx9Xjvw2FlUpe2Y68A
+X-Proofpoint-GUID: pdNkXY-ly2RFLAqx9Xjvw2FlUpe2Y68A
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-13_04,2024-09-13_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ phishscore=0 mlxlogscore=999 spamscore=0 impostorscore=0 adultscore=0
+ bulkscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0 clxscore=1011
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2408220000
+ definitions=main-2409130058
 
-The violation of atomicity occurs when the drbd_uuid_set_bm function is
-executed simultaneously with modifying the value of
-device->ldev->md.uuid[UI_BITMAP]. Consider a scenario where, while
-device->ldev->md.uuid[UI_BITMAP] passes the validity check when its value
-is not zero, the value of device->ldev->md.uuid[UI_BITMAP] is written to
-zero. In this case, the check in drbd_uuid_set_bm might refer to the old
-value of device->ldev->md.uuid[UI_BITMAP] (before locking), which allows
-an invalid value to pass the validity check, resulting in inconsistency.
 
-To address this issue, it is recommended to include the data validity check
-within the locked section of the function. This modification ensures that
-the value of device->ldev->md.uuid[UI_BITMAP] does not change during the
-validation process, thereby maintaining its integrity.
 
-This possible bug is found by an experimental static analysis tool
-developed by our team. This tool analyzes the locking APIs to extract
-function pairs that can be concurrently executed, and then analyzes the
-instructions in the paired functions to identify possible concurrency bugs
-including data races and atomicity violations.
+On 9/13/24 12:00, Christophe Leroy wrote:
+> 
+> 
+> Le 28/08/2024 à 12:21, Kajol Jain a écrit :
+>> The pseries Shared Processor Logical Partition(SPLPAR) machines
+>> can retrieve a log of dispatch and preempt events from the
+>> hypervisor using data from Disptach Trace Log(DTL) buffer.
+>> With this information, user can retrieve when and why each dispatch &
+>> preempt has occurred. Added an interface to expose the Virtual Processor
+>> Area(VPA) DTL counters via perf.
+>>
+>> The following events are available and exposed in sysfs:
+>>
+>>   vpa_dtl/dtl_cede/ - Trace voluntary (OS initiated) virtual processor
+>> waits
+>>   vpa_dtl/dtl_preempt/ - Trace time slice preempts
+>>   vpa_dtl/dtl_fault/ - Trace virtual partition memory page faults.
+>>   vpa_dtl/dtl_all/ - Trace all (dtl_cede/dtl_preempt/dtl_fault)
+>>
+>> Added interface defines supported event list, config fields for the
+>> event attributes and their corresponding bit values which are exported
+>> via sysfs. User could use the standard perf tool to access perf events
+>> exposed via vpa-dtl pmu.
+>>
+>> The VPA DTL PMU counters do not interrupt on overflow or generate any
+>> PMI interrupts. Therefore, the kernel needs to poll the counters, added
+>> hrtimer code to do that. The timer interval can be provided by user via
+>> sample_period field in nano seconds.
+>>
+>> Result on power10 SPLPAR system with 656 cpu threads.
+>> In the below perf record command with vpa_dtl pmu, -c option is used
+>> to provide sample_period whch corresponding to 1000000000ns i.e; 1sec
+>> and the workload time is also 1 second, hence we are getting 656 samples:
+>>
+>> [command] perf record -a -R -e vpa_dtl/dtl_all/ -c 1000000000 sleep 1
+>> [ perf record: Woken up 1 times to write data ]
+>> [ perf record: Captured and wrote 0.828 MB perf.data (656 samples) ]
+>>
+>> There is one hrtimer added per vpa-dtl pmu thread. Code added to handle
+>> addition of dtl buffer data in the raw sample. Since DTL does not provide
+>> IP address for a sample and it just have traces on reason of
+>> dispatch/preempt, we directly saving DTL buffer data to perf.data file as
+>> raw sample. For each hrtimer restart call, interface will dump all the
+>> new dtl entries added to dtl buffer as a raw sample.
+>>
+>> To ensure there are no other conflicting dtl users (example: debugfs dtl
+>> or /proc/powerpc/vcpudispatch_stats), interface added code to use
+>> "down_write_trylock" call to take the dtl_access_lock. The
+>> dtl_access_lock
+>> is defined in dtl.h file. Also added global reference count variable
+>> called
+>> "dtl_global_refc", to ensure dtl data can be captured per-cpu. Code also
+>> added global lock called "dtl_global_lock" to avoid race condition.
+>>
+>> Signed-off-by: Kajol Jain <kjain@linux.ibm.com>
+>> ---
+>> Notes:
+>>
+>> - Made code changes on top of recent fix sent by Michael Ellerman.
+>>    Link to the patch:
+>> https://patchwork.ozlabs.org/project/linuxppc-dev/patch/20240819122401.513203-1-mpe@ellerman.id.au/
+>>
+>>   arch/powerpc/perf/Makefile  |   2 +-
+>>   arch/powerpc/perf/vpa-pmu.c | 469 ++++++++++++++++++++++++++++++++++++
+>>   include/linux/cpuhotplug.h  |   1 +
+>>   3 files changed, 471 insertions(+), 1 deletion(-)
+>>   create mode 100644 arch/powerpc/perf/vpa-pmu.c
+> 
+> 
+> Seems like it doesn't build on PPC64:
+> 
+> arch/powerpc/perf/vpa-pmu.c#L212
+> passing argument 1 of 'up_write' from incompatible pointer type
+> [-Wincompatible-pointer-types]
+> 
+> arch/powerpc/perf/vpa-pmu.c#L261
+> passing argument 1 of 'down_write_trylock' from incompatible pointer
+> type [-Wincompatible-pointer-types]
+> 
+> arch/powerpc/perf/vpa-pmu.c#L402
+> passing argument 1 of 'up_write' from incompatible pointer type
+> [-Wincompatible-pointer-types]
 
-Fixes: 9f2247bb9b75 ("drbd: Protect accesses to the uuid set with a spinlock")
-Cc: stable@vger.kernel.org
-Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
----
- drivers/block/drbd/drbd_main.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Hi Christophe,
+   Thanks for checking the patch. These changes are on top of fix patch
+sent by Michael Ellerman
+https://patchwork.ozlabs.org/project/linuxppc-dev/patch/20240819122401.513203-1-mpe@ellerman.id.au/
 
-diff --git a/drivers/block/drbd/drbd_main.c b/drivers/block/drbd/drbd_main.c
-index a9e49b212341..abafc4edf9ed 100644
---- a/drivers/block/drbd/drbd_main.c
-+++ b/drivers/block/drbd/drbd_main.c
-@@ -3399,10 +3399,12 @@ void drbd_uuid_new_current(struct drbd_device *device) __must_hold(local)
- void drbd_uuid_set_bm(struct drbd_device *device, u64 val) __must_hold(local)
- {
- 	unsigned long flags;
--	if (device->ldev->md.uuid[UI_BITMAP] == 0 && val == 0)
-+	spin_lock_irqsave(&device->ldev->md.uuid_lock, flags);
-+	if (device->ldev->md.uuid[UI_BITMAP] == 0 && val == 0) {
-+		spin_unlock_irqrestore(&device->ldev->md.uuid_lock, flags);
- 		return;
-+	}
- 
--	spin_lock_irqsave(&device->ldev->md.uuid_lock, flags);
- 	if (val == 0) {
- 		drbd_uuid_move_history(device);
- 		device->ldev->md.uuid[UI_HISTORY_START] = device->ldev->md.uuid[UI_BITMAP];
--- 
-2.34.1
+Since he changed the dtl_access_lock to be a rw_semaphore.
+
+Are you trying with Michael patch changes?
+
+Thanks,
+Kajol Jain
 
 
