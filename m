@@ -1,65 +1,81 @@
-Return-Path: <linux-kernel+bounces-328009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17F6C977DA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:36:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10D34977DAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:36:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 518881C24B11
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:36:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AFDA1C20A6C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45AD71DA617;
-	Fri, 13 Sep 2024 10:32:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D9C1D86FE;
+	Fri, 13 Sep 2024 10:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="pXGgtSFn"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T9RZWXc1"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5860F1D86E7;
-	Fri, 13 Sep 2024 10:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22761D7E46;
+	Fri, 13 Sep 2024 10:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726223524; cv=none; b=pfc0yZMybbkw7glzb6bG9kLTIeP2ekrk+oZ01N3wvWgVUm1zIqsNq4MtCpptpgsYZORhCp2YbgM49rgKRGP6taI9Cym25+XgZ9G3f072fiIfqlrOz0qmNg2FQ1yNMCI8mlCH1XvTWNByg9yvoEd3kcolWMdnsFkRlAXEsN5BC58=
+	t=1726223588; cv=none; b=QOhKMF8ncfyKXyChqmHWhXHSLiN0TtGQdTF1pRq86LzsEC+JDn3ENXpSrh3pVPtcIluz9Z7ljvPhOP9CAkzzmyg3inKVFxn5q6x6xPlJfAkR0L0rYbuM6YNs2MDsabkmjg8eGzLqZYZ07LLdbRXmwOMfNBG0NVI8k3dgZASdu3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726223524; c=relaxed/simple;
-	bh=7ivd+WdK+aq4MBObNeNCEIVPW0kKaRjKQTPOhGgbDVM=;
+	s=arc-20240116; t=1726223588; c=relaxed/simple;
+	bh=Z9EvHk8XwDoWDzB9UU9hm/ejOwPkx++wY5mYfVvTTn8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gre9kt5Cbq5ese2h98H3KMbPqqnM6S/jHrunPUrdBA2QXczh3Yv+15c0hv2lDN1Lh2iv208/6SWX+y7oeDnngSyzoK6H7JlFXehjJ+OrdI1wA+Eo8oXHulvd+Yw3/ZqJKJNeO48nnNVcoNlc7jXZ4ealu0+AyuvwVmf0W2jC4r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=pXGgtSFn; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=quFk3WgZg9+egnOYr8N0RhUmwCf0tv4Den6aqX8Uawg=; b=pXGgtSFn5uzbCKq113TpYMrD+A
-	7ReZAKi7UKQor27EN/eBGVdZzhbxhbEsZiFAEDsr6lvqUORQDqgmlD+AsLG5UXLf4YO3u0ijwC1pF
-	1+JSpoWG2rV18m3HKFf30cUpfPEFBHtdfgJIcZbF2iwCoxrUiEcd7KuouzhsBnDckqEagTT0N3XnQ
-	9wbQvXYvx4ZIejJcFMQ8WIdcDQSddsH4ZY8Kw5bebZUTISkuysDHkMks0j+JtPk6/5jvRQpN474ms
-	iRkaYZhX3RwMvPx+3POz6rYrqV/1Wh9wFZBkY00qvxMMW7QDjtVEZxXyYyhLND50HHR3+R9xfdjWw
-	GcqOP2Uw==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sp3Qr-002DwH-04;
-	Fri, 13 Sep 2024 18:31:55 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 13 Sep 2024 18:31:54 +0800
-Date: Fri, 13 Sep 2024 18:31:54 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Chen Yufan <chenyufan@vivo.com>
-Cc: Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
-	Pankaj Gupta <pankaj.gupta@nxp.com>,
-	Gaurav Jain <gaurav.jain@nxp.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH v1] crypto: camm/qi - Use ERR_CAST() to return
- error-valued pointer
-Message-ID: <ZuQUmpO1v07tXDuE@gondor.apana.org.au>
-References: <20240906104327.72221-1-chenyufan@vivo.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cj2HidvYG35AMyyQm5cZhDOTDDNxbopcfErnR4AM5tRlyzpU/NcH0/4i/H+UwSaHcmF1NnFxwRjbSW021imJvr/TivmZRR/lw1Hq2Z1+4sN/q4OiX61+4pAEssrMC2UqlINuCcQ+/yyqldNdVjQlrBSFAegs2+akCcubqMCbsV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T9RZWXc1; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726223587; x=1757759587;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Z9EvHk8XwDoWDzB9UU9hm/ejOwPkx++wY5mYfVvTTn8=;
+  b=T9RZWXc1ly/1igtrOD+fNrTMx/ovqC0/GSottvqWLt6o47OwwHSyy8ex
+   RW8cOm1abdU/oN5booeZgor6UdJoaVoMFhXtXsvkrtGhiSMyJZogsTqsP
+   pbrjvwkdwBh8iZv9MOmPR7jUkyZtFi/DtpLTIXdenstvNK8jH/KGhoW8J
+   DvL9LPSuX+Ureg/R8DOqr368OfIYPZRI5hOlS5aoEUvP/7vCP7EbsBvQA
+   D3X+h1V/DzeY1UoPouqWJpdD4IoqkO2P7yZx2UwueCZWHhYWtJpW3lyAf
+   CX4K/UZd0Mzvbjr9nHWcDfcXuTiaZF9jEIt7edUnPVa3gir/X12K7rIIP
+   w==;
+X-CSE-ConnectionGUID: uLgGYQs2TMK1HIdTbmUCsA==
+X-CSE-MsgGUID: b44meNukTVmDXaLtkk1wPQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="24996002"
+X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
+   d="scan'208";a="24996002"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 03:33:06 -0700
+X-CSE-ConnectionGUID: dnB8CsN/Q2iy/b6EUnzxVQ==
+X-CSE-MsgGUID: AO3zy03GSXOAhlueUtVMDQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
+   d="scan'208";a="72778575"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 03:33:02 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sp3bm-00000008GKu-1uSW;
+	Fri, 13 Sep 2024 13:32:58 +0300
+Date: Fri, 13 Sep 2024 13:32:58 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: warp5tw@gmail.com
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
+	venture@google.com, yuenn@google.com, benjaminfair@google.com,
+	andi.shyti@kernel.org, wsa@kernel.org, rand.sec96@gmail.com,
+	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com,
+	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com,
+	KWLIU@nuvoton.com, JJLIU0@nuvoton.com, kfting@nuvoton.com,
+	openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/6] i2c: npcm: Modify the client address assignment
+Message-ID: <ZuQU2iIZwW4mAumo@smile.fi.intel.com>
+References: <20240913101445.16513-1-kfting@nuvoton.com>
+ <20240913101445.16513-5-kfting@nuvoton.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,21 +84,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240906104327.72221-1-chenyufan@vivo.com>
+In-Reply-To: <20240913101445.16513-5-kfting@nuvoton.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Sep 06, 2024 at 06:43:24PM +0800, Chen Yufan wrote:
-> Instead of directly casting and returning (void *) pointer, use ERR_CAST
-> to explicitly return an error-valued pointer. This makes the error handling
-> more explicit and improves code clarity.
+On Fri, Sep 13, 2024 at 06:14:44PM +0800, warp5tw@gmail.com wrote:
+> From: Tyrone Ting <kfting@nuvoton.com>
 > 
-> Signed-off-by: Chen Yufan <chenyufan@vivo.com>
-> ---
->  drivers/crypto/caam/caamalg_qi.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Store the client address earlier since it might get called in
+> the i2c_recover_bus logic flow at the early stage of the function
+> npcm_i2c_master_xfer.
 
-Patch applied.  Thanks.
+We refer to the functions as func().
+
+...
+
+> +	/*
+> +	 * Previously, the address was stored w/o left-shift by one bit and
+> +	 * with that shift in the following call to npcm_i2c_master_start_xmit.
+> +	 *
+> +	 * Since there are cases that the i2c_recover_bus gets called at the
+> +	 * early stage of the function npcm_i2c_master_xfer, the address is
+
+Ditto.
+
+> +	 * stored with the shift and used in the i2c_recover_bus call.
+> +	 *
+> +	 * The address is stored from bit 1 to bit 7 in the register for
+> +	 * sending the i2c address later so it's left-shifted by 1 bit.
+> +	 */
+
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+With Best Regards,
+Andy Shevchenko
+
+
 
