@@ -1,242 +1,193 @@
-Return-Path: <linux-kernel+bounces-327704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DCAD977A0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:44:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BBBD977A0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4CD4B26989
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:44:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B3661F2787B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99471BC9F3;
-	Fri, 13 Sep 2024 07:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93361BD005;
+	Fri, 13 Sep 2024 07:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="crCXW7wB"
-Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aVKsWs3e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710C41BE878;
-	Fri, 13 Sep 2024 07:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181601BBBE7;
+	Fri, 13 Sep 2024 07:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726213358; cv=none; b=dTok0TwZqlbSjlifiAGvX/yA/vxGua3gd9hOKOJQ3Y71GbA4zC1DbD194CY4ZjFsV5gBcIzS93LUOAEdZzeBDzq3ZuYhaqimGbSRtj4BQAHhcjh0GK7Kt0OPatpOcfKYR/szgf4KTm3DHaE8npQFDixiMWYN6bAYOaVgkYdu8d0=
+	t=1726213382; cv=none; b=CblnY/8gJu4YIrAzhESwR99CFWX+9lnQM0a5vV/m9FIe6n6E1rwqtCnSEyUp73jph4zHrLoxr5yfDaDhJoqY0I62fCXfuzQQos9874ff+bQyBc4M4JuDGuqkd+oMXRzIZQhDOw5Q+mc/tYRCTy23OrrTSSylzLqFo5vzVAbBBoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726213358; c=relaxed/simple;
-	bh=7jw/f54xBwvtHJyN2Sxj9VpS5d+cwllxlCvm2TJvMxM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TJPGF0RZjxtEaK1kgZYxgJRcTx+O1ePMJSROjH78VplUpfRz+Ly/QPw6kgWK2xa+y7CsapxR6D7IixVm3IjyTWI7Zz/HeSjdFqnKF9WhMD2GJf8UHT6O6TU7+QF25DD0fu/NklD28TFnmPTORU7M089iMrWxd4+SB/ZKSHkDLIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=crCXW7wB; arc=none smtp.client-ip=49.12.199.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id E3082DAD4D;
-	Fri, 13 Sep 2024 09:42:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
-	t=1726213354; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=qJRG//ZQGo+L4jpM1tEP3oB74zzSoIQHH+B9SgLTCus=;
-	b=crCXW7wBJBPfXyoTAs3TOynEUFM4HHEdNUZl+wcVZOhrWFZZ8+W+oXfL5cdXpnLwRD0tAe
-	+bT928XnGpOZMAAh9yWJZvOlfiCGhwCuzrKI3R2IO4hN9Ng5x3Jq2DRZlRqweMZRw7ySSn
-	HNDlXkmKcdwZixIn3i2xGOGzDpKkMJliwBdWhJMo6dAAui+XzVkWRJZXNRGHqLfU8mQoGk
-	rzndNx9CGnECpMsy9Wo9wNA2ky3q9mxDg6TxMvsK4A00Y6ptXrIv1c6GPWXdKnDFexSOmt
-	/Uvu0blpHEQKLJwGMIsCwD3uLjXBW6I3CFRSdHEjracMo3Eq0GUD7C+Ncke8OQ==
-From: Daniel Wagner <wagi@kernel.org>
-Date: Fri, 13 Sep 2024 09:42:04 +0200
-Subject: [PATCH 6/6] blk-mq: remove unused queue mapping helpers
+	s=arc-20240116; t=1726213382; c=relaxed/simple;
+	bh=6vVfeec0WqIKtFvnv9JVpUgihKL+jhfuvKu/eKaH9H0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sNfmbG3F013KPxXzXC3AImduaS0FBsw1zQrYqVgL+yQYXWtlMsfo3bzQuFlWT4wCPMPvVZKR4ztk85rl0Q3hJylXX5hmmvnYFGIofBvqdlDwcSi4VLYXr3X7VSPk9C6v7GNVNM3YRJHlFheSZaQjmyrpAF6JGQb4rwhhjEzlKcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aVKsWs3e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F544C4CEC0;
+	Fri, 13 Sep 2024 07:43:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726213381;
+	bh=6vVfeec0WqIKtFvnv9JVpUgihKL+jhfuvKu/eKaH9H0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aVKsWs3eJZST2pqFYSRQeF/Fkb5XJHJcxWrA9x2jOTlHn1XwsicqLZpY7z+k2gCDd
+	 5aeCnUq9Jd0mtzwXM0hQEZirlMJy+mvEOuP9ovF62bqlXygf/zfQRv2zi+6NyqUnRH
+	 pGdfLD00qAPKGaR7FEgcOxAF5rXu8iTynmj+rEnvf16dTrmk5yp6Pm8/rQlnCW3rLT
+	 +mx86gt/kSa9ypGVn8A1oHTe2BwMyHoTzV3aB/kor6qGzQ95kx0k3JDF6AqQ8W7JGi
+	 Dmn2XLrml6EmaP2XpXmQIaTmsVOIRuioV8NVXyGtfQqHO2h78HfdTtsJEe7Ts5YxIj
+	 f7w6kuGEZl5pw==
+Received: by pali.im (Postfix)
+	id 43B87725; Fri, 13 Sep 2024 09:42:56 +0200 (CEST)
+Date: Fri, 13 Sep 2024 09:42:56 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Steve French <smfrench@gmail.com>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/7] cifs: Improve client SFU support for special files
+Message-ID: <20240913074256.lhc6h3adtk2egi52@pali>
+References: <20240912120548.15877-1-pali@kernel.org>
+ <CAH2r5msLPA2RB14dm2orqFoRQvUj2K2ZpCeeiNKMGVJpQLsU0Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240913-refactor-blk-affinity-helpers-v1-6-8e058f77af12@suse.de>
-References: <20240913-refactor-blk-affinity-helpers-v1-0-8e058f77af12@suse.de>
-In-Reply-To: <20240913-refactor-blk-affinity-helpers-v1-0-8e058f77af12@suse.de>
-To: Jens Axboe <axboe@kernel.dk>, Bjorn Helgaas <bhelgaas@google.com>, 
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, 
- Sagi Grimberg <sagi@grimberg.me>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pci@vger.kernel.org, virtualization@lists.linux.dev, 
- linux-scsi@vger.kernel.org, megaraidlinux.pdl@broadcom.com, 
- mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com, 
- storagedev@microchip.com, linux-nvme@lists.infradead.org, 
- Daniel Wagner <dwagner@suse.de>, 
- 20240912-do-not-overwrite-pci-mapping-v1-1-85724b6cec49@suse.de
-X-Mailer: b4 0.14.0
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH2r5msLPA2RB14dm2orqFoRQvUj2K2ZpCeeiNKMGVJpQLsU0Q@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 
-From: Daniel Wagner <dwagner@suse.de>
+On Thursday 12 September 2024 22:44:40 Steve French wrote:
+> tentatively merged into cifs-2.6.git for-next pending review and more testing
+> 
+> Do you remember if there is a reference to  sections of the protocol
+> documentation that can help confirm some of the changes?
 
-There are no users left of the pci and virtio queue mapping helpers.
-Thus remove them.
+I do not know about normative documentation of SFU-style special files.
+If there is some documentation about it then it would be part of either
+Interix subsystem or part of NTFS. And I'm not sure if either of those
+were released to public. All things were done based on observations.
 
-Signed-off-by: Daniel Wagner <dwagner@suse.de>
----
- block/Makefile                |  2 --
- block/blk-mq-pci.c            | 46 -------------------------------------------
- block/blk-mq-virtio.c         | 46 -------------------------------------------
- include/linux/blk-mq-pci.h    | 11 -----------
- include/linux/blk-mq-virtio.h | 11 -----------
- 5 files changed, 116 deletions(-)
-
-diff --git a/block/Makefile b/block/Makefile
-index ddfd21c1a9ff..33748123710b 100644
---- a/block/Makefile
-+++ b/block/Makefile
-@@ -27,8 +27,6 @@ bfq-y				:= bfq-iosched.o bfq-wf2q.o bfq-cgroup.o
- obj-$(CONFIG_IOSCHED_BFQ)	+= bfq.o
- 
- obj-$(CONFIG_BLK_DEV_INTEGRITY) += bio-integrity.o blk-integrity.o t10-pi.o
--obj-$(CONFIG_BLK_MQ_PCI)	+= blk-mq-pci.o
--obj-$(CONFIG_BLK_MQ_VIRTIO)	+= blk-mq-virtio.o
- obj-$(CONFIG_BLK_DEV_ZONED)	+= blk-zoned.o
- obj-$(CONFIG_BLK_WBT)		+= blk-wbt.o
- obj-$(CONFIG_BLK_DEBUG_FS)	+= blk-mq-debugfs.o
-diff --git a/block/blk-mq-pci.c b/block/blk-mq-pci.c
-deleted file mode 100644
-index d47b5c73c9eb..000000000000
---- a/block/blk-mq-pci.c
-+++ /dev/null
-@@ -1,46 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Copyright (c) 2016 Christoph Hellwig.
-- */
--#include <linux/kobject.h>
--#include <linux/blkdev.h>
--#include <linux/blk-mq-pci.h>
--#include <linux/pci.h>
--#include <linux/module.h>
--
--#include "blk-mq.h"
--
--/**
-- * blk_mq_pci_map_queues - provide a default queue mapping for PCI device
-- * @qmap:	CPU to hardware queue map.
-- * @pdev:	PCI device associated with @set.
-- * @offset:	Offset to use for the pci irq vector
-- *
-- * This function assumes the PCI device @pdev has at least as many available
-- * interrupt vectors as @set has queues.  It will then query the vector
-- * corresponding to each queue for it's affinity mask and built queue mapping
-- * that maps a queue to the CPUs that have irq affinity for the corresponding
-- * vector.
-- */
--void blk_mq_pci_map_queues(struct blk_mq_queue_map *qmap, struct pci_dev *pdev,
--			   int offset)
--{
--	const struct cpumask *mask;
--	unsigned int queue, cpu;
--
--	for (queue = 0; queue < qmap->nr_queues; queue++) {
--		mask = pci_irq_get_affinity(pdev, queue + offset);
--		if (!mask)
--			goto fallback;
--
--		for_each_cpu(cpu, mask)
--			qmap->mq_map[cpu] = qmap->queue_offset + queue;
--	}
--
--	return;
--
--fallback:
--	WARN_ON_ONCE(qmap->nr_queues > 1);
--	blk_mq_clear_mq_map(qmap);
--}
--EXPORT_SYMBOL_GPL(blk_mq_pci_map_queues);
-diff --git a/block/blk-mq-virtio.c b/block/blk-mq-virtio.c
-deleted file mode 100644
-index 68d0945c0b08..000000000000
---- a/block/blk-mq-virtio.c
-+++ /dev/null
-@@ -1,46 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- * Copyright (c) 2016 Christoph Hellwig.
-- */
--#include <linux/device.h>
--#include <linux/blk-mq-virtio.h>
--#include <linux/virtio_config.h>
--#include <linux/module.h>
--#include "blk-mq.h"
--
--/**
-- * blk_mq_virtio_map_queues - provide a default queue mapping for virtio device
-- * @qmap:	CPU to hardware queue map.
-- * @vdev:	virtio device to provide a mapping for.
-- * @first_vec:	first interrupt vectors to use for queues (usually 0)
-- *
-- * This function assumes the virtio device @vdev has at least as many available
-- * interrupt vectors as @set has queues.  It will then query the vector
-- * corresponding to each queue for it's affinity mask and built queue mapping
-- * that maps a queue to the CPUs that have irq affinity for the corresponding
-- * vector.
-- */
--void blk_mq_virtio_map_queues(struct blk_mq_queue_map *qmap,
--		struct virtio_device *vdev, int first_vec)
--{
--	const struct cpumask *mask;
--	unsigned int queue, cpu;
--
--	if (!vdev->config->get_vq_affinity)
--		goto fallback;
--
--	for (queue = 0; queue < qmap->nr_queues; queue++) {
--		mask = vdev->config->get_vq_affinity(vdev, first_vec + queue);
--		if (!mask)
--			goto fallback;
--
--		for_each_cpu(cpu, mask)
--			qmap->mq_map[cpu] = qmap->queue_offset + queue;
--	}
--
--	return;
--
--fallback:
--	blk_mq_map_queues(qmap);
--}
--EXPORT_SYMBOL_GPL(blk_mq_virtio_map_queues);
-diff --git a/include/linux/blk-mq-pci.h b/include/linux/blk-mq-pci.h
-deleted file mode 100644
-index ca544e1d3508..000000000000
---- a/include/linux/blk-mq-pci.h
-+++ /dev/null
-@@ -1,11 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef _LINUX_BLK_MQ_PCI_H
--#define _LINUX_BLK_MQ_PCI_H
--
--struct blk_mq_queue_map;
--struct pci_dev;
--
--void blk_mq_pci_map_queues(struct blk_mq_queue_map *qmap, struct pci_dev *pdev,
--			   int offset);
--
--#endif /* _LINUX_BLK_MQ_PCI_H */
-diff --git a/include/linux/blk-mq-virtio.h b/include/linux/blk-mq-virtio.h
-deleted file mode 100644
-index 13226e9b22dd..000000000000
---- a/include/linux/blk-mq-virtio.h
-+++ /dev/null
-@@ -1,11 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef _LINUX_BLK_MQ_VIRTIO_H
--#define _LINUX_BLK_MQ_VIRTIO_H
--
--struct blk_mq_queue_map;
--struct virtio_device;
--
--void blk_mq_virtio_map_queues(struct blk_mq_queue_map *qmap,
--		struct virtio_device *vdev, int first_vec);
--
--#endif /* _LINUX_BLK_MQ_VIRTIO_H */
-
--- 
-2.46.0
-
+> On Thu, Sep 12, 2024 at 7:06 AM Pali Rohár <pali@kernel.org> wrote:
+> >
+> > This patch series implement full support for SFU-style of special files
+> > (fifo, socket, block, char, symlink) and makes client cifs's -o sfu
+> > mount option to be fully compatible with SFU.
+> >
+> > Before this patch series, kernel cifs client was able to:
+> > * create new char and block devices in SFU-style, and detect them
+> > * detect existing SFU fifo, but no create/mkfifo SFU functionality
+> > * detect symlink SFU symlink, but no readlink() functionality and
+> >   neither no create SFU symlink functionality
+> >
+> > And it was able to create some SFU-incompatible sockets and fifos (when
+> > -o sfu was specified) which were not recognized by neither original MS
+> > SFU implementation and neither by others.
+> >
+> > This patch series implements missing functionality, which is:
+> > * detect existing SFU sockets
+> > * create new SFU sockets
+> > * create new SFU fifos
+> > * create new SFU symlink
+> > * readlink() support for existing SFU symlinks
+> >
+> > In following pragraphs are some details about these SFU special files
+> > which usage on Linux has to be activated by -o sfu mount option.
+> >
+> > SFU-style fifo is empty file with system attribute set. This format is
+> > used by old Microsoft POSIX subsystem and later also by OpenNT/Interix
+> > subsystem (which replaced Microsoft POSIX subsystem and is part of
+> > Microsoft SFU). OpenNT is previous name of Interix versions 1.x/2.x.
+> > Microsoft POSIX subsystem is available since the first Windows NT
+> > version 3.1, and it was replaced by Interix since Windows XP. Interix
+> > continue to use this format up to the its last released version for
+> > Windows 8 / Server 2012 (part of Subsystem for UNIX-based Applications).
+> > Hence these SFU-style fifos are for very long time unified and widely
+> > supported.
+> >
+> > SFU-style socket is file which has system attribute set and file content
+> > is one zero byte.
+> >
+> > SFU-style symlink is file which has system attribute set and file content
+> > is buffer "IntxLNK\1" (8th byte is 0x01) followed by the target location
+> > encoded in little endian UCS-2/UTF-16. There is no trailing nul.
+> >
+> > SFU-style char or block device is file which has system attribute set
+> > and file content is buffer "IntxBLK\0" or "IntxCHR\0" (8th byte is 0x00)
+> > followed by major and minor numbers encoded in twos 64-bit little endian.
+> >
+> > Format of SFU-style sockets, symlinks, char and block devices was
+> > introduced in Interix 3.0 subsystem, as part of the Microsoft SFU 3.0
+> > and is used also by all later versions, up to the Windows 8 / Server 2012
+> > (part of Subsystem for UNIX-based Applications) where it was deprecated.
+> > Previous OpenNT/Interix versions had no support for UNIX domain sockets
+> > (and socket files), symlinks or possibility to create character or block
+> > devices (but they had block/char devices in-memory, returned by stat()).
+> >
+> > Microsoft NFS server up to the version included in Windows Server 2008 R2
+> > also uses this SFU-style format of special files when storing them on
+> > local filesystem. Later Microsoft NFS server versions (starting in
+> > Windows Server 2012) use new NFS reparse format, which Interix subsystem
+> > (included in SFU or SUA) does not understand.
+> >
+> > Even SFU-style of special files is old format, it has one big advantage,
+> > this format does not require any support on SMB/CIFS server of special
+> > files, as everything is stored only in the file content. The only
+> > requirement from server is support for system attribute. So this allows
+> > to store special files also on FAT filesystem.
+> >
+> > This patch series makes cifs -o sfu mount option compatible with
+> > SFU-style of special files, and so compatible with the latest SFU/SUA.
+> >
+> > Note that -o sfu is by default turned off, so these changes should have
+> > no effect on default cifs mounts.
+> >
+> > Manually tested with MS SFU 3.5 (for Windows XP) and MS SUA 6.2 (latest
+> > released version of Interix) that interop works correctly, special files
+> > created by POSIX/Interix application can be recognized by Linux cifs
+> > client (exported over MS SMB) with these patches (and vice-versa setup,
+> > created by Linux cifs client and recognized in POSIX/Interix subsystem).
+> >
+> > Manually tested that old Linux 4.19 cifs client version can recognize
+> > SFU-style of special files created by Linux cifs client this patch
+> > series (except socket, which is unsupported in this Linux cifs version).
+> >
+> > Patch series is based on the latest upstream tag v6.11-rc7.
+> >
+> > Pali Rohár (7):
+> >   cifs: Fix recognizing SFU symlinks
+> >   cifs: Add support for reading SFU symlink location
+> >   cifs: Put explicit zero byte into SFU block/char types
+> >   cifs: Show debug message when SFU Fifo type was detected
+> >   cifs: Recognize SFU socket type
+> >   cifs: Fix creating of SFU fifo and socket special files
+> >   cifs: Add support for creating SFU symlinks
+> >
+> >  fs/smb/client/cifspdu.h    |  6 ---
+> >  fs/smb/client/cifsproto.h  |  4 ++
+> >  fs/smb/client/cifssmb.c    |  8 ++--
+> >  fs/smb/client/fs_context.c | 13 ++++---
+> >  fs/smb/client/inode.c      | 42 ++++++++++++++++++--
+> >  fs/smb/client/link.c       |  3 ++
+> >  fs/smb/client/smb1ops.c    |  2 +-
+> >  fs/smb/client/smb2ops.c    | 78 ++++++++++++++++++++++++++++----------
+> >  8 files changed, 117 insertions(+), 39 deletions(-)
+> >
+> > --
+> > 2.20.1
+> >
+> >
+> 
+> 
+> -- 
+> Thanks,
+> 
+> Steve
 
