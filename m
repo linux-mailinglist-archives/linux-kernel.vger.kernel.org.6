@@ -1,163 +1,156 @@
-Return-Path: <linux-kernel+bounces-328747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41688978836
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:54:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AF5B978838
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06485287CFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:54:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C42421F22891
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750D613777F;
-	Fri, 13 Sep 2024 18:54:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89931139579;
+	Fri, 13 Sep 2024 18:55:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="iZ25hX07"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="nJ8l+26h"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5C582D70;
-	Fri, 13 Sep 2024 18:54:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A84126C13
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 18:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726253654; cv=none; b=t7TFFIGQuJafrynIO5/ugYaUqu5aDB+DYpoQ2NYhTko8xdloOMKDrL+QXa9MlNrJPFVQbeu7YiCSbi3rQ/q6ABx97Si724CIM5Ui07JOmzDbHQu1lhQvqvIoxFnldcO/9e2xka09BE/Ymb8enMU1l64RQxcg7k568WznBQlxXBI=
+	t=1726253735; cv=none; b=OvWbF80ZrWMy95ks278WDF2PcvrXYGc+bApZuFIlxrgH7INzueIrJjwB5f+DAZxzXNy3NHo6u4HTWsWlZlBpi4tM3yuEFnN/PitZniJ8EkBJjiX4E7esTCUrZpzppBpjykb5RW5Uq2vQKgP6IvTiG7aLPY7SO26sQFj6qRNDkH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726253654; c=relaxed/simple;
-	bh=2umMFuyC59HJUchrynLNf3a9oiPhTTsMl8Qhzz8cPXs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ss4l+c2aZ3trvmJ1kAnN004nRQvIr8udO+bnZMLl/knrBs9AC9/8MshCLQIGjs6N9MeTNPNFcJUUvb22pN7YOjFAHpuAp0H2kfoKfz/MnzHbU2dt9hVYnz+dqGjts+9Q3aS0uqL79pztcIjNVR576EAyVK+a/nWsjBrcJYOA7i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=iZ25hX07; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48DIs3hI097808;
-	Fri, 13 Sep 2024 13:54:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1726253644;
-	bh=9NplcwqAcUBPdkGVhuqmZ/8tZIV84nJKWo9I13pK8GQ=;
-	h=From:To:CC:Subject:Date;
-	b=iZ25hX07GExWlzx6dNmFiRuYev7waBJFqD72RHGqq2jgB5oRqv4JL+O2N87+pb4S3
-	 KxCYoeAKD92XCr9cWMOScmim4GbSqBxuQEic2hqZqBp3zbmiqITGu+J4+/eb+mBCEQ
-	 6lthyKVVBOenTfV5t+UmPti7hSoQNINe7y+ILY/A=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48DIs30J031793
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 13 Sep 2024 13:54:03 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 13
- Sep 2024 13:54:03 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 13 Sep 2024 13:54:03 -0500
-Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48DIs3km008526;
-	Fri, 13 Sep 2024 13:54:03 -0500
-From: Judith Mendez <jm@ti.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-CC: Adrian Hunter <adrian.hunter@intel.com>, <linux-mmc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] mmc: sdhci_am654: Add sdhci_am654_start_signal_voltage_switch
-Date: Fri, 13 Sep 2024 13:54:03 -0500
-Message-ID: <20240913185403.1339115-1-jm@ti.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1726253735; c=relaxed/simple;
+	bh=V+VmYPTZRE3hzK62YCRKPBn1g2RyukAfOJtc1OgpEBU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dFryQdi2ciqzKADez0JOl3kaQzSbhcINMzI0FrU6BxY/JALcT2P84jtD6f5JOBrE1H/6juquQ4iDIYLZ0DPCR+rFb4nTi8JwZlUg0fIWjvehii0DvFaQSfchdMA64od3Mrt8StupNxjeiukk2CnX1dZN9LgrAnwFLwVzzzyfXIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=nJ8l+26h; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a8d2b24b7a8so652615266b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 11:55:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1726253732; x=1726858532; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5SDYQ7lzcTR7t7MivDajHBL9N4FwFQeM0m9Pk7CbHHE=;
+        b=nJ8l+26hEJhxdnD+J5xpJKSaXOgr1fwaCJFlBl8x438jI8WpiYraJD9V8NsQn5UsgC
+         tZ3GyGhb/Rc1T0ZpSUJFqQmmKc45QLeetKr75fe9msLMfWhWHYYDfutJcYVzUwdm4H+7
+         MQk8QnTYU3L/Yne1jRwcyQLSA51lapkYmgl6c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726253732; x=1726858532;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5SDYQ7lzcTR7t7MivDajHBL9N4FwFQeM0m9Pk7CbHHE=;
+        b=rT/tnXwkPPsuAPKzZQ4Q2VfZ+6kl7ibEANxxGUORwWATivFr4AZDKiugtQoCUeHPno
+         rGr97ippHK1T1IuP+H2ECTc9PbAa8lBBxrZwF7N7I4bgGj+YZkhV0hoQZlR3VHJhbFho
+         dMfRS+i1UP3tQKhRny1rCu89Cik97ttxdHYckthp1OkBFrkcTpNf8FhKgxvy0zcYxEgX
+         xGN6b9XLLIv7/PC5bZWZPemt6WZ17fJXkhHfcEa64SoluniHIpve2M0I5M4eG/yBHdhd
+         i1uVgYBe9FCg/j230Twua8w3xPiuAteWA/RdXsGBZjY1Hr+chEyktG7Xj+g2VCtSStsa
+         pakA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDTH53wmD6Ij82DhwiYr9d7NKHPXcShJSuftC0ZXeGXU53VzWpMhB9oV5SesXChcBSMz/cjdStMtq4548=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygD4+o+i2r5qOW1U4W7yAzwAXaJQLvKixZJ6Y1idL9qZCdYHSj
+	sX89rula3P1wNO/Y9/QPtDCsEIIwaEMlOXIrZn+V3X99d1I6jRV3MgzrKmON0r8=
+X-Google-Smtp-Source: AGHT+IHnCvCp+xq1tGI3ArJ6ViTY+PYeT7JnNVeEAe4ZbrJxfhBSFEIBXJggCl2+kXNhZMsIaMn+kQ==
+X-Received: by 2002:a17:907:9721:b0:a80:c0ed:2145 with SMTP id a640c23a62f3a-a902a3d105cmr839070866b.2.1726253731882;
+        Fri, 13 Sep 2024 11:55:31 -0700 (PDT)
+Received: from LQ3V64L9R2.homenet.telecomitalia.it (host-79-23-194-51.retail.telecomitalia.it. [79.23.194.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25d63bebsm898006366b.207.2024.09.13.11.55.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 11:55:31 -0700 (PDT)
+Date: Fri, 13 Sep 2024 20:55:29 +0200
+From: Joe Damato <jdamato@fastly.com>
+To: Stanislav Fomichev <stfomichev@gmail.com>
+Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, kuba@kernel.org,
+	skhawaja@google.com, sdf@fomichev.me, bjorn@rivosinc.com,
+	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	David Ahern <dsahern@kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC net-next v3 5/9] net: napi: Add napi_config
+Message-ID: <ZuSKofgZbfn_n8tb@LQ3V64L9R2.homenet.telecomitalia.it>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Stanislav Fomichev <stfomichev@gmail.com>, netdev@vger.kernel.org,
+	mkarsten@uwaterloo.ca, kuba@kernel.org, skhawaja@google.com,
+	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	David Ahern <dsahern@kernel.org>,
+	Johannes Berg <johannes.berg@intel.com>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240912100738.16567-1-jdamato@fastly.com>
+ <20240912100738.16567-6-jdamato@fastly.com>
+ <ZuR5jU3BGbsut-q6@mini-arch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZuR5jU3BGbsut-q6@mini-arch>
 
-The sdhci_start_signal_voltage_switch function sets
-V1P8_SIGNAL_ENA by default after switching to 1v8 signaling.
-V1P8_SIGNAL_ENA determines whether to launch cmd/data on neg
-edge or pos edge of clock.
+On Fri, Sep 13, 2024 at 10:42:37AM -0700, Stanislav Fomichev wrote:
+> On 09/12, Joe Damato wrote:
 
-Due to some eMMC and SD failures seen across am62x platform,
-do not set V1P8_SIGNAL_ENA by default, only enable the bit
-for devices that require this bit in order to switch to 1v8
-voltage for uhs modes.
+[...]
 
-Signed-off-by: Judith Mendez <jm@ti.com>
----
-Changes since v1:
-- Invert quirk logic
-- Simplify sdhci_am654_start_signal_voltage_switch() and call
-  sdhci_start_signal_voltage_switch() when the quirk does not apply
-- Simply logic when detecting when quirk should be applied
----
- drivers/mmc/host/sdhci_am654.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+> > @@ -6505,12 +6517,13 @@ static void napi_hash_add(struct napi_struct *napi)
+> >  		if (unlikely(++napi_gen_id < MIN_NAPI_ID))
+> >  			napi_gen_id = MIN_NAPI_ID;
+> >  	} while (napi_by_id(napi_gen_id));
+> 
+> [..]
+> 
+> > -	napi->napi_id = napi_gen_id;
+> > -
+> > -	hlist_add_head_rcu(&napi->napi_hash_node,
+> > -			   &napi_hash[napi->napi_id % HASH_SIZE(napi_hash)]);
+> >  
+> >  	spin_unlock(&napi_hash_lock);
+> > +
+> > +	napi_hash_add_with_id(napi, napi_gen_id);
+> 
+> nit: it is very unlikely that napi_gen_id is gonna wrap around after the
+> spin_unlock above, but maybe it's safer to have the following?
+> 
+> static void __napi_hash_add_with_id(struct napi_struct *napi, unsigned int napi_id)
+> {
+> 	napi->napi_id = napi_id;
+> 	hlist_add_head_rcu(&napi->napi_hash_node,
+> 			   &napi_hash[napi->napi_id % HASH_SIZE(napi_hash)]);
+> }
+> 
+> static void napi_hash_add_with_id(struct napi_struct *napi, unsigned int napi_id)
+> {
+> 	spin_lock(&napi_hash_lock);
+> 	__napi_hash_add_with_id(...);
+> 	spin_unlock(&napi_hash_lock);
+> }
+> 
+> And use __napi_hash_add_with_id here before spin_unlock?
 
-diff --git a/drivers/mmc/host/sdhci_am654.c b/drivers/mmc/host/sdhci_am654.c
-index 0aa3c40ea6ed8..9ff07aadb2d91 100644
---- a/drivers/mmc/host/sdhci_am654.c
-+++ b/drivers/mmc/host/sdhci_am654.c
-@@ -155,6 +155,7 @@ struct sdhci_am654_data {
- 	u32 tuning_loop;
- 
- #define SDHCI_AM654_QUIRK_FORCE_CDTEST BIT(0)
-+#define SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA BIT(1)
- };
- 
- struct window {
-@@ -356,6 +357,29 @@ static void sdhci_j721e_4bit_set_clock(struct sdhci_host *host,
- 	sdhci_set_clock(host, clock);
- }
- 
-+static int sdhci_am654_start_signal_voltage_switch(struct mmc_host *mmc, struct mmc_ios *ios)
-+{
-+	struct sdhci_host *host = mmc_priv(mmc);
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_am654_data *sdhci_am654 = sdhci_pltfm_priv(pltfm_host);
-+	int ret;
-+
-+	if ((sdhci_am654->quirks & SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA) &&
-+	    ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180) {
-+		if (!IS_ERR(mmc->supply.vqmmc)) {
-+			ret = mmc_regulator_set_vqmmc(mmc, ios);
-+			if (ret < 0) {
-+				pr_err("%s: Switching to 1.8V signalling voltage failed,\n",
-+				       mmc_hostname(mmc));
-+				return -EIO;
-+			}
-+		}
-+		return 0;
-+	}
-+
-+	return sdhci_start_signal_voltage_switch(mmc, ios);
-+}
-+
- static u8 sdhci_am654_write_power_on(struct sdhci_host *host, u8 val, int reg)
- {
- 	writeb(val, host->ioaddr + reg);
-@@ -844,6 +868,11 @@ static int sdhci_am654_get_of_property(struct platform_device *pdev,
- 	if (device_property_read_bool(dev, "ti,fails-without-test-cd"))
- 		sdhci_am654->quirks |= SDHCI_AM654_QUIRK_FORCE_CDTEST;
- 
-+	/* Suppress v1p8 ena for eMMC and SD with vqmmc supply */
-+	if (!!of_parse_phandle(dev->of_node, "vmmc-supply", 0) ==
-+	    !!of_parse_phandle(dev->of_node, "vqmmc-supply", 0))
-+		sdhci_am654->quirks |= SDHCI_AM654_QUIRK_SUPPRESS_V1P8_ENA;
-+
- 	sdhci_get_of_property(pdev);
- 
- 	return 0;
-@@ -940,6 +969,7 @@ static int sdhci_am654_probe(struct platform_device *pdev)
- 		goto err_pltfm_free;
- 	}
- 
-+	host->mmc_host_ops.start_signal_voltage_switch = sdhci_am654_start_signal_voltage_switch;
- 	host->mmc_host_ops.execute_tuning = sdhci_am654_execute_tuning;
- 
- 	pm_runtime_get_noresume(dev);
+Thanks for taking a look.
 
-base-commit: cf6444ba528f043398b112ac36e041a4d8685cb1
--- 
-2.46.0
+Sure, that seems reasonable. I can add that for the rfcv4.
 
+I'll probably hold off on posting the rfcv4 until either after LPC
+and/or after I have some time to debug the mlx5/page_pool thing.
 
