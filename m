@@ -1,180 +1,95 @@
-Return-Path: <linux-kernel+bounces-328873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32FE5978A2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:47:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4570A978A33
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:49:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57B0E1C21F46
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:47:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78EE31C21BEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72CF415098A;
-	Fri, 13 Sep 2024 20:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82EA81474C5;
+	Fri, 13 Sep 2024 20:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vxmT0Zk1"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="cRH/R3ts"
+Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400B712CDAE
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 20:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6906034CD8;
+	Fri, 13 Sep 2024 20:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726260434; cv=none; b=Tf6sEZgOYQSZe5Enqjrgd73CznjJLIWmmHz+USaAkCIKFh+r4MlEfP9KbdaGhY0kGC/xV8rx2YDMazbC7MXJgdj/CPZEpx5UP1JSRNkLu80f0OvMJffqaTksAE7U/JubpYRwygbGCUpp5IIDP3kvSMA2KGPs91TZJFHP4pghsiQ=
+	t=1726260560; cv=none; b=jPg653eCt8aKP8f+E/B8XM0+sIbvmlSpOx1VTYohPSnsuZeJYosRxi7FATR2qX9OYsBpTkgfjLsJ61pypr5esuI/o7u6/ivKlZEKFAh/SaOjtvNIf8LghbyDrOqLghkQ2xWVTgE/DzG32HVVLkxXBUKDzzUp1KGckuTfymrhFrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726260434; c=relaxed/simple;
-	bh=+w7pnCe13cneotmHtYMAqQ4Thh3L1WZ9Sf2dGfNzHGg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=cklkGcim9/7uRzrC5eLvN2AAaiOwlV5xdMPUYFLLV8xjbIlYaVELJi9FMgSGaZB1rLa8f3KfFlK4rE9HVVYiCZOIKA3rNR1GQpxoOp/z0xkAf4lF9BoV3gGNnt2niGGZC0S9BW5/1OXoD8Qwd+4KJRaw2qCply4bTEEnaOvzRgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vxmT0Zk1; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jthoughton.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6cf78470a56so62839957b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 13:47:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726260432; x=1726865232; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pB0pBVQhjuwmKvEa6sTHCtkYYP4usAt00xQYDsw1fuA=;
-        b=vxmT0Zk1TCjppXF6ZdDWBCVw4D+gwgIpSzNZ1IbjulrQFEn61im5VDpkHBJFOOS/LS
-         L2FJntusX6G6zbkobKm3sKCJPiOf1VwrweZuEwzZsBur2DbNFYghGjWTz5az27Y1i5w9
-         i9nb2DOxllXgfOkskWRvjDxgmESF5J8IsjXkr01TiP1BSUW+JvLSvb+0AmAsVyTKf0mm
-         TNH/oUN90XUCXIiRo4TGDYzRfVJ2otlpd+Z5a/3f+dQwGa/WC6Q6Gi87/cPGWqItKw5s
-         upVUDOM7utM5PMxCx73Cl1V3eO9UP3mbRGRv8k2h4QXkjt03s9bJSZVNX+G3FiPyGbIf
-         XhFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726260432; x=1726865232;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pB0pBVQhjuwmKvEa6sTHCtkYYP4usAt00xQYDsw1fuA=;
-        b=HbL6XjwCdXh6BsoudvlPcCkRqBJs1f9XO2c3oXfj6UF54lHiQJoNfFGnJkB0RwMVwj
-         688wNsKEivO+p/j0K6wnl/mSssE9kJSSNFv7sVMN4VkCoBdOK/mm36mfIs7X4yMwum32
-         dtmYVy+y521WXWbOoSTqhk4xSGDrC8CeQ82+NDH+HD7q1wSvQ8OqCvngcykvdNzomX3J
-         TZEuv91ranvwAjWT10oHD6YN5LBDPEtHo7twZKw1GQlGxzkzqIKa0WSncort1u/Ux0D6
-         XkTGkfOxBqk7fGtohxd96bEnbJGbVA9NcQbsr2JDwoajXm81Y2jzFZ6jn7KW0mb2xXnb
-         PObw==
-X-Forwarded-Encrypted: i=1; AJvYcCWHqiqJ6Xqc+qbXMYcsn3e6uRWxTQQLw6HJ43c1RF1vr+7DkLVHEFILspCe6AY9FNEOcGNZnQYwbQBP/us=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc40DskPjSfPa4qZHxO+w4QplEMqO8Vw3FAHy8tMzURt0d291A
-	6VujRNKzgn4/WAp9CaWf1BPCuEWPvcnDE/JVdSp+76VoXSLYl0Cb8/pL29MZe9v97Vdq+BdpZdb
-	CKX4jTYYWZoQyorkPGg==
-X-Google-Smtp-Source: AGHT+IF0KlYAfabntP8DGmbCaPONcArZEuk/OdnURmRD8et2Y319XSkqK51oSusCluIbgOxFIPxi3eLs9VtnN36m
-X-Received: from jthoughton.c.googlers.com ([fda3:e722:ac3:cc00:13d:fb22:ac12:a84b])
- (user=jthoughton job=sendgmr) by 2002:a81:5b88:0:b0:6db:c6d8:678 with SMTP id
- 00721157ae682-6dbc6d807f6mr1472677b3.0.1726260432113; Fri, 13 Sep 2024
- 13:47:12 -0700 (PDT)
-Date: Fri, 13 Sep 2024 20:47:11 +0000
-In-Reply-To: <ZXEEbrI7K6XGr2dN@google.com>
+	s=arc-20240116; t=1726260560; c=relaxed/simple;
+	bh=dHXqkzDI7fPL8ZL5DnwKxcDnMyhXfuzk3DFIXV7jmeU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b03PGqfAwYZYy588uvelismLzvA3FEvQP+xcrmpgT/jgdKf9YsLzxBI1xv4Cm/MaY311klKdR9rXWK8fRxBuEbwFHysqRDq+iNvU/yUX51GDqlVZ+NRw2jPRCQ2Gxl0cWbVG9CayahitXvbjzIpcGZuMNrwW7qJtzEJ6v2Mb2Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=cRH/R3ts; arc=none smtp.client-ip=95.143.211.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+Message-ID: <2e1da617-c437-4ff9-93e0-e0e212aabfaa@swemel.ru>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
+	t=1726260547;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+MCfVmDv2PMAfKS4DqZ7boOBF/67quVC8bAWfhKn5uo=;
+	b=cRH/R3tsgk8hVC8/dJZP4ofYSbcpfoH/ir2UND8thoROjEK0BnbqxAhDojRaeYijCgdI5N
+	fJYc4zar8FE15sb9Nj4p0FczFfD5EjaOjtSidd9UieLlUPtDC3Ztry/aZj4jy13qKRUii4
+	rDSjEvxTCgRDLq22eQXwaiRK5J9W07I=
+Date: Fri, 13 Sep 2024 23:49:38 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <ZXEEbrI7K6XGr2dN@google.com>
-X-Mailer: git-send-email 2.46.0.662.g92d0881bb0-goog
-Message-ID: <20240913204711.2041299-1-jthoughton@google.com>
-Subject: Re: [PATCH 03/11] objtool: Convert ANNOTATE_RETPOLINE_SAFE to ANNOTATE
-From: James Houghton <jthoughton@google.com>
-To: peterz@infradead.org
-Cc: seanjc@google.com, jpoimboe@redhat.com, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, pbonzini@redhat.com, tglx@linutronix.de, 
-	x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Subject: Re: [PATCH v3 01/13] LSM: Add the lsm_prop data structure.
+Content-Language: en-US
+To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20240910184125.224651-1-casey@schaufler-ca.com>
+ <20240910184125.224651-2-casey@schaufler-ca.com>
+From: Konstantin Andreev <andreev@swemel.ru>
+Disposition-Notification-To: Konstantin Andreev <andreev@swemel.ru>
+In-Reply-To: <20240910184125.224651-2-casey@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-OriginalArrivalTime: 13 Sep 2024 20:49:06.0959 (UTC) FILETIME=[602821F0:01DB061E]
 
-Hi Peter,
+Casey Schaufler, 10 Sep 2024:
+> ...
+> The lsm_prop structure definition is intended to keep the LSM
+> specific information private to the individual security modules.
+> ...
+> index 1390f1efb4f0..1027c802cc8c 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -140,6 +144,22 @@ enum lockdown_reason {
+> +
+> +/*
+> + * Data exported by the security modules
+> + */
+> +struct lsm_prop {
+> +	struct lsm_prop_selinux selinux;
+> +	struct lsm_prop_smack smack;
+> +	struct lsm_prop_apparmor apparmor;
+> +	struct lsm_prop_bpf bpf;
+> +	struct lsm_prop_scaffold scaffold;
+> +};
 
-On Wed, 6 Dec 2023, Sean Christopherson wrote:
-> On Mon, Dec 04, 2023, Peter Zijlstra wrote:
-> > 
-> > --- a/arch/x86/include/asm/nospec-branch.h
-> > +++ b/arch/x86/include/asm/nospec-branch.h
-> > @@ -193,12 +193,7 @@
-> >   * objtool the subsequent indirect jump/call is vouched safe for retpoline
-> >   * builds.
-> >   */
-> > -.macro ANNOTATE_RETPOLINE_SAFE
-> > -.Lhere_\@:
-> > -	.pushsection .discard.retpoline_safe
-> > -	.long .Lhere_\@
-> > -	.popsection
-> > -.endm
-> > +#define ANNOTATE_RETPOLINE_SAFE	ANNOTATE type=ANNOTYPE_RETPOLINE_SAFE
-> >  
-> >  /*
-> >   * (ab)use RETPOLINE_SAFE on RET to annotate away 'bare' RET instructions
-> > @@ -317,11 +312,7 @@
-> >  
-> >  #else /* __ASSEMBLY__ */
-> >  
-> > -#define ANNOTATE_RETPOLINE_SAFE					\
-> > -	"999:\n\t"						\
-> > -	".pushsection .discard.retpoline_safe\n\t"		\
-> > -	".long 999b\n\t"					\
-> > -	".popsection\n\t"
-> > +#define ANNOTATE_RETPOLINE_SAFE ASM_ANNOTATE(ANNOTYPE_RETPOLINE_SAFE)
-> 
-> This fails for some of my builds that end up with CONFIG_OBJTOOl=n.  Adding a
-> stub for ASM_ANNOTATE() gets me past that:
-> 
-> @@ -156,6 +171,7 @@
->  #define STACK_FRAME_NON_STANDARD(func)
->  #define STACK_FRAME_NON_STANDARD_FP(func)
->  #define ANNOTATE_NOENDBR
-> +#define ASM_ANNOTATE(x)
->  #define ASM_REACHABLE
->  #else
->  #define ANNOTATE_INTRA_FUNCTION_CALL
-> 
-> but then I run into other issues:
-> 
-> arch/x86/kernel/relocate_kernel_32.S: Assembler messages:
-> arch/x86/kernel/relocate_kernel_32.S:96: Error: Parameter named `type' does not exist for macro `annotate'
-> arch/x86/kernel/relocate_kernel_32.S:166: Error: Parameter named `type' does not exist for macro `annotate'
-> arch/x86/kernel/relocate_kernel_32.S:174: Error: Parameter named `type' does not exist for macro `annotate'
-> arch/x86/kernel/relocate_kernel_32.S:200: Error: Parameter named `type' does not exist for macro `annotate'
-> arch/x86/kernel/relocate_kernel_32.S:220: Error: Parameter named `type' does not exist for macro `annotate'
-> arch/x86/kernel/relocate_kernel_32.S:285: Error: Parameter named `type' does not exist for macro `annotate'
+This design prevents compiling and loading out-of-tree 3rd party LSM, am I right?
 
-Sean pointed me at this series recently. It seems like these compile errors
-(and some others) go away with the following diff:
+Out-of-tree LSM's were discussed recently at
 
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 0bebdcad7ba1..036ab199859a 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -489,7 +489,7 @@ static inline void call_depth_return_thunk(void) {}
- 	"       .align 16\n"					\
- 	"903:	lea    4(%%esp), %%esp;\n"			\
- 	"       pushl  %[thunk_target];\n"			\
--	"       ret;\n"						\
-+	"       ret;\n",					\
- 	X86_FEATURE_RETPOLINE,					\
- 	"lfence;\n"						\
- 	ANNOTATE_RETPOLINE_SAFE					\
-diff --git a/include/linux/objtool.h b/include/linux/objtool.h
-index f6f80bfefe3b..e811b2ff3a9c 100644
---- a/include/linux/objtool.h
-+++ b/include/linux/objtool.h
-@@ -159,6 +159,7 @@
- #define STACK_FRAME_NON_STANDARD_FP(func)
- #define ANNOTATE_NOENDBR
- #define ASM_REACHABLE
-+#define ASM_ANNOTATE(x)
- #else
- #define ANNOTATE_INTRA_FUNCTION_CALL
- .macro UNWIND_HINT type:req sp_reg=0 sp_offset=0 signal=0
-@@ -169,7 +170,7 @@
- .endm
- .macro REACHABLE
- .endm
--.macro ANNOTATE
-+.macro ANNOTATE type:req
- .endm
- #endif
+https://lore.kernel.org/linux-security-module/efb8f264-f80e-43b2-8ea3-fcc9789520ec@I-love.SAKURA.ne.jp/T/
+https://lore.kernel.org/linux-security-module/960e740f-e5d9-409b-bb2a-8bdceffaae95@I-love.SAKURA.ne.jp/T/
 
-This series applies on top of the latest kvm-x86/next with only a few trivial
-conflicts, so I hope you are able to send a new version.
-
-I could send one for you, but I have no idea how to properly test it.
+but it looks like a final decision to ban them is not taken yet.
+--
+Konstantin Andreev
 
