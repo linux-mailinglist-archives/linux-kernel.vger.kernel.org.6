@@ -1,77 +1,54 @@
-Return-Path: <linux-kernel+bounces-327803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3829977B68
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:44:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EAB5977B76
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDA901C20C13
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:44:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 094E31F281D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29AF71D6C6D;
-	Fri, 13 Sep 2024 08:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nF/+XLzk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C61185925;
-	Fri, 13 Sep 2024 08:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557EE1D6C79;
+	Fri, 13 Sep 2024 08:44:48 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 501751BF324;
+	Fri, 13 Sep 2024 08:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726217056; cv=none; b=qrKN6Pdqy6VYm0ljoJHAKQEBke338BJDqJvz7TRrmE/TGz4wh81ASIbw9xpqQadnZpNx9JAkEmQhCcw1+eFeiHy0xULRGuMyeuiw/pyV5PsnZgBHl4NucaKaPPBQKBq3Tu6gekKWR76m9u16Z68PmUsIY7vI92erZ29vV4EJH4Y=
+	t=1726217088; cv=none; b=Si0x/cOAQ/i4tehhZErCEuHs0LFQG+tz6YxQcv05EBIepHTWGZ8xTxIrxLZ4Yxu1sJf7x1t4lpRXt1iD3362c4wofhYECvFLz16AG31eWBbV9RU9okdE2bkS5BOIn0UuEk99SwYIDGjxSCotcWMSXLTMRkJlyQ/XD4MxlFY+r6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726217056; c=relaxed/simple;
-	bh=+jAaPwab1GS9UNp1Ia34ZEvBHBb4SGKdmT76WYDP7yI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qNpuPXbllylJSTLuIVa5rBfmVbEAo1nA3aM1z17kXrxmUmOqqbdaK5EPWyWbnQrstORq3ILAk+aOEOtaR5+GpL5xv8yPEh68q4JGtff2olbdbVNsmkqjodvUzVYVx9cjrAgAhtqegTmfUSq1PS40Ktr2GMJbsTGNS5aYkEQ2X70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nF/+XLzk; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726217054; x=1757753054;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=+jAaPwab1GS9UNp1Ia34ZEvBHBb4SGKdmT76WYDP7yI=;
-  b=nF/+XLzk6KYEv+SOHXfO6jZULebXLo4A1X4CVBUElUcOsa1p6m+V1HED
-   7OJOKUYeIGTAyyJTMzIUlq+kEuUj+VhCOxod+IxWD8mhKs+TE7C4TLpNd
-   K4myE10XuKnisPjml7dULBciTlKMD1uz3lKr4bJySZg9vxur6/mlcgFaR
-   2a4pEi65qJRu7Sg4bIR8owfynYJwauwaERpe+GBBgRqoByd/63RZvTyFh
-   jHUxg/RXm29ymiCZHVHQ/0gUzv9zMlbTSA5sn7XrysVxWGLaY4a7+9kAK
-   +jNAWvqXOs0r8YxC5XxzfTj+SnTWev/oExgf9lCx6OaT02O0rl4qy9/4D
-   A==;
-X-CSE-ConnectionGUID: JXh1i9OPSiKSGsx1yCWpEw==
-X-CSE-MsgGUID: ZMQa5VS/R2eKJmkYYg4y0g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="42618546"
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="42618546"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 01:44:14 -0700
-X-CSE-ConnectionGUID: oTZRt37oTtG3dIvdw9O9SQ==
-X-CSE-MsgGUID: 5HwujQJVRoSO+7CnT+ZHrw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="67953667"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa009.fm.intel.com with ESMTP; 13 Sep 2024 01:44:12 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 89A20387; Fri, 13 Sep 2024 11:44:11 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Mathias Nyman <mathias.nyman@linux.intel.com>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mathias Nyman <mathias.nyman@intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 2/2] xhci: pci: Fix indentation in the PCI device ID definitions
-Date: Fri, 13 Sep 2024 11:43:38 +0300
-Message-ID: <20240913084411.3309911-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20240913084411.3309911-1-andriy.shevchenko@linux.intel.com>
-References: <20240913084411.3309911-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1726217088; c=relaxed/simple;
+	bh=QFa203OC2WhTCdihVHC5Wc82zSwZEYBkVei0/jDI/m0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=av1Pvi7fUyLgf9pW4MaU/lG+qgBcm0tCodPZQ/AE5oKPgMzbAx8HV0MMteQbWdPW0SI1Scmj7WsSdkaEV5Ys6INMlIwFz6ilGVa21TjlPZifY9AuSGT9hXIGxbt/AKuC+WDOYka2LrhiYzhU5W9iuc48DolUnrJE1lEh8KtBNTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B45C813D5;
+	Fri, 13 Sep 2024 01:45:13 -0700 (PDT)
+Received: from a077893.blr.arm.com (a077893.blr.arm.com [10.162.16.84])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7F3B23F73B;
+	Fri, 13 Sep 2024 01:44:40 -0700 (PDT)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-mm@kvack.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	x86@kernel.org,
+	linux-m68k@lists.linux-m68k.org,
+	linux-fsdevel@vger.kernel.org,
+	kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH 0/7] mm: Use pxdp_get() for accessing page table entries
+Date: Fri, 13 Sep 2024 14:14:26 +0530
+Message-Id: <20240913084433.1016256-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,40 +57,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Some of the definitions are missing the one TAB, add it to them.
+This series converts all generic page table entries direct derefences via
+pxdp_get() based helpers extending the changes brought in via the commit
+c33c794828f2 ("mm: ptep_get() conversion"). First it does some platform
+specific changes for m68k and x86 architecture.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/usb/host/xhci-pci.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+This series has been build tested on multiple architecture such as x86,
+arm64, powerpc, powerpc64le, riscv, and m68k etc.
 
-diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-index 6d9eb2b031e2..cbbee5175547 100644
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -28,8 +28,8 @@
- #define SPARSE_CNTL_ENABLE	0xC12C
- 
- /* Device for a quirk */
--#define PCI_VENDOR_ID_FRESCO_LOGIC	0x1b73
--#define PCI_DEVICE_ID_FRESCO_LOGIC_PDK	0x1000
-+#define PCI_VENDOR_ID_FRESCO_LOGIC		0x1b73
-+#define PCI_DEVICE_ID_FRESCO_LOGIC_PDK		0x1000
- #define PCI_DEVICE_ID_FRESCO_LOGIC_FL1009	0x1009
- #define PCI_DEVICE_ID_FRESCO_LOGIC_FL1100	0x1100
- #define PCI_DEVICE_ID_FRESCO_LOGIC_FL1400	0x1400
-@@ -38,8 +38,8 @@
- #define PCI_DEVICE_ID_ETRON_EJ168		0x7023
- #define PCI_DEVICE_ID_ETRON_EJ188		0x7052
- 
--#define PCI_DEVICE_ID_INTEL_LYNXPOINT_XHCI	0x8c31
--#define PCI_DEVICE_ID_INTEL_LYNXPOINT_LP_XHCI	0x9c31
-+#define PCI_DEVICE_ID_INTEL_LYNXPOINT_XHCI		0x8c31
-+#define PCI_DEVICE_ID_INTEL_LYNXPOINT_LP_XHCI		0x9c31
- #define PCI_DEVICE_ID_INTEL_WILDCATPOINT_LP_XHCI	0x9cb1
- #define PCI_DEVICE_ID_INTEL_CHERRYVIEW_XHCI		0x22b5
- #define PCI_DEVICE_ID_INTEL_SUNRISEPOINT_H_XHCI		0xa12f
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: "Mike Rapoport (IBM)" <rppt@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: x86@kernel.org
+Cc: linux-m68k@lists.linux-m68k.org
+Cc: linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: kasan-dev@googlegroups.com
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-perf-users@vger.kernel.org
+Cc: kasan-dev@googlegroups.com
+
+Anshuman Khandual (7):
+  m68k/mm: Change pmd_val()
+  x86/mm: Drop page table entry address output from pxd_ERROR()
+  mm: Use ptep_get() for accessing PTE entries
+  mm: Use pmdp_get() for accessing PMD entries
+  mm: Use pudp_get() for accessing PUD entries
+  mm: Use p4dp_get() for accessing P4D entries
+  mm: Use pgdp_get() for accessing PGD entries
+
+ arch/m68k/include/asm/page.h          |  2 +-
+ arch/x86/include/asm/pgtable-3level.h | 12 ++---
+ arch/x86/include/asm/pgtable_64.h     | 20 +++----
+ drivers/misc/sgi-gru/grufault.c       | 10 ++--
+ fs/proc/task_mmu.c                    | 26 ++++-----
+ fs/userfaultfd.c                      |  6 +--
+ include/linux/huge_mm.h               |  5 +-
+ include/linux/mm.h                    |  6 +--
+ include/linux/pgtable.h               | 38 +++++++-------
+ kernel/events/core.c                  |  6 +--
+ mm/gup.c                              | 40 +++++++-------
+ mm/hmm.c                              |  2 +-
+ mm/huge_memory.c                      | 76 +++++++++++++--------------
+ mm/hugetlb.c                          | 10 ++--
+ mm/hugetlb_vmemmap.c                  |  4 +-
+ mm/kasan/init.c                       | 38 +++++++-------
+ mm/kasan/shadow.c                     | 12 ++---
+ mm/khugepaged.c                       |  4 +-
+ mm/madvise.c                          |  6 +--
+ mm/mapping_dirty_helpers.c            |  2 +-
+ mm/memory-failure.c                   | 14 ++---
+ mm/memory.c                           | 59 +++++++++++----------
+ mm/mempolicy.c                        |  4 +-
+ mm/migrate.c                          |  4 +-
+ mm/migrate_device.c                   | 10 ++--
+ mm/mlock.c                            |  6 +--
+ mm/mprotect.c                         |  2 +-
+ mm/mremap.c                           |  4 +-
+ mm/page_table_check.c                 |  4 +-
+ mm/page_vma_mapped.c                  |  6 +--
+ mm/pagewalk.c                         | 10 ++--
+ mm/percpu.c                           |  8 +--
+ mm/pgalloc-track.h                    |  6 +--
+ mm/pgtable-generic.c                  | 24 ++++-----
+ mm/ptdump.c                           |  8 +--
+ mm/rmap.c                             |  8 +--
+ mm/sparse-vmemmap.c                   | 10 ++--
+ mm/vmalloc.c                          | 46 ++++++++--------
+ mm/vmscan.c                           |  6 +--
+ 39 files changed, 283 insertions(+), 281 deletions(-)
+
 -- 
-2.43.0.rc1.1336.g36b5255a03ac
+2.25.1
 
 
