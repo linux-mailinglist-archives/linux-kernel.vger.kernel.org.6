@@ -1,129 +1,103 @@
-Return-Path: <linux-kernel+bounces-327922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D17977CAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:58:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0B82977CBA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:59:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C0311F263D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:58:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 064DF1C2519F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:59:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B37C1D86C4;
-	Fri, 13 Sep 2024 09:57:36 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C80FD1D7E2E;
+	Fri, 13 Sep 2024 09:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WURHdlxD"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55C31D7E42
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84981D7998;
+	Fri, 13 Sep 2024 09:59:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726221455; cv=none; b=TBBqgkJfck/V9xz8y8IEAGsk5vcoh8tRro6/GSZs/mKeLrIvlOgzDtg+eVfrxcjHYvLSspwbJ0+jprwMPGID39Tje/ZfRJoJf4HomOmxp86wQRZPSoY5ER5+0i080zHqogyyMEB3dQZ2WjRhNlRYt05Sath0IuA3Bnh1OKlt/hA=
+	t=1726221563; cv=none; b=VnGTqJfL17jp1NqPnwVjrq8x7zVLtx25CRa+nqe66GldsJb7LJashN/hxB9dwZacEn0zMErC1JOye9T2C/tMa73PmJWcGgjAuSy/WbBTKn/vijwW6Bt8mdvD3qFWX4KyMeht0xPGlXS+HGkQaD1dWqsqcy3QmMVnR1sA8z13GlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726221455; c=relaxed/simple;
-	bh=wQ8+QXv/Zotz6sPCe1Tr3v8Fb8/Ka826oQpsymIlEN4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=QCiJzOm+ZxPv7+aYRyTKl4tgGZXUKk3eGk+3Ev3ILm/B0KvBUfTwR0WB3kTX1EkESMy83OxPkopEw3BYc312v27n87RjsOk/Px6L0tEZZ7fBCnKfJXyt7mwyrq7xZo+ZecZdgUVB4vTyWtFaJE9FL/a5YS0T7O15UKpEL6B6fSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4X4qTk1fNhz2CpcZ;
-	Fri, 13 Sep 2024 17:56:58 +0800 (CST)
-Received: from kwepemd500019.china.huawei.com (unknown [7.221.188.86])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1927718001B;
-	Fri, 13 Sep 2024 17:57:30 +0800 (CST)
-Received: from [10.67.109.61] (10.67.109.61) by kwepemd500019.china.huawei.com
- (7.221.188.86) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 13 Sep
- 2024 17:57:29 +0800
-Message-ID: <a316316a-f828-3a51-f6eb-18a31c8b4c35@huawei.com>
-Date: Fri, 13 Sep 2024 17:57:28 +0800
+	s=arc-20240116; t=1726221563; c=relaxed/simple;
+	bh=3+NbSZ3etjvKYRx4sm9SGu5IqWM9BNB/WQxIlcSu+zw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hEhIBlf0XX6aNSH44v6c+c6Usdig+N9eE4WwM3lXrH8la/eimEXGJH5rYXPpIM1KcimD0s5pihej9EAW8UdZdbyZB1w4XCFEzbo5u1/0veQOMsuDAxo1JkxBViK+6VUt4JW96gCKT8fwBM9/BP22w8hHlhhZjA/F2zj9MYsSC7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WURHdlxD; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a86e9db75b9so278216766b.1;
+        Fri, 13 Sep 2024 02:59:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726221560; x=1726826360; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3+NbSZ3etjvKYRx4sm9SGu5IqWM9BNB/WQxIlcSu+zw=;
+        b=WURHdlxDuGT9FPUxsfQCi6T1HMeUOjWFo590lTg8HmrJf8cTQiKDO9WRk1TERLSbdG
+         w888AInEQ02xK+Sokj6wNj0OyZrp8Gi5T3YwdCKrXlhVxwN74zyiufRHFf8xWgqAkmNN
+         VjVrh/Y/LvV4HFUHcS7Z339fzwKj9lqzLizlzpWZjHqYcplkhLFPtxsIzeFflCmXp+8j
+         j58DpyKxfDmsOLVkcB3eJ+4VRL6hQ4Xsp/QbZypSl5uQ3dAhd5SHkYNAAri2uRg0DcJo
+         J8JStjoj9e4sINsZPRe/mh+jkuw8iq3H75eweCHzACZwRapzmgNDGiuK+9L9gxWo7VRo
+         QQKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726221560; x=1726826360;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3+NbSZ3etjvKYRx4sm9SGu5IqWM9BNB/WQxIlcSu+zw=;
+        b=Omopa52NMBN6qJOcdMb5bbEdNB7wHIvzXZXmXqy2YaT3EvVE/Di9QLVx9WN5lQDQi1
+         Wi/OzD0lPruniA0sglFM5+/bMRiS5ZDY478bWVzaQwiKXz+eFOe4PS/3s7QtCS5FhOQc
+         qNHdoaZATW/hXQEp7Ou3aEwOFy7/4EVcfBcSfOcJ2mvrWkdyQJ443NAQfkmCM6zkEKSr
+         xs4VzSnyeCA3Un83uesNZuarP1me6iMD6Rglp9Z/6ja1cl11UPL/Fn4XjPiEIxF55iXs
+         YJkfTsh9JY2ZV7JMglZex6HMbHhuAmfS+YtOE6NStutbtVwys5CF0Q/EIonrGlrf9G1J
+         MnAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUGAJO4CBs8xREsAIIqXNFvqtOeQpKosPV6vKTem0J3uj/unpuXgghzZxq3ToC8Gs3W9DmeLmKfVgxj@vger.kernel.org, AJvYcCX8o9HWq6mZvK/OmcKpoJbx5HTELcrvUch8qF8rxD11ijs/kmKEFAzmJ8Yp21A1LwsEK/c4i7wd@vger.kernel.org, AJvYcCXB0t93S1ayeLQF0v1c92+cLnCfT3GXuv0pXrzBwyxKradL9RLUDUVZXAV3kv/w9IS4PRrsME+o5jC5jzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyblGxLcXWhHJ93H9PJjJBuKPo9YwvWau40CtSF5HB+ZCPrnMhQ
+	x+sdBJtwgVPM1QBcScIRTa7GKnVg0aQkYb1PrxinKraWQQl851WsRZbeqmmE3HhyXqJd+nm3oMM
+	IXdji+rqJb7i/SjG47zeqNliTTLA=
+X-Google-Smtp-Source: AGHT+IHykOTcthTjBRQ45AGDlyV4+KjC8hweDGxJDxkIBpD6K6YsFn1B5hioCcBaxqBusZecaQhw69UeMtFb6ngBJFo=
+X-Received: by 2002:a17:906:dc8a:b0:a8d:7b7d:8c47 with SMTP id
+ a640c23a62f3a-a90297315b9mr609687866b.59.1726221559701; Fri, 13 Sep 2024
+ 02:59:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH -next] sched: Remove the check on the return value of
- sched_update_scaling()
-From: zhengzucheng <zhengzucheng@huawei.com>
-To: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
-	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
-	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
-	<vschneid@redhat.com>, <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>
-References: <20240812120819.1083687-1-zhengzucheng@huawei.com>
-In-Reply-To: <20240812120819.1083687-1-zhengzucheng@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemd500019.china.huawei.com (7.221.188.86)
+References: <20240905065716.305332-1-pawell@cadence.com> <PH7PR07MB9538584F3C0AD11119403F11DD9D2@PH7PR07MB9538.namprd07.prod.outlook.com>
+ <PH7PR07MB9538734A9BC4FA56E34998EEDD9D2@PH7PR07MB9538.namprd07.prod.outlook.com>
+ <ZuMOfHp9j_6_3-WC@surfacebook.localdomain> <7e73a66f-e853-4da5-bb95-f28c75d993f2@linux.intel.com>
+In-Reply-To: <7e73a66f-e853-4da5-bb95-f28c75d993f2@linux.intel.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 13 Sep 2024 12:58:42 +0300
+Message-ID: <CAHp75Vca4PCa0DfDF53g8=GuFzSxmbQUR4N985R7AtLa=F2=Jg@mail.gmail.com>
+Subject: Re: [PATCH] usb: xhci: fix loss of data on Cadence xHC
+To: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: Pawel Laszczak <pawell@cadence.com>, "mathias.nyman@intel.com" <mathias.nyman@intel.com>, 
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, 
+	"peter.chen@kernel.org" <peter.chen@kernel.org>, 
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Friendly ping. Any more question about this patch?
+On Fri, Sep 13, 2024 at 11:59=E2=80=AFAM Mathias Nyman
+<mathias.nyman@linux.intel.com> wrote:
+> On 12.9.2024 18.53, Andy Shevchenko wrote:
+> > Thu, Sep 05, 2024 at 07:06:48AM +0000, Pawel Laszczak kirjoitti:
 
-在 2024/8/12 20:08, Zheng Zucheng 写道:
-> sched_update_scaling() always returns 0, so there's no need to check if
-> sched_update_scaling() was successful.
->
-> Fixes: 8a99b6833c88 ("sched: Move SCHED_DEBUG sysctl to debugfs")
-> Signed-off-by: Zheng Zucheng <zhengzucheng@huawei.com>
-> ---
->   kernel/sched/debug.c | 3 +--
->   kernel/sched/fair.c  | 4 +---
->   kernel/sched/sched.h | 2 +-
->   3 files changed, 3 insertions(+), 6 deletions(-)
->
-> diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-> index 845b79238398..87c683c8635f 100644
-> --- a/kernel/sched/debug.c
-> +++ b/kernel/sched/debug.c
-> @@ -188,8 +188,7 @@ static ssize_t sched_scaling_write(struct file *filp, const char __user *ubuf,
->   		return -EINVAL;
->   
->   	sysctl_sched_tunable_scaling = scaling;
-> -	if (sched_update_scaling())
-> -		return -EINVAL;
-> +	sched_update_scaling();
->   
->   	*ppos += cnt;
->   	return cnt;
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index efb2b3062179..b3d79b693021 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -954,7 +954,7 @@ struct sched_entity *__pick_last_entity(struct cfs_rq *cfs_rq)
->    * Scheduling class statistics methods:
->    */
->   #ifdef CONFIG_SMP
-> -int sched_update_scaling(void)
-> +void sched_update_scaling(void)
->   {
->   	unsigned int factor = get_update_sysctl_factor();
->   
-> @@ -962,8 +962,6 @@ int sched_update_scaling(void)
->   	(normalized_sysctl_##name = sysctl_##name / (factor))
->   	WRT_SYSCTL(sched_base_slice);
->   #undef WRT_SYSCTL
-> -
-> -	return 0;
->   }
->   #endif
->   #endif
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index 9373426d5aae..d8319e58a0c6 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -2054,7 +2054,7 @@ static inline void update_sched_domain_debugfs(void) { }
->   static inline void dirty_sched_domain_sysctl(int cpu) { }
->   #endif
->   
-> -extern int sched_update_scaling(void);
-> +extern void sched_update_scaling(void);
->   
->   static inline const struct cpumask *task_user_cpus(struct task_struct *p)
->   {
+> Thanks, fixed and rebased.
+
+LGTM, thanks!
+
+--
+With Best Regards,
+Andy Shevchenko
 
