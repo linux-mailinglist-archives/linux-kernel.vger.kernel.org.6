@@ -1,179 +1,331 @@
-Return-Path: <linux-kernel+bounces-327740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD035977A8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:04:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE6CF977A92
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:05:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 226DB1C24F07
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:04:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7F85284117
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346611BD02E;
-	Fri, 13 Sep 2024 08:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5CF1BD4FC;
+	Fri, 13 Sep 2024 08:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qaqG/9R8"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="AI9viBmb"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD3CB1BDAA7
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 08:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5ACF1BD4E7
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 08:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726214639; cv=none; b=kM2VmiJeoXWSz6liCrpSTAUr69gjZLyz2OoIe59Xg78l0CprdnNAHOX3NsSf8wn/pI8lr9bfdUCIdAEdAC+a5WARByDa2KWQ5wKxEAT8ZxHvzXpjr/ht/p/DPiuFssbf58gLY7icXWlI0DUD9Jo+PtgzsNpQ43qpQGgSQm4lBoM=
+	t=1726214641; cv=none; b=WhIXKH/w1RkugKXfxBnn3YJbsXIgr1WeY+d9g4fY1PBbYQ5dZmdXxnpSInVJjY7DbTfc8gNl4Rv9A37WtdkV+rsmgFaAOSwtmJ7q4GBRPKvTDMTCStuNbFlqs6S0gT132+zTmFOEl8r64XPwxT38kl5VP5j9+HqrtOYNlQcI+Xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726214639; c=relaxed/simple;
-	bh=VXfpLvliY0qreEcwdlpLsHaDpXmSSi5Ra3LdGTOB0yk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=oSaaLAtCiPZ4aBKacPEmeyPyyPqCufVqMCkcppZTc2mAMkyvai0hwPw0cEmJ4huv8Wq1NRfZW+cqouBDTGhxn3soia+jDMt0SpAy30Ad/KXvVkoaiKcMyEe9XkYXFMEx93gDiVee/dxw4cuSLifEzcWCyxufJHDhqHRRgazmV0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=qaqG/9R8; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240913080349epoutp01f2ede31a8069f478ce07787dd09370e4~0vw8t7Dv41922819228epoutp01M
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 08:03:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240913080349epoutp01f2ede31a8069f478ce07787dd09370e4~0vw8t7Dv41922819228epoutp01M
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1726214629;
-	bh=SZfbc9jZ4LzU+dG89MMiiL9I3Js9nc5zQVapmEmqHR8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qaqG/9R8w+0I4Vtf60NN9nqDjBqcauJNxCBjarNpiyI1ljr+TuyDRDejkYSjCZ9E8
-	 dleFmOE4NKobo8GMS5bCu/xBpmFP6jcAhSplxv1wK7oVBUHD43aQ7CK4aY7w99cEJS
-	 Z6nY0Ecb1ZSZcWW1MZ6J5+lcaWCfDpNKnieMOf+8=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-	20240913080348epcas2p28d084be4931c403519c8b40180dfa464~0vw8O6GL21146511465epcas2p2c;
-	Fri, 13 Sep 2024 08:03:48 +0000 (GMT)
-Received: from epsmges2p3.samsung.com (unknown [182.195.36.101]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4X4mz76mJRz4x9Q2; Fri, 13 Sep
-	2024 08:03:47 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-	8C.B0.10012.3E1F3E66; Fri, 13 Sep 2024 17:03:47 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240913080347epcas2p46fd90107fe54b8eab3a031cf2fbd592c~0vw7LS7PK1978819788epcas2p4S;
-	Fri, 13 Sep 2024 08:03:47 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240913080347epsmtrp2d37c2ac5a207d9899279f65a004e7c88~0vw7KaDwg1974219742epsmtrp2G;
-	Fri, 13 Sep 2024 08:03:47 +0000 (GMT)
-X-AuditID: b6c32a47-c43ff7000000271c-1d-66e3f1e37f3d
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	3D.34.08964.3E1F3E66; Fri, 13 Sep 2024 17:03:47 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.229.9.55]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240913080347epsmtip2db59ad0f635dc9527d8bdd02aa2c9beb~0vw65fUrT0679106791epsmtip2F;
-	Fri, 13 Sep 2024 08:03:47 +0000 (GMT)
-From: Taewan Kim <trunixs.kim@samsung.com>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
-	<linux@roeck-us.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Alim Akhtar
-	<alim.akhtar@samsung.com>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, Byoungtae Cho <bt.cho@samsung.com>,
-	Taewan Kim <trunixs.kim@samsung.com>
-Subject: [PATCH 3/3] arm64: dts: exynosautov920: add watchdog DT node
-Date: Fri, 13 Sep 2024 17:03:25 +0900
-Message-ID: <20240913080325.3676181-4-trunixs.kim@samsung.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240913080325.3676181-1-trunixs.kim@samsung.com>
+	s=arc-20240116; t=1726214641; c=relaxed/simple;
+	bh=pMbl/6FH+RsIUAoL48/tTYOyY2AwXx5OQCfVDXZIdpA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ErBZ9Chdlx0MgOQMKo0aZVbVIMFhWmIiBNJM6m2YjDjnlOrsvXDyTdBYbNz1+zUCSG31PjzzAFut9TaGM96AmA+gc7BgxRB6aQ84kTiXhc/FDbu9Nk1zDdZbvOudnaAoXuQzZyeDNmsqVk+tVD6sWESBlCHioQBPcoSmSrDtyHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=AI9viBmb; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6009a.ext.cloudfilter.net ([10.0.30.184])
+	by cmsmtp with ESMTPS
+	id otk5savdKqvuop1HbsYOsi; Fri, 13 Sep 2024 08:03:59 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id p1HasqQL8P7Vfp1HasAIZC; Fri, 13 Sep 2024 08:03:59 +0000
+X-Authority-Analysis: v=2.4 cv=XpL8O0F9 c=1 sm=1 tr=0 ts=66e3f1ef
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=rpUMG24A1zG+UrzXDtAMsg==:17
+ a=IkcTkHD0fZMA:10 a=EaEq8P2WXUwA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
+ a=VRFK7ttmmsBj0-VOgosA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=XQUgST2hsoYMlW6hQha6OjD7pqx6B4iAGIMnvvwRLPs=; b=AI9viBmbhmxJm8FoCGNzYlt2vy
+	DGQ8gORPXixu62Dy5PwLlXXy8s+1Wmw5BvjnU5VA/lCnrnIWENFeGS0ZRtHfi1dOP0FkfsbYC4+BL
+	d4d+oo7oxxj7pfTklZfrJKRo0ncq7VTwsK3DARfAli/l6VqAI8UJuZEGXR8CrsfoAJvxAoaxyMjGT
+	5vj3WAEdBNN1n5bxmIrCPM6ibz1pwFrlLtOiQYawzTyEy7iUSPfKqqXKuHy98xZFqEiABauEoCQv4
+	cC5eqsjwv8gqNF+NJGRKX4UZipiWXTtT6NXsIY5+vLoeqqTy3p0ELLJRTXw+AsqHPnWjLSQ/JQZGp
+	qnjthbZQ==;
+Received: from [185.44.53.103] (port=47678 helo=[192.168.1.187])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1sp1HZ-003eph-1s;
+	Fri, 13 Sep 2024 03:03:58 -0500
+Message-ID: <38e13999-b44d-40eb-96d9-01d4a3f4594e@embeddedor.com>
+Date: Fri, 13 Sep 2024 10:03:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] wifi: iwlwifi: fw/mvm: Avoid multiple
+ -Wflex-array-member-not-at-end warnings
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+ Kalle Valo <kvalo@kernel.org>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <Zr5c2DVAp3mWVO6h@elsanto>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <Zr5c2DVAp3mWVO6h@elsanto>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLJsWRmVeSWpSXmKPExsWy7bCmhe7jj4/TDO5dNbR4MG8bm8X9T31M
-	Fmv2nmOymH/kHKvFy1n32Cw2Pb7GanF51xw2ixnn9zFZ3Fi3j93iycIzTBb/9+xgt5i0+DyT
-	xeOX/5gdeD02repk81i5Zg2rx+Yl9R47vzewe/RtWcXo8XmTXABbVLZNRmpiSmqRQmpecn5K
-	Zl66rZJ3cLxzvKmZgaGuoaWFuZJCXmJuqq2Si0+ArltmDtChSgpliTmlQKGAxOJiJX07m6L8
-	0pJUhYz84hJbpdSClJwC8wK94sTc4tK8dL281BIrQwMDI1OgwoTsjKsL2lgKNnFXfLw8l72B
-	8RBnFyMnh4SAicSTs79Yuxi5OIQEdjBKbJ62jxHC+cQoseTvI3YI5xujxJwPr5i7GDnAWpb3
-	mkPE9zJKvHg6hxnC+cgocWzmSmaQuWwCWhLbDr9iAkmICLxmlGjqfQdWxSzwlVFie2srK0iV
-	sICrxL2/n1hAbBYBVYmOba1g3bwCdhLXPv9lhLhQXuL646NMIDangL3E7uY+NogaQYmTM5+A
-	9TID1TRvnQ22QEJgLofEr7W72SCaXSRufv4ANUhY4tXxLewQtpTE53d7oWryJVauPMEEYddI
-	3GvbxQJh20ssOvOTHeRnZgFNifW79CHeV5Y4cgtqLZ9Ex+G/7BBhXomONiEIU1Vi+rIAiBnS
-	EhNnrGWDCHtInN+iDAmqSYwSF9pWsk5gVJiF5JdZSH6ZhbB2ASPzKkax1ILi3PTUYqMCY3gE
-	J+fnbmIEp1st9x2MM95+0DvEyMTBeIhRgoNZSYR3EtujNCHelMTKqtSi/Pii0pzU4kOMpsCQ
-	nsgsJZqcD0z4eSXxhiaWBiZmZobmRqYG5krivPda56YICaQnlqRmp6YWpBbB9DFxcEo1MGkn
-	t0orynR+sP4//5B5u/F/Tb3ABS/PFEap/tp5srFVMPzLlITIf8tP1V32ctszyd9Cpnv/1xNl
-	lf2RvZonuI3VTaokehdr3jY+yBm5fGF5l45WoUrn78w2DW6pq++VTS7V/GK9dnZi7Rqt2wWG
-	rAe3xyvqvPh4e/tSoXC3k+vjPi7743hmYVJetVjGK5ulogIqh1d6B91lXFbuzNlb/fAaY0Hw
-	jSveEw07kx7tn/v2PqOzvbUAW9brW4eVO4ViHthOkbv6I4PP+f4/n92L3G+6M22e0PbuVVfB
-	2YzcXd9WPC6dXsRQ8ql50gX1M1vfnAm1/jeLcSPT1msPrzLs/7/1frCfm4jo+abS881s65RY
-	ijMSDbWYi4oTAWu7RNdABAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsWy7bCSvO7jj4/TDBqOClg8mLeNzeL+pz4m
-	izV7zzFZzD9yjtXi5ax7bBabHl9jtbi8aw6bxYzz+5gsbqzbx27xZOEZJov/e3awW0xafJ7J
-	4vHLf8wOvB6bVnWyeaxcs4bVY/OSeo+d3xvYPfq2rGL0+LxJLoAtissmJTUnsyy1SN8ugSvj
-	6oI2loJN3BUfL89lb2A8xNnFyMEhIWAisbzXvIuRi0NIYDejRMOKD+xdjJxAcWmJI79fsEHY
-	whL3W46wQhS9Z5SY3v8LLMEmoCWx7fArJpCECEji7JdfjCAJZoHfjBIbFhiD2MICrhL3/n5i
-	AbFZBFQlOra1MoPYvAJ2Etc+/2WE2CAvcf3xUSYQm1PAXmJ3cx/YAiGgmukLWtgh6gUlTs58
-	wgIxX16ieets5gmMArOQpGYhSS1gZFrFKJlaUJybnltsWGCYl1quV5yYW1yal66XnJ+7iREc
-	G1qaOxi3r/qgd4iRiYPxEKMEB7OSCO8ktkdpQrwpiZVVqUX58UWlOanFhxilOViUxHnFX/Sm
-	CAmkJ5akZqemFqQWwWSZODilGpgyd3ybdu7TOkMrXia9peIX/D1sTE8lJE1rejjpzaoDb21F
-	zG3jz7x6eUxxVdn8/5fCz/zQuGt5JmFZhHrgE4+j7xsnTow8+iHiu7ZSBrfbMf4HXUY7xOxj
-	xd98PdT9TdqUMzk4n7t4RWFD/MJtd8viHZUZ7V6GK9241BAVffVbzKHeKseHGUeMZV/udjr9
-	IOuS3Kkphbv/hWzqa1j49PqsJxwebF0H+7x2sGmfaT97oylaZs2Cbi/exhPXJMruXfb3vxt2
-	3ynQ8lqEVE3eFtHET6qOK/sEjSSnfGM+mCXbOM9ga61cgxP3Kn+B7mJujTbb3CfsvEGv2Kaw
-	PNvUXX/uw40y/f9r/2zzdHgx45ASS3FGoqEWc1FxIgD4Sj3W/AIAAA==
-X-CMS-MailID: 20240913080347epcas2p46fd90107fe54b8eab3a031cf2fbd592c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240913080347epcas2p46fd90107fe54b8eab3a031cf2fbd592c
-References: <20240913080325.3676181-1-trunixs.kim@samsung.com>
-	<CGME20240913080347epcas2p46fd90107fe54b8eab3a031cf2fbd592c@epcas2p4.samsung.com>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 185.44.53.103
+X-Source-L: No
+X-Exim-ID: 1sp1HZ-003eph-1s
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.187]) [185.44.53.103]:47678
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfCOW6+6byUyDGndfQTgSBUKH9vc2xVn5+MxsFdHFkK3L5t0fvPwezxR1NMs79a/3Uwa8nwa5/U4jaYN//0/KbJ7eLSKMeiPB7OCV8mOJ9dikSjd2hcIw
+ E+jNEyhr8Rw5QD8asvACxbsKXRPs5kRGmdG7uyELJpGrHO2qqkOTgS3mBT3AmIChq2Un2tdKbUicRyTesC4ghvNd7plKOWayMcdSnbXxwRbSH3GmR9jeHn4g
 
-From: Byoungtae Cho <bt.cho@samsung.com>
+Hi all,
 
-Adds two watchdog devices for ExynosAutoV920 SoC.
+Friendly ping: who can take this, please? 🙂
 
-Signed-off-by: Byoungtae Cho <bt.cho@samsung.com>
-Signed-off-by: Taewan Kim <trunixs.kim@samsung.com>
----
- .../arm64/boot/dts/exynos/exynosautov920.dtsi | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-index c1c8566d74f5..de210f8e5599 100644
---- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
-@@ -297,6 +297,26 @@ pinctrl_aud: pinctrl@1a460000 {
- 			compatible = "samsung,exynosautov920-pinctrl";
- 			reg = <0x1a460000 0x10000>;
- 		};
-+
-+		watchdog_cl0: watchdog@10060000 {
-+			compatible = "samsung,exynosautov920-wdt";
-+			reg = <0x10060000 0x100>;
-+			interrupts = <GIC_SPI 953 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&xtcxo>, <&xtcxo>;
-+			clock-names = "watchdog", "watchdog_src";
-+			samsung,syscon-phandle = <&pmu_system_controller>;
-+			samsung,cluster-index = <0>;
-+		};
-+
-+		watchdog_cl1: watchdog@10070000 {
-+			compatible = "samsung,exynosautov920-wdt";
-+			reg = <0x10070000 0x100>;
-+			interrupts = <GIC_SPI 952 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&xtcxo>, <&xtcxo>;
-+			clock-names = "watchdog", "watchdog_src";
-+			samsung,syscon-phandle = <&pmu_system_controller>;
-+			samsung,cluster-index = <1>;
-+		};
- 	};
- 
- 	timer {
+Thanks
 -- 
-2.46.0
+Gustavo
 
+On 15/08/24 21:54, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
+> 
+> So, in order to avoid ending up with a flexible-array member in the
+> middle of multiple other structs, we use the `__struct_group()`
+> helper to create a new tagged `struct iwl_tx_cmd_hdr`. This structure
+> groups together all the members of the flexible `struct iwl_tx_cmd`
+> except the flexible array.
+> 
+> As a result, the array is effectively separated from the rest of the
+> members without modifying the memory layout of the flexible structure.
+> We then change the type of the middle struct members currently causing
+> trouble from `struct iwl_tx_cmd` to `struct iwl_tx_cmd_hdr`.
+> 
+> We also want to ensure that when new members need to be added to the
+> flexible structure, they are always included within the newly created
+> tagged struct. For this, we use `static_assert()`. This ensures that the
+> memory layout for both the flexible structure and the new tagged struct
+> is the same after any changes.
+> 
+> This approach avoids having to implement `struct iwl_tx_cmd_hdr`
+> as a completely separate structure, thus preventing having to maintain
+> two independent but basically identical structures, closing the door
+> to potential bugs in the future.
+> 
+> We also use `container_of()` whenever we need to retrieve a pointer to
+> the flexible structure, through which we can access the flexible-array
+> member, if necessary.
+> 
+> Worth mentioning is that the union at the end of the flexible structure
+> was replaced by a direct declaration of flexible-array member `hdr[]`
+> as `payload` is unnecessary.
+> 
+> So, with these changes, fix the following warnings:
+> 
+> drivers/net/wireless/intel/iwlwifi/fw/api/tx.h:745:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/net/wireless/intel/iwlwifi/fw/api/tx.h:764:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/net/wireless/intel/iwlwifi/mvm/../fw/api/tdls.h:134:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/net/wireless/intel/iwlwifi/mvm/../fw/api/tdls.h:53:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/net/wireless/intel/iwlwifi/mvm/../fw/api/tx.h:745:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/net/wireless/intel/iwlwifi/mvm/../fw/api/tx.h:764:27: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+>   .../net/wireless/intel/iwlwifi/fw/api/tdls.h  |  4 +-
+>   .../net/wireless/intel/iwlwifi/fw/api/tx.h    | 61 ++++++++++---------
+>   .../net/wireless/intel/iwlwifi/mvm/mac-ctxt.c |  8 ++-
+>   drivers/net/wireless/intel/iwlwifi/mvm/tdls.c |  8 ++-
+>   4 files changed, 45 insertions(+), 36 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/intel/iwlwifi/fw/api/tdls.h b/drivers/net/wireless/intel/iwlwifi/fw/api/tdls.h
+> index 893438aadab0..0ea6c0e37750 100644
+> --- a/drivers/net/wireless/intel/iwlwifi/fw/api/tdls.h
+> +++ b/drivers/net/wireless/intel/iwlwifi/fw/api/tdls.h
+> @@ -50,7 +50,7 @@ struct iwl_tdls_channel_switch_timing {
+>    */
+>   struct iwl_tdls_channel_switch_frame {
+>   	__le32 switch_time_offset;
+> -	struct iwl_tx_cmd tx_cmd;
+> +	struct iwl_tx_cmd_hdr tx_cmd;
+>   	u8 data[IWL_TDLS_CH_SW_FRAME_MAX_SIZE];
+>   } __packed; /* TDLS_STA_CHANNEL_SWITCH_FRAME_API_S_VER_1 */
+>   
+> @@ -131,7 +131,7 @@ struct iwl_tdls_config_cmd {
+>   	struct iwl_tdls_sta_info sta_info[IWL_MVM_TDLS_STA_COUNT];
+>   
+>   	__le32 pti_req_data_offset;
+> -	struct iwl_tx_cmd pti_req_tx_cmd;
+> +	struct iwl_tx_cmd_hdr pti_req_tx_cmd;
+>   	u8 pti_req_template[];
+>   } __packed; /* TDLS_CONFIG_CMD_API_S_VER_1 */
+>   
+> diff --git a/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h b/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h
+> index c5277e2f8cd4..903f0f7517e0 100644
+> --- a/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h
+> +++ b/drivers/net/wireless/intel/iwlwifi/fw/api/tx.h
+> @@ -222,34 +222,37 @@ enum iwl_tx_offload_assist_flags_pos {
+>    * and then the actial payload.
+>    */
+>   struct iwl_tx_cmd {
+> -	__le16 len;
+> -	__le16 offload_assist;
+> -	__le32 tx_flags;
+> -	struct {
+> -		u8 try_cnt;
+> -		u8 btkill_cnt;
+> -		__le16 reserved;
+> -	} scratch; /* DRAM_SCRATCH_API_U_VER_1 */
+> -	__le32 rate_n_flags;
+> -	u8 sta_id;
+> -	u8 sec_ctl;
+> -	u8 initial_rate_index;
+> -	u8 reserved2;
+> -	u8 key[16];
+> -	__le32 reserved3;
+> -	__le32 life_time;
+> -	__le32 dram_lsb_ptr;
+> -	u8 dram_msb_ptr;
+> -	u8 rts_retry_limit;
+> -	u8 data_retry_limit;
+> -	u8 tid_tspec;
+> -	__le16 pm_frame_timeout;
+> -	__le16 reserved4;
+> -	union {
+> -		DECLARE_FLEX_ARRAY(u8, payload);
+> -		DECLARE_FLEX_ARRAY(struct ieee80211_hdr, hdr);
+> -	};
+> +	/* New members MUST be added within the __struct_group() macro below. */
+> +	__struct_group(iwl_tx_cmd_hdr, __hdr, __packed,
+> +		__le16 len;
+> +		__le16 offload_assist;
+> +		__le32 tx_flags;
+> +		struct {
+> +			u8 try_cnt;
+> +			u8 btkill_cnt;
+> +			__le16 reserved;
+> +		} scratch; /* DRAM_SCRATCH_API_U_VER_1 */
+> +		__le32 rate_n_flags;
+> +		u8 sta_id;
+> +		u8 sec_ctl;
+> +		u8 initial_rate_index;
+> +		u8 reserved2;
+> +		u8 key[16];
+> +		__le32 reserved3;
+> +		__le32 life_time;
+> +		__le32 dram_lsb_ptr;
+> +		u8 dram_msb_ptr;
+> +		u8 rts_retry_limit;
+> +		u8 data_retry_limit;
+> +		u8 tid_tspec;
+> +		__le16 pm_frame_timeout;
+> +		__le16 reserved4;
+> +	);
+> +
+> +	struct ieee80211_hdr hdr[];
+>   } __packed; /* TX_CMD_API_S_VER_6 */
+> +static_assert(offsetof(struct iwl_tx_cmd, hdr) == sizeof(struct iwl_tx_cmd_hdr),
+> +	      "struct member likely outside of __struct_group()");
+>   
+>   struct iwl_dram_sec_info {
+>   	__le32 pn_low;
+> @@ -742,7 +745,7 @@ struct iwl_mvm_compressed_ba_notif {
+>    * @frame: the template of the beacon frame
+>    */
+>   struct iwl_mac_beacon_cmd_v6 {
+> -	struct iwl_tx_cmd tx;
+> +	struct iwl_tx_cmd_hdr tx;
+>   	__le32 template_id;
+>   	__le32 tim_idx;
+>   	__le32 tim_size;
+> @@ -761,7 +764,7 @@ struct iwl_mac_beacon_cmd_v6 {
+>    * @frame: the template of the beacon frame
+>    */
+>   struct iwl_mac_beacon_cmd_v7 {
+> -	struct iwl_tx_cmd tx;
+> +	struct iwl_tx_cmd_hdr tx;
+>   	__le32 template_id;
+>   	__le32 tim_idx;
+>   	__le32 tim_size;
+> diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c b/drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c
+> index dfcc96f18b4f..41e276f2fcf8 100644
+> --- a/drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c
+> +++ b/drivers/net/wireless/intel/iwlwifi/mvm/mac-ctxt.c
+> @@ -1053,8 +1053,10 @@ static int iwl_mvm_mac_ctxt_send_beacon_v6(struct iwl_mvm *mvm,
+>   {
+>   	struct iwl_mvm_vif *mvmvif = iwl_mvm_vif_from_mac80211(vif);
+>   	struct iwl_mac_beacon_cmd_v6 beacon_cmd = {};
+> +	struct iwl_tx_cmd *beacon_cmd_tx =
+> +		container_of(&beacon_cmd.tx, struct iwl_tx_cmd, __hdr);
+>   
+> -	iwl_mvm_mac_ctxt_set_tx(mvm, vif, beacon, &beacon_cmd.tx);
+> +	iwl_mvm_mac_ctxt_set_tx(mvm, vif, beacon, beacon_cmd_tx);
+>   
+>   	beacon_cmd.template_id = cpu_to_le32((u32)mvmvif->id);
+>   
+> @@ -1073,8 +1075,10 @@ static int iwl_mvm_mac_ctxt_send_beacon_v7(struct iwl_mvm *mvm,
+>   {
+>   	struct iwl_mvm_vif *mvmvif = iwl_mvm_vif_from_mac80211(vif);
+>   	struct iwl_mac_beacon_cmd_v7 beacon_cmd = {};
+> +	struct iwl_tx_cmd *beacon_cmd_tx =
+> +			container_of(&beacon_cmd.tx, struct iwl_tx_cmd, __hdr);
+>   
+> -	iwl_mvm_mac_ctxt_set_tx(mvm, vif, beacon, &beacon_cmd.tx);
+> +	iwl_mvm_mac_ctxt_set_tx(mvm, vif, beacon, beacon_cmd_tx);
+>   
+>   	beacon_cmd.template_id = cpu_to_le32((u32)mvmvif->id);
+>   
+> diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tdls.c b/drivers/net/wireless/intel/iwlwifi/mvm/tdls.c
+> index 3d25ff5cd7e8..7e45445c3ce6 100644
+> --- a/drivers/net/wireless/intel/iwlwifi/mvm/tdls.c
+> +++ b/drivers/net/wireless/intel/iwlwifi/mvm/tdls.c
+> @@ -341,6 +341,8 @@ iwl_mvm_tdls_config_channel_switch(struct iwl_mvm *mvm,
+>   	struct iwl_tdls_channel_switch_cmd cmd = {0};
+>   	struct iwl_tdls_channel_switch_cmd_tail *tail =
+>   		iwl_mvm_chan_info_cmd_tail(mvm, &cmd.ci);
+> +	struct iwl_tx_cmd *tail_frame_tx_cmd =
+> +		container_of(&tail->frame.tx_cmd, struct iwl_tx_cmd, __hdr);
+>   	u16 len = sizeof(cmd) - iwl_mvm_chan_info_padding(mvm);
+>   	int ret;
+>   
+> @@ -410,13 +412,13 @@ iwl_mvm_tdls_config_channel_switch(struct iwl_mvm *mvm,
+>   			ret = -EINVAL;
+>   			goto out;
+>   		}
+> -		iwl_mvm_set_tx_cmd_ccmp(info, &tail->frame.tx_cmd);
+> +		iwl_mvm_set_tx_cmd_ccmp(info, tail_frame_tx_cmd);
+>   	}
+>   
+> -	iwl_mvm_set_tx_cmd(mvm, skb, &tail->frame.tx_cmd, info,
+> +	iwl_mvm_set_tx_cmd(mvm, skb, tail_frame_tx_cmd, info,
+>   			   mvmsta->deflink.sta_id);
+>   
+> -	iwl_mvm_set_tx_cmd_rate(mvm, &tail->frame.tx_cmd, info, sta,
+> +	iwl_mvm_set_tx_cmd_rate(mvm, tail_frame_tx_cmd, info, sta,
+>   				hdr->frame_control);
+>   	rcu_read_unlock();
+>   
 
