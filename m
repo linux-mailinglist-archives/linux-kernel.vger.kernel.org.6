@@ -1,127 +1,144 @@
-Return-Path: <linux-kernel+bounces-328648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C95839786E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:36:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 525029786E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:37:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7475A1F23A9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:36:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86C171C21BB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CAED82D70;
-	Fri, 13 Sep 2024 17:36:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3841B1C14;
-	Fri, 13 Sep 2024 17:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C47285931;
+	Fri, 13 Sep 2024 17:36:43 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE001C14;
+	Fri, 13 Sep 2024 17:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726248999; cv=none; b=pCKoi58N9iZrD3f59WS51LuZWW3ilY1zJc+/2TFUj8EKHEFmysfzX2q5EUXjV9JNSoohXSpLKEWfe2dj/RtqxmbREequur1ifEG+loB5OfHe7Ocl9r4l1MYrfTUMDTppwHNbc0FzXrCFNhnI4omZ0PX17ZRNIVtfLyLNiHvlYGE=
+	t=1726249002; cv=none; b=uBmC/e4xpLvVno0HfH2hD6BmXoPVqUkwsMTyzL3Frt2Dwf0W5E+9gnpXNMb2Bm6GWMLFhYFWLpn/7Nt4gO1a4HhvntJzMpCE3mcoE315QmpmJyukYpuy66x6e5M4y800/SCDuuXqi6O/oHLpIa2/nItsBsZeWjsovwI8jX9/7Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726248999; c=relaxed/simple;
-	bh=i4sBOolzT6ahoQSSuKXWmcVCJLLVD2qcsAVFDfhP6MI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=imANcuoYu31FhyfXgUyZBuy5nONtT8441UzISIbV8UgPxip0ebAZbwlfJid7BEvBQIdwW/Wv+v/OAdtnjKSedU1Ac+WqjG8SBQMKeFekcd78SfCAgJeW4JPWxPTz0ejBg77GDGQslS5Cu9bxRlLlvBOwMveHMZq/u170hdx8MYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 676CD13D5;
-	Fri, 13 Sep 2024 10:37:05 -0700 (PDT)
-Received: from [192.168.1.12] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC4A33F64C;
-	Fri, 13 Sep 2024 10:36:33 -0700 (PDT)
-Message-ID: <6f365e5b-220c-4b2e-8a56-a5135b216e62@arm.com>
-Date: Fri, 13 Sep 2024 19:36:27 +0200
+	s=arc-20240116; t=1726249002; c=relaxed/simple;
+	bh=D11EquOkxJRaOVUkKtxsD3m2xYUCqKKmdjEKiBybbjk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZkHYvvWsJf1C2cvxPMzRpuuckcxpQGkQi+Y7M5zmktmU8/rgEKr4jcEMXpQqlDfuYwg5iYlXoD+Cl/eeebsBpUb8gFD/AXCmTwrNniVJoMkyhthl2b6UhOHLlhjui98X8jnekUSpz+oLxWt1l7ja2EZX42TqkL1jWh9JCwdbrGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+X-CSE-ConnectionGUID: rC3uDd1ZStKvMmGMZmghbw==
+X-CSE-MsgGUID: itPzId6UQA+J2tcbHhARUQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25095539"
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="25095539"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 10:36:41 -0700
+X-CSE-ConnectionGUID: 1+fOcsm8QZ6oe9+CessA4g==
+X-CSE-MsgGUID: URKtfhegR7+1jeTkfiofQQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="72954063"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 10:36:36 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy.shevchenko@gmail.com>)
+	id 1spADh-00000008ND0-0smQ;
+	Fri, 13 Sep 2024 20:36:33 +0300
+Date: Fri, 13 Sep 2024 20:36:32 +0300
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: "Nechita, Ramona" <Ramona.Nechita@analog.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	"Tanislav, Cosmin" <Cosmin.Tanislav@analog.com>,
+	"Hennerich, Michael" <Michael.Hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, "Sa, Nuno" <Nuno.Sa@analog.com>,
+	David Lechner <dlechner@baylibre.com>,
+	"Schmitt, Marcelo" <Marcelo.Schmitt@analog.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	Matteo Martelli <matteomartelli3@gmail.com>,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	Mike Looijmans <mike.looijmans@topic.nl>,
+	"linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v5 2/3] Documentation: ABI: added filter mode doc in
+ sysfs-bus-iio
+Message-ID: <ZuR4IE-mwhL27ZG0@smile.fi.intel.com>
+References: <20240912121609.13438-1-ramona.nechita@analog.com>
+ <20240912121609.13438-3-ramona.nechita@analog.com>
+ <CAHp75VdOjodDaz6J4sWOiT2HHmdXpOPcWeS5kz4e3rB_=gh3xw@mail.gmail.com>
+ <SN6PR03MB4320EC2760F85BB6B0DDEED4F3652@SN6PR03MB4320.namprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/fair: Fix integer underflow
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
-References: <20240913085824.404709-1-pierre.gondois@arm.com>
- <CAKfTPtB2=_O=dJbTH=e_Hg80_rcSvBgwUP+ZMehfyG4sG5W6iQ@mail.gmail.com>
-Content-Language: en-US
-From: Pierre Gondois <pierre.gondois@arm.com>
-In-Reply-To: <CAKfTPtB2=_O=dJbTH=e_Hg80_rcSvBgwUP+ZMehfyG4sG5W6iQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SN6PR03MB4320EC2760F85BB6B0DDEED4F3652@SN6PR03MB4320.namprd03.prod.outlook.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hello Vincent,
+On Fri, Sep 13, 2024 at 02:06:48PM +0000, Nechita, Ramona wrote:
+> >>
+> >> The filter mode / filter type property is used for ad4130 and ad7779
+> >> drivers, therefore the ABI doc file for ad4130 was removed, merging
+> >> both of them in the sysfs-bus-iio.
 
-On 9/13/24 18:14, Vincent Guittot wrote:
-> Hi Pierre
+...
+
+> >> +What:          /sys/bus/iio/devices/iio:deviceX/filter_type_available
+> >> +What:          /sys/bus/iio/devices/iio:deviceX/in_voltage-voltage_filter_mode_available
+> >> +KernelVersion: 6.1
+> >
+> >I believe I have already commented on this. The commit message keeps silent about version changes. Why?
 > 
-> On Fri, 13 Sept 2024 at 10:58, Pierre Gondois <pierre.gondois@arm.com> wrote:
->>
->> (struct sg_lb_stats).idle_cpus is of type 'unsigned int'.
->> (local->idle_cpus - busiest->idle_cpus) can underflow to UINT_MAX
->> for instance, and max_t(long, 0, UINT_MAX) will output UINT_MAX.
->>
->> Use lsub_positive() instead of max_t().
-> 
-> Have you faced the problem or this patch is based on code review ?
-> 
-> we have the below in sched_balance_find_src_group() that should ensure
-> that we have local->idle_cpus > busiest->idle_cpus
-> 
-> if (busiest->group_weight > 1 &&
->      local->idle_cpus <= (busiest->idle_cpus + 1)) {
->      /*
->      * If the busiest group is not overloaded
->      * and there is no imbalance between this and busiest
->      * group wrt idle CPUs, it is balanced. The imbalance
->      * becomes significant if the diff is greater than 1
->      * otherwise we might end up to just move the imbalance
->      * on another group. Of course this applies only if
->      * there is more than 1 CPU per group.
->      */
->      goto out_balanced;
-> }
+> I mentioned it in the cover-letter, since the attributes of two devices were
+> merged, and one of them was available in 6.1 ad the other in 6.2, it felt
+> appropriate to leave it as 6.1.
+> I was wondering if this is ok or if it should be kept as 6.2. Should this be
+> mentioned in the commit message as well?
 
-It was with this setup:
-- busiest->group_type == group_overloaded
-so it might not have checked the value. I can check the exact path if desired,
+Please, mention in the commit message.
 
-Regards,
-Pierre
-
-
+> >> +Contact:       linux-iio@vger.kernel.org
+> >> +Description:
+> >> +               Reading returns a list with the possible filter modes. Options
+> >> +               for the attribute:
+> >> +                       * "sinc3"       - The digital sinc3 filter. Moderate 1st conversion time.
+> >> +                   Good noise performance.
+> >> +                       * "sinc4"       - Sinc 4. Excellent noise performance. Long
+> >> +                       1st conversion time.
+> >> +                       * "sinc5"       - The digital sinc5 filter. Excellent noise performance
+> >> +                       * "sinc4+sinc1" - Sinc4 + averaging by 8. Low 1st conversion
+> >> +                   time.
+> >> +                       * "sinc3+rej60" - Sinc3 + 60Hz rejection.
+> >> +                       * "sinc3+sinc1" - Sinc3 + averaging by 8. Low 1st conversion
+> >> +                   time.
+> >> +                       * "sinc3+pf1"   - Sinc3 + device specific Post Filter 1.
+> >> +                       * "sinc3+pf2"   - Sinc3 + device specific Post Filter 2.
+> >> +                       * "sinc3+pf3"   - Sinc3 + device specific Post Filter 3.
+> >> +                       * "sinc3+pf4"   - Sinc3 + device specific Post Filter 4.
+> >
+> >Also, the original file was more verbose for the complex cases, like
+> >"sinc3+pfX", why has this been changed?
 > 
->>
->> Fixes: 0b0695f2b34a ("sched/fair: Rework load_balance()")
->> cc: stable@vger.kernel.org
->> Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
->> ---
->>   kernel/sched/fair.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index 9057584ec06d..6d9124499f52 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -10775,8 +10775,8 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
->>                           * idle CPUs.
->>                           */
->>                          env->migration_type = migrate_task;
->> -                       env->imbalance = max_t(long, 0,
->> -                                              (local->idle_cpus - busiest->idle_cpus));
->> +                       env->imbalance = local->idle_cpus;
->> +                       lsub_positive(&env->imbalance, busiest->idle_cpus);
->>                  }
->>
->>   #ifdef CONFIG_NUMA
->> --
->> 2.25.1
->>
+> Since this is a more generic file I was advised to leave out specific
+> details, should I include them just as they were in the original file?
+
+I would leave the examples for the mentioned chip in the parentheses. But it's
+up to Jonathan, I have no such device anyway, so personally I'm not affected
+:-)
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
