@@ -1,162 +1,121 @@
-Return-Path: <linux-kernel+bounces-328394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D14139782CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:42:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 070099782E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1369F1F225EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:42:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A34FB1F22B4C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614083FE55;
-	Fri, 13 Sep 2024 14:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB37208C4;
+	Fri, 13 Sep 2024 14:47:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b/mYaPBw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HZ4lmL5D"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE70639FCF;
-	Fri, 13 Sep 2024 14:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292B129CE3;
+	Fri, 13 Sep 2024 14:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726238541; cv=none; b=OofLHpEMy8ZF7VGOte9Rp1dKY9FhG+n6NfpVijwrXx6bpp4JfVb0WFzQ5mb354t6mfnRcYfBZkCkhcaMGgXSuaBpNAtks+82qtpwXTvH6qDsnzAh4YrJqHxzaIB09dymOFLovKrDQ18ukHiRH2L4VQsTzXZCzArcvlj8xeBg4yM=
+	t=1726238876; cv=none; b=BLYyhtkV9cPXMrAAgcpNr+8CNAs636ACUmMIcN0Bfbl+WFNXmVPmSe/7wt6V4jGlpCvlRR+EsdI7QzJgbsmaalpnef8hylLkwLdrEDh2DQOZho6nxA7nYr5n9zSN8NYW66O+bSkKcX9+Vs7K8curvdKHHZR5p68IXKBvV/Hn4SQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726238541; c=relaxed/simple;
-	bh=8yB6wiIlyPSVlBf4rJCJJhvxljsZBL+jUgEgkzGOIio=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RcEKycVsBwM7yvl0CS2RMco0mGxMwvWPEIdPKd+cG1F1MyAroD7DTF28tpRXJVlPJzGk2Y4Hssq+wW0nYe1XGWHOEsoEwTKfLAen1nCKp48w8NQSuq0MVGpybAyCuYDMx9HqEeEfzZpzl1SqLWP9XR1aqWWa7ATg7NVxzPYmQ1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b/mYaPBw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 421F4C4CEC0;
-	Fri, 13 Sep 2024 14:42:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726238541;
-	bh=8yB6wiIlyPSVlBf4rJCJJhvxljsZBL+jUgEgkzGOIio=;
-	h=From:To:Cc:Subject:Date:From;
-	b=b/mYaPBwbyDstmt/s5IgMu/7Xr9o85dPOOjfi+1Q/tjXo2zqzxtOjWx9buJptOU2k
-	 8e/1/Bi++t0JO+87inhLUXhrlmg1zSGyC0Zrt62TEdmcNlj/UVPZ3CRYicg/1I60VR
-	 RwrMfkLIaw3Iqi2671J7Tj2R1Te4RUgAHuZvBhJiNhllHx+jjpchuURA+Nsd988IIM
-	 2KHRT5ecBjxT9GvTZPWYBG3ljC+dbUZaLLmw4CLZxwd9+9Xe3eyQ0B5O6elqx5NzbG
-	 axATpkZbCl2gVcMLSd8ZzfcBhHlt5vn2dmlxgtS8jWXEDIpcRWgsSrubnTVLmmcP2+
-	 XuD8p2qeqa9XQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs mount
-Date: Fri, 13 Sep 2024 16:41:58 +0200
-Message-ID: <20240913-vfs-mount-ff71ba96c312@brauner>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1726238876; c=relaxed/simple;
+	bh=FsvMNSjsqkmpovx3KipovB3Nr37RFysiVdtAEGJB5Ko=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gecMYcY+QhKBZtT/mBO0gGGzePnaO7lv5lze1FF3YywqI0m3NI90aqsJsOdou/PjBE9PHEMY+e12BcoXh7uBOlPECC1WBwkcKxjf9N9n859I7uc6z9/olChanKWQw9ZKf8GnFcyPFpORolT8PKJBrEjT/QhIBUZNsFdACF3F2NE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HZ4lmL5D; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48D74ZVp028394;
+	Fri, 13 Sep 2024 14:42:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=aA0VD6ILZwVsRCqF6gyMIXcvET
+	Ry4AHsm47dMSMexos=; b=HZ4lmL5DfAEi7SrWDWljVLFu/HrpBbdPmmOfbd5XNZ
+	DalIyxewb9m7uYdGawvPM3GwWsNir1FVhgzJPUx7n1qghWrp4Jrn5/p230j2NLvB
+	PzIwecRik9bz/0aOX3n90CY8ecNCcvyNG+L22PaFgVkLsKaZUTBzoeXZO9vGQ4Xr
+	2VyKbbWO/sRrfwv6qgDmL4GISwGTM5IGB7UJxjn0+pq8+XSHh4LhfiJuNmbQ0vNO
+	SDXFhI6gGUzO+IJFwMiVLVxOkHL0l1PvhioAVpWqOyFIYWGszElhjN7WRyKx6pQW
+	4ZQBSQOOhuTfjtfTAfT6s+j6szsR67+P3HmG+1j5sLIw==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41geg02de4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 14:42:37 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48DCgFTA027389;
+	Fri, 13 Sep 2024 14:42:36 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 41h3v3pev3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 14:42:36 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48DEgYu522413890
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Sep 2024 14:42:35 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B762758058;
+	Fri, 13 Sep 2024 14:42:34 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5BD9858059;
+	Fri, 13 Sep 2024 14:42:34 +0000 (GMT)
+Received: from ltcden12-lp3.aus.stglabs.ibm.com (unknown [9.40.195.53])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 13 Sep 2024 14:42:34 +0000 (GMT)
+From: Danny Tsen <dtsen@linux.ibm.com>
+To: linux-crypto@vger.kernel.org
+Cc: stable@vger.kernel.org, herbert@gondor.apana.org.au, leitao@debian.org,
+        nayna@linux.ibm.com, appro@cryptogams.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        mpe@ellerman.id.au, ltcgcw@linux.vnet.ibm.com, dtsen@us.ibm.com,
+        Danny Tsen <dtsen@linux.ibm.com>
+Subject: [PATCH v2] crypto: Removing CRYPTO_AES_GCM_P10.
+Date: Fri, 13 Sep 2024 10:42:23 -0400
+Message-ID: <20240913144223.1783162-1-dtsen@linux.ibm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3702; i=brauner@kernel.org; h=from:subject:message-id; bh=8yB6wiIlyPSVlBf4rJCJJhvxljsZBL+jUgEgkzGOIio=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ98XcymbR0etTenx1adoyXp5/ZPVPFpSNx/ar8oN3Me 2cc3OS7uKOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiZT6MDAdqbDbf2Mr55HLp 7/1nF/Xle2sdLRYLDVpp38j/h5FpkRjDf8csxuSLunKatiLFufGsszi4WSO59z4v3GgyRUCs/tE ZHgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: -CEw3quGPWS97YQJeKZRXaB0Yg4lcMyu
+X-Proofpoint-ORIG-GUID: -CEw3quGPWS97YQJeKZRXaB0Yg4lcMyu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-13_11,2024-09-13_02,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=808 priorityscore=1501
+ adultscore=0 clxscore=1011 spamscore=0 bulkscore=0 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409130102
 
-Hey Linus,
+Disabling CRYPTO_AES_GCM_P10 in Kconfig first so that we can apply the
+subsequent patches to fix data mismatch over ipsec tunnel.
 
-/* Summary */
+Signed-off-by: Danny Tsen <dtsen@linux.ibm.com>
+---
+ arch/powerpc/crypto/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Recently, we added the ability to list mounts in other mount namespaces
-and the ability to retrieve namespace file descriptors without having to
-go through procfs by deriving them from pidfds.
+diff --git a/arch/powerpc/crypto/Kconfig b/arch/powerpc/crypto/Kconfig
+index 09ebcbdfb34f..46a4c85e85e2 100644
+--- a/arch/powerpc/crypto/Kconfig
++++ b/arch/powerpc/crypto/Kconfig
+@@ -107,6 +107,7 @@ config CRYPTO_AES_PPC_SPE
+ 
+ config CRYPTO_AES_GCM_P10
+ 	tristate "Stitched AES/GCM acceleration support on P10 or later CPU (PPC)"
++	depends on BROKEN
+ 	depends on PPC64 && CPU_LITTLE_ENDIAN && VSX
+ 	select CRYPTO_LIB_AES
+ 	select CRYPTO_ALGAPI
+-- 
+2.43.0
 
-This extends nsfs in two ways:
-
-(1) Add the ability to retrieve information about a mount namespace via
-    NS_MNT_GET_INFO. This will return the mount namespace id and the
-    number of mounts currently in the mount namespace. The number of
-    mounts can be used to size the buffer that needs to be used for
-    listmount() and is in general useful without having to actually
-    iterate through all the mounts.
-
-    The structure is extensible.
-
-(2) Add the ability to iterate through all mount namespaces over which
-    the caller holds privilege returning the file descriptor for the
-    next or previous mount namespace.
-
-    To retrieve a mount namespace the caller must be privileged wrt to
-    it's owning user namespace. This means that PID 1 on the host can
-    list all mounts in all mount namespaces or that a container can list
-    all mounts of its nested containers.
-
-    Optionally pass a structure for NS_MNT_GET_INFO with
-    NS_MNT_GET_{PREV,NEXT} to retrieve information about the mount
-    namespace in one go.
-
-(1) and (2) can be implemented for other namespace types easily.
-
-Together with recent api additions this means one can iterate through
-all mounts in all mount namespaces without ever touching procfs. The
-merge message contains example code how to do this.
-
-/* Testing */
-
-gcc version 14.2.0 (Debian 14.2.0-3)
-Debian clang version 16.0.6 (27+b1)
-
-All patches are based on v6.11-rc1 and have been sitting in linux-next.
-No build failures or warnings were observed.
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-(1) linux-next: build failure after merge of the bpf-next tree
-    https://lore.kernel.org/r/20240913133240.066ae790@canb.auug.org.au
-
-    The reported merge conflict isn't really with bpf-next but with the
-    series to convert to fd_file() accessors for the changed struct fd
-    representation.
-
-    The patch you need to fix this however is correct in that draft. But
-    honestly, it's pretty easy for you to figure out on your own anyway.
-
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
-
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.12.mount
-
-for you to fetch changes up to 49224a345c488a0e176f193a60a2a76e82349e3e:
-
-  Merge patch series "nsfs: iterate through mount namespaces" (2024-08-09 12:47:05 +0200)
-
-Please consider pulling these changes from the signed vfs-6.12.mount tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.12.mount
-
-----------------------------------------------------------------
-Christian Brauner (5):
-      fs: allow mount namespace fd
-      fs: add put_mnt_ns() cleanup helper
-      file: add fput() cleanup helper
-      nsfs: iterate through mount namespaces
-      Merge patch series "nsfs: iterate through mount namespaces"
-
- fs/mount.h                    |  13 ++++++
- fs/namespace.c                |  74 +++++++++++++++++++++++++-----
- fs/nsfs.c                     | 102 +++++++++++++++++++++++++++++++++++++++++-
- include/linux/file.h          |   2 +
- include/linux/mnt_namespace.h |   4 ++
- include/uapi/linux/nsfs.h     |  16 +++++++
- 6 files changed, 198 insertions(+), 13 deletions(-)
 
