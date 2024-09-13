@@ -1,186 +1,179 @@
-Return-Path: <linux-kernel+bounces-327614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71673977859
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:30:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05CF5977862
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:31:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DB6B1F25CB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:30:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DDFCB26E1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAFC71A4E86;
-	Fri, 13 Sep 2024 05:29:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C45418592B;
+	Fri, 13 Sep 2024 05:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bpksQqTz"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PNuU1yff"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F28B17D377;
-	Fri, 13 Sep 2024 05:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F153C13A87C;
+	Fri, 13 Sep 2024 05:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726205380; cv=none; b=ofhxlScYoxF10EyWHAmUebivxEXSbsOkOJ/bmf7lK/L1sCdIqlaakpaW/Z0W5DxHS/xfEQpEXKbXCIEZhjFk9tRwdT8CzKtHldIuV218C7R+DUmlJVRPUnzmZrNDnVFqDlFtKrefkEfLgbDYQ49FCershsBIWB3KrsG/eaA8f04=
+	t=1726205475; cv=none; b=IykZ3D1dz5cRT6qAV3mfr0ok1IbM7kcarukNwHdV+ZT1vQquXR8/Wraz0/M13RJAL297lKCKO90LYFGStC9yagTtme4PQgGKHszieN/I5qtslbo49A3jIDA5UDn9SiOfyQWMKHIWBWxZMd52OkPWUkRDVyFd83Hho/1KFzl0ArU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726205380; c=relaxed/simple;
-	bh=5R5XaxTZbPrsH411hnN/29R+a8+Lk8LpNL0Ge4qRBwQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QFk5sRSotXqNrpu7Z2fsujhLQDzjp1oa5R0wavCdYGqurQQ15P0Rgg9LY1I0fO53BThEWnvL5XxDOLVUPqpQmCf+iKkkc6pap6uYUmF2Oav6mVSB5isTs3+O1qEH27el8hzfaErrTiazZLBPgmzbmUC8ek5BsFemYJHrmZ6/sb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bpksQqTz; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726205378; x=1757741378;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5R5XaxTZbPrsH411hnN/29R+a8+Lk8LpNL0Ge4qRBwQ=;
-  b=bpksQqTzZerHPYIwdraqgFRXeac9rohYkiLRczHm4zaUq+F9rB7y99jU
-   ld22K6Yoihl9oTEfOi+FFMppHwjbs1pN0sqo8OMpvknUrnQTKJRItuZfs
-   kLMLtUSgX8E2PXXwR8eDatkP9j+5NMZ9PDMFM/e2mhuu+SK1FsKh1dq3q
-   D4jFaBrnpbJR0b5hOk+TwOWwB+csVKsk4h3it/gGUAZmUc1K4unHaxWdU
-   q6GKItwMzy8rVsudLq9BfXJ/tBa2VPJ9M4LnL+teyEOOP3EXa9M09R81l
-   q5xHHDeJfUxaEkqh8FtVCQDj+5wJ/YSlWDT7Qs4ekccbBMr01yfY4o9Eb
-   A==;
-X-CSE-ConnectionGUID: RHr3juOMSPmNY5RUUSDlRg==
-X-CSE-MsgGUID: IBMuq5uZRj6SweLBcQNHqw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="25190253"
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="25190253"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 22:29:36 -0700
-X-CSE-ConnectionGUID: SFWThGLxT8uu6phGmNFlIw==
-X-CSE-MsgGUID: o02l+adqSz+fVPIA//19Sw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="72047678"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 12 Sep 2024 22:29:34 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1soys8-00062m-2g;
-	Fri, 13 Sep 2024 05:29:32 +0000
-Date: Fri, 13 Sep 2024 13:29:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: Wenliang <wenliang202407@163.com>, linux@roeck-us.net
-Cc: oe-kbuild-all@lists.linux.dev, jdelvare@suse.com,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Wenliang <wenliang202407@163.com>
-Subject: Re: [PATCH linux dev 6.11] hwmon:add new hwmon driver sq52205
-Message-ID: <202409131320.Ne0lQtTj-lkp@intel.com>
-References: <20240822074426.7241-1-wenliang202407@163.com>
+	s=arc-20240116; t=1726205475; c=relaxed/simple;
+	bh=hLvwALJYS0Ms5X5w32Gr/vWBFtFxSedf0uASpJp8Pmo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GB4n0/Ipf6NIaVfDzdrirLGfHmlxmm7aE7OPf6sDM/8Y3FCfVRCzJR+Ify6Y5qF0blcxyDi1TXpILTxf+x7Hw0dgjrzrt2Hc6fkC/qgdx4QZijRKXSKBEKhnlJ5ap01acHnU5rskVPmqIh3FEYnMuAXhOQ5nuG8Ir/jWWX0OKzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PNuU1yff; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48CMD3AK014383;
+	Fri, 13 Sep 2024 05:31:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ebwHcJiJ19PCSvJeefM2jzsbHo9gyE7rK7UJ+ppe14M=; b=PNuU1yffx7pL7s5b
+	XTa2xtOGozhaA8gzQ89C/R+6yIC/qNCUCANI1P3oo4AliLwvoo9jt2wDutk/7EHq
+	vqeOGueKO6kGsi4IPZdAuDVniAlW3DmtAvl5hYQpSgw43z2c2i9ndhClF/gHGLOm
+	FYFCinkM+7njopET9DrQC0K3XCe6qzQATwPij+kqhb87www36nX07GjUJNdmjl1m
+	BDl5l0Py5cCH/oVCGxqKAcQ9ImYNNDnpmCNgjbb5KbyRUyUg9NDhBcwWjHg8NpW8
+	U7udRJnqudE6H0IllvZ5XztqV3zT964Amt0XmsiGpPWh78z+c0P6gYVoULkxthvi
+	3xxQEQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy51fgej-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 05:31:10 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48D5V8mH010986
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 05:31:08 GMT
+Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 12 Sep
+ 2024 22:31:04 -0700
+Message-ID: <936f151e-6951-4dea-95ed-35374ab249cf@quicinc.com>
+Date: Fri, 13 Sep 2024 11:01:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240822074426.7241-1-wenliang202407@163.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] clk: qcom: lpassaudiocc-sc7280: Add support for
+ LPASS resets for QCM6490
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, <quic_imrashai@quicinc.com>,
+        <quic_jkona@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240816-qcm6490-lpass-reset-v1-0-a11f33cad3c5@quicinc.com>
+ <20240816-qcm6490-lpass-reset-v1-2-a11f33cad3c5@quicinc.com>
+ <67819a53-8e99-469b-a458-8c00034fec4a@kernel.org>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <67819a53-8e99-469b-a458-8c00034fec4a@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: eZ-fiT7bS5-zNR_6vyY_ds7-VSuMStCe
+X-Proofpoint-GUID: eZ-fiT7bS5-zNR_6vyY_ds7-VSuMStCe
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ mlxscore=0 bulkscore=0 mlxlogscore=999 priorityscore=1501
+ lowpriorityscore=0 malwarescore=0 clxscore=1015 phishscore=0
+ suspectscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2408220000 definitions=main-2409130038
 
-Hi Wenliang,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on linux/master]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Wenliang/hwmon-add-new-hwmon-driver-sq52205/20240912-002906
-base:   linux/master
-patch link:    https://lore.kernel.org/r/20240822074426.7241-1-wenliang202407%40163.com
-patch subject: [PATCH linux dev 6.11] hwmon:add new hwmon driver sq52205
-config: openrisc-randconfig-r072-20240913 (https://download.01.org/0day-ci/archive/20240913/202409131320.Ne0lQtTj-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240913/202409131320.Ne0lQtTj-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409131320.Ne0lQtTj-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/hwmon/sq52205.c: In function 'sq522xx_probe':
->> drivers/hwmon/sq52205.c:493:44: error: assignment of member 'max_register' in read-only object
-     493 |         sq522xx_regmap_config.max_register = data->config->registers;
-         |                                            ^
 
 
-vim +/max_register +493 drivers/hwmon/sq52205.c
+On 8/17/2024 2:55 PM, Krzysztof Kozlowski wrote:
+> On 16/08/2024 10:32, Taniya Das wrote:
+>> On the QCM6490 boards the LPASS firmware controls the complete clock
+>> controller functionalities. But the LPASS resets are required to be
+>> controlled from the high level OS. The Audio SW driver should be able to
+>> assert/deassert the audio resets as required. Thus in clock driver add
+>> support for the resets.
+>>
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>> ---
+>>   drivers/clk/qcom/lpassaudiocc-sc7280.c | 23 +++++++++++++++++++----
+>>   1 file changed, 19 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>> index 45e726477086..b64393089263 100644
+>> --- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>> +++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>> @@ -1,6 +1,7 @@
+>>   // SPDX-License-Identifier: GPL-2.0-only
+>>   /*
+>>    * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+>> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+>>    */
+>>   
+>>   #include <linux/clk-provider.h>
+>> @@ -713,14 +714,24 @@ static const struct qcom_reset_map lpass_audio_cc_sc7280_resets[] = {
+>>   	[LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
+>>   };
+>>   
+>> +static const struct regmap_config lpass_audio_cc_sc7280_reset_regmap_config = {
+>> +	.name = "lpassaudio_cc_reset",
+>> +	.reg_bits = 32,
+>> +	.reg_stride = 4,
+>> +	.val_bits = 32,
+>> +	.fast_io = true,
+>> +	.max_register = 0xc8,
+>> +};
+>> +
+>>   static const struct qcom_cc_desc lpass_audio_cc_reset_sc7280_desc = {
+>> -	.config = &lpass_audio_cc_sc7280_regmap_config,
+>> +	.config = &lpass_audio_cc_sc7280_reset_regmap_config,
+>>   	.resets = lpass_audio_cc_sc7280_resets,
+>>   	.num_resets = ARRAY_SIZE(lpass_audio_cc_sc7280_resets),
+>>   };
+>>   
+>>   static const struct of_device_id lpass_audio_cc_sc7280_match_table[] = {
+>> -	{ .compatible = "qcom,sc7280-lpassaudiocc" },
+>> +	{ .compatible = "qcom,qcm6490-lpassaudiocc", .data = &lpass_audio_cc_reset_sc7280_desc },
+> 
+> That's odd to see sc7280 reset added for qcm6490, but not used fot
+> sc7280 at all. Didn't you mean here lpass_audio_cc_qcm6409_desc?
+> 
+> 
+The resets descriptor(lpass_audio_cc_reset_sc7280_desc) is not part of 
+the global clock descriptor(lpass_cc_sc7280_desc) as these are part of 
+different regmaps.
 
-   460	
-   461	static int sq522xx_probe(struct i2c_client *client)
-   462	{
-   463		struct device *dev = &client->dev;
-   464		struct sq522xx_data *data;
-   465		struct device *hwmon_dev;
-   466		u32 val;
-   467		int ret, group = 0;
-   468		enum sq522xx_ids chip;
-   469	
-   470		if (client->dev.of_node)
-   471			chip = (uintptr_t)of_device_get_match_data(&client->dev);
-   472		else
-   473			chip = i2c_match_id(sq522xx_id, client)->driver_data;
-   474	
-   475		data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-   476		if (!data)
-   477			return -ENOMEM;
-   478	
-   479		/* set the device type */
-   480		data->client = client;
-   481		data->config = &sq522xx_config[chip];
-   482		mutex_init(&data->config_lock);
-   483	
-   484		if (of_property_read_u32(dev->of_node, "shunt-resistor", &val) < 0)
-   485			val = SQ522XX_RSHUNT_DEFAULT;
-   486	
-   487	
-   488		if (val <= 0 || val > data->config->calibration_factor)
-   489			return -ENODEV;
-   490	
-   491		data->rshunt = val;
-   492	
- > 493		sq522xx_regmap_config.max_register = data->config->registers;
-   494	
-   495		data->regmap = devm_regmap_init_i2c(client, &sq522xx_regmap_config);
-   496		if (IS_ERR(data->regmap)) {
-   497			dev_err(dev, "failed to allocate register map\n");
-   498			return PTR_ERR(data->regmap);
-   499		}
-   500	
-   501	
-   502		ret = sq522xx_init(data);
-   503		if (ret < 0) {
-   504			dev_err(dev, "error configuring the device: %d\n", ret);
-   505			return -ENODEV;
-   506		}
-   507		if (chip == sq52205) {
-   508			ret = sq52205_init(data);
-   509			if (ret < 0) {
-   510				dev_err(dev, "error configuring the device cal: %d\n", ret);
-   511				return -ENODEV;
-   512			}
-   513		}
-   514	
-   515		data->groups[group++] = &sq522xx_group;
-   516		if (chip == sq52205)
-   517			data->groups[group++] = &sq52205_group;
-   518	
-   519		hwmon_dev = devm_hwmon_device_register_with_groups(dev, client->name,
-   520									data, data->groups);
-   521		if (IS_ERR(hwmon_dev))
-   522			return PTR_ERR(hwmon_dev);
-   523	
-   524		dev_info(dev, "power monitor %s (Rshunt = %li uOhm)\n",
-   525			 client->name, data->rshunt);
-   526	
-   527		return 0;
-   528	}
-   529	
+On a non-QCM6490(SC7280) boards the resets are registered after the 
+global descriptor is registered.
+
+But on QCM6490 board we need to register only the reset descriptor and 
+no clocks are to be handled/registered and thus passed the match data 
+for QCM6490 boards only.
+
+> Best regards,
+> Krzysztof
+> 
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks & Regards,
+Taniya Das.
 
