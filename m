@@ -1,244 +1,328 @@
-Return-Path: <linux-kernel+bounces-328157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 733F6977FB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:19:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0EE2977FBD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:21:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB4CBB20C85
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:19:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1B96B22B65
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A501E1D9329;
-	Fri, 13 Sep 2024 12:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C5B1DA0E1;
+	Fri, 13 Sep 2024 12:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=vignesh.raman@collabora.com header.b="DpDYps18"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Eu97YHXZ"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420A01D7E2D
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726229960; cv=pass; b=hSkwfMK/1RVFxoNl7mlAv31teQdQhecki84EwOIbFpLYqohPSmuBv9QGRg2eiXwQoN3JMQdlmS1mUiNNnRQo9Kys5bYy1pB16ILC6bnsdT53NKPDlF4kLISySGZSEO1uNx/MrqaYNRTza3ALvUq5aAVNBXh3Q8pnbr5xjJHde5c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726229960; c=relaxed/simple;
-	bh=7qFV8ouhOjYdPEBwkN+qQKOmsuOahD/KhIPUm+HNUnY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pu0atKGeXibrGCYZeph1YodpxS+0Rf7ahb5+mBVoMUeygE6cAztymYT8oJA/EU9VOv4EYCNLlyi10RZnYgxmVT/1YsYp3l4xxYw4SEY5GSA/r+AQCxXBE1QXJsvi6PDic7H2YSDajCP2Ce/vAmV8TcAPLy5relgk6aLbHAiogdQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=vignesh.raman@collabora.com header.b=DpDYps18; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1726229954; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=AA0OWO+k8gJ6Wg9omSdFa5q1lTJY5LDIZnPSjAEbBkT6fTyytaw1FwtwPebjtyz5WdSP4g0pE+IYPsy/q2vQx5XmtuHR8VuSb4T8p89pQvp6QI0VfhV13ftcYEFDZ1GdCYzCzc4vkqy6UQqzh3K2yp+umTD41dShkNBHDpzQWeE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1726229954; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=cVUFU5KIUA6rufOpcTvDgHhdvtoTT7WEsa6cwDCimqs=; 
-	b=X5AyFhZqmTjs+4vGcb0orUaK96tdfG/mNh1GM3fhhPI9tdpUKkituHJZTPuW3knoDJCKdHLY4a3hiTQfQE++pk2c+qL6d5aomODLlqFfp4G/BrcYctJRSXyka045knMUA8DV6w2Y5pjNCHW95pfKWhbAKsSawW9mSo4jR5T/jpg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=vignesh.raman@collabora.com;
-	dmarc=pass header.from=<vignesh.raman@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726229954;
-	s=zohomail; d=collabora.com; i=vignesh.raman@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=cVUFU5KIUA6rufOpcTvDgHhdvtoTT7WEsa6cwDCimqs=;
-	b=DpDYps18x7sGxBrgRJyK1xEF5Kso6NMelwumV6vr05WMPd3yrovcEWiXZVWTPdzZ
-	JnBDMWzCvu74n98k71VgN9Ft/nluh8EpLcL5390Xluj1uUarcjy3u7/oL/SDFjBg61+
-	VbFNxBYq6QH42k0kKnzacxXzTPcUCnPKH/RcO12Y=
-Received: by mx.zohomail.com with SMTPS id 1726229952619949.3254555456753;
-	Fri, 13 Sep 2024 05:19:12 -0700 (PDT)
-Message-ID: <a81d8d9d-8aa6-4b59-976e-5bca7c8fdaa9@collabora.com>
-Date: Fri, 13 Sep 2024 17:49:02 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7354B1D88D3
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:21:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726230074; cv=none; b=ta2NYsvgbwWpZg6OR/M7UGjBwICWtWVZT8h/1djFkJOxlq+Bf5tUuV4Fe3NsQe8sagrVFCcaEHB/9voEMoxs7hI8O9F9QpR3idMUVJobw8mVbUaxcOAWWDlrHrdBe8S9clP0/7qwlqeq71Lb3pKWpCo9GxKx+WmuCkaoGK8Kllk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726230074; c=relaxed/simple;
+	bh=625Oo2NDSYSjj2f8r/wEx8RCA+JzmVNn6YN3FDWjQJg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qfZEwjf6DBaiPmeLr15Wa9Ust/aXbk5sib8jWaCjnKsOWSIeGgMJSv6ZSSxwimdPL+MYac9j3z9fmCeRhIa6oJKmx00xqwr/MzZLkFPT1iaWLdRKmOyU+ywFN8h9H7N6qgpMgz+pjufg90VMcB2a8lXtpwJf0bqgHxEG97dDTK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Eu97YHXZ; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5367ae52a01so1200634e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 05:21:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726230071; x=1726834871; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lo4ZVnqapTTwf1TxU7CAaNVwjVyFLb9hYsDih6bfwrs=;
+        b=Eu97YHXZyx5dZxnkiHhBiSqijn1aOemcZbk7d8yO/MW2i2G96SmdzZnGvXdaK5m37m
+         s/eHY0tYn9SykYxWZFc9EFWLryJidaO6bdAzxbpivfBgh3qo/ub7hJBL9h7JzLOUfC1+
+         6e36Y66JRGz5VNyLjV2MVjXZsRM71uvfPWGZmHI08dQVXolHYtrgfGfJSwdkaAyqmAja
+         IyD1NpnSrZhC5fNCFAD3WtHYbE/rfm/0ElMe5vrZSyP5r8BBn/JaV8wuI/JK0B9OTISS
+         rgjNwqR8i/HS7hjjx7hIGFjNRvApapAhuUaxIF1MKufEnRSVmgXrSxa+zQn5Vv/uNZ60
+         TTbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726230071; x=1726834871;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lo4ZVnqapTTwf1TxU7CAaNVwjVyFLb9hYsDih6bfwrs=;
+        b=Az+MPKsEt95HvcaDDlbX4Do/KPN6YjYNjR7MjvEcFWY3emgtN0MAaS1zTdZawKbUze
+         6S0Ort84M2uViM8wDGZ+5KHqgJnfzqMPv5uNbT1VCSPQxyeXk95TTUSWVrXDxK16sAvT
+         /Yl88d0uTUoSV3kZFLxet3wv42mIXRMsInr6E4fgK5FIG53N8JbCpQeaeTWeALqvHJ1t
+         vq490rF+HCQg/um0cAU3LdXmb2ztZnzfmcJQl8IbS3I3mUQ3hWPqPY2FRVxi1r1ookcQ
+         VVXAWbaQrVTkuINmQYdpzjkBnHSkm1uaFUV3aX18Owfqm+WcZ430bD3EsmWyUg6KbPS5
+         Sk1g==
+X-Forwarded-Encrypted: i=1; AJvYcCXEUsbVV/lZcms+ePvScLpiTWilt9oeTJGvVe9+eFNmfy5EulDxYKyKYTHWcE+i4eHEb9VGIQehoJROlFQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcVKPCs4m6TAX5xTzDoz6dGDzlO8KhcvUxyut/ISk0bGR4jTFx
+	TOVesJHwAxkXJrM8zOGMpU0uC7x7+FjAwl/mOetqxxqb+tnSGxcfC+j+UoB//fc=
+X-Google-Smtp-Source: AGHT+IHTw5M9AaVBseki1oFupqjrbJ5LF7PaDftiWnMSBPnVi9nRpuuPAvJasGEWRAVEgo0fmUCmjg==
+X-Received: by 2002:a05:6512:6d2:b0:530:aeea:27e1 with SMTP id 2adb3069b0e04-5367ff33789mr1789612e87.50.1726230069590;
+        Fri, 13 Sep 2024 05:21:09 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f90e3besm2252267e87.299.2024.09.13.05.21.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 05:21:09 -0700 (PDT)
+Date: Fri, 13 Sep 2024 15:21:07 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: "Gaurav Kashyap (QUIC)" <quic_gaurkash@quicinc.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, 
+	Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
+	Mikulas Patocka <mpatocka@redhat.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Asutosh Das <quic_asutoshd@quicinc.com>, Ritesh Harjani <ritesh.list@gmail.com>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
+	"Theodore Y. Ts'o" <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	"manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>, "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, 
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"dm-devel@lists.linux.dev" <dm-devel@lists.linux.dev>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, 
+	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, "linux-fscrypt@vger.kernel.org" <linux-fscrypt@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, 
+	"bartosz.golaszewski" <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v6 09/17] soc: qcom: ice: add HWKM support to the ICE
+ driver
+Message-ID: <egtwyk2rp3mtnw2ry6npq5xjfhjvtnymbxy66zevtdi7yvaav4@gcnmrmtqro4b>
+References: <20240906-wrapped-keys-v6-9-d59e61bc0cb4@linaro.org>
+ <7uoq72bpiqmo2olwpnudpv3gtcowpnd6jrifff34ubmfpijgc6@k6rmnalu5z4o>
+ <66953e65-2468-43b8-9ccf-54671613c4ab@linaro.org>
+ <ivibs6qqxhbikaevys3iga7s73xq6dzq3u43gwjri3lozkrblx@jxlmwe5wiq7e>
+ <98cc8d71d5d9476297a54774c382030d@quicinc.com>
+ <CAA8EJpp_HY+YmMCRwdteeAHnSHtjuHb=nFar60O_PwLwjk0mNA@mail.gmail.com>
+ <9bd0c9356e2b471385bcb2780ff2425b@quicinc.com>
+ <20240912231735.GA2211970@google.com>
+ <CAA8EJpq3sjfB0BsJTs3_r_ZFzhrrpy-A=9Dx9ks2KrDNYCntdg@mail.gmail.com>
+ <20240913045716.GA2292625@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] drm/ci: enable lockdep detection
-To: Rob Clark <robdclark@gmail.com>
-Cc: Helen Mae Koike Fornazier <helen.koike@collabora.com>,
- dri-devel <dri-devel@lists.freedesktop.org>, daniels
- <daniels@collabora.com>, airlied <airlied@gmail.com>,
- daniel <daniel@ffwll.ch>, "guilherme.gallo" <guilherme.gallo@collabora.com>,
- "sergi.blanch.torne" <sergi.blanch.torne@collabora.com>,
- "deborah.brouwer" <deborah.brouwer@collabora.com>,
- linux-kernel <linux-kernel@vger.kernel.org>
-References: <20240812112030.81774-1-vignesh.raman@collabora.com>
- <191483d05a3.129198f97500814.8001634600010504645@collabora.com>
- <0a3db7dc-4533-4111-bec9-35cc68e35d83@collabora.com>
- <1914d612d8e.f2d5101b916106.3138016556910118397@collabora.com>
- <42753719-9619-45f1-b76a-8ff8d19cec22@collabora.com>
- <CAF6AEGuWHER=k-xGad-aAtOfS10R55W37FcU45phNnJpOwFhWw@mail.gmail.com>
-Content-Language: en-US
-From: Vignesh Raman <vignesh.raman@collabora.com>
-In-Reply-To: <CAF6AEGuWHER=k-xGad-aAtOfS10R55W37FcU45phNnJpOwFhWw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240913045716.GA2292625@google.com>
 
-Hi Rob, Helen,
-
-On 14/08/24 23:11, Rob Clark wrote:
-> On Wed, Aug 14, 2024 at 2:42 AM Vignesh Raman
-> <vignesh.raman@collabora.com> wrote:
->>
->> Hi Helen,
->>
->> On 14/08/24 01:44, Helen Mae Koike Fornazier wrote:
->>>
->>>
->>>
->>>
->>> ---- On Tue, 13 Aug 2024 02:26:48 -0300 Vignesh Raman  wrote ---
->>>
->>>    > Hi Helen,
->>>    >
->>>    > On 13/08/24 01:47, Helen Mae Koike Fornazier wrote:
->>>    > >
->>>    > > Hi Vignesh,
->>>    > >
->>>    > > Thanks for your patch.
->>>    > >
->>>    > >
->>>    > > ---- On Mon, 12 Aug 2024 08:20:28 -0300 Vignesh Raman  wrote ---
->>>    > >
->>>    > >   > We have enabled PROVE_LOCKING (which enables LOCKDEP) in drm-ci.
->>>    > >   > This will output warnings when kernel locking errors are encountered
->>>    > >   > and will continue executing tests. To detect if lockdep has been
->>>    > >   > triggered, check the debug_locks value in /proc/lockdep_stats after
->>>    > >   > the tests have run. When debug_locks is 0, it indicates that lockdep
->>>    > >   > has detected issues and turned itself off. So check this value and
->>>    > >   > exit with an error if lockdep is detected.
->>>    > >
->>>    > > Should we exit with an error? Or with a warning? (GitLab-CI supports that).
->>>    > > Well, I guess it is serious enough.
->>>    >
->>>    > I think we can exit with an error since we check the status at the end
->>>    > of the tests.
->>>
->>> I mean, we can exit with a specific error and configure this specific error in gitlab-ci to be a warning,
->>> so the job will be yellow and not red.
->>>
->>> But maybe the lockdep issue should be a strong error.
->>
->> Yes agree. We can exit with an error for lockdep issue instead of a warning.
+On Fri, Sep 13, 2024 at 04:57:16AM GMT, Eric Biggers wrote:
+> On Fri, Sep 13, 2024 at 07:28:33AM +0300, Dmitry Baryshkov wrote:
+> > On Fri, 13 Sept 2024 at 02:17, Eric Biggers <ebiggers@kernel.org> wrote:
+> > >
+> > > On Thu, Sep 12, 2024 at 10:17:03PM +0000, Gaurav Kashyap (QUIC) wrote:
+> > > >
+> > > > On Monday, September 9, 2024 11:29 PM PDT, Dmitry Baryshkov wrote:
+> > > > > On Tue, 10 Sept 2024 at 03:51, Gaurav Kashyap (QUIC)
+> > > > > <quic_gaurkash@quicinc.com> wrote:
+> > > > > >
+> > > > > > Hello Dmitry and Neil
+> > > > > >
+> > > > > > On Monday, September 9, 2024 2:44 AM PDT, Dmitry Baryshkov wrote:
+> > > > > > > On Mon, Sep 09, 2024 at 10:58:30AM GMT, Neil Armstrong wrote:
+> > > > > > > > On 07/09/2024 00:07, Dmitry Baryshkov wrote:
+> > > > > > > > > On Fri, Sep 06, 2024 at 08:07:12PM GMT, Bartosz Golaszewski wrote:
+> > > > > > > > > > From: Gaurav Kashyap <quic_gaurkash@quicinc.com>
+> > > > > > > > > >
+> > > > > > > > > > Qualcomm's ICE (Inline Crypto Engine) contains a proprietary
+> > > > > > > > > > key management hardware called Hardware Key Manager (HWKM).
+> > > > > > > > > > Add
+> > > > > > > HWKM
+> > > > > > > > > > support to the ICE driver if it is available on the platform.
+> > > > > > > > > > HWKM primarily provides hardware wrapped key support where
+> > > > > the
+> > > > > > > > > > ICE
+> > > > > > > > > > (storage) keys are not available in software and instead
+> > > > > > > > > > protected in
+> > > > > > > hardware.
+> > > > > > > > > >
+> > > > > > > > > > When HWKM software support is not fully available (from
+> > > > > > > > > > Trustzone), there can be a scenario where the ICE hardware
+> > > > > > > > > > supports HWKM, but it cannot be used for wrapped keys. In this
+> > > > > > > > > > case, raw keys have to be used without using the HWKM. We
+> > > > > > > > > > query the TZ at run-time to find out whether wrapped keys
+> > > > > > > > > > support is
+> > > > > > > available.
+> > > > > > > > > >
+> > > > > > > > > > Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
+> > > > > > > > > > Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
+> > > > > > > > > > Signed-off-by: Bartosz Golaszewski
+> > > > > > > > > > <bartosz.golaszewski@linaro.org>
+> > > > > > > > > > ---
+> > > > > > > > > >   drivers/soc/qcom/ice.c | 152
+> > > > > > > +++++++++++++++++++++++++++++++++++++++++++++++--
+> > > > > > > > > >   include/soc/qcom/ice.h |   1 +
+> > > > > > > > > >   2 files changed, 149 insertions(+), 4 deletions(-)
+> > > > > > > > > >
+> > > > > > > > > >   int qcom_ice_enable(struct qcom_ice *ice)
+> > > > > > > > > >   {
+> > > > > > > > > > + int err;
+> > > > > > > > > > +
+> > > > > > > > > >           qcom_ice_low_power_mode_enable(ice);
+> > > > > > > > > >           qcom_ice_optimization_enable(ice);
+> > > > > > > > > > - return qcom_ice_wait_bist_status(ice);
+> > > > > > > > > > + if (ice->use_hwkm)
+> > > > > > > > > > +         qcom_ice_enable_standard_mode(ice);
+> > > > > > > > > > +
+> > > > > > > > > > + err = qcom_ice_wait_bist_status(ice); if (err)
+> > > > > > > > > > +         return err;
+> > > > > > > > > > +
+> > > > > > > > > > + if (ice->use_hwkm)
+> > > > > > > > > > +         qcom_ice_hwkm_init(ice);
+> > > > > > > > > > +
+> > > > > > > > > > + return err;
+> > > > > > > > > >   }
+> > > > > > > > > >   EXPORT_SYMBOL_GPL(qcom_ice_enable);
+> > > > > > > > > > @@ -150,6 +282,10 @@ int qcom_ice_resume(struct qcom_ice
+> > > > > *ice)
+> > > > > > > > > >                   return err;
+> > > > > > > > > >           }
+> > > > > > > > > > + if (ice->use_hwkm) {
+> > > > > > > > > > +         qcom_ice_enable_standard_mode(ice);
+> > > > > > > > > > +         qcom_ice_hwkm_init(ice); }
+> > > > > > > > > >           return qcom_ice_wait_bist_status(ice);
+> > > > > > > > > >   }
+> > > > > > > > > >   EXPORT_SYMBOL_GPL(qcom_ice_resume);
+> > > > > > > > > > @@ -157,6 +293,7 @@ EXPORT_SYMBOL_GPL(qcom_ice_resume);
+> > > > > > > > > >   int qcom_ice_suspend(struct qcom_ice *ice)
+> > > > > > > > > >   {
+> > > > > > > > > >           clk_disable_unprepare(ice->core_clk);
+> > > > > > > > > > + ice->hwkm_init_complete = false;
+> > > > > > > > > >           return 0;
+> > > > > > > > > >   }
+> > > > > > > > > > @@ -206,6 +343,12 @@ int qcom_ice_evict_key(struct qcom_ice
+> > > > > > > > > > *ice,
+> > > > > > > int slot)
+> > > > > > > > > >   }
+> > > > > > > > > >   EXPORT_SYMBOL_GPL(qcom_ice_evict_key);
+> > > > > > > > > > +bool qcom_ice_hwkm_supported(struct qcom_ice *ice) {  return
+> > > > > > > > > > +ice->use_hwkm; }
+> > > > > > > EXPORT_SYMBOL_GPL(qcom_ice_hwkm_supported);
+> > > > > > > > > > +
+> > > > > > > > > >   static struct qcom_ice *qcom_ice_create(struct device *dev,
+> > > > > > > > > >                                           void __iomem *base)
+> > > > > > > > > >   {
+> > > > > > > > > > @@ -240,6 +383,7 @@ static struct qcom_ice
+> > > > > > > > > > *qcom_ice_create(struct
+> > > > > > > device *dev,
+> > > > > > > > > >                   engine->core_clk = devm_clk_get_enabled(dev, NULL);
+> > > > > > > > > >           if (IS_ERR(engine->core_clk))
+> > > > > > > > > >                   return ERR_CAST(engine->core_clk);
+> > > > > > > > > > + engine->use_hwkm = qcom_scm_has_wrapped_key_support();
+> > > > > > > > >
+> > > > > > > > > This still makes the decision on whether to use HW-wrapped keys
+> > > > > > > > > on behalf of a user. I suppose this is incorrect. The user must
+> > > > > > > > > be able to use raw keys even if HW-wrapped keys are available on
+> > > > > > > > > the platform. One of the examples for such use-cases is if a
+> > > > > > > > > user prefers to be able to recover stored information in case of
+> > > > > > > > > a device failure (such recovery will be impossible if SoC is
+> > > > > > > > > damaged and HW-
+> > > > > > > wrapped keys are used).
+> > > > > > > >
+> > > > > > > > Isn't that already the case ? the
+> > > > > BLK_CRYPTO_KEY_TYPE_HW_WRAPPED
+> > > > > > > size
+> > > > > > > > is here to select HW-wrapped key, otherwise the ol' raw key is passed.
+> > > > > > > > Just look the next patch.
+> > > > > > > >
+> > > > > > > > Or did I miss something ?
+> > > > > > >
+> > > > > > > That's a good question. If use_hwkm is set, ICE gets programmed to
+> > > > > > > use hwkm (see qcom_ice_hwkm_init() call above). I'm not sure if it
+> > > > > > > is expected to work properly if after such a call we pass raw key.
+> > > > > > >
+> > > > > >
+> > > > > > Once ICE has moved to a HWKM mode, the firmware key programming
+> > > > > currently does not support raw keys.
+> > > > > > This support is being added for the next Qualcomm chipset in Trustzone to
+> > > > > support both at he same time, but that will take another year or two to hit
+> > > > > the market.
+> > > > > > Until that time, due to TZ (firmware) limitations , the driver can only
+> > > > > support one or the other.
+> > > > > >
+> > > > > > We also cannot keep moving ICE modes, due to the HWKM enablement
+> > > > > being a one-time configurable value at boot.
+> > > > >
+> > > > > So the init of HWKM should be delayed until the point where the user tells if
+> > > > > HWKM or raw keys should be used.
+> > > >
+> > > > Ack.
+> > > > I'll work with Bartosz to look into moving to HWKM mode only during the first key program request
+> > > >
+> > >
+> > > That would mean the driver would have to initially advertise support for both
+> > > HW-wrapped keys and raw keys, and then it would revoke the support for one of
+> > > them later (due to the other one being used).  However, runtime revocation of
+> > > crypto capabilities is not supported by the blk-crypto framework
+> > > (Documentation/block/inline-encryption.rst), and there is no clear path to
+> > > adding such support.  Upper layers may have already checked the crypto
+> > > capabilities and decided to use them.  It's too late to find out that the
+> > > support was revoked in the middle of an I/O request.  Upper layer code
+> > > (blk-crypto, fscrypt, etc.) is not prepared for this.  And even if it was, the
+> > > best it could do is cleanly fail the I/O, which is too late as e.g. it may
+> > > happen during background writeback and cause user data to be thrown away.
+> > 
+> > Can we check crypto capabilities when the user sets the key?
 > 
-> I think that is too strong, lockdep can warn about things which can
-> never happen in practice.  (We've never completely solved some of the
-> things that lockdep complains about in runpm vs shrinker reclaim.)
+> I think you mean when a key is programmed into a keyslot?  That happens during
+> I/O, which is too late as I've explained above.
 > 
-> Surfacing it as a warning is fine.
+> > Compare this to the actual HSM used to secure communication or
+> > storage. It has certain capabilities, which can be enumerated, etc.
+> > But then at the time the user sets the key it is perfectly normal to
+> > return an error because HSM is out of resources. It might even have
+> > spare key slots, but it might be not enough to be able to program the
+> > required key (as a really crazy example, consider the HSM having at
+> > this time a single spare DES key slot, while the user wants to program
+> > 3DES key).
+> 
+> That isn't how the kernel handles inline encryption keyslots.  They are only
+> programmed as needed for I/O.  If they are all in-use by pending I/O requests,
+> then the kernel waits for an I/O request to finish and reprograms the keyslot it
+> was using.  There is never an error reported due to lack of keyslots.
 
-Will send another patch which will exit with an error if lockdep is 
-detected and configure it as a warning in GitLab CI.
+Does that mean that the I/O can be outstanding for the very long period
+of time? Or that if the ICE hardware has just a single keyslot, but
+there are two concurrent I/O processes using two different keys, the
+framework will be constantly swapping the keys programmed to the HW?
 
-Regards,
-Vignesh
+I think it might be prefereable for the drivers and the framework to
+support "preprogramming" of the keys, when the key is programmed to the
+hardware when it is set by the user.
+
+Another option might be to let the drivers validate the keys being set
+by userspace. This way in our case the driver might report that it
+supports both raw and wrapped keys, but start rejecting the keys once
+it gets notified that the user has programmed other kind of keys. This
+way key setup can fail, but the actual I/O can not. WDYT?
+
+> If I/O requests could randomly fail at any time when using inline encryption,
+> then no one would use inline encryption because it would not be reliable.
+
+Yes, I agree here.
 
 > 
-> BR,
-> -R
+> > > So, the choice of support for HW-wrapped vs. raw will need to be made ahead of
+> > > time, rather than being implicitly set by the first use.  That is most easily
+> > > done using a module parameter like qcom_ice.hw_wrapped_keys=1.  Yes, it's a bit
+> > > inconvenient, but there's no realistic way around this currently.
+> > 
+> > This doesn't work for Android usecase. The user isn't able to setup modparams.
 > 
->>>
->>>    >
->>>    > >
->>>    > > Should we also track on the xfail folder? So we can annotate those errors as well?
->>>    >
->>>    > Do you mean reporting this error in expectation files?
->>>
->>> I wonder if there will be cases were we are getting this error and we should ignore it, so in the code
->>> we should check the xfail files to see if we should exit with an error or ignore it.
->>>
->>> For instance, if we have a case where we are having this error, and it is flaky, we might want to add it
->>> to the flakes file list.
->>>
->>> Maybe this is not the case, I'm just wondering.
->>
->>
->> The tests are passing but log shows lockdep warning
->> (https://gitlab.freedesktop.org/vigneshraman/linux/-/jobs/62177711).
->>
->> Moreover if the lockdep warning is emitted, lockdep will not continue to
->> run and there is no need to check this warning for each tests.
->> So added the check at the end of the tests.
->>
->>>
->>>
->>>    >
->>>    > > Did you have an entire pipeline with this? To see if everything is still green?
->>>    >
->>>    > Yes. https://gitlab.freedesktop.org/vigneshraman/linux/-/jobs/62177711
->>>    >
->>>    > This is a test branch in which I reverted a fix for the lockdep issue.
->>>    > We see 'WARNING: bad unlock balance detected!' in logs and pipeline is
->>>    > still green.
->>>
->>> But with your patch, it would red right?
->>
->> Yes it would fail and the pipeline will be red.
->>
->>> With the current patch, is the pipeline still all green?
->>
->> With this current patch, it will fail.
->> Pipeline link to show lockdep_stats before and after tests,
->> https://gitlab.freedesktop.org/vigneshraman/linux/-/pipelines/1246721
->>
->> Regards,
->> Vignesh
->>
->>>
->>> Regards,
->>> Helen
->>>
->>>    >
->>>    > Regards,
->>>    > Vignesh
->>>    >
->>>    > >
->>>    > > Helen
->>>    > >
->>>    > >   >
->>>    > >   > Signed-off-by: Vignesh Raman vignesh.raman@collabora.com>
->>>    > >   > ---
->>>    > >   >
->>>    > >   > v1:
->>>    > >   >  - Pipeline link to show lockdep_stats before and after tests,
->>>    > >   > https://gitlab.freedesktop.org/vigneshraman/linux/-/pipelines/1246721
->>>    > >   >
->>>    > >   > ---
->>>    > >   >  drivers/gpu/drm/ci/igt_runner.sh | 11 +++++++++++
->>>    > >   >  1 file changed, 11 insertions(+)
->>>    > >   >
->>>    > >   > diff --git a/drivers/gpu/drm/ci/igt_runner.sh b/drivers/gpu/drm/ci/igt_runner.sh
->>>    > >   > index f38836ec837c..d2c043cd8c6a 100755
->>>    > >   > --- a/drivers/gpu/drm/ci/igt_runner.sh
->>>    > >   > +++ b/drivers/gpu/drm/ci/igt_runner.sh
->>>    > >   > @@ -85,6 +85,17 @@ deqp-runner junit \
->>>    > >   >  --limit 50 \
->>>    > >   >  --template "See https://$CI_PROJECT_ROOT_NAMESPACE.pages.freedesktop.org/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/results/{{testcase}}.xml"
->>>    > >   >
->>>    > >   > +# Check if /proc/lockdep_stats exists
->>>    > >   > +if [ -f /proc/lockdep_stats ]; then
->>>    > >   > +    # If debug_locks is 0, it indicates lockdep is detected and it turns itself off.
->>>    > >   > +    debug_locks=$(grep 'debug_locks:' /proc/lockdep_stats | awk '{print $2}')
->>>    > >   > +    if [ "$debug_locks" -eq 0 ]; then
->>>    > >   > +        echo "LOCKDEP issue detected. Please check dmesg logs for more information."
->>>    > >   > +        cat /proc/lockdep_stats
->>>    > >   > +        ret=1
->>>    > >   > +    fi
->>>    > >   > +fi
->>>    > >   > +
->>>    > >   >  # Store the results also in the simpler format used by the runner in ChromeOS CI
->>>    > >   >  #sed -r 's/(dmesg-warn|pass)/success/g' /results/results.txt > /results/results_simple.txt
->>>    > >   >
->>>    > >   > --
->>>    > >   > 2.43.0
->>>    > >   >
->>>    > >   >
->>>    >
+> It does work for Android.  The encryption setting that Android uses is
+> configured in the build of Android for the device (by the OEM, or by whoever
+> made the build in the case of a custom build).  Refer to
+> https://source.android.com/docs/security/features/encryption/file-based#enabling-file-based-encryption
+> 
+> Anyone who can change that can also change the kernel command line.
+
+Ok. I think if the 'validation' or 'notify' proposal is declined, I'll
+have to agree to the modparam.
+
+-- 
+With best wishes
+Dmitry
 
