@@ -1,122 +1,107 @@
-Return-Path: <linux-kernel+bounces-328813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 676D0978936
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:59:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83046978947
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 051AEB22E10
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:59:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C8D11F24699
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D598814830D;
-	Fri, 13 Sep 2024 19:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9663514831E;
+	Fri, 13 Sep 2024 20:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LiqJgrq0"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="oIVXLNNf"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EF31487DC;
-	Fri, 13 Sep 2024 19:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50212BA2E;
+	Fri, 13 Sep 2024 20:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726257556; cv=none; b=OSGXRuHB3PaTKCrhhDia5s0H4iOG1w2cvWNLQhrQpN13xn7TGSym5o7PEWMYRlRDsST8rRuOuujnOxXKH0vScXwWBnt1C1N8MlhlORD1sFccEtZyi55fKAZVaUdvOV+sxZlJW4KrKvzrxcUbFziXLr0EA/G5rTnSSYP28HuLOFg=
+	t=1726257947; cv=none; b=JZL5Yl7f1wExYcfpKgKWgowTBlxZ3fcV1tBoIT3eNol0QPao4Hfsng4RDW/dPKUz5mXRencw9JCf22d/Zl4/cWhkpbXBMqgw0uumW85E/Hz3MfhRHSnqW1/M1YWAh5Cx9DNYo5I6yWwtjcDwAPuiHjwYaOPPpQyTQfRYrhsNZd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726257556; c=relaxed/simple;
-	bh=QVoPu5UgDsOwNF+b+s5XZQ9uTM5s6DcN1EGM/gmFP0w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MvExAEh1EBWATBvQ/frdGdGk6sjh+4H4WxMnl7X4pTinJQiD3PNb1EJrXCK3LuHSwRpt72sjsqxw6AbBmVdvwYLarM64qhmhEm5SY7aV7UrUxNirua4htBujJCxGMxQhUT9RisQLxkKR+RCB4VDjCjPkBIWvQW5DRlnRtfPcxZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LiqJgrq0; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2068bee21d8so28303115ad.2;
-        Fri, 13 Sep 2024 12:59:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726257554; x=1726862354; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QVoPu5UgDsOwNF+b+s5XZQ9uTM5s6DcN1EGM/gmFP0w=;
-        b=LiqJgrq0ECeNP51GQX6PXOXWRMsYn11w7byXxFGkLEV74UlnweXLW5ozVn+gOV9aFA
-         iBgpkcjlpoMf3VLvJvWsPshe0L4a46ZU1rEAOTm2Pk8DgOKUtgQcmhMd5UwGCIGAnU8Q
-         ZfU8AaXl4U/Q3ELrjENKXXdn++15Q3gI1rfRQ2tR3YS/vn1KBmfE8TvR44Ht6dGTTvnc
-         cHM6ys6+RfD4zA16rQ1vEA0Ty4jBV+Cu2EzKR5G0hxaYWnY2yJSfq3oJJx4BdcBDK5H3
-         OMq/JzXEygOfIemgNU1sSImV3cCPEuKPaDfbanCHZvNlaMztrd0IMZLlpYxEWwqEnwxl
-         j0+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726257554; x=1726862354;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QVoPu5UgDsOwNF+b+s5XZQ9uTM5s6DcN1EGM/gmFP0w=;
-        b=jbQZo+/FNfLI3hKV5q95E0TPPW2FkWFAqbugizbQ8LuvnkLewVcGvuk0zFlJxYS9eC
-         AWsSg5Y49IPyYDoBjfViaYff+RMDx0x9Q/E3xqvJ32Sy5BaxzIqzm0odswEJidEc8DQf
-         qpA8jzS5t7ABXLfZmuTqRSdaRNKnANQLQkBSV8CCT17cGwdrhCGvJzIGWoPFaBFiJkZI
-         Nw+yPD7qeSBT4LCoplWtGKa96YAtFv9UDAhKyIvCBEkgcsCjnamWJJ0E8XUB3q+sEtoP
-         FzFZkh80+JUNAJn2Zu3n2NVkeQ0mLB7t5RJi2o+9jpL1tZZdmUPXaspbn+l3+SDEp5SU
-         rHjA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6O4ckH8kmivp1ZlD68aNY4FLVaM+WAPuGsRnqd//4zeBdfKWRMDMx1K83l6swHUHkutis9v4kvAM=@vger.kernel.org, AJvYcCWUUtvs2Xquah0tX1TQoYyEsVgys4xLk84fMJpKmMW3ynyxoy0meMAb+Li4/LfskEhSuw5OmuLCBRB+rVE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaeWXZLi87JCkc0vd/a8+wqdEywAa3I0RDoHbocrJ+rlRRcVIS
-	JK5QBTyddcaB8SAEqot8XNS5nbZVBkGhf3WFXlGN5TRN3oYwY3gY
-X-Google-Smtp-Source: AGHT+IEcQ6djuD5zFPAim6v6THvher5zETymPAYgSd11RBJx1VLMGIexPb5FxwgF+tAvHyoinfHNrg==
-X-Received: by 2002:a17:902:d54a:b0:202:9b7:1dc with SMTP id d9443c01a7336-2076e44ba5emr92889665ad.54.1726257554153;
-        Fri, 13 Sep 2024 12:59:14 -0700 (PDT)
-Received: from localhost.localdomain (111-240-84-197.dynamic-ip.hinet.net. [111.240.84.197])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20794605706sm204985ad.117.2024.09.13.12.59.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 12:59:13 -0700 (PDT)
-From: Min-Hua Chen <minhuadotchen@gmail.com>
-To: jwyatt@redhat.com
-Cc: jkacur@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	minhuadotchen@gmail.com,
-	sageofredondo@gmail.com,
-	shuah@kernel.org,
-	trenn@suse.com
-Subject: Re: [PATCH v2 for-next] pm: cpupower: rename raw_pylibcpupower.i
-Date: Sat, 14 Sep 2024 03:58:49 +0800
-Message-ID: <20240913195849.805-1-minhuadotchen@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <ZuRqkbJixRQEScYA@rhfedora>
-References: <ZuRqkbJixRQEScYA@rhfedora>
+	s=arc-20240116; t=1726257947; c=relaxed/simple;
+	bh=wOcXFFZJkYFroI8Y8vyR4sjRArdTV3LbDKjrSMNfqd8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=JLkcK2WwxfUeT2qliUlORy1Mct20J7hUwM56MrOkz1KCfvlp2GDl/TqWjLzmGxXAMabLD4KAb5kRq+UdASluK/n1X1tUVPSDsa0p0T/yRJKhEp3aqYNk4rIGMpwqs21ee0mXQLbGtjjKtvRh9oz7XQZPN9LeLtRybOaqmx8MSHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=oIVXLNNf; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726257941; x=1726862741; i=markus.elfring@web.de;
+	bh=wOcXFFZJkYFroI8Y8vyR4sjRArdTV3LbDKjrSMNfqd8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=oIVXLNNfjNVcyAcY5KU1IY6OkKlQubvXYJHrqK44KVXwEju9g2teSavAfikBz+xU
+	 XKlFrfRi19jzXz2t5cyWTyb5nt+aBdUNffm22diGf8CUEO0A+fjb0iEGp1Wv4XziL
+	 ifJPHUZkn4wqpH/W41Dek2lVJ4L5emBzbdfs/Q6vD3LQMsyiS+MfDn7wYxkWOM2oK
+	 W0SAjrxCdd/4CxZmb5ynP+c2cd/InRAVYUOSE3j7iQEkQG87ZbLJB3A5VszvcMU+V
+	 fFgaAwDTqpFe86tZELlAMxQ8S7F9hPZ/mwOWa55JQfmZIBY+Tv40u2MW9i7fMf3sc
+	 em12KNY9itHBilDaKg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1M5QqN-1soNVx2u0r-00106Q; Fri, 13
+ Sep 2024 22:00:12 +0200
+Message-ID: <014449ba-6b9d-4fb3-8dda-4cbdfa74b9be@web.de>
+Date: Fri, 13 Sep 2024 22:00:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Akashi Takahiro <takahiro.akashi@linaro.org>,
+ Ben Chuang <ben.chuang@genesyslogic.com.tw>,
+ Victor Shih <victor.shih@genesyslogic.com.tw>, linux-mmc@vger.kernel.org,
+ Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ben Chuang <benchuanggli@gmail.com>,
+ Daniil Lunev <dlunev@chromium.org>, Greg Tu <greg.tu@genesyslogic.com.tw>,
+ HL.Liu@genesyslogic.com.tw, Lucas Lai <Lucas.Lai@genesyslogic.com.tw>
+References: <20240913102836.6144-9-victorshihgli@gmail.com>
+Subject: Re: [PATCH V22 08/22] mmc: sdhci: add UHS-II related definitions in
+ headers
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240913102836.6144-9-victorshihgli@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:9buK7XdQBP5rea45pUAwBBXZmpVDqremWuF83st63myOidwYhbF
+ K2oB8TIsKcmGhPWsg5r4URLDXnX9VW1P5pghvGuSWzvbuYK6boavUyUuV9DR3BEa5voYsuH
+ TsA+VsOmEoBMnGxhqLIGgetqpvAaWyHrtlm26LCMIp1MfvrdYzCGP/P2JFhUBD+56vwbNFD
+ XXPWlEvyjL4svqEleFAIg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:6bT37zSAkV0=;pzAV+4hnfTBK5p4KNGFcpU88YR/
+ SpN7tB/w07q3NXhDVZ7HeSaSKBGPo9Tm9L3YjywTtHVVhr9qTaT7D0nAo5DmK0luvT0hY0mxT
+ vClCbhWykeapGtc9dYXR7Kg28BOHLpIjyo9Pln+BqSgNlRDxY1Dx7g19YsJknTN0u17NPtRJv
+ 3W7HY8Ys2QBewHkRHrcMhU4X+qGcydtAROP6vYuaFHXr78hGDbgDzUGPpb2IbbM/BLo2TbsAw
+ X2yNkY4x2UEX3OrYaqq73vUoU/PgKulFk87kdUX4duALNLS+JAipZ5xjAEqwsYl/Y1gsCLaiL
+ bQxfYI0LLNyKD0Thsu2/nERnVuzUiybTuyBiOXK3YHhId07GRLQBdMHwPI6JWe581vTbkcQSi
+ gf8lk87OfCNffyL24+catm0GoSY71GkfFZavc1H8p3Z8EkHXtrLKZC+iBDEBj3jPuOzG3ABIi
+ 6vLnOfkvOxVqfpLiuADUq/0CDs5De6AH1LrgSE4Fz1eOwfLxijZFx627ggVpl03XGHf5K/g+K
+ Zxfs0Dg9w9/MEvjI11uqPyNRshUSzFg9p41MSV34py+sLUqngRuLdNCMOrIDVKK2XSW7E0Bb3
+ dsbrpuYqdUEfrYYku1HS83t4jaVHzXany9zMg6F7latVf4sDKe+WCknjtGbqfYNSpHcHYkJTO
+ pN92MYIIJY31MNcM8AZLsSMvb3/eKg1ta8UtzX7I0D828Mu25JfiVa1gWw7IsP+OfPZgpnM3H
+ nNXO1TenoYfQ3IoGoFd8icP/rdHpnsE2czkqEo+yrLnPjZJOkuYJqioinDVu7wNcMgyI0n6NC
+ hdjFLc+sJV5hiSpXEroZRkOw==
 
->On Fri, Sep 13, 2024 at 07:01:00AM +0800, Min-Hua Chen wrote:
->
->> To fix it, rename raw_pylibcpupower.i to raw_pylibcpupower.if.
->
->Would you please rename this to .swg instead?
+=E2=80=A6
+> +++ b/drivers/mmc/host/sdhci-uhs2.h
+> @@ -0,0 +1,177 @@
+=E2=80=A6
+> +#ifndef __SDHCI_UHS2_H
+> +#define __SDHCI_UHS2_H
+=E2=80=A6
 
-No problem, I will send patch v3 for this.
+I suggest to omit leading underscores from such identifiers.
+https://wiki.sei.cmu.edu/confluence/display/c/DCL37-C.+Do+not+declare+or+d=
+efine+a+reserved+identifier
 
->
->'''
->5.1.1 Input format
->
->As input, SWIG expects a file containing ISO C/C++ declarations and special
->SWIG directives. More often than not, this is a special SWIG interface file
->which is usually denoted with a special .i or .swg suffix.
->'''
-
-Thanks for sharing the document, using .swg extension looks a better solution.
-
-
-cheers,
-Min-Hua
-
->
->https://www.swig.org/Doc4.2/SWIG.html
->
->I tested it and .swg is not removed by 'make clean' or 'make mrproper'.
->
->My apologies for the extra work Min-Hua. I can send a quick patch
->instead if you wish.
+Regards,
+Markus
 
