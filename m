@@ -1,169 +1,173 @@
-Return-Path: <linux-kernel+bounces-327801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02375977B5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:41:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5270977B65
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:42:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD9B51F2099A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:41:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0AAA1C20EF7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9061E1D6DBE;
-	Fri, 13 Sep 2024 08:40:55 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E61031D6C79;
+	Fri, 13 Sep 2024 08:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RpG2SRz6"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1AE1D6C62
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 08:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80151D6C57;
+	Fri, 13 Sep 2024 08:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726216855; cv=none; b=DW9hMjcAAyfOXydPeWLLjvbTq596c2QXKSZ7JV6AJ7hzugtApKHr8uKSqG8825O1VyPGLVvNDWMn+TOAedcZG3jChjBDrHeO2ayd5V+i8DbSoJLYhebiXViY8kEBV4Emk4pDCQKKZDQz0X2Nk9FoM91IGg5AainD1yS5pXCdddI=
+	t=1726216909; cv=none; b=qcdLzWg6cVXb6cbkGPETbrkZ+EEnl7cmRMr7+njH9I9TJVlbrFCVExUfMTXixOtik+rKW3xJQYtCWcBuXqXqOm4HkPOAnTK2K35N4eh7VEFMI/oJXtJP9fKqwrHFgSf07IUJEOKaVKMHMVnWwPM1rOIw+26JIRFLwRv0Z10u9w0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726216855; c=relaxed/simple;
-	bh=laoe3SnMaiPWtPOUgZ8i4FpD13PW4kdI6pvhyusMybw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cIzB1J9xUCnsNjVHH6tvzGcNwyX4pcjqz/bMvZ5h2tctfEPkf1Ej6NrF7petPzmXHbSlJwlIj3NL1OqLwAnKolQdpZPXBVUUeXw0p3x6NyzWxMlOpsaWKLB/D4fBU0hR8ywgA1QuETcFNgCyWXaS0uN7itEYAi8rc3q9YMNP0dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sp1qr-0005nB-L3; Fri, 13 Sep 2024 10:40:25 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sp1qp-007a7Z-TJ; Fri, 13 Sep 2024 10:40:23 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sp1qp-00E1uc-2g;
-	Fri, 13 Sep 2024 10:40:23 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	devicetree@vger.kernel.org
-Subject: [PATCH net-next v3 2/2] net: phy: Add support for PHY timing-role configuration via device tree
-Date: Fri, 13 Sep 2024 10:40:22 +0200
-Message-Id: <20240913084022.3343903-3-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240913084022.3343903-1-o.rempel@pengutronix.de>
-References: <20240913084022.3343903-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1726216909; c=relaxed/simple;
+	bh=Mxg17ZKwDAnIFw5xzrZFUsi1NwSXcmpAqbBiabD/dq0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Wv2o/TFuuaJR5CcRK1bzY861CjKKs5NHnI6bGnRT0ZGmJVTmr5EvtFjPuNJRor6Rg7Ug7RJKQLS7xSZGZgYPGYIJl2L00GKUsAGuELOiDCzvybpnQfOZ+2oNuNFpMwRY2zr9tum741I5RlZzxdB6gkpeo2NFnoS7msrgZnKidlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RpG2SRz6; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48CMBArh025473;
+	Fri, 13 Sep 2024 08:41:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	XaldEHcAoyUk0jfzc2R4+o02uTW5r7INZBjjuXVthlQ=; b=RpG2SRz6WbSt/xje
+	ejYnyWexT9Wv6R0Lq0sEqup8phF+Xaf+cjPasr5TSFuqVj1OQrrcqd0l9hzAySZh
+	pnXXcMl8OUX6rzcEzDH2WQqwG3N4+9QBnEJbZKXooe54O/VG1YMaKZOuhAjzUdPl
+	83liJXjsQ+FiXkMs94+01P1TPKVI591S6zSHFoDEb0ax2/RqiNpElnLuL/oJj5M4
+	55cr2S3tPElJVPd6z8s8BErBmloIaEOC1JMUP75L45uxeKg64cS1pLpu0+KAGVET
+	ksUeZaIMqKUfeMcpTUejEhbAPDg3iSUFEzO57tGmyKm8uweuPbPrSwUB35yGwOvg
+	fSivJA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy8p857g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 08:41:09 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48D8f7VZ018352
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 08:41:07 GMT
+Received: from [10.239.29.179] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 13 Sep
+ 2024 01:41:02 -0700
+Message-ID: <0c3347a5-85a0-4f28-a393-58f9653d80c6@quicinc.com>
+Date: Fri, 13 Sep 2024 16:41:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 8/8] PCI: qcom: Add support to PCIe slot power supplies
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>
+CC: Konrad Dybcio <konradybcio@kernel.org>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <robh@kernel.org>, <andersson@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <abel.vesa@linaro.org>, <quic_msarkar@quicinc.com>,
+        <quic_devipriy@quicinc.com>, <kw@linux.com>, <lpieralisi@kernel.org>,
+        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+References: <20240827063631.3932971-1-quic_qianyu@quicinc.com>
+ <20240827063631.3932971-9-quic_qianyu@quicinc.com>
+ <CAA8EJpq5KergZ8czg4F=EYMLANoOeBsiSVoO-zAgfG0ezQrKCQ@mail.gmail.com>
+ <20240827165826.moe6cnemeheos6jn@thinkpad>
+ <26f2845f-2e29-4887-9f33-0b5b2a06adb6@quicinc.com>
+ <20240911153228.7ajcqicxnu2afhbp@thinkpad>
+ <9222ef18-2eef-4ba3-95aa-fae540c06925@quicinc.com>
+ <d5468dd2-0f81-4d89-a3bd-a546b2395ca6@kernel.org>
+ <20240912144439.fnne4x7qvggveve2@thinkpad>
+ <CAA8EJppSFb+Me6w5vUpmbogQ4DS2=15FmHu4nzGz2POWQPouwA@mail.gmail.com>
+Content-Language: en-US
+From: Qiang Yu <quic_qianyu@quicinc.com>
+In-Reply-To: <CAA8EJppSFb+Me6w5vUpmbogQ4DS2=15FmHu4nzGz2POWQPouwA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: _vNsLo3ok6ERoauWgDGeuNLPTcuWKCiI
+X-Proofpoint-ORIG-GUID: _vNsLo3ok6ERoauWgDGeuNLPTcuWKCiI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ impostorscore=0 mlxscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
+ mlxlogscore=999 lowpriorityscore=0 adultscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409130059
 
-Introduce support for configuring the master/slave role of PHYs based on
-the `timing-role` property in the device tree. While this functionality
-is necessary for Single Pair Ethernet (SPE) PHYs (1000/100/10Base-T1)
-where hardware strap pins may be unavailable or incorrectly set, it
-works for any PHY type.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
-changes v3:
-- rename master-slave to timing-role
----
- drivers/net/phy/phy-core.c   | 33 +++++++++++++++++++++++++++++++++
- drivers/net/phy/phy_device.c |  3 +++
- include/linux/phy.h          |  1 +
- 3 files changed, 37 insertions(+)
+On 9/12/2024 10:49 PM, Dmitry Baryshkov wrote:
+> On Thu, 12 Sept 2024 at 17:45, Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
+>> On Thu, Sep 12, 2024 at 04:15:56PM +0200, Konrad Dybcio wrote:
+>>> On 12.09.2024 3:39 PM, Qiang Yu wrote:
+>>>> On 9/11/2024 11:32 PM, Manivannan Sadhasivam wrote:
+>>>>> On Wed, Sep 11, 2024 at 04:17:41PM +0800, Qiang Yu wrote:
+>>>>>> On 8/28/2024 12:58 AM, Manivannan Sadhasivam wrote:
+>>>>>>> On Tue, Aug 27, 2024 at 02:44:09PM +0300, Dmitry Baryshkov wrote:
+>>>>>>>> On Tue, 27 Aug 2024 at 09:36, Qiang Yu <quic_qianyu@quicinc.com> wrote:
+>>>>>>>>> On platform x1e80100 QCP, PCIe3 is a standard x8 form factor. Hence, add
+>>>>>>>>> support to use 3.3v, 3.3v aux and 12v regulators.
+>>>>>>>> First of all, I don't see corresponding bindings change.
+>>>>>>>>
+>>>>>>>> Second, these supplies power up the slot, not the host controller
+>>>>>>>> itself. As such these supplies do not belong to the host controller
+>>>>>>>> entry. Please consider using the pwrseq framework instead.
+>>>>>>>>
+>>>>>>> Indeed. For legacy reasons, slot power supplies were populated in the host
+>>>>>>> bridge node itself until recently Rob started objecting it [1]. And it makes
+>>>>>>> real sense to put these supplies in the root port node and handle them in the
+>>>>>>> relevant driver.
+>>>>>>>
+>>>>>>> I'm still evaluating whether the handling should be done in the portdrv or
+>>>>>>> pwrctl driver, but haven't reached the conclusion. Pwrctl seems to be the ideal
+>>>>>>> choice, but I see a few issues related to handling the OF node for the root
+>>>>>>> port.
+>>>>>>>
+>>>>>>> Hope I'll come to a conclusion in the next few days and will update this thread.
+>>>>>>>
+>>>>>>> - Mani
+>>>>>>>
+>>>>>>> [1] https://lore.kernel.org/lkml/20240604235806.GA1903493-robh@kernel.org/
+>>>>>> Hi Mani, do you have any updates?
+>>>>>>
+>>>>> I'm working with Bartosz to add a new pwrctl driver for rootports. And we are
+>>>>> debugging an issue currently. Unfortunately, the progress is very slow as I'm on
+>>>>> vacation still.
+>>>>>
+>>>>> Will post the patches once it got resolved.
+>>>>>
+>>>>> - Mani
+>>>> OK, thanks for your update.
+>>> Qiang, you can still resubmit the rest of the patches without having
+>>> to wait on that to be resolved
+>>>
+>> In that case, the slot supplies should be described in the PCIe bridge.
+> Patches 1-6 don't seem to depend on slot supplies, so they can be
+> submitted separately.
+OK, let me send v2 patch. Hi Mani, if you need any supports, please let 
+me know.
 
-diff --git a/drivers/net/phy/phy-core.c b/drivers/net/phy/phy-core.c
-index 1f98b6a96c153..97ff10e226180 100644
---- a/drivers/net/phy/phy-core.c
-+++ b/drivers/net/phy/phy-core.c
-@@ -412,6 +412,39 @@ void of_set_phy_eee_broken(struct phy_device *phydev)
- 	phydev->eee_broken_modes = broken;
- }
- 
-+/**
-+ * of_set_phy_timing_role - Set the master/slave mode of the PHY
-+ *
-+ * @phydev: The phy_device struct
-+ *
-+ * Set master/slave configuration of the PHY based on the device tree.
-+ */
-+void of_set_phy_timing_role(struct phy_device *phydev)
-+{
-+	struct device_node *node = phydev->mdio.dev.of_node;
-+	const char *master;
-+
-+	if (!IS_ENABLED(CONFIG_OF_MDIO))
-+		return;
-+
-+	if (!node)
-+		return;
-+
-+	if (of_property_read_string(node, "timing-role", &master))
-+		return;
-+
-+	if (strcmp(master, "force-master") == 0)
-+		phydev->master_slave_set = MASTER_SLAVE_CFG_MASTER_FORCE;
-+	else if (strcmp(master, "force-slave") == 0)
-+		phydev->master_slave_set = MASTER_SLAVE_CFG_SLAVE_FORCE;
-+	else if (strcmp(master, "prefer-master") == 0)
-+		phydev->master_slave_set = MASTER_SLAVE_CFG_MASTER_PREFERRED;
-+	else if (strcmp(master, "prefer-slave") == 0)
-+		phydev->master_slave_set = MASTER_SLAVE_CFG_SLAVE_PREFERRED;
-+	else
-+		phydev_warn(phydev, "Unknown master-slave mode %s\n", master);
-+}
-+
- /**
-  * phy_resolve_aneg_pause - Determine pause autoneg results
-  *
-diff --git a/drivers/net/phy/phy_device.c b/drivers/net/phy/phy_device.c
-index 560e338b307a4..4ccf504a8b2c2 100644
---- a/drivers/net/phy/phy_device.c
-+++ b/drivers/net/phy/phy_device.c
-@@ -3608,6 +3608,9 @@ static int phy_probe(struct device *dev)
- 	 */
- 	of_set_phy_eee_broken(phydev);
- 
-+	/* Get master/slave strap overrides */
-+	of_set_phy_timing_role(phydev);
-+
- 	/* The Pause Frame bits indicate that the PHY can support passing
- 	 * pause frames. During autonegotiation, the PHYs will determine if
- 	 * they should allow pause frames to pass.  The MAC driver should then
-diff --git a/include/linux/phy.h b/include/linux/phy.h
-index 4a9a11749c554..898ea2e316d2c 100644
---- a/include/linux/phy.h
-+++ b/include/linux/phy.h
-@@ -1260,6 +1260,7 @@ size_t phy_speeds(unsigned int *speeds, size_t size,
- 		  unsigned long *mask);
- void of_set_phy_supported(struct phy_device *phydev);
- void of_set_phy_eee_broken(struct phy_device *phydev);
-+void of_set_phy_timing_role(struct phy_device *phydev);
- int phy_speed_down_core(struct phy_device *phydev);
- 
- /**
--- 
-2.39.2
-
+Thanks,
+Qiang
+>
+>> - Mani
+>>
+>>> Konrad
+>> --
+>> மணிவண்ணன் சதாசிவம்
+>
+>
 
