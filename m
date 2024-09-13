@@ -1,107 +1,144 @@
-Return-Path: <linux-kernel+bounces-328577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A924B97860C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:42:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E28CF97860E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:44:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2FD41C22C2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:42:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 503D71F258A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:44:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5FA78C90;
-	Fri, 13 Sep 2024 16:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC5E7DA64;
+	Fri, 13 Sep 2024 16:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="p7dwqn5h"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RJcrHDf+"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22092D052;
-	Fri, 13 Sep 2024 16:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA462D052;
+	Fri, 13 Sep 2024 16:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726245754; cv=none; b=m0hUmKwK9X9tnxVxOjjQCVBti8eCDCxba0e99Todwm7s+FTU9mlJfw1V3eq5XSti7g4j5um+IGyMdpvXcht6P+IlgxMiK+IrfmDc4e/HH45RZq3ld/xiLbzE/t9BAW9JLvSW3rlAOw43ceouX0fpalkW6K83klHcoxqX5L9fQOc=
+	t=1726245848; cv=none; b=ofRE8dRZiiXkRnb+eaDmPLupXastC8ExWL5vHU9KGFGcalHXWo59a1cT/9GoB8HSFbW06eCdJCvqpcgPP07MUjoptLYtXbyFB2RqhHyZ/mzydIQP/E/PSVxfszXgvOdJFTBu86EPzQlrrlsShvGJdzuBok0T400CukR1HIq3ybE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726245754; c=relaxed/simple;
-	bh=HXIfKdnG22exxAV+fSAOXl1qXmyMtKHpkEy00UN8v14=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=cvBbdhCXN3ATwOlKhJUWhKgGGyNCy+7Nh+rcXQE52T2xC79bO76mkpPV6bryKRb0tVbO75sVwtPg6yj331pbxI/h9iI00pbpZBhOJcDTNkEh2cBt/bJhGrmEM8/Zm8jdBy258oZpKE+09FIomGMJciXSswY1g6JJNILD15voF94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=p7dwqn5h; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1726245740; x=1726850540; i=markus.elfring@web.de;
-	bh=HXIfKdnG22exxAV+fSAOXl1qXmyMtKHpkEy00UN8v14=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=p7dwqn5hOfV2UKVvdOg+cfcAVvzWZVvi9tMRnTVq0DQJorx7zgx9XXW8XZj054Vt
-	 EiTUbLD5liumry+Dpv9w9Opkcswg/4ZqZv0RzBhGPNtIqBg2Zk/zxAMNZ0DNMEJu4
-	 43CbwE705LyQ1SINoWOFhYeIy7TwhfPY1RtofcEP8+jYWDnGlsF9nGGfuWpXUqmMT
-	 w8V0cIvgIi7/JBidxH0A6CgY1lffQxBXbrvWa8A3bwzWxMhnlViNM4R/ehncKemqX
-	 hIWR5k/bSpw4lSAtQzKKfGCsCAXVACCP+XWgRoeZDbV/oQPgrb2wW20tGZdJJJA+x
-	 psZ9nUM7BUi1qHGIBQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MDvDi-1sfDjs29jg-004tLo; Fri, 13
- Sep 2024 18:42:20 +0200
-Message-ID: <1016953e-3bab-4acc-a167-27656073feda@web.de>
-Date: Fri, 13 Sep 2024 18:42:16 +0200
+	s=arc-20240116; t=1726245848; c=relaxed/simple;
+	bh=9P3KKNeOdf/QArfyD1XcZIiZNM202mA/m+9ClQY2USo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qBS1PvVmIHEdMVgyU0wtd4h971jaEqrbtdp6qAmCBy9d+9VvNA3LPIYOlPJszn7oh8YqjvppU6TcnIk3MWNYP4SJ1mxPy1FPhdbIVN2isfQJSgVgUWVIIAvt20B7n6E6vbu9UFysve27K6LYh9E0R08d6H0oK7Wj0gm9ik3NuMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RJcrHDf+; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2d8881850d9so1983122a91.3;
+        Fri, 13 Sep 2024 09:44:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726245846; x=1726850646; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/Hu6phz1hzShHnKdfRtYKMNvyuzN1209rgixPm1lxEo=;
+        b=RJcrHDf+85g7Z228LOy83FtmJniVPrlYgYbm8rXVAjM0GpLSLCbyAhDdctTEmO9OEP
+         6crrYEm97yfsxwyfwrMh66e3fzBxRNPvlF7JhuSlYZlDFtLh5lw5z5nQj4VHkc0fColt
+         2LsatnoeVKlYUDkkQ3ikUR3xG6mJe9LdMQm1MT5AxHosTP5xfF8RkOEE1MP0MLQqOCiR
+         uoI6K8H12qKByiKIcyzQoHRwO2+ve/HGac0mTSZUDqCtX+oXj4yhy96N/rCS01pycBJW
+         ylR1FprxLArVnUaDsQrYUAzGrilUZGmgyjhUE158tUuHqfalOpC0Hq2sngVH1rRAp7sO
+         typA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726245846; x=1726850646;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/Hu6phz1hzShHnKdfRtYKMNvyuzN1209rgixPm1lxEo=;
+        b=oY2Enq0x/T/KwWydsDD958kPX07EwIirshjxwMbMUeFrEjNEWD0t0g7AUtjycmabkN
+         U6xPmQKjldNAAYg+tpUHZvjJFhlX9YGBHg0o1FDi7cO0Brx4eUQDRRuhftPC6jwk7+qR
+         Q3n4wAsEvbWOSVZRMefAs7hvg8uSXnWPzpqlDAtnnASk6wGxJA8fCeOdJG2NGBq7lrs1
+         OcYamhzXezyTKX+9cCGbbgm/R7B3aazk+V8EngDXAmbXGCz0wzaOaXKRiLU4nxN46kbN
+         vaeJqvUtLF4/v0/5icwUe+XoYImKFhhkODZN9EEs09madngpBXw9vIB5Wuu196wTcWMj
+         R+9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWhUTyfZue7fo8/wV5cfKmQO/+AzofHQ3+xPAgUAIaqFT0pqP47XFh0JKq/vBlMhXtoeYD+d+Ik473VHXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFc2mvqAxxdPe1PuNUpyc57Uja6qgrnB886fnpRW6f+VgZCgf5
+	dLklBWPvvIAQ/x4iaxuxJkgdnEpF5awH1likltEYuRjEp0vHoLyj
+X-Google-Smtp-Source: AGHT+IETR1pLw22OESSlqZ9K710vB5OgYjNJAcUs9DZzWF3wNd4u2+qR5UXoBqYfsY2HHH9UPXj9sA==
+X-Received: by 2002:a17:90a:9308:b0:2da:d766:1925 with SMTP id 98e67ed59e1d1-2dba007f632mr7941267a91.37.1726245845652;
+        Fri, 13 Sep 2024 09:44:05 -0700 (PDT)
+Received: from localhost ([116.198.225.81])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbb9d98963sm1984722a91.53.2024.09.13.09.44.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 09:44:05 -0700 (PDT)
+From: Tao Chen <chen.dylane@gmail.com>
+To: Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tao Chen <chen.dylane@gmail.com>
+Subject: [PATCH bpf-next RESEND v2] libbpf: Fix expected_attach_type set when kernel not support
+Date: Sat, 14 Sep 2024 00:43:55 +0800
+Message-Id: <20240913164355.176021-1-chen.dylane@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Akashi Takahiro <takahiro.akashi@linaro.org>,
- Ben Chuang <ben.chuang@genesyslogic.com.tw>,
- Victor Shih <victor.shih@genesyslogic.com.tw>, linux-mmc@vger.kernel.org,
- Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ben Chuang <benchuanggli@gmail.com>,
- Daniil Lunev <dlunev@chromium.org>, Greg Tu <greg.tu@genesyslogic.com.tw>,
- HL.Liu@genesyslogic.com.tw, Lucas Lai <Lucas.Lai@genesyslogic.com.tw>
-References: <20240913102836.6144-10-victorshihgli@gmail.com>
-Subject: Re: [PATCH V22 09/22] mmc: sdhci: add UHS-II module and add a kernel
- configuration
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240913102836.6144-10-victorshihgli@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:QeA4gMO8b1UNSDpdTs7WI+aozQyDW3a6pLGEyD8WxSbigZW6j13
- L9OjZzChwA5QUbA0jSRakA9iRjlC92EG9/iA9JwLnC+LRNOF9elTCyHQdrH8zV7JGBUZlX7
- yXE4NA0uCBeRKTP0FgRYPB7PPBSSrMjQuPXkU9vbxwZcUQfsznCS8pr3aHXhbxwtN834SCu
- HRwM/Yjnq8F6dD0ok6IRw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:taiSzN5xeAU=;3sn3Db6WJaEEEysbldXsOBecBgM
- bha4cX8+Y4Kxt4IB925Hrf5KZfKFbEOlwowtJYCIOI2lQVewRoxwzxL3fYmW0PFCAy/DCQxZA
- W74yeNO2ejPL0wtFQwHdA9a+pZVoGuFpoaoMqaunFYdoSzlYv0ooVb7qYkOU91xV02g0bWFYN
- p6dN1EIeb5+rRB3tAA41LhLsWl6T5Wp08rhTL/jwDKleeBiD5GTRXIHT7LdF0dRgKGm18CCjj
- /CnKTY8AjKd+u7ojk1+J/OCQpL9JlBALIq3OU8awcfeGwtIdriYdUnwjtJZcRZ2BRUWKG7lbr
- 7mPUKjXpgCV8j8otmxKU2/BpwSJRmsxqOPg597za+F0dha6Br+ZtH6MRPYbKkW99sOFooAXvr
- rNnOXakN/SZA7VmVOmSft8SIId8CvIheC5pUh5kjU4NrkgbaaHBV57nXxPXPopPgAsyXKW6yJ
- CC3Y58WoY/OWnoMegNK51r0DWAe19XA8w66QplsWtpXyjwgW9AIVhXro+v4Bc6xR3MfZ+bpN9
- aqVfx4yEmt/DrnpX+4n3dfThM2SfkhO85ot/bvrE4VhM00yI5oq6rrfMxFJXVBT9NsB9LZrJg
- J/1YVWVE68qG1Km727mcLUnAooWW2EOxZRg2p4Ga4c92O/ZMqdKosNqyCfWNIJFHh7PNTmioi
- QpJBo+tV5D1RqJQRnNE3GMtGK63ZJUW9mG0QMA3jzb058nd0sicTXayUGqDkIN3Bi0m3+NGo7
- 6D9s9OKwjk9++UPWMfeeRNH4A7xljNTWkiRplx7JVMbEkmNGS8vrzHWCSCBbcY3c8NcNRmX7J
- pQklyhZJgXNIgGWIsLS/OWGw==
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> +++ b/drivers/mmc/host/sdhci-uhs2.c
-> @@ -0,0 +1,41 @@
-=E2=80=A6
-> +MODULE_AUTHOR("Intel, Genesys Logic, Linaro");
-=E2=80=A6
+The commit "5902da6d8a52" set expected_attach_type again with
+filed of bpf_program after libpf_prepare_prog_load, which makes
+expected_attach_type = 0 no sense when kenrel not support the
+attach_type feature, so fix it.
 
-Would you like to reconsider the structure for such provided information o=
-nce more?
-https://elixir.bootlin.com/linux/v6.11-rc7/source/include/linux/module.h#L=
-239
+Fixes: 5902da6d8a52 ("libbpf: Add uprobe multi link support to bpf_program__attach_usdt")
+Suggested-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+---
+ tools/lib/bpf/libbpf.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Regards,
-Markus
+Change list:
+- v1 -> v2:
+    - restore the original initialization way suggested by Jiri
+
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 219facd0e66e..df2244397ba1 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -7353,7 +7353,7 @@ static int libbpf_prepare_prog_load(struct bpf_program *prog,
+ 
+ 	/* special check for usdt to use uprobe_multi link */
+ 	if ((def & SEC_USDT) && kernel_supports(prog->obj, FEAT_UPROBE_MULTI_LINK))
+-		prog->expected_attach_type = BPF_TRACE_UPROBE_MULTI;
++		opts->expected_attach_type = BPF_TRACE_UPROBE_MULTI;
+ 
+ 	if ((def & SEC_ATTACH_BTF) && !prog->attach_btf_id) {
+ 		int btf_obj_fd = 0, btf_type_id = 0, err;
+@@ -7443,6 +7443,7 @@ static int bpf_object_load_prog(struct bpf_object *obj, struct bpf_program *prog
+ 	load_attr.attach_btf_id = prog->attach_btf_id;
+ 	load_attr.kern_version = kern_version;
+ 	load_attr.prog_ifindex = prog->prog_ifindex;
++	load_attr.expected_attach_type = prog->expected_attach_type;
+ 
+ 	/* specify func_info/line_info only if kernel supports them */
+ 	if (obj->btf && btf__fd(obj->btf) >= 0 && kernel_supports(obj, FEAT_BTF_FUNC)) {
+@@ -7474,9 +7475,6 @@ static int bpf_object_load_prog(struct bpf_object *obj, struct bpf_program *prog
+ 		insns_cnt = prog->insns_cnt;
+ 	}
+ 
+-	/* allow prog_prepare_load_fn to change expected_attach_type */
+-	load_attr.expected_attach_type = prog->expected_attach_type;
+-
+ 	if (obj->gen_loader) {
+ 		bpf_gen__prog_load(obj->gen_loader, prog->type, prog->name,
+ 				   license, insns, insns_cnt, &load_attr,
+-- 
+2.25.1
+
 
