@@ -1,114 +1,160 @@
-Return-Path: <linux-kernel+bounces-327627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 131BC97787F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:46:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 755C2977882
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:47:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F74F288B5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:46:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AC871F24766
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355E5187356;
-	Fri, 13 Sep 2024 05:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YiZRILjl"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38049187349;
+	Fri, 13 Sep 2024 05:47:24 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A123126C12;
-	Fri, 13 Sep 2024 05:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163FE323D;
+	Fri, 13 Sep 2024 05:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726206369; cv=none; b=cJEpXO/vjDTAnonUV70LzWh8EqGlqZD3wRwseE1N0Rn7yn0Yk5H7hU6nqgG4Qip2QF1UQwg6QNtRAk3MGdjPHL6UuCXl3tgJcUG1ghg9ve7WmQ+WLGbZIROhRqFPS0CjAZiwQpmt3e3uMiJTi7S3DIfsGw1wHfJ5U9l5/h0H/5k=
+	t=1726206443; cv=none; b=NSHeLNOR6L05yTVs/RpkLEn+iHyHkdxD5qlZ8ZEtbHZTgvnpjW/fJGYkKdzcepEz/0/LTgxVlqZEFY+cT6PjPOPCekf40YoBIIYUM0Z0VbnteIeFFqD0ZSwLUG6Fi3niyAnE3ym9gxBUIDzs7IaZAEn64LCOgKk4i2hNarLm7cA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726206369; c=relaxed/simple;
-	bh=eV/T8sUcUxx7POf9QK3Dl6id7FddeoCjxhsSBXgpcd4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ktzKuoUU84Q3NI2qphkcTiDuckn2RM1b1iLJB/V9xxLQlIOxPkKBn494WDsH5jmmIPdCg7wUKSw13ay57HAupNa9ja4QYflg3PBkYlmKoJEoqDT2qHsoTvnVOC/TPEm70/8Dg4CYYJZ911caCqNuO8kwSk4vfQZwjcWmV/Tj2Bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YiZRILjl; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48D5jlpC022020;
-	Fri, 13 Sep 2024 00:45:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1726206347;
-	bh=v97XVJ9tpllW38oQNLyJjoB5iGyEwtCuwOkT+p4KMpg=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=YiZRILjlVWLHNYK1Jwk0qzw76HECFE/CiWvkrObknM0g5t1n01T4b6fHK4aUN2VpN
-	 H4/rWgczzE0vMJs5Et8jLfVTwOZWFU4hK/s5gzHhd8otgWmguQzPERr0SbFFuRqvzR
-	 vAZflIUEw/W2rykgGisQB/dEVMvP3coJvHpsAjJY=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48D5jlg5042131;
-	Fri, 13 Sep 2024 00:45:47 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 13
- Sep 2024 00:45:47 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 13 Sep 2024 00:45:47 -0500
-Received: from localhost (jluthra.dhcp.ti.com [172.24.227.116])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48D5jkVI037265;
-	Fri, 13 Sep 2024 00:45:46 -0500
-From: Jai Luthra <j-luthra@ti.com>
-To: Jai Luthra <jai.luthra@linux.dev>,
-        Mauro Carvalho Chehab
-	<mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Jai Luthra <j-luthra@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Vignesh
- Raghavendra <vigneshr@ti.com>,
-        Devarsh Thakkar <devarsht@ti.com>, Nishanth
- Menon <nm@ti.com>
-Subject: [PATCH 2/2] dt-bindings: media: ti,j721e-csi2rx-shim: Update maintainer email
-Date: Fri, 13 Sep 2024 11:15:01 +0530
-Message-ID: <20240913-maintainer_email-v1-2-10c574bc1e7f@ti.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240913-maintainer_email-v1-0-10c574bc1e7f@ti.com>
-References: <20240913-maintainer_email-v1-0-10c574bc1e7f@ti.com>
+	s=arc-20240116; t=1726206443; c=relaxed/simple;
+	bh=cUOwFu2UtxM3l2pffSqHt82mFslpz2gxEF54trMn0P8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YMT8MG6U8A7tjQGwv1K8hblmDa8HU9t9dQ5rF47/e+NhVNiqHM4BgXdz2k45MMa4ZnZ2JAxF1sf76l5IVSb0rTmQEBeV+dwPqkOeIttv31OZAN09IBrHurIHoCYCLMBpCU+QNH/uw4QwG0Oh0zHtg61wif0qsP+L8IkAf1y+7dM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4X4jxg6vMMz9sxD;
+	Fri, 13 Sep 2024 07:47:19 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id rcETtnnNavE7; Fri, 13 Sep 2024 07:47:19 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4X4jxg5s39z9sjv;
+	Fri, 13 Sep 2024 07:47:19 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id B48CF8B77A;
+	Fri, 13 Sep 2024 07:47:19 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id BrEQGrKMhBAg; Fri, 13 Sep 2024 07:47:19 +0200 (CEST)
+Received: from [192.168.233.70] (unknown [192.168.233.70])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 458908B766;
+	Fri, 13 Sep 2024 07:47:18 +0200 (CEST)
+Message-ID: <fe46ee6f-24c2-42be-942c-e03bc2b6e0aa@csgroup.eu>
+Date: Fri, 13 Sep 2024 07:47:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.12.4
-Content-Transfer-Encoding: quoted-printable
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linus:master] [mseal] 8be7258aad:
+ stress-ng.pagemove.page_remaps_per_sec -4.4% regression
+To: Michael Ellerman <mpe@ellerman.id.au>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Nicholas Piggin <npiggin@gmail.com>
+Cc: Jeff Xu <jeffxu@google.com>, Pedro Falcato <pedro.falcato@gmail.com>,
+ kernel test robot <oliver.sang@intel.com>, Jeff Xu <jeffxu@chromium.org>,
+ oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, Kees Cook
+ <keescook@chromium.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Dave Hansen <dave.hansen@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Guenter Roeck <groeck@chromium.org>, Jann Horn <jannh@google.com>,
+ Jonathan Corbet <corbet@lwn.net>, Jorge Lucangeli Obes
+ <jorgelo@chromium.org>, Matthew Wilcox <willy@infradead.org>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ =?UTF-8?Q?Stephen_R=C3=B6ttger?= <sroettger@google.com>,
+ Suren Baghdasaryan <surenb@google.com>,
+ Amer Al Shanawany <amer.shanawany@gmail.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, linux-api@vger.kernel.org,
+ linux-mm@kvack.org, ying.huang@intel.com, feng.tang@intel.com,
+ fengwei.yin@intel.com
+References: <202408041602.caa0372-oliver.sang@intel.com>
+ <CAHk-=whbxLj0thXPzN9aW4CcX1D2_dntNu+x9-8uBakamBggLA@mail.gmail.com>
+ <CAKbZUD3B03Zjex4STW8J_1VJhpsYb=1mnZL2-vSaW-CaZdzLiA@mail.gmail.com>
+ <CALmYWFuXVCvAfrcDOCAR72z2_rmnm09QeVVqdhzqjF-fZ9ndUA@mail.gmail.com>
+ <CAHk-=wgPHCJ0vZMfEP50VPjSVi-CzL0fhTGXgNLQn=Pp9W0DVA@mail.gmail.com>
+ <CALmYWFuCvphvLQOuQHBbFq0G8Ekyze=q45Tt4dATOt-GhO2RGg@mail.gmail.com>
+ <CAHk-=wgySgXXkZtx49Xq70X2CmSizM8siacYKncMmFWRzKjs5Q@mail.gmail.com>
+ <D38D6LJZOIQK.2GV58PGVL5K85@gmail.com>
+ <CAHk-=wjeWqr+0Ktzbwqrw17aESe5dZm5Kt6nwqtKJX00VsDqWg@mail.gmail.com>
+ <87r0b2if4t.fsf@mail.lhotse>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <87r0b2if4t.fsf@mail.lhotse>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-I will no longer be an employee of TI, so update my email in maintainer=0D
-list.=0D
-=0D
-Signed-off-by: Jai Luthra <j-luthra@ti.com>=0D
----=0D
- Documentation/devicetree/bindings/media/ti,j721e-csi2rx-shim.yaml | 2 +-=0D
- 1 file changed, 1 insertion(+), 1 deletion(-)=0D
-=0D
-diff --git a/Documentation/devicetree/bindings/media/ti,j721e-csi2rx-shim.y=
-aml b/Documentation/devicetree/bindings/media/ti,j721e-csi2rx-shim.yaml=0D
-index f762fdc05e4d..b9f033f2f3ce 100644=0D
---- a/Documentation/devicetree/bindings/media/ti,j721e-csi2rx-shim.yaml=0D
-+++ b/Documentation/devicetree/bindings/media/ti,j721e-csi2rx-shim.yaml=0D
-@@ -13,7 +13,7 @@ description: |=0D
-   CSI_RX_IF section.=0D
- =0D
- maintainers:=0D
--  - Jai Luthra <j-luthra@ti.com>=0D
-+  - Jai Luthra <jai.luthra@linux.dev>=0D
- =0D
- properties:=0D
-   compatible:=0D
-=0D
--- =0D
-2.43.0=0D
-=0D
+
+
+Le 06/08/2024 à 04:01, Michael Ellerman a écrit :
+> Linus Torvalds <torvalds@linux-foundation.org> writes:
+>> On Mon, 5 Aug 2024 at 16:25, Nicholas Piggin <npiggin@gmail.com> wrote:
+>>>
+>>> Can userspace on other archs not unmap their vdsos?
+>>
+>> I think they can, and nobody cares. The "context.vdso" value stays at
+>> some stale value, and anybody who tries to use it will just fail.
+>>
+>> So what makes powerpc special is not "you can unmap the vdso", but
+>> "powerpc cares".
+>>
+>> I just don't quite know _why_ powerpc cares.
+> 
+> AFAIK for CRIU the problem is signal delivery:
+> 
+> arch/powerpc/kernel/signal_64.c:
+> 
+> int handle_rt_signal64(struct ksignal *ksig, sigset_t *set,
+> 		struct task_struct *tsk)
+> {
+>          ...
+> 	/* Set up to return from userspace. */
+> 	if (tsk->mm->context.vdso) {
+> 		regs_set_return_ip(regs, VDSO64_SYMBOL(tsk->mm->context.vdso, sigtramp_rt64));
+> 
+> 
+> ie. if the VDSO is moved but mm->context.vdso is not updated, signal
+> delivery will crash in userspace.
+> 
+> x86-64 always uses SA_RESTORER, and arm64 & s390 can use SA_RESTORER, so
+> I think CRIU uses that to avoid problems with signal delivery when the
+> VDSO is moved.
+> 
+> riscv doesn't support SA_RESTORER but I guess CRIU doesn't support riscv
+> yet so it's not become a problem.
+> 
+> There was a patch to support SA_RESTORER on powerpc, but I balked at
+> merging it because I couldn't find anyone on the glibc side to say
+> whether they wanted it or not. I guess I should have just merged it.
+
+The patch is at 
+https://patchwork.ozlabs.org/project/linuxppc-dev/patch/afe50d1db63a10fde9547ea08fe1fa68b0638aba.1624618157.git.christophe.leroy@csgroup.eu/
+
+It still applies cleanly.
+
+Christophe
+
+
+> 
+> There was an attempt to unify all the vdso stuff and handle the
+> VDSO mremap case in generic code:
+> 
+>    https://lore.kernel.org/lkml/20210611180242.711399-17-dima@arista.com/
+> 
+> But I think that series got a bit big and complicated and Dmitry had to
+> move on to other things.
+> 
+> cheers
 
