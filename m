@@ -1,156 +1,150 @@
-Return-Path: <linux-kernel+bounces-328723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B559787CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:27:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C3899787D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:27:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 061EE289435
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:27:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45EA31F25C4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:27:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407F0136330;
-	Fri, 13 Sep 2024 18:27:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A17213A87A;
+	Fri, 13 Sep 2024 18:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="uK0xHbEn"
-Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eLI6O7yj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD64C8C11;
-	Fri, 13 Sep 2024 18:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.184.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BF28C11;
+	Fri, 13 Sep 2024 18:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726252050; cv=none; b=PyAM7ygDyNmH6xBe1Qot3OMIWPllZud37udy0nA+Om1LjMrKAPbQfxFmXRlyBrXbLDEgVC3B/W28ydUJbaWBPkZvdwHIsQDraJD1uKzN9GDiEG2w9VkVWZqORZ/BtzhQrOnqvDRS5rf1FPFPItENf8WPpTBf15U7AQicG2sKQxQ=
+	t=1726252055; cv=none; b=LM/PHzMBawpCdlmdYMxN1c6iHmElMWKVL24667/Ei2paY/r6U8LJ+4nxOjRHcwZvnZ9twApPv9oqGJAhzdUgrD91toGdSF12bZai3ykVm1T5KcYjQUO0MdMF/coLM4EPAtEW3DvEc5zyJA2zLDch9rS/3IdA/v7GDvahm7iCtpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726252050; c=relaxed/simple;
-	bh=T/FAGmskof49WPg60zyMYqxdzTPYLl+utpDpDsGWIgI=;
-	h=Subject:MIME-Version:Content-Type:Date:Message-ID:From:To:CC:
-	 References:In-Reply-To; b=XnvrYJAMPc/AtQYr4QPSpbH9BRlK3L+r0lz9VebhDqayDF473vMCT23gnwqglARKgIvf9uxeEvhHm1b0kaX1Bfzs/jRG7LKfe7KnHc7IWgcDKWvyySjWpW1DOd/Emu+ZWlR0mbSM4CJ+09xBAqBTAgv45dJ04u/Z9aezkQyXBRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.es; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=uK0xHbEn; arc=none smtp.client-ip=207.171.184.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.es
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1726252049; x=1757788049;
-  h=mime-version:content-transfer-encoding:date:message-id:
-   from:to:cc:references:in-reply-to:subject;
-  bh=wLLXE9tAXmUWkp0mNTmCfQvKPHj+bdubDsMn8oPnwBc=;
-  b=uK0xHbEnzY8FgxjONqDUcW47zA2JDsb/aUMi+un9nh5LtYk91J/tVm1W
-   RyWuBl/P7WuQOS0lF13r7QK1L8tSMM/SRanwgtbcctoSVH4leW8WOMyD5
-   aXYpwY/+ZXiV3fBFuiDrHys3ilhdn/89hxe1CK1TAgDianeSGIjElTjbE
-   o=;
-X-IronPort-AV: E=Sophos;i="6.10,226,1719878400"; 
-   d="scan'208";a="453843029"
-Subject: Re: [PATCH 16/18] KVM: x86: Take mem attributes into account when faulting
- memory
-Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 18:27:18 +0000
-Received: from EX19MTAEUB001.ant.amazon.com [10.0.10.100:19490]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.41.21:2525] with esmtp (Farcaster)
- id 4d96842b-9f62-44f5-97a0-d8ad265e11a9; Fri, 13 Sep 2024 18:27:04 +0000 (UTC)
-X-Farcaster-Flow-ID: 4d96842b-9f62-44f5-97a0-d8ad265e11a9
-Received: from EX19D004EUC001.ant.amazon.com (10.252.51.190) by
- EX19MTAEUB001.ant.amazon.com (10.252.51.26) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Fri, 13 Sep 2024 18:27:04 +0000
-Received: from localhost (10.13.235.138) by EX19D004EUC001.ant.amazon.com
- (10.252.51.190) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Fri, 13 Sep 2024
- 18:26:58 +0000
+	s=arc-20240116; t=1726252055; c=relaxed/simple;
+	bh=lw0eK6fflWLo8L9Xc6oEj9NPbarXvrNywgJhseEI1to=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g94UpfFZd0G+1WmuGq9HOuLDl1pEdU/u0ELyPVuk/exTobo7DuAtXKxDOM/kmCD5dTcyAWwSr1BeJvzOOtmkpQ5yxnykuxQ1PYmH3jTIn4/tR3FdMgn63TUWKLllbC/AVbWRmoY8mD+jtA5LBrY9OYmczRizh/AIXmSivP5WYuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eLI6O7yj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF4ACC4CEC7;
+	Fri, 13 Sep 2024 18:27:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726252055;
+	bh=lw0eK6fflWLo8L9Xc6oEj9NPbarXvrNywgJhseEI1to=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eLI6O7yjFdju5S0/44XPZp2MQYIvN2HPbxq0F7Y91MPyxs54GtyJnn01HhMHWIMO9
+	 IXdzSj9MppdtB2VRQif816nHhSVsSit2ZvaC6dJj1oZrlBFUFQZ7Y7pTtO+27RUXIR
+	 4FzLz2nUKVLNjOdtmyBXMXQWLfXAJqhEkUWjO3JnspWY5xKjo+Ey8AkdOzbB8u1ToW
+	 vzCc4ztMYHVCIQfJmDoTgauCs5VPcLMd5/8S0DqDXIqdkl8F/szMLQEBwaWUo8Yql2
+	 Wnwo79mdtdwoG+Y0n/Jbxi4Yz0Q9uh7ytO2dbP9Ox8W5WdxnRu8RdCXYhDNUGW1Wpn
+	 Ppqw66NUmN/yQ==
+Date: Fri, 13 Sep 2024 19:27:29 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
+	ang.iglesiasg@gmail.com, linus.walleij@linaro.org,
+	biju.das.jz@bp.renesas.com, javier.carrasco.cruz@gmail.com,
+	semen.protsenko@linaro.org, 579lpy@gmail.com, ak@it-klinger.de,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, christophe.jaillet@wanadoo.fr
+Subject: Re: [PATCH v6 2/4] dt-bindings: iio: pressure: bmp085: Add
+ interrupts for BMP3xx and BMP5xx devices
+Message-ID: <20240913-overarch-preplan-c899f16a90c8@spud>
+References: <20240912233234.45519-1-vassilisamir@gmail.com>
+ <20240912233234.45519-3-vassilisamir@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="yklktLtRTBY9hG1i"
+Content-Disposition: inline
+In-Reply-To: <20240912233234.45519-3-vassilisamir@gmail.com>
+
+
+--yklktLtRTBY9hG1i
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-Date: Fri, 13 Sep 2024 18:26:54 +0000
-Message-ID: <D45D9NN03CSH.3B25KJ1XKV6XE@amazon.com>
-From: Nicolas Saenz Julienne <nsaenz@amazon.com>
-To: Sean Christopherson <seanjc@google.com>
-CC: <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
-	<pbonzini@redhat.com>, <vkuznets@redhat.com>, <linux-doc@vger.kernel.org>,
-	<linux-hyperv@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-	<linux-trace-kernel@vger.kernel.org>, <graf@amazon.de>,
-	<dwmw2@infradead.org>, <pdurrant@amazon.com>, <mlevitsk@redhat.com>,
-	<jgowans@amazon.com>, <corbet@lwn.net>, <decui@microsoft.com>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <amoorthy@google.com>
-X-Mailer: aerc 0.18.2-0-ge037c095a049-dirty
-References: <20240609154945.55332-1-nsaenz@amazon.com>
- <20240609154945.55332-17-nsaenz@amazon.com>
- <D3MJJCTNY7OM.WOB5W8AVBH9G@amazon.com> <ZsduQ7tg0oQFDY8h@google.com>
-In-Reply-To: <ZsduQ7tg0oQFDY8h@google.com>
-X-ClientProxiedBy: EX19D040UWB003.ant.amazon.com (10.13.138.8) To
- EX19D004EUC001.ant.amazon.com (10.252.51.190)
 
-On Thu Aug 22, 2024 at 4:58 PM UTC, Sean Christopherson wrote:
-> On Thu, Aug 22, 2024, Nicolas Saenz Julienne wrote:
-> > On Sun Jun 9, 2024 at 3:49 PM UTC, Nicolas Saenz Julienne wrote:
-> > > Take into account access restrictions memory attributes when faulting
-> > > guest memory. Prohibited memory accesses will cause an user-space fau=
-lt
-> > > exit.
-> > >
-> > > Additionally, bypass a warning in the !tdp case. Access restrictions =
-in
-> > > guest page tables might not necessarily match the host pte's when mem=
-ory
-> > > attributes are in use.
-> > >
-> > > Signed-off-by: Nicolas Saenz Julienne <nsaenz@amazon.com>
-> >
-> > I now realize that only taking into account memory attributes during
-> > faults isn't good enough for VSM. We should check the attributes anytim=
-e
-> > KVM takes GPAs as input for any action initiated by the guest. If the
-> > memory attributes are incompatible with such action, it should be
-> > stopped. Failure to do so opens side channels that unprivileged VTLs ca=
-n
-> > abuse to infer information about privileged VTL. Some examples I came u=
-p
-> > with:
-> > - Guest page walks: VTL0 could install malicious directory entries that
-> >   point to GPAs only visible to VTL1. KVM will happily continue the
-> >   walk. Among other things, this could be use to infer VTL1's GVA->GPA
-> >   mappings.
-> > - PV interfaces like the Hyper-V TSC page or VP assist page, could be
-> >   used to modify portions of VTL1 memory.
-> > - Hyper-V hypercalls that take GPAs as input/output can be abused in a
-> >   myriad of ways. Including ones that exit into user-space.
-> >
-> > We would be protected against all these if we implemented the memory
-> > access restrictions through the memory slots API. As is, it has the
-> > drawback of having to quiesce the whole VM for any non-trivial slot
-> > modification (i.e. VSM's memory protections). But if we found a way to
-> > speed up the slot updates we could rely on that, and avoid having to
-> > teach kvm_read/write_guest() and friends to deal with memattrs. Note
-> > that we would still need to use memory attributes to request for faults
-> > to exit onto user-space on those select GPAs. Any opinions or
-> > suggestions?
-> >
-> > Note that, for now, I'll stick with the memory attributes approach to
-> > see what the full solution looks like.
->
-> FWIW, I suspect we'll be better off honoring memory attributes.  It's not=
- just
-> the KVM side that has issues with memslot updates, my understanding is us=
-erspace
-> has also built up "slow" code with respect to memslot updates, in part be=
-cause
-> it's such a slow path in KVM.
+On Fri, Sep 13, 2024 at 01:32:32AM +0200, Vasileios Amoiridis wrote:
+> Add interrupt options for BMP3xx and BMP5xx devices as well.
+>=20
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> ---
+>  .../bindings/iio/pressure/bmp085.yaml         | 22 ++++++++++++++++++-
+>  1 file changed, 21 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml b=
+/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
+> index 6fda887ee9d4..7c9d85be9008 100644
+> --- a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
+> +++ b/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
+> @@ -48,14 +48,34 @@ properties:
+> =20
+>    interrupts:
+>      description:
+> -      interrupt mapping for IRQ (BMP085 only)
+> +      interrupt mapping for IRQ. Supported in BMP085, BMP3xx, BMP5xx
 
-Sean, since I see you're looking at the series. I don't think it's worth
-spending too much time with the memory attributes patches. Since
-figuring out the sidechannels mentioned above, I found even more
-shortcomings in this implementation. I'm reworking the whole thing in a
-separate series [1], taking into account sidechannels, MMIO, non-TDP
-MMUs, etc. and introducing selftests and an in-depth design document.
+If you respin, you can drop the description entirely, since you've added
+proper enforcement below.
 
-[1] https://github.com/vianpl/linux branch 'vsm/memory-protections' (wip)
+Otherwise,
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Thanks,
-Nicolas
+Cheers,
+Conor.
+
+>      maxItems: 1
+> =20
+> +  drive-open-drain:
+> +    description:
+> +      set if the interrupt pin should be configured as open drain.
+> +      If not set, defaults to push-pull configuration.
+> +    type: boolean
+> +
+>  required:
+>    - compatible
+>    - vddd-supply
+>    - vdda-supply
+> =20
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          not:
+> +            contains:
+> +              enum:
+> +                - bosch,bmp085
+> +                - bosch,bmp380
+> +                - bosch,bmp580
+> +    then:
+> +      properties:
+> +        interrupts: false
+> +
+>  additionalProperties: false
+> =20
+>  examples:
+> --=20
+> 2.25.1
+>=20
+
+--yklktLtRTBY9hG1i
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuSEEQAKCRB4tDGHoIJi
+0ug0AQDv9jtxn90k9XFvocbM+CoDnehphvbc+3ADMDwVjaf1rgEA1SL5+udw2VPe
+exH1SqZqbO4XEmb+Nl+bljSO0kWQ+gg=
+=ett3
+-----END PGP SIGNATURE-----
+
+--yklktLtRTBY9hG1i--
 
