@@ -1,141 +1,156 @@
-Return-Path: <linux-kernel+bounces-328721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D7219787C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:25:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43B559787CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9ECFD1C21BC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:25:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 061EE289435
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51C0713212A;
-	Fri, 13 Sep 2024 18:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407F0136330;
+	Fri, 13 Sep 2024 18:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CqCOrKOt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="uK0xHbEn"
+Received: from smtp-fw-9102.amazon.com (smtp-fw-9102.amazon.com [207.171.184.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A2A12C465;
-	Fri, 13 Sep 2024 18:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD64C8C11;
+	Fri, 13 Sep 2024 18:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.184.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726251920; cv=none; b=sU8wvO1reI4Udd1fX9dC8n1nZ+r9fG/F7BCDzmR909KIzTlzwkKs+16p+9j2XY/OZoOqXdfQRQetID5mpSGr+vHGiMsrNIf6aI7xb5AHHtxLlCK0a8ufRGAYAIoJEAfMg0Z8OF+UEsY1bSzT5XrzWpOey6ABIE7D4pNbjmor6fw=
+	t=1726252050; cv=none; b=PyAM7ygDyNmH6xBe1Qot3OMIWPllZud37udy0nA+Om1LjMrKAPbQfxFmXRlyBrXbLDEgVC3B/W28ydUJbaWBPkZvdwHIsQDraJD1uKzN9GDiEG2w9VkVWZqORZ/BtzhQrOnqvDRS5rf1FPFPItENf8WPpTBf15U7AQicG2sKQxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726251920; c=relaxed/simple;
-	bh=ZP5Sr3pIISCAUY6csIxUxy+RYfNU+Q4zrM+AyHqj3zk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UJO4bv4j9oGvFGBziPTcmbEoCA5SD60Q0c1OOirMQBgVcdq8SrddGjdS7F8BMMJq0DwCiUiTcAyinLcaVQpOV/xtqBu4T3cizYgCnTlQ3CjFQoPLDd5d97Gs+WHmDTItUQh4lymadlzKT+c5517j0es0E0dwh8CzrfzinLAlrmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CqCOrKOt; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726251918; x=1757787918;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ZP5Sr3pIISCAUY6csIxUxy+RYfNU+Q4zrM+AyHqj3zk=;
-  b=CqCOrKOtuc4KXD7IoEfkQIiV4kwh9Bs9pLQDnkGRCRfiOV5+Z5VPk67M
-   U/FeFoSCjEpdfFG6D7Q8VSm0fPOurHb2EHyodWOLhkMCmMX8aadlswH7V
-   ov2uPuYwLVlG/kS1pAhlh4IvQXloYLFqdcRzo45N+KtcwYwfz98NHkupZ
-   rKp/C4fj2UJ4WK913wU8MmxwMMJYzmJScYmebU1kkGSuRVHQTpXr66QWk
-   Pc9jhejzT49vNGN8dEkBwKLxH6Dy6lKE7BvGzx/z65P54SbppZcbgc8uq
-   4q5IQl+ysTerh8X+3Lulg7K4VZNWnkYdsKOpn+slHnPGXtTsdgwxTWSQH
-   g==;
-X-CSE-ConnectionGUID: namvzSXhQYiJjnASJizmlA==
-X-CSE-MsgGUID: ID1oSx0rR4S0hVbTuFvHOw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25317602"
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="25317602"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 11:25:17 -0700
-X-CSE-ConnectionGUID: qKVgOJ7vRz+xuOlNQcQR/g==
-X-CSE-MsgGUID: O8ITvqYkRYS8xm4R/TpOuw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="72262328"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 13 Sep 2024 11:25:13 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1spAyl-0006p4-2y;
-	Fri, 13 Sep 2024 18:25:11 +0000
-Date: Sat, 14 Sep 2024 02:25:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	krisman@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	kernel-dev@igalia.com, Daniel Rosenberg <drosen@google.com>,
-	smcv@collabora.com, Christoph Hellwig <hch@lst.de>,
-	Theodore Ts'o <tytso@mit.edu>,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>
-Subject: Re: [PATCH v4 07/10] tmpfs: Add casefold lookup support
-Message-ID: <202409140236.RR9Gbvqh-lkp@intel.com>
-References: <20240911144502.115260-8-andrealmeid@igalia.com>
+	s=arc-20240116; t=1726252050; c=relaxed/simple;
+	bh=T/FAGmskof49WPg60zyMYqxdzTPYLl+utpDpDsGWIgI=;
+	h=Subject:MIME-Version:Content-Type:Date:Message-ID:From:To:CC:
+	 References:In-Reply-To; b=XnvrYJAMPc/AtQYr4QPSpbH9BRlK3L+r0lz9VebhDqayDF473vMCT23gnwqglARKgIvf9uxeEvhHm1b0kaX1Bfzs/jRG7LKfe7KnHc7IWgcDKWvyySjWpW1DOd/Emu+ZWlR0mbSM4CJ+09xBAqBTAgv45dJ04u/Z9aezkQyXBRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.es; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=uK0xHbEn; arc=none smtp.client-ip=207.171.184.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.es
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1726252049; x=1757788049;
+  h=mime-version:content-transfer-encoding:date:message-id:
+   from:to:cc:references:in-reply-to:subject;
+  bh=wLLXE9tAXmUWkp0mNTmCfQvKPHj+bdubDsMn8oPnwBc=;
+  b=uK0xHbEnzY8FgxjONqDUcW47zA2JDsb/aUMi+un9nh5LtYk91J/tVm1W
+   RyWuBl/P7WuQOS0lF13r7QK1L8tSMM/SRanwgtbcctoSVH4leW8WOMyD5
+   aXYpwY/+ZXiV3fBFuiDrHys3ilhdn/89hxe1CK1TAgDianeSGIjElTjbE
+   o=;
+X-IronPort-AV: E=Sophos;i="6.10,226,1719878400"; 
+   d="scan'208";a="453843029"
+Subject: Re: [PATCH 16/18] KVM: x86: Take mem attributes into account when faulting
+ memory
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-9102.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 18:27:18 +0000
+Received: from EX19MTAEUB001.ant.amazon.com [10.0.10.100:19490]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.41.21:2525] with esmtp (Farcaster)
+ id 4d96842b-9f62-44f5-97a0-d8ad265e11a9; Fri, 13 Sep 2024 18:27:04 +0000 (UTC)
+X-Farcaster-Flow-ID: 4d96842b-9f62-44f5-97a0-d8ad265e11a9
+Received: from EX19D004EUC001.ant.amazon.com (10.252.51.190) by
+ EX19MTAEUB001.ant.amazon.com (10.252.51.26) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Fri, 13 Sep 2024 18:27:04 +0000
+Received: from localhost (10.13.235.138) by EX19D004EUC001.ant.amazon.com
+ (10.252.51.190) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34; Fri, 13 Sep 2024
+ 18:26:58 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240911144502.115260-8-andrealmeid@igalia.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Date: Fri, 13 Sep 2024 18:26:54 +0000
+Message-ID: <D45D9NN03CSH.3B25KJ1XKV6XE@amazon.com>
+From: Nicolas Saenz Julienne <nsaenz@amazon.com>
+To: Sean Christopherson <seanjc@google.com>
+CC: <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
+	<pbonzini@redhat.com>, <vkuznets@redhat.com>, <linux-doc@vger.kernel.org>,
+	<linux-hyperv@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>, <graf@amazon.de>,
+	<dwmw2@infradead.org>, <pdurrant@amazon.com>, <mlevitsk@redhat.com>,
+	<jgowans@amazon.com>, <corbet@lwn.net>, <decui@microsoft.com>,
+	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <amoorthy@google.com>
+X-Mailer: aerc 0.18.2-0-ge037c095a049-dirty
+References: <20240609154945.55332-1-nsaenz@amazon.com>
+ <20240609154945.55332-17-nsaenz@amazon.com>
+ <D3MJJCTNY7OM.WOB5W8AVBH9G@amazon.com> <ZsduQ7tg0oQFDY8h@google.com>
+In-Reply-To: <ZsduQ7tg0oQFDY8h@google.com>
+X-ClientProxiedBy: EX19D040UWB003.ant.amazon.com (10.13.138.8) To
+ EX19D004EUC001.ant.amazon.com (10.252.51.190)
 
-Hi André,
+On Thu Aug 22, 2024 at 4:58 PM UTC, Sean Christopherson wrote:
+> On Thu, Aug 22, 2024, Nicolas Saenz Julienne wrote:
+> > On Sun Jun 9, 2024 at 3:49 PM UTC, Nicolas Saenz Julienne wrote:
+> > > Take into account access restrictions memory attributes when faulting
+> > > guest memory. Prohibited memory accesses will cause an user-space fau=
+lt
+> > > exit.
+> > >
+> > > Additionally, bypass a warning in the !tdp case. Access restrictions =
+in
+> > > guest page tables might not necessarily match the host pte's when mem=
+ory
+> > > attributes are in use.
+> > >
+> > > Signed-off-by: Nicolas Saenz Julienne <nsaenz@amazon.com>
+> >
+> > I now realize that only taking into account memory attributes during
+> > faults isn't good enough for VSM. We should check the attributes anytim=
+e
+> > KVM takes GPAs as input for any action initiated by the guest. If the
+> > memory attributes are incompatible with such action, it should be
+> > stopped. Failure to do so opens side channels that unprivileged VTLs ca=
+n
+> > abuse to infer information about privileged VTL. Some examples I came u=
+p
+> > with:
+> > - Guest page walks: VTL0 could install malicious directory entries that
+> >   point to GPAs only visible to VTL1. KVM will happily continue the
+> >   walk. Among other things, this could be use to infer VTL1's GVA->GPA
+> >   mappings.
+> > - PV interfaces like the Hyper-V TSC page or VP assist page, could be
+> >   used to modify portions of VTL1 memory.
+> > - Hyper-V hypercalls that take GPAs as input/output can be abused in a
+> >   myriad of ways. Including ones that exit into user-space.
+> >
+> > We would be protected against all these if we implemented the memory
+> > access restrictions through the memory slots API. As is, it has the
+> > drawback of having to quiesce the whole VM for any non-trivial slot
+> > modification (i.e. VSM's memory protections). But if we found a way to
+> > speed up the slot updates we could rely on that, and avoid having to
+> > teach kvm_read/write_guest() and friends to deal with memattrs. Note
+> > that we would still need to use memory attributes to request for faults
+> > to exit onto user-space on those select GPAs. Any opinions or
+> > suggestions?
+> >
+> > Note that, for now, I'll stick with the memory attributes approach to
+> > see what the full solution looks like.
+>
+> FWIW, I suspect we'll be better off honoring memory attributes.  It's not=
+ just
+> the KVM side that has issues with memslot updates, my understanding is us=
+erspace
+> has also built up "slow" code with respect to memslot updates, in part be=
+cause
+> it's such a slow path in KVM.
 
-kernel test robot noticed the following build warnings:
+Sean, since I see you're looking at the series. I don't think it's worth
+spending too much time with the memory attributes patches. Since
+figuring out the sidechannels mentioned above, I found even more
+shortcomings in this implementation. I'm reworking the whole thing in a
+separate series [1], taking into account sidechannels, MMIO, non-TDP
+MMUs, etc. and introducing selftests and an in-depth design document.
 
-[auto build test WARNING on akpm-mm/mm-everything]
-[also build test WARNING on tytso-ext4/dev brauner-vfs/vfs.all linus/master v6.11-rc7 next-20240913]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+[1] https://github.com/vianpl/linux branch 'vsm/memory-protections' (wip)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andr-Almeida/libfs-Create-the-helper-function-generic_ci_validate_strict_name/20240911-224740
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20240911144502.115260-8-andrealmeid%40igalia.com
-patch subject: [PATCH v4 07/10] tmpfs: Add casefold lookup support
-config: csky-randconfig-002-20240913 (https://download.01.org/0day-ci/archive/20240914/202409140236.RR9Gbvqh-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409140236.RR9Gbvqh-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409140236.RR9Gbvqh-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> mm/shmem.c:4719:39: warning: 'shmem_ci_dentry_ops' defined but not used [-Wunused-const-variable=]
-    4719 | static const struct dentry_operations shmem_ci_dentry_ops = {
-         |                                       ^~~~~~~~~~~~~~~~~~~
-
-
-vim +/shmem_ci_dentry_ops +4719 mm/shmem.c
-
-  4717	
-  4718	#if IS_ENABLED(CONFIG_UNICODE)
-> 4719	static const struct dentry_operations shmem_ci_dentry_ops = {
-  4720		.d_hash = generic_ci_d_hash,
-  4721		.d_compare = generic_ci_d_compare,
-  4722	#ifdef CONFIG_FS_ENCRYPTION
-  4723		.d_revalidate = fscrypt_d_revalidate,
-  4724	#endif
-  4725		.d_delete = always_delete_dentry,
-  4726	};
-  4727	#endif
-  4728	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Nicolas
 
