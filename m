@@ -1,109 +1,140 @@
-Return-Path: <linux-kernel+bounces-328254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 362EF978119
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:26:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ECFD9780EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:19:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECC7A2817EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:26:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 796D91C22703
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE8C1DB948;
-	Fri, 13 Sep 2024 13:25:40 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480ED1DB525;
+	Fri, 13 Sep 2024 13:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YBKB0LoB"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09881DA62B;
-	Fri, 13 Sep 2024 13:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45FF1DA2FF;
+	Fri, 13 Sep 2024 13:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726233939; cv=none; b=d2r6H5eJW3kug5SezqrgsB6uEkJ57DcOMwJRtykhvS2E1o91GyN1ZRLhXh2caRZc1zhKkRTjNnLSoo3E6vOOE/hFKpwC7134pFxZNK2y8mXAwbU6++vuh/BOD0HAnuhAfWd8SP0PsQzjdQ/kbv+96jV+sIrDoSB0YQXsnVRh3eE=
+	t=1726233558; cv=none; b=M3Wgxgnr8M6sLpiga86EL9nST98QoqSJBj0HO2XTow60xh4lX0eef0sWbuuUw9EXd5xImrRYDuYzJu1W+2vw7IOCBUVf/4lEtT44aOe8nfiIkBJl1RDfriaIrBVA4UD6jzsmZN6uY1+9FJYB7wtLG1r8E9pSnDytJkHAhf3JIoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726233939; c=relaxed/simple;
-	bh=VFN9R0auFtHfIEJzSpEEh6qLV1o1M/nq69Fch1WZ5wo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mcmOAIS1q8STogpedgsi4WAK1XPfaCDEA7BtrlLo+TAdPQo/clXBZpZolP/+CeQFxKtmGBgiFPKMPyS9Djd3Nh/QmJGPy5fQIHkE8oi9D8vgIJHEuvsEobK35Eqaf2HvE2kpVTph6x54JT/0S5eWlupN9BCezbk7HNyvgXXHHkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4X4w412nbqzmV6L;
-	Fri, 13 Sep 2024 21:23:29 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6BF6F1401F0;
-	Fri, 13 Sep 2024 21:25:34 +0800 (CST)
-Received: from huawei.com (10.67.174.121) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Fri, 13 Sep
- 2024 21:25:33 +0800
-From: Chen Ridong <chenridong@huawei.com>
-To: <martin.lau@linux.dev>, <ast@kernel.org>, <daniel@iogearbox.net>,
-	<andrii@kernel.org>, <eddyz87@gmail.com>, <song@kernel.org>,
-	<yonghong.song@linux.dev>, <john.fastabend@gmail.com>, <kpsingh@kernel.org>,
-	<sdf@google.com>, <haoluo@google.com>, <jolsa@kernel.org>, <tj@kernel.org>,
-	<lizefan.x@bytedance.com>, <hannes@cmpxchg.org>, <roman.gushchin@linux.dev>
-CC: <bpf@vger.kernel.org>, <cgroups@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 3/3] workqueue: Adjust WQ_MAX_ACTIVE from 512 to 2048
-Date: Fri, 13 Sep 2024 13:17:20 +0000
-Message-ID: <20240913131720.1762188-4-chenridong@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240913131720.1762188-1-chenridong@huawei.com>
-References: <20240913131720.1762188-1-chenridong@huawei.com>
+	s=arc-20240116; t=1726233558; c=relaxed/simple;
+	bh=4q/8N6O8ffI72x/9iTUFiRqxpi/mE0XbxqrQO5oMoWM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HEBiWvQLSTZFPP+aCgeANLthpMLjJ9rf5evyn0ouolmK7/1GdocAYeFZqEIiZ+sPw1icOB/uc/5vuh4O+j5Ci066+UvX6h0IPxOXZ3vVMfgo/6As36wdBwEcYDUq9xSc5sXX56KX9R8XinTuMjFhsCIf64jjU0fSqNwdK4TCysI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YBKB0LoB; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5365aa568ceso1202316e87.0;
+        Fri, 13 Sep 2024 06:19:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726233555; x=1726838355; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cnZBXkdG1OqmFjnngLoBqqNkjebYkNRY5cB09E7/o7A=;
+        b=YBKB0LoBg7DxZbkSoO0yLAsR44a/nCALzXKpXoEpkGsy8G10bABYlfEbl92zhs91BJ
+         0M3yJYNfb+cC9ZYWGmtu1y/4Gq+9PqmmVoWhW7+gXVvbKUjinijYEF7NveKtR6kZux6A
+         iYRF2F8c2M3jJa1NEP4uQ4ywmSnSCoAgCp++rBEtzQcd/rnU2Rz6Ho4M0A5NG0a/QA2C
+         6ilnW2Be/7wzWLvJH2Y2K6/lMPkMziweug5kUCGg1VPWNnouiOaBc9FMmt+HF7ud8EyP
+         Fg4OEwdWkndD6zmxU0U50VXPHEIbA3TlPp9OcjNGO3+kF252pPtfm79zj/WIolCr5nfI
+         0mdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726233555; x=1726838355;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cnZBXkdG1OqmFjnngLoBqqNkjebYkNRY5cB09E7/o7A=;
+        b=VjDhoxNZ152VZapEejH4ly7HUIprVmaLya3ud3tOFamfQOAgDXMifG7Wj+xLEbUa1/
+         RKXaEAvkSP/qJOmaH9WKz/gWpAoeYq9/vPWx6U5Ke+5pSKb/MPpXANFVJ0bmnhIinwpk
+         iNy9PMtYvo8WgbFyLeAfFyjP+CewGRuTsBoDnQc/w/IBMBVfyUMOEKyuWnlmAjesDLGO
+         /PCuKf1LQ8S8Mz8DYk+Pd2Bn5MMOSsXukEdpZOEXLBhUbv/3HL/sZMC1wc1s3O7G/FYv
+         pAG7BLHTks1yXcS4BcWhNqoTAn8GJqHO1zborxWmh6nACTesnPm330btiWXDSbmv2cL9
+         kJag==
+X-Forwarded-Encrypted: i=1; AJvYcCUqH8bmb0JPZzsP9uoTdT3e7ZHpwsbNMF4dd1utiZ8jPmJmtY07pxyvfzquGLatJ2pM75wmwJWSU8Jh@vger.kernel.org, AJvYcCWW+XGePhTecTsGh0V4YLVWunbCGzYwgGAv2TbqR9f4XFtrnTit2L/AkQoFA3xiekowClQPWSCS@vger.kernel.org, AJvYcCXJ+tl4TfMLo8x3VMuRvcocOJ4feioHqOXv9WlTvGBzchN1wssn8x18gujBFuymSnrhIy1MhDf5m2nreZio@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTYJqYClbfdkFH+sC2m0M4Fq1fZ7lLfqyEsasZWqr5Y64mffog
+	D34gxsASKfe7s8FzjsGrDZq9YktlwmoMtkYSokOl+RZJqhqBaFy/
+X-Google-Smtp-Source: AGHT+IHLOctH/seZi9U2ROlC0Paog572OIeyF1WDBW/pyJ+Rgfnrhh7rDUxEq6zeapMoNF+4zLw9ZQ==
+X-Received: by 2002:a05:6512:3e29:b0:52e:936e:a237 with SMTP id 2adb3069b0e04-5367fec8cb1mr2509991e87.16.1726233554670;
+        Fri, 13 Sep 2024 06:19:14 -0700 (PDT)
+Received: from [127.0.1.1] (84-115-213-37.cable.dynamic.surfer.at. [84.115.213.37])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25a258a3sm865945666b.89.2024.09.13.06.19.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 06:19:14 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH 0/7] iio: light: veml6030: fix issues and add support for
+ veml6035
+Date: Fri, 13 Sep 2024 15:18:55 +0200
+Message-Id: <20240913-veml6035-v1-0-0b09c0c90418@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd100013.china.huawei.com (7.221.188.163)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL875GYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDSwNj3bLU3BwzA2NTXfNES8OkZAMLi2SzNCWg8oKi1LTMCrBR0bG1tQC
+ dd0DYWgAAAA==
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Rishi Gupta <gupt21@gmail.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>, stable@vger.kernel.org
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726233553; l=1792;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=4q/8N6O8ffI72x/9iTUFiRqxpi/mE0XbxqrQO5oMoWM=;
+ b=4KjytU33ZjXrLgrm2P1Kf/9UjwbWMq1EApvzJscdq7sGzb52I9BXebT/4H7SeFW+hMPe10/Lf
+ cfnvYuMHvxkDlXQkTNQKjJ9vpGw8/UGr4bvJEjyVMtOjYhZngvBCy/m
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-WQ_MAX_ACTIVE is currently set to 512, which was established approximately
-15 yeas ago. However, with the significant increase in machine sizes and
-capabilities, the previous limit of 256 concurrent tasks is no longer
-sufficient. Therefore, we propose to increase WQ_MAX_ACTIVE to 2048.
-and WQ_DFL_ACTIVE is 1024 now.
+This series updates the driver for the veml6030 ALS and adds support for
+the veml6035, which shares most of its functionality with the former.
 
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
+The most relevant updates for the veml6030 are the resolution correction
+to meet the datasheet update that took place with Rev 1.7, 28-Nov-2023,
+and a fix to avoid a segmentation fault when reading the
+in_illuminance_period_available attribute.
+
+Vishay does not host the Product Information Notification where the
+resolution correction was introduced, but it can still be found
+online[1], and the corrected value is the one listed on the latest
+version of the datasheet[2] (Rev. 1.7, 28-Nov-2023) and application
+note[3] (Rev. 17-Jan-2024).
+
+Link: https://www.farnell.com/datasheets/4379688.pdf [1]
+Link: https://www.vishay.com/docs/84366/veml6030.pdf [2]
+Link: https://www.vishay.com/docs/84367/designingveml6030.pdf [3]
+
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 ---
- Documentation/core-api/workqueue.rst | 4 ++--
- include/linux/workqueue.h            | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Javier Carrasco (7):
+      dt-bindings: iio: light: veml6030: rename to add manufacturer
+      dt-bindings: iio: light: veml6030: add veml6035
+      iio: light: veml6030: fix IIO device retrieval from embedded device
+      iio: light: veml6030: make use of regmap_set_bits()
+      iio: light: veml6030: update sensor resolution
+      iio: light: veml6030: add set up delay after any power on sequence
+      iio: light: veml6030: add support for veml6035
 
-diff --git a/Documentation/core-api/workqueue.rst b/Documentation/core-api/workqueue.rst
-index 338b25e86f8c..b66b55d35c9c 100644
---- a/Documentation/core-api/workqueue.rst
-+++ b/Documentation/core-api/workqueue.rst
-@@ -245,8 +245,8 @@ CPU which can be assigned to the work items of a wq. For example, with
- at the same time per CPU. This is always a per-CPU attribute, even for
- unbound workqueues.
- 
--The maximum limit for ``@max_active`` is 512 and the default value used
--when 0 is specified is 256. These values are chosen sufficiently high
-+The maximum limit for ``@max_active`` is 2048 and the default value used
-+when 0 is specified is 1024. These values are chosen sufficiently high
- such that they are not the limiting factor while providing protection in
- runaway cases.
- 
-diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
-index 59c2695e12e7..b0dc957c3e56 100644
---- a/include/linux/workqueue.h
-+++ b/include/linux/workqueue.h
-@@ -412,7 +412,7 @@ enum wq_flags {
- };
- 
- enum wq_consts {
--	WQ_MAX_ACTIVE		= 512,	  /* I like 512, better ideas? */
-+	WQ_MAX_ACTIVE		= 2048,	  /* I like 2048, better ideas? */
- 	WQ_UNBOUND_MAX_ACTIVE	= WQ_MAX_ACTIVE,
- 	WQ_DFL_ACTIVE		= WQ_MAX_ACTIVE / 2,
- 
+ .../light/{veml6030.yaml => vishay,veml6030.yaml}  |  42 ++-
+ drivers/iio/light/veml6030.c                       | 323 ++++++++++++++++++---
+ 2 files changed, 319 insertions(+), 46 deletions(-)
+---
+base-commit: 5acd9952f95fb4b7da6d09a3be39195a80845eb6
+change-id: 20240903-veml6035-7a91bc088c6f
+
+Best regards,
 -- 
-2.34.1
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
 
