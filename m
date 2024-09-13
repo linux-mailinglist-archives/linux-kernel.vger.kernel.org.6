@@ -1,354 +1,360 @@
-Return-Path: <linux-kernel+bounces-328763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17B56978880
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:07:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CD49978833
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:53:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 439031C219EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:07:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD6D21F26742
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D82E146D40;
-	Fri, 13 Sep 2024 19:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED23139566;
+	Fri, 13 Sep 2024 18:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxiRFoYY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="ye0TWV/v";
+	dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b="sspARN5K"
+Received: from mx0b-002c1b01.pphosted.com (mx0b-002c1b01.pphosted.com [148.163.155.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED9E224CF;
-	Fri, 13 Sep 2024 19:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726254416; cv=none; b=GBZErquQ7CH9uRZ+y/xwXRrF8zrYN+21jHICH0fFKU79HTpEh+lx1fY5zRh2V6w65zLQx9w/e7/YfkaTgEbxCQAsxXeE6md57BDG3i9oI0Ew5AwCtDXPESXitvNMWJRiPmHYp44mF5EUxH11XtskhYcf1Jm5BJqwBlSsz5zv+Y8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726254416; c=relaxed/simple;
-	bh=IVp8l6c6f41YARzik52VEPuV2gqwV+A4TSgezp3UTFY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oUIvsrPhl/ABFQ9Qp903VUPlJGjM0pi1P23BDrjNkQCfmnvbaaM39mb0TVYJFzROunzM6e83+zzpq32ooFCUv/gszC8vQrQ0WViZP6fZTFHEbsr8/BUuIYeyVou3gFgnraZXbzujPvBO9LLlxzWJrGdS/UXYpK6VWuPf2n1oRzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxiRFoYY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECFADC4CEC0;
-	Fri, 13 Sep 2024 19:06:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726254415;
-	bh=IVp8l6c6f41YARzik52VEPuV2gqwV+A4TSgezp3UTFY=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=rxiRFoYY4/kzc8OfApKxV6U7AY4Xpi99RSsWygXYv8i4olbPdx3/x/7kPoTEfUbzg
-	 YhSt9Kt+hOCSLCFqlS5GGMenDanxz7Ts+B0x48Yee1o+3OUNTQVcIBpZxCRJMr8ssm
-	 ccc8bmd0eefFzmEKYxr4U4n4s5XMrlNQmDJW31cxIk1TVT7zBDlbQI1ePuL4PTffp5
-	 hewtBg86TqpwbDKs564Xj5AOpS0UHgNe6II7qFx1FJOfGHZtM0vVZ/ToPjJdWAQbX5
-	 qkDYIDIA711JYHbdWGS/tmMYlNk/v+HnF5MQJdt0UHkIP3y3nr02KGo6EF+p8i4J5T
-	 gIn6i4NFtE0YQ==
-Message-ID: <8756a43fe0b7c3f418b351adb05e7a146d33bdfe.camel@kernel.org>
-Subject: Re: [PATCH v7 01/11] timekeeping: move multigrain timestamp floor
- handling into timekeeper
-From: Jeff Layton <jlayton@kernel.org>
-To: John Stultz <jstultz@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Stephen Boyd <sboyd@kernel.org>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, Jan Kara <jack@suse.cz>,  Steven Rostedt
- <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet
- <corbet@lwn.net>, Chandan Babu R <chandan.babu@oracle.com>, "Darrick J.
- Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, Andreas Dilger
- <adilger.kernel@dilger.ca>, Chris Mason <clm@fb.com>, Josef Bacik
- <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,  Hugh Dickins
- <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, Chuck Lever
- <chuck.lever@oracle.com>, Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
- linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
- linux-btrfs@vger.kernel.org, linux-nfs@vger.kernel.org, linux-mm@kvack.org
-Date: Fri, 13 Sep 2024 15:06:51 -0400
-In-Reply-To: <CANDhNCof7+q+-XzQoP=w0pcrS_-ifH9pmAmtq8H++tbognBv1A@mail.gmail.com>
-References: <20240913-mgtime-v7-0-92d4020e3b00@kernel.org>
-	 <20240913-mgtime-v7-1-92d4020e3b00@kernel.org>
-	 <CANDhNCof7+q+-XzQoP=w0pcrS_-ifH9pmAmtq8H++tbognBv1A@mail.gmail.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCEE43AAB;
+	Fri, 13 Sep 2024 18:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.155.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726253569; cv=fail; b=C23G1t+MLQ+2KC5NBhzwKg2hHwV4aFKkFupm9N/SC3wAtzFRgKKEzUyGzdQIbFokAj1EyAL2ZIT7nQEqBk3vb8D+CZBO+w5wKZbGY3wX0kMmRTvvOFsr4OZ+V3ox3yDXLok5Fhrs/QCbA6PtqXDKmzQWYL4KrBNyhXAyk/6vaT8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726253569; c=relaxed/simple;
+	bh=spaKgGsWBrt0Bb6lt5J1StJr22PO7NA8prbSEMvQ5T4=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=VnEQ82OwMaLhm/WtAmLt/f51c2h5bX4wOE4D34+jnbm9Fxg25be/dNRtHf2lkHg9y9kF3StH2/+jDnXnlb1SiMBDWhKKLO16F99GLlhDMbPagoosZjfTQf+5CIyTvYGHE2JSA9t6Q62ATpDQl04hsjUNNedoQAzVvFuHXxZZTwU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nutanix.com; spf=pass smtp.mailfrom=nutanix.com; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=ye0TWV/v; dkim=pass (2048-bit key) header.d=nutanix.com header.i=@nutanix.com header.b=sspARN5K; arc=fail smtp.client-ip=148.163.155.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nutanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nutanix.com
+Received: from pps.filterd (m0127844.ppops.net [127.0.0.1])
+	by mx0b-002c1b01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48DEmlmj008226;
+	Fri, 13 Sep 2024 11:52:16 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=proofpoint20171006; bh=UGZkFXWGPm44b
+	HBOL+o21YjX0/FcZNLRMty/eAnBrXo=; b=ye0TWV/v0Y4h6cwAFG/lJLVZmD+F+
+	MSSQYaC533/hEICFOd3GK85zxGNytcfyjVQldQ+RrfbRNXluPqbu0xGUYBAY6c6d
+	QPNOxzZI9gnqZF00O/5rW7VZAPmWHey8mMibj+BFhQfM0A5qBPLjuszzc6mLfFm4
+	FwQcJTbN1DqiP8Gnoz5ZYOzvXc+LXlo1oECvyJobGf5zM2Fru2nndA6Ey5/Hh4Wd
+	7I/eI9g+cYupDEcyKH3gBWdiLpgZWNxhjJUV2gLpdtD7KKX+6t1JqOGvB3spBSl+
+	p2xWOXofMb4y/f0KPkJmULDn4ol9dQCPI79+/nWS5CH9NGQc78zSmgCVQ==
+Received: from dm1pr04cu001.outbound.protection.outlook.com (mail-centralusazlp17010005.outbound.protection.outlook.com [40.93.13.5])
+	by mx0b-002c1b01.pphosted.com (PPS) with ESMTPS id 41gpc0ytjh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 11:52:15 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cTHamLUDrKZUzTtyJ48ahjEGGP5hp+qnreJyiIhB/3Pw8SBseiklqzVks1aFmsIInMzrkcZVE5XtM7SlB0Sd3Ja0KiCXhfQDBLXRCKMlKCn48YyddpB01rN0iCZUwpBeA8GBTfUY8BNMMLbDGQSPjNDKwv5gA92SunW5ymlC0nwgqzeSpAZbzc2wJ5P2sRMx8/ihcmDF8hLae7z+PBFz+WoOgZ+xh/GpPC3hq7EOVlICH3PyBE5vjZe1fJC+xWwVQrqv8AmZKihUBoSALd1bKQsY3IxDYxi5f9pi7pNLZ9HMbcf+aXQpGe9VL3HSfetEXPaseDbQcL5lJZPhCYXwhw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UGZkFXWGPm44bHBOL+o21YjX0/FcZNLRMty/eAnBrXo=;
+ b=P/SpUXIpZfA+XUTFoOQKR0BsLqjQ2ouUeTgjqlyiPi7uaJref7OClFMQR7HiJL8y39k0LLPlKaSfGlYS8qR3tA2Pl5RwcpQKEenhDGR40+ci6GzQnZ4TMcrqamobDh1VarJcLorz2sBVu1zOhmlO8ECBarP+5QEDfqjT8DNZ2XIxoAay898x8Bqjjwntn5wS31ymbWbj6Ipcefzi+rUgn+jCplCKNSy+encdwrDBm+DiR5S7dCHfnXzjjqTJ1bfoOqAmbmNRFNcEU0504KVj92B/L9iW4Y4+LOGUOi7SFVbVfyMvIA4C5kSMzPhf6efgRdeky7sMH0f6RgyEQRhaLw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nutanix.com; dmarc=pass action=none header.from=nutanix.com;
+ dkim=pass header.d=nutanix.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nutanix.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UGZkFXWGPm44bHBOL+o21YjX0/FcZNLRMty/eAnBrXo=;
+ b=sspARN5K/azteobBdRCsAOCE72nMj+YptRK/al7QMaqqdGTM3ae2Vfnz8CFdPBXkwVfVy0QM2Ea0GjnkKjGlEmW1RKzyOkE+ELzb2BBCizOw53Ximyu74fdJkoSv1So2DIhUDi+d6vDZs6nKHTIQbQNE1EXS/sdb2eIBl2wuPs5QNtv7W++soj3HbIlYLPZ8SG1xl+du4dgfgHrOK4+jmHkFZgZGpSezjkfgxNFDjQ0EC0qkAJIzgRsgBjftqbgtPRGOS/2iNn+JKv/Avp7jLNGc4X52PsopD7GC/QhRmthJlW5iG41SNQdmZrnbKFEoi+1+VoxRzjzTuDYXs7WdYQ==
+Received: from LV8PR02MB10287.namprd02.prod.outlook.com
+ (2603:10b6:408:1fa::10) by SJ0PR02MB7821.namprd02.prod.outlook.com
+ (2603:10b6:a03:32e::5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.20; Fri, 13 Sep
+ 2024 18:52:13 +0000
+Received: from LV8PR02MB10287.namprd02.prod.outlook.com
+ ([fe80::b769:6234:fd94:5054]) by LV8PR02MB10287.namprd02.prod.outlook.com
+ ([fe80::b769:6234:fd94:5054%5]) with mapi id 15.20.7918.020; Fri, 13 Sep 2024
+ 18:52:11 +0000
+From: Jon Kohler <jon@nutanix.com>
+To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+        Sandipan Das <sandipan.das@amd.com>, Kai Huang <kai.huang@intel.com>,
+        linux-kernel@vger.kernel.org
+Cc: kvm@vger.kernel.org, Jon Kohler <jon@nutanix.com>,
+        Chao Gao <chao.gao@intel.com>,
+        Daniel Sneddon <daniel.sneddon@linux.intel.com>
+Subject: [PATCH v3] x86/bhi: use TSX abort for mitigation on RTM systems
+Date: Fri, 13 Sep 2024 12:08:53 -0700
+Message-ID: <20240913190857.1557383-1-jon@nutanix.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR03CA0112.namprd03.prod.outlook.com
+ (2603:10b6:a03:333::27) To LV8PR02MB10287.namprd02.prod.outlook.com
+ (2603:10b6:408:1fa::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR02MB10287:EE_|SJ0PR02MB7821:EE_
+X-MS-Office365-Filtering-Correlation-Id: ac9f1137-7a5d-4e38-c222-08dcd4252a6d
+x-proofpoint-crosstenant: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|7416014|376014|1800799024|366016|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?x7Gx9oOX400OlPRquzQVRc8ksCbH5EFktPDxSb9vdOmQPRkP6U49z0AEjr9b?=
+ =?us-ascii?Q?1rxKewf6fUOXKVWbW8KvyQGNTNjLoWfslcfNOMHvRoixfmmk9NsZbRU0Ge4r?=
+ =?us-ascii?Q?pjQkhyoVd/IjNHl73AS5bVizlAYyh/HmDc2AluK2P8ipF3h4/lUeXArJWR2A?=
+ =?us-ascii?Q?4j6PuMMvplp+USbrdDe/8RmzYrQSg3JYwGx9UAuExo6om0Tw6lnQYVEWPmCl?=
+ =?us-ascii?Q?t0GZRfJvCjRrFoqoUvYZdcTf0VrVBRHKgSEPkZMF4kv3Sdd2AdciCpEyz9Mg?=
+ =?us-ascii?Q?VCAD6SQ+eBN/TOgRrUMrMoaF7jPVBcBQKVVEBZv4SH67iNm39WbLSAjDqffA?=
+ =?us-ascii?Q?A7u2BFtB1uDiXAZKI3WvEtg7yNF3b4wB0rnbIn5zCtpNEKJnEmZKVSRkuqPX?=
+ =?us-ascii?Q?yziHUQZTZH/eUjLqQl4FkNBlwTpb7L1aXiUxC7mzMaNhOCfXXQFRZUx/nMPu?=
+ =?us-ascii?Q?Sg7JL1Z6DfTs+nnnclU+2kSe3A7I0Qo7tX7jj/rkV2Q1HkG9EmkjjiL+viEF?=
+ =?us-ascii?Q?6Z1K9pNwokVlgeiU5WAKn19cOAFsho3G7tWOLfW5qieVzbiH3Zw0LSkZ8Ww2?=
+ =?us-ascii?Q?78T12GRMWj7TLpSJ6ZkkVTkgFUuEarqfhmGdxMeUB3elsBJDfjXcnUlATNeF?=
+ =?us-ascii?Q?DH7zeiJsqaO7vGReUGDJokPdsJToWGU71/mnj3c1e48FYNeT9IFUGNp5MKE5?=
+ =?us-ascii?Q?MbhDgXlz2X0LuuwqP4Q9j/p/7jn5WKAZGl0mt+af+m/juyOnhfeEszHSUxPL?=
+ =?us-ascii?Q?l4Vf/2GmJXkBRQ1jRXEsJcOpxNlcbdxXXsDU84qVPftdNtSeWT/irU95opqr?=
+ =?us-ascii?Q?/euuaHbWtc1a8x4fdnnmQ3ZedHIA0eY5yE8e+63RHvPakrAA20EjoWKkWTgv?=
+ =?us-ascii?Q?GZOUNytoKCpKV5CLb2my4ezYeGaWbSPi8iFeFH9Nsr5cktQhrqmWmqNLvyMM?=
+ =?us-ascii?Q?bcxAlmExKwCV//RVYjJ6jzdK0ZUozmnh8No/J+OsHCi77sFHqQbBhu9zad6n?=
+ =?us-ascii?Q?71Cz8w1I0o9Hen14cxPYZdz1ODMHvo0XAnZCjSeuwugX11O6XjCOr7+7eXVz?=
+ =?us-ascii?Q?Uqmf6RlGZ98Vq2wSElfCievTthC9gkC6CNzbO1edmWaV3TJ0s2cBaP+zufDh?=
+ =?us-ascii?Q?dClPoYffnXCNqI+ueCEg2ZtpoelXxHhjQQ696DM0UkFOy2XuOgCEyiWnt7cD?=
+ =?us-ascii?Q?c6o4luq8dyHJ3DaNO69F4z/Ck8f42CdWzOXVV4QIx2m/3MSYcybhDSBT/oTk?=
+ =?us-ascii?Q?ZpjBYtyHrE7WArWmjnvkCJjEJpKNemZ+hdOh81mSpG5CNCW+gwWAbZWGRk3x?=
+ =?us-ascii?Q?MOMtV+M5w1PBZ3cqx0zFhEQ/MbGpXiyDi90RuEuOestzhr2z6rrXMe6BLq7g?=
+ =?us-ascii?Q?w8MJZL1bBcXteKSM47Fme6a1av+tdEQpIHKktu+xM9cWhSvYQPjRLC8Nirz/?=
+ =?us-ascii?Q?esFNq/418mI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR02MB10287.namprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(7416014)(376014)(1800799024)(366016)(38350700014)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?5+1FII95TkdjVVm8sFWx90UIRYp/ihJ5j1euvCztXH0ysziRq1ZKHGhZ4oqf?=
+ =?us-ascii?Q?aMSnZbV4T+goOrsoajPLP3ZcTOeOwj6Q4+yukx83ozLPycvcYpFAL59mkJGl?=
+ =?us-ascii?Q?Sm7u+BkrIMxX6kCIHE+kPK+wThy4vn+hNGgE7VxtPcjTUvy2Jg+DpEczH0lo?=
+ =?us-ascii?Q?jBHJULe08KWJAYGAeAto3fDzJForvWgSlRciuPT2y8BBPJgfHenY1ElRgROg?=
+ =?us-ascii?Q?2iRzAx0bG0W3FMQlpnCtB/0GHbPnN1zsRWwiTEhCt5r32Y27dNhKhl3COo/r?=
+ =?us-ascii?Q?03Jn1X38evIW9It9HkuYBVLeXvhPNL22L1p+c2QmomjdTCaxkGmLhKpCjrf/?=
+ =?us-ascii?Q?sHyKNF/pQvvWidc1ulmKTHr7mIiOkgwHqfr1x8obU2BJ4Cg8eL6FAihAokdk?=
+ =?us-ascii?Q?yDWdBOjERFFkMc45ofxUUzqX+s2XRQ+V4vXut7H3n2bLRXx8+4P9I4tnrft/?=
+ =?us-ascii?Q?aFpk+IdFG0mOBES8WGXn46H8OJUjUoXAu9j24pVqcgneouOXpNptc1Gi3AOZ?=
+ =?us-ascii?Q?9SEfpSBzAJvoGuFnkhUYl1wb1ILJQmdZqewiq9HMv8yh4QDvBWY8YWWmbr0q?=
+ =?us-ascii?Q?v/Jpx8tl2h02qSPoNO3AKDAiRhxvqjOzaDy9YqCE7cROkYSW7Y3LbAuF1Nph?=
+ =?us-ascii?Q?KclpVvUE+FiXX2OxZ00VWIy/OFZh1zDLe3JX/8lEQky7MtZD7IOigBgr4soE?=
+ =?us-ascii?Q?ip0nyZnSzIiDod6xm/YoTo7VI1ZWBu4OMbj0T5+hNcYbHlDuOOn0jZwar6A9?=
+ =?us-ascii?Q?yPi8inNwCvL6kdHXIBUZatUiloTkizOXiG6yJzzdenTE+a7IEUJZ1ecisMPY?=
+ =?us-ascii?Q?DFEMAegAJZUtQYmRPg8am0V9L3hNw84HtLqeupiN+4iMnrMzu5hxuHNtqc/O?=
+ =?us-ascii?Q?w6xoMvjPqOy6Hy+We6Hymwyh2UUVOJu3NTFcX5Pr0xPxjXQ4sg1BPW7zZJHb?=
+ =?us-ascii?Q?+T5pLma1V/lMdtpeEBKFA1pCPEeVFo0WE6ydqHFojw/gHXDc9I53fIuCfg5K?=
+ =?us-ascii?Q?a7YZZ95tPL19h/CH4Z/mgwCsvLxoW+LJneVkeW/LFYUpLtfZR1zvcn5M5q9f?=
+ =?us-ascii?Q?fMu0KWlv5FvazpwVYfG9NfIQigUSS5461suLvpKcYWrct00KAOXlcUWqaqfD?=
+ =?us-ascii?Q?PgCedXvOuvCj3hT7Z3bBGbsvjWZWhk73xmRCO6R+PDR2UqfEbUQd3VGac0rl?=
+ =?us-ascii?Q?VObze7v67G3bO8YQ6rvpVVZkT+3yjPxaPybeP8YrBUg3uQODU7GmL4mNfdJM?=
+ =?us-ascii?Q?OOLuaVSCVQcpRIC8VEV1R8eQi9UQ1RC9BBAnwgGikzdghQsDl0x+6StMKjoF?=
+ =?us-ascii?Q?7eBKCel1wQZsZasff0tAOZZzplXfUlQ4Berv7pODkGPaa0OfIiy5lirPZWVU?=
+ =?us-ascii?Q?CpqVstAU7MzohZepk/GvU6HscJOQ/m3WCH0lgqO8k4Fx9M5Q0uXfbPfHrMK3?=
+ =?us-ascii?Q?aQwMz2C42EnT5lbrsXCB/Y75/ENNu9ipEXQI84IFr/WUrSQcfSQdYbo4a6Gk?=
+ =?us-ascii?Q?5dNqqJn7Wgz7hxfPzghEsNaWotVbC6lsfk5uLWKuBj6VyQhc6unydl/K8oNU?=
+ =?us-ascii?Q?lyt+i382C8i2nAlHnbvsiFjgABZxxS1dqqV1p8bFpPTTA2QoxgNCV1A9MzGT?=
+ =?us-ascii?Q?vQ=3D=3D?=
+X-OriginatorOrg: nutanix.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac9f1137-7a5d-4e38-c222-08dcd4252a6d
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR02MB10287.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 18:52:10.3251
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bb047546-786f-4de1-bd75-24e5b6f79043
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sHZet20wNJOT/zf/3kTZd2HQNhYD4KeB6gpx1fDQLfFdyUviCK5tmvmU4QUMqG9Qu6y4ikKs36vH/olHQ0lb3JWUGBvb5wH1CsKDghHGrgg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR02MB7821
+X-Authority-Analysis: v=2.4 cv=YqddRJYX c=1 sm=1 tr=0 ts=66e489df cx=c_pps a=ga136hzsjl6Lb4dqulp3IQ==:117 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=EaEq8P2WXUwA:10 a=0034W8JfsZAA:10 a=0kUYKlekyDsA:10 a=QyXUC8HyAAAA:8 a=64Cc0HZtAAAA:8
+ a=VwQbUJbxAAAA:8 a=FBfThdMdpptHyf1kRGMA:9 a=iJeLTDR2-uQA:10 a=y5rEMOVZ_0gA:10 a=14NRyaPF5x3gF6G45PvQ:22
+X-Proofpoint-GUID: fDUB-SGgGwxIMKjPtQsEhL62EvbOJTe6
+X-Proofpoint-ORIG-GUID: fDUB-SGgGwxIMKjPtQsEhL62EvbOJTe6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-13_11,2024-09-13_02,2024-09-02_01
+X-Proofpoint-Spam-Reason: safe
 
-On Fri, 2024-09-13 at 11:59 -0700, John Stultz wrote:
-> On Fri, Sep 13, 2024 at 6:54=E2=80=AFAM Jeff Layton <jlayton@kernel.org> =
-wrote:
-> >=20
-> > For multigrain timestamps, we must keep track of the latest timestamp
-> > that has ever been handed out, and never hand out a coarse time below
-> > that value.
-> >=20
-> > Add a static singleton atomic64_t into timekeeper.c that we can use to
-> > keep track of the latest fine-grained time ever handed out. This is
->=20
-> Maybe drop "ever" and  add "handed out through a specific interface",
-> as timestamps can be accessed in a lot of ways that don't keep track
-> of what was returned.
->=20
+Introduce ability to mitigate BHI via TSX aborts on systems that
+support RTM feature. The assembly for this mitigation was provided by
+Intel [1], noted as "Listing 3", which starts and immediately aborts a
+TSX transaction and causes the processor to clear the BHB.
 
-Will do. I'll make it clear that this only applies to the *_mg
-interfaces.
+Vulnerable systems that do not support RTM or have TSX disabled will
+still use the clear_bhb_loop mitigation by default.
 
->=20
-> > tracked as a monotonic ktime_t value to ensure that it isn't affected b=
-y
-> > clock jumps.
-> >=20
-> > Add two new public interfaces:
-> >=20
-> > - ktime_get_coarse_real_ts64_mg() fills a timespec64 with the later of =
-the
-> >   coarse-grained clock and the floor time
-> >=20
-> > - ktime_get_real_ts64_mg() gets the fine-grained clock value, and tries
-> >   to swap it into the floor. A timespec64 is filled with the result.
-> >=20
-> > Since the floor is global, we take great pains to avoid updating it
-> > unless it's absolutely necessary. If we do the cmpxchg and find that th=
-e
-> > value has been updated since we fetched it, then we discard the
-> > fine-grained time that was fetched in favor of the recent update.
-> >=20
-> > To maximize the window of this occurring when multiple tasks are racing
-> > to update the floor, ktime_get_coarse_real_ts64_mg returns a cookie
-> > value that represents the state of the floor tracking word, and
-> > ktime_get_real_ts64_mg accepts a cookie value that it uses as the "old"
-> > value when calling cmpxchg().
-> >=20
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  include/linux/timekeeping.h |  4 +++
-> >  kernel/time/timekeeping.c   | 81 +++++++++++++++++++++++++++++++++++++=
-++++++++
-> >  2 files changed, 85 insertions(+)
-> >=20
-> > diff --git a/include/linux/timekeeping.h b/include/linux/timekeeping.h
-> > index fc12a9ba2c88..cf2293158c65 100644
-> > --- a/include/linux/timekeeping.h
-> > +++ b/include/linux/timekeeping.h
-> > @@ -45,6 +45,10 @@ extern void ktime_get_real_ts64(struct timespec64 *t=
-v);
-> >  extern void ktime_get_coarse_ts64(struct timespec64 *ts);
-> >  extern void ktime_get_coarse_real_ts64(struct timespec64 *ts);
-> >=20
-> > +/* Multigrain timestamp interfaces */
-> > +extern u64 ktime_get_coarse_real_ts64_mg(struct timespec64 *ts);
-> > +extern void ktime_get_real_ts64_mg(struct timespec64 *ts, u64 cookie);
-> > +
-> >  void getboottime64(struct timespec64 *ts);
-> >=20
-> >  /*
-> > diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-> > index 5391e4167d60..ee11006a224f 100644
-> > --- a/kernel/time/timekeeping.c
-> > +++ b/kernel/time/timekeeping.c
-> > @@ -114,6 +114,13 @@ static struct tk_fast tk_fast_raw  ____cacheline_a=
-ligned =3D {
-> >         .base[1] =3D FAST_TK_INIT,
-> >  };
-> >=20
-> > +/*
-> > + * This represents the latest fine-grained time that we have handed ou=
-t as a
-> > + * timestamp on the system. Tracked as a monotonic ktime_t, and conver=
-ted to the
-> > + * realtime clock on an as-needed basis.
-> > + */
-> > +static __cacheline_aligned_in_smp atomic64_t mg_floor;
-> > +
-> >  static inline void tk_normalize_xtime(struct timekeeper *tk)
-> >  {
-> >         while (tk->tkr_mono.xtime_nsec >=3D ((u64)NSEC_PER_SEC << tk->t=
-kr_mono.shift)) {
-> > @@ -2394,6 +2401,80 @@ void ktime_get_coarse_real_ts64(struct timespec6=
-4 *ts)
-> >  }
-> >  EXPORT_SYMBOL(ktime_get_coarse_real_ts64);
-> >=20
-> > +/**
-> > + * ktime_get_coarse_real_ts64_mg - get later of coarse grained time or=
- floor
-> > + * @ts: timespec64 to be filled
-> > + *
-> > + * Adjust floor to realtime and compare it to the coarse time. Fill
-> > + * @ts with the latest one. Returns opaque cookie suitable for passing
-> > + * to ktime_get_real_ts64_mg().
-> > + */
-> > +u64 ktime_get_coarse_real_ts64_mg(struct timespec64 *ts)
-> > +{
-> > +       struct timekeeper *tk =3D &tk_core.timekeeper;
-> > +       u64 floor =3D atomic64_read(&mg_floor);
-> > +       ktime_t f_real, offset, coarse;
-> > +       unsigned int seq;
-> > +
-> > +       WARN_ON(timekeeping_suspended);
-> > +
-> > +       do {
-> > +               seq =3D read_seqcount_begin(&tk_core.seq);
-> > +               *ts =3D tk_xtime(tk);
-> > +               offset =3D *offsets[TK_OFFS_REAL];
-> > +       } while (read_seqcount_retry(&tk_core.seq, seq));
-> > +
-> > +       coarse =3D timespec64_to_ktime(*ts);
-> > +       f_real =3D ktime_add(floor, offset);
-> > +       if (ktime_after(f_real, coarse))
-> > +               *ts =3D ktime_to_timespec64(f_real);
-> > +       return floor;
-> > +}
-> > +EXPORT_SYMBOL_GPL(ktime_get_coarse_real_ts64_mg);
-> > +
-> > +/**
-> > + * ktime_get_real_ts64_mg - attempt to update floor value and return r=
-esult
-> > + * @ts:                pointer to the timespec to be set
-> > + * @cookie:    opaque cookie from earlier call to ktime_get_coarse_rea=
-l_ts64_mg()
-> > + *
-> > + * Get a current monotonic fine-grained time value and attempt to swap
-> > + * it into the floor using @cookie as the "old" value. @ts will be
-> > + * filled with the resulting floor value, regardless of the outcome of
-> > + * the swap.
->=20
-> I'd add more detail here to clarify that this can return a coarse
-> floor value if the cookie is stale.
->=20
+Furthermore, on hardware that supports BHI_DIS_S/X86_FEATURE_BHI_CTRL,
+do not use hardware mitigation when using BHI_MITIGATION_VMEXIT_ONLY,
+as this causes the value of MSR_IA32_SPEC_CTRL to change, inflicting
+measurable KVM overhead.
 
-Sure, or I can just drop the cookie, if that's better.
+Example:
+In a typical eIBRS enabled system, such as Intel SPR, the SPEC_CTRL may
+be commonly set to val == 1 to reflect eIBRS enablement; however,
+SPEC_CTRL_BHI_DIS_S causes val == 1025. If the guests that KVM is
+virtualizing do not also set the guest side value == 1025, KVM will
+constantly have to wrmsr toggle the guest vs host value on both entry
+and exit, delaying both.
 
-> > +void ktime_get_real_ts64_mg(struct timespec64 *ts, u64 cookie)
-> > +{
-> > +       struct timekeeper *tk =3D &tk_core.timekeeper;
-> > +       ktime_t offset, mono, old =3D (ktime_t)cookie;
-> > +       unsigned int seq;
-> > +       u64 nsecs;
-> > +
-> > +       WARN_ON(timekeeping_suspended);
-> > +
-> > +       do {
-> > +               seq =3D read_seqcount_begin(&tk_core.seq);
-> > +
-> > +               ts->tv_sec =3D tk->xtime_sec;
-> > +               mono =3D tk->tkr_mono.base;
-> > +               nsecs =3D timekeeping_get_ns(&tk->tkr_mono);
-> > +               offset =3D *offsets[TK_OFFS_REAL];
-> > +       } while (read_seqcount_retry(&tk_core.seq, seq));
-> > +
-> > +       mono =3D ktime_add_ns(mono, nsecs);
-> > +
-> > +       if (atomic64_try_cmpxchg(&mg_floor, &old, mono)) {
-> > +               ts->tv_nsec =3D 0;
-> > +               timespec64_add_ns(ts, nsecs);
-> > +       } else {
-> > +               /*
-> > +                * Something has changed mg_floor since "old" was
-> > +                * fetched. That value is just as valid, so accept it.
-> > +                */
->=20
-> Mostly because I embarrassingly tripped over this in front of
-> everyone, I might suggest:
-> /*
->  * mg_floor was updated since the cookie was fetched, so the
->  * the try_cmpxchg failed. However try_cmpxchg updated old
->  * with the current mg_floor, so use that to return the current
->  * coarse floor value
->  */
->=20
-> :)
+In fact, if the VMM (such as qemu) does not expose BHI_CTRL + the guest
+kernel does not understand BHI_CTRL, or the VMM does expose it + the
+guest understands BHI_CTRL *but* the guest does not reboot to
+reinitialize SPEC_CTRL, the guest val will never equal 1025, making
+this overhead both painful and unavoidable.
 
-Will do. I've already added some comments to that effect that should
-help clarify things.
+Testing:
+On an Intel SPR 6442Y, using KVM unit tests tscdeadline_immed shows a
+~17-18% speedup vs the existing default.
 
-> Additionally, for these two new interfaces, since they are so
-> specifically tuned to this particular need in the vfs, it might be
-> good to add a comments in the kerneldoc here that they are special
-> case interfaces for the vfs and should be avoided outside that space.
->=20
-> That probably would alleviate my main worries, and we can polish the
-> details around cookie or no cookie later if needed.
->=20
+[1] https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/technical-documentation/branch-history-injection.html
 
-Will do.
+Signed-off-by: Jon Kohler <jon@nutanix.com>
+Cc: Chao Gao <chao.gao@intel.com>
+Cc: Daniel Sneddon <daniel.sneddon@linux.intel.com>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+---
+v1: https://lore.kernel.org/kvm/20240912141156.231429-1-jon@nutanix.com/
+v2: Switch approached to TSX abort, addressed comments from Chao/Pawan
+v3: Added changelog here, fixed small issue in v2 in bugs.c
 
-Thanks for the review!
---=20
-Jeff Layton <jlayton@kernel.org>
+ arch/x86/entry/entry_64.S            | 24 ++++++++++++++++++++++++
+ arch/x86/include/asm/cpufeatures.h   |  2 ++
+ arch/x86/include/asm/nospec-branch.h |  8 ++++++--
+ arch/x86/kernel/cpu/bugs.c           | 26 +++++++++++++++++++++-----
+ 4 files changed, 53 insertions(+), 7 deletions(-)
+
+diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
+index 1b5be07f8669..64e83caec40b 100644
+--- a/arch/x86/entry/entry_64.S
++++ b/arch/x86/entry/entry_64.S
+@@ -1552,3 +1552,27 @@ SYM_FUNC_START(clear_bhb_loop)
+ SYM_FUNC_END(clear_bhb_loop)
+ EXPORT_SYMBOL_GPL(clear_bhb_loop)
+ STACK_FRAME_NON_STANDARD(clear_bhb_loop)
++
++/*
++ * Aborting a TSX transactional region by invoking TSX abort also clears
++ * the BHB. This software sequence is an alternative to clear_bhb_loop,
++ * but it only works on processors that support Intel TSX. The TSX
++ * sequence is effective on all current processors with Intel TSX support
++ * that do not enumerate BHI_NO and should not be needed on parts that do
++ * enumerate BHI_NO. This sequence would be effective on all current
++ * processors with Intel TSX support whether or not XBEGIN is configured
++ * to always abort, such as when the IA32_TSX_CTRL (0x122) RTM_DISABLE
++ * control is set.
++ */
++SYM_FUNC_START(clear_bhb_tsx_abort)
++	push	%rbp
++	mov	%rsp, %rbp
++	xbegin label
++	xabort $0
++	lfence
++label:
++	pop	%rbp
++	RET
++SYM_FUNC_END(clear_bhb_tsx_abort)
++EXPORT_SYMBOL_GPL(clear_bhb_tsx_abort)
++STACK_FRAME_NON_STANDARD(clear_bhb_tsx_abort)
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index dd4682857c12..c6aa2d758389 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -473,6 +473,8 @@
+ #define X86_FEATURE_CLEAR_BHB_HW	(21*32+ 3) /* BHI_DIS_S HW control enabled */
+ #define X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT (21*32+ 4) /* Clear branch history at vmexit using SW loop */
+ #define X86_FEATURE_FAST_CPPC		(21*32 + 5) /* AMD Fast CPPC */
++#define X86_FEATURE_CLEAR_BHB_TSX	(21*32 + 6) /* "" Clear branch history at syscall entry using TSX abort */
++#define X86_FEATURE_CLEAR_BHB_TSX_ON_VMEXIT (21*32 + 7) /* "" Clear branch history at vmexit using TSX abort */
+ 
+ /*
+  * BUG word(s)
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index ff5f1ecc7d1e..915a767b9053 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -328,11 +328,14 @@
+ 
+ #ifdef CONFIG_X86_64
+ .macro CLEAR_BRANCH_HISTORY
+-	ALTERNATIVE "", "call clear_bhb_loop", X86_FEATURE_CLEAR_BHB_LOOP
++	ALTERNATIVE_2 "", "call clear_bhb_loop", X86_FEATURE_CLEAR_BHB_LOOP, \
++			  "call clear_bhb_tsx_abort", X86_FEATURE_CLEAR_BHB_TSX
+ .endm
+ 
+ .macro CLEAR_BRANCH_HISTORY_VMEXIT
+-	ALTERNATIVE "", "call clear_bhb_loop", X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT
++	ALTERNATIVE_2 "", "call clear_bhb_loop", X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT, \
++			  "call clear_bhb_tsx_abort", X86_FEATURE_CLEAR_BHB_TSX_ON_VMEXIT
++
+ .endm
+ #else
+ #define CLEAR_BRANCH_HISTORY
+@@ -383,6 +386,7 @@ extern void entry_ibpb(void);
+ 
+ #ifdef CONFIG_X86_64
+ extern void clear_bhb_loop(void);
++extern void clear_bhb_tsx_abort(void);
+ #endif
+ 
+ extern void (*x86_return_thunk)(void);
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 45675da354f3..4837f3968954 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -1662,8 +1662,16 @@ static void __init bhi_select_mitigation(void)
+ 			return;
+ 	}
+ 
+-	/* Mitigate in hardware if supported */
+-	if (spec_ctrl_bhi_dis())
++	/*
++	 * Mitigate in hardware if appropriate.
++	 * Note: for vmexit only, do not mitigate in hardware to avoid changing
++	 * the value of MSR_IA32_SPEC_CTRL to include SPEC_CTRL_BHI_DIS_S. If a
++	 * guest does not also set their own SPEC_CTRL to include this, KVM has
++	 * to toggle on every vmexit and vmentry if the host value does not
++	 * match the guest value. Instead, depend on software loop mitigation
++	 * only.
++	 */
++	if (bhi_mitigation != BHI_MITIGATION_VMEXIT_ONLY && spec_ctrl_bhi_dis())
+ 		return;
+ 
+ 	if (!IS_ENABLED(CONFIG_X86_64))
+@@ -1671,13 +1679,21 @@ static void __init bhi_select_mitigation(void)
+ 
+ 	if (bhi_mitigation == BHI_MITIGATION_VMEXIT_ONLY) {
+ 		pr_info("Spectre BHI mitigation: SW BHB clearing on VM exit only\n");
+-		setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT);
++		if (boot_cpu_has(X86_FEATURE_RTM))
++			setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_TSX_ON_VMEXIT);
++		else
++			setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT);
+ 		return;
+ 	}
+ 
+ 	pr_info("Spectre BHI mitigation: SW BHB clearing on syscall and VM exit\n");
+-	setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP);
+-	setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT);
++	if (boot_cpu_has(X86_FEATURE_RTM)) {
++		setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_TSX);
++		setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_TSX_ON_VMEXIT);
++	} else {
++		setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP);
++		setup_force_cpu_cap(X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT);
++	}
+ }
+ 
+ static void __init spectre_v2_select_mitigation(void)
+-- 
+2.43.0
+
 
