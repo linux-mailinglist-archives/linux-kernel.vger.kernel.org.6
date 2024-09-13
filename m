@@ -1,175 +1,138 @@
-Return-Path: <linux-kernel+bounces-327829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24BD4977BB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:57:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB008977BA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:56:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DBE8B2446E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:57:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 762DEB258CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBBE61D6C58;
-	Fri, 13 Sep 2024 08:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D914D1D6C4C;
+	Fri, 13 Sep 2024 08:56:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b="rA5SK0O1"
-Received: from mail1.fiberby.net (mail1.fiberby.net [193.104.135.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="J1s8dfmo";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="YkeDtf+w"
+Received: from a7-32.smtp-out.eu-west-1.amazonses.com (a7-32.smtp-out.eu-west-1.amazonses.com [54.240.7.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D231D58B2;
-	Fri, 13 Sep 2024 08:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.104.135.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5741AD256;
+	Fri, 13 Sep 2024 08:56:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.240.7.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726217867; cv=none; b=YLBEeVZAm/kEFuauFY4sp8kZ2fmF1zGGtv4TCX1acOW8ddgHC4crDkVaaxGelTQNK/neGye8c0D0BcdzE8RjUucYCPi4DmhibGMny1+OhlnvmYMQbgiZytmzVE1nxMndPKtNK7QjgnXDVCusBk5xl7POea2jezCRQod903YQQ1E=
+	t=1726217762; cv=none; b=I8rB1ZavceME8bEQKrsPvMY9yR+0Ld57ySOzf6uTfvELE2gHhBtR8Yn2I7XPBi4GaPQiADIUWCw9Pyy0t93C6jtqzbkWJQfpV7GRVdW/PQNv2JL1VbWewgHElijdLz8GtqwWD7dyxN5sCDEBeMIAxMgIQa5LvA3rqUkh0PuI/50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726217867; c=relaxed/simple;
-	bh=M5El9EyA9A0fefWeLaVcaVsb2FjaARGsqbpvDqpFzAo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YmbgyIT2drdIJsJaqVYvFhl158sLJKN597UBvBaTAYs1V7PpiOdOVJ7Pav1S2YB0mKzna0OzM9zZfmwm3NQqAzdFLThsflFd0pAb5l4CYEV24hkKuwyp31l+04CW2onOSz5wmEepEG626eSOM/iSEdkVdEv/L0dywTJ4lwEkvZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net; spf=pass smtp.mailfrom=fiberby.net; dkim=pass (2048-bit key) header.d=fiberby.net header.i=@fiberby.net header.b=rA5SK0O1; arc=none smtp.client-ip=193.104.135.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fiberby.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fiberby.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fiberby.net;
-	s=202008; t=1726217861;
-	bh=M5El9EyA9A0fefWeLaVcaVsb2FjaARGsqbpvDqpFzAo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=rA5SK0O1sLh8ZhNZX1jQIbZmA2PToy6epTTsj8CW9l1r4pw1Nvbf6FkucOQ9zQa+z
-	 N+N1Qfo2AK975ZnXLwxGLMgJ9RjDY3cp95T6FU5d6itglP7KT3xVu3XY1EwP29sX4H
-	 xDJ9msjaZFzLSZBYclBGpsioX4FyLbAY7qw6oUEUwWB74YYXDQ97UqLNBKnfiESc9Y
-	 wJjMyKnqIGct+rzwb0coEd22i9pZs9WAm8vHt3nZUD7qUfTrfckVULVtLUrQmk7JAy
-	 ummm/9xyCTvaJuPkLNig0BFonZOsDLViWZJ6TGg5i0Vm1gnr/EoFy10orssbVHXPEm
-	 oeNspWgu9kYUg==
-Received: from x201s (193-104-135-243.ip4.fiberby.net [193.104.135.243])
-	by mail1.fiberby.net (Postfix) with ESMTPSA id DA61E60078;
-	Fri, 13 Sep 2024 08:57:40 +0000 (UTC)
-Received: by x201s (Postfix, from userid 1000)
-	id C08512018C7; Fri, 13 Sep 2024 08:56:11 +0000 (UTC)
-From: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>
-To: Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: =?UTF-8?q?Asbj=C3=B8rn=20Sloth=20T=C3=B8nnesen?= <ast@fiberby.net>,
-	David Ahern <dsahern@kernel.org>,
-	Matthieu Baerts <matttbe@kernel.org>,
-	Mat Martineau <martineau@kernel.org>,
-	Geliang Tang <geliang@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	netdev@vger.kernel.org,
-	mptcp@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] tools: ynl-gen: use big-endian netlink attribute types
-Date: Fri, 13 Sep 2024 08:55:54 +0000
-Message-ID: <20240913085555.134788-1-ast@fiberby.net>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1726217762; c=relaxed/simple;
+	bh=yRGGn9KUcYp+ecXIoiuLZBY3QdwMcXtt0dMTBMqC+Oo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=twNNQo7OJxwAoBn68HW1wdjYBWY95Li8sgH+MZXFSaqu5WfiYsI/hpiZjBkFWOlBTkHWsKso/lT0UvtSH/Qj92OpZNTkDlRE8bi7//B0PfkWgURAjIztvjF/qgbZsSr+xJlTcLLKUBNdtsgksoDbtt4+L9mKT5N3DdkXznztJuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=amazonses.collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=J1s8dfmo; dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b=YkeDtf+w; arc=none smtp.client-ip=54.240.7.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazonses.collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=4232tfv5ebdrjdwkr5zzm7kytdkokgug; d=collabora.com; t=1726217758;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+	bh=yRGGn9KUcYp+ecXIoiuLZBY3QdwMcXtt0dMTBMqC+Oo=;
+	b=J1s8dfmoeCoXie2NoIr5GgXLR3tnjN+/YL7PHr6Qq7OG8wirlezjvKjyoFTuWiZE
+	tf1MJwRQmSgEL96UFThJ4clzGQeK07CGIOnOOoFbXsGjokyzgMRCd8FdbpZ/wqYLWR2
+	IOijmY4xUxK/6b2y7LUQdKXQDyTBP99E/E4cgLM66D7na0wujBjhaee/zyRx20cXYyW
+	willCxzoAggd5qA3iHMk+zGctgghmUukT9BE3usFGpQkflf6ZPKyBLbim00xKPf0bRg
+	wH7kJyivEYE0XgQOSGoDYTZg/YpMtS0RdeMV8YsiV/hyzUrX0O9ZPEF5btCUgcWoobu
+	4lf3Bcofbg==
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1726217758;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
+	bh=yRGGn9KUcYp+ecXIoiuLZBY3QdwMcXtt0dMTBMqC+Oo=;
+	b=YkeDtf+whiDS718vK4g6f8eVb3O/c/g+4EnaW2/ic1nIXOy31oRmfbrN42QJE4bL
+	jKRK1LdovtTjGYJYTl0ATmtSymkaitSl/6EcWqiqBqBCjW66HcDxmExAYkDI+Zpiq9y
+	mVfdXxcXoLjsZpDhydLhvEk47xHrNeEyXfO8csJw=
+Message-ID: <01020191ea98a643-2d0be5d1-e00b-48e0-b823-bfe2c65b0d00-000000@eu-west-1.amazonses.com>
+Date: Fri, 13 Sep 2024 08:55:58 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/2] dt-bindings: arm: mediatek: Add MT8186 Ponyta
+ Chromebook
+To: Jianeng Ceng <cengjianeng@huaqin.corp-partner.google.com>, 
+	matthias.bgg@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, knoxchiou@google.com, hsinyi@google.com
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20240913031505.372868-1-cengjianeng@huaqin.corp-partner.google.com>
+ <20240913031505.372868-2-cengjianeng@huaqin.corp-partner.google.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240913031505.372868-2-cengjianeng@huaqin.corp-partner.google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Feedback-ID: ::1.eu-west-1.YpP9ZbxnARFfy3Cb5pfsLd/pdsXBCNK0KEM7HforL4k=:AmazonSES
+X-SES-Outgoing: 2024.09.13-54.240.7.32
 
-Change ynl-gen-c.py to use NLA_BE16 and NLA_BE32 types to represent
-big-endian u16 and u32 ynl types.
+Il 13/09/24 05:15, Jianeng Ceng ha scritto:
+> Ponyta is a custom label Chromebook based on MT8186. It is a
+> self-developed project of Huaqin and has no fixed OEM.
+> 
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Jianeng Ceng <cengjianeng@huaqin.corp-partner.google.com>
+> ---
+> Changes in v5:
+> - PATCH 1/2: Remove sku2147483647.
+> - Link to v4:https://lore.kernel.org/all/20240906085739.1322676-2-cengjianeng@huaqin.corp-partner.google.com/
+> 
+> Changes in v4:
+> - PATCH 1/2: Add more info for Ponyta custom label in commit.
+> - Link to v3:https://lore.kernel.org/all/20240904081501.2060933-1-cengjianeng@huaqin.corp-partner.google.com/
+> 
+> Changes in v3:
+> - PATCH 1/2: Modify lable to label.
+> - Link to v2:https://lore.kernel.org/all/20240903061603.3007289-1-cengjianeng@huaqin.corp-partner.google.com/
+> 
+> Chage since V2:
+> - No change.
+> 
+> ---
+>   Documentation/devicetree/bindings/arm/mediatek.yaml | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Documentation/devicetree/bindings/arm/mediatek.yaml
+> index 1d4bb50fcd8d..43a824bee1b6 100644
+> --- a/Documentation/devicetree/bindings/arm/mediatek.yaml
+> +++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
+> @@ -257,6 +257,16 @@ properties:
+>             - const: google,steelix-sku393218
+>             - const: google,steelix
+>             - const: mediatek,mt8186
+> +      - description: Google Ponyta (Custom label)
 
-Doing this enables those attributes to have range checks applied, as
-the validator will then convert to host endianness prior to validation.
+Instead of "(Custom label)", why don't we just label it as "(Huaqin ODM)" or as
+the ODM board number (if not confidential)?
 
-The autogenerated kernel/uapi code have been regenerated by running:
-  ./tools/net/ynl/ynl-regen.sh -f
+Or we could even drop it and just say "Google Ponyta" instead, maybe?
 
-This changes the policy types of the following attributes:
+I don't really like "Custom label", as that looks really like a placeholder
+for something else, which doesn't look right.
 
-  FOU_ATTR_PORT (NLA_U16 -> NLA_BE16)
-  FOU_ATTR_PEER_PORT (NLA_U16 -> NLA_BE16)
-    These two are used with nla_get_be16/nla_put_be16().
+Cheers,
+Angelo
 
-  MPTCP_PM_ADDR_ATTR_ADDR4 (NLA_U32 -> NLA_BE32)
-    This one is used with nla_get_in_addr/nla_put_in_addr(),
-    which uses nla_get_be32/nla_put_be32().
-
-IOWs the generated changes are AFAICT aligned with their implementations.
-
-The generated userspace code remains identical, and have been verified
-by comparing the output generated by the following command:
-  make -C tools/net/ynl/generated
-
-Signed-off-by: Asbjørn Sloth Tønnesen <ast@fiberby.net>
----
- net/ipv4/fou_nl.c          | 4 ++--
- net/mptcp/mptcp_pm_gen.c   | 2 +-
- tools/net/ynl/ynl-gen-c.py | 6 +++++-
- 3 files changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/net/ipv4/fou_nl.c b/net/ipv4/fou_nl.c
-index 98b90107b5abc..3d9614609b2d3 100644
---- a/net/ipv4/fou_nl.c
-+++ b/net/ipv4/fou_nl.c
-@@ -12,7 +12,7 @@
- 
- /* Global operation policy for fou */
- const struct nla_policy fou_nl_policy[FOU_ATTR_IFINDEX + 1] = {
--	[FOU_ATTR_PORT] = { .type = NLA_U16, },
-+	[FOU_ATTR_PORT] = { .type = NLA_BE16, },
- 	[FOU_ATTR_AF] = { .type = NLA_U8, },
- 	[FOU_ATTR_IPPROTO] = { .type = NLA_U8, },
- 	[FOU_ATTR_TYPE] = { .type = NLA_U8, },
-@@ -21,7 +21,7 @@ const struct nla_policy fou_nl_policy[FOU_ATTR_IFINDEX + 1] = {
- 	[FOU_ATTR_LOCAL_V6] = { .len = 16, },
- 	[FOU_ATTR_PEER_V4] = { .type = NLA_U32, },
- 	[FOU_ATTR_PEER_V6] = { .len = 16, },
--	[FOU_ATTR_PEER_PORT] = { .type = NLA_U16, },
-+	[FOU_ATTR_PEER_PORT] = { .type = NLA_BE16, },
- 	[FOU_ATTR_IFINDEX] = { .type = NLA_S32, },
- };
- 
-diff --git a/net/mptcp/mptcp_pm_gen.c b/net/mptcp/mptcp_pm_gen.c
-index c30a2a90a1925..5a6b2b4510d37 100644
---- a/net/mptcp/mptcp_pm_gen.c
-+++ b/net/mptcp/mptcp_pm_gen.c
-@@ -14,7 +14,7 @@
- const struct nla_policy mptcp_pm_address_nl_policy[MPTCP_PM_ADDR_ATTR_IF_IDX + 1] = {
- 	[MPTCP_PM_ADDR_ATTR_FAMILY] = { .type = NLA_U16, },
- 	[MPTCP_PM_ADDR_ATTR_ID] = { .type = NLA_U8, },
--	[MPTCP_PM_ADDR_ATTR_ADDR4] = { .type = NLA_U32, },
-+	[MPTCP_PM_ADDR_ATTR_ADDR4] = { .type = NLA_BE32, },
- 	[MPTCP_PM_ADDR_ATTR_ADDR6] = NLA_POLICY_EXACT_LEN(16),
- 	[MPTCP_PM_ADDR_ATTR_PORT] = { .type = NLA_U16, },
- 	[MPTCP_PM_ADDR_ATTR_FLAGS] = { .type = NLA_U32, },
-diff --git a/tools/net/ynl/ynl-gen-c.py b/tools/net/ynl/ynl-gen-c.py
-index 717530bc9c52e..e26f2c3c40891 100755
---- a/tools/net/ynl/ynl-gen-c.py
-+++ b/tools/net/ynl/ynl-gen-c.py
-@@ -48,6 +48,7 @@ class Type(SpecAttr):
-         self.attr = attr
-         self.attr_set = attr_set
-         self.type = attr['type']
-+        self.nla_type = self.type
-         self.checks = attr.get('checks', {})
- 
-         self.request = False
-@@ -157,7 +158,7 @@ class Type(SpecAttr):
-         return '{ .type = ' + policy + ', }'
- 
-     def attr_policy(self, cw):
--        policy = c_upper('nla-' + self.attr['type'])
-+        policy = c_upper('nla-' + self.nla_type)
- 
-         spec = self._attr_policy(policy)
-         cw.p(f"\t[{self.enum_name}] = {spec},")
-@@ -300,6 +301,9 @@ class TypeScalar(Type):
-         self.byte_order_comment = ''
-         if 'byte-order' in attr:
-             self.byte_order_comment = f" /* {attr['byte-order']} */"
-+            if self.attr['byte-order'] == 'big-endian':
-+                if self.type in {'u16', 'u32'}:
-+                    self.nla_type = f'be{self.type[1:]}'
- 
-         if 'enum' in self.attr:
-             enum = self.family.consts[self.attr['enum']]
--- 
-2.45.2
+> +        items:
+> +          - const: google,ponyta-sku0
+> +          - const: google,ponyta
+> +          - const: mediatek,mt8186
+> +      - description: Google Ponyta (Custom label)
+> +        items:
+> +          - const: google,ponyta-sku1
+> +          - const: google,ponyta
+> +          - const: mediatek,mt8186
+>         - description: Google Rusty (Lenovo 100e Chromebook Gen 4)
+>           items:
+>             - const: google,steelix-sku196609
 
 
