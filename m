@@ -1,125 +1,76 @@
-Return-Path: <linux-kernel+bounces-327483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1234B977694
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:53:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74878977685
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:50:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9027EB23C7F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:53:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A71A81C24265
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1321B8C1F;
-	Fri, 13 Sep 2024 01:53:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99DC6FB0;
+	Fri, 13 Sep 2024 01:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="KP9Y2GX6"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB9479CF;
-	Fri, 13 Sep 2024 01:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gQ/rdY2j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 475EA1FC8
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 01:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726192424; cv=none; b=ousOehxpHZDSoXhO3UNITUfx01Bnz3JUc0iy4URg5259OBgN2NVVwjKDALZ7Nv9zxnUJFsxnomayvJmqulFPE2YDCA7XDbWyy3omcwFYT/9SIjx3lqZ9juwpKbLsaaqw5cRbHOopJEjc4IGJb07hlE8f0EsHMTxK76pwNwJ0OCc=
+	t=1726192220; cv=none; b=cCGziBJiC0WJzqpC1fsMuPDO/1tou2f+WemyqYXu4KkO52ze5j3XcWrgWMLoZidDQ4US4yP3rado5W9GD7Wm/00g96c8iN9VLU/xmIeMxx5jmliFoqzrBET5NUk7HZCM38fQcQ+f9YWZdavvEJW15O9K7RRMkM+hwjPXhymf73s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726192424; c=relaxed/simple;
-	bh=xIWLX1KE6wRXK1a/clCuHOsxwaQitK01JBEzvWMrV7c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RCrUVhmYPc8Zkv+4+sHuNSMattjxvRXyQ1D2+EHhdpeCg67J/Q9RxOdFdZmMoqxknqIOFI2khrN7VKVkCqsu3oLHn6RcKy8Mj1tCDjvX3weDOcPnuLz6U8iOCXq1uU1zRiTUyZP/INTLH0rScraIV4jWyFD8ifGeovpKRGiNMbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=KP9Y2GX6; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=DMcHW
-	ox+TxQ+e6JzHkX6N9IOsAN2a72uEhLT05aIANQ=; b=KP9Y2GX6t6JkxNeVMIe7e
-	gA6/zi3iXHqH0Zzw3WRPJkai8IYPgVWHj6qLeeru5vJUICa51l7SF1qJWrBoM9XD
-	thKhqydaEZ7OgysuXXQ2jafJ27v1m844TDBTyoU3zwk+EbyPBl2FKsdF49s5yhht
-	k06UniyCxmm74Rh+NmcYFA=
-Received: from localhost.localdomain (unknown [58.243.42.99])
-	by gzga-smtp-mta-g2-3 (Coremail) with SMTP id _____wDHrUrvmuNmnSvrAg--.37498S2;
-	Fri, 13 Sep 2024 09:52:48 +0800 (CST)
-From: Qianqiang Liu <qianqiang.liu@163.com>
-To: kuba@kernel.org,
-	edumazet@google.com
-Cc: usama.anjum@collabora.com,
-	andrew@lunn.ch,
-	o.rempel@pengutronix.de,
-	rosenp@gmail.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Qianqiang Liu <qianqiang.liu@163.com>
-Subject: [PATCH v2] net: ag71xx: remove dead code path
-Date: Fri, 13 Sep 2024 09:47:32 +0800
-Message-Id: <20240913014731.149739-1-qianqiang.liu@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726192220; c=relaxed/simple;
+	bh=HgzJPitcmNSo3TO5D0K1yFbTLYRnejMdLnksGZ3n1zI=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=pNNJ/WZMxCoY5kS/OJkVevj1O50ZZsDVSW9CNt8loqTOFRFyDgdPcX3tF9+IVwVifvGYiZXI/VE0P8gAif5cbao1TGPLGDHXtVN923wDa9VbSADFSqrP2ghklsCYzjV1ZXJjJHDzsADjqsw2ZSJhtRFbleWKZjLsKvitNMibs04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gQ/rdY2j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74093C4CEC3;
+	Fri, 13 Sep 2024 01:50:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726192219;
+	bh=HgzJPitcmNSo3TO5D0K1yFbTLYRnejMdLnksGZ3n1zI=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=gQ/rdY2ji0uinK9jnzpe/2UebLxey5glnmYyVZiYQZsbXEbSiBAC5jjvzmP8OdP5Q
+	 uC4UnGwMmey8Rlz9loGXD36Pf7pGLCg8T+AsK4nvn5mT/casPU+/jPtmHlxotvCtvy
+	 k4FJSAawCDxSuaegON5eWR3P5v1/pY91ryOkIM00eK4PsmBvEr4esJaxT38hMs9Iwk
+	 hpMHJPuKWtJYnm7PLD5+1EbKb0dXq5NkG4uKw0sfXMBObkUyZEnHyLeRf+73S4Oo+O
+	 32la3qwr5Td0qzMWY1640Zqm1Vaz25VNj5U8VDmDKqW8Qnx2ECNKp17JE9ciNVbq81
+	 Pc28nF/R9C/jQ==
+Message-ID: <500c3c3a-5332-4c86-ba7c-dacb3061e17b@kernel.org>
+Date: Fri, 13 Sep 2024 09:50:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDHrUrvmuNmnSvrAg--.37498S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7KF48uw1DtF45CFW7uFy3Jwb_yoW8ArWDpF
-	43Kayvgr48Ar17JayDZrWIvF98KayvyrWagryfG3yFvF15Arn0qFyUK3yUKr1xurWkCanF
-	vw48C3W7AFsxJwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UFg4hUUUUU=
-X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiYBJZamV4JNgodwAAs-
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, Daeho Jeong <daehojeong@google.com>
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: forcibly migrate to secure space for
+ zoned device file pinning
+To: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com
+References: <20240912165958.386947-1-daeho43@gmail.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20240912165958.386947-1-daeho43@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The "err" is always zero, so the following branch can never be executed:
-if (err) {
-	ndev->stats.rx_dropped++;
-	kfree_skb(skb);
-}
-Therefore, the "if" statement can be removed.
+On 2024/9/13 0:59, Daeho Jeong wrote:
+> From: Daeho Jeong <daehojeong@google.com>
+> 
+> We need to migrate data blocks even though it is full to secure space
+> for zoned device file pinning.
+> 
+> Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> Fixes: 9703d69d9d15 ("f2fs: support file pinning for zoned devices")
 
-Use "ndev->stats.rx_errors" to count "napi_build_skb()" failure
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
----
-Changes since v1:
- - Use "ndev->stats.rx_errors" to count "napi_build_skb()" failure
----
- drivers/net/ethernet/atheros/ag71xx.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
-index 96a6189cc31e..9586b6894f7e 100644
---- a/drivers/net/ethernet/atheros/ag71xx.c
-+++ b/drivers/net/ethernet/atheros/ag71xx.c
-@@ -1616,7 +1616,6 @@ static int ag71xx_rx_packets(struct ag71xx *ag, int limit)
- 		unsigned int i = ring->curr & ring_mask;
- 		struct ag71xx_desc *desc = ag71xx_ring_desc(ring, i);
- 		int pktlen;
--		int err = 0;
- 
- 		if (ag71xx_desc_empty(desc))
- 			break;
-@@ -1639,6 +1638,7 @@ static int ag71xx_rx_packets(struct ag71xx *ag, int limit)
- 
- 		skb = napi_build_skb(ring->buf[i].rx.rx_buf, ag71xx_buffer_size(ag));
- 		if (!skb) {
-+			ndev->stats.rx_errors++;
- 			skb_free_frag(ring->buf[i].rx.rx_buf);
- 			goto next;
- 		}
-@@ -1646,14 +1646,9 @@ static int ag71xx_rx_packets(struct ag71xx *ag, int limit)
- 		skb_reserve(skb, offset);
- 		skb_put(skb, pktlen);
- 
--		if (err) {
--			ndev->stats.rx_dropped++;
--			kfree_skb(skb);
--		} else {
--			skb->dev = ndev;
--			skb->ip_summed = CHECKSUM_NONE;
--			list_add_tail(&skb->list, &rx_list);
--		}
-+		skb->dev = ndev;
-+		skb->ip_summed = CHECKSUM_NONE;
-+		list_add_tail(&skb->list, &rx_list);
- 
- next:
- 		ring->buf[i].rx.rx_buf = NULL;
--- 
-2.34.1
-
+Thanks,
 
