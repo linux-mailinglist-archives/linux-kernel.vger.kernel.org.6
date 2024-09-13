@@ -1,108 +1,74 @@
-Return-Path: <linux-kernel+bounces-327892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 033F3977C59
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:40:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32F7C977C5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:40:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EDFB1C244E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:40:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2EA01F21733
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361151D86F0;
-	Fri, 13 Sep 2024 09:39:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB691D79A6;
+	Fri, 13 Sep 2024 09:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="HcX1kffT";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="N4PwImb1"
-Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KmM2LyOb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C721E18A6D6;
-	Fri, 13 Sep 2024 09:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD601BD4F2;
+	Fri, 13 Sep 2024 09:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726220342; cv=none; b=tjjJYJqs9tbQMjvsXG8QSEwB0cCZV7xnVgs+6fMOnzEu36orxotfheBHeFs4NzGl7nzk0WT6eoozVYGRpvyqbz2xce7m6p7v07o7jZyXbkO9hXcwTMKMxv9eLpea3+wgYdfomoGCu+TXrvYs/FaHYkMe/pzL0RkuL+JvzzrqFaw=
+	t=1726220351; cv=none; b=qIDqeYUu+ttHUpZLgKmLl6Xvf8Vl5rQcDafGRX1CZX250el9YXgdTZYi2+TtewKYuNcaWbrJqHUrGNjaqI0Y3IEbUFngq398TZd0vmAMtriYmbJ7liDphCgH3+0NDXfYVy2SCs4en3pLH2U0fMQXas0yBtW60ueyP9xCrZGXOps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726220342; c=relaxed/simple;
-	bh=A2qVBIMYp/2r3CFer6xBiqk5bNkvq3f/Xhhuxq/P0po=;
+	s=arc-20240116; t=1726220351; c=relaxed/simple;
+	bh=JI2ZLU0FyTqnuSB6wzQzLJ8IjKER/NhO6YLSEUfYLns=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gStnrp6ys6MRZDMJ3al5Ft6ELEwyIKphSO0MOAW418TqImtc3vv9HTm4expb1kkyiXGYFEdh/VuEjskPZEMNHl4Q28XtGH/yp8RShnT5mXlkj+nnQkidw1dwyRiuLqLZeswAy6yz5XdGU4JTybVfUbm4DJVy6zKZhUwcSC3Ypg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=HcX1kffT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=N4PwImb1; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfout.phl.internal (Postfix) with ESMTP id C6E8B1380313;
-	Fri, 13 Sep 2024 05:38:58 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Fri, 13 Sep 2024 05:38:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1726220338; x=
-	1726306738; bh=K+AlDx1kABcH1bjNHO39XpWBnTf9rTOESmFmUtu1C08=; b=H
-	cX1kffT3gCsZo8AGKNkafPUMycPnllN8WmPLz3Onpcfx7YO0aAf3umyQRTO3TGkV
-	7wNfcGotSKBxOTmB4fnfYkzDNVUFGEA9oG60zaVOwQmaGOhRYKq0WripbZxmWt0P
-	1IymJe/4mIR59TfXSFJs9cpj+LbuAaWlvSfR5yLfqtoAU10uM9x1GrjU3YFTvnI4
-	MHksV7cyLq2+YSR9ntus9OlHurj+p4sKYoe24WBskIZcGFy632YkVc1llOAcdqIQ
-	wIFkyeBrV9t1PsmygnWQlbHYXdz7fWG7DynapGOidwfWpMhLezjObPw/qnDiyOpF
-	foDE1kkKPkV2E20Xc8dJA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1726220338; x=1726306738; bh=K+AlDx1kABcH1bjNHO39XpWBnTf9
-	rTOESmFmUtu1C08=; b=N4PwImb1Y8dtY3Yvdl0JyU0ll9bbD+5QfTwsw8ZoJGrw
-	9kkTnH2JCxeuPOh+TkLO2oNrVhVirAUSHg30Zp1xmPfQ7OKzpIyFw7HltEHWCB6l
-	NX/8Bju0TjV6Vpchbo/txdvmOEQ1a44gtD6c5zch8EXZWlD5fqJZdy8mcvhNuKLq
-	cTyXYxSO5CVkQ+HAEfSlKXBbenHPWjSDSRJz0XCDMTwHmxVihdVfhHQ/VdcbAoWq
-	7CwRN34bzjo0S+OE/dNCN2gmB37jBViTEofPl3Qi1jCSW3ETTn9HQiEDJa8fkNDs
-	Nj1X7bZFt/1cpnmhcMsG4Qe/JWodvqNYmTYJxI+SIQ==
-X-ME-Sender: <xms:MgjkZuGHfqvk9YQjf1X1JztIqEs3eg6EVQaNNOTtEP7yQFd989E1hQ>
-    <xme:MgjkZvUcVlw1GV-1wp7QecddrABnrkNs2jmL1mzcLXYTgdcOHB27WWWF8Lw6-9-8_
-    gbmS-DCBDXJCeu7JJ8>
-X-ME-Received: <xmr:MgjkZoLK6s0QnlUD9d53h_XsEY1X7bJ1MYESpm4ZE_up0g0aJlV2YnyRoKTQroWLCdfp19IIo_-gSu5CyoWVT_CPU70z44MKVonL>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejjedgudejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihessh
-    grkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhephefhhfettefgkedvieeu
-    ffevveeufedtlefhjeeiieetvdelfedtgfefuedukeeunecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhho
-    tggthhhirdhjphdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtg
-    hpthhtohepvggumhhunhgurdhrrghilhgvsehprhhothhonhhmrghilhdrtghomhdprhgt
-    phhtthhopegrphgrihhssehlihhnuhigrdhmihgtrhhoshhofhhtrdgtohhmpdhrtghpth
-    htoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheplhhinhhugidqmhgvughirgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtph
-    htthhopehlihhnuhigqdhsohhunhgusehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepth
-    hifigrihesshhushgvrdguvg
-X-ME-Proxy: <xmx:MgjkZoFxpE_q3HpW7obNDw_FUZc7_Ln34uOcTKuGQPGsHtya35QuIQ>
-    <xmx:MgjkZkX-LWRIRQTd0aUj3Ro9XsT86bvURayymGs0pzDzpeRx_frMnw>
-    <xmx:MgjkZrPdibi_zgMrPML7e7dDkNSxVMAHfsIhvnVBV8L_VrTot0q44Q>
-    <xmx:MgjkZr3Ig31IgjdsnlOsY4zqVG7cl8rMmhf5UiPZZ2dq7dvRkz6qdQ>
-    <xmx:MgjkZnHOhA9Xlf6OvTSjXfCdK3GeHHBNJ7BzZMvmb_olpb3wOgCwNNG4>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 13 Sep 2024 05:38:56 -0400 (EDT)
-Date: Fri, 13 Sep 2024 18:38:52 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: Edmund Raile <edmund.raile@protonmail.com>
-Cc: apais@linux.microsoft.com, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-sound@vger.kernel.org,
-	netdev@vger.kernel.org, tiwai@suse.de
-Subject: Re: firewire: use sleepable workqueue to handle 1394 OHCI IT/IR
- context events: test 2
-Message-ID: <20240913093852.GA305057@workstation.local>
-Mail-Followup-To: Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-	Edmund Raile <edmund.raile@protonmail.com>,
-	apais@linux.microsoft.com, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, linux-sound@vger.kernel.org,
-	netdev@vger.kernel.org, tiwai@suse.de
-References: <20240904125155.461886-1-o-takashi@sakamocchi.jp>
- <20240912214404.10616-2-edmund.raile@protonmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uELa0EtJV/RX4kEGLGFgV5zW4IfStx0gcF32yCupjnycM+/BdWTB0hQ1ldxCJ/Y/vDIVB2s6ltlHnC0VM+RPGCC4IzZv9PMneBUBWwhu2ARqjK8dL5rCI9/IQ+bmX68MvnwTesKJbLLRN++FaGEJL/GwtrMnJzLur/MmhF5BiTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KmM2LyOb; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726220349; x=1757756349;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JI2ZLU0FyTqnuSB6wzQzLJ8IjKER/NhO6YLSEUfYLns=;
+  b=KmM2LyObMEXacq4m5QHvhsswNtERTpU9rZ0+Z63GzItGvKBh5dV9IXSE
+   shpE32RoK60/MPj/zMFfnlZEgDlrQetG6nSrHBMWEvcgEXXxGo3Fu1WGD
+   DeXMPHQOGodtpP1EVWYccCc6bmWN9zJqcIhbzORsvKuc0ATANh9bueYga
+   NPCMOY2xteDsnFdzvpqz6MHJCZwcPRP4TT3XUfAQ79AkJS4FMTDMErZZv
+   W12IVre94vlckuRgcpycK7r6GGCudsKcZZKsD0Omk2kSAF/XtHQXxvda1
+   9inbenWboZHCWtDYPhYopeX52Zh5ZFR14ElguzG+o16UOWmcIliC6ewh8
+   w==;
+X-CSE-ConnectionGUID: RDnyyfA2QUSCMqS8HYIFoQ==
+X-CSE-MsgGUID: 4S+SHxS0TXaOt84EEgJpDg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="25240118"
+X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
+   d="scan'208";a="25240118"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 02:39:09 -0700
+X-CSE-ConnectionGUID: 82q8k3OBSUeFliXMTpbJEA==
+X-CSE-MsgGUID: saJO+JZ6Qw6jSfZ5p00AYA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
+   d="scan'208";a="98687270"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 02:39:07 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sp2ld-00000008FJY-0JzY;
+	Fri, 13 Sep 2024 12:39:05 +0300
+Date: Fri, 13 Sep 2024 12:39:04 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: robh@kernel.org, saravanak@google.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/2] Use functionality of irq_get_trigger_type() and
+Message-ID: <ZuQIOKzDO5aUhoCJ@smile.fi.intel.com>
+References: <20240912221605.27089-1-vassilisamir@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -111,79 +77,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240912214404.10616-2-edmund.raile@protonmail.com>
+In-Reply-To: <20240912221605.27089-1-vassilisamir@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi,
+On Fri, Sep 13, 2024 at 12:16:03AM +0200, Vasileios Amoiridis wrote:
+> The series is compile tested.
 
-On Thu, Sep 12, 2024 at 09:44:52PM +0000, Edmund Raile wrote:
-> Hello Sakamoto-San, I came around to testing your patch [1], after RFT.
-> 
-> I've had to make the following changes to patch 1/5 again for it to apply to
-> mainline (d1f2d51b711a3b7f1ae1b46701c769c1d580fa7f), due to missing b171e20
-> from 2009 and a7ecbe9 from 2022.
-> 
-> @@ -584,9 +601,13 @@ int fw_card_add(struct fw_card *card,
->  
->  	generate_config_rom(card, tmp_config_rom);
->  	ret = card->driver->enable(card, tmp_config_rom, config_rom_length);
->  	if (ret == 0)
->  		list_add_tail(&card->link, &card_list);
-> +	else
-> +		destroy_workqueue(isoc_wq);
-> +
-> +	card->isoc_wq = isoc_wq;
-> 
->  	mutex_unlock(&card_mutex);
-> 
->  	return ret;
-> @@ -709,7 +729,9 @@ void fw_core_remove_card(struct fw_card *card)
->  {
->  	struct fw_card_driver dummy_driver = dummy_driver_template;
->  	unsigned long flags;
->  
-> +	might_sleep();
-> +
->  	card->driver->update_phy_reg(card, 4,
->  				     PHY_LINK_ACTIVE | PHY_CONTENDER, 0);
->  	fw_schedule_bus_reset(card, false, true);
-> @@ -719,6 +741,7 @@ void fw_core_remove_card(struct fw_card *card)
->  	dummy_driver.free_iso_context	= card->driver->free_iso_context;
->  	dummy_driver.stop_iso		= card->driver->stop_iso;
->  	card->driver = &dummy_driver;
-> +	drain_workqueue(card->isoc_wq);
->  
->  	spin_lock_irqsave(&card->lock, flags);
->  	fw_destroy_nodes(card);
-> 
-> Then everything applied fine.
-> 
-> This resulted in 6.11.0-rc6-1-mainline-00326-gd1f2d51b711a-dirty.
-> 
-> Testing it with TI XIO2213B and RME Fireface 800 so far:
-> 
-> Initially I had a buffer freeze after 3 hours of continuous ALSA playback
-> from mpv:
->   mpv --audio-device=alsa/sysdefault:CARD=Fireface800 Spor-Ignition.flac
-> accompanied by stresstest (mprime).
-> 
-> It didn't freeze/crash the kernel, just the audio buffer kept repeating.
-> Gone after power-cycling the interface and restarting playback.
-> 
-> Can't say with certainty whether it's related, have been unable to replicate
-> the issue for the past 3 days (good sign I hope).
-> That's why I was holding this message back a bit.
-> 
-> Kind regards,
-> Edmund Raile.
-> 
-> Signed-off-by: Edmund Raile <edmund.raile@protonmail.com>
-> Tested-by: Edmund Raile <edmund.raile@protonmail.com>
- 
-Thank you for your test. I've picked up your Tested-by tag to the
-series.
+LGTM, FWIW,
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-Thanks
-
-Takashi Sakamoto
 
