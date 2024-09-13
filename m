@@ -1,123 +1,165 @@
-Return-Path: <linux-kernel+bounces-328405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C6479782F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:52:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22FB89782F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:52:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB50AB24CFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:52:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B3AA1C21F05
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7638D2BAF1;
-	Fri, 13 Sep 2024 14:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4B21EEE6;
+	Fri, 13 Sep 2024 14:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IPmJL5L+"
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JSwCJzus"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EA8EED6;
-	Fri, 13 Sep 2024 14:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A273D967
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:52:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726239129; cv=none; b=mkHnxxFjk93CUWTkFt0vGgtz93cZOCDJgz52vDxcErCsjvU5VdXbnfdsqjng/jWlPx/4JOB6npId4GQ+HnfOS/biAsbZVVXCPKMPAz4q4u0rdo9q8ekeXMKo2WukSDPvok9c7gordTi3QiGC0F1nFmeZ7+eTsGeNyH8RSwVDYis=
+	t=1726239136; cv=none; b=El/ZxxfhzZpjpkOF/lEGT5CREWfyvl+HcccB0iHRxiLQ28tvhn5mhFp+LEBvzCOljtVu7zTAQsvxuDBDYa89LjXkmHX0UluTZCadwEhFVhHPxU2w4CnIUK8ira1kZmhhncu/pD8whIbmq93HG/SnnUUpNylxROh444QSqIctLyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726239129; c=relaxed/simple;
-	bh=N/xGBp+Akf2x8w+9/94FGQTZDsqfmxwzez4y1UP+/QE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NCFhJpkvD5KwwpdrsSdffP6atYvisomz0OrGH3DDpTDJvDHrKYGcRedN9+3dNa4Ln+RxC7QCPnN/05cWnlm8BCDZ/6rIP1wT7J3tB3/0mXuhPcRE6KNk3erUmweg3wi33DVnDN4Z95qYeJd29wxduigjxiur2ip9iG3goMPX/co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IPmJL5L+; arc=none smtp.client-ip=209.85.217.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-49bc13c3a47so431440137.3;
-        Fri, 13 Sep 2024 07:52:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726239127; x=1726843927; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SC7Qi9CJ/UlqMx5HJFGorczxcYiMNzmkMF/PjtSiNQc=;
-        b=IPmJL5L+04gC83EmJWm29rUNtery4irTfv6Xk/zS5n3eowIaa6CsvTTkBV2WkWek8V
-         Y0wXGApYmUf6Q/EWvW7wUdjYaM7VdYsJlGh3dtnTlPbHyJ7JBhaGdYGMIpg7Th/HdOrq
-         LYBrutaaXAz3fIw3veyEemYw0rUpN/ew84Ey0fi6y0L6ECopep0KZAmFCezMwQBUtV6k
-         nXegm6dmXfFZd/VtJIjdoZRrPrhdgGvko46y2QvQI01UIi6aA/piykwN6xXArhyxmg1w
-         b0jMfVloZVpd8EVfgqAC9o3tR/PNrwyCTFZnVpOkuGnp3CE9+pm7wdgZsFCog2M4TUal
-         uu3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726239127; x=1726843927;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SC7Qi9CJ/UlqMx5HJFGorczxcYiMNzmkMF/PjtSiNQc=;
-        b=H6c11HRDRwFOV4HLKNU9jAUKt+dua81y0GOyk5blz6vG+l0qg+hlFTMFGx3i7PCFNW
-         EqRaEZy8ZAItkRsVcVLUTKhScAslqkxEfRMzA48GWtRfq5R7Q/v+ynsj6herKiKXzljm
-         KuvtlIf1YSQ57LiXLXyhNEHXXyJsCmjfyIlzutu/U2CU5BmB/6pONchFN38LxedZTsrG
-         eqaEmCeqExX+V8GBrXnj6RKGaaErnduFzwNBhTNwtBmiCyl3RKeb1NnPFd4ZUs42ia9Q
-         KKU6Ghmn/tO5WsCKswg75u1SqNYzz7w7t9AKQaep7jQtByM+qoj2GnC+uNeiMJLua/7k
-         a1gQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPokIGQIq/NAJsD1Gpkp/6TscdctQ9pnU48LLOFTVQ+9ZDcIhKtC5kD3wYu94zj/TaJgtr1pbHBzsu@vger.kernel.org, AJvYcCUYMiAz5tZBawjr5X4ZK8N9AMmo47YPfyUGCcU8D1vL0P0w8cfX2gULw8U8zxwATGnFWtvX2jAEDFHyC0RP@vger.kernel.org, AJvYcCUomohpmDVKMEesmL81cfkFZZ2vW5wPQsYH6LkVOVPo6eda88qhKJoer5Bi+RBkpDxiTIzcGmGd875e@vger.kernel.org, AJvYcCUqG/6J9y2M/mr6bZeCtHGcyjIE1fL5ZnhD0pekNAQA0Off0F5D7ODSjNbKctV9Fyg7Ok4PjBWcy0Zr@vger.kernel.org, AJvYcCUuV1TE0NfbDttYSLJMYiRssi0fzXzrGLs/5vKClypYaF2X1Krq4noR0RknvloiML04QgvOvDpW2kKiL9i+eBYaSA0=@vger.kernel.org, AJvYcCVjHeGDvMz5cACO+5y2pcLPE2fP02QIIzbJJRZ9Fxz/Yy3QEGgBhazHYwa1ZsTKIy1grpFxNjMntse5qGU=@vger.kernel.org, AJvYcCVjo5ulMq6V0AumAXef8nCmLmZ0ETTOQmOtEBZZnIYDJuEi4Lz4azHYIp2Dm7eFKBqh8WVo2nRQFFhdMg4=@vger.kernel.org, AJvYcCVpE9w8kQ//h/aJ3E5xsEUzmzYfWbMeto/At0C8gj7+2VWt18bnV7Lw4eidhTLUZ+oKBB8VoWi2nE0=@vger.kernel.org, AJvYcCXnxOGyyjk1ffPSZ0jU9lbdoESo5JGGp/eaIyjz4AUYqrdOJHVH+RAJAL9BF7ZyRT+F3jdLF4YnvQZl7F4OIg==@vger.kernel.org, AJvYcCXtHPOAWmKj0dkr
- upoB5srGsNVHjupE0Qr1+FSjQtSnJMcRejmxnPrXCJuQz8bvBvRk1vLfg+4ITHOOCw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8F6z+yyfgnP8PtHBXPYFCB/v8g60xniBP7lnisolRABExAdF4
-	+/aVgMhtFL2fqMPhAJUxQ9YfjZAF8SSsjomyd0nDu8fK8shyrZPErDcMcQ0Qadd3YmDOt4XdQGd
-	AGeLHvcOtGa9puniCDDyjZ1uwYD0=
-X-Google-Smtp-Source: AGHT+IFzt77B+UQvTyXWnWYICtP+/AmJJ5rq6JqNXDt5n+hgGmGESoN8kaR8YY1ZG0wjobVeQOsHMwrHDFFr4Mg31HU=
-X-Received: by 2002:a05:6102:e14:b0:49c:1bc:1eff with SMTP id
- ada2fe7eead31-49d4f6fafc6mr2074878137.28.1726239127329; Fri, 13 Sep 2024
- 07:52:07 -0700 (PDT)
+	s=arc-20240116; t=1726239136; c=relaxed/simple;
+	bh=QYJAT449u0J4RfzwfdVOFXD6V9MVsaV3hOZoa9qmVro=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L9JxgbNsXAb0MJdN6WWD7f5sk2efbrRvbcPD/JFnR4MhiNO8jenii+ZyLdLYBI0x8k2hW0iyxULj8hzQMBRz9TkdO3OxQ8eaJVXTgzrVe8o1KE52SDYAdQI+JNb3PuFfswVuFcyxy6JwpXbORq90JkMk61A9dUBJZZa44BqNP+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JSwCJzus; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1726239131;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=TYpo3SEOUQJxC0I/V/RNMCTVReqQRSdjKs/mEViJgkE=;
+	b=JSwCJzusti1A/7MnBoW0SdpgmLYSWNNSOt81uWPH0o4VXTiWIS3e8aJ9BlMbaR6X5J+E5r
+	Y1sEUpfQbkgGiWIalCvehP7IyJxpoKvMFNZGtSkCUZFC8L81Y7S8XbJpT3bn22y36LCQuz
+	UYIABA5Q3t6THWWjq1+v/2V84p1DyCE=
+From: Sean Anderson <sean.anderson@linux.dev>
+To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org
+Cc: Daniel Borkmann <daniel@iogearbox.net>,
+	Michal Simek <michal.simek@amd.com>,
+	Suraj <Suraj.Gupta2@amd.com>,
+	Harini <harini.katakam@amd.com>,
+	Andy Chiu <andy.chiu@sifive.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Sean Anderson <sean.anderson@linux.dev>
+Subject: [PATCH net v3] net: xilinx: axienet: Fix packet counting
+Date: Fri, 13 Sep 2024 10:51:56 -0400
+Message-Id: <20240913145156.2283067-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
- <20240618-starqltechn_integration_upstream-v3-4-e3f6662017ac@gmail.com> <13a650f4-7ca7-4c95-b536-9814a22f00ff@kernel.org>
-In-Reply-To: <13a650f4-7ca7-4c95-b536-9814a22f00ff@kernel.org>
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Fri, 13 Sep 2024 17:51:56 +0300
-Message-ID: <CABTCjFCOTd5V5WyRbD1OCS9Hatk0mOCtNy5WWfp0KkUBgqXs+A@mail.gmail.com>
-Subject: Re: [PATCH v3 04/23] dt-bindings: mfd: add maxim,max77705
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	phone-devel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-=D1=87=D1=82, 20 =D0=B8=D1=8E=D0=BD. 2024=E2=80=AF=D0=B3. =D0=B2 18:46, Krz=
-ysztof Kozlowski <krzk@kernel.org>:
->
-> On 18/06/2024 15:59, Dzmitry Sankouski wrote:
-> > maxim,max77705 is MAX77705 pmic binding part
-> >
-> > Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> > ---
-> >  .../devicetree/bindings/mfd/maxim,max77705.yaml    | 112 +++++++++++++=
-++++++++
->
-> Your patch order is totally messed. Not tested by automation. Only
-> limited review follows.
->
-Hmm, not sure what was wrong. I sent version 4 to myself with `b4 send
---reflect`, the order looks good.
+axienet_free_tx_chain returns the number of DMA descriptors it's
+handled. However, axienet_tx_poll treats the return as the number of
+packets. When scatter-gather SKBs are enabled, a single packet may use
+multiple DMA descriptors, which causes incorrect packet counts. Fix this
+by explicitly keepting track of the number of packets processed as
+separate from the DMA descriptors.
 
---=20
+Budget does not affect the number of Tx completions we can process for
+NAPI, so we use the ring size as the limit instead of budget. As we no
+longer return the number of descriptors processed to axienet_tx_poll, we
+now update tx_bd_ci in axienet_free_tx_chain.
 
-Best regards,
-Dzmitry
+Fixes: 8a3b7a252dca ("drivers/net/ethernet/xilinx: added Xilinx AXI Ethernet driver")
+Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+---
+
+Changes in v3:
+- Don't limit transmit packets processed to budget, since it doesn't
+  apply to Tx completions. This allows a few more simplifications.
+- Add a note to the commit message regarding the movement of the
+  tx_bd_ci update
+
+Changes in v2:
+- Only call napi_consume_skb with non-zero budget when force is false
+
+ .../net/ethernet/xilinx/xilinx_axienet_main.c | 23 +++++++++++--------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+index 9eb300fc3590..1beb439deaf3 100644
+--- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
++++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+@@ -674,15 +674,15 @@ static int axienet_device_reset(struct net_device *ndev)
+  *
+  * Would either be called after a successful transmit operation, or after
+  * there was an error when setting up the chain.
+- * Returns the number of descriptors handled.
++ * Returns the number of packets handled.
+  */
+ static int axienet_free_tx_chain(struct axienet_local *lp, u32 first_bd,
+ 				 int nr_bds, bool force, u32 *sizep, int budget)
+ {
+ 	struct axidma_bd *cur_p;
+ 	unsigned int status;
++	int i, packets = 0;
+ 	dma_addr_t phys;
+-	int i;
+ 
+ 	for (i = 0; i < nr_bds; i++) {
+ 		cur_p = &lp->tx_bd_v[(first_bd + i) % lp->tx_bd_num];
+@@ -701,8 +701,10 @@ static int axienet_free_tx_chain(struct axienet_local *lp, u32 first_bd,
+ 				 (cur_p->cntrl & XAXIDMA_BD_CTRL_LENGTH_MASK),
+ 				 DMA_TO_DEVICE);
+ 
+-		if (cur_p->skb && (status & XAXIDMA_BD_STS_COMPLETE_MASK))
++		if (cur_p->skb && (status & XAXIDMA_BD_STS_COMPLETE_MASK)) {
+ 			napi_consume_skb(cur_p->skb, budget);
++			packets++;
++		}
+ 
+ 		cur_p->app0 = 0;
+ 		cur_p->app1 = 0;
+@@ -718,7 +720,13 @@ static int axienet_free_tx_chain(struct axienet_local *lp, u32 first_bd,
+ 			*sizep += status & XAXIDMA_BD_STS_ACTUAL_LEN_MASK;
+ 	}
+ 
+-	return i;
++	if (!force) {
++		lp->tx_bd_ci += i;
++		if (lp->tx_bd_ci >= lp->tx_bd_num)
++			lp->tx_bd_ci %= lp->tx_bd_num;
++	}
++
++	return packets;
+ }
+ 
+ /**
+@@ -891,13 +899,10 @@ static int axienet_tx_poll(struct napi_struct *napi, int budget)
+ 	u32 size = 0;
+ 	int packets;
+ 
+-	packets = axienet_free_tx_chain(lp, lp->tx_bd_ci, budget, false, &size, budget);
++	packets = axienet_free_tx_chain(lp, lp->tx_bd_ci, lp->tx_bd_num, false,
++					&size, budget);
+ 
+ 	if (packets) {
+-		lp->tx_bd_ci += packets;
+-		if (lp->tx_bd_ci >= lp->tx_bd_num)
+-			lp->tx_bd_ci %= lp->tx_bd_num;
+-
+ 		u64_stats_update_begin(&lp->tx_stat_sync);
+ 		u64_stats_add(&lp->tx_packets, packets);
+ 		u64_stats_add(&lp->tx_bytes, size);
+-- 
+2.35.1.1320.gc452695387.dirty
+
 
