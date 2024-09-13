@@ -1,138 +1,114 @@
-Return-Path: <linux-kernel+bounces-328707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C782D978797
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:10:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDC20978795
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:10:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F40741C225F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:10:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93109286789
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCA012EBE7;
-	Fri, 13 Sep 2024 18:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D637A126C01;
+	Fri, 13 Sep 2024 18:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Fuq1zFRb"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T7BrkxFt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6B6C12D1EA;
-	Fri, 13 Sep 2024 18:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA234126BE1;
+	Fri, 13 Sep 2024 18:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726251012; cv=none; b=nUw7SLtxWtPXZyQn0I7YgcrDVlVQdRa7mAMIXrCByRGVxLCXDB67IZrw825r8POkzTbnU1CZZlEeSnkN6N8rDPnWOvrND5iBKoQssA1zMkH17jQi8ZErcQwrg2XQG1DbcCnk6VsKt0lC9pBCfaFmT8C/df/irIBI9r3sI4k/0Po=
+	t=1726251008; cv=none; b=GY/fKYIMY+sD+p1NxCbokgWlPyKCh2KYEl5KOIOVz2fMn2IoLVDjjyj+9gle+nJ0qiDopYkbxR2QNrLGZumbJsqp5ETx+WmwsBPnFvOOjeJUryHMsAAodrs8miiCQH4ByphKPwSCzyE4HY0YFWGjB172JiSJFbM0N0Ng6iZ9CGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726251012; c=relaxed/simple;
-	bh=2AKIDsY30kROqtXd1iPFPguYH7NkJ4wNs36fl8HheaE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e79EPTBLMR0kaTg0Y5bd3T0gquWzDI4lfGT4D5H27prz0f+vzgwgHg04/8Dzy7GQeU24AemW2aqAdDP0eOJwewuYcEZfSXTwLZ1MedsnDGG0KKbKwQbYsYOcYNBMNabplbuVQoYCvc82eHwWzzQFC24LWg17i0EP12ZoECk8NCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Fuq1zFRb; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48DI9oaa006173;
-	Fri, 13 Sep 2024 13:09:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1726250990;
-	bh=4mwqEo4CJeHKszOoMmSuayFcDjMFSpj7YGqp6pepgK8=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=Fuq1zFRbpcfUlaQOqRUG+nF3IHG3kZGFynaIdHB7xK1F9bjpiwQCbc4er9g3ItKfx
-	 qc5VJjixmFVv9UdJmS2st1LF3CUHzjOD8NK0lPTRceS1DeF2uBebSz+A3VOBKDBxmq
-	 1VLQt0P8AZsERdvdrhDYWWBaZTIHlmihcZ0/N2mQ=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48DI9okY038102
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 13 Sep 2024 13:09:50 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 13
- Sep 2024 13:09:50 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 13 Sep 2024 13:09:49 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48DI9naV087654;
-	Fri, 13 Sep 2024 13:09:49 -0500
-Date: Fri, 13 Sep 2024 13:09:49 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Garrett Giordano <ggiordano@phytec.com>
-CC: <vigneshr@ti.com>, <kristo@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <w.egorov@phytec.de>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>
-Subject: Re: [PATCH 1/2] arm64: dts: ti: am62-phycore-som: Increase cpu
- frequency to 1.4 GHz
-Message-ID: <20240913180949.dlw3k6epqmzlpuu5@studied>
-References: <20240913175625.3190757-1-ggiordano@phytec.com>
- <20240913175625.3190757-2-ggiordano@phytec.com>
+	s=arc-20240116; t=1726251008; c=relaxed/simple;
+	bh=1GXqbADojQ15lXlutK50SvWzT4F2kKmG3RHiIwu79sc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lj06mu0+4P4J0gx5gTR1cjmpXwFiG9d0tcUXy0TrLz9pbOrltPUKaEa5+u+HT3SUo4X3ijMTt3Z2jmvFWDM+QZpJ4EXiBIyjwLS/g9P7yzJuTwVHs/f+kTf4n164IihbYbaqfifwGdRRcsV4uYdBbPxww4+RXu0wD+lnBRT2NdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T7BrkxFt; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726251007; x=1757787007;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1GXqbADojQ15lXlutK50SvWzT4F2kKmG3RHiIwu79sc=;
+  b=T7BrkxFtllJx6eOFAZLHOqmDVuy4WKIM+BlOnjBY1GYOIP/4g8Uk+2xM
+   BsyJSvAJCpnRyTqGPs28PmSSFPMxxY5P0PJ//YwekVIl+YrIaZdkubd9K
+   wE/iVBO7ERcqSztQx1ikKtkf5V9raYPpEtEdmiBaMQhunoUzgne8sujiA
+   6LGVFwVm/9dfDU0tNwOgdcQ18Ht0ULyYcGl9jnYi6L0yx/coGEYChD4Ps
+   RfxeuUieqPiTgMagHelqA3zPJd4iObupp5HxmTlySpXg8ddVwe54S56CB
+   xkPWOhiLV7PojMku5zeWiEGsdM/sCPxHr0c2bQY94onVHUQQtpcIpoHAN
+   g==;
+X-CSE-ConnectionGUID: Wi1SBwSYR/O4bMXtOC9gRQ==
+X-CSE-MsgGUID: msU6RZzMSNC9J0wHuE0ZoA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="24987236"
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="24987236"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 11:10:07 -0700
+X-CSE-ConnectionGUID: JuvKgL5LQ0+LTnsnqYepQQ==
+X-CSE-MsgGUID: W2vIvt6bQQqkqfiQL7Phmg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="68082419"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 11:10:05 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1spAk5-00000008Nmg-40ry;
+	Fri, 13 Sep 2024 21:10:01 +0300
+Date: Fri, 13 Sep 2024 21:10:01 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Parker Newman <parker@finest.io>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	Parker Newman <pnewman@connecttech.com>
+Subject: Re: [PATCH v1 0/6] serial: 8250_exar: Replace custom EEPROM code
+ with eeprom_93cx6
+Message-ID: <ZuR_-cV5zy1mwel3@smile.fi.intel.com>
+References: <cover.1726237379.git.pnewman@connecttech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240913175625.3190757-2-ggiordano@phytec.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <cover.1726237379.git.pnewman@connecttech.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 10:56-20240913, Garrett Giordano wrote:
-> The am625 is capable of running at 1.4 GHz when VDD_CORE is increased
-> from 0.75V to 0.85V. Here we add a 1.4 GHz node to the a53_opp_table and
-> increase the VDD_CORE voltage accordingly.
-
-The entire argument in introducing the 1.4Ghz overlay seems to have been
-to let users have the choice. What has changed since then?
-
-Ref: commit 7a5775a3da906dab059b8de60a2b88f6016cb4b8
-
-btw, instead of putting a patch to delete the dtso, you should
-probably consider a revert patch instead.
-
+On Fri, Sep 13, 2024 at 10:55:37AM -0400, Parker Newman wrote:
+> From: Parker Newman <pnewman@connecttech.com>
 > 
-> Signed-off-by: Garrett Giordano <ggiordano@phytec.com>
-> ---
->  arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
+> This series of patches replaces the custom 93cx6 EEPROM read functions in
+> the 8250_exar driver with the eeprom_93cx6 driver. This removes duplicate code
+> and improves code readability.
 > 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi b/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi
-> index ac8959f3d953..8acbd4facf37 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi
-> @@ -205,6 +205,13 @@ AM62X_IOPAD(0x01f4, PIN_INPUT, 0) /* (D16) EXTINTn */
->  	};
->  };
->  
-> +&a53_opp_table {
-> +	opp-1400000000 {
-> +		opp-hz = /bits/ 64 <1400000000>;
-> +		opp-supported-hw = <0x01 0x0004>;
-> +	};
-> +};
-> +
->  &mcu_m4fss {
->  	mboxes = <&mailbox0_cluster0 &mbox_m4_0>;
->  	memory-region = <&mcu_m4fss_dma_memory_region>,
-> @@ -265,8 +272,8 @@ pmic@30 {
->  		regulators {
->  			vdd_core: buck1 {
->  				regulator-name = "VDD_CORE";
-> -				regulator-min-microvolt = <750000>;
-> -				regulator-max-microvolt = <750000>;
-> +				regulator-min-microvolt = <850000>;
-> +				regulator-max-microvolt = <850000>;
->  				regulator-boot-on;
->  				regulator-always-on;
->  			};
-> -- 
-> 2.25.1
+> In order to use the eeprom_93cx6 driver a quirk needed to be added to add an
+> extra clock cycle before reading from the EEPROM. This is similar to the
+> quirk in the eeprom_93xx46 driver.
 > 
+> More details in associated patch and mailing list discussion with
+> Andy Shevchenko about these changes:
+> Link: https://lore.kernel.org/linux-serial/Ztr5u2wEt8VF1IdI@black.fi.intel.com/
 
+Thanks for the prompt update!
+
+However we are close to the merge window, I think Greg won't accept this until
+v6.12-rc1 is out. So, we have a two or three weeks of time.
+
+Meanwhile I have some (small) comments, I just sent in individual replies.
+Overall, LGTM.
 
 -- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+With Best Regards,
+Andy Shevchenko
+
+
 
