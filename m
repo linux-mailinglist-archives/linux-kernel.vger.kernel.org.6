@@ -1,210 +1,209 @@
-Return-Path: <linux-kernel+bounces-327887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B69FE977C4B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:38:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EB72977C53
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:39:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37B251F280B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:38:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA2D61F26563
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A25B1D6C53;
-	Fri, 13 Sep 2024 09:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mQyaq9yA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C371D79BD;
+	Fri, 13 Sep 2024 09:38:54 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA26175D45;
-	Fri, 13 Sep 2024 09:37:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19A2190047;
+	Fri, 13 Sep 2024 09:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726220268; cv=none; b=MOXdELJRLe+CH4YW2opgIj+q3TkRRhLie1aXxHyxp1GvQIojjrOmy5aO2Hhv3qPTmL9rEWHbmjOd5WaiS972+XRkgZTfOGOLW7hwXOTt4v2lf0q9PzSmgIQYkaoQmTdoJlGsmvVozlNu3gTVDQ3GTGRwmG+fmhPGTjYLSwVK5Es=
+	t=1726220333; cv=none; b=Hib6haRHvQcz8HDnePUJbCVHsOMrX9MuLBEiz4kEJzclBc6HgBOexEQ/s3XV35aJnPP4kam0W4Io+5yVxama15ZjT0zMASCdjTJAkX0lxYjzcmgGLcu+NEAdAKAjOMccs+jgCeyyaAPk79FOPpoiImIeeiwVLJTiOmbPhTeOChU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726220268; c=relaxed/simple;
-	bh=zsaRI26ytatIl70DSoQ1SIaz3geJQP4pX3Z6fCVcIlo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m2BhnjLYaQ6/uqMSgKTYAw/mMbiS0OnEwGWry0p1QI4JW41PljOqOS72yryH2vAT1FkgzhXkPCbaJpSJa2cPnibG0bMjZsFMoXK39hdhwmUbJWHxLJoTiCLkCaraP0HLpxTdimJ/aj52uHgUhpFR8FfF7tEyshbF1b/F+iJVe0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mQyaq9yA; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726220267; x=1757756267;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zsaRI26ytatIl70DSoQ1SIaz3geJQP4pX3Z6fCVcIlo=;
-  b=mQyaq9yAH9sTyzuMYqMZ6lMS+TTJkWJ53kDlg4V5Rc9CPNat/o8sVGnO
-   0TcAGaJGy1b8E+2arl2waGaXSWRzYVHbLPlIo50s3HdOFs+3Xb6GtMXLe
-   lhLqkQBggEv/OIxjTSRKenxBgyh3GB2FnJOPeKZTufscjVX+y0VbBVMF9
-   uAcPeKogzbheiPCeHsLDlfjKRYtrl6bQQmrJdD8grdIUsVjual9+zRumu
-   GnZTknqhN8dlgcy5/V88Mc3RcARmdoEuiAq+6+J1TYSzSmkwIjsyiJ1E7
-   OM0e4RuOLQ/KTXKGvbfJoWBR3yAAg2IbwOgq0B6c2sODRzJ2qJ4PW8chh
-   A==;
-X-CSE-ConnectionGUID: G4m1kXgKStanwRglD4aM0g==
-X-CSE-MsgGUID: zZt8FIE+QauFEikiAZUbHQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="24603626"
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="24603626"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 02:37:46 -0700
-X-CSE-ConnectionGUID: Ll7xJsJrRGSI2gxiDKPhcA==
-X-CSE-MsgGUID: ERESeP6sQe+GV/zsyKycKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="98814015"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 02:37:34 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sp2k7-00000008FHq-1GBi;
-	Fri, 13 Sep 2024 12:37:31 +0300
-Date: Fri, 13 Sep 2024 12:37:31 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Parker Newman <parker@finest.io>
-Cc: Parker Newman <pnewman@connecttech.com>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>
-Subject: Re: [PATCH v2 00/13] serial: 8250_exar: Clean up the driver
-Message-ID: <ZuQH27ViT84wXKK3@smile.fi.intel.com>
-References: <Ztr5u2wEt8VF1IdI@black.fi.intel.com>
- <20240906095141.021318c8@SWDEV2.connecttech.local>
- <ZtsQrFgH86AkKgPp@smile.fi.intel.com>
- <20240906103354.0bf5f3b7@SWDEV2.connecttech.local>
- <ZtsU0nfAFssevmmz@smile.fi.intel.com>
- <20240906143851.21c97ef9@SWDEV2.connecttech.local>
- <Zt7IonZIYgBqjvy7@smile.fi.intel.com>
- <20240911133848.2cbb1834@SWDEV2.connecttech.local>
- <ZuICvRjM4TqozL_X@smile.fi.intel.com>
- <20240912084147.6af5ac12@SWDEV2.connecttech.local>
+	s=arc-20240116; t=1726220333; c=relaxed/simple;
+	bh=AvK8B0XZ3AqgDkyyFK0iRJtmR1JfTTRvrAUrfjaLbwM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KhtMtY5Q9ELFEqDWP8B25vOZYTo4/CZcSLtIcbOkRovUTgWrUANbb9przpAvSJ/cc17X4HsGlMgyKQ7FGbr+kQNLRl+PvR/AiXVo79R/fa/z9LvNIJ8Ru4h6kdtwqxi7vQS3MWm5mlkwYT4g9jB67N4D+ox+Om6EWlAUh3SOaQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: f285ee1e71b311efa216b1d71e6e1362-20240913
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:3545db07-27dc-45b0-a9c3-33517082b506,IP:25,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:10
+X-CID-INFO: VERSION:1.1.38,REQID:3545db07-27dc-45b0-a9c3-33517082b506,IP:25,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:10
+X-CID-META: VersionHash:82c5f88,CLOUDID:8e28f9a7baab127fb8240fe078bd3ab7,BulkI
+	D:2409062205428B690IWE,BulkQuantity:14,Recheck:0,SF:64|66|24|17|19|44|102,
+	TC:nil,Content:1|-5,EDM:-3,IP:-2,URL:1,File:nil,RT:nil,Bulk:40,QS:nil,BEC:
+	nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,
+	TF_CID_SPAM_OBB,TF_CID_SPAM_ULS
+X-UUID: f285ee1e71b311efa216b1d71e6e1362-20240913
+X-User: duanchenghao@kylinos.cn
+Received: from [172.30.80.21] [(39.156.73.13)] by mailgw.kylinos.cn
+	(envelope-from <duanchenghao@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 730110907; Fri, 13 Sep 2024 17:38:35 +0800
+Message-ID: <4bbd4c114d80c98c4592b1b7ec32c4dbc96d8ac6.camel@kylinos.cn>
+Subject: Re: [PATCH] USB: Fix the issue of task recovery failure caused by
+ USB status when S4 wakes up
+From: duanchenghao <duanchenghao@kylinos.cn>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: gregkh@linuxfoundation.org, pavel@ucw.cz, linux-pm@vger.kernel.org, 
+	niko.mauno@vaisala.com, stanley_chang@realtek.com, tj@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Date: Fri, 13 Sep 2024 17:38:26 +0800
+In-Reply-To: <52b9fd0ab9d279c7da1e2c70e1f023c7e3333ad6.camel@kylinos.cn>
+References: <20240906030548.845115-1-duanchenghao@kylinos.cn>
+	 <1725931490447646.3.seg@mailgw.kylinos.cn>
+	 <a618ada1582c82b58d2503ecf777ea2d726f9399.camel@kylinos.cn>
+	 <8b07752d-63c4-41e3-bd20-ce3da43dfffc@rowland.harvard.edu>
+	 <8068130ce4ece6078b2893c4c6333c06c792b6c0.camel@kylinos.cn>
+	 <b8dc326b-8aee-4903-bbb6-64083cf66b4d@rowland.harvard.edu>
+	 <52b9fd0ab9d279c7da1e2c70e1f023c7e3333ad6.camel@kylinos.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240912084147.6af5ac12@SWDEV2.connecttech.local>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Thu, Sep 12, 2024 at 08:41:47AM -0400, Parker Newman wrote:
-> On Wed, 11 Sep 2024 23:51:09 +0300
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > On Wed, Sep 11, 2024 at 01:38:48PM -0400, Parker Newman wrote:
-> > > On Mon, 9 Sep 2024 13:06:26 +0300
-> > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > > > On Fri, Sep 06, 2024 at 02:38:51PM -0400, Parker Newman wrote:
-> > > > > On Fri, 6 Sep 2024 17:42:26 +0300
-> > > > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > > > > > On Fri, Sep 06, 2024 at 10:33:54AM -0400, Parker Newman wrote:
-> > > > > > > On Fri, 6 Sep 2024 17:24:44 +0300
-> > > > > > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > > > > > > > On Fri, Sep 06, 2024 at 09:51:41AM -0400, Parker Newman wrote:
-> > > > > > > > > On Fri, 6 Sep 2024 15:46:51 +0300
-> > > > > > > > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > > > > > > > > > On Fri, May 03, 2024 at 02:33:03PM -0400, Parker Newman wrote:
+=E5=9C=A8 2024-09-13=E6=98=9F=E6=9C=9F=E4=BA=94=E7=9A=84 09:51 +0800=EF=BC=
+=8Cduanchenghao=E5=86=99=E9=81=93=EF=BC=9A
+> =E5=9C=A8 2024-09-12=E6=98=9F=E6=9C=9F=E5=9B=9B=E7=9A=84 11:00 -0400=EF=
+=BC=8CAlan Stern=E5=86=99=E9=81=93=EF=BC=9A
+> > On Thu, Sep 12, 2024 at 11:21:26AM +0800, duanchenghao wrote:
+> > > =E5=9C=A8 2024-09-11=E6=98=9F=E6=9C=9F=E4=B8=89=E7=9A=84 10:40 -0400=
+=EF=BC=8CAlan Stern=E5=86=99=E9=81=93=EF=BC=9A
+> > > > On Tue, Sep 10, 2024 at 05:36:56PM +0800, duanchenghao wrote:
+> > > > > S4 wakeup restores the image that was saved before the system
+> > > > > entered
+> > > > > the S4 sleep state.
+> > > > >=20
+> > > > > =C2=A0=C2=A0=C2=A0 S4 waking up from hibernation
+> > > > > =C2=A0=C2=A0=C2=A0 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > > =C2=A0=C2=A0=C2=A0 kernel initialization
+> > > > > =C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=20
+> > > > > =C2=A0=C2=A0=C2=A0 v=C2=A0=C2=A0=20
+> > > > > =C2=A0=C2=A0=C2=A0 freeze user task and kernel thread
+> > > > > =C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=20
+> > > > > =C2=A0=C2=A0=C2=A0 v=C2=A0=C2=A0=20
+> > > > > =C2=A0=C2=A0=C2=A0 load saved image
+> > > > > =C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=20
+> > > > > =C2=A0=C2=A0=C2=A0 v=C2=A0=C2=A0=20
+> > > > > =C2=A0=C2=A0=C2=A0 freeze the peripheral device and controller
+> > > > > =C2=A0=C2=A0=C2=A0 (Check the HCD_FLAG_WAKEUP_ PENDING flag of th=
+e USB. If
+> > > > > it
+> > > > > is
+> > > > > set,
+> > > > > =C2=A0=C2=A0=C2=A0=C2=A0 return to EBUSY and do not perform the f=
+ollowing restore
+> > > > > image.)
+> > > >=20
+> > > > Why is the flag set at this point?=C2=A0 It should not be; the
+> > > > device
+> > > > and=20
+> > > > controller should have been frozen with wakeup disabled.
+> > > >=20
+> > > This is check point, not set point.
+> >=20
+> > Yes, I know that.=C2=A0 But when the flag was checked, why did the code
+> > find=20
+> > that it was set?=C2=A0 The flag should have been clear.
+>=20
+> Yes, the current issue is that during S4 testing, there is a
+> probabilistic scenario where clear_bit is not called after set_bit,
+> or
+> clear_bit is called but does not execute after set_bit. Please refer
+> to
+> the two modification points in the v2 patch for details, as both of
+> them can cause the current issue.
+>=20
+> >=20
+> > > > Is your problem related to the one discussed in this email
+> > > > thread?
+> > > >=20
+> > > > https://lore.kernel.org/linux-usb/d8600868-6e4b-45ab-b328-852b6ac8e=
+cb5@rowland.harvard.edu/
+> > > >=20
+> > > > Would the suggestion I made there -- i.e., have the xhci-hcd=20
+> > > > interrupt handler skip calling usb_hcd_resume_root_hub() if the
+> > > > root
+> > > > hub=20
+> > > > was suspended with wakeup =3D 0 -- fix your problem?
+> > >=20
+> > > Skipping usb_hcd_resume_root_hub() should generally be possible,
+> > > but
+> > > it's important to ensure that normal remote wakeup functionality
+> > > is
+> > > not
+> > > compromised. Is it HUB_SUSPEND that the hub you are referring to
+> > > is
+> > > in
+> > > a suspended state?
+> >=20
+> > I don't understand this question.=C2=A0 hub_quiesce() gets called with=
+=20
+> > HUB_SUSPEND when the hub enters a suspended state.
+> >=20
+> > You are correct about the need for normal remote wakeup to work=20
+> > properly.=C2=A0 The interrupt handler should skip calling=20
+> > usb_hcd_resume_root_hub() for port connect or disconnect changes
+> > and
+> > for=20
+> > port overcurrent changes (when the root hub is suspended with
+> > wakeup
+> > =3D=20
+> > 0).=C2=A0 But it should _not_ skip calling usb_hcd_resume_root_hub() fo=
+r
+> > port=20
+> > resume events.
+>=20
+> The current issue arises when rh_state is detected as RH_SUSPEND and
+> usb_hcd_resume_root_hub() is called to resume the root hub. However,
+> there is no mutual exclusion between the suspend flag, set_bit, and
+> clear_bit, which can lead to two scenarios:
+>=20
+> =C2=A0=C2=A0=C2=A0 1. After set_bit is called, the state of the USB devic=
+e is
+> modified
+> by another process to !USB_STATE_SUSPEND, preventing the hub's resume
+> from being executed, and consequently, clear_bit is not called again.
+>=20
+> =C2=A0=C2=A0=C2=A0 2. In another scenario, during the hub resume process,=
+ after
+> HCD_FLAG_WAKEUP_PENDING is cleared by clear_bit, rh_state has not yet
+> been set to !RH_SUSPENDED. At this point, set_bit is executed, but
+> since the hub has already entered the running state, the clear_bit
+> associated with the resume operation is not executed.
+>=20
+> Please review the v2 patch, where I have described both the logical
+> flow before the modification and the revised logical flow after the
+> modification.
+>=20
 
-...
+In fact, issue point 2 in the patch is introduced by issue point 1, and
+issue point 2 represents a further improvement. The main issue lies in
+point 1, where after the execution of the top half of the interrupt is
+completed, the bottom half is frozen by S4. As a result, the USB resume
+is not executed during this S4 process, and clear_bit is not called as
+well. This further leads to a situation where during the process of S4
+putting the USB controller into suspend, the check for
+HCD_FLAG_WAKEUP_PENDING being set returns -EBUSY.
 
-> > > > > > > > > > Sorry for blast from the past, but I have some instersting information
-> > > > > > > > > > for you. We now have spi-gpio and 93c46 eeprom drivers available to be
-> > > > > > > > > > used from others via software nodes, can you consider updating your code
-> > > > > > > > > > to replace custom bitbanging along with r/w ops by the instantiating the
-> > > > > > > > > > respective drivers?
-> > > > > > > > >
-> > > > > > > > > Hi Andy,
-> > > > > > > > > The Exar UARTs don't actually use MPIO/GPIO for the EEPROM.
-> > > > > > > > > They have a dedicated "EEPROM interface" which is accessed by the
-> > > > > > > > > REGB (0x8E) register. It is a very simple bit-bang interface though,
-> > > > > > > > > one bit per signal.
-> > > > > > > > >
-> > > > > > > > > I guess in theory I could either add  GPIO wrapper to toggle these bits
-> > > > > > > > > and use the spi-gpio driver but I am not sure if that really improves things?
-> > > > > > > > > Maybe using the spi-bitbang driver directly is more appropriate?
-> > > > > > > > > What do you think?
-> > > > > > > >
-> > > > > > > > Yes, spi-bitbang seems better in this case.
-> > > > > > >
-> > > > > > > I will try to make some time to implement this... Or if someone else from the
-> > > > > > > community wants to take this on in the mean time I am certainly happy to test
-> > > > > > > and help out!
-> > > > > >
-> > > > > > Sure, I shared this thought due to having lack of time to look myself,
-> > > > > > but I prepared the above mentioned drivers to make them work in this case.
-> > > > > > (If you are curios, see the Git history for the last few releases with
-> > > > > >  --author="Andy Shevchenko")
-> > > > > >
-> > > > >
-> > > > > Looking into it a bit more I think we could just use the eeprom_93cx6
-> > > > > driver without any SPI layer. Just need to add simple register_read()
-> > > > > and register_write() functions to read/write the REB register.
-> > > > >
-> > > > > That should be a pretty easy change to make, I can try to make that
-> > > > > change soon unless anyone has any objections to that method?
-> > > >
-> > > > Thank you, this is pretty wonderful news!
-> > > >
-> > >
-> > > I have this mostly working however there is one issue. The eeprom_93cx6
-> > > driver doesn't seem to discard the "dummy bit" the 93C46 EEPROM outputs
-> > > between the writing of the op-code/address to the EEPROM and the reading
-> > > of the data from the EEPROM.
-> > >
-> > > More info can be found on page 6 of the AT93C46 datasheet. I see similar
-> > > notes in other 93C46/93C56/93C66 datasheets.
-> > > Link: https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-5193-SEEPROM-AT93C46D-Datasheet.pdf
-> > >
-> > > In summary the read operation for the AT93C46 EEPROM is:
-> > > Write to EEPROM :	110[A5-A0]	(9 bits)
-> > > Read from EEPROM: 	0[D15-D0]	(17 bits)
-> > >
-> > > Where 110 is the READ OpCode, [A5-A0] is the address to read from,
-> > > 0 is a "dummy bit" and then [D15-D0] is the actual data.
-> > >
-> > > I am seeing the "correct" values being read from the EEPROM when using the
-> > > eeprom_93cx6 driver but they are all shifted right by one because the
-> > > dummy 0 bit is not being discarded.
-> > >
-> > > The confusing part is the eeprom_93cx6 driver has behaved the same since
-> > > at least 2009 and half a dozen or so other drivers use it. I am not sure
-> > > if they just work around and/or live with this bug or if they have
-> > > different HW that handles the extra dummy bit?
-> >
-> > I briefly looked at a few users and it seems to me:
-> > 1) either the Atmel chip has different HW protocol;
-> > 2) or all of them handle that in HW transparently to SW.
-> 
-> The 3 Exar cards I have handy actually use the ST M93C46 version but looking
-> through our BOMs I see AT/CAT/ST used on various cards over the years.
-> 
-> Looking at the READ timing diagrams in the Atmel and ST datasheets it looks
-> like the dummy bit should actually be clocked out on the last address bit
-> clock cycle. If this were so it would be ignored naturally.
-> 
-> This may just be a quirk of the Exar HW. All Exar code I have looked at
-> manually discards the dummy bit.
-> 
-> > > I am hesitant to "fix" the eeprom_93cx6 driver and potentially break the
-> > > other users of it. I could add a flag to the eeprom_93cx6 struct to work
-> > > around this issue... Unless anyone else has some ideas or input?
-> >
-> > In my opinion the 93c46 needs an additional configuration setting (in the
-> > respective data structure) and some code to implement what you need here.
-> 
-> I see the eeprom_93xx46 driver has the QUIRK_EXTRA_READ_CYCLE quirk to solve
-> this issue. I could add something similar.
-
-Seems like a good plan to me, and thanks again for looking into this!
-
-> > But yes, let's wait a bit for other opinions...
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+> >=20
+> > Alan Stern
+>=20
 
 
