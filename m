@@ -1,152 +1,342 @@
-Return-Path: <linux-kernel+bounces-327609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CD0F977849
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:25:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACE8397784E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5634A1C24D60
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:25:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55B1BB260C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:26:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8316156972;
-	Fri, 13 Sep 2024 05:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EACAC154C04;
+	Fri, 13 Sep 2024 05:25:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TvUuyRy+"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Fw9aEFBw"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2075.outbound.protection.outlook.com [40.107.243.75])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C535C4A07;
-	Fri, 13 Sep 2024 05:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726205115; cv=none; b=QVEi7qnCrUKC56nAHdGYmrAGqK+QVceSmTu8Gn+fbI7TE5ZFZSPoN9k/D2kuLoGEbiy1mTJWNBee4Rlk4e4T0i40xEkNJiMPI+KbNRqBRmDxG3tQFrEHKMMAHBeZYSIj8vndCAi+/K7jw87ubb/X9Qr8m17En0JlZ/zf1qwXvdI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726205115; c=relaxed/simple;
-	bh=27gpEokVPxNneEEgKh8PwQgYDDsz/nj+/b0k1NQV3fE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vDRLRIhzmH7grAHGUiLAX4KD5ORwF02AiIfdEki+mvY2rhjt0xKLS5xRt9ZLB6Ez0mlwMylHlPOLeh7veXISh/M0Kc14lR8TnSiDnuT5XUFN3/INJVP7u4LH967LfWzwKBQ+du17jtB0yFmIuRaNWC/JDw+C4pRCqbTILdGykUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TvUuyRy+; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7d4f85766f0so1541908a12.2;
-        Thu, 12 Sep 2024 22:25:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726205113; x=1726809913; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=20ZaIfIVSeWUJgDUWvfCEP+VNL9P/nfw/kHDqiLJ47k=;
-        b=TvUuyRy+f9eI/nye1+bRS+RR6DSwM7IR1OMssftnp6V6RLHxkfB65gaNbT15dhI3Z0
-         1kHlcsdnbZR2p0mGcMgtUZrP2KBWrZEAYD1wLmCvwfbTUwfmFZ/ZMFxeq5PDX6yRGfVT
-         wMap1vq+nnnA/7L1JCJ98uU7+zRSZ8TZ8+EnxWZHGZaY7jgmYFElluwF/bgAOb2fYWsU
-         IhhCnN6zh71fFn+oGz1evCISMJBaWuI/zFCmxe3wJqZFYp4v8ORZM6QIYeRMb0DafH0h
-         76xHU4k0/ktvvif7sdS7jJP3YSrFAtQ8eu//pK5p0yVeeTIt/e6kIkqjoRB1B7/zpDz+
-         2jsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726205113; x=1726809913;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=20ZaIfIVSeWUJgDUWvfCEP+VNL9P/nfw/kHDqiLJ47k=;
-        b=IWydeHNLVY5VyMNMThuwoYziwaGhPnfbBz5kLGyRCq8StfxRj3JdZAOSy9v0BBeYdJ
-         JXvr2sTRzQm0zX6y55Y72OUUcjL/y5fBYzoFnOGx2exKDmGkru8/UtmjSkZtUSzgY8Ng
-         gQNW60e6s/1CH/ocFe85p5s3x1GaLy70GeblKKBdDSzPOFcvuvcF1nUT0yzrH6ap0Dbe
-         5JWcgrX1C/ycPrFT/kqywWWZfSUNzwlESLvugetvvF1kg1NN7vhVNma5o9qzPbQsPdl1
-         PRe/6uJHmwXBYBifegfLbHd1ZRdm19BOD1EukYLUizMiGg7mmhMStjNw4b4wYie6sOJJ
-         FDTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWHNOikg/j/WkMGacBmxFvH7xnIhzOJKyZlEB9EvMENodFReOiIVcp+IDJeWRyUuaqXX2raGQ29@vger.kernel.org, AJvYcCX4XeXQNYQ5ZGZzGTJE0GPUdQFTrtJoVPYJW99wv5hsAxsjlnvXM6WTvUtb2RihbXi8JzKpsIBDclas@vger.kernel.org, AJvYcCXtWbAoNhJ9IiZO9wjqs3nd7ycAZTktoqqT4vUkkqtrYI+dCDn8JOp/s4nQUAc9TYsTq80Hec1+znijVfA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4sURdgkYEPwHquBLiYzKq8gnEKhQ+z9jof6uMFwApYIU4xGcT
-	LQpwHXQN2rYjnxCCtHaWRhhEAFiaOExKwUAAzMhIgOCVYjiMHeTcCfzCUDoXjIpM++pKHmsC//E
-	z5Rfq+0Iaz90rRrXDhN3alHoDwNc=
-X-Google-Smtp-Source: AGHT+IGdVg8q8qvyLIEMHbHsPv/DvSwUDUKj0IRac1OwT3hrcFwNwy5nZqfkXIzxp2oIAKxdmnaUNjMKrxKD5eWTv5Y=
-X-Received: by 2002:a17:90a:46cb:b0:2da:5d71:fbc with SMTP id
- 98e67ed59e1d1-2db9ffcc71emr6157282a91.16.1726205112882; Thu, 12 Sep 2024
- 22:25:12 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B302C149DF0;
+	Fri, 13 Sep 2024 05:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726205157; cv=fail; b=SX+AOhR4c+kgWV1QoauzZwkEdTlWhDZHPhq3dsG7nW1wLV1O5bE3wHl8P4wsuSN8DHd5xGk0Ev566BH+43fSbOUFqEL8IavWxb8o+01CIxAUfww9pyrJL+V4rZdpm6Cy2WFkCYFWgsle0/gHSN+lADP7aFVEQdiXhRHh30ZEpjA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726205157; c=relaxed/simple;
+	bh=kS7mMd3Sf7WNWOjMCf/LNoq/e9tYKVW+Jrnjq6qCmQQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IhQjHeQnm8W+78xOoSSSHL0sqgWikTN3DzCJ59+wlbXKj1rO+Nba7sf5Mtu1oAdEA+i8419/GVrNPH8Mt36mX0suIDkaKlGO/c+m505DU6+QQQafbIswElQCJIh6a1X+PnEe8QczHCCN4WtA1FcEUDdDXM/noEK5Myv4QjWQBuQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Fw9aEFBw; arc=fail smtp.client-ip=40.107.243.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=szV2pF6GhFb63gUlnTSHRuhLa/+xwklpZfl4GO4GH1L6J5L8jmocr6LgHcl1sRjZskUWkHmGlgT7I7PhUzGdC4uJZZg+PE9auNpvRulmjr6epMGD4jzUKMIGoei4juk4YcLeoxf6jRDpssBcuUxfHlTEYQTPu/pwdI3/OOAJT1ENlj2w/7wvqJ9dKsM1D/L9SlijfkIZ4QurwsYguiaabdqR/9y0AN5Bn1Dvf0xHah7tkK7MYfaVB8J7hIwAJzdKDu0RTH/PLqWNnfr3jKCJUWy4KVtyHDiQglqmKxVX8MCHO/6XuCKSL9r3tCI+0LWY8I63TmXjNIhfGFoUynZNvQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3CgEMvQNi1+YMzm/OANmnx/mjHrdrStrHhNACOGX8Mk=;
+ b=HkfUjx1vLO9+8S8kTPwA5ibHbm+uZInOejzhUge+rqY45MQRT+m5gGgz8256i4quEHZLa027738xmM6mU2MlRnfn6eKm7RKDptgVhCTQXV/pLYMfHFtmBLh+V8NyzQ9M5f0XhbHSwn1o1oNeGeGQsoDLjY1fH0uPFt9RtmxdCPlzmBdZ0xUTrXxOEiH4UC588MDPm2qJExuXnNB1UsgUPMlgs9sJJqSFoqBCFrd9vF4SFN/0L7Iukcrmflsyv0KaZGqQ9cwYhFYtrkXvFN5X6GlWWaQK3o3gELwHkIka92ncug1115yi/pLXKC5S66hAR18a166JCesUMzOq/qUM0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3CgEMvQNi1+YMzm/OANmnx/mjHrdrStrHhNACOGX8Mk=;
+ b=Fw9aEFBwbKp+heHA3Kal2CkshtCvBMagoYaJjEylR+LK/NWZySB0qw8sS7anaCL1UyW9Qmaj4STiH6RItJn19OY7XxXn8flmSWG1Hqd+CNLQY3QB6mu0akHeqoTSvbkjMBN15zIHWuryP+nGGJHmgoGP+jB0mesAUrXwQefr0BvzBh21xw0Gld+wGEekHsbmQRwwCCxYKHyEOXNOoCVQ7esNS//2wfko/lcLgR76YfX8uug/jqER5qBbMr520nNU0O2ihxHdxP3vpq6A3sElVkxP9saI/2yptlTFEn+hclO/oZPmVg37DzfPS4RJ5ubWMqNnjEPCPHgI0vYrO1rwmQ==
+Received: from BN8PR03CA0016.namprd03.prod.outlook.com (2603:10b6:408:94::29)
+ by CH3PR12MB9171.namprd12.prod.outlook.com (2603:10b6:610:1a2::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.18; Fri, 13 Sep
+ 2024 05:25:47 +0000
+Received: from MN1PEPF0000F0DE.namprd04.prod.outlook.com
+ (2603:10b6:408:94:cafe::4b) by BN8PR03CA0016.outlook.office365.com
+ (2603:10b6:408:94::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24 via Frontend
+ Transport; Fri, 13 Sep 2024 05:25:46 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ MN1PEPF0000F0DE.mail.protection.outlook.com (10.167.242.36) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7918.13 via Frontend Transport; Fri, 13 Sep 2024 05:25:46 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 12 Sep
+ 2024 22:25:38 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 12 Sep
+ 2024 22:25:37 -0700
+Received: from Asurada-9440.nvidia.com (10.127.8.13) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 12 Sep 2024 22:25:35 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: <jgg@nvidia.com>, <bagasdotme@gmail.com>
+CC: <kevin.tian@intel.com>, <corbet@lwn.net>, <iommu@lists.linux.dev>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yi.l.liu@intel.com>, <eric.auger@redhat.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <smostafa@google.com>,
+	<baolu.lu@linux.intel.com>
+Subject: [PATCH v3] Documentation: userspace-api: iommufd: Update HWPT_PAGING and HWPT_NESTED
+Date: Thu, 12 Sep 2024 22:25:19 -0700
+Message-ID: <20240913052519.2153-1-nicolinc@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911051716.6572-1-ki.chiang65@gmail.com> <20240911051716.6572-2-ki.chiang65@gmail.com>
- <d222e5b9-7241-46a1-84fe-be2343fa4346@linux.intel.com>
-In-Reply-To: <d222e5b9-7241-46a1-84fe-be2343fa4346@linux.intel.com>
-From: Kuangyi Chiang <ki.chiang65@gmail.com>
-Date: Fri, 13 Sep 2024 13:25:06 +0800
-Message-ID: <CAHN5xi3UEJJ2aPuF3y0PHoqzb6xhmD+UG3YZyh2Ut_hk0H58gg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] xhci: Fix control transfer error on Etron xHCI host
-To: Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc: gregkh@linuxfoundation.org, mathias.nyman@intel.com, 
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN1PEPF0000F0DE:EE_|CH3PR12MB9171:EE_
+X-MS-Office365-Filtering-Correlation-Id: d773786f-9915-46ce-f064-08dcd3b485a2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|36860700013|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?rq+TtykBOwsdTP2pL5wRy/50oKdAgtwlllULzv+EWG9weajv07NEA3e3yf3m?=
+ =?us-ascii?Q?ObNHLX+SwOi2RfkIhNfkh2VbLQfqiUU/a0NiuKHCsbNVwgVym2+rtDDtkXo6?=
+ =?us-ascii?Q?ctIbecB0us5lYU/GDxuBEqB4RQT7L7VzbrHd8+zekq6Ia3D5PqrDGBWI55ZM?=
+ =?us-ascii?Q?A6v4XxYQWbYwXM0EEaDvD5RFlk6I17AelkyYLK7yLUtMV/Ft6h59KPe1MNOi?=
+ =?us-ascii?Q?gNA38tmjSEljStWWjzow+pnWKT1mrjyAHMR+EgCynyYrg4GP80n3I19/A95i?=
+ =?us-ascii?Q?JjDBYZO2l30iPIRJ0xjatzEjVN7aTiIYRPhmj83yCeEY/RAOigjl7SgZBT0V?=
+ =?us-ascii?Q?IDu4JLKtXZGXNEqZJI7d34MzZz/vQT7fMS5R+kxNie3lI2uFhTAdEqoEY8mT?=
+ =?us-ascii?Q?7VH9evwsmN4u9yWT7iyMSCDVQW/QwidEiznHN7lJHB8BrIW36+z8LRp1/WUL?=
+ =?us-ascii?Q?h34Jvs9wbn1pznXcu+zHvD3sSb5aRHw8V4aS3oUW1K+BF1CqxFwLXaBSbGQX?=
+ =?us-ascii?Q?+R++4s0Jz7KoJ8PjS/eaIXmTcR1LVcLQ3UEr+lD/4m1d8uWrd0ik2JBnnlAZ?=
+ =?us-ascii?Q?kSgCZ71BqaJcUV4qEY/pUBQBriKW/MFxqOqkIpVMQPDB50VxMCMNrMFEY72K?=
+ =?us-ascii?Q?ttH7vENSb0o07F+PrXSpftO0N90fVChcRl0FTBQHe066Ipsp7TCLsmWaFrEt?=
+ =?us-ascii?Q?gbiEgCAaRjXIZhvLoFHCvz/AgYeafoy2OeHlqTnzijJaxk8zI904KgbyCKW1?=
+ =?us-ascii?Q?ka9hcDZpAl+zlOLLh6ka/GkfHoGJ3cprQ/ldB+iLskQE/VcBkeqZDREY0JQV?=
+ =?us-ascii?Q?XhgcDNOsYUi0L3jrXmDqBXsBCyS/yZlUemNzl5oOmsu2oJLpPtqA4jZgFFvi?=
+ =?us-ascii?Q?q5FKVdkwkvZK7ZF+xTxbJ594/lFZIM9+VwiKuM6bmTqRE//Tz1EAbv2T7OMp?=
+ =?us-ascii?Q?I/SVa6UAcazRphbCXRvVw2hELOChYqnO0C6WvofFrOlLahgwjlOxwLMCk8E4?=
+ =?us-ascii?Q?ljTPXgrQE1vF+WJgeRuxbyulRwg9qCuvxl82mmqK6JLWWdaNrxuBikqdn9rw?=
+ =?us-ascii?Q?VBe5pFMgQwJ2tDKYbLDXfFXMIpY+84eIEFkH1lEgPzYsklmtOic3uI5/J0vR?=
+ =?us-ascii?Q?shCmI9kmXLaFSYvoJvbQMCBg9DtOPTPPk3UKlm6NE0Q5ScFr+crz4I+WxeIE?=
+ =?us-ascii?Q?0IKpeQAgTOsXzFoDUM3vA6CsTFFNcAKWYXEAXIWzaypoJYglLGuBIdGxp8xC?=
+ =?us-ascii?Q?OFKU7ND0Sk4oHH1Q1i4REg9IwSiQR4H1vci3LZRj1ijO53kASN+hdlSSLwFa?=
+ =?us-ascii?Q?6q3gs+U9px+++5YLFYj2gbHvxnLn3T0M2rYJRy9IQQl1eX0wW0XF41IaMMxH?=
+ =?us-ascii?Q?8AfipB+5p6u+aog/E5ZMfUs9Oa8VBBpvS4Atlj8OB3Q1FeUkn/fQPCfigDt1?=
+ =?us-ascii?Q?Q89Uer/g+du4WaAZD3OJen0jMdFxWqSa?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 05:25:46.7514
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d773786f-9915-46ce-f064-08dcd3b485a2
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MN1PEPF0000F0DE.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9171
 
-Hi,
+The previous IOMMUFD_OBJ_HW_PAGETABLE has been reworked to two separated
+objects: IOMMUFD_OBJ_HWPT_PAGING and IOMMUFD_OBJ_HWPT_NESTED in order to
+support a nested translation context.
 
-Thank you for the review.
+Corresponding to the latest iommufd APIs and uAPIs, update the doc so as
+to reflect the new design.
 
-Mathias Nyman <mathias.nyman@linux.intel.com> =E6=96=BC 2024=E5=B9=B49=E6=
-=9C=8811=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=8811:05=E5=AF=AB=E9=81=
-=93=EF=BC=9A
->
-> On 11.9.2024 8.17, Kuangyi Chiang wrote:
-> > Performing a stability stress test on a USB3.0 2.5G ethernet adapter
-> > results in errors like this:
-> >
-> > [   91.441469] r8152 2-3:1.0 eth3: get_registers -71
-> > [   91.458659] r8152 2-3:1.0 eth3: get_registers -71
-> > [   91.475911] r8152 2-3:1.0 eth3: get_registers -71
-> > [   91.493203] r8152 2-3:1.0 eth3: get_registers -71
-> > [   91.510421] r8152 2-3:1.0 eth3: get_registers -71
-> >
-> > The r8152 driver will periodically issue lots of control-IN requests
-> > to access the status of ethernet adapter hardware registers during
-> > the test.
-> >
-> > This happens when the xHCI driver enqueue a control TD (which cross
-> > over the Link TRB between two ring segments, as shown) in the endpoint
-> > zero's transfer ring. Seems the Etron xHCI host can not perform this
-> > TD correctly, causing the USB transfer error occurred, maybe the upper
-> > driver retry that control-IN request can solve problem, but not all
-> > drivers do this.
-> >
-> > |     |
-> > -------
-> > | TRB | Setup Stage
-> > -------
-> > | TRB | Link
-> > -------
-> > -------
-> > | TRB | Data Stage
-> > -------
-> > | TRB | Status Stage
-> > -------
-> > |     |
-> >
->
-> What if the link TRB is between Data and Status stage, does that
-> case work normally?
+Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+---
 
-I am not sure, I don't encounter this case, maybe OK.
+Changelog
+v3:
+ * Minor word changings
+v2:
+ https://lore.kernel.org/all/20240912021503.205502-1-nicolinc@nvidia.com/
+ * Minor paragraph changes to reduce redundancy
+ * Added nested bullet list to IOMMUFD_OBJ_HWPT_PAGING section
+v1:
+ https://lore.kernel.org/all/20240910204111.7969-1-nicolinc@nvidia.com/
 
->
-> > To work around this, the xHCI driver should enqueue a No Op TRB if
-> > next available TRB is the Link TRB in the ring segment, this can
-> > prevent the Setup and Data Stage TRB to be breaked by the Link TRB.
->
-> There are some hosts that need the 'Chain' bit set in the Link TRB,
-> does that work in this case?
+ Documentation/userspace-api/iommufd.rst | 134 +++++++++++++++---------
+ 1 file changed, 87 insertions(+), 47 deletions(-)
 
-No, it doesn't work. It seems to be a hardware issue.
+diff --git a/Documentation/userspace-api/iommufd.rst b/Documentation/userspace-api/iommufd.rst
+index aa004faed5fd..2deba93bf159 100644
+--- a/Documentation/userspace-api/iommufd.rst
++++ b/Documentation/userspace-api/iommufd.rst
+@@ -41,46 +41,65 @@ Following IOMMUFD objects are exposed to userspace:
+ - IOMMUFD_OBJ_DEVICE, representing a device that is bound to iommufd by an
+   external driver.
+ 
+-- IOMMUFD_OBJ_HW_PAGETABLE, representing an actual hardware I/O page table
+-  (i.e. a single struct iommu_domain) managed by the iommu driver.
+-
+-  The IOAS has a list of HW_PAGETABLES that share the same IOVA mapping and
+-  it will synchronize its mapping with each member HW_PAGETABLE.
++- IOMMUFD_OBJ_HWPT_PAGING, representing an actual hardware I/O page table
++  (i.e. a single struct iommu_domain) managed by the iommu driver. "PAGING"
++  primarly indicates this type of HWPT should be linked to an IOAS. It also
++  indicates that it is backed by an iommu_domain with __IOMMU_DOMAIN_PAGING
++  feature flag. This can be either an UNMANAGED stage-1 domain for a device
++  running in the user space, or a nesting parent stage-2 domain for mappings
++  from guest-level physical addresses to host-level physical addresses.
++
++  The IOAS has a list of HWPT_PAGINGs that share the same IOVA mapping and
++  it will synchronize its mapping with each member HWPT_PAGING.
++
++- IOMMUFD_OBJ_HWPT_NESTED, representing an actual hardware I/O page table
++  (i.e. a single struct iommu_domain) managed by user space (e.g. guest OS).
++  "NESTED" indicates that this type of HWPT should be linked to an HWPT_PAGING.
++  It also indicates that it is backed by an iommu_domain that has a type of
++  IOMMU_DOMAIN_NESTED. This must be a stage-1 domain for a device running in
++  the user space (e.g. in a guest VM enabling the IOMMU nested translation
++  feature.) As such, it must be created with a given nesting parent stage-2
++  domain to associate to. This nested stage-1 page table managed by the user
++  space usually has mappings from guest-level I/O virtual addresses to guest-
++  level physical addresses.
+ 
+ All user-visible objects are destroyed via the IOMMU_DESTROY uAPI.
+ 
+-The diagram below shows relationship between user-visible objects and kernel
++The diagrams below show relationships between user-visible objects and kernel
+ datastructures (external to iommufd), with numbers referred to operations
+ creating the objects and links::
+ 
+-  _________________________________________________________
+- |                         iommufd                         |
+- |       [1]                                               |
+- |  _________________                                      |
+- | |                 |                                     |
+- | |                 |                                     |
+- | |                 |                                     |
+- | |                 |                                     |
+- | |                 |                                     |
+- | |                 |                                     |
+- | |                 |        [3]                 [2]      |
+- | |                 |    ____________         __________  |
+- | |      IOAS       |<--|            |<------|          | |
+- | |                 |   |HW_PAGETABLE|       |  DEVICE  | |
+- | |                 |   |____________|       |__________| |
+- | |                 |         |                   |       |
+- | |                 |         |                   |       |
+- | |                 |         |                   |       |
+- | |                 |         |                   |       |
+- | |                 |         |                   |       |
+- | |_________________|         |                   |       |
+- |         |                   |                   |       |
+- |_________|___________________|___________________|_______|
+-           |                   |                   |
+-           |              _____v______      _______v_____
+-           | PFN storage |            |    |             |
+-           |------------>|iommu_domain|    |struct device|
+-                         |____________|    |_____________|
++  _______________________________________________________________________
++ |                      iommufd (HWPT_PAGING only)                       |
++ |                                                                       |
++ |        [1]                  [3]                                [2]    |
++ |  ________________      _____________                        ________  |
++ | |                |    |             |                      |        | |
++ | |      IOAS      |<---| HWPT_PAGING |<---------------------| DEVICE | |
++ | |________________|    |_____________|                      |________| |
++ |         |                    |                                  |     |
++ |_________|____________________|__________________________________|_____|
++           |                    |                                  |
++           |              ______v_____                          ___v__
++           | PFN storage |  (paging)  |                        |struct|
++           |------------>|iommu_domain|<-----------------------|device|
++                         |____________|                        |______|
++
++  _______________________________________________________________________
++ |                      iommufd (with HWPT_NESTED)                       |
++ |                                                                       |
++ |        [1]                  [3]                [4]             [2]    |
++ |  ________________      _____________      _____________     ________  |
++ | |                |    |             |    |             |   |        | |
++ | |      IOAS      |<---| HWPT_PAGING |<---| HWPT_NESTED |<--| DEVICE | |
++ | |________________|    |_____________|    |_____________|   |________| |
++ |         |                    |                  |               |     |
++ |_________|____________________|__________________|_______________|_____|
++           |                    |                  |               |
++           |              ______v_____       ______v_____       ___v__
++           | PFN storage |  (paging)  |     |  (nested)  |     |struct|
++           |------------>|iommu_domain|<----|iommu_domain|<----|device|
++                         |____________|     |____________|     |______|
+ 
+ 1. IOMMUFD_OBJ_IOAS is created via the IOMMU_IOAS_ALLOC uAPI. An iommufd can
+    hold multiple IOAS objects. IOAS is the most generic object and does not
+@@ -94,21 +113,41 @@ creating the objects and links::
+    device. The driver must also set the driver_managed_dma flag and must not
+    touch the device until this operation succeeds.
+ 
+-3. IOMMUFD_OBJ_HW_PAGETABLE is created when an external driver calls the IOMMUFD
+-   kAPI to attach a bound device to an IOAS. Similarly the external driver uAPI
+-   allows userspace to initiate the attaching operation. If a compatible
+-   pagetable already exists then it is reused for the attachment. Otherwise a
+-   new pagetable object and iommu_domain is created. Successful completion of
+-   this operation sets up the linkages among IOAS, device and iommu_domain. Once
+-   this completes the device could do DMA.
+-
+-   Every iommu_domain inside the IOAS is also represented to userspace as a
+-   HW_PAGETABLE object.
++3. IOMMUFD_OBJ_HWPT_PAGING can be created in two ways:
++
++   * IOMMUFD_OBJ_HWPT_PAGING is automatically created when an external driver
++     calls the IOMMUFD kAPI to attach a bound device to an IOAS. Similarly the
++     external driver uAPI allows userspace to initiate the attaching operation.
++     If a compatible member HWPT_PAGING object exists in the IOAS's HWPT_PAGING
++     list, then it will be reused. Otherwise a new HWPT_PAGING that represents
++     an iommu_domain to userspace will be created, and then added to the list.
++     Successful completion of this operation sets up the linkages among IOAS,
++     device and iommu_domain. Once this completes the device could do DMA.
++
++   * IOMMUFD_OBJ_HWPT_PAGING can be manually created via the IOMMU_HWPT_ALLOC
++     uAPI, provided an ioas_id via @pt_id to associate the new HWPT_PAGING to
++     the corresponding IOAS object. The benefit of this manual allocation is to
++     allow allocation flags (defined in enum iommufd_hwpt_alloc_flags), e.g. it
++     allocates a nesting parent HWPT_PAGING if the IOMMU_HWPT_ALLOC_NEST_PARENT
++     flag is set.
++
++4. IOMMUFD_OBJ_HWPT_NESTED can be only manually created via the IOMMU_HWPT_ALLOC
++   uAPI, provided an hwpt_id via @pt_id to associate the new HWPT_NESTED object
++   to the corresponding HWPT_PAGING object. The associating HWPT_PAGING object
++   must be a nesting parent manually allocated via the same uAPI previously with
++   an IOMMU_HWPT_ALLOC_NEST_PARENT flag, otherwise the allocation will fail. The
++   allocation will be further validated by the IOMMU driver to ensure that the
++   nesting parent domain and the nested domain being allocated are compatible.
++   Successful completion of this operation sets up linkages among IOAS, device,
++   and iommu_domains. Once this completes the device could do DMA via a 2-stage
++   translation, a.k.a nested translation. Note that multiple HWPT_NESTED objects
++   can be allocated by (and then associated to) the same nesting parent.
+ 
+    .. note::
+ 
+-      Future IOMMUFD updates will provide an API to create and manipulate the
+-      HW_PAGETABLE directly.
++      Either a manual IOMMUFD_OBJ_HWPT_PAGING or an IOMMUFD_OBJ_HWPT_NESTED is
++      created via the same IOMMU_HWPT_ALLOC uAPI. The difference is at the type
++      of the object passed in via the @pt_id field of struct iommufd_hwpt_alloc.
+ 
+ A device can only bind to an iommufd due to DMA ownership claim and attach to at
+ most one IOAS object (no support of PASID yet).
+@@ -120,7 +159,8 @@ User visible objects are backed by following datastructures:
+ 
+ - iommufd_ioas for IOMMUFD_OBJ_IOAS.
+ - iommufd_device for IOMMUFD_OBJ_DEVICE.
+-- iommufd_hw_pagetable for IOMMUFD_OBJ_HW_PAGETABLE.
++- iommufd_hwpt_paging for IOMMUFD_OBJ_HWPT_PAGING.
++- iommufd_hwpt_nested for IOMMUFD_OBJ_HWPT_NESTED.
+ 
+ Several terminologies when looking at these datastructures:
+ 
+-- 
+2.34.1
 
->
-> Thanks
-> Mathias
->
-
-Thanks,
-Kuangyi Chiang
 
