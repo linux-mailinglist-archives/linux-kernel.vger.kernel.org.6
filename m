@@ -1,352 +1,290 @@
-Return-Path: <linux-kernel+bounces-328068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A35E1977E89
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:36:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8C88977E8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:37:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6425828360E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:36:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BF0F28360E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03AF81D88C7;
-	Fri, 13 Sep 2024 11:36:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35AEB1D88A6;
+	Fri, 13 Sep 2024 11:37:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="jII1tZSQ"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2080.outbound.protection.outlook.com [40.107.92.80])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="C3KUrZMD"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2064.outbound.protection.outlook.com [40.107.101.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D72A17BB3A;
-	Fri, 13 Sep 2024 11:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BE41BD4E4;
+	Fri, 13 Sep 2024 11:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.64
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726227365; cv=fail; b=bEO3Dw4oWUKqwgaEpjiLvRzVz5AB3vUj3qYt98dKSslBoFEWFeHYZL4VKJ4140iOgjrLrLvTLTjt8w8YN9XC1Xt4jtoUIZu9phPJ906qa32JvY5TKkMzK1sPIMt3dB/D4VHJBVzStw8+qOx0f8Z1t628+K9SpyoSZHJLBHpLsRo=
+	t=1726227443; cv=fail; b=uHz3F2Gcv1Gj5Bal4XwY1sKd4lsNepbgTLEMYWMP5aMmapGH0VthPeZxJ07yrvMW9MQNCYgsQm8I3fSXzfVV2igSoXGJOweS1/Tdvs6UBnAeUa+TwDzMq3W7gQM/zF0Ka7h+ftYzax1rw99DN+sm0hlRBi07+bx3QS55ErvwmxY=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726227365; c=relaxed/simple;
-	bh=Tv6U4HCIAbjSqE5fzrEZL781trH/JBAtKNeS8QDOj4c=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=WS6C7d/TFFFk0IoGn+dgkC68H19SUVeXsOcl04ZcKrPySB38a8ct+Ce89av4crsp7v0yqc63II+cnmGz6DBr8ckxLHJDRRwhhd8CnJS3Tr9D6Uk3jZBuitfnbBkmYQIICNWLSyKp75nZVvYRmRxQiibTI6e3aqqkE+rcfinrtAU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=jII1tZSQ; arc=fail smtp.client-ip=40.107.92.80
+	s=arc-20240116; t=1726227443; c=relaxed/simple;
+	bh=bVURonVtm7IV0NVnZeNdz1p1tD1dPsSHYTb0wv/Uzz4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fa9rW+YYgObdGffAL35zJiMitfy1WGyiPca02QnrpwF4YLch57ckWPAlBBGwUyc/uKUGQzZgZele+/A71ct3M5PqllZO3KWJhelW0sjICQRCweaELszHMUGSkcJo22CX5QkiLIb0yL3f4sNcNdTMkou3h2aFAmQf4lsNwmIs0FU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=C3KUrZMD; arc=fail smtp.client-ip=40.107.101.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oZmLtobR0LVlu+glO3DRcE0ykDC0k3gTq+bq5XVGLhDvjpSWn16/2m2giTLPDk8A6jTfaiSZGRSbcpr5JjfrCxPXQ2xGMWPNyXHm1qKLr8+J6v5wIfuFrbWkdWn2Kmp2FUMbjUaw5EEMd74YZsZn7bFQghvG2B8i+aCMGAwvTnQC9Bth/YyS/m1OCDB6926WurPqlQKIYCqLODL1Xn+RAEHZt936yZXszOKLpNtyLSoG3SH3Q/2niwd85yxbZpvzaWz2QNFf0kHFoAIvKSZdVZhMxQwC/MthEfM98iEAU27WuiT16JULU5AlhaZtLQ/Xl4Qk9GjjhD7XytE46RXL+A==
+ b=Nt+ge3iUsJe6auWt4kkF415qDtT4Ao82ScgxCPyLp4/jOUWZgnGL954Y8L6+Klzwa/8JOj2K5hrViW1Xg1daZ31z79bhYIqluon/JZiRX6uV+1eAqzKwrNwr9t7fQw3uSX+0PC4AtoETTdNOdDGTe8QORSm/JaWq4zF975j6aQ2b6r6n1w9Ber2H1OWddQT0ZG6gn4uxm7PLb2N0eX7AbCl51l2B4RiNJslc+7OXSBIOXx/YAk82q7yjIKr0gya/ZA1u89W8gnV7ObbiKsQas9mrD1TUnERS0JNsEQO8GSMuD0Ggin2HcUHXTncCuecpgZNgDbmU6Cf62iQUJP8KFQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JbcubEGgjgZeNl75c91M+MecqnWSovKLzIZReNDrzRE=;
- b=HVBo+czR//VTF4iK00R9vDNyLPFcX9hFzzx7WjL8KlcIm+JNYb0ZQnB4qkW/8uJkaGQkYmCLrusijXQE3J3cpwnTM18x4bw2852j/vOr+B6RAHyDXYX/ZY5HD1+H1jgBNnN8GSdQEgOu2oviVBWxT66W+bbzxVAcFbqNJXmV6clTTnBnq7ecUqhrWVLLsDct2ADjQ6nXI/zJ5iPWZElRbwsS918HPsEVFJsmqWexg9blqUBOW7ygnt6cJUWACs7x82EnV+EROdwxH7NlyXLQrWMLXMARJtRzbTdMXcHkQnBxeuCXcmacQxBvKQ6m+3KIxznZU8JTjf8Qm98hiiFKeg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
+ bh=J26oDHzt6tzKi4hVB5HtfZf4vQwziwSnIBeo2awrIJ8=;
+ b=RpWyDxFDO7SeIUV3y0FQqkzklI3RULsj67iqkqlA1TcuhjCgPeNRlRbkmv4opnfVLMKrMLoBY8CrTUUJpXKXqpN5TfyxbnfUNCspJbhVl7u9gdJrkHISYVwR6o9HF/Mj18Z7nCD8vLGHAkOECrigByMfC25Sd8w/VbZU2Z0p4jOcJSwV3t6d4jmyC7KewnRmTCWASm/GGw/UazVXfrn8OeesD5p//tEkhAC1dkNt5/LhDDxwZ2lfdMrzuohwwiUyW30Sj/NeOy3DtcW/ugG4fvAtZ4OvriH2NQoJp2QX9zkUNwZu4Z4X6NU/3eI1nqz7gEX8+jFccP+ocf6GqOlWOA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JbcubEGgjgZeNl75c91M+MecqnWSovKLzIZReNDrzRE=;
- b=jII1tZSQL/qO47kxNQXz3xZyi+zLQJln+TI5Iqtqe778OxuRTM5wOKWeJGibV6dmxfOMtp0rDy2WYE1zKu3nYYmI7iEMH+f49bC6ZQoarlYTLhJSFzt+K/32DvnRe88IQdcq5B5NY0o+hjX0p9aBSBMuSdTtDJNZ2x5tM0ZBUPo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM6PR12MB4202.namprd12.prod.outlook.com (2603:10b6:5:219::22)
- by CH3PR12MB8725.namprd12.prod.outlook.com (2603:10b6:610:170::14) with
+ bh=J26oDHzt6tzKi4hVB5HtfZf4vQwziwSnIBeo2awrIJ8=;
+ b=C3KUrZMDoWMWGk1ZIWEmBpR3Q+SwFm2I7KHRkScAG52kqTLIE4tyKNqAf548pJpxQFMS8W29fwAVfY8kstSFtj3tHaYWGRIHsno91GcVb1FOTJDc4+97BLYZ2WR1JQCVpoLIWkUWwTYu8tOyW2InU6Bld2FkRNGfe7EiJq/kB20=
+Received: from LV3P220CA0013.NAMP220.PROD.OUTLOOK.COM (2603:10b6:408:234::34)
+ by SN7PR12MB7252.namprd12.prod.outlook.com (2603:10b6:806:2ac::9) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Fri, 13 Sep
- 2024 11:36:00 +0000
-Received: from DM6PR12MB4202.namprd12.prod.outlook.com
- ([fe80::f943:600c:2558:af79]) by DM6PR12MB4202.namprd12.prod.outlook.com
- ([fe80::f943:600c:2558:af79%4]) with mapi id 15.20.7962.021; Fri, 13 Sep 2024
- 11:36:00 +0000
-Message-ID: <fda48ab0-35bc-48ab-4b62-77e09758c760@amd.com>
-Date: Fri, 13 Sep 2024 12:35:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH V4 04/12] PCI/TPH: Add pcie_enable_tph() to enable TPH
-Content-Language: en-US
-To: Wei Huang <wei.huang2@amd.com>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- netdev@vger.kernel.org
-Cc: Jonathan.Cameron@Huawei.com, helgaas@kernel.org, corbet@lwn.net,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, alex.williamson@redhat.com, gospo@broadcom.com,
- michael.chan@broadcom.com, ajit.khaparde@broadcom.com,
- somnath.kotur@broadcom.com, andrew.gospodarek@broadcom.com,
- manoj.panicker2@amd.com, Eric.VanTassell@amd.com, vadim.fedorenko@linux.dev,
- horms@kernel.org, bagasdotme@gmail.com, bhelgaas@google.com,
- lukas@wunner.de, paul.e.luse@intel.com, jing2.liu@intel.com
-References: <20240822204120.3634-1-wei.huang2@amd.com>
- <20240822204120.3634-5-wei.huang2@amd.com>
-From: Alejandro Lucero Palau <alucerop@amd.com>
-In-Reply-To: <20240822204120.3634-5-wei.huang2@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0004.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2ad::13) To DM6PR12MB4202.namprd12.prod.outlook.com
- (2603:10b6:5:219::22)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.25; Fri, 13 Sep
+ 2024 11:37:18 +0000
+Received: from DS3PEPF000099E1.namprd04.prod.outlook.com
+ (2603:10b6:408:234:cafe::24) by LV3P220CA0013.outlook.office365.com
+ (2603:10b6:408:234::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.24 via Frontend
+ Transport; Fri, 13 Sep 2024 11:37:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DS3PEPF000099E1.mail.protection.outlook.com (10.167.17.196) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7918.13 via Frontend Transport; Fri, 13 Sep 2024 11:37:18 +0000
+Received: from BLR-L-NUPADHYA.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 13 Sep
+ 2024 06:37:13 -0500
+From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <tglx@linutronix.de>, <mingo@redhat.com>, <dave.hansen@linux.intel.com>,
+	<Thomas.Lendacky@amd.com>, <nikunj@amd.com>, <Santosh.Shukla@amd.com>,
+	<Vasant.Hegde@amd.com>, <Suravee.Suthikulpanit@amd.com>, <bp@alien8.de>,
+	<David.Kaplan@amd.com>, <x86@kernel.org>, <hpa@zytor.com>,
+	<peterz@infradead.org>, <seanjc@google.com>, <pbonzini@redhat.com>,
+	<kvm@vger.kernel.org>
+Subject: [RFC 00/14] AMD: Add Secure AVIC Guest Support
+Date: Fri, 13 Sep 2024 17:06:51 +0530
+Message-ID: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4202:EE_|CH3PR12MB8725:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0a0216d6-2de6-414a-e7e3-08dcd3e83d65
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099E1:EE_|SN7PR12MB7252:EE_
+X-MS-Office365-Filtering-Correlation-Id: e9057a7d-be9a-429d-ad31-08dcd3e86c67
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|366016|376014;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|7416014|376014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NnVSZWU0aVA1dG56RVpOSFlzcjhGTEdlUXc5dFNHOE0rTFNwaC8rajd5QjZh?=
- =?utf-8?B?N0NhVXBVb2tWT3B0UEtaYmY3SDR6V2hlclRQZ2VzTHUzUlpZd1RQR0x4TW9Q?=
- =?utf-8?B?SDlobzFQZHY1TTBGemNZbnZuUEdwQmV5a3gzN1oyWWM4QXFFUTFuMEdtRE1y?=
- =?utf-8?B?ZWdKL2FhQWVDOG1rZ0RaOWRXcGVoZENxRXQ1dGhkK3RFN0xLNW5OK3FSbEJ3?=
- =?utf-8?B?Y2NON0wvanBpa2lNbkw3K29yOTJ1Q0M1NTZoUXRRMFgwejEwR0dRL0JtZ05o?=
- =?utf-8?B?d2NIc09nenAxRVpocm80ellVK3ZzSGJ5d0FwUzNvblkwL1pkclVBSWJuZnBt?=
- =?utf-8?B?QitvVFNjYy9JREtubzNZSWZ2enZmV3ZEVXpTQm83U3lWT2MrRU13bDVOMUFH?=
- =?utf-8?B?eXZsU3QwY2xHRjNJTEhGOExwTU5GSC9ucmVOWjlpS3VQdUJpUHVFUS9vd09O?=
- =?utf-8?B?T1JYQmlHVkgreUNVUW05ekcwd0IrZVdYR3RsWEZzRzR1bWV3c29FckFQMHBy?=
- =?utf-8?B?TmJCOW42SFFkU05KTHlJQUQzYVd6RnFyVm43TEk4TkIzVjlJSVdJdS9BYUJY?=
- =?utf-8?B?ZjFnRDFickxWVHVkWW5lRVgrRkFuWVhNeEZSSmJib0JYRmszbnpwNFdFbGV2?=
- =?utf-8?B?QUpnMWRDZGhwbFNTQXVzUGVGM1BpSTNIZC9ycWt5Ynl0dEZKSHlZYk5qbm1X?=
- =?utf-8?B?RkRVL0NSTjdjeEJRcEd0RHlVSWVFVUM1dXB6endvclpldjAwRGJtR2hXTHc4?=
- =?utf-8?B?Z1o0cWxucVVlMVl2bU1jTno2czlOOHVHQUk1YVdHRkQ4UCtrOVNaUGtFdlA3?=
- =?utf-8?B?c0dKUnE5QnF2WGxnbzZ1MHBmOHBadGg1ZHIybDJKSzMxVEE0MEZkdnhJNC9U?=
- =?utf-8?B?dzJ6NDd4ZVRCaWpsWHRwZXFXWlpFUmF6K3l4NjZyWmJtRnNGRzVLL2drNTlt?=
- =?utf-8?B?aEo4Sjgwc2l4YndBTmdLazdTVEszdEV6V0lLZTJ3MlNRUjBoNUIwL1k5Y2Zi?=
- =?utf-8?B?dmhXOFltc3J0Y1R2UWUxVDIvc2ZIWkhTeld1cGtsekx2UjRrb3pha0pRYnpG?=
- =?utf-8?B?c09SK3c2cW5kSmRldXRudjVMamtEcUJOb0VKWTA5S3dRRGZaTktYcEsxajUy?=
- =?utf-8?B?K21oTHdLbDBoTWRTdEJTaXB1YjEwcERCMkNpMUIyY05wZ0Y4US9EYk95cVFX?=
- =?utf-8?B?UlErdkc2NFhnNDZ0aFJ3anJtSHhyaU96MG1aM3N2eExDNEJmUjFZUXF6SzBm?=
- =?utf-8?B?ZHRtSE9acFphWnhRWkJjYmNSdzU1RVk3RHRwbXhLbjQ5cWprVHJvam9Ub3R4?=
- =?utf-8?B?TXdsQnpiUHIzdnBtb1ozcjdleFkwL3RVTDgrVXFKTDQzYnNzY2NvOHZPSkpX?=
- =?utf-8?B?dW55REJ6cXh0emdnQXZsWGNiZEt5c21PRTdncEtWRTdXRysrWkR2WWwzTmJq?=
- =?utf-8?B?Y2I5d0I2MXlRNzU0UnVlN29xM3NoMFM4c2hLeXhXa2tucjEyQmcxVEJvdDdu?=
- =?utf-8?B?QkNwUUdJOFBCZ3gxUGtnaUtOYkhWZ0VvbkJCeXBjY2lVNFFyV0pXbm9Ca1pX?=
- =?utf-8?B?QUtFaTI1RlRZK1dqTkYwWnk2azJEdWM5dDhyWjZRY1ErWm9idGx6MVc1Rzc4?=
- =?utf-8?B?YzBCWlUxa290dE13cHFIL0xwazdyNktPc3pOQ2cwaVZXZC8xSmQrWXpEQlV6?=
- =?utf-8?B?YWtZaFN0dW1lMUhsVkRwQkoxWGVudUt5QlJFREl6WFZiaHdZaGNiNC9OMlFE?=
- =?utf-8?B?cjg2QytBVmNmQ2JrTG1hekNXZmpKa3c5VmYyUUlNU1lTN3FoNWRDNzd5ZmNO?=
- =?utf-8?B?ZEZlNW1TSmZCcnQwbGVHQT09?=
+	=?us-ascii?Q?UpNbUR5NabZfpWJU/Uf3NyXzpynwUQtW7jY3bx3Fw+GvE+UF8bowGiOh+uhF?=
+ =?us-ascii?Q?0m+M1EaivmgILnBC3xHiP1aHhk0+1oWFeom5ETezLPSHBIgerpNWW/5kPrdl?=
+ =?us-ascii?Q?tmip7E/x1B9H75Qf7oSnaL7M+8Zg4F8oBvhj/b8fxadRWcdYZx/MixWdr9Zt?=
+ =?us-ascii?Q?wA2151Y6jBU+ztUXQG0jEIOyaiexX8Y2iIvHqzQnIOuuiLPAvTyaW7yXKkGE?=
+ =?us-ascii?Q?CiR45UIHTbWqB6GfAqhUe4UhyYVjlAKcS8OUBlaC+MQnvfOetggoIADMhvwY?=
+ =?us-ascii?Q?L6WbUhB90kBol9UVq3vj7si8TJFfXIwGIdlysHBIoppAwvpR98kDf53sWPAz?=
+ =?us-ascii?Q?KuXv7t1OxdHyAdruGRheqa6LBt6r29PJ796RrTs3+lCcn2XJYmjSJnUWr+7e?=
+ =?us-ascii?Q?/poHl1pWNNeHHozkK6yCCmzF8QdqDZgfSxdIQXVqz/xsiAjFsJ7Ihf+2fpGt?=
+ =?us-ascii?Q?KKVqYNH/+eI7NAK7Pr2pFStTK4Nlt92ypVWCUA43nDRSAxIq4UTcD//g4kY0?=
+ =?us-ascii?Q?fmjgiNnIAIyHnIoN9NbUWqNEKvOIn/yBuzfzRVVHkWJ88olrQxlTv9sKh1Vw?=
+ =?us-ascii?Q?oUUpV5BxguBRwkhHvn3VtVlhDNBGKqcjpxJa1kcdPc1A7bcb+UdJ8vEpIjWi?=
+ =?us-ascii?Q?1/h/bVmDnLiL+rJXSHdqm9OOakw9Kd9SaqHlhvAn/qdiAXte6BLZ6Jb7I8ac?=
+ =?us-ascii?Q?qhp8kBu1/mo7Bk03LWzUSQaVqZJ2ULGwa+4vD4BQvaiCxqBE0nrugi7+gj2t?=
+ =?us-ascii?Q?EhUC1Qvml52Cy8SkKw7R5W0EbSFnU0/qZpwERqafgpbCC99H1c7QcEPXZqo3?=
+ =?us-ascii?Q?LvFZS3rarJVJCbqmUfTMItu+xpX+ccpL3SVy6He3ESkY6SOqdsbsGLaD5IF9?=
+ =?us-ascii?Q?noFUGXECmY7t+95OsYzUv/zWnyUp9iRY1o8RUz7URH0irTXmk/pTZHT6wo1+?=
+ =?us-ascii?Q?mRY9EHjOiYK5kLEcv3tg/uSpQqN6PORbOAPjKJaaVnAftWCdG1WrfpAzpZ/R?=
+ =?us-ascii?Q?J5JqqXRzOeF9ATFK12q0guRnUOVkF4hqEESLMZv33Hbke+/f4bH6CDijaXyj?=
+ =?us-ascii?Q?yI+7rcjr0zR24u9l1Ak0Jmv77KdfaH4TRfKo8wYYAWmzw6AqRBELH2olb7RU?=
+ =?us-ascii?Q?DU/cXs8CiyN/qUI/uBi9ul49L3UcGrUfdHYSV4oI37edDt8iweBB7OebgeiK?=
+ =?us-ascii?Q?pnwhQHr/Ig2ECkgMWMKZc0J7rjvRVe49rES2exRvNqRBfVevv0h3kDj2KTCE?=
+ =?us-ascii?Q?RBA0+4FIgbM2FF4s5aTIeM1gR0/NV0EjXlIiPUqColFPiltejM7TGEpNNO4S?=
+ =?us-ascii?Q?rMHtA3J0omoduAl8Wc0LEzx4vo61klundHENUx692bQeyZOQ9Eux5hpnTxxn?=
+ =?us-ascii?Q?maJNmW/HJXqsvn6UKmfB8FPf7s+M+4BRybo1c4bI+Nh/YmsKABiYLG6gdvRY?=
+ =?us-ascii?Q?mu2xrmhl6mE+O2csadcBw202FtUqKorD?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4202.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?blVPREVXSkVTWGJ3ZE1qZUk5MUNnSXppdHZFeVlyaUxWRzY4QlR6TTRMRmE5?=
- =?utf-8?B?bGs0U0w3UnhRTlUvY3lUbGF2cFJ5WjZ2UVY2bVJkeGZMUUkxUHZXUFlhTXVW?=
- =?utf-8?B?Um0wb0dhcTFCb1piTlg1bjAzczg2R0IzbUFRMXZQbEFsRmFPeTlBd1labGZo?=
- =?utf-8?B?aTVwdmxjY2M5VVdrVUNBVC9LNnNqVEdoOVJRT0JXOUJ2UXdIZjNSdlJKM09F?=
- =?utf-8?B?bWtpdVRRSmJtWjJ0anVjZFRiWTFyQ2Z4azl1aXhxNFRiMGJrUE5Ma21zekZM?=
- =?utf-8?B?VExJQ0NCUmxNbkJBU0ZkUWhhNzZpRmVwMmNhM2taN04yWmhjL3J4YStjelRL?=
- =?utf-8?B?bXErTXVUYm9Sc0JEeWJhREZ5dWtJQ2dDUjBhdzNMZUE2MjRpT3MrbEh6QmF5?=
- =?utf-8?B?MC9hMG5EYzJxUGttUTJzdCtZRnZ3d21MU25zYVRJd3R3NUdxc2xESS95YVZE?=
- =?utf-8?B?cXByUDJnYWRnRFlibHNuSDNsYitMNDVIZkNNTVBIWldlSStqSVJTREFubXps?=
- =?utf-8?B?dWdWd2h6aG83bFEzdlp6ZmJDQlBhRU40eUlsYXEvUWJQNmtybU9SZGVOV1JZ?=
- =?utf-8?B?U2pnYjFONVdpWHJJOUZxRXVmam1mMHZGK2h4TWVNOEpsYmZUWnBYR3dETi9O?=
- =?utf-8?B?cU1NaXdCWWNOMTRxWWZmRjhkSlZIblhLbVdtTHlPaHRQMk9NTTFLRG5tb2RI?=
- =?utf-8?B?ZDllZEtWRDRKaFNvQ2dBS0ZWemlQOWRROVpLd3RHaUJkKzcvaVZXU1gva2xB?=
- =?utf-8?B?R2cvdS9aZTJuREwxQk5qT2FXcTlmb0dnQW5qZ0dwMlFqMk5hSkdyYUc3QmJj?=
- =?utf-8?B?TXd0U3dGYVRqZFJIN29zYVBma3VZTVBCemxBRkc3YzRDRHF2VTd2dWpFWlgr?=
- =?utf-8?B?TnlMd0dEaUtuMGhGVll2ZHFRcjNBK2htVlF1UUp3Zms0VkVSdTB5RDdJY0px?=
- =?utf-8?B?VVpCaVNFck5DNXNibHE2VnBGRUJoN2svVkc4RERMVjBZUlVTY3lMTnZJR1pq?=
- =?utf-8?B?Mlh0cG5rb1I3Z25NWklqelZ4SlFmS3BxbStDbHpkSkJBWUJ1R1dBcFkrTmhn?=
- =?utf-8?B?SDl1dm1WT1p6aFJMdzRiQkZHQmtBZVlsQXdiNUkwc0M1OW9sMDBUSkFHZEdz?=
- =?utf-8?B?WDdIRkk5YThjNGphN3V0OHZuR01EdHdrdHd3aExFZHpoTHdJSEtITmdFNUdj?=
- =?utf-8?B?VnMwQnd3b1QwSUo5TG9NMWdDc3hPTVJpOFJ3Rm43ejlmbElLc1R2VTczY1Bt?=
- =?utf-8?B?aFpHTTMzVWE1cDMydXdJdE1KQlpuV29MSzRqUk1wYnhsbXlpbko4NFpBc2xD?=
- =?utf-8?B?QTlaSzN2ZXJBdXpRVFBtbGZZU01FOEJpdmZDQ1VrRnpzQ3E0aHh2RXdFRFpO?=
- =?utf-8?B?UW1jcStEZVg5VVAvTm5MeW1pUlg3ZzYzVU04dkVJekl1TEFVakNxeUV2V1cy?=
- =?utf-8?B?NzdWcm5kWnlCbGtnSmZ4dXhXMHcrVWtBcmJnVUlBT2FBZDh4UVk2eWF0SzU5?=
- =?utf-8?B?WnZDVzZzSDRJRlZlSkEyZFlLNnlCOXNBb3VjS05BRXBVa1p1Z051NDQvdmp4?=
- =?utf-8?B?T1dxQUtMQlpPZ0JEbjVtcnJvYXJrd0JSTXFTVzhaRWE0cEFrano0VmJJRXRJ?=
- =?utf-8?B?STUyank0QUlXdk5RMG91SUZpWlFPYTZ2cC9PTU5qTTlSRHBFMU9vWGsxVjJZ?=
- =?utf-8?B?UFhFeVQwVkxCZ01mUnpWUjBUMGJrYVV2dGQ5a20wMnhYQ3Y0VkZNamxBYzFu?=
- =?utf-8?B?anVURUliMXdudlB4TStCV2xhT1pFanVIdVRiZW85a2hEbHYwRWl6ZW1UcHJq?=
- =?utf-8?B?cllGU2hEN2FGUWtZOXRLbEVDQklpVGovUUg1bVl3OVZoVnZ6Ri9ydml6ZHAx?=
- =?utf-8?B?K1NEMDR0VDFXT1Nld0M1SDNIMVBlZTA0d0xXS0JFSjlqcW5tZGZGbXpocnQw?=
- =?utf-8?B?T0dCVGtoSHpWbTh4VFcvVWZPS3N6blIrSUdwRnhuNHNEQnIxeUQvY3Jpa21i?=
- =?utf-8?B?R3Bkc0U1SUNXUCs4Q1ZBaFBzTHA5SXFIOHkrV1RJbzJOMk5oOU8zRExPVjVn?=
- =?utf-8?B?b1JFUjdEZW4vYVI0QWdPRTc1VG5TNkZGNjVuZU1nemxsOWlUN3RzRkQ0N3hv?=
- =?utf-8?Q?LKveJd1BI91aHhht+2o0t4blB?=
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0a0216d6-2de6-414a-e7e3-08dcd3e83d65
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4202.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 11:35:59.8697
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 11:37:18.3281
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Network-Message-Id: e9057a7d-be9a-429d-ad31-08dcd3e86c67
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YgC8VOL3cVHFRe+maHQe6I2kT7s02pkrizM4Y/3O5CQkQEubO8hpuSzzu6GA3F0eoB98MzvBbXagzC0f+BJS4w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8725
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF000099E1.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7252
+
+Introduction
+------------
+
+Secure AVIC is a new hardware feature in the AMD64 architecture to
+allow SEV-SNP guests to prevent hypervisor from generating unexpected
+interrupts to a vCPU or otherwise violate architectural assumptions
+around APIC behavior.
+
+One of the significant differences from AVIC or emulated x2APIC is that
+Secure AVIC uses a guest-owned and managed APIC backing page. It also
+introduces additional fields in both the VMCB and the Secure AVIC backing
+page to aid the guest in limiting which interrupt vectors can be injected
+into the guest.
+
+Guest APIC Backing Page
+-----------------------
+Each vCPU has a guest-allocated APIC backing page of size 4K, which
+maintains APIC state for that vCPU. The x2APIC MSRs are mapped at
+their corresposing x2APIC MMIO offset within the guest APIC backing
+page. All x2APIC accesses by guest or Secure AVIC hardware operate
+on this backing page. The backing page should be pinned and NPT entry
+for it should be always mapped while the corresponding vCPU is running.
 
 
-On 8/22/24 21:41, Wei Huang wrote:
-> Allow drivers to enable TPH support using a specific ST mode. It checks
-> whether the mode is actually supported by the device before enabling.
-> Additionally determines what types of requests, TPH (8-bit) or Extended
-> TPH (16-bit), can be issued by the device based on the device's TPH
-> Requester capability and its Root Port's Completer capability.
->
-> Co-developed-by: Eric Van Tassell <Eric.VanTassell@amd.com>
-> Signed-off-by: Eric Van Tassell <Eric.VanTassell@amd.com>
-> Signed-off-by: Wei Huang <wei.huang2@amd.com>
-> Reviewed-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
-> Reviewed-by: Somnath Kotur <somnath.kotur@broadcom.com>
-> Reviewed-by: Andy Gospodarek <andrew.gospodarek@broadcom.com>
-> ---
->   drivers/pci/pcie/tph.c  | 92 +++++++++++++++++++++++++++++++++++++++++
->   include/linux/pci-tph.h |  3 ++
->   include/linux/pci.h     |  3 ++
->   3 files changed, 98 insertions(+)
->
-> diff --git a/drivers/pci/pcie/tph.c b/drivers/pci/pcie/tph.c
-> index a28dced3097d..14ad8c5e895c 100644
-> --- a/drivers/pci/pcie/tph.c
-> +++ b/drivers/pci/pcie/tph.c
-> @@ -7,6 +7,7 @@
->    *     Wei Huang <wei.huang2@amd.com>
->    */
->   #include <linux/pci.h>
-> +#include <linux/bitfield.h>
->   #include <linux/pci-tph.h>
->   
->   #include "../pci.h"
-> @@ -21,6 +22,97 @@ static u8 get_st_modes(struct pci_dev *pdev)
->   	return reg;
->   }
->   
-> +/* Return device's Root Port completer capability */
-> +static u8 get_rp_completer_type(struct pci_dev *pdev)
-> +{
-> +	struct pci_dev *rp;
-> +	u32 reg;
-> +	int ret;
-> +
-> +	rp = pcie_find_root_port(pdev);
-> +	if (!rp)
-> +		return 0;
-> +
-> +	ret = pcie_capability_read_dword(rp, PCI_EXP_DEVCAP2, &reg);
-> +	if (ret)
-> +		return 0;
-> +
-> +	return FIELD_GET(PCI_EXP_DEVCAP2_TPH_COMP_MASK, reg);
-> +}
-> +
-> +/**
-> + * pcie_enable_tph - Enable TPH support for device using a specific ST mode
-> + * @pdev: PCI device
-> + * @mode: ST mode to enable, as returned by pcie_tph_modes()
-> + *
-> + * Checks whether the mode is actually supported by the device before enabling
-> + * and returns an error if not. Additionally determines what types of requests,
-> + * TPH or extended TPH, can be issued by the device based on its TPH requester
-> + * capability and the Root Port's completer capability.
-> + *
-> + * Return: 0 on success, otherwise negative value (-errno)
-> + */
-> +int pcie_enable_tph(struct pci_dev *pdev, int mode)
-> +{
-> +	u32 reg;
-> +	u8 dev_modes;
-> +	u8 rp_req_type;
-> +
-> +	if (!pdev->tph_cap)
-> +		return -EINVAL;
-> +
-> +	if (pdev->tph_enabled)
-> +		return -EBUSY;
-> +
-> +	/* Check ST mode comptability */
-> +	dev_modes = get_st_modes(pdev);
-> +	if (!(mode & dev_modes))
-> +		return -EINVAL;
-> +
-> +	/* Select a supported mode */
-> +	switch (mode) {
-> +	case PCI_TPH_CAP_INT_VEC:
-> +		pdev->tph_mode = PCI_TPH_INT_VEC_MODE;
-> +		break;
-> +	case PCI_TPH_CAP_DEV_SPEC:
-> +		pdev->tph_mode = PCI_TPH_DEV_SPEC_MODE;
-> +		break;
-> +	case PCI_TPH_CAP_NO_ST:
-> +		pdev->tph_mode = PCI_TPH_NO_ST_MODE;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* Get req_type supported by device and its Root Port */
-> +	reg = pci_read_config_dword(pdev, pdev->tph_cap + PCI_TPH_CAP, &reg);
-> +	if (FIELD_GET(PCI_TPH_CAP_EXT_TPH, reg))
-> +		pdev->tph_req_type = PCI_TPH_REQ_EXT_TPH;
-> +	else
-> +		pdev->tph_req_type = PCI_TPH_REQ_TPH_ONLY;
-> +
-> +	rp_req_type = get_rp_completer_type(pdev);
-> +
-> +	/* Final req_type is the smallest value of two */
-> +	pdev->tph_req_type = min(pdev->tph_req_type, rp_req_type);
-> +
-> +	/* Write them into TPH control register */
-> +	pci_read_config_dword(pdev, pdev->tph_cap + PCI_TPH_CTRL, &reg);
+MSR Accesses
+------------
+Secure AVIC only supports x2APIC MSR accesses. xAPIC MMIO offset based
+accesses are not supported.
+
+Some of the MSR accesses such as ICR writes (with shorthand equal to
+self), SELF_IPI, EOI, TPR writes are accelerated by Secure AVIC
+hardware. Other MSR accesses generate a #VC exception. The #VC
+exception handler reads/writes to the guest APIC backing page.
+As guest APIC backing page is accessible to the guest, the Secure
+AVIC driver code optimizes APIC register access by directly
+reading/writing to the guest APIC backing page (instead of taking
+the #VC exception route).
+
+In addition to the architected MSRs, following new fields are added to
+the guest APIC backing page which can be modified directly by the
+guest:
+
+a. ALLOWED_IRR
+
+ALLOWED_IRR vector indicates the interrupt vectors which the guest
+allows the hypervisor to send. The combination of host-controlled
+REQUESTED_IRR vectors (part of VMCB) and ALLOWED_IRR is used by
+hardware to update the IRR vectors of the Guest APIC backing page.
+
+#Offset        #bits        Description
+204h           31:0         Guest allowed vectors 0-31
+214h           31:0         Guest allowed vectors 32-63
+...
+274h           31:0         Guest allowed vectors 224-255
+
+ALLOWED_IRR is meant to be used specifically for vectors that the
+hypervisor is allowed to inject, such as device interrupts.  Interrupt
+vectors used exclusively by the guest itself (like IPI vectors) should
+not be allowed to be injected into the guest for security reasons.
+
+b. NMI Request
+ 
+#Offset        #bits        Description
+278h           0            Set by Guest to request Virtual NMI
 
 
-No error checked. Same with below pci_write_config_dword.
+LAPIC Timer Support
+-------------------
+LAPIC timer is emulated by hypervisor. So, APIC_LVTT, APIC_TMICT and
+APIC_TDCR, APIC_TMCCT APIC registers are not read/written to the guest
+APIC backing page and are communicated to the hypervisor using SVM_EXIT_MSR
+VMGEXIT. 
+
+IPI Support
+-----------
+Only SELF_IPI is accelerated by Secure AVIC hardware. Other IPIs require
+writing (from the Secure AVIC driver) to the IRR vector of the target CPU
+backing page and then issuing VMGEXIT for the hypervisor to notify the
+target vCPU.
+
+Driver Implementation Open Points
+---------------------------------
+
+The Secure AVIC driver only supports physical destination mode. If
+logical destination mode need to be supported, then a separate x2apic
+driver would be required for supporting logical destination mode.
+
+Setting of ALLOWED_IRR vectors is done from vector.c for IOAPIC and MSI
+interrupts. ALLOWED_IRR vector is not cleared when an interrupt vector
+migrates to different CPU. Using a cleaner approach to manage and
+configure allowed vectors needs more work.
 
 
-> +
-> +	reg &= ~PCI_TPH_CTRL_MODE_SEL_MASK;
-> +	reg |= FIELD_PREP(PCI_TPH_CTRL_MODE_SEL_MASK, pdev->tph_mode);
-> +
-> +	reg &= ~PCI_TPH_CTRL_REQ_EN_MASK;
-> +	reg |= FIELD_PREP(PCI_TPH_CTRL_REQ_EN_MASK, pdev->tph_req_type);
-> +
-> +	pci_write_config_dword(pdev, pdev->tph_cap + PCI_TPH_CTRL, reg);
-> +
-> +	pdev->tph_enabled = 1;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(pcie_enable_tph);
-> +
->   /**
->    * pcie_tph_modes - Get the ST modes supported by device
->    * @pdev: PCI device
-> diff --git a/include/linux/pci-tph.h b/include/linux/pci-tph.h
-> index fa378afe9c7e..cdf561076484 100644
-> --- a/include/linux/pci-tph.h
-> +++ b/include/linux/pci-tph.h
-> @@ -10,8 +10,11 @@
->   #define LINUX_PCI_TPH_H
->   
->   #ifdef CONFIG_PCIE_TPH
-> +int pcie_enable_tph(struct pci_dev *pdev, int mode);
->   int pcie_tph_modes(struct pci_dev *pdev);
->   #else
-> +static inline int pcie_enable_tph(struct pci_dev *pdev, int mode)
-> +{ return -EINVAL; }
->   static inline int pcie_tph_modes(struct pci_dev *pdev) { return 0; }
->   #endif
->   
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index c59e7ecab491..6f05deb6a0bf 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -433,6 +433,7 @@ struct pci_dev {
->   	unsigned int	ats_enabled:1;		/* Address Translation Svc */
->   	unsigned int	pasid_enabled:1;	/* Process Address Space ID */
->   	unsigned int	pri_enabled:1;		/* Page Request Interface */
-> +	unsigned int	tph_enabled:1;		/* TLP Processing Hints */
->   	unsigned int	is_managed:1;		/* Managed via devres */
->   	unsigned int	is_msi_managed:1;	/* MSI release via devres installed */
->   	unsigned int	needs_freset:1;		/* Requires fundamental reset */
-> @@ -533,6 +534,8 @@ struct pci_dev {
->   
->   #ifdef CONFIG_PCIE_TPH
->   	u16		tph_cap;	/* TPH capability offset */
-> +	u8		tph_mode;	/* TPH mode */
-> +	u8		tph_req_type;	/* TPH requester type */
->   #endif
->   };
->   
+Testing
+-------
+
+This series is based on top of commit 196145c606d0 "Merge
+tag 'clk-fixes-for-linus' of
+git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux."
+
+Host Secure AVIC support patch series is at [1].
+
+Following tests are done:
+
+1) Boot to Prompt using initramfs and ubuntu fs.
+2) Verified timer and IPI as part of the guest bootup.
+3) Verified long run SCF TORTURE IPI test.
+4) Verified FIO test with NVME passthrough.
+
+[1] https://github.com/AMDESE/linux-kvm/tree/savic-host
+
+Kishon Vijay Abraham I (11):
+  x86/apic: Add new driver for Secure AVIC
+  x86/apic: Initialize Secure AVIC APIC backing page
+  x86/apic: Initialize APIC backing page for Secure AVIC
+  x86/apic: Add update_vector callback for Secure AVIC
+  x86/apic: Add support to send IPI for Secure AVIC
+  x86/apic: Support LAPIC timer for Secure AVIC
+  x86/sev: Initialize VGIF for secondary VCPUs for Secure AVIC
+  x86/apic: Add support to send NMI IPI for Secure AVIC
+  x86/apic: Allow NMI to be injected from hypervisor for Secure AVIC
+  x86/sev: Enable NMI support for Secure AVIC
+  x86/sev: Indicate SEV-SNP guest supports Secure AVIC
+
+Neeraj Upadhyay (3):
+  x86/apic: Populate .read()/.write() callbacks of Secure AVIC driver
+  x86/apic: Initialize APIC ID for Secure AVIC
+  x86/apic: Enable Secure AVIC in Control MSR
+
+ arch/x86/Kconfig                    |  12 +
+ arch/x86/boot/compressed/sev.c      |   3 +-
+ arch/x86/coco/core.c                |   3 +
+ arch/x86/coco/sev/core.c            |  91 +++++-
+ arch/x86/include/asm/apic.h         |   3 +
+ arch/x86/include/asm/apicdef.h      |   2 +
+ arch/x86/include/asm/msr-index.h    |   9 +-
+ arch/x86/include/asm/sev.h          |   6 +
+ arch/x86/include/uapi/asm/svm.h     |   1 +
+ arch/x86/kernel/apic/Makefile       |   1 +
+ arch/x86/kernel/apic/apic.c         |   4 +
+ arch/x86/kernel/apic/vector.c       |   8 +
+ arch/x86/kernel/apic/x2apic_savic.c | 480 ++++++++++++++++++++++++++++
+ include/linux/cc_platform.h         |   8 +
+ 14 files changed, 621 insertions(+), 10 deletions(-)
+ create mode 100644 arch/x86/kernel/apic/x2apic_savic.c
+
+-- 
+2.34.1
+
 
