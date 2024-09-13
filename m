@@ -1,232 +1,140 @@
-Return-Path: <linux-kernel+bounces-328545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0928978586
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:13:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B5D97858B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:14:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B806E1C22166
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:13:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 080441C222C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A5074418;
-	Fri, 13 Sep 2024 16:13:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6435161FC4;
+	Fri, 13 Sep 2024 16:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cs-soprasteria.com header.i=@cs-soprasteria.com header.b="rmolvz0+"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2079.outbound.protection.outlook.com [40.107.20.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jc1DQIL5"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FB434CD8;
-	Fri, 13 Sep 2024 16:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726244003; cv=fail; b=CHzM+nt4haBlzAy18N2hEOCRt6WyLYW/UvhfxRmObmoOGmQK92ULGKI2fW3zQ94zH7kLi+6YbcGBhEGWt6ZAjmSoCiBPwNqzrz0X22RJYHWb9mEQMoGoiE5B4+l7M7FL1oLIXBUdmwMQqWlHrMc46eiOF0540dkFx6z273YmiUU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726244003; c=relaxed/simple;
-	bh=9R80L5vQnyBzSUtRqXgypO9z18XQgNjYISmLFrvl5ec=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=qHB9zf0VlpjWMuJ4V0C+j3eeFvEvALRUMNQoVAk/VjI8yzCark2hWEmAiEOuVgSfOzYkRg5FsMFyO3kc75/4K96fnGvkIb/fgGY0DqFmQUnJiRA0fEt4TOBinKbEuH/ydpxTu9NOXvjj2vJbsd08J6xSTiTWzvmaFCMi/s1G33k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cs-soprasteria.com; spf=pass smtp.mailfrom=cs-soprasteria.com; dkim=pass (2048-bit key) header.d=cs-soprasteria.com header.i=@cs-soprasteria.com header.b=rmolvz0+; arc=fail smtp.client-ip=40.107.20.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cs-soprasteria.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cs-soprasteria.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gfzPpPkylygWgdOCiIwKtxjaDGsL7k2JTUZRgaOrq6CAc6S+oieYTsInqNFDVpoxfo13xjsrG+32vzOp7/p/55mXqQFTYEx45s2liu+gGUP/CC6b9SGKbVCZ+wM12IpP35qjB4P5FLA/gKA7A7oyUyb3lwXxEw5LOUvaGDUgSjqIxEc454F2M5HQSl1G6TzJbrFnYFYD3ZED4W6qxr+ki1D+//+/COm9et7YY4TlTudBXCa3nGUqoXx0icQLY8pUl0l6sbgCBXsv3kNgHsj30RxMtx/n89XPZMk3Tk+m3AdcJQweqvhCRGyUAvaS/0bcCnLHEcY/xmrGIucKpva+fg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9R80L5vQnyBzSUtRqXgypO9z18XQgNjYISmLFrvl5ec=;
- b=yVmte/zNnPa0V4miOTZzGvp8OBqVYnwVe61jfsANOiFOIqgmdjMZFJonOZ9H6KWZwTTx6a2d+GXi7LU/zr6DqLvEHdQHcqJEpkl6apWZ3SdnkPLOSvze2Vha0/e4T4ZYy6uxh6KWH71BHt1ep/V5craXUyfJtVAZvLx6iRS7P4VnSIeOr53ZGPX8COuyUt+C9CUUo0wGIUXmUfniCz5G9wUhFngzdwC26M/fIa6b/IS1Z72keeCtMSh5lhNThhtU0fBFMU+APOkXbU/Htn4UV0OEjNN6QTVbPJDCi2RhG3At+PnibgP/A0ct28RXxRGZzbd71D+tU4URmtxVP0FwwA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cs-soprasteria.com; dmarc=pass action=none
- header.from=cs-soprasteria.com; dkim=pass header.d=cs-soprasteria.com;
- arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cs-soprasteria.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9R80L5vQnyBzSUtRqXgypO9z18XQgNjYISmLFrvl5ec=;
- b=rmolvz0+O3tDpGT8osMMwPQLwDE4VJbc7hPJhnfNQdtezGSQrTlxxwdzufu97cljhrCAbJd34ZkIGRFlAh6+NAHSOPRkTwse7VDTDEnw7Mf72eD5+xJp/WFca2VuH2pIao/WfIWh1p3ZqkZSGTQEuUGg2GWjzjd90Fqg+58uCRKW1+AjBpd9wtEh50Y45nVtrXei0khnYPBf8U/G9Py4w4ywdQK7T3ardhvaAiU04YixrAVCPlp2cHHbCeHsnbVKDGDyC9MYxeSXilCMjyzE1wNoCy56VoAtiPKR1NUf5z7LJTwNpt+FxMgksq1OFSHer9UXH21skpTXyIt791NBFg==
-Received: from AM0PR07MB4962.eurprd07.prod.outlook.com (2603:10a6:208:f3::19)
- by AS8PR07MB8168.eurprd07.prod.outlook.com (2603:10a6:20b:377::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.18; Fri, 13 Sep
- 2024 16:13:18 +0000
-Received: from AM0PR07MB4962.eurprd07.prod.outlook.com
- ([fe80::6724:2919:9cbb:2bb2]) by AM0PR07MB4962.eurprd07.prod.outlook.com
- ([fe80::6724:2919:9cbb:2bb2%5]) with mapi id 15.20.7962.018; Fri, 13 Sep 2024
- 16:13:18 +0000
-From: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>
-To: Jakub Kicinski <kuba@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>
-CC: David Miller <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, Mina
- Almasry <almasrymina@google.com>, Networking <netdev@vger.kernel.org>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
-	<linux-next@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Thread-Topic: linux-next: build failure after merge of the net-next tree
-Thread-Index: AQHbBfJ0iiSDxx9vNU2ZWR+1kT0rXrJV3S4AgAAGnIA=
-Date: Fri, 13 Sep 2024 16:13:17 +0000
-Message-ID: <913e2fbd-d318-4c9b-aed2-4d333a1d5cf0@cs-soprasteria.com>
-References: <20240913125302.0a06b4c7@canb.auug.org.au>
- <20240912200543.2d5ff757@kernel.org>
- <20240913204138.7cdb762c@canb.auug.org.au>
- <20240913083426.30aff7f4@kernel.org> <20240913084938.71ade4d5@kernel.org>
-In-Reply-To: <20240913084938.71ade4d5@kernel.org>
-Accept-Language: fr-FR, en-US
-Content-Language: fr-FR
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cs-soprasteria.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM0PR07MB4962:EE_|AS8PR07MB8168:EE_
-x-ms-office365-filtering-correlation-id: 78854182-81ce-44e5-2ed5-08dcd40efab1
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?dTV5K2N4bWtBKzJTUmhlUWlUWkd1MTRDU0l5N1lhbDZ1a0lpWHRZMDNPRi9w?=
- =?utf-8?B?SjFNTGZnY1pBUkxlcVYwS3RscGNDOW5xbkhQV3FNbUkzNlptUFMxS1ROb2Ew?=
- =?utf-8?B?YVhIZ2U1cGN2eWxTVkVWWk1RSkxmVVVkVHFZTDdFdE9LUnhRdEdLbDFhbU1F?=
- =?utf-8?B?bFFrMVk0cmpJaHM0YWFDZDVac210a1JtM2U5cGVTZUYzaWJMNVYwRkZhVFE1?=
- =?utf-8?B?UnV5NEI2Nk9yb2hvWmpUL0pKMHpGVkZmdE5qTHhTbVltNURUQVcwWDBiUkdY?=
- =?utf-8?B?a3pIaXdsNDlOcEd1QXJTWjY0UFlmZ0JyUnQwWnRmTm4vUFhVODQyS0ZPNGpi?=
- =?utf-8?B?Y0FMSWRmRHRKZ05DaW9XZG5RajliOHJnZVdqcll4TTdZbUxQdzE5VFpkc0pp?=
- =?utf-8?B?VmxRajlOczZneHJ4SWRrMUVsbXNXQUlWVVRHbHlpd1R2cmZPNnZhQ1FibG9y?=
- =?utf-8?B?MUpTcEl4ZFlmbklKR3g1RlJBa0wrTXlRclNhQzJLT1kwMmtzU2Z0TGNkbmZ3?=
- =?utf-8?B?alBZalhaK09teUh1SDdHZ3hTTUtSbmVSMFRkMlBDd29Dc1B5TXovUDNoTkJB?=
- =?utf-8?B?ZjZlNFNZNlZBZkdPdlFMWml6bFhYZk84K3NGR1hGdTR6L3Z5cFpYUXFpZ2x5?=
- =?utf-8?B?WlB0eC9iUENxQW9WSFdPNEFvSjZadzBJOEJXWTZZOHJZTkZEUkpRTWVMY1pR?=
- =?utf-8?B?ckZXYXZmWndrQlBNL1RjbUl2OGlqUTFtcW85dHk5QU8xNGhGY0xUNFVLYmc2?=
- =?utf-8?B?dEt0eTc2VVdiT2NvTjIvbStYUGxQNW9icnJ1Yk9LaVpEcVZ4dWU0ZjlSSldE?=
- =?utf-8?B?N3BCUlBTaWJkZW1qTC9YRlRta2JDTnNVWFNlSDc1akowY3RNTTZvZ3RsOTZq?=
- =?utf-8?B?NEpuN3pzS3B3ZDZZczVGSmo4WkM0OHlEa1c5Z1ZaMGFENC9JaTF4ZFNueHNZ?=
- =?utf-8?B?L2tjcVJibGE2b3E3Vk42MDNKUGZmR1I1NTFHakwvV1JMUVYva3IvY1pwand5?=
- =?utf-8?B?ZnNNT0Rwd0trcCtoUDJmQ1RPZCs1S0hKVlZlSllaZGdpWCtlazRsMjk5bjNT?=
- =?utf-8?B?eGtQeEdGWGFCQXJPcjZZdHYzKzJmcUNHQzNJdVZPMFVlWGZZSjY2c0cyemNW?=
- =?utf-8?B?ZWZKYUNtZnBMWkpmZmFXcHQ1eEUrM3ZXK0RneTdoZlBsUE5SQjBVR0piNTRk?=
- =?utf-8?B?NjN3ZVQ1Sk4zbGYweExoL3ozWUJFbzNvQVJObVNGaHBmZGV5SWxTd2MrTGVE?=
- =?utf-8?B?YzduK2lHZ2tRTEFqTEdlS3lhN2d2OVgzbjFzTFlWakxxK2pnVk1XdEQ1ZUE2?=
- =?utf-8?B?SmRTZ0M4emZBSVBVa0ZYRmlwc2RWZkl4bFFCNW9FdXRPODE2MkNnSlRWN3Rp?=
- =?utf-8?B?Y2FSMmFBMlhnbVc5VFloTUU2ZWhvakE3dktORUsxRGtxQ3dwVmZGUzl6aURm?=
- =?utf-8?B?VmJJTWJEcUdHMmNZaDhTSzJGa3NiWVJxRTJpMjlJdkZtc2V6amxnYmg3clNp?=
- =?utf-8?B?QkFwaEZXQlA2bmlpRmJEUXdybGs5NFZXeWVqeDIrOVFkLzN0Nk1NN0VCZm12?=
- =?utf-8?B?S3hZM0pwUXA2Q0h4YytWVEluT2p0QytjWm9oZzFRTWlTTFFmM1EyL3g2WXBC?=
- =?utf-8?B?RmJpZ0VMdTg4QXRyZEhCRytzUlRTRkxFWXBjWDRodDNUVnZNSEVLaXZWd1ZI?=
- =?utf-8?B?WkladWxsa3I4dlk2WGNnYkpnRTlEc3VlOXRBckJSY2tyb2J4ZWFwMHh0amN1?=
- =?utf-8?B?dkFrVTlHQjhvejhEdlBGaWJzM05zLzRqMUhTckZZNU1sbThSUm9rV295QzJD?=
- =?utf-8?B?Y0ppVWVRMW91VjB5RFRDclNuY3hIcVVTdHdBR3RMZ1VDcmRZQUU4T0E5ZVhV?=
- =?utf-8?B?VVJuNEV3VWd6VlVmNkpBS2JaNWtxWHdqTStGMHdrMTA2MXc9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0PR07MB4962.eurprd07.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?eFFXbFcrODAvZ0N4RFhzaGMvSXRQcVpjbUVzcEhTYng0ZHFndC9rS08wUDE0?=
- =?utf-8?B?UXdVN3hqamhOSC9XaWFFdG9yZ2ordUxHWUI5NmRQWHE5VVRvaGszQkg0MzV6?=
- =?utf-8?B?TmtLcWFiNWNqei9GeW9qTmxjenM0YmVZVWpqR1IrNW4yemJnc3V1QVZ3R3k5?=
- =?utf-8?B?QzlmUzk1eHRZNXZxUkpiMStlRTJVQm85ZHZpNXB5bzBlcTcwNVFoL0ZDblZn?=
- =?utf-8?B?dHZwcnlaNzdOWGVLRnJjc2psRzhIZkpURU1TTWxpYjZ4aDU2eHVXa2d0SnBo?=
- =?utf-8?B?MllmakZSanhsTlpXaDduL1JySmFYcDk3dXBWamloaDM2cEhMMVVmUDlBT1ht?=
- =?utf-8?B?bUVLb0poWUVWL1FGMDNvTHhGNUwrYXN5a2IxekRERm5uNTZXZXVMSktkM3Nk?=
- =?utf-8?B?WVhId2c1TFFpNzJMNUZxa1NnT0FoR3dxc25Kd3RDdGphc2hCOWRKMlNBS0ox?=
- =?utf-8?B?OHphMUhjKy91TnZhdDcyMTgwNUw1Y1hOMGxUZzRvWFEyc0Z3L1FsZFgzRTRl?=
- =?utf-8?B?b3RMUVNvNEs4a2tIWGpCOU1pZmRPTUZ1WXE2QVN0K3N1SnErdWZaRmVqWkpy?=
- =?utf-8?B?NVVNSjZzd3JLUVB5dGJmSGdRNGZUQkYwc3FCQTl4Y1haa2tQVE1HdEFSeWRy?=
- =?utf-8?B?WjNTRUVhbHhpaFBJdklIaUhJNGZMSXF0ejVEcUQxSmxqc3ZoSWptOElDOXFl?=
- =?utf-8?B?cnMrTTJRakhpNHlGWjQ1OVZvWEhHdldOd3FqSUswQm9YalZHandYTVVPNXAr?=
- =?utf-8?B?TXlwYVZ1TFVLaGMrcE82VWJPdjRET3VkVzVkOXhjOGZuRVF1YVVoSTRqNXFm?=
- =?utf-8?B?REYyalZraHEzaVZ4cTVUTEE3Y2FiSm00UUVlOFhkYTc3bUJqclF4RDIyNEJD?=
- =?utf-8?B?ZVorbmx4eEdLUEFHVWQ0Rm11czR2VlJvcmEvU0ZyQXpoRExpUXJQcno5OVh6?=
- =?utf-8?B?TUFrbnoxT1QwWTNDejFrRUpmNGFTZ3RCNzlVVVBuaVBDOG8xM05MaUhSZ2tJ?=
- =?utf-8?B?SlpyMjlyUzFOM0JKSkswcXJPUGNCNlphbjlZc1QxcHVaQndUd0dheUtkaHNj?=
- =?utf-8?B?dmxsU1NMOG5hWWluVW5MU3N6YTkwN0l0dzRTbFluUlpYUGxRNzlGeU1oZ0dT?=
- =?utf-8?B?TXNiYnl4NG1yekl0QTdONUhaNUcyVFNqZWZJV3FSa3dITms4WXBwUndpN3pZ?=
- =?utf-8?B?S1NUS05HSkJJcFFDYmNmTFgwemFpcWJxNWJ1ZkxvUmp2TG1EbTAwc0ZwMUFO?=
- =?utf-8?B?NE5SL2N4QjRPOUZRWm1WRDBxaEx5WGxYM3lvYWlGY09XWjNJdTgrTTlrSlE2?=
- =?utf-8?B?dFhiUEw0cWdnSlYxNXBJWTAyZTBQbzJrdnk4YkpvYkZ6bnIyMzdXMlIwWi8z?=
- =?utf-8?B?RU9YMGhrV3AyMFNqcjZaTS9UN3ZsOVJjUytNTFVxWjZ4M3QxeEt0ZW8vanEz?=
- =?utf-8?B?Qm9UQ0F0UTRBU1hFYzhoaDlaTXRWWW5LcGFDSzhBMDZETnoyb1Y4Wko0YTcv?=
- =?utf-8?B?dWR1NlRweFhnUDNiM3hrWW1Pdy9nR2c3SjVmUVBpaGZFMi9FMU5HRitwS0VG?=
- =?utf-8?B?Uk5iTkkyVG40Y3JkKzQrbkxQUWhRdzRnQzVpVk1LcFRPUmpRclV3WW5Rc3Zj?=
- =?utf-8?B?UExZKzZ3T0tpTWJmV2QyTWxZZnJmb2V2cVRBTVMwT1dQOHVUMm5kZ0cvb1E0?=
- =?utf-8?B?TktpRC9sUitUWFVuaGYzY1I2QkoxaW4xVFFqOVpDNE1PMDVOaGdJY1ZHOHNq?=
- =?utf-8?B?LzcwL05yRHhtNXMyeVZPVkE3WG10aVdValZZWFY3WktUTWU3RHIwNktXS0NT?=
- =?utf-8?B?K2w1SU1qMzNJcWxaRHFFQWFtZXJMUHVISGtkeXFlZmtRY1A3NGlDNk9FYjBZ?=
- =?utf-8?B?bzVScWpFNEI2MWh4SEJGMGFqbWF0djVhdGZjNEJ2eTRZZlA1V2NzeE5jUGxL?=
- =?utf-8?B?S1cydStISWF2OHNBNVBKNEVNdlBPMlQ5RWZ2dnpTaW9UT2NwK1ZCaU8waFNo?=
- =?utf-8?B?bGtCREdFelE5TzhkVnNNelg2NnNQcFM2VGVhbXZVcmVYZ2lnSHZQZ2xnbEFH?=
- =?utf-8?B?K29zTmM0aWZQQ3lVY1RHSEdxQTE2NW1teXg1ZCtZdXAwbllIYTh4bEYvZjJ0?=
- =?utf-8?B?eHJWM2pYVko3ZkljUFE3amwyUTVjUmxSL1kydmUrbUxOVTdvV0IrQ1ROK25Z?=
- =?utf-8?B?elhTTXJsQ0VLUndUcDkvVzZKQm1YdlZ6aHlHTFR3KzNLZlRmdG9YOTI2NE1C?=
- =?utf-8?Q?4nMywSGzTkI8ZE9ZISz8H0hD5P667cKq8XbywylJEA=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <61AB939F18B1724FA733F4F5D0E91BC7@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA1ED502
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 16:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726244079; cv=none; b=n9FS2QPHloxOTe3OxLU+t6z99xLX1iO++Fo5EaaRTf5dtaPMizKQFSvJWhcYLaFsRa51UgBIy7fl4A5ROYF3wY+ci+9RQA8D0KdDlznlzRsVuRpeUlv2gIhegxy5pa5opGZLh2+9dnD+pXOvb+igacXFycnark+7icvISLk0ywc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726244079; c=relaxed/simple;
+	bh=58i9GhiFFTmfKWxU3edBq68pTLPjGtrRGCYmR0XEWYw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ma7v33EshW307BYWch91PsISHj9HPheoiwP/HzCFrmC+3Zjchag/KVQ7PhUMSIa5Sz9W/qhRCHmwXld/UXIRHAgIJ20TAzvLFMvmm6eZ9Nv7t+s+tIdm+h8k7X/8889mMkh6GZZ2hAgKIH+pJ5e9fD1AtlK2PIqWoCuZ3E829Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jc1DQIL5; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7b0c9bbddb4so1631811a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:14:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726244077; x=1726848877; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=k3sfmhPCsJ8N0kfGHvGp1JD0fhbJFa0kOkkkY4RvNYg=;
+        b=jc1DQIL5RHmoR80Tmtf5VlWXQwD+OVZ0UdgXgMnzjTv+8QdtXvNctxz+YHq3IG9E0Q
+         lrQ8Jf/5Zs15KfnW1AtOLSUOnzE7+1wExYNKax1X6sQ6N8pvkImxvJqdmgn3Jihnie1Z
+         XTeJjXCurSMaIiIDq1jJP+a2Y6Vqb+PyF0H4CIVQ7nSQsl6RsiExSn0oDaboHd3JegE5
+         FP5Mb0ZRjiNqq5DWnTuVolLziJ1s0EneIMUE7XVyvMAJsxEI3Beqttkuetq0gBNyprQl
+         DfKRKc0m1O28KQp3pHBzfQLVATtp7hzjSFkVt3Yu7OawuCGMk5u/Vu9asb7Gtwp/PbOs
+         db3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726244077; x=1726848877;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k3sfmhPCsJ8N0kfGHvGp1JD0fhbJFa0kOkkkY4RvNYg=;
+        b=H+goHu8VpPz+fcNW2IMEha/PbpBLrUYe78/m9E8yFPKIFPvEiAMhIkb2XiQnJQQpP8
+         +CNfGIminu7PgN6LxP8ETYdHZhJjPL0azYxR32Zc3Q9ZI/5iyly+R4S7sWbERjV0lpNR
+         zblCdXr46UIvCLlqAfFSVdBoMnx4fJYbsrNRXj/ykc4HKw+2HaQeWhsQ+aO6Y3VouYe7
+         xxD8SWXAQ1nZDuhXd8a8YbY/8t4VmgJiHcluu9CQpzDsLXivKunP0/FBeXU4oJM5Bui3
+         hQS4YT7MeYf2UXxygRnNTLfZC8FWRCoA2p6cnPUU27L+2OcHfZ8W1Uzu6JavbHLA7k4J
+         r0aw==
+X-Gm-Message-State: AOJu0YwdDcUIMYEdZwz1YgvbbCHwXgN0B38zuYGFQZ/qIE4Udo+D9MEM
+	tH9JGVmBRJKcu2TMbsd/n7lzMvpM8QEKjvG166vqA5KVIyPDoVpIrnZlk9hHursOhwm6K0c6Ocj
+	ES7VXGtcrAIawkMeHLmbDB3gVFXgZrLB3AbH+WA==
+X-Google-Smtp-Source: AGHT+IE1JePHlH3d/E87lzzKaJZwUvbA+kPupkgy6Tswjrp87EvmuEgorBN7aRkFJMMq4kK0pCYLnLU6PhV97Yv5DHY=
+X-Received: by 2002:a17:90a:c10:b0:2d8:f7e2:eff with SMTP id
+ 98e67ed59e1d1-2dba006821cmr7133948a91.36.1726244077324; Fri, 13 Sep 2024
+ 09:14:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: cs-soprasteria.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM0PR07MB4962.eurprd07.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 78854182-81ce-44e5-2ed5-08dcd40efab1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Sep 2024 16:13:18.0104
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8b87af7d-8647-4dc7-8df4-5f69a2011bb5
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Xxl82t2lRU4qZ4wDjqQrT5tqofJsZGYKLjG5bpcMtq++LG9gGD5Fm/Bwe3fB6Mnr/DT91i6yILfPo8vuM8IFkSNBXEyIk/dGUiFqrii4zzBtiqP2dkdtBxqugCwHtGb3
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR07MB8168
-X-MS-Exchange-CrossPremises-AuthAs: Internal
-X-MS-Exchange-CrossPremises-AuthMechanism: 04
-X-MS-Exchange-CrossPremises-AuthSource: AM0PR07MB4962.eurprd07.prod.outlook.com
-X-MS-Exchange-CrossPremises-TransportTrafficType: Email
-X-MS-Exchange-CrossPremises-SCL: 1
-X-MS-Exchange-CrossPremises-messagesource: StoreDriver
-X-MS-Exchange-CrossPremises-BCC:
-X-MS-Exchange-CrossPremises-originalclientipaddress: 2a01:e0a:511:aad0:9f10:86ad:5cd0:9703
-X-MS-Exchange-CrossPremises-transporttraffictype: Email
-X-MS-Exchange-CrossPremises-antispam-scancontext: DIR:Originating;SFV:NSPM;SKIP:0;
-X-MS-Exchange-CrossPremises-processed-by-journaling: Journal Agent
-X-OrganizationHeadersPreserved: AS8PR07MB8168.eurprd07.prod.outlook.com
+References: <20240913085824.404709-1-pierre.gondois@arm.com>
+In-Reply-To: <20240913085824.404709-1-pierre.gondois@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Fri, 13 Sep 2024 18:14:26 +0200
+Message-ID: <CAKfTPtB2=_O=dJbTH=e_Hg80_rcSvBgwUP+ZMehfyG4sG5W6iQ@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair: Fix integer underflow
+To: Pierre Gondois <pierre.gondois@arm.com>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-DQoNCkxlIDEzLzA5LzIwMjQgw6AgMTc6NDksIEpha3ViIEtpY2luc2tpIGEgw6ljcml0wqA6DQo+
-IE9uIEZyaSwgMTMgU2VwIDIwMjQgMDg6MzQ6MjYgLTA3MDAgSmFrdWIgS2ljaW5za2kgd3JvdGU6
-DQo+Pj4gVGhlIHNlY29uZCAiYXNtIiBhYm92ZSAoQ09ORklHX1BQQ19LRVJORUxfUFJFRklYRUQg
-aXMgbm90IHNldCkuICBJIGFtDQo+Pj4gZ3Vlc3NpbmcgYnkgc2VhcmNoaW5nIGZvciAiMzkiIGlu
-IG5ldC9jb3JlL3BhZ2VfcG9vbC5zDQo+Pj4NCj4+PiBUaGlzIGlzIG1heWJlIGNhbGxlZCBmcm9t
-IHBhZ2VfcG9vbF91bnJlZl9uZXRtZW0oKQ0KPj4NCj4+IFRoYW5rcyEgVGhlIGNvbXBpbGVyIHZl
-cnNpb24gaGVscGVkLCBJIGNhbiByZXBybyB3aXRoIEdDQyAxNC4NCj4+DQo+PiBJdCdzIHNvbWV0
-aGluZyBzcGVjaWFsIGFib3V0IGNvbXBvdW5kIHBhZ2UgaGFuZGxpbmcgb24gcG93ZXJwYzY0LA0K
-Pj4gQUZBSUNULiBJJ20gZ3Vlc3NpbmcgdGhhdCB0aGUgYXNzZW1ibGVyIGlzIG1hZCB0aGF0IHdl
-J3JlIGRvaW5nDQo+PiBhbiB1bmFsaWduZWQgcmVhZDoNCj4+DQo+PiAgICAgMzMwMCAgICAgICAg
-IGxkIDgsMzkoOCkgICAgICAgIyBNRU1bKGNvbnN0IHN0cnVjdCBhdG9taWM2NF90ICopXzI5XS5j
-b3VudGVyLCB0DQo+Pg0KPj4gd2hpY2ggZG9lcyBpbmRlZWQgbG9vayB1bmFsaWduZWQgdG8gYSBu
-YWtlZCBleWUuIElmIEkgcmVwbGFjZQ0KPj4gdmlydF90b19oZWFkX3BhZ2UoKSB3aXRoIHZpcnRf
-dG9fcGFnZSgpIG9uIGxpbmUgODY3IGluIG5ldC9jb3JlL3BhZ2VfcG9vbC5jDQo+PiBJIGdldDoN
-Cj4+DQo+PiAgICAgMjk4MiAgICAgICAgIGxkIDgsNDAoMTApICAgICAgIyBNRU1bKGNvbnN0IHN0
-cnVjdCBhdG9taWM2NF90ICopXzk0XS5jb3VudGVyLCB0DQo+Pg0KPj4gYW5kIHRoYXQncyB3aGF0
-IHdlJ2QgZXhwZWN0LiBJdCdzIHJlYWRpbmcgcHBfcmVmX2NvdW50IHdoaWNoIGlzIGF0DQo+PiBv
-ZmZzZXQgNDAgaW4gc3RydWN0IG5ldF9pb3YuIEknbGwgdHJ5IHRvIHRha2UgYSBjbG9zZXIgbG9v
-ayBhdA0KPj4gdGhlIGNvbXBvdW5kIHBhZ2UgaGFuZGxpbmcsIHdpdGggcG93ZXJwYyBhc3NlbWJs
-eSBib29rIGluIGhhbmQsDQo+PiBidXQgcGVyaGFwcyB0aGlzIHJpbmdzIGEgYmVsbCBmb3Igc29t
-ZW9uZT8NCj4gDQo+IE9oLCBva2F5LCBJIHRoaW5rIEkgdW5kZXJzdGFuZCBub3cuIE15IGxhY2sg
-b2YgTU0ga25vd2xlZGdlIHNob3dpbmcuDQo+IFNvIGlmIGl0J3MgYSBjb21wb3VuZCBoZWFkIHdl
-IGRvOg0KPiANCj4gc3RhdGljIGlubGluZSB1bnNpZ25lZCBsb25nIF9jb21wb3VuZF9oZWFkKGNv
-bnN0IHN0cnVjdCBwYWdlICpwYWdlKQ0KPiB7DQo+ICAgICAgICAgIHVuc2lnbmVkIGxvbmcgaGVh
-ZCA9IFJFQURfT05DRShwYWdlLT5jb21wb3VuZF9oZWFkKTsNCj4gICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgDQo+ICAgICAgICAgIGlmICh1bmxpa2VseShoZWFkICYgMSkpDQo+ICAgICAgICAgICAg
-ICAgICAgcmV0dXJuIGhlYWQgLSAxOw0KPiAgICAgICAgICByZXR1cm4gKHVuc2lnbmVkIGxvbmcp
-cGFnZV9maXhlZF9mYWtlX2hlYWQocGFnZSk7DQo+IH0NCj4gDQo+IFByZXN1bWFibHkgcGFnZS0+
-Y29tcG91bmRfaGVhZCBzdG9yZXMgdGhlIHBvaW50ZXIgdG8gdGhlIGhlYWQgcGFnZS4NCj4gSSdt
-IGd1ZXNzaW5nIHRoZSBjb21waWxlciBpcyAic21hcnQiIGFuZCBkZWNpZGVzICJ3aHkgc2hvdWxk
-IEkgZG8NCj4gbGQgKHBhZ2UgLSAxKSArIDQwLCB3aGVuIEkgY2FuIGRvIGxkIHBhZ2UgKyAzOSA6
-fA0KPiANCj4gSSB0aGluayBpdCdzIGEgY29tcGlsZXIgYnVnLi4uDQo+IA0KDQpXb3VsZCBpdCB3
-b3JrIGlmIHlvdSByZXBsYWNlIGl0IHdpdGggZm9sbG93aW5nID8NCg0KCXJldHVybiBoZWFkICYg
-fjE7DQoNCkNocmlzdG9waGUNCg==
+Hi Pierre
+
+On Fri, 13 Sept 2024 at 10:58, Pierre Gondois <pierre.gondois@arm.com> wrote:
+>
+> (struct sg_lb_stats).idle_cpus is of type 'unsigned int'.
+> (local->idle_cpus - busiest->idle_cpus) can underflow to UINT_MAX
+> for instance, and max_t(long, 0, UINT_MAX) will output UINT_MAX.
+>
+> Use lsub_positive() instead of max_t().
+
+Have you faced the problem or this patch is based on code review ?
+
+we have the below in sched_balance_find_src_group() that should ensure
+that we have local->idle_cpus > busiest->idle_cpus
+
+if (busiest->group_weight > 1 &&
+    local->idle_cpus <= (busiest->idle_cpus + 1)) {
+    /*
+    * If the busiest group is not overloaded
+    * and there is no imbalance between this and busiest
+    * group wrt idle CPUs, it is balanced. The imbalance
+    * becomes significant if the diff is greater than 1
+    * otherwise we might end up to just move the imbalance
+    * on another group. Of course this applies only if
+    * there is more than 1 CPU per group.
+    */
+    goto out_balanced;
+}
+
+>
+> Fixes: 0b0695f2b34a ("sched/fair: Rework load_balance()")
+> cc: stable@vger.kernel.org
+> Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
+> ---
+>  kernel/sched/fair.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 9057584ec06d..6d9124499f52 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -10775,8 +10775,8 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+>                          * idle CPUs.
+>                          */
+>                         env->migration_type = migrate_task;
+> -                       env->imbalance = max_t(long, 0,
+> -                                              (local->idle_cpus - busiest->idle_cpus));
+> +                       env->imbalance = local->idle_cpus;
+> +                       lsub_positive(&env->imbalance, busiest->idle_cpus);
+>                 }
+>
+>  #ifdef CONFIG_NUMA
+> --
+> 2.25.1
+>
 
