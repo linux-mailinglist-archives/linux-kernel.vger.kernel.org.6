@@ -1,133 +1,141 @@
-Return-Path: <linux-kernel+bounces-327657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85C689778E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:41:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19AFC9778EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CF1E287959
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:41:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAA7B1F25EE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063011B983E;
-	Fri, 13 Sep 2024 06:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FDD1AE845;
+	Fri, 13 Sep 2024 06:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hwpyuUx8"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SN8PIuK5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8BF186E46
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 06:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC35187350
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 06:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726209669; cv=none; b=o54oCUAWEVTfprcLHXUQFk7IRmL7RQ2WFCEEVQN1k6NR8o7zPfVJNvzbNjl6x0yIbuJIHRnQOVtD/AENhCPEC06dyIeV0GGY7y+0W8Jp46Qq0dt5NdL/Yj32klyIIFC8Ax7lQTCP/FLRsgO35kz3pkGJXhTv/xhEXs1qMoEYY+I=
+	t=1726209761; cv=none; b=dxCpRXMIkCuFsv7+BtKC2HunR3x0VmSVvMavcRw+MiJW+1i6Sb1QhMKaDdqz21yiPPzYqViCPdXoidwuLp8e36w7CVi17RdfO047BEEjlmljhAf7Gt2PkQUQFZrh08k03rYi35ukxas+Q57pEdPkcwTiH528kbbtGdec+BgKrE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726209669; c=relaxed/simple;
-	bh=ehcs3zWtTc6DmoyDuY/1gTW6lTSxcf2UYJrb+rJ+Qj4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gV/5d+/CYFIt9huxT9jBUz65jBwvSpu3mXwyXTtwqzvvylQgtKN2mmp2+dN6ARs7nMvXTKpIa/IjDx8DhMAbdh9G2BppCOmN9PHCV9r6H3KNKZ4zt1bT7IiZj/pUJBDz2l/Mtn5qJjKcUQJlx8mi0AZa7bir6oFqWSZJFLmx+Cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hwpyuUx8; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-27051f63018so258780fac.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 23:41:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726209667; x=1726814467; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=mST6gEktXZQHF6SwcttPjz/jfWpwUS5ebz/OPlAa6uM=;
-        b=hwpyuUx8kby7PIvgpgWRUzru/HiIvei8Ymq2juzp6bqcYR7XRypMD75XFFesXTQBtU
-         rdc+qL8LFqOZbEkbshOLysYmeKvmmTUUehouHLDorktfsMrOayireLe86tUE28zx5T0g
-         1XJAZcdc3vfsYKBxGJGOeZrtEjl2m3MBP1RJZofjaIa3UYkGlyZnrackZpTNY7MLU7an
-         gKE4jMGJo4gOwI4xmHYMtQDUAteW0QwdJoTSm1vPnA0b+rcgQpYF8d/nvtDuwbgPferI
-         gbkCKLXpyEy80az2QAhCu1Vtikv3bxkJY4uznT80uahUHqzIAifabmyu6kog66BcqY9z
-         6jzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726209667; x=1726814467;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mST6gEktXZQHF6SwcttPjz/jfWpwUS5ebz/OPlAa6uM=;
-        b=iqcZ5QG6kG9keUgXIsmupoVv5EizaBKz5ZYuCEKLWq4z8w4VeNqQeQgHsswFwGU3FU
-         XvKzR6KJKIU7eDlq7oM+qZaOjn2fdZB/0DdvCAyl63XhDJn3fGY7QCfL0P5SFyqpNLlx
-         uXTNdS8K9lY5sa+d0vuEaWgcKQlQMNNmJFcmIhMhFgdSmV1+rH1z1SkbX99ljMQAi52N
-         t33vemY/1wmTGaKHweZGQAsTxGzndmHBNdBNQ6j/S0vwiTZ9I2zeAo8LYb1XJkJWpeOo
-         DSTR8u2FBzbuQlSLDGlcrF7lNoP1OxwEfyEGODLGw14lKtj6fuFjNfbylY7szXM5Moli
-         TaiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW3CKkoD2TbOze0F69gg4CAdzFU/QqqeEe+THkv3v9eG+ZNzRwogc4lVa1e6p+8BdtiMNBdsdJZPYWeKo4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1xxq0zim9ITK7Sdku734PiV3M0fva/Xog0xbwwb0JLwim6EK/
-	6PFZ4TSX4gDCEwhVHZB8d5r1IbS33WNzjTuPVRwLVamBWrtVm77ZUHFNB+g/da3XfrGH+DZkaAy
-	qs699kLxZtHOPWN8n0luPW3l1dZGblC00ZVDJ6UxnAqT4Bq1RBLQ=
-X-Google-Smtp-Source: AGHT+IHq7LKuC8w8KZXTC1aYQokjs33/F/qEQAisoiDkuE50PH9P5dpa/EWsmU4eHs1SO0Aao6x1WX+8wzR8ghf5Hk0=
-X-Received: by 2002:a05:6871:e2a9:b0:25e:eab:6d32 with SMTP id
- 586e51a60fabf-27c688c0640mr1090936fac.5.1726209666728; Thu, 12 Sep 2024
- 23:41:06 -0700 (PDT)
+	s=arc-20240116; t=1726209761; c=relaxed/simple;
+	bh=AR7yZuTlGot/y1jh/5CMWzyHwGVxELvTUjzMdobZYKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=koycxSiv2A51Dbvwa8f0aK/EkPb0mNBULdXFM71zPRXE1k51WBAH0LHiD8Di7MjmI0MR7gLk4JF6nJmZpFWJgegi91FTmrsffLBZp7dybJwpLOggB6YcW2iMcJaCFsLfn0s4rqRwkSYxbYM8bz9NCVRaDNqTaPg73tdJwdYelSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SN8PIuK5; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726209760; x=1757745760;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=AR7yZuTlGot/y1jh/5CMWzyHwGVxELvTUjzMdobZYKo=;
+  b=SN8PIuK5hZGX74lqO/juYwclyKAi89kjhOgMEcJSNWeYiLKHsR2ND5oQ
+   xdEUxiUkcLh4HrHwvCKwFtMAyCXiGJQdxa6+fW3ETUZWUBrqc9IbDkbYB
+   lsetjXeT4R+k154OxRFPYizCrU8gOapj7OdMvpyMnxdQmCI+Wqah0kQUg
+   Sz7nPZHwXknuMLgAVIAp8qXltd/LS4iGIS4WEtc9YU+NOrfXNmnl0WLCC
+   ykmpJPtv30ykTVaWXvFDE1fN3kfpnCFcCPKDNW7ttgZXtKCQhTwxXR1RR
+   lkeUll7yttZKvFYXrFwAroJhHUuVkQdd6vZLmGx5h7MH57cKRNOBfnV9M
+   A==;
+X-CSE-ConnectionGUID: cFqSXHIZRsabrjGFiCnuiQ==
+X-CSE-MsgGUID: abzIZ9S5TJybKWkdLPt7AQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="24920928"
+X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
+   d="scan'208";a="24920928"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 23:42:39 -0700
+X-CSE-ConnectionGUID: qB4aAGkARSaQA2TIf4KWgQ==
+X-CSE-MsgGUID: xw5eili4TSm4qkwlyDT9Zg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
+   d="scan'208";a="68261423"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 12 Sep 2024 23:42:38 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sp00p-00066e-0U;
+	Fri, 13 Sep 2024 06:42:35 +0000
+Date: Fri, 13 Sep 2024 14:42:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kaixin Wang <kxwang23@m.fudan.edu.cn>, sre@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, andriy.shevchenko@linux.intel.com,
+	rdunlap@infradead.org, linux-kernel@vger.kernel.org,
+	21210240012@m.fudan.edu.cn, 21302010073@m.fudan.edu.cn,
+	Kaixin Wang <kxwang23@m.fudan.edu.cn>
+Subject: Re: [PATCH] HSI: ssi_protocol: Fix use after free vulnerability in
+ ssi_protocol Driver Due to Race Condition
+Message-ID: <202409131457.oUtHawfD-lkp@intel.com>
+References: <20240911151915.844957-1-kxwang23@m.fudan.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906202745.11159-1-gourry@gourry.net> <20240906202745.11159-5-gourry@gourry.net>
-In-Reply-To: <20240906202745.11159-5-gourry@gourry.net>
-From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Date: Fri, 13 Sep 2024 09:40:30 +0300
-Message-ID: <CAC_iWjJizjQWucDbrqKGdZTcj7FFxiPN97=p1zwfnPE=sAC6RQ@mail.gmail.com>
-Subject: Re: [PATCH 4/6] tpm: sanity check the log version before using it
-To: Gregory Price <gourry@gourry.net>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, ardb@kernel.org, 
-	leitao@debian.org, usamaarif642@gmail.com, 
-	sathyanarayanan.kuppuswamy@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240911151915.844957-1-kxwang23@m.fudan.edu.cn>
 
-Hi Gregory,
+Hi Kaixin,
 
-On Fri, 6 Sept 2024 at 23:28, Gregory Price <gourry@gourry.net> wrote:
->
-> If the log version is not sane (0 or >2), don't attempt to use
-> the rest of the log values for anything to avoid potential corruption.
->
-> Signed-off-by: Gregory Price <gourry@gourry.net>
-> ---
->  drivers/firmware/efi/tpm.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/drivers/firmware/efi/tpm.c b/drivers/firmware/efi/tpm.c
-> index 6e03eed0dc6f..9a080887a3e0 100644
-> --- a/drivers/firmware/efi/tpm.c
-> +++ b/drivers/firmware/efi/tpm.c
-> @@ -60,6 +60,15 @@ int __init efi_tpm_eventlog_init(void)
->                 return -ENOMEM;
->         }
->
-> +       if (!log_tbl->version ||
-> +           log_tbl->version > EFI_TCG2_EVENT_LOG_FORMAT_TCG_2) {
-> +               pr_err(FW_BUG "TPM Events table version invalid (%x)\n",
-> +                      log_tbl->version);
-> +               early_memunmap(log_tbl, sizeof(*log_tbl));
-> +               efi.tpm_log = EFI_INVALID_TABLE_ADDR;
-> +               return -EINVAL;
+kernel test robot noticed the following build errors:
 
-I don't think we need this check at all. Did you actually see this happening?
-efi_retrieve_eventlog() that runs during the efistub tries to retrieve
-the log and the EFI protocol itself explicitly says that the firmware
-*must* return EFI_INVALID_PARAMETER if the event log is not in 1.2 or
-2.0 format. If the firmware does something wrong, we should report the
-FW BUG in that function, instead of installing the config tables Linux
-uses internally to handover the log and catching it late.
+[auto build test ERROR on sre-hsi/for-next]
+[also build test ERROR on linus/master v6.11-rc7 next-20240912]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks
-/Ilias
+url:    https://github.com/intel-lab-lkp/linux/commits/Kaixin-Wang/HSI-ssi_protocol-Fix-use-after-free-vulnerability-in-ssi_protocol-Driver-Due-to-Race-Condition/20240911-232206
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-hsi.git for-next
+patch link:    https://lore.kernel.org/r/20240911151915.844957-1-kxwang23%40m.fudan.edu.cn
+patch subject: [PATCH] HSI: ssi_protocol: Fix use after free vulnerability in ssi_protocol Driver Due to Race Condition
+config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20240913/202409131457.oUtHawfD-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240913/202409131457.oUtHawfD-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409131457.oUtHawfD-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/hsi/clients/ssi_protocol.c: In function 'ssi_protocol_remove':
+>> drivers/hsi/clients/ssi_protocol.c:1158:37: error: expected ';' before 'kfree'
+    1158 |         cancel_work_sync(&ssi->work)
+         |                                     ^
+         |                                     ;
+    1159 |         kfree(ssi);
+         |         ~~~~~                        
 
 
+vim +1158 drivers/hsi/clients/ssi_protocol.c
 
-> +       }
-> +
->         tbl_size = sizeof(*log_tbl) + log_tbl->size;
->         if (memblock_reserve(efi.tpm_log, tbl_size)) {
->                 pr_err("TPM Event Log memblock reserve fails (0x%lx, 0x%x)\n",
-> --
-> 2.43.0
->
+  1148	
+  1149	static int ssi_protocol_remove(struct device *dev)
+  1150	{
+  1151		struct hsi_client *cl = to_hsi_client(dev);
+  1152		struct ssi_protocol *ssi = hsi_client_drvdata(cl);
+  1153	
+  1154		list_del(&ssi->link);
+  1155		unregister_netdev(ssi->netdev);
+  1156		ssip_free_cmds(ssi);
+  1157		hsi_client_set_drvdata(cl, NULL);
+> 1158		cancel_work_sync(&ssi->work)
+  1159		kfree(ssi);
+  1160	
+  1161		return 0;
+  1162	}
+  1163	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
