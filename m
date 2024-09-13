@@ -1,101 +1,127 @@
-Return-Path: <linux-kernel+bounces-328705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54738978793
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:09:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97FA9978782
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3A73B2572A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:09:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A868289487
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70BD38F6A;
-	Fri, 13 Sep 2024 18:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED80126C14;
+	Fri, 13 Sep 2024 18:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="gGMBvjRN"
-Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tv71CAS6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B59D126BE6;
-	Fri, 13 Sep 2024 18:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9731684A40;
+	Fri, 13 Sep 2024 18:07:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726250964; cv=none; b=pofDGi+D23y4PRtG3vRVkCoqJrMdqJFhkSPGeIt04ofo1QONx8C8lF0/n+4u/N/4B3EiILNH7aBUcF6LUrS5JJssa632OfuufggQ9fGzwlttPlLwn6YKVSgOtcJxduNJMMq/EbbJhATs/YhL54Z21AEqlJwi1Rc3A8/JISRgoRU=
+	t=1726250842; cv=none; b=m6iKpZmKrBt5xRkn44awf3gnutd1zSHpknHRHYYrU/lrTjUrYkoSDCCim/9/8dLuvM9eCiCVFRQecHa66egVyMre3GbhQr9EFzCkGQdW2KIywQAZC/eC4YD66N965R95NShylSEQgLKSlIbO1I28vF78yYDih0/fqlB0UkwJSMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726250964; c=relaxed/simple;
-	bh=CYsnOF3mg7HRqKjs8+zohjNJM8L3/gkDXeAgSnJOS/8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=JHVRuZhqoSaC4pjo3Ow2BYo57hGCN2lskFBXU8bceFpEtjVz8MHScBFIU0apR7Xa2onhYTW9fYP9t8Ca6praBttu412Y0zXH2CQ5Z5s3QfY0Tm4fkinW02CSUwb0gX6AnUO2XJHruSnP3etWbUnYh9Zm5/tfBZLuTmhkSmZfsZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=gGMBvjRN; arc=none smtp.client-ip=94.231.106.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
-Received: from localhost (localhost [127.0.0.1])
-	by smtp.simply.com (Simply.com) with ESMTP id 4X52C92QGHz1FXSC;
-	Fri, 13 Sep 2024 20:00:05 +0200 (CEST)
-Received: from [10.10.15.13] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by smtp.simply.com (Simply.com) with ESMTPSA id 4X52C90KsQz1DPl0;
-	Fri, 13 Sep 2024 20:00:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
-	s=unoeuro; t=1726250405;
-	bh=SWvXRVsmJjaa9ejRemRSz9PHWcu0seHqqpEBo4CbFBs=;
-	h=Date:Subject:To:References:From:In-Reply-To;
-	b=gGMBvjRNvr61acm1rTtvWLXKfCX18UDdEju1gTxvBk7OYtXkmLWmhm/bMNAbheuyR
-	 bKzb/VFlaZBuWaJgM/6m+8h02Qu603llsCKr/Xy54epP+F30LjbsFZDhE+LrfXTTiK
-	 w+j9RdsLXmyqut7g2fNULu8dDjPfiQyy7e3KB1JM=
-Message-ID: <59d604b6-8672-4c90-ab10-b3b74e79f9b1@gaisler.com>
-Date: Fri, 13 Sep 2024 20:00:03 +0200
+	s=arc-20240116; t=1726250842; c=relaxed/simple;
+	bh=WBLnnwyIn8w3d6CyiQ5QRfFUDAUXUgM89Rb9FC2tTuE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YpMkks+fO40qQx/yKGbr3Vjd0b/y0AYpeWfSvVnoZhXxscS/r+9+w9reFhWnX3CMQ6YzUQpR8JXdi+FRNKMg5KePleVpgFRcYFqG07DsucDLVi5V0ZqkgHWVDy30abfrK6epuHBuI4fA3eHx5fImTWfhm4XqpR/BoUZkMqbbnto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tv71CAS6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2C91C4CEC0;
+	Fri, 13 Sep 2024 18:07:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726250842;
+	bh=WBLnnwyIn8w3d6CyiQ5QRfFUDAUXUgM89Rb9FC2tTuE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Tv71CAS6S+Rn/U6AgWyhAvSEENpd0fXHR2JGo+NxDsSjcvv4XSXTTDcvomlbr4pVL
+	 761kLpNapeJsT+mnqSsW0fYFtjAstxZzQgAIhmNUGj0nzwrhYoYuq6BsMZ8Wis+SOA
+	 fwTYtlxbFnMKHZCZU9I38NYsjbI2j8WNghKSRqo+fOYT9nTznxJgXHokC8DQr7OSu/
+	 q8uzJESdASA+VHrD54jAzdR/FTI8CWSS32RiwLWcja1D+imWjLTJGOhkvSMIijs0bC
+	 EG7szqoEss2dkcxIV9BKCwYPwrN4P8Jdta+pMMAHry85pcXxDWlQ5xawKlmH/gKYQd
+	 I8ch69EbpfI/w==
+Date: Fri, 13 Sep 2024 19:07:17 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Emil Gedenryd <emil.gedenryd@axis.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andreas Dannenberg <dannenberg@ti.com>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	kernel@axis.com
+Subject: Re: [PATCH v2 2/3] dt-bindings: iio: light: opt3001: add compatible
+ for opt3002
+Message-ID: <20240913-stimulate-swell-3964c45e6e81@spud>
+References: <20240913-add_opt3002-v2-0-69e04f840360@axis.com>
+ <20240913-add_opt3002-v2-2-69e04f840360@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arch/sparc: remove unused varible paddrbase in function
- leon_swprobe()
-To: alexs@kernel.org, "David S . Miller" <davem@davemloft.net>,
- Christian Brauner <brauner@kernel.org>, sparclinux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240729064926.3126528-1-alexs@kernel.org>
-Content-Language: en-US
-From: Andreas Larsson <andreas@gaisler.com>
-In-Reply-To: <20240729064926.3126528-1-alexs@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="MTkaypvhF8DGEqkj"
+Content-Disposition: inline
+In-Reply-To: <20240913-add_opt3002-v2-2-69e04f840360@axis.com>
 
-On 2024-07-29 08:49, alexs@kernel.org wrote:
-> From: Alex Shi <alexs@kernel.org>
-> 
-> commit f22ed71cd602 ("sparc32,leon: SRMMU MMU Table probe fix") change
-> return value from paddrbase to 'pte', but left the varible here.
-> That causes a build warning for this varible, so we may remove it.
-> 
-> make --keep-going CROSS_COMPILE=/home/alexs/0day/gcc-14.1.0-nolibc/sparc-linux/bin/sparc-linux- --jobs=16 KCFLAGS= -Wtautological-compare -Wno-error=return-type -Wreturn-type -Wcast-function-type -funsigned-char -Wundef -fstrict-flex-arrays=3 -Wformat-overflow -Wformat-truncation -Wrestrict -Wenum-conversion W=1 O=sparc ARCH=sparc defconfig SHELL=/bin/bash arch/sparc/mm/ mm/ -s
-> <stdin>:1519:2: warning: #warning syscall clone3 not implemented [-Wcpp]
-> ../arch/sparc/mm/leon_mm.c: In function 'leon_swprobe':
-> ../arch/sparc/mm/leon_mm.c:42:32: warning: variable 'paddrbase' set but not used [-Wunused-but-set-variable]
->    42 |         unsigned int lvl, pte, paddrbase;
->       |                                ^~~~~~~~~
-> 
-> Signed-off-by: Alex Shi <alexs@kernel.org>
-> To: linux-kernel@vger.kernel.org
-> To: sparclinux@vger.kernel.org
-> To: Christian Brauner <brauner@kernel.org>
-> To: Andreas Larsson <andreas@gaisler.com>
-> To: David S. Miller <davem@davemloft.net>
-> ---
->  arch/sparc/mm/leon_mm.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
 
-Reviewed-by: Andreas Larsson <andreas@gaisler.com>
-Tested-by: Andreas Larsson <andreas@gaisler.com>
+--MTkaypvhF8DGEqkj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Picking this up to my for-next.
+On Fri, Sep 13, 2024 at 11:57:03AM +0200, Emil Gedenryd wrote:
+> OPT3002 is a Light-to-Digital Sensor by TI with support for wide-range
+> spectrum light.
+>=20
+> Add the compatible string of opt3002.
+
+You should mention what makes the 02 and 01 devices different here, and
+with that done,
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
 Thanks,
-Andreas
+Conor.
+
+>=20
+> Signed-off-by: Emil Gedenryd <emil.gedenryd@axis.com>
+> ---
+>  Documentation/devicetree/bindings/iio/light/ti,opt3001.yaml | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/light/ti,opt3001.yaml =
+b/Documentation/devicetree/bindings/iio/light/ti,opt3001.yaml
+> index 441e9343fc97..67ca8d08256a 100644
+> --- a/Documentation/devicetree/bindings/iio/light/ti,opt3001.yaml
+> +++ b/Documentation/devicetree/bindings/iio/light/ti,opt3001.yaml
+> @@ -15,7 +15,9 @@ description: |
+> =20
+>  properties:
+>    compatible:
+> -    const: ti,opt3001
+> +    enum:
+> +      - ti,opt3001
+> +      - ti,opt3002
+> =20
+>    reg:
+>      maxItems: 1
+>=20
+> --=20
+> 2.39.2
+>=20
+
+--MTkaypvhF8DGEqkj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuR/VQAKCRB4tDGHoIJi
+0mk3AP9Mdpd5kDmgviAPbnYr/o6taLkyGrfPkZYsZSB9P7CU1QEAo4Cun+yDOwLB
+7R92PVr/Fyr+wIcMVNHu7PnQvvogLwg=
+=LyEq
+-----END PGP SIGNATURE-----
+
+--MTkaypvhF8DGEqkj--
 
