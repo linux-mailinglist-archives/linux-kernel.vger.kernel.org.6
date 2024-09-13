@@ -1,177 +1,238 @@
-Return-Path: <linux-kernel+bounces-328927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BAB9978ADF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:53:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2963978AE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:54:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0A71B21352
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:53:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 685F21F22EF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB320155324;
-	Fri, 13 Sep 2024 21:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6451714B6;
+	Fri, 13 Sep 2024 21:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hDSOPrNq"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l+2wC8Fw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3E26BFD4;
-	Fri, 13 Sep 2024 21:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2CF1155A4F;
+	Fri, 13 Sep 2024 21:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726264393; cv=none; b=fMlFytZTV2iFcdEk5k+JIpjRr/myDBoM58I0DKmhxqYff81sZfDAqrXsMfZSQ2j0bLpaQ9cbn2oJ2UUTq1kamdAp74HQpWhdTAvlVftTUX5xm3i3Ckv7N3OZ7/SZwWQyQhUznMf2vsnu8OwDoR+L6Mkspsk7Uu9C2GFztTcbqJ0=
+	t=1726264477; cv=none; b=FK7KTDP6vyb97FHkh94i5K3dT0cRjCIx9qICezSqRaQXYpuJfnm0NwJovF6QApaK/0C3DwsZ6inL3vhPH/BdokEcAONTmotdd+xzeN8HSZNHZj+g5Fd9BCJ5lEP1wL2M8ja1dT48BpxSDb2TMTbpp81eXrgEAlRrqhfX8W1WUgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726264393; c=relaxed/simple;
-	bh=bROgI7wiehG5a7VPcOWWp+q00U22ejHaEo6jyat/eM4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mXq9P3Aefd+YjT7ld136V8gbUWVXmheCZjKjBvjAELJrILMd0p44XMtsuSxHYZUkrkCIgMlgnCg+PV96Wv35DSa66nwqWtP4KMmb3PIZoXxfSeGrk7iY3gzQBPn4ZGlQyJY0rlfy3AqPhs6dD32RWJ8iYL9L+2K4W+RvgAloIFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hDSOPrNq; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71781f42f75so2217390b3a.1;
-        Fri, 13 Sep 2024 14:53:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726264391; x=1726869191; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mo+N/W667eEINY143EiHKlaxZURxS+IB8LyZfXkFx1Q=;
-        b=hDSOPrNqWT5CdrNjt6YsC5sV9S6ODgJ8fa4R1+E8Sydh4VogVXAfcsPBTKZcSlX+cd
-         WsPuNMuQoalJk8hfkGZbCPmQsqjb0l0WzQ4s9S80Yj7XdQUJA4ONw0UWxr4JbZjsqH3+
-         FE+KtfUTh/qfMq9q5CXr7GJqs72QhlJSGRVyxj8HRUJTjG4mdXaB+Q8fAA1BjD8yWby3
-         KEEa5Mqj7vN3za2ngoemJCzYeF3VJS0mp1bTS1DWM4jqdT271atvPeVIvum/8estwzta
-         hUpRdd6CwercqlMvnlTUazvL2VDwWQLGe8OtaeG8Kzwttmls9NzFywWqKGFf+fwMnHUJ
-         j9aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726264391; x=1726869191;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Mo+N/W667eEINY143EiHKlaxZURxS+IB8LyZfXkFx1Q=;
-        b=Uuzwop/vyx5PUqmYWT1F3m5ez0yZqxb9OjY2kNStVnjDTkSb28SvPbu9P22BqVSc/0
-         9slCQ9wqWC4iffkhUtm/Xfl10H9EBQ0bu6/Tnp91t9p/HnczhHyhRDsLKAMRXuzr1c2r
-         UCg/BsyhXg+KYfeLDQtlQnizOlClhSs/ja4Ll+QK4s43R3CJ4ereZWKRcoHXjwtcGFAV
-         pafXH32h9WDP2Bj7svKC8zXwzltjjkikqW9QS5edgQhe9+GlDUIYGOn/G+nwhez3Zb7C
-         Th4X4ktAVMdMXbZtqKHoDPplSvKQL8jH0ACcYYRAD4CU8zBrLfUe0jyN6f3+yug5rbEr
-         jf6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVb4RZD5kzast1lVttJ6nO4eAZhDrhEJ1UiZSTgYMVtQsopb69JDUgOnASgzpIscpNVklXObCg9@vger.kernel.org, AJvYcCXFJwGP3KZvEuoURlIsv0TWcLQ8sbHCSDUy8nVEDFO0sUcOJ8S64QSeyS1OJvzLh6wXK/qDQGjZ7sJAE2o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5XU0PYKCBA565aR1WhlikTyN+zqtKt7inUrpJaLWSBqVEjLDq
-	eCynDWlsIhKjJn9JRs3TEF3ifQl/M2JW7h4bqn1fkf3UIo9zHcU6IkU9THVUztic1+3OCytwtfB
-	mbrW6nontRpHPfQyYxkXbzenajW8=
-X-Google-Smtp-Source: AGHT+IHIIM3s9b0RG6Ya8X+Wu2PmJfg8oj1TJs0N7c2FeMGYp8eNLPoyuwqlUB21hchDOIuZd1ZV1F3l8aSKlkOEF1Y=
-X-Received: by 2002:a05:6a00:a01:b0:70b:176e:b3bc with SMTP id
- d2e1a72fcca58-71926213bb8mr11895426b3a.28.1726264390946; Fri, 13 Sep 2024
- 14:53:10 -0700 (PDT)
+	s=arc-20240116; t=1726264477; c=relaxed/simple;
+	bh=zAwlk67tqKRq3ykb3Dq/lPmctb9a7uuG+dbiA68cadA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tiZbuGrbEVKahl+GXjPF7I5wtZdJ+FP70CU4saB1NKtGTEBKvpMOtl1S5CGit9jCqbrTiLFTcuhUhWVgARIHyzPc9lTdRu/wbBhHEfbaDbgCv2zGatoKFR2p8g1/w4UAKXojxfp7jTJvCCIPLApYvkdVsQ0slMvjXJexoroaXb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l+2wC8Fw; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726264476; x=1757800476;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zAwlk67tqKRq3ykb3Dq/lPmctb9a7uuG+dbiA68cadA=;
+  b=l+2wC8FwoUf4jv/m9AM4NRcj4YUfouCYP0vBIl3Vt6x3Ia4u41tFL51g
+   YUxgyNQ6s2DlUIu7RyRMBwVa/2RZuBiTVSC1Ww8QTM5e8OIsgEkZG16YV
+   v7H7r4GUsGO3ODDcmzIpec5+c6isY/8vZX0rm1VcWxg9upnwqXGsU3gmF
+   b2NX8LJ5o7ky4lHqR2YBCTCwTts1ebn3RW0FfGEaYh5rCTSxy5TL/DzJt
+   A3FRBnwv4FzMp+7aW6c4qfCEBOKdn0+UbJSWnlYqdgprBeb56adDSDMiC
+   SOH2CY4YFfVm5n4R0mVrVwrmSxPVBTsgE3PM5L/46LoGAewjO6H+icqM4
+   A==;
+X-CSE-ConnectionGUID: gCbj0OLlQCGNBssXS9LvyQ==
+X-CSE-MsgGUID: 66RUN85vSOWmVDkg05o5sA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="28964284"
+X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
+   d="scan'208";a="28964284"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 14:54:32 -0700
+X-CSE-ConnectionGUID: FOi80xTeS1Oe+X0B2eo2eQ==
+X-CSE-MsgGUID: XvYNeoeQRMufVwcHM+SBeA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
+   d="scan'208";a="72802514"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 13 Sep 2024 14:54:28 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1spEFF-00074a-1x;
+	Fri, 13 Sep 2024 21:54:25 +0000
+Date: Sat, 14 Sep 2024 05:53:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jesper Dangaard Brouer <hawk@kernel.org>, tj@kernel.org,
+	cgroups@vger.kernel.org, yosryahmed@google.com,
+	shakeel.butt@linux.dev
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Jesper Dangaard Brouer <hawk@kernel.org>, hannes@cmpxchg.org,
+	lizefan.x@bytedance.com, longman@redhat.com,
+	kernel-team@cloudflare.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V11] cgroup/rstat: Avoid flushing if there is an ongoing
+ root flush
+Message-ID: <202409140533.2vt8QPj8-lkp@intel.com>
+References: <172616070094.2055617.17676042522679701515.stgit@firesoul>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHaCkmfFt1oP=r28DDYNWm3Xx5CEkzeu7NEstXPUV+BmG3F1_A@mail.gmail.com>
- <CAHaCkmddrR+sx7wQeKh_8WhiYc0ymTyX5j1FB5kk__qTKe2z3Q@mail.gmail.com>
- <20240912083746.34a7cd3b@kernel.org> <CAHaCkmekKtgdVhm7RFp0jo_mfjsJgAMY738wG0LPdgLZN6kq4A@mail.gmail.com>
- <656a4613-9b31-d64b-fc78-32f6dfdc96e9@intel.com>
-In-Reply-To: <656a4613-9b31-d64b-fc78-32f6dfdc96e9@intel.com>
-From: Jesper Juhl <jesperjuhl76@gmail.com>
-Date: Fri, 13 Sep 2024 23:52:34 +0200
-Message-ID: <CAHaCkmfkD0GkT6OczjMVZ9x-Ucr9tS0Eo8t_edDgrrPk-ZNc-A@mail.gmail.com>
-Subject: Re: [Intel-wired-lan] igc: Network failure, reboot required: igc:
- Failed to read reg 0xc030!
-To: "Lifshits, Vitaly" <vitaly.lifshits@intel.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Eric Dumazet <edumazet@google.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, 
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, intel-wired-lan@lists.osuosl.org, 
-	Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <172616070094.2055617.17676042522679701515.stgit@firesoul>
 
-On Fri, 13 Sept 2024 at 09:02, Lifshits, Vitaly
-<vitaly.lifshits@intel.com> wrote:
->
-> On 9/12/2024 10:45 PM, Jesper Juhl wrote:
-> >> Would you be able to decode the stack trace? It may be helpful
-> >> to figure out which line of code this is:
-> >>
-> >>   igc_update_stats+0x8a/0x6d0 [igc
-> >> 22e0a697bfd5a86bd5c20d279bfffd
-> >> 131de6bb32]
-> >
-> > Of course. Just tell me what to do.
-> >
-> > - Jesper
-> >
-> > On Thu, 12 Sept 2024 at 17:37, Jakub Kicinski <kuba@kernel.org> wrote:
-> >>
-> >> On Thu, 12 Sep 2024 15:03:14 +0200 Jesper Juhl wrote:
-> >>> It just happened again.
-> >>> Same error message, but different stacktrace:
-> >>
-> >> Hm, I wonder if it's power management related or the device just goes
-> >> sideways for other reasons. The crashes are in accessing statistics
-> >> and the relevant function doesn't resume the device. But then again,
-> >> it could just be that stats reading is the most common control path
-> >> operation.
-> >>
+Hi Jesper,
 
-I doubt it's related to power management since the machine is not idle
-when this happens.
+kernel test robot noticed the following build errors:
 
-> >> Hopefully the Intel team can help.
-> >>
-> >> Would you be able to decode the stack trace? It may be helpful
-> >> to figure out which line of code this is:
-> >>
-> >>    igc_update_stats+0x8a/0x6d0 [igc
-> >> 22e0a697bfd5a86bd5c20d279bfffd131de6bb32]
->
-I didn't manage to decode it with the distro kernel. I'll build a
-custom kernel straight from the git repo and wait for the problem to
-happen again, then I'll report back with a decoded trace.
+[auto build test ERROR on tj-cgroup/for-next]
+[also build test ERROR on axboe-block/for-next linus/master v6.11-rc7]
+[cannot apply to akpm-mm/mm-everything next-20240913]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> Hi Jasper,
->
-> I agree with Kuba that it might be related to power management, and I
-> wonder if it can be related to PTM.
-> Anyway, can you please share the following information?
->
-> 1. Is runtime D3 enabled? (you can check the value in
-> /sys/devices/pci:(pci SBDF)/power/control)
+url:    https://github.com/intel-lab-lkp/linux/commits/Jesper-Dangaard-Brouer/cgroup-rstat-Avoid-flushing-if-there-is-an-ongoing-root-flush/20240913-010800
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-next
+patch link:    https://lore.kernel.org/r/172616070094.2055617.17676042522679701515.stgit%40firesoul
+patch subject: [PATCH V11] cgroup/rstat: Avoid flushing if there is an ongoing root flush
+config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20240914/202409140533.2vt8QPj8-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409140533.2vt8QPj8-lkp@intel.com/reproduce)
 
-$ cat /sys/devices/pci0000\:00/power/control
-auto
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409140533.2vt8QPj8-lkp@intel.com/
 
-> 2. What is the NVM version that your NIC has? (ethtool -i eno1)
+All errors (new ones prefixed by >>):
 
-$ sudo ethtool -i eno1
-driver: igc
-version: 6.10.9-arch1-2
-firmware-version: 1082:8770
-expansion-rom-version:
-bus-info: 0000:0c:00.0
-supports-statistics: yes
-supports-test: yes
-supports-eeprom-access: yes
-supports-register-dump: yes
-supports-priv-flags: yes
+>> mm/vmscan.c:2265:2: error: call to undeclared function 'mem_cgroup_flush_stats_relaxed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    2265 |         mem_cgroup_flush_stats_relaxed(sc->target_mem_cgroup);
+         |         ^
+   mm/vmscan.c:2265:2: note: did you mean 'mem_cgroup_flush_stats_ratelimited'?
+   include/linux/memcontrol.h:1429:20: note: 'mem_cgroup_flush_stats_ratelimited' declared here
+    1429 | static inline void mem_cgroup_flush_stats_ratelimited(struct mem_cgroup *memcg)
+         |                    ^
+   1 error generated.
 
-> 3. Can you please elaborate on you bug?
-> Does it happen while the system is in idle state?
 
-I don't know. It might, but I've only ever observed it while actively
-using the machine. I usually notice the problem when watching a
-youtube video or playing an online game and suddenly the network
-connection dies.
+vim +/mem_cgroup_flush_stats_relaxed +2265 mm/vmscan.c
 
-> Does it run any
-> traffic?
+  2250	
+  2251	static void prepare_scan_control(pg_data_t *pgdat, struct scan_control *sc)
+  2252	{
+  2253		unsigned long file;
+  2254		struct lruvec *target_lruvec;
+  2255	
+  2256		if (lru_gen_enabled())
+  2257			return;
+  2258	
+  2259		target_lruvec = mem_cgroup_lruvec(sc->target_mem_cgroup, pgdat);
+  2260	
+  2261		/*
+  2262		 * Flush the memory cgroup stats, so that we read accurate per-memcg
+  2263		 * lruvec stats for heuristics.
+  2264		 */
+> 2265		mem_cgroup_flush_stats_relaxed(sc->target_mem_cgroup);
+  2266	
+  2267		/*
+  2268		 * Determine the scan balance between anon and file LRUs.
+  2269		 */
+  2270		spin_lock_irq(&target_lruvec->lru_lock);
+  2271		sc->anon_cost = target_lruvec->anon_cost;
+  2272		sc->file_cost = target_lruvec->file_cost;
+  2273		spin_unlock_irq(&target_lruvec->lru_lock);
+  2274	
+  2275		/*
+  2276		 * Target desirable inactive:active list ratios for the anon
+  2277		 * and file LRU lists.
+  2278		 */
+  2279		if (!sc->force_deactivate) {
+  2280			unsigned long refaults;
+  2281	
+  2282			/*
+  2283			 * When refaults are being observed, it means a new
+  2284			 * workingset is being established. Deactivate to get
+  2285			 * rid of any stale active pages quickly.
+  2286			 */
+  2287			refaults = lruvec_page_state(target_lruvec,
+  2288					WORKINGSET_ACTIVATE_ANON);
+  2289			if (refaults != target_lruvec->refaults[WORKINGSET_ANON] ||
+  2290				inactive_is_low(target_lruvec, LRU_INACTIVE_ANON))
+  2291				sc->may_deactivate |= DEACTIVATE_ANON;
+  2292			else
+  2293				sc->may_deactivate &= ~DEACTIVATE_ANON;
+  2294	
+  2295			refaults = lruvec_page_state(target_lruvec,
+  2296					WORKINGSET_ACTIVATE_FILE);
+  2297			if (refaults != target_lruvec->refaults[WORKINGSET_FILE] ||
+  2298			    inactive_is_low(target_lruvec, LRU_INACTIVE_FILE))
+  2299				sc->may_deactivate |= DEACTIVATE_FILE;
+  2300			else
+  2301				sc->may_deactivate &= ~DEACTIVATE_FILE;
+  2302		} else
+  2303			sc->may_deactivate = DEACTIVATE_ANON | DEACTIVATE_FILE;
+  2304	
+  2305		/*
+  2306		 * If we have plenty of inactive file pages that aren't
+  2307		 * thrashing, try to reclaim those first before touching
+  2308		 * anonymous pages.
+  2309		 */
+  2310		file = lruvec_page_state(target_lruvec, NR_INACTIVE_FILE);
+  2311		if (file >> sc->priority && !(sc->may_deactivate & DEACTIVATE_FILE) &&
+  2312		    !sc->no_cache_trim_mode)
+  2313			sc->cache_trim_mode = 1;
+  2314		else
+  2315			sc->cache_trim_mode = 0;
+  2316	
+  2317		/*
+  2318		 * Prevent the reclaimer from falling into the cache trap: as
+  2319		 * cache pages start out inactive, every cache fault will tip
+  2320		 * the scan balance towards the file LRU.  And as the file LRU
+  2321		 * shrinks, so does the window for rotation from references.
+  2322		 * This means we have a runaway feedback loop where a tiny
+  2323		 * thrashing file LRU becomes infinitely more attractive than
+  2324		 * anon pages.  Try to detect this based on file LRU size.
+  2325		 */
+  2326		if (!cgroup_reclaim(sc)) {
+  2327			unsigned long total_high_wmark = 0;
+  2328			unsigned long free, anon;
+  2329			int z;
+  2330	
+  2331			free = sum_zone_node_page_state(pgdat->node_id, NR_FREE_PAGES);
+  2332			file = node_page_state(pgdat, NR_ACTIVE_FILE) +
+  2333				   node_page_state(pgdat, NR_INACTIVE_FILE);
+  2334	
+  2335			for (z = 0; z < MAX_NR_ZONES; z++) {
+  2336				struct zone *zone = &pgdat->node_zones[z];
+  2337	
+  2338				if (!managed_zone(zone))
+  2339					continue;
+  2340	
+  2341				total_high_wmark += high_wmark_pages(zone);
+  2342			}
+  2343	
+  2344			/*
+  2345			 * Consider anon: if that's low too, this isn't a
+  2346			 * runaway file reclaim problem, but rather just
+  2347			 * extreme pressure. Reclaim as per usual then.
+  2348			 */
+  2349			anon = node_page_state(pgdat, NR_INACTIVE_ANON);
+  2350	
+  2351			sc->file_is_tiny =
+  2352				file + free <= total_high_wmark &&
+  2353				!(sc->may_deactivate & DEACTIVATE_ANON) &&
+  2354				anon >> sc->priority;
+  2355		}
+  2356	}
+  2357	
 
-Yes, there's usually always network traffic when the problem occurs.
-
-> What is the system's link partner (switch? other NIC?)
-
-It's a "tp-link" switch: TL-SG105-M2 5-Port 2.5G Multi-Gigabit Desktop Switch
-
-Kind regards
- Jesper Juhl
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
