@@ -1,147 +1,122 @@
-Return-Path: <linux-kernel+bounces-328407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 895589782FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:52:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFC1D978332
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:02:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18A5E28A571
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:52:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15BE6B22691
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278752EB02;
-	Fri, 13 Sep 2024 14:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0442C3B782;
+	Fri, 13 Sep 2024 15:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b="AqKwS/sA"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="qe8RCx8w"
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E569E2A1D7
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3E05228;
+	Fri, 13 Sep 2024 15:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726239150; cv=none; b=prEDv+kjGXV6eClmPG6gaDdV4D71I5Qv7ZQRi7OcW3p2IBoC7BPXIEQC5cwn1BcDBR+/k0bVUycemRR4YS5QhwsgKUGIQ0dzi4jgn8sDhwdngjz87SS/Qk03vGgGFltUDvBf9F1EnLAIzvB/YrWjkH1EdjpywbMWkdxhgMdLIE4=
+	t=1726239721; cv=none; b=uZDL2F+bOY6fLXFbrFeIQtuiN6pvU5qadL5ECwPfwMuYIv2kCPPJk/lHIxXq9aF5qeDP8GIpPr/cXGFRq+A3Sti2gtMH7spqvWPAydYgUPv/6T2Hua6uIya21cPBDF2JycTg+0tnorSLi2SjFNm3PBTw0oyt5WlRtLllpeyzoaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726239150; c=relaxed/simple;
-	bh=bc19nmfDOzm1d2iw50r7gOBtML2goEgcuFtt/x25Lf8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oM9ez07xMykRkZODqg4OgHyuZOuuHoGD3JocBsojvKGECcui4Lse8DDVIZ52aNIfJF/Ewf9g6HFhBTW8r5j6mm27ODrdmLgV3sX07yNP1OAg7gY9K7e2JZs/i6gySRhxLqbLFlS+ElRJvcvkMDKCZDnisjJtrRJlM/u66hMRr4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca; spf=none smtp.mailfrom=ndufresne.ca; dkim=pass (2048-bit key) header.d=ndufresne-ca.20230601.gappssmtp.com header.i=@ndufresne-ca.20230601.gappssmtp.com header.b=AqKwS/sA; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ndufresne.ca
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e1a9e4fa5aaso2237378276.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 07:52:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20230601.gappssmtp.com; s=20230601; t=1726239148; x=1726843948; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Wh24t8XN3yHHOFZUwuYZW8sGA7Ptb+KwZsMuJbONzt0=;
-        b=AqKwS/sA4j4V5jFweDuKGE6S/3UpSlfoZX2ugH7qbAdaB4fRWVU2sVGmG32/FzPn6x
-         JvWItj61Uzh5aGWpnEuwRoDcJB2RfzgP8rgsn7FeQNeV7KjRUfHLhYSIydxd/FWlv7YA
-         D5o9EFl0aO3kafDNbIZxKdiLb3cX3reooWmxL9U+aS5VNTawEpv3n891AhbffzeusJKe
-         YD9ryaaXMBGlZ6kXnovS1hKpb1+lQpNMtV8vxHvFCX+8JZ3Fz5OsMAzSIbiqGoqhR8ef
-         52KVsP31ufhn2j+UaK6LVLG7dvcByb41Nldu5l+CVyl6Na+XNQ5rv9spIgIgYm9pKHlc
-         N03g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726239148; x=1726843948;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Wh24t8XN3yHHOFZUwuYZW8sGA7Ptb+KwZsMuJbONzt0=;
-        b=hBlOtmlw7ape2Fz2PJJuDobqWq3l+BY2zXME+zdncPvIAm7uh0T8tpgR6FcT17ICn4
-         mWAevlATKQLDLfeECRyiyUsIgDLMMAvM8aRe6GkJ5f9ll+W3ykAiWuyS8vqSe0mgYXfT
-         9jZOBG/x5LNAFk0B9EEXL2dq4ccjWZ9KSJQIygynWxgNd4m/kYCRCq7PwpDEXZtaziXj
-         cB438p3ZvgU+ON7bKYJJRRP8J3KRdoluzJ2g7pKr924NlyaTRfzEylVC+BXpVeycpR8+
-         T0gC9JpG+jcVG4qIPRqKkYQNyb+pQZ7TvZK0WIFZT1JXgZ/8l+mhWIX2w0kkx2pCKAXc
-         bL0w==
-X-Forwarded-Encrypted: i=1; AJvYcCU3vbfwxTKtW9MB50HQO6HkpciaYrj+8PX4QaxiAFr5YMHbIIbqV9tgxvWR/gJTo+gfzv9ztU728zL55kQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuOoMd2pr3TEjUL+Y6/SJWlM61RE6fjzkRytXm4shxb4Hc/U5V
-	Po0BZqVZnwJeS3cFeJ6XcSwXcGdaiBoJg1EN5HUWXVsNv1u1TUH/3ZVFt/K3O7U=
-X-Google-Smtp-Source: AGHT+IGU94xKbiJ/NsGLlEWL1lJMESc5VD1fjhN/wg4OV5LxPQTPbPKdIdLKD8QBrO2C5Quex3OuFw==
-X-Received: by 2002:a05:6902:2682:b0:e11:7b5b:18b0 with SMTP id 3f1490d57ef6-e1d9dc5fee7mr6441950276.47.1726239147763;
-        Fri, 13 Sep 2024 07:52:27 -0700 (PDT)
-Received: from nicolas-tpx395.lan ([2606:6d00:17:9cac::580])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c53474d632sm67209446d6.89.2024.09.13.07.52.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 07:52:27 -0700 (PDT)
-Message-ID: <2042cabf9d8d2ca7faea485d2b5d21aa438a63d3.camel@ndufresne.ca>
-Subject: Re: [PATCH] media: verisilicon: av1: Fix reference video buffer
- pointer assignment
-From: Nicolas Dufresne <nicolas@ndufresne.ca>
-To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, 
-	ezequiel@vanguardiasur.com.ar, p.zabel@pengutronix.de, mchehab@kernel.org, 
-	heiko@sntech.de, hverkuil-cisco@xs4all.nl
-Cc: linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	kernel@collabora.com
-Date: Fri, 13 Sep 2024 10:52:26 -0400
-In-Reply-To: <6c6e00fd-334c-41ae-963c-eeffb368b727@collabora.com>
-References: 
-	<01020191dc45365b-26b103cd-153a-4b74-a663-ed7beecc1713-000000@eu-west-1.amazonses.com>
-	 <10f107089cf679bcabd03e49fc469bb89518deeb.camel@ndufresne.ca>
-	 <6c6e00fd-334c-41ae-963c-eeffb368b727@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1726239721; c=relaxed/simple;
+	bh=3h8jinm1SdDaK4W4DSDn9yq0QU4lEyKGoFK+u5TfO8Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tbRo8IjddpOW2JWXgOd3lxQT4WXKd9sElI5K6aivtQ2v2rKwcZWhR9ZNhjnveIRFbikDQPsU1ywDBYfynKAGd3Rf4AxqheEKwewhhvV9kaswiQ8bkyDPUIngY82W0nZZnjc5VNqiIL7UcDpy6T7baJEeIk2UwX2lguEGGSWETvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=qe8RCx8w; arc=none smtp.client-ip=74.208.4.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
+	s=s1-ionos; t=1726239716; x=1726844516; i=parker@finest.io;
+	bh=oIq9RnNEQW4Xv0SaenfD3RdSE47NhFTAj2gl3GlSmCo=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=qe8RCx8wLenfbPX6XkmOligvduwSmgWHt5E14w3YSRZijr22GNq9SlzsxiG9xrux
+	 277+fjKdDeGYW2yTzsGzDXObElCm3VmLb8ZkxtJTTw+dxa0dGrhHisSCXV49g++rd
+	 IVTGyhbc9vN4i7Y3CkexRoJCuw2NTFS3h7L/QZ5O/VCbnbUtezHQe6c/2i1hAWUe0
+	 AnPvuS+0nm3Q6xHyYBneuAPfpHdQnOkZVyHELqkL9xyqt4eyYbv1/QkSygOOznAyv
+	 DyGKaTrMJ2YYhxykHMQNaSCm2/fa3uuCFXT5DUX0rDgDu82JRtD7kaDdM6kz9Wfa+
+	 S/PmWJEZHFjtGsvJeg==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from finest.io ([98.159.241.229]) by mrelay.perfora.net (mreueus004
+ [74.208.5.2]) with ESMTPSA (Nemesis) id 1MfHtf-1sNTfT00uB-00bva5; Fri, 13 Sep
+ 2024 16:56:28 +0200
+From: Parker Newman <parker@finest.io>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Cc: Parker Newman <pnewman@connecttech.com>
+Subject: [PATCH v1 0/6] serial: 8250_exar: Replace custom EEPROM code with eeprom_93cx6
+Date: Fri, 13 Sep 2024 10:55:37 -0400
+Message-ID: <cover.1726237379.git.pnewman@connecttech.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:8KlvLOuOy+TZj1iyvqdZngYG5Zxe/DEjpySsXbrBGbA//v02fsH
+ gRIbcRdNS65efWZkW306svjv71wETrkEqZk4PiSR6VNFBDMg1Dw6ytJAhlGFqjgDLQxsjnF
+ QDB+9RuVqAuaZxULr8Fl9FFHOLqWBiOCGHB6f+T+JPIfXPcTySqjIRwHmfdKkfgnhNILSLI
+ lh2LvkLhwL9g0swvs4Hpg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:JwwQSWwv8A4=;oLiH9vWwicPFTEeeIqk61Rc1iB8
+ AOcysHx1i3ghIQdqmdnT2Xu/5atKeruM9fT4RvM93tuqH2/urOWkG+E1kzVd3B19v3TD0Rt9m
+ ii/JaG+HgGGUYVi205sVQYGnb31bR/uYJ7ra0nFgeqq7Yi6SfKqep0w4hXPC9hgWv91QltAVy
+ DwvrUPmSvRZTcT3ooiHSMz+ZNod56OBkdS1wTMHZYnGM2BQKp5I3MciV3SpHHTo/Hj5mqVtkK
+ MUaSSvDOKlW1/uUf8uLpqY/FOYFYpnfzUFPanAqDOiCkO34mHayz35HJA2QJMgMi2hiBGGjOq
+ aTKGJilPT3ACqp8OZ2wxVroqHrPOPoIMc+jpwAIuGiyCMSW7cBDOyBU6LSTjNpMMLGK2Kw3ue
+ pPdHew+GUvjImAZr4oMfyVPRiVONoV3+bxaP/3O0rQEi34Liz11EjDUEECtwyb7i/ykkffcDi
+ m4XphSD46BhTk3a1/Kw/SR0lzZ9thB996c9IDStjMjwWW5tLqqYLnCCfJDjCZRcrxZ9NdszjQ
+ p1lNxdWw8n47JtHhWtyH2ae+W5qV6Akgq/4URaIRPNDCCv7Q4JuTf87HUa1NM65cCGQNCgjuV
+ dnJKs6WY57sFVd6RIMY1y0BFeKppsEY2vB2fsHWm4KkSHwBUoju27spnraDpU+OStufDpRfhC
+ QsyOs0b37uzcxztiRXYDuRu/64UhdMPt7Fr0FGCJ3rvKvGjFetEkufGRDXYR9craBfYOVuXqY
+ FlNdNtT9cljDYrzhr1cRoSyf68O0C9nNQ==
 
-Le mercredi 11 septembre 2024 =C3=A0 10:36 +0200, Benjamin Gaignard a =C3=
-=A9crit=C2=A0:
-> Le 10/09/2024 =C3=A0 21:44, Nicolas Dufresne a =C3=A9crit=C2=A0:
-> > Hi,
-> >=20
-> > Le mardi 10 septembre 2024 =C3=A0 14:10 +0000, Benjamin Gaignard a =C3=
-=A9crit=C2=A0:
-> > > Always get new destination buffer for reference frame because nothing
-> > > garanty the one set previously is still valid or unused.
-> > Mind documenting here which tests got fixed with this change ?
->=20
-> Only one from chromium test suite:
-> https://chromium.googlesource.com/chromium/src/media/+/refs/heads/main/te=
-st/data/test-25fps.av1.ivf
->=20
-> Fluster AV1 score remains unchanged.
+From: Parker Newman <pnewman@connecttech.com>
 
-We already integrated a lot of chromium tests in Fluster, would make sense =
-to
-include some more. Was this one missed ? or added later ?
+This series of patches replaces the custom 93cx6 EEPROM read functions in
+the 8250_exar driver with the eeprom_93cx6 driver. This removes duplicate =
+code
+and improves code readability.
 
->=20
-> >=20
-> > > Fixes: 727a400686a2 ("media: verisilicon: Add Rockchip AV1 decoder")
-> > > Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-> > > ---
-> > >   .../media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c    | 3 =
-+--
-> > >   1 file changed, 1 insertion(+), 2 deletions(-)
-> > >=20
-> > > diff --git a/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av=
-1_dec.c b/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c
-> > > index 372dfcd0fcd9..2b9a1047479c 100644
-> > > --- a/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c
-> > > +++ b/drivers/media/platform/verisilicon/rockchip_vpu981_hw_av1_dec.c
-> > > @@ -161,8 +161,7 @@ static int rockchip_vpu981_av1_dec_frame_ref(stru=
-ct hantro_ctx *ctx,
-> > >   		av1_dec->frame_refs[i].timestamp =3D timestamp;
-> > >   		av1_dec->frame_refs[i].frame_type =3D frame->frame_type;
-> > >   		av1_dec->frame_refs[i].order_hint =3D frame->order_hint;
-> > > -		if (!av1_dec->frame_refs[i].vb2_ref)
-> > > -			av1_dec->frame_refs[i].vb2_ref =3D hantro_get_dst_buf(ctx);
-> > > +		av1_dec->frame_refs[i].vb2_ref =3D hantro_get_dst_buf(ctx);
-> > Good catch, would still be nice to improve the commit message.
-> >=20
-> > Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-> >=20
-> > >  =20
-> > >   		for (j =3D 0; j < V4L2_AV1_TOTAL_REFS_PER_FRAME; j++)
-> > >   			av1_dec->frame_refs[i].order_hints[j] =3D frame->order_hints[j];
-> >=20
+In order to use the eeprom_93cx6 driver a quirk needed to be added to add =
+an
+extra clock cycle before reading from the EEPROM. This is similar to the
+quirk in the eeprom_93xx46 driver.
+
+More details in associated patch and mailing list discussion with
+Andy Shevchenko about these changes:
+Link: https://lore.kernel.org/linux-serial/Ztr5u2wEt8VF1IdI@black.fi.intel=
+.com/
+
+Parker Newman (6):
+  misc: eeprom: eeprom_93cx6: Add quirk for extra read clock cycle
+  misc: eeprom: eeprom_93cx6: Switch to BIT() macro
+  misc: eeprom: eeprom_93cx6: Replace printk(KERN_ERR ...) with pr_err()
+  serial: 8250_exar: Replace custom EEPROM read with eeprom_93cx6
+  serial: 8250_exar: Remove old exar_ee_read() and other unneeded code
+  serial: 8250_exar: Add select EEPROM_93CX6 in Kconfig
+
+ drivers/misc/eeprom/eeprom_93cx6.c  |  22 ++++-
+ drivers/tty/serial/8250/8250_exar.c | 122 +++++++---------------------
+ drivers/tty/serial/8250/Kconfig     |   1 +
+ include/linux/eeprom_93cx6.h        |   7 ++
+ 4 files changed, 58 insertions(+), 94 deletions(-)
+
+
+base-commit: 5ed771f174726ae879945d4f148a9005ac909cb7
+=2D-
+2.46.0
 
 
