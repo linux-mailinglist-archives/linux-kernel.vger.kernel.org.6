@@ -1,116 +1,195 @@
-Return-Path: <linux-kernel+bounces-328695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D53597877C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:06:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9761197877F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 267D81F25E1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:06:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24DB4B25C32
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63080126C14;
-	Fri, 13 Sep 2024 18:06:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E58B127B56;
+	Fri, 13 Sep 2024 18:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tj7Kua/3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uwys8dWt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B99DB446AF;
-	Fri, 13 Sep 2024 18:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAC1446AF;
+	Fri, 13 Sep 2024 18:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726250788; cv=none; b=BXc3lMI+meO451bz7Tgzw/TQTM50fhHjIKUIdB3bi1ZzBzbIp2fnJHkM5glo7XHVq37eO+lrI5O6sa/Xs46dre/jAfswzAY4Ew8sK6/nDB+xMrDr7ohjFurX2EIYfzAXvTckCajPe7EpMw2sYlDa53U9Csr8AcwNADIjdiKQSQ8=
+	t=1726250815; cv=none; b=uTzcv1DoTZYw254deMAV5BxPg3BW6R14+bcf9yfu/BKrUr7TaUANlPajNNUbnNNx5rk98OfqZZreeQ/OJlOY45Mfq23BwpT+jnrAQVCoT7elzOxGkqcER2swBBZbZMWzqRGCm2r+KZlhwFmPefQnBc0P1K14dc+y75IipELd/o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726250788; c=relaxed/simple;
-	bh=2jSUwK3ok+ItiZnWlopILuxmtn6sSOQCXeuyuT4Nx1A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dnxXYHUvD12nEp0mgUH1RWRv2LsBx+wf+Hc20PzHVrUd4+poMyIVVmpb/9jSh4GWfITtpGM19lIACIyDM9l/krSF5CKJqnrIiyE0S1Dh8ZC7/HqK/qgqa/Y2i2G74Jc/e+ti6XpT9P2DS5ihhSfYUy3tDu5nELBW9Kx87VicLyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tj7Kua/3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D5EFC4CEC0;
-	Fri, 13 Sep 2024 18:06:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726250788;
-	bh=2jSUwK3ok+ItiZnWlopILuxmtn6sSOQCXeuyuT4Nx1A=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Tj7Kua/36ark1PAnazD1tCbN4lhY97h09dJ1Uo9PNkgVaDGDwQo/IX1Pfz33n0B9T
-	 5SBnxDOMm7tpDJUZ2KbFb9kFBl4VUxvW17gNtafuHma4b1OAeiQ37xPdVNkN5piDuT
-	 B5EWamN7pFv2HsuSBeygSYP0hV1Z7K1k8bpt/vnoQkxyPCsNNCYPT/OoWRNDHTNnXL
-	 mx/H2w2BBO6/Dy4in/lfsES90QvMrUxXxtiWCiQ7ErkbgdkmrZ2ptA2GEVO1FJMUP8
-	 wtSc0GwKTh1IuGzvgqpsF/1oZgiG5MuLh5rPrYEfaHT/DWUKbc3YdFaf88rCqbwfsI
-	 Ulo1AjeA9ZUTg==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: linux-kbuild@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	rust-for-linux@vger.kernel.org
-Cc: Finn Behrens <me@kloenk.de>,
-	linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Subject: [PATCH] kbuild: remove unnecessary export of RUST_LIB_SRC
-Date: Sat, 14 Sep 2024 03:06:20 +0900
-Message-ID: <20240913180622.1327656-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726250815; c=relaxed/simple;
+	bh=hODeVcKESQQ+bysOclnLLpr1fN1atctGk9DXPTCBdzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eYKE7eH3i/og11sY2wLtjetVJSiekdreda7UIyCa7CxYvEQEYh+HVrrTSHBkSFxv7SW8/Jy39Vf1675i/4VopO4q350dMhpR/ykRAj6/Z1GrcrQ0dlfMaq9ZR5qSaI3+n/s7rJUDKjx4sJ4E80bWz7Djh0Y4PbZHFSW1lwUKIQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uwys8dWt; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726250815; x=1757786815;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hODeVcKESQQ+bysOclnLLpr1fN1atctGk9DXPTCBdzQ=;
+  b=Uwys8dWt1N3A0ACDaeP1lRnbwC+4Q5XZhqsWMyrhi//je9wqRpedEhN9
+   gNBjLMu2n1JlAFaKWy/79NqcVOlvKEKKwK6BZLQcz6iysImWrMISI8zd3
+   NxUZWiFx6aNDyqpDDKA8AYkcfN+EL7pu8ptJMajoe//8ViyGQtkq413ub
+   AYRtSk4TS6sDpLlqNewQ3GAoId5vfu7CIh6DpDhDltLMPz08GKo9olqiI
+   XOu9YoiUAuLTdY83etfomjG9kvSA6xmLPQJeG2holvjaVSqtfUYbx1JZl
+   TY+wdxTtClvSbQ82N2gE8CTYcl+M2XCXBv8uTC7tzMlR4dwyOmuwAdwi7
+   w==;
+X-CSE-ConnectionGUID: 9gKdYi1QSp6I/HdoaY5V9Q==
+X-CSE-MsgGUID: zqjLgIi8R4Gl/6STAKR0ew==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25288281"
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="25288281"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 11:06:54 -0700
+X-CSE-ConnectionGUID: +/2pBTv9TBauH7SK5OAjeA==
+X-CSE-MsgGUID: oXgjKCtbQMOmA8rNxzioSw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="98822694"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 11:06:52 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1spAgy-00000008Nj4-3whr;
+	Fri, 13 Sep 2024 21:06:48 +0300
+Date: Fri, 13 Sep 2024 21:06:48 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Parker Newman <parker@finest.io>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	Parker Newman <pnewman@connecttech.com>
+Subject: Re: [PATCH v1 4/6] serial: 8250_exar: Replace custom EEPROM read
+ with eeprom_93cx6
+Message-ID: <ZuR_OERZZY3QoAtH@smile.fi.intel.com>
+References: <cover.1726237379.git.pnewman@connecttech.com>
+ <78dead78311ea619e0be99cc32ee0df1610a480d.1726237379.git.pnewman@connecttech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <78dead78311ea619e0be99cc32ee0df1610a480d.1726237379.git.pnewman@connecttech.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-If RUST_LIB_SRC is defined in the top-level Makefile (via an environment
-variable or command line), it is already exported.
+On Fri, Sep 13, 2024 at 10:55:41AM -0400, Parker Newman wrote:
+> From: Parker Newman <pnewman@connecttech.com>
+> 
+> Replace the custom 93cx6 EEPROM read functions with the eeprom_93cx6
+> driver. This removes duplicate code and improves code readability.
+> 
+> exar_ee_read() calls are replaced with eeprom_93cx6_read() or
+> eeprom_93cx6_multiread().
+> 
+> Link to discussion with Andy Shevchenko:
 
-The only situation where it is defined but not exported is when the
-top-level Makefile is wrapped by another Makefile (e.g., GNUmakefile).
-I cannot think of any other use cases.
+(the above might need to be rephrased a bit, see below why)
 
-I know some people use this tip to define custom variables. However,
-even in that case, you can export it directly in the wrapper Makefile.
+> Link: https://lore.kernel.org/linux-serial/Ztr5u2wEt8VF1IdI@black.fi.intel.com/
 
-Example GNUmakefile:
+Make it real tag by moving...
 
-    export RUST_LIB_SRC = /path/to/your/sysroot/lib/rustlib/src/rust/library
-    include Makefile
+> Note: Old exar_ee_read() and associated functions are removed in next
+> patch in this series.
+> 
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
-This code was added by this commit:
+...somewhere here.
 
-  https://github.com/Rust-for-Linux/linux/commit/3f46885dc03ed2d750085b2237078a1628323964
+> Signed-off-by: Parker Newman <pnewman@connecttech.com>
 
-Please me know if I am missing something.
+...
 
+>  #include <linux/property.h>
+>  #include <linux/string.h>
+>  #include <linux/types.h>
+> +#include <linux/eeprom_93cx6.h>
 
- Makefile | 4 ----
- 1 file changed, 4 deletions(-)
+Keep it sorted.
 
-diff --git a/Makefile b/Makefile
-index d57cfc6896b8..b194b7702a2e 100644
---- a/Makefile
-+++ b/Makefile
-@@ -578,10 +578,6 @@ else
- 	RUSTC_OR_CLIPPY = $(RUSTC)
- endif
- 
--ifdef RUST_LIB_SRC
--	export RUST_LIB_SRC
--endif
--
- # Allows the usage of unstable features in stable compilers.
- export RUSTC_BOOTSTRAP := 1
- 
+...
+
+> +static void exar_eeprom_93cx6_reg_read(struct eeprom_93cx6 *eeprom)
+> +{
+> +	struct exar8250 *priv = (struct exar8250 *)eeprom->data;
+
+Unneeded explicit cast.
+
+> +	u8 regb = exar_read_reg(priv, UART_EXAR_REGB);
+> +
+> +	// EECK and EECS always read 0 from REGB so only set EEDO
+
+Please, use C comment style as everywhere else in the file.
+
+> +	eeprom->reg_data_out = regb & UART_EXAR_REGB_EEDO;
+> +}
+
+...
+
+> +static void exar_eeprom_93cx6_reg_write(struct eeprom_93cx6 *eeprom)
+> +{
+> +	struct exar8250 *priv = (struct exar8250 *)eeprom->data;
+
+Unneeded cast from void *.
+
+> +	u8 regb = 0;
+> +
+> +	if (eeprom->reg_data_in)
+> +		regb |= UART_EXAR_REGB_EEDI;
+> +	if (eeprom->reg_data_clock)
+> +		regb |= UART_EXAR_REGB_EECK;
+> +	if (eeprom->reg_chip_select)
+> +		regb |= UART_EXAR_REGB_EECS;
+> +
+> +	exar_write_reg(priv, UART_EXAR_REGB, regb);
+> +}
+
+...
+
+> +       priv->eeprom.data = (void *)priv;
+
+Unneeded cast.
+
+...
+
+> +	eeprom_93cx6_multiread(&priv->eeprom, eeprom_offset,
+> +				(__le16 *)&osc_freq_le, 2);
+
+Okay, this should be done better I believe:
+
+	/* ...Find better names for variables... */
+	__le16 f[2];
+	u32 osc_freq;
+
+	eeprom_93cx6_multiread(&priv->eeprom, eeprom_offset, &freq, ARRAY_SIZE(freq));
+
+	osc_freq = le16_to_cpu(f[0]) | (le16_to_cpu(f[1]) << 16);
+	if (osc_freq == GENMASK(31, 0))
+		...
+
+	return osc_freq;
+
+(Also no need to break on 80 characters)
+
+> +	if (osc_freq_le == 0xFFFFFFFF)
+>  		return -EIO;
+> 
+> +	return le32_to_cpu(osc_freq_le);
+
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
 
