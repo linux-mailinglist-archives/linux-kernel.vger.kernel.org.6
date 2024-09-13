@@ -1,173 +1,104 @@
-Return-Path: <linux-kernel+bounces-327850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 689D5977BEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:09:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 805BE977BED
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E95DF1F277E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:09:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B273D1C24570
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5981BD4EA;
-	Fri, 13 Sep 2024 09:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yUGmf3yQ"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652401D7991;
+	Fri, 13 Sep 2024 09:09:54 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553F01BFE12
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15381D6DC3;
+	Fri, 13 Sep 2024 09:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726218565; cv=none; b=t33ei0lQxk1EkYcoM445vfLykg+N4qft+eGv1FG5DlPRmJfdRr4Hk0CaPw/lUNTdIR8m21UYjJaPxGDu/1KHw86HaaOhNM912cpMane6o1VSJjdmj+5TqaBTyyx8J13ZO+PSSxOc9gDmfXehdAHcMfzWhtuJ8JRI/O8fwfNaMUU=
+	t=1726218594; cv=none; b=B8mgAcUtPybRnlazJU+p40sSY0EqSOdF9+OX/m+9SpHdVJQGPypLLyH2RlhIdnB+Gy5mRHPGpHPVwFGrG188O4C81e95FnRJ6isLlv3TOC82qR+6KcmnDZQwKFJnYAwGDxueB7EAPMIORHZl+wYGFER8pBPpY51gw9FWaGtAJ8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726218565; c=relaxed/simple;
-	bh=VR77kTkSj9mtdPER9rfxtV81rr43X9QpLa8jlgRjBCw=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Z8l3YoicV3S7ayDDynIg06SYVawGrEjHB2+fS9uA0PzPLWOCkke07riFYAB0LJ1fDDWN7k1Ov/L6m/mgqnG1HJC+hybV1pM7wGVgFTz1BSx45ZVrzIaL0C/Y+h/3zxkgXeNNZCg0zQ+MtWUCtXLE2Bz2fBQA2Tst9Y+x1V18N7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yUGmf3yQ; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cae6bb895so18189855e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 02:09:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726218562; x=1726823362; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0Px7P8vUhtcnumZBZibQpbbgvjXBl3y0kO8YYM/2s24=;
-        b=yUGmf3yQ8M6ILX9AJdsG5SyFOqAjjy2ICS+gKubVl2kf+2G/sWfj/BIblGt1BgQFZM
-         Rp0i3X50dVhT7TbIsAeZpYUIptqsmRBlR5pjbR6Bg5Tmfv/Wo/uS1dPDMwT+7EWHPoqW
-         ++c8JlndyvWTLpULRqrR/uXWuOLQcZaZNxVTLbLAXnRd40xkDuD+6VYwSQZpdJxQ1A4U
-         o+ekITT9C//i4YI4Gw1VqiILyx/crH+B00QfYuOGkAQ8JgAtTViTi/YpeOTOmux0X1O1
-         cB/fFRL6QGCWCKsIijtJwDUndUY5/+SFjhq3EmAEmOIjumS9AqKawIIzBMTuN+rBCAZn
-         riHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726218562; x=1726823362;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0Px7P8vUhtcnumZBZibQpbbgvjXBl3y0kO8YYM/2s24=;
-        b=ZQNchFnvR1walvXmfEJj6R3ZhefNKKkQaNBH21cv/npCyMubMdnpTdCri1p/hx/rbK
-         ltZJsNBwfEAtjMzxFkbuHBWZ1MjU1Wn+uaAMGiHcLD//OtJ2V1iQVaTSfZgBefEgOAOq
-         B3YsilolK+De1/cUzP65MOJlIXMvkIpJ9+ewMyXAWDbEzVoaJrtnrWHR955SMSYYG3yj
-         7odG3FyYM3n9dP3dWs/UCOobKecyEVHWCDN/4JMctjs3IhdaNKEOhA3FX5RqaEhhJZEg
-         0sP+4zPRlVFyzxvxFRZ9Lzw9HgQer+P/ePXZmfh3uZEcvSR0st6je5iiKyQBQ7Ii36Uv
-         KSBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/JN89gIAW9+NghcAsSLNUJPBKOsSJ/oMGeC69BX4SnDzd9mDdcGSFJJZ8+ohQlQs6gr3KR8wtbxue7FI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqvYtyn/D259DezLd1qWAdgRC91jn6JYQlxlP44b8bedHv7BSU
-	cQTjd7TWZ6liArCSFawzjFa+ukRLjZvPI/jG3NcdRVpWmctCK1KYow9VWxdgcTY=
-X-Google-Smtp-Source: AGHT+IH7SyOewl5IXKTi3cewOPHM7wrZGefNZMT6Npms0fzQJ1acd3Jey9j4PucxqZTn0IAqCKo78g==
-X-Received: by 2002:a7b:c386:0:b0:42c:baf9:bee7 with SMTP id 5b1f17b1804b1-42cdb67b16bmr40882295e9.12.1726218561024;
-        Fri, 13 Sep 2024 02:09:21 -0700 (PDT)
-Received: from [192.168.7.202] ([212.114.21.58])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b18202fsm17354465e9.42.2024.09.13.02.09.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Sep 2024 02:09:20 -0700 (PDT)
-Message-ID: <e6d37d13-a150-468f-93c8-f8109996b974@linaro.org>
-Date: Fri, 13 Sep 2024 11:09:19 +0200
+	s=arc-20240116; t=1726218594; c=relaxed/simple;
+	bh=Av6DwQRaWunF3koNCEdfoBHipvscEcRfDxYFy3uvIH0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rr5JmhufO/wuowclTWJh5UzQdHqoJo9QJ3vM2N1LZKQjZZvzrpZgvyxbkYakI2HDQn0VQe1LsrxlIXFM6B9gKXX0pJcj+EpECRhe739a6JQK36rSvX43IQUKCtrGLmiLcUqj3LtuKOSdJG1IvnYIQB2Aj7NOAC7ek9csh7xmxdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-03 (Coremail) with SMTP id rQCowACXndlHAeRmbBRXAw--.41S2;
+	Fri, 13 Sep 2024 17:09:34 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: alain.volmat@foss.st.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	vincent.abriou@st.com,
+	benjamin.gaignard@linaro.org
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>,
+	stable@vger.kernel.org
+Subject: [PATCH] drm/sti: avoid potential dereference of error pointers in sti_hqvdp_atomic_check
+Date: Fri, 13 Sep 2024 17:09:26 +0800
+Message-Id: <20240913090926.2023716-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] drm: panel: nt36523: use devm_mipi_dsi_* function to
- register and attach dsi
-To: Jianhua Lu <lujianhua000@gmail.com>,
- Jessica Zhang <quic_jesszhan@quicinc.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240904142907.367786-1-lujianhua000@gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240904142907.367786-1-lujianhua000@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowACXndlHAeRmbBRXAw--.41S2
+X-Coremail-Antispam: 1UD129KBjvdXoWruF4kGrW7Gw18WF43uryrXrb_yoWfZFg_G3
+	WUWrnagFy7KF1vva1jyr98Xa4F9FZYgF48Ww1jva9xArWDWryrX3yxWFyrGw4UWF40qFyD
+	ta1xCryqgrna9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbSxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
+	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r
+	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
+	648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2
+	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
+	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0x
+	vE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE
+	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6x
+	kF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUF0eHDUUUU
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-On 04/09/2024 16:29, Jianhua Lu wrote:
-> Switch to devm_mipi_dsi_* function, we don't need to detach and
-> unregister dsi manually any more.
-> 
-> Signed-off-by: Jianhua Lu <lujianhua000@gmail.com>
-> ---
->   drivers/gpu/drm/panel/panel-novatek-nt36523.c | 16 ++--------------
->   1 file changed, 2 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-novatek-nt36523.c b/drivers/gpu/drm/panel/panel-novatek-nt36523.c
-> index 18bd2ee71201..04f1d2676c78 100644
-> --- a/drivers/gpu/drm/panel/panel-novatek-nt36523.c
-> +++ b/drivers/gpu/drm/panel/panel-novatek-nt36523.c
-> @@ -1095,18 +1095,6 @@ static int nt36523_unprepare(struct drm_panel *panel)
->   static void nt36523_remove(struct mipi_dsi_device *dsi)
->   {
->   	struct panel_info *pinfo = mipi_dsi_get_drvdata(dsi);
-> -	int ret;
-> -
-> -	ret = mipi_dsi_detach(pinfo->dsi[0]);
-> -	if (ret < 0)
-> -		dev_err(&dsi->dev, "failed to detach from DSI0 host: %d\n", ret);
-> -
-> -	if (pinfo->desc->is_dual_dsi) {
-> -		ret = mipi_dsi_detach(pinfo->dsi[1]);
-> -		if (ret < 0)
-> -			dev_err(&pinfo->dsi[1]->dev, "failed to detach from DSI1 host: %d\n", ret);
-> -		mipi_dsi_device_unregister(pinfo->dsi[1]);
-> -	}
->   
->   	drm_panel_remove(&pinfo->panel);
->   }
-> @@ -1251,7 +1239,7 @@ static int nt36523_probe(struct mipi_dsi_device *dsi)
->   		if (!dsi1_host)
->   			return dev_err_probe(dev, -EPROBE_DEFER, "cannot get secondary DSI host\n");
->   
-> -		pinfo->dsi[1] = mipi_dsi_device_register_full(dsi1_host, info);
-> +		pinfo->dsi[1] = devm_mipi_dsi_device_register_full(dev, dsi1_host, info);
->   		if (IS_ERR(pinfo->dsi[1])) {
->   			dev_err(dev, "cannot get secondary DSI device\n");
->   			return PTR_ERR(pinfo->dsi[1]);
-> @@ -1288,7 +1276,7 @@ static int nt36523_probe(struct mipi_dsi_device *dsi)
->   		pinfo->dsi[i]->format = pinfo->desc->format;
->   		pinfo->dsi[i]->mode_flags = pinfo->desc->mode_flags;
->   
-> -		ret = mipi_dsi_attach(pinfo->dsi[i]);
-> +		ret = devm_mipi_dsi_attach(dev, pinfo->dsi[i]);
->   		if (ret < 0)
->   			return dev_err_probe(dev, ret, "cannot attach to DSI%d host.\n", i);
->   	}
+The return value of drm_atomic_get_crtc_state() needs to be
+checked. To avoid use of error pointer 'crtc_state' in case
+of the failure.
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: stable@vger.kernel.org
+Fixes: dd86dc2f9ae1 ("drm/sti: implement atomic_check for the planes")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/gpu/drm/sti/sti_hqvdp.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/gpu/drm/sti/sti_hqvdp.c b/drivers/gpu/drm/sti/sti_hqvdp.c
+index 0fb48ac044d8..abab92df78bd 100644
+--- a/drivers/gpu/drm/sti/sti_hqvdp.c
++++ b/drivers/gpu/drm/sti/sti_hqvdp.c
+@@ -1037,6 +1037,9 @@ static int sti_hqvdp_atomic_check(struct drm_plane *drm_plane,
+ 		return 0;
+ 
+ 	crtc_state = drm_atomic_get_crtc_state(state, crtc);
++	if (IS_ERR(crtc_state))
++		return PTR_ERR(crtc_state);
++
+ 	mode = &crtc_state->mode;
+ 	dst_x = new_plane_state->crtc_x;
+ 	dst_y = new_plane_state->crtc_y;
+-- 
+2.25.1
+
 
