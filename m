@@ -1,212 +1,174 @@
-Return-Path: <linux-kernel+bounces-327780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB86B977B14
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:31:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5587F977B0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:31:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D1F11F25CAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:31:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F20D1C245A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443791D7E37;
-	Fri, 13 Sep 2024 08:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="wApw0FDv"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2059.outbound.protection.outlook.com [40.107.21.59])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561B91D79A2;
+	Fri, 13 Sep 2024 08:30:41 +0000 (UTC)
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F3E1D79A8;
-	Fri, 13 Sep 2024 08:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726216243; cv=fail; b=W79jiAaQq2we9AfPMlfqqf9KDT6BBnEZRp4QEaai3N2UjEecAj5RA7d8699J20+VrethTSnc44sFv9foBnD/te37aI4+49BKjwwo3tWnLrbfDifkv+Wn7wRXUgbbZ+FVnMFo3l8Ey0bkHUrfaxC/88HDmkcqdaH97M96FOKdJ+g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726216243; c=relaxed/simple;
-	bh=7cn+2MieRYiKh4YRXkyXyV9HQNytc64vZ/RQY5VQT0o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Kr1ysXQrzg8dN1qK7wddqFVp/uUpNiS4LBC9IcWlNQbW1EqfvPA3a+UkTQSoyZ7HVrjQpLA7AqOEFHHI5RS9xSyghyMsrVEAPqalVyCOVz8+R9tsbh4qPcWGYhcxUCJ3X6aPzn/jDnRjBATWno4rnPjDnpLNHl2BTpYPPksNDJE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=wApw0FDv; arc=fail smtp.client-ip=40.107.21.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iVflI63bHIcvsVSs1Jg303Mz4liab3xcNnw2UpXEjqzMXvpMFpBCDwmLd97WsvleUvMFyVzDCOXjYC4orn3UPK93VrOCo9C2YhVF8TAZNYcepRRtzgts3pTlfEd0v9z6vuW88GQytu8awoa1VcCOtwLMDewX6cojN/WteF1pRx7fh98C2cxzgtKwvCl/vPdZqjxYvirEgb7/qdluf0Qr26bd54LuwdxqLCPxxIGrVuLZ7/kwvAnR6sA2hTAiX63KuU7It4oPModqrDECqsZN/ZnLrIhFFO/noCQQQM0QJ2NcvgDIaQZERqHl1S2IN9UAaHDp+ortTUSW/wLDMq0ZYA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QjCSUOOZVM71QFpr7noHcDioZNtuSHZqJ2aVZ5bo8cg=;
- b=AUOiXG13TK27GS38DS8XW3r3YrYyb4WcmyHJ3iTBNHtUf0YmMxug/giXjpZJhoz1oKHh1+4ZflHe56cYm1modO7k/IH+5uk/etopiiPL7PhY3PLlTSqU1rH7kk5UAjw6lekVAuhVsWASGu0xWHolAo5L+3KedxbNqJp8PqLsIZlYjb8TjzDS2Rd/dYhtflSYD2AtwIDRWcI2O+anjRfXQLCvLv/HMFPzive46awObfsaJaln74qACtUwbXRaA5YHbYYY2dPV7eBKof4uKzvg/BrDpSM/i8kviIOF+KqpGYcj1b58mnXr2tuBK1x98exwuAaBIqMpeZJBsD77rzj4dg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QjCSUOOZVM71QFpr7noHcDioZNtuSHZqJ2aVZ5bo8cg=;
- b=wApw0FDv3bVW270zogDJmQfC+jPO/EiJS56AcFpxGxIbc/wJS5daDWO8R8ehEXkxkru6n8ddtcuPA0EzWddXJVftZ60rFCRx3upmwzDHBUVe4hxdbMD3CGZ9xOwQv8AKeEHe8g/P6alxz4l1wtxCEEFIfd1LJkFlKVfkR7SAeUi78Gat4impnBOlNpAqLgWy/BWRY5w6EbrYzsGNnZZqHl7dka2SIDW0LUd5iLzJb2rO6g13TarzgxC5q90Nbw2ActHrFtWPvTzpqYKwJUN57O+bHK10EBamApFFL/xFPlqOW8+r5AEPBBQyfc1O8g2Gc+HD0t6BXTo/yCr9pqOdeg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AM9PR04MB8487.eurprd04.prod.outlook.com (2603:10a6:20b:41a::6)
- by AS8PR04MB8403.eurprd04.prod.outlook.com (2603:10a6:20b:3f7::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.17; Fri, 13 Sep
- 2024 08:30:39 +0000
-Received: from AM9PR04MB8487.eurprd04.prod.outlook.com
- ([fe80::6d7a:8d2:f020:455]) by AM9PR04MB8487.eurprd04.prod.outlook.com
- ([fe80::6d7a:8d2:f020:455%5]) with mapi id 15.20.7962.018; Fri, 13 Sep 2024
- 08:30:39 +0000
-From: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chester Lin <chester62515@gmail.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-Subject: [PATCH v2 4/4] MAINTAINERS: add MAINTAINER for S32G2 SIUL2 GPIO driver
-Date: Fri, 13 Sep 2024 11:29:35 +0300
-Message-ID: <20240913082937.444367-5-andrei.stefanescu@oss.nxp.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240913082937.444367-1-andrei.stefanescu@oss.nxp.com>
-References: <20240913082937.444367-1-andrei.stefanescu@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AM0PR02CA0134.eurprd02.prod.outlook.com
- (2603:10a6:20b:28c::31) To AM9PR04MB8487.eurprd04.prod.outlook.com
- (2603:10a6:20b:41a::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522021BCA19;
+	Fri, 13 Sep 2024 08:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726216240; cv=none; b=FmH/Vjcqm6hWzRF7XG2bRrlQSkec73gG8C//skY2WcmMYzLU9MDyB+4jphzBBdGoKdt+vAnYvEYkJEAFyVRq34OByZCm1OzBZDLlHLxSv6jRShicfGPFExRaqf/1GJ5oSQq5Ef9UCDn1V/SPMOgZggr3fKQYfArZ3mZkeBrSdQ4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726216240; c=relaxed/simple;
+	bh=kPrSg6p6aTVQXXcjD7xT55A6UN3j0AilK3uKI03SJuY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KZyvSAoG4+tx7bNGnIEmvHrLSkIQekXbu41eWvRBLNTUqTpKsUxURq9Rjp3z7laqtILzPlQbKIMGkurhef8i2kRX5LAK/KWWA3+S4gZFuQJFGLJheqILT8rXx02TirqkH/s8VaGj5RAVHambcopz3OIlrlDvrCmW6dFxc80EBRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4X4n0v135Cz9v7JT;
+	Fri, 13 Sep 2024 16:05:19 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id C27AE140360;
+	Fri, 13 Sep 2024 16:30:27 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwCX+ckW+ONmdJzVAA--.9008S2;
+	Fri, 13 Sep 2024 09:30:25 +0100 (CET)
+Message-ID: <b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com>
+Subject: Re: [PATCH v3 00/14] KEYS: Add support for PGP keys and signatures
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: dhowells@redhat.com, dwmw2@infradead.org, davem@davemloft.net, 
+	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, zohar@linux.ibm.com, 
+	linux-integrity@vger.kernel.org, torvalds@linux-foundation.org, 
+	roberto.sassu@huawei.com, linux-security-module@vger.kernel.org
+Date: Fri, 13 Sep 2024 10:30:11 +0200
+In-Reply-To: <ZuPDZL_EIoS60L1a@gondor.apana.org.au>
+References: <ZuPDZL_EIoS60L1a@gondor.apana.org.au>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM9PR04MB8487:EE_|AS8PR04MB8403:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2857b8fc-9a75-4aec-16f4-08dcd3ce58d6
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|7416014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RlQ4dkg1Zjc0blJQZm5zMVU2cE5ud0hTbmpMRXlhSEI4bTBmdTZkVlN6QW9U?=
- =?utf-8?B?U3dmN3FNSUNSdjlZU3BJcVdCdGI0VkJjdWg2NXRoVkF0N2pKRU1OUVY3bnlX?=
- =?utf-8?B?Q2k2S2Vhckx5Z0V3QUFmR0V1SmZ6Nk11NVM3d3cxbzlOZ2N5Vk0rTHN1UjJT?=
- =?utf-8?B?VklQWDBocGgvb1ZuSm5yZkZienlORGRIU0dDaG54TTl6YmowZDYwSXRWMVVM?=
- =?utf-8?B?NHNoUXVoWHVSUWx5SHZ5eG5aWHc5c1JNRGxMZkw1RGUvY05rYlVLcjhndzVn?=
- =?utf-8?B?UmVta1FlMjVGb09LdllSNCtaTkNvbWZXUERLVWdJYWxqbTBmcVVxSUxyYnNF?=
- =?utf-8?B?dExGQkVUV3F3OGtBL0labm1meWdYRVVBWFJaRGQvc0FuNTRPWmVhKzVQVHRH?=
- =?utf-8?B?VVJTejh4eUJyRWFIV1FUU2p5YTFvQndHVFFjRkRaZGdlcEJzVFR3TmtTbFUv?=
- =?utf-8?B?bmsva3FONUdCODRGZ0pWcGRtcFpXempqMmw2NklFb0lRV1pEaW42Z1R1VGp4?=
- =?utf-8?B?anpvWGlPRXZQdVJMUjlnVkRyQ2U2dmhxSVpEbWpNeEx2L2ZhWktIamZiNkY0?=
- =?utf-8?B?cW93MXAvRmd0aWc1REUyZ0E1NWM4Ynl2VXdKNEJjMWNpdG9UTEtBdkRpUE84?=
- =?utf-8?B?NThaMDFNVXpEbk1XZk4wcHFyYmJCeXl3QWZwRmQwaTMyWklLbnhjaDUvRnph?=
- =?utf-8?B?YXZra1FZNDl5ZU5jRmpMRk1yaFBza2NVUU1pZmpZL1g3bmZod1dtNWhHTVJF?=
- =?utf-8?B?eGVBT2ZnREsrNEZoUXVUcXNVRVRGV1hoMFFiakU1OXRQWkV6aFNCcmM5VzYz?=
- =?utf-8?B?cWltcVNadHF1WjQ1NGFsRFRPVldhdUJmcG40V2NOTi9sRXdVRmY5RFBEdU5K?=
- =?utf-8?B?Wnp4UFUvR0xrMStnK0VXaWVsVEp4NmNnbTB5ckc5WnRHNGx4b0F3blBIVCs2?=
- =?utf-8?B?OFA1TTBKeTFwOVdCZHR6K0RjMVB4cmpFVTFFc05DNjU3aVo5R2R0Z3BTbVNX?=
- =?utf-8?B?ZnltazVDUU5NYUdLeXZCZURzUEFxaUgycnB5SFpuaDhKQmlNNlZvdXVGVkZH?=
- =?utf-8?B?RnFwdFpxakVBNkNYV05WaGIyNjJiSUtTTXFyUm1nVHFhYVdYRVRFSnQwYTNm?=
- =?utf-8?B?bUVuV2ZBdHY2aWZaVlNTbGdMQ2ZxVzQ2bUsxUGg0SHVlc0xVSWxZYU1OS05v?=
- =?utf-8?B?WG95YmJWRllGeGUzNDhoZFhINGZNT2haOU4vYUxUTDFySEg1RGRGT1RjUFlw?=
- =?utf-8?B?QXAyVWVsYm1CYU1QMjI2Qk9sUUJ5UU1ET3VnOE8yTytGTit4eEhLMmZUYkR5?=
- =?utf-8?B?NzBuVWhQYXY5NGlqYUlaemxMNkRKMUl4bWRpWDFhVExNNW9mZjM5bzJ3czJF?=
- =?utf-8?B?Y0pWMWFOVU5XeExGVVhoN0cvbVdaanFjS0dlUW5mUjIxT1ZKbFFSR0VlOG5M?=
- =?utf-8?B?N2dvL0NvSkcxOW5peXE0SkdpZ20xNVR1YzFuMVN6NkM3M0prWDdtQVNWT3U3?=
- =?utf-8?B?MXdFL0xtM1B4VzRsMGpXVkZTck9WZ3hIajBaNEMrdDhXUTFGSFlJaDhoUUlP?=
- =?utf-8?B?bUsxUTRUNFpNNzFhTG9ESDJQVzFhalVNQTVXTHdpWG8vcHNiWGJoSXlLMUV1?=
- =?utf-8?B?dlMyUkdLVTg0SExHcWVYcmMyNmJ6NUs3cHNoWWVDQmlCK1ZCVERhUUFHRDY3?=
- =?utf-8?B?Q1RucXU5eXRwaHJtakJuSHdYQXA1MlhsNzJrOFNwV2Q4dU9SUkR5UnpXaVZr?=
- =?utf-8?B?OHQvaExERkpWdExUcjE3Ym1WRVlmenIzNVVmMG8wV1hiZnR1TUw3VWdJb2ps?=
- =?utf-8?B?OEgyWU9vOThCVDdlYk5jZytTa0lRUDg3YWRXQnQvUUYvajZyTHl5dXhiL1Qy?=
- =?utf-8?B?YmNidXRUUzBxTVRDZWc5RlB1YTJwdGdDRURMWlN2YnZja2c9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8487.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(7416014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bXd6UFBoYXhNZDNNSk9hTmlSWm9nTWFQMGowWVZKdzEvSlk2bFVSTE40YXlO?=
- =?utf-8?B?L3FxOTVlclBObW1kWFpYRVk5WFNwNWxFRG0yUG9NQXBXVUQ5bVRRb0hmcVoz?=
- =?utf-8?B?TWlUWjF1Qk9wOW1jNHJYK1dWdTZoNGdRY1hjaXU5d2ZiSHkwaDZPelR6WDZZ?=
- =?utf-8?B?UERsNk1tVGhhSy9lbUtoQ0JzMGt3SXk5M2RDQnJjdUxaYnlpM1JIQk1tU053?=
- =?utf-8?B?Ylpmd2J6R2EwbHB2MUZOOEFHNXRpREIyN0RSaFc1d2YrdWZrd1pzQmR6aXlR?=
- =?utf-8?B?ZHYreVBFV0RNLzh5U2YwQ0tCaW5WUWxrQWxaWXN1UXRtc1hISE4xRHFJbzBi?=
- =?utf-8?B?Z1BJN0xrbUFaZjRIODVjRHk0cTNTWjRaTW9UcTRwMHBQR280QXcrQk15OWp2?=
- =?utf-8?B?Q3AzQnByWU5hRnNkRVNBNUQ1NWtQSXJZaWVZY1NyS1NGbmFJRU9KcnRZdDlw?=
- =?utf-8?B?d1VLNkhqWThDUHNKOFVEREpwOXR0QzUwQ0RYcWo1MjIvcGduRVlNTURUdHhV?=
- =?utf-8?B?WmhYbG9BRWxDSU5ZUGVvL2VybFVQM0RNR0pSV0pxU2dWZ2tiMVhVejhVckRs?=
- =?utf-8?B?bEZjUTBheDdWRWFFVG9pTU1DY2djK0JtQ2hvMFRVTWtxSzZVVGU5MFQ4d2pt?=
- =?utf-8?B?YmQ3ZnR6aGtJdURyUHVtYUluaEcrSWg1NTdPamd4RktvUjUrZGExUy9VR2ln?=
- =?utf-8?B?MEVIbTZDZkJNVlFVYlJyczhYbEcwQnlMcG9pSzVmbjJNTmt0UWdVREZ3WjQr?=
- =?utf-8?B?ek1hSkYrb3JOTGVMNWlSS0JuQmtIcHNDTmh0eGRmSnhqMk1yZW5RZDRrcnk4?=
- =?utf-8?B?OWNyWjR0RnhBL1dtRHU2RUIyL0F5MnJhMGIxOGZoZ2RDR1JGelowS2xOYU5S?=
- =?utf-8?B?Y210dnJjS0E1QkRhSUY3Wk5BZzE0cVZ2MWtMNVVIUURadmM1NXlkWW51dHZT?=
- =?utf-8?B?N1lPUCtXWktjajZCQ2N4NmdNOTVxRXBHdjEwQVIwUXNvKzQ4bjNoeFQxTkNR?=
- =?utf-8?B?aGdUUDRIZllZRWNQdzRqMGNDUS8ramN0dHUwVk1yQmUyVDRHUEZKYzVQbi9W?=
- =?utf-8?B?enJqZkVDS0l2UGZSb285aXM2Z0hvTXRWYVgzV21GTDE1NUlVVVpMZHpNVXRo?=
- =?utf-8?B?S1dwVEFEOEtiU1QwRXFNcnpmYkh2MnhFc1NvSjJMb29GN0JKWStDOGNxYTE5?=
- =?utf-8?B?RFBUTm9kT1FNYXpFV0RYTW10bklHbjJsM1dWR1FiU2VObDFxbEg0ejJOTVhB?=
- =?utf-8?B?Q0pVWmcvSE1kUnMwTHgzcEprWllCY3J3cFFUYnBKUngyZ1lZSVY1Mk1NamZQ?=
- =?utf-8?B?dnhaVTRBZmc5MUdVS213cGRUbWNPdFRDRmtkYndSYThvUFhpcUdCdlo3dHJP?=
- =?utf-8?B?ZWdmNDdoUUxjeXVGVHRORlpQWG5RNUl6cnFQbGxuNjNFRzNMOTlKOVR2QUpU?=
- =?utf-8?B?V21jMldVQU51SmdVSG1zd3RZdm5SV1hnL29PR0F3NUljMmNZMjdBd0VLQ01l?=
- =?utf-8?B?ZEl4SUdFZUJzNkhZaTNUVXN3YW9HZmJaWVFOOXNyVXlpZ01lR2FKenQzNnBW?=
- =?utf-8?B?MXNhaXNKa1RMbW10K2hQcHduTEdra1oza3kzaUVFUlVNOXNqN2dsdVNvcDFi?=
- =?utf-8?B?QUVsSGpmd015VzlJak5zWWZUSWhKWG5LMnk0eXlNTWowS0hXRHllNVJ3cXBv?=
- =?utf-8?B?YXBVYmJhNk8yZEFQYVBkL3doeGxlengvS29EWVAyZDlaMytURTh3ditabFph?=
- =?utf-8?B?OXBPejdrWUIvRGlOK01FaFFiNGk5SEM3RjNUQ0Y3ZWFNRDdKQmJuaVhRVytr?=
- =?utf-8?B?ZTZleW1MU2ZSd2E0S3VNUG1oZllpdWcycXpWMHhIRGl2T0RBa2ZiNCs0SWx6?=
- =?utf-8?B?NVFRYm5xR2p2VDR0dDJ1eG5Wb0xjdWxJbUd2SUYwWGtMS1JKUjRlMnRSRkkw?=
- =?utf-8?B?STJ6bEhBbUMrSEpCNGxVUVF0Z3ZLbFJVMG9HUXh2L1lFR2pkNnVRTUtRN3Jw?=
- =?utf-8?B?Q1Fmc0t0V01FL2w1b3g5elU5LzZkYngvZUorS0krdHhrOG5DL1pIbTUxYjdl?=
- =?utf-8?B?Y1lkYXBHMG9Ja3cvUFYxTm93bGs5RnBrY3lvNHpuSHJIRUtJb2hleWtqTEI4?=
- =?utf-8?B?Vk8zcGNGTGVVR3ZoQkFGclJKNmhDUzhFUFpVbHQrVTdLQkd1L1ZCTlR5em9v?=
- =?utf-8?B?bHc9PQ==?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2857b8fc-9a75-4aec-16f4-08dcd3ce58d6
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8487.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 08:30:39.1276
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gei5Cdu9Q30NR/HquIN3C67VYjWM55ayCJFajOfReBwj6M71hfWeDOCaUKuOr0+5NlOuLK+2XVwCCqd51ddzAJm6pFY+AibmwcLi61nU194=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8403
+X-CM-TRANSID:GxC2BwCX+ckW+ONmdJzVAA--.9008S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxGryrJw4DKr1UZr4kWF1rWFg_yoW5tryUpr
+	45Aa9xKwnrJr17K3s7Jw4xCa4I9ws3C3W5Gr9xJr1Fywn8GF1I9r1S9w4UWF1kCr4xJr1Y
+	vwsFvr12k3srZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAFBGbjn-sDtwABsX
 
-Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+On Fri, 2024-09-13 at 12:45 +0800, Herbert Xu wrote:
+> Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 10430778c998..e23c4369b6e1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2689,10 +2689,12 @@ ARM/NXP S32G ARCHITECTURE
- R:	Chester Lin <chester62515@gmail.com>
- R:	Matthias Brugger <mbrugger@suse.com>
- R:	Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>
-+R: 	Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
- L:	NXP S32 Linux Team <s32@nxp.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
- F:	arch/arm64/boot/dts/freescale/s32g*.dts*
-+F: 	drivers/gpio/gpio-siul2-s32g2.c
- F:	drivers/pinctrl/nxp/
- 
- ARM/Orion SoC/Technologic Systems TS-78xx platform support
--- 
-2.45.2
++ linux-security-module
+
+> >=20
+> > For the envisioned use cases, PGP operations cannot be done in user spa=
+ce,
+> > since the consumers are in the kernel itself (Integrity Digest Cache an=
+d
+> > IMA). Also they cannot be done in a trusted initial ram disk, since PGP
+> > operations can occur also while the system is running (e.g. after softw=
+are
+> > package installation).
+>=20
+> Does this address Linus's objections? If not then we cannot proceed.
+
+I hope to get an answer from him.
+
+> Personally I don't think the argument above holds water.  With
+> IPsec we had a similar issue of authenticating untrusted peers
+> using public key cryptography.  In that case we successfully
+> delegated the task to user-space and it is still how it works
+> to this day.
+
+That makes sense, since it is not the kernel holding secrets on behalf
+of user space, it is user space passing the crypto material to the
+kernel (if I remember IPSEC correctly). Failure of user space to hold
+its secrets or to tamper with the task has only effect in user space.
+
+With my understanding, I'm citing a source enumerating the requirements
+of a secure system:
+
+James P. Anderson: Computer Security Technology Planning Study
+
+The first requirement of a component enforcing a security policy on a
+Target of Evaluation (TOE), aka the reference monitor, is that it must
+be tamperproof [1].
+
+The security policy I want to enforce is: all code that the system
+executes has been built by a trusted source (e.g. a Linux
+distribution).
+
+I want to leverage the kernel to enforce such security policy, and I
+assume that the kernel can be fortified enough (for example through the
+lockdown LSM) to be considered tamperproof against the TOE (the user
+space processes).
+
+The first problem I see in delegating the public crypto task to user
+space is that it is at the same time part of the reference monitor
+(since it is used to enforce the security policy) and it is a TOE too.
+
+The second problem is, assuming that the task is verified through other
+means other than PGP (but again, we are still relying on the public
+crypto functionality to be performed by the kernel, for this to work),
+that I didn't get a confirmation that user space can have equivalent
+isolation guarantees as the kernel:
+
+https://lore.kernel.org/linux-integrity/eb31920bd00e2c921b0aa6ebed8745cb013=
+0b0e1.camel@huaweicloud.com/
+
+
+Please, keep in mind that I already proposed what you suggested:
+
+https://lore.kernel.org/linux-kernel/20230317145240.363908-1-roberto.sassu@=
+huaweicloud.com/#r
+
+
+After discussing with some kernel developers, the outcome was that a
+better choice would be to put the code in the kernel, if I want
+reasonable tamperproof guarantees.
+
+Thanks
+
+Roberto
+
+
+[1] https://seclab.cs.ucdavis.edu/projects/history/papers/ande72a.pdf (page=
+ 17)
+
+> A user-space daemon dedicated to public key crypto seems equally
+> applicable to your scenario.
+>=20
+> The original application that brought public key crypto into the
+> kernel was module loading.  If we really wanted to we could extend
+> the user-space verification to modules too and perhaps kick all
+> public key crypto out of the kernel.
+>=20
+> The complexity and lack of reviewer attention in this area means
+> that we're more likely to introduce security holes into the kernel
+> with such code.
+>=20
+> Cheers,
 
 
