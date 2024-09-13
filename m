@@ -1,237 +1,154 @@
-Return-Path: <linux-kernel+bounces-328391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4368A9782C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:39:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 600209782CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA1671F21155
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:39:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A54B1C223BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7441A276;
-	Fri, 13 Sep 2024 14:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E586B2A1D7;
+	Fri, 13 Sep 2024 14:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CV3VvuO8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ay3fgm8T"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CCCE101C5
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FBB29CE7
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726238374; cv=none; b=Yj1kNfy2EFSqfE7I2/ZJ/dBj2z873yCJrVYLdtJjreFP9lesWDoQGN3HR6juN9rjq94384mR/aJdIKAi4zGsNud0mAkRvqmagL52GB/ielAVH7kAck+d/46W7gu1XYuEnTKT6PGGpWaGFZDTKZKvY/N/SqjXniyscN2avapOByg=
+	t=1726238392; cv=none; b=kZygtrUDIO77Mhjw7FlNJRH3ztFMBtAOI0z8jcWfxKi2drsF0myaMM8EtmUkvxtMi4kDyeEbu96ke5meh3Rdp2aQ06uLX2JdbkxJAM+3a7PsTQ1ptFXRQpT8GQD7ZfIYrBS8oTgyGvCSKG3uu6AlIDgjUZs+Z5mb0gupLAZtznU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726238374; c=relaxed/simple;
-	bh=iF+OwMVzAxNrDmu6houQARtAsobEPYNKJexijboTY5o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=my5k2jIMvIk5ZlW9fqViVtZ6aUtLvlzuoywC6Jur3ur50mWHmGRiK+LraL7h7yhNlnAJDJmgeIw56ewVbudUy171jZzDWD2+AGQKXUDssMfl4QeaKuxD9lI5CjweKTlvTP5s/1nxDxPrHzIDfLP9BaI2nsaiZtztSKdk/zZNmsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CV3VvuO8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726238370;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iaQbIDBF55GqS7IkFMCgMsaRgkbnRg9eREgwNo66+n0=;
-	b=CV3VvuO8w3Zy2VyJt5WlFfTG64bVLQY2hRjt5OYf9nsbZSxjK7qpMPc09srHfxQFsnHn1G
-	/j0C80C4wRgsDeBP3EOtQhu9HChuPdI7txncDhEbrfbdvaxIzZOIs4OYUEX+ZkKirEG/Uw
-	e25ecYcPvj7LjZ1EJtYBkfTrIuraEzE=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-166-e0HL4IeGPTe1OLhcK9g9YQ-1; Fri,
- 13 Sep 2024 10:39:25 -0400
-X-MC-Unique: e0HL4IeGPTe1OLhcK9g9YQ-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7117F1955BC1;
-	Fri, 13 Sep 2024 14:39:23 +0000 (UTC)
-Received: from redhat.com (unknown [10.22.8.105])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 380051956086;
-	Fri, 13 Sep 2024 14:39:21 +0000 (UTC)
-Date: Fri, 13 Sep 2024 10:39:18 -0400
-From: Joe Lawrence <joe.lawrence@redhat.com>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
-	Petr Mladek <pmladek@suse.com>, Jiri Kosina <jikos@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Marcos Paulo de Souza <mpdesouza@suse.com>,
-	Song Liu <song@kernel.org>
-Subject: Re: [RFC 00/31] objtool, livepatch: Livepatch module generation
-Message-ID: <ZuROlpVFO3OE9o1r@redhat.com>
-References: <cover.1725334260.git.jpoimboe@kernel.org>
- <20240911073942.fem2kekg3f23hzf2@treble>
- <ZuLwJIgt4nsQKvqZ@redhat.com>
+	s=arc-20240116; t=1726238392; c=relaxed/simple;
+	bh=tx+eiWlkm8Gy1oJTVQzCp0tnPwzYu6jX+WUYZnyHw/I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rVCJyf8PeW/Ogy/wzOGeFkdRZ+f2KgWfY5LoPiJOtpnZHXAWc/xd035Ta/wK2KOXa11TUPxlAEx35wX3CS1nMArErF3cOgAaRWb9WEdmctk/GEtXEEXgs8V9/lmVC7EYkiZQShd5/KMBtUrvyaAFdWd76GAm2arP2p6i+y1vRMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ay3fgm8T; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f75428b9f8so16226461fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 07:39:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726238389; x=1726843189; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tx+eiWlkm8Gy1oJTVQzCp0tnPwzYu6jX+WUYZnyHw/I=;
+        b=Ay3fgm8TX/lylCmCYjEA8IgcdrFn0qsvI8OaIXHuy6OQNIuEre2yyb0Iss6BA6wuTU
+         vunDWCwf0vXqylUTcHcpleK6cPxULGoi5qiCWjrQd1pCZjp1BgvSsIB1kXSbK08pHTFw
+         oJjKvH8bq+jrFD28eS5eSSmWfdGrf4oZp1xgN8uaj99AucAKMW8mnUaUAnZheadYrAop
+         QmkZ+9/UFVAVN8IdeLdznmRlUubZqOkRZGzj3V5ZW5M8GLEowR1YWP0bo6mvlTJ4PR1T
+         PJne7U/1dBU4OxON2mGn9o+hvNVT39wgx88PvmJP4SA7n1j1Q0/Li6cfkc0PSzao/OfX
+         IY0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726238389; x=1726843189;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tx+eiWlkm8Gy1oJTVQzCp0tnPwzYu6jX+WUYZnyHw/I=;
+        b=dnjMGDt4JCtt9JZw1yMPA/jUl9F7zgExizd4ijmUsCFV5DLwg9te3qD6UzRqLRJKDL
+         3vKbP66nzJYdH2QsnkhPIFSc4qYVax951I+xwHgEKMEAfTaEtCnF9MVQst6LxpNebxfj
+         uyZ6gcGs+Bu/tNyDw+FUcofzFpA2tPDa/1SA8MlGtOFWNMT3w8800fi2JByOqyHAX3Dx
+         Zj3PWqmMl6khgzlhqFweSs0r1cHb2USFh/1dMcAKNud8cQymBv3Hk/HQACn9l9v1TRSX
+         DLCke7eFahqxbuBf3ORUSy1Yq964AZtmc14K8XNgmnGtZjKgzH2IEkBfhDHfsOQx1j3s
+         5iiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWTvf13sBM22wE2m+/SpSkXC1islZU1+YprZG2ziBAVJfJBjCFHgYl1PSqLCqdRAFSGC8bERgiExl95PLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3UzGuOW0OZH0EjyAtXdP/vBVh+N+02ozRgFtfrCCCWRcItqOc
+	arrfdL3NVOjTkdBNduLHtq5a9ENFOT8j8F9QVe1AC6EDWcQNg1MgUUeJ1CP6J86ZXSlgBxAuJWy
+	8F1cdmpRj0mU97sMfLnsLOZRq2GNpn2FeNTFq
+X-Google-Smtp-Source: AGHT+IEhG+dTJtYTj1YMD7Cs2BayN2Mp8duGb5iMRTTDm1TSkoSOnwIiTckfllyg/uTZsmo/So4hr5aEjyizhIv4X08=
+X-Received: by 2002:a2e:6119:0:b0:2f0:27da:6864 with SMTP id
+ 38308e7fff4ca-2f7919fe28amr18951821fa.17.1726238388192; Fri, 13 Sep 2024
+ 07:39:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZuLwJIgt4nsQKvqZ@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+References: <20240913100941.8565-1-lulie@linux.alibaba.com>
+ <CANn89iJuUFaM5whtsqA37vh6vUKUQJhgjV9Uqv6_ARpVGFjB2w@mail.gmail.com> <20240913142155.GA14069@linux.alibaba.com>
+In-Reply-To: <20240913142155.GA14069@linux.alibaba.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 13 Sep 2024 16:39:33 +0200
+Message-ID: <CANn89iL9EYX1EYLcrsXxz6dZX6eYyAi+u4uCZuYjg=y3tbgh6A@mail.gmail.com>
+Subject: Re: [RFC PATCH net-next] net/udp: Add 4-tuple hash for connected socket
+To: dust.li@linux.alibaba.com
+Cc: Philo Lu <lulie@linux.alibaba.com>, netdev@vger.kernel.org, 
+	willemdebruijn.kernel@gmail.com, davem@davemloft.net, kuba@kernel.org, 
+	pabeni@redhat.com, dsahern@kernel.org, antony.antony@secunet.com, 
+	steffen.klassert@secunet.com, linux-kernel@vger.kernel.org, 
+	jakub@cloudflare.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 12, 2024 at 09:44:04AM -0400, Joe Lawrence wrote:
-> On Wed, Sep 11, 2024 at 12:39:42AM -0700, Josh Poimboeuf wrote:
-> > On Mon, Sep 02, 2024 at 08:59:43PM -0700, Josh Poimboeuf wrote:
-> > > Hi,
-> > > 
-> > > Here's a new way to build livepatch modules called klp-build.
-> > > 
-> > > I started working on it when I realized that objtool already does 99% of
-> > > the work needed for detecting function changes.
-> > > 
-> > > This is similar in concept to kpatch-build, but the implementation is
-> > > much cleaner.
-> > > 
-> > > Personally I still have reservations about the "source-based" approach
-> > > (klp-convert and friends), including the fragility and performance
-> > > concerns of -flive-patching.  I would submit that klp-build might be
-> > > considered the "official" way to make livepatch modules.
-> > > 
-> > > Please try it out and let me know what you think.  Based on v6.10.
-> > > 
-> > > Also avaiable at:
-> > > 
-> > >   git://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git klp-build-rfc
-> > 
-> > Here's an updated branch with a bunch of fixes.  It's still incompatible
-> > with BTF at the moment, otherwise it should (hopefully) fix the rest of
-> > the issues reported so far.
-> > 
-> > While the known bugs are fixed, I haven't finished processing all the
-> > review comments yet.  Once that happens I'll post a proper v2.
-> > 
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git klp-build-v1.5
-> 
-> Hi Josh,
-> 
-> I've had much better results with v1.5, thanks for collecting up those
-> fixes in a branch.
+On Fri, Sep 13, 2024 at 4:22=E2=80=AFPM Dust Li <dust.li@linux.alibaba.com>=
+ wrote:
+>
+> On 2024-09-13 13:49:03, Eric Dumazet wrote:
+> >On Fri, Sep 13, 2024 at 12:09=E2=80=AFPM Philo Lu <lulie@linux.alibaba.c=
+om> wrote:
+> >>
+> >> This RFC patch introduces 4-tuple hash for connected udp sockets, to
+> >> make udp lookup faster. It is a tentative proposal and any comment is
+> >> welcome.
+> >>
+> >> Currently, the udp_table has two hash table, the port hash and portadd=
+r
+> >> hash. But for UDP server, all sockets have the same local port and add=
+r,
+> >> so they are all on the same hash slot within a reuseport group. And th=
+e
+> >> target sock is selected by scoring.
+> >>
+> >> In some applications, the UDP server uses connect() for each incoming
+> >> client, and then the socket (fd) is used exclusively by the client. In
+> >> such scenarios, current scoring method can be ineffcient with a large
+> >> number of connections, resulting in high softirq overhead.
+> >>
+> >> To solve the problem, a 4-tuple hash list is added to udp_table, and i=
+s
+> >> updated when calling connect(). Then __udp4_lib_lookup() firstly
+> >> searches the 4-tuple hash list, and return directly if success. A new
+> >> sockopt UDP_HASH4 is added to enable it. So the usage is:
+> >> 1. socket()
+> >> 2. bind()
+> >> 3. setsockopt(UDP_HASH4)
+> >> 4. connect()
+> >>
+> >> AFAICT the patch (if useful) can be further improved by:
+> >> (a) Support disable with sockopt UDP_HASH4. Now it cannot be disabled
+> >> once turned on until the socket closed.
+> >> (b) Better interact with hash2/reuseport. Now hash4 hardly affects oth=
+er
+> >> mechanisms, but maintaining sockets in both hash4 and hash2 lists seem=
+s
+> >> unnecessary.
+> >> (c) Support early demux and ipv6.
+> >>
+> >> Signed-off-by: Philo Lu <lulie@linux.alibaba.com>
+> >
+> >Adding a 4-tuple hash for UDP has been discussed in the past.
+>
+> Thanks for the information! we don't know the history.
+>
+> >
+> >Main issue is that this is adding one cache line miss per incoming packe=
+t.
+>
+> What about adding something like refcnt in 'struct udp_hslot' ?
+> if someone enabled uhash4 on the port, we increase the refcnt.
+> Then we can check if that port have uhash4 enabled. If it's zero,
+> we can just bypass the uhash4 lookup process and goto the current
+> udp4_lib_lookup2().
 >
 
-Today's experiment used the centos-stream-10's kernel config with
-CONFIG_MODULE_ALLOW_BTF_MISMATCH=y and cs-10's gcc (GCC) 14.2.1 20240801
-(Red Hat 14.2.1-1).
+Reading anything (thus a refcnt) in 'struct udp_hslot' will need the
+same cache line miss.
 
-First, more gcc nits (running top-level `make`):
-
-  check.c: In function ‘decode_instructions’:
-  check.c:410:54: error: ‘calloc’ sizes specified with ‘sizeof’ in the earlier argument and not in the later argument [-Werror=calloc-transposed-args]
-    410 |                                 insns = calloc(sizeof(*insn), INSN_CHUNK_SIZE);
-        |                                                      ^
-  check.c:410:54: note: earlier argument should specify number of elements, later size of each element
-  check.c: In function ‘init_pv_ops’:
-  check.c:551:38: error: ‘calloc’ sizes specified with ‘sizeof’ in the earlier argument and not in the later argument [-Werror=calloc-transposed-args]
-    551 |         file->pv_ops = calloc(sizeof(struct pv_state), nr);
-        |                                      ^~~~~~
-  check.c:551:38: note: earlier argument should specify number of elements, later size of each element
-
--->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8--
-
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 63c2d6c06..c6f192859 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -407,7 +407,7 @@ static void decode_instructions(struct objtool_file *file)
- 
- 		for (offset = 0; offset < sec_size(sec); offset += insn->len) {
- 			if (!insns || idx == INSN_CHUNK_MAX) {
--				insns = calloc(sizeof(*insn), INSN_CHUNK_SIZE);
-+				insns = calloc(INSN_CHUNK_SIZE, sizeof(*insn));
- 				ERROR_ON(!insns, "calloc");
- 
- 				idx = 0;
-@@ -548,7 +548,7 @@ static void init_pv_ops(struct objtool_file *file)
- 		return;
- 
- 	nr = sym->len / sizeof(unsigned long);
--	file->pv_ops = calloc(sizeof(struct pv_state), nr);
-+	file->pv_ops = calloc(nr, sizeof(struct pv_state));
- 	ERROR_ON(!file->pv_ops, "calloc");
- 
- 	for (idx = 0; idx < nr; idx++)
-
--->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8--
-
-and now a happy build of objtool.
-
-
-The top-level `make` moves onto building all the kernel objects, but
-then objtool vmlinux.o crashes:
-
-  $ gdb --args ./tools/objtool/objtool --sym-checksum --hacks=jump_label --hacks=noinstr --hacks=skylake --ibt --orc --retpoline --rethunk --static-call --uaccess --prefix=16 --link vmlinux.o
-  
-  Program received signal SIGSEGV, Segmentation fault.
-  ignore_unreachable_insn (file=0x435ea0 <file>, insn=0x1cd928c0) at check.c:3980
-  3980            if (prev_insn->dead_end &&
-  
-  (gdb) bt
-  #0  ignore_unreachable_insn (file=0x435ea0 <file>, insn=0x1cd928c0) at check.c:3980
-  #1  validate_reachable_instructions (file=0x435ea0 <file>) at check.c:4452
-  #2  check (file=file@entry=0x435ea0 <file>) at check.c:4610
-  #3  0x0000000000412d4f in objtool_run (argc=<optimized out>, argc@entry=14, argv=argv@entry=0x7fffffffdd78) at builtin-check.c:206
-  #4  0x0000000000417f9b in main (argc=14, argv=0x7fffffffdd78) at objtool.c:131
-  
-  (gdb) p prev_insn
-  $1 = (struct instruction *) 0x0
-
-which I worked around by copying a similar conditional check on
-prev_insn after calling prev_insn_same_sec():
-
--->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8--
-
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 63c2d6c06..c6f192859 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -3977,7 +3977,7 @@ static bool ignore_unreachable_insn(struct objtool_file *file, struct instructio
- 	 * It may also insert a UD2 after calling a __noreturn function.
- 	 */
- 	prev_insn = prev_insn_same_sec(file, insn);
--	if (prev_insn->dead_end &&
-+	if (prev_insn && prev_insn->dead_end &&
- 	    (insn->type == INSN_BUG ||
- 	     (insn->type == INSN_JUMP_UNCONDITIONAL &&
- 	      insn->jump_dest && insn->jump_dest->type == INSN_BUG)))
-
--->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8--
-
-and now a happy kernel build and boot.
-
-
-A klp-build of the usual cmdline.patch succeeds, however it generates
-some strange relocations:
-
-  Relocation section '.rela.text' at offset 0x238 contains 6 entries:
-      Offset             Info             Type               Symbol's Value  Symbol's Name + Addend
-  0000000000000016  0000004600000004 R_X86_64_PLT32         0000000000000000 __kmalloc_noprof - 4
-  0000000000000035  0000004e00000004 R_X86_64_PLT32         0000000000000000 __fentry__ - 4
-  000000000000003c  0000000000000000 R_X86_64_NONE                             -4
-  
-  Relocation section '.rela.klp.relocs' at offset 0x1168 contains 2 entries:
-      Offset             Info             Type               Symbol's Value  Symbol's Name + Addend
-  0000000000000000  0000000700000001 R_X86_64_64            0000000000000000 .text + 3c
-  0000000000000008  0000000000000001 R_X86_64_64                               -4
-  
-  Relocation section '.klp.rela.h..text' at offset 0x53f18 contains 1 entry: 
-      Offset             Info             Type               Symbol's Value  Symbol's Name + Addend
-  000000000000003c  0000000000000002 R_X86_64_PC32                             -4
-
-No bueno.  FWIW, Song's 0001-test-klp.patch does seem to build w/o odd
-relocations and it loads fine.
-
---
-Joe
-
+Note that udp_hslot already has a 'count' field
 
