@@ -1,320 +1,195 @@
-Return-Path: <linux-kernel+bounces-327661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C0299778F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:51:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A56D09778FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0B691F262F9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:51:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDBC11C24FA4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA2CB1AD26C;
-	Fri, 13 Sep 2024 06:51:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53BF1B12E7;
+	Fri, 13 Sep 2024 06:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="T9rip408"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F614143C40
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 06:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF93E143C40
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 06:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726210265; cv=none; b=Tp7+AuOic59ObK3MnKXBH44MeXldA+iNxpKSERhohIuktA9qYvtk0xx4+M/KhQ/tOLs1wlQEx4006CXIvGv+niqnAMFZXclgR3hOpYSyG0xjacHPY9CwnlhMaViKKr8L7AOvPK0xGq1GyyPBPZLYwEDZG2LUhKe70ahz5GxmPCc=
+	t=1726210410; cv=none; b=rv4FvMS6G8c48z7QxodpQKGjMlMsD495BcujSLmKXiSm3V609L0g0yV0Xi0Djt+QY8D9uYO3nYK6AynhehrzoX/QPIYDvZKX8Mh+9LRSvvwK9nLGxOfU/77z7WAWk9uaEk4ah3K/MMvM7W8+LPAWtzwiowdNRm9GE9q+1h+tmKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726210265; c=relaxed/simple;
-	bh=I5gUSU8A43j4EMtPZSVzdAO9LnLE3sgQrm4sCQRWQcU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qS5ZUCsDbkooLZGeUBfL3VedafJUxo9GJGKk5juEn/7QaTf894Y33LOG10US8pYM/QoNv+hCn9pfl92xUI9CdFVDVktoPMgismcsAh+sf+nEwLcpCsNud6pgX05c3NTtCXTHk0+dBMqKjkJgYyrVqE8j0yT/+CqzejsWXPvdhbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39f510b3f81so33935135ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 23:51:03 -0700 (PDT)
+	s=arc-20240116; t=1726210410; c=relaxed/simple;
+	bh=+kER8xitWJszH/a1OjrkxLTo9oWWQKr79yE3ek1aStw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZK/YrUMW7o07KlhLelgg8rhL9dr1rl/OslH9JrG6ljDPVGI4OD52aOjV7AidZ56qnJehCKETmH4VYxxG6oPCUEXv4dQcS4PJ2AYMsqDyBHm3ORKQ9sTduA6a1rHVBI4XXe827JYjbny+yOLLX5btxn3TCLpz4QtppJTKYjys3HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=T9rip408; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5365aec6fc1so2054918e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 23:53:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726210404; x=1726815204; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D/JVmumvAmhH4T2M2SYhr9R81Y5mg2XZZPfgi7X4P4s=;
+        b=T9rip408P7+UozYJs5rQjf9iZG1thUe8raupKkABAcq0H6DKAqmYxC4N02wZyLiDV7
+         DOHOStNacepM4lqFhF54EewQVN0atvfTJfVv08cA+wW93zr7xZUExJodKTiFS3FCUUKN
+         iXuiD2wCFoKt5NwXNq+AVR4e6KhoGssV3GK4YYsGdZEHPYceKKWTJXZHWJ7kdnSbRTIs
+         /YTQcz5i3XnkWSRON/6PId9P3BpH78chPEbcjMWqHXSbaDzBP0AjzgExW7AZVU32qv7B
+         zfLdtN36Ui4yMl5UiY9Ra5BzPYZgxvhSIUdhlZXHflLb7YnBrS2QAavRbHSVOReILQDj
+         ln0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726210262; x=1726815062;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qkc96E3dG3MYjX0uC5Kc7FpNYHue9DlbLBx98kDPhKs=;
-        b=VSSrJ3n65QdjTm7+ZLkKGk8lozLVTlecTlTay7P21E2ODpBoevk5cbdNVncv5G6djT
-         amDGxo+QJ6A/Qp6OQFEkWgH0j0YCMGmbQIcA2DKlKCMc49VB0s9NrJpPmbNpwM17Smzk
-         6wuM91O+G0IimXh5Ixh1yHFeqqcSaxtZ1Q2R4ihjFvEPWO4orY243HFHHN6wpQkMdMh8
-         lvqYmOFHJ4RJ0RflVVZzeQ6HgCDn2kzSa9zxyLG5s7IByz4PVDzwSQx5aIfFdnB0IJtY
-         Vg9ymV2yDd8lWKjkwUgfuUWEUWD4z3SS2UxDmTxfpWz9ZGfQalzw8XmpW/9XsDBiWhMw
-         h5KA==
-X-Forwarded-Encrypted: i=1; AJvYcCXx9lX9NXtG2bus9o6AV2gVMhlLXOWFYELrhRXHDC9/bigoid8ckezc7nTdYNvHqyX5IYEATlcw4AtGmrU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpoM9tDrLmkaaKYVKGhDdaecD3dmdS0s+STcCoYk5Ap/Rler3j
-	5djQ2KZ26qDMnYtF4I6tUgby/aMp6bzDL3pNqErkb6KIeWbmJQhCTp261duyOoKAWn7f7iigsJA
-	ZlO9CyWbn8+avrEhal6y4xV1tfBSvVzgwopdDYJkSZImbpXGkh5J8e5I=
-X-Google-Smtp-Source: AGHT+IFFlsIjX5atkSyL0cpdtKMOpx5T4OVv256ODsZFsDLjupgDrQsiEqkWs+fyFKzE4TeZJ0LUs0BE59WSLbgc08pOKIs5GuKd
+        d=1e100.net; s=20230601; t=1726210404; x=1726815204;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D/JVmumvAmhH4T2M2SYhr9R81Y5mg2XZZPfgi7X4P4s=;
+        b=VYEsaHHgBzAtLIEZTVXz+qDNgzXUa1tAKxCyYolyOeWfoEs4kKwOLAD47/w/8ZEzeJ
+         K0TMGkgu9svdt3jd7hLLtDSZf7DGhW3FErpr/zJNWKDdk0Ooj8fHp41nApH57aj11Muq
+         YVVd5iol59Y1RJwVaWyvofFM1aEwIxx8NMEBXQfcCzsCxZGOzaaPFG2RHqj7aQjVT/jx
+         ObiSTmkMHonajsYLsJn037Lwufqrq9kv1g02X7ZlBgqylroz3C0eNJ7UfO895DycAuoE
+         dqHbHOVC/KfMC5PzzW0al4j0VSaXlhAbTcGX3elyjWupwQMEHpuPx5fPzOZ1sPld18Pq
+         nxLw==
+X-Forwarded-Encrypted: i=1; AJvYcCXvsyUxRbCWfUDpXGXIPEZ2QuZ/5OdqcO+YBOxD+fA4a+XyKXXwSYlM3+BTKWc/rRi7/3u8Doyed2IGV2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcXTiwEgB0ccM9jng3Nuzu8UN3pCeqPuj7Tvw4wLh3D9ZXggKa
+	PcHEX6ygPuzJEjbfIqCVJekiT9UVqs2NMKMqalfM2tgXJZ/1taUAKJDnpfDU+bY=
+X-Google-Smtp-Source: AGHT+IHjjlfV76zJQFOUoO0v8dhF0Bl3CQ4RiUDYruhQ4SFj0zyKwm9aj2oXnuAxIJ6qQTQKV6bSlA==
+X-Received: by 2002:a05:6512:6ce:b0:534:36bf:b622 with SMTP id 2adb3069b0e04-53678ffa374mr2717302e87.61.1726210402875;
+        Thu, 12 Sep 2024 23:53:22 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:9766:a21e:6656:7a28])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b05d5dbsm13450095e9.13.2024.09.12.23.53.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Sep 2024 23:53:22 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Stephen Boyd <sboyd@kernel.org>,  Neil Armstrong
+ <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>,  Jiucheng Xu
+ <jiucheng.xu@amlogic.com>,  linux-arm-kernel@lists.infradead.org,
+  linux-amlogic@lists.infradead.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 8/9] reset: amlogic: split the device core and
+ platform probe
+In-Reply-To: <8cb81058c8f45e378675e078e296336a2cf74308.camel@pengutronix.de>
+	(Philipp Zabel's message of "Thu, 12 Sep 2024 10:12:14 +0200")
+References: <20240910-meson-rst-aux-v5-0-60be62635d3e@baylibre.com>
+	<20240910-meson-rst-aux-v5-8-60be62635d3e@baylibre.com>
+	<8cb81058c8f45e378675e078e296336a2cf74308.camel@pengutronix.de>
+Date: Fri, 13 Sep 2024 08:53:21 +0200
+Message-ID: <1jldzwkpsu.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3603:b0:39f:6f6c:90ba with SMTP id
- e9e14a558f8ab-3a08461c414mr34107645ab.6.1726210262403; Thu, 12 Sep 2024
- 23:51:02 -0700 (PDT)
-Date: Thu, 12 Sep 2024 23:51:02 -0700
-In-Reply-To: <CACb6ct1VapivgTKjsoUnq06UKvNUVwaL_CS750phHNwpPynQog@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007f9cab0621faa59b@google.com>
-Subject: Re: [syzbot] [crypto?] [ntfs3?] KMSAN: uninit-value in sw842_compress
-From: syzbot <syzbot+17cae3c0a5b0acdc327d@syzkaller.appspotmail.com>
-To: ksjoe30@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-Hello,
+On Thu 12 Sep 2024 at 10:12, Philipp Zabel <p.zabel@pengutronix.de> wrote:
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in sw842_compress
+> On Di, 2024-09-10 at 18:32 +0200, Jerome Brunet wrote:
+>> To prepare the addition of the auxiliary device support, split
+>> out the device coomon functions from the probe of the platform device.
+>> 
+>> The device core function will be common to both the platform and auxiliary
+>> driver.
+>> 
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>> ---
+>>  drivers/reset/amlogic/Kconfig              |   7 +-
+>>  drivers/reset/amlogic/Makefile             |   1 +
+>>  drivers/reset/amlogic/reset-meson-common.c | 121 ++++++++++++++++++++++++++++
+>>  drivers/reset/amlogic/reset-meson.c        | 122 ++++-------------------------
+>>  drivers/reset/amlogic/reset-meson.h        |  24 ++++++
+>>  5 files changed, 167 insertions(+), 108 deletions(-)
+>> 
+>> diff --git a/drivers/reset/amlogic/Kconfig b/drivers/reset/amlogic/Kconfig
+>> index 532e6a4f7865..1d77987088f4 100644
+>> --- a/drivers/reset/amlogic/Kconfig
+>> +++ b/drivers/reset/amlogic/Kconfig
+>> @@ -1,10 +1,15 @@
+>> +config RESET_MESON_COMMON
+>> +	tristate
+>> +	select REGMAP
+>> +
+>>  config RESET_MESON
+>>  	tristate "Meson Reset Driver"
+>>  	depends on ARCH_MESON || COMPILE_TEST
+>>  	default ARCH_MESON
+>>  	select REGMAP_MMIO
+>> +	select RESET_MESON_COMMON
+>>  	help
+>> -	  This enables the reset driver for Amlogic Meson SoCs.
+>> +	  This enables the reset driver for Amlogic SoCs.
+>>  
+>>  config RESET_MESON_AUDIO_ARB
+>>  	tristate "Meson Audio Memory Arbiter Reset Driver"
+>> diff --git a/drivers/reset/amlogic/Makefile b/drivers/reset/amlogic/Makefile
+>> index 55509fc78513..74aaa2fb5e13 100644
+>> --- a/drivers/reset/amlogic/Makefile
+>> +++ b/drivers/reset/amlogic/Makefile
+>> @@ -1,2 +1,3 @@
+>>  obj-$(CONFIG_RESET_MESON) += reset-meson.o
+>> +obj-$(CONFIG_RESET_MESON_COMMON) += reset-meson-common.o
+>>  obj-$(CONFIG_RESET_MESON_AUDIO_ARB) += reset-meson-audio-arb.o
+>> diff --git a/drivers/reset/amlogic/reset-meson-common.c b/drivers/reset/amlogic/reset-meson-common.c
+>> new file mode 100644
+>> index 000000000000..d57544801ae9
+>> --- /dev/null
+>> +++ b/drivers/reset/amlogic/reset-meson-common.c
+>> @@ -0,0 +1,121 @@
+>> +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
+>> +/*
+>> + * Amlogic Meson Reset core functions
+>> + *
+>> + * Copyright (c) 2016-2024 BayLibre, SAS.
+>> + * Authors: Neil Armstrong <narmstrong@baylibre.com>
+>> + *          Jerome Brunet <jbrunet@baylibre.com>
+>> + */
+>> +
+>> +#include <linux/device.h>
+>> +#include <linux/module.h>
+>> +#include <linux/regmap.h>
+>> +#include <linux/reset-controller.h>
+>> +
+>> +#include "reset-meson.h"
+>> +
+>> +struct meson_reset {
+>> +	const struct meson_reset_param *param;
+>> +	struct reset_controller_dev rcdev;
+>> +	struct regmap *map;
+>> +};
+>> +
+>> +static void meson_reset_offset_and_bit(struct meson_reset *data,
+>> +				       unsigned long id,
+>> +				       unsigned int *offset,
+>> +				       unsigned int *bit)
+>> +{
+>> +	unsigned int stride = regmap_get_reg_stride(data->map);
+>> +
+>> +	*offset = (id / (stride * BITS_PER_BYTE)) * stride;
+>> +	*bit = id % (stride * BITS_PER_BYTE);
+>> +}
+>> +
+>> +static int meson_reset_reset(struct reset_controller_dev *rcdev,
+>> +			     unsigned long id)
+>
+> checkpatch --strict complains about the alignment here.
+> I'll fix this up when applying, no need to resend.
 
-=====================================================
-BUG: KMSAN: uninit-value in check_template lib/842/842_compress.c:393 [inline]
-BUG: KMSAN: uninit-value in process_next lib/842/842_compress.c:458 [inline]
-BUG: KMSAN: uninit-value in sw842_compress+0x1744/0x5a70 lib/842/842_compress.c:545
- check_template lib/842/842_compress.c:393 [inline]
- process_next lib/842/842_compress.c:458 [inline]
- sw842_compress+0x1744/0x5a70 lib/842/842_compress.c:545
- crypto842_scompress+0x4f/0x70 crypto/842.c:78
- scomp_acomp_comp_decomp+0x7c6/0xb90
- scomp_acomp_compress+0x32/0x40 crypto/scompress.c:187
- crypto_acomp_compress include/crypto/acompress.h:251 [inline]
- zswap_compress+0x368/0xad0 mm/zswap.c:927
- zswap_store+0x1af3/0x2dd0 mm/zswap.c:1459
- swap_writepage+0x11f/0x470 mm/page_io.c:198
- shmem_writepage+0x1a75/0x1f70 mm/shmem.c:1536
- pageout mm/vmscan.c:680 [inline]
- shrink_folio_list+0x577f/0x7cb0 mm/vmscan.c:1360
- evict_folios+0x9a49/0xbb30 mm/vmscan.c:4560
- try_to_shrink_lruvec+0x13a3/0x1750 mm/vmscan.c:4755
- lru_gen_shrink_lruvec mm/vmscan.c:4897 [inline]
- shrink_lruvec+0x4a3/0x46c0 mm/vmscan.c:5652
- shrink_node_memcgs mm/vmscan.c:5888 [inline]
- shrink_node+0x104e/0x50f0 mm/vmscan.c:5928
- shrink_zones mm/vmscan.c:6172 [inline]
- do_try_to_free_pages+0x820/0x2550 mm/vmscan.c:6234
- try_to_free_mem_cgroup_pages+0x3f7/0xae0 mm/vmscan.c:6566
- try_charge_memcg+0x72c/0x1830 mm/memcontrol.c:2210
- try_charge mm/memcontrol-v1.h:20 [inline]
- charge_memcg mm/memcontrol.c:4438 [inline]
- __mem_cgroup_charge+0x11d/0x3f0 mm/memcontrol.c:4453
- mem_cgroup_charge include/linux/memcontrol.h:672 [inline]
- shmem_alloc_and_add_folio+0xe83/0x1ca0 mm/shmem.c:1792
- shmem_get_folio_gfp+0x10bd/0x24c0 mm/shmem.c:2188
- shmem_read_folio_gfp+0x80/0x140 mm/shmem.c:5201
- drm_gem_get_pages+0x3cf/0x1440 drivers/gpu/drm/drm_gem.c:568
- drm_gem_shmem_get_pages drivers/gpu/drm/drm_gem_shmem_helper.c:177 [inline]
- drm_gem_shmem_vmap+0x2dc/0xca0 drivers/gpu/drm/drm_gem_shmem_helper.c:337
- drm_gem_shmem_object_vmap+0x35/0x40 include/drm/drm_gem_shmem_helper.h:229
- drm_gem_vmap drivers/gpu/drm/drm_gem.c:1205 [inline]
- drm_gem_vmap_unlocked+0xc6/0x200 drivers/gpu/drm/drm_gem.c:1247
- drm_gem_fb_vmap+0x11b/0x590 drivers/gpu/drm/drm_gem_framebuffer_helper.c:365
- vkms_prepare_fb+0x12f/0x170 drivers/gpu/drm/vkms/vkms_plane.c:176
- drm_atomic_helper_prepare_planes+0x436/0x10b0 drivers/gpu/drm/drm_atomic_helper.c:2601
- drm_atomic_helper_commit+0x1f3/0xe80 drivers/gpu/drm/drm_atomic_helper.c:2029
- drm_atomic_commit+0x30a/0x380 drivers/gpu/drm/drm_atomic.c:1522
- drm_atomic_helper_update_plane+0x42b/0x600 drivers/gpu/drm/drm_atomic_helper.c:3190
- __setplane_atomic+0x33d/0x3f0 drivers/gpu/drm/drm_plane.c:1074
- drm_mode_cursor_universal drivers/gpu/drm/drm_plane.c:1229 [inline]
- drm_mode_cursor_common+0x171a/0x1e80 drivers/gpu/drm/drm_plane.c:1288
- drm_mode_cursor_ioctl+0x97/0xd0 drivers/gpu/drm/drm_plane.c:1338
- drm_ioctl_kernel+0x4ea/0x560 drivers/gpu/drm/drm_ioctl.c:745
- drm_ioctl+0xd13/0x15a0 drivers/gpu/drm/drm_ioctl.c:842
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0x261/0x450 fs/ioctl.c:893
- __x64_sys_ioctl+0x96/0xe0 fs/ioctl.c:893
- x64_sys_call+0x18bf/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:17
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Thanks Philipp.
 
-<Zero or more stacks not recorded to save memory>
+FYI, those mis-alignement were already present in the original code and
+there has been comments when I re-indented code while moving it
+around so I did not touch it.
 
-Uninit was stored to memory at:
- memcpy_from_iter lib/iov_iter.c:73 [inline]
- iterate_bvec include/linux/iov_iter.h:122 [inline]
- iterate_and_advance2 include/linux/iov_iter.h:249 [inline]
- iterate_and_advance include/linux/iov_iter.h:271 [inline]
- __copy_from_iter lib/iov_iter.c:249 [inline]
- copy_page_from_iter_atomic+0x12bb/0x2ae0 lib/iov_iter.c:481
- copy_folio_from_iter_atomic include/linux/uio.h:186 [inline]
- generic_perform_write+0x896/0x12e0 mm/filemap.c:4032
- shmem_file_write_iter+0x2bd/0x2f0 mm/shmem.c:3074
- do_iter_readv_writev+0x8a1/0xa40
- vfs_iter_write+0x459/0xd50 fs/read_write.c:895
- lo_write_bvec drivers/block/loop.c:243 [inline]
- lo_write_simple drivers/block/loop.c:264 [inline]
- do_req_filebacked drivers/block/loop.c:511 [inline]
- loop_handle_cmd drivers/block/loop.c:1910 [inline]
- loop_process_work+0x15ec/0x3750 drivers/block/loop.c:1945
- loop_rootcg_workfn+0x2b/0x40 drivers/block/loop.c:1976
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3393
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>
+> regards
+> Philipp
 
-Uninit was stored to memory at:
- ntfs_write_bh+0x652/0xdb0 fs/ntfs3/fsntfs.c:1450
- indx_write fs/ntfs3/index.c:1027 [inline]
- indx_update_dup+0xd81/0xf80 fs/ntfs3/index.c:2694
- ni_update_parent+0x12de/0x14b0 fs/ntfs3/frecord.c:3301
- ni_write_inode+0x1cf4/0x1de0 fs/ntfs3/frecord.c:3392
- ntfs3_write_inode+0x94/0xb0 fs/ntfs3/inode.c:1052
- write_inode fs/fs-writeback.c:1497 [inline]
- __writeback_single_inode+0x849/0x12c0 fs/fs-writeback.c:1716
- writeback_sb_inodes+0xc95/0x1e00 fs/fs-writeback.c:1947
- __writeback_inodes_wb+0x14c/0x440 fs/fs-writeback.c:2018
- wb_writeback+0x50b/0xea0 fs/fs-writeback.c:2129
- wb_check_background_flush fs/fs-writeback.c:2199 [inline]
- wb_do_writeback fs/fs-writeback.c:2287 [inline]
- wb_workfn+0x122c/0x1940 fs/fs-writeback.c:2314
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3393
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Uninit was stored to memory at:
- ntfs_read_run_nb+0x786/0x1070 fs/ntfs3/fsntfs.c:1252
- ntfs_read_bh+0x64/0xde0 fs/ntfs3/fsntfs.c:1313
- indx_read+0x44e/0x17b0 fs/ntfs3/index.c:1067
- indx_find+0xd12/0x1440 fs/ntfs3/index.c:1181
- indx_update_dup+0x607/0xf80 fs/ntfs3/index.c:2666
- ni_update_parent+0x12de/0x14b0 fs/ntfs3/frecord.c:3301
- ni_write_inode+0x1cf4/0x1de0 fs/ntfs3/frecord.c:3392
- ntfs3_write_inode+0x94/0xb0 fs/ntfs3/inode.c:1052
- write_inode fs/fs-writeback.c:1497 [inline]
- __writeback_single_inode+0x849/0x12c0 fs/fs-writeback.c:1716
- writeback_sb_inodes+0xc95/0x1e00 fs/fs-writeback.c:1947
- __writeback_inodes_wb+0x14c/0x440 fs/fs-writeback.c:2018
- wb_writeback+0x50b/0xea0 fs/fs-writeback.c:2129
- wb_check_background_flush fs/fs-writeback.c:2199 [inline]
- wb_do_writeback fs/fs-writeback.c:2287 [inline]
- wb_workfn+0x122c/0x1940 fs/fs-writeback.c:2314
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3393
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Uninit was stored to memory at:
- ntfs_write_bh+0x652/0xdb0 fs/ntfs3/fsntfs.c:1450
- indx_write fs/ntfs3/index.c:1027 [inline]
- indx_update_dup+0xd81/0xf80 fs/ntfs3/index.c:2694
- ni_update_parent+0x12de/0x14b0 fs/ntfs3/frecord.c:3301
- ni_write_inode+0x1cf4/0x1de0 fs/ntfs3/frecord.c:3392
- ntfs3_write_inode+0x94/0xb0 fs/ntfs3/inode.c:1052
- write_inode fs/fs-writeback.c:1497 [inline]
- __writeback_single_inode+0x849/0x12c0 fs/fs-writeback.c:1716
- writeback_sb_inodes+0xc95/0x1e00 fs/fs-writeback.c:1947
- __writeback_inodes_wb+0x14c/0x440 fs/fs-writeback.c:2018
- wb_writeback+0x50b/0xea0 fs/fs-writeback.c:2129
- wb_check_background_flush fs/fs-writeback.c:2199 [inline]
- wb_do_writeback fs/fs-writeback.c:2287 [inline]
- wb_workfn+0x122c/0x1940 fs/fs-writeback.c:2314
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3393
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Uninit was stored to memory at:
- ntfs_read_run_nb+0x786/0x1070 fs/ntfs3/fsntfs.c:1252
- ntfs_read_bh+0x64/0xde0 fs/ntfs3/fsntfs.c:1313
- indx_read+0x44e/0x17b0 fs/ntfs3/index.c:1067
- indx_find+0xd12/0x1440 fs/ntfs3/index.c:1181
- indx_update_dup+0x607/0xf80 fs/ntfs3/index.c:2666
- ni_update_parent+0x12de/0x14b0 fs/ntfs3/frecord.c:3301
- ni_write_inode+0x1cf4/0x1de0 fs/ntfs3/frecord.c:3392
- ntfs3_write_inode+0x94/0xb0 fs/ntfs3/inode.c:1052
- write_inode fs/fs-writeback.c:1497 [inline]
- __writeback_single_inode+0x849/0x12c0 fs/fs-writeback.c:1716
- writeback_sb_inodes+0xc95/0x1e00 fs/fs-writeback.c:1947
- __writeback_inodes_wb+0x14c/0x440 fs/fs-writeback.c:2018
- wb_writeback+0x50b/0xea0 fs/fs-writeback.c:2129
- wb_check_background_flush fs/fs-writeback.c:2199 [inline]
- wb_do_writeback fs/fs-writeback.c:2287 [inline]
- wb_workfn+0x122c/0x1940 fs/fs-writeback.c:2314
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
- worker_thread+0xea7/0x14f0 kernel/workqueue.c:3393
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Uninit was stored to memory at:
- ntfs_write_bh+0x652/0xdb0 fs/ntfs3/fsntfs.c:1450
- indx_write fs/ntfs3/index.c:1027 [inline]
- indx_insert_into_buffer+0xd8f/0x2010 fs/ntfs3/index.c:1811
- indx_insert_entry+0xa3c/0xee0 fs/ntfs3/index.c:1988
- ni_add_name+0xe5d/0x10d0 fs/ntfs3/frecord.c:3123
- ntfs_link_inode+0x265/0x310 fs/ntfs3/inode.c:1768
- ntfs_link+0x21d/0x500 fs/ntfs3/namei.c:146
- vfs_link+0x93d/0xb70 fs/namei.c:4692
- do_linkat+0x4f5/0xfd0 fs/namei.c:4762
- __do_sys_link fs/namei.c:4796 [inline]
- __se_sys_link fs/namei.c:4794 [inline]
- __x64_sys_link+0xe8/0x140 fs/namei.c:4794
- x64_sys_call+0x2853/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:87
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was stored to memory at:
- hdr_insert_de fs/ntfs3/index.c:838 [inline]
- indx_insert_into_buffer+0xcdf/0x2010 fs/ntfs3/index.c:1807
- indx_insert_entry+0xa3c/0xee0 fs/ntfs3/index.c:1988
- ni_add_name+0xe5d/0x10d0 fs/ntfs3/frecord.c:3123
- ntfs_link_inode+0x265/0x310 fs/ntfs3/inode.c:1768
- ntfs_link+0x21d/0x500 fs/ntfs3/namei.c:146
- vfs_link+0x93d/0xb70 fs/namei.c:4692
- do_linkat+0x4f5/0xfd0 fs/namei.c:4762
- __do_sys_link fs/namei.c:4796 [inline]
- __se_sys_link fs/namei.c:4794 [inline]
- __x64_sys_link+0xe8/0x140 fs/namei.c:4794
- x64_sys_call+0x2853/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:87
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:3998 [inline]
- slab_alloc_node mm/slub.c:4041 [inline]
- kmem_cache_alloc_noprof+0x637/0xb20 mm/slub.c:4048
- ntfs_link_inode+0x8f/0x310 fs/ntfs3/inode.c:1756
- ntfs_link+0x21d/0x500 fs/ntfs3/namei.c:146
- vfs_link+0x93d/0xb70 fs/namei.c:4692
- do_linkat+0x4f5/0xfd0 fs/namei.c:4762
- __do_sys_link fs/namei.c:4796 [inline]
- __se_sys_link fs/namei.c:4794 [inline]
- __x64_sys_link+0xe8/0x140 fs/namei.c:4794
- x64_sys_call+0x2853/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:87
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 1 UID: 0 PID: 5939 Comm: syz.0.15 Not tainted 6.11.0-rc7-syzkaller-g196145c606d0-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-=====================================================
-
-
-Tested on:
-
-commit:         196145c6 Merge tag 'clk-fixes-for-linus' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=159027c7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ea008021530b2de3
-dashboard link: https://syzkaller.appspot.com/bug?extid=17cae3c0a5b0acdc327d
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1453949f980000
-
+-- 
+Jerome
 
