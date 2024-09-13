@@ -1,91 +1,101 @@
-Return-Path: <linux-kernel+bounces-328477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B91C9784C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:25:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCC2F9784CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:25:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81FCA1C22D56
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:25:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05811B274D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C377655893;
-	Fri, 13 Sep 2024 15:24:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C41C3C485;
+	Fri, 13 Sep 2024 15:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i10wbSEX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zslma9Bb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2172EDF60;
-	Fri, 13 Sep 2024 15:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 698C31F5FE;
+	Fri, 13 Sep 2024 15:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726241073; cv=none; b=oHmu/b65PMfNy93WSTqL6o1AFubaCpu+uYV4f9G/wUXgrH67SD+5P6/X7alvfll+c4NjFv49Qfbxz5pW1b3spZJxCtSGbHNLKchZ9eL3ySSQ4gLtzWGtay2KJVx7vnRryeQwtyErew44POkCbJxmNx1AGqrpoVdESk5jRV+FGw4=
+	t=1726241141; cv=none; b=czLxbpUYKyNcu43fCe31oTc765T+cRZ6kYo6ipOiEpXLDt2AON9L1PaE7wW/LD1t1/UMCniZMF6khuhePgLGlzHOpCHt7tUoKfKkwSjHu8yKrm6AhT7MVRUq5rApjtcxI5M3VrRKmQPgYNwFlwtJjn6+qjMQ/uc9LJ3rFZGu3cU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726241073; c=relaxed/simple;
-	bh=xlpLRV9hViJBcrtkalP94EioikNI5rImcEjIIh9vJeY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kepuyt7fZ7UVKz+cC0jB6X6+2pXmiG2+W9I/L+cMSsiqO0r8/SPiw0rM8GUBMRDFDRDTpBlmguf5/B99gFeVw8daoAkJ9l/VOFqEihbZS11kvaohPvi+zxEdCZn+LDNUPHQe0rQXMVKggtNDewLIx/ILrgS/kRrkc/84J07UM+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i10wbSEX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCF77C4CEC0;
-	Fri, 13 Sep 2024 15:24:31 +0000 (UTC)
+	s=arc-20240116; t=1726241141; c=relaxed/simple;
+	bh=XgjTcZB/joHvG88LwfYUyBpeQjgR2rJH09fvAF160QI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gNe7eRwGIyhallesePxLoJoj/u906mIsF3d4CPuVvU64XcUjs6hWW3gprhqST/qXcNIAZDhaWNU0QGt9mfOdNT8NR2/oAVUeUx6Fo3yx38B9c9sgmAZO4qPQy3C2UPz2VX3LQNMgdf0/RI9xQAv8javjdUgKxidQx4fgy2f0H98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zslma9Bb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1BF6C4CECF;
+	Fri, 13 Sep 2024 15:25:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726241072;
-	bh=xlpLRV9hViJBcrtkalP94EioikNI5rImcEjIIh9vJeY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i10wbSEXjicEZUx5Q3t5Ko31o/Rmll4l/df1dDvTnAuLmCzz1wPpYXc3xBV0n+b+Q
-	 o8JFVG+3OqAoXPG98QGh5K6y9mYYLIKNF70r9PPQTCT9NuXge1HsFkxJmkyVG7+kx4
-	 e3K/eS7MCvCIwBTePFYz7RPka4apRYx9aRtyVarQJr2sg+013QPwJvR8pCL0PnB0QQ
-	 nQb1L2KNZPOlCNDhCWbQ9QLmmhW2R+zznvLHh45MPtjNy8JhmLJNqETNOPX7PVaJwq
-	 FoMYYVTFOPJ4KNWsREtZcg9T4cfmuHp0CkUXXBtxtfHFvW/RKH+EQIavr68RkEiEnK
-	 Ydq59DcQXmh3g==
-Date: Fri, 13 Sep 2024 09:24:29 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>,
-	Nirmal Patel <nirmal.patel@linux.intel.com>,
-	jonathan.derrick@linux.dev, acelan.kao@canonical.com,
-	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kaihengfeng@gmail.com
-Subject: Re: [PATCH] PCI: vmd: Delay interrupt handling on MTL VMD controller
-Message-ID: <ZuRZLRFrCjXlrd4w@kbusch-mbp>
-References: <20240903025544.286223-1-kai.heng.feng@canonical.com>
- <20240903042852.v7ootuenihi5wjpn@thinkpad>
- <CAAd53p4EWEuu-V5hvOHtKZQxCJNf94+FOJT+_ryu0s2RpB1o-Q@mail.gmail.com>
- <ZtciXnbQJ88hjfDk@kbusch-mbp>
- <CAAd53p4cyOvhkorHBkt227_KKcCoKZJ+SM13n_97fmTTq_HLuQ@mail.gmail.com>
- <20240904062219.x7kft2l3gq4qsojc@thinkpad>
- <CAAd53p5ox-CiNd6nHb4ogL-K2wr+dNYBtRxiw8E6jf7HgLsH-A@mail.gmail.com>
- <20240912104547.00005865@linux.intel.com>
- <CAAd53p698eNQdZqPFHCmpPQ7pkDoyT4_C9ERXJ4X=V_8QFO8pQ@mail.gmail.com>
- <20240913111142.4cgrmirofhhgrbqm@thinkpad>
+	s=k20201202; t=1726241141;
+	bh=XgjTcZB/joHvG88LwfYUyBpeQjgR2rJH09fvAF160QI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Zslma9BbJPeopyi9lsxHgwLeAg0apkkzQc9TLrHDNvYtX7htREULs3KQUTjPsuE7e
+	 qO7vz16l6qHxPqSVFDGzrgPGikKAXAaLEuo8a8a7bpjz2AvpyWvN4z3r6gbcZN0evM
+	 D86uWeTuWlCZ8xQtiTMSvx1b5f5E9Aev3U6laNJgoUY2aVZHvaLLhrDco1XSScaRwR
+	 e71nzePlOExIGdTvmsSWawmTIZy3H0eWb+xkgtKg22wrHUlRYp4U2sL9eHtQSYWrem
+	 EKSO/Ocaasfwv4e4ZdcwjltgACHK4bAhfkEajbFEvNsf9wx0fmMjh1yP89a+d9kz6L
+	 b3lEa0F/wTPEQ==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f74e613a10so17308181fa.1;
+        Fri, 13 Sep 2024 08:25:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUf3Evrug9OLogBn84uwnEhLtsEnTM03aEpoR2kmWBuiJ/xdmnklxLCyqL4HVMqVoYSNADR1RlHnVm5mhk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjHvXFpT8cYRyVcdeAopncS3a+VBTK1rBPj4YM4aItc/qY561q
+	iXa6LUzGi7DXXzqn07jp8GYB2Lsey1y/P4Y72rQXfRjuf94F4tCBWbiBdF/pAbCZWJRuWuX9sep
+	ZOA4q+ptz0QA1SVYDkrNNPV15UjA=
+X-Google-Smtp-Source: AGHT+IFfv1a79Z6scFWVcSLcB5+aOzc39UPeqhu0O7rc5XO4iyk+7VrV/X1VQQxoqEwhb8uF16pC4m39oVgVCtctcjU=
+X-Received: by 2002:a2e:be04:0:b0:2f3:cb70:d447 with SMTP id
+ 38308e7fff4ca-2f791b664afmr29619191fa.40.1726241139297; Fri, 13 Sep 2024
+ 08:25:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913111142.4cgrmirofhhgrbqm@thinkpad>
+References: <20240906202745.11159-1-gourry@gourry.net> <20240906202745.11159-7-gourry@gourry.net>
+In-Reply-To: <20240906202745.11159-7-gourry@gourry.net>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 13 Sep 2024 17:25:27 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXHRkDCnUCjBR17jSCwceGT8fyE_WdERmVpYY7c6eBsgFA@mail.gmail.com>
+Message-ID: <CAMj1kXHRkDCnUCjBR17jSCwceGT8fyE_WdERmVpYY7c6eBsgFA@mail.gmail.com>
+Subject: Re: [PATCH 6/6] libstub,tpm: do not ignore failure case when reading
+ final event log
+To: Gregory Price <gourry@gourry.net>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, leitao@debian.org, 
+	usamaarif642@gmail.com, sathyanarayanan.kuppuswamy@linux.intel.com, 
+	ilias.apalodimas@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Sep 13, 2024 at 04:41:42PM +0530, Manivannan Sadhasivam wrote:
-> I'm not able to understand the bug properly. The erratum indicates that the MSI
-> from device reaches the VMD before other writes to the registers. So this is an
-> ordering issue as MSI takes precedence over other writes from the device.
-> 
-> So the workaround is to read the device register in the MSI handler to make sure
-> the previous writes from the device are flushed. IIUC, once the MSI reaches the
-> VMD, it will trigger the IRQ handler in the NVMe driver and in the handler, CQE
-> status register is read first up. This flow matches with the workaround
-> suggested.
-> 
-> Is any write being performed to the NVMe device before reading any register in
-> the MSI handler? Or the current CQE read is not able to satisfy the workaround?
-> Please clarify.
+On Fri, 6 Sept 2024 at 22:28, Gregory Price <gourry@gourry.net> wrote:
+>
+> Current code fails to check for an error case when reading events from
+> final event log to calculate offsets.  Check the error case, report the
+> error, and break early because all subsequent calls will also fail.
+>
+> Signed-off-by: Gregory Price <gourry@gourry.net>
+> ---
+>  drivers/firmware/efi/libstub/tpm.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/firmware/efi/libstub/tpm.c b/drivers/firmware/efi/libstub/tpm.c
+> index 4f9f0e049a7a..c71b0d3e66d2 100644
+> --- a/drivers/firmware/efi/libstub/tpm.c
+> +++ b/drivers/firmware/efi/libstub/tpm.c
+> @@ -124,6 +124,10 @@ static void efi_retrieve_tcg2_eventlog(int version, efi_physical_addr_t log_loca
+>                         event_size = __calc_tpm2_event_size(header,
+>                                                    (void *)(long)log_location,
+>                                                    false);
+> +                       if (!event_size) {
+> +                               efi_err("Invalid TPM Final Event Log Entry\n");
+> +                               break;
+> +                       }
 
-The CQE is not a device register. It exists in host memory, so reading
-that from the driver isn't going to flush writes from IO devices.
+I don't object to this in principle, the only problem is that these
+log prints are not recorded anywhere: they are printed to the EFI boot
+console by the EFI stub, which may not even be visible, and is
+definitely not captured by the kernel logging routines.
 
