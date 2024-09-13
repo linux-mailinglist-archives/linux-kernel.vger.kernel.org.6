@@ -1,130 +1,152 @@
-Return-Path: <linux-kernel+bounces-328640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B6C69786CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:30:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43AE59786D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 322DC1F2220C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:30:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D7E71C21B86
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00ABC74076;
-	Fri, 13 Sep 2024 17:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259058289E;
+	Fri, 13 Sep 2024 17:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r+6dicoP"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SeVAv5rb"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD6D84D0E
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 17:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778521EEE4;
+	Fri, 13 Sep 2024 17:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726248636; cv=none; b=ip28bQjvTjpk5yNwQX4/KzBC1b4RcgZwehpSqidzpVo0mbXSZwfVXgM64zGELg2MZUSHKRyIvmMsCrSaphE2yaejNUYCCw3M8w7ofBrQl0KaUPzWo+2pE8lk6Jg+WnS+4ow9b+vJi7rYj9zM4eOWG8J31eLYemCPhxPt7lkLpAc=
+	t=1726248737; cv=none; b=nrys01oYlUfyCCGm1Anrss1heM/LVCJ0otOcKf06QjWVwOKUUP/cJ1PRw7IWoeNbQzEI0g3yBewJUEsuP/Y8Ylk+B7BpWNsVQ/jwA6XBZHG8Vw6HCveS9qJcxXJcvDNMUX3eSIwQzNqKHqHJGhJm92sFV77fRR/e1eCUIZ+Au2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726248636; c=relaxed/simple;
-	bh=avuE8sDdkBwyoDjtRSEJc0iN1R8TiV1WBhRrowcs5G8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=QlE3t7buBpFyD33zIYI8V8RwxrQtKZ56pUmmG65i4GCWdKVIDv3LJrVYwgQkJk4QBiBSSLuOCfhOiTAJsGuXcV9bTGToA3xsngjg6YlPvAwQ9sLpnNFW46bpvyjJaTtcnw4vKXT9zbVpCbpwPJLBnZlBbejPghS+2c2d5Qcikmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r+6dicoP; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6d683cfa528so40411347b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 10:30:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726248633; x=1726853433; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=muv8DD4FcvEwNrsCNMD3J/XvZ3CY/Fmbm537cj+6e7A=;
-        b=r+6dicoPY0VMNyhsZHTOICbjhbqsEpP2edYoH6TczkPvQW62yxwY7SOZaOFCaBdYBR
-         +A7ccrVNKtJos2Xk0kVDTU6YYtvvRFnupPxHNtVMftt66Jtoa1AwfEJJeOG3cZh+VWFW
-         dLKA5/8oy5/4/3RCO+cIw5GwoGltfaGjef+J8+X2CpQbzw/CzKdy6MYOejx/+V5OIGia
-         DcMWTpaIIHXnSGGN9ihWmGQ22HujnbOySZ3Iemc3eWRYeNXVs8h5G+ZDgOkiZ4RUIdi8
-         boIndmo6zuY9kt2ogO9yCigu+jvsfzjQycnIwuOhRkSuNIf7zawvqoFo7lnw8qKaEZpR
-         3wQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726248633; x=1726853433;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=muv8DD4FcvEwNrsCNMD3J/XvZ3CY/Fmbm537cj+6e7A=;
-        b=FTuCrxjufj2vXJpulxbJNsPlS0153Uq7et3xgNovQqBWJKemjjKBwAfd+oKlyAuNB+
-         UjCWfh0Vc5RdbZ0yFUm+hHPQGIKB17gia84oK/Ro4fq3tdKWDubA451JpeGRrh2V9eEZ
-         W1XGKqilJMgUI83NjrHLyWiXAMuQdybXCQ8KsaMb/10Em79e9JvjenC7Ge3WnRwe+cpn
-         g7vqGp1R3I6VvqsCsN2wMhnPWCqZbE4j4o9O6NqPikYIuABiARoHmDddWDKs3EOsfalY
-         PLa5FZpk7cOIdbatIdih0YOGTdPF9bVohaERcUvBru4f9zgb9qLrwt0KbOPH6vo1cifm
-         2gwQ==
-X-Gm-Message-State: AOJu0YwIakU/XTqdCn9aVx1m400FtYVfAFCwQFK2a2xAmJ6t3PEjy5h1
-	hCEobD+T3MYs1NCUF80e+c42M5q0p2zYkXLFxZ0V+Z2Lw0ZOaEyz4HcPhiivlRm1kQ+tytf1iYw
-	GVQ==
-X-Google-Smtp-Source: AGHT+IE+5iuXvCyAMuKaKT0gEL+Uw6Gkh8WoLyy+tvqvUhOnFfag/tsvUh5cZQ1p1B+I9A3G/dwbMGpEuM4=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a0d:c087:0:b0:6d4:d6de:3e35 with SMTP id
- 00721157ae682-6dbb6ba2a49mr1266217b3.8.1726248633303; Fri, 13 Sep 2024
- 10:30:33 -0700 (PDT)
-Date: Fri, 13 Sep 2024 10:30:31 -0700
-In-Reply-To: <20240731150811.156771-20-nikunj@amd.com>
+	s=arc-20240116; t=1726248737; c=relaxed/simple;
+	bh=pzA7ZMZZoVgNpmaWFc0CC225Ch3A3u6mzfsVUDrccy0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FU4z9DP5kG9za5wbVc2lU61oupeB6Pks77rjT5im6gHqZgCeILqPvPv9dyWiZe0G4QfOGGmtOVpT9bSOgan5HraY63zA0fG8UqQ6toZwetnbb1LjmbNa7+6yva9aGSpPNqBTuJxroCh8jbWkMW7sNpzR1IPlrDA2tg3LgCHRyqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SeVAv5rb; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48DHLhtX025025;
+	Fri, 13 Sep 2024 17:32:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=QnKufj0sD+PZoQG/V9Fz2QjNWrI
+	8Gvwt12+jULSnV+0=; b=SeVAv5rbtltW6SAgQMF+DzHSgsRDHIGUsCnOuFBenmE
+	UBDwWoEzNix9XtZBs8kuNCYbw3Vv5vG7g5WACVneFb6UhMWSV8pjoDNXtBBO/v/Y
+	ETGD+OG/L2RO37S4ewyYCwQXMkSOr5GD3Ql4999FGLepgiqiKlfCXI+64U7Wqeyp
+	qXUszcKqmmkn9ntsN3kExYN9qzc93SZKwPSqUiHMbdsJALyjriwgEY303mNMA7tD
+	o5ImiZ7sB3u05Bo3zL+SJHDXRwuUElUpKQa2AD5xgefL9IIolhw9OjXOWiXuYuIE
+	8oeB8VUlTczvJJj9fbkua/iSPAIeEWMFYfR3SBHRvAA==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41gc8qusv7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 17:32:13 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48DFGMtg010729;
+	Fri, 13 Sep 2024 17:32:12 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41kmb7391e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 17:32:12 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48DHW8b253215732
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Sep 2024 17:32:08 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7590A20043;
+	Fri, 13 Sep 2024 17:32:08 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D301320040;
+	Fri, 13 Sep 2024 17:32:07 +0000 (GMT)
+Received: from osiris (unknown [9.171.6.86])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 13 Sep 2024 17:32:07 +0000 (GMT)
+Date: Fri, 13 Sep 2024 19:32:06 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Stefan Liebler <stli@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH 7/7] s390/vdso: Wire up getrandom() vdso implementation
+Message-ID: <20240913173206.30385-C-hca@linux.ibm.com>
+References: <20240913130544.2398678-1-hca@linux.ibm.com>
+ <20240913130544.2398678-8-hca@linux.ibm.com>
+ <ZuRWmJTWqmD92D8d@zx2c4.com>
+ <ZuRYoVIrg28kBKqb@zx2c4.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240731150811.156771-1-nikunj@amd.com> <20240731150811.156771-20-nikunj@amd.com>
-Message-ID: <ZuR2t1QrBpPc1Sz2@google.com>
-Subject: Re: [PATCH v11 19/20] x86/kvmclock: Skip kvmclock when Secure TSC is available
-From: Sean Christopherson <seanjc@google.com>
-To: Nikunj A Dadhania <nikunj@amd.com>
-Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, bp@alien8.de, 
-	x86@kernel.org, kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de, 
-	dave.hansen@linux.intel.com, pgonda@google.com, pbonzini@redhat.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZuRYoVIrg28kBKqb@zx2c4.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: eTsnFCQgIgAm6HIewvB69RXkhB0rMtH1
+X-Proofpoint-ORIG-GUID: eTsnFCQgIgAm6HIewvB69RXkhB0rMtH1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-13_11,2024-09-13_02,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ mlxscore=0 lowpriorityscore=0 impostorscore=0 priorityscore=1501
+ malwarescore=0 adultscore=0 clxscore=1015 mlxlogscore=610 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409130121
 
-On Wed, Jul 31, 2024, Nikunj A Dadhania wrote:
-> For AMD SNP guests with SecureTSC enabled, kvm-clock is being picked up
-> momentarily instead of selecting more stable TSC clocksource.
+On Fri, Sep 13, 2024 at 05:22:09PM +0200, Jason A. Donenfeld wrote:
+> On Fri, Sep 13, 2024 at 05:13:28PM +0200, Jason A. Donenfeld wrote:
+> > On Fri, Sep 13, 2024 at 03:05:43PM +0200, Heiko Carstens wrote:
+> > > The vdso testcases vdso_test_getrandom and vdso_test_chacha pass.
+> > 
+> > I'm trying to cross compile this but I'm getting:
+> > 
+> >   CC       vdso_test_chacha
+> > /home/zx2c4/Projects/random-linux/tools/testing/selftests/../../../tools/arch/s390/vdso/vgetrandom-chacha.S: Assembler messages:
+> > /home/zx2c4/Projects/random-linux/tools/testing/selftests/../../../tools/arch/s390/vdso/vgetrandom-chacha.S:147: Error: Unrecognized opcode: `alsih'
+> > 
+> > Any idea what's up?
 > 
-> [    0.000000] kvm-clock: Using msrs 4b564d01 and 4b564d00
-> [    0.000001] kvm-clock: using sched offset of 1799357702246960 cycles
-> [    0.001493] clocksource: kvm-clock: mask: 0xffffffffffffffff max_cycles: 0x1cd42e4dffb, max_idle_ns: 881590591483 ns
-> [    0.006289] tsc: Detected 1996.249 MHz processor
-> [    0.305123] clocksource: tsc-early: mask: 0xffffffffffffffff max_cycles: 0x398cadd9d93, max_idle_ns: 881590552906 ns
-> [    1.045759] clocksource: Switched to clocksource kvm-clock
-> [    1.141326] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 0x398cadd9d93, max_idle_ns: 881590552906 ns
-> [    1.144634] clocksource: Switched to clocksource tsc
-> 
-> When Secure TSC is enabled, skip using the kvmclock. The guest kernel will
-> fallback and use Secure TSC based clocksource.
-> 
-> Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
-> Tested-by: Peter Gonda <pgonda@google.com>
-> ---
->  arch/x86/kernel/kvmclock.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
-> index 5b2c15214a6b..3d03b4c937b9 100644
-> --- a/arch/x86/kernel/kvmclock.c
-> +++ b/arch/x86/kernel/kvmclock.c
-> @@ -289,7 +289,7 @@ void __init kvmclock_init(void)
->  {
->  	u8 flags;
->  
-> -	if (!kvm_para_available() || !kvmclock)
-> +	if (!kvm_para_available() || !kvmclock || cc_platform_has(CC_ATTR_GUEST_SECURE_TSC))
+> Looks like I needed `-march=arch9`. I can potentially rebuild my
+> toolchains to do this by default, though, if that's a normal thing to
+> have and this is just my toolchain being crappy. Or, if it's not a
+> normal thing to have, do we need to add it to the selftests Makefile?
 
-I would much prefer we solve the kvmclock vs. TSC fight in a generic way.  Unless
-I've missed something, the fact that the TSC is more trusted in the SNP/TDX world
-is simply what's forcing the issue, but it's not actually the reason why Linux
-should prefer the TSC over kvmclock.  The underlying reason is that platforms that
-support SNP/TDX are guaranteed to have a stable, always running TSC, i.e. that the
-TSC is a superior timesource purely from a functionality perspective.  That it's
-more secure is icing on the cake.
+That needs to be fixed differently, since the kernel build would also
+fail when building for z10. Could you squash the below fix into this
+patch, please?
 
->  		return;
->  
->  	if (kvm_para_has_feature(KVM_FEATURE_CLOCKSOURCE2)) {
-> -- 
-> 2.34.1
-> 
+That way the compiler will still generate the correct code even if
+compiled with a lower march flag. There is already a guard in place
+(test_facility()), which prevents that this code will be executed if
+the machine does not know the instruction.
+
+So for the kernel itself including the vdso code, everything is
+correct now. But similar checks are missing within vdso_test_chacha.c.
+I'll provide something for that, so that the test case will be skipped
+if the required instructions are missing, but not today.
+
+diff --git a/arch/s390/kernel/vdso64/vgetrandom-chacha.S b/arch/s390/kernel/vdso64/vgetrandom-chacha.S
+index ecd44cf0eaba..d802b0a96f41 100644
+--- a/arch/s390/kernel/vdso64/vgetrandom-chacha.S
++++ b/arch/s390/kernel/vdso64/vgetrandom-chacha.S
+@@ -144,7 +144,8 @@ SYM_FUNC_START(__arch_chacha20_blocks_nostack)
+ .Lstoredone:
+ 
+ 	/* ++COPY3.COUNTER */
+-	alsih	%r3,1
++	/* alsih %r3,1 */
++	.insn	rilu,0xcc0a00000000,%r3,1
+ 	alcr	%r3,%r1
+ 	VLVGG	COPY3,%r3,0
+ 
 
