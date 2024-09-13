@@ -1,129 +1,114 @@
-Return-Path: <linux-kernel+bounces-328464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D54E69784A8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:22:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDC249784AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:22:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A09A1C20CCF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:22:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 038381C214D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4204D558B6;
-	Fri, 13 Sep 2024 15:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBF55811A;
+	Fri, 13 Sep 2024 15:18:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mPHbH+u9"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="D4tqCtsc"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149612629F
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 15:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDB2BE6F;
+	Fri, 13 Sep 2024 15:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726240619; cv=none; b=CNggc2fIEc+vN7pbWiZdQQjfqj3nqVL9XHPe4BPxDydofO0Ro0L7Pj6QzyqHxuQhT5ltZ5dYftMxpj7Hdlk6nbI+ErI+r2MZ+2MR11Fn1q4sZmaWbGMzreCIaj4cNFkLphny+gZcKj4k+s1ZoERuyZIioM6NmlQIH5sVvcGCSCw=
+	t=1726240681; cv=none; b=oCs4j2+x2KcdY9qQO6SKcV6bh9ObgHq4QrkgVqVLBV8d+O1PutDjOr0hCtp3B1xYdw/vDx+SieeZfvR/fQws5h0Sm7MenMrxJ0yUVRZ44lyYLlIQp4GfwxsQbneU2Z+WSslxKk/8DVKqw2ruavcR1BYFE+Q1qP6wM5OWdh3xPEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726240619; c=relaxed/simple;
-	bh=xAWkEscfYbcgnPVZ4edFBthl8XXEGTFdPUlCpw8X+X0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K5fZnKYW54TLSPMhlUkwtBtn45spRa5Pp8k1EcZ+qqRKdSEDoxh+sQou3Sgyl5ADHPFuZbDc+w/NBJUpr2So9jP5uOzV6p7TLzQIh2oDscNogWD7gNr7udYa/fCoegGLki6nr9PHDglEWZ6ox4gOzJ9VcqI6WakeQFgVhPXm4L0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mPHbH+u9; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a8a789c4fc5so549533566b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 08:16:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726240616; x=1726845416; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5YdprUc1vPVqWZrJP7Xy0uhlo+IsxLQcTd7Jlyz7yzs=;
-        b=mPHbH+u98l781NDodvWjfVZRVyryKrkfh4bEfOpjuEzLcvTVrqtXui5zZ2m03BFsoH
-         nRi95L/QBbG+xm/gZajtDB8riwMBVPngfybSQNOYWAGbBZ3MltWBSx5rrdc3NhQWaQL6
-         0/aQluiBXLmNnEfxhFXDKa94Eb08BRkAr2G6EmcqZvwOsR6pwN0OLL8eqLUqr5ppl/I9
-         l8kMZtg1JFmZyi+1BBZCI/SS6L5ZI3TURwXZUv8i6pT5Go6OKRyrvV+pPr+Pjd8Q2dJ8
-         LALkIIHshGrsVqO5W8k2ynODB0sEjEczDoZ93qeqE1rJcY/r1Tdc3zplIK3/6idbdc1X
-         MdCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726240616; x=1726845416;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5YdprUc1vPVqWZrJP7Xy0uhlo+IsxLQcTd7Jlyz7yzs=;
-        b=SLTbfB5enJift5nOxd3ZDjCpY2EXnDz0yO0QRB4E2Yfbx6NIO3WkLYdChJZhtPqf5v
-         YK7k5xjwoGJsUD9GKo6qTTMYVuc5ntSLw0o6ljh/bg1si7JMNqM+xPnUff9JHblKl0nX
-         aP0hVQR9IPYFCH9dWqQDCavFgkdexpyxFvDJpF+fabvB7HA/8+b2rB6LR5JQVoeRvUXT
-         /mW2G1rlG6OvvfrMYIzS7BoVQ8JsEhytftwc6h4qLEmBm0PAODCLheEVsU97/+TzZ7nr
-         zu6OD4ElTVnTippNn8gZ6FPTztnLiqZKuIZnpvojR5472qBisckKVXdbyI9CaO0z+QYx
-         2cpg==
-X-Forwarded-Encrypted: i=1; AJvYcCV4xqamKhmgfz0/I8lj8x3HW7hyZ0i8prE/3zvC3eaQsMadC+2/MDIMSTuWvTlc1XNhuB5EvwHMysboHx0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6xF8UiyPQd19/U/6Oq5FDwHvAL02d37Y/UTXiQZAksDis4Ods
-	dECn1mjIHiE7raEMUTK9TSz8xrA+tkJYsaoJwi1a4Q29qrCK7FmaW41fb7qHuTYeQ5sCuwiiSSS
-	Lu6jvuoFiQw2dlN4ZazO6DMf9gNYfhddf/FLg
-X-Google-Smtp-Source: AGHT+IH64JnbnKqlgjuwZ2poHsHnkRBQt2ZGALlB0BUTFCR5X3gE/MmjgeDfm+uKTA7o3vUfN5CtY78gFaFyWIBw5kc=
-X-Received: by 2002:a17:907:9723:b0:a8d:2bc7:6331 with SMTP id
- a640c23a62f3a-a8ffae3a217mr1348205966b.27.1726240615882; Fri, 13 Sep 2024
- 08:16:55 -0700 (PDT)
+	s=arc-20240116; t=1726240681; c=relaxed/simple;
+	bh=HdARxft5lo/WwL7MdcchDvg7lHX7sYr4osFJymFGL3w=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=IET8SAmMu5OAlNLB7I5vmom5CepRzmM0+73z6r8qWLXLcF1tUITIX023Qdgdatb/k81eKv1tkqPZT2GEWNuI9232JDyNRdfxcyg2IkdYQIOsuwyxdzFnv64d6ZGY0GGFdtZhKT4NReF2T2dtyn38W2uDfqljZ8ZmHH9hvmRGdY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=D4tqCtsc; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726240662; x=1726845462; i=markus.elfring@web.de;
+	bh=RnKqKkU5ax07eav2EVa2dS7EwG10YlWPtNLoGqh3bH4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=D4tqCtscxIhQoVsyq3ZjCr/heR8Sxwrl9CdSHVdZrbLm3TCiR5cAnwipTn8gccz6
+	 4h7M2bo9j8B1W+EhchvIibvww7vq/ZWki/LCED5NaR8Y4N7rw1IYZ4outWAQtm2Hc
+	 KVp86KzQOynVSGPu+JjTkMvaQdy7MT2hg9rhTpUZBNFvQ7owwU/xD7aE5ibL7WXKW
+	 1FKGiyn2DYbUXf7n1DEn1NiM7U3Py73AmtLpIbN1f849SbgOgFxIa8wGKjTkFzvXj
+	 vng9NvyFI6K55KT4NHKk+6f1QlCklh1qEp9PqieDa2AW6Vh6O62o8C7FcIEVePUfe
+	 77bT4g0VsqxasVObhA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N9LEU-1rsujS1TQy-014dYn; Fri, 13
+ Sep 2024 17:17:42 +0200
+Message-ID: <973892ec-d905-4524-a024-d506099290ea@web.de>
+Date: Fri, 13 Sep 2024 17:17:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240913150954.2287196-1-sean.anderson@linux.dev>
-In-Reply-To: <20240913150954.2287196-1-sean.anderson@linux.dev>
-From: Eric Dumazet <edumazet@google.com>
-Date: Fri, 13 Sep 2024 17:16:45 +0200
-Message-ID: <CANn89iL-fgyZo=NbyDFA5ebSn4nqvNASFyXq2GVGpCpH049+Lg@mail.gmail.com>
-Subject: Re: [PATCH] net: Handle threadirqs in __napi_schedule_irqoff
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
-	Juri Lelli <juri.lelli@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: Akashi Takahiro <takahiro.akashi@linaro.org>,
+ Ben Chuang <ben.chuang@genesyslogic.com.tw>,
+ Victor Shih <victor.shih@genesyslogic.com.tw>, linux-mmc@vger.kernel.org,
+ Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ben Chuang <benchuanggli@gmail.com>,
+ Daniil Lunev <dlunev@chromium.org>, Greg Tu <greg.tu@genesyslogic.com.tw>,
+ HL.Liu@genesyslogic.com.tw, Lucas Lai <Lucas.Lai@genesyslogic.com.tw>
+References: <20240913102836.6144-18-victorshihgli@gmail.com>
+Subject: Re: [PATCH V22 17/22] mmc: sdhci-uhs2: add irq() and others
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240913102836.6144-18-victorshihgli@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:6gIqQ0bFKBlIcJgZ73wRNhc1GcKsyI4tYhuXKDQ/FUmsLFAxV7G
+ mkTccOSDa9lqUwTokxxOfYIkMlspGHR2FN8nUoVBGrNgMW1iw+eAqRkd+2SDkG0dCJsePqh
+ wnGVK87SMDEv+gLB93BKkWclpzVgZ7aR276yk3AdGLwl3SG19hSRLY9gs9KREpQ0vffIajH
+ P9OL/+a5Sg0MaWxhObehA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:2YAwxqnx5mw=;SMPcOF5Br0swl+g+TLEel6MDUMu
+ 83v9QwbYH4jjEOu+cWk8v3Vu/4QAbGxno8v54qwjMRUyN+xHOpzQyEJ+Dr37Z15GxEd2qqd7b
+ lUdepGSvx0PSfRtts2XdWvvVxJ9Vy6+7D477YiX7h65BhE1kuS7f3RyPdjLZl5pWyFa65s2dG
+ 33BywuGPntxfEWEKOcoSq3glmOuUrb2QTvHnz24t4s/ab4u4L9RVSST64xhkdnsadKPacT8JW
+ kI0hVp+jWY8WD7hit2kZBZWUHa9Copn1JHxRxBco5xhkI3JMB9+V+gYuRf0CWq3KvMk9CbAfC
+ dRRzfFI7qLvpi5I0G3SH2DpAOPc1o9vfaoQ+7COtSOVsNNewVigZ2xGXpUf4k/+C5ZIhf9ci3
+ eHI090EPuEso1s3NSbQ4l2E73FBaBficirzQdmMYFVnlirn1vQb6UIPhwA+A+PLmkRJWPX+Io
+ RY7xL94YpxHfU/tXSzW4kz/b35uP2/PgjC4U2D70Yy0crwrv9C6c4/6NNOCJVY06d09CXM6lu
+ YtiFB7RzfIUxwfo+RU/TjSfxlk6y3lRNTGopIipF8QERi1IhbVDNngrfv9Gv/21Y6gRj8R+9y
+ Pykv/wJBs8994sx6ptXparZzT5P/ZZxo7WF2HDeA4JSxHymbpO4Cg+06oE2cBxy+IqPPXwSxG
+ vRApcpxxgEUzoEcEaW2daox1gieb19vs5VX2B8n82hI41HuhndEJrGY1tplUqa3cLV4lD0nwL
+ 1nJJGu38kvKMCCv0zSeQHMJ3OVfCLqxN7Y/ZfQzcZvw49EEj6lVlvghMgYfFyV1RYMUIaIdXv
+ bXpbuTfS3jwYaPRgogN22N2g==
 
-On Fri, Sep 13, 2024 at 5:10=E2=80=AFPM Sean Anderson <sean.anderson@linux.=
-dev> wrote:
->
-> The threadirqs kernel parameter can be used to force threaded IRQs even
-> on non-PREEMPT_RT kernels. Use force_irqthreads to determine if we can
-> skip disabling local interrupts. This defaults to false on regular
-> kernels, and is always true on PREEMPT_RT kernels.
->
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> ---
->
->  net/core/dev.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/net/core/dev.c b/net/core/dev.c
-> index 1e740faf9e78..112e871bc2b0 100644
-> --- a/net/core/dev.c
-> +++ b/net/core/dev.c
-> @@ -6202,7 +6202,7 @@ EXPORT_SYMBOL(napi_schedule_prep);
->   */
->  void __napi_schedule_irqoff(struct napi_struct *n)
->  {
-> -       if (!IS_ENABLED(CONFIG_PREEMPT_RT))
-> +       if (!force_irqthreads())
->                 ____napi_schedule(this_cpu_ptr(&softnet_data), n);
->         else
->                 __napi_schedule(n);
-> --
-> 2.35.1.1320.gc452695387.dirty
->
+=E2=80=A6
+> +++ b/drivers/mmc/host/sdhci-uhs2.c
+=E2=80=A6
+> +static bool sdhci_uhs2_request_done(struct sdhci_host *host)
+> +{
+=E2=80=A6
+> +	int i;
+> +
+> +	spin_lock_irqsave(&host->lock, flags);
+=E2=80=A6
+> +	host->mrqs_done[i] =3D NULL;
+> +
+> +	spin_unlock_irqrestore(&host->lock, flags);
+=E2=80=A6
 
-Seems reasonable, can you update the comment (kdoc) as well ?
+Under which circumstances would you become interested to apply a statement
+like =E2=80=9Cguard(spinlock_irqsave)(&host->lock);=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.11-rc7/source/include/linux/spinlock.h=
+#L572
 
-It says :
-
- * On PREEMPT_RT enabled kernels this maps to __napi_schedule()
- * because the interrupt disabled assumption might not be true
- * due to force-threaded interrupts and spinlock substitution.
-
-Also always specify net or net-next for networking patches.
-
-Thanks.
+Regards,
+Markus
 
