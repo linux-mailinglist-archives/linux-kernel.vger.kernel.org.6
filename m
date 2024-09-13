@@ -1,94 +1,285 @@
-Return-Path: <linux-kernel+bounces-327467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13B1697765C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:21:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C663C97765F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:22:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD8651F24633
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:21:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB2981C22833
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4874A3E;
-	Fri, 13 Sep 2024 01:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62924A3F;
+	Fri, 13 Sep 2024 01:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="LWi9plxG"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hbinJR/c"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99831FA5;
-	Fri, 13 Sep 2024 01:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EC6A59;
+	Fri, 13 Sep 2024 01:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726190463; cv=none; b=HwbopeMdQS/EnK4uv6wRw+7aKRW8whHNm6dXWwJoenaUEXBajwypz4nlTN6j+guDyfp0qRYwaljwrMsIqE9K9q4ZA4ZA165pWml33MJFasytmJyBjpsAMopfAlAd5JDanyRUq5A3NCkX8h0IE6V56RpVL6aKitMWgjY7jA+8xw0=
+	t=1726190536; cv=none; b=M8chQXBwCBnML066o4+zof63IbLmtQDaVdCE+SrwSQPtjUEuwdL3bEKuf7hufGu5WFhPVudKWhxsnSOa2PQb8MBKS/rbMLfY1d66a5OigVNWATKPF6EpdL4BfH6E/aBU4iT9/Ppx8j4ewZ8JOc/ZZtD/TlGiuIDODcZ+qKHlils=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726190463; c=relaxed/simple;
-	bh=yi8Fzl1i9+PpIayISuMGypW4nou4TzFzAOOdTRRgHKA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=JGmuDauVAkcRYn3Mue+pd2CugVy+UthqaPdWxwlV1n6uwJWXfG22uJm852hk4gswEHrVE8uchb5yI/0soxbfBRPbPKQKvk4L4rgRwRt1J4H+q9y13YYiNc/T94fSlTHf0oBPEp4ZJw1LEfTFgXyE6JFS66OkzdZHFUf/rw6T9NY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=LWi9plxG; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 48D1KkqK62078355, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1726190446; bh=yi8Fzl1i9+PpIayISuMGypW4nou4TzFzAOOdTRRgHKA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=LWi9plxGemzbyTJXxQlYHEW4SoAkNMl0ED0UlljpugELLwKj6tauOrYUmlpSbQj9d
-	 8eI3kIAnXxNU4F1gYpK+3wvXO7ppMHd4mfV9ObwVxeKDrLcMxDVT6v39B4hB9LG+dd
-	 igrW9dtsypA/H1YOQ+lgCBxiOn7q1dYdrOs+qAIeqzR6sOgFgvSquabO3k+ph/NsAJ
-	 rUf1YR7Ww7E8+phWreOvlyCNRUm2TfjRQQJwy41/LPXEFIVgcdvO10yZmQvfZt87JJ
-	 JJAQyVq1MGynwLhgO2H8iH8M4OkaFkiTHrQQQKA7HrGq7/9oR1+hvWZX36uVkMKQ2e
-	 swp1vcTLM+4LQ==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.05/5.92) with ESMTPS id 48D1KkqK62078355
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Sep 2024 09:20:46 +0800
-Received: from RTEXMBS02.realtek.com.tw (172.21.6.95) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 13 Sep 2024 09:20:45 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS02.realtek.com.tw (172.21.6.95) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Fri, 13 Sep 2024 09:20:45 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f]) by
- RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f%11]) with mapi id
- 15.01.2507.035; Fri, 13 Sep 2024 09:20:45 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Colin Ian King <colin.i.king@gmail.com>, Kalle Valo <kvalo@kernel.org>,
-        Dmitry Antipov <dmantipov@yandex.ru>,
-        "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>
-CC: "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH][next] wifi: rtlwifi: make read-only arrays static const
-Thread-Topic: [PATCH][next] wifi: rtlwifi: make read-only arrays static const
-Thread-Index: AQHbBRsuUlJ76Z1Mb0GnQxRPAMYupbJU6//g
-Date: Fri, 13 Sep 2024 01:20:45 +0000
-Message-ID: <05085e265b174d6482b108f6378921b9@realtek.com>
-References: <20240912135335.590464-1-colin.i.king@gmail.com>
-In-Reply-To: <20240912135335.590464-1-colin.i.king@gmail.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-x-kse-serverinfo: RTEXMBS02.realtek.com.tw, 9
-x-kse-antispam-interceptor-info: fallback
-x-kse-antivirus-interceptor-info: fallback
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1726190536; c=relaxed/simple;
+	bh=yRH5tf+ZvOsKwZDNQrzD6xeTVcBtRzuN9s8qBocLsOo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZpP3QtJeGefNekcMVBX6dBsDoS6zb8ICANbCwsMqzzC062ldIjIvS98nyerM2G3quSJhdS7SBWVGnPgfVyNBkM+BNfWPjvzLtceFXXhCJ/ABcsjQ1J0fNBlWwLa6+spkrV6lwQ4uCUrNwdk9rNji6EINAhdcgw1iG871sZmbX9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hbinJR/c; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726190534; x=1757726534;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yRH5tf+ZvOsKwZDNQrzD6xeTVcBtRzuN9s8qBocLsOo=;
+  b=hbinJR/cxD9HUePfryVQeyp2MGMfnNSUU1rOHZozGOEq45hSX4gUK+Hr
+   1jKewzUp38I1KJZXA63GzEVQpyHzxZghtnVI3kwYIyhWqI2AgJDq6md1b
+   X1mkQsPMw4N2Es7qZBLMKNl/jGX+yCCQ7AmfW3cDM/tyzJbuxRIPt5AJI
+   z8gHqN3mFGSrG+DT7NG2Lk6HrmX01kYyOw89IOyuChOFgLRDE09te6yQa
+   PZx47cMFS5cJaOegg5wAYTTF2d7Hqr99GVXTggx4YiiwdYtJ2MHqCA3OU
+   oyV5WmtMWcHxpFyPFeGVvyuYptWHNO2iPQjBkXLu8EVX8aMqLfAzmW+Wr
+   w==;
+X-CSE-ConnectionGUID: 69Nld+vcTlK4kW9mb/qCCg==
+X-CSE-MsgGUID: e26Si0shSxaR+1GOZwpZ4g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="47594688"
+X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
+   d="scan'208";a="47594688"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 18:22:13 -0700
+X-CSE-ConnectionGUID: 1w8QNgEPR/WPGAoBTa3jcg==
+X-CSE-MsgGUID: tQllv47DS+CnnL7+3jsRfw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
+   d="scan'208";a="67982903"
+Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 18:22:12 -0700
+Date: Thu, 12 Sep 2024 18:22:12 -0700
+From: Isaku Yamahata <isaku.yamahata@intel.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Isaku Yamahata <isaku.yamahata@intel.com>, kvm@vger.kernel.org,
+	sagis@google.com, chao.gao@intel.com, pbonzini@redhat.com,
+	rick.p.edgecombe@intel.com, yan.y.zhao@intel.com,
+	linux-kernel@vger.kernel.org, isaku.yamahata@linux.intel.com
+Subject: Re: [PATCH] KVM: x86/tdp_mmu: Trigger the callback only when an
+ interesting change
+Message-ID: <ZuOTxGa58QUy0qbI@ls.amr.corp.intel.com>
+References: <6eecc450d0326c9bedfbb34096a0279410923c8d.1726182754.git.isaku.yamahata@intel.com>
+ <ZuOCXarfAwPjYj19@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSE-AntiSpam-Interceptor-Info: fallback
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZuOCXarfAwPjYj19@google.com>
 
-Q29saW4gSWFuIEtpbmcgPGNvbGluLmkua2luZ0BnbWFpbC5jb20+IHdyb3RlOg0KPiBEb24ndCBw
-b3B1bGF0ZSB0aGUgcmVhZC1vbmx5IGFycmF5cyBwYXJhbXMsIHRvc2hpYmFfc21pZDEsIHRvc2hp
-YmFfc21pZDIsDQo+IHNhbXN1bmdfc21pZCBhbmQgbGVub3ZvX3NtaWQgb24gdGhlIHN0YWNrIGF0
-IHJ1biB0aW1lLCBpbnN0ZWFkIG1ha2UgdGhlbQ0KPiBzdGF0aWMgY29uc3QuDQo+IA0KPiBTaWdu
-ZWQtb2ZmLWJ5OiBDb2xpbiBJYW4gS2luZyA8Y29saW4uaS5raW5nQGdtYWlsLmNvbT4NCg0KQWNr
-ZWQtYnk6IFBpbmctS2UgU2hpaCA8cGtzaGloQHJlYWx0ZWsuY29tPg0KDQoNCg==
+On Thu, Sep 12, 2024 at 05:07:57PM -0700,
+Sean Christopherson <seanjc@google.com> wrote:
+
+> On Thu, Sep 12, 2024, Isaku Yamahata wrote:
+> > KVM MMU behavior
+> > ================
+> > The leaf SPTE state machine is coded in make_spte().  Consider AD bits and
+> > the present bits for simplicity.  The two functionalities and AD bits
+> > support are related in this context.  unsync (manipulate D bit and W bit,
+> > and handle write protect fault) and access tracking (manipulate A bit and
+> > present bit, and hand handle page fault).  (We don't consider dirty page
+> > tracking for now as it's future work of TDX KVM.)
+> > 
+> > * If AD bit is enabled:
+> > D bit state change for dirty page tracking
+> > On the first EPT violation without prefetch,
+> > - D bits are set.
+> > - Make SPTE writable as TDX supports only RXW (or if write fault).
+> >   (TDX KVM doesn't support write protection at this state. It's future work.)
+> > 
+> > On the second EPT violation.
+> > - clear D bits if write fault.
+> 
+> Heh, I was literally just writing changelogs for patches to address this (I told
+> Sagi I would do it "this week"; that was four weeks ago).
+> 
+> This is a bug in make_spte().  Replacing a W=1,D=1 SPTE with a W=1,D=0 SPTE is
+> nonsensical.  And I'm pretty sure it's an outright but for the TDP MMU (see below).
+> 
+> Right now, the fixes for make_spte() are sitting toward the end of the massive
+> kvm_follow_pfn() rework (80+ patches and counting), but despite the size, I am
+> fairly confident that series can land in 6.13 (lots and lots of small patches).
+
+Thanks for addressing this.
+
+
+> ---
+> Author:     Sean Christopherson <seanjc@google.com>
+> AuthorDate: Thu Sep 12 16:23:21 2024 -0700
+> Commit:     Sean Christopherson <seanjc@google.com>
+> CommitDate: Thu Sep 12 16:35:06 2024 -0700
+> 
+>     KVM: x86/mmu: Flush TLBs if resolving a TDP MMU fault clears W or D bits
+>     
+>     Do a remote TLB flush if installing a leaf SPTE overwrites an existing
+>     leaf SPTE (with the same target pfn) and clears the Writable bit or the
+>     Dirty bit.  KVM isn't _supposed_ to clear Writable or Dirty bits in such
+>     a scenario, but make_spte() has a flaw where it will fail to set the Dirty
+>     if the existing SPTE is writable.
+>     
+>     E.g. if two vCPUs race to handle faults, the KVM will install a W=1,D=1
+>     SPTE for the first vCPU, and then overwrite it with a W=1,D=0 SPTE for the
+>     second vCPU.  If the first vCPU (or another vCPU) accesses memory using
+>     the W=1,D=1 SPTE, i.e. creates a writable, dirty TLB entry, and that is
+>     the only SPTE that is dirty at the time of the next relevant clearing of
+>     the dirty logs, then clear_dirty_gfn_range() will not modify any SPTEs
+>     because it sees the D=0 SPTE, and thus will complete the clearing of the
+>     dirty logs without performing a TLB flush.
+>     
+>     Opportunistically harden the TDP MMU against clearing the Writable bit as
+>     well, both to prevent similar bugs for write-protection, but also so that
+>     the logic can eventually be deduplicated into spte.c (mmu_spte_update() in
+>     the shadow MMU has similar logic).
+>     
+>     Fix the bug in the TDP MMU's page fault handler even though make_spte() is
+>     clearly doing odd things, e.g. it marks the page dirty in its slot but
+>     doesn't set the Dirty bit.  Precisely because replacing a leaf SPTE with
+>     another leaf SPTE is so rare, the cost of hardening KVM against such bugs
+>     is negligible.  The make_spte() will be addressed in a future commit.
+>     
+>     Fixes: bb18842e2111 ("kvm: x86/mmu: Add TDP MMU PF handler")
+>     Cc: David Matlack <dmatlack@google.com>
+>     Cc: stable@vger.kernel.org
+>     Signed-off-by: Sean Christopherson <seanjc@google.com>
+> 
+> diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
+> index 3b996c1fdaab..7c6d1c610f0e 100644
+> --- a/arch/x86/kvm/mmu/tdp_mmu.c
+> +++ b/arch/x86/kvm/mmu/tdp_mmu.c
+> @@ -1038,7 +1038,9 @@ static int tdp_mmu_map_handle_target_level(struct kvm_vcpu *vcpu,
+>         else if (tdp_mmu_set_spte_atomic(vcpu->kvm, iter, new_spte))
+>                 return RET_PF_RETRY;
+>         else if (is_shadow_present_pte(iter->old_spte) &&
+> -                !is_last_spte(iter->old_spte, iter->level))
+> +                (!is_last_spte(iter->old_spte, iter->level) ||
+> +                 (is_mmu_writable_spte(old_spte) && !is_writable_pte(new_spte)) ||
+> +                 (is_dirty_spte(old_spte) && !is_dirty_spte(new_spte))))
+>                 kvm_flush_remote_tlbs_gfn(vcpu->kvm, iter->gfn, iter->level);
+>  
+>         /*
+> ---
+> 
+> >  arch/x86/kvm/mmu/spte.h    |  6 ++++++
+> >  arch/x86/kvm/mmu/tdp_mmu.c | 28 +++++++++++++++++++++++++---
+> >  2 files changed, 31 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/arch/x86/kvm/mmu/spte.h b/arch/x86/kvm/mmu/spte.h
+> > index a72f0e3bde17..1726f8ec5a50 100644
+> > --- a/arch/x86/kvm/mmu/spte.h
+> > +++ b/arch/x86/kvm/mmu/spte.h
+> > @@ -214,6 +214,12 @@ extern u64 __read_mostly shadow_nonpresent_or_rsvd_mask;
+> >   */
+> >  #define FROZEN_SPTE	(SHADOW_NONPRESENT_VALUE | 0x5a0ULL)
+> >  
+> > +#define EXTERNAL_SPTE_IGNORE_CHANGE_MASK		\
+> > +	(shadow_acc_track_mask |			\
+> > +	 (SHADOW_ACC_TRACK_SAVED_BITS_MASK <<		\
+> > +	  SHADOW_ACC_TRACK_SAVED_BITS_SHIFT) |		\
+> 
+> Just make TDX require A/D bits, there's no reason to care about access tracking.
+
+Ok.
+
+
+> > +	 shadow_dirty_mask | shadow_accessed_mask)
+> > +
+> >  /* Removed SPTEs must not be misconstrued as shadow present PTEs. */
+> >  static_assert(!(FROZEN_SPTE & SPTE_MMU_PRESENT_MASK));
+> >  
+> > diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
+> > index 019b43723d90..cfb82ede8982 100644
+> > --- a/arch/x86/kvm/mmu/tdp_mmu.c
+> > +++ b/arch/x86/kvm/mmu/tdp_mmu.c
+> > @@ -503,8 +503,6 @@ static int __must_check set_external_spte_present(struct kvm *kvm, tdp_ptep_t sp
+> >  	kvm_pfn_t new_pfn = spte_to_pfn(new_spte);
+> >  	int ret = 0;
+> >  
+> > -	KVM_BUG_ON(was_present, kvm);
+> > -
+> >  	lockdep_assert_held(&kvm->mmu_lock);
+> >  	/*
+> >  	 * We need to lock out other updates to the SPTE until the external
+> > @@ -519,10 +517,34 @@ static int __must_check set_external_spte_present(struct kvm *kvm, tdp_ptep_t sp
+> >  	 * external page table, or leaf.
+> >  	 */
+> >  	if (is_leaf) {
+> > -		ret = static_call(kvm_x86_set_external_spte)(kvm, gfn, level, new_pfn);
+> > +		/*
+> > +		 * SPTE is state machine with software available bits used.
+> > +		 * Check if the change is interesting to the backend.
+> > +		 */
+> > +		if (!was_present)
+> > +			ret = static_call(kvm_x86_set_external_spte)(kvm, gfn, level, new_pfn);
+> > +		else {
+> > +			/*
+> > +			 * The external PTEs don't need updates for some bits,
+> > +			 * but if others are changed, bug the VM.
+> > +			 */
+> > +			if (KVM_BUG_ON(~EXTERNAL_SPTE_IGNORE_CHANGE_MASK &
+> 
+> There's no reason to bug the VM.  WARN, yes (maybe), but not bug the VM.  And I
+> think this should be short-circuited somewhere further up the chain, i.e. not
+> just for TDX.
+> 
+> One idea would be to WARN and skip setting the SPTE in tdp_mmu_map_handle_target_level().
+> I.e. WARN and ignore 1=>0 transitions for Writable and Dirty bits, and then drop
+> the TLB flush (assuming the above patch lands).
+
+Ok, let me give it a try.
+
+
+> > +				       (old_spte ^ new_spte), kvm)) {
+> 
+> Curly braces are unnecessary.
+
+Will fix.
+
+
+> > +				ret = -EIO;
+> > +			}
+> > +		}
+> > +
+> > +		/*
+> > +		 * The backend shouldn't return an error except EAGAIN.
+> > +		 * It's hard to debug without those info.
+> > +		 */
+> > +		if (ret && ret != EAGAIN)
+> > +			pr_debug("gfn 0x%llx old_spte 0x%llx new_spte 0x%llx level %d\n",
+> > +				 gfn, old_spte, new_spte, level);
+> 
+> Please no.  Not in upstream.  Yeah, for development it's fine, but sprinkling
+> printks all over the MMU eventually just results in stale printks, e.g. see all
+> of the pgprintk crud that got ripped out a while back.
+
+Ok, will remove it.
+
+
+> >  	} else {
+> >  		void *external_spt = get_external_spt(gfn, new_spte, level);
+> >  
+> > +		KVM_BUG_ON(was_present, kvm);
+> >  		KVM_BUG_ON(!external_spt, kvm);
+> >  		ret = static_call(kvm_x86_link_external_spt)(kvm, gfn, level, external_spt);
+> >  	}
+> > 
+> > base-commit: d2c7662a6ea1c325a9ae878b3f1a265264bcd18b
+> > -- 
+> > 2.45.2
+> > 
+> 
+
+-- 
+Isaku Yamahata <isaku.yamahata@intel.com>
 
