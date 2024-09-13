@@ -1,89 +1,153 @@
-Return-Path: <linux-kernel+bounces-328632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB379786A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:24:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AEB69786A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:25:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BBE61C2243C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:24:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 515A4284386
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C01839F4;
-	Fri, 13 Sep 2024 17:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8FDA83CD9;
+	Fri, 13 Sep 2024 17:24:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Yk6uccGY"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKf16Lsy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B601EEE4;
-	Fri, 13 Sep 2024 17:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102B66F31E;
+	Fri, 13 Sep 2024 17:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726248266; cv=none; b=eiZRiXLjvxikoYyrvwx9YewrJmswrlsBwyLIpqzQWAB5Mf3Zxuz1lsyS/jWfMLbd5CTQmof06xfVyb84+If0t9Nyq10vK9phk4aNB+vQrryABqNuYF/di+UN4oUzuUjNlpzP/r9pGzeRf3k1e6iwmfPsLMooSOoKkw9rIvmiDVE=
+	t=1726248293; cv=none; b=uMRc6mle90BxKnOw0O4n3ryYoWzvWPjCSc4LHOVvwrRMXBE5DUsuG8GClsv9eEZhpJl/c738gx0m4qi1FyxlNzobNau+ulGkFmOLMjReSrUA4BSUr8nSYTXAq7q6yrLSUzPKTaiA3m9IXhzK7rBUedXHV5rEMPw7k5QJuLQaG84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726248266; c=relaxed/simple;
-	bh=sllu2LtMOhcdH/FD8wUSmEhJWjy45HTpNiNXgVAUspU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W6d9rI4buhMyghtEFb88LzzWRx9F2PcRgSxcJMe2F2jElJK0OA24kGShvjrV9c4AOranFtFORK1KynlSBuB+oJ9aYbvjlI56KQRMKh2ouOyUAxw/xeOoBigF/682Cwiy+ik6lHozrKC6LS1+OEsdl88taFwjudnptWVj+2M9ueE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Yk6uccGY; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <e1435276-d106-411f-9c0f-c98abd2bce08@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726248260;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eUlMI/VUG0tbtBW/0vyoiiaa/eRH5yrftzcJDI7pfa4=;
-	b=Yk6uccGYN6b+Y8rna0u6tXJc1FyRwl3xoyTZX3NS+dAPIOwIqURDELqvdltb8saVILHLKL
-	7PBy7oqaLuG2UqwAsSfCyCvkQrO2/FVD+0bJ2DQDaFpSTgZdACLrpjp96GU8e8GHJWLCxP
-	bVc3vdUJ6gUo+6M8+OEDHunEIIMXq48=
-Date: Fri, 13 Sep 2024 10:24:09 -0700
+	s=arc-20240116; t=1726248293; c=relaxed/simple;
+	bh=PnxiBuLP2r+FlaRXWWuCH9SooIjCuVke4h/VjCYOCNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pV85O2NWqOUvPHmsUC5rGQ8O5mvSb7gjQ4J5HD+5Cu1/ANTklcxKwifrwMSZw2AWpyJ/37FKWjzn2ssJarWDa/3Qeo2e+LCBZiw2yE1tpAqsmXU/gOZJmkszCpFfuu3BIl4eFTVBtX+ZQ30eMt3PgCtu8acVIahMGqW86QN+gPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UKf16Lsy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEC2AC4CEC0;
+	Fri, 13 Sep 2024 17:24:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726248292;
+	bh=PnxiBuLP2r+FlaRXWWuCH9SooIjCuVke4h/VjCYOCNU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UKf16Lsyktzjkf9OKskVaxOsM9QAx34cF8UO+z9ZcgTKgzFyeaXHCe1SzRaYRE0wh
+	 /MwiPJ7GzibU49760jGEkOMElo2e+r15+1oDNLoR2uXQLLnh0Iqme0YFzA2eQL0NGM
+	 PSMC63H7SuUeQ6cy5LiQWrkW0trozSOMn8RZei6o2IZI+IKfDW1nCqQ/K7BWBLkdpP
+	 vlJxKiDvEq3XZjnlnatu0PTdN39GDS7Pa8qw1hOZGo1MQ0EVj4WXsp4OUaRpKd0XMo
+	 PF4AMM5pR35WguMKcHn61BLEbNu+YJDYYyUJ96LEFuX5hqvM8fnOE+ird31npSIGt/
+	 9O4VEju03b0xg==
+Date: Fri, 13 Sep 2024 18:24:47 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Michal Simek <michal.simek@amd.com>
+Cc: linux-kernel@vger.kernel.org, monstr@monstr.eu, michal.simek@xilinx.com,
+	git@xilinx.com, stable@vger.kernel.org,
+	Benjamin Gaignard <benjamin.gaignard@st.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"open list:TTY LAYER AND SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+Subject: Re: [PATCH v2] dt-bindings: serial: rs485: Fix rs485-rts-delay
+ property
+Message-ID: <20240913-sulk-threaten-79448edf988a@spud>
+References: <1b60e457c2f1bfa2284291ad58af02c982936ac8.1726224922.git.michal.simek@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net] netkit: Assign missing bpf_net_context
-To: Breno Leitao <leitao@debian.org>
-Cc: kuba@kernel.org, bpf@vger.kernel.org,
- Daniel Borkmann <daniel@iogearbox.net>,
- Nikolay Aleksandrov <razor@blackwall.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
- =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- vadim.fedorenko@linux.dev, andrii@kernel.org,
- "open list:BPF [NETKIT] (BPF-programmable network device)"
- <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-References: <20240912155620.1334587-1-leitao@debian.org>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-In-Reply-To: <20240912155620.1334587-1-leitao@debian.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="rqNS0kyIGTMLDBX1"
+Content-Disposition: inline
+In-Reply-To: <1b60e457c2f1bfa2284291ad58af02c982936ac8.1726224922.git.michal.simek@amd.com>
 
-On 9/12/24 8:56 AM, Breno Leitao wrote:
-> During the introduction of struct bpf_net_context handling for
-> XDP-redirect, the netkit driver has been missed, which also requires it
-> because NETKIT_REDIRECT invokes skb_do_redirect() which is accessing the
-> per-CPU variables. Otherwise we see the following crash:
-> 
-> 	BUG: kernel NULL pointer dereference, address: 0000000000000038
-> 	bpf_redirect()
-> 	netkit_xmit()
-> 	dev_hard_start_xmit()
-> 
-> Set the bpf_net_context before invoking netkit_xmit() program within the
-> netkit driver.
 
-Acked-by: Martin KaFai Lau <martin.lau@kernel.org>
+--rqNS0kyIGTMLDBX1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Sep 13, 2024 at 12:55:23PM +0200, Michal Simek wrote:
+> Code expects array only with 2 items which should be checked.
+> But also item checking is not working as it should likely because of
+> incorrect items description.
+>=20
+> Fixes: d50f974c4f7f ("dt-bindings: serial: Convert rs485 bindings to json=
+-schema")
+> Signed-off-by: Michal Simek <michal.simek@amd.com>
+> Cc: <stable@vger.kernel.org>
+> ---
+>=20
+> Changes in v2:
+> - Remove maxItems properties which are not needed
+> - Add stable ML to CC
+>=20
+>  .../devicetree/bindings/serial/rs485.yaml     | 19 +++++++++----------
+>  1 file changed, 9 insertions(+), 10 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/serial/rs485.yaml b/Docume=
+ntation/devicetree/bindings/serial/rs485.yaml
+> index 9418fd66a8e9..9665de41762e 100644
+> --- a/Documentation/devicetree/bindings/serial/rs485.yaml
+> +++ b/Documentation/devicetree/bindings/serial/rs485.yaml
+> @@ -18,16 +18,15 @@ properties:
+>      description: prop-encoded-array <a b>
+>      $ref: /schemas/types.yaml#/definitions/uint32-array
+>      items:
+> -      items:
+> -        - description: Delay between rts signal and beginning of data se=
+nt in
+> -            milliseconds. It corresponds to the delay before sending dat=
+a.
+> -          default: 0
+> -          maximum: 100
+> -        - description: Delay between end of data sent and rts signal in =
+milliseconds.
+> -            It corresponds to the delay after sending data and actual re=
+lease
+> -            of the line.
+> -          default: 0
+> -          maximum: 100
+> +      - description: Delay between rts signal and beginning of data sent=
+ in
+> +          milliseconds. It corresponds to the delay before sending data.
+> +        default: 0
+> +        maximum: 50
+
+I would expect to see some mention in the commit message as to why the
+maximum has changed from 100 to 50 milliseconds.
+
+> +      - description: Delay between end of data sent and rts signal in mi=
+lliseconds.
+> +          It corresponds to the delay after sending data and actual rele=
+ase
+> +          of the line.
+> +        default: 0
+> +        maximum: 100
+> =20
+>    rs485-rts-active-high:
+>      description: drive RTS high when sending (this is the default).
+> --=20
+> 2.43.0
+>=20
+
+--rqNS0kyIGTMLDBX1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuR1XwAKCRB4tDGHoIJi
+0vfwAP0TfUUdDtg6AO2HGHUxJaYOIeAhds57L3Zm/Cdtut8DIwEA1zocxXYyK33w
+6LSjDjUNRjqlKfpC0Rgmq7fgwoE4KgY=
+=vUf3
+-----END PGP SIGNATURE-----
+
+--rqNS0kyIGTMLDBX1--
 
