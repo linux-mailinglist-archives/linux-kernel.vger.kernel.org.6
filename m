@@ -1,195 +1,326 @@
-Return-Path: <linux-kernel+bounces-328499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C3409784FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:37:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D15F9784FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:36:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1710B24B5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:37:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 890E41C229DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4121A3B782;
-	Fri, 13 Sep 2024 15:37:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1383BBE0;
+	Fri, 13 Sep 2024 15:36:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NhNnKS5g"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YN4MdyGt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF132EB02
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 15:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868482EB02;
+	Fri, 13 Sep 2024 15:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726241835; cv=none; b=TXmqwG6fnuSgFset/Vjn+gHQziUD8S9KRTckWPwyL4cV6QqZ7YlbRXie/b3OQsqiaZyFBatRRXtV59Whh1ggDR4+5eZj9ZoVE53Bhdj1FKy3qSAGCWz8HISl9iegbIkz8KQEFDu3uBxcMhszQa4CYYNrkJO6CwXs0tYHgzAv0/Y=
+	t=1726241798; cv=none; b=lmNcRvAQQSPn+wRyc2xW3lfrbW2N7gFeh2/aXhSJaT9xzcehrNzNMnsG/eyFhD92E9oS4RltYKzdK9HPe/2sRXaS8geLEMPcVfHK+w698t0ZsSW8mM9ee7OT+3K3sta7s8CAEj1Vw0WctE+NllsOmQS2AjSLnbLl64NyARPPhXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726241835; c=relaxed/simple;
-	bh=qKZS7gKFbdbvYJNw0orhcxfy64ecTPi7YhsqUN3BZc8=;
+	s=arc-20240116; t=1726241798; c=relaxed/simple;
+	bh=RVqRBRsVH1AVrSfltGecQSUntV2rlbNzyx87uddCwXs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jflcBowiGuSeouxH9SOek17rv2l4IJG86GLdqHdqKy3Trw1/1qhXKjrfFTvh45xYGqhBOH0qHDdMrCUXIcFcpQDSGoYKmKdW6qozzOI2+0FZbUoHoO0t1/faFcl6a7HMkSO0A8gFRpB2L7ngHLxiYvTNJhyzNjWlhR80oDN6do8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NhNnKS5g; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726241834; x=1757777834;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qKZS7gKFbdbvYJNw0orhcxfy64ecTPi7YhsqUN3BZc8=;
-  b=NhNnKS5gBjv3Vetxswsh50MBKWBZLQhf6eBnOxhd+QsAdGASxS9TgXVS
-   yBfaVC9OqOY0WKOxq/B+3/V3zA7m5nkUjbgVqRic5Sbux06qOJJG/c7jP
-   nFZYVDTUbxcnvW5RgcRLDuiOPhxqkMEamSejCWDdGjSqjhsbgO+8DAfyC
-   o7KPXUkwZE7RDbeClqO6djPOZnRApFBzmPtMUUI838q/+gKeXWSchPiY7
-   I8maPSQLq1gAQrNiDMYHm8H9IaT3mmhKNz0NGwL0jrYTQia5OTUZQ/QGu
-   5To5pPDISobfrI3ey+99xdCpdnV9cpBx4CktzvCMSYu/tZOHururaQXry
-   A==;
-X-CSE-ConnectionGUID: iXs4SHAATBS3e8lxI/208w==
-X-CSE-MsgGUID: 9dztIU00QKCu99C1SF8XMA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25345524"
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="25345524"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 08:37:03 -0700
-X-CSE-ConnectionGUID: SuvMplaFTvarrWZvHyvm7A==
-X-CSE-MsgGUID: HHxLgRdXQE+eJID1d0c2hQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="91352230"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 13 Sep 2024 08:37:00 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sp8Ly-0006d7-0c;
-	Fri, 13 Sep 2024 15:36:58 +0000
-Date: Fri, 13 Sep 2024 23:36:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Abhishek Tamboli <abhishektamboli9@gmail.com>,
-	gregkh@linuxfoundation.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	skhan@linuxfoundation.org, rbmarliere@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: octeon: Use new initialization api for tasklet
-Message-ID: <202409132323.MbFMwNBU-lkp@intel.com>
-References: <20240912172231.369566-1-abhishektamboli9@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=T6ROeQJUsLsNJM1ph7gaNTp3p5CHwtWSFWcBAu1VpsgqV6lYv5AFWZSJNTWx8uwIFIaLZw+3M+qRdVsyrb7JLznJrfeuQZ06orJZu7WtwRD6TiEwx9KK8KnY4q1mHK1dJ61Vmrt807DHrcxPyEn54AK2Vqq8i1Z0KCUVOyRuKrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YN4MdyGt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD0FEC4CEC0;
+	Fri, 13 Sep 2024 15:36:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726241798;
+	bh=RVqRBRsVH1AVrSfltGecQSUntV2rlbNzyx87uddCwXs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YN4MdyGtpadj42zM4+5HVJIVGfP0SJREsjhkkU8DkQtJH4DYdjtCVhcocYIa4W3os
+	 WtnQc2zi3IeEEzGbijuW4Bw01AsOgJ281oXtkmUVyKJI0GRGSocI3jZWM/eykQynwU
+	 KISW3OFGskLuNEeUC+jJJGqgW0J77pd2VFreBooBXEBJO5kRInPwUwgV375+KzVypz
+	 vN7uu7vgGwBP7Q/sQKphWs/qj9Ld9J8TcUU9DbLLb2/SCw2uw5FqR8URb3ai9McfvG
+	 chQSRSk0cs0MxD0pdXCbtKZwJc7gp9nXH+E9gRZNl6bgsm2AGRkFjlm8N6vLyVv4Op
+	 D5JXZFZKLOm4g==
+Received: by pali.im (Postfix)
+	id DB449725; Fri, 13 Sep 2024 17:36:31 +0200 (CEST)
+Date: Fri, 13 Sep 2024 17:36:31 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
+	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nfsd: Fill NFSv4.1 server implementation fields in
+ OP_EXCHANGE_ID response
+Message-ID: <20240913153631.2lqq5nybuitjiwmo@pali>
+References: <20240912220919.23449-1-pali@kernel.org>
+ <ZuRX/QfG+OLm9fTR@tissot.1015granger.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240912172231.369566-1-abhishektamboli9@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZuRX/QfG+OLm9fTR@tissot.1015granger.net>
+User-Agent: NeoMutt/20180716
 
-Hi Abhishek,
+On Friday 13 September 2024 11:19:25 Chuck Lever wrote:
+> On Fri, Sep 13, 2024 at 12:09:19AM +0200, Pali Rohár wrote:
+> > NFSv4.1 OP_EXCHANGE_ID response from server may contain server
+> > implementation details (domain, name and build time) in optional
+> > nfs_impl_id4 field. Currently nfsd does not fill this field.
+> > 
+> > NFSv4.1 OP_EXCHANGE_ID call request from client may contain client
+> > implementation details and Linux NFSv4.1 client is already filling these
+> > information based on runtime module param "nfs.send_implementation_id" and
+> > build time Kconfig option "NFS_V4_1_IMPLEMENTATION_ID_DOMAIN". Module param
+> > send_implementation_id specify whether to fill implementation fields and
+> > Kconfig option "NFS_V4_1_IMPLEMENTATION_ID_DOMAIN" specify the domain
+> > string.
+> > 
+> > Do same in nfsd, introduce new runtime param "nfsd.send_implementation_id"
+> > and build time Kconfig option "NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN" and
+> > based on them fill NFSv4.1 server implementation details in OP_EXCHANGE_ID
+> > response. Logic in nfsd is exactly same as in nfs.
+> > 
+> > This aligns Linux NFSv4.1 server logic with Linux NFSv4.1 client logic.
+> > 
+> > NFSv4.1 client and server implementation fields are useful for statistic
+> > purposes or for identifying type of clients and servers.
+> 
+> NFSD has gotten along for more than a decade without returning this
+> information. The patch description should explain the use case in a
+> little more detail, IMO.
+> 
+> As a general comment, I recognize that you copied the client code
+> for EXCHANGE_ID to construct this patch. The client and server code
+> bases are somewhat different and have different coding conventions.
+> Most of the comments below have to do with those differences.
 
-kernel test robot noticed the following build errors:
+Ok, this can be adjusted/aligned.
 
-[auto build test ERROR on staging/staging-testing]
+> 
+> > Signed-off-by: Pali Rohár <pali@kernel.org>
+> > ---
+> >  fs/nfsd/Kconfig   | 12 +++++++++++
+> >  fs/nfsd/nfs4xdr.c | 55 +++++++++++++++++++++++++++++++++++++++++++++--
+> >  2 files changed, 65 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/nfsd/Kconfig b/fs/nfsd/Kconfig
+> > index ec2ab6429e00..70067c29316e 100644
+> > --- a/fs/nfsd/Kconfig
+> > +++ b/fs/nfsd/Kconfig
+> > @@ -136,6 +136,18 @@ config NFSD_FLEXFILELAYOUT
+> >  
+> >  	  If unsure, say N.
+> >  
+> > +config NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN
+> > +	string "NFSv4.1 Implementation ID Domain"
+> > +	depends on NFSD_V4
+> > +	default "kernel.org"
+> > +	help
+> > +	  This option defines the domain portion of the implementation ID that
+> > +	  may be sent in the NFS exchange_id operation.  The value must be in
+> 
+> Nit: "that the server returns in its NFSv4 EXCHANGE_ID response."
+> 
+> 
+> > +	  the format of a DNS domain name and should be set to the DNS domain
+> > +	  name of the distribution.
+> 
+> Perhaps add: "See the description of the nii_domain field in Section
+> 3.3.21 of RFC 8881 for details."
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Abhishek-Tamboli/staging-octeon-Use-new-initialization-api-for-tasklet/20240913-012448
-base:   staging/staging-testing
-patch link:    https://lore.kernel.org/r/20240912172231.369566-1-abhishektamboli9%40gmail.com
-patch subject: [PATCH] staging: octeon: Use new initialization api for tasklet
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20240913/202409132323.MbFMwNBU-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project bf684034844c660b778f0eba103582f582b710c9)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240913/202409132323.MbFMwNBU-lkp@intel.com/reproduce)
+Ok.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409132323.MbFMwNBU-lkp@intel.com/
+> But honestly, I'm not sure why nii_domain is parametrized at all, on
+> the client. Why not /always/ return "kernel.org" ?
 
-All errors (new ones prefixed by >>):
+I do not know. I just followed logic of client. In my opinion, it does
+not make sense to have different logic in client and server. If it is
+not needed, maybe remove it from client too?
 
-   In file included from drivers/staging/octeon/ethernet-tx.c:10:
-   In file included from include/linux/netdevice.h:38:
-   In file included from include/net/net_namespace.h:43:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:10:
-   In file included from include/linux/mm.h:2228:
-   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from drivers/staging/octeon/ethernet-tx.c:10:
-   In file included from include/linux/netdevice.h:38:
-   In file included from include/net/net_namespace.h:43:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from drivers/staging/octeon/ethernet-tx.c:10:
-   In file included from include/linux/netdevice.h:38:
-   In file included from include/net/net_namespace.h:43:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from drivers/staging/octeon/ethernet-tx.c:10:
-   In file included from include/linux/netdevice.h:38:
-   In file included from include/net/net_namespace.h:43:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
->> drivers/staging/octeon/ethernet-tx.c:44:52: error: incompatible function pointer types initializing 'void (*)(struct tasklet_struct *)' with an expression of type 'void (struct tasklet_struct)' [-Wincompatible-function-pointer-types]
-      44 | static DECLARE_TASKLET(cvm_oct_tx_cleanup_tasklet, cvm_oct_tx_do_cleanup);
-         |                                                    ^~~~~~~~~~~~~~~~~~~~~
-   include/linux/interrupt.h:665:14: note: expanded from macro 'DECLARE_TASKLET'
-     665 |         .callback = _callback,                          \
-         |                     ^~~~~~~~~
-   7 warnings and 1 error generated.
+> What checking should be done to ensure that the value of this
+> setting is a valid DNS label?
 
+Checking for valid DNS label is not easy. Client does not do it, so is
+it needed?
 
-vim +44 drivers/staging/octeon/ethernet-tx.c
+> 
+> > +	  If the NFS server is unchanged from the upstream kernel, this
+> > +	  option should be set to the default "kernel.org".
+> > +
+> >  config NFSD_V4_2_INTER_SSC
+> >  	bool "NFSv4.2 inter server to server COPY"
+> >  	depends on NFSD_V4 && NFS_V4_2
+> > diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+> > index b45ea5757652..5e89f999d4c7 100644
+> > --- a/fs/nfsd/nfs4xdr.c
+> > +++ b/fs/nfsd/nfs4xdr.c
+> > @@ -62,6 +62,9 @@
+> >  #include <linux/security.h>
+> >  #endif
+> >  
+> > +static bool send_implementation_id = true;
+> > +module_param(send_implementation_id, bool, 0644);
+> > +MODULE_PARM_DESC(send_implementation_id, "Send implementation ID with NFSv4.1 exchange_id");
+> 
+> I'd rather not add a module parameter if we don't have to. Can you
+> explain why this new parameter is necessary? For instance, is there
+> a reason why an administrator who runs NFSD on a stock distro kernel
+> would want to change this setting to "false" ?
 
-    42	
-    43	static void cvm_oct_tx_do_cleanup(struct tasklet_struct clean);
-  > 44	static DECLARE_TASKLET(cvm_oct_tx_cleanup_tasklet, cvm_oct_tx_do_cleanup);
-    45	
+I really do not know. Client has this parameter, so I though it is a
+good idea to have it.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> If it turns out that the parameter is valuable, is there admin
+> documentation to go with it?
+
+I'm not sure if client have documentation for it.
+
+> 
+> >  #define NFSDDBG_FACILITY		NFSDDBG_XDR
+> >  
+> > @@ -4833,6 +4836,53 @@ nfsd4_encode_server_owner4(struct xdr_stream *xdr, struct svc_rqst *rqstp)
+> >  	return nfsd4_encode_opaque(xdr, nn->nfsd_name, strlen(nn->nfsd_name));
+> >  }
+> >  
+> > +#define IMPL_NAME_LIMIT (sizeof(utsname()->sysname) + sizeof(utsname()->release) + \
+> > +			 sizeof(utsname()->version) + sizeof(utsname()->machine) + 8)
+> > +
+> > +static __be32
+> > +nfsd4_encode_server_impl_id(struct xdr_stream *xdr)
+> > +{
+> 
+> The matching XDR decoder in fs/nfsd/nfs4xdr.c is:
+> 
+>    static __be32 nfsd4_decode_nfs_impl_id4( ... )
+> 
+> The function name matches the name of the XDR type in the spec. So
+> let's call this function nfsd4_encode_nfs_impl_id4().
+
+Ok.
+
+> 
+> > +	char impl_name[IMPL_NAME_LIMIT];
+> > +	int impl_name_len;
+> > +	__be32 *p;
+> > +
+> > +	impl_name_len = 0;
+> > +	if (send_implementation_id &&
+> > +	    sizeof(CONFIG_NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN) > 1 &&
+> > +	    sizeof(CONFIG_NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN) <= NFS4_OPAQUE_LIMIT)
+> > +		impl_name_len = snprintf(impl_name, sizeof(impl_name), "%s %s %s %s",
+> > +			       utsname()->sysname, utsname()->release,
+> > +			       utsname()->version, utsname()->machine);
+> > +
+> > +	if (impl_name_len <= 0) {
+> > +		if (xdr_stream_encode_u32(xdr, 0) != XDR_UNIT)
+> > +			return nfserr_resource;
+> > +		return nfs_ok;
+> > +	}
+> 
+> IMPL_NAME_LIMIT looks like it could be hundreds of bytes. Probably
+> not good to put a character array that size on the stack.
+> 
+> I prefer that the construction and checking is done in
+> nfsd4_exchange_id() instead, and the content of these fields passed
+> to this encoder via struct nfsd4_exchange_id.
+> 
+> As a guideline, the XDR layer should be concerned solely with
+> marshaling and unmarshalling data types. The content of the
+> marshaled data fields should be handled by NFSD's proc layer
+> (fs/nfsd/nfs4proc.c).
+
+Ok, I could try to look at it.
+
+> 
+> > +
+> > +	if (xdr_stream_encode_u32(xdr, 1) != XDR_UNIT)
+> > +		return nfserr_resource;
+> 
+> A brief comment would help remind readers that what is encoded here
+> is an array item count, and not a string length or a "value follows"
+> boolean.
+> 
+> Nit: In fact, this value isn't really a part of the base
+> nfs_impl_id4 data type. Maybe better to do this bit of logic in the
+> caller nfsd4_encode_exchange_id().
+
+Ok, it is truth that array item could is not part of impl_id4.
+
+> 
+> > +
+> > +	p = xdr_reserve_space(xdr,
+> > +		4 /* nii_domain.len */ +
+> > +		(XDR_QUADLEN(sizeof(CONFIG_NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN) - 1) * 4) +
+> > +		4 /* nii_name.len */ +
+> > +		(XDR_QUADLEN(impl_name_len) * 4) +
+> > +		8 /* nii_time.tv_sec */ +
+> > +		4 /* nii_time.tv_nsec */);
+> > +	if (!p)
+> > +		return nfserr_resource;
+> > +
+> > +	p = xdr_encode_opaque(p, CONFIG_NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN,
+> > +				sizeof(CONFIG_NFSD_V4_1_IMPLEMENTATION_ID_DOMAIN) - 1);
+> > +	p = xdr_encode_opaque(p, impl_name, impl_name_len);
+> > +	/* just send zeros for nii_date - the date is in nii_name */
+> > +	p = xdr_encode_hyper(p, 0); /* tv_sec */
+> > +	*p++ = cpu_to_be32(0); /* tv_nsec */
+> 
+> We no longer write raw encoders like this in NFSD code. This is
+> especially unnecessary because EXCHANGE_ID is not a hot path.
+> 
+> Instead, use the XDR utility functions to spell out the field names
+> and data types, for easier auditing. For instance, something like
+> this:
+> 
+> 	status = nfsd4_encode_opaque(xdr, exid->nii_domain.data,
+> 				     exid->nii_domain.len);        
+> 	if (status != nfs_ok)
+> 		return status;
+> 	status = nfsd4_encode_opaque(xdr, exid->nii_name.data,
+> 				     exid->nii_name.len);        
+> 	return nfsd4_encode_nfstime4(xdr, &exid->nii_date);
+
+Ok.
+
+> Regarding the content of these fields: I don't mind filling in
+> nii_date, duplicating what might appear in the nii_name field, if
+> that is not a bother.
+
+I looked at this, and getting timestamp in numeric form is not possible.
+Kernel utsname() and UTS functions provides date only in `date` format
+which is unsuitable for parsing in kernel and converting into seconds
+since epoch. Moreover uts structures are exported to userspace, so
+changing and providing numeric value would be harder.
+
+> 
+> > +
+> > +	return nfs_ok;
+> > +}
+> > +
+> >  static __be32
+> >  nfsd4_encode_exchange_id(struct nfsd4_compoundres *resp, __be32 nfserr,
+> >  			 union nfsd4_op_u *u)
+> > @@ -4867,8 +4917,9 @@ nfsd4_encode_exchange_id(struct nfsd4_compoundres *resp, __be32 nfserr,
+> >  	if (nfserr != nfs_ok)
+> >  		return nfserr;
+> >  	/* eir_server_impl_id<1> */
+> > -	if (xdr_stream_encode_u32(xdr, 0) != XDR_UNIT)
+> > -		return nfserr_resource;
+> > +	nfserr = nfsd4_encode_server_impl_id(xdr);
+> > +	if (nfserr != nfs_ok)
+> > +		return nfserr;
+> >  
+> >  	return nfs_ok;
+> >  }
+> > -- 
+> > 2.20.1
+> > 
+> 
+> -- 
+> Chuck Lever
 
