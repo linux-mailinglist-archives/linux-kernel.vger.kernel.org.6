@@ -1,116 +1,158 @@
-Return-Path: <linux-kernel+bounces-328245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4683978104
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:21:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D455A978105
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:21:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42024B25B2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:21:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 893931F26EB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E70BD1DB55C;
-	Fri, 13 Sep 2024 13:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="DkWCPtPH"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ED3C1DA2FF;
-	Fri, 13 Sep 2024 13:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0B41DA631;
+	Fri, 13 Sep 2024 13:20:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87111DA60C;
+	Fri, 13 Sep 2024 13:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726233595; cv=none; b=DT1BoP02D+2DWigMr30QGN0uOaqdoD3XckP8Q3U/OfX52FbLsc341uRb/vdXA86O4UlVlwu9sc8jvz7QBdQ3nn2kANcCfbMP/tnsY6uVPBFb1ry4JU9CGrKaEHXeqOIa/SslXrR0gQ4oskXgZybZfxO44KvR2B0UyAqeoi0J8rk=
+	t=1726233650; cv=none; b=kWfWnggZG7bej3g4BuuR6oyf2IiCj4w0FExcx1MLy+9ujIs9FM5H7TNdP4849gg2UNzWv1AXTyHw/wGXIUdK6c2IDZoZ3e0j4mUNUZHQa5PSfWUmKTZyk/tFOiAZMEj8pE8ojUjj2ufZJDZ3jut/bnjycDXGtV15nfnaLsf5q0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726233595; c=relaxed/simple;
-	bh=sNEmhx/N8+AwKemCx9RJEvLGlPu/MZXKY6FL6UOSbb8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=glTgI5okaiG8GUcXme9YBhhA+52JxdrzTlhA7cuwMg/14Wo3q/cLYnumEJNLkZQzftKxc7mnrCSsd6Wj60T4BmJZwxDJK6OopQpcDUSVwPeSVr5soqfS33eQx3bTKC1Ltek70BNIcMjoeyW5LKDYGccfoOFUGI5Vo1A9x4oWnIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=DkWCPtPH; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=tz1Z35ih+B7Hopu+zVSSe+Xlz6B1z7J1dHcxircymEQ=; b=DkWCPtPHN4YkI+BV7UjkhIZjQf
-	7t54woOn0CgZ3mJBKwVaX7fmZWoLHerLy5RyZ/O9d1zDgeMurNe5MZk3pvpJrsaT9f1O7QKBc+7Lv
-	x/PrH5RaTD3SShz5YeNcMtZcbNOQ5A0lkODxoZlXQnC8pfJDE75k3VuKflbOVj4BKix0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sp6D5-007OYf-MB; Fri, 13 Sep 2024 15:19:39 +0200
-Date: Fri, 13 Sep 2024 15:19:39 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Raju Lakkaraju - I30499 <Raju.Lakkaraju@microchip.com>
-Cc: Ronnie Kunin - C21729 <Ronnie.Kunin@microchip.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	Bryan Whitehead - C21958 <Bryan.Whitehead@microchip.com>,
-	UNGLinuxDriver <UNGLinuxDriver@microchip.com>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"maxime.chevallier@bootlin.com" <maxime.chevallier@bootlin.com>,
-	"rdunlap@infradead.org" <rdunlap@infradead.org>,
-	Steen Hegelund - M31857 <Steen.Hegelund@microchip.com>,
-	Daniel Machon - M70577 <Daniel.Machon@microchip.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next V2 4/5] net: lan743x: Implement phylink pcs
-Message-ID: <4559162d-5502-4fc3-9e46-65393e28e082@lunn.ch>
-References: <20240911161054.4494-1-Raju.Lakkaraju@microchip.com>
- <20240911161054.4494-5-Raju.Lakkaraju@microchip.com>
- <c6e36569-e3a8-4962-ac85-2fd7d35ab5d1@lunn.ch>
- <ZuKP6XcWTSk0SUn4@HYD-DK-UNGSW21.microchip.com>
- <cbc505ca-3df0-4139-87a1-db603f9f426a@lunn.ch>
- <PH8PR11MB79651A4A42D0492064F6541B95642@PH8PR11MB7965.namprd11.prod.outlook.com>
- <ZuP9y+5YntuUJNTe@HYD-DK-UNGSW21.microchip.com>
+	s=arc-20240116; t=1726233650; c=relaxed/simple;
+	bh=Pux9vGJIxSvJffdRQ6pJ5IpXFb74LMLn76OPxBtyAOI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mSF9ZrDhqgj+gutHLWo18hKRzj0u6WPbxZBvs07WqiF8ojbllaObT/yAy5uuEtlYEezN7vLAF+y46tffPIzOj35vnE2fji8WMD2wP4QN0snHg+HX5NyHAS9FETAFdcix8N9nH/z57dJWPfbUJVGOAkZi6j8bHULxqDZmFb2Ep+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 62C5D13D5;
+	Fri, 13 Sep 2024 06:21:17 -0700 (PDT)
+Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 12E223F73B;
+	Fri, 13 Sep 2024 06:20:44 -0700 (PDT)
+Message-ID: <11bca9b1-7eb1-4a13-8f05-9ba5b9c46d24@arm.com>
+Date: Fri, 13 Sep 2024 14:20:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZuP9y+5YntuUJNTe@HYD-DK-UNGSW21.microchip.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/7] perf scripts python cs-etm: Add start and stop
+ arguments
+To: James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org,
+ gankulkarni@os.amperecomputing.com, coresight@lists.linaro.org,
+ scclevenger@os.amperecomputing.com
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, John Garry <john.g.garry@oracle.com>,
+ Will Deacon <will@kernel.org>, Leo Yan <leo.yan@linux.dev>,
+ Ben Gainey <ben.gainey@arm.com>, Ruidong Tian
+ <tianruidong@linux.alibaba.com>, Benjamin Gray <bgray@linux.ibm.com>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240912151143.1264483-1-james.clark@linaro.org>
+ <20240912151143.1264483-7-james.clark@linaro.org>
+Content-Language: en-US
+From: Leo Yan <leo.yan@arm.com>
+In-Reply-To: <20240912151143.1264483-7-james.clark@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> It's my mistake. We don't need 2 MDIO buses. 
-> If SFP present, XPC's MDIO bus can use,
-> If not sfp, LAN743x MDIO bus can use. 
+On 9/12/24 16:11, James Clark wrote:>
+> Make it possible to only disassemble a range of timestamps or sample
+> indexes. This will be used by the test to limit the runtime, but it's
+> also useful for users.
+> 
+> Signed-off-by: James Clark <james.clark@linaro.org>
+> ---
+>   .../scripts/python/arm-cs-trace-disasm.py     | 22 +++++++++++++++++--
+>   1 file changed, 20 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/scripts/python/arm-cs-trace-disasm.py b/tools/perf/scripts/python/arm-cs-trace-disasm.py
+> index 02e957d037ea..a097995d8e7b 100755
+> --- a/tools/perf/scripts/python/arm-cs-trace-disasm.py
+> +++ b/tools/perf/scripts/python/arm-cs-trace-disasm.py
+> @@ -55,6 +55,11 @@ args.add_argument("-k", "--vmlinux",
+>   args.add_argument("-d", "--objdump", nargs="?", const=default_objdump(),
+>                    help="Show disassembly. Can also be used to change the objdump path"),
+>   args.add_argument("-v", "--verbose", action="store_true", help="Enable debugging log")
+> +args.add_argument("--start-time", type=int, help="Time of sample to start from")
+> +args.add_argument("--stop-time", type=int, help="Time of sample to stop at")
+> +args.add_argument("--start-sample", type=int, help="Index of sample to start from")
+> +args.add_argument("--stop-sample", type=int, help="Index of sample to stop at")
+> +
 
-I still think this is wrong. Don't focus on 'sfp present'.
+It is good to validate the ranges for time and sample indexes, in case
+the user passes unexpected values and can directly report the error.
 
-Other MAC drivers don't even know there is an SFP cage connected vs a
-PHY. They just tell phylink the list of link modes they support, and
-phylink tells it which one to use when the media has link.
+BTW, I think it is good to clarify the time is based on monotonic clock
+but not wall-clock time.
 
-You have a set of hardware building blocks, A MAC, a PCS, an MDIO bus.
-Use the given abstractions in Linux to export them to the core, and
-then let Linux combine them as needed.
+With above changes, LGTM:
 
-Back to my question about EEPROM vs fuses. I assume it is an EEPROM,
-and the PCS always exists. So always instantiate an MDIO bus and
-instantiate the PCS. The MDIO bus always exists, so instantiate an
-MDIO bus.
+Reviewed-by: Leo Yan <leo.yan@arm.com>
 
-The driver itself should not really need to take any notice of the
-EEPROM contents. All the EEPROM is used for is to indicate what
-swnodes to create. It is a replacement of DT. Look at other drivers,
-they don't parse DT to see if there is an SFP and so instantiate
-different blocks.
-
-As a silicon vendor, you want to export all the capabilities of the
-device, and then sit back and watch all the weird and wonderful ways
-you never even imagined it could be used come to life.
-
-One such use case: What you can express in the EEPROM is very
-limited. I would not be too surprised if somebody comes along and adds
-DT overlay support. Look at what is going on with MikrotekBus and the
-RPI add on chip RP1. Even microchip itself is using DT overlays with
-some of its switch chips.
-
-	Andrew
+>   options = args.parse_args()
+> 
+>   # Initialize global dicts and regular expression
+> @@ -63,6 +68,7 @@ cpu_data = dict()
+>   disasm_re = re.compile(r"^\s*([0-9a-fA-F]+):")
+>   disasm_func_re = re.compile(r"^\s*([0-9a-fA-F]+)\s.*:")
+>   cache_size = 64*1024
+> +sample_idx = -1
+> 
+>   glb_source_file_name   = None
+>   glb_line_number                = None
+> @@ -151,10 +157,10 @@ def print_disam(dso_fname, dso_start, start_addr, stop_addr):
+> 
+>   def print_sample(sample):
+>          print("Sample = { cpu: %04d addr: 0x%016x phys_addr: 0x%016x ip: 0x%016x " \
+> -             "pid: %d tid: %d period: %d time: %d }" % \
+> +             "pid: %d tid: %d period: %d time: %d index: %d}" % \
+>                (sample['cpu'], sample['addr'], sample['phys_addr'], \
+>                 sample['ip'], sample['pid'], sample['tid'], \
+> -              sample['period'], sample['time']))
+> +              sample['period'], sample['time'], sample_idx))
+> 
+>   def trace_begin():
+>          print('ARM CoreSight Trace Data Assembler Dump')
+> @@ -216,6 +222,7 @@ def print_srccode(comm, param_dict, sample, symbol, dso):
+>   def process_event(param_dict):
+>          global cache_size
+>          global options
+> +       global sample_idx
+> 
+>          sample = param_dict["sample"]
+>          comm = param_dict["comm"]
+> @@ -231,6 +238,17 @@ def process_event(param_dict):
+>          ip = sample["ip"]
+>          addr = sample["addr"]
+> 
+> +       sample_idx += 1
+> +
+> +       if (options.start_time and sample["time"] < options.start_time):
+> +               return
+> +       if (options.stop_time and sample["time"] > options.stop_time):
+> +               exit(0)
+> +       if (options.start_sample and sample_idx < options.start_sample):
+> +               return
+> +       if (options.stop_sample and sample_idx > options.stop_sample):
+> +               exit(0)
+> +
+>          if (options.verbose == True):
+>                  print("Event type: %s" % name)
+>                  print_sample(sample)
+> --
+> 2.34.1
+> 
 
