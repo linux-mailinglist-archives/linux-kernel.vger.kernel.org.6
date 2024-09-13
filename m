@@ -1,82 +1,98 @@
-Return-Path: <linux-kernel+bounces-327944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A02F977CED
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:08:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17271977CF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:08:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD696B2849F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:08:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F4AB1C251A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:08:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DBAA1D7E52;
-	Fri, 13 Sep 2024 10:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G/d4Wfa8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100F71D7E5D;
+	Fri, 13 Sep 2024 10:08:36 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6385C1BF80A
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 10:08:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729851BD00C;
+	Fri, 13 Sep 2024 10:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726222098; cv=none; b=VrsWyz58xNHQIclocev8U0ONB+atnq2FUqy6RL7uXt0sk0mV0APwo43lxr1NP60saB+OnQ3OS4S061R/E6nFalAxQoi2lFcPxsTSG+jATkpDsZ5HPf7YpFknPKlMh1MHbyZiF7juXqrnN4WcgFs+RlfvzApJwnNnnYX+T8Y6jeY=
+	t=1726222115; cv=none; b=E/gdBG5UzfH8wkkXOHcAhhJMd6IoepOQnAmLXxB/4YsEp9ATQZlRt15snXJ93U8YrNs6bCePBLtpYoT/L0tP3dmFmyoG5WWGFAaarrud7MgmLVSNIQTeP21ruduXeYeaoDao/KUP6v3uqOFBCrnMXtM2HhCOsyh7tnFr3DXjfH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726222098; c=relaxed/simple;
-	bh=NJ5vLMS3p7bc1+ugEtX1p5ebV1ErxgxGh0V/uCJ1X+g=;
+	s=arc-20240116; t=1726222115; c=relaxed/simple;
+	bh=e/DBTJD8mKVYtqmc31ZP4xQcSa8VjrlsLeu/n3O5RJQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PNdnsPP1kvUbk98yWzaQV3lJ3SZ8f7suKqHfVVne+5lpOs3yiCG/ykt/rVmb6Vg4hMujIHM5iEUefbnUuqxxoBpaMxTK3P6HeTrI7Sn3DUgkbQHvk+/7I8aydnephWdxiu0ir+bDfMDITyvWWqq7jVR5Q/tq+JaycYnAbh3MhNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G/d4Wfa8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726222096;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hNIkurA652okgpZwfSLzJJZ0gdHyD3mAUwRUjJPJUt4=;
-	b=G/d4Wfa8I6Kq8V/V9I3ZQnqPAKd7p7YynP1wTAmWYcUs9Svx86ew32KFF/N13nzHhL5wJS
-	0q6QEGTOELwjIO8zXaF7vvbDC2EuQcSRLO5+QC+XBatAvapxoI0DP47jySFwm7LiKgV+Ig
-	wOIuos53K+MtwfCCHJxIBfkb3DwXhH8=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-695-jPnU5WGbOTyGqUvSuRaPwg-1; Fri,
- 13 Sep 2024 06:08:11 -0400
-X-MC-Unique: jPnU5WGbOTyGqUvSuRaPwg-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 09E061955EA8;
-	Fri, 13 Sep 2024 10:08:09 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.25])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A2E341956086;
-	Fri, 13 Sep 2024 10:08:02 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri, 13 Sep 2024 12:07:57 +0200 (CEST)
-Date: Fri, 13 Sep 2024 12:07:49 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCHv3 1/7] uprobe: Add support for session consumer
-Message-ID: <20240913100749.GB19305@redhat.com>
-References: <20240909074554.2339984-1-jolsa@kernel.org>
- <20240909074554.2339984-2-jolsa@kernel.org>
- <20240912162028.GD27648@redhat.com>
- <ZuP2YFruQDXTRi25@krava>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bfTwwDiyI81cbRe/EF28CuNN3PvxmszUi6fvqAFXSexhdkxOtK1ZmUa4qOIAhC5sYgAWxtH/zR1rVJ710B6QMb/0K1S/DzuEEEh48BQ0fCpD6tWdsHMar1TV9X3dDzr9nbY3HKuYCfrck1jtboLEpLkZRy0exzXnlByDSDbwka8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6077CC4CEC0;
+	Fri, 13 Sep 2024 10:08:25 +0000 (UTC)
+Date: Fri, 13 Sep 2024 11:08:23 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Arnd Bergmann <arnd@arndb.de>, guoren <guoren@kernel.org>,
+	Richard Henderson <richard.henderson@linaro.org>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Matt Turner <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Yoshinori Sato <ysato@users.sourceforge.jp>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	"David S . Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	shuah <shuah@kernel.org>, Christoph Hellwig <hch@infradead.org>,
+	Michal Hocko <mhocko@suse.com>,
+	"Kirill A. Shutemov" <kirill@shutemov.name>,
+	Chris Torek <chris.torek@gmail.com>,
+	Linux-Arch <linux-arch@vger.kernel.org>,
+	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-abi-devel@lists.sourceforge.net
+Subject: Re: [PATCH RFC v3 1/2] mm: Add personality flag to limit address to
+ 47 bits
+Message-ID: <ZuQPF7Gbcqzq0U6N@arm.com>
+References: <9fc4746b-8e9d-4a75-b966-e0906187e6b7@app.fastmail.com>
+ <CAJF2gTTVX9CFM3oRZZP3hGExwVwA_=n1Lrq_0DQKWA+-ZbOekg@mail.gmail.com>
+ <f23b18c6-1856-4b59-9ba3-59809b425c81@app.fastmail.com>
+ <Ztrq8PBLJ3QuFJz7@arm.com>
+ <oshwto46wbbgneiayj63umllyozm3c4267rvpszqzaopwnt2l7@6mxl5vydtons>
+ <ZuDoExckq21fePoe@ghost>
+ <ZuHfp0_tAQhaymdy@arm.com>
+ <ZuKHpFB+uWuJe2xm@ghost>
+ <ZuLIPZId9aHcAY2j@arm.com>
+ <ZuNaD+zAXiAulc0n@ghost>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,29 +101,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZuP2YFruQDXTRi25@krava>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+In-Reply-To: <ZuNaD+zAXiAulc0n@ghost>
 
-On 09/13, Jiri Olsa wrote:
->
-> On Thu, Sep 12, 2024 at 06:20:29PM +0200, Oleg Nesterov wrote:
-> > > +
-> > > +		if (rc == 0 && uc->ret_handler) {
-> >
-> > should we enter this block if uc->handler == NULL?
->
-> yes, consumer can have just ret_handler defined
+On Thu, Sep 12, 2024 at 02:15:59PM -0700, Charlie Jenkins wrote:
+> On Thu, Sep 12, 2024 at 11:53:49AM +0100, Catalin Marinas wrote:
+> > On Wed, Sep 11, 2024 at 11:18:12PM -0700, Charlie Jenkins wrote:
+> > > Opting-in to the higher address space is reasonable. However, it is not
+> > > my preference, because the purpose of this flag is to ensure that
+> > > allocations do not exceed 47-bits, so it is a clearer ABI to have the
+> > > applications that want this guarantee to be the ones setting the flag,
+> > > rather than the applications that want the higher bits setting the flag.
+> > 
+> > Yes, this would be ideal. Unfortunately those applications don't know
+> > they need to set a flag in order to work.
+> 
+> It's not a regression, the applications never worked (on platforms that
+> do not have this default). The 47-bit default would allow applications
+> that didn't work to start working at the cost of a non-ideal ABI. That
+> doesn't seem like a reasonable tradeoff to me.  If applications want to
+> run on new hardware that has different requirements, shouldn't they be
+> required to update rather than expect the kernel will solve their
+> problems for them?
 
-Sorry, I meant we do not need to push { cookie, id } into return_instance
-if uc->handler == NULL.
+That's a valid point but it depends on the application and how much you
+want to spend updating user-space. OpenJDK is fine, if you need a JIT
+you'll have to add support for that architecture anyway. But others are
+arch-agnostic, you just recompile to your target. It's not an ABI
+problem, more of an API one.
 
-And in fact I'd prefer (but won't insist) the new
+The x86 case (and powerpc/arm64) was different, the 47-bit worked for a
+long time before expanding it. So it made a lot of sense to keep the
+same default.
 
-	UPROBE_HANDLER_I_WANT_MY_COOKIE_PLEASE
+Anyway, the prctl() can go both ways, either expanding or limiting the
+default address space. So I'd be fine with such interface.
 
-return code to make this logic more explicit.
-
-Oleg.
-
+-- 
+Catalin
 
