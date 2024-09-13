@@ -1,108 +1,159 @@
-Return-Path: <linux-kernel+bounces-327869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73A3D977C11
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:19:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EB02977C15
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE856B2750A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:18:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07CC2B27922
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648781D79A2;
-	Fri, 13 Sep 2024 09:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mgHPoyaM"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C11175D45;
+	Fri, 13 Sep 2024 09:19:30 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377581D5CC1
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1632A1D5CC1;
+	Fri, 13 Sep 2024 09:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726219120; cv=none; b=ZgFBBnrD/S9We0FK5sPjGoVnYCQ/Tvnbqop+tz5au57Q+gsPAz94W/HXrRUtJcRGRya7TAJHWSVQCfI3sDSXqCm7VC4KfihdbfQRhWBerS8qlOhoC1IZvRqXcLceEWldVVgOoT+n+7BV8zMJ3JzB66QzfxzcUe6R3X8YknubNok=
+	t=1726219169; cv=none; b=OniSFY2CNmeZpedMww+X1Ln2v26ANeIItwGBfO2LEEJ7SToaBcdXpiVnf0cihjtFlGNTXW61Ks8mc+KXuDNxlgW9ck+LkfHgBotQRBy77FpsFdY52bBF1ms4uuYarAZhVczcRYf2j9bZTU0Nlq+3MV01hx88TiQgdeTkf2Yn/fY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726219120; c=relaxed/simple;
-	bh=4VqzD1bF/dcoqi1G2tdQISJ/BOID64AQnGEkVlv1wy0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=scpFQAWTt4cvK5JUhPRGSz68G3RvaX6KxPFzCuG2GxXDa8NWAtW4QS3aac+CmwqBR0qu4gyQyvx/UqQWWIOJebFFEeh5njtJ0PewiwfMT/ZkcPi1cn0+8VOdrql+LbCdV0McNZ26Vwk7vR7RRSYwoelVEQPFvHHaJSwrcP4KpHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mgHPoyaM; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-374c5bab490so1938114f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 02:18:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726219117; x=1726823917; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5KD7pHCmBcsgB2DArG/S7aZbZ+GCS6w6lP+HY1VMGzI=;
-        b=mgHPoyaM244VfXu04AZrFhCeW78TIn4W5P0y7ey+FNzT/FC1YQVj8HjwOjQx0jv1K8
-         +7NkKRb5PQZSGGEue2u8rXgs9Y35JJkO5kRzoAJAgJtRS3xmnZVqnguDnHr5VMV/UGzn
-         CIc9g/7qgInC6JRolOCSXo/D3LMKnD0NUn62jEaNLiD76tGdyUxrNtbruea7607Nh12I
-         gEmwoYh6HeNsSvUsbrkEvLdnjXrEf1ftrVZCbu1ys2ecAXjlDplXkF9HfQJmO5x6YlL2
-         WVVWXs/tLNHhNES8ADzq9O5ZJ2bNa04SGsqJcbROu16tD3fcEpXrSZj7oE8iEClOzeL3
-         S6ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726219117; x=1726823917;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5KD7pHCmBcsgB2DArG/S7aZbZ+GCS6w6lP+HY1VMGzI=;
-        b=s0EsYQIwlp0OpdTgPhmpAFkSzGP+ERbyN4aJXlCj/m54ePBNPoBoRM7xxj/xAwdAtB
-         wviF6McmQCmhSu77/V75F9gr1ySqtpr/BWNwhsOIfs39In3xCMFhu3CiJIpwmnMHxT1y
-         2ORyVeC0ZgIK3JgZ+kOGYyM6sHm4ENIXFfsftYSaT+KNs40zCzcCZ41lL12QCfKfnG6f
-         suRRyhmhfc6V1aM+4sB6eI8DEgvhpF83t+ua5DbveO2iOQWp/Uij4EUStQ9SFRom4jwJ
-         bMB0F7ShTtKqfBj1Flmf0sTrXJ+WfFSSWA9E5LGwp3e74KVz2byyYpaCIzFp+eP4t0fM
-         mI1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUuu/QyG6H+p/SXqwPHDzzKdvMEG2MtRDgRzT14mQz0/qcibKI4m+hTMKCM1ZRTow8jxQW8tc3BG9WSGsg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4tNUmqqbOzsTtNvA88geyeNG5Bz/XnRVuiD1aGwKvqlk9IrV6
-	9+d4RLNRlu0VbKPMhUECVVMdIDUgcw/y3iH6IgMO8W1ww6RIWdsOC1XXf9zEqUE=
-X-Google-Smtp-Source: AGHT+IHMezkuVRNZUXSaSOzfE0wCiGluS32q4ou3UZOYqqvg/BDHgGPVBLZ4ko4U2Kzbn7syHXVa0Q==
-X-Received: by 2002:a05:6000:bc7:b0:374:b6e4:16a7 with SMTP id ffacd0b85a97d-378a8a0b864mr6850478f8f.8.1726219117307;
-        Fri, 13 Sep 2024 02:18:37 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956de0e2sm16258982f8f.105.2024.09.13.02.18.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 02:18:36 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Jessica Zhang <quic_jesszhan@quicinc.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-In-Reply-To: <20240911200125.2886384-1-andriy.shevchenko@linux.intel.com>
-References: <20240911200125.2886384-1-andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 1/1] drm/panel: sony-acx565akm: Use %*ph to print
- small buffer
-Message-Id: <172621911647.1200554.4675756324644604163.b4-ty@linaro.org>
-Date: Fri, 13 Sep 2024 11:18:36 +0200
+	s=arc-20240116; t=1726219169; c=relaxed/simple;
+	bh=IR5J9e4PvS1gfDTjd1ZAG39ngyGRHzP2kRwLiZkWNps=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cEroni1+8/jgbcCdWxSjwTEZdFkCHF7pIzK2TUks3XdUjahR43X4BuHy38yIg7dUsmIGQQa/T7+zfXelwsXD1gSaPn1qA9JEYy0/Cu6ifdVN4vqaw7NP2WlYQTwtlsk0M1dw9EmRSPglV1pjig/NJyYkrQRCJ2RxIkla+oaKgCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-03 (Coremail) with SMTP id rQCowAAXHHyEA+RmIphXAw--.1451S2;
+	Fri, 13 Sep 2024 17:19:12 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: alain.volmat@foss.st.com
+Cc: airlied@gmail.com,
+	akpm@linux-foundation.org,
+	daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	laurent.pinchart@ideasonboard.com,
+	linux-kernel@vger.kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	make24@iscas.ac.cn,
+	mripard@kernel.org,
+	stable@vger.kernel.org,
+	tzimmermann@suse.de
+Subject: Re: [PATCH RESEND] drm/sti: avoid potential dereference of error pointers
+Date: Fri, 13 Sep 2024 17:19:00 +0800
+Message-Id: <20240913091900.2025122-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240912070118.GA3783204@gnbcxd0016.gnb.st.com>
+References: <20240912070118.GA3783204@gnbcxd0016.gnb.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID:rQCowAAXHHyEA+RmIphXAw--.1451S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxXr1kWFW5JFyfZry3Gr4fGrg_yoW5GFy8pr
+	W7GF1j9rWYqa17J3s2qw1qqF4S9395K3y7Gr98G3s2qw1Dtry3GF1akr43ua15Wry8Gw1Y
+	yF9F9FZIqay5ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26r
+	xl6s0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJV
+	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
+	0VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28Icx
+	kI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
+	xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42
+	IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY
+	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
+	CY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU122NtUUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-Hi,
-
-On Wed, 11 Sep 2024 23:01:25 +0300, Andy Shevchenko wrote:
-> Use %*ph format to print small buffer as hex string.
-> 
-> 
-
-Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
-
-[1/1] drm/panel: sony-acx565akm: Use %*ph to print small buffer
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/9550e2394fc09bf105a246221660da980c2dbd66
-
--- 
-Neil
+Alain Volmat<alain.volmat@foss.st.com> wrote:=0D
+> Hi,=0D
+> =0D
+> I probably went a bit fast on the commit message.  It seems to me that=0D
+> the Fixes line would be probably better with below one instead.=0D
+> =0D
+> Fixes: dd86dc2f9ae1 ("drm/sti: implement atomic_check for the planes")=0D
+> =0D
+> The same fix is actually necessary for all planes (cursor / gdp / hqvdp),=
+=0D
+> which is related to the same original commit.  Hence sti_cursor/sti_gdp=0D
+> and sti_hqvdp.=0D
+> =0D
+> Would you be ok to have those 3 fixes within a commit ?=0D
+> =0D
+> Regards,=0D
+> Alain=0D
+> =0D
+> On Tue, Sep 10, 2024 at 07:25:43PM +0200, Alain Volmat wrote:=0D
+> > Hi,=0D
+> > =0D
+> > Thanks for your patch.=0D
+> > =0D
+> > Acked-by: Alain Volmat <alain.volmat@foss.st.com>=0D
+> > =0D
+> > Regards,=0D
+> > Alain=0D
+> > =0D
+> > On Mon, Aug 26, 2024 at 01:26:52PM +0800, Ma Ke wrote:=0D
+> > > The return value of drm_atomic_get_crtc_state() needs to be=0D
+> > > checked. To avoid use of error pointer 'crtc_state' in case=0D
+> > > of the failure.=0D
+> > > =0D
+> > > Cc: stable@vger.kernel.org=0D
+> > > Fixes: dec92020671c ("drm: Use the state pointer directly in planes a=
+tomic_check")=0D
+> > > =0D
+> > > Signed-off-by: Ma Ke <make24@iscas.ac.cn>=0D
+> > > ---=0D
+> > >  drivers/gpu/drm/sti/sti_cursor.c | 2 ++=0D
+> > >  1 file changed, 2 insertions(+)=0D
+> > > =0D
+> > > diff --git a/drivers/gpu/drm/sti/sti_cursor.c b/drivers/gpu/drm/sti/s=
+ti_cursor.c=0D
+> > > index db0a1eb53532..e460f5ba2d87 100644=0D
+> > > --- a/drivers/gpu/drm/sti/sti_cursor.c=0D
+> > > +++ b/drivers/gpu/drm/sti/sti_cursor.c=0D
+> > > @@ -200,6 +200,8 @@ static int sti_cursor_atomic_check(struct drm_pla=
+ne *drm_plane,=0D
+> > >  		return 0;=0D
+> > >  =0D
+> > >  	crtc_state =3D drm_atomic_get_crtc_state(state, crtc);=0D
+> > > +	if (IS_ERR(crtc_state))=0D
+> > > +		return PTR_ERR(crtc_state);=0D
+> > >  	mode =3D &crtc_state->mode;=0D
+> > >  	dst_x =3D new_plane_state->crtc_x;=0D
+> > >  	dst_y =3D new_plane_state->crtc_y;=0D
+> > > -- =0D
+> > > 2.25.1=0D
+> > > =0D
+Hi=EF=BC=8C=0D
+=0D
+I appreciate your guidance regarding the modification of the Fixes tag. As =
+=0D
+your observation, I have also identified the additional instance=0D
+(sti_hqvdp_atomic_check) where a similar issue exists, necessitating the =0D
+same patch. I have recognized the problem and was in the process of =0D
+reporting it. To prevent any confusion and ensure accurate reporting, I =0D
+have updated the patch already submitted as patch v2. The issue in =0D
+sti_hqvdp_atomic_check has also been reported, and I kindly request you to =
+=0D
+review it.(I am not very familiar with how to combine the reporting of =0D
+vulnerabilities in multiple functions, so to avoid unnecessary errors or =0D
+confusion, I reported them one by one. Hope for your understanding.) Thank =
+=0D
+you for your prompt response. Your assistance is invaluable to me.=0D
+=0D
+Best regards,=0D
+Ma Ke=
 
 
