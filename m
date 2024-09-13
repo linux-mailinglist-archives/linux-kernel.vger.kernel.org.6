@@ -1,47 +1,53 @@
-Return-Path: <linux-kernel+bounces-327830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96ACA977BB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:58:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03295977BB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:58:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D6061F21D6C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:58:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F2BD1F226B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E9531D6C6D;
-	Fri, 13 Sep 2024 08:58:28 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0CBD1BCA19;
-	Fri, 13 Sep 2024 08:58:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA78D1D6C6B;
+	Fri, 13 Sep 2024 08:58:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DDEA1D58B7;
+	Fri, 13 Sep 2024 08:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726217907; cv=none; b=s8lX6RU2O7KHRoiaLRDH7MlWeLVT2nDpX5/QhCKlWmuYgfFxmpLKnQSy7DIj9XUOxtOyuNR6zzM0P5E8mRvEbJU7MH8JkhGp94B83Crx9Vxpi67uERcWLq++P0FH2SpdHCXQVfMRrS1cO4jxJ8cMZ4VGqkI64xQBJLWkqShji1w=
+	t=1726217918; cv=none; b=I3VBvvoHOLTNJ+WPofGdI0M6LwiP+tmLDIraFsPSEmd5gBech6rbIzq0gMNYFEcSR5RA97dVdXX4lq/S9IYrUQS4EPz5qKUJwONezXc7f9M9jVEMuLwAoFSsbc6kHVBzv8fY6zLF/Y3Dns3RD3hErsfzoytKwGQ6fQwfEUqG/0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726217907; c=relaxed/simple;
-	bh=Yv0iyO0UW2UAeKCgOTz1Nbm9Qzb5EKZbJShs5oHwKwU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OiuVjRY8BPgUrZjEqHhDRfxPLKnkzZQgnAZ0rHFzs428C0t2bjHv3BhfzzewE+YzUaU6MYRa3VtxbggTcuMRzG74PL5q2g9boWP2wVdSCGBtmISbrA9/YPUB/t/FqM29lEl+SWPKyo3WthTEHPWK43RvnaIIwwv8XItEDZ+H7PU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58209C4CEC0;
-	Fri, 13 Sep 2024 08:58:24 +0000 (UTC)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Bibo Mao <maobibo@loongson.cn>
-Cc: kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [GIT PULL] LoongArch KVM changes for v6.12
-Date: Fri, 13 Sep 2024 16:58:12 +0800
-Message-ID: <20240913085812.1030686-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1726217918; c=relaxed/simple;
+	bh=gvYM1eP7xAAEJwcJpVXx5FknQI88VmeZhycs4DExV5M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AQYV7ZNXN6gocWZvY4cqMI5vCBNZf8VeXDTDLFSovfixP72fDDA60V4knIBg5+i11Sv03s0vNUAxemeh1+oW2+ZFn2V8SBN30znpVP/7GsXB3DIe5Vga4qeRfDIMGNZBF8s9W3nbVQcWqpvvhynVBOp7KI6TZ43Ma8N1Kv/PqB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CEB8D13D5;
+	Fri, 13 Sep 2024 01:59:05 -0700 (PDT)
+Received: from e126645.arm.com (unknown [10.57.75.215])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C1D4E3F73B;
+	Fri, 13 Sep 2024 01:58:33 -0700 (PDT)
+From: Pierre Gondois <pierre.gondois@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Pierre Gondois <pierre.gondois@arm.com>,
+	stable@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: [PATCH] sched/fair: Fix integer underflow
+Date: Fri, 13 Sep 2024 10:58:23 +0200
+Message-Id: <20240913085824.404709-1-pierre.gondois@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,57 +56,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The following changes since commit da3ea35007d0af457a0afc87e84fddaebc4e0b63:
+(struct sg_lb_stats).idle_cpus is of type 'unsigned int'.
+(local->idle_cpus - busiest->idle_cpus) can underflow to UINT_MAX
+for instance, and max_t(long, 0, UINT_MAX) will output UINT_MAX.
 
-  Linux 6.11-rc7 (2024-09-08 14:50:28 -0700)
+Use lsub_positive() instead of max_t().
 
-are available in the Git repository at:
+Fixes: 0b0695f2b34a ("sched/fair: Rework load_balance()")
+cc: stable@vger.kernel.org
+Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
+---
+ kernel/sched/fair.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-kvm-6.12
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 9057584ec06d..6d9124499f52 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -10775,8 +10775,8 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
+ 			 * idle CPUs.
+ 			 */
+ 			env->migration_type = migrate_task;
+-			env->imbalance = max_t(long, 0,
+-					       (local->idle_cpus - busiest->idle_cpus));
++			env->imbalance = local->idle_cpus;
++			lsub_positive(&env->imbalance, busiest->idle_cpus);
+ 		}
+ 
+ #ifdef CONFIG_NUMA
+-- 
+2.25.1
 
-for you to fetch changes up to 3abb708ec0be25da16a1ee9f1ab5cbc93f3256f3:
-
-  LoongArch: KVM: Implement function kvm_para_has_feature() (2024-09-12 22:56:14 +0800)
-
-----------------------------------------------------------------
-LoongArch KVM changes for v6.12
-
-1. Revert qspinlock to test-and-set simple lock on VM.
-2. Add Loongson Binary Translation extension support.
-3. Add PMU support for guest.
-4. Enable paravirt feature control from VMM.
-5. Implement function kvm_para_has_feature().
-
-----------------------------------------------------------------
-Bibo Mao (6):
-      LoongArch: Revert qspinlock to test-and-set simple lock on VM
-      LoongArch: KVM: Add VM feature detection function
-      LoongArch: KVM: Add Binary Translation extension support
-      LoongArch: KVM: Add vm migration support for LBT registers
-      LoongArch: KVM: Enable paravirt feature control from VMM
-      LoongArch: KVM: Implement function kvm_para_has_feature()
-
-Song Gao (1):
-      LoongArch: KVM: Add PMU support for guest
-
- arch/loongarch/include/asm/Kbuild          |   1 -
- arch/loongarch/include/asm/kvm_csr.h       |   6 +
- arch/loongarch/include/asm/kvm_host.h      |  37 +++-
- arch/loongarch/include/asm/kvm_para.h      |  12 +
- arch/loongarch/include/asm/kvm_vcpu.h      |  11 +
- arch/loongarch/include/asm/loongarch.h     |  11 +-
- arch/loongarch/include/asm/paravirt.h      |   7 +
- arch/loongarch/include/asm/qspinlock.h     |  41 ++++
- arch/loongarch/include/uapi/asm/Kbuild     |   2 -
- arch/loongarch/include/uapi/asm/kvm.h      |  20 ++
- arch/loongarch/include/uapi/asm/kvm_para.h |  21 ++
- arch/loongarch/kernel/paravirt.c           |  47 ++--
- arch/loongarch/kernel/setup.c              |   2 +
- arch/loongarch/kernel/smp.c                |   4 +-
- arch/loongarch/kvm/exit.c                  |  46 ++--
- arch/loongarch/kvm/vcpu.c                  | 340 ++++++++++++++++++++++++++++-
- arch/loongarch/kvm/vm.c                    |  69 +++++-
- 17 files changed, 616 insertions(+), 61 deletions(-)
- create mode 100644 arch/loongarch/include/asm/qspinlock.h
- create mode 100644 arch/loongarch/include/uapi/asm/kvm_para.h
 
