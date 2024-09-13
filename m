@@ -1,84 +1,103 @@
-Return-Path: <linux-kernel+bounces-328334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 381F397822F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:05:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2431D97822E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:05:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D856F1F2698C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:05:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFF8D1F26577
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CDF31DCB04;
-	Fri, 13 Sep 2024 14:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D29F1DC740;
+	Fri, 13 Sep 2024 14:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="WBWMSVOU"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eJRJTIgR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2841DC75E;
-	Fri, 13 Sep 2024 14:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1A31DC04D;
+	Fri, 13 Sep 2024 14:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726236238; cv=none; b=YGkQVAuNKsuyFybjGeBZXxOmcTUwL7RU69gpe9IPC6JdZsZbmuTGaK+ktHAlMgK7iTWL8HBbNx/mGSmOm1Ggt+w0Z1GyG/qEDBQ6mN0o/C9t0sHFmSevf8oaUUBfkRHq8GZMVzTrTO2bvU3rU1hANCMYvSsmU1y67EF4GZ8GTPU=
+	t=1726236233; cv=none; b=dtyFRW30uzqzzBKo+Mxj2+muA8VbytMUZBCiNXDkQw2/oMymbNgWYM1jbYFd74UJw40c06haX6jJvE3MJ6yL1/58Suyt5OX5gWQHRCh/M0HI84xrmJsMrMS7FXzqQYCtsdStvntGP8s0jTmmDYj33fmbTBA8gM3X4jNer5Y2SY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726236238; c=relaxed/simple;
-	bh=my7FXu/G1WDjdq5+yH5TAWpFIO2G9YS14A+L2Qkw4Is=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Fdbil5ukoxIzPrGrSFIw8h5FFyYvchFrP3cgSfZgaI9nDvykh0NAzTpdCR4dESVK5RWdofz4HRdHFz6e465NI+5d2Xb3jWH3BjdDPqF176HyenKfN4YKX5nLLt4QBRDxMq1qPlwifyVEl9CofMFV68C3L7bRBEMaMEE8N34y3rE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=WBWMSVOU; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=bFBz4tDpc8fG1LDKKBWmQeiRnYgFe0jkd5sd4Tdoi9A=; b=WBWMSVOUl+UuLGq6
-	xR3HVJf0QbEt34l7vpLuwo95JHvS9nN2Svpw/SB7At4jKdcEcoYOOGNUoDShZMZc6D53YLxJsexEb
-	PysDamg7iz83mEghX+s3EPP9oOBn2YSeMmUiuqbVZawTAkQSDBAJG60G8YTJ6Pbxa+8WcRMAuHdSL
-	52IGA1zI/OIBdQUhZgOe7DL3tP5b2krfT2rrjFCnmeQGKGtV3aNjupMFTUuMigWuTYNRkUPzXBSRS
-	8iaVD1hAPYaYPNZYrNQBQf9IZQ5A/S/COOCHEibqKSlqFfjKk7MwAljvdBiJduTU6pa9ZeR3O35LC
-	yikAn8TKN8ikMub3KQ==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sp6to-005b5d-0v;
-	Fri, 13 Sep 2024 14:03:48 +0000
-Date: Fri, 13 Sep 2024 14:03:48 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: socketcan@hartkopp.net, mkl@pengutronix.de
-Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: of alloc_canxl_skb
-Message-ID: <ZuRGRKU9bjgC52mD@gallifrey>
+	s=arc-20240116; t=1726236233; c=relaxed/simple;
+	bh=wwF+X0mc2AN+PZKJgNZ320Blh/Ek4njmjetukD9wYgI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ba+r1MGP0oAsOxTwhQJVeOcSD6WFISkcqDy/kD4pUbfl9cNB5Jt1avrMRqO1XD/yrEal5l/v9Or4oJiwq6fYLyckCu3HGal76szvPQxARaVvOC9oalYqmmNLnacOcF552ac1lb6SoP02kAeRasyPaZYL2doLlNIwqW8eElZz2dM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eJRJTIgR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87488C4CEC0;
+	Fri, 13 Sep 2024 14:03:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726236232;
+	bh=wwF+X0mc2AN+PZKJgNZ320Blh/Ek4njmjetukD9wYgI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eJRJTIgRt45tU47FY8CnJUXmeOjZ2j2ugpdu7fYc5uwtkyLiyikYJDjXI6GcKmWDb
+	 FkPbkv0IF5lC1/aCafSlvCXJpEwpFDgORD7nleB4t0xivBLcgo7Yhm+3GQLbusCI1J
+	 5OKsWQ33+aCeWe+4+zo8A+T4/7Ka/LlYkkmo/8Km4ZLQJUSoP8ZeFyRzVuYLvboWfz
+	 Z811dG6ZIVhAVSiuPwOvG1pvCBSPKNER2t9hg1D4yfi9yA0JISCgw+/Z/TvynyC8Pl
+	 +slJN3g99T1ZxbHBDhUYEYre/db71TTYruIZRhBpfEnsKiwTDiz1rdRvJS0YahOPiu
+	 5H+EF1kVPOuGg==
+Date: Fri, 13 Sep 2024 16:03:48 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Wade Wang <wade.wang@hp.com>
+Cc: jikos@kernel.org, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] HID: plantronics: Update to map micmute controls
+Message-ID: <s36bnt7ptdarrxpejm6n62gf3rvvwfagmmpyq4unpv3hn7v2jf@up2vjv7shl2q>
+References: <20240913060800.1325954-1-wade.wang@hp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 14:00:46 up 128 days,  1:14,  1 user,  load average: 0.07, 0.06,
- 0.02
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <20240913060800.1325954-1-wade.wang@hp.com>
 
-Hi Oliver, Marc,
-  I'm doing some deadcode hunting and noticed that
+On Sep 13 2024, Wade Wang wrote:
+> telephony page of Plantronics headset is ignored currently, it caused
+> micmute button no function, Now follow native HID key mapping for
+> telephony page map, telephony micmute key is enabled by default
 
-  alloc_canxl_skb in drivers/net/can/dev/skb.c
+For which devices this patch is required? Is it related to the other
+patch you sent today? If so please make a mention of the concerned
+devices and make sure both patches are sent in a single v3 series.
 
-looks unused in the main kernel tree; is that expected?
-I see it was added back in 2022 by
-  fb08cba12b52 ("can: canxl: update CAN infrastructure for CAN XL frames")
+Also, have you tested this change with other Plantronics headsets? Where
+there any changes in behavior from them?
 
-I know almost exactly nothing about CAN, so I thought it best
-to ask!
+Cheers,
+Benjamin
 
-Dave
-
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+> 
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Wade Wang <wade.wang@hp.com>
+> ---
+>  drivers/hid/hid-plantronics.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/hid/hid-plantronics.c b/drivers/hid/hid-plantronics.c
+> index 2a19f3646ecb..2d17534fce61 100644
+> --- a/drivers/hid/hid-plantronics.c
+> +++ b/drivers/hid/hid-plantronics.c
+> @@ -77,10 +77,10 @@ static int plantronics_input_mapping(struct hid_device *hdev,
+>  		}
+>  	}
+>  	/* handle standard types - plt_type is 0xffa0uuuu or 0xffa2uuuu */
+> -	/* 'basic telephony compliant' - allow default consumer page map */
+> +	/* 'basic telephony compliant' - allow default consumer & telephony page map */
+>  	else if ((plt_type & HID_USAGE) >= PLT_BASIC_TELEPHONY &&
+>  		 (plt_type & HID_USAGE) != PLT_BASIC_EXCEPTION) {
+> -		if (PLT_ALLOW_CONSUMER)
+> +		if (PLT_ALLOW_CONSUMER || (usage->hid & HID_USAGE_PAGE) == HID_UP_TELEPHONY)
+>  			goto defaulted;
+>  	}
+>  	/* not 'basic telephony' - apply legacy mapping */
+> -- 
+> 2.34.1
+> 
 
