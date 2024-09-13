@@ -1,115 +1,156 @@
-Return-Path: <linux-kernel+bounces-327835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD30B977BC5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:01:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2504977B31
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81E27289384
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:01:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C73F5B2715A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991861D58BB;
-	Fri, 13 Sep 2024 09:00:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B891D6C7D;
+	Fri, 13 Sep 2024 08:36:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b="EPV16MLu"
-Received: from www.linux-watchdog.org (www.linux-watchdog.org [185.87.125.42])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B101E80B;
-	Fri, 13 Sep 2024 09:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.87.125.42
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NPnThKTt"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DC41D6C7C
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 08:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726218056; cv=none; b=iW4aqjCtJ17kIP9ORI6bRV+Il+BRiMeH0Ysni7boRWXXVS6x9ejPtVvACTmQagkqyPYf6qlTaZPfpK+h872pKOTo5uKmzTLgL4BUBZHJF/Sy1fx6dA5msLEflATmOrqW1GoGOE0TFX5h6dByjjPt3/PYJKCKbNfdQksONeffL+c=
+	t=1726216604; cv=none; b=ailKietaaY1vQ5MaIffziptwP7SQGaVLTdxO6lYmFjIix+0FP9HdwWDRnFNYQCyT1wKw9VcH1bVyO/QYeVNO91w6Cr/a2LplfJhj8V11BH/nZqDImrvjW4VmVMq4/8uulV8+sAU2r775Y76vEkNFfF1HfxQs+WO8ybwNpkvi2aM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726218056; c=relaxed/simple;
-	bh=yWD/92u+XFhtQdYKm2gtn2rSyWlAtkwRqZS6BFKn22E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pF68CsSr8fBGQqnR1Px324hXzlCpj+PRMdZJa5ReI4QzlSG69b3hcnA90s3GnqnGP+ubW6449FgsLT1J2fsZyMYIizvvzAKu0neH9AYryuxllGL9MjX4cgQRvpl4lXZZyk6Ulg4id5Hoef47q6QSSoYmaUIYKOljBUJU22cCr+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org; spf=pass smtp.mailfrom=linux-watchdog.org; dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b=EPV16MLu; arc=none smtp.client-ip=185.87.125.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux-watchdog.org
-Received: by www.linux-watchdog.org (Postfix, from userid 500)
-	id 87E2640A91; Fri, 13 Sep 2024 10:36:37 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org 87E2640A91
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
-	s=odk20180602; t=1726216597;
-	bh=yWD/92u+XFhtQdYKm2gtn2rSyWlAtkwRqZS6BFKn22E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EPV16MLu21t81sea0feTtu/2h/f0iY2B0ocNE1v1OA6iakls8HysQv0mSGLH7iGvU
-	 xnTM9USnjz6sW1b0ZGKlTjbqI15+LOl5IcmOLogGEtv2gHdRPndcrHPo3osTfc7lJh
-	 tW02TL7MWW3adNO7rm1NDwfTWlAmwjKGnZ0OFTwk=
-Date: Fri, 13 Sep 2024 10:36:37 +0200
-From: Wim Van Sebroeck <wim@linux-watchdog.org>
-To: Shen Lichuan <shenlichuan@vivo.com>
-Cc: wim@linux-watchdog.org, linux@roeck-us.net,
-	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH v1] watchdog: Convert comma to semicolon
-Message-ID: <20240913083637.GA31468@www.linux-watchdog.org>
-References: <20240910070058.40867-1-shenlichuan@vivo.com>
+	s=arc-20240116; t=1726216604; c=relaxed/simple;
+	bh=zAMShyBfk0di8PVtRRMQX+UtUolVAfO18RJ9JXP23AI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QLmXMmypZIQxNUX6a5dzfMqBeFXofxPrhSFm9ZBRWHaI95KCRpXU5FFrvdHv+iQJ0ZNcsV0kDhG0N2BMXrssbYTLwQQvcTI6GtVYkmlTvSFgVVTqBhIYOS3FSyi/5zaVMEjXfBS0RaePXV73RDNvcd7qJyMZCCMxSCRi8nuZ1lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NPnThKTt; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-374b25263a3so475179f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 01:36:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726216600; x=1726821400; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=M4pnwolBQoa9ieXVMZZHl9gf+CGD4ivypyvaluO9F24=;
+        b=NPnThKTtuyd+IBbUka9ae+GMZ2WnIPAwoUJJOuaZeBi4/m0k1E3zeVlzQbNskDkZPq
+         d8y2sOHITb6Wet/oZiejhhHFG1WCja7dBH3so6uiZgQdyRfb1DriBhMkmZZMSMXxtQae
+         0jZXaSMmYiXWmHitn6mLcEpl6D5WzVZaeuOcfvKDM/id4vVcndr/Mh64TVjZRMokFVdL
+         rIfXYlwmCrhZ+t+FyXXK8t4k5XE+oQRitR1tp5wJEm6GoNvQEr5P6vV6oO5NUsVTVo01
+         BNQMFiDjYi5kx8uInvlvxyQTJW4EKh26X61gk4cvUxdkJJzE+RXQJ7goHgagihUUPCDr
+         3X7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726216600; x=1726821400;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M4pnwolBQoa9ieXVMZZHl9gf+CGD4ivypyvaluO9F24=;
+        b=std405Mchy4dPqdYT7KZvrXWch0uDXCr5exMWKkbf6uN3Zhuph8d9bj/Y+sLSxxyXH
+         EJRY0+xyxgc/CYu3r7v+MhUZEMeyNHpSn9sgS+FwjjXDymAWyk23gbjT11SY39HxJpS1
+         wU9EHgYfK59AKodFhAnls6KmpEe7aNMe5vekY26Nk3gwScFPezGbPIcff7tYV/QkOlhx
+         b6/4ccqMAhwcVwlhk7zoaaWywxNWmcIZCyf+tKP/AoGCYAnOsUUMQUlSx3aJFyleUM16
+         NE8g3wWQd+/RbDHzR4GM0kixKJT12/MNHZFDJyRBsIQkH4DGxfxDP8TA5wCnWRVFOWGU
+         NOTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUKasnbHrnpt1S4gGLFzkmRuaJ3LJVU3YFJhO56KOzwqIy918rFJbdoDcglNNuQG+bK+DjSKm1dQZaUaIU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzkiOKK+v6V2t6fg5Y+FrxMWidjL+RRxx0JvJPKshEIlSuRMQR
+	triB/D1D7vnN5yDbbpNqUT8OzpGpcL/PynFgeEcuUu/xB98MYWt7mufz3I1LM+k=
+X-Google-Smtp-Source: AGHT+IHx+OMzS4wGVJnmmQnNusmr45zTxb9hpuk4RDO/rxJ2QU/ShBAVN25ERI2yQhQcZdcHa5uSFg==
+X-Received: by 2002:a05:6000:1841:b0:378:7f65:e13a with SMTP id ffacd0b85a97d-378d61d4fc8mr1097306f8f.2.1726216600193;
+        Fri, 13 Sep 2024 01:36:40 -0700 (PDT)
+Received: from [192.168.1.61] ([84.67.228.188])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956de3d4sm16159955f8f.108.2024.09.13.01.36.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Sep 2024 01:36:39 -0700 (PDT)
+Message-ID: <39eafc82-dfa8-4e22-9d8a-071ed09460d3@linaro.org>
+Date: Fri, 13 Sep 2024 09:36:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240910070058.40867-1-shenlichuan@vivo.com>
-User-Agent: Mutt/1.5.20 (2009-12-10)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] perf stat: Stop repeating when ref_perf_stat()
+ returns -1
+To: Levi Yun <yeoreum.yun@arm.com>
+Cc: nd@arm.com, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@redhat.com,
+ acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
+ adrian.hunter@intel.com, asmadeus@codewreck.org
+References: <20240913020209.520104-1-yeoreum.yun@arm.com>
+ <20240913020209.520104-3-yeoreum.yun@arm.com>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20240913020209.520104-3-yeoreum.yun@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Shen,
 
-> To ensure code clarity and prevent potential errors, it's advisable
-> to employ the ';' as a statement separator, except when ',' are
-> intentionally used for specific purposes.
+
+On 13/09/2024 03:02, Levi Yun wrote:
+> Exit when run_perf_stat() returns an error to avoid continuously
+> repeating the same error message. It's not expected that COUNTER_FATAL
+> or internal errors are recoverable so there's no point in retrying.
 > 
-> Signed-off-by: Shen Lichuan <shenlichuan@vivo.com>
+> This fixes the following flood of error messages for permission issues,
+> for example when perf_event_paranoid==3:
+>    perf stat -r 1044 -- false
+> 
+>    Error:
+>    Access to performance monitoring and observability operations is limited.
+>    ...
+>    Error:
+>    Access to performance monitoring and observability operations is limited.
+>    ...
+>    (repeating for 1044 times).
+> 
+> Signed-off-by: Levi Yun <yeoreum.yun@arm.com>
 > ---
->  drivers/watchdog/iTCO_wdt.c   | 4 ++--
->  drivers/watchdog/pm8916_wdt.c | 2 +-
->  2 files changed, 3 insertions(+), 3 deletions(-)
+> Changes in v2:
+>    - Add some comments.
+> ---
+>   tools/perf/builtin-stat.c | 10 +++++++++-
+>   1 file changed, 9 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/watchdog/iTCO_wdt.c b/drivers/watchdog/iTCO_wdt.c
-> index 264857d314da..35b358bcf94c 100644
-> --- a/drivers/watchdog/iTCO_wdt.c
-> +++ b/drivers/watchdog/iTCO_wdt.c
-> @@ -563,8 +563,8 @@ static int iTCO_wdt_probe(struct platform_device *pdev)
->  	}
->  
->  	ident.firmware_version = p->iTCO_version;
-> -	p->wddev.info = &ident,
-> -	p->wddev.ops = &iTCO_wdt_ops,
-> +	p->wddev.info = &ident;
-> +	p->wddev.ops = &iTCO_wdt_ops;
->  	p->wddev.bootstatus = 0;
->  	p->wddev.timeout = WATCHDOG_TIMEOUT;
->  	watchdog_set_nowayout(&p->wddev, nowayout);
-
-Removed this part since there was allready a patch for this that is in linux-watchdog-next.
-
-> diff --git a/drivers/watchdog/pm8916_wdt.c b/drivers/watchdog/pm8916_wdt.c
-> index f3fcbeb0852c..007ed139ab96 100644
-> --- a/drivers/watchdog/pm8916_wdt.c
-> +++ b/drivers/watchdog/pm8916_wdt.c
-> @@ -218,7 +218,7 @@ static int pm8916_wdt_probe(struct platform_device *pdev)
->  		return err;
->  	}
->  
-> -	wdt->wdev.ops = &pm8916_wdt_ops,
-> +	wdt->wdev.ops = &pm8916_wdt_ops;
->  	wdt->wdev.parent = dev;
->  	wdt->wdev.min_timeout = PM8916_WDT_MIN_TIMEOUT;
->  	wdt->wdev.max_timeout = PM8916_WDT_MAX_TIMEOUT;
-> -- 
-> 2.17.1
+> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+> index 954eb37ce7b8..0153925f2382 100644
+> --- a/tools/perf/builtin-stat.c
+> +++ b/tools/perf/builtin-stat.c
+> @@ -2875,7 +2875,15 @@ int cmd_stat(int argc, const char **argv)
+>   			evlist__reset_prev_raw_counts(evsel_list);
 > 
+>   		status = run_perf_stat(argc, argv, run_idx);
+> -		if (forever && status != -1 && !interval) {
+> +		/*
+> +		 * * Meet COUNTER_FATAL situation (i.e) can't open event counter.
+> +		 * * In this case, there is a high chance of failure in the next attempt
+> +		 * * as well with the same reason. so, stop it.
+> +		 * */
 
-Reviewed-by: Wim Van Sebroeck <wim@linux-watchdog.org>
+There's something wrong with the formatting here.
 
-And added it to linux-watchdog-next also.
+But I don't think the comment answers my question about the other return 
+codes. It just states what the code does.
 
-Kind regards,
-Wim.
+There are many more return -1's than just for COUNTER_FATAL, so it's not 
+just that situation anyway. And in addition to that, there is -ENOMEM 
+and others that aren't -1 which aren't explained that they are 
+deliberately explicit retry or ignores.
 
+> +		if (status == -1)
+> +			break;
+> +
+> +		if (forever && !interval) {
+>   			print_counters(NULL, argc, argv);
+>   			perf_stat__reset_stats();
+>   		}
+> --
+> LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+> 
 
