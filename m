@@ -1,137 +1,115 @@
-Return-Path: <linux-kernel+bounces-328924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F949978ACE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:45:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0227E978ACF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:46:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E94341F22BD0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:45:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33DBC1C22EC4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8043155324;
-	Fri, 13 Sep 2024 21:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1B1149C41;
+	Fri, 13 Sep 2024 21:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="I12/DHD4"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a2N2hvJQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794F5155A4F
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 21:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE062B9D2
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 21:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726263916; cv=none; b=Cdfw3tDR+Vwn4FefbgoPqFHwxN1+SCZi2SXtcZ42e0jqMvJVLSrzGxGHWcr9y6NeONoLDONKEK7oA52eDQ4zE3uufhgWAMMD7pMrhCcD0iIxbzF9LkuuyEa3uhSV6eKP65Q3rPmUiH5m+i22U4jQ1fW9bMX2a4drg9h4+3kIaJA=
+	t=1726264003; cv=none; b=HdhCapl1+QJ4y8q/FVecpYwLKqHE3GbiA5v7Hb6TNcbCJgiPsMh1WDjJzQdVdxJ8P8FMwW+a03qD/v3K8WVrb/1CqnpYpjlObBiKhTcTOhucLUcGJ7gfZTDKD99qNx/TvE3+p48+XU6onlom6/VHYEWGF28zxo35ChI0XKWx6ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726263916; c=relaxed/simple;
-	bh=FRuh+KBT0a7k37NAtcwsuij34NzWTTyM/ab3DyrzLEQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S4NiyvQk+z5Njb658ZPrqJl9ge8bf780ExOdyGmZxgySlfFQxkxh+bf5SQWbyZk6bKBdvh8kDOWe6GeCwilZmbQ0i27zhcoNzHuXfcXYhllaIamwHfyo4zONdUdbqbsrPVphgiiddZtMsliUfDfaa2eAMcQJ1aX7zJl/RQx94JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=I12/DHD4; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e1a74ee4c75so1321521276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:45:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1726263913; x=1726868713; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lwn37t/iSKoOZ7UvHqU4qQdhusIvGBPeQaXOibPFjp8=;
-        b=I12/DHD4bbOdwoFHzXxjuJmT6OqVkMcxItHTOZi0kXc9nf9xFq03PglVxV9EUeCgBD
-         n+sQRj+Z224C8/rtuBCqrE2HyjBtQ2QWZVevjOZd2Si4IhUahQ3C7nXrKTGtuMsYPX2I
-         eIhCvWPV+nt7yEKHE9YlM5/9I6fWx8ne2kfDYpf49/LfCgPSuKNGEurcN9MhGdKV5LTZ
-         LRAfsGuPWKgcFdrUk/6+M7SPcUt/PzKG+CyslKYjL7TITE994UCRBe34Kd77B7oVGl3Z
-         j1AT1uqjQLVQY8kFYauvF6xYnlGBRXCANrBTdmKN6SfMy3yj6AbspkbLT4ACarPeA/0g
-         a0Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726263913; x=1726868713;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Lwn37t/iSKoOZ7UvHqU4qQdhusIvGBPeQaXOibPFjp8=;
-        b=tLfExg48gWc/PQWF5HE9fPEwrAb+IGPUfMcHSXXndOoI7wu+DRZM466ErXU5Tt22+z
-         T3Euf9SpKeq5pRHkXoB9y+kqm8UaGOCZNLIC+QO8zc1gwagtkvoTFmuF2hn0GJ6I/Jgn
-         nwNNwa6IwHfTmJdRNmR2ZPBuBLWoggPX2v7+zb2Kz30pSu5zbpGruG0m/UmgH7uI78/Q
-         5/c7PcUXdLHT8V786LP7GUia8MRGaa/V4AKbA3kUfEnk2cbQ+WIw0hvAwLptu/CFf2T1
-         CS2JQaxFkVqadzX0J4KgjMlAo4ZzIm/E4cxhct3F+gwMD5OG1n/zYCz3yZ9xdaKSsZ5J
-         iS2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVZxZnQrJvKtMDGdem06+fhoAX7zmanRmYw8lyYYAqeAPOdILmUluOlKco2Z1c035tzwjc0aOVC92ZPD0s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUokrJNkAjN0Hml1p3jp6e87tantx4PXF89EsWVUQf7J2K/m9T
-	O+/CAPHIa6gULcwhw8s1FgKJ7EL45o7c8XGXpRZYN5t9pURv8Gc2GXZEuxitHj8ySnTOfB99EH8
-	xHUQR6MVgoAlVh4ZLEy9wq8hVsrIYASAsqIIa
-X-Google-Smtp-Source: AGHT+IHVR8chyAryrgWoD0CfuiVCPSTNyXA8dqCpTcxPwQRyhtBbIrntDXbyeDkcU1pJ/lYcycmDXrk0C8l4LPdW6YQ=
-X-Received: by 2002:a05:6902:2186:b0:e1d:2261:cb25 with SMTP id
- 3f1490d57ef6-e1db00c664amr3581421276.18.1726263913366; Fri, 13 Sep 2024
- 14:45:13 -0700 (PDT)
+	s=arc-20240116; t=1726264003; c=relaxed/simple;
+	bh=NRV+0ixBQxnrUIlapYeV9lT77jBqv2DyRM2xA9tpcpo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mBUmIZ8saIgSAiQ9vPMtlIA3N+Nv9Hmrnhp+tdJAb3arzf8bXEKIGFR6MH9nRDoRXx2oO3S74YJxPo5UiX0edqHkFAq21J7D/NbLYJtqruL7QdB6gYUUnXGIcMeSVrPcxfMMU1dNCQDYvEUk/LtxQzq8LdtAxocsDIAtwI+Z2AU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a2N2hvJQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D9CFC4CEC0;
+	Fri, 13 Sep 2024 21:46:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726264003;
+	bh=NRV+0ixBQxnrUIlapYeV9lT77jBqv2DyRM2xA9tpcpo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=a2N2hvJQ9t0VtFCIs5S1Upng1zO4hFCtjTkfzlGszP5pf2Kymbq9ekujoCac7nV+K
+	 vOiw1FzdZCbd/5P2ktipqNIIyNiJmljN1ZsSQZOYZN29GG9AGPqCEJMdvn9fInDNmz
+	 KNoDvqAq0JzK2LP+0l8JIzJJxZQfFoW0nF1No/LJEVSnKiBkhEJ89pU6c8Rb1JPNGJ
+	 /84K0tFym7FI9zlQGAPqYC8n80ngoJfLqmdZVuHuF7omEehepn7oUiuWEiS/pA14n1
+	 S1F/CaSuLs0dpEcFjGrVEEpyPMKAER8IcoQEcnrEc3z2sZYMVy0PHM0etBwVNQqzk3
+	 QzwKU8XHPbStQ==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Hillf Danton <hdanton@sina.com>,
+	Tejun Heo <tj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	syzbot+943d34fa3cf2191e3068@syzkaller.appspotmail.com
+Subject: [PATCH] kthread: Unpark only parked kthread
+Date: Fri, 13 Sep 2024 23:46:34 +0200
+Message-ID: <20240913214634.12557-1-frederic@kernel.org>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240910184125.224651-1-casey@schaufler-ca.com>
- <20240910184125.224651-2-casey@schaufler-ca.com> <2e1da617-c437-4ff9-93e0-e0e212aabfaa@swemel.ru>
-In-Reply-To: <2e1da617-c437-4ff9-93e0-e0e212aabfaa@swemel.ru>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 13 Sep 2024 17:45:02 -0400
-Message-ID: <CAHC9VhQfLRfKTjksZ=KxuNPHXXUAV_0Q0ejKEDmFXc82wOZu2g@mail.gmail.com>
-Subject: Re: [PATCH v3 01/13] LSM: Add the lsm_prop data structure.
-To: Konstantin Andreev <andreev@swemel.ru>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 13, 2024 at 4:49=E2=80=AFPM Konstantin Andreev <andreev@swemel.=
-ru> wrote:
-> Casey Schaufler, 10 Sep 2024:
-> > ...
-> > The lsm_prop structure definition is intended to keep the LSM
-> > specific information private to the individual security modules.
-> > ...
-> > index 1390f1efb4f0..1027c802cc8c 100644
-> > --- a/include/linux/security.h
-> > +++ b/include/linux/security.h
-> > @@ -140,6 +144,22 @@ enum lockdown_reason {
-> > +
-> > +/*
-> > + * Data exported by the security modules
-> > + */
-> > +struct lsm_prop {
-> > +     struct lsm_prop_selinux selinux;
-> > +     struct lsm_prop_smack smack;
-> > +     struct lsm_prop_apparmor apparmor;
-> > +     struct lsm_prop_bpf bpf;
-> > +     struct lsm_prop_scaffold scaffold;
-> > +};
->
-> This design prevents compiling and loading out-of-tree 3rd party LSM, am =
-I right?
->
-> Out-of-tree LSM's were discussed recently at
->
-> https://lore.kernel.org/linux-security-module/efb8f264-f80e-43b2-8ea3-fcc=
-9789520ec@I-love.SAKURA.ne.jp/T/
-> https://lore.kernel.org/linux-security-module/960e740f-e5d9-409b-bb2a-8bd=
-ceffaae95@I-love.SAKURA.ne.jp/T/
->
-> but it looks like a final decision to ban them is not taken yet.
+Calling into kthread unparking unconditionally is mostly harmless when
+the kthread is already unparked. The wake up is then simply ignored
+because the target is not in TASK_PARKED state.
 
-For those who haven't read my latest comment in the v6.12 merge window
-pull request, I'll copy-n-paste it here:
+However if the kthread is per CPU, the wake up is preceded by a call
+to kthread_bind() which expects the task to be inactive and in
+TASK_PARKED state, which obviously isn't the case if it is unparked.
 
-"My focus is on the upstream Linux kernel and ensuring that the
-upstream, in-tree LSMs have the best framework possible to ensure
-their proper operation and ease of development/maintenance.  While I
-have no intention to negatively impact out-of-tree LSMs, I will not
-harm the upstream code base solely to support out-of-tree LSMs.
-Further, if improvements to the upstream LSM framework are determined
-to harm out-of-tree LSMs, that shall be no reason to reject the
-upstream improvements.  I believe this policy is not only consistent
-with that of previous LSM maintainers, but of the general Linux kernel
-as well."
+As a result, calling kthread_stop() on an unparked per-cpu kthread
+triggers such a warning:
 
---=20
-paul-moore.com
+	WARNING: CPU: 0 PID: 11 at kernel/kthread.c:525 __kthread_bind_mask kernel/kthread.c:525
+	 <TASK>
+	 kthread_stop+0x17a/0x630 kernel/kthread.c:707
+	 destroy_workqueue+0x136/0xc40 kernel/workqueue.c:5810
+	 wg_destruct+0x1e2/0x2e0 drivers/net/wireguard/device.c:257
+	 netdev_run_todo+0xe1a/0x1000 net/core/dev.c:10693
+	 default_device_exit_batch+0xa14/0xa90 net/core/dev.c:11769
+	 ops_exit_list net/core/net_namespace.c:178 [inline]
+	 cleanup_net+0x89d/0xcc0 net/core/net_namespace.c:640
+	 process_one_work kernel/workqueue.c:3231 [inline]
+	 process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+	 worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+	 kthread+0x2f0/0x390 kernel/kthread.c:389
+	 ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+	 ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+	 </TASK>
+
+Fix this with skipping unecessary unparking while stopping a kthread.
+
+Reported-and-tested-by: syzbot+943d34fa3cf2191e3068@syzkaller.appspotmail.com
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+---
+ kernel/kthread.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/kernel/kthread.c b/kernel/kthread.c
+index f7be976ff88a..5e2ba556aba8 100644
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -623,6 +623,8 @@ void kthread_unpark(struct task_struct *k)
+ {
+ 	struct kthread *kthread = to_kthread(k);
+ 
++	if (!test_bit(KTHREAD_SHOULD_PARK, &kthread->flags))
++		return;
+ 	/*
+ 	 * Newly created kthread was parked when the CPU was offline.
+ 	 * The binding was lost and we need to set it again.
+-- 
+2.46.0
+
 
