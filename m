@@ -1,178 +1,178 @@
-Return-Path: <linux-kernel+bounces-328668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC99097871F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:48:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8106978727
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:49:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1740EB21D30
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:48:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E33D1F223DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A384126C01;
-	Fri, 13 Sep 2024 17:48:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBED126BE9;
+	Fri, 13 Sep 2024 17:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L9aOKjto"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B9Tq02fW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FB6823C8;
-	Fri, 13 Sep 2024 17:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865BE85283
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 17:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726249691; cv=none; b=ic39Uu/dTeBqdl4PO5PQRbLNKfiQpXGzDTD803du2wiDm+WDIbR9Bnrhz+YcvYFU+obPtLcJCf4ae5JG4VxvdiUe1z+hiAyTNn/abN8Hmd5M0Lxo7YHsl3ciJz7QIhp+Dg4/HNp0hUCJcURDOJgQzL0G2wsEgyUMFYavcsfkWts=
+	t=1726249718; cv=none; b=qEbHZKDYRYnz9NihZJjBQxrbFEr4Chvyt6+bVLmg0VjTymeMiBInj2rEQ8dAP/HEon+h/JjM/bYCtZjnOaa2fJ0DaNUMydysjd//eDDrrFlpn5VpizibpRraZ4EYFs4z8DwHZIB6zWWenigL9g9KYWOSsmVEX1jYiwbvy8hCXz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726249691; c=relaxed/simple;
-	bh=eHBaGabrVPkz1nCn1EqgEsXsowcWrIbMnyYuN9LVwZE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ntXMqMXIJm/3lJ30IoO3/c5fApNB836pURV6yKZhXRE/rLiIC14L6dOgmlQU3l4AavvNZ+xdvWaUN4DPNGYJGniPHi1RGMTqdFY5XYh6Nad4zEXa8FODN71NnH6Ya3YKCqhUoGdsp2pkln7Q/0FtTAIvSFrunaL2gyqaPXUXNQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L9aOKjto; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726249690; x=1757785690;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=eHBaGabrVPkz1nCn1EqgEsXsowcWrIbMnyYuN9LVwZE=;
-  b=L9aOKjtoLoMty/j19job27V68RmOkGWuIcj3nETQUZzBD85zjagWXyDd
-   nsfCw2/Ap4PZ60YqP6CO2cbU81K2jZOOtKw/Zx88GDRA0mjtovkXBZTcL
-   mTNX0usmHlYokYy9pTnuY6mKEIqciGRgjCe6yGg9q0Y8nb8RWMZsWfsqd
-   92cwhyXQNA6/1/JziIrl8fREXzqxHdKBIs+evOUddrY/V9tMbl3oYGcad
-   1YcoCL3YCRwnLF5gbetAcfWoAB0LDCiACuvt+B1Cg4YcLdH9F4EqJv8W7
-   0Zl9s2PVsQEAcVEmJLUO+arINOXtMa6ud5dxS4Be4vuOKnXTzciUum5JS
-   A==;
-X-CSE-ConnectionGUID: scDk9hFxT5+yjs4jVqoZJA==
-X-CSE-MsgGUID: VO59341sRtCWDC4YXJ/0EQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="42669446"
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="42669446"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 10:48:08 -0700
-X-CSE-ConnectionGUID: rUcvZkxrSDeKulvDrheboQ==
-X-CSE-MsgGUID: 6XhydrL6QMacok8VfnMY8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="72902079"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 10:48:06 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1spAOp-00000008NOf-47mj;
-	Fri, 13 Sep 2024 20:48:03 +0300
-Date: Fri, 13 Sep 2024 20:48:03 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Parker Newman <parker@finest.io>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	Parker Newman <pnewman@connecttech.com>
-Subject: Re: [PATCH v1 1/6] misc: eeprom: eeprom_93cx6: Add quirk for extra
- read clock cycle
-Message-ID: <ZuR600QgWi6oQcau@smile.fi.intel.com>
-References: <cover.1726237379.git.pnewman@connecttech.com>
- <d0818651c4a58d0162a898c3ba3dd8abf9f95272.1726237379.git.pnewman@connecttech.com>
+	s=arc-20240116; t=1726249718; c=relaxed/simple;
+	bh=Y5gQ40zmMeWnVA/ZC0/AJPglvrv6zNXwP2X+yYqn3YM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WRDxRWiGsMWpWVzWGnjuEyYD5D2m2hjPRcT4zjCn0wZ6uAGKbaE1k8Dco8lcwip3+gQGEBYXboSjVTnArHl1iSbciSv3OJ3NB4EVCNWHmLOtN0suF0uPuUlyJx9cPJ9vdpK7/9E/ssbyTQO/BrHAAxOltqvKsAsX3ocTXQW/Nug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B9Tq02fW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 459F2C4CEC0;
+	Fri, 13 Sep 2024 17:48:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726249717;
+	bh=Y5gQ40zmMeWnVA/ZC0/AJPglvrv6zNXwP2X+yYqn3YM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=B9Tq02fW45jqkSbXtFOm+kioCJNAQSd7QyYnJmGNTmaixZ3Qe/24zcvG3vMfotRWC
+	 nLVBvcEiZ8NeQ0wovVd/S8qBy7YtEmxOXHPjmqY4NK/zfHyQrDbDIqnEQ0SQ7dDl4n
+	 ZVnNYH8EXZfuO4qiFIjqmEfEcegYlP+8WP9boVqthqkTC+1uCx+9cTJa1mtjR4IqMp
+	 YrzfYXGfiM6KXtvuoTntPU0EqCQO4m1YA/yJYt3r77dsrG8l+PHRSirvehyB8liAuQ
+	 bF7CwOGCtoputDlOaSlIDn3UwttsC1viR9u0R4Ol0OvX6waav8wA90dUJc9o/eD+Y0
+	 A1RvwLLuVwLew==
+Date: Sat, 14 Sep 2024 01:48:29 +0800
+From: Gao Xiang <xiang@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-erofs@lists.ozlabs.org,
+	Chao Yu <chao@kernel.org>, Sandeep Dhavale <dhavale@google.com>,
+	Hongzhen Luo <hongzhen@linux.alibaba.com>,
+	Yiyang Wu <toolmanp@tlmp.cc>, Chunhai Guo <guochunhai@vivo.com>
+Subject: [GIT PULL] erofs updates for 6.12-rc1
+Message-ID: <ZuR67f12ntVf59FZ@debian>
+Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
+	LKML <linux-kernel@vger.kernel.org>, linux-erofs@lists.ozlabs.org,
+	Chao Yu <chao@kernel.org>, Sandeep Dhavale <dhavale@google.com>,
+	Hongzhen Luo <hongzhen@linux.alibaba.com>,
+	Yiyang Wu <toolmanp@tlmp.cc>, Chunhai Guo <guochunhai@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d0818651c4a58d0162a898c3ba3dd8abf9f95272.1726237379.git.pnewman@connecttech.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Sep 13, 2024 at 10:55:38AM -0400, Parker Newman wrote:
-> From: Parker Newman <pnewman@connecttech.com>
-> 
-> This patch adds a quirk similar to eeprom_93xx46 to add an extra clock
-> cycle before reading data from the EEPROM.
-> 
-> The 93Cx6 family of EEPROMs output a "dummy 0 bit" between the writing
-> of the op-code/address from the host to the EEPROM and the reading of
-> the actual data from the EEPROM.
-> 
-> More info can be found on page 6 of the AT93C46 datasheet. Similar notes
-> are found in other 93xx6 datasheets.
+Hi Linus,
 
-> Link: https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-5193-SEEPROM-AT93C46D-Datasheet.pdf
+Could you consider this pull request for 6.12-rc1? It's a bit earlier
+due to our mid-autumn festival holidays next week.
 
-Make it a tag (i.e. locate just above your SoB tag)
+In this cycle, we'd like to add file-backed mount support, which has
+has been a strong requirement for years.  It is especially useful when
+there are thousands of images running on the same host for containers
+and other sandbox use cases, unlike OS image use cases.
 
-> In summary the read operation for a 93Cx6 EEPROM is:
-> Write to EEPROM :	110[A5-A0]	(9 bits)
+Without file-backed mounts, it's hard for container runtimes  to manage
+and isolate so many unnecessary virtual block devices safely and
+efficiently, therefore file-backed mounts are highly preferred.
+For EROFS users, ComposeFS [1], containerd, and Android APEXes [2] will
+directly benefit from it, and I've seen no risk in implementing it as
+a completely immutable filesystem.
 
-> Read from EEPROM: 	0[D15-D0]	(17 bits)
+The previous experimental feature "EROFS over fscache" is now marked as
+deprecated because:
 
-The mixed TABs/space here (one extra space after :)
+ - Fscache is no longer an independent subsystem and has been merged
+   into netfs, which was somewhat unexpected when it was proposed.
 
-> Where:
->  	110 is the start bit and READ OpCode
-> 	[A5-A0] is the address to read from
-> 	0 is a "dummy bit" preceding the actual data
-> 	[D15-D0] is the actual data.
+ - New HSM "fanotify pre-content hooks" [3] will be landed upstream.
+   These hooks will replace "EROFS over fscache" in a simpler way, as
+   EROFS won't be bother with kernel caching anymore.  Userspace
+   programs can also manage their own caching hierarchy more flexibly.
 
-Also leading spaces, please remove them and use TAB, or use spaces only.
+Once the HSM "fanotify pre-content hooks" is landed, I will remove the
+fscache backend entirely as an internal dependency cleanup.  More
+backgrounds are listed in the original patchset [4].
 
-> Looking at the READ timing diagrams in the 93Cx6 datasheets the dummy
-> bit should be clocked out on the last address bit clock cycle meaning it
-> should be discarded naturally.
-> 
-> However, depending on the hardware configuration sometimes this dummy
-> bit is not discarded. This is the case with Exar PCI UARTs which require
-> an extra clock cycle between sending the address and reading the data.
+In addition to that, there are bugfixes and cleanups as usual as shown
+below.  All commits have been in -next and no potential merge conflict
+is observed.
 
-...
+Thanks,
+Gao Xiang
 
-> +static inline bool has_quirk_extra_read_cycle(struct eeprom_93cx6 *eeprom)
-> +{
-> +	return eeprom->quirks & PCI_EEPROM_QUIRK_EXTRA_READ_CYCLE;
-> +}
+[1] https://github.com/containers/storage/pull/2039 
+[2] https://lore.kernel.org/r/CAB=BE-R3wU7hBBaeAXdkDp2kvODxSFWNQtcmc5tCppN5qwdQgw@mail.gmail.com
+[3] https://lore.kernel.org/r/cover.1725481503.git.josef@toxicpanda.com
+[4] https://lore.kernel.org/r/20240830032840.3783206-1-hsiangkao@linux.alibaba.com 
 
-So, this makes sense to be in a header since everything else related to that
-also in the header already.
+The following changes since commit da3ea35007d0af457a0afc87e84fddaebc4e0b63:
 
-...
+  Linux 6.11-rc7 (2024-09-08 14:50:28 -0700)
 
-> +	if (has_quirk_extra_read_cycle(eeprom)) {
-> +		eeprom_93cx6_pulse_high(eeprom);
+are available in the Git repository at:
 
-No additional delay is needed?
+  git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-6.12-rc1
 
-> +		eeprom_93cx6_pulse_low(eeprom);
-> +	}
+for you to fetch changes up to 025497e1d176a9e063d1e60699527e2f3a871935:
 
-> +	if (has_quirk_extra_read_cycle(eeprom)) {
-> +		eeprom_93cx6_pulse_high(eeprom);
+  erofs: reject inodes with negative i_size (2024-09-12 23:00:09 +0800)
 
-Ditto.
+----------------------------------------------------------------
+Changes since last update:
 
-> +		eeprom_93cx6_pulse_low(eeprom);
-> +	}
+ - Support file-backed mounts for containers and sandboxes;
 
-...
+ - Mark the experimental fscache backend as deprecated;
 
-> +/* Some EEPROMs require an extra clock cycle before reading */
-> +#define PCI_EEPROM_QUIRK_EXTRA_READ_CYCLE	BIT(0)
+ - Handle overlapped pclusters caused by crafted images properly;
 
-I would move it directly into the structure definitions, just after quirk
-field (the same way it's done in the other driver)...
+ - Fix a failure path which could cause infinite loops in
+   z_erofs_init_decompressor();
 
-...
+ - Get rid of unnecessary NOFAILs;
 
->  	int width;
-> +	unsigned int quirks;
+ - Harmless on-disk hardening & minor cleanups.
 
-...somewhere here.
+----------------------------------------------------------------
+Chunhai Guo (1):
+      erofs: allocate more short-lived pages from reserved pool first
 
->  	char drive_data;
->  	char reg_data_in;
+Gao Xiang (10):
+      erofs: fix incorrect symlink detection in fast symlink
+      erofs: clean up erofs_register_sysfs()
+      erofs: handle overlapped pclusters out of crafted images properly
+      erofs: add file-backed mount support
+      erofs: support unencoded inodes for fileio
+      erofs: support compressed inodes for fileio
+      erofs: mark experimental fscache backend deprecated
+      erofs: sunset unneeded NOFAILs
+      erofs: restrict pcluster size limitations
+      erofs: reject inodes with negative i_size
 
--- 
-With Best Regards,
-Andy Shevchenko
+Hongzhen Luo (1):
+      erofs: simplify erofs_map_blocks_flatmode()
 
+Sandeep Dhavale (1):
+      erofs: fix error handling in z_erofs_init_decompressor
 
+Yiyang Wu (2):
+      erofs: use kmemdup_nul in erofs_fill_symlink
+      erofs: refactor read_inode calling convention
+
+ fs/erofs/Kconfig        |  22 +++++-
+ fs/erofs/Makefile       |   1 +
+ fs/erofs/data.c         | 109 ++++++++++++++++++---------
+ fs/erofs/decompressor.c |   2 +-
+ fs/erofs/erofs_fs.h     |   5 +-
+ fs/erofs/fileio.c       | 192 +++++++++++++++++++++++++++++++++++++++++++++++
+ fs/erofs/inode.c        | 138 +++++++++++++++-------------------
+ fs/erofs/internal.h     |  26 ++++++-
+ fs/erofs/super.c        |  80 +++++++++++++-------
+ fs/erofs/sysfs.c        |  30 ++------
+ fs/erofs/zdata.c        | 196 ++++++++++++++++++++++--------------------------
+ fs/erofs/zmap.c         |  42 +++++------
+ 12 files changed, 544 insertions(+), 299 deletions(-)
+ create mode 100644 fs/erofs/fileio.c
 
