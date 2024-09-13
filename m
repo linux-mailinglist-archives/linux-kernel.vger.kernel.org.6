@@ -1,121 +1,84 @@
-Return-Path: <linux-kernel+bounces-328336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4E77978233
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:05:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 381F397822F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:05:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF0D71C21015
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:05:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D856F1F2698C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2318F1DB555;
-	Fri, 13 Sep 2024 14:04:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CDF31DCB04;
+	Fri, 13 Sep 2024 14:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="FoJ7BDpx"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="WBWMSVOU"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECE743144
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2841DC75E;
+	Fri, 13 Sep 2024 14:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726236275; cv=none; b=qYCOHM6kzImPFKYJw7o4GgpxPOprsuqVJ1Ji4HRmgV2XTI0t9/g0QAqKu5+RWUrzixw+67BZfUBZV9c4dQdupbZr0vmfY016UQanFXCda+uv8FJ/ZoQkqR3aGVm4do1cGtbp74fw2Xbv6b6Vw4PC2Y+t+8cWWsMxDNxsEFkLEZk=
+	t=1726236238; cv=none; b=YGkQVAuNKsuyFybjGeBZXxOmcTUwL7RU69gpe9IPC6JdZsZbmuTGaK+ktHAlMgK7iTWL8HBbNx/mGSmOm1Ggt+w0Z1GyG/qEDBQ6mN0o/C9t0sHFmSevf8oaUUBfkRHq8GZMVzTrTO2bvU3rU1hANCMYvSsmU1y67EF4GZ8GTPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726236275; c=relaxed/simple;
-	bh=lRAFs8AFzw/PpSoN4wy5HoNo5gRes9DuFwQpRAs/ZQk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C/IwWqPdZ1acbZC2SY3MJuba0UwDmVAuQXZUF7FmtnKABW0CzANegI6fmJXm6SexD35jQn9t+2bScu91WkzlBOAbjl4R2ENjOJS7h+qNBSRLoX9lVIQ77Zvfx6JFw8zmkqeACp5oy2oeRmmU7QsCkTkip/XRxiL0yBnEMLwjMhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=FoJ7BDpx; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7a9ab721058so288633185a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 07:04:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1726236273; x=1726841073; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SLksJP/rhb8eqI+HK9T7IjB9aZnFUbuXu6ZyAADYNVg=;
-        b=FoJ7BDpxdim40YVUJxAmrb9RDGqP5jp1AVt5LscfcHM69DlCddJArGdxJw5vd3efTq
-         Owqexb2wdc5SdkbDUGq3wjKT4LzD0Kuwc/bjqKFIjDwMZJq/3Rjc8aAB18zZ1EjTM8+j
-         9LZ4dIa+pBZ/WFGeoINeywNwnVXpbf6ZbaGT1k6yRTQ8F/j5Ew416NxhreWfjuCjGtzB
-         9SATmE3GPEaDN8d2uAjx0Ue0GJ1AOSPhT1n6IwiWA4Yait/InvOfZ5wEydQvEyZyAeor
-         gdGs/yMZiFCsjPgW69+/XVlHJtTkuT2D8wjBi8K9++rEqUi/AMPtD35/CUbnvlsrnw+q
-         cpGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726236273; x=1726841073;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SLksJP/rhb8eqI+HK9T7IjB9aZnFUbuXu6ZyAADYNVg=;
-        b=FirK4RhZxXkzNOi6VDeeXElZ7ZogLKKN1xrtcLNPUjnMo6gJXgj2P8z5F77X4/wvfL
-         SQCT9XYiPows3e7kV3TEJ3sgPRxwP5TfrBWGLm9GPTiaOTrtnUJQU52pR8mR1IK/PIiA
-         V+k6F9W4u5oUlBATNwvt++1RiuahDjOVK1jdVY4y67Lc0U9EHCDMIRE1RHIMrW8Q0wfl
-         Ei1ZUPFvOVP5Bez8Ab/KL8T4r4Yr+DNWCT1MZp41lx8zM4reVH9Fh6G2JhaOHHV5G1wN
-         UXSiJMNnlEsZYxZkUtlVnZzcHktbIfJbzKr/7cPFWJ65WgKpzLHCJDilP4DYb+2DSvPw
-         qYQw==
-X-Forwarded-Encrypted: i=1; AJvYcCXW3YqDbIZvPXJSmK20Mij48Xm/owttyJp0BJkrZZuaGGyogULnk9/GdiP6JBJzJiT5GOwCqdUVZ41SqMI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrDDbSE8TBbUT1EqVqQyBabJZbzFUhSnsfGBsO9B6OyKcY0fEx
-	foTv/XAvXQQ8WNeh4uuTJNrf5gplLoiZKNXxjkyxRs6px4SoUwWZ32P3XGeXFNE=
-X-Google-Smtp-Source: AGHT+IH4NCvGaNE+Es+iBNh83ffGpuZef2D03EDpMqVLxAngpEsawFYZLw/f5SZOMq/7k2BuNz6o+A==
-X-Received: by 2002:a05:620a:4145:b0:7a9:a690:caf7 with SMTP id af79cd13be357-7a9e60bbaacmr1049715385a.18.1726236272630;
-        Fri, 13 Sep 2024 07:04:32 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a9a799119fsm660409085a.57.2024.09.13.07.04.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 07:04:32 -0700 (PDT)
-Date: Fri, 13 Sep 2024 10:03:47 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	leitao@debian.org, usamaarif642@gmail.com,
-	sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: Re: [PATCH 4/6] tpm: sanity check the log version before using it
-Message-ID: <ZuRGQzirtUfih7sO@PC2K9PVX.TheFacebook.com>
-References: <20240906202745.11159-1-gourry@gourry.net>
- <20240906202745.11159-5-gourry@gourry.net>
- <CAC_iWjJizjQWucDbrqKGdZTcj7FFxiPN97=p1zwfnPE=sAC6RQ@mail.gmail.com>
- <ZuQ2c7XOptYMJEtD@PC2K9PVX.TheFacebook.com>
- <CAC_iWjKoptBngCj-W6axZ9bmJmhT11JMctn1m4maVvO4mzcENg@mail.gmail.com>
- <CAMj1kXF9rpKJV5Df34F_oYZ1ZVbQ8Lumiw0ZOUnpVH6Dffq-Pg@mail.gmail.com>
- <CAMj1kXGnqact9B+=uhbGCV=2zaNQQBGsTk=a-NejUjWCoWDutg@mail.gmail.com>
+	s=arc-20240116; t=1726236238; c=relaxed/simple;
+	bh=my7FXu/G1WDjdq5+yH5TAWpFIO2G9YS14A+L2Qkw4Is=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Fdbil5ukoxIzPrGrSFIw8h5FFyYvchFrP3cgSfZgaI9nDvykh0NAzTpdCR4dESVK5RWdofz4HRdHFz6e465NI+5d2Xb3jWH3BjdDPqF176HyenKfN4YKX5nLLt4QBRDxMq1qPlwifyVEl9CofMFV68C3L7bRBEMaMEE8N34y3rE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=WBWMSVOU; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=bFBz4tDpc8fG1LDKKBWmQeiRnYgFe0jkd5sd4Tdoi9A=; b=WBWMSVOUl+UuLGq6
+	xR3HVJf0QbEt34l7vpLuwo95JHvS9nN2Svpw/SB7At4jKdcEcoYOOGNUoDShZMZc6D53YLxJsexEb
+	PysDamg7iz83mEghX+s3EPP9oOBn2YSeMmUiuqbVZawTAkQSDBAJG60G8YTJ6Pbxa+8WcRMAuHdSL
+	52IGA1zI/OIBdQUhZgOe7DL3tP5b2krfT2rrjFCnmeQGKGtV3aNjupMFTUuMigWuTYNRkUPzXBSRS
+	8iaVD1hAPYaYPNZYrNQBQf9IZQ5A/S/COOCHEibqKSlqFfjKk7MwAljvdBiJduTU6pa9ZeR3O35LC
+	yikAn8TKN8ikMub3KQ==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1sp6to-005b5d-0v;
+	Fri, 13 Sep 2024 14:03:48 +0000
+Date: Fri, 13 Sep 2024 14:03:48 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: socketcan@hartkopp.net, mkl@pengutronix.de
+Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: of alloc_canxl_skb
+Message-ID: <ZuRGRKU9bjgC52mD@gallifrey>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAMj1kXGnqact9B+=uhbGCV=2zaNQQBGsTk=a-NejUjWCoWDutg@mail.gmail.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 14:00:46 up 128 days,  1:14,  1 user,  load average: 0.07, 0.06,
+ 0.02
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Fri, Sep 13, 2024 at 03:47:03PM +0200, Ard Biesheuvel wrote:
-> > > If we agree that this needs to go in btw, I think you should refactor
-> > > it a bit. That function already defines an out: label, which unmaps
-> > > memory. So you can rewrite the above as
-> > >
-> > > If(....) {
-> > >     ret = -EINVAL;
-> > >     efi.tpm_log = EFI_INVALID_TABLE_ADDR;
-> > >    goto out;
-> > > }
-> > >
-> >
-> > Validating a table that was created by the EFI stub seems redundant.
-> > If the version check needs to be tightened, please do so in
-> > efi_retrieve_tcg2_eventlog() (in the stub).
-> 
-> ... and actually, this version is set by the EFI stub based on which
-> flavor of the TCG protocols it found.
-> 
-> So i don't think we need this check to begin with.
-> 
-> If we need to detect corruption of these tables, I'd prefer to add a
-> checksum or something like that. But I don't think we should bother.
+Hi Oliver, Marc,
+  I'm doing some deadcode hunting and noticed that
 
-Will drop, east enough.  Will send v2 later today.
+  alloc_canxl_skb in drivers/net/can/dev/skb.c
 
-~Gregory
+looks unused in the main kernel tree; is that expected?
+I see it was added back in 2022 by
+  fb08cba12b52 ("can: canxl: update CAN infrastructure for CAN XL frames")
+
+I know almost exactly nothing about CAN, so I thought it best
+to ask!
+
+Dave
+
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
