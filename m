@@ -1,189 +1,179 @@
-Return-Path: <linux-kernel+bounces-328902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D29B978AA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:33:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34BDC978AAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 361C61C21FFB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:33:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80163B253BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDA0154445;
-	Fri, 13 Sep 2024 21:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509DB149C4A;
+	Fri, 13 Sep 2024 21:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OhmS80rm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QoFQYjQl"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08365154C09
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 21:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7F1137905
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 21:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726263177; cv=none; b=efscTbDmDj+CSWwTxFyDYn9aCZKQKuQVNjKfPUTV0OV4ykYml3Nq3i8N9l6EhU43olRSflQy2M6qvm+uT+RQ7iopDo/22nBx5FgV4zQOgTddsGbdnxI1OU8VpRBN4dwNuA39ZRViH5hn7C9rANzW5rwn29SL3iQ7DeKZDDEgpQo=
+	t=1726263236; cv=none; b=ilFYCbR1af0IgMV6WHzMZpm7Vy1qW6HiwQmH+RBZDc+2o75ynGQdLb2p5QQK4vbu27bILi7neMSQzXR7hJjx0SXFJA5A+MGbss1ReMTt1bX/Y7oW63xLaiKc9bSFAm/e2YM8afpAifQuFKlENzXi4DstgoAH3SXxhDnfNp6vAtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726263177; c=relaxed/simple;
-	bh=4UwXVn3VjGHTV9K0yYJ+/4sQY1rIjdE/3NLygsvBHHc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jsjmSaDpVeY5YPx18CybALhJUIButC2zWDU4itZtgzQ2rdsIGO6wPXdMba9BKnioPGCFBBt6OsukZEzNYPa0a6x4fZwUBOtVKAswmNKDhDnWDuYAydevhB5Mnph1DzcyECz/iazVfa54Me/0qSPsPbDyMtrQ/sSzHopZP/aKtwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OhmS80rm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726263174;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=zq/XGfhuxnu2xqsl1VfuSOlwQfCDeWHk07eSBLjaxgY=;
-	b=OhmS80rmWwHEmZ7hp6E5zm8NVxzmEy7dL9q/8M4U90rqFEDa2Hg+1P+VSxVOswvZNgTbIf
-	tAphImSchjxP9sawpZ+gp2c8PyYU3443xZKYcq39KWcYzeqnrtrYWdfJCqSmLCdDbQHYrK
-	e7949al16jtk6gp7kyLpEuoRdQ0dKLU=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-333-J6O02tpQPwCliz5bH53u4w-1; Fri, 13 Sep 2024 17:32:53 -0400
-X-MC-Unique: J6O02tpQPwCliz5bH53u4w-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-377a26a5684so623322f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:32:53 -0700 (PDT)
+	s=arc-20240116; t=1726263236; c=relaxed/simple;
+	bh=MkfVfrMFBKZhPzzuv+Q0xVR3iXUZ+B4XFBxm6rOnls0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=OeLZ0E/tKP909Zt8e2mupHUTrOMdYbGL3xllJi+AydWy1T9jj1dP45IJabHXK/+rlzBtqfz9z3BA93H0vDQpwUCZh+Z78hH3ciLFsruRhepiKduB5EU9Obavx1gvq+FQbKneiJP2ZrFRnIAdcYi2ZdzFsWyji/d8HwAgG9d5BZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QoFQYjQl; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e1a74f824f9so4777262276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:33:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726263234; x=1726868034; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=C2T8h7PkrQu/P499dIgiz7AXqfHfFO+K5APloBO//pM=;
+        b=QoFQYjQl1+5kVQKjtEzm2JVSsopQvSglmU5Q7R2QcEcycNjdPMo01NbasT8U4dK3aq
+         7Vm+wXO5bhQb4dvmaSC1UyigjIy4S7d4zdt5qgWi0kZHi7R9uNlthux8EdlLOwAn3RWS
+         kk99W1ntSiv5iC1w3bl6ge6YaZjGdJrxaYBi1TkxiqrnRsLk0KWwJbFp4VpKm8/LWpL4
+         ai27a1ZQhcohisdk6R6F4RzOus4paD7pdZPZoJvywfe1Ps5TdxP0uIcaFLsgot7y5Wia
+         tja+8MJ4xYy2SKDwU/F9M0Y4mPF/GiEK1/0zM6faXGsc9bFnQ0S3ccQRSlRncCUdKV0Y
+         s7AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726263172; x=1726867972;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zq/XGfhuxnu2xqsl1VfuSOlwQfCDeWHk07eSBLjaxgY=;
-        b=HNnEzbsUrZ26e1n0vDL+qyKLcc1fV7oo8wtLeJjSb8dZhzy+ctY4lZzb1lDU4Lk8Bw
-         fYBApeeQmGSPuFbk2jrbYtsULiGQHlVa3LDotbj1f20aJdVgt0Z1SWUt5v45vmqcJtH/
-         IwDNf76SWMl+9mmHsbch7pAu2qbjFPwwBe3eEd3ayO0LIFJDIykWQ/+i75N054CAdKYF
-         WQfmXpHViJXLV23JpbxadJ4f0IBvrEjOK0bk/P50/H9ZW68ApSFi3DA4oKGMUiA5vjJk
-         2A/0bR+rzG3+rcxNylDYJOUgdlODfU1ibKyrEI67NWml9uwlDjkYu4bEdPTqEIwM+ugE
-         iLpw==
-X-Gm-Message-State: AOJu0YyXHY0qZqwKK8kMo6TKT/qJMrjAMM521V2cuuqZHp2Vtqr2SFuZ
-	0A/3dh8XCl6DOkQ8C4xrJZrn5ygH5L8Ue0aHVtyyltpmlQmlDApY3tnHl0KIGBGP/1mMDZPIt4L
-	dfodL0PyiJkWWa4sAtp6Kr5QCAudQvlMwMjihbcuci6u62RlBT9+I4iQyotuTgh6rZo+sMFlqlq
-	41qwBiZEfR6jqDwN+L4NDfi6yX4lNpz5Bsesid0KRpVPs2
-X-Received: by 2002:a5d:4388:0:b0:368:5b0c:7d34 with SMTP id ffacd0b85a97d-378d61e2c14mr2554804f8f.22.1726263172286;
-        Fri, 13 Sep 2024 14:32:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFEyVfX5FD6HqnGhKNhramC2RAHdl6F32DVAZO0vkVjMaGBuk7aa+lbQRZkWnexB34MoaO9XQ==
-X-Received: by 2002:a5d:4388:0:b0:368:5b0c:7d34 with SMTP id ffacd0b85a97d-378d61e2c14mr2554779f8f.22.1726263171717;
-        Fri, 13 Sep 2024 14:32:51 -0700 (PDT)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cc01a8ee7sm142234035e9.0.2024.09.13.14.32.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 14:32:51 -0700 (PDT)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Julius Werner <jwerner@chromium.org>,
-	Hugues Bruant <hugues.bruant@gmail.com>,
-	intel-gfx@lists.freedesktop.org,
-	Brian Norris <briannorris@chromium.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	dri-devel@lists.freedesktop.org,
-	Borislav Petkov <bp@alien8.de>,
-	chrome-platform@lists.linux.dev,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	Tzung-Bi Shih <tzungbi@kernel.org>
-Subject: [PATCH v3] firmware: coreboot: Don't register a pdev if screen_info data is present
-Date: Fri, 13 Sep 2024 23:32:29 +0200
-Message-ID: <20240913213246.1549213-1-javierm@redhat.com>
-X-Mailer: git-send-email 2.46.0
+        d=1e100.net; s=20230601; t=1726263234; x=1726868034;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C2T8h7PkrQu/P499dIgiz7AXqfHfFO+K5APloBO//pM=;
+        b=FUZTQCNT6UArsevXLDEPwStFt1LJ1ZmsIODR6Pp373h11hhcFJl9yA2uC7/jWZipqZ
+         UD2aBZTBqHZbVA4XLWnTa8mgGtx+KxmLDvgAL2WW7LxGaxYC3qII98f54s+2N3ophPY+
+         fDHfZT/bT6vzVGGcJ662sp0tUXfL3I8KXqhovOwcR7TdfmXl3nMI3VQmaLrjq2SFv5re
+         S4KEYIEJSKmMyW5Bu/Ml0e2GVxnkM7AlAT3kC8tBEkEhaDatfcL6O3Cn6/TSmdVg8LPP
+         0bw+kAKnk5uGcjFZYc6hDbHjphIF+r75IBwUgB+bAzjlBgPNHJd8lwesFFwcXylPMOTD
+         UnNg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCGCKQ1End7pjr76N+44CPh6kJmYeHz/Ha8ehSn9Lpm3bfwImUm6hxXYZ/4835R60pR36hFjIshJ2Fc5E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFMj6LzL0X1wFsHkvyVv7EzlIO6OuyNsBhViL48xsLEowAQQBs
+	rm8akc74N8uKtHQig+Dne5Ylr8dIgi9gJkY9m7QG0CDsMcb/EZWNiyIq/FW1uVSoCbDLT3+cavU
+	EdCS2vqheIw5Ot3+u2uBtdA==
+X-Google-Smtp-Source: AGHT+IGKRzJx5PjSFO3E8tqWdgVC95OAYqJ2OCpdJ9chaj4/FshFhL9QqOypm1YXq6OH+fxO5D7luhUe9GMEMnCStg==
+X-Received: from almasrymina.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:4bc5])
+ (user=almasrymina job=sendgmr) by 2002:a25:cec3:0:b0:e1a:44fa:f09 with SMTP
+ id 3f1490d57ef6-e1d9db95493mr10461276.2.1726263233997; Fri, 13 Sep 2024
+ 14:33:53 -0700 (PDT)
+Date: Fri, 13 Sep 2024 21:33:51 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.662.g92d0881bb0-goog
+Message-ID: <20240913213351.3537411-1-almasrymina@google.com>
+Subject: [PATCH net-next v2] page_pool: fix build on powerpc with GCC 14
+From: Mina Almasry <almasrymina@google.com>
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Mina Almasry <almasrymina@google.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On coreboot platforms, a system framebuffer may be provided to the Linux
-kernel by filling a LB_TAG_FRAMEBUFFER entry in the coreboot table. But
-a coreboot payload (e.g: SeaBIOS) could also provide its own framebuffer
-information to the Linux kernel.
+Building net-next with powerpc with GCC 14 compiler results in this
+build error:
 
-If that's the case, arch x86 boot code will fill the global screen_info
-data and this used by the Generic System Framebuffers (sysfb) framework,
-to register a platform device with pdata about the system's framebuffer.
+/home/sfr/next/tmp/ccuSzwiR.s: Assembler messages:
+/home/sfr/next/tmp/ccuSzwiR.s:2579: Error: operand out of domain (39 is
+not a multiple of 4)
+make[5]: *** [/home/sfr/next/next/scripts/Makefile.build:229:
+net/core/page_pool.o] Error 1
 
-But later, the framebuffer_coreboot driver will try to do the same and
-attempt to register a "simple-framebuffer" platform device (using the
-information from the coreboot table), which will lead to an error due a
-device with the same name already being registered:
+Root caused in this thread:
+https://lore.kernel.org/netdev/913e2fbd-d318-4c9b-aed2-4d333a1d5cf0@cs-soprasteria.com/
 
-    sysfs: cannot create duplicate filename '/bus/platform/devices/simple-framebuffer.0'
-    ...
-    coreboot: could not register framebuffer
-    framebuffer coreboot8: probe with driver framebuffer failed with error -17
+We try to access offset 40 in the pointer returned by this function:
 
-To prevent this issue, make the framebuffer_core driver to not register
-a platform device if the global struct screen_info data has been filled.
+static inline unsigned long _compound_head(const struct page *page)
+{
+        unsigned long head = READ_ONCE(page->compound_head);
 
-Reported-by: Brian Norris <briannorris@chromium.org>
-Closes: https://lore.kernel.org/all/ZuCG-DggNThuF4pj@b20ea791c01f/T/#ma7fb65acbc1a56042258adac910992bb225a20d2
-Suggested-by: Julius Werner <jwerner@chromium.org>
-Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
-Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
-Reviewed-by: Brian Norris <briannorris@chromium.org>
-Reviewed-by: Julius Werner <jwerner@chromium.org>
+        if (unlikely(head & 1))
+                return head - 1;
+        return (unsigned long)page_fixed_fake_head(page);
+}
+
+The GCC 14 (but not 11) compiler optimizes this by doing:
+
+ld page + 39
+
+Rather than:
+
+ld (page - 1) + 40
+
+And causing an unaligned load. Get around this by issuing a READ_ONCE as
+we convert the page to netmem.  That disables the compiler optimizing the
+load in this way.
+
+Cc: Simon Horman <horms@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: David Miller <davem@davemloft.net>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Networking <netdev@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+
+Suggested-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Mina Almasry <almasrymina@google.com>
+
 ---
 
-Changes in v3:
-- Fix coreboot spelling to be all in lowercase (Julius Werner).
+v2: https://lore.kernel.org/netdev/20240913192036.3289003-1-almasrymina@google.com/
 
-Changes in v2:
-- Declare the struct screen_info as constant variable (Thomas Zimmermann).
-- Use screen_info_video_type() instead of checking the screen_info video
-  types directly (Thomas Zimmermann).
-- Fix missing "device" word in a comment (Brian Norris).
-- Fix some mispellings in a comment (Brian Norris).
-- Change error code returned from -EINVAL to -ENODEV (Brian Norris).
+- Work around this issue as we convert the page to netmem, instead of
+  a generic change that affects compound_head().
+---
+ net/core/page_pool.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
- drivers/firmware/google/framebuffer-coreboot.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/drivers/firmware/google/framebuffer-coreboot.c b/drivers/firmware/google/framebuffer-coreboot.c
-index daadd71d8ddd..f722292e7684 100644
---- a/drivers/firmware/google/framebuffer-coreboot.c
-+++ b/drivers/firmware/google/framebuffer-coreboot.c
-@@ -15,6 +15,7 @@
- #include <linux/module.h>
- #include <linux/platform_data/simplefb.h>
- #include <linux/platform_device.h>
-+#include <linux/screen_info.h>
+diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+index a813d30d2135..74ea491d0ab2 100644
+--- a/net/core/page_pool.c
++++ b/net/core/page_pool.c
+@@ -859,12 +859,25 @@ void page_pool_put_page_bulk(struct page_pool *pool, void **data,
+ {
+ 	int i, bulk_len = 0;
+ 	bool allow_direct;
++	netmem_ref netmem;
++	struct page *page;
+ 	bool in_softirq;
  
- #include "coreboot_table.h"
+ 	allow_direct = page_pool_napi_local(pool);
  
-@@ -27,8 +28,10 @@ static int framebuffer_probe(struct coreboot_device *dev)
- 	int i;
- 	u32 length;
- 	struct lb_framebuffer *fb = &dev->framebuffer;
-+	const struct screen_info *si = &screen_info;
- 	struct platform_device *pdev;
- 	struct resource res;
-+	unsigned int type;
- 	struct simplefb_platform_data pdata = {
- 		.width = fb->x_resolution,
- 		.height = fb->y_resolution,
-@@ -36,6 +39,20 @@ static int framebuffer_probe(struct coreboot_device *dev)
- 		.format = NULL,
- 	};
- 
-+	/*
-+	 * On coreboot systems, the advertised LB_TAG_FRAMEBUFFER entry
-+	 * in the coreboot table should only be used if the payload did
-+	 * not pass a framebuffer information to the Linux kernel.
-+	 *
-+	 * If the global screen_info data has been filled, the Generic
-+	 * System Framebuffers (sysfb) will already register a platform
-+	 * device and pass that screen_info as platform_data to a driver
-+	 * that can scan-out using the system provided framebuffer.
-+	 */
-+	type = screen_info_video_type(si);
-+	if (type)
-+		return -ENODEV;
+ 	for (i = 0; i < count; i++) {
+-		netmem_ref netmem = page_to_netmem(virt_to_head_page(data[i]));
++		page = virt_to_head_page(data[i]);
 +
- 	if (!fb->physical_address)
- 		return -ENODEV;
++		/* GCC 14 powerpc compiler will optimize reads into the
++		 * resulting netmem_ref into unaligned reads as it sees address
++		 * arithmetic in _compound_head() call that the page has come
++		 * from.
++		 *
++		 * The READ_ONCE here gets around that by breaking the
++		 * optimization chain between the address arithmetic and later
++		 * indexing.
++		 */
++		netmem = page_to_netmem(READ_ONCE(page));
  
+ 		/* It is not the last user for the page frag case */
+ 		if (!page_pool_is_last_ref(netmem))
 -- 
-2.46.0
+2.46.0.662.g92d0881bb0-goog
 
 
