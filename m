@@ -1,121 +1,135 @@
-Return-Path: <linux-kernel+bounces-327910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D47977C86
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:46:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78E14977C8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:48:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AED41F2885E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:46:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB179B213ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAAE41D6DB2;
-	Fri, 13 Sep 2024 09:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46641D6DD1;
+	Fri, 13 Sep 2024 09:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nakq5lNk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BZA1Jyzi"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD3DA1BC9E0;
-	Fri, 13 Sep 2024 09:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826A713CABC;
+	Fri, 13 Sep 2024 09:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726220793; cv=none; b=PvIvRe0e6FfaAGOY6MjqrlVYMeX1P+y9QaPH1PHdpXv5fTceegHX/oDy/PAkCqRLG4d1q+bKJH+ooK3PLvCbr3wbm6rrCIHNBaila2hFq9Zdib326xOsXOoaVlQVkMMEBsfrtpAgh+/TKNOy/dILmzxmOHU4KMkIE/bw6LgBEMg=
+	t=1726220914; cv=none; b=aRAcj+WL5eJqMTY9kNIotY8jScsrEUFVxE86o6q2afobLutWMCnWxVXwW22jG62PZJ74ZSmTBLnCOCpfmYCfaEpqc4oPBpdnylKl+/ZUaQqDMCv4+E4lxX+cXADZ8WKG5UOwUDMK04BkTLfsnyrvzY82w3a3JKSwuna/qAGA878=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726220793; c=relaxed/simple;
-	bh=BT6BwnWKIIo6f5KGZ9sOvCPyOrcdsUj54Uor+njpwy4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fuxp8zS565xWefK4zAy9K8eVBurMXkA82dK+wPEQMnSbRmKQU5/OsvTCsXM+DY5TmreXhtZKTChUixGRJSNVd6XdAn8GsVT57168aegVSRK6IOFgp7z3+qLgu6kVzz/kbOq+35oitB83/KnwPbm0XOV83xjFmanpKp8Ieke2m0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nakq5lNk; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726220792; x=1757756792;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BT6BwnWKIIo6f5KGZ9sOvCPyOrcdsUj54Uor+njpwy4=;
-  b=Nakq5lNkXNu2CtZ/HV79dBsj2qoNACasyyjNuFMlqsOAx6GOLL42F/JU
-   47MYl5Y+mMj3nZ83QoxEt5C3BQq/v4wH732DWhP7vhHBCNgWINc34nYVG
-   kGFdaAMGcyucD+lUJwA+h+8pbtKk4RS5TEPfoJJnji9rCoXFcK5BJjCak
-   FQc7gRrO75WJo+juPJp+DZgRAiBycDchvvy5q6TELueQaMRB+6HZnYOFp
-   p8jUe4GuR+7F/f1TpcpQ0nyRydfZRVvJAiaVkeHYb4BiBDcB7/F6t4+GA
-   MBebvXfJ+Xrqmy8VkILn6S+2JHa6A8AKXbqKQvJiY8JXea8Duby8yhOMY
-   g==;
-X-CSE-ConnectionGUID: nbVTXvomR+eOp66tTURE4Q==
-X-CSE-MsgGUID: kZa7Ubz2SOys/5CRpZzfdw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="42623337"
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="42623337"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 02:46:30 -0700
-X-CSE-ConnectionGUID: ye8B9dbuTv2TLSkeGLljIg==
-X-CSE-MsgGUID: g6rVSLVMSFS0WnLd04QiNQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="72803170"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 02:46:28 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sp2sj-00000008FRk-142M;
-	Fri, 13 Sep 2024 12:46:25 +0300
-Date: Fri, 13 Sep 2024 12:46:25 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Olof Johansson <olof@lixom.net>,
-	ARM <linux-arm-kernel@lists.infradead.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-next <linux-next@vger.kernel.org>,
-	Nikita Shubin <nikita.shubin@maquefel.me>
-Subject: Re: linux-next: manual merge of the gpio-brgl tree with the arm-soc
- tree
-Message-ID: <ZuQJ8aGqrF_eMVEH@smile.fi.intel.com>
-References: <20240912174842.57a43921@canb.auug.org.au>
- <a124f713-8cbb-46d3-850c-1dd1b9010258@app.fastmail.com>
+	s=arc-20240116; t=1726220914; c=relaxed/simple;
+	bh=xgpGRsCTpAi5fY/qcvLV7YM6QgUN1NxtneHSZ5GnC5g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kpu9iqv3IieO34S8qNQwbWeonLN9stNeK60Z+REDI+fTT9DW8/5zhLU63RnL7GrjQp6qh78dXucePnxv1SlaNKuurimHUXkO8eRAPvglunKO1sjowvnCacXX/rrEkCnz10tEL2f7Mz5oFe8tSwg4UntfiN7xzwS4vUR02bDu+MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BZA1Jyzi; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-374bd0da617so1340574f8f.3;
+        Fri, 13 Sep 2024 02:48:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726220911; x=1726825711; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6/eKjE/ZIiv+2bvRdfHp+82zpO7/8oX80AIbfHpCg2M=;
+        b=BZA1JyziZfhAEesEopFOlTktKPscz/wNlXzfC3BG0znvq5ZIOWlA5S1l6mH95zwG/y
+         NAM2aSLVWt1fOzHMgO1xDn8k7ECR06Rwzb3CH2Z6+mTOIZU152n1YtQuhzD9PKPeQfpQ
+         5Qfi+vZb58bvb035JFsIPa04DWPa3yeOpQqaVZbh+fi8+qmDhQ7izTzfsZaxPnv7CR7Z
+         F3yMUfXu6agTz04weQhIuZQnmKNs3UvkYXqyfLv00JI3EUl9nQ5V03P63hzf1299HIRq
+         FSdH7nloot3sAjnif4Mwz2xKf5GCRy8du6gIMbRqG8pGROXxUxxCNJiajjttYs2s70Fu
+         NC/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726220911; x=1726825711;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6/eKjE/ZIiv+2bvRdfHp+82zpO7/8oX80AIbfHpCg2M=;
+        b=QcEHLVbDfngQHpZlM3FiXHCn3sMHW0CyNacIr8LqEYc7tzMw66VuorsLY/HhTjP+Sd
+         SrPJiYoEZXasNJ/Qi2mwGuqIK9z3e2yaRg0XFmlokGI+cQG1H32t7A+ii1pDm/V/WBh+
+         +8qZN4mgCbXZAR66H/stgOPRvcINOazVuAPjTX5aGta9iiqHGBsVtmIYuf+pynEp4Quv
+         eamUs8B0K42dzzUKkQNejxA4O74OgOYkTPznzl4q8HAcWVt0UzWZXDsE5JiweqlbOQlT
+         ll6UTK0W2e/rspeSkdDbZdfWLJm7rzaE86Axivn/+g0XHR2xocX8Wzay2jAYxFQ5yo3f
+         UynQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVrL/pLVY5+CbPwXHD1VeRCcIHcf1py21D4CUt9c26lE2GhgHUGstNR+m/SvlFZbrbMYaAoUW9HqQqRFdZn2RI=@vger.kernel.org, AJvYcCXkwXFfSjwWtOwXwNarCF0CAAQCpui6+IgcwRX1qMERutlPI4JTNvZ4LxGpDEtj+SeLkpWCforTUwQ380du@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCVSQZbpCBDiGj4l/b77r6vPyoCqmoOVE2CYa+eA7SqiIJ15uJ
+	yY1dHmBHxqwoeqxGfrMNQY5BarDgqf0nu8ZPLwNCadjGtd/IGzm5
+X-Google-Smtp-Source: AGHT+IH8ykEdbL6dIm9/qmwfUe0sUH2Gi88huy6I1kPGc5tApxXUPMHDJ5VEoMIfhcjSz3r8nvkT8A==
+X-Received: by 2002:a5d:6788:0:b0:371:a844:d326 with SMTP id ffacd0b85a97d-378c2d4c9bbmr3754253f8f.43.1726220910171;
+        Fri, 13 Sep 2024 02:48:30 -0700 (PDT)
+Received: from void.void ([141.226.9.10])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37895676093sm16326846f8f.65.2024.09.13.02.48.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 02:48:29 -0700 (PDT)
+From: Andrew Kreimer <algonell@gmail.com>
+To: Kalle Valo <kvalo@kernel.org>
+Cc: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Andrew Kreimer <algonell@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH] wifi: ath6kl: fix typos
+Date: Fri, 13 Sep 2024 12:48:10 +0300
+Message-ID: <20240913094818.14456-1-algonell@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a124f713-8cbb-46d3-850c-1dd1b9010258@app.fastmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Thu, Sep 12, 2024 at 12:10:38PM +0000, Arnd Bergmann wrote:
-> On Thu, Sep 12, 2024, at 07:48, Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > Today's linux-next merge of the gpio-brgl tree got a conflict in:
-> >
-> >   arch/arm/mach-ep93xx/vision_ep9307.c
-> >
-> > between commit:
-> >
-> >   3e0bae7f35c9 ("ARM: ep93xx: delete all boardfiles")
-> >
-> > from the arm-soc tree and commits:
-> >
-> >   4b2b0a2ce815 ("gpiolib: legacy: Kill GPIOF_INIT_* definitions")
-> >   8c045ca534d0 ("gpiolib: legacy: Kill GPIOF_DIR_* definitions")
-> >
-> > from the gpio-brgl tree.
-> >
-> > I fixed it up (I removed the file)
-> 
-> Looks good, thanks,
+Fix typos in comments.
 
-Confirmed from my side, thanks.
+Reported-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Andrew Kreimer <algonell@gmail.com>
+---
+ drivers/net/wireless/ath/ath6kl/wmi.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
+diff --git a/drivers/net/wireless/ath/ath6kl/wmi.h b/drivers/net/wireless/ath/ath6kl/wmi.h
+index b4fcfb72991c..68384159870b 100644
+--- a/drivers/net/wireless/ath/ath6kl/wmi.h
++++ b/drivers/net/wireless/ath/ath6kl/wmi.h
+@@ -1249,7 +1249,7 @@ struct wmi_rssi_threshold_params_cmd {
+ 	/* highest of upper */
+ 	a_sle16 thresh_above6_val;
+ 
+-	/* lowest of bellow */
++	/* lowest of below */
+ 	a_sle16 thresh_below1_val;
+ 
+ 	a_sle16 thresh_below2_val;
+@@ -1257,7 +1257,7 @@ struct wmi_rssi_threshold_params_cmd {
+ 	a_sle16 thresh_below4_val;
+ 	a_sle16 thresh_below5_val;
+ 
+-	/* highest of bellow */
++	/* highest of below */
+ 	a_sle16 thresh_below6_val;
+ 
+ 	/* "alpha" */
+@@ -1287,13 +1287,13 @@ struct wmi_snr_threshold_params_cmd {
+ 	/* highest of upper */
+ 	u8 thresh_above4_val;
+ 
+-	/* lowest of bellow */
++	/* lowest of below */
+ 	u8 thresh_below1_val;
+ 
+ 	u8 thresh_below2_val;
+ 	u8 thresh_below3_val;
+ 
+-	/* highest of bellow */
++	/* highest of below */
+ 	u8 thresh_below4_val;
+ 
+ 	u8 reserved[3];
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.46.0
 
 
