@@ -1,137 +1,158 @@
-Return-Path: <linux-kernel+bounces-327465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BC6E977656
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:18:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3B69977658
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68AE91C210B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:18:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 228611C238A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886444A3F;
-	Fri, 13 Sep 2024 01:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94B14A11;
+	Fri, 13 Sep 2024 01:18:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VUbkVguT"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="cflh8pVu"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A264A06;
-	Fri, 13 Sep 2024 01:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF163D62
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 01:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726190292; cv=none; b=q2RSqTG4A3sb7u2uAJYXgd0+LW59Q5wAFGZv7addllcDaaZ8rbsygiaGnGeyj8hR7S+aSCNUX1Ue+fKcp8IoSmY6yPdSFahecYgIZI33pcExT/1+D/ZDvAY8cNu+KL9lt8wtg/cIRHwJGU3j1MNNTGSUQEN/cBDxxLWGZR9aCcA=
+	t=1726190318; cv=none; b=X2wC8Gx6thXzVP+y29kAwyflMqLHwUGdi/ZSc3RS1yr6/CQrC4Cdbklyt6uTTMby7W30meCAn4PKUNiMUouIya+bxGXB+Y4SV8p8kFh4lVxoFhqwfWmA5JBxDDLVOVpSpL5Z8oKbdIaYgqJMZoG/uuwk2d+MpYXeFL4bs/NwwWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726190292; c=relaxed/simple;
-	bh=Yp6PMUWJlSeoZOwCPYo7ijS5MpmrOP2BcUzEIaBVPcg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jc/EdfMPyzaFDtMLAhdsH3Pgbq6suVRTVtst5s9n14819FpB1ib3+Jg83cjPsb7t3QCDBCsrmcRJTp6sf569SZIwidsTe+7TxoTvRDzGVecCX9DbM09oQSw70RrzPVv1Hr5QTHcZPnac9Nnbp82SGX33ZGHksScA9RvvNC43ESM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VUbkVguT; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71911585911so1375296b3a.3;
-        Thu, 12 Sep 2024 18:18:09 -0700 (PDT)
+	s=arc-20240116; t=1726190318; c=relaxed/simple;
+	bh=NA6fdfMXOcNcjOXQj/GmFhALd+tPv0w1x2df+NW4U5w=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=HYXHt92DnIKgYPenIiJBPG9Yrp+UgjkJUo19e6aOYxnyGKc6p6qI8OffNoATAr30MwNSXki79MQnqjDxqXUDuYtRxdC5/dMIsr1y/MNKXFsj7Uk5sHniuEHqW7YxVQZ4OI5GjMnIcmVcBtErOy+aGVDTCQfWQOlOHhlCmlEU2z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=cflh8pVu; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7a99c99acf7so151151785a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 18:18:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726190289; x=1726795089; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=d9Dv1rZ4lSX5JLn7g5A6qbc9I0zKJhTNVaRog4l8gvk=;
-        b=VUbkVguTlOw1eBMSoMATp6omKnSrBNg+jBhdNLCwMImDu+tys7Mocsj1qfYMoFLj0p
-         t4v8YBUc+6+6V4CBUOyObMxJOSt++sAKrPn6PJ8G2yPLhFCciEPeYZxwb5n4G0pIQOWD
-         /6yr71/BLLCNzL7lDOk4eFfc55ARbnnUGgFepGL7bVyVvsh/ZlLs/8UINl9l0qIavcrV
-         KaUquvYgo+MkR5fgl0rcCb60deYIydRD00Mmv1rw+84yzpdxr4M59gEWluPo93NPYHCw
-         fZ4KsXyclLThzVFeUqXFTr0pQgZVzMl+J5ZqRO8+ECPiMMRA0g6gGp30GNZLAfs8MQYB
-         tj0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726190289; x=1726795089;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1726190315; x=1726795115; darn=vger.kernel.org;
+        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=d9Dv1rZ4lSX5JLn7g5A6qbc9I0zKJhTNVaRog4l8gvk=;
-        b=jcE8Nz9T+gnbojdGsWrSZNXbyoaepwbQeejeTeeBpl4QXp/Q7aJ7Vna2nkvRv2AimE
-         OVfRXMa1HGLOkRPoZJF11W63GmLYZwH6a4CxEMuPZ4vE0KIYHh7LKIlPbEd9HlMez4qz
-         hWyawohh1KZjktF5NujwN1WFnb8Wg91wSYiBYJK8mn6bcreKxwiShW3rSiJ3tluOlOL4
-         yot3id2oPDSYaQOh5NhUJZnh/GKKngf6RJVEqCvpVR+PNP9W3JhEeWSOK7EKHdWF8KkO
-         cUlD//aXeieQkOr0dRagYYSLCm8XXIMeVLlvtBVinj4kzQH4oD6XjWfEIymgP3RGVVgl
-         6PMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtYDQ/+GLaZkEkG3iu+yJNxF46tXHb5mfjEgNjbOhMZmcGwJSOzQCuM9qUIBQ2m+3o/LxBtOp5wwE=@vger.kernel.org, AJvYcCVjBirnBnAjKdsCnV2DW5y42WHVcHuGhVJgaX5OhFS1Kc5qE7e4DvegY7gr3kVbeIFDPQ3w61DI+g5215t2@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvCZ96/VpO0piokF2LXUakvCueAwoCqY9Vbms8ZtwqIlm78Idc
-	Um2GqB6/ZGogFm4LOjASgAWzqMxADvugz8gVgBGtZueQAMbQjoMH
-X-Google-Smtp-Source: AGHT+IG6Z1K2Jq2CgbYNkWAoessZF2j9kOgTQZdK15l+SPX166vfeZd+aLbSAVSTd/QbfgpqEkcmGA==
-X-Received: by 2002:a05:6a00:3cd1:b0:714:1d15:663 with SMTP id d2e1a72fcca58-71926202c98mr7348108b3a.24.1726190288659;
-        Thu, 12 Sep 2024 18:18:08 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71908feac91sm5154667b3a.85.2024.09.12.18.18.07
+        bh=5YKYyd6pVgIHHfDYldydf/l8er/9vTj3rQlAXSuFfGs=;
+        b=cflh8pVuG5RqHpTuNzUq2VoXtKga8iaN+6rudvjfbuVhaSz2vWTCs8YdCE+j1J+2JV
+         8Z34A29jxmgT9Stz6u/w96X++iLBVbHE70daXGl8VmoESBVIcC1vPn5rmOlHQyYG8gCm
+         fvOiJN7DkeM00NVckUvOcp8TswhgLz4luI7UBrPzdKvaxZ4rRii0DXCVyynDaulitMlT
+         PUJ4QaI+FYGjsXakfkqqW0ECqP9y9gHbTvBcL+otiL58s+0FE1DxYcfvDfpCcbQOL4EL
+         M8s4N0joI1c6oV4qsO9xT6T1MC7zNmRtYT6jO16cL9d0WTmv+ai02AZNEgo4PDRf9XHK
+         omkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726190315; x=1726795115;
+        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5YKYyd6pVgIHHfDYldydf/l8er/9vTj3rQlAXSuFfGs=;
+        b=HB1D2MFPyYgRFr15lkTE4112VW1SNt5YcWiYUs7DVvIaMniUS7NTRND/X26xqROoai
+         eLkqxU68JN1g4kJ39l/0M8MqyUvhwbjaf4gjA48hSMhMJ5s5l3Y/1LzU0GLtgN8SZWna
+         R0DT5xdhOBTmIZbxv2hVxpVfj4U4DDmiH12oi9ovNDGEs5NA3rfb+4rUyC1P0+ZR9aGS
+         Bgu5MsnzWPnkP3j/GGY0tiIJHL2P/wF6j2i8HzOf1YWP+1CUl1k+aVbI1UD4S8W343EF
+         7Oa9R1UdQs+Ywm2yQ+82D4rBtU88ozshBnbE1LzHbSd9/Xba0gmW0H2bXRGvzqkDV07Y
+         BZDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUvfvJ43x9kCYXJDcFQD3njEmQWeDW3C+jD0XP79uK6ECTPSCfDYovJJA6ppi8LTJMDyt2K/+B2dgvzdrI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzinrxTD5ul9lQr3R/ubf9QS2lqgGJnQLBOUadGRc8+Kt9pD88q
+	04P/IMt2fjWzkGx17XBmJqP5bD0bEdZh/D05ZW4TRU/LdIyabVS8TZboGMQbxw==
+X-Google-Smtp-Source: AGHT+IHp1hgkE96Wih0ITNuYvZtXTJ9Giba/CeSTfOTehlb9V+ct3FfrhjuOdJRzHqnTPSuI/KacTw==
+X-Received: by 2002:a05:620a:4086:b0:7a9:c160:c80b with SMTP id af79cd13be357-7a9e5ee70f9mr826282985a.8.1726190314835;
+        Thu, 12 Sep 2024 18:18:34 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a9a7946afbsm600876785a.3.2024.09.12.18.18.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 18:18:07 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 7260D4A19C6E; Fri, 13 Sep 2024 08:18:03 +0700 (WIB)
-Date: Fri, 13 Sep 2024 08:18:03 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Nicolin Chen <nicolinc@nvidia.com>, jgg@nvidia.com,
-	kevin.tian@intel.com
-Cc: corbet@lwn.net, iommu@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, yi.l.liu@intel.com,
-	eric.auger@redhat.com, shameerali.kolothum.thodi@huawei.com,
-	smostafa@google.com, baolu.lu@linux.intel.com
-Subject: Re: [PATCH v2] Documentation: userspace-api: iommufd: Update
- HWPT_PAGING and HWPT_NESTED
-Message-ID: <ZuOSy3ITxJ7tkMnl@archie.me>
-References: <20240912021503.205502-1-nicolinc@nvidia.com>
+        Thu, 12 Sep 2024 18:18:34 -0700 (PDT)
+Date: Thu, 12 Sep 2024 21:18:33 -0400
+Message-ID: <c6139509267be86f56f189c243d57426@paul-moore.com>
+From: Paul Moore <paul@paul-moore.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] selinux/selinux-pr-20240911
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Q6dB82KOjQiJ6b5g"
-Content-Disposition: inline
-In-Reply-To: <20240912021503.205502-1-nicolinc@nvidia.com>
 
+Linus,
 
---Q6dB82KOjQiJ6b5g
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+A number of small SELinux patches for the v6.12 merge window:
 
-On Wed, Sep 11, 2024 at 07:15:03PM -0700, Nicolin Chen wrote:
-> +- IOMMUFD_OBJ_HWPT_NESTED, representing an actual hardware I/O page table
-> +  (i.e. a single struct iommu_domain) managed by user space (e.g. guest =
-OS).
-> +  "NESTED" indicates that this type of HWPT should be linked to an HWPT_=
-PAGING.
-> +  It also indicates that it is backed by an iommu_domain that has a type=
- of
-> +  IOMMU_DOMAIN_NESTED. This must be a stage-1 domain for a device runnin=
-g in
-> +  the user space (e.g. in a guest VM enabling the IOMMU nested translati=
-on
-> +  feature.) So it must be created with a given nesting parent stage-2 do=
-main
-              "As such, it must be ..."
-> +  to associate to. This nested stage-1 page table managed by the user sp=
-ace
-> +  usually has mappings from guest-level I/O virtual addresses to guest-l=
-evel
-> +  physical addresses.
+* Ensure that both IPv4 and IPv6 connections are properly initialized
 
-Thanks.
+While we always properly initialized IPv4 connections early in their
+life, we missed the necessary IPv6 change when we were adding IPv6
+support.
 
---=20
-An old man doll... just what I always wanted! - Clara
+* Annotate the SELinux inode revalidation function to quiet KCSAN 
 
---Q6dB82KOjQiJ6b5g
-Content-Type: application/pgp-signature; name="signature.asc"
+KCSAN correctly identifyies a race in __inode_security_revalidate() when
+we check to see if an inode's SELinux has been properly initialized.
+While KCSAN is correct, it is an intentional choice made for performance
+reasons; if necessary, we check the state a second time, this time with a
+lock held, before initializing the inode's state.
 
------BEGIN PGP SIGNATURE-----
+* Code cleanups, simplification, etc.
 
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZuOSwwAKCRD2uYlJVVFO
-o0OaAPwM6FumUDIil8nGnHe9Y/dbNttmC+bS+5w4gXSnlpG87AEA5HC2c3jQt49S
-VlXWJWQKvlGu5wi0sZOUQXBN9rH+uAc=
-=DzZT
------END PGP SIGNATURE-----
+A handful of individual patches to simplify some SELinux kernel logic,
+improve return code granularity via ERR_PTR(), follow the guidance on
+using KMEM_CACHE(), and correct some minor style problems.
 
---Q6dB82KOjQiJ6b5g--
+-Paul
+
+--
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+    tags/selinux-pr-20240911
+
+for you to fetch changes up to d19a9e25a722d629041ac8fd320a86c016e349d1:
+
+  selinux: fix style problems in security/selinux/include/audit.h
+    (2024-09-03 18:54:38 -0400)
+
+----------------------------------------------------------------
+selinux/stable-6.12 PR 20240911
+----------------------------------------------------------------
+
+Canfeng Guo (1):
+      selinux: Streamline type determination in security_compute_sid
+
+Eric Suen (1):
+      selinux: replace kmem_cache_create() with KMEM_CACHE()
+
+Gaosheng Cui (1):
+      selinux: refactor code to return ERR_PTR in
+         selinux_netlbl_sock_genattr
+
+Guido Trentalancia (1):
+      selinux: mark both IPv4 and IPv6 accepted connection sockets as
+         labeled
+
+Paul Moore (1):
+      selinux: fix style problems in security/selinux/include/audit.h
+
+Stephen Smalley (1):
+      selinux: annotate false positive data race to avoid KCSAN warnings
+
+Zhen Lei (1):
+      selinux: simplify avc_xperms_audit_required()
+
+ security/selinux/avc.c           |   20 ++++---------
+ security/selinux/hooks.c         |    7 ++++
+ security/selinux/include/audit.h |   46 +++++++++++++++----------------
+ security/selinux/netlabel.c      |   20 ++++++-------
+ security/selinux/ss/avtab.c      |    7 +---
+ security/selinux/ss/ebitmap.c    |    4 --
+ security/selinux/ss/hashtab.c    |    4 --
+ security/selinux/ss/services.c   |   36 ++++++++++++------------
+ 8 files changed, 68 insertions(+), 76 deletions(-)
+
+--
+paul-moore.com
 
