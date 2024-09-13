@@ -1,159 +1,109 @@
-Return-Path: <linux-kernel+bounces-328691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D99FB97876E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:02:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B994978775
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:03:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32251B20C1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:02:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 003761F24521
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:03:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C1F6F31E;
-	Fri, 13 Sep 2024 18:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34FF0126C01;
+	Fri, 13 Sep 2024 18:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="jDfJUCZd";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="S3vKPw3X"
-Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FPBntywq"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B8422338;
-	Fri, 13 Sep 2024 18:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39784839EB
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 18:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726250550; cv=none; b=K+7ChdXuZxlr4ckarnsEgp7ncFC8VIwo9jGOfTjzMIoz1DKvMUdor1p02JOihhOt2KdbkBFU77l46SbrveiP34bqLaI7k4OknPsLK+hnJShyU6MByklpHOihonrWALY6KOYYvaQXQ85QQghZeQLVgOFxxK48KoG+1NoMl3Jwu9g=
+	t=1726250587; cv=none; b=Xyc1xvly0JZwcMtpmaD8gs2a2qW3gG72DUorK/+KnjENRnEmtDVINJTYv2gw0WCjvOcigmbmGt1gAWFSMJSrrYth0WzvxyANE2N6eSDwQXQTz2zv9xBEzTaGn8b4GQCLmGENbHErEH7KlwSu84nlA3NdNY8PHF1WpIFPUbVKnNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726250550; c=relaxed/simple;
-	bh=/xiIVCpQW8QVmjZDSV8aZTbb32lrd7k8VmT6lTMuWYs=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
-	 Cc:In-Reply-To:To; b=XvY+8ovlGJIbqpqleyuVpyedKKTeIMuvwes4nPxs4OUuQ9epfL4A3w9nZAGPg4V+Y9qZq4mXDSvEbchcGNW9G45h9JjBMYbvb1nAYQnVNHNv2exAz32HaXxGrkz98GT3nbl9aUSii9DeGgMFYG6sdN88tQHZvDzFQy6/QC/phPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=jDfJUCZd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=S3vKPw3X; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfout.phl.internal (Postfix) with ESMTP id C1C1C138019B;
-	Fri, 13 Sep 2024 14:02:27 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Fri, 13 Sep 2024 14:02:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm2;
-	 t=1726250547; x=1726336947; bh=KgF0/2DNs9uieC59wQf5tgot36dlRR/u
-	LSlmHjblz8o=; b=jDfJUCZdWRxOrQNYqiCr29EzjLrYMMyWE8xrlqsLM4gCD0m4
-	fIBqqCscBgOc53ODPmHaM9lIwcOIeE5WXUENMS40op1bgfe7WaJm9+uKMiuGpbYu
-	z68XBaOvdCHbVaWjFYeA1XVzg3uhs71MHeErif85AA8UIoTbp5wlxqf15VmLvFKF
-	68IvfoLSVxTpTyx1yBQ3ffGpplSvbitYlK58/Gok4cdneqPoL6JZHZJZwx5/1bmf
-	ZcP2iF2rPZxOBsHefvXTIC0oJI/9ovVPBv1rgfypihgz82prof1VIY4tw0bq8HfE
-	HoCo+Rx8TDF+vYk32/YIoI2nQOAIBZESWu7Xqw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726250547; x=
-	1726336947; bh=KgF0/2DNs9uieC59wQf5tgot36dlRR/uLSlmHjblz8o=; b=S
-	3vKPw3X8+p0TuP5oitYCrbasHjLSNfzYbnLPPTSUD9n9SOsBHBTV3rhRoG9Sz0+f
-	iYBtg2anqYVoK2XIUoirmgmpKYBGg6bRmuy062xAw7pKSWwVoppNDSrpwmUIyrTI
-	b1WddpmgFklmtzlmDR8i+wPjHeL1wjeFsqkbJR6CCePUnTo3h/ZlODuSbGJj6nJs
-	ehj9Z262VUsbnNPdd10IDNKw3DxbMNymnuEQRpBdN1WQactt4+vBFbAEWDfhKZgY
-	GwrdbqNJnpV4P5FxzT133Eg6q0SWrLlwO9l9A87cn6Ht5a/X/AK0hMCN4xKOpKvZ
-	LsRnhhTy6q6ssdlLTQLUQ==
-X-ME-Sender: <xms:Mn7kZi5ixJbZmhT0bVEtddEfFd-tQM4Fg1eGjOekVYL8o0HvfiBM1A>
-    <xme:Mn7kZr49MVBKoyNmQB7os9zjSbnWDUJChlhouk_wKZtfAKzyoOfyEYeB3_WbGgWFh
-    hRkcTpGg6G51nMUx_4>
-X-ME-Received: <xmr:Mn7kZhdW-Ah9w-QxaNDS_FMuxeBSbTtFMa2ULkkE-3udsueyJ4w8jvIlgUYaUVWthuvAaoLrFYdPUD7JkwOPpyYaBzOQ5PbOw6qFy_GhRLGDN4Vq2SMP0JIj>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejjedguddulecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpegtgffhggfufffkfhevjgfvofesthhqmhdthhdt
-    jeenucfhrhhomhepufhvvghnucfrvghtvghruceoshhvvghnsehsvhgvnhhpvghtvghrrd
-    guvghvqeenucggtffrrghtthgvrhhnpedvhfdtudduvdeujeeufffgudekvdefvefgueei
-    iedvledtheegieevffdtteekudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehsvhgvnhesshhvvghnphgvthgvrhdruggvvhdpnhgspghrtghp
-    thhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhinhhugidqkhgvrh
-    hnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghsrghhiheslhhi
-    shhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnh
-    gvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehtohifihhn
-    tghhvghnmhhisehgmhgrihhlrdgtohhmpdhrtghpthhtohepfihimheslhhinhhugidqfi
-    grthgthhguohhgrdhorhhgpdhrtghpthhtoheprghlhihsshgrsehrohhsvghniiifvghi
-    ghdrihhopdhrtghpthhtoheplhhinhhugiesrhhovggtkhdquhhsrdhnvghtpdhrtghpth
-    htoheplhhinhhugidqfigrthgthhguohhgsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtohepmhgrrhgtrghnsehmrghrtggrnhdrshht
-X-ME-Proxy: <xmx:Mn7kZvK9LIOXYJhkNiRYtHzMBLdArpEcWF2HUUeKWfBdzw51UOy9UA>
-    <xmx:Mn7kZmIQEEDreFMXyn5maw8cZZ3V5K0pUzY6Kc1FLgUmMylX5OmKjQ>
-    <xmx:Mn7kZgyizUyd_tZRoEhVDhAOoVN3XbYxZCyGrJe1Yp_nJHYRPVw2uA>
-    <xmx:Mn7kZqJY0rBUI7QTtaNy2dT3F4qO2gMyIHR4pJGmA6oJEUtCldfcjA>
-    <xmx:M37kZjU_lZZ5ME2AO2S9WbRuT_gyEjtkX4ijfixdcVo069ul7vd20g1Z>
-Feedback-ID: i51094778:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 13 Sep 2024 14:02:26 -0400 (EDT)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From: Sven Peter <sven@svenpeter.dev>
+	s=arc-20240116; t=1726250587; c=relaxed/simple;
+	bh=UXOkfh0KcTju6djH7sIVB89zq8vPdKXMJhkLDkEvaUs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eiZ5RjBCd8D17tpUHaB2WYB4Nx0AT6u5s8nk4We2R0T0jjchcLqq4cJDFRBC8OPxJf/9Kserim6HYYqZoRel4XdclzSwK1waTUieO8FbSDTWNydY2XSjb5hUwjQtuBV+8ayIzYhKV4/cq1OajJwfIP7e+Ol0bNm6i9ZxJ4WEhNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FPBntywq; arc=none smtp.client-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-710fe5c3b44so707807a34.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 11:03:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726250585; x=1726855385; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UXOkfh0KcTju6djH7sIVB89zq8vPdKXMJhkLDkEvaUs=;
+        b=FPBntywqsxArJi54K4PxjZdCs2Y8HU3hhwmDaz2q429m9R25ERQP0zx3BkqV72gsms
+         UEhE0VAbKfw01LT9oL2yLHKxoIm7dL36ArSNSkX0KNtPaOlTCBwtpjUQrBVNPIk0R3ph
+         +0SkOkOTAYnUGx8YyAkpH9bKioiU6yqRKNvQZjaQ+lDbldo4kzsQ33OdaepJn5hwr9+j
+         W0xbTcAH/H/9Bp5q7Omdv4eW0ZTnwupdhkhKr1tMTMpqmlf7J2z5SwAfwRLawC9xvnY1
+         4PtRMu13rg4gx1SWVokPOopH2N3AtgfbFAn3/tpKb8Xeri80N8qcrhMhYN+FEMKRX6+z
+         aAvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726250585; x=1726855385;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UXOkfh0KcTju6djH7sIVB89zq8vPdKXMJhkLDkEvaUs=;
+        b=MjFz+5Cifwh+Sor+kkQShGNTJ7KZKWJcsxEZVfIFcL0yXVgUveroHqBxVu6PrHxdCK
+         vlmYMMlaDzMKnZsjnM6/oqwg3ibx5+HablYnSNvsHbeT49DtSmakP5yJQWda0t9C8Wkj
+         bkPBP8dn/9uiJH0ubYEAy8QIERjgenEUYMScUMstL2ei8VVOcg4QDnJ64Pcegl4Egjyh
+         igkLcNxpJHG7TUiSUIjn/qhvbFvbGRf7IzK6Wdru/fIqtU6Y4Aj/xVHJSUFdSFmouwez
+         UoTNJbYoWeIq267E8blhXjGRzflnKZmvG9Of+lpZ9OPK6gYQGj2EHnOma4vV1zJUDkNK
+         lGag==
+X-Forwarded-Encrypted: i=1; AJvYcCXZV3rZo4lVK4CkM/WwN3bz/wMvgK/cLcatHpM8238LxVwb93M4D6xPUDYx6kXCX4/Ww+L3RD93Pmyj/lE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4KDBrSWL0/RcEnioacPLkQUz0IBYhECAQ5Uh5D8pozx1ki/tO
+	QMnvsBdjBOTua73NRWVNVYUaURRIxVmHAvUub23Rq+cx+BTPiX3gBNBO1RvFLvS+/y5IDBYra2u
+	ksUxBYPO/L5BORlCrYfUqXdt4oFkzqQNxQDjo
+X-Google-Smtp-Source: AGHT+IFrf2QUiZsdEKs4/Sf36WYr8jWjIM29ElW6cJcACEnzKBzgpfdB7Kxl5d/I2hCYcFryV9WuyJMJ0IY43uIBeDQ=
+X-Received: by 2002:a05:6358:3a06:b0:1b8:6074:b4e with SMTP id
+ e5c5f4694b2df-1bc394937d8mr183875455d.9.1726250584950; Fri, 13 Sep 2024
+ 11:03:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] watchdog: apple: Increase reset delay to 150ms
-Date: Fri, 13 Sep 2024 20:02:14 +0200
-Message-Id: <0F0CD820-4479-4DDB-BA89-CB44F4A190F3@svenpeter.dev>
-References: <20240913174540.45551-1-towinchenmi@gmail.com>
-Cc: Hector Martin <marcan@marcan.st>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>,
- Wim Van Sebroeck <wim@linux-watchdog.org>,
- Guenter Roeck <linux@roeck-us.net>, asahi@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-watchdog@vger.kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240913174540.45551-1-towinchenmi@gmail.com>
-To: Nick Chan <towinchenmi@gmail.com>
-X-Mailer: iPhone Mail (21G93)
+MIME-Version: 1.0
+References: <20240906005803.1824339-1-royluo@google.com> <20240907005829.ldaspnspaegq5m4t@synopsys.com>
+In-Reply-To: <20240907005829.ldaspnspaegq5m4t@synopsys.com>
+From: Roy Luo <royluo@google.com>
+Date: Fri, 13 Sep 2024 11:02:27 -0700
+Message-ID: <CA+zupgxMefawABGDkpRy9XmWJ5S50H1U9AF9V3UqX2b5G3pj-Q@mail.gmail.com>
+Subject: Re: [PATCH v1] usb: dwc3: re-enable runtime PM after failed resume
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "badhri@google.com" <badhri@google.com>, 
+	"frank.wang@rock-chips.com" <frank.wang@rock-chips.com>, 
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Sep 6, 2024 at 5:58=E2=80=AFPM Thinh Nguyen <Thinh.Nguyen@synopsys.=
+com> wrote:
+>
+> On Fri, Sep 06, 2024, Roy Luo wrote:
+> > When dwc3_resume_common() returns an error, runtime pm is left in
+> > disabled state in dwc3_resume(). The next dwc3_suspend_common()
+>
+> What issue did you see when dwc3_suspend_common is not skipped?
 
->=20
-> On 13. Sep 2024, at 19:46, Nick Chan <towinchenmi@gmail.com> wrote:
->=20
-> =EF=BB=BFThe Apple A8X SoC seems to be slowest at resetting, taking up to a=
-round
-> 125ms to reset. Wait 150ms to be safe here.
->=20
-> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
-> ---
+Apologies for the delayed response.
 
-Reviewed-by: Sven Peter <sven@svenpeter.dev>
+To answer your question, if dwc3_suspend_common() isn't skipped, it
+can lead to issues because dwc->dev is already in a suspended state.
+This could mean its parent devices (like the power domain or glue
+driver) are also suspended and may have released resources that dwc
+requires.
+Consequently, calling dwc3_suspend_common() in this situation could
+result in attempts to access unclocked or unpowered registers.
 
-
-> drivers/watchdog/apple_wdt.c | 6 +++---
-> 1 file changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/watchdog/apple_wdt.c b/drivers/watchdog/apple_wdt.c
-> index d4f739932f0b..353ecf0b04dc 100644
-> --- a/drivers/watchdog/apple_wdt.c
-> +++ b/drivers/watchdog/apple_wdt.c
-> @@ -127,11 +127,11 @@ static int apple_wdt_restart(struct watchdog_device *=
-wdd, unsigned long mode,
->    /*
->     * Flush writes and then wait for the SoC to reset. Even though the
->     * reset is queued almost immediately experiments have shown that it
-> -     * can take up to ~20-25ms until the SoC is actually reset. Just wait=
-
-> -     * 50ms here to be safe.
-> +     * can take up to ~120-125ms until the SoC is actually reset. Just
-> +     * wait 150ms here to be safe.
->     */
->    (void)readl_relaxed(wdt->regs + APPLE_WDT_WD1_CUR_TIME);
-> -    mdelay(50);
-> +    mdelay(150);
->=20
->    return 0;
-> }
->=20
-> base-commit: 5acd9952f95fb4b7da6d09a3be39195a80845eb6
-> --
-> 2.46.0
->=20
-
+Regards,
+Roy Luo
 
