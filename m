@@ -1,165 +1,163 @@
-Return-Path: <linux-kernel+bounces-328287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E25D978176
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:47:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1342978159
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:40:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 344AD1F259B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:47:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41A27B2357B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D841DC04A;
-	Fri, 13 Sep 2024 13:47:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196C61DB534;
+	Fri, 13 Sep 2024 13:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b="NbE6FoEO"
-Received: from mail.katalix.com (mail.katalix.com [3.9.82.81])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2CCB1DB944;
-	Fri, 13 Sep 2024 13:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.9.82.81
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r38jofUn"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B76758AC4
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 13:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726235233; cv=none; b=O1KBvnPhWzr8J4DfSPtZKLBVrOh+d3F8UdG8NHnLAnNYUfYe2YAuHZ6X53Bvy6IxrlJOeleRPrIyyIFr//+G/kJe/lEfR8rumtZocF7EgLf/C53h/UMShQypG+2HrGpxYoNHipr+NJ8z0c18m6fZXX3kZSGGOXBtwuf340/46w4=
+	t=1726234798; cv=none; b=loMm9Iy3xcK/5qr9XLuPk3wEjDLsfWZll9TLcFUwJFmZLRWW69BYDjofdxqkN8dUDt1THNkZHjWvpKrLw0PeI73w2uaagYdoWv62HjJDNEBSnqxPSQUt3Hv9i+YbqzR42lW28ulhwNH4tipYhQq8R1xLsxlYDyplVrXwNf9YiN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726235233; c=relaxed/simple;
-	bh=gSKF73ELRYiPVfunTe9d06F2jJrVWK3PzdtJcZYhfkc=;
-	h=Message-ID:Date:MIME-Version:To:References:From:Subject:
-	 In-Reply-To:Content-Type; b=Gr7RftJXgxgbNTuLvKebviCnkMfPSmcj6uh/Mapw9B9b7OuT/pu4U7v49Bmqx0l5o2aJ0lWp+MqawsBDaY2+7lg2MqRSp+RYcwRbcHyhWoRCl3oKiZ8Gmu9EtzK0xIYvr6QsKt2VT3Rr5wynDIN+NsKFYzc/Qgb0cTU9FdlSHPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com; spf=pass smtp.mailfrom=katalix.com; dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b=NbE6FoEO; arc=none smtp.client-ip=3.9.82.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=katalix.com
-Received: from [IPV6:2a02:8010:6359:2:fd3b:359b:7b1f:f7be] (unknown [IPv6:2a02:8010:6359:2:fd3b:359b:7b1f:f7be])
-	(Authenticated sender: james)
-	by mail.katalix.com (Postfix) with ESMTPSA id D133C7D0D4;
-	Fri, 13 Sep 2024 14:39:01 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=katalix.com; s=mail;
-	t=1726234742; bh=gSKF73ELRYiPVfunTe9d06F2jJrVWK3PzdtJcZYhfkc=;
-	h=Message-ID:Date:MIME-Version:To:References:From:Subject:
-	 In-Reply-To:From;
-	z=Message-ID:=20<237e9f5f-4605-8873-2260-c7e5ddac9795@katalix.com>|
-	 Date:=20Fri,=2013=20Sep=202024=2014:39:01=20+0100|MIME-Version:=20
-	 1.0|To:=20syzbot=20<syzbot+332fe1e67018625f63c9@syzkaller.appspotm
-	 ail.com>,=0D=0A=20davem@davemloft.net,=20edumazet@google.com,=20ku
-	 ba@kernel.org,=0D=0A=20linux-kernel@vger.kernel.org,=20netdev@vger
-	 .kernel.org,=20pabeni@redhat.com,=0D=0A=20syzkaller-bugs@googlegro
-	 ups.com|References:=20<0000000000005423e30621f745ff@google.com>|Fr
-	 om:=20James=20Chapman=20<jchapman@katalix.com>|Subject:=20Re:=20[s
-	 yzbot]=20[net?]=20WARNING=20in=20l2tp_exit_net|In-Reply-To:=20<000
-	 0000000005423e30621f745ff@google.com>;
-	b=NbE6FoEOhDTedLLrdww0gCtBB1iYleifysjr0BpqyO8xqOyO7EgMsBNJYDjhgJW+k
-	 jH7b5Wp4LhZNQ1pEyEijwaR7E/49d5EW3p4SDqx4YJpNC70/ydouuprPXIfhepaHVE
-	 rueSLmmMHP0dBWqoGGFTMToLIDDNnre/9j2Sxi8nNwUqX6m9Xn3Pfj9U/yD/fL0tug
-	 gJwKAlTTiQ2KNaKGNwV/wNr70W2AY/I/5CHyzhwwIxOORUhBE24yHzFRNb4f0sI2gS
-	 J8MLSafSyeM0i1QhDA/inR3wYbKW+Bw4gpKbXfQ1Dav7ZPIlunKiKzMGZbmlEO/+UN
-	 lRDh181ACPmMw==
-Message-ID: <237e9f5f-4605-8873-2260-c7e5ddac9795@katalix.com>
-Date: Fri, 13 Sep 2024 14:39:01 +0100
+	s=arc-20240116; t=1726234798; c=relaxed/simple;
+	bh=Une7f2k/KmpgDey8zFYfeiGwdtTaCeYlY49pG0SshaQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V4whnenuO3rn5orYRlAU3v5an1/xJAnjCDfN6HMnmfgTepWW7JBoISeJlR22xdauW+z6W0cygnVhX54RLE1toUCVPr4LUSriENiaVH5AaD5c+x6NRA362/M/9srH1Hys3cOoE5HQMmSyf4lTQT2kl5aPJ33CTm+NQTdZab2ae3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r38jofUn; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7c6b4222fe3so1412121a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 06:39:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726234796; x=1726839596; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=15unwVZm+OPwbYI5yFxIUYjpkqKaKnTXKaJUsxY7urY=;
+        b=r38jofUnrThI6s7mtqUHcPcl+fsVc/2iJhwdKIVfTGX0LpRwnQaGjvBhxAiXjopxqU
+         b7J+EpIacYXOdgN4yTbGkQrc2tirNE+Dd35sRXy9a0j4mlDyWlOHfaOctyDjffyTpJr/
+         CE0Lwkx4j+SSmgko5eFdmDLmPNkBRexU12CPEcc6c80GtPHdnUP0vjfSlG8ME+LKgcKM
+         qeu7Ztta3nNMYlg2BFgK+RuOdbiirUK8mnXYI70JYQ0g2xNlHwLiKO/nHkZzF5Vv3Iiq
+         qm3pMIUdN6zbmPX8itjLrVcRW3bepyyHCIR+2nH/f7S4T1NbO7muLXS2OCntitiSy7bb
+         MoRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726234796; x=1726839596;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=15unwVZm+OPwbYI5yFxIUYjpkqKaKnTXKaJUsxY7urY=;
+        b=oOt1Gvqv+O4OGnJjae80ErK4kClJsjvT33dOm1G86bvQH9B8K4MXQD9H4mTK+v/51s
+         KpF0VGjxz0NyT7xWZh3yvz67b6hPSCewZxTkLA9PV3pYpatHTyDCSRUYfdX7me00qhrG
+         VsLTRE3cAyihJhFoEOVniP7iUEGVFHuHSPh9d5qGA854b0UshI4tE1cQQIZJ9z7z2HM/
+         dCW3V1bkjMSmS3JaAK1zx5+66Ek8oZnzCqgk1wUcJMxelHqSfjlm6gJ+ee/PGw4rrxL4
+         eMJXreuBoJaQojv4fuTPaYi5RpSnNbAms1j+brV/MBXLtMSaGrKXWz1nphbNq+aL22Sb
+         dXkw==
+X-Forwarded-Encrypted: i=1; AJvYcCWiBPTekrTs5QA6DglhPXepOKDU3SzrT9uq0yYl4WBmjX9AHei/uy4j2bnkFGEAXj/1ToeM9yPQazeqMwQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzj1MdIH5dX2FR389toZ00MOeRh/R7m6xxl+VDT8CPozY1qHsWj
+	ODgTAvhT+Attv44bmqT2iUN9tsv52OvF7A4uMC+ClPAj8/dab/btrZnSOyh/cvu+4+c7+pTOPV2
+	xRRuMBfd4aIdBUaIJVtBh8nf66ww0t2l+PYzxBw==
+X-Google-Smtp-Source: AGHT+IF59t17Y/5ech59IOa2/IFQRJFPElHtqzuEuiaN7v3gSFbj/dR4AVugJXpvaSP7ix1aYeDgRQlJmu3t8gEO0M8=
+X-Received: by 2002:a17:90a:6809:b0:2d3:d728:6ebb with SMTP id
+ 98e67ed59e1d1-2db9ffa74b6mr7489220a91.5.1726234796028; Fri, 13 Sep 2024
+ 06:39:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Content-Language: en-US
-To: syzbot <syzbot+332fe1e67018625f63c9@syzkaller.appspotmail.com>,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
- syzkaller-bugs@googlegroups.com
-References: <0000000000005423e30621f745ff@google.com>
-From: James Chapman <jchapman@katalix.com>
-Organization: Katalix Systems Ltd
-Subject: Re: [syzbot] [net?] WARNING in l2tp_exit_net
-In-Reply-To: <0000000000005423e30621f745ff@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240906202745.11159-1-gourry@gourry.net> <20240906202745.11159-5-gourry@gourry.net>
+ <CAC_iWjJizjQWucDbrqKGdZTcj7FFxiPN97=p1zwfnPE=sAC6RQ@mail.gmail.com> <ZuQ2c7XOptYMJEtD@PC2K9PVX.TheFacebook.com>
+In-Reply-To: <ZuQ2c7XOptYMJEtD@PC2K9PVX.TheFacebook.com>
+From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Date: Fri, 13 Sep 2024 16:39:19 +0300
+Message-ID: <CAC_iWjKoptBngCj-W6axZ9bmJmhT11JMctn1m4maVvO4mzcENg@mail.gmail.com>
+Subject: Re: [PATCH 4/6] tpm: sanity check the log version before using it
+To: Gregory Price <gourry@gourry.net>, Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, leitao@debian.org, 
+	usamaarif642@gmail.com, sathyanarayanan.kuppuswamy@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 13/09/2024 03:49, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    f3b6129b7d25 Merge branch '100GbE' of git://git.kernel.org..
-> git tree:       net-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=144ba477980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=37742f4fda0d1b09
-> dashboard link: https://syzkaller.appspot.com/bug?extid=332fe1e67018625f63c9
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/a742e7b2e0d2/disk-f3b6129b.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/6982186745fb/vmlinux-f3b6129b.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/5fd38b217bb5/bzImage-f3b6129b.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+332fe1e67018625f63c9@syzkaller.appspotmail.com
-> 
-> bond0 (unregistering): (slave dummy0): Releasing backup interface
-> bond0 (unregistering): Released all slaves
-> tipc: Disabling bearer <eth:batadv0>
-> tipc: Disabling bearer <udp:syz0>
-> tipc: Left network mode
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 17026 at net/l2tp/l2tp_core.c:1881 l2tp_exit_net+0x165/0x170 net/l2tp/l2tp_core.c:1881
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 17026 Comm: kworker/u8:36 Not tainted 6.11.0-rc6-syzkaller-01324-gf3b6129b7d25 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-> Workqueue: netns cleanup_net
-> RIP: 0010:l2tp_exit_net+0x165/0x170 net/l2tp/l2tp_core.c:1881
-> Code: 0f 0b 90 e9 3b ff ff ff e8 48 a4 b0 f6 eb 05 e8 41 a4 b0 f6 90 0f 0b 90 e9 7a ff ff ff e8 33 a4 b0 f6 eb 05 e8 2c a4 b0 f6 90 <0f> 0b 90 eb b5 66 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90
-> RSP: 0018:ffffc9000ae07a98 EFLAGS: 00010293
-> RAX: ffffffff8ae2e87d RBX: ffff8880797c0888 RCX: ffff88806dbbda00
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000002
-> RBP: ffffc9000ae07bb0 R08: ffffffff8bb2ce16 R09: 1ffffffff2031025
-> R10: dffffc0000000000 R11: fffffbfff2031026 R12: dffffc0000000000
-> R13: 1ffffffff1fd274c R14: ffff8880797c0930 R15: ffff8880797c0840
-> FS:  0000000000000000(0000) GS:ffff8880b8800000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 000000110c3831d6 CR3: 000000000e734000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->   <TASK>
->   ops_exit_list net/core/net_namespace.c:173 [inline]
->   cleanup_net+0x802/0xcc0 net/core/net_namespace.c:626
->   process_one_work kernel/workqueue.c:3231 [inline]
->   process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
->   worker_thread+0x86d/0xd10 kernel/workqueue.c:3389
->   kthread+0x2f0/0x390 kernel/kthread.c:389
->   ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
->   ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->   </TASK>
+On Fri, 13 Sept 2024 at 15:57, Gregory Price <gourry@gourry.net> wrote:
+>
+> On Fri, Sep 13, 2024 at 09:40:30AM +0300, Ilias Apalodimas wrote:
+> > Hi Gregory,
+> >
+> > On Fri, 6 Sept 2024 at 23:28, Gregory Price <gourry@gourry.net> wrote:
+> > >
+> > > If the log version is not sane (0 or >2), don't attempt to use
+> > > the rest of the log values for anything to avoid potential corruption.
+> > >
+> > > Signed-off-by: Gregory Price <gourry@gourry.net>
+> > > ---
+> > >  drivers/firmware/efi/tpm.c | 9 +++++++++
+> > >  1 file changed, 9 insertions(+)
+> > >
+> > > diff --git a/drivers/firmware/efi/tpm.c b/drivers/firmware/efi/tpm.c
+> > > index 6e03eed0dc6f..9a080887a3e0 100644
+> > > --- a/drivers/firmware/efi/tpm.c
+> > > +++ b/drivers/firmware/efi/tpm.c
+> > > @@ -60,6 +60,15 @@ int __init efi_tpm_eventlog_init(void)
+> > >                 return -ENOMEM;
+> > >         }
+> > >
+> > > +       if (!log_tbl->version ||
+> > > +           log_tbl->version > EFI_TCG2_EVENT_LOG_FORMAT_TCG_2) {
+> > > +               pr_err(FW_BUG "TPM Events table version invalid (%x)\n",
+> > > +                      log_tbl->version);
+> > > +               early_memunmap(log_tbl, sizeof(*log_tbl));
+> > > +               efi.tpm_log = EFI_INVALID_TABLE_ADDR;
+> > > +               return -EINVAL;
+> >
+> > I don't think we need this check at all. Did you actually see this happening?
+> > efi_retrieve_eventlog() that runs during the efistub tries to retrieve
+> > the log and the EFI protocol itself explicitly says that the firmware
+> > *must* return EFI_INVALID_PARAMETER if the event log is not in 1.2 or
+> > 2.0 format. If the firmware does something wrong, we should report the
+> > FW BUG in that function, instead of installing the config tables Linux
+> > uses internally to handover the log and catching it late.
+> >
+> > Thanks
+> > /Ilias
+> >
+>
+> We saw this happen and discovered it was a disagreement between EFI/OS/kexec
+> causing the table to be overwritten during kexec.  We've since found a fix for
+> that.  So the result was that it appeared the firmware was doing something
+> wrong. The sanity check at least allowed us to boot without immediately
+> crashing - because the tables don't get reinstalled, they get re-used
+> (at least that's by best understanding of the whole interaction).
+>
+> If the check seems superfluous, i can drop it.
 
-This warning is l2tp checking that there are no l2tp tunnels left when 
-l2tp_exit_net is called and finding one or more tunnels still in its IDR 
-list. These should be removed by l2tp_pre_exit_net.
+Ok, that explains why it wasn't caught earlier at least. I would
+prefer dropping it tbh, but I am going to defer to Ard for that.
 
-I'll review l2tp code and watch this one.
+If we agree that this needs to go in btw, I think you should refactor
+it a bit. That function already defines an out: label, which unmaps
+memory. So you can rewrite the above as
 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
-> 
+If(....) {
+    ret = -EINVAL;
+    efi.tpm_log = EFI_INVALID_TABLE_ADDR;
+   goto out;
+}
 
+Cheers
+/Ilias
+
+>
+> >
+> >
+> > > +       }
+> > > +
+> > >         tbl_size = sizeof(*log_tbl) + log_tbl->size;
+> > >         if (memblock_reserve(efi.tpm_log, tbl_size)) {
+> > >                 pr_err("TPM Event Log memblock reserve fails (0x%lx, 0x%x)\n",
+> > > --
+> > > 2.43.0
+> > >
 
