@@ -1,92 +1,132 @@
-Return-Path: <linux-kernel+bounces-328884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F884978A6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:05:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68579978A78
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:13:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 064D8281834
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:05:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F30EB2411C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:13:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A804514A084;
-	Fri, 13 Sep 2024 21:05:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2922B14D2BD;
+	Fri, 13 Sep 2024 21:13:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TGAEYv+1"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b="gmU668Pk"
+Received: from sonic312-20.consmr.mail.sg3.yahoo.com (sonic312-20.consmr.mail.sg3.yahoo.com [106.10.244.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F74126C01
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 21:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4591465A4
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 21:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.244.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726261515; cv=none; b=XXpf20w81Gm9OnV+jnfjsejoG56lUrCTdG4zSrxQSn8CZM4sfR0mOuIAYn164VItSGMEct16cVtVqm4UfyQN++cpI84hKANweAVkODizw2akG+aOLN0Gok3mqmIPF1Iezkl7IRnIgaqOA7rNKHcBvBEJMMGUanEjP+4lHEPtGno=
+	t=1726261990; cv=none; b=eDGJsRgP4ytyl0rB5NDEvQHfWCICqyOJqKoOOnNB4279GZEirv1dCdngqvae8uPtsOZ1oC5uIM7cpFLuulpwfOLPchI0v24Neco37lPUOkrDShxf8SDwVG54ZgbzSBr2d091GFi++OlMK4SPwGvKZutM7P5aJ7ceTRPsM2vNN00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726261515; c=relaxed/simple;
-	bh=Y5vaHHHX9R/doH4SFIBNsgP0FRw42PlBP15OcUVBXmQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ut4A0MwmtS0Kp8cIR7NZebwjFTYK9q7INgzhs6I0MvPCUFVjNlvhMOYVxd101pw6aEzOM478d9u1QBdzPNHElI5rBykM5dN7MwEhIzvzr3kK9rPUFoG8Y7Qn9t5cS3MsvtrUKMvTonPGm3RcLDDv2JX2eIMEgs2TnTN/ONF5G8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=google.com; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TGAEYv+1; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4582b71df40so19671cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:05:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1726261511; x=1726866311; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1BcM4lFpbGajeTbbT/mhOoL1c44seTsAjZcdL46W1OY=;
-        b=TGAEYv+1Uf/C8AG04SIIUnngGMwiXleLK1P5YgXWCA5I9GVYZEPWqnqcL5n424CCb0
-         AaBeTrmW37BpX8eqlEoIGtxYCmINXfsHXGmNetmJ3uRQfRRrTm78CvoM76Ky2O28cYWQ
-         gxSWqqyyTVoUeY70Z+Zk6XHbMSeOCWZH5VaXQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726261511; x=1726866311;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1BcM4lFpbGajeTbbT/mhOoL1c44seTsAjZcdL46W1OY=;
-        b=culRjuIcGyhd1U1CS/p4/JwvskENIqJ3yQpmBC1GHJbPKEB3AmSwQgYb/POkmV9N8L
-         DWAAjZzyfcFKlPl1ksX3Bdx3Ti2QcH4F9/BlmHDYoWwTJ8w1hZ/gSQBThH+D1PQRDnPM
-         VxTwPlqZd+1OjXeYkX8ZNmJan3/wBM7VtHuRIz2+uH/vFA40ygXyrghh2Cvv/RgypzOM
-         FugsDraWszofJ24Xh/LzD97ZA+uYI3KRFcMXAKC6sTMhPjDazmltoGV2otNcehS6CfsV
-         QLV1UsYq9+VI4onEQQxZnZ6Xqr7C4iBtHOVaoJ2erFrWRcSGxeR6KuNWMtyyTLbBsEC8
-         FUKw==
-X-Gm-Message-State: AOJu0YyPWV2fcTyAfT494gbLCfz+2Dpqmo0J7jCAMPAWUBBza0oIi6l2
-	V6t3EoVNQcBgJcLj1Q7xD+g/HHS3HyhZQ9+2vPDZIJwJTPHXIBjy+Au2fL4VYpMNkqckWEBfrZ3
-	aupcv30tvZcgFccEx3oDAV3puTrUFTMNoLNMf
-X-Google-Smtp-Source: AGHT+IFNRp9kjdF5lPJBN4P/u35hlTu6w+0QAcj6x9ZSyI0WuN2oPGU/zG4A4BHZew+CcsGHtVNi4SatFGwQfWsqIMc=
-X-Received: by 2002:ac8:7e8f:0:b0:453:56d3:d155 with SMTP id
- d75a77b69052e-4586079ad25mr7773551cf.8.1726261511093; Fri, 13 Sep 2024
- 14:05:11 -0700 (PDT)
+	s=arc-20240116; t=1726261990; c=relaxed/simple;
+	bh=2so5/dlwuaehvsB5jpWp6d3aG+AwuUtDaEHHBeVGxAg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=CSA2sbfZRA2hcfWPXSE5o1+qe5RpU0i5k2kSZRFowsWqj3sjh+h7xzX6OWKa2lyL5I2QVhFwgW5Q102LiTDe/D6Xp/GoSgziA3eqQrR27EYPIdglleCOQ4fX/1ndAjSNQb8o8q4sugmortBaRyvzftJH0W/e85ZjsOe/JSsGc60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com; spf=pass smtp.mailfrom=myyahoo.com; dkim=pass (2048-bit key) header.d=myyahoo.com header.i=@myyahoo.com header.b=gmU668Pk; arc=none smtp.client-ip=106.10.244.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=myyahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=myyahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=myyahoo.com; s=s2048; t=1726261986; bh=1EOOzYwmZxr/eQ2GSdm3AxrZXyHasBU1ASee1LLS1z8=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=gmU668Pk7heU4Ay546tEJndsAjm1g2g510fpEdLaVszKJi2kPZT76q7EuBG/D2aT76kHqL37t7wfsBgIWm0h7H/zEp9fTv5ua5pyX9C35Gda/CdHG26waR8qCuY6sJDdOD8hGSvVawu86OjwCbLH51R08hD72v3SvHf0U330Y5h9cddKpfhitLPTpiT/hOMk/g0gVUSLJxKdv16QpWyk9cTnZGSxQLmQfiVMPkNRaIDBk4+/vjIQUCy1528tyVP9wCONgDAAcVNNLD42gaNKrQFbax5IwJdjo7btaikfoQnQAy6UuWKnl4TKLOBRuGdi1inT0cP/yobb7KFz4sBTBg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1726261986; bh=WPq+O9N+spu+46Ch4h7/bdNUPibvIhat5Hb58x0IMf4=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=Mevs2nx9JFtqcPfZTYGFPrWru8zN+ZAj8h2wMoJZ9GL61AuYLbJhrn71OBEZJrkPH3+24WhotAQkBBrF5K+98bJkMA36SxTlJRBzF62yHnJc8sXY4xzKw1vlyDUAjoqE/p/VDdquznEocruJeIM5Ujtvt1tls+It1SAQllfxcLsQMU86rqCdKWmukVu4s35FyDR0i1t7FNFuvJiwD7vo1V6SqRzf2ReTEVt8hRqlw+rbTnYaMNzM4XNDkhby6wi0DIfMABvMv6Xg/diYAbazWd+PBuQYlJIfOLgLUTlyvpWeAKdaa8HfgG8xby0cNnwZ3bLKwUrmvAyXtg0JE/hX0Q==
+X-YMail-OSG: 2NFnT6MVM1m8Lzd75MTmvh3WPZAb2ySByuOuLgDmrej3Dp_76pihgdEgSl3jGu4
+ ISBOoPW_QbridWJcF49gM7gjZphiXwssyZO3o.sM45MzucpoeGGSFOS10c2A1w9bwa1foVWLoSfG
+ uOHWrMhlikXQfMCBUA0P8XZaYkkAdbgApeVS.Ebbfcwm7CpuTPW7Upel5h0TI.1kEAX9jSW7wBq4
+ 1p98In4T_hn08ErFozbqmlgCddKjD_5NptFI5tOkkCai3MW8OUKW24vAbh3O_Dek8.wmYTK7awYa
+ WIs.PCDhJFJxzjUQJGfundBXj7LlUsjnG0uhZ7_7PgOz3gsPnzc5PoDNzEvbmj6fCbrXW4D7EO4y
+ C2yk8QplLIY1OBgx5rScF7xs3VOr4s3DrRaJtyo2BY_XA7To6esciLmLa_O6SFq5OWqertKLNduz
+ scnbdHDfd8C4Z1v1AtJGmzz_anhj3kALW.SH.dX38lcEx1czoWzqcXmQCqX5k8W9eyNsJHd5R1UW
+ dDH591blNv3YGHMyXrTpjzyUb3ZTMMNF6elTJ2jS..yGCGqge1nEGg8ddY0M.ULZKmWshFU8kz7k
+ gmnjO9FDzeaoASoVfrOQFApKb.m_2uBjj1jJPRbKYwKXH2XQEUo6sWkIqxhnIOH2ypMSZpFionB4
+ g75VLdMd3UwRX0S3mPkhg_1XPtdDhj4RZ8PdzaRk8ntvV5NqnyUz.xZqY3XAIP1ACnP4GQYCbE4x
+ ClWTUsaGdfH3sjLKyv64aqpjVyRTI9WduReqd64K6ZTm5DJeFAaarIjzRHNyrhMhZVp9HhuGyPFW
+ aLMO1KN4VrZsBc7O1JwtB7uhuPVvoTNmSQQNH8v1Y0D4cR2U6zGI.dt4dlUyjP3_0cOF8fWLZjen
+ 2j2.gjktSoXWKP3X7e78m8ZJYKyWDtHXMDANBWvpjbESVqJ2BNR5N9iG8WiyG4bQpXYzEe.oklA7
+ SgMbUqzjMm9c_psaN8BWyhEKkR5_llSqiFO13M02NJfIK3xfcZqCIpHTI3IoWj2krU9QwkjNrJ86
+ GIfCuJVTmXrBZRtgfjaWYhvHkDpnIhQgF33_ifIoAjMx8VmKvqN4c5TLfykSZw0RFbTucV33bYfZ
+ YvUTrtNedmf9YN_it.TVUu8ToX.VcsP049fbM34fzEX26ocZv79PKEU.Krj.914ahFvPWQyGsEaL
+ UIDkmwARa6uD7IyeosVxOVxv9Smcz.2xk4czG_Cy0pDAzypQf8UNgxO.DE0vu3Olfml.DVJY7D_M
+ _9U_8KeoKi79EzR2LOJO7M6rYdtXepU8XyJRMDs0r9M3BcNku4cVMxXsaYfMMlhWRDie7hcjCcHS
+ cDGu5eGzzEvF45kSeQEO_YynJ1.xYjcCypykSYNmUbHYB2VYA6vdKDXWB4Z4eRks605vaEK167xg
+ fi26Sn7WqCN0CCJ0Mby5b5r80hcjuKhzQ5u0zfiUjIxLqnsLVGCByQ9i3.JZjz9taK0Iz3Gj.uFF
+ 9MU1ocSwnGt3WLsQRbKdbycMfDtC0sAEMuITg2KYWKAuZerGCrJyaSGC1RsYCKjOLzE32cFVcin8
+ UJAG6Qi4m5E5gEKswlM1Vunj_mTmovhajDxnN4ja9dyo2FexQXHs_69w5E5GUAXi62BfvqO3yL2q
+ oeWpw7hWp60r6x8wcXWlQYyRWBjAC4Fv3JMbveGTZ8ZVNFIvkY1u1IfIZ3w6WPXmAggGlJGaM9eD
+ lTToZeyFus8xS1wyqKXN_y4aZLQKYZl_XJT4bsZnIVBqT_7VZ3WxDXo0ymRWV1WZHA_mDOaXsYb0
+ nS5bestOydYrfHp_s6LxfHdTnEKtxj4i9XhZvTjZwNTQY8FzbborVk3LVo0Gmk84kiVXYCkFC0PJ
+ xnCBJ9CUFu0KaUTd4yDyQw6br.h1du_b6MIhm.NYTZepXeu4IXsipd2Ue1MaInJoJ5s534caK2hI
+ kJ2SKubfzLuM5By5WWAIAbstWgnOpjUihZFTMPhw.3e2R3lA4oyZkpK.xm_DQPZYmxQicmWOvBAM
+ EzBmu5_PiBYkPl2bdo_fTw1gQ2CFK9WD_acdu7Pw7K_mvbdnP2uPxiVktITSJVwz2HsDuF5v6sAK
+ 0G.mmqse1L_Ap5jd3sOm3UuPGGoRXPj8MVpcH22pGnK469lX3xUGhF72Z8Sz_ODXUsFNHHcDyOwS
+ 3UjuaJlygrFQwOzWK1hVbPhWjm2685XiUKtUuiBHfYrAtJRibTLF_gT.xMrf7fkf7ZCMha35WDQW
+ rt3KUK0ieE.4mQme1yhV3jqYz3lmsSJIa_rGnjO_KFvZeMlW.hVOrnhrs9tMZ
+X-Sonic-MF: <abdul.rahim@myyahoo.com>
+X-Sonic-ID: 800d228a-dc28-4feb-b880-57b6f9c12796
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.sg3.yahoo.com with HTTP; Fri, 13 Sep 2024 21:13:06 +0000
+Received: by hermes--production-sg3-fc85cddf6-kdpzj (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 9bebe123c7193dfe864d6d02fc719e39;
+          Fri, 13 Sep 2024 21:13:05 +0000 (UTC)
+From: Abdul Rahim <abdul.rahim@myyahoo.com>
+To: rafael@kernel.org,
+	rui.zhang@intel.com,
+	lenb@kernel.org,
+	christophe.jaillet@wanadoo.fr
+Cc: Abdul Rahim <abdul.rahim@myyahoo.com>,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] ACPI: thermal: Use strscpy() instead of strcpy()
+Date: Sat, 14 Sep 2024 02:41:35 +0530
+Message-ID: <20240913211156.103864-1-abdul.rahim@myyahoo.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240913191428.1539653-1-javierm@redhat.com>
-In-Reply-To: <20240913191428.1539653-1-javierm@redhat.com>
-From: Julius Werner <jwerner@chromium.org>
-Date: Fri, 13 Sep 2024 14:04:55 -0700
-Message-ID: <CAODwPW8nEkc=x+BeSajfMVjXzET_0G3h-xFMnbUaE8Lgi-173Q@mail.gmail.com>
-Subject: Re: [PATCH v2] firmware: coreboot: Don't register a pdev if
- screen_info data is present
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: linux-kernel@vger.kernel.org, chrome-platform@lists.linux.dev, 
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	Hugues Bruant <hugues.bruant@gmail.com>, Julius Werner <jwerner@chromium.org>, 
-	Brian Norris <briannorris@chromium.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Borislav Petkov <bp@alien8.de>, Tzung-Bi Shih <tzungbi@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+References: <20240913211156.103864-1-abdul.rahim.ref@myyahoo.com>
 
-> +       /*
-> +        * On Coreboot systems, the advertised LB_TAG_FRAMEBUFFER entry
-> +        * in the Coreboot table should only be used if the payload did
-> +        * not pass a framebuffer information to the Linux kernel.
+strcpy() is generally considered unsafe and use of strscpy() is
+recommended [1]
 
-nit: The official brand spelling is "coreboot", always lowercase (even
-at the start of a sentence). Not a big deal though.
+this fixes checkpatch warning:
+	WARNING: Prefer strscpy over strcpy
 
-Reviewed-by: Julius Werner <jwerner@chromium.org>
+Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strcpy [1]
+Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
+---
+
+Changes in v2:
+
+    - Remove an unneeded extra parameter (MAX_ACPI_DEVICE_NAME_LEN) in
+      the 2nd strscpy() call
+
+v1:
+https://lore.kernel.org/all/20240912205922.302036-1-abdul.rahim@myyahoo.com/
+
+ drivers/acpi/thermal.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/acpi/thermal.c b/drivers/acpi/thermal.c
+index 78db38c7076e..6671537cb4b7 100644
+--- a/drivers/acpi/thermal.c
++++ b/drivers/acpi/thermal.c
+@@ -796,9 +796,9 @@ static int acpi_thermal_add(struct acpi_device *device)
+ 		return -ENOMEM;
+ 
+ 	tz->device = device;
+-	strcpy(tz->name, device->pnp.bus_id);
+-	strcpy(acpi_device_name(device), ACPI_THERMAL_DEVICE_NAME);
+-	strcpy(acpi_device_class(device), ACPI_THERMAL_CLASS);
++	strscpy(tz->name, device->pnp.bus_id);
++	strscpy(acpi_device_name(device), ACPI_THERMAL_DEVICE_NAME);
++	strscpy(acpi_device_class(device), ACPI_THERMAL_CLASS);
+ 	device->driver_data = tz;
+ 
+ 	acpi_thermal_aml_dependency_fix(tz);
+-- 
+2.46.0
+
 
