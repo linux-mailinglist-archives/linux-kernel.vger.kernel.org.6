@@ -1,96 +1,182 @@
-Return-Path: <linux-kernel+bounces-328772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D25997889D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:12:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15AA09788A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7AA91F2405B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:12:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42ABA1C21535
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D011537D9;
-	Fri, 13 Sep 2024 19:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F6A156C62;
+	Fri, 13 Sep 2024 19:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wroRNBrX"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="uPgWAy7z"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C577A14EC73
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 19:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B242F155757;
+	Fri, 13 Sep 2024 19:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726254702; cv=none; b=KKEWp0Fsn+Tshj7jJu7pq82Vc1eic/CWUa4D/tyLErvYeHiz5V0Q1gb1IqpwHn7P/69VrB2T5sgSCSpm0ia5w+L2WOTfQ5Ne5kEpbb9yQ2VR7XAPhFWQUizZPREQ7TWqCs1BHlIrBSJaxN89ESBrPrcfC1I5Ylo++pzxCmlAymo=
+	t=1726254708; cv=none; b=o64qnT8KyQT+3HHShX2ZjjgbuIa6QsInil+hQQ9ivGB9KEWqtpz6/VYiWR2VlwKR24akG2LskScFe5Q6wMDzdl1Bk2a4uY6likJFHuMpWGbFhf5BLhb3V8MCsbjxdhgxdpNsKvpoGHCv0lR+mn9tDeqNeWhi4chSQYJmh6D1roU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726254702; c=relaxed/simple;
-	bh=df/OdVQzmZ9IIzivyT0nVwAaqNoCrQVBqFQJsmOtcdo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=cQnsCmTmj9+6nHErXOoXFlAy5p6CjMQVHC8+Ub0SzbSCPbn+7CduxguGHuaW2qbvfiSN6wCUMCqzLHApI1X+yJV8+BblK5TJpHgaeBTaCPJROFH5vRFXHw46i8bQsgu9VyamiuBGKoBEWSTLaM0kYTad5t0xPqn0c6dRYado7ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wroRNBrX; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6d4f52a4069so60966907b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:11:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726254700; x=1726859500; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=df/OdVQzmZ9IIzivyT0nVwAaqNoCrQVBqFQJsmOtcdo=;
-        b=wroRNBrXifviZNzryntxniZPn+arxL0Nh4JCbHM6SqVsnPfMvchzAZ17PLO6xruIfR
-         U9tl6oIAONK7yKRTz4Yufr4XW74eNNVuoMKP7wYgyOgvSEDMoShIlNGM0yjF/w4HHGCw
-         BK1PYUd2/5DL4gzJ8NW1Dn3TtLMq7rXyNSKD3o3AE1U85mk661wLL6tYANSrRbvgWpH6
-         uTt0ZBJBFBL0oWqayKB4Fi3h2V9atHVfw15s/zesi8mtX+h0u3LtacD4Ow2svhk+fAma
-         fsDnYrRAdEwLB2U5IxpW5GRrN1Z4MhgBbpISNQ3V66RVMM+2QtKkRpOBG8A/ZUTtkOEA
-         JmYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726254700; x=1726859500;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=df/OdVQzmZ9IIzivyT0nVwAaqNoCrQVBqFQJsmOtcdo=;
-        b=NAASFEgmlsisI5hz7KO/ZdRY2MjGLQKNxoix51DKoe6mazQuqVBeAG4wvg7JvRmEkG
-         RiCgeKYLEhCdoC4VQZM0zutOzqeh6Gdc7cB99PNJ41vk98kvXPw7lDvcztUsMHPVEUls
-         5T5BXyFM76Ezm8Lno2eBH5X8Gm7lqJXbK3fK3qxhnWmqIT7TEwTlvGTQfvEapAStcoAA
-         iWMYzdvswG2rkomjPmMdhY+wYeqRit0u9co0fAl3fHbYd/aRkUtMNGmbIwcRpaw8tHPv
-         3UXjQKS2QUzCLpsJ4qQt0KWSImBwlSOUfoGKkSvYsJrHIO7GuK1WpeyUx9riSIxUYycI
-         aUeQ==
-X-Gm-Message-State: AOJu0YwsIG1S9fDW8VMrRgli74kTU796x6OrgzF5xvHRYHdhw/soIuAk
-	j3lnTgkztxxYkqx/H4IaZKNkAtE7ME1csGmknb5vK+asHT36qmZh254ow/q7B2OV3E4/7DRtRms
-	n9g==
-X-Google-Smtp-Source: AGHT+IHWKdvpTgRToeIjzP7LiLbwdIQd0DfavHeMBa0nhxmMEncC0lsKplD9gP28OszQ1s0UsOTgeX3hi0E=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a25:86c9:0:b0:e11:5a3c:26c7 with SMTP id
- 3f1490d57ef6-e1d9dc4275fmr12810276.9.1726254699289; Fri, 13 Sep 2024 12:11:39
- -0700 (PDT)
-Date: Fri, 13 Sep 2024 12:11:37 -0700
-In-Reply-To: <20240609154945.55332-12-nsaenz@amazon.com>
+	s=arc-20240116; t=1726254708; c=relaxed/simple;
+	bh=FSP8+aZvygGlFdnBS0yY0alytQkKXdz2tdXRla1srC4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LOFluyJCO6hlvMUeC98chhbh4VtPxmOlyCgHidNItT1kp3oxp1V1Y/1T4WxbfNi3j+r6bJ4RqHflBmw674IcIx8YUNy4xYpeb9ozUqXBi9a6twNoqE51wOmfcrmWJNQJ000EYbU5xXg77fyyxWOE+13GQgrzpvFoB9ugunM1mw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=uPgWAy7z; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1726254704; x=1726513904;
+	bh=6/lBrZ2oDDRZvVUHlxFsYvMr6aYJJQrOCFEf51HfHeg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=uPgWAy7zSjTBka6AISIp1jmQ42aVGA8jKYC2DYVpZxx9rqR7tLO6EjK75ego4B5m8
+	 V3CFAY0C85OszAvyxLMbhJeSR8FGTgdoEhdXFkEzs3GlUleGiGb0N1C2wn6RaKv1hd
+	 hKBOur9wA4+gIygtUEB4u1HLguqlU3ZH1p38asyQ19lTCMG5AZzCORU2l+yp6DR9+f
+	 vXjKTLJnkl6YM6t7Z4627b75+XLSUfQ4WxO97cupmNVyx1sb8rKQ4QQatnvxZ290Ty
+	 8ks1Zw/DD+/qI8osw832p+c54JoctYTNufEWZJoOqDhy1dPLGwElPvddwGX0Rb79J5
+	 sRT6B1wl4nEIw==
+Date: Fri, 13 Sep 2024 19:11:42 +0000
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>
+From: Harry Austen <hpausten@protonmail.com>
+Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Harry Austen <hpausten@protonmail.com>
+Subject: [PATCH v2 6/6] clk: clocking-wizard: move dynamic reconfig setup behind flag
+Message-ID: <20240913191037.2690-7-hpausten@protonmail.com>
+In-Reply-To: <20240913191037.2690-1-hpausten@protonmail.com>
+References: <20240913191037.2690-1-hpausten@protonmail.com>
+Feedback-ID: 53116287:user:proton
+X-Pm-Message-ID: 5bf6a2b04b808efc1b0da601da58340992b043d8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240609154945.55332-1-nsaenz@amazon.com> <20240609154945.55332-12-nsaenz@amazon.com>
-Message-ID: <ZuSOaTw1vgwquqTE@google.com>
-Subject: Re: [PATCH 11/18] KVM: x86: Pass the instruction length on memory
- fault user-space exits
-From: Sean Christopherson <seanjc@google.com>
-To: Nicolas Saenz Julienne <nsaenz@amazon.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, pbonzini@redhat.com, 
-	vkuznets@redhat.com, linux-doc@vger.kernel.org, linux-hyperv@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	graf@amazon.de, dwmw2@infradead.org, paul@amazon.com, mlevitsk@redhat.com, 
-	jgowans@amazon.com, corbet@lwn.net, decui@microsoft.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	amoorthy@google.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 09, 2024, Nicolas Saenz Julienne wrote:
-> In order to simplify Hyper-V VSM secure memory intercept generation in
-> user-space (it avoids the need of implementing an x86 instruction
-> decoder and the actual decoding). Pass the instruction length being run
-> at the time of the guest exit as part of the memory fault exit
-> information.
+Xilinx clocking wizard IP core's dynamic reconfiguration support is
+optionally enabled at build time. Use the new boolean devicetree
+property to indicate whether the hardware supports this feature or not.
 
-Why does userspace need the instruction length, but not the associated code stream?
+Signed-off-by: Harry Austen <hpausten@protonmail.com>
+---
+v1 -> v2:
+- Update if condition with renamed inverted DT property
+
+ drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 73 +++++++++++-----------
+ 1 file changed, 38 insertions(+), 35 deletions(-)
+
+diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xilin=
+x/clk-xlnx-clock-wizard.c
+index 1a65a7d153c35..b2233d3ff9a99 100644
+--- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
++++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
+@@ -1146,20 +1146,6 @@ static int clk_wzrd_probe(struct platform_device *pd=
+ev)
+ =09if (IS_ERR(clk_wzrd->base))
+ =09=09return PTR_ERR(clk_wzrd->base);
+=20
+-=09ret =3D of_property_read_u32(np, "xlnx,speed-grade", &clk_wzrd->speed_g=
+rade);
+-=09if (!ret) {
+-=09=09if (clk_wzrd->speed_grade < 1 || clk_wzrd->speed_grade > 3) {
+-=09=09=09dev_warn(&pdev->dev, "invalid speed grade '%d'\n",
+-=09=09=09=09 clk_wzrd->speed_grade);
+-=09=09=09clk_wzrd->speed_grade =3D 0;
+-=09=09}
+-=09}
+-
+-=09clk_wzrd->clk_in1 =3D devm_clk_get(&pdev->dev, "clk_in1");
+-=09if (IS_ERR(clk_wzrd->clk_in1))
+-=09=09return dev_err_probe(&pdev->dev, PTR_ERR(clk_wzrd->clk_in1),
+-=09=09=09=09     "clk_in1 not found\n");
+-
+ =09clk_wzrd->axi_clk =3D devm_clk_get_enabled(&pdev->dev, "s_axi_aclk");
+ =09if (IS_ERR(clk_wzrd->axi_clk))
+ =09=09return dev_err_probe(&pdev->dev, PTR_ERR(clk_wzrd->axi_clk),
+@@ -1170,31 +1156,48 @@ static int clk_wzrd_probe(struct platform_device *p=
+dev)
+ =09=09return -EINVAL;
+ =09}
+=20
+-=09ret =3D clk_wzrd_register_output_clocks(&pdev->dev, nr_outputs);
+-=09if (ret)
+-=09=09return ret;
+-
+-=09clk_wzrd->clk_data.num =3D nr_outputs;
+-=09ret =3D devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_onecell_get, =
+&clk_wzrd->clk_data);
+-=09if (ret) {
+-=09=09dev_err(&pdev->dev, "unable to register clock provider\n");
+-=09=09return ret;
+-=09}
++=09if (!of_property_present(np, "xlnx,static-config")) {
++=09=09ret =3D of_property_read_u32(np, "xlnx,speed-grade", &clk_wzrd->spee=
+d_grade);
++=09=09if (!ret) {
++=09=09=09if (clk_wzrd->speed_grade < 1 || clk_wzrd->speed_grade > 3) {
++=09=09=09=09dev_warn(&pdev->dev, "invalid speed grade '%d'\n",
++=09=09=09=09=09 clk_wzrd->speed_grade);
++=09=09=09=09clk_wzrd->speed_grade =3D 0;
++=09=09=09}
++=09=09}
+=20
+-=09if (clk_wzrd->speed_grade) {
+-=09=09clk_wzrd->nb.notifier_call =3D clk_wzrd_clk_notifier;
++=09=09clk_wzrd->clk_in1 =3D devm_clk_get(&pdev->dev, "clk_in1");
++=09=09if (IS_ERR(clk_wzrd->clk_in1))
++=09=09=09return dev_err_probe(&pdev->dev, PTR_ERR(clk_wzrd->clk_in1),
++=09=09=09=09=09     "clk_in1 not found\n");
+=20
+-=09=09ret =3D devm_clk_notifier_register(&pdev->dev, clk_wzrd->clk_in1,
+-=09=09=09=09=09=09 &clk_wzrd->nb);
++=09=09ret =3D clk_wzrd_register_output_clocks(&pdev->dev, nr_outputs);
+ =09=09if (ret)
+-=09=09=09dev_warn(&pdev->dev,
+-=09=09=09=09 "unable to register clock notifier\n");
++=09=09=09return ret;
++
++=09=09clk_wzrd->clk_data.num =3D nr_outputs;
++=09=09ret =3D devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_onecell_ge=
+t,
++=09=09=09=09=09=09  &clk_wzrd->clk_data);
++=09=09if (ret) {
++=09=09=09dev_err(&pdev->dev, "unable to register clock provider\n");
++=09=09=09return ret;
++=09=09}
+=20
+-=09=09ret =3D devm_clk_notifier_register(&pdev->dev, clk_wzrd->axi_clk,
+-=09=09=09=09=09=09 &clk_wzrd->nb);
+-=09=09if (ret)
+-=09=09=09dev_warn(&pdev->dev,
+-=09=09=09=09 "unable to register clock notifier\n");
++=09=09if (clk_wzrd->speed_grade) {
++=09=09=09clk_wzrd->nb.notifier_call =3D clk_wzrd_clk_notifier;
++
++=09=09=09ret =3D devm_clk_notifier_register(&pdev->dev, clk_wzrd->clk_in1,
++=09=09=09=09=09=09=09 &clk_wzrd->nb);
++=09=09=09if (ret)
++=09=09=09=09dev_warn(&pdev->dev,
++=09=09=09=09=09 "unable to register clock notifier\n");
++
++=09=09=09ret =3D devm_clk_notifier_register(&pdev->dev, clk_wzrd->axi_clk,
++=09=09=09=09=09=09=09 &clk_wzrd->nb);
++=09=09=09if (ret)
++=09=09=09=09dev_warn(&pdev->dev,
++=09=09=09=09=09 "unable to register clock notifier\n");
++=09=09}
+ =09}
+=20
+ =09return 0;
+--=20
+2.46.0
+
+
 
