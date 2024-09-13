@@ -1,201 +1,193 @@
-Return-Path: <linux-kernel+bounces-328458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 468D897848D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:20:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAC6797847A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:19:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 726561C22DB2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:20:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A7E9281526
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA92E1C579C;
-	Fri, 13 Sep 2024 15:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QqtG5sjD"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA38B1C3F16;
+	Fri, 13 Sep 2024 15:09:30 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896E01C3F30;
-	Fri, 13 Sep 2024 15:09:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93AFC1C2DB2
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 15:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726240175; cv=none; b=qnNEYSB1a5xLPs0sDfIpXR986lhd2I9snSKjKQdM2G/LRoy36wdmESYAAUocnMavoOvgBECrVBAGoBRhGnHzRM0wG5rGmQIIoWnmRodabhjAWCbGUvY/d7uuSd3+FdfviqYLnbQYIdDxuVhQFqmp+X/4xhvy9Puh5Pz0bDnJKtM=
+	t=1726240170; cv=none; b=mS5HFaRfyRLyyBNMG9XhEIA1rhyJIU+Vea1rCtiLucNayVJ7UZL271ijYxkG6pDiGaiAzxhzA4kjfQWBaEPYyFLw4zsQ2RW+kE39BNVPtpmFLXEUF5T1Jmm90nW1SQ5ZYLMxbgEKZSRXRLp2HTp3y/LxAYxoClZeG7xY82GKyWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726240175; c=relaxed/simple;
-	bh=sotlZbQi5UxMTXTY9iQWeBGitc5Ct0BtuZ2yW6i8Nok=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VNp+hW1d1PgsGFhK5D7e2RqyNGNAhD6Cmr5ocg6ziPLmseic6XHGkjcaTIe20Ec6kj4002Q46NVVExSRfVNqqn6Jn738mX6ABG1vUp2V4LBk1bPSaoMxGgYR5hsly/UxEWlq2t1Dg4VRnJlKXUIzFvnFI30yLftOzpCSj3E/pSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QqtG5sjD; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c26311c6f0so2944448a12.3;
-        Fri, 13 Sep 2024 08:09:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726240171; x=1726844971; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mXJIkSLw8SmFch9ZUCSaWYebLdfaycyre/4lwJqktRc=;
-        b=QqtG5sjD75MPPTL9uxDFdApVZ3+r7KD2KL0iNEd7Js90da5B8v2G7y+/hyWDKlV5rX
-         3Fztu+Wr2ICdSY2o/ip5d3KH8+xusrmEk4hGscNhCdvFluwf/bmjeOVoL8nh2Ixdb9IJ
-         8U3CtH+hvCV76li6tt5eG48Gg8AHVZvQlRHh8Iy1dsORWODQX5jFUWiWqOMInp9PIMAH
-         Eam4aRySDKUWLk1mcEu1RA6JcvJ5gyFy+57gK4h1j2AScZLQbGYtM+Xs1NvdELKUDhmk
-         VuhKzTAeL7kuvMrIK55UaKutlSNNDmXIDkoTqOUNNL/vrl+yneS+sZaOlU7w6poRuwn5
-         7baw==
+	s=arc-20240116; t=1726240170; c=relaxed/simple;
+	bh=/mfPXuGUjWoK95rEJEj+oT92WLzibx1CBpWAkHAq+ks=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=gPsovTUhWnBbC//fqZE00d6VqzCIZMllB07sib2qxmdHMt47DWX5CCq+zrwkeqqYcdKYCOY0XTvBx0Y/4TrapfgLL5EIRaOJFoPIkF66/jbMq7YLx9aIJQ28ca6jQXI+pkbiN3Nszs8CFDvb8U9QQbVuMWlxH6HqjAd2fzLpXHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-82ad45d6dc7so45839439f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 08:09:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726240171; x=1726844971;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mXJIkSLw8SmFch9ZUCSaWYebLdfaycyre/4lwJqktRc=;
-        b=J9s27h1UUGLr84U5/yAyZJsgI6gwTHTQQ+vx/u51IwWj7gqz1CmyTrroV5jq8Uh2kr
-         E6u/R847+cr5r/nQ2cV7iHoiZ/O8Tnuqm1jUfKDhRIJ/WZF6sKhlzSzO04n2OS86LbR0
-         EUfQ2zyMBYDHXc6Q4qcMzz39U9NEvPDWHumLR14W95EsHaqGt0qOc1T96vkXLvxGZDoi
-         R5rnELotNTtDWaSnFytAWVM0bOaJ7FdMiB9fpweo4LiQ3ATYKmZdbNBA+ImhCfSjQ0Ch
-         6NmICZQIdot3wAagTOVaiWzPG5FK7xN17aQ/feXCCjFm8oGKxBLN0/GNL+ae640xuK/z
-         0wHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhCX0BAMk05IyBLSQutDLJfVWTFswx9F6GWd198LSABd381GBIIaofuv+n3Fa5lFEPdxdJepGB/ueakzc=@vger.kernel.org, AJvYcCUuti24ziJKj2yZFdgTlk5qdVp945GGwnleaoFOwvGYAgF7kM/9o3AZlWOLxs+cYjH4P6bgysgzQEM9drJk@vger.kernel.org, AJvYcCV/qB5ttufj9m/e1++oHyIrcBu/Jt7mXBsrsWZpW93JbSKj/Zx9IYSZWtbqcNxF6T8URIhVfGCxA7YUd61q3DF5fE0=@vger.kernel.org, AJvYcCVkbNcUFQEropyKy8NfbbsMNZ0QFvOOxr1HnVH6jZrBzr082ilPdQ9RkssS8xkcR+35Qbb7GX9WOIsQu46sKg==@vger.kernel.org, AJvYcCWkJ1fxPDQw+F8r8yx7Po3+bsO/Ie2HEvDLachSkDhlUvGLdF0gIqwUzuNz3Ji0C3TXXVK+1MAIYtX+@vger.kernel.org, AJvYcCXJHZsaa+Lap0z/vITRjAjE62GtCcTohp03NyLwF6TsIf9FuM6fHeZe2uwiRnsoxTVQn7RploJGBy5rBw==@vger.kernel.org, AJvYcCXJnUnKOXJwgWI/0HxHCnRFJ6i5GZUP9VgPjkF/qb/TieQqREoyTLOspdurnGLOHPfqyNQSodpmpsci@vger.kernel.org, AJvYcCXt0cotO6XZozI3melRYob9QNcTS0GS2D4FCOYxAwa1B0Sgm/cZTNkjEey2pOgXjSPttPPrsaluxiW0@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuhtrqkE/IfZ68GjJMK0tVXPbHrxcDBj+ASAUTOSw7C4Nva94o
-	ajFXxhiT6NXbFfN+Y1dTeTE+SQ9dGLGsQrG0J2viUkESwvG/xvQyBeZVeA==
-X-Google-Smtp-Source: AGHT+IGyk1J+WrXxg3n6en6ZybXZ+SEJzAfSUZQA055wEMUefoWDRM5H6YgIPbZdZbXXjvmPnSljDQ==
-X-Received: by 2002:a05:6402:35c1:b0:5c4:181a:6b0a with SMTP id 4fb4d7f45d1cf-5c4181a6b7dmr4656181a12.10.1726240171482;
-        Fri, 13 Sep 2024 08:09:31 -0700 (PDT)
-Received: from [127.0.1.1] ([178.127.153.210])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd523b4sm7774318a12.51.2024.09.13.08.09.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 08:09:31 -0700 (PDT)
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Fri, 13 Sep 2024 18:08:10 +0300
-Subject: [PATCH v4 27/27] arm64: dts: qcom: starqltechn: add modem support
+        d=1e100.net; s=20230601; t=1726240167; x=1726844967;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uwZk2Mnqq2cweJX6bDDtcGnk53Z7SnCzW4WXDuHomAE=;
+        b=kdtzvMiAsK7ivZqVQnGlpEc/6OkIBEc1XCioeX3PDWCKZJI/7PO2xZ2u9Ctv7TFLiF
+         WiSDSTNiChB1cUD+mQx25oSwUFXPHOH2hsG04RNeiZHy9W2t+mhGMWebG+50VBurHMug
+         i03QVLo+JEBJPk1RsghHYzSymSpK/Fs813AgLIxQZPWjixTu9kSdaIgri7yJ82gqLBft
+         2kbsnVmtCEPTOuHHeEGkqPQC9iHUzDiplNiNZzYrMXtwZbhk7qRHReIjlZ+YkXtwBERD
+         jirHzd1VZTCLHdgkuteG5LgLbnL2WnZEoNWePW1KN7poj/rYVuTYB3XLNdiQEPn+9i9H
+         pHSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWOpTnlj1zQPUiDQflFOCnM1+bUPxF1h4IYDMe2nleLWgmV9TBFwJl1T5PnTWbZeN/zYr5+lgV56ZjKjn0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsRhJwHh31XM1EfA3Tjf3jwpBMfBCyVhnPyUYcIFvdDBHTu+QJ
+	mRiSCWP/NVyAIsmgJlB3zSDAzZ/kccr4UyTR5ymKj90IohVf3ZDKEQcb3S9e5Rv6rwvnSnypvIO
+	znpvu4Lltk6u6xoHQ0FMOkI1dbqkhmoA6IRXaiM9Ubp3ysY+nSxN+H7M=
+X-Google-Smtp-Source: AGHT+IEQoJRcIrzGUkN4aBBAUJBtrxkYArlv+beaDll8QIp9cBUcHhnYeXB1rLxxTrg7K/KJ8rD2bB4D+8ClBawnxtz5KWwC9PT7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240913-starqltechn_integration_upstream-v4-27-2d2efd5c5877@gmail.com>
-References: <20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com>
-In-Reply-To: <20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com>
-To: Sebastian Reichel <sre@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, 
- Simona Vetter <simona@ffwll.ch>, cros-qcom-dts-watchers@chromium.org, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Simona Vetter <simona.vetter@ffwll.ch>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
- linux-input@vger.kernel.org, linux-leds@vger.kernel.org, 
- linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- Dzmitry Sankouski <dsankouski@gmail.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1726240085; l=2030;
- i=dsankouski@gmail.com; s=20240618; h=from:subject:message-id;
- bh=sotlZbQi5UxMTXTY9iQWeBGitc5Ct0BtuZ2yW6i8Nok=;
- b=2OY/1Wou8Los9DL2QaeQkDbKQavhO22dQvFX7va+9W+VFm6Zwxp1qTyqVIttAEcQn/XWN02FC
- mMW9IBedqIOB+8AWBDGbU1ksLCmuAtMW2nQ+hhGKetema4Hwj+gR7YU
-X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
- pk=6pMMVVDDReSiRgPCbMOUauN5nS3ty4Sf5b7a2gi4x0M=
+X-Received: by 2002:a05:6e02:1383:b0:3a0:57b5:6e08 with SMTP id
+ e9e14a558f8ab-3a08497522cmr17636745ab.7.1726240167434; Fri, 13 Sep 2024
+ 08:09:27 -0700 (PDT)
+Date: Fri, 13 Sep 2024 08:09:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000fa38f30622019b6e@google.com>
+Subject: [syzbot] [riscv?] kernel panic: corrupted stack end in
+ handle_page_fault (2)
+From: syzbot <syzbot+5a364b90a40e8fe8ab78@syzkaller.appspotmail.com>
+To: aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, palmer@dabbelt.com, paul.walmsley@sifive.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add support for modem and ipa(IP Accelerator).
-Add spss reserved memory node.
+Hello,
 
-Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+syzbot found the following issue on:
+
+HEAD commit:    1ff95eb2bebd riscv: Fix RISCV_ALTERNATIVE_EARLY
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git fixes
+console output: https://syzkaller.appspot.com/x/log.txt?x=119b27c7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c79e90d7b2f5b364
+dashboard link: https://syzkaller.appspot.com/bug?extid=5a364b90a40e8fe8ab78
+compiler:       riscv64-linux-gnu-gcc (Debian 12.2.0-13) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: riscv64
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/a741b348759c/non_bootable_disk-1ff95eb2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1491182abe4e/vmlinux-1ff95eb2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/926302c5c645/Image-1ff95eb2.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5a364b90a40e8fe8ab78@syzkaller.appspotmail.com
+
+Registered RDS/tcp transport
+NET: Registered PF_SMC protocol family
+9pnet: Installing 9P2000 support
+Key type dns_resolver registered
+Key type ceph registered
+libceph: loaded (mon/osd proto 15/24)
+NET: Registered PF_VSOCK protocol family
+registered taskstats version 1
+Loading compiled-in X.509 certificates
+Loaded X.509 cert 'Build time autogenerated kernel key: f2a59455c4296818b28c73c1d87b1152c8ec3b9d'
+zswap: loaded using pool 842/z3fold
+Demotion targets for Node 0: null
+debug_vm_pgtable: [debug_vm_pgtable         ]: Validating architecture page table helpers
+Key type .fscrypt registered
+Key type fscrypt-provisioning registered
+Key type big_key registered
+Key type encrypted registered
+AppArmor: AppArmor sha256 policy hashing enabled
+ima: No TPM chip found, activating TPM-bypass!
+Loading compiled-in module X.509 certificates
+Loaded X.509 cert 'Build time autogenerated kernel key: f2a59455c4296818b28c73c1d87b1152c8ec3b9d'
+ima: Allocated hash algorithm: sha256
+ima: No architecture policies found
+evm: Initialising EVM extended attributes:
+evm: security.selinux (disabled)
+evm: security.SMACK64 (disabled)
+evm: security.SMACK64EXEC (disabled)
+evm: security.SMACK64TRANSMUTE (disabled)
+evm: security.SMACK64MMAP (disabled)
+evm: security.apparmor
+evm: security.ima
+evm: security.capability
+evm: HMAC attrs: 0x1
+printk: legacy console [netcon0] enabled
+netconsole: network logging started
+gtp: GTP module loaded (pdp ctx size 128 bytes)
+rdma_rxe: loaded
+clk: Disabling unused clocks
+PM: genpd: Disabling unused power domains
+ALSA device list:
+  #0: Dummy 1
+  #1: Loopback 1
+  #2: Virtual MIDI Card 1
+md: Skipping autodetection of RAID arrays. (raid=autodetect will force)
+EXT4-fs (vda): mounted filesystem 34b94c48-234b-4869-b990-1f782e29954a ro with ordered data mode. Quota mode: none.
+VFS: Mounted root (ext4 filesystem) readonly on device 253:0.
+devtmpfs: mounted
+Freeing unused kernel image (initmem) memory: 2532K
+Failed to set sysctl parameter 'max_rcu_stall_to_panic=1': parameter not found
+Run /sbin/init as init process
+Kernel panic - not syncing: corrupted stack end detected inside scheduler
+CPU: 1 UID: 0 PID: 1 Comm: init Not tainted 6.11.0-rc2-syzkaller-g1ff95eb2bebd #0
+Hardware name: riscv-virtio,qemu (DT)
+Call Trace:
+[<ffffffff80010216>] dump_backtrace+0x2e/0x3c arch/riscv/kernel/stacktrace.c:130
+[<ffffffff85edbc4e>] show_stack+0x34/0x40 arch/riscv/kernel/stacktrace.c:136
+[<ffffffff85f3714c>] __dump_stack lib/dump_stack.c:93 [inline]
+[<ffffffff85f3714c>] dump_stack_lvl+0x108/0x196 lib/dump_stack.c:119
+[<ffffffff85f371f6>] dump_stack+0x1c/0x24 lib/dump_stack.c:128
+[<ffffffff85edc812>] panic+0x388/0x806 kernel/panic.c:348
+[<ffffffff85f4533a>] schedule_debug kernel/sched/core.c:5745 [inline]
+[<ffffffff85f4533a>] __schedule+0x3230/0x3288 kernel/sched/core.c:6411
+[<ffffffff85f4585c>] preempt_schedule_common kernel/sched/core.c:6708 [inline]
+[<ffffffff85f4585c>] preempt_schedule+0xd2/0x1e2 kernel/sched/core.c:6732
+[<ffffffff85f5a472>] __raw_spin_unlock include/linux/spinlock_api_smp.h:143 [inline]
+[<ffffffff85f5a472>] _raw_spin_unlock+0x88/0xa8 kernel/locking/spinlock.c:186
+[<ffffffff806c89e0>] spin_unlock include/linux/spinlock.h:391 [inline]
+[<ffffffff806c89e0>] filemap_map_pages+0xa4a/0xf70 mm/filemap.c:3655
+[<ffffffff807efa7c>] do_fault_around mm/memory.c:5019 [inline]
+[<ffffffff807efa7c>] do_read_fault mm/memory.c:5052 [inline]
+[<ffffffff807efa7c>] do_fault mm/memory.c:5191 [inline]
+[<ffffffff807efa7c>] do_pte_missing mm/memory.c:3947 [inline]
+[<ffffffff807efa7c>] handle_pte_fault mm/memory.c:5522 [inline]
+[<ffffffff807efa7c>] __handle_mm_fault+0x1cbe/0x3998 mm/memory.c:5665
+[<ffffffff807f1d08>] handle_mm_fault+0x5b2/0xb36 mm/memory.c:5833
+[<ffffffff8002350a>] handle_page_fault+0x2ba/0x1588 arch/riscv/mm/fault.c:302
+[<ffffffff85f3950a>] do_page_fault+0x20/0x56 arch/riscv/kernel/traps.c:362
+[<ffffffff85f5b85a>] handle_exception+0xca/0xd6 arch/riscv/kernel/entry.S:110
+SMP: stopping secondary CPUs
+Rebooting in 86400 seconds..
+
+
 ---
- .../boot/dts/qcom/sdm845-samsung-starqltechn.dts   | 39 ++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts b/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
-index 2710386a89e1..4614ec5f731f 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
-@@ -17,6 +17,8 @@
- #include "pm8998.dtsi"
- #include "sdm845-wcd9340.dtsi"
- 
-+/delete-node/ &rmtfs_mem;
-+/delete-node/ &spss_mem;
- /delete-node/ &adsp_mem;
- /delete-node/ &slpi_mem;
- 
-@@ -91,15 +93,39 @@ memory@a1300000 {
- 			pmsg-size = <0x40000>;
- 		};
- 
-+		/*
-+		 * It seems like reserving the old rmtfs_mem region is also needed to prevent
-+		 * random crashes which are most likely modem related, more testing needed.
-+		 */
-+		removed_region: removed-region@88f00000 {
-+			reg = <0 0x88f00000 0 0x1c00000>;
-+			no-map;
-+		};
-+
- 		slpi_mem: slpi@96700000 {
- 			reg = <0 0x96700000 0 0xf00000>;
- 			no-map;
- 		};
- 
-+		spss_mem: spss@97700000 {
-+			reg = <0 0x97700000 0 0x100000>;
-+			no-map;
-+		};
-+
- 		adsp_mem: memory@97800000 {
- 			reg = <0 0x97800000 0 0x2000000>;
- 			no-map;
- 		};
-+
-+		rmtfs_mem: rmtfs-mem@fde00000 {
-+			compatible = "qcom,rmtfs-mem";
-+			reg = <0 0xfde00000 0 0x202000>;
-+			qcom,use-guard-pages;
-+			no-map;
-+
-+			qcom,client-id = <1>;
-+			qcom,vmid = <QCOM_SCM_VMID_MSS_MSA>;
-+		};
- 	};
- 
- 	gpio_keys {
-@@ -837,6 +863,19 @@ dai@5 {
- 	};
- };
- 
-+&mss_pil {
-+	firmware-name = "qcom/sdm845/starqltechn/mba.mbn",
-+			"qcom/sdm845/starqltechn/modem.mbn";
-+	status = "okay";
-+};
-+
-+&ipa {
-+	qcom,gsi-loader = "self";
-+	memory-region = <&ipa_fw_mem>;
-+	firmware-name = "qcom/sdm845/starqltechn/ipa_fws.mbn";
-+	status = "okay";
-+};
-+
- &usb_1 {
- 	status = "okay";
- };
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-2.39.2
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
