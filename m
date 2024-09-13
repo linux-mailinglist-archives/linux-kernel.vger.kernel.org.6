@@ -1,96 +1,124 @@
-Return-Path: <linux-kernel+bounces-328815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 911BF97893F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:04:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 627B3978945
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:05:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 473771F24B52
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:04:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D32A1C22AC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9591482ED;
-	Fri, 13 Sep 2024 20:04:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8481482E5;
+	Fri, 13 Sep 2024 20:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tOUoikfm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="n8Dw7WDy"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220EE126F2A;
-	Fri, 13 Sep 2024 20:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D545BA2E;
+	Fri, 13 Sep 2024 20:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726257876; cv=none; b=Ukv1WnBCLpMZKYhCcvb4BCEKxROUFiAyogcS2HMmcY3CkCAShErUddQDpguMLEFOqvNwUcatu9dkrQM5R6pfhWFVbi46lziU3l6sVr1DEplKaWON5I33VwoxEv9869G53Feb5NdNmwX4RZucwJFQejEtfoW+W4t8mc3uSGwX9G0=
+	t=1726257938; cv=none; b=a8gnWy9VGsQYVsPmU+8AznTSa1bEmi3P7ZZPJFh77ORj7vlYqxKPkwZ1h6A7FEN3lLI8oU7ylZws7DRtsYSu5PGQsfmYwmPNDANREfp5tWjYY+Qixq/11nqZNmBTbkgfm2uw2+J2pjJmBZOwYtHG9yD48CEC1gAT8qAmlqQxGSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726257876; c=relaxed/simple;
-	bh=dM3QGp5ZmtjL9C71+b5qzSHRkFpnfx9h2fJN6ECQJ6k=;
+	s=arc-20240116; t=1726257938; c=relaxed/simple;
+	bh=88+WbYUILBPnMzh6jPB4Mj7NyId5g8mRCRkbvrT/nQE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I2X1swksgFB3WUfgPeYoC1+7LrVNArCpGvGhD5jrqfdjofNSQYx9z1SdWSfwsSwG/ZQh4sCmKn8jwJkEPVsH5lN4xekISFhjPX0Izp3qChDROZXV651YrV6huCb3pxvwx6d1zDqQ9bYR1EwF059J9vKIAuDGzKvAfy84IpPkhF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tOUoikfm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C725C4CEC0;
-	Fri, 13 Sep 2024 20:04:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726257875;
-	bh=dM3QGp5ZmtjL9C71+b5qzSHRkFpnfx9h2fJN6ECQJ6k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tOUoikfm6k2VBxCA6Bo66C5Ro3C8Np068neUzbjBQdfaeAZxdRRE4nCUJCCv1dGIB
-	 7TZj0SJZxCE2gmooHYk/MBbHdh8zjj0npChFcEIh4r/dVsr08MifaA5Hl1N51mhL7P
-	 YxnUU4tOrqtIw8/fka7Y/1SjJk9nwN6mQ3fp4pldndMsT1M9Qx2vF/0vrwtPzSKYso
-	 TIHMTTT673/F478SkJCrond0Zguh5r55vMDT0bDFNjvTnU/z9Bmt1xpZXmB7/okIBA
-	 IwzXQkQZcVsm5Yh8rLyStqVzg94PJ0P+O4SBfr/3BWIYszhVL2S/9zd+j0wqroneFB
-	 Gz8RLgCMCF1lQ==
-Received: by pali.im (Postfix)
-	id 7D9CB725; Fri, 13 Sep 2024 22:04:30 +0200 (CEST)
-Date: Fri, 13 Sep 2024 22:04:30 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>
-Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/7] cifs: Fix recognizing SFU symlinks
-Message-ID: <20240913200430.zodog6t5uaall6yv@pali>
-References: <20240912120548.15877-1-pali@kernel.org>
- <20240912120548.15877-2-pali@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eE1RPSXGSP1f+uySFpg32ewvczDCBc4LH4ZM5KVXGkC+XBYF7y2ep2X3IpoN/Dg4lcV2w8k/qmDiWPuL72xbF27ZssHaPGWFufrJI3iJ4J20CLjVuX5XypUe+SUb3lAHnYs5ea6PHR6ED+jZlC74LAsXpQLisJGw6k+HCW9thzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=n8Dw7WDy; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=fdTfQKY0qkCMjwrdmN0Fuu0YLCsZGwp56cFev5joVpI=; b=n8Dw7WDyb8qe/vPk
+	zv/1LZwBTw68NIlZxHpBQEh4Oa7ShjOtFYOsru3+bCjk/h4lpiapemxcA2IQ/hfIwlTlDRwMPJTFK
+	9pldfEKL0sMlQ4tjm9JD0pvZl4B5xrjTZgS9nYX/SmKYzTQ8AXuJSwWuEdKyH0H1TWcxN6dqv7kEy
+	1+O9+KdqhyjZfD4NDHF05a4ej+P7upLyUztHVbXqb7RQfIPNkuUEKofjukBgjwp/HC8GsTHHBrewY
+	dbV2qY7UdZLdes6Y9TaKiWTwd1RvDdGUanxLi60ulWLKzIIzKnpjYFGGWqsiO4LA1SZbGGYuEnESA
+	AmLy17OzX6i0USUDtg==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1spCXr-005fFw-0D;
+	Fri, 13 Sep 2024 20:05:31 +0000
+Date: Fri, 13 Sep 2024 20:05:31 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: mkl@pengutronix.de, linux-can@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: of alloc_canxl_skb
+Message-ID: <ZuSbC8iqeGcUnogC@gallifrey>
+References: <ZuRGRKU9bjgC52mD@gallifrey>
+ <2540406e-8da3-4cb8-bd1a-30271dd6cc67@hartkopp.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240912120548.15877-2-pali@kernel.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <2540406e-8da3-4cb8-bd1a-30271dd6cc67@hartkopp.net>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 20:04:08 up 128 days,  7:18,  1 user,  load average: 0.02, 0.02,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Thursday 12 September 2024 14:05:42 Pali Rohár wrote:
-> SFU symlinks have 8 byte prefix: "IntxLNK\1".
-> So check also the last 8th byte 0x01.
+* Oliver Hartkopp (socketcan@hartkopp.net) wrote:
+> Hi David,
+
+Hi Oliver,
+
+> On 13.09.24 16:03, Dr. David Alan Gilbert wrote:
 > 
-> Signed-off-by: Pali Rohár <pali@kernel.org>
-
-Fixes: 9e294f1c4d4a ("[CIFS] Recognize properly symlinks and char/blk devices (not just FIFOs) created by SFU (part 2 of 2).")
-
-(I located commit which probably by mistake removed that byte 0x01).
-
-> ---
->  fs/smb/client/inode.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> >    I'm doing some deadcode hunting and noticed that
+> > 
+> >    alloc_canxl_skb in drivers/net/can/dev/skb.c
+> > 
+> > looks unused in the main kernel tree; is that expected?
+> > I see it was added back in 2022 by
+> >    fb08cba12b52 ("can: canxl: update CAN infrastructure for CAN XL frames")
+> > 
+> > I know almost exactly nothing about CAN, so I thought it best
+> > to ask!
 > 
-> diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
-> index 73e2e6c230b7..7d424e769a56 100644
-> --- a/fs/smb/client/inode.c
-> +++ b/fs/smb/client/inode.c
-> @@ -612,7 +612,7 @@ cifs_sfu_type(struct cifs_fattr *fattr, const char *path,
->  			cifs_dbg(FYI, "Socket\n");
->  			fattr->cf_mode |= S_IFSOCK;
->  			fattr->cf_dtype = DT_SOCK;
-> -		} else if (memcmp("IntxLNK", pbuf, 7) == 0) {
-> +		} else if (memcmp("IntxLNK\1", pbuf, 8) == 0) {
->  			cifs_dbg(FYI, "Symlink\n");
->  			fattr->cf_mode |= S_IFLNK;
->  			fattr->cf_dtype = DT_LNK;
-> -- 
-> 2.20.1
+> I created some slides so that you can get an introduction to the different
+> CAN protocols CAN CC (aka Classical CAN), CAN FD and CAN XL:
 > 
+> https://github.com/linux-can/can-doc/tree/master/presentations
+
+Thanks!
+
+> The introduction of the CAN XL support lead to some clean up and rework also
+> for the former alloc_can_skb() and alloc_canfd_skb() helpers.
+> 
+> The function is currently not in use in net/can/raw.c as it is only needed
+> when a CAN XL frame is received from read hardware. But the patch also
+> contains the definition of ETH_P_CANXL to already handle CAN XL frames
+> properly inside the Linux kernel and e.g. for WireShark 4.4.
+> 
+> There are currently some CAN XL IP cores in development (see attached
+> picture with an FPGA based IP core) and I am working on the kernel
+> infrastructure (e.g. bitrate configuration enhancements) on this board. So
+> alloc_canxl_skb() is already in use on my desk and there will be some more
+> stuff showing up soon ;-)
+
+OK, great - I won't try and deadcode it then!
+
+Thanks again for the reply,
+
+Dave
+
+
+> Best regards,
+> Oliver
+
+
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
