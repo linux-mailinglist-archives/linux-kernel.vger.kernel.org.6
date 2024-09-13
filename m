@@ -1,339 +1,95 @@
-Return-Path: <linux-kernel+bounces-327476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BEF897766D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:30:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BFC897766A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:26:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 777E7B22E25
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:30:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84ABA1F2430C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:26:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299384A3E;
-	Fri, 13 Sep 2024 01:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="bURSXsvR"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5409D4A3E;
+	Fri, 13 Sep 2024 01:25:58 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE5E4A06
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 01:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A803443D
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 01:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726190998; cv=none; b=kIDAOIN05IC40tEwNOmRZRzTHgzQnoH/M5HbB/TekIQmr0L0H8gUUnU9kFR5mc1ajLbsLDt5qRQRn2Y1JRVSh8PR5B23mjkSbcBL91UGgAhuh7fMlECuZNfdOteRNi4FqbDD5SbzIff96PwzG5IFC4ZwPmSSCZ68m08UUrwjTDA=
+	t=1726190758; cv=none; b=RGlolroS7qlesL3y1YpESpWmjv7lqkCYM1ZePlo4zpVWAy+ErpfMc2S48aRC2FgGPe96JoHS9SX3wxioKHLy4D5BRK48OyoEIyjijfgIvaUvFvYeETeDkNfgrSOuJVA6Vykbobr30hYGnvhr+xei9SQ/XkB9anpUW9UeqsCX0Sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726190998; c=relaxed/simple;
-	bh=94OVKNo7+/2yX9lYKqNr+7qk9kQow0P186JyrepvVFI=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=SHSJSlx7SxfR0bdI/M2cqZWyBb+8Sv1lpJ4/kzXZO30e9RLrSDS8O37UCVwtVrInlgUy52e24ivb8AffVVZ0mQXf8Sh7Cd86YfDk9hffySfiJPtmwInJZQAkl1k3GJ2Qx973tduM5zbswaokWvdFHNAc3uYgjadjFDMhvimhKfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=bURSXsvR; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7a9aec89347so99433285a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 18:29:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1726190995; x=1726795795; darn=vger.kernel.org;
-        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yKsryRZxeeDHRG/BrSJmrMq93TR8VGtT1uFe4+enWiY=;
-        b=bURSXsvRaY3/ZWscos6Jf/CpRPGuGnUdMvpLyVASdTP3cCL+NEN2cvZu4AqNfjuTGz
-         qJEIpw1sKWX9OR5+hU7nJMWdXXHm0ggIk0fSSbVllXfP8uJevDedWu/hCVhqcfoWMwPq
-         zfiR0dmrrWxpl1blC+fbKDvmqG84V4e7obeOcwnrYODVz3s3OKY3HiP6C0So7MfKvcrr
-         hMP1ZNm5wZ5hEriP4e5tGy2JfjEDuHmwusFh9r2aRn9twtehOWdBwyK415LaE/9kLKDb
-         B5T5rPJueAA0qBLoFUTGHjfhjs9wF0EwlusT7EY3iuBb2ASSdadfkX9rliC3Emcw/D07
-         S2/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726190995; x=1726795795;
-        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yKsryRZxeeDHRG/BrSJmrMq93TR8VGtT1uFe4+enWiY=;
-        b=A4myJtutn95IsCr/YWW7+SRqs18PxnTbzcebk9Gwp5g0wqN9C9Nfe+q0vgaqzsm2uT
-         1L7lhF0aIYOe+namviBYF8IbUHhJ/T+snO8Tp6Ro+TTzfKDGaTGUjIfvUS55f6qDFG8u
-         b67C1RKJRvtTYoGEMopjaSUjhHeurfWLfJybcmOMGmY0eIKTLLzQrDG0+7W/j0YnHHn8
-         TfHM+Uf4FkekiFNJjj15oOqmrk6NhRkwzN13e/CmeQCTMr5Ws3RJzDQ4WcsA9qg//WTT
-         bwy2xT351dcM6wL3c2SCqN9EaD+mlcuhFg6RRp5xfca9nTbMUiBJ5jUdbzkzWZ6oOrUr
-         fykQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWuEuGI1F838QJXPqRyMpneCNGxjYETX3bSaJUtT3IGQXyw1/3xL0sEEP5QcAWIsDfLLdxh9i9WN5vNVJY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwY9QJxkrDbHDWe0SmS7t5heF8gZsvwayEB839Vsf1BiqXwcbLk
-	MlbmkAQvLbvus2pDfZRjkt0U1p75cET4RefyOaIRSBKllkbd9G6D7LRm2JRPLGRREHqGnnXaRpo
-	=
-X-Google-Smtp-Source: AGHT+IF3T7Zq8bcbhwTy6n0E+YB2QeEfjLstJF9RICxYJ5lNg2eFj8SjI4ixrEFSwXtAmv//s1r4rQ==
-X-Received: by 2002:a05:6214:469e:b0:6c5:2fc7:a623 with SMTP id 6a1803df08f44-6c573543ccemr70624966d6.11.1726190994996;
-        Thu, 12 Sep 2024 18:29:54 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c53433982esm60313976d6.42.2024.09.12.18.29.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 18:29:54 -0700 (PDT)
-Date: Thu, 12 Sep 2024 21:29:54 -0400
-Message-ID: <d15ee1ccfb91bda67d248b3ec70f0475@paul-moore.com>
-From: Paul Moore <paul@paul-moore.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] lsm/lsm-pr-20240911
+	s=arc-20240116; t=1726190758; c=relaxed/simple;
+	bh=9vgVqu6YemcpCPzpG8tCwQdV08j/EigS60ejUpRid0I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=az5kzJgBN67edAh/Q0+icQc05SqLx5kthoQrm9f3S0WNAP2wR9R37/ASBMOSZDoo5033l154WnUVvegZD2aYfGoBdfp7bPFb36MAA2W/CKOrKbEXw4xyDKAIsiLjTTrH47p8EmjFG3j1RrkPi/Eb1g6uRL4q6fqKnk5CCDOaWms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4X4c7N6SXyz2CpbF;
+	Fri, 13 Sep 2024 09:25:20 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4ED551402E2;
+	Fri, 13 Sep 2024 09:25:52 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemh500013.china.huawei.com
+ (7.202.181.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 13 Sep
+ 2024 09:25:51 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <lgirdwood@gmail.com>, <broonie@kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH -next] regulator: max8973: Use irq_get_trigger_type() helper
+Date: Fri, 13 Sep 2024 09:35:03 +0800
+Message-ID: <20240913013503.3754712-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-Linus,
+Use irq_get_trigger_type() to replace irq_get_irq_data() and then
+irqd_get_trigger_type(), if the irq data is NULL it will return 0.
 
-We've got a reasonably large pull request for the LSM framework this
-time (at least it's large for us), here are the highlights:
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ drivers/regulator/max8973-regulator.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-* Move the LSM framework to static calls
+diff --git a/drivers/regulator/max8973-regulator.c b/drivers/regulator/max8973-regulator.c
+index 96ca146281d6..f68caa07f546 100644
+--- a/drivers/regulator/max8973-regulator.c
++++ b/drivers/regulator/max8973-regulator.c
+@@ -470,8 +470,7 @@ static const struct thermal_zone_device_ops max77621_tz_ops = {
+ static int max8973_thermal_init(struct max8973_chip *mchip)
+ {
+ 	struct thermal_zone_device *tzd;
+-	struct irq_data *irq_data;
+-	unsigned long irq_flags = 0;
++	unsigned long irq_flags;
+ 	int ret;
+ 
+ 	if (mchip->id != MAX77621)
+@@ -489,9 +488,7 @@ static int max8973_thermal_init(struct max8973_chip *mchip)
+ 	if (mchip->irq <= 0)
+ 		return 0;
+ 
+-	irq_data = irq_get_irq_data(mchip->irq);
+-	if (irq_data)
+-		irq_flags = irqd_get_trigger_type(irq_data);
++	irq_flags = irq_get_trigger_type(mchip->irq);
+ 
+ 	ret = devm_request_threaded_irq(mchip->dev, mchip->irq, NULL,
+ 					max8973_thermal_irq,
+-- 
+2.34.1
 
-Based on some of our exchanges over the summer, it sounds like you
-are already familiar with the effort to convert the LSM callbacks
-from function pointers to static calls.  This pull request includes
-that work and transitions the vast majority of the LSM callbacks into
-static calls.  Those callbacks which haven't been converted were
-left as-is due to the general ugliness of the changes required to
-support the static call conversion; we can revisit those callbacks
-at a future date.
-
-It is worth mentioning that Tetsuo Handa is opposed to the static call
-patches, some even carry his NACK, as they make it more difficult to
-dynamically load out-of-tree LSMs, or unsupported LSMs on distro kernels.
-Many of us have tried to explain that out-of-tree LSMs are not a
-concern for the upstream LSM framework, or the Linux kernel in general,
-and that decisions around what LSMs are enabled in distro kernels is
-a distro issue, not an upstream issue, but unfortunately Tetsuo
-continues to disregard these arguments.
-
-* Add the Integrity Policy Enforcement (IPE) LSM
-
-This pull request adds a new LSM, Integrity Policy Enforcement (IPE).
-There is plenty of documentation about IPE in this patches, so I'll
-refrain from going into too much detail here, but the basic motivation
-behind IPE is to provide a mechanism such that administrators can
-restrict execution to only those binaries which come from integrity
-protected storage, e.g. a dm-verity protected filesystem.  You will
-notice that IPE requires additional LSM hooks in the initramfs,
-dm-verity, and fs-verity code, with the associated patches carrying
-ACK/review tags from the associated maintainers.  We couldn't find an
-obvious maintainer for the initramfs code, but the IPE patchset has
-been widely posted over several years.
-
-Both Deven Bowers and Fan Wu have contributed to IPE's development
-over the past several years, with Fan Wu agreeing to serve as the IPE
-maintainer moving forward.  Once IPE is accepted into your tree, I'll
-start working with Fan to ensure he has the necessary accounts, keys,
-etc. so that he can start submitting IPE pull requests to you directly
-during the next merge window.
-
-* Move the lifecycle management of the LSM blobs to the LSM framework
-
-Management of the LSM blobs (the LSM state buffers attached to various
-kernel structs, typically via a void pointer named "security" or similar)
-has been mixed, some blobs were allocated/managed by individual LSMs,
-others were managed by the LSM framework itself.  Starting with this
-pull request we move management of all the LSM blobs, minus the XFRM
-blob, into the framework itself, improving consistency across LSMs, and
-reducing the amount of duplicated code across LSMs.  Due to some
-additional work required to migrate the XFRM blob, it has been left as
-a todo item for a later date; from a practical standpoint this omission
-should have little impact as only SELinux provides a XFRM LSM
-implementation.
-
-* Fix problems with the LSM's handling of F_SETOWN
-
-The LSM hook for the fcntl(F_SETOWN) operation had a couple of problems:
-it was racy with itself, and it was disconnected from the associated DAC
-related logic in such a way that the LSM state could be updated in cases
-where the DAC state would not.  We fix both of these problems by moving
-the security_file_set_fowner() hook into the same section of code where
-the DAC attributes are updated.  Not only does this resolve the DAC/LSM
-synchronization issue, but as that code block is protected by a lock, it
-also resolve the race condition.
-
-* Fix potential problems with the security_inode_free() LSM hook 
-
-Due to use of RCU to protect inodes and the placement of the LSM hook
-associated with freeing the inode, there is a bit of a challenge when
-it comes to managing any LSM state associated with an inode.  The VFS
-folks are not open to relocating the LSM hook so we have to get creative
-when it comes to releasing an inode's LSM state.  Traditionally we have
-used a single LSM callback within the hook that is triggered when the
-inode is "marked for death", but not actually released due to RCU.
-Unfortunately, this causes problems for LSMs which want to take an
-action when the inode's associated LSM state is actually released; this
-pull request adds an additional LSM callback, inode_free_security_rcu(),
-that is called when the inode's LSM state is released in the RCU free
-callback.
-
-* Refactor two LSM hooks to better fit the LSM return value patterns
-
-The vast majority of the LSM hooks follow the "return 0 on success,
-negative values on failure" pattern, however, there are a small handful
-that have unique return value behaviors which has caused confusion in the
-past and makes it difficult for the BPF verifier to properly vet BPF LSM
-programs.  This pull request includes patches to convert two of these
-"special" LSM hooks to the common 0/-ERRNO pattern.
-
-* Various cleanups and improvements
-
-A handful of patches to remove redundant code, better leverage the
-IS_ERR_OR_NULL() helper, add missing "static" markings, and do some minor
-style fixups.
-
--Paul
-
---
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
-
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
-    tags/lsm-pr-20240911
-
-for you to fetch changes up to 19c9d55d72a9040cf9dc8de62633e6217381106b:
-
-  security: Update file_set_fowner documentation
-    (2024-09-09 12:30:51 -0400)
-
-----------------------------------------------------------------
-lsm/stable-6.12 PR 20240911
-----------------------------------------------------------------
-
-Casey Schaufler (6):
-      lsm: infrastructure management of the sock security
-      lsm: infrastructure management of the key security blob
-      lsm: add helper for blob allocations
-      lsm: infrastructure management of the dev_tun blob
-      lsm: infrastructure management of the infiniband blob
-      lsm: infrastructure management of the perf_event security blob
-
-Deven Bowers (13):
-      lsm: add IPE lsm
-      ipe: add policy parser
-      ipe: add evaluation loop
-      ipe: add LSM hooks on execution and kernel read
-      ipe: add userspace interface
-      audit,ipe: add IPE auditing support
-      ipe: add permissive toggle
-      block,lsm: add LSM blob and new LSM hooks for block devices
-      dm-verity: expose root hash digest and signature data to LSMs
-      ipe: add support for dm-verity as a trust provider
-      scripts: add boot policy generation program
-      ipe: kunit test for parser
-      documentation: add IPE documentation
-
-Fan Wu (7):
-      initramfs,lsm: add a security hook to do_populate_rootfs()
-      ipe: introduce 'boot_verified' as a trust provider
-      lsm: add new securityfs delete function
-      lsm: add security_inode_setintegrity() hook
-      fsverity: expose verified fsverity built-in signatures to LSMs
-      ipe: enable support for fs-verity as a trust provider
-      MAINTAINERS: add IPE entry with Fan Wu as maintainer
-
-Hongbo Li (1):
-      lsm: Use IS_ERR_OR_NULL() helper function
-
-KP Singh (4):
-      init/main.c: Initialize early LSMs after arch code, static keys
-         and calls.
-      kernel: Add helper macros for loop unrolling
-      lsm: count the LSMs enabled at compile time
-      lsm: replace indirect LSM hook calls with static calls
-
-Mickaël Salaün (2):
-      fs: Fix file_set_fowner LSM hook inconsistencies
-      security: Update file_set_fowner documentation
-
-Paul Moore (2):
-      lsm: cleanup lsm_hooks.h
-      lsm: add the inode_free_security_rcu() LSM implementation hook
-
-Tetsuo Handa (1):
-      lsm: remove LSM_COUNT and LSM_CONFIG_COUNT
-
-Xu Kuohai (2):
-      lsm: Refactor return value of LSM hook vm_enough_memory
-      lsm: Refactor return value of LSM hook inode_copy_up_xattr
-
-Yang Li (1):
-      ipe: Remove duplicated include in ipe.c
-
-Yue Haibing (1):
-      lockdown: Make lockdown_lsmid static
-
- Documentation/admin-guide/LSM/index.rst             |    1 
- Documentation/admin-guide/LSM/ipe.rst               |  790 ++++++++++++
- Documentation/admin-guide/kernel-parameters.txt     |   12 
- Documentation/filesystems/fsverity.rst              |   27 
- Documentation/security/index.rst                    |    1 
- Documentation/security/ipe.rst                      |  446 ++++++
- MAINTAINERS                                         |   10 
- block/bdev.c                                        |    7 
- drivers/md/dm-verity-target.c                       |  118 +
- drivers/md/dm-verity.h                              |    4 
- fs/fcntl.c                                          |   14 
- fs/overlayfs/copy_up.c                              |    6 
- fs/verity/signature.c                               |   18 
- include/linux/args.h                                |    6 
- include/linux/blk_types.h                           |    3 
- include/linux/lsm_count.h                           |  135 ++
- include/linux/lsm_hook_defs.h                       |   20 
- include/linux/lsm_hooks.h                           |  129 +
- include/linux/security.h                            |   55 
- include/linux/unroll.h                              |   36 
- include/uapi/linux/audit.h                          |    3 
- include/uapi/linux/lsm.h                            |    1 
- init/initramfs.c                                    |    3 
- init/main.c                                         |    6 
- scripts/Makefile                                    |    1 
- scripts/ipe/Makefile                                |    2 
- scripts/ipe/polgen/.gitignore                       |    2 
- scripts/ipe/polgen/Makefile                         |    5 
- scripts/ipe/polgen/polgen.c                         |  145 ++
- security/Kconfig                                    |   11 
- security/Makefile                                   |    1 
- security/apparmor/include/net.h                     |    3 
- security/apparmor/lsm.c                             |   17 
- security/apparmor/net.c                             |    2 
- security/commoncap.c                                |   11 
- security/inode.c                                    |   27 
- security/integrity/evm/evm_main.c                   |    2 
- security/integrity/ima/ima.h                        |    2 
- security/integrity/ima/ima_iint.c                   |   20 
- security/integrity/ima/ima_main.c                   |    2 
- security/ipe/.gitignore                             |    2 
- security/ipe/Kconfig                                |   97 +
- security/ipe/Makefile                               |   31 
- security/ipe/audit.c                                |  292 ++++
- security/ipe/audit.h                                |   19 
- security/ipe/digest.c                               |  118 +
- security/ipe/digest.h                               |   26 
- security/ipe/eval.c                                 |  393 +++++
- security/ipe/eval.h                                 |   70 +
- security/ipe/fs.c                                   |  247 +++
- security/ipe/fs.h                                   |   16 
- security/ipe/hooks.c                                |  314 ++++
- security/ipe/hooks.h                                |   52 
- security/ipe/ipe.c                                  |   98 +
- security/ipe/ipe.h                                  |   26 
- security/ipe/policy.c                               |  227 +++
- security/ipe/policy.h                               |   98 +
- security/ipe/policy_fs.c                            |  472 +++++++
- security/ipe/policy_parser.c                        |  559 ++++++++
- security/ipe/policy_parser.h                        |   11 
- security/ipe/policy_tests.c                         |  296 ++++
- security/landlock/fs.c                              |    9 
- security/lockdown/lockdown.c                        |    2 
- security/security.c                                 |  615 ++++++---
- security/selinux/hooks.c                            |  176 --
- security/selinux/include/objsec.h                   |   28 
- security/selinux/netlabel.c                         |   23 
- security/smack/smack.h                              |   12 
- security/smack/smack_lsm.c                          |  107 -
- security/smack/smack_netfilter.c                    |    4 
- tools/testing/selftests/lsm/lsm_list_modules_test.c |    3 
- 71 files changed, 6063 insertions(+), 484 deletions(-)
-
---
-paul-moore.com
 
