@@ -1,287 +1,329 @@
-Return-Path: <linux-kernel+bounces-327854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 521A0977BF0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:10:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7DDB977BF4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:11:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4D011C24595
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:10:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C536B28E49
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02881D6DC6;
-	Fri, 13 Sep 2024 09:10:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB491D6DC8
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486881D6DBA;
+	Fri, 13 Sep 2024 09:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="ExTFxaOM";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LSzpmTvK"
+Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AAB31D58B2;
+	Fri, 13 Sep 2024 09:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726218603; cv=none; b=uahevd5OFsa/2kUIWYMq5cUZBVQm8YjVJNv2cUXzgGGwVWaKMo/TycEJNCHxxoqBaWiJNOrYggbOJ+F47o5edKuCK43HGmWADji20KVO5boOyS+wPpDhgaLSdZMrA762WWjgsURLE1fQNaaytkATrFvcWllng7EGVpDyGgxw/pg=
+	t=1726218653; cv=none; b=EmmIWVCqhnkDC9b0wqpTOdqrQEAqOpnyFkpkBHq2gc+eWpi5DAx8+Sqq4l1oM6ct2Z9EUPiqmIqUoIgusU6GsLK4XfxX37VN7q8oD48JUlBSBmC3efb57ue3GIjP8zS4t899sWh6uFNgiMuwd9L7NX7q1JTAYQ6Mh+cexUuBnJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726218603; c=relaxed/simple;
-	bh=0mWGs2FHEmfQVikZtZU1lBffsWT85KwcNlRyYbJJ1zc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G4IHjZnBeZB+EGgYVwS2gCbECnuuswDYLu7Jp6z017Pyi+4gAPW3k8ozoE6ofT5DducNOm0BpEFscRTPVK6mdck3awpxS3EI+gbhfmvzp4uvKHh9GUitQXgBjsAZmExih2srE+Z0egKH6YXSdxsEtDNjxLAi/1RJJCqPv6qpECE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 644E713D5;
-	Fri, 13 Sep 2024 02:10:30 -0700 (PDT)
-Received: from [10.57.75.215] (unknown [10.57.75.215])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E65BE3F73B;
-	Fri, 13 Sep 2024 02:09:57 -0700 (PDT)
-Message-ID: <5ccc3a77-64de-48fd-b118-f08aef9e1d2c@arm.com>
-Date: Fri, 13 Sep 2024 11:09:52 +0200
+	s=arc-20240116; t=1726218653; c=relaxed/simple;
+	bh=tt9AADMrwVNUsXHIqAOKdNpwu64ra0IXp/MHU7EzxmQ=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=uszbwTn4VLRQ0jbzcZpdq8RH5hCsQ4bUAmCIethr5JBJHKIX28ou+iPgIRmVpt8dOnav1X1d9woc/oTo+hwainIqlHUU5ZFvpBYcUN/PexUarLfH7ASyFSZZ7G8yPDLq08aCzipAA6Gow6vEQLhlxzbUIO50/cwLfyNNzykPKu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=ExTFxaOM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LSzpmTvK; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.phl.internal (Postfix) with ESMTP id 281CE13802B2;
+	Fri, 13 Sep 2024 05:10:49 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-09.internal (MEProxy); Fri, 13 Sep 2024 05:10:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1726218649;
+	 x=1726305049; bh=FJ45Qglvg7DmjFxDy6maK3tnXPu/iEdwJfotzp3qoVY=; b=
+	ExTFxaOM1q2QaFIn5lMTUZRkL3s3wsqh2uACtKgm2++6I8Cxbuarlx73WuTfodr+
+	1BG52BjtQ2O/RbOeHY6Z5nQkez1OTWLHrw9Y0HdlwCG7Fcqffcm9ZE/Z42MUw6e7
+	aJ1k6eLQeyWnQzqilmgQFjTxoRlR/as6/lCk3zH39XuljGSLdvDfM87v/n7ohRLK
+	q9k4demWaxJOiy9mMFAW3aqlDjJC/OC9NwEmy69O96Fht5SMVvyfM6Anra7fPhYb
+	fBJFHPwan1xmQbtth9l/LYFNR8i5qnFS4B7K6V6gTiiYoVJJlkLRbdknR0LpiI5q
+	S4tQHPtdDuDOfectuh04SA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726218649; x=
+	1726305049; bh=FJ45Qglvg7DmjFxDy6maK3tnXPu/iEdwJfotzp3qoVY=; b=L
+	SzpmTvKYIF5kHP5K92PZi0/P6uMjICaF3iGyvPH8pPsB2p2rAbeVJ0MrxBwZHLWS
+	vwU1MB6JZCIELNgabHhzhAOZLt5M8i5ie5bkMDSppFPjNrsHxluzZpQjbRVyZglX
+	9t3GYgDXiLuwU2NHU2+J1w04V03e+pH6SSyCyOiIGXsUftHsl25QN5WC+apWqqof
+	+Ui9WOf9Z0UAeJr5w2RDbrq4SukapfQnvpceTr9VSvxfOCfBYwB+K0CevPj5lNSF
+	awYmOZ2IF6sy/CGw1Hl0eBY9hcNrrbMeeukbxHtbFir99XQZP4q3UIZIlO9vOkN3
+	5EaIK3QW/8Cd+MaNk/3kg==
+X-ME-Sender: <xms:mAHkZs58ehgy0N4vhx2YdYQMhZOLsKB1XYqdEW7-rkcwoVtJwOG_hg>
+    <xme:mAHkZt5TJnLA5yoStQU0eMuqwJdk-iY43LttYqwyDED4quoAtVd543NrTsfcTqpS1
+    7TknnLWC_HhaaBTSXQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejjedgudduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
+    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeehfeduvddtgffgvdffkeet
+    hefhlefgvdevvdekuefffeekheehgeevhfevteejnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgr
+    thdrtghomhdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthht
+    oheptghhvghnhhhurggtrghisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrrghfrg
+    gvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhirhgvshhhrdhkuhhmrghrsehl
+    ihhnrghrohdrohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvg
+    dprhgtphhtthhopehlohhonhhgrghrtghhsehlihhsthhsrdhlihhnuhigrdguvghvpdhr
+    tghpthhtohepkhhvmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlih
+    hnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehl
+    ihhnuhigqdhmihhpshesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:mAHkZreBs9WeD2wS-4sgdFp08F2qC_tlncrS_kXiaFyZY3gZpEEJCg>
+    <xmx:mAHkZhIRkM_6p6WglSJG38Xq1-yLnpz_YUilrHgTLr6Sz1l1pStRPg>
+    <xmx:mAHkZgI1iWTI-sWtiM2oEdAejdsQo6QLXm5oIs-jr1b0h2qRheqEQQ>
+    <xmx:mAHkZiz6yS6epgx0Hz0fHV15BuOnWeYnZMReLDTfgw37ODVKNf3k6Q>
+    <xmx:mQHkZtALj-7B8j9db26vWy2uo4xeplo4CRbDzNqmchNcB2Br6nCwg1Yy>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 2A1761C20065; Fri, 13 Sep 2024 05:10:48 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 5/5] sched/fair: Add push task callback for EAS
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, vschneid@redhat.com, lukasz.luba@arm.com,
- rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org,
- qyousef@layalina.io, hongyan.xia2@arm.com
-References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
- <20240830130309.2141697-6-vincent.guittot@linaro.org>
- <ccf4095f-5fca-42f4-b9fe-aa93e703016e@arm.com>
- <CAKfTPtDm_e2feardrXN0M3679F67+gys=U7ZHQoyLL_LjzD04w@mail.gmail.com>
-Content-Language: en-US
-From: Pierre Gondois <pierre.gondois@arm.com>
-In-Reply-To: <CAKfTPtDm_e2feardrXN0M3679F67+gys=U7ZHQoyLL_LjzD04w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Date: Fri, 13 Sep 2024 10:10:09 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Huacai Chen" <chenhuacai@kernel.org>
+Cc: "Xuerui Wang" <kernel@xen0n.name>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Viresh Kumar" <viresh.kumar@linaro.org>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ kvm@vger.kernel.org
+Message-Id: <84c6e819-e2b8-40b6-8de4-9f550e652acc@app.fastmail.com>
+In-Reply-To: 
+ <CAAhV-H74OCxnRQjHXtu-CuVaEb5bsMQ4vR4wCOvztZdV-HWEVg@mail.gmail.com>
+References: <20240912-iocsr-v2-0-e88f75b37da4@flygoat.com>
+ <20240912-iocsr-v2-1-e88f75b37da4@flygoat.com>
+ <CAAhV-H74OCxnRQjHXtu-CuVaEb5bsMQ4vR4wCOvztZdV-HWEVg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] LoongArch: Probe more CPU features from CPUCFG
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello Vincent,
 
-On 9/12/24 14:30, Vincent Guittot wrote:
-> Hello Pierre,
-> 
-> On Wed, 11 Sept 2024 at 16:03, Pierre Gondois <pierre.gondois@arm.com> wrote:
->>
->> Hello Vincent,
->>
->> On 8/30/24 15:03, Vincent Guittot wrote:
->>> EAS is based on wakeup events to efficiently place tasks on the system, but
->>> there are cases where a task will not have wakeup events anymore or at a
->>> far too low pace. For such situation, we can take advantage of the task
->>> being put back in the enqueued list to check if it should be migrated on
->>> another CPU. When the task is the only one running on the CPU, the tick
->>> will check it the task is stuck on this CPU and should migrate on another
->>> one.
->>>
->>> Wake up events remain the main way to migrate tasks but we now detect
->>> situation where a task is stuck on a CPU by checking that its utilization
->>> is larger than the max available compute capacity (max cpu capacity or
->>> uclamp max setting)
->>>
->>> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
->>> ---
->>>    kernel/sched/fair.c  | 211 +++++++++++++++++++++++++++++++++++++++++++
->>>    kernel/sched/sched.h |   2 +
->>>    2 files changed, 213 insertions(+)
->>>
->>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.cHel
->>> index e46af2416159..41fb18ac118b 100644
->>> --- a/kernel/sched/fair.c
->>> +++ b/kernel/sched/fair.c
->>
->> [snip]
->>
->>> +
->>> +static inline void check_misfit_cpu(struct task_struct *p, struct rq *rq)
->>> +{
->>> +     int new_cpu, cpu = cpu_of(rq);
->>> +
->>> +     if (!sched_energy_enabled())
->>> +             return;
->>> +
->>> +     if (WARN_ON(!p))
->>> +             return;
->>> +
->>> +     if (WARN_ON(p != rq->curr))
->>> +             return;
->>> +
->>> +     if (is_migration_disabled(p))
->>> +             return;
->>> +
->>> +     if ((rq->nr_running > 1) || (p->nr_cpus_allowed == 1))
->>> +             return;
->>
->> I tried the code on a Pixel6 with the following setup:
->> - without the above (rq->nr_running > 1) condition
->> - without the push task mechanism
->> i.e. tasks without regular wakeups only have the opportunity to
->> run feec() via the sched_tick. It seemed sufficient to avoid
->> the problematic you mentioned:
->> - having unbalanced UCLAMP_MAX tasks in a pd, e.g. 1 UCLAMP_MAX task
->>     per little CPU, except one little CPU with N UCLAMP_MAX tasks
->> - downgrading UCLAMP_MAX tasks that could run on smaller CPUs
->>     but have no wakeups and thus don't run feec()
-> 
-> The main problem with your test is that you always call feec() for the
-> running task so you always have to wake up the migration thread to
-> migrate the current running thread which is quite inefficient. The
-> push mechanism only takes a task which is not the current running one
-> and we don't need to wake up migration thread which is simpler and
-> more efficient. We check only one task at a time and will not loop on
-> an unbounded number of tasks after a task switch or a tick
-> 
->>
->> Thus I was wondering it it would not be better to integrate the
->> EAS to the load balancer instead (not my idea, but don't remember
->> who suggested that).
-> 
-> My 1st thought was also to use load balance to pull tasks which were
-> stuck on the wrong CPU (as mentioned in [1]) but this solution is not
-> scalable as we don't want to test all runnable task on a cpu and it's
-> not really easy to know which cpu and which tasks should be checked
-> 
-> [1] https://youtu.be/PHEBAyxeM_M?si=ZApIOw3BS4SOLPwp
-> 
->> Or otherwise if just running feec() through the sched_tick path
->> would not be sufficient (i.e. this patch minus the push mechanism).
-> 
-> As mentioned above, the push mechanism is more efficient than active migration.
-> 
-> 
->>
->>> +
->>> +     if (!task_misfit_cpu(p, cpu))
->>> +             return;
->>> +
->>> +     new_cpu = find_energy_efficient_cpu(p, cpu);
->>> +
->>> +     if (new_cpu == cpu)
->>> +             return;
->>> +
->>> +     /*
->>> +      * ->active_balance synchronizes accesses to
->>> +      * ->active_balance_work.  Once set, it's cleared
->>> +      * only after active load balance is finished.
->>> +      */
->>> +     if (!rq->active_balance) {
->>> +             rq->active_balance = 1;
->>> +             rq->push_cpu = new_cpu;
->>> +     } else
->>> +             return;
->>> +
->>> +     raw_spin_rq_unlock(rq);
->>> +     stop_one_cpu_nowait(cpu,
->>> +             active_load_balance_cpu_stop, rq,
->>> +             &rq->active_balance_work);
->>> +     raw_spin_rq_lock(rq);
->>
->> I didn't hit any error, but isn't it eligible to the following ?
->>     commit f0498d2a54e7 ("sched: Fix stop_one_cpu_nowait() vs hotplug")
->>
-> 
-> I will recheck but being called from the tick, for the local cpu and
-> with a running thread no being cpu_stopper_thread, should protect us
-> from the case describe in this commit
-> 
->>
->>> +}
->>> +
->>> +static inline int has_pushable_tasks(struct rq *rq)
->>> +{
->>> +     return !plist_head_empty(&rq->cfs.pushable_tasks);
->>> +}
->>> +
->>> +static struct task_struct *pick_next_pushable_fair_task(struct rq *rq)
->>> +{
->>> +     struct task_struct *p;
->>> +
->>> +     if (!has_pushable_tasks(rq))
->>> +             return NULL;
->>> +
->>> +     p = plist_first_entry(&rq->cfs.pushable_tasks,
->>> +                           struct task_struct, pushable_tasks);
->>> +
->>> +     WARN_ON_ONCE(rq->cpu != task_cpu(p));
->>> +     WARN_ON_ONCE(task_current(rq, p));
->>> +     WARN_ON_ONCE(p->nr_cpus_allowed <= 1);
->>> +
->>> +     WARN_ON_ONCE(!task_on_rq_queued(p));
->>> +
->>> +     /*
->>> +      * Remove task from the pushable list as we try only once after
->>> +      * task has been put back in enqueued list.
->>> +      */
->>> +     plist_del(&p->pushable_tasks, &rq->cfs.pushable_tasks);
->>> +
->>> +     return p;
->>> +}
->>> +
->>> +/*
->>> + * See if the non running fair tasks on this rq
->>> + * can be sent to some other CPU that fits better with
->>> + * their profile.
->>> + */
->>> +static int push_fair_task(struct rq *rq)
->>> +{
->>> +     struct task_struct *next_task;
->>> +     struct rq *new_rq;
->>> +     int prev_cpu, new_cpu;
->>> +     int ret = 0;
->>> +
->>> +     next_task = pick_next_pushable_fair_task(rq);
->>> +     if (!next_task)
->>> +             return 0;
->>> +
->>> +     if (is_migration_disabled(next_task))
->>> +             return 0;
->>> +
->>> +     if (WARN_ON(next_task == rq->curr))
->>> +             return 0;
->>> +
->>> +     /* We might release rq lock */
->>> +     get_task_struct(next_task);
->>> +
->>> +     prev_cpu = rq->cpu;
->>> +
->>> +     new_cpu = find_energy_efficient_cpu(next_task, prev_cpu);
->>> +
->>> +     if (new_cpu == prev_cpu)
->>> +             goto out;
->>> +
->>> +     new_rq = cpu_rq(new_cpu);
->>> +
->>> +     if (double_lock_balance(rq, new_rq)) {
->>
->>
->> I think it might be necessary to check the following:
->>     if (task_cpu(next_task) != rq->cpu) {
->>       double_unlock_balance(rq, new_rq);
-> 
-> Yes good point
-> 
->>       goto out;
->>     }
->>
->> Indeed I've been hitting the following warnings:
->> - uclamp_rq_dec_id():SCHED_WARN_ON(!bucket->tasks)
->> - set_task_cpu()::WARN_ON_ONCE(state == TASK_RUNNING &&
->>                       p->sched_class == &fair_sched_class &&
->>                       (p->on_rq && !task_on_rq_migrating(p)))
->> - update_entity_lag()::SCHED_WARN_ON(!se->on_rq)
->>
->> and it seemed to be caused by the task not being on the initial rq anymore.
-> 
-> Do you have a particular use case to trigger this ? I haven't faced
-> this in the various stress tests that  I did
 
-It was triggered by this workload, but it was on a Pixel6 device,
-so there might be more background activity:
-- 8 tasks with: [UCLAMP_MIN:0, UCLAMP_MAX:1, duty_cycle:100%, period:16ms]
-- 4 tasks each bound to a little CPU with: [UCLAMP_MIN:0, UCLAMP_MAX:1024, duty_cycle:4%, period:4ms]
+=E5=9C=A82024=E5=B9=B49=E6=9C=8813=E6=97=A5=E4=B9=9D=E6=9C=88 =E4=B8=8A=E5=
+=8D=889:46=EF=BC=8CHuacai Chen=E5=86=99=E9=81=93=EF=BC=9A
+> Hi, Jiaxun,
+>
+> On Fri, Sep 13, 2024 at 4:56=E2=80=AFAM Jiaxun Yang <jiaxun.yang@flygo=
+at.com> wrote:
+>>
+>> Probe ISA level, TLB, IOCSR information from CPUCFG to
+>> improve kernel resilience to different core implementations.
+>>
+>> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+>> ---
+>>  arch/loongarch/include/asm/cpu.h       |  4 +++
+>>  arch/loongarch/include/asm/loongarch.h |  3 +-
+>>  arch/loongarch/kernel/cpu-probe.c      | 54 ++++++++++++++++++++++++=
+----------
+>>  3 files changed, 44 insertions(+), 17 deletions(-)
+>>
+>> diff --git a/arch/loongarch/include/asm/cpu.h b/arch/loongarch/includ=
+e/asm/cpu.h
+>> index 843f9c4ec980..251a15439cff 100644
+>> --- a/arch/loongarch/include/asm/cpu.h
+>> +++ b/arch/loongarch/include/asm/cpu.h
+>> @@ -100,6 +100,8 @@ enum cpu_type_enum {
+>>  #define CPU_FEATURE_HYPERVISOR         25      /* CPU has hypervisor=
+ (running in VM) */
+>>  #define CPU_FEATURE_PTW                        26      /* CPU has ha=
+rdware page table walker */
+>>  #define CPU_FEATURE_AVECINT            27      /* CPU has avec inter=
+rupt */
+>> +#define CPU_FEATURE_IOCSR              28      /* CPU has IOCSR */
+>> +#define CPU_FEATURE_LSPW               29      /* CPU has LSPW */
+> I don't see LSPW being used, so just remove it now?
 
-Regards,
-Pierre
+I=E2=80=99m going to submit a page table walker for CPU without SPW late=
+r on :-)
+
+I=E2=80=99m fine with adding that later.
+
+Thanks
+- Jiaxun
+
+>
+>>
+>>  #define LOONGARCH_CPU_CPUCFG           BIT_ULL(CPU_FEATURE_CPUCFG)
+>>  #define LOONGARCH_CPU_LAM              BIT_ULL(CPU_FEATURE_LAM)
+>> @@ -129,5 +131,7 @@ enum cpu_type_enum {
+>>  #define LOONGARCH_CPU_HYPERVISOR       BIT_ULL(CPU_FEATURE_HYPERVISO=
+R)
+>>  #define LOONGARCH_CPU_PTW              BIT_ULL(CPU_FEATURE_PTW)
+>>  #define LOONGARCH_CPU_AVECINT          BIT_ULL(CPU_FEATURE_AVECINT)
+>> +#define LOONGARCH_CPU_IOCSR            BIT_ULL(CPU_FEATURE_IOCSR)
+>> +#define LOONGARCH_CPU_LSPW             BIT_ULL(CPU_FEATURE_LSPW)
+>>
+>>  #endif /* _ASM_CPU_H */
+>> diff --git a/arch/loongarch/include/asm/loongarch.h b/arch/loongarch/=
+include/asm/loongarch.h
+>> index 631d249b3ef2..23af28f00c3c 100644
+>> --- a/arch/loongarch/include/asm/loongarch.h
+>> +++ b/arch/loongarch/include/asm/loongarch.h
+>> @@ -60,8 +60,7 @@
+>>  #define  CPUCFG0_PRID                  GENMASK(31, 0)
+>>
+>>  #define LOONGARCH_CPUCFG1              0x1
+>> -#define  CPUCFG1_ISGR32                        BIT(0)
+>> -#define  CPUCFG1_ISGR64                        BIT(1)
+>> +#define  CPUCFG1_ISA                   GENMASK(1, 0)
+>>  #define  CPUCFG1_PAGING                        BIT(2)
+>>  #define  CPUCFG1_IOCSR                 BIT(3)
+>>  #define  CPUCFG1_PABITS                        GENMASK(11, 4)
+>> diff --git a/arch/loongarch/kernel/cpu-probe.c b/arch/loongarch/kerne=
+l/cpu-probe.c
+>> index 14f0449f5452..5dc8ca3c4387 100644
+>> --- a/arch/loongarch/kernel/cpu-probe.c
+>> +++ b/arch/loongarch/kernel/cpu-probe.c
+>> @@ -92,11 +92,29 @@ static void cpu_probe_common(struct cpuinfo_loong=
+arch *c)
+>>         unsigned long asid_mask;
+>>
+>>         c->options =3D LOONGARCH_CPU_CPUCFG | LOONGARCH_CPU_CSR |
+>> -                    LOONGARCH_CPU_TLB | LOONGARCH_CPU_VINT | LOONGAR=
+CH_CPU_WATCH;
+>> +                    LOONGARCH_CPU_VINT | LOONGARCH_CPU_WATCH;
+>>
+>>         elf_hwcap =3D HWCAP_LOONGARCH_CPUCFG;
+>>
+>>         config =3D read_cpucfg(LOONGARCH_CPUCFG1);
+>> +
+>> +       switch (config & CPUCFG1_ISA) {
+>> +       case 0:
+>> +               set_isa(c, LOONGARCH_CPU_ISA_LA32R);
+>> +               break;
+>> +       case 1:
+>> +               set_isa(c, LOONGARCH_CPU_ISA_LA32S);
+>> +               break;
+>> +       case 2:
+>> +               set_isa(c, LOONGARCH_CPU_ISA_LA64);
+>> +               break;
+>> +       default:
+>> +               pr_warn("Warning: unknown ISA level\n");
+>> +       }
+>> +       if (config & CPUCFG1_PAGING)
+>> +               c->options |=3D LOONGARCH_CPU_TLB;
+>> +       if (config & CPUCFG1_IOCSR)
+>> +               c->options |=3D LOONGARCH_CPU_IOCSR;
+>>         if (config & CPUCFG1_UAL) {
+>>                 c->options |=3D LOONGARCH_CPU_UAL;
+>>                 elf_hwcap |=3D HWCAP_LOONGARCH_UAL;
+>> @@ -157,6 +175,8 @@ static void cpu_probe_common(struct cpuinfo_loong=
+arch *c)
+>>                 elf_hwcap |=3D HWCAP_LOONGARCH_LBT_MIPS;
+>>         }
+>>  #endif
+>> +       if (config & CPUCFG2_LSPW)
+>> +               c->options |=3D LOONGARCH_CPU_LSPW;
+>>
+>>         config =3D read_cpucfg(LOONGARCH_CPUCFG6);
+>>         if (config & CPUCFG6_PMP)
+>> @@ -222,6 +242,7 @@ static inline void cpu_probe_loongson(struct cpui=
+nfo_loongarch *c, unsigned int
+>>  {
+>>         uint64_t *vendor =3D (void *)(&cpu_full_name[VENDOR_OFFSET]);
+>>         uint64_t *cpuname =3D (void *)(&cpu_full_name[CPUNAME_OFFSET]=
+);
+>> +       const char *core_name =3D "Unknown";
+>>
+>>         if (!__cpu_full_name[cpu])
+>>                 __cpu_full_name[cpu] =3D cpu_full_name;
+>> @@ -232,40 +253,43 @@ static inline void cpu_probe_loongson(struct cp=
+uinfo_loongarch *c, unsigned int
+>>         switch (c->processor_id & PRID_SERIES_MASK) {
+>>         case PRID_SERIES_LA132:
+>>                 c->cputype =3D CPU_LOONGSON32;
+>> -               set_isa(c, LOONGARCH_CPU_ISA_LA32S);
+>>                 __cpu_family[cpu] =3D "Loongson-32bit";
+>> -               pr_info("32-bit Loongson Processor probed (LA132 Core=
+)\n");
+>> +               core_name =3D "LA132";
+>>                 break;
+>>         case PRID_SERIES_LA264:
+>>                 c->cputype =3D CPU_LOONGSON64;
+>> -               set_isa(c, LOONGARCH_CPU_ISA_LA64);
+>>                 __cpu_family[cpu] =3D "Loongson-64bit";
+>> -               pr_info("64-bit Loongson Processor probed (LA264 Core=
+)\n");
+>> +               core_name =3D "LA264";
+>>                 break;
+>>         case PRID_SERIES_LA364:
+>>                 c->cputype =3D CPU_LOONGSON64;
+>> -               set_isa(c, LOONGARCH_CPU_ISA_LA64);
+>>                 __cpu_family[cpu] =3D "Loongson-64bit";
+>> -               pr_info("64-bit Loongson Processor probed (LA364 Core=
+)\n");
+>> +               core_name =3D "LA364";
+>>                 break;
+>>         case PRID_SERIES_LA464:
+>>                 c->cputype =3D CPU_LOONGSON64;
+>> -               set_isa(c, LOONGARCH_CPU_ISA_LA64);
+>>                 __cpu_family[cpu] =3D "Loongson-64bit";
+>> -               pr_info("64-bit Loongson Processor probed (LA464 Core=
+)\n");
+>> +               core_name =3D "LA464";
+>>                 break;
+>>         case PRID_SERIES_LA664:
+>>                 c->cputype =3D CPU_LOONGSON64;
+>> -               set_isa(c, LOONGARCH_CPU_ISA_LA64);
+>>                 __cpu_family[cpu] =3D "Loongson-64bit";
+>> -               pr_info("64-bit Loongson Processor probed (LA664 Core=
+)\n");
+>> +               core_name =3D "LA664";
+>>                 break;
+>>         default: /* Default to 64 bit */
+>> -               c->cputype =3D CPU_LOONGSON64;
+>> -               set_isa(c, LOONGARCH_CPU_ISA_LA64);
+>> -               __cpu_family[cpu] =3D "Loongson-64bit";
+>> -               pr_info("64-bit Loongson Processor probed (Unknown Co=
+re)\n");
+>> +               if (c->isa_level & LOONGARCH_CPU_ISA_LA64) {
+>> +                       c->cputype =3D CPU_LOONGSON64;
+>> +                       __cpu_family[cpu] =3D "Loongson-64bit";
+>> +               } else if (c->isa_level & LOONGARCH_CPU_ISA_LA32S) {
+>> +                       c->cputype =3D CPU_LOONGSON32;
+>> +                       __cpu_family[cpu] =3D "Loongson-32bit";
+>> +               } else if (c->isa_level & LOONGARCH_CPU_ISA_LA32R) {
+>> +                       c->cputype =3D CPU_LOONGSON32;
+>> +                       __cpu_family[cpu] =3D "Loongson-32bit Reduced=
+";
+>> +               }
+> I prefer to move this part before the switch-case of PRID (and it is
+> better to convert to a switch-case too), then the switch-case of PRID
+> can be only used for probing core-name.
+>
+> Huacai
+>
+>>         }
+>> +
+>> +       pr_info("%s Processor probed (%s Core)\n", __cpu_family[cpu],=
+ core_name);
+>>  }
+>>
+>>  #ifdef CONFIG_64BIT
+>>
+>> --
+>> 2.46.0
+>>
+
+--=20
+- Jiaxun
 
