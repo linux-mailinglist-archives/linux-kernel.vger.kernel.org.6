@@ -1,99 +1,127 @@
-Return-Path: <linux-kernel+bounces-328102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62EFC977EE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:51:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 830D5977EE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:53:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CB641C21914
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:51:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48E2F284FB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:53:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4EC1D88BC;
-	Fri, 13 Sep 2024 11:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E551D88BC;
+	Fri, 13 Sep 2024 11:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Afv6Xwzi"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DvcZhikQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641BC1D6C7F;
-	Fri, 13 Sep 2024 11:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0103E2C80
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 11:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726228311; cv=none; b=Wg2IlaUtee0plOrL/n00NzQlStCsjRiECJqKUVa4nwqitYK3lUQFX4TouoCdAEsAgsc28L6ZyRFmnf17FX3I+eFl1F8aNQ5HJ6Hz1sQ+ABsIatv0oxUiOUkOLa7sBMkSXl4/DZWsJJHIHMDNsUKIYMzvdN/odMZAFpKave+KZZY=
+	t=1726228376; cv=none; b=cCdWQN+dO20l6l0JfJQzYdp2ApdxRjrf5OSEOuV5UZteguGZCj8DeaWl4bc33ojAnCaLGOaq/Dve9kNvLE/jT8joEis4PZ+nNkz6BxrsE/s65akqaHA0A2PB6iSt86jZp6QMl3A0leZC35ftjpcBg/Y7i7y6cOPm5WfYE0yjgok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726228311; c=relaxed/simple;
-	bh=1TLm4rAZ5pFpsYIIQFLhLiHFR2YYzQXDu6UGmffJLJY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UdSoOP1PiC4xjb/OGvk01RKeWqEq0WYdf92LsWe0K5LqiSqF8H+HEGXKZsTWe+dk74FFxWH4hHBQBPwg9yvorRZp41ZZnUqu/x2ya3zhzlM9/tlQKpkVwEuCtucywI0ACW29DHhmTIsTa361qeafhVRvXwYjorCl3UOed7jVCqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Afv6Xwzi; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 833F140002;
-	Fri, 13 Sep 2024 11:51:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1726228307;
+	s=arc-20240116; t=1726228376; c=relaxed/simple;
+	bh=pMCipnQS2GEzxtn5f/uJ+jzhSgUq2j2uXgI3jBB5eCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CH6Ki+P6USKBRpLUEgYy+M30qSDCsPmNKeQHXHJbvt3IjPz9kyu04QdBjWb5+Gw7RUjxA2svIy6A4OQZ9o9I4CwtFkR0CxfuOB0SZcfBkgo3bwwaxtoNFB8dBD+s05UC70Li6ibL+LqXZSRBv3ZrkG9lSGWCucNuCMFLsli+9YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DvcZhikQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726228374;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=o22ld+Ml/WqxlcTNuea7Zj0lN6reXMa5feXwsZPjWbs=;
-	b=Afv6XwzikOJ1Oxj7sjkT5xnkekmXx3kGpt6E4zviM0lqGfyyWrgQGf6xz0Z72g15ndFsxN
-	+zsa2jjS8MBWHCr8Lanlxa/RjOsz7vUKhdJSi4HOqFD1a+8TI3DegsICkCJbXPGzxFln5i
-	KkBiu2QG17SVcV21otBbvdONZHQMn86SSNlvvsWtYpbQQs1LKhGVRNDF2BNbry+i2FjIze
-	dIieib+x/XuXQDu5gDaTFh3s7RgOfEFr/53+Hy2okgkWp3YejE1CCv8MO9WQqhZsZBNqiK
-	1mMD9TVKROec5eqr0PU2gmegww2mZvTE7zr4Oz3GqKemu9TywB4cpFTYTCzGvw==
-Date: Fri, 13 Sep 2024 13:51:45 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: <syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com>,
- <christophe.leroy@csgroup.eu>, <davem@davemloft.net>,
- <edumazet@google.com>, <kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
- <netdev@vger.kernel.org>, <pabeni@redhat.com>,
- <syzkaller-bugs@googlegroups.com>
-Subject: Re: [PATCH net-next] net: ethtool: phy: Distinguish whether dev is
- got by phy start or doit
-Message-ID: <20240913135145.2c9ac50c@fedora.home>
-In-Reply-To: <20240913080714.1809254-1-lizhi.xu@windriver.com>
-References: <000000000000d3bf150621d361a7@google.com>
-	<20240913080714.1809254-1-lizhi.xu@windriver.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	bh=kjWhGkYRLL4AoRfx/SSMTKGWIse43z4bAnG3BFGqR34=;
+	b=DvcZhikQ0I/oSeStepD2bgto/U/7KWCHWUxjdjXmA88fNqqOo1FtX5uYhiTvy94iJJu52T
+	FY6a+dAwGwcW/ttX8NJ+9KA44/ig33NaTgi7MBXaSaA+x1gi/TytQnchungMcsFJ2QPr+K
+	F9ZsotFNeS1dRYibEtrzH1zA4pr16NA=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-549-rBokVC_iPJ6RNTN59bqzpw-1; Fri,
+ 13 Sep 2024 07:52:50 -0400
+X-MC-Unique: rBokVC_iPJ6RNTN59bqzpw-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 995611955F07;
+	Fri, 13 Sep 2024 11:52:47 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.25])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 9F46519560AB;
+	Fri, 13 Sep 2024 11:52:41 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 13 Sep 2024 13:52:35 +0200 (CEST)
+Date: Fri, 13 Sep 2024 13:52:28 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCHv3 1/7] uprobe: Add support for session consumer
+Message-ID: <20240913115228.GE19305@redhat.com>
+References: <20240909074554.2339984-1-jolsa@kernel.org>
+ <20240909074554.2339984-2-jolsa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240909074554.2339984-2-jolsa@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hi,
+On 09/09, Jiri Olsa wrote:
+>
+> @@ -37,13 +37,16 @@ struct uprobe_consumer {
+>  	 * for the current process. If filter() is omitted or returns true,
+>  	 * UPROBE_HANDLER_REMOVE is effectively ignored.
+>  	 */
+> -	int (*handler)(struct uprobe_consumer *self, struct pt_regs *regs);
+> +	int (*handler)(struct uprobe_consumer *self, struct pt_regs *regs, __u64 *data);
+>  	int (*ret_handler)(struct uprobe_consumer *self,
+>  				unsigned long func,
+> -				struct pt_regs *regs);
+> +				struct pt_regs *regs, __u64 *data);
 
-On Fri, 13 Sep 2024 16:07:13 +0800
-Lizhi Xu <lizhi.xu@windriver.com> wrote:
+And... I won't insist, but I'd suggest to do this in a separate patch
+which should also update the current users in bpf_trace.c, trace_uprobe.c
+and bpf_testmod.c.
 
-> Syzbot reported a refcount bug in ethnl_phy_done.
-> This is because when executing ethnl_phy_done, it does not know who obtained
-> the dev(it can be got by ethnl_phy_doit or ethnl_phy_start) and directly
-> executes ethnl_parse_header_dev_put as long as the dev is not NULL.
-> Add dev_start_doit to the structure phy_req_info to distinguish who obtains dev.
-> 
-> Fixes: 17194be4c8e1 ("net: ethtool: Introduce a command to list PHYs on an interface")
-> Reported-and-tested-by: syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=e9ed4e4368d450c8f9db
-> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+Then it would be easier to review the next "functional" change. But this
+is minor, feel free to ignore.
 
-Thanks for addressing this, however I've already sent a first fix for
-this [1] yesterday, followed-up by a second one [2] with another
-approach following the reviews.
 
-[1] : https://lore.kernel.org/netdev/20240913091404.3d4a9d19@fedora.home/T/#m4777416dbe26bf97b3a0a323fc71a93b40e0f7fb
-[2] : https://lore.kernel.org/netdev/20240913100515.167341-1-maxime.chevallier@bootlin.com/T/#u
+Finally, imo this documentation in handler_chain()
 
-Best regards,
+		/*
+		 * The handler can return following values:
+		 * 0 - execute ret_handler (if it's defined)
+		 * 1 - remove uprobe
+		 * 2 - do nothing (ignore ret_handler)
+		 */
 
-Maxime
+should be moved to uprobes.h and explain UPROBE_HANDLER_REMOVE/IGNORE there.
+
+And note that "remove uprobe" is misleading, it should say something
+like "remove the breakpoint from current->mm".
+
+Oleg.
+
 
