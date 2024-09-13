@@ -1,144 +1,135 @@
-Return-Path: <linux-kernel+bounces-328023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E63C977DE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:41:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8197977DE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:46:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 561ED1F215B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:41:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60C7DB22989
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD7801D7E51;
-	Fri, 13 Sep 2024 10:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFCE1D86D7;
+	Fri, 13 Sep 2024 10:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XyxoIQDE"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PCesijiR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186701B9826;
-	Fri, 13 Sep 2024 10:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221C01D7E39;
+	Fri, 13 Sep 2024 10:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726224107; cv=none; b=tzqnljHX9RUjktaO8VpXWjnf+LDlJPo9H4kfY0DeUxPf7j/hbjrpcxCWLR5yW6XFP5KMAWtQVYUmTJGWlliDcQJ1Gyg4DUgMhrcjARrvh3H+J5NqmAWYrtj16AdVpdczoLvlxuf3QNhJwfYJbl7TXEbPij++LkxpOPkDYlRowFo=
+	t=1726224383; cv=none; b=hS65T82EXrSjawsMwRzD3VNRHo2Y2q+uOWzNT7uUbEUX64a/8e1RIfbr33MrFm6j24iRIqDCZEwN9AN6rerHF/ESijvPhehMCk8hfA9yi+Jjxc+qiL0umtepd8GYtCz+QyZRdkyz153fXG5/YMxxZnwQWLxinO4j9AE4Jf9KaWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726224107; c=relaxed/simple;
-	bh=JICNTVqX1nbtOb/rRWVWNUiKb0VIP6ogub7x0oZyFeM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sbz3n+j32br+qpLbXrp+ccDQt2wlXIkx/HVH9wH9nF1S0A18OAqhMJ1eQ1cSoGEmbqyidU2aCdGQj3ugVSgnJMDLP36jvJvIkzzOe1bK2AfXKdlT6xYV37fhWwulvWyUS07fSFmwt/NxTVh4bxBXXbeyjWubqu2i80JSZFKz6WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=XyxoIQDE; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726224100;
-	bh=KqjBufrxC1T+9UNimGFrPXe7rI3jiWjqihf9xX0aIeg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XyxoIQDErSA1qKR62zcOAPzg2joowjqZfj8xhd1SPLWne9anPPVLrnPsDtdLjyoNn
-	 mDBKHofLzOlr+o4Yv0XXu42U9nlvcGc7VPrEQOCeYvtRMqGiqpWGkEyMbt7BSV0oYo
-	 qJedo1H2i9/RxPhw6Ztz+KT519n6LmAMgFDLzp1CmnODXfXswnnwzZDI00nB+GnQm1
-	 n0wlbV8LMRnAy9heSAeCDSvY6qymWPXzCBx5naFxQWj2o4Lhxru0H/VPgvQBx0+LA9
-	 O6cu0X31e1nCzU/gocznUcF+tuswkBy3NU+BX8vfHL/y2U0uXUOXSy6+5jMz1/sQQK
-	 n1H41yt0vrHyw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X4rTH3Yq1z4xD7;
-	Fri, 13 Sep 2024 20:41:39 +1000 (AEST)
-Date: Fri, 13 Sep 2024 20:41:38 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: David Miller <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>,
- Mina Almasry <almasrymina@google.com>, Networking <netdev@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Message-ID: <20240913204138.7cdb762c@canb.auug.org.au>
-In-Reply-To: <20240912200543.2d5ff757@kernel.org>
-References: <20240913125302.0a06b4c7@canb.auug.org.au>
-	<20240912200543.2d5ff757@kernel.org>
+	s=arc-20240116; t=1726224383; c=relaxed/simple;
+	bh=S3OfFPhvngzIXVIBvvu2VJ7Ne9DtASb05dIPumrAuGA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BVQV6Ubx3ptMeyUN0tT8O7ZmO/xgIQnn/I8Ee74AP3BNM35UQBI8QiL9nuzghXKge+d5n6kfBsbtVrtLIjmiboqw30UtYl0/rV+KUtQ4N2cbjLuTB+mucGHVNWgEb5Lv4wCF0T/+ob5daD6PabwP3AvyHcfMyYTYbvQD1FI9Ae8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PCesijiR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0A22C4CED0;
+	Fri, 13 Sep 2024 10:46:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726224382;
+	bh=S3OfFPhvngzIXVIBvvu2VJ7Ne9DtASb05dIPumrAuGA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=PCesijiRN0EG3csPIokYtW3nnlsM02Sn8/crXyeded6Dwiab1FXZ1fvHFnj32e9UD
+	 cUpXq9+9gb60uH+AhkYtovgYOFsLDU2WvffuKLjvouAEUdvtELf8wLcUFpeHcbx7UE
+	 PQRmFs+U5Oaa0v1kQ6ALW5DOePB1fBbdgCS1l4awJ9RecUVQQidV/f/6/CVaZvssFR
+	 9pLsHQ0AA8fyZh64QFPAmLTZOMJ5OnOGzfpFynP8FAX1vINw2F1j0K34I4XiMXX5Y8
+	 AnOGx3kl3u0eqy8V5gzcrzME/JZ336CG29Z3URffZrBjoA79xZam0o+VvZqNjuhuY4
+	 BRMp/RZi+BS3Q==
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f75b13c2a8so24190331fa.3;
+        Fri, 13 Sep 2024 03:46:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUtjXwnFTNIuWnSbnkUwh3mG3eK9s80i598NqBybOM9WFflbthvaSQWT/sI23aDneB8mZCIDM+YDQLKVkBX@vger.kernel.org, AJvYcCUxlrTIMOpFB/UGvEnX4EaxQWiD2lHaNEILJooPdrIhFCtINDH8U2/jPJQxg2G0rbD6Q7BTyPkEccIO55kD@vger.kernel.org, AJvYcCXIHqZUR184CNDIy8QLX2hEkhyAs0T+fhGvgyWME+slirwUQprRnxfVIDWez3vAlwJ97UkQ4l3Cyw==@vger.kernel.org, AJvYcCXsvIfTLerldLa2wE4EUT769Y8N8i/BevX+aQ6HjWbIAv1j/whDkaAwxlbAv6SCG7OoDGHTGzzL2myKIknLJEce@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWUcLhFUar0QGK9HSPfpf6X9uw0wPDOW8TOnshNJYQhbv19RF1
+	5luUdTsRwJFNZ7u7ywM40DmK0ftvRKVaTxydIjWxdrTSABfosIyW6ovFn80ms3T0TA+hf5ZmaDd
+	AK13nl3cc9om3s4u8tZnjX+Q76js=
+X-Google-Smtp-Source: AGHT+IHgfCxPiT5vZMtaQepta9uqXpG4/5TNPzFxOmRXvEQwfvgwsKyWmN8/Fya2mEuSKQsg4t5AMIdDxMekLTQEEkM=
+X-Received: by 2002:a2e:1311:0:b0:2f3:ed34:41c9 with SMTP id
+ 38308e7fff4ca-2f787f32dc2mr26801081fa.37.1726224380930; Fri, 13 Sep 2024
+ 03:46:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/OqNqPcdJGXr8HswA1u3OcDh";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+References: <ZuPDZL_EIoS60L1a@gondor.apana.org.au> <1266435.1726219950@warthog.procyon.org.uk>
+In-Reply-To: <1266435.1726219950@warthog.procyon.org.uk>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 13 Sep 2024 12:46:09 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXH8nWtAzX+9xc2tLyy5d0w==JNQCMJBAbL=LdcF+XrYkw@mail.gmail.com>
+Message-ID: <CAMj1kXH8nWtAzX+9xc2tLyy5d0w==JNQCMJBAbL=LdcF+XrYkw@mail.gmail.com>
+Subject: Re: [PATCH v3 00/14] KEYS: Add support for PGP keys and signatures
+To: David Howells <dhowells@redhat.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>, 
+	Roberto Sassu <roberto.sassu@huaweicloud.com>, dwmw2@infradead.org, davem@davemloft.net, 
+	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, zohar@linux.ibm.com, 
+	linux-integrity@vger.kernel.org, torvalds@linux-foundation.org, 
+	roberto.sassu@huawei.com
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/OqNqPcdJGXr8HswA1u3OcDh
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi Jakub,
-
-On Thu, 12 Sep 2024 20:05:43 -0700 Jakub Kicinski <kuba@kernel.org> wrote:
+On Fri, 13 Sept 2024 at 11:32, David Howells <dhowells@redhat.com> wrote:
 >
-> On Fri, 13 Sep 2024 12:53:02 +1000 Stephen Rothwell wrote:
-> > /home/sfr/next/tmp/ccuSzwiR.s: Assembler messages:
-> > /home/sfr/next/tmp/ccuSzwiR.s:2579: Error: operand out of domain (39 is=
- not a multiple of 4)
-> > make[5]: *** [/home/sfr/next/next/scripts/Makefile.build:229: net/core/=
-page_pool.o] Error 1 =20
->=20
-> Ugh, bad times for networking, I just "fixed" the HSR one a few hours
-> ago. Any idea what line of code this is? I'm dusting off my powerpc
-> build but the error is somewhat enigmatic.
+> Herbert Xu <herbert@gondor.apana.org.au> wrote:
+>
+> > Personally I don't think the argument above holds water.  With
+> > IPsec we had a similar issue of authenticating untrusted peers
+> > using public key cryptography.  In that case we successfully
+> > delegated the task to user-space and it is still how it works
+> > to this day.
 
-I have bisected it (just using the net-next tree) to commit
+This is slightly disingenuous. The kernel itself has no need to trust
+the peer - it only manages the network pipe and authenticates/decrypts
+the packets on behalf of user space.
 
-8ab79ed50cf10f338465c296012500de1081646f is the first bad commit
-commit 8ab79ed50cf10f338465c296012500de1081646f
-Author: Mina Almasry <almasrymina@google.com>
-Date:   Tue Sep 10 17:14:49 2024 +0000
+The situation would be radically different if the kernel itself would
+communicate over IPsec (or HTTPS) directly.
 
-    page_pool: devmem support
-   =20
+Likewise for module loading: there is no way the authentication can be
+delegated to user space, unless that user space component is
+authenticated by the kernel (and runs in a special, hardened context).
+>
+> It transpires that we do actually need at least a PGP parser in the kernel -
+> and it needs to be used prior to loading any modules: some Lenovo Thinkpads,
+> at least, may have EFI variables holding a list of keys in PGP form, not X.509
+> form.
+>
+> For example, in dmesg, you might see:
+>
+> May 16 04:01:01 localhost kernel: integrity: Loading X.509 certificate: UEFI:MokListRT (MOKvar table)
+> May 16 04:01:01 localhost kernel: integrity: Problem loading X.509 certificate -126
+>
 
-And it may be pointing at arch/powerpc/include/asm/atomic.h line 200
-which is this:
+MokListRT is a shim construct, which is a component in the downstream
+distro boot chain. It is not part of EFI, and in your case, this is
+unlikely to be specific to Lenovo systems.
 
-static __inline__ s64 arch_atomic64_read(const atomic64_t *v)
-{
-        s64 t;
+> On my laptop, if I dump this variable:
+>
+>         efivar -e /tmp/q --name=605dab50-e046-4300-abb6-3dd810dd8b23-MokListRT
+>
+> And then looking at the data exported:
+>
+>         file /tmp/q
+>
+> I see:
+>
+>         /tmp/q: PGP Secret Sub-key -
+>
+> The kernel doesn't currently have a PGP parser.  I've checked and the value
+> doesn't parse as ASN.1:
+>
+>         openssl asn1parse -in /tmp/q -inform DER
+>             0:d=0  hl=2 l=  21 prim: cont [ 23 ]
+>         Error in encoding
+>         001EBA93B67F0000:error:0680007B:asn1 encoding routines:ASN1_get_object:header too long:crypto/asn1/asn1_lib.c:105:
+>
+> which would suggest that it isn't X.509.
+>
 
-        /* -mprefixed can generate offsets beyond range, fall back hack */
-        if (IS_ENABLED(CONFIG_PPC_KERNEL_PREFIXED))
-                __asm__ __volatile__("ld %0,0(%1)" : "=3Dr"(t) : "b"(&v->co=
-unter))
-;
-        else
-                __asm__ __volatile__("ld%U1%X1 %0,%1" : "=3Dr"(t) : "m<>"(v=
-->counter));
-
-        return t;
-}
-
-The second "asm" above (CONFIG_PPC_KERNEL_PREFIXED is not set).  I am
-guessing by searching for "39" in net/core/page_pool.s
-
-This is maybe called from page_pool_unref_netmem()
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/OqNqPcdJGXr8HswA1u3OcDh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbkFuIACgkQAVBC80lX
-0GzYvwf+My4BrCjgWnAkd9yuW9q9y0XFB9nX8bAWXutRCiTw22e2MPif0yBJptC+
-6mFCLLQUcov4q6REPXui/S6HfFoVSnc4Brl7FK002mDBjkZDRG+/JY9o+NBLECP9
-gfZLmb4gvvcPtWM9i43hI1LG0xL/vFPri3jsRLwnbzMjwDd9QuzL4GVKGZXbSO5C
-bzJGd3+jzVfMYpMSIcSxYmHR1gDr2fuSJObVoDk7hx9bW7RlgKM0tdg2s7qx+pDs
-DSdELdrDXxgAyArQBLUdzkLok1HNpMaqXqinY+jhPlzc1B8FL3T1eyiUrz1FLp4K
-gkIxUT3Wnq93H6SNB1uFO4CMXStdDQ==
-=3Adj
------END PGP SIGNATURE-----
-
---Sig_/OqNqPcdJGXr8HswA1u3OcDh--
+This should be fixed in shim not the kernel.
 
