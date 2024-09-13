@@ -1,56 +1,57 @@
-Return-Path: <linux-kernel+bounces-328290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C923B97817A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:48:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BE33978179
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:48:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CC9EB2323A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:48:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E25231F2538B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:48:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F861DB95B;
-	Fri, 13 Sep 2024 13:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E5E51DB93B;
+	Fri, 13 Sep 2024 13:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="aXiK1slG"
-Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="bdDo9gnE"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51D21DB94D;
-	Fri, 13 Sep 2024 13:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F25F51BDA85;
+	Fri, 13 Sep 2024 13:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726235249; cv=none; b=mLuIHFmmnnU2OD8OojjBrEEKVtNTjl34tLy3tayL8h/VdqmK9wKPwb1BBBSbCxAtErUwtfbBZCFULbVB14IDJhTYaTYFXIqzkfGy6zlrJJ56aN1rNn8lTD3U4wOaip61an9o+atq+fKUzHnIVgnSldDjt5fi3k7+SoEDlgxjqjI=
+	t=1726235243; cv=none; b=R+GNnOIf+Wybpmyetm0SGapYdIEkKtb9NHrSWXxBBMKO54fW3uPsdqxkjgJTgaYE8jg+4J9BlykkW4z83Xzyl9HJ7YZNOcHnFxihzsnrcFJ30k1M2yo4LR7jwzJ3PdX+N7tAGDngGmw4LUPzr2cdo8YtPTnW/pkvEcZJOao9xeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726235249; c=relaxed/simple;
-	bh=GZG5Q4PYxwRPU+OS+/CNkqCPb50HPjc3xKewmpW3GLg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I+ggPBhaAPP7vwFEEy8R7Z6K54HM78LTDUVDKI8w8cNWiX/fTdybRkxg6tV+en0N6Gaz5txGmlqOrZ8RlDIPRKsnvo0BbnLcrK7Ov9Nl5UNUV9eM6MRfhQBcm2DejsYShUYqmugRyzDNPARxvA/5Z0FEtaWpF8hmQivSL+wDW88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=aXiK1slG; arc=none smtp.client-ip=49.12.199.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 258F2DAC06;
-	Fri, 13 Sep 2024 15:47:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
-	t=1726235239; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=fZY5alxMSv52zndyax4LhSJk/d8fGq0vKOA63eoQKx4=;
-	b=aXiK1slGH1j2yTrch4uqHfTFeQW6E0zd6/Y/RyADbTSnM0wCvFOs0SczdOsmbJVpY/2pvb
-	JPuss1YGuE99LTEnFKsVFanFAsvEwkMu0OxHAa7dWjs59R4aDONA1q9YQnhsyU4OMydrNC
-	ZGYUJXVvo+ySq/uhd/YL25q0ykLkN+uWDt7oT1cncJL7vV2HSkJjsxvM267xPuw1yd/hwu
-	8A57QsoQrp7tMoBZQCQF3kcPWvlp953VmK/oWSjI8azzg6xXNhps16IBAdieE/zm9TFdGi
-	CMrcy+v2q5w9nsdJJ07qUNr+Eke+VV+NUp9h4lyUItkGob6XFgbuiLXLTSKyqQ==
-Date: Fri, 13 Sep 2024 15:47:13 +0200
-From: Daniel Wagner <wagi@monom.org>
-To: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, 
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Daniel Bristot de Oliveira <bristot@kernel.org>, kernel@collabora.com, gustavo.padovan@collabora.com, 
-	helen.koike@collabora.com
-Subject: Re: [Report] rtla: Failed to set runtime and/or period
-Message-ID: <5b7e6aa4-8fe1-4ba3-b5e9-80bfa710afb9@flourine.local>
-References: <d3468fce-088c-45d0-8543-a2bc9fef07c9@collabora.com>
+	s=arc-20240116; t=1726235243; c=relaxed/simple;
+	bh=WYyA5Vp4yB2SzAq5FgsNLkWXyhNzcdO7XMVLMGkAFZE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gfBqMFN8kXF/Pz9Jcauwss8NyHJwW0zIyNC81Ydn2Jzh5AATJ2rW5wXZccSdGYcwxK9w+G3TVdScv0KdAtvwFxVuSOxIADlU2NN0UDgtQDtUqbBATxm8rVLCokjSz0EjxGK+bnUD8JNzoHTHL6Xn8TdLsQGib66DztgVwlrVFH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=bdDo9gnE; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=t23qmclnbfdk7ikjffltxnilny.protonmail; t=1726235239; x=1726494439;
+	bh=SL3UlF5etkuUcpUbBrRU6HGec8qwa3J9DFhxx6wKbmg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=bdDo9gnE0o/bZQrzRUryK5khH6tmq6pRw9ow7rtComZG5xYF5MofCkMkRo6s+400+
+	 KOW+nAfCyf9TTWTPnjlmcwwbCn6mZzRfKnVBqTTO0u9Qo1Kma5GcwfqFbf6rQWTxhq
+	 ZUvM7jhMawYmJuvZO9LgwQ21IhKXBY/oCCSd2IbsPvq2IHKC0m5lk28qtHzVcDAJjq
+	 fFfLXH+Z2MBynPPx9gAwQogl6tkC2Mat1sY0JZLi9fkxu/TjOyRKsqNjhZijGXIDRr
+	 7X9zF7ZbWCj6kTlGgT0wthPdu2+Jvm7APrns1QuThmXZS5UIHDsXESoNq+f9MNgQ5E
+	 JWux13PkN42VQ==
+Date: Fri, 13 Sep 2024 13:47:15 +0000
+To: Finn Behrens <me@kloenk.dev>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Greg KH <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] rust: add untrusted data abstraction
+Message-ID: <5f60a885-733e-4434-ac5e-a70005f11382@proton.me>
+In-Reply-To: <EE2A76E7-58E6-40E5-9075-48A169292250@kloenk.dev>
+References: <20240913112643.542914-1-benno.lossin@proton.me> <20240913112643.542914-2-benno.lossin@proton.me> <EE2A76E7-58E6-40E5-9075-48A169292250@kloenk.dev>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: dcd4c3c2fd7e5b9edafd8fb86ab173433798d0dc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,64 +59,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d3468fce-088c-45d0-8543-a2bc9fef07c9@collabora.com>
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 12, 2024 at 06:58:02PM GMT, Muhammad Usama Anjum wrote:
-> We are running rt-tests on KernelCI. I'm looking at failures and I found
-> out that rtla osnoise and rtla timerlat are failing. We have just
-> enabled these tests and they are failing from day one.
+On 13.09.24 15:41, Finn Behrens wrote:
+> On 13 Sep 2024, at 13:26, Benno Lossin wrote:
+>> +pub trait Validator {
+>> +    /// Type of the input data that is untrusted.
+>> +    type Input: ?Sized;
+>=20
+> I would like to explore this trait with being generic over Input, instead=
+ of having Input as an associated type. Might be nicer to have Validators f=
+or different input types if the valid data is always the same?
 
-Thanks a lot on working on this!
+I think I have changed my opinion on this from Kangrejos, I like the
+idea. Then we would also be able to do something like this:
 
-> The first thing I fixed in my local setup is to sync the version of rtla
-> with that of the running kernel from the source. It resolves the Tracer
-> timerlat not found!" error as we had installed the older rtla package
-> from Debian on CI.
+    impl<I> Validator<I> for Foo
+    where
+        I: Deref<Target =3D [u8]>,
+    {
+        /* ... */
+    }
 
-There is some dependency between kernel version and the rtla tool suite.
-I suppose there is a window of version which you can differ but I
-suppose the Debian packaged version is way too old for recent kernels.
+---
+Cheers,
+Benno
 
-> I'll update it. Is the version of rtla dependent on
-> the exact kernel version or any recent rtla version is acceptable?
+>> +    /// Type of the validated data.
+>> +    type Output;
+>> +    /// Validation error.
+>> +    type Err;
+>> +
+>> +    /// Validate the given untrusted data and parse it into the output =
+type.
+>> +    ///
+>> +    /// When implementing this function, you can use [`Untrusted::untru=
+sted()`] to get access to
+>> +    /// the raw untrusted data.
+>> +    fn validate(untrusted: &Untrusted<Self::Input>) -> Result<Self::Out=
+put, Self::Err>;
+>> +}
+>> --
+>> 2.46.0
 
-I have to figure this out. It could be that we need to build/provide
-matching rtla versions to the kernel. In theory the API should be stable
-etc but I suspect the APIs got broken (not on purpose) in the early
-days. Anyway, we have to figure this out as we can't ask Daniel sadly.
-
-> The other errors are persistent:
-> 
-> ➜  sudo ./rtla osnoise hist -r 900000
-> Failed to set runtime and/or period
-> Could not apply config
-
-This works on my Tumbleweed kernel (pretty much a vanila kernel)
-6.10.9-1-default with the matching rtla version 6.10.9.
-
-What version do you use?
-
-> I thought maybe some argument are wrong. I ran the example from man page:
-> 
-> ➜  sudo ./rtla osnoise hist -P F:1 -c 0-11 -r 900000 -d 1M -b 10 -E 25
-> Failed to apply CPUs config
-> Could not apply config
-
-Same here. This works on my local kernel.
-
-> Is there some configuration which is missing for running rtla? Please
-> let me know.
-
-Are these
-
-    CONFIG_OSNOISE_TRACER
-    CONFIG_TIMERLAT_TRACER
-
-config option enabled in your kernel?
-
-Thanks,
-Daniel
 
