@@ -1,195 +1,175 @@
-Return-Path: <linux-kernel+bounces-327961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB38977D25
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:18:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A8C7977D2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3446E1C20DE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:18:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 569B51C20E29
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C685E1D7E36;
-	Fri, 13 Sep 2024 10:18:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 731B51C2422;
+	Fri, 13 Sep 2024 10:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B0oE51jG"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vE2plQ85"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779C51272A6;
-	Fri, 13 Sep 2024 10:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA0518BC20
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 10:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726222691; cv=none; b=QfqyUKRR0vtbkPL+wHcjgFnT41PBzaN9kiE0joSw6dDC3k/gIAaIK7P4sFZGjYnMYDA7Jm70DacoY9jxtTnGeG1xFvxSOmJNXKhtXKArHiB4+oeakw8DL2PofmxdL/JX+wXI8fmD3i0WLqqe9xrqMQedjhZQgSImbZpCHQ0jAKY=
+	t=1726222822; cv=none; b=dEQNjha8lakv2kSBws7tXy4WHzdFdB06/hKiUrhUpogfFqUa21HdaThmBSBZxv81EbMx03oJSnYBwLf29IbxdEO/FaHP15BVTy3J+e31bByDdTR2o2ldS0hXkZWi63vZt97/2GimubZW5hNzrzPZsUSilBsADqdb2aoZwPlroL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726222691; c=relaxed/simple;
-	bh=rq0cpoOgAqPg2i8ruVnsc/sSAuiTwarjDXcOaAEYfXo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GCrVmeGwJnMgiGgiw8wOAqwkdl5/S0s7OYstumpFCtYJkZ9miFKLFrvCs/sKmNCV2zw+Ku5ZY4Vo3fhtqWSoIYKA5L+u+nl3WnhUQQyTWsyb4X+tO0wPKbzvlh+VBv+gKq2/qmVJ9wNvYgw74zfNafZVu2hacEuZUu5R7pF3iNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B0oE51jG; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cae4eb026so19024805e9.0;
-        Fri, 13 Sep 2024 03:18:09 -0700 (PDT)
+	s=arc-20240116; t=1726222822; c=relaxed/simple;
+	bh=+a8dHCpcOKdPblR+icDGIFbRfJiKQRh9zmI9229E+lo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UTbvxgjTjSb2dKEvF4QAhG56lI+dukF7KqEWGkT8J4O+cb7HqZQD4SbWMINY/Ji7zk3fNzSEd4/RRJMLrmCLganlQerCxKXvXPwh5C8p1OayMpBlAi6b8/mkIc4ikPp23Jbuw4CeiK6R7IkM2i0Zibux7uydvIC+bFRywmDuzFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vE2plQ85; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cae6bb895so18880355e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 03:20:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726222688; x=1726827488; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=kx5BsABkoElJE7bjexxNubeyaOGJiSqqc8lQf9xJ58Q=;
-        b=B0oE51jGBj0ZKAyD0lA/QMotEfWtsZ6b4WgvUn91D7IPWfeYl6ifYJefTbU0/StIl+
-         iXum81AFs0Obvl7zhP5Ci/IlIJ6xTaIsr2rmjgjgNgHe0XfKBvlPrORVkxWWUQm7X86H
-         tgrL7gjU6bDpbmNLlc+ku4aA/i4JiArbIU3dm+mOEE6nbsIB7n71CK8nd1Rj9HRSghp2
-         TFVy4NLQfH9e97ZVkziqEhP+h1XkboklPKpFCuyPHdafcdFSz0MzGssTeT/BAcC3wN4k
-         rzDmpiSYGjGTcLExAW2n9xurqE8G8HmqQ7V7IefIPaQghKGBvWX9GAFhfWNMtIm7WSjh
-         09oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726222688; x=1726827488;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=linaro.org; s=google; t=1726222819; x=1726827619; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=kx5BsABkoElJE7bjexxNubeyaOGJiSqqc8lQf9xJ58Q=;
-        b=l28xs8uNfPcRXk/3yf0DkgxWNIgLDa4JqjrMQfLQS6XpoH15iU9hkmugVEZMJ47e+S
-         NuCiOo3lGLP5VmD+3X00XNdWOP3fTJw59/P3EiMjyx2KC9+zrM980S6CMqbX1M6zF5oi
-         xgWtbzGoc8NC8oN1MeWBR7ADRqUgVZYrXPzPIgB5JJuayGh9VIhd/kudYrCY4YeenlKS
-         +pfGi+Rdu1oBwtEn7vlZiAVxxnwPaM1JQpmyvESjASaJ1+b5dXUbVz1JFoldz6NQnuRg
-         ehuvzq67MVPGd/yVHu02ySFO/u/33ur/UF1ixf38Gf9rb1e9fzo/RJj9c5ciMkS/0JL8
-         gKuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMYH9fsGMWdSR2nbjQRFvb2y8xpb75O99u4+WVA897aJEFgvy52xVPBs/hVETyn2C/QrMQIwDCEuFe@vger.kernel.org, AJvYcCWpCLx0eSEGwM+YB+7/KqgzAp/MjeZbT6IuzYtFHzu/r8SgzgG+7sYOUEfG6n3ab+qlxfVqqEUjHmXA@vger.kernel.org, AJvYcCX+U56JJmtkchdlGxwQO6WhwFSDpGHBddVsyS0igY/kF3OGoTu77TtpFmdN7w/ZmFaGQprVDJFZxGsDGzPo@vger.kernel.org, AJvYcCXQ1xsMMYPXnEcg9QQLvtq3tpO3ideoaX2wF45BaTv5YMwYeQNFWk+Bs3DubEJxU/vclV/zPMREPQ9i@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhZbci6+aoN0spfXpzJTn2vY5B2KVPvBZXoChT4mWQ0HTIFaha
-	BknM/rwe/Wl539rv+2DHO9ApcF7Ezy2pFZbJTwAf7SdN+sVvTGPu
-X-Google-Smtp-Source: AGHT+IEErEMp5HKQGF5Xiah+gi6I3jO7IyCsIxXTBZS6IkyJs7SzH7NjDnG+zYgZu1BvEiIjkfAT/g==
-X-Received: by 2002:a05:600c:1caa:b0:42c:a574:6364 with SMTP id 5b1f17b1804b1-42cdb531b89mr45506795e9.12.1726222686967;
-        Fri, 13 Sep 2024 03:18:06 -0700 (PDT)
-Received: from ?IPv6:2001:a61:341e:1201:c434:b5b1:98a6:efed? ([2001:a61:341e:1201:c434:b5b1:98a6:efed])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b05a700sm19998105e9.10.2024.09.13.03.18.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 03:18:06 -0700 (PDT)
-Message-ID: <0a4e7fe39cf36774b28c86f6baab5ef8c20e3d6b.camel@gmail.com>
-Subject: Re: [PATCH 4/6] iio: adc: ad4030: add support for ad4630-24 and
- ad4630-16
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Esteban Blanc <eblanc@baylibre.com>, Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nuno Sa
- <nuno.sa@analog.com>,  Jonathan Corbet <corbet@lwn.net>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>, 
- linux-doc@vger.kernel.org
-Date: Fri, 13 Sep 2024 12:18:05 +0200
-In-Reply-To: <D452E2M75XCM.13OQGAPJ7JJ4A@baylibre.com>
-References: <20240822-eblanc-ad4630_v1-v1-0-5c68f3327fdd@baylibre.com>
-	 <20240822-eblanc-ad4630_v1-v1-4-5c68f3327fdd@baylibre.com>
-	 <20240826102748.4be0b642@jic23-huawei>
-	 <D452E2M75XCM.13OQGAPJ7JJ4A@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+        bh=/UmlrqFmFGfqE/2SG7iQXFLt1xw4r5tdaO/8FXG+IYI=;
+        b=vE2plQ85Kb3ya5mEsJpKDQsSvlfvxkkQCBlkvDDUUi7MQE7zQ1+HVMIOzlKH1ZDRqG
+         6xXnQ+hXavH2eYqH7TpVVUe/xlbqeY3gPt4gGq47IecFQrXcG+z1Bewt+bZk5Kj0A182
+         k4b/21fE+QJcmrZckgPSs1BELE01KzlDolkUkY/5x8VakMsW2yFALoIBq9GPVfzsX4aD
+         thB9ywSg2zzf0zx5r/7WtgYiqxLi3aZmqydGZ7V2gwmcW4tg6g80tA5sQ4wu59mDeU6i
+         woFPXralLAd0V5hlezVv/ezOujW55ZJ0YxqBxrieBX49wd9K0apcDsCq0wgvlp4Zjt3v
+         7umQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726222819; x=1726827619;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/UmlrqFmFGfqE/2SG7iQXFLt1xw4r5tdaO/8FXG+IYI=;
+        b=n+rKzZ8U2+2O+UM+dSi9qUWBAxQamcUlIPPy15AGJeJ1JrPzp7AUYNFAX5zLqw4grL
+         uTMkrusqGXDKAVl09RIra4CQIhdKb27NzQ+QGOa1b4S3v5cjpA1AacRgt5DoovBHU01i
+         YNwXsuhmoaNWeSXyZf23gkk3dhvdC886t0H1bY8hG26vPqtq50XLyoR1QltJ62NgONYD
+         zNDro4+Zq+ZEO78LT4EE/xpnYXM+gKd1i73DNStgtjySC53r4kL8T7zmgiLuwPxaHpnx
+         yVnhPJ+YpdgXInDj6VPAR5dfDYC2xhmWiYGPZz7HYGVC8TMVzzyft5v6ElsFhd2H4ZR9
+         Yd7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUGbxbUNAjmI6Jp+72RbJZd13MCoUgJ5x/aqJSzYTwO/AQ4IwU6qHyGL4Jt2WBHty1wpu1hWyGSeIsYnBQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLuG3UI/OqKV5cxeRzALLigIruo+Fc6Oi3oLmMUO9fFD1HV+hu
+	6rrAx7VEL3BYdd3IxnEA05ltFZmLBFfU4qfbqWTIpglzrjcJm41xeQkzp7E2lCY=
+X-Google-Smtp-Source: AGHT+IFhB5EyB/CfUyNt8iViwsCYv0St/esuI7Acf2pdZ8K8lLzJYDgZXj+Sq5blNB5V9TXvy/DuXg==
+X-Received: by 2002:a05:600c:548a:b0:42c:bc60:5332 with SMTP id 5b1f17b1804b1-42cdb54eda5mr40853065e9.19.1726222818809;
+        Fri, 13 Sep 2024 03:20:18 -0700 (PDT)
+Received: from [192.168.1.61] ([84.67.228.188])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42cc01d3d17sm105403095e9.0.2024.09.13.03.20.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Sep 2024 03:20:18 -0700 (PDT)
+Message-ID: <49fe18ff-827a-429b-9d74-9d8ed02ac409@linaro.org>
+Date: Fri, 13 Sep 2024 11:20:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] perf build: Require at least clang 16.0.6 to build
+ BPF skeletons
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Howard Chu <howardchu95@gmail.com>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alan Maguire <alan.maguire@oracle.com>, Jiri Olsa <jolsa@kernel.org>,
+ Kan Liang <kan.liang@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-perf-users@vger.kernel.org
+References: <ZuGL9ROeTV2uXoSp@x1>
+ <caad2d84-a8ff-4304-b8ab-04642ea18323@linaro.org> <ZuL_0V5jgaaEUOY_@x1>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <ZuL_0V5jgaaEUOY_@x1>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 2024-09-13 at 09:55 +0000, Esteban Blanc wrote:
-> On Mon Aug 26, 2024 at 9:27 AM UTC, Jonathan Cameron wrote:
-> > On Thu, 22 Aug 2024 14:45:20 +0200
-> > Esteban Blanc <eblanc@baylibre.com> wrote:
-> > > @@ -460,12 +517,21 @@ static int ad4030_conversion(struct ad4030_stat=
-e *st,
-> > > =C2=A0	if (ret)
-> > > =C2=A0		return ret;
-> > > =C2=A0
-> > > -	if (st->mode !=3D AD4030_OUT_DATA_MD_24_DIFF_8_COM)
-> > > +	if (st->chip->num_channels =3D=3D 2)
-> > > +		ad4030_extract_interleaved(st->rx_data.raw,
-> > > +					=C2=A0=C2=A0 &st->rx_data.diff[0],
-> > > +					=C2=A0=C2=A0 &st->rx_data.diff[1]);
-> > > +
-> > > +	if (st->mode !=3D AD4030_OUT_DATA_MD_16_DIFF_8_COM &&
-> > > +	=C2=A0=C2=A0=C2=A0 st->mode !=3D AD4030_OUT_DATA_MD_24_DIFF_8_COM)
-> > > =C2=A0		return 0;
-> > > =C2=A0
-> > > =C2=A0	byte_index =3D BITS_TO_BYTES(chan->scan_type.realbits);
-> > > -	for (i =3D 0; i < st->chip->num_channels; i++)
-> > > -		st->rx_data.buffered[i].common =3D ((u8 *)&st-
-> > > >rx_data.buffered[i].val)[byte_index];
-> > > +	/* Doing it backward to avoid overlap when reordering */
-> > > +	for (i =3D st->chip->num_channels - 1; i > 0; i--) {
-> > > +		st->rx_data.buffered_common[i].diff =3D st->rx_data.diff[i];
-> > > +		st->rx_data.buffered_common[i].common =3D ((u8 *)&st-
-> > > >rx_data.diff[i])[byte_index];
-> > > +	}
-> >=20
-> > I wonder if doing it in place is actually worthwhile.=C2=A0 Maybe unpac=
-k into a second
-> > array? That is still fairly small and may make code easier to read.
->=20
-> Okay sure
->=20
-> > > +static const unsigned long ad4630_channel_masks[] =3D {
-> > > +	/* Differential only */
-> > > +	BIT(0) | BIT(2),
-> > > +	/* Differential with common byte */
-> > > +	GENMASK(3, 0),
-> > The packing of data isn't going to be good. How bad to shuffle
-> > to put the two small channels next to each other?
-> > Seems like it means you will want to combine your deinterleave
-> > and channel specific handling above, which is a bit fiddly but
-> > not much worse than current code.
->=20
-> I can do it since that was what I had done in the RFC in the first place.
-> Nuno asked for in this email
-> https://lore.kernel.org/r/0036d44542f8cf45c91c867f0ddd7b45d1904d6b.camel@=
-gmail.com/
-> :
->=20
-> > > > * You're pushing the CM channels into the end. So when we a 2 chann=
-el device
-> > > > we'll have:
->=20
-> > > > in_voltage0 - diff
-> > > > in_voltage1 - diff
-> > > > in_voltage2 - CM associated with chan0
-> > > > in_voltage0 - CM associated with chan1
-> > > >=20
-> > > > I think we could make it so the CM channel comes right after the ch=
-annel
-> > > > where
-> > > > it's data belongs too. So for example, odd channels would be CM cha=
-nnels (and
-> > > > labels could also make sense).
->=20
-> So that's what I did here :D
->=20
-> For the software side off things here it doesn't change a lot of things
-> since we have to manipulate the data anyway, putting the extra byte at th=
-e
-> end or in between is no extra work.
-> For the offload engine however, it should be easier to ask for 24 bits
-> then 8 bits for each channel as it would return two u32 per "hardware
-> channel".
->=20
-> In order to avoid having two different layouts, I was kind of sold by
-> Nuno's idea of having the CM in between each diff channel.
->=20
 
-Tbh, I was not even thinking about the layout when I proposed the arrangeme=
-nt. Just
-made sense to me (from a logical point of view) to have them together as th=
-ey relate
-to the same physical channel. FWIW, we're also speaking bytes in here so no=
-t sure if
-it's that important (or bad).
 
-That said, as we should have labels anyways, I'm not being the blocker if e=
-veryone
-else prefers to have the RFC layout :)
+On 12/09/2024 15:50, Arnaldo Carvalho de Melo wrote:
+> On Thu, Sep 12, 2024 at 03:40:32PM +0100, James Clark wrote:
+>> On 11/09/2024 13:24, Arnaldo Carvalho de Melo wrote:
+>>> Howard reported problems using perf features that use BPF:
+> 
+>>>     perf $ clang -v
+>>>     Debian clang version 15.0.6
+>>>     Target: x86_64-pc-linux-gnu
+>>>     Thread model: posix
+>>>     InstalledDir: /bin
+>>>     Found candidate GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/12
+>>>     Selected GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/12
+>>>     Candidate multilib: .;@m64
+>>>     Selected multilib: .;@m64
+>>>     perf $ ./perf trace -e write --max-events=1
+>>>     libbpf: prog 'sys_enter_rename': BPF program load failed: Permission denied
+>>>     libbpf: prog 'sys_enter_rename': -- BEGIN PROG LOAD LOG --
+>>>     0: R1=ctx() R10=fp0
+>>>
+>>> But it works with:
+>>>
+>>>     perf $ clang -v
+>>>     Debian clang version 16.0.6 (15~deb12u1)
+>>>     Target: x86_64-pc-linux-gnu
+>>>     Thread model: posix
+>>>     InstalledDir: /bin
+>>>     Found candidate GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/12
+>>>     Selected GCC installation: /bin/../lib/gcc/x86_64-linux-gnu/12
+>>>     Candidate multilib: .;@m64
+>>>     Selected multilib: .;@m64
+>>>     perf $ ./perf trace -e write --max-events=1
+>>>          0.000 ( 0.009 ms): gmain/1448 write(fd: 4, buf: \1\0\0\0\0\0\0\0, count: 8)                         = 8 (kworker/0:0-eve)
+>>>     perf $
+>>>
+>>> So lets make that the required version, if you happen to have a slightly
+>>> older version where this work, please report so that we can adjust the
+>>> minimum required version.
+>   
+>> I wasn't able to reproduce the issue with either of these versions. But I
+>> suppose it could be an issue with only 15.0.6.
+> 
+> Interesting, that complicates things, probably the best way then is to
+> try to build it, if it fails, mention that 15.0.6 is known to be
+> problematic and suggest working versions?
+> 
+> - Arnaldo
 
-- Nuno S=C3=A1
+I still wasn't able to reproduce it with 15.0.6. And I double checked 
+with V=1 that the build was using the right clang. I suppose it could be 
+a build configuration issue, or maybe with a different kernel version?
 
+$  uname --kernel-release
+6.8.0-76060800daily20240311-generic
+
+$ ../../llvm-project/build/bin/clang -v
+clang version 15.0.6 (https://github.com/llvm/llvm-project.git 
+088f33605d8a61ff519c580a71b1dd57d16a03f8)
+Target: x86_64-unknown-linux-gnu
+Thread model: posix
+InstalledDir: /home/james/workspace/linux/linux/../../llvm-project/build/bin
+Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/11
+Found candidate GCC installation: /usr/lib/gcc/x86_64-linux-gnu/12
+Selected GCC installation: /usr/lib/gcc/x86_64-linux-gnu/12
+Candidate multilib: .;@m64
+Selected multilib: .;@m64
+
+$ git log
+commit 003265bb6f028d7bcd7cbd92d6ba2b4e26382796 
+(perf-tools-next/perf-tools-next)
+
+$ make O=../build/local/ CLANG=../../llvm-project/build/bin/clang -C \
+   tools/perf
+
+$ perf trace -e write --max-events=1
+
+      0.000 ( 0.026 ms): gnome-shell/5454 write(fd: 5, buf:
+        0x7fffa102d9b0, count: 8)                           = 8
 
 
