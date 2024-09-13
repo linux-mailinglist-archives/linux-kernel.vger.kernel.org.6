@@ -1,145 +1,102 @@
-Return-Path: <linux-kernel+bounces-327932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D047D977CCE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:02:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA9CF977C9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 718651F2805B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:02:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B06DF288A05
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93E81D7E4B;
-	Fri, 13 Sep 2024 10:02:13 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F881D79A6;
+	Fri, 13 Sep 2024 09:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UE+DQN/p"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006B01D7E20;
-	Fri, 13 Sep 2024 10:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD151D6DB1;
+	Fri, 13 Sep 2024 09:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726221733; cv=none; b=VYI1/Wn0YDd9+YQY8ehyeqOgzk8u23vbV9nPxZQU/Lqqq+9aHLaSKsjsabvN+I3o83ref6113Y3FFUvRwvDsp/5s9dgV8e3No3k1ZcP74YN5cej2L7bhmjobawfoTy7cLB6O+1qk+6Qc88E4T+w4/DnusOB/Qqw8gnhGb9LtxI4=
+	t=1726221308; cv=none; b=qSvgpchDfP1PMXglGbrpzwUj3LsXBdr9cpbn51A3B8EJpKnetW3o5CGVU1LP0nV/lq/KDb9oGkCTzw5yvGstb3/jdwgVHaP1b0vn0r/SI3zbPpyAtxXSNaGK1AibAgCPKL8i59XxjmdinQKpiJ0f8N1+vuZYNHaggOeeP+0VxBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726221733; c=relaxed/simple;
-	bh=w4ZxKQrqZpSMibcNS7/BllpRKF+tFp07Q8XIWWUdloo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bjUGLZFJjGkO7PDThVA7k7v2izRBAW97ifjPXzyFD3Z+LVWpRGSnwGPIhJqNnGPNISlSmQS1QjcFGxS64BkkXI8HfD/QkksoUuU2Eak86rFna+8i4TGGvCZ5R1Qz8Cp1S9V8hSgy8DzzBUIagk8iy/lKDrXuPc9wplRR7vifIUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4X4qbX2phnz20p0T;
-	Fri, 13 Sep 2024 18:02:00 +0800 (CST)
-Received: from kwepemm600005.china.huawei.com (unknown [7.193.23.191])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7F1761402CE;
-	Fri, 13 Sep 2024 18:02:08 +0800 (CST)
-Received: from huawei.com (10.50.165.33) by kwepemm600005.china.huawei.com
- (7.193.23.191) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 13 Sep
- 2024 18:02:07 +0800
-From: Longfang Liu <liulongfang@huawei.com>
-To: <alex.williamson@redhat.com>, <jgg@nvidia.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <jonathan.cameron@huawei.com>
-CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@openeuler.org>, <liulongfang@huawei.com>
-Subject: [PATCH v9 1/4] hisi_acc_vfio_pci: extract public functions for container_of
-Date: Fri, 13 Sep 2024 17:54:59 +0800
-Message-ID: <20240913095502.22940-2-liulongfang@huawei.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20240913095502.22940-1-liulongfang@huawei.com>
-References: <20240913095502.22940-1-liulongfang@huawei.com>
+	s=arc-20240116; t=1726221308; c=relaxed/simple;
+	bh=7DGEWBjAfWkhNbt5jQHZrOkSIxaz2Tu237bLh6tN8O8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TQKZZSW90K9jl39HT9/9fVugvRW5xhkpI3ke86JtrvYYbNhkB+f1VtpI98ZIEtuRNDdALgQsdYxASS1d16rssUe6swY3QBMjUwtPS9x7v2UN2vww+V7R+5BxWg89PR/U7MOuAH/bnrWd/H4unzqLZAO51amg7qFtiKOwxYflkIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UE+DQN/p; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726221307; x=1757757307;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=7DGEWBjAfWkhNbt5jQHZrOkSIxaz2Tu237bLh6tN8O8=;
+  b=UE+DQN/pf+YR/hLJRUgtsogBT/NlsgJ67isoj2yS2e6kB5s4a/vPzhWY
+   DrkNgKySn6/cTe9kcOgRH+6jg1PH20B5pdGUU8cmjhvU1RnE4spNVwOFM
+   IafINnbGsKJyoHaLCH41DDSM50aCF9J2P0sKLMvq+r1oPz6hwxDIWoJvs
+   1OqhoX70wmLG9BYLAkTGcGU0q01ipmW9Tm7IVzb/lrKV+oYXTx3IIitn/
+   kEGDRMjeKMxiKCOWBlPfImTWMquUJ8dig61DeMNM9Wem8olGWu7SyNHXy
+   4rVN/fTuZJIqKPLFPHfuBCrIQolK/muS+lP8h0EPlLUOqNV/zM2SEN+1K
+   A==;
+X-CSE-ConnectionGUID: F/pFF9lwSiq+ZymzXOZadA==
+X-CSE-MsgGUID: 31e/M6zsRDuFsYoR0pXudA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="36250966"
+X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
+   d="scan'208";a="36250966"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 02:55:07 -0700
+X-CSE-ConnectionGUID: Phe9HHwZRZmetMAb9Xy8XA==
+X-CSE-MsgGUID: fewlj8mcQr2v4yh/3X2cUw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
+   d="scan'208";a="67709659"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 02:55:02 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sp311-00000008FZv-2Kdb;
+	Fri, 13 Sep 2024 12:54:59 +0300
+Date: Fri, 13 Sep 2024 12:54:59 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
+	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	christophe.jaillet@wanadoo.fr
+Subject: Re: [PATCH v6 0/4] pressure: bmp280: Minor cleanup and interrupt
+ support
+Message-ID: <ZuQL845_lQhpNpSR@smile.fi.intel.com>
+References: <20240912233234.45519-1-vassilisamir@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemm600005.china.huawei.com (7.193.23.191)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912233234.45519-1-vassilisamir@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-In the current driver, vdev is obtained from struct
-hisi_acc_vf_core_device through the container_of function.
-This method is used in many places in the driver. In order to
-reduce this repetitive operation, It was extracted into
-a public function.
+On Fri, Sep 13, 2024 at 01:32:30AM +0200, Vasileios Amoiridis wrote:
+> Depends on this: https://lore.kernel.org/linux-iio/20240823172017.9028-1-vassilisamir@gmail.com
 
-Signed-off-by: Longfang Liu <liulongfang@huawei.com>
-Reviewed-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
----
- .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 21 ++++++++++---------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+for patches 1 & 3.
+Dunno if a couple of nit-picks warrants the v7, so I leave it to Jonathan to
+decide.
 
-diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-index 9a3e97108ace..45351be8e270 100644
---- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-+++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-@@ -630,6 +630,12 @@ static void hisi_acc_vf_disable_fds(struct hisi_acc_vf_core_device *hisi_acc_vde
- 	}
- }
- 
-+static struct hisi_acc_vf_core_device *hisi_acc_get_vf_dev(struct vfio_device *vdev)
-+{
-+	return container_of(vdev, struct hisi_acc_vf_core_device,
-+			    core_device.vdev);
-+}
-+
- static void hisi_acc_vf_reset(struct hisi_acc_vf_core_device *hisi_acc_vdev)
- {
- 	hisi_acc_vdev->vf_qm_state = QM_NOT_READY;
-@@ -1033,8 +1039,7 @@ static struct file *
- hisi_acc_vfio_pci_set_device_state(struct vfio_device *vdev,
- 				   enum vfio_device_mig_state new_state)
- {
--	struct hisi_acc_vf_core_device *hisi_acc_vdev = container_of(vdev,
--			struct hisi_acc_vf_core_device, core_device.vdev);
-+	struct hisi_acc_vf_core_device *hisi_acc_vdev = hisi_acc_get_vf_dev(vdev);
- 	enum vfio_device_mig_state next_state;
- 	struct file *res = NULL;
- 	int ret;
-@@ -1075,8 +1080,7 @@ static int
- hisi_acc_vfio_pci_get_device_state(struct vfio_device *vdev,
- 				   enum vfio_device_mig_state *curr_state)
- {
--	struct hisi_acc_vf_core_device *hisi_acc_vdev = container_of(vdev,
--			struct hisi_acc_vf_core_device, core_device.vdev);
-+	struct hisi_acc_vf_core_device *hisi_acc_vdev = hisi_acc_get_vf_dev(vdev);
- 
- 	mutex_lock(&hisi_acc_vdev->state_mutex);
- 	*curr_state = hisi_acc_vdev->mig_state;
-@@ -1280,8 +1284,7 @@ static long hisi_acc_vfio_pci_ioctl(struct vfio_device *core_vdev, unsigned int
- 
- static int hisi_acc_vfio_pci_open_device(struct vfio_device *core_vdev)
- {
--	struct hisi_acc_vf_core_device *hisi_acc_vdev = container_of(core_vdev,
--			struct hisi_acc_vf_core_device, core_device.vdev);
-+	struct hisi_acc_vf_core_device *hisi_acc_vdev = hisi_acc_get_vf_dev(core_vdev);
- 	struct vfio_pci_core_device *vdev = &hisi_acc_vdev->core_device;
- 	int ret;
- 
-@@ -1304,8 +1307,7 @@ static int hisi_acc_vfio_pci_open_device(struct vfio_device *core_vdev)
- 
- static void hisi_acc_vfio_pci_close_device(struct vfio_device *core_vdev)
- {
--	struct hisi_acc_vf_core_device *hisi_acc_vdev = container_of(core_vdev,
--			struct hisi_acc_vf_core_device, core_device.vdev);
-+	struct hisi_acc_vf_core_device *hisi_acc_vdev = hisi_acc_get_vf_dev(core_vdev);
- 	struct hisi_qm *vf_qm = &hisi_acc_vdev->vf_qm;
- 
- 	iounmap(vf_qm->io_base);
-@@ -1320,8 +1322,7 @@ static const struct vfio_migration_ops hisi_acc_vfio_pci_migrn_state_ops = {
- 
- static int hisi_acc_vfio_pci_migrn_init_dev(struct vfio_device *core_vdev)
- {
--	struct hisi_acc_vf_core_device *hisi_acc_vdev = container_of(core_vdev,
--			struct hisi_acc_vf_core_device, core_device.vdev);
-+	struct hisi_acc_vf_core_device *hisi_acc_vdev = hisi_acc_get_vf_dev(core_vdev);
- 	struct pci_dev *pdev = to_pci_dev(core_vdev->dev);
- 	struct hisi_qm *pf_qm = hisi_acc_get_pf_qm(pdev);
- 
 -- 
-2.24.0
+With Best Regards,
+Andy Shevchenko
+
 
 
