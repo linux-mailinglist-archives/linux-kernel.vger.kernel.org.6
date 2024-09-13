@@ -1,221 +1,336 @@
-Return-Path: <linux-kernel+bounces-328957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9779D978B75
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 00:42:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C83BC978B77
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 00:43:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18A971F2413A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:42:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89038287D2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC9416F858;
-	Fri, 13 Sep 2024 22:41:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3603D16F858;
+	Fri, 13 Sep 2024 22:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RDzFZCej"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pX8cCdWL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8A2158A2E
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 22:41:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A3ED502;
+	Fri, 13 Sep 2024 22:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726267314; cv=none; b=NlL07CU8U168obQaOahMMVbsIvU/CeHKxi+r4BxIb2x5XKkzIxzwnf38uGHL80op58QXnhTRowu/q1vAaFtrzHggTCi8M55f7Ydj9VbPlCqo5o1sgWt3KQpa8Td6/DgXT7mEfsq1IBRTfR5zlMz3A836z9mphNK+KkJbJs1u2jo=
+	t=1726267374; cv=none; b=d6z90Hj2+/xqfc86Wx2/9JL6ZwSAuDbuiyeDK02HW0Q3M3Q3K2336YxzhaotaJ6BclsbHUCDmHEHA6TT4vxEoYrY9KVAY+5vnCpx7ClncK8nwWqigt4d6gy4V0bzvb1VViwjQUKjWyTijeoDp4d4MUS640amAxWqqBm9ozTZM4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726267314; c=relaxed/simple;
-	bh=icrItZvHpFuET3+CJhIilIA7XOmNI4pwD00NBgnwCBk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HqB89iDt6KwxnqGaMo/Y/qWap7NC6o1lOPiLNuX0IPZkaOsOtjn33Yt8xuj9fchMIOKJQEDBorsdXNfXI1Rg9MABjzDIRSX2ITNk98waaZVpyk3rVNlFlUhaTS4W2Bkeuz4FM+AzBoAyLDt764Tiam/K5SfuTRB+H4TmCSvqC4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RDzFZCej; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a90349aa7e5so275944666b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 15:41:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726267311; x=1726872111; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DtXOc95I+x4HHrv/uM3TaVJscG84UiL/FTjzf5cP9lg=;
-        b=RDzFZCejDrIfNB1cRfbfLTel3Ddw5fEsp1dDbWK+uJXeiaOD7x7n/wjAFu0Ez9bERI
-         gCCZvZ5wFtarngn2KBKewGepSKBgfMQ7IArtlcQI9IeTY37xbfC7UC3Hctv0FfxlrtgP
-         MzfRhwH9EKRTLuRJPISf5ApcKejdWHNSrA/xj1nzrDOB0k53IPfJv5qX3lv+hl4nY0o0
-         TuhEriRnDt/MtstSRkbabXWQPZu6iasvb45q+pztfAussMk62TFJZefigmxJMfvfDOXi
-         DJ6U7G2cHcsCadDXKFwbsdIeWj4MLrV0QLw5fZTj/NRRFOhSBrYgpPj6pT5T9JfkcFFN
-         8TAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726267311; x=1726872111;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DtXOc95I+x4HHrv/uM3TaVJscG84UiL/FTjzf5cP9lg=;
-        b=WGYPIy7YkKJiygiHYKkq6xGrLg5FgPncEAKYWxXWOFJ3RSi0vzp9QI+Sqytf9/2Dpz
-         9mGXBGlDXAGBSAkuasJIWQoDatodFPWOW9vt8NF4H2lBVy99Xf/kZo1+wj8j6GD0qvjw
-         LOYEhgLPjneEhIArsAA6dREauYkEjjVju1fsgZAZ2Y6Cy1oAmIlV6bGd6DNSndemPZ8k
-         fON0vKlvWP31+5p/VKpS1G3DxrXy710vJVNnFar1WPCoEYqswzLW5O3gN2iSTNyT7wRu
-         JbHRKRnNn0l3w3zY6BL5cAtPbryy7OQTIMeCc+mXkoBcBTuYdhEYTrjX3LBwY6ORgw+P
-         GaFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFRhVvEAsn/dAUusSWqgabOhII/j0Vmlfp5vlozFaZPHSNyPuNgGCfSQ0CiyN19w0PHHlT/68Gq5QT+MM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPo1c2SAPvXDkvHY343kp28wyinph69hBgOV6wFZF19teVz22y
-	a+Q1jHcLX3EHuV3Wcqh0PscJpshEEAcrOPqEnG01IzntzweJaH+NrHysIiy/GZPRi5OxdsgTK+J
-	Y5TTkQBdrb0V1wwYz5q4Gu7cHKqJko2NmcRbjT/MkDELcNjCV8Ftqow==
-X-Google-Smtp-Source: AGHT+IEa9o6+4F9ecXEPCE9xVtutXb4eyOyLgX+ck4F98FYJYIKeRJ9wFivoEdQm/0xma88gFu4dGiIwH/JM3LxZ+Nc=
-X-Received: by 2002:a17:907:e29f:b0:a8a:3ece:d073 with SMTP id
- a640c23a62f3a-a90293fb566mr699784166b.10.1726267310213; Fri, 13 Sep 2024
- 15:41:50 -0700 (PDT)
+	s=arc-20240116; t=1726267374; c=relaxed/simple;
+	bh=a2XbEjLV8h2XnTRM3pofDRkpxxDnBs745jhF5ndW1FY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S2lYJ7zr7fWfoo3HnspuouN7wJbG2T7/GAbJCw6OlIrUhY/P2QlW3px0j93BnbyqMjhV57+CgeAqHWe5RSduDOkKgY9ATWl8u8miLAdbxM9wtwgvLM1N/1/lflkmHY9zvwAivCbyPJPateTCX7eQBdi6dHCJxKBhaaU6OhKD0O8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pX8cCdWL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 821E1C4CEC0;
+	Fri, 13 Sep 2024 22:42:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726267373;
+	bh=a2XbEjLV8h2XnTRM3pofDRkpxxDnBs745jhF5ndW1FY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pX8cCdWLkJber6PaUokrVnEV2CzO/2105z9hXq3nJp6gyfO32suzbbhsCMjxmuGTz
+	 ma1jND86qt9lNiL+jCdzbMfKo6zkAGEisWVBAL+YnNfYod4XBVPZWQYH0OxdCtHzcM
+	 KlzR6TjcYCM1gzCfsF/M5PyFcrAXwYBDE2+nlkLnCl4RkJOLucEK3sPPPMLo0buPjU
+	 +dHcLBN1ek2I5WBrJv+7Rh+mNwQSZqBD4r8KvHO3Uu19BUAAm5k+GMUOLM3mpTNHz0
+	 Qokt7E2zQvVi9v8L7SvMsA5Off1D30mEDhEP9Y6ftKoXfBUEZfEy0hjAuBDzadxVkb
+	 ObEJyEXNfOheA==
+Received: by pali.im (Postfix)
+	id C1DA8725; Sat, 14 Sep 2024 00:42:48 +0200 (CEST)
+Date: Sat, 14 Sep 2024 00:42:48 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Steve French <smfrench@gmail.com>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] cifs: Fix creating of SFU fifo and socket special
+ files
+Message-ID: <20240913224248.k5tn2le3gau2prmo@pali>
+References: <20240912120548.15877-1-pali@kernel.org>
+ <20240912120548.15877-7-pali@kernel.org>
+ <20240913200721.7egunkwp76qo5yy7@pali>
+ <CAH2r5mvEa8mUrK7mEKFiimkb1asTWA0p7ADz4937yoxM916RAw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911093029.3279154-1-vdonnefort@google.com> <20240911093029.3279154-7-vdonnefort@google.com>
-In-Reply-To: <20240911093029.3279154-7-vdonnefort@google.com>
-From: John Stultz <jstultz@google.com>
-Date: Fri, 13 Sep 2024 15:41:38 -0700
-Message-ID: <CANDhNCr8ptL+JbCTFwtkRx+=yLscqrTQ=P0dmu3rGStuZiBeuw@mail.gmail.com>
-Subject: Re: [PATCH 06/13] KVM: arm64: Add clock support in the nVHE hyp
-To: Vincent Donnefort <vdonnefort@google.com>
-Cc: rostedt@goodmis.org, mhiramat@kernel.org, 
-	linux-trace-kernel@vger.kernel.org, maz@kernel.org, oliver.upton@linux.dev, 
-	kvmarm@lists.linux.dev, will@kernel.org, qperret@google.com, 
-	kernel-team@android.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH2r5mvEa8mUrK7mEKFiimkb1asTWA0p7ADz4937yoxM916RAw@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 
-On Wed, Sep 11, 2024 at 2:31=E2=80=AFAM 'Vincent Donnefort' via kernel-team
-<kernel-team@android.com> wrote:
->
-> By default, the arm64 host kernel is using the arch timer as a source
-> for sched_clock. Conveniently, EL2 has access to that same counter,
-> allowing to generate clock values that are synchronized.
->
-> The clock needs nonetheless to be setup with the same slope values as
-> the kernel. Introducing at the same time trace_clock() which is expected
-> to be later configured by the hypervisor tracing.
->
-> Signed-off-by: Vincent Donnefort <vdonnefort@google.com>
->
-> diff --git a/arch/arm64/include/asm/kvm_hyp.h b/arch/arm64/include/asm/kv=
-m_hyp.h
-> index c838309e4ec4..355bae0056f0 100644
-> --- a/arch/arm64/include/asm/kvm_hyp.h
-> +++ b/arch/arm64/include/asm/kvm_hyp.h
-> @@ -144,5 +144,4 @@ extern u64 kvm_nvhe_sym(id_aa64smfr0_el1_sys_val);
->  extern unsigned long kvm_nvhe_sym(__icache_flags);
->  extern unsigned int kvm_nvhe_sym(kvm_arm_vmid_bits);
->  extern unsigned int kvm_nvhe_sym(kvm_host_sve_max_vl);
-> -
->  #endif /* __ARM64_KVM_HYP_H__ */
-> diff --git a/arch/arm64/kvm/hyp/include/nvhe/clock.h b/arch/arm64/kvm/hyp=
-/include/nvhe/clock.h
-> new file mode 100644
-> index 000000000000..2bd05b3b89f9
-> --- /dev/null
-> +++ b/arch/arm64/kvm/hyp/include/nvhe/clock.h
-> @@ -0,0 +1,16 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __ARM64_KVM_HYP_NVHE_CLOCK_H
-> +#define __ARM64_KVM_HYP_NVHE_CLOCK_H
-> +#include <linux/types.h>
-> +
-> +#include <asm/kvm_hyp.h>
-> +
-> +#ifdef CONFIG_TRACING
-> +void trace_clock_update(u32 mult, u32 shift, u64 epoch_ns, u64 epoch_cyc=
-);
-> +u64 trace_clock(void);
-> +#else
-> +static inline void
-> +trace_clock_update(u32 mult, u32 shift, u64 epoch_ns, u64 epoch_cyc) { }
-> +static inline u64 trace_clock(void) { return 0; }
-> +#endif
-> +#endif
-> diff --git a/arch/arm64/kvm/hyp/nvhe/Makefile b/arch/arm64/kvm/hyp/nvhe/M=
-akefile
-> index b43426a493df..323e992089bd 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/Makefile
-> +++ b/arch/arm64/kvm/hyp/nvhe/Makefile
-> @@ -28,6 +28,7 @@ hyp-obj-y :=3D timer-sr.o sysreg-sr.o debug-sr.o switch=
-.o tlb.o hyp-init.o host.o
->  hyp-obj-y +=3D ../vgic-v3-sr.o ../aarch32.o ../vgic-v2-cpuif-proxy.o ../=
-entry.o \
->          ../fpsimd.o ../hyp-entry.o ../exception.o ../pgtable.o
->  hyp-obj-$(CONFIG_LIST_HARDENED) +=3D list_debug.o
-> +hyp-obj-$(CONFIG_TRACING) +=3D clock.o
->  hyp-obj-y +=3D $(lib-objs)
->
->  ##
-> diff --git a/arch/arm64/kvm/hyp/nvhe/clock.c b/arch/arm64/kvm/hyp/nvhe/cl=
-ock.c
-> new file mode 100644
-> index 000000000000..0d1f74bc2e11
-> --- /dev/null
-> +++ b/arch/arm64/kvm/hyp/nvhe/clock.c
-> @@ -0,0 +1,49 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2024 Google LLC
-> + * Author: Vincent Donnefort <vdonnefort@google.com>
-> + */
-> +
-> +#include <nvhe/clock.h>
-> +
-> +#include <asm/arch_timer.h>
-> +#include <asm/div64.h>
-> +
-> +static struct clock_data {
-> +       struct {
-> +               u32 mult;
-> +               u32 shift;
-> +               u64 epoch_ns;
-> +               u64 epoch_cyc;
-> +       } data[2];
-> +       u64 cur;
-> +} trace_clock_data;
-> +
-> +/* Does not guarantee no reader on the modified bank. */
-> +void trace_clock_update(u32 mult, u32 shift, u64 epoch_ns, u64 epoch_cyc=
-)
-> +{
-> +       struct clock_data *clock =3D &trace_clock_data;
-> +       u64 bank =3D clock->cur ^ 1;
-> +
-> +       clock->data[bank].mult          =3D mult;
-> +       clock->data[bank].shift         =3D shift;
-> +       clock->data[bank].epoch_ns      =3D epoch_ns;
-> +       clock->data[bank].epoch_cyc     =3D epoch_cyc;
-> +
-> +       smp_store_release(&clock->cur, bank);
-> +}
+On Friday 13 September 2024 17:14:22 Steve French wrote:
+> How did you find the format of the FIFO and SOCK file types?  I
 
-Can't see from the context in this patch how it's called, but with
-timekeeping there can be multiple updaters (settimeofday, timer tick,
-etc).
-So would it be smart to have some serialization here to avoid you
-don't get parallel updates here?
+For fifo there are multiple sources on internet, but none of them is
+normative. Everything is just what people have tried. For example this
+old email on samba list:
+https://lists.samba.org/archive/linux-cifs-client/2005-May/000856.html
 
-> +
-> +/* Using host provided data. Do not use for anything else than debugging=
-. */
-> +u64 trace_clock(void)
-> +{
-> +       struct clock_data *clock =3D &trace_clock_data;
-> +       u64 bank =3D smp_load_acquire(&clock->cur);
-> +       u64 cyc, ns;
-> +
-> +       cyc =3D __arch_counter_get_cntpct() - clock->data[bank].epoch_cyc=
-;
-> +
-> +       ns =3D cyc * clock->data[bank].mult;
-> +       ns >>=3D clock->data[bank].shift;
-> +
-> +       return (u64)ns + clock->data[bank].epoch_ns;
-> +}
+Format of the socket I have figured out by creating it in Interix
+subsystem and then dumped content of the file from Win32 subsystem.
+Then I checked that it has also same format over older MS NFS server.
+It was easier than trying to search for some documentation (which I have
+not found).
 
-You might want some overflow protection on the mult?  See the
-max_cycles value we use in timekeeping_cycles_to_ns()
+> couldn't find any references to those so added two new types to allow
+> current Linux to be able to create these (especially since they are
+> opaque to the server and thus low risk).
 
--john
+I was searching over internet again and now I have found patent
+https://patents.google.com/patent/US20090049459 which describe symlink
+content:
+
+#define NFS_SPECFILE_LNK_V1  0x014b4e4c78746e49 /* “IntxLNK” */
+
+But does not describe other types.
+
+> > +     case S_IFSOCK:
+> > -             strscpy(pdev.type, "LnxSOCK");
+> > +             /* SFU socket is system file with one zero byte */
+> > +             pdev_len = 1;
+> > +             pdev.type[0] = '\0';
+> >               break;
+> >       case S_IFIFO:
+> > -             strscpy(pdev.type, "LnxFIFO");
+> > +             /* SFU fifo is system file which is empty */
+> > +             pdev_len = 0;
+> 
+> My worry about the suggested change above is that it is possible that
+> we could accidentally match to an empty file.
+
+I fully understand your concerns, but code in this patch is for creating
+new fifos. Not recognizing existing fifos.
+
+Code for recognizing existing fifos (=empty file with system attribute)
+was not changed and is in Linux cifs client for a very long time.
+
+And if nobody complained yet then this is probably not an issue.
+
+You can create manually on server empty file, mark it as system and then
+Linux cifs client even without these changes would recognize that file
+as fifo.
+
+> We intentionally added
+> the two new dev.type fields for these to avoid collisions with other
+> things (and since they are Linux specific).  It seems risky to have an
+> empty file with the system attribute marked as a FIFO, and similarly a
+> file with one byte null as Socket.   Since this is for only the Linux
+> client to recognize, I wanted to do something safe for those file
+> types less likely to be confusing (ie strings for Socket and FIFO that
+> were similar in length and format to the other special files seemed
+> intuitive) and "LnxFIFO" and LnxSOCK" were used as the tags in the
+> file to reduce confusion ie the tags for those two start with "Lnx" -
+> ie "something used for Linux client" not related to the original
+> Interix (those begin with "Intx").
+
+I see. Now I understand what are those types (as I have not seen them
+before). It is somehow misleading if such "LnxFIFO" and LnxSOCK"
+functionality is provided by SFU option, but is incompatible with MS SFU
+and also with MS NFS server. And is also incompatible with older Linux
+cifs clients (as they do not understand those Lnx types).
+
+> Note that in the long run we hope to use reparse points by default in
+> more servers to store special files like this but there are a few
+> cases for unusual workloads that need special file support that would
+> have to use sfu still.  The newer reparse tags that Windows uses "WSL"
+> have the advantage that they require fewer roundtrips to query (since
+> the file type is in the reparse tag).
+
+Yes, new WSL tags seems to be better. Also SFU mount option is not
+activated by default.
+
+> Also noticed an interesting problem when mounted with "sfu" -
+> "smbgetinfo filebasicinfo /mnt/fifo1" will hang (in sys_open).  Is
+> that expected for a FIFO?
+
+Reading from fifo sleep reading process until some other process write
+data to fifo. This is how fifos are working. You can try it on local
+filesystem (e.g. ext4 or tmpfs).
+
+$ mkfifo fifo
+$ strace cat fifo
+
+You will see in strace output of cat something like:
+...
+openat(AT_FDCWD, "fifo", O_RDONLY
+
+And once you write to that fifo by other process (e.g. echo abc > fifo)
+then cat will unfreeze and continue:
+
+                                        = 3
+fstat(3, {st_mode=S_IFIFO|0644, st_size=0, ...}) = 0
+fadvise64(3, 0, 0, POSIX_FADV_SEQUENTIAL) = -1 ESPIPE (Neprípustné nastavenie pozície)
+mmap(NULL, 139264, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f17a34bb000
+read(3, "abc\n", 131072)                = 4
+...
+
+
+> On Fri, Sep 13, 2024 at 3:07 PM Pali Rohár <pali@kernel.org> wrote:
+> >
+> > On Thursday 12 September 2024 14:05:47 Pali Rohár wrote:
+> > > SFU-style fifo is empty file with system attribute set. This format is used
+> > > by old Microsoft POSIX subsystem and later also by OpenNT/Interix subsystem
+> > > (which replaced Microsoft POSIX subsystem and is part of Microsoft SFU).
+> > >
+> > > SFU-style socket is file which has system attribute set and file content is
+> > > one zero byte. This format was introduced in Interix 3.0 subsystem, as part
+> > > of the Microsoft SFU 3.0 and is used also by all later versions. Previous
+> > > versions had no UNIX domain socket support.
+> > >
+> > > Currently when sfu mount option is specified then CIFS creates fifo and
+> > > socket special files with some strange LnxSOCK or LnxFIFO content which is
+> > > not compatible with Microsoft SFU and neither recognized by other SMB
+> > > implementations which have some SFU support, including older Linux cifs
+> > > implementations.
+> > >
+> > > So when sfu mount option is specified, create all fifo and socket special
+> > > files compatible with SFU format to achieve SFU interop, as it is expected
+> > > by sfu mount option.
+> > >
+> > > Signed-off-by: Pali Rohár <pali@kernel.org>
+> >
+> > Fixes: 72bc63f5e23a ("smb3: fix creating FIFOs when mounting with "sfu" mount option")
+> > Fixes: 518549c120e6 ("cifs: fix creating sockets when using sfu mount options")
+> >
+> > I located commits which introduced those strange LnxSOCK or LnxFIFO
+> > types which are not compatible with SFU. I would suggest to add those
+> > two Fixes: tags into commit message for reference.
+> >
+> > > ---
+> > >  fs/smb/client/cifssmb.c |  8 ++++----
+> > >  fs/smb/client/smb1ops.c |  2 +-
+> > >  fs/smb/client/smb2ops.c | 29 +++++++++++++++++++----------
+> > >  3 files changed, 24 insertions(+), 15 deletions(-)
+> > >
+> > > diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
+> > > index cfae2e918209..0ffc45aa5e2c 100644
+> > > --- a/fs/smb/client/cifssmb.c
+> > > +++ b/fs/smb/client/cifssmb.c
+> > > @@ -1076,8 +1076,8 @@ SMBLegacyOpen(const unsigned int xid, struct cifs_tcon *tcon,
+> > >       pSMB->OpenFlags |= cpu_to_le16(REQ_MORE_INFO);
+> > >       pSMB->Mode = cpu_to_le16(access_flags_to_smbopen_mode(access_flags));
+> > >       pSMB->Mode |= cpu_to_le16(0x40); /* deny none */
+> > > -     /* set file as system file if special file such
+> > > -        as fifo and server expecting SFU style and
+> > > +     /* set file as system file if special file such as fifo,
+> > > +      * socket, char or block and server expecting SFU style and
+> > >          no Unix extensions */
+> > >
+> > >       if (create_options & CREATE_OPTION_SPECIAL)
+> > > @@ -1193,8 +1193,8 @@ CIFS_open(const unsigned int xid, struct cifs_open_parms *oparms, int *oplock,
+> > >       req->AllocationSize = 0;
+> > >
+> > >       /*
+> > > -      * Set file as system file if special file such as fifo and server
+> > > -      * expecting SFU style and no Unix extensions.
+> > > +      * Set file as system file if special file such as fifo, socket, char
+> > > +      * or block and server expecting SFU style and no Unix extensions.
+> > >        */
+> > >       if (create_options & CREATE_OPTION_SPECIAL)
+> > >               req->FileAttributes = cpu_to_le32(ATTR_SYSTEM);
+> > > diff --git a/fs/smb/client/smb1ops.c b/fs/smb/client/smb1ops.c
+> > > index e1f2feb56f45..e03c91a49650 100644
+> > > --- a/fs/smb/client/smb1ops.c
+> > > +++ b/fs/smb/client/smb1ops.c
+> > > @@ -1078,7 +1078,7 @@ cifs_make_node(unsigned int xid, struct inode *inode,
+> > >       /*
+> > >        * Check if mounted with mount parm 'sfu' mount parm.
+> > >        * SFU emulation should work with all servers, but only
+> > > -      * supports block and char device (no socket & fifo),
+> > > +      * supports block and char device, socket & fifo,
+> > >        * and was used by default in earlier versions of Windows
+> > >        */
+> > >       if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_UNX_EMUL))
+> > > diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
+> > > index 9c2d065d3cc4..9e90672caf60 100644
+> > > --- a/fs/smb/client/smb2ops.c
+> > > +++ b/fs/smb/client/smb2ops.c
+> > > @@ -5066,26 +5066,32 @@ static int __cifs_sfu_make_node(unsigned int xid, struct inode *inode,
+> > >       struct cifs_fid fid;
+> > >       unsigned int bytes_written;
+> > >       struct win_dev pdev = {};
+> > > +     size_t pdev_len = 0;
+> > >       struct kvec iov[2];
+> > >       __u32 oplock = server->oplocks ? REQ_OPLOCK : 0;
+> > >       int rc;
+> > >
+> > >       switch (mode & S_IFMT) {
+> > >       case S_IFCHR:
+> > > +             pdev_len = sizeof(pdev);
+> > >               memcpy(pdev.type, "IntxCHR\0", 8);
+> > >               pdev.major = cpu_to_le64(MAJOR(dev));
+> > >               pdev.minor = cpu_to_le64(MINOR(dev));
+> > >               break;
+> > >       case S_IFBLK:
+> > > +             pdev_len = sizeof(pdev);
+> > >               memcpy(pdev.type, "IntxBLK\0", 8);
+> > >               pdev.major = cpu_to_le64(MAJOR(dev));
+> > >               pdev.minor = cpu_to_le64(MINOR(dev));
+> > >               break;
+> > >       case S_IFSOCK:
+> > > -             strscpy(pdev.type, "LnxSOCK");
+> > > +             /* SFU socket is system file with one zero byte */
+> > > +             pdev_len = 1;
+> > > +             pdev.type[0] = '\0';
+> > >               break;
+> > >       case S_IFIFO:
+> > > -             strscpy(pdev.type, "LnxFIFO");
+> > > +             /* SFU fifo is system file which is empty */
+> > > +             pdev_len = 0;
+> > >               break;
+> > >       default:
+> > >               return -EPERM;
+> > > @@ -5100,14 +5106,17 @@ static int __cifs_sfu_make_node(unsigned int xid, struct inode *inode,
+> > >       if (rc)
+> > >               return rc;
+> > >
+> > > -     io_parms.pid = current->tgid;
+> > > -     io_parms.tcon = tcon;
+> > > -     io_parms.length = sizeof(pdev);
+> > > -     iov[1].iov_base = &pdev;
+> > > -     iov[1].iov_len = sizeof(pdev);
+> > > +     if (pdev_len > 0) {
+> > > +             io_parms.pid = current->tgid;
+> > > +             io_parms.tcon = tcon;
+> > > +             io_parms.length = pdev_len;
+> > > +             iov[1].iov_base = &pdev;
+> > > +             iov[1].iov_len = pdev_len;
+> > > +
+> > > +             rc = server->ops->sync_write(xid, &fid, &io_parms,
+> > > +                                          &bytes_written, iov, 1);
+> > > +     }
+> > >
+> > > -     rc = server->ops->sync_write(xid, &fid, &io_parms,
+> > > -                                  &bytes_written, iov, 1);
+> > >       server->ops->close(xid, tcon, &fid);
+> > >       return rc;
+> > >  }
+> > > @@ -5149,7 +5158,7 @@ static int smb2_make_node(unsigned int xid, struct inode *inode,
+> > >       /*
+> > >        * Check if mounted with mount parm 'sfu' mount parm.
+> > >        * SFU emulation should work with all servers, but only
+> > > -      * supports block and char device (no socket & fifo),
+> > > +      * supports block and char device, socket & fifo,
+> > >        * and was used by default in earlier versions of Windows
+> > >        */
+> > >       if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_UNX_EMUL) {
+> > > --
+> > > 2.20.1
+> > >
+> >
+> 
+> 
+> -- 
+> Thanks,
+> 
+> Steve
 
