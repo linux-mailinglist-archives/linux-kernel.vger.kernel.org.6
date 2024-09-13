@@ -1,159 +1,156 @@
-Return-Path: <linux-kernel+bounces-327870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EB02977C15
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:19:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7956F977C16
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:19:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07CC2B27922
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:19:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F1221F28889
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C11175D45;
-	Fri, 13 Sep 2024 09:19:30 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1632A1D5CC1;
-	Fri, 13 Sep 2024 09:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3C21D6C7D;
+	Fri, 13 Sep 2024 09:19:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEA01D5CC1
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726219169; cv=none; b=OniSFY2CNmeZpedMww+X1Ln2v26ANeIItwGBfO2LEEJ7SToaBcdXpiVnf0cihjtFlGNTXW61Ks8mc+KXuDNxlgW9ck+LkfHgBotQRBy77FpsFdY52bBF1ms4uuYarAZhVczcRYf2j9bZTU0Nlq+3MV01hx88TiQgdeTkf2Yn/fY=
+	t=1726219178; cv=none; b=r81KIsPwWezQWKQGGS8StDqwNWRloHzZ4KSqMJCJYY2zG4k4ya+I2iuKZEJF2nf8pFEGXzog1mEu5W9HEj+XPkkOJvx9r1h3n15d7JjYapIbBCTvbvjgbo/AptmJDkmlWOu2tXeFEovjouXLA2lgDKoocamuXPALeB2hVtTdTs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726219169; c=relaxed/simple;
-	bh=IR5J9e4PvS1gfDTjd1ZAG39ngyGRHzP2kRwLiZkWNps=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cEroni1+8/jgbcCdWxSjwTEZdFkCHF7pIzK2TUks3XdUjahR43X4BuHy38yIg7dUsmIGQQa/T7+zfXelwsXD1gSaPn1qA9JEYy0/Cu6ifdVN4vqaw7NP2WlYQTwtlsk0M1dw9EmRSPglV1pjig/NJyYkrQRCJ2RxIkla+oaKgCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-03 (Coremail) with SMTP id rQCowAAXHHyEA+RmIphXAw--.1451S2;
-	Fri, 13 Sep 2024 17:19:12 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: alain.volmat@foss.st.com
-Cc: airlied@gmail.com,
-	akpm@linux-foundation.org,
-	daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	laurent.pinchart@ideasonboard.com,
+	s=arc-20240116; t=1726219178; c=relaxed/simple;
+	bh=CXvpaSN+tVJEE0/BqYHUploPRrHWtOXgqxZ7f+sqGnM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W5sFLqRufgDG17cF+nacEfZ8h42NbIObXG5hHCpshoX3ZCgIaBZQLpVLFmVViAC9E3aRneAlnIThCGkXrQ5fd7GN0jBgWogS/YMEZEiSzyYTLbsjpHwlz6eOpfIyDu8dIt+slU+7PACnhcs+iw3w4hkz2CNZmow/0zyRekoweT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 42CFD339;
+	Fri, 13 Sep 2024 02:20:05 -0700 (PDT)
+Received: from e116581.blr.arm.com (e116581.arm.com [10.162.40.25])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2ACB33F73B;
+	Fri, 13 Sep 2024 02:19:30 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	willy@infradead.org
+Cc: ryan.roberts@arm.com,
+	anshuman.khandual@arm.com,
+	baohua@kernel.org,
+	hughd@google.com,
+	ioworker0@gmail.com,
+	wangkefeng.wang@huawei.com,
+	baolin.wang@linux.alibaba.com,
+	gshan@redhat.com,
 	linux-kernel@vger.kernel.org,
-	maarten.lankhorst@linux.intel.com,
-	make24@iscas.ac.cn,
-	mripard@kernel.org,
-	stable@vger.kernel.org,
-	tzimmermann@suse.de
-Subject: Re: [PATCH RESEND] drm/sti: avoid potential dereference of error pointers
-Date: Fri, 13 Sep 2024 17:19:00 +0800
-Message-Id: <20240913091900.2025122-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240912070118.GA3783204@gnbcxd0016.gnb.st.com>
-References: <20240912070118.GA3783204@gnbcxd0016.gnb.st.com>
+	linux-mm@kvack.org,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH] mm: Compute mTHP order efficiently
+Date: Fri, 13 Sep 2024 14:49:02 +0530
+Message-Id: <20240913091902.1160520-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-CM-TRANSID:rQCowAAXHHyEA+RmIphXAw--.1451S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxXr1kWFW5JFyfZry3Gr4fGrg_yoW5GFy8pr
-	W7GF1j9rWYqa17J3s2qw1qqF4S9395K3y7Gr98G3s2qw1Dtry3GF1akr43ua15Wry8Gw1Y
-	yF9F9FZIqay5ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26r
-	xl6s0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
-	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJV
-	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
-	0VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28Icx
-	kI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
-	xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42
-	IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY
-	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
-	CY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU122NtUUUUU==
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Content-Transfer-Encoding: 8bit
 
-Alain Volmat<alain.volmat@foss.st.com> wrote:=0D
-> Hi,=0D
-> =0D
-> I probably went a bit fast on the commit message.  It seems to me that=0D
-> the Fixes line would be probably better with below one instead.=0D
-> =0D
-> Fixes: dd86dc2f9ae1 ("drm/sti: implement atomic_check for the planes")=0D
-> =0D
-> The same fix is actually necessary for all planes (cursor / gdp / hqvdp),=
-=0D
-> which is related to the same original commit.  Hence sti_cursor/sti_gdp=0D
-> and sti_hqvdp.=0D
-> =0D
-> Would you be ok to have those 3 fixes within a commit ?=0D
-> =0D
-> Regards,=0D
-> Alain=0D
-> =0D
-> On Tue, Sep 10, 2024 at 07:25:43PM +0200, Alain Volmat wrote:=0D
-> > Hi,=0D
-> > =0D
-> > Thanks for your patch.=0D
-> > =0D
-> > Acked-by: Alain Volmat <alain.volmat@foss.st.com>=0D
-> > =0D
-> > Regards,=0D
-> > Alain=0D
-> > =0D
-> > On Mon, Aug 26, 2024 at 01:26:52PM +0800, Ma Ke wrote:=0D
-> > > The return value of drm_atomic_get_crtc_state() needs to be=0D
-> > > checked. To avoid use of error pointer 'crtc_state' in case=0D
-> > > of the failure.=0D
-> > > =0D
-> > > Cc: stable@vger.kernel.org=0D
-> > > Fixes: dec92020671c ("drm: Use the state pointer directly in planes a=
-tomic_check")=0D
-> > > =0D
-> > > Signed-off-by: Ma Ke <make24@iscas.ac.cn>=0D
-> > > ---=0D
-> > >  drivers/gpu/drm/sti/sti_cursor.c | 2 ++=0D
-> > >  1 file changed, 2 insertions(+)=0D
-> > > =0D
-> > > diff --git a/drivers/gpu/drm/sti/sti_cursor.c b/drivers/gpu/drm/sti/s=
-ti_cursor.c=0D
-> > > index db0a1eb53532..e460f5ba2d87 100644=0D
-> > > --- a/drivers/gpu/drm/sti/sti_cursor.c=0D
-> > > +++ b/drivers/gpu/drm/sti/sti_cursor.c=0D
-> > > @@ -200,6 +200,8 @@ static int sti_cursor_atomic_check(struct drm_pla=
-ne *drm_plane,=0D
-> > >  		return 0;=0D
-> > >  =0D
-> > >  	crtc_state =3D drm_atomic_get_crtc_state(state, crtc);=0D
-> > > +	if (IS_ERR(crtc_state))=0D
-> > > +		return PTR_ERR(crtc_state);=0D
-> > >  	mode =3D &crtc_state->mode;=0D
-> > >  	dst_x =3D new_plane_state->crtc_x;=0D
-> > >  	dst_y =3D new_plane_state->crtc_y;=0D
-> > > -- =0D
-> > > 2.25.1=0D
-> > > =0D
-Hi=EF=BC=8C=0D
-=0D
-I appreciate your guidance regarding the modification of the Fixes tag. As =
-=0D
-your observation, I have also identified the additional instance=0D
-(sti_hqvdp_atomic_check) where a similar issue exists, necessitating the =0D
-same patch. I have recognized the problem and was in the process of =0D
-reporting it. To prevent any confusion and ensure accurate reporting, I =0D
-have updated the patch already submitted as patch v2. The issue in =0D
-sti_hqvdp_atomic_check has also been reported, and I kindly request you to =
-=0D
-review it.(I am not very familiar with how to combine the reporting of =0D
-vulnerabilities in multiple functions, so to avoid unnecessary errors or =0D
-confusion, I reported them one by one. Hope for your understanding.) Thank =
-=0D
-you for your prompt response. Your assistance is invaluable to me.=0D
-=0D
-Best regards,=0D
-Ma Ke=
+We use pte_range_none() to determine whether contiguous PTEs are empty
+for an mTHP allocation. Instead of iterating the while loop for every
+order, use some information, which is the first set PTE found, from the
+previous iteration, to eliminate some cases. The key to understanding
+the correctness of the patch is that the ranges we want to examine
+form a strictly decreasing sequence of nested intervals.
+
+Suggested-by: Ryan Roberts <ryan.roberts@arm.com>
+Signed-off-by: Dev Jain <dev.jain@arm.com>
+---
+ mm/memory.c | 30 +++++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 7 deletions(-)
+
+diff --git a/mm/memory.c b/mm/memory.c
+index 3c01d68065be..ffc24a48ef15 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -4409,26 +4409,27 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+ 	return ret;
+ }
+ 
+-static bool pte_range_none(pte_t *pte, int nr_pages)
++static int pte_range_none(pte_t *pte, int nr_pages)
+ {
+ 	int i;
+ 
+ 	for (i = 0; i < nr_pages; i++) {
+ 		if (!pte_none(ptep_get_lockless(pte + i)))
+-			return false;
++			return i;
+ 	}
+ 
+-	return true;
++	return nr_pages;
+ }
+ 
+ static struct folio *alloc_anon_folio(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
++	pte_t *first_set_pte = NULL, *align_pte, *pte;
+ 	unsigned long orders;
+ 	struct folio *folio;
+ 	unsigned long addr;
+-	pte_t *pte;
++	int max_empty;
+ 	gfp_t gfp;
+ 	int order;
+ 
+@@ -4463,8 +4464,23 @@ static struct folio *alloc_anon_folio(struct vm_fault *vmf)
+ 	order = highest_order(orders);
+ 	while (orders) {
+ 		addr = ALIGN_DOWN(vmf->address, PAGE_SIZE << order);
+-		if (pte_range_none(pte + pte_index(addr), 1 << order))
++		align_pte = pte + pte_index(addr);
++
++		/* Range to be scanned known to be empty */
++		if (align_pte + (1 << order) <= first_set_pte)
+ 			break;
++
++		/* Range to be scanned contains first_set_pte */
++		if (align_pte <= first_set_pte)
++			goto repeat;
++
++		/* align_pte > first_set_pte, so need to check properly */
++		max_empty = pte_range_none(align_pte, 1 << order);
++		if (max_empty == 1 << order)
++			break;
++
++		first_set_pte = align_pte + max_empty;
++repeat:
+ 		order = next_order(&orders, order);
+ 	}
+ 
+@@ -4579,7 +4595,7 @@ static vm_fault_t do_anonymous_page(struct vm_fault *vmf)
+ 	if (nr_pages == 1 && vmf_pte_changed(vmf)) {
+ 		update_mmu_tlb(vma, addr, vmf->pte);
+ 		goto release;
+-	} else if (nr_pages > 1 && !pte_range_none(vmf->pte, nr_pages)) {
++	} else if (nr_pages > 1 && pte_range_none(vmf->pte, nr_pages) != nr_pages) {
+ 		update_mmu_tlb_range(vma, addr, vmf->pte, nr_pages);
+ 		goto release;
+ 	}
+@@ -4915,7 +4931,7 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+ 		update_mmu_tlb(vma, addr, vmf->pte);
+ 		ret = VM_FAULT_NOPAGE;
+ 		goto unlock;
+-	} else if (nr_pages > 1 && !pte_range_none(vmf->pte, nr_pages)) {
++	} else if (nr_pages > 1 && pte_range_none(vmf->pte, nr_pages) != nr_pages) {
+ 		update_mmu_tlb_range(vma, addr, vmf->pte, nr_pages);
+ 		ret = VM_FAULT_NOPAGE;
+ 		goto unlock;
+-- 
+2.30.2
 
 
