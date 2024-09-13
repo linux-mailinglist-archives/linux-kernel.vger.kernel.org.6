@@ -1,55 +1,90 @@
-Return-Path: <linux-kernel+bounces-327871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7956F977C16
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:19:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96638977C18
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:20:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F1221F28889
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:19:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9AB5B28AB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3C21D6C7D;
-	Fri, 13 Sep 2024 09:19:38 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEA01D5CC1
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1BD21D6C7C;
+	Fri, 13 Sep 2024 09:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HwnCQgOd";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6mZXP1fv";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HwnCQgOd";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6mZXP1fv"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F79175D45
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726219178; cv=none; b=r81KIsPwWezQWKQGGS8StDqwNWRloHzZ4KSqMJCJYY2zG4k4ya+I2iuKZEJF2nf8pFEGXzog1mEu5W9HEj+XPkkOJvx9r1h3n15d7JjYapIbBCTvbvjgbo/AptmJDkmlWOu2tXeFEovjouXLA2lgDKoocamuXPALeB2hVtTdTs4=
+	t=1726219240; cv=none; b=qyGYKeWwI0v6kgrEXxfmom9BROyc5oL0izY3Tq2bjn5PLFK41wr48ViORar4/TSVWXgx2lttY8EaswFXPzUFRYKOlcCFUpxCgsopQPNAUCPIkyRcMvEBmU94Q0Q3f8FuH9X+9LoOIKpGSN4A5lfjxhDdn1Jf5EhwyuImw3aMEw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726219178; c=relaxed/simple;
-	bh=CXvpaSN+tVJEE0/BqYHUploPRrHWtOXgqxZ7f+sqGnM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W5sFLqRufgDG17cF+nacEfZ8h42NbIObXG5hHCpshoX3ZCgIaBZQLpVLFmVViAC9E3aRneAlnIThCGkXrQ5fd7GN0jBgWogS/YMEZEiSzyYTLbsjpHwlz6eOpfIyDu8dIt+slU+7PACnhcs+iw3w4hkz2CNZmow/0zyRekoweT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 42CFD339;
-	Fri, 13 Sep 2024 02:20:05 -0700 (PDT)
-Received: from e116581.blr.arm.com (e116581.arm.com [10.162.40.25])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2ACB33F73B;
-	Fri, 13 Sep 2024 02:19:30 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: akpm@linux-foundation.org,
-	david@redhat.com,
-	willy@infradead.org
-Cc: ryan.roberts@arm.com,
-	anshuman.khandual@arm.com,
-	baohua@kernel.org,
-	hughd@google.com,
-	ioworker0@gmail.com,
-	wangkefeng.wang@huawei.com,
-	baolin.wang@linux.alibaba.com,
-	gshan@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH] mm: Compute mTHP order efficiently
-Date: Fri, 13 Sep 2024 14:49:02 +0530
-Message-Id: <20240913091902.1160520-1-dev.jain@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726219240; c=relaxed/simple;
+	bh=EpwXLUTj62b6d6Gz8jWdaV2Dn7S4iRdKfckasaFDw/U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EaMpO4j9dUweHv9bu7oyPN/m+j6JrIYiWJDLPorpIIcNUF0rB4g9WwTpShF3WocwwYhAjBY4hNQ6kF4+XI30B7BX7TTLIC7GMnqy8YqDQ6g8lKRw336xKoTHUuD0szVGMUBXmWvFfMRK9EIG8S2XNLlYYIsfQQb+kCswDlKyR1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HwnCQgOd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6mZXP1fv; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HwnCQgOd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6mZXP1fv; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9C304218ED;
+	Fri, 13 Sep 2024 09:20:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726219236; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=vVcGxtCsucx7/qosy72/MyNz3WeeSZ63XSScGFyR6OY=;
+	b=HwnCQgOdhnSMD3Gj79x3N48CYOX+C6taNUv3QYdE0SGzLpX6u2JpZl2463/n0vuQMltpbn
+	1n8dV/+7l/FodaW+6qwvUBKe0s6K/IwE9iGcIYP0qtP93dpWK8I/UQAMDLorRH9c/IoUdX
+	VWe7H6CmURwNthCSAWLwi17z7VmEJ/I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726219236;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=vVcGxtCsucx7/qosy72/MyNz3WeeSZ63XSScGFyR6OY=;
+	b=6mZXP1fvNRoyqhmtqhhttun0PKmxABYj1N69n/WMz4mrCzlrft1xu6HTRDL51zML9qcuMk
+	z0VTtJF4pbfOytAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726219236; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=vVcGxtCsucx7/qosy72/MyNz3WeeSZ63XSScGFyR6OY=;
+	b=HwnCQgOdhnSMD3Gj79x3N48CYOX+C6taNUv3QYdE0SGzLpX6u2JpZl2463/n0vuQMltpbn
+	1n8dV/+7l/FodaW+6qwvUBKe0s6K/IwE9iGcIYP0qtP93dpWK8I/UQAMDLorRH9c/IoUdX
+	VWe7H6CmURwNthCSAWLwi17z7VmEJ/I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726219236;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=vVcGxtCsucx7/qosy72/MyNz3WeeSZ63XSScGFyR6OY=;
+	b=6mZXP1fvNRoyqhmtqhhttun0PKmxABYj1N69n/WMz4mrCzlrft1xu6HTRDL51zML9qcuMk
+	z0VTtJF4pbfOytAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7EAEF13999;
+	Fri, 13 Sep 2024 09:20:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MrqvHeQD5GZ+UAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 13 Sep 2024 09:20:36 +0000
+From: Takashi Iwai <tiwai@suse.de>
+To: linux-firmware@kernel.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH linux-firmware] copy-firmware: Fix incorrect symlinks to uncompressed targets
+Date: Fri, 13 Sep 2024 11:21:08 +0200
+Message-ID: <20240913092122.19523-1-tiwai@suse.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,100 +92,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.98%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_NONE(0.00)[];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-We use pte_range_none() to determine whether contiguous PTEs are empty
-for an mTHP allocation. Instead of iterating the while loop for every
-order, use some information, which is the first set PTE found, from the
-previous iteration, to eliminate some cases. The key to understanding
-the correctness of the patch is that the ranges we want to examine
-form a strictly decreasing sequence of nested intervals.
+The script tries to make a symlink to the target with the compressed
+extension, but it ends up with a wrong symlink if the compression is
+skipped for the target (e.g. via RawFile entry).
 
-Suggested-by: Ryan Roberts <ryan.roberts@arm.com>
-Signed-off-by: Dev Jain <dev.jain@arm.com>
+Add more checks to make a correct symlink.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 ---
- mm/memory.c | 30 +++++++++++++++++++++++-------
- 1 file changed, 23 insertions(+), 7 deletions(-)
 
-diff --git a/mm/memory.c b/mm/memory.c
-index 3c01d68065be..ffc24a48ef15 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4409,26 +4409,27 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
- 	return ret;
- }
- 
--static bool pte_range_none(pte_t *pte, int nr_pages)
-+static int pte_range_none(pte_t *pte, int nr_pages)
- {
- 	int i;
- 
- 	for (i = 0; i < nr_pages; i++) {
- 		if (!pte_none(ptep_get_lockless(pte + i)))
--			return false;
-+			return i;
- 	}
- 
--	return true;
-+	return nr_pages;
- }
- 
- static struct folio *alloc_anon_folio(struct vm_fault *vmf)
- {
- 	struct vm_area_struct *vma = vmf->vma;
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+	pte_t *first_set_pte = NULL, *align_pte, *pte;
- 	unsigned long orders;
- 	struct folio *folio;
- 	unsigned long addr;
--	pte_t *pte;
-+	int max_empty;
- 	gfp_t gfp;
- 	int order;
- 
-@@ -4463,8 +4464,23 @@ static struct folio *alloc_anon_folio(struct vm_fault *vmf)
- 	order = highest_order(orders);
- 	while (orders) {
- 		addr = ALIGN_DOWN(vmf->address, PAGE_SIZE << order);
--		if (pte_range_none(pte + pte_index(addr), 1 << order))
-+		align_pte = pte + pte_index(addr);
-+
-+		/* Range to be scanned known to be empty */
-+		if (align_pte + (1 << order) <= first_set_pte)
- 			break;
-+
-+		/* Range to be scanned contains first_set_pte */
-+		if (align_pte <= first_set_pte)
-+			goto repeat;
-+
-+		/* align_pte > first_set_pte, so need to check properly */
-+		max_empty = pte_range_none(align_pte, 1 << order);
-+		if (max_empty == 1 << order)
-+			break;
-+
-+		first_set_pte = align_pte + max_empty;
-+repeat:
- 		order = next_order(&orders, order);
- 	}
- 
-@@ -4579,7 +4595,7 @@ static vm_fault_t do_anonymous_page(struct vm_fault *vmf)
- 	if (nr_pages == 1 && vmf_pte_changed(vmf)) {
- 		update_mmu_tlb(vma, addr, vmf->pte);
- 		goto release;
--	} else if (nr_pages > 1 && !pte_range_none(vmf->pte, nr_pages)) {
-+	} else if (nr_pages > 1 && pte_range_none(vmf->pte, nr_pages) != nr_pages) {
- 		update_mmu_tlb_range(vma, addr, vmf->pte, nr_pages);
- 		goto release;
- 	}
-@@ -4915,7 +4931,7 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
- 		update_mmu_tlb(vma, addr, vmf->pte);
- 		ret = VM_FAULT_NOPAGE;
- 		goto unlock;
--	} else if (nr_pages > 1 && !pte_range_none(vmf->pte, nr_pages)) {
-+	} else if (nr_pages > 1 && pte_range_none(vmf->pte, nr_pages) != nr_pages) {
- 		update_mmu_tlb_range(vma, addr, vmf->pte, nr_pages);
- 		ret = VM_FAULT_NOPAGE;
- 		goto unlock;
+This fixes the installation failure with the recent change for qcom
+commit 541f96c0fa47b70e9bc13035f7a082064e5b2d4c
+
+The workaround is pretty ad hoc, so if you have a better way to manage
+it, feel free to scratch this.
+
+
+ copy-firmware.sh | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/copy-firmware.sh b/copy-firmware.sh
+index 6757c6ce03a3..fc096dd6daf0 100755
+--- a/copy-firmware.sh
++++ b/copy-firmware.sh
+@@ -136,9 +136,15 @@ grep -E '^Link:' WHENCE | sed -e 's/^Link: *//g;s/-> //g' | while read f d; do
+         if test -d "$target"; then
+             $verbose "creating link $f -> $d"
+             ln -s "$d" "$destdir/$f"
+-        else
++        elif test -f "$target$compext"; then
+             $verbose "creating link $f$compext -> $d$compext"
+             ln -s "$d$compext" "$destdir/$f$compext"
++        elif test -f "$target"; then
++            $verbose "creating link $f -> $d"
++            ln -s "$d" "$destdir/$f"
++        else
++            $verbose "creating link (not yet existing) $f$compext -> $d$compext"
++            ln -s "$d$compext" "$destdir/$f$compext"
+         fi
+     fi
+ done
 -- 
-2.30.2
+2.43.0
 
 
