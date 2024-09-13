@@ -1,202 +1,103 @@
-Return-Path: <linux-kernel+bounces-328026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F07977DEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:47:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C81977DE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:46:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EE70284E15
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:47:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28B381C24C59
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB2721D88C8;
-	Fri, 13 Sep 2024 10:46:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DA01D86C3;
+	Fri, 13 Sep 2024 10:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ae/23Uoq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RckU/D8L";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JaR8+4ix"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729791D7E39;
-	Fri, 13 Sep 2024 10:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8891D7E39;
+	Fri, 13 Sep 2024 10:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726224397; cv=none; b=q6FOLkC8x+52mKl7vhsDw92ZGVhOwBmqteTNqi6icWjzWp9gIGoHkKQm5qJyhtd/KUGJS7v7Ke/ea7EdvJIBpw9LKGBtyXNc/ZBZbS5p9FjB4GwLysvhI8a30f7Fq2/5dFtcuKrB3p40XovayDcMAp7a9tdy63n4d3y0ojG9DMw=
+	t=1726224391; cv=none; b=Rsh6LszN4miBwG+0AC5bqqUNS3hMgYqNiyvRhVK5wypRHgII02OOdxU5hfdsgDyMmKOPzyh4ExY5rU2CN82DMl/p9cy01XoTEeKEIeyGydCDuynAcZw0XMaNbB63odzyYJ8ltGUJ+ANzhwHMIpv++O66rOmCn1MfB8wU3lq6quA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726224397; c=relaxed/simple;
-	bh=e+un8vaDxaujRJMqDIAlvYg83zY4vEsoD9RPHPWxTwo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pr50SIhIb24cM9h06YitJFBN8SxClEK9CHESn2BbZCXzXyH24JM6c9OkdK7Oc+1CXMLKVcjPFKCCalk/TwSmIPa2iHhiGkaddYXPvUng7BlJ2u+sQcokEFaHs2QMS1L+ufqB4SL5gi+bPW5qc+5ktCh0OmO2VvllSr6mt9V+QWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ae/23Uoq; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726224395; x=1757760395;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=e+un8vaDxaujRJMqDIAlvYg83zY4vEsoD9RPHPWxTwo=;
-  b=ae/23UoqqdmhacqBw6LjgwJxMICWMMRsYuVkiQDeRXCJ3kk1d3WnpBxG
-   ILib/1bJGKgcv4E/PvEjvsoqXZv1SWCCoD8LVagu7Op90pueNpQ8xFl+1
-   uYraH9lCMpDuo4QYrP6JdEBf07MF4WiD0dQi08MLLjD+zW5EN8Pg15+Uf
-   ovFFCFd8ntUPuv5ij6pbZSvqhYmiYniDl30B0mrTUdDyOP37ODfTSY7Vm
-   cZjSGEAQvDfgLd9utZOMoOWgHfoSYMLHLuftAcgzqd0uA2FNeo0XLgQGv
-   xiApmu2EG4q5kV5LageiHKEU4Z/YPizUF4Nny0PbPC00xpf2fbOdg7Ptl
-   Q==;
-X-CSE-ConnectionGUID: vk65TY1JRMyugHXntDcOwg==
-X-CSE-MsgGUID: vz7xmvZzRpyVVa6M/Y4RZg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="35785565"
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="35785565"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 03:46:33 -0700
-X-CSE-ConnectionGUID: Hhyk6Xc+Sgq83pUXYmyoqg==
-X-CSE-MsgGUID: meWPunBWTZyMDaizKz0Dpg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="72781058"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 03:46:29 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sp3oo-00000008GXj-3PLy;
-	Fri, 13 Sep 2024 13:46:26 +0300
-Date: Fri, 13 Sep 2024 13:46:26 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v7 07/10] i2c: of-prober: Add simple helpers for
- regulator support
-Message-ID: <ZuQYAu9tBN0wrNfo@smile.fi.intel.com>
-References: <20240911072751.365361-1-wenst@chromium.org>
- <20240911072751.365361-8-wenst@chromium.org>
+	s=arc-20240116; t=1726224391; c=relaxed/simple;
+	bh=KCWk/dnVPJwIbDkehd9oHsFwt8PrYfUPofvCbjHB2G0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=E0GQ+x51Ua+a6X9s/s6jT7Nssxt64EVvVprgyWHaQLlfwOveub9k5bBa35AvgixVMYungj1oSldSib1N/MFKurWGLCp0jcl9PG+zKEBl0ne8ksjwx4awfyZrOIwjv0eivwuvZt/yxT6DIQdkjXle4igqTEFQRYfMp6Sr+2lx6Zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RckU/D8L; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JaR8+4ix; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1726224388;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BnsRMqXCsoNSxev+bzoyLtV5/e+uievz8pnFWnbeXXU=;
+	b=RckU/D8LtemwgfefZNK5f3PvEUsmbnsCEktJoUmFDsViCepWwZ56LLJY+99843OpLnX47U
+	WSnPZ3FX++x1FeY+V7jCSbVrEPOm3PEGN4FZZ2xPDhDjiPLu1fqWEf5rgDNASTQe3+v7Mz
+	MaNebGhBoOGFp9V3OqvrLioyFsn81dGxQn0RyfTutdKlPkJ/8oZuKbNLQaiAe2S0dG2xd8
+	xho197EemNvBl2RXxTwS2KXC1QiVksEsJhpAmie+m3ecj7mhHmUKD9TBMu1H4dEtL+N22F
+	R/KApj//MRmg+e3wdZNWuXYQ+fzkQFgh0LYi5PrgdAmsd49DbQljsYQIn9mbTA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1726224388;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BnsRMqXCsoNSxev+bzoyLtV5/e+uievz8pnFWnbeXXU=;
+	b=JaR8+4ixFirPagxehqLX8jzIZ+iLxSrrJtSdtxmc/fAQ4ZLTYv8Z6fx32DjesY/CkTBjFj
+	toFF1MlSfVy5dXDw==
+To: Jinjie Ruan <ruanjinjie@huawei.com>, Richard Cochran
+ <richardcochran@gmail.com>
+Cc: bryan.whitehead@microchip.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, anna-maria@linutronix.de,
+ frederic@kernel.org, UNGLinuxDriver@microchip.com, mbenes@suse.cz,
+ jstultz@google.com, andrew@lunn.ch, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next v3 1/2] posix-timers: Check timespec64 before call
+ clock_set()
+In-Reply-To: <46efd1be-688e-ecd0-a9e1-cf5f69d0110f@huawei.com>
+References: <20240909074124.964907-1-ruanjinjie@huawei.com>
+ <20240909074124.964907-2-ruanjinjie@huawei.com>
+ <Zt8SFUpFp7JDkNbM@hoboy.vegasvil.org>
+ <ea351ea0-5095-d7ae-5592-ec3bd45c771c@huawei.com> <874j6l9ixk.ffs@tglx>
+ <46efd1be-688e-ecd0-a9e1-cf5f69d0110f@huawei.com>
+Date: Fri, 13 Sep 2024 12:46:28 +0200
+Message-ID: <87v7yz96gr.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240911072751.365361-8-wenst@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain
 
-On Wed, Sep 11, 2024 at 03:27:45PM +0800, Chen-Yu Tsai wrote:
-> Add helpers to do regulator management for the I2C OF component prober.
-> Components that the prober intends to probe likely require their
-> regulator supplies be enabled, and GPIOs be toggled to enable them or
-> bring them out of reset before they will respond to probe attempts.
-> GPIOs will be handled in the next patch.
-> 
-> The assumption is that the same class of components to be probed are
-> always connected in the same fashion with the same regulator supply
-> and GPIO. The names may vary due to binding differences, but the
-> physical layout does not change.
-> 
-> This set of helpers supports at most one regulator supply. The user
-> must specify the node from which the supply is retrieved. The supply
-> name and the amount of time to wait after the supply is enabled are
-> also given by the user.
+On Thu, Sep 12 2024 at 20:24, Jinjie Ruan wrote:
+> On 2024/9/12 20:04, Thomas Gleixner wrote:
+>> How does this code validate timespecs for clock_settime(clockid) where
+>> clockid != CLOCK_REALTIME?
+>
+> According to the man manual of clock_settime(), the other clockids are
+> not settable.
+>
+> And in Linux kernel code, except for CLOCK_REALTIME which is defined in
+> posix_clocks array, the clock_set() hooks are not defined and will
+> return -EINVAL in SYSCALL_DEFINE2(clock_settime), so the check is not
+> necessary.
 
-...
+You clearly understand the code you are modifying:
 
-> +static int i2c_of_probe_simple_get_supply(struct device *dev, struct device_node *node,
-> +					  struct i2c_of_probe_simple_ctx *ctx)
-> +{
-> +	const char *supply_name;
-> +	struct regulator *supply;
-> +
-> +	/*
-> +	 * It's entirely possible for the component's device node to not have regulator
-> +	 * supplies. While it does not make sense from a hardware perspective, the
-> +	 * supplies could be always on or otherwise not modeled in the device tree, but
-> +	 * the device would still work.
-> +	 */
+const struct k_clock clock_posix_dynamic = {
+	.clock_getres           = pc_clock_getres,
+        .clock_set              = pc_clock_settime, 
 
-I would reformat as
+which is what PTP clocks use and that's what this is about, no?
 
-	/*
-	 * It's entirely possible for the component's device node to not have the
-	 * regulator supplies. While it does not make sense from a hardware perspective,
-	 * the supplies could be always on or otherwise not modeled in the device tree,
-	 * but the device would still work.
-	 */
+Thanks,
 
-> +	supply_name = ctx->opts->supply_name;
-> +	if (!supply_name)
-> +		return 0;
-> +
-> +	supply = of_regulator_get_optional(dev, node, supply_name);
-> +	if (IS_ERR(supply)) {
-> +		return dev_err_probe(dev, PTR_ERR(supply),
-> +				     "Failed to get regulator supply \"%s\" from %pOF\n",
-> +				     supply_name, node);
-> +	}
-> +
-> +	ctx->supply = supply;
-> +
-> +	return 0;
-> +}
-
-...
-
-> +int i2c_of_probe_simple_get_res(struct device *dev, struct device_node *bus_node, void *data)
-> +{
-> +	struct i2c_of_probe_simple_ctx *ctx = data;
-> +	struct device_node *node;
-> +	const char *compat;
-> +	int ret;
-> +
-> +	dev_dbg(dev, "Requesting resources for components under I2C bus %pOF\n", bus_node);
-> +
-> +	if (!ctx || !ctx->opts)
-> +		return -EINVAL;
-> +
-> +	compat = ctx->opts->res_node_compatible;
-> +	if (!compat)
-> +		return -EINVAL;
-
-> +	node = of_get_compatible_child(bus_node, compat);
-
-	__free(of_node_put) ?
-
-> +	if (!node)
-> +		return dev_err_probe(dev, -ENODEV, "No device compatible with \"%s\" found\n",
-> +				     compat);
-> +
-> +	ret = i2c_of_probe_simple_get_supply(dev, node, ctx);
-> +	if (ret)
-> +		goto out_put_node;
-> +
-> +	return 0;
-> +
-> +out_put_node:
-> +	of_node_put(node);
-> +	return ret;
-> +}
-
-...
-
-> + * @post_power_on_delay_ms: Delay in ms after regulators are powered on. Passed to msleep().
-
-No need to duplicate the units as it's obvious from the variable name and msleep().
-
- * @post_power_on_delay_ms: Delay after regulators are powered on. Passed to msleep().
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+        tglx
 
