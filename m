@@ -1,230 +1,156 @@
-Return-Path: <linux-kernel+bounces-328424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7944978337
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:02:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C05897833E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:04:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 680F11F21F41
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:02:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0D6C288365
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FA9383BF;
-	Fri, 13 Sep 2024 15:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041D338DFC;
+	Fri, 13 Sep 2024 15:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="sxv+nCCE";
-	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="WJFebE8q"
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.52])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="pt+P3Dt1"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE4829CF0;
-	Fri, 13 Sep 2024 15:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726239734; cv=pass; b=efRJ+5m03JJ39BIrcq1Im4HYqjcS5ZPwCZlCqrg6QlwJkN4+1JW+WOaTuy80t8TZOUysqFR1IUo/5lhFSvFPI3fix3asq9lKZsnEodyVpR4DJfLc/sqeRYlMveKtN+dJiqs4r/Lq70OHyS5WaASIKtW9xRcUGJ4fAYU96YMATv4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726239734; c=relaxed/simple;
-	bh=e57zcWQSVSgo6cEBNGs+KUbvp+KYXNF6edtF2NSWF7I=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=YQyZTx9xAr6CdOZBLCKSunosAMwUzFYDWTnoXCxEfLtuOnyOGBJnAwfZ+NyJfXklzeYL+wa4RXW3tWbsj6OIn13t5vP/uYHYYGb15GCEPYPknAzglsoj31Jfv1Q8qR+jkjyoXI6pnzTWSpeGAGX6nlIbTc4OLATl8B0jyorIuJM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=sxv+nCCE; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=WJFebE8q; arc=pass smtp.client-ip=85.215.255.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
-ARC-Seal: i=1; a=rsa-sha256; t=1726239714; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=OF27jDUSeIFFiPY477XiPvqb58kj8KGspHFAy8Khlq+H0+VMR+4zM60zfvZkyM7zAK
-    zKSb7HuppM6sMek2V/Ft33d0A5M/ljOz3gYavFULS2+CG7H6G6C+34Bt42pceuW5SEgh
-    6Fsj+t3muWG42XqMf5BXN/TAVmUlQMrblSAj/Dvc+b0isZsmjWOzoRo9Y/h3yC3F1s3W
-    N4yBopMujLW1/Td5WBcdBMcO+BkQ2WQrn0xX2OLE3XtvAmzkYvfsuXZbsRUM1u6/gmir
-    6KEMwJ54X7YCy0kXjTDEiTFwDzzHTG7ptaxFTrhNzp8rN0PC7UMRHZc4yTp/ZtZbEhvn
-    /u1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1726239714;
-    s=strato-dkim-0002; d=strato.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=pWUZCvtRrFmZUWsXHM9GvLPUeTaoAVROQZxyilr4N7o=;
-    b=ROiWCEGWGC7IUHTf8AUTquF5wxUZn3DcMWoqSMzz5rx9nle6U5sJpUxTahStB1z42V
-    odXj2v0wOrL8fCmlwFxU0tcnHa/xCBqonOhrZ8Jzx0lzkCdGtG2K1TYKRxBUHtc20FeH
-    NhAU4yVwttF6VKCXLeb2JPwhkah6SwZfLx0rb/BxgHw5aOb/kzSfWwGxbcxib90JYI/V
-    Y0KEn5+EoXTGPC3nJs5kuCW8uIwbrTBP//j4Hm5qzpCxqih3Bil/kyTQcmTVFdTGhaV7
-    8FSn14OoKmXlL0wbKacxTa343mgedUMOaw8r5xQJ7PZfA+NNXA09Kae/2nYHzBTjHwa4
-    x75Q==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo01
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1726239714;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=pWUZCvtRrFmZUWsXHM9GvLPUeTaoAVROQZxyilr4N7o=;
-    b=sxv+nCCE9wVoztWLZqNVrZp+cvm0lB04OykWNaUQTUXVlZjxoXtRgboMIAiWbDBzva
-    KiCW+LC1RTZTvNuHF3AvqyXkfUd4ln1CnZ7nMNeoeEDnR7lF510gLXJGEyrJVSAH8aLx
-    We5cyzYKsfHNveL9IR6SdmQx/d62ynGZaZgkfAuVsXO7AEN8UKIGhJ8NburfFoOerQVo
-    gBYk183jVNfpLzgJY6AG1cv3ZgDoDiV3Q3SIMgWHsew1y+1pj23B4W0yPONu0SP+mv7w
-    0/594crKg0cjWvAScVASUwNUopqTkz2smiwgjuxD3dfMamQWHB79lpA96mHfB1AZ5xzp
-    xGLg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1726239714;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
-    From:Subject:Sender;
-    bh=pWUZCvtRrFmZUWsXHM9GvLPUeTaoAVROQZxyilr4N7o=;
-    b=WJFebE8qQPzuvsAnpczhTrm2zT2XFBBkAlFBgUkullST85l8IO0jb7pV1zVE+sg28Y
-    NAmMlJk69BttJZygj9BQ==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0lFzL1yfjAZ"
-Received: from smtpclient.apple
-    by smtp.strato.de (RZmta 51.2.3 DYNA|AUTH)
-    with ESMTPSA id Q984c208DF1rA1B
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-	(Client did not present a certificate);
-    Fri, 13 Sep 2024 17:01:53 +0200 (CEST)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666E328366;
+	Fri, 13 Sep 2024 15:04:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726239852; cv=none; b=dWF/JomUm7uTyYto6281QKYlSQWXVUcNNxUIgy3jitt0SzBhmHM8yppDaSCHiwQoK/x1nFI49UMeEBJu0vCy54E0mUTXrCCkeGbkOhdCHowvr9n73CWVT0B5+71rfG+9P+wnEV9gE+yMgYhjMcsrGH9U92NqZm016biDT3lY894=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726239852; c=relaxed/simple;
+	bh=RsIRhVtaZpo3ac3+pu0UVgkzx27Fk2CKoiVYYrnj2NU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=re1pjzcYmCsqaoNdGjYygSBVMayj8urU3tK0Kor7A+SqfdROqtcQGsmC8Rk6zhNk8QH+RWxB0ZBuKpQNjjgJo0RuX3mQwfE/xrrEUGLsKl5hGJXx02+QUSsOnitm5VZ7pktZVfNkvc+kU/SUfuTD1v6pW41yyfHFRF4eAjJWI9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=pt+P3Dt1; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=mDPiCm6axJxwKPkIrMZyEkQmZQPHQrr21Uo9jvJLswo=; b=pt+P3Dt1NnqdxnzXQZ9Of2Sc8E
+	KGNYZ7MDM0LIwVtEBkGNr9uKy8bOKkktFN76r7CJ7L/En861Qi/HjaBnoIHfFqvFoNVBzoPCNJ5Nv
+	cnamYhVDdMuQjocOTepSsau8i7a54JnwqULsOtDLpI21MqhuU8g5FrfmYj0usNFEA+6U=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sp7pr-007OxV-9b; Fri, 13 Sep 2024 17:03:47 +0200
+Date: Fri, 13 Sep 2024 17:03:47 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Ronnie.Kunin@microchip.com
+Cc: Raju.Lakkaraju@microchip.com, netdev@vger.kernel.org,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, Bryan.Whitehead@microchip.com,
+	UNGLinuxDriver@microchip.com, linux@armlinux.org.uk,
+	maxime.chevallier@bootlin.com, rdunlap@infradead.org,
+	Steen.Hegelund@microchip.com, Daniel.Machon@microchip.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next V2 4/5] net: lan743x: Implement phylink pcs
+Message-ID: <867aadb8-6e48-4c7c-883b-6f88caefcaa6@lunn.ch>
+References: <20240911161054.4494-1-Raju.Lakkaraju@microchip.com>
+ <20240911161054.4494-5-Raju.Lakkaraju@microchip.com>
+ <c6e36569-e3a8-4962-ac85-2fd7d35ab5d1@lunn.ch>
+ <ZuKP6XcWTSk0SUn4@HYD-DK-UNGSW21.microchip.com>
+ <cbc505ca-3df0-4139-87a1-db603f9f426a@lunn.ch>
+ <PH8PR11MB79651A4A42D0492064F6541B95642@PH8PR11MB7965.namprd11.prod.outlook.com>
+ <ZuP9y+5YntuUJNTe@HYD-DK-UNGSW21.microchip.com>
+ <4559162d-5502-4fc3-9e46-65393e28e082@lunn.ch>
+ <PH8PR11MB7965B1A0ABAF1AAD42C57F1A95652@PH8PR11MB7965.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH v2] i2c: omap: Fix standard mode false ACK readings
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20240913153251.48ffafbd@akair>
-Date: Fri, 13 Sep 2024 17:01:42 +0200
-Cc: Reid Tonking <reidt@ti.com>,
- Tony Lindgren <tony@atomide.com>,
- "Raghavendra, Vignesh" <vigneshr@ti.com>,
- Aaro Koskinen <aaro.koskinen@iki.fi>,
- Janusz Krzysztofik <jmkrzyszt@gmail.com>,
- Linux-OMAP <linux-omap@vger.kernel.org>,
- linux-i2c@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <68865E6A-FBA3-4947-9761-9FD3DC957D0E@goldelico.com>
-References: <20230426194956.689756-1-reidt@ti.com>
- <445b3cbf-ffbc-6f77-47db-c30fc599e88f@ti.com>
- <20230428074330.GJ14287@atomide.com>
- <20230428183037.wbhds54dz5l4v5xa@reidt-t5600.dhcp.ti.com>
- <664241E0-8D6B-4783-997B-2D8510ADAEA3@goldelico.com>
- <20240913140934.29bb542b@akair>
- <0903DB3E-1A44-44BB-87DC-01C65B97AE4E@goldelico.com>
- <20240913153251.48ffafbd@akair>
-To: Andreas Kemnade <andreas@kemnade.info>
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PH8PR11MB7965B1A0ABAF1AAD42C57F1A95652@PH8PR11MB7965.namprd11.prod.outlook.com>
 
-Hi Andreas,
+On Fri, Sep 13, 2024 at 02:23:03PM +0000, Ronnie.Kunin@microchip.com wrote:
+> > > It's my mistake. We don't need 2 MDIO buses.
+> > > If SFP present, XPC's MDIO bus can use, If not sfp, LAN743x MDIO bus
+> > > can use.
+> > 
+> > I still think this is wrong. Don't focus on 'sfp present'.
+> > 
+> > Other MAC drivers don't even know there is an SFP cage connected vs a PHY. They just tell phylink the list
+> > of link modes they support, and phylink tells it which one to use when the media has link.
+> > 
+> > You have a set of hardware building blocks, A MAC, a PCS, an MDIO bus.
+> > Use the given abstractions in Linux to export them to the core, and then let Linux combine them as
+> > needed.
+> > 
+> > Back to my question about EEPROM vs fuses. I assume it is an EEPROM, ...
+> 
+> How RGMII vs "SGMII-BASEX"  is controlled ?
+> The hardware default is RGMII. That can be overwritten by OTP (similar functionality to EFuse, inside the PCI11010), which also can be further overwritten by EEPROM (outside the PCI11010). That will setup the initial value the device will have by the time the software first sees it. But it is a live bit in a register, so it can be changed at runtime if it was desired.
 
-> Am 13.09.2024 um 15:32 schrieb Andreas Kemnade <andreas@kemnade.info>:
->=20
->>> I had a patch to disable 1Ghz on that
->>> device in my tree. Do you have anything strange in your
->>> tree? =20
->>=20
->> No, and the omap3 is running with 800 MHz only.
->>=20
-> So you have a patch disabling 1Ghz OPP in there?
+In a DT system phy-mode will tell you this. You don't have DT, at
+least not at the moment, so your EEPROM makes sense for this, the
+RGMII vs "SGMII-BASEX" bit.
 
-I think the speed is binned to be 800 MHz only. So the OPP is ignored.
+> 
+> > ... and the PCS always exists. So
+> > always instantiate an MDIO bus and instantiate the PCS. The MDIO bus always exists, so instantiate an
+> > MDIO bus.
+> 
+> No, you can't do that with this device because:
+> - There are shared pins in the chip between RGMII and SGMII/BASEX
 
-> The error messages
-> look like things I got when 1Ghz was enabled, so better double check.
+Which is typical in SoC. What you generally have is lots of IP blocks,
+I2C, SPI, GPIO, PWM, NAND controllers etc. The total number of
+inputs/outputs of these blocks is more than the legs on the chip. You
+then have a pinmux, which connects the internal blocks to the pins.
 
-Well, it turns out to be difficult to check since with 6.11-rc7
-cpufreq-info seems to be broken... I have not yet installed the fixed =
-4.19.283 again.
+All the devices exist, but only a subset is connected to the outside
+world.
 
-But indeed I have found a potential issue. We have a patch [1] for the =
-gta04a5 (only) that adds
+For RGMII vs SGMII/BASEX, it probably does not make sense to
+instantiate the PCS in RGMII mode. However, in SGMII/BASEX it should
+always exist, because it is connected to the outside world.
 
-&cpu0_opp_table {
-	/* is unreliable on gta04a5 - enable by echo 1 =
->/sys/devices/system/cpu/cpufreq/boost */
-	opp1g-1000000000 {
-		turbo-mode;
-	};
-};
+> - Furthermore, I need to check with the HW architect, but I suspect
+>   that the block that was not selected is shutdown to save power as
+>   well.
 
-so that 1 GHz must be explicitly enabled by user-space.
+I would also expect that when the PCS device is probed, it is left in
+a lower power state. For an external PHY, you don't need the PCS
+running until the PHY has link, autoneg has completed, and phylink
+will tell you to configure the PCS to SGMII or 2500BaseX. For an SFP,
+you need to read out the contents of the SFP EEPROM, look for LOS to
+indicate there is link, and then phylink will determine SGMII,
+1000BaseX or 2500BaseX and tell you how to configure it. It is only at
+that point do you need to take the PCS out of low power mode.
 
-But some time ago the 1GHz node was apparently renamed to opp-1000000000 =
-(5821d766932cc8)
-and this patch was not adjusted.
+Independent of RGMII vs SGMII/BASEX, the MDIO bus always exists. Both
+modes need it. And Linux just considers it an MDIO, not necessarily an
+MDIO bus for this MAC. So i would expect to always see a fully
+functioning MDIO bus.
 
-After fixing it I can ask again for cpufreq-info and the 1GHz OPP is not =
-activated:
+One of the weird and wonderful use cases: There are lots of ComExpress
+boards with Intel 10G Ethernet interfaces. There are developers who
+create base boards for them with Ethernet switches. They connect the
+10G interface to one port of the switch. But to manage the switch they
+need MDIO. The Intel 10G drivers bury the MDIO in firmware, Linux
+cannot access is. So they are forced to use three GPIOs and bitbang
+MDIO. It is slow. Now imaging i put your device on the baseboard. I
+use its MAC connected to a 1G/2.5G PHY, on the MDIO bus, which i uses
+as the management interface for the box. Additional i connect the MDIO
+bus to the switch, to manage the switch. Linux has no problems with
+this, MDIO is just a bus with devices on it. But phylink will want
+access to the PCS to switch it between SGMII and 2500BaseX depending
+on what the PHY negotiates. Plus we need C45 to talk to the switch.
 
-root@letux:~# cpufreq-info=20
-cpufrequtils 008: cpufreq-info (C) Dominik Brodowski 2004-2009
-Report errors and bugs to cpufreq@vger.kernel.org, please.
-analyzing CPU 0:
-  driver: cpufreq-dt
-  CPUs which run at the same hardware frequency: 0
-  CPUs which need to have their frequency coordinated by software: 0
-  maximum transition latency: 300 us.
-  hardware limits: 300 MHz - 800 MHz
-  available frequency steps: 300 MHz, 600 MHz, 800 MHz
-  available cpufreq governors: conservative, ondemand, userspace, =
-powersave, performance
-  current policy: frequency should be within 300 MHz and 800 MHz.
-                  The governor "ondemand" may decide which speed to use
-                  within this range.
-  current CPU frequency is 800 MHz (asserted by call to hardware).
-  cpufreq stats: 300 MHz:37.38%, 600 MHz:10.11%, 800 MHz:52.51%, 1000 =
-MHz:0.00%  (1740)
-root@letux:~#=20
+The proposed hijacking for C45 from the MDIO bus to talk to the PCS
+when there is an SFP breaks this, and as far as i can see, for no real
+reason other than being too lazy to put the PCS on its own Linux MDIO
+bus.
 
-Anyways, this bug was introduced some months after this i2c patch we
-are discussing here. So i2c broke first before the 800MHz limitation was =
-accidentially
-removed. Therefore I am quite sure that the failing 4.19.283 did run at =
-800 MHz.
-
-And in the v4.19.282 and v4.19.283 based kernels we have simply =
-commented out the 1GHz
-option (since 2018) or there is no 1GHz OPP at all.
-
-Thanks for the hint to take a second and closer look at it, but it =
-doesn't seem to
-be a factor here.
-
-> if it is letux, then there is e.g. the interrupt reversal in there.
-> Maybe it unveils some problem which should be fixed, maybe it is
-> harmful, it was never well reviewed...
-
-I know what you refer to but I could not find it any more. But I may not =
-have
-searched correctly.
-
->=20
->> I haven't tested on another board but the bug is very reproducible
->> and I was able to bisect it to this patch, which makes the =
-difference.
->>=20
-> the error messages, esp. regarding rcu do not look so related to this.
-> Maybe having this patch or not triggers some other bug. Maybe we =
-trigger
-> some race conditions. Or i2c error checking regarding OPP setting...
-
-That is what I suspect as well. I2C is used to switch the twl4030 for =
-different OPPs...
-
->=20
->> So there may be boards which happily run with the patch and some
->> don't. Maybe a race condition with hardware.
->>=20
-> I am not ruling out that this patch has nasty side effects but I think
-> there is more in the game.
-
-Yes, that is why I think just reverting this patch may only hide a
-symptom and does not solve it.
-
-But it may as well have introduced a bug as Tony apparently was thinking
-of when asking.
-
-BR and thanks,
-Nikolaus
-
-[1]: =
-https://git.goldelico.com/?p=3Dletux-kernel.git;a=3Dcommit;h=3De824f0c9513=
-cf1d57eba0c9a2ce5fe264fafc8d5=
+      Andrew
 
