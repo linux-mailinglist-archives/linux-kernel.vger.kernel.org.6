@@ -1,114 +1,99 @@
-Return-Path: <linux-kernel+bounces-328101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D01FA977EDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:51:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62EFC977EE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:51:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8680E1F24A5A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:51:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CB641C21914
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:51:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7FC1D7E22;
-	Fri, 13 Sep 2024 11:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4EC1D88BC;
+	Fri, 13 Sep 2024 11:51:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cnw0/Jrj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Afv6Xwzi"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C0D1D86EF;
-	Fri, 13 Sep 2024 11:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641BC1D6C7F;
+	Fri, 13 Sep 2024 11:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726228292; cv=none; b=Rjho3ol/3mW2x8lPArDjLGRAn0bwm7ic0h8qh3I172tAFhD143E9ZAKcHrkxXOOxR4FM4/X6225MiDOaBBAruemJOnOXlJT9yOJI+JciRRW19z3JzIUSQOe34tf0Fotkai9Y28tOwZfiKzOBJIcPskpNgRv/5PqgpVwT+cIG1/4=
+	t=1726228311; cv=none; b=Wg2IlaUtee0plOrL/n00NzQlStCsjRiECJqKUVa4nwqitYK3lUQFX4TouoCdAEsAgsc28L6ZyRFmnf17FX3I+eFl1F8aNQ5HJ6Hz1sQ+ABsIatv0oxUiOUkOLa7sBMkSXl4/DZWsJJHIHMDNsUKIYMzvdN/odMZAFpKave+KZZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726228292; c=relaxed/simple;
-	bh=bDQ2cHKwBgZirp1r+Hr2bpHWKmVZ+wjLFiy68UToSsk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sL+JNmpggHDoIM6OeQMDknpqE//bO9K7LG2Mu5rZn0aSUvjq7wiyZ8UrlICrxOrn4vm7+9sepRtqKKUfJ622iqGvChyjTUgv0rXa5OqTs4S105tk+vksgthOsWdcZdGx9VIlBpTLlRPRFRr7yTdEy6/KquJsMnDspjJcaVPb1cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cnw0/Jrj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D26BC4CEC0;
-	Fri, 13 Sep 2024 11:51:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726228290;
-	bh=bDQ2cHKwBgZirp1r+Hr2bpHWKmVZ+wjLFiy68UToSsk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Cnw0/Jrj2V/AnMFdy16uEyvcUU9eEyu/3xxKMDM2cTRbzZSNWAP9C7uF5z6/avJfc
-	 8aBl0mQVSY9DP3osEYsrAq9Nmh1rnYJCgcS97AzgCugxHjYvCBq4i7pqRXpL39uejY
-	 TLf1ONc/DsRr/n0cof4p0CVA2lzcIjIirKJTAuHImByJLPCinlyyQC5jjt+fwntTKK
-	 igk/thqZJUx809wRqwuQgANDuDTFcuy9LzSYJoMdOF/UhqZuEau18025GmX2slI240
-	 bwoSMHU2RuYUjp0IUcOPYeMgumptePJFqZ8KYm7J24KGjwrwQBY+oz92SmKu7t50JZ
-	 OTXQ5KvLjR/uw==
-Date: Fri, 13 Sep 2024 17:21:26 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: =?iso-8859-1?Q?P=E9ter?= Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	yung-chuan.liao@linux.intel.com,
-	pierre-louis.bossart@linux.intel.com,
-	krzysztof.kozlowski@linaro.org, alsa-devel@alsa-project.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH stable-6.10 regression] Revert "soundwire: stream: fix
- programming slave ports for non-continous port maps"
-Message-ID: <ZuQnPnRsXaUEBv6X@vaman>
-References: <20240910124009.10183-1-peter.ujfalusi@linux.intel.com>
- <febaa630-7bf4-4bb8-8bcf-a185f1b2ed65@linux.intel.com>
- <2024091130-detail-remix-34f7@gregkh>
+	s=arc-20240116; t=1726228311; c=relaxed/simple;
+	bh=1TLm4rAZ5pFpsYIIQFLhLiHFR2YYzQXDu6UGmffJLJY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UdSoOP1PiC4xjb/OGvk01RKeWqEq0WYdf92LsWe0K5LqiSqF8H+HEGXKZsTWe+dk74FFxWH4hHBQBPwg9yvorRZp41ZZnUqu/x2ya3zhzlM9/tlQKpkVwEuCtucywI0ACW29DHhmTIsTa361qeafhVRvXwYjorCl3UOed7jVCqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Afv6Xwzi; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 833F140002;
+	Fri, 13 Sep 2024 11:51:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1726228307;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=o22ld+Ml/WqxlcTNuea7Zj0lN6reXMa5feXwsZPjWbs=;
+	b=Afv6XwzikOJ1Oxj7sjkT5xnkekmXx3kGpt6E4zviM0lqGfyyWrgQGf6xz0Z72g15ndFsxN
+	+zsa2jjS8MBWHCr8Lanlxa/RjOsz7vUKhdJSi4HOqFD1a+8TI3DegsICkCJbXPGzxFln5i
+	KkBiu2QG17SVcV21otBbvdONZHQMn86SSNlvvsWtYpbQQs1LKhGVRNDF2BNbry+i2FjIze
+	dIieib+x/XuXQDu5gDaTFh3s7RgOfEFr/53+Hy2okgkWp3YejE1CCv8MO9WQqhZsZBNqiK
+	1mMD9TVKROec5eqr0PU2gmegww2mZvTE7zr4Oz3GqKemu9TywB4cpFTYTCzGvw==
+Date: Fri, 13 Sep 2024 13:51:45 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: <syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com>,
+ <christophe.leroy@csgroup.eu>, <davem@davemloft.net>,
+ <edumazet@google.com>, <kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
+ <netdev@vger.kernel.org>, <pabeni@redhat.com>,
+ <syzkaller-bugs@googlegroups.com>
+Subject: Re: [PATCH net-next] net: ethtool: phy: Distinguish whether dev is
+ got by phy start or doit
+Message-ID: <20240913135145.2c9ac50c@fedora.home>
+In-Reply-To: <20240913080714.1809254-1-lizhi.xu@windriver.com>
+References: <000000000000d3bf150621d361a7@google.com>
+	<20240913080714.1809254-1-lizhi.xu@windriver.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2024091130-detail-remix-34f7@gregkh>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On 11-09-24, 14:31, Greg KH wrote:
-> On Tue, Sep 10, 2024 at 04:02:29PM +0300, Péter Ujfalusi wrote:
-> > Hi,
-> > 
-> > On 10/09/2024 15:40, Peter Ujfalusi wrote:
-> > > The prop->src_dpn_prop and prop.sink_dpn_prop is allocated for the _number_
-> > > of ports and it is forced as 0 index based.
-> > > 
-> > > The original code was correct while the change to walk the bits and use
-> > > their position as index into the arrays is not correct.
-> > > 
-> > > For exmple we can have the prop.source_ports=0x2, which means we have one
-> > > port, but the prop.src_dpn_prop[1] is accessing outside of the allocated
-> > > memory.
-> > > 
-> > > This reverts commit 6fa78e9c41471fe43052cd6feba6eae1b0277ae3.
-> > 
-> > I just noticed that Krzysztof already sent the revert patch but it is
-> > not picked up for stable-6.10.y
-> > 
-> > https://lore.kernel.org/lkml/20240909164746.136629-1-krzysztof.kozlowski@linaro.org/
+Hi,
+
+On Fri, 13 Sep 2024 16:07:13 +0800
+Lizhi Xu <lizhi.xu@windriver.com> wrote:
+
+> Syzbot reported a refcount bug in ethnl_phy_done.
+> This is because when executing ethnl_phy_done, it does not know who obtained
+> the dev(it can be got by ethnl_phy_doit or ethnl_phy_start) and directly
+> executes ethnl_parse_header_dev_put as long as the dev is not NULL.
+> Add dev_start_doit to the structure phy_req_info to distinguish who obtains dev.
 > 
-> Is this in Linus's tree yet?  That's what we are waiting for.
+> Fixes: 17194be4c8e1 ("net: ethtool: Introduce a command to list PHYs on an interface")
+> Reported-and-tested-by: syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=e9ed4e4368d450c8f9db
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
 
-Yes I was waiting for that as well, the pull request has been sent to
-Linus, this should be in his tree, hopefully tomorow..
+Thanks for addressing this, however I've already sent a first fix for
+this [1] yesterday, followed-up by a second one [2] with another
+approach following the reviews.
 
-> 
-> > > Cc: stable@vger.kernel.org # 6.10.y
-> > > Signed-off-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
-> > > ---
-> > > Hi,
-> > > 
-> > > The reverted patch causes major regression on soundwire causing all audio
-> > > to fail.
-> > > Interestingly the patch is only in 6.10.8 and 6.10.9, not in mainline or linux-next.
-> 
-> Really?  Commit ab8d66d132bc ("soundwire: stream: fix programming slave
-> ports for non-continous port maps") is in Linus's tree, why isn't it
-> being reverted there first?
+[1] : https://lore.kernel.org/netdev/20240913091404.3d4a9d19@fedora.home/T/#m4777416dbe26bf97b3a0a323fc71a93b40e0f7fb
+[2] : https://lore.kernel.org/netdev/20240913100515.167341-1-maxime.chevallier@bootlin.com/T/#u
 
-I guess Peter jumped the gun, I was planning to ask you once this is
-picked up Linus
+Best regards,
 
--- 
-~Vinod
+Maxime
 
