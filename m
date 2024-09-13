@@ -1,215 +1,128 @@
-Return-Path: <linux-kernel+bounces-328853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C66F9789EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:29:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AAE99789F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:31:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 780311C22DD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:29:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4D811F26DE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:31:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F7E14831E;
-	Fri, 13 Sep 2024 20:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5BD514A099;
+	Fri, 13 Sep 2024 20:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M/80441E"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TWNFYvLw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E8757C8D;
-	Fri, 13 Sep 2024 20:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34590B67D;
+	Fri, 13 Sep 2024 20:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726259365; cv=none; b=TYNdP99/11uESeOMqTS275KmqqYcBmWqRLsRkALM3sFB6bKUu76V0m7rcUcJx1mTcEj7/kNlMUrzAyu+N2dNIuXOcx4gPLDpvJZ9QRm5imWQkf5z+l8Vk2erk0HOadX/H5LjKIMDvc5SgHY58gydDDnU2ovLiE4PW51bDksMYpQ=
+	t=1726259486; cv=none; b=hLGmELKcnNdvz4YX7PmTgg7jg//5c8uxDxqNTvjsKWPiQgJesSp5kpcC/xSz+QHBo2R1KDK+BSYP69ZDwtST1vWsIZVKX85S8VZGuEeva43O9SQZt/e31MsZoaGRrOrcnJdzfWB67D/Ciy04Ue2MLeGJ8nNCi1AJQbHenVGnSs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726259365; c=relaxed/simple;
-	bh=Eraz0blgc4Pzkzc8lSujYmFedwYBhnjbjZ7Rod7oKS0=;
+	s=arc-20240116; t=1726259486; c=relaxed/simple;
+	bh=Tx5/dZmHNQNXpIuvYmfC/G6hrzVqoftURJxPv5bI6kk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fgJeOnKMmfTrv0eZCnRWP1txY7i33O2bUN7Ksdnlm0BMNznjkLQmEhEJfEzPkjRM8IgazSEEDSf25rTrAnnB2gajrilPIUj2yOzTyewxKqYJt34AcTxEyRWn+hmF6sQmAmA/RMb+KwmJj04EwT7J6AOtFqCaA1gFq/NK2GD9Xw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M/80441E; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42cb0d0311fso4061355e9.1;
-        Fri, 13 Sep 2024 13:29:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726259362; x=1726864162; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5xolFhNsDxZ0oUZ4unxP8L8jNHdIcN6NCApuBWLejIs=;
-        b=M/80441EeAGcnV7CNET8qJRkn5HLcmndOWz3TZswntNWz1aqsjnehJ9Bd+t/tnN8ex
-         3DsPJ1lvN8jdUD8LM5uk7KpvKQpxw6iG4RCKbuiaB28dUW3uH0MGPsM8uEKcuqhdmZVs
-         llSP7nQhFwMJyPTrc+Jo+za/M/sDe5N39OpMWc5nhWjBia+7WZbE3F8tHcoNBrIRVCMl
-         HVNgLG70YbY/ZJRkyFvtGGg+wTIcO8FqWiDh0GZx/Drbr4PMvFTaZesjvaXvqrhcDPxw
-         WqcIAjn+zmjpJXpqYeaklUUvojiEHf0sEY7J2cNnhJ0CI1MNi52J6o9uFvTeTBOGdq/c
-         CVjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726259362; x=1726864162;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5xolFhNsDxZ0oUZ4unxP8L8jNHdIcN6NCApuBWLejIs=;
-        b=p3CjFfAWkze3K05JMTGYDJALjdioup42vlkuujJ9QYWVwrkgHOCuTJUJIMUSlUtM7C
-         +ca9xyJsyMEnZmeNjhZ01agj1CrSjSCUrRjDApVTdJ+YzKgJUv4d8HyZ+rBPKmwyYSKt
-         U0suw9gOygGD4aqBYaiYEpVohinvFtfDADIHejW2LWQ03SIGbvBTCW/tl2qWszir3ZmH
-         9oYeF1QWJWGj1XpGRUShcRE67FwxALDFq88JSIovWXThaEG7nUe8FVeytYgkijvNDj2p
-         pExK1Vl7YqthoIQqc3oovuvBLiGNabcKgxMxrv7xtFYx8UB0JwG/evnyUIphGczGiW4H
-         Or2g==
-X-Forwarded-Encrypted: i=1; AJvYcCUeJ8LIWGzpVfab1yaLnCUqC4vnvyLJZeSZ4JYvsw2UpeMfdJ9G42q8VraixhaNl61pCVHDKa8Ud5fch1c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/Cj3JbqYyR5+X8p9p9SZIoBS8WF9fOBFv0Erza4vLv+fnKGVw
-	ldFhiZXqeTEhFg2jfj49JLVqLN8Yndb73KnWJtWPFWjnFgD3o8HM
-X-Google-Smtp-Source: AGHT+IGpvt0S5W8aCBGJ6NArrRUubl0oaLk1rGoOiTAa8dDF48WlXMqbFY0nwTaGKoLmpUpJSlcmPQ==
-X-Received: by 2002:a05:600c:3506:b0:42c:ba6c:d9b7 with SMTP id 5b1f17b1804b1-42cdb57e85emr30075965e9.5.1726259361289;
-        Fri, 13 Sep 2024 13:29:21 -0700 (PDT)
-Received: from skbuf ([188.25.134.29])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b189a83sm35598185e9.34.2024.09.13.13.29.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 13:29:19 -0700 (PDT)
-Date: Fri, 13 Sep 2024 23:29:16 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>
-Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"vladimir.oltean@nxp.com" <vladimir.oltean@nxp.com>,
-	"andrew@lunn.ch" <andrew@lunn.ch>,
-	"vivien.didelot@gmail.com" <vivien.didelot@gmail.com>,
-	"claudiu.manoil@nxp.com" <claudiu.manoil@nxp.com>,
-	"woojung.huh@microchip.com" <woojung.huh@microchip.com>,
-	"dqfext@gmail.com" <dqfext@gmail.com>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"UNGLinuxDriver@microchip.com" <UNGLinuxDriver@microchip.com>,
-	"alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"george.mccollister@gmail.com" <george.mccollister@gmail.com>,
-	"linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-	"linux@rempel-privat.de" <linux@rempel-privat.de>,
-	"linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-	"hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-	"hauke@hauke-m.de" <hauke@hauke-m.de>,
-	"LinoSanfilippo@gmx.de" <LinoSanfilippo@gmx.de>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"sean.wang@mediatek.com" <sean.wang@mediatek.com>,
-	"kurt@linutronix.de" <kurt@linutronix.de>,
-	"m.grzeschik@pengutronix.de" <m.grzeschik@pengutronix.de>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-	"Landen.Chao@mediatek.com" <Landen.Chao@mediatek.com>,
-	"f.fainelli@gmail.com" <f.fainelli@gmail.com>
-Subject: Re: [PATCH v2 net 2/5] net: dsa: be compatible with masters which
- unregister on shutdown
-Message-ID: <20240913202916.t7bpdc6ubfdpv47s@skbuf>
-References: <20210917133436.553995-1-vladimir.oltean@nxp.com>
- <20210917133436.553995-3-vladimir.oltean@nxp.com>
- <2d2e3bba17203c14a5ffdabc174e3b6bbb9ad438.camel@siemens.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rvj6L4pvAFZoRSdv5OM+vKxdCuDuYgzA9otjHRIxP5wVtV1dDKKi8C+0aZYDG0+1x0bsRH+i/fPrC/dgsxps0lZaGe9oZH6yvhyNTryV3t1AbHIruMmEldLX+/m+vnIbOQKYdx4yiV65lggXKwfzO9jnZhmLl/9kdMVEeebewiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TWNFYvLw; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726259484; x=1757795484;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Tx5/dZmHNQNXpIuvYmfC/G6hrzVqoftURJxPv5bI6kk=;
+  b=TWNFYvLwI74IuXHjfCFlF/64YUQgsOzOguDnQrJTOYUUY5wP7l4NO7AW
+   /1YukI6N3KxnPA5WscG/JnKpw+rEhtyfpuIaeqiiufdJKMxRf4gO8fJN1
+   pKDpsJbPIcrj/6l6UFQ4YgFiJKsy5vLTvlh2cHF2f+YdHRS8UyfgImJPs
+   oxq0DuiJCeSHXGLKGaAH8x8nYDjAeet5H8SZPHV5HUxCDv/pGjV8qB2W6
+   u8oZRZk2w9VZTkVB6B/pUYBdelOdplGMU+NGJ7ggQHiC3z+wHi2M6kW7o
+   z+wvbqctjmXax5hW1VKGj87l8KWistI1j/wAsw0LVDy7S1bnMe1M5ZQWP
+   Q==;
+X-CSE-ConnectionGUID: BdOAa7aPQy2zjTQAjnHqAg==
+X-CSE-MsgGUID: r4Wa7KjeRXmF7dzoLT2uEg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25110863"
+X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
+   d="scan'208";a="25110863"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 13:31:23 -0700
+X-CSE-ConnectionGUID: Yaf97OChSUq8zt1fjh93bw==
+X-CSE-MsgGUID: 5M2YQM5/TGGWtgJ6fMjEVA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
+   d="scan'208";a="72556858"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 13 Sep 2024 13:31:21 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1spCwo-0006xw-1u;
+	Fri, 13 Sep 2024 20:31:18 +0000
+Date: Sat, 14 Sep 2024 04:30:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alexandru Ardelean <aardelean@baylibre.com>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, jic23@kernel.org, krzk+dt@kernel.org,
+	robh@kernel.org, lars@metafoo.de, michael.hennerich@analog.com,
+	gstols@baylibre.com, dlechner@baylibre.com,
+	Alexandru Ardelean <aardelean@baylibre.com>
+Subject: Re: [PATCH v6 8/8] iio: adc: ad7606: add support for AD7606C-{16,18}
+ parts
+Message-ID: <202409140416.KWHXjFSv-lkp@intel.com>
+References: <20240913135744.152669-9-aardelean@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2d2e3bba17203c14a5ffdabc174e3b6bbb9ad438.camel@siemens.com>
+In-Reply-To: <20240913135744.152669-9-aardelean@baylibre.com>
 
-Hi Alexander,
+Hi Alexandru,
 
-On Wed, Sep 04, 2024 at 08:31:13AM +0000, Sverdlin, Alexander wrote:
-> > +static void lan9303_mdio_shutdown(struct mdio_device *mdiodev)
-> > +{
-> > +	struct lan9303_mdio *sw_dev = dev_get_drvdata(&mdiodev->dev);
-> > +
-> > +	if (!sw_dev)
-> > +		return;
-> > +
-> > +	lan9303_shutdown(&sw_dev->chip);
-> > +
-> > +	dev_set_drvdata(&mdiodev->dev, NULL);
-> >  }
-> 
-> This unfortunately didn't work well with LAN9303 and probably will not work
-> with others:
-> 
-> Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-> CPU: 0 PID: 442 Comm: kworker/0:3 Tainted: G           O       6.1.99+gitb7793b7d9b35 #1
-> Workqueue: events_power_efficient phy_state_machine
-> pc : lan9303_mdio_phy_read+0x1c/0x34
-> lr : lan9303_phy_read+0x50/0x100
-> Call trace:
->  lan9303_mdio_phy_read+0x1c/0x34
->  lan9303_phy_read+0x50/0x100
->  dsa_slave_phy_read+0x40/0x50
->  __mdiobus_read+0x34/0x130
->  mdiobus_read+0x44/0x70
->  genphy_update_link+0x2c/0x104
->  genphy_read_status+0x2c/0x120
->  phy_check_link_status+0xb8/0xcc
->  phy_state_machine+0x198/0x27c
->  process_one_work+0x1dc/0x450
->  worker_thread+0x154/0x450
-> 
-> as long as the ports are not down (and dsa_switch_shutdown() doesn't ensure it),
-> we cannot just zero drvdata, because PHY polling will eventually call
-> 
-> static int lan9303_mdio_phy_read(struct lan9303 *chip, int addr, int reg)
-> {
->         struct lan9303_mdio *sw_dev = dev_get_drvdata(chip->dev);
-> 
->         return mdiobus_read_nested(sw_dev->device->bus, addr, reg);
-> 
-> There are however multiple other unsafe patterns.
-> I suppose current
-> 
-> dsa_switch_shutdown();
-> dev_set_drvdata(...->dev, NULL);
-> 
-> pattern is broken in many cases...
+kernel test robot noticed the following build warnings:
 
-Unfortunately the code portion which you've quoted for your reply does not
-show the full story. dsa_switch_shutdown(), at the time of this patch,
-was implemented like this (stripped of comments):
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on next-20240913]
+[cannot apply to linus/master v6.11-rc7]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-void dsa_switch_shutdown(struct dsa_switch *ds)
-{
-	struct net_device *master, *slave_dev;
-	LIST_HEAD(unregister_list);
-	struct dsa_port *dp;
+url:    https://github.com/intel-lab-lkp/linux/commits/Alexandru-Ardelean/iio-adc-ad7606-add-bits-parameter-to-channels-macros/20240913-220501
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20240913135744.152669-9-aardelean%40baylibre.com
+patch subject: [PATCH v6 8/8] iio: adc: ad7606: add support for AD7606C-{16,18} parts
+config: arm-randconfig-001-20240914 (https://download.01.org/0day-ci/archive/20240914/202409140416.KWHXjFSv-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409140416.KWHXjFSv-lkp@intel.com/reproduce)
 
-	mutex_lock(&dsa2_mutex);
-	rtnl_lock();
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409140416.KWHXjFSv-lkp@intel.com/
 
-	list_for_each_entry(dp, &ds->dst->ports, list) {
-		if (dp->ds != ds)
-			continue;
+All warnings (new ones prefixed by >>):
 
-		if (!dsa_port_is_user(dp))
-			continue;
+>> drivers/iio/adc/ad7606.c:39:27: warning: 'ad7606_18bit_hw_scale_avail' defined but not used [-Wunused-const-variable=]
+      39 | static const unsigned int ad7606_18bit_hw_scale_avail[2] = {
+         |                           ^~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-		master = dp->cpu_dp->master;
-		slave_dev = dp->slave;
 
-		netdev_upper_dev_unlink(master, slave_dev);
-		unregister_netdevice_queue(slave_dev, &unregister_list);
-	}
-	unregister_netdevice_many(&unregister_list);
+vim +/ad7606_18bit_hw_scale_avail +39 drivers/iio/adc/ad7606.c
 
-	rtnl_unlock();
-	mutex_unlock(&dsa2_mutex);
-}
+    38	
+  > 39	static const unsigned int ad7606_18bit_hw_scale_avail[2] = {
+    40		38147, 76294
+    41	};
+    42	
 
-I believe you would be wrong to blame this patch for exiting with the
-slave/user ports still running (and thus ds->ops->phy_read() still
-callable), because, as you can see, it doesn't do that - it unregisters
-them, which also stops the net_device prior. So, both phylink_stop() and
-phylink_destroy() would be called.
-
-The patch had other problems though, and that led to the rework in
-commit ee534378f005 ("net: dsa: fix panic when DSA master device unbinds
-on shutdown"), rework which is in fact to blame for what you're reporting.
-
-Given that we are talking about a fix to a fix, it doesn't really matter
-in terms of backporting targets which one it is, but for correctness sake,
-it is the later patch that fixed some things while introducing the race
-condition.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
