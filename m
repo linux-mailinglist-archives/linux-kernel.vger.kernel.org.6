@@ -1,162 +1,122 @@
-Return-Path: <linux-kernel+bounces-328164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBC4F977FD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:27:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0745977FD4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10A0B2892F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:27:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 796DF1F21560
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58581D932F;
-	Fri, 13 Sep 2024 12:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Ou1wOFkE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5698A1D9323;
+	Fri, 13 Sep 2024 12:28:06 +0000 (UTC)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03CED1C2319;
-	Fri, 13 Sep 2024 12:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0851C2BF
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726230455; cv=none; b=l2FzUwIYjFe4ahEZuL+QRyaApB0DOHh7nJSzKKCLiuLv3mqo4BHZsvUBjyIdK6FG92zq6L44Qu2PD4mKwEGz9LrTy+CbLM5OmPF+IM+opPI15kqm7M5wnblueK3PUlc4qKI+TQslz0AZ6/DwE8tYrvdk5lKXXPhqy1+693LKAJs=
+	t=1726230486; cv=none; b=mA7jNV0c/F9uXfqPHTIeas1HK0oiNGS8E2+71084NidK0aklKhJMtKYBYTEDwYVss17kq2jNO4gaLCExbtXTzqDMEpmJqoXDQQTKSxhnZ8zvWTfwepBDSshdiKELhMGh8I7RUkjw2RuEmjtEGnRNJ8d7n9nbczl4DpFaNHfd4nA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726230455; c=relaxed/simple;
-	bh=Xn7ahkD5Ei/452KsEUp8graRPSBFcovTP+7QMOXhAgo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q09Io+2rxY9TDwOkHqxixM+4JYX72vntbBXQ6Hte2Yp14gBOEIpYbPGeKmX1WlOvonMWNa7uhA3+GPzcTQMRoh7cEJM4f1uYBiYy+xtdTPbDmchwkewJXU4a7QF6cVp+Wjc25YACd5y5Anhg7+SWnAPDhyeWiGOqdXJV+8/nblc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Ou1wOFkE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AF01C4CEC0;
-	Fri, 13 Sep 2024 12:27:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1726230454;
-	bh=Xn7ahkD5Ei/452KsEUp8graRPSBFcovTP+7QMOXhAgo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ou1wOFkE6y1fntz+hYhajiflE8pyAvzS0XPDmz228CZ8slRjsUrzKpnc158hiWaWt
-	 ZzYLSlM/9y5gGQxLnthhpQQR66Gw9vxYD2SGI7bXcx4qQ5fngJ88W/S9behEP+PF2V
-	 2/MNBWbHpTcaYMnoVVRQmwmDWLhCi3wRudn15Jpk=
-Date: Fri, 13 Sep 2024 14:27:31 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 4.19 00/95] 4.19.322-rc2 review
-Message-ID: <2024091329-clambake-lion-860a@gregkh>
-References: <20240910094253.246228054@linuxfoundation.org>
- <CA+G9fYtxOA7Ee1omhLT-fMaaBPqNEZQYVHXovLtGgv9jbuxQLA@mail.gmail.com>
+	s=arc-20240116; t=1726230486; c=relaxed/simple;
+	bh=RK5S3zrgomn9+skT4aQ4j9kXPhojcRKZuS90n34VDEM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ptnDjoLLnshC7qgcG2DrtOikgf9KxtR9fAUfZCKIblxTAqrv9oOi0Yhcf6n27xdK7HGXC8YHq7elnIcYgChagQ9bwmh7+/Q6uaPawTO6vFd/GIszoAmN0XF9M2cklX3dpVDR6uWFY9S43Baf2ue4ji5KYl5CSCX6HcrxaO4SwQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a8d6ac24a3bso374974166b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 05:28:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726230482; x=1726835282;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0PdiN7C66G4aok0RazPvpU2qA/vYlEOU5wuWR2Un29M=;
+        b=fDuNjmi9dmjod0rEe/c6icon0ZBT1/23AhVEa2pxJJAxoY0kL3if2EvZ7yvof8Li8T
+         y97W9Va8F2B0E1GDV4XhH43rEHD7pD0wsDAM4G+ZG3IWnTqcqElIypq9lK/9CJMc/H6A
+         hYQkqqgGcdGpYTzRFOuYf/amZLdFLu8mqnxBcL2JkuXDU7pYGu+KXLQjDsIA28Sq3jBC
+         p7884Szu9E9GpujqjlvoIIhLQbTxDNjzHWGTyiEZFkrgX+7KmLdCDCBcCITtTWI0YyX6
+         1xLfgprG05lIEJYU2iibMT+HAVyQkFM3B44WmY/wjVe5m03mX6+XLKFvoAgGmV+uBTTJ
+         52Hg==
+X-Forwarded-Encrypted: i=1; AJvYcCXwEqRhGtnk3ICM5i62zC4MibhkXiUfgVa4btrFwyrG9tBAuw0ZfPgqiLvlvMrivBsRtEes/FPn9ycmPmc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSZo2nbM6lxplXp+X5XxdhP4Jy4RsHu2oiZoHZ9C5vyahOAjok
+	mATwQRMjV/1l9SO/XuNFSBeHhlLd10i4YTZBUTL0vKCyO5GxNEr2
+X-Google-Smtp-Source: AGHT+IHp7tyVCxPErikJEy3n9AhquE5p2KZrjNms5Lc1oV9O58Ce5kS9WM+Z1GqkpLzprbDkT8efJA==
+X-Received: by 2002:a17:907:9809:b0:a8d:29b7:ece3 with SMTP id a640c23a62f3a-a902a8f0940mr639289866b.33.1726230481932;
+        Fri, 13 Sep 2024 05:28:01 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-115.fbsv.net. [2a03:2880:30ff:73::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25cecc21sm862212966b.166.2024.09.13.05.28.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 05:28:01 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: corbet@lwn.net,
+	linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND 64-BIT))
+Subject: [PATCH] x86/bugs: Correct RSB terminology in Kconfig
+Date: Fri, 13 Sep 2024 05:27:53 -0700
+Message-ID: <20240913122754.249306-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+G9fYtxOA7Ee1omhLT-fMaaBPqNEZQYVHXovLtGgv9jbuxQLA@mail.gmail.com>
 
-On Wed, Sep 11, 2024 at 08:44:13PM +0530, Naresh Kamboju wrote:
-> On Tue, 10 Sept 2024 at 16:18, Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > This is the start of the stable review cycle for the 4.19.322 release.
-> > There are 95 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Thu, 12 Sep 2024 09:42:36 +0000.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.322-rc2.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
-> 
-> 
-> Results from Linaro’s test farm.
-> No regressions on arm64, arm, x86_64, and i386.
-> 
-> Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> ## Build
-> * kernel: 4.19.322-rc2
-> * git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> * git commit: 00a71bfa9b89c96b41773efee1cca378cc1fa5e6
-> * git describe: v4.19.321-96-g00a71bfa9b89
-> * test details:
-> https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-4.19.y/build/v4.19.321-96-g00a71bfa9b89
-> 
-> ## Test Regressions (compared to v4.19.320-99-g0cc44dd838a6)
-> 
-> ## Metric Regressions (compared to v4.19.320-99-g0cc44dd838a6)
-> 
-> ## Test Fixes (compared to v4.19.320-99-g0cc44dd838a6)
-> 
-> ## Metric Fixes (compared to v4.19.320-99-g0cc44dd838a6)
-> 
-> ## Test result summary
-> total: 116497, pass: 103587, fail: 542, skip: 12283, xfail: 85
-> 
-> ## Build Summary
-> * arc: 20 total, 20 passed, 0 failed
-> * arm: 204 total, 192 passed, 12 failed
-> * arm64: 54 total, 44 passed, 10 failed
-> * i386: 30 total, 24 passed, 6 failed
-> * mips: 40 total, 40 passed, 0 failed
-> * parisc: 6 total, 0 passed, 6 failed
-> * powerpc: 48 total, 48 passed, 0 failed
-> * s390: 12 total, 12 passed, 0 failed
-> * sh: 20 total, 20 passed, 0 failed
-> * sparc: 12 total, 12 passed, 0 failed
-> * x86_64: 46 total, 36 passed, 10 failed
-> 
-> ## Test suites summary
-> * boot
-> * kunit
-> * libhugetlbfs
-> * log-parser-boot
-> * log-parser-test
-> * ltp-commands
-> * ltp-containers
-> * ltp-controllers
-> * ltp-cpuhotplug
-> * ltp-crypto
-> * ltp-cve
-> * ltp-dio
-> * ltp-fcntl-locktests
-> * ltp-fs
-> * ltp-fs_bind
-> * ltp-fs_perms_simple
-> * ltp-hugetlb
-> * ltp-ipc
-> * ltp-math
-> * ltp-mm
-> * ltp-nptl
-> * ltp-pty
-> * ltp-sched
-> * ltp-smoke
-> * ltp-syscalls
-> * ltp-tracing
-> * rcutorture
-> 
-> --
-> Linaro LKFT
-> https://lkft.linaro.org
-> 
+RSB stands for "Return Stack Buffer" in industry literature[1]. Update
+the kernel Kconfig to use this standard term instead of the current
+"Return-Speculation-Buffer".
 
-Thanks for testing and letting me know,
+This change aligns kernel documentation with widely accepted terminology.
 
-greg k-h
+The line length reduction triggers text reformatting, but no functional
+text is altered.
+
+[1] https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/advisory-guidance/return-stack-buffer-underflow.html
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ arch/x86/Kconfig | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
+
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 007bab9f2a0e..5d87d5d7c6d0 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -2554,15 +2554,14 @@ config MITIGATION_CALL_DEPTH_TRACKING
+ 	default y
+ 	help
+ 	  Compile the kernel with call depth tracking to mitigate the Intel
+-	  SKL Return-Speculation-Buffer (RSB) underflow issue. The
+-	  mitigation is off by default and needs to be enabled on the
+-	  kernel command line via the retbleed=stuff option. For
+-	  non-affected systems the overhead of this option is marginal as
+-	  the call depth tracking is using run-time generated call thunks
+-	  in a compiler generated padding area and call patching. This
+-	  increases text size by ~5%. For non affected systems this space
+-	  is unused. On affected SKL systems this results in a significant
+-	  performance gain over the IBRS mitigation.
++	  SKL Return-Stack-Buffer (RSB) underflow issue. The mitigation is off
++	  by default and needs to be enabled on the kernel command line via the
++	  retbleed=stuff option. For non-affected systems the overhead of this
++	  option is marginal as the call depth tracking is using run-time
++	  generated call thunks in a compiler generated padding area and call
++	  patching. This increases text size by ~5%. For non affected systems
++	  this space is unused. On affected SKL systems this results in a
++	  significant performance gain over the IBRS mitigation.
+ 
+ config CALL_THUNKS_DEBUG
+ 	bool "Enable call thunks and call depth tracking debugging"
+-- 
+2.43.5
+
 
