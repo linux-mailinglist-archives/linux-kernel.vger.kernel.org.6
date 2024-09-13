@@ -1,78 +1,82 @@
-Return-Path: <linux-kernel+bounces-327879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31EB2977C32
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:31:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE191977C36
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0FA928431F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:31:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80473289238
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926221C1AA4;
-	Fri, 13 Sep 2024 09:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB581D6C53;
+	Fri, 13 Sep 2024 09:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FbG2uPdD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AdJlqcEY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CED186E2C;
-	Fri, 13 Sep 2024 09:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69421BF80A
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726219898; cv=none; b=YICBuq2NXAFsHVRKAIbExKJaLdyOtXh4OtzuswI8xh3bO2CFaZQaJktLJrUUqI+CQGZAaFufDCTN9e///WmjtE6ovZCnBG2zY8ofv+fvAtehtaH5MtpS2KghXu0MhQffysulZiHBuaiElXMLILYbKsgNimBQm2yzPay+MQhHsZU=
+	t=1726219952; cv=none; b=hJk6thgut1RADiAk183kPhsoA65i5YxOHZKSxdTwLbryobygq9akbO1rOfshOzTfrgGontPd9QXU87bLUaaK76DKS+gSHwxaNwhr8AL6ZH4vqMO/376qZ1V4VeNMseCxZTNpqf5wzZNXt7DzmfCwhRNmm4ui29M6rFFkuMg0a2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726219898; c=relaxed/simple;
-	bh=ekuvhHPYKge6NJXqTlLTzq+obp+wVk2Rpy5JOBXtHrw=;
+	s=arc-20240116; t=1726219952; c=relaxed/simple;
+	bh=cIVkaDlafyz17Lv00EsE5GUygASztsmlwwverOYBNZc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QBAFBSsrG4g0HBZF/1mASgMg7qG+SuKKH4G/pqcls/Ig6hUUkicoSZjB4as97mQS+SYIxKGHZyzxcR8EuWEvckt0m3+eQttvYiB3ojn7c/eDbBWzSEOba97EzjiLuisldoghKb9lkmJs6OwM3wfYgQ4O7/Ta8OiybA55+gAm5sM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FbG2uPdD; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726219897; x=1757755897;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ekuvhHPYKge6NJXqTlLTzq+obp+wVk2Rpy5JOBXtHrw=;
-  b=FbG2uPdDONMKeV2L56ZvZzBdRFxxsYwZPY9wnXPGAXQ9dzhIi7nU1g+u
-   UvoiG/1ZS4HL6AmxaJ0MS1sC5DpoWMLq+iVYo8I9MlQRBe3mhuxhA9IT/
-   a1+jS/ZPHWLKPR5ebW90/yqrY2dV1KIakz7oJfXSMPfBqdIBqkPQWO9mc
-   YKEN8PtIVyeaR2g1xhpRaF5oPFpFZ+4nK6ocBKYv3CBKAhh1+xahfEHZ/
-   SNLpTUm+61MkfNcPCx3habbvnz0aWkQsqjIyJQgMhUAzjj1XymJZ7LKMg
-   Wu9c5RAMo1vMH+slRnVnsR220fsgMc8z+KpKttPZeoh6AJrrVudsfxoad
-   g==;
-X-CSE-ConnectionGUID: h7bmUtHjQ52xE03+xCoUHQ==
-X-CSE-MsgGUID: iTW0e8O1TTOaiMgR7n+MkA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="47628280"
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="47628280"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 02:31:36 -0700
-X-CSE-ConnectionGUID: zDnRAEnSS4OgiTvHoCvpOQ==
-X-CSE-MsgGUID: IE1cu8MSSOy0Xr0N/6OfKQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="67616819"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 02:31:34 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sp2eJ-00000008FAi-2Iib;
-	Fri, 13 Sep 2024 12:31:31 +0300
-Date: Fri, 13 Sep 2024 12:31:31 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: Re: [PATCH v1 1/1] iio: light: ltr501: Drop most likely fake ACPI ID
-Message-ID: <ZuQGcyrTFek1yExt@smile.fi.intel.com>
-References: <20240911212202.2892451-1-andriy.shevchenko@linux.intel.com>
- <c45dd21c-493a-4e56-809e-85d6d7201254@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oJMVttnVzhcx9rXgH3bWYpA74+eB/j4+0VT14+Yal8Jf9Ipj02p0z1KA2/hrF6oKbVhb2cIGy4S+edtT5KHbC56qNKiJOTQWt9Zf25IxKph+mtaaM7/fnshi8XfVTc58tE+eybG461pTOtgnGAFLwJ+3DpU6NgvpHc2eSX5rvrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AdJlqcEY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726219949;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=icP+9T+nckSCW+51d5IyXV2vWbgpkam3VDgb48zcQBk=;
+	b=AdJlqcEYIWXZPjv4ybJDDFCzFZaVBZ/Qkq/CHExKoMQpzWkAAkUTZE6QwymaI5MDFkxbhs
+	fYqs+TMlT6L+L7bNaxFKpy/HZscrARTduknW8j0v9s7YOcHHe/yJ3FFEE8F7HlQjIeWFtS
+	6OqKB/IsQjol27tiv+GrOXDP6H2UB90=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-122-ChSwSbbTOymr1SyfvELLRg-1; Fri,
+ 13 Sep 2024 05:32:23 -0400
+X-MC-Unique: ChSwSbbTOymr1SyfvELLRg-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D0A9C1955F10;
+	Fri, 13 Sep 2024 09:32:20 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.25])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 952353001D10;
+	Fri, 13 Sep 2024 09:32:14 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 13 Sep 2024 11:32:09 +0200 (CEST)
+Date: Fri, 13 Sep 2024 11:32:01 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCHv3 1/7] uprobe: Add support for session consumer
+Message-ID: <20240913093201.GA19305@redhat.com>
+References: <20240909074554.2339984-1-jolsa@kernel.org>
+ <20240909074554.2339984-2-jolsa@kernel.org>
+ <20240912163539.GE27648@redhat.com>
+ <ZuP5dyfgT0PHaf_4@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,33 +85,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c45dd21c-493a-4e56-809e-85d6d7201254@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <ZuP5dyfgT0PHaf_4@krava>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Thu, Sep 12, 2024 at 03:51:09PM +0200, Hans de Goede wrote:
-> Hi,
-> 
-> On 9/11/24 11:22 PM, Andy Shevchenko wrote:
-> > The commit in question does not proove that ACPI ID exists.
-> > Quite likely it was a cargo cult addition while doint that
-> > for DT-based enumeration.  Drop most likely fake ACPI ID.
-> > 
-> > Googling for LTERxxxx gives no useful results in regard to DSDT.
-> > Moreover, there is no "LTER" official vendor ID in the registry.
-> > 
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> Thanks, patch looks good to me:
+On 09/13, Jiri Olsa wrote:
+>
+> On Thu, Sep 12, 2024 at 06:35:39PM +0200, Oleg Nesterov wrote:
+> > >  	list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
+> > >  				 srcu_read_lock_held(&uprobes_srcu)) {
+> > > +		/*
+> > > +		 * If we don't find return consumer, it means uprobe consumer
+> > > +		 * was added after we hit uprobe and return consumer did not
+> > > +		 * get registered in which case we call the ret_handler only
+> > > +		 * if it's not session consumer.
+> > > +		 */
+> > > +		ric = return_consumer_find(ri, &iter, uc->id);
+> > > +		if (!ric && uc->session)
+> > > +			continue;
+> > >  		if (uc->ret_handler)
+> > > -			uc->ret_handler(uc, ri->func, regs);
+> > > +			uc->ret_handler(uc, ri->func, regs, ric ? &ric->cookie : NULL);
+> >
+> > So why do we need the new uc->session member and the uc->session above ?
+> >
+> > If return_consumer_find() returns NULL, uc->ret_handler(..., NULL) can handle
+> > this case itself?
+>
+> I tried to explain that in the comment above.. we do not want to
+> execute session ret_handler at all in this case, because its entry
+> counterpart did not run
 
-Have you grepped over your collection of real DSDTs?
+I understand, but the session ret_handler(..., __u64 *data) can simply do
 
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+	// my ->handler() didn't run or it didn't return 0
+	if (!data)
+		return;
 
-Thank you!
+at the start?
 
--- 
-With Best Regards,
-Andy Shevchenko
-
+Oleg.
 
 
