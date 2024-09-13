@@ -1,293 +1,235 @@
-Return-Path: <linux-kernel+bounces-327591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4BCB977824
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:57:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2B78977827
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:58:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B966B21BB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:57:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D1D9B24DEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3351D54DB;
-	Fri, 13 Sep 2024 04:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99FE81D47DE;
+	Fri, 13 Sep 2024 04:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G8wG10cc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NBeV5Rem"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2A413A87C;
-	Fri, 13 Sep 2024 04:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E7B1D415B;
+	Fri, 13 Sep 2024 04:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726203439; cv=none; b=O6/u734e016lYwFnsB6UkEuhC8Mydl9y9rGAwTThBnKpsn+mpiWLVaXhv54R7gWFkV0pxEl89Lk1vYTISJl9pHu+asYfBoQ+mdofTVdacPK6PzGURJLpS7mmjn4UHzwmHEau3cUl1FTrNtbFeXcdsPL6/GspZDkR1Fr9VN+biyk=
+	t=1726203494; cv=none; b=DK7G+8vzOZojlM9dIOWy8IR1RvrkKUfW+xxSVDRtlqv/xRUaWJCX0fgkyBqcuZXLoMt9se+keQXo8N3xoy1kxVaXIsfist5ym+nrZo7Eb0LO7bgbP+88v681I+40Z4J96c8X3znG4hg5zlw5yAhRn9dRzM+MUIuue3VSY5pqJxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726203439; c=relaxed/simple;
-	bh=um3Mn+EkFIJt96fC+wAnweUqzaADBeYTVtNV6fDcqYE=;
+	s=arc-20240116; t=1726203494; c=relaxed/simple;
+	bh=RmNH2p/GoDL1qScrBL/TMM8SUVpUdArniZU1bwGG30I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iHydPOJySnvjr1JCoWtuP/MwG+JxiJY/Gsqt5i4NypszPrIM+nAPxYZOMSkWk9R2FH0GvrOT6pUTJp3CxkxaDjvIaBngOZVRPQvc2mYCCfwee5DBJ1pCz1INaxNhtbsfhoTjHUEFJGXgtf/6psSH9rdpqoP4CSXTc3Xt9prla78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G8wG10cc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAFDFC4CEC0;
-	Fri, 13 Sep 2024 04:57:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726203438;
-	bh=um3Mn+EkFIJt96fC+wAnweUqzaADBeYTVtNV6fDcqYE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G8wG10ccIcy28NQh3A63Y8hzlknFxVp2sTHYcviLVe/nQu17xaLGkNMpm2QU2Xlte
-	 d71YZ/rlGHofEv3+0v7BGlUa0VQRugG0GnDKksVY689/4cph1bsFZaRHO8Q/cn7c7C
-	 BpOrzGfuifqkV45E2Xb2TgTk8/kEPrWxIzp8arOP5bz2FJ/6sCSk2+jNfIPF6JtEC3
-	 3Lmlm9OK9GXCxmdEIUx/Q8jAgy82ebTlfQxR68zQefUES2nKEVqNGnODMvBkTZlThK
-	 /sAY6qinPLIos4uJJLOQaKE2s4ev0RCqwAlOcE6HiNBL5ZK5fb63FUZFl7zU6pZ/9x
-	 xMsJa/UOBlN/g==
-Date: Fri, 13 Sep 2024 04:57:16 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: "Gaurav Kashyap (QUIC)" <quic_gaurkash@quicinc.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Jens Axboe <axboe@kernel.dk>,
-	Jonathan Corbet <corbet@lwn.net>, Alasdair Kergon <agk@redhat.com>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Asutosh Das <quic_asutoshd@quicinc.com>,
-	Ritesh Harjani <ritesh.list@gmail.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	"Theodore Y. Ts'o" <tytso@mit.edu>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	"manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"dm-devel@lists.linux.dev" <dm-devel@lists.linux.dev>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-	"linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"linux-fscrypt@vger.kernel.org" <linux-fscrypt@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-	"bartosz.golaszewski" <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v6 09/17] soc: qcom: ice: add HWKM support to the ICE
- driver
-Message-ID: <20240913045716.GA2292625@google.com>
-References: <20240906-wrapped-keys-v6-0-d59e61bc0cb4@linaro.org>
- <20240906-wrapped-keys-v6-9-d59e61bc0cb4@linaro.org>
- <7uoq72bpiqmo2olwpnudpv3gtcowpnd6jrifff34ubmfpijgc6@k6rmnalu5z4o>
- <66953e65-2468-43b8-9ccf-54671613c4ab@linaro.org>
- <ivibs6qqxhbikaevys3iga7s73xq6dzq3u43gwjri3lozkrblx@jxlmwe5wiq7e>
- <98cc8d71d5d9476297a54774c382030d@quicinc.com>
- <CAA8EJpp_HY+YmMCRwdteeAHnSHtjuHb=nFar60O_PwLwjk0mNA@mail.gmail.com>
- <9bd0c9356e2b471385bcb2780ff2425b@quicinc.com>
- <20240912231735.GA2211970@google.com>
- <CAA8EJpq3sjfB0BsJTs3_r_ZFzhrrpy-A=9Dx9ks2KrDNYCntdg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GyE/LSjYf8fiq4lavbV766/zGPEkJr5rTGCN2Iy4pWw5bpC+FPbuW0hTjNj+r/Zql4n+o/It5ezou/JlFZGE1Eoe7DrAAmjgYlyr/7MNIsHH995+ZEjRx1jvQFqzGyEb/sLBePosJDISb/enBS57BX+fHfuYVjtSETyrAsBGh3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NBeV5Rem; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726203493; x=1757739493;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RmNH2p/GoDL1qScrBL/TMM8SUVpUdArniZU1bwGG30I=;
+  b=NBeV5RemT1akyMKUWmVKsMDeWWv4EHRZ2ESViKFGl/cN1BCjlHWAShLR
+   4USEqqED8UOvZBS1JIx49m6si7fh65CW0u8m/mQg6LkkXDdydyf2rUFK9
+   w+uMGClzr1Qm6PYeNpJQTXYgi3hyDIK4i/ZCU+L3aWZe/lzZN2xKZLKog
+   2AneplOOSbgNcO4R5XnHj+xifg/OPmrhyoUReHRhkA1QHTnLZY3sttf42
+   XKuQ61GXk1pDeuKuE9Tw8d40lwekX8j0inRuZqsxIq6ZWKLwWssc+L+9g
+   z9oyVM/N7/zAI0JnQzOO2OfCPuylJ4qB9G/N2x8xEd/T0JbZRp2PTzJYS
+   Q==;
+X-CSE-ConnectionGUID: HJJ9T3vuQwmsjleoFEEZHA==
+X-CSE-MsgGUID: F/RQycqLQGuYexJwxno04g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="42601825"
+X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
+   d="scan'208";a="42601825"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 21:58:12 -0700
+X-CSE-ConnectionGUID: UXQdo05JQ0aK8t0WkxktEw==
+X-CSE-MsgGUID: LFhL4YmrSoao1QgzH0asuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
+   d="scan'208";a="68708624"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa008.jf.intel.com with ESMTP; 12 Sep 2024 21:58:09 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 6CDF032A; Fri, 13 Sep 2024 07:58:07 +0300 (EEST)
+Date: Fri, 13 Sep 2024 07:58:07 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, Gary Li <Gary.Li@amd.com>,
+	Mario Limonciello <superm1@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	"open list : PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list : USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
+	Daniel Drake <drake@endlessos.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Subject: Re: [PATCH v5 2/5] PCI: Check PCI_PM_CTRL instead of PCI_COMMAND in
+ pci_dev_wait()
+Message-ID: <20240913045807.GM275077@black.fi.intel.com>
+References: <20240903182509.GA260253@bhelgaas>
+ <525214d1-793e-412c-b3b2-b7e20645b9cf@amd.com>
+ <20240904120545.GF1532424@black.fi.intel.com>
+ <2bf715fb-509b-4b00-a28d-1cc83c0bb588@amd.com>
+ <20240905093325.GJ1532424@black.fi.intel.com>
+ <b4237bef-809f-4d78-8a70-d962e7eb467b@amd.com>
+ <20240910091329.GI275077@black.fi.intel.com>
+ <66019fa3-2f02-4b03-9eb7-7b0bed0fd044@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAA8EJpq3sjfB0BsJTs3_r_ZFzhrrpy-A=9Dx9ks2KrDNYCntdg@mail.gmail.com>
+In-Reply-To: <66019fa3-2f02-4b03-9eb7-7b0bed0fd044@amd.com>
 
-On Fri, Sep 13, 2024 at 07:28:33AM +0300, Dmitry Baryshkov wrote:
-> On Fri, 13 Sept 2024 at 02:17, Eric Biggers <ebiggers@kernel.org> wrote:
-> >
-> > On Thu, Sep 12, 2024 at 10:17:03PM +0000, Gaurav Kashyap (QUIC) wrote:
-> > >
-> > > On Monday, September 9, 2024 11:29 PM PDT, Dmitry Baryshkov wrote:
-> > > > On Tue, 10 Sept 2024 at 03:51, Gaurav Kashyap (QUIC)
-> > > > <quic_gaurkash@quicinc.com> wrote:
-> > > > >
-> > > > > Hello Dmitry and Neil
-> > > > >
-> > > > > On Monday, September 9, 2024 2:44 AM PDT, Dmitry Baryshkov wrote:
-> > > > > > On Mon, Sep 09, 2024 at 10:58:30AM GMT, Neil Armstrong wrote:
-> > > > > > > On 07/09/2024 00:07, Dmitry Baryshkov wrote:
-> > > > > > > > On Fri, Sep 06, 2024 at 08:07:12PM GMT, Bartosz Golaszewski wrote:
-> > > > > > > > > From: Gaurav Kashyap <quic_gaurkash@quicinc.com>
-> > > > > > > > >
-> > > > > > > > > Qualcomm's ICE (Inline Crypto Engine) contains a proprietary
-> > > > > > > > > key management hardware called Hardware Key Manager (HWKM).
-> > > > > > > > > Add
-> > > > > > HWKM
-> > > > > > > > > support to the ICE driver if it is available on the platform.
-> > > > > > > > > HWKM primarily provides hardware wrapped key support where
-> > > > the
-> > > > > > > > > ICE
-> > > > > > > > > (storage) keys are not available in software and instead
-> > > > > > > > > protected in
-> > > > > > hardware.
-> > > > > > > > >
-> > > > > > > > > When HWKM software support is not fully available (from
-> > > > > > > > > Trustzone), there can be a scenario where the ICE hardware
-> > > > > > > > > supports HWKM, but it cannot be used for wrapped keys. In this
-> > > > > > > > > case, raw keys have to be used without using the HWKM. We
-> > > > > > > > > query the TZ at run-time to find out whether wrapped keys
-> > > > > > > > > support is
-> > > > > > available.
-> > > > > > > > >
-> > > > > > > > > Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
-> > > > > > > > > Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
-> > > > > > > > > Signed-off-by: Bartosz Golaszewski
-> > > > > > > > > <bartosz.golaszewski@linaro.org>
-> > > > > > > > > ---
-> > > > > > > > >   drivers/soc/qcom/ice.c | 152
-> > > > > > +++++++++++++++++++++++++++++++++++++++++++++++--
-> > > > > > > > >   include/soc/qcom/ice.h |   1 +
-> > > > > > > > >   2 files changed, 149 insertions(+), 4 deletions(-)
-> > > > > > > > >
-> > > > > > > > >   int qcom_ice_enable(struct qcom_ice *ice)
-> > > > > > > > >   {
-> > > > > > > > > + int err;
-> > > > > > > > > +
-> > > > > > > > >           qcom_ice_low_power_mode_enable(ice);
-> > > > > > > > >           qcom_ice_optimization_enable(ice);
-> > > > > > > > > - return qcom_ice_wait_bist_status(ice);
-> > > > > > > > > + if (ice->use_hwkm)
-> > > > > > > > > +         qcom_ice_enable_standard_mode(ice);
-> > > > > > > > > +
-> > > > > > > > > + err = qcom_ice_wait_bist_status(ice); if (err)
-> > > > > > > > > +         return err;
-> > > > > > > > > +
-> > > > > > > > > + if (ice->use_hwkm)
-> > > > > > > > > +         qcom_ice_hwkm_init(ice);
-> > > > > > > > > +
-> > > > > > > > > + return err;
-> > > > > > > > >   }
-> > > > > > > > >   EXPORT_SYMBOL_GPL(qcom_ice_enable);
-> > > > > > > > > @@ -150,6 +282,10 @@ int qcom_ice_resume(struct qcom_ice
-> > > > *ice)
-> > > > > > > > >                   return err;
-> > > > > > > > >           }
-> > > > > > > > > + if (ice->use_hwkm) {
-> > > > > > > > > +         qcom_ice_enable_standard_mode(ice);
-> > > > > > > > > +         qcom_ice_hwkm_init(ice); }
-> > > > > > > > >           return qcom_ice_wait_bist_status(ice);
-> > > > > > > > >   }
-> > > > > > > > >   EXPORT_SYMBOL_GPL(qcom_ice_resume);
-> > > > > > > > > @@ -157,6 +293,7 @@ EXPORT_SYMBOL_GPL(qcom_ice_resume);
-> > > > > > > > >   int qcom_ice_suspend(struct qcom_ice *ice)
-> > > > > > > > >   {
-> > > > > > > > >           clk_disable_unprepare(ice->core_clk);
-> > > > > > > > > + ice->hwkm_init_complete = false;
-> > > > > > > > >           return 0;
-> > > > > > > > >   }
-> > > > > > > > > @@ -206,6 +343,12 @@ int qcom_ice_evict_key(struct qcom_ice
-> > > > > > > > > *ice,
-> > > > > > int slot)
-> > > > > > > > >   }
-> > > > > > > > >   EXPORT_SYMBOL_GPL(qcom_ice_evict_key);
-> > > > > > > > > +bool qcom_ice_hwkm_supported(struct qcom_ice *ice) {  return
-> > > > > > > > > +ice->use_hwkm; }
-> > > > > > EXPORT_SYMBOL_GPL(qcom_ice_hwkm_supported);
-> > > > > > > > > +
-> > > > > > > > >   static struct qcom_ice *qcom_ice_create(struct device *dev,
-> > > > > > > > >                                           void __iomem *base)
-> > > > > > > > >   {
-> > > > > > > > > @@ -240,6 +383,7 @@ static struct qcom_ice
-> > > > > > > > > *qcom_ice_create(struct
-> > > > > > device *dev,
-> > > > > > > > >                   engine->core_clk = devm_clk_get_enabled(dev, NULL);
-> > > > > > > > >           if (IS_ERR(engine->core_clk))
-> > > > > > > > >                   return ERR_CAST(engine->core_clk);
-> > > > > > > > > + engine->use_hwkm = qcom_scm_has_wrapped_key_support();
-> > > > > > > >
-> > > > > > > > This still makes the decision on whether to use HW-wrapped keys
-> > > > > > > > on behalf of a user. I suppose this is incorrect. The user must
-> > > > > > > > be able to use raw keys even if HW-wrapped keys are available on
-> > > > > > > > the platform. One of the examples for such use-cases is if a
-> > > > > > > > user prefers to be able to recover stored information in case of
-> > > > > > > > a device failure (such recovery will be impossible if SoC is
-> > > > > > > > damaged and HW-
-> > > > > > wrapped keys are used).
-> > > > > > >
-> > > > > > > Isn't that already the case ? the
-> > > > BLK_CRYPTO_KEY_TYPE_HW_WRAPPED
-> > > > > > size
-> > > > > > > is here to select HW-wrapped key, otherwise the ol' raw key is passed.
-> > > > > > > Just look the next patch.
-> > > > > > >
-> > > > > > > Or did I miss something ?
-> > > > > >
-> > > > > > That's a good question. If use_hwkm is set, ICE gets programmed to
-> > > > > > use hwkm (see qcom_ice_hwkm_init() call above). I'm not sure if it
-> > > > > > is expected to work properly if after such a call we pass raw key.
-> > > > > >
-> > > > >
-> > > > > Once ICE has moved to a HWKM mode, the firmware key programming
-> > > > currently does not support raw keys.
-> > > > > This support is being added for the next Qualcomm chipset in Trustzone to
-> > > > support both at he same time, but that will take another year or two to hit
-> > > > the market.
-> > > > > Until that time, due to TZ (firmware) limitations , the driver can only
-> > > > support one or the other.
-> > > > >
-> > > > > We also cannot keep moving ICE modes, due to the HWKM enablement
-> > > > being a one-time configurable value at boot.
-> > > >
-> > > > So the init of HWKM should be delayed until the point where the user tells if
-> > > > HWKM or raw keys should be used.
-> > >
-> > > Ack.
-> > > I'll work with Bartosz to look into moving to HWKM mode only during the first key program request
-> > >
-> >
-> > That would mean the driver would have to initially advertise support for both
-> > HW-wrapped keys and raw keys, and then it would revoke the support for one of
-> > them later (due to the other one being used).  However, runtime revocation of
-> > crypto capabilities is not supported by the blk-crypto framework
-> > (Documentation/block/inline-encryption.rst), and there is no clear path to
-> > adding such support.  Upper layers may have already checked the crypto
-> > capabilities and decided to use them.  It's too late to find out that the
-> > support was revoked in the middle of an I/O request.  Upper layer code
-> > (blk-crypto, fscrypt, etc.) is not prepared for this.  And even if it was, the
-> > best it could do is cleanly fail the I/O, which is too late as e.g. it may
-> > happen during background writeback and cause user data to be thrown away.
+Hi,
+
+On Thu, Sep 12, 2024 at 11:12:11PM -0500, Mario Limonciello wrote:
+> On 9/10/2024 04:13, Mika Westerberg wrote:
+> > Hi,
+> > 
+> > On Mon, Sep 09, 2024 at 03:40:54PM -0500, Mario Limonciello wrote:
+> > > > Few additional side paths here, though. This is supposed to work so that
+> > > > once the host router sleep bit is set the driver is supposed to allow
+> > > > the domain to enter sleep (e.g it should not be waken up before it is
+> > > > fully transitioned). That's what we do:
+> > > > 
+> > > > 1. All tunneled PCIe Root/Downstream ports are in D3.
+> > > > 2. All tunneled USB 3.x ports are in U3.
+> > > > 3. No DisplayPort is tunneled.
+> > > > 4. Thunderbolt driver enables wakes.
+> > > > 5. Thunderbolt driver writes sleep ready bit of the host router.
+> > > > 6. Thunderbolt driver runtime suspend is complete.
+> > > > 7. ACPI method is called (_PS3 or _PR3.OFF) that will trigger the "Sleep
+> > > > Event".
+> > > > 
+> > > > If between 5 and 7 there is device connected, it should not "abort" the
+> > > > sequence. Unfortunately this is not explict in the USB4 spec but the
+> > > > connection manager guide has similar note. Even if the connect happens
+> > > > there the "Sleep Event" should happen but after that it can trigger
+> > > > normal wakeup which will then bring everything back.
+> > > > 
+> > > > Would it be possible to enable tracing around these steps so that we
+> > > > could see if there is hotplug notification somewhere there that is not
+> > > > expected? Here are instructions how to get pretty accurate trace:
+> > > > 
+> > > > https://github.com/intel/tbtools?tab=readme-ov-file#tracing
+> > > > 
+> > > > Please also take full dmesg.
+> > > 
+> > > Sure, here is the dmesg with tracing enabled:
+> > > 
+> > > https://gist.github.com/superm1/5186e0023c8a5d2ecd75c50fd2168308
+> > 
+> > Thanks! I meant also enable control channel tracing as explained in the
+> > above linked page so we could maybe see the hotplug packet coming from
+> > the lane adapter too. Anyhow,
+> > 
+> > [  560.789681] thunderbolt 0-2: device disconnected
+> > [  560.789771] thunderbolt 0000:e5:00.5: bandwidth consumption changed, re-calculating estimated bandwidth
+> > [  560.789775] thunderbolt 0000:e5:00.5: bandwidth re-calculation done
+> > [  560.789778] thunderbolt 0000:e5:00.5: looking for DP IN <-> DP OUT pairs:
+> > [  560.789800] thunderbolt 0000:e5:00.5: 0:6: DP IN available
+> > [  560.789803] thunderbolt 0000:e5:00.5: 0:6: no suitable DP OUT adapter available, not tunneling
+> > [  560.790484] thunderbolt 0000:e5:00.5: 0:7: DP IN available
+> > [  560.790487] thunderbolt 0000:e5:00.5: 0:7: no suitable DP OUT adapter available, not tunneling
+> > ...
+> > [  578.677640] thunderbolt 0000:e5:00.5: nhi_runtime_suspend() - enter, pdev->current_state = 0
+> > [  578.677648] thunderbolt 0000:e5:00.5: 0: suspending switch
+> > [  578.677653] thunderbolt 0000:e5:00.5: 0: enabling wakeup: 0x3f
+> > [  578.678248] thunderbolt 0000:e5:00.5: stopping RX ring 0
+> > [  578.678256] thunderbolt 0000:e5:00.5: disabling interrupt at register 0x38200 bit 3 (0x9 -> 0x1)
+> > [  578.678272] thunderbolt 0000:e5:00.5: stopping TX ring 0
+> > [  578.678277] thunderbolt 0000:e5:00.5: disabling interrupt at register 0x38200 bit 0 (0x1 -> 0x0)
+> > [  578.678287] thunderbolt 0000:e5:00.5: control channel stopped
+> > ...
+> > pci_pm_runtime_resume()
+> >    pci_pm_default_resume_early(pci_dev);
+> >      pci_pm_power_up_and_verify_state(pci_dev);
+> >        pci_power_up(pci_dev);
+> >          platform_pci_set_power_state(dev, PCI_D0);
+> > 	// here we should see acpi_pci_set_power_state() printing "xxx: power
+> > 	// state changed by ACPI to D0" but we don't.
+> > 	//
+> > 	// also pdev->current_state is set to PCI_D0
+> >        pci_update_current_state(pci_dev, PCI_D0);
+> >          // this one reads it back, it should be 0..
+> >    pm->runtime_resume(dev);
+> >      nhi_runtime_resume(dev)
+> > [  578.773503] thunderbolt 0000:e5:00.5: nhi_runtime_resume() - enter, pdev->current_state = 3
+> > 
+> > // .. but it is not. It seems to be powered off, D3cold.
+> > 
+> > [  578.773516] thunderbolt 0000:e5:00.5: control channel starting...
+> > [  578.773518] thunderbolt 0000:e5:00.5: starting TX ring 0
+> > [  578.773524] thunderbolt 0000:e5:00.5: enabling interrupt at register 0x38200 bit 0 (0xffffffff -> 0xffffffff)
+> > 
+> > // As here too.
+> > 
+> > It would be interesting to see what ACPI does here, I mean enabling
+> > dynamic debugging of acpi_device_set_power() and friends.
 > 
-> Can we check crypto capabilities when the user sets the key?
-
-I think you mean when a key is programmed into a keyslot?  That happens during
-I/O, which is too late as I've explained above.
-
-> Compare this to the actual HSM used to secure communication or
-> storage. It has certain capabilities, which can be enumerated, etc.
-> But then at the time the user sets the key it is perfectly normal to
-> return an error because HSM is out of resources. It might even have
-> spare key slots, but it might be not enough to be able to program the
-> required key (as a really crazy example, consider the HSM having at
-> this time a single spare DES key slot, while the user wants to program
-> 3DES key).
-
-That isn't how the kernel handles inline encryption keyslots.  They are only
-programmed as needed for I/O.  If they are all in-use by pending I/O requests,
-then the kernel waits for an I/O request to finish and reprograms the keyslot it
-was using.  There is never an error reported due to lack of keyslots.
-
-If I/O requests could randomly fail at any time when using inline encryption,
-then no one would use inline encryption because it would not be reliable.
-
-> > So, the choice of support for HW-wrapped vs. raw will need to be made ahead of
-> > time, rather than being implicitly set by the first use.  That is most easily
-> > done using a module parameter like qcom_ice.hw_wrapped_keys=1.  Yes, it's a bit
-> > inconvenient, but there's no realistic way around this currently.
+> Here is a log with dyndbg turned up.
+> https://gist.github.com/superm1/2f7ca6123431365d11e9bc3cc9329c14
 > 
-> This doesn't work for Android usecase. The user isn't able to setup modparams.
+> You can see firmware node \_SB_.PCI0.BUSC.NHI0 is physical device
+> 0000:e5:00.5.
 
-It does work for Android.  The encryption setting that Android uses is
-configured in the build of Android for the device (by the OEM, or by whoever
-made the build in the case of a custom build).  Refer to
-https://source.android.com/docs/security/features/encryption/file-based#enabling-file-based-encryption
+Thanks!
 
-Anyone who can change that can also change the kernel command line.
+> > One suspect is
+> > that when the runtime suspends happens, the power resource or _PS3()
+> > gets called to put the device into D3cold and it has some sort of
+> > Sleep() inside. This allows the OS to relese the CPU to do other things
+> > too according to ACPI spec (and Linux does this) so now when you plug in
+> > the device the GPE triggers wake and Linux starts processing that one.
+> > We see the above runtime resume but then the Sleep() in the _PS3()
+> > completes and cuts the power from the NHI while we are in the middle of
+> > resuming it already (or something along those lines).
+> > 
+> > We saw similar "context switch" happening when PCIe L2 failed, BIOS
+> > implemented the timeout using Sleep() that allowed Linux to process
+> > other things which resulted unexpected wake (not the same as here
+> > though).
+> > 
+> > So one thing to check too is how the ACPI methods get called and
+> > especially if they somehow end up messing with each other.
+> 
+> At least to me it looks pretty straightforward that each D0 sequence is
+> going through and nothing looked out of order:
+> 
+> acpi_pci_set_power_state()
+> ->acpi_device_set_power()
+> ->->acpi_dev_pm_explicit_set()
+> 
+> 
+> There is a Sleep() call in M232() which is a SMI used in both _PS0 and _PS3,
+> but as far as I can tell it's not actually called as the case always has
+> zero as an argument.
+> 
+> Here's some snippets of ASL from the NHI0 device to see.
+> https://gist.github.com/superm1/32ef1f822a6220a41b19574024717f79
+> 
+> I feel your theory is right about it being an aborted D3cold request, but I
+> don't believe it's from concurrency issue of _PS3.  I feel there isn't any
+> guard rails either in Linux or the AML for ensuring that
+> the transition actually finished.
 
-- Eric
+Yeah, I agree now. It does not look like the methods are messing each
+other here. We don't see the GPE handler being run but I don't think it
+matters here. For some reason the device just is not yet ready when it
+is supposed to be in D0.
+
+Sorry for wasting your time with these suspects.
 
