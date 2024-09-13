@@ -1,152 +1,225 @@
-Return-Path: <linux-kernel+bounces-328669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 264A8978724
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:48:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B00FE97871B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:48:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D18681F24185
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:48:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECBA01F2287D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F953128369;
-	Fri, 13 Sep 2024 17:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A7384A57;
+	Fri, 13 Sep 2024 17:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="bLXyoRao"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fYM2siTo"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2FD84A5C;
-	Fri, 13 Sep 2024 17:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F97823C8
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 17:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726249695; cv=none; b=gWaHF8NODowWjqC2R4J5xNSdkfUzBjx63yUNjzEENoE03RIbbxh8v0efGXWmR3+w0mlIKGgG84lSeDootxrWfMd8M4tdBC9Gh9KVKkzu5fngv7XlRCNLIwc/JyEo3spks23hPLcxip4VRF62NXXkzfVXkhzAWpBh7GDM7mHVnBQ=
+	t=1726249680; cv=none; b=GgW3pxinbtxEwFP2fGuclTAD8p3Q6CfbprqE6jVRRJW7vqvl7uT1mn+bdNpIaBcdxWCSRcjMJejWuv8V7zj5o6Nuxuids3r8KKWqGTHZ8MrZ+CYX2ZxX6LU9P9FrEAGqmZh7gleZWCO0+Prw/sZAShgHLhATGuUt2rChvbAqcpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726249695; c=relaxed/simple;
-	bh=1bgvytnR1cBoSNS0eNWksDlJAGVUVW56J/DY/7oQ/r8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dpula4lhPyko0yJZwc7LTWiB+LRivtPsekXVcq/GblGbqrUHRUgVVi1oWEdXPxDn1F1p197MwvWnTusIhFf0MrpMLr12fkprTz57/lCbp9gCzcCeJBPgqAZCwpitkC7Fx5sKVsY4fyJf/FqfRwWU3iWZAg1CIqx0FOl6eMvLPV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=bLXyoRao; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 5567fcfe71f811efb66947d174671e26-20240914
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=xotAzUqezhsD17X56wb62uKRJaTQRcsCpG1PKAuJkiA=;
-	b=bLXyoRaoG2BWcPSJ/Lob/YGLmHH4jbYR3bk0ORhMvifoOAmUaBlAx6bHj6/nV1/gzH0pPf1djrTf1weAV0tC6/tEpJIFJ93cPXAaiu6cberu/CQ1x3hEI3RwJcQmMKOFE6KcDyKPU1wwt6G6AWFtgAJ4PdIBznlj4kQQ+79uViw=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:260387d0-77f3-4e5a-a2a0-e1a34bc0a739,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:d5672ed0-7921-4900-88a1-3aef019a55ce,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 5567fcfe71f811efb66947d174671e26-20240914
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 321677032; Sat, 14 Sep 2024 01:48:07 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Sat, 14 Sep 2024 01:48:04 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkmbs11n2.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
- Transport; Sat, 14 Sep 2024 01:47:53 +0800
-Message-ID: <f6050fa5-4cb5-9283-263b-bcd0d97a09bc@mediatek.com>
-Date: Sat, 14 Sep 2024 01:47:52 +0800
+	s=arc-20240116; t=1726249680; c=relaxed/simple;
+	bh=gd4U6lhjfa5SiS/0ILHhYNor4QZLTvpx0IBnAFnuPc8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DVDuz3kau027zrtSYx4+XFZvIblHpZbIqmlVy8LtBLNrtClqVzK7tJ2jy7CVgaD4DdNry2zVJh3gIoT2dyWVj8ATUsGaavSGH79M+2aav5lRQ031jRyk6OxZKtVClhlFk9N3R1QFhzmhErk9dC0YmiPEnZjbFU2WMOU6pOLHTJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fYM2siTo; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2055136b612so31186745ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 10:47:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1726249678; x=1726854478; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8IH/fKZ7WlUWd6MAHGKHHDTF08xKH8CLIu/uq2juW/g=;
+        b=fYM2siToKs5b7tGUhzc4ruDZ0ZhXs4RvNdPK5JBjl61HBMlzbLEOK/dJTbSlrkChVO
+         65hylTI2ZAAt0hKGAHIhppmOBFeQ7IzIUJxk09eVwYFp5XRjsqk95DeU1OYNi/SenudV
+         2+b0lKiPciHCmNFa2tBK4q2cfA0ff6/3uBlvk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726249678; x=1726854478;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8IH/fKZ7WlUWd6MAHGKHHDTF08xKH8CLIu/uq2juW/g=;
+        b=qwnIckUyp8N13viYv1RLdYpl+Q3qhl57D322np6k5xV0yl+Lj23NznQrcC9J6VTo0S
+         wJ5NAxYE1xhfDNsevuGBdLq+yUYvX9E6XeVBtdTE2qhUQ0dgAyvqggX0SEkvXzAcc56r
+         jxjZRM0PE2r57zS0lBkMns2KNQaf8/VGSYGJKVXtjYUtMLeRrHVqMG+uaTs8p74SXACc
+         kYLXzQQXrvPegfR26fzhoBuTzq1HTf1iPGDr2ASbW6097jr6+oqm9ElZLhuP4SOFdxNf
+         XrcigOsw/PjNJW937cgl1N5XSLwHkbvMVnNYZhNWQL0BXYlORvAJk2+rFiLWmK9onY/A
+         YDTw==
+X-Forwarded-Encrypted: i=1; AJvYcCU0EYVNGkOnwf+Pu+sJaUL6TgbXCuONabQ43LFdqcaIbNcWgOyVhQLMcQhSRmPRm5gpitoO8k+hLEJrSPs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbKRHIKBX22dD0vi0b+msGJ5NIP4Obb80hutxwyjKIfgh+XEaW
+	4sx/EA3vuCJ9WuBU6FfTJPneYwl/RtzA8RrRIiGS8AbbzCOnnoDGy3CrO+N//w==
+X-Google-Smtp-Source: AGHT+IF/Z83uZ5DKsWYI6BIBnszLvyBcxjjxnEpt4x8DvN82ruG8ZaQekEMAasgPQ7k4gkSjUIiGcg==
+X-Received: by 2002:a17:902:c946:b0:207:850c:2548 with SMTP id d9443c01a7336-207850c26e1mr44249585ad.22.1726249677812;
+        Fri, 13 Sep 2024 10:47:57 -0700 (PDT)
+Received: from localhost ([2a00:79e0:2e14:7:8bb7:9bdd:6697:b2f7])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2076b01a742sm30385035ad.259.2024.09.13.10.47.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Sep 2024 10:47:57 -0700 (PDT)
+Date: Fri, 13 Sep 2024 10:47:54 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Javier Martinez Canillas <javierm@redhat.com>
+Cc: Julius Werner <jwerner@chromium.org>, Borislav Petkov <bp@alien8.de>,
+	Hugues Bruant <hugues.bruant@gmail.com>, stable@vger.kernel.org,
+	regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Tony Luck <tony.luck@intel.com>, Tzung-Bi Shih <tzungbi@kernel.org>,
+	chrome-platform@lists.linux.dev,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Subject: Re: [NOT A REGRESSION] firmware: framebuffer-coreboot: duplicate
+ device name "simple-framebuffer.0"
+Message-ID: <ZuR6yvqpCiV4Cjqf@google.com>
+References: <CALvjV29jozswRtmYxDur2TuEQ=1JSDrM+uWVHmghW3hG5Y9F+w@mail.gmail.com>
+ <20240909080200.GAZt6reI9c98c9S_Xc@fat_crate.local>
+ <ZuCGkjoxKxpnhEh6@google.com>
+ <87jzfhayul.fsf@minerva.mail-host-address-is-not-set>
+ <CAODwPW8P+jcF0erUph5XyWoyQgLFbZWxEM6Ygi_LFCCTLmH89Q@mail.gmail.com>
+ <87mskczv9l.fsf@minerva.mail-host-address-is-not-set>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v2 1/7] regulator: dt-bindings: mt6323: Convert to DT
- schema
-Content-Language: en-US
-To: Rob Herring <robh@kernel.org>
-CC: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	<linux-leds@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
-	<broonie@kernel.org>, Sebastian Reichel <sre@kernel.org>, Pavel Machek
-	<pavel@ucw.cz>, Sean Wang <sean.wang@mediatek.com>, Lee Jones
-	<lee@kernel.org>, Alexandre Mergnat <amergnat@baylibre.com>, Flora Fu
-	<flora.fu@mediatek.com>, Bear Wang <bear.wang@mediatek.com>, Pablo Sun
-	<pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, Sen Chu
-	<sen.chu@mediatek.com>, Chris-qj chen <chris-qj.chen@mediatek.com>, "MediaTek
- Chromebook Upstream" <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-	<linux-rtc@vger.kernel.org>, <linux-sound@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, Chen-Yu Tsai <wenst@chromium.org>
-References: <20240830110732.30080-1-macpaul.lin@mediatek.com>
- <20240830145056.GA4170065-robh@kernel.org>
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-In-Reply-To: <20240830145056.GA4170065-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--14.924800-8.000000
-X-TMASE-MatchedRID: oTBA/+sdKaYOwH4pD14DsPHkpkyUphL9meN8m2FdGic3xO2R3boBWFbu
-	qIY+/skQkABPgKBt/0rdkc3IJsq77y9FtW7XfHueU+OjsPhIWDiwR/wKmchi2X3ikYeDnk/KepZ
-	UyQ6EeDXoapbtUvkIf+xNbFV/iNBgt3ZVSPV8VOi0sO72q2op4f+UEb65dgmQEB/Asc4oaYEfg0
-	sA1HT2xmQQJkXF7hk6vMxSxMv7UnmPLG+A0qvEpp4CIKY/Hg3AtOt1ofVlaoLUHQeTVDUrItRnE
-	QCUU+jzjoczmuoPCq0Bv7xhCXsjZm/ZfgvjZa1rh9ifqkpf8qhcEkm/83qnHz1B6iuMVH+d
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--14.924800-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP: BAB98BC90D7C6C90416F4D37BF8B8CF0C1790B6C68AB3A968115B29A6A8B76452000:8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87mskczv9l.fsf@minerva.mail-host-address-is-not-set>
 
-On 8/30/24 22:50, Rob Herring wrote:
-> 	
-> 
-> External email : Please do not click links or open attachments until you 
-> have verified the sender or the content.
-> 
-> On Fri, Aug 30, 2024 at 07:07:26PM +0800, Macpaul Lin wrote:
->> Convert this from the old style text based binding to the new DT schema
->> style.
->> 
->> The examples have been trimmed down and move to parent schema
->> mfd/mediatek,mt6397.yaml.
->> 
->> Add new maintainers and submitter from MediaTek.
->> 
->> Signed-off-by: Sen Chu <sen.chu@mediatek.com>
->> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+Hi Javier,
 
-[snip]
-
->> +
->> +patternProperties:
->> +  "^(buck_)?v(pa|proc|sys)$":
->> +    description: Buck regulators
->> +    type: object
->> +    $ref: regulator.yaml#
->> +    properties:
->> +      regulator-allowed-modes: false
->> +    unevaluatedProperties: false
->> +
->> +  "^(ldo_)?v(camio|cn18)$":
+On Thu, Sep 12, 2024 at 06:33:58PM +0200, Javier Martinez Canillas wrote:
+> That's a very good point. I'm actually not familiar with Coreboot and I
+> used an educated guess (in the case of DT for example, that's the main
+> source of truth and I didn't know if a Core table was in a similar vein).
 > 
-> Why are buck_ and ldo_ prefixes optional? The old binding didn't reflect
-> actual (upstream) users? If so, that's fine, but mention that in the
-> commit message.
-> 
-> Rob
-> 
+> Maybe something like the following (untested) patch then?
 
-Will use "^buck_v" and "^ldo_v" as the prefixes of each items in 
-patternProperties. Thanks!
+Julius is more familiar with the Coreboot + payload ecosystem than me,
+but his explanations make sense to me, as does this patch.
 
-Regards,
-Macpaul Lin
+> From de1c32017006f4671d91b695f4d6b4e99c073ab2 Mon Sep 17 00:00:00 2001
+> From: Javier Martinez Canillas <javierm@redhat.com>
+> Date: Thu, 12 Sep 2024 18:31:55 +0200
+> Subject: [PATCH] firmware: coreboot: Don't register a pdev if screen_info data
+>  is available
+> 
+> On Coreboot platforms, a system framebuffer may be provided to the Linux
+> kernel by filling a LB_TAG_FRAMEBUFFER entry in the Coreboot table. But
+> a Coreboot payload (e.g: SeaBIOS) could also provide this information to
+> the Linux kernel.
+> 
+> If that the case, early arch x86 boot code will fill the global struct
+> screen_info data and that data used by the Generic System Framebuffers
+> (sysfb) framework to add a platform device with platform data about the
+> system framebuffer.
+
+Normally, these sorts of "early" and "later" ordering descriptions would
+set alarm bells when talking about independent drivers. But I suppose
+the "early arch" code has better ordering guaranteeds than drivers, so
+this should be fine.
+
+> But later then the framebuffer_coreboot driver will try to do the same
+> framebuffer (using the information from the Coreboot table), which will
+> lead to an error due a simple-framebuffer.0 device already registered:
+> 
+>     sysfs: cannot create duplicate filename '/bus/platform/devices/simple-framebuffer.0'
+>     ...
+>     coreboot: could not register framebuffer
+>     framebuffer coreboot8: probe with driver framebuffer failed with error -17
+> 
+> To prevent the issue, make the framebuffer_core driver to not register a
+> platform device if the global struct screen_info data has been filled.
+> 
+> Reported-by: Brian Norris <briannorris@chromium.org>
+> Link: https://lore.kernel.org/all/ZuCG-DggNThuF4pj@b20ea791c01f/T/#ma7fb65acbc1a56042258adac910992bb225a20d2
+> Suggested-by: Julius Werner <jwerner@chromium.org>
+> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+> ---
+>  drivers/firmware/google/framebuffer-coreboot.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/drivers/firmware/google/framebuffer-coreboot.c b/drivers/firmware/google/framebuffer-coreboot.c
+> index daadd71d8ddd..4e50da17cd7e 100644
+> --- a/drivers/firmware/google/framebuffer-coreboot.c
+> +++ b/drivers/firmware/google/framebuffer-coreboot.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/module.h>
+>  #include <linux/platform_data/simplefb.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/screen_info.h>
+>  
+>  #include "coreboot_table.h"
+>  
+> @@ -27,6 +28,7 @@ static int framebuffer_probe(struct coreboot_device *dev)
+>  	int i;
+>  	u32 length;
+>  	struct lb_framebuffer *fb = &dev->framebuffer;
+> +	struct screen_info *si = &screen_info;
+>  	struct platform_device *pdev;
+>  	struct resource res;
+>  	struct simplefb_platform_data pdata = {
+> @@ -36,6 +38,20 @@ static int framebuffer_probe(struct coreboot_device *dev)
+>  		.format = NULL,
+>  	};
+>  
+> +	/*
+> +	 * If the global screen_info data has been filled, the Generic
+> +	 * System Framebuffers (sysfb) will already register a platform
+
+Did you mean 'platform_device'?
+
+> +	 * and pass the screen_info as platform_data to a driver that
+> +	 * could scan-out using the system provided framebuffer.
+> +	 *
+> +	 * On Coreboot systems, the advertise LB_TAG_FRAMEBUFFER entry
+
+s/advertise/advertised/ ?
+
+> +	 * in the Coreboot table should only be used if the payload did
+> +	 * not set video mode info and passed it to the Linux kernel.
+
+s/passed/pass/
+
+> +	 */
+> +	if (si->orig_video_isVGA == VIDEO_TYPE_VLFB ||
+> +            si->orig_video_isVGA == VIDEO_TYPE_EFI)
+
+This line is using spaces for indentation. It should use a tab, and then
+spaces for alignment. But presumably this will change based on Thomas's
+suggestions anyway.
+
+> +		return -EINVAL;
+
+Is EINVAL right? IIUC, that will print a noisier error to the logs. I
+believe the "expected" sorts of return codes are ENODEV or ENXIO. (See
+call_driver_probe().) ENODEV seems like a fine choice, similar to
+several of the other return codes already used here.
+
+Anyway, this seems along the right track. Thanks for tackling, and feel
+free to carry a:
+
+Reviewed-by: Brian Norris <briannorris@chromium.org>
+
+> +
+>  	if (!fb->physical_address)
+>  		return -ENODEV;
+>  
+> -- 
+> Best regards,
+> 
+> Javier Martinez Canillas
+> Core Platforms
+> Red Hat
+> 
 
