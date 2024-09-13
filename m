@@ -1,167 +1,139 @@
-Return-Path: <linux-kernel+bounces-327598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCFFB977836
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:14:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11C8697783B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:19:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26F87B25387
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:14:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD70C2878E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D374D14F10F;
-	Fri, 13 Sep 2024 05:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D671154BE9;
+	Fri, 13 Sep 2024 05:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KP/5FFGB"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="K5KBUARH"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAD94A07
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 05:14:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E734917FD;
+	Fri, 13 Sep 2024 05:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726204445; cv=none; b=svakEklZWAFn2NZwUsL9hYiW7YZUQUSN8gBBYrnkEMAv1XnDaK0SM+KX0nfahgGzQq5Tq55MXjThpoaW7rQvTUcOSeGcLM0UDM02wCjxYQrZuRkph3Yuv2lE0aTsy+KFLu9FwxJhzZpjeTPaT3ywcqsbywdzGGZi5kcnjYmuuls=
+	t=1726204757; cv=none; b=GD5mB1ax3PPMgqONxchW2R1xSfEBfncUK54FeSNnmujYRi1ytvuFQN5eAdD1mpWxzwCf6xaiHyYdhJsa5K7naic37RRNqTCCkJp4TymmUESRvs/61P7E5tKM9eKA76Z/YdbpIWf2u2vnRoowvnp61ICA0yY/J0WdOmf4cHEhMlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726204445; c=relaxed/simple;
-	bh=V1fvTvhnNs0D/v+HSumYZRrqkSvuiMQGM1bEUvgAAp4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=W4iwD8TRVbPAy/GxgnQMxtQtIwCqVXYbvQZEFjz4oYrqa+xW25tvghSjqedBbN2jWCPCJ0UdGZ6xHhyCEgnQ3k3mJTmmtKDFOk9SaY7FxDuW+JRxvR/ihh3bpy3SWYjv8q+beY+L9NQB7YJ9utHnHwr1SAf3/o6O+hrnAX4g7Pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KP/5FFGB; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42cba6cdf32so14697815e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 22:14:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726204441; x=1726809241; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=97sC7FgCTGAzcHzCh0fwAJYsBr0u+Us2Q3UWUqb1Z7A=;
-        b=KP/5FFGBKwAH+xbH+e/rVbltyFn6xWGZDUVgM9ZRIaRiU/ul5ZvA05D4TFmK1v78m3
-         A04KyrsRhOcEzaCf+vtHYG1rlZWUHKJ6jfwZMuUg1a1B61nYE3ee82/JjpnODMKTXcvB
-         i1cTJj8IWS+CDY5Gc3fBLhNKktma1hG9anVho+o6fldEmZVgkiq+6nq4WpZGJFYpPTcx
-         pbZi0v/VOh4a1py82wsrhtaAxNz4NH5q4hAhdEFTk5OrxjlcOWe8h4pYb7CidOHE4udr
-         uLIE9HnYgOLhO2jf7eHCyymzcEAdwKNmEfWOOx2/xC3ndeTBudQVSDbcgX+DcjpuRPiA
-         Tc1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726204441; x=1726809241;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=97sC7FgCTGAzcHzCh0fwAJYsBr0u+Us2Q3UWUqb1Z7A=;
-        b=M3u7MyxjrlwCfY6Q+zfTRZAKOU3HnZgv1C1UX1eVEaAD+XsCT0EhuFDJycM5HxrBb5
-         LjunJVVhjmwYhBf3OXVTdCqXE/6OhiFH17w/V7NDk95YtXIe2A/FVjbOi4C4xFtuVpaz
-         rL9iAtn9mo8qIM+q+FRyON3Gi1GKWC73kOIa9OHC1XL321iQxQTlrO5ZvFJnSdhTteA/
-         DEJcBBSRnLWIbEj+kdXjIgITnAO0USwMsdM39u9vO18YliUK4DFxoBmO8gJ4x1CsC9TC
-         U4sGbuccIcNt0U8fljq7xfYoyBoWf/rhRAbkPlM0wwD4uW+vjmnU+UR/gw+XJgYyluTJ
-         OMTg==
-X-Forwarded-Encrypted: i=1; AJvYcCUze4JXmBbw1NgvL7h2ySw7Ye8Yfkh3K5a/1iztcGrYLKubT6h6paP+B1NMtP5prCwiz5b+n7G3MS2djig=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYMKrg4JjWZAMLWPM9VZCjTaEfFsbxDboo/zCKuTVSkQjBoyvC
-	oLVIp5AawcXIC/KudUR2a8oPvjp6JuNZJVYooGcMn3narfa0upX/
-X-Google-Smtp-Source: AGHT+IGPTeZzgwWJYrCDC9+6ULWhqzz+N66BwcmM+1R3Eh86zl3oXyQ3q54ErbKwTAYcAwPG5dUmYQ==
-X-Received: by 2002:a05:600c:46c5:b0:42c:b843:792b with SMTP id 5b1f17b1804b1-42cdb531b96mr40618205e9.2.1726204440453;
-        Thu, 12 Sep 2024 22:14:00 -0700 (PDT)
-Received: from localhost.localdomain ([37.72.3.43])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b15c2f4sm11063685e9.24.2024.09.12.22.13.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 22:13:59 -0700 (PDT)
-From: =?UTF-8?q?Miquel=20Sabat=C3=A9=20Sol=C3=A0?= <mikisabate@gmail.com>
-To: paul.walmsley@sifive.com
-Cc: palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Miquel=20Sabat=C3=A9=20Sol=C3=A0?= <mikisabate@gmail.com>,
-	Jesse Taube <jesse@rivosinc.com>,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [RESEND PATCH v2] riscv: hwprobe: export Zicntr and Zihpm extensions
-Date: Fri, 13 Sep 2024 07:13:24 +0200
-Message-ID: <20240913051324.8176-1-mikisabate@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1726204757; c=relaxed/simple;
+	bh=aR9LN1buTA/IxsC4E88/Bgxaw6OweBTG4Odhn372LlU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=sR69ZvkL/331ktzNdHQ3tS3xRxJR1GeXPB3Mw9NkXS0F3cdTWGLyc3Jdd+6QfN/2e/lmF7ftE2iAjdMsd9APwHKVlxSrZV1r78+YTrxidqqXgfoXN2kv7B9xKRJKml6kMbmT/arar6iIlodNibgSMdy6ibJKB1Jd/JFDWn6AtZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=K5KBUARH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48CMB6eT004962;
+	Fri, 13 Sep 2024 05:19:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	xrAwKnb+B3d+413qPsr4KXDdqL2unh9P+kLire20ZLE=; b=K5KBUARHsRIc4r0d
+	zGE7sWnWB8/1k+wpv5+W8Zf+nuVz4CdmZvwAmyDiUe2njUXw/WnSiZndw4fGv+ee
+	vWPTQUPckS6RNv4wuJIxx1DKR0yv38/gOYqoyk7q+j7kSJLM24yqFG8DhbzB2E4V
+	HFmxXnD8taTsNe+1Q1C7+1mSoI8L8Dg+JMA6/NWfwwtSTG8QTNgdVdGFP98tMsYF
+	V50qkGoOcHU0T1R632VCcJWnLRDV0PKao2z4XCvmaMc4aW+Uy9SsKWGsJ9sPg8uL
+	5zc0V1IJpX/JWqPhMiym/M9ccrXkAvFaM3+KGmmH3YK0xQbvDQ9g5X6Puq+z/5g6
+	r3N/IA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy737phf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 05:19:12 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 48D5JAbg016575
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 05:19:10 GMT
+Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 12 Sep
+ 2024 22:18:33 -0700
+Message-ID: <3e1594f5-7134-4210-a232-2fb1595d2166@quicinc.com>
+Date: Fri, 13 Sep 2024 10:48:24 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] dt-bindings: clock: qcom: Add compatible for
+ QCM6490 boards
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, <quic_imrashai@quicinc.com>,
+        <quic_jkona@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240816-qcm6490-lpass-reset-v1-0-a11f33cad3c5@quicinc.com>
+ <20240816-qcm6490-lpass-reset-v1-1-a11f33cad3c5@quicinc.com>
+ <ac4eca9d-8a2c-49a3-86d8-0201d5078dde@kernel.org>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <ac4eca9d-8a2c-49a3-86d8-0201d5078dde@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: unDEkUomD-nVWby814y2Fksn6DbPb2aL
+X-Proofpoint-GUID: unDEkUomD-nVWby814y2Fksn6DbPb2aL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ impostorscore=0 lowpriorityscore=0 clxscore=1015 bulkscore=0
+ malwarescore=0 adultscore=0 mlxlogscore=851 suspectscore=0
+ priorityscore=1501 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2408220000 definitions=main-2409130035
 
-Export Zicntr and Zihpm ISA extensions through the hwprobe syscall.
 
-Signed-off-by: Miquel Sabaté Solà <mikisabate@gmail.com>
-Acked-by: Jesse Taube <jesse@rivosinc.com>
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
----
-This is a resend because I sent v2 as a reply to the original thread and
-it most probably was lost by most people. Fortunately Conor picked it up
-and gave it a review.
 
-I am resending this so it can be properly applied. Thank you for your time and
-sorry for the inconvenience.
+On 8/17/2024 2:51 PM, Krzysztof Kozlowski wrote:
+> On 16/08/2024 10:32, Taniya Das wrote:
+>> Add the new QCM6490 compatible to support the reset functionality for
+>> Low Power Audio subsystem.
+>>
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> 
+> Subject is odd - I do not see here anything related to boards.
+> 
+> Anyway, this is incomplete. Look at the rest of the binding - you did
+> not update any part related to proper clock constraints.
+> 
 
-Changes since v1 [1]: the EXT_KEY instructions have been written in order.
+Not sure if I understand the concern, but I was of the opinion that I 
+have added a new compatible for QCM6490 board , but no new clock 
+constraint added.
 
-[1] https://lore.kernel.org/linux-riscv/20240817075629.262318-1-mikisabate@gmail.com/
 
- Documentation/arch/riscv/hwprobe.rst  | 6 ++++++
- arch/riscv/include/uapi/asm/hwprobe.h | 2 ++
- arch/riscv/kernel/sys_hwprobe.c       | 2 ++
- 3 files changed, 10 insertions(+)
+I see a patch from you 
+https://lore.kernel.org/all/20240817094605.27185-1-krzysztof.kozlowski@linaro.org/ 
+and I guess it fixes the constraints.
 
-diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/riscv/hwprobe.rst
-index 3db60a0911df..cfd2929d0562 100644
---- a/Documentation/arch/riscv/hwprobe.rst
-+++ b/Documentation/arch/riscv/hwprobe.rst
-@@ -183,6 +183,9 @@ The following keys are defined:
-        defined in the Atomic Compare-and-Swap (CAS) instructions manual starting
-        from commit 5059e0ca641c ("update to ratified").
 
-+  * :c:macro:`RISCV_HWPROBE_EXT_ZICNTR`: The Zicntr extension version 2.0
-+       is supported as defined in the RISC-V ISA manual.
-+
-   * :c:macro:`RISCV_HWPROBE_EXT_ZICOND`: The Zicond extension is supported as
-        defined in the RISC-V Integer Conditional (Zicond) operations extension
-        manual starting from commit 95cf1f9 ("Add changes requested by Ved
-@@ -192,6 +195,9 @@ The following keys are defined:
-        supported as defined in the RISC-V ISA manual starting from commit
-        d8ab5c78c207 ("Zihintpause is ratified").
+Please help with your comments further.
+> Best regards,
+> Krzysztof
+> 
 
-+  * :c:macro:`RISCV_HWPROBE_EXT_ZIHPM`: The Zihpm extension version 2.0
-+       is supported as defined in the RISC-V ISA manual.
-+
-   * :c:macro:`RISCV_HWPROBE_EXT_ZVE32X`: The Vector sub-extension Zve32x is
-     supported, as defined by version 1.0 of the RISC-V Vector extension manual.
-
-diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include/uapi/asm/hwprobe.h
-index b706c8e47b02..098a815b3fd4 100644
---- a/arch/riscv/include/uapi/asm/hwprobe.h
-+++ b/arch/riscv/include/uapi/asm/hwprobe.h
-@@ -72,6 +72,8 @@ struct riscv_hwprobe {
- #define		RISCV_HWPROBE_EXT_ZCF		(1ULL << 46)
- #define		RISCV_HWPROBE_EXT_ZCMOP		(1ULL << 47)
- #define		RISCV_HWPROBE_EXT_ZAWRS		(1ULL << 48)
-+#define		RISCV_HWPROBE_EXT_ZICNTR	(1ULL << 49)
-+#define		RISCV_HWPROBE_EXT_ZIHPM		(1ULL << 50)
- #define RISCV_HWPROBE_KEY_CPUPERF_0	5
- #define		RISCV_HWPROBE_MISALIGNED_UNKNOWN	(0 << 0)
- #define		RISCV_HWPROBE_MISALIGNED_EMULATED	(1 << 0)
-diff --git a/arch/riscv/kernel/sys_hwprobe.c b/arch/riscv/kernel/sys_hwprobe.c
-index 8d1b5c35d2a7..910b41b6a7ab 100644
---- a/arch/riscv/kernel/sys_hwprobe.c
-+++ b/arch/riscv/kernel/sys_hwprobe.c
-@@ -107,9 +107,11 @@ static void hwprobe_isa_ext0(struct riscv_hwprobe *pair,
- 		EXT_KEY(ZCB);
- 		EXT_KEY(ZCMOP);
- 		EXT_KEY(ZICBOZ);
-+		EXT_KEY(ZICNTR);
- 		EXT_KEY(ZICOND);
- 		EXT_KEY(ZIHINTNTL);
- 		EXT_KEY(ZIHINTPAUSE);
-+		EXT_KEY(ZIHPM);
- 		EXT_KEY(ZIMOP);
- 		EXT_KEY(ZKND);
- 		EXT_KEY(ZKNE);
---
-2.46.0
-
+-- 
+Thanks & Regards,
+Taniya Das.
 
