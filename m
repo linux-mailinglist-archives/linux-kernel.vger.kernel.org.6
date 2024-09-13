@@ -1,112 +1,101 @@
-Return-Path: <linux-kernel+bounces-327971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB7D6977D50
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:27:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C148977D53
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:27:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F56A287EF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:27:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 134BE288412
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8591D7E3B;
-	Fri, 13 Sep 2024 10:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jkX/KnuP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37E01D6C7F;
-	Fri, 13 Sep 2024 10:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BECB1D7E48;
+	Fri, 13 Sep 2024 10:27:35 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9721E505;
+	Fri, 13 Sep 2024 10:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726223240; cv=none; b=p+rtEm/7RZL+G15A8+eqJBWDaqrqgNPyXq5D07JgMJufAx/L2Eo+GAnc0hJb5Sq+UUmtPLBZxwVsZZe8O8wIl8CCvjJMgMF2yteLUFDfaxBly6DT6XCDXBXSx9nJ2UUTR4dLS4xn+ySewMjuCCr6xkhEj9bcgPnY5B6uXBFGzbU=
+	t=1726223254; cv=none; b=N1XQda6SjNYBbJOw6VCTEmhZJwrOnCuqdBhJ2Ys3CqTCT1w2WG2cWiQZdPachowz7B2wDDtIQ2M2v5ByvSeLmtXou7J7+k4sjijVp7WLZFpRBPwK7ot3j5CfgE2AEhwrCacsZAAKnQuHM6MSzre9n2OoBJJ1fwlCOvY6oskAHh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726223240; c=relaxed/simple;
-	bh=TrwaSnGSZr2bfjo3SWe2U7AL25TlCBVEkrZRf6lgy8A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EMwM9RFuUOYqXhH7i7IFrg0R0Y5dptALNVujJnBZodCpkKI32T/pO/Q4szh9oyz+Jt5MnI8TEV9Rbb0Lr20bc3PZXNB2kLPBu1b9v3RSxcBfZfKMirtqaWXaZD1bwhIJ0E12e5zUzItoSR8FsB3cMsRDdBo3/S21KrNE3rp15oM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jkX/KnuP; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726223239; x=1757759239;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=TrwaSnGSZr2bfjo3SWe2U7AL25TlCBVEkrZRf6lgy8A=;
-  b=jkX/KnuPS3XVL6cosXBU1o7hhosIcsJS8t+AP3EOVn+CCEnXFjUE0aRL
-   WPrdGXiyApCfGTRMCrrdtRYTHgh7z/Jpl3r26PLQ6BfofyI8HTiVotT5F
-   1WQQae8ZDz82c8SWkltolwtm5wYc0ZP5vpR0lQnJ5eOeMB/DQlL2nVQlm
-   7YA5azEvrjA6ibwT8/MsrVxRheG4ZE5kEJ0DoCzo3oSE+KOefuJvI4ky7
-   xw5xkUyNoYYSggYW9ac+geW3npehQPf6HmK3+7hNuvZ1O/2pRX/T6I55Z
-   xEg4KAVJH/vsYvaOE2rwXjrro4+9gEI3EWGdTgUhPpx4RLrbYU4k6jwqw
-   A==;
-X-CSE-ConnectionGUID: 9kRDiTeeSQGNYwvQlzQlcw==
-X-CSE-MsgGUID: K/GBQ5wWT5ahAyV9F7Do3Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="28863699"
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="28863699"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 03:27:18 -0700
-X-CSE-ConnectionGUID: oXOdqqt7RNywTmc/BAEEVQ==
-X-CSE-MsgGUID: wq3nQX7HT92g5GEvSvGEoQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="72813103"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 03:27:14 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sp3WB-00000008GC9-1PTf;
-	Fri, 13 Sep 2024 13:27:11 +0300
-Date: Fri, 13 Sep 2024 13:27:11 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v7 03/10] regulator: Split up _regulator_get()
-Message-ID: <ZuQTf0MiktCGAELP@smile.fi.intel.com>
-References: <20240911072751.365361-1-wenst@chromium.org>
- <20240911072751.365361-4-wenst@chromium.org>
+	s=arc-20240116; t=1726223254; c=relaxed/simple;
+	bh=kmK/SPNRil/4AojhazHVknaNAsrDW0H1jS/HHKg8VEc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IgOPV5FmL9J073RnBhZvK0Ii6BpdgFc73vsTOE4qjiSClz25X4/mY3oMIH9eUJ8/Jw3mRoTP/Jy6E1uoFiZvcNUrkwX3F9AS0DYGkrV6uuFdy0moHyPhO3aYpHFWlUCjC53A0cQuD3A++LuJgxz03YEQvcnqG6voIG9AzibEtpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 372AA13D5;
+	Fri, 13 Sep 2024 03:28:02 -0700 (PDT)
+Received: from [10.57.82.141] (unknown [10.57.82.141])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F132B3F64C;
+	Fri, 13 Sep 2024 03:27:30 -0700 (PDT)
+Message-ID: <f7129bab-4def-4d64-8135-b5f0467bf739@arm.com>
+Date: Fri, 13 Sep 2024 11:27:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240911072751.365361-4-wenst@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/7] mm: Use ptep_get() for accessing PTE entries
+To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, "Mike Rapoport (IBM)"
+ <rppt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
+ linux-m68k@lists.linux-m68k.org, linux-fsdevel@vger.kernel.org,
+ kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org
+References: <20240913084433.1016256-1-anshuman.khandual@arm.com>
+ <20240913084433.1016256-4-anshuman.khandual@arm.com>
+Content-Language: en-GB
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20240913084433.1016256-4-anshuman.khandual@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 11, 2024 at 03:27:41PM +0800, Chen-Yu Tsai wrote:
-> _regulator_get() contains a lot of common code doing checks prior to the
-> regulator lookup and housekeeping work after the lookup. Almost all the
-> code could be shared with a OF-specific variant of _regulator_get().
+On 13/09/2024 09:44, Anshuman Khandual wrote:
+> Convert PTE accesses via ptep_get() helper that defaults as READ_ONCE() but
+> also provides the platform an opportunity to override when required.
 > 
-> Split out the common parts so that they can be reused. The OF-specific
-> version of _regulator_get() will be added in a subsequent patch.
-> No functional changes were made.
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: "Mike Rapoport (IBM)" <rppt@kernel.org>
+> Cc: linux-mm@kvack.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> ---
+>  include/linux/pgtable.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+> index 2a6a3cccfc36..05e6995c1b93 100644
+> --- a/include/linux/pgtable.h
+> +++ b/include/linux/pgtable.h
+> @@ -1060,7 +1060,7 @@ static inline int pgd_same(pgd_t pgd_a, pgd_t pgd_b)
+>   */
+>  #define set_pte_safe(ptep, pte) \
+>  ({ \
+> -	WARN_ON_ONCE(pte_present(*ptep) && !pte_same(*ptep, pte)); \
+> +	WARN_ON_ONCE(pte_present(ptep_get(ptep)) && !pte_same(ptep_get(ptep), pte)); \
 
-I think this patch makes sense on its own, but it of course up to Mark.
-FWIW,
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Suggest reading once into a temporary so that the pte can't change between the 2
+gets. In practice, it's not likely to be a huge problem for this instance since
+its under the PTL so can only be racing with HW update of access and dirty. But
+good practice IMHO:
 
--- 
-With Best Regards,
-Andy Shevchenko
+    pte_t __old = ptep_get(ptep); \
+    WARN_ON_ONCE(pte_present(__old) && !pte_same(__old, pte)); \
 
+Thanks,
+Ryan
+
+>  	set_pte(ptep, pte); \
+>  })
+>  
 
 
