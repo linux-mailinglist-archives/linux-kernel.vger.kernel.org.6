@@ -1,145 +1,102 @@
-Return-Path: <linux-kernel+bounces-328275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D38978151
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:38:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A52F978157
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0EAB1C22313
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:38:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 013C81F22E30
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A45B1DB921;
-	Fri, 13 Sep 2024 13:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AFA01DB55F;
+	Fri, 13 Sep 2024 13:38:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uReTE3yz"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bs/fFwqb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E33B186E5E
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 13:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C231D6C7A;
+	Fri, 13 Sep 2024 13:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726234684; cv=none; b=L7fb9pUTpEZP0Zx1HlTeYww8mheCCiXDa0yGIxSPS5Uyipv26ArsKxt/h1lnOBDVofWja8z3yzr9jFNFb+0knYjPJyLxc1uKIGEVo/4ZWSopdX8OvoycDqNCmgHLeV/1FwbG93XqC9DdcIbt4/ZgDlQz072Fvzh24GuSWBQzrwU=
+	t=1726234738; cv=none; b=MUZYsl3k4gBNfwOwaEKJ2TjoRyQSyAPaeby9/WPi9m5fqCvzBr0Ceiy+ZN1FsunKGslofnB/8BVaK9sVutMfZ2njcmEEaOnVZLN6r/jacwma8XhAkUzIkIw6RAVoUaTC1Ngp8tgFNpl1Nq5ouH/j+zrxQ3c/9W/NDuAdrdSD+e4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726234684; c=relaxed/simple;
-	bh=PWgO44z09ebmgMtrjRxx7dE2A2UuqzUQ+JDOYxYQtpg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y1sB8XPHzTvUpDUKcm3CCpnKdsD0lv3J8PXw/wkEc9bmhTI+deU23bDdBLaPsuziOFaSqXwpHvMGWgv8u4774HIBWUTLbsrSDUjup3/5Gu9mH/BDP4JNYvvF91m2hrRqZIwsTvQtoZWfeqoEC8vq1gnCv8xA/SLDAb8ugpt6kW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uReTE3yz; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7179802b8fcso740325b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 06:38:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726234683; x=1726839483; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=BI2hDmwwKJCOx3VYE7RIwF7HNSiMnl3DjwM5Z3iw39A=;
-        b=uReTE3yzkZMxJLBygzZm/+F/nhnRqFeFBsbDzCE/xZ1J8G9UaS9JJQWBJR3T2CFXnv
-         qjPTlIKJAm6mcY12Ir4dTyqCmiZIg+ltlf2e5BP/VtWXuf5PjGoeKE46T5EuRg2UMvqL
-         jwX0nN0i+1B5tUHtkuiNN7SjG+uWSColIzBuMNtRTs3nFjegHBNnLDKNdQ9qhC1gx743
-         pKhYFPM94EcvRjtPQgIIdcWnz4GbueuxEsLZkyMz0g1O0rP8K+4WATRYRyj2g0UaMi95
-         YwoG0Rsq1apHNEpdgIxTqKtjDCzU08PkrCGWO1nsbk4jy26WxkcUQzkwLO3c5vn148EI
-         CIJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726234683; x=1726839483;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BI2hDmwwKJCOx3VYE7RIwF7HNSiMnl3DjwM5Z3iw39A=;
-        b=AwGRyGdQ+K7nKSa4tj9GS9Cv+ZoqI/hHriN4c93Rrr050m75XNr+hfYIwod/jbVvwT
-         p8udccjpFs5CdhZ+vRnrBp8OngkX0m9nYlWLZAPg6SNVZgUN2Cj954Ma8oVQD7iUIFzj
-         xwtlpwri0T4f/KUqvYSFNgaiRswQjQkP/jJ/YtKrhfILQBLjvhYL7q0wPpgp3N3Q7aZD
-         l3VJXfVu51eC4vDh3oqh6aFIVfN5qjBdoZZkThHAm/HL8FEcwm3eQcLatGAw7KQoPDpf
-         qCGT8cO78Beie8xRRTl4ayt1gst1jEGtrV7MzvwhRuDdWox3rXYtDAK12HN6zifxtPVo
-         rrWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXpyPL3nvkmv6mk9grznCXtRWlwLP5HWRAayx89ZR2vm6iJo1Yjvw2H1uNlqa75QjHjJ2dwVbgigTKOBT4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeOwyphojfmwpfy+YCbpgLA2PwuDuEWvW8pIHghVlM8b6BKvyr
-	c9MJiyNfpZ23GRyeNbU9CcgWBge3MaMPIfpeLu2dnjxJjEkToT3uHx/7gkG0Hg==
-X-Google-Smtp-Source: AGHT+IHkmtRHQ+rUmoFYCE/1t6yyLL89sOdatHoosm5maSEtNzYl+sXUvxBNTHJPrww1u/l+DLihkw==
-X-Received: by 2002:a05:6a00:1ad3:b0:714:17b5:c1d9 with SMTP id d2e1a72fcca58-71936a2f094mr4539801b3a.1.1726234682735;
-        Fri, 13 Sep 2024 06:38:02 -0700 (PDT)
-Received: from thinkpad ([120.60.66.60])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-719090b2c3fsm6095724b3a.165.2024.09.13.06.37.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 06:38:02 -0700 (PDT)
-Date: Fri, 13 Sep 2024 19:07:51 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
-	andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-	abel.vesa@linaro.org, quic_msarkar@quicinc.com,
-	quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org,
-	kw@linux.com, lpieralisi@kernel.org, neil.armstrong@linaro.org,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 1/5] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy:
- Document the X1E80100 QMP PCIe PHY Gen4 x8
-Message-ID: <20240913133751.2yegqbobvfzbogxc@thinkpad>
-References: <20240913083724.1217691-1-quic_qianyu@quicinc.com>
- <20240913083724.1217691-2-quic_qianyu@quicinc.com>
+	s=arc-20240116; t=1726234738; c=relaxed/simple;
+	bh=/KYBSsDBCUsu+s6eKQzz/C+xxOtD1VUVkICShhczuto=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=PdhHl2bzhdJb5TXUPM/PmIqt76ySRJBp0k4DU0L89zGzqJf5b/QM8eN8od9d/NuQiU6nJC4dNwzgarXfzYzxT1NbIzZn+W5CEhXJ0Bq6rIms5Mg7T9Ys/qfMLj1aXKL8ZJA0zs6csFEDCKBWgfk40IGrs2yaV6BzaVXjunM4Ff8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bs/fFwqb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34808C4CEC0;
+	Fri, 13 Sep 2024 13:38:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726234738;
+	bh=/KYBSsDBCUsu+s6eKQzz/C+xxOtD1VUVkICShhczuto=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Bs/fFwqbdW6dlxBnItsXK36LvRQXPXcToYHuJUWFx6tvZ+ExVwLy+TlJyf+jFxlf0
+	 68TsjIdQub/qzqSm6R/Ym1o0APmC8da4YOjZOgiFrHMPvaoAFDTNyXnf2dpdDFRnQJ
+	 md/lYpfK1c1N0fV3phv+O+kGwE02CYfXL2IBShc7hbPsmaA/TWfbExj5Ji4GOyxRGh
+	 LQLWGUfT/Xz/oZYLO81dyF2eBXZsz8gqdtK9usPTcPGRUDDQcpoAW0qEMUedfirquF
+	 7i83vW4pBF0H8OiPYo6E8W8fQfM7wKjMzuqLAU61rjuq2g+Tv2tkrQMWYBgAkeHijU
+	 +I64sUZR7hjsQ==
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Jiri Kosina <jikos@kernel.org>, 
+ Peter Hutterer <peter.hutterer@who-t.net>, Vicki Pfau <vi@endrift.com>, 
+ Shuah Khan <shuah@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
+Cc: linux-input@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+In-Reply-To: <20240910-hid-bpf-hid-generic-v2-0-083dfc189e97@kernel.org>
+References: <20240910-hid-bpf-hid-generic-v2-0-083dfc189e97@kernel.org>
+Subject: Re: (subset) [PATCH HID v2 00/11] HID: bpf: add a new hook to
+ control hid-generic
+Message-Id: <172623473588.1192461.11090201509053454593.b4-ty@kernel.org>
+Date: Fri, 13 Sep 2024 15:38:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240913083724.1217691-2-quic_qianyu@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-On Fri, Sep 13, 2024 at 01:37:20AM -0700, Qiang Yu wrote:
-> PCIe 3rd instance of X1E80100 support Gen 4x8 which needs different 8 lane
-> capable QMP PCIe PHY. Document Gen 4x8 PHY as separate module.
+On Tue, 10 Sep 2024 23:43:36 +0900, Benjamin Tissoires wrote:
+> This is a slight change from the fundamentals of HID-BPF.
+> In theory, HID-BPF is abstract to the kernel itself, and makes
+> only changes at the HID level (through report descriptors or
+> events emitted to/from the device).
 > 
-
-Nit: please use 'Gen 4 x8'
-
-- Mani
-
-> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> ---
->  .../devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml    | 3 +++
->  1 file changed, 3 insertions(+)
+> However, we have seen a few use cases where HID-BPF might interact with
+> the running kernel when the target device is already handled by a
+> specific device.
 > 
-> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
-> index dcf4fa55fbba..680ec3113c2b 100644
-> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
-> @@ -41,6 +41,7 @@ properties:
->        - qcom,x1e80100-qmp-gen3x2-pcie-phy
->        - qcom,x1e80100-qmp-gen4x2-pcie-phy
->        - qcom,x1e80100-qmp-gen4x4-pcie-phy
-> +      - qcom,x1e80100-qmp-gen4x8-pcie-phy
->  
->    reg:
->      minItems: 1
-> @@ -172,6 +173,7 @@ allOf:
->                - qcom,sc8280xp-qmp-gen3x2-pcie-phy
->                - qcom,sc8280xp-qmp-gen3x4-pcie-phy
->                - qcom,x1e80100-qmp-gen4x4-pcie-phy
-> +              - qcom,x1e80100-qmp-gen4x8-pcie-phy
->      then:
->        properties:
->          clocks:
-> @@ -201,6 +203,7 @@ allOf:
->                - qcom,sm8550-qmp-gen4x2-pcie-phy
->                - qcom,sm8650-qmp-gen4x2-pcie-phy
->                - qcom,x1e80100-qmp-gen4x2-pcie-phy
-> +              - qcom,x1e80100-qmp-gen4x8-pcie-phy
->      then:
->        properties:
->          resets:
-> -- 
-> 2.34.1
-> 
+> [...]
 
+Applied to hid/hid.git (for-6.12/bpf), thanks!
+
+[01/11] HID: bpf: move HID-BPF report descriptor fixup earlier
+        https://git.kernel.org/hid/hid/c/f10a11b7b599
+[02/11] HID: core: save one kmemdup during .probe()
+        https://git.kernel.org/hid/hid/c/6941754dbbc7
+[03/11] HID: core: remove one more kmemdup on .probe()
+        https://git.kernel.org/hid/hid/c/4fe29f36d2a3
+[04/11] HID: bpf: allow write access to quirks field in struct hid_device
+        https://git.kernel.org/hid/hid/c/b722f588adc6
+[05/11] selftests/hid: add dependency on hid_common.h
+        https://git.kernel.org/hid/hid/c/3d816765e12e
+[06/11] selftests/hid: cleanup C tests by adding a common struct uhid_device
+        https://git.kernel.org/hid/hid/c/28023a0f99d1
+[07/11] selftests/hid: allow to parametrize bus/vid/pid/rdesc on the test device
+        https://git.kernel.org/hid/hid/c/10d3147f9bb1
+[08/11] HID: add per device quirk to force bind to hid-generic
+        https://git.kernel.org/hid/hid/c/d030f826ea47
+[09/11] selftests/hid: add test for assigning a given device to hid-generic
+        https://git.kernel.org/hid/hid/c/10929078201f
+
+Cheers,
 -- 
-மணிவண்ணன் சதாசிவம்
+Benjamin Tissoires <bentiss@kernel.org>
+
 
