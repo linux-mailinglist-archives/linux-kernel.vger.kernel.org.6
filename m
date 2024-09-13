@@ -1,144 +1,122 @@
-Return-Path: <linux-kernel+bounces-328665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB4D4978712
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:44:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DCD4978716
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:46:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CE2928C680
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:44:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 232F11F220E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767A083CC7;
-	Fri, 13 Sep 2024 17:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F6281ACA;
+	Fri, 13 Sep 2024 17:46:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d19BrIOi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jt0t1q4G"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D48282D83;
-	Fri, 13 Sep 2024 17:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D622179B8E;
+	Fri, 13 Sep 2024 17:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726249455; cv=none; b=nO4x9/UglDMxlHyDXDu+vsM/js2jFP3fvMXLk7CiaoY11DQhZ33LbqNf0qbKrrv4c6N/anxSHSvJVX8XVgrheBM/NdoPI4SIBiTGo5MBAPORbVlaPp9mYFwN8qO9GojS6XfNitSxjZzAmXfg5CVr5O5ArYlyAsThdU1dYnx8bMM=
+	t=1726249565; cv=none; b=rPe6dJBF9FzqFno0gadDGhHj79+4M7EWsF2aO9cReLO6r59TYUswvbdmILquIXKRBEIdl1mxJG42gcT9h0TRzuJSm3qL6WrCkp6a2LpwYGPtz3mHV0OZhnJn0OmG+r7SSaYKiVMNOf0yMnwwUy7nD3+aZA1CD7HHOzVzl/jS+dU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726249455; c=relaxed/simple;
-	bh=jGzGLS5jc1tgtr1VvrVQOwCVcOgKD27bW3hONB0me0s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NcA71fIYfz+/dRdFulUNRK+Cwypu5bpB1aVaTIR/SPDYycaSYThMkuSKpzwXKN/vYnuupqH/zGE/+aYjvTLmkkVMrdASnp/A0E4YdPpoWubNTf4C9uOeMM9kcfHFxVFhZl7m6kDbvezqYqoe9T6/xT81T65h8QwTZmUEx78damE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d19BrIOi; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726249454; x=1757785454;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jGzGLS5jc1tgtr1VvrVQOwCVcOgKD27bW3hONB0me0s=;
-  b=d19BrIOiJWvB28tQvjgBwlX5DGQJL9gmcx6UewE0VmB3AgT5ZhpC+AC6
-   oY91oDS2jWkn1n2SRa8+W7Y891B437rvgSibfIH5O81Y8StQMOTXqgxIl
-   PFrA1Y8tLkUzp8aPfF8Nbinb9sCHZbLyz5hlfLBbVj/HgjQeRqcrTANNe
-   FFX/ymiL+ZKlcu21qX//Ip6CTp1Wl3Cp0vqKdZIVoQLDbzIYi3ohETIoI
-   UddVMWdufjHQeYolaRSM5y2cvJJZTk79a+N+y+ur4bsy/mm/IP3j4WLQh
-   /cME/hyPlhWsXf7ZHj6cNiX+TolAECJFiVQxVuyp3rAF3tqXg9kWZ3q/6
-   Q==;
-X-CSE-ConnectionGUID: D8T5PTAtTjKyymi0V7ts4g==
-X-CSE-MsgGUID: nY9kI+vqQwGXsAFxLkv5MA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="35829380"
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="35829380"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 10:44:13 -0700
-X-CSE-ConnectionGUID: CpJnrJr1RpeKBeAlx1cR5Q==
-X-CSE-MsgGUID: mnDRyL3fS8Kw/nImH3rKAA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="67761067"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 13 Sep 2024 10:44:10 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1spAL2-0006lY-0W;
-	Fri, 13 Sep 2024 17:44:08 +0000
-Date: Sat, 14 Sep 2024 01:43:10 +0800
-From: kernel test robot <lkp@intel.com>
-To: Erni Sri Satya Vennela <ernis@linux.microsoft.com>, kys@microsoft.com,
-	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
-	jikos@kernel.org, bentiss@kernel.org, dmitry.torokhov@gmail.com,
-	linux-hyperv@vger.kernel.org, linux-input@vger.kernel.org,
+	s=arc-20240116; t=1726249565; c=relaxed/simple;
+	bh=k2Sg5pN7dYYgJRnp2XsRdLyqdDWdF3HWxsDL5TVPvEs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tgTDKFiKtjhcYz83ovOVUdB9+FBQoKMZnGpAMEtAJk9uz5iHb2J+kbSK0IjXzL9mAniB0bVi81RNC6zDrcE31g9jU0Kfb/oiMNKBNs3C8mGsK0ovH/uYBSjKK1v5tByVsMNCkj9CaJ8R42e83hWmUHGS4t19BZktNML63SLGwr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jt0t1q4G; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-206f9b872b2so24851655ad.3;
+        Fri, 13 Sep 2024 10:46:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726249562; x=1726854362; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KMmVvlnDTI/iTSI2Zh5vhwF1oFsJYU1HFV/JLiFZUNw=;
+        b=Jt0t1q4GodL6Q6KuESR48GYYQ1NlvLG77Z3XIBMPnxxCilYIbUY6cZ/6Aed+TtLDmO
+         eeQw2VfPZq3Jvtkcu6iAXIIDk4RyMUkfVmaz3ldbcxpz/vPL6QUc9m0YUyI5WXDzBmnq
+         vuPyXmSDq3555HMTZK0b2TJzFQTDQCN36mUDf5i8TGqmOG5ZNS3HE79hOyvMZL4hgP8C
+         g4Q61Xa/CTtJOxF7orZEEDS4Sk5SwyIVr97EEYhEp8Vg5L0BJvQcMuRL4o/DeqPALICp
+         pTJP8FPjkxAqbOuiyJwgezY1+SFspPlF3UwbPlEb+qPJgDpKU+QiGWaeD2hkS3AaLHgs
+         TvAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726249562; x=1726854362;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KMmVvlnDTI/iTSI2Zh5vhwF1oFsJYU1HFV/JLiFZUNw=;
+        b=Bi95w8XCtyFYEqhoxL5UVQINIpqAsmOgq3+msrK49sppI9tpCqM2Snk1JhDjH6xJm5
+         0mOlOc7CaorEv4NY1jKiZRp5ukBFXwUBD35gioratjNKv7cB8vYnkIUWnzqEARRirf+4
+         MAnd9EuRQ4mBFv0A8Vkhh4a3/wWnFJBnZGqNI4AupxXorPOVj23rCPRueyM/ssfMnPfz
+         xGIhr4KSsfGGeLr+UR1UzrIKzDVomccp1XAPGanmLkJtq3ISMpyDQU+oQuM+UQm9qhO2
+         J8EG5bMdD2EIXDK43bbVl91RcR729XIm8nasgGH2KMJ78GBzlNWkaS39ieQIjGdP8n/0
+         wY2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXEKhllPbP9+/ANWAEgPDbjp7eqMspZ1nlwHthkmi1Px8nUe+l5mDnxKpkwGmjE50FpeN8JCGad7kqkgTQ=@vger.kernel.org, AJvYcCXgZLHF3MtJ/oj0alZFyC7go3iJzJN7co6ps0rmYwMoLsQL9iO5G/+QusiNGHdIhH9lhxJQco43PTL8z38nFlo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGoW3AeRH2U3TI0LI3D9zbaeQDE3FJCSMvFFXV2N4sJBMBsA4Z
+	EW/dAeztdPP80GXaEWPcfKEiLSSIQ3uTsd11hA95lmTG7W5r/AlS
+X-Google-Smtp-Source: AGHT+IGQ8EysGx88b1xm+qR1UoKo/PQr2FXhFG58fEJbseDMvs0OFF/hkxWoZMnNYF7N3WdCAQ4J9g==
+X-Received: by 2002:a17:902:b48f:b0:1fc:57b7:995c with SMTP id d9443c01a7336-2076e36cc53mr87095525ad.7.1726249561902;
+        Fri, 13 Sep 2024 10:46:01 -0700 (PDT)
+Received: from localhost.localdomain ([59.188.211.160])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-2076afdd667sm30300465ad.140.2024.09.13.10.45.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 10:46:01 -0700 (PDT)
+From: Nick Chan <towinchenmi@gmail.com>
+To: Hector Martin <marcan@marcan.st>,
+	Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-watchdog@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, ernis@microsoft.com,
-	Erni Sri Satya Vennela <ernis@linux.microsoft.com>,
-	Saurabh Sengar <ssengar@linux.microsoft.com>
-Subject: Re: [PATCH 1/3] Drivers: hv: vmbus: Disable Suspend-to-Idle for VMBus
-Message-ID: <202409140137.5jZxplAp-lkp@intel.com>
-References: <1726176470-13133-2-git-send-email-ernis@linux.microsoft.com>
+Cc: Nick Chan <towinchenmi@gmail.com>
+Subject: [PATCH] watchdog: apple: Increase reset delay to 150ms
+Date: Sat, 14 Sep 2024 01:45:05 +0800
+Message-ID: <20240913174540.45551-1-towinchenmi@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1726176470-13133-2-git-send-email-ernis@linux.microsoft.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Erni,
+The Apple A8X SoC seems to be slowest at resetting, taking up to around
+125ms to reset. Wait 150ms to be safe here.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+---
+ drivers/watchdog/apple_wdt.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-[auto build test ERROR on hid/for-next]
-[also build test ERROR on dtor-input/next dtor-input/for-linus linus/master v6.11-rc7 next-20240913]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+diff --git a/drivers/watchdog/apple_wdt.c b/drivers/watchdog/apple_wdt.c
+index d4f739932f0b..353ecf0b04dc 100644
+--- a/drivers/watchdog/apple_wdt.c
++++ b/drivers/watchdog/apple_wdt.c
+@@ -127,11 +127,11 @@ static int apple_wdt_restart(struct watchdog_device *wdd, unsigned long mode,
+ 	/*
+ 	 * Flush writes and then wait for the SoC to reset. Even though the
+ 	 * reset is queued almost immediately experiments have shown that it
+-	 * can take up to ~20-25ms until the SoC is actually reset. Just wait
+-	 * 50ms here to be safe.
++	 * can take up to ~120-125ms until the SoC is actually reset. Just
++	 * wait 150ms here to be safe.
+ 	 */
+ 	(void)readl_relaxed(wdt->regs + APPLE_WDT_WD1_CUR_TIME);
+-	mdelay(50);
++	mdelay(150);
+ 
+ 	return 0;
+ }
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Erni-Sri-Satya-Vennela/Drivers-hv-vmbus-Disable-Suspend-to-Idle-for-VMBus/20240913-053127
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
-patch link:    https://lore.kernel.org/r/1726176470-13133-2-git-send-email-ernis%40linux.microsoft.com
-patch subject: [PATCH 1/3] Drivers: hv: vmbus: Disable Suspend-to-Idle for VMBus
-config: i386-randconfig-003-20240913 (https://download.01.org/0day-ci/archive/20240914/202409140137.5jZxplAp-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409140137.5jZxplAp-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409140137.5jZxplAp-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/hv/vmbus_drv.c:985:27: error: 'vmbus_freeze' undeclared here (not in a function); did you mean 'vmbus_remove'?
-     985 |         .suspend_noirq  = vmbus_freeze,
-         |                           ^~~~~~~~~~~~
-         |                           vmbus_remove
-
-
-vim +985 drivers/hv/vmbus_drv.c
-
-   973	
-   974	/*
-   975	 * Note: we must use the "noirq" ops: see the comment before vmbus_bus_pm.
-   976	 *
-   977	 * suspend_noirq/resume_noirq are set to NULL to support Suspend-to-Idle: we
-   978	 * shouldn't suspend the vmbus devices upon Suspend-to-Idle, otherwise there
-   979	 * is no way to wake up a Generation-2 VM.
-   980	 *
-   981	 * The other 4 ops are for hibernation.
-   982	 */
-   983	
-   984	static const struct dev_pm_ops vmbus_pm = {
- > 985		.suspend_noirq  = vmbus_freeze,
-   986		.resume_noirq	= NULL,
-   987		.freeze_noirq	= vmbus_suspend,
-   988		.thaw_noirq	= vmbus_resume,
-   989		.poweroff_noirq	= vmbus_suspend,
-   990		.restore_noirq	= vmbus_resume,
-   991	};
-   992	
-
+base-commit: 5acd9952f95fb4b7da6d09a3be39195a80845eb6
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.46.0
+
 
