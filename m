@@ -1,181 +1,261 @@
-Return-Path: <linux-kernel+bounces-327430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77BCD9775E3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:03:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC4779775E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:07:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CE081F24879
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:03:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0C071C2423D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B78B623;
-	Fri, 13 Sep 2024 00:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3219653;
+	Fri, 13 Sep 2024 00:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="apVxy5ZZ"
-Received: from pv50p00im-hyfv10021501.me.com (pv50p00im-hyfv10021501.me.com [17.58.6.48])
+	dkim=pass (2048-bit key) header.d=jvosburgh.net header.i=@jvosburgh.net header.b="ZJOZDOKr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dF7s8E3j"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD709376
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 00:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7858B376;
+	Fri, 13 Sep 2024 00:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726185818; cv=none; b=U4sD10WR8+itfSvoODXx6f/9Bx3CI34XHwP+Qrat3pTQgsmxRuUJcIPm4w/i0FFCkmR79NSozZqPxSDoW4IU5/tg5kK6oXr/LuNMQ1Hrt7UPjsEeopLBYjRUPDIH0uXq3QPjbHpSlaYhCseX3o8+TFnGYRR7ixsMfuEyregm2FU=
+	t=1726186021; cv=none; b=j62e+QKGfVVlZIe3b7B6napogj/A9JxJbGKVU3M1ZlUEMSNWZOHdjABLquNZ4xv0emLhXGEgKZJjtzElihGE7fudNyHvMeZ6fFCzooCgxpQOivEleHDglWt7uSZMrtA48o3EHJ3Vix2WB9h5oG+ypVR7VvDXl2n4PNDsz1q4LVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726185818; c=relaxed/simple;
-	bh=L8UuwACrjIlci6pVnHp5gUQtK4BTpDJJIaEpVUHIbLU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ppdnZjmeJ+ltv6o8jrJoUXirdcmUdPN3r2kBjI8170/8f1XLPqHcdgmfRZ69x2m5yDjtOX4RrPvIyweXGk89y0nrFE9c59bMGSP7rvz2IXC8rZV8fKF1D44duC0+Wi2B8xYgVVS9lYDQ3UnySVqK+qw0wFhK90fq/NWtX8QTUGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=apVxy5ZZ; arc=none smtp.client-ip=17.58.6.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1726185816;
-	bh=FmIGfZyH/DV0K8QZSkGSqqgovRptSxi0Ip7aw2bM+f4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=apVxy5ZZYQE7pwcGfDiKddtbMfm7c8dReWsU3aVNIpVbBSt97Kr8hxzPbZGFwz8l+
-	 hrJRIzAZqiWrUtShJbHTStz46YrBFxWXmx43sqYE1boDMD3P4BtcO5sK8mnpehjmYD
-	 nIZ+LIXdKxDQLZercaWPy2nYLGcP/S6JcRwlUQN4DGwjbSSaAztsSZzUUcok1y9Rdh
-	 EHtLSuuR1zUbDr5Uc2eEAlt5COdsCdetL+GDhznUeopJIL1mahEbyk42xcHHi9xErk
-	 cWumvtu8HjQ84rXWRJ3oWwQsfyaU3a7RZWV5G4a5Cx/a2aAjBacW/YCmwtgclNQ1Y4
-	 mI8ADAMAHlXPA==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-hyfv10021501.me.com (Postfix) with ESMTPSA id 539EE2C043C;
-	Fri, 13 Sep 2024 00:03:32 +0000 (UTC)
-Message-ID: <f3887bd7-3a30-4093-99f5-a52e3a3c513d@icloud.com>
-Date: Fri, 13 Sep 2024 08:03:09 +0800
+	s=arc-20240116; t=1726186021; c=relaxed/simple;
+	bh=FvXbuDIYKjNAbAAcRxFAh7oxKSlBNc2itf3fVC7x4B8=;
+	h=From:To:cc:Subject:In-reply-to:References:MIME-Version:
+	 Content-Type:Date:Message-ID; b=b5v1xSxMPfaLqsESPwHR2EMeRFvFroOMPcZ+JswBv39d8qgM+KbzPbtX4wU53YfXi7jVvpOODIdb/SXOGLNnKcYhkNjcnKjbQIyVCld+MmiIqZFDSR5mBcYpZEHz0OY8JOqUCypQ5fsNo0shfqVFmHVzKYCcA+YK0SCauTMwzdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jvosburgh.net; spf=pass smtp.mailfrom=jvosburgh.net; dkim=pass (2048-bit key) header.d=jvosburgh.net header.i=@jvosburgh.net header.b=ZJOZDOKr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dF7s8E3j; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jvosburgh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jvosburgh.net
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfout.phl.internal (Postfix) with ESMTP id 6D5AF13800B5;
+	Thu, 12 Sep 2024 20:06:58 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-08.internal (MEProxy); Thu, 12 Sep 2024 20:06:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jvosburgh.net;
+	 h=cc:cc:content-id:content-transfer-encoding:content-type
+	:content-type:date:date:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to; s=fm3; t=1726186018; x=1726272418; bh=VIpDzQ5Q47McP90RMpSYT
+	K1CUPLCRSwo82eQcpu1SQI=; b=ZJOZDOKrKA03oR165BSNuW9IDaomh43JA0Z2Y
+	gSBm0dgshkYVZZ6mSlXd+Y4el06orAs9igwTVd9QKZsjZtFQrgjCFM85vZyME11B
+	Y4+QxqnSnm1OE9r1CoXliylu61+BesWPz9iqRJk80Zhl1W5HaghcK3K2MXWIQ1e8
+	hHp9L6p7ebcA2YkatyHLZmI8ME8J4oZxJ4+c9wK42rp5TbsF2C6l6CnT7/0gjcC0
+	QG4FbSms3xA0BeXnSLGvjY+EQt69ZR9XCqrA0Um+3E1TjGTvpUVxWSE+8LWdkIgA
+	qA82mHfP4dvW0snRSqtVIev7f4GAYLuzpxBLX5VgE84OkHgNw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-id
+	:content-transfer-encoding:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1726186018; x=1726272418; bh=VIpDzQ5Q47McP90RMpSYTK1CUPLC
+	RSwo82eQcpu1SQI=; b=dF7s8E3ji2RP1jjjkTdmLe1c+lmHTYyYB2mrgOhkWe+u
+	dMvFH/oxSm8nIrhwNWG9bb/dnvH4h9qgCuJQxpEwUL2cZjGabDtFJhatIKnCcyMI
+	K7PS7soWiHVMN/3EHNEcyxKvfl5j7dpaHn79kWqXJ6P4wVNI0KNm66FCf7VXpGCy
+	vZ8QzLuMOPwiiLnjd5ho3x/iSE8PDHkwmGjzui4hhrahP9SeR+ul8sVb+j7XyfMy
+	G5ORrwoySaPMJ6Zs0OnU24mlfqFX2M43NCSPvG67eBo8kjtDmnfTzrJIj37I7l8V
+	0KGXutApU6l/h6v3dPy7HmMmydaevRTLqoid9cOB/Q==
+X-ME-Sender: <xms:IYLjZhQQCNfafdql9BRKI7ssAXB7xGyqrIWpfsuarrBszhKiMFj7Cg>
+    <xme:IYLjZqzsRj9kBBjyyNg9aN1WxPSDi5hPN3ayG5i-KcIY_cK7GX-66cIJPKRW3zLE3
+    -k5za5ZOS_vexQ6TAk>
+X-ME-Received: <xmr:IYLjZm2lxff8WdXuDR3m226RucwbrFGjXTelG1zsfZVm1Qrlu13ILbZ29APegV0BKArDZw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejgedgfedvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhephffvvefujghfofggtgfgfffksehtqhertdertddv
+    necuhfhrohhmpeflrgihucggohhssghurhhghhcuoehjvhesjhhvohhssghurhhghhdrnh
+    gvtheqnecuggftrfgrthhtvghrnhepieefvdelfeeljeevtefhfeeiudeuiedvfeeiveel
+    ffduvdevfedtheffffetfeffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepjhhvsehjvhhoshgsuhhrghhhrdhnvghtpdhnsggprhgtphhtthho
+    peekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvvghmsegurghvvghmlh
+    hofhhtrdhnvghtpdhrtghpthhtohepshhurhgvshhhvdehudegsehgmhgrihhlrdgtohhm
+    pdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhope
+    grnhguhiesghhrvgihhhhouhhsvgdrnhgvthdprhgtphhtthhopehkuhgsrgeskhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtph
+    htthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:IYLjZpDJJl0BhUj3jOy57IMZ3N4kWpcMMiilIQWTj2qU330C2iphMA>
+    <xmx:IYLjZqj2nm-26_C_rAx880Y-A0c-zJSbf9mbooWzq6TmsUVulRACww>
+    <xmx:IYLjZtqREOwMZSUJxTOamzgniKg_NQFi1nHSapTCBQJ5lT6niTPz5g>
+    <xmx:IYLjZliHrVligt1w_rirahdkFpOc0BM-irf6x1i1hxX1lo1cfpbAAg>
+    <xmx:IoLjZjXDjIFDTHGoMk1e75wJlrVxNqDNsc-J4WHJj2qtUdJNDuxtpbxG>
+Feedback-ID: i53714940:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 12 Sep 2024 20:06:57 -0400 (EDT)
+Received: by famine.localdomain (Postfix, from userid 1000)
+	id 2D0869FC93; Thu, 12 Sep 2024 17:06:56 -0700 (PDT)
+Received: from famine (localhost [127.0.0.1])
+	by famine.localdomain (Postfix) with ESMTP id 29BDB9FC92;
+	Thu, 12 Sep 2024 17:06:56 -0700 (PDT)
+From: Jay Vosburgh <jv@jvosburgh.net>
+To: Suresh Kumar <suresh2514@gmail.com>
+cc: andy@greyhouse.net, davem@davemloft.net, edumazet@google.com,
+    kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: bonding: do not set force_primary if reselect is set
+ to failure
+In-reply-to: <20240912064043.36956-1-suresh2514@gmail.com>
+References: <20240912064043.36956-1-suresh2514@gmail.com>
+Comments: In-reply-to Suresh Kumar <suresh2514@gmail.com>
+   message dated "Thu, 12 Sep 2024 12:10:43 +0530."
+X-Mailer: MH-E 8.6+git; nmh 1.8+dev; Emacs 29.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] driver core: bus: Correct API bus_rescan_devices()
- behavior
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20240913-bus_match_unlikely-v2-0-5c0c3bfda2f6@quicinc.com>
- <20240913-bus_match_unlikely-v2-2-5c0c3bfda2f6@quicinc.com>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <20240913-bus_match_unlikely-v2-2-5c0c3bfda2f6@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: NGrUBEC9J_FhmSWKwVyq_Tly8-jfAvGK
-X-Proofpoint-GUID: NGrUBEC9J_FhmSWKwVyq_Tly8-jfAvGK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-12_10,2024-09-12_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxlogscore=999 mlxscore=0
- clxscore=1015 suspectscore=0 bulkscore=0 phishscore=0 adultscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2409120173
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <397120.1726186016.1@famine>
+Content-Transfer-Encoding: quoted-printable
+Date: Thu, 12 Sep 2024 17:06:56 -0700
+Message-ID: <397121.1726186016@famine>
 
-On 2024/9/13 07:45, Zijun Hu wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
-> 
-> API bus_rescan_devices() should ideally scan drivers for a bus's
-> devices as many as possible, but it will really stop scanning for
-> remaining devices even if a device encounters inconsequential errors
-> such as -EPROBE_DEFER, -ENODEV and -EBUSY, fixed by ignoring such
+Suresh Kumar <suresh2514@gmail.com> wrote:
 
-Scenarios which encounter -EPROBE_DEFER:
- - amba_match(), as bus_type @amba_bustype's match(), may return
-   this error code.
- - really_probe() may return this error code if any of a device's
-   suppliers has no driver bound.
- - other functions called by really_probe() to operate device related
-   hardware resources may potentially return this error code such
-   as pinctrl_bind_pins().
+>when bond_enslave() is called, it sets bond->force_primary to true
+>without checking if primary_reselect is set to 'failure' or 'better'.
+>This can result in primary becoming active again when link is back which
+>is not what we want when primary_reselect is set to 'failure'
 
-> inconsequential errors and continue to scan drivers for next device.
-> 
-> By the way, in order to eliminate risk:
->  - the API's return value is not changed by recording the first
->    error code during scanning which is returned.
->  - API device_reprobe()'s existing logic is not changed as well.
-> 
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> ---
->  drivers/base/bus.c | 38 +++++++++++++++++++++++++-------------
->  1 file changed, 25 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-> index 4b5958c5ee7d..fa68acd55bf8 100644
-> --- a/drivers/base/bus.c
-> +++ b/drivers/base/bus.c
-> @@ -58,9 +58,6 @@ static int __must_check bus_rescan_single_device(struct device *dev)
->  	return ret;
->  }
->  
-> -static int __must_check bus_rescan_devices_helper(struct device *dev,
-> -						void *data);
-> -
->  /**
->   * bus_to_subsys - Turn a struct bus_type into a struct subsys_private
->   *
-> @@ -797,15 +794,23 @@ static int __must_check bus_rescan_devices_helper(struct device *dev,
->  						  void *data)
->  {
->  	int ret = 0;
-> +	int *first_error = data;
->  
-> -	if (!dev->driver) {
-> -		if (dev->parent && dev->bus->need_parent_lock)
-> -			device_lock(dev->parent);
-> -		ret = device_attach(dev);
-> -		if (dev->parent && dev->bus->need_parent_lock)
-> -			device_unlock(dev->parent);
-> -	}
-> -	return ret < 0 ? ret : 0;
-> +	ret = bus_rescan_single_device(dev);
-> +
-> +	if (ret >= 0)
-> +		return 0;
-> +
-> +	if (!*first_error)
-> +		*first_error = ret;
-> +	/*
-> +	 * Ignore these inconsequential errors and continue to
-> +	 * scan drivers for next device.
-> +	 */
-> +	if (ret == -EPROBE_DEFER || ret == -ENODEV || ret == -EBUSY)
-> +		return 0;
-> +
-> +	return ret;
->  }
->  
->  /**
-> @@ -818,7 +823,10 @@ static int __must_check bus_rescan_devices_helper(struct device *dev,
->   */
->  int bus_rescan_devices(const struct bus_type *bus)
->  {
-> -	return bus_for_each_dev(bus, NULL, NULL, bus_rescan_devices_helper);
-> +	int err = 0;
-> +
-> +	bus_for_each_dev(bus, NULL, &err, bus_rescan_devices_helper);
-> +	return err;
->  }
->  EXPORT_SYMBOL_GPL(bus_rescan_devices);
->  
-> @@ -833,9 +841,13 @@ EXPORT_SYMBOL_GPL(bus_rescan_devices);
->   */
->  int device_reprobe(struct device *dev)
->  {
-> +	int ret;
-> +
->  	if (dev->driver)
->  		device_driver_detach(dev);
-> -	return bus_rescan_devices_helper(dev, NULL);
-> +
-> +	ret = bus_rescan_single_device(dev);
-> +	return ret < 0 ? ret : 0;
->  }
->  EXPORT_SYMBOL_GPL(device_reprobe);
->  
-> 
+	The current behavior is by design, and is documented in
+Documentation/networking/bonding.rst:
 
+
+	The primary_reselect setting is ignored in two cases:
+
+		If no slaves are active, the first slave to recover is
+		made the active slave.
+
+		When initially enslaved, the primary slave is always made
+		the active slave.
+
+
+	Your proposed change would cause the primary to never be made
+the active interface when added to the bond for the primary_reselect
+"better" and "failure" settings, unless the primary interface is added
+to the bond first or all other interfaces are down.
+
+	Also, your description above and the test example below use the
+phrases "link is back" and "primary link failure" but the patch and test
+context suggest that the primary interface is being removed from the
+bond and then later added back to the bond, which is not the same thing
+as a link failure.
+
+	-J
+
+>Test
+>=3D=3D=3D=3D
+>Ethernet Channel Bonding Driver: v3.7.1 (April 27, 2011)
+>
+>Bonding Mode: fault-tolerance (active-backup)
+>Primary Slave: enp1s0 (primary_reselect failure)
+>Currently Active Slave: enp1s0
+>MII Status: up
+>MII Polling Interval (ms): 100
+>Up Delay (ms): 0
+>Down Delay (ms): 0
+>Peer Notification Delay (ms): 0
+>
+>Slave Interface: enp1s0
+>MII Status: up
+>Speed: 1000 Mbps
+>Duplex: full
+>Link Failure Count: 0
+>Permanent HW addr: 52:54:00:d7:a7:2a
+>Slave queue ID: 0
+>
+>Slave Interface: enp9s0
+>MII Status: up
+>Speed: 1000 Mbps
+>Duplex: full
+>Link Failure Count: 0
+>Permanent HW addr: 52:54:00:da:9a:f9
+>Slave queue ID: 0
+>
+>
+>After primary link failure:
+>
+>Bonding Mode: fault-tolerance (active-backup)
+>Primary Slave: None
+>Currently Active Slave: enp9s0 <---- secondary is active now
+>MII Status: up
+>MII Polling Interval (ms): 100
+>Up Delay (ms): 0
+>Down Delay (ms): 0
+>Peer Notification Delay (ms): 0
+>
+>Slave Interface: enp9s0
+>MII Status: up
+>Speed: 1000 Mbps
+>Duplex: full
+>Link Failure Count: 0
+>Permanent HW addr: 52:54:00:da:9a:f9
+>Slave queue ID: 0
+>
+>
+>Now add primary link back and check bond status:
+>
+>Bonding Mode: fault-tolerance (active-backup)
+>Primary Slave: enp1s0 (primary_reselect failure)
+>Currently Active Slave: enp1s0  <------------- primary is active again
+>MII Status: up
+>MII Polling Interval (ms): 100
+>Up Delay (ms): 0
+>Down Delay (ms): 0
+>Peer Notification Delay (ms): 0
+>
+>Slave Interface: enp9s0
+>MII Status: up
+>Speed: 1000 Mbps
+>Duplex: full
+>Link Failure Count: 0
+>Permanent HW addr: 52:54:00:da:9a:f9
+>Slave queue ID: 0
+>
+>Slave Interface: enp1s0
+>MII Status: up
+>Speed: 1000 Mbps
+>Duplex: full
+>Link Failure Count: 0
+>Permanent HW addr: 52:54:00:d7:a7:2a
+>Slave queue ID: 0
+>
+>Signed-off-by: Suresh Kumar <suresh2514@gmail.com>
+>---
+> drivers/net/bonding/bond_main.c | 4 +++-
+> 1 file changed, 3 insertions(+), 1 deletion(-)
+>
+>diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_m=
+ain.c
+>index bb9c3d6ef435..731256fbb996 100644
+>--- a/drivers/net/bonding/bond_main.c
+>+++ b/drivers/net/bonding/bond_main.c
+>@@ -2146,7 +2146,9 @@ int bond_enslave(struct net_device *bond_dev, struc=
+t net_device *slave_dev,
+> 		/* if there is a primary slave, remember it */
+> 		if (strcmp(bond->params.primary, new_slave->dev->name) =3D=3D 0) {
+> 			rcu_assign_pointer(bond->primary_slave, new_slave);
+>-			bond->force_primary =3D true;
+>+            if (bond->params.primary_reselect !=3D BOND_PRI_RESELECT_FAI=
+LURE  &&
+>+                bond->params.primary_reselect !=3D BOND_PRI_RESELECT_BET=
+TER)
+>+			    bond->force_primary =3D true;
+> 		}
+> 	}
+> =
+
+>-- =
+
+>2.43.0
+>
+
+---
+	-Jay Vosburgh, jv@jvosburgh.net
 
