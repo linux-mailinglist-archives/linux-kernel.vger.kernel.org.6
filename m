@@ -1,82 +1,61 @@
-Return-Path: <linux-kernel+bounces-328040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B043977E21
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:01:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 939BD977EC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:44:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4589C1C24AA7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:01:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45FB31F27934
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:44:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226DF1D7E58;
-	Fri, 13 Sep 2024 11:01:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A930F1D88D7;
+	Fri, 13 Sep 2024 11:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="3ZFnPrBn"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="+JmDCEuF"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9622B14F10F
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 11:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730E21D86EC;
+	Fri, 13 Sep 2024 11:44:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726225286; cv=none; b=fjHFxymIDUu8DSdYn9yKXzpkn2nvT8f7k7v2+iFBi+KdTasDdQky0XXZ8uP9TBG4vNLj3XNesOG1rh7m8T4qNWejXMWGqiBMqF37+CITFW0swfsM2KZdPfY/MSDphTRIQp2DZxstCQj5tHPG+bqtT1orwii8Bz+p07Kn5G9gL+8=
+	t=1726227889; cv=none; b=FwHsRoODcuUrToJGf3SdiBQZr1hDGE9xkDq+HZhJZnGc+kORVtpDljVP3P08WCsAcK5t+2IYb0klwp4LDDef8TNwzzzJhs9JQmr31oTZodkcNLrak92csYN+VFLGGEbfp0S+X+4YfOdpBFVkIA6sOxO2iFFkzcc7uNBDy1Sa/2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726225286; c=relaxed/simple;
-	bh=6cTHjuS7EBHBD4xtZqJfXECj5rtdnxI2Mext/1qxcOg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jpHXMorP9ZNJ6hPd6xj+Nd292cnqAu8azkX2v3gxj2QPuUROXov5ME2R+kWeJo5n5gJAdphE/dGUW2MirfR5H40iLkMjSIn8yWuJeodJP7hs2+rdy9XVprd8qYHCtUUYOMOhjxyVhnqEhsa5XBetAsU3jZ5aF4yj68lJ0ElpsUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=3ZFnPrBn; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5c3df1a3cb6so358331a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 04:01:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1726225282; x=1726830082; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=b6x+FbPBr6LOLetSJiGWO7sMy2gp7jD6h7M3aIAswxc=;
-        b=3ZFnPrBnyanINfPLnYAtBudE5xd3tCt592o+CnE8XH9GZ4OXdCRiUUKtVbQTFknxwS
-         NkrvTKa2Lxm4GMWstXztXxECMLVUthnDC2tPxe6JCa87j/d4yhqQ8U4w8DDeRJTSj0BN
-         OeGYoiYYmaJ6Bt3y+tQ6WD6GjrG4hvMIC+Ba4fofDZtBY4Eq6bIOvZjElQntm1eabNa2
-         +gLX+mE6vwZoYHTtrtZokHRV+5QtFYwQkjROJgzUZNXIFRU0/muzcLl/gr+VDpgegEMd
-         FRuNPfpIr9E41gOZgjpbYXYgWuRjGhrtiHCWn2saEma+/cAAoxoH0EokIddKWVGt7YDf
-         p37A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726225282; x=1726830082;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b6x+FbPBr6LOLetSJiGWO7sMy2gp7jD6h7M3aIAswxc=;
-        b=U/U8dvePBnAcdi6D0yL8hBJUpZ/nfxQMlrknbFkopMTa7Fny/d8Z+o17TLybC1CNCQ
-         Nd/VU2tdPyrCqabvueMeCJPKtAc+rC3IJjE1azf0nI1a5xvtUi4jh9xwrGpriknZytJr
-         hOSY+DPBeAlNV56rse+0wyD0g8pT6biX3ZsFW97DGbRW4mC3iTI3Ofyqxqm9mvH/IG6k
-         exABs/XxXJKUS9iMXkw25Q2QXYl+VAHHjPE4p3CeeeVU3/nxtQ2CPqSpRYDsI9gkbxaw
-         eUN3s7HkLXcFaON46543IbWcUrXlhrXqUnNxJeGSi1FihWBU4Qh9snwt5c8LiFz2OZMq
-         xQtA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5r85Y4wwiESs6hfx2nOT/zz7JnVUyuWdPYzyzlzeN3DWWS/dd2F+p9e9w1GPfzzoP0oZHztEQ1Ww1AkQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN0mbC56qwkM4t3kc4yJQz/gMkB9eggyIyHH1+LdMIyNC2N0k6
-	Gele83cwN8h//wNveXz6a08E5RGd3KPtDP3P5/s4fg7aVy8e4s/+aQAie8U7E3o=
-X-Google-Smtp-Source: AGHT+IGIsdWg7O3qlfv6WqCrKkIhGhaWd9vPtXUZRebQ9smyngb4xqLB6yJC4zM5VZ5puQwM7VOsnw==
-X-Received: by 2002:a05:6402:26c3:b0:5c4:bb1:6491 with SMTP id 4fb4d7f45d1cf-5c413e123b3mr1767817a12.3.1726225281653;
-        Fri, 13 Sep 2024 04:01:21 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-62-216-208-245.dynamic.mnet-online.de. [62.216.208.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd51f84sm7459257a12.41.2024.09.13.04.01.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 04:01:21 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	kees@kernel.org,
-	gustavoars@kernel.org
-Cc: linux-ext4@vger.kernel.org,
+	s=arc-20240116; t=1726227889; c=relaxed/simple;
+	bh=D6Aea0vN4+YQgnTaFtA2Xc8h1cmTBP0II52kCPnOPg4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HOyMH/p3fVf25PO3hYc1iWG+F+M9DYUunLb968ehzitmZTpAmgKYg8ln+cWF82Y3xOgjo4/4n7doA/dwN3kxRYFVJnDoa+XChll/PdwxQiDJkWbudkhj/+DU2OLdd07qIRHpHe66RtgBIPd+WWR4kwDrBiKeWUMdkGbfk3RE7Zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=+JmDCEuF; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=Cc:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=uKY+vBHzrvIaEx4iv91a6m00ms046KPp640Lmm3Yn6s=; b=+JmDCEuFzksb5sWhlECW0+2ZkO
+	984ONyEZWm3pqtyBG2GROEMIooQCO/NjangcEc7ZcbgeIyPWdsw/N8Zil+lxlxbsBZcBEMtt8bk77
+	NqpsRDf+fcrulXLVcyphURBI0VYmHPr/sckH3hX8hm6jmi9EQUPppr5GL6hTV9hF7qWQllUs72Xqi
+	WYOuaFQW1VdwGG7xSv88h7NZDV2OzS1miuHqndZENlvrlwqj16iVywhBFV+JI5HaUXwSdTfYrsVoA
+	m46isSJTld6JZ5ZiwTJ9b1sedRPelftfEIAgRA7JV56cUCyCQAUtl99SXqB8PiU2JWOM4e9J07oze
+	2oJ/06+A==;
+From: Andreas Kemnade <andreas@kemnade.info>
+To: tony@atomide.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-omap@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] ext4: Annotate struct fname with __counted_by()
-Date: Fri, 13 Sep 2024 13:00:14 +0200
-Message-ID: <20240913110013.151331-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.46.0
+	hns@goldelico.com
+Cc: Andreas Kemnade <andreas@kemnade.info>,
+	linux-gpio@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [RFC PATCH] ARM: dts: omap3-gta04: add line names for modem-related GPIOs
+Date: Fri, 13 Sep 2024 13:01:25 +0200
+Message-Id: <20240913110125.753142-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,49 +64,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the __counted_by compiler attribute to the flexible array member
-name to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-CONFIG_FORTIFY_SOURCE.
+There is one GPIO which needs a high pulse to toggle power of the
+modem. Since GPIO numbering (and even chip numbering) is not stable
+anymore, make it detectable via gpiofind, so userspace can take care.
 
-Inline and use struct_size() to calculate the number of bytes to
-allocate for new_fn and remove the local variable len.
+There is another reset-out gpio on the A5 which indicates the power state
+of the modem, make it also available.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+Note: there is a full kernel space implementation of this issue:
+https://git.goldelico.com/?p=letux-kernel.git;a=blob;f=drivers/misc/wwan-on-off.c;h=768b6f9fa745d7f4d820685748a1b801e731962d;hb=letux-6.11-rc7
+which never hit mainline.
+
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+CC: linux-gpio@vger.kernel.org
+CC: Linus Walleij <linus.walleij@linaro.org>
+CC: Bartosz Golaszewski <brgl@bgdev.pl>
 ---
- fs/ext4/dir.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+This looks quite ugly and does not even fully solve the problem, since
+gpioset does not keep that gpio state on exit, so scripts using
+sysfs-export cannot use it as a drop-in replacement. So probably some
+daemon sitting on that gpio is needed, if things should be done in
+userspace.
+At least this patch improves the description of the hardware
+what is what the devicetree is for.
 
-diff --git a/fs/ext4/dir.c b/fs/ext4/dir.c
-index ff4514e4626b..8e7df15bb971 100644
---- a/fs/ext4/dir.c
-+++ b/fs/ext4/dir.c
-@@ -408,7 +408,7 @@ struct fname {
- 	__u32		inode;
- 	__u8		name_len;
- 	__u8		file_type;
--	char		name[];
-+	char		name[] __counted_by(name_len);
+ arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi  | 7 +++++++
+ arch/arm/boot/dts/ti/omap/omap3-gta04a5.dts | 4 ++++
+ 2 files changed, 11 insertions(+)
+
+diff --git a/arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi b/arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi
+index 5001c4ea35658..b00d0d092eabc 100644
+--- a/arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi
++++ b/arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi
+@@ -469,6 +469,13 @@ OMAP3630_CORE2_IOPAD(0x25e4, PIN_INPUT | MUX_MODE4) /* rx */
+ 	};
  };
  
- /*
-@@ -464,14 +464,13 @@ int ext4_htree_store_dirent(struct file *dir_file, __u32 hash,
- 	struct rb_node **p, *parent = NULL;
- 	struct fname *fname, *new_fn;
- 	struct dir_private_info *info;
--	int len;
++&gpio6 {
++	gpio-line-names = "", "", "", "", "", "", "", "",
++			  "", "", "", "", "", "", "", "",
++			  "", "", "", "", "", "", "", "",
++			  "", "", "MODEM_EN";
++};
++
+ &i2c1 {
+ 	clock-frequency = <2600000>;
  
- 	info = dir_file->private_data;
- 	p = &info->root.rb_node;
+diff --git a/arch/arm/boot/dts/ti/omap/omap3-gta04a5.dts b/arch/arm/boot/dts/ti/omap/omap3-gta04a5.dts
+index 230f6f4fc6bf8..be7f71d720680 100644
+--- a/arch/arm/boot/dts/ti/omap/omap3-gta04a5.dts
++++ b/arch/arm/boot/dts/ti/omap/omap3-gta04a5.dts
+@@ -44,6 +44,10 @@ irda-en-hog {
+ 	};
+ };
  
- 	/* Create and allocate the fname structure */
--	len = sizeof(struct fname) + ent_name->len + 1;
--	new_fn = kzalloc(len, GFP_KERNEL);
-+	new_fn = kzalloc(struct_size(new_fn, name, ent_name->len + 1),
-+			 GFP_KERNEL);
- 	if (!new_fn)
- 		return -ENOMEM;
- 	new_fn->hash = hash;
++&twl_gpio {
++	gpio-line-names = "", "", "", "", "", "", "MODEM_RESET_OUT";
++};
++
+ &omap3_pmx_core {
+ 	bt_pins: bt-pins {
+ 		pinctrl-single,pins = <
 -- 
-2.46.0
+2.39.2
 
 
