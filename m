@@ -1,329 +1,142 @@
-Return-Path: <linux-kernel+bounces-327855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7DDB977BF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:11:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9973C977BF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:11:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C536B28E49
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:11:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3D571C244EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 486881D6DBA;
-	Fri, 13 Sep 2024 09:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8551D6C6E;
+	Fri, 13 Sep 2024 09:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="ExTFxaOM";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LSzpmTvK"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FTQlb8J+"
+Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AAB31D58B2;
-	Fri, 13 Sep 2024 09:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052CD1D67B6;
+	Fri, 13 Sep 2024 09:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726218653; cv=none; b=EmmIWVCqhnkDC9b0wqpTOdqrQEAqOpnyFkpkBHq2gc+eWpi5DAx8+Sqq4l1oM6ct2Z9EUPiqmIqUoIgusU6GsLK4XfxX37VN7q8oD48JUlBSBmC3efb57ue3GIjP8zS4t899sWh6uFNgiMuwd9L7NX7q1JTAYQ6Mh+cexUuBnJ0=
+	t=1726218664; cv=none; b=cBdWEUh2KfN7McBp5cx67iS4e1bSCISLptqDTafgfYr16BR4rwLUoXhacNKO62DcE8MBuvnO7rLbe3KW+0Wf33082ykDCsP8oK+zQkXU1HGpdCEqnYIqsuGu1azbTJWO0U2dOR1axTs6wQjr2NSp+dAa2+gvKq5xq7YU2mwAKoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726218653; c=relaxed/simple;
-	bh=tt9AADMrwVNUsXHIqAOKdNpwu64ra0IXp/MHU7EzxmQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=uszbwTn4VLRQ0jbzcZpdq8RH5hCsQ4bUAmCIethr5JBJHKIX28ou+iPgIRmVpt8dOnav1X1d9woc/oTo+hwainIqlHUU5ZFvpBYcUN/PexUarLfH7ASyFSZZ7G8yPDLq08aCzipAA6Gow6vEQLhlxzbUIO50/cwLfyNNzykPKu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=ExTFxaOM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LSzpmTvK; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.phl.internal (Postfix) with ESMTP id 281CE13802B2;
-	Fri, 13 Sep 2024 05:10:49 -0400 (EDT)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-09.internal (MEProxy); Fri, 13 Sep 2024 05:10:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1726218649;
-	 x=1726305049; bh=FJ45Qglvg7DmjFxDy6maK3tnXPu/iEdwJfotzp3qoVY=; b=
-	ExTFxaOM1q2QaFIn5lMTUZRkL3s3wsqh2uACtKgm2++6I8Cxbuarlx73WuTfodr+
-	1BG52BjtQ2O/RbOeHY6Z5nQkez1OTWLHrw9Y0HdlwCG7Fcqffcm9ZE/Z42MUw6e7
-	aJ1k6eLQeyWnQzqilmgQFjTxoRlR/as6/lCk3zH39XuljGSLdvDfM87v/n7ohRLK
-	q9k4demWaxJOiy9mMFAW3aqlDjJC/OC9NwEmy69O96Fht5SMVvyfM6Anra7fPhYb
-	fBJFHPwan1xmQbtth9l/LYFNR8i5qnFS4B7K6V6gTiiYoVJJlkLRbdknR0LpiI5q
-	S4tQHPtdDuDOfectuh04SA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726218649; x=
-	1726305049; bh=FJ45Qglvg7DmjFxDy6maK3tnXPu/iEdwJfotzp3qoVY=; b=L
-	SzpmTvKYIF5kHP5K92PZi0/P6uMjICaF3iGyvPH8pPsB2p2rAbeVJ0MrxBwZHLWS
-	vwU1MB6JZCIELNgabHhzhAOZLt5M8i5ie5bkMDSppFPjNrsHxluzZpQjbRVyZglX
-	9t3GYgDXiLuwU2NHU2+J1w04V03e+pH6SSyCyOiIGXsUftHsl25QN5WC+apWqqof
-	+Ui9WOf9Z0UAeJr5w2RDbrq4SukapfQnvpceTr9VSvxfOCfBYwB+K0CevPj5lNSF
-	awYmOZ2IF6sy/CGw1Hl0eBY9hcNrrbMeeukbxHtbFir99XQZP4q3UIZIlO9vOkN3
-	5EaIK3QW/8Cd+MaNk/3kg==
-X-ME-Sender: <xms:mAHkZs58ehgy0N4vhx2YdYQMhZOLsKB1XYqdEW7-rkcwoVtJwOG_hg>
-    <xme:mAHkZt5TJnLA5yoStQU0eMuqwJdk-iY43LttYqwyDED4quoAtVd543NrTsfcTqpS1
-    7TknnLWC_HhaaBTSXQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejjedgudduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
-    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeehfeduvddtgffgvdffkeet
-    hefhlefgvdevvdekuefffeekheehgeevhfevteejnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgr
-    thdrtghomhdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgtph
-    htthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthht
-    oheptghhvghnhhhurggtrghisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrrghfrg
-    gvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhirhgvshhhrdhkuhhmrghrsehl
-    ihhnrghrohdrohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvg
-    dprhgtphhtthhopehlohhonhhgrghrtghhsehlihhsthhsrdhlihhnuhigrdguvghvpdhr
-    tghpthhtohepkhhvmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlih
-    hnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehl
-    ihhnuhigqdhmihhpshesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:mAHkZreBs9WeD2wS-4sgdFp08F2qC_tlncrS_kXiaFyZY3gZpEEJCg>
-    <xmx:mAHkZhIRkM_6p6WglSJG38Xq1-yLnpz_YUilrHgTLr6Sz1l1pStRPg>
-    <xmx:mAHkZgI1iWTI-sWtiM2oEdAejdsQo6QLXm5oIs-jr1b0h2qRheqEQQ>
-    <xmx:mAHkZiz6yS6epgx0Hz0fHV15BuOnWeYnZMReLDTfgw37ODVKNf3k6Q>
-    <xmx:mQHkZtALj-7B8j9db26vWy2uo4xeplo4CRbDzNqmchNcB2Br6nCwg1Yy>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 2A1761C20065; Fri, 13 Sep 2024 05:10:48 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1726218664; c=relaxed/simple;
+	bh=H1DEQUCDUzUOXlRaC4aA86YWZ/hLPsD9x3abWlVWMwA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rMjkuROalgZHs6klopj8LsBwohrcNCsMQdvuhsEK9mivCIe+HO9CCGcLxV3U8vc9d0ryQXvIOI38ucZr7i8kp1tH+7fR+EZx4IsMebZ/AXAiuhTzkgECFbyMDd4k995kzw2fkXkxTm8w2GCVUAF6kQJGIB6XTiehZmOu1uF0inw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FTQlb8J+; arc=none smtp.client-ip=209.85.214.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-205909af9b5so6546305ad.3;
+        Fri, 13 Sep 2024 02:11:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726218662; x=1726823462; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hj2GddeQps/FE1fWEl/3u7sXcPoqY/f7cIdf4hfzm/8=;
+        b=FTQlb8J+UcdDNFboXwAkDDk+nauVvt1YGoRwZhivuuqu/Np1RwstzbO2JwhZ6asuEa
+         2oiYFSojLAslW6JyKjMKRgP36zLej+DBjB0z1XX4bsn8FNKKvjxIoT9ZmVPaAtbd2pvT
+         WXCblRv87wMxTNaOydazTbYp1HmodktSG3x9mSpYXev5lmgjpf7hg3lc2NAqeSserhw5
+         ysCk0Ug27qARd3dXN93+4Jm92Vbb0gUmx3EtS9/aT/t7QHjl5zClwdgiDpLrt/vjLlCL
+         Z3/3z8/+jAJBugGOA15GLamyGpb1Ea44cgYW+aq8j3kTAunvRapdFg/LV4id1hoVQv6L
+         f9rQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726218662; x=1726823462;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Hj2GddeQps/FE1fWEl/3u7sXcPoqY/f7cIdf4hfzm/8=;
+        b=QQZQ70d5IWSbcdB3Bi5TYEp4TjVc0LVTqMew7FnFkQFSfXXgLO9kAUdJjMx2+y6b/f
+         LA8sk0BKj19/noOPsmo1fuaWtkyw7TeedZMCaxtNWGYFC1m5kn3uSPK3C0yASg/Zz8fA
+         zflMCQNEiOknXyqwg50bWphPTjs+51K4udu9NEDZpCTF18CQzPpwhEbJK25rKjmZmb6C
+         gZd5y7Mhwwat8NpKk/wVZkDlTYM7UhjHBiPtu/2cj4yxue8SpI8JHh/nys6TbVRrVsf/
+         qDYCDvlqGKedlt/kEHdrGlCx1pBYKja/ES8bhKAGniTfqr6dPvXBGU9VU85fyL3+3tpf
+         JFYw==
+X-Forwarded-Encrypted: i=1; AJvYcCWyx3F6g1Q4fy3j4x3M29pRkSbOTm0EM/Y0OYdIiMmAnRe0ERP2AjnxPWFprgEBjImc2/nm2ms5lVWFX2g=@vger.kernel.org, AJvYcCXUXlUoHqleHf3AF/qZb1TZ/afM35F6tTsCa+2YrFXL9vE0p6/SwyIwHWV7Kb5QYETavrE463xM@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3VMMuwzsRvyySBHB8mNb8zAqoWEVPLD5YIKdlhZEkmtzqZMkf
+	TV4F1qAy8A+ewwat+7y8XVyJnip9rq85JWTWx5YhCDG1i8Fj1Bmv
+X-Google-Smtp-Source: AGHT+IHqr6Ea/+/C5VS1ndd+a6oK2hZU9vmvQDeDsKAJlBu82gDjVw6gDtp76gUirTBv0x8t4OfxJg==
+X-Received: by 2002:a17:902:f60d:b0:205:76d0:563b with SMTP id d9443c01a7336-20781947b5fmr31093955ad.0.1726218661777;
+        Fri, 13 Sep 2024 02:11:01 -0700 (PDT)
+Received: from tom-QiTianM540-A739.. ([106.39.42.164])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-207810a4d62sm8606085ad.8.2024.09.13.02.10.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 02:11:01 -0700 (PDT)
+From: Qiu-ji Chen <chenqiuji666@gmail.com>
+To: mripard@kernel.org,
+	dave.stevenson@raspberrypi.com,
+	kernel-list@raspberrypi.com,
+	maarten.lankhorst@linux.intel.com,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com,
+	Qiu-ji Chen <chenqiuji666@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] drm/vc4: Fix atomicity violation in vc4_crtc_send_vblank()
+Date: Fri, 13 Sep 2024 17:10:53 +0800
+Message-Id: <20240913091053.14220-1-chenqiuji666@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 13 Sep 2024 10:10:09 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Huacai Chen" <chenhuacai@kernel.org>
-Cc: "Xuerui Wang" <kernel@xen0n.name>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- "Viresh Kumar" <viresh.kumar@linaro.org>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- kvm@vger.kernel.org
-Message-Id: <84c6e819-e2b8-40b6-8de4-9f550e652acc@app.fastmail.com>
-In-Reply-To: 
- <CAAhV-H74OCxnRQjHXtu-CuVaEb5bsMQ4vR4wCOvztZdV-HWEVg@mail.gmail.com>
-References: <20240912-iocsr-v2-0-e88f75b37da4@flygoat.com>
- <20240912-iocsr-v2-1-e88f75b37da4@flygoat.com>
- <CAAhV-H74OCxnRQjHXtu-CuVaEb5bsMQ4vR4wCOvztZdV-HWEVg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] LoongArch: Probe more CPU features from CPUCFG
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
+Atomicity violation occurs when the vc4_crtc_send_vblank function is
+executed simultaneously with modifications to crtc->state or
+crtc->state->event. Consider a scenario where both crtc->state and
+crtc->state->event are non-null. They can pass the validity check, but at
+the same time, crtc->state or crtc->state->event could be set to null. In
+this case, the validity check in vc4_crtc_send_vblank might act on the old
+crtc->state and crtc->state->event (before locking), allowing invalid
+values to pass the validity check, leading to null pointer dereference.
 
+To address this issue, it is recommended to include the validity check of
+crtc->state and crtc->state->event within the locking section of the
+function. This modification ensures that the values of crtc->state->event
+and crtc->state do not change during the validation process, maintaining
+their valid conditions.
 
-=E5=9C=A82024=E5=B9=B49=E6=9C=8813=E6=97=A5=E4=B9=9D=E6=9C=88 =E4=B8=8A=E5=
-=8D=889:46=EF=BC=8CHuacai Chen=E5=86=99=E9=81=93=EF=BC=9A
-> Hi, Jiaxun,
->
-> On Fri, Sep 13, 2024 at 4:56=E2=80=AFAM Jiaxun Yang <jiaxun.yang@flygo=
-at.com> wrote:
->>
->> Probe ISA level, TLB, IOCSR information from CPUCFG to
->> improve kernel resilience to different core implementations.
->>
->> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
->> ---
->>  arch/loongarch/include/asm/cpu.h       |  4 +++
->>  arch/loongarch/include/asm/loongarch.h |  3 +-
->>  arch/loongarch/kernel/cpu-probe.c      | 54 ++++++++++++++++++++++++=
-----------
->>  3 files changed, 44 insertions(+), 17 deletions(-)
->>
->> diff --git a/arch/loongarch/include/asm/cpu.h b/arch/loongarch/includ=
-e/asm/cpu.h
->> index 843f9c4ec980..251a15439cff 100644
->> --- a/arch/loongarch/include/asm/cpu.h
->> +++ b/arch/loongarch/include/asm/cpu.h
->> @@ -100,6 +100,8 @@ enum cpu_type_enum {
->>  #define CPU_FEATURE_HYPERVISOR         25      /* CPU has hypervisor=
- (running in VM) */
->>  #define CPU_FEATURE_PTW                        26      /* CPU has ha=
-rdware page table walker */
->>  #define CPU_FEATURE_AVECINT            27      /* CPU has avec inter=
-rupt */
->> +#define CPU_FEATURE_IOCSR              28      /* CPU has IOCSR */
->> +#define CPU_FEATURE_LSPW               29      /* CPU has LSPW */
-> I don't see LSPW being used, so just remove it now?
+This possible bug is found by an experimental static analysis tool
+developed by our team. This tool analyzes the locking APIs
+to extract function pairs that can be concurrently executed, and then
+analyzes the instructions in the paired functions to identify possible
+concurrency bugs including data races and atomicity violations.
 
-I=E2=80=99m going to submit a page table walker for CPU without SPW late=
-r on :-)
+Fixes: 68e4a69aec4d ("drm/vc4: crtc: Create vblank reporting function")
+Cc: stable@vger.kernel.org
+Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
+---
+ drivers/gpu/drm/vc4/vc4_crtc.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-I=E2=80=99m fine with adding that later.
+diff --git a/drivers/gpu/drm/vc4/vc4_crtc.c b/drivers/gpu/drm/vc4/vc4_crtc.c
+index 8b5a7e5eb146..98885f519827 100644
+--- a/drivers/gpu/drm/vc4/vc4_crtc.c
++++ b/drivers/gpu/drm/vc4/vc4_crtc.c
+@@ -575,10 +575,12 @@ void vc4_crtc_send_vblank(struct drm_crtc *crtc)
+ 	struct drm_device *dev = crtc->dev;
+ 	unsigned long flags;
+ 
+-	if (!crtc->state || !crtc->state->event)
++	spin_lock_irqsave(&dev->event_lock, flags);
++	if (!crtc->state || !crtc->state->event) {
++		spin_unlock_irqrestore(&dev->event_lock, flags);
+ 		return;
++	}
+ 
+-	spin_lock_irqsave(&dev->event_lock, flags);
+ 	drm_crtc_send_vblank_event(crtc, crtc->state->event);
+ 	crtc->state->event = NULL;
+ 	spin_unlock_irqrestore(&dev->event_lock, flags);
+-- 
+2.34.1
 
-Thanks
-- Jiaxun
-
->
->>
->>  #define LOONGARCH_CPU_CPUCFG           BIT_ULL(CPU_FEATURE_CPUCFG)
->>  #define LOONGARCH_CPU_LAM              BIT_ULL(CPU_FEATURE_LAM)
->> @@ -129,5 +131,7 @@ enum cpu_type_enum {
->>  #define LOONGARCH_CPU_HYPERVISOR       BIT_ULL(CPU_FEATURE_HYPERVISO=
-R)
->>  #define LOONGARCH_CPU_PTW              BIT_ULL(CPU_FEATURE_PTW)
->>  #define LOONGARCH_CPU_AVECINT          BIT_ULL(CPU_FEATURE_AVECINT)
->> +#define LOONGARCH_CPU_IOCSR            BIT_ULL(CPU_FEATURE_IOCSR)
->> +#define LOONGARCH_CPU_LSPW             BIT_ULL(CPU_FEATURE_LSPW)
->>
->>  #endif /* _ASM_CPU_H */
->> diff --git a/arch/loongarch/include/asm/loongarch.h b/arch/loongarch/=
-include/asm/loongarch.h
->> index 631d249b3ef2..23af28f00c3c 100644
->> --- a/arch/loongarch/include/asm/loongarch.h
->> +++ b/arch/loongarch/include/asm/loongarch.h
->> @@ -60,8 +60,7 @@
->>  #define  CPUCFG0_PRID                  GENMASK(31, 0)
->>
->>  #define LOONGARCH_CPUCFG1              0x1
->> -#define  CPUCFG1_ISGR32                        BIT(0)
->> -#define  CPUCFG1_ISGR64                        BIT(1)
->> +#define  CPUCFG1_ISA                   GENMASK(1, 0)
->>  #define  CPUCFG1_PAGING                        BIT(2)
->>  #define  CPUCFG1_IOCSR                 BIT(3)
->>  #define  CPUCFG1_PABITS                        GENMASK(11, 4)
->> diff --git a/arch/loongarch/kernel/cpu-probe.c b/arch/loongarch/kerne=
-l/cpu-probe.c
->> index 14f0449f5452..5dc8ca3c4387 100644
->> --- a/arch/loongarch/kernel/cpu-probe.c
->> +++ b/arch/loongarch/kernel/cpu-probe.c
->> @@ -92,11 +92,29 @@ static void cpu_probe_common(struct cpuinfo_loong=
-arch *c)
->>         unsigned long asid_mask;
->>
->>         c->options =3D LOONGARCH_CPU_CPUCFG | LOONGARCH_CPU_CSR |
->> -                    LOONGARCH_CPU_TLB | LOONGARCH_CPU_VINT | LOONGAR=
-CH_CPU_WATCH;
->> +                    LOONGARCH_CPU_VINT | LOONGARCH_CPU_WATCH;
->>
->>         elf_hwcap =3D HWCAP_LOONGARCH_CPUCFG;
->>
->>         config =3D read_cpucfg(LOONGARCH_CPUCFG1);
->> +
->> +       switch (config & CPUCFG1_ISA) {
->> +       case 0:
->> +               set_isa(c, LOONGARCH_CPU_ISA_LA32R);
->> +               break;
->> +       case 1:
->> +               set_isa(c, LOONGARCH_CPU_ISA_LA32S);
->> +               break;
->> +       case 2:
->> +               set_isa(c, LOONGARCH_CPU_ISA_LA64);
->> +               break;
->> +       default:
->> +               pr_warn("Warning: unknown ISA level\n");
->> +       }
->> +       if (config & CPUCFG1_PAGING)
->> +               c->options |=3D LOONGARCH_CPU_TLB;
->> +       if (config & CPUCFG1_IOCSR)
->> +               c->options |=3D LOONGARCH_CPU_IOCSR;
->>         if (config & CPUCFG1_UAL) {
->>                 c->options |=3D LOONGARCH_CPU_UAL;
->>                 elf_hwcap |=3D HWCAP_LOONGARCH_UAL;
->> @@ -157,6 +175,8 @@ static void cpu_probe_common(struct cpuinfo_loong=
-arch *c)
->>                 elf_hwcap |=3D HWCAP_LOONGARCH_LBT_MIPS;
->>         }
->>  #endif
->> +       if (config & CPUCFG2_LSPW)
->> +               c->options |=3D LOONGARCH_CPU_LSPW;
->>
->>         config =3D read_cpucfg(LOONGARCH_CPUCFG6);
->>         if (config & CPUCFG6_PMP)
->> @@ -222,6 +242,7 @@ static inline void cpu_probe_loongson(struct cpui=
-nfo_loongarch *c, unsigned int
->>  {
->>         uint64_t *vendor =3D (void *)(&cpu_full_name[VENDOR_OFFSET]);
->>         uint64_t *cpuname =3D (void *)(&cpu_full_name[CPUNAME_OFFSET]=
-);
->> +       const char *core_name =3D "Unknown";
->>
->>         if (!__cpu_full_name[cpu])
->>                 __cpu_full_name[cpu] =3D cpu_full_name;
->> @@ -232,40 +253,43 @@ static inline void cpu_probe_loongson(struct cp=
-uinfo_loongarch *c, unsigned int
->>         switch (c->processor_id & PRID_SERIES_MASK) {
->>         case PRID_SERIES_LA132:
->>                 c->cputype =3D CPU_LOONGSON32;
->> -               set_isa(c, LOONGARCH_CPU_ISA_LA32S);
->>                 __cpu_family[cpu] =3D "Loongson-32bit";
->> -               pr_info("32-bit Loongson Processor probed (LA132 Core=
-)\n");
->> +               core_name =3D "LA132";
->>                 break;
->>         case PRID_SERIES_LA264:
->>                 c->cputype =3D CPU_LOONGSON64;
->> -               set_isa(c, LOONGARCH_CPU_ISA_LA64);
->>                 __cpu_family[cpu] =3D "Loongson-64bit";
->> -               pr_info("64-bit Loongson Processor probed (LA264 Core=
-)\n");
->> +               core_name =3D "LA264";
->>                 break;
->>         case PRID_SERIES_LA364:
->>                 c->cputype =3D CPU_LOONGSON64;
->> -               set_isa(c, LOONGARCH_CPU_ISA_LA64);
->>                 __cpu_family[cpu] =3D "Loongson-64bit";
->> -               pr_info("64-bit Loongson Processor probed (LA364 Core=
-)\n");
->> +               core_name =3D "LA364";
->>                 break;
->>         case PRID_SERIES_LA464:
->>                 c->cputype =3D CPU_LOONGSON64;
->> -               set_isa(c, LOONGARCH_CPU_ISA_LA64);
->>                 __cpu_family[cpu] =3D "Loongson-64bit";
->> -               pr_info("64-bit Loongson Processor probed (LA464 Core=
-)\n");
->> +               core_name =3D "LA464";
->>                 break;
->>         case PRID_SERIES_LA664:
->>                 c->cputype =3D CPU_LOONGSON64;
->> -               set_isa(c, LOONGARCH_CPU_ISA_LA64);
->>                 __cpu_family[cpu] =3D "Loongson-64bit";
->> -               pr_info("64-bit Loongson Processor probed (LA664 Core=
-)\n");
->> +               core_name =3D "LA664";
->>                 break;
->>         default: /* Default to 64 bit */
->> -               c->cputype =3D CPU_LOONGSON64;
->> -               set_isa(c, LOONGARCH_CPU_ISA_LA64);
->> -               __cpu_family[cpu] =3D "Loongson-64bit";
->> -               pr_info("64-bit Loongson Processor probed (Unknown Co=
-re)\n");
->> +               if (c->isa_level & LOONGARCH_CPU_ISA_LA64) {
->> +                       c->cputype =3D CPU_LOONGSON64;
->> +                       __cpu_family[cpu] =3D "Loongson-64bit";
->> +               } else if (c->isa_level & LOONGARCH_CPU_ISA_LA32S) {
->> +                       c->cputype =3D CPU_LOONGSON32;
->> +                       __cpu_family[cpu] =3D "Loongson-32bit";
->> +               } else if (c->isa_level & LOONGARCH_CPU_ISA_LA32R) {
->> +                       c->cputype =3D CPU_LOONGSON32;
->> +                       __cpu_family[cpu] =3D "Loongson-32bit Reduced=
-";
->> +               }
-> I prefer to move this part before the switch-case of PRID (and it is
-> better to convert to a switch-case too), then the switch-case of PRID
-> can be only used for probing core-name.
->
-> Huacai
->
->>         }
->> +
->> +       pr_info("%s Processor probed (%s Core)\n", __cpu_family[cpu],=
- core_name);
->>  }
->>
->>  #ifdef CONFIG_64BIT
->>
->> --
->> 2.46.0
->>
-
---=20
-- Jiaxun
 
