@@ -1,203 +1,152 @@
-Return-Path: <linux-kernel+bounces-327519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E155977715
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:51:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3AA1977716
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:52:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB81EB231A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:51:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5DCA284E1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:52:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB57A1C173A;
-	Fri, 13 Sep 2024 02:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 844681B12D8;
+	Fri, 13 Sep 2024 02:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="ZLl1fNrt"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="WV/8S7+T"
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A627340C03
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 02:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9919E40C03
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 02:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726195887; cv=none; b=PI1Y6rfmf07dOrwGIUzJ7MqDGTmtFcAxKrbp+W0/flbU5Fx+Xt4t3wM3w+9G1Qj3FpVMyayYkwBqgudhM7EaZgBUTfFTbddb4A7tCk3GtDy1qHhZoaxuUNwEhZm+MvNdNJnULZBBi73ENzKdnk+ivPoUtvZKAcW0QftLuRMYwi0=
+	t=1726195917; cv=none; b=RNnPGQ6XkyLpcDR+b18s6i6QvtLuZ4BiCwODkajrO/YT0bFHSZVPaKoBEspqjNu9dc7coGF1Tk4LkQ4MSvZy9Es/bZolwqnr3qNSMfFGbXU0+uhz4trB1Fh1Q9ccNUGDQy2EwISNzeifSSttJN/ofQ5S0vtVcr0F/i6ptC8t9Ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726195887; c=relaxed/simple;
-	bh=AN4DtVKMFJj+Oka4ewoJjhlxUHL0Ou2WbvKruw5A9Vg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XO8eZTvV87kw23fUcnoyiBIItayri6BDS8qayX9BY5p27RfLf4m5tZgSuLX1pnA8o7/HWf9iTss4AcxGoYTaTFOXlC0lWTEIOpOzsSqJqs2+RnJmeoZyCL5haDS0wWTp3AelNkwHFpcmg/A4TDP+phN25xATuYo3BDfnU5BWMKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=ZLl1fNrt; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7191901abd6so346692b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 19:51:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1726195884; x=1726800684; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7lucKHZRD1F8sNhQoF0GbULdmAnhRsrGT0LLKCZjQ8Q=;
-        b=ZLl1fNrtCqmkdQ382N7VDZy2JOd14XjwPAbzHzgvUi+CeVt+f8zlsbo4Mp/pZvRGH8
-         ns0tU92Jl+wKIBTMfPFbAeJGeZW3Ajv0HsBBazurcwNBkcgnuRFCV1hAj/S+8pL5bv8+
-         DAiQD6+dPe/6DNJnJVRnd3I1+mySPREtjbUjBFzQlwMB8oHzPbGGnIBRpBiA0+u38j9b
-         TIbXar+jbPPolb3OvP/mp2ushsDtnVB3vUARfha2mOSPJ6aHlNqMi960NUMvNKVh5tUp
-         svQMjN2RpD5obnFzEb5UIf7veRBgJu8htMrnhJPF4pIly2Do6pAVOtdtcoGAEYhQ0HxS
-         5udw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726195884; x=1726800684;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7lucKHZRD1F8sNhQoF0GbULdmAnhRsrGT0LLKCZjQ8Q=;
-        b=VB43Ujg4nrPE25NkvZ8ea7KLrKMMhXg1zO12E5R3QfgXVxt0LnYVN3lKXg5ZVsvF+f
-         CDkVpqHARk7WFf/Nl7Q74rlp2xfsyZwVIEhDpA2soMYHTSzr4CcQYLgDDRxHroCTRTW6
-         lpU4u8rPWcIwEWM6fQq9FpJ+euSZ+bG9A/n8J0ex54UUl048WP77cl/QcKjXcACiO3br
-         PUiZqS6ch390/NKSe4m6SC+nC8UPa6Pk/DQLuYpcC23jBnqLX/iskVmEv4PgqVns8Dul
-         8dRcOQsLISDvxHkd0q8AcKOp3j4riUsUYwcspAp7byyoKlbScwoirliSnPibGS5+WZCM
-         2LuA==
-X-Forwarded-Encrypted: i=1; AJvYcCXVghIc/KS1NJXZ1S2bgseGnGlzghyK2pKhJO6GrXN8ENuHV8vpe24abN8fqSW2cLWTw0tskmnwpmxrmhI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvVV884+gCaVAouwgzTyu+MMgXAQUjeZ4zc1sh/k72pZWngv1T
-	bBhIL287KwTLc//UA40y2W4F8xBaUa9OH50she1bsM2e7wfXCsb6NIKnba4k794=
-X-Google-Smtp-Source: AGHT+IF0SPnqCcWggj+ZbMP5BdP/rIV8aCEiZw6gABT7Jq6B8FmEO+5IPUNs4ZDtOMOgvUeBHKH7Nw==
-X-Received: by 2002:a05:6300:668a:b0:1cc:cdb6:c116 with SMTP id adf61e73a8af0-1d112db1368mr1881160637.24.1726195883833;
-        Thu, 12 Sep 2024 19:51:23 -0700 (PDT)
-Received: from ghost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71908fc8febsm5398290b3a.19.2024.09.12.19.51.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 19:51:23 -0700 (PDT)
-Date: Thu, 12 Sep 2024 19:51:21 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-kernel@vger.kernel.org, Anup Patel <anup@brainfault.org>,
-	Conor Dooley <conor@kernel.org>, kasan-dev@googlegroups.com,
-	Atish Patra <atishp@atishpatra.org>,
-	Evgenii Stepanov <eugenis@google.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v4 06/10] riscv: Allow ptrace control of the tagged
- address ABI
-Message-ID: <ZuOoqTfKs/7G075O@ghost>
-References: <20240829010151.2813377-1-samuel.holland@sifive.com>
- <20240829010151.2813377-7-samuel.holland@sifive.com>
+	s=arc-20240116; t=1726195917; c=relaxed/simple;
+	bh=LET1BQ0Xn4Tfvm+vfRy4bftcZN0ArP5ewrmZ8L4dqYo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qsUT0ptiPhF7PeI3HNqIZ9qyPqtKHVXsa70X8r6I3Hn1rcq9ZnOymNLVV1lBWha6MvctFeGUtqgJkU07aYRQtwInEORof0LOGK2Q1kvMY8wCIJK9T7Jxe38pbp4VLRCKD3WZEWumyooxprXXzjE/nwsGHbDGs0+chu2HwNiBHeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=WV/8S7+T; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1726195907;
+	bh=LET1BQ0Xn4Tfvm+vfRy4bftcZN0ArP5ewrmZ8L4dqYo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=WV/8S7+TcW74jGiEQus1VxB0290v42CC/6Uib3OgSEleN9tMk1aPJv2lgGufH4Yt1
+	 5C5EA8FKc1gtiCXFm+r40CnpkdBou0rFulJqpdRjczh9HCOlhuYZXdKNfcVk1TS1jP
+	 Pzcqv6dYJeBht1XqxHeKHvPg4gdWf1UWajUETWrE=
+X-QQ-mid: bizesmtpip2t1726195904tnlmeop
+X-QQ-Originating-IP: SvkltPouCzgQMW+h9Abq/NT5VbFnlznpZKK/5Glp6uY=
+Received: from [IPV6:240e:36c:d2e:d900:4ac4:d8 ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 13 Sep 2024 10:51:42 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 7572236675390096387
+Message-ID: <933241F284D0194F+9840ef64-2285-4378-9a8a-393253530535@uniontech.com>
+Date: Fri, 13 Sep 2024 10:51:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829010151.2813377-7-samuel.holland@sifive.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND. PATCH] riscv: Use '%u' to format the output of 'cpu'
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: paul.walmsley@sifive.com, Palmer Dabbelt <palmer@dabbelt.com>,
+ aou@eecs.berkeley.edu, samuel.holland@sifive.com,
+ conor.dooley@microchip.com, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, atish.patra@wdc.com, anup@brainfault.org,
+ guanwentao@uniontech.com, zhanjun@uniontech.com
+References: <E4CA32D7942C8637+20240912134946.163833-1-wangyuli@uniontech.com>
+ <alpine.DEB.2.21.2409122309090.40372@angie.orcam.me.uk>
+From: WangYuli <wangyuli@uniontech.com>
+Content-Language: en-US
+Autocrypt: addr=wangyuli@uniontech.com; keydata=
+ xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
+ IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
+ qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
+ 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
+ 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
+ VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
+ DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
+ o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
+In-Reply-To: <alpine.DEB.2.21.2409122309090.40372@angie.orcam.me.uk>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------6403Jj0Wn65v0w3LhfzdauCG"
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-On Wed, Aug 28, 2024 at 06:01:28PM -0700, Samuel Holland wrote:
-> This allows a tracer to control the ABI of the tracee, as on arm64.
-> 
-> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
-> ---
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------6403Jj0Wn65v0w3LhfzdauCG
+Content-Type: multipart/mixed; boundary="------------uBhyMPZVGE5D0qKkF2xBZ8AB";
+ protected-headers="v1"
+From: WangYuli <wangyuli@uniontech.com>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: paul.walmsley@sifive.com, Palmer Dabbelt <palmer@dabbelt.com>,
+ aou@eecs.berkeley.edu, samuel.holland@sifive.com,
+ conor.dooley@microchip.com, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, atish.patra@wdc.com, anup@brainfault.org,
+ guanwentao@uniontech.com, zhanjun@uniontech.com
+Message-ID: <9840ef64-2285-4378-9a8a-393253530535@uniontech.com>
+Subject: Re: [RESEND. PATCH] riscv: Use '%u' to format the output of 'cpu'
+References: <E4CA32D7942C8637+20240912134946.163833-1-wangyuli@uniontech.com>
+ <alpine.DEB.2.21.2409122309090.40372@angie.orcam.me.uk>
+In-Reply-To: <alpine.DEB.2.21.2409122309090.40372@angie.orcam.me.uk>
 
-Since this code is identical to the arm64 port, could it be extracted
-out into the generic ptrace.c and ifdef on either CONFIG_RISCV_ISA_SUPM
-or CONFIG_ARM64_TAGGED_ADDR_ABI by adding some generic flag like
-CONFIG_HAVE_ARCH_TAGGED_ADDR_ABI?
+--------------uBhyMPZVGE5D0qKkF2xBZ8AB
+Content-Type: multipart/mixed; boundary="------------SisB9iXFPKTnCULnAVX9pEYA"
 
-- Charlie
+--------------SisB9iXFPKTnCULnAVX9pEYA
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
->
-> (no changes since v1)
-> 
->  arch/riscv/kernel/ptrace.c | 42 ++++++++++++++++++++++++++++++++++++++
->  include/uapi/linux/elf.h   |  1 +
->  2 files changed, 43 insertions(+)
-> 
-> diff --git a/arch/riscv/kernel/ptrace.c b/arch/riscv/kernel/ptrace.c
-> index 92731ff8c79a..ea67e9fb7a58 100644
-> --- a/arch/riscv/kernel/ptrace.c
-> +++ b/arch/riscv/kernel/ptrace.c
-> @@ -28,6 +28,9 @@ enum riscv_regset {
->  #ifdef CONFIG_RISCV_ISA_V
->  	REGSET_V,
->  #endif
-> +#ifdef CONFIG_RISCV_ISA_SUPM
-> +	REGSET_TAGGED_ADDR_CTRL,
-> +#endif
->  };
->  
->  static int riscv_gpr_get(struct task_struct *target,
-> @@ -152,6 +155,35 @@ static int riscv_vr_set(struct task_struct *target,
->  }
->  #endif
->  
-> +#ifdef CONFIG_RISCV_ISA_SUPM
-> +static int tagged_addr_ctrl_get(struct task_struct *target,
-> +				const struct user_regset *regset,
-> +				struct membuf to)
-> +{
-> +	long ctrl = get_tagged_addr_ctrl(target);
-> +
-> +	if (IS_ERR_VALUE(ctrl))
-> +		return ctrl;
-> +
-> +	return membuf_write(&to, &ctrl, sizeof(ctrl));
-> +}
-> +
-> +static int tagged_addr_ctrl_set(struct task_struct *target,
-> +				const struct user_regset *regset,
-> +				unsigned int pos, unsigned int count,
-> +				const void *kbuf, const void __user *ubuf)
-> +{
-> +	int ret;
-> +	long ctrl;
-> +
-> +	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &ctrl, 0, -1);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return set_tagged_addr_ctrl(target, ctrl);
-> +}
-> +#endif
-> +
->  static const struct user_regset riscv_user_regset[] = {
->  	[REGSET_X] = {
->  		.core_note_type = NT_PRSTATUS,
-> @@ -182,6 +214,16 @@ static const struct user_regset riscv_user_regset[] = {
->  		.set = riscv_vr_set,
->  	},
->  #endif
-> +#ifdef CONFIG_RISCV_ISA_SUPM
-> +	[REGSET_TAGGED_ADDR_CTRL] = {
-> +		.core_note_type = NT_RISCV_TAGGED_ADDR_CTRL,
-> +		.n = 1,
-> +		.size = sizeof(long),
-> +		.align = sizeof(long),
-> +		.regset_get = tagged_addr_ctrl_get,
-> +		.set = tagged_addr_ctrl_set,
-> +	},
-> +#endif
->  };
->  
->  static const struct user_regset_view riscv_user_native_view = {
-> diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
-> index b54b313bcf07..9a32532d7264 100644
-> --- a/include/uapi/linux/elf.h
-> +++ b/include/uapi/linux/elf.h
-> @@ -448,6 +448,7 @@ typedef struct elf64_shdr {
->  #define NT_MIPS_MSA	0x802		/* MIPS SIMD registers */
->  #define NT_RISCV_CSR	0x900		/* RISC-V Control and Status Registers */
->  #define NT_RISCV_VECTOR	0x901		/* RISC-V vector registers */
-> +#define NT_RISCV_TAGGED_ADDR_CTRL 0x902	/* RISC-V tagged address control (prctl()) */
->  #define NT_LOONGARCH_CPUCFG	0xa00	/* LoongArch CPU config registers */
->  #define NT_LOONGARCH_CSR	0xa01	/* LoongArch control and status registers */
->  #define NT_LOONGARCH_LSX	0xa02	/* LoongArch Loongson SIMD Extension registers */
-> -- 
-> 2.45.1
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+T24gMjAyNC85LzEzIDA2OjEyLCBNYWNpZWogVy4gUm96eWNraSB3cm90ZToNCg0KPiAgIE5C
+IHRoZSBwcm9wZXIgSVNPIEMgYW5kIFBPU0lYIHRlcm0gZm9yIGAldScsIGAlZCcsIGV0Yy4g
+aXMgImNvbnZlcnNpb24NCj4gc3BlY2lmaWVyIiByYXRoZXIgdGhhbiAicGxhY2Vob2xkZXIi
+Lg0KDQpUaGFua3MgZm9yIHBvaW50aW5nIHRoYXQgb3V0Lg0KDQoiY29udmVyc2lvbiBzcGVj
+aWZpZXIiIGlzIG11Y2ggYmV0dGVyIGFuZCBtb3JlIHByb2Zlc3Npb25hbC4NCg0KPg0KPiAg
+ICBNYWNpZWoNCj4NClRoYW5rcywNCi0tIA0KV2FuZ1l1bGkNCg==
+--------------SisB9iXFPKTnCULnAVX9pEYA
+Content-Type: application/pgp-keys; name="OpenPGP_0xC5DA1F3046F40BEE.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xC5DA1F3046F40BEE.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSK
+P+nX39DNIVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAx
+FiEEa1GMzYeuKPkgqDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMB
+AAAKCRDF2h8wRvQL7g0UAQCH3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfP
+bwD/SrncJwwPAL4GiLPEC4XssV6FPUAY0rA68eNNI9cJLArOOARmgSyJEgorBgEE
+AZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7VTL0dvPDofBTjFYDAQgHwngE
+GBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIbDAAKCRDF2h8wRvQL
+7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkUo9ERi7qS
+/hbUdUgtitI89efbY0TVetgDsyeQiwU=3D
+=3DBlkq
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------SisB9iXFPKTnCULnAVX9pEYA--
+
+--------------uBhyMPZVGE5D0qKkF2xBZ8AB--
+
+--------------6403Jj0Wn65v0w3LhfzdauCG
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZuOovgUDAAAAAAAKCRDF2h8wRvQL7kk6
+AP9l7NduOUZtfTUmyyvWcFLpQ6+CRIC9rlQ4ygDDeqN9NgEA87PvCwvlUa62DwV3Cn3S9yYDJ1wH
+mXySRMyqa5NWnAw=
+=X+P6
+-----END PGP SIGNATURE-----
+
+--------------6403Jj0Wn65v0w3LhfzdauCG--
 
