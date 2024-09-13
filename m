@@ -1,85 +1,119 @@
-Return-Path: <linux-kernel+bounces-328202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14A8D978077
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:51:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B107297807B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:52:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5AE31F24ED9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:51:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6617B1F24F2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78BAE1DA614;
-	Fri, 13 Sep 2024 12:51:12 +0000 (UTC)
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0ED51DA60F;
+	Fri, 13 Sep 2024 12:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QIk15wl6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EE6B1D932A;
-	Fri, 13 Sep 2024 12:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40001D9354;
+	Fri, 13 Sep 2024 12:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726231872; cv=none; b=LyyFXlQXTmMJDZCWCgTRdL1vGCzGxV45pD6kLhYpq7Fzk4aaY89dFdJNc7s9BScCq43fUb77Oe4jhJHzcLwSuuoPvYdNc2DI9q4v6ruJzsI7QKrFmfRogxtz1Ell8TVNQW6yzqhQJc4SVjALNa4G/2N1FF3QWsV1+0Ws4Xke23Q=
+	t=1726231923; cv=none; b=Wo5nGOSQ1AOYx8Pn2c+nM4FWdzcs2Py4i3kJqH3BFQ1R90ME3SREJlpTle6uakPQKnUQTb7L5zO98sRkjwAehIKhW+tZx3f159/G4K11lzpbfhJAO/Qoy37sY6+WqOzZICmjj0B+tzEEzrME5yXcZw1sroa4qAWHWNqQO3qmyeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726231872; c=relaxed/simple;
-	bh=0LPaUu5x8MBadWhHlLdNsEAYT7/cokc0hK8NodyyRm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IS/Bc3IV9/uaYIIq2BEx+aXvJaCnrWblEt4MAfLNmgS3hOhLOVMlq5RRNADfyxLJpDohUJilo4unQor78FrCuGU24UyjlkR82jpaC2bWZ25Xe/tW3SxpY0BKn2oqHmgVeHuzY76ifYOly7RW9ZdWrYutajv8fkau+hIE+cvRy0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71798a15ce5so2248328b3a.0;
-        Fri, 13 Sep 2024 05:51:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726231870; x=1726836670;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=az9LZKLKvqGpXpJsC4psjWXdanadCOEEk6UxUCZj28c=;
-        b=dmRqmutnWnGnaSAs8HSIoxZx6gn+fDq8SIklJ59aO+SOQIHyf1lTYzjFLSuHEfO322
-         Tlf06T0Q6hca+8iA9+DflczPOoKWaHBR0H1hLkC+A55zVE3eYIxN+55c9dZZv74rykEt
-         lv1YtjPuhNUh8aumEsqBzZIHyPIyTjf3LKy4sj7qowkzoLr4Gd+G22wFEbifT9lq/p38
-         v+RlW+hNktiSDW2XjCOYyX8fG3DyyLpDf1ubRt63iFIMB9g+4GxWSE4cbn3/LRS9Qh93
-         1M34/XBoSAzk1LqqhsC7B5B/jRiUupwxSuMHJ98lMtY5bkzg9CrpODyaepzA/SzPBGv7
-         d76Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV/OXL6oIAtq3GJL6mBGbzWCIyfSP2PkoFBw5c5FglLQqTArIMA6fAlgXa95AUb5vEF2To9ZMYKcZn5@vger.kernel.org, AJvYcCXxESbfFc9gid+6ILXK26XH3TqDy0O+yiYibsCH2SLZW9yManWqaGl/Ddce+NauTLIq12DgvQs/3uZ6SKg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxerixP4J98j5c9LirYiR4A5MmugJ96kRMZqiYzj05Cr0QxTj2s
-	fKT3RDLPDzPr4l7yi3nqtl1iw/+TGaA5dRUA9mHHexeBKQAEhRrBFL1E+9vw8IA=
-X-Google-Smtp-Source: AGHT+IFvDY8HsW6dPm18BZIKkQepmKQQRzZd7YstkeK+LVaQPXsOLIZhxJ7MozSPKGLyFs9IJhn6KQ==
-X-Received: by 2002:a05:6a20:db0a:b0:1cc:d5d1:fe64 with SMTP id adf61e73a8af0-1cf75613f2dmr10631941637.14.1726231869636;
-        Fri, 13 Sep 2024 05:51:09 -0700 (PDT)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71908fcecb5sm6259033b3a.16.2024.09.13.05.51.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 05:51:09 -0700 (PDT)
-Date: Fri, 13 Sep 2024 21:51:07 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Alex Williamson <alex.williamson@redhat.com>
-Cc: helgaas@kernel.org, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, delineshev@outlook.com
-Subject: Re: [PATCH] PCI: Mark Creative Labs EMU20k2 INTx masking as broken
-Message-ID: <20240913125107.GA964006@rocinante>
-References: <20240912215331.839220-1-alex.williamson@redhat.com>
+	s=arc-20240116; t=1726231923; c=relaxed/simple;
+	bh=opKtSYOP11iB37GmEu3c5JYfOAW+vJkmvop3fOEpU4Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T1qse8VSHmS7TFuwg/RRdn64jiC8wvudvgbBRmiyJbWwPD81SZChPwY2nSb3imNohZeMzXUF6UCc8Yei6pG8ICylcEFUm4cyvKQ7+ng7HlLx8RVx7xUJaGkZ2Ok3DcXF3NDOAItof3ukbf7vNW5w5TpULUzmCbL7R7lXUNL6IEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QIk15wl6; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726231922; x=1757767922;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=opKtSYOP11iB37GmEu3c5JYfOAW+vJkmvop3fOEpU4Y=;
+  b=QIk15wl6NsAdKQ8NUQQIeIS9THTOFHGXFZoN/x55Bal4mMmn76NnmwK/
+   jRMB1kc+q3bq+fixuphqMGkxpkJWKfWRTY93HwQ6f3IucGlzsvpMYzK1X
+   91Mekn8Oi6X1bvYi0bLhL7x6bmL41d2NgxpEIs0Ew4oU9UipGdEhlQjGL
+   rqrhTYGzbqWsLtDuZEj8zHyE6/BgCgq87ulaKwwFImjSqN7Q4g/BMc9mq
+   nh4UTcMNiLOMVR74nLn8abrcdo0GfGwmllszhfxCme03+xLc2lZj/9qVu
+   r0+9L56dd7lwm+vWpNJ8pFP5csI7RCdfCkP9vAx1SKdOljD63JWqeQVyE
+   w==;
+X-CSE-ConnectionGUID: H27jBa4UQLeEh0msOI3mlA==
+X-CSE-MsgGUID: k7iKpS4RTOmmb8YEIuNTRw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="25255808"
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="25255808"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 05:52:01 -0700
+X-CSE-ConnectionGUID: /EETgf/bTzGHgZbt5Z1yjQ==
+X-CSE-MsgGUID: O63I8223TAick/taRh/2wQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="68365341"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa006.jf.intel.com with ESMTP; 13 Sep 2024 05:51:59 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 0A897334; Fri, 13 Sep 2024 15:51:56 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Pawel Laszczak <pawell@cadence.com>
+Subject: [PATCH net-next v1 1/1] net: macb: Use predefined PCI vendor ID constant
+Date: Fri, 13 Sep 2024 15:51:46 +0300
+Message-ID: <20240913125146.3628751-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240912215331.839220-1-alex.williamson@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-Hello,
+The PCI vendor ID for Cadence is defined in pci_ids.h. Use it.
+While at it, move to PCI_VDEVICE() macro and usual pattern for
+PCI device ID.
 
-> As reported in the link below, a user indicates this device generates
-> spurious interrupts when used with vfio-pci unless DisINTx masking
-> support is disabled.  Quirk the device to mark INTx masking as broken.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/net/ethernet/cadence/macb_pci.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Applied to quirks, thank you!
+diff --git a/drivers/net/ethernet/cadence/macb_pci.c b/drivers/net/ethernet/cadence/macb_pci.c
+index f66d22de5168..fc4f5aee6ab3 100644
+--- a/drivers/net/ethernet/cadence/macb_pci.c
++++ b/drivers/net/ethernet/cadence/macb_pci.c
+@@ -19,8 +19,7 @@
+ #define PCI_DRIVER_NAME "macb_pci"
+ #define PLAT_DRIVER_NAME "macb"
+ 
+-#define CDNS_VENDOR_ID 0x17cd
+-#define CDNS_DEVICE_ID 0xe007
++#define PCI_DEVICE_ID_CDNS_MACB 0xe007
+ 
+ #define GEM_PCLK_RATE 50000000
+ #define GEM_HCLK_RATE 50000000
+@@ -117,7 +116,7 @@ static void macb_remove(struct pci_dev *pdev)
+ }
+ 
+ static const struct pci_device_id dev_id_table[] = {
+-	{ PCI_DEVICE(CDNS_VENDOR_ID, CDNS_DEVICE_ID), },
++	{ PCI_VDEVICE(CDNS, PCI_DEVICE_ID_CDNS_MACB) },
+ 	{ 0, }
+ };
+ 
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-[1/1] PCI: Mark Creative Labs EMU20k2 INTx masking as broken
-      https://git.kernel.org/pci/pci/c/2910306655a7
-
-	Krzysztof
 
