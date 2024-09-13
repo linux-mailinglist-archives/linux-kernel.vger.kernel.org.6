@@ -1,266 +1,202 @@
-Return-Path: <linux-kernel+bounces-327432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0470B9775E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:08:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD9639775E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:09:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 281B21C24235
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:08:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4340FB21314
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 00:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF627E1;
-	Fri, 13 Sep 2024 00:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 560143D62;
+	Fri, 13 Sep 2024 00:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wirdfzHQ"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="V4wSskZY";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="wBFB6lag"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93B0376
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 00:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726186081; cv=none; b=Xw0DhBC1uvkWLK5+MoxDWhhTIYwiUWVARTdtnis2By7fbdtBfM4GtzmUB0CZTfawjKi2WRwmjlr7wlh+lo4aJ2PKLL9r0J4sh7gJiJrMvmW9bBtTW4aluckOEpP9vomvr6KPhJzt9MWhZdZkh0hpA+WeAd6oWMr+EGO2cRmB4ns=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726186081; c=relaxed/simple;
-	bh=HnqZ+WQxTmhdX5AHMSykpvAerEB7h3ospCerp328K5g=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UVUgVIsRzrMUoN82F5IxZ1xMThNSp1+X4ZlB2t0aVLsFv+cRKN4ao3mqkd5L4cOPMbPEc8ABhGrLmeSKMgSZVEWs+pwmm9GOTXxbySzOTberfI/vZRY8gNrHJNseCL6H+dq2zcz8lMD8+VnLqIvQ3rcB8AKythpHcGkQ6gCiSzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wirdfzHQ; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1ff24acb60dso14249415ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 17:07:59 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF603211;
+	Fri, 13 Sep 2024 00:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726186156; cv=fail; b=G3TeYEmgvHATJvrS2H5zoA3zaXnoL1if68KgQWTdc3lbHIwAbQyd5lBMe6uGltgUj826FOX+IGF7jZmbGSqAP0/Bjpozvuzyf/fIJOGp6XM/dvlx95CoaffSooUVbMpQ3dxdgXoVQA1hGYyJrfg3Yim+1gplLNcKu6fU0VnrO1g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726186156; c=relaxed/simple;
+	bh=X16rVJSGDvXbNZD6EDJt2L+HhurDCywym04K3uSyqgw=;
+	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
+	 Content-Type:MIME-Version; b=hoPxefzSSgT1ITHFvUtUc7y6xb3l+DXKo8bY96m12+EX4CLkSUhaTjg+Jlkb6pVFvv2hPNIZqW+vJeeBvCYTmIR0HgCPM/HZnMJTe8fssjWNKWucSlJNXtOIRiFMJis39rh2nWBHdtHD5eoUcd5xwWdepK3/9xf9hzuCsVZiiv8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=V4wSskZY; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=wBFB6lag; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48CMBd2x022857;
+	Fri, 13 Sep 2024 00:09:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to
+	:cc:subject:from:in-reply-to:message-id:references:date
+	:content-type:mime-version; s=corp-2023-11-20; bh=d313CQd/juZd49
+	CrjsU+sgNRthWm+ul/jkmzoKL1+TQ=; b=V4wSskZYzYhrKxmhP1ghL1cJ15ak3k
+	EcBen3DJhCwk+rvKAR3bOnUXtfn4DXxj6EP2xC6erzhU0slf9ONQQhAOWPO2EOnk
+	r/Wb21YstKyWMgs5NQNfWXvbruVtIcQlQY0RVy4mvOb5a69S+1eBnDUQqbf4zE6T
+	QYqAJOCXkd0kuLTX/KzMw2HvLBMUKUo9Nq1w85nMRQVnGb4pYzwLrDWNETbDFlnQ
+	jdKptprQpyyX2VZ9bMX8m2yhimie8r0YMgn/O9ySE3CwHerNZyqzbebG6j1unqVb
+	FZCay8XROCBpgpXJCQ50lJLa/jRcVr5UmGbbq8QxLm/fDG3URLtwaVQA==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 41gde0c90p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Sep 2024 00:09:01 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 48CN5mpZ033545;
+	Fri, 13 Sep 2024 00:09:01 GMT
+Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam04lp2048.outbound.protection.outlook.com [104.47.74.48])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 41gd9bytbu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 13 Sep 2024 00:09:01 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CqWmRklDtiRzN7MMoDM7xDgbKvqgV5c+p63NFTmJyK3rQvHJb9zyw3jfe+MN8eG0cthdNN5+q8Sg2kj+9gABOEGk/QtdpfpQpPbiTRXCLJbwn5vFBthojs+2A5XJcNQTHo6WOB9VjyAhQ/t/nFU4RIvWi0knt8+FMju2JAR9HrcrmpDI093uqUfZ9U2Is1Cmb9mQEJueacYBt0mrFYcL5rRFs9t4V0H3vre34OBUB9V1yzqI2YvcCaSd5OGYXZPpNf8mpD+8h68D/gr9I4r+v5+vN0WgLPUAgGLbgFbf6LAwnxJveM4Ir8soANwiokh50ZzRDot2MB4AUEOp0sSV4A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d313CQd/juZd49CrjsU+sgNRthWm+ul/jkmzoKL1+TQ=;
+ b=yN5fZywzUL30H2h7i2RccJ2MkOaXenqLyTun39jIOcs4Nm58Ku/fJNMsSbgVOYSyF3rLdQhPA93xr+XYLn8r3m58hD44cxAOaW24UzMcL9yeTwDeJ/4Ga0n6m1VitabkL6oQwibVs4Chor9sa7+d4oF0hmVEvjjh7zoyvA6R6wOs3l5FE/yO0U8OK/MoNnppz1GXhhp27b0wHBFdNolIMdRNlHcO08eRpzDwD3NnLItNoWm1J7O3oNmJi04u3FRCYqpbreaMXbF5Q1CaCBgxIE9l5ZfRMZHl8DVsGJ5YctfJQEfUiWPIVwSXo5bYBES/ryNghCRbiI1jOSiCNuISLA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726186079; x=1726790879; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FV0xpAyRsnkvg2I8ID+gF0AA+BuNB8xDqvOjKUOupJw=;
-        b=wirdfzHQJ4+vCavXp/jlw5OWk84YzRIb/+Qc2QWdSalyvnB01+wNjM0UPmosotwsjS
-         oucz4EbfWo9Qvpedz4zYAG63EY3BEs8aLiknUF8Z8RNsxbjx6Iie9Nt3NiOolsjlHBpj
-         JT6k2uAlYGXPfKbAFBvZBc0XWOCvFOq05VBu0m25YpIVjNvaj25v4cvWgpOp15EZBV9W
-         vX3R533MgdCoUNxpuXR1EcMlGZWr/LOClGvp1Ba+dubyeyawj294MthRkxoryONTpyRA
-         GXAk7yXkwIPwRmncX9+EQ6tqqt/H4DC4T1blkDkyWcmGLKhcXnHzUEBsUOL2Y/3sGayR
-         DQXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726186079; x=1726790879;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FV0xpAyRsnkvg2I8ID+gF0AA+BuNB8xDqvOjKUOupJw=;
-        b=dQ/91rbd9YalACzc940KY4e9Vh3v9cuuC3BG3XlPn25mt3YPu0ibtWID3S9ecWxrGO
-         xEc+Ty2nxJ5idTOz4gIfAIkiG//Kp9/7YDzjftVMZZ8E+erzlSN5uIiFV+oX8kn9i4F6
-         yIvPxMRnFfuZkKIAxroY4Syd+Vt2iAmKafm0/Ku28H889cvBvrbNn7ITmkCVQvs8+v/j
-         NAyC6+N5dj8TUwOYI8ktEP4b7hgm643DwGMmK8qlj4+YmdQKdBssxotUVxxWTWSYAdWC
-         AoLhx+CKP0GSHraTcfqTrHUOUG8l8DE8XiBh6H+JPd8WzvkM5/+eOf/dNlROKCvbVTpY
-         uhCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWMMBB20XzIcRH+bFipgSYaNEkZskB1hAF6P0HTHcCsERogZZK99mzEOCtFX3Gkni0+br/Uz/0xeqWqqGI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8m+vuyPrCQDjfQxFU4pW6gjfACpfWX4R9pdGJSQZ95sxddBf0
-	SNRTtyWJzn8yrxuaQXkNJYeQWURq243zsNtDTxacF0Tgc9KJV84ie/T6H4HnlLnpgT0pHyirEfh
-	7+A==
-X-Google-Smtp-Source: AGHT+IGPquyAWmRgRvPVm5oG0pkzuk76JVdxT2qdK+EbZAQCvazZOU7w0yp0FIdj678BpZ2KG/ZeC2SNH68=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:c386:b0:205:4fe5:8136 with SMTP id
- d9443c01a7336-2074c6d7bd9mr297185ad.3.1726186078899; Thu, 12 Sep 2024
- 17:07:58 -0700 (PDT)
-Date: Thu, 12 Sep 2024 17:07:57 -0700
-In-Reply-To: <6eecc450d0326c9bedfbb34096a0279410923c8d.1726182754.git.isaku.yamahata@intel.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=d313CQd/juZd49CrjsU+sgNRthWm+ul/jkmzoKL1+TQ=;
+ b=wBFB6lag+o71N5Aa0Frl/DJt2qtoSuXU1ZkbIYgFvR4sNNQDH9gTPJ7KDHvSoCUsPeG20Z8yArp9KDdaj1zxVpLeId3DiacgnfvhAEku4oLh855xCs6GUdkOkYTZ+7DTQuBo+9q8ALAMCcOH7h1P/IlGN7jxY9c5u1TxEV366dI=
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
+ by CY8PR10MB6876.namprd10.prod.outlook.com (2603:10b6:930:87::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7982.8; Fri, 13 Sep
+ 2024 00:08:58 +0000
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::5c74:6a24:843e:e8f7]) by PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::5c74:6a24:843e:e8f7%3]) with mapi id 15.20.7962.016; Fri, 13 Sep 2024
+ 00:08:57 +0000
+To: Rafael Rocha <vidurri@gmail.com>
+Cc: Kai.Makisara@kolumbus.fi, James.Bottomley@HansenPartnership.com,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rrochavi@fnal.gov
+Subject: Re: [PATCH] scsi: st: Fix input/output error on empty drive reset
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+In-Reply-To: <20240905173921.10944-1-rrochavi@fnal.gov> (Rafael Rocha's
+	message of "Thu, 5 Sep 2024 12:39:21 -0500")
+Organization: Oracle Corporation
+Message-ID: <yq17cbg1kl7.fsf@ca-mkp.ca.oracle.com>
+References: <20240905173921.10944-1-rrochavi@fnal.gov>
+Date: Thu, 12 Sep 2024 20:08:55 -0400
+Content-Type: text/plain
+X-ClientProxiedBy: BY5PR03CA0017.namprd03.prod.outlook.com
+ (2603:10b6:a03:1e0::27) To PH0PR10MB4759.namprd10.prod.outlook.com
+ (2603:10b6:510:3d::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <6eecc450d0326c9bedfbb34096a0279410923c8d.1726182754.git.isaku.yamahata@intel.com>
-Message-ID: <ZuOCXarfAwPjYj19@google.com>
-Subject: Re: [PATCH] KVM: x86/tdp_mmu: Trigger the callback only when an
- interesting change
-From: Sean Christopherson <seanjc@google.com>
-To: Isaku Yamahata <isaku.yamahata@intel.com>
-Cc: kvm@vger.kernel.org, sagis@google.com, chao.gao@intel.com, 
-	pbonzini@redhat.com, rick.p.edgecombe@intel.com, yan.y.zhao@intel.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB4759:EE_|CY8PR10MB6876:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3a8e0132-5d5b-4cde-01c9-08dcd388430c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?omb25T5qB8W+B2Haqf2ODCVFmK6ui6biKw9wCZEoTBFC5IsUbseowiLo36iL?=
+ =?us-ascii?Q?SvGx9ZLgPda8y0FHOXMv+WmXkLMZ8hmsbTXAJHzuf7A2oM+hfitnbaTbYyk4?=
+ =?us-ascii?Q?VUxoMfr3FSS2RY7eDiL6ydaQTvoWsEoLbzkkAjvQfD8Wg2qZ1NdURrCce8Bz?=
+ =?us-ascii?Q?M6Rf3DACMvpk/VDcK7zpSX+hFvxYodG92mAE8fxeerxq9wDJJXVh/5x4gXYG?=
+ =?us-ascii?Q?iq1ZlVoGX9RZMVTCZYjGArtLJZYWeLz43Vr6vwPb8i344B96bQjFazxPPqR+?=
+ =?us-ascii?Q?3aCXKHW1+1kQRSiIgdQLo6OZKbTSnT7s7LdVpTQBLNYW95FVaErBL4Oz1lQu?=
+ =?us-ascii?Q?Go3JeYUgmSjaTgab4Zz0HGCBcWOpPz35iFIYgyjYYafb5+HxClrEL0G5+RPG?=
+ =?us-ascii?Q?e4lwDn/KHS5TVUEbkKYcliN3wYvcr62jijb276ISggLVCv9QQ0fApe5/UogC?=
+ =?us-ascii?Q?3fGNivGbM77HNFI2RzBj8CPvR7BDQ8apYG19Crbdbi3yGImPDhoGMMteGvxf?=
+ =?us-ascii?Q?Rq5WmQpkH6n63zE5xIcXKIh0ftXFak/iRxYyvfa78YMBR3NLHq6msylNSnOc?=
+ =?us-ascii?Q?3IE/x7o6aQRAqCk3LMRVXeMODV0I8zzsVXxf78lX67h4qulA1Ucks1XDnPkb?=
+ =?us-ascii?Q?Rt6VFxXx7UNmET/asp/a/L9/J6yitAZnRpuwkuq+dwxRDgiomknegYqwM9zz?=
+ =?us-ascii?Q?I9au+QYqTcunnszkcB8CkVGf6g+uADT/e/Ac7CFGoMltus6u4uQ5HSNDuMu5?=
+ =?us-ascii?Q?SxCJ3nEmV0nSfR2FpFJ3g7pFztOoOgVaYCAQNnguiZxgvyamehkkOwgbGQub?=
+ =?us-ascii?Q?PwW85Oo7eKDMTyMTxQyeDKzwLzwgXXD4tX5KTI17ffm7ATrK+RW+yKAfyXhc?=
+ =?us-ascii?Q?93vHTSjlgyj5qeHwQxwwACsosAS86KyxoDvzUWrMYiHVdof3kkmHeDjUYM5m?=
+ =?us-ascii?Q?y5nT8V8jq3UWkxkw/hz4GpX6ukfsQVrtLSB9+hOE4B+ThrZAVjll9nBVmHeq?=
+ =?us-ascii?Q?bCtrUCE08pBJygTabzxTiGaFLMquAfU/0Ll02G+YEzuwSa+BzpicooM3N09J?=
+ =?us-ascii?Q?Y5CNkdukPWmCbcOEWUwTYUoWaaPhOkhPEZdbSn8GpkguFgvbJl2tbexcCEw1?=
+ =?us-ascii?Q?ovLEl/DxjP2EqWjgpBXDQ6BPGCmkBmKt/Ib44sxs15c3v409kom8pGOPrU3q?=
+ =?us-ascii?Q?KtfGDlB/52RAzVUVEgN112XSBo9zVz+WSg34QKKfAhk8TtRfwJHF7TOx6Vtw?=
+ =?us-ascii?Q?YC/DYhdOoC2BdUq7ZiYg9jdvD3eh7x4zrhdlyvJTDzbCi5RxKav/ngHot6Xd?=
+ =?us-ascii?Q?/yMNqoRHZhDXHREd8tiiPiEggumLXCJNpRMK6aiMLv6pHQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ujJeVx4Ij51oaerQ6TazHKXHQNakrD7MFwKfIx1Cb1mkF+3Y7rCxpf8ZIVmE?=
+ =?us-ascii?Q?qCcKbE5lV34tKuFM9UT8b73WNQr30eSOhwbfwrR8iV5vzATAk3ZDfONYwefr?=
+ =?us-ascii?Q?fGP0rDPq4VJvLedb3j4c3ZoEJM6+ViWIDwvbqqY2CnVGPYu92CZIihWKjkBM?=
+ =?us-ascii?Q?gW6Mt6YpJbgxi6FB/lRaGFEmy9+bPL0YQKzrxetIj4a7jy+u7kEHHjuFCP3u?=
+ =?us-ascii?Q?7fZN83pnSk+o41GXmViU7hmzq434aEE+HRPGb9vPQb1XUSMgiwWTSrq8t5CU?=
+ =?us-ascii?Q?C7Z4H8w1DnHAS0LtQEUSZVx6eNmN0mEbU1XmTF50clKQYrz/pbRg7dRbEwen?=
+ =?us-ascii?Q?yEIu6MWqAMf/Zb+Ek25Y3GKby2zXKP3PYPfnREIBjZngNEv+HRsRyEg5PoVI?=
+ =?us-ascii?Q?iOyFJFjlwk42J9s29u40/es6lGrc8In2lUPr9apKlVbNzoho3uh9zp/rp6Oj?=
+ =?us-ascii?Q?ztPc3ioun04B4AyAlZLfytImsKjbwkm5czLyx8xVmb3ZMsYvp3SrYtDxnzQV?=
+ =?us-ascii?Q?LvfcYQBlwx2+kEqX/R3wEIJJKSjWH3vy1bP1E8bemaGEsStEiYbsPZFIY7Ft?=
+ =?us-ascii?Q?eKyxYw+5l2YtpAT4PtI+1HMwRp943WielJ8h3Nqvhxcmnn7DnvOS8a8F94U9?=
+ =?us-ascii?Q?ob20FvOClU+jLV9pJstSMmKpUnywsaQRouC7oKmAPRWuelWRi7Zlae/3h2fp?=
+ =?us-ascii?Q?kUDze1ItF1A+FwG0+h8P7HQFsoS0qPi95v6zS7PYJNC7MG23TGYRO99CuuJO?=
+ =?us-ascii?Q?TNIb9/b8vUDBlIP4I1HOQoKErbE7b1vmpONF/70hqCo9a+swnDOUndLdtLPZ?=
+ =?us-ascii?Q?9p0lSkCZhvWlBt+8IEAtlKrM3bNX8EzchgjVLABNANwPa7RReAgLp8sDPIVl?=
+ =?us-ascii?Q?PDVyWZeI0AuT1RaIynDZ7uB7bUoZGrg7cyR7Ch+X+etA/ItQMCrw6sd1NIQO?=
+ =?us-ascii?Q?V4IyYS2qJ13N2UJCI7VfFmEd/EVQBTVXW9nU4adpdoCsnHG8k+Z+WpYmZVST?=
+ =?us-ascii?Q?ECqZjVTjMHrF2U6KTFFREBLVnZJbCl6WV/IO7g/48FE3CX0fJ6CAVLpkPZjN?=
+ =?us-ascii?Q?cY4yCnN4XBTyWeMcSF9fWeGSfRvOD0pNDEFD0GNzIc3bRAfZ3DLiB/PBU8ol?=
+ =?us-ascii?Q?/3u2vGAMzTJrybZdvXg/UDypoBh6zFGGf/RgXU3DYT/UWjJw7MfDq3QIUYBe?=
+ =?us-ascii?Q?NH4p2hIvPyfif8w5GWluGUvQQ5ltQRWTlLVMRuA4tjFsw1RVTHMtZksP0Fjq?=
+ =?us-ascii?Q?AV3Tb8bcd+12Y+YcjGysGG2n2XZyEM6M2pdSHnymvMxpPYigOIjebXCMAVfR?=
+ =?us-ascii?Q?ZBrPDH3n2DcBMyQT6f0Wi5xqNj5vi7KrQ6PEsJ4PQY4MyQQtGsEM/Gj9YZ2d?=
+ =?us-ascii?Q?KRH+/Z64wJzYoA6ETMCgJGttgv+ZdFKJxNVDzzxlmHKtnXyBMVNCnmFY09gD?=
+ =?us-ascii?Q?dk2NfMR4AJEFdCxdhqG19IPUBdjOhw33JY5gWFDRZRzyE9M8F6I013BDJlO+?=
+ =?us-ascii?Q?Xh87qPqTvA6sdpdSm+XTZelhAvK3+nyWjZE82WlsUlidTLCOylpBgrdFGzxC?=
+ =?us-ascii?Q?7/32NShLX9WULMiN0GiwoQ36cqwMrLt2NxmYbxsL7kF6D/apF9RuwhJs8oqT?=
+ =?us-ascii?Q?FA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	4TJpiemBeckvC7bSnJYex96XfbIq7i0Z1Kc4VwQ301ysrsAGnsL4Wue0NwoHvuBtNByw232zIKZkkpXToCSJOMA0TJK2XWQq+C0Dr7dNX+fArGubKEnmXzUAM+ensGxDXJK4udvglYH0vQx7XqVgUQCO6TSnw4/LSe6I1GFNc/sMY36bYp7bQJrFED5VJZS4s/MEKh7T7DTyLigbhCA81a2BwXoK2X6JOExJB0P4hr6upIevBSSRDObvIJnq8z0+9OAIE7SYgpKT2N7+D7eq8/NdM28VFETK8mWy7DGWHVuFlM/9n3UBZeZrjbQlgAvpg0zne/jhE0t7ro6wInx1zAWSlI0ACbaYzv26mJ0589HQe8JCkaqk7moh7BmieG8g+QDWqpQ1y4K3mUINhtwVsI9jgtYkP+QkJtxpq7s/S2Fog8M6K33YtvEXqYrJVHCa5ZNOhscR2zNwvklnUHO6Ya74Ef1vx1P8vBxIFonQ3vVHV76++qnh+ynG0pI9ZGifvOSqhKRhA0KC85VcsK0+/2pZG+i48imCTZHV3BspGQJbWkm7Rnkq4pRi2iaJ7xMOmdYKk05u06e4zGMd3YoK6vwwEnchM1WdgBSs4Xo4P/4=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3a8e0132-5d5b-4cde-01c9-08dcd388430c
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 00:08:57.5315
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BgXiH9mGTpSjuYiRnWDPS1EDVRYzC9heFiB2p6UXwj6uQQKC2BT54sSelDBPMeCDB/HmOrBi0Y83Z4VU94dz3yc2okNQxOOTbd9VKQUpJOc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR10MB6876
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-12_10,2024-09-12_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0 phishscore=0
+ spamscore=0 malwarescore=0 adultscore=0 mlxscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2408220000
+ definitions=main-2409120174
+X-Proofpoint-ORIG-GUID: S8ZtmOczhY4MEIbVnhEqYBP3YNcE_tfS
+X-Proofpoint-GUID: S8ZtmOczhY4MEIbVnhEqYBP3YNcE_tfS
 
-On Thu, Sep 12, 2024, Isaku Yamahata wrote:
-> KVM MMU behavior
-> ================
-> The leaf SPTE state machine is coded in make_spte().  Consider AD bits and
-> the present bits for simplicity.  The two functionalities and AD bits
-> support are related in this context.  unsync (manipulate D bit and W bit,
-> and handle write protect fault) and access tracking (manipulate A bit and
-> present bit, and hand handle page fault).  (We don't consider dirty page
-> tracking for now as it's future work of TDX KVM.)
-> 
-> * If AD bit is enabled:
-> D bit state change for dirty page tracking
-> On the first EPT violation without prefetch,
-> - D bits are set.
-> - Make SPTE writable as TDX supports only RXW (or if write fault).
->   (TDX KVM doesn't support write protection at this state. It's future work.)
-> 
-> On the second EPT violation.
-> - clear D bits if write fault.
 
-Heh, I was literally just writing changelogs for patches to address this (I told
-Sagi I would do it "this week"; that was four weeks ago).
+Rafael,
 
-This is a bug in make_spte().  Replacing a W=1,D=1 SPTE with a W=1,D=0 SPTE is
-nonsensical.  And I'm pretty sure it's an outright but for the TDP MMU (see below).
+> To resolve this, the "ST_NO_TAPE" status should take priority when the
+> drive is empty, allowing communication with the drive following a
+> power-on reset. At the same time, the change should continue to
+> protect data by maintaining the "pos_unknown" flag when the drive
+> contains a tape and its position is unknown.
 
-Right now, the fixes for make_spte() are sitting toward the end of the massive
-kvm_follow_pfn() rework (80+ patches and counting), but despite the size, I am
-fairly confident that series can land in 6.13 (lots and lots of small patches).
+Applied to 6.12/scsi-staging, thanks!
 
----
-Author:     Sean Christopherson <seanjc@google.com>
-AuthorDate: Thu Sep 12 16:23:21 2024 -0700
-Commit:     Sean Christopherson <seanjc@google.com>
-CommitDate: Thu Sep 12 16:35:06 2024 -0700
-
-    KVM: x86/mmu: Flush TLBs if resolving a TDP MMU fault clears W or D bits
-    
-    Do a remote TLB flush if installing a leaf SPTE overwrites an existing
-    leaf SPTE (with the same target pfn) and clears the Writable bit or the
-    Dirty bit.  KVM isn't _supposed_ to clear Writable or Dirty bits in such
-    a scenario, but make_spte() has a flaw where it will fail to set the Dirty
-    if the existing SPTE is writable.
-    
-    E.g. if two vCPUs race to handle faults, the KVM will install a W=1,D=1
-    SPTE for the first vCPU, and then overwrite it with a W=1,D=0 SPTE for the
-    second vCPU.  If the first vCPU (or another vCPU) accesses memory using
-    the W=1,D=1 SPTE, i.e. creates a writable, dirty TLB entry, and that is
-    the only SPTE that is dirty at the time of the next relevant clearing of
-    the dirty logs, then clear_dirty_gfn_range() will not modify any SPTEs
-    because it sees the D=0 SPTE, and thus will complete the clearing of the
-    dirty logs without performing a TLB flush.
-    
-    Opportunistically harden the TDP MMU against clearing the Writable bit as
-    well, both to prevent similar bugs for write-protection, but also so that
-    the logic can eventually be deduplicated into spte.c (mmu_spte_update() in
-    the shadow MMU has similar logic).
-    
-    Fix the bug in the TDP MMU's page fault handler even though make_spte() is
-    clearly doing odd things, e.g. it marks the page dirty in its slot but
-    doesn't set the Dirty bit.  Precisely because replacing a leaf SPTE with
-    another leaf SPTE is so rare, the cost of hardening KVM against such bugs
-    is negligible.  The make_spte() will be addressed in a future commit.
-    
-    Fixes: bb18842e2111 ("kvm: x86/mmu: Add TDP MMU PF handler")
-    Cc: David Matlack <dmatlack@google.com>
-    Cc: stable@vger.kernel.org
-    Signed-off-by: Sean Christopherson <seanjc@google.com>
-
-diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-index 3b996c1fdaab..7c6d1c610f0e 100644
---- a/arch/x86/kvm/mmu/tdp_mmu.c
-+++ b/arch/x86/kvm/mmu/tdp_mmu.c
-@@ -1038,7 +1038,9 @@ static int tdp_mmu_map_handle_target_level(struct kvm_vcpu *vcpu,
-        else if (tdp_mmu_set_spte_atomic(vcpu->kvm, iter, new_spte))
-                return RET_PF_RETRY;
-        else if (is_shadow_present_pte(iter->old_spte) &&
--                !is_last_spte(iter->old_spte, iter->level))
-+                (!is_last_spte(iter->old_spte, iter->level) ||
-+                 (is_mmu_writable_spte(old_spte) && !is_writable_pte(new_spte)) ||
-+                 (is_dirty_spte(old_spte) && !is_dirty_spte(new_spte))))
-                kvm_flush_remote_tlbs_gfn(vcpu->kvm, iter->gfn, iter->level);
- 
-        /*
----
-
->  arch/x86/kvm/mmu/spte.h    |  6 ++++++
->  arch/x86/kvm/mmu/tdp_mmu.c | 28 +++++++++++++++++++++++++---
->  2 files changed, 31 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/mmu/spte.h b/arch/x86/kvm/mmu/spte.h
-> index a72f0e3bde17..1726f8ec5a50 100644
-> --- a/arch/x86/kvm/mmu/spte.h
-> +++ b/arch/x86/kvm/mmu/spte.h
-> @@ -214,6 +214,12 @@ extern u64 __read_mostly shadow_nonpresent_or_rsvd_mask;
->   */
->  #define FROZEN_SPTE	(SHADOW_NONPRESENT_VALUE | 0x5a0ULL)
->  
-> +#define EXTERNAL_SPTE_IGNORE_CHANGE_MASK		\
-> +	(shadow_acc_track_mask |			\
-> +	 (SHADOW_ACC_TRACK_SAVED_BITS_MASK <<		\
-> +	  SHADOW_ACC_TRACK_SAVED_BITS_SHIFT) |		\
-
-Just make TDX require A/D bits, there's no reason to care about access tracking.
-
-> +	 shadow_dirty_mask | shadow_accessed_mask)
-> +
->  /* Removed SPTEs must not be misconstrued as shadow present PTEs. */
->  static_assert(!(FROZEN_SPTE & SPTE_MMU_PRESENT_MASK));
->  
-> diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-> index 019b43723d90..cfb82ede8982 100644
-> --- a/arch/x86/kvm/mmu/tdp_mmu.c
-> +++ b/arch/x86/kvm/mmu/tdp_mmu.c
-> @@ -503,8 +503,6 @@ static int __must_check set_external_spte_present(struct kvm *kvm, tdp_ptep_t sp
->  	kvm_pfn_t new_pfn = spte_to_pfn(new_spte);
->  	int ret = 0;
->  
-> -	KVM_BUG_ON(was_present, kvm);
-> -
->  	lockdep_assert_held(&kvm->mmu_lock);
->  	/*
->  	 * We need to lock out other updates to the SPTE until the external
-> @@ -519,10 +517,34 @@ static int __must_check set_external_spte_present(struct kvm *kvm, tdp_ptep_t sp
->  	 * external page table, or leaf.
->  	 */
->  	if (is_leaf) {
-> -		ret = static_call(kvm_x86_set_external_spte)(kvm, gfn, level, new_pfn);
-> +		/*
-> +		 * SPTE is state machine with software available bits used.
-> +		 * Check if the change is interesting to the backend.
-> +		 */
-> +		if (!was_present)
-> +			ret = static_call(kvm_x86_set_external_spte)(kvm, gfn, level, new_pfn);
-> +		else {
-> +			/*
-> +			 * The external PTEs don't need updates for some bits,
-> +			 * but if others are changed, bug the VM.
-> +			 */
-> +			if (KVM_BUG_ON(~EXTERNAL_SPTE_IGNORE_CHANGE_MASK &
-
-There's no reason to bug the VM.  WARN, yes (maybe), but not bug the VM.  And I
-think this should be short-circuited somewhere further up the chain, i.e. not
-just for TDX.
-
-One idea would be to WARN and skip setting the SPTE in tdp_mmu_map_handle_target_level().
-I.e. WARN and ignore 1=>0 transitions for Writable and Dirty bits, and then drop
-the TLB flush (assuming the above patch lands).
-
-> +				       (old_spte ^ new_spte), kvm)) {
-
-Curly braces are unnecessary.
-
-> +				ret = -EIO;
-> +			}
-> +		}
-> +
-> +		/*
-> +		 * The backend shouldn't return an error except EAGAIN.
-> +		 * It's hard to debug without those info.
-> +		 */
-> +		if (ret && ret != EAGAIN)
-> +			pr_debug("gfn 0x%llx old_spte 0x%llx new_spte 0x%llx level %d\n",
-> +				 gfn, old_spte, new_spte, level);
-
-Please no.  Not in upstream.  Yeah, for development it's fine, but sprinkling
-printks all over the MMU eventually just results in stale printks, e.g. see all
-of the pgprintk crud that got ripped out a while back.
-
->  	} else {
->  		void *external_spt = get_external_spt(gfn, new_spte, level);
->  
-> +		KVM_BUG_ON(was_present, kvm);
->  		KVM_BUG_ON(!external_spt, kvm);
->  		ret = static_call(kvm_x86_link_external_spt)(kvm, gfn, level, external_spt);
->  	}
-> 
-> base-commit: d2c7662a6ea1c325a9ae878b3f1a265264bcd18b
-> -- 
-> 2.45.2
-> 
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
