@@ -1,159 +1,125 @@
-Return-Path: <linux-kernel+bounces-327730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E37D977A6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:01:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41A82977A72
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:01:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 071451F25062
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:01:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BB721C241F1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881631BD003;
-	Fri, 13 Sep 2024 08:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28FE733C8;
+	Fri, 13 Sep 2024 08:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="GtmDrGgo"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BxUS37rz"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4616613F42F;
-	Fri, 13 Sep 2024 08:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA1513D89D;
+	Fri, 13 Sep 2024 08:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726214465; cv=none; b=RASsN5t3JsAhQnoQcGMNkYqn7293AFMSobVbyD8DaYFbJJXEOf2/8NBbgjUnTUvqnWmGeuA05mOyR/7mCtOEoIBREHodxVwziAav8O2iIg/QijIqPxfzn9b/lX6xjiQyRQbgbLPHnrbosdWDH5r31L0dbXU7P9RfPLwRQWhRt7U=
+	t=1726214486; cv=none; b=nnF5oOHayajQgFTAchQP4ju+deq6GKQnUjMRD+T6DKMUs1daVQOTs3/YsruwUNepL3UlCuV/5wxHBz6B0WyJ3PZDFguWy8L4O2x4cTv8x8qITpHobBj1iIKMrpzxeJBcnxbsXcAfHqNIZHXcYjMW6wEr7gXOpU2afDNIOHPsO4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726214465; c=relaxed/simple;
-	bh=WQF04KEZMGaX+rXC+csKFxpNeaJOVChWnA4IHqeeHMc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GJ00IuCcYSn7yG8DBv1J6UCf0+IChwuVxO/neVSh1dDV75YsJDTJkm33d/BhZpkupADuvOiG4aAZgl7ig1pPY0nZXp66l6mUJntI0FbQFKgDXnZ3wQpHxXTYkc8gEzw2Mx7Zp9SK9FmZ2OiwKJrOmc1H/2jBHr54n5tjrlrNvPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=GtmDrGgo; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1726214461; x=1726473661;
-	bh=iyDJEHYIHv3zMkFgFswy2GwRhPDuLo3wwMT62mkDyZc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=GtmDrGgoXHAiOQ97YVpac10Iz2v8QIJ6Zih0NUedjqUBFy+M4SDPcN4t7bUSe0OE9
-	 YgDJwvr+hSrPhGV1Pvs87ye5HB/dv3VrYweO+XNca1Ox1E84/EJXJXi5FB69UaaLSx
-	 VeuXFTmUDEpcYfrS3hOebb3f1/vC7JnIgkhumMNh710KkCYUG/xm6qEkly3+7f0Ezm
-	 ItgBSzv1rPT5e0N2JxapWBEp6HBdy4FwV9CIg9reMw3aXlbmkO1WzqvhrRqM/Pj4cS
-	 oL1hkeqA9dohCG5WmmhRX7tuVtTSgJ8mRdesA7F9wVdOO7aFJzo9c6R+OmGCdZVtO2
-	 sWFL1G9wD6wqw==
-Date: Fri, 13 Sep 2024 08:00:57 +0000
-To: Sami Tolvanen <samitolvanen@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Petr Pavlu <petr.pavlu@suse.com>, Miroslav Benes <mbenes@suse.cz>, Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Asahi Linux <asahi@lists.linux.dev>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 16/19] gendwarfksyms: Add support for reserved structure fields
-Message-ID: <79860bab-4a48-4b6d-ab63-71dd57d6c590@proton.me>
-In-Reply-To: <CABCJKufJD6Zea7P_aPHNQQgCMgqkw98-XcvW8hRaTx6kcg4vUw@mail.gmail.com>
-References: <20240815173903.4172139-21-samitolvanen@google.com> <20240815173903.4172139-37-samitolvanen@google.com> <alpine.LSU.2.21.2408301114000.1124@pobox.suse.cz> <CABCJKucCWfeC0yL6Q2ZcBfef0tMd9L_gmHRJt-cUYkg_4PDtnA@mail.gmail.com> <599892ec-3cf5-4349-984b-7c94f2ba5687@suse.com> <CABCJKuer=O3FnLJNGMg2+-HxFJFUrccTuuHt5OiMpRsAJBvBsg@mail.gmail.com> <2b2d4953-d2a3-4ea2-98a4-078901cfbda3@proton.me> <CABCJKue-YtCQWinad2GW7uJuVN-ZSUmRYttK_PUurJOR51Urgg@mail.gmail.com> <66694e9a-16d1-4d4e-b825-b90707f2b42e@proton.me> <CABCJKufJD6Zea7P_aPHNQQgCMgqkw98-XcvW8hRaTx6kcg4vUw@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 775dd34bad8d236b607b12e5776ebef360e0bc12
+	s=arc-20240116; t=1726214486; c=relaxed/simple;
+	bh=2kwJ+BtuiLcQLk+MsoKNbghxD9PaOnAzAz+VDMPDp1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZavvHVP6nGyT333mMlkl/7IH6y7a7Uy5zKiInIbiSlt/NzJ46O9SbiNMjIqu/8Ptu0g5VwO09rlUB1R/Nz6gdDmV8x2lXUyeY+jWFQ65b8YKIql/GMb1gxum34DddVAtjfT0FUgMwR2vP4YvM5nQgRgKPoa9VD0bwQovKnU49JM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BxUS37rz; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A4D1220010;
+	Fri, 13 Sep 2024 08:01:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1726214481;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+mJb5b8M7y+63w9Nl8ehjYHcycuEjHwdcbQVGSHrsXU=;
+	b=BxUS37rz24vR3RIuK1EfVOI3pGeLCb8RWHGAbYbOuaRLiDNCn9Q5f5YsKvNAPGyef2SjGz
+	YZkcuKhXaYMoeQ6yYa0nixBMpak9e25i1fzBN0HnNKiHa0UrgLlcHnKPxiWVBSz7+qi953
+	rsok3Anf74PF86idPebzU9Si3w9k0vvKMgFVG4iuIrWhppvk2kouW8JboHbVj0vu5fnV86
+	tAcQfXrpLZGNcY3Lv+nuyiQ9EeeaIpalmGyLvc+2fb50/SUBlbYctUIaA/B5LMM1QPoaq3
+	Zpz0JMGuiuMzBnpoBR8kzORs9BnpgMfdSZbFgCgPKrpU3pd471KggCXpPTbP7A==
+Date: Fri, 13 Sep 2024 10:01:20 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Abhishek Chauhan <quic_abchauha@quicinc.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Andrew Halaney <ahalaney@redhat.com>, "Russell King (Oracle)"
+ <linux@armlinux.org.uk>, Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Bartosz Golaszewski
+ <bartosz.golaszewski@linaro.org>, "linux-tegra@vger.kernel.org"
+ <linux-tegra@vger.kernel.org>, Brad Griffis <bgriffis@nvidia.com>, Vladimir
+ Oltean <vladimir.oltean@nxp.com>, Jon Hunter <jonathanh@nvidia.com>,
+ kernel@quicinc.com
+Subject: Re: [RFC PATCH net v1] net: phy: aquantia: Set phy speed to 2.5gbps
+ for AQR115c
+Message-ID: <20240913100120.75f9d35c@fedora.home>
+In-Reply-To: <20240913011635.1286027-1-quic_abchauha@quicinc.com>
+References: <20240913011635.1286027-1-quic_abchauha@quicinc.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On 13.09.24 00:37, Sami Tolvanen wrote:
-> Hi,
->=20
-> On Thu, Sep 12, 2024 at 2:58=E2=80=AFPM Benno Lossin <benno.lossin@proton=
-.me> wrote:
->>
->> On 12.09.24 22:58, Sami Tolvanen wrote:
->>> That's an interesting point. Is the problem that you cannot assign
->>> arbitrary values to the Rust enum that bindgen generates, or is using
->>> a #define the problem? We could probably just make the hidden enum
->>> values visible to bindgen only if needed.
->>
->> So if I take your example from above add it to our bindgen input, then I
->> get the following output:
->>
->>     pub const e_A: my_own_test_enum =3D 0;
->>     pub const e_B: my_own_test_enum =3D 1;
->>     pub type e_enum =3D core::ffi::c_uint;
->>
->> So it doesn't pick up the other constants at all. That is probably
->> because we haven't enabled the bindgen flag that adds support for
->> function-like macros. If I enable that flag (`--clang-macro-fallback`,
->> then the output becomes:
->>
->>     pub const C: u32 =3D 2;
->>     pub const D: u32 =3D 3;
->>     pub const e_A: e =3D 0;
->>     pub const e_B: e =3D 1;
->>     pub type e =3D ::std::os::raw::c_uint;
->>
->> So it doesn't really work as we would like it to (ie missing e_ prefix).
->=20
-> If defines are a problem, we can always use a const int instead. It
-> doesn't have to be defined inside the enum either, and probably we can
-> add a prefix too.
+Hi,
 
-They might also be a problem, though I haven't checked. It would be best
-if they can just stay in the `enum`.
+On Thu, 12 Sep 2024 18:16:35 -0700
+Abhishek Chauhan <quic_abchauha@quicinc.com> wrote:
 
->> But even if bindgen were to start supporting `#define` inside of the
->> enum. It might still have a problem with the `#define`: there is the
->> `--rustified-enum <REGEX>` option for bindgen that would change the
->> output to this:
->>
->>     #[repr(u32)]
->>     #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
->>     pub enum e {
->>         A =3D 0,
->>         B =3D 1,
->>     }
->>
->> Which makes using the values on the Rust side a lot easier, since you
->> get exhaustiveness checks when using `match`. Adding the
->> `--clang-macro-fallback` flag, I get:
->>
->>     pub const C: u32 =3D 2;
->>     pub const D: u32 =3D 3;
->>     #[repr(u32)]
->>     #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
->>     pub enum e {
->>         A =3D 0,
->>         B =3D 1,
->>     }
->>
->> Which is a big problem, because the enum `e` won't have 2 or 3 as valid
->> values (it will be UB to write them to a variable of type `e`).
->=20
-> Yes, I sort of thought that this might be an issue. I don't see this
-> in bindgen flags right now, are you planning on switching the kernel
-> bindgen to use --rustified-enum?
+> Recently we observed that aquantia AQR115c always comes up in
+> 100Mbps mode. AQR115c aquantia chip supports max speed up to
+> 2.5Gbps. Today the AQR115c configuration is done through
+> aqr113c_config_init which internally calls aqr107_config_init.
+> aqr113c and aqr107 are both capable of 10Gbps. Whereas AQR115c
+> supprts max speed of 2.5Gbps only.
+> 
+> Fixes: 0ebc581f8a4b ("net: phy: aquantia: add support for aqr115c")
+> Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
+> ---
+>  drivers/net/phy/aquantia/aquantia_main.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
+> index e982e9ce44a5..9afc041dbb64 100644
+> --- a/drivers/net/phy/aquantia/aquantia_main.c
+> +++ b/drivers/net/phy/aquantia/aquantia_main.c
+> @@ -499,6 +499,12 @@ static int aqr107_config_init(struct phy_device *phydev)
+>  	if (!ret)
+>  		aqr107_chip_info(phydev);
+>  
+> +	/* AQR115c supports speed up to 2.5Gbps */
+> +	if (phydev->interface == PHY_INTERFACE_MODE_2500BASEX) {
+> +		phy_set_max_speed(phydev, SPEED_2500);
+> +		phydev->autoneg = AUTONEG_ENABLE;
+> +	}
+> +
 
-You mean you don't see the `--clang-macro-fallback` option? I think it
-was added in version 0.70.0.
+If I get your commit log right, the code above will also apply for
+ASQR107, AQR113 and so on, don't you risk breaking these PHYs if they
+are in 2500BASEX mode at boot?
 
-> If you do plan to use --rustified-enum, we could just use #ifdef
-> __BINDGEN__ to hide the fields from everyone else, but I think we
-> might actually need a more generic solution after all. I'll think
-> about it a bit more.
+Besides that, if the PHY switches between SGMII and 2500BASEX
+dynamically depending on the link speed, it could be that it's
+configured by default in SGMII, hence this check will be missed.
 
-Well we don't exactly plan to use `--rustified-enum`, the problem is
-that transmuting the integer that C gives us to that enum is UB, when
-the integer is not a valid bit pattern for that enum. Instead we would
-like to have an option to generate both the Rust-style enum and a
-newtype enum that can hold any integer value. We then check at runtime
-that the value is in range and error otherwise. This is being worked on
-at [1].=20
-I would say that it has the same issue that `--rustified-enum` currently
-has.
+Is the AQR115c in the same situation as AQR111 for example, where the
+PMA capabilities reported are incorrect ? If so, you can take the same
+approach as aqr111, which is to create a dedicated .config_init()
+callback for the AQR115c, which sets the max speed, then call
+aqr113c_config_init() from there ?
 
-[1]: https://github.com/rust-lang/rust-bindgen/pull/2908
-
----
-Cheers,
-Benno
-
+Maxime
 
