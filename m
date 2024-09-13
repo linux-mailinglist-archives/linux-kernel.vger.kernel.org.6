@@ -1,119 +1,118 @@
-Return-Path: <linux-kernel+bounces-328358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5BE6978268
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:17:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C57697826C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:20:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01A6F1C21EFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:17:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5577B20DB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3435BE68;
-	Fri, 13 Sep 2024 14:17:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34FBAB66C;
+	Fri, 13 Sep 2024 14:20:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="l5imSffl"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jeTg9nsf"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63A3B67D;
-	Fri, 13 Sep 2024 14:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B202B6FB0
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726237021; cv=none; b=G6G52OmoSR3E5rc1okCdmi3oEoHx3Zv1j12KS+yja+/Si0IGUrdQG6roWlBTNtm6XilPN5T+e2JobvyMsNMpbeivjtJ+EuvXk8/Jrkg0SD1hAoH7GCj8JabnQRRgwHIwWfz+l4i/vRsdscQmAAWRO11guZ2TNsxA7LhVUMsJT+w=
+	t=1726237232; cv=none; b=Q8DlnRdSde3YKMrhXBVFHV0u+YSfc0ST7DGswGMFWUm03A4mwDAY5bCyhmgli+/f9IPV47qgmSkP071hUvP7HhisPjFX5m6iOGBIA4/GTaKaK0JOF9gKLtR1m4+2iyEK4bveP5GgnOIp8tJpQ4mq1qNYHD2kTVoLQ2P6GLjYLro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726237021; c=relaxed/simple;
-	bh=QU6uT6lAbpe0mepp8W6skjQzIgbhyf8e5y0ReybLeM8=;
+	s=arc-20240116; t=1726237232; c=relaxed/simple;
+	bh=LbrdxWZP6SmKFDlv6xWujTUAzGWg+nd/jQVvo10eTHI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s1r3Fng7ABa/2PxakzQb8oMZSsb1JTheWX2bVZE3Jbo4Z4nKfh/vBiTd6sMnCNruwEji62KOYBWl5OOmJjW9qtHMxTNCpfCfPA9f378SnTNEW0mAjmp3sglDcVjcfKgShWuDU9zHUrVXGNoJSEK8kTBRat+WTOFJRX/HfeSUIO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=l5imSffl; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48DC5MjG017225;
-	Fri, 13 Sep 2024 14:16:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=tpg4DzrCNwpPwgcofK+9l7FLwHa
-	1nwvoUf9a1kt2Kb8=; b=l5imSffld8j+g1Z9M4Q3uNp7dZ34JVfQ00MEo94giN/
-	OhoC/v8oXODtCVsfDMcbxlrHZlNpcwC+OesjCgDZNZDIz4pMI/5Ce2a901Z4nBTB
-	BCVcn0Ugj6jvX8mjDIn49SoI98qMXh3jExe37VjhF6bFGBGdxayB0re+aXxlmGL+
-	a2ZJpsDzo6bKAxjARjy2Y0O/Hf7vypMYaSpHv5j2lKwt3fS3NoOZC/lQKpPstdS9
-	ipJH9QbyGQWBmNbt1u7zTj7sY3kuB6sfGZ4wLkelYihhx4m+nwF3LUakap/bu/z0
-	uxpT6ahiYMX0QzB2FZMJ9+B51sw+SngllixjCCwbc7Q==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 41geg029hw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Sep 2024 14:16:58 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 48DCYDXr010811;
-	Fri, 13 Sep 2024 14:16:57 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41kmb7292g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 13 Sep 2024 14:16:57 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 48DEGr4d54985174
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 13 Sep 2024 14:16:53 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7E68A2004D;
-	Fri, 13 Sep 2024 14:16:53 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 148CF2004B;
-	Fri, 13 Sep 2024 14:16:53 +0000 (GMT)
-Received: from osiris (unknown [9.171.6.86])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 13 Sep 2024 14:16:53 +0000 (GMT)
-Date: Fri, 13 Sep 2024 16:16:51 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Stefan Liebler <stli@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org
-Subject: Re: [PATCH 7/7] s390/vdso: Wire up getrandom() vdso implementation
-Message-ID: <20240913141651.30385-A-hca@linux.ibm.com>
-References: <20240913130544.2398678-1-hca@linux.ibm.com>
- <20240913130544.2398678-8-hca@linux.ibm.com>
- <ZuRD58DrEzzcXKZg@zx2c4.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LIBKdl8xQR369sGNcj+FDmz1J3nBfs+oH6WYam5MBOyd7zkqgKTsb+bhNDZgy3RHy9sO2qSsNZXdhEcGlipD61VhbQya1Gxrs53ay4tjtf3cpRCruXmBkJon7wwRy6gDVAJpKh/+EGRreiwnued+sZ6dTGZRv9GpasCsVeNaHK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jeTg9nsf; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4A4D040E0288;
+	Fri, 13 Sep 2024 14:20:27 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id SnMObGLRW4gG; Fri, 13 Sep 2024 14:20:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1726237222; bh=aA11WTU3egHjyLaGShregclRHe8W1dy58KR4A5tHZNc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jeTg9nsfW7170PGWd6n7W2bcZJJPR7Z0L777Lej9JOtnCZBPP5Ja1UIxu3Y6+Dck7
+	 YYF0IQVGUrjz8n43lbYktovR+zs2hk00k7KvtnD6Z3vOVxJZHASLf+2W+qcvF0/FEW
+	 YvppJONsaVjECgl5ZFqpK775B7xc3OlAw+M0Az0xKfJr778tqm5rLabZyKp/Ta8tFN
+	 iO31alxKVye735ATuYOQV1q3ctehk+zQmBa+V9PqNxvo1AHKu7xlMBYCKhyWCT4wxZ
+	 nGYvA0LVIe/9cnFUhhWjPOvK2PxEmLvYIeDmTKjcDafd4l6r89k+NlL4Vgnf4e0Xuw
+	 pGMmmt0PPJB6Fw1ekcvWtNZFIMMC/lXa249oyANjWO44YZxH49VOTVXNSDBGIY/GWS
+	 tK/xI/ZIo+vvBErL9SsaJcrb4mhbSok1EhEuKV6z5YMFvRhB+knPOxSk4Q4ND/kawX
+	 dt4QC8Z6+9GLDVSLjJjfDv8yWmvNR6DfCCPYqKF8Y/1aUo298ZEnI/YRTuvNtTJ4AB
+	 0d7e50Lzt7mU/GmoWMCVsxuk5p6TnLJyq0pxkg5g0Rvsvax5rNQ0ZjOKD+7NVk91gr
+	 z1gw0J0p8yHN/YzY8NYN06hZFeoY63eHLB+flnzDyb9vArW4pu3srtvWTd6t5IU4qt
+	 eAR84wjR7XgjggwUrnNXeSJU=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7A02640E0289;
+	Fri, 13 Sep 2024 14:20:11 +0000 (UTC)
+Date: Fri, 13 Sep 2024 16:20:05 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Kaplan, David" <David.Kaplan@amd.com>
+Cc: Dave Hansen <dave.hansen@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 27/34] x86/bugs: Add attack vector controls for
+ spectre_v1
+Message-ID: <20240913142005.GAZuRKFXEG9v26rezp@fat_crate.local>
+References: <20240912190857.235849-1-david.kaplan@amd.com>
+ <20240912190857.235849-28-david.kaplan@amd.com>
+ <8a406835-b985-415a-a944-25d0ebea4fd0@intel.com>
+ <LV3PR12MB9265FDD41382B1271DB0305E94642@LV3PR12MB9265.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZuRD58DrEzzcXKZg@zx2c4.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: wmfrrqZXSmg1WQ-jA4kMAlgLuLh273a9
-X-Proofpoint-ORIG-GUID: wmfrrqZXSmg1WQ-jA4kMAlgLuLh273a9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-13_11,2024-09-13_02,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- lowpriorityscore=0 suspectscore=0 mlxlogscore=498 priorityscore=1501
- adultscore=0 clxscore=1015 spamscore=0 bulkscore=0 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2409130098
+In-Reply-To: <LV3PR12MB9265FDD41382B1271DB0305E94642@LV3PR12MB9265.namprd12.prod.outlook.com>
 
-On Fri, Sep 13, 2024 at 03:53:43PM +0200, Jason A. Donenfeld wrote:
-> On Fri, Sep 13, 2024 at 03:05:43PM +0200, Heiko Carstens wrote:
-> > The vdso testcases vdso_test_getrandom and vdso_test_chacha pass.
+On Thu, Sep 12, 2024 at 07:57:50PM +0000, Kaplan, David wrote:
+> > There's also added complexity from having 'enum vulnerabilities' which
+> > basically duplicate the X86_BUG_* space.  If the infrastructure was, for
+> > instance, built around X86_BUG bits, it might have enabled this patch to be
+> > something like:
+> >
+> > -       if (!boot_cpu_has_bug(X86_BUG_SPECTRE_V1) ||
+> > -           cpu_mitigations_off())
+> > +       if (!should_mitigate_vuln(X86_BUG_SPECTRE_V1))
+> >                 spectre_v1_mitigation = SPECTRE_V1_MITIGATION_NONE;
 > 
-> I'd be curious to see the results of ./vdso_test_getrandom bench-single
-> and such.
+> That's a reasonable idea.  One issue I see is that there is no separation in
+> the X86_BUG* space for spectre_v2 vs spectre_v2_user, but they do have
+> separate mitigations.  But I think that is the only missing one, so maybe it
+> just makes sense to add a X86_BUG bit for that?
 
-It looks like this with two layers of hypervisors in between, but that
-shouldn't matter too much for this type of workload:
+I think we should do that. That's less complexity in the mitigations area and
+those are always welcome.
 
-$ ./vdso_test_getrandom bench-single
-   vdso: 25000000 times in 0.493703559 seconds
-   libc: 25000000 times in 6.371764073 seconds
-syscall: 25000000 times in 6.584025337 seconds
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
