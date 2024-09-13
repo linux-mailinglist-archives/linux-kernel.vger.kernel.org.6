@@ -1,201 +1,125 @@
-Return-Path: <linux-kernel+bounces-328586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 897A5978636
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:52:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17B1B978637
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:52:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D56D1B23787
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:51:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EBB01C22C56
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:52:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B919E81AC1;
-	Fri, 13 Sep 2024 16:51:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5687811EB;
+	Fri, 13 Sep 2024 16:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qPCAZNKK"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Oi7tVDUQ"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B6547F4D
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 16:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A617406F
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 16:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726246313; cv=none; b=LGKQW5OzrrMUb5cVY21AJaRNq/sN0WCgBuao793jzMLm2VqEpUWe9rqjvAUt9ianjBYJDPjOG+yYqVyCVLZy5eAtftv3UEmwZ6nBmjrZaQl/pb3wLAXke13yw7GJ03PkWYl3/0pOexwmUTUbosC7zVv6ZFkikvdtnU/biCuV+bY=
+	t=1726246336; cv=none; b=aGRMgpODQrVWSenMjGOU3QbQV3fgqdWYIULGHKYLcSf8mUcp3hwkRRzfDlB9qu1qd34QCTLKuzmwtsT/IQNHrhJ2Cn2GWeMD2cUvz4Bb81gVejE/6ECrSFN1ZzIVCbnYpteMGkLiW6vrMtYGI6+hCu8xSWCnzENPqRMdEVZoKTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726246313; c=relaxed/simple;
-	bh=m0KfwnxjycrKvrrK/6Ha/CRVQ4CxJDVEVb0zF9eBJWc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=taS2q1yqprgBBgsOktB8HcJz41Uisv/cumNXEsa5XSOuTdTXpuAhT/uz38yoCQcbUL0gvImj3swdGyqKiO7663H7GBmO64RbTidKVwxBd8wYVfWnWttoo9p0w3qGoHFubgpGBN9SpVUvtjpy4S5vStWEhirRpdnQ5NVje8GkUlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qPCAZNKK; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <dd8369d8-7f3d-467c-afba-abb149bb5942@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726246310;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IhlnxT9KTSM/GX5pPXvuEwpGZ4YYYm1EVWV1M5DWdR8=;
-	b=qPCAZNKKyEJf5hFHq/R6ahRFlJbfSFJzeVruH5FWzS1QB5jZbPkRrraU0F3/A7YEiuAS0H
-	SV6zyasz7b03klKHTxAsW+S692m0ob+ty+uIFObV2XhyACYTLeFvUcmcU6watWwEuaLgjA
-	x5ZkoKzn/zOQfjvYxcK/E5YP6vtBGoM=
-Date: Fri, 13 Sep 2024 12:51:45 -0400
+	s=arc-20240116; t=1726246336; c=relaxed/simple;
+	bh=NkfRuK05G42gxi/P3Ur/QBm3gz03FXJHhe16w81o8nQ=;
+	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CdG02/EYCKZ90NINWQ/hM2p89sV6L2ZMmXC8T0dvqAjydisVzjsxwKjZZwjWR/npQwRJH8oXC/2p10hAQ1baksOTwJkQnbgvM8rfzZDVsm7Fu7R6yF094eRIe10N8syxoqI7byXBCNwOKdVDoGCUDQ8zCfUFxXkwJfbbUgio0UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Oi7tVDUQ; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1726246332; x=1726505532;
+	bh=pmUKiN2tKdM7v2+UQJgPTwbwy4xCGQ7zQ6ZenqKk7Cg=;
+	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=Oi7tVDUQHyUDB7Efmpg+QDtNVubYBrKlkXG+z70+a2vVfEt8VgLYQCV8KJt9DGtK8
+	 UHPd29Nf8GS1Mror/vUrS8yA49q9C2TtM647b1GHnLAD3GCwT+xENkv1mI/KVWFFld
+	 hIWDk/9+IvBpgiV/2FMV6zZ59Faq7ciwGY14ZwO8JnUDGqKf2W10gfUucGsyKXOvLx
+	 wyQCjj2gRQaKlwIEZjo9F8ai7VSVez46Bz/xVp4r6uaLBzPKfrV0PQvyoElMRvM+tB
+	 BNn9s0jnO+ByvjWphjzWcjchXdy0HqslHKn+57V3SMWHElCOJclEE6AYyatCZGHNGj
+	 xNgkWtiLpKOgA==
+Date: Fri, 13 Sep 2024 16:52:02 +0000
+To: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Benno Lossin <benno.lossin@proton.me>
+Subject: Re: [PATCH v3] rust: add global lock support
+Message-ID: <8c233e14-e380-417d-84f7-d5056a768427@proton.me>
+In-Reply-To: <CAH5fLgiaPYphXE-Azfb0MU1EzsNpAMFntDeAt8YAMj5KAxS_xA@mail.gmail.com>
+References: <20240910-static-mutex-v3-1-5bebd11bdf3b@google.com> <ZuRh9niSrX6E5CWq@phenom.ffwll.local> <CAH5fLgiaPYphXE-Azfb0MU1EzsNpAMFntDeAt8YAMj5KAxS_xA@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 908183d6695a87f8425fa3f43bec44c0efbb85d8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net v2] net: xilinx: axienet: Fix IRQ coalescing packet
- count overflow
-To: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "Gupta, Suraj" <Suraj.Gupta2@amd.com>,
- "Katakam, Harini" <harini.katakam@amd.com>
-Cc: Andy Chiu <andy.chiu@sifive.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Simon Horman <horms@kernel.org>, Ariane Keller
- <ariane.keller@tik.ee.ethz.ch>, Daniel Borkmann <daniel@iogearbox.net>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "Simek, Michal"
- <michal.simek@amd.com>
-References: <20240909230908.1319982-1-sean.anderson@linux.dev>
- <MN0PR12MB5953E38D1EEBF3F83172E2EEB79B2@MN0PR12MB5953.namprd12.prod.outlook.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <MN0PR12MB5953E38D1EEBF3F83172E2EEB79B2@MN0PR12MB5953.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 9/11/24 03:01, Pandey, Radhey Shyam wrote:
->> -----Original Message-----
->> From: Sean Anderson <sean.anderson@linux.dev>
->> Sent: Tuesday, September 10, 2024 4:39 AM
->> To: Pandey, Radhey Shyam <radhey.shyam.pandey@amd.com>; David S .
->> Miller <davem@davemloft.net>; Eric Dumazet <edumazet@google.com>;
->> Jakub Kicinski <kuba@kernel.org>; Paolo Abeni <pabeni@redhat.com>;
->> netdev@vger.kernel.org
->> Cc: Andy Chiu <andy.chiu@sifive.com>; linux-kernel@vger.kernel.org; Simon
->> Horman <horms@kernel.org>; Ariane Keller <ariane.keller@tik.ee.ethz.ch>;
->> Daniel Borkmann <daniel@iogearbox.net>; linux-arm-
->> kernel@lists.infradead.org; Simek, Michal <michal.simek@amd.com>; Sean
->> Anderson <sean.anderson@linux.dev>
->> Subject: [PATCH net v2] net: xilinx: axienet: Fix IRQ coalescing packet count
->> overflow
->> 
->> If coalece_count is greater than 255 it will not fit in the register and
->> will overflow. This can be reproduced by running
->> 
->>     # ethtool -C ethX rx-frames 256
->> 
->> which will result in a timeout of 0us instead. Fix this by clamping the
->> counts to the maximum value.
-> After this fix - what is o/p we get on rx-frames read? I think silent clamping is not a great 
-> idea and user won't know about it.  One alternative is to add check in set_coalesc 
-> count for valid range? (Similar to axienet_ethtools_set_ringparam so that user is notified 
-> for incorrect range)
-> 
->> 
->> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
->> Fixes: 8a3b7a252dca ("drivers/net/ethernet/xilinx: added Xilinx AXI Ethernet
->> driver")
->> ---
->> 
->> Changes in v2:
->> - Use FIELD_MAX to extract the max value from the mask
->> - Expand the commit message with an example on how to reproduce this
->>   issue
->> 
->>  drivers/net/ethernet/xilinx/xilinx_axienet.h      | 5 ++---
->>  drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 8 ++++++--
->>  2 files changed, 8 insertions(+), 5 deletions(-)
->> 
->> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet.h
->> b/drivers/net/ethernet/xilinx/xilinx_axienet.h
->> index 1223fcc1a8da..54db69893565 100644
->> --- a/drivers/net/ethernet/xilinx/xilinx_axienet.h
->> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet.h
->> @@ -109,11 +109,10 @@
->>  #define XAXIDMA_BD_CTRL_TXEOF_MASK	0x04000000 /* Last tx packet
->> */
->>  #define XAXIDMA_BD_CTRL_ALL_MASK	0x0C000000 /* All control bits
->> */
->> 
->> -#define XAXIDMA_DELAY_MASK		0xFF000000 /* Delay timeout
->> counter */
->> -#define XAXIDMA_COALESCE_MASK		0x00FF0000 /* Coalesce
->> counter */
->> +#define XAXIDMA_DELAY_MASK		((u32)0xFF000000) /* Delay
->> timeout counter */
-> 
-> Adding typecast here looks odd. Any reason for it? 
-> If needed we do it in specific case where it is required.
+On 13.09.24 18:10, Alice Ryhl wrote:
+> On Fri, Sep 13, 2024 at 6:02=E2=80=AFPM Simona Vetter <simona.vetter@ffwl=
+l.ch> wrote:
+>> On Tue, Sep 10, 2024 at 02:23:34PM +0000, Alice Ryhl wrote:
+>>> Add support for creating global variables that are wrapped in a mutex o=
+r
+>>> spinlock. Optionally, the macro can generate a special LockedBy type
+>>> that does not require a runtime check.
+>>>
+>>> The implementation here is intended to replace the global mutex
+>>> workaround found in the Rust Binder RFC [1]. In both cases, the global
+>>> lock must be initialized before first use. The macro is unsafe to use
+>>> for the same reason.
+>>>
+>>> The separate initialization step is required because bindgen refuses to
+>>> expose __ARCH_SPIN_LOCK_UNLOCKED to Rust as a compile-time constant. It
+>>> just generates an `extern "C"` global reference instead. In the future,
+>>> we could expose the value of __ARCH_SPIN_LOCK_UNLOCKED to Rust in a way
+>>> that Rust can understand. This would remove the need for a separate
+>>> initialization step.
+>>
+>> Yeah it's just a raw C struct initializer, I wouldn't even know how to
+>> move that to rust.
+>>
+>> An absolute horrible idea, and I didn't try whether it's even possible:
+>> - put all the global locks of a type into a special linker section (we
+>>   need a macro anyway for them).
+>> - patch them up with a horrible linker script objtool patching with an
+>>   example lock initialized by the C macro.
+>>
+>> Even worse idea, on most architectures/config it's all zeros. Iirc the o=
+ne
+>> I've found that might matter a bit is CONFIG_SMP=3Dn with some lock
+>> debugging enabled. We could make rust support conditional on those, and
+>> then maybe a build-time check that it's actually all set to 0 ...
+>>
+>> Requiring the unsafe init just feels a bit disappointing to me, when the=
+ C
+>> side (including lockdep annotations) tries really hard to make global
+>> locks a one-liner.
+>=20
+> I actually have a prototype lying around that gets rid of the
+> initialization step. The idea is to define some new macros:
+>=20
+>  #define __ARCH_SPIN_LOCK_UNLOCKED      { 0 }
+> +#define __ARCH_SPIN_LOCK_UNLOCKED_TYP  unsigned int
+> +#define __ARCH_SPIN_LOCK_UNLOCKED_INT  0
+>=20
+> Rust then uses the two new #defines to initialize the raw spin lock to
+> the right bytes. As long as __ARCH_SPIN_LOCK_UNLOCKED and
+> __ARCH_SPIN_LOCK_UNLOCKED_INT are represented by the same sequence of
+> bytes, it should work.
 
-Sorry, I missed this on my first read.
+I have no idea if this is possible, but maybe one of the C experts can
+help with this: could we define `__ARCH_SPIN_LOCK_UNLOCKED` in terms of
+`__ARCH_SPIN_LOCK_UNLOCKED_INT`? That way there is only one source of
+truth.
 
-This is necessary for...
+---
+Cheers,
+Benno
 
->> +#define XAXIDMA_COALESCE_MASK		((u32)0x00FF0000) /*
->> Coalesce counter */
->> 
->>  #define XAXIDMA_DELAY_SHIFT		24
->> -#define XAXIDMA_COALESCE_SHIFT		16
->> 
->>  #define XAXIDMA_IRQ_IOC_MASK		0x00001000 /* Completion
->> intr */
->>  #define XAXIDMA_IRQ_DELAY_MASK		0x00002000 /* Delay
->> interrupt */
->> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
->> b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
->> index 9eb300fc3590..89b63695293d 100644
->> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
->> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
->> @@ -252,7 +252,9 @@ static u32 axienet_usec_to_timer(struct axienet_local
->> *lp, u32 coalesce_usec)
->>  static void axienet_dma_start(struct axienet_local *lp)
->>  {
->>  	/* Start updating the Rx channel control register */
->> -	lp->rx_dma_cr = (lp->coalesce_count_rx <<
->> XAXIDMA_COALESCE_SHIFT) |
->> +	lp->rx_dma_cr = FIELD_PREP(XAXIDMA_COALESCE_MASK,
->> +				   min(lp->coalesce_count_rx,
->> +
->> FIELD_MAX(XAXIDMA_COALESCE_MASK))) |
-
-this expression. Since min will complain if the types of its arguments
-differ. Since coalesce_count_rx is a u32, and integer constants default
-to int, I cast the mask to u32 above. Although a U suffix would have
-also worked.
-
---Sean
-
->>  			XAXIDMA_IRQ_IOC_MASK |
->> XAXIDMA_IRQ_ERROR_MASK;
->>  	/* Only set interrupt delay timer if not generating an interrupt on
->>  	 * the first RX packet. Otherwise leave at 0 to disable delay interrupt.
->> @@ -264,7 +266,9 @@ static void axienet_dma_start(struct axienet_local
->> *lp)
->>  	axienet_dma_out32(lp, XAXIDMA_RX_CR_OFFSET, lp->rx_dma_cr);
->> 
->>  	/* Start updating the Tx channel control register */
->> -	lp->tx_dma_cr = (lp->coalesce_count_tx <<
->> XAXIDMA_COALESCE_SHIFT) |
->> +	lp->tx_dma_cr = FIELD_PREP(XAXIDMA_COALESCE_MASK,
->> +				   min(lp->coalesce_count_tx,
->> +
->> FIELD_MAX(XAXIDMA_COALESCE_MASK))) |
->>  			XAXIDMA_IRQ_IOC_MASK |
->> XAXIDMA_IRQ_ERROR_MASK;
->>  	/* Only set interrupt delay timer if not generating an interrupt on
->>  	 * the first TX packet. Otherwise leave at 0 to disable delay interrupt.
->> --
->> 2.35.1.1320.gc452695387.dirty
-> 
 
