@@ -1,110 +1,121 @@
-Return-Path: <linux-kernel+bounces-328155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AA75977FAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:18:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC3D0977FAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:18:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 844F21C209D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:18:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BCDB1C215B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD621D9324;
-	Fri, 13 Sep 2024 12:15:50 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC8B1D9355;
+	Fri, 13 Sep 2024 12:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CbHOZ0kb"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918781C1AC2
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B5B1D88D3;
+	Fri, 13 Sep 2024 12:16:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726229750; cv=none; b=ZCHLPdtxuXR/xtSvepljVMmsfukANMI3A/jn/iSQaT67XV4gAnZJ168TA6g2LlzNoZgsj4qOXTtPNWUs8Y0PioNo1sDdJFHGsVnIxpLY3AyYHXEyiGpRWk2cR8u78xcnFa/eKqr3it384jFvu4yjolhfL7PfStotS7ZhOb2mWRs=
+	t=1726229811; cv=none; b=l/T/HE16DVD0qw1RZx6c73fAgASKsPlZOOtpitAVDIIC/HwNytVBDnTEArKoMfDU3PF4NjOPYDGifWWy88hNDt0icXhLGYAqNW7LhaqfF9u5K79bYzbrM3h+og0izfVMfvYMNsQH4cHcc+ra2ubDVC0/XWKNEBZrxBNCbRZqX5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726229750; c=relaxed/simple;
-	bh=bIIXpFBcy9JQN6Eq1rXBhck4SQov32Ei9qIPZHwLGC4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZUdg9EYaz1CndWa6mP6gW4neqQFVeuSmlUH3pRbzNBFlAv5v1U+bnlFDFHWm/WO7PnSVlAT97szd4ZuPmkd8p8OnNYw5A2X3lOo7foKtlEAi6J9jwr33nVGPGpBcxrycN8NzbKDXJx3d1Xl01KOiWQMUkWi3Hquvg61SUz6K7V4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4X4tYm6ccqz9sfV;
-	Fri, 13 Sep 2024 14:15:40 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id XiImRg9SP39k; Fri, 13 Sep 2024 14:15:40 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4X4tYm5mBbz9sZX;
-	Fri, 13 Sep 2024 14:15:40 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id B657B8B77A;
-	Fri, 13 Sep 2024 14:15:40 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id lNQyLDOf4yiZ; Fri, 13 Sep 2024 14:15:40 +0200 (CEST)
-Received: from [192.168.233.70] (unknown [192.168.233.70])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5D3688B766;
-	Fri, 13 Sep 2024 14:15:40 +0200 (CEST)
-Message-ID: <81200b50-eaec-4cfd-9121-f661f3065572@csgroup.eu>
-Date: Fri, 13 Sep 2024 14:15:40 +0200
+	s=arc-20240116; t=1726229811; c=relaxed/simple;
+	bh=O0hIV/6nB2rRddlD11VmsyTXzTX0q92fiXgW3yR8Qfo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EQ3/rM5IApzvZ84v2ZVnSFO30NujQp5MJ7VkJLIvNHlWqOhzMKXEqlJOOUfCQ469IfEBWqHc2NGfKtjXzrRukqBgLiHgbrQ7tGgnwXXdoXybJJpxmYnzKOkln8PRTdrIOoC7FfdBIryF34h/UoR+W8g5zUxEMwoeywQQeeqzE18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CbHOZ0kb; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7178df70f28so1618454b3a.2;
+        Fri, 13 Sep 2024 05:16:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726229809; x=1726834609; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cbCGTiN11FXVDbAkkViGrjdz04Y2hBtYS4VFXBmy4tQ=;
+        b=CbHOZ0kbAkcxJIxpXVJjsFqukNKI3KuIGXH+F2yEgjfQI/pjY83hRqmj3wJ9p2v+1Y
+         F2XAy9YaUvTLaurhaRG9BoIRi6TYrXjafPq4UA9rdNaWa+FYPvq/w+Vo7bG8dd6HH7IK
+         we1YgnRCbNY58FuJ/5O4NPvvoLTqyyxuadcRuZRQ17b+D+mVQNSk1TZzr+JwmWWUHCeK
+         h3+sLJqrOPKSqoeb+Cr21DGepnhKOeYH3Q2AOLHM6U/CbFuZ5jPT3BsR7tQhqyZ4KhhW
+         SO0rGjBNkHlyo2wV5q9nlQOwH//OlYE8zN3q+iv7uZJQYsrn2yvXT+EXjrExNURlDyeK
+         Ydww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726229809; x=1726834609;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cbCGTiN11FXVDbAkkViGrjdz04Y2hBtYS4VFXBmy4tQ=;
+        b=SHov920XHjseYxbm88XMIHdvuAElXmDSxH1pUIz2Govo0SCFsNr8ne/2FfaT9Gua2M
+         IZgMd0ITbqRssYG0moiI4tk8yhnuPnjVQnFTf3HWJjb8PMKAfrjKZ5eysz3V3OnekYtW
+         0v+y/eLPVbbmIE201BaRtSpLW5r0XLK8MQ1bTRBDeeIU5LCEVL+83DYxf4UFNsu0Hki4
+         agK5nZqJY2TazIls34dtGdEfGY42KC4O6F6QAmY8s721hCYcZEpyPpEsbxz/d4Ij0ZA+
+         7Ll0dzxJCA+OSrHzVxcNjKwEnIuC9i6u0bVT9KHwmQcSL0jPNGYLGVmcmJZEXkG7AumC
+         OPPA==
+X-Forwarded-Encrypted: i=1; AJvYcCUohlnkzPwf+xywZCEpVvJERHdC6JegmN+x5X0kfxYRlaUTggaolN0aeCkzY5M9dXE9Chik0ettPDsT0/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVN/Fwqx6Zawki9UdAeDYGNEsvIlomJcAGkQQdrDpjM61atRip
+	JIMFeaUd+jtMSaD3sMM+N41y2XopAT45vyvfNF14R/ODKeHhNx6r
+X-Google-Smtp-Source: AGHT+IGEntuO0AfIyn2/27Csp9RurnaARnS88M+fUAOsKJoNa02/MLOdAFJCt2QX9JfbWN6i+OsKzg==
+X-Received: by 2002:a05:6a00:2daa:b0:717:9154:b5b6 with SMTP id d2e1a72fcca58-7192606ce9emr9929623b3a.7.1726229808646;
+        Fri, 13 Sep 2024 05:16:48 -0700 (PDT)
+Received: from localhost ([116.198.225.81])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7190909252esm5986331b3a.124.2024.09.13.05.16.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 05:16:48 -0700 (PDT)
+From: Tao Chen <chen.dylane@gmail.com>
+To: Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tao Chen <chen.dylane@gmail.com>
+Subject: [PATCH bpf-next] libbpf: Fix expected_attach_type set when kernel not support
+Date: Fri, 13 Sep 2024 20:16:27 +0800
+Message-Id: <20240913121627.153898-1-chen.dylane@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] powerpc/entry: convert to common and generic entry
-To: Luming Yu <luming.yu@shingroup.cn>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- mpe@ellerman.id.au, npiggin@gmail.com, jialong.yang@shingroup.cn,
- luming.yu@gmail.com
-References: <B4ABABEA5F13B86A+20240912082500.1469-1-luming.yu@shingroup.cn>
- <fc509bcd-5ca0-4dc2-962e-766a01cbe4fb@csgroup.eu>
- <153FD6B5CE4F97D9+ZuOYDQ-iHIIwJjbh@HX09040029.powercore.com.cn>
- <95ced963-b584-4ccf-ba34-8f2ba99172f4@csgroup.eu>
- <0332BAE1905768B6+ZuPsBvgv0nwmFAjW@HX09040029.powercore.com.cn>
- <854eef54-4779-4233-a958-0c98ae5fcb7e@csgroup.eu>
- <F81D1486B7B82141+ZuQp4YQkAA2cB9Rw@HX09040029.powercore.com.cn>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <F81D1486B7B82141+ZuQp4YQkAA2cB9Rw@HX09040029.powercore.com.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+The commit "5902da6d8a52" set expected_attach_type again with
+filed of bpf_program after libpf_prepare_prog_load, which makes
+expected_attach_type = 0 no sense when kenrel not support the
+attach_type feature, so fix it.
 
+Fixes: 5902da6d8a52 ("libbpf: Add uprobe multi link support to bpf_program__attach_usdt")
+Signed-off-by: Tao Chen <chen.dylane@gmail.com>
+---
+ tools/lib/bpf/libbpf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Le 13/09/2024 à 14:02, Luming Yu a écrit :
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 219facd0e66e..9035edf763a3 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -7343,7 +7343,7 @@ static int libbpf_prepare_prog_load(struct bpf_program *prog,
+ 
+ 	/* old kernels might not support specifying expected_attach_type */
+ 	if ((def & SEC_EXP_ATTACH_OPT) && !kernel_supports(prog->obj, FEAT_EXP_ATTACH_TYPE))
+-		opts->expected_attach_type = 0;
++		prog->expected_attach_type = 0;
+ 
+ 	if (def & SEC_SLEEPABLE)
+ 		opts->prog_flags |= BPF_F_SLEEPABLE;
+-- 
+2.25.1
 
->> ...
->> nothing happens after that.
-> reproduced with ppc64_defconfig
-> [    0.818972][    T1] Run /init as init process
-> [    5.851684][  T240] request_module: modprobe binfmt-4c46 cannot be processed, kmod busy with 50 threads for more than 5 seconds now
-> [    5.851742][  T240] kworker/u33:18 (240) used greatest stack depth: 13584 bytes left
-> [    5.860081][  T232] kworker/u33:16 (232) used greatest stack depth: 13072 bytes left
-> [    5.863145][  T210] kworker/u35:13 (210) used greatest stack depth: 12928 bytes left
-> [    5.865000][    T1] Failed to execute /init (error -8)
-> [    5.868897][    T1] Run /sbin/init as init process
-> [   10.891673][  T315] request_module: modprobe binfmt-4c46 cannot be processed, kmod busy with 50 threads for more than 5 seconds now
-> [   10.894036][    T1] Starting init: /sbin/init exists but couldn't execute it (error -8)
-> [   10.901455][    T1] Run /etc/init as init process
-> [   10.903154][    T1] Run /bin/init as init process
-> [   10.904747][    T1] Run /bin/sh as init process
-> [   15.931679][  T367] request_module: modprobe binfmt-4c46 cannot be processed, kmod busy with 50 threads for more than 5 seconds now
-> [   15.934689][    T1] Starting init: /bin/sh exists but couldn't execute it (error -8)
-
-That's something different, this is because you built a big-endian 
-kernel and you are trying to run a little-endian userspace.
-
-Does it work with ppc64le_defconfig ?
-
-On my side there is absolutely nothing happening after the last line, 
-the screen remains steady.
-
-
-Christophe
 
