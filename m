@@ -1,149 +1,120 @@
-Return-Path: <linux-kernel+bounces-328945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31464978B51
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 00:19:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 569F2978B54
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 00:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AF2B1F2377F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:19:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F42C284764
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC644170A11;
-	Fri, 13 Sep 2024 22:18:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCBF155735;
+	Fri, 13 Sep 2024 22:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1ZgurxCk"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ntrBb1f0"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06AF74A21
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 22:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C551494CE
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 22:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726265931; cv=none; b=Ri2Yt4dt1ZrB7N/8Hz+mjlgicHcCT5ZeuLkb56fwQnoO5krSn06WwbG1Hc6JSpZy1BbBNeICom2BIkEkuBTS1wY3Fnglt1pf5qXBMSqYuNJQiHTRhbKaXBW5LkmO2sb0Agnr9lnbtEKVk22SY+znqyp6llI2D/Imx+1nsSAc/ic=
+	t=1726266029; cv=none; b=EHk1RQkcNBKYhuUVIeeBmt/xt7FKH7TonW/Pd2xpc2aZ9JsfEiWUAMZ0qJ6yqJ4WH7sJcztaVdDyjKJn47tEWWoTkXDXFf0ysT6GmttpPNCsRsqkxN2AbMD1u2m3a2xDGoBCQSh53mI47Ek/gs3V7AoQZ92aOcvQeSS//QL9gGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726265931; c=relaxed/simple;
-	bh=LmaUTuFuTcc7yU1/rC/EbHxZ+OomwmkfIy/uLqa79o4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=O5pdYS86h8vCZrnMqxg51aSH7LLehJ/MA+bSoInozPmA/M1JwvSl3Ew+7jvFMfF7jhEm/vFRG1KZjyjRCZStLkfDxTcP+PJbXqDcR6aHO0PmZhOEetH50vwLZEeRWr7ZA7XPaTvkw+g25OY7vvaJ8K4YtleqPtXhHK01GqfvZDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1ZgurxCk; arc=none smtp.client-ip=209.85.214.202
+	s=arc-20240116; t=1726266029; c=relaxed/simple;
+	bh=4ReVohtII5cSTlqN3wK0UiuPDbS9FDQk1WOSWLM7E9c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lpnifljwXEVx0m/opLnA1SjUoIFDIEpSG1TjssU2OTSDvwbUbvlVjMGbugeXZtKl7nzVmsAonc0xF81R5g3OV53xAISq4G3q4SH4ffCsoQBDQqFmOefxtyEiSiKvWq30lXoQuV2OekbfRSl5yDjzuHjjUsEZtIRe3r9gzz2N9+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ntrBb1f0; arc=none smtp.client-ip=209.85.160.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-205425b7e27so14312695ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 15:18:49 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4582fa01090so94051cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 15:20:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726265929; x=1726870729; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+lg7W1reJVaCd4w6Hfmv7NNUvMMjgh2a3fstO+opB70=;
-        b=1ZgurxCkeoPpHBGL8+xiUO5YvtMgFqVmhM5rn+BqIk7BI15EDVWuW+kR6bPdm2GhLH
-         fMCxi+I655025wJPcv/3E/oTKJFi56B4WFA08R6UBNlEnS/FVrcAEMUjnm8gmTb5X3xC
-         8psaYX2W6s3l0a5ct9o/s6/C2ZwrCV3xAjW3y4V0TsS0te6o8kINLhfxZe6pVLYnggrs
-         YJY0wfpeGT0bJbwhiIRJdme0bPSgfihylJHyAoBsXVq3Nrw0MV865mg6SpzFCfGStXfL
-         mQpnGT1p2xhzpfWpITOfn0N0YbzZgGFLqM1L7Atq6bvPPxE9NqW/xl5Fw79DzB45Bu89
-         DRAw==
+        d=google.com; s=20230601; t=1726266027; x=1726870827; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4ReVohtII5cSTlqN3wK0UiuPDbS9FDQk1WOSWLM7E9c=;
+        b=ntrBb1f0cbP22KFb+Rg20gIThFiP2ZI1+5mGlkt3myhcUIg/4pjdi+hQy7/CgKgrLn
+         ws6LkoGyoDK8sVUkhVrloM9cARVJzvhP26KouOSo2JZC+3u2FDJIZ9nAnNeIqd9PiXaM
+         rxM7zB07CsEO05I6Ri/dX4+Fg8J6ltnyMsFmlbtSUVV4Cgg6WfvXudTxBCdiRLlfDsuz
+         GPE40cG7cfE2/3CsHWsFT6mi6VISNj0hpHK8WNRSQMtsEoJJz9zVl97Ut7ImoHGljqcK
+         N7Pwgv22o0LwKCawht9ds005H9A4zcgsinTxTNcXM9xIuGEUjDkvHEQ6Vb6JGzswH6ru
+         j7kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726265929; x=1726870729;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=+lg7W1reJVaCd4w6Hfmv7NNUvMMjgh2a3fstO+opB70=;
-        b=EAvZDNfn5l8079vrcLBdr/7ujH14HRBobbCdgXveBrO/0W2wwqeDu6AWQ913Gy0NT6
-         jsFdph/YbUsZCcDy+SKovIf6J1Tcfrz3VTKv6I+ebYifaSgQAHRPQs1BG9AAANjnEtAH
-         q6RQoPKY3GWVp57CC845T8whX2rCa27uHX35Eqa8/KcFs+pY6mpqnK8lutMcm5Z1KJX0
-         EE1OT5l/zBsmyKJrQaaAlIJJXbWGSmdAOF59tkw7pWoC59Ei1vHK3KEZj+uC0NIxwkAc
-         4Hl+YrNEYHuQgy99OTRmRT4PG+APsGBulRkxpzEtZD4/LXnOU6dTbRKiuuXbgUQ8Gb44
-         se+g==
-X-Forwarded-Encrypted: i=1; AJvYcCXoaceEzAQebucVeL2JJOQWRkrdnk3FhaEVi/LaKy/Ib3C55By3R9CkNmqe2NqgmNku8ZxAlPuXwAfiO3s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzucEjUapP/cwTj2jKnxzUpJL/j22Tkqs3Eh3r4rvcPmBBLB5Yz
-	XDCszHzoHlvG/85DmF4Y6isvn7He9kLhvTCBVb2fMrz1l26XThfVa/3zWCvXXY+ebHZCPcXL71/
-	7tQ==
-X-Google-Smtp-Source: AGHT+IH9nbs5qdnvPw/8oHJxe8p1ZkwaRp91F5WWmtNygJRvhBnyirrYyU1Y03XGMM+hBPA5K0pbtdebSjk=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:ecd0:b0:206:b8b7:859 with SMTP id
- d9443c01a7336-2078296043amr1970935ad.7.1726265929074; Fri, 13 Sep 2024
- 15:18:49 -0700 (PDT)
-Date: Fri, 13 Sep 2024 15:18:47 -0700
-In-Reply-To: <4bed8c0579298fbb0767c04b75cc9c3be0e925ad.camel@intel.com>
+        d=1e100.net; s=20230601; t=1726266027; x=1726870827;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4ReVohtII5cSTlqN3wK0UiuPDbS9FDQk1WOSWLM7E9c=;
+        b=riXJ1InZfLslgk1uNcT4c8oIIYWrsatp0uIoDf6GXOknAfFuNDb0+2UsCz1EI4HlIU
+         /u4Bdps0VIvyz4nxwyZj939mhHky1lDYuUHn5z+91KUCla0slmnXfFmTf2+LcDgNktvv
+         TxFwkmtMldGsNK/H7rLT1SJYUgGP8wlvcNK469XQcS6l59b2FiZs+Iy1IbrZ7+KmqaXH
+         yGFhEyOTwgbFLOwpbm40/IeSrPSlfCGQDwPCkIlqqM9+FytyU0Xjvr9Lvu3BGtqmhu7/
+         hbaHIO0aV0Kpp4b5cDUzUwf7g+qXkL+5Dqvxf3JGnjGwGYROFCjOZVev2obvxn4QSY45
+         54sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWbWeN8QBCwSGqKVLSGhRDMCNlGaNPzS3mvNvJkqoBRM6VocyWQxp4Pw+bg0kaoRsJz4pzlSlCCulMy0JQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzj3kuRAcl+LtNTaHOsvAdcPa3W87ZZWGQgjfwwvf6mkiqtMu7M
+	OHb7woE6PjEA6cyEVm2uZQzIB72PVBTOpJT8uOUvPoD6C99BhO5C2BP69YVShgYjjor6JNlr0fH
+	+Ox5+td7ndCd7ToI9sKCY1P0LCcMSJ9vVxFSl
+X-Google-Smtp-Source: AGHT+IE0fYJ1AUzgoxfB7Sh6DszZg8+4BX/1w2yCAl0s1N4rHnq7fstPs0A7Ok4hht+CAAz8/BHHwxzYdIYuFld+XbQ=
+X-Received: by 2002:ac8:5845:0:b0:453:5f2f:d5d2 with SMTP id
+ d75a77b69052e-45864403792mr5623691cf.1.1726266026235; Fri, 13 Sep 2024
+ 15:20:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <Zt9kmVe1nkjVjoEg@google.com> <1bbe3a78-8746-4db9-a96c-9dc5f1190f16@redhat.com>
- <ZuBQYvY6Ib4ZYBgx@google.com> <CABgObfayLGyWKERXkU+0gjeUg=Sp3r7GEQU=+13sUMpo36weWg@mail.gmail.com>
- <ZuBsTlbrlD6NHyv1@google.com> <655170f6a09ad892200cd033efe5498a26504fec.camel@intel.com>
- <ZuCE_KtmXNi0qePb@google.com> <ZuP5eNXFCljzRgWo@yzhao56-desk.sh.intel.com>
- <ZuR09EqzU1WbQYGd@google.com> <4bed8c0579298fbb0767c04b75cc9c3be0e925ad.camel@intel.com>
-Message-ID: <ZuS6R2kuGHQQqkEw@google.com>
-Subject: Re: [PATCH 09/21] KVM: TDX: Retry seamcall when TDX_OPERAND_BUSY with
- operand SEPT
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: Yan Y Zhao <yan.y.zhao@intel.com>, Yuan Yao <yuan.yao@intel.com>, 
-	Kai Huang <kai.huang@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	"dmatlack@google.com" <dmatlack@google.com>, "nik.borisov@suse.com" <nik.borisov@suse.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20240913213351.3537411-1-almasrymina@google.com> <ZuS0wKBUTSWvD_FZ@casper.infradead.org>
+In-Reply-To: <ZuS0wKBUTSWvD_FZ@casper.infradead.org>
+From: Mina Almasry <almasrymina@google.com>
+Date: Fri, 13 Sep 2024 15:20:13 -0700
+Message-ID: <CAHS8izMwQDQ9-JNBpvVeN+yFMzmG+UB-hJWVtz_-ty+NHUdyGA@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] page_pool: fix build on powerpc with GCC 14
+To: Matthew Wilcox <willy@infradead.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Linux Next Mailing List <linux-next@vger.kernel.org>, 
+	Arnd Bergmann <arnd@arndb.de>, 
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 13, 2024, Rick P Edgecombe wrote:
-> On Fri, 2024-09-13 at 10:23 -0700, Sean Christopherson wrote:
-> > > TL;DR:
-> > > - tdh_mem_track() can contend with tdh_vp_enter().
-> > > - tdh_vp_enter() contends with tdh_mem*() when 0-stepping is suspecte=
-d.
-> >=20
-> > The zero-step logic seems to be the most problematic.=C2=A0 E.g. if KVM=
- is trying
-> > to
+On Fri, Sep 13, 2024 at 2:55=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> On Fri, Sep 13, 2024 at 09:33:51PM +0000, Mina Almasry wrote:
+> > Building net-next with powerpc with GCC 14 compiler results in this
+> > build error:
+> >
+> > /home/sfr/next/tmp/ccuSzwiR.s: Assembler messages:
+> > /home/sfr/next/tmp/ccuSzwiR.s:2579: Error: operand out of domain (39 is
+> > not a multiple of 4)
+> > make[5]: *** [/home/sfr/next/next/scripts/Makefile.build:229:
+> > net/core/page_pool.o] Error 1
+> >
+> > Root caused in this thread:
+> > https://lore.kernel.org/netdev/913e2fbd-d318-4c9b-aed2-4d333a1d5cf0@cs-=
+soprasteria.com/
+>
+> It would be better to include a direct link to the GCC bugzilla.
+>
 
-I am getting a feeling of deja vu.  Please fix your mail client to not gene=
-rate
-newlines in the middle of quoted text.
+I have not reported the issue to GCC yet. From the build break thread
+it seemed a fix was urgent, so I posted the fix and was planning to
+report the issue after. If not, no problem, I'll report the issue and
+repost the fix with a GCC bugzilla link, waiting 24hr before reposts
+this time. I just need to go through the steps in
+https://gcc.gnu.org/bugs/, shouldn't be an issue.
 
-> > install a page on behalf of two vCPUs, and KVM resumes the guest if it
-> > encounters a FROZEN_SPTE when building the non-leaf SPTEs, then one of =
-the
-> > vCPUs could trigger the zero-step mitigation if the vCPU that "wins" an=
-d
-> > gets delayed for whatever reason.
->=20
-> Can you explain more about what the concern is here? That the zero-step
-> mitigation activation will be a drag on the TD because of extra contentio=
-n with
-> the TDH.MEM calls?
->=20
-> >=20
-> > Since FROZEN_SPTE is essentially bit-spinlock with a reaaaaaly slow
-> > slow-path, what if instead of resuming the guest if a page fault hits
-> > FROZEN_SPTE, KVM retries the fault "locally", i.e. _without_ redoing
-> > tdh_vp_enter() to see if the vCPU still hits the fault?
->=20
-> It seems like an optimization. To me, I would normally want to know how m=
-uch it
-> helped before adding it. But if you think it's an obvious win I'll defer.
-
-I'm not worried about any performance hit with zero-step, I'm worried about=
- KVM
-not being able to differentiate between a KVM bug and guest interference.  =
-The
-goal with a local retry is to make it so that KVM _never_ triggers zero-ste=
-p,
-unless there is a bug somewhere.  At that point, if zero-step fires, KVM ca=
-n
-report the error to userspace instead of trying to suppress guest activity,=
- and
-potentially from other KVM tasks too.
-
-It might even be simpler overall too.  E.g. report status up the call chain=
- and
-let the top-level TDX S-EPT handler to do its thing, versus adding various =
-flags
-and control knobs to ensure a vCPU can make forward progress.
+--=20
+Thanks,
+Mina
 
