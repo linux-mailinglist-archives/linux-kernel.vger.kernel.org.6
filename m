@@ -1,160 +1,87 @@
-Return-Path: <linux-kernel+bounces-328921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76408978AC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:44:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4474978ACA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:45:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D2491F20D6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:44:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 633F0B24BB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFAA61714C3;
-	Fri, 13 Sep 2024 21:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D17D17C9B2;
+	Fri, 13 Sep 2024 21:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z5QNCBry"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hDGjjDCo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B065A7F460;
-	Fri, 13 Sep 2024 21:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47D67F460;
+	Fri, 13 Sep 2024 21:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726263852; cv=none; b=WD9FWz+WsQNXZuF2vjUVvr1g/e7JwZozFYnRNPIsjZtxsKHECRU2Sf52FIXa7hYEA7y/CZo+MjsPxWjLMsQLkiVZqqPsSfFjRUe0mXng43ZG6uTAWauR/yQfDOTrU3qO9wM3tLdvoe6JZO0vIhZ6+8YBMekc+DxLszmaNr8py7E=
+	t=1726263866; cv=none; b=QVrYcPMIssYLVGlfqGKz9oWsuZXbkC996ZQGvDqadIPDRmLIukEYP5LoQHgzMisIDXrG0OoGE03Fty8bzW3FQuOEm/hj6pSzczWQX+80c2hIRSafzKh/amEKQxlQhmEmO98s8wULILyH2ALWocPkE6cgMuA1muIw+thg9FXNgQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726263852; c=relaxed/simple;
-	bh=hNyvoxa3anpKEWE9B+/hF81CDNXxoDAwvMwv79zNG+A=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=fjnB+KMv/DdgYxF3rOswC8TFTud4FG+1yz4CWlF01z3WsrBHTK+LVR8hDGmPq7fmj99vue9pteu1nyweB/IR7lmzhqhDrislLEXSqN419ZtE8iKgq8In0sZc/Ms2ZWLZimZ0COV+QzOCwVdegSIoDYAw1L3/tytD01zT2Iy0qoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z5QNCBry; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7a9ad15d11bso210790685a.0;
-        Fri, 13 Sep 2024 14:44:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726263848; x=1726868648; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LMLeKw66M9m1AhtQ5lqJRpIeGoTSiq6qH4fFplYAkTQ=;
-        b=Z5QNCBrym40GVQ2/sD0LiKpPRtoPZMl+xXc5OIN25oeCHVv2fcCbpa2m1h+ofWCFNU
-         tT9hOe4nWg/1Fe4pMfWSVgLiwHJumkP6C2STEkZO3lDDAOgA8yOEmNnZyVrlQ0H7n8XH
-         AIXYm2WgfOObtPaWJ3c1nSXwwpXB7dGfxjzgychdNjRf1H9+aqa3xoGJv5FIbMQHlmXP
-         17vgQ+BhEVKbL8MseanRyld2E4Cc9diojMdgePf0knoj5f1iBNeSLW/XwUQH9LjpkIfD
-         9hAJVDwfsM46DhkH/vZO6BThSoB9eyVo7KqIEIGxebs4aghcAFNvhenBOxRvPKfJZ0/m
-         K+Jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726263848; x=1726868648;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=LMLeKw66M9m1AhtQ5lqJRpIeGoTSiq6qH4fFplYAkTQ=;
-        b=O+fWO3ikQXkPiM83wyr1MEQawMzJpbwdU2cJ2tvNHiFAncQ9L51t3mudFtvMFbJYta
-         har+zIKJSg3VHI3RFvJKGry07iNT72Eeoi4StMBDaadOhMKXAsXGxVyiErWUIues54Vz
-         5w4Jn4nqZaJtpd3CvvNjQHtz/oCo9UAHTy1UkXOVaXTxQivGlcQXFEVhOzNEYpINP99B
-         AspjlE2IQxdXhq4RzKQcPEn2j6l4CtFKZhxrdxEXyFE0BikISelTDNnNIgwStRVHhTcU
-         2MX6RFcp1SRJzTax7ignGPMLNJpjkHlBJv05x6LGo9gkEo8aJIwAqssV+sT9Xfs19XMI
-         ZU/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUj0njyLbSOjnDcsGodrRc5/5y8SYQlG4G8M19y1sATifSAHOhltpVMLDIEEictlsNofQRbc13AE1ryHVBO@vger.kernel.org, AJvYcCW/pYLZoGemHIUPorcVub4lQeArEB9BZadgIi4loMPIZn5St89J7V0v1G9cq917VMo6FX5AazyvjTM=@vger.kernel.org, AJvYcCWDX/jdZykVCbZFssezHIAYnZ/9+iuClWjtETLfiYHuQFxltkHqXhaUvqe9MaVUbX7EIuTJNo8E@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrHRtduBhDwvhzInT+2IUGsyz1OF8HE7qW+yyL5bUy/pJkGCYT
-	5q9x2R9aAFPXnyHtAxh/Tv1etBJ1zWwsxYmYH4kPd2Ii6r2USU+H
-X-Google-Smtp-Source: AGHT+IFebz0zvDKDAhsGeRE4WEblmqKZL3XP0bUChu0h1cXPwGrBz4bmSFyW7vRxCT7fsZElpXQG0Q==
-X-Received: by 2002:a05:620a:1a27:b0:7a9:afef:33bd with SMTP id af79cd13be357-7a9e5fba0e4mr1449546185a.58.1726263848065;
-        Fri, 13 Sep 2024 14:44:08 -0700 (PDT)
-Received: from localhost (23.67.48.34.bc.googleusercontent.com. [34.48.67.23])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7ab3eb5792fsm5238385a.75.2024.09.13.14.44.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 14:44:07 -0700 (PDT)
-Date: Fri, 13 Sep 2024 17:44:07 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Joe Damato <jdamato@fastly.com>, 
- netdev@vger.kernel.org
-Cc: mkarsten@uwaterloo.ca, 
- kuba@kernel.org, 
- skhawaja@google.com, 
- sdf@fomichev.me, 
- bjorn@rivosinc.com, 
- amritha.nambiar@intel.com, 
- sridhar.samudrala@intel.com, 
- "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, 
- Paolo Abeni <pabeni@redhat.com>, 
- Jonathan Corbet <corbet@lwn.net>, 
- Jiri Pirko <jiri@resnulli.us>, 
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
- Lorenzo Bianconi <lorenzo@kernel.org>, 
- David Ahern <dsahern@kernel.org>, 
- Johannes Berg <johannes.berg@intel.com>, 
- "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, 
- open list <linux-kernel@vger.kernel.org>
-Message-ID: <66e4b22743592_19ec3c294db@willemb.c.googlers.com.notmuch>
-In-Reply-To: <ZuMC2fYPPtWggB2w@LQ3V64L9R2.homenet.telecomitalia.it>
-References: <20240912100738.16567-1-jdamato@fastly.com>
- <20240912100738.16567-6-jdamato@fastly.com>
- <ZuMC2fYPPtWggB2w@LQ3V64L9R2.homenet.telecomitalia.it>
-Subject: Re: [RFC net-next v3 5/9] net: napi: Add napi_config
+	s=arc-20240116; t=1726263866; c=relaxed/simple;
+	bh=0qZpgua4L0xrtWkUfIR6unEX4LXRvx7Pt6VezLDtDeQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bBIWe+Gze2IwRYU7FvUXPEo0io5CG++8sRjhnrYDWjZ1zUduBPl0kAbEMwU+0kfiekBUlZGK5N4MWbmuPNEKoTMYeLlebty/2E06XmEi779idaaYoZx3IQa33XxoTJfBgeYPceJDGKxviExsWJ4nBAByBGPlNFk4sWTHRNBEnw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hDGjjDCo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFAA0C4CEC0;
+	Fri, 13 Sep 2024 21:44:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726263866;
+	bh=0qZpgua4L0xrtWkUfIR6unEX4LXRvx7Pt6VezLDtDeQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hDGjjDCoe3ljU2LTBneE7fwJ+vGP+DhxIpnFjUD6TVcLlrARRVYetn/38/12r8k64
+	 l0/KS/AQYc0gs8N1L0vRva4anmO1FGgqtRbpOf4zX3Eg4kxcAhvKCFNJF6dXA7/kdw
+	 lTALwyMBZew240jI8W2g9eGorAVDl249MNWoOg2U6Ti911YESKSloazxVWz39wRMN5
+	 tDIRup2hcWmepqGHVemmC4cA1bgI9Rvr/6i+w3Q5wyDEztTi7T+y0Wsvh9uccWPq4b
+	 2lvgcvZlHzcXur/X127aDE6DyqXrTRSGlS6dRMXoAkysZAenE16a+jTScdQUxyBjPY
+	 8CbCUpMXJgERw==
+Date: Fri, 13 Sep 2024 23:44:23 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@amd.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>,
+	Cheng-Jui Wang <Cheng-Jui.Wang@mediatek.com>
+Subject: Re: [PATCH 0/3] rcu/nocb updates
+Message-ID: <ZuSyN_1jKUrVAprO@pavilion.home>
+References: <20240913214205.12359-1-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240913214205.12359-1-frederic@kernel.org>
 
-Joe Damato wrote:
-> Several comments on different things below for this patch that I just noticed.
+Le Fri, Sep 13, 2024 at 11:42:02PM +0200, Frederic Weisbecker a écrit :
+> Hi,
 > 
-> On Thu, Sep 12, 2024 at 10:07:13AM +0000, Joe Damato wrote:
-> > Add a persistent NAPI config area for NAPI configuration to the core.
-> > Drivers opt-in to setting the storage for a NAPI by passing an index
-> > when calling netif_napi_add_storage.
-> > 
-> > napi_config is allocated in alloc_netdev_mqs, freed in free_netdev
-> > (after the NAPIs are deleted), and set to 0 when napi_enable is called.
+> This series include:
 > 
-> Forgot to re-read all the commit messages. I will do that for rfcv4
-> and make sure they are all correct; this message is not correct.
->  
-> > Drivers which implement call netif_napi_add_storage will have persistent
-> > NAPI IDs.
-> > 
-> > Signed-off-by: Joe Damato <jdamato@fastly.com>
+> * Fix another RT wake up while CPU is offline (reported by Cheng-Jui Wang)
+> * Cleanup rcuo wakeup
+> * Remove another superfluous barrier
+> 
+> Thanks.
+> 
+> Frederic Weisbecker (3):
+>   rcu/nocb: Fix RT throttling hrtimer armed from offline CPU
+>   rcu/nocb: Conditionally wake up rcuo if not already waiting on GP
+>   rcu/nocb: Remove superfluous memory barrier after bypass enqueue
+> 
+>  kernel/rcu/tree_nocb.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-> > @@ -11062,6 +11110,9 @@ struct net_device *alloc_netdev_mqs(int sizeof_priv, const char *name,
-> >  		return NULL;
-> >  	}
-> >  
-> > +	WARN_ON_ONCE(txqs != rxqs);
-> 
-> This warning triggers for me on boot every time with mlx5 NICs.
-> 
-> The code in mlx5 seems to get the rxq and txq maximums in:
->   drivers/net/ethernet/mellanox/mlx5/core/en_main.c
->     mlx5e_create_netdev
-> 
->   which does:
-> 
->     txqs = mlx5e_get_max_num_txqs(mdev, profile);
->     rxqs = mlx5e_get_max_num_rxqs(mdev, profile);
-> 
->     netdev = alloc_etherdev_mqs(sizeof(struct mlx5e_priv), txqs, rxqs);
-> 
-> In my case for my device, txqs: 760, rxqs: 63.
-> 
-> I would guess that this warning will trigger everytime for mlx5 NICs
-> and would be quite annoying.
-> 
-> We may just want to replace the allocation logic to allocate
-> txqs+rxqs, remove the WARN_ON_ONCE, and be OK with some wasted
-> space?
-
-I was about to say that txqs == rxqs is not necessary.
-
-The number of napi config structs you want depends on whether the
-driver configures separate IRQs for Tx and Rx or not.
-
-Allocating the max of the two is perhaps sufficient for now.
+Please discard this series. It has been applied already. Scripting error...
 
