@@ -1,73 +1,83 @@
-Return-Path: <linux-kernel+bounces-328130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41678977F3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:07:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3202C977F3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D782B20F76
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:07:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8D73280E06
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:07:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83C81D88AA;
-	Fri, 13 Sep 2024 12:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23F51D88D0;
+	Fri, 13 Sep 2024 12:07:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="tYyhCVMf"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Fr3Z+T0S";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="Fr3Z+T0S"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D41FB1C3304;
-	Fri, 13 Sep 2024 12:07:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79EC11C175F;
+	Fri, 13 Sep 2024 12:07:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726229265; cv=none; b=YvBsrBT14OC33/4uQhnl4OnGrNDzddmBEdhhxAXVtE2s0F8Vz9WHp/WlDOj/A6ahMkKRaV+Azhda2sHpMYJjLRfRgS8hHoqaCL8grKVMHmxFxcyBZan0O+yW4lBTgyuKg/L9etZ6wYhateiBzH/ZP43Lt7VZ5kt/qfX8X3IHaFE=
+	t=1726229244; cv=none; b=B+bjDGBwcQ973RXfZ/J0JNd1wdpUyYrH446l1L28tAZQnbW/tSrNOP7n7SqdjPh5+7VtJcNyxNhmpKN4do6G8D+TlNAHnej9tfZg1Qo0qovMrkHqQJq8dPSK757ovxk4Wq02cZQlbmnoEZbqme0gga6p5LcTr4BPcZoQvnwUQGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726229265; c=relaxed/simple;
-	bh=V6u2eHa/w9HQk3WWvCdMr/y/+BoQMgcZ+Nl2/14uCeA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rkiuvV89FRDpVAWNBHKA6wRnHCCiI5nizG024qPtQfDFxZUC45GlKyVpLoGs3P2QWOhnJt0A2l6HXST/uyQHlbrBdFblUa8JpXluy+GjC5Agsr02TA15DXbONpObruiC/gynE3utaT4jwr44RyTF6PdXF/TMDrOdHUXBBpRdjXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=tYyhCVMf; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1726229244; c=relaxed/simple;
+	bh=OGYZmlVkcDrP5LYRua4zarLnQVw/13XyLwQqI9Lg2hE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=liXTfD3aVyyBz79mSDnkrVGAYJKXfyQIIkj7AzXc6Wdo7KFyJmRSLqOTErfPWtcRFfYCF538X1BcI/qLIXUUJy246dposcRSKHhPolUqbx2ZExtecpURzBHhwX1p+bQsAo76xa60JsjuQ+eKBh5rmbwBLe3tnW4poAsHI0mJy+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=Fr3Z+T0S; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=Fr3Z+T0S; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1726229263; x=1757765263;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=V6u2eHa/w9HQk3WWvCdMr/y/+BoQMgcZ+Nl2/14uCeA=;
-  b=tYyhCVMfKYu5YpNt7kKscM4SF9qUYsGlKlEljVhDTCfXTenW9RWy4xkz
-   0bdVTxk3XJqEYk+VFQoW2Al/wgj5W53gAlDirIByD5/M1nt16dPsjwtZe
-   sj6j/OAa/dgXhGhDuUDvPihy9nrloymCfFCfxpY5x9bW4NqMshBFFRyad
-   2CpX/C3LVh4IIJjW0CP6TwISJoCu1mVKtr9LJIcq9ecdQN/+lk6xLoK0E
-   FTLean241LXKmDFhKiWCbz3BuUDrbG0LoDL01HISmBs18tIpYuXKY540L
-   efNPxdWTYdhc1xT4BShXL4SQKbSzAXKxk+pk7EtNjtrIq1pxzBXlFMLMT
-   Q==;
-X-CSE-ConnectionGUID: ap9aDqYYRZ2h/RrZKGCbqA==
-X-CSE-MsgGUID: FyIGOBtkRr+rtkG0jt9EvA==
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="31749888"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 Sep 2024 05:07:36 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 13 Sep 2024 05:07:25 -0700
-Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Fri, 13 Sep 2024 05:07:21 -0700
-From: Andrei Simion <andrei.simion@microchip.com>
-To: <claudiu.beznea@tuxon.dev>, <lgirdwood@gmail.com>, <broonie@kernel.org>,
-	<perex@perex.cz>, <tiwai@suse.com>, <nicolas.ferre@microchip.com>,
-	<alexandre.belloni@bootlin.com>
-CC: <alsa-devel@alsa-project.org>, <linux-sound@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>, Andrei Simion
-	<andrei.simion@microchip.com>
-Subject: [PATCH v2] ASoC: atmel: mchp-pdmc: Retain Non-Runtime Controls
-Date: Fri, 13 Sep 2024 15:06:22 +0300
-Message-ID: <20240913120621.79088-1-andrei.simion@microchip.com>
-X-Mailer: git-send-email 2.34.1
+	d=hansenpartnership.com; s=20151216; t=1726229241;
+	bh=OGYZmlVkcDrP5LYRua4zarLnQVw/13XyLwQqI9Lg2hE=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=Fr3Z+T0SJ/zHOYu780Y2cGaCP2Pd3yxY4nlj1wnXKps/z74wNheT50NRi/dF5moIH
+	 MMf+pPFTQVQ6jj9SnEPIOyztnNfByLtn9sZiK2PAe2Hp9UNAYA3+HgDLT1IrXd2PnH
+	 Qjx97sRbq0vR/nvQwGCfalI4Kx2D2S0gMsrYqCoE=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 6E3361287930;
+	Fri, 13 Sep 2024 08:07:21 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id NSlQqNqgMfc8; Fri, 13 Sep 2024 08:07:21 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1726229241;
+	bh=OGYZmlVkcDrP5LYRua4zarLnQVw/13XyLwQqI9Lg2hE=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=Fr3Z+T0SJ/zHOYu780Y2cGaCP2Pd3yxY4nlj1wnXKps/z74wNheT50NRi/dF5moIH
+	 MMf+pPFTQVQ6jj9SnEPIOyztnNfByLtn9sZiK2PAe2Hp9UNAYA3+HgDLT1IrXd2PnH
+	 Qjx97sRbq0vR/nvQwGCfalI4Kx2D2S0gMsrYqCoE=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 1F5AC128791E;
+	Fri, 13 Sep 2024 08:07:20 -0400 (EDT)
+Message-ID: <5c525fe8f33fffebc0d275086cc7484e309dfae0.camel@HansenPartnership.com>
+Subject: Re: [RFC] efi/tpm: add efi.tpm_log as a reserved region in
+ 820_table_firmware
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Breno Leitao <leitao@debian.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Usama Arif <usamaarif642@gmail.com>, 
+ linux-efi@vger.kernel.org, kexec@lists.infradead.org,
+ ebiederm@xmission.com,  bhe@redhat.com, vgoyal@redhat.com,
+ tglx@linutronix.de, dave.hansen@linux.intel.com,  x86@kernel.org,
+ linux-kernel@vger.kernel.org, rmikey@meta.com, gourry@gourry.net
+Date: Fri, 13 Sep 2024 08:07:18 -0400
+In-Reply-To: <20240913-careful-maroon-crab-8a0541@leitao>
+References: <20240911104109.1831501-1-usamaarif642@gmail.com>
+	 <CAMj1kXFVyQEwBTf2bG8yBXUktM16dzrcPH-Phz_toAsCK-NfMA@mail.gmail.com>
+	 <2542182d-aa79-4705-91b6-fa593bacffa6@gmail.com>
+	 <CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
+	 <20240912-wealthy-gabby-tamarin-aaba3c@leitao>
+	 <d9df5012cd3306afa2eddd5187e643a3bbdfd866.camel@HansenPartnership.com>
+	 <20240913-careful-maroon-crab-8a0541@leitao>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,140 +85,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+On Fri, 2024-09-13 at 04:57 -0700, Breno Leitao wrote:
+> Hello James,
+> 
+> On Thu, Sep 12, 2024 at 12:22:01PM -0400, James Bottomley wrote:
+> > On Thu, 2024-09-12 at 06:03 -0700, Breno Leitao wrote:
+> > > Hello Ard,
+> > > 
+> > > On Thu, Sep 12, 2024 at 12:51:57PM +0200, Ard Biesheuvel wrote:
+> > > > I don't see how this could be an EFI bug, given that it does
+> > > > not deal with E820 tables at all.
+> > > 
+> > > I want to back up a little bit and make sure I am following the
+> > > discussion.
+> > > 
+> > > From what I understand from previous discussion, we have an EFI
+> > > bug as the root cause of this issue.
+> > > 
+> > > This happens because the EFI does NOT mark the EFI TPM event log
+> > > memory region as reserved (EFI_RESERVED_TYPE). Not having an
+> > > entry for the event table memory in EFI memory mapped, then
+> > > libstub will ignore it completely (the TPM event log memory
+> > > range) and not populate e820 table with it.
+> > 
+> > Wait, that's not correct.  The TPM log is in memory that doesn't
+> > survive ExitBootServices (by design in case the OS doesn't care
+> > about it).  So the EFI stub actually copies it over to a new
+> > configuration table that is in reserved memory before it calls
+> > ExitBootServices.  This new copy should be in kernel reserved
+> > memory regardless of its e820 map status.
+> 
+> First of all, thanks for clarifying some points here.
+> 
+> How should the TPM log table be passed to the next kernel when
+> kexecing() since it didn't surive ExitBootServices?
 
-Avoid removing these controls, as doing so can cause issues if the stream
-is initiated from another control. Ensure these controls remain intact when
-the stream is started or finished. Instead of removing them, return an
--EBUSY error code to indicate that the controller is busy, especially when
-the audio filter and the SINC filter are in use.
+I've no idea.  I'm assuming you don't elaborately reconstruct the EFI
+boot services, so you can't enter the EFI boot stub before
+ExitBootServices is called?  So I'd guess you want to preserve the EFI
+table that copied the TPM data in to kernel memory.
 
-[andrei.simion@microchip.com: Reword the commit title and the commit
-message. Replace spinlock and busy variable with atomic_t busy_stream.]
+James
 
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
----
-v1 -> v2:
-- drop spinlock and u8 busy:1;
-- use atomic_t variable busy_stream
-- use atomic_read, atomic_set
----
- sound/soc/atmel/mchp-pdmc.c | 57 ++++++++++---------------------------
- 1 file changed, 15 insertions(+), 42 deletions(-)
-
-diff --git a/sound/soc/atmel/mchp-pdmc.c b/sound/soc/atmel/mchp-pdmc.c
-index d97d153ee375..939cd44ebc8a 100644
---- a/sound/soc/atmel/mchp-pdmc.c
-+++ b/sound/soc/atmel/mchp-pdmc.c
-@@ -124,6 +124,7 @@ struct mchp_pdmc {
- 	int mic_no;
- 	int sinc_order;
- 	bool audio_filter_en;
-+	atomic_t busy_stream;
- };
- 
- static const char *const mchp_pdmc_sinc_filter_order_text[] = {
-@@ -167,6 +168,10 @@ static int mchp_pdmc_sinc_order_put(struct snd_kcontrol *kcontrol,
- 		return -EINVAL;
- 
- 	val = snd_soc_enum_item_to_val(e, item[0]) << e->shift_l;
-+
-+	if (atomic_read(&dd->busy_stream))
-+		return -EBUSY;
-+
- 	if (val == dd->sinc_order)
- 		return 0;
- 
-@@ -193,6 +198,9 @@ static int mchp_pdmc_af_put(struct snd_kcontrol *kcontrol,
- 	struct mchp_pdmc *dd = snd_soc_component_get_drvdata(component);
- 	bool af = uvalue->value.integer.value[0] ? true : false;
- 
-+	if (atomic_read(&dd->busy_stream))
-+		return -EBUSY;
-+
- 	if (dd->audio_filter_en == af)
- 		return 0;
- 
-@@ -379,52 +387,10 @@ static const struct snd_kcontrol_new mchp_pdmc_snd_controls[] = {
- 	},
- };
- 
--static int mchp_pdmc_close(struct snd_soc_component *component,
--			   struct snd_pcm_substream *substream)
--{
--	return snd_soc_add_component_controls(component, mchp_pdmc_snd_controls,
--					      ARRAY_SIZE(mchp_pdmc_snd_controls));
--}
--
--static int mchp_pdmc_open(struct snd_soc_component *component,
--			  struct snd_pcm_substream *substream)
--{
--	int i;
--
--	/* remove controls that can't be changed at runtime */
--	for (i = 0; i < ARRAY_SIZE(mchp_pdmc_snd_controls); i++) {
--		const struct snd_kcontrol_new *control = &mchp_pdmc_snd_controls[i];
--		struct snd_ctl_elem_id id;
--		int err;
--
--		if (component->name_prefix)
--			snprintf(id.name, sizeof(id.name), "%s %s", component->name_prefix,
--				 control->name);
--		else
--			strscpy(id.name, control->name, sizeof(id.name));
--
--		id.numid = 0;
--		id.iface = control->iface;
--		id.device = control->device;
--		id.subdevice = control->subdevice;
--		id.index = control->index;
--		err = snd_ctl_remove_id(component->card->snd_card, &id);
--		if (err < 0)
--			dev_err(component->dev, "%d: Failed to remove %s\n", err,
--				control->name);
--	}
--
--	return 0;
--}
--
- static const struct snd_soc_component_driver mchp_pdmc_dai_component = {
- 	.name = "mchp-pdmc",
- 	.controls = mchp_pdmc_snd_controls,
- 	.num_controls = ARRAY_SIZE(mchp_pdmc_snd_controls),
--	.open = &mchp_pdmc_open,
--	.close = &mchp_pdmc_close,
--	.legacy_dai_naming = 1,
--	.trigger_start = SND_SOC_TRIGGER_ORDER_LDC,
- };
- 
- static const unsigned int mchp_pdmc_1mic[] = {1};
-@@ -587,6 +553,11 @@ static int mchp_pdmc_hw_params(struct snd_pcm_substream *substream,
- 			cfgr_val |= MCHP_PDMC_CFGR_BSSEL(i);
- 	}
- 
-+	/*
-+	 * from these point forward, we consider the controller busy, so the
-+	 * audio filter and SINC order can't be changed
-+	 */
-+	atomic_set(&dd->busy_stream, 1);
- 	for (osr_start = dd->audio_filter_en ? 64 : 8;
- 	     osr_start <= 256 && best_diff_rate; osr_start *= 2) {
- 		long round_rate;
-@@ -1143,6 +1114,8 @@ static void mchp_pdmc_remove(struct platform_device *pdev)
- {
- 	struct mchp_pdmc *dd = platform_get_drvdata(pdev);
- 
-+	atomic_set(&dd->busy_stream, 0);
-+
- 	if (!pm_runtime_status_suspended(dd->dev))
- 		mchp_pdmc_runtime_suspend(dd->dev);
- 
-
-base-commit: 5acd9952f95fb4b7da6d09a3be39195a80845eb6
--- 
-2.34.1
 
 
