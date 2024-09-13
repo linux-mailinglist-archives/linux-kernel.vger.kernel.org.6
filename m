@@ -1,142 +1,152 @@
-Return-Path: <linux-kernel+bounces-328801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E83997890F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:40:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E250978910
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:42:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D87161C2249A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:40:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DEBD1F2361B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DEAE149C52;
-	Fri, 13 Sep 2024 19:39:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D93E146A69;
+	Fri, 13 Sep 2024 19:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XkPfKM2l"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CigS4wlK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8DBA148317;
-	Fri, 13 Sep 2024 19:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4FB08C11;
+	Fri, 13 Sep 2024 19:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726256396; cv=none; b=SoFkJrRKymsZRpDcg3+0W6Xa1o5gWXPdc/Zi96NWcyXFr3SBIPTzFSmI0i4lV404/zklr+p8wxIKgys959NhNLmQsZ8wM8btOIgaGAAwwio6/+uIuJml6ehfK7xnp8c8jw/Ppn5fBUH4pbuUWtqJR3sYtZhOJXdDPZxczQT+2yg=
+	t=1726256518; cv=none; b=SeIWtJv2x9hN+UHkSukDG+eXaAVR5Gf1CqZSieR7CMz+YNkWhPJ/Kop0RzZ/7zEcXv0cWE2dGgYDnA46qOtv5wKFoBs5J4WPpVKZ/cWZQ3TDmQmMhWwb7X6RMRvBJ3OUiKqf8i3bGKTrBdxacGW4VyA73LjUFt0eJadPAvOMEbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726256396; c=relaxed/simple;
-	bh=RUEVWgvk6mTpIhbMZyR3ybMcrifXc1NcuV8nvnQ7Z2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=vCxdK4OLFKC0LK+XisbOKCIj6R5G9DJFAg0R+zDGUOP+dt3qc0nTXaJt3E2A09EwYND+DvaNI8QcI2g5tlD5eJyEAkyL614jGZpkUyPIW8KNBH1+V1IbU0F+JLu3g4/A+Z5a/htxr8ZFmgQtQt0IfrGRc18Y2IiU1CqbHCsHWTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XkPfKM2l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1AF3C4CECC;
-	Fri, 13 Sep 2024 19:39:54 +0000 (UTC)
+	s=arc-20240116; t=1726256518; c=relaxed/simple;
+	bh=X+xZJ2B1YUnFcRBHyymTV8kCYmdbI++oeoXCPuXzbE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H6/IWM+9Y4wncLU/N1Yvr7apFzuiz6BeNV1qpHXBM0Z6zF3pOYbuRmh3LExUclMJ0eI5QIsK9bmTq2KAi2i67BhcWVNHXAyhR0UTKLr6tO177D/CLDvhz57SotDZ35dHwEOr+Yh6mJZVvUHeUehKCXdKnzHX2Ozv8Q7W3s1ymDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CigS4wlK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C925FC4CEC0;
+	Fri, 13 Sep 2024 19:41:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726256396;
-	bh=RUEVWgvk6mTpIhbMZyR3ybMcrifXc1NcuV8nvnQ7Z2Q=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XkPfKM2lxkNEq4p+g6nAtThYVWFspucb3zEcTqZK0ROXAA8mOSrVtvQLoozYScctH
-	 SBTLXvGAh0lKJ5YHPyPyocQi+ovGSmFHemw3x8I+O1ThIiSM2bR/efSkt1QUQvC+UL
-	 VHuiUdLcTt18LUH5/ZwYQWiDUAKqLPcGg4CwCY/zjHNDntiY4QSyHffri6UqkZeMkd
-	 YilGwuzVXjyDh83cj/j8sUQeB2pIkEyXnf46W6SnRw3YPEpAyMfZvIpNcJFieqMrXj
-	 iVlG5hZ6DKPDJhPAsLT4mxbDFpY5VLEjv2z/TI+I1hggUciRsR6Nr/uGfSo24Aq7Ru
-	 lNH23BRAfpEGQ==
-Date: Fri, 13 Sep 2024 20:39:50 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matteo Martelli <matteomartelli3@gmail.com>
-Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Dan Carpenter
- <dan.carpenter@linaro.org>, kernel-janitors@vger.kernel.org,
- lars@metafoo.de, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: pac1921: add missing error return in probe()
-Message-ID: <20240913203950.06ed1603@jic23-huawei>
-In-Reply-To: <172604712407.3581.15543200034844778072@njaxe.localdomain>
-References: <1fa4ab12-0939-477d-bc92-306fd32e4fd9@stanley.mountain>
-	<36b1a47a-7af2-4baf-8188-72f6eed78529@wanadoo.fr>
-	<66b5c5df76766_133d37031@njaxe.notmuch>
-	<9a98aab5-bb68-4206-9ecf-32fbf6c9c7ef@stanley.mountain>
-	<20240810113518.2cbceb66@jic23-huawei>
-	<172604712407.3581.15543200034844778072@njaxe.localdomain>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1726256517;
+	bh=X+xZJ2B1YUnFcRBHyymTV8kCYmdbI++oeoXCPuXzbE0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CigS4wlK3LvsDZEyxmTriGbXUjclLDRPo5W5zGCErZrbxK+KrgH2d2VYHjnKtUtFg
+	 oNhPsilD2qVU0XIlEUi10mIXwPJ7bbJup1RalMOVRP5xag/sd9sq3jPIodN5pFWp1d
+	 YFsOahGiYhlCh2/uTCWbl43E1T7y5uO1CGmlgIDwuyrYjOxI8nfED6rP5ABGGIvMq5
+	 eQXcytyQ2C0DN6S87zR5aZw3EKwJixeCHjb1Un8PNPTuGsOZNySAvLQkKUyTmRUbac
+	 47F49x2Vet8SZ17H3ATPfzE8OQcU4PcAjuCPBGe3ow8cqwYyWRO4aMroeOu29ODsW6
+	 aSi/kmZ3NOnJQ==
+Date: Fri, 13 Sep 2024 12:41:55 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>, x86@kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	patches@lists.linux.dev
+Subject: Re: [PATCH] x86/resctrl: Annotate __get_mem_config_intel() as __init
+Message-ID: <20240913194155.GA4188687@thelio-3990X>
+References: <20240822-x86-restctrl-get_mem_config_intel-init-v1-1-8b0a68a8731a@kernel.org>
+ <fc49e252-6283-4a37-b4e8-bd329f326e68@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fc49e252-6283-4a37-b4e8-bd329f326e68@intel.com>
 
-On Wed, 11 Sep 2024 11:32:04 +0200
-Matteo Martelli <matteomartelli3@gmail.com> wrote:
+Hi Reinette,
 
-> Quoting Jonathan Cameron (2024-08-10 12:35:18)
-> > On Fri, 9 Aug 2024 18:18:13 +0300
-> > Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> >  =20
-> > > On Fri, Aug 09, 2024 at 09:31:43AM +0200, Matteo Martelli wrote: =20
-> > > > Christophe JAILLET wrote:   =20
-> > > > > Le 08/08/2024 =C3=A0 21:28, Dan Carpenter a =C3=A9crit=C2=A0:   =
-=20
-> > > > > > This error path was intended to return, and not just print an e=
-rror.  The
-> > > > > > current code will lead to an error pointer dereference.
-> > > > > >=20
-> > > > > > Fixes: 371f778b83cd ("iio: adc: add support for pac1921")
-> > > > > > Signed-off-by: Dan Carpenter <dan.carpenter-QSEj5FYQhm4dnm+yROf=
-E0A@public.gmane.org>
-> > > > > > ---
-> > > > > >   drivers/iio/adc/pac1921.c | 4 ++--
-> > > > > >   1 file changed, 2 insertions(+), 2 deletions(-)
-> > > > > >=20
-> > > > > > diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac192=
-1.c
-> > > > > > index d04c6685d780..8200a47bdf21 100644
-> > > > > > --- a/drivers/iio/adc/pac1921.c
-> > > > > > +++ b/drivers/iio/adc/pac1921.c
-> > > > > > @@ -1168,8 +1168,8 @@ static int pac1921_probe(struct i2c_clien=
-t *client)
-> > > > > >  =20
-> > > > > >         priv->regmap =3D devm_regmap_init_i2c(client, &pac1921_=
-regmap_config);
-> > > > > >         if (IS_ERR(priv->regmap))
-> > > > > > -               dev_err_probe(dev, (int)PTR_ERR(priv->regmap),
-> > > > > > -                             "Cannot initialize register map\n=
-");
-> > > > > > +               return dev_err_probe(dev, (int)PTR_ERR(priv->re=
-gmap),   =20
-> > > > >=20
-> > > > > The (int) is unusual.
-> > > > >   =20
-> > > > The (int) explicit cast is to address Wconversion warnings since de=
-v_err_probe
-> > > > takes an int as argument.   =20
-> > >=20
-> > > I don't want to remove the int because it's unrelated, but Christophe=
- is right
-> > > that the int is unusual.  We really would want to discourage that. =20
-> >=20
-> > Applied, but I'd ideally like a follow up patch removing the int and the
-> > couple of similar instances from this driver.  Anyone want to spin one?
-> >  =20
->=20
-> I can spin the patch, but at this point I am wondering whether I should r=
-emove all
-> the unnecessary explicit casts that I put to address Wconversion
-> and Wsign-compare warnings. If that's the general approach to help readab=
-ility I
-> am totally fine with it.
+On Thu, Sep 12, 2024 at 03:33:09PM -0700, Reinette Chatre wrote:
+> Apologies for the delay.
 
-I think it is probably sensible to do so as mostly we know the value ranges
-etc so they don't matter.
+No worries, this is not super high priority (except when the section
+mismatch warning is elevated to an error but that does not happen in too
+many real world configurations).
 
-Jonathan
+> On 8/22/24 5:12 PM, Nathan Chancellor wrote:
+> > After a recent LLVM change [1] that deduces __cold on functions that
+> > only call cold code (such as __init functions), there is a section
+> > mismatch warning from __get_mem_config_intel(), which got moved to
+> > .text.unlikely. as a result of that optimization:
+> > 
+> >    WARNING: modpost: vmlinux: section mismatch in reference: __get_mem_config_intel+0x77 (section: .text.unlikely.) -> thread_throttle_mode_init (section: .init.text)
+> > 
+> > Mark __get_mem_config_intel() as __init as well since it is only called
+> > from __init code, which clears up the warning.
+> 
+> It looks to me as though __rdt_get_mem_config_amd() may need the same __init
+> treatment
 
->=20
-> > Thanks,
-> >=20
-> > Jonathan
-> >  =20
->=20
-> Thanks,
-> Matteo Martelli
+It certainly looks like __init would be appropriate for
+__rdt_get_mem_config_amd(), although there is no current risk of a
+modpost warning like __get_mem_config_intel() because it does not call
+any __init functions, which is really what triggered this warning.
 
+> it is not clear to me why __get_mem_config_intel() would trigger
+> such warning, but not __rdt_get_mem_config_amd()?
+
+Based on my understanding of the LLVM change linked below my comment
+here, __get_mem_config_intel() gets implicitly marked as __cold because
+it unconditionally calls thread_throttle_mode_init(), which is __cold
+through __init. If __get_mem_config_intel() does not get inlined into
+its caller (which could happen if a compiler decides not to optimize
+__cold code), that call to thread_throttle_mode_init() will appear to
+come from the .text section, even though it will really be from
+.init.text because __get_mem_config_intel() is only called from __init
+functions.
+
+__rdt_get_mem_config_amd() does not call any cold functions so it avoids
+this problem altogether.
+
+I can send a v2 with __init added to __rdt_get_mem_config_amd() if you
+want, along with the style update you mention below. Just let me know
+what you prefer based on my comments above.
+
+Cheers,
+Nathan
+
+> > Link: https://github.com/llvm/llvm-project/commit/6b11573b8c5e3d36beee099dbe7347c2a007bf53 [1]
+> > Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> > ---
+> >   arch/x86/kernel/cpu/resctrl/core.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+> > index 1930fce9dfe9..b28646f1d9d6 100644
+> > --- a/arch/x86/kernel/cpu/resctrl/core.c
+> > +++ b/arch/x86/kernel/cpu/resctrl/core.c
+> > @@ -199,7 +199,7 @@ static inline bool rdt_get_mb_table(struct rdt_resource *r)
+> >   	return false;
+> >   }
+> > -static bool __get_mem_config_intel(struct rdt_resource *r)
+> > +static bool __init __get_mem_config_intel(struct rdt_resource *r)
+> 
+> Surely resctrl is not consistent in this regard but I understand from the coding style
+> doc that storage class should precede the return type, so perhaps:
+> 	static __init bool __get_mem_config_intel(struct rdt_resource *r)
+> 
+> We may need to follow this recommended style for this to be included.
+> 
+> >   {
+> >   	struct rdt_hw_resource *hw_res = resctrl_to_arch_res(r);
+> >   	union cpuid_0x10_3_eax eax;
+> > 
+> > ---
+> > base-commit: 7424fc6b86c8980a87169e005f5cd4438d18efe6
+> > change-id: 20240822-x86-restctrl-get_mem_config_intel-init-3af02a5130ba
+> > 
+> > Best regards,
+> 
+> Thank you very much.
+> 
+> Reinette
 
