@@ -1,285 +1,478 @@
-Return-Path: <linux-kernel+bounces-328659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1540978702
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:40:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14B90978706
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:41:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 158BE1C24132
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:40:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 875511F25164
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D15126C01;
-	Fri, 13 Sep 2024 17:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F861C2BF;
+	Fri, 13 Sep 2024 17:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="hMBe0VNy"
-Received: from rcdn-iport-8.cisco.com (rcdn-iport-8.cisco.com [173.37.86.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="LxxByNP3"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F1C1C2BF;
-	Fri, 13 Sep 2024 17:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.37.86.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB98784A3E
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 17:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726249214; cv=none; b=L4ESj/sszaLwfYFKv+O2ossm7LRJcDHvmH3gCHSh/3J97LSxPAdKNu2RNccqH016pQVzRZvX/mq22UZhEkFclkwBBYFet2cK6UvohyGIdcRbD13ZHokojtqAtTCBPlGNYRhsEnv3pPq40g9Hzbfhctwu6+aw58QRSox3qnTOxY4=
+	t=1726249274; cv=none; b=M926NqD8DjV95k6UMQ0fK8HYRyR1CRM6RQAUX8TU1bK2Tte9ce70+npB9FP1hWNTD01eps7jGDnol8ci27FmyA8bfnLU5M/DatnsbT4aQBVfK/4n5c9bht9UXsYvUVAHHdDVbsMoy27PVtnlY2nYRNwsx4+cjT+lKG0/f5HErok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726249214; c=relaxed/simple;
-	bh=XcuFu7CBhGrA7Vf6zHDY6IJb0fmDzn8wCNN4pukLdqk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FZwS9qUr1vpSa1Djl1w1IyPkvZaHkeSc2wl6QPrnpKRObW1Uq8I6xy6gHoEh4SiHdy9eA66YbnjNY75DluIDCb8yGJ1lXMU/VOUFB4F5gLJP7un6mWFXiEZsUmQjLzMO0+k4x/2gae8bFOCWPNTuc4cpY8+rIsKmDnuAPAXb8MI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b=hMBe0VNy; arc=none smtp.client-ip=173.37.86.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
+	s=arc-20240116; t=1726249274; c=relaxed/simple;
+	bh=yZHfP3kMI9QG9zQDROsEJS/DMBQfQNiJH9GIAv4b7vo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PPlTMTyySVCswijYBpWecBCTyjA4sFJHijlZ3f6zrbcaBDJi2Bk7hrw8/+EOQUwnTGwTVElrOMwQGpAe2JcTW2R9nr5SfCTNx8DTN2vr9XSuWmA/ONXhjlS1Mkr1uzBdSJf+Wp2wAc1pS986/Gw7FfuPS4a2o19OdazWgz2RfiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=LxxByNP3; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e1cf1a4865aso1093789276.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 10:41:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=cisco.com; i=@cisco.com; l=5433; q=dns/txt; s=iport;
-  t=1726249213; x=1727458813;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Een6jqFsAIKR9yxn1aG6e3vj/VQBH6dT7iePuwzEn3o=;
-  b=hMBe0VNyB/fQa08Ua3ZFnjdqMiKQGMowKteCQaC6TgWIgHiAWrlMQfiT
-   yoaA5H7XyeP/EokRLGilB0MTybibkz5we89a8DoQt9kMlENQMcB2ZaR6w
-   Dx8yaAGtg98nlcRnxTY2BxKtEsUdx9FGMaKFew7GMWGmIV60brsULxROC
-   c=;
-X-CSE-ConnectionGUID: x9C4BFYkTUih79vTmhhsFA==
-X-CSE-MsgGUID: fr+wke/nSsmb1In6dACamg==
-X-IPAS-Result: =?us-ascii?q?A0DEAADkd+RmmJNdJa1agliEGkNIlkOBFpA0jE2BJQNWD?=
- =?us-ascii?q?wEBAQ9EBAEBhQeJfgImNAkOAQIEAQEBAQMCAwEBAQEBAQEBAQUBAQUBAQECA?=
- =?us-ascii?q?QcFFAEBAQEBAQEBNwUOO4YChl4hCgsBRimBFBMUgm2CZQOvdoF5M4EBhHrZO?=
- =?us-ascii?q?IFsGIEwjUKFZScbgUlEgRWBO4E3dosHBIYYhUKDDhZwhC0KiVQliVqPQ0iBI?=
- =?us-ascii?q?QNZIQIRAVUTDQoLCQWJOYMmKYFrgQqDC4UngWcJYYhOgQgtgRGBHzqCAoE3S?=
- =?us-ascii?q?oVNgQaCU2tOPAINAjeCKYETglqENUADCxgNSBEsNRQbBj5uB6tuR4FCAQVtL?=
- =?us-ascii?q?RBRFGZDPBgfCy4LAjCSNiQDj3CCHqB9hCGhOxozhAWTf5JAAZh1ox00FB01h?=
- =?us-ascii?q?GaBZzqBWzMaCBsVO4JnUhkPji0NCc9RJjI7AgcLAQEDCY1fAQE?=
-IronPort-Data: A9a23:CnUytajECA68GBcalX4TI4T/X161qxAKZh0ujC45NGQN5FlHY01je
- htvX27VOfeCNGamf9BzPNm//UlX6p6Gn9JgTwA5/ikwE3tjpJueD7x1DKtf0wB+jyHnZBg6h
- ynLQoCYdKjYdleF+1HwdOGn9SQhvU2xbuKUIPbePSxsThNTRi4kiBZy88Y0mYcAbeKRW2thg
- vus5ZSHULOZ82QsaD5MuvvY8EgHUMna4Vv0gHRvPZing3eG/5UlJMp3Db28KXL+Xr5VEoaSL
- 87fzKu093/u5BwkDNWoiN7TKiXmlZaLYGBiIlIPM0STqkAqSh4ai87XB9JAAatjsAhlqvgqo
- Dl7WTNcfi9yVkHEsLx1vxC1iEiSN4UekFPMCSDXXcB+UyQqflO0q8iCAn3aMqUIq80rK09/9
- sAlKTBSPw6/guK225ySH7wEasQLdKEHPasFsX1miDreF/tjGMmFSKTR7tge1zA17ixMNa+BP
- IxCNnw+N1KZP0In1lQ/UPrSmM+og3jlej9wo1OOrq1x6G/WpOB0+OKwaoOKJoTRFa25mG6Wv
- CHZ/Gm+BCoBMdbG6Dzb/luHj+rAyHaTtIU6T+DgqaUw3zV/3Fc7DBwQSEv+r+K1h1CzX/pBJ
- EEOvCkjt64/8AqsVNaVdxm5pmOU+x0RQdxdF8Uk5wyXjKnZ+QCUAi4DVDEpQNUlrMoeQT0sy
- 0/MkdT0AzBmrLySTzSa7Lj8kN+pETIeIWlHbigeQE5cup/ooZo4iVTESdML/LOJYsPdCWDbn
- xqknSsCurQT0p8V66C7/Uvpqmf5znTWdTId6gLSV2Ojywp2Yo+5eoClgWQ3C94ed+51qXHf4
- BA5d9ii0QwYMX2aeMWwrAglBrql4bOONyfRxAc2WZIg7D+qvXWkeOi8AQ2Sxm83bK7omhewP
- Cc/XD+9ArcIYBNGiocsP+qM5zwCl/SIKDgcfqm8giBySpZwbhSb2ypleFSd2Wvg+GB1zvthY
- MnGIJvxXSdAYUiC8NZQb7pAuVPM7n1vrV4/ubihknxLLJLHPifMEuZfWLdwRrtgvf3ayOkqz
- zqvH5DXk0oECrKWjtj/+o8IJldCNmkgGZ3zsIRWcOXFSjeK60l/Y8I9NYgJItQ/94wMz7+g1
- ijkBidwlgGl7VWZclriV5yWQO61NXqJhShlbXVE0JfB8yVLXLtDG49EJ8JqJuZ8qr09pRO2J
- tFcE/i97j10Ymyv01wggVPV9eSOqDzDadqyAheY
-IronPort-HdrOrdr: A9a23:v72nB6vWmWZVcH7IkhlZUhOb7skDedV00zEX/kB9WHVpmwKj+/
- xG+85rtyMc5wx+ZJhNo7q90cq7MBDhHOBOgLX5VI3KNGLbUQCTQ72Kg7GO/9TIIVyaygck78
- ddm2wUMqyWMbC85vyKhDWFLw==
-X-Talos-CUID: =?us-ascii?q?9a23=3AFmRazmlXEDCLjdqBzMU+O6LujfnXOW2M5yv6DX6?=
- =?us-ascii?q?7NVtoSOLEV2OV+KN/veM7zg=3D=3D?=
-X-Talos-MUID: 9a23:rhpi4AixUBMgUsegcm08ZsMpOt0r/KejT0Y2ipAM4uiCayBZED6Yg2Hi
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="6.10,226,1719878400"; 
-   d="scan'208";a="252174038"
-Received: from rcdn-core-11.cisco.com ([173.37.93.147])
-  by rcdn-iport-8.cisco.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 17:40:05 +0000
-Received: from sjc-ads-7729.cisco.com (sjc-ads-7729.cisco.com [10.30.222.16])
-	by rcdn-core-11.cisco.com (8.15.2/8.15.2) with ESMTP id 48DHe4uw017907;
-	Fri, 13 Sep 2024 17:40:04 GMT
-From: Haider Miraj <hmiraj@cisco.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: xe-linux-external@cisco.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH] [RFC] proc: Add mmap callback for /proc/<pid>/mem
-Date: Fri, 13 Sep 2024 10:40:03 -0700
-Message-Id: <20240913174003.1786581-1-hmiraj@cisco.com>
-X-Mailer: git-send-email 2.35.6
+        d=raspberrypi.com; s=google; t=1726249271; x=1726854071; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OI6pNgxVdvOzHFV5D5PZF6q7ExUwnpQaO64OezhXm9w=;
+        b=LxxByNP3EXemnpyJYpFB9AlmUsC2k4zi5LtO4yGiY2skEKo2P0WINcSqK7maskuqX8
+         0VwSiZ+eHyqhTytrXgZ5fkCMOitETfQP9pVHTpjEFit9e7QmqqpmXdRQP/SCMOS9/klX
+         6z8uVUueAPFPpnjKwYYxxNe/EychkNbWbr+9iZMWRi7er4I1U4cH/3yhEmmPnYJEoHZI
+         OhQYAMO4dLzB9m4+zSFnQZOxxiA0GZ/FqQMy+l0OPzvOw9eyIkZmpto+yHk5ZLBWzhjV
+         nuj0wwEBUgYuSAJx892FGr17GKJeQV2Ik6pfrQVixtSXl7naowAefA/3RTzX511G2X12
+         YJhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726249271; x=1726854071;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OI6pNgxVdvOzHFV5D5PZF6q7ExUwnpQaO64OezhXm9w=;
+        b=Zk5j2gmwiDqb+kY8t6JIWpIupUwG2+MOReESkNOogdMO4xzopS8JisrgVSpAAN3mTp
+         O29yh6/Np1u9eogUl5fS09nkfzw9c73gXQhirCDow4eDA3N96iE1vfQpeBNL0UB+xFdj
+         Dcs/dyUf3iZfsbNrKr6XqgmPYtGvEbdRGBKSecccE9qlxmMc/ECaZxLyu8UEe5kRoPDq
+         omyCjlga8vKvw4rOz0VnXl0K9GT1NLo3Tnqc7TcyuDAPRBNUk8ZGHstTUSGvsalz8o6y
+         8wu4Ks+yuysVKyOXQYwIvkJeLy5gFdJlzegrmQVAe5kqDVYuwIxZmNW5PVAobfN4i4Ws
+         yAlw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/TtF/ewa1RhmGQiNiPmJ5S7yO1SRvc7cD9qR27R/e8anOy4ErI4axLh9FebQzEw0tQTlXeeERtp8vlcc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdnVr4LakVJxGc6G//OjG1HPEZ5aNVUlfssQDstWPKp7bVZhRd
+	9EtmkIuUqhSnk6O+QOlmBVAnAN7EfeHMXjDxcFleZl3+0T3VwXSmkLmBBvnLwiGgel24oDTP1JJ
+	lnn1yIUov9VkTrwI4g6C9vO3ty7toivMkEhyg1g==
+X-Google-Smtp-Source: AGHT+IHeRXlWcT+4L8AfV+ZH92f3PDGOws4ASPaQOv+PQI69sQ6rPojXAj0yuxEgi4vUbo09DSW8jQjOV58nnFxd0wk=
+X-Received: by 2002:a05:6902:2382:b0:e0b:e1da:e711 with SMTP id
+ 3f1490d57ef6-e1db017d386mr2975226276.40.1726249270597; Fri, 13 Sep 2024
+ 10:41:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 10.30.222.16, sjc-ads-7729.cisco.com
-X-Outbound-Node: rcdn-core-11.cisco.com
+References: <20240902-imx214-v1-0-c96cba989315@apitzsch.eu>
+ <20240902-imx214-v1-8-c96cba989315@apitzsch.eu> <CAPybu_2VPDTHb=nOaze7bwLvEEGxcS1zK=su5vpfLNao59Gwfw@mail.gmail.com>
+ <CAPY8ntCOWxXXmkahhMwx4E74LAtFQKrUxmJOrERm2F7KqiiOyg@mail.gmail.com>
+In-Reply-To: <CAPY8ntCOWxXXmkahhMwx4E74LAtFQKrUxmJOrERm2F7KqiiOyg@mail.gmail.com>
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date: Fri, 13 Sep 2024 18:40:54 +0100
+Message-ID: <CAPY8ntDnbbhseYHynU=09Ziev9qeFZ074yPodWPUGZ9xbWCd2Q@mail.gmail.com>
+Subject: Re: [PATCH 08/13] media: i2c: imx214: Add vblank and hblank controls
+To: Ricardo Ribalda Delgado <ribalda@kernel.org>
+Cc: git@apitzsch.eu, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht, 
+	phone-devel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch introduces memory mapping (mmap) support for the /proc/<pid>/mem
-interface. The new functionality allows users to map the memory of a
-process into their address space reusing the same pages
+On Thu, 12 Sept 2024 at 15:51, Dave Stevenson
+<dave.stevenson@raspberrypi.com> wrote:
+>
+> Hi Andr=C3=A9 & Ricardo
+>
+> On Thu, 12 Sept 2024 at 14:41, Ricardo Ribalda Delgado
+> <ribalda@kernel.org> wrote:
+> >
+> > Hi
+> >
+> > Arent you missing some chage in enum_frame_interval?
+>
+> Raw sensors shouldn't be using [enum|set|get]_frame_interval at all
+> https://www.kernel.org/doc/html/latest/userspace-api/media/drivers/camera=
+-sensor.html#frame-interval-configuration
+>
+> The question now is how to handle the backwards compatibility for any
+> userspace app that might be using this driver and expecting to use the
+> frame_interval calls.
+> Seeing as it only ever allowed a fixed value of 30fps, leaving it as
+> is with a comment as to why it is there would be reasonable in my
+> view.
+>
+> > On Mon, Sep 2, 2024 at 11:53=E2=80=AFPM Andr=C3=A9 Apitzsch via B4 Rela=
+y
+> > <devnull+git.apitzsch.eu@kernel.org> wrote:
+> > >
+> > > From: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+> > >
+> > > Add vblank control to allow changing the framerate /
+> > > higher exposure values.
+> > >
+> > > The vblank and hblank controls are needed for libcamera support.
+> > >
+> > > While at it, fix the minimal exposure time according to the datasheet=
+.
+> > >
+> > > Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+> > > ---
+> > >  drivers/media/i2c/imx214.c | 112 +++++++++++++++++++++++++++++++++++=
++---------
+> > >  1 file changed, 91 insertions(+), 21 deletions(-)
+> > >
+> > > diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
+> > > index 3b422cddbdce..9f5a57aebb86 100644
+> > > --- a/drivers/media/i2c/imx214.c
+> > > +++ b/drivers/media/i2c/imx214.c
+> > > @@ -34,11 +34,18 @@
+> > >
+> > >  /* V-TIMING internal */
+> > >  #define IMX214_REG_FRM_LENGTH_LINES    CCI_REG16(0x0340)
+> > > +#define IMX214_VTS_MAX                 0xffff
+> > > +
+> > > +#define IMX214_VBLANK_MIN              4
+> > > +
+> > > +/* HBLANK control - read only */
+> > > +#define IMX214_PPL_DEFAULT             5008
+> > >
+> > >  /* Exposure control */
+> > >  #define IMX214_REG_EXPOSURE            CCI_REG16(0x0202)
+> > > -#define IMX214_EXPOSURE_MIN            0
+> > > -#define IMX214_EXPOSURE_MAX            3184
+> > > +#define IMX214_EXPOSURE_OFFSET         10
+> > > +#define IMX214_EXPOSURE_MIN            1
+> > > +#define IMX214_EXPOSURE_MAX            (IMX214_VTS_MAX - IMX214_EXPO=
+SURE_OFFSET)
+> > >  #define IMX214_EXPOSURE_STEP           1
+> > >  #define IMX214_EXPOSURE_DEFAULT                3184
+> > >  #define IMX214_REG_EXPOSURE_RATIO      CCI_REG8(0x0222)
+> > > @@ -189,6 +196,8 @@ struct imx214 {
+> > >         struct v4l2_ctrl_handler ctrls;
+> > >         struct v4l2_ctrl *pixel_rate;
+> > >         struct v4l2_ctrl *link_freq;
+> > > +       struct v4l2_ctrl *vblank;
+> > > +       struct v4l2_ctrl *hblank;
+> > >         struct v4l2_ctrl *exposure;
+> > >         struct v4l2_ctrl *unit_size;
+> > >
+> > > @@ -205,8 +214,6 @@ static const struct cci_reg_sequence mode_4096x23=
+04[] =3D {
+> > >         { IMX214_REG_HDR_MODE, IMX214_HDR_MODE_OFF },
+> > >         { IMX214_REG_HDR_RES_REDUCTION, IMX214_HDR_RES_REDU_THROUGH }=
+,
+> > >         { IMX214_REG_EXPOSURE_RATIO, 1 },
+> > > -       { IMX214_REG_FRM_LENGTH_LINES, 3194 },
+> > > -       { IMX214_REG_LINE_LENGTH_PCK, 5008 },
+> > >         { IMX214_REG_X_ADD_STA, 56 },
+> > >         { IMX214_REG_Y_ADD_STA, 408 },
+> > >         { IMX214_REG_X_ADD_END, 4151 },
+> > > @@ -277,8 +284,6 @@ static const struct cci_reg_sequence mode_1920x10=
+80[] =3D {
+> > >         { IMX214_REG_HDR_MODE, IMX214_HDR_MODE_OFF },
+> > >         { IMX214_REG_HDR_RES_REDUCTION, IMX214_HDR_RES_REDU_THROUGH }=
+,
+> > >         { IMX214_REG_EXPOSURE_RATIO, 1 },
+> > > -       { IMX214_REG_FRM_LENGTH_LINES, 3194 },
+> > > -       { IMX214_REG_LINE_LENGTH_PCK, 5008 },
+> > >         { IMX214_REG_X_ADD_STA, 1144 },
+> > >         { IMX214_REG_Y_ADD_STA, 1020 },
+> > >         { IMX214_REG_X_ADD_END, 3063 },
+> > > @@ -362,6 +367,7 @@ static const struct cci_reg_sequence mode_table_c=
+ommon[] =3D {
+> > >         { IMX214_REG_ORIENTATION, 0 },
+> > >         { IMX214_REG_MASK_CORR_FRAMES, IMX214_CORR_FRAMES_MASK },
+> > >         { IMX214_REG_FAST_STANDBY_CTRL, 1 },
+> > > +       { IMX214_REG_LINE_LENGTH_PCK, IMX214_PPL_DEFAULT },
+> > >         { CCI_REG8(0x4550), 0x02 },
+> > >         { CCI_REG8(0x4601), 0x00 },
+> > >         { CCI_REG8(0x4642), 0x05 },
+> > > @@ -465,18 +471,24 @@ static const struct cci_reg_sequence mode_table=
+_common[] =3D {
+> > >  static const struct imx214_mode {
+> > >         u32 width;
+> > >         u32 height;
+> > > +
+> > > +       /* V-timing */
+> > > +       unsigned int vts_def;
+> > > +
+> > >         unsigned int num_of_regs;
+> > >         const struct cci_reg_sequence *reg_table;
+> > >  } imx214_modes[] =3D {
+> > >         {
+> > >                 .width =3D 4096,
+> > >                 .height =3D 2304,
+> > > +               .vts_def =3D 3194,
+> > >                 .num_of_regs =3D ARRAY_SIZE(mode_4096x2304),
+> > >                 .reg_table =3D mode_4096x2304,
+> > >         },
+> > >         {
+> > >                 .width =3D 1920,
+> > >                 .height =3D 1080,
+> > > +               .vts_def =3D 3194,
+> > >                 .num_of_regs =3D ARRAY_SIZE(mode_1920x1080),
+> > >                 .reg_table =3D mode_1920x1080,
+> > >         },
+> > > @@ -629,6 +641,37 @@ static int imx214_set_format(struct v4l2_subdev =
+*sd,
+> > >         __crop->width =3D mode->width;
+> > >         __crop->height =3D mode->height;
+> > >
+> > > +       if (format->which =3D=3D V4L2_SUBDEV_FORMAT_ACTIVE) {
+> > > +               int exposure_max;
+> > > +               int exposure_def;
+> > > +               int hblank;
+> > > +
+> > > +               /* Update limits and set FPS to default */
+> > > +               __v4l2_ctrl_modify_range(imx214->vblank, IMX214_VBLAN=
+K_MIN,
+> > > +                                        IMX214_VTS_MAX - mode->heigh=
+t, 1,
+> > > +                                        mode->vts_def - mode->height=
+);
+> > > +               __v4l2_ctrl_s_ctrl(imx214->vblank,
+> > > +                                  mode->vts_def - mode->height);
+> > > +
+> > > +               /* Update max exposure while meeting expected vblanki=
+ng */
+> > > +               exposure_max =3D mode->vts_def - IMX214_EXPOSURE_OFFS=
+ET;
+> > > +               exposure_def =3D (exposure_max < IMX214_EXPOSURE_DEFA=
+ULT) ?
+> > > +                       exposure_max : IMX214_EXPOSURE_DEFAULT;
+> > > +               __v4l2_ctrl_modify_range(imx214->exposure,
+> > > +                                        imx214->exposure->minimum,
+> > > +                                        exposure_max, imx214->exposu=
+re->step,
+> > > +                                        exposure_def);
+> > > +
+> > > +               /*
+> > > +                * Currently PPL is fixed to IMX214_PPL_DEFAULT, so h=
+blank
+> > > +                * depends on mode->width only, and is not changeble =
+in any
+> > > +                * way other than changing the mode.
+> > > +                */
+> > > +               hblank =3D IMX214_PPL_DEFAULT - mode->width;
+> > > +               __v4l2_ctrl_modify_range(imx214->hblank, hblank, hbla=
+nk, 1,
+> > > +                                        hblank);
+> > > +       }
+> > > +
+> > >         return 0;
+> > >  }
+> > >
+> > > @@ -678,8 +721,25 @@ static int imx214_set_ctrl(struct v4l2_ctrl *ctr=
+l)
+> > >  {
+> > >         struct imx214 *imx214 =3D container_of(ctrl->handler,
+> > >                                              struct imx214, ctrls);
+> > > +       const struct v4l2_mbus_framefmt *format;
+> > > +       struct v4l2_subdev_state *state;
+> > >         int ret;
+> > >
+> > > +       state =3D v4l2_subdev_get_locked_active_state(&imx214->sd);
+> > > +       format =3D v4l2_subdev_state_get_format(state, 0);
+> > > +
+> > > +       if (ctrl->id =3D=3D V4L2_CID_VBLANK) {
+> > > +               int exposure_max, exposure_def;
+> > > +
+> > > +               /* Update max exposure while meeting expected vblanki=
+ng */
+> > > +               exposure_max =3D format->height + ctrl->val - IMX214_=
+EXPOSURE_OFFSET;
+> > > +               exposure_def =3D min(exposure_max, IMX214_EXPOSURE_DE=
+FAULT);
+> > > +               __v4l2_ctrl_modify_range(imx214->exposure,
+> > > +                                        imx214->exposure->minimum,
+> > > +                                        exposure_max, imx214->exposu=
+re->step,
+> > > +                                        exposure_def);
+> > > +       }
+> > > +
+> > >         /*
+> > >          * Applying V4L2 control value only happens
+> > >          * when power is up for streaming
+> > > @@ -691,7 +751,10 @@ static int imx214_set_ctrl(struct v4l2_ctrl *ctr=
+l)
+> > >         case V4L2_CID_EXPOSURE:
+> > >                 cci_write(imx214->regmap, IMX214_REG_EXPOSURE, ctrl->=
+val, &ret);
+> > >                 break;
+> > > -
+> > > +       case V4L2_CID_VBLANK:
+> > > +               cci_write(imx214->regmap, IMX214_REG_FRM_LENGTH_LINES=
+,
+> > > +                         format->height + ctrl->val, &ret);
+>
+> My datasheet says this register is "set up in multiples of 2".
+> (LINE_LENGTH_PCK for HBLANK is "set in multiples of 8")
+>
+> I don't have one of these modules, but is that saying only multiples
+> of 2 are permitted (in which case the step size for the control needs
+> to reflect that), or that setting a value of N is interpreted by the
+> hardware as 2N?
+> Do all the numbers with PIXEL_RATE work out correctly in the frame rate c=
+alcs?
 
-The idea is to mmap another process's memory by first pinning the pages in
-memory and then using `remap_pfn_range` to map them as device memory, reusing
-the same pages. A list of pinned pages is maintained and released back on the
-close call. This design has certain limitations.
+Answering my own question, PIXEL_RATE looks dubious.
 
-I am seeking comments and advice on the following:
-- Given that read access to `/proc/<pid>/mem` is already allowed for
-  privileged users, are there specific reasons or concerns that have prevented
-  the implementation of `mmap` for this interface?
-- Is there a way to insert anonymous pages into a file-backed VMA so that it
-  honors reverse mapping, eliminating the need to keep track of pinned pages?
-- I plan to implement a page fault handler as well.
+The original code had LINE_LENGTH_PCK as 5008, and FRAME_LENGTH_LINES
+as 3194. If enum_frame_intervals is to be believed, then it delivered
+30fps.
+5008 * 3194 * 30 =3D 479,866,560 Pix/s.
 
-I am looking for feedback on how to improve this implementation and what
-additional considerations are necessary for it to be accepted by the community.
+The driver defines IMX214_DEFAULT_LINK_FREQ 480000000, and then
+IMX214_DEFAULT_PIXEL_RATE ((IMX214_DEFAULT_LINK_FREQ * 8LL) / 10),
+which works out as 384MPix/s. (Presumably the 8 is 4 lanes and DDR,
+but it's not obvious)
 
-Cc: xe-linux-external@cisco.com
-Signed-off-by: Haider Miraj <hmiraj@cisco.com>
----
- fs/proc/base.c | 129 +++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 129 insertions(+)
+Parsing the PLL registers with the defined 24MHz input. We're in
+single PLL mode, so MIPI frequency is directly linked to pixel rate.
+VTCK ends up being 1200MHz, and VTPXCK and OPPXCK both are 120MHz.
+Section 5.3 "Frame rate calculation formula" says "Pixel rate
+[pixels/s] =3D VTPXCK [MHz] * 4", so 120 * 4 =3D 480MPix/s, which
+basically agrees with my number above.
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 72a1acd03675..405de47d0c1c 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -117,6 +117,17 @@
- static u8 nlink_tid __ro_after_init;
- static u8 nlink_tgid __ro_after_init;
- 
-+struct vma_info {
-+	struct list_head page_list_head;
-+	uintptr_t vma_start_addr;
-+	uintptr_t vma_end_addr;
-+};
-+
-+struct page_list_item {
-+	struct list_head list;
-+	struct page *page;
-+};
-+
- struct pid_entry {
- 	const char *name;
- 	unsigned int len;
-@@ -926,12 +937,130 @@ static int mem_release(struct inode *inode, struct file *file)
- 	return 0;
- }
- 
-+static void mem_vma_close(struct vm_area_struct *vma)
-+{
-+	struct vma_info *info;
-+	struct page_list_item *item, *tmp;
-+
-+	info = vma->vm_private_data;
-+
-+	if (info) {
-+		/* Avoid cleanup if we are being split, instead print warning */
-+		if (info->vma_start_addr == vma->vm_start &&
-+			info->vma_end_addr == vma->vm_end) {
-+			/* Iterate over the list and free each item and call put_page */
-+			list_for_each_entry_safe(item, tmp,
-+						 &info->page_list_head, list) {
-+				list_del(&item->list);
-+				put_page(item->page);
-+				kfree(item);
-+			}
-+
-+			kfree(info);
-+			vma->vm_private_data = NULL;
-+		} else {
-+			pr_warn("%s: VMA has been split, operation not supported\n", __func__);
-+		}
-+	}
-+}
-+
-+static const struct vm_operations_struct mem_vm_ops = {
-+	.close = mem_vma_close,
-+};
-+
-+/**
-+ * mem_mmap - Memory mapping function
-+ *
-+ * This function implements mmap call for /proc/<pid>/mem.
-+ *
-+ * Assumptions and Limitations:
-+ * - This function does not handle reverse mapping, which is required for swapping.
-+ * - The VMA is not expected to be split with an unmap call.
-+ */
-+static int mem_mmap(struct file *file, struct vm_area_struct *vma)
-+{
-+	uintptr_t addr, target_start_addr, target_end_addr;
-+	struct page_list_item *item;
-+	struct page *page, *zero_page;
-+	unsigned long zero_page_pfn;
-+	struct vma_info *info;
-+	long pinned;
-+	int ret;
-+
-+	/* Retrieve mm of the target process*/
-+	struct mm_struct *mm = (struct mm_struct *)file->private_data;
-+	size_t size = vma->vm_end - vma->vm_start;
-+	uintptr_t start_addr = vma->vm_start;
-+
-+	target_start_addr = vma->vm_pgoff << PAGE_SHIFT; /* Multiply by PAGE_SIZE */
-+	target_end_addr = target_start_addr + size;
-+
-+	if (!mm)
-+		return -EINVAL;
-+
-+	info = kmalloc(sizeof(struct vma_info), GFP_KERNEL);
-+	if (!info)
-+		return -ENOMEM;
-+	INIT_LIST_HEAD(&info->page_list_head);
-+	info->vma_start_addr = vma->vm_start;
-+	info->vma_end_addr = vma->vm_end;
-+
-+	vma->vm_private_data = info;
-+	vma->vm_ops = &mem_vm_ops;
-+
-+	zero_page = ZERO_PAGE(0);
-+	zero_page_pfn = page_to_pfn(zero_page);
-+
-+	/* Acquire the mmap_lock before pinning the page (get_user_pages_remote) */
-+	down_read(&mm->mmap_lock);
-+
-+	for (addr = target_start_addr; addr < target_end_addr; addr += PAGE_SIZE) {
-+		unsigned long pfn;
-+
-+		/* Pin the user page */
-+		pinned = get_user_pages_remote(mm, addr, 1, FOLL_GET | FOLL_NOFAULT,
-+						&page, NULL, NULL);
-+		/* Page is not resident (FOLL_NOFAULT), we will skip to the next address */
-+		if (pinned <= 0) {
-+			ret = remap_pfn_range(vma, start_addr, zero_page_pfn, PAGE_SIZE,
-+					vma->vm_page_prot);
-+			if (ret)
-+				goto err_unlock;
-+			start_addr += PAGE_SIZE;
-+			continue;
-+		}
-+
-+		/* We need to keep track of pages which are pinned */
-+		item = kmalloc(sizeof(struct page_list_item), GFP_KERNEL);
-+		if (!item) {
-+			kfree(info);
-+			return -ENOMEM;
-+		}
-+
-+		item->page = page;
-+		list_add(&item->list, &info->page_list_head);
-+		pfn = page_to_pfn(page);
-+
-+		/* Remap the page frame under current vma */
-+		ret = remap_pfn_range(vma, start_addr, pfn, PAGE_SIZE,
-+					vma->vm_page_prot);
-+		if (ret)
-+			kfree(item);
-+
-+		start_addr += PAGE_SIZE;
-+	}
-+err_unlock:
-+	up_read(&mm->mmap_lock);
-+	return 0;
-+}
-+
- static const struct file_operations proc_mem_operations = {
- 	.llseek		= mem_lseek,
- 	.read		= mem_read,
- 	.write		= mem_write,
- 	.open		= mem_open,
- 	.release	= mem_release,
-+	.mmap		= mem_mmap,
- };
- 
- static int environ_open(struct inode *inode, struct file *file)
--- 
-2.35.6
+3.1.4. MIPI global timing setting says "Output bitrate =3D OPPXCK * reg
+0x113[7:0]", so 120MHz * 10, or 1200Mbit/s. That would be a link
+frequency of 600MHz due to DDR.
+That also matches to 480MPix/s * 10bpp / 4 lanes / 2 for DDR
 
+Registers 0x0820-0823 are meant to define the target CSI2 bitrate, and
+are set to 0x12c00000, or 314,572,800 decimal. I can't get that to
+square with the above.
+
+
+So my conclusion is that both PIXEL_RATE and LINK_FREQUENCY are wrong,
+however the relationship used to define them looks to be correct.
+Correct IMX214_DEFAULT_LINK_FREQ to 600MHz, and all should be good.
+However you almost certainly want to set IMX214_VBLANK_MIN to
+something significantly greater than 4.
+
+  Dave
+
+> Reading the spec sheet that 30fps is the max frame rate at full res
+> (4096x2304), and the driver was setting a value of 3194 to this
+> register, I don't see it being interpreted as 2N. Then again having
+> VBLANK at 890 seems pretty high.
+>
+> > > +               break;
+> > >         default:
+> > >                 ret =3D -EINVAL;
+> > >         }
+> > > @@ -714,8 +777,11 @@ static int imx214_ctrls_init(struct imx214 *imx2=
+14)
+> > >                 .width =3D 1120,
+> > >                 .height =3D 1120,
+> > >         };
+> > > +       const struct imx214_mode *mode =3D &imx214_modes[0];
+> > >         struct v4l2_fwnode_device_properties props;
+> > >         struct v4l2_ctrl_handler *ctrl_hdlr;
+> > > +       int exposure_max, exposure_def;
+> > > +       int hblank;
+> > >         int ret;
+> > >
+> > >         ret =3D v4l2_fwnode_device_parse(imx214->dev, &props);
+> > > @@ -723,7 +789,7 @@ static int imx214_ctrls_init(struct imx214 *imx21=
+4)
+> > >                 return ret;
+> > >
+> > >         ctrl_hdlr =3D &imx214->ctrls;
+> > > -       ret =3D v4l2_ctrl_handler_init(&imx214->ctrls, 6);
+> > > +       ret =3D v4l2_ctrl_handler_init(&imx214->ctrls, 8);
+> > >         if (ret)
+> > >                 return ret;
+> > >
+> > > @@ -739,22 +805,26 @@ static int imx214_ctrls_init(struct imx214 *imx=
+214)
+> > >         if (imx214->link_freq)
+> > >                 imx214->link_freq->flags |=3D V4L2_CTRL_FLAG_READ_ONL=
+Y;
+> > >
+> > > -       /*
+> > > -        * WARNING!
+> > > -        * Values obtained reverse engineering blobs and/or devices.
+> > > -        * Ranges and functionality might be wrong.
+> > > -        *
+> > > -        * Sony, please release some register set documentation for t=
+he
+> > > -        * device.
+> > > -        *
+> > > -        * Yours sincerely, Ricardo.
+> > > -        */
+> >
+> > I would like to keep this comment until there is a public document avai=
+lable.
+>
+> I suspect you'll be waiting forever for a document to be officially relea=
+sed.
+>
+> I have a datasheet for IMX214, and I believe Kieran and Jacopo do too.
+> Which specific values do you wish to be verified?
+>
+> >
+> > > +       /* Initial vblank/hblank/exposure parameters based on current=
+ mode */
+> > > +       imx214->vblank =3D v4l2_ctrl_new_std(ctrl_hdlr, &imx214_ctrl_=
+ops,
+> > > +                                          V4L2_CID_VBLANK, IMX214_VB=
+LANK_MIN,
+>
+> IMX214_VBLANK_MIN being 4 feels plausible, but pretty low.
+> I read the datasheet to say there are 4 embedded data lines per image.
+> Seeing as you have STATS data output enabled as well that makes 5
+> lines of non-image data per frame, but you're only adding blanking
+> time for 4 lines.
+>
+> As noted above, I think you've also increased the max frame rate
+> significantly above that quoted by Sony. Has that been actually
+> exercised and confirmed to function correctly?
+>
+>   Dave
+>
+> > > +                                          IMX214_VTS_MAX - mode->hei=
+ght, 1,
+> > > +                                          mode->vts_def - mode->heig=
+ht);
+> > > +
+> > > +       hblank =3D IMX214_PPL_DEFAULT - mode->width;
+> > > +       imx214->hblank =3D v4l2_ctrl_new_std(ctrl_hdlr, &imx214_ctrl_=
+ops,
+> > > +                                          V4L2_CID_HBLANK, hblank, h=
+blank,
+> > > +                                          1, hblank);
+> > > +       if (imx214->hblank)
+> > > +               imx214->hblank->flags |=3D V4L2_CTRL_FLAG_READ_ONLY;
+> > > +
+> > > +       exposure_max =3D mode->vts_def - IMX214_EXPOSURE_OFFSET;
+> > > +       exposure_def =3D min(exposure_max, IMX214_EXPOSURE_DEFAULT);
+> > >         imx214->exposure =3D v4l2_ctrl_new_std(ctrl_hdlr, &imx214_ctr=
+l_ops,
+> > >                                              V4L2_CID_EXPOSURE,
+> > > -                                            IMX214_EXPOSURE_MIN,
+> > > -                                            IMX214_EXPOSURE_MAX,
+> > > +                                            IMX214_EXPOSURE_MIN, exp=
+osure_max,
+> > >                                              IMX214_EXPOSURE_STEP,
+> > > -                                            IMX214_EXPOSURE_DEFAULT)=
+;
+> > > +                                            exposure_def);
+> > >
+> > >         imx214->unit_size =3D v4l2_ctrl_new_std_compound(ctrl_hdlr,
+> > >                                 NULL,
+> > >
+> > > --
+> > > 2.46.0
+> > >
+> > >
+> >
 
