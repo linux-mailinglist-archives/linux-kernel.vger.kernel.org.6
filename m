@@ -1,87 +1,237 @@
-Return-Path: <linux-kernel+bounces-328390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA9A99782C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:39:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4368A9782C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:39:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE469283F94
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:39:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA1671F21155
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DB3286A8;
-	Fri, 13 Sep 2024 14:38:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7441A276;
+	Fri, 13 Sep 2024 14:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="gYjEEnam"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CV3VvuO8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB7626AC3;
-	Fri, 13 Sep 2024 14:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CCCE101C5
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:39:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726238320; cv=none; b=aTY0uNN6y30VQeXYDio2xbmO6DRIB3mvGTo8OvwR7JYygSMWLg3pugrG5m1fPKWcXKD1oh0jLUh/GA5GD3FmaPu4c3guA+9fM7eLJrxVKRNIfNn0/9yQBXKp7vnLobUytUIUPArveiBSXhB9zrYhVMp3jKpUZr/lm9THZJTRzxc=
+	t=1726238374; cv=none; b=Yj1kNfy2EFSqfE7I2/ZJ/dBj2z873yCJrVYLdtJjreFP9lesWDoQGN3HR6juN9rjq94384mR/aJdIKAi4zGsNud0mAkRvqmagL52GB/ielAVH7kAck+d/46W7gu1XYuEnTKT6PGGpWaGFZDTKZKvY/N/SqjXniyscN2avapOByg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726238320; c=relaxed/simple;
-	bh=ODPC/mmlX6/mJkJ4sqrmh2Ywzw9wnagKUef8mp3AdE4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rkOJWBfU0D2xkNPDcHDBvQDlCP2Jraf+ahbXuOd6rLV5zpGAliiu1wb9bDrrtPx27Df/FIqx11jLsmsjQ8NxbpRlzD1nKYNjjz36pSCPjBWBmcD57leZxeQn9VPBG8hOON0VuTEHsEJ7HrBNmjBacF2FA4N0YrVh+fXI+6CTXP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=gYjEEnam; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 1498F4188F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1726238307; bh=sP9tNsxkkTxV13nxMXjrTbHIM0VIEbH9geFGNnQijsM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=gYjEEnamJFddfn3iBfRfuvayzFovUIpGK2dTEUQHcDMgUtVB9MpOQiKc8aOozNSi2
-	 Zk1pzFiV1EvLR+bgD08C/0uSpcf+aAZGZ8nXkxW0kcJ/C7GymxMaDRSp96HHnfEQj9
-	 0pEKyR5jNjCYRv5rlfzWIzH+dU2ub4XREP3o07XO3vl8enWjXQsD4ViYbJE/GpDF/D
-	 lqY+tNg5hqSp/PIpoDL4IQnYp6T3/rJPdmis43MG/f150K1X/Blxve8tTp4urWaFR6
-	 fKLEdmHcqUErxjRvIZUtgpjO4KEqKqAHtghxj4PRzAdhYgUf9jcp00nuzvt5rhc/a+
-	 xWz0y5ue1Q/Zw==
-Received: from localhost (mdns.lwn.net [45.79.72.68])
+	s=arc-20240116; t=1726238374; c=relaxed/simple;
+	bh=iF+OwMVzAxNrDmu6houQARtAsobEPYNKJexijboTY5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=my5k2jIMvIk5ZlW9fqViVtZ6aUtLvlzuoywC6Jur3ur50mWHmGRiK+LraL7h7yhNlnAJDJmgeIw56ewVbudUy171jZzDWD2+AGQKXUDssMfl4QeaKuxD9lI5CjweKTlvTP5s/1nxDxPrHzIDfLP9BaI2nsaiZtztSKdk/zZNmsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CV3VvuO8; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726238370;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iaQbIDBF55GqS7IkFMCgMsaRgkbnRg9eREgwNo66+n0=;
+	b=CV3VvuO8w3Zy2VyJt5WlFfTG64bVLQY2hRjt5OYf9nsbZSxjK7qpMPc09srHfxQFsnHn1G
+	/j0C80C4wRgsDeBP3EOtQhu9HChuPdI7txncDhEbrfbdvaxIzZOIs4OYUEX+ZkKirEG/Uw
+	e25ecYcPvj7LjZ1EJtYBkfTrIuraEzE=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-166-e0HL4IeGPTe1OLhcK9g9YQ-1; Fri,
+ 13 Sep 2024 10:39:25 -0400
+X-MC-Unique: e0HL4IeGPTe1OLhcK9g9YQ-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 1498F4188F;
-	Fri, 13 Sep 2024 14:38:26 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Cheng Ziqiu <chengziqiu@hust.edu.cn>, Alex Shi <alexs@kernel.org>,
- Yanteng Si <siyanteng@loongson.cn>
-Cc: Dongliang Mu <dzm91@hust.edu.cn>, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, hust-os-kernel-patches@googlegroups.com,
- Cheng Ziqiu <chengziqiu@hust.edu.cn>
-Subject: Re: [PATCH] scripts: use ':Original:' tag to locate the origin file
-In-Reply-To: <20240913081626.4174631-1-chengziqiu@hust.edu.cn>
-References: <20240913081626.4174631-1-chengziqiu@hust.edu.cn>
-Date: Fri, 13 Sep 2024 08:38:24 -0600
-Message-ID: <875xqz39gf.fsf@trenco.lwn.net>
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7117F1955BC1;
+	Fri, 13 Sep 2024 14:39:23 +0000 (UTC)
+Received: from redhat.com (unknown [10.22.8.105])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 380051956086;
+	Fri, 13 Sep 2024 14:39:21 +0000 (UTC)
+Date: Fri, 13 Sep 2024 10:39:18 -0400
+From: Joe Lawrence <joe.lawrence@redhat.com>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Miroslav Benes <mbenes@suse.cz>,
+	Petr Mladek <pmladek@suse.com>, Jiri Kosina <jikos@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Marcos Paulo de Souza <mpdesouza@suse.com>,
+	Song Liu <song@kernel.org>
+Subject: Re: [RFC 00/31] objtool, livepatch: Livepatch module generation
+Message-ID: <ZuROlpVFO3OE9o1r@redhat.com>
+References: <cover.1725334260.git.jpoimboe@kernel.org>
+ <20240911073942.fem2kekg3f23hzf2@treble>
+ <ZuLwJIgt4nsQKvqZ@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZuLwJIgt4nsQKvqZ@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Cheng Ziqiu <chengziqiu@hust.edu.cn> writes:
-
-> Simply substitute path may cause file finding failed
-> if we have a different dir map for translation. The
-> ':Original:' tag could be used to locate the origin
-> file if both the tag and file exist.
+On Thu, Sep 12, 2024 at 09:44:04AM -0400, Joe Lawrence wrote:
+> On Wed, Sep 11, 2024 at 12:39:42AM -0700, Josh Poimboeuf wrote:
+> > On Mon, Sep 02, 2024 at 08:59:43PM -0700, Josh Poimboeuf wrote:
+> > > Hi,
+> > > 
+> > > Here's a new way to build livepatch modules called klp-build.
+> > > 
+> > > I started working on it when I realized that objtool already does 99% of
+> > > the work needed for detecting function changes.
+> > > 
+> > > This is similar in concept to kpatch-build, but the implementation is
+> > > much cleaner.
+> > > 
+> > > Personally I still have reservations about the "source-based" approach
+> > > (klp-convert and friends), including the fragility and performance
+> > > concerns of -flive-patching.  I would submit that klp-build might be
+> > > considered the "official" way to make livepatch modules.
+> > > 
+> > > Please try it out and let me know what you think.  Based on v6.10.
+> > > 
+> > > Also avaiable at:
+> > > 
+> > >   git://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git klp-build-rfc
+> > 
+> > Here's an updated branch with a bunch of fixes.  It's still incompatible
+> > with BTF at the moment, otherwise it should (hopefully) fix the rest of
+> > the issues reported so far.
+> > 
+> > While the known bugs are fixed, I haven't finished processing all the
+> > review comments yet.  Once that happens I'll post a proper v2.
+> > 
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git klp-build-v1.5
+> 
+> Hi Josh,
+> 
+> I've had much better results with v1.5, thanks for collecting up those
+> fixes in a branch.
 >
-> Signed-off-by: Cheng Ziqiu <chengziqiu@hust.edu.cn>
-> ---
->  scripts/checktransupdate.py | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
 
-Perhaps we need this, but I would really rather move any files that
-don't conform to the English-language directory structure.  Having them
-be anything but the same can only lead to this sort of confusion.
+Today's experiment used the centos-stream-10's kernel config with
+CONFIG_MODULE_ALLOW_BTF_MISMATCH=y and cs-10's gcc (GCC) 14.2.1 20240801
+(Red Hat 14.2.1-1).
 
-Thanks,
+First, more gcc nits (running top-level `make`):
 
-jon
+  check.c: In function ‘decode_instructions’:
+  check.c:410:54: error: ‘calloc’ sizes specified with ‘sizeof’ in the earlier argument and not in the later argument [-Werror=calloc-transposed-args]
+    410 |                                 insns = calloc(sizeof(*insn), INSN_CHUNK_SIZE);
+        |                                                      ^
+  check.c:410:54: note: earlier argument should specify number of elements, later size of each element
+  check.c: In function ‘init_pv_ops’:
+  check.c:551:38: error: ‘calloc’ sizes specified with ‘sizeof’ in the earlier argument and not in the later argument [-Werror=calloc-transposed-args]
+    551 |         file->pv_ops = calloc(sizeof(struct pv_state), nr);
+        |                                      ^~~~~~
+  check.c:551:38: note: earlier argument should specify number of elements, later size of each element
+
+-->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8--
+
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 63c2d6c06..c6f192859 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -407,7 +407,7 @@ static void decode_instructions(struct objtool_file *file)
+ 
+ 		for (offset = 0; offset < sec_size(sec); offset += insn->len) {
+ 			if (!insns || idx == INSN_CHUNK_MAX) {
+-				insns = calloc(sizeof(*insn), INSN_CHUNK_SIZE);
++				insns = calloc(INSN_CHUNK_SIZE, sizeof(*insn));
+ 				ERROR_ON(!insns, "calloc");
+ 
+ 				idx = 0;
+@@ -548,7 +548,7 @@ static void init_pv_ops(struct objtool_file *file)
+ 		return;
+ 
+ 	nr = sym->len / sizeof(unsigned long);
+-	file->pv_ops = calloc(sizeof(struct pv_state), nr);
++	file->pv_ops = calloc(nr, sizeof(struct pv_state));
+ 	ERROR_ON(!file->pv_ops, "calloc");
+ 
+ 	for (idx = 0; idx < nr; idx++)
+
+-->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8--
+
+and now a happy build of objtool.
+
+
+The top-level `make` moves onto building all the kernel objects, but
+then objtool vmlinux.o crashes:
+
+  $ gdb --args ./tools/objtool/objtool --sym-checksum --hacks=jump_label --hacks=noinstr --hacks=skylake --ibt --orc --retpoline --rethunk --static-call --uaccess --prefix=16 --link vmlinux.o
+  
+  Program received signal SIGSEGV, Segmentation fault.
+  ignore_unreachable_insn (file=0x435ea0 <file>, insn=0x1cd928c0) at check.c:3980
+  3980            if (prev_insn->dead_end &&
+  
+  (gdb) bt
+  #0  ignore_unreachable_insn (file=0x435ea0 <file>, insn=0x1cd928c0) at check.c:3980
+  #1  validate_reachable_instructions (file=0x435ea0 <file>) at check.c:4452
+  #2  check (file=file@entry=0x435ea0 <file>) at check.c:4610
+  #3  0x0000000000412d4f in objtool_run (argc=<optimized out>, argc@entry=14, argv=argv@entry=0x7fffffffdd78) at builtin-check.c:206
+  #4  0x0000000000417f9b in main (argc=14, argv=0x7fffffffdd78) at objtool.c:131
+  
+  (gdb) p prev_insn
+  $1 = (struct instruction *) 0x0
+
+which I worked around by copying a similar conditional check on
+prev_insn after calling prev_insn_same_sec():
+
+-->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8--
+
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 63c2d6c06..c6f192859 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -3977,7 +3977,7 @@ static bool ignore_unreachable_insn(struct objtool_file *file, struct instructio
+ 	 * It may also insert a UD2 after calling a __noreturn function.
+ 	 */
+ 	prev_insn = prev_insn_same_sec(file, insn);
+-	if (prev_insn->dead_end &&
++	if (prev_insn && prev_insn->dead_end &&
+ 	    (insn->type == INSN_BUG ||
+ 	     (insn->type == INSN_JUMP_UNCONDITIONAL &&
+ 	      insn->jump_dest && insn->jump_dest->type == INSN_BUG)))
+
+-->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8-- -->8--
+
+and now a happy kernel build and boot.
+
+
+A klp-build of the usual cmdline.patch succeeds, however it generates
+some strange relocations:
+
+  Relocation section '.rela.text' at offset 0x238 contains 6 entries:
+      Offset             Info             Type               Symbol's Value  Symbol's Name + Addend
+  0000000000000016  0000004600000004 R_X86_64_PLT32         0000000000000000 __kmalloc_noprof - 4
+  0000000000000035  0000004e00000004 R_X86_64_PLT32         0000000000000000 __fentry__ - 4
+  000000000000003c  0000000000000000 R_X86_64_NONE                             -4
+  
+  Relocation section '.rela.klp.relocs' at offset 0x1168 contains 2 entries:
+      Offset             Info             Type               Symbol's Value  Symbol's Name + Addend
+  0000000000000000  0000000700000001 R_X86_64_64            0000000000000000 .text + 3c
+  0000000000000008  0000000000000001 R_X86_64_64                               -4
+  
+  Relocation section '.klp.rela.h..text' at offset 0x53f18 contains 1 entry: 
+      Offset             Info             Type               Symbol's Value  Symbol's Name + Addend
+  000000000000003c  0000000000000002 R_X86_64_PC32                             -4
+
+No bueno.  FWIW, Song's 0001-test-klp.patch does seem to build w/o odd
+relocations and it loads fine.
+
+--
+Joe
+
 
