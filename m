@@ -1,128 +1,168 @@
-Return-Path: <linux-kernel+bounces-327502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDC889776E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:27:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 432649776E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:29:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 899521F219B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:27:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 680821C2390C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7901D3629;
-	Fri, 13 Sep 2024 02:27:39 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D9A1D31BB;
+	Fri, 13 Sep 2024 02:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BlnGhnne"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD0B2AD17;
-	Fri, 13 Sep 2024 02:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879782AD17;
+	Fri, 13 Sep 2024 02:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726194459; cv=none; b=dLG8S5+6+BWrkVIRtJ+ZTpK9BQSIJRn/fdjdQQFC7TdkTeS6ca3RjngRzET1EsA3TQcGuWl7BtnLjoZKXeVJBMZxZyICaZ3oOWJk0T1nK1BTgHtbetrEHY6kN9+2hx0jx97jkVTKM2ulznnFT3GLiQXbMqUBpHVKrbDzbdid3EI=
+	t=1726194572; cv=none; b=u5cNyOmJzaM3XR3vMXvwmIKEo9e4dmJf6Qu5rg1ztATu/Z4EgCZRjvutN2MGvYBkzQS9afnlTASNiCa6NO7mLR2E/XbFw6SnYkPHTA10CmTl+PvOEERrGrOHk3JAoZbWn4lrVU8+Ygp5qekt1WH7sbtAFL1wiugud8CjBvzKN10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726194459; c=relaxed/simple;
-	bh=r+50XrLvRja1NEXa/UF8fLt3iWBZuI++7VM2OW/k5lw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NvRig5keSdOAEX31wA/1EXF0awH9gzcSjAqQ4z1/4K0UKJtFzBaXWHe5Ja/C7hmVfVn79TKtlyP0K0z8E5lQPPf9exqjr5jw8OwtidDo/Ai/+22EgJA8Fyt/aPlN50O/ifVfe9nsv0H30bQkb4qL3+SRnvlA9aBPceLuBIQtP7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from ubt.. (unknown [210.73.53.31])
-	by APP-01 (Coremail) with SMTP id qwCowAC3vh4Eo+NmTrhAAw--.28619S3;
-	Fri, 13 Sep 2024 10:27:18 +0800 (CST)
-From: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Alexandre Ghiti <alex@ghiti.fr>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH 2/2] selftests/mm: skip virtual_address_range tests on riscv
-Date: Fri, 13 Sep 2024 10:26:35 +0800
-Message-Id: <20240913022635.751505-2-zhangchunyan@iscas.ac.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240913022635.751505-1-zhangchunyan@iscas.ac.cn>
-References: <20240913022635.751505-1-zhangchunyan@iscas.ac.cn>
+	s=arc-20240116; t=1726194572; c=relaxed/simple;
+	bh=wDB/MmaREIlVIheggTMUFzevQWctTktcCq/9Zzf0yhw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aKL3XrvP579/7lR+80clEpe8jrGTVL1GtweBqYe1f0sSJj4T+jgHfWITicI2bWPqMMYD5tDjTg16Ug/NUbyijxh4abbHwVy99gYnsHXulKnmNU7BAdjyg7mD60L8hcswRF6+f4u0LA9Oq+LwpQaJv9+3MDqOZAo99sNVzQ5vkLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BlnGhnne; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3a08d3144d9so290555ab.0;
+        Thu, 12 Sep 2024 19:29:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726194569; x=1726799369; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PTMhgEbsFwO+pBfHozMIUKTCxeSJ9rkkx6pXiVEJYI4=;
+        b=BlnGhnnexsyq9cE/vQSppMohKNQJZCC0ZUYd87fRRBHQ8GYKhhHwskb+AtbGFjhx2E
+         FAiAWXBHNyX8J/mk5FxROaY+EYnrhNRV8OFBUnUZ6lY4PY2x3LT8cWnnycsVx7TOBYqs
+         5OXsPBz5X8wEDfyaJTJ9k1r7JYoQEw7u+G3gFZFLv4FwPVWPdJZo9fbAAVlQke48f+xZ
+         wWsXqmslAr2Ua+T2YUYgdjuYjEVFq5qKLpS73712jUuIpAE6VLpHYLNcsw1+yfN30+w9
+         Oe/P4kKx5fXIL9LgBqHEf4WXSq7of9RcyTwjTOq2/gubNWnyMMhGW7XWo41iT5qYCVEr
+         bG2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726194569; x=1726799369;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PTMhgEbsFwO+pBfHozMIUKTCxeSJ9rkkx6pXiVEJYI4=;
+        b=t3UjzXbubXicS9NAsqMtg6jGtUVn8L0Hw18/T7HIX0U/DL5z4M+SWvUrTKDeUi7jOz
+         0AdXBvYTA2+4cQrp45WxKJaZ8LpverzM1/HhVi65xtsedhGdg+/g2gg6E0UNLYyei9Gd
+         E6dZ6VzkRyuERoQSi7y9mwr0Wo4fs2d+HV2ZfNRVJrkqNGxJdwQ+xYsg/p46kehvuALp
+         bs4MVmjNYWrHcBiTJLignQlapv7VGMP7pE67miAQWFBcwK+FAGFkjOIBR1hwV2u8ijy4
+         fGyrXAQcKPdxijZwL9qV8+uI3BVPO8/31B4Yq0Ourkzlfg9p/I6QKWCZmnlC/evnrG9Z
+         eO2w==
+X-Forwarded-Encrypted: i=1; AJvYcCV2dKvCLNGcsHokGmjW0weHUvjqXztoGzdatLX4yk4oVRp72zGFC3cDbpMob/aBMv5ZRhD5tlQZ4sxgy+Q=@vger.kernel.org, AJvYcCVDvjjmmKKUkcoaqRUO/O7WiATfyFtdrY2GTEQjxUT0wuop2Os8EFONtAToWGBM9fUVh0cK0Oe698hugR8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymycPVggg3Dmckyd8mIGBfSgYbouBOHQ9W1N1EnkPbSlRceBfJ
+	s8gFeqHWrll9urWrGDwJnQzO1HX8vejb6Z0aWcum7ptyDnn+X87gGSB/f1YQYQLYupaCpikMH+Q
+	+Ohg5H7WzNMLfJ/XIVaKTvF0bJjQ=
+X-Google-Smtp-Source: AGHT+IENKLUdj9+ZkJdPontbPGNcWKf/93O8fVsmGBQhknsCe7sTxPjA/0aEHZIrgYGLHSh2qlW9DaOFsfh/RDk3zVc=
+X-Received: by 2002:a05:6e02:12c5:b0:39f:5efe:ae73 with SMTP id
+ e9e14a558f8ab-3a0848eb2admr53336035ab.5.1726194569381; Thu, 12 Sep 2024
+ 19:29:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAC3vh4Eo+NmTrhAAw--.28619S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ww13Kr13WryrGw1rAr13Jwb_yoW8ZFW7pa
-	4xA34Yvr10gFn7JF1kur4DXFW8Ka1kGF48tFyUZryDur13Jry7ur4fKr4Ut3WagrWFqw4r
-	Z3WfW3s3Z3WUJ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPEb7Iv0xC_Cr1lb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI
-	8067AKxVWUGwA2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF
-	64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcV
-	CY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280
-	aVCY1x0267AKxVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64
-	kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm
-	72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI
-	1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
-	Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17
-	CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0
-	I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I
-	8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73
-	UjIFyTuYvjxUx5EfUUUUU
-X-CM-SenderInfo: x2kd0wxfkx051dq6x2xfdvhtffof0/1tbiDAgTB2bjgUZ5HAAAs3
+References: <1725615837-24872-1-git-send-email-shengjiu.wang@nxp.com>
+In-Reply-To: <1725615837-24872-1-git-send-email-shengjiu.wang@nxp.com>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Fri, 13 Sep 2024 10:29:13 +0800
+Message-ID: <CAA+D8AOkQOanya6RViXfk_=CmNmCWx-N3cb-0SjMhSy0AA7LeA@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 0/6] ASoC: fsl: add memory to memory function for ASRC
+To: Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: vkoul@kernel.org, perex@perex.cz, tiwai@suse.com, 
+	alsa-devel@alsa-project.org, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com, 
+	nicoleotsuka@gmail.com, lgirdwood@gmail.com, broonie@kernel.org, 
+	linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-RISC-V doesn't currently have the behavior of restricting the virtual
-address space which virtual_address_range tests check, this will
-cause the tests fail. So lets disable the whole test suite for riscv64
-for now, not build it and run_vmtests.sh will skip it if it is not present.
+On Fri, Sep 6, 2024 at 6:05=E2=80=AFPM Shengjiu Wang <shengjiu.wang@nxp.com=
+> wrote:
+>
+> This function is base on the accelerator implementation
+> for compress API:
+> https://patchwork.kernel.org/project/alsa-devel/patch/20240731083843.5991=
+1-1-perex@perex.cz/
 
-Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
----
- tools/testing/selftests/mm/Makefile       |  2 ++
- tools/testing/selftests/mm/run_vmtests.sh | 10 ++++++----
- 2 files changed, 8 insertions(+), 4 deletions(-)
+Hi Jaroslav
 
-diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
-index 84573ddfcfa2..912778347213 100644
---- a/tools/testing/selftests/mm/Makefile
-+++ b/tools/testing/selftests/mm/Makefile
-@@ -112,7 +112,9 @@ endif
- 
- ifneq (,$(filter $(ARCH),arm64 ia64 mips64 parisc64 powerpc riscv64 s390x sparc64 x86_64))
- TEST_GEN_FILES += va_high_addr_switch
-+ifneq ($(ARCH),riscv64)
- TEST_GEN_FILES += virtual_address_range
-+endif
- TEST_GEN_FILES += write_to_hugetlbfs
- endif
- 
-diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/selftests/mm/run_vmtests.sh
-index 03ac4f2e1cce..7caa624a2e5a 100755
---- a/tools/testing/selftests/mm/run_vmtests.sh
-+++ b/tools/testing/selftests/mm/run_vmtests.sh
-@@ -347,10 +347,12 @@ if [ $VADDR64 -ne 0 ]; then
- 	# allows high virtual address allocation requests independent
- 	# of platform's physical memory.
- 
--	prev_policy=$(cat /proc/sys/vm/overcommit_memory)
--	echo 1 > /proc/sys/vm/overcommit_memory
--	CATEGORY="hugevm" run_test ./virtual_address_range
--	echo $prev_policy > /proc/sys/vm/overcommit_memory
-+	if [ -x ./virtual_address_range ]; then
-+		prev_policy=$(cat /proc/sys/vm/overcommit_memory)
-+		echo 1 > /proc/sys/vm/overcommit_memory
-+		CATEGORY="hugevm" run_test ./virtual_address_range
-+		echo $prev_policy > /proc/sys/vm/overcommit_memory
-+	fi
- 
- 	# va high address boundary switch test
- 	ARCH_ARM64="arm64"
--- 
-2.34.1
+    Shall I add this patch to my patch set next time? Last time I
+reported an issue
+about "list_for_each_entry_safe_reverse", I can help to add it.  or
+will you send
+another version by yourself?
 
+Best regards
+Shengjiu Wang
+
+>
+> Audio signal processing also has the requirement for memory to
+> memory similar as Video.
+>
+> This asrc memory to memory (memory ->asrc->memory) case is a non
+> real time use case.
+>
+> User fills the input buffer to the asrc module, after conversion, then as=
+rc
+> sends back the output buffer to user. So it is not a traditional ALSA pla=
+yback
+> and capture case.
+>
+> Because we had implemented the "memory -> asrc ->i2s device-> codec"
+> use case in ALSA.  Now the "memory->asrc->memory" needs
+> to reuse the code in asrc driver, so the patch 1 and patch 2 is for refin=
+ing
+> the code to make it can be shared by the "memory->asrc->memory"
+> driver.
+>
+> Other change is to add memory to memory support for two kinds of i.MX ASR=
+C
+> modules.
+>
+> changes in v3:
+> - use Jaroslav's suggestion for header file compress_params.h (PATCH 01)
+> - remove the ASRC_OUTPUT_FORMAT/ASRC_OUTPUT_RATE definition
+> - remove ASRC_RATIO_MOD in this version because it uses .set_metadata()
+>   Will wait Jaroslav's update or other better method in the future.
+> - Address some comments from Pierre.
+>
+> changes in v2:
+> - Remove the changes in compress API
+> - drop the SNDRV_COMPRESS_SRC_RATIO_MOD
+> - drop the SND_AUDIOCODEC_SRC and struct snd_dec_src
+> - define private metadata key value
+>   ASRC_OUTPUT_FORMAT/ASRC_OUTPUT_RATE/ASRC_RATIO_MOD
+>
+> Shengjiu Wang (6):
+>   ALSA: compress: Add output rate and output format support
+>   ASoC: fsl_asrc: define functions for memory to memory usage
+>   ASoC: fsl_easrc: define functions for memory to memory usage
+>   ASoC: fsl_asrc_m2m: Add memory to memory function
+>   ASoC: fsl_asrc: register m2m platform device
+>   ASoC: fsl_easrc: register m2m platform device
+>
+>  include/uapi/sound/compress_params.h |  23 +-
+>  sound/soc/fsl/Kconfig                |   1 +
+>  sound/soc/fsl/Makefile               |   2 +-
+>  sound/soc/fsl/fsl_asrc.c             | 179 ++++++-
+>  sound/soc/fsl/fsl_asrc.h             |   2 +
+>  sound/soc/fsl/fsl_asrc_common.h      |  70 +++
+>  sound/soc/fsl/fsl_asrc_m2m.c         | 727 +++++++++++++++++++++++++++
+>  sound/soc/fsl/fsl_easrc.c            | 261 +++++++++-
+>  sound/soc/fsl/fsl_easrc.h            |   4 +
+>  9 files changed, 1260 insertions(+), 9 deletions(-)
+>  create mode 100644 sound/soc/fsl/fsl_asrc_m2m.c
+>
+> --
+> 2.34.1
+>
 
