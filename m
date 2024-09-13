@@ -1,116 +1,125 @@
-Return-Path: <linux-kernel+bounces-327682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A37EF977999
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:27:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3BC597799A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:27:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69388284860
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:27:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A37A91F26A18
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B30B1BC9E5;
-	Fri, 13 Sep 2024 07:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BaHhRIDc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4281BC089;
+	Fri, 13 Sep 2024 07:27:48 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E8177107;
-	Fri, 13 Sep 2024 07:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DE81B9B3E
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 07:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726212425; cv=none; b=fHWB1kwOAVZePlw4Hz5MLOvMWZMgiha7XdnCbJ1UE+MMFhS6NGhKGmLqhKjxszjPv4ed4WiOM6ynBRUkVqf9gt+YkIgwoo3YCycVr5/pognmc3psHER3G7VOBnnNpaZexTVWa3cEJqPOfKijoUgVm3NnA2NmchdxINDJ3x/ZgrU=
+	t=1726212468; cv=none; b=XmnyJ/bOWhB8roa1cNilztfjNmlDe0C2GhdGVCzoPDUCyshXlg/ERfkgZZQOUZPIgMgEsnGrw/VNVRQUjgXvuNiMKg/BK6CjctIOA4eaSjppecAxBBOguA/A3w5MTQYsQCL7n3V9PWi2jyKcYXmhJauDoMBVWQBwI2ag6BEBnbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726212425; c=relaxed/simple;
-	bh=YHrWZ756TWnCmNV+PsSyXX+0zIj/PE3ia94PWJfIGm0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WJAjpb8M0YMicKafZhq1j72CXXOtWHDRF/5qO3GTjuD9SsKvxuiIfER1sKqrWAOjREn7PwV7PQFBqFvclF8UPLC0uCXXGmjMoklNEE50Fwa+8H3wr8cxQf8J/iGiTh/R6Ysn56ORx7xOk2mQq9quMglR70JL25eLAakMNr/1VrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BaHhRIDc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B28EC4CEC0;
-	Fri, 13 Sep 2024 07:27:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726212425;
-	bh=YHrWZ756TWnCmNV+PsSyXX+0zIj/PE3ia94PWJfIGm0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BaHhRIDccAB+chq4vfIolGjqSeEg83jXPD9rNbdUr9nB5/qalCkKmr1FX/E8z3e8A
-	 Fq2G5AaOuXhVk6j+SjVejHhvtB1b14B8RT3I909sg4e1/JOPKttO+W4O8PstFZa/tF
-	 U2MoY8GK5rjFdB0ee9DQ9gWLeJ79qbhess8Q/RmCHjX+IkVyufUTNX3KH3r9JZq9PG
-	 IJJOJA2f6q237Wh9f5SSsO1L+T0/3RFpi43x42GqwpcQSBpo29bk0rlpdzOdBB4dzq
-	 hfSkl93kcOr7NY6EOvPA004XRR7x0+IKyvGh9B6yUFhu8rEPQINRj0/IyDlGkWSIhy
-	 QEGwyGjkY0Mgw==
-Date: Fri, 13 Sep 2024 08:26:58 +0100
-From: Simon Horman <horms@kernel.org>
-To: Alexis =?utf-8?Q?Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	ebpf@linuxfoundation.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH bpf-next v2] selftests/bpf: convert test_xdp_features.sh
- to test_progs
-Message-ID: <20240913072658.GR572255@kernel.org>
-References: <20240910-convert_xdp_tests-v2-1-a46367c9d038@bootlin.com>
- <20240911141824.GZ572255@kernel.org>
- <fb7db9a9-5b9a-4b77-8dc6-f30b839bec27@bootlin.com>
+	s=arc-20240116; t=1726212468; c=relaxed/simple;
+	bh=C4gIocm3QWi2fPeIbtwknZXmhIPL9DDJgblP9XfPXAU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=RMQFOOdj5LtNCI7+IYlV6gUxporhKJ14qzRP1H4nZAsFlvtozYuCgQ4fNGrugrzUhT98OUkWDjqP8KJVPXHJuI1k4jEsfbVUT8f7mk9ip21cYeI+bz48izieIgsVfUJ4c1bUJuEdiLEq4bwhU9gtSgktVNVhqSPDcl/F4ptdq4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-82aa499f938so314515739f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 00:27:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726212466; x=1726817266;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4PxJn+UhPuaR3TBKTVzJcybwKeseG8dsygcJO7OPLZw=;
+        b=twql2274l2M8eMIrtAm0ffk+t4VRWHI8NQMbkfdY9by+Nrv/zG1gEDl+378Ovu2gI6
+         lezEaYyTU1J3uqX/ANBLS6ltZDV8UclqkM1fEaIon8h+XUGQyGbudroswvG2Th984jM8
+         OotGXU5i/rsGyof8hoLbFVBsJ/cfNoFfFoFxiZu7DpqzppKHDuhruPWOGbTBHs8Fyq+6
+         6WdSzJcG6n8ear3C2Dv/WLmFwNOIX45EVwNX52AzgwD5mI2GrNtVG+jx9P/p1Pg2i/ZQ
+         pfHp2cJl5FIYFx7mlHmd/fEG0pwpZQS2uDchtw7HyduNNHb5bYZbDlcpBvRa6ZdkHPfU
+         CuFQ==
+X-Gm-Message-State: AOJu0Yz+rNQ4dZ1HgsI1jlffGahKc1GPbUV06nwsc7gwpjNBZ4vvNTOk
+	sA43ChzuvioPXifD9/pTdy2CL0uueHbGuuEWze7xcmkMG6KmY9q160mkvHWpCYUqV1ItysQnt9C
+	aJBZV8ADvpsgMExJh5niiZaEBgYyO4ZX9JYhhtS3jhsJGi3QcVAxYHL0=
+X-Google-Smtp-Source: AGHT+IHZnI7itz5kYq3On9nvFbP8yD9YpY8PBXekhclZOErWjQjlFqy3rQfFzDauzQcimjV/ZIEBpCV1WAChryb98LFsYLodXAQI
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fb7db9a9-5b9a-4b77-8dc6-f30b839bec27@bootlin.com>
+X-Received: by 2002:a05:6e02:1565:b0:39f:5783:fbbb with SMTP id
+ e9e14a558f8ab-3a084611adamr44928325ab.3.1726212466382; Fri, 13 Sep 2024
+ 00:27:46 -0700 (PDT)
+Date: Fri, 13 Sep 2024 00:27:46 -0700
+In-Reply-To: <000000000000d3bf150621d361a7@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ddaa900621fb28a2@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [net?] WARNING: refcount bug in ethnl_phy_done
+From: syzbot <syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Sep 12, 2024 at 10:17:13PM +0200, Alexis Lothoré wrote:
-> Hi Simon,
-> 
-> On 9/11/24 16:18, Simon Horman wrote:
-> 
-> [...]
-> 
-> >> diff --git a/tools/testing/selftests/bpf/prog_tests/xdp_features.c b/tools/testing/selftests/bpf/prog_tests/xdp_features.c
-> >> new file mode 100644
-> >> index 000000000000..bcb36a2d2767
-> >> --- /dev/null
-> >> +++ b/tools/testing/selftests/bpf/prog_tests/xdp_features.c
-> >> @@ -0,0 +1,446 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >> +
-> >> +/**
-> >> + * Test XDP features
-> >> + *
-> >> + * Sets up a veth pair, and for each xdp feature under test:
-> >> + * - asks the tested interface its xdp capabilities through bpf_xdp_query
-> >> + * - attach and run some specific programs on both interfaces to check if
-> >> + *   announced capability is respected
-> >> + */
-> > 
-> > Hi Alexis,
-> > 
-> > This is neither a full review nor an issue that needs to block progress.
-> > But, FWIIW, the comment above is not a Kernel doc, yet starts with '/**'.
-> > I suggest that it should start with '/*' instead.
-> 
-> ACK. I'll wait for more comments on the series, and add the fix to the
-> corresponding revision, if any.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Thanks, much appreciated.
+***
+
+Subject: Re: [syzbot] [net?] WARNING: refcount bug in ethnl_phy_done
+Author: lizhi.xu@windriver.com
+
+Distinguish whether dev is initialized by phy start or phy doit
+
+#syz test
+
+diff --git a/net/ethtool/phy.c b/net/ethtool/phy.c
+index 4ef7c6e32d10..fe11de6bddab 100644
+--- a/net/ethtool/phy.c
++++ b/net/ethtool/phy.c
+@@ -13,6 +13,7 @@
+ struct phy_req_info {
+ 	struct ethnl_req_info		base;
+ 	struct phy_device_node		*pdn;
++	u8 dev_start_doit;
+ };
+ 
+ #define PHY_REQINFO(__req_base) \
+@@ -157,6 +158,9 @@ int ethnl_phy_doit(struct sk_buff *skb, struct genl_info *info)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	if (req_info.base.dev)
++		req_info.dev_start_doit = 0;
++
+ 	rtnl_lock();
+ 
+ 	ret = ethnl_phy_parse_request(&req_info.base, tb, info->extack);
+@@ -223,10 +227,14 @@ int ethnl_phy_start(struct netlink_callback *cb)
+ 					 false);
+ 	ctx->ifindex = 0;
+ 	ctx->phy_index = 0;
++	ctx->phy_req_info->dev_start_doit = 0;
+ 
+ 	if (ret)
+ 		kfree(ctx->phy_req_info);
+ 
++	if (ctx->phy_req_info->base.dev)
++		ctx->phy_req_info->dev_start_doit = 1;
++
+ 	return ret;
+ }
+ 
+@@ -234,7 +242,7 @@ int ethnl_phy_done(struct netlink_callback *cb)
+ {
+ 	struct ethnl_phy_dump_ctx *ctx = (void *)cb->ctx;
+ 
+-	if (ctx->phy_req_info->base.dev)
++	if (ctx->phy_req_info->base.dev && ctx->phy_req_info->dev_start_doit)
+ 		ethnl_parse_header_dev_put(&ctx->phy_req_info->base);
+ 
+ 	kfree(ctx->phy_req_info);
 
