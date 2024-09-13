@@ -1,145 +1,93 @@
-Return-Path: <linux-kernel+bounces-327709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81334977A21
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:46:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF5A2977A26
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBB5D1C25319
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:46:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E5131F27A74
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795791D589D;
-	Fri, 13 Sep 2024 07:43:31 +0000 (UTC)
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15A11D5CC2;
+	Fri, 13 Sep 2024 07:43:40 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC391D54C5
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 07:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87D61BDAB2;
+	Fri, 13 Sep 2024 07:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726213411; cv=none; b=HrXDQ9utcQ66gz8QDyo54/16azNBE146mRXVn+D5UvdX6WNyJYi43ZN4b3bzzAOSQqGragz8xnktIiAet3ZNf28CpeYbGfIqVtkXGUy+11Qc3LDB2s2Mv6CKftlfIORAhjaUKbDPnG4uwpCanXrcVTO6zCjgjzU0Q3Oxxj+QKxw=
+	t=1726213420; cv=none; b=lK0lc/S+ngfZJVouiMl62P1mRBuPZ6HPh7Khog166euAXMpIcrLJKAyX/YY78K17M5XlhRS2/EnzAdlZH1s3ykAcPEHKa07bSb6Hk74kWe6cCrEtGyHO2u6WurrYn2Oa6GH6kf7rWfgGLDBSDuCCZ2LoFpGNhj5erizzqwN6lIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726213411; c=relaxed/simple;
-	bh=yhmuZNYq1MmF/ZYy4MTPzdt4rwr5KfY+aAE6ylA/6kI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uzi7U1Xo5DVuGDDcdCBFA11R2Zj5jYxIoH+HIZAr2EnSU23s2GM0mqQnlHJNAFumPxKEOGgYE+uqvQF8tdadme989ZKpzvp7kQ3sd8qwKmPWpfCXy0vD2slSpLH452J8paa4MjmFyFpI58IIac4lVdUbccLF5nXW1EjV7OqXZC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e0b7efa1c1bso1820829276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 00:43:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726213407; x=1726818207;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Uob8wHcFsSqO1Ywd9b+SmTX4fajQu+yvDZdClendtRg=;
-        b=DF0waJCjIShZ/qccP9ys/AzRZCFtg/iYAqNvo+SATCd/vWt92/FfgHcqeKGq/1SR2t
-         OY1Iwzoi8oKTHbPMmk1ebepQoOPANNQOCsP7biW3yRpFHGyHfriqFVwaqUG0iqfPlFYv
-         AV4X9kobITk0x8fhCYSlA+S9qX2yttsoz2ST+S2IzWf8Bs8FVnaYLzxQuvNlR1UByLdN
-         B/7S+3Zyk8+az2Be/N4fFC/6ZLXPK+Gp1jyQQMP8xdZPs3z+qmA0600hlS8UcIAAGm2p
-         3OcUHjmAIshZ++083QInd2Nbm5we8wVzFhqRRSAB6uR9wsCzVL9UHSC9kWkHJU1hsnZg
-         nxGg==
-X-Forwarded-Encrypted: i=1; AJvYcCV8LC8/OLRRILLFQTKVcC/i8TLDVDReqAARDIWv4HfiCo5OaZ5DuAA/+fsjTSlWHaZR9xtRjaYGwNHvP2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF2FyR9l2Vtvo8Dd4EXEuNKMQYJ3NCa4GBR1nZ6lXRVWphFhrh
-	7KcPKWpR5emdilAnEWfzXe6Pf+Kcxdd1Z68bQJ+0cVXmg4DgUBorFF6Zmdq3
-X-Google-Smtp-Source: AGHT+IEpbo1hA4HG+LelP68Eo3j7WTfhanWCl6OEbvz+xdpngR3bGo8F9W6fPjtOHZYh0JHL406HTw==
-X-Received: by 2002:a05:6902:1b04:b0:e16:4a59:c3a7 with SMTP id 3f1490d57ef6-e1d9dbe1a36mr5330132276.32.1726213407115;
-        Fri, 13 Sep 2024 00:43:27 -0700 (PDT)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e1d7b9db6c2sm1398278276.9.2024.09.13.00.43.26
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Sep 2024 00:43:26 -0700 (PDT)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6d3f4218081so16837327b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 00:43:26 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVt87d46uZb3+tk+9YEyt8bEUnP1TXBpji8R121XfVmpii0hKdyaqu47AXCwv5/BqcJIb6sP1hqIzKLmXI=@vger.kernel.org
-X-Received: by 2002:a05:690c:a8b:b0:6db:d27f:dd96 with SMTP id
- 00721157ae682-6dbd27fde76mr4703747b3.45.1726213405883; Fri, 13 Sep 2024
- 00:43:25 -0700 (PDT)
+	s=arc-20240116; t=1726213420; c=relaxed/simple;
+	bh=L4uQfDONVw2EilB+3eyY/Qj18I0ieYrCqIDqrOFePiw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Eekbcg2/G6K57JfssNZ8tDDl9F+g+Wn4kgL9R9CD9VyUw6Cbjciodk6q1fhmdIVeDP5NyavOQaw5bSSP+m2mqVXg3142F6rU36U4ZNtO690FzQoXORl9NrRu+5lv3R2Pz+D1LgtEebHsoKcgV3GAbbOyRZaDEQ9ZycG1d6NfH1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Fri, 13 Sep
+ 2024 15:43:25 +0800
+Received: from mail.aspeedtech.com (192.168.10.10) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
+ Transport; Fri, 13 Sep 2024 15:43:25 +0800
+From: Billy Tsai <billy_tsai@aspeedtech.com>
+To: <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <joel@jms.id.au>,
+	<andrew@codeconstruct.com.au>, <linux-gpio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+	<BMC-SW@aspeedtech.com>, <Peter.Yin@quantatw.com>
+Subject: [PATCH v3 0/6] Add Aspeed G7 gpio support 
+Date: Fri, 13 Sep 2024 15:43:19 +0800
+Message-ID: <20240913074325.239390-1-billy_tsai@aspeedtech.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912171142.3241719-1-devarsht@ti.com> <c501c5d3-d715-4ac5-98be-35d23ad1cfbe@kernel.org>
- <3y4pqlazkuofc37s6zlw7waqzmtdl5iydhm4i3i45n6d6pnflc@osyocv7wxtif> <87ed5oypeh.fsf@minerva.mail-host-address-is-not-set>
-In-Reply-To: <87ed5oypeh.fsf@minerva.mail-host-address-is-not-set>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 13 Sep 2024 09:43:13 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWYtsERgJH+Epq2d0P34PfVtEG69HHDLgz_nsKaxbDu4g@mail.gmail.com>
-Message-ID: <CAMuHMdWYtsERgJH+Epq2d0P34PfVtEG69HHDLgz_nsKaxbDu4g@mail.gmail.com>
-Subject: Re: [PATCH] drm/tidss: Add MIT license along with GPL-2.0
-To: Javier Martinez Canillas <javierm@redhat.com>
-Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Danilo Krummrich <dakr@kernel.org>, Devarsh Thakkar <devarsht@ti.com>, jyri.sarha@iki.fi, 
-	tomi.valkeinen@ideasonboard.com, airlied@gmail.com, daniel@ffwll.ch, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	praneeth@ti.com, nm@ti.com, vigneshr@ti.com, r-ravikumar@ti.com, 
-	j-choudhary@ti.com, grandmaster@al2klimov.de, caihuoqing@baidu.com, 
-	ahalaney@redhat.com, cai.huoqing@linux.dev, colin.i.king@gmail.com, 
-	dmitry.baryshkov@linaro.org, geert+renesas@glider.be, 
-	laurent.pinchart@ideasonboard.com, robh@kernel.org, sam@ravnborg.org, 
-	simona.vetter@ffwll.ch, ville.syrjala@linux.intel.com, 
-	wangxiaojun11@huawei.com, yuanjilin@cdjrlc.com, yuehaibing@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="yes"
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 13, 2024 at 9:38=E2=80=AFAM Javier Martinez Canillas
-<javierm@redhat.com> wrote:
-> Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com> writes:
+The Aspeed 7th generation SoC features two GPIO controllers: one with 12
+GPIO pins and another with 216 GPIO pins. The main difference from the
+previous generation is that the control logic has been updated to support
+per-pin control, allowing each pin to have its own 32-bit register for
+configuring value, direction, interrupt type, and more.
+This patch serial also add low-level operations (llops) to abstract the
+register access for GPIO registers and the coprocessor request/release in
+gpio-aspeed.c making it easier to extend the driver to support different
+hardware register layouts.
 
-> > On Thu, Sep 12, 2024 at 10:47:31PM +0200, Danilo Krummrich wrote:
-> >> On 9/12/24 7:11 PM, Devarsh Thakkar wrote:
-> >> > Modify license to include dual licensing as GPL-2.0-only OR MIT lice=
-nse for
-> >> > tidss display driver. This allows other operating system ecosystems =
-such as
-> >> > Zephyr and also the commercial firmwares to refer and derive code fr=
-om this
-> >> > display driver in a more permissive manner.
-> >> >
-> >> > Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
-> >>
-> >> My only contribution to this driver was through DRM refactorings,
-> >> but anyways:
-> >>
-> >> Acked-by: Danilo Krummrich <dakr@kernel.org>
-> >
-> > Similar for me. I only touched one of the affected files with a
-> > refactoring change (34cdd1f691ade28abd36ce3cab8f9d442f43bf3f). I don't
-> > assume this gives me any copyright to that driver, but to simplify
-> > things:
-> >
-> > Acked-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
->
-> Similar for me too. My only change to this driver I think was to add DRM
-> panic support in commit b2cb6011bcaf ("drm/tidss: Add drm_panic support")=
-.
->
-> But I'm also OK with the change, so:
->
-> Acked-by: Javier Martinez Canillas <javierm@redhat.com>
+Change since v2:
+- Correct minItems for gpio-line names
+- Remove the example for ast2700, because it’s the same as the AST2600
+- Fix the sparse warning which is reported by the test robot
+- Remove the version and use the match data to replace it.
+- Add another two patches one for deferred probe one for flush write.
 
-Similar for me, just a forgotten comment update.
+Changes since v1:
+- Merge the gpio-aspeed-g7.c into the gpio-aspeed.c.
+- Create the llops in gpio-aspeed.c for flexibility.
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Billy Tsai (6):
+  dt-bindings: gpio: aspeed,ast2400-gpio: Support ast2700
+  gpio: aspeed: Remove the name for bank array
+  gpio: aspeed: Create llops to handle hardware access
+  gpio: aspeed: Support G7 Aspeed gpio controller
+  gpio: aspeed: Change the macro to support deferred probe
+  gpio: aspeed: Add the flush write to ensure the write complete.
 
-Gr{oetje,eeting}s,
+ .../bindings/gpio/aspeed,ast2400-gpio.yaml    |  19 +-
+ drivers/gpio/gpio-aspeed.c                    | 498 +++++++++++-------
+ 2 files changed, 313 insertions(+), 204 deletions(-)
 
-                        Geert
+-- 
+2.25.1
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
