@@ -1,115 +1,125 @@
-Return-Path: <linux-kernel+bounces-328423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2705E978333
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:02:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0FBA97830E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:58:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0D0E281602
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:02:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F275287DF6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135B14F215;
-	Fri, 13 Sep 2024 15:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A63D6F31E;
+	Fri, 13 Sep 2024 14:57:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="vt/aSyrG"
-Received: from mout.perfora.net (mout.perfora.net [74.208.4.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="frB2zXBk"
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C57C4AEE5;
-	Fri, 13 Sep 2024 15:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21370208B0
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726239725; cv=none; b=FzvA8ijwVSepuw0G2id4O8TgbHl1DELzTFnF++qq37LhKyIpz+9h5q8G404zPs4KcCrU8p/8mYEfNEjsaWoO9r6VsthnPgL3o0ol7XU7R+oT9//Eq6r5H96MGwjFcg2VA9x0DrRbA9nH/QzlXjA3EJH5Syrp+5DpbBZWAvU1W84=
+	t=1726239420; cv=none; b=EeDeXehJ0lVIyPertn4vnEDQn5mReiV20It7P7gFz6eYxLJCD2eRix03lpNI4oKZkaBuCYtdH2FjhDRBDejrKLOmzD5qjLoTO914w6ZlC4OxYveKKJDtWLDt5ItCK4FTfh2gm3XVf6pnyKgNf4yutZCyfHA4No6sOpy7Pmj6D2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726239725; c=relaxed/simple;
-	bh=ESKLF8yFEtUQytc0bKQ3oBD2aW2a9E9kSXQeLosTxeE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pE8mqwowBxuJRezJ+A/LEFt2K5P2wemlXh7OEwnUQKzZ1tutSRGrD1oKMDDCUP+vRsF7DIePqbRXIOoOcCkxedR7Q1+6cbgyJFJfZbwnnstIb6P3qeWifJhq9S3e/PQrGMHTiUhF1bBbAJkFyChzXvNSPXUqEVmJpAEU0nJMBw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=vt/aSyrG; arc=none smtp.client-ip=74.208.4.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
-	s=s1-ionos; t=1726239721; x=1726844521; i=parker@finest.io;
-	bh=2o7ADJUQgRYhhYBqQX29IqghXTlpdQRGn0FGNbn1NUI=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=vt/aSyrGR0pI0utiyKc+KclswpULP4ACa8uNh00+H6SEfQC52JMi74QE2A+SUf/L
-	 PX5/lk3vlwenK4FLgl2z1aBNII96vhLhpQseB8P4GhJuNefpgmfc7le72a97IF9Fd
-	 n0Vu7N3PTKRQAOvlmotvJvhA2v3tD4oeHs/sw27rg9FWVMsJOfJUzWIIh2efFKz0p
-	 fPs874M6J6j1QfNl5S/U850+Qpx7VvmDVLbbvXq5WWtynegFUYC9IxBVp9gjP0Hxu
-	 TA0DIBqK05mLDwQabSXck+Ullrj8Zz2O8tPGq/pGAwBEwPkbTNDI3a1KR/4Hzoz6h
-	 Dxya9IPaMrGSW67XiQ==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from finest.io ([98.159.241.229]) by mrelay.perfora.net (mreueus004
- [74.208.5.2]) with ESMTPSA (Nemesis) id 1MQdh4-1sbI5p0r26-00Ijhc; Fri, 13 Sep
- 2024 16:56:31 +0200
-From: Parker Newman <parker@finest.io>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Cc: Parker Newman <pnewman@connecttech.com>
-Subject: [PATCH v1 6/6] serial: 8250_exar: Add select EEPROM_93CX6 in Kconfig
-Date: Fri, 13 Sep 2024 10:55:43 -0400
-Message-ID: <b6444935804fb0e745d7f374cf2a0c9116a2b3e9.1726237379.git.pnewman@connecttech.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <cover.1726237379.git.pnewman@connecttech.com>
-References: <cover.1726237379.git.pnewman@connecttech.com>
+	s=arc-20240116; t=1726239420; c=relaxed/simple;
+	bh=bk5fBYoRubuV3SwJbAObGRT8vGObXynBdtgnt0h4beo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N2uIQsraYmvhksVl6QQEPd4bg/1nZNrI+D6AFzBI9lro78jgiyZSFLywuElFTzN5EmbMokix2DIuk25KkntAcWN5LCHE9MlLi3pKv8EW0W2SuDXPKrokxDK+ID9P9IurHOUSdQz4V/78dYq5l/2caA+T5cl74Hf2lYsy68Ss9ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=frB2zXBk; arc=none smtp.client-ip=80.12.242.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id p7j0sSUf9oR4tp7j1soqq0; Fri, 13 Sep 2024 16:56:51 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1726239411;
+	bh=2ppfZtFE3UF/ZPMPNi/oYz7eBBncngRv+97pSLrZhqA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=frB2zXBkPf2SbckhFM/MElr0u4oWmiNEG9WMsoDpJ/9F4I7EYcra7Vs8SKV+jLf+1
+	 WWGlSmHvc/f7s+3oGUMSXH5RIL/A2V+mD/tDQ2Npd7phpBuZLSvDKJhe1Lm1JTLPfu
+	 aoxhKvyROQrUYZ8kb0VNSo/Qfd2ONclCAzrvbaA7mu5HE+UmjR/zDHxx+E1fE7Es+7
+	 kJbvvCde1ENSFzGt/J6Qu/wq7dZt4HKhih6QC9K5ksQM1/n4HyKc1NWK5Yw0uZwRO6
+	 s4b/ny6bMWwAvVEVZZhnBEqRRMu4p2PMo2aiVQriYVg2PMV8jODsa9EVN43ryFMzxo
+	 R4XOTF72vKrbw==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Fri, 13 Sep 2024 16:56:51 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <e2d7ed77-827b-4b7c-800c-9c8f3bcb6b5a@wanadoo.fr>
+Date: Fri, 13 Sep 2024 16:56:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ajSEOcGFWwOl3ZVKbnLk5A4JCktIcIR++kmKHBG9KY4PhRwnsKq
- gFQWdnF4kErSeMUGkRa8Tit2TjYHtLJpmxCmi9zfc4ndO1RM20ITIiceoZo9ODltrLhlCwa
- mjDx76qXS252rPgX40mY7MBkCkz387RJEUcBpq13g7Ci0yGUmldKgDagyKIQAgoZjmOzG8X
- ctfGuLLPyOjjqJDDhN1Hg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:K8dNiyVWNQI=;0F0kA9AYH9Cy3j0YwgV/acixk0h
- 5YGkt5o3KYsm4hAYt0+TYpzonADsI75g6kF1NH2vpKO+ZKLRjmRnBiF6gq3LRlt0GI9iI5dVK
- BJ06aFpXEWE0Pmrpult0dibntcMT3Xm8eF0CZ8UhDoXSn8AxTtEfS6GMv7qOovlg1HDqK7a7a
- +8+fdlwplcgw0yMOwit6Osr76ToDjAtb53q7P9gmb7+ZP5kxuxydB6g1E42vcuBcjXPsBaqOA
- XvhwNDEF2oYykanIRAcmAPo2ZktPtiHsIHPX0BEgoVnls+MS/DAVzIciWMvxyEkhJQt6N1WnZ
- 8Qa7DWsYe5ROZJaYtg+dRSrjjBnaHd4pbRjPhWtSS6MhVR9ddjRuQDT8SfM/vodkvjhZZoip4
- aTs/49AJ6SovsXZimJ71mo98y4ouzNaRCa5hkLq3DyGewno9eIa0bS08M/vC8+Qv1DBmFfBu7
- w3mZg627RHe/D4Qpwrdx503PCPWq9TveBaVMuTxGbBJ1/qLldcAbrmwGvV8/ujBHxGLOud3L4
- NPO71TX7j4C987umx/s9j2KWFML9SrhN7F6W7WTwcwx8z5KlqBfHXcKUQd9+2Ed/Mlndiy+kN
- YedLTRGGCGYkNDKOJea5+UIFng8T5EoCJg3Rzw2PFfJBwFEywvY/K6oc/6jNrdGo932WXEcas
- ZCGrO62S+40EQMATsvc3NRh4gqw3EwK09JLceYBc+TRnlB0ye9ORdLaYzYmkwGaafGfz2g0ni
- c0chnqXagLl4Alyv8ImDw9pYLYJjOvIbw==
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 v2 1/4] riscv: dts: starfive: add assigned-clock* to
+ limit frquency
+To: WangYuli <wangyuli@uniontech.com>, stable@vger.kernel.org,
+ gregkh@linuxfoundation.org, sashal@kernel.org, william.qiu@starfivetech.com,
+ emil.renner.berthing@canonical.com, conor.dooley@microchip.com,
+ xingyu.wu@starfivetech.com, walker.chen@starfivetech.com, robh@kernel.org,
+ hal.feng@starfivetech.com
+Cc: kernel@esmil.dk, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, devicetree@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ richardcochran@gmail.com, netdev@vger.kernel.org
+References: <3A31C289BC240955+20240912025539.1928223-1-wangyuli@uniontech.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <3A31C289BC240955+20240912025539.1928223-1-wangyuli@uniontech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-From: Parker Newman <pnewman@connecttech.com>
+Le 12/09/2024 à 04:55, WangYuli a écrit :
+> From: William Qiu <william.qiu@starfivetech.com>
+> 
+> [ Upstream commit af571133f7ae028ec9b5fdab78f483af13bf28d3 ]
+> 
+> In JH7110 SoC, we need to go by-pass mode, so we need add the
+> assigned-clock* properties to limit clock frquency.
+> 
+> Signed-off-by: William Qiu <william.qiu@starfivetech.com>
+> Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+> ---
 
-Add "select EEPROM_93CX6" to config SERIAL_8250_EXAR to ensure
-eeprom_93cx6 driver is also compiled when 8250_exar driver is selected.
+Hi,
 
-Signed-off-by: Parker Newman <pnewman@connecttech.com>
-=2D--
- drivers/tty/serial/8250/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+if/when resent, there is a typo in the subject: s/frquency/frequency/
 
-diff --git a/drivers/tty/serial/8250/Kconfig b/drivers/tty/serial/8250/Kco=
-nfig
-index 47ff50763c04..94910ced8238 100644
-=2D-- a/drivers/tty/serial/8250/Kconfig
-+++ b/drivers/tty/serial/8250/Kconfig
-@@ -150,6 +150,7 @@ config SERIAL_8250_EXAR
- 	tristate "8250/16550 Exar/Commtech PCI/PCIe device support"
- 	depends on SERIAL_8250 && PCI
- 	select SERIAL_8250_PCILIB
-+	select EEPROM_93CX6
- 	default SERIAL_8250
- 	help
- 	  This builds support for XR17C1xx, XR17V3xx and some Commtech
-=2D-
-2.46.0
+CJ
+
+
+>   .../riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+> index 062b97c6e7df..4874e3bb42ab 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+> @@ -204,6 +204,8 @@ &i2c6 {
+>   
+>   &mmc0 {
+>   	max-frequency = <100000000>;
+> +	assigned-clocks = <&syscrg JH7110_SYSCLK_SDIO0_SDCARD>;
+> +	assigned-clock-rates = <50000000>;
+>   	bus-width = <8>;
+>   	cap-mmc-highspeed;
+>   	mmc-ddr-1_8v;
+> @@ -220,6 +222,8 @@ &mmc0 {
+>   
+>   &mmc1 {
+>   	max-frequency = <100000000>;
+> +	assigned-clocks = <&syscrg JH7110_SYSCLK_SDIO1_SDCARD>;
+> +	assigned-clock-rates = <50000000>;
+>   	bus-width = <4>;
+>   	no-sdio;
+>   	no-mmc;
 
 
