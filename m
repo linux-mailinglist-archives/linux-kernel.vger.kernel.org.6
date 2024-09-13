@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-327734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEEF9977A79
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:02:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1A72977A7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:03:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A24F1F26EE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:02:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 721DE1F263F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901EE15443F;
-	Fri, 13 Sep 2024 08:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B3581BC9EC;
+	Fri, 13 Sep 2024 08:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qYujvOE6"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IzeQ/ld4"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0131BD4EB
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 08:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C0013D89D
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 08:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726214537; cv=none; b=bw/wZeEMwR+B+uimMQFiWSWjdmlSTmJIw2HeH9dRGVAK1s58r+USdkpF1rCiDVbvY4/jDd9RCB6KY/Iw4bvgeuYARqtkCUQwu/TQcldRrDg8J+6X1blK/MXL/Shb03NKZ+1zaEJFwnD1V+50Jcaf6zwsL0WrCo0wcWTXuxzmI8c=
+	t=1726214585; cv=none; b=oGiyqtRlM3OElB2vZQMxDRAg1d77wyqYB2ry0XaSyimewhmOr/Yd+TJevlWynu2LsdOcf5uiFvh30Zw2fESrRhajtna4o1bH6IHTi9WMWw/b75axn7d+s7qVd2ItNSBUExY9O1IFoYYTiVptqV2/hh8c0oCJZ/MFIZa0I+A6Rwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726214537; c=relaxed/simple;
-	bh=h+pFtVY954vE0hVzhY7ubcpyJvPCEto2CJEjgNZXKBs=;
+	s=arc-20240116; t=1726214585; c=relaxed/simple;
+	bh=srQoL6/aXY/RpWn99OG3FcrilnPzoej+BEEFaRHX3ZM=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=cHlVhgZYlXvgZzAfMeWxJ06akmLsM7T29AvFtk3CX2VegHjNdRzmOuryqBvuF2iHl6111EYJjjIfLZeV5IXJdacwDTXopR+cptEOfycfHFGwiwz67qie9gQJ9BiLI4ZoYNhOGyC4+Rip01F0yh+dWBjEUiFe2DhOXhgqVpIElvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qYujvOE6; arc=none smtp.client-ip=209.85.221.46
+	 In-Reply-To:Content-Type; b=B0/aKtdweRYM3bEAUYzg6qw56EXZh03oZJhKhD+VJYQopp2gaNJWrcNgE6wUD9Y7K0U0juPOK0xZITr2BGvIp17tuuE4yr61btChA38gt3avKN5fqDoybfOL2fkwy5uUkM/PUZecIAhFJOQVmMIQRo9eCU+9y6/rIkdyqseC0YE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IzeQ/ld4; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-374ca65cafdso399447f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 01:02:15 -0700 (PDT)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3787f30d892so439472f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 01:03:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726214534; x=1726819334; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1726214582; x=1726819382; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=KAjUdoyXPSNHLiRF/5bnxLG0wpq4kPs9TC2hjddZOXw=;
-        b=qYujvOE6U4YfN6RD+PVOKa8zbWKeQpjvJCFejLaqlRBQVRLCKCOJF1eCiyFvXhb+WO
-         84o+pvupb1j1KvicPOTzukX5IBlhtJAZ58UmZatb3jsD8IxjMuxyZ3ivFXADOrFLPzK1
-         Ot87ycZqQtfITupqD9WLMpmij4m54D0p47UDfhFtUrav90ZmRX7GITAMPUVwQmV/KTzk
-         WsADGvCLu9etTXeyAu4lkbp+LvKF6hcB81MeDtJIuanePcgkRja83ycyJm6uy/6DzaKB
-         PEMrVEZ7Vpv5+7Z/laKKGnQT47nJs/wckiz1jV8o8aBI5zz0mM9ePFDTlXJ9/+HNFWjL
-         tb2Q==
+        bh=WuKvojtCZg7g14c14RQDvHtxwoqt5QeCZyN0kUqDmA0=;
+        b=IzeQ/ld4Uvy0QgyqRCbgZmy48M7A0AJXMtwHYfQoP0IcSvRMpwMur6jOSkYq/Nqj/K
+         CT2hfvQzWGTEOIPtCGMOzjZ2caepNxdqJTyXNnxYJrnt5tz0LRYoy7O1uNMc/9Uv46M9
+         O1oXDMD6DDOdIrPUTKANsxl/Gv0PMiltVGFNsuzkacM941olmf8EdlVZik7wxVodxl1P
+         TyVoc7Fj9kFsb4KIIbnKMee8v7NrbcHbkDxyYFu7I7wjEv+AsrigH+RK5R0Y5wnYAZHG
+         cOR2YuI4NPYmu3PDkzKDqElscrJgXz0s1PR8Kxs1sFJOFYpvWRaz/Yc8+F+ZwE/YKMXt
+         e5PA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726214534; x=1726819334;
+        d=1e100.net; s=20230601; t=1726214582; x=1726819382;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=KAjUdoyXPSNHLiRF/5bnxLG0wpq4kPs9TC2hjddZOXw=;
-        b=E9FKNBi754F+XZi6ZZz83JSNw+wWTn0utd9aC00GBMq9kisVOBnwjDZ5Kb44eZCndF
-         OyJlJIISPa/58cJXIo6nCBbzkdoKGtNeLI83V1iWuCXDjOf8RLRQmkF6O08cPALdZAGD
-         UmNoispTnv51QW1A2pw/E9p4RZPifmaEUBw8AtET84RujrrdFBjXdHnpwcH62ejoKpY8
-         FV/qmuzLEve/miWVbsNuyrENOS/Hp0o0xXNETKmRqDo3xZa80tCo+XDuqtgrCOKmNgiq
-         GRFkMMGv0LnNihZ2P5YtXmtkj96FWSGb11+wb9T0nuRzSkwSRPK2JnD+ofiGo0MnCjGa
-         ttFA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8Pfxt+Ab57sS02CMCRI00LrwuawMGCIK0iJJeeJYpOww5LHN6XBTn1VeZlHSKolZdnvc3dra3d8P2TxE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAp4PNEmL07xgX5S7p9BvG89op8BrFwYfr2mBm9IAnX4Kzuaw9
-	t+Yk8lZUwJmJmSQIzm28N5ZQHbFQxe4WC3cFMHnCT8AdIIkVDxYIftiFGB9XSa4=
-X-Google-Smtp-Source: AGHT+IFqhk+bK1ONAFkVcGqoWxYXj5S5OT3U3eVNN4v3VLfYwyLCWyCWI1nrQX0GDWFegfWc7EvPkg==
-X-Received: by 2002:adf:f045:0:b0:374:c101:32 with SMTP id ffacd0b85a97d-378d623c027mr995199f8f.46.1726214533967;
-        Fri, 13 Sep 2024 01:02:13 -0700 (PDT)
+        bh=WuKvojtCZg7g14c14RQDvHtxwoqt5QeCZyN0kUqDmA0=;
+        b=jrdKK2zq4g/899bgo8WZodJdVCg7rbwIlLc4/jF9TUO0+VHCvxbl2IGUKtMZ60EAPT
+         q7wlTCdviRoV81KrSx9MbeIU7Z2710Zr4eE2td9PClE4YjPBzVh+QOdsm2Vhs5A+0TO5
+         ckhpLFmVJgVw1B6v0A80Ms4j5VPCHD5k3dDP1uztKjCbmei3Aheku7lmqEq2VblQ1Ymq
+         Y5otR/JaaprYm7ca3qgs8lrohhrxrtmtL4xECf9SmfSk2QlFBM2umBHsRClvMKNysdAz
+         K5bvSmbjjfwSqJb5gZ3QesuPyxLAOzz4Z1i4G9sl8ZuOMB5wQy3i9Jts78eL8w0G6ylG
+         sygA==
+X-Forwarded-Encrypted: i=1; AJvYcCVUk7j1WZANqXlVWr0jFKvwayM5uNg2LMQgQokEqi+Vz0Lpg1AYIgyImxtpt3oAreKqmZMqfZsv7Dhunpo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHzv4HEjyWWf13CfOLy0u9xpXa3hg989y2MkuvhrzoLizEKI6L
+	u/o2pUbNzD2KJDYZ29eQaKmUdnFlJdV8wke0xaLaCXWaRChNkiJWgidzO0J1o/w=
+X-Google-Smtp-Source: AGHT+IGjWX8++sbopvCOcrzHWzZMeCZ109rEfa8ItpaKA91i9e/Yn1nIyeUmaUhA27muapNY9/QnTA==
+X-Received: by 2002:adf:edc6:0:b0:34d:ae98:4e7 with SMTP id ffacd0b85a97d-378d6241ff8mr1021335f8f.41.1726214581833;
+        Fri, 13 Sep 2024 01:03:01 -0700 (PDT)
 Received: from [192.168.7.202] ([212.114.21.58])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37895665108sm16057316f8f.28.2024.09.13.01.02.13
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956761c6sm16112834f8f.61.2024.09.13.01.03.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Sep 2024 01:02:13 -0700 (PDT)
-Message-ID: <4bc6a5e6-f2cf-43ab-8555-4f8aaf9f2cd0@linaro.org>
-Date: Fri, 13 Sep 2024 10:02:12 +0200
+        Fri, 13 Sep 2024 01:03:01 -0700 (PDT)
+Message-ID: <17aece51-fe00-4c60-85cc-f89cb14b2e6a@linaro.org>
+Date: Fri, 13 Sep 2024 10:03:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,8 +79,8 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2 09/10] drm: bridge: dw_hdmi: Update EDID during hotplug
- processing
+Subject: Re: [PATCH v2 06/10] drm: bridge: dw_hdmi: Remove previous_mode and
+ mode_set
 To: Jonas Karlman <jonas@kwiboo.se>, Andrzej Hajda <andrzej.hajda@intel.com>,
  Robert Foss <rfoss@kernel.org>,
  Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
@@ -94,7 +94,7 @@ Cc: Christian Hewitt <christianshewitt@gmail.com>,
  dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org,
  linux-kernel@vger.kernel.org
 References: <20240908132823.3308029-1-jonas@kwiboo.se>
- <20240908132823.3308029-10-jonas@kwiboo.se>
+ <20240908132823.3308029-7-jonas@kwiboo.se>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -121,47 +121,73 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <20240908132823.3308029-10-jonas@kwiboo.se>
+In-Reply-To: <20240908132823.3308029-7-jonas@kwiboo.se>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 08/09/2024 15:28, Jonas Karlman wrote:
-> Update successfully read EDID during hotplug processing to ensure the
-> connector diplay_info is always up-to-date.
+> With the use of adjusted_mode directly from the crtc_state there is no
+> longer a need to store a copy in previous_mode, remove it and the now
+> unneeded mode_set ops.
 > 
 > Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
 > ---
 > v2: No change
 > ---
->   drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 12 ++++++++++++
->   1 file changed, 12 insertions(+)
+>   drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 19 +------------------
+>   1 file changed, 1 insertion(+), 18 deletions(-)
 > 
 > diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> index c19307120909..7bd9f895f03f 100644
+> index 1eefa633ff78..6a94376a3da3 100644
 > --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
 > +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-> @@ -2457,6 +2457,18 @@ dw_hdmi_connector_detect(struct drm_connector *connector, bool force)
+> @@ -154,8 +154,6 @@ struct dw_hdmi {
+>   		bool enabled;
+>   	} phy;
 >   
->   	status = dw_hdmi_detect(hdmi);
+> -	struct drm_display_mode previous_mode;
+> -
+>   	struct i2c_adapter *ddc;
+>   	void __iomem *regs;
+>   	bool sink_is_hdmi;
+> @@ -165,7 +163,7 @@ struct dw_hdmi {
+>   	struct pinctrl_state *default_state;
+>   	struct pinctrl_state *unwedge_state;
 >   
-> +	/* Update EDID during hotplug processing (force=false) */
-> +	if (status == connector_status_connected && !force) {
-> +		const struct drm_edid *drm_edid;
-> +
-> +		drm_edid = dw_hdmi_edid_read(hdmi, connector);
-> +		if (drm_edid)
-> +			drm_edid_connector_update(connector, drm_edid);
-> +		cec_notifier_set_phys_addr(hdmi->cec_notifier,
-> +			connector->display_info.source_physical_address);
-> +		drm_edid_free(drm_edid);
-> +	}
-> +
->   	if (status == connector_status_disconnected)
->   		cec_notifier_phys_addr_invalidate(hdmi->cec_notifier);
+> -	struct mutex mutex;		/* for state below and previous_mode */
+> +	struct mutex mutex;		/* for state below */
+>   	enum drm_connector_force force;	/* mutex-protected force state */
+>   	struct drm_connector *curr_conn;/* current connector (only valid when !disabled) */
+>   	bool disabled;			/* DRM has disabled our bridge */
+> @@ -2894,20 +2892,6 @@ dw_hdmi_bridge_mode_valid(struct drm_bridge *bridge,
+>   	return mode_status;
+>   }
 >   
+> -static void dw_hdmi_bridge_mode_set(struct drm_bridge *bridge,
+> -				    const struct drm_display_mode *orig_mode,
+> -				    const struct drm_display_mode *mode)
+> -{
+> -	struct dw_hdmi *hdmi = bridge->driver_private;
+> -
+> -	mutex_lock(&hdmi->mutex);
+> -
+> -	/* Store the display mode for plugin/DKMS poweron events */
+> -	drm_mode_copy(&hdmi->previous_mode, mode);
+> -
+> -	mutex_unlock(&hdmi->mutex);
+> -}
+> -
+>   static void dw_hdmi_bridge_atomic_disable(struct drm_bridge *bridge,
+>   					  struct drm_bridge_state *old_state)
+>   {
+> @@ -2971,7 +2955,6 @@ static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
+>   	.atomic_get_input_bus_fmts = dw_hdmi_bridge_atomic_get_input_bus_fmts,
+>   	.atomic_enable = dw_hdmi_bridge_atomic_enable,
+>   	.atomic_disable = dw_hdmi_bridge_atomic_disable,
+> -	.mode_set = dw_hdmi_bridge_mode_set,
+>   	.mode_valid = dw_hdmi_bridge_mode_valid,
+>   	.detect = dw_hdmi_bridge_detect,
+>   	.edid_read = dw_hdmi_bridge_edid_read,
 
-I wonder why we should read edid at each dw_hdmi_connector_detect() call,
-AFAIK it should only be when we have HPD pulses
-
-Neil
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
