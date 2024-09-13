@@ -1,300 +1,234 @@
-Return-Path: <linux-kernel+bounces-327671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FB0997793A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:16:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E895B97793E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:17:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1AA1B23577
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:16:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34E981F2438A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED17E1B982B;
-	Fri, 13 Sep 2024 07:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6162E1BA86F;
+	Fri, 13 Sep 2024 07:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hp.com header.i=@hp.com header.b="OjqW7sV4"
-Received: from us-smtp-delivery-162.mimecast.com (us-smtp-delivery-162.mimecast.com [170.10.133.162])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="t1e9TGd0"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2048.outbound.protection.outlook.com [40.107.92.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40FB78289
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 07:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.162
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726211783; cv=none; b=jvgi3M9qXJbXOWAESVQ/4DRopTm0CMRAtenGBFbuAzEESKK7EuAeRgmk5K67EntDj2uoPFXmJiU8dnThTlbdIeO1NLmC8G9KRnqT/ixAfFZxj7uPqAL2EyqUaQbbreuHy0+dmkl2V80i4HEzHbMpXvfOdezzcncSDffbtnrf5bo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726211783; c=relaxed/simple;
-	bh=9rnN5DwxCAvT/q+ggfK9QZ8bVqpmzE6lczSXiXpj4cA=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E84D77107;
+	Fri, 13 Sep 2024 07:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726211848; cv=fail; b=RKrHtw746J+cCRkcnUtOO1quUe6fr8fiObTVhnzl27iIhTfqdBnOIYeJ7+l3e3I1Bg304Q68z7/3JW5/jr1nrJwiPyblcBQB5Erz9rO20BzApcCadwAQ29KBO4xtgr/YiX5emPR15sPtTa1n/2rTcQ8gzppcUUuq8FJhFYI3nyI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726211848; c=relaxed/simple;
+	bh=I9DscJeNDJT4uNZ2eUInIrWy7KSqLPNtjw4dH/TGHE0=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=gjgR+QHuqoRM2Q7YDtitLT77l35ROFX7wUG0gLNksaWlJHbcaSrK5hFN35fDmcTsF4MQ5Du1te3GOJyIHtFeeBmRCeRLCCOuoshKJrI0eD5dXNxqQ8KMNMKSVWgU6sewwUZIk/yd7AeFeuZcuLpDdMq4T/zWumaAfdnXjlp+8aY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hp.com; spf=pass smtp.mailfrom=hp.com; dkim=pass (1024-bit key) header.d=hp.com header.i=@hp.com header.b=OjqW7sV4; arc=none smtp.client-ip=170.10.133.162
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hp.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hp.com; s=mimecast20180716;
-	t=1726211777;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xp4OmqcKnTSikpX6/kcq5PuqDzegL8F3f3FwoJazqjY=;
-	b=OjqW7sV46IdqS/4Q+5vntDfX7mItiDwaSenxuJ6LEKi18VLoEkmq8oUetvkz4T0rsp0xyy
-	xDhMUOGkZ1K3pdDSlVogDKSgCNseB1igCxgO8l5vZOeQxm9fnEaW/jTq9nbAYlXgauldlp
-	5MUJ8vRs+9lOWPbxuUiWFBhmHIZ+Kxw=
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com
- (mail-dm6nam11lp2171.outbound.protection.outlook.com [104.47.57.171]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-66-muyF6CLRMQGwlMFDml-Yyw-1; Fri, 13 Sep 2024 03:16:15 -0400
-X-MC-Unique: muyF6CLRMQGwlMFDml-Yyw-1
-Received: from EA2PR84MB3780.NAMPRD84.PROD.OUTLOOK.COM (2603:10b6:303:25b::18)
- by DM4PR84MB1664.NAMPRD84.PROD.OUTLOOK.COM (2603:10b6:8:4b::17) with
+	 Content-Type:MIME-Version; b=X6GIbyvVpxt+bHOJFrmAPE+z6V8PqbTW5Hf0GNVem1IuHeH/R1zfu8x21LuPpK9LdHl+cftSDRKMk7+31b+cYgmDIxpaPSMGMkUmZPcmK8bFSCZnQnDFswgvnmLx7xOa2EvUAol0q1bQTByqpP7QXzvtuJdtp3Y5ZL1Ag7Y2GqA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=t1e9TGd0; arc=fail smtp.client-ip=40.107.92.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mGCjg7aKoKU0hN6BtgdWOri3ULcEw3zgqGRxP2/VTJenPIcKx03/1V8C4ErTkzE7RaKSA/pnkDj0wyFDLPwuyc3Qk3jS8YLajRZhuajbNLsdQcVurGSnb9cW0tTifWZRy8KooBi+h/qTk+XYbWz90edNgbM5ST2FuO0QiAO+1Z8a38KwX6KBFEmeM6fdyw+3hEd/orWJsLGWptts66K0v2Phv4lph/wDrsYmvggoE+KSfnsFCiluBllxWca9wF1Gq+5FsjZgoAts+n6IPEWBJJtTTsukS8JS0D0Xq3muqfeNsWyFklIC9cCQy8ppbw3K/UnSdDXv8aUTnuNS/tf20w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ntqaFOVcPDt2K7ohfbgMIiwXTqKcv74RpScHUGG4OSA=;
+ b=EVkSmWWx+HCp8B+yl065ZLtIl0ySFocwH9muSgQZxD9PGRNN55ftuQdFWGrpcEITztGERFoPJLbjDfKT2hKgzuSvTV09shdzWOhezYUFZ9yO8oPMXIm3U22InKxzJ4LeBd3YL+JsP52RXlSLNCBMFCp3tDSog/qFEioHfEVKE9t/54aCL5+ZiSaSjCZ8KDW97N4hNGJAbGRozsatsFVWJxZemkwhOwqvKLed2ANQEcBFM4B+q+SghH0DL77f/GJeYajnw6sx+6vHKFbT5J+5znjcOGhQYc3DZrHcCsw37wCZR24GI3QnixJUWcrU8E6mwno1a5wKV3rCQBoCNlMh5Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ntqaFOVcPDt2K7ohfbgMIiwXTqKcv74RpScHUGG4OSA=;
+ b=t1e9TGd0TnCl9wJmGhCYmGZqFc98N+sTC0XBjtEc+c1M9wtuYNloyk/V9zM20HNLhFsvnI4iI1+1FqYAKzBDKTyFzRdffOYIQ0NAoyZ9IBsWEHc9rX5EB5F4YYXnL5KOfTYNgrxe3fA3YlR+RNNK0iiFpy8oexVqnighGhBzxWb+Qf6oC7PiKlNj5pKYD7LBv8G/AaP8DmCi7DzcgLNl62M+1ZpWqwmm7vidynBk9VyCeYfxlGa/Hn9PoEAe4Rn8GXm7MYdlaeeLmtU0d0b+wmKpTu8zIjuuPK863OCsKPkUT40XEFdW0lfvsNrPSXtNUeIUgZNya9O2WJ4nsJDvzQ==
+Received: from DM4PR11MB6239.namprd11.prod.outlook.com (2603:10b6:8:a7::20) by
+ CH0PR11MB8233.namprd11.prod.outlook.com (2603:10b6:610:183::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.19; Fri, 13 Sep
- 2024 07:16:13 +0000
-Received: from EA2PR84MB3780.NAMPRD84.PROD.OUTLOOK.COM
- ([fe80::af88:ed17:72c3:3f4e]) by EA2PR84MB3780.NAMPRD84.PROD.OUTLOOK.COM
- ([fe80::af88:ed17:72c3:3f4e%4]) with mapi id 15.20.7939.022; Fri, 13 Sep 2024
- 07:16:13 +0000
-From: "Wang, Wade" <wade.wang@hp.com>
-To: Greg KH <greg@kroah.com>
-CC: "jikos@kernel.org" <jikos@kernel.org>, "bentiss@kernel.org"
-	<bentiss@kernel.org>, "linux-input@vger.kernel.org"
-	<linux-input@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "stable@vger.kernel.org"
-	<stable@vger.kernel.org>
-Subject: RE: [PATCH] HID: plantronics: Additional PID for double volume key
- presses quirk
-Thread-Topic: [PATCH] HID: plantronics: Additional PID for double volume key
- presses quirk
-Thread-Index: AQHbBadDGCls5uY0YkK/wJ49qPEETbJVTieQ
-Date: Fri, 13 Sep 2024 07:16:13 +0000
-Message-ID: <EA2PR84MB37800B3DCB1F28FAAF266FC18B652@EA2PR84MB3780.NAMPRD84.PROD.OUTLOOK.COM>
-References: <20240913060710.1325640-1-wade.wang@hp.com>
- <2024091355-antitrust-retiree-1299@gregkh>
-In-Reply-To: <2024091355-antitrust-retiree-1299@gregkh>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Fri, 13 Sep
+ 2024 07:17:21 +0000
+Received: from DM4PR11MB6239.namprd11.prod.outlook.com
+ ([fe80::244e:154d:1b0b:5eb5]) by DM4PR11MB6239.namprd11.prod.outlook.com
+ ([fe80::244e:154d:1b0b:5eb5%3]) with mapi id 15.20.7962.018; Fri, 13 Sep 2024
+ 07:17:20 +0000
+From: <Tarun.Alle@microchip.com>
+To: <andrew@lunn.ch>
+CC: <Arun.Ramadoss@microchip.com>, <UNGLinuxDriver@microchip.com>,
+	<hkallweit1@gmail.com>, <linux@armlinux.org.uk>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net-next V3] net: phy: microchip_t1: SQI support for
+ LAN887x
+Thread-Topic: [PATCH net-next V3] net: phy: microchip_t1: SQI support for
+ LAN887x
+Thread-Index: AQHbBEzINi707w8K50y8J4iUSIwWz7JSzBuAgAJ8nuA=
+Date: Fri, 13 Sep 2024 07:17:20 +0000
+Message-ID:
+ <DM4PR11MB6239F0D858373406A556975E8B652@DM4PR11MB6239.namprd11.prod.outlook.com>
+References: <20240911131124.203290-1-tarun.alle@microchip.com>
+ <a7e330fd-9000-4b23-bec6-ae2bbfe487a9@lunn.ch>
+In-Reply-To: <a7e330fd-9000-4b23-bec6-ae2bbfe487a9@lunn.ch>
 Accept-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microchip.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: EA2PR84MB3780:EE_|DM4PR84MB1664:EE_
-x-ms-office365-filtering-correlation-id: 51b572b6-a00f-4d51-1cc8-08dcd3c3f36b
+x-ms-traffictypediagnostic: DM4PR11MB6239:EE_|CH0PR11MB8233:EE_
+x-ms-office365-filtering-correlation-id: 986bf8d0-42db-457c-d87c-08dcd3c41b78
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6239.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018
-x-microsoft-antispam-message-info: =?us-ascii?Q?CLDbdJwOtwUzzvhCofY9VLKRnPAPrSuox7d4tbg2FzrSIYTTVsUw/fpk8SMY?=
- =?us-ascii?Q?qxp3uVNoLHR1MW/SZ29lg6GoBXl7kpcEIWXTJd6gFFYl4fhD9woi9VT1nd69?=
- =?us-ascii?Q?jbBDHcH4sA/nGM6GBtuF6H/cw9JGsbJuqqwdUX9DKPsjGdFnWtPdMSsuq3HK?=
- =?us-ascii?Q?xVoXHr/EzpzUYwU2isZJ600fB4XBJM3DQFNHmqJ7HmAl0dUQBDB0RcyCrnLs?=
- =?us-ascii?Q?8jrx4sm9w3od8X8xsvGbqZXPpSzWQC3p0BruN10FemjP0oBSKqAiqhfXziTG?=
- =?us-ascii?Q?6UOgeONBdb0SWkv51k4OxHFdDiLzgEO+ZXSFG6XT9ZhMrLqIDoIsNd8rkoHJ?=
- =?us-ascii?Q?Zk3bzXQUK3SL2bexao53JrEY9DZJPn9yYQd70ZnIreT8UrxUA61r4p19/vXs?=
- =?us-ascii?Q?cqwE6Qnu5XIfxqOAtzohWQybTPwJOmI9l5CKRgVaXHKGp9mA9NX3guShjHxD?=
- =?us-ascii?Q?65lv0Z2xD4TjHxkDQlrv0NcO196R/kbDRPbYy31559WvW1cD1hJpHXt4sOdR?=
- =?us-ascii?Q?UJ+l6jsEqE9CEjd6/MgL0rhlFrGJ053KsLo0n2QiFI9bDumTqqvpiSewqEXH?=
- =?us-ascii?Q?+J19M0hGeBDzwsM5I+12tlXXnE4/8vA3LHmrwoo0ltmrmdyNrBdFH8tka10A?=
- =?us-ascii?Q?K3hp+L1wLmIKaE4j9pFsi3mi9xS0iwUMTLVCi3dmXGmPduN+seuZ2MjQnb6w?=
- =?us-ascii?Q?K4iJLj2oAca1aJ0P1rnPMqEqZqQ0g8dLkbGiIrfPZg6dGGrlMnwA4+V752Md?=
- =?us-ascii?Q?LNQNyrxoJ1MYKHdrq+Wr7Nhi8vS1WrMnynkP0S2bJvdMrSiX+H73wSNgOD8H?=
- =?us-ascii?Q?QPF/4u/ogiV/DLnz43aKeuBEP616bX9c0tPMvCJJGckbOLYfSdRJ4uzeO9I/?=
- =?us-ascii?Q?rGP8uH+eGVfFGMG6wD2joXoXMGxgahy9m0uBD5ZpidzTYSFrFpYNKcH8EuJA?=
- =?us-ascii?Q?5CY2M/wBMY/t+NzUS2qKQAJi+hqcopkY/lqjQIlGrPYDnaBFaXqKaPPJg+9a?=
- =?us-ascii?Q?WZEy/TW8ASyGlKng3uTL0TCJRlvNhmmq/zJsT45PQFWlnIqNhNLFk/hd2/gK?=
- =?us-ascii?Q?XXGeY1wIM4x/ixP5Nnob4PetJZQzuTFSmwAMNeGQbtIgGqRZFcGnZHNoNHc/?=
- =?us-ascii?Q?fFJXsnBJIqasU41ICBNmA2lTHonpQAPR4CKWjFO5YR+z3w9YAvU0rh3hT8S1?=
- =?us-ascii?Q?0g06A8C9c9/RikqZCd0T9cZcalrm0/0R6dTLGn2zjPOGnmKprpUdMRyT0yB3?=
- =?us-ascii?Q?wwB6OCw3/fEK5qeCRWl8pRcdBNXtTUBrWTEHvOSRft37ovBst5bKUSJX1X2u?=
- =?us-ascii?Q?COC6UwQyt54kVB3bfIfNpWJ+nck6glTsPv1xrQF43jfSpxjAi9PAiilaxDB4?=
- =?us-ascii?Q?N3RJ+a1urbX2KL2nYv5UBuKY0qHzOWpkMlnSKpXchLLRaD23Xw=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:EA2PR84MB3780.NAMPRD84.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?CHwSPUJNpubBahOP8VWdhpvo/wAZyCjQOAvHd3nNSo/pDVeIMNWetitJlofY?=
+ =?us-ascii?Q?1hcZC015JsIt1ixbBuwENDMvSXShLQdQV2auJYDjsIcm5dowyCljKH9eHdF7?=
+ =?us-ascii?Q?rlo9QAIy8sToo2TJJHkWz0ugTYarzklT10E3eSQt+zQW8fK7Tq08Y26uUXYw?=
+ =?us-ascii?Q?nM2kgBTP3CZxFd1CIZuY95QSy3vPIXXsZxaCKdeH0DUt8VbmRSxa7z+k8Vkt?=
+ =?us-ascii?Q?a3+ZHtHaaulqQ8he3vV77jBEhYnqHE15Sk7G1mOCU7fuiNK94XEbZscn02B2?=
+ =?us-ascii?Q?G5sWbc/8NoD0zS6BhiLcsZBU7PUHvnBfY6hTfcJLm7VvrUJDMrjXuM6lOfRu?=
+ =?us-ascii?Q?ORBdJUoFo2zWQWvcbub7pZOQuf/Dcsta5YkB1UKS5UOPc5ZLrVUPoa80gVnc?=
+ =?us-ascii?Q?+4/aRdahw0OE5UdvvpJ4RdxF3FPkYNjR6LpiMm7acLUOF1RX6W57XNSRqnDV?=
+ =?us-ascii?Q?114EkKRGBDHnUny2mvjQs78Wb3np7ZKkDAEGEsnCwqJyeL65kDFF/OlMylDh?=
+ =?us-ascii?Q?JFy8lJygHHAMCtof5R/sqt5p0EZLXzluVdK264HDrHxAQQ9/EGeNmleCz1A4?=
+ =?us-ascii?Q?SQzf/InsL80Rk/xo3RPDEn7/hbtL7GqKBAev9tJStNDBBsEUSgtpg9cYV+ym?=
+ =?us-ascii?Q?R20M1QcIzCrgrTB1XSJnPkyCCyJtOOzUNxiNKAIAOBPPY6bljBsQNveqbCdH?=
+ =?us-ascii?Q?c96xZHYcMxhYIYPKeVhBFIl9pICr1edFso79zPMAXep0EcNVlksS6WNkU4Vx?=
+ =?us-ascii?Q?2tzboKD8Ubsr4YdF8BzYAyEJnmHvOinSWsBTplM0xw5p9km07UF7FbaEvMH1?=
+ =?us-ascii?Q?a7a5KnwrbivK8SGK4q7Yg9oLt3CjlQwi0MSbKgBSND7zq4n3pf/FpD8E4wVt?=
+ =?us-ascii?Q?Bcw/pfTmBnKQc1zDphWBDtJ8H/sTLVWzNafF0kKW2McDJPI78Vl6p3A/sok+?=
+ =?us-ascii?Q?fJr/spA5Vl5N3roJ+/eeF/AaipZPih2w0uK1bMA33MlCpB9pTLTEV+eL4y4u?=
+ =?us-ascii?Q?mItjDX0wTN/F3kztNxSBTXgEZq41jkFAiEWHxiGBVCv1VZo5jx7ZnzNduSkn?=
+ =?us-ascii?Q?O03rHH1l4pIdMx2Te1URIzDDMG7g9o9uS5xfCwFRJoQbWvGj6/gkIIPQ7sa2?=
+ =?us-ascii?Q?jfJDnSZ68y0H4ZhopVS4MbbtK1Z9PUnpKbuImQ6DI3OtFt7caPlU6CYgBgL+?=
+ =?us-ascii?Q?kQrDcDVPARWN6qTjoGxv4covCYizcKXNmEeUDO5EwcinVZR4IZCc9Df+xVu1?=
+ =?us-ascii?Q?I5Ejd1jPTDnzZn3CzuxZLZc/goY9lihbvV9O8Hf/JM5TCsn29eBQsvdRgydM?=
+ =?us-ascii?Q?vyYfIyshZoSZuDidkehSzxq0dK17MMEuSX0nsed990NGanVvPUOUAUqWw+5L?=
+ =?us-ascii?Q?oDzDoI91WeY+rG3uC5RM5wMWA4MI3XIF/1XrmEhjwiwcJHPtCA=3D=3D?=
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?TwlNw9czJ9c5O+vvFc0oJMo4qBLFxbdj5JmT/kM5306x845AJpPMYNbhJRcu?=
- =?us-ascii?Q?lmgLKibr8DvGJHVg63spvLUGFIPl8IKaAaUQp2HE6O6DydCROljLyYVwErLF?=
- =?us-ascii?Q?ICSPqJDxGzvgvqzeWjw5rs1YuU8+NTxZSm6oL3sUzVX41TvIQQRUOobhFvpi?=
- =?us-ascii?Q?almujiDkL/QLAhQD2yxP35OruWoYvFgQajsG5pHeeI51YffhPSWClOtlVsLs?=
- =?us-ascii?Q?ZOzmvV1OIZ7mwECCUNYZ2zA6tEYJp71RVpTXXgYLL6HGMLgFOFVgkjNIGjj1?=
- =?us-ascii?Q?Yxd0Vn0hmuxzDYxpj0/R5qBNLu/q3ndKi6kYnj2SJPUigFqJunLrswqlYj2B?=
- =?us-ascii?Q?Lm0yFaKDYujhzO/Rnr+R7Va3QGqAYw2nThytuJnfGSkr4uiCQgra8pOu2DBJ?=
- =?us-ascii?Q?pu4DM8DUfvMcpaIe1n8R3P3CjQYWgpyYiw3YuY5OCUQtJbui/GClDG4IwS19?=
- =?us-ascii?Q?P1U7TjcqDTUYFd+F8Jt+h7gKhjuPmboi1aD+ArOgmYU9YANoSy+MqEePPbwO?=
- =?us-ascii?Q?ApDkzBCP4OklFtGm/AkFJY7sJwDQZyjnhXdSvaodpCQvL3wGoXdHGB/nvj6P?=
- =?us-ascii?Q?DwJ7EIrgmFSJsnznLgTcxrkW1+r3/AnPJNT6OGyYHetr3xQ8bnVbKibwoiUm?=
- =?us-ascii?Q?lSKpOa7ClX1iEmx2+6FbxeI9j46AOofo/wLnF6tr99+MpYlvGWwOtMnGsB4O?=
- =?us-ascii?Q?sAdgaL5O/s+sOBp3usuzqeF3HdLSidO6a5kdlOIXo8CTHhX9km4Lbj9YVoIQ?=
- =?us-ascii?Q?AX2w0iYbzUNcOHPFm+LDXKuIAmFLFzVwnJvSc0pPICsfqXKl33PlO63854gw?=
- =?us-ascii?Q?zAnxdZJYRDtGZetjB1JUtz9XTNGvUQwJYuUPIm5FvA8detTocyS6O7PZHN/R?=
- =?us-ascii?Q?MDjMLg2ISd9CApFeisqscf6uFCIzVJdKXMYC9X6k+MN+jiDT983yBA24VKdX?=
- =?us-ascii?Q?XCGekghazMUgKQBWCBjD19ziLEQUt9Qjbdpnt54WTEIA03wdgdnYOK+N/e3n?=
- =?us-ascii?Q?Wk4LWnIP9TVs091/32BEH2NcNHVLJ4j6rKktrii/dofXJY9U5UrNFPJDflSD?=
- =?us-ascii?Q?iKr2qMXSq3cti3iaHHJY9VMxeIFFXHXXfB1q/g1VKYC9B6DLgOqHjGf/l8ZD?=
- =?us-ascii?Q?/voScCtCltigiGuXQea0K9lyfhPkoc8VoYwPKskXvigqFODNMKoQpVWBNMjZ?=
- =?us-ascii?Q?+IxJ+0w4yzgbMUWzCW5XHtmIeQVyNkh8J06X0RTIiXBg1+HXhj3xfNETGP+n?=
- =?us-ascii?Q?/de/D0Ky3XiBFwsHcvpLf7AyV59yeR6bU4jQ0BKZPYm9NALU2NXcGjPxBAgD?=
- =?us-ascii?Q?MY8CIHgbc00AtkBh6AX6iyi3p4KfDLC5j/TOs6KfvvTSyMnMqEWA8WgF76G4?=
- =?us-ascii?Q?TYGKrFqDArYsVdWFr8lK36oxbmM2XEjGkGGWj07UFPQhJXaattfF0hnt9ztS?=
- =?us-ascii?Q?psewlfNjfb1hVcT7oUIRFNqMqR8D1w7NRpK09WMN3JzATai54y7+SbF8XC69?=
- =?us-ascii?Q?ZxdaK+V/GdE0TPdiE0pyeEOF3/BPaygLY0SCRry04MAWqK7I5Vh577toEZIw?=
- =?us-ascii?Q?xGyqVeopBlAN46OV7l8=3D?=
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?MqCryY8HXALbjdW8AxCszkmXSdb17nRoFrhD647VW8Xm5IAq0XBNjjn/Iie9?=
+ =?us-ascii?Q?NMm82onrC20ziPl++DLWypJi1c8XIGkASOW0xZKNfTnJQhIl02+s92cJEMYO?=
+ =?us-ascii?Q?kB6Hy+yOaAjoKXkG3pSP6q8cFuRQmCCqJy0qb/AI75mU9t12E9YJv3VkC89D?=
+ =?us-ascii?Q?NsUVn1+VeH9YnmHja+LIIWJxGud4agPeBLWdHX/K8GM3LPNFCqmGkfi7B28f?=
+ =?us-ascii?Q?IuAqrTODtBbumLuNRCSzqalf/aJ4WHC34BpSnlRnhqKPVnye5I08ufhtAzpB?=
+ =?us-ascii?Q?UCbUtRziIN9BpkHSD8dX2khsbR7Q4ZKlPt92YY76YZmU9sUJdhpGz0mYObJI?=
+ =?us-ascii?Q?Mnk0lixNDAO0Ku37/EPXelUdSghEcq2oTebKSLczt54tDI4snIWd7QwfcXjW?=
+ =?us-ascii?Q?kzcxmCTwK1L/HDSNDkaYjBAL+cnoOYdtUY/Nczy/CKDovcbMsI7l8PJZ75fN?=
+ =?us-ascii?Q?cxB2M0FzfAKNrInNqrAPXU5ifXPYeVZSDamXN62PmkCuuYeLFcGNGTeooyes?=
+ =?us-ascii?Q?tnAWca5gn/MEP9N1RY/29g8t0DhSLOoIE1Wd4vQsPyqE7xXqbEQK/xJxbG8e?=
+ =?us-ascii?Q?ZuPAaOYSFiz2BJrw9r5BqnW8hV2SkhUWlQ2lVtLxrNnz9UFEc4EAlqJ6BRLT?=
+ =?us-ascii?Q?jgfz1/vwFo0IpY07fX/5ruyMUXezq93N5MgTNBJt2PrE7SJAFc8KJLJIb8H/?=
+ =?us-ascii?Q?N/TieiAnVT+ABAlu0n/QBmsA/EvEzt9Bf2Y6WaniuTUrP195lm1B6lckij7e?=
+ =?us-ascii?Q?K2Yio2ZkUtDR9LRfLGlUL6D4meRhK1ELOtTNzsT6HIFxVe6k9clfLtiEJ4F2?=
+ =?us-ascii?Q?kyO4d8Y+MRviOUcttWzKfjrIhkx68KzY8ZgrvuqJj4SEjO3UOHww0F6hA3ar?=
+ =?us-ascii?Q?9enQmytWL/c3tEAt1cdX0eU+XyrQMcS6KHbkSHB+xcRPSjjpbitxmu/+05eD?=
+ =?us-ascii?Q?kKjvUrxg6jIsQHpJLEDrWZkD9+4xHaAXcIbLfXkjlZ+M+Fd7bWu/qfMCOA0d?=
+ =?us-ascii?Q?CGaAOmVuMcl1wZSbP4t5u0iySEh5GT91YEE214UnbpiFXSvKrey5bnfKASac?=
+ =?us-ascii?Q?5ArGoH4zWXXMuvCV/KMG7gJFHPymypvMyTZPFMj2K1XQK4Eakdo/FJ4oHjA8?=
+ =?us-ascii?Q?8iqgoKSgk4aHAs/PWxKtDB8NWO5KFrkaBJOxJZr0LWQOlw6fmwVg50WYtsSI?=
+ =?us-ascii?Q?vZy5hfzTzhPvU6dRlfuQI9G43xaOWS9GuHWWQlX2DbD6Uur0CzPDUmgRdFaL?=
+ =?us-ascii?Q?OHematPPeEnHKJhq68mq3+RDikSDumnYZucqNpWhJf260Pdq9SQw3ruUymL4?=
+ =?us-ascii?Q?+TVuYyprJvi4ovNDZhi54EQzOB1v7d8W0m0Mg+8kucJXOzxNEkNyWmYUApUh?=
+ =?us-ascii?Q?Q6NgoZ4Em1ch7MBzKs40deDdL64j4zJsosgUuyheKgwU7T3tRE8V6DzlTveu?=
+ =?us-ascii?Q?WBjpTUSKlvX6RrGjmpmt/31/WKkl8eqyRvi410wWxDvhoSKEueKzOpGxxGgR?=
+ =?us-ascii?Q?m6j1SKYmNzl1KGYV88Xh9jn7/dXvUcIYXNLfOHupma/H+M1W6XWK4pUhCVjC?=
+ =?us-ascii?Q?rSLLLoMDozN7jOB9/F47frSuEc/iiUCrNZQRk2Kn?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: hp.com
+X-OriginatorOrg: microchip.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: EA2PR84MB3780.NAMPRD84.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51b572b6-a00f-4d51-1cc8-08dcd3c3f36b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Sep 2024 07:16:13.5161
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6239.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 986bf8d0-42db-457c-d87c-08dcd3c41b78
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Sep 2024 07:17:20.7659
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: ca7981a2-785a-463d-b82a-3db87dfc3ce6
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ihNYqHttYKf3heJv6MZoOZMwJb4THWeVAMrTFLW93ah7+16A9qCINPNC8WbG6f7TwqJPNVLhHisoeUqPJPYc3w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR84MB1664
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: hp.com
-Content-Language: en-US
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-userprincipalname: SKMpL2RgbZDtqKNGpJ9PZg6qedF6DeLjboGpVdBxdvcPEHu7V0I4qkxYZ2l287h/PbX9zCjfkHEeRc0XuZWgyfRXebux+OeYgNoBG89Bjms=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR11MB8233
 
-Hi Greg,
+Hi Andrew,
+Thank you for the review comments.
 
-Just add "Cc: stable@vger.kernel.org" in 2nd patch submission, because kern=
-el test robot required. Any other thing I need to do for your question now?=
- Thanks
+> -----Original Message-----
+> From: Andrew Lunn <andrew@lunn.ch>
+> Sent: Wednesday, September 11, 2024 10:18 PM
+> To: Tarun Alle - I68638 <Tarun.Alle@microchip.com>
+> Cc: Arun Ramadoss - I17769 <Arun.Ramadoss@microchip.com>; UNGLinuxDriver
+> <UNGLinuxDriver@microchip.com>; hkallweit1@gmail.com;
+> linux@armlinux.org.uk; davem@davemloft.net; edumazet@google.com;
+> kuba@kernel.org; pabeni@redhat.com; netdev@vger.kernel.org; linux-
+> kernel@vger.kernel.org
+> Subject: Re: [PATCH net-next V3] net: phy: microchip_t1: SQI support for
+> LAN887x
+>=20
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know th=
+e
+> content is safe
+>=20
+> > +     /* Keep inliers and discard outliers */
+> > +     for (int i =3D ARRAY_SIZE(rawtable) / 5;
+> > +          i < ARRAY_SIZE(rawtable) / 5 * 4; i++)
+> > +             sqiavg +=3D rawtable[i];
+> > +
+> > +     /* Get SQI average */
+> > +     sqiavg /=3D 120;
+>=20
+> 120?
+>=20
+> Isn't that ARRAY_SIZE(rawtable) / 5 * 4 - ARRAY_SIZE(rawtable) / 5
+>=20
+> Please think about the comments being given. I said you should not assume=
+ 200,
+> but use ARRAY_SIZE, so it is possible to change the size of the array and=
+ not get
+> buffer overruns etc. So you need to review all the code.
+>=20
 
-Regards
-Wade
+My apologies I realized the issue just after sending the patch.=20
 
------Original Message-----
-From: Greg KH <greg@kroah.com>=20
-Sent: Friday, September 13, 2024 2:28 PM
-To: Wang, Wade <wade.wang@hp.com>
-Cc: jikos@kernel.org; bentiss@kernel.org; linux-input@vger.kernel.org; linu=
-x-kernel@vger.kernel.org; stable@vger.kernel.org
-Subject: Re: [PATCH] HID: plantronics: Additional PID for double volume key=
- presses quirk
+> Better still, change it to 50 and make sure you get sensible values from =
+it. The
+> accuracy won't be as good, but i would expect it to be still about right.=
+ But with
+> the current code, i guess you get 7 no matter what the actual quality is.
+>=20
 
-CAUTION: External Email
+To be consistent and accurate with compliance tests, 200 samples are used.
+If customer wants accurate SQI value, we need to use suggested sample count=
+=20
+as per the compliance reports. Otherwise, single (any other value) sample c=
+an also
+be used which will give ~ +/-1 SQI value (which may not be guaranteed alway=
+s).
 
-On Fri, Sep 13, 2024 at 02:07:10PM +0800, Wade Wang wrote:
-> Add the below headsets for double volume key presses quirk
->         Plantronics EncorePro 500 Series  (047f:431e)
->         Plantronics Blackwire_3325 Series (047f:430c)
->
-> Quote from previous patch by Maxim Mikityanskiy and Terry Junge
->       'commit f567d6ef8606 ("HID: plantronics: Workaround for double volu=
-me
->        key presses")'
->       'commit 3d57f36c89d8 ("HID: plantronics: Additional PIDs for double
->        volume key presses quirk")'
-> These Plantronics Series headset sends an opposite volume key=20
-> following each volume key press. This patch adds a quirk to=20
-> hid-plantronics for this product ID, which will ignore the second=20
-> opposite volume key press if it happens within 250 ms from the last one t=
-hat was handled.
->
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Wade Wang <wade.wang@hp.com>
+
+> This is a general principle in C code, and coding in general. Don't scatt=
+er the same
+> knowledge repeatedly everywhere, because it makes it error prone to chang=
+e.
+> You have to find and change them all, rather than just one central value.
+>=20
+
+Going forward I will take care of constants and repetitive calculations.
+
+>     Andrew
+>=20
 > ---
->  drivers/hid/hid-ids.h         |  2 ++
->  drivers/hid/hid-plantronics.c | 11 +++++++++++
->  2 files changed, 13 insertions(+)
->
-> diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h index=20
-> 781c5aa29859..a0aaac98a891 100644
-> --- a/drivers/hid/hid-ids.h
-> +++ b/drivers/hid/hid-ids.h
-> @@ -1050,6 +1050,8 @@
->  #define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3220_SERIES      0xc056
->  #define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3215_SERIES      0xc057
->  #define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3225_SERIES      0xc058
-> +#define USB_DEVICE_ID_PLANTRONICS_BLACKWIRE_3325_SERIES      0x430c
-> +#define USB_DEVICE_ID_PLANTRONICS_ENCOREPRO_500_SERIES               0x4=
-31e
->
->  #define USB_VENDOR_ID_PANASONIC              0x04da
->  #define USB_DEVICE_ID_PANABOARD_UBT780       0x1044
-> diff --git a/drivers/hid/hid-plantronics.c=20
-> b/drivers/hid/hid-plantronics.c index 3d414ae194ac..2a19f3646ecb=20
-> 100644
-> --- a/drivers/hid/hid-plantronics.c
-> +++ b/drivers/hid/hid-plantronics.c
-> @@ -38,8 +38,10 @@
->                           (usage->hid & HID_USAGE_PAGE) =3D=3D=20
-> HID_UP_CONSUMER)
->
->  #define PLT_QUIRK_DOUBLE_VOLUME_KEYS BIT(0)
-> +#define PLT_QUIRK_FOLLOWED_VOLUME_UP_DN_KEYS BIT(1)
->
->  #define PLT_DOUBLE_KEY_TIMEOUT 5 /* ms */
-> +#define PLT_FOLLOWED_KEY_TIMEOUT 250 /* ms */
->
->  struct plt_drv_data {
->       unsigned long device_type;
-> @@ -134,6 +136,9 @@ static int plantronics_event(struct hid_device *hdev,=
- struct hid_field *field,
->               cur_ts =3D jiffies;
->               if (jiffies_to_msecs(cur_ts - prev_ts) <=3D PLT_DOUBLE_KEY_=
-TIMEOUT)
->                       return 1; /* Ignore the repeated key. */
-> +             if ((drv_data->quirks & PLT_QUIRK_FOLLOWED_VOLUME_UP_DN_KEY=
-S)
-> +              && jiffies_to_msecs(cur_ts - prev_ts) <=3D PLT_FOLLOWED_KE=
-Y_TIMEOUT)
-> +                     return 1; /* Ignore the followed volume key. */
->
->               drv_data->last_volume_key_ts =3D cur_ts;
->       }
-> @@ -210,6 +215,12 @@ static const struct hid_device_id plantronics_device=
-s[] =3D {
->       { HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
->                                        USB_DEVICE_ID_PLANTRONICS_BLACKWIR=
-E_3225_SERIES),
->               .driver_data =3D PLT_QUIRK_DOUBLE_VOLUME_KEYS },
-> +     { HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
-> +                                      USB_DEVICE_ID_PLANTRONICS_BLACKWIR=
-E_3325_SERIES),
-> +             .driver_data =3D PLT_QUIRK_DOUBLE_VOLUME_KEYS|PLT_QUIRK_FOL=
-LOWED_VOLUME_UP_DN_KEYS },
-> +     { HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS,
-> +                                      USB_DEVICE_ID_PLANTRONICS_ENCOREPR=
-O_500_SERIES),
-> +             .driver_data =3D=20
-> + PLT_QUIRK_DOUBLE_VOLUME_KEYS|PLT_QUIRK_FOLLOWED_VOLUME_UP_DN_KEYS },
->       { HID_USB_DEVICE(USB_VENDOR_ID_PLANTRONICS, HID_ANY_ID) },
->       { }
->  };
-> --
-> 2.34.1
->
->
+> pw-bot: cr
 
-Hi,
-
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him a =
-patch that has triggered this response.  He used to manually respond to the=
-se common problems, but in order to save his sanity (he kept writing the sa=
-me thing over and over, yet to different people), I was created.  Hopefully=
- you will not take offence and will fix the problem in your patch and resub=
-mit it so that it can be accepted into the Linux kernel tree.
-
-You are receiving this message because of the following common error(s) as =
-indicated below:
-
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
-
-If you wish to discuss this problem further, or you have questions about ho=
-w to resolve this issue, please feel free to respond to this email and Greg=
- will reply once he has dug out from the pending patches received from othe=
-r developers.
-
-thanks,
-
-greg k-h's patch email bot
-
+Thanks,
+Tarun Alle.
 
