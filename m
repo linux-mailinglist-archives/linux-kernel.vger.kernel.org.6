@@ -1,144 +1,125 @@
-Return-Path: <linux-kernel+bounces-328558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 604229785BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:28:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 536019785BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:28:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20669288952
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:28:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 189FF287FA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC89977F2F;
-	Fri, 13 Sep 2024 16:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46C56F31E;
+	Fri, 13 Sep 2024 16:28:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AGr7V/92"
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B/B1zepu"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935906F077
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 16:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD7E4A21
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 16:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726244889; cv=none; b=jf1B+6ULQQDYiHI7E8Z3dWQfc7uEEDYNCIvnw/AhkIYgi2xq4SCCVMfYT3kHnPHVUCNkjEoLbIDDebhxkVCNxlYNkrhOIkHoqgqQPJ2xz+cYYw+qOagz3yYPFgndZVMTXvFvsAPBp20dcVlC1oldJfD6hmF3aQWORRrCfJ+IqeI=
+	t=1726244887; cv=none; b=PPgCNWsMdJPwhCyKvmbNVnDTDVAYMfHfpKHC4fAU643EYndkGQu/yHVOPNjfG2YwJuRevGMWk8lG7u8riIakS9suHzIlc62JqgvZHzYylkv6TpwbDhOfXCJ+QUbUXaIZBGwTZ9bDHTmzaqIg3Ikz59NqPG+jRQ0UxDwrc8AWlYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726244889; c=relaxed/simple;
-	bh=l6fQQfIJrCnieXnJtgF3yWwkk1JOKa/ssQuU9USSh54=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZS0nnvbtTxM03UujlRXXLyuq6aHZJUeNc8ZSdbdNjrseDuUgQUbGCb711gPWx/QLrxbJHtBfp18M7aF6yPiMFgdCRSaXnQpoOqGfqHfRu4YdFXteUTLxIUq9oH1RrRnQqBEhlllHkGayNIwuS6o3gosZcce8D+KsByMh3XZriQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AGr7V/92; arc=none smtp.client-ip=209.85.222.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-846c4ec2694so617333241.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:28:07 -0700 (PDT)
+	s=arc-20240116; t=1726244887; c=relaxed/simple;
+	bh=Dz4ycnfvKoef37mAeFE+o6mhEPp3GIZ2MGXjJvSfPUs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=J+7fdQd1ycf3MjJBbZFdRkRzHNN0H8bg8jSOVo5PMVlkH9hpqHwi8/FyVfR1eezDVc/DEEQrdZWgo59oLz7i+YsFYbsMcpUxSzUCMI4Hx/XVh3Gz0g4rqF1Rbd3KECnNJW/6qHyan06Z4sTzGDpL8TzcewglrC8poLw7ojRkxys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B/B1zepu; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-718e82769aeso3595752b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:28:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1726244884; x=1726849684; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MySfAV1H+y1ji7wrdPmDhE9q7agfjXhZS+w1J3QnDfE=;
-        b=AGr7V/92Ccvh2ei+H3/gjhiw71ZoSCNCUhMriUQ4BlAbHantF65uBfx7vg+eEefmXE
-         Cs+qy4mjox/EiuRlPGTc6loAydW4F1JELiQ3+Ia2E4XTf5jvNP14CmOCyMcg8Zd7X+n1
-         kUdYnMPHcw2XrkeK7lkMvA0aHpAemdplbGITY=
+        d=google.com; s=20230601; t=1726244885; x=1726849685; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cN9LbXKrRTawqhLxdUzFmP/6lGNimEaJ6R6JDJd4qJ0=;
+        b=B/B1zepu96JZ3LGmQZZtIh+OlVUs8TEsYwtex+YmKSZBkkoU40r3DgG4gsZfFGhYyH
+         HCVvFJ1vmJoExf/JPsrAu9b3YUvg4Yudyp4si90BUS9L6MNav91PxDBhOKmTlPweM8yW
+         4uAD74cS2iMtFr8/ylw8R0/q54Y0S9/gd4rBsQVr3NDcjDuB0H8EhucoZcwuvw6ohEzC
+         Is8zFeUiyJboOoocYnS7ETOn3wBr2gbS7tR0zZVVr4RzW08M2Vbsp4vxegEyMo24x36k
+         HVm8cYrS6RNyRZ7kqSKdaxVjyGKN/19J5ak/WNgAVF0MWNZjdEAvz1NXgXrkdTRjJzwy
+         w1hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726244884; x=1726849684;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MySfAV1H+y1ji7wrdPmDhE9q7agfjXhZS+w1J3QnDfE=;
-        b=D7HnwQgngae3EUf8YyYkmI2jXQF7J3bWCyrxN2xxHyuEN7kSTbXp9lrroylomN3/0/
-         JOn2IQQ6vBfw4UNcdGdY4vmB082J3AfGX71FWn8k6N6T3UNz0ylNAFAOYYeGAVXhQdp/
-         jlIe9XqRjyJVw9RHe1xYp6KNzhFnBpEDENxS0gqDnMCJ5FMg1gSJjy/FwMPeYZi46Gkq
-         xm9Dzra4+O5sx42mMCGex14X97Lrf2VmQgzG9P2DvhfykwRrKJvQEt+NzSJxagj6gOjr
-         H1kN7dNu24VI+T8chCkf9Dz9ovmVUUACs04cnHmEcfmW0E4Esw5S4Y/f6YT7X9CocI1x
-         ypLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXVZ53wF4T3Ph1ms1ZXffbOOjp/j3/NncuJRbCseUZhSkqXeeisoUOXuxq/IQPoIuh+4EIGIrD0NRlHBfY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzg3cc8VfxpMZRWD5FkpTniqDe1EE4QyNYCp4JJQBlAhjFHcCkk
-	1OKel0HyAd/UfAR5hQ0zF+F2qhEJtwVCjqsj2P2tyMHWTBCaozlA6sRaAbX9ZJh9/2jQZEjKbck
-	=
-X-Google-Smtp-Source: AGHT+IHGFiJ8cxtgDB9E2ElFXZbDZrE8EZoj+HKkj+HzxCvE6vpM5BcNuDTK34ogbLzAT8roT52a8Q==
-X-Received: by 2002:a05:6102:e0b:b0:48f:461b:c9ac with SMTP id ada2fe7eead31-49d414b32f9mr6314274137.14.1726244884601;
-        Fri, 13 Sep 2024 09:28:04 -0700 (PDT)
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com. [209.85.222.181])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-84906ececa5sm576872241.35.2024.09.13.09.28.03
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Sep 2024 09:28:04 -0700 (PDT)
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7a99e8c32c0so222220285a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:28:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU/zpLxvkSUtHtblXErOpOJmNXoLiKT1Euns6AU+pOunBbkcbRFtToODlBKG2MFk5yKYnaPlQ+1HK9E9m0=@vger.kernel.org
-X-Received: by 2002:a05:6214:3a86:b0:6c5:297c:da5f with SMTP id
- 6a1803df08f44-6c573570b58mr118095856d6.33.1726244882965; Fri, 13 Sep 2024
- 09:28:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726244885; x=1726849685;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cN9LbXKrRTawqhLxdUzFmP/6lGNimEaJ6R6JDJd4qJ0=;
+        b=AtAqUwwAv9WCmS5nm8TAu/CmqtXiylZJHxhCEJo8SPZ/7zp30Jwlij7Pf86c1WcY5q
+         YFZgyJE5AAkmlS/ORjqTZ0AN4UrhzPNNJpU28KIhGFxSasnaic5ux9gqRnBAVWPGSSh9
+         Wqfrv0bWO9rmcdOsu9MSzgR/U6MZjcIQPUoGKkx/9oSYOEb7KG8AlxfgA1xnv2BFhYVS
+         TMPA6okzVZZ6jnPTGySPbKxJ5gkZFXHl4GNGMkvP3J7rY16+LKkBRY3mWnc0s0ygRMdq
+         tBQZ9P9chkdaG/NZnJzDVD/HJx4yoHs97nUFx42SGfdnilNNCFt3CQbPqIG4j4e7eO/j
+         Eorw==
+X-Forwarded-Encrypted: i=1; AJvYcCWd/smSzPdMMcpR+1JUyNw3ip7FCms4IheFde8DBzpBXPUj71f66Jjt/fDbZWppysdH6tm3r4WhWzhPR78=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyyzX+iMr4++NKAdi++qyjJMyVqjOMP5odKCAgIpqXPA4QnLjn
+	qi7mveuJriulDch5cyDmwTxHzqrMWnhvwz4K8w9X9j4GyDc9iye/swbTaTlYItHpoWmv1xshLNA
+	tpA==
+X-Google-Smtp-Source: AGHT+IEyFXub8qnBjI0i5iQfgEPlsRdkIO3FIrijTVZf40RVSEUHkYTCWRuRVG3w2Em0cQHn4IDy8Vj2t8o=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:91d0:b0:717:92f2:d50b with SMTP id
+ d2e1a72fcca58-71925fa5ba1mr22049b3a.0.1726244885020; Fri, 13 Sep 2024
+ 09:28:05 -0700 (PDT)
+Date: Fri, 13 Sep 2024 09:28:03 -0700
+In-Reply-To: <c0d9ff5f-85d5-4df0-94a8-82e3bf6fe21f@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240909132810.1296786-1-ruanjinjie@huawei.com>
- <20240909132810.1296786-4-ruanjinjie@huawei.com> <CAD=FV=XQ7uf_Y_WTv_6-DX1Mo=+RycKSyxf=E-f3TOKiuE5RMA@mail.gmail.com>
- <c662f0b9-31dc-8b97-ef3f-ea33f9fc62af@huawei.com> <CAD=FV=U+kc1rKSDDo-Zx+CiuapoJ8izrCW0Wh-PfR7ivY_4bXw@mail.gmail.com>
- <10e77c5a-a188-698b-0c82-86c4bcdf114d@huawei.com>
-In-Reply-To: <10e77c5a-a188-698b-0c82-86c4bcdf114d@huawei.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 13 Sep 2024 09:27:51 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XGKph6t9S-r9-D+LkYcGNgRbEAC-qc4OQZjZXmxrjozw@mail.gmail.com>
-Message-ID: <CAD=FV=XGKph6t9S-r9-D+LkYcGNgRbEAC-qc4OQZjZXmxrjozw@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] spi: geni-qcom: Use devm functions to simplify code
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: broonie@kernel.org, akashast@codeaurora.org, vkoul@kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <cover.1724837158.git.legion@kernel.org> <cover.1725622408.git.legion@kernel.org>
+ <6c158a14-ba01-4146-9c6c-8e4c035dd055@intel.com> <ZttwkLP74TrQgVtL@google.com>
+ <d3895e03-bdfc-4f2a-a1c4-b2c95a098fb5@intel.com> <ZuHC-G575S4A-S_m@google.com>
+ <h5gp6dgcfazm2yk3lorwqms24c2y2z4saqyed6bnzkk2zhq5g2@rf3lj2a22omd>
+ <039bc47c-9b5d-41f3-87da-4500731ad347@intel.com> <2v2egjmdpb2fzjriqc2ylvqns3heo5bpirtqm7cn32h3zsuwry@y5ejrbyniwxq>
+ <c0d9ff5f-85d5-4df0-94a8-82e3bf6fe21f@intel.com>
+Message-ID: <ZuRoE6P3DxxK_3C9@google.com>
+Subject: Re: [PATCH v6 0/6] x86/tdx: Allow MMIO instructions from userspace
+From: Sean Christopherson <seanjc@google.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Alexey Gladkov <legion@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-coco@lists.linux.dev, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Yuan Yao <yuan.yao@intel.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Yuntao Wang <ytcoode@gmail.com>, 
+	Kai Huang <kai.huang@intel.com>, Baoquan He <bhe@redhat.com>, Oleg Nesterov <oleg@redhat.com>, 
+	cho@microsoft.com, decui@microsoft.com, John.Starks@microsoft.com, 
+	Paolo Bonzini <pbonzini@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Hi,
-
-On Thu, Sep 12, 2024 at 11:44=E2=80=AFPM Jinjie Ruan <ruanjinjie@huawei.com=
-> wrote:
->
-> On 2024/9/12 21:38, Doug Anderson wrote:
-> > Hi,
-> >
-> > On Wed, Sep 11, 2024 at 8:53=E2=80=AFPM Jinjie Ruan <ruanjinjie@huawei.=
-com> wrote:
+On Fri, Sep 13, 2024, Dave Hansen wrote:
+> On 9/13/24 08:53, Kirill A. Shutemov wrote:
+> >> Basically:
 > >>
-> >>>> @@ -1132,6 +1134,12 @@ static int spi_geni_probe(struct platform_dev=
-ice *pdev)
-> >>>>         if (ret)
-> >>>>                 return ret;
-> >>>>
-> >>>> +       ret =3D devm_add_action_or_reset(dev, spi_geni_release_dma_c=
-han, mas);
-> >>>> +       if (ret) {
-> >>>> +               dev_err(dev, "Unable to add action.\n");
-> >>>> +               return ret;
-> >>>> +       }
-> >>>
-> >>> Use dev_err_probe() to simplify.
-> >>>
-> >>> ret =3D devm_add_action_or_reset(dev, spi_geni_release_dma_chan, mas)=
-;
-> >>> if (ret)
-> >>>   return dev_err_probe(dev, ret, "Unable to add action.\n");
-> >>
-> >> It seems that if it only return -ENOMEM or 0, using dev_err_probe() ha=
-s
-> >> not not much value for many community maintainers.
-> >
-> > While I won't insist, it still has some value to use dev_err_probe()
-> > as I talked about in commit 7065f92255bb ("driver core: Clarify that
-> > dev_err_probe() is OK even w/out -EPROBE_DEFER")
-> The main difference is that when use dev_err_probe()=EF=BC=8Cthere will p=
-rint
-> anything on -ENOMEM now.
+> >> 	New ABI =~ Specific Kernel-mandated Instructions
+> > If we are going to say "no" to userspace MMIO emulation for TDX, the same
+> > has to be done for SEV. Or we can bring TDX to SEV level and draw the line
+> > there.
+> > 
+> > SEV and TDX run similar workloads and functional difference in this area
+> > is hard to justify.
+> 
+> Maybe.  We definitely don't want to put any new restrictions on SEV
 
-Oh, I see. You're saying that we should just get rid of the print
-altogether because the only error case is -ENOMEM and the kernel
-already splats there? Yeah, that sounds right to me. That doesn't
-match what you did in v5, though...
+Note, SEV-MEM, a.k.a. the original SEV, isn't in scope because instruction decoding
+is still handled by the hypervisor.  SEV-ES is where the guest kernel first gets
+involved.
 
--Doug
+> because folks would update their kernel and old userspace would break.
+> 
+> Or maybe we start enforcing things at >=SEV-SNP and TDX and just say
+> that security model has changed too much to allow the old userspace.
+
+Heh, that's an outright lie though.  Nothing relevant has changed between SEV-ES
+and SEV-SNP that makes old userspace any less secure, or makes it harder for the
+kernel to support decoding instructions on SNP vs. ES.
+
+I also don't know that this is for old userspace.  AFAIK, the most common case
+for userspace triggering emulated MMIO is when a device is passed to userspace
+via VFIO/IOMMUFD, e.g. a la DPDK.
 
