@@ -1,132 +1,158 @@
-Return-Path: <linux-kernel+bounces-328726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD56F9787EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:33:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 285E99787F3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:33:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 133AC1C22E4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:33:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 623241C24584
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F4012A14C;
-	Fri, 13 Sep 2024 18:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 746BC139CE9;
+	Fri, 13 Sep 2024 18:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PAizeBNH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xse7L38f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8AA92AD33;
-	Fri, 13 Sep 2024 18:32:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B739712D773;
+	Fri, 13 Sep 2024 18:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726252376; cv=none; b=DlwVgka8a1EFip4753eFtDFgjnU6T6fg4fkebGEeJUqQ3FCwjWisW5xt1YcD+VMLe4TBUaMq4ypySLX6isUJirsaR/crjbQ621c1fKKwuuh/HX6W78ymMFexh1hX1rf7aWCkuBX8oZWChlKmJmX4G1de/lmV+jApexS2ZofZHO4=
+	t=1726252405; cv=none; b=FdH9GclVMw0UpU8Y650Pxv06GspkNBLhyhEuy32SL+5DBrj7tWhxx/0oFFPEqOwSHpR+jOEBR/BhybmMldwobvDRArzmcJ8TXxrWs2hX7o7j21nqBJnfv1ugjsna+nRDslqw3+jzufPewWbBiwqDilihPB3x2ezf5khUMYqI3dI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726252376; c=relaxed/simple;
-	bh=znnVx+uRElVywTjUapcfKJ0/15Z+HLxKd6BG/S5a4M0=;
+	s=arc-20240116; t=1726252405; c=relaxed/simple;
+	bh=A1W9jCfny74eDZ2Sq3AsHaoLeaw3yFn1FM9duxuPzpw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hzEp/JfJsBpCYQR/kq1eDoR86QipLKtaLNEKkgUwuZk9E0JeSAv1lG+/Tb2VleuuAqwMc0IFYbNME7fwBygOOffFx+OKxCprSFpwwhWepxFKS5et0EwxSUGVnOG+AH6jE2xm7U1zSavfNhi86j0OFA76rCAIzs0KyeFi3/zA8gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PAizeBNH; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726252375; x=1757788375;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=znnVx+uRElVywTjUapcfKJ0/15Z+HLxKd6BG/S5a4M0=;
-  b=PAizeBNHTm7DjDdK+Xu7928v+WVrhQ/qhoKIXAiQAagiWt7xsdOkHhjw
-   9GlTChwdQUo1w/lSxTNjC+QS6PeJZiniHi3HYIvY8bgV7UScjxqDmWac5
-   uQhkNPmQAlsSKX7iDSXEGP1nnZJF7XP2sCPgp7fpP4pj3hRAkieT0mzXd
-   h599+Bjypqd9poqub8YPhQ4rIiXvLZAkjeTRXplB/dO8pVHMoNlLJk00E
-   a+j/lsLlXMRPx2eBNk6Q1Ya8lU5vOYKIHap3YK/Ns8yIYhbF+XFIyBGX9
-   8DaGOgyd16zZ56Lrg1eeyZU6KqIxNPyuMH6RMcjHCkJf4y40lFWEsSKcc
-   Q==;
-X-CSE-ConnectionGUID: iwAKvfuzSxSWYpdVExIhFw==
-X-CSE-MsgGUID: J+uDHX3bTtGm9shtwk/4nw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25261411"
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="25261411"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 11:32:54 -0700
-X-CSE-ConnectionGUID: j+lir26ERx2OTTkmcaTa/A==
-X-CSE-MsgGUID: z8VyUXDqS6y4Ie9aPyw45A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="72524838"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 11:32:52 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1spB69-00000008OIL-1yG8;
-	Fri, 13 Sep 2024 21:32:49 +0300
-Date: Fri, 13 Sep 2024 21:32:49 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Parker Newman <parker@finest.io>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	Parker Newman <pnewman@connecttech.com>
-Subject: Re: [PATCH v1 1/6] misc: eeprom: eeprom_93cx6: Add quirk for extra
- read clock cycle
-Message-ID: <ZuSFUQPp0BdcFpx9@smile.fi.intel.com>
-References: <cover.1726237379.git.pnewman@connecttech.com>
- <d0818651c4a58d0162a898c3ba3dd8abf9f95272.1726237379.git.pnewman@connecttech.com>
- <ZuR600QgWi6oQcau@smile.fi.intel.com>
- <20240913142420.675faf80@SWDEV2.connecttech.local>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iZpBf12XnyGY5gjW5UIt51wjLgyKCi9L4fobuRjIW3065jetV3iCeRrto7VDxn3XSMbGXY/HqtCvA0krG1aeg9YSnA8iKqLzu0teHYMYQfwgJ66beiiRhF+J21Bpym+DMCk4QMyI3K6KGFoqvmJDOskyXm5C6xDV9+8iRaGz7do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xse7L38f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05299C4CEC0;
+	Fri, 13 Sep 2024 18:33:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726252405;
+	bh=A1W9jCfny74eDZ2Sq3AsHaoLeaw3yFn1FM9duxuPzpw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xse7L38f6kbjvUpu6KuIcVvQkUwvvSdpQAM+baUWBOxKHwkNfN5n2a4WPozZqBe8H
+	 wK0MzQxo8HaBbxuUeFJXh3/RW+hMjig/4aZGdSxtxD3LD8GbD3DRZcbszWLIfS3u+T
+	 +C1yA4kCqVrgK0dsD4o3gsiA0TZa8JVM1HU/f8BtZlm8MQBlP8HkJcDN5H+1fbF5jI
+	 ndbaCs1vA15EeSzoQc+9usB98O311e5c8s64OxS6Xxc1uJ16cXD1TaIJd3pdwK4a4D
+	 07izK89AKA0KtL0Q249Alsfdaz8Zn0MATGInL83hMy59wNE/n9GB0mXHAaewkqPYn8
+	 4wIslCdEw1Wyg==
+Date: Fri, 13 Sep 2024 19:33:07 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: paul.walmsley@sifive.com, palmer@sifive.com, linux-doc@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-arch@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, corbet@lwn.net, palmer@dabbelt.com,
+	aou@eecs.berkeley.edu, robh@kernel.org, krzk+dt@kernel.org,
+	oleg@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	peterz@infradead.org, akpm@linux-foundation.org, arnd@arndb.de,
+	ebiederm@xmission.com, kees@kernel.org, Liam.Howlett@oracle.com,
+	vbabka@suse.cz, lorenzo.stoakes@oracle.com, shuah@kernel.org,
+	brauner@kernel.org, samuel.holland@sifive.com, andy.chiu@sifive.com,
+	jerry.shih@sifive.com, greentime.hu@sifive.com,
+	charlie@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com,
+	xiao.w.wang@intel.com, ajones@ventanamicro.com, anup@brainfault.org,
+	mchitale@ventanamicro.com, atishp@rivosinc.com, sameo@rivosinc.com,
+	bjorn@rivosinc.com, alexghiti@rivosinc.com, david@redhat.com,
+	libang.li@antgroup.com, jszhang@kernel.org, leobras@redhat.com,
+	guoren@kernel.org, samitolvanen@google.com,
+	songshuaishuai@tinylab.org, costa.shul@redhat.com, bhe@redhat.com,
+	zong.li@sifive.com, puranjay@kernel.org, namcaov@gmail.com,
+	antonb@tenstorrent.com, sorear@fastmail.com,
+	quic_bjorande@quicinc.com, ancientmodern4@gmail.com,
+	ben.dooks@codethink.co.uk, quic_zhonhan@quicinc.com,
+	cuiyunhui@bytedance.com, yang.lee@linux.alibaba.com,
+	ke.zhao@shingroup.cn, sunilvl@ventanamicro.com,
+	tanzhasanwork@gmail.com, schwab@suse.de, dawei.li@shingroup.cn,
+	rppt@kernel.org, willy@infradead.org, usama.anjum@collabora.com,
+	osalvador@suse.de, ryan.roberts@arm.com, andrii@kernel.org,
+	alx@kernel.org, catalin.marinas@arm.com, broonie@kernel.org,
+	revest@chromium.org, bgray@linux.ibm.com, deller@gmx.de,
+	zev@bewilderbeest.net
+Subject: Re: [PATCH v4 07/30] riscv: zicfilp / zicfiss in dt-bindings
+ (extensions.yaml)
+Message-ID: <20240913-woven-droplet-1f25d0d5a33b@spud>
+References: <20240912231650.3740732-1-debug@rivosinc.com>
+ <20240912231650.3740732-8-debug@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Wo0WH8RKXYiALMcP"
+Content-Disposition: inline
+In-Reply-To: <20240912231650.3740732-8-debug@rivosinc.com>
+
+
+--Wo0WH8RKXYiALMcP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240913142420.675faf80@SWDEV2.connecttech.local>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 13, 2024 at 02:24:20PM -0400, Parker Newman wrote:
-> On Fri, 13 Sep 2024 20:48:03 +0300
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > On Fri, Sep 13, 2024 at 10:55:38AM -0400, Parker Newman wrote:
+On Thu, Sep 12, 2024 at 04:16:26PM -0700, Deepak Gupta wrote:
+> Make an entry for cfi extensions in extensions.yaml.
+>=20
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+>  .../devicetree/bindings/riscv/extensions.yaml        | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Do=
+cumentation/devicetree/bindings/riscv/extensions.yaml
+> index a06dbc6b4928..b7c86fb91984 100644
+> --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> @@ -361,6 +361,18 @@ properties:
+>              The standard Zicboz extension for cache-block zeroing as rat=
+ified
+>              in commit 3dd606f ("Create cmobase-v1.0.pdf") of riscv-CMOs.
+> =20
+> +        - const: zicfilp
+> +          description:
+> +            The standard Zicfilp extension for enforcing forward edge co=
+ntrol-flow
+> +            integrity as ratified in commit 3f8e450 ("merge pull request=
+ #227 from
+> +            ved-rivos/0709") of riscv-cfi github repo.
+> +
+> +        - const: zicfiss
+> +          description:
+> +            The standard Zicfilp extension for enforcing forward edge co=
+ntrol-flow
+> +            integrity as ratified in commit 3f8e450 ("merge pull request=
+ #227 from
+> +            ved-rivos/0709") of riscv-cfi github repo.
 
-...
+Because both of these have a # in them you need to have a | after
+description:. Please run dt_binding_check :)
 
-> > > Link: https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-5193-SEEPROM-AT93C46D-Datasheet.pdf
-> >
-> > Make it a tag (i.e. locate just above your SoB tag)
-> 
-> Sorry, not 100% sure what you mean by tag? Do I just need to move the Link: entry
-> to be above my Sign-off? Or is there something else? Thanks!
+> +
+>          - const: zicntr
+>            description:
+>              The standard Zicntr extension for base counters and timers, =
+as
+> --=20
+> 2.45.0
+>=20
 
-Make it like
+--Wo0WH8RKXYiALMcP
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  ...Summary...
-  <blank line>
-  ...commit message text...
-  <blank line>
-  Link: ...
-  Signed-off-by: ...
+-----BEGIN PGP SIGNATURE-----
 
-...
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuSFYwAKCRB4tDGHoIJi
+0vnMAP4jAcike3nNkua8hG9QWEW4+qazPoSFmDREmFEymZqK8wD/R5K+u0LGQlr6
+Bci3roI9osxHgbbuooL8Ckvlomw/wAc=
+=cQDJ
+-----END PGP SIGNATURE-----
 
-> > > +	if (has_quirk_extra_read_cycle(eeprom)) {
-> > > +		eeprom_93cx6_pulse_high(eeprom);
-> >
-> > No additional delay is needed?
-> 
-> Should not need any extra delay as both pulse high/low functions have the worst case
-> 450ns delay after the register write. It was working well on my test cards.
-
-OK!
-
-> > > +		eeprom_93cx6_pulse_low(eeprom);
-> > > +	}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+--Wo0WH8RKXYiALMcP--
 
