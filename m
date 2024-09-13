@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-328409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D3C4978302
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:57:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2705E978333
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:02:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40DFD28724D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:57:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0D0E281602
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B89B383A2;
-	Fri, 13 Sep 2024 14:56:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135B14F215;
+	Fri, 13 Sep 2024 15:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="g7jUPpoU"
+	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="vt/aSyrG"
 Received: from mout.perfora.net (mout.perfora.net [74.208.4.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FAD32629F;
-	Fri, 13 Sep 2024 14:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C57C4AEE5;
+	Fri, 13 Sep 2024 15:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726239412; cv=none; b=n+8ce4U0u3uLCpujOXZ84jKt7d/AImDg52x5Q2PKLHFdu4lnsctYN+GHBMYYCikxxMYkH+edQQh7TPcIIkI/+XOudn92oQNE0ierhus6LYPm7Xon9U0DrAr7B8+Hx8DSMsX6HPfmtUlwVy2xt4XKdUefAjoLqIA83hT68fJD0Vg=
+	t=1726239725; cv=none; b=FzvA8ijwVSepuw0G2id4O8TgbHl1DELzTFnF++qq37LhKyIpz+9h5q8G404zPs4KcCrU8p/8mYEfNEjsaWoO9r6VsthnPgL3o0ol7XU7R+oT9//Eq6r5H96MGwjFcg2VA9x0DrRbA9nH/QzlXjA3EJH5Syrp+5DpbBZWAvU1W84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726239412; c=relaxed/simple;
-	bh=6HGa3xH4q/wVIDbcp21UHl2EmGSf3xbW64DuCdXyolc=;
+	s=arc-20240116; t=1726239725; c=relaxed/simple;
+	bh=ESKLF8yFEtUQytc0bKQ3oBD2aW2a9E9kSXQeLosTxeE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oGHkEfU01nRrSb4MHW5x6/idec4Frfs2Vy6spfWk5WaOQ2OIfwXPjisxayq67GW2EUgMWA61PGsnpszvc2daAGeQrxQN5niVw+h5nM8AIkAMlqOf+V6ZrDupvgWHA1FQt9sv6Hpppcpud3xuE89jLTYdfrTxMrIHAQWK6WGSnuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=g7jUPpoU; arc=none smtp.client-ip=74.208.4.194
+	 MIME-Version; b=pE8mqwowBxuJRezJ+A/LEFt2K5P2wemlXh7OEwnUQKzZ1tutSRGrD1oKMDDCUP+vRsF7DIePqbRXIOoOcCkxedR7Q1+6cbgyJFJfZbwnnstIb6P3qeWifJhq9S3e/PQrGMHTiUhF1bBbAJkFyChzXvNSPXUqEVmJpAEU0nJMBw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=vt/aSyrG; arc=none smtp.client-ip=74.208.4.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
-	s=s1-ionos; t=1726239390; x=1726844190; i=parker@finest.io;
-	bh=XwoyajezAxnq4yQoPqaucc/mmTrf6GLB40+rbTgUjoU=;
+	s=s1-ionos; t=1726239721; x=1726844521; i=parker@finest.io;
+	bh=2o7ADJUQgRYhhYBqQX29IqghXTlpdQRGn0FGNbn1NUI=;
 	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
 	 References:MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=g7jUPpoUyzfdcVEYnf19SOKXmwk9J7z/f0ayL6veGP/3m/cr+x6seWDqu0plPw0V
-	 AenIhRW5v2l8hWydcvprg2j4rApoWl/skDeCSbLH9SzyhzI2vfa0oxk0s30chIXeL
-	 /DsRIjKuayfoWT/beUMC2TRvwqYD5LRxZABYdPsYpK3P+GLSW9xnDbFeW+lw92UMZ
-	 Ttv2f2+jyHmNXp1vQaBGyb8Op4518Qz2nssOyZ9KyFQrhBbSFBBqcJTX1QCiD3xuZ
-	 XapduiHvvb+pyOhtYboc0HsU1zE31p4czvQE9Bha1M0Id66B/T5IMrcz+mT8vOyaL
-	 aFGgDTPznowPVTs+yA==
+	b=vt/aSyrGR0pI0utiyKc+KclswpULP4ACa8uNh00+H6SEfQC52JMi74QE2A+SUf/L
+	 PX5/lk3vlwenK4FLgl2z1aBNII96vhLhpQseB8P4GhJuNefpgmfc7le72a97IF9Fd
+	 n0Vu7N3PTKRQAOvlmotvJvhA2v3tD4oeHs/sw27rg9FWVMsJOfJUzWIIh2efFKz0p
+	 fPs874M6J6j1QfNl5S/U850+Qpx7VvmDVLbbvXq5WWtynegFUYC9IxBVp9gjP0Hxu
+	 TA0DIBqK05mLDwQabSXck+Ullrj8Zz2O8tPGq/pGAwBEwPkbTNDI3a1KR/4Hzoz6h
+	 Dxya9IPaMrGSW67XiQ==
 X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
 Received: from finest.io ([98.159.241.229]) by mrelay.perfora.net (mreueus004
- [74.208.5.2]) with ESMTPSA (Nemesis) id 1MKtBx-1sYqSB34cX-00QBQ7; Fri, 13 Sep
- 2024 16:56:30 +0200
+ [74.208.5.2]) with ESMTPSA (Nemesis) id 1MQdh4-1sbI5p0r26-00Ijhc; Fri, 13 Sep
+ 2024 16:56:31 +0200
 From: Parker Newman <parker@finest.io>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Jiri Slaby <jirislaby@kernel.org>,
@@ -55,9 +55,9 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-kernel@vger.kernel.org,
 	linux-serial@vger.kernel.org
 Cc: Parker Newman <pnewman@connecttech.com>
-Subject: [PATCH v1 5/6] serial: 8250_exar: Remove old exar_ee_read() and other unneeded code
-Date: Fri, 13 Sep 2024 10:55:42 -0400
-Message-ID: <3d7342999229210b18d1e163362999cac78a52d6.1726237379.git.pnewman@connecttech.com>
+Subject: [PATCH v1 6/6] serial: 8250_exar: Add select EEPROM_93CX6 in Kconfig
+Date: Fri, 13 Sep 2024 10:55:43 -0400
+Message-ID: <b6444935804fb0e745d7f374cf2a0c9116a2b3e9.1726237379.git.pnewman@connecttech.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1726237379.git.pnewman@connecttech.com>
 References: <cover.1726237379.git.pnewman@connecttech.com>
@@ -68,154 +68,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:PiWaDdgHCq6lF/1o+DvXnHdtCsbtl67UQZZbI/RYrhJYKdJ43V2
- 784SedABsWcUXJQSleEbl5aQ5N04VUeGe3RnUV29GS0Rdbvf+z1/vjcpBhW3omWZ6FudoDl
- X97x3EmGk2qqWHIzj10cZKIV/UKg0JIcERt4rN+7ltHXiHtIZBxEMgEBQ6n4yWLuKgrKbzY
- PMpUwlQnBX4uPev+AHVWw==
+X-Provags-ID: V03:K1:ajSEOcGFWwOl3ZVKbnLk5A4JCktIcIR++kmKHBG9KY4PhRwnsKq
+ gFQWdnF4kErSeMUGkRa8Tit2TjYHtLJpmxCmi9zfc4ndO1RM20ITIiceoZo9ODltrLhlCwa
+ mjDx76qXS252rPgX40mY7MBkCkz387RJEUcBpq13g7Ci0yGUmldKgDagyKIQAgoZjmOzG8X
+ ctfGuLLPyOjjqJDDhN1Hg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:bFYaTlExvS4=;Yy/Bb8iWmB21KDO5uNEI9QwRnKl
- E5DfwtRn5vIJ0w8FrkD3n5KqREBeyOEKL1UWyH0ShkCiortq6e91v4N+8sIAOzw0XoicQncYp
- VxCu2G+iJOUCQ4oQs7OYGQirkb8pu1Jy1+FIiDoM5lg0ynTVBvCesIgrfKIyKqM6jpOkFyqnJ
- s0wnxspO5/jNJ/rN7ZyDpJ3ENDYlQLD3Bq0lN9sFYdIG4jgKItkpv56TknwT2QSNUqKA1lmZP
- A9q+gPAD0ZJXX4PoAXm/kpM235qzhLnxz4DpxPvULFyLPfVutzPgs6eA6HshhAcJHHWdccqdI
- pK/jkl1Lr4/riRPI45uMKy+i6Bljug/8okIiJSO8ETvUuYDKD3thmMEYP7uZCqDVC1BynUL2r
- qvr9h3DpFAhzvAnJqD3TrY8PTSFUc9dv7Eq1vIVdPcYvndLBhe9jrRzXBSSPRziEYkgaSqCIZ
- 0Gud/MSpSCk58eDsqZiDILjCyY7J/INdQY7LU6PywpusCH51UKKhSF5wTZXRZfFtiTBd3yxkM
- 3ou8HWOiDEiuyCOjof+/lOSBkWQ+5nPWK9uw3JgFPoR4uTRtx7aEPtlHTUhuLYi/CASch6jZw
- /7Xa5sU5O+gPzfFxuwyiRKSdnu0/y/m2yOi1kL2rr97LUbU+Vo0OuScsEsr+P5BOGygUqeA4K
- J4hfwBQIOSfaLI8GfyH5Y7+BRAzFNg2JtdoR4Rr4RXg5C/cCspM1yNFe4omOVcqy0pjcWqsLT
- U5cFtgoC4V70yCyta5B52pREEOUx73GYQ==
+UI-OutboundReport: notjunk:1;M01:P0:K8dNiyVWNQI=;0F0kA9AYH9Cy3j0YwgV/acixk0h
+ 5YGkt5o3KYsm4hAYt0+TYpzonADsI75g6kF1NH2vpKO+ZKLRjmRnBiF6gq3LRlt0GI9iI5dVK
+ BJ06aFpXEWE0Pmrpult0dibntcMT3Xm8eF0CZ8UhDoXSn8AxTtEfS6GMv7qOovlg1HDqK7a7a
+ +8+fdlwplcgw0yMOwit6Osr76ToDjAtb53q7P9gmb7+ZP5kxuxydB6g1E42vcuBcjXPsBaqOA
+ XvhwNDEF2oYykanIRAcmAPo2ZktPtiHsIHPX0BEgoVnls+MS/DAVzIciWMvxyEkhJQt6N1WnZ
+ 8Qa7DWsYe5ROZJaYtg+dRSrjjBnaHd4pbRjPhWtSS6MhVR9ddjRuQDT8SfM/vodkvjhZZoip4
+ aTs/49AJ6SovsXZimJ71mo98y4ouzNaRCa5hkLq3DyGewno9eIa0bS08M/vC8+Qv1DBmFfBu7
+ w3mZg627RHe/D4Qpwrdx503PCPWq9TveBaVMuTxGbBJ1/qLldcAbrmwGvV8/ujBHxGLOud3L4
+ NPO71TX7j4C987umx/s9j2KWFML9SrhN7F6W7WTwcwx8z5KlqBfHXcKUQd9+2Ed/Mlndiy+kN
+ YedLTRGGCGYkNDKOJea5+UIFng8T5EoCJg3Rzw2PFfJBwFEywvY/K6oc/6jNrdGo932WXEcas
+ ZCGrO62S+40EQMATsvc3NRh4gqw3EwK09JLceYBc+TRnlB0ye9ORdLaYzYmkwGaafGfz2g0ni
+ c0chnqXagLl4Alyv8ImDw9pYLYJjOvIbw==
 
 From: Parker Newman <pnewman@connecttech.com>
 
-Remove the old exar_ee_read() and associated helper functions as well as
-some defines that are no longer needed after the switch to using the
-eeprom_93cx6 driver.
+Add "select EEPROM_93CX6" to config SERIAL_8250_EXAR to ensure
+eeprom_93cx6 driver is also compiled when 8250_exar driver is selected.
 
 Signed-off-by: Parker Newman <pnewman@connecttech.com>
 =2D--
- drivers/tty/serial/8250/8250_exar.c | 92 -----------------------------
- 1 file changed, 92 deletions(-)
+ drivers/tty/serial/8250/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/serial/8250=
-/8250_exar.c
-index 0edb5aeba199..3ef28429f1d1 100644
-=2D-- a/drivers/tty/serial/8250/8250_exar.c
-+++ b/drivers/tty/serial/8250/8250_exar.c
-@@ -136,8 +136,6 @@
- #define UART_EXAR_REGB_EECS		BIT(5)
- #define UART_EXAR_REGB_EEDI		BIT(6)
- #define UART_EXAR_REGB_EEDO		BIT(7)
--#define UART_EXAR_REGB_EE_ADDR_SIZE	6
--#define UART_EXAR_REGB_EE_DATA_SIZE	16
-
- #define UART_EXAR_XR17C15X_PORT_OFFSET	0x200
- #define UART_EXAR_XR17V25X_PORT_OFFSET	0x200
-@@ -190,8 +188,6 @@
- #define CTI_EE_OFF_XR17V35X_PORT_FLAGS	0x14  /* 1 word */
-
- #define CTI_EE_MASK_PORT_FLAGS_TYPE	GENMASK(7, 0)
--#define CTI_EE_MASK_OSC_FREQ_LOWER	GENMASK(15, 0)
--#define CTI_EE_MASK_OSC_FREQ_UPPER	GENMASK(31, 16)
-
- #define CTI_FPGA_RS485_IO_REG		0x2008
- #define CTI_FPGA_CFG_INT_EN_REG		0x48
-@@ -269,94 +265,6 @@ static inline u8 exar_read_reg(struct exar8250 *priv,=
- unsigned int reg)
- 	return readb(priv->virt + reg);
- }
-
--static inline void exar_ee_select(struct exar8250 *priv)
--{
--	// Set chip select pin high to enable EEPROM reads/writes
--	exar_write_reg(priv, UART_EXAR_REGB, UART_EXAR_REGB_EECS);
--	// Min ~500ns delay needed between CS assert and EEPROM access
--	udelay(1);
--}
--
--static inline void exar_ee_deselect(struct exar8250 *priv)
--{
--	exar_write_reg(priv, UART_EXAR_REGB, 0x00);
--}
--
--static inline void exar_ee_write_bit(struct exar8250 *priv, u8 bit)
--{
--	u8 value =3D UART_EXAR_REGB_EECS;
--
--	if (bit)
--		value |=3D UART_EXAR_REGB_EEDI;
--
--	// Clock out the bit on the EEPROM interface
--	exar_write_reg(priv, UART_EXAR_REGB, value);
--	// 2us delay =3D ~500khz clock speed
--	udelay(2);
--
--	value |=3D UART_EXAR_REGB_EECK;
--
--	exar_write_reg(priv, UART_EXAR_REGB, value);
--	udelay(2);
--}
--
--static inline u8 exar_ee_read_bit(struct exar8250 *priv)
--{
--	u8 regb;
--	u8 value =3D UART_EXAR_REGB_EECS;
--
--	// Clock in the bit on the EEPROM interface
--	exar_write_reg(priv, UART_EXAR_REGB, value);
--	// 2us delay =3D ~500khz clock speed
--	udelay(2);
--
--	value |=3D UART_EXAR_REGB_EECK;
--
--	exar_write_reg(priv, UART_EXAR_REGB, value);
--	udelay(2);
--
--	regb =3D exar_read_reg(priv, UART_EXAR_REGB);
--
--	return (regb & UART_EXAR_REGB_EEDO ? 1 : 0);
--}
--
--/**
-- * exar_ee_read() - Read a word from the EEPROM
-- * @priv: Device's private structure
-- * @ee_addr: Offset of EEPROM to read word from
-- *
-- * Read a single 16bit word from an Exar UART's EEPROM.
-- * The type of the EEPROM is AT93C46D.
-- *
-- * Return: EEPROM word
-- */
--static u16 exar_ee_read(struct exar8250 *priv, u8 ee_addr)
--{
--	int i;
--	u16 data =3D 0;
--
--	exar_ee_select(priv);
--
--	// Send read command (opcode 110)
--	exar_ee_write_bit(priv, 1);
--	exar_ee_write_bit(priv, 1);
--	exar_ee_write_bit(priv, 0);
--
--	// Send address to read from
--	for (i =3D UART_EXAR_REGB_EE_ADDR_SIZE - 1; i >=3D 0; i--)
--		exar_ee_write_bit(priv, ee_addr & BIT(i));
--
--	// Read data 1 bit at a time starting with a dummy bit
--	for (i =3D UART_EXAR_REGB_EE_DATA_SIZE; i >=3D 0; i--) {
--		if (exar_ee_read_bit(priv))
--			data |=3D BIT(i);
--	}
--
--	exar_ee_deselect(priv);
--
--	return data;
--}
--
- static void exar_eeprom_93cx6_reg_read(struct eeprom_93cx6 *eeprom)
- {
- 	struct exar8250 *priv =3D (struct exar8250 *)eeprom->data;
+diff --git a/drivers/tty/serial/8250/Kconfig b/drivers/tty/serial/8250/Kco=
+nfig
+index 47ff50763c04..94910ced8238 100644
+=2D-- a/drivers/tty/serial/8250/Kconfig
++++ b/drivers/tty/serial/8250/Kconfig
+@@ -150,6 +150,7 @@ config SERIAL_8250_EXAR
+ 	tristate "8250/16550 Exar/Commtech PCI/PCIe device support"
+ 	depends on SERIAL_8250 && PCI
+ 	select SERIAL_8250_PCILIB
++	select EEPROM_93CX6
+ 	default SERIAL_8250
+ 	help
+ 	  This builds support for XR17C1xx, XR17V3xx and some Commtech
 =2D-
 2.46.0
 
