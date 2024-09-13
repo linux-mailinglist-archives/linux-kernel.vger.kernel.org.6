@@ -1,106 +1,110 @@
-Return-Path: <linux-kernel+bounces-328138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDA01977F53
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:11:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E21977F52
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:11:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84762281A1C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:11:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9B9AB24CCA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:11:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE441D933B;
-	Fri, 13 Sep 2024 12:11:42 +0000 (UTC)
-Received: from mail114-240.sinamail.sina.com.cn (mail114-240.sinamail.sina.com.cn [218.30.114.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8473F1D9344;
+	Fri, 13 Sep 2024 12:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aRvVf7oj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92C01C175F
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.114.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64E51C175F;
+	Fri, 13 Sep 2024 12:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726229502; cv=none; b=GwyC3RiLIqFmP7L5/XpKuzbXK2VPmChx+26T+sPpDN65igAKI9ez8rgOqjDHY+/1mSPNdk5I84ZbJ/C8ILXUzp2RK6Av5O8rrF6nunmzj9pLwoq6slVxLEK2fdtdM6dxGOuIuHEYjAhsX1i932SHQv0lkEtte2btnRsj50UVDlQ=
+	t=1726229489; cv=none; b=iLtPx5TXqIveGJju7eRjDRjbp9WzoYC+R3rFPBX/mf1VnEw34bqdRz3A20sxswtrktM5aBKJz4YONK3RIS3fuMFM0U3/OtYb9UHGDJDDX8E3PoGFaiXcW2ydviBsSRMhiIYbKJsByZyfUfBmBuxKvX7+8GiwF7W22jnGzMhXgr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726229502; c=relaxed/simple;
-	bh=ENl4OIXM2il0Gwky2Mxi3ZazpJgg9kt7UZAkWx9UUz4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TRwtScjQ134YpBjBkwEl77yBI7WINBPr+D2dvOFAG3AVAPDBEdIfAS7VM4feDX9xDCat24FQFPackhSsgfPW8ATlWBbIXcOr2kbpFuvIJupV6cwTw+ORyMPC3Xvw2SXyioZp/l+/q0OWoYFBQq6gd/pBvwDOkfEbWoNnsFDKSvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.114.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.71.185])
-	by sina.com (10.185.250.23) with ESMTP
-	id 66E42BE700004E8E; Fri, 13 Sep 2024 20:11:21 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 8650948913435
-X-SMAIL-UIID: A0AEF1283A154653AC858FDF16549CDE-20240913-201121-1
-From: Hillf Danton <hdanton@sina.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: syzbot <syzbot+943d34fa3cf2191e3068@syzkaller.appspotmail.com>,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH] kthread: Unpark only parked kthreads (was Re: [syzbot] [wireguard?] WARNING in kthread_unpark (2))
-Date: Fri, 13 Sep 2024 20:11:09 +0800
-Message-Id: <20240913121109.289-1-hdanton@sina.com>
-In-Reply-To: <ZuGHTBfUlB0qlgn4@localhost.localdomain>
-References: 
+	s=arc-20240116; t=1726229489; c=relaxed/simple;
+	bh=7xIfV9cbzSwkAOH/0KEgBigHdF3rNbLzHt6TgHTSjX8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jq7T/jJndbko7flxNKTSpeqmW7sz4Sy/LaRdpLcLqoRNlWFfWorEjj4m3gO2qQQQ0bKbNhMbtxphYLGH+L9JV+OUVRE2XMjzvYfBhB0D0fsl26ftpac5QLEEuc0JEUO7DgINRYWqUTPvQIaZKGdoKG0teIxBhRcBCUHldf0XeEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aRvVf7oj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3A34C4CEC0;
+	Fri, 13 Sep 2024 12:11:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726229488;
+	bh=7xIfV9cbzSwkAOH/0KEgBigHdF3rNbLzHt6TgHTSjX8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aRvVf7ojKKKqLD9YWcx/3bpn4sdndF1F9fraVJqDU9bsn8N9wDsH6LxXzx5WXi26H
+	 RwHxd2OsJbu+eV3786Ep4aqOwbz5xkjy5VnVOCcecIYWaO3v3JiJ0ZpPpXxnUFn4KO
+	 akkoN0/Q3X/1rJ7i6GOfDOxsjXqtkxqROJ40T1bVJEwb6JaS6OH9ApegotS4CmLHIk
+	 a167Sb5gvXUNQxhLfgiAjmCLv1c6M/jLZJoD7pcXz4WFNe/SzshO7m76/XfsWddZrF
+	 MFKoPSvf8yrcXolFmwP3Swuwl7aTm+lUg/5KGOG/DCxutKVu5/zyJ3g7l79DG5f0y9
+	 gdfel2VlMccNg==
+Date: Fri, 13 Sep 2024 14:11:22 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Pankaj Raghav <p.raghav@samsung.com>, Luis Chamberlain <mcgrof@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Matthew Wilcox <willy@infradead.org>, 
+	Christian Theune <ct@flyingcircus.io>, linux-mm@kvack.org, 
+	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Daniel Dao <dqminh@cloudflare.com>, Dave Chinner <david@fromorbit.com>, clm@meta.com, 
+	regressions@lists.linux.dev, regressions@leemhuis.info
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+Message-ID: <20240913-ortsausgang-baustart-1dae9a18254d@brauner>
+References: <A5A976CB-DB57-4513-A700-656580488AB6@flyingcircus.io>
+ <ZuNjNNmrDPVsVK03@casper.infradead.org>
+ <0fc8c3e7-e5d2-40db-8661-8c7199f84e43@kernel.dk>
+ <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
 
-Test Frederic's idea.
+On Thu, Sep 12, 2024 at 03:25:50PM GMT, Linus Torvalds wrote:
+> On Thu, 12 Sept 2024 at 15:12, Jens Axboe <axboe@kernel.dk> wrote:
+> >
+> > When I saw Christian's report, I seemed to recall that we ran into this
+> > at Meta too. And we did, and hence have been reverting it since our 5.19
+> > release (and hence 6.4, 6.9, and 6.11 next). We should not be shipping
+> > things that are known broken.
+> 
+> I do think that if we have big sites just reverting it as known broken
+> and can't figure out why, we should do so upstream too.
+> 
+> Yes,  it's going to make it even harder to figure out what's wrong.
+> Not great. But if this causes filesystem corruption, that sure isn't
+> great either. And people end up going "I'll use ext4 which doesn't
+> have the problem", that's not exactly helpful either.
+> 
+> And yeah, the reason ext4 doesn't have the problem is simply because
+> ext4 doesn't enable large folios. So that doesn't pin anything down
+> either (ie it does *not* say "this is an xfs bug" - it obviously might
+> be, but it's probably more likely some large-folio issue).
+> 
+> Other filesystems do enable large folios (afs, bcachefs, erofs, nfs,
+> smb), but maybe just not be used under the kind of load to show it.
+> 
+> Honestly, the fact that it hasn't been reverted after apparently
+> people knowing about it for months is a bit shocking to me. Filesystem
+> people tend to take unknown corruption issues as a big deal. What
+> makes this so special? Is it because the XFS people don't consider it
+> an XFS issue, so...
 
-#syz test upstream master
+So this issue it new to me as well. One of the items this cycle is the
+work to enable support for block sizes that are larger than page sizes
+via the large block size (LBS) series that's been sitting in -next for a
+long time. That work specifically targets xfs and builds on top of the
+large folio support.
 
---- a/kernel/kthread.c
-+++ b/kernel/kthread.c
-@@ -623,6 +623,8 @@ void kthread_unpark(struct task_struct *
- {
- 	struct kthread *kthread = to_kthread(k);
- 
-+	if (!test_bit(KTHREAD_SHOULD_PARK, &kthread->flags))
-+		return;
- 	/*
- 	 * Newly created kthread was parked when the CPU was offline.
- 	 * The binding was lost and we need to set it again.
---- l/drivers/input/misc/yealink.c
-+++ y/drivers/input/misc/yealink.c
-@@ -438,7 +438,7 @@ static void urb_irq_callback(struct urb
- 
- 	yealink_do_idle_tasks(yld);
- 
--	if (!yld->shutdown) {
-+	if (!yld->shutdown && status != -EPROTO) {
- 		ret = usb_submit_urb(yld->urb_ctl, GFP_ATOMIC);
- 		if (ret && ret != -EPERM)
- 			dev_err(&yld->intf->dev,
-@@ -460,13 +460,13 @@ static void urb_ctl_callback(struct urb
- 	case CMD_KEYPRESS:
- 	case CMD_SCANCODE:
- 		/* ask for a response */
--		if (!yld->shutdown)
-+		if (!yld->shutdown && status != -EPROTO)
- 			ret = usb_submit_urb(yld->urb_irq, GFP_ATOMIC);
- 		break;
- 	default:
- 		/* send new command */
- 		yealink_do_idle_tasks(yld);
--		if (!yld->shutdown)
-+		if (!yld->shutdown && status != -EPROTO)
- 			ret = usb_submit_urb(yld->urb_ctl, GFP_ATOMIC);
- 		break;
- 	}
---
+If the support for large folios is going to be reverted in xfs then I
+see no point to merge the LBS work now. So I'm holding off on sending
+that pull request until a decision is made (for xfs). As far as I
+understand, supporting larger block sizes will not be meaningful without
+large folio support.
 
