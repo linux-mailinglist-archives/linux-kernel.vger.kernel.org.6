@@ -1,309 +1,348 @@
-Return-Path: <linux-kernel+bounces-328315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D39CD9781F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:00:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D20EC9781FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42BFFB20D46
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:00:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F3FE1F21356
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813661DB54F;
-	Fri, 13 Sep 2024 13:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85A81DCB11;
+	Fri, 13 Sep 2024 13:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="DHDyLHfm";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="DHDyLHfm"
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2056.outbound.protection.outlook.com [40.107.104.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mxCR1lZn"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790321DB94E;
-	Fri, 13 Sep 2024 13:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.56
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726235830; cv=fail; b=ZWE7uCJ1Ff/pWrgrQyji9GPeplLrIqOYn0+tWNkLe9kAhSfUo5jlrp4ELQ0VMzQcT26dW/S6HVqvoJwMx1lAPduiwzaIiYYYpHUk3jpikVbLS+mD/yMkGHci08qArmJIfZqFQcJ4C8xHdF6cCZxxX5b45kKMQtnkIMJ0n00Dy/E=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726235830; c=relaxed/simple;
-	bh=e+HOShqtDiOlYehlDUWJaEqWM17mPylSlz6NaN8jdMo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Va0Q3AWwgRpnjpT2PVDgBqoADhpp0fLzvDjBP/braqmSiRVg+pJ3ruOKf5/9PG14lt3SRETvIxWRFS7v0RFFCGqCi3ta4rVdxLA1CtzzK91xkPQk1pvieUWzp8INk0B628vUL9MzOlMDF+V5e1zrp8RYRl9saHRYqz1b23d6CVc=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=DHDyLHfm; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=DHDyLHfm; arc=fail smtp.client-ip=40.107.104.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=it47iXy60hDlrDpUN74hlxOVmHUnppsdYVt5+Q/9vZlaEYUMLXOc2DvouLfZRQOLpiWY0PQQUC4K4dg3Z1s7OQDgL84mDUhxoY1eaoTg1j5Q/ArFDZJ95WJz00z1z5MIE2i2inoI+hOd1DRMIVPsGNcYDwZWxeJ+Y2jJXigD4iYw6Ygx0672IRHDFSLixPgIIMOSIkroi4oalZnF+WD0Stz6tuRnnoefD568TTpvnAVSGCT/9ltVBmynD8xH13YQle1J9s1o9xKoYFxZtuP8Ik8T/i7ZreC0O0yi1n1AGxTUv8AwhBBDVcG6W7828lJktY+iswHtn5JHFhQO6ecxxQ==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dRDANWvS6bsZIGOlkmdEgjbpBsStU+/ywsZSGQMSBxI=;
- b=gJ83F0IcqUR1RZyW8PJfWC/ABluA1CCz7/czGQ2ZVMJnfoLtuipSSqN0EtzB5Da3tq4zBDeDHL7xbAQw0DVB/nURApu8MJl+V69YPJ9bjS2L2pk3yuqBDbqavlBdK15h7ckW8k1rzuVaELKPQapADN72ySPN34Ms4dZcEU/hHh7Dn3oKDwF3VkvKggHiZnSgnM4iFe2goyUFBIR9yUrN7Vf9tzXgUwMFxfhHMYEU9q0uGXIls3WtZjv1hwwUTfq3nM6YmoqdWTHn8rPBqH/ZXMADbj5EknL520U7Bn9lOwdUssPPlYY7eYqr2arSjt+GxrQSZH6VLlsKSLFaJyvaGg==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 63.35.35.123) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dRDANWvS6bsZIGOlkmdEgjbpBsStU+/ywsZSGQMSBxI=;
- b=DHDyLHfmUHyf85kNOLOAHVOQ7ys0jB6O5XbioO2RkUT/Tf7DlqSmUAdUWL9Mq5VVprU+OC1lBJajsgo85smej9qRTQ4aJ8A0zOqXa1XpSbgtoC+nOHs6S0EHis0bUJ+2intId/FrWAkfUHWMnlPMJwDf0Jcd7ystGw65NXvrso0=
-Received: from DUZPR01CA0045.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:468::20) by FRZPR08MB10926.eurprd08.prod.outlook.com
- (2603:10a6:d10:13d::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.17; Fri, 13 Sep
- 2024 13:57:02 +0000
-Received: from DB5PEPF00014B92.eurprd02.prod.outlook.com
- (2603:10a6:10:468:cafe::45) by DUZPR01CA0045.outlook.office365.com
- (2603:10a6:10:468::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7939.28 via Frontend
- Transport; Fri, 13 Sep 2024 13:57:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
- client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
- pr=C
-Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- DB5PEPF00014B92.mail.protection.outlook.com (10.167.8.230) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.7918.13
- via Frontend Transport; Fri, 13 Sep 2024 13:57:00 +0000
-Received: ("Tessian outbound ee7a81b3b7b9:v441"); Fri, 13 Sep 2024 13:57:00 +0000
-X-CheckRecipientChecked: true
-X-CR-MTA-CID: 8ed6480f738502d2
-X-CR-MTA-TID: 64aa7808
-Received: from L469d82fbbcbd.2
-	by 64aa7808-outbound-1.mta.getcheckrecipient.com id 80BC5E13-3A2B-4905-8CA2-0C5B39B02F38.1;
-	Fri, 13 Sep 2024 13:56:49 +0000
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id L469d82fbbcbd.2
-    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
-    Fri, 13 Sep 2024 13:56:49 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=D7NMaBr51Ph5Si8wv8dTcz0PlI5lYlDMJd1n5Ks24nveCCh7K8mmDK6IZODmoVe9heRRpXb8FaxzW+liip8GvRSNwwJqiqOZE5fkx/pdCb3qOFIT0zqcuLgk2ZjII3K7y0SeI3fXFChL226NBrUgQZEsdtass7SatM6qMBQYlLeYDXxh3KPsWZIUVROiIFIp3zfcF8/3Ei4vSIT6peJwGUBg64MMAYpGMqAeBCDtU8iTRh/bOU5X20uuEGf+dCDcYP6i08taJ8HOum8XO+mlknFiqHzISXJC/x1xTW6NHY36gJZ6MIv0XSlxWrM/7LEg/80uQ0O/nnuJWeMS18we5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dRDANWvS6bsZIGOlkmdEgjbpBsStU+/ywsZSGQMSBxI=;
- b=oeFpx+BEtPr+3Zk66tAmCZjtuhxVhU2TJK6naOubH0CTIR8HnxYU/1F/JA4TqQgWd8mt81irQ4iIEofHKtnZmebWljqF5/kx4mtOeQuAQ4p00kamH5zqTN8wiQ8zEK4A9Bp3D+vWqua/Njs5WidQQhKwXsI+mJ5zrT/OkPluVEPnFPdGJd6Lj/izqOy/WBq7TfjJdTR5FppDcPTRhcLRd5Mqus6N2HJkdgwaMxOGsaDryc++9NtrhxxqYqLXDDMwd1JuNcs7obW3GdfyPUFLtCEk6LdG3nHGP5lYh0RCU0JSM1Dfk2p9WoUC1gKN3Xlt9gEMNIrKtoM+83njMPx+sw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dRDANWvS6bsZIGOlkmdEgjbpBsStU+/ywsZSGQMSBxI=;
- b=DHDyLHfmUHyf85kNOLOAHVOQ7ys0jB6O5XbioO2RkUT/Tf7DlqSmUAdUWL9Mq5VVprU+OC1lBJajsgo85smej9qRTQ4aJ8A0zOqXa1XpSbgtoC+nOHs6S0EHis0bUJ+2intId/FrWAkfUHWMnlPMJwDf0Jcd7ystGw65NXvrso0=
-Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
- (2603:10a6:150:163::20) by AS2PR08MB8334.eurprd08.prod.outlook.com
- (2603:10a6:20b:556::22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.17; Fri, 13 Sep
- 2024 13:56:46 +0000
-Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
- ([fe80::d430:4ef9:b30b:c739]) by GV1PR08MB10521.eurprd08.prod.outlook.com
- ([fe80::d430:4ef9:b30b:c739%3]) with mapi id 15.20.7962.016; Fri, 13 Sep 2024
- 13:56:46 +0000
-From: Yeo Reum Yun <YeoReum.Yun@arm.com>
-To: James Clark <james.clark@linaro.org>
-CC: "linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, nd
-	<nd@arm.com>, "peterz@infradead.org" <peterz@infradead.org>,
-	"mingo@redhat.com" <mingo@redhat.com>, "acme@kernel.org" <acme@kernel.org>,
-	"namhyung@kernel.org" <namhyung@kernel.org>, Mark Rutland
-	<Mark.Rutland@arm.com>, "alexander.shishkin@linux.intel.com"
-	<alexander.shishkin@linux.intel.com>, "jolsa@kernel.org" <jolsa@kernel.org>,
-	"irogers@google.com" <irogers@google.com>, "asmadeus@codewreck.org"
-	<asmadeus@codewreck.org>
-Subject: Re: [PATCH v3 2/2] perf stat: Stop repeating when ref_perf_stat()
- returns -1
-Thread-Topic: [PATCH v3 2/2] perf stat: Stop repeating when ref_perf_stat()
- returns -1
-Thread-Index: AQHbBcXPrXd5KHXgFU2xJGLIVnOm67JVu/AAgAAB8I8=
-Date: Fri, 13 Sep 2024 13:56:46 +0000
-Message-ID:
- <GV1PR08MB10521E382B62E14F8EF4BF5BEFB652@GV1PR08MB10521.eurprd08.prod.outlook.com>
-References: <20240913101456.633819-1-yeoreum.yun@arm.com>
- <20240913101456.633819-3-yeoreum.yun@arm.com>
- <d6df6edd-688d-403d-8006-491e302fd042@linaro.org>
-In-Reply-To: <d6df6edd-688d-403d-8006-491e302fd042@linaro.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-GB
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-x-ms-traffictypediagnostic:
-	GV1PR08MB10521:EE_|AS2PR08MB8334:EE_|DB5PEPF00014B92:EE_|FRZPR08MB10926:EE_
-X-MS-Office365-Filtering-Correlation-Id: 91ca7812-868d-4e4e-ef3a-08dcd3fbf094
-x-checkrecipientrouted: true
-nodisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
-X-Microsoft-Antispam-Message-Info-Original:
- =?us-ascii?Q?DocTJF5ayB8PCGUafszn7kFXJzicm3cb33STNy/2990Nz569wgP8YHgVCuh7?=
- =?us-ascii?Q?RDPzbAwARSkNraIVVCPV/zFFOx2GnvkmPPRdOfCFI3T1Wu7dmshOkKPFar0M?=
- =?us-ascii?Q?YJ4eubc91EQaqOS02BUtZ5KbcpwUp6tJiNr9MWKiNiTd0XtSkjT+PVQy4s1u?=
- =?us-ascii?Q?nySwpFQWnFwsmsFkEAW1gd+WdhEDKIaz7YurFqbS0ybubV6iSlK/3bhNgIdz?=
- =?us-ascii?Q?J9/IGRs7sCMXvslSny6mXWAxTzYwafnIBKhr0MfxNETaYMos38N0/2aAOdqh?=
- =?us-ascii?Q?ITQ6BKtDWt31iZChi6hw2q6AQ2v80rLDHYNNGq9cmLvB5oDpzB8UpuCa1X+3?=
- =?us-ascii?Q?MXmYzICOm+JKO2eVgkxOmCtC139ypfRb++ikH4niroDDXszcR6HIKiOiqt/P?=
- =?us-ascii?Q?VfP8fdiOSvf4rPrPL550D2MDsHBolb1Ew9kzlRQ8DbjDjIOrCQe3UCN6g1TQ?=
- =?us-ascii?Q?T5VZo1crSDu+vPgLs8WjLghj4ikxZH2moXWZmp4p07QABuhbLXVmDMgKOv5V?=
- =?us-ascii?Q?R/lsYayoqFfNHcpMcsYfuq5Ugxz5R9BbygH0AF7QBcgy7ND4D7tsi/prJ9L/?=
- =?us-ascii?Q?1HwjSKl05WD9G1a1Syuw/keWwlJ0xFxwfsUVfFCffXOrz4wKW21/wjkfYE/G?=
- =?us-ascii?Q?OCCAbQDo/8wsve4902n/yzbsdQOGGg3OwyyScMtszG42BJ5MhW19uda0qgHx?=
- =?us-ascii?Q?iAJ4Cowk/F8+/qfLjZ3CZH2mzmLFqBo3sa5NHcSfE0/+8FYPOrh3Qdcm2wqb?=
- =?us-ascii?Q?PhpWNQ+F0GDiruarCS25i2FEb6lmC7SaWiC+yWEqfPBXhSP2h2OdAdgo2SCO?=
- =?us-ascii?Q?TEpVTB8yWAmfwOdpGEfXCPHFZl+V+aN0N/U4uBAyD7PS0+oQSy7GujNYPzYf?=
- =?us-ascii?Q?dfhoyz3Acp92dN2qWrg7ATVQnWc7xFdqOqwEEXEfOFkPwYxjy7fM6QGw9NCN?=
- =?us-ascii?Q?GfthRwbMTxs484keRnqCMmVZdAvXY0YgU3Lgy9m2rJR2eVU4F5bc2m4g065z?=
- =?us-ascii?Q?hTBNFSBbDVG/ymKXpfGRPXBmC5yph1LWSNlhoovvDMeEeakZKGjTfGm0AcP5?=
- =?us-ascii?Q?9EEZsmXW34+OoKkvEOB3oO1QZnxEjHnsbMYVHn+h3YdE8OMbrBlpGM1HtQTA?=
- =?us-ascii?Q?BeM6SAGdRm4vtBzO/9THhfY5zX9KGFyus4ecre47brXkmGfS7CKdfpZQb6kb?=
- =?us-ascii?Q?GKfKMxlIpsljRvfUv+mFjHeMIJ0HnZJI1YY26UycLfNG0CoVRmTAUzYnlLdk?=
- =?us-ascii?Q?vk12bqaKJDl92aFf5cc4g7ug0Ik13wd3aTSWS6uCgRdoLbmBI30u7l9aG1+m?=
- =?us-ascii?Q?Xbjly6yhW1NBFMRmKQbl+JRteUKTozQvsUd2mZjrjKu8nMTQct22iBXRrKXk?=
- =?us-ascii?Q?phuMkOqsZ+MPGpOg1n0L5Xhka8/ebk6VDFr0JOfWbL+ZNEoDnQ=3D=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10521.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D1F1DC759
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 13:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726235841; cv=none; b=gCA8+gQKEKtCYyXGFxIWI5wuP8IPXgtEuxWRQBSWUwtB8CE0qrnOC+7O4yPPjFoguSnqrB6z5otkmW/YoyjBM593VAybehEz+VHe/m9rqq+pd70fmCL+kHMPXihsy1oYhXJsKVS9J6SsRI4rH5B6exbwu25WVRd1AvEtXGDpCRY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726235841; c=relaxed/simple;
+	bh=nygQcvBgkEXlQczrMZaRkwU7DMO4Sgzp88nUG5kKe5s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iSqSa+kUwg7M0MGEp/qaE38jHbbK634ZGAa6fNeVpPiFc8UKBAGJy3YdfY9iPzby4x4AdCaLMYd4F+kCetNU1529p5FVX6hJsQKnT0qelcjtQ9yoW38NB/vu3tACCrjl/3aPnFGtfbkt2OZ/xZkzH6wZNr7RXE28Od3Q6weAikg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mxCR1lZn; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2053616fa36so25368385ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 06:57:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726235839; x=1726840639; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=j4zVOa+rsJLoaZtlg7qNm3b8vXOuxAqtzpJMF/Jo70g=;
+        b=mxCR1lZnLia7tXuzndmEmU9G/PqZ3bWM7olWjHgy68VKbkcAa7fFyPgiXkmK3EyeN1
+         I0O6lqAiVB0zxCBLs/U1Yf+0aQ/cRjO+qwDx6rsL6SkJe2QFVETz9C/bd1a3lgkX+8bi
+         tAzvU/Gzv5xXBDYC/V0Vpp6f8SR5L6e+MKOQm/vjKi4olziVi+iXMsbaRu556EAH+6rq
+         9q5YPGCdyYxbZOxMci57owTtPivKZTEOUZp0dVTPWbtXZXd4WhGQpP8o8Dgkzrjj05Pd
+         Z5CwhDH2/+S6mDMlyiDOVojhLse+vhGlMxKWnVsxc+QF16rZTx4sSoyDkLQ/nXQMrKRf
+         RpvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726235839; x=1726840639;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j4zVOa+rsJLoaZtlg7qNm3b8vXOuxAqtzpJMF/Jo70g=;
+        b=Q4bTvPZjDqthIL0VyUzBgpStCAvBplCQQzojw6VVS/z7EgKJOEdsLopkia4gUP5Ae6
+         NZl1je5B3ySDDwQakPC3RxjsIO2/l3pm2SJdIuWp2kONBam6dltTYA+kCsmZfU+sfrnZ
+         xpzMTMpoTC1NX2Ta+ISZQWF+Hyh2uBYrqvAX0K0Sw2760NXNuu8ljkgbcKSKFK3f23PU
+         3MorScs+jNuq5tQeUokqLBXduhOVIyUqez4eZ3XLB2KWPI93AqKqTay1bLp9SI0H02Im
+         TPNwEw4FKO0890vQU9d7ifovZkfPS8QFOCW0ed1SvGUqX/trlD2xPK8OJzcH8KoxbdJ1
+         1wew==
+X-Forwarded-Encrypted: i=1; AJvYcCXpGzgXOSzTKsAkPd9hWX7LYhTBkbFIWj1Q9DM3l6BUaS3ydhilu4I4AYTosaw+pvAdvFfWi57dTN1QsyU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2M6eAAfH/8AUCzzQcWqk6hJ+8BTE8HFeop3kiFBKEGJZe01JR
+	obGw/CdHRd7BrTF2bDY9BhT6N/n3e++XC60lu76DSWJUeDQypestXmxbWqmR9Q==
+X-Google-Smtp-Source: AGHT+IF/dhpwnwCRU/9Bk+v+2G3zbmxcvhusIOoU80hBY2klO7C51mKtJhG7H4NPXx22niLc5+SxxA==
+X-Received: by 2002:a17:902:f785:b0:205:7863:2dec with SMTP id d9443c01a7336-2076e3698edmr95862965ad.27.1726235838719;
+        Fri, 13 Sep 2024 06:57:18 -0700 (PDT)
+Received: from thinkpad ([120.60.66.60])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076af4739asm28455325ad.66.2024.09.13.06.57.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 06:57:18 -0700 (PDT)
+Date: Fri, 13 Sep 2024 19:27:10 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Qiang Yu <quic_qianyu@quicinc.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
+	andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+	abel.vesa@linaro.org, quic_msarkar@quicinc.com,
+	quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org,
+	kw@linux.com, lpieralisi@kernel.org, neil.armstrong@linaro.org,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] arm64: dts: qcom: x1e80100: Add support for PCIe3
+ on x1e80100
+Message-ID: <20240913135710.6ionsmzo45orin6n@thinkpad>
+References: <20240913083724.1217691-1-quic_qianyu@quicinc.com>
+ <20240913083724.1217691-6-quic_qianyu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR08MB8334
-Original-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-X-EOPAttributedMessage: 0
-X-MS-Exchange-SkipListedInternetSender:
- ip=[2603:10a6:150:163::20];domain=GV1PR08MB10521.eurprd08.prod.outlook.com
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DB5PEPF00014B92.eurprd02.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	02910e7a-418f-4aad-c8bd-08dcd3fbe7e6
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|35042699022|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?th9CPCACu/AZr/uSAHV1G5GBFAIfWF8GaiL2RozywOw00guKz8Yc7boupLYJ?=
- =?us-ascii?Q?ixaYpOBthRvaslgd6wRS2Y4AhnLtN8v5XcyBMPfyS3+RBUUS85RvgBLtrdWu?=
- =?us-ascii?Q?kysxFf5bWqPL6bGBPD3mjtNUoi95Pl5rjny3BfdM0sZOSqMWzrNJMs9bD2Xq?=
- =?us-ascii?Q?8mq1ywOyuc3F3oGoraOSc8LP8OhPV+3rYqkvRNFNrOpdezUfo6PdsKOBIxsB?=
- =?us-ascii?Q?13g9Ltrw5T2u7yYOPUkrrrJInsJ1zqhQ36PyYCv7cbIaGSuxf3Whz91WYn+V?=
- =?us-ascii?Q?kE89JY2aSRs/HxHfDsFb3D2nAv4To1WG6spKvnsmP0rRm5+zC+a+HpwtP+M6?=
- =?us-ascii?Q?uBG/2xgveIYISBPpMCKchNCRg0SIqPoWfxjSirjzhCU304WjBqTf/poRh0gv?=
- =?us-ascii?Q?wJf7f6QtTuuJbzDpwm48dhfMNuWxIrC0QqBbIB+37cjBr4QgmguUOi0yE18z?=
- =?us-ascii?Q?e2vzlh00jMOc6QdhVdK2Nyb0REBI0JCl8noKM/+pLw+fZfwcRTtUNy6SK8Qv?=
- =?us-ascii?Q?/WKL8d/aQevkwb7aisUQQPesOF7Rx7tNBy5xnfY5N+3oUTS966Y/zfEdRrOt?=
- =?us-ascii?Q?7uVmsmlH6w3vqDJUDT3udR/+GsNyIMscT8hLcsgpZ9o0c/nZmJoO0tpMcnDw?=
- =?us-ascii?Q?RkMosy/UNr6gMZkV36ewyQcDdWvEMUSDRW3yC9PchE77PKoK+t/lGBd/Ti04?=
- =?us-ascii?Q?/ppq9x6g1krY88n2e9AUSZ1cpO8/fHI1LqWHuHOH4WKvwJ07cGOzcNjZFWqf?=
- =?us-ascii?Q?vHOiqtbBI1erEz7zqwV0oZnJ9q6b5XZxogDUFc23sGB75mqfaMOahoQaCwiC?=
- =?us-ascii?Q?v6pc2iLm7cx/yE+orJB2SG1/FXhWInGULf1CtxOPj6LdmnEZ4OecjA2r3Ntf?=
- =?us-ascii?Q?Dcx+G5TJWtJpP1EOsvkMwfSMiLqb14YbZ/1OmccyXTnLrXLBlEEywpH0gFnt?=
- =?us-ascii?Q?IeTm071o86D3z5R8N6DSDxKRxkHZfqrgsDpxGbjKRCljVBFziYi8myzAUEQd?=
- =?us-ascii?Q?1at7t80ZI0xpwudQ392R6TzHon1CIOYsWhIW/xPuWu3xYvXaF87zkX9dohKP?=
- =?us-ascii?Q?OoIg3ryCNsHaHltb0WB2aoRWDqCptSnO3224LtyFCZ/HwJ2LhSC0YFQFhLSU?=
- =?us-ascii?Q?Z7I5Ys6VpxY2XqXFbhNYZKWdImSm0X+UQzBX4gRV48LgglvcpScfcKvfc8Gv?=
- =?us-ascii?Q?1NLtb+/WOoqahvewxnJTV7z9mkAkLgGE+c+zID4JiqlU549SoL5k2rLFgpbA?=
- =?us-ascii?Q?OL7AoaDEt4IFe12b0G3c1m0N54OkWz/SohMKo4RLdPIc3077Lg3jntjAkOym?=
- =?us-ascii?Q?ppLf0TJksfIZAr+ZHZYRV9TdeI2ybvE4wQ9JGN9lJ842HFSQ6IdvIAFCy54l?=
- =?us-ascii?Q?rQMN1it16t0E3M4774+FjMaMMhsYNUZjWNxe6UMHi6wxeGDm2klabny32ghl?=
- =?us-ascii?Q?VoGg25+hr/Jt31Zo1/WVYXsLh4jeYRFy?=
-X-Forefront-Antispam-Report:
-	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(35042699022)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 13:57:00.5843
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 91ca7812-868d-4e4e-ef3a-08dcd3fbf094
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DB5PEPF00014B92.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: FRZPR08MB10926
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240913083724.1217691-6-quic_qianyu@quicinc.com>
 
-> I meant this to be a function doc above the run_perf_stat() function.
-> Usually what a function returns would be documented there, in case there
-> end up being multiple callers.
-
-Ah. okay. okay. I'll move to this to funciton.
-
-Thanks.
-
-________________________________________
-From: James Clark <james.clark@linaro.org>
-Sent: 13 September 2024 14:49
-To: Yeo Reum Yun
-Cc: linux-perf-users@vger.kernel.org; linux-kernel@vger.kernel.org; nd; pet=
-erz@infradead.org; mingo@redhat.com; acme@kernel.org; namhyung@kernel.org; =
-Mark Rutland; alexander.shishkin@linux.intel.com; jolsa@kernel.org; irogers=
-@google.com; asmadeus@codewreck.org
-Subject: Re: [PATCH v3 2/2] perf stat: Stop repeating when ref_perf_stat() =
-returns -1
-
-
-
-On 13/09/2024 11:14, Levi Yun wrote:
-> Exit when run_perf_stat() returns an error to avoid continuously
-> repeating the same error message. It's not expected that COUNTER_FATAL
-> or internal errors are recoverable so there's no point in retrying.
->
-> This fixes the following flood of error messages for permission issues,
-> for example when perf_event_paranoid=3D=3D3:
->    perf stat -r 1044 -- false
->
->    Error:
->    Access to performance monitoring and observability operations is limit=
-ed.
->    ...
->    Error:
->    Access to performance monitoring and observability operations is limit=
-ed.
->    ...
->    (repeating for 1044 times).
->
-> Signed-off-by: Levi Yun <yeoreum.yun@arm.com>
+On Fri, Sep 13, 2024 at 01:37:24AM -0700, Qiang Yu wrote:
+> Describe PCIe3 controller and PHY. Also add required system resources like
+> regulators, clocks, interrupts and registers configuration for PCIe3.
+> 
+> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
 > ---
->   tools/perf/builtin-stat.c | 14 +++++++++++++-
->   1 file changed, 13 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> index 954eb37ce7b8..d25528ea7e40 100644
-> --- a/tools/perf/builtin-stat.c
-> +++ b/tools/perf/builtin-stat.c
-> @@ -2875,7 +2875,19 @@ int cmd_stat(int argc, const char **argv)
->                       evlist__reset_prev_raw_counts(evsel_list);
->
->               status =3D run_perf_stat(argc, argv, run_idx);
-> -             if (forever && status !=3D -1 && !interval) {
+>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 202 ++++++++++++++++++++++++-
+>  1 file changed, 201 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> index a36076e3c56b..a7703e4974a6 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> @@ -744,7 +744,7 @@ gcc: clock-controller@100000 {
+>  
+>  			clocks = <&bi_tcxo_div2>,
+>  				 <&sleep_clk>,
+> -				 <0>,
+> +				 <&pcie3_phy>,
+>  				 <&pcie4_phy>,
+>  				 <&pcie5_phy>,
+>  				 <&pcie6a_phy>,
+> @@ -2907,6 +2907,206 @@ mmss_noc: interconnect@1780000 {
+>  			#interconnect-cells = <2>;
+>  		};
+>  
+> +		pcie3: pci@1bd0000 {
+
+pcie@
+
+> +			device_type = "pci";
+> +			compatible = "qcom,pcie-x1e80100";
+> +			reg = <0 0x01bd0000 0 0x3000>,
+> +			      <0 0x78000000 0 0xf1d>,
+
+0x0 here and below.
+
+> +			      <0 0x78000f40 0 0xa8>,
+> +			      <0 0x78001000 0 0x1000>,
+> +			      <0 0x78100000 0 0x100000>,
+> +			      <0 0x01bd3000 0 0x1000>;
+> +			reg-names = "parf",
+> +				    "dbi",
+> +				    "elbi",
+> +				    "atu",
+> +				    "config",
+> +				    "mhi";
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +			ranges = <0x01000000 0x0 0x00000000 0x0 0x78200000 0x0 0x100000>,
+> +				 <0x02000000 0x0 0x78300000 0x0 0x78300000 0x0 0x3d00000>,
+> +				 <0x03000000 0x7 0x40000000 0x7 0x40000000 0x0 0x40000000>;
+> +			bus-range = <0x00 0xff>;
 > +
-> +             /*
-> +              * Returns -1 for fatal errors which signifies to not conti=
-nue
-> +              * when in repeat mode.
-> +              *
-> +              * Returns < -1 error codes when stat record is used. These
-> +              * result in the stat information being displayed, but writ=
-ing
-> +              * to the file fails and is non fatal.
-> +              */
+> +			dma-coherent;
+> +
+> +			linux,pci-domain = <3>;
+> +			num-lanes = <8>;
+> +
+> +			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 769 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 836 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 671 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "msi0",
+> +					  "msi1",
+> +					  "msi2",
+> +					  "msi3",
+> +					  "msi4",
+> +					  "msi5",
+> +					  "msi6",
+> +					  "msi7";
 
-I meant this to be a function doc above the run_perf_stat() function.
-Usually what a function returns would be documented there, in case there
-end up being multiple callers.
+Can you add 'global' interrupt as well? While doing so, please make sure the
+global_irq related patches are applied and Link up works fine. Those patches are
+already in linux-next.
 
-With that change:
+> +
+> +			#interrupt-cells = <1>;
+> +			interrupt-map-mask = <0 0 0 0x7>;
+> +			interrupt-map = <0 0 0 1 &intc 0 0 0 220 IRQ_TYPE_LEVEL_HIGH>,
 
-Reviewed-by: James Clark <james.clark@linaro.org>
+Use GIC_SPI for the parent interrupt specifier.
 
-Also I think something happened with the cover letter as well, it's
-marked as V2.
+- Mani
+
+> +					<0 0 0 2 &intc 0 0 0 221 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 3 &intc 0 0 0 237 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 4 &intc 0 0 0 238 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +			clocks = <&gcc GCC_PCIE_3_AUX_CLK>,
+> +				 <&gcc GCC_PCIE_3_CFG_AHB_CLK>,
+> +				 <&gcc GCC_PCIE_3_MSTR_AXI_CLK>,
+> +				 <&gcc GCC_PCIE_3_SLV_AXI_CLK>,
+> +				 <&gcc GCC_PCIE_3_SLV_Q2A_AXI_CLK>,
+> +				 <&gcc GCC_CFG_NOC_PCIE_ANOC_NORTH_AHB_CLK>,
+> +				 <&gcc GCC_CNOC_PCIE_NORTH_SF_AXI_CLK>;
+> +			clock-names = "aux",
+> +				      "cfg",
+> +				      "bus_master",
+> +				      "bus_slave",
+> +				      "slave_q2a",
+> +				      "noc_aggr",
+> +				      "cnoc_sf_axi";
+> +
+> +			assigned-clocks = <&gcc GCC_PCIE_3_AUX_CLK>;
+> +			assigned-clock-rates = <19200000>;
+> +
+> +			interconnects = <&pcie_south_anoc MASTER_PCIE_3 QCOM_ICC_TAG_ALWAYS
+> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+> +					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
+> +					 &cnoc_main SLAVE_PCIE_3 QCOM_ICC_TAG_ALWAYS>;
+> +			interconnect-names = "pcie-mem",
+> +					     "cpu-pcie";
+> +
+> +			resets = <&gcc GCC_PCIE_3_BCR>,
+> +				 <&gcc GCC_PCIE_3_LINK_DOWN_BCR>;
+> +			reset-names = "pci",
+> +				      "link_down";
+> +
+> +			power-domains = <&gcc GCC_PCIE_3_GDSC>;
+> +
+> +			phys = <&pcie3_phy>;
+> +			phy-names = "pciephy";
+> +
+> +			operating-points-v2 = <&pcie3_opp_table>;
+> +
+> +			status = "disabled";
+> +
+> +			pcie3_opp_table: opp-table {
+> +				compatible = "operating-points-v2";
+> +
+> +				/* GEN 1 x1 */
+> +				opp-2500000 {
+> +					opp-hz = /bits/ 64 <2500000>;
+> +					required-opps = <&rpmhpd_opp_low_svs>;
+> +					opp-peak-kBps = <250000 1>;
+> +				};
+> +
+> +				/* GEN 1 x2 and GEN 2 x1 */
+> +				opp-5000000 {
+> +					opp-hz = /bits/ 64 <5000000>;
+> +					required-opps = <&rpmhpd_opp_low_svs>;
+> +					opp-peak-kBps = <500000 1>;
+> +				};
+> +
+> +				/* GEN 1 x4 and GEN 2 x2 */
+> +				opp-10000000 {
+> +					opp-hz = /bits/ 64 <10000000>;
+> +					required-opps = <&rpmhpd_opp_low_svs>;
+> +					opp-peak-kBps = <1000000 1>;
+> +				};
+> +
+> +				/* GEN 1 x8 and GEN 2 x4 */
+> +				opp-20000000 {
+> +					opp-hz = /bits/ 64 <20000000>;
+> +					required-opps = <&rpmhpd_opp_low_svs>;
+> +					opp-peak-kBps = <2000000 1>;
+> +				};
+> +
+> +				/* GEN 2 x8 */
+> +				opp-40000000 {
+> +					opp-hz = /bits/ 64 <40000000>;
+> +					required-opps = <&rpmhpd_opp_low_svs>;
+> +					opp-peak-kBps = <4000000 1>;
+> +				};
+> +
+> +				/* GEN 3 x1 */
+> +				opp-8000000 {
+> +					opp-hz = /bits/ 64 <8000000>;
+> +					required-opps = <&rpmhpd_opp_svs>;
+> +					opp-peak-kBps = <984500 1>;
+> +				};
+> +
+> +				/* GEN 3 x2 and GEN 4 x1 */
+> +				opp-16000000 {
+> +					opp-hz = /bits/ 64 <16000000>;
+> +					required-opps = <&rpmhpd_opp_svs>;
+> +					opp-peak-kBps = <1969000 1>;
+> +				};
+> +
+> +				/* GEN 3 x4 and GEN 4 x2 */
+> +				opp-32000000 {
+> +					opp-hz = /bits/ 64 <32000000>;
+> +					required-opps = <&rpmhpd_opp_svs>;
+> +					opp-peak-kBps = <3938000 1>;
+> +				};
+> +
+> +				/* GEN 3 x8 and GEN 4 x4 */
+> +				opp-64000000 {
+> +					opp-hz = /bits/ 64 <64000000>;
+> +					required-opps = <&rpmhpd_opp_svs>;
+> +					opp-peak-kBps = <7876000 1>;
+> +				};
+> +
+> +				/* GEN 4 x8 */
+> +				opp-128000000 {
+> +					opp-hz = /bits/ 64 <128000000>;
+> +					required-opps = <&rpmhpd_opp_svs>;
+> +					opp-peak-kBps = <15753000 1>;
+> +				};
+> +			};
+> +		};
+> +
+> +		pcie3_phy: phy@1be0000 {
+> +			compatible = "qcom,x1e80100-qmp-gen4x8-pcie-phy";
+> +			reg = <0 0x01be0000 0 0x10000>;
+> +
+> +			clocks = <&gcc GCC_PCIE_3_PHY_AUX_CLK>,
+> +				 <&gcc GCC_PCIE_3_CFG_AHB_CLK>,
+> +				 <&tcsr TCSR_PCIE_8L_CLKREF_EN>,
+> +				 <&gcc GCC_PCIE_3_PHY_RCHNG_CLK>,
+> +				 <&gcc GCC_PCIE_3_PIPE_CLK>,
+> +				 <&gcc GCC_PCIE_3_PIPEDIV2_CLK>;
+> +			clock-names = "aux",
+> +				      "cfg_ahb",
+> +				      "ref",
+> +				      "rchng",
+> +				      "pipe",
+> +				      "pipediv2";
+> +
+> +			resets = <&gcc GCC_PCIE_3_PHY_BCR>,
+> +				 <&gcc GCC_PCIE_3_NOCSR_COM_PHY_BCR>;
+> +			reset-names = "phy",
+> +				      "phy_nocsr";
+> +
+> +			assigned-clocks = <&gcc GCC_PCIE_3_PHY_RCHNG_CLK>;
+> +			assigned-clock-rates = <100000000>;
+> +
+> +			power-domains = <&gcc GCC_PCIE_3_PHY_GDSC>;
+> +
+> +			#clock-cells = <0>;
+> +			clock-output-names = "pcie3_pipe_clk";
+> +
+> +			#phy-cells = <0>;
+> +
+> +			status = "disabled";
+> +		};
+> +
+>  		pcie6a: pci@1bf8000 {
+>  			device_type = "pci";
+>  			compatible = "qcom,pcie-x1e80100";
+> -- 
+> 2.34.1
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
