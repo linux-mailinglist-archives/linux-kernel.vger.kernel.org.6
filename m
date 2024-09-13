@@ -1,119 +1,156 @@
-Return-Path: <linux-kernel+bounces-328784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EC1C9788CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:20:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 268A29788D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13CA6284E47
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:20:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 605F91C22743
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5F114D2B8;
-	Fri, 13 Sep 2024 19:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0253114658C;
+	Fri, 13 Sep 2024 19:20:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SaMD/DM3"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zBAdb5Yh"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0C2149C41
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 19:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E45A781ACA
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 19:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726255161; cv=none; b=kQedRhC8xM3+FAKCjHScxEEzHAb+AE6ra8hIWd/NadfybXGfkrzmoSqiUPdDP8c8nZGJXaeLXq49/3osFsDlf6Y3+pDFM80ToZ+n7tzPbn7CpZHhxdQAVlIDjSFldhucg2MMJ3EQQ7/Ju2LIH2GtgLDd6B+rKofk0m4UEpQVun0=
+	t=1726255251; cv=none; b=LflMijEFbTUmn6MU0UL94e3TO12P2HEcgSLNXWkC1vyjXJw0EqgC4osFWjwmI4j/MoIT0KYAPcWAnBCsIUTK85DRW5hL7QrIyUeTcMFuhyJ268Op9wm5qUIqzN0CyjywSN353jZ1fYIoJC0mXcBJk/wLnLO5zTqAqmHLKg5V9QM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726255161; c=relaxed/simple;
-	bh=KdqA4DCfyuTo+ba0MlGe2lwMx112ipnTw4TXPWoYZCc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BHQpvDJulNMayqHc2okAweso0obU1moHdhl8816Nwb7DPEazpLJYi2r/5gKnApj54IPH8gfcOe73Cd/N/F8F5oFocX6J7m2lWsK+hopPrM4XM+V4EImjjqI1DN911AmM8t4mTVTYOZGU4Ne2CKUPtEtvKmYNeWTIiUJW1B/5cmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SaMD/DM3; arc=none smtp.client-ip=209.85.210.202
+	s=arc-20240116; t=1726255251; c=relaxed/simple;
+	bh=ymlhcAQNHEBbDJjwaPc7aeCQGJlzv7MIqjOWsvgbkPA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=KvD6m+bKtpgyny0SUcvS+EIf0p/bEHVueac3A1AzQM4jpTeZjpAaQXRrGpty5BU8Z3TN7fSp5R+GxUxGiH00IZ4/4dyIre8hhuDMQ/zam4bQz5dJkxUJnefQzdSR/QFVpuNDPpzg0auYjITESFQNmJ430TRFE7nq0ePifrX0hLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zBAdb5Yh; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-718d7ec6ff8so2152924b3a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:19:20 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6b41e02c255so29141477b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:20:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726255160; x=1726859960; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KygmwJLmIe2nR4CdVNrvjxv0ydC1BigODAK7NzKvrLY=;
-        b=SaMD/DM3iHhfZq+KTOOEVbBQ3ES/g53YZwROvYvomdUUkOyr29bvex2yM7xaFYb1nW
-         UqtYCwIv2+Zh51xQZarLIIupKzqic/57TMTRLQpTN+Hz9rG5ACc9yWCkQ1cJ8o4SQTgx
-         weAJvEFgIajyUdVEFfJ0ps20YMwLE/9qdL8tdSVrr4SncUlwggDXLdffpVjT8go8Kd2E
-         yZ+RdJYGFBHIPr0vY2aiaFZwD3TDvDTtuDb2FMPHgVSoBZFBX5QO2MwZACMm8YuCcvou
-         UR9WmsjndgrP4TkJaP8FUJGs7ZzZgM8iiQNodU35X80wEFyy50KgEreQvc17LUE4LP2L
-         Ccog==
+        d=google.com; s=20230601; t=1726255249; x=1726860049; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XyVwmJzFbJ/oT6rl4j6NoyNuLyObf2RLXKIfBjhIh5k=;
+        b=zBAdb5YhPvpI1Lnmd2XkzhP52PF4x9RGuVKl5DZUwIi1dkQxzlu2amz2dAdh8Cy+EH
+         +ITOfpBH223EchkFntIihO42oPzvfdD1gGGPrEsGv4WhC2DjkisxzGYoeHwZYL8yQ048
+         SCEcMncePDCCI9drgggFchdfUOgqfsySKUvmfnLh5JpFJ2f1kOi1dyYAVmzkPC9YlXzb
+         jJyrJqPEpLuCuNWOA8Gyf7zlkUDbKBIZlsc/3kZcY/oxn6ALUAPNBRa0AE5I0zBpnteY
+         Z0PphiumZhmy8zVpFxqgdCx5v9nVzQAham+IDY4NAwPs4zsUdtdlbcy/cFIw86aZvU+q
+         xJAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726255160; x=1726859960;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KygmwJLmIe2nR4CdVNrvjxv0ydC1BigODAK7NzKvrLY=;
-        b=l+I4vGkniVhvC7am/zLXN7UIBDalNugRnDzszM869/qj5wqjCuyGCyXjkfJ1V5bYG4
-         GnnzuoBAFlL9Yhzzc/cT1Fu2iylLy1oX72vd/ELruywJRvb00+qxK7UcgImuyzGBUoB5
-         deTSsSCSdqNAuSwmRZsWeznVKZuM5XwxyEMgxwG/T6YdY+lKfA5wSM0uxzt3G2gyBU4m
-         H0dVLPnF461vcd5Fbj4KWlE3rzzhiHgsGA4zfJ+4mrqTuzfVkrbOTX2MgN7vWO8dOeff
-         tLKerCfS808S8gz3QSc24HUZH9b7TVl7k1A64BfwwpVQvQGCDBq6h85yJx00giFY696N
-         6ooQ==
-X-Gm-Message-State: AOJu0YyxW+qMqQuCIYeYL75OXxLP5icmDBtTtsYMoqwN4jjZSWnaolCz
-	6N0liVPn6vwa8Q+yfNFVB0IntkwTRd/U8WKS2/7N4RjhSF93pX2Le8BiyaZArbYUly7nxOPhCIn
-	kcg==
-X-Google-Smtp-Source: AGHT+IH/IGVZ8XQwZZNAwLj6rrOnsFpPB4v5CQ6jVNhQ4gVq1+yWAmZL7Sj8qjscTbab1nLQs6mmPd32wXk=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:aa7:8d83:0:b0:718:d9ff:a392 with SMTP id
- d2e1a72fcca58-71907f308b6mr87141b3a.2.1726255159186; Fri, 13 Sep 2024
- 12:19:19 -0700 (PDT)
-Date: Fri, 13 Sep 2024 12:19:17 -0700
-In-Reply-To: <20240609154945.55332-1-nsaenz@amazon.com>
+        d=1e100.net; s=20230601; t=1726255249; x=1726860049;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XyVwmJzFbJ/oT6rl4j6NoyNuLyObf2RLXKIfBjhIh5k=;
+        b=WvLAIFhI6JFgn2q/53oETRH6Rk3SEvjNMD5Ae8hYE3q189nbcz/klcQ0e3owNo+Pui
+         m/vkdU6PKjtGWZIIDWl6k2DR/IiSW/dtJATIJDvW16jjK4orUzRHcbEr6czAGRBsqRte
+         JFCHBYoMNztY5sRej4it//A1/4Awyn3q1CFMracSJPRKXacCVlhhrO6H3uIJEcNsXnKb
+         ZL7iV+ugFFKKXDxT4DROzSxvPnDQVXnyzP+dh+eVUBy5Ft+DYpUJ9SgZhf0MuFf+YXlk
+         pfknRShvpHXyF30Jj9jA2hYqTdPEhpZ7kyOgJLFuWRnSTYEjNzIgkRdYMGbf90UL3RIT
+         wLnw==
+X-Forwarded-Encrypted: i=1; AJvYcCXKddsEZPLFDzCV0yTz9Z7X/ntdTaRLNYTA6A1+KKlxsW8kSZgJmJXqhaFX5yHH+oik6qTQXtC6TZ3haVo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwV8cJi2pxb9GTqyxFDJUdnkrmmva470+vPpl22FKudS5RChOUh
+	bSzlaL55fcagTRPmWxB3FoOHSqVLGUJ3i40BvDEtWs/8FefBEmy/ljMSiuEhC1Qky/X24PlbxJg
+	dK5ywaSCx0yem21WOUgLMeA==
+X-Google-Smtp-Source: AGHT+IFDF32N4mQwATZNCLz25QLEOkKmOIRWCMujqX0ZzKlzsSNpONZ53k1X0A26W9ZzFOaKPw2IjNpPtPK3sfm+wg==
+X-Received: from almasrymina.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:4bc5])
+ (user=almasrymina job=sendgmr) by 2002:a05:690c:7487:b0:6d5:df94:b7f2 with
+ SMTP id 00721157ae682-6dbcc579a34mr1597487b3.5.1726255248865; Fri, 13 Sep
+ 2024 12:20:48 -0700 (PDT)
+Date: Fri, 13 Sep 2024 19:20:36 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20240609154945.55332-1-nsaenz@amazon.com>
-Message-ID: <ZuSQNZYWfeHTpAKN@google.com>
-Subject: Re: [PATCH 00/18] Introducing Core Building Blocks for Hyper-V VSM Emulation
-From: Sean Christopherson <seanjc@google.com>
-To: Nicolas Saenz Julienne <nsaenz@amazon.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, pbonzini@redhat.com, 
-	vkuznets@redhat.com, linux-doc@vger.kernel.org, linux-hyperv@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	graf@amazon.de, dwmw2@infradead.org, paul@amazon.com, mlevitsk@redhat.com, 
-	jgowans@amazon.com, corbet@lwn.net, decui@microsoft.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, 
-	amoorthy@google.com
-Content-Type: text/plain; charset="us-ascii"
+X-Mailer: git-send-email 2.46.0.662.g92d0881bb0-goog
+Message-ID: <20240913192036.3289003-1-almasrymina@google.com>
+Subject: [PATCH net-next v1] mm: fix build on powerpc with GCC 14
+From: Mina Almasry <almasrymina@google.com>
+To: netdev@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc: Mina Almasry <almasrymina@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Simon Horman <horms@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Jakub Kicinski <kuba@kernel.org>, David Miller <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, 
+	LEROY Christophe <christophe.leroy2@cs-soprasteria.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Jun 09, 2024, Nicolas Saenz Julienne wrote:
-> This series introduces core KVM functionality necessary to emulate Hyper-V's
-> Virtual Secure Mode in a Virtual Machine Monitor (VMM).
+Building net-next with powerpc with GCC 14 compiler results in this
+build error:
 
-...
+/home/sfr/next/tmp/ccuSzwiR.s: Assembler messages:
+/home/sfr/next/tmp/ccuSzwiR.s:2579: Error: operand out of domain (39 is
+not a multiple of 4)
+make[5]: *** [/home/sfr/next/next/scripts/Makefile.build:229:
+net/core/page_pool.o] Error 1
 
-> As discussed at LPC2023 and in our previous RFC [2], we decided to model each
-> VTL as a distinct KVM VM. With this approach, and the RWX memory attributes
-> introduced in this series, we have been able to implement VTL memory
-> protections in a non-intrusive way, using generic KVM APIs. Additionally, each
-> CPU's VTL is modeled as a distinct KVM vCPU, owned by the KVM VM tracking that
-> VTL's state. VTL awareness is fully removed from KVM, and the responsibility
-> for VTL-aware hypercalls, VTL scheduling, and state transfer is delegated to
-> userspace.
-> 
-> Series overview:
-> - 1-8: Introduce a number of Hyper-V hyper-calls, all of which are VTL-aware and
->        expected to be handled in userspace. Additionally an new VTL-specifc MP
->        state is introduced.
-> - 9-10: Pass the instruction length as part of the userspace fault exit data
->         in order to simplify VSM's secure intercept generation.
-> - 11-17: Introduce RWX memory attributes as well as extend userspace faults.
-> - 18: Introduces the main VSM CPUID bit which gates all VTL configuration and
->       runtime hypercalls.
+Root caused in this thread:
+https://lore.kernel.org/netdev/913e2fbd-d318-4c9b-aed2-4d333a1d5cf0@cs-soprasteria.com/
 
-Aside from the RWX attributes, which to no one's surprise will need a lot of work
-to get them performant and functional, are there any "big" TODO items that you see
-in KVM?
+We try to access offset 40 in the pointer returned by this function:
 
-If this series is more or less code complete, IMO modeling VTLs as distinct VM
-structures is a clear win.  Except for the "idle VTL" stuff, which I think we can
-simplify, this series is quite boring, and I mean that in the best possible way :-)
+static inline unsigned long _compound_head(const struct page *page)
+{
+	unsigned long head = READ_ONCE(page->compound_head);
+
+	if (unlikely(head & 1))
+		return head - 1;
+	return (unsigned long)page_fixed_fake_head(page);
+}
+
+The GCC 14 (but not 11) compiler optimizes this by doing:
+
+ld page + 39
+
+Rather than:
+
+ld (page - 1) + 40
+
+Causing an unaligned read error. Fix this by bitwise operand instead of
+an arthimetic operation to clear the pointer, which probably
+communicates the intention of the code a bit better anyway.
+
+Cc: Simon Horman <horms@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: David Miller <davem@davemloft.net>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Networking <netdev@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+
+Suggested-by: LEROY Christophe <christophe.leroy2@cs-soprasteria.com>
+Signed-off-by: Mina Almasry <almasrymina@google.com>
+
+---
+ include/linux/page-flags.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index 5769fe6e4950..ea4005d2d1a9 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -239,8 +239,8 @@ static inline unsigned long _compound_head(const struct page *page)
+ {
+ 	unsigned long head = READ_ONCE(page->compound_head);
+ 
+-	if (unlikely(head & 1))
+-		return head - 1;
++	if (unlikely(head & 1UL))
++		return head & ~1UL;
+ 	return (unsigned long)page_fixed_fake_head(page);
+ }
+ 
+-- 
+2.46.0.662.g92d0881bb0-goog
+
 
