@@ -1,86 +1,208 @@
-Return-Path: <linux-kernel+bounces-327552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD586977775
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:44:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC7CD977777
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF7E21C24546
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:44:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CCD61C24542
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF411C6897;
-	Fri, 13 Sep 2024 03:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C1D1C461C;
+	Fri, 13 Sep 2024 03:44:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LQV1m+ie"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lwjy9V8t"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 325A574402;
-	Fri, 13 Sep 2024 03:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E487974402;
+	Fri, 13 Sep 2024 03:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726199081; cv=none; b=ai+HkUlzMDoZ2rNH5SP43ZO/s4aDAIGCrcwQbdtw2IyvEnl+LAixxnrRCEO/3L5fW71LuwdZXdHmLgjFgOJCmDJLceNTDTU1vfe+dhnQpIn/rHiPxTO3EX8OHMVp8v/FBep/IovELeVwFZIV6jq0hQx1xB/VJPtSbvhGcW161Rc=
+	t=1726199095; cv=none; b=pXCaQwRV9muO5vnyRDsZfhxyxVXJYQGyvnGkRilpSmw2HhOnF0XlUZLQ54T5QMh9t5EgCi6K1fcziP9RTl00TYRgltk9KEhxH/c7jTctksrMQzduwahrv2QC6F1WhYXtyev557f0FKFJvPWajNaj8tRdP/cCaOpQJ0355qPk/Jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726199081; c=relaxed/simple;
-	bh=14FYnHIpK2VkIZXi1OjsNSbKcix+CkvkwHGueSrvBr4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Be/4bnreYhZ31Bc+DT16pg9IH4xxE1y41dk+nhGWm14j4T4fxiy3HdXXrVYS0KhAJVUe9lK5CY97E/bAAoc55jM+bBaTWK+QzzY1WeDjSAMarwsOiwRgrh+c1FmScMmWF/9AdjkbkgLgmtvWmaYNl8CG1cQliA3RqbyQDTqysRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LQV1m+ie; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7829AC4CEC0;
-	Fri, 13 Sep 2024 03:44:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726199080;
-	bh=14FYnHIpK2VkIZXi1OjsNSbKcix+CkvkwHGueSrvBr4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LQV1m+ieF8kilr4Pc0TdiGeaW/6bp1yTGccJ+bcdgww2EymrUdh2PnmVKWx2PxBZa
-	 IK7ga/GcPhGlgnD10gZU63yrymwumSoN+EtgC4UY1V1GiBLN3NYeQQMg0eiMtkdScg
-	 0wx4RH5qZFSgdMNMHr3TJwciaP3CfFDvhP3eJtpHf6/fQ8Rhs9NJVu6EkYLs7zxATK
-	 3Iw+6SvDDhYLnCqgNG68+FXRXeYCcT//W6lpxI6kj3ynYtqXRwGs00HHF9TK8SQOpI
-	 C6zSp5lyb8321l9H4WAxJJyJtRYaZaicraOZ2KeCTra4SpL1w7i6NLhtXgJjV3FWPc
-	 bd3FcOYxJ6fOg==
-Date: Thu, 12 Sep 2024 20:44:38 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
- <andrew@lunn.ch>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>, Heiner Kallweit
- <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Jesse Brandeburg
- <jesse.brandeburg@intel.com>, Marek =?UTF-8?B?QmVow7pu?=
- <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
- <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
- mwojtas@chromium.org, Nathan Chancellor <nathan@kernel.org>, Antoine Tenart
- <atenart@kernel.org>, Marc Kleine-Budde <mkl@pengutronix.de>, Dan Carpenter
- <dan.carpenter@linaro.org>, Romain Gantois <romain.gantois@bootlin.com>,
- syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com
-Subject: Re: [PATCH net-next] net: ethtool: phy: Clear the netdev context
- pointer for DUMP requests
-Message-ID: <20240912204438.629a3019@kernel.org>
-In-Reply-To: <20240911134623.1739633-1-maxime.chevallier@bootlin.com>
-References: <20240911134623.1739633-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1726199095; c=relaxed/simple;
+	bh=K8tPMqcuYmOZKjAw2eVx1Vvj7LMyLT8twg4BRDnl6Xc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DxSOJ3MT0lF+aVXm1BhpgmzAS6aM2opCPMQWwRMdSj8qjcG/JLtl/Z+POOiMvvCIRnVo+gUqnZ/OskAuqt9gPMC3egZuS79O0YAoXKi859eWSjE9eN0FAzxyUNy8lPH2Et5smM+cndXZ5yrx1u64E1RK0n8oHPiRyZ+1qVSCFxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lwjy9V8t; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53653ee23adso1557032e87.3;
+        Thu, 12 Sep 2024 20:44:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726199092; x=1726803892; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bdjdqStA4bP/m6JmL9lff105JkiRrmFWiXzLbSHHHdY=;
+        b=lwjy9V8tF9vvpMp/IMvpINeHRpgRpuOnGOm8FpWRzYyefrRrkAmrXcD38OhSyDfKJy
+         cO/ApmogdJnfy8BjeIoB2cNSse6Cmif7Be9dYNFyDW8U3pjxoCQGn7GG5bxQFP/rHHqd
+         QWmQlyrNwVeCZ2jum5vAVE63F80KHd942mo+YCqIbk3NstzpBSoHhfJiuTo1FpW81jSu
+         QQ4BxieZKC3NgtkbfHpLKQj4jeTo1wEcpRTfvi9rjAcSl7h1EZNYh/CU9RQlvcNThOHR
+         3P+bBNTwPwOKhKSVCCqeiheD8BEhXzE1ENEX2fuZ+190t2PBNXQUyeQoISyPu14iIfca
+         2C0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726199092; x=1726803892;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bdjdqStA4bP/m6JmL9lff105JkiRrmFWiXzLbSHHHdY=;
+        b=kHJ4EDmmNg4qhXUEqmHbPsCy8hQvB/6epeRWt5aq7e9B//v0Uw4gMD0YyKPrnmwdQZ
+         NxVwwaAxdETfgZrNZ9Ik0oEzuBgdRNitkUOx87sIHCkaShkxIjKE4H2X0v+4ZsohhPb+
+         P8iHaL6UFfzipMfIF6P/nqEPcxc2odsbmhoj/Fec1YEAqidjRkatBLaBKVnIAP5ijQnP
+         z4dpQ2jciWAsx5Y9hFbKG37zzRJpGqHbS0fGccEXPgG1gQLKYPlz9Wxxkz1fQL+63TWn
+         UesllVafL9d4beQVKlAPAi7oRTlLJ5ucufaMkSAihgGjzA5A4vYMXhdLViuYxA6gmEux
+         JG3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVhOzot9pmIvTfGhl83sC6iENboV/MoQLBjgGmXj6TcrK/2c31xCpk+mwl+Q39HJwOt5lABeW3k8G47Z41D@vger.kernel.org, AJvYcCXI4DPb0ijfLa5uu+D62Uy6NoWzwtmdM7kL62hh6/ThxdnK+a/NazV8ThYzJvnPnRdON4F+bARk64UI@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzgPq4wwQCEq7eP2s54n13H1CdXGE7/AuDAJURThHJBpPLhyR1
+	b2HNVC/2BSW6yIg79obDin6iADY0uUQ+SgpxJfyvSsewT5puE81xp/UIl1MFnD0IyrzrXUq7tvQ
+	tKLHewQXpoiMabPPlB1UHp5ajrNc=
+X-Google-Smtp-Source: AGHT+IFrfBTEIS7roOBWPAV3uk8zEZLQE/yrq3co/ANX2Gd+9fPL93YYP7Ow+sHjcnSEgbKSQMni2L1rCZdb+zmaf1M=
+X-Received: by 2002:a05:6512:b03:b0:536:53c2:8179 with SMTP id
+ 2adb3069b0e04-53678feb22dmr3064017e87.37.1726199091522; Thu, 12 Sep 2024
+ 20:44:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20240912120548.15877-1-pali@kernel.org>
+In-Reply-To: <20240912120548.15877-1-pali@kernel.org>
+From: Steve French <smfrench@gmail.com>
+Date: Thu, 12 Sep 2024 22:44:40 -0500
+Message-ID: <CAH2r5msLPA2RB14dm2orqFoRQvUj2K2ZpCeeiNKMGVJpQLsU0Q@mail.gmail.com>
+Subject: Re: [PATCH 0/7] cifs: Improve client SFU support for special files
+To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>, linux-cifs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 11 Sep 2024 15:46:21 +0200 Maxime Chevallier wrote:
-> +		/* Clear the context netdev pointer so avoid a netdev_put from
-> +		 * the .done() callback
-> +		 */
-> +		ctx->phy_req_info->base.dev = NULL;
+tentatively merged into cifs-2.6.git for-next pending review and more testi=
+ng
 
-Why do we assign to req_base.dev in the first place?
-req is for the parsed request in my mind, and I don't
-see anything in the PHY dump handlers actually using dev?
+Do you remember if there is a reference to  sections of the protocol
+documentation that can help confirm some of the changes?
+
+On Thu, Sep 12, 2024 at 7:06=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.org> w=
+rote:
+>
+> This patch series implement full support for SFU-style of special files
+> (fifo, socket, block, char, symlink) and makes client cifs's -o sfu
+> mount option to be fully compatible with SFU.
+>
+> Before this patch series, kernel cifs client was able to:
+> * create new char and block devices in SFU-style, and detect them
+> * detect existing SFU fifo, but no create/mkfifo SFU functionality
+> * detect symlink SFU symlink, but no readlink() functionality and
+>   neither no create SFU symlink functionality
+>
+> And it was able to create some SFU-incompatible sockets and fifos (when
+> -o sfu was specified) which were not recognized by neither original MS
+> SFU implementation and neither by others.
+>
+> This patch series implements missing functionality, which is:
+> * detect existing SFU sockets
+> * create new SFU sockets
+> * create new SFU fifos
+> * create new SFU symlink
+> * readlink() support for existing SFU symlinks
+>
+> In following pragraphs are some details about these SFU special files
+> which usage on Linux has to be activated by -o sfu mount option.
+>
+> SFU-style fifo is empty file with system attribute set. This format is
+> used by old Microsoft POSIX subsystem and later also by OpenNT/Interix
+> subsystem (which replaced Microsoft POSIX subsystem and is part of
+> Microsoft SFU). OpenNT is previous name of Interix versions 1.x/2.x.
+> Microsoft POSIX subsystem is available since the first Windows NT
+> version 3.1, and it was replaced by Interix since Windows XP. Interix
+> continue to use this format up to the its last released version for
+> Windows 8 / Server 2012 (part of Subsystem for UNIX-based Applications).
+> Hence these SFU-style fifos are for very long time unified and widely
+> supported.
+>
+> SFU-style socket is file which has system attribute set and file content
+> is one zero byte.
+>
+> SFU-style symlink is file which has system attribute set and file content
+> is buffer "IntxLNK\1" (8th byte is 0x01) followed by the target location
+> encoded in little endian UCS-2/UTF-16. There is no trailing nul.
+>
+> SFU-style char or block device is file which has system attribute set
+> and file content is buffer "IntxBLK\0" or "IntxCHR\0" (8th byte is 0x00)
+> followed by major and minor numbers encoded in twos 64-bit little endian.
+>
+> Format of SFU-style sockets, symlinks, char and block devices was
+> introduced in Interix 3.0 subsystem, as part of the Microsoft SFU 3.0
+> and is used also by all later versions, up to the Windows 8 / Server 2012
+> (part of Subsystem for UNIX-based Applications) where it was deprecated.
+> Previous OpenNT/Interix versions had no support for UNIX domain sockets
+> (and socket files), symlinks or possibility to create character or block
+> devices (but they had block/char devices in-memory, returned by stat()).
+>
+> Microsoft NFS server up to the version included in Windows Server 2008 R2
+> also uses this SFU-style format of special files when storing them on
+> local filesystem. Later Microsoft NFS server versions (starting in
+> Windows Server 2012) use new NFS reparse format, which Interix subsystem
+> (included in SFU or SUA) does not understand.
+>
+> Even SFU-style of special files is old format, it has one big advantage,
+> this format does not require any support on SMB/CIFS server of special
+> files, as everything is stored only in the file content. The only
+> requirement from server is support for system attribute. So this allows
+> to store special files also on FAT filesystem.
+>
+> This patch series makes cifs -o sfu mount option compatible with
+> SFU-style of special files, and so compatible with the latest SFU/SUA.
+>
+> Note that -o sfu is by default turned off, so these changes should have
+> no effect on default cifs mounts.
+>
+> Manually tested with MS SFU 3.5 (for Windows XP) and MS SUA 6.2 (latest
+> released version of Interix) that interop works correctly, special files
+> created by POSIX/Interix application can be recognized by Linux cifs
+> client (exported over MS SMB) with these patches (and vice-versa setup,
+> created by Linux cifs client and recognized in POSIX/Interix subsystem).
+>
+> Manually tested that old Linux 4.19 cifs client version can recognize
+> SFU-style of special files created by Linux cifs client this patch
+> series (except socket, which is unsupported in this Linux cifs version).
+>
+> Patch series is based on the latest upstream tag v6.11-rc7.
+>
+> Pali Roh=C3=A1r (7):
+>   cifs: Fix recognizing SFU symlinks
+>   cifs: Add support for reading SFU symlink location
+>   cifs: Put explicit zero byte into SFU block/char types
+>   cifs: Show debug message when SFU Fifo type was detected
+>   cifs: Recognize SFU socket type
+>   cifs: Fix creating of SFU fifo and socket special files
+>   cifs: Add support for creating SFU symlinks
+>
+>  fs/smb/client/cifspdu.h    |  6 ---
+>  fs/smb/client/cifsproto.h  |  4 ++
+>  fs/smb/client/cifssmb.c    |  8 ++--
+>  fs/smb/client/fs_context.c | 13 ++++---
+>  fs/smb/client/inode.c      | 42 ++++++++++++++++++--
+>  fs/smb/client/link.c       |  3 ++
+>  fs/smb/client/smb1ops.c    |  2 +-
+>  fs/smb/client/smb2ops.c    | 78 ++++++++++++++++++++++++++++----------
+>  8 files changed, 117 insertions(+), 39 deletions(-)
+>
+> --
+> 2.20.1
+>
+>
+
+
+--=20
+Thanks,
+
+Steve
 
