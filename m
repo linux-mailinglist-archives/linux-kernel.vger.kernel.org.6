@@ -1,209 +1,189 @@
-Return-Path: <linux-kernel+bounces-327889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EB72977C53
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:39:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 033F3977C59
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:40:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA2D61F26563
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:39:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EDFB1C244E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40C371D79BD;
-	Fri, 13 Sep 2024 09:38:54 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361151D86F0;
+	Fri, 13 Sep 2024 09:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="HcX1kffT";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="N4PwImb1"
+Received: from fout8-smtp.messagingengine.com (fout8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19A2190047;
-	Fri, 13 Sep 2024 09:38:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C721E18A6D6;
+	Fri, 13 Sep 2024 09:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726220333; cv=none; b=Hib6haRHvQcz8HDnePUJbCVHsOMrX9MuLBEiz4kEJzclBc6HgBOexEQ/s3XV35aJnPP4kam0W4Io+5yVxama15ZjT0zMASCdjTJAkX0lxYjzcmgGLcu+NEAdAKAjOMccs+jgCeyyaAPk79FOPpoiImIeeiwVLJTiOmbPhTeOChU=
+	t=1726220342; cv=none; b=tjjJYJqs9tbQMjvsXG8QSEwB0cCZV7xnVgs+6fMOnzEu36orxotfheBHeFs4NzGl7nzk0WT6eoozVYGRpvyqbz2xce7m6p7v07o7jZyXbkO9hXcwTMKMxv9eLpea3+wgYdfomoGCu+TXrvYs/FaHYkMe/pzL0RkuL+JvzzrqFaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726220333; c=relaxed/simple;
-	bh=AvK8B0XZ3AqgDkyyFK0iRJtmR1JfTTRvrAUrfjaLbwM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KhtMtY5Q9ELFEqDWP8B25vOZYTo4/CZcSLtIcbOkRovUTgWrUANbb9przpAvSJ/cc17X4HsGlMgyKQ7FGbr+kQNLRl+PvR/AiXVo79R/fa/z9LvNIJ8Ru4h6kdtwqxi7vQS3MWm5mlkwYT4g9jB67N4D+ox+Om6EWlAUh3SOaQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: f285ee1e71b311efa216b1d71e6e1362-20240913
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:3545db07-27dc-45b0-a9c3-33517082b506,IP:25,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:10
-X-CID-INFO: VERSION:1.1.38,REQID:3545db07-27dc-45b0-a9c3-33517082b506,IP:25,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:10
-X-CID-META: VersionHash:82c5f88,CLOUDID:8e28f9a7baab127fb8240fe078bd3ab7,BulkI
-	D:2409062205428B690IWE,BulkQuantity:14,Recheck:0,SF:64|66|24|17|19|44|102,
-	TC:nil,Content:1|-5,EDM:-3,IP:-2,URL:1,File:nil,RT:nil,Bulk:40,QS:nil,BEC:
-	nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,
-	TF_CID_SPAM_OBB,TF_CID_SPAM_ULS
-X-UUID: f285ee1e71b311efa216b1d71e6e1362-20240913
-X-User: duanchenghao@kylinos.cn
-Received: from [172.30.80.21] [(39.156.73.13)] by mailgw.kylinos.cn
-	(envelope-from <duanchenghao@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 730110907; Fri, 13 Sep 2024 17:38:35 +0800
-Message-ID: <4bbd4c114d80c98c4592b1b7ec32c4dbc96d8ac6.camel@kylinos.cn>
-Subject: Re: [PATCH] USB: Fix the issue of task recovery failure caused by
- USB status when S4 wakes up
-From: duanchenghao <duanchenghao@kylinos.cn>
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: gregkh@linuxfoundation.org, pavel@ucw.cz, linux-pm@vger.kernel.org, 
-	niko.mauno@vaisala.com, stanley_chang@realtek.com, tj@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Date: Fri, 13 Sep 2024 17:38:26 +0800
-In-Reply-To: <52b9fd0ab9d279c7da1e2c70e1f023c7e3333ad6.camel@kylinos.cn>
-References: <20240906030548.845115-1-duanchenghao@kylinos.cn>
-	 <1725931490447646.3.seg@mailgw.kylinos.cn>
-	 <a618ada1582c82b58d2503ecf777ea2d726f9399.camel@kylinos.cn>
-	 <8b07752d-63c4-41e3-bd20-ce3da43dfffc@rowland.harvard.edu>
-	 <8068130ce4ece6078b2893c4c6333c06c792b6c0.camel@kylinos.cn>
-	 <b8dc326b-8aee-4903-bbb6-64083cf66b4d@rowland.harvard.edu>
-	 <52b9fd0ab9d279c7da1e2c70e1f023c7e3333ad6.camel@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1726220342; c=relaxed/simple;
+	bh=A2qVBIMYp/2r3CFer6xBiqk5bNkvq3f/Xhhuxq/P0po=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gStnrp6ys6MRZDMJ3al5Ft6ELEwyIKphSO0MOAW418TqImtc3vv9HTm4expb1kkyiXGYFEdh/VuEjskPZEMNHl4Q28XtGH/yp8RShnT5mXlkj+nnQkidw1dwyRiuLqLZeswAy6yz5XdGU4JTybVfUbm4DJVy6zKZhUwcSC3Ypg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=HcX1kffT; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=N4PwImb1; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfout.phl.internal (Postfix) with ESMTP id C6E8B1380313;
+	Fri, 13 Sep 2024 05:38:58 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-07.internal (MEProxy); Fri, 13 Sep 2024 05:38:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1726220338; x=
+	1726306738; bh=K+AlDx1kABcH1bjNHO39XpWBnTf9rTOESmFmUtu1C08=; b=H
+	cX1kffT3gCsZo8AGKNkafPUMycPnllN8WmPLz3Onpcfx7YO0aAf3umyQRTO3TGkV
+	7wNfcGotSKBxOTmB4fnfYkzDNVUFGEA9oG60zaVOwQmaGOhRYKq0WripbZxmWt0P
+	1IymJe/4mIR59TfXSFJs9cpj+LbuAaWlvSfR5yLfqtoAU10uM9x1GrjU3YFTvnI4
+	MHksV7cyLq2+YSR9ntus9OlHurj+p4sKYoe24WBskIZcGFy632YkVc1llOAcdqIQ
+	wIFkyeBrV9t1PsmygnWQlbHYXdz7fWG7DynapGOidwfWpMhLezjObPw/qnDiyOpF
+	foDE1kkKPkV2E20Xc8dJA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1726220338; x=1726306738; bh=K+AlDx1kABcH1bjNHO39XpWBnTf9
+	rTOESmFmUtu1C08=; b=N4PwImb1Y8dtY3Yvdl0JyU0ll9bbD+5QfTwsw8ZoJGrw
+	9kkTnH2JCxeuPOh+TkLO2oNrVhVirAUSHg30Zp1xmPfQ7OKzpIyFw7HltEHWCB6l
+	NX/8Bju0TjV6Vpchbo/txdvmOEQ1a44gtD6c5zch8EXZWlD5fqJZdy8mcvhNuKLq
+	cTyXYxSO5CVkQ+HAEfSlKXBbenHPWjSDSRJz0XCDMTwHmxVihdVfhHQ/VdcbAoWq
+	7CwRN34bzjo0S+OE/dNCN2gmB37jBViTEofPl3Qi1jCSW3ETTn9HQiEDJa8fkNDs
+	Nj1X7bZFt/1cpnmhcMsG4Qe/JWodvqNYmTYJxI+SIQ==
+X-ME-Sender: <xms:MgjkZuGHfqvk9YQjf1X1JztIqEs3eg6EVQaNNOTtEP7yQFd989E1hQ>
+    <xme:MgjkZvUcVlw1GV-1wp7QecddrABnrkNs2jmL1mzcLXYTgdcOHB27WWWF8Lw6-9-8_
+    gbmS-DCBDXJCeu7JJ8>
+X-ME-Received: <xmr:MgjkZoLK6s0QnlUD9d53h_XsEY1X7bJ1MYESpm4ZE_up0g0aJlV2YnyRoKTQroWLCdfp19IIo_-gSu5CyoWVT_CPU70z44MKVonL>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejjedgudejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihessh
+    grkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhephefhhfettefgkedvieeu
+    ffevveeufedtlefhjeeiieetvdelfedtgfefuedukeeunecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhho
+    tggthhhirdhjphdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtg
+    hpthhtohepvggumhhunhgurdhrrghilhgvsehprhhothhonhhmrghilhdrtghomhdprhgt
+    phhtthhopegrphgrihhssehlihhnuhigrdhmihgtrhhoshhofhhtrdgtohhmpdhrtghpth
+    htoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheplhhinhhugidqmhgvughirgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtph
+    htthhopehlihhnuhigqdhsohhunhgusehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepth
+    hifigrihesshhushgvrdguvg
+X-ME-Proxy: <xmx:MgjkZoFxpE_q3HpW7obNDw_FUZc7_Ln34uOcTKuGQPGsHtya35QuIQ>
+    <xmx:MgjkZkX-LWRIRQTd0aUj3Ro9XsT86bvURayymGs0pzDzpeRx_frMnw>
+    <xmx:MgjkZrPdibi_zgMrPML7e7dDkNSxVMAHfsIhvnVBV8L_VrTot0q44Q>
+    <xmx:MgjkZr3Ig31IgjdsnlOsY4zqVG7cl8rMmhf5UiPZZ2dq7dvRkz6qdQ>
+    <xmx:MgjkZnHOhA9Xlf6OvTSjXfCdK3GeHHBNJ7BzZMvmb_olpb3wOgCwNNG4>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 13 Sep 2024 05:38:56 -0400 (EDT)
+Date: Fri, 13 Sep 2024 18:38:52 +0900
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: Edmund Raile <edmund.raile@protonmail.com>
+Cc: apais@linux.microsoft.com, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-sound@vger.kernel.org,
+	netdev@vger.kernel.org, tiwai@suse.de
+Subject: Re: firewire: use sleepable workqueue to handle 1394 OHCI IT/IR
+ context events: test 2
+Message-ID: <20240913093852.GA305057@workstation.local>
+Mail-Followup-To: Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Edmund Raile <edmund.raile@protonmail.com>,
+	apais@linux.microsoft.com, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-sound@vger.kernel.org,
+	netdev@vger.kernel.org, tiwai@suse.de
+References: <20240904125155.461886-1-o-takashi@sakamocchi.jp>
+ <20240912214404.10616-2-edmund.raile@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912214404.10616-2-edmund.raile@protonmail.com>
 
-=E5=9C=A8 2024-09-13=E6=98=9F=E6=9C=9F=E4=BA=94=E7=9A=84 09:51 +0800=EF=BC=
-=8Cduanchenghao=E5=86=99=E9=81=93=EF=BC=9A
-> =E5=9C=A8 2024-09-12=E6=98=9F=E6=9C=9F=E5=9B=9B=E7=9A=84 11:00 -0400=EF=
-=BC=8CAlan Stern=E5=86=99=E9=81=93=EF=BC=9A
-> > On Thu, Sep 12, 2024 at 11:21:26AM +0800, duanchenghao wrote:
-> > > =E5=9C=A8 2024-09-11=E6=98=9F=E6=9C=9F=E4=B8=89=E7=9A=84 10:40 -0400=
-=EF=BC=8CAlan Stern=E5=86=99=E9=81=93=EF=BC=9A
-> > > > On Tue, Sep 10, 2024 at 05:36:56PM +0800, duanchenghao wrote:
-> > > > > S4 wakeup restores the image that was saved before the system
-> > > > > entered
-> > > > > the S4 sleep state.
-> > > > >=20
-> > > > > =C2=A0=C2=A0=C2=A0 S4 waking up from hibernation
-> > > > > =C2=A0=C2=A0=C2=A0 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > > =C2=A0=C2=A0=C2=A0 kernel initialization
-> > > > > =C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=20
-> > > > > =C2=A0=C2=A0=C2=A0 v=C2=A0=C2=A0=20
-> > > > > =C2=A0=C2=A0=C2=A0 freeze user task and kernel thread
-> > > > > =C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=20
-> > > > > =C2=A0=C2=A0=C2=A0 v=C2=A0=C2=A0=20
-> > > > > =C2=A0=C2=A0=C2=A0 load saved image
-> > > > > =C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0=20
-> > > > > =C2=A0=C2=A0=C2=A0 v=C2=A0=C2=A0=20
-> > > > > =C2=A0=C2=A0=C2=A0 freeze the peripheral device and controller
-> > > > > =C2=A0=C2=A0=C2=A0 (Check the HCD_FLAG_WAKEUP_ PENDING flag of th=
-e USB. If
-> > > > > it
-> > > > > is
-> > > > > set,
-> > > > > =C2=A0=C2=A0=C2=A0=C2=A0 return to EBUSY and do not perform the f=
-ollowing restore
-> > > > > image.)
-> > > >=20
-> > > > Why is the flag set at this point?=C2=A0 It should not be; the
-> > > > device
-> > > > and=20
-> > > > controller should have been frozen with wakeup disabled.
-> > > >=20
-> > > This is check point, not set point.
-> >=20
-> > Yes, I know that.=C2=A0 But when the flag was checked, why did the code
-> > find=20
-> > that it was set?=C2=A0 The flag should have been clear.
->=20
-> Yes, the current issue is that during S4 testing, there is a
-> probabilistic scenario where clear_bit is not called after set_bit,
-> or
-> clear_bit is called but does not execute after set_bit. Please refer
-> to
-> the two modification points in the v2 patch for details, as both of
-> them can cause the current issue.
->=20
-> >=20
-> > > > Is your problem related to the one discussed in this email
-> > > > thread?
-> > > >=20
-> > > > https://lore.kernel.org/linux-usb/d8600868-6e4b-45ab-b328-852b6ac8e=
-cb5@rowland.harvard.edu/
-> > > >=20
-> > > > Would the suggestion I made there -- i.e., have the xhci-hcd=20
-> > > > interrupt handler skip calling usb_hcd_resume_root_hub() if the
-> > > > root
-> > > > hub=20
-> > > > was suspended with wakeup =3D 0 -- fix your problem?
-> > >=20
-> > > Skipping usb_hcd_resume_root_hub() should generally be possible,
-> > > but
-> > > it's important to ensure that normal remote wakeup functionality
-> > > is
-> > > not
-> > > compromised. Is it HUB_SUSPEND that the hub you are referring to
-> > > is
-> > > in
-> > > a suspended state?
-> >=20
-> > I don't understand this question.=C2=A0 hub_quiesce() gets called with=
-=20
-> > HUB_SUSPEND when the hub enters a suspended state.
-> >=20
-> > You are correct about the need for normal remote wakeup to work=20
-> > properly.=C2=A0 The interrupt handler should skip calling=20
-> > usb_hcd_resume_root_hub() for port connect or disconnect changes
-> > and
-> > for=20
-> > port overcurrent changes (when the root hub is suspended with
-> > wakeup
-> > =3D=20
-> > 0).=C2=A0 But it should _not_ skip calling usb_hcd_resume_root_hub() fo=
-r
-> > port=20
-> > resume events.
->=20
-> The current issue arises when rh_state is detected as RH_SUSPEND and
-> usb_hcd_resume_root_hub() is called to resume the root hub. However,
-> there is no mutual exclusion between the suspend flag, set_bit, and
-> clear_bit, which can lead to two scenarios:
->=20
-> =C2=A0=C2=A0=C2=A0 1. After set_bit is called, the state of the USB devic=
-e is
-> modified
-> by another process to !USB_STATE_SUSPEND, preventing the hub's resume
-> from being executed, and consequently, clear_bit is not called again.
->=20
-> =C2=A0=C2=A0=C2=A0 2. In another scenario, during the hub resume process,=
- after
-> HCD_FLAG_WAKEUP_PENDING is cleared by clear_bit, rh_state has not yet
-> been set to !RH_SUSPENDED. At this point, set_bit is executed, but
-> since the hub has already entered the running state, the clear_bit
-> associated with the resume operation is not executed.
->=20
-> Please review the v2 patch, where I have described both the logical
-> flow before the modification and the revised logical flow after the
-> modification.
->=20
+Hi,
 
-In fact, issue point 2 in the patch is introduced by issue point 1, and
-issue point 2 represents a further improvement. The main issue lies in
-point 1, where after the execution of the top half of the interrupt is
-completed, the bottom half is frozen by S4. As a result, the USB resume
-is not executed during this S4 process, and clear_bit is not called as
-well. This further leads to a situation where during the process of S4
-putting the USB controller into suspend, the check for
-HCD_FLAG_WAKEUP_PENDING being set returns -EBUSY.
+On Thu, Sep 12, 2024 at 09:44:52PM +0000, Edmund Raile wrote:
+> Hello Sakamoto-San, I came around to testing your patch [1], after RFT.
+> 
+> I've had to make the following changes to patch 1/5 again for it to apply to
+> mainline (d1f2d51b711a3b7f1ae1b46701c769c1d580fa7f), due to missing b171e20
+> from 2009 and a7ecbe9 from 2022.
+> 
+> @@ -584,9 +601,13 @@ int fw_card_add(struct fw_card *card,
+>  
+>  	generate_config_rom(card, tmp_config_rom);
+>  	ret = card->driver->enable(card, tmp_config_rom, config_rom_length);
+>  	if (ret == 0)
+>  		list_add_tail(&card->link, &card_list);
+> +	else
+> +		destroy_workqueue(isoc_wq);
+> +
+> +	card->isoc_wq = isoc_wq;
+> 
+>  	mutex_unlock(&card_mutex);
+> 
+>  	return ret;
+> @@ -709,7 +729,9 @@ void fw_core_remove_card(struct fw_card *card)
+>  {
+>  	struct fw_card_driver dummy_driver = dummy_driver_template;
+>  	unsigned long flags;
+>  
+> +	might_sleep();
+> +
+>  	card->driver->update_phy_reg(card, 4,
+>  				     PHY_LINK_ACTIVE | PHY_CONTENDER, 0);
+>  	fw_schedule_bus_reset(card, false, true);
+> @@ -719,6 +741,7 @@ void fw_core_remove_card(struct fw_card *card)
+>  	dummy_driver.free_iso_context	= card->driver->free_iso_context;
+>  	dummy_driver.stop_iso		= card->driver->stop_iso;
+>  	card->driver = &dummy_driver;
+> +	drain_workqueue(card->isoc_wq);
+>  
+>  	spin_lock_irqsave(&card->lock, flags);
+>  	fw_destroy_nodes(card);
+> 
+> Then everything applied fine.
+> 
+> This resulted in 6.11.0-rc6-1-mainline-00326-gd1f2d51b711a-dirty.
+> 
+> Testing it with TI XIO2213B and RME Fireface 800 so far:
+> 
+> Initially I had a buffer freeze after 3 hours of continuous ALSA playback
+> from mpv:
+>   mpv --audio-device=alsa/sysdefault:CARD=Fireface800 Spor-Ignition.flac
+> accompanied by stresstest (mprime).
+> 
+> It didn't freeze/crash the kernel, just the audio buffer kept repeating.
+> Gone after power-cycling the interface and restarting playback.
+> 
+> Can't say with certainty whether it's related, have been unable to replicate
+> the issue for the past 3 days (good sign I hope).
+> That's why I was holding this message back a bit.
+> 
+> Kind regards,
+> Edmund Raile.
+> 
+> Signed-off-by: Edmund Raile <edmund.raile@protonmail.com>
+> Tested-by: Edmund Raile <edmund.raile@protonmail.com>
+ 
+Thank you for your test. I've picked up your Tested-by tag to the
+series.
 
-> >=20
-> > Alan Stern
->=20
 
+Thanks
+
+Takashi Sakamoto
 
