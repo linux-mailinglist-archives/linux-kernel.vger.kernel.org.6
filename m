@@ -1,81 +1,61 @@
-Return-Path: <linux-kernel+bounces-328003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2155977D97
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:35:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47046977D99
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 279131C249AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:35:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 635A0B28C5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6791DCB16;
-	Fri, 13 Sep 2024 10:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F271DA0F0;
+	Fri, 13 Sep 2024 10:30:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZxEYC1Rr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="s73hu5C4"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741001DCB0C;
-	Fri, 13 Sep 2024 10:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A21F1DCB1B;
+	Fri, 13 Sep 2024 10:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726223429; cv=none; b=A1YK89OrXQ58F3GH3bOrJAxQHmfxfjRAfZ79zAZNT+87ToPfKbGjGXiF3iwRxphV88K9AT5JTmqdYVMqHp3iZK5XDQvm98VW4rXwCkDlQLKLW3Os9OzaKWrnbZpQBsci5s4TBp7N8c/DnhXD1Pr+rQeBvA9dbsHvF6qlL416bGo=
+	t=1726223437; cv=none; b=PlhVGUqJQVvexmcJBw820iyvtIzGdflL1YArttPwwEnz3g6dYn3EyukUL39e4i9EFEiibCZXMHJ1GDGHFD6C6BNPLJnM0x+TjNGgcqplQC1vhx6LXtlvzwgGKKQTiRdFoiLgwH0IM9U1kiZ8vsjope7Afo9lCo64nzRUMWb/gL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726223429; c=relaxed/simple;
-	bh=oD+Qsgq58ocfiZiQ8YH8GER77w5w9FSuVLKbvSvLgRM=;
+	s=arc-20240116; t=1726223437; c=relaxed/simple;
+	bh=BnjPmVb0BSKWEXaBQTjdWyLgDL3ZHVxYPNSE1X5mmFQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MqXwOrOiWoN5J5nbH//2Vb0qhg5wk+Sdt37Vs5n4PcM8rcBTwtD5UrSRayFGu5oNxjIQ2XgLvqyLpI1YW68ZWDt/eNbC2eiI189rDcHGbKwdsja1nWZuG4GJQcIv45Bjunqb8uG6CXF8sbOa9a/vMaQl/U4nDrGUTl0MLs8oVnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZxEYC1Rr; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726223427; x=1757759427;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=oD+Qsgq58ocfiZiQ8YH8GER77w5w9FSuVLKbvSvLgRM=;
-  b=ZxEYC1Rr8DCBI+NUgX9L6cRmQzGGOfgmpq6/SY9SxvnBQUoKx2TATdqv
-   YRRuQZorpPTkC/+/TVZMWwxGfLsUOGe0os6Uh1FT554o54AHhlyZHnmkS
-   DLo7hDMdk4hAJO+5ihWt+nWCDmc66yISwViN4nN/pubtyBkUvwN4BRSkE
-   xpEwkq8I4WlAAFYsMd0DTIB/OfQC8750WSFU7Ymiv+hItnFXn1WrNLgIb
-   yVP5zMt5jiBXa73y6JtCT9nqBeZHU3OvAmzxJKfPf5UO7qnDHyhZfXixW
-   nxrXCd5gIPLoBjQO12CgQhsz9dgcPbdCxiUxwQhfYsoJI3j32cCFtzDrJ
-   Q==;
-X-CSE-ConnectionGUID: vcirwhjmQROsZB5/TSqBXw==
-X-CSE-MsgGUID: MW57keYASmC+pbAbNB6OZw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="25272099"
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="25272099"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 03:30:27 -0700
-X-CSE-ConnectionGUID: gaR+cvi6Sb+Gvch5XSFGcw==
-X-CSE-MsgGUID: df8w1pRzTNWUh5IXFaV8Kw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="67978434"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 03:30:22 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sp3ZE-00000008GHh-02wk;
-	Fri, 13 Sep 2024 13:30:20 +0300
-Date: Fri, 13 Sep 2024 13:30:19 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: warp5tw@gmail.com
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
-	venture@google.com, yuenn@google.com, benjaminfair@google.com,
-	andi.shyti@kernel.org, wsa@kernel.org, rand.sec96@gmail.com,
-	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com,
-	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com,
-	KWLIU@nuvoton.com, JJLIU0@nuvoton.com, kfting@nuvoton.com,
-	openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=su/uZ6jkrQxRU+PXoxCfK+G3zri1IJveFq34Ffz5GyL5guDRVHM1W4GLCdp2OXTqKN2yjPUXYW5QfxkS/9AqOtNLsVcJS2i7u1/vI0Q+tU/bdloNUQKiH63zEihXrBExtB3HOYkYRFOT+NRJvT2q56ma6V4uNYbajV3FZ0VdAaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=s73hu5C4; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=9BWWxqzXVcGdS8wOTgfzpZaI3rs4ar7k4VF3nwXPb+g=; b=s73hu5C41QWsKrseJPCPSsxqaL
+	71qGa5FmajoGKgiTQ674DlIbR9PAhxuGbU3td8R4sMGX+/o2EY0KzJ4uOqQ5T6YqvTXkSMVMgFdkX
+	dtGRTG8Mi0DiIh+r9HI/6cPFb2mjKDG2GWZJ9fCzTZvwrZpqmrDt1+wTNpqg1IRPEdHycE4KqrAC4
+	OqhmhUAspb88uDL65XWfesCNNCKLi7QcrUAIAQigffbZigD4gzaczPnj3dzSwa9L582Fk8Mvy9U0q
+	AZ/d7j+YpBfmYVsg+vaJjIC8ef+rl0u6Aucvv2mYY+sbwY/eqhud3wNdI4kCxGPA+vZ7Dyh9qZ6uh
+	y0y+sNSw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sp3PT-002DsL-22;
+	Fri, 13 Sep 2024 18:30:30 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 13 Sep 2024 18:30:29 +0800
+Date: Fri, 13 Sep 2024 18:30:29 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Riyan Dhiman <riyandhiman14@gmail.com>
+Cc: davem@davemloft.net, linux-crypto@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/6] i2c: npcm: Bug fixes read/write operation,
- checkpatch
-Message-ID: <ZuQUOw5Y2hZgGyFJ@smile.fi.intel.com>
-References: <20240913101445.16513-1-kfting@nuvoton.com>
+Subject: Re: [PATCH] crypto: aegis128: Fix indentation issue in
+ crypto_aegis128_process_crypt()
+Message-ID: <ZuQURVsiGsrhYYjO@gondor.apana.org.au>
+References: <20240903125539.12679-1-riyandhiman14@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,34 +64,27 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240913101445.16513-1-kfting@nuvoton.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20240903125539.12679-1-riyandhiman14@gmail.com>
 
-On Fri, Sep 13, 2024 at 06:14:40PM +0800, warp5tw@gmail.com wrote:
-> From: Tyrone Ting <kfting@nuvoton.com>
+On Tue, Sep 03, 2024 at 06:25:39PM +0530, Riyan Dhiman wrote:
+> The code in crypto_aegis128_process_crypt() had an indentation
+> issue where spaces were used instead of tabs. This commit
+> corrects the indentation to use tabs, adhering to the
+> Linux kernel coding style guidelines.
 > 
-> This patchset includes the following fixes:
+> Issue reported by checkpatch:
+> - ERROR: code indent should use tabs where possible
 > 
-> - Enable the target functionality in the interrupt handling routine 
->   when the i2c transfer is about to finish.
-> - Correct the read/write operation procedure.
-> - Introduce a software flag to handle the bus error (BER) condition
->   which is not caused by the i2c transfer.
-> - Modify timeout calculation.
-> - Assign the client address earlier logically.
-> - Use an i2c frequency table for the frequency parameters assignment.
-> - Coding style fix.
+> No functional changes are intended.
 > 
-> The NPCM I2C driver is tested on NPCM750 and NPCM845 evaluation boards.
+> Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
+> ---
+>  crypto/aegis128-core.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 
-Somehow your 6th patch becomes independent from the email thread.
-(Initially I thought it was a separate fix)
-
-Please, check what's going on with email settings on your side.
-
+Patch applied.  Thanks.
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
