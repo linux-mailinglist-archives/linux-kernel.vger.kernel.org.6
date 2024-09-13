@@ -1,108 +1,121 @@
-Return-Path: <linux-kernel+bounces-328286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3765978174
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:47:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C923B97817A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E45B28200C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:47:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CC9EB2323A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C021DB930;
-	Fri, 13 Sep 2024 13:47:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F861DB95B;
+	Fri, 13 Sep 2024 13:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AVNi1oIH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b="aXiK1slG"
+Received: from mail.nearlyone.de (mail.nearlyone.de [49.12.199.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4321D86D6;
-	Fri, 13 Sep 2024 13:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51D21DB94D;
+	Fri, 13 Sep 2024 13:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.199.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726235230; cv=none; b=LosxJOtb+QpYWtxeCOtQz2u5CyxFnA337i7zjhkp1kcsR/NVgSABU9vVfqBElHT1FvVR8H7F6nscpZjjFysej7oWdISqnzdYCs6cnP6jSkpJn5dM/kRwGFAXqPxBooZA/8L+RJLni6FvwfwSZh6VinxVgQoDhcPDivH9Nb2oN0E=
+	t=1726235249; cv=none; b=mLuIHFmmnnU2OD8OojjBrEEKVtNTjl34tLy3tayL8h/VdqmK9wKPwb1BBBSbCxAtErUwtfbBZCFULbVB14IDJhTYaTYFXIqzkfGy6zlrJJ56aN1rNn8lTD3U4wOaip61an9o+atq+fKUzHnIVgnSldDjt5fi3k7+SoEDlgxjqjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726235230; c=relaxed/simple;
-	bh=yf2GMxg1XefxfAsl9eGXYlqULarFfBfcXvs5DfHxdng=;
+	s=arc-20240116; t=1726235249; c=relaxed/simple;
+	bh=GZG5Q4PYxwRPU+OS+/CNkqCPb50HPjc3xKewmpW3GLg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cnGEBDxLU06HOi9miDL84MBLeU3Ab8qPJu6038OZjrFiwwJY03BcN5Eu/H8XxYweAxRsaAMTUPD1kH87fD9qxRZxyoOfDZi3Tf9rVcLy7ytdfP72VtLaL6KlekcClI2fiTZRwIvuFfGHxeVHuviKFIb5yrmXG/hIJ2T12rgdIaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AVNi1oIH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8622EC4CEC5;
-	Fri, 13 Sep 2024 13:47:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726235230;
-	bh=yf2GMxg1XefxfAsl9eGXYlqULarFfBfcXvs5DfHxdng=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AVNi1oIHTvjVZBxX2Dyg8MCcsk3lXAuSqrlA9K5OrCzoIFDt6wNYHaUYiK3dy/ncY
-	 q/fpJj1RUqB6PeYZdH+xH+6uE3P9mu2YryzYodrAiZpJ9QHv12db3RSfAE8C2Mo6PN
-	 5H7YCj5R27dV78eWk5IjDmuzNiVe9/JHPY4vFDVNLiwWw5PVed0fGbfRDCTt/xUL9a
-	 EtldTn6DHPqxjWMHiAAIBhYMe3MiQvTbag+PHw18hubLyD71dee5+9hDON6kxqN9bZ
-	 MbCVfMVO363XcdC31iu6FdtG4XM8rAZXPbC7yQuvuKuws1CTcW7P10dtqNlpGdDayI
-	 /n0FLFZlaadgQ==
-Date: Fri, 13 Sep 2024 15:47:05 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>, 
-	Peter Hutterer <peter.hutterer@who-t.net>, Vicki Pfau <vi@endrift.com>, Shuah Khan <shuah@kernel.org>
-Cc: linux-input@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: (subset) [PATCH HID v2 00/11] HID: bpf: add a new hook to
- control hid-generic
-Message-ID: <etbeblypdylnngwuwjfqkmkduk4iup7uq4c5zkwrssoi6u7jvg@gtf3gpzrloii>
-References: <20240910-hid-bpf-hid-generic-v2-0-083dfc189e97@kernel.org>
- <172623473588.1192461.11090201509053454593.b4-ty@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=I+ggPBhaAPP7vwFEEy8R7Z6K54HM78LTDUVDKI8w8cNWiX/fTdybRkxg6tV+en0N6Gaz5txGmlqOrZ8RlDIPRKsnvo0BbnLcrK7Ov9Nl5UNUV9eM6MRfhQBcm2DejsYShUYqmugRyzDNPARxvA/5Z0FEtaWpF8hmQivSL+wDW88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org; spf=pass smtp.mailfrom=monom.org; dkim=pass (2048-bit key) header.d=monom.org header.i=@monom.org header.b=aXiK1slG; arc=none smtp.client-ip=49.12.199.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=monom.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=monom.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 258F2DAC06;
+	Fri, 13 Sep 2024 15:47:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monom.org; s=dkim;
+	t=1726235239; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=fZY5alxMSv52zndyax4LhSJk/d8fGq0vKOA63eoQKx4=;
+	b=aXiK1slGH1j2yTrch4uqHfTFeQW6E0zd6/Y/RyADbTSnM0wCvFOs0SczdOsmbJVpY/2pvb
+	JPuss1YGuE99LTEnFKsVFanFAsvEwkMu0OxHAa7dWjs59R4aDONA1q9YQnhsyU4OMydrNC
+	ZGYUJXVvo+ySq/uhd/YL25q0ykLkN+uWDt7oT1cncJL7vV2HSkJjsxvM267xPuw1yd/hwu
+	8A57QsoQrp7tMoBZQCQF3kcPWvlp953VmK/oWSjI8azzg6xXNhps16IBAdieE/zm9TFdGi
+	CMrcy+v2q5w9nsdJJ07qUNr+Eke+VV+NUp9h4lyUItkGob6XFgbuiLXLTSKyqQ==
+Date: Fri, 13 Sep 2024 15:47:13 +0200
+From: Daniel Wagner <wagi@monom.org>
+To: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, 
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Daniel Bristot de Oliveira <bristot@kernel.org>, kernel@collabora.com, gustavo.padovan@collabora.com, 
+	helen.koike@collabora.com
+Subject: Re: [Report] rtla: Failed to set runtime and/or period
+Message-ID: <5b7e6aa4-8fe1-4ba3-b5e9-80bfa710afb9@flourine.local>
+References: <d3468fce-088c-45d0-8543-a2bc9fef07c9@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <172623473588.1192461.11090201509053454593.b4-ty@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d3468fce-088c-45d0-8543-a2bc9fef07c9@collabora.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Sep 13 2024, Benjamin Tissoires wrote:
-> On Tue, 10 Sep 2024 23:43:36 +0900, Benjamin Tissoires wrote:
-> > This is a slight change from the fundamentals of HID-BPF.
-> > In theory, HID-BPF is abstract to the kernel itself, and makes
-> > only changes at the HID level (through report descriptors or
-> > events emitted to/from the device).
-> > 
-> > However, we have seen a few use cases where HID-BPF might interact with
-> > the running kernel when the target device is already handled by a
-> > specific device.
-> > 
-> > [...]
+On Thu, Sep 12, 2024 at 06:58:02PM GMT, Muhammad Usama Anjum wrote:
+> We are running rt-tests on KernelCI. I'm looking at failures and I found
+> out that rtla osnoise and rtla timerlat are failing. We have just
+> enabled these tests and they are failing from day one.
+
+Thanks a lot on working on this!
+
+> The first thing I fixed in my local setup is to sync the version of rtla
+> with that of the running kernel from the source. It resolves the Tracer
+> timerlat not found!" error as we had installed the older rtla package
+> from Debian on CI.
+
+There is some dependency between kernel version and the rtla tool suite.
+I suppose there is a window of version which you can differ but I
+suppose the Debian packaged version is way too old for recent kernels.
+
+> I'll update it. Is the version of rtla dependent on
+> the exact kernel version or any recent rtla version is acceptable?
+
+I have to figure this out. It could be that we need to build/provide
+matching rtla versions to the kernel. In theory the API should be stable
+etc but I suspect the APIs got broken (not on purpose) in the early
+days. Anyway, we have to figure this out as we can't ask Daniel sadly.
+
+> The other errors are persistent:
 > 
-> Applied to hid/hid.git (for-6.12/bpf), thanks!
+> ➜  sudo ./rtla osnoise hist -r 900000
+> Failed to set runtime and/or period
+> Could not apply config
+
+This works on my Tumbleweed kernel (pretty much a vanila kernel)
+6.10.9-1-default with the matching rtla version 6.10.9.
+
+What version do you use?
+
+> I thought maybe some argument are wrong. I ran the example from man page:
 > 
-> [01/11] HID: bpf: move HID-BPF report descriptor fixup earlier
->         https://git.kernel.org/hid/hid/c/f10a11b7b599
-> [02/11] HID: core: save one kmemdup during .probe()
->         https://git.kernel.org/hid/hid/c/6941754dbbc7
-> [03/11] HID: core: remove one more kmemdup on .probe()
->         https://git.kernel.org/hid/hid/c/4fe29f36d2a3
-> [04/11] HID: bpf: allow write access to quirks field in struct hid_device
->         https://git.kernel.org/hid/hid/c/b722f588adc6
-> [05/11] selftests/hid: add dependency on hid_common.h
->         https://git.kernel.org/hid/hid/c/3d816765e12e
-> [06/11] selftests/hid: cleanup C tests by adding a common struct uhid_device
->         https://git.kernel.org/hid/hid/c/28023a0f99d1
-> [07/11] selftests/hid: allow to parametrize bus/vid/pid/rdesc on the test device
->         https://git.kernel.org/hid/hid/c/10d3147f9bb1
-> [08/11] HID: add per device quirk to force bind to hid-generic
->         https://git.kernel.org/hid/hid/c/d030f826ea47
-> [09/11] selftests/hid: add test for assigning a given device to hid-generic
->         https://git.kernel.org/hid/hid/c/10929078201f
-> 
+> ➜  sudo ./rtla osnoise hist -P F:1 -c 0-11 -r 900000 -d 1M -b 10 -E 25
+> Failed to apply CPUs config
+> Could not apply config
 
-Just for completeness, I've dropped 10/11 and 11/11 when applying the
-series because even if they are working it's unclear if the use case is
-rock solid, like the first one is.
+Same here. This works on my local kernel.
 
-The patches are still on the LKML, so if anyone believes they required
-it, we can alwasy pull them in later.
+> Is there some configuration which is missing for running rtla? Please
+> let me know.
 
-Cheers,
-Benjamin
+Are these
+
+    CONFIG_OSNOISE_TRACER
+    CONFIG_TIMERLAT_TRACER
+
+config option enabled in your kernel?
+
+Thanks,
+Daniel
 
