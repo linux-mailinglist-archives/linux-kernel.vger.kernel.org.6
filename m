@@ -1,112 +1,116 @@
-Return-Path: <linux-kernel+bounces-328247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA11978107
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:21:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 872AA97810A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:21:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2E1B28771F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:21:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C03B01C216C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B05B1DB547;
-	Fri, 13 Sep 2024 13:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C691DB93D;
+	Fri, 13 Sep 2024 13:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MI1bXRtG"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="epLnpAXS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8141DB538
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 13:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266401DB55E;
+	Fri, 13 Sep 2024 13:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726233676; cv=none; b=IkAJahfAgXyEJGvqi48XyQnL4IfxbP4xgCdtiRUqaf5wU3nWH5Bb3Lx87ivwEtnrwelid2FqAGQ3jW/tTf2N8XQThDH7rR0MOAoWJx3TTtAkpS7ZeYvKz6yYPMwA8UYa8Ft4ZwftlT1Q1fS792yo1OZwYToBbBlnrh6vzjfCcdw=
+	t=1726233692; cv=none; b=Aq55pDL7fguvmarb4h1Q7mRXHXnY4ez2gUz7PuyxF0JlwUsuGFM08Q0dRXligIrChJ7GthhoPgvfmJWJ2ROBPKgOo9RsXVWFSH4a1hOIyep2l5iirftAfNWxpeFa/H3AJy4+bxvN3QKesJBEXM+84/hMr0XI1ReKmCyejw86vBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726233676; c=relaxed/simple;
-	bh=D0f1PuT9jXBwBOm3nTsBr0JjPgQVpuzPalotUDBLBts=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OGkrgen8H32Tkjz3/3oHahNBeJCreNClaGPflNvaVEZB5rZv4YDKxtGPzkapikKSte0PregHKRErrbj2n57dqXsUC65n5UmOTv4m+6cZ4TImurhGPqpPHL7W8Eg4jYIK4UPHoMTnqY+v54IBgH41QXWuEKAetKj+6/e8xs7jahM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MI1bXRtG; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a8a7903cb7dso53073766b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 06:21:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726233670; x=1726838470; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XhdGDbYhYo4L16IpPIGGru0i2V684mpbk3Fjn0fs3A4=;
-        b=MI1bXRtGN+e041M+4T5p37hH3SfQSgFeuyOFtKgjjbvFEucv1HTiFjZgdP83w1lzDF
-         ZYJ3cmqCVvFwcJQGpPwCP+BvRxG5/2uxQk02i+itqm88LjduYKDQ/B3kfxC803fA6Zxg
-         C4XyNng9syJcSkAnydG+p/eko7Yl1Lk/9WeAjTbccoNqMsBVxqFoe9P3rC56jtG1sT8t
-         AvBYWEhYR55X0intkYJHjzk3xg6PYWlpiuAJM/ZK6q21PHnx0gFFM34naXTmmtrNliG2
-         +9MW11u28bXVENFQ+ROfDighjJLu/xZyHShSL/4ebYmQpwMW099yXvu/c2+Z64FP993L
-         DNxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726233670; x=1726838470;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XhdGDbYhYo4L16IpPIGGru0i2V684mpbk3Fjn0fs3A4=;
-        b=JVpvBTSAAI+CvLzVa57FfAr6l4H7nOhYpr6vU9211PbPhhTcKR7Ofps4XDEgKA9tW9
-         HGrmLOwCZMXByC/caZskjx30ZVvKprJLsk77pCwodZjXZ3qcb+NTcq6yMUl16zWKLHhU
-         NFGvc25f5Dda/HmghwOBedCZBoXnr8jsOacVS5k/Q/KyxVW9B+LlmzFkP5be6twAACqR
-         3wzHKxgdpPAgggk5Fs5BhQK/EH81LayvEgMPGWUX1zA0dp9uoQJ6/4liiFZaXPA7rteF
-         xTnVb6glc18YsK4FHhpyz/cqZELy8TmJj36GlCRlsLFemJkZ6xVYqvXLqia7is4RroYk
-         pc2g==
-X-Forwarded-Encrypted: i=1; AJvYcCXbUiFTC+NwOEz0xr4oqZSs2g94FibrLMdi+tIAMc3CSTbiyOCy2soqPJgDPPSS9tZSYfwpJyGbT3g05XU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2HwHCCLOlssat8kQi76OwpvkfLMkJRAwm4POVDYDzK2qD7mID
-	Igssux5yRGAlbxz0ZSaBZWRGUtYNoOnK5uL103EQ4LREvThX5irYqGSg4Ic/c+A=
-X-Google-Smtp-Source: AGHT+IHcJ56NtIk9V3Z+A3QtoEu3bfPgHzOA+efDcloNtpUGHKdEpTOJ3QrRsGllAAeULwcGZII6kA==
-X-Received: by 2002:a05:6402:2687:b0:5c4:2448:87e9 with SMTP id 4fb4d7f45d1cf-5c424488a68mr872652a12.0.1726233669912;
-        Fri, 13 Sep 2024 06:21:09 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd76efbsm7653417a12.67.2024.09.13.06.21.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 06:21:09 -0700 (PDT)
-Date: Fri, 13 Sep 2024 16:21:05 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Qianqiang Liu <qianqiang.liu@163.com>
-Cc: ematsumiya@suse.de, sfrench@samba.org, linux-cifs@vger.kernel.org,
-	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] smb: client: compress: fix an "illegal accesses" issue
-Message-ID: <63aacc6d-8e3c-476d-938f-cce25d74a6b5@stanley.mountain>
-References: <20240913032750.175840-1-qianqiang.liu@163.com>
+	s=arc-20240116; t=1726233692; c=relaxed/simple;
+	bh=mia+xUTvFMRfYLyU8IqRV/oKPzsms8mLPQ0ZR+xMAL4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AxwkH2RRLS4Hgrbfq2XRefEduxAxGzx74A+sEJLzixqNy/FXLXjtSirXda5xbWVvo1dVaFx6OgESgzQTrTFy9woDuGMrdyh7CB97b6xWkYNwTpPqu6WhmeNZPyIoqmingATclOWZE6lY9RdlcsqOxobtvAAtz8KSpg7qi/YFfl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=epLnpAXS; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726233690; x=1757769690;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=mia+xUTvFMRfYLyU8IqRV/oKPzsms8mLPQ0ZR+xMAL4=;
+  b=epLnpAXSQzDtB66DL7u+Sr7e8K5EmcHuG813QhqjKBJLH6Arcj0vDD5M
+   CNsYerRlR4f2YEs4c6nySug0yJICnD7dH5ZHHLQ4MMN9x6H26VHM1G8N5
+   Q0LOZYIxks7Fkj8m6QLUFwER+h14eIzZw2Iwvs0I8AYpPHdX1C6f8KC3h
+   y4uN8LMosntgBTUtR9CbGRFZX5kxROPIPU++Vy9QYYqKqHmy1/SR5kWyR
+   3g9OwEnH90kx08Is/z6JYVfnROaNeKNcAaOIRyEhm02qIL5jRXMUs1zBU
+   kC9AhOpYkxmDrboLcUcpI+ZnlNJCYyvP92v3e6WyXVb+nf3DRFGjK3HKz
+   A==;
+X-CSE-ConnectionGUID: qErX7ou3T1aR2FX5EBlVMQ==
+X-CSE-MsgGUID: Exw+8nhBTXqX7iPah0QWSg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="24621326"
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="24621326"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 06:21:29 -0700
+X-CSE-ConnectionGUID: 57iOqf/FSqmfbkS7Dtk5Ng==
+X-CSE-MsgGUID: UCuaNriNQ2GfqOA/LYpPLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="67992724"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa009.jf.intel.com with ESMTP; 13 Sep 2024 06:21:28 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 44334334; Fri, 13 Sep 2024 16:21:26 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Pawel Laszczak <pawell@cadence.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH v1 1/1] sub: cdns2: Use predefined PCI vendor ID constant
+Date: Fri, 13 Sep 2024 16:21:25 +0300
+Message-ID: <20240913132125.3630860-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913032750.175840-1-qianqiang.liu@163.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 13, 2024 at 11:27:51AM +0800, Qianqiang Liu wrote:
-> Using uninitialized value "bkt" when calling "kfree"
-> 
-> Fixes: 13b68d44990d9 ("smb: client: compress: LZ77 code improvements cleanup")
-> Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
+The PCI vendor ID for Cadence is defined in pci_ids.h. Use it.
+While at it, move to PCI_DEVICE() macro and usual pattern for
+PCI class and device IDs.
 
-Thanks.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/usb/gadget/udc/cdns2/cdns2-pci.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
-
-I was reviewing this static checker warning.  I also have an unpublished warning
-which complains about collect_sample().
-
-fs/smb/client/compress.c:207 collect_sample() warn: should we be adding 'len' of the min_t value?
-
-It's a bit weird to sample data from each page.  Could we add some comments at
-the top of the function explaining what the function does.
-
-/*
- * This reads a 2k sample from the start of each page to see the data is already
- * compressed or whether we can compress it further.
- */
-
-regards,
-dan carpenter
+diff --git a/drivers/usb/gadget/udc/cdns2/cdns2-pci.c b/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
+index 50c3d0974d9b..b1a8f772467c 100644
+--- a/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
++++ b/drivers/usb/gadget/udc/cdns2/cdns2-pci.c
+@@ -15,8 +15,7 @@
+ #include "cdns2-gadget.h"
+ 
+ #define PCI_DRIVER_NAME		"cdns-pci-usbhs"
+-#define CDNS_VENDOR_ID		0x17cd
+-#define CDNS_DEVICE_ID		0x0120
++#define PCI_DEVICE_ID_CDNS_USB2	0x0120
+ #define PCI_BAR_DEV		0
+ #define PCI_DEV_FN_DEVICE	0
+ 
+@@ -114,8 +113,8 @@ static const struct dev_pm_ops cdns2_pci_pm_ops = {
+ };
+ 
+ static const struct pci_device_id cdns2_pci_ids[] = {
+-	{ PCI_VENDOR_ID_CDNS, CDNS_DEVICE_ID, PCI_ANY_ID, PCI_ANY_ID,
+-	  PCI_CLASS_SERIAL_USB_DEVICE, PCI_ANY_ID },
++	{ PCI_DEVICE(PCI_VENDOR_ID_CDNS, PCI_DEVICE_ID_CDNS_USB2),
++	  .class = PCI_CLASS_SERIAL_USB_DEVICE },
+ 	{ 0, }
+ };
+ 
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
 
