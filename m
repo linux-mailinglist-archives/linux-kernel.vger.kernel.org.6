@@ -1,151 +1,267 @@
-Return-Path: <linux-kernel+bounces-327652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E069E9778D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:30:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D6E9778DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:32:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A5481F2551D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:30:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C4431C24942
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:32:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F216187FF7;
-	Fri, 13 Sep 2024 06:30:47 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7321B982B;
+	Fri, 13 Sep 2024 06:31:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Gzh5uKVF"
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2046.outbound.protection.outlook.com [40.107.255.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279044A07;
-	Fri, 13 Sep 2024 06:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726209047; cv=none; b=Z9EeV6NEWfL8J18JBWE6/rZlgag+X/95uwV3CGj4QNWX7WmEuNbf5qB0Sd6q+UHi0LxJmOp+Iy3aKZrL17+/Ms4p34MtJln0bCgcjT8LdoOqB/hVk+LyxKswUDv08NR53ayY6FPv9Mb7tLYXfNc87Be70u8HuKaUgX/UpVI18SM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726209047; c=relaxed/simple;
-	bh=wqhkE51D6fBFTxHsF7tyblzU++jlhsqpAQT2Nky7JCA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sWzNiN/s7hi4ce9gmiF02L5a9hSWFupu5f1s8RGuBHbeDl83M874RoRPjoZhy5dOYod93099G28+2W3a4Ajyg0pYCF2RpPXdxZEkD5UyT/dhgkSThrcqWnu+CzS+0ydmnQW+NT3JaMp4X0N7B7sHHr7he4jo/2HKbzsd04MeNuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4X4kvl1mYcz9sxD;
-	Fri, 13 Sep 2024 08:30:43 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id KPoVoPcVMXmd; Fri, 13 Sep 2024 08:30:43 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4X4kvl0pksz9sxB;
-	Fri, 13 Sep 2024 08:30:43 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 093388B77A;
-	Fri, 13 Sep 2024 08:30:43 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id r0dE7jHRRDpY; Fri, 13 Sep 2024 08:30:42 +0200 (CEST)
-Received: from [192.168.233.70] (unknown [192.168.233.70])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 511308B766;
-	Fri, 13 Sep 2024 08:30:42 +0200 (CEST)
-Message-ID: <56b53876-0838-416f-adce-b1ffbd0916fc@csgroup.eu>
-Date: Fri, 13 Sep 2024 08:30:41 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D424A07;
+	Fri, 13 Sep 2024 06:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726209111; cv=fail; b=G/ULy6qyos4P/XKreLCvZSgPafPgDUyjxJFyYp1+/Zj57XsCtwMWDg/+iZnMjSALMVjIOqdbfbSH2H4kOIccaA3ZOsS97wHWe9NVumZvU8PXvk9dI0OThAR2Gp9LXflI+ASDLsFXzk/rnoC+9ogRCzHBhwpk+BYd23Ah3fa+3IE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726209111; c=relaxed/simple;
+	bh=bm/H/tQoMtpKC8hNl6aRQkb1BQPZfifV10MneOqeIdQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=YAVSTSDkqAHUazvD+sx3TEpDD+qeGsIcU2F/v63euh4wrlGC8G+HXC79Mbj+/TZcqe0bVaxduqqBxHqFgsbjAq4wt2TO9Kronutb6p+sC3kK8DY1CmJsVx9w1OND3jKpKaH4JzHZ83jVMtWiohaIicH0lwdErhNXT68859JMnh4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Gzh5uKVF; arc=fail smtp.client-ip=40.107.255.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=k4+yAt4L2nuBmtREWhSRi9ELYMhvVG+HotjiwmuIp2X+ESCQrAJCvfm66w/XzET8DbU8s/7RLF+ZzDBjEep8wreoFIe6/YT0dIzhLpnxBfswsyPG6T/n2uvSs29XMcDoeGDl+hI+P93uY/ycc0WFGfhKzNZhfxGcmooJOHx++qTYGvf4AGlqR9PLfAaJSVO09zUUmVmSqVzj/CEvtvjRCqpCAYs+k2cvXWrZDUNH/dwIV/L8iJ/fPLWqm7DZ05RaXQi3j2FvSKMFbILYwbgyU9QRtqYC3Ar32hJcVrfCCbvlU+uH6g7Ocln3+4KCmKnL4GG9iagUvtd8GuEUxV+icQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vbYMjrud4zEvIY6c++bulnEs/QmujSjYlOaOEhxEvcY=;
+ b=ueOuooJJFm/CB4DMujLVQS7HbXxBSMSchaspc7VfRaTIbnm9QFfel4C89gAUg5C5HOzbC8tAqU9dhQR2gQkFeBvog3DoVW8R7zBRQtDY/BsTIpzjy9qPhZr974pvCtG68+9AJRxfv4myTo4vjhEOzyM2t2m3QKxvdvXs+ZrLRnDt09mQr0mWfCkZMC3V4C88rMPtBoLqnCPzdfWbtvJ3tnyODBA7DlDwd2iPpKNNsErJRAPDgweQaAawZO0Aw5I7LTtHUSazrmqDLj5V1j7I1I5C8InXjrDZq9axvhIFL5QxqK/4XesdOGVLfxjEBSJZrBlhBPjBBQ3thE9dyJ/UcA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vbYMjrud4zEvIY6c++bulnEs/QmujSjYlOaOEhxEvcY=;
+ b=Gzh5uKVFkeqcqMdYR1zCKAQWWF7oV0xmavjG1Zfto2bsDLZHiIggGxDyigvAD3F76FKHaK4bl7LO+sh/zlj05IpKFy3P/wwBtWemUFBY0GXOIRQEWk5SbQdzaFRP3B6mOUG8RifDvE2VXlvW6xsrPdG4CsLSxmgH2hLnSVXZfoZDCs/ECBWcyjmvgAE4CUogq1hBPcGDsaaHcHqg/GWEycHmOctGWhP3Z/U5lmGnSxCAXjxcpczbHDm0qWeO+q5ENd1eqfJivKG+RRBoV+v79ilq3/aw7jbHhxP0JjuJkqpLkT3Gs18QWI9ys4i8RGTHP41DHRrYCuSeH+j0vF1Cdg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
+ by SEYPR06MB5868.apcprd06.prod.outlook.com (2603:1096:101:d1::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.27; Fri, 13 Sep
+ 2024 06:31:42 +0000
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f%6]) with mapi id 15.20.7962.018; Fri, 13 Sep 2024
+ 06:31:42 +0000
+Message-ID: <37e1f8a7-aa94-4a2b-9cd0-cb788a4f0b01@vivo.com>
+Date: Fri, 13 Sep 2024 14:31:36 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/7] udmabuf: fix vmap_udmabuf error page set
+To: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Gerd Hoffmann <kraxel@redhat.com>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
+References: <20240909091851.1165742-1-link@vivo.com>
+ <20240909091851.1165742-4-link@vivo.com>
+ <IA0PR11MB718549B45FCA4C85C1C99CA4F8642@IA0PR11MB7185.namprd11.prod.outlook.com>
+From: Huan Yang <link@vivo.com>
+In-Reply-To: <IA0PR11MB718549B45FCA4C85C1C99CA4F8642@IA0PR11MB7185.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR01CA0116.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:40::20) To PUZPR06MB5676.apcprd06.prod.outlook.com
+ (2603:1096:301:f8::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] powerpc/vpa_pmu: Add interface to expose vpa counters
- via perf
-To: Kajol Jain <kjain@linux.ibm.com>, mpe@ellerman.id.au
-Cc: atrajeev@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, maddy@linux.ibm.com,
- disgoel@linux.ibm.com, linuxppc-dev@lists.ozlabs.org,
- hbathini@linux.ibm.com, adubey@linux.ibm.com
-References: <20240828102141.1052332-1-kjain@linux.ibm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20240828102141.1052332-1-kjain@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|SEYPR06MB5868:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2dca8d0c-e44a-4b1e-f029-08dcd3bdbb0d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|52116014|366016|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dS9oKzBHSTdUa3FXdzZ3dGpmdnVvdWdhZGtPYW5peHVReEQ2a00zSHRmbC83?=
+ =?utf-8?B?cm1Dbk5FVDhLeGd1OEowa2F6QjkvSVJTZkVSeFpIcVdDME1talJXMkh1amRT?=
+ =?utf-8?B?Q0RueUFjRG0waGtCM256ZS8xQjN2Si83ZXU3QUhucmNXbFlhN3YrczJMTzNF?=
+ =?utf-8?B?VG9OV1BNNElRUG55UTYxZHNRSlJQalBJL1JBdDlkSW1IWTl5VWtqbUtGa0ZQ?=
+ =?utf-8?B?OCttZGRDSGw5SU9Qdm9EcDhKWitnblpiMFVRRDJFQXl3d2RlMldHZ3pyU3E2?=
+ =?utf-8?B?bG50blcxczRtak8wUFI3bHYrV3E0T3JYQTFJUjFqMEpaYUVmNVA5WG5QQVZn?=
+ =?utf-8?B?N0VtMjBweStDUjg4YnY5d2pvcVBZSHlhdjNzTE9ZdkxsMWQyZXFGSXphNUFY?=
+ =?utf-8?B?VVZMVG4yRkR1dUlRN1FYWUFwcEY4L1lXY2ZWeFBHMWFZNXJtM0lpVmlnN2gz?=
+ =?utf-8?B?UWR3TW9tekFSNDJpOTgyQTdCRDdwVjBCYVlwMEhaSjFOZmphNnIyT2JzVnJT?=
+ =?utf-8?B?NHVhd0ZQRng5VVhBUk1SR0lySHR1TlhDWTVDOHJCdFRZbXhHdEhZcERKM25k?=
+ =?utf-8?B?OHFEOUJGVEpQTWx6cGI3aGlKS25za28vRGp5dGdvaDZSOUJsL1FlYzRXUlhP?=
+ =?utf-8?B?cUNWL0lrYXdTb3d6cXRCR2IxTmxGRXZ3clZPSHFmTUlONit6aWNRTkEyNGo2?=
+ =?utf-8?B?KzVMd2RacUprSDlPZWxYZkZiWkh4MEdlU1pGUjBOU21McUtYNWhtZDNyR2t2?=
+ =?utf-8?B?dHhnK2tsWElBdHRrdWlhL001YnI3NjhnTEVGaGxBTVQ2WFVqS0xIZE44ejEz?=
+ =?utf-8?B?N2JEUWdoY21HbjIxa3pxNEFkdUw0d0RLZzE5YklPSnFpRXFpMjJ3U0tSMVNF?=
+ =?utf-8?B?akVnNkN1alBqM1FlMzMrTnhJbG1ITjhQZEY5Ni9JN1hqZTVvS202aVB0SEZk?=
+ =?utf-8?B?a1RxNS9sYmVZc0hnYU5RVDJvb0Yva0pIMEN5ZE9MWXdRUEgwckNsUXgvd2dn?=
+ =?utf-8?B?dldGVDVHcjY1b0ZXRHR1NEp4SS9rUFpVZUhib25wUUN3Z2w0S2d2UGIwOGhq?=
+ =?utf-8?B?dk1weEFaU0lGNjdySGw3TGozdngzcm85djRPTnJZWVQ1S3JtL1FyVGZGQ2M4?=
+ =?utf-8?B?MDl1YkZIcHF2cnl3N1crOUpsU3ZwYWx1RGY1U09RVlN5cUk4eS9wU0Nramk1?=
+ =?utf-8?B?TXhtY016V3k1WEpMT0x3UGtSL2pETGpXM096R21vbDFhQlBlRXZlaTZDSDNL?=
+ =?utf-8?B?Wjhmc2VjV2lmeS9SSERiSWJyY1FtbVc4TXR0c2ZsNWVtYk5FT1cvZFI2dkw2?=
+ =?utf-8?B?V0lia01QS2xIRXlHUTd3eDlqTmdRcStQbUtXc05oN0w4MFVwcEl1cHpiQzVa?=
+ =?utf-8?B?STFERkFPVUowSjNaZlNMeUdidS81ODQ1Rm5QMDFhTWxoVEtkdjdqQkExUnNB?=
+ =?utf-8?B?LzRJWndUNlpwL05GRjY1M0xjaUR4aFZ3K2JEZkxWSTZQd1hja1pWbHA2Nisv?=
+ =?utf-8?B?VXh3Z3ZOd0cwNmVOYUFLcDBtZU4xbExiZld4ZFliZU5zckwxclZheTVXcTcr?=
+ =?utf-8?B?ZitzWDlnVDZXNlppRi8wL1MrOGRYeENJdWE0dXRXUUo5dHZpY1llTUcwNElz?=
+ =?utf-8?B?UUFhOUpySi80d2ovUzVzcUJNZC8xOXg4Q3RGbEN5V3BHTGQrUG5SZmRIVjZZ?=
+ =?utf-8?B?WFUxLzlZT0E3WVByQzA2VGpCR09TVmJydkVVWTkrazR1cldpZVRmeHVqOGN1?=
+ =?utf-8?B?VlA0VWpIaDVzd2FEWTFIdjhqNytwcG9BM0wyTG1TWlVpQnBEZTh0Vzl1b2pJ?=
+ =?utf-8?B?ejFnQk1Ddkh4dWVvUDZqTkZSQmtIdXRnL041OHBUQzRCVnAxTWFuL1h4Tk9p?=
+ =?utf-8?B?Z2xDaXhDU3lMeUdvaGNiVlUrSjJFRTRLYjVEK1lGYWQzU1E9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(366016)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?enh5TGJSSGZwSkVCVXVrZzRTR3dnc01hVjVqUTdpcTg0TWMrOFVZTWFxTVYw?=
+ =?utf-8?B?UFNMS1VsS0l2VTJVSTNtSzRrRFVoTjFwbE4wbEdxMHJ2ZXZKOFR1S2ZSVlFR?=
+ =?utf-8?B?dHA5TUIwajBFUk4xeGVWd2gyUVpRZ0VjQ3NhUlBJWktVa1RQbzNtQS83dmRh?=
+ =?utf-8?B?VXpEVk1RTDNlaFVlR1RselNERmRRYncwN29waWNhRUJzRzhIQXhUTlp4TldL?=
+ =?utf-8?B?NWRNMGhiMmxXb2FqcDNKWi9ET3R0aUdCS0l4T056L1dMNWNMMnV0bVVIOUpy?=
+ =?utf-8?B?RkoxWWhCK2Z2S2t6VTk0c1c1eUFic2U2bUIxZzVKdHUzWjY2b3lPZUVHaCtC?=
+ =?utf-8?B?UndITUJBbkhjK25xM1U5ME04VlNqeklkd2NjWCttYmxJZjJGQWh6alA4YzNB?=
+ =?utf-8?B?MG9Xd0ppb2tjNnNqMHlNNldra0lRV2pEckVpYWVURU93eXQ5K2x4UEpqa1dQ?=
+ =?utf-8?B?SEY4anBnZTNEUzcwcE1TaW1USmZRbmVOSHVOYi9BYmMxNmlRVEY0bHVhLzF1?=
+ =?utf-8?B?Z2wzZ2JtV0JFWUpUVjZzYVRuSHZFQVZMOFdCQlFLRUY0QS9MWGlvSmZ0c2dh?=
+ =?utf-8?B?a25kOUN4SWt5anB3c3dFTHpOc1JZOHk3WmxkWGo0YklLTWhPNHdLRi9mUmJT?=
+ =?utf-8?B?MkhWNGNqa2tucisycUlvVGhIOFpINDJjWGxjMTE1a1lkU2hwblFqSG1iQlJ6?=
+ =?utf-8?B?TW1yMUREbmNhSkJ2eHlBdlVEd2lTNWZpN0lCbDRLSkcyVVh0M3pwN3JLWTdM?=
+ =?utf-8?B?OFR1enR1dWlZUjUxSjIzTU5uVVNBd0dHOVpkaXpBRTRHMFJiNWhINUtFem5Y?=
+ =?utf-8?B?WVM2dnJObWxnQ1pHRkZhbG0yUWNKK2NjSFoyd25jWHZHTm9VTjZaRzhyOUwz?=
+ =?utf-8?B?ZDNZb2duUjFWRlJJQkdLL2JNQ2JvcnlVa2RzNUNzdkJtSXRwbENTeEpCbm5h?=
+ =?utf-8?B?c2t4Q0dCaHlUWXpuSWlPRnk3OWxFQitSdVgxWE56ekF1WHMwZ2NqSndxMkRQ?=
+ =?utf-8?B?RWhUQzdJN2tEWmVxTjBuSFBmVFB1c0ovYmFQREtiV053Ui9oV1dRZ3hVdTdL?=
+ =?utf-8?B?MFIyNUxlblFYbHpSZTltK1IyZnJHS3YxWVV0alRnUjJnM2czNWUvM3F6endT?=
+ =?utf-8?B?ZmQvaVZIM2RPNyt0d1pHMUY3OWhVQ1RsNEZpVVV4ZllhU0Z1cnZmMHRDMkpu?=
+ =?utf-8?B?K0w3YUh2dkFNdlc1UUdOMm9rUUJiSmpEVnorWlZYK3dIVVEvV2RPOVg0UUxa?=
+ =?utf-8?B?TEN0eTVlaGtkOEh4SFVtRU9qRlNZM2pGblNaTW84TldLYmxpWFNBQ3NXSVlH?=
+ =?utf-8?B?YWNGeUFGWVhrNk9aSE0vdnZWeForMDREZGora1VneDBlYlpRS1VlbmVzRnIr?=
+ =?utf-8?B?OEwyQ05XRVhFMWhMYnhMTUFISGF0WjlZemVGSjB6emd5dnBPRXljVzFOSEI0?=
+ =?utf-8?B?L3RuYWpKYVJ3OTJzQVhCKzBZdnh6YzRQYUxBdHduTHZ1bU1mU0k1VTdVaFBx?=
+ =?utf-8?B?aW1nM04vU2RzbWxoR2ZWTkc3bjZBTmtObkdGTFNVWnNKckM2eVFsVTFrRTB0?=
+ =?utf-8?B?R2JZYnA4UU1Yc09zWU5ocVFqazhzNGFwdkg3aGNKc3k4Y21SUmRva3RqUzJw?=
+ =?utf-8?B?TE01SUdmT0NhSTBtZCs2WGhlcEprbFhqTVphYjcrVDNRYmU4MmV1cmRFMS9Y?=
+ =?utf-8?B?cytSVElFeXRUWmYvcFVnNTJ1bXFjVDhlZGRqczRnUnI1RUxkUWdjbVpBbU9p?=
+ =?utf-8?B?eEtuMXFaZnZRMmFFTzlCNDJja0srQzQ3MVVrQ1VOb09YQVN4RnRCZDA4OHRC?=
+ =?utf-8?B?QngvZFRiVHZ2d0pJSE9xYzhoS1Fic2treStZUU1FUEFSRjNleW9PeUZNY1Jh?=
+ =?utf-8?B?S3I2NUhDN2JwTlVIWUFYeEtWaTl3aENCaW4rQTN1ekNiNGZSeDlMcjZXdXBw?=
+ =?utf-8?B?ZHU0QS9lS1NhRldYL0xXcDUzaTJUOURISk5LaTFHeXRTYVNLVzdROWJES0RH?=
+ =?utf-8?B?eG5YR2ZOazE0OFU4VGMrT2FRLy9MZGhUeENWL25vQ0dLS1VaV2RBRUFXSUVD?=
+ =?utf-8?B?UlJ2Mk15bkJUbTZUWitiSFJRaEdRV2J2NDkwbzUrUWxTRDN6RE9PVnl5MEor?=
+ =?utf-8?Q?16eewULiAGTmBodY1TKVLxS91?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2dca8d0c-e44a-4b1e-f029-08dcd3bdbb0d
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 06:31:42.2763
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Y0I087LjUfNZMPycJzwh7pGUyooirLPiewdrtpZ5jFr01KZsc0msb1hCt6z7K6qYaJOYG8o1OqZplQGPXfNE9Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5868
 
 
-
-Le 28/08/2024 à 12:21, Kajol Jain a écrit :
-> The pseries Shared Processor Logical Partition(SPLPAR) machines
-> can retrieve a log of dispatch and preempt events from the
-> hypervisor using data from Disptach Trace Log(DTL) buffer.
-> With this information, user can retrieve when and why each dispatch &
-> preempt has occurred. Added an interface to expose the Virtual Processor
-> Area(VPA) DTL counters via perf.
-> 
-> The following events are available and exposed in sysfs:
-> 
->   vpa_dtl/dtl_cede/ - Trace voluntary (OS initiated) virtual processor waits
->   vpa_dtl/dtl_preempt/ - Trace time slice preempts
->   vpa_dtl/dtl_fault/ - Trace virtual partition memory page faults.
->   vpa_dtl/dtl_all/ - Trace all (dtl_cede/dtl_preempt/dtl_fault)
-> 
-> Added interface defines supported event list, config fields for the
-> event attributes and their corresponding bit values which are exported
-> via sysfs. User could use the standard perf tool to access perf events
-> exposed via vpa-dtl pmu.
-> 
-> The VPA DTL PMU counters do not interrupt on overflow or generate any
-> PMI interrupts. Therefore, the kernel needs to poll the counters, added
-> hrtimer code to do that. The timer interval can be provided by user via
-> sample_period field in nano seconds.
-> 
-> Result on power10 SPLPAR system with 656 cpu threads.
-> In the below perf record command with vpa_dtl pmu, -c option is used
-> to provide sample_period whch corresponding to 1000000000ns i.e; 1sec
-> and the workload time is also 1 second, hence we are getting 656 samples:
-> 
-> [command] perf record -a -R -e vpa_dtl/dtl_all/ -c 1000000000 sleep 1
-> [ perf record: Woken up 1 times to write data ]
-> [ perf record: Captured and wrote 0.828 MB perf.data (656 samples) ]
-> 
-> There is one hrtimer added per vpa-dtl pmu thread. Code added to handle
-> addition of dtl buffer data in the raw sample. Since DTL does not provide
-> IP address for a sample and it just have traces on reason of
-> dispatch/preempt, we directly saving DTL buffer data to perf.data file as
-> raw sample. For each hrtimer restart call, interface will dump all the
-> new dtl entries added to dtl buffer as a raw sample.
-> 
-> To ensure there are no other conflicting dtl users (example: debugfs dtl
-> or /proc/powerpc/vcpudispatch_stats), interface added code to use
-> "down_write_trylock" call to take the dtl_access_lock. The dtl_access_lock
-> is defined in dtl.h file. Also added global reference count variable called
-> "dtl_global_refc", to ensure dtl data can be captured per-cpu. Code also
-> added global lock called "dtl_global_lock" to avoid race condition.
-> 
-> Signed-off-by: Kajol Jain <kjain@linux.ibm.com>
-> ---
-> Notes:
-> 
-> - Made code changes on top of recent fix sent by Michael Ellerman.
->    Link to the patch: https://patchwork.ozlabs.org/project/linuxppc-dev/patch/20240819122401.513203-1-mpe@ellerman.id.au/
-> 
->   arch/powerpc/perf/Makefile  |   2 +-
->   arch/powerpc/perf/vpa-pmu.c | 469 ++++++++++++++++++++++++++++++++++++
->   include/linux/cpuhotplug.h  |   1 +
->   3 files changed, 471 insertions(+), 1 deletion(-)
->   create mode 100644 arch/powerpc/perf/vpa-pmu.c
-
-
-Seems like it doesn't build on PPC64:
-
-arch/powerpc/perf/vpa-pmu.c#L212
-passing argument 1 of 'up_write' from incompatible pointer type 
-[-Wincompatible-pointer-types]
-
-arch/powerpc/perf/vpa-pmu.c#L261
-passing argument 1 of 'down_write_trylock' from incompatible pointer 
-type [-Wincompatible-pointer-types]
-
-arch/powerpc/perf/vpa-pmu.c#L402
-passing argument 1 of 'up_write' from incompatible pointer type 
-[-Wincompatible-pointer-types]
+在 2024/9/13 6:37, Kasireddy, Vivek 写道:
+> Hi Huan,
+>
+>> Subject: [PATCH v6 3/7] udmabuf: fix vmap_udmabuf error page set
+>>
+>> Currently vmap_udmabuf set page's array by each folio.
+>> But, ubuf->folios is only contain's the folio's head page.
+>>
+>> That mean we repeatedly mapped the folio head page to the vmalloc area.
+>>
+>> Due to udmabuf can use hugetlb, if HVO enabled, tail page may not exist,
+>> so, we can't use page array to map, instead, use pfn array.
+>>
+>> By this, we removed page usage in udmabuf totally.
+>>
+> I think this would probably need a Fixes tag:
+> Fixes: 5e72b2b41a21 ("udmabuf: convert udmabuf driver to use folios")
+OK, I'll update it
+>
+> Thanks,
+> Vivek
+>
+>> Suggested-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
+>> Signed-off-by: Huan Yang <link@vivo.com>
+>> Acked-by: Vivek Kasireddy <vivek.kasireddy@intel.com>
+>> ---
+>>   drivers/dma-buf/Kconfig   |  1 +
+>>   drivers/dma-buf/udmabuf.c | 22 +++++++++++++++-------
+>>   2 files changed, 16 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/dma-buf/Kconfig b/drivers/dma-buf/Kconfig
+>> index b46eb8a552d7..fee04fdb0822 100644
+>> --- a/drivers/dma-buf/Kconfig
+>> +++ b/drivers/dma-buf/Kconfig
+>> @@ -36,6 +36,7 @@ config UDMABUF
+>>   	depends on DMA_SHARED_BUFFER
+>>   	depends on MEMFD_CREATE || COMPILE_TEST
+>>   	depends on MMU
+>> +	select VMAP_PFN
+>>   	help
+>>   	  A driver to let userspace turn memfd regions into dma-bufs.
+>>   	  Qemu can use this to create host dmabufs for guest framebuffers.
+>> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
+>> index ba9dbc7caf71..aa182a9dcdfa 100644
+>> --- a/drivers/dma-buf/udmabuf.c
+>> +++ b/drivers/dma-buf/udmabuf.c
+>> @@ -103,21 +103,29 @@ static int mmap_udmabuf(struct dma_buf *buf,
+>> struct vm_area_struct *vma)
+>>   static int vmap_udmabuf(struct dma_buf *buf, struct iosys_map *map)
+>>   {
+>>   	struct udmabuf *ubuf = buf->priv;
+>> -	struct page **pages;
+>> +	unsigned long *pfns;
+>>   	void *vaddr;
+>>   	pgoff_t pg;
+>>
+>>   	dma_resv_assert_held(buf->resv);
+>>
+>> -	pages = kvmalloc_array(ubuf->pagecount, sizeof(*pages),
+>> GFP_KERNEL);
+>> -	if (!pages)
+>> +	/**
+>> +	 * HVO may free tail pages, so just use pfn to map each folio
+>> +	 * into vmalloc area.
+>> +	 */
+>> +	pfns = kvmalloc_array(ubuf->pagecount, sizeof(*pfns), GFP_KERNEL);
+>> +	if (!pfns)
+>>   		return -ENOMEM;
+>>
+>> -	for (pg = 0; pg < ubuf->pagecount; pg++)
+>> -		pages[pg] = &ubuf->folios[pg]->page;
+>> +	for (pg = 0; pg < ubuf->pagecount; pg++) {
+>> +		unsigned long pfn = folio_pfn(ubuf->folios[pg]);
+>>
+>> -	vaddr = vm_map_ram(pages, ubuf->pagecount, -1);
+>> -	kvfree(pages);
+>> +		pfn += ubuf->offsets[pg] >> PAGE_SHIFT;
+>> +		pfns[pg] = pfn;
+>> +	}
+>> +
+>> +	vaddr = vmap_pfn(pfns, ubuf->pagecount, PAGE_KERNEL);
+>> +	kvfree(pfns);
+>>   	if (!vaddr)
+>>   		return -EINVAL;
+>>
+>> --
+>> 2.45.2
 
