@@ -1,119 +1,120 @@
-Return-Path: <linux-kernel+bounces-328939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67F92978B2F
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 00:06:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC3C7978B37
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 00:06:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99A5E1C22B9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:06:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 765FF1F2606D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4453156C62;
-	Fri, 13 Sep 2024 22:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7388D171E76;
+	Fri, 13 Sep 2024 22:06:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WzGDzkUi"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K8vx+3LG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D402F860;
-	Fri, 13 Sep 2024 22:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB2B1465BD;
+	Fri, 13 Sep 2024 22:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726265193; cv=none; b=LN2JIbTVgsB+6Xn0kWifHVvMEOr+ms3OjBnETz0CKD3/dcR6eeXkswJxJYjv25uX1vzYNsQ2fY+Xflmn7wtAeKV/C6gSU9bWD0QyyNcsdsyZgKbY3NGBXdHgj6cJhCJgDcMDr+7WQMMnDm7IRDu2UEIlfwUFvytRFXrdLf75FcY=
+	t=1726265208; cv=none; b=Vk6j6uUGJr6Cdl8rrT0kpnS3aoXeY47Xc+YEKWlUiMcCaGS7tjxALbsUDYfOmtG8rHGngrJNYiDVp2trcKdrmtMUTEgLpMz7UC2TUVBisFw3t8Znj2Cav8BaspiCKNxOMyOg/OZGCs0YUTr/8A2P+bjF1fKWmM9E6yzGkY3LYYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726265193; c=relaxed/simple;
-	bh=OIOoMQzoCgZxzo2kXHIadr8YEc/Wuuwq+XO3aobvV+g=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=vBHZhPzdfUszSGcOX9M7qa4C97LSWmwt34r/T9/5OdDZkWzpJ8eNR8gmdvVhY7g/EQztN3t5WBeHHLfGO3yl8elY0ntmL7sw5CixEDgHPEgT1nOBkpqNk78OEx7gLUIwfi+MQ6qv45HCX4tipCLyJqixKmZmkDAkgrPVAzj+3Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WzGDzkUi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A7C5C4CEC0;
-	Fri, 13 Sep 2024 22:06:31 +0000 (UTC)
+	s=arc-20240116; t=1726265208; c=relaxed/simple;
+	bh=SXNBW/VoAU5RqThsZySaFZaV3BaP0nEHQ65azegNSbU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XFZKjcl6paREEsYoHV4hhJf83SI+DgcqBTLOQxKKzAhb1m4/INgl3oJWoyUQ/r52XB4veiHf5SbLhC0ZT0me40yeKw2GlD+bvZ+dD1QJn9/s5L2UoqC5ICB4GJGC6Sd2hr+/KipTjOPq7zrH5edGQWyRDH2awdGYpvroZ/Xee5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K8vx+3LG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62BD5C4CEC0;
+	Fri, 13 Sep 2024 22:06:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726265192;
-	bh=OIOoMQzoCgZxzo2kXHIadr8YEc/Wuuwq+XO3aobvV+g=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=WzGDzkUipADF6QvZNhGYsdfqcigisuYp2A/fTb+XXD4d3uUF2gyaeEB5aT0zgSM0J
-	 HizPtwhsaHE+dqutdWdZUdelF75rgs+xcL1kNMDl/QZyuJmXR8CbBFTQPhE5cCelZ1
-	 2SUvRit55lwhuTrRRY7fIyLA5FsVIVuFY4owYhelOzrVyEjOllIMinmGXkOJNetIfY
-	 2lLUfGJ582v6PY+hb2t+s+FtjOA9Ee5OKf2pzPIyY5Ihu97n3KoymPcIRxmhTFHKFE
-	 dtrMHm1CtdjAjhEfNsLsIPhCOh7PxKZsRNz3RtJM8jrzZ/8QgEGNmsDecJRDm7BLBD
-	 GStQn80AcXIbw==
+	s=k20201202; t=1726265208;
+	bh=SXNBW/VoAU5RqThsZySaFZaV3BaP0nEHQ65azegNSbU=;
+	h=Date:From:To:List-Id:Cc:Subject:References:In-Reply-To:From;
+	b=K8vx+3LG5FTAG8jL1PXJZIyfgYaOYlZ/UOXk7cz3P8OPYIXxmgZtKpAIZ0HVRwxc2
+	 EWh+zxKdq5SrMV9RwCj9lsI+IFwI28JjmIWopL0IwJLljIaZ3cUYLqherMUc4Fdg1D
+	 gNjMFW6kGTTvklvRud0k2y9o58eX8HK86emoggXi79XE3NvXDZouz0+LsyLGDYbwvs
+	 N05a3DZFKNfQLj3ylXU6lyazwka9KcPRd9q7twIp2mtdV2yt3aZOm0st2fvqRUQhA6
+	 RANjlCfdhoF2JLNR++tkvJZQg7+t7We+kIK/cH7/1ld2Qxx9Ibq5lxumOmtGdZaeZD
+	 VX2ggNfelO/eQ==
+Date: Fri, 13 Sep 2024 17:06:47 -0500
+From: Rob Herring <robh@kernel.org>
+To: Arturs Artamonovs <arturs.artamonovs@analog.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Greg Malysa <greg.malysa@timesys.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Utsav Agarwal <Utsav.Agarwal@analog.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>, soc@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-serial@vger.kernel.org, adsp-linux@analog.com,
+	Nathan Barrett-Morrison <nathan.morrison@timesys.com>
+Subject: Re: [PATCH 08/21] dt-bindings: clock: adi,sc5xx-clocks: add bindings
+Message-ID: <20240913220647.GB878799-robh@kernel.org>
+References: <20240912-test-v1-0-458fa57c8ccf@analog.com>
+ <20240912-test-v1-8-458fa57c8ccf@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 14 Sep 2024 01:06:28 +0300
-Message-Id: <D45HXRJ0LTFC.3VVF6QI3NGVXV@kernel.org>
-Subject: Re: [regression] significant delays when secureboot is enabled
- since 6.10
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko.sakkinen@iki.fi>, "Roberto Sassu"
- <roberto.sassu@huaweicloud.com>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, "Linux regressions mailing list"
- <regressions@lists.linux.dev>
-Cc: <keyrings@vger.kernel.org>, "linux-integrity@vger.kernel.org"
- <linux-integrity@vger.kernel.org>, "LKML" <linux-kernel@vger.kernel.org>,
- "Pengyu Ma" <mapengyu@gmail.com>
-X-Mailer: aerc 0.17.0
-References: <0b4a5a86-a9f6-42d1-a9ba-ec565b336d3a@leemhuis.info>
- <92fbcc4c252ec9070d71a6c7d4f1d196ec67eeb0.camel@huaweicloud.com>
- <D42LZPLE8HR3.2UTNOI9CYZPIR@kernel.org>
- <D42M6OE94RLT.6EZSZLBTX437@kernel.org>
- <663d272617d1aead08077ad2b72929cbc226372a.camel@HansenPartnership.com>
- <D42N17MFTEDM.3E6IK034S26UT@kernel.org>
- <f554031343039883068145f9f4777277e490dc05.camel@huaweicloud.com>
- <D43JXBFOOB2O.3U6ZQ7DASR1ZW@kernel.org>
- <7e47f97aede88b87fbb9c9284db2005764bfbedd.camel@huaweicloud.com>
- <D45GBJ51SBNP.1WR34VCVNSN52@iki.fi>
-In-Reply-To: <D45GBJ51SBNP.1WR34VCVNSN52@iki.fi>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912-test-v1-8-458fa57c8ccf@analog.com>
 
-On Fri Sep 13, 2024 at 11:50 PM EEST, Jarkko Sakkinen wrote:
-> On Thu Sep 12, 2024 at 11:13 AM EEST, Roberto Sassu wrote:
-> > On Wed, 2024-09-11 at 18:14 +0300, Jarkko Sakkinen wrote:
-> > > On Wed Sep 11, 2024 at 11:53 AM EEST, Roberto Sassu wrote:
-> > > > I made few measurements. I have a Fedora 38 VM with TPM passthrough=
-.
-> > >=20
-> > > I was thinking more like
-> > >=20
-> > > sudo bpftrace -e 'k:tpm_transmit { @start[tid] =3D nsecs; } kr:tpm_tr=
-ansmit { @[kstack, ustack, comm] =3D sum(nsecs - @start[tid]); delete(@star=
-t[tid]); } END { clear(@start); }'
-> > >=20
-> > > For example when running "tpm2_createprimary --hierarchy o -G rsa2048=
- -c owner.txt", I get:
-> >
-> > Sure:
->
-> Took couple of days to upgrade my BuildRoot environment to have bcc and
-> bpftrace [1] but finally got similar figures (not the same test but doing
-> extends).
->
-> Summarizing your results looking at call before tpm_transmit:
->
-> - HMAC management: 124 ms
-> - extend with HMAC: 25 ms
-> - extend without HMAC: 5.2 ms=20
->
-> I'd see the only possible way to fix this would be refactor the HMAC
-> implementation by making the caller always the orchestrator and thus
-> allowing to use continueSession flag for TPM2_StartAuthSession to be
-> used.
->
-> For example if you do multiple extends there should not be good reason
-> to setup and rollback session for each call separately right?
->
-> [1] https://codeberg.org/jarkko/linux-tpmdd-test
+On Thu, Sep 12, 2024 at 07:24:53PM +0100, Arturs Artamonovs wrote:
+> Add ADSP-SC5xx clock bindings.
+> 
+> Signed-off-by: Arturs Artamonovs <Arturs.Artamonovs@analog.com>
+> Co-developed-by: Nathan Barrett-Morrison <nathan.morrison@timesys.com>
+> Signed-off-by: Nathan Barrett-Morrison <nathan.morrison@timesys.com>
+> Co-developed-by: Greg Malysa <greg.malysa@timesys.com>
+> Signed-off-by: Greg Malysa <greg.malysa@timesys.com>
+> ---
+>  .../bindings/clock/adi,sc5xx-clocks.yaml           | 65 ++++++++++++++++++++++
+>  1 file changed, 65 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/adi,sc5xx-clocks.yaml b/Documentation/devicetree/bindings/clock/adi,sc5xx-clocks.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..a092ebdefdcf89a635cdcf1073921efd28a38386
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/adi,sc5xx-clocks.yaml
+> @@ -0,0 +1,65 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/adi,sc5xx-clocks.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Clock Tree Drivers for Analog Devices ADSP-SC5XX Processors
+> +
+> +maintainers:
+> +  - Arturs Artamonovs <arturs.artamonovs@analog.com>
+> +  - Utsav Agarwal <Utsav.Agarwal@analog.com>
+> +
+> +description: |
+> +  These drivers read in the processors CDU (clock distribution unit)
+> +  and CGU (clock generation unit) values to determine various clock
+> +  rates
 
-Note that the timings are accumulated (not averaged). It would be easy
-to fix this tho.
+That sounds like 2 h/w blocks, not 1. If so, the bindings should reflect 
+that even if you want 1 driver to handle both.
 
-BR, Jarkko
-
+Rob
 
