@@ -1,325 +1,155 @@
-Return-Path: <linux-kernel+bounces-328954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E9C6978B6D
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 00:33:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 072CA978B70
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 00:34:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 423E31C22CDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:33:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABE6A1F24014
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 22:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF49158A2E;
-	Fri, 13 Sep 2024 22:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A37148308;
+	Fri, 13 Sep 2024 22:33:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TUF1QpXN"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LCydffo3"
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A78D502;
-	Fri, 13 Sep 2024 22:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCCAE13BC35
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 22:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726266818; cv=none; b=O6/gSp7Jr1XhFbFqyC0ok9Yh2L+PLFHgI7wgScZT+s3K+USW2wMgjAtf7e3qnaaTLe/qjAsBVX/Oymjiq/Wiqa81L33F0eRPvO3FqjFy1p7NZfP5QV8/pqEjVBP7EEBZO1amz1CnARd4NLrFjg41cMMfgSdmtyc4TfbvpSlLQF8=
+	t=1726266834; cv=none; b=e5duhtcQnFxr7khPCGMEnGmoGNVsp38CR9E4d9R2bXgNJ6c6xONNt+HAkDY+vSZPXtQGZZ7WMBtDk1WjchAfTqvsOLgup4bO+7vGz1ZqArVJu1xCRFheix6X7nG+5AmsdPfrYX6w/Bob1o2Gaj9vdX1s6ELb53QyVl/JYL8ODxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726266818; c=relaxed/simple;
-	bh=EdFGuxoFM7GGXxeP3wdVcdb75w5FP1HDHQLPeMjebGE=;
+	s=arc-20240116; t=1726266834; c=relaxed/simple;
+	bh=U1NroKr0HA7CbvYhIRp6QGqZlDY9h8+cRjm0wX0Ld0E=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tb119WjaaE62NUqillLmkpUfCpmAwAfbfhP7j/e9DfZawACWf/QOJoSv6i/JtE0NheTKKcRqfknWbArH/Rmfj0qz8Lg0lF0pMj4t+hGJCoOOko/eYx2Ts1N5k//k2aZuJQVUk5r/CuuvcuQctVxH76cyin79jXtL6WzSayZHcZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TUF1QpXN; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8a706236bfso74231366b.0;
-        Fri, 13 Sep 2024 15:33:36 -0700 (PDT)
+	 To:Cc:Content-Type; b=jb7I7YLReR7ZmT+x1KMoCF8hqYoU3yAmWM/VbaIBefBMuDhB38OSuMzkjqkbZ3Qpf3LPaFjPeFRb15IWsFbEzZ8TVRztXAkHbPpk0VpjcgcuqIQdC2yxq9psrTT/p15LheLt8HW6JauSUTwZ6RsVaPGqWo1XAE38WP5dRBeIpnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LCydffo3; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5e1d7421d14so109407eaf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 15:33:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726266815; x=1726871615; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1726266832; x=1726871632; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8U9RJozTknlutL+hhyt4CUdPuPWCF8nPwSWbYIEsTxc=;
-        b=TUF1QpXNopukTz47CQkB5dgKnLRVsUL5NMLaDo1xgMnOiCTwr3O4oW1oaRTfNWZ0PP
-         wUlJL45ov8A8dPI9N/1hdTk8SpmFwK37uaJM51jqGvY1WWkwVkUjN21OX6z2l0J1HyDP
-         Xu5ZV4qmo9iOCZlKwLt3p5S96Luk/3hv/0MzeU63nIjJmooHdoumQQ/uxdpCwiMd7ED5
-         fyI4Rp8pdg4Jn2WiH9aa8Q5EVQULxVlpVwcz5/mvvHSy03nrZ5sysvkRiaFJdoLY1eZE
-         4yDJsUKs+fFGGV/jv4kpqeYVXGzwaHcXvqUXcmh2h/Sg5scYK7dBjJBV5ndk+BqqmSyI
-         kCkQ==
+        bh=nR+aFVWTVq8CbCarFENk6QxpMqmR4IKiYC+//JY1HWs=;
+        b=LCydffo3Ahdeh+wUDqj9HWcDSBv8dPoRSKM1pN7d8sx0CGMT4dj53oFP8zVT9jv22+
+         tP9k9PuECqQ3H34RpXKVEc+36J7i1jbezFYo55ZaLIb3bA5Am5BWEk5A0RvvvsTSN852
+         fh0fZKjaNozRhvQLGwZtsGVJq2rhS6lt1R4Z8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726266815; x=1726871615;
+        d=1e100.net; s=20230601; t=1726266832; x=1726871632;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8U9RJozTknlutL+hhyt4CUdPuPWCF8nPwSWbYIEsTxc=;
-        b=mTkgFMtXv9tqhmYe5YWbT68dm/LOiBPmwMP18FoAB3Ho6+e7Gj/ZaI5qTXUsFXxilS
-         IQL1AcoTtDHu2oD6SNdr7JzVnhypSG2rSeMQmSEZvBIwKpgdDVNKyNeeD194hdDv4CEi
-         kV+4LLjkfGmzOK2tlm9sWKj8X6uJZK6u/LaqKJZ6wovpCSBZvRyGja1o+/usAnNmOC/y
-         x+VpNbPzHV0zWpyoS/JPJQrPx3WA+CXmJXVvt8KFdh2q69eDkOmAuPMOJOI8KkutjQTY
-         xs95FkmbnSWnnmGLJkrbOys6kaBhSc5N5ZoSB4PhVV5wKtx9NZ5GkQCJGKMUYaS3KZ7Q
-         CpDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8rCBoTCoXcTdKmA61O58TahpNnZM2XZT8hOVhfdoHhoR6PEoDaXgLk9Q9JJodGY7GSpyh2NO+UtKn@vger.kernel.org, AJvYcCVk/wLI5EXkRCdo+gKKswr3Mf/y95cw1RQP0xTEyC+M2FBxSkzINroMHVqHlQmrUj/+k4WlrqbOIlkPN+e/@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxxf5zGdUEW3NvJ2ETHgxI42fLD5CccnB0CZDqGsQpielJfAedY
-	EAXMHAvYyJqsF1ZFv7eVvLev16mCOpQ511FTD0NjH9hotRapwXIvXUpcjA3DQhkrOYlVleJJW73
-	K0gHPt5Y72wkLncLmwefAzTlHjDU=
-X-Google-Smtp-Source: AGHT+IG6OoqjYvygWloG0kVfFXJKeW8FDDKrKGnU2viTb/U/Gf3PEJF9JpettkHJZDIBDptC5aoY7BAm7iUEfQ8L+fk=
-X-Received: by 2002:a05:6402:2108:b0:5c4:2366:2bd2 with SMTP id
- 4fb4d7f45d1cf-5c423662c51mr2844730a12.21.1726266814353; Fri, 13 Sep 2024
- 15:33:34 -0700 (PDT)
+        bh=nR+aFVWTVq8CbCarFENk6QxpMqmR4IKiYC+//JY1HWs=;
+        b=DFt56VYw4VcUI4n3pwDidnF7PrDTTxICmvSGWZyYbAGCgQH3gJW/asisqXhc7LHy30
+         Qluw9OFwmoTxpkwpKlynNpG5gfLiWT+6LkL44al2cUZ0N1cY4b1j7FipYn00C+qlDExW
+         oSwSUisALrtyX9rNdqCie0NiODkQC7TYxGJsYhCBX8xiqg4tnMKjYOgebxs3siNUFsoD
+         fZXIZqTZARXbzDgnPrtY14XQaWgBaMvYM8cUuNs08S+DjFqrhA5Z4XSR9XSXMHewbKy3
+         vYnzv8O9QgWySfsN410iFlff7BjwO87oDye5lbcXD4+Rd6uuW6RAUk2Mh8EudzpgoOUU
+         +KAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWVMrAFvZLNMLDOl4bXNDAaevtGvPhkM/1WoesfKbbnWryMQaeBzUdGjVZ2sBSR4FBVGQzaAKJ5mkeKKww=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8dmTn3GivHwQUxCSo+Yq9fMoO7R452UFRrebKirfwVv/KiWCc
+	xymkifokzVqTr8KPv2DogmnU0hCKRLBixXjeDM/JtmRmjqSpMWKanLmEDgnnjLDEOL19HCew/Nt
+	AExH9Sv/DdNc3u605QDgKCLp6iIJ6B9P/JfBv
+X-Google-Smtp-Source: AGHT+IHoRn8wPvaGm0XnG3869dlzoogkjY3U7o40PCg3lnku1IuTJCyxK495TTkFeC7nabla4nDYmkGBplV0McjYN34=
+X-Received: by 2002:a05:6870:65a4:b0:27b:9f8b:7e4a with SMTP id
+ 586e51a60fabf-27c3f694c07mr1516649fac.12.1726266831574; Fri, 13 Sep 2024
+ 15:33:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912120548.15877-1-pali@kernel.org> <20240912120548.15877-7-pali@kernel.org>
- <20240913200721.7egunkwp76qo5yy7@pali> <CAH2r5mvEa8mUrK7mEKFiimkb1asTWA0p7ADz4937yoxM916RAw@mail.gmail.com>
-In-Reply-To: <CAH2r5mvEa8mUrK7mEKFiimkb1asTWA0p7ADz4937yoxM916RAw@mail.gmail.com>
-From: Steve French <smfrench@gmail.com>
-Date: Fri, 13 Sep 2024 17:33:22 -0500
-Message-ID: <CAH2r5mskDvz2-iAYY8mknuBVtPq_C5sQyggYEwDivtGPc83B1g@mail.gmail.com>
-Subject: Re: [PATCH 6/7] cifs: Fix creating of SFU fifo and socket special files
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, linux-cifs@vger.kernel.org, 
+References: <20240809082511.497266-1-usama.anjum@collabora.com>
+ <CABi2SkWgPoWJY_CMxDru7FPjtQBgv61PA2VoCumd3T8Xq3fjbg@mail.gmail.com> <1b36ba43-60a4-441c-981f-9b62f366aa95@collabora.com>
+In-Reply-To: <1b36ba43-60a4-441c-981f-9b62f366aa95@collabora.com>
+From: Jeff Xu <jeffxu@chromium.org>
+Date: Fri, 13 Sep 2024 15:33:39 -0700
+Message-ID: <CABi2SkWk8igT=HCTcawv72uxrf2rhzj1A23k4EixCxcDKhSNxw@mail.gmail.com>
+Subject: Re: [PATCH] selftests: mm: Fix build errors on armhf
+To: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>, 
+	Kees Cook <kees@kernel.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, kernel@collabora.com, 
+	stable@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-One other thing which worried me a bit is that I confirmed that an
-empty file with the system attribute set was matched as a FIFO file
-type (when you mount with "sfu") - this seems risky.
+On Mon, Aug 19, 2024 at 3:05=E2=80=AFAM Muhammad Usama Anjum
+<Usama.Anjum@collabora.com> wrote:
+>
+> On 8/14/24 3:29 AM, Jeff Xu wrote:
+> > Hi Muhammad
+> >
+> > On Fri, Aug 9, 2024 at 1:25=E2=80=AFAM Muhammad Usama Anjum
+> > <usama.anjum@collabora.com> wrote:
+> >>
+> >> The __NR_mmap isn't found on armhf. The mmap() is commonly available
 
-On Fri, Sep 13, 2024 at 5:14=E2=80=AFPM Steve French <smfrench@gmail.com> w=
-rote:
->
-> How did you find the format of the FIFO and SOCK file types?  I
-> couldn't find any references to those so added two new types to allow
-> current Linux to be able to create these (especially since they are
-> opaque to the server and thus low risk).
->
-> > +     case S_IFSOCK:
-> > -             strscpy(pdev.type, "LnxSOCK");
-> > +             /* SFU socket is system file with one zero byte */
-> > +             pdev_len =3D 1;
-> > +             pdev.type[0] =3D '\0';
-> >               break;
-> >       case S_IFIFO:
-> > -             strscpy(pdev.type, "LnxFIFO");
-> > +             /* SFU fifo is system file which is empty */
-> > +             pdev_len =3D 0;
->
-> My worry about the suggested change above is that it is possible that
-> we could accidentally match to an empty file. We intentionally added
-> the two new dev.type fields for these to avoid collisions with other
-> things (and since they are Linux specific).  It seems risky to have an
-> empty file with the system attribute marked as a FIFO, and similarly a
-> file with one byte null as Socket.   Since this is for only the Linux
-> client to recognize, I wanted to do something safe for those file
-> types less likely to be confusing (ie strings for Socket and FIFO that
-> were similar in length and format to the other special files seemed
-> intuitive) and "LnxFIFO" and LnxSOCK" were used as the tags in the
-> file to reduce confusion ie the tags for those two start with "Lnx" -
-> ie "something used for Linux client" not related to the original
-> Interix (those begin with "Intx").
->
-> Note that in the long run we hope to use reparse points by default in
-> more servers to store special files like this but there are a few
-> cases for unusual workloads that need special file support that would
-> have to use sfu still.  The newer reparse tags that Windows uses "WSL"
-> have the advantage that they require fewer roundtrips to query (since
-> the file type is in the reparse tag).
->
-> Also noticed an interesting problem when mounted with "sfu" -
-> "smbgetinfo filebasicinfo /mnt/fifo1" will hang (in sys_open).  Is
-> that expected for a FIFO?
->
-> On Fri, Sep 13, 2024 at 3:07=E2=80=AFPM Pali Roh=C3=A1r <pali@kernel.org>=
- wrote:
+What is armhf ?
+is that arm64 ? I was able to build arm64 correctly.
+
+-Jeff
+
+> >> system call and its wrapper is presnet on all architectures. So it
+> >> should be used directly. It solves problem for armhf and doesn't creat=
+e
+> >> problem for architectures as well. Remove sys_mmap() functions as they
+> >> aren't doing anything else other than calling mmap(). There is no need
+> >> to set errno =3D 0 manually as glibc always resets it.
+> >>
+> > The mseal_test should't have dependency on libc, and mmap() is
+> > implemented by glibc, right ?
 > >
-> > On Thursday 12 September 2024 14:05:47 Pali Roh=C3=A1r wrote:
-> > > SFU-style fifo is empty file with system attribute set. This format i=
-s used
-> > > by old Microsoft POSIX subsystem and later also by OpenNT/Interix sub=
-system
-> > > (which replaced Microsoft POSIX subsystem and is part of Microsoft SF=
-U).
-> > >
-> > > SFU-style socket is file which has system attribute set and file cont=
-ent is
-> > > one zero byte. This format was introduced in Interix 3.0 subsystem, a=
-s part
-> > > of the Microsoft SFU 3.0 and is used also by all later versions. Prev=
-ious
-> > > versions had no UNIX domain socket support.
-> > >
-> > > Currently when sfu mount option is specified then CIFS creates fifo a=
-nd
-> > > socket special files with some strange LnxSOCK or LnxFIFO content whi=
-ch is
-> > > not compatible with Microsoft SFU and neither recognized by other SMB
-> > > implementations which have some SFU support, including older Linux ci=
-fs
-> > > implementations.
-> > >
-> > > So when sfu mount option is specified, create all fifo and socket spe=
-cial
-> > > files compatible with SFU format to achieve SFU interop, as it is exp=
-ected
-> > > by sfu mount option.
-> > >
-> > > Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
+> > I just fixed a bug to switch mremap() to sys_mremap to address an
+> > issue that different glibc version's behavior is slightly different
+> > for mremap().
 > >
-> > Fixes: 72bc63f5e23a ("smb3: fix creating FIFOs when mounting with "sfu"=
- mount option")
-> > Fixes: 518549c120e6 ("cifs: fix creating sockets when using sfu mount o=
-ptions")
-> >
-> > I located commits which introduced those strange LnxSOCK or LnxFIFO
-> > types which are not compatible with SFU. I would suggest to add those
-> > two Fixes: tags into commit message for reference.
-> >
-> > > ---
-> > >  fs/smb/client/cifssmb.c |  8 ++++----
-> > >  fs/smb/client/smb1ops.c |  2 +-
-> > >  fs/smb/client/smb2ops.c | 29 +++++++++++++++++++----------
-> > >  3 files changed, 24 insertions(+), 15 deletions(-)
-> > >
-> > > diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
-> > > index cfae2e918209..0ffc45aa5e2c 100644
-> > > --- a/fs/smb/client/cifssmb.c
-> > > +++ b/fs/smb/client/cifssmb.c
-> > > @@ -1076,8 +1076,8 @@ SMBLegacyOpen(const unsigned int xid, struct ci=
-fs_tcon *tcon,
-> > >       pSMB->OpenFlags |=3D cpu_to_le16(REQ_MORE_INFO);
-> > >       pSMB->Mode =3D cpu_to_le16(access_flags_to_smbopen_mode(access_=
-flags));
-> > >       pSMB->Mode |=3D cpu_to_le16(0x40); /* deny none */
-> > > -     /* set file as system file if special file such
-> > > -        as fifo and server expecting SFU style and
-> > > +     /* set file as system file if special file such as fifo,
-> > > +      * socket, char or block and server expecting SFU style and
-> > >          no Unix extensions */
-> > >
-> > >       if (create_options & CREATE_OPTION_SPECIAL)
-> > > @@ -1193,8 +1193,8 @@ CIFS_open(const unsigned int xid, struct cifs_o=
-pen_parms *oparms, int *oplock,
-> > >       req->AllocationSize =3D 0;
-> > >
-> > >       /*
-> > > -      * Set file as system file if special file such as fifo and ser=
-ver
-> > > -      * expecting SFU style and no Unix extensions.
-> > > +      * Set file as system file if special file such as fifo, socket=
-, char
-> > > +      * or block and server expecting SFU style and no Unix extensio=
-ns.
-> > >        */
-> > >       if (create_options & CREATE_OPTION_SPECIAL)
-> > >               req->FileAttributes =3D cpu_to_le32(ATTR_SYSTEM);
-> > > diff --git a/fs/smb/client/smb1ops.c b/fs/smb/client/smb1ops.c
-> > > index e1f2feb56f45..e03c91a49650 100644
-> > > --- a/fs/smb/client/smb1ops.c
-> > > +++ b/fs/smb/client/smb1ops.c
-> > > @@ -1078,7 +1078,7 @@ cifs_make_node(unsigned int xid, struct inode *=
-inode,
-> > >       /*
-> > >        * Check if mounted with mount parm 'sfu' mount parm.
-> > >        * SFU emulation should work with all servers, but only
-> > > -      * supports block and char device (no socket & fifo),
-> > > +      * supports block and char device, socket & fifo,
-> > >        * and was used by default in earlier versions of Windows
-> > >        */
-> > >       if (!(cifs_sb->mnt_cifs_flags & CIFS_MOUNT_UNX_EMUL))
-> > > diff --git a/fs/smb/client/smb2ops.c b/fs/smb/client/smb2ops.c
-> > > index 9c2d065d3cc4..9e90672caf60 100644
-> > > --- a/fs/smb/client/smb2ops.c
-> > > +++ b/fs/smb/client/smb2ops.c
-> > > @@ -5066,26 +5066,32 @@ static int __cifs_sfu_make_node(unsigned int =
-xid, struct inode *inode,
-> > >       struct cifs_fid fid;
-> > >       unsigned int bytes_written;
-> > >       struct win_dev pdev =3D {};
-> > > +     size_t pdev_len =3D 0;
-> > >       struct kvec iov[2];
-> > >       __u32 oplock =3D server->oplocks ? REQ_OPLOCK : 0;
-> > >       int rc;
-> > >
-> > >       switch (mode & S_IFMT) {
-> > >       case S_IFCHR:
-> > > +             pdev_len =3D sizeof(pdev);
-> > >               memcpy(pdev.type, "IntxCHR\0", 8);
-> > >               pdev.major =3D cpu_to_le64(MAJOR(dev));
-> > >               pdev.minor =3D cpu_to_le64(MINOR(dev));
-> > >               break;
-> > >       case S_IFBLK:
-> > > +             pdev_len =3D sizeof(pdev);
-> > >               memcpy(pdev.type, "IntxBLK\0", 8);
-> > >               pdev.major =3D cpu_to_le64(MAJOR(dev));
-> > >               pdev.minor =3D cpu_to_le64(MINOR(dev));
-> > >               break;
-> > >       case S_IFSOCK:
-> > > -             strscpy(pdev.type, "LnxSOCK");
-> > > +             /* SFU socket is system file with one zero byte */
-> > > +             pdev_len =3D 1;
-> > > +             pdev.type[0] =3D '\0';
-> > >               break;
-> > >       case S_IFIFO:
-> > > -             strscpy(pdev.type, "LnxFIFO");
-> > > +             /* SFU fifo is system file which is empty */
-> > > +             pdev_len =3D 0;
-> > >               break;
-> > >       default:
-> > >               return -EPERM;
-> > > @@ -5100,14 +5106,17 @@ static int __cifs_sfu_make_node(unsigned int =
-xid, struct inode *inode,
-> > >       if (rc)
-> > >               return rc;
-> > >
-> > > -     io_parms.pid =3D current->tgid;
-> > > -     io_parms.tcon =3D tcon;
-> > > -     io_parms.length =3D sizeof(pdev);
-> > > -     iov[1].iov_base =3D &pdev;
-> > > -     iov[1].iov_len =3D sizeof(pdev);
-> > > +     if (pdev_len > 0) {
-> > > +             io_parms.pid =3D current->tgid;
-> > > +             io_parms.tcon =3D tcon;
-> > > +             io_parms.length =3D pdev_len;
-> > > +             iov[1].iov_base =3D &pdev;
-> > > +             iov[1].iov_len =3D pdev_len;
-> > > +
-> > > +             rc =3D server->ops->sync_write(xid, &fid, &io_parms,
-> > > +                                          &bytes_written, iov, 1);
-> > > +     }
-> > >
-> > > -     rc =3D server->ops->sync_write(xid, &fid, &io_parms,
-> > > -                                  &bytes_written, iov, 1);
-> > >       server->ops->close(xid, tcon, &fid);
-> > >       return rc;
-> > >  }
-> > > @@ -5149,7 +5158,7 @@ static int smb2_make_node(unsigned int xid, str=
-uct inode *inode,
-> > >       /*
-> > >        * Check if mounted with mount parm 'sfu' mount parm.
-> > >        * SFU emulation should work with all servers, but only
-> > > -      * supports block and char device (no socket & fifo),
-> > > +      * supports block and char device, socket & fifo,
-> > >        * and was used by default in earlier versions of Windows
-> > >        */
-> > >       if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_UNX_EMUL) {
-> > > --
-> > > 2.20.1
-> > >
-> >
+> > What is the reason that __NR_mmap not available in armhf ? (maybe it
+> > is another name ?)  there must be a way to call syscall directly on
+> > armhf, can we use that instead ?
 >
+> It seems __NR_mmap syscall is deprecated for arm. Found this comment in
+> arch/arm/include/asm/unistd.h:
+> /*
+>  * The following syscalls are obsolete and no longer available for EABI:
+>  *  __NR_time
+>  *  __NR_umount
+>  *  __NR_stime
+>  *  __NR_alarm
+>  *  __NR_utime
+>  *  __NR_getrlimit
+>  *  __NR_select
+>  *  __NR_readdir
+>  *  __NR_mmap
+>  *  __NR_socketcall
+>  *  __NR_syscall
+>  *  __NR_ipc
+>  */
+>
+> The glibc mmap() calls mmap2() these days by adjusting the parameters
+> internally. From man mmap:
+> C library/kernel differences:
+> This  page  describes the interface provided by the glibc mmap() wrapper
+> function.  Originally, this function invoked a system call of the same
+> name.  Since Linux 2.4, that system call has been superseded  by
+> mmap2(2), and nowadays the glibc mmap() wrapper function invokes
+> mmap2(2) with a suitably adjusted value for offset.
+>
+> I'm not sure if behaviour of glibc mmap() and syscall mmap2() would be
+> same, but we should use glibc at most places which accounts for
+> different architectures correctly. Maybe the differences were only
+> present in case of mremap().
 >
 > --
-> Thanks,
+> BR,
+> Muhammad Usama Anjum
 >
-> Steve
-
-
-
---=20
-Thanks,
-
-Steve
 
