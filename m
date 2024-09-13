@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-328682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD75C978751
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:57:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A1E5978752
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 638FC281334
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:57:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F2E11F21DF9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC837130ADA;
-	Fri, 13 Sep 2024 17:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F0A4136330;
+	Fri, 13 Sep 2024 17:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=phytec.com header.i=@phytec.com header.b="WxowanHw"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2119.outbound.protection.outlook.com [40.107.236.119])
+	dkim=pass (1024-bit key) header.d=phytec.com header.i=@phytec.com header.b="Pqs7hYDT"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2129.outbound.protection.outlook.com [40.107.101.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A80A126BE6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B70126C13;
 	Fri, 13 Sep 2024 17:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.119
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.129
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726250218; cv=fail; b=Kp8t0Xfe8h3jkACuvaVFJVa1Xystx8YXISp37T9RmuqTJ31vl3rfGNKTlxyDfGwKrHVgAoRDPKzer7FgD22O9Dc2u80sx3HwfKzS1rq0flnL9sVlItxAtAtRmjLjVZ0aSVmz4TSWaN5WreQbsB2RzCaD+H7CuYwXnN/jekSKwbA=
+	t=1726250218; cv=fail; b=UXWMFEIkM9GefXRYOzc+GSvvYde96AJD5/a5YE5tpGItLg9EOZSWht0rSMFsQCsPd1fWzhIYHhKmMiHtdbsrf+4iDJp0pNXis654cYIggDM9FR8n7M6x11y424slzLP3f8NGdAkDwBqomMk8n8vDmYtRolfLVQK8osTZVsdVM34=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1726250218; c=relaxed/simple;
-	bh=U8Pa9kuok6n/UKfsskfJFljjsTFrVe4XSxlempuU0SE=;
+	bh=5vNpXvKShIhaO9eK/gPpGgy9d3nnpLZTwldol40bAI4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Xps/vlXHGGiMhbzEWNVc6qx1pcI7roTUAjqOfGh9IPv4AkNg/84d7Je9Mj3gtiuX+Jqy6db3Nn1lMtt6qzPkDoM5H44Rk4fYWMLGisz+1bLX8KyiMUlae6JICT+4/8pUd0rR6fKNLBDr6Xxysji6iW0M+YnEwE6ZKB9ffuNaEis=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=phytec.com; spf=pass smtp.mailfrom=phytec.com; dkim=pass (1024-bit key) header.d=phytec.com header.i=@phytec.com header.b=WxowanHw; arc=fail smtp.client-ip=40.107.236.119
+	 Content-Type:MIME-Version; b=L+qpT8hfMwmx5Wa2VK5gETu46rc5BFZJ776ooJAr26vbHdAJwVyHBo/kSZ10GT+O48uFZrSaX3nmVAi1OIlhcXzCHfd1UuTBTUKpWZpP0wntVkHuW68yh39C/24NbMTVf4ihfOdm0ggKLmUrtOAqG1AZuvLJ+Pgx9SKu2kbpaXc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=phytec.com; spf=pass smtp.mailfrom=phytec.com; dkim=pass (1024-bit key) header.d=phytec.com header.i=@phytec.com header.b=Pqs7hYDT; arc=fail smtp.client-ip=40.107.101.129
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=phytec.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ndHIiarLjEordD6vGOeCqguD1sBFk78VZ4VpPxQEJ4LJflbUybxOhz7KAwrpTcJlDjQYykczoygWk/bTNQ7kjD3aTmA9mOONdMks6tcsVGZeM9n2Rj5YrDoJ3d3ca72qSE3HFaedAHPvzF+WFOIUEHdlOrmzEZo1aA4HQoT6t0Rf2Wq8LMSo5X/BAwUrxON7VkYlzyEE/ozwLKu9tXOpZSwOM1IYLic4NJrEkfctwDJrHnUqSkMD9omEMwVtEnNOxGNK8GiFvA3X2eACcavajmfc46yfqEdEiDLaOTRCsxUedrPOklagWiFH3s6JfPgDJ8Q+epFuPStO/zlqZlWj7Q==
+ b=ibV7xjbBHzJwsh7suh7XdR+mfwdZzazlgVbCd205iy8XiGm4XtSij2I1TFgkn9X8vweZAHJGpduAqz6vF0URfLZdmAkAhiuZ0gq9L4Jyi6yXHca2RaU/z0faEpXAVqyLIE2c0qnL7ZBBk9GRtHxL3B676kjLpvxNkvR6sRNQbp9Kq21QcEIf9YQpP2RHjwiFfveqAeUvHsWn5nMe6+JtsfOBQLaYwnMwqkHJb6acx9iEU2dPFeAd6RxyKHXpzu+C7y5UsAFJhtLAjJSJeUzz4CeQikLVt6/TiG9O8eSNwBaRYhyFIlI6+HJ1qHqR5QdtSD5JuNf+l3AKzSp1uKAJtQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=C0gIAgryXRwWSwCjR6EocccnpaGL8eCAzYmGJSIf2AY=;
- b=FsGaBFJCJp9uJkGwEtaWqOODYmWwY2LRkzqJAXMwt6ub4zIsVlMjoL0SttOY6VOrtDvAKIYBWWcmuqakNKNHJR9tuA/m4f7QEVblfzNWv0qH50VgfGqRYgyoLFF8UIb350zTeGpASJOO4pmA8eWGl5GzT+dFF8q5y8bLPKuiY5gBIpfG8qV+3Y12Ar3Ww/+7Icgr72qzkM+d+sxzplzCeb8qVYI0irCKtWUkIj0CwPWhe3olu/gQHaKAKnt0IlMWWTxOe/GmUHAv9OqmpZ2hfuJzrONhCtYHnW1+ahusfmCND3dK80q3YelHsp8ik7tF4ze6wIbPBT2gmjACUym2VQ==
+ bh=mZmCYQXL7QxXJWZlqJNUMObse+9EjHGPA8gvbfnCT2Y=;
+ b=KU2uexrrhjoe1QllP2yf8hojMBCHYrqfjAj3sbyqQKdV/aJwGM2ZnpS4ZE84q2FZUP0S2l0SZl0h3uXDvQPoTUB57XbEzt6suJChhu+zjn/PCJ1PmmuTX4cStXYwJ6wJsAVx8q4fcLn15iyC81Btu5CCgh1Nuk8jiM6J4kwjGOq4mDr+XEbKPjDV0e/qm70hgawIsNoSQIZHiIzR0ttjHVlai7ZCMKVfCNJR7NmAUv2pfk2S8CYsFvRTnS+qqfRM4UejoQUIofdaER4FCVrMbXKH3VmWpZQWv0kJB0Kj/rv+KsofFgaxRSQGJWMpdTg3ueBaco92L301/nHZxAU+MA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=phytec.com; dmarc=pass action=none header.from=phytec.com;
  dkim=pass header.d=phytec.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=phytec.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=C0gIAgryXRwWSwCjR6EocccnpaGL8eCAzYmGJSIf2AY=;
- b=WxowanHw7d7E6SpfWnKHTipfUMdVUFE6i5NS+LocHhkMkuKvqvd7CLCShgOT6pJciWI06x7fdGPmc/x9TSOxcRah3q66IWNYVL5scP7Vqz2e/cOyVrlgZBS/pYmGlbpUxJDcXY0tFs1+4JAhbgBkW09+70LUdKMwJ+cjPHcUPMY=
+ bh=mZmCYQXL7QxXJWZlqJNUMObse+9EjHGPA8gvbfnCT2Y=;
+ b=Pqs7hYDT5Aid4aN57Cl0gPIlO8FFxc7iuHmwufILhAN0WTrrUIc9ozSU81LDkCxfFH2bIo6P8M5WNi+3sKQ7Puf6W0HUCYNO0HtH+HsAcI916jgZ4fbt5iO9QnrYdDt3Nie7VvYrnXpzwaslF8hwiZtiWtifwXKyL1an2ZSBlCc=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=phytec.com;
 Received: from SJ2PR22MB4354.namprd22.prod.outlook.com (2603:10b6:a03:537::8)
- by SA6PR22MB5894.namprd22.prod.outlook.com (2603:10b6:806:411::13) with
+ by MW6PR22MB4151.namprd22.prod.outlook.com (2603:10b6:303:249::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.19; Fri, 13 Sep
- 2024 17:56:52 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.18; Fri, 13 Sep
+ 2024 17:56:54 +0000
 Received: from SJ2PR22MB4354.namprd22.prod.outlook.com
  ([fe80::789c:e41e:1367:383d]) by SJ2PR22MB4354.namprd22.prod.outlook.com
  ([fe80::789c:e41e:1367:383d%5]) with mapi id 15.20.7962.016; Fri, 13 Sep 2024
- 17:56:52 +0000
+ 17:56:53 +0000
 From: Garrett Giordano <ggiordano@phytec.com>
 To: nm@ti.com,
 	vigneshr@ti.com,
@@ -67,9 +67,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	upstream@lists.phytec.de
-Subject: [PATCH 1/2] arm64: dts: ti: am62-phycore-som: Increase cpu frequency to 1.4 GHz
-Date: Fri, 13 Sep 2024 10:56:24 -0700
-Message-Id: <20240913175625.3190757-2-ggiordano@phytec.com>
+Subject: [PATCH 2/2] arm64: dts: ti: Remove k3-am625-phyboard-lyra-1-4-ghz-opp overlay
+Date: Fri, 13 Sep 2024 10:56:25 -0700
+Message-Id: <20240913175625.3190757-3-ggiordano@phytec.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240913175625.3190757-1-ggiordano@phytec.com>
 References: <20240913175625.3190757-1-ggiordano@phytec.com>
@@ -85,118 +85,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR22MB4354:EE_|SA6PR22MB5894:EE_
-X-MS-Office365-Filtering-Correlation-Id: 611b6fbb-eeec-4fb7-4fcc-08dcd41d7263
+X-MS-TrafficTypeDiagnostic: SJ2PR22MB4354:EE_|MW6PR22MB4151:EE_
+X-MS-Office365-Filtering-Correlation-Id: 869b92f3-efbc-4a80-e0db-08dcd41d735c
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|366016|376014|52116014|38350700014;
+	BCL:0;ARA:13230040|52116014|376014|7416014|1800799024|366016|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?p+AatTEcbTCkugMpLGvX3bVeUketQC/OC/yUlrzXnMHvHK7fIvBpgBNkq26s?=
- =?us-ascii?Q?xrX3hfkSZE7CNG4AmMff5rqzUfxeTn7VRj6PU4u1DS7GBr0T0Q8mIUAd9lgO?=
- =?us-ascii?Q?9ik5WyTZ7SdmbdGeX0NNEMlNTlV/VjFQwPoAE7FYfhc+ABC4QRIG+fj5B6hb?=
- =?us-ascii?Q?U34lMYsbReZthr3oQLcHy+zXHZe5RTk9TX4E32PAenLtEmXz3BpGtdMBQlBp?=
- =?us-ascii?Q?oXDObFOuvs8kS+X23fonhoTHP68CFHAKkMqcOY1zo3W2SAAVzqEF0XxlN6lt?=
- =?us-ascii?Q?f6IGBaFGhCtsxi/ZqwxTu2NbWHEaogcwkD1BZ9xs4u1nTIwYUxXga2Ux1otQ?=
- =?us-ascii?Q?By7XyCrMi+7ZSlCFVWaeIAnxxvAIufaJr7CXLY9L9M4725KAaQp9D2y4yYep?=
- =?us-ascii?Q?3cf4gALbZA2kF8BSpzEdYtH3Qz09cA2RUKMoJMfnDPGsw8kjy1aJR+qsM3eD?=
- =?us-ascii?Q?6gmYu6iqnuuOVtRGHQ/xOCNqquInfDOzvXmTxAy9MwZey8Vz5ccxKqlgA83w?=
- =?us-ascii?Q?gfy2xrdiecHb2k9Gs5w9NqG4ttZVeSRaFzjLxoSjBezKH9YB+IOoEVeAzEZ3?=
- =?us-ascii?Q?5zNHbomdO24YvkeM2EoVjz56flLu1JaV1H5Gp9yaUSzvG+/Ug4YdLRBwktp6?=
- =?us-ascii?Q?Cna8n141DRCvn7i0njCbY61yhc8PX4lUX11W8zT0wKE1nO0yjztB7YOupSqY?=
- =?us-ascii?Q?oWVJhOgyLyE1ipFlFG9wWqAPOSwFFwNEIAFiwAQGYxA+mM2UG70P4XApGDnS?=
- =?us-ascii?Q?PqqFdCZ0DIiZ+MhQeiud4nJVxh8bcgWbnaWNKs/Mwgwta59D23erOV1joUnj?=
- =?us-ascii?Q?RMCdXMPzQ+l3KiV8yhomJdEU5cRPu9nmbd9XGcJTfB3QEpcu4tMjvI5+/4ht?=
- =?us-ascii?Q?JN74rmQuU67HJ2qYb0wUAD0mgm5o6YaGIe2mfDlqbg5kbQL+qyHZ+7WKFfl7?=
- =?us-ascii?Q?jQUDn9j0UUkqgwvOe6vJH6/kruyI3DVPsnNj2EegdGjdVP6yQ9w9QumZEP4X?=
- =?us-ascii?Q?CZDmEr8AZB9BVcwSBfbxSD7HHKBpbTnP9d2kzbHaBv0gPmoZfdkM7YFSYMQC?=
- =?us-ascii?Q?EBp3Fqkhgic3a+QCzFLQBR54aB3Z8LJKFkOLB/+YyRagjLNRug4W1bImHY6t?=
- =?us-ascii?Q?SHr92XG2rK9/ciOuX/t7KfKhQzWf6aLqCGjg/n7vKjN0Xz135kyQiwiyVnzl?=
- =?us-ascii?Q?iaIgJEkNNDqVeUa9VBoRRM2tW3a557mxrM5YFf2LH2L1ffkzplVNmfpHsiU8?=
- =?us-ascii?Q?G1WimI417WF29N4CibBZSi62jwj0DRXw22Ie2XlQoI3FWE5d2VgnekAOlyde?=
- =?us-ascii?Q?G7bH2jBzzxb9UDbZCeibaDC1fT4l1nk/0OGFy+VyNbOBW+mL8GalqfT3/S79?=
- =?us-ascii?Q?eJ1ZsWyFq3m6es+4tZIrj+9kaq4K6Y1AMmNtsBvb7ZQLR9xElQ=3D=3D?=
+	=?us-ascii?Q?Yln1+GPvaajooVx1OVym/xam95O7vLx41VQSHpKG8GXQfM/um2IylbmzHEdD?=
+ =?us-ascii?Q?FYCbg1faSFsl1IxlJ8Ciop+fTnooIRail2dOh60dJmotavw2CwOd2ofzyL/J?=
+ =?us-ascii?Q?Xr/myGXo0zlpP9WLnaF+LCHUpITeQv5vTnFilRS3dqdamfboFAihXiTXWP1D?=
+ =?us-ascii?Q?zrPqSSggje4PH5XycvxT8Q6PjbONaTYZ0eeDj5JIy0sJL3y19pSQaciDkf7m?=
+ =?us-ascii?Q?GVIXfUnXhexSOMcEnbVMxKa5LwOL0Lfh+2KZCuYk5f/s2gXyp36pu6heAMVF?=
+ =?us-ascii?Q?tgD3UBQV7iDLuIcSY3wyy66jzMpzX1OIv1OmCeKvFpoy7EmklxY14knjR2i7?=
+ =?us-ascii?Q?qew9BezEYgHphVbAM3+wevn5NbYEICnh+viuOwKkhjCPlo4nKK65mfQTOGgM?=
+ =?us-ascii?Q?cf/2nEy86bhTnuCYp6Nk44q0htRDwuDRat/RkDLOS8QMgxdeF57KPOXiLoSQ?=
+ =?us-ascii?Q?JQdz8xXRhxmAp12FAB+IJIkdJBwREtZbTx5s+d0Ks/o9r0Ou5r4j69awB+ga?=
+ =?us-ascii?Q?3gKIG482wHdH6yRo49xCx2i/id1wxsTpwsKB2PW2op1pgI7dnt4qEexbNoET?=
+ =?us-ascii?Q?2i85FnYfH4KLQC7zclCZI+T1SzO3FC+TWTaoGQepg6b3cvrj9ELnShgYYh5l?=
+ =?us-ascii?Q?AqhWhDgmAxGrlQFJDexPQoSUNEVRnFsl3frbZXJoXTUpGGBYNhVqtI0uPJLn?=
+ =?us-ascii?Q?qubb5hz4WK3u5eGB8Dnacs8S35cTajFLs7pT+s0Inpy7ni0jyLa3mhaPiaXc?=
+ =?us-ascii?Q?FuXXkQQEWdJx7nn/7ssAT7Tw7bHAa9RwTjKKmv38J1IUJgS981JIZsiaP6m4?=
+ =?us-ascii?Q?Ws1wUUFFubJlxGOcxY/FDqEz6KGP4HHbKdxq4d6mnh7dbeumXWFCouTFjOpN?=
+ =?us-ascii?Q?GRvy6tYop6GPGl0pFdwUqXg5ITiSCkDdwdBw+K2YfRcicCsRDfnxfYUT48ki?=
+ =?us-ascii?Q?p30JZvDqGPj0grgtpPNQS4b8z0t1ACkhn0tz0N9hg4w7FiA2EumlykAKkhQe?=
+ =?us-ascii?Q?SKKlXbWn7hsqIcx+vd2zWpOylXwhwp8L5YOk/KxWvhwUucX++cnhVKcqWA/F?=
+ =?us-ascii?Q?39CSJs6CaDeK5hrWfZb4+tnssSwldRCz97mbe394LeHJD+PPprmD4ARVY6s8?=
+ =?us-ascii?Q?SI+mFOW4aQt/gouqnkhCAXQ6Rwyg9MB4uWKrv5qEtLwrqH+WjJZTNUsjllj5?=
+ =?us-ascii?Q?guoL7vSdcAJ1FIqMN9CTi+5dpnKTOdA8FtXGmCJr0JkgjAuEEWt3t94pGlQG?=
+ =?us-ascii?Q?sebBKcxdWi8Ie1YQUyZgjwtYoOgsM040tn5T7Oelxmq5xu+feIGlhrQ7MFod?=
+ =?us-ascii?Q?CnG4yi3ERWSueI+31QK0zM1lIF5eeyPJsCx/2TjO3pGCK/8Y9Z6dfGWTGABZ?=
+ =?us-ascii?Q?5XLgBXiVg4TGVrIqKhWDTMCC0Y3wB9UxH1qoFMkQhhQbqDgPXw=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR22MB4354.namprd22.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR22MB4354.namprd22.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(7416014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Lt4mStZaAJBnNALlfU4QgnWb2qHiODPCd03KZQ7OwTUZPvRo/a4ZAq7Q8wE6?=
- =?us-ascii?Q?SPK+NGdj9Gzy7V7XpI35G3ikcRHWK5PFjo4cFwQlE3LfZgggTOmgYS0k45Ju?=
- =?us-ascii?Q?rQrZLy5NULmLCQqcvywd4/UEjt/XcjhFN3XTyPwkUI+Vv8IojaaCE/J0Isnc?=
- =?us-ascii?Q?33TLsPd3B7QBjrphG5fAoAY7GUdUnYBF4udFkwsCxlJ49C176XGVB1IH2edG?=
- =?us-ascii?Q?yNV979wZKYLfFPIpLG6ac3+So5Pv569X2avyVPsZGlP96MJzPvSG5YbfHX78?=
- =?us-ascii?Q?VdERbrVJjEBiTKK+yTSHJ9hijUUWVlUHPI8zmgMSJdUNmVtxVPf/OR1qRssF?=
- =?us-ascii?Q?Hwr7hGpxHaHMMh2bVvMZUhy6L3ljjLZ/IzOscTTfvo1huOzwHOfzVa8v92jj?=
- =?us-ascii?Q?UXp1z3EP+tr7ipdjA+/TM5hrmYaBNEEjfaLmFxGukv2V1XE7+JwQ6VITn/xo?=
- =?us-ascii?Q?X/sQeKKWnoagQM3ltUN/P7SGQOMwPzme/5i4QywjWgehGr5yqS8W5/8OyckQ?=
- =?us-ascii?Q?Yw45rPceNNKo1smMi2igG/bFRXBf6ZNE0O6F3ukpFB5pyEQ3hImPQJsduGOV?=
- =?us-ascii?Q?3QBKKbNIZ/OHbkLpGrNHQR/dq39F/KH/3vX5F1JU0GKdySkG3uENtef1XK/q?=
- =?us-ascii?Q?ST9yN1H+Powe64g8EQvoXTjALJSH/+Xcqdv/cBm6X4cw/mErBZognZ2IvOQ2?=
- =?us-ascii?Q?CPkOel4ElqPMabQJMfBoLYi7Xodxj2LMRXKz56h8Ac0peA+5uxBjhnYUIJM7?=
- =?us-ascii?Q?o1cLFxhJPBeMT/+7ZLE4JFj0AWsrGSXFoQT4Rou13c3+4Ncc/CSmnn/tYi1h?=
- =?us-ascii?Q?cs+Qf08amTRGHsjj9RV3njtcvk8TCeFX81Iy5VGGsEoipiF+pPTnjNz6Ad7/?=
- =?us-ascii?Q?sSGDm4SNCQU2Leq4P4W84UF4m68MyibWVs1GCZ7Q0mxapH5Ck13fNXP9Gf/4?=
- =?us-ascii?Q?3hPUCXf1UiwL67bXitq+jna2kzTxirUiBClOHBrXIkb329g/QNnSyqCVOYlc?=
- =?us-ascii?Q?ed5GR6BSHlGHJD/Ca7tqJmRjU6E2KVYnFy0BsOlE1sKI7J8ExyiS7CnyTEpu?=
- =?us-ascii?Q?M5KQNtC3QY9KiSdcI7AceNuXB3uYkmD6S5c2cc/O8x5JdxCWhCHCn8mLB0Pa?=
- =?us-ascii?Q?WUG0S4ibluUGc2CbKIuplCiWbVUN8LZgxsleEuCpy2rqE4Yq9K0uItQ3z704?=
- =?us-ascii?Q?/tY/NjBUbxgt739Xyf+LFqt7Yhu+uWfBe6iVOWSwcnKUSIZbO0HjOXim8Tyk?=
- =?us-ascii?Q?cnBvMHa0Ojho4oiZrMZx51aDNQ0eA8geYokbKwSNw+sQ3xKdehFV6ibmjY8v?=
- =?us-ascii?Q?nzlCN/ul/Ym2qFqdKRlxzC7iYJmqltT5t+BUxJkBIdNAstXe+J+uM8qItoNq?=
- =?us-ascii?Q?vgPF7F61r8o5JG18eCFHG3JtomWJGiNcvWgbYpv6Rl293056WKFXmBSC6aEn?=
- =?us-ascii?Q?VxB5PmBbSdsxmuYtOPNUs9qB9rAfUdsfZI3TNfxC4xic2uurMTOIzoWFGq2u?=
- =?us-ascii?Q?iZ/+mfgNsGZa6jb5FcP4z6Q+OAcaprMCVxn+gyjrtSpQwFPEihWusLZjVQqU?=
- =?us-ascii?Q?THOHePMdKDMX7YZQaQuVtigZK5QohIWYb5aMOjRi?=
+	=?us-ascii?Q?GQbKEI2P7BE4AQa9/x7Coev3YxMaCdRQq3hX8LH2mWcHQFZOgc4qzBEmiMmb?=
+ =?us-ascii?Q?kda+mRS1hmJWq6ocAclFtRTQsUcth5FmhnFzxbt9k/DxRuVRwm09e7ofE6CG?=
+ =?us-ascii?Q?/skZc+MsHk7IK3pMkv0gnaFl6c1Rt+p2UthZny8rlcdbHTXvrwbynDIVfUpK?=
+ =?us-ascii?Q?8KWDXmLv9FtxbO+R4om+r1+uyhbYk/7Ypy3O8xpICJSh9UHBa8bhoaaEogsw?=
+ =?us-ascii?Q?dW3R3SpQiJBIq9uvpVCLVD8sPFlE4IYMqLlD5xqODdflFWmzmIF38biX6ECh?=
+ =?us-ascii?Q?gAhXSgtsfGON8L27XgoUf/AifBOizPDNvPtnF4DRwW1EolI8ZOnRvnBc6lm3?=
+ =?us-ascii?Q?zpCwd8szeDmGVNL9YE5gklb5CTRnzHlx8ozOhtrIF9WdMrYtzbZUEnfWKsJc?=
+ =?us-ascii?Q?VSrrFXy1/5oFiWcMrwWiJoJNt28XsrxdlXHK9PwyBNjgLAoyGdT0p6svqmiZ?=
+ =?us-ascii?Q?6yD2ZGk0TR4SITIOBbJzz+AGBqQZ8MHNh3OTY6qtPd+AHu+FZwh6ZBR+LRu1?=
+ =?us-ascii?Q?TGF8EV/cVi2JQGsViy+os8ogWEN75T4Qkkoj7i5eyLDdPLkjcBO0JnLTWvtd?=
+ =?us-ascii?Q?DVrmhD7v39qOl0wMi/nHaHH+b2ElnsZey5N6Adu0dDqSJGVxg2UaowabmcIZ?=
+ =?us-ascii?Q?fT+P7NWTOzFEEC0aY1IQkqQ5fCz0awY7d+8Tf42lU/aGt+iJxZVBfVwzFnz9?=
+ =?us-ascii?Q?FDU59HmXaC17UTJeXyTf/naJuD4Rikq3zjouBQnjegF6+vWNYy/jiYIg1eoD?=
+ =?us-ascii?Q?219aHh4/DoI1TgES/dy3VVayGj2q/rq7SbBSVHdrKMSUFau/xbQyQmd7nVkL?=
+ =?us-ascii?Q?tWr16F5mTM6La6UrKo9X/UxW5HsnAVD4mf4+9dswDyO9xZHKG4JtLkcAh+EU?=
+ =?us-ascii?Q?vwWTqsxGN6SVFmkOj8c3yLf0i6oLJymifDrSWg5LgmpOo6mqjtnrewuMS0UK?=
+ =?us-ascii?Q?8u/xZkXGXoNWP3leeDtdwdtQ+XEKMQdVhQ9YLP4ruJFpWe1UuADkOIVa+Mqv?=
+ =?us-ascii?Q?IIi1o+rObCIQ/efZxpxKE76RTPZD7hhNloPxuSzzlpgfjQlHIwafTEIC5nYN?=
+ =?us-ascii?Q?cOmCIYrIF6/cJfHIiiRvunQn3FE3l3/zd5WbEaaHJRP0yPd/Zz1cOl1dyViT?=
+ =?us-ascii?Q?tB8RJJCpyqRtwArEWH1qkEdPtIg7pBRShkQHrG6kJB06LpfFgviOWnj/0+Yw?=
+ =?us-ascii?Q?emYvUmbEccFt8+FElknsUpBptC9PvgKeY/pNhC0U3aJ46caVfWokOrr9AGcn?=
+ =?us-ascii?Q?t1Q0UYcNy5DaO/gvDWvju7ILGV/FCoM/VQa/7m8JyDJYgVh9z9KNBF87K0eJ?=
+ =?us-ascii?Q?Qku/dYuFRZGArH8/vac7Faavv6/XQ1m5XQ651KI95fp5RC+CMRW0wiZ+KYxw?=
+ =?us-ascii?Q?yGYM2bzXSOjCZl7Yvd/ZS7JEBDgpgLYjDLU44sNkuHC2BY+J1Ec33GpPObkG?=
+ =?us-ascii?Q?PUi16u3ThZl9Ha1GR2b3odwiB2tgX+VUyDDMO905W6p74l5Q/+gfQSj6qH7/?=
+ =?us-ascii?Q?5M5Q0TWYOo86TS79IilOXN0cn7ypCFTSHXPjWj0MZ2Bl7ztjMQrkN2KuIe4T?=
+ =?us-ascii?Q?HiPpnnq5fc2IfoV5g3+DtGZ9TZbdvDRWd2cB2bck?=
 X-OriginatorOrg: phytec.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 611b6fbb-eeec-4fb7-4fcc-08dcd41d7263
+X-MS-Exchange-CrossTenant-Network-Message-Id: 869b92f3-efbc-4a80-e0db-08dcd41d735c
 X-MS-Exchange-CrossTenant-AuthSource: SJ2PR22MB4354.namprd22.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 17:56:52.0379
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 17:56:53.6220
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 67bcab1a-5db0-4ee8-86f4-1533d0b4b5c7
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZfhgHXtgKcWtG1nM2okSrTBXu3wflhYMGgTuu/wYF9xFY1ra7TYb2ifmuGkKgk9S971DxQfQWDVQdeMHBPJ7Ew==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA6PR22MB5894
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8/Xdm8KWXzCN+A05RS2x4aujiJdylJ+GVlo4mjl0e97mCcQS4z6k1FIm6wVVGlAv2c0exsmwZNo+zHPZaMC+uw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR22MB4151
 
-The am625 is capable of running at 1.4 GHz when VDD_CORE is increased
-from 0.75V to 0.85V. Here we add a 1.4 GHz node to the a53_opp_table and
-increase the VDD_CORE voltage accordingly.
+Remove the k3-am625-phyboard-lyra-1-4-ghz-opp overlay. We now
+configure the a53_opp_table to include a 1.4 GHz node and set our
+VDD_CORE to 0.85v in the k3-am62-phycore-som.dtsi. This change is to
+match our PMIC which is now set to output 0.85v by default.
 
 Signed-off-by: Garrett Giordano <ggiordano@phytec.com>
 ---
- arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ .../k3-am625-phyboard-lyra-1-4-ghz-opp.dtso   | 20 -------------------
+ 1 file changed, 20 deletions(-)
+ delete mode 100644 arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-1-4-ghz-opp.dtso
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi b/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi
-index ac8959f3d953..8acbd4facf37 100644
---- a/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62-phycore-som.dtsi
-@@ -205,6 +205,13 @@ AM62X_IOPAD(0x01f4, PIN_INPUT, 0) /* (D16) EXTINTn */
- 	};
- };
- 
-+&a53_opp_table {
-+	opp-1400000000 {
-+		opp-hz = /bits/ 64 <1400000000>;
-+		opp-supported-hw = <0x01 0x0004>;
-+	};
-+};
-+
- &mcu_m4fss {
- 	mboxes = <&mailbox0_cluster0 &mbox_m4_0>;
- 	memory-region = <&mcu_m4fss_dma_memory_region>,
-@@ -265,8 +272,8 @@ pmic@30 {
- 		regulators {
- 			vdd_core: buck1 {
- 				regulator-name = "VDD_CORE";
--				regulator-min-microvolt = <750000>;
--				regulator-max-microvolt = <750000>;
-+				regulator-min-microvolt = <850000>;
-+				regulator-max-microvolt = <850000>;
- 				regulator-boot-on;
- 				regulator-always-on;
- 			};
+diff --git a/arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-1-4-ghz-opp.dtso b/arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-1-4-ghz-opp.dtso
+deleted file mode 100644
+index 6ec6d57ec49c..000000000000
+--- a/arch/arm64/boot/dts/ti/k3-am625-phyboard-lyra-1-4-ghz-opp.dtso
++++ /dev/null
+@@ -1,20 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only OR MIT
+-/*
+- * Copyright (C) 2024 PHYTEC America LLC
+- * Author: Nathan Morrisson <nmorrisson@phytec.com>
+- */
+-
+-/dts-v1/;
+-/plugin/;
+-
+-&vdd_core {
+-	regulator-min-microvolt = <850000>;
+-	regulator-max-microvolt = <850000>;
+-};
+-
+-&a53_opp_table {
+-	opp-1400000000 {
+-		opp-hz = /bits/ 64 <1400000000>;
+-		opp-supported-hw = <0x01 0x0004>;
+-	};
+-};
 -- 
 2.25.1
 
