@@ -1,131 +1,178 @@
-Return-Path: <linux-kernel+bounces-327477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BAC7977679
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:42:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4F9F97767B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:43:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E5BD1C24297
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:42:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 670EE285C95
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E895F4A3E;
-	Fri, 13 Sep 2024 01:42:23 +0000 (UTC)
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281CE4A3E;
+	Fri, 13 Sep 2024 01:43:06 +0000 (UTC)
+Received: from mail03.siengine.com (mail03.siengine.com [43.240.192.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41E13FE4
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 01:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D714A06
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 01:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.240.192.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726191743; cv=none; b=P+IX112tmUcijUpZrQI8Nyv5w2YpVouS3VcgpxnI7QvIVP3Ar8WQgjWxRf9TfoM7e50q5u6FD+g0WtVV9gwMsaC7/HbB88FnoIiSSu6XD8Z77vOUMu/magTniqrIQ7nqVcjl1gSbay4k5ANhxJr3ZzEHpL94pVWyrqdCabu+heU=
+	t=1726191785; cv=none; b=mg/RGw25FWn1gKeqKu6KhUH/g76qVtHMUGuBafaQJ6p2iajd4TwpB5U0oFtdU+uDE7JyJVm4SgQHr93DXxGjKbgDGfaEIz/lv9QQeYIO8CsSCJb0eVpc24Q/NVE5RSmQAG7rBDDPbCoD8yESqlh/Maw90Xk9odnP0uZaGomChyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726191743; c=relaxed/simple;
-	bh=BVBPAKskZ2e4xhJDy2mkhR5EOL7VIVzmaqEZVTE+tEQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=soUdgbdwxOqXZQQhw61pD5Zd41kovhBYlvbvvTd8JvhyUp9YZuM7c17zg49kw+Ek5qchVx20C1tJC3TKdSxaJWhQ0+ivcz0MopvK9bXGNiOaElbKV93bJghQIs2e6/69IkA97xYZ83nBOEuYOLiD6e1gQbpwyAKk0fT/Qbk/Zik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=54.254.200.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shingroup.cn
-X-QQ-mid: bizesmtpsz10t1726191665tzs1mm
-X-QQ-Originating-IP: ntUUR5HCbH45R31EnJtFXoJQJMPf/PsHyejSfRzk1nE=
-Received: from HX09040029.powercore.com.cn ( [180.171.104.254])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 13 Sep 2024 09:40:53 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 6794888667536814964
-Date: Fri, 13 Sep 2024 09:40:29 +0800
-From: Luming Yu <luming.yu@shingroup.cn>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	mpe@ellerman.id.au, npiggin@gmail.com, jialong.yang@shingroup.cn,
-	luming.yu@gmail.com
-Subject: Re: [PATCH 1/2] powerpc/entry: convert to common and generic entry
-Message-ID: <153FD6B5CE4F97D9+ZuOYDQ-iHIIwJjbh@HX09040029.powercore.com.cn>
-References: <B4ABABEA5F13B86A+20240912082500.1469-1-luming.yu@shingroup.cn>
- <fc509bcd-5ca0-4dc2-962e-766a01cbe4fb@csgroup.eu>
+	s=arc-20240116; t=1726191785; c=relaxed/simple;
+	bh=gAvmkDRuJce7nI0PJsDZRjNGaiQYVFEP/ujm3GKyjzA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=lFdBCLnIeE/kvzdkK2AX2NUmIKxCDYnMoYR+wo+ZHUvb5LGDMh0tfI3l372Wpn92DfdBj3p1IBJd7nQGZXzNbE/8em/CUegkzDmKHiYNBoKc8sUmN1wITgVxf93vRJitklEjq1lOzM3bWMmbrDVIRrlOPbHrizgCj9WDg+nW7Cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com; spf=pass smtp.mailfrom=siengine.com; arc=none smtp.client-ip=43.240.192.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siengine.com
+Received: from dsgsiengine01.siengine.com ([10.8.1.61])
+	by mail03.siengine.com with ESMTPS id 48D1gCL6061266
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 13 Sep 2024 09:42:12 +0800 (+08)
+	(envelope-from kimriver.liu@siengine.com)
+Received: from SEEXMB03-2019.siengine.com (SEEXMB03-2019.siengine.com [10.8.1.33])
+	by dsgsiengine01.siengine.com (SkyGuard) with ESMTPS id 4X4cVq3ZtVz7ZMt2;
+	Fri, 13 Sep 2024 09:42:11 +0800 (CST)
+Received: from SEEXMB05-2019.siengine.com (10.8.1.153) by
+ SEEXMB03-2019.siengine.com (10.8.1.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.11; Fri, 13 Sep 2024 09:42:12 +0800
+Received: from SEEXMB03-2019.siengine.com (10.8.1.33) by
+ SEEXMB05-2019.siengine.com (10.8.1.153) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.2.1544.9; Fri, 13 Sep 2024 09:42:09 +0800
+Received: from SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe]) by
+ SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe%16]) with mapi id
+ 15.02.1544.011; Fri, 13 Sep 2024 09:42:09 +0800
+From: =?gb2312?B?TGl1IEtpbXJpdmVyL8H1vfC60w==?= <kimriver.liu@siengine.com>
+To: Andi Shyti <andi.shyti@kernel.org>,
+        Andy Shevchenko
+	<andy.shevchenko@gmail.com>
+CC: "jarkko.nikula@linux.intel.com" <jarkko.nikula@linux.intel.com>,
+        "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
+        "jsd@semihalf.com" <jsd@semihalf.com>,
+        "linux-i2c@vger.kernel.org"
+	<linux-i2c@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v10] i2c: designware: fix controller is holding SCL low
+ while ENABLE bit is disabled
+Thread-Topic: [PATCH v10] i2c: designware: fix controller is holding SCL low
+ while ENABLE bit is disabled
+Thread-Index: AQHbBNrkUD+mO8YM70mPDsgqfnC1TLJUWit3gACL0iA=
+Date: Fri, 13 Sep 2024 01:42:09 +0000
+Message-ID: <c3e590cc3db74234ac7a766babd46344@siengine.com>
+References: <cd5f6b0a57adf6fdff7bf3c24cb319bf778d61d6.1726121009.git.kimriver.liu@siengine.com>
+ <ZuMJoHWLU1FIznZR@surfacebook.localdomain>
+ <fpa7ufcpazewftgeoj72t3m7jumddvt23dzmqpr4znqx663yl7@4vckpbls2iyy>
+In-Reply-To: <fpa7ufcpazewftgeoj72t3m7jumddvt23dzmqpr4znqx663yl7@4vckpbls2iyy>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <fc509bcd-5ca0-4dc2-962e-766a01cbe4fb@csgroup.eu>
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:shingroup.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-DKIM-Results: [10.8.1.61]; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:mail03.siengine.com 48D1gCL6061266
 
-On Thu, Sep 12, 2024 at 12:23:29PM +0200, Christophe Leroy wrote:
-> 
-> 
-> Le 12/09/2024 à 10:24, Luming Yu a écrit :
-> > From: Yu Luming <luming.yu@gmail.com>
-> > 
-> > convert powerpc entry code in syscall and fault to use syscall_work
-> > and irqentry_state as well as common calls from generic entry infrastructure.
-> > 
-> > Signed-off-by: Luming Yu <luming.yu@shingroup.cn>
-> > ---
-> >   arch/powerpc/Kconfig                   | 1 +
-> >   arch/powerpc/include/asm/hw_irq.h      | 5 +++++
-> >   arch/powerpc/include/asm/processor.h   | 6 ++++++
-> >   arch/powerpc/include/asm/syscall.h     | 5 +++++
-> >   arch/powerpc/include/asm/thread_info.h | 1 +
-> >   arch/powerpc/kernel/syscall.c          | 6 +++++-
-> >   arch/powerpc/mm/fault.c                | 5 +++++
-> >   7 files changed, 28 insertions(+), 1 deletion(-)
-> 
-> There is another build problem:
-> 
->   CC      kernel/entry/common.o
-> kernel/entry/common.c: In function 'irqentry_exit':
-> kernel/entry/common.c:335:21: error: implicit declaration of function
-> 'regs_irqs_disabled'; did you mean 'raw_irqs_disabled'?
-> [-Werror=implicit-function-declaration]
->   335 |         } else if (!regs_irqs_disabled(regs)) {
->       |                     ^~~~~~~~~~~~~~~~~~
->       |                     raw_irqs_disabled
-> 
-> 
-> You have put regs_irqs_disabled() in a section dedicated to PPC64, so it
-> fails on PPC32.
-> 
-> 
-> After fixing this problem and providing an empty asm/entry-common.h it is
-> now possible to build the kernel. But that's not enough, the board is stuck
-> after:
-> 
-> ...
-> [    2.871391] Freeing unused kernel image (initmem) memory: 1228K
-> [    2.877990] Run /init as init process
-
-Thanks for these questions. :-)
-I haven't gotten chance to run it in ppc32 qemu.
-the common syscall trace enter lost this hunk
--       if (!is_32bit_task())
--               audit_syscall_entry(regs->gpr[0], regs->gpr[3], regs->gpr[4],
--                                   regs->gpr[5], regs->gpr[6]);
--       else
--               audit_syscall_entry(regs->gpr[0],
--                                   regs->gpr[3] & 0xffffffff,
--                                   regs->gpr[4] & 0xffffffff,
--                                   regs->gpr[5] & 0xffffffff,
--                                   regs->gpr[6] & 0xffffffff);
-which I don't understand whether we need a arch callbacks for it.
-
-Before I sent out the RFC patch set, the very limited compile and boot test goes well with a ppc64 qemu VM. Surely, there will be a lot of test, debug and following up patch set update that is necessary to make it a complete convert.
-
-And the patch set should really be re-named to RFC and v1. 
-
-Cheers  
-
-> 
-> 
-> Christophe
-> 
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5kaSBTaHl0aSA8YW5k
+aS5zaHl0aUBrZXJuZWwub3JnPiANCj4gU2VudDogMjAyNMTqOdTCMTPI1SAwOjM2DQo+IFRvOiBB
+bmR5IFNoZXZjaGVua28gPGFuZHkuc2hldmNoZW5rb0BnbWFpbC5jb20+DQo+IENjOiBMaXUgS2lt
+cml2ZXIvwfW98LrTIDxraW1yaXZlci5saXVAc2llbmdpbmUuY29tPjsgamFya2tvLm5pa3VsYUBs
+aW51eC5pbnRlbC5jb207IGFuZHJpeS5zaGV2Y2hlbmtvQGxpbnV4LmludGVsLmNvbTsgbWlrYS53
+ZXN0ZXJiZXJnQGxpbnV4LmludGVsLmNvbTsganNkQHNlbWloYWxmLmNvbTsgbGludXgtaTJjQHZn
+ZXIua2VybmVsLm9yZzsgbGludXgtPiBrZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6
+IFJlOiBbUEFUQ0ggdjEwXSBpMmM6IGRlc2lnbndhcmU6IGZpeCBjb250cm9sbGVyIGlzIGhvbGRp
+bmcgU0NMIGxvdyB3aGlsZSBFTkFCTEUgYml0IGlzIGRpc2FibGVkDQoNCj4gT24gVGh1LCBTZXAg
+MTIsIDIwMjQgYXQgMDY6MzI6NDhQTSBHTVQsIEFuZHkgU2hldmNoZW5rbyB3cm90ZToNCj4gPiBU
+aHUsIFNlcCAxMiwgMjAyNCBhdCAwMjoxMToxMlBNICswODAwLCBLaW1yaXZlciBMaXUga2lyam9p
+dHRpOg0KPiA+ID4gSXQgd2FzIG9ic2VydmVkIHRoYXQgaXNzdWluZyBBQk9SVCBiaXQgKElDX0VO
+QUJMRVsxXSkgd2lsbCBub3Qgd29yayANCj4gPiA+IHdoZW4gSUNfRU5BQkxFIGlzIGFscmVhZHkg
+ZGlzYWJsZWQuDQo+ID4gPiANCj4gPiA+IENoZWNrIGlmIEVOQUJMRSBiaXQgKElDX0VOQUJMRVsw
+XSkgaXMgZGlzYWJsZWQgd2hlbiB0aGUgY29udHJvbGxlciANCj4gPiA+IGlzIGhvbGRpbmcgU0NM
+IGxvdy4gSWYgRU5BQkxFIGJpdCBpcyBkaXNhYmxlZCwgdGhlIHNvZnR3YXJlIG5lZWQNCg0KPiAv
+bmVlZC9uZWVkcy8NCg0KPiA+ID4gdG8gZW5hYmxlIGl0IGJlZm9yZSB0cnlpbmcgdG8gaXNzdWUg
+QUJPUlQgYml0LiBvdGhlcndpc2UsDQoNCj4gL0FCT1JUL3RoZSBBQk9SVC8NCg0KPiA+ID4gdGhl
+IGNvbnRyb2xsZXIgaWdub3JlcyBhbnkgd3JpdGUgdG8gQUJPUlQgYml0Lg0KPj4gID4gDQo+PiAg
+PiBUaGVzZSBrZXJuZWwgbG9ncyBzaG93IHVwIHdoZW5ldmVyIGFuIEkyQyB0cmFuc2FjdGlvbiBp
+cyBhdHRlbXB0ZWQgDQo+PiAgPiBhZnRlciB0aGlzIGZhaWx1cmUuDQo+PiAgPiBpMmNfZGVzaWdu
+d2FyZSBlOTVlMDAwMC5pMmM6IHRpbWVvdXQgd2FpdGluZyBmb3IgYnVzIHJlYWR5IA0KPj4gID4g
+aTJjX2Rlc2lnbndhcmUgZTk1ZTAwMDAuaTJjOiB0aW1lb3V0IGluIGRpc2FibGluZyBhZGFwdGVy
+DQo+ID4gDQo+PiAgPiBUaGUgcGF0Y2ggY2FuIGJlIGZpeCB0aGUgY29udHJvbGxlciBjYW5ub3Qg
+YmUgZGlzYWJsZWQgd2hpbGUgU0NMIGlzIA0KPj4gID4gaGVsZCBsb3cgaW4gRU5BQkxFIGJpdCBp
+cyBhbHJlYWR5IGRpc2FibGVkLg0KPj4gIA0KPiA+IFRoZXJlIGFyZSBFbmdsaXNoIHdvcmRzIGJ1
+dCBhIGNvbXBsZXRlIG5vbnNlbnNlIHRvZ2V0aGVyLg0KDQo+IFdlIGNvdWxkIHJld29yZCB0aGlz
+IHRvOg0KDQo+IFRoZSBwYXRjaCBmaXhlcyB0aGUgaXNzdWUgd2hlcmUgdGhlIGNvbnRyb2xsZXIg
+Y2Fubm90IGJlIGRpc2FibGVkIHdoaWxlIFNDTCBpcyBoZWxkIGxvdyBpZiB0aGUgRU5BQkxFIGJp
+dCBpcyBhbHJlYWR5IGRpc2FibGVkLg0KDQo+ID4gICBGaXggdGhlIGNvbmRpdGlvbiB3aGVuIGNv
+bnRyb2xsZXIgY2Fubm90IGJlIGRpc2FibGVkIHdoaWxlIFNDTA0KDQo+IC93aGVuL3doZXJlLw0K
+DQo+ID4gICBpcyBoZWxkIGxvdyBhbmQgRU5BQkxFIGJpdCBpcyBhbHJlYWR5IGRpc2FibGVkLg0K
+DQo+IC9FTkFCTEUvdGhlIEVOQUJMRS8NCg0KPiBJZiB5b3UgYWdyZWUgd2l0aCB0aGUgY2hhbmdl
+cywgSSBjYW4gYXBwbHkgdGhlbSBiZWZvcmUgbWVyZ2luZy4NCg0KPiA+IA0KPiA+IFJldmlld2Vk
+LWJ5OiBBbmR5IFNoZXZjaGVua28gPGFuZHlAa2VybmVsLm9yZz4NCg0KPiBUaGFua3MgYSBsb3Qs
+IEFuZHkhIEkgcmVhbGx5IGFwcHJlY2lhdGUgeW91ciByZXZpZXdzIQ0KDQo+ID4gLi4uDQo+ID4g
+DQo+ID4gPiArCQlpZiAoIShlbmFibGUgJiBEV19JQ19FTkFCTEVfRU5BQkxFKSkgew0KPiA+ID4g
+KwkJCXJlZ21hcF93cml0ZShkZXYtPm1hcCwgRFdfSUNfRU5BQkxFLCBEV19JQ19FTkFCTEVfRU5B
+QkxFKTsNCj4gPiA+ICsJCQkvKg0KPj4gPiArCQkJICogV2FpdCAxMCB0aW1lcyB0aGUgc2lnbmFs
+aW5nIHBlcmlvZCBvZiB0aGUgaGlnaGVzdCBJMkMNCj4+ID4gKwkJCSAqIHRyYW5zZmVyIHN1cHBv
+cnRlZCBieSB0aGUgZHJpdmVyIChmb3IgNDAwS0h6IHRoaXMgaXMNCj4gPiA+ICsJCQkgKiAyNXVz
+KSB0byBlbnN1cmUgdGhlIEkyQyBFTkFCTEUgYml0IGlzIGFscmVhZHkgc2V0DQo+ID4gPiArCQkJ
+ICogYXMgZGVzY3JpYmVkIGluIHRoZSBEZXNpZ25XYXJlIEkyQyBkYXRhYm9vay4NCj4gPiA+ICsJ
+CQkgKi8NCj4gPiA+ICsJCQlmc2xlZXAoRElWX1JPVU5EX0NMT1NFU1RfVUxMKDEwICogTUlDUk8s
+IHQtPmJ1c19mcmVxX2h6KSk7DQo+ID4gDQo+ID4gPiArCQkJLyogS2VlcCBFTkFCTEUgYml0IGlz
+IGFscmVhZHkgc2V0IGJlZm9yZSBTZXR0aW5nIEFCT1JULiovDQo+PiAgDQo+PiAgCQkJLyogU2V0
+IEVOQUJMRSBiaXQgYmVmb3JlIHNldHRpbmcgQUJPUlQgKi8NCj4+ICANCj4+ICANCj4+ID4gKwkJ
+CWVuYWJsZSB8PSBEV19JQ19FTkFCTEVfRU5BQkxFOw0KPj4gPiArCQl9DQo+ID4gDQo+Pg0KPiA+
+IA0KPiA+ID4gKy8qDQo+ID4gPiArICogVGhpcyBmdW5jdGlvbnMgd2FpdHMgY29udHJvbGxlciBp
+ZGxpbmcgYmVmb3JlIGRpc2FibGluZyBJMkMNCj4gPiANCj4gPiBzL2Z1bmN0aW9ucy9mdW5jdGlv
+bi8NCg0KPiBJIGNhbiBmaXggaXQgYmVmb3JlIG1lcmdpbmcuDQoNCk9Lo6xJIGFncmVlIHdpdGgg
+eW91ciBmaXhpbmcgaXQgYmVmb3JlIG1lcmdpbmcuIFRoYW5rcyBmb3IgeW91ciByZXZpZXchDQoN
+Cj4gPiA+ICsgKiBXaGVuIHRoZSBjb250cm9sbGVyIGlzIG5vdCBpbiB0aGUgSURMRSBzdGF0ZSwN
+Cj4gPiA+ICsgKiBNU1RfQUNUSVZJVFkgYml0IChJQ19TVEFUVVNbNV0pIGlzIHNldC4NCj4gPiA+
+ICsgKiBWYWx1ZXM6DQo+ID4gPiArICogMHgxIChBQ1RJVkUpOiBDb250cm9sbGVyIG5vdCBpZGxl
+DQo+PiAgPiArICogMHgwIChJRExFKTogQ29udHJvbGxlciBpcyBpZGxlDQo+PiAgPiArICogVGhl
+IGZ1bmN0aW9uIGlzIGNhbGxlZCBhZnRlciByZXR1cm5pbmcgdGhlIGVuZCBvZiB0aGUgY3VycmVu
+dCANCj4+ICA+ICt0cmFuc2Zlcg0KPj4gID4gKyAqIFJldHVybnM6DQo+ID4gPiArICogRmFsc2Ug
+d2hlbiBjb250cm9sbGVyIGlzIGluIElETEUgc3RhdGUuDQo+PiAgPiArICogVHJ1ZSB3aGVuIGNv
+bnRyb2xsZXIgaXMgaW4gQUNUSVZFIHN0YXRlLg0KPiA+ID4gKyAqLw0KPiA+ID4gK3N0YXRpYyBi
+b29sIGkyY19kd19pc19jb250cm9sbGVyX2FjdGl2ZShzdHJ1Y3QgZHdfaTJjX2RldiAqZGV2KSB7
+DQo+ID4gPiArCXUzMiBzdGF0dXM7DQo+ID4gPiArDQo+PiAgPiArCXJlZ21hcF9yZWFkKGRldi0+
+bWFwLCBEV19JQ19TVEFUVVMsICZzdGF0dXMpOw0KPiA+ID4gKwlpZiAoIShzdGF0dXMgJiBEV19J
+Q19TVEFUVVNfTUFTVEVSX0FDVElWSVRZKSkNCj4gPiA+ICsJCXJldHVybiBmYWxzZTsNCj4+ICA+
+ICsNCj4+ICA+ICsJcmV0dXJuIHJlZ21hcF9yZWFkX3BvbGxfdGltZW91dChkZXYtPm1hcCwgRFdf
+SUNfU1RBVFVTLCBzdGF0dXMsDQo+PiAgPiArCQkJCSAgICAgICAhKHN0YXR1cyAmIERXX0lDX1NU
+QVRVU19NQVNURVJfQUNUSVZJVFkpLA0KPj4gID4gKwkJCQkJMTEwMCwgMjAwMDApICE9IDA7DQo+
+ID4gDQo+ID4gCXJldHVybiByZWdtYXBfcmVhZF9wb2xsX3RpbWVvdXQoZGV2LT5tYXAsIERXX0lD
+X1NUQVRVUywgc3RhdHVzLA0KPj4gIAkJCQkJIShzdGF0dXMgJiBEV19JQ19TVEFUVVNfTUFTVEVS
+X0FDVElWSVRZKSwNCj4gPiAJCQkJCTExMDAsIDIwMDAwKSAhPSAwOw0KPiANCj4gPiAoaW4gdGhl
+IHNlY29uZCBsaW5lIHJlcGxhY2VkIDcgc3BhY2VzIGJ5IGEgc2luZ2xlIFRBQiB0byBmaXggdGhl
+IA0KPj4gIGluZGVudGF0aW9uKQ0KDQo+IEkgY2FuIGZpeCBpdCBiZWZvcmUgbWVyZ2luZy4NCg0K
+PiBLaW1yaXZlciwgaWYgeW91IGFncmVlLCBpIGNhbiBtZXJnZSB0aGlzIGFuZCBxdWV1ZSBpdCBm
+b3IgdGhlIG5leHQgd2VlaydzIGZpeGVzIG1lcmdlIHJlcXVlc3QuDQo+QW5kaQ0KDQogT0ujrEkg
+YWdyZWUuIA0KICBEbyBJIHN0aWxsIG5lZWQgdG8gdXBkYXRlIHRvIHBhdGNoIFYxMT8gT3IgeW91
+IGZpeCBpdCBiZWZvcmUgbWVyZ2luZw0KDQogVGhhbmtzIGZvciB0YWtpbmcgdGhlIHRpbWUgdG8g
+cmV2aWV3IHRoZSBwYXRjaCwgIEkgaGF2ZSBsZWFybmVkIGEgbG90IG9mIGtub3dsZWRnZSAuDQoN
+Cj4gPiArfQ0KPiANCj4gLi4uDQo+IA0KPiA+ICsJLyoNCj4gPiArCSAqIFRoaXMgaGFwcGVucyBy
+YXJlbHkgKH4xOjUwMCkgYW5kIGlzIGhhcmQgdG8gcmVwcm9kdWNlLiBEZWJ1ZyB0cmFjZQ0KPiA+
+ICsJICogc2hvd2VkIHRoYXQgSUNfU1RBVFVTIGhhZCB2YWx1ZSBvZiAweDIzIHdoZW4gU1RPUF9E
+RVQgb2NjdXJyZWQsDQo+ID4gKwkgKiBpZiBkaXNhYmxlIElDX0VOQUJMRS5FTkFCTEUgaW1tZWRp
+YXRlbHkgdGhhdCBjYW4gcmVzdWx0IGluDQo+ID4gKwkgKiBJQ19SQVdfSU5UUl9TVEFULk1BU1RF
+Ul9PTl9IT0xEIGhvbGRpbmcgU0NMIGxvdy4gQ2hlY2sgaWYNCj4gPiArCSAqIGNvbnRyb2xsZXIg
+aXMgc3RpbGwgQUNUSVZFIGJlZm9yZSBkaXNhYmxpbmcgSTJDLg0KPiA+ICsJICovDQo+ID4gKwlp
+ZiAoaTJjX2R3X2lzX2NvbnRyb2xsZXJfYWN0aXZlKGRldikpDQo+ID4gKwkJZGV2X2VycihkZXYt
+PmRldiwgImNvbnRyb2xsZXIgYWN0aXZlXG4iKTsNCj4gDQo+IC0tDQo+IFdpdGggQmVzdCBSZWdh
+cmRzLA0KPiBBbmR5IFNoZXZjaGVua28NCj4gDQo+IA0KDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0NCkJlc3QgUmVnYXJkcw0KS2ltcml2ZXIgTGl1DQo=
 
