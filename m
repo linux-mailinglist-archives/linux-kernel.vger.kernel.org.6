@@ -1,125 +1,146 @@
-Return-Path: <linux-kernel+bounces-328413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0FBA97830E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:58:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D50B978310
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F275287DF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:58:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B33F22893C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:58:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A63D6F31E;
-	Fri, 13 Sep 2024 14:57:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E525275804;
+	Fri, 13 Sep 2024 14:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="frB2zXBk"
-Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Hd3d3OBG";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Hd3d3OBG"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21370208B0
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CCED1EEE6
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726239420; cv=none; b=EeDeXehJ0lVIyPertn4vnEDQn5mReiV20It7P7gFz6eYxLJCD2eRix03lpNI4oKZkaBuCYtdH2FjhDRBDejrKLOmzD5qjLoTO914w6ZlC4OxYveKKJDtWLDt5ItCK4FTfh2gm3XVf6pnyKgNf4yutZCyfHA4No6sOpy7Pmj6D2c=
+	t=1726239424; cv=none; b=LBYYK9zYBNfmRoYZq7sMXiPF9ISd4r6bVxlWp0vZ1lcEF3jF0NSgXMYR9/WSw4C1NHfsndF+G6eIWlXp6h1dl8FXVvxsTGGXpT9jq2HplPsqMsY8l5qVZDOBvXw6WR1JX0wY7zSj3KGbX9mBOx0Bd6m9tfQZoA7TtMwJOSwlTs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726239420; c=relaxed/simple;
-	bh=bk5fBYoRubuV3SwJbAObGRT8vGObXynBdtgnt0h4beo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N2uIQsraYmvhksVl6QQEPd4bg/1nZNrI+D6AFzBI9lro78jgiyZSFLywuElFTzN5EmbMokix2DIuk25KkntAcWN5LCHE9MlLi3pKv8EW0W2SuDXPKrokxDK+ID9P9IurHOUSdQz4V/78dYq5l/2caA+T5cl74Hf2lYsy68Ss9ZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=frB2zXBk; arc=none smtp.client-ip=80.12.242.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id p7j0sSUf9oR4tp7j1soqq0; Fri, 13 Sep 2024 16:56:51 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1726239411;
-	bh=2ppfZtFE3UF/ZPMPNi/oYz7eBBncngRv+97pSLrZhqA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=frB2zXBkPf2SbckhFM/MElr0u4oWmiNEG9WMsoDpJ/9F4I7EYcra7Vs8SKV+jLf+1
-	 WWGlSmHvc/f7s+3oGUMSXH5RIL/A2V+mD/tDQ2Npd7phpBuZLSvDKJhe1Lm1JTLPfu
-	 aoxhKvyROQrUYZ8kb0VNSo/Qfd2ONclCAzrvbaA7mu5HE+UmjR/zDHxx+E1fE7Es+7
-	 kJbvvCde1ENSFzGt/J6Qu/wq7dZt4HKhih6QC9K5ksQM1/n4HyKc1NWK5Yw0uZwRO6
-	 s4b/ny6bMWwAvVEVZZhnBEqRRMu4p2PMo2aiVQriYVg2PMV8jODsa9EVN43ryFMzxo
-	 R4XOTF72vKrbw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Fri, 13 Sep 2024 16:56:51 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <e2d7ed77-827b-4b7c-800c-9c8f3bcb6b5a@wanadoo.fr>
-Date: Fri, 13 Sep 2024 16:56:42 +0200
+	s=arc-20240116; t=1726239424; c=relaxed/simple;
+	bh=u0oqinYA3P1PM3z6qIR5L+Du3AcQ6m6F7ZK3431VRk0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UB86aLieA2bC4SeMU8V4gWesYnz29PeKIz/mJm2wXHWhaV1+a/Y5q/7RbrdhHUNeLzPYMnrAFO0L5jSD+z4lHa1l7Xa/cG2UAa/balBcKts8todnEotvFol7kh7rYOwsHJ2oQFjL/BkjFpH5zylN0+1S83e0Q/XWtFuYUtYVVbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Hd3d3OBG; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Hd3d3OBG; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 04A941FD10;
+	Fri, 13 Sep 2024 14:57:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1726239421; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=MHWoAUv4ldqATPzGpmkCnxdPYx6ziXNFVp80sHhmRlM=;
+	b=Hd3d3OBG+MS0uDJ5W/ZkTD7/0ekjKu8fMqihMMXxT1pOwq2AMisqIk/5nplvH8GkPhfY7+
+	sj/YhjwnkfJxzp471M7j66qePv6D7hA6ewX0dk/3emRmcqtRShZnNktCfcgu3NFP8EXMNh
+	6dvfKiXur1eVe+PQo/GBv2lJaUCuvgo=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1726239421; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=MHWoAUv4ldqATPzGpmkCnxdPYx6ziXNFVp80sHhmRlM=;
+	b=Hd3d3OBG+MS0uDJ5W/ZkTD7/0ekjKu8fMqihMMXxT1pOwq2AMisqIk/5nplvH8GkPhfY7+
+	sj/YhjwnkfJxzp471M7j66qePv6D7hA6ewX0dk/3emRmcqtRShZnNktCfcgu3NFP8EXMNh
+	6dvfKiXur1eVe+PQo/GBv2lJaUCuvgo=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C06C513999;
+	Fri, 13 Sep 2024 14:57:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id q+FxLbxS5GZ5QwAAD6G6ig
+	(envelope-from <jgross@suse.com>); Fri, 13 Sep 2024 14:57:00 +0000
+From: Juergen Gross <jgross@suse.com>
+To: linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Cc: Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	xen-devel@lists.xenproject.org
+Subject: [PATCH] xen/swiotlb: add alignment check for dma buffers
+Date: Fri, 13 Sep 2024 16:56:55 +0200
+Message-ID: <20240913145655.10076-1-jgross@suse.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 v2 1/4] riscv: dts: starfive: add assigned-clock* to
- limit frquency
-To: WangYuli <wangyuli@uniontech.com>, stable@vger.kernel.org,
- gregkh@linuxfoundation.org, sashal@kernel.org, william.qiu@starfivetech.com,
- emil.renner.berthing@canonical.com, conor.dooley@microchip.com,
- xingyu.wu@starfivetech.com, walker.chen@starfivetech.com, robh@kernel.org,
- hal.feng@starfivetech.com
-Cc: kernel@esmil.dk, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- conor+dt@kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, devicetree@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- richardcochran@gmail.com, netdev@vger.kernel.org
-References: <3A31C289BC240955+20240912025539.1928223-1-wangyuli@uniontech.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <3A31C289BC240955+20240912025539.1928223-1-wangyuli@uniontech.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:email,imap1.dmz-prg2.suse.org:helo];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Le 12/09/2024 à 04:55, WangYuli a écrit :
-> From: William Qiu <william.qiu@starfivetech.com>
-> 
-> [ Upstream commit af571133f7ae028ec9b5fdab78f483af13bf28d3 ]
-> 
-> In JH7110 SoC, we need to go by-pass mode, so we need add the
-> assigned-clock* properties to limit clock frquency.
-> 
-> Signed-off-by: William Qiu <william.qiu@starfivetech.com>
-> Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
-> ---
+When checking a memory buffer to be consecutive in machine memory,
+the alignment needs to be checked, too. Failing to do so might result
+in DMA memory not being aligned according to its requested size,
+leading to error messages like:
 
-Hi,
+  4xxx 0000:2b:00.0: enabling device (0140 -> 0142)
+  4xxx 0000:2b:00.0: Ring address not aligned
+  4xxx 0000:2b:00.0: Failed to initialise service qat_crypto
+  4xxx 0000:2b:00.0: Resetting device qat_dev0
+  4xxx: probe of 0000:2b:00.0 failed with error -14
 
-if/when resent, there is a typo in the subject: s/frquency/frequency/
+Signed-off-by: Juergen Gross <jgross@suse.com>
+---
+ drivers/xen/swiotlb-xen.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-CJ
-
-
->   .../riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
-> index 062b97c6e7df..4874e3bb42ab 100644
-> --- a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
-> +++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
-> @@ -204,6 +204,8 @@ &i2c6 {
->   
->   &mmc0 {
->   	max-frequency = <100000000>;
-> +	assigned-clocks = <&syscrg JH7110_SYSCLK_SDIO0_SDCARD>;
-> +	assigned-clock-rates = <50000000>;
->   	bus-width = <8>;
->   	cap-mmc-highspeed;
->   	mmc-ddr-1_8v;
-> @@ -220,6 +222,8 @@ &mmc0 {
->   
->   &mmc1 {
->   	max-frequency = <100000000>;
-> +	assigned-clocks = <&syscrg JH7110_SYSCLK_SDIO1_SDCARD>;
-> +	assigned-clock-rates = <50000000>;
->   	bus-width = <4>;
->   	no-sdio;
->   	no-mmc;
+diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
+index 35155258a7e2..11f4b1195324 100644
+--- a/drivers/xen/swiotlb-xen.c
++++ b/drivers/xen/swiotlb-xen.c
+@@ -78,9 +78,15 @@ static inline int range_straddles_page_boundary(phys_addr_t p, size_t size)
+ {
+ 	unsigned long next_bfn, xen_pfn = XEN_PFN_DOWN(p);
+ 	unsigned int i, nr_pages = XEN_PFN_UP(xen_offset_in_page(p) + size);
++	unsigned int order = get_order(size);
+ 
+ 	next_bfn = pfn_to_bfn(xen_pfn);
+ 
++	/* If buffer is physically aligned, ensure DMA alignment. */
++	if (IS_ALIGNED(p, 1UL << (order + PAGE_SHIFT)) &&
++	    !IS_ALIGNED(next_bfn, 1UL << order))
++		return 1;
++
+ 	for (i = 1; i < nr_pages; i++)
+ 		if (pfn_to_bfn(++xen_pfn) != ++next_bfn)
+ 			return 1;
+-- 
+2.43.0
 
 
