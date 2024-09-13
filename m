@@ -1,146 +1,78 @@
-Return-Path: <linux-kernel+bounces-328414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D50B978310
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:58:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 501F197830D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B33F22893C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:58:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1A1128A4AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E525275804;
-	Fri, 13 Sep 2024 14:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7993061FC4;
+	Fri, 13 Sep 2024 14:56:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Hd3d3OBG";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="Hd3d3OBG"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evbdHCti"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CCED1EEE6
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF8C1EEE6;
+	Fri, 13 Sep 2024 14:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726239424; cv=none; b=LBYYK9zYBNfmRoYZq7sMXiPF9ISd4r6bVxlWp0vZ1lcEF3jF0NSgXMYR9/WSw4C1NHfsndF+G6eIWlXp6h1dl8FXVvxsTGGXpT9jq2HplPsqMsY8l5qVZDOBvXw6WR1JX0wY7zSj3KGbX9mBOx0Bd6m9tfQZoA7TtMwJOSwlTs0=
+	t=1726239418; cv=none; b=ZNqCgCbFwW1Kehw2MfDVyXkL4wIjrlwvjPAo5nscvwCS1/qi8vKbkEVfqbxHa/hndgsJDTcGJJXhaX6CQtONXHM+HqXzvcZbVxTroykqlue4k03+tzbtpseAEtHKOiqDSsEshQ8aB99n/5ChTZ9dUsmmhdTP6YFzpM4xQmfRRa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726239424; c=relaxed/simple;
-	bh=u0oqinYA3P1PM3z6qIR5L+Du3AcQ6m6F7ZK3431VRk0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UB86aLieA2bC4SeMU8V4gWesYnz29PeKIz/mJm2wXHWhaV1+a/Y5q/7RbrdhHUNeLzPYMnrAFO0L5jSD+z4lHa1l7Xa/cG2UAa/balBcKts8todnEotvFol7kh7rYOwsHJ2oQFjL/BkjFpH5zylN0+1S83e0Q/XWtFuYUtYVVbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Hd3d3OBG; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=Hd3d3OBG; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 04A941FD10;
-	Fri, 13 Sep 2024 14:57:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1726239421; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=MHWoAUv4ldqATPzGpmkCnxdPYx6ziXNFVp80sHhmRlM=;
-	b=Hd3d3OBG+MS0uDJ5W/ZkTD7/0ekjKu8fMqihMMXxT1pOwq2AMisqIk/5nplvH8GkPhfY7+
-	sj/YhjwnkfJxzp471M7j66qePv6D7hA6ewX0dk/3emRmcqtRShZnNktCfcgu3NFP8EXMNh
-	6dvfKiXur1eVe+PQo/GBv2lJaUCuvgo=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1726239421; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=MHWoAUv4ldqATPzGpmkCnxdPYx6ziXNFVp80sHhmRlM=;
-	b=Hd3d3OBG+MS0uDJ5W/ZkTD7/0ekjKu8fMqihMMXxT1pOwq2AMisqIk/5nplvH8GkPhfY7+
-	sj/YhjwnkfJxzp471M7j66qePv6D7hA6ewX0dk/3emRmcqtRShZnNktCfcgu3NFP8EXMNh
-	6dvfKiXur1eVe+PQo/GBv2lJaUCuvgo=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C06C513999;
-	Fri, 13 Sep 2024 14:57:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id q+FxLbxS5GZ5QwAAD6G6ig
-	(envelope-from <jgross@suse.com>); Fri, 13 Sep 2024 14:57:00 +0000
-From: Juergen Gross <jgross@suse.com>
-To: linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev
-Cc: Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	xen-devel@lists.xenproject.org
-Subject: [PATCH] xen/swiotlb: add alignment check for dma buffers
-Date: Fri, 13 Sep 2024 16:56:55 +0200
-Message-ID: <20240913145655.10076-1-jgross@suse.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726239418; c=relaxed/simple;
+	bh=NCdjJCJ0ZIj5gtppWyq68KprL6Ix4U5xy2TvUU3fOp0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gjhoUUXN2CNr9lbbZzXj7hGQ8C9EmFuEptQodkndG1y8BRWRmCYW5N1KNjjyp7tfW2ffXPmqnaIMML/MupjkSpZS0XRIf6W/XnSBVcMhR72ydZFgU3kNkdCtEceqsFmF9nODxOKwhio+JEI8ol2CBhB0epLXXqprBaqNxFG/ap0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evbdHCti; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 065C8C4CEC0;
+	Fri, 13 Sep 2024 14:56:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726239418;
+	bh=NCdjJCJ0ZIj5gtppWyq68KprL6Ix4U5xy2TvUU3fOp0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=evbdHCtiKvZ+iWRwGctlekfnIR5ieEyGejDSV1sCQxLV+/hOoi2ECye4PjKcEQHt/
+	 PBKq3ojc3tWDhXZjajXozziBt6KjlUvbyn3zzoKhs2weu7IRl/UFrQvL+R0m+Fgq/s
+	 r5CegLuUW68AVrEMW5+ARIET11620yAKrKHLjjWpRl0hUbOAs3nMCoW+44ysZ+B8//
+	 ava2huQAPOs057SY0VCF3/MK1nqMLWCgLJfqFNekC3+rMfeXaDWcM0acLbKqWF7kFG
+	 dxcMxpaCVzOUsjthRNRGe1q8uL5f7C4TOhjibVWP95sSF5HNIySl98Wla7tJ5NSwLa
+	 R0DwwK62D8vew==
+Date: Fri, 13 Sep 2024 07:56:57 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jamie Bainbridge <jamie.bainbridge@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Shuah Khan
+ <shuah@kernel.org>, Ido Schimmel <idosch@nvidia.com>, Nikolay Aleksandrov
+ <razor@blackwall.org>, netdev@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] selftests: forwarding: Avoid false MDB delete/flush
+ failures
+Message-ID: <20240913075657.6062ad40@kernel.org>
+In-Reply-To: <b77ab871df2475df37aa29672c9bbcc33d03e90f.1726220359.git.jamie.bainbridge@gmail.com>
+References: <b77ab871df2475df37aa29672c9bbcc33d03e90f.1726220359.git.jamie.bainbridge@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:email,imap1.dmz-prg2.suse.org:helo];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-When checking a memory buffer to be consecutive in machine memory,
-the alignment needs to be checked, too. Failing to do so might result
-in DMA memory not being aligned according to its requested size,
-leading to error messages like:
+On Fri, 13 Sep 2024 19:40:04 +1000 Jamie Bainbridge wrote:
+> Running this test on a small system produces different failures every
+> test checking deletions, and some flushes. From different test runs:
 
-  4xxx 0000:2b:00.0: enabling device (0140 -> 0142)
-  4xxx 0000:2b:00.0: Ring address not aligned
-  4xxx 0000:2b:00.0: Failed to initialise service qat_crypto
-  4xxx 0000:2b:00.0: Resetting device qat_dev0
-  4xxx: probe of 0000:2b:00.0 failed with error -14
+This increases the runtime of the test 1m 25s -> 1m 35s sec which may
+be fine. But unfortunately it also makes it reliably fail with:
 
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
- drivers/xen/swiotlb-xen.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+# TEST: Flush tests                                                   [FAIL]
+# Managed to flush by destination VNI
 
-diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
-index 35155258a7e2..11f4b1195324 100644
---- a/drivers/xen/swiotlb-xen.c
-+++ b/drivers/xen/swiotlb-xen.c
-@@ -78,9 +78,15 @@ static inline int range_straddles_page_boundary(phys_addr_t p, size_t size)
- {
- 	unsigned long next_bfn, xen_pfn = XEN_PFN_DOWN(p);
- 	unsigned int i, nr_pages = XEN_PFN_UP(xen_offset_in_page(p) + size);
-+	unsigned int order = get_order(size);
- 
- 	next_bfn = pfn_to_bfn(xen_pfn);
- 
-+	/* If buffer is physically aligned, ensure DMA alignment. */
-+	if (IS_ALIGNED(p, 1UL << (order + PAGE_SHIFT)) &&
-+	    !IS_ALIGNED(next_bfn, 1UL << order))
-+		return 1;
-+
- 	for (i = 1; i < nr_pages; i++)
- 		if (pfn_to_bfn(++xen_pfn) != ++next_bfn)
- 			return 1;
+on x86 VMs.
 -- 
-2.43.0
-
+pw-bot: cr
 
