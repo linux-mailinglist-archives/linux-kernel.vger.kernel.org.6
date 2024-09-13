@@ -1,162 +1,263 @@
-Return-Path: <linux-kernel+bounces-327872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96638977C18
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:20:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03448977C20
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:24:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9AB5B28AB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:20:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7C4D281561
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:24:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1BD21D6C7C;
-	Fri, 13 Sep 2024 09:20:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E801D6DDB;
+	Fri, 13 Sep 2024 09:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HwnCQgOd";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6mZXP1fv";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HwnCQgOd";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6mZXP1fv"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SfawKEcS"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F79175D45
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E0F1D5CC1;
+	Fri, 13 Sep 2024 09:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726219240; cv=none; b=qyGYKeWwI0v6kgrEXxfmom9BROyc5oL0izY3Tq2bjn5PLFK41wr48ViORar4/TSVWXgx2lttY8EaswFXPzUFRYKOlcCFUpxCgsopQPNAUCPIkyRcMvEBmU94Q0Q3f8FuH9X+9LoOIKpGSN4A5lfjxhDdn1Jf5EhwyuImw3aMEw8=
+	t=1726219433; cv=none; b=JpX/taST2wWyxh7GaKh1SqQTrZ08qu0OhlWLH0VCrX3VlMD+HitECptLb42BD2tjdP5ChluNRyGinMk3YUtz+K9NAfNDIg+xoWYa3as310bAjdxPAT6uUB4R/rDOwitshwkCVohi6JZKtaoZhmQ3MOJH+9jlpkKYSX2TvDOURco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726219240; c=relaxed/simple;
-	bh=EpwXLUTj62b6d6Gz8jWdaV2Dn7S4iRdKfckasaFDw/U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EaMpO4j9dUweHv9bu7oyPN/m+j6JrIYiWJDLPorpIIcNUF0rB4g9WwTpShF3WocwwYhAjBY4hNQ6kF4+XI30B7BX7TTLIC7GMnqy8YqDQ6g8lKRw336xKoTHUuD0szVGMUBXmWvFfMRK9EIG8S2XNLlYYIsfQQb+kCswDlKyR1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HwnCQgOd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6mZXP1fv; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HwnCQgOd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6mZXP1fv; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9C304218ED;
-	Fri, 13 Sep 2024 09:20:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726219236; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=vVcGxtCsucx7/qosy72/MyNz3WeeSZ63XSScGFyR6OY=;
-	b=HwnCQgOdhnSMD3Gj79x3N48CYOX+C6taNUv3QYdE0SGzLpX6u2JpZl2463/n0vuQMltpbn
-	1n8dV/+7l/FodaW+6qwvUBKe0s6K/IwE9iGcIYP0qtP93dpWK8I/UQAMDLorRH9c/IoUdX
-	VWe7H6CmURwNthCSAWLwi17z7VmEJ/I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726219236;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=vVcGxtCsucx7/qosy72/MyNz3WeeSZ63XSScGFyR6OY=;
-	b=6mZXP1fvNRoyqhmtqhhttun0PKmxABYj1N69n/WMz4mrCzlrft1xu6HTRDL51zML9qcuMk
-	z0VTtJF4pbfOytAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726219236; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=vVcGxtCsucx7/qosy72/MyNz3WeeSZ63XSScGFyR6OY=;
-	b=HwnCQgOdhnSMD3Gj79x3N48CYOX+C6taNUv3QYdE0SGzLpX6u2JpZl2463/n0vuQMltpbn
-	1n8dV/+7l/FodaW+6qwvUBKe0s6K/IwE9iGcIYP0qtP93dpWK8I/UQAMDLorRH9c/IoUdX
-	VWe7H6CmURwNthCSAWLwi17z7VmEJ/I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726219236;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=vVcGxtCsucx7/qosy72/MyNz3WeeSZ63XSScGFyR6OY=;
-	b=6mZXP1fvNRoyqhmtqhhttun0PKmxABYj1N69n/WMz4mrCzlrft1xu6HTRDL51zML9qcuMk
-	z0VTtJF4pbfOytAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7EAEF13999;
-	Fri, 13 Sep 2024 09:20:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id MrqvHeQD5GZ+UAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 13 Sep 2024 09:20:36 +0000
-From: Takashi Iwai <tiwai@suse.de>
-To: linux-firmware@kernel.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH linux-firmware] copy-firmware: Fix incorrect symlinks to uncompressed targets
-Date: Fri, 13 Sep 2024 11:21:08 +0200
-Message-ID: <20240913092122.19523-1-tiwai@suse.de>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1726219433; c=relaxed/simple;
+	bh=BB2Qli8K7W5hKcfadq8joRx/Kr5Qk4bl0eg10xz/VGQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NNz7snJgnaeWZV9HviFXrVD1WRlxG3JF1xFV9/Q5Mv3jfFja94Zfbm2/s0uL15M0HL1csW4rci9OljvoGifg1OjECCPKVOCdHxjzIrxG6MdkNGeLGEMnpuYnyzeEVo3ZqeVqq6CalrIkIjD79DZqCZXIXDbuZDv4AS2h/8qFRr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SfawKEcS; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726219432; x=1757755432;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BB2Qli8K7W5hKcfadq8joRx/Kr5Qk4bl0eg10xz/VGQ=;
+  b=SfawKEcSaBPXScZHzk48VLnhiiHXcTZvq5j+Tozl0UyNv5UMrQ9MzJ7a
+   zZMBsY076l5JeJccqA2VuqUx2gIhWBgjUhqcNwMoeB3fthmGN+YHjb45U
+   EKYoBYk1ms1yo5YdmPNE7c4K8nXHgQJT+nbKbF0jsOtHSVWoon79t3lHH
+   EvWnajGbP5baBedU3bI184CGaGuUskMOWcbAU02guC6s+9c43oaFAvTQz
+   Q9+pKvAFVaEhKebk0jYx77FrRiINGKlflD+F+9EQXW370kRs4DssAZADr
+   RkR8w30ptCnqTDEeiqwzAHeOmroPyAeaZcyw50CPkLTepz3z6rZEPky2B
+   A==;
+X-CSE-ConnectionGUID: hxCq3m8BQCWisDD/gFLNtg==
+X-CSE-MsgGUID: dF0J71WRRMitXTZWruAwKA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="13509281"
+X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
+   d="scan'208";a="13509281"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 02:23:50 -0700
+X-CSE-ConnectionGUID: DxnFPH8UQWS397PPeOpDAg==
+X-CSE-MsgGUID: /Y7yQKqjRv2MDyRvxMazew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
+   d="scan'208";a="68498886"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 13 Sep 2024 02:23:45 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sp2Wk-0006IR-2o;
+	Fri, 13 Sep 2024 09:23:42 +0000
+Date: Fri, 13 Sep 2024 17:22:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Md Sadre Alam <quic_mdalam@quicinc.com>, broonie@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	andersson@kernel.org, konradybcio@kernel.org,
+	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+	manivannan.sadhasivam@linaro.org, esben@geanix.com,
+	linux-arm-msm@vger.kernel.org, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	quic_mdalam@quicinc.com, quic_varada@quicinc.com,
+	quic_srichara@quicinc.com
+Subject: Re: [PATCH v9 6/8] spi: spi-qpic: add driver for QCOM SPI NAND flash
+ Interface
+Message-ID: <202409131702.oP75WEmL-lkp@intel.com>
+References: <20240912061503.3468147-7-quic_mdalam@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[99.98%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_NONE(0.00)[];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912061503.3468147-7-quic_mdalam@quicinc.com>
 
-The script tries to make a symlink to the target with the compressed
-extension, but it ends up with a wrong symlink if the compression is
-skipped for the target (e.g. via RawFile entry).
+Hi Md,
 
-Add more checks to make a correct symlink.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
----
+[auto build test WARNING on mtd/nand/next]
+[also build test WARNING on broonie-spi/for-next robh/for-next linus/master v6.11-rc7 next-20240912]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-This fixes the installation failure with the recent change for qcom
-commit 541f96c0fa47b70e9bc13035f7a082064e5b2d4c
+url:    https://github.com/intel-lab-lkp/linux/commits/Md-Sadre-Alam/spi-dt-bindings-Introduce-qcom-spi-qpic-snand/20240912-141925
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next
+patch link:    https://lore.kernel.org/r/20240912061503.3468147-7-quic_mdalam%40quicinc.com
+patch subject: [PATCH v9 6/8] spi: spi-qpic: add driver for QCOM SPI NAND flash Interface
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20240913/202409131702.oP75WEmL-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project bf684034844c660b778f0eba103582f582b710c9)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240913/202409131702.oP75WEmL-lkp@intel.com/reproduce)
 
-The workaround is pretty ad hoc, so if you have a better way to manage
-it, feel free to scratch this.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409131702.oP75WEmL-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/spi/spi-qpic-snand.c:14:
+   In file included from include/linux/dmaengine.h:12:
+   In file included from include/linux/scatterlist.h:8:
+   In file included from include/linux/mm.h:2228:
+   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from drivers/spi/spi-qpic-snand.c:14:
+   In file included from include/linux/dmaengine.h:12:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/spi/spi-qpic-snand.c:14:
+   In file included from include/linux/dmaengine.h:12:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/spi/spi-qpic-snand.c:14:
+   In file included from include/linux/dmaengine.h:12:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+>> drivers/spi/spi-qpic-snand.c:1018:10: warning: equality comparison with extraneous parentheses [-Wparentheses-equality]
+    1018 |                 if ((i == (num_cw - 1))) {
+         |                      ~~^~~~~~~~~~~~~~~
+   drivers/spi/spi-qpic-snand.c:1018:10: note: remove extraneous parentheses around the comparison to silence this warning
+    1018 |                 if ((i == (num_cw - 1))) {
+         |                     ~  ^              ~
+   drivers/spi/spi-qpic-snand.c:1018:10: note: use '=' to turn this equality comparison into an assignment
+    1018 |                 if ((i == (num_cw - 1))) {
+         |                        ^~
+         |                        =
+   8 warnings generated.
 
 
- copy-firmware.sh | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+vim +1018 drivers/spi/spi-qpic-snand.c
 
-diff --git a/copy-firmware.sh b/copy-firmware.sh
-index 6757c6ce03a3..fc096dd6daf0 100755
---- a/copy-firmware.sh
-+++ b/copy-firmware.sh
-@@ -136,9 +136,15 @@ grep -E '^Link:' WHENCE | sed -e 's/^Link: *//g;s/-> //g' | while read f d; do
-         if test -d "$target"; then
-             $verbose "creating link $f -> $d"
-             ln -s "$d" "$destdir/$f"
--        else
-+        elif test -f "$target$compext"; then
-             $verbose "creating link $f$compext -> $d$compext"
-             ln -s "$d$compext" "$destdir/$f$compext"
-+        elif test -f "$target"; then
-+            $verbose "creating link $f -> $d"
-+            ln -s "$d" "$destdir/$f"
-+        else
-+            $verbose "creating link (not yet existing) $f$compext -> $d$compext"
-+            ln -s "$d$compext" "$destdir/$f$compext"
-         fi
-     fi
- done
+   973	
+   974	static int qcom_spi_program_raw(struct qcom_nand_controller *snandc,
+   975					const struct spi_mem_op *op)
+   976	{
+   977		struct qpic_ecc *ecc_cfg = snandc->qspi->ecc;
+   978		struct mtd_info *mtd = snandc->qspi->mtd;
+   979		u8 *data_buf = NULL, *oob_buf = NULL;
+   980		int i, ret;
+   981		int num_cw = snandc->qspi->num_cw;
+   982		u32 cfg0, cfg1, ecc_bch_cfg;
+   983	
+   984		cfg0 = (ecc_cfg->cfg0_raw & ~(7U << CW_PER_PAGE)) |
+   985				(num_cw - 1) << CW_PER_PAGE;
+   986		cfg1 = ecc_cfg->cfg1_raw;
+   987		ecc_bch_cfg = ECC_CFG_ECC_DISABLE;
+   988	
+   989		data_buf = snandc->qspi->data_buf;
+   990	
+   991		oob_buf = snandc->qspi->oob_buf;
+   992		memset(oob_buf, 0xff, OOB_BUF_SIZE);
+   993	
+   994		snandc->buf_count = 0;
+   995		snandc->buf_start = 0;
+   996		qcom_clear_read_regs(snandc);
+   997		qcom_clear_bam_transaction(snandc);
+   998	
+   999		snandc->regs->addr0 = snandc->qspi->addr1;
+  1000		snandc->regs->addr1 = snandc->qspi->addr2;
+  1001		snandc->regs->cmd = snandc->qspi->cmd;
+  1002		snandc->regs->cfg0 = cpu_to_le32(cfg0);
+  1003		snandc->regs->cfg1 = cpu_to_le32(cfg1);
+  1004		snandc->regs->ecc_bch_cfg = cpu_to_le32(ecc_bch_cfg);
+  1005		snandc->regs->clrflashstatus = cpu_to_le32(ecc_cfg->clrflashstatus);
+  1006		snandc->regs->clrreadstatus = cpu_to_le32(ecc_cfg->clrreadstatus);
+  1007		snandc->regs->exec = cpu_to_le32(1);
+  1008	
+  1009		qcom_spi_config_page_write(snandc);
+  1010	
+  1011		for (i = 0; i < num_cw; i++) {
+  1012			int data_size1, data_size2, oob_size1, oob_size2;
+  1013			int reg_off = FLASH_BUF_ACC;
+  1014	
+  1015			data_size1 = mtd->writesize - ecc_cfg->cw_size * (num_cw - 1);
+  1016			oob_size1 = ecc_cfg->bbm_size;
+  1017	
+> 1018			if ((i == (num_cw - 1))) {
+  1019				data_size2 = NANDC_STEP_SIZE - data_size1 -
+  1020					     ((num_cw - 1) << 2);
+  1021				oob_size2 = (num_cw << 2) + ecc_cfg->ecc_bytes_hw +
+  1022					    ecc_cfg->spare_bytes;
+  1023			} else {
+  1024				data_size2 = ecc_cfg->cw_data - data_size1;
+  1025				oob_size2 = ecc_cfg->ecc_bytes_hw + ecc_cfg->spare_bytes;
+  1026			}
+  1027	
+  1028			qcom_write_data_dma(snandc, reg_off, data_buf, data_size1,
+  1029					    NAND_BAM_NO_EOT);
+  1030			reg_off += data_size1;
+  1031			data_buf += data_size1;
+  1032	
+  1033			qcom_write_data_dma(snandc, reg_off, oob_buf, oob_size1,
+  1034					    NAND_BAM_NO_EOT);
+  1035			oob_buf += oob_size1;
+  1036			reg_off += oob_size1;
+  1037	
+  1038			qcom_write_data_dma(snandc, reg_off, data_buf, data_size2,
+  1039					    NAND_BAM_NO_EOT);
+  1040			reg_off += data_size2;
+  1041			data_buf += data_size2;
+  1042	
+  1043			qcom_write_data_dma(snandc, reg_off, oob_buf, oob_size2, 0);
+  1044			oob_buf += oob_size2;
+  1045	
+  1046			qcom_spi_config_cw_write(snandc);
+  1047		}
+  1048	
+  1049		ret = qcom_submit_descs(snandc);
+  1050		if (ret) {
+  1051			dev_err(snandc->dev, "failure to write raw page\n");
+  1052			return ret;
+  1053		}
+  1054	
+  1055		return 0;
+  1056	}
+  1057	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
