@@ -1,87 +1,111 @@
-Return-Path: <linux-kernel+bounces-327555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7213C97777D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:45:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA1C7977770
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:42:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35F00286D8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:45:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 544F21F23C90
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908281C579D;
-	Fri, 13 Sep 2024 03:45:17 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8922D1C5788;
+	Fri, 13 Sep 2024 03:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J9qbmf7V"
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A691B653C;
-	Fri, 13 Sep 2024 03:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875588827;
+	Fri, 13 Sep 2024 03:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726199117; cv=none; b=htWj853iUPmJed2622bybtV5Pjb7W2aeQ0s6bI5YIohYaJQwQyhSEMaIGBSZb3v/XqVDKKRvp63zu58A1MaLf2G/8wUqPF22+WAQyPMacmugY/x98cVD4wmtMIV2l4REtA8bdWVF71JPe3ChwC6WqSwDgBLHRaFhVcgl7izyUmI=
+	t=1726198914; cv=none; b=Z29h1ZwCIt9JV/OT1GuMsUQqdUdHPmR6DpubAFxY6df/6J0d6dJ6s+O0FA7v2/knMCYijUsWUVZ/P6lDxCSnFvrvYxZXUevJMpw/+R1CzBX9zlCKykrbOpB47r1a9paT1u+LHIEeocahZAATpwizarb8e6r2dWfyMFZwXi6rd28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726199117; c=relaxed/simple;
-	bh=8CiYljOttU3RMsKwHDx5X/Ct2ctl0M+3ISzbVKy3LZs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B0D6t2fZc0sHhh+ImxA3uo0VdomvHpBd3CWUmddBwIegjsK/+a0cXoMIk8HMDFQk1KVagx2c/B2lGBiXazIrMbNpMyD8r/9Qa9LupCgrn25YhurYR5Pzq4dYRQt0Zm0YyqUAIN7FKAx2VEGDWKA/1jK10+9THqWT8ZWfWtvThQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4X4gCq2xVTzyRsv;
-	Fri, 13 Sep 2024 11:44:23 +0800 (CST)
-Received: from kwepemj200011.china.huawei.com (unknown [7.202.194.23])
-	by mail.maildlp.com (Postfix) with ESMTPS id 02A9D1401F0;
-	Fri, 13 Sep 2024 11:45:11 +0800 (CST)
-Received: from huawei.com (10.67.174.77) by kwepemj200011.china.huawei.com
- (7.202.194.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 13 Sep
- 2024 11:45:10 +0800
-From: Liao Chen <liaochen4@huawei.com>
-To: <GR-QLogic-Storage-Upstream@marvell.com>, <linux-scsi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <skashyap@marvell.com>, <jhasan@marvell.com>,
-	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
-	<njavali@marvell.com>
-Subject: [PATCH] scsi: qedf: Fix potential null pointer dereference
-Date: Fri, 13 Sep 2024 03:36:27 +0000
-Message-ID: <20240913033627.1465713-1-liaochen4@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1726198914; c=relaxed/simple;
+	bh=WiG+fM+7N9Q40JfTc9raIwTA9+J99+5kuXFj+tWJcxo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yus5JDmE0Rh+u2k5oWdhpazE77In3LlymjI98XD+eAFkOF2/yUkvDQhKWVBtWqUYS0VjFTs6mfNpa55RgxzgsLaYWLYOcwsqXt+ztN7K5dJURjStuOqMpLTzjFxVt8AkhMOMed7MFjYjt2Vja3MbDLztcfgTzztII056dKCheE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J9qbmf7V; arc=none smtp.client-ip=209.85.167.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3e04801bb65so230510b6e.0;
+        Thu, 12 Sep 2024 20:41:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726198911; x=1726803711; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WiG+fM+7N9Q40JfTc9raIwTA9+J99+5kuXFj+tWJcxo=;
+        b=J9qbmf7VqLdUqE6aFJEeSQpw0yTHFLfB+E1LyS40l5DuWdn4kp+9J5CYSU/nMCCYyE
+         rZaxU3h1lk9l8lh1q6bQX18MVm9XYtdQ84Ee4QSRJtVowkt6ShxTlmsGsonmZw4EsfqQ
+         MlcGSXam8KrcSRBo43jMN71D4HMjT/2TDNoIK0HZa2bmyKvjuLIfhpaGTgBgbCl2nOJy
+         A8PBX9UMnwpDvleHonXD7BBE2LHixTvmpODqsHNz7rCieuTbh1rMZ20Xfov/X87DjSns
+         sEZ1B9/s+TRHoB4IPhNUTOSn1lbHbPiU9r6twdNYx2PwW2qS6OfnL8+XEIajl6IrJUz2
+         amdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726198911; x=1726803711;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WiG+fM+7N9Q40JfTc9raIwTA9+J99+5kuXFj+tWJcxo=;
+        b=rISF7FWNK9jZ+fZwti1ept/KCPbU98R7ec01hPMGFaW+zKwakG0HYmhGf480djx752
+         KmgOPpv9mGPAcfUAZDiYUAhAd63XxFl/0mjfMMxMewJJyP3whRbHAPyaRGFyksOzIxU6
+         NGGfYpdfjsXRxKdjRoo3ntXkktLIUGSb2F5jAIKxzkuhojepkC4tl3Td7eBB65tqJgUF
+         Eux3CyX2J/SYQd+7y05R+2/4NBvKpC5A4tp9FbeeL0AcX9oNX2vV1s6j6lisqY0Wa0wa
+         VOXGQY9sxKclKAaGKdahzFuwgBp5eCPiACj4t6z1wTJzLchDcQHZpFWhmxvOg1QgnCjD
+         N5jA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqgCJ8gcB0N6qe4Y3hZ34edUUq1CtdgCMhVqc7fzzeGVen4m2HpkipvN06QJUM7NdKTiuTCr1RQfkU6dB3ItVd@vger.kernel.org, AJvYcCXye9/nouwswlb4g2G0kOZFkpMgvdAXxYutoBh5nTdMu/zM5bot+JoE6+Ih4oR5uZNS6AkwJupvfi41C80=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNUkY7Y//E/pyQtPleXlC3ieynzc/c7gfrEy4X9MYgk+AkP5jQ
+	YnR3zfyqrQ0oxbmPjD2Y8MeeJ+x6XJiOiSdS0Kdj2+Q4RHb61vCGVONcqv6imKdEG6C+lBcwnCP
+	3J9Zf3wU8WMM+lUv6MwIKLYSKoo8=
+X-Google-Smtp-Source: AGHT+IFapc1fMjHxFBGJ0qkUtd+XJG4w0zAhtt6ixANanpzleOSJATkFV4GdeXlL/n6mICeMMpYCQrQW1V9fRfCBD5k=
+X-Received: by 2002:a05:6808:192a:b0:3e0:45ea:7fbe with SMTP id
+ 5614622812f47-3e07a1103c3mr858054b6e.13.1726198911381; Thu, 12 Sep 2024
+ 20:41:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemj200011.china.huawei.com (7.202.194.23)
+References: <20240913022635.751505-1-zhangchunyan@iscas.ac.cn>
+ <20240913022635.751505-2-zhangchunyan@iscas.ac.cn> <ZuOv55YsorfvhlQi@ghost>
+In-Reply-To: <ZuOv55YsorfvhlQi@ghost>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Fri, 13 Sep 2024 11:41:15 +0800
+Message-ID: <CAAfSe-vQCG=RRGwxEEWR-HE5LGH4XniMWi=nTzOOQMrW_fvRUQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] selftests/mm: skip virtual_address_range tests on riscv
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Chunyan Zhang <zhangchunyan@iscas.ac.cn>, Andrew Morton <akpm@linux-foundation.org>, 
+	Shuah Khan <shuah@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, linux-mm@kvack.org, 
+	linux-kselftest@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-qedf is checked to be null in this if branch, accessing its member will
-cause a null pointer dereference. Fix it by passing a direct NULL into
-the error function.
+Hi Charlie,
 
-Fixes: 51071f0831ea ("scsi: qedf: Don't process stag work during unload and recovery")
-Signed-off-by: Liao Chen <liaochen4@huawei.com>
----
- drivers/scsi/qedf/qedf_main.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Fri, 13 Sept 2024 at 11:22, Charlie Jenkins <charlie@rivosinc.com> wrote:
+>
+> On Fri, Sep 13, 2024 at 10:26:35AM +0800, Chunyan Zhang wrote:
+> > RISC-V doesn't currently have the behavior of restricting the virtual
+> > address space which virtual_address_range tests check, this will
+> > cause the tests fail. So lets disable the whole test suite for riscv64
+> > for now, not build it and run_vmtests.sh will skip it if it is not present.
+> >
+> > Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+>
+> Which tree does this apply onto? It is failing to apply on -rc7. Also,
 
-diff --git a/drivers/scsi/qedf/qedf_main.c b/drivers/scsi/qedf/qedf_main.c
-index 4813087e58a1..9d4738db0e51 100644
---- a/drivers/scsi/qedf/qedf_main.c
-+++ b/drivers/scsi/qedf/qedf_main.c
-@@ -4021,7 +4021,7 @@ void qedf_stag_change_work(struct work_struct *work)
- 	    container_of(work, struct qedf_ctx, stag_work.work);
- 
- 	if (!qedf) {
--		QEDF_ERR(&qedf->dbg_ctx, "qedf is NULL");
-+		QEDF_ERR(NULL, "qedf is NULL");
- 		return;
- 	}
- 
--- 
-2.34.1
+Oh, it applies to -rc1.
 
+> since this is the second version of this patch it is good practice to
+> put v2 in the subject like [PATCH v2 2/2]. Anyways, the content of this
+> patch looks good!
+>
+> Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+
+Thanks,
+Chunyan
 
