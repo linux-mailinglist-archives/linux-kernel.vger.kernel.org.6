@@ -1,204 +1,165 @@
-Return-Path: <linux-kernel+bounces-327865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6B80977C08
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:17:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87CB6977C0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:18:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 798EB289344
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:17:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07F751F284A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:18:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D9D1D5CC1;
-	Fri, 13 Sep 2024 09:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397EF1D6DAD;
+	Fri, 13 Sep 2024 09:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="ifQfiAOG";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="EAnQmZSI"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ppjG/DfG"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C82E17BED3;
-	Fri, 13 Sep 2024 09:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C2B175D45
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726219038; cv=none; b=ZFFhMKtQ29a+/UbJ0WjHek+s2Ff3s7WKgUAMvVJx/nRLzldRRZPuaqeOzMUZvIhCy5SoiCcLXP6bxsBf6/f6IbaTqzi1S6CY+RBitm8D9z7/h9FJWcSoyi+OY/m5fmoPz/6uh7k+cmLPTI5luVM+fqiqhu3te4hVbZrVHTmXOAQ=
+	t=1726219099; cv=none; b=CIoK73z8tcVd5VoQcL9Py0R/ck5g0HEnbMnnOFVHN/nM6kXWoumcJdpmixd9rQfWpMqlDndSbrnh03PZ1xOCDD+2Pg89JnHk0Dwh7ems0ijXMtuKPIH00rvoHtZnyZSmDrononSDMzATZFGYBL0HCx+K1qY3XuO6NeTeMWn7KK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726219038; c=relaxed/simple;
-	bh=hMrF5SdlF17xoZq+/VZGpcQOWFrPq9ZfR0YLyh5OhxY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ES9CTA4KE89yA/Snb55AwkC1J3expthpAzRAx7hP6N+B/a0z2mY05sIZTsS7zRIDJst4bqq2+9OC8fHxon1/NiRPwhEjaJNaqxA1es5ZAJZyggUnWRj3PfD+t6xNv/lgRQoq/i17qAnMk4ROJgW7zkHpyujQL2lEDrueO8ovHZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=ifQfiAOG; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=EAnQmZSI reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1726219099; c=relaxed/simple;
+	bh=LcF+Hsw3T7wNgVazlCAqVo2GimNCrFW20BvWEZ5ejNo=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=QiaAt3SoCquxaOqEIQf0/rrggrIJSq6nOz0e1knPLRRQJiCICytFRUTo+6coK6BkER2pLbz8s4BEYGJObX0nQqIIj2P9qit+rEqmhIgcb8A9n4qYvquZyOAiMb7J0vyTg5IIni2Jo0TmZUPql5jqAFABwN4Co6H+5tV4dBY/oeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ppjG/DfG; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3787f30d892so497232f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 02:18:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1726219034; x=1757755034;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=5nyRXAZtZaPgsiU9hSdOI+jFy3OJbheXoiy71LlZp5k=;
-  b=ifQfiAOGMXQzFKFawuLMUdgqcSAwoaJbhomjZ0Ere9sAltj26uyJOCCZ
-   1c9Im0F4bxvaZbGLDEsXfXVU3vxlyNnEIwJeMxT6sfrlidmFe+XDF6dKf
-   VWUS1si2lz7CWAb21gcmQ9Rd42gUigXPOZWB7ru4BNzHnBoOWF7WTFBYY
-   LkGJTVo/jlUvjw9vUhb6My7sxIYROX4pyeeQ4MzeZOaxDcfYHgDoJI4D5
-   lRFQuTyAs8TFS1pjmsrwE/76J3AnkYbjyZjyO5thLRbMb5jXTcX8hsPS2
-   vEEbMJGOPNNF13FX7oGCkali0Kx40sM9km7s0T6evs0wwf4b9ErmLvPmq
-   g==;
-X-CSE-ConnectionGUID: p+R67PyMQLOUJgOdcEoSbQ==
-X-CSE-MsgGUID: XvVlXnRDRI6dXMCAF3adjg==
-X-IronPort-AV: E=Sophos;i="6.10,225,1719871200"; 
-   d="scan'208";a="38929837"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 13 Sep 2024 11:17:10 +0200
-X-CheckPoint: {66E40316-20-5FF8EC80-F6CEE9F8}
-X-MAIL-CPID: 74791384B45C96BF1AA1857C48273692_0
-X-Control-Analysis: str=0001.0A782F1D.66E40317.0096,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 76CBA167CB0;
-	Fri, 13 Sep 2024 11:17:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1726219026;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=5nyRXAZtZaPgsiU9hSdOI+jFy3OJbheXoiy71LlZp5k=;
-	b=EAnQmZSII4QJyrFQEhdzwtL9szLD0RYPMLcU4Q/LY4fcWXEfOzariAmcCYgUfGM9JQeKDZ
-	2j2Ap9VUdwJYLTfL6DuZu2932doAJUwzCuF0B0lZPZJ2zd/RzfjD7a/1Y9XY+YVdW8ShtW
-	vltqnbGcxVnuvBYvydqEir6CO5HinkmwGXUccMbpUJSG+e70HkTxwgVI/WpNw6+8Y6cZaH
-	Hlkv6Ync38Phss+7eDwPe3w3CbLVTCq9rusbSxGWI1k8PdR0Uw5E2LZM6ZNhy+pnW0q7rW
-	0Hy1KbF56hSS/EkGSX9g0JVL+i4c8ia0sGTZE87mxI9A16F952cTBPBTb/+5zA==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, John Ogness <john.ogness@linuxtronix.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Esben Haabendal <esben@geanix.com>, Esben Haabendal <esben@geanix.com>
-Subject: Re: [PATCH 2/2] serial: imx: Add more comments on port lock status
-Date: Fri, 13 Sep 2024 11:17:04 +0200
-Message-ID: <2200890.irdbgypaU6@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20240913-serial-imx-lockfix-v1-2-4d102746c89d@geanix.com>
-References: <20240913-serial-imx-lockfix-v1-0-4d102746c89d@geanix.com> <20240913-serial-imx-lockfix-v1-2-4d102746c89d@geanix.com>
+        d=linaro.org; s=google; t=1726219096; x=1726823896; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g+lCBvfZhk89IxuyRik45Usszh1RJXdqxxur9MDAw60=;
+        b=ppjG/DfGR8LgGzBSL+JfyANElTdqZ8HTYXDcVMAob3d1zjQaQvax64Hfxgnp428mMl
+         wAZLmObVFG73cvtrldGps7+RgxOCh/KD9FAkR7gjOHh72en4z4EeVVbLkLfJ15+xyi9k
+         QAczkqaQPLdPuIDYywhK5Nxhnmj2PZWC5kyLwO+Pg6Z/J87v/6ZzHxfwNLsBZT4IreRA
+         QdRfCrhlcUOCUYS8odTP1XVl+eplNM/mq1OpX4ZSIssduN0Q+YFcmMj56X9uMaMX2UMv
+         ZY3MNNeWEZQl4Nxhpa5Q0uAlLQdXRRouX4syPGzus8mGbANEji1wsXyl6IxlSeyRWj4M
+         BLUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726219096; x=1726823896;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=g+lCBvfZhk89IxuyRik45Usszh1RJXdqxxur9MDAw60=;
+        b=iUqxZ/Z2wsu41zLn3B3SmmSkXdQN2bv+ujeTR6AyCsX5mXZMV6Rb9mnwwzox4sssr8
+         8P3Q8//53JwEiP/Brl5YPwfCn+ScZtxsp+F6UWd2QY3G7Fe1vL6GvRsmOnzd0agROBhr
+         zJ+ec7gbPUnUWkL2SYz3b+PBoDQcPoxe3U+NGHLGMH/IfGwlqqrHk2bdVq5ex7bbKdfo
+         i0lFOMNlS0G9H3SsryZXHGftu1euPmzyQj8DBq5nlPuDfNo861KsC60K2gB1AB6lT7iG
+         ag6JeJ+3KcCsM+vcb/7ir7+GzP8AK07gfhomN0FG2yQQ15ttApA9YfYnY95AtxGZyM/U
+         GrBw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMnTuBMVDBGaqyFtgiMkzl6M3vOamqzhp6XiO795gIb35rkWX+u8CBvydWfQF2TGqymeKymBojSM4FULo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRGUalx07vzDFWWt3OFOg4NTiPplR4g+WIwNnhOzk10ZpxFDab
+	lK7+AUlNRSVQdQgLfKfWRB6A5bt+8xI5N/rl7uZOKwmeyAgz8T9QmZiYSNwmRTI=
+X-Google-Smtp-Source: AGHT+IFhW2GYxSfgVCqM06/BxMKkLw7o4vA1zm4kWO44iV8QW6/npglLmLNYsCv3nMYyjlfU/pSZFA==
+X-Received: by 2002:a5d:49d0:0:b0:365:f52f:cd44 with SMTP id ffacd0b85a97d-378d625a9demr959427f8f.57.1726219095775;
+        Fri, 13 Sep 2024 02:18:15 -0700 (PDT)
+Received: from [192.168.7.202] ([212.114.21.58])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956e8a98sm16352062f8f.117.2024.09.13.02.18.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Sep 2024 02:18:15 -0700 (PDT)
+Message-ID: <813cfef8-6464-4927-be2d-55fef1104416@linaro.org>
+Date: Fri, 13 Sep 2024 11:18:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 2/4] dt-bindings: display: panel-lvds: Add compatible
+ for Jenson BL-JT60050-01A
+To: Frieder Schrempf <frieder@fris.de>, Conor Dooley <conor+dt@kernel.org>,
+ Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
+ devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ linux-kernel@vger.kernel.org,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Rob Herring <robh@kernel.org>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
+ Conor Dooley <conor.dooley@microchip.com>,
+ Heiko Stuebner <heiko.stuebner@cherry.de>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+References: <20240828074753.25401-1-frieder@fris.de>
+ <20240828074753.25401-3-frieder@fris.de>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240828074753.25401-3-frieder@fris.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 Hi,
 
-Am Freitag, 13. September 2024, 10:39:50 CEST schrieb Esben Haabendal:
-> Comments regarding status of port.lock on internal functions is useful wh=
-en
-> reviewing correct handling of registers that must be protected by this
-> lock.
->=20
-> Signed-off-by: Esben Haabendal <esben@geanix.com>
+On 28/08/2024 09:46, Frieder Schrempf wrote:
+> From: Frieder Schrempf <frieder.schrempf@kontron.de>
+> 
+> The Jenson BL-JT60050-01A is a 7" 1024x600 LVDS display.
+> 
+> Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 > ---
->  drivers/tty/serial/imx.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->=20
-> diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-> index efa3eb3a2c57..bea4510743ef 100644
-> --- a/drivers/tty/serial/imx.c
-> +++ b/drivers/tty/serial/imx.c
-> @@ -370,6 +370,7 @@ static void imx_uart_soft_reset(struct imx_port *spor=
-t)
->  	sport->idle_counter =3D 0;
->  }
-> =20
-> +/* called with port.lock taken and irqs off */
->  static void imx_uart_disable_loopback_rs485(struct imx_port *sport)
->  {
->  	unsigned int uts;
+> Changes for v2:
+> * Add tag from Conor (thanks!)
+> ---
+>   Documentation/devicetree/bindings/display/panel/panel-lvds.yaml | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/panel/panel-lvds.yaml b/Documentation/devicetree/bindings/display/panel/panel-lvds.yaml
+> index 155d8ffa8f6ef..5af2d69300751 100644
+> --- a/Documentation/devicetree/bindings/display/panel/panel-lvds.yaml
+> +++ b/Documentation/devicetree/bindings/display/panel/panel-lvds.yaml
+> @@ -50,6 +50,8 @@ properties:
+>             - hannstar,hsd101pww2
+>             # Hydis Technologies 7" WXGA (800x1280) TFT LCD LVDS panel
+>             - hydis,hv070wx2-1e0
+> +          # Jenson Display BL-JT60050-01A 7" WSVGA (1024x600) color TFT LCD LVDS panel
+> +          - jenson,bl-jt60050-01a
+>             - tbs,a711-panel
+>   
+>         - const: panel-lvds
 
-I think you are referring to sport.lock. On the other hand, instead of
-just adding comments, wouldn't it be better to make it explicit?
-Adding=20
-> lockdep_assert_held(&sport->port->lock);
-and/or sparse annoations
-> __must_hold(&sport->port->lock)
+How do you want to deal with that, I can apply both patches 1 & 2 to drm-misc-next, is that ok ?
 
-seems more reasonable to me than adding non-enforcing comments.
-
-Best regards,
-Alexander
-
-> @@ -470,6 +471,7 @@ static void imx_uart_stop_tx(struct uart_port *port)
->  	}
->  }
-> =20
-> +/* called with port.lock taken and irqs off */
->  static void imx_uart_stop_rx_with_loopback_ctrl(struct uart_port *port, =
-bool loopback)
->  {
->  	struct imx_port *sport =3D to_imx_port(port);
-> @@ -803,6 +805,8 @@ static irqreturn_t imx_uart_txint(int irq, void *dev_=
-id)
->   * issuing soft reset to the UART (just stop/start of RX does not help).=
- Note
->   * that what we do here is sending isolated start bit about 2.4 times sh=
-orter
->   * than it is to be on UART configured baud rate.
-> + *
-> + * Called with port.lock taken and irqs off.
->   */
->  static void imx_uart_check_flood(struct imx_port *sport, u32 usr2)
->  {
-> @@ -838,6 +842,7 @@ static void imx_uart_check_flood(struct imx_port *spo=
-rt, u32 usr2)
->  	}
->  }
-> =20
-> +/* called with port.lock taken and irqs off */
->  static irqreturn_t __imx_uart_rxint(int irq, void *dev_id)
->  {
->  	struct imx_port *sport =3D dev_id;
-> @@ -916,6 +921,7 @@ static void imx_uart_clear_rx_errors(struct imx_port =
-*sport);
->  /*
->   * We have a modem side uart, so the meanings of RTS and CTS are inverte=
-d.
->   */
-> +/* called with port.lock taken and irqs off */
->  static unsigned int imx_uart_get_hwmctrl(struct imx_port *sport)
->  {
->  	unsigned int tmp =3D TIOCM_DSR;
-> @@ -938,6 +944,8 @@ static unsigned int imx_uart_get_hwmctrl(struct imx_p=
-ort *sport)
-> =20
->  /*
->   * Handle any change of modem status signal since we were last called.
-> + *
-> + * Called with port.lock taken and irqs off.
->   */
->  static void imx_uart_mctrl_check(struct imx_port *sport)
->  {
-> @@ -1277,6 +1285,7 @@ static int imx_uart_start_rx_dma(struct imx_port *s=
-port)
->  	return 0;
->  }
-> =20
-> +/* called with port.lock taken and irqs off */
->  static void imx_uart_clear_rx_errors(struct imx_port *sport)
->  {
->  	struct tty_port *port =3D &sport->port.state->port;
-> @@ -1407,6 +1416,7 @@ static int imx_uart_dma_init(struct imx_port *sport)
->  	return ret;
->  }
-> =20
-> +/* called with port.lock taken and irqs off */
->  static void imx_uart_enable_dma(struct imx_port *sport)
->  {
->  	u32 ucr1;
->=20
->=20
-
-
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
-
+Neil
 
