@@ -1,89 +1,113 @@
-Return-Path: <linux-kernel+bounces-327906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6964B977C7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:45:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A02F977CED
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 148BD1F28824
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:45:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD696B2849F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 492DA1D6DCD;
-	Fri, 13 Sep 2024 09:45:08 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DBAA1D7E52;
+	Fri, 13 Sep 2024 10:08:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G/d4Wfa8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530511D798B
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6385C1BF80A
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 10:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726220707; cv=none; b=W8B0MVzjLHdWUJmjQpkAiH4ebLg66gDAjrHAo/b47FwTsNHgrSdf2ETuPWoj51q66tRnUOTu+78JBeL+5YGsfBYIIAN6xPbCgTdxpqsgTB1uIhRNmS6ybo1v3AavQkbkKDyjYNeDY+1d4USlN1DvQ2KY97UGXOn36yb4oZ6MoIo=
+	t=1726222098; cv=none; b=VrsWyz58xNHQIclocev8U0ONB+atnq2FUqy6RL7uXt0sk0mV0APwo43lxr1NP60saB+OnQ3OS4S061R/E6nFalAxQoi2lFcPxsTSG+jATkpDsZ5HPf7YpFknPKlMh1MHbyZiF7juXqrnN4WcgFs+RlfvzApJwnNnnYX+T8Y6jeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726220707; c=relaxed/simple;
-	bh=CRukpNiaS1+ZF0v6XbbCV6D0SdH8QXNiaPbDb9iR1MM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=swBfx/tuw/XGuEzfejtIxu6AoDrvcCt84jEO61NV6uFsah9PWQURRtzrqWccbFsN7wiizI9VM8dRdyYHyp5J7GVoTvO/W/5S28z84bgsGBNAkbXxGQniImA7rw22Xr3JpzmSlqmHP+M1jVpdWsUVOFMNR0Nd0/aZDNWZ4/IAtrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4X4q9S3TTzzfc6y;
-	Fri, 13 Sep 2024 17:42:52 +0800 (CST)
-Received: from kwepemf500004.china.huawei.com (unknown [7.202.181.242])
-	by mail.maildlp.com (Postfix) with ESMTPS id EB267180106;
-	Fri, 13 Sep 2024 17:45:03 +0800 (CST)
-Received: from lihuafei.huawei.com (10.90.53.74) by
- kwepemf500004.china.huawei.com (7.202.181.242) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 13 Sep 2024 17:45:03 +0800
-From: Li Huafei <lihuafei1@huawei.com>
-To: <tglx@linutronix.de>, <peterz@infradead.org>
-CC: <akpm@linux-foundation.org>, <linux@weissschuh.net>, <song@kernel.org>,
-	<dianders@chromium.org>, <j.granados@samsung.com>,
-	<liusong@linux.alibaba.com>, <lizhe.67@bytedance.com>,
-	<yaoma@linux.alibaba.com>, <dzickus@redhat.com>, <mingo@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lihuafei1@huawei.com>
-Subject: [PATCH 2/2] watchdog/hardlockup/perf: Warn if watchdog_ev is overwritten
-Date: Sat, 14 Sep 2024 01:45:54 +0800
-Message-ID: <20240913174554.2759064-2-lihuafei1@huawei.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240913174554.2759064-1-lihuafei1@huawei.com>
-References: <20240913174554.2759064-1-lihuafei1@huawei.com>
+	s=arc-20240116; t=1726222098; c=relaxed/simple;
+	bh=NJ5vLMS3p7bc1+ugEtX1p5ebV1ErxgxGh0V/uCJ1X+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PNdnsPP1kvUbk98yWzaQV3lJ3SZ8f7suKqHfVVne+5lpOs3yiCG/ykt/rVmb6Vg4hMujIHM5iEUefbnUuqxxoBpaMxTK3P6HeTrI7Sn3DUgkbQHvk+/7I8aydnephWdxiu0ir+bDfMDITyvWWqq7jVR5Q/tq+JaycYnAbh3MhNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G/d4Wfa8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726222096;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hNIkurA652okgpZwfSLzJJZ0gdHyD3mAUwRUjJPJUt4=;
+	b=G/d4Wfa8I6Kq8V/V9I3ZQnqPAKd7p7YynP1wTAmWYcUs9Svx86ew32KFF/N13nzHhL5wJS
+	0q6QEGTOELwjIO8zXaF7vvbDC2EuQcSRLO5+QC+XBatAvapxoI0DP47jySFwm7LiKgV+Ig
+	wOIuos53K+MtwfCCHJxIBfkb3DwXhH8=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-695-jPnU5WGbOTyGqUvSuRaPwg-1; Fri,
+ 13 Sep 2024 06:08:11 -0400
+X-MC-Unique: jPnU5WGbOTyGqUvSuRaPwg-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 09E061955EA8;
+	Fri, 13 Sep 2024 10:08:09 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.25])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A2E341956086;
+	Fri, 13 Sep 2024 10:08:02 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 13 Sep 2024 12:07:57 +0200 (CEST)
+Date: Fri, 13 Sep 2024 12:07:49 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>,
+	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCHv3 1/7] uprobe: Add support for session consumer
+Message-ID: <20240913100749.GB19305@redhat.com>
+References: <20240909074554.2339984-1-jolsa@kernel.org>
+ <20240909074554.2339984-2-jolsa@kernel.org>
+ <20240912162028.GD27648@redhat.com>
+ <ZuP2YFruQDXTRi25@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemf500004.china.huawei.com (7.202.181.242)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZuP2YFruQDXTRi25@krava>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-When we create a new perf_event, it should not happen that the old
-perf_event is not released. If it does, make a warning to sense the
-problem in time.
+On 09/13, Jiri Olsa wrote:
+>
+> On Thu, Sep 12, 2024 at 06:20:29PM +0200, Oleg Nesterov wrote:
+> > > +
+> > > +		if (rc == 0 && uc->ret_handler) {
+> >
+> > should we enter this block if uc->handler == NULL?
+>
+> yes, consumer can have just ret_handler defined
 
-Signed-off-by: Li Huafei <lihuafei1@huawei.com>
----
- kernel/watchdog_perf.c | 1 +
- 1 file changed, 1 insertion(+)
+Sorry, I meant we do not need to push { cookie, id } into return_instance
+if uc->handler == NULL.
 
-diff --git a/kernel/watchdog_perf.c b/kernel/watchdog_perf.c
-index 2fdb96eaf493..09236586b8c3 100644
---- a/kernel/watchdog_perf.c
-+++ b/kernel/watchdog_perf.c
-@@ -144,6 +144,7 @@ static int hardlockup_detector_event_create(void)
- 			 PTR_ERR(evt));
- 		return PTR_ERR(evt);
- 	}
-+	WARN_ON(this_cpu_read(watchdog_ev));
- 	this_cpu_write(watchdog_ev, evt);
- 	return 0;
- }
--- 
-2.25.1
+And in fact I'd prefer (but won't insist) the new
+
+	UPROBE_HANDLER_I_WANT_MY_COOKIE_PLEASE
+
+return code to make this logic more explicit.
+
+Oleg.
 
 
