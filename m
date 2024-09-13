@@ -1,239 +1,215 @@
-Return-Path: <linux-kernel+bounces-328226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54A309780C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:13:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4948B9780D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:15:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA34D287880
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:13:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C72FE1F25470
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD151DA624;
-	Fri, 13 Sep 2024 13:13:30 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4647B1DA638;
+	Fri, 13 Sep 2024 13:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="aSIHIObi"
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2074.outbound.protection.outlook.com [40.107.249.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188FF1DA2F5;
-	Fri, 13 Sep 2024 13:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726233210; cv=none; b=IR6zpvNkbrq0i+A0qcrq48huOBzgJj42XhwrnBnYEzELbl4JjzfX5Z471hWcvne8ucHjjM9X0EONgyZ3Sl14h1THmq3BaN74htxSf4P6Ebg9FPCqLKgv6G4nDvtTKxZduxrDph4VhS1RJcbnW/3mr6E3wbRO0QMhdlRbduxPz6U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726233210; c=relaxed/simple;
-	bh=VXcDxHOAh7TO4czNZZWoYSUiEXDPphH8+xi/j+NvWA0=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Naet8rmubN3nCRJWD59RufWgezPm7QU8pIRkcfEbpQBbbxTABBH9uS/snM+rWcys2VTnmyIVTFQebYIXUoIPQ97LlPVxX/qV8GYmO7GSAMJZayKC1BNmv8nSvQkSyHHbW8pfzpuGgiw3vk85nAKYZTOVmCp8PiK6pyD6gob/9GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4X4vlh0zcNz6GDD2;
-	Fri, 13 Sep 2024 21:09:20 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 34FE8140519;
-	Fri, 13 Sep 2024 21:13:24 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 13 Sep
- 2024 15:13:23 +0200
-Date: Fri, 13 Sep 2024 14:13:22 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Ira Weiny <ira.weiny@intel.com>
-CC: Ying Huang <ying.huang@intel.com>, Dave Jiang <dave.jiang@intel.com>, Dan
- Williams <dan.j.williams@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>, "Vishal Verma"
-	<vishal.l.verma@intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] cxl/region: Remove lock from memory notifier
- callback
-Message-ID: <20240913141322.000037e0@Huawei.com>
-In-Reply-To: <20240904-fix-notifiers-v3-1-576b4e950266@intel.com>
-References: <20240904-fix-notifiers-v3-1-576b4e950266@intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625F01BA292;
+	Fri, 13 Sep 2024 13:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726233341; cv=fail; b=LeViQ+agPkfEnq9zA684VpEoHHyK2gU7jr4CofsGHjMCCJT4ZYLyYCiuv61l1yDTfbDWy8B09yC8L4IFtBA/QPf+USqWFAoKOA74e1vh7EyC3liHGFY+Blmzh/9Jom9tj/qs5eupiGb/3n2npq+d07DuD1gGkrMj6lp2O53OvqU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726233341; c=relaxed/simple;
+	bh=M9eSlmroM1VIGFkw56hY7YlNkVm9rFkV2zpKQryD6o8=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=uhTB6e38Kk01C6hRDNxmShXMl/202PqHhj7HK9ZPwmd7hjmjbZupEV5JfZUbtaZtujqtPNNjlyyWWyy7p3XiO8kSjH/4GuwfdCbkUkA8zDMUn7fg8xLjkb6SNA4wUi7grpXp4jBsRc1ZplHBbA4Vh92hMSJYRILBfijWdaK4nD8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=aSIHIObi; arc=fail smtp.client-ip=40.107.249.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=s6D6f9hWqM+bpSGP95FTsbs9Z1TjIqV8p7kM7YANqDnVq1ngyWvfRhxVm3k/0nvIH4+U0LNWu12GvEBLewqJ2S5eV3GZVQQp6JwjndDh5AmzZQhPouyCqNuhLSAQMxE8sTri9c18AQKxnFhNC6w9Qdw07fIglMsG7mjsttN4i/AeSHFCBEKA1+i71xy+VLju/UtHZ4eSyoXFk+2SA6rH+T8/pt/TbOFFX3Hox7urbRxYJyCb9G0CMLV0ZFrvljfmbvgtDgklJogM6ykWFZLZPFxyDWAmU29cQjsrZ2B2jk+qxyIGfwheDvgWN0/UN0tyuiCJBidKH3dW8MQfSB2jgw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vWFzHif5Y8Iy6DuwB1qv/q5RlgzRpYrVSzve9zcXGwc=;
+ b=sujMCU7mSve8QCsrJ7y9t9Ia/5OMtXLoETT0bt2PFJ1VlxRs5eOI1oMWklC1Wpr65B0xZK0IHTk9P1UUyAotWWZYzYka5jraR6bTlqIAzL+XxrhoW7/EjDUWei+9lrdm8lKLjFJutCYk+scVbx2q2wTpqEw8J6C713ukMSHQRqpkGePGiJfIGqlFTSIFuR7Zog1vGn/srYgmIyRFJ2Hr7Akjk5D4A2n9DvNG9G2Cf35SuiwgRsj/mtKn68A7cexbsLpEMwGe1vt6KblUphA6KKbHc+S3rqZ5lXYpr0kRtp/JYE32KgUxo+pnGLHxjILhUtv/Ofxm4j8fsAgR1Pj0BA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vWFzHif5Y8Iy6DuwB1qv/q5RlgzRpYrVSzve9zcXGwc=;
+ b=aSIHIObi84N5wQum8YD9uI1Kyl5LpCExuas4f/YvRxGL1jp3x+O5CGhKE20hbJ6YFw5yGr1LaUXo39Qsjp5DFELyQFaORx3xiKfSjPoCLiLILI7HM9yUlqxcQBfmcAF69HPRwIzMlWUhSPkojMsMVM34yt+MZh55o8N+R/eupx6EkEr9pb8w1+MlsAa6+FVQ0v7wPJVOa5eGL2STk3uRnUAYb91xQEFzYEWe6v2ecGMKHYgxYXKa6Wjg+gYuFJ9nInoJnnty2thRcIUe8P8d4T3aDB+RDeKsxT/GgKAS0bnAqfGIvnwQ7h7NRfPpL85QK4B6Ajmw/KFioSs+LZvuUg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by PA4PR04MB7519.eurprd04.prod.outlook.com (2603:10a6:102:f3::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7962.17; Fri, 13 Sep
+ 2024 13:15:36 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%3]) with mapi id 15.20.7962.017; Fri, 13 Sep 2024
+ 13:15:36 +0000
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 0/4] Cascaded management xmit for SJA1105 DSA driver
+Date: Fri, 13 Sep 2024 16:15:03 +0300
+Message-Id: <20240913131507.2760966-1-vladimir.oltean@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BE1P281CA0119.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:b10:7b::12) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
- frapeml500008.china.huawei.com (7.182.85.71)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|PA4PR04MB7519:EE_
+X-MS-Office365-Filtering-Correlation-Id: 67cbc19e-388e-475d-5c32-08dcd3f627c3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|52116014|1800799024|376014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?eSRw83BVn6TM2l9wRBpj4rI96rUNm7ost0p8IBCB0HakZxWMGX8cTrL2I5ZH?=
+ =?us-ascii?Q?hug1Bu7r8IhSiUNlvrHQOpVP/g206RZCQFV8TC6Nc0lBKDaQrtzvEyDXsVNi?=
+ =?us-ascii?Q?XmMj+qhSW4yXZWB/Y+2gYettwWt09B46B6aQRkf/mtsFbGuhQFl4/iMQ1mXk?=
+ =?us-ascii?Q?t1pdN5bJkr1hgDTJOJ1Bi2f6AxOxGgm1H9Rq5a8PtJ+W6ORbF4WJrUHRskk2?=
+ =?us-ascii?Q?In5A2Tjy1gukWqtl9XO5lako8GpXddfgBekX+7MuWCb7hb3f4/25g33l+21n?=
+ =?us-ascii?Q?C0rxdFOnClcPGCKx9paq171vG3HDrl+bFDXRR/KlITyLii979a/1/t5ytLYL?=
+ =?us-ascii?Q?a6CAzqLisI9b6NFuWI0WlPJ08O4MlxglwWDfCkf5j9KlA4b9wrzqqPLyvPm9?=
+ =?us-ascii?Q?TOdu48hQf1CHvmR3g5RIfLv/FVvGWs6x5IW1B8ODnzl+IhvhPuS5SFMQ0w5N?=
+ =?us-ascii?Q?E3CPqtAwBtksEMB3fkeMcmdhqKvPcBNTxGCWHOP26+BOlSkHKKS4UusD7Tp4?=
+ =?us-ascii?Q?TOyK9iSQXMkrUQ0y8HyeNhvFIfntQIYKwL6MplC7tYVeIZDRz4vont1+hL07?=
+ =?us-ascii?Q?naPZYEL3PudTM5KihUxD6KMb3tSDJnFlP57y/EHb728fqOXLw9nQIpiRF6EQ?=
+ =?us-ascii?Q?i3PDywCrPSDeugnoiSvO6eUMKDqqUaBgZMew9wMGVoGAiSjVhmoZjRWfE4gG?=
+ =?us-ascii?Q?lAKGrDjx0IqK7WWca4Qodf/xKVC9u0LQBz0sAhEm+Yc+E0HQDfviCeu/UBpP?=
+ =?us-ascii?Q?6aUkifErfYZKijh3lW9Fcr/62PxjB0wW9yJBnXjXgbtng0sGC5zptTQsKgz6?=
+ =?us-ascii?Q?JOAdLHNw40jL6XDjhLXdzhIO1LZA5VzF+7AhAgsW3RTYTQYtGowbh7/EG4oY?=
+ =?us-ascii?Q?ALV0ioFIVlZXI7t4ZnbglPCLUWaRv5/htkl7V4NcYMHRbrbyoNO3x0vT2DGC?=
+ =?us-ascii?Q?/IEV/V4m6s4G+MoaKLRs2YlArtsPC4fBQjM8FFQ8mc7sVJLEOKAhlw1HYWTm?=
+ =?us-ascii?Q?+gkN1jWrI/htl5SfKw/aVOzOArmS6ULmHKdWOLasNOQZIg2PEN3qjcTngx4p?=
+ =?us-ascii?Q?Di5q7z+AeklKGaTrbDwZsjmkjAqYOoSHlsfdbh2XsAIa26Xorx9EypkXi6oC?=
+ =?us-ascii?Q?ZbDSKili+IwiLomyj8FGT0CBKoeIM5iDvRa0hFNynidh7zGuJzjjf/I5uKzb?=
+ =?us-ascii?Q?YHlqf3yyXT1tF2TvolYsPC4oIBpE58HeI4FKKbGfqlB2hY8pm6pwo28WFcFs?=
+ =?us-ascii?Q?vZWxcFx6RUzGk55anz3EMuGHHivgX5ssqk9jA0epFfcmr3pEAMsb7edPrxUA?=
+ =?us-ascii?Q?KX8qEdTqa51OZ6nIxBihPbJuA2F6htyInBRilrYQ/NA6aj+Ffhkcbn9Ht/wF?=
+ =?us-ascii?Q?hYDJnc/8RR7RPTRW6mB3bIX5q+atdXVwsdRCVHMuoq7beTnpQg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(1800799024)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?nRJ7F3YBCGeLDDdVXTJdHZrfVEJXhmspx7GEXGdJdoTSTwslqx686eCFMYZz?=
+ =?us-ascii?Q?JizuQEio/D37DU2C2pDISqS2nPcnrJ81etTRMeS5E5yrVu/GMxjCGhoSfHGl?=
+ =?us-ascii?Q?KVushzxkTPehIqRIbLhiGiZR4Pc0fOjJxsda66k7Vm+Q9QqHbk5q2oEfDJnK?=
+ =?us-ascii?Q?dbRJVsKSIrOmg+v3vJzKU6/sILQC1TS+n3wP3O3AkDH79LtSlmmgorkMc1hp?=
+ =?us-ascii?Q?5we2KLGBk3UlS6vBxFwZhpfiGrbqOIWDBIrUhGWDbd4pA/QQy/SOnMzFrpqQ?=
+ =?us-ascii?Q?zziApgvwxlF3QXivimvdIain664MqzqEeR6B5o3lQ+a9u2d86M3hZLWIi9Dg?=
+ =?us-ascii?Q?0O9LAC/mFa9rR7zrz3lskF6fAOTqYqZVBCKGpo2yxTKbo7hYuvOTxaEeMJqh?=
+ =?us-ascii?Q?3YtANTCfwRwIxzS/sMigw4747n5IrtPotfiqa4yZbQF1CkJbH3dHeiTQ5F/t?=
+ =?us-ascii?Q?uJfZNpiD+t5vhYJ8wm1QNCkOM+tZ2r58OXPJ83Q1cT4hMelTflTykNpwyfDe?=
+ =?us-ascii?Q?vTfyHqG/Egoikj/f0J+Ld1r37IERm+rZ7m6NKHwpdjTKtJTuvIxMfG0WESoj?=
+ =?us-ascii?Q?w64ORKdJWM6mpsEc9yop1/a7j2nmJyCoQPcqqwayf0vXnLR306aNo9efVLrq?=
+ =?us-ascii?Q?OzMahLqYd0rRaF2Bt2ExFe7HVreFG1t2va/SG/yH1FekYPP2pcV7VwkqAxe3?=
+ =?us-ascii?Q?xT5ExFNPGQNpk7VQzRpPXBW3bBhFcyJHm+F92/L5LhX+ij0L73BM/B59CJm2?=
+ =?us-ascii?Q?O8Kds9fPq9W6PPAj3UIz6n3v2FC1oS78IRD0F5jK1bFLfohx7RWilT/D0TWy?=
+ =?us-ascii?Q?WpqE+Qr6hZSzLLpEr3pESCEfQdRdRpb/1c3R82Pqs+TA3+cC9Tz8r5+/pEOR?=
+ =?us-ascii?Q?VNd1XaHUs1fDM73MypIhqqn1t+jv880nouRX0DfXfLbXyJXmbvPhbWKh1eFD?=
+ =?us-ascii?Q?3uiA3j+kU3WEBDXjIK1r8Gs2Y074ifH/6h7js5qpG//4gz8f3uW4PxP6f0OJ?=
+ =?us-ascii?Q?weyGTyU6dBL7iETTuWlS6zL9S/jjsFT6+9rFD3YlDXcNeQmm6N8POo0RT76O?=
+ =?us-ascii?Q?rXxzyGq99SiIHtaRHLNrrQhrv291V2eRwSoz1+0xefZocZN+ttJj2S9PQdGt?=
+ =?us-ascii?Q?mHiGLtNZsa0mccsMi4aDhHSlJJoP3ofRNS4nNAfZE5eeZ2On1u0hYlNwl69V?=
+ =?us-ascii?Q?RPv+CNQRh6sS5SDUs1g1hmJA1mcTqYpddok5KpuUmGz5VCY4lFXeASjKNUVy?=
+ =?us-ascii?Q?lgXSZjghm73Bmoao5dU86e7+elrDqq+1/Hy6n+k3iwcBtPyVhH6KszUC5l7q?=
+ =?us-ascii?Q?JWQAm4uO0pm82ZpGo85i344gkv2y0nHFE9XFLdZ4l+X3Lb7FkTy/qOr/Fpu7?=
+ =?us-ascii?Q?5NldhKa9+n2OqnUeLo8+DHscyL1immjnT1ynxiFDDNck2CdLrguLigHowitv?=
+ =?us-ascii?Q?hNudvCdYbaA8KR/nnfFJt8UaqxTvvwpppwqFEI1ow5YbmXZVg9R7+aqa92J7?=
+ =?us-ascii?Q?BbRW9ZL629VXlzhpla0pc0h0NtkMD9L4QnwmHaDNoV258T3GXoiHbUWVkpWB?=
+ =?us-ascii?Q?n6aE0nX0magpZz8rWh8me+sEos3aGAQchgtRtYl3DyVAvrdjd98xjXAhCGFe?=
+ =?us-ascii?Q?bQ=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67cbc19e-388e-475d-5c32-08dcd3f627c3
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Sep 2024 13:15:36.4051
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: m2M9ziRbS3XXlhtK40PExlz4yXeMI71tm/U5gMVAMrvW/fkCdbAyKfhZgbqK4M6a8q3TuEIVpsBIjI1U1u0chQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7519
 
-On Wed, 04 Sep 2024 09:47:54 -0500
-Ira Weiny <ira.weiny@intel.com> wrote:
+This patch set adds support for simple daisy chain topologies in the
+sja1105 DSA driver:
 
-> In testing Dynamic Capacity Device (DCD) support, a lockdep splat
-> revealed an ABBA issue between the memory notifiers and the DCD extent
-> processing code.[0]  Changing the lock ordering within DCD proved
-> difficult because regions must be stable while searching for the proper
-> region and then the device lock must be held to properly notify the DAX
-> region driver of memory changes.
-> 
-> Dan points out in the thread that notifiers should be able to trust that
-> it is safe to access static data.  Region data is static once the device
-> is realized and until it's destruction.  Thus it is better to manage the
-> notifiers within the region driver.
-> 
-> Remove the need for a lock by ensuring the notifiers are active only
-> during the region's lifetime.
-> 
-> Furthermore, remove cxl_region_nid() because resource can't be NULL
-> while the region is stable.
-> 
-> Link: https://lore.kernel.org/all/66b4cf539a79b_a36e829416@iweiny-mobl.notmuch/ [0]
-> Cc: Ying Huang <ying.huang@intel.com>
-> Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Reviewed-by: Ying Huang <ying.huang@intel.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-A few comments on looking at this again, but all things that apply equally to old
-code so maybe things for another day.
+ +------------+
+ |    eth0    |
+ |  (conduit) |
+ +------------+
+       |
+       | Switch #1
+ +------------+
+ |    cpu     |--- user
+ |            |--- user
+ |    dsa     |--- user
+ +------------+
+       |
+       | Switch #2
+ +------------+
+ |    dsa     |--- user
+ |            |--- user
+ |            |--- user
+ |            |--- user
+ +------------+
 
-Jonathan
+Previously we did support multi-switch trees, but not the simple kind.
 
-> ---
-> Changes in v3:
-> - [Ying: Add comment regarding cxl_region_rwsem]
-> - [iweiny: pickup tags]
-> - Link to v2: https://patch.msgid.link/20240814-fix-notifiers-v2-1-6bab38192c7c@intel.com
-> 
-> Changes in v2:
-> - [djbw: remove cxl_region_nid()]
-> - Link to v1: https://patch.msgid.link/20240813-fix-notifiers-v1-1-efd23a18688d@intel.com
-> ---
->  drivers/cxl/core/region.c | 54 ++++++++++++++++++++++++++---------------------
->  1 file changed, 30 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 21ad5f242875..dbc9f8a4f603 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -2313,8 +2313,6 @@ static void unregister_region(void *_cxlr)
->  	struct cxl_region_params *p = &cxlr->params;
->  	int i;
->  
-> -	unregister_memory_notifier(&cxlr->memory_notifier);
-> -	unregister_mt_adistance_algorithm(&cxlr->adist_notifier);
->  	device_del(&cxlr->dev);
->  
->  	/*
-> @@ -2391,18 +2389,6 @@ static bool cxl_region_update_coordinates(struct cxl_region *cxlr, int nid)
->  	return true;
->  }
->  
-> -static int cxl_region_nid(struct cxl_region *cxlr)
-> -{
-> -	struct cxl_region_params *p = &cxlr->params;
-> -	struct resource *res;
-> -
-> -	guard(rwsem_read)(&cxl_region_rwsem);
-> -	res = p->res;
-> -	if (!res)
-> -		return NUMA_NO_NODE;
-> -	return phys_to_target_node(res->start);
-> -}
-> -
->  static int cxl_region_perf_attrs_callback(struct notifier_block *nb,
->  					  unsigned long action, void *arg)
->  {
-> @@ -2415,7 +2401,11 @@ static int cxl_region_perf_attrs_callback(struct notifier_block *nb,
->  	if (nid == NUMA_NO_NODE || action != MEM_ONLINE)
->  		return NOTIFY_DONE;
->  
-> -	region_nid = cxl_region_nid(cxlr);
-> +	/*
-> +	 * No need to hold cxl_region_rwsem; region parameters are stable
-> +	 * within the cxl_region driver.
-> +	 */
-> +	region_nid = phys_to_target_node(cxlr->params.res->start);
->  	if (nid != region_nid)
->  		return NOTIFY_DONE;
->  
-> @@ -2434,7 +2424,11 @@ static int cxl_region_calculate_adistance(struct notifier_block *nb,
->  	int *adist = data;
->  	int region_nid;
->  
-> -	region_nid = cxl_region_nid(cxlr);
-> +	/*
-> +	 * No need to hold cxl_region_rwsem; region parameters are stable
-> +	 * within the cxl_region driver.
-> +	 */
-> +	region_nid = phys_to_target_node(cxlr->params.res->start);
->  	if (nid != region_nid)
->  		return NOTIFY_OK;
->  
-> @@ -2484,14 +2478,6 @@ static struct cxl_region *devm_cxl_add_region(struct cxl_root_decoder *cxlrd,
->  	if (rc)
->  		goto err;
->  
-> -	cxlr->memory_notifier.notifier_call = cxl_region_perf_attrs_callback;
-> -	cxlr->memory_notifier.priority = CXL_CALLBACK_PRI;
-> -	register_memory_notifier(&cxlr->memory_notifier);
-> -
-> -	cxlr->adist_notifier.notifier_call = cxl_region_calculate_adistance;
-> -	cxlr->adist_notifier.priority = 100;
-> -	register_mt_adistance_algorithm(&cxlr->adist_notifier);
-> -
->  	rc = devm_add_action_or_reset(port->uport_dev, unregister_region, cxlr);
->  	if (rc)
->  		return ERR_PTR(rc);
-> @@ -3386,6 +3372,14 @@ static int is_system_ram(struct resource *res, void *arg)
->  	return 1;
->  }
->  
-> +static void shutdown_notifiers(void *_cxlr)
-> +{
-> +	struct cxl_region *cxlr = _cxlr;
-> +
-> +	unregister_memory_notifier(&cxlr->memory_notifier);
-> +	unregister_mt_adistance_algorithm(&cxlr->adist_notifier);
-Flip order.
+What is special here is that sending PTP/STP packets out through
+switch #2's user ports requires the programming of management routes in
+switch #1 as well. Patch 4/4 does that. It requires some extra infra in
+the DSA core, handled by patch 3/4. The extra infra requires documenting
+an assumption in the dt-bindings: patch 2/4. And patch 1/4 is fixing a
+bug I noticed while reviewing the code, but which is pretty hard to
+meaningfully trigger, so I am not considering it a 'stable' candidate.
 
-Makes zero real difference, but if we later end up with more to do
-here for some reason there may be ordering requirements that will
-care that this doesn't tear down in reverse of setup.
+I do not actually have a board with a switch topology as described
+above. This patch set was confirmed working by customers on their
+boards. I have just regression-tested it on simple, single-switch trees.
 
-Mind you, see below.
+Vladimir Oltean (4):
+  net: dsa: free routing table on probe failure
+  dt-bindings: net: dsa: the adjacent DSA port must appear first in
+    "link" property
+  net: dsa: populate dp->link_dp for cascade ports
+  net: dsa: sja1105: implement management routes for cascaded switches
 
-> +}
-> +
->  static int cxl_region_probe(struct device *dev)
->  {
->  	struct cxl_region *cxlr = to_cxl_region(dev);
-> @@ -3418,6 +3412,18 @@ static int cxl_region_probe(struct device *dev)
->  out:
->  	up_read(&cxl_region_rwsem);
->  
-> +	if (rc)
-> +		return rc;
-> +
-> +	cxlr->memory_notifier.notifier_call = cxl_region_perf_attrs_callback;
-> +	cxlr->memory_notifier.priority = CXL_CALLBACK_PRI;
-> +	register_memory_notifier(&cxlr->memory_notifier);
-Can in theory fail.  Today that is EEXIST only but who knows in future.
-I think we should handle that and do two devm_add_action_or_reset() perhaps?
+ .../devicetree/bindings/net/dsa/dsa-port.yaml |   9 +-
+ drivers/net/dsa/sja1105/sja1105.h             |  43 ++-
+ drivers/net/dsa/sja1105/sja1105_main.c        | 253 ++++++++++++++++--
+ include/net/dsa.h                             |   9 +-
+ net/dsa/dsa.c                                 |  43 ++-
+ 5 files changed, 307 insertions(+), 50 deletions(-)
 
-
-> +
-> +	cxlr->adist_notifier.notifier_call = cxl_region_calculate_adistance;
-> +	cxlr->adist_notifier.priority = 100;
-> +	register_mt_adistance_algorithm(&cxlr->adist_notifier);
-> +
-> +	rc = devm_add_action_or_reset(&cxlr->dev, shutdown_notifiers, cxlr);
->  	if (rc)
->  		return rc;
->  
-> 
-> ---
-> base-commit: 67784a74e258a467225f0e68335df77acd67b7ab
-> change-id: 20240813-fix-notifiers-99c350b044a2
-> 
-> Best regards,
+-- 
+2.34.1
 
 
