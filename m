@@ -1,160 +1,152 @@
-Return-Path: <linux-kernel+bounces-327608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB92B977846
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:25:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CD0F977849
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:25:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3509AB248B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:25:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5634A1C24D60
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5126C154C04;
-	Fri, 13 Sep 2024 05:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8316156972;
+	Fri, 13 Sep 2024 05:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EFfSehS+"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TvUuyRy+"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24EBD4A07;
-	Fri, 13 Sep 2024 05:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C535C4A07;
+	Fri, 13 Sep 2024 05:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726205102; cv=none; b=d/NcgRXzy7BHxFeE1HLujRTWotdORBsKymEMolkf8Ulr4o5mRACdbbhT1HVZ6ePjrw1LVDq5xAu5DjVw8fwEGu9bPkNfAUR5Z+2YU6hMQwYM/Rr3jAzbdCXX4RHt9H3ATCKOcsuIu/HJ7rern7uvIXnak0tellNa9EnwK1nljVQ=
+	t=1726205115; cv=none; b=QVEi7qnCrUKC56nAHdGYmrAGqK+QVceSmTu8Gn+fbI7TE5ZFZSPoN9k/D2kuLoGEbiy1mTJWNBee4Rlk4e4T0i40xEkNJiMPI+KbNRqBRmDxG3tQFrEHKMMAHBeZYSIj8vndCAi+/K7jw87ubb/X9Qr8m17En0JlZ/zf1qwXvdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726205102; c=relaxed/simple;
-	bh=WoKkcQipE4/xHR/NdwPS6Bjm/Dw9I6bu2ZnHts3E368=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VW9udRsMlMCNm3mq9+Wh+75mqdimOhYchHA2E31frIBRLzN4S4uAquqwPB5qqkfysEHq4IkN6OUU17GEPuEznngcFSNKPJfWuDDo3SBen3qDCcevDEMcTXvcNXwk5GnBZoLvTFJG/PtX7CGxOuusLoHteIbRp2XUdSy70CZ2wwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EFfSehS+; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48D5Ohl9024794;
-	Fri, 13 Sep 2024 00:24:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1726205083;
-	bh=Us8Z9SWqyaxfXS8Zp2weS07AoL27IDikUkpVOPXuHTE=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=EFfSehS+PqnwHfsaBB4exofR/nd8KNBX1Utkh+/7HyTo4ufhQqOqMXnYNPTPixyOG
-	 XS7Soxc1zil5YnYIsjRxIIjmHkPH1j7RFfXM70YxHhTRvkvGrdCPHAKEptPPXnkL/O
-	 vYJddGgHwrv6c3RyQnh7ddajAz0qYnfy57T2XmsQ=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48D5OhKG009215
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 13 Sep 2024 00:24:43 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 13
- Sep 2024 00:24:42 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 13 Sep 2024 00:24:42 -0500
-Received: from [172.24.19.92] (lt5cd2489kgj.dhcp.ti.com [172.24.19.92])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48D5OcJP128907;
-	Fri, 13 Sep 2024 00:24:38 -0500
-Message-ID: <1a9b4de5-93f5-47ad-be5d-733668b3adba@ti.com>
-Date: Fri, 13 Sep 2024 10:54:37 +0530
+	s=arc-20240116; t=1726205115; c=relaxed/simple;
+	bh=27gpEokVPxNneEEgKh8PwQgYDDsz/nj+/b0k1NQV3fE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vDRLRIhzmH7grAHGUiLAX4KD5ORwF02AiIfdEki+mvY2rhjt0xKLS5xRt9ZLB6Ez0mlwMylHlPOLeh7veXISh/M0Kc14lR8TnSiDnuT5XUFN3/INJVP7u4LH967LfWzwKBQ+du17jtB0yFmIuRaNWC/JDw+C4pRCqbTILdGykUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TvUuyRy+; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7d4f85766f0so1541908a12.2;
+        Thu, 12 Sep 2024 22:25:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726205113; x=1726809913; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=20ZaIfIVSeWUJgDUWvfCEP+VNL9P/nfw/kHDqiLJ47k=;
+        b=TvUuyRy+f9eI/nye1+bRS+RR6DSwM7IR1OMssftnp6V6RLHxkfB65gaNbT15dhI3Z0
+         1kHlcsdnbZR2p0mGcMgtUZrP2KBWrZEAYD1wLmCvwfbTUwfmFZ/ZMFxeq5PDX6yRGfVT
+         wMap1vq+nnnA/7L1JCJ98uU7+zRSZ8TZ8+EnxWZHGZaY7jgmYFElluwF/bgAOb2fYWsU
+         IhhCnN6zh71fFn+oGz1evCISMJBaWuI/zFCmxe3wJqZFYp4v8ORZM6QIYeRMb0DafH0h
+         76xHU4k0/ktvvif7sdS7jJP3YSrFAtQ8eu//pK5p0yVeeTIt/e6kIkqjoRB1B7/zpDz+
+         2jsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726205113; x=1726809913;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=20ZaIfIVSeWUJgDUWvfCEP+VNL9P/nfw/kHDqiLJ47k=;
+        b=IWydeHNLVY5VyMNMThuwoYziwaGhPnfbBz5kLGyRCq8StfxRj3JdZAOSy9v0BBeYdJ
+         JXvr2sTRzQm0zX6y55Y72OUUcjL/y5fBYzoFnOGx2exKDmGkru8/UtmjSkZtUSzgY8Ng
+         gQNW60e6s/1CH/ocFe85p5s3x1GaLy70GeblKKBdDSzPOFcvuvcF1nUT0yzrH6ap0Dbe
+         5JWcgrX1C/ycPrFT/kqywWWZfSUNzwlESLvugetvvF1kg1NN7vhVNma5o9qzPbQsPdl1
+         PRe/6uJHmwXBYBifegfLbHd1ZRdm19BOD1EukYLUizMiGg7mmhMStjNw4b4wYie6sOJJ
+         FDTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWHNOikg/j/WkMGacBmxFvH7xnIhzOJKyZlEB9EvMENodFReOiIVcp+IDJeWRyUuaqXX2raGQ29@vger.kernel.org, AJvYcCX4XeXQNYQ5ZGZzGTJE0GPUdQFTrtJoVPYJW99wv5hsAxsjlnvXM6WTvUtb2RihbXi8JzKpsIBDclas@vger.kernel.org, AJvYcCXtWbAoNhJ9IiZO9wjqs3nd7ycAZTktoqqT4vUkkqtrYI+dCDn8JOp/s4nQUAc9TYsTq80Hec1+znijVfA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4sURdgkYEPwHquBLiYzKq8gnEKhQ+z9jof6uMFwApYIU4xGcT
+	LQpwHXQN2rYjnxCCtHaWRhhEAFiaOExKwUAAzMhIgOCVYjiMHeTcCfzCUDoXjIpM++pKHmsC//E
+	z5Rfq+0Iaz90rRrXDhN3alHoDwNc=
+X-Google-Smtp-Source: AGHT+IGdVg8q8qvyLIEMHbHsPv/DvSwUDUKj0IRac1OwT3hrcFwNwy5nZqfkXIzxp2oIAKxdmnaUNjMKrxKD5eWTv5Y=
+X-Received: by 2002:a17:90a:46cb:b0:2da:5d71:fbc with SMTP id
+ 98e67ed59e1d1-2db9ffcc71emr6157282a91.16.1726205112882; Thu, 12 Sep 2024
+ 22:25:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/2] arm64: dts: ti: k3-j784s4: Mark tps659413
- regulators as bootph-all
-To: Andrew Halaney <ahalaney@redhat.com>, Nishanth Menon <nm@ti.com>,
-        Vignesh
- Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: Keerthy <j-keerthy@ti.com>, Neha Malcom Francis <n-francis@ti.com>,
-        Eric
- Chanudet <echanude@redhat.com>,
-        Enric Balletbo <eballetb@redhat.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>
-References: <20240911-j784s4-tps6594-bootph-v2-0-a83526264ab1@redhat.com>
- <lnrcosn7e7x6v5kerll3sqyy7r3qup5nmqi4m3puzjfcvpoljv@6lfmyprzwseu>
-Content-Language: en-US
-From: "Kumar, Udit" <u-kumar1@ti.com>
-In-Reply-To: <lnrcosn7e7x6v5kerll3sqyy7r3qup5nmqi4m3puzjfcvpoljv@6lfmyprzwseu>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240911051716.6572-1-ki.chiang65@gmail.com> <20240911051716.6572-2-ki.chiang65@gmail.com>
+ <d222e5b9-7241-46a1-84fe-be2343fa4346@linux.intel.com>
+In-Reply-To: <d222e5b9-7241-46a1-84fe-be2343fa4346@linux.intel.com>
+From: Kuangyi Chiang <ki.chiang65@gmail.com>
+Date: Fri, 13 Sep 2024 13:25:06 +0800
+Message-ID: <CAHN5xi3UEJJ2aPuF3y0PHoqzb6xhmD+UG3YZyh2Ut_hk0H58gg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] xhci: Fix control transfer error on Etron xHCI host
+To: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: gregkh@linuxfoundation.org, mathias.nyman@intel.com, 
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
-On 9/12/2024 9:32 PM, Andrew Halaney wrote:
-> On Wed, Sep 11, 2024 at 12:19:01PM GMT, Andrew Halaney wrote:
->> This series marks tps659413's regulators as bootph-all in order for
->> the nodes (and parent nodes) to be accessible during MCU's u-boot SPL.
->>
->> This in turn is desired since the tps659413 needs its MCU ESM
->> state machine setup in order for the watchdog to reset the board.
->>
->> This took me a little while to track down, as enabling the ESM, TPS6594,
->> etc in u-boot would result in the below boot failure:
->>
->>      U-Boot SPL 2024.10-rc4-00007-g44b12cbcd1b3-dirty (Sep 06 2024 - 14:25:52 -0500)
->>      SYSFW ABI: 3.1 (firmware rev 0x0009 '9.2.4--v09.02.04 (Kool Koala)')
->>      Initialized 4 DRAM controllers
->>      SPL initial stack usage: 13408 bytes
->>      ### ERROR ### Please RESET the board ###
->>
->> Which turns out to actually have failed far earlier in spl_early_init(),
->> due to these nodes not being accessible in u-boot. That's hard to tell
->> though since console isn't setup until later (and for that reason I
->> think spl_early_init()'s return value in j784s4_init.c isn't
->> evaluated since a panic() at that point would leave a user with *no*
->> information at all).
->>
->> I've tested this in conjunction with a u-boot series which I'll link in
->> a follow-up response on the k3-j784s4-evm. I'd appreciate someone testing
->> on the k3-am69-sk at a minimum, as it should suffer the same fate if things
->> aren't setup appropriately.
->>
->> Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
-> Link to the u-boot series: https://lore.kernel.org/all/3bf2177d-178f-46bf-abfe-6f00a52c623b@ti.com/#t
+Thank you for the review.
+
+Mathias Nyman <mathias.nyman@linux.intel.com> =E6=96=BC 2024=E5=B9=B49=E6=
+=9C=8811=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=8811:05=E5=AF=AB=E9=81=
+=93=EF=BC=9A
 >
-> Udit, it seems you tested the am69-sk patch from this series in the above
-> u-boot link, thanks! If that's correct mind adding your Tested-by on
-> the patch here then as well?
+> On 11.9.2024 8.17, Kuangyi Chiang wrote:
+> > Performing a stability stress test on a USB3.0 2.5G ethernet adapter
+> > results in errors like this:
+> >
+> > [   91.441469] r8152 2-3:1.0 eth3: get_registers -71
+> > [   91.458659] r8152 2-3:1.0 eth3: get_registers -71
+> > [   91.475911] r8152 2-3:1.0 eth3: get_registers -71
+> > [   91.493203] r8152 2-3:1.0 eth3: get_registers -71
+> > [   91.510421] r8152 2-3:1.0 eth3: get_registers -71
+> >
+> > The r8152 driver will periodically issue lots of control-IN requests
+> > to access the status of ethernet adapter hardware registers during
+> > the test.
+> >
+> > This happens when the xHCI driver enqueue a control TD (which cross
+> > over the Link TRB between two ring segments, as shown) in the endpoint
+> > zero's transfer ring. Seems the Etron xHCI host can not perform this
+> > TD correctly, causing the USB transfer error occurred, maybe the upper
+> > driver retry that control-IN request can solve problem, but not all
+> > drivers do this.
+> >
+> > |     |
+> > -------
+> > | TRB | Setup Stage
+> > -------
+> > | TRB | Link
+> > -------
+> > -------
+> > | TRB | Data Stage
+> > -------
+> > | TRB | Status Stage
+> > -------
+> > |     |
+> >
+>
+> What if the link TRB is between Data and Status stage, does that
+> case work normally?
 
-
-Yes, Please use for this series on both platforms
-
-Tested-by: Udit Kumar <u-kumar1@ti.com>
-
+I am not sure, I don't encounter this case, maybe OK.
 
 >
-> Thanks,
-> Andrew
+> > To work around this, the xHCI driver should enqueue a No Op TRB if
+> > next available TRB is the Link TRB in the ring segment, this can
+> > prevent the Setup and Data Stage TRB to be breaked by the Link TRB.
 >
->> ---
->> Changes in v2:
->> - Only mark the regulator nodes as bootph-all since parents are implied
->> - Link to v1: https://lore.kernel.org/r/20240906-j784s4-tps6594-bootph-v1-0-c5b58d43bf04@redhat.com
->>
->> ---
->> Andrew Halaney (2):
->>        arm64: dts: ti: k3-j784s4-evm: Mark tps659413 regulators as bootph-all
->>        arm64: dts: ti: k3-am69-sk:  Mark tps659413 regulators as bootph-all
->>
->>   arch/arm64/boot/dts/ti/k3-am69-sk.dts    | 8 ++++++++
->>   arch/arm64/boot/dts/ti/k3-j784s4-evm.dts | 8 ++++++++
->>   2 files changed, 16 insertions(+)
->> ---
->> base-commit: 9aaeb87ce1e966169a57f53a02ba05b30880ffb8
->> change-id: 20240906-j784s4-tps6594-bootph-19d3f00fb98a
->>
->> Best regards,
->> -- 
->> Andrew Halaney <ahalaney@redhat.com>
->>
+> There are some hosts that need the 'Chain' bit set in the Link TRB,
+> does that work in this case?
+
+No, it doesn't work. It seems to be a hardware issue.
+
+>
+> Thanks
+> Mathias
+>
+
+Thanks,
+Kuangyi Chiang
 
