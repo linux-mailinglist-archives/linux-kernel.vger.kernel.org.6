@@ -1,226 +1,230 @@
-Return-Path: <linux-kernel+bounces-328419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 028B097832A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:01:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7944978337
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:02:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18256B26501
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:01:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 680F11F21F41
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51FB43B782;
-	Fri, 13 Sep 2024 15:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42FA9383BF;
+	Fri, 13 Sep 2024 15:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YAJMkQFc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="sxv+nCCE";
+	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="WJFebE8q"
+Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C42728366;
-	Fri, 13 Sep 2024 15:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726239656; cv=none; b=sUKX2K7Dpzqa/W3KGt2R/KXYqSn3fCI6UMijHIen9hj7Vhkq6oHD9chYicPGpna+A1GcuGxBaaWJM/DO+VH77ziFKalEYfHGlBxoWz1NxflOnV9HUCksCBHblHnXIHQDGmpf6mbu+NzvT7jRdv+c83zcY+kyZzil8mrq4JgwFGQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726239656; c=relaxed/simple;
-	bh=BA0ANnltDBBfuoBltj9aaFdaXEL//Iks38XJnB02U/g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=co7cmp9Uu7WupKwSJaX6VxtjpoYw4H0P0ZNW5kprOfFR6Eo/5yoCYsQtsiB0hOm+5ff8UvkTig6mE+lPtTZRwfpA9JyVBHZUiC2u7h/UUFPYpFb1k9xCj+S6TaXnUIRiCUiktbwdvTjxXGWIEJHhsqKVCC4yKI5MopNfb50WT1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YAJMkQFc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E81CBC4CEDB;
-	Fri, 13 Sep 2024 15:00:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726239656;
-	bh=BA0ANnltDBBfuoBltj9aaFdaXEL//Iks38XJnB02U/g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YAJMkQFcS9yQrD3CD9uf2YDAnPedZRu2sdG3Uq7zy8+8g4fHsdnaV9YMu/zLJ/1tj
-	 EDiCdYnV0pGG/cGSGCoqzc1yz3NAQwdRBBLRfL0AaT5mhRSd5SqOtQjToavlsk96bb
-	 oKdYkALvWRv8THfAoHVYOAKmMboDnCW5qhSOfsTXSAkiRSZcMGaGh7XxCBtwPbd5yo
-	 iYcY5nqsZThg8+lFTkl4wHHIxP84VsBur9fkHWLMiLx+uY355fMP3Bd0gFRq3KpUT4
-	 TIJSScKe0wBqYY1i+xFQfTmvYKL4lkyD4Paj6wDyvXKCliGwP8nsVtdZV47PWrdook
-	 qWRlseRXwzJPA==
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f759688444so20775241fa.1;
-        Fri, 13 Sep 2024 08:00:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCULir8RU8+P9W/UUHicJGDrkLQQQZokBhHGLCgoRNfZP5TViqAqbSAXmiHiCpE3I4KmoIht3k9rS+Siils=@vger.kernel.org, AJvYcCUw1AyxawrWxc/j7v03nO2ad+l8y8OsrCz5pbPc/VzKwI9EJJmUUtSCFw0eA/l6pJGyb5/cDl5DKnQ=@vger.kernel.org, AJvYcCUxvSkjTNBJJDMNVxAvXbjdUHZ/3Nt+B2q46ZDB04fOYwaKARUBkey1NT4qRYE9nxdmslUPtXBA1/HAyspyqQ==@vger.kernel.org, AJvYcCVdAG1QR7P19Qz6OOO+svTOKlqL+qfFD5IncHKX6ncPJbq3+KSig5TlZG63fEGm4XAcPKOk0F/jiJxTrA==@vger.kernel.org, AJvYcCVtsDg+0MZeHZXjkKJB5t4vEgnbgBgcaPpdxY0ymQIWPxqZZrQFJbmrMc3znAsWgGxYQLbhegaDEB2DqCfD@vger.kernel.org, AJvYcCWDfqc+xc5hMcP3JG9ctERZe79q8aNyXVE+E5pCvWB6KlMThkVtFs6UlosHUd/t1hU19VNmxptRYCVDkFsxW/X0eFcr@vger.kernel.org, AJvYcCWGtaY1eP2j7izTOEJFsnrMSzpYhaPwr0exKMiB5O+/mq76CXmOgUZrjpuOASxh6x3VE9HbMkNCD04D+lUd@vger.kernel.org, AJvYcCXcxpURX017fZYRq9h+F8GTJvPfaCx7MZElPErCIf64gAItKFh63Cs2rLul+y7fgZ/ocONgNGudDyNUv3S5G8Q=@vger.kernel.org, AJvYcCXfiy1yV18uLg4r+FuZM20TQHKTVUAaAE0RKHt/zmpwyWmOGY0zCJSxp68VCO3nyNEoMSEpB4mG0K+msQ==@vger.kernel.org, AJvY
- cCXk2/tlXIAd3IMCDQYvMLnknHPNku9g3pNxzJ9w0sAAw/5/winZpdHmdwqfzRJ2WZiakDZYLL+WjFLOVs2zAw==@vger.kernel.org, AJvYcCXlfdVgjN27YkAH2elz+3KHzyWh9zIYQyR1021lTaYvwcmrngYb4QAxxoL68i57hLLldJARGZIYJ+OUhA==@vger.kernel.org, AJvYcCXtJH5o/uZ+9iGulxzcMyKL/DTTv+fLQUgrVZrR4ONsJetKnUkp/9U3yVe/rIK7yPgKy/gbycUfKwTMZQ==@vger.kernel.org, AJvYcCXutrGseycTn/cGyeHK5TPzQZ/a3JPOl811M6oAlencO81EUw8g2O1/Z6+kdY+Jd+mE5kQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmKtUy3CnOCc7qGHJ4H+Fk8HiVo4sszEh3tjAp6mLuMyCeG757
-	p10UIAD88ar0TpjeZDZmqeFbJMqDiIYc+Mc/p65ZtHPq05vDROGYbZDZFwUdm23eNAfLJ10hUuL
-	Ge96rXQf6wDtaqAEFP4xJCU8WZmY=
-X-Google-Smtp-Source: AGHT+IEIp2MygUsW5Tc1gnqrEXhSi4Y5LfaJ7pDs2t1FcVSY61BEs2pVKMYAU/+O+nJIsawLe6NqpBRTPpsi7cWLSzQ=
-X-Received: by 2002:a05:651c:1a0c:b0:2f0:1e0a:4696 with SMTP id
- 38308e7fff4ca-2f787dabe7emr39035411fa.7.1726239653924; Fri, 13 Sep 2024
- 08:00:53 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE4829CF0;
+	Fri, 13 Sep 2024 15:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726239734; cv=pass; b=efRJ+5m03JJ39BIrcq1Im4HYqjcS5ZPwCZlCqrg6QlwJkN4+1JW+WOaTuy80t8TZOUysqFR1IUo/5lhFSvFPI3fix3asq9lKZsnEodyVpR4DJfLc/sqeRYlMveKtN+dJiqs4r/Lq70OHyS5WaASIKtW9xRcUGJ4fAYU96YMATv4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726239734; c=relaxed/simple;
+	bh=e57zcWQSVSgo6cEBNGs+KUbvp+KYXNF6edtF2NSWF7I=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=YQyZTx9xAr6CdOZBLCKSunosAMwUzFYDWTnoXCxEfLtuOnyOGBJnAwfZ+NyJfXklzeYL+wa4RXW3tWbsj6OIn13t5vP/uYHYYGb15GCEPYPknAzglsoj31Jfv1Q8qR+jkjyoXI6pnzTWSpeGAGX6nlIbTc4OLATl8B0jyorIuJM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=sxv+nCCE; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=WJFebE8q; arc=pass smtp.client-ip=85.215.255.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
+ARC-Seal: i=1; a=rsa-sha256; t=1726239714; cv=none;
+    d=strato.com; s=strato-dkim-0002;
+    b=OF27jDUSeIFFiPY477XiPvqb58kj8KGspHFAy8Khlq+H0+VMR+4zM60zfvZkyM7zAK
+    zKSb7HuppM6sMek2V/Ft33d0A5M/ljOz3gYavFULS2+CG7H6G6C+34Bt42pceuW5SEgh
+    6Fsj+t3muWG42XqMf5BXN/TAVmUlQMrblSAj/Dvc+b0isZsmjWOzoRo9Y/h3yC3F1s3W
+    N4yBopMujLW1/Td5WBcdBMcO+BkQ2WQrn0xX2OLE3XtvAmzkYvfsuXZbsRUM1u6/gmir
+    6KEMwJ54X7YCy0kXjTDEiTFwDzzHTG7ptaxFTrhNzp8rN0PC7UMRHZc4yTp/ZtZbEhvn
+    /u1w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1726239714;
+    s=strato-dkim-0002; d=strato.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=pWUZCvtRrFmZUWsXHM9GvLPUeTaoAVROQZxyilr4N7o=;
+    b=ROiWCEGWGC7IUHTf8AUTquF5wxUZn3DcMWoqSMzz5rx9nle6U5sJpUxTahStB1z42V
+    odXj2v0wOrL8fCmlwFxU0tcnHa/xCBqonOhrZ8Jzx0lzkCdGtG2K1TYKRxBUHtc20FeH
+    NhAU4yVwttF6VKCXLeb2JPwhkah6SwZfLx0rb/BxgHw5aOb/kzSfWwGxbcxib90JYI/V
+    Y0KEn5+EoXTGPC3nJs5kuCW8uIwbrTBP//j4Hm5qzpCxqih3Bil/kyTQcmTVFdTGhaV7
+    8FSn14OoKmXlL0wbKacxTa343mgedUMOaw8r5xQJ7PZfA+NNXA09Kae/2nYHzBTjHwa4
+    x75Q==
+ARC-Authentication-Results: i=1; strato.com;
+    arc=none;
+    dkim=none
+X-RZG-CLASS-ID: mo01
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1726239714;
+    s=strato-dkim-0002; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=pWUZCvtRrFmZUWsXHM9GvLPUeTaoAVROQZxyilr4N7o=;
+    b=sxv+nCCE9wVoztWLZqNVrZp+cvm0lB04OykWNaUQTUXVlZjxoXtRgboMIAiWbDBzva
+    KiCW+LC1RTZTvNuHF3AvqyXkfUd4ln1CnZ7nMNeoeEDnR7lF510gLXJGEyrJVSAH8aLx
+    We5cyzYKsfHNveL9IR6SdmQx/d62ynGZaZgkfAuVsXO7AEN8UKIGhJ8NburfFoOerQVo
+    gBYk183jVNfpLzgJY6AG1cv3ZgDoDiV3Q3SIMgWHsew1y+1pj23B4W0yPONu0SP+mv7w
+    0/594crKg0cjWvAScVASUwNUopqTkz2smiwgjuxD3dfMamQWHB79lpA96mHfB1AZ5xzp
+    xGLg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1726239714;
+    s=strato-dkim-0003; d=goldelico.com;
+    h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:Cc:Date:
+    From:Subject:Sender;
+    bh=pWUZCvtRrFmZUWsXHM9GvLPUeTaoAVROQZxyilr4N7o=;
+    b=WJFebE8qQPzuvsAnpczhTrm2zT2XFBBkAlFBgUkullST85l8IO0jb7pV1zVE+sg28Y
+    NAmMlJk69BttJZygj9BQ==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0lFzL1yfjAZ"
+Received: from smtpclient.apple
+    by smtp.strato.de (RZmta 51.2.3 DYNA|AUTH)
+    with ESMTPSA id Q984c208DF1rA1B
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+	(Client did not present a certificate);
+    Fri, 13 Sep 2024 17:01:53 +0200 (CEST)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240909064730.3290724-1-rppt@kernel.org> <20240909064730.3290724-8-rppt@kernel.org>
-In-Reply-To: <20240909064730.3290724-8-rppt@kernel.org>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 13 Sep 2024 17:00:42 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXG_Z=7B_eDAk3vhtDjfcnka3AoSKNzvFQDzpvYY2EyVfg@mail.gmail.com>
-Message-ID: <CAMj1kXG_Z=7B_eDAk3vhtDjfcnka3AoSKNzvFQDzpvYY2EyVfg@mail.gmail.com>
-Subject: Re: [PATCH v3 7/8] execmem: add support for cache of large ROX pages
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Andreas Larsson <andreas@gaisler.com>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>, 
-	Brian Cain <bcain@quicinc.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Christoph Hellwig <hch@infradead.org>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Dinh Nguyen <dinguyen@kernel.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>, 
-	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Kent Overstreet <kent.overstreet@linux.dev>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Richard Weinberger <richard@nod.at>, Russell King <linux@armlinux.org.uk>, Song Liu <song@kernel.org>, 
-	Stafford Horne <shorne@gmail.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner <tglx@linutronix.de>, 
-	Uladzislau Rezki <urezki@gmail.com>, Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>, 
-	bpf@vger.kernel.org, linux-alpha@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
-	linux-hexagon@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
-	linux-mm@kvack.org, linux-modules@vger.kernel.org, 
-	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-sh@vger.kernel.org, 
-	linux-snps-arc@lists.infradead.org, linux-trace-kernel@vger.kernel.org, 
-	linux-um@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, 
-	loongarch@lists.linux.dev, sparclinux@vger.kernel.org, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH v2] i2c: omap: Fix standard mode false ACK readings
+From: "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20240913153251.48ffafbd@akair>
+Date: Fri, 13 Sep 2024 17:01:42 +0200
+Cc: Reid Tonking <reidt@ti.com>,
+ Tony Lindgren <tony@atomide.com>,
+ "Raghavendra, Vignesh" <vigneshr@ti.com>,
+ Aaro Koskinen <aaro.koskinen@iki.fi>,
+ Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+ Linux-OMAP <linux-omap@vger.kernel.org>,
+ linux-i2c@vger.kernel.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <68865E6A-FBA3-4947-9761-9FD3DC957D0E@goldelico.com>
+References: <20230426194956.689756-1-reidt@ti.com>
+ <445b3cbf-ffbc-6f77-47db-c30fc599e88f@ti.com>
+ <20230428074330.GJ14287@atomide.com>
+ <20230428183037.wbhds54dz5l4v5xa@reidt-t5600.dhcp.ti.com>
+ <664241E0-8D6B-4783-997B-2D8510ADAEA3@goldelico.com>
+ <20240913140934.29bb542b@akair>
+ <0903DB3E-1A44-44BB-87DC-01C65B97AE4E@goldelico.com>
+ <20240913153251.48ffafbd@akair>
+To: Andreas Kemnade <andreas@kemnade.info>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-Hi Mike,
+Hi Andreas,
 
-On Mon, 9 Sept 2024 at 08:51, Mike Rapoport <rppt@kernel.org> wrote:
->
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
->
-> Using large pages to map text areas reduces iTLB pressure and improves
-> performance.
->
-> Extend execmem_alloc() with an ability to use huge pages with ROX
-> permissions as a cache for smaller allocations.
->
-> To populate the cache, a writable large page is allocated from vmalloc with
-> VM_ALLOW_HUGE_VMAP, filled with invalid instructions and then remapped as
-> ROX.
->
-> Portions of that large page are handed out to execmem_alloc() callers
-> without any changes to the permissions.
->
-> When the memory is freed with execmem_free() it is invalidated again so
-> that it won't contain stale instructions.
->
-> The cache is enabled when an architecture sets EXECMEM_ROX_CACHE flag in
-> definition of an execmem_range.
->
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> ---
->  include/linux/execmem.h |   2 +
->  mm/execmem.c            | 289 +++++++++++++++++++++++++++++++++++++++-
->  2 files changed, 286 insertions(+), 5 deletions(-)
->
-> diff --git a/include/linux/execmem.h b/include/linux/execmem.h
-> index dfdf19f8a5e8..7436aa547818 100644
-> --- a/include/linux/execmem.h
-> +++ b/include/linux/execmem.h
-> @@ -77,12 +77,14 @@ struct execmem_range {
->
->  /**
->   * struct execmem_info - architecture parameters for code allocations
-> + * @fill_trapping_insns: set memory to contain instructions that will trap
->   * @ranges: array of parameter sets defining architecture specific
->   * parameters for executable memory allocations. The ranges that are not
->   * explicitly initialized by an architecture use parameters defined for
->   * @EXECMEM_DEFAULT.
->   */
->  struct execmem_info {
-> +       void (*fill_trapping_insns)(void *ptr, size_t size, bool writable);
->         struct execmem_range    ranges[EXECMEM_TYPE_MAX];
->  };
->
-> diff --git a/mm/execmem.c b/mm/execmem.c
-> index 0f6691e9ffe6..f547c1f3c93d 100644
-> --- a/mm/execmem.c
-> +++ b/mm/execmem.c
-> @@ -7,28 +7,88 @@
->   */
->
->  #include <linux/mm.h>
-> +#include <linux/mutex.h>
->  #include <linux/vmalloc.h>
->  #include <linux/execmem.h>
-> +#include <linux/maple_tree.h>
->  #include <linux/moduleloader.h>
->  #include <linux/text-patching.h>
->
-> +#include <asm/tlbflush.h>
-> +
-> +#include "internal.h"
-> +
->  static struct execmem_info *execmem_info __ro_after_init;
->  static struct execmem_info default_execmem_info __ro_after_init;
->
-> -static void *__execmem_alloc(struct execmem_range *range, size_t size)
-> +#ifdef CONFIG_MMU
-> +struct execmem_cache {
-> +       struct mutex mutex;
-> +       struct maple_tree busy_areas;
-> +       struct maple_tree free_areas;
-> +};
-> +
-> +static struct execmem_cache execmem_cache = {
-> +       .mutex = __MUTEX_INITIALIZER(execmem_cache.mutex),
-> +       .busy_areas = MTREE_INIT_EXT(busy_areas, MT_FLAGS_LOCK_EXTERN,
-> +                                    execmem_cache.mutex),
-> +       .free_areas = MTREE_INIT_EXT(free_areas, MT_FLAGS_LOCK_EXTERN,
-> +                                    execmem_cache.mutex),
-> +};
-> +
-> +static void execmem_cache_clean(struct work_struct *work)
-> +{
-> +       struct maple_tree *free_areas = &execmem_cache.free_areas;
-> +       struct mutex *mutex = &execmem_cache.mutex;
-> +       MA_STATE(mas, free_areas, 0, ULONG_MAX);
-> +       void *area;
-> +
-> +       mutex_lock(mutex);
-> +       mas_for_each(&mas, area, ULONG_MAX) {
-> +               size_t size;
-> +
-> +               if (!xa_is_value(area))
-> +                       continue;
-> +
-> +               size = xa_to_value(area);
-> +
-> +               if (IS_ALIGNED(size, PMD_SIZE) &&
-> +                   IS_ALIGNED(mas.index, PMD_SIZE)) {
-> +                       void *ptr = (void *)mas.index;
-> +
-> +                       mas_erase(&mas);
-> +                       vfree(ptr);
-> +               }
-> +       }
-> +       mutex_unlock(mutex);
-> +}
-> +
-> +static DECLARE_WORK(execmem_cache_clean_work, execmem_cache_clean);
-> +
-> +static void execmem_fill_trapping_insns(void *ptr, size_t size, bool writable)
-> +{
-> +       if (execmem_info->fill_trapping_insns)
-> +               execmem_info->fill_trapping_insns(ptr, size, writable);
-> +       else
-> +               memset(ptr, 0, size);
+> Am 13.09.2024 um 15:32 schrieb Andreas Kemnade <andreas@kemnade.info>:
+>=20
+>>> I had a patch to disable 1Ghz on that
+>>> device in my tree. Do you have anything strange in your
+>>> tree? =20
+>>=20
+>> No, and the omap3 is running with 800 MHz only.
+>>=20
+> So you have a patch disabling 1Ghz OPP in there?
 
-Does this really have to be a function pointer with a runtime check?
+I think the speed is binned to be 800 MHz only. So the OPP is ignored.
 
-This could just be a __weak definition, with the arch providing an
-override if the memset() is not appropriate.
+> The error messages
+> look like things I got when 1Ghz was enabled, so better double check.
+
+Well, it turns out to be difficult to check since with 6.11-rc7
+cpufreq-info seems to be broken... I have not yet installed the fixed =
+4.19.283 again.
+
+But indeed I have found a potential issue. We have a patch [1] for the =
+gta04a5 (only) that adds
+
+&cpu0_opp_table {
+	/* is unreliable on gta04a5 - enable by echo 1 =
+>/sys/devices/system/cpu/cpufreq/boost */
+	opp1g-1000000000 {
+		turbo-mode;
+	};
+};
+
+so that 1 GHz must be explicitly enabled by user-space.
+
+But some time ago the 1GHz node was apparently renamed to opp-1000000000 =
+(5821d766932cc8)
+and this patch was not adjusted.
+
+After fixing it I can ask again for cpufreq-info and the 1GHz OPP is not =
+activated:
+
+root@letux:~# cpufreq-info=20
+cpufrequtils 008: cpufreq-info (C) Dominik Brodowski 2004-2009
+Report errors and bugs to cpufreq@vger.kernel.org, please.
+analyzing CPU 0:
+  driver: cpufreq-dt
+  CPUs which run at the same hardware frequency: 0
+  CPUs which need to have their frequency coordinated by software: 0
+  maximum transition latency: 300 us.
+  hardware limits: 300 MHz - 800 MHz
+  available frequency steps: 300 MHz, 600 MHz, 800 MHz
+  available cpufreq governors: conservative, ondemand, userspace, =
+powersave, performance
+  current policy: frequency should be within 300 MHz and 800 MHz.
+                  The governor "ondemand" may decide which speed to use
+                  within this range.
+  current CPU frequency is 800 MHz (asserted by call to hardware).
+  cpufreq stats: 300 MHz:37.38%, 600 MHz:10.11%, 800 MHz:52.51%, 1000 =
+MHz:0.00%  (1740)
+root@letux:~#=20
+
+Anyways, this bug was introduced some months after this i2c patch we
+are discussing here. So i2c broke first before the 800MHz limitation was =
+accidentially
+removed. Therefore I am quite sure that the failing 4.19.283 did run at =
+800 MHz.
+
+And in the v4.19.282 and v4.19.283 based kernels we have simply =
+commented out the 1GHz
+option (since 2018) or there is no 1GHz OPP at all.
+
+Thanks for the hint to take a second and closer look at it, but it =
+doesn't seem to
+be a factor here.
+
+> if it is letux, then there is e.g. the interrupt reversal in there.
+> Maybe it unveils some problem which should be fixed, maybe it is
+> harmful, it was never well reviewed...
+
+I know what you refer to but I could not find it any more. But I may not =
+have
+searched correctly.
+
+>=20
+>> I haven't tested on another board but the bug is very reproducible
+>> and I was able to bisect it to this patch, which makes the =
+difference.
+>>=20
+> the error messages, esp. regarding rcu do not look so related to this.
+> Maybe having this patch or not triggers some other bug. Maybe we =
+trigger
+> some race conditions. Or i2c error checking regarding OPP setting...
+
+That is what I suspect as well. I2C is used to switch the twl4030 for =
+different OPPs...
+
+>=20
+>> So there may be boards which happily run with the patch and some
+>> don't. Maybe a race condition with hardware.
+>>=20
+> I am not ruling out that this patch has nasty side effects but I think
+> there is more in the game.
+
+Yes, that is why I think just reverting this patch may only hide a
+symptom and does not solve it.
+
+But it may as well have introduced a bug as Tony apparently was thinking
+of when asking.
+
+BR and thanks,
+Nikolaus
+
+[1]: =
+https://git.goldelico.com/?p=3Dletux-kernel.git;a=3Dcommit;h=3De824f0c9513=
+cf1d57eba0c9a2ce5fe264fafc8d5=
 
