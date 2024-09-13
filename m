@@ -1,177 +1,129 @@
-Return-Path: <linux-kernel+bounces-328463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7A959784A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:21:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D54E69784A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:22:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F262E1C2124C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:21:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A09A1C20CCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6230082D70;
-	Fri, 13 Sep 2024 15:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4204D558B6;
+	Fri, 13 Sep 2024 15:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RGoKlFqM"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mPHbH+u9"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B428824A1;
-	Fri, 13 Sep 2024 15:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149612629F
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 15:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726240470; cv=none; b=nP2CmZcMkBI9RDQmJV71Xf2jgrpeIjVeS9vo+Lx8B9nHdWtU6UEIvnhiaq1Z1Y7i/m16WfADOYs+TjNL94qR2JglI0HKXAylKNfDgcYGSgo3FyxuPWApCJ5zLcmxsa0FLiEqKjCyXPwqcAsqD8Px2zkiAhjqhdH/gtMjIUbo38c=
+	t=1726240619; cv=none; b=CNggc2fIEc+vN7pbWiZdQQjfqj3nqVL9XHPe4BPxDydofO0Ro0L7Pj6QzyqHxuQhT5ltZ5dYftMxpj7Hdlk6nbI+ErI+r2MZ+2MR11Fn1q4sZmaWbGMzreCIaj4cNFkLphny+gZcKj4k+s1ZoERuyZIioM6NmlQIH5sVvcGCSCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726240470; c=relaxed/simple;
-	bh=g4jBOHib7DDLDufNgs9as3beAZdFvYAq+LxQwq6bJIg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u29dMzvkG5aLQdAq1+T5fj7bfi2VVkBYYnlTbyE7B1wBkyWNDRbXJjlYS0V5ha4SeLrA3LZ6ohHb/aBx9OE21PhnH+VD9VUhUQBMchONq1ugoqzCdXsHT71rJKD9WYoLfy8gzKpN3tWZulbrJBAkahoybIeBk0eUhmeIU3YqNJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RGoKlFqM; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-206f9b872b2so23237955ad.3;
-        Fri, 13 Sep 2024 08:14:29 -0700 (PDT)
+	s=arc-20240116; t=1726240619; c=relaxed/simple;
+	bh=xAWkEscfYbcgnPVZ4edFBthl8XXEGTFdPUlCpw8X+X0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K5fZnKYW54TLSPMhlUkwtBtn45spRa5Pp8k1EcZ+qqRKdSEDoxh+sQou3Sgyl5ADHPFuZbDc+w/NBJUpr2So9jP5uOzV6p7TLzQIh2oDscNogWD7gNr7udYa/fCoegGLki6nr9PHDglEWZ6ox4gOzJ9VcqI6WakeQFgVhPXm4L0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mPHbH+u9; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a8a789c4fc5so549533566b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 08:16:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726240468; x=1726845268; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1726240616; x=1726845416; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sTqRxpnsELCRZthgAUNY/2NziO6J5/9jQZ2ah9jAKF0=;
-        b=RGoKlFqMgeU9qHR9s+f5M0Dy1YqOaghWcHRRw8eFZnU9aiKFhUeiwbLvBBIlHEGtX/
-         PCau5LU4P/4xQOTqR6WKuSJaT9cWZizVP3pOTvypu8HsM9hLmIO56VCQVaYzJzBuyFwa
-         tbKGJ6rctsf56gLoyZWHSq0ph9tzc+TOe+Zk6CKVokQmHBVSZ0q0kg2bl6kmBbhAE5Zb
-         bRtuCY93FY+KS2Xq954LiDJbwBYeDfN8UQ+m5gfGC0EyZxQPCJVsPgxAr1d4mIIJ2JUV
-         69mDR8TaNfNZvlH9Q/sgCAJXtdiyF577PUAOhu5EWTiBh7l+WNd64UYEpPUbYXLvakat
-         iqfQ==
+        bh=5YdprUc1vPVqWZrJP7Xy0uhlo+IsxLQcTd7Jlyz7yzs=;
+        b=mPHbH+u98l781NDodvWjfVZRVyryKrkfh4bEfOpjuEzLcvTVrqtXui5zZ2m03BFsoH
+         nRi95L/QBbG+xm/gZajtDB8riwMBVPngfybSQNOYWAGbBZ3MltWBSx5rrdc3NhQWaQL6
+         0/aQluiBXLmNnEfxhFXDKa94Eb08BRkAr2G6EmcqZvwOsR6pwN0OLL8eqLUqr5ppl/I9
+         l8kMZtg1JFmZyi+1BBZCI/SS6L5ZI3TURwXZUv8i6pT5Go6OKRyrvV+pPr+Pjd8Q2dJ8
+         LALkIIHshGrsVqO5W8k2ynODB0sEjEczDoZ93qeqE1rJcY/r1Tdc3zplIK3/6idbdc1X
+         MdCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726240468; x=1726845268;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=sTqRxpnsELCRZthgAUNY/2NziO6J5/9jQZ2ah9jAKF0=;
-        b=jBjn3F8kTL3H76Mt86RORTLIHoSC8dWgziw9FU+2of/WB8MRHQgXBJp2hdTYY7BD78
-         R7wQbNUgbg/dZ/uqzAwEKMY15lsm0FcTgj1wqevb1uGxq2NVWxnzKf2hMEtavpurOl4y
-         ic4Lap7l0ZdEEW1wFm+OdtGmsDlK+9+qPl54skrfyY2jG2MW5eEq4rWubhdbDrgVPxNC
-         GbCZWDcXOzWN1UVL0UIlWT4Dg2P7Orj6JDflWXr7UmQeeF66HJl9EbCT8OcZYx/3NboF
-         1IM5ERCReZhg5vfXRpyxfoHJgLxZrl4zfjHmqfHzsVqIvcTJdY+TQqj5wvAhx7VE7Pnq
-         AgIA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlCO++LV5w4qZzhv2dV3o1oVQIJCQLia7WLSZmNxP2IfCu5d5Pn62Zd/bfhAQQ59hxPHg=@vger.kernel.org, AJvYcCVyEmBgFkwdj2K9TUiFPyq57R9eGYp/43b10EAiolaP/pww8MUNKRHtgrEaT8o69GRW1v5Gbw1v1E1QI8Mp@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxF4yrdMh5XIrclgS1vAzevPMvkbU9DgZoUX28G4C6/ekBDJOG
-	8Jx8b0Fp2lWl6nmosW/4EsY3tPpMrsaj3K82UcJmhJgX1E9Pf8iO
-X-Google-Smtp-Source: AGHT+IGiszi5u/D2JmGS2Ec+IKq8GqyWeaf3SUz5xBSUd1WMfC8UDHQC75fRy58VHrpkoUvgUKelHA==
-X-Received: by 2002:a17:903:986:b0:1fb:6294:2e35 with SMTP id d9443c01a7336-2076e4854f3mr94126525ad.50.1726240467968;
-        Fri, 13 Sep 2024 08:14:27 -0700 (PDT)
-Received: from [192.168.50.122] ([117.147.91.189])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2076af25683sm29343895ad.17.2024.09.13.08.14.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Sep 2024 08:14:27 -0700 (PDT)
-Message-ID: <0e26d4c9-3e14-4bf9-85d3-86131e6a07f8@gmail.com>
-Date: Fri, 13 Sep 2024 23:14:17 +0800
+        d=1e100.net; s=20230601; t=1726240616; x=1726845416;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5YdprUc1vPVqWZrJP7Xy0uhlo+IsxLQcTd7Jlyz7yzs=;
+        b=SLTbfB5enJift5nOxd3ZDjCpY2EXnDz0yO0QRB4E2Yfbx6NIO3WkLYdChJZhtPqf5v
+         YK7k5xjwoGJsUD9GKo6qTTMYVuc5ntSLw0o6ljh/bg1si7JMNqM+xPnUff9JHblKl0nX
+         aP0hVQR9IPYFCH9dWqQDCavFgkdexpyxFvDJpF+fabvB7HA/8+b2rB6LR5JQVoeRvUXT
+         /mW2G1rlG6OvvfrMYIzS7BoVQ8JsEhytftwc6h4qLEmBm0PAODCLheEVsU97/+TzZ7nr
+         zu6OD4ElTVnTippNn8gZ6FPTztnLiqZKuIZnpvojR5472qBisckKVXdbyI9CaO0z+QYx
+         2cpg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4xqamKhmgfz0/I8lj8x3HW7hyZ0i8prE/3zvC3eaQsMadC+2/MDIMSTuWvTlc1XNhuB5EvwHMysboHx0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6xF8UiyPQd19/U/6Oq5FDwHvAL02d37Y/UTXiQZAksDis4Ods
+	dECn1mjIHiE7raEMUTK9TSz8xrA+tkJYsaoJwi1a4Q29qrCK7FmaW41fb7qHuTYeQ5sCuwiiSSS
+	Lu6jvuoFiQw2dlN4ZazO6DMf9gNYfhddf/FLg
+X-Google-Smtp-Source: AGHT+IH64JnbnKqlgjuwZ2poHsHnkRBQt2ZGALlB0BUTFCR5X3gE/MmjgeDfm+uKTA7o3vUfN5CtY78gFaFyWIBw5kc=
+X-Received: by 2002:a17:907:9723:b0:a8d:2bc7:6331 with SMTP id
+ a640c23a62f3a-a8ffae3a217mr1348205966b.27.1726240615882; Fri, 13 Sep 2024
+ 08:16:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next] libbpf: Fix expected_attach_type set when kernel
- not support
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman
- <eddyz87@gmail.com>, Daniel Borkmann <daniel@iogearbox.net>,
- Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240913121627.153898-1-chen.dylane@gmail.com>
- <ZuRCO3_075wY2zbG@krava>
-From: Tao Chen <chen.dylane@gmail.com>
-In-Reply-To: <ZuRCO3_075wY2zbG@krava>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240913150954.2287196-1-sean.anderson@linux.dev>
+In-Reply-To: <20240913150954.2287196-1-sean.anderson@linux.dev>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 13 Sep 2024 17:16:45 +0200
+Message-ID: <CANn89iL-fgyZo=NbyDFA5ebSn4nqvNASFyXq2GVGpCpH049+Lg@mail.gmail.com>
+Subject: Re: [PATCH] net: Handle threadirqs in __napi_schedule_irqoff
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
+	Juri Lelli <juri.lelli@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-在 2024/9/13 21:48, Jiri Olsa 写道:
-> On Fri, Sep 13, 2024 at 08:16:27PM +0800, Tao Chen wrote:
->> The commit "5902da6d8a52" set expected_attach_type again with
->> filed of bpf_program after libpf_prepare_prog_load, which makes
->> expected_attach_type = 0 no sense when kenrel not support the
->> attach_type feature, so fix it.
->>
->> Fixes: 5902da6d8a52 ("libbpf: Add uprobe multi link support to bpf_program__attach_usdt")
->> Signed-off-by: Tao Chen <chen.dylane@gmail.com>
->> ---
->>   tools/lib/bpf/libbpf.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
->> index 219facd0e66e..9035edf763a3 100644
->> --- a/tools/lib/bpf/libbpf.c
->> +++ b/tools/lib/bpf/libbpf.c
->> @@ -7343,7 +7343,7 @@ static int libbpf_prepare_prog_load(struct bpf_program *prog,
->>   
->>   	/* old kernels might not support specifying expected_attach_type */
->>   	if ((def & SEC_EXP_ATTACH_OPT) && !kernel_supports(prog->obj, FEAT_EXP_ATTACH_TYPE))
->> -		opts->expected_attach_type = 0;
->> +		prog->expected_attach_type = 0;
->>   
->>   	if (def & SEC_SLEEPABLE)
->>   		opts->prog_flags |= BPF_F_SLEEPABLE;
->> -- 
->> 2.25.1
->>
-> 
-> good catch! thanks
-> 
-> I can't remember why it was needed, perhaps we should go back to where it
-> was before?
-> 
-> I'm guessing prog->expected_attach_type might not get updated properly and
-> that might cause issues, not sure
-> 
-> thanks,
-> jirka
-> 
-> 
+On Fri, Sep 13, 2024 at 5:10=E2=80=AFPM Sean Anderson <sean.anderson@linux.=
+dev> wrote:
+>
+> The threadirqs kernel parameter can be used to force threaded IRQs even
+> on non-PREEMPT_RT kernels. Use force_irqthreads to determine if we can
+> skip disabling local interrupts. This defaults to false on regular
+> kernels, and is always true on PREEMPT_RT kernels.
+>
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
 > ---
-> diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-> index 219facd0e66e..df2244397ba1 100644
-> --- a/tools/lib/bpf/libbpf.c
-> +++ b/tools/lib/bpf/libbpf.c
-> @@ -7353,7 +7353,7 @@ static int libbpf_prepare_prog_load(struct bpf_program *prog,
->   
->   	/* special check for usdt to use uprobe_multi link */
->   	if ((def & SEC_USDT) && kernel_supports(prog->obj, FEAT_UPROBE_MULTI_LINK))
-> -		prog->expected_attach_type = BPF_TRACE_UPROBE_MULTI;
-> +		opts->expected_attach_type = BPF_TRACE_UPROBE_MULTI;
->   
->   	if ((def & SEC_ATTACH_BTF) && !prog->attach_btf_id) {
->   		int btf_obj_fd = 0, btf_type_id = 0, err;
-> @@ -7443,6 +7443,7 @@ static int bpf_object_load_prog(struct bpf_object *obj, struct bpf_program *prog
->   	load_attr.attach_btf_id = prog->attach_btf_id;
->   	load_attr.kern_version = kern_version;
->   	load_attr.prog_ifindex = prog->prog_ifindex;
-> +	load_attr.expected_attach_type = prog->expected_attach_type;
->   
->   	/* specify func_info/line_info only if kernel supports them */
->   	if (obj->btf && btf__fd(obj->btf) >= 0 && kernel_supports(obj, FEAT_BTF_FUNC)) {
-> @@ -7474,9 +7475,6 @@ static int bpf_object_load_prog(struct bpf_object *obj, struct bpf_program *prog
->   		insns_cnt = prog->insns_cnt;
->   	}
->   
-> -	/* allow prog_prepare_load_fn to change expected_attach_type */
-> -	load_attr.expected_attach_type = prog->expected_attach_type;
-> -
->   	if (obj->gen_loader) {
->   		bpf_gen__prog_load(obj->gen_loader, prog->type, prog->name,
->   				   license, insns, insns_cnt, &load_attr,
+>
+>  net/core/dev.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/net/core/dev.c b/net/core/dev.c
+> index 1e740faf9e78..112e871bc2b0 100644
+> --- a/net/core/dev.c
+> +++ b/net/core/dev.c
+> @@ -6202,7 +6202,7 @@ EXPORT_SYMBOL(napi_schedule_prep);
+>   */
+>  void __napi_schedule_irqoff(struct napi_struct *n)
+>  {
+> -       if (!IS_ENABLED(CONFIG_PREEMPT_RT))
+> +       if (!force_irqthreads())
+>                 ____napi_schedule(this_cpu_ptr(&softnet_data), n);
+>         else
+>                 __napi_schedule(n);
+> --
+> 2.35.1.1320.gc452695387.dirty
+>
 
+Seems reasonable, can you update the comment (kdoc) as well ?
 
-Hi, Jiri, thank you for your reply.
-It looks better your way, i will send it in v2.
+It says :
 
--- 
-Best Regards
-Dylane Chen
+ * On PREEMPT_RT enabled kernels this maps to __napi_schedule()
+ * because the interrupt disabled assumption might not be true
+ * due to force-threaded interrupts and spinlock substitution.
+
+Also always specify net or net-next for networking patches.
+
+Thanks.
 
