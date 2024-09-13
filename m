@@ -1,153 +1,187 @@
-Return-Path: <linux-kernel+bounces-327719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83387977A40
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:48:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2969D977A3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:48:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AED091C2485B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:48:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E9D8B24ABB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10681BF7E6;
-	Fri, 13 Sep 2024 07:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1576C1BE852;
+	Fri, 13 Sep 2024 07:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="jja0CkoH";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="t2TimrG1"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T2TTYPjf"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24961BE87A;
-	Fri, 13 Sep 2024 07:44:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF5F1BC9E5
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 07:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726213473; cv=none; b=O+gCyfkIieIgkP8EYKlHT4pLZXL3qzHKbDRYqJi8Xq/VhYEWviiM5P9xSyOm3mqhpzqDjplOyF+HRptN0wqrWO16qHvte2Eb/7cBdzLsfh0sb3MpwM8KXp763gUxS/2fXx3+domem7Hp1tUHk1b0JJy3uIc5yJaG2uLILCCOgbs=
+	t=1726213466; cv=none; b=Xw559c1AoL6HCXWLW7mpsCUiAP/eILvhuQVu4YETMMi4V0haC+2Z8PxXybqNdANyPpbFeDnc/MeSkvgayOc5zQpHvr/p09j59j1CXyKqaV2ybQMOTkVNGzB8pIAJiQ3AVNYOpCjhSvenDGUQDdYVo9cwiKoxJbFHvNwQeFqCzv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726213473; c=relaxed/simple;
-	bh=nBX5Ld1z1bmIkJx+NXFUOrdrC8aPexOJWUJML02Vlro=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=aOJUDC/xeE7T9jGg5/tRTZgtCcXGtYoSNCulNq3icFlRjaeclcBPhUngTe5gxrF+OjrxEs94a5tCeYHesvbUahr5reQeev+dD8i0kQU09kd4Yv1Q6HNw1yH6LPMRV9bEd0rRDjAjK+LNPBye0KQRD04cl+e0m+544hr7E2nW+DU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=jja0CkoH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=t2TimrG1; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id C62DA1380255;
-	Fri, 13 Sep 2024 03:44:29 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 13 Sep 2024 03:44:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1726213469;
-	 x=1726299869; bh=ASky3zL5oAIAgoydVci+Abhny5EjFe7NPYg23iemIz8=; b=
-	jja0CkoHIwYg/WFYPr8JqvpOrpbMBjNKkG03+ZaTTeK+V6Zw2G05ORgewsdzdXza
-	a62zQwPMCkkwYWNs3mxivs58DILf3138AWDsWyGni/RJ6zTn41+PU5A4ZjrdHOJA
-	tIYhqAjxSHkuZouOplEBvfTMohyqcl0i0qFcg5ANry/9Ju7b6ckSU4T0DhnLHd7M
-	amtnT8LVTW4qB1w29ahTpapkcFn1yFwpntLVPicCOSs3nL/wNmEeBQoDQqX0sIEu
-	GYmNszbF3H3CzHCW5gbyl6U6qCQQP7T32x6ISZ0jCu2WmqejaFOxt45D5mCtECxC
-	uqDQOshrZ5IXYOG8debgMw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726213469; x=
-	1726299869; bh=ASky3zL5oAIAgoydVci+Abhny5EjFe7NPYg23iemIz8=; b=t
-	2TimrG1l6Jbf6mjZaxLtdIvy+FAnkwAWYJPYA7IduEzGgIKclFSBh2o0riXXWEQo
-	Qpyj9Ko04bHno2ERBTZn9NMCV0F0xM4atYWWf4L0ZODJzamI9EA9ZkAIC+jwXJw3
-	WuyBHjZrYL4n0L91yiUPQ3L+zdz7CbXayns5CdcRuiHTn702eWUe15KYvZ+OARNR
-	t3flrzzbv1/LbWXjNZYjMtmAKnQWU92aWVcLuxxsQYNY/DIbQhyMFWeFJuws/GCy
-	VZqatv1ov697TKmUv0tJBsRxhj0ByuHcmW0x3bSvLoy/8uPx5Y9pJk3/HB8n362E
-	2U9VVtgbuJhD2ae30DgZw==
-X-ME-Sender: <xms:Xe3jZm2-G4Eem-Sjx6NQrDVGy9hu9K_mMLpAblSydd1HhvYi6DadGA>
-    <xme:Xe3jZpEeWEC5BW7Do3jTk4eCqT0yYMY6YwSbffNgRA7ftXlTmeFFOuCeBBdajm2iV
-    BOJJb8pcYO-PO8Iy98>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejiedggeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvdek
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehuthhsrghvrdgrghgrrhifrghlse
-    grnhgrlhhoghdrtghomhdprhgtphhtthhopegrughsphdqlhhinhhugiesrghnrghlohhg
-    rdgtohhmpdhrtghpthhtoheprghrthhurhhsrdgrrhhtrghmohhnohhvshesrghnrghloh
-    hgrdgtohhmpdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtgho
-    mhdprhgtphhtthhopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtg
-    hpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopegrnhguihdrshhhhiht
-    iheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehjihhrihhslhgrsgihsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:Xe3jZu6hB3Tc2ik6R4PD3w7pPZv7KtTe6D6QZHGYlY86boQ_Daz5zw>
-    <xmx:Xe3jZn0yBzN0vM5i20JnHlqeE1cET1S76lTGOkDwn0wVerFT4E0K2g>
-    <xmx:Xe3jZpGR7F4yN6pb_j9FskEIkM1F_sEpznEpBmD7cWeYHMeRjDI_QA>
-    <xmx:Xe3jZg_dFGZa6gWqm8TidYslENoXR1BmbkSMax2J1_DMyuM2OnKRSA>
-    <xmx:Xe3jZlW9bWHUqzZRZWmH1PcsQVGZojKRcePhKcvM5oELpG0h1V8ivvzR>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 24D01222006F; Fri, 13 Sep 2024 03:44:29 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1726213466; c=relaxed/simple;
+	bh=04h4E5s//lE7AGcZ5WXXq0mdamQexsMEhrSxTnBdrrM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=OUsT1vHSfXPR/diHkfBsyd8qJktCtLJ7CXEWPKT5OoWV6ie4Na2MBSVXFmXgLY8DzZ0PnFswQp/gxRjkrI8cN/K9OH9FUZBk4YwofgtGt6DOe83nuBKCmJqx7BkvyvTzCk2wk1J9QoviOyABoKKOmxl3L2GhvA/yWuhZ9F/+vQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T2TTYPjf; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42cb8dac900so17337745e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 00:44:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726213461; x=1726818261; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AheCAqeoUm8jMvzLGmM3qZQOOZVqEnJwf/ppq5LTzDo=;
+        b=T2TTYPjfRBKPbfc2CTecls9zzZinLq5cUVOtTrtBJwglxnSKCPIQONIYp5gwERdj6v
+         6a9u5KjOQY9Lbt4hpDOZEyx8VsK+hOH0DGKR9UEakBzXxsv9nlWOixDWNv03j5wZFJ1i
+         orgk1OuyIMNxJrCgFqYYiyPdUhdoOK5zXQAbW2OltbIp3/nO08e47eyHmwckGTrIfjGQ
+         ZdDmHwC+hrJYsqWhJTW7r/Mk0sSAN4RW5O5iKnkxcyZQUr8ATOrRd849WUX/zv2AjK8A
+         1hx1rFJcyFQUWBDmT4kBDg7IERzOu6EHzOqsadyUpOLOAwh5VMH5HRvaGX4UfmvtrnO7
+         t/vQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726213461; x=1726818261;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=AheCAqeoUm8jMvzLGmM3qZQOOZVqEnJwf/ppq5LTzDo=;
+        b=ed6NGFPnBqg3u8QVWlUzRF2ZVGSVIvwFfqK/6IvkvrIN4j3Heu01s4HL4/gGcltbSo
+         SGdIyO2CIYuKPlNybgrpIkFvplqaOwPp04dIcqwC2YgvOO+axqX+h5ZwTTd6Fjdqp4Wk
+         L6RiRBbYkYI5h+J9njW16L2XG3j2EZMMDU/rxjWVNhthlENQ8ZVQouy8BCEtJBSpXFLW
+         pKAaLTs94PBZCROt2ERDvWzjPhm7takp6t8fW83MPzsbqDywth2ji7EX/VHjUC4C6Vhn
+         ZEIpfAow7Z4OWtgq8c72XLaIHuqzEclLerbkc6/Syq8ZLQc6Ku9J4i9516MPiCd73SyO
+         NYjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUc0rro+3jbkgHUCUznovg452Wu9B5y3MJ0+GObkTQpUBsfpIIQM2OrIAm/C+BA3of5slQCdGyxsy+tfN8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlIjmdBmGAANn1Lf36LPoZgHHisHYO6xo+7/pK04opyRk3IYGS
+	OZLlU92FTYzbiRxTeO5HvjFO5lmL4KudWcjqCmjy34ZAwUquzk2iYeBP/Qbt+L0=
+X-Google-Smtp-Source: AGHT+IGsEdjmmPHEFWAf/IGcV2sqiw5X4o9COdYfUQwMTAP2tgacgkx5UhDvEESC5qvKY6aNHfxZgg==
+X-Received: by 2002:a05:600c:5125:b0:42c:cd88:d0f4 with SMTP id 5b1f17b1804b1-42cdb56aea6mr48877945e9.22.1726213461409;
+        Fri, 13 Sep 2024 00:44:21 -0700 (PDT)
+Received: from [192.168.7.202] ([212.114.21.58])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b05a754sm14722525e9.3.2024.09.13.00.44.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Sep 2024 00:44:21 -0700 (PDT)
+Message-ID: <4cbc14ad-0b2f-476e-8da2-08986776eae8@linaro.org>
+Date: Fri, 13 Sep 2024 09:44:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 13 Sep 2024 07:44:08 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: arturs.artamonovs@analog.com, "Catalin Marinas" <catalin.marinas@arm.com>,
- "Will Deacon" <will@kernel.org>, "Greg Malysa" <greg.malysa@timesys.com>,
- "Philipp Zabel" <p.zabel@pengutronix.de>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Utsav Agarwal" <Utsav.Agarwal@analog.com>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Andi Shyti" <andi.shyti@kernel.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Jiri Slaby" <jirislaby@kernel.org>, "Olof Johansson" <olof@lixom.net>,
- soc@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org,
- adsp-linux@analog.com,
- "Nathan Barrett-Morrison" <nathan.morrison@timesys.com>
-Message-Id: <117b76ac-97b2-4201-86b2-b48b063bac35@app.fastmail.com>
-In-Reply-To: <20240912-test-v1-20-458fa57c8ccf@analog.com>
-References: <20240912-test-v1-0-458fa57c8ccf@analog.com>
- <20240912-test-v1-20-458fa57c8ccf@analog.com>
-Subject: Re: [PATCH 20/21] arm64: defconfig: sc598 add minimal changes
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2] drm/bridge: imx8mp-hdmi-tx: allow 0.5% margin with
+ selected clock
+To: Dominique Martinet <asmadeus@codewreck.org>, Liu Ying
+ <victor.liu@nxp.com>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>
+Cc: Adam Ford <aford173@gmail.com>, Lucas Stach <l.stach@pengutronix.de>,
+ Frieder Schrempf <frieder.schrempf@kontron.de>,
+ dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Dominique Martinet <dominique.martinet@atmark-techno.com>
+References: <20240907-hdmi-tolerance-v2-1-b9d7abd89f5c@codewreck.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240907-hdmi-tolerance-v2-1-b9d7abd89f5c@codewreck.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Thu, Sep 12, 2024, at 18:25, Arturs Artamonovs via B4 Relay wrote:
-> From: Arturs Artamonovs <arturs.artamonovs@analog.com>
->
-> Add ADSP-SC598 defconfig
->
-> @@ -513,6 +515,7 @@ CONFIG_TCG_TIS_I2C_CR50=m
->  CONFIG_TCG_TIS_I2C_INFINEON=y
->  CONFIG_I2C_CHARDEV=y
->  CONFIG_I2C_MUX=y
-> +CONFIG_I2C_ADI_TWI=y
->  CONFIG_I2C_MUX_PCA954x=y
->  CONFIG_I2C_BCM2835=m
->  CONFIG_I2C_CADENCE=m
-> @@ -539,6 +542,7 @@ CONFIG_I2C_UNIPHIER_F=y
->  CONFIG_I2C_RCAR=y
->  CONFIG_I2C_CROS_EC_TUNNEL=y
->  CONFIG_SPI=y
-> +CONFIG_SPI_ADI=y
->  CONFIG_SPI_ARMADA_3700=y
->  CONFIG_SPI_BCM2835=m
->  CONFIG_SPI_BCM2835AUX=m
+On 07/09/2024 07:54, Dominique Martinet wrote:
+> From: Dominique Martinet <dominique.martinet@atmark-techno.com>
+> 
+> This allows the hdmi driver to pick e.g. 64.8MHz instead of 65Mhz when we
+> cannot output the exact frequency, enabling the imx8mp HDMI output to
+> support more modes
+> 
+> Tested-by: Adam Ford <aford173@gmail.com> #imx8mp-beacon
+> Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+> Tested-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+> Signed-off-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
+> ---
+> Changes in v2:
+> - Improve comment about the tolerance
+> - Link to v1: https://lore.kernel.org/r/20240904083103.1257480-1-dominique.martinet@atmark-techno.com
+> ---
+>   drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c | 11 +++++++++--
+>   1 file changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c b/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
+> index 13bc570c5473..200d65184159 100644
+> --- a/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
+> +++ b/drivers/gpu/drm/bridge/imx/imx8mp-hdmi-tx.c
+> @@ -23,6 +23,7 @@ imx8mp_hdmi_mode_valid(struct dw_hdmi *dw_hdmi, void *data,
+>   		       const struct drm_display_mode *mode)
+>   {
+>   	struct imx8mp_hdmi *hdmi = (struct imx8mp_hdmi *)data;
+> +	long round_rate;
+>   
+>   	if (mode->clock < 13500)
+>   		return MODE_CLOCK_LOW;
+> @@ -30,8 +31,14 @@ imx8mp_hdmi_mode_valid(struct dw_hdmi *dw_hdmi, void *data,
+>   	if (mode->clock > 297000)
+>   		return MODE_CLOCK_HIGH;
+>   
+> -	if (clk_round_rate(hdmi->pixclk, mode->clock * 1000) !=
+> -	    mode->clock * 1000)
+> +	round_rate = clk_round_rate(hdmi->pixclk, mode->clock * 1000);
+> +	/* imx8mp's pixel clock generator (fsl-samsung-hdmi) cannot generate
+> +	 * all possible frequencies, so allow some tolerance to support more
+> +	 * modes.
+> +	 * Allow 0.5% difference allowed in various standards (VESA, CEA861)
+> +	 * 0.5% = 5/1000 tolerance (mode->clock is 1/1000)
+> +	 */
+> +	if (abs(round_rate - mode->clock * 1000) > mode->clock * 5)
+>   		return MODE_CLOCK_RANGE;
+>   
+>   	/* We don't support double-clocked and Interlaced modes */
+> 
+> ---
+> base-commit: 67784a74e258a467225f0e68335df77acd67b7ab
+> change-id: 20240907-hdmi-tolerance-4d83074a4517
+> 
+> Best regards,
 
-These are usually not required for booting and should be
-made loadable modules if possible.
-
-      Arnd
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
