@@ -1,79 +1,56 @@
-Return-Path: <linux-kernel+bounces-328599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0586C978653
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:02:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9D2F978659
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:03:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA16E280FAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:02:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 861EF1F26891
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:03:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1032780C0C;
-	Fri, 13 Sep 2024 17:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3445880C02;
+	Fri, 13 Sep 2024 17:02:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YC61bJFt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="QeCjm9zW"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A7E6BB4B;
-	Fri, 13 Sep 2024 17:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D35457CBB;
+	Fri, 13 Sep 2024 17:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726246933; cv=none; b=g1g9Ibd038k0k/ekq95BKvtKOj+m2cpiefA3UQJAFzvH/VccS7aSkTovJtiYn2zMab5IDeuOYUWpemdQfciqonjLnJnpuTfEcGRLsUzR8b66HIRMyxX6rmu1SAtjtO+tOp85kgzPTYdVlUHQgC5OwbEUH6jG3Ifn02cnTReZswo=
+	t=1726246974; cv=none; b=PMXOj5RN1/IuNjZ7BYpQRzCi5L6yp9Vfzhz76vWoBr9DSAsWOcCUvekg6Mu1hCOw62ae8JPITIHsO7jxPI5r+YMfdFPkZpHU5UA1BAMAK06AHZDDN0+1F2vCIEzkuXXQ+2UgdQ1FG4xk6eyfooXObZ8YZRFf18yP6ULcY9f2HWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726246933; c=relaxed/simple;
-	bh=iU+uC45aK3oxV1shXS6vt5137cEYJgyIhw/8iZFvqHc=;
+	s=arc-20240116; t=1726246974; c=relaxed/simple;
+	bh=9hCxTYk9yAqwSOku5ekhshPSb4kkYyvIP5skQlEd55A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dukijcysQEi1noGOZmJiA3a75/4H283rvsyYJno50zFmuQEyyReQBp5iPmNB1umFXDmhBsEM+kHONSnDkQnf1yTfJ7jkCwpw4Yfk9FmoE2qK83KhghfOPg+9Qa65lHSqMXJgnsWCsjC7XQG1ETCP8sslH6jGYoHgmyt3F+woHlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YC61bJFt; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726246932; x=1757782932;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=iU+uC45aK3oxV1shXS6vt5137cEYJgyIhw/8iZFvqHc=;
-  b=YC61bJFtDbc7pNw8YMKfP20CmUK83nhYZneQV+19cs9dF25CYJT+oz92
-   1+VcojxywW52QxgOARwMZqo9QhvME1PEmn1aCus910XQ2K3D+2o07ZE52
-   uzjkD/oS4rsJrIp6orJrQEAjoX47QPQgWaazTAmR+rjkA17TpCd5VKzuQ
-   BBpHq1a71+vnboZSnDgN+Cj9iTDi2Ao2OgNnp+P+KboHzMpYhqhbHbDd4
-   +rbJY4+T0HnxBOjyD/MdT3+Dh/BJrrUFwccmd4TLPan7njLBEPOMPefxV
-   ckrNVbskJ0mr2i5k2DdQzfglBqD4+BK+QFcWt7sVgDHGtDqa15g3sJg+0
-   Q==;
-X-CSE-ConnectionGUID: +RljoJbhQReXe9iqunD4og==
-X-CSE-MsgGUID: +lkJMYGGQpagOtAW1a500g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="13515309"
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="13515309"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 10:02:11 -0700
-X-CSE-ConnectionGUID: AGhsvv91SAiQc4j9Az2hlw==
-X-CSE-MsgGUID: JmSBjxDHRLuUjUB61DfkmA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="98972511"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 13 Sep 2024 10:02:08 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sp9gL-0006im-28;
-	Fri, 13 Sep 2024 17:02:05 +0000
-Date: Sat, 14 Sep 2024 01:01:55 +0800
-From: kernel test robot <lkp@intel.com>
-To: Erni Sri Satya Vennela <ernis@linux.microsoft.com>, kys@microsoft.com,
-	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
-	jikos@kernel.org, bentiss@kernel.org, dmitry.torokhov@gmail.com,
-	linux-hyperv@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, ernis@microsoft.com,
-	Erni Sri Satya Vennela <ernis@linux.microsoft.com>,
-	Saurabh Sengar <ssengar@linux.microsoft.com>
-Subject: Re: [PATCH 1/3] Drivers: hv: vmbus: Disable Suspend-to-Idle for VMBus
-Message-ID: <202409140042.imFE8dSL-lkp@intel.com>
-References: <1726176470-13133-2-git-send-email-ernis@linux.microsoft.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l/xX8OWjxOKwVxX3zY9lmUc/LK69ehkth1G1P21XrumYt+86RXVzd2toL9oi/dvxjyOreBVX3VxOyiRnhF/RwQnYFAMNIhTYhE4R95w3fml/PpEaPlFOGtOedr4Ne6EJFle+k8De1SQGBw+lV9IJ+RzvFKr38EOvbrILjmEwtXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=QeCjm9zW; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=7zMlLZOcK1RQ4wrk+dCE2XdWF0J3wBrSzW6w7G6AQZQ=; b=QeCjm9zWACqkkRpr1lXanKKSOc
+	P6bv7x4mMn6S2gtOxJlV8g1iuP0oKVWvBp5f4UQsTZhssOxFybaWUaIQuMx6Y5a2rEfh1N0hUN7A9
+	kdPeZxcTuSjbAtpTNmxL5z2ow3DscexehQfDARGAIWC9XpdxXRHN5ufh38czZXKwtCVs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sp9gy-007PQX-PD; Fri, 13 Sep 2024 19:02:44 +0200
+Date: Fri, 13 Sep 2024 19:02:44 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Frank Sae <Frank.Sae@motor-comm.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, xiaogang.fan@motor-comm.com,
+	fei.zhang@motor-comm.com, hua.sun@motor-comm.com
+Subject: Re: [RFC] net:yt6801: Add Motorcomm yt6801 PCIe driver
+Message-ID: <9506d808-85b9-4f37-baee-76f3dee56182@lunn.ch>
+References: <20240913124113.9174-1-Frank.Sae@motor-comm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,69 +59,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1726176470-13133-2-git-send-email-ernis@linux.microsoft.com>
+In-Reply-To: <20240913124113.9174-1-Frank.Sae@motor-comm.com>
 
-Hi Erni,
+On Fri, Sep 13, 2024 at 09:00:04PM +0800, Frank Sae wrote:
+> This patch is to add the ethernet device driver for the PCIe interface of
+> Motorcomm YT6801 Gigabit Ethernet.
 
-kernel test robot noticed the following build errors:
+One 11,927 line patch?
 
-[auto build test ERROR on hid/for-next]
-[also build test ERROR on dtor-input/next dtor-input/for-linus linus/master v6.11-rc7 next-20240913]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Please look at how other Ethernet drivers are submitted. Please break
+this up. You should also look at the comments other drivers get when
+submitted. A quick look through suggests there is plenty of broken
+stuff in here which has been commented on before. You should not be
+repeating the errors of others.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Erni-Sri-Satya-Vennela/Drivers-hv-vmbus-Disable-Suspend-to-Idle-for-VMBus/20240913-053127
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
-patch link:    https://lore.kernel.org/r/1726176470-13133-2-git-send-email-ernis%40linux.microsoft.com
-patch subject: [PATCH 1/3] Drivers: hv: vmbus: Disable Suspend-to-Idle for VMBus
-config: x86_64-randconfig-161-20240913 (https://download.01.org/0day-ci/archive/20240914/202409140042.imFE8dSL-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409140042.imFE8dSL-lkp@intel.com/reproduce)
+FYI: All your PHY handling code needs throwing away and use phylink or
+phylib.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409140042.imFE8dSL-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/hv/vmbus_drv.c:985:20: error: use of undeclared identifier 'vmbus_freeze'
-     985 |         .suspend_noirq  = vmbus_freeze,
-         |                           ^
-   drivers/hv/vmbus_drv.c:1913:42: warning: shift count >= width of type [-Wshift-count-overflow]
-    1913 |         dma_set_mask(&child_device_obj->device, DMA_BIT_MASK(64));
-         |                                                 ^~~~~~~~~~~~~~~~
-   include/linux/dma-mapping.h:77:54: note: expanded from macro 'DMA_BIT_MASK'
-      77 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
-         |                                                      ^ ~~~
-   1 warning and 1 error generated.
-
-
-vim +/vmbus_freeze +985 drivers/hv/vmbus_drv.c
-
-   973	
-   974	/*
-   975	 * Note: we must use the "noirq" ops: see the comment before vmbus_bus_pm.
-   976	 *
-   977	 * suspend_noirq/resume_noirq are set to NULL to support Suspend-to-Idle: we
-   978	 * shouldn't suspend the vmbus devices upon Suspend-to-Idle, otherwise there
-   979	 * is no way to wake up a Generation-2 VM.
-   980	 *
-   981	 * The other 4 ops are for hibernation.
-   982	 */
-   983	
-   984	static const struct dev_pm_ops vmbus_pm = {
- > 985		.suspend_noirq  = vmbus_freeze,
-   986		.resume_noirq	= NULL,
-   987		.freeze_noirq	= vmbus_suspend,
-   988		.thaw_noirq	= vmbus_resume,
-   989		.poweroff_noirq	= vmbus_suspend,
-   990		.restore_noirq	= vmbus_resume,
-   991	};
-   992	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+	Andrew
 
