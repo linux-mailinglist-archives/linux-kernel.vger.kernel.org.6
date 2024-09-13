@@ -1,192 +1,160 @@
-Return-Path: <linux-kernel+bounces-327600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4733597783C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:20:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB92B977846
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:25:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93445B23D06
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:20:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3509AB248B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF95C1448ED;
-	Fri, 13 Sep 2024 05:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5126C154C04;
+	Fri, 13 Sep 2024 05:25:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X1X8puXt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EFfSehS+"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FEF3EA64
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 05:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24EBD4A07;
+	Fri, 13 Sep 2024 05:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726204831; cv=none; b=oaRmDXekBQmB/XV+LjPr/Ui/E2uAFzHVViW1Q06h6uFG61AhCUBTXELMWLVfsrhp4mumitQXdPA9fjnvhIbC87gaDJJzTSZ5p9lmk/H0F99yMP/FsxXQTBXE3kOUCQrq1svCa+/YL9I5Aa7ddo27GQ7Z7sJuLT3QFk3QT/fjD5Y=
+	t=1726205102; cv=none; b=d/NcgRXzy7BHxFeE1HLujRTWotdORBsKymEMolkf8Ulr4o5mRACdbbhT1HVZ6ePjrw1LVDq5xAu5DjVw8fwEGu9bPkNfAUR5Z+2YU6hMQwYM/Rr3jAzbdCXX4RHt9H3ATCKOcsuIu/HJ7rern7uvIXnak0tellNa9EnwK1nljVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726204831; c=relaxed/simple;
-	bh=UaW0JClroVNWlhraitr91hMTlbi5VT0vYCxxVYhROnU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MYb/VtZBErYwNHo466yboqYQRrxNsHDb97ZWkmVmMswfcqLT9mMctJIUP1hAVa4zl+kf4nvNdlpPbgmIKLwHYnLdvbfYwB4WwgDKODZ1rgVNfTNh093zYugpa8jDVNxkcUEAEEqgOqyPxl6uALb2K30taQYNcmFEH3yjk/HQRJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X1X8puXt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CABACC4CEC0;
-	Fri, 13 Sep 2024 05:20:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726204830;
-	bh=UaW0JClroVNWlhraitr91hMTlbi5VT0vYCxxVYhROnU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=X1X8puXt78CFZ0KTOxYWbbedI3hRAEt2J3hDaWmopuqbnbJ4pltPhCkxPeMZVdlAO
-	 8FkDicu+y551u5INo+El52K7j8OovI23sX0C+5g4s8dFUJJyS5Ihp0d3xWO1ccXWBJ
-	 N3Adh0sZvGNO9etM5F5Qr54FPMctVKYvrDdzmkukRild/lorPTAd/3D0oZc9g7jas0
-	 bCVWHYXZ21GIjd0d0ixvYlo6xYWuKdxFLP0lr7j6xb/2pfim+xB9cMi0cj/y6Cg3HW
-	 tzxWNJ39Bo6JHM1bCGAiXmQZjW9i7J3xssFVbu8f70T4/xKIpb8RJ0B2XmITT37zqv
-	 zgew5k9QjyaDg==
-Date: Fri, 13 Sep 2024 07:20:25 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@Huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
- <linux-kernel@vger.kernel.org>, <qemu-arm@nongnu.org>,
- <qemu-devel@nongnu.org>
-Subject: Re: [PATCH v8 06/13] acpi/ghes: add support for generic error
- injection via QAPI
-Message-ID: <20240913072025.76a329b0@foz.lan>
-In-Reply-To: <20240912144233.675d6b63@imammedo.users.ipa.redhat.com>
-References: <cover.1723793768.git.mchehab+huawei@kernel.org>
-	<2c8970b5d54d17b601dc65d778cc8b5fb288984b.1723793768.git.mchehab+huawei@kernel.org>
-	<20240819145136.0452ff2b@imammedo.users.ipa.redhat.com>
-	<20240825052923.715f88bc@sal.lan>
-	<20240911152132.65a7a219@imammedo.users.ipa.redhat.com>
-	<20240911163436.00004738@Huawei.com>
-	<20240912144233.675d6b63@imammedo.users.ipa.redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1726205102; c=relaxed/simple;
+	bh=WoKkcQipE4/xHR/NdwPS6Bjm/Dw9I6bu2ZnHts3E368=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VW9udRsMlMCNm3mq9+Wh+75mqdimOhYchHA2E31frIBRLzN4S4uAquqwPB5qqkfysEHq4IkN6OUU17GEPuEznngcFSNKPJfWuDDo3SBen3qDCcevDEMcTXvcNXwk5GnBZoLvTFJG/PtX7CGxOuusLoHteIbRp2XUdSy70CZ2wwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EFfSehS+; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 48D5Ohl9024794;
+	Fri, 13 Sep 2024 00:24:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1726205083;
+	bh=Us8Z9SWqyaxfXS8Zp2weS07AoL27IDikUkpVOPXuHTE=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=EFfSehS+PqnwHfsaBB4exofR/nd8KNBX1Utkh+/7HyTo4ufhQqOqMXnYNPTPixyOG
+	 XS7Soxc1zil5YnYIsjRxIIjmHkPH1j7RFfXM70YxHhTRvkvGrdCPHAKEptPPXnkL/O
+	 vYJddGgHwrv6c3RyQnh7ddajAz0qYnfy57T2XmsQ=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 48D5OhKG009215
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 13 Sep 2024 00:24:43 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 13
+ Sep 2024 00:24:42 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 13 Sep 2024 00:24:42 -0500
+Received: from [172.24.19.92] (lt5cd2489kgj.dhcp.ti.com [172.24.19.92])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 48D5OcJP128907;
+	Fri, 13 Sep 2024 00:24:38 -0500
+Message-ID: <1a9b4de5-93f5-47ad-be5d-733668b3adba@ti.com>
+Date: Fri, 13 Sep 2024 10:54:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] arm64: dts: ti: k3-j784s4: Mark tps659413
+ regulators as bootph-all
+To: Andrew Halaney <ahalaney@redhat.com>, Nishanth Menon <nm@ti.com>,
+        Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: Keerthy <j-keerthy@ti.com>, Neha Malcom Francis <n-francis@ti.com>,
+        Eric
+ Chanudet <echanude@redhat.com>,
+        Enric Balletbo <eballetb@redhat.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>
+References: <20240911-j784s4-tps6594-bootph-v2-0-a83526264ab1@redhat.com>
+ <lnrcosn7e7x6v5kerll3sqyy7r3qup5nmqi4m3puzjfcvpoljv@6lfmyprzwseu>
+Content-Language: en-US
+From: "Kumar, Udit" <u-kumar1@ti.com>
+In-Reply-To: <lnrcosn7e7x6v5kerll3sqyy7r3qup5nmqi4m3puzjfcvpoljv@6lfmyprzwseu>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-
-Em Thu, 12 Sep 2024 14:42:33 +0200
-Igor Mammedov <imammedo@redhat.com> escreveu:
-
-> On Wed, 11 Sep 2024 16:34:36 +0100
-> Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
-> 
-> > On Wed, 11 Sep 2024 15:21:32 +0200
-> > Igor Mammedov <imammedo@redhat.com> wrote:
-> > 
-> > > On Sun, 25 Aug 2024 05:29:23 +0200
-> > > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> > >   
-> > > > Em Mon, 19 Aug 2024 14:51:36 +0200
-> > > > Igor Mammedov <imammedo@redhat.com> escreveu:
-> > > >     
-> > > > > > +        read_ack = 1;
-> > > > > > +        cpu_physical_memory_write(read_ack_start_addr,
-> > > > > > +                                  &read_ack, (uint64_t));        
-> > > > > we don't do this for SEV so, why are you setting it to 1 here?    
-
-The diffstat doesn't really help here. The full code is:
-
-    /* zero means OSPM does not acknowledge the error */
-    if (!read_ack) {
-        error_setg(errp,
-                   "Last CPER record was not acknowledged yet");
-        read_ack = 1;
-        cpu_physical_memory_write(read_ack_start_addr,
-                                  &read_ack, sizeof(read_ack));
-        return;
-    }
-
-> > > what you are doing here by setting read_ack = 1,
-> > > is making ack on behalf of OSPM when OSPM haven't handled existing error yet.
-> > > 
-> > > Essentially making HW/FW do the job of OSPM. That looks wrong to me.
-> > > From HW/FW side read_ack register should be thought as read-only.  
-> > 
-> > It's not read-only because HW/FW has to clear it so that HW/FW can detect
-> > when the OSPM next writes it.
-> 
-> By readonly, I've meant that hw shall not do above mentioned write
-> (bad phrasing on my side).
-
-The above code is actually an error handling condition: if for some
-reason errors are triggered too fast, there's a bug on QEMU or there is
-a bug at the OSPM, an error message is raised and the logic resets the 
-record to a sane state. So, on a next error, OSPM will get it.
-
-As described at https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html?highlight=asynchronous#generic-hardware-error-source:
-
-   "Some platforms may describe multiple Generic Hardware Error Source
-    structures with different notification types, as defined in 
-    Table 18.10. For example, a platform may describe one error source
-    for the handling of synchronous errors (e.g. MCE or SEA), and a 
-    second source for handling asynchronous errors (e.g. SCI or
-    External Interrupt)."
-
-Basically, the error logic there seems to fit for the asynchronous
-case, detecting if another error happened before OSPM handles the
-first one.
-
-IMO, there are a couple of alternatives to handle such case:
-
-1. Keep the code as-is: if this ever happens, an error message will
-   be issued. If SEA/MCE gets implemented synchronously on HW/FW/OSPM,
-   the above code will never be called;
-2. Change the logic to do that only for asynchronous sources
-   (currently, only if source ID is QMP);
-3. Add a special QMP message to reset the notification ack. Probably
-   would use Notification type as an input parameter;
-4. Have a much more complex code to implement asynchronous notifications,
-   with a queue to receive HEST errors and a separate thread to deliver
-   errors to OSPM asynchronously. If we go this way, QMP would be
-   returning the number of error messages queued, allowing error injection
-   code to know if OSPM has troubles delivering errors;
-5. Just return an error code without doing any resets. To me, this is 
-   the worse scenario.
-
-I don't like (5), as if something bad happens, there's nothing to be
-done.
-
-For QMP error injection (4) seems is overkill. It may be needed in the
-future if we end implementing a logic where host OS informs guest about
-hardware problems, and such errors use asynchronous notifications.
-
-I would also avoid implementing (3) at least for now, as reporting
-such error via QMP seems enough for the QMP usecase.
-
-So, if ok for you, I'll change the code to (2).
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
 
-> > Agreed this write to 1 looks wrong, but the one a few lines further down (to zero
-> > it) is correct.
-> 
-> yep, hw should clear register.
-> It would be better to so on OSPM ACK, but alas we can't intercept that,
-> so the next option would be to do that at the time when we add a new error block
-> 
-> > 
-> > My bug a long time back I think.
-> > 
-> > Jonathan
-> > 
-> > >   
-> > > > 
-> > > > IMO, this is needed, independently of the notification mechanism.
-> > > > 
-> > > > Regards,
-> > > > Mauro
-> > > >     
-> > > 
-> > >   
-> > 
-> 
+On 9/12/2024 9:32 PM, Andrew Halaney wrote:
+> On Wed, Sep 11, 2024 at 12:19:01PM GMT, Andrew Halaney wrote:
+>> This series marks tps659413's regulators as bootph-all in order for
+>> the nodes (and parent nodes) to be accessible during MCU's u-boot SPL.
+>>
+>> This in turn is desired since the tps659413 needs its MCU ESM
+>> state machine setup in order for the watchdog to reset the board.
+>>
+>> This took me a little while to track down, as enabling the ESM, TPS6594,
+>> etc in u-boot would result in the below boot failure:
+>>
+>>      U-Boot SPL 2024.10-rc4-00007-g44b12cbcd1b3-dirty (Sep 06 2024 - 14:25:52 -0500)
+>>      SYSFW ABI: 3.1 (firmware rev 0x0009 '9.2.4--v09.02.04 (Kool Koala)')
+>>      Initialized 4 DRAM controllers
+>>      SPL initial stack usage: 13408 bytes
+>>      ### ERROR ### Please RESET the board ###
+>>
+>> Which turns out to actually have failed far earlier in spl_early_init(),
+>> due to these nodes not being accessible in u-boot. That's hard to tell
+>> though since console isn't setup until later (and for that reason I
+>> think spl_early_init()'s return value in j784s4_init.c isn't
+>> evaluated since a panic() at that point would leave a user with *no*
+>> information at all).
+>>
+>> I've tested this in conjunction with a u-boot series which I'll link in
+>> a follow-up response on the k3-j784s4-evm. I'd appreciate someone testing
+>> on the k3-am69-sk at a minimum, as it should suffer the same fate if things
+>> aren't setup appropriately.
+>>
+>> Signed-off-by: Andrew Halaney <ahalaney@redhat.com>
+> Link to the u-boot series: https://lore.kernel.org/all/3bf2177d-178f-46bf-abfe-6f00a52c623b@ti.com/#t
+>
+> Udit, it seems you tested the am69-sk patch from this series in the above
+> u-boot link, thanks! If that's correct mind adding your Tested-by on
+> the patch here then as well?
 
 
+Yes, Please use for this series on both platforms
 
-Thanks,
-Mauro
+Tested-by: Udit Kumar <u-kumar1@ti.com>
+
+
+>
+> Thanks,
+> Andrew
+>
+>> ---
+>> Changes in v2:
+>> - Only mark the regulator nodes as bootph-all since parents are implied
+>> - Link to v1: https://lore.kernel.org/r/20240906-j784s4-tps6594-bootph-v1-0-c5b58d43bf04@redhat.com
+>>
+>> ---
+>> Andrew Halaney (2):
+>>        arm64: dts: ti: k3-j784s4-evm: Mark tps659413 regulators as bootph-all
+>>        arm64: dts: ti: k3-am69-sk:  Mark tps659413 regulators as bootph-all
+>>
+>>   arch/arm64/boot/dts/ti/k3-am69-sk.dts    | 8 ++++++++
+>>   arch/arm64/boot/dts/ti/k3-j784s4-evm.dts | 8 ++++++++
+>>   2 files changed, 16 insertions(+)
+>> ---
+>> base-commit: 9aaeb87ce1e966169a57f53a02ba05b30880ffb8
+>> change-id: 20240906-j784s4-tps6594-bootph-19d3f00fb98a
+>>
+>> Best regards,
+>> -- 
+>> Andrew Halaney <ahalaney@redhat.com>
+>>
 
