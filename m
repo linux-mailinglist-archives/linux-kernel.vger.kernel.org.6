@@ -1,122 +1,107 @@
-Return-Path: <linux-kernel+bounces-328575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 669229785F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:41:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A924B97860C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:42:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 116521F24C9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:41:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2FD41C22C2C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497B278C76;
-	Fri, 13 Sep 2024 16:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5FA78C90;
+	Fri, 13 Sep 2024 16:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UF02V0tb"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="p7dwqn5h"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCF7482DB
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 16:41:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22092D052;
+	Fri, 13 Sep 2024 16:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726245663; cv=none; b=Sih4XczHokVh8v4H8hsI6dSP+zbg+lJlNipgbqvYGkSFEwIfhIAK1QuMVrm4Ll8bz8o2rl65jmicPtai5LE1eNtM0vh+yeb1eVph9pzBgeoBwNNm5+cW0b09Fzt9KnNeC7vT+SWf8tEZ2ECw+KgyjXUF1I4KVXONzNVyRZQqhp4=
+	t=1726245754; cv=none; b=m0hUmKwK9X9tnxVxOjjQCVBti8eCDCxba0e99Todwm7s+FTU9mlJfw1V3eq5XSti7g4j5um+IGyMdpvXcht6P+IlgxMiK+IrfmDc4e/HH45RZq3ld/xiLbzE/t9BAW9JLvSW3rlAOw43ceouX0fpalkW6K83klHcoxqX5L9fQOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726245663; c=relaxed/simple;
-	bh=HhYMYnEDCfAu/czHEFoDMqeqegceDcImzlGxTPN4FyQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l5NFI8tMTez3L2GsMBasLjFsutdJEOZVwzUpW0wfFPKBfVCXdOuTNNw0Hq3f6b+nDwRFuKHpdGy4OTJT+y9U9iUhH7RUUx3iYxcnQo7dqKc90VsEepBKgYBVsw0WYyuHKZS/us/vq4R3UtRzY4vStzEeMbBwh2+Xv9hefZe4FFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UF02V0tb; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <14e6f307-1aaa-4862-a22f-4833fc18920a@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726245658;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wG4ZcFkaU9wM1fuGnOPOZ06ynoZgWADJYJlzgy7RAcM=;
-	b=UF02V0tbxau1xdYEebDycBjEwN7gqdm1KS9I+SduH4IbyKxFCL+ASKhsM1b54NFQBURG3z
-	Uw2fj9quCfJjJcBlpDtB6SciWQh6xm+fU/Jo+ujz0huJ78UO90YOz5f2HrOE/ehfFbw/lP
-	O6UII46xxunMiGzSDCs6n91R4rVbAV0=
-Date: Fri, 13 Sep 2024 17:40:52 +0100
+	s=arc-20240116; t=1726245754; c=relaxed/simple;
+	bh=HXIfKdnG22exxAV+fSAOXl1qXmyMtKHpkEy00UN8v14=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=cvBbdhCXN3ATwOlKhJUWhKgGGyNCy+7Nh+rcXQE52T2xC79bO76mkpPV6bryKRb0tVbO75sVwtPg6yj331pbxI/h9iI00pbpZBhOJcDTNkEh2cBt/bJhGrmEM8/Zm8jdBy258oZpKE+09FIomGMJciXSswY1g6JJNILD15voF94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=p7dwqn5h; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1726245740; x=1726850540; i=markus.elfring@web.de;
+	bh=HXIfKdnG22exxAV+fSAOXl1qXmyMtKHpkEy00UN8v14=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=p7dwqn5hOfV2UKVvdOg+cfcAVvzWZVvi9tMRnTVq0DQJorx7zgx9XXW8XZj054Vt
+	 EiTUbLD5liumry+Dpv9w9Opkcswg/4ZqZv0RzBhGPNtIqBg2Zk/zxAMNZ0DNMEJu4
+	 43CbwE705LyQ1SINoWOFhYeIy7TwhfPY1RtofcEP8+jYWDnGlsF9nGGfuWpXUqmMT
+	 w8V0cIvgIi7/JBidxH0A6CgY1lffQxBXbrvWa8A3bwzWxMhnlViNM4R/ehncKemqX
+	 hIWR5k/bSpw4lSAtQzKKfGCsCAXVACCP+XWgRoeZDbV/oQPgrb2wW20tGZdJJJA+x
+	 psZ9nUM7BUi1qHGIBQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MDvDi-1sfDjs29jg-004tLo; Fri, 13
+ Sep 2024 18:42:20 +0200
+Message-ID: <1016953e-3bab-4acc-a167-27656073feda@web.de>
+Date: Fri, 13 Sep 2024 18:42:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next] net: ethtool: phy: Don't set the context dev
- pointer for unfiltered DUMP
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>,
- Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>,
- Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>,
- linux-arm-kernel@lists.infradead.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Herve Codina <herve.codina@bootlin.com>,
- Florian Fainelli <f.fainelli@gmail.com>,
- Heiner Kallweit <hkallweit1@gmail.com>,
- Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?Q?K=C3=B6ry_Maincent?= <kory.maincent@bootlin.com>,
- =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
- Piergiorgio Beruto <piergiorgio.beruto@gmail.com>,
- Oleksij Rempel <o.rempel@pengutronix.de>,
- =?UTF-8?Q?Nicol=C3=B2_Veronese?= <nicveronese@gmail.com>,
- Simon Horman <horms@kernel.org>, mwojtas@chromium.org,
- Nathan Chancellor <nathan@kernel.org>, Antoine Tenart <atenart@kernel.org>,
- Marc Kleine-Budde <mkl@pengutronix.de>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- Romain Gantois <romain.gantois@bootlin.com>,
- syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com, davem@davemloft.net
-References: <20240913100515.167341-1-maxime.chevallier@bootlin.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20240913100515.167341-1-maxime.chevallier@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+To: Akashi Takahiro <takahiro.akashi@linaro.org>,
+ Ben Chuang <ben.chuang@genesyslogic.com.tw>,
+ Victor Shih <victor.shih@genesyslogic.com.tw>, linux-mmc@vger.kernel.org,
+ Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ben Chuang <benchuanggli@gmail.com>,
+ Daniil Lunev <dlunev@chromium.org>, Greg Tu <greg.tu@genesyslogic.com.tw>,
+ HL.Liu@genesyslogic.com.tw, Lucas Lai <Lucas.Lai@genesyslogic.com.tw>
+References: <20240913102836.6144-10-victorshihgli@gmail.com>
+Subject: Re: [PATCH V22 09/22] mmc: sdhci: add UHS-II module and add a kernel
+ configuration
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240913102836.6144-10-victorshihgli@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:QeA4gMO8b1UNSDpdTs7WI+aozQyDW3a6pLGEyD8WxSbigZW6j13
+ L9OjZzChwA5QUbA0jSRakA9iRjlC92EG9/iA9JwLnC+LRNOF9elTCyHQdrH8zV7JGBUZlX7
+ yXE4NA0uCBeRKTP0FgRYPB7PPBSSrMjQuPXkU9vbxwZcUQfsznCS8pr3aHXhbxwtN834SCu
+ HRwM/Yjnq8F6dD0ok6IRw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:taiSzN5xeAU=;3sn3Db6WJaEEEysbldXsOBecBgM
+ bha4cX8+Y4Kxt4IB925Hrf5KZfKFbEOlwowtJYCIOI2lQVewRoxwzxL3fYmW0PFCAy/DCQxZA
+ W74yeNO2ejPL0wtFQwHdA9a+pZVoGuFpoaoMqaunFYdoSzlYv0ooVb7qYkOU91xV02g0bWFYN
+ p6dN1EIeb5+rRB3tAA41LhLsWl6T5Wp08rhTL/jwDKleeBiD5GTRXIHT7LdF0dRgKGm18CCjj
+ /CnKTY8AjKd+u7ojk1+J/OCQpL9JlBALIq3OU8awcfeGwtIdriYdUnwjtJZcRZ2BRUWKG7lbr
+ 7mPUKjXpgCV8j8otmxKU2/BpwSJRmsxqOPg597za+F0dha6Br+ZtH6MRPYbKkW99sOFooAXvr
+ rNnOXakN/SZA7VmVOmSft8SIId8CvIheC5pUh5kjU4NrkgbaaHBV57nXxPXPopPgAsyXKW6yJ
+ CC3Y58WoY/OWnoMegNK51r0DWAe19XA8w66QplsWtpXyjwgW9AIVhXro+v4Bc6xR3MfZ+bpN9
+ aqVfx4yEmt/DrnpX+4n3dfThM2SfkhO85ot/bvrE4VhM00yI5oq6rrfMxFJXVBT9NsB9LZrJg
+ J/1YVWVE68qG1Km727mcLUnAooWW2EOxZRg2p4Ga4c92O/ZMqdKosNqyCfWNIJFHh7PNTmioi
+ QpJBo+tV5D1RqJQRnNE3GMtGK63ZJUW9mG0QMA3jzb058nd0sicTXayUGqDkIN3Bi0m3+NGo7
+ 6D9s9OKwjk9++UPWMfeeRNH4A7xljNTWkiRplx7JVMbEkmNGS8vrzHWCSCBbcY3c8NcNRmX7J
+ pQklyhZJgXNIgGWIsLS/OWGw==
 
-On 13/09/2024 11:05, Maxime Chevallier wrote:
-> The context info allows continuing DUMP requests, shall they fill the
-> netlink buffer.
-> 
-> In the case of filtered DUMP requests, a reference on the netdev is
-> grabbed in the .start() callback and release in .done().
-> 
-> Unfiltered DUMP request don't need the dev pointer to be set in the context
-> info, doing so will trigger an unwanted netdev_put() in .done().
-> 
-> Reported-by: syzbot+e9ed4e4368d450c8f9db@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/netdev/000000000000d3bf150621d361a7@google.com/
-> Fixes: 17194be4c8e1 ("net: ethtool: Introduce a command to list PHYs on an interface")
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> ---
-> This patch fixes a commit that still lives in net-next.
-> 
->   net/ethtool/phy.c | 2 --
->   1 file changed, 2 deletions(-)
-> 
-> diff --git a/net/ethtool/phy.c b/net/ethtool/phy.c
-> index 4ef7c6e32d10..ed8f690f6bac 100644
-> --- a/net/ethtool/phy.c
-> +++ b/net/ethtool/phy.c
-> @@ -251,8 +251,6 @@ static int ethnl_phy_dump_one_dev(struct sk_buff *skb, struct net_device *dev,
->   	int ret = 0;
->   	void *ehdr;
->   
-> -	pri->base.dev = dev;
-> -
->   	if (!dev->link_topo)
->   		return 0;
->   
+=E2=80=A6
+> +++ b/drivers/mmc/host/sdhci-uhs2.c
+> @@ -0,0 +1,41 @@
+=E2=80=A6
+> +MODULE_AUTHOR("Intel, Genesys Logic, Linaro");
+=E2=80=A6
 
-I've checked that this is leftover from the previous series.
+Would you like to reconsider the structure for such provided information o=
+nce more?
+https://elixir.bootlin.com/linux/v6.11-rc7/source/include/linux/module.h#L=
+239
 
-Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+Regards,
+Markus
 
