@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-328421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E9EF97832F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:02:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A7F1978304
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02036281994
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:02:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C7311F255BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D288729CF0;
-	Fri, 13 Sep 2024 15:02:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3332A3D0AD;
+	Fri, 13 Sep 2024 14:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="Zzx54NxF"
-Received: from mout.perfora.net (mout.perfora.net [74.208.4.197])
+	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="mXexuzNS"
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A7C18054;
-	Fri, 13 Sep 2024 15:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCF629CE7;
+	Fri, 13 Sep 2024 14:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726239720; cv=none; b=ezRlJ+EkNCMc7CukEbASRoBSozUgna5XxPn7xfwWEGEPasuO9fUfMyGe29VGiNClES4Z/zyj6+eLqMCLSN9chaz8vSdbnP76qRad88Engj2K4HRw7u31p/hffX0SG40NOi8RzCldNoziQYDioE+vpqDA1YhIneMagIOeOzpzx4k=
+	t=1726239413; cv=none; b=YTg5eSxvF3M7hZksrnfywoKcsz0/JxMQ5sorOesQ9jvlllTLxGsDVhHWY3/K6s+/aYnjFluHaZKj4teRZHLUWwLL5kxzaEeq9bO5/iyLCewzjCkQ6mcqT6rTr5CtZ7186NbbxXLJJ41Wm2MJc2CYVlQO0/IZ3duTR7Gu5Y12zF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726239720; c=relaxed/simple;
-	bh=Prop8X1u5n9vXxzf5jOSP/AMviBnOLDj1YxG3MfeTSU=;
+	s=arc-20240116; t=1726239413; c=relaxed/simple;
+	bh=3WCsga3GqIwYhBmstLx/z0AhqxN2IfYpeKnamXXGdzc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EjlZqMR8JXPJ2XPfat4Ssi65S0Qk6RH0ZW1Qe+fh6KwYYlZGebzb8xiQs79EH56wooS9Xlu2dCGUZE2kxed4iOyHAR3OXIr3I2jY75eAJ52xNZ8qHVxBJN2+RUe8s0G8kVFObgcR/Uk0Uwnflbn94Xb0Byhl8jYkhhqHnlfDPbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=Zzx54NxF; arc=none smtp.client-ip=74.208.4.197
+	 MIME-Version; b=FIJwh9koFn9D9wkMBmKseWvgCC8f4Fsz1dVhMUJqFUCE84ddawlusfE8W1IxKQuAtE2rNSwmgNK/BSf9lq1pUEb5dEP1kmkViQ+SwSRRJP7hKFq/r4aD+iwku5a7Gs1/AKOUwKYVwrVsn8U3DF2/L7nM0CFHj15L3dE7/Zv/+F8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=mXexuzNS; arc=none smtp.client-ip=74.208.4.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
-	s=s1-ionos; t=1726239715; x=1726844515; i=parker@finest.io;
-	bh=XcKN6q0TBp89e0wB0f+FMk1TLd9btuVWG0QWEJAGodg=;
+	s=s1-ionos; t=1726239390; x=1726844190; i=parker@finest.io;
+	bh=b4O9e5pH2C9mry5jrjkn2GHODSWJkyFz+pjodKXA+xA=;
 	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
 	 References:MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=Zzx54NxFb57Q7WyGm26DIn5KWtSXiVALR08QXN6C7IIz45yqCRd4dCnj1rj8ijYS
-	 nSjCn0ub1ORyC9iwjY1bnsEEkPePy6I1lnDYDCKhLnOHvBJ1v3PCpY60taovBU7po
-	 j5CdI14nSLRHfR2B7GuOa9umAtd/CMVJh2PWSHQ1BSFrak+yQg3gYlN0xK1Spt8fH
-	 LVrLPQX6/SZ0qbeQoeKEtYobIj7ZfuelWAuciVWPWVyMc1SoG7VX8/1axIlVKM7Ik
-	 sCQOMjx29qaMYut/F4TnZ926Gdwbvj8IHpRu9DzeFPACNFWZkIfIf4t4WFOkBxOI7
-	 6Kk+rO7Ezs/5Ko3fVw==
+	b=mXexuzNSPzyaYwC1W/mFBzPal99tjPZ2A5u56BVsPEGbkcrhusrmM0TN+qCmyAQP
+	 mcO3tiYBj/y6TMIxCmtdLBrgxDljw2BUD7j5vOOR0rmGDlzBBgwizat/Y1L+gdPQ+
+	 BqZgVndn7h5CEvW2nDpIL1ziAxjJrfN7mc54oM/ZgfIPow5uOW9duCwRqOtL/2Qc7
+	 6mrzQvGeeX0aCFaNvenFu8ZULCsjg8V/Kk4N0ta2+72CZK80gkalwsnzpdgtIqTpL
+	 cXKIXrh0A6jz2Q2F9LRIid1Ae5w5IrxNI+vrYWMJH4GIrfqRSAbBei1qw8K0mhHe8
+	 4uZ7bIiqyqq7kw391Q==
 X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
 Received: from finest.io ([98.159.241.229]) by mrelay.perfora.net (mreueus004
- [74.208.5.2]) with ESMTPSA (Nemesis) id 1MsIT8-1s19Sp3HEw-00xbIG; Fri, 13 Sep
- 2024 16:56:29 +0200
+ [74.208.5.2]) with ESMTPSA (Nemesis) id 1Mad3m-1sIoq416d8-00g4RU; Fri, 13 Sep
+ 2024 16:56:30 +0200
 From: Parker Newman <parker@finest.io>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Jiri Slaby <jirislaby@kernel.org>,
@@ -55,9 +55,9 @@ To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-kernel@vger.kernel.org,
 	linux-serial@vger.kernel.org
 Cc: Parker Newman <pnewman@connecttech.com>
-Subject: [PATCH v1 3/6] misc: eeprom: eeprom_93cx6: Replace printk(KERN_ERR ...) with pr_err()
-Date: Fri, 13 Sep 2024 10:55:40 -0400
-Message-ID: <127dcc7f60d15a1cc9007c9e5b06a1aa2b170e19.1726237379.git.pnewman@connecttech.com>
+Subject: [PATCH v1 4/6] serial: 8250_exar: Replace custom EEPROM read with eeprom_93cx6
+Date: Fri, 13 Sep 2024 10:55:41 -0400
+Message-ID: <78dead78311ea619e0be99cc32ee0df1610a480d.1726237379.git.pnewman@connecttech.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1726237379.git.pnewman@connecttech.com>
 References: <cover.1726237379.git.pnewman@connecttech.com>
@@ -68,54 +68,152 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:mPfsegP9z14MiUC6IhNn4jM/ANnsdT/sOovmOq6y+rpXz6nvaf/
- 9qskY9F0kghKN5DS9mtdl17qS43tf1AmB8Pz3ew2mOXJ8HLs8KfvwVhZICsJ25wFafgrs52
- p26+nHka0/fnZU9d4G8Ukxz25vs6dcJKme2jtXDW1a4KpuYYA+ywQEpqdGl5ZVGPBHERXXs
- DGLU84D7meXUutgfa/U2A==
+X-Provags-ID: V03:K1:BQbriEhczTMvDyonXQ0dqYK7p6lCYymmcHtH1Fm/YlxLyNmjLOj
+ ybBgu3uyOLqxpqYMHY3ZaNYZYKm6l5nLJr1crSoy5xkVsjFj+67Ii1h59d955/CwbGj1WJ0
+ uINVYCSNM1FtfRvYj4dFqpFwOOBV99z3UeXT0tGT4tHNNdAxJIJdPFX4X9/ZOaYlkkJNE9a
+ 8vMpd+IeIY7ZbJO0li9Ww==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:J23xp/a1mPk=;fdT3TA1eWzuORCpVRS//uRqJz+G
- 2+5B7bKjm+cXMVQXHFr+9+4f0vwjx0pQyF2gFWnT3JMVyu5CzbLw9WUWY46WPa0/j+K4FqGMt
- X5LXzEBt4A99g8i7L0MjjT2932q5ZSChJCgA3MBCr7ts7XAs0xE7liADPg19hpNIRLG5Tcb0G
- Q9fjMRiqxcwpnMbtVTU0V4FrdCHTM+i1mxvfOnojozSQR+4b/cz+9Aw6gOcAEmjX3AjE1j1pU
- 5uGJW+y1KQAoLA2aEKePGWQ/IZWBtXkfi0IIrZ3M7pGzCSql5ACKBe1QCQ8dVC7hW+oX0hLjl
- oJxzyzWYfMz5U8K22Q1khS4k+Mr/6NH+3CoCqzBHCn3RNxo/zwP/hZJFfhg4eMpLkVxWrIIhS
- tZun6O7qboHJcX6IoRb5I4HE15MVLqVmxae1ssXyXfnKV0UMWqNBYDiUj8CCHqMVUFGuYIJ0/
- IDCv9U+JGV3DqL6N3UlFc7Or7qaLpi4mola55N9bW41L2rST7wOgmx+tNRlSl9tsIQ72vIC+l
- dASqouuJxHzfPSWLotPPwFLDsp4GZD8xOckgLHZArBy77tifPJl8j357qFo5lVzuP0CqC9Utl
- Gxt+pBJ7vSKiydme7D3lUVyAv2YoFa8CkbpPhPAe25OWKt2zry8x/wT4eWaPqyxeC+RnhTZoC
- jreC7xvYd6zsEYA7CMsPTfUtU3SnFo8G4/neE9ZihrtlQ5khIqEGnETxZgmqWVSHCh8ZJf4yy
- L1lwODX8i4C/SgOoBBP+MuuKBc7iyqHrQ==
+UI-OutboundReport: notjunk:1;M01:P0:9rsu8cD/61M=;Rfb+0YV+CyFLtFK67TtW7j0j3m1
+ uI7UrW++m3EkrifFh3slJWgDjrEMghiRbeSwBoNYQ/dUSL1X+ZIBfslkdlad+L0PyldgvygHf
+ 1sEM2v0wRZQcK9/amdGfc2mIOvAN7K0IAbU3V4VFyLL5NBUJxqfJLqy99XE9O1l0jTAckedOs
+ 6Wu+GELprg0KpsJz14SnFmcBaFTt31YXOIkVsWCuaMT27Jb9O+lEPISIOk2u+/ZdDAjbHF4PD
+ jEnHiy3mnXKLzCH7EmElFkck8q/YY2akkmnMKFHAsrFh6xNbxKsQrk+mzKQQV+PkoTweEzetX
+ JizkrTTCnF5EtmoPjdUoevQ+TcquQjfnGpGfAPWu1SbIEcPRTcOa9erboFCCEsFfMJ3fYUTpm
+ wsADqAC1BRb/xoMdOkzfrdWKQZPdTbhUi1+f12RoMyEMOtUXtll+xS+Qn25Ory/VFeSx2ess6
+ Zr9TSuMFSDl3NfcG/IW8i3O4tiNHAjqVe8xsEV6Ens97YbZvnNA1Z3rDDB+iCFRjFbafx1dg0
+ TzD0sBIn+ZAl/1v4K6Y7TXotTF5bTE5rrHj721uJ7AsrQ0yw6hBVtFrbXslPg16UqokMKEqql
+ quDAzgnNtxOT2oLB+0MXhw90ru4FklotC7/pqT0IHRR4XUmNarbHICUBEG5eUHVuBlGdr6Zmn
+ b74dFjaSPuPcL+Xiu45gipupfOZ/SGm7SgfJWwhReruuBVDkJ773Xln7czZFXmXJlmf2E/Q4k
+ PXVbHYGvvL97zxP3LUXJTZDwBz833dbPg==
 
 From: Parker Newman <pnewman@connecttech.com>
 
-Replace printk(KERN_ERR ...) with pr_err() to improve readability.
+Replace the custom 93cx6 EEPROM read functions with the eeprom_93cx6
+driver. This removes duplicate code and improves code readability.
 
-Fixes checkpatch warning:
+exar_ee_read() calls are replaced with eeprom_93cx6_read() or
+eeprom_93cx6_multiread().
 
-WARNING: Prefer [subsystem eg: netdev]_err([subsystem]dev, ... then
-dev_err(dev, ... then pr_err(...  to printk(KERN_ERR ...
-+			printk(KERN_ERR "%s: timeout\n", __func__);
+Link to discussion with Andy Shevchenko:
+Link: https://lore.kernel.org/linux-serial/Ztr5u2wEt8VF1IdI@black.fi.intel=
+.com/
+
+Note: Old exar_ee_read() and associated functions are removed in next
+patch in this series.
 
 Signed-off-by: Parker Newman <pnewman@connecttech.com>
 =2D--
- drivers/misc/eeprom/eeprom_93cx6.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/8250/8250_exar.c | 54 +++++++++++++++++++++++------
+ 1 file changed, 43 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/misc/eeprom/eeprom_93cx6.c b/drivers/misc/eeprom/eepr=
-om_93cx6.c
-index 64da22edefa4..755be9a4ffd4 100644
-=2D-- a/drivers/misc/eeprom/eeprom_93cx6.c
-+++ b/drivers/misc/eeprom/eeprom_93cx6.c
-@@ -378,7 +378,7 @@ void eeprom_93cx6_write(struct eeprom_93cx6 *eeprom, u=
-8 addr, u16 data)
- 		usleep_range(1000, 2000);
+diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/serial/8250=
+/8250_exar.c
+index b7a75db15249..0edb5aeba199 100644
+=2D-- a/drivers/tty/serial/8250/8250_exar.c
++++ b/drivers/tty/serial/8250/8250_exar.c
+@@ -21,6 +21,7 @@
+ #include <linux/property.h>
+ #include <linux/string.h>
+ #include <linux/types.h>
++#include <linux/eeprom_93cx6.h>
 
- 		if (--timeout <=3D 0) {
--			printk(KERN_ERR "%s: timeout\n", __func__);
-+			pr_err("%s: timeout\n", __func__);
- 			break;
- 		}
- 	}
+ #include <linux/serial_8250.h>
+ #include <linux/serial_core.h>
+@@ -252,6 +253,7 @@ struct exar8250 {
+ 	unsigned int		nr;
+ 	unsigned int		osc_freq;
+ 	struct exar8250_board	*board;
++	struct eeprom_93cx6	eeprom;
+ 	void __iomem		*virt;
+ 	int			line[];
+ };
+@@ -355,6 +357,39 @@ static u16 exar_ee_read(struct exar8250 *priv, u8 ee_=
+addr)
+ 	return data;
+ }
+
++static void exar_eeprom_93cx6_reg_read(struct eeprom_93cx6 *eeprom)
++{
++	struct exar8250 *priv =3D (struct exar8250 *)eeprom->data;
++	u8 regb =3D exar_read_reg(priv, UART_EXAR_REGB);
++
++	// EECK and EECS always read 0 from REGB so only set EEDO
++	eeprom->reg_data_out =3D regb & UART_EXAR_REGB_EEDO;
++}
++
++static void exar_eeprom_93cx6_reg_write(struct eeprom_93cx6 *eeprom)
++{
++	struct exar8250 *priv =3D (struct exar8250 *)eeprom->data;
++	u8 regb =3D 0;
++
++	if (eeprom->reg_data_in)
++		regb |=3D UART_EXAR_REGB_EEDI;
++	if (eeprom->reg_data_clock)
++		regb |=3D UART_EXAR_REGB_EECK;
++	if (eeprom->reg_chip_select)
++		regb |=3D UART_EXAR_REGB_EECS;
++
++	exar_write_reg(priv, UART_EXAR_REGB, regb);
++}
++
++static void exar_eeprom_init(struct exar8250 *priv)
++{
++	priv->eeprom.data =3D (void *)priv;
++	priv->eeprom.register_read =3D exar_eeprom_93cx6_reg_read;
++	priv->eeprom.register_write =3D exar_eeprom_93cx6_reg_write;
++	priv->eeprom.width =3D PCI_EEPROM_WIDTH_93C46;
++	priv->eeprom.quirks |=3D PCI_EEPROM_QUIRK_EXTRA_READ_CYCLE;
++}
++
+ /**
+  * exar_mpio_config_output() - Configure an Exar MPIO as an output
+  * @priv: Device's private structure
+@@ -696,20 +731,15 @@ static int cti_plx_int_enable(struct exar8250 *priv)
+  */
+ static int cti_read_osc_freq(struct exar8250 *priv, u8 eeprom_offset)
+ {
+-	u16 lower_word;
+-	u16 upper_word;
++	__le32 osc_freq_le;
+
+-	lower_word =3D exar_ee_read(priv, eeprom_offset);
+-	// Check if EEPROM word was blank
+-	if (lower_word =3D=3D 0xFFFF)
+-		return -EIO;
++	eeprom_93cx6_multiread(&priv->eeprom, eeprom_offset,
++				(__le16 *)&osc_freq_le, 2);
+
+-	upper_word =3D exar_ee_read(priv, (eeprom_offset + 1));
+-	if (upper_word =3D=3D 0xFFFF)
++	if (osc_freq_le =3D=3D 0xFFFFFFFF)
+ 		return -EIO;
+
+-	return FIELD_PREP(CTI_EE_MASK_OSC_FREQ_LOWER, lower_word) |
+-	       FIELD_PREP(CTI_EE_MASK_OSC_FREQ_UPPER, upper_word);
++	return le32_to_cpu(osc_freq_le);
+ }
+
+ /**
+@@ -833,7 +863,7 @@ static enum cti_port_type cti_get_port_type_xr17v35x(s=
+truct exar8250 *priv,
+ 	u8 offset;
+
+ 	offset =3D CTI_EE_OFF_XR17V35X_PORT_FLAGS + port_num;
+-	port_flags =3D exar_ee_read(priv, offset);
++	eeprom_93cx6_read(&priv->eeprom, offset, &port_flags);
+
+ 	port_type =3D FIELD_GET(CTI_EE_MASK_PORT_FLAGS_TYPE, port_flags);
+ 	if (CTI_PORT_TYPE_VALID(port_type))
+@@ -1551,6 +1581,8 @@ exar_pci_probe(struct pci_dev *pcidev, const struct =
+pci_device_id *ent)
+ 	if (rc)
+ 		return rc;
+
++	exar_eeprom_init(priv);
++
+ 	for (i =3D 0; i < nr_ports && i < maxnr; i++) {
+ 		rc =3D board->setup(priv, pcidev, &uart, i);
+ 		if (rc) {
 =2D-
 2.46.0
 
