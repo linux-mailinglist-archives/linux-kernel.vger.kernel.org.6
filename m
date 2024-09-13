@@ -1,175 +1,144 @@
-Return-Path: <linux-kernel+bounces-327463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96684977650
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:16:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5554977654
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A5B7281953
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:16:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 543C01F24326
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7E2441D;
-	Fri, 13 Sep 2024 01:16:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEEC14A07;
+	Fri, 13 Sep 2024 01:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="00K90ats"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mrCCHMbW"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0D34A07
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 01:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688FF4A06;
+	Fri, 13 Sep 2024 01:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726190189; cv=none; b=j5Lr+CtHSlZ7E1kR3MWexKnVdSwpdFbAtN1tqB40vyk8p+WsFFLsvtBTQhXBy1PuErj+Ou7+39dT+9SkDxXtilEmK22drfNSZstNTkHEIYf7hwR57vZP2isuVpG1LWiGADGfomWn07tBgRowrl6nmybBr1w9qwvrRT585GNbSAs=
+	t=1726190222; cv=none; b=YmJWYdp7dGakka+0Ky5vTr3Ci0BKkBWbHuBEJYcjeZgGegRvPNUr3/AL2pxRVc/mAeH63nBEY/VtiayBUTLmkL9B1JrqD1zjAPEy/t+coRMwnqLGs8zDjn2Y6ROEf5Fst14srxlLLPXoAht6FKTbkAQESVHUtIIBjT0lQErZ394=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726190189; c=relaxed/simple;
-	bh=r/yO+OeFcLvOjY6JHwXkqX6j3rz4+wcN2tkneSV7wN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SI/VzkbGO0qFkvgUtSh/65u5aXJVph3xfaCHHLs5Czdxem3Vk+85odVGAXBxOOj3EKSG1BDH4jWVMwOAWeuSadgFiQ0zkOklUtbkplTns9WnqtnkPKjPFfnCdWCybri74PU8ZRIfvQvVNZeq9ADXD9gbBclRgD6dmii6rEKA9Y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=00K90ats; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-206e614953aso17561375ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 18:16:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1726190186; x=1726794986; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CGdN0gxzpmFovSXXc4PPR7wb1goaAH/sxNtRx0azomw=;
-        b=00K90atsMMhkIeOfviDeZgLYYMC+Kbv2wOkwkhJ/F4QWA5SXHcrTqnl1Cn1MxNUefB
-         1003I+kUTcBfPO024bgJV4j7L4L5oVT1HvzopP5Q5vfXoewSywIxcOROSBKrc2rcxcYO
-         6/5dVIu8pRBV6cIfFU6vXmQxRyAFy3OHS7xixXfc92NNS7sKRqPx1IFavjKQv9sZKyQU
-         Xvvw4bEsIHA47MfuqXKerx/tfNc5iGKPNVUrsA0U0vJvLpPDHpolRlwuzP3yPtx282L0
-         O1dbY12H2QGipm+1NUM288QgWj7wHA4gF/nGP+g6fIFTpXy+Lz97XiPQSpaa1MOqG0Ad
-         8nfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726190186; x=1726794986;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CGdN0gxzpmFovSXXc4PPR7wb1goaAH/sxNtRx0azomw=;
-        b=ohE//hSBEj/LoQf38J84+Vh9B1jS/qi9dRq3Ov6jyQr4AGfDDo/rWtrj6y47sWiQcB
-         AhpwMeqt/c4WaJA98/JI5Hz0zp2ZtUkhgR2UUKQCUu8m9CJw2ONIuRCfUlVDSXTAFNYo
-         iiaSyWM59YaiELbi8vXOFD+hSIhQrvJ4vzqRSdMikeWmLiBbveQFWS6XsAC0P7jUAKdR
-         27E7EONYGET6Q1xuun5Kuti/llTwa2g4/AITTVaPq+CS20kbocUxUho/+61KG/7qeivF
-         faeYnNYnsonjRlx94YU9HXQCC/OhaDc+Cus9Nb2Xx0817/EuM/0+RdTQIP1MjHJCqgfY
-         7zeA==
-X-Forwarded-Encrypted: i=1; AJvYcCUll1YuJkDEUL2vxdDmh+OmD3HVbhTwvcw339k8Xa7ODzEEGvL6ICnBmhxsl5KkvO2LNtiCOgoLRAP07zM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi+lVmQoJKK3siD6T/uIH693idyxy4ZYUj1tS0BPccv4ADzVSO
-	10uKpqElZry4OvyMaxnzX+IRSGr0uVXoOklQpChB3Ofm46RDzpUWDJ3+X2LU1ng=
-X-Google-Smtp-Source: AGHT+IEHKm3UNTMeYi9FcEOsLtiVsBpfeVoViEjIu4klChUXmqp/JF2zUsw5pdnzmHwyVdvF9TzQWQ==
-X-Received: by 2002:a17:903:249:b0:206:8eec:c087 with SMTP id d9443c01a7336-2076e354d05mr65687755ad.16.1726190185980;
-        Thu, 12 Sep 2024 18:16:25 -0700 (PDT)
-Received: from ghost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbb9c98f1fsm382550a91.20.2024.09.12.18.16.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 18:16:24 -0700 (PDT)
-Date: Thu, 12 Sep 2024 18:16:20 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-kernel@vger.kernel.org, Anup Patel <anup@brainfault.org>,
-	Conor Dooley <conor@kernel.org>, kasan-dev@googlegroups.com,
-	Atish Patra <atishp@atishpatra.org>,
-	Evgenii Stepanov <eugenis@google.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Subject: Re: [PATCH v4 03/10] riscv: Add CSR definitions for pointer masking
-Message-ID: <ZuOSZPJLBUeoTMA9@ghost>
-References: <20240829010151.2813377-1-samuel.holland@sifive.com>
- <20240829010151.2813377-4-samuel.holland@sifive.com>
+	s=arc-20240116; t=1726190222; c=relaxed/simple;
+	bh=E2gV8B8A3jzr/nMS2SjrXxg5bgvM29YhQivGU6jtdJc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jTRblFOadQtLTTEN44dpoZPHSiXxW0mxPgGgIgByJitmBWpKXOXmvSdPvS6ooyR20wiGdLKPlaTAPgMXh9G3L0IHncrSDDw5makRPmK8lyQWFivYXdYM1+gB7qR5nMo393a7ajTgx+9wfQLUNB8uD0T0lFTs7PSHa+JREzQLTnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mrCCHMbW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 48CMCD0f026534;
+	Fri, 13 Sep 2024 01:16:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=/hXxj2sLevdSYIfC94W0db/OYZ+/bHx9gEI
+	VaF2ne9E=; b=mrCCHMbWi/TZvRcuAjoKa2mbPWc0lJuqrJZYjbVGYej7qBqi67D
+	TmyS6kPkoeOGjVwOfJiA7IX+DCtstO0VIpYDMojnZDFTEGIXy4WhkZV06I019FbT
+	zASqsYfUKD6lBJk9YTfhP9Ghv/nS4gre+D8zoaNc/2f282O086pL0nuJ0HOqH6g3
+	Yu1srAuOjLwmxlc8a8rZb1Zk+7c/A2UC/qNcCk0Ytyv/rw3A5gRsuaUKMHVTPOb8
+	Z9Er98wJEZ8h1sBNA+8x55GVdBUCrTYpNIfvAzKZNgLmsewpLGFs0fenTLBAW+Ku
+	BrN+V5oX9taWh8x2w9BPdz83Vw+Fto/GlbA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41gy8p764t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 01:16:37 +0000 (GMT)
+Received: from pps.filterd (NALASPPMTA03.qualcomm.com [127.0.0.1])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 48D1Gamg002243;
+	Fri, 13 Sep 2024 01:16:36 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by NALASPPMTA03.qualcomm.com (PPS) with ESMTPS id 41kxud4yt5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 01:16:36 +0000
+Received: from NALASPPMTA03.qualcomm.com (NALASPPMTA03.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 48D1GaUb002238;
+	Fri, 13 Sep 2024 01:16:36 GMT
+Received: from hu-devc-lv-u20-a-new.qualcomm.com (hu-abchauha-lv.qualcomm.com [10.81.25.35])
+	by NALASPPMTA03.qualcomm.com (PPS) with ESMTPS id 48D1GZ68002235
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 13 Sep 2024 01:16:36 +0000
+Received: by hu-devc-lv-u20-a-new.qualcomm.com (Postfix, from userid 214165)
+	id 77FF522114; Thu, 12 Sep 2024 18:16:35 -0700 (PDT)
+From: Abhishek Chauhan <quic_abchauha@quicinc.com>
+To: "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andrew Halaney <ahalaney@redhat.com>,
+        "Russell King (Oracle)" <linux@armlinux.org.uk>,
+        Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Brad Griffis <bgriffis@nvidia.com>,
+        Vladimir Oltean <vladimir.oltean@nxp.com>,
+        Jon Hunter <jonathanh@nvidia.com>
+Cc: kernel@quicinc.com
+Subject: [RFC PATCH net v1] net: phy: aquantia: Set phy speed to 2.5gbps for AQR115c
+Date: Thu, 12 Sep 2024 18:16:35 -0700
+Message-Id: <20240913011635.1286027-1-quic_abchauha@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829010151.2813377-4-samuel.holland@sifive.com>
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: qxWp5TY8iCz_57xYBxdGvkQvHTJcQ3m0
+X-Proofpoint-ORIG-GUID: qxWp5TY8iCz_57xYBxdGvkQvHTJcQ3m0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
+ impostorscore=0 mlxscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
+ mlxlogscore=999 lowpriorityscore=0 adultscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2408220000 definitions=main-2409130008
 
-On Wed, Aug 28, 2024 at 06:01:25PM -0700, Samuel Holland wrote:
-> Pointer masking is controlled via a two-bit PMM field, which appears in
-> various CSRs depending on which extensions are implemented. Smmpm adds
-> the field to mseccfg; Smnpm adds the field to menvcfg; Ssnpm adds the
-> field to senvcfg. If the H extension is implemented, Ssnpm also defines
-> henvcfg.PMM and hstatus.HUPMM.
-> 
-> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+Recently we observed that aquantia AQR115c always comes up in
+100Mbps mode. AQR115c aquantia chip supports max speed up to
+2.5Gbps. Today the AQR115c configuration is done through
+aqr113c_config_init which internally calls aqr107_config_init.
+aqr113c and aqr107 are both capable of 10Gbps. Whereas AQR115c
+supprts max speed of 2.5Gbps only.
 
-Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+Fixes: 0ebc581f8a4b ("net: phy: aquantia: add support for aqr115c")
+Signed-off-by: Abhishek Chauhan <quic_abchauha@quicinc.com>
+---
+ drivers/net/phy/aquantia/aquantia_main.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-> ---
-> 
-> (no changes since v3)
-> 
-> Changes in v3:
->  - Use shifts instead of large numbers in ENVCFG_PMM* macro definitions
-> 
-> Changes in v2:
->  - Use the correct name for the hstatus.HUPMM field
-> 
->  arch/riscv/include/asm/csr.h | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/arch/riscv/include/asm/csr.h b/arch/riscv/include/asm/csr.h
-> index 25966995da04..fe5d4eb9adea 100644
-> --- a/arch/riscv/include/asm/csr.h
-> +++ b/arch/riscv/include/asm/csr.h
-> @@ -119,6 +119,10 @@
->  
->  /* HSTATUS flags */
->  #ifdef CONFIG_64BIT
-> +#define HSTATUS_HUPMM		_AC(0x3000000000000, UL)
-> +#define HSTATUS_HUPMM_PMLEN_0	_AC(0x0000000000000, UL)
-> +#define HSTATUS_HUPMM_PMLEN_7	_AC(0x2000000000000, UL)
-> +#define HSTATUS_HUPMM_PMLEN_16	_AC(0x3000000000000, UL)
->  #define HSTATUS_VSXL		_AC(0x300000000, UL)
->  #define HSTATUS_VSXL_SHIFT	32
->  #endif
-> @@ -195,6 +199,10 @@
->  /* xENVCFG flags */
->  #define ENVCFG_STCE			(_AC(1, ULL) << 63)
->  #define ENVCFG_PBMTE			(_AC(1, ULL) << 62)
-> +#define ENVCFG_PMM			(_AC(0x3, ULL) << 32)
-> +#define ENVCFG_PMM_PMLEN_0		(_AC(0x0, ULL) << 32)
-> +#define ENVCFG_PMM_PMLEN_7		(_AC(0x2, ULL) << 32)
-> +#define ENVCFG_PMM_PMLEN_16		(_AC(0x3, ULL) << 32)
->  #define ENVCFG_CBZE			(_AC(1, UL) << 7)
->  #define ENVCFG_CBCFE			(_AC(1, UL) << 6)
->  #define ENVCFG_CBIE_SHIFT		4
-> @@ -216,6 +224,12 @@
->  #define SMSTATEEN0_SSTATEEN0_SHIFT	63
->  #define SMSTATEEN0_SSTATEEN0		(_ULL(1) << SMSTATEEN0_SSTATEEN0_SHIFT)
->  
-> +/* mseccfg bits */
-> +#define MSECCFG_PMM			ENVCFG_PMM
-> +#define MSECCFG_PMM_PMLEN_0		ENVCFG_PMM_PMLEN_0
-> +#define MSECCFG_PMM_PMLEN_7		ENVCFG_PMM_PMLEN_7
-> +#define MSECCFG_PMM_PMLEN_16		ENVCFG_PMM_PMLEN_16
-> +
->  /* symbolic CSR names: */
->  #define CSR_CYCLE		0xc00
->  #define CSR_TIME		0xc01
-> @@ -382,6 +396,8 @@
->  #define CSR_MIP			0x344
->  #define CSR_PMPCFG0		0x3a0
->  #define CSR_PMPADDR0		0x3b0
-> +#define CSR_MSECCFG		0x747
-> +#define CSR_MSECCFGH		0x757
->  #define CSR_MVENDORID		0xf11
->  #define CSR_MARCHID		0xf12
->  #define CSR_MIMPID		0xf13
-> -- 
-> 2.45.1
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/aquantia/aquantia_main.c
+index e982e9ce44a5..9afc041dbb64 100644
+--- a/drivers/net/phy/aquantia/aquantia_main.c
++++ b/drivers/net/phy/aquantia/aquantia_main.c
+@@ -499,6 +499,12 @@ static int aqr107_config_init(struct phy_device *phydev)
+ 	if (!ret)
+ 		aqr107_chip_info(phydev);
+ 
++	/* AQR115c supports speed up to 2.5Gbps */
++	if (phydev->interface == PHY_INTERFACE_MODE_2500BASEX) {
++		phy_set_max_speed(phydev, SPEED_2500);
++		phydev->autoneg = AUTONEG_ENABLE;
++	}
++
+ 	ret = aqr107_set_downshift(phydev, MDIO_AN_VEND_PROV_DOWNSHIFT_DFLT);
+ 	if (ret)
+ 		return ret;
+@@ -1036,6 +1042,7 @@ static struct phy_driver aqr_driver[] = {
+ 	.get_sset_count = aqr107_get_sset_count,
+ 	.get_strings    = aqr107_get_strings,
+ 	.get_stats      = aqr107_get_stats,
++	.get_features	= genphy_c45_pma_read_abilities,
+ 	.link_change_notify = aqr107_link_change_notify,
+ 	.led_brightness_set = aqr_phy_led_brightness_set,
+ 	.led_hw_is_supported = aqr_phy_led_hw_is_supported,
+-- 
+2.25.1
+
 
