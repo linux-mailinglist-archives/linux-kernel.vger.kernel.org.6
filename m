@@ -1,136 +1,121 @@
-Return-Path: <linux-kernel+bounces-328620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F29E8978680
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:14:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DF80978683
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:14:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 163381C22F0A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:14:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1C2C28728E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8913812D1FA;
-	Fri, 13 Sep 2024 17:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cGBlSBYB"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71A3839E4;
+	Fri, 13 Sep 2024 17:13:39 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E6C81AD7;
-	Fri, 13 Sep 2024 17:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4679C82D66
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 17:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726247581; cv=none; b=io8FjfRorMQbe6t3lWWO6vmsVBDR4q4H3kAiLe7H19qHu/2Ku9U5owG8evtDVhrHVBNDnIYP7WFG6IZgMS/o9HKw0/Y8gbp6dTNsgLn9jQHnD41+1cv6uwg4i5Hq5PAIc+WNZejYSEzyTnX0pK3e8kdMtL1pahXTctTxO58n6L8=
+	t=1726247619; cv=none; b=NULm4C9RU1OOZmvs8lUpe5i56X8tsDCpSSU03VNoIdcXILkyoUn40mCikjIx8IGEqIHC3zRAAHqsg8BiAruHoWTMk5dOcugufIpXj/RmTPFXi6Fj9lHzZLAys4agIxuZ3QbNtcGdu3JQgG04NU5870Dp+V8hJZh7/QNkY5EojlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726247581; c=relaxed/simple;
-	bh=h2FS9wwlMOv3wwf7neE4FpMtuEaNqT5ZsukaE4Ktdyc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EeI4JhjAkctaQc+ec8TZyyrFeaCY5PJ29/IvNaN0R5jpdP0xjU3COydCOysoURaoX8tpkrgaloklnInI5vSK1SvVk44AVMYQlcEEwRNPOkXjRRqkwdDoeDyI7G7Lmg+6SYNko8rqTt0UwjxKtXpyJX0CbCgZOSfxseRCjYdj6Vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cGBlSBYB; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-68518bc1407so12498967b3.2;
-        Fri, 13 Sep 2024 10:12:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726247578; x=1726852378; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lodPUkw76M0wAYUAWlmowp4aeuvIBGM0yxAx9nJPMd8=;
-        b=cGBlSBYBR/SV+Ph88pNTKmVLFOIsbxXsvTbljGFVqqIO9dD17sWQiwPaNqxSaUTN0V
-         IBqSQt3Hv0GMecShVJICjZytsleG9MTH1JOb0aPLfNvt2Os7qassAXd5hSfShHzVrHWR
-         gTBv/LQXPYNzMNx6XrPNuOph4jyaOAbfn0Hs/wtTXBC6ZSYGJ0eO3yC5/9K0fZ7FMLoo
-         XHREygbccNLFjYxb9CmLnNcCgjihYlebbOZ9V2YFkPbI4onpl6mkop7sSwRwI4nRT/Qw
-         HNAy+RdZCJ5fDjxAqEOj+Ewbkcv/VlJDnuXbOI/pS97mVndphjNrtHyy/cUF4MVHEL3h
-         TiFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726247578; x=1726852378;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lodPUkw76M0wAYUAWlmowp4aeuvIBGM0yxAx9nJPMd8=;
-        b=u/TCzRN3mCFlFLI9EUj3+W1XnLlxbhprsISiG0S+1wKeFZCeUF4LNWpCHNjPW3JE18
-         wf37gOq0zBGzQJsOCL9l5uSHcEeooCV4cOPX/+4ey5wdLMiARaVDTTA/g2eUXFXu63ns
-         Y+KqiyzUysh4zsXHkP2Zh0xkc/QrV5TGxpZgQv9d6AFsMBaRsIW6fxczdTrFiAQLn0nu
-         cX7R3yIDyudczkqEYKy1C/2olaC8YDa8LEp+D5eTZ1cc1rFRhNWiau1D66ERFvJ6Gdly
-         aPHb7ryMMsa5bHYivFu4hFedEEl2y+zp5aeBFDqJYIBFHmFvrgfIjybvYE5couHa3Hhh
-         UBog==
-X-Forwarded-Encrypted: i=1; AJvYcCV4biVfaFf2+hd9cayToO3Clv9rb8lUTTTeor0802EtqfdJ/xq/7HiaD1trhvw//cysBk9X1O64qQ/HbzI=@vger.kernel.org, AJvYcCX2iw+h/3sC0+t3mAanC8zAQ6HLIYHgetkAAlzcTwFllxK4akh51V2/jJwz70iXX6sMbSdA66S5jmDg4ZPu@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyduXTpBcp8Ny87K5scEx7lRweRjUIiWS7petRqZZmcPm06W3/
-	zIAk3hEGKaOe+vbsmdQzpzpqkyx396FgrM07gewwDs9k+kh4MRFq
-X-Google-Smtp-Source: AGHT+IGuj4Rn/rdl6gaT3L62kE+18YqQTACYO1y2rAI4rwYpCNJoWUqwgYsIAvywKbqcCbRqeUPKjg==
-X-Received: by 2002:a05:690c:1d:b0:66a:ba89:d671 with SMTP id 00721157ae682-6dbcc5565bdmr35564967b3.35.1726247578555;
-        Fri, 13 Sep 2024 10:12:58 -0700 (PDT)
-Received: from localhost (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6db9642d024sm14632357b3.4.2024.09.13.10.12.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 10:12:58 -0700 (PDT)
-From: David Hunter <david.hunter.linux@gmail.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: David Hunter <david.hunter.linux@gmail.com>,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	shuah@kernel.org,
-	javier.carrasco.cruz@gmail.com
-Subject: [PATCH 7/7] linux-kbuild: fix: process config options set to "y"
-Date: Fri, 13 Sep 2024 13:12:02 -0400
-Message-ID: <20240913171205.22126-8-david.hunter.linux@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240913171205.22126-1-david.hunter.linux@gmail.com>
-References: <20240913171205.22126-1-david.hunter.linux@gmail.com>
+	s=arc-20240116; t=1726247619; c=relaxed/simple;
+	bh=bdhM4R5fE2+VdHpuqyjiN5QKqRZXydJ9f7R1QLxMP/c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UJo6aX3vX4x67vpMqkc0ohUsuq+fsBsHKldduZgnfN7L9NdykoJNBJ9BJxaCLUT3sXw4mijc/Vp4iOu/1TFnfRe0XYR5NLnJGoD8KBqNx4DAUYgR0n/jSBCdsLH8MM1rczUQfulQzawxhlHhs3c5WD02ADYj7MXibvRppPSNtlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46CA9C4CEC0;
+	Fri, 13 Sep 2024 17:13:37 +0000 (UTC)
+Date: Fri, 13 Sep 2024 18:13:35 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Yang Shi <yang@os.amperecomputing.com>
+Cc: will@kernel.org, muchun.song@linux.dev, david@redhat.com,
+	akpm@linux-foundation.org, linux-arm-kernel@lists.infradead.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [v4 PATCH 1/2] hugetlb: arm64: add mte support
+Message-ID: <ZuRyv8Q4iRDabq1-@arm.com>
+References: <20240912204129.1432995-1-yang@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912204129.1432995-1-yang@os.amperecomputing.com>
 
-The goal of "make localmodconfig" is to turn off modules that are not
-necessary. Some modules are necessary because they are depended on by
-config options set with a "y."
+On Thu, Sep 12, 2024 at 01:41:28PM -0700, Yang Shi wrote:
+> diff --git a/arch/arm64/mm/copypage.c b/arch/arm64/mm/copypage.c
+> index a7bb20055ce0..c8687ccc2633 100644
+> --- a/arch/arm64/mm/copypage.c
+> +++ b/arch/arm64/mm/copypage.c
+> @@ -18,17 +18,41 @@ void copy_highpage(struct page *to, struct page *from)
+>  {
+>  	void *kto = page_address(to);
+>  	void *kfrom = page_address(from);
+> +	struct folio *src = page_folio(from);
+> +	struct folio *dst = page_folio(to);
+> +	unsigned int i, nr_pages;
+>  
+>  	copy_page(kto, kfrom);
+>  
+>  	if (kasan_hw_tags_enabled())
+>  		page_kasan_tag_reset(to);
+>  
+> -	if (system_supports_mte() && page_mte_tagged(from)) {
+> -		/* It's a new page, shouldn't have been tagged yet */
+> -		WARN_ON_ONCE(!try_page_mte_tagging(to));
+> -		mte_copy_page_tags(kto, kfrom);
+> -		set_page_mte_tagged(to);
+> +	if (system_supports_mte()) {
+> +		if (folio_test_hugetlb(src) &&
+> +		    folio_test_hugetlb_mte_tagged(src)) {
+> +			if (!try_folio_hugetlb_mte_tagging(dst))
+> +				return;
+> +
+> +			/*
+> +			 * Populate tags for all subpages.
+> +			 *
+> +			 * Don't assume the first page is head page since
+> +			 * huge page copy may start from any subpage.
+> +			 */
+> +			nr_pages = folio_nr_pages(src);
+> +			for (i = 0; i < nr_pages; i++) {
+> +				kfrom = page_address(folio_page(src, i));
+> +				kto = page_address(folio_page(dst, i));
+> +				mte_copy_page_tags(kto, kfrom);
+> +			}
+> +			folio_set_hugetlb_mte_tagged(dst);
+> +		} else if (page_mte_tagged(from)) {
+> +			/* It's a new page, shouldn't have been tagged yet */
+> +			WARN_ON_ONCE(!try_page_mte_tagging(to));
+> +
+> +			mte_copy_page_tags(kto, kfrom);
+> +			set_page_mte_tagged(to);
+> +		}
+>  	}
+>  }
 
-Process configs set to "y" so that the modules that are depended on
-will not be turned off later.
+A nitpick here: I don't like that much indentation, so just do an early
+return if !system_supports_mte() in this function.
 
-Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
----
- scripts/kconfig/streamline_config.pl | 13 ++++++++++---
- 1 file changed, 10 insertions(+), 3 deletions(-)
+Otherwise the patch looks fine to me. I agree with David's point on an
+earlier version of this patch, the naming of these functions isn't
+great. So, as per David's suggestion (at least for the first two):
 
-diff --git a/scripts/kconfig/streamline_config.pl b/scripts/kconfig/streamline_config.pl
-index 948437aac535..762bf80408c7 100755
---- a/scripts/kconfig/streamline_config.pl
-+++ b/scripts/kconfig/streamline_config.pl
-@@ -466,6 +466,11 @@ foreach my $line (@config_file) {
- 
-     if (/(CONFIG_[$valid]*)=(m|y)/) {
- 	$orig_configs{$1} = $2;
-+	# all configs options set to 'y' need to be processed
-+	if($2 eq "y") {
-+            $configs{$1}= $2;
-+        }
-+
-     }
- }
- 
-@@ -596,9 +601,11 @@ sub loop_depend {
-       forloop:
- 	foreach my $config (keys %configs) {
- 
--	    # If this config is not a module, we do not need to process it
--	    if (defined($orig_configs{$config}) && $orig_configs{$config} ne "m") {
--		next forloop;
-+           # If this config is not set in the original config,
-+	    # we do not need to process it
-+           if (defined($orig_configs{$config}) && $orig_configs{$config} ne "m"
-+		    	&& $orig_configs{$config} ne "y")  {
-+		    next forloop;
- 	    }
- 
- 	    $config =~ s/^CONFIG_//;
+folio_test_hugetlb_mte_tagged()
+folio_set_hugetlb_mte_tagged()
+folio_try_hugetlb_mte_tagging()
+
+As for "try" vs "test_and_set_.*_lock", the original name was picked to
+mimic spin_trylock() since this function is waiting/spinning. It's not
+great but the alternative naming is closer to test_and_set_bit_lock().
+This has different behaviour, it only sets a bit with acquire semantics,
+no waiting/spinning.
+
 -- 
-2.43.0
-
+Catalin
 
