@@ -1,135 +1,147 @@
-Return-Path: <linux-kernel+bounces-327912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78E14977C8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:48:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53356977C8F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:52:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB179B213ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:48:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECE5A1F28871
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:52:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46641D6DD1;
-	Fri, 13 Sep 2024 09:48:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E53321D6DD1;
+	Fri, 13 Sep 2024 09:52:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BZA1Jyzi"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UWbWyGvp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826A713CABC;
-	Fri, 13 Sep 2024 09:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE5D1BF7E3;
+	Fri, 13 Sep 2024 09:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726220914; cv=none; b=aRAcj+WL5eJqMTY9kNIotY8jScsrEUFVxE86o6q2afobLutWMCnWxVXwW22jG62PZJ74ZSmTBLnCOCpfmYCfaEpqc4oPBpdnylKl+/ZUaQqDMCv4+E4lxX+cXADZ8WKG5UOwUDMK04BkTLfsnyrvzY82w3a3JKSwuna/qAGA878=
+	t=1726221124; cv=none; b=equGvNshAiNFflTEeGIVH+2JgXlmR2BlcE78jDGViG6Fw/1S/mIshLHlWuzCrCis1ONjrOCNjlftQv4d1FVjBZLL/2kidqhHL9GBEjChOTy4Uj0/Ff/wQzgYbad11OdWo9dxf1kQx/N9us2yvFwh+5nGeXlCWkwTWtJb0qI/jHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726220914; c=relaxed/simple;
-	bh=xgpGRsCTpAi5fY/qcvLV7YM6QgUN1NxtneHSZ5GnC5g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kpu9iqv3IieO34S8qNQwbWeonLN9stNeK60Z+REDI+fTT9DW8/5zhLU63RnL7GrjQp6qh78dXucePnxv1SlaNKuurimHUXkO8eRAPvglunKO1sjowvnCacXX/rrEkCnz10tEL2f7Mz5oFe8tSwg4UntfiN7xzwS4vUR02bDu+MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BZA1Jyzi; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-374bd0da617so1340574f8f.3;
-        Fri, 13 Sep 2024 02:48:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726220911; x=1726825711; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6/eKjE/ZIiv+2bvRdfHp+82zpO7/8oX80AIbfHpCg2M=;
-        b=BZA1JyziZfhAEesEopFOlTktKPscz/wNlXzfC3BG0znvq5ZIOWlA5S1l6mH95zwG/y
-         NAM2aSLVWt1fOzHMgO1xDn8k7ECR06Rwzb3CH2Z6+mTOIZU152n1YtQuhzD9PKPeQfpQ
-         5Qfi+vZb58bvb035JFsIPa04DWPa3yeOpQqaVZbh+fi8+qmDhQ7izTzfsZaxPnv7CR7Z
-         F3yMUfXu6agTz04weQhIuZQnmKNs3UvkYXqyfLv00JI3EUl9nQ5V03P63hzf1299HIRq
-         FSdH7nloot3sAjnif4Mwz2xKf5GCRy8du6gIMbRqG8pGROXxUxxCNJiajjttYs2s70Fu
-         NC/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726220911; x=1726825711;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6/eKjE/ZIiv+2bvRdfHp+82zpO7/8oX80AIbfHpCg2M=;
-        b=QcEHLVbDfngQHpZlM3FiXHCn3sMHW0CyNacIr8LqEYc7tzMw66VuorsLY/HhTjP+Sd
-         SrPJiYoEZXasNJ/Qi2mwGuqIK9z3e2yaRg0XFmlokGI+cQG1H32t7A+ii1pDm/V/WBh+
-         +8qZN4mgCbXZAR66H/stgOPRvcINOazVuAPjTX5aGta9iiqHGBsVtmIYuf+pynEp4Quv
-         eamUs8B0K42dzzUKkQNejxA4O74OgOYkTPznzl4q8HAcWVt0UzWZXDsE5JiweqlbOQlT
-         ll6UTK0W2e/rspeSkdDbZdfWLJm7rzaE86Axivn/+g0XHR2xocX8Wzay2jAYxFQ5yo3f
-         UynQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVrL/pLVY5+CbPwXHD1VeRCcIHcf1py21D4CUt9c26lE2GhgHUGstNR+m/SvlFZbrbMYaAoUW9HqQqRFdZn2RI=@vger.kernel.org, AJvYcCXkwXFfSjwWtOwXwNarCF0CAAQCpui6+IgcwRX1qMERutlPI4JTNvZ4LxGpDEtj+SeLkpWCforTUwQ380du@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCVSQZbpCBDiGj4l/b77r6vPyoCqmoOVE2CYa+eA7SqiIJ15uJ
-	yY1dHmBHxqwoeqxGfrMNQY5BarDgqf0nu8ZPLwNCadjGtd/IGzm5
-X-Google-Smtp-Source: AGHT+IH8ykEdbL6dIm9/qmwfUe0sUH2Gi88huy6I1kPGc5tApxXUPMHDJ5VEoMIfhcjSz3r8nvkT8A==
-X-Received: by 2002:a5d:6788:0:b0:371:a844:d326 with SMTP id ffacd0b85a97d-378c2d4c9bbmr3754253f8f.43.1726220910171;
-        Fri, 13 Sep 2024 02:48:30 -0700 (PDT)
-Received: from void.void ([141.226.9.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37895676093sm16326846f8f.65.2024.09.13.02.48.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 02:48:29 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Kalle Valo <kvalo@kernel.org>
-Cc: linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] wifi: ath6kl: fix typos
-Date: Fri, 13 Sep 2024 12:48:10 +0300
-Message-ID: <20240913094818.14456-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1726221124; c=relaxed/simple;
+	bh=HouVnrGuBJ0vEff0wCB7G3P0H8zvJt0xl3sx03nL+9s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XD53chuNHB3U8soPA4cIMPlaZTt7fAUgUaa6eb6oJky/ulcD1rOkHl5jRB3YzcarIIODj2QRWwdsuPSTWJ5yxDfOqg7TGEdivszSI+oESAS4mw4UjQx3QVl7IeFRFnASca/Szz1mVv+ouQcQ6qP39JW8XomrCTXUzrb1W4beKWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UWbWyGvp; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726221123; x=1757757123;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HouVnrGuBJ0vEff0wCB7G3P0H8zvJt0xl3sx03nL+9s=;
+  b=UWbWyGvpO94TjFDJ6vWTxHENA95S3f6+LqGBUgO72vVli5XXgZUew+TN
+   dNi5gb725nK9GE9P545fo52sFCtsKnGeLfT1/SVpZmjNXnJgCySfsYn6Q
+   ACX0rECaETqvS0xp9PpMWkPl98Zvg6hFpG7b1mPuHvxF66pnii0WLbhz2
+   3F7Mz5MgbmmNgTYz0+XAL0ujt1bjGBMf+AWlQGg/J1zkzP9wR3FXIDruH
+   ZySt5MR6cHW5UMtYSyQIg11xazLxsxVmujwX4BkJCGGlmjvZd+xkkCbI9
+   u+SloY/aIybEeko7XeU0b6aFBv0cHtwng11kHi1hHe9O9TdNGXkabuu6K
+   Q==;
+X-CSE-ConnectionGUID: RnZHSr8uSzStu5MyzMiUZA==
+X-CSE-MsgGUID: 1YkqcsczTMahIaIr3QPO5w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="42623783"
+X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
+   d="scan'208";a="42623783"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 02:52:02 -0700
+X-CSE-ConnectionGUID: /WndNwMjT1+h2WtZf2XsIg==
+X-CSE-MsgGUID: xM/yDa8VQsCnWNjxzeUH/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
+   d="scan'208";a="72804129"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 02:51:59 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sp2y3-00000008FWm-2hSM;
+	Fri, 13 Sep 2024 12:51:55 +0300
+Date: Fri, 13 Sep 2024 12:51:55 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
+	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	christophe.jaillet@wanadoo.fr
+Subject: Re: [PATCH v6 1/4] iio: pressure: bmp280: Use sleep and forced mode
+ for oneshot captures
+Message-ID: <ZuQLOwjQUTjo1nPg@smile.fi.intel.com>
+References: <20240912233234.45519-1-vassilisamir@gmail.com>
+ <20240912233234.45519-2-vassilisamir@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912233234.45519-2-vassilisamir@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Fix typos in comments.
+On Fri, Sep 13, 2024 at 01:32:31AM +0200, Vasileios Amoiridis wrote:
+> Add forced mode support in sensors BMP28x, BME28x, BMP3xx and BMP58x.
+> Sensors BMP18x and BMP085 are old and do not support this feature so
+> their operation is not affected at all.
+> 
+> Essentially, up to now, the rest of the sensors were used in normal mode
+> all the time. This means that they are continuously doing measurements
+> even though these measurements are not used. Even though the sensor does
+> provide PM support, to cover all the possible use cases, the sensor needs
+> to go into sleep mode and wake up whenever necessary.
+> 
+> The idea is that the sensor is by default in sleep mode, wakes up in
+> forced mode when a oneshot capture is requested, or in normal mode
+> when the buffer is enabled. The difference lays in the fact that in
+> forced mode, the sensor does only one conversion and goes back to sleep
+> while in normal mode, the sensor does continuous measurements with the
+> frequency that was set in the ODR registers.
+> 
+> The bmpX_chip_config() functions which are responsible for applying
+> the requested configuration to the sensor, are modified accordingly
+> in order to set the sensor by default in sleep mode.
+> 
+> DEEP STANDBY, Low Power NORMAL and CONTINUOUS modes, supported only by
+> the BMP58x version, are not added.
 
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
----
- drivers/net/wireless/ath/ath6kl/wmi.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+...
 
-diff --git a/drivers/net/wireless/ath/ath6kl/wmi.h b/drivers/net/wireless/ath/ath6kl/wmi.h
-index b4fcfb72991c..68384159870b 100644
---- a/drivers/net/wireless/ath/ath6kl/wmi.h
-+++ b/drivers/net/wireless/ath/ath6kl/wmi.h
-@@ -1249,7 +1249,7 @@ struct wmi_rssi_threshold_params_cmd {
- 	/* highest of upper */
- 	a_sle16 thresh_above6_val;
- 
--	/* lowest of bellow */
-+	/* lowest of below */
- 	a_sle16 thresh_below1_val;
- 
- 	a_sle16 thresh_below2_val;
-@@ -1257,7 +1257,7 @@ struct wmi_rssi_threshold_params_cmd {
- 	a_sle16 thresh_below4_val;
- 	a_sle16 thresh_below5_val;
- 
--	/* highest of bellow */
-+	/* highest of below */
- 	a_sle16 thresh_below6_val;
- 
- 	/* "alpha" */
-@@ -1287,13 +1287,13 @@ struct wmi_snr_threshold_params_cmd {
- 	/* highest of upper */
- 	u8 thresh_above4_val;
- 
--	/* lowest of bellow */
-+	/* lowest of below */
- 	u8 thresh_below1_val;
- 
- 	u8 thresh_below2_val;
- 	u8 thresh_below3_val;
- 
--	/* highest of bellow */
-+	/* highest of below */
- 	u8 thresh_below4_val;
- 
- 	u8 reserved[3];
+> +	if (!((reg & BMP380_STATUS_DRDY_PRESS_MASK) &&
+> +	    (reg & BMP380_STATUS_DRDY_TEMP_MASK))) {
+
+I would add one more space to make the indentation follow the logic.
+
+(no need to resend until Jonathan asks for it, otherwise I believe
+ he can amend this whilst applying)
+
+> +		dev_err(data->dev, "Measurement cycle didn't complete.\n");
+> +		return -EBUSY;
+> +	}
+
+...
+
+> +		/*
+> +		 * According to the BMP3 Sensor API, the sensor needs 5000us
+
+Can we use 5ms...
+
+> +		 * in order to go to the sleep mode.
+> +		 */
+> +		fsleep(5000);
+
+...and 5 * USEC_PER_MSEC here respectively?
+
 -- 
-2.46.0
+With Best Regards,
+Andy Shevchenko
+
 
 
