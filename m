@@ -1,146 +1,109 @@
-Return-Path: <linux-kernel+bounces-327514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47B0C977707
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:49:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4099097770D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:50:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AB3D1C2400D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:49:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4B01284FD6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A6D1AE87C;
-	Fri, 13 Sep 2024 02:49:26 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C3A1D131C;
+	Fri, 13 Sep 2024 02:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="y12320wQ"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB5D933F7
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 02:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB9F2C95
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 02:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726195766; cv=none; b=j4YHj/vrgKHU9n+bVn5QesYqOb4EnwCFMCgL0Mm/im5jHVzHseU19MmWD95SlV+zLt0uDbjbZ0lsLBWhY0UOKuRTm5pQ+mrfmec2HqCJ9XAg2PcMpJepTcj50oqcrmBGSxitsBj2xqcDDY0A1Mbdp52LkaoFef9me4JewH00ZsI=
+	t=1726195803; cv=none; b=EPkdeu23BKChazriNWWs+fOmgFQN1D+NHa81Q11uS6tXvnQEcX5AIXLJcGrxuWiScF3wtd6RPId/mpYmOxTwlM0m/g4nq/OhhvdjsVrjessrZMHeWLwRGZIpMbOHjSMwuBy5w9dzAvX+5y9ApXI11Pyi0JX7XR646O/Mycp7MwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726195766; c=relaxed/simple;
-	bh=x0KX85Eni+Rh0AeFH72GXX5ZhraHqy9hmgGncDVv670=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=n2++NN1gsWIG0hrX5HBmRL87hIAoqGK+BuoaglGVaBn33iCrOJqXWQIHTZNVdoA7gS455Aeg7kHctdIUPXATu0rXLDCc1gZ1GeL7QZ9402zhg0oStYVlxH04bwCeyCsFgyLrwcXR/hvET70LzT7yoGK9DKQe6gQmMg5YdnTyeWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a05311890bso6953285ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 19:49:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726195764; x=1726800564;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jylXtxP5F5Cw039rfiu+ue6c4TyiJIjw+s934NPOJXs=;
-        b=t22w64/S+rsS73MkNSVB69okkVbo14NOX6n4Du+1ledt25Umqxlbf3/3xyKzlF7sIW
-         +qtN6PuFMScmYQ/akQ4/XAWLHXBLTjBYeUxPBYdcxV1ZLXQnxjqgVIhYTrn1vAIhd2Hr
-         YGsu+mqvgtp1ApG8GCbatZZW86DGCSJwQzffXhsze5osFqeVXfwGSnI2mvYUm12pt3UP
-         ZEWPduD9Tg/3IgKGfCeRmT7kNYX9C9QXz1gnplk2pOPUxSt7qcfk/hBUCrO0zl0q/Y8X
-         ozpEBBDdmDmfFGNmSxBSu7PQzjSLoEqygKEk3UtDcHBvIZUKq7Acxt8Ad/9xNXE4vTdr
-         VvYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXnMXpfYj6rXef/lECC3TYMCNIGaKpTfVLOy3JdYfW9IdQuWbZmD8erbcbb3WmkuWzwYvUmchWUZUp0mJ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwMXcCnQ8b+DPbvTkrYbi6MjVlIzzMZhsyWp6eQv2PIzNI85kw
-	Wby+qFKnfMQtIS/Ht4g1q/rPN+7AwEOrhRurzsYyZzeiUI2u9yP9VCbPqEPBwQlVyQ+CFHGhXvx
-	zpKuDwMau+9BDQWf3Mo4pPrSaqZ9ljnIWbBgHzqxxUoaAn0WlcVR/eSA=
-X-Google-Smtp-Source: AGHT+IEMwLeBLn/bi1hN9EaKEyCRvg7Lt9GQuvkQvyAiSzkZf2HaVtbmBgbaTOWMgTrIWFo6OCpUCj70YNfh+u+LtnUHeVzU6uGV
+	s=arc-20240116; t=1726195803; c=relaxed/simple;
+	bh=85T8glehQSr9kNN62nTHvMVeLgPDiEUD9r6Mf6HV7Hw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lb2uTcNx+TKm7NpyOhDY7l/0mGtm93toE7s4WU4D4h08Ttq7MbKB/04mWs5bGze9Ne7x/kvXqCBrpyjs2WgsZa3UyGZpOBmD+xE8tEoB3T6ei4Z6pb1Azs9PNZjQyYqTmVe0iyf35x7Y8LkmvHjUXy/oWgKSmfoQ1CMvoSAIk2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=y12320wQ; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id CA79F2C0576;
+	Fri, 13 Sep 2024 14:49:51 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1726195791;
+	bh=djn6bQj5m7HLsvl0QqQZJE1stfc6VPB3T5iAfhUMZ0o=;
+	h=From:To:Cc:Subject:Date:From;
+	b=y12320wQY5uiU8gHEMtpn1rtUP14IMYAix/hXNErgcg8lvUlxosgYoEVyDnQQPXBL
+	 0JFXPesnThF/qnG5Tq6zwNezqefWSN1SFwX43u7ph8XElJWjQuD/Dp4s5OemkLxQQ+
+	 Hnu/q8JOcq0L+9uc3crwd6hRUQDhl9jAFE6/9mr5wJk1oDN2BddJBQ3IagytaN85Dl
+	 SC22ek+79mVbIdJcN8HOaTy1VZrtevQMUW6AZq/bo86hjchPE38MjpIx23HtgirqI+
+	 JfpdtRqFjcaka+NQ5o1aY3+E0rnaJKobN1tOI4UWofwu9PNIH0GEXXk5VCc1z/fw+k
+	 bIipnGF7e4E3g==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B66e3a84f0000>; Fri, 13 Sep 2024 14:49:51 +1200
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id 8FFED13ED8D;
+	Fri, 13 Sep 2024 14:49:51 +1200 (NZST)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+	id 8D51A2804E9; Fri, 13 Sep 2024 14:49:51 +1200 (NZST)
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: lee@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	tsbogend@alpha.franken.de,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org
+Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v2 0/2] mips: realtek: Add reboot support
+Date: Fri, 13 Sep 2024 14:49:46 +1200
+Message-ID: <20240913024948.1317786-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20c6:b0:3a0:4b2d:6a7c with SMTP id
- e9e14a558f8ab-3a08b78971dmr11417985ab.20.1726195764038; Thu, 12 Sep 2024
- 19:49:24 -0700 (PDT)
-Date: Thu, 12 Sep 2024 19:49:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005423e30621f745ff@google.com>
-Subject: [syzbot] [net?] WARNING in l2tp_exit_net
-From: syzbot <syzbot+332fe1e67018625f63c9@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=Id0kWnqa c=1 sm=1 tr=0 ts=66e3a84f a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=EaEq8P2WXUwA:10 a=Mt1HfaXHmOUzYFHI898A:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-Hello,
+The system reboot on the cameo-rtl9302c (and presumably many other boards=
+ based
+on the realtek reference design) is connected via the switch reset regist=
+er
+(RST_GLB_CTRL_0).
 
-syzbot found the following issue on:
+Because the switch register block encompasses a number of functions that =
+would
+normally be separate perhipherals I've represented it as a syscon node. R=
+ight
+now the only peripheral I've added is the reset (using syscon-reboot). Th=
+e
+binding and syscon node will be expanded in the future to add some additi=
+onal
+functions (e.g. I2C, GPIO, MDIO).
 
-HEAD commit:    f3b6129b7d25 Merge branch '100GbE' of git://git.kernel.org..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=144ba477980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=37742f4fda0d1b09
-dashboard link: https://syzkaller.appspot.com/bug?extid=332fe1e67018625f63c9
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Chris Packham (2):
+  dt-bindings: mfd: Add Realtek switch
+  mips: dts: realtek: Add syscon-reboot node
 
-Unfortunately, I don't have any reproducer for this issue yet.
+ .../bindings/mfd/realtek,rtl9302c-switch.yaml | 50 +++++++++++++++++++
+ arch/mips/boot/dts/realtek/rtl930x.dtsi       | 11 ++++
+ 2 files changed, 61 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/realtek,rtl9302=
+c-switch.yaml
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/a742e7b2e0d2/disk-f3b6129b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6982186745fb/vmlinux-f3b6129b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5fd38b217bb5/bzImage-f3b6129b.xz
+--=20
+2.46.0
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+332fe1e67018625f63c9@syzkaller.appspotmail.com
-
-bond0 (unregistering): (slave dummy0): Releasing backup interface
-bond0 (unregistering): Released all slaves
-tipc: Disabling bearer <eth:batadv0>
-tipc: Disabling bearer <udp:syz0>
-tipc: Left network mode
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 17026 at net/l2tp/l2tp_core.c:1881 l2tp_exit_net+0x165/0x170 net/l2tp/l2tp_core.c:1881
-Modules linked in:
-CPU: 0 UID: 0 PID: 17026 Comm: kworker/u8:36 Not tainted 6.11.0-rc6-syzkaller-01324-gf3b6129b7d25 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Workqueue: netns cleanup_net
-RIP: 0010:l2tp_exit_net+0x165/0x170 net/l2tp/l2tp_core.c:1881
-Code: 0f 0b 90 e9 3b ff ff ff e8 48 a4 b0 f6 eb 05 e8 41 a4 b0 f6 90 0f 0b 90 e9 7a ff ff ff e8 33 a4 b0 f6 eb 05 e8 2c a4 b0 f6 90 <0f> 0b 90 eb b5 66 0f 1f 44 00 00 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc9000ae07a98 EFLAGS: 00010293
-RAX: ffffffff8ae2e87d RBX: ffff8880797c0888 RCX: ffff88806dbbda00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000002
-RBP: ffffc9000ae07bb0 R08: ffffffff8bb2ce16 R09: 1ffffffff2031025
-R10: dffffc0000000000 R11: fffffbfff2031026 R12: dffffc0000000000
-R13: 1ffffffff1fd274c R14: ffff8880797c0930 R15: ffff8880797c0840
-FS:  0000000000000000(0000) GS:ffff8880b8800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000110c3831d6 CR3: 000000000e734000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ops_exit_list net/core/net_namespace.c:173 [inline]
- cleanup_net+0x802/0xcc0 net/core/net_namespace.c:626
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
- worker_thread+0x86d/0xd10 kernel/workqueue.c:3389
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
