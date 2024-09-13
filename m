@@ -1,121 +1,145 @@
-Return-Path: <linux-kernel+bounces-327706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4FCB977A12
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:45:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81334977A21
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:46:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94F362887A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:45:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBB5D1C25319
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7261BD50F;
-	Fri, 13 Sep 2024 07:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Q26Flae+"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 795791D589D;
+	Fri, 13 Sep 2024 07:43:31 +0000 (UTC)
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D1C1BC063;
-	Fri, 13 Sep 2024 07:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC391D54C5
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 07:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726213402; cv=none; b=tETedZu5JDU1Yc5/A/AEffPhWM46P2A8L1eiMaQ10a+z5Eey14495xX/wB/sHa0xwu1AfuOYOUmwCCkIHG4tsWW7Ke6qcFYhC67lKkjfOSJgah3T64mo9X7NnbVQJAqtHyi/xP0wut0N1xO21ReiLjZOlMwDZzMEtFpEmkmTtOc=
+	t=1726213411; cv=none; b=HrXDQ9utcQ66gz8QDyo54/16azNBE146mRXVn+D5UvdX6WNyJYi43ZN4b3bzzAOSQqGragz8xnktIiAet3ZNf28CpeYbGfIqVtkXGUy+11Qc3LDB2s2Mv6CKftlfIORAhjaUKbDPnG4uwpCanXrcVTO6zCjgjzU0Q3Oxxj+QKxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726213402; c=relaxed/simple;
-	bh=9KkMe5v4E+0qEr1YKv7MGz8qVKHNysFqzV0E+PVt14A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hgKvJZffBYw3oip6j+i33dc/0ntndDXUlXrKDRAeoba6MjJa3OCovMlPgsCDSU7wB6api8hPvxHEdZOOGYKh2QYkoRbsAJ5H5dHkhhtmN1RTN3NRUom9Di7wBj/qBmQFgLGYtvp1iL2fPYK0DMUpOXG/06VazSUTXlbhTpT/SVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Q26Flae+; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1C5A8240007;
-	Fri, 13 Sep 2024 07:43:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1726213397;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VbNBS11AUnkLj6P267FhnebVN+Afa/PIxo5XX6/e7v0=;
-	b=Q26Flae+FSPLgdiUA2lHNIiJX0f3LqcDsutVu4UhmJ3NmJQk/eZBfiTnwqkbQqQewaQvEA
-	GG0PIc8zXAbtYqM9eN0Fa9zarr24lkOoGkTQD5/HEGFNsDiT/o3ZXVVJQoSx2OiXvzCHuM
-	6T9URrufOwTy6OHvHDNeNvhbBXG2phBFZdbnuGtApsCZqXoeGgt4kx9J6LT+OD0lbboVdz
-	yvNzivWzqvRjvsKtWbKDLjTHXhD0wG50dRGq3bOx7WWwcPH/osADxoPq1DJ1UjRMfpiKvQ
-	fjn+/6GKLV8BnAeWtt0FC8q+Da8IH1YjQjzyquvxEVSIeP85ydyuFlK1OJGtfQ==
-Date: Fri, 13 Sep 2024 09:43:13 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn
- <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell King
- <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org, Christophe
- Leroy <christophe.leroy@csgroup.eu>, Herve Codina
- <herve.codina@bootlin.com>, Heiner Kallweit <hkallweit1@gmail.com>,
- Vladimir Oltean <vladimir.oltean@nxp.com>, Marek =?UTF-8?B?QmVow7pu?=
- <kabel@kernel.org>, =?UTF-8?B?S8O2cnk=?= Maincent
- <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: Re: [PATCH net-next 1/7] net: phy: allow isolating PHY devices
-Message-ID: <20240913094313.6539264a@fedora.home>
-In-Reply-To: <7736f0f2-8a99-4329-b290-089454d56e36@gmail.com>
-References: <20240911212713.2178943-1-maxime.chevallier@bootlin.com>
-	<20240911212713.2178943-2-maxime.chevallier@bootlin.com>
-	<7736f0f2-8a99-4329-b290-089454d56e36@gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1726213411; c=relaxed/simple;
+	bh=yhmuZNYq1MmF/ZYy4MTPzdt4rwr5KfY+aAE6ylA/6kI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uzi7U1Xo5DVuGDDcdCBFA11R2Zj5jYxIoH+HIZAr2EnSU23s2GM0mqQnlHJNAFumPxKEOGgYE+uqvQF8tdadme989ZKpzvp7kQ3sd8qwKmPWpfCXy0vD2slSpLH452J8paa4MjmFyFpI58IIac4lVdUbccLF5nXW1EjV7OqXZC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e0b7efa1c1bso1820829276.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 00:43:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726213407; x=1726818207;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Uob8wHcFsSqO1Ywd9b+SmTX4fajQu+yvDZdClendtRg=;
+        b=DF0waJCjIShZ/qccP9ys/AzRZCFtg/iYAqNvo+SATCd/vWt92/FfgHcqeKGq/1SR2t
+         OY1Iwzoi8oKTHbPMmk1ebepQoOPANNQOCsP7biW3yRpFHGyHfriqFVwaqUG0iqfPlFYv
+         AV4X9kobITk0x8fhCYSlA+S9qX2yttsoz2ST+S2IzWf8Bs8FVnaYLzxQuvNlR1UByLdN
+         B/7S+3Zyk8+az2Be/N4fFC/6ZLXPK+Gp1jyQQMP8xdZPs3z+qmA0600hlS8UcIAAGm2p
+         3OcUHjmAIshZ++083QInd2Nbm5we8wVzFhqRRSAB6uR9wsCzVL9UHSC9kWkHJU1hsnZg
+         nxGg==
+X-Forwarded-Encrypted: i=1; AJvYcCV8LC8/OLRRILLFQTKVcC/i8TLDVDReqAARDIWv4HfiCo5OaZ5DuAA/+fsjTSlWHaZR9xtRjaYGwNHvP2U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwF2FyR9l2Vtvo8Dd4EXEuNKMQYJ3NCa4GBR1nZ6lXRVWphFhrh
+	7KcPKWpR5emdilAnEWfzXe6Pf+Kcxdd1Z68bQJ+0cVXmg4DgUBorFF6Zmdq3
+X-Google-Smtp-Source: AGHT+IEpbo1hA4HG+LelP68Eo3j7WTfhanWCl6OEbvz+xdpngR3bGo8F9W6fPjtOHZYh0JHL406HTw==
+X-Received: by 2002:a05:6902:1b04:b0:e16:4a59:c3a7 with SMTP id 3f1490d57ef6-e1d9dbe1a36mr5330132276.32.1726213407115;
+        Fri, 13 Sep 2024 00:43:27 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e1d7b9db6c2sm1398278276.9.2024.09.13.00.43.26
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 13 Sep 2024 00:43:26 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6d3f4218081so16837327b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 00:43:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVt87d46uZb3+tk+9YEyt8bEUnP1TXBpji8R121XfVmpii0hKdyaqu47AXCwv5/BqcJIb6sP1hqIzKLmXI=@vger.kernel.org
+X-Received: by 2002:a05:690c:a8b:b0:6db:d27f:dd96 with SMTP id
+ 00721157ae682-6dbd27fde76mr4703747b3.45.1726213405883; Fri, 13 Sep 2024
+ 00:43:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+References: <20240912171142.3241719-1-devarsht@ti.com> <c501c5d3-d715-4ac5-98be-35d23ad1cfbe@kernel.org>
+ <3y4pqlazkuofc37s6zlw7waqzmtdl5iydhm4i3i45n6d6pnflc@osyocv7wxtif> <87ed5oypeh.fsf@minerva.mail-host-address-is-not-set>
+In-Reply-To: <87ed5oypeh.fsf@minerva.mail-host-address-is-not-set>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 13 Sep 2024 09:43:13 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWYtsERgJH+Epq2d0P34PfVtEG69HHDLgz_nsKaxbDu4g@mail.gmail.com>
+Message-ID: <CAMuHMdWYtsERgJH+Epq2d0P34PfVtEG69HHDLgz_nsKaxbDu4g@mail.gmail.com>
+Subject: Re: [PATCH] drm/tidss: Add MIT license along with GPL-2.0
+To: Javier Martinez Canillas <javierm@redhat.com>
+Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Danilo Krummrich <dakr@kernel.org>, Devarsh Thakkar <devarsht@ti.com>, jyri.sarha@iki.fi, 
+	tomi.valkeinen@ideasonboard.com, airlied@gmail.com, daniel@ffwll.ch, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	praneeth@ti.com, nm@ti.com, vigneshr@ti.com, r-ravikumar@ti.com, 
+	j-choudhary@ti.com, grandmaster@al2klimov.de, caihuoqing@baidu.com, 
+	ahalaney@redhat.com, cai.huoqing@linux.dev, colin.i.king@gmail.com, 
+	dmitry.baryshkov@linaro.org, geert+renesas@glider.be, 
+	laurent.pinchart@ideasonboard.com, robh@kernel.org, sam@ravnborg.org, 
+	simona.vetter@ffwll.ch, ville.syrjala@linux.intel.com, 
+	wangxiaojun11@huawei.com, yuanjilin@cdjrlc.com, yuehaibing@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Florian,
+On Fri, Sep 13, 2024 at 9:38=E2=80=AFAM Javier Martinez Canillas
+<javierm@redhat.com> wrote:
+> Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com> writes:
 
-On Thu, 12 Sep 2024 11:30:26 -0700
-Florian Fainelli <f.fainelli@gmail.com> wrote:
+> > On Thu, Sep 12, 2024 at 10:47:31PM +0200, Danilo Krummrich wrote:
+> >> On 9/12/24 7:11 PM, Devarsh Thakkar wrote:
+> >> > Modify license to include dual licensing as GPL-2.0-only OR MIT lice=
+nse for
+> >> > tidss display driver. This allows other operating system ecosystems =
+such as
+> >> > Zephyr and also the commercial firmwares to refer and derive code fr=
+om this
+> >> > display driver in a more permissive manner.
+> >> >
+> >> > Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
+> >>
+> >> My only contribution to this driver was through DRM refactorings,
+> >> but anyways:
+> >>
+> >> Acked-by: Danilo Krummrich <dakr@kernel.org>
+> >
+> > Similar for me. I only touched one of the affected files with a
+> > refactoring change (34cdd1f691ade28abd36ce3cab8f9d442f43bf3f). I don't
+> > assume this gives me any copyright to that driver, but to simplify
+> > things:
+> >
+> > Acked-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
+>
+> Similar for me too. My only change to this driver I think was to add DRM
+> panic support in commit b2cb6011bcaf ("drm/tidss: Add drm_panic support")=
+.
+>
+> But I'm also OK with the change, so:
+>
+> Acked-by: Javier Martinez Canillas <javierm@redhat.com>
 
-> On 9/11/24 14:27, Maxime Chevallier wrote:
-> > The 802.3 specifications describes the isolation mode as setting the
-> > PHY's MII interface in high-impedance mode, thus isolating the PHY from
-> > that bus. This effectively breaks the link between the MAC and the PHY,
-> > but without necessarily disrupting the link between the PHY and the LP.
-> > 
-> > This mode can be useful for testing purposes, but also when there are
-> > multiple PHYs on the same MII bus (a case that the 802.3 specification
-> > refers to).
-> > 
-> > In Isolation mode, the PHY will still continue to respond to MDIO
-> > commands.
-> > 
-> > Introduce a helper to set the phy in an isolated mode.
-> > 
-> > Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>  
-> 
-> Not sure where that comment belongs so I will put it here, one thing 
-> that concerns me is if you have hardware that is not strapped to be 
-> isolated by default, and the PHY retains the state configured by Linux, 
-> such that the PHY is in isolation mode. A boot loader that is not 
-> properly taking the PHY out of isolation mode would be unavailable to 
-> use it and that would be a bug that Linux would likely be on the hook to 
-> fix.
-> 
-> Would recommend adding a phy_shutdown() method which is called upon 
-> reboot/kexec and which, based upon a quirk/flag can ensure that the 
-> isolation bit is cleared.
+Similar for me, just a forgotten comment update.
 
-Very good point. I can see the same problem occuring with loopback then
-(if we use the 802.3 C22 PHY loopback bit).
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-I have such a patch ready actually, for the 2-PHYs-on-the-same-MAC
-scenario, I will include it in the next iteration.
+Gr{oetje,eeting}s,
 
-Thanks for your feedback,
+                        Geert
 
-Maxime
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
