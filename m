@@ -1,173 +1,163 @@
-Return-Path: <linux-kernel+bounces-328400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89B349782DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:45:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F5339782DA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5098C28D598
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:45:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E22F228D0E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48624381B9;
-	Fri, 13 Sep 2024 14:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48FD11EEE0;
+	Fri, 13 Sep 2024 14:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WqWDX5eI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eOZSeYOY"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81222BB13;
-	Fri, 13 Sep 2024 14:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DC818054
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726238718; cv=none; b=VlrXZMAOd8QwRZdR+hMsESRL9wwQZ1wA5rYLdqDlk5lO41zsDPzJaUayJXWN6m1K4bPLM+5kymka7vcZOQIbvpiVsMLcDIxJS1EkzogEcbFeqp7XWafPAVhtBiglMMAe3WMJOrlDx2DvJNVKk7jKzv+41c5mdyceEwOr/mlpMTc=
+	t=1726238713; cv=none; b=m2ymNnssAVxdS2dRoNjGZ8jHH3qQ2L2b04DJYiZHv3CxLWAuEu2Nd3FLof9gkL8Z/9J+sG3913+psmOWAkte1vkuoGMiC4EwCdyo1jL4wITgvUdfzcKn6GzXB1ZUwoCGzSZHPrADmJhaeRFUeBC6sFZnu4lI/IFlN+ftEHi8fvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726238718; c=relaxed/simple;
-	bh=TB2AsdrJ7JEBqRjjSRElrMDhNIYQUq/KDMCtNVT66fU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gtR1cfCIoN72SzQlBfTUND5/vPKn7eAxWkfQYdmSkPR3+HvKAIO13yp8VUeHe8T2LWjZKsNuq7CT6OtuKgKrPnC4xHIoDI6DkYAXP3LwafdMiEFPS7ml8MK57PNp+7SAD1iXCa8heKONyiZQR1GK/VxnvGYOG6oy6NpM8DSVfG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WqWDX5eI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DD0FC4CECC;
-	Fri, 13 Sep 2024 14:45:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726238718;
-	bh=TB2AsdrJ7JEBqRjjSRElrMDhNIYQUq/KDMCtNVT66fU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=WqWDX5eIL02yeMLAser/aAhKG9lnmWCbmEIm/huZouoUy8ClwnuQle+5tYh18MOdK
-	 eBGQpxDQ/pA16d2J67/s4T0zxCkBU5efOTjNioDs4YoEq7sglP7ZzBpaWIsmBlZTjs
-	 HUjH3wsPW0PQOmDCP91HVKHFCjhiNGdsB45eCtTsk7gAGjXFdIA3EbnZSyw87QvjJu
-	 telu7CYV7+uqaztt5Cm/QRy1BeeP1TgrmOfjskdp8ZAHch8BWxxHjC26DqR+4cwGX+
-	 1mcid9SHbYDJC5Vc4SO9QrorRXs4DtOt8XUiY43R5iDX/mbDJ5YrYfj8I6Gzv4o/fY
-	 qRtANqI4ok4xg==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs procfs
-Date: Fri, 13 Sep 2024 16:44:47 +0200
-Message-ID: <20240913-vfs-procfs-f4fc141daed2@brauner>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1726238713; c=relaxed/simple;
+	bh=g2ybvLjs9yiUiIZpkDchh13jHortfCHh94LQJ1NTVQ4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YIJDVhn1tEqTdKa23JuFlsdsRD2+Czvm+/qyjgzSe+cMm8mXcPkQxs4cRu0ijiEoNbh2NlG50QoCSSjpuAn7QJCge5qEvUCSUS/86JOGW+MV/usXk/wXpx3j6Ns991I83KfRRUUx/xCW/nK5jyiMaB60dsQ/ccDph/7zGuPGhTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eOZSeYOY; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f7657f9f62so26536911fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 07:45:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726238710; x=1726843510; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hRlsoz0SQi6Y31kBnSS0wNEmQwFLdHQJn6urXpVey+s=;
+        b=eOZSeYOYHaJS/OgMMvEGOWpt7Z82u5QnWTgkPC5R/+k/DjCxmYHst1z2BGis5DZ1or
+         hMxZPOSVgqm6QsACdsNoFJmqmeJXie1OH2vVx8r+w87AFNw5rD207X74MA73CyvZFVbh
+         CKubRBLExbQ8qDc7T3+0GSiFJ2f16VL6PyR+mjC2jj5mYf/UOSgcgiz5ebTvGr8OslUX
+         LxJwHlutJgGbaU8aQ1/c3Xa0bQ1t1viUuGOHXgTRxWyHGKXjOkgqXrxnb68o7hD/YbVi
+         UeWtFuMJzbf9LgsFLqqR7NZjGXZZQ61Rgwc3+Zw33H6kDmNDwCBU/oIRdcohsOzjETWT
+         eyTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726238710; x=1726843510;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hRlsoz0SQi6Y31kBnSS0wNEmQwFLdHQJn6urXpVey+s=;
+        b=vlO0AgVQudARc1v+2HiYOWPuBnAvGSNsZVNm7vsUA01OdHYF9BgZ2AgesOLW3VB1ci
+         CkEN1V6kdDaErAs8lx/SDnxtUoA8m9wIhpPXcQptrf9mzpd4JFFOSx54igpE6AAHsGXz
+         AJ6KB64WU9WAE2m+3NTI2POiJjRn2kIqLKa4/TORHyfHbFedzGrV2+nFs8LqCYQwjkzG
+         dka89A7N5Fot6oAjwMNE+ffJQn8iWO1AeFAr/9YYIbgN7CLQ+Tr27ygjEp+fCOutc3Iu
+         ncdzBr7Qj3+kgIGQMpDUl5nTeS9s8j0ykm0mNzYHx91TYevtLXprtR4xuzaGR9hSW5+F
+         7pYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUiBjnfBgOdIXRYqDzYWhb9WDgqfcLcloEWLPEXF5eX8qLmSm5Qxml02pPf39Cm3Sh/mfgIEByY3bHtjDw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwREOz66pNROQHlG6cDgHUtHTQQXjdjRgeuI0CvBbiGCGu25QDN
+	9ex6apfwDRgoWYvgpkxdGVM91ipOlcQeNbq0i5rdSqX9cb/J/f/1CupKeoRqGr1w0BjkicqhTnX
+	+2EsH1lhcHtz4ulWuUhz/vZj576hKBXNnATrPQV5jwtjEUXjb
+X-Google-Smtp-Source: AGHT+IHUFXrwlfPMaxEeDNt9yglyljvYbg/DLrmw5ptYs+I26fJbLl2Yz4iDT0/avZHjhVpNTTnBoHkg2kD6Gg/9LqI=
+X-Received: by 2002:a2e:4c19:0:b0:2f6:d5e2:7889 with SMTP id
+ 38308e7fff4ca-2f787ddf348mr27934931fa.19.1726238709788; Fri, 13 Sep 2024
+ 07:45:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4168; i=brauner@kernel.org; h=from:subject:message-id; bh=TB2AsdrJ7JEBqRjjSRElrMDhNIYQUq/KDMCtNVT66fU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ98f9WFFyY5bP+4kYRxvgN6y/ZdJizvA86/m3vNvdjS 0yze1z/dZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEykVofhn3VgQeb8o4pztDZZ SynN8guuW7W2XM3fVYF/Z1HigzzRCwx/JRpy684Wvz9sXdYQ65NveD9YZp1R6pdatfzX50RWf5T kAgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20240912170025.455167-1-valentina.fernandezalanis@microchip.com>
+In-Reply-To: <20240912170025.455167-1-valentina.fernandezalanis@microchip.com>
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+Date: Fri, 13 Sep 2024 08:44:58 -0600
+Message-ID: <CANLsYkwC0hW3YPmfxOCW+sQcNVVficvPX0+yhsTnKb70f_4taA@mail.gmail.com>
+Subject: Re: [PATCH v1 0/5] Add Microchip IPC mailbox and remoteproc support
+To: Valentina Fernandez <valentina.fernandezalanis@microchip.com>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	peterlin@andestech.com, dminus@andestech.com, conor.dooley@microchip.com, 
+	conor+dt@kernel.org, ycliang@andestech.com, jassisinghbrar@gmail.com, 
+	robh@kernel.org, krzk+dt@kernel.org, andersson@kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-/* Summary */
-Hey Linus,
+Hi Valentina,
 
-This contains the following changes for procfs:
+On Thu, 12 Sept 2024 at 10:48, Valentina Fernandez
+<valentina.fernandezalanis@microchip.com> wrote:
+>
+> Hello all,
+>
+> This series adds support for the Microchip Inter-Processor Communication
+> (IPC) mailbox controller, as well as an IPC remoteproc platform driver.
+>
+> Microchip's family of RISC-V SoCs typically has one or more clusters
+> that can be configured to run in Asymmetric Multi-Processing (AMP) mode.
+>
+> The Microchip IPC is used to send messages between processors using
+> an interrupt signaling mechanism. The driver uses the RISC-V Supervisor
+> Binary Interface (SBI) to communicate with software running in machine
+> mode (M-mode) to access the IPC hardware block.
+>
+> Additional details on the Microchip vendor extension and the IPC
+> function IDs described in the driver can be found in the following
+> documentation:
+>
+> https://github.com/linux4microchip/microchip-sbi-ecall-extension
+>
+> The IPC remoteproc platform driver allows for starting and stopping
+> firmware on the remote cluster(s) and facilitates RPMsg communication.
+> The remoteproc attach/detach operations are also supported for use cases
+> where the firmware is loaded by the Hart Software Services
+> (zero-stage bootloader) before Linux boots.
+>
+> Error Recovery and Power Management features are not currently
+> supported in the remoteproc platform driver.
+>
+> The PIC64GX MPU has a Mi-V IHC block, this will be added to the PIC64GX
+> dts after the initial upstreaming:
+>
+> https://patchwork.kernel.org/project/linux-riscv/patch/20240725121609.13101-18-pierre-henry.moussay@microchip.com/
+>
+> Thanks,
+> Valentina
+>
+> Valentina Fernandez (5):
+>   riscv: asm: vendorid_list: Add Microchip Technology to the vendor list
+>   dt-bindings: mailbox: add binding for Microchip IPC mailbox driver
+>   mailbox: add Microchip IPC support
+>   dt-bindings: remoteproc: add binding for Microchip IPC remoteproc
+>   remoteproc: add support for Microchip IPC remoteproc platform driver
+>
+>  .../bindings/mailbox/microchip,sbi-ipc.yaml   | 115 ++++
+>  .../remoteproc/microchip,ipc-remoteproc.yaml  |  84 +++
+>  arch/riscv/include/asm/vendorid_list.h        |   1 +
+>  drivers/mailbox/Kconfig                       |  12 +
+>  drivers/mailbox/Makefile                      |   2 +
+>  drivers/mailbox/mailbox-mchp-ipc-sbi.c        | 539 ++++++++++++++++++
+>  drivers/remoteproc/Kconfig                    |  12 +
+>  drivers/remoteproc/Makefile                   |   1 +
+>  drivers/remoteproc/mchp_ipc_remoteproc.c      | 461 +++++++++++++++
+>  include/linux/mailbox/mchp-ipc.h              |  23 +
+>  10 files changed, 1250 insertions(+)
 
-* Add config options and parameters to block forcing memory writes.
+It might be easier to split this patchset in two and proceed
+incrementally, i.e upstream the mailbox driver first and then the
+remoteproc part.
 
-  This adds a Kconfig option and boot param to allow removing the
-  FOLL_FORCE flag from /proc/<pid>/mem write calls as this can be used
-  in various attacks.
+Regards,
+Mathieu
 
-  The traditional forcing behavior is kept as default because it can
-  break GDB and some other use cases.
-
-  This is the simpler version that you had requested.
-
-* Restrict overmounting of ephemeral entities.
-
-  It is currently possible to mount on top of various ephemeral entities
-  in procfs. This specifically includes magic links. To recap, magic
-  links are links of the form /proc/<pid>/fd/<nr>. They serve as
-  references to a target file and during path lookup they cause a jump
-  to the target path. Such magic links disappear if the corresponding
-  file descriptor is closed.
-
-  Currently it is possible to overmount such magic links. This is mostly
-  interesting for an attacker that wants to somehow trick a process into
-  e.g., reopening something that it didn't intend to reopen or to hide
-  a malicious file descriptor.
-
-  But also it risks leaking mounts for long-running processes. When
-  overmounting a magic link like above, the mount will not be detached
-  when the file descriptor is closed. Only the target mountpoint will
-  disappear. Which has the consequence of making it impossible to unmount
-  that mount afterwards. So the mount will stick around until the process
-  exits and the /proc/<pid>/ directory is cleaned up during
-  proc_flush_pid() when the dentries are pruned and invalidated.
-
-  That in turn means it's possible for a program to accidentally leak
-  mounts and it's also possible to make a task leak mounts without it's
-  knowledge if the attacker just keeps overmounting things under
-  /proc/<pid>/fd/<nr>.
-
-  Disallow overmounting of such ephemeral entities.
-
-* Cleanup the readdir method naming in some procfs file operations.
-
-* Replace kmalloc() and strcpy() with a simple kmemdup() call.
-
-/* Testing */
-
-gcc version 14.2.0 (Debian 14.2.0-3)
-Debian clang version 16.0.6 (27+b1)
-
-All patches are based on v6.11-rc1 and have been sitting in linux-next.
-No build failures or warnings were observed.
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-None.
-
-Merge conflicts with other trees
-================================
-
-None.
-
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
-
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.12.procfs
-
-for you to fetch changes up to 4ad5f9a021bd7e3a48a8d11c52cef36d5e05ffcc:
-
-  proc: fold kmalloc() + strcpy() into kmemdup() (2024-09-09 10:51:20 +0200)
-
-Please consider pulling these changes from the signed vfs-6.12.procfs tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.12.procfs
-
-----------------------------------------------------------------
-Adrian Ratiu (1):
-      proc: add config & param to block forcing mem writes
-
-Alexey Dobriyan (1):
-      proc: fold kmalloc() + strcpy() into kmemdup()
-
-Christian Brauner (7):
-      proc: proc_readfd() -> proc_fd_iterate()
-      proc: proc_readfdinfo() -> proc_fdinfo_iterate()
-      proc: add proc_splice_unmountable()
-      proc: block mounting on top of /proc/<pid>/map_files/*
-      proc: block mounting on top of /proc/<pid>/fd/*
-      proc: block mounting on top of /proc/<pid>/fdinfo/*
-      Merge patch series "proc: restrict overmounting of ephemeral entities"
-
- Documentation/admin-guide/kernel-parameters.txt | 10 ++++
- fs/proc/base.c                                  | 65 +++++++++++++++++++++++--
- fs/proc/fd.c                                    | 16 +++---
- fs/proc/generic.c                               |  4 +-
- fs/proc/internal.h                              | 13 +++++
- security/Kconfig                                | 32 ++++++++++++
- 6 files changed, 127 insertions(+), 13 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/microchip,sbi-ipc.yaml
+>  create mode 100644 Documentation/devicetree/bindings/remoteproc/microchip,ipc-remoteproc.yaml
+>  create mode 100644 drivers/mailbox/mailbox-mchp-ipc-sbi.c
+>  create mode 100644 drivers/remoteproc/mchp_ipc_remoteproc.c
+>  create mode 100644 include/linux/mailbox/mchp-ipc.h
+>
+> --
+> 2.34.1
+>
 
