@@ -1,217 +1,151 @@
-Return-Path: <linux-kernel+bounces-328098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 717FF977ED7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:49:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E6F3977EDB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B3E81C2169D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:49:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AC011F22501
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5781D86EF;
-	Fri, 13 Sep 2024 11:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D986A1D88AF;
+	Fri, 13 Sep 2024 11:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FnvdftAa"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bBmqOddq"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D319F1C2DB3
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 11:49:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0A941D6C7F
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 11:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726228144; cv=none; b=hjIWk4sKksgzgAeg8llA9RvD4YkZTnrSPHBvo1mG6vcL+NyHmhNOsKiNt0/GYWfuSW3NWfMf8jN7COgPEtlOuGGI5xKtgTLK225Z6frZaXsmgtcRESsKMWC8EJbIUCSHjnkq6EvA+buU4LFRQnVWvKU1tJPA0sHTRt8Ay4HbAFo=
+	t=1726228236; cv=none; b=okG4KMvTpHaChPm9hAAIoZUIYVSkBEwNGqS+qe+CEuhyvCluc6b7h1yfDaO55fcxvJd12h0pcSsZ6IKmZHSptmTNRrjJQnNCs6sengWy8HM49ycdWjNWKeAHvjzd+mSsGmOCTW0F5OyTOI9t2smNo4iArW/9FpwJuvWqogsrkCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726228144; c=relaxed/simple;
-	bh=xxQ0aXG09rXJKVCMGSHHz3LbN7OPgJPQ5BAuRWnB/TM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r68dqJ+/RUP+3fyyvmo4Yvz9vUcYKIu0Ey+uRnlnI8y41amXAJQ6OOPEIskVJwIPukOWIE5xteGeXZ7VOIoAFDKXiBR7iDHjBNwEUq+PhU/qu417FZtanKWBckXvm4vmMXHps36q0ZEUsT6UHAL3DeouRdIYFFZXHkdFDA++iwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FnvdftAa; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1726228236; c=relaxed/simple;
+	bh=6+CCqLiTlnbAOqwKpOu2V8VVZpz4SFARlyK/H9WWw1o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=as0Plv4ozffT+9MAJ+mMMfkht0YjKGwCEqmi7bLohlGYGCVQx355tA4CiTLWBCJhfONbXherkFaAX5+1eauswGddZMQ6H4zFRaHsvm6hG/nXEBKALjdeRlSKnT9ARrZ+hSptU73ystcReFEpdcQn9j9SezLFJsPHPix5mNyRlZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bBmqOddq; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726228141;
+	s=mimecast20190719; t=1726228233;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qLsgKJWlbStQF29sk2kzl+359xJBMr9YOTKXz/rvjuY=;
-	b=FnvdftAaixVHmXDcBhtnHGpx7+KBdOT9abkZfVSySjuAG35nPwb/0IqbXFKsw9g8K8n+9y
-	dsedot0vRl1GaEYBRxOy++yLScchdQT8t2pM5UvZPR3BWFEa8FwRqti2l84U2Ne7RithPr
-	thfjCrBs9ovMP3ljrLQDVV+3x6dA3q0=
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
- [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DzsuH7HNLxmJ8c6STpWbL+svm6fJdpP+EHkpqLBMKjE=;
+	b=bBmqOddqSzN3hHqM0k76XXdZrsa3sI/k/HRjskbPCNJYZlmW+84iIKt0eb5q+rjzuSySRb
+	kl0UrCzyuzsxK+zdjOVJH8zyvWNzX4h34a/MhWIb4WafG7hlz3BegQWqhayGG0M17DVAj2
+	RavSTBvmP6qyTAPoKESDrpM+cWgow6w=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-563-EMcX_OfjPHC9a7Dc5Dnsng-1; Fri, 13 Sep 2024 07:49:00 -0400
-X-MC-Unique: EMcX_OfjPHC9a7Dc5Dnsng-1
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a043f8e2abso27498295ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 04:49:00 -0700 (PDT)
+ us-mta-459-XLYpf6wvM6GiBnbQUI-How-1; Fri, 13 Sep 2024 07:50:32 -0400
+X-MC-Unique: XLYpf6wvM6GiBnbQUI-How-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-374c581ce35so1099889f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 04:50:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726228140; x=1726832940;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1726228231; x=1726833031;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=qLsgKJWlbStQF29sk2kzl+359xJBMr9YOTKXz/rvjuY=;
-        b=d6ghImc+vD1GPCFsKU/vsn32ldWRcO42Uz6jLq37csBXougi+LiDeynfx9IbFC174l
-         EzzqRQfdOV1v38zseRTd64FgiWr3dqlGwN5+rBRNYkrL1URWrC8Ld3t7/uZoW/HIzOvC
-         iqeJ5rahSbMbpOI0jA8mGGXfdd9Pr6Yo5Ya9tmBn44Jox2uejNF1Uf2T1VLiRpWz1Oyy
-         TJ9wyF7yhkGiiGrZoTcbFeXcL5fQNNlyj9ihyGnhXqQafwjTCEahfNRrP5z+1DnGUj2Q
-         XPi+K1ik3owk74zYovAAaWCis+TUCjrZbD6jxSm3tc4jBF4XjRJJwvVWbw68qiIE/LVE
-         qq3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVhyd96qv/IIDWaU60vmjeCHkxqeMUEoRnPZAIX4mzDEo/zobaW8LaITgH0/cHWq5SzVF+r0cmjYhxuiGk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCrXf7Xb1it0HDCXOXnD+MsyeuGlE6QaQmerbmd3i5zu/kZ4Km
-	enQkEOxev7zN3Ex0JjHew6ANzUiTM8kpRXAQJcfwnDNTRxSxkr3CqhdSdR6hvrIHUh4JIrg6EiH
-	24hZnl09gy9UGk5j8BmtTz5iIKLyt2uBVrRX3wt+RfQvUNPXNZZ0F1q5qxn8OJHmxE6igEd7MNB
-	+dcNVpEMXOmYXYXBeScHB7OjhlgVP/9J3TNC9z
-X-Received: by 2002:a05:6e02:1d05:b0:39d:2a84:86a3 with SMTP id e9e14a558f8ab-3a0848aff21mr65013315ab.4.1726228139824;
-        Fri, 13 Sep 2024 04:48:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHBxhnTVx9pazmQpewUpzYgkKmDROO9FUau+OjYRUe1cM2IP3h9TK3N1cMqOfg6YcN/9Aw7a7Ms1iOdUE4IdMo=
-X-Received: by 2002:a05:6e02:1d05:b0:39d:2a84:86a3 with SMTP id
- e9e14a558f8ab-3a0848aff21mr65013185ab.4.1726228139409; Fri, 13 Sep 2024
- 04:48:59 -0700 (PDT)
+        bh=DzsuH7HNLxmJ8c6STpWbL+svm6fJdpP+EHkpqLBMKjE=;
+        b=eYyZ1q9sEwQtQVzk4IRxUAguf+RbHR1qtY5ebA/44NsrR3cHRP6CInd286xCRj7tzI
+         t2SOrsM9lg+osh4gQJOrSnl+Iw58+sPcbh0Bk6NyJaleCQBAvrEzqldIIWpndge/ghKH
+         2AI4XUU7BGU2X6++26f6+upAlbuoryQyuA5ADF/8yAXGHb2iq4kwxjtvBk7Tgl07Zn3E
+         ZeybxWVvxMBUOzLGrYIKcNOLVkdleQG4A85huxYRXFRXilpsQjb5aU18+HwdNIvrK1b0
+         AoKmZuwaBZ68uUHzyAGx8f8jOFcOtc7rcaWu8krvog4w36YaLxS4uYcoDIQs2fYLNYul
+         tRPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXmSyfGz99y3NciOAuflbBpDxKikQtJJOVmi8sMRb4h5e8T+FkVS2ni/yJx8mfOTnUEX7e5UxBYuvGzzYU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxB1vuBzuDrC8kRpsLe72AOc0L6+9N+aRDMWn4hSVJr7BMCLk7U
+	VUOrOZlRHWL6ErnjvX7kVVIR+AVFtS+8hAluef1kJKSTJgGlj10Ya1U/yqzp0DKrxRfK6Nwwl6q
+	JcydrDWFMsvk1/oWaL8jMZdj028m06Qgw2b6xWA+SG2s2OauUcEaQqrDvsT4SOQ==
+X-Received: by 2002:adf:ec05:0:b0:374:c45a:8afb with SMTP id ffacd0b85a97d-378c2d0751cmr4180377f8f.19.1726228231273;
+        Fri, 13 Sep 2024 04:50:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHHJ1H8Rwnaa1DIdW+rQ4X4iS0OLgLw1U12qROIerX9bfZfLhkIcHw4REHfmZmfNMyqXWcA2A==
+X-Received: by 2002:adf:ec05:0:b0:374:c45a:8afb with SMTP id ffacd0b85a97d-378c2d0751cmr4180360f8f.19.1726228230716;
+        Fri, 13 Sep 2024 04:50:30 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b05df7esm22569645e9.20.2024.09.13.04.50.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 04:50:30 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Lukasz Majewski <lukma@denx.de>,
+	Nikita Shubin <nikita.shubin@maquefel.me>,
+	Hartley Sweeten <hsweeten@visionengravers.com>,
+	Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: move BK3 machine support to CREDITS
+Date: Fri, 13 Sep 2024 13:50:12 +0200
+Message-ID: <20240913115021.58405-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240911104109.1831501-1-usamaarif642@gmail.com>
- <CAMj1kXFVyQEwBTf2bG8yBXUktM16dzrcPH-Phz_toAsCK-NfMA@mail.gmail.com>
- <2542182d-aa79-4705-91b6-fa593bacffa6@gmail.com> <CAMj1kXGi+N6AukJt6EGQTao=-1Ud_=bzwPvdjEzhmzEraFU98w@mail.gmail.com>
- <20240912-wealthy-gabby-tamarin-aaba3c@leitao> <CAMj1kXHh-Kov8c1pto0LJL6debugz1og6GFMYCwvfu+RiQGreA@mail.gmail.com>
- <6b2cc4c4-4354-4b29-bc73-c1384b90dfc6@gmail.com> <CAMj1kXG1hbiafKRyC5qM1Vj5X7x-dmLndqqo2AYnHMRxDz-80w@mail.gmail.com>
- <CAMj1kXFr+N9LMj0=wULchYosUpV0ygZSKUj1vdUP0KWEANKasw@mail.gmail.com>
- <CALu+AoS9+OxPmVJB9fAJFkjsX9xUVw6K_uXiOi0-XsK6-b4THg@mail.gmail.com>
- <1c37546a-e15e-465f-bcbb-6f39c0fcf82d@gmail.com> <CALu+AoQ_Db=1naa1YffvdV7ziY8FPzugUutw6ggg8O5P0Z2ofA@mail.gmail.com>
-In-Reply-To: <CALu+AoQ_Db=1naa1YffvdV7ziY8FPzugUutw6ggg8O5P0Z2ofA@mail.gmail.com>
-From: Dave Young <dyoung@redhat.com>
-Date: Fri, 13 Sep 2024 19:49:08 +0800
-Message-ID: <CALu+AoSdN4Zh5gPbyTGS8gJ7wDFfOq81ANNH4wmv3z1vs-34Rw@mail.gmail.com>
-Subject: Re: [RFC] efi/tpm: add efi.tpm_log as a reserved region in 820_table_firmware
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Breno Leitao <leitao@debian.org>, linux-efi@vger.kernel.org, 
-	kexec@lists.infradead.org, ebiederm@xmission.com, bhe@redhat.com, 
-	vgoyal@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com, 
-	x86@kernel.org, linux-kernel@vger.kernel.org, rmikey@meta.com, 
-	gourry@gourry.net
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=y
+Content-Transfer-Encoding: 8bit
 
-On Fri, 13 Sept 2024 at 19:13, Dave Young <dyoung@redhat.com> wrote:
->
-> On Fri, 13 Sept 2024 at 19:07, Usama Arif <usamaarif642@gmail.com> wrote:
-> >
-> >
-> >
-> > On 13/09/2024 11:56, Dave Young wrote:
-> > > On Thu, 12 Sept 2024 at 22:15, Ard Biesheuvel <ardb@kernel.org> wrote:
-> > >>
-> > >> (cc Dave)
-> > >
-> > > Thanks for ccing me.
-> > >
-> > >>
-> > >> Full thread here:
-> > >> https://lore.kernel.org/all/CAMj1kXG1hbiafKRyC5qM1Vj5X7x-dmLndqqo2AYnHMRxDz-80w@mail.gmail.com/T/#u
-> > >>
-> > >> On Thu, 12 Sept 2024 at 16:05, Ard Biesheuvel <ardb@kernel.org> wrote:
-> > >>>
-> > >>> On Thu, 12 Sept 2024 at 15:55, Usama Arif <usamaarif642@gmail.com> wrote:
-> > >>>>
-> > >>>>
-> > >>>>
-> > >>>> On 12/09/2024 14:10, Ard Biesheuvel wrote:
-> > >>>>> Does the below help at all?
-> > >>>>>
-> > >>>>> --- a/drivers/firmware/efi/tpm.c
-> > >>>>> +++ b/drivers/firmware/efi/tpm.c
-> > >>>>> @@ -60,7 +60,7 @@ int __init efi_tpm_eventlog_init(void)
-> > >>>>>         }
-> > >>>>>
-> > >>>>>         tbl_size = sizeof(*log_tbl) + log_tbl->size;
-> > >>>>> -       memblock_reserve(efi.tpm_log, tbl_size);
-> > >>>>> +       efi_mem_reserve(efi.tpm_log, tbl_size);
-> > >>>>>
-> > >>>>>         if (efi.tpm_final_log == EFI_INVALID_TABLE_ADDR) {
-> > >>>>>                 pr_info("TPM Final Events table not present\n");
-> > >>>>
-> > >>>> Unfortunately not. efi_mem_reserve updates e820_table, while kexec looks at /sys/firmware/memmap
-> > >>>> which is e820_table_firmware.
-> > >>>>
-> > >>>> arch_update_firmware_area introduced in the RFC patch does the same thing as efi_mem_reserve does at
-> > >>>> its end, just with e820_table_firmware instead of e820_table.
-> > >>>> i.e. efi_mem_reserve does:
-> > >>>>         e820__range_update(addr, size, E820_TYPE_RAM, E820_TYPE_RESERVED);
-> > >>>>         e820__update_table(e820_table);
-> > >>>>
-> > >>>> while arch_update_firmware_area does:
-> > >>>>         e820__range_update_firmware(addr, size, E820_TYPE_RAM, E820_TYPE_RESERVED);
-> > >>>>         e820__update_table(e820_table_firmware);
-> > >>>>
-> > >>>
-> > >>> Shame.
-> > >>>
-> > >>> Using efi_mem_reserve() is appropriate here in any case, but I guess
-> > >>> kexec on x86 needs to be fixed to juggle the EFI memory map, memblock
-> > >>> table, and 3 (!) versions of the E820 table in the correct way
-> > >>> (e820_table, e820_table_kexec and e820_table_firmware)
-> > >>>
-> > >>> Perhaps we can put this additional logic in x86's implementation of
-> > >>> efi_arch_mem_reserve()? AFAICT, all callers of efi_mem_reserve() deal
-> > >>> with configuration tables produced by the firmware that may not be
-> > >>> reserved correctly if kexec looks at e820_table_firmware[] only.
-> > >>
-> > >
-> > > I have not read all the conversations,  let me have a look and response later.
-> > >
-> > > The first glance about the patch is that I think the kexec_file_load
-> > > syscall (default of latest kexec-tools) will not use
-> > > e820_table_firmware AFAIK.  it will only use e820_table_kexec.
-> >
-> > I initially thought that as well. But it looks like kexec just reads /sys/firmware/memmap
-> >
-> > https://github.com/horms/kexec-tools/blob/main/kexec/firmware_memmap.h#L29
-> >
-> > which is e820_table_firmware.
->
-> That piece of code is only used by kexec_load
->
-> >
-> > The patch that Ard sent in https://lore.kernel.org/all/20240912155159.1951792-2-ardb+git@google.com/
-> > is the right approach to it I believe, and I dont see the issue anymore after applying that patch.
-> >
-> > >
-> > > Usama, can you confirm how you tested this?
-> > > kexec -c -l  will use kexec_load syscall
-> >
-> > I am currently testing in my VM setup with kexec_load. But production is running
-> > kexec_file_load and has the same issue.
->
-> Ok, I mean efi_mem_reserve should be able to work if you retest with
-> kexec_file_load.
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
-Hold on,  I'm not sure about above :(
+Commit 3e0bae7f35c9 ("ARM: ep93xx: delete all boardfiles") removes
+ts72xx.c, but misses to adjust the ARM/CIRRUS LOGIC BK3 MACHINE SUPPORT
+section, which is referring to this file. Hence,
+./scripts/get_maintainer.pl --self-test=patterns complains about a broken
+reference.
 
-checking the efi_arch_mem_reserve(), currently it updates the e820
-table, if you update the e820_table_kexec and e820_table_firmware then
-I think both kexec_load and kexec_file_load will work.
+As the corresponding file of this section is gone, remove the whole section
+and note this previous contribution in the CREDITS instead.
 
-Anyway I was not aware very much about the firmware e820 tables and
-kexec tables when they were created.   I suspect that a cleanup and
-revisit is needed.  I will have a look at that.
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+Arnd, please pick this quick administration fix on top of the commit
+above. Thanks.
 
-For Ard's fix to allocate it as ACPI memory, I think it should be good
-and simpler.
+ CREDITS     | 4 ++++
+ MAINTAINERS | 6 ------
+ 2 files changed, 4 insertions(+), 6 deletions(-)
 
->
-> >
-> > Thanks,
-> > Usama
-> >
-> > > kexec [-s] -l will use kexec_file_load syscall
-> > >
-> > > Thanks
-> > > Dave
-> > >
-> >
+diff --git a/CREDITS b/CREDITS
+index d439f5a1bc00..b2f16d191f3c 100644
+--- a/CREDITS
++++ b/CREDITS
+@@ -2539,6 +2539,10 @@ S: PO BOX 220, HFX. CENTRAL
+ S: Halifax, Nova Scotia
+ S: Canada B3J 3C8
+ 
++N: Lukasz Majewski
++E: lukma@denx.de
++D: arm/Cirrus Logic BK3 machine support
++
+ N: Kai Mäkisara
+ E: Kai.Makisara@kolumbus.fi
+ D: SCSI Tape Driver
+diff --git a/MAINTAINERS b/MAINTAINERS
+index deb3c0cd392a..7c9c88d447e0 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2257,12 +2257,6 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Supported
+ F:	drivers/net/ethernet/cavium/thunder/
+ 
+-ARM/CIRRUS LOGIC BK3 MACHINE SUPPORT
+-M:	Lukasz Majewski <lukma@denx.de>
+-L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+-S:	Maintained
+-F:	arch/arm/mach-ep93xx/ts72xx.c
+-
+ ARM/CIRRUS LOGIC CLPS711X ARM ARCHITECTURE
+ M:	Alexander Shiyan <shc_work@mail.ru>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+-- 
+2.46.0
 
 
