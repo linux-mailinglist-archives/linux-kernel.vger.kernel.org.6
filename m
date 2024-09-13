@@ -1,226 +1,208 @@
-Return-Path: <linux-kernel+bounces-328717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A8639787C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:24:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F60A9787C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45EB3B22D62
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:24:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74CB7B25D0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84502136E01;
-	Fri, 13 Sep 2024 18:24:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C3AD13AA53;
+	Fri, 13 Sep 2024 18:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NHAVNtU2"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b="mkPMN57z"
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A150212C530
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 18:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C1412D1EA;
+	Fri, 13 Sep 2024 18:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726251866; cv=none; b=OgG2ujuulgy65uqwTxqRWh6HYqtKWVjFWzvNVXKsqa7Y4EZDtlTipKE3GK/QUFaLkhR5WMO6BM8YrezDbIoGaMCm1bb1rtdFXByfPs6ebM2rofMndgbW0Re853KA6M8h6cussVN3BRLgekrC43CEC75TlPT0wkFdQizNIOVcDu4=
+	t=1726251873; cv=none; b=ojN+ljRURm0UNoY7J0gYLbMzZhOie9F9GtA10Jzqlxem7tBky8RPuymD0adkrNBVpLdXMGiiBekhvlhjzkeigiAKgQF50rTk1Mh4FUy57dQxesruEvdGnXRMERKppK8k4PjOP9gNAUE7hvXvNAZMn8kigNhEjiYj3tiqRkz0ldY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726251866; c=relaxed/simple;
-	bh=FMnCn4o2qdaSUXi73ndLZFMOMrjiifMev7x7oJtFz8M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V/+2GoOEM95/TuQslkigSj1Bdbk/Wr59rR+VCmZZ67PeM6D0zdruKtyXk+9j5/KSaGHXt51DVYCMqnNSMPQ1VYTE7HmO++5ApbkroNezEzlByqVTnyNJAGat+TqGVAU23feFjUzodLrajUFia0WW9RzCjQU1TTPvldfpJErbk7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NHAVNtU2; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <d17da5b6-6273-4c2c-abd7-99378723866e@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726251861;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=STET5AXaIIGQswDEEBI7EGCg3LCwzAn8DRb4QZJG3wQ=;
-	b=NHAVNtU2cEONxvAu5BGBDbSFgBqCccPGRmQmvrLsgOs+A5Y6y+mOVEcHed8JXsQMwAlnzo
-	Fx1QOCna/Rmoh6YMKAt9XOlXOML0A1aj9hMU4nMbomT7DJR6V7Tj+J5EKWTaNeRYpm14pB
-	7Wzjx/uoB51Yp0VvQ297kU+shUjruG0=
-Date: Fri, 13 Sep 2024 11:24:09 -0700
+	s=arc-20240116; t=1726251873; c=relaxed/simple;
+	bh=Z+w+8oycgqaK4tqY4poB5CUC/js9DJbBU8KFfLHiDu4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K8MrfnCf2NBNUWi0lirh4bXJg0fG1+MzJH1o5GvbMZY3h4X2AvlKunffYxegy0jO2ggGT/tEuGaMX6Gm/UK6RcnuqFj50KIo2/nXoYLHMAosokQKygaaWp67xe2Zz8yqZCV1m97Dunjv6dLIMd2glahZa80MHNL1o5oMTuFPjOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io; spf=pass smtp.mailfrom=finest.io; dkim=pass (2048-bit key) header.d=finest.io header.i=parker@finest.io header.b=mkPMN57z; arc=none smtp.client-ip=74.208.4.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=finest.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=finest.io
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=finest.io;
+	s=s1-ionos; t=1726251862; x=1726856662; i=parker@finest.io;
+	bh=xCQB6HrOuc6yoWPGEb2hOmynqm1KeHWsyghC2ukGrsg=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=mkPMN57zuAxUqAhVgikuCtlDmM2Li/kLUkg3RtAPrUsmlrlc4cJHdE7A6gfyxPkU
+	 noegdJY1RA0OzAmB3W8u5CERQ0HsgeR1JG4OEUiH0yIJlNxXCi9b2UUS7ymrWMn6K
+	 7QqmSlViVbGWRpRaa4F2/4LxBpbdLaONE4dnA+rXfXQiVHVBI5Fyvh4RVcRZORLbD
+	 btEMXT7/NnqgoeZXfkDk0rJMsT74ZT+HJgbkQXyjXTYuurE8FiHSjq2/WqUMBJmb+
+	 PCBxYsFDCqAHr8Qeo1l+DvkXuwbqe4thd+qADFYz1AIcdIDvUz1hp3gNk3grlzVOT
+	 P55K6Yne7yvvKEvViA==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from SWDEV2.connecttech.local ([98.159.241.229]) by
+ mrelay.perfora.net (mreueus002 [74.208.5.2]) with ESMTPSA (Nemesis) id
+ 0LbL7E-1s9pgC1zFS-00eEx3; Fri, 13 Sep 2024 20:24:22 +0200
+Date: Fri, 13 Sep 2024 14:24:20 -0400
+From: Parker Newman <parker@finest.io>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Parker Newman
+ <pnewman@connecttech.com>
+Subject: Re: [PATCH v1 1/6] misc: eeprom: eeprom_93cx6: Add quirk for extra
+ read clock cycle
+Message-ID: <20240913142420.675faf80@SWDEV2.connecttech.local>
+In-Reply-To: <ZuR600QgWi6oQcau@smile.fi.intel.com>
+References: <cover.1726237379.git.pnewman@connecttech.com>
+	<d0818651c4a58d0162a898c3ba3dd8abf9f95272.1726237379.git.pnewman@connecttech.com>
+	<ZuR600QgWi6oQcau@smile.fi.intel.com>
+Organization: Connect Tech Inc.
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [RFC PATCH 2/3] ipv6: Run a reverse sk_lookup on sendmsg.
-To: Tiago Lam <tiagolam@cloudflare.com>
-Cc: "David S. Miller" <davem@davemloft.net>, David Ahern
- <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Jakub Sitnicki <jakub@cloudflare.com>,
- kernel-team@cloudflare.com
-References: <20240913-reverse-sk-lookup-v1-0-e721ea003d4c@cloudflare.com>
- <20240913-reverse-sk-lookup-v1-2-e721ea003d4c@cloudflare.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-In-Reply-To: <20240913-reverse-sk-lookup-v1-2-e721ea003d4c@cloudflare.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:nti8a+qShA6s3dzsfN5LJNKhmfK/6pa57HifSQI7Y1SckL14RrB
+ P52RyZhd9xTTPuT0y0yPzY0y5qOHIJkA5B9ILT5IWmYMM6KiFPATkIP0LTiG3P1V6c0WHvv
+ PgIQ15al+LTQLKP4PREfKQafq3NbATvfqik7FtZjHUuWyoLSgKvYDOhqcIcfu/75YXqpakH
+ fLqZUrlWwSkTQSLSwLipg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Wx8JGLuwzm0=;nGZr5lOM9+rDnItSmVHzBsjg9OP
+ LEdcdR9I//n3CzmISOFSrHjg+XfGu7SmOD1jBLKnIWReiv3Mkw3E9M5HhiSVldJq6+e+/s6eq
+ GJKUdADiIoxHK1712JThiEvr9Hb12XDJfCZQKjrx5F7F9OTQMmcRVfDA9XO6YeosrZiZ7Tl/U
+ 5ewQofKb3XvRfarXWMwvt3lbfpz1jRUR9O7UVdVpeaKILgoIt3tAijBYgjgdcrneNDJMkt2gI
+ jGImg/0Kdz59ARsEgGDwCTBradXJcsYwHEUwAdvFCliKcOIiYXznidiGJF2Y5jWQz9zXOxiaP
+ olf+/InzTO883HWG6APk9LO676u6Kbiaj1w81azc4Jd9GCzTlN3wF0/NP/Y/64K965DkLArx+
+ J88ZacAdmGWgKZsDck+b7EIWvEYaIX+2ZjWlhdUvblhJQkLFT+7oCthm9d+eQjtdJ0/TuFO+2
+ +jjv6Ei3IugFepdVUnyaADpLDkhqyrUFeGHBy9iP7QeN4diFLNlMJ5BhRr80COHawuqFq2gXu
+ 4ww5f90YO4QdjM4F3abSJSa1l56GLY3Iu58tkvc4h7M1dzNar+WWQRkj2pE8PE4GePY6niknl
+ 6oab4sFT8t00yz2RpwB/NUA9mx8Ewcf+ffEm9Dh3m01NE6WYN9Eo7Eyj62j+Y73NfSC1O7O9y
+ LyKey0zHLPll9djSMHzolC4SzQkN4Q1ep6ZmQVrfcBMuZu61wWZsJKwReGv+lagSRmav2RqBN
+ xs310bNbQaXhK0mHhBjZTiuPtYz94vmuQ==
 
-On 9/13/24 2:39 AM, Tiago Lam wrote:
-> This follows the same rationale provided for the ipv4 counterpart, where
-> it now runs a reverse socket lookup when source addresses and/or ports
-> are changed, on sendmsg, to check whether egress traffic should be
-> allowed to go through or not.
-> 
-> As with ipv4, the ipv6 sendmsg path is also extended here to support the
-> IPV6_ORIGDSTADDR ancilliary message to be able to specify a source
-> address/port.
-> 
-> Suggested-by: Jakub Sitnicki <jakub@cloudflare.com>
-> Signed-off-by: Tiago Lam <tiagolam@cloudflare.com>
-> ---
->   net/ipv6/datagram.c | 76 +++++++++++++++++++++++++++++++++++++++++++++++++++++
->   net/ipv6/udp.c      |  8 ++++--
->   2 files changed, 82 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/ipv6/datagram.c b/net/ipv6/datagram.c
-> index fff78496803d..4214dda1c320 100644
-> --- a/net/ipv6/datagram.c
-> +++ b/net/ipv6/datagram.c
-> @@ -756,6 +756,27 @@ void ip6_datagram_recv_ctl(struct sock *sk, struct msghdr *msg,
->   }
->   EXPORT_SYMBOL_GPL(ip6_datagram_recv_ctl);
->   
-> +static inline bool reverse_sk_lookup(struct flowi6 *fl6, struct sock *sk,
-> +				     struct in6_addr *saddr, __be16 sport)
-> +{
-> +	if (static_branch_unlikely(&bpf_sk_lookup_enabled) &&
-> +	    (saddr && sport) &&
-> +	    (ipv6_addr_cmp(&sk->sk_v6_rcv_saddr, saddr) || inet_sk(sk)->inet_sport != sport)) {
-> +		struct sock *sk_egress;
-> +
-> +		bpf_sk_lookup_run_v6(sock_net(sk), IPPROTO_UDP, &fl6->daddr, fl6->fl6_dport,
-> +				     saddr, ntohs(sport), 0, &sk_egress);
+On Fri, 13 Sep 2024 20:48:03 +0300
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-iirc, in the ingress path, the sk could also be selected by a tc bpf prog doing 
-bpf_sk_assign. Then this re-run on sk_lookup may give an incorrect result?
+> On Fri, Sep 13, 2024 at 10:55:38AM -0400, Parker Newman wrote:
+> > From: Parker Newman <pnewman@connecttech.com>
+> >
+> > This patch adds a quirk similar to eeprom_93xx46 to add an extra clock
+> > cycle before reading data from the EEPROM.
+> >
+> > The 93Cx6 family of EEPROMs output a "dummy 0 bit" between the writing
+> > of the op-code/address from the host to the EEPROM and the reading of
+> > the actual data from the EEPROM.
+> >
+> > More info can be found on page 6 of the AT93C46 datasheet. Similar not=
+es
+> > are found in other 93xx6 datasheets.
+>
+> > Link: https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-5193-SEEP=
+ROM-AT93C46D-Datasheet.pdf
+>
+> Make it a tag (i.e. locate just above your SoB tag)
+>
 
-In general, is it necessary to rerun any bpf prog if the user space has 
-specified the IP[v6]_ORIGDSTADDR.
+Sorry, not 100% sure what you mean by tag? Do I just need to move the Link=
+: entry
+to be above my Sign-off? Or is there something else? Thanks!
 
-> +		if (!IS_ERR_OR_NULL(sk_egress) &&
-> +		    atomic64_read(&sk_egress->sk_cookie) == atomic64_read(&sk->sk_cookie))
-> +			return true;
-> +
-> +		net_info_ratelimited("No reverse socket lookup match for local addr %pI6:%d remote addr %pI6:%d\n",
-> +				     &saddr, ntohs(sport), &fl6->daddr, ntohs(fl6->fl6_dport));
-> +	}
-> +
-> +	return false;
-> +}
-> +
->   int ip6_datagram_send_ctl(struct net *net, struct sock *sk,
->   			  struct msghdr *msg, struct flowi6 *fl6,
->   			  struct ipcm6_cookie *ipc6)
-> @@ -844,7 +865,62 @@ int ip6_datagram_send_ctl(struct net *net, struct sock *sk,
->   
->   			break;
->   		    }
-> +		case IPV6_ORIGDSTADDR:
-> +			{
-> +			struct sockaddr_in6 *sockaddr_in;
-> +			struct net_device *dev = NULL;
-> +
-> +			if (cmsg->cmsg_len < CMSG_LEN(sizeof(struct sockaddr_in6))) {
-> +				err = -EINVAL;
-> +				goto exit_f;
-> +			}
-> +
-> +			sockaddr_in = (struct sockaddr_in6 *)CMSG_DATA(cmsg);
-> +
-> +			addr_type = __ipv6_addr_type(&sockaddr_in->sin6_addr);
-> +
-> +			if (addr_type & IPV6_ADDR_LINKLOCAL)
-> +				return -EINVAL;
-> +
-> +			/* If we're egressing with a different source address and/or port, we
-> +			 * perform a reverse socket lookup.  The rationale behind this is that we
-> +			 * can allow return UDP traffic that has ingressed through sk_lookup to
-> +			 * also egress correctly. In case the reverse lookup fails, we
-> +			 * continue with the normal path.
-> +			 *
-> +			 * The lookup is performed if either source address and/or port changed, and
-> +			 * neither is "0".
-> +			 */
-> +			if (reverse_sk_lookup(fl6, sk, &sockaddr_in->sin6_addr,
-> +					      sockaddr_in->sin6_port)) {
-> +				/* Override the source port and address to use with the one we
-> +				 * got in cmsg and bail early.
-> +				 */
-> +				fl6->saddr = sockaddr_in->sin6_addr;
-> +				fl6->fl6_sport = sockaddr_in->sin6_port;
-> +				break;
-> +			}
->   
-> +			if (addr_type != IPV6_ADDR_ANY) {
-> +				int strict = __ipv6_addr_src_scope(addr_type) <= IPV6_ADDR_SCOPE_LINKLOCAL;
-> +
-> +				if (!ipv6_can_nonlocal_bind(net, inet_sk(sk)) &&
-> +				    !ipv6_chk_addr_and_flags(net,
-> +							     &sockaddr_in->sin6_addr,
-> +							     dev, !strict, 0,
-> +							     IFA_F_TENTATIVE) &&
-> +				    !ipv6_chk_acast_addr_src(net, dev,
-> +							     &sockaddr_in->sin6_addr))
-> +					err = -EINVAL;
-> +				else
-> +					fl6->saddr = sockaddr_in->sin6_addr;
-> +			}
-> +
-> +			if (err)
-> +				goto exit_f;
-> +
-> +			break;
-> +			}
->   		case IPV6_FLOWINFO:
->   			if (cmsg->cmsg_len < CMSG_LEN(4)) {
->   				err = -EINVAL;
-> diff --git a/net/ipv6/udp.c b/net/ipv6/udp.c
-> index 6602a2e9cdb5..6121cbb71ad3 100644
-> --- a/net/ipv6/udp.c
-> +++ b/net/ipv6/udp.c
-> @@ -1476,6 +1476,12 @@ int udpv6_sendmsg(struct sock *sk, struct msghdr *msg, size_t len)
->   
->   	fl6->flowi6_uid = sk->sk_uid;
->   
-> +	/* We use fl6's daddr and fl6_sport in the reverse sk_lookup done
-> +	 * within ip6_datagram_send_ctl() now.
-> +	 */
-> +	fl6->daddr = *daddr;
-> +	fl6->fl6_sport = inet->inet_sport;
-> +
->   	if (msg->msg_controllen) {
->   		opt = &opt_space;
->   		memset(opt, 0, sizeof(struct ipv6_txoptions));
-> @@ -1511,10 +1517,8 @@ int udpv6_sendmsg(struct sock *sk, struct msghdr *msg, size_t len)
->   
->   	fl6->flowi6_proto = sk->sk_protocol;
->   	fl6->flowi6_mark = ipc6.sockc.mark;
-> -	fl6->daddr = *daddr;
->   	if (ipv6_addr_any(&fl6->saddr) && !ipv6_addr_any(&np->saddr))
->   		fl6->saddr = np->saddr;
-> -	fl6->fl6_sport = inet->inet_sport;
->   
->   	if (cgroup_bpf_enabled(CGROUP_UDP6_SENDMSG) && !connected) {
->   		err = BPF_CGROUP_RUN_PROG_UDP6_SENDMSG_LOCK(sk,
-> 
+> > In summary the read operation for a 93Cx6 EEPROM is:
+> > Write to EEPROM :	110[A5-A0]	(9 bits)
+>
+> > Read from EEPROM: 	0[D15-D0]	(17 bits)
+>
+> The mixed TABs/space here (one extra space after :)
+>
+> > Where:
+> >  	110 is the start bit and READ OpCode
+> > 	[A5-A0] is the address to read from
+> > 	0 is a "dummy bit" preceding the actual data
+> > 	[D15-D0] is the actual data.
+>
+> Also leading spaces, please remove them and use TAB, or use spaces only.
+>
+
+Ugh, copy/paste is hard! I will fix :).
+
+> > Looking at the READ timing diagrams in the 93Cx6 datasheets the dummy
+> > bit should be clocked out on the last address bit clock cycle meaning =
+it
+> > should be discarded naturally.
+> >
+> > However, depending on the hardware configuration sometimes this dummy
+> > bit is not discarded. This is the case with Exar PCI UARTs which requi=
+re
+> > an extra clock cycle between sending the address and reading the data.
+>
+> ...
+>
+> > +static inline bool has_quirk_extra_read_cycle(struct eeprom_93cx6 *ee=
+prom)
+> > +{
+> > +	return eeprom->quirks & PCI_EEPROM_QUIRK_EXTRA_READ_CYCLE;
+> > +}
+>
+> So, this makes sense to be in a header since everything else related to =
+that
+> also in the header already.
+
+Makes sense, will do.
+
+> ...
+>
+> > +	if (has_quirk_extra_read_cycle(eeprom)) {
+> > +		eeprom_93cx6_pulse_high(eeprom);
+>
+> No additional delay is needed?
+>
+
+Should not need any extra delay as both pulse high/low functions have the =
+worst case
+450ns delay after the register write. It was working well on my test cards=
+.
+
+> > +		eeprom_93cx6_pulse_low(eeprom);
+> > +	}
+>
+> > +	if (has_quirk_extra_read_cycle(eeprom)) {
+> > +		eeprom_93cx6_pulse_high(eeprom);
+>
+> Ditto.
+>
+> > +		eeprom_93cx6_pulse_low(eeprom);
+> > +	}
+>
+> ...
+>
+> > +/* Some EEPROMs require an extra clock cycle before reading */
+> > +#define PCI_EEPROM_QUIRK_EXTRA_READ_CYCLE	BIT(0)
+>
+> I would move it directly into the structure definitions, just after quir=
+k
+> field (the same way it's done in the other driver)...
+>
+
+Will do, thanks!
+
+> ...
+>
+> >  	int width;
+> > +	unsigned int quirks;
+>
+> ...somewhere here.
+>
+> >  	char drive_data;
+> >  	char reg_data_in;
+>
 
 
