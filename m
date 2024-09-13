@@ -1,165 +1,139 @@
-Return-Path: <linux-kernel+bounces-327860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEA1E977BFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:13:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27529977BFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:13:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74934B231A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:13:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60E9F1C20D4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF83F1D6C7A;
-	Fri, 13 Sep 2024 09:13:28 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9241D6DA1;
+	Fri, 13 Sep 2024 09:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g1zDysS7"
+Received: from mail-yb1-f194.google.com (mail-yb1-f194.google.com [209.85.219.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 449C41D6C57
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 09:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F7A317BED3;
+	Fri, 13 Sep 2024 09:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726218808; cv=none; b=bm2ubhSawQo3LnvMwI3NuLxuaVsDnttz8wpclkAV7uXnti3jXMjBxLlge5x4zdoPByP1LNds40uVA05/ONNVh/3gi9brv3pHCZhQk2f6tM4HbqaMaJ6j5IAI1F7TwR6c8Ya6/eqZJzimayx+CZ2otdVrNgZTlD3MLrhJXJzZa4g=
+	t=1726218821; cv=none; b=AcVZqFV73T5LSkOtoSfe9iV/z5rLexBw+3lYRLMnvCm83sXsKs2USyce/omB8qKqfqqfqZQdAPQyDDrHWMAWISJkQyfT9lC6ozyA+3+usE7CGdAUfVxfed0q1CI2p3MNsb+NwJ+sI/kkz6VZrRAfpPZXqvgRiiyDmTD0IrRF+mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726218808; c=relaxed/simple;
-	bh=0Z5HKK+AhlLh8QfJrbwPkv9I4sQ/FVl7bCDpfNDaZOQ=;
-	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=du5Wm1oiH9ymnJrZOrHLSTpAQbEViAPwJkY1usVsoGj9LFhtjiPSZnx4dIpqYwKpqYRgL336STDMCRYE6Dbybc2Sbvc0+cw9kl5+LZFZZTrJDTd5HBFnMobyR+Y2bEsuzvprbgayGGk+nBZ7q8GwNG4+nn6erVjWyTsZDmONGk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4X4pWQ0w5Xz1xv4f;
-	Fri, 13 Sep 2024 17:13:22 +0800 (CST)
-Received: from kwepemd500019.china.huawei.com (unknown [7.221.188.86])
-	by mail.maildlp.com (Postfix) with ESMTPS id EB9BA140134;
-	Fri, 13 Sep 2024 17:13:22 +0800 (CST)
-Received: from [10.67.109.61] (10.67.109.61) by kwepemd500019.china.huawei.com
- (7.221.188.86) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 13 Sep
- 2024 17:13:22 +0800
-Message-ID: <67060b2c-b2bb-b01e-c24a-6346e9ccc1fb@huawei.com>
-Date: Fri, 13 Sep 2024 17:13:21 +0800
+	s=arc-20240116; t=1726218821; c=relaxed/simple;
+	bh=JI3m9LYyWSyk0jfVWwO1YfrWWHzbrvI0o8O2cO+Sucw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X6L2lsuTirEcjI+2lMZoS+0BRezhS15Kp3WBhWiWcygaUUecM+AMXeZBJvoxeIZY4nl2B4YEb06as0Lg3b+E145vMknkSEbKC3qbyz6/jcMQXrBYhOkNneP+TN4CFL3r0G3waDTvIn0nIIps0eTLCQu6u85GZ5wCqM57lApFpzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g1zDysS7; arc=none smtp.client-ip=209.85.219.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f194.google.com with SMTP id 3f1490d57ef6-e1a74ee4c75so652778276.3;
+        Fri, 13 Sep 2024 02:13:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726218819; x=1726823619; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gyXxFHDnWBDDJlEOl6Xh69Gj8jXFozZBOH+5BBxE9Fk=;
+        b=g1zDysS7Rm0RmkIVkAnWOrRu2dhw0fFbaerqiJCPaBhHM2yFXSu7fd6ALcyKXofVqh
+         gfUQm+1m1WypYNCyUsemsp0fIHgpZoKBTFkasScHWhTva6D+8zgR0wM9lw+5+V16mR7E
+         kGQbgBGAEOrreGn4hdUDk4BWEFUn3xWNT4ed0W3dEK0qfclHX8xYc8aZYiZlOSFfUuNe
+         S+OJYusiVqVMaP1u2+PDmVNk/EvW2mqrZfcc2xfZxdJMoK6Hw0NLt7gA1fz+3qBoiSmR
+         IRmGYno75JXPJdM3ny/vifsUp0sTJFUKwvkgTTglHAhQmq/zMmxxOaZGMgBzw3Y8w39L
+         Hi+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726218819; x=1726823619;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gyXxFHDnWBDDJlEOl6Xh69Gj8jXFozZBOH+5BBxE9Fk=;
+        b=XjyU5Dd0LUimviz/bLptscp2orymxV+6z4fcAcE71QgLuaOwVLEsuNEYAMyuuw0KUV
+         LkyXZS+M+KA2fDX6ASPfkYaiUVKPuGzQMcDifBBDIzTdhw0VH9y3JXbQgQfkL3epoxus
+         JxHVEbihvK1uNzywEjyeSS53JVWIwofVuaY2fvyMLvxomZ5wt6aUwn5Joco2hL9Y0AoT
+         lkYN8/mmnEhE6KFaHmaKIigPdnfIFhDOpqDOoFJSrcdBeS2lDnXmletAHXj/v1Y+0AlF
+         RhTIwUZwMBfCuCzO8jXVVTCqF2qx6QUjAdvCZTKTkn+jbGEcwil1rbkzyQK9QvlDSVi0
+         eKDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGGQBbxc/S5QLLSMOMLjEwzV04ivYFLEEiLaRv+jG4IfQBLBKDf21vzQUwECdOCsf6dDY2PDe0sZGJqyk=@vger.kernel.org, AJvYcCVEyMl9GS2iOaQCpefs4ah8kBrldRAmMuLntPI4b8gGdPJErVgNNPM5Cbch2PHYq+hgRNjtPk7J@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnQU8Zl6GbNZUHuf6VcKFIrbZOy4m3LRudQ06xQ9mk2UPgGAec
+	iT7cUzlHmRm8HQVQAmkXonk8Yw+YvTLW2kUm2/dS110tL4n/gRRUH9e15TkUX5YlgHu+ImJD8lk
+	edrOViKobB74xFd97j8YUwHIT8eY=
+X-Google-Smtp-Source: AGHT+IGTSx+nc+ZmzlzXLNrgq3ecoPsZXndDrY5v49iTDxEfSYxup4DdcsT7ch+4ToenP+w5LpUJqm5pZ41QSctqz8A=
+X-Received: by 2002:a05:6902:993:b0:e11:6eb3:833f with SMTP id
+ 3f1490d57ef6-e1db00a735bmr1431100276.5.1726218818951; Fri, 13 Sep 2024
+ 02:13:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-To: Peter Zijlstra <peterz@infradead.org>, <mingo@redhat.com>,
-	<juri.lelli@redhat.com>, <vincent.guittot@linaro.org>, <rostedt@goodmis.org>,
-	<bsegall@google.com>, <mgorman@suse.de>, <vschneid@redhat.com>,
-	<vincent.guittot@linaro.org>, <tjcao980311@gmail.com>, zhengzucheng
-	<zhengzucheng@huawei.com>
-CC: <linux-kernel@vger.kernel.org>
-From: zhengzucheng <zhengzucheng@huawei.com>
-Subject: =?UTF-8?Q?=5bQuestion=5d_sched=ef=bc=9athe_load_is_unbalanced_in_th?=
- =?UTF-8?Q?e_VM_overcommitment_scenario?=
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd500019.china.huawei.com (7.221.188.86)
+References: <20240909071652.3349294-1-dongml2@chinatelecom.cn>
+ <20240909071652.3349294-7-dongml2@chinatelecom.cn> <ZuFP9EAu4MxlY7k0@shredder.lan>
+ <CADxym3ZUx7v38YU6DpAxLU_PSOqHTpvz3qyvE4B3UhSHR2K67w@mail.gmail.com>
+In-Reply-To: <CADxym3ZUx7v38YU6DpAxLU_PSOqHTpvz3qyvE4B3UhSHR2K67w@mail.gmail.com>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Fri, 13 Sep 2024 17:13:41 +0800
+Message-ID: <CADxym3ZriQCvHcJjCniJHxXFRo_VnVXg-dheym9UYSM-S=euBg@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 06/12] net: vxlan: make vxlan_snoop() return
+ drop reasons
+To: Ido Schimmel <idosch@nvidia.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Alexander Lobakin <aleksander.lobakin@intel.com>, Simon Horman <horms@kernel.org>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
+	dsahern@kernel.org, dongml2@chinatelecom.cn, amcohen@nvidia.com, 
+	gnault@redhat.com, bpoirier@nvidia.com, b.galvani@gmail.com, 
+	razor@blackwall.org, petrm@nvidia.com, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In the VM overcommitment scenario, the overcommitment ratio is 1:2, 8 
-CPUs are overcommitted to 2 x 8u VMs,
-and 16 vCPUs are bound to 8 cpu. However, one VM obtains only 2 CPUs 
-resources, the other VM has 6 CPUs.
-The host is configured with 80 CPUs in a sched domain and other CPUs are 
-in the idle state.
-The root cause is that the load of the host is unbalanced, some vCPUs 
-exclusively occupy CPU resources.
-when the CPU that triggers load balance calculates imbalance value, 
-env->imbalance = 0 is calculated because of
-local->avg_load > sds->avg_load. As a result, the load balance fails.
-(https://github.com/torvalds/linux/commit/91dcf1e8068e9a8823e419a7a34ff4341275fb70) 
+On Thu, Sep 12, 2024 at 10:30=E2=80=AFAM Menglong Dong <menglong8.dong@gmai=
+l.com> wrote:
+>
+> On Wed, Sep 11, 2024 at 4:08=E2=80=AFPM Ido Schimmel <idosch@nvidia.com> =
+wrote:
+> >
+> > On Mon, Sep 09, 2024 at 03:16:46PM +0800, Menglong Dong wrote:
+> > > @@ -1447,7 +1448,7 @@ static bool vxlan_snoop(struct net_device *dev,
+> > >
+> > >       /* Ignore packets from invalid src-address */
+> > >       if (!is_valid_ether_addr(src_mac))
+> > > -             return true;
+> > > +             return SKB_DROP_REASON_VXLAN_INVALID_SMAC;
+> >
+> > [...]
+> >
+> > > diff --git a/include/net/dropreason-core.h b/include/net/dropreason-c=
+ore.h
+> > > index 98259d2b3e92..1b9ec4a49c38 100644
+> > > --- a/include/net/dropreason-core.h
+> > > +++ b/include/net/dropreason-core.h
+> > > @@ -94,6 +94,8 @@
+> > >       FN(TC_RECLASSIFY_LOOP)          \
+> > >       FN(VXLAN_INVALID_HDR)           \
+> > >       FN(VXLAN_VNI_NOT_FOUND)         \
+> > > +     FN(VXLAN_INVALID_SMAC)          \
+> >
+> > Since this is now part of the core reasons, why not name it
+> > "INVALID_SMAC" so that it could be reused outside of the VXLAN driver?
+> > For example, the bridge driver has the exact same check in its receive
+> > path (see br_handle_frame()).
+> >
+>
+> Yeah, I checked the br_handle_frame() and it indeed does
+> the same check.
+>
+> I'll rename it to INVALID_SMAC for general usage.
+>
 
+Hello, does anyone have more comments on this series before I
+send the next version?
 
-It's normal from kernel load balance, but it's not reasonable from the 
-perspective of VM users.
-In cgroup v1, set cpuset.sched_load_balance=0 to modify the schedule 
-domain to fix it.
-Is there any other method to fix this problem? thanks!
-
-Abstracted reproduction case：
-1.environment information：
-[root@localhost ~]# cat /proc/schedstat
-cpu0
-domain0 00000000,00000000,00010000,00000000,00000001
-domain1 00000000,00ffffff,ffff0000,000000ff,ffffffff
-domain2 ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
-cpu1
-domain0 00000000,00000000,00020000,00000000,00000002
-domain1 00000000,00ffffff,ffff0000,000000ff,ffffffff
-domain2 ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
-cpu2
-domain0 00000000,00000000,00040000,00000000,00000004
-domain1 00000000,00ffffff,ffff0000,000000ff,ffffffff
-domain2 ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
-cpu3
-domain0 00000000,00000000,00080000,00000000,00000008
-domain1 00000000,00ffffff,ffff0000,000000ff,ffffffff
-domain2 ffffffff,ffffffff,ffffffff,ffffffff,ffffffff
-
-2.test case:
-vcpu.c
-#include <stdio.h>
-#include <unistd.h>
-
-int main()
-{
-         sleep(20);
-         while (1);
-         return 0;
-}
-
-gcc vcpu.c -o vcpu
------------------------------------------------------------------
-test.sh
-
-#!/bin/bash
-
-#vcpu1
-mkdir /sys/fs/cgroup/cpuset/vcpu_1
-echo '0-3, 80-83' > /sys/fs/cgroup/cpuset/vcpu_1/cpuset.cpus
-echo 0 > /sys/fs/cgroup/cpuset/vcpu_1/cpuset.mems
-for i in {1..8}
-do
-         ./vcpu &
-         pid=$!
-         sleep 1
-         echo $pid > /sys/fs/cgroup/cpuset/vcpu_1/tasks
-done
-
-#vcpu2
-mkdir /sys/fs/cgroup/cpuset/vcpu_2
-echo '0-3, 80-83' > /sys/fs/cgroup/cpuset/vcpu_2/cpuset.cpus
-echo 0 > /sys/fs/cgroup/cpuset/vcpu_2/cpuset.mems
-for i in {1..8}
-do
-         ./vcpu &
-         pid=$!
-         sleep 1
-         echo $pid > /sys/fs/cgroup/cpuset/vcpu_2/tasks
-done
-------------------------------------------------------------------
-[root@localhost ~]# ./test.sh
-[root@localhost ~]# top -d 1 -c -p $(pgrep -d',' -f vcpu)
-14591 root      20   0    2448   1012    928 R 100.0   0.0 13:10.73 ./vcpu
-14582 root      20   0    2448   1012    928 R 100.0   0.0 13:12.71 ./vcpu
-14606 root      20   0    2448    872    784 R 100.0   0.0 13:09.72 ./vcpu
-14620 root      20   0    2448    916    832 R 100.0   0.0 13:07.72 ./vcpu
-14622 root      20   0    2448    920    836 R 100.0   0.0 13:06.72 ./vcpu
-14629 root      20   0    2448    920    832 R 100.0   0.0 13:05.72 ./vcpu
-14643 root      20   0    2448    924    836 R  21.0   0.0 2:37.13 ./vcpu
-14645 root      20   0    2448    868    784 R  21.0   0.0 2:36.51 ./vcpu
-14589 root      20   0    2448    900    816 R  20.0   0.0 2:45.16 ./vcpu
-14608 root      20   0    2448    956    872 R  20.0   0.0 2:42.24 ./vcpu
-14632 root      20   0    2448    872    788 R  20.0   0.0 2:38.08 ./vcpu
-14638 root      20   0    2448    924    840 R  20.0   0.0 2:37.48 ./vcpu
-14652 root      20   0    2448    928    844 R  20.0   0.0 2:36.42 ./vcpu
-14654 root      20   0    2448    924    840 R  20.0   0.0 2:36.14 ./vcpu
-14663 root      20   0    2448    900    816 R  20.0   0.0 2:35.38 ./vcpu
-14669 root      20   0    2448    868    784 R  20.0   0.0 2:35.70 ./vcpu
-
+Thanks!
+Menglong Dong
+> > > +     FN(VXLAN_ENTRY_EXISTS)          \
+> > >       FN(IP_TUNNEL_ECN)               \
+> > >       FNe(MAX)
 
