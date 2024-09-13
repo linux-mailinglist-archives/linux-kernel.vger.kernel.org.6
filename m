@@ -1,149 +1,214 @@
-Return-Path: <linux-kernel+bounces-328265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC8E0978137
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:33:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDAA0978139
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:33:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DAB3287D95
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:33:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 868D7287698
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B72F1DA62A;
-	Fri, 13 Sep 2024 13:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F1141DA61F;
+	Fri, 13 Sep 2024 13:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="FoXKLmkj"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="rHKCAJL8"
+Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BAB43144;
-	Fri, 13 Sep 2024 13:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2854443144;
+	Fri, 13 Sep 2024 13:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726234382; cv=none; b=OvbYxEIgW8j8kjJWWK/G5gFGA1OEI75tcpWTkWCXack9o7XcUOBONk06Daeyz6YZjRorNqSusSz21ep9HMrwmgG50JUi7cflSunRo6J7T3frj1DAyMA3vL+trF6ezoZdk/vAz7+jKcDX3TAfSMiiGXIhcxbkrW+ui+W+wKjoTLw=
+	t=1726234401; cv=none; b=Qx7cQp4EnSPQFaGva+MaYo8cvW52xeLeraEjbo66ZmuJ2MLQHANLUmipL3yfz2gRrQ2rW4SPrn6wknOufHqB18IL9Dd33OqrdQU8681O3iXE5AAM0M9MvBnR9b16vLsMPB7LY+KOertdcJTIpGIOlfJe7P8nBVnAC/uqBYrniok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726234382; c=relaxed/simple;
-	bh=uUQd/1Da/Xxm1kE6OdzdbNAjdOJfQIBxpUioYDTwULQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oi7nZgzYlzkjUftx0wf4yVjwi/f6MbrK3YjNwYjnGn+ey9LqRTQ1aJTl6u7RAjbTk04AsTdznY2i67VmSVcCfkhqpOtlv29MjyVJF5i5zeFjDmMQFE3YYZ9x68EB1EEGWfax1DKCR4/GxuLep+oV+9LW2poIGLFujvcB5w5bAVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=FoXKLmkj; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=RDJJpk2SIh0MQg/4338KK0HiVTDWE+lSNgBRvW7MeCY=; b=FoXKLmkjUo5AsulAlYgBYqf8OX
-	IIUfakLskE93sj5H+0RlwjZd/uGx8m+e3c78IWkb0yTok0ByEVDbFc7r5M2XQ3wpwZuIexYwPymhx
-	q8N7QDGF/5NxXsaxVh0wrzAXprWx+zmTne64hxtgVG1kfX50GJi9WvUkxKp2B9sKNQbjgTkzBHTLk
-	Uq02qR/wfeAjLiw1UV8Sh7VXY1APgM7UXKJX97bQu7brrfV2+iozwYYic1QUnX5FrUOc11Y9CIJzV
-	QTi3SaBSUQlbm6KLSVgVuNW+YVh1Tvz/hYqJbbvgX+WluX6jjb/GFQGYcoes8uIJj00MpsLdqYDwc
-	nF1I0HOQ==;
-Date: Fri, 13 Sep 2024 15:32:51 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Reid Tonking <reidt@ti.com>, Tony Lindgren <tony@atomide.com>,
- "Raghavendra, Vignesh" <vigneshr@ti.com>, Aaro Koskinen
- <aaro.koskinen@iki.fi>, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
- Linux-OMAP <linux-omap@vger.kernel.org>, linux-i2c@vger.kernel.org, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] i2c: omap: Fix standard mode false ACK readings
-Message-ID: <20240913153251.48ffafbd@akair>
-In-Reply-To: <0903DB3E-1A44-44BB-87DC-01C65B97AE4E@goldelico.com>
-References: <20230426194956.689756-1-reidt@ti.com>
-	<445b3cbf-ffbc-6f77-47db-c30fc599e88f@ti.com>
-	<20230428074330.GJ14287@atomide.com>
-	<20230428183037.wbhds54dz5l4v5xa@reidt-t5600.dhcp.ti.com>
-	<664241E0-8D6B-4783-997B-2D8510ADAEA3@goldelico.com>
-	<20240913140934.29bb542b@akair>
-	<0903DB3E-1A44-44BB-87DC-01C65B97AE4E@goldelico.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1726234401; c=relaxed/simple;
+	bh=FuLavyQvHtM8WNrI6vKqzszV+dUVTGkQOGNr5SLyZC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fRn/Z/lt7KWEr6SfKPCL+2LcLtsj37JBrQXn0uxgxv4oziimxMA2NrQ08xkoKVn3O8NqvJKwxKvBYvVpNekkZQdsgJpddbHBUcfkc/7K9FOmIFLlFak8bpW7yDDyL8kgrKe5D1rfg1GJrVSQ4eGv9+81Vi3RrVNR2ZQWWHIeE3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=rHKCAJL8; arc=none smtp.client-ip=83.166.143.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X4wH83tfjzgWW;
+	Fri, 13 Sep 2024 15:33:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1726234388;
+	bh=MH8HjPJeBlhN/lWhWBgQcXkOURL5N2O7tfwxaECdnFQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rHKCAJL8t1bdaLNqjn89ZGONAIOviOasFHZS3MK8w73wdLPvihXWzz/n4NNcCC0ZD
+	 bOe9KY1bV3n04AQIH9Y/TK+opSL9NA/PLQdazDyfx9phHwm962fsuFzk97IPAIJ81o
+	 fCS3LXWubgoWrnYigeSczWA7VS6P8xC3tNYVGw0U=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4X4wH64ldfzZ9Z;
+	Fri, 13 Sep 2024 15:33:06 +0200 (CEST)
+Date: Fri, 13 Sep 2024 15:32:59 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tahera Fahimi <fahimitahera@gmail.com>, linux-api@vger.kernel.org
+Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v11 1/8] Landlock: Add abstract UNIX socket restriction
+Message-ID: <20240913.AmeeLo0aeheD@digikod.net>
+References: <cover.1725494372.git.fahimitahera@gmail.com>
+ <5f7ad85243b78427242275b93481cfc7c127764b.1725494372.git.fahimitahera@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5f7ad85243b78427242275b93481cfc7c127764b.1725494372.git.fahimitahera@gmail.com>
+X-Infomaniak-Routing: alpha
 
-Am Fri, 13 Sep 2024 14:28:59 +0200
-schrieb "H. Nikolaus Schaller" <hns@goldelico.com>:
+On Wed, Sep 04, 2024 at 06:13:55PM -0600, Tahera Fahimi wrote:
+> This patch introduces a new "scoped" attribute to the
+> landlock_ruleset_attr that can specify
+> "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to scope abstract UNIX sockets
+> from connecting to a process outside of the same Landlock domain. It
+> implements two hooks, unix_stream_connect and unix_may_send to enforce
+> this restriction.
+> 
+> Closes: https://github.com/landlock-lsm/linux/issues/7
+> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> 
+> ---
+> v11:
+> - For a connected abstract datagram socket, the hook_unix_may_send
+>   allows the socket to send a data. (it is treated as a connected stream
+>   socket)
+> - Minor comment revision.
+> v10:
+> - Minor code improvement based on reviews on v9.
+> v9:
+> - Editting inline comments.
+> - Major refactoring in domain_is_scoped() and is_abstract_socket
+> v8:
+> - Code refactoring (improve code readability, renaming variable, etc.)
+>   based on reviews by Mickaël Salaün on version 7.
+> - Adding warn_on_once to check (impossible) inconsistencies.
+> - Adding inline comments.
+> - Adding check_unix_address_format to check if the scoping socket is an
+>   abstract UNIX sockets.
+> v7:
+> - Using socket's file credentials for both connected(STREAM) and
+>   non-connected(DGRAM) sockets.
+> - Adding "domain_sock_scope" instead of the domain scoping mechanism
+>   used in ptrace ensures that if a server's domain is accessible from
+>   the client's domain (where the client is more privileged than the
+>   server), the client can connect to the server in all edge cases.
+> - Removing debug codes.
+> v6:
+> - Removing curr_ruleset from landlock_hierarchy, and switching back to
+>   use the same domain scoping as ptrace.
+> - code clean up.
+> v5:
+> - Renaming "LANDLOCK_*_ACCESS_SCOPE" to "LANDLOCK_*_SCOPE"
+> - Adding curr_ruleset to hierarachy_ruleset structure to have access
+>   from landlock_hierarchy to its respective landlock_ruleset.
+> - Using curr_ruleset to check if a domain is scoped while walking in the
+>   hierarchy of domains.
+> - Modifying inline comments.
+> v4:
+> - Rebased on Günther's Patch:
+>   https://lore.kernel.org/all/20240610082115.1693267-1-gnoack@google.com/
+>   so there is no need for "LANDLOCK_SHIFT_ACCESS_SCOPE", then it is
+>   removed.
+> - Adding get_scope_accesses function to check all scoped access masks in
+>   a ruleset.
+> - Using socket's file credentials instead of credentials stored in
+>   peer_cred for datagram sockets. (see discussion in [1])
+> - Modifying inline comments.
+> V3:
+> - Improving commit description.
+> - Introducing "scoped" attribute to landlock_ruleset_attr for IPC
+>   scoping purpose, and adding related functions.
+> - Changing structure of ruleset based on "scoped".
+> - Removing rcu lock and using unix_sk lock instead.
+> - Introducing scoping for datagram sockets in unix_may_send.
+> V2:
+> - Removing wrapper functions
+> 
+> [1]https://lore.kernel.org/all/20240610.Aifee5ingugh@digikod.net/
+> ---
+>  include/uapi/linux/landlock.h                |  28 ++++
+>  security/landlock/limits.h                   |   3 +
+>  security/landlock/ruleset.c                  |   7 +-
+>  security/landlock/ruleset.h                  |  24 +++-
+>  security/landlock/syscalls.c                 |  17 ++-
+>  security/landlock/task.c                     | 136 +++++++++++++++++++
+>  tools/testing/selftests/landlock/base_test.c |   2 +-
+>  7 files changed, 208 insertions(+), 9 deletions(-)
+> 
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index 2c8dbc74b955..dfd48d722834 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -44,6 +44,12 @@ struct landlock_ruleset_attr {
+>  	 * flags`_).
+>  	 */
+>  	__u64 handled_access_net;
+> +	/**
+> +	 * @scoped: Bitmask of scopes (cf. `Scope flags`_)
+> +	 * restricting a Landlock domain from accessing outside
+> +	 * resources(e.g. IPCs).
+> +	 */
+> +	__u64 scoped;
+>  };
+>  
+>  /*
+> @@ -274,4 +280,26 @@ struct landlock_net_port_attr {
+>  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
+>  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
+>  /* clang-format on */
+> +
+> +/**
+> + * DOC: scope
+> + *
+> + * Scope flags
+> + * ~~~~~~~~~~~
+> + *
+> + * These flags enable to restrict a sandboxed process from a set of IPC
+> + * actions. Setting a flag for a ruleset will isolate the Landlock domain
+> + * to forbid connections to resources outside the domain.
+> + *
+> + * IPCs with scoped actions:
+> + *
+> + * - %LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET: Restrict a sandboxed process
+> + *   from connecting to an abstract unix socket created by a process
+> + *   outside the related Landlock domain (e.g. a parent domain or a
+> + *   non-sandboxed process).
+> + */
+> +/* clang-format off */
+> +#define LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET		(1ULL << 0)
 
-> Hi,
-> 
-> 
-> > Am 13.09.2024 um 14:09 schrieb Andreas Kemnade
-> > <andreas@kemnade.info>:
-> > 
-> > Am Wed, 11 Sep 2024 11:40:04 +0200
-> > schrieb "H. Nikolaus Schaller" <hns@goldelico.com>:
-> >   
-> >> Hi,
-> >>   
-> >>> Am 28.04.2023 um 20:30 schrieb Reid Tonking <reidt@ti.com>:
-> >>> 
-> >>> On 10:43-20230428, Tony Lindgren wrote:    
-> >>>> * Raghavendra, Vignesh <vigneshr@ti.com> [230427 13:18]:    
-> >>>>> On 4/27/2023 1:19 AM, Reid Tonking wrote:    
-> >>>>>> Using standard mode, rare false ACK responses were appearing
-> >>>>>> with i2cdetect tool. This was happening due to NACK interrupt
-> >>>>>> triggering ISR thread before register access interrupt was
-> >>>>>> ready. Removing the NACK interrupt's ability to trigger ISR
-> >>>>>> thread lets register access ready interrupt do this instead.
-> >>>>>>  
-> >>>> 
-> >>>> So is it safe to leave NACK interrupt unhandled until we get the
-> >>>> next interrupt, does the ARDY always trigger after hitting this?
-> >>>> 
-> >>>> Regards,
-> >>>> 
-> >>>> Tony    
-> >>> 
-> >>> Yep, the ARDY always gets set after a new command when register
-> >>> access is ready so there's no need for NACK interrupt to control
-> >>> this.    
-> >> 
-> >> I have tested one GTA04A5 board where this patch breaks boot on
-> >> v4.19.283 or v6.11-rc7 (where it was inherited from some earlier
-> >> -rc series).
-> >> 
-> >> The device is either stuck with no signs of activity or reports RCU
-> >> stalls after a 20 second pause.
-> >>   
-> > cannot reproduce it here.  
-> 
-> That is good for you :)
-> 
-which does not mean that there is no problem...
+Thinking more about it, it makes more sense to rename it to
+LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET (s/SCOPED/SCOPE/) because it
+express a scope (not a "scoped") and it allign with the current
+LANDLOCK_ACCESS_* and other internal variables such as
+LANDLOCK_LAST_SCOPE...
 
-> > I had a patch to disable 1Ghz on that
-> > device in my tree. Do you have anything strange in your
-> > tree?  
-> 
-> No, and the omap3 is running with 800 MHz only.
-> 
-So you have a patch disabling 1Ghz OPP in there? The error messages
-look like things I got when 1Ghz was enabled, so better double check.
+However, it still makes sense to keep the "scoped" ruleset's field,
+which is pretty similar to the "handled_*" semantic: it describes what
+will be *scoped* by the ruleset.
 
-if it is letux, then there is e.g. the interrupt reversal in there.
-Maybe it unveils some problem which should be fixed, maybe it is
-harmful, it was never well reviewed...
-
-> I haven't tested on another board but the bug is very reproducible
-> and I was able to bisect it to this patch, which makes the difference.
-> 
-the error messages, esp. regarding rcu do not look so related to this.
-Maybe having this patch or not triggers some other bug. Maybe we trigger
-some race conditions. Or i2c error checking regarding OPP setting...
-
-> So there may be boards which happily run with the patch and some
-> don't. Maybe a race condition with hardware.
-> 
-I am not ruling out that this patch has nasty side effects but I think
-there is more in the game.
-
-Regards,
-Andreas
+> +/* clang-format on*/
+> +
+>  #endif /* _UAPI_LINUX_LANDLOCK_H */
+> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+> index 4eb643077a2a..eb01d0fb2165 100644
+> --- a/security/landlock/limits.h
+> +++ b/security/landlock/limits.h
+> @@ -26,6 +26,9 @@
+>  #define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET << 1) - 1)
+>  #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NET)
+>  
+> +#define LANDLOCK_LAST_SCOPE		LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET
+> +#define LANDLOCK_MASK_SCOPE		((LANDLOCK_LAST_SCOPE << 1) - 1)
+> +#define LANDLOCK_NUM_SCOPE		__const_hweight64(LANDLOCK_MASK_SCOPE)
+>  /* clang-format on */
 
