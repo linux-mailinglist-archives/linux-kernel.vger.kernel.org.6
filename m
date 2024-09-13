@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-327628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 755C2977882
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:47:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A022C977884
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:47:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AC871F24766
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:47:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CE371F24EAD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38049187349;
-	Fri, 13 Sep 2024 05:47:24 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76F8187334;
+	Fri, 13 Sep 2024 05:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="OxBVVm6L"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163FE323D;
-	Fri, 13 Sep 2024 05:47:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1784183CB1;
+	Fri, 13 Sep 2024 05:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726206443; cv=none; b=NSHeLNOR6L05yTVs/RpkLEn+iHyHkdxD5qlZ8ZEtbHZTgvnpjW/fJGYkKdzcepEz/0/LTgxVlqZEFY+cT6PjPOPCekf40YoBIIYUM0Z0VbnteIeFFqD0ZSwLUG6Fi3niyAnE3ym9gxBUIDzs7IaZAEn64LCOgKk4i2hNarLm7cA=
+	t=1726206460; cv=none; b=cqmW1MIfPqTIkCNZ69YLMVW2lt5kxV+f8D6iHmFZmEKo98cFCB6iWTX9xQxLGmqXEVVTjGHZ6PP+N+vGIflJFSpIYTz526x3nQR74cjWIQARrci7nkvr7+THkKwj0l++YI+NnBZNdprjjs8m6KZZdMBAe17oxhK3G6UJeDlkoVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726206443; c=relaxed/simple;
-	bh=cUOwFu2UtxM3l2pffSqHt82mFslpz2gxEF54trMn0P8=;
+	s=arc-20240116; t=1726206460; c=relaxed/simple;
+	bh=lAMua73ejBJurk/Ie6xLFCg83ls2Ldu5/yxaZDQ0kHY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YMT8MG6U8A7tjQGwv1K8hblmDa8HU9t9dQ5rF47/e+NhVNiqHM4BgXdz2k45MMa4ZnZ2JAxF1sf76l5IVSb0rTmQEBeV+dwPqkOeIttv31OZAN09IBrHurIHoCYCLMBpCU+QNH/uw4QwG0Oh0zHtg61wif0qsP+L8IkAf1y+7dM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4X4jxg6vMMz9sxD;
-	Fri, 13 Sep 2024 07:47:19 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id rcETtnnNavE7; Fri, 13 Sep 2024 07:47:19 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4X4jxg5s39z9sjv;
-	Fri, 13 Sep 2024 07:47:19 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id B48CF8B77A;
-	Fri, 13 Sep 2024 07:47:19 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id BrEQGrKMhBAg; Fri, 13 Sep 2024 07:47:19 +0200 (CEST)
-Received: from [192.168.233.70] (unknown [192.168.233.70])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 458908B766;
-	Fri, 13 Sep 2024 07:47:18 +0200 (CEST)
-Message-ID: <fe46ee6f-24c2-42be-942c-e03bc2b6e0aa@csgroup.eu>
-Date: Fri, 13 Sep 2024 07:47:17 +0200
+	 In-Reply-To:Content-Type; b=JTSgUBIAgj7wVGtORLKkBFcRRNNujWr1gBYje80Q9CFymH/L72tQ3xEJwFMrec2f+oGJZE1ssbDSaRSV0yNQ/4Zbiw/+/jIqP8f2N2QGeP4/Cpcs9h2sDwvv8a0CaUXjO1ud3CWYYDnQi7Pcl8WO7pDGunssVSMBaPjkYqK9qjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=OxBVVm6L; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1726206445; x=1726811245; i=quwenruo.btrfs@gmx.com;
+	bh=lAMua73ejBJurk/Ie6xLFCg83ls2Ldu5/yxaZDQ0kHY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=OxBVVm6L1Js2OSv5x+d3IZrU+jS3kG2Jk4KneMnIzwcYyiXcTEY/HQ00Sru4ZoMI
+	 dzh2RvsHHhudYOe6QECbMuqkYf0tNWFr4kL3fy26GIZfQIPXi3mLA8P64FyrghL9M
+	 L5mgn95ICclStLviPlf7i9KKwrtGiSyVWc938PmB1Gd7JL7KBB4tLM74BSA2UtnfF
+	 oW33PjBUzUbttCrONubaADGlkgGuY7WSaxGu6YUj9mbh8Cl2c02IZufHGk+cc95yB
+	 FS7UexkO7WjOnBfPvUqbC6O8HGZDL5DAqMZ3nLmwXF48NDCZoBxSA8k1zGTM8gfQf
+	 RDTp73paIwo1gfCC2g==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx105
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MgvrB-1sN4K11ebF-00mRsc; Fri, 13
+ Sep 2024 07:47:24 +0200
+Message-ID: <85888aaa-c8f5-453b-8344-6cabc82f537e@gmx.com>
+Date: Fri, 13 Sep 2024 15:17:19 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,104 +57,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [linus:master] [mseal] 8be7258aad:
- stress-ng.pagemove.page_remaps_per_sec -4.4% regression
-To: Michael Ellerman <mpe@ellerman.id.au>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Nicholas Piggin <npiggin@gmail.com>
-Cc: Jeff Xu <jeffxu@google.com>, Pedro Falcato <pedro.falcato@gmail.com>,
- kernel test robot <oliver.sang@intel.com>, Jeff Xu <jeffxu@chromium.org>,
- oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, Kees Cook
- <keescook@chromium.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Dave Hansen <dave.hansen@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Guenter Roeck <groeck@chromium.org>, Jann Horn <jannh@google.com>,
- Jonathan Corbet <corbet@lwn.net>, Jorge Lucangeli Obes
- <jorgelo@chromium.org>, Matthew Wilcox <willy@infradead.org>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>,
- =?UTF-8?Q?Stephen_R=C3=B6ttger?= <sroettger@google.com>,
- Suren Baghdasaryan <surenb@google.com>,
- Amer Al Shanawany <amer.shanawany@gmail.com>,
- Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Shuah Khan <shuah@kernel.org>, linux-api@vger.kernel.org,
- linux-mm@kvack.org, ying.huang@intel.com, feng.tang@intel.com,
- fengwei.yin@intel.com
-References: <202408041602.caa0372-oliver.sang@intel.com>
- <CAHk-=whbxLj0thXPzN9aW4CcX1D2_dntNu+x9-8uBakamBggLA@mail.gmail.com>
- <CAKbZUD3B03Zjex4STW8J_1VJhpsYb=1mnZL2-vSaW-CaZdzLiA@mail.gmail.com>
- <CALmYWFuXVCvAfrcDOCAR72z2_rmnm09QeVVqdhzqjF-fZ9ndUA@mail.gmail.com>
- <CAHk-=wgPHCJ0vZMfEP50VPjSVi-CzL0fhTGXgNLQn=Pp9W0DVA@mail.gmail.com>
- <CALmYWFuCvphvLQOuQHBbFq0G8Ekyze=q45Tt4dATOt-GhO2RGg@mail.gmail.com>
- <CAHk-=wgySgXXkZtx49Xq70X2CmSizM8siacYKncMmFWRzKjs5Q@mail.gmail.com>
- <D38D6LJZOIQK.2GV58PGVL5K85@gmail.com>
- <CAHk-=wjeWqr+0Ktzbwqrw17aESe5dZm5Kt6nwqtKJX00VsDqWg@mail.gmail.com>
- <87r0b2if4t.fsf@mail.lhotse>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <87r0b2if4t.fsf@mail.lhotse>
+Subject: Re: [PATCH] btrfs: scrub: skip PREALLOC extents on RAID stripe-tree
+To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+ Johannes Thumshirn <jth@kernel.org>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+ "open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+Cc: WenRuo Qu <wqu@suse.com>
+References: <20240912143312.14442-1-jth@kernel.org>
+ <a0d0fa88-e67c-4b35-88b4-74c5b15a16bb@gmx.com>
+ <958f5586-c37a-4836-87a2-4530428b0a4e@wdc.com>
+Content-Language: en-US
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
+ pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
+ BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
+ XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
+ jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
+ LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
+ mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
+ CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
+ tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
+ INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
+ DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
+ iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
+In-Reply-To: <958f5586-c37a-4836-87a2-4530428b0a4e@wdc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:5wVcUuI1GXMVxdeNkUQATjTvVBMzNLFpNPQ8eIwvXFTUdatVbaC
+ sl5NfNe3OkDrLxe0fKW79BS0rmo9JVBEIVHXQEnZ6WGHd95T8LqiTTKl2e9tfXciW/BPC9f
+ dCUOK5dLbSWmT6mPnHcmFSKCzZRxwAPFSXNQznJTvPEauqaAgVseGc8mcYivD1soR2ERWiK
+ oxl9qyG5l/peJTDwmCT6w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:yF2iUk9ITAQ=;GK0xtzAmesKahR10OBPz2IsDzNp
+ VNqDA1MrCgijWpnK/6estQTuClGDIOMUFZYdoO3T1CaJ8exKElbSdJn8BtHTKaZS8AXlZhnvL
+ yLm7b7Y3WQd2l+woQtejeNtcLtdcNUKSQ0UJIyjhLIPXwx+XmzOMFwBTni2h7MTRJ7nos91/X
+ skSRbFdpR1LPjwYSfctmJ3pk048C5H87g/nbS7RDwJB8prDDp1/m/GeP9YXVlD/gNutIj8oxi
+ UAgijv1gHQ62A77aZpeAQbZ8rbfbVFPFt1/b1o51AkmWeIkkQ7IlP2t4vrmlncZbcpKXtODz9
+ G3G6dpaEz64drk5E2iWo3EzhMio4uYQ6qkj5I4SdYvWO6dRo9c45AT4+CiYXPHGGssFdOtfB+
+ PwnPOTUtRekgAeySkcJvaIJoslwUCIzn0DZsw4NNEvnURqMkbmEEUzLGmuchzcLyHPasylvrr
+ HZr5LD7OQJpUuCOAcUMqMpvEXNIvJmCVoVFEmfNezWGauSwQfAI3/ojN9Fh3MHqEcMrXxcEs2
+ 9zhbaXPYFHnBTO67l2yuqiyW5alRI83/cHljz3I9LeK+8mkec5aZs8lQnePDTPHgqPxvsn9Yp
+ U4KI0j2IcWFmjWKL8AFiHHRa4ZUrcAzZpRP5eHF/Sjx2iCVu5cFFczftqKUbSQ1itprjfpE/5
+ qVw2MiyHBEBt5VyhWJbz4FuO0SbEJgcYowmGE1AjCLQBrBvVZ8WlR2CImHTcbj3M3SdX3A2P8
+ V8/c1gxdD4soMfgb6CdKV63V05QL8V1l1R03Ngde8I3iE/AORuBmMnNbUqG/gbgqRk6B/ZKin
+ MOeC2pld7s6UC59VfK8Ur8Fg==
 
 
 
-Le 06/08/2024 à 04:01, Michael Ellerman a écrit :
-> Linus Torvalds <torvalds@linux-foundation.org> writes:
->> On Mon, 5 Aug 2024 at 16:25, Nicholas Piggin <npiggin@gmail.com> wrote:
+=E5=9C=A8 2024/9/13 15:12, Johannes Thumshirn =E5=86=99=E9=81=93:
+> On 12.09.24 23:32, Qu Wenruo wrote:
+>>
+>>
+>> =E5=9C=A8 2024/9/13 00:03, Johannes Thumshirn =E5=86=99=E9=81=93:
+>>> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 >>>
->>> Can userspace on other archs not unmap their vdsos?
+>>> When scrubbing a RAID stripe-tree based filesystem with preallocated
+>>> extents, the btrfs_map_block() called by
+>>> scrub_submit_extent_sector_read() will return ENOENT, because there is
+>>> no RAID stripe-tree entry for preallocated extents. This then causes
+>>> the sector to be marked as a sector with an I/O error.
+>>>
+>>> To prevent this false alert don't mark secotors for that
+>>> btrfs_map_block() returned an ENOENT as I/O errors but skip them.
+>>>
+>>> This results for example in errors in fstests' btrfs/060 .. btrfs/074
+>>> which all perform fsstress and scrub operations. Whit this fix, these
+>>> errors are gone and the tests pass again.
+>>>
+>>> Cc: Qu Wenru <wqu@suse.com>
 >>
->> I think they can, and nobody cares. The "context.vdso" value stays at
->> some stale value, and anybody who tries to use it will just fail.
->>
->> So what makes powerpc special is not "you can unmap the vdso", but
->> "powerpc cares".
->>
->> I just don't quite know _why_ powerpc cares.
-> 
-> AFAIK for CRIU the problem is signal delivery:
-> 
-> arch/powerpc/kernel/signal_64.c:
-> 
-> int handle_rt_signal64(struct ksignal *ksig, sigset_t *set,
-> 		struct task_struct *tsk)
-> {
->          ...
-> 	/* Set up to return from userspace. */
-> 	if (tsk->mm->context.vdso) {
-> 		regs_set_return_ip(regs, VDSO64_SYMBOL(tsk->mm->context.vdso, sigtramp_rt64));
-> 
-> 
-> ie. if the VDSO is moved but mm->context.vdso is not updated, signal
-> delivery will crash in userspace.
-> 
-> x86-64 always uses SA_RESTORER, and arm64 & s390 can use SA_RESTORER, so
-> I think CRIU uses that to avoid problems with signal delivery when the
-> VDSO is moved.
-> 
-> riscv doesn't support SA_RESTORER but I guess CRIU doesn't support riscv
-> yet so it's not become a problem.
-> 
-> There was a patch to support SA_RESTORER on powerpc, but I balked at
-> merging it because I couldn't find anyone on the glibc side to say
-> whether they wanted it or not. I guess I should have just merged it.
+>> My concern is, ENOENT can be some real problems other than PREALLOC.
+>> I'd prefer this to be the last-resort method.
+>
+> Hm but what else could create an entry in the extent tree without having
+> it in the stripe tree? I can't really think of a situation creating this
+> layout.
 
-The patch is at 
-https://patchwork.ozlabs.org/project/linuxppc-dev/patch/afe50d1db63a10fde9547ea08fe1fa68b0638aba.1624618157.git.christophe.leroy@csgroup.eu/
+My concern is that, if by some other bug that certain writes didn't
+create needed RST entry, we will always treat them as preallocated
+during scrub.
 
-It still applies cleanly.
+Thus it may be better to have a way to distinguish a real missing entry
+and preallocated extents.
 
-Christophe
+>
+>
+>> Would it be possible to create an RST entry for preallocated operations
+>> manually? E.g. without creating a dummy OE, but just insert the needed
+>> RST entries into RST tree at fallocate time?
+>
+> Let me give it a try. But I'm a bit less happy to do so, as RST already
+> increases the write amplification.
 
+Well, write amplification is always a big problem for btrfs...
 
-> 
-> There was an attempt to unify all the vdso stuff and handle the
-> VDSO mremap case in generic code:
-> 
->    https://lore.kernel.org/lkml/20210611180242.711399-17-dima@arista.com/
-> 
-> But I think that series got a bit big and complicated and Dmitry had to
-> move on to other things.
-> 
-> cheers
+Thanks,
+Qu
 
