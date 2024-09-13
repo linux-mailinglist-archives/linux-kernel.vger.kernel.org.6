@@ -1,115 +1,125 @@
-Return-Path: <linux-kernel+bounces-328793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ACA59788F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:26:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 323649788FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:33:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54F1C1C24454
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:26:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBE852897A4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D041474A5;
-	Fri, 13 Sep 2024 19:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 153981465A0;
+	Fri, 13 Sep 2024 19:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M0tFFXH6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="fBKuZZ5E"
+Received: from msa.smtpout.orange.fr (smtp-71.smtpout.orange.fr [80.12.242.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36B712C526;
-	Fri, 13 Sep 2024 19:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE61513AD03
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 19:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726255592; cv=none; b=PgI3wCu5d/K2HJzM9TOmp9b02HTxvDO1XWaEQRTLgMoGRQQxr+5hhaowi5L7x8HSkMt4SC51sjZQd0NxuuenXDYzzxX4T56N9KjQV8XE8TnBac17TZk/jOFh5B2X0ljxQi8jC5AqglON3iuxmgpMPZSB+jt3EGtnAZkQQqrs/ss=
+	t=1726256000; cv=none; b=mXcU/PXd6ceh1sKVKViZTBZnxwNLlBCdZ7KYDpjbFD4DdfdfUkAi5vT9saw8bYc48vG6cvGZQ6mboQpGvxhIUWqKxbpyohy3MKaUtTtOvQdrcN3vnbC9lpNnGA7zTLj+xvOtilWtk7PS6pwVBsQacpzo2iKNyJEH3/Iz39c0Sd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726255592; c=relaxed/simple;
-	bh=qG7jcnA1rEli/ZigmuPTNW11XKmxV75+0YOUYyPr32Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ppt6Rn2A7k84TmrNv6iQx3atFBHRzGsqOs+1O+yOSz9Sr0D13iVzj4OuIh93rRimamx6bWrc367rAh4A643movnYLhDKWuHNeqaKIxK/dbFJYaraK1e3MqNtdEuZ6mO+mTlBhcX1I+9ws1Fa1eBDRim9S2YE3LZBf1GckQOkOz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M0tFFXH6; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726255591; x=1757791591;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qG7jcnA1rEli/ZigmuPTNW11XKmxV75+0YOUYyPr32Q=;
-  b=M0tFFXH6ivwpxkk46ttKLEw5aZSBBONejgkmOo/Nj8Vwep5ciQR9dKwz
-   HULM2wn/900O4240qFf8dtyX0bLZCJru/CCY+e04a0Q0VqjkK6iHJxCGT
-   AYG8jDyoObpy9v8tDZtrRYdCkbEKa/dD/vMOtLSqSeGW8epBi/YmlqzVe
-   Vc6h1AYuj5G5TP+xTl3GnmjhMFj8Rt4LPd/gC6hCf2N93/eZF4a0z9XsG
-   58uATqfV4m9xeGKwK6I20WR3DOtU0ex12imJcXCkDDrVbVo9ZdLSzCELe
-   TEp9QJcgqxTMIYDUS5pTplKj0gZ89DD0FgwmNrRxS38TUztSCAIU2HPr/
-   g==;
-X-CSE-ConnectionGUID: uICTIistTUG76BIg/n5xdQ==
-X-CSE-MsgGUID: Ch0I/b3PRO6d4aTZveTvDQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="50584610"
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="50584610"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 12:26:30 -0700
-X-CSE-ConnectionGUID: G7eN8g31T/maWZgoCoZGvg==
-X-CSE-MsgGUID: GKCaoW7zS+Gv/awNUxtxEw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="68674766"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 12:26:28 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1spBw1-00000008PC0-3REc;
-	Fri, 13 Sep 2024 22:26:25 +0300
-Date: Fri, 13 Sep 2024 22:26:25 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Parker Newman <parker@finest.io>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	Parker Newman <pnewman@connecttech.com>
-Subject: Re: [PATCH v1 3/6] misc: eeprom: eeprom_93cx6: Replace
- printk(KERN_ERR ...) with pr_err()
-Message-ID: <ZuSR4WXoD_2Mb8BI@smile.fi.intel.com>
-References: <cover.1726237379.git.pnewman@connecttech.com>
- <127dcc7f60d15a1cc9007c9e5b06a1aa2b170e19.1726237379.git.pnewman@connecttech.com>
- <ZuR8PawGrcDxCioi@smile.fi.intel.com>
- <20240913151228.2b312e9b@SWDEV2.connecttech.local>
+	s=arc-20240116; t=1726256000; c=relaxed/simple;
+	bh=FJf2/qicU/Ub7t4CHyb6DnSpZplsW5xVb2wAQve19O0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C15FTTvQONznPlTbX7FLGB6c6i/BYjHr62J0MHSo2Wdip3sM951JCiaAlMvc7eOaatwVrZk+XxUWtluYW4mGJxv46Mf9xgamG1FxpLAQk0nJpiO+Xd+gHQE7wNW7lNCHYgBz9Ocv5TrxuUVLyL7Jn6/55ljmCWXqet4f2i8MWAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=fBKuZZ5E; arc=none smtp.client-ip=80.12.242.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id pC1OsIlQM71UmpC1OsZYb7; Fri, 13 Sep 2024 21:31:59 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1726255919;
+	bh=nVA7uG1NwgGwCUCbBVabP7FPCkwT9VHonPQjHtNDTOU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=fBKuZZ5EdgcATloIEZ5h5J9PNsbxS/ecJLKobaFG7LPiXngodlYSiNpyGK8QaU7QD
+	 aKoXPnxlSmr1cCp8sJC3dM5S5vNUBv69LXmL0mGhD1vVRhpAfSr/prKajXeokmmmpw
+	 5SeXNiubfk4DZWonLlU/7DVG1G0psXvCiNsAISd0qin0OlMXwP2BSxJeKXqS7Tze2V
+	 uBItcOO41KlLwmnMsaS0+f8avUnxVLeL0S4Th79pagkAmJfhU68wCMvyYt9ZhPB2Pa
+	 FPKTrANkK/TuyMV0cm4fCxYR3xM14A+iCajiWIPjC1i0f69YddexGu2PtrTCVuYgN5
+	 zEKMuZIKj9lwA==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Fri, 13 Sep 2024 21:31:59 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <c4e7b3ac-d8fa-47b9-84f6-e3332bb54e12@wanadoo.fr>
+Date: Fri, 13 Sep 2024 21:31:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913151228.2b312e9b@SWDEV2.connecttech.local>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ACPI: thermal: Use strscpy() instead of strcpy()
+To: Abdul Rahim <abdul.rahim@myyahoo.com>, rafael@kernel.org,
+ rui.zhang@intel.com, lenb@kernel.org
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240913191249.51822-1-abdul.rahim.ref@myyahoo.com>
+ <20240913191249.51822-1-abdul.rahim@myyahoo.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240913191249.51822-1-abdul.rahim@myyahoo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Sep 13, 2024 at 03:12:28PM -0400, Parker Newman wrote:
-> On Fri, 13 Sep 2024 20:54:05 +0300
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > On Fri, Sep 13, 2024 at 10:55:40AM -0400, Parker Newman wrote:
-
-...
-
-> > if you go with pr_fmt() perhaps it still makes sense to have separate changes.
-> > I dunno which one is better, up to you.
+Le 13/09/2024 à 21:12, Abdul Rahim a écrit :
+> strcpy() is generally considered unsafe and use of strscpy() is
+> recommended [1]
 > 
-> Sorry if I am miss-reading but do you mean the pr_err() and pr_fmt() can be combined
-> and the read_poll_timeout() change should be made in a separate patch after?
+> this fixes checkpatch warning:
+>      WARNING: Prefer strscpy over strcpy
+> 
+> Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strcpy [1]
+> Signed-off-by: Abdul Rahim <abdul.rahim@myyahoo.com>
 
-Possibly, I dunno.
+Hi,
 
-> Or should I be adding the pr_fmt() define in its own patch, followed by the pr_err()
-> and read_poll_timeout() in a patch?
+in order to ease the review process, when you send a new version of a 
+patch, the subject line should state the version: (i.e.: [PATCH v2] ...)
 
-No, either altogether, or one patch for pr_err() + pr_fmt() and one for
-read_poll_timeout().
 
--- 
-With Best Regards,
-Andy Shevchenko
+It is also a good practice to explain what has changed with the previous 
+version.
+Finally, it is nice to provide the link on lore to the previous version.
+All this should added below the first ---.
+Here it could look like:
 
+> ---
+
+Changes in v2:
+   - Remove an unneeded extra parameter (MAX_ACPI_DEVICE_NAME_LEN) in 
+the 2nd strscpy() call
+
+v1: 
+https://lore.kernel.org/all/20240912205922.302036-1-abdul.rahim@myyahoo.com/
+
+CJ
+
+>   drivers/acpi/thermal.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/acpi/thermal.c b/drivers/acpi/thermal.c
+> index 78db38c7076e..6671537cb4b7 100644
+> --- a/drivers/acpi/thermal.c
+> +++ b/drivers/acpi/thermal.c
+> @@ -796,9 +796,9 @@ static int acpi_thermal_add(struct acpi_device *device)
+>   		return -ENOMEM;
+>   
+>   	tz->device = device;
+> -	strcpy(tz->name, device->pnp.bus_id);
+> -	strcpy(acpi_device_name(device), ACPI_THERMAL_DEVICE_NAME);
+> -	strcpy(acpi_device_class(device), ACPI_THERMAL_CLASS);
+> +	strscpy(tz->name, device->pnp.bus_id);
+> +	strscpy(acpi_device_name(device), ACPI_THERMAL_DEVICE_NAME);
+> +	strscpy(acpi_device_class(device), ACPI_THERMAL_CLASS);
+>   	device->driver_data = tz;
+>   
+>   	acpi_thermal_aml_dependency_fix(tz);
 
 
