@@ -1,55 +1,83 @@
-Return-Path: <linux-kernel+bounces-328070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B211977E8D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:37:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AE0B977EAA
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:41:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20BD628289C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:37:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16C59282E6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218511D88DF;
-	Fri, 13 Sep 2024 11:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9601D88AA;
+	Fri, 13 Sep 2024 11:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FnXBoyDk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GvNx1vE3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804231BD4E4;
-	Fri, 13 Sep 2024 11:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012FA1D86C3
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 11:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726227451; cv=none; b=XwwzYZjqagrpooPP8pfU5q7cXgxuuappUmky5Vcq5Ykcg3F67pdhMoEcyJ9cSHSi6BrH2sAg1fFHD+BzkGvTRWifuCVtkdt7KP8tMWwfMx7rU2RmWcjPy5mtBVgYQVt0z8iIZ6siQgA1rmp8kW452VvKR6nw6xrkDvn9sE00ELA=
+	t=1726227704; cv=none; b=B6NNDvLDLiOLMluD0jQQ7JvNZgZZY1nwsOahETmTVfYyc0xD4gk1ialMII2B+CtQ/XaoY9LJAvZeOnvp0aQz4MVv3/WQ8Atztpaa92mePvAOqAe1Z/e0P9u2XmOuhpKpIlzzzY4qc0QGFvjLZyvHW2rT7RLGDvUv0/DPmontskE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726227451; c=relaxed/simple;
-	bh=9/pekRjHqpcBVcnkLOUUKkxWln7sVWOI9vseeK/GQ9U=;
+	s=arc-20240116; t=1726227704; c=relaxed/simple;
+	bh=JvvwYvhyetmEaxa4Ok6f8I1hR579EyKZ0zQapZDJJjE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cP55ZIVCo7MEGEOFoLVwO2MrpFFEKdcFQ2YuHdAiDjWNdME85IQVDY2OnJIfawkYXKL1yed1mKUfXj09E38LWmCLoxHHbmLsvDA2JOotyjTdxKNrdr7QM61D/kfCdeuT+P8ZwqaVXQAmlgeN7mQO5vESaUR6Nf3P/rzI/+d2jb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FnXBoyDk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67FBBC4CEC0;
-	Fri, 13 Sep 2024 11:37:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726227451;
-	bh=9/pekRjHqpcBVcnkLOUUKkxWln7sVWOI9vseeK/GQ9U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FnXBoyDkN2YOmW0+EIyLUILqERRz91M6LAaxlSS6M9C86Kxu/fZK/cPY5A1gMsrOF
-	 pQ1ZoewiAKSjIiVn9DG/w2kq9hbvSuiQUDtspS+C5D8zN0c4d65ljnR35X4J0XPjoD
-	 HGazJgDxpNQSDTZeV/iLgXGBlK+f1HqtegZl8QfNNTD9xOWnU6XT/VowFCRimSY1KZ
-	 ICm6mSLYR93lqDXsrkz/s/ZsRu/uh5XvpxFSbe1Kki4t1Ifv+O4+BTOlT2H5Xhg5sI
-	 /5WCEEKf0rgdrdsylOPN6WaJ/rEnV2n8n3boLbCdkYuAGWKZr99320z98OpV74gW7L
-	 5WgT4lUCqgTYw==
-Date: Fri, 13 Sep 2024 12:37:27 +0100
-From: Simon Horman <horms@kernel.org>
-To: Kaixin Wang <kxwang23@m.fudan.edu.cn>
-Cc: davem@davemloft.net, wtdeng24@m.fudan.edu.cn,
-	21210240012@m.fudan.edu.cn, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, edumazet@google.com, kuba@kernel.org
-Subject: Re: [PATCH] net: seeq: Fix use after free vulnerability in ether3
- Driver Due to Race Condition
-Message-ID: <20240913113727.GX572255@kernel.org>
-References: <20240909175821.2047-1-kxwang23@m.fudan.edu.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XOjGBq9QQrUSJ2LpAc9j0kq4XVjQ0BRSCjo+y0EVFBgD7Vzq7hbLoLfywXxgwm7XeQMzGvDl5qV3PF7mwrmPj6vuZQ02oKBIkabRb7gWeRBBHBScFJATyqTxrVlG7kAOr3E3yupRrHgflq5oroVijDcN2ZvEVA80PTeX/VZvNRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GvNx1vE3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726227701;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bFl8pMgMCraS/0h8k8X7XF/1tEc21OrF7vh7Xgi/UvQ=;
+	b=GvNx1vE3BYAPZzP0/PAvSbYibtDZeTMjIsAjYgfqWomVasaC5pEGrvb5wwLKjrw6JWFflD
+	In/283KQ9lYwpBSPDbX4CAx5/S1l/4DoPswLdtrFZmFlxZuE0Qn/GfnGlutQLh0qb7S/eu
+	mWko4O7mrjnHY1nbyeXN6l/HDws2lWI=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-448-2lvjgl2yMiStlNola52Dyw-1; Fri,
+ 13 Sep 2024 07:41:36 -0400
+X-MC-Unique: 2lvjgl2yMiStlNola52Dyw-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EB9AF196CDF5;
+	Fri, 13 Sep 2024 11:41:33 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.25])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 0DBA21956086;
+	Fri, 13 Sep 2024 11:41:27 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 13 Sep 2024 13:41:22 +0200 (CEST)
+Date: Fri, 13 Sep 2024 13:41:15 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@chromium.org>, Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCHv3 1/7] uprobe: Add support for session consumer
+Message-ID: <20240913114114.GD19305@redhat.com>
+References: <20240909074554.2339984-1-jolsa@kernel.org>
+ <20240909074554.2339984-2-jolsa@kernel.org>
+ <20240912162028.GD27648@redhat.com>
+ <ZuP2YFruQDXTRi25@krava>
+ <20240913105750.GC19305@redhat.com>
+ <ZuQjPCdLkKnPQsu0@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,41 +86,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240909175821.2047-1-kxwang23@m.fudan.edu.cn>
+In-Reply-To: <ZuQjPCdLkKnPQsu0@krava>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Tue, Sep 10, 2024 at 01:58:21AM +0800, Kaixin Wang wrote:
-> In the ether3_probe function, a timer is initialized with a callback
-> function ether3_ledoff, bound to &prev(dev)->timer. Once the timer is
-> started, there is a risk of a race condition if the module or device
-> is removed, triggering the ether3_remove function to perform cleanup.
-> The sequence of operations that may lead to a UAF bug is as follows:
-> 
-> CPU0                                    CPU1
-> 
->                       |  ether3_ledoff
-> ether3_remove         |
->   free_netdev(dev);   |
->   put_devic           |
->   kfree(dev);         |
->  |  ether3_outw(priv(dev)->regs.config2 |= CFG2_CTRLO, REG_CONFIG2);
->                       | // use dev
-> 
-> Fix it by ensuring that the timer is canceled before proceeding with
-> the cleanup in ether3_remove.
-> 
-> Signed-off-by: Kaixin Wang <kxwang23@m.fudan.edu.cn>
+On 09/13, Jiri Olsa wrote:
+>
+> On Fri, Sep 13, 2024 at 12:57:51PM +0200, Oleg Nesterov wrote:
+>
+> > static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
+> > {
+> > 	...
+> > 	struct return_instance *ri = NULL;
+> > 	int push_idx = 0;
+> >
+> > 	list_for_each_entry_rcu(uc, &uprobe->consumers, cons_node, rcu_read_lock_trace_held()) {
+> > 		__u64 cookie = 0;
+> > 		int rc = 0;
+> >
+> > 		if (uc->handler)
+> > 			rc = uc->handler(uc, regs, &cookie);
+> >
+> > 		remove &= rc;
+> > 		has_consumers = true;
+> >
+> > 		if (!uc->ret_handler || rc == UPROBE_HANDLER_REMOVE || rc == 2)
+> > 			continue;
+> >
+> > 		if (!ri)
+> > 			ri = alloc_return_instance();
+> >
+> > 		// or, better if (rc = UPROBE_HANDLER_I_WANT_MY_COOKIE)
+> > 		if (uc->handler))
+> > 			ri = push_id_cookie(ri, push_idx++, uc->id, cookie);
+> > 	}
+> >
+> > 	if (!ZERO_OR_NULL_PTR(ri)) {
+>
+> should we rather bail out right after we fail to allocate ri above?
 
-This seems like it is a bug fix to me.  If so, it should have a Fixes tag
-(immediately above your Signed-off-by line, no blank line in between). And
-be targeted at net.
+I think handler_chain() should call all the ->handler's even if
+kzalloc/krealloc fails.
 
-	Subject: [PATCH net] ...
+This is close to what the current code does, all the ->handler's are
+called even if then later prepare_uretprobe()->kmalloc() fails.
 
-Unless the bug only exists in net-next.
+Oleg.
 
-	Subject: [PATCH net-next] ...
-
-Link: https://docs.kernel.org/process/maintainer-netdev.html
-
-...
 
