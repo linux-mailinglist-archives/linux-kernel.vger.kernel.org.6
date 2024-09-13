@@ -1,178 +1,125 @@
-Return-Path: <linux-kernel+bounces-327478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4F9F97767B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:43:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1234B977694
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:53:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 670EE285C95
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:43:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9027EB23C7F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281CE4A3E;
-	Fri, 13 Sep 2024 01:43:06 +0000 (UTC)
-Received: from mail03.siengine.com (mail03.siengine.com [43.240.192.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D714A06
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 01:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.240.192.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1321B8C1F;
+	Fri, 13 Sep 2024 01:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="KP9Y2GX6"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB9479CF;
+	Fri, 13 Sep 2024 01:53:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726191785; cv=none; b=mg/RGw25FWn1gKeqKu6KhUH/g76qVtHMUGuBafaQJ6p2iajd4TwpB5U0oFtdU+uDE7JyJVm4SgQHr93DXxGjKbgDGfaEIz/lv9QQeYIO8CsSCJb0eVpc24Q/NVE5RSmQAG7rBDDPbCoD8yESqlh/Maw90Xk9odnP0uZaGomChyQ=
+	t=1726192424; cv=none; b=ousOehxpHZDSoXhO3UNITUfx01Bnz3JUc0iy4URg5259OBgN2NVVwjKDALZ7Nv9zxnUJFsxnomayvJmqulFPE2YDCA7XDbWyy3omcwFYT/9SIjx3lqZ9juwpKbLsaaqw5cRbHOopJEjc4IGJb07hlE8f0EsHMTxK76pwNwJ0OCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726191785; c=relaxed/simple;
-	bh=gAvmkDRuJce7nI0PJsDZRjNGaiQYVFEP/ujm3GKyjzA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=lFdBCLnIeE/kvzdkK2AX2NUmIKxCDYnMoYR+wo+ZHUvb5LGDMh0tfI3l372Wpn92DfdBj3p1IBJd7nQGZXzNbE/8em/CUegkzDmKHiYNBoKc8sUmN1wITgVxf93vRJitklEjq1lOzM3bWMmbrDVIRrlOPbHrizgCj9WDg+nW7Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com; spf=pass smtp.mailfrom=siengine.com; arc=none smtp.client-ip=43.240.192.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siengine.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siengine.com
-Received: from dsgsiengine01.siengine.com ([10.8.1.61])
-	by mail03.siengine.com with ESMTPS id 48D1gCL6061266
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 13 Sep 2024 09:42:12 +0800 (+08)
-	(envelope-from kimriver.liu@siengine.com)
-Received: from SEEXMB03-2019.siengine.com (SEEXMB03-2019.siengine.com [10.8.1.33])
-	by dsgsiengine01.siengine.com (SkyGuard) with ESMTPS id 4X4cVq3ZtVz7ZMt2;
-	Fri, 13 Sep 2024 09:42:11 +0800 (CST)
-Received: from SEEXMB05-2019.siengine.com (10.8.1.153) by
- SEEXMB03-2019.siengine.com (10.8.1.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.11; Fri, 13 Sep 2024 09:42:12 +0800
-Received: from SEEXMB03-2019.siengine.com (10.8.1.33) by
- SEEXMB05-2019.siengine.com (10.8.1.153) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.2.1544.9; Fri, 13 Sep 2024 09:42:09 +0800
-Received: from SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe]) by
- SEEXMB03-2019.siengine.com ([fe80::23e0:1bbb:3ec9:73fe%16]) with mapi id
- 15.02.1544.011; Fri, 13 Sep 2024 09:42:09 +0800
-From: =?gb2312?B?TGl1IEtpbXJpdmVyL8H1vfC60w==?= <kimriver.liu@siengine.com>
-To: Andi Shyti <andi.shyti@kernel.org>,
-        Andy Shevchenko
-	<andy.shevchenko@gmail.com>
-CC: "jarkko.nikula@linux.intel.com" <jarkko.nikula@linux.intel.com>,
-        "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
-        "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
-        "jsd@semihalf.com" <jsd@semihalf.com>,
-        "linux-i2c@vger.kernel.org"
-	<linux-i2c@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v10] i2c: designware: fix controller is holding SCL low
- while ENABLE bit is disabled
-Thread-Topic: [PATCH v10] i2c: designware: fix controller is holding SCL low
- while ENABLE bit is disabled
-Thread-Index: AQHbBNrkUD+mO8YM70mPDsgqfnC1TLJUWit3gACL0iA=
-Date: Fri, 13 Sep 2024 01:42:09 +0000
-Message-ID: <c3e590cc3db74234ac7a766babd46344@siengine.com>
-References: <cd5f6b0a57adf6fdff7bf3c24cb319bf778d61d6.1726121009.git.kimriver.liu@siengine.com>
- <ZuMJoHWLU1FIznZR@surfacebook.localdomain>
- <fpa7ufcpazewftgeoj72t3m7jumddvt23dzmqpr4znqx663yl7@4vckpbls2iyy>
-In-Reply-To: <fpa7ufcpazewftgeoj72t3m7jumddvt23dzmqpr4znqx663yl7@4vckpbls2iyy>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1726192424; c=relaxed/simple;
+	bh=xIWLX1KE6wRXK1a/clCuHOsxwaQitK01JBEzvWMrV7c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RCrUVhmYPc8Zkv+4+sHuNSMattjxvRXyQ1D2+EHhdpeCg67J/Q9RxOdFdZmMoqxknqIOFI2khrN7VKVkCqsu3oLHn6RcKy8Mj1tCDjvX3weDOcPnuLz6U8iOCXq1uU1zRiTUyZP/INTLH0rScraIV4jWyFD8ifGeovpKRGiNMbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=KP9Y2GX6; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=DMcHW
+	ox+TxQ+e6JzHkX6N9IOsAN2a72uEhLT05aIANQ=; b=KP9Y2GX6t6JkxNeVMIe7e
+	gA6/zi3iXHqH0Zzw3WRPJkai8IYPgVWHj6qLeeru5vJUICa51l7SF1qJWrBoM9XD
+	thKhqydaEZ7OgysuXXQ2jafJ27v1m844TDBTyoU3zwk+EbyPBl2FKsdF49s5yhht
+	k06UniyCxmm74Rh+NmcYFA=
+Received: from localhost.localdomain (unknown [58.243.42.99])
+	by gzga-smtp-mta-g2-3 (Coremail) with SMTP id _____wDHrUrvmuNmnSvrAg--.37498S2;
+	Fri, 13 Sep 2024 09:52:48 +0800 (CST)
+From: Qianqiang Liu <qianqiang.liu@163.com>
+To: kuba@kernel.org,
+	edumazet@google.com
+Cc: usama.anjum@collabora.com,
+	andrew@lunn.ch,
+	o.rempel@pengutronix.de,
+	rosenp@gmail.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Qianqiang Liu <qianqiang.liu@163.com>
+Subject: [PATCH v2] net: ag71xx: remove dead code path
+Date: Fri, 13 Sep 2024 09:47:32 +0800
+Message-Id: <20240913014731.149739-1-qianqiang.liu@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-DKIM-Results: [10.8.1.61]; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:mail03.siengine.com 48D1gCL6061266
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDHrUrvmuNmnSvrAg--.37498S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7KF48uw1DtF45CFW7uFy3Jwb_yoW8ArWDpF
+	43Kayvgr48Ar17JayDZrWIvF98KayvyrWagryfG3yFvF15Arn0qFyUK3yUKr1xurWkCanF
+	vw48C3W7AFsxJwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UFg4hUUUUU=
+X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiYBJZamV4JNgodwAAs-
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5kaSBTaHl0aSA8YW5k
-aS5zaHl0aUBrZXJuZWwub3JnPiANCj4gU2VudDogMjAyNMTqOdTCMTPI1SAwOjM2DQo+IFRvOiBB
-bmR5IFNoZXZjaGVua28gPGFuZHkuc2hldmNoZW5rb0BnbWFpbC5jb20+DQo+IENjOiBMaXUgS2lt
-cml2ZXIvwfW98LrTIDxraW1yaXZlci5saXVAc2llbmdpbmUuY29tPjsgamFya2tvLm5pa3VsYUBs
-aW51eC5pbnRlbC5jb207IGFuZHJpeS5zaGV2Y2hlbmtvQGxpbnV4LmludGVsLmNvbTsgbWlrYS53
-ZXN0ZXJiZXJnQGxpbnV4LmludGVsLmNvbTsganNkQHNlbWloYWxmLmNvbTsgbGludXgtaTJjQHZn
-ZXIua2VybmVsLm9yZzsgbGludXgtPiBrZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6
-IFJlOiBbUEFUQ0ggdjEwXSBpMmM6IGRlc2lnbndhcmU6IGZpeCBjb250cm9sbGVyIGlzIGhvbGRp
-bmcgU0NMIGxvdyB3aGlsZSBFTkFCTEUgYml0IGlzIGRpc2FibGVkDQoNCj4gT24gVGh1LCBTZXAg
-MTIsIDIwMjQgYXQgMDY6MzI6NDhQTSBHTVQsIEFuZHkgU2hldmNoZW5rbyB3cm90ZToNCj4gPiBU
-aHUsIFNlcCAxMiwgMjAyNCBhdCAwMjoxMToxMlBNICswODAwLCBLaW1yaXZlciBMaXUga2lyam9p
-dHRpOg0KPiA+ID4gSXQgd2FzIG9ic2VydmVkIHRoYXQgaXNzdWluZyBBQk9SVCBiaXQgKElDX0VO
-QUJMRVsxXSkgd2lsbCBub3Qgd29yayANCj4gPiA+IHdoZW4gSUNfRU5BQkxFIGlzIGFscmVhZHkg
-ZGlzYWJsZWQuDQo+ID4gPiANCj4gPiA+IENoZWNrIGlmIEVOQUJMRSBiaXQgKElDX0VOQUJMRVsw
-XSkgaXMgZGlzYWJsZWQgd2hlbiB0aGUgY29udHJvbGxlciANCj4gPiA+IGlzIGhvbGRpbmcgU0NM
-IGxvdy4gSWYgRU5BQkxFIGJpdCBpcyBkaXNhYmxlZCwgdGhlIHNvZnR3YXJlIG5lZWQNCg0KPiAv
-bmVlZC9uZWVkcy8NCg0KPiA+ID4gdG8gZW5hYmxlIGl0IGJlZm9yZSB0cnlpbmcgdG8gaXNzdWUg
-QUJPUlQgYml0LiBvdGhlcndpc2UsDQoNCj4gL0FCT1JUL3RoZSBBQk9SVC8NCg0KPiA+ID4gdGhl
-IGNvbnRyb2xsZXIgaWdub3JlcyBhbnkgd3JpdGUgdG8gQUJPUlQgYml0Lg0KPj4gID4gDQo+PiAg
-PiBUaGVzZSBrZXJuZWwgbG9ncyBzaG93IHVwIHdoZW5ldmVyIGFuIEkyQyB0cmFuc2FjdGlvbiBp
-cyBhdHRlbXB0ZWQgDQo+PiAgPiBhZnRlciB0aGlzIGZhaWx1cmUuDQo+PiAgPiBpMmNfZGVzaWdu
-d2FyZSBlOTVlMDAwMC5pMmM6IHRpbWVvdXQgd2FpdGluZyBmb3IgYnVzIHJlYWR5IA0KPj4gID4g
-aTJjX2Rlc2lnbndhcmUgZTk1ZTAwMDAuaTJjOiB0aW1lb3V0IGluIGRpc2FibGluZyBhZGFwdGVy
-DQo+ID4gDQo+PiAgPiBUaGUgcGF0Y2ggY2FuIGJlIGZpeCB0aGUgY29udHJvbGxlciBjYW5ub3Qg
-YmUgZGlzYWJsZWQgd2hpbGUgU0NMIGlzIA0KPj4gID4gaGVsZCBsb3cgaW4gRU5BQkxFIGJpdCBp
-cyBhbHJlYWR5IGRpc2FibGVkLg0KPj4gIA0KPiA+IFRoZXJlIGFyZSBFbmdsaXNoIHdvcmRzIGJ1
-dCBhIGNvbXBsZXRlIG5vbnNlbnNlIHRvZ2V0aGVyLg0KDQo+IFdlIGNvdWxkIHJld29yZCB0aGlz
-IHRvOg0KDQo+IFRoZSBwYXRjaCBmaXhlcyB0aGUgaXNzdWUgd2hlcmUgdGhlIGNvbnRyb2xsZXIg
-Y2Fubm90IGJlIGRpc2FibGVkIHdoaWxlIFNDTCBpcyBoZWxkIGxvdyBpZiB0aGUgRU5BQkxFIGJp
-dCBpcyBhbHJlYWR5IGRpc2FibGVkLg0KDQo+ID4gICBGaXggdGhlIGNvbmRpdGlvbiB3aGVuIGNv
-bnRyb2xsZXIgY2Fubm90IGJlIGRpc2FibGVkIHdoaWxlIFNDTA0KDQo+IC93aGVuL3doZXJlLw0K
-DQo+ID4gICBpcyBoZWxkIGxvdyBhbmQgRU5BQkxFIGJpdCBpcyBhbHJlYWR5IGRpc2FibGVkLg0K
-DQo+IC9FTkFCTEUvdGhlIEVOQUJMRS8NCg0KPiBJZiB5b3UgYWdyZWUgd2l0aCB0aGUgY2hhbmdl
-cywgSSBjYW4gYXBwbHkgdGhlbSBiZWZvcmUgbWVyZ2luZy4NCg0KPiA+IA0KPiA+IFJldmlld2Vk
-LWJ5OiBBbmR5IFNoZXZjaGVua28gPGFuZHlAa2VybmVsLm9yZz4NCg0KPiBUaGFua3MgYSBsb3Qs
-IEFuZHkhIEkgcmVhbGx5IGFwcHJlY2lhdGUgeW91ciByZXZpZXdzIQ0KDQo+ID4gLi4uDQo+ID4g
-DQo+ID4gPiArCQlpZiAoIShlbmFibGUgJiBEV19JQ19FTkFCTEVfRU5BQkxFKSkgew0KPiA+ID4g
-KwkJCXJlZ21hcF93cml0ZShkZXYtPm1hcCwgRFdfSUNfRU5BQkxFLCBEV19JQ19FTkFCTEVfRU5B
-QkxFKTsNCj4gPiA+ICsJCQkvKg0KPj4gPiArCQkJICogV2FpdCAxMCB0aW1lcyB0aGUgc2lnbmFs
-aW5nIHBlcmlvZCBvZiB0aGUgaGlnaGVzdCBJMkMNCj4+ID4gKwkJCSAqIHRyYW5zZmVyIHN1cHBv
-cnRlZCBieSB0aGUgZHJpdmVyIChmb3IgNDAwS0h6IHRoaXMgaXMNCj4gPiA+ICsJCQkgKiAyNXVz
-KSB0byBlbnN1cmUgdGhlIEkyQyBFTkFCTEUgYml0IGlzIGFscmVhZHkgc2V0DQo+ID4gPiArCQkJ
-ICogYXMgZGVzY3JpYmVkIGluIHRoZSBEZXNpZ25XYXJlIEkyQyBkYXRhYm9vay4NCj4gPiA+ICsJ
-CQkgKi8NCj4gPiA+ICsJCQlmc2xlZXAoRElWX1JPVU5EX0NMT1NFU1RfVUxMKDEwICogTUlDUk8s
-IHQtPmJ1c19mcmVxX2h6KSk7DQo+ID4gDQo+ID4gPiArCQkJLyogS2VlcCBFTkFCTEUgYml0IGlz
-IGFscmVhZHkgc2V0IGJlZm9yZSBTZXR0aW5nIEFCT1JULiovDQo+PiAgDQo+PiAgCQkJLyogU2V0
-IEVOQUJMRSBiaXQgYmVmb3JlIHNldHRpbmcgQUJPUlQgKi8NCj4+ICANCj4+ICANCj4+ID4gKwkJ
-CWVuYWJsZSB8PSBEV19JQ19FTkFCTEVfRU5BQkxFOw0KPj4gPiArCQl9DQo+ID4gDQo+Pg0KPiA+
-IA0KPiA+ID4gKy8qDQo+ID4gPiArICogVGhpcyBmdW5jdGlvbnMgd2FpdHMgY29udHJvbGxlciBp
-ZGxpbmcgYmVmb3JlIGRpc2FibGluZyBJMkMNCj4gPiANCj4gPiBzL2Z1bmN0aW9ucy9mdW5jdGlv
-bi8NCg0KPiBJIGNhbiBmaXggaXQgYmVmb3JlIG1lcmdpbmcuDQoNCk9Lo6xJIGFncmVlIHdpdGgg
-eW91ciBmaXhpbmcgaXQgYmVmb3JlIG1lcmdpbmcuIFRoYW5rcyBmb3IgeW91ciByZXZpZXchDQoN
-Cj4gPiA+ICsgKiBXaGVuIHRoZSBjb250cm9sbGVyIGlzIG5vdCBpbiB0aGUgSURMRSBzdGF0ZSwN
-Cj4gPiA+ICsgKiBNU1RfQUNUSVZJVFkgYml0IChJQ19TVEFUVVNbNV0pIGlzIHNldC4NCj4gPiA+
-ICsgKiBWYWx1ZXM6DQo+ID4gPiArICogMHgxIChBQ1RJVkUpOiBDb250cm9sbGVyIG5vdCBpZGxl
-DQo+PiAgPiArICogMHgwIChJRExFKTogQ29udHJvbGxlciBpcyBpZGxlDQo+PiAgPiArICogVGhl
-IGZ1bmN0aW9uIGlzIGNhbGxlZCBhZnRlciByZXR1cm5pbmcgdGhlIGVuZCBvZiB0aGUgY3VycmVu
-dCANCj4+ICA+ICt0cmFuc2Zlcg0KPj4gID4gKyAqIFJldHVybnM6DQo+ID4gPiArICogRmFsc2Ug
-d2hlbiBjb250cm9sbGVyIGlzIGluIElETEUgc3RhdGUuDQo+PiAgPiArICogVHJ1ZSB3aGVuIGNv
-bnRyb2xsZXIgaXMgaW4gQUNUSVZFIHN0YXRlLg0KPiA+ID4gKyAqLw0KPiA+ID4gK3N0YXRpYyBi
-b29sIGkyY19kd19pc19jb250cm9sbGVyX2FjdGl2ZShzdHJ1Y3QgZHdfaTJjX2RldiAqZGV2KSB7
-DQo+ID4gPiArCXUzMiBzdGF0dXM7DQo+ID4gPiArDQo+PiAgPiArCXJlZ21hcF9yZWFkKGRldi0+
-bWFwLCBEV19JQ19TVEFUVVMsICZzdGF0dXMpOw0KPiA+ID4gKwlpZiAoIShzdGF0dXMgJiBEV19J
-Q19TVEFUVVNfTUFTVEVSX0FDVElWSVRZKSkNCj4gPiA+ICsJCXJldHVybiBmYWxzZTsNCj4+ICA+
-ICsNCj4+ICA+ICsJcmV0dXJuIHJlZ21hcF9yZWFkX3BvbGxfdGltZW91dChkZXYtPm1hcCwgRFdf
-SUNfU1RBVFVTLCBzdGF0dXMsDQo+PiAgPiArCQkJCSAgICAgICAhKHN0YXR1cyAmIERXX0lDX1NU
-QVRVU19NQVNURVJfQUNUSVZJVFkpLA0KPj4gID4gKwkJCQkJMTEwMCwgMjAwMDApICE9IDA7DQo+
-ID4gDQo+ID4gCXJldHVybiByZWdtYXBfcmVhZF9wb2xsX3RpbWVvdXQoZGV2LT5tYXAsIERXX0lD
-X1NUQVRVUywgc3RhdHVzLA0KPj4gIAkJCQkJIShzdGF0dXMgJiBEV19JQ19TVEFUVVNfTUFTVEVS
-X0FDVElWSVRZKSwNCj4gPiAJCQkJCTExMDAsIDIwMDAwKSAhPSAwOw0KPiANCj4gPiAoaW4gdGhl
-IHNlY29uZCBsaW5lIHJlcGxhY2VkIDcgc3BhY2VzIGJ5IGEgc2luZ2xlIFRBQiB0byBmaXggdGhl
-IA0KPj4gIGluZGVudGF0aW9uKQ0KDQo+IEkgY2FuIGZpeCBpdCBiZWZvcmUgbWVyZ2luZy4NCg0K
-PiBLaW1yaXZlciwgaWYgeW91IGFncmVlLCBpIGNhbiBtZXJnZSB0aGlzIGFuZCBxdWV1ZSBpdCBm
-b3IgdGhlIG5leHQgd2VlaydzIGZpeGVzIG1lcmdlIHJlcXVlc3QuDQo+QW5kaQ0KDQogT0ujrEkg
-YWdyZWUuIA0KICBEbyBJIHN0aWxsIG5lZWQgdG8gdXBkYXRlIHRvIHBhdGNoIFYxMT8gT3IgeW91
-IGZpeCBpdCBiZWZvcmUgbWVyZ2luZw0KDQogVGhhbmtzIGZvciB0YWtpbmcgdGhlIHRpbWUgdG8g
-cmV2aWV3IHRoZSBwYXRjaCwgIEkgaGF2ZSBsZWFybmVkIGEgbG90IG9mIGtub3dsZWRnZSAuDQoN
-Cj4gPiArfQ0KPiANCj4gLi4uDQo+IA0KPiA+ICsJLyoNCj4gPiArCSAqIFRoaXMgaGFwcGVucyBy
-YXJlbHkgKH4xOjUwMCkgYW5kIGlzIGhhcmQgdG8gcmVwcm9kdWNlLiBEZWJ1ZyB0cmFjZQ0KPiA+
-ICsJICogc2hvd2VkIHRoYXQgSUNfU1RBVFVTIGhhZCB2YWx1ZSBvZiAweDIzIHdoZW4gU1RPUF9E
-RVQgb2NjdXJyZWQsDQo+ID4gKwkgKiBpZiBkaXNhYmxlIElDX0VOQUJMRS5FTkFCTEUgaW1tZWRp
-YXRlbHkgdGhhdCBjYW4gcmVzdWx0IGluDQo+ID4gKwkgKiBJQ19SQVdfSU5UUl9TVEFULk1BU1RF
-Ul9PTl9IT0xEIGhvbGRpbmcgU0NMIGxvdy4gQ2hlY2sgaWYNCj4gPiArCSAqIGNvbnRyb2xsZXIg
-aXMgc3RpbGwgQUNUSVZFIGJlZm9yZSBkaXNhYmxpbmcgSTJDLg0KPiA+ICsJICovDQo+ID4gKwlp
-ZiAoaTJjX2R3X2lzX2NvbnRyb2xsZXJfYWN0aXZlKGRldikpDQo+ID4gKwkJZGV2X2VycihkZXYt
-PmRldiwgImNvbnRyb2xsZXIgYWN0aXZlXG4iKTsNCj4gDQo+IC0tDQo+IFdpdGggQmVzdCBSZWdh
-cmRzLA0KPiBBbmR5IFNoZXZjaGVua28NCj4gDQo+IA0KDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0NCkJlc3QgUmVnYXJkcw0KS2ltcml2ZXIgTGl1DQo=
+The "err" is always zero, so the following branch can never be executed:
+if (err) {
+	ndev->stats.rx_dropped++;
+	kfree_skb(skb);
+}
+Therefore, the "if" statement can be removed.
+
+Use "ndev->stats.rx_errors" to count "napi_build_skb()" failure
+
+Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
+---
+Changes since v1:
+ - Use "ndev->stats.rx_errors" to count "napi_build_skb()" failure
+---
+ drivers/net/ethernet/atheros/ag71xx.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
+index 96a6189cc31e..9586b6894f7e 100644
+--- a/drivers/net/ethernet/atheros/ag71xx.c
++++ b/drivers/net/ethernet/atheros/ag71xx.c
+@@ -1616,7 +1616,6 @@ static int ag71xx_rx_packets(struct ag71xx *ag, int limit)
+ 		unsigned int i = ring->curr & ring_mask;
+ 		struct ag71xx_desc *desc = ag71xx_ring_desc(ring, i);
+ 		int pktlen;
+-		int err = 0;
+ 
+ 		if (ag71xx_desc_empty(desc))
+ 			break;
+@@ -1639,6 +1638,7 @@ static int ag71xx_rx_packets(struct ag71xx *ag, int limit)
+ 
+ 		skb = napi_build_skb(ring->buf[i].rx.rx_buf, ag71xx_buffer_size(ag));
+ 		if (!skb) {
++			ndev->stats.rx_errors++;
+ 			skb_free_frag(ring->buf[i].rx.rx_buf);
+ 			goto next;
+ 		}
+@@ -1646,14 +1646,9 @@ static int ag71xx_rx_packets(struct ag71xx *ag, int limit)
+ 		skb_reserve(skb, offset);
+ 		skb_put(skb, pktlen);
+ 
+-		if (err) {
+-			ndev->stats.rx_dropped++;
+-			kfree_skb(skb);
+-		} else {
+-			skb->dev = ndev;
+-			skb->ip_summed = CHECKSUM_NONE;
+-			list_add_tail(&skb->list, &rx_list);
+-		}
++		skb->dev = ndev;
++		skb->ip_summed = CHECKSUM_NONE;
++		list_add_tail(&skb->list, &rx_list);
+ 
+ next:
+ 		ring->buf[i].rx.rx_buf = NULL;
+-- 
+2.34.1
+
 
