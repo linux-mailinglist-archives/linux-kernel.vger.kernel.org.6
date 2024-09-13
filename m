@@ -1,136 +1,164 @@
-Return-Path: <linux-kernel+bounces-328162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E3CE977FC7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:25:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E05D977FC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:24:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A08962836DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:25:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 662BF1C20CB2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E31B1D932C;
-	Fri, 13 Sep 2024 12:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5A9F1D9324;
+	Fri, 13 Sep 2024 12:24:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="lb8yhYTK";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AX2NWoKp"
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ecH63PkR"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5D81C2BF;
-	Fri, 13 Sep 2024 12:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E9F1D58A5;
+	Fri, 13 Sep 2024 12:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726230298; cv=none; b=XXbxsCjHfGrCcrxSmhlSnpqSt1W+ebxKTJ1F5J9xbsirWjx3VRPFi8p9Z9gS8HP54MuzWEwP3ypvmQ7Muga35/8DSbL5vgsJPHeMtl39w473Uzfna0pH8gnTq/EdjM4WfqiTADHA/39tQcMvKmUgTawSW+tRmzufipUQzayT9AQ=
+	t=1726230285; cv=none; b=mGGMYxUuW9IiLSB4zGg2PUCtKPdoz0eT0SPRWYhy3Dc0+0qbG4CciKc0xWCd8P19PY+uKJBlqOwU4tni2yczBQE0Ab3Y10lBZwEJ72kTFODuUepbJtWBEwvtsAk9+MslhOEWjIWmaz0TP4stJGlNHrkv5ew38HRrmHYI+IIm9l4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726230298; c=relaxed/simple;
-	bh=4PYF1Jr9bWGi3HzqF5uU7EgHTiAs3MxzS1XFJM2iD7o=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=BeG2Xyyc/zfaxaNQ2ZjlRdmsZae3FEiDfwIE7v5E5pLkaS4dkdrdlQ6ugfB728/vJOZwo4b3CN3G09OLGWn9zB4kHDn+mBlM9hMq5p3+4d2USRwDo2X0a/UPOW8ia6EMPdeeqFq7wCMfuy4ASLaW7wdnkY4TZ0+TXtnia9kEKGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=lb8yhYTK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AX2NWoKp; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id EBD081140203;
-	Fri, 13 Sep 2024 08:24:54 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 13 Sep 2024 08:24:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1726230294;
-	 x=1726316694; bh=E6Cqr6blYSXbC1Q7pSrIaOAl79ieSQztc8I/sTEdB3g=; b=
-	lb8yhYTKVVqktNUJvgfMaAqRN43f87L/5YR7kugg1qS3ThUzZsOjlYyZhaWZK+nF
-	zRpELm63Velc4UCH9/5oXiPiqEXNarBEo3hDYCLG7NZXzO4cfU/gqwnWMZzlERkX
-	xdz8izovL2BQAgO+Pab7BAJbBZGi7W/XXlomQGK2LW05H9bnYH+VGMb6nfGw53vT
-	mqBv275czXA4j41piEbbOuHVTozXT5no46mUO8hlFll6DGqsIFeDLto3IEwE+H9Z
-	qDkMqXhgC+uGYhNdaZdFBQuQ3ByfFxaV1YQWo9gdpAYMB3qY3BvcuXA4m+Ht0tsv
-	TATWN3FDyWX9PfdMfGdcCg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726230294; x=
-	1726316694; bh=E6Cqr6blYSXbC1Q7pSrIaOAl79ieSQztc8I/sTEdB3g=; b=A
-	X2NWoKpfKmBGB71Acht5TsA4TPkfOpmXz5oJjOb91ginMnVuQAeR6OrRALahb0MD
-	Y0N0Y9eWxKM4mBnv/gaBD5//sMrkvTQG61p3XiiRWUU/Gf467oiibPXz3kM1Aitq
-	5fbXGwHjSmpXettk0vy09mkvZYAsKgDtBXCEp7YWc04pKIb6JaP13QAEoUcQE9+A
-	ZIiezNVkHCeUqHOc/WxraOO+rwXfSgVkaKKI4cYhksQ8dxw24iij1ef8crLZIOfJ
-	kFbhcCk521kvnZjOqk67aVQwS7tSaecfW4isnzYEM4u1NqnjmVrEufgkyoV0lgAM
-	ONnsrSJQoHjpllI26cC9Q==
-X-ME-Sender: <xms:Fi_kZkQLb8sR8nzJgNAJAMqf6lGPI36DeFkv_lv7laZ9e-thvtY9LA>
-    <xme:Fi_kZhwADQURpaHpJdQ44YTvOTCN2rDip9DvJBNklvc4ylO5cJuiYDTDQRTm-vtC4
-    tJT4l6bv6kZLuCYHKI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejjedghedtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepkedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhukhhmrgesuggvnhigrdguvgdprh
-    gtphhtthhopegrlhgvgigrnhguvghrrdhsvhgvrhgulhhinhesghhmrghilhdrtghomhdp
-    rhgtphhtthhopehnihhkihhtrgdrshhhuhgsihhnsehmrghquhgvfhgvlhdrmhgvpdhrtg
-    hpthhtoheplhgsuhhlfigrhhhnsehrvgguhhgrthdrtghomhdprhgtphhtthhopehluhhk
-    rghsrdgsuhhlfigrhhhnsehrvgguhhgrthdrtghomhdprhgtphhtthhopehkvghrnhgvlh
-    dqjhgrnhhithhorhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhi
-    nhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohephh
-    hsfigvvghtvghnsehvihhsihhonhgvnhhgrhgrvhgvrhhsrdgtohhm
-X-ME-Proxy: <xmx:Fi_kZh2M0i1mVwF7W5evj-YM9aH-0Uidy0n-xw0BZRhZGdpTY2aS3Q>
-    <xmx:Fi_kZoAiJ0Lbmu8ExGDwJXqK93g6qVIxgL0uqTeDz2A5-3YgkapYlQ>
-    <xmx:Fi_kZth07F23AW2xdlwcMEC3227ZaPEb4dlbc6L7YruKI0blse96uQ>
-    <xmx:Fi_kZkpsrvb8I1q3nxNnc1vX0EDZGKNjEwOec2SByK1PHnH9KYujyw>
-    <xmx:Fi_kZljJZuHsr5MYh8sRHSKYKYjaOHoMl2DOZqucm93G5Bi04U3nKQdi>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 3FF6D222006F; Fri, 13 Sep 2024 08:24:54 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1726230285; c=relaxed/simple;
+	bh=VmINIj5NH1MZ4e8FN/wTEV756SmmHNn3Op3QNsfyjls=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rrp9J/eO6XIpCJG4de7iHc/3ZzBxMSETL6g4DTXhjcKjpN/ZpH6Jy2GCNs2LtuxyYQXspaLSoScepNZdPjJ26hpTo4C2nwRyQp3xrgsaVu48ivxyKMvCrJucD0dyiW6MCE0pfs8Y5docbfyNav2+CXxvfcg3is2IO7du5gj3XGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ecH63PkR; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5344ab30508so2821646e87.0;
+        Fri, 13 Sep 2024 05:24:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726230281; x=1726835081; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RFPRKDqHutsw2IRFpZNgYHQw3hG+kN8M0uPbw2n2aso=;
+        b=ecH63PkRQcOxZUNBRm9xuob34EJDWvRZTIHPFOiKYUeaFOQMVVoMJ+fFZ0oAd1jjyh
+         SvXJsC1nVEyi+zhOMYCYVr1hF1n47HqPQgEmNJqMVobzVJKqoVz/mY905KQsqMkp9rg1
+         ckYICMfLyO5X8GFER8SdUTzVIZniZRxaaSYOjNEf9qZJoOMDjk8Eht4KCHip2WYdhOXe
+         bQDaF2llEAlcbTigjJnweTc3MgA9goO3+r8t8xcWr/3ALBqXPiM5Tc1xIlAh/US5kgbz
+         jKeJjxYVMAPOPbI5cMKfb7anMz6+THVO6mzbhMJyZqu2L6q7MzoJSx0ke6oetq196msN
+         KwYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726230281; x=1726835081;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RFPRKDqHutsw2IRFpZNgYHQw3hG+kN8M0uPbw2n2aso=;
+        b=VPgcqrhQVMciOna15murnv9oHSCefgD9ZXXj2IW3BlU0J2JCvFDluFv4VBgPiJQydd
+         yPEaXDhfXqBG0baKdFFAdClD6pLr9IGNrYxMyCbpY5gZqsPG7EoNSX9tMU74AbweOErE
+         oNWLfXIh6gUxwFLwv+taq/qB7syH+VIoZSXZ+aiRSEKIFAzr5e24d5YMHj/NhjCcsfhK
+         LZ7pfOUWTqSeuKSZWQm8xwXcngAnTv86iKfEbdz3LudIcuZDjoU2YYsDMQRcaqAIWUD9
+         GDEe/WGiXhW8QFn/znVNRuh7TW3k96BfYwegAg2n/nFOpatiHZ9zfuRkTnu4kP0sCZKo
+         dZhw==
+X-Forwarded-Encrypted: i=1; AJvYcCU0sEW7RJJ0Z/Kvnxzmfz8qFwPf2u9TzHOlU9o5sxq4TFcbo2qmL5BZZEzFzJ5sZ6yf1f1h@vger.kernel.org, AJvYcCUJhvxcyApAxK7O/bXh2DydScDEvK1scZtKqXn2nkUJwgHQpVjTMi1g6DAtXtORfcAIwQyb4ho0GYxOI44=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwoZ0wmN4cPz/7KrnHwoXhJoCDd7SERxpjBysm0+pfZk3LXdvP
+	H0521lMY8a9WkXB0DyEpLflx7a3HzNWT+vHIPcckqSkPv4Qiss3W
+X-Google-Smtp-Source: AGHT+IFLUQoibGRDw3oUS7udJsaqOPVQtkIi5Ll/wCSUkCxyjdP/Pv8MsS4CR3z0bme5UUzSOSH3Iw==
+X-Received: by 2002:a05:6512:3d93:b0:533:32cf:6420 with SMTP id 2adb3069b0e04-53679075a23mr2093293e87.8.1726230280647;
+        Fri, 13 Sep 2024 05:24:40 -0700 (PDT)
+Received: from pc638.lan ([2001:9b1:d5a0:a500:2d8:61ff:fec9:d743])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f90d429sm2277066e87.263.2024.09.13.05.24.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 05:24:40 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc638.lan>
+Date: Fri, 13 Sep 2024 14:24:38 +0200
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Uladzislau Rezki <urezki@gmail.com>, Vlastimil Babka <vbabka@suse.cz>,
+	RCU <rcu@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [PATCH v2] rcu/kvfree: Add kvfree_rcu_barrier() API
+Message-ID: <ZuQvBjqEtVus7rGO@pc638.lan>
+References: <20240820155935.1167988-1-urezki@gmail.com>
+ <34ec01ee-a015-45bb-90ce-2c2af4ac9dbf@paulmck-laptop>
+ <ZuFmWuUK8POsihzf@pc636>
+ <cdab7aec-0f03-48ab-b162-28c4a2f198eb@paulmck-laptop>
+ <ZuMT-IpkBCGYzIIL@pc636>
+ <4c3647a0-a6f9-40d7-b214-7497af104181@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 13 Sep 2024 12:24:33 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Lukas Bulwahn" <lbulwahn@redhat.com>, "Lukasz Majewski" <lukma@denx.de>,
- "Nikita Shubin" <nikita.shubin@maquefel.me>,
- "Hartley Sweeten" <hsweeten@visionengravers.com>,
- "Alexander Sverdlin" <alexander.sverdlin@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Lukas Bulwahn" <lukas.bulwahn@redhat.com>
-Message-Id: <d125b5a5-8118-48ec-8af4-243a217170df@app.fastmail.com>
-In-Reply-To: <20240913115021.58405-1-lukas.bulwahn@redhat.com>
-References: <20240913115021.58405-1-lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] MAINTAINERS: move BK3 machine support to CREDITS
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4c3647a0-a6f9-40d7-b214-7497af104181@paulmck-laptop>
 
-On Fri, Sep 13, 2024, at 11:50, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
->
-> Commit 3e0bae7f35c9 ("ARM: ep93xx: delete all boardfiles") removes
-> ts72xx.c, but misses to adjust the ARM/CIRRUS LOGIC BK3 MACHINE SUPPORT
-> section, which is referring to this file. Hence,
-> ./scripts/get_maintainer.pl --self-test=patterns complains about a broken
-> reference.
->
-> As the corresponding file of this section is gone, remove the whole section
-> and note this previous contribution in the CREDITS instead.
->
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-> ---
-> Arnd, please pick this quick administration fix on top of the commit
-> above. Thanks.
+On Thu, Sep 12, 2024 at 11:07:24AM -0700, Paul E. McKenney wrote:
+> On Thu, Sep 12, 2024 at 06:16:56PM +0200, Uladzislau Rezki wrote:
+> > On Wed, Sep 11, 2024 at 03:39:19AM -0700, Paul E. McKenney wrote:
+> > > On Wed, Sep 11, 2024 at 11:43:54AM +0200, Uladzislau Rezki wrote:
+> > > > On Tue, Sep 10, 2024 at 08:42:54AM -0700, Paul E. McKenney wrote:
+> > > > > On Tue, Aug 20, 2024 at 05:59:35PM +0200, Uladzislau Rezki (Sony) wrote:
+> > > > > > Add a kvfree_rcu_barrier() function. It waits until all
+> > > > > > in-flight pointers are freed over RCU machinery. It does
+> > > > > > not wait any GP completion and it is within its right to
+> > > > > > return immediately if there are no outstanding pointers.
+> > > > > > 
+> > > > > > This function is useful when there is a need to guarantee
+> > > > > > that a memory is fully freed before destroying memory caches.
+> > > > > > For example, during unloading a kernel module.
+> > > > > > 
+> > > > > > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> > > > > > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> > > > > 
+> > > > > As a follow-on patch, once kvfree_rcu_barrier() is accepted into
+> > > > > mainline, should we add a call to kvfree_rcu_barrier() to the
+> > > > > rcu_barrier_throttled() function in kernel/rcu/tree.c?
+> > > > > 
+> > > > > This would allow the do_rcu_barrier module parameter to be used to clear
+> > > > > out kfree_rcu() as well as call_rcu() work.  This would be useful to
+> > > > > people running userspace benchmarks that cause the kernel to do a lot
+> > > > > of kfree_rcu() calls.  Always good to avoid messing up the results from
+> > > > > the current run due to deferred work from the previous run.  Even better
+> > > > > would be to actually account for the deferred work, but do_rcu_barrier
+> > > > > can help with that as well.  ;-)
+> > > > > 
+> > > > > Thoughts?
+> > > > >
+> > > > Makes sense. To be make sure that all objects are flushed. And as you
+> > > > mentioned it is good to have it for benchmarking as a return to a baseline
+> > > > point.
+> > > > 
+> > > > One issue is probably a "name" which would be common for both:
+> > > > 
+> > > > rcu_barrier()
+> > > > kvfree_rcu_barrier()
+> > > > 
+> > > > i mean /sys/module/rcutree/parameters/do_rcu_barrier. From how i
+> > > > would see it, it is supposed to trigger just rcu_barrier() API.
+> > > 
+> > > One approach would be to keep the old functionality, but create
+> > > a new sysfs variable that does both.  Except that to avoid code
+> > > duplication, we would likely end up with both actually doing
+> > > both.
+> > > 
+> > > Another approach is to rename the sysfs variable.  This might
+> > > work if there are not too many people using it.  Might.  ;-)
+> > > 
+> > > Other approaches?
+> > > 
+> > Maybe just rename from/to: do_rcu_barrier -> do_barrier? Probably this
+> > would be the best, but as you noted, there might be users :)
+> > 
+> > To be safe, we can add kvfree_rcu_barrier() to the rcu_barrier_throttled() and  
+> > document that it does both now!
+> 
+> That does sound safest to me.  We just might find that our users (if any)
+> expected that it already did both.  ;-)
+> 
+Good. Then i will send out the patch!
 
-The machine should still work as before, I think we should
-instead adapt the path to point to
-
-F: arch/arm/boot/dts/cirrus/ep93xx-bk3.dts
-F: arch/arm/boot/dts/cirrus/ep93xx-ts7250.dts
-
-       Arnd
+--
+Uladzislau Rezki
 
