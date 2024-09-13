@@ -1,189 +1,210 @@
-Return-Path: <linux-kernel+bounces-327886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7FD8977C49
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:37:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B69FE977C4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:38:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19E7A1C215FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:37:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37B251F280B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B664E1D6DCB;
-	Fri, 13 Sep 2024 09:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A25B1D6C53;
+	Fri, 13 Sep 2024 09:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ADHNJSSe"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mQyaq9yA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EEF175D45;
-	Fri, 13 Sep 2024 09:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA26175D45;
+	Fri, 13 Sep 2024 09:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726220261; cv=none; b=YHYObShzlpergT6N0RSbJ9RE0q8LunxqMGxi4BbF3fOAdfFrVC59N43j/iDVbDrix1eevFsa26dWmeREOECEIxGeWIS7YFixrCH6bFmidkaTBTlwLqmdmOvC9fasRwi87rx9F+Cp2bf48IU5ubAqp/CCv15liPzWSRJvqRXvUFs=
+	t=1726220268; cv=none; b=MOXdELJRLe+CH4YW2opgIj+q3TkRRhLie1aXxHyxp1GvQIojjrOmy5aO2Hhv3qPTmL9rEWHbmjOd5WaiS972+XRkgZTfOGOLW7hwXOTt4v2lf0q9PzSmgIQYkaoQmTdoJlGsmvVozlNu3gTVDQ3GTGRwmG+fmhPGTjYLSwVK5Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726220261; c=relaxed/simple;
-	bh=Muc8CTJ6tUBeBmqYfUSLjI05P6c+7aACxxpXBvHZK3g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RiC/IVXBmEhQdW1kiFkioDWvRgOvPUXgP0vcRKI8oQAozpzhcK1LW0orWB455mQEIWapoTJ3XE5wghND6eEtzB8xY4GgzXMrGxa4RAWpV20+x/16+UBw4ghzjk0pPxux8d1wrVlroIC/mqcBK7G9it8MkL+89gyptpo4eTB48dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ADHNJSSe; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53661ac5ba1so2068562e87.2;
-        Fri, 13 Sep 2024 02:37:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726220257; x=1726825057; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=poNRBe+GqBqtFV5yIuKftcM+UDfFRe/cSM7MSFErS7k=;
-        b=ADHNJSSeKzR8q5Xokl7KOsGHY9bEXVEC6Lfhm+zhflJscS8OUZyzPguvvCw2hnCPAD
-         YFB1pBIccoqbbchh5J8YAyouV7JCZ3t3I2Pf63B9HXMPv2FCbQyaBp+YUvYgQmqOmyZ5
-         EHmx5lbz54QDxtiJ6aUNMkW6Yu3BUvbnFLdmHBPXW0/Tsv22mDfOVtWkoezPvihyWQFj
-         x27aivG6KXcJh0hZPDtcgC42z9Nve5jzW8a5Ma/8W55nZmL9Z5GrqY3/5nPdkQl6rURb
-         AEx42KlEWt0vBIcS95q00JHgufvs4QFNdJdFgBV1eRL9LQRFTBAE3q5DI1ZtTSfe/XYk
-         2l+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726220257; x=1726825057;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=poNRBe+GqBqtFV5yIuKftcM+UDfFRe/cSM7MSFErS7k=;
-        b=hkVG2bxZQTMGUDhfFh2qIGEXcfJMv+ZOR14h+D+R/HTAOBEwU0+miLZHM874G5Njpe
-         e1R2Te+ZHX2+Uk8gMNFyU9JC2+qh8hK+Q5n6jiPK6wIYUNrPAZiodF4t4PJTXCTW38mX
-         gZKB48NKtjU0WLxRnzJGmsnx6ZepKhI0c0zh3VxfAMbbiDrCXj5mIKUoQ0IUfJ2/tucK
-         7Zb7BLL1c+EHuKK9o7+3ggVhmvLnRut6ewY7b0GEu5/W/qtEoHhsoUuC2xVzQW+Q2w0X
-         xdG4qUP1Vo0/RuZ1/T6XcY0fSt2iLN6By2TEio8TQ0pN7qix97qm+hk6zdL4+Zd+hhFA
-         Rz6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVGID/F7GcvfiBgaXKsdk6Oqhwt55dD7rFvjZkm2D+Dav6yr2HVpiccEopn1TiXXXASjbxv8alAkL0y0Yo3zkM=@vger.kernel.org, AJvYcCWpwg5cDsh1hGC7hecahiQV0GnkICojpIIaCJnH0F3gp+e4MvfYtzS6H/BLQj+T6eFhX/H/kn58+7F9og==@vger.kernel.org, AJvYcCX/uqkMhVpnZxWx6B7ogAf/astLx5Oao6+vRz2uvutwREHO+vON9Px0Hdn3t2Jj6Rpx+s79ruNsyuVQ33q0@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNqlXtUfBth+JipXHqfh5NSQ6wQzmfRolr8et9ll2ZWTn6ce3d
-	ls+7w6vXyFOMonm1RFeRynp3Pqy5V3X0Vq6TAGeEIB0AC3cLUXJ8
-X-Google-Smtp-Source: AGHT+IHPJDR3vrgdy7/5HudOfik7GjSbGIw/RQHKxVrRjeXrJNFMhS6eIKZWgtPsUyW4DKS7qLG5Ow==
-X-Received: by 2002:a05:6512:230b:b0:535:6d34:5cd7 with SMTP id 2adb3069b0e04-53678fb2001mr3195481e87.11.1726220257027;
-        Fri, 13 Sep 2024 02:37:37 -0700 (PDT)
-Received: from void.void ([141.226.9.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3789564a340sm16347128f8f.24.2024.09.13.02.37.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 02:37:36 -0700 (PDT)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Eduardo Valentin <edubezval@gmail.com>,
-	Keerthy <j-keerthy@ti.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>
-Cc: linux-pm@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH] thermal/ti-soc-thermal: Fix typos
-Date: Fri, 13 Sep 2024 12:37:05 +0300
-Message-ID: <20240913093713.12376-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1726220268; c=relaxed/simple;
+	bh=zsaRI26ytatIl70DSoQ1SIaz3geJQP4pX3Z6fCVcIlo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m2BhnjLYaQ6/uqMSgKTYAw/mMbiS0OnEwGWry0p1QI4JW41PljOqOS72yryH2vAT1FkgzhXkPCbaJpSJa2cPnibG0bMjZsFMoXK39hdhwmUbJWHxLJoTiCLkCaraP0HLpxTdimJ/aj52uHgUhpFR8FfF7tEyshbF1b/F+iJVe0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mQyaq9yA; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726220267; x=1757756267;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zsaRI26ytatIl70DSoQ1SIaz3geJQP4pX3Z6fCVcIlo=;
+  b=mQyaq9yAH9sTyzuMYqMZ6lMS+TTJkWJ53kDlg4V5Rc9CPNat/o8sVGnO
+   0TcAGaJGy1b8E+2arl2waGaXSWRzYVHbLPlIo50s3HdOFs+3Xb6GtMXLe
+   lhLqkQBggEv/OIxjTSRKenxBgyh3GB2FnJOPeKZTufscjVX+y0VbBVMF9
+   uAcPeKogzbheiPCeHsLDlfjKRYtrl6bQQmrJdD8grdIUsVjual9+zRumu
+   GnZTknqhN8dlgcy5/V88Mc3RcARmdoEuiAq+6+J1TYSzSmkwIjsyiJ1E7
+   OM0e4RuOLQ/KTXKGvbfJoWBR3yAAg2IbwOgq0B6c2sODRzJ2qJ4PW8chh
+   A==;
+X-CSE-ConnectionGUID: G4m1kXgKStanwRglD4aM0g==
+X-CSE-MsgGUID: zZt8FIE+QauFEikiAZUbHQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="24603626"
+X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
+   d="scan'208";a="24603626"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 02:37:46 -0700
+X-CSE-ConnectionGUID: Ll7xJsJrRGSI2gxiDKPhcA==
+X-CSE-MsgGUID: ERESeP6sQe+GV/zsyKycKA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
+   d="scan'208";a="98814015"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 02:37:34 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sp2k7-00000008FHq-1GBi;
+	Fri, 13 Sep 2024 12:37:31 +0300
+Date: Fri, 13 Sep 2024 12:37:31 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Parker Newman <parker@finest.io>
+Cc: Parker Newman <pnewman@connecttech.com>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Subject: Re: [PATCH v2 00/13] serial: 8250_exar: Clean up the driver
+Message-ID: <ZuQH27ViT84wXKK3@smile.fi.intel.com>
+References: <Ztr5u2wEt8VF1IdI@black.fi.intel.com>
+ <20240906095141.021318c8@SWDEV2.connecttech.local>
+ <ZtsQrFgH86AkKgPp@smile.fi.intel.com>
+ <20240906103354.0bf5f3b7@SWDEV2.connecttech.local>
+ <ZtsU0nfAFssevmmz@smile.fi.intel.com>
+ <20240906143851.21c97ef9@SWDEV2.connecttech.local>
+ <Zt7IonZIYgBqjvy7@smile.fi.intel.com>
+ <20240911133848.2cbb1834@SWDEV2.connecttech.local>
+ <ZuICvRjM4TqozL_X@smile.fi.intel.com>
+ <20240912084147.6af5ac12@SWDEV2.connecttech.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912084147.6af5ac12@SWDEV2.connecttech.local>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Fix typos in comments.
+On Thu, Sep 12, 2024 at 08:41:47AM -0400, Parker Newman wrote:
+> On Wed, 11 Sep 2024 23:51:09 +0300
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > On Wed, Sep 11, 2024 at 01:38:48PM -0400, Parker Newman wrote:
+> > > On Mon, 9 Sep 2024 13:06:26 +0300
+> > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > > > On Fri, Sep 06, 2024 at 02:38:51PM -0400, Parker Newman wrote:
+> > > > > On Fri, 6 Sep 2024 17:42:26 +0300
+> > > > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > > > > > On Fri, Sep 06, 2024 at 10:33:54AM -0400, Parker Newman wrote:
+> > > > > > > On Fri, 6 Sep 2024 17:24:44 +0300
+> > > > > > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > > > > > > > On Fri, Sep 06, 2024 at 09:51:41AM -0400, Parker Newman wrote:
+> > > > > > > > > On Fri, 6 Sep 2024 15:46:51 +0300
+> > > > > > > > > Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> > > > > > > > > > On Fri, May 03, 2024 at 02:33:03PM -0400, Parker Newman wrote:
 
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
----
- drivers/thermal/ti-soc-thermal/dra752-bandgap.h   | 4 ++--
- drivers/thermal/ti-soc-thermal/omap4xxx-bandgap.h | 8 ++++----
- drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h | 4 ++--
- 3 files changed, 8 insertions(+), 8 deletions(-)
+...
 
-diff --git a/drivers/thermal/ti-soc-thermal/dra752-bandgap.h b/drivers/thermal/ti-soc-thermal/dra752-bandgap.h
-index d1b5b699cf23..1402b8c44c6b 100644
---- a/drivers/thermal/ti-soc-thermal/dra752-bandgap.h
-+++ b/drivers/thermal/ti-soc-thermal/dra752-bandgap.h
-@@ -74,7 +74,7 @@
- /**
-  * Register bitfields for DRA752
-  *
-- * All the macros bellow define the required bits for
-+ * All the macros below define the required bits for
-  * controlling temperature on DRA752. Bit defines are
-  * grouped by register.
-  */
-@@ -125,7 +125,7 @@
- /**
-  * Temperature limits and thresholds for DRA752
-  *
-- * All the macros bellow are definitions for handling the
-+ * All the macros below are definitions for handling the
-  * ADC conversions and representation of temperature limits
-  * and thresholds for DRA752. Definitions are grouped
-  * by temperature domain.
-diff --git a/drivers/thermal/ti-soc-thermal/omap4xxx-bandgap.h b/drivers/thermal/ti-soc-thermal/omap4xxx-bandgap.h
-index c63f439e01d6..3963f1badfc9 100644
---- a/drivers/thermal/ti-soc-thermal/omap4xxx-bandgap.h
-+++ b/drivers/thermal/ti-soc-thermal/omap4xxx-bandgap.h
-@@ -32,7 +32,7 @@
- /**
-  * Register and bit definitions for OMAP4430
-  *
-- * All the macros bellow define the required bits for
-+ * All the macros below define the required bits for
-  * controlling temperature on OMAP4430. Bit defines are
-  * grouped by register.
-  */
-@@ -48,7 +48,7 @@
- /**
-  * Temperature limits and thresholds for OMAP4430
-  *
-- * All the macros bellow are definitions for handling the
-+ * All the macros below are definitions for handling the
-  * ADC conversions and representation of temperature limits
-  * and thresholds for OMAP4430.
-  */
-@@ -102,7 +102,7 @@
- /**
-  * Register bitfields for OMAP4460
-  *
-- * All the macros bellow define the required bits for
-+ * All the macros below define the required bits for
-  * controlling temperature on OMAP4460. Bit defines are
-  * grouped by register.
-  */
-@@ -135,7 +135,7 @@
- /**
-  * Temperature limits and thresholds for OMAP4460
-  *
-- * All the macros bellow are definitions for handling the
-+ * All the macros below are definitions for handling the
-  * ADC conversions and representation of temperature limits
-  * and thresholds for OMAP4460.
-  */
-diff --git a/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h b/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h
-index 3880e667ea96..b70084b8013a 100644
---- a/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h
-+++ b/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h
-@@ -56,7 +56,7 @@
- /**
-  * Register bitfields for OMAP5430
-  *
-- * All the macros bellow define the required bits for
-+ * All the macros below define the required bits for
-  * controlling temperature on OMAP5430. Bit defines are
-  * grouped by register.
-  */
-@@ -101,7 +101,7 @@
- /**
-  * Temperature limits and thresholds for OMAP5430
-  *
-- * All the macros bellow are definitions for handling the
-+ * All the macros below are definitions for handling the
-  * ADC conversions and representation of temperature limits
-  * and thresholds for OMAP5430. Definitions are grouped
-  * by temperature domain.
+> > > > > > > > > > Sorry for blast from the past, but I have some instersting information
+> > > > > > > > > > for you. We now have spi-gpio and 93c46 eeprom drivers available to be
+> > > > > > > > > > used from others via software nodes, can you consider updating your code
+> > > > > > > > > > to replace custom bitbanging along with r/w ops by the instantiating the
+> > > > > > > > > > respective drivers?
+> > > > > > > > >
+> > > > > > > > > Hi Andy,
+> > > > > > > > > The Exar UARTs don't actually use MPIO/GPIO for the EEPROM.
+> > > > > > > > > They have a dedicated "EEPROM interface" which is accessed by the
+> > > > > > > > > REGB (0x8E) register. It is a very simple bit-bang interface though,
+> > > > > > > > > one bit per signal.
+> > > > > > > > >
+> > > > > > > > > I guess in theory I could either add  GPIO wrapper to toggle these bits
+> > > > > > > > > and use the spi-gpio driver but I am not sure if that really improves things?
+> > > > > > > > > Maybe using the spi-bitbang driver directly is more appropriate?
+> > > > > > > > > What do you think?
+> > > > > > > >
+> > > > > > > > Yes, spi-bitbang seems better in this case.
+> > > > > > >
+> > > > > > > I will try to make some time to implement this... Or if someone else from the
+> > > > > > > community wants to take this on in the mean time I am certainly happy to test
+> > > > > > > and help out!
+> > > > > >
+> > > > > > Sure, I shared this thought due to having lack of time to look myself,
+> > > > > > but I prepared the above mentioned drivers to make them work in this case.
+> > > > > > (If you are curios, see the Git history for the last few releases with
+> > > > > >  --author="Andy Shevchenko")
+> > > > > >
+> > > > >
+> > > > > Looking into it a bit more I think we could just use the eeprom_93cx6
+> > > > > driver without any SPI layer. Just need to add simple register_read()
+> > > > > and register_write() functions to read/write the REB register.
+> > > > >
+> > > > > That should be a pretty easy change to make, I can try to make that
+> > > > > change soon unless anyone has any objections to that method?
+> > > >
+> > > > Thank you, this is pretty wonderful news!
+> > > >
+> > >
+> > > I have this mostly working however there is one issue. The eeprom_93cx6
+> > > driver doesn't seem to discard the "dummy bit" the 93C46 EEPROM outputs
+> > > between the writing of the op-code/address to the EEPROM and the reading
+> > > of the data from the EEPROM.
+> > >
+> > > More info can be found on page 6 of the AT93C46 datasheet. I see similar
+> > > notes in other 93C46/93C56/93C66 datasheets.
+> > > Link: https://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-5193-SEEPROM-AT93C46D-Datasheet.pdf
+> > >
+> > > In summary the read operation for the AT93C46 EEPROM is:
+> > > Write to EEPROM :	110[A5-A0]	(9 bits)
+> > > Read from EEPROM: 	0[D15-D0]	(17 bits)
+> > >
+> > > Where 110 is the READ OpCode, [A5-A0] is the address to read from,
+> > > 0 is a "dummy bit" and then [D15-D0] is the actual data.
+> > >
+> > > I am seeing the "correct" values being read from the EEPROM when using the
+> > > eeprom_93cx6 driver but they are all shifted right by one because the
+> > > dummy 0 bit is not being discarded.
+> > >
+> > > The confusing part is the eeprom_93cx6 driver has behaved the same since
+> > > at least 2009 and half a dozen or so other drivers use it. I am not sure
+> > > if they just work around and/or live with this bug or if they have
+> > > different HW that handles the extra dummy bit?
+> >
+> > I briefly looked at a few users and it seems to me:
+> > 1) either the Atmel chip has different HW protocol;
+> > 2) or all of them handle that in HW transparently to SW.
+> 
+> The 3 Exar cards I have handy actually use the ST M93C46 version but looking
+> through our BOMs I see AT/CAT/ST used on various cards over the years.
+> 
+> Looking at the READ timing diagrams in the Atmel and ST datasheets it looks
+> like the dummy bit should actually be clocked out on the last address bit
+> clock cycle. If this were so it would be ignored naturally.
+> 
+> This may just be a quirk of the Exar HW. All Exar code I have looked at
+> manually discards the dummy bit.
+> 
+> > > I am hesitant to "fix" the eeprom_93cx6 driver and potentially break the
+> > > other users of it. I could add a flag to the eeprom_93cx6 struct to work
+> > > around this issue... Unless anyone else has some ideas or input?
+> >
+> > In my opinion the 93c46 needs an additional configuration setting (in the
+> > respective data structure) and some code to implement what you need here.
+> 
+> I see the eeprom_93xx46 driver has the QUIRK_EXTRA_READ_CYCLE quirk to solve
+> this issue. I could add something similar.
+
+Seems like a good plan to me, and thanks again for looking into this!
+
+> > But yes, let's wait a bit for other opinions...
+
 -- 
-2.46.0
+With Best Regards,
+Andy Shevchenko
+
 
 
