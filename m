@@ -1,290 +1,194 @@
-Return-Path: <linux-kernel+bounces-328396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 080799782D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:44:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB7C39782D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:44:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDAD128C58D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:44:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BF841F23874
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E6A39FD0;
-	Fri, 13 Sep 2024 14:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CC11DDE9;
+	Fri, 13 Sep 2024 14:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cUqduUk4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SDdo1olv"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F51D381B9;
-	Fri, 13 Sep 2024 14:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C371B4AEE5
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726238646; cv=none; b=J9Zm880H4y1BpWCGtOg1V4+pXPTdANHmU/zqzfhkPasm2NnPoCwZS0hzYOjgPsYV03lCWLbuD+Ek1N48MtHWUFYJ0aRJpyeOSyL5ak7Ksydtm5n0RnFVanoaukMAYpTlIgWyEdzxj68Y6DDWWnCRW8Mha2ZdM+j2D5W+o0kdfwE=
+	t=1726238658; cv=none; b=cAxqTPsa3mGiikXptte/wh/OFAuVNfih6bRfFy27OlXDNBPDwaCYRlM0NqeGhO3D45WbpZaY4aDdaaYevlofFAOEe6WxVFw22/TvbOdRvU+PAPj6mjaha+5KzHCAdCCvxaw7zVL1T8+WFsG8+ZSApecXP+N/y2YWdUVihKJ+inM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726238646; c=relaxed/simple;
-	bh=bftPZ6DnGSfrBcXZPZR7Hx1mV/8icYhGXgepmZwn/kI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mQOTdJLV/CyqR/vjfYMo6OTXEwr1GzsdEIsrEBdZqY2L8P6jRQu3TPFHI/cYX5do5TDmSaDpVzpkoUu3a+wML6kaiaCzUVbPfyiA9vPsywApIxrxa5A4MqLdiWTU8+pRG2yjgqll3s09Laf7eO4HC11iLloSq6WaGsWwm1z4D7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cUqduUk4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12C57C4CEC0;
-	Fri, 13 Sep 2024 14:44:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726238646;
-	bh=bftPZ6DnGSfrBcXZPZR7Hx1mV/8icYhGXgepmZwn/kI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=cUqduUk4ahokYnxtG/FrYOXsWWb69zuKm7avUyxzqEgAJaK8X946V9quYvE+GGq4/
-	 NeZ5z1xo6qY5l//jnJ+/fNdrmNurCdFXDYJdMaCrhGf1qp2k2EurHNNp9/GmW0vB5b
-	 m0urATmy1h+jJu5CyzxWUnRvkNgwoqUL1dYPoVcXOI9b4MXPBo2q8sa8nC55vdoUfV
-	 QlfbDu7hpetL7YWq4Hl1xn6nkvtbjIifPHTB76LsGXtswA9KhYsKzdtfL1teyUm/si
-	 LSsnH5kutvueR2rsrVRRT8nmhzyoJnGRvvFUylkqJrCsjzYOctqxTM50K2v//EaVh9
-	 3py7Gf8lzEs6g==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs file
-Date: Fri, 13 Sep 2024 16:43:10 +0200
-Message-ID: <20240913-vfs-file-53bf57c94647@brauner>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1726238658; c=relaxed/simple;
+	bh=yxbS5ZgLlXhg5bw9EbtSOOdwW659qsXhQuCcfA1VLMk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZgHNfIdw+vB3hQgUMdBtBPJyn8j2QajC9tRbQBI8ox8q6ZAf7IY1qWyJEMR1euBUDxTOZfm0Nx4/9UxSL25S/pCvXCkFeWXHm7rJmL/gJitJIZbbplub+AghDXSJFz7CAT/uZSj4TD3BIUvX0YJU33wl7Xpn1+OKz3/eW9DNI8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SDdo1olv; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a8d6ac24a3bso401973466b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 07:44:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1726238655; x=1726843455; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BWAX9MKC9+qpP4rTaNc34KRGg6ko5WHRfsEjNewEvO8=;
+        b=SDdo1olvF6fZ/z4Fbe/hhbgwTwDkKim4mAsTl6NjAmZ4yaUZOk9YpKhWqG2afJkwMn
+         ers833ZJHqQ7tElMK5GubKzdZNHB+Jp4fh2/Hmb+829lXRSxVYRhf9DBmb3ixGYF9PKi
+         LcRN4OG6ESYyNqr8O/Pky7WzlD5C9JNyRMy9EPR5MbTLXF9bmQkJqaEehfgIkCR1ndS+
+         BybLf6iOMyRWQBItbcvv7caichNNr87XWK9gppuAUMhev/e4YaLgDPXouxThS1rHrgod
+         uxRz0wA++lq0INU6gYtsT9EbtOUjcRpBsKmNgqy53keK2m7PayXRg3LzI/XZGz1EXb1a
+         4QLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726238655; x=1726843455;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BWAX9MKC9+qpP4rTaNc34KRGg6ko5WHRfsEjNewEvO8=;
+        b=Rf15QGQSBT9YhHGa6l9lD/sLX0IOhdzptqQblgiGdfCIbknWL7J6zKWGTWIoWoNX+w
+         oPjQ8r7V4QC9wZ4c8kMYMN0+A7YqRd+yw/W3DTI3FYlUzLDngM1IgbwOss8PiihmvnWw
+         PjNy5fU2+6XU1A8rhC01sADg2P7chAw1IoAdiLUOTu0CeMbFNWvh9ZrkhNiQRaS0ZqLs
+         q13iRhnFYFKVp5bYa8D2K8QJbsPpnksgM8mL/bYZN3KjTb95BiG01VjJija9DeroJD3K
+         ZQ2lXdPiKNr426/WIwMbbayh+PjzN4+fbDftfh63jV7NdZmLD/RquhXiIqL6LFwQDYLU
+         zi9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVMkX7mWovBcOIShtB/hdVLuRi+Kbduo6vlKNR8SR14TACo9+0HmEh650snrFR9RLhVI3P/LQvTdFUlKQ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQ56w22sBAdDgEUNIwu5YP8UtdbtqYHWxVtPWah1fb0G7VtgG7
+	Ic9K9hNoN5EorQCarlFlTiokh1TzwDy9iFvNKcz8jrEFj8by5RK9i2Xt+AQbhaAauho6KDmpILm
+	DqAIQd3wGXi7i/4kPqG8L5YZQYnb8P+pXBGfG
+X-Google-Smtp-Source: AGHT+IGE+Jp/rSNl8CHAKVPj7rH64h80c1EZux4OwllcyyhQIQurPUP9+TGcdKNzyP6cFI3y2UMMZ38TUPBCji5KOKg=
+X-Received: by 2002:a17:907:9809:b0:a8d:29b7:ece3 with SMTP id
+ a640c23a62f3a-a902a8f0940mr691888166b.33.1726238654450; Fri, 13 Sep 2024
+ 07:44:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8758; i=brauner@kernel.org; h=from:subject:message-id; bh=bftPZ6DnGSfrBcXZPZR7Hx1mV/8icYhGXgepmZwn/kI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQ98V+TVSx7XvHL6g87Fyg3cLy/X3f7vMm2bO4Z7kfLb Ti/MBqodJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEyEZT3DT8Zbp+a+PcngcHDb HL6sngnfNNsj3u4KP76wJ+zRGfUFhU8Z/kf2dLB/XnmX9e/29C6fPbqs2tYB6/L4b0XxFPg9WZN 1mh8A
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20240823085313.75419-1-zhoufeng.zf@bytedance.com>
+ <CANn89i+ZsktuirATK0nhUmJu+TiqB9Kbozh+HhmCiP3qdnW3Ew@mail.gmail.com>
+ <173d3b06-57ed-4e2e-9034-91b99f41512b@linux.dev> <CANn89iLKcOBBHXMSduV-DXYZfDCKAZyySggKFnQMpKH3p_Ureg@mail.gmail.com>
+ <6c75215b-0bdc-4b5a-b267-6dce0faec496@bytedance.com>
+In-Reply-To: <6c75215b-0bdc-4b5a-b267-6dce0faec496@bytedance.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Fri, 13 Sep 2024 16:44:03 +0200
+Message-ID: <CANn89i+9GmBLCdgsfH=WWe-tyFYpiO27wONyxaxiU6aOBC6G8g@mail.gmail.com>
+Subject: Re: [External] Re: [PATCH bpf-next v2] bpf: Fix bpf_get/setsockopt to
+ tos not take effect when TCP over IPv4 via INET6 API
+To: Feng Zhou <zhoufeng.zf@bytedance.com>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>, davem@davemloft.net, kuba@kernel.org, 
+	pabeni@redhat.com, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
+	haoluo@google.com, jolsa@kernel.org, dsahern@kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	yangzhenze@bytedance.com, wangdongdong.6@bytedance.com, 
+	YiFei Zhu <zhuyifei@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hey Linus,
+On Tue, Aug 27, 2024 at 10:08=E2=80=AFAM Feng Zhou <zhoufeng.zf@bytedance.c=
+om> wrote:
+>
+> =E5=9C=A8 2024/8/24 02:53, Eric Dumazet =E5=86=99=E9=81=93:
+> > On Fri, Aug 23, 2024 at 8:49=E2=80=AFPM Martin KaFai Lau <martin.lau@li=
+nux.dev> wrote:
+> >>
+> >> On 8/23/24 6:35 AM, Eric Dumazet wrote:
+> >>> On Fri, Aug 23, 2024 at 10:53=E2=80=AFAM Feng zhou <zhoufeng.zf@byted=
+ance.com> wrote:
+> >>>>
+> >>>> From: Feng Zhou <zhoufeng.zf@bytedance.com>
+> >>>>
+> >>>> when TCP over IPv4 via INET6 API, bpf_get/setsockopt with ipv4 will
+> >>>> fail, because sk->sk_family is AF_INET6. With ipv6 will success, not
+> >>>> take effect, because inet_csk(sk)->icsk_af_ops is ipv6_mapped and
+> >>>> use ip_queue_xmit, inet_sk(sk)->tos.
+> >>>>
+> >>>> So bpf_get/setsockopt needs add the judgment of this case. Just chec=
+k
+> >>>> "inet_csk(sk)->icsk_af_ops =3D=3D &ipv6_mapped".
+> >>>>
+> >>>> | Reported-by: kernel test robot <lkp@intel.com>
+> >>>> | Closes: https://lore.kernel.org/oe-kbuild-all/202408152034.lw9Ilsj=
+6-lkp@intel.com/
+> >>>> Signed-off-by: Feng Zhou <zhoufeng.zf@bytedance.com>
+> >>>> ---
+> >>>> Changelog:
+> >>>> v1->v2: Addressed comments from kernel test robot
+> >>>> - Fix compilation error
+> >>>> Details in here:
+> >>>> https://lore.kernel.org/bpf/202408152058.YXAnhLgZ-lkp@intel.com/T/
+> >>>>
+> >>>>    include/net/tcp.h   | 2 ++
+> >>>>    net/core/filter.c   | 6 +++++-
+> >>>>    net/ipv6/tcp_ipv6.c | 6 ++++++
+> >>>>    3 files changed, 13 insertions(+), 1 deletion(-)
+> >>>>
+> >>>> diff --git a/include/net/tcp.h b/include/net/tcp.h
+> >>>> index 2aac11e7e1cc..ea673f88c900 100644
+> >>>> --- a/include/net/tcp.h
+> >>>> +++ b/include/net/tcp.h
+> >>>> @@ -493,6 +493,8 @@ struct request_sock *cookie_tcp_reqsk_alloc(cons=
+t struct request_sock_ops *ops,
+> >>>>                                               struct tcp_options_rec=
+eived *tcp_opt,
+> >>>>                                               int mss, u32 tsoff);
+> >>>>
+> >>>> +bool is_tcp_sock_ipv6_mapped(struct sock *sk);
+> >>>> +
+> >>>>    #if IS_ENABLED(CONFIG_BPF)
+> >>>>    struct bpf_tcp_req_attrs {
+> >>>>           u32 rcv_tsval;
+> >>>> diff --git a/net/core/filter.c b/net/core/filter.c
+> >>>> index ecf2ddf633bf..02a825e35c4d 100644
+> >>>> --- a/net/core/filter.c
+> >>>> +++ b/net/core/filter.c
+> >>>> @@ -5399,7 +5399,11 @@ static int sol_ip_sockopt(struct sock *sk, in=
+t optname,
+> >>>>                             char *optval, int *optlen,
+> >>>>                             bool getopt)
+> >>>>    {
+> >>>> -       if (sk->sk_family !=3D AF_INET)
+> >>>> +       if (sk->sk_family !=3D AF_INET
+> >>>> +#if IS_BUILTIN(CONFIG_IPV6)
+> >>>> +           && !is_tcp_sock_ipv6_mapped(sk)
+> >>>> +#endif
+> >>>> +           )
+> >>>>                   return -EINVAL;
+> >>>
+> >>> This does not look right to me.
+> >>>
+> >>> I would remove the test completely.
+> >>>
+> >>> SOL_IP socket options are available on AF_INET6 sockets just fine.
+> >>
+> >> Good point on the SOL_IP options.
+> >>
+> >> The sk could be neither AF_INET nor AF_INET6. e.g. the bpf_get/setsock=
+opt
+> >> calling from the bpf_lsm's socket_post_create). so the AF_INET test is=
+ still needed.
+> >>
+> >
+> > OK, then I suggest using sk_is_inet() helper.
+> >
+> >> Adding "&& sk->sk_family !=3D AF_INET6" should do. From ipv6_setsockop=
+t, I think
+> >> it also needs to consider the "sk->sk_type !=3D SOCK_RAW".
+> >>
+> >> Please add a test in the next re-spin.
+> >>
+> >> pw-bot: cr
+>
+> Thanks for your suggestion, I will add it in the next version.
 
-/* Summary */
+Gentle ping.
 
-This is the work to cleanup and shrink struct file significantly. You
-should've already seen most of the work in here.
-
-Right now, (focussing on x86) struct file is 232 bytes. After this
-series struct file will be 184 bytes aka 3 cacheline and a spare 8 bytes
-for future extensions at the end of the struct.
-
-With struct file being as ubiquitous as it is this should make a
-difference for file heavy workloads and allow further optimizations in
-the future.
-
-* struct fown_struct was embeeded into struct file letting it take up 32
-  bytes in total when really it shouldn't even be embedded in struct
-  file in the first place. Instead, actual users of struct fown_struct
-  now allocate the struct on demand. This frees up 24 bytes.
-
-* Move struct file_ra_state into the union containg the cleanup hooks
-  and move f_iocb_flags out of the union. This closes a 4 byte hole we
-  created earlier and brings struct file to 192 bytes. Which means
-  struct file is 3 cachelines and we managed to shrink it by 40 bytes.
-
-* Reorder struct file so that nothing crosses a cacheline. I suspect
-  that in the future we will end up reordering some members to mitigate
-  false sharing issues or just because someone does actually provide
-  really good perf data.
-
-* Shrinking struct file to 192 bytes is only part of the work. Files use
-  a slab that is SLAB_TYPESAFE_BY_RCU and when a kmem cache is created
-  with SLAB_TYPESAFE_BY_RCU the free pointer must be located outside of
-  the object because the cache doesn't know what part of the memory can
-  safely be overwritten as it may be needed to prevent object recycling.
-
-  That has the consequence that SLAB_TYPESAFE_BY_RCU may end up adding a
-  new cacheline.
-
-  So this also contains work to add a new kmem_cache_create_rcu()
-  function that allows the caller to specify an offset where the
-  freelist pointer is supposed to be placed. Thus avoiding the implicit
-  addition of a fourth cacheline.
-
-* And finally this removes the f_version member in struct file. The
-  f_version member isn't particularly well-defined. It is mainly used as
-  a cookie to detect concurrent seeks when iterating directories. But it
-  is also abused by some subsystems for completely unrelated things.
-
-  It is mostly a directory and filesystem specific thing that doesn't
-  really need to live in struct file and with its wonky semantics it
-  really lacks a specific function.
-
-  For pipes, f_version is (ab)used to defer poll notifications until a
-  write has happened. And struct pipe_inode_info is used by multiple
-  struct files in their ->private_data so there's no chance of pushing
-  that down into file->private_data without introducing another pointer
-  indirection.
-
-  But pipes don't rely on f_pos_lock so this adds a union into struct
-  file encompassing f_pos_lock and a pipe specific f_pipe member that
-  pipes can use. This union of course can be extended to other file
-  types and is similar to what we do in struct inode already.
-
-/* Testing */
-
-gcc version 14.2.0 (Debian 14.2.0-3)
-Debian clang version 16.0.6 (27+b1)
-
-All patches are based on v6.11-rc4 and have been sitting in linux-next.
-No build failures or warnings were observed.
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-(1) This will have merge conflict with the vfs.misc pull request sent as:
-    https://lore.kernel.org/r/20240913-vfs-misc-348ac639e66e@brauner
-
-    Assuming you merge vfs.misc first the conflict resolution looks like this:
-
-diff --cc fs/fcntl.c
-index 22ec683ad8f8,0587a0e221a6..f6fde75a3bd5
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@@ -343,12 -414,30 +414,36 @@@ static long f_dupfd_query(int fd, struc
-        return f.file == filp;
-  }
-
- +/* Let the caller figure out whether a given file was just created. */
- +static long f_created_query(const struct file *filp)
- +{
- +      return !!(filp->f_mode & FMODE_CREATED);
- +}
- +
-+ static int f_owner_sig(struct file *filp, int signum, bool setsig)
-+ {
-+       int ret = 0;
-+       struct fown_struct *f_owner;
-+
-+       might_sleep();
-+
-+       if (setsig) {
-+               if (!valid_signal(signum))
-+                       return -EINVAL;
-+
-+               ret = file_f_owner_allocate(filp);
-+               if (ret)
-+                       return ret;
-+       }
-+
-+       f_owner = file_f_owner(filp);
-+       if (setsig)
-+               f_owner->signum = signum;
-+       else if (f_owner)
-+               ret = f_owner->signum;
-+       return ret;
-+ }
-+
-  static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
-                struct file *filp)
-  {
-
-(2) linux-next: manual merge of the security tree with the vfs-brauner tree
-    https://lore.kernel.org/r/20240910132740.775b92e1@canb.auug.org.au
-
-The following changes since commit 47ac09b91befbb6a235ab620c32af719f8208399:
-
-  Linux 6.11-rc4 (2024-08-18 13:17:27 -0700)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.12.file
-
-for you to fetch changes up to 24a988f75c8a5f16ef935c51039700e985767eb9:
-
-  Merge patch series "file: remove f_version" (2024-09-12 11:58:46 +0200)
-
-Please consider pulling these changes from the signed vfs-6.12.file tag.
-
-Note that this work provides the base for the slab pull request this
-cycle. So just to not mess with Vlastimil's pr I pushed two tags:
-
-(1) vfs-6.12.file
-(2) vfs-6.12.file.kmem
-
-The second tag only contains what slab relies on and (1) contains
-everything for this cycle. If you disagree with additional stuff in (1)
-you may still consider pulling (2).
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.12.file
-
-----------------------------------------------------------------
-Christian Brauner (27):
-      file: reclaim 24 bytes from f_owner
-      fs: switch f_iocb_flags and f_ra
-      fs: pack struct file
-      mm: remove unused argument from create_cache()
-      mm: add kmem_cache_create_rcu()
-      fs: use kmem_cache_create_rcu()
-      Merge patch series "fs,mm: add kmem_cache_create_rcu()"
-      adi: remove unused f_version
-      ceph: remove unused f_version
-      s390: remove unused f_version
-      fs: add vfs_setpos_cookie()
-      fs: add must_set_pos()
-      fs: use must_set_pos()
-      fs: add generic_llseek_cookie()
-      affs: store cookie in private data
-      ext2: store cookie in private data
-      ext4: store cookie in private data
-      input: remove f_version abuse
-      ocfs2: store cookie in private data
-      proc: store cookie in private data
-      udf: store cookie in private data
-      ufs: store cookie in private data
-      ubifs: store cookie in private data
-      fs: add f_pipe
-      pipe: use f_pipe
-      fs: remove f_version
-      Merge patch series "file: remove f_version"
-
-R Sundar (1):
-      mm: Removed @freeptr_offset to prevent doc warning
-
- drivers/char/adi.c             |   1 -
- drivers/input/input.c          |  47 ++++++-----
- drivers/net/tun.c              |   6 ++
- drivers/s390/char/hmcdrv_dev.c |   3 -
- drivers/tty/tty_io.c           |   6 ++
- fs/affs/dir.c                  |  44 +++++++++--
- fs/ceph/dir.c                  |   1 -
- fs/ext2/dir.c                  |  28 ++++++-
- fs/ext4/dir.c                  |  50 ++++++------
- fs/ext4/ext4.h                 |   2 +
- fs/ext4/inline.c               |   7 +-
- fs/fcntl.c                     | 166 +++++++++++++++++++++++++++++++--------
- fs/file_table.c                |  16 ++--
- fs/internal.h                  |   1 +
- fs/locks.c                     |   6 +-
- fs/notify/dnotify/dnotify.c    |   6 +-
- fs/ocfs2/dir.c                 |   3 +-
- fs/ocfs2/file.c                |  11 ++-
- fs/ocfs2/file.h                |   1 +
- fs/pipe.c                      |   8 +-
- fs/proc/base.c                 |  30 ++++++--
- fs/read_write.c                | 171 +++++++++++++++++++++++++++++++----------
- fs/ubifs/dir.c                 |  64 ++++++++++-----
- fs/udf/dir.c                   |  28 ++++++-
- fs/ufs/dir.c                   |  28 ++++++-
- include/linux/fs.h             | 106 +++++++++++++++----------
- include/linux/slab.h           |   9 +++
- mm/slab.h                      |   2 +
- mm/slab_common.c               | 138 +++++++++++++++++++++++----------
- mm/slub.c                      |  20 +++--
- net/core/sock.c                |   2 +-
- security/selinux/hooks.c       |   2 +-
- security/smack/smack_lsm.c     |   2 +-
- 33 files changed, 744 insertions(+), 271 deletions(-)
+Have you sent the new version ?
 
