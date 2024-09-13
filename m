@@ -1,96 +1,94 @@
-Return-Path: <linux-kernel+bounces-328122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D9CB977F27
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:03:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46880977F2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:03:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9904A1C214BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:03:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80B091C22090
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA54D1D9332;
-	Fri, 13 Sep 2024 12:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6370F1D9329;
+	Fri, 13 Sep 2024 12:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DAsUsGFc"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L8kY6jXP"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C931DA100
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 693321D9344
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726228950; cv=none; b=roa4eMHoApt5ierLMEkS7VouV+mQ97t+cySjN/rBFsMzn0pKUOy11hM60GAL0F3lgr0z3XfCqqnAv0UFUUO5vaKX9/VNIL+z8KB4t7qKguulNkQ8iP1fxdm5H9U3yC/bCWdItHhz1WHHTYe2TzhV+c+56tM9IkSzV6HInana0T8=
+	t=1726228957; cv=none; b=fU3gnP8tK6mQbBLFLPOh4yG28jZK2VyzmjCRAPPafQX/2RnYQWbKvllNbNIhgqziPZdsANDQXzmoq8bYSo74F4BuFchmUinFlMDJsIyRgYF5kXbhBa/d4z8AZwUR2AQAYQX+HRyih2Fm9utkSFpxanR/j0MNtCUOZhL9VdwxYDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726228950; c=relaxed/simple;
-	bh=5ecyZVpYI8q2kAC7DnbFHrixpgS8zfec8GgteQKL9vs=;
+	s=arc-20240116; t=1726228957; c=relaxed/simple;
+	bh=QvE2TVXQ6W2C7ymRczabrWiqSouQpIkgqhi84ilDeZM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X0Km9v6gO9//0kwmHwnFdr6AiUbtPC00SDxhW1EbIdJalQWFrOjfm8lyNY0QlFgD+sUHk/jGWf7ni7uhYp60BWTyjErXEdtFQBvF95h1iO7aobfg+ehPYA2Lb1xDqBKqxuVvEzZl6VEGj9r3I6f1b9M440ZfLUy4o7M8TzrrbdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DAsUsGFc; arc=none smtp.client-ip=209.85.219.173
+	 To:Cc:Content-Type; b=klCsWM0O09R2eQ47YTEPXN6uIY5r3/zNmPNVZy1GmeFlmC2/fcqcExZVmRGZjfZ+RafuzWBIzNZ2pooXoO82k8oS1MELy3XB/ViuQQkxbyZCYNJOZD7qkT/SuFxoEJQTcBzHR/K3M9Lon9r/KN8T8QUyf2WGjxaedCe/nCbsdTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L8kY6jXP; arc=none smtp.client-ip=209.85.128.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e1a7c25e350so835405276.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 05:02:27 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6db5abe2cafso20265707b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 05:02:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726228946; x=1726833746; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1726228955; x=1726833755; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aUCJeUdbCtTzlTdC7hKAZDf0AYKIsmkYRDth/Vcc+GU=;
-        b=DAsUsGFcP1p7seo84Vno61loKj4E953gsV2n2cPVRdfMqc/haFwPynwRc6H1O85qm7
-         6oRRjp/UL3pCskdpQ1G6fnMC4WKAVEG5gwqY7KscgxDKArO187F/dAmHwmUDcDBzFIbB
-         Ofem0beGLAGc2JYecwaZi04ZRxuSVrNhtCkuImSKZf/ZIl0Gx2S5UA+cv5A11EKRLQhq
-         GWwqbyO1n4MHIMd3kuUnbzO48ZxHeFEo7AGsfEo/VGAXPwByWOIi4F61lB7o397GXFlX
-         3T3sPNokUzM/DPLwAu6NYSuJDeC0MjvixAZeztGiIS/rCXOy2wqZjE4FG7QoiPzq1ueT
-         IlCg==
+        bh=mcAm2/IOLoHziP4KJeQzrLPo6iRoaonV073IWS+KZ98=;
+        b=L8kY6jXPPqySGBh57Ab3JMVpqcjcwYs5Xs8Fli2rh14lmRYf5pXOVIJdQayQX2Fpfl
+         s3QefQskfiV45gycNEdmDm5VyWLUcMu37YN/XvxE8lGVrZvuhWHLrWUR9C75gYEkhWxj
+         EHBMwgO7bthE3V4g+APzy3eoa5k66VvCdNzIwvTbPekGbJwsEQnN2Isj5bexbyK9GB4B
+         p/vhoqZrMJP3aT4QFojxmd9QbeqgYp1E9b2ck+dxrR2PczUzrz8wXzJJ7oB7YzPRQ2u0
+         dzyIp8x22TvEG3ujXh91xMiXtTTu9PQrZDS2GZQ60X097wAo8QEDjCWoTLqaSODVVNos
+         fhUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726228946; x=1726833746;
+        d=1e100.net; s=20230601; t=1726228955; x=1726833755;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=aUCJeUdbCtTzlTdC7hKAZDf0AYKIsmkYRDth/Vcc+GU=;
-        b=HGyKfRiqTfDINOaGeh/bKYokLzDZ7ogdD4pYqJfgZHPjoozaIEP6gXjWg1tI3Qz+hq
-         K6Cb6gLZJ9QULaIF2pHy6w/2vWXTTi1rD+DrpVClg+rwDdj4ED1u61+jrBEtlQp7GBmF
-         hm7Ex5RaSHC4+G4c7sknmk9Ub+WJlKu7GYAADIW/OTpewUYZY6AwcrfhYsneOpSEkRNT
-         FkEWF2x9/gBgK7k0a8xRn6mHUFOAu8GXxPMEVKs1Y0gOfdXMQlc9OkO8iQwWwP7DgjUw
-         wbUM+G3HGIGd/wAH/WFuCugb03y0It69E4TAaly3ebTLwS2hh7kLJ8aG420qtSxdWb+a
-         tNgQ==
-X-Gm-Message-State: AOJu0Yx2BgDhnsXvOauI+t0Kxa5xfd5+XoyT3t/wVndoa+h8AWL2Ap1E
-	r/qugbTVCzjEQUAOQ0bckxTIiHySbbu8PEnbwnX6gAYVX5qfEPZmO+SuGrzd29gv60UwVSFjx5E
-	EDAizk/Lt9OsQMHT2lUCFUkhznZoq9mo5CE30/Q==
-X-Google-Smtp-Source: AGHT+IECNxvcFi3ScZRYjWcQww81p9XEb9hR+bYUmttrCAW18q0cmnkWFae6PLyr/4yCBmR962PjB7HU9kMt0j8tTw8=
-X-Received: by 2002:a05:690c:4989:b0:650:859b:ec8d with SMTP id
- 00721157ae682-6dbcc29ef68mr21668657b3.10.1726228946301; Fri, 13 Sep 2024
- 05:02:26 -0700 (PDT)
+        bh=mcAm2/IOLoHziP4KJeQzrLPo6iRoaonV073IWS+KZ98=;
+        b=ZGichy8tg6oXWF05oTpNu6ss7Pgph6fhp1osfV5+JJlxV6rWmW5qZp08SqMb5wjUQO
+         MqHMfD1A8OkWdTolIoNvDVEipW16FM77nFW5OeoES58rur2t6M3oVLHoWgqaxQJJ5y+S
+         uavXPytF9elG/rnI0P2yxoUrltZWEK27vB8kahx7DnUH5LQUdzEOmauFKSvGMgEmM0ht
+         dl3Cm5vsdElzSpBTt1LnwBt8ub/nlRihDkP1l/ioGDbNhH3x6ky96Pd9/NhWBdloiOTJ
+         96wrIJ+JvuLX9dhyKJyfhUV1q6DRsn7pmvFkCKRVlHUONrbpF1iOiE4BvplkXlAFCgRy
+         z2uA==
+X-Forwarded-Encrypted: i=1; AJvYcCXT44UzZXir4VLSFS9Xq29/3O7x2pUSE3ZoOz1Y9aFdm6VFN2mlxZ8SX/dqMw8v/7O0ejudCAyJ55Jp13k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynTsZb13andYqiW1YkksKzhkHXTETkvKpzIVEGMQ6m+1PQtW7X
+	j7bWcI7qVMSQdnS8eXht+P5dK4CUlVVsJsRCbRH5UJuZ/eUk9ZiJpN8yT3PMwRMdhZVGQHq5i1b
+	ELaeUBsGobAinku5AA+IlaxMpywPyVi26CAixXQ==
+X-Google-Smtp-Source: AGHT+IHiP9b6dJV25d/Htzen2O7catAWENjnMqHmAX2mIxCvI/j2Vrccz+v9rt8y3xny5gEO6++hJXVM9Bd8jPS8hus=
+X-Received: by 2002:a05:690c:6683:b0:6db:d572:aa7d with SMTP id
+ 00721157ae682-6dbd572ae48mr7812527b3.19.1726228955300; Fri, 13 Sep 2024
+ 05:02:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240825143428.556439-1-dario.binacchi@amarulasolutions.com> <20240825143428.556439-3-dario.binacchi@amarulasolutions.com>
-In-Reply-To: <20240825143428.556439-3-dario.binacchi@amarulasolutions.com>
+References: <20240825183116.102953-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240825183116.102953-1-krzysztof.kozlowski@linaro.org>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 13 Sep 2024 14:01:50 +0200
-Message-ID: <CAPDyKFoO4UUuJf6G7BTx-4LNpKVY8gJvZ0dj8tWP1E1aJiHYqg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] pmdomain: imx93-pd: drop the context variable "init_off"
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
-	Fabio Estevam <festevam@gmail.com>, Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-pm@vger.kernel.org
+Date: Fri, 13 Sep 2024 14:01:59 +0200
+Message-ID: <CAPDyKFohY+p8c9R3M82jcGrRxEA6V6fGyOUBz6ABMQQjyxKBzw@mail.gmail.com>
+Subject: Re: [PATCH] pmdomain: rockchip: Simplify dropping OF node reference
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Heiko Stuebner <heiko@sntech.de>, linux-pm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 25 Aug 2024 at 16:34, Dario Binacchi
-<dario.binacchi@amarulasolutions.com> wrote:
+On Sun, 25 Aug 2024 at 20:31, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
 >
-> This variable is only used within the probe() function, so let's remove
-> it from the context and define it locally within the same function.
+> Drop OF node reference immediately after using it in
+> syscon_node_to_regmap(), which is both simpler and typical/expected
+> code pattern.
 >
-> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Applied for next, thanks!
 
@@ -98,64 +96,28 @@ Kind regards
 Uffe
 
 
->
 > ---
+>  drivers/pmdomain/rockchip/pm-domains.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 >
-> (no changes since v1)
->
->  drivers/pmdomain/imx/imx93-pd.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/pmdomain/imx/imx93-pd.c b/drivers/pmdomain/imx/imx93-pd.c
-> index fb53a8e359bc..25ab592945bd 100644
-> --- a/drivers/pmdomain/imx/imx93-pd.c
-> +++ b/drivers/pmdomain/imx/imx93-pd.c
-> @@ -28,7 +28,6 @@ struct imx93_power_domain {
->         void __iomem *addr;
->         struct clk_bulk_data *clks;
->         int num_clks;
-> -       bool init_off;
->  };
->
->  #define to_imx93_pd(_genpd) container_of(_genpd, struct imx93_power_domain, genpd)
-> @@ -99,6 +98,7 @@ static int imx93_pd_probe(struct platform_device *pdev)
->         struct device *dev = &pdev->dev;
->         struct device_node *np = dev->of_node;
->         struct imx93_power_domain *domain;
-> +       bool init_off;
->         int ret;
->
->         domain = devm_kzalloc(dev, sizeof(*domain), GFP_KERNEL);
-> @@ -118,9 +118,9 @@ static int imx93_pd_probe(struct platform_device *pdev)
->         domain->genpd.power_on = imx93_pd_on;
->         domain->dev = dev;
->
-> -       domain->init_off = readl(domain->addr + MIX_FUNC_STAT_OFF) & FUNC_STAT_ISO_STAT_MASK;
-> +       init_off = readl(domain->addr + MIX_FUNC_STAT_OFF) & FUNC_STAT_ISO_STAT_MASK;
->         /* Just to sync the status of hardware */
-> -       if (!domain->init_off) {
-> +       if (!init_off) {
->                 ret = clk_bulk_prepare_enable(domain->num_clks, domain->clks);
->                 if (ret)
->                         return dev_err_probe(domain->dev, ret,
-> @@ -128,7 +128,7 @@ static int imx93_pd_probe(struct platform_device *pdev)
->                                              domain->genpd.name);
+> diff --git a/drivers/pmdomain/rockchip/pm-domains.c b/drivers/pmdomain/rockchip/pm-domains.c
+> index 64b4d7120d83..5ee7efbd2ef8 100644
+> --- a/drivers/pmdomain/rockchip/pm-domains.c
+> +++ b/drivers/pmdomain/rockchip/pm-domains.c
+> @@ -716,12 +716,11 @@ static int rockchip_pm_add_one_domain(struct rockchip_pmu *pmu,
+>                                 goto err_unprepare_clocks;
+>                         }
+>                         pd->qos_regmap[j] = syscon_node_to_regmap(qos_node);
+> +                       of_node_put(qos_node);
+>                         if (IS_ERR(pd->qos_regmap[j])) {
+>                                 error = -ENODEV;
+> -                               of_node_put(qos_node);
+>                                 goto err_unprepare_clocks;
+>                         }
+> -                       of_node_put(qos_node);
+>                 }
 >         }
 >
-> -       ret = pm_genpd_init(&domain->genpd, NULL, domain->init_off);
-> +       ret = pm_genpd_init(&domain->genpd, NULL, init_off);
->         if (ret)
->                 goto err_clk_unprepare;
->
-> @@ -144,7 +144,7 @@ static int imx93_pd_probe(struct platform_device *pdev)
->         pm_genpd_remove(&domain->genpd);
->
->  err_clk_unprepare:
-> -       if (!domain->init_off)
-> +       if (!init_off)
->                 clk_bulk_disable_unprepare(domain->num_clks, domain->clks);
->
->         return ret;
 > --
 > 2.43.0
 >
