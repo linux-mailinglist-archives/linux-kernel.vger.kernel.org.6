@@ -1,89 +1,113 @@
-Return-Path: <linux-kernel+bounces-327622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A0D9977870
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:43:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FAD8977876
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:44:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A77411F25B19
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:43:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A5551C23A38
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:44:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8734187356;
-	Fri, 13 Sep 2024 05:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A3D154BE9;
+	Fri, 13 Sep 2024 05:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="cbBQJOSQ"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Tb7m+Zsz"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8021D52B;
-	Fri, 13 Sep 2024 05:43:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA92D1D52B;
+	Fri, 13 Sep 2024 05:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726206217; cv=none; b=ieOwNpXfZGCVR8wdrXCFHmgGdBpnOM8w8fYfKBf2xpevQ93X7ys5jcsxzHj6mEtt95uX9Tg9bLcqeM1Yl6iemL4MUUkiBJ9T9Wf+TMbWcZ4N4h7FS8aJXFqQLIkBPDqkuxGZ/gAPzAq43JN5HFoQmMT7xYMTxMjmsXHzz32XnoY=
+	t=1726206283; cv=none; b=lvsydUZkhad+su4Rr9i39BV6y92ACXj2BhoLmlPa65nu0xcXdhYrF87mEJ5/lHdwwUSE4Y5qEpj4D+EYK0MOHBRyoVVhRXHgNrMjW7Ce9nFOHlEFfi4CJpufsHyLhaYSyDxwdq3QiIQ+VmMsrmbkcvtdvLoDQSZIDPCwTFt2Vfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726206217; c=relaxed/simple;
-	bh=6igXgBzJbL/bxr+9RONfH/CyyIxiTqnZKHLRBoihv2Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B41W1HqSbR77l5+jqwizlq8mlsZop5pqCNbW4N0pRdAHs4GkKyQOiOuRCRw8XDTCT+qAPg5mb6LJIUB40ZkoYsJMhHsiDrpoT0aJ6asAG2K5L09+gx6G4WJd2v99RnNCNrJJwY4/OIPFTGLCzt/xMg1jCBUW38FHvcH8SOdsYBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=cbBQJOSQ; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1726206204; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=C4W/4ycTRzizrdX3vEha8KtLmRwzwt5L/4YB4OcI418=;
-	b=cbBQJOSQ5mnGnBmR5bHq3CK0uUYZmTr1UQjMMBeJ68/EGHYZ9yyOeJtFjFK6cBr3963CnKlRMvBlA1kIqV4ZnIM2GZSRQF0FvzvWFI5YKZ/NSafFC6JBQlYAg5vWs687H78dTG/gOxCq0ZmOheVK+u+Hgt7fvY30kXo5p968X6s=
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WEtnxii_1726206196)
-          by smtp.aliyun-inc.com;
-          Fri, 13 Sep 2024 13:43:24 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: seanjc@google.com
-Cc: pbonzini@redhat.com,
-	shuah@kernel.org,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] KVM: selftests: Use ARRAY_SIZE for array length
-Date: Fri, 13 Sep 2024 13:43:15 +0800
-Message-Id: <20240913054315.130832-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+	s=arc-20240116; t=1726206283; c=relaxed/simple;
+	bh=y0vunahOwbyq+pBN+DnwkZltqno78Hmh2YHmyIimOM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IV2fRxIIIC3liP5npox/y8Wo1/UpLn4uTCVrPa/sx2+6NYtv+qiJWmYImaaFdiRTy5OCPk3AP6A3hoNRbWk9CFQM/raPcVC3OWDleTd3Q+gaOkIPFoNqAMxa9lZFwyJrUvgSoAfE5sopdeFKlfZZFUiTsCVZoW5kNAFQ1P3odF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Tb7m+Zsz; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1726206275;
+	bh=Oc4UPSV+MqwV3Yrw5FWaiaSkA/TSezeDNS9FcjUTgUc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Tb7m+ZszdoEXPKnaJ9JIsqfvbHF9xNPnDl0gx1hf1jShOUwXCEuvqOl9GrZ/k80zx
+	 OptFT6GldNQDd9hWOmuudoB2W0KVPoAGomDSXZApHFQgO6UEwO3XSzT9B6TE5NMZPn
+	 7IoPqbVLLPW97vKAbHVEr1qWdxNKp9n+LOdCQj3jCB9LlrDKwGu4LXP31v1g13gKso
+	 SL64syuwE8HBdfUSCBUUa39/LIxYcd9alkr6a5HhE3/fpN2+t7HGONsWk0oIIC1QvU
+	 i1zOXnzLyzTQ/1O/PhGyGi7s7SSzRygzbPcdJhLtDHIAG7udKfrbOi0nvWcL8cDQD3
+	 uwkLX3RFW2cMg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X4jtT08Nhz4wnw;
+	Fri, 13 Sep 2024 15:44:32 +1000 (AEST)
+Date: Fri, 13 Sep 2024 15:44:31 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Wim Van Sebroeck <wim@iguana.be>
+Cc: Guenter Roeck <linux@roeck-us.net>, Lad Prabhakar
+ <prabhakar.mahadev-lad.rj@bp.renesas.com>, Wim Van Sebroeck
+ <wim@linux-watchdog.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the watchdog tree
+Message-ID: <20240913154431.14297f94@canb.auug.org.au>
+In-Reply-To: <20240911145543.270c9c9c@canb.auug.org.au>
+References: <20240911145543.270c9c9c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/98JP5/tzIjANEHTM=pcyrQf";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Use of macro ARRAY_SIZE to calculate array size minimizes
-the redundant code and improves code reusability.
+--Sig_/98JP5/tzIjANEHTM=pcyrQf
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-./tools/testing/selftests/kvm/x86_64/debug_regs.c:169:32-33: WARNING: Use ARRAY_SIZE.
+Hi all,
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=10847
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- tools/testing/selftests/kvm/x86_64/debug_regs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, 11 Sep 2024 14:55:43 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> After merging the watchdog tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>=20
+> ERROR: modpost: missing MODULE_LICENSE() in drivers/watchdog/rzv2h_wdt.o
+>=20
+> Caused by commit
+>=20
+>   f6febd0a30b6 ("watchdog: Add Watchdog Timer driver for RZ/V2H(P)")
+>=20
+> I have used the watchdog tree from next-20240910 for today.
 
-diff --git a/tools/testing/selftests/kvm/x86_64/debug_regs.c b/tools/testing/selftests/kvm/x86_64/debug_regs.c
-index 76cc2df9238a..2d814c1d1dc4 100644
---- a/tools/testing/selftests/kvm/x86_64/debug_regs.c
-+++ b/tools/testing/selftests/kvm/x86_64/debug_regs.c
-@@ -166,7 +166,7 @@ int main(void)
- 	/* Test single step */
- 	target_rip = CAST_TO_RIP(ss_start);
- 	target_dr6 = 0xffff4ff0ULL;
--	for (i = 0; i < (sizeof(ss_size) / sizeof(ss_size[0])); i++) {
-+	for (i = 0; i < ARRAY_SIZE(ss_size); i++) {
- 		target_rip += ss_size[i];
- 		memset(&debug, 0, sizeof(debug));
- 		debug.control = KVM_GUESTDBG_ENABLE | KVM_GUESTDBG_SINGLESTEP |
--- 
-2.32.0.3.g01195cf9f
+I am still seeing this failure.
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/98JP5/tzIjANEHTM=pcyrQf
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbj0T8ACgkQAVBC80lX
+0GwASAf/aLMZ+UhTHD5f4f2nlakMPAF8mxdx1uTmdEH+83iKxhTF3KWsrRpnqcEf
+Any3a24IkXHp3GJRFc/qiymqW9fpb4csi0pQRrBf4tqd7c4FZV18403U9rvWAtbq
+g/ZO61I8JpxilzRcduDrfCYUA5/GoL1a37qsIUgZOenyhF/qr/QlMGj4HPaZcWRM
+KmUaHZldi7mXJU9kKbgpTIx8BZru9c8Iej/h8I6Ftc7BdEqmVSgHlEZKrOrgEppb
+Z1cgAaqUnErEvuJkozumFtgRu/aVAq2jUljiH6EwdvPSr2ILgXlheB8OnduEVa0n
+mQCBznphSoAlFA9XOLHsbN9Dg0eljA==
+=vWLj
+-----END PGP SIGNATURE-----
+
+--Sig_/98JP5/tzIjANEHTM=pcyrQf--
 
