@@ -1,276 +1,124 @@
-Return-Path: <linux-kernel+bounces-328759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB822978866
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:03:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 252F397886A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:03:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 242481C208DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:03:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C45DF1F284E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3CD613AA26;
-	Fri, 13 Sep 2024 19:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4B713C8EA;
+	Fri, 13 Sep 2024 19:03:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b="O+H3CUKB"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="iukORuk6"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD1712CDA5
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 19:02:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8776E12D758
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 19:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726254174; cv=none; b=S2LuLMj3+BkSKtA7MNEg+2B7VggWwa3PKwDQehAcuwkp2b8l/1sCctqR9rkZ7mNo4PVV4OuiML1rh2VS/BIf6MXV1KYWioQHRokmuDY2gmNDbPwAQTyVHAEKBZD/4R2lJE+kf0ZE/7f3GJNU0IWzuRmLPKtegd8cXg4xFzArSek=
+	t=1726254202; cv=none; b=huBsal+26+oDw8Z3kzkGo9vl3FBqurBkvYxAKQNeIQTTxRTIRB6M6FzoIwKGGTYwF4Sx7Hee11YYtouHn6qgpFJ0qm1MjlIm/U0s5eq98PoK7nSqixlFvLUkAhl97uIoj9EGcdgK3z4nVWKYwp3zCX77qlLgO5ZScrsZ7GRKhOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726254174; c=relaxed/simple;
-	bh=hzf9eTYQm5HBPInuHGmxUJ8hYh5awgKWO6NeIjhpAxM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HtTHfn76GDuiGUIlkJ0OlPsV9k5ZPF4gpmbv0tVRCYU0WKN4pz5oPU6o9ErbXXmX+Oj8LLM68swP+vHUxXGvQrMPQTy+QRdmlUrg4wTM7LnORtBYz+U3IrVdQATRXGZOw4G0ZeObyrkcyUo+0pFc0PoMr+fDSmKO47UX/vB4xV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org; spf=pass smtp.mailfrom=kali.org; dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b=O+H3CUKB; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kali.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f74e468aa8so28241361fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:02:51 -0700 (PDT)
+	s=arc-20240116; t=1726254202; c=relaxed/simple;
+	bh=DejRZZDbvIwg8LB/2rtU2ayjqdkKF06fnRo4NPmr88I=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=Nnbhw5ZnTn32wVJgzy4aCKULRmxH8mLOJ3+bwA84UoKjR8xk6FUX0DBGo5REBIQBQZnO2u3IecpVfq8oV6qcgz9WCbuFMEw9/bTq78Ew2raLMQ5A001ZRIHQs75D8Ff4LeH/CsGlfdbKNznHuIjVnJcK4A+C8xrYTGFhv6c5eHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=iukORuk6; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c2509f4143so327037a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:03:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kali.org; s=google; t=1726254170; x=1726858970; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1726254199; x=1726858999; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aFMQpW/5xpKH62jSxPCKZoeksH9vz3ccBemfSscBQOM=;
-        b=O+H3CUKB4D0skb6Ux77/1PKCMfVMve3XDdkTgZWUrsKh09DlTgJSEZp+N/NmMlpPh7
-         FFLvGnqiC3ZMG8vdTtbkSgtvRVjv7+yjUb8G0XNy3SqRLcz8TukjHS8a6SlpsQNI9d0M
-         JztnKohoG6QrTsZDLLzlABKTzakVi+arIcswbdDPTpYdBEc1r3UfltKofyduucEfFcbF
-         J/VrAmI/r2wikboLlbDjl7eZtvZ8oDwOq00ilFOMuXGl/SwlL4qlHiaW6lcDbLyeRH6/
-         ZDQTnNC73mfdEbmBsRvYNRgYM1X02yxJvKpDl0xlRkHBYaT1hRarmNzCDXrYNfxXg4aF
-         ElOA==
+        bh=DejRZZDbvIwg8LB/2rtU2ayjqdkKF06fnRo4NPmr88I=;
+        b=iukORuk64fW541Mp9zsgDeomRnuhsTpFcq/ir1sfeNzcyRXmCSwR0kSdKKC/HHkTu+
+         LT6Ojdfxr6OXh/YSzQjFUAuj1fkUwM+jyKrvXQ2Dl+sC+SskTogiqUa8QDDZlv12VYdZ
+         I2CzPcW8O4MOG9/4b8ZSheK37r/qr9EfCFlxs/UASVJYdT4LyLyUICKjQMHhFrWAhEU3
+         5eS580x0PegH2Hl07ApL5lipI3gFcEuV2YW0zvmGs/FT5951YdsqesnWPI7VLM/M9NVK
+         oeRYgrBtA2k62v6hDUfOgJfjYENr3yvVple/UGCwn4nTCqjgMfsgh/Ug2LS9HBpYrX3n
+         PxJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726254170; x=1726858970;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1726254199; x=1726858999;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aFMQpW/5xpKH62jSxPCKZoeksH9vz3ccBemfSscBQOM=;
-        b=uhM+Jd7iaNOlDaZFR8HqhrEO9CH99vsIp65UDJeopzO2M/6XI6UFoKFJi3NcX7TALA
-         8IKkNNp430EQ8fHLZ+vRYXiHEeYiEt1OrxtuEz8Aj7ljb5VK4wWowyooRzla2CmfbJT6
-         UxMjkQbQuN/TO2nmwBZVsX5K9T4LxLN4s/OZrmttEphddl6/Wy6ItqE1/KHGa5FQ/LBR
-         EtfFLLVt5SFOXkr2T/zjlZAHosVmNT5PYNCzho5dRxdqIjvg1Pie6g5OWd+HJVIpLrNS
-         /7zIMAqaU8syog1Z+6epaIgazPZgmukdbXz+cd5fTaD5GHR9/Fq7ksGsjHFBm0jZDpoF
-         HM9w==
-X-Forwarded-Encrypted: i=1; AJvYcCU+arGjHHAk6EF5NRIQAVA2KsUXnlc/XfPBKEQquHoJFfrT93kN/G6XuJXQMG0BbcdA32IEjtPCWIdUhl8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfpB2lvMdQTnicfKsoPAljbki+Og5QvcOA8kSF5uDS4Th/7HSw
-	stmT3U17/OcG2s04r/O2YNY0y+usJT0Bs1NeaeZ6L+Qy8Fa9vjkIJLqTLA0PO2HujMeSBpst6TQ
-	zyNiRkYYmsr4NQHcjdP5rhvwMJBNQ0rz0u8VlBw==
-X-Google-Smtp-Source: AGHT+IG04MtFkoqeSZ+ZwHbb/afYODEkr16FWXAk4qdDs5nfmXBBJ7oS+aKXnVw26IQAdUNCPeHcTtPlTkeDl/uvGDw=
-X-Received: by 2002:a05:651c:b2b:b0:2f1:563d:ec8a with SMTP id
- 38308e7fff4ca-2f787f4a407mr40618911fa.41.1726254169824; Fri, 13 Sep 2024
- 12:02:49 -0700 (PDT)
+        bh=DejRZZDbvIwg8LB/2rtU2ayjqdkKF06fnRo4NPmr88I=;
+        b=KkNtNnkfEK4owbiWlLqpSuTh8PUSz35UYiFT2rIgJw/IYExVcqZdRCOMS4D/XgqF72
+         ZZ4Q8SwnanlNprmHD4dT+t+S024oMB8GGtJ3zQMOminM9wZXnfOvzDcoL6FDs7skZxZY
+         Ou839pd8tQ3yG2pXAJclaOGSA0SnxHVlHxGgvr83RaNMZRjxCuG2oHRpI8EU3rQm1dgv
+         tUdMPMBc85rRwG5jb6W/t6a6HKlUVLWpY6SqWKhozygmviQaJ473ONeVq4eS8l4hLnIQ
+         /qFzsmCO8eh/PGDCsk46IdwNBm3W7aSe3e0mj+B0E52Krk7c1bJySDTxzTAWD3ZTVyL7
+         9T5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUqud5kLPLQ5cmgcAqgL6CiOwszBQ9GZrm+Ztv5gDpGWh/XffoK41oYGcIAJyWRZUH+MS/YTavSJaUio+w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPwhIu/bNdrUefNthXTe8u8/B44ofaaAV2BfahNvRwKwtqyE6X
+	B0kdAiN1L+ghQGnOBzzDqvwUdw1w2a8FyWIVUn/GpBjlBMMguJqLhTSwYEZ8OQhncaOcQFkELWn
+	oI0g=
+X-Google-Smtp-Source: AGHT+IH+LuJuwmspR6WLDdVMlbayW2LEANHqgFNJEOY9KQxhS5KniRy4B4R6msSK+2h63K+cXq+95Q==
+X-Received: by 2002:a17:906:f58a:b0:a80:ed7e:8468 with SMTP id a640c23a62f3a-a902911617bmr307927266b.0.1726254198662;
+        Fri, 13 Sep 2024 12:03:18 -0700 (PDT)
+Received: from smtpclient.apple ([2001:a61:a4f:301:a9d6:6b62:70d5:4ea5])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25ced201sm893637666b.168.2024.09.13.12.03.17
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 13 Sep 2024 12:03:18 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240913-starqltechn_integration_upstream-v4-0-2d2efd5c5877@gmail.com>
- <20240913-starqltechn_integration_upstream-v4-16-2d2efd5c5877@gmail.com>
-In-Reply-To: <20240913-starqltechn_integration_upstream-v4-16-2d2efd5c5877@gmail.com>
-From: Steev Klimaszewski <steev@kali.org>
-Date: Fri, 13 Sep 2024 14:02:37 -0500
-Message-ID: <CAKXuJqgrkt3qqCZsYP=jB2CVDSoacxH645Qxqein+JMkApx0Aw@mail.gmail.com>
-Subject: Re: [PATCH v4 16/27] arm64: dts: qcom: sdm845: enable gmu
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, Simona Vetter <simona@ffwll.ch>, 
-	cros-qcom-dts-watchers@chromium.org, Konrad Dybcio <konradybcio@kernel.org>, 
-	Simona Vetter <simona.vetter@ffwll.ch>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
-	linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [RESEND PATCH v2] params: Annotate struct module_param_attrs with
+ __counted_by()
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <ZuSHB2v7OLvagZnn@smile.fi.intel.com>
+Date: Fri, 13 Sep 2024 21:03:06 +0200
+Cc: Nathan Chancellor <nathan@kernel.org>,
+ kees@kernel.org,
+ gustavoars@kernel.org,
+ mcgrof@kernel.org,
+ linux-hardening@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <B46D6F09-6F81-45B3-833F-9785BBBC146F@toblux.com>
+References: <20240909162725.1805-2-thorsten.blum@toblux.com>
+ <20240913164630.GA4091534@thelio-3990X> <ZuSHB2v7OLvagZnn@smile.fi.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-Hi Dzmitry,
+On 13. Sep 2024, at 20:40, Andy Shevchenko =
+<andriy.shevchenko@linux.intel.com> wrote:
+> On Fri, Sep 13, 2024 at 09:46:30AM -0700, Nathan Chancellor wrote:
+>> On Mon, Sep 09, 2024 at 06:27:26PM +0200, Thorsten Blum wrote:
+>>> Add the __counted_by compiler attribute to the flexible array member
+>>> attrs to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+>>> CONFIG_FORTIFY_SOURCE.
+>>>=20
+>>> Increment num before adding a new param_attribute to the attrs array =
+and
+>>> adjust the array index accordingly. Increment num immediately after =
+the
+>>> first reallocation such that the reallocation for the NULL =
+terminator
+>>> only needs to add 1 (instead of 2) to mk->mp->num.
+>>>=20
+>>> Use struct_size() instead of manually calculating the size for the
+>>> reallocation.
+>>>=20
+>>> Use krealloc_array() for the additional NULL terminator.
+>=20
+>>> /* Fix up all the pointers, since krealloc can move us */
+>>> for (i =3D 0; i < mk->mp->num; i++)
+>=20
+> Shouldn't this for loop and followed by assignment also be -1:ed?
 
-On Fri, Sep 13, 2024 at 10:15=E2=80=AFAM Dzmitry Sankouski <dsankouski@gmai=
-l.com> wrote:
->
-> Leave gmu enabled, because it's only probed when
-> GPU is.
->
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> ---
->  arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi                   | 4 ----
->  arch/arm64/boot/dts/qcom/sdm845-db845c.dts                   | 4 ----
->  arch/arm64/boot/dts/qcom/sdm845-mtp.dts                      | 4 ----
->  arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi          | 4 ----
->  arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts            | 4 ----
->  arch/arm64/boot/dts/qcom/sdm845-sony-xperia-tama.dtsi        | 4 ----
->  arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi | 4 ----
->  arch/arm64/boot/dts/qcom/sdm845-xiaomi-polaris.dts           | 4 ----
->  arch/arm64/boot/dts/qcom/sdm845.dtsi                         | 2 --
->  9 files changed, 34 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi b/arch/arm64/boot=
-/dts/qcom/sdm845-cheza.dtsi
-> index e8276db9eabb..a5149a384167 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-cheza.dtsi
-> @@ -741,10 +741,6 @@ touchscreen@10 {
->         };
->  };
->
-> -&gmu {
-> -       status =3D "okay";
-> -};
-> -
->  &gpu {
->         status =3D "okay";
->  };
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-db845c.dts b/arch/arm64/boot=
-/dts/qcom/sdm845-db845c.dts
-> index 9a6d3d0c0ee4..59cb6e6e434c 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-db845c.dts
-> @@ -444,10 +444,6 @@ &gcc {
->                            <GCC_LPASS_SWAY_CLK>;
->  };
->
-> -&gmu {
-> -       status =3D "okay";
-> -};
-> -
->  &gpi_dma0 {
->         status =3D "okay";
->  };
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts b/arch/arm64/boot/dt=
-s/qcom/sdm845-mtp.dts
-> index 2391f842c903..d31efad8a321 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
-> @@ -414,10 +414,6 @@ &gcc {
->                            <GCC_LPASS_SWAY_CLK>;
->  };
->
-> -&gmu {
-> -       status =3D "okay";
-> -};
-> -
->  &gpu {
->         status =3D "okay";
->
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi b/arch/a=
-rm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
-> index 46e25c53829a..8a0f154bffc3 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
-> @@ -345,10 +345,6 @@ &gcc {
->                                 <GCC_LPASS_SWAY_CLK>;
->  };
->
-> -&gmu {
-> -       status =3D "okay";
-> -};
-> -
->  &gpu {
->         status =3D "okay";
->
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts b/arch/arm=
-64/boot/dts/qcom/sdm845-shift-axolotl.dts
-> index 486ce175e6bc..87fc4021e024 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts
-> @@ -419,10 +419,6 @@ &gcc {
->                            <GCC_LPASS_SWAY_CLK>;
->  };
->
-> -&gmu {
-> -       status =3D "okay";
-> -};
-> -
->  &gpu {
->         status =3D "okay";
->
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-sony-xperia-tama.dtsi b/arch=
-/arm64/boot/dts/qcom/sdm845-sony-xperia-tama.dtsi
-> index b02a1dc5fecd..a3a304e1ac87 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845-sony-xperia-tama.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-sony-xperia-tama.dtsi
-> @@ -415,10 +415,6 @@ &gcc {
->                         <GCC_LPASS_SWAY_CLK>;
->  };
->
-> -&gmu {
-> -       status =3D "okay";
-> -};
-> -
->  &gpi_dma0 {
->         status =3D "okay";
->  };
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi=
- b/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi
-> index 617b17b2d7d9..f790eb73abdd 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi
-> @@ -239,10 +239,6 @@ &gcc {
->                            <GCC_LPASS_SWAY_CLK>;
->  };
->
-> -&gmu {
-> -       status =3D "okay";
-> -};
-> -
->  &gpu {
->         status =3D "okay";
->
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845-xiaomi-polaris.dts b/arch/ar=
-m64/boot/dts/qcom/sdm845-xiaomi-polaris.dts
-> index e386b504e978..501575c9beda 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845-xiaomi-polaris.dts
-> +++ b/arch/arm64/boot/dts/qcom/sdm845-xiaomi-polaris.dts
-> @@ -381,10 +381,6 @@ &gcc {
->                                 <GCC_LPASS_SWAY_CLK>;
->  };
->
-> -&gmu {
-> -       status =3D "okay";
-> -};
-> -
->  &gpi_dma0 {
->         status =3D "okay";
->  };
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/q=
-com/sdm845.dtsi
-> index 54077549b9da..fe154216f138 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -4948,8 +4948,6 @@ gmu: gmu@506a000 {
->
->                         operating-points-v2 =3D <&gmu_opp_table>;
->
-> -                       status =3D "disabled";
-> -
->                         gmu_opp_table: opp-table {
->                                 compatible =3D "operating-points-v2";
->
->
-> --
-> 2.39.2
->
->
-
-This seems like it would also affect the sdm850-lenovo-yoga-c630 which
-inherits from sdm850.dtsi which inherits from sdm845.dtsi (they are
-sdm845s with 2 higher clock speeds)
-
--- steev
+That should be fine as mk->mp->num was already incremented before the
+for-loop.=
 
