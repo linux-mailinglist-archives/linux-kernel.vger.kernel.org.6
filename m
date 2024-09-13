@@ -1,118 +1,93 @@
-Return-Path: <linux-kernel+bounces-328415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 856A5978312
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:58:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6242978315
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:59:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E764B2591D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:58:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62E3D287687
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB9839ACC;
-	Fri, 13 Sep 2024 14:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C93C47A73;
+	Fri, 13 Sep 2024 14:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OzGqYlt1"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="mldlbSfB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C89536AF8
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 14:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBB377101;
+	Fri, 13 Sep 2024 14:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726239441; cv=none; b=mPVOMUWq0hW9PqqM294xUcBipj3iZDjgeIBLsxmrk5xsUsXd8bo2p2HprYNMwVH1YPEfS9n+idSsbQpUeTZBSuy9hVbYPw0ERVEoTnyOtUvZcZ1WZ8qu+W8rDZI1mkRTGCC6LcQk71o3WKCRkVgoLJoeurnymXNj2FlXDeNwhCY=
+	t=1726239448; cv=none; b=MvG5bgzEYBTrcW0ldatUBnPrVvgee+FnokMls44OR+wWlwxX1RYFdlDuvBXcR/wwQM2Gmc0vv5uomZKdxzs0AlortVaaYd56qcW8QIXcXI0TSYCfn/nrQaIx1yP5+DQ6yWWADQe9NtEV4h+qQd9CCDdhH2XNOf4SJI1X7kquKfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726239441; c=relaxed/simple;
-	bh=9ypuQrSVvfxeeJhMmpbTSY+TsDH8/u/9ZkPhzlDgw6o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B+Yz5pjMvWEfNlzr/YlVjKpjPSCvwO+R90tTtXSLYwoSdIsbvLG37OHRClryKFqA2JdRsYLtmuxJpX/RZZuoe6zdUVmliF4WMNeJRkK4U0XwE5G6bosqlsa3DeO6XlPgKjiCKuoni0VH8EbG6GpbV+/aZkJcjAEpc8N65CFyO+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OzGqYlt1; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726239437;
+	s=arc-20240116; t=1726239448; c=relaxed/simple;
+	bh=0pQSKjyDUhXIEugFiuzdrF8bAxtZ6BKZdYhNanK6JsM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CUreZoZItDRQI4dMWAYsJGT3FyKo7Wj7F2a8eyVxQ/+GvtITSi3Wo8ilYfCc62uqdXX7hFjWFsLyRFuXLs44vz/WJRnyaG5UBO+D78rf6IzDdSqFZbpOHcqIyXTWC+ayomEKE2gXllUYBBLRzVie/atnSFBoH4aF4x1txrwIOmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=mldlbSfB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34C13C4CEC5;
+	Fri, 13 Sep 2024 14:57:27 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="mldlbSfB"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1726239445;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=sqPwZBdOFC2kmYnJsv9Gtj6yUf0eG7sqHAFicEZ9CaI=;
-	b=OzGqYlt1JQB4wNJbgyO+3/IIt5HwxQxW0nWnVrcxOxOULsLZPzrEXvLPp8Q9OQ38JmcC78
-	FemuATVLeUp6nIzvYR23VpA4wGOMfTxc5nnSYsOfKAibHmj/rZBCwmGngHxncfhtmw0lBo
-	tRWP9CadEN4K1s+3csOpOSn76LZV6nc=
-From: Sean Anderson <sean.anderson@linux.dev>
-To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	Michal Simek <michal.simek@amd.com>,
-	linux-kernel@vger.kernel.org,
-	Robert Hancock <robert.hancock@calian.com>,
-	Sean Anderson <sean.anderson@linux.dev>,
-	Shannon Nelson <shannon.nelson@amd.com>
-Subject: [PATCH net v2] net: xilinx: axienet: Schedule NAPI in two steps
-Date: Fri, 13 Sep 2024 10:57:11 -0400
-Message-Id: <20240913145711.2284295-1-sean.anderson@linux.dev>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DxtSJbsFiH8dQ1jg4k4rteEz9A3w5akpU+RXvsLEdZk=;
+	b=mldlbSfBDjDhPptlAaw4VSSPKV54dfCxY8+zMtmXHqLEucpVwgAN3wq8g8e/jMa1VFSNXy
+	P8SAItWz2EtDhE3ud+7xM7/2QrKEO6CBmDrr5922m+BWLRGqzBV9+0LscIYQ1SNGe2nqUO
+	rG9nq8b3iM+Rhi8ww1EsWxpB+N79W2U=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 809a3f81 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Fri, 13 Sep 2024 14:57:24 +0000 (UTC)
+Date: Fri, 13 Sep 2024 16:57:22 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Harald Freudenberger <freude@linux.ibm.com>,
+	Stefan Liebler <stli@linux.ibm.com>, linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH 7/7] s390/vdso: Wire up getrandom() vdso implementation
+Message-ID: <ZuRS0sz_9_mkHsnl@zx2c4.com>
+References: <20240913130544.2398678-1-hca@linux.ibm.com>
+ <20240913130544.2398678-8-hca@linux.ibm.com>
+ <ZuRD58DrEzzcXKZg@zx2c4.com>
+ <20240913141651.30385-A-hca@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240913141651.30385-A-hca@linux.ibm.com>
 
-As advised by Documentation/networking/napi.rst, masking IRQs after
-calling napi_schedule can be racy. Avoid this by only masking/scheduling
-if napi_schedule_prep returns true.
+On Fri, Sep 13, 2024 at 04:16:51PM +0200, Heiko Carstens wrote:
+> On Fri, Sep 13, 2024 at 03:53:43PM +0200, Jason A. Donenfeld wrote:
+> > On Fri, Sep 13, 2024 at 03:05:43PM +0200, Heiko Carstens wrote:
+> > > The vdso testcases vdso_test_getrandom and vdso_test_chacha pass.
+> > 
+> > I'd be curious to see the results of ./vdso_test_getrandom bench-single
+> > and such.
+> 
+> It looks like this with two layers of hypervisors in between, but that
+> shouldn't matter too much for this type of workload:
+> 
+> $ ./vdso_test_getrandom bench-single
+>    vdso: 25000000 times in 0.493703559 seconds
+>    libc: 25000000 times in 6.371764073 seconds
+> syscall: 25000000 times in 6.584025337 seconds
 
-Fixes: 9e2bc267e780 ("net: axienet: Use NAPI for TX completion path")
-Fixes: cc37610caaf8 ("net: axienet: implement NAPI and GRO receive")
-Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-Reviewed-by: Shannon Nelson <shannon.nelson@amd.com>
----
+Cool. I'll amend that to the commit message, perhaps, so we have some
+historical snapshot of what it does. What cpu generation/model is this?
 
-Changes in v2:
-- Don't use the irqoff variant of __napi_schedule
-
- drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-index 9eb300fc3590..3de6559ceea6 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-@@ -1222,9 +1222,10 @@ static irqreturn_t axienet_tx_irq(int irq, void *_ndev)
- 		u32 cr = lp->tx_dma_cr;
- 
- 		cr &= ~(XAXIDMA_IRQ_IOC_MASK | XAXIDMA_IRQ_DELAY_MASK);
--		axienet_dma_out32(lp, XAXIDMA_TX_CR_OFFSET, cr);
--
--		napi_schedule(&lp->napi_tx);
-+		if (napi_schedule_prep(&lp->napi_tx)) {
-+			axienet_dma_out32(lp, XAXIDMA_TX_CR_OFFSET, cr);
-+			__napi_schedule(&lp->napi_tx);
-+		}
- 	}
- 
- 	return IRQ_HANDLED;
-@@ -1266,9 +1267,10 @@ static irqreturn_t axienet_rx_irq(int irq, void *_ndev)
- 		u32 cr = lp->rx_dma_cr;
- 
- 		cr &= ~(XAXIDMA_IRQ_IOC_MASK | XAXIDMA_IRQ_DELAY_MASK);
--		axienet_dma_out32(lp, XAXIDMA_RX_CR_OFFSET, cr);
--
--		napi_schedule(&lp->napi_rx);
-+		if (napi_schedule_prep(&lp->napi_rx)) {
-+			axienet_dma_out32(lp, XAXIDMA_RX_CR_OFFSET, cr);
-+			__napi_schedule(&lp->napi_rx);
-+		}
- 	}
- 
- 	return IRQ_HANDLED;
--- 
-2.35.1.1320.gc452695387.dirty
-
+Jason
 
