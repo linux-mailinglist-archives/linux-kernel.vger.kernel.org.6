@@ -1,155 +1,115 @@
-Return-Path: <linux-kernel+bounces-328645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FAA89786D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:33:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED9EB978703
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDDCF286DC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:33:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3364E1C240C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D3E12F588;
-	Fri, 13 Sep 2024 17:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600DE823AF;
+	Fri, 13 Sep 2024 17:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EWXdHCXk"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="l0DjuLxv"
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312C812BF25
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 17:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0B586131
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 17:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726248778; cv=none; b=k1Htre5uqYpFT3X1YYut2xThOLE4tZU/VWf/9bzRQVurTVzOR5MgYObNaL74k91IFvA81areCMpiGAjnwxheb935ONgnMffBMx3S7mp6PjiY/tCLpawmJ5IGgcQec4X40qHqSau4xFfUHy54+tcklHn1A9uDi+1M2gI5O7GoyEo=
+	t=1726249217; cv=none; b=IWcG0j1PMYqZFZv2lGDc0IWELpaT+IFkYEsTiLurvdI570g3bh5DqvmOHx8iKfMzhfezKCV5OPmvdbbbvn3DvoTsEAccdDL2fy3HMH/YJDPn4Bhqu5Vw2MIR9pcMzIaMAGX7s7z3bWQc2/agUdQ2RH2f0X81P5rdUC0obEuWeXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726248778; c=relaxed/simple;
-	bh=INXEGqBpdqXknfmZSD/sh52qeMFtGxNFla/jPofoHTg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=DvgIHlHzDC+RhoehBcGOlnO/NKH15teQ5zsoIPWsPCkQrIgIgEpxpgN5/q0CJHrXK1TLYn/qXStv2n75JG3XJabECvfoTLVZV9chQTDNfaIFZF9UBtJtvOqlMuIOc5z28GSKslurPKI1fTpxTWy231jjZ0uRT4XbmkPDhPKg4zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EWXdHCXk; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6d470831e3aso26242977b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 10:32:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726248776; x=1726853576; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=g8wmRU1VBjftYUbE8QWox2vZgYnjmK1j3kpaMosk3/s=;
-        b=EWXdHCXkW5znDv/JsjN+fX1/Z4mNgAAtnYKHXtG89ipLjOi7hBfN2uXR/mzFm2eDXQ
-         pWgrgC6xggoKHw0qWlODXUbdCQWR4AtjWhu2HueD0x0CR6J2aHEF2Iq8A39wI86EzZYu
-         rnMXdgNt5bDlEajhf8ZT4Ef5LkcITZPM39eYnwFarhMfvXJddPpwMek7GsRBlRIslO/t
-         H16+fYdUmb2W3k+VZmKArqlOUxIF72aZvid8+HufUBZlOpULgd6Znb7a/TMHY6BzZQKF
-         Besp3n6+VdZozN9jR4rQJ0IYpeRV/blP5lhDUhMnPtiVHlNyoiQOYiJQMQdN4sUF27Av
-         nKdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726248776; x=1726853576;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g8wmRU1VBjftYUbE8QWox2vZgYnjmK1j3kpaMosk3/s=;
-        b=i1Cr/g6XwyH6LqsYtCBBNeR9vWdW786BxyfHHV4Kx3Xplg9CWhr5x3NVMYGklLwzUE
-         M9zzV0Fi9/KWzO1LLmfX6L1FrxrVTgUZja6vq/gevXTfU6oRDuRlNM5+SgtjR54G2J0p
-         dViIdc4hZrgq3cuIA2dfyhshRFE+gyMg0efOVv3skSnSdIoW2EBGTY4CCKVWP05UNIKt
-         0rWUOs1GL2FBu5tksSV5ReA9c/gbwEfSPXOqJ30Xpg9Fv4tgL0HVFgVUlehCd9UDj2mo
-         Fs6mHZTYabuCcFXoLpY284y2GDoO+I9CB93apQKxnhIK+aEymOw0Jj92iuugyZjf4fbf
-         kaCg==
-X-Forwarded-Encrypted: i=1; AJvYcCWTFhWxSBoctlkUUNRliOtPIBxfK62/hVH3QMnwUhn4wTZ2TSFVa2hAdZpA2CmYesw20xfrNyaU4MUJXOI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPu1C70i9LS5ONi3Yk4qNeezYBYRcbQLDFvtdxPZuCWhxVVkMI
-	2Q2W8yNHmRNETRD85uv9seuQEZ2d1NWhY0DPVNSLXVgNmc+BuDLbFJVVpHsThaBzzOibLKaDDO6
-	dxx9bbsyBAg==
-X-Google-Smtp-Source: AGHT+IGSFsTgCDbNetbXcYx95b1Niemc1TyU+mUuvVsCWCrCX6LdU1NXur64D5AtqnSZJbSSZ+54bB9edgoiUg==
-X-Received: from loggerhead.c.googlers.com ([fda3:e722:ac3:cc00:f3:525d:ac13:60e1])
- (user=jmattson job=sendgmr) by 2002:a25:b2a4:0:b0:e11:5807:1072 with SMTP id
- 3f1490d57ef6-e1db00f2edemr4504276.8.1726248776127; Fri, 13 Sep 2024 10:32:56
- -0700 (PDT)
-Date: Fri, 13 Sep 2024 10:32:29 -0700
-In-Reply-To: <20240913173242.3271406-1-jmattson@google.com>
+	s=arc-20240116; t=1726249217; c=relaxed/simple;
+	bh=SIqKamNHZz5/uNc+N5jXsYdWxrtaRfUiR9avW5BOBQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h2qXHfP7d/s5cIWR/jArLPT/CFkBP+7FLIgX1QrCA6ZFboYL9ryPUNeDOTqC41HDBVQK8ulx4AUGgvirNyoLioW26i04q+OWS2tq/qBHv+zxOev5h8K9iiklW6kKtfrRx78YskDEvQt9dyS3s1IDCKhCgmYiSHZfdTcW6VgVUHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=l0DjuLxv; arc=none smtp.client-ip=45.157.188.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X51c70D3jzRtd;
+	Fri, 13 Sep 2024 19:33:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1726248790;
+	bh=c91K7s1c/V3DYCglP+L8gIe2uMVDTi7QkMZAlfXi9Gg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l0DjuLxvABVY9m3WW2eC4vaDwWmgh3xbrBbJAzDprHbTB7pegs6jjzZ/auBMoFUyc
+	 M2OppqZZdnV+i9umQUhYcbGMsk3vIFM5fzXH+xIWXV9LDVn49fwZ8PA77NWCUBUcfH
+	 1R/CPAvjYWAFRYhKyXKQjN76Cfq4ihGzj3z8vxaI=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4X51c63h7jz5bq;
+	Fri, 13 Sep 2024 19:33:09 +0200 (CEST)
+Date: Fri, 13 Sep 2024 19:33:02 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patches in the landlock tree
+Message-ID: <20240913.sohShem6yoh9@digikod.net>
+References: <20240913180641.4a3152ec@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240913173242.3271406-1-jmattson@google.com>
-X-Mailer: git-send-email 2.46.0.662.g92d0881bb0-goog
-Message-ID: <20240913173242.3271406-4-jmattson@google.com>
-Subject: [PATCH v4 3/3] KVM: x86: AMD's IBPB is not equivalent to Intel's IBPB
-From: Jim Mattson <jmattson@google.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Jim Mattson <jmattson@google.com>, Sandipan Das <sandipan.das@amd.com>, 
-	Kai Huang <kai.huang@intel.com>, x86@kernel.org, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org
-Cc: Venkatesh Srinivas <venkateshs@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240913180641.4a3152ec@canb.auug.org.au>
+X-Infomaniak-Routing: alpha
 
-From Intel's documention [1], "CPUID.(EAX=07H,ECX=0):EDX[26]
-enumerates support for indirect branch restricted speculation (IBRS)
-and the indirect branch predictor barrier (IBPB)." Further, from [2],
-"Software that executed before the IBPB command cannot control the
-predicted targets of indirect branches (4) executed after the command
-on the same logical processor," where footnote 4 reads, "Note that
-indirect branches include near call indirect, near jump indirect and
-near return instructions. Because it includes near returns, it follows
-that **RSB entries created before an IBPB command cannot control the
-predicted targets of returns executed after the command on the same
-logical processor.**" [emphasis mine]
+Hi,
 
-On the other hand, AMD's IBPB "may not prevent return branch
-predictions from being specified by pre-IBPB branch targets" [3].
+I minimized the commits required for my -next branch, I hope it will be
+good enough now:
+https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/commit/?h=next&id=24dfe95e493086a99acf7df1ef23d9f21f8cdec7
 
-However, some AMD processors have an "enhanced IBPB" [terminology
-mine] which does clear the return address predictor. This feature is
-enumerated by CPUID.80000008:EDX.IBPB_RET[bit 30] [4].
+Regards,
+ Mickaël
 
-Adjust the cross-vendor features enumerated by KVM_GET_SUPPORTED_CPUID
-accordingly.
+On Fri, Sep 13, 2024 at 06:06:41PM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> The following commits are also in the vfs-brauner tree as different
+> commits (but the same patches):
+> 
+>   45c6e98705e0 ("fs: remove f_version")
+>   ce22e70a947f ("pipe: use f_pipe")
+>   191021d73803 ("fs: add f_pipe")
+>   a6e2141e0b77 ("ubifs: store cookie in private data")
+>   3125ec2ef10b ("ufs: store cookie in private data")
+>   905fcc3a4ec0 ("udf: store cookie in private data")
+>   f2647a4fbe5e ("proc: store cookie in private data")
+>   e2f00c032780 ("ocfs2: store cookie in private data")
+> 
+> These are commits
+> 
+>   11068e0b64cb ("fs: remove f_version")
+>   5a957bbac3ab ("pipe: use f_pipe")
+>   5e9b50dea970 ("fs: add f_pipe")
+>   1146e5a69efc ("ubifs: store cookie in private data")
+>   0bea8287df6c ("ufs: store cookie in private data")
+>   3dd4624ffcd2 ("udf: store cookie in private data")
+>   b4dba2efa810 ("proc: store cookie in private data")
+>   ceaa5e80db7c ("ocfs2: store cookie in private data")
+> 
+> in the vfs-brauner tree.  There is a conflict between commit
+> 
+>   61be440b7cc6 ("input: remove f_version abuse")
+> 
+> from the landlock tree and commit
+> 
+>   7a7ce8b3ba66 ("input: remove f_version abuse")
+> 
+> from the vfs-brauner tree, so I used the latter version.
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
 
-[1] https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/technical-documentation/cpuid-enumeration-and-architectural-msrs.html
-[2] https://www.intel.com/content/www/us/en/developer/articles/technical/software-security-guidance/technical-documentation/speculative-execution-side-channel-mitigations.html#Footnotes
-[3] https://www.amd.com/en/resources/product-security/bulletin/amd-sb-1040.html
-[4] https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/programmer-references/24594.pdf
-
-Fixes: 0c54914d0c52 ("KVM: x86: use Intel speculation bugs and features as derived in generic x86 code")
-Suggested-by: Venkatesh Srinivas <venkateshs@chromium.org>
-Signed-off-by: Jim Mattson <jmattson@google.com>
----
- arch/x86/kvm/cpuid.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index ec7b2ca3b4d3..600d79ea22be 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -690,7 +690,9 @@ void kvm_set_cpu_caps(void)
- 	kvm_cpu_cap_set(X86_FEATURE_TSC_ADJUST);
- 	kvm_cpu_cap_set(X86_FEATURE_ARCH_CAPABILITIES);
- 
--	if (boot_cpu_has(X86_FEATURE_IBPB) && boot_cpu_has(X86_FEATURE_IBRS))
-+	if (boot_cpu_has(X86_FEATURE_AMD_IBPB_RET) &&
-+	    boot_cpu_has(X86_FEATURE_AMD_IBPB) &&
-+	    boot_cpu_has(X86_FEATURE_AMD_IBRS))
- 		kvm_cpu_cap_set(X86_FEATURE_SPEC_CTRL);
- 	if (boot_cpu_has(X86_FEATURE_STIBP))
- 		kvm_cpu_cap_set(X86_FEATURE_INTEL_STIBP);
-@@ -759,8 +761,12 @@ void kvm_set_cpu_caps(void)
- 	 * arch/x86/kernel/cpu/bugs.c is kind enough to
- 	 * record that in cpufeatures so use them.
- 	 */
--	if (boot_cpu_has(X86_FEATURE_IBPB))
-+	if (boot_cpu_has(X86_FEATURE_IBPB)) {
- 		kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB);
-+		if (boot_cpu_has(X86_FEATURE_SPEC_CTRL) &&
-+		    !boot_cpu_has_bug(X86_BUG_EIBRS_PBRSB))
-+			kvm_cpu_cap_set(X86_FEATURE_AMD_IBPB_RET);
-+	}
- 	if (boot_cpu_has(X86_FEATURE_IBRS))
- 		kvm_cpu_cap_set(X86_FEATURE_AMD_IBRS);
- 	if (boot_cpu_has(X86_FEATURE_STIBP))
--- 
-2.46.0.662.g92d0881bb0-goog
 
 
