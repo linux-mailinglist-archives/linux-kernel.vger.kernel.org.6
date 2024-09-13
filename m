@@ -1,73 +1,70 @@
-Return-Path: <linux-kernel+bounces-328514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0117978528
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:51:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AC60978529
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:51:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DD431F211F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:51:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E29D82875B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8E46F2E7;
-	Fri, 13 Sep 2024 15:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B21C6E2BE;
+	Fri, 13 Sep 2024 15:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZSnZEqbf"
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kf8x/i6s"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A2B2EB02;
-	Fri, 13 Sep 2024 15:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108D358AD0;
+	Fri, 13 Sep 2024 15:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726242672; cv=none; b=ZD8tsaWok+Mv3iWiGuyMiFOujPLElB0tXbVXl9V5MkUsvQQ0WkQgk4ZkLRR3Dre7GrT+4qEi2+d+AsPPEczmoHXSZhyjJ1PM8AJO0gpfYkPc3fdqrFnl5RUgYd0QDPmaDBFbAaGDgo/bOPsf7GeEYwgHAqX9apSKa6qlsP5xeZo=
+	t=1726242699; cv=none; b=tTcH2xxaQwXUNi2MfBv+e1fE+KkCB0MzyETTuGK7sXo+L+zuZHB31FprNrV9US5r//Eo3yr3D3MEYZ1gTQ0QLujD4u/piaFjNOFdDn6/yzU7ac5L70uwX20cFYT+mG05Z6votWPDxD2Pqv2RtSO0tJKX5yWm1XkRWXetp+HHEpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726242672; c=relaxed/simple;
-	bh=ecz4eJEVPDt26YmFuv0POtj0jecJSvSuFAGuu1dxlPs=;
+	s=arc-20240116; t=1726242699; c=relaxed/simple;
+	bh=GAmUucMy9vuLeh91K6btHFOEbFl/PyM0yqJoMR0hgjs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lw/QD0HiBcoYfZJs8/hWFb/fMcMVUebqHRkw1vYVg7T3txSRQImy89sAWAOYimQRe6S7pG9azp6458Jua/GtiyVMwaWaZKWScnR4kmQidW1vhR5XfJMoAJAzkJShqTjvV3WHhC+oEZucjKfkM3adABg7GoX77CYcYAweIgCm2bQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZSnZEqbf; arc=none smtp.client-ip=209.85.160.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-277cfd3f07aso1038165fac.3;
-        Fri, 13 Sep 2024 08:51:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726242670; x=1726847470; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ehs9yLbkVlOBEgkAu8IxC2ecxN3bEC7UNanNZJEoFLs=;
-        b=ZSnZEqbfrsKroStwuSqiYqz5TPdo8h9torfCDIwj+Z1sfF9ZjJAYvGLa/Yq+LfYw5n
-         9YoTLFa1FrjXGfbznkXST5UoHom9ykmhXDn0NQ8ZG6lQUdkchiY7hf6GRmXnzTD1/3Cs
-         knjqpWRuM8wxrAIBHwkyQcsWjAls9reT6hDtU/mO+wpt/+VYsePJZPwO3oLbxSvHeUSl
-         RahBPIcH5x4Zq30P4x6CKErjVpW7hn/b0qTgxWAWrRo/hxdGfPqy2FfjbohMMZHQ9Bdr
-         mHw/inct6gmUqMljmmoUh5WM4ghh9Fj87ZZ9I64Ix85GAYU43ijdYyPXTOfDr8YuHC/X
-         Lk4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726242670; x=1726847470;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ehs9yLbkVlOBEgkAu8IxC2ecxN3bEC7UNanNZJEoFLs=;
-        b=TyYhK24END3FFGMCIRvfDBTkIuG4YyINv7xv6vUIwEFTQGEUxrjdpowog1vmSfE22P
-         H2gxTug/ITPggqygH477AgtAUCPdcDf+BOzVmd05w5AMf2d3eljGgXWOjQEMA4p5zKVx
-         4xb6dA7h2/muSAFDArIJiQOTUvpi0oYjaOOJWL1chahQpSvWCehR7JrIkB8nta+R1i73
-         496MJdux/VyRxEzYAGwb6cTctktSLcc7yhstiShMhCpr88CSxD9NkfQ0m48Fv+v7hJn5
-         7UIihCoMJ3kAVcH76oGAz73zUbd17E2UgAvgI6pctojmamzadou82NlO8l5uoW57kuGs
-         4Fkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTwpmJB64/HCIJ+1xNP5wjZc5UM4I7+AlBqu/+jZa6E8GB+zDmGKfwx9H3lo1/Cx10BpGGeUJGF5oq@vger.kernel.org, AJvYcCUcLPCEi1BOFK1LIqn0KF+YyFR2dOT5kbX0WcBVba1PKldkht8W1GuSEfUzmkBfeP7gLpOTIku+PbN+tqtt@vger.kernel.org, AJvYcCUfv3VH0N7KiarGtYPITjZnWZBiRLpnQ2n3ZrxlyRW5//c09gbWyJSKfwbv79uN7lhwFRjv7h1pkjlTRg==@vger.kernel.org, AJvYcCV5DtwEPDWFMtAwPKSmz804u6jXcwBCrpWI6hz4NkU2y7UYEGF0olO4eTYyhTus9ONCVNB6+wFSHIce@vger.kernel.org, AJvYcCW571Lk7l6h9rfhktMmfOBonDcaqacZfAz9s3Tle3/qCZ4sYOVhAtwbUgKgqwzLfpXdMzp5tDXmp+6p/4nEJufq@vger.kernel.org, AJvYcCXDJDCPxGmrJwvLd19BQxIWQb03CKpQ5jz/twNmol8+rTTYx6L9+VxtQU0LySLjQwTzHLmx9NxzTUmGwdLStQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwK/w07WkEaNhHiAYtURq8sJWDbUYY18b06ocnwUgRMcnfwpTWl
-	cnQ3qJCFSc5/QAw86FNK/2cfUFyfiA3Azw88g9vLTTfrMkGtLBuH
-X-Google-Smtp-Source: AGHT+IGwspwIdcxizms74BUEV11s0x25xQw3otEtykkXT6P5qLAwtjFU5Aef8TBprXa84EXBrlG8AA==
-X-Received: by 2002:a05:6870:df92:b0:27c:475c:ab2c with SMTP id 586e51a60fabf-27c475cad93mr3175704fac.43.1726242670341;
-        Fri, 13 Sep 2024 08:51:10 -0700 (PDT)
-Received: from ?IPV6:2603:8080:7400:36da:dff5:4180:2562:4c1e? ([2603:8080:7400:36da:dff5:4180:2562:4c1e])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-27ba40b0bb0sm3632948fac.41.2024.09.13.08.51.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Sep 2024 08:51:09 -0700 (PDT)
-Message-ID: <5cc36aa7-e064-42b3-b52e-fb471d99d338@gmail.com>
-Date: Fri, 13 Sep 2024 10:51:04 -0500
+	 In-Reply-To:Content-Type; b=Eiua4MOUcm0snDLnUlGZNUw/OWkVScsmjSV9xl2LW6hUpTIbiDg5LBVSXIBUVxplfHytv/29VCO/bIFxxPgqURoZd8ppKXM405W8HxTfoqYTaRZ822w9v4OD080MnFumqx1qKdhduZ841iVW1xt/1v9ixpfYpMVGh8lwcrJ3Fqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kf8x/i6s; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726242698; x=1757778698;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=GAmUucMy9vuLeh91K6btHFOEbFl/PyM0yqJoMR0hgjs=;
+  b=kf8x/i6sm2AJNPH73Z2fyG7AVL/4O6zIF48jrTqm5ImKd5tXrgD6Val5
+   5M83uoTf2cOtJfZy/BZr/UdtxlTupXGfhlhBySkuNcDpJZVVgnuhWuR83
+   uO2pCguPsrBUBQozY1OTltz/tUM1IST9AzIjtzOal0VyuM8h6LAqLtvTY
+   3BuibHhrCzcr9ECT2YPWT2TY6UXVj93PXGjlsXWuMAqIFtvrdv1YfnYci
+   cdAVxkWVhZnxf81/t8liNcD+/qr9IyPb/0A2T//JhlipIHMtTAVWIOkib
+   w3dmqfer5mYv3OdRxWpzQ0OZ0r1ThHuvpJQlu+hypshm+D4u5yvyn5jKn
+   A==;
+X-CSE-ConnectionGUID: th7AMbPZSm+aT+vJ82voqw==
+X-CSE-MsgGUID: SbfXi+l3QJewaHx7zAxiEQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25347411"
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="25347411"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 08:51:38 -0700
+X-CSE-ConnectionGUID: 8BmZfTWZTNaiueaoRACoKA==
+X-CSE-MsgGUID: sorbTAXYTgSt0vskP4Noig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="91360656"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 08:51:37 -0700
+Received: from [10.212.21.130] (kliang2-mobl1.ccr.corp.intel.com [10.212.21.130])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 8955820CFED7;
+	Fri, 13 Sep 2024 08:51:35 -0700 (PDT)
+Message-ID: <8a9dabcd-023a-4e8f-8570-3c69a9cf0c0a@linux.intel.com>
+Date: Fri, 13 Sep 2024 11:51:34 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,129 +72,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/30] mm: Introduce ARCH_HAS_USER_SHADOW_STACK
-To: Deepak Gupta <debug@rivosinc.com>, paul.walmsley@sifive.com,
- palmer@sifive.com, conor@kernel.org, linux-doc@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-arch@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Cc: corbet@lwn.net, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- robh@kernel.org, krzk+dt@kernel.org, oleg@redhat.com, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
- hpa@zytor.com, peterz@infradead.org, akpm@linux-foundation.org,
- arnd@arndb.de, ebiederm@xmission.com, kees@kernel.org,
- Liam.Howlett@oracle.com, vbabka@suse.cz, lorenzo.stoakes@oracle.com,
- shuah@kernel.org, brauner@kernel.org, samuel.holland@sifive.com,
- andy.chiu@sifive.com, jerry.shih@sifive.com, greentime.hu@sifive.com,
- charlie@rivosinc.com, evan@rivosinc.com, cleger@rivosinc.com,
- xiao.w.wang@intel.com, ajones@ventanamicro.com, anup@brainfault.org,
- mchitale@ventanamicro.com, atishp@rivosinc.com, sameo@rivosinc.com,
- bjorn@rivosinc.com, alexghiti@rivosinc.com, david@redhat.com,
- libang.li@antgroup.com, jszhang@kernel.org, leobras@redhat.com,
- guoren@kernel.org, samitolvanen@google.com, songshuaishuai@tinylab.org,
- costa.shul@redhat.com, bhe@redhat.com, zong.li@sifive.com,
- puranjay@kernel.org, namcaov@gmail.com, antonb@tenstorrent.com,
- sorear@fastmail.com, quic_bjorande@quicinc.com, ancientmodern4@gmail.com,
- ben.dooks@codethink.co.uk, quic_zhonhan@quicinc.com,
- cuiyunhui@bytedance.com, yang.lee@linux.alibaba.com, ke.zhao@shingroup.cn,
- sunilvl@ventanamicro.com, tanzhasanwork@gmail.com, schwab@suse.de,
- dawei.li@shingroup.cn, rppt@kernel.org, willy@infradead.org,
- usama.anjum@collabora.com, osalvador@suse.de, ryan.roberts@arm.com,
- andrii@kernel.org, alx@kernel.org, catalin.marinas@arm.com,
- broonie@kernel.org, revest@chromium.org, bgray@linux.ibm.com, deller@gmx.de,
- zev@bewilderbeest.net, Rick Edgecombe <rick.p.edgecombe@intel.com>
-References: <20240912231650.3740732-1-debug@rivosinc.com>
- <20240912231650.3740732-2-debug@rivosinc.com>
+Subject: Re: [BUG BISECTED] Missing RCU reader in perf_event_setup_cpumask()
+To: Peter Zijlstra <peterz@infradead.org>,
+ "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+ mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+ irogers@google.com, adrian.hunter@intel.com
+References: <2b66dff8-b827-494b-b151-1ad8d56f13e6@paulmck-laptop>
+ <20240913104752.GU4723@noisy.programming.kicks-ass.net>
 Content-Language: en-US
-From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-In-Reply-To: <20240912231650.3740732-2-debug@rivosinc.com>
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240913104752.GU4723@noisy.programming.kicks-ass.net>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 9/12/24 18:16, Deepak Gupta wrote:
-
-> From: Mark Brown <broonie@kernel.org>
->
-> Since multiple architectures have support for shadow stacks and we need to
-> select support for this feature in several places in the generic code
-> provide a generic config option that the architectures can select.
->
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Reviewed-by: Deepak Gupta <debug@rivosinc.com>
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
-> ---
->  arch/x86/Kconfig   | 1 +
->  fs/proc/task_mmu.c | 2 +-
->  include/linux/mm.h | 2 +-
->  mm/Kconfig         | 6 ++++++
->  4 files changed, 9 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 007bab9f2a0e..320e1f411163 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -1957,6 +1957,7 @@ config X86_USER_SHADOW_STACK
->  	depends on AS_WRUSS
->  	depends on X86_64
->  	select ARCH_USES_HIGH_VMA_FLAGS
-> +	select ARCH_HAS_USER_SHADOW_STACK
->  	select X86_CET
->  	help
->  	  Shadow stack protection is a hardware feature that detects function
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 5f171ad7b436..0ea49725f524 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -984,7 +984,7 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
->  #ifdef CONFIG_HAVE_ARCH_USERFAULTFD_MINOR
->  		[ilog2(VM_UFFD_MINOR)]	= "ui",
->  #endif /* CONFIG_HAVE_ARCH_USERFAULTFD_MINOR */
-> -#ifdef CONFIG_X86_USER_SHADOW_STACK
-> +#ifdef CONFIG_ARCH_HAS_USER_SHADOW_STACK
->  		[ilog2(VM_SHADOW_STACK)] = "ss",
->  #endif
->  #ifdef CONFIG_64BIT
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 147073601716..e39796ea17db 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -346,7 +346,7 @@ extern unsigned int kobjsize(const void *objp);
->  #endif
->  #endif /* CONFIG_ARCH_HAS_PKEYS */
->  
-> -#ifdef CONFIG_X86_USER_SHADOW_STACK
-> +#ifdef CONFIG_ARCH_HAS_USER_SHADOW_STACK
->  /*
->   * VM_SHADOW_STACK should not be set with VM_SHARED because of lack of
->   * support core mm.
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index b72e7d040f78..3167be663bca 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -1263,6 +1263,12 @@ config IOMMU_MM_DATA
->  config EXECMEM
->  	bool
->  
-> +config ARCH_HAS_USER_SHADOW_STACK
-> +	bool
-> +	help
-> +	  The architecture has hardware support for userspace shadow call
-> +          stacks (eg, x86 CET, arm64 GCS or RISC-V Zicfiss).
-> +
->  source "mm/damon/Kconfig"
 
 
-Reviewed-by: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+On 2024-09-13 6:47 a.m., Peter Zijlstra wrote:
+> On Fri, Sep 13, 2024 at 01:00:44AM -0700, Paul E. McKenney wrote:
+>> Hello!
+>>
+>> On next-20240912 running rcutorture scenario TREE05, I see this
+>> deterministically:
+>>
+>> [   32.603233] =============================
+>> [   32.604594] WARNING: suspicious RCU usage
+>> [   32.605928] 6.11.0-rc5-00040-g4ba4f1afb6a9 #55238 Not tainted
+>> [   32.607812] -----------------------------
+>> [   32.609140] kernel/events/core.c:13946 RCU-list traversed in non-reader section!!
+>> [   32.611595]
+>> [   32.611595] other info that might help us debug this:
+>> [   32.611595]
+>> [   32.614247]
+>> [   32.614247] rcu_scheduler_active = 2, debug_locks = 1
+>> [   32.616392] 3 locks held by cpuhp/4/35:
+>> [   32.617687]  #0: ffffffffb666a650 (cpu_hotplug_lock){++++}-{0:0}, at: cpuhp_thread_fun+0x4e/0x200
+>> [   32.620563]  #1: ffffffffb666cd20 (cpuhp_state-down){+.+.}-{0:0}, at: cpuhp_thread_fun+0x4e/0x200
+>> [   32.623412]  #2: ffffffffb677c288 (pmus_lock){+.+.}-{3:3}, at: perf_event_exit_cpu_context+0x32/0x2f0
+>> [   32.626399]
+>> [   32.626399] stack backtrace:
+>> [   32.627848] CPU: 4 UID: 0 PID: 35 Comm: cpuhp/4 Not tainted 6.11.0-rc5-00040-g4ba4f1afb6a9 #55238
+>> [   32.628832] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
+>> [   32.628832] Call Trace:
+>> [   32.628832]  <TASK>
+>> [   32.628832]  dump_stack_lvl+0x83/0xa0
+>> [   32.628832]  lockdep_rcu_suspicious+0x143/0x1a0
+>> [   32.628832]  perf_event_exit_cpu_context+0x2e5/0x2f0
+>> [   32.628832]  ? __pfx_perf_event_exit_cpu+0x10/0x10
+>> [   32.628832]  perf_event_exit_cpu+0x9/0x10
+>> [   32.628832]  cpuhp_invoke_callback+0x130/0x2a0
+>> [   32.628832]  ? lock_release+0xc7/0x290
+>> [   32.628832]  ? cpuhp_thread_fun+0x4e/0x200
+>> [   32.628832]  cpuhp_thread_fun+0x183/0x200
+>> [   32.628832]  smpboot_thread_fn+0xd8/0x1d0
+>> [   32.628832]  ? __pfx_smpboot_thread_fn+0x10/0x10
+>> [   32.628832]  kthread+0xd4/0x100
+>> [   32.628832]  ? __pfx_kthread+0x10/0x10
+>> [   32.628832]  ret_from_fork+0x2f/0x50
+>> [   32.628832]  ? __pfx_kthread+0x10/0x10
+>> [   32.628832]  ret_from_fork_asm+0x1a/0x30
+>> [   32.628832]  </TASK>
+>>
+>> I bisected this to:
+>>
+>> 4ba4f1afb6a9 ("perf: Generic hotplug support for a PMU with a scope")
+>>
+>> This adds a perf_event_setup_cpumask() function that uses
+>> list_for_each_entry_rcu() without an obvious RCU read-side critical
+>> section, so the fix might be as simple as adding rcu_read_lock() and
+>> rcu_read_unlock().  In the proper places, of course.  ;-)
+> 
+> IIRC that condition should be:
+> 
+>   lockdep_is_held(&pmus_srcu) || lockdep_is_held(&pmus_lock)
+> 
+> And at this pooint we actually do hold pmus_lock.
+> 
+> But that all begs the question why we're using RCU iteration here to
+> begin with, as this code seems to be only called from this context.
 
+I think I just copied and paste the PMU iterate code here, and forget to
+add the srcu_read_lock(). Sorry for it.
 
->  
->  endmenu
+> 
+> Kan, is the simple fix to do:
+> 
+> -	list_for_each_entry_rcu(pmu, &pmus, entry, lockdep_is_held(&pmus_srcu)) {
+> +	list_for_each_entry(pmu, &pmus, entry) {
+> 
+> ?
+>   
 
+Yes, the &pmus_lock protect is good enough. we don't need the rcu here.
+I will post a patch with the suggested fix.
 
-Thanks, Carlos
+Thanks,
+Kan
 
 
