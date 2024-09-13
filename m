@@ -1,157 +1,108 @@
-Return-Path: <linux-kernel+bounces-328288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74B81978178
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:47:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3765978174
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:47:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE9FE1C21BE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:47:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E45B28200C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D1D1DB944;
-	Fri, 13 Sep 2024 13:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C021DB930;
+	Fri, 13 Sep 2024 13:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fefwtt5c"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AVNi1oIH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865DC1DC06E;
-	Fri, 13 Sep 2024 13:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4321D86D6;
+	Fri, 13 Sep 2024 13:47:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726235236; cv=none; b=p5hhi02nM4BvIO/4HRpsYrsA8tleeNhceU7HXpO86F3jjXHdZ+c8cCwHwT62ideY70YLFUA/FX8q/z5cZKQLKSYKdsjKCT+SpS+wocPY/YkUTS5rQe9nlJErA1ojZupKBQyTrDqC829Gq8qzGGmc+p7y5Eovs/p7Tob+jeLpNvI=
+	t=1726235230; cv=none; b=LosxJOtb+QpYWtxeCOtQz2u5CyxFnA337i7zjhkp1kcsR/NVgSABU9vVfqBElHT1FvVR8H7F6nscpZjjFysej7oWdISqnzdYCs6cnP6jSkpJn5dM/kRwGFAXqPxBooZA/8L+RJLni6FvwfwSZh6VinxVgQoDhcPDivH9Nb2oN0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726235236; c=relaxed/simple;
-	bh=Qx2wKRO005WJPfohhNN56W659aDK+rFiujL2cLPoGuo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qeS/fDVzMqqq9oCIlh22WnvSGy0wtBKKDL/E530NPJi1hqlq7vaSYNlCN+jrwnM8gIYfLRl4w28BtdH52wgqD0bUcchRo1fy0DvQ8MVCD9xSO41tJbhrCVV0TaZVplM1IxwsleE7wQOGx6F/dEds2JGA5UMVhspmY+6SKQ52csA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fefwtt5c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06850C4CECF;
-	Fri, 13 Sep 2024 13:47:16 +0000 (UTC)
+	s=arc-20240116; t=1726235230; c=relaxed/simple;
+	bh=yf2GMxg1XefxfAsl9eGXYlqULarFfBfcXvs5DfHxdng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cnGEBDxLU06HOi9miDL84MBLeU3Ab8qPJu6038OZjrFiwwJY03BcN5Eu/H8XxYweAxRsaAMTUPD1kH87fD9qxRZxyoOfDZi3Tf9rVcLy7ytdfP72VtLaL6KlekcClI2fiTZRwIvuFfGHxeVHuviKFIb5yrmXG/hIJ2T12rgdIaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AVNi1oIH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8622EC4CEC5;
+	Fri, 13 Sep 2024 13:47:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726235236;
-	bh=Qx2wKRO005WJPfohhNN56W659aDK+rFiujL2cLPoGuo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Fefwtt5cjMtVvCeAwWZf6DQ980qoLRs4VJi6c+mjFszRKTN8Yy9sFeHL4/XbR/rT+
-	 eLrfPCZJwEi2KywNWnxWrwsbf6EcudEoKeqCE5kOPyxh3Rk5X4LhU4Z2KL9TEue8UK
-	 UMC5WRVieK4i0A/SlG/xZuHZab18uiobrZsphQohyLlkL8jRHx8tawbuXLO+6vN9Iq
-	 CDzl1TOclQs64XyraVWnHaNwqhDcpW4fCmRwtLO0kqP8w/4zCw0F/4L57eNyWQbw5U
-	 UkoYLke9k63sgol5vD1XB/K2NMoCQO7BQqApbA126KJ7YOF/XRytzXydDdUZk+FAFf
-	 Y/OekZLQOhclw==
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f75c6ed428so10924801fa.0;
-        Fri, 13 Sep 2024 06:47:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUEqji4/VhgRVWggCyIsZO0dHP64iWw+/mLkjAggKLtbqwwpkve2wOt57Kt7TTFk7Gpi8x/OjYDhao=@vger.kernel.org, AJvYcCUSIW+SRVsluUzvXCZ8dMfS9UAmmDki7yhfbGmUlh9SAr9gD8jJIJpDamy0qSf67y+NxL0x8zqHFyurFSJL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzw27dbe+VE5bfedGJIxwAKTSEJsJfUX0Fs2FzRXNaQ8VRlxZ8v
-	D11UQrJdEuYt/u6yVjGCHcuHM9Q+s8LeeJlC7g+w4hDewrm5+BqIe5PPU4u9gKOV4z5MMbRCnge
-	ZUtp1FazNiNSlhARdOktV7ByaVI0=
-X-Google-Smtp-Source: AGHT+IEEwoet004htwpS+qvqkRimB6EKHWyh8OdAQW7sf8+CVdnHpMFZHHBIx4aZh7qOdM6AB6T4DlIHAHCIKf38eXo=
-X-Received: by 2002:a2e:b8d5:0:b0:2f7:90b9:7534 with SMTP id
- 38308e7fff4ca-2f7919076aemr19343621fa.11.1726235234294; Fri, 13 Sep 2024
- 06:47:14 -0700 (PDT)
+	s=k20201202; t=1726235230;
+	bh=yf2GMxg1XefxfAsl9eGXYlqULarFfBfcXvs5DfHxdng=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AVNi1oIHTvjVZBxX2Dyg8MCcsk3lXAuSqrlA9K5OrCzoIFDt6wNYHaUYiK3dy/ncY
+	 q/fpJj1RUqB6PeYZdH+xH+6uE3P9mu2YryzYodrAiZpJ9QHv12db3RSfAE8C2Mo6PN
+	 5H7YCj5R27dV78eWk5IjDmuzNiVe9/JHPY4vFDVNLiwWw5PVed0fGbfRDCTt/xUL9a
+	 EtldTn6DHPqxjWMHiAAIBhYMe3MiQvTbag+PHw18hubLyD71dee5+9hDON6kxqN9bZ
+	 MbCVfMVO363XcdC31iu6FdtG4XM8rAZXPbC7yQuvuKuws1CTcW7P10dtqNlpGdDayI
+	 /n0FLFZlaadgQ==
+Date: Fri, 13 Sep 2024 15:47:05 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Jiri Kosina <jikos@kernel.org>, 
+	Peter Hutterer <peter.hutterer@who-t.net>, Vicki Pfau <vi@endrift.com>, Shuah Khan <shuah@kernel.org>
+Cc: linux-input@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: (subset) [PATCH HID v2 00/11] HID: bpf: add a new hook to
+ control hid-generic
+Message-ID: <etbeblypdylnngwuwjfqkmkduk4iup7uq4c5zkwrssoi6u7jvg@gtf3gpzrloii>
+References: <20240910-hid-bpf-hid-generic-v2-0-083dfc189e97@kernel.org>
+ <172623473588.1192461.11090201509053454593.b4-ty@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240906202745.11159-1-gourry@gourry.net> <20240906202745.11159-5-gourry@gourry.net>
- <CAC_iWjJizjQWucDbrqKGdZTcj7FFxiPN97=p1zwfnPE=sAC6RQ@mail.gmail.com>
- <ZuQ2c7XOptYMJEtD@PC2K9PVX.TheFacebook.com> <CAC_iWjKoptBngCj-W6axZ9bmJmhT11JMctn1m4maVvO4mzcENg@mail.gmail.com>
- <CAMj1kXF9rpKJV5Df34F_oYZ1ZVbQ8Lumiw0ZOUnpVH6Dffq-Pg@mail.gmail.com>
-In-Reply-To: <CAMj1kXF9rpKJV5Df34F_oYZ1ZVbQ8Lumiw0ZOUnpVH6Dffq-Pg@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 13 Sep 2024 15:47:03 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXGnqact9B+=uhbGCV=2zaNQQBGsTk=a-NejUjWCoWDutg@mail.gmail.com>
-Message-ID: <CAMj1kXGnqact9B+=uhbGCV=2zaNQQBGsTk=a-NejUjWCoWDutg@mail.gmail.com>
-Subject: Re: [PATCH 4/6] tpm: sanity check the log version before using it
-To: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Cc: Gregory Price <gourry@gourry.net>, linux-efi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, leitao@debian.org, usamaarif642@gmail.com, 
-	sathyanarayanan.kuppuswamy@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <172623473588.1192461.11090201509053454593.b4-ty@kernel.org>
 
-On Fri, 13 Sept 2024 at 15:44, Ard Biesheuvel <ardb@kernel.org> wrote:
->
-> On Fri, 13 Sept 2024 at 15:39, Ilias Apalodimas
-> <ilias.apalodimas@linaro.org> wrote:
-> >
-> > On Fri, 13 Sept 2024 at 15:57, Gregory Price <gourry@gourry.net> wrote:
-> > >
-> > > On Fri, Sep 13, 2024 at 09:40:30AM +0300, Ilias Apalodimas wrote:
-> > > > Hi Gregory,
-> > > >
-> > > > On Fri, 6 Sept 2024 at 23:28, Gregory Price <gourry@gourry.net> wrote:
-> > > > >
-> > > > > If the log version is not sane (0 or >2), don't attempt to use
-> > > > > the rest of the log values for anything to avoid potential corruption.
-> > > > >
-> > > > > Signed-off-by: Gregory Price <gourry@gourry.net>
-> > > > > ---
-> > > > >  drivers/firmware/efi/tpm.c | 9 +++++++++
-> > > > >  1 file changed, 9 insertions(+)
-> > > > >
-> > > > > diff --git a/drivers/firmware/efi/tpm.c b/drivers/firmware/efi/tpm.c
-> > > > > index 6e03eed0dc6f..9a080887a3e0 100644
-> > > > > --- a/drivers/firmware/efi/tpm.c
-> > > > > +++ b/drivers/firmware/efi/tpm.c
-> > > > > @@ -60,6 +60,15 @@ int __init efi_tpm_eventlog_init(void)
-> > > > >                 return -ENOMEM;
-> > > > >         }
-> > > > >
-> > > > > +       if (!log_tbl->version ||
-> > > > > +           log_tbl->version > EFI_TCG2_EVENT_LOG_FORMAT_TCG_2) {
-> > > > > +               pr_err(FW_BUG "TPM Events table version invalid (%x)\n",
-> > > > > +                      log_tbl->version);
-> > > > > +               early_memunmap(log_tbl, sizeof(*log_tbl));
-> > > > > +               efi.tpm_log = EFI_INVALID_TABLE_ADDR;
-> > > > > +               return -EINVAL;
-> > > >
-> > > > I don't think we need this check at all. Did you actually see this happening?
-> > > > efi_retrieve_eventlog() that runs during the efistub tries to retrieve
-> > > > the log and the EFI protocol itself explicitly says that the firmware
-> > > > *must* return EFI_INVALID_PARAMETER if the event log is not in 1.2 or
-> > > > 2.0 format. If the firmware does something wrong, we should report the
-> > > > FW BUG in that function, instead of installing the config tables Linux
-> > > > uses internally to handover the log and catching it late.
-> > > >
-> > > > Thanks
-> > > > /Ilias
-> > > >
-> > >
-> > > We saw this happen and discovered it was a disagreement between EFI/OS/kexec
-> > > causing the table to be overwritten during kexec.  We've since found a fix for
-> > > that.  So the result was that it appeared the firmware was doing something
-> > > wrong. The sanity check at least allowed us to boot without immediately
-> > > crashing - because the tables don't get reinstalled, they get re-used
-> > > (at least that's by best understanding of the whole interaction).
-> > >
-> > > If the check seems superfluous, i can drop it.
-> >
-> > Ok, that explains why it wasn't caught earlier at least. I would
-> > prefer dropping it tbh, but I am going to defer to Ard for that.
-> >
-> > If we agree that this needs to go in btw, I think you should refactor
-> > it a bit. That function already defines an out: label, which unmaps
-> > memory. So you can rewrite the above as
-> >
-> > If(....) {
-> >     ret = -EINVAL;
-> >     efi.tpm_log = EFI_INVALID_TABLE_ADDR;
-> >    goto out;
-> > }
-> >
->
-> Validating a table that was created by the EFI stub seems redundant.
-> If the version check needs to be tightened, please do so in
-> efi_retrieve_tcg2_eventlog() (in the stub).
+On Sep 13 2024, Benjamin Tissoires wrote:
+> On Tue, 10 Sep 2024 23:43:36 +0900, Benjamin Tissoires wrote:
+> > This is a slight change from the fundamentals of HID-BPF.
+> > In theory, HID-BPF is abstract to the kernel itself, and makes
+> > only changes at the HID level (through report descriptors or
+> > events emitted to/from the device).
+> > 
+> > However, we have seen a few use cases where HID-BPF might interact with
+> > the running kernel when the target device is already handled by a
+> > specific device.
+> > 
+> > [...]
+> 
+> Applied to hid/hid.git (for-6.12/bpf), thanks!
+> 
+> [01/11] HID: bpf: move HID-BPF report descriptor fixup earlier
+>         https://git.kernel.org/hid/hid/c/f10a11b7b599
+> [02/11] HID: core: save one kmemdup during .probe()
+>         https://git.kernel.org/hid/hid/c/6941754dbbc7
+> [03/11] HID: core: remove one more kmemdup on .probe()
+>         https://git.kernel.org/hid/hid/c/4fe29f36d2a3
+> [04/11] HID: bpf: allow write access to quirks field in struct hid_device
+>         https://git.kernel.org/hid/hid/c/b722f588adc6
+> [05/11] selftests/hid: add dependency on hid_common.h
+>         https://git.kernel.org/hid/hid/c/3d816765e12e
+> [06/11] selftests/hid: cleanup C tests by adding a common struct uhid_device
+>         https://git.kernel.org/hid/hid/c/28023a0f99d1
+> [07/11] selftests/hid: allow to parametrize bus/vid/pid/rdesc on the test device
+>         https://git.kernel.org/hid/hid/c/10d3147f9bb1
+> [08/11] HID: add per device quirk to force bind to hid-generic
+>         https://git.kernel.org/hid/hid/c/d030f826ea47
+> [09/11] selftests/hid: add test for assigning a given device to hid-generic
+>         https://git.kernel.org/hid/hid/c/10929078201f
+> 
 
-... and actually, this version is set by the EFI stub based on which
-flavor of the TCG protocols it found.
+Just for completeness, I've dropped 10/11 and 11/11 when applying the
+series because even if they are working it's unclear if the use case is
+rock solid, like the first one is.
 
-So i don't think we need this check to begin with.
+The patches are still on the LKML, so if anyone believes they required
+it, we can alwasy pull them in later.
 
-If we need to detect corruption of these tables, I'd prefer to add a
-checksum or something like that. But I don't think we should bother.
+Cheers,
+Benjamin
 
