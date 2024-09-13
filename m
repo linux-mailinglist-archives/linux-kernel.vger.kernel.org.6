@@ -1,146 +1,146 @@
-Return-Path: <linux-kernel+bounces-328280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1DFC978164
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:42:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F207978167
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:44:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F4BDB257C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:42:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 159B51F2519E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A6C1DB93D;
-	Fri, 13 Sep 2024 13:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9F91DB55E;
+	Fri, 13 Sep 2024 13:44:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bagh5QGG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O6WvN70I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0600B1DB53F;
-	Fri, 13 Sep 2024 13:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8503D1C2DAA;
+	Fri, 13 Sep 2024 13:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726234922; cv=none; b=is53ILfn+4PYbE2Gcj7rmE5Wj4jrqI7AeUD9jsTJcsDr76WqU+iy/ubMiwlMr/iimNoPlKTTDf8PENfFB3KcGT8+UVawF6WyfMuinkV9ancEkFJMUSkFd+v0MFce1d8xCRKkFW4jb87+6BTdDHKMOYfqRtzeSAwgTUyr6Kb29Os=
+	t=1726235060; cv=none; b=VjK8l0wYduZiIha4S0Ll8AXowHDQWNyHrtjHxtwkQzNZrLDUU5GHPd5uPE2ZEVuYatz4sTSTQDZ0u8ScSyEDRZdLpRqz1iiYhgj8ikv61AqNHsalrmCVtC5LalchoE/9WXzMDl2z8YB8tkW6qycGgzvkttWUSET6uYcZvPtH+Cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726234922; c=relaxed/simple;
-	bh=bf8Xv7o4YwxmyAHF0D2eb3sZJQ30HdDrCz7p377435A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hkCRDE60i0dhpvYwh1cRTc8SYXyTmwNEJ1iNXQMSFQnCNqIKrIZJth8LKBEfu4fPNH3ztXrmZ5r8zAAeuETOqCY7iU0EzM/dLOhG5iLl24bxroouwsF7RJAuYeMY3QvglRn7d7wV7BH1aIf1M4a1dn2/c0d1FMxhfljAiG3PKcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bagh5QGG; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726234921; x=1757770921;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bf8Xv7o4YwxmyAHF0D2eb3sZJQ30HdDrCz7p377435A=;
-  b=bagh5QGGWVQWZrDgCR0CDp/0p2eDTzHrcyvJRqgDAkLMdsRAV7RBeKU4
-   hhZ6O2SF/U+4PasUiKQZWUzqoJ0BRCDc9DI+FvUw4CJVsAyOZfUuYv/OJ
-   w40N7MwOUl2C+XNRK24zmxFottAgImAdWFuKsvyhDuVi4MQv4/vyZtMYS
-   8n6E8yKFTrp86iwcEmKY2uMFz/ucbvmT1rfa5Y1PLCCT5T6+mJVyZ9k5U
-   2/Jfohe2oZScluWD1cuQbrNXfnmi9LaSN5fu/JwbyrjCnNkgs5MDeCSCJ
-   /6XuX1lx2H6gZOkVSFGzBos8eYO7MkMhmMxXf9YMk8s4Gn9Ga3C/mpV2C
-   A==;
-X-CSE-ConnectionGUID: mJQozP7UQtivWBuewVcrSw==
-X-CSE-MsgGUID: 0f978c5ITDi5PH0XtZXEjw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="36269353"
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="36269353"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 06:42:01 -0700
-X-CSE-ConnectionGUID: kHf73TM5RIylPLXj+wk35Q==
-X-CSE-MsgGUID: tskWT6C9TR6TDti5ucK13g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
-   d="scan'208";a="98890502"
-Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 13 Sep 2024 06:41:57 -0700
-Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sp6Yc-0006Xq-2m;
-	Fri, 13 Sep 2024 13:41:54 +0000
-Date: Fri, 13 Sep 2024 21:41:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: Christoph Lameter via B4 Relay <devnull+cl.gentwo.org@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-arch@vger.kernel.org,
-	"Christoph Lameter (Ampere)" <cl@gentwo.org>
-Subject: Re: [PATCH v3] Avoid memory barrier in read_seqcount() through load
- acquire
-Message-ID: <202409132145.0UdNx9kr-lkp@intel.com>
-References: <20240912-seq_optimize-v3-1-8ee25e04dffa@gentwo.org>
+	s=arc-20240116; t=1726235060; c=relaxed/simple;
+	bh=So7Ou1bgpq1eBnTCykwLwj9RCYzU3iPoCbU4c8ED3k0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qa3Ubnf5ED+nQ/wHWNNkwwoprXg9oWEM6D+NyoMpF5uB0NwubtnM130qpJ+B8P0Khs1xtRs+k8pc6elYDypvAoaU47xOkkPLUU9ggpFBxDw1U/YojHLi6sWhUWSok2ACABgQpSgm4lmMlI2HPq1/2hXYqfNw8w3ibKLZdcCiaPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O6WvN70I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 237D4C4AF09;
+	Fri, 13 Sep 2024 13:44:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726235060;
+	bh=So7Ou1bgpq1eBnTCykwLwj9RCYzU3iPoCbU4c8ED3k0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=O6WvN70IA3+p08qWgT6zfuUK4NeGIy8NmQSZYx9Wo0EKQETs/BifsLEhbqV4dgWrj
+	 ebSNginltT0N/ZQ8jTTmFULzY1rJT3vMhZMNPhOt2lEHm+vPq6ZSn2kCJMwe1wESVh
+	 uY0plucjsgl3MTZBd9QKDA1J4MaFOJvGM9U1THEddhdGlKgqIE7HRHi0aTbGKowaOA
+	 jYtTe8Fd9+tDgYCF/qTSseCHoGfkEdiKP8Xk1p4T9e2+jernbO8cf/XeqTBP2LO1xF
+	 hReP/5Vh5yWKCTEOKVI0AWr6mPntAZwfeG3iACMPgqC8ZkHI0492T9i1/FoAF5A3dy
+	 3A5RXKv9+VNHQ==
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f753375394so20960851fa.0;
+        Fri, 13 Sep 2024 06:44:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVy5xZD+UPrFOWJL4MiuCp0wl9V93QkTnJVR57pYNfCndUm3+FEv+VQDZpXSPVl4h9ogxjeBk1u43NMMRyF@vger.kernel.org, AJvYcCXBQsOHRTlUGUz45x3Uj6/Pp7eiMCpzxex7tYqO4cWhwBfAgAh8lNwJlzpWLPQmQl2tUjyS1sXOOpc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzqg8bXlphotqu27DIjGl531a7Rg5evR5i9/3e9T+RGM6xjaSXz
+	13MMWD5YBGze7tPy+Ezdz7sTZwihGxuI2HYl6f9L5e+Olxo5KMLEVR1+0MYsdtdjMcmcjm+cO8+
+	P6k9D5BxIuSeb9LPslou3QJxR/G8=
+X-Google-Smtp-Source: AGHT+IGO6V1ba24bRdDJblKHTDk0lUPYvYvHmtqb6jPU/DoOBM9uX68J5zaLOeJ0LEwmPhoIIe+7r5UNeEIJuZG+Ssc=
+X-Received: by 2002:a05:651c:1988:b0:2ef:1784:a20 with SMTP id
+ 38308e7fff4ca-2f787f4f5d6mr39490071fa.38.1726235058474; Fri, 13 Sep 2024
+ 06:44:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240912-seq_optimize-v3-1-8ee25e04dffa@gentwo.org>
+References: <20240906202745.11159-1-gourry@gourry.net> <20240906202745.11159-5-gourry@gourry.net>
+ <CAC_iWjJizjQWucDbrqKGdZTcj7FFxiPN97=p1zwfnPE=sAC6RQ@mail.gmail.com>
+ <ZuQ2c7XOptYMJEtD@PC2K9PVX.TheFacebook.com> <CAC_iWjKoptBngCj-W6axZ9bmJmhT11JMctn1m4maVvO4mzcENg@mail.gmail.com>
+In-Reply-To: <CAC_iWjKoptBngCj-W6axZ9bmJmhT11JMctn1m4maVvO4mzcENg@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 13 Sep 2024 15:44:07 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXF9rpKJV5Df34F_oYZ1ZVbQ8Lumiw0ZOUnpVH6Dffq-Pg@mail.gmail.com>
+Message-ID: <CAMj1kXF9rpKJV5Df34F_oYZ1ZVbQ8Lumiw0ZOUnpVH6Dffq-Pg@mail.gmail.com>
+Subject: Re: [PATCH 4/6] tpm: sanity check the log version before using it
+To: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Cc: Gregory Price <gourry@gourry.net>, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, leitao@debian.org, usamaarif642@gmail.com, 
+	sathyanarayanan.kuppuswamy@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Christoph,
+On Fri, 13 Sept 2024 at 15:39, Ilias Apalodimas
+<ilias.apalodimas@linaro.org> wrote:
+>
+> On Fri, 13 Sept 2024 at 15:57, Gregory Price <gourry@gourry.net> wrote:
+> >
+> > On Fri, Sep 13, 2024 at 09:40:30AM +0300, Ilias Apalodimas wrote:
+> > > Hi Gregory,
+> > >
+> > > On Fri, 6 Sept 2024 at 23:28, Gregory Price <gourry@gourry.net> wrote:
+> > > >
+> > > > If the log version is not sane (0 or >2), don't attempt to use
+> > > > the rest of the log values for anything to avoid potential corruption.
+> > > >
+> > > > Signed-off-by: Gregory Price <gourry@gourry.net>
+> > > > ---
+> > > >  drivers/firmware/efi/tpm.c | 9 +++++++++
+> > > >  1 file changed, 9 insertions(+)
+> > > >
+> > > > diff --git a/drivers/firmware/efi/tpm.c b/drivers/firmware/efi/tpm.c
+> > > > index 6e03eed0dc6f..9a080887a3e0 100644
+> > > > --- a/drivers/firmware/efi/tpm.c
+> > > > +++ b/drivers/firmware/efi/tpm.c
+> > > > @@ -60,6 +60,15 @@ int __init efi_tpm_eventlog_init(void)
+> > > >                 return -ENOMEM;
+> > > >         }
+> > > >
+> > > > +       if (!log_tbl->version ||
+> > > > +           log_tbl->version > EFI_TCG2_EVENT_LOG_FORMAT_TCG_2) {
+> > > > +               pr_err(FW_BUG "TPM Events table version invalid (%x)\n",
+> > > > +                      log_tbl->version);
+> > > > +               early_memunmap(log_tbl, sizeof(*log_tbl));
+> > > > +               efi.tpm_log = EFI_INVALID_TABLE_ADDR;
+> > > > +               return -EINVAL;
+> > >
+> > > I don't think we need this check at all. Did you actually see this happening?
+> > > efi_retrieve_eventlog() that runs during the efistub tries to retrieve
+> > > the log and the EFI protocol itself explicitly says that the firmware
+> > > *must* return EFI_INVALID_PARAMETER if the event log is not in 1.2 or
+> > > 2.0 format. If the firmware does something wrong, we should report the
+> > > FW BUG in that function, instead of installing the config tables Linux
+> > > uses internally to handover the log and catching it late.
+> > >
+> > > Thanks
+> > > /Ilias
+> > >
+> >
+> > We saw this happen and discovered it was a disagreement between EFI/OS/kexec
+> > causing the table to be overwritten during kexec.  We've since found a fix for
+> > that.  So the result was that it appeared the firmware was doing something
+> > wrong. The sanity check at least allowed us to boot without immediately
+> > crashing - because the tables don't get reinstalled, they get re-used
+> > (at least that's by best understanding of the whole interaction).
+> >
+> > If the check seems superfluous, i can drop it.
+>
+> Ok, that explains why it wasn't caught earlier at least. I would
+> prefer dropping it tbh, but I am going to defer to Ard for that.
+>
+> If we agree that this needs to go in btw, I think you should refactor
+> it a bit. That function already defines an out: label, which unmaps
+> memory. So you can rewrite the above as
+>
+> If(....) {
+>     ret = -EINVAL;
+>     efi.tpm_log = EFI_INVALID_TABLE_ADDR;
+>    goto out;
+> }
+>
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on 77f587896757708780a7e8792efe62939f25a5ab]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Christoph-Lameter-via-B4-Relay/Avoid-memory-barrier-in-read_seqcount-through-load-acquire/20240913-064557
-base:   77f587896757708780a7e8792efe62939f25a5ab
-patch link:    https://lore.kernel.org/r/20240912-seq_optimize-v3-1-8ee25e04dffa%40gentwo.org
-patch subject: [PATCH v3] Avoid memory barrier in read_seqcount() through load acquire
-config: i386-buildonly-randconfig-001-20240913 (https://download.01.org/0day-ci/archive/20240913/202409132145.0UdNx9kr-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240913/202409132145.0UdNx9kr-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409132145.0UdNx9kr-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/gpu/drm/i915/gem/i915_gem_pages.c:11:
->> drivers/gpu/drm/i915/gt/intel_tlb.h:21:40: error: too few arguments provided to function-like macro invocation
-      21 |         return seqprop_sequence(&gt->tlb.seqno);
-         |                                               ^
-   include/linux/seqlock.h:280:9: note: macro 'seqprop_sequence' defined here
-     280 | #define seqprop_sequence(s, a)          __seqprop(s, sequence)(s, a)
-         |         ^
-   In file included from drivers/gpu/drm/i915/gem/i915_gem_pages.c:11:
->> drivers/gpu/drm/i915/gt/intel_tlb.h:21:9: error: use of undeclared identifier 'seqprop_sequence'; did you mean '__seqprop_sequence'?
-      21 |         return seqprop_sequence(&gt->tlb.seqno);
-         |                ^~~~~~~~~~~~~~~~
-         |                __seqprop_sequence
-   include/linux/seqlock.h:228:24: note: '__seqprop_sequence' declared here
-     228 | static inline unsigned __seqprop_sequence(const seqcount_t *s, bool acquire)
-         |                        ^
-   In file included from drivers/gpu/drm/i915/gem/i915_gem_pages.c:11:
->> drivers/gpu/drm/i915/gt/intel_tlb.h:21:9: error: incompatible pointer to integer conversion returning 'unsigned int (const seqcount_t *, bool)' (aka 'unsigned int (const struct seqcount *, _Bool)') from a function with result type 'u32' (aka 'unsigned int') [-Wint-conversion]
-      21 |         return seqprop_sequence(&gt->tlb.seqno);
-         |                ^~~~~~~~~~~~~~~~
-   3 errors generated.
-
-
-vim +21 drivers/gpu/drm/i915/gt/intel_tlb.h
-
-568a2e6f0b12ee Chris Wilson 2023-08-01  18  
-568a2e6f0b12ee Chris Wilson 2023-08-01  19  static inline u32 intel_gt_tlb_seqno(const struct intel_gt *gt)
-568a2e6f0b12ee Chris Wilson 2023-08-01  20  {
-568a2e6f0b12ee Chris Wilson 2023-08-01 @21  	return seqprop_sequence(&gt->tlb.seqno);
-568a2e6f0b12ee Chris Wilson 2023-08-01  22  }
-568a2e6f0b12ee Chris Wilson 2023-08-01  23  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Validating a table that was created by the EFI stub seems redundant.
+If the version check needs to be tightened, please do so in
+efi_retrieve_tcg2_eventlog() (in the stub).
 
