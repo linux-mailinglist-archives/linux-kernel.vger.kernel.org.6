@@ -1,128 +1,150 @@
-Return-Path: <linux-kernel+bounces-328598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B73F978650
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:01:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0586C978653
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:02:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3B8A282469
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:01:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA16E280FAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753086BB4B;
-	Fri, 13 Sep 2024 17:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1032780C0C;
+	Fri, 13 Sep 2024 17:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="JXo5eKd8"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YC61bJFt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E7F57CBB;
-	Fri, 13 Sep 2024 17:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A7E6BB4B;
+	Fri, 13 Sep 2024 17:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726246894; cv=none; b=DWNLbQvbaxUoI0GsP3aTERpIwQX0Qt8gOtGG1heOIEh0eakyzEeMrvaJFXaMLkCfwLXOB0xjiuVLrxyUHbCL9w5L0mUz7FlU5md2Ah2BMYv0D/cDY6nYKfkGgXQ7yX9lAVq3w7s50r4lqZ1/Ligix7a5XAbxibeycYpWSbygTDg=
+	t=1726246933; cv=none; b=g1g9Ibd038k0k/ekq95BKvtKOj+m2cpiefA3UQJAFzvH/VccS7aSkTovJtiYn2zMab5IDeuOYUWpemdQfciqonjLnJnpuTfEcGRLsUzR8b66HIRMyxX6rmu1SAtjtO+tOp85kgzPTYdVlUHQgC5OwbEUH6jG3Ifn02cnTReZswo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726246894; c=relaxed/simple;
-	bh=qDtC1y7ZBxJ9wlYLMS6bSqD52Tijs/FV2RCHH1h3K8w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iK+yVJpvVNtvNd5mI8NEJSCeoHkShBQKzPHZrQSQ/kK6JymJ6CMqWmrikKztF29Sbb4evlK+0Y4piXEGaMpHGS8MYLR3vVopgOVIs6h286wKlvIymEpyyVdNqqqw+sLsuUKumMDR+CyOTFRbEfuKhJAuV1NG8ilYHyuVa9cyKhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=JXo5eKd8; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=xh6orQbvPl5FfKLfh/aG37BBQRsqWm3ZnNvZp2gsyIA=; b=JXo5eKd8wHDMS7Sx
-	D/ftgTYfCjAoD890WSd4hPrb2oSL1ZBQrQMKz4q1aNihjrzSrlKLOCim3j1fASnhfMjra5TCD+aEl
-	vSx/R/wbb4/7p3V9AT/EzhRXReHzLMmEE8BSE17ebFVIs8QvNxDN6sj+/rkFpiJ+pPZCHbNwvdfQs
-	778TIuRBSZlGFb/z6QCYas8/TLms6GiIqi78qok8JOnFTZ1syALvbsnF/wJprXpQmtgv+c9zJIKUn
-	xogDSIHYtREv7U5DXqzSJX+anC77j+RyyOYHUYVFyA/2+1gmYsCK641owlVNtod8kuhCnAwRzx2q/
-	zSp80kqEs1bZ1H7ICA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sp9fe-005dOb-2I;
-	Fri, 13 Sep 2024 17:01:22 +0000
-From: linux@treblig.org
-To: hare@suse.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] scsi: aic7xxx: Remove unused aic7770_find_device
-Date: Fri, 13 Sep 2024 18:01:16 +0100
-Message-ID: <20240913170116.250996-1-linux@treblig.org>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1726246933; c=relaxed/simple;
+	bh=iU+uC45aK3oxV1shXS6vt5137cEYJgyIhw/8iZFvqHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dukijcysQEi1noGOZmJiA3a75/4H283rvsyYJno50zFmuQEyyReQBp5iPmNB1umFXDmhBsEM+kHONSnDkQnf1yTfJ7jkCwpw4Yfk9FmoE2qK83KhghfOPg+9Qa65lHSqMXJgnsWCsjC7XQG1ETCP8sslH6jGYoHgmyt3F+woHlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YC61bJFt; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726246932; x=1757782932;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=iU+uC45aK3oxV1shXS6vt5137cEYJgyIhw/8iZFvqHc=;
+  b=YC61bJFtDbc7pNw8YMKfP20CmUK83nhYZneQV+19cs9dF25CYJT+oz92
+   1+VcojxywW52QxgOARwMZqo9QhvME1PEmn1aCus910XQ2K3D+2o07ZE52
+   uzjkD/oS4rsJrIp6orJrQEAjoX47QPQgWaazTAmR+rjkA17TpCd5VKzuQ
+   BBpHq1a71+vnboZSnDgN+Cj9iTDi2Ao2OgNnp+P+KboHzMpYhqhbHbDd4
+   +rbJY4+T0HnxBOjyD/MdT3+Dh/BJrrUFwccmd4TLPan7njLBEPOMPefxV
+   ckrNVbskJ0mr2i5k2DdQzfglBqD4+BK+QFcWt7sVgDHGtDqa15g3sJg+0
+   Q==;
+X-CSE-ConnectionGUID: +RljoJbhQReXe9iqunD4og==
+X-CSE-MsgGUID: +lkJMYGGQpagOtAW1a500g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="13515309"
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="13515309"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 10:02:11 -0700
+X-CSE-ConnectionGUID: AGhsvv91SAiQc4j9Az2hlw==
+X-CSE-MsgGUID: JmSBjxDHRLuUjUB61DfkmA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="98972511"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 13 Sep 2024 10:02:08 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sp9gL-0006im-28;
+	Fri, 13 Sep 2024 17:02:05 +0000
+Date: Sat, 14 Sep 2024 01:01:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: Erni Sri Satya Vennela <ernis@linux.microsoft.com>, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	jikos@kernel.org, bentiss@kernel.org, dmitry.torokhov@gmail.com,
+	linux-hyperv@vger.kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, ernis@microsoft.com,
+	Erni Sri Satya Vennela <ernis@linux.microsoft.com>,
+	Saurabh Sengar <ssengar@linux.microsoft.com>
+Subject: Re: [PATCH 1/3] Drivers: hv: vmbus: Disable Suspend-to-Idle for VMBus
+Message-ID: <202409140042.imFE8dSL-lkp@intel.com>
+References: <1726176470-13133-2-git-send-email-ernis@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1726176470-13133-2-git-send-email-ernis@linux.microsoft.com>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Hi Erni,
 
-'aic7770_find_device' has been unused since 2005's
-  commit dedd83108105 ("[SCSI] aic7xxx: remove Linux 2.4 ifdefs")
+kernel test robot noticed the following build errors:
 
-Remove it and the associated constant.
-(Whether anyone still has one of these cards in use is another question,
-I've just build tested this).
+[auto build test ERROR on hid/for-next]
+[also build test ERROR on dtor-input/next dtor-input/for-linus linus/master v6.11-rc7 next-20240913]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/scsi/aic7xxx/aic7770.c | 15 ---------------
- drivers/scsi/aic7xxx/aic7xxx.h |  2 --
- 2 files changed, 17 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Erni-Sri-Satya-Vennela/Drivers-hv-vmbus-Disable-Suspend-to-Idle-for-VMBus/20240913-053127
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git for-next
+patch link:    https://lore.kernel.org/r/1726176470-13133-2-git-send-email-ernis%40linux.microsoft.com
+patch subject: [PATCH 1/3] Drivers: hv: vmbus: Disable Suspend-to-Idle for VMBus
+config: x86_64-randconfig-161-20240913 (https://download.01.org/0day-ci/archive/20240914/202409140042.imFE8dSL-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409140042.imFE8dSL-lkp@intel.com/reproduce)
 
-diff --git a/drivers/scsi/aic7xxx/aic7770.c b/drivers/scsi/aic7xxx/aic7770.c
-index 176704b24e6a..f1ce02cd569e 100644
---- a/drivers/scsi/aic7xxx/aic7770.c
-+++ b/drivers/scsi/aic7xxx/aic7770.c
-@@ -99,21 +99,6 @@ struct aic7770_identity aic7770_ident_table[] =
- 		ahc_aic7770_EISA_setup
- 	}
- };
--const int ahc_num_aic7770_devs = ARRAY_SIZE(aic7770_ident_table);
--
--struct aic7770_identity *
--aic7770_find_device(uint32_t id)
--{
--	struct	aic7770_identity *entry;
--	int	i;
--
--	for (i = 0; i < ahc_num_aic7770_devs; i++) {
--		entry = &aic7770_ident_table[i];
--		if (entry->full_id == (id & entry->id_mask))
--			return (entry);
--	}
--	return (NULL);
--}
- 
- int
- aic7770_config(struct ahc_softc *ahc, struct aic7770_identity *entry, u_int io)
-diff --git a/drivers/scsi/aic7xxx/aic7xxx.h b/drivers/scsi/aic7xxx/aic7xxx.h
-index 9bc755a0a2d3..20857c213c72 100644
---- a/drivers/scsi/aic7xxx/aic7xxx.h
-+++ b/drivers/scsi/aic7xxx/aic7xxx.h
-@@ -1119,7 +1119,6 @@ struct aic7770_identity {
- 	ahc_device_setup_t	*setup;
- };
- extern struct aic7770_identity aic7770_ident_table[];
--extern const int ahc_num_aic7770_devs;
- 
- #define AHC_EISA_SLOT_OFFSET	0xc00
- #define AHC_EISA_IOSIZE		0x100
-@@ -1135,7 +1134,6 @@ int			 ahc_pci_test_register_access(struct ahc_softc *);
- void __maybe_unused	 ahc_pci_resume(struct ahc_softc *ahc);
- 
- /*************************** EISA/VL Front End ********************************/
--struct aic7770_identity *aic7770_find_device(uint32_t);
- int			 aic7770_config(struct ahc_softc *ahc,
- 					struct aic7770_identity *,
- 					u_int port);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409140042.imFE8dSL-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/hv/vmbus_drv.c:985:20: error: use of undeclared identifier 'vmbus_freeze'
+     985 |         .suspend_noirq  = vmbus_freeze,
+         |                           ^
+   drivers/hv/vmbus_drv.c:1913:42: warning: shift count >= width of type [-Wshift-count-overflow]
+    1913 |         dma_set_mask(&child_device_obj->device, DMA_BIT_MASK(64));
+         |                                                 ^~~~~~~~~~~~~~~~
+   include/linux/dma-mapping.h:77:54: note: expanded from macro 'DMA_BIT_MASK'
+      77 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
+         |                                                      ^ ~~~
+   1 warning and 1 error generated.
+
+
+vim +/vmbus_freeze +985 drivers/hv/vmbus_drv.c
+
+   973	
+   974	/*
+   975	 * Note: we must use the "noirq" ops: see the comment before vmbus_bus_pm.
+   976	 *
+   977	 * suspend_noirq/resume_noirq are set to NULL to support Suspend-to-Idle: we
+   978	 * shouldn't suspend the vmbus devices upon Suspend-to-Idle, otherwise there
+   979	 * is no way to wake up a Generation-2 VM.
+   980	 *
+   981	 * The other 4 ops are for hibernation.
+   982	 */
+   983	
+   984	static const struct dev_pm_ops vmbus_pm = {
+ > 985		.suspend_noirq  = vmbus_freeze,
+   986		.resume_noirq	= NULL,
+   987		.freeze_noirq	= vmbus_suspend,
+   988		.thaw_noirq	= vmbus_resume,
+   989		.poweroff_noirq	= vmbus_suspend,
+   990		.restore_noirq	= vmbus_resume,
+   991	};
+   992	
+
 -- 
-2.46.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
