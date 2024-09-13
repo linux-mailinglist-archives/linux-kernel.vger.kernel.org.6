@@ -1,190 +1,173 @@
-Return-Path: <linux-kernel+bounces-328293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2D3C978182
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:50:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E77C7978165
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:42:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E8922839BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:50:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 741E51F2430D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:42:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BD51DB54F;
-	Fri, 13 Sep 2024 13:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734EE1DB941;
+	Fri, 13 Sep 2024 13:42:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="oq3kYpLJ"
-Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EvT8BnQl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8969B1DA62C;
-	Fri, 13 Sep 2024 13:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534371D9358;
+	Fri, 13 Sep 2024 13:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726235430; cv=none; b=r8mWpXRBkIvJnYQvwoYKPFsD6R3ln7xCQhs9zQpizNT3ZWb6n1tf1WDv/MZfVxE7gVjo2AlOmlrBAyQ0KXyCTjCVleUS3FaSjVuBj+B7iKiAIHmoyNOrUEuKzr1yUQGJE9t6Q0K66Ry3IwzTMdhNtlGnBpMjv9kMENmbe/2MTbk=
+	t=1726234922; cv=none; b=ITDFLDySsup0wF1vG5MjjBDvISLJZ7bQooxT+4QzOdE9Hv3JKKIy+Wmn/ZDAjF5/Rbzpbn/pG0uRpPjCf7p2i26uIH6+BjPvykLVb3f8QygFwP/1jFZFw8NSknhSCIAO+4Aqc7MaKqwuh57QuQpVmHl7u2bgA6Bd+R0LVTi2SDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726235430; c=relaxed/simple;
-	bh=rmbVteh3MhMwb6kEdNs/84s2F30jItgTqVYsZhXGmko=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jDnTRYdX6nRcCtk3iVtUMFEXemBwSf2ZiCyNoe47y1WmggLQpGXxC5hlpM89d4RIClX1zPmeC3W5L4x1+o5J2xsm11qgkRI+fZoe3/BmFFsa+aAMhqE/5xEQsa7kmknk8hV2w49hZsmp7H0H8TIShVnMN8SP4C0u9oXiS8s2xlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=oq3kYpLJ; arc=none smtp.client-ip=49.12.72.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
-From: Finn Behrens <me@kloenk.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
-	t=1726234868; bh=koEIKzayacr7Jw1JspcVjhqLCbSZescfm3Wqy+rjWOs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=oq3kYpLJwiuDiblrUu8Tds3YRWHP9RXxhCzUyZPChjf4FpGPNNy4sKBPf/B6BGqjv
-	 1L1PNHdNcroidcPyfFjCxY6dd5sUZuPk8laioBYMiHbXqZIDuieYHLIbMfVvXtZFgV
-	 Gvuu4ZpHYeRrzCl/R+7x1q0pof7wkpKDiH6CsOYQ=
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Greg KH <gregkh@linuxfoundation.org>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] rust: add untrusted data abstraction
-Date: Fri, 13 Sep 2024 15:41:06 +0200
-Message-ID: <EE2A76E7-58E6-40E5-9075-48A169292250@kloenk.dev>
-In-Reply-To: <20240913112643.542914-2-benno.lossin@proton.me>
-References: <20240913112643.542914-1-benno.lossin@proton.me>
- <20240913112643.542914-2-benno.lossin@proton.me>
+	s=arc-20240116; t=1726234922; c=relaxed/simple;
+	bh=0izZwJbUGeZqqwiDNV+yXiHife2eO1rK6MoQCaafoMw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vDQQ3CXRY55JHjnImLIjkawJXZnfFwTylCyhwPX9r3Y9keb7I0qnIPtt+D2EUj/LIYwjHmMoicesyCw1BNw5x/XEUDg3tRN8K3lIZAZB2PQW7h3QfcnjxF4iShc/6BFGJD2HWYuJJvk+Tp3wybZH6og28e0rmaBSQ6g/SU3+4Zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EvT8BnQl; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726234921; x=1757770921;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0izZwJbUGeZqqwiDNV+yXiHife2eO1rK6MoQCaafoMw=;
+  b=EvT8BnQlXduQByrqMuNDntOZ974lONbfL1h2YE4z6GF+znfZp1nFCGgg
+   vWYlAqXB1ulHR+tQ0+FaR1ALkDyVnkVqzp6vTCta57o9AAQ7vhABwuX+M
+   WxMmce1IW9V/wKmGxeuH2rHitutLefwhNrbOzTTt/q2fhPqFp0RkXgvoU
+   8JXSrQNos7hq4sp+Zt++QRQphkQvdXEUTAizAcHj8UMadI6h5IzczDaI/
+   z9lfytXunyNNY3waq3fpEV8fuXSZZHTuUtECPW16hrK7jnsYZBueWsSta
+   m0tKntjlrCpptsL9WBpv9gh+VydX6dCVaXE+wAmLqD8WuFyu27zvEPsTa
+   A==;
+X-CSE-ConnectionGUID: SldJq2i1RNuXqj0P3Cc4Zg==
+X-CSE-MsgGUID: Bn+rlysLSEaAYk0Sr+jQiA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25004146"
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="25004146"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 06:42:00 -0700
+X-CSE-ConnectionGUID: 09Us8nKxQVKipNQZKbDWBQ==
+X-CSE-MsgGUID: FbdWSZFvSoO1EmjZw05Kqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="68826248"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 13 Sep 2024 06:41:57 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sp6Yc-0006Xu-2v;
+	Fri, 13 Sep 2024 13:41:54 +0000
+Date: Fri, 13 Sep 2024 21:41:15 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christoph Lameter via B4 Relay <devnull+cl.gentwo.org@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-arch@vger.kernel.org,
+	"Christoph Lameter (Ampere)" <cl@gentwo.org>
+Subject: Re: [PATCH v3] Avoid memory barrier in read_seqcount() through load
+ acquire
+Message-ID: <202409132135.ki3Mp5EA-lkp@intel.com>
+References: <20240912-seq_optimize-v3-1-8ee25e04dffa@gentwo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912-seq_optimize-v3-1-8ee25e04dffa@gentwo.org>
+
+Hi Christoph,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on 77f587896757708780a7e8792efe62939f25a5ab]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Christoph-Lameter-via-B4-Relay/Avoid-memory-barrier-in-read_seqcount-through-load-acquire/20240913-064557
+base:   77f587896757708780a7e8792efe62939f25a5ab
+patch link:    https://lore.kernel.org/r/20240912-seq_optimize-v3-1-8ee25e04dffa%40gentwo.org
+patch subject: [PATCH v3] Avoid memory barrier in read_seqcount() through load acquire
+config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20240913/202409132135.ki3Mp5EA-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240913/202409132135.ki3Mp5EA-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409132135.ki3Mp5EA-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   In file included from drivers/gpu/drm/i915/gt/intel_gt.c:36:
+   drivers/gpu/drm/i915/gt/intel_tlb.h: In function 'intel_gt_tlb_seqno':
+>> drivers/gpu/drm/i915/gt/intel_tlb.h:21:47: error: macro "seqprop_sequence" requires 2 arguments, but only 1 given
+      21 |         return seqprop_sequence(&gt->tlb.seqno);
+         |                                               ^
+   In file included from include/linux/mmzone.h:17,
+                    from include/linux/gfp.h:7,
+                    from include/drm/drm_managed.h:6,
+                    from drivers/gpu/drm/i915/gt/intel_gt.c:6:
+   include/linux/seqlock.h:280: note: macro "seqprop_sequence" defined here
+     280 | #define seqprop_sequence(s, a)          __seqprop(s, sequence)(s, a)
+         | 
+   In file included from drivers/gpu/drm/i915/gt/intel_gt.c:36:
+>> drivers/gpu/drm/i915/gt/intel_tlb.h:21:16: error: 'seqprop_sequence' undeclared (first use in this function)
+      21 |         return seqprop_sequence(&gt->tlb.seqno);
+         |                ^~~~~~~~~~~~~~~~
+   drivers/gpu/drm/i915/gt/intel_tlb.h:21:16: note: each undeclared identifier is reported only once for each function it appears in
+--
+   In file included from drivers/gpu/drm/i915/gt/intel_tlb.c:14:
+   drivers/gpu/drm/i915/gt/intel_tlb.h: In function 'intel_gt_tlb_seqno':
+>> drivers/gpu/drm/i915/gt/intel_tlb.h:21:47: error: macro "seqprop_sequence" requires 2 arguments, but only 1 given
+      21 |         return seqprop_sequence(&gt->tlb.seqno);
+         |                                               ^
+   In file included from include/linux/mmzone.h:17,
+                    from include/linux/gfp.h:7,
+                    from include/linux/xarray.h:16,
+                    from include/linux/radix-tree.h:21,
+                    from include/linux/idr.h:15,
+                    from include/linux/kernfs.h:12,
+                    from include/linux/sysfs.h:16,
+                    from include/linux/kobject.h:20,
+                    from include/linux/energy_model.h:7,
+                    from include/linux/device.h:16,
+                    from include/linux/pm_qos.h:17,
+                    from drivers/gpu/drm/i915/i915_drv.h:35,
+                    from drivers/gpu/drm/i915/gt/intel_tlb.c:6:
+   include/linux/seqlock.h:280: note: macro "seqprop_sequence" defined here
+     280 | #define seqprop_sequence(s, a)          __seqprop(s, sequence)(s, a)
+         | 
+   In file included from drivers/gpu/drm/i915/gt/intel_tlb.c:14:
+>> drivers/gpu/drm/i915/gt/intel_tlb.h:21:16: error: 'seqprop_sequence' undeclared (first use in this function)
+      21 |         return seqprop_sequence(&gt->tlb.seqno);
+         |                ^~~~~~~~~~~~~~~~
+   drivers/gpu/drm/i915/gt/intel_tlb.h:21:16: note: each undeclared identifier is reported only once for each function it appears in
+>> drivers/gpu/drm/i915/gt/intel_tlb.h:22:1: warning: control reaches end of non-void function [-Wreturn-type]
+      22 | }
+         | ^
 
 
+vim +/seqprop_sequence +21 drivers/gpu/drm/i915/gt/intel_tlb.h
 
-On 13 Sep 2024, at 13:26, Benno Lossin wrote:
+568a2e6f0b12ee Chris Wilson 2023-08-01  18  
+568a2e6f0b12ee Chris Wilson 2023-08-01  19  static inline u32 intel_gt_tlb_seqno(const struct intel_gt *gt)
+568a2e6f0b12ee Chris Wilson 2023-08-01  20  {
+568a2e6f0b12ee Chris Wilson 2023-08-01 @21  	return seqprop_sequence(&gt->tlb.seqno);
+568a2e6f0b12ee Chris Wilson 2023-08-01 @22  }
+568a2e6f0b12ee Chris Wilson 2023-08-01  23  
 
-> When reading data from userspace, hardware or other external untrusted
-> sources, the data must be validated before it is used for logic within
-> the kernel. This abstraction provides a generic newtype wrapper that
-> prevents direct access to the inner type. It does allow access through
-> the `untrusted()` method, but that should be a telltale sign to
-> reviewers that untrusted data is being used at that point.
->
-> Any API that reads data from an untrusted source should return
-> `Untrusted<T>` where `T` is the type of the underlying untrusted data.
-> This generic allows other abstractions to return their custom type
-> wrapped by `Untrusted`, signaling to the caller that the data must be
-> validated before use. This allows those abstractions to be used both in=
-
-> a trusted and untrusted manner, increasing their generality.
-> Additionally, using the arbitrary self types feature, APIs can be
-> designed to explicitly read untrusted data:
->
->     impl MyCustomDataSource {
->         pub fn read(self: &Untrusted<Self>) -> &Untrusted<[u8]>;
->     }
->
-> To validate data, the `Validator` trait is introduced, readers of
-> untrusted data should implement it for their type and move all of their=
-
-> validation and parsing logic into its `validate` function. That way
-> reviewers and later contributors have a central location to consult for=
-
-> data validation.
->
-> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
-> ---
->  rust/kernel/types.rs | 248 ++++++++++++++++++++++++++++++++++++++++++-=
-
->  1 file changed, 247 insertions(+), 1 deletion(-)
->
-> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-> index 9e7ca066355c..20ef04b1b417 100644
-> --- a/rust/kernel/types.rs
-> +++ b/rust/kernel/types.rs
-=E2=80=A6
-> +
-> +/// Validates untrusted data.
-> +///
-> +/// # Examples
-> +///
-> +/// ## Using an API returning untrusted data
-> +///
-> +/// Create the type of the data that you want to parse:
-> +///
-> +/// ```
-> +/// pub struct FooData {
-> +///     data: [u8; 4],
-> +/// }
-> +/// ```
-> +///
-> +/// Then implement this trait:
-> +///
-> +/// ```
-> +/// use kernel::types::{Untrusted, Validator};
-> +/// # pub struct FooData {
-> +/// #     data: [u8; 4],
-> +/// # }
-> +/// impl Validator for FooData {
-> +///     type Input =3D [u8];
-> +///     type Output =3D FooData;
-> +///     type Err =3D Error;
-> +///
-> +///     fn validate(untrusted: &Untrusted<Self::Input>) -> Result<Self=
-::Output, Self::Err> {
-> +///         let untrusted =3D untrusted.untrusted();
-> +///         let untrusted =3D <[u8; 4]>::try_from(untrusted);
-> +///         for byte in &untrusted {
-> +///             if byte & 0xf0 !=3D 0 {
-> +///                 return Err(());
-> +///             }
-> +///         }
-> +///         Ok(FooData { data: untrusted })
-> +///     }
-> +/// }
-> +/// ```
-> +///
-> +/// And then use the API that returns untrusted data:
-> +///
-> +/// ```ignore
-> +/// let result =3D get_untrusted_data().validate::<FooData>();
-> +/// ```
-> +///
-> +/// ## Creating an API returning untrusted data
-> +///
-> +/// In your API instead of just returning the untrusted data, wrap it =
-in [`Untrusted<T>`]:
-> +///
-> +/// ```
-> +/// pub fn get_untrusted_data(&self) -> &Untrusted<[u8]> {
-> +///     todo!()
-> +/// }
-> +/// ```
-> +pub trait Validator {
-> +    /// Type of the input data that is untrusted.
-> +    type Input: ?Sized;
-
-I would like to explore this trait with being generic over Input, instead=
- of having Input as an associated type. Might be nicer to have Validators=
- for different input types if the valid data is always the same?
-
-> +    /// Type of the validated data.
-> +    type Output;
-> +    /// Validation error.
-> +    type Err;
-> +
-> +    /// Validate the given untrusted data and parse it into the output=
- type.
-> +    ///
-> +    /// When implementing this function, you can use [`Untrusted::untr=
-usted()`] to get access to
-> +    /// the raw untrusted data.
-> +    fn validate(untrusted: &Untrusted<Self::Input>) -> Result<Self::Ou=
-tput, Self::Err>;
-> +}
-> -- =
-
-> 2.46.0
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
