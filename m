@@ -1,181 +1,158 @@
-Return-Path: <linux-kernel+bounces-327492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 997F59776B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:03:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1AFB9776BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:08:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B885A1C2436D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:03:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C2ED284EBB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 02:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB141D27BF;
-	Fri, 13 Sep 2024 02:02:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384ED1D2792;
+	Fri, 13 Sep 2024 02:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I4MOevAp"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z33D3HKo"
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 197871C2325;
-	Fri, 13 Sep 2024 02:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276C21CEE97;
+	Fri, 13 Sep 2024 02:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726192977; cv=none; b=keQC+AV6is1PZ+eq2ZW5nSO3BEWCThKufJn24JKGyRxwwQggOY3q9xD33yBjaXT9Xq1c2+SPA25Li+1EyJcWXiAhFeh5lQwQ/sK+EBmgZb5/hQzI6QbFgBi3yBoVjrCPvjuKeqUyGJEOhnOO9sDT0wCywlw+Xtqgs1i8b2LwqLM=
+	t=1726193288; cv=none; b=gYoBPQO1WpML9aULvo2PoUzNYyx9GQhOXBvDgT6V2Lg44U6A3BDArnGvp1eC/g5qJ1m/oWnnMtpFqKe47mQcNt3Q9HuJNxjshE9GG7GzxMAc3YjPdNMau2ppggAF59F4Gvln7koyI2wpP6p8T8/JM2ZCk4RTILZXkE8cws+CMjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726192977; c=relaxed/simple;
-	bh=4MThY4qvJ1Ab6BupHVMJxh9rEHrKqVI39dBQQzwYzlc=;
+	s=arc-20240116; t=1726193288; c=relaxed/simple;
+	bh=9eu43g3M8wipEXOkNZjpouW9lCogA3u6Xl1D1un49kk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=REwwZ/o+vFCGuMIUDPxI8Uxo3aDeNz09p+WcaIQ2/6e8chEnDl7H0H3Enxwj9ZWkvDa/EXsiTv339HKfMTkDqu2mt6Dvp/hc8p4WLUr5Kw2cd1Ko9QplMcevOcOZXT0CGb4IMQcg2OtmZwc1mwEl+DWJ/fx5I3HisbwhGZ5yr2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I4MOevAp; arc=none smtp.client-ip=209.85.167.47
+	 To:Cc:Content-Type; b=fQM7sn0sYhoYF+oOuC4yWuu5vXcXBY6Xt2zl4qYnTciXO8Rjoee7wpikTUv4dV+Nu20nRrj5CIMT2ZoTXcFndw6YcT4Uo2rzSkYBf3L9SBywQwinVSMSaQigxHRcurYCdroRArXz+D3IGXELgeh5IDWTcd1T8q3HFfPP+eQHrlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z33D3HKo; arc=none smtp.client-ip=209.85.167.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53654d716d1so170039e87.2;
-        Thu, 12 Sep 2024 19:02:53 -0700 (PDT)
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3e049185cfeso146997b6e.1;
+        Thu, 12 Sep 2024 19:08:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726192972; x=1726797772; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QY/gsuvkOGtdcCqciSaAEue2D/lSI91a7bbyTdP4bHg=;
-        b=I4MOevAp08QF5iLxLdlNhA2yKI3IENjQspbOIx8SuktxmOGWhmVGHqL+hQpgN3wSIt
-         9Wze6PpYAZ1OB2UUCOlRvB8LGRIMDra++DTnYBcEGRnz4q+DkA6WUHboWUpOg/qBwz9y
-         EbTXbzblaljw+brdfnF7UoG7/ET2eiBvXo9U/kwZLvilKgvx+GlfF6Aof1sjz5G9hQ4Z
-         HoNLNfJjLZBzGFUdlyzAc5wzyu0hDtgzAjyAKjcoxsTEn+uDnZuPS8QB7DgcA7TWHCYs
-         wP9D8odq2wzX8nsFavBNwEc1NPnGEQM/TBk6xDhe3CbQ1ojWEM1dEUnUQNjJNzuj0gFJ
-         cPfw==
+        d=gmail.com; s=20230601; t=1726193285; x=1726798085; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=s7cimPnDbBKYHrFkLn6Bf+Cga62onzQ+Q3eQb/Boxbw=;
+        b=Z33D3HKovCtknm0H10JwzQdlDEMekOnUySEqtlqVMbmXO0U9zaSisEXzxmKFpAMXa8
+         hWJTzVyI2Hc4fcQfZei8gljV54Vsqz7TEqW5KSgjqmZkyTQ2nVyWPGvm0qSAJgT7Lsmf
+         P8djyzZkDYtsrf5JWUqoDbRCcSqwWQg07L1zodJ6QZY3y3ZOJd5hqVfs1/TLwmBUrHiO
+         j2yKgwoy7nzB49EFWUD7sAy6orjMd/kfYEb9F2CFa4n9HzTrGXnVIU6BsFo4nq5Ck7Y8
+         1GZExlLF32boIRRRl1btvjLpBpjov/00XxdbQuIozxlMP7B9LhBM+I62horW7e1O5kUt
+         E8ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726192972; x=1726797772;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QY/gsuvkOGtdcCqciSaAEue2D/lSI91a7bbyTdP4bHg=;
-        b=drvIXOY484oZyWkkvEcYrKpRwi2mqam1i2dwUrAbiGZatZp5Uj6tQsi3MBWUyRDBzt
-         fmVKy2b5IomLgCHG32sETcoHuaBVu80Qr1r/jdhMvROZqyqWucy1q/t5/3psW2mPgize
-         6rgpED924aOQUv3ddTaXKlXHzaOj2UbSITqfAIhAa8b2UK/LEIhz7CkacEgTR77NyxPl
-         rDlpE/3eqa6U/Z4eiAThZ1HUgjXwCeDtsUNSvABCBnf3g8UEZw+tEQR7kfKql+sqdHla
-         +q+tbzIVhWD2LPCedmpCJyfs40H5dTfaDZJ1tD1ZRHHJv89jZKIFB/cwWudCSehS0AhB
-         owOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTJqA74XIMowVDzaD1yOV7OYiPKT/KgnNQp/2HMTBeqTsZDQggltSPoyz25YU7lyqgkxzdTq8eHmpNxkp1@vger.kernel.org, AJvYcCUnVUj+S/7p8YR5+iCreirA0FHvag9qstNsxbRS+tO+ToWUDXbfQPrBkyQlHCvFiErCax6U/xzmVbwd@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWG0k7ZU7E0Fo7B1RD5CZWcPeDgiHrO7Ejm092pXioqcnO5qcB
-	HSsyAz1V3iHwtSGmnu3NdyvNisfMvdAZnxaA4xJXjkicQbjXedDgz8vlbisGiTTjiQ+pzjLPIln
-	dHZjZh7ytoxzYo47jPMV7dLHDAx0=
-X-Google-Smtp-Source: AGHT+IGrJuDG02PCG4dEENnexjrncMmBCSoLaB2YMVJxFV1gKI9S8xqofKhSZ5zvkpp0iF7rb03Y0mYGa3ZFRO8vt9A=
-X-Received: by 2002:a2e:bc15:0:b0:2f4:f3e7:2a36 with SMTP id
- 38308e7fff4ca-2f787d9e80cmr7624221fa.3.1726192971742; Thu, 12 Sep 2024
- 19:02:51 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1726193285; x=1726798085;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=s7cimPnDbBKYHrFkLn6Bf+Cga62onzQ+Q3eQb/Boxbw=;
+        b=CtoardTfwI+pg3YtzDDTouUxSOCBSqQ5KetMT+TW/ndJRUpFlZdRkXyitoEnKw8Hj+
+         95DQjyj5QJSYTOjQCVTMuZ4eCWBY1/750no8ZfLslPiXzEdChzDgCES2ntyCXbDHttBY
+         NGsibPdwKxKD6sqie5izbrWuvMWTPrzUVELgPzb1302bhI3eqTsQBVSOX4OFZBWnRfFa
+         +CYquS7vvKXVIB2SD3XqGfJKSGz15xr1N489dHJL/uSMXxlAfOx4AeyXJV9VqF1Jt6UO
+         w1a/X2KdzIjd6pz168dejgUo35IZpJpERk7P/NKPlzZ/tCJWpFSrHcbU+8lJ7tIcX4L9
+         +scQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV8rTmcSKOPXsxXSEVV9Phz0NZO7DBW6OKLqiGh3q/6hhlxrYFZQMLdoIKAe/8bA2dFQ1d1WsT3B6h/b/0=@vger.kernel.org, AJvYcCVjbrlUi9kJHWASLqTW+Akg2nJv6YWzzp9tTMppxlNpqQzPTPIyhdosQADrVus6OtTuhZG3fH8gQHzHN0W9Fy2a@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVHFYjKHPQjD8GCtqImJJGPw2RpO77loMNfOGORd7O+YFSANqJ
+	XeNMqm/TDNh9U0RsPLmQiUthrxSCzsiwAArY1ZaAkaQTVVt0FWysjyOLSYBE1m46LqI5rQRnosO
+	ldANgPEPF3eHwmeoO+nbboAZVLsw=
+X-Google-Smtp-Source: AGHT+IHggupOHNWQQGi87kpgjxoBFmwiJyJeCdJM1Ufdym7+4NlW81mIMtLq1f/ocpWT1XwYREsvFBgQ5gHmWI0LRtQ=
+X-Received: by 2002:a05:6808:14cf:b0:3dd:cc7:957c with SMTP id
+ 5614622812f47-3e07a0eee2bmr659522b6e.8.1726193284860; Thu, 12 Sep 2024
+ 19:08:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240904075300.1148836-1-zhaoyang.huang@unisoc.com>
-In-Reply-To: <20240904075300.1148836-1-zhaoyang.huang@unisoc.com>
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Date: Fri, 13 Sep 2024 10:02:40 +0800
-Message-ID: <CAGWkznF0LvqP59edcrs_wxpbUAnK6mZWY-ovE0CPBBXNysUUtg@mail.gmail.com>
-Subject: Re: [PATCHv3 1/1] fs: ext4: Don't use CMA for buffer_head
-To: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Jan Kara <jack@suse.cz>
-Cc: "Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	=?UTF-8?B?5bq357qq5ruoIChTdGV2ZSBLYW5nKQ==?= <steve.kang@unisoc.com>
+References: <20240912100018.736447-1-zhangchunyan@iscas.ac.cn> <ZuNTWCsPPLTm1zdX@ghost>
+In-Reply-To: <ZuNTWCsPPLTm1zdX@ghost>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Fri, 13 Sep 2024 10:07:28 +0800
+Message-ID: <CAAfSe-sfv2n85-XtYBqegCH+n=XR1KN+v6oJu+5d0_y_z9toTQ@mail.gmail.com>
+Subject: Re: [PATCH] selftest/mm: Do not use hint for riscv mmap
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Chunyan Zhang <zhangchunyan@iscas.ac.cn>, Andrew Morton <akpm@linux-foundation.org>, 
+	Shuah Khan <shuah@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, linux-mm@kvack.org, 
+	linux-kselftest@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-loop in jan kara
+On Fri, 13 Sept 2024 at 04:47, Charlie Jenkins <charlie@rivosinc.com> wrote:
+>
+> On Thu, Sep 12, 2024 at 06:00:18PM +0800, Chunyan Zhang wrote:
+> > When the virtual address range selftest is run on RISC-V platforms,
+> > it is observed that using the hint address when calling mmap cannot
+> > get the address in the range of that validate_addr() checks, also
+> > that will cause '/proc/self/maps' have gaps larger than MAP_CHUNK_SIZE.
+> >
+> > Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+> > ---
+> >  tools/testing/selftests/mm/virtual_address_range.c | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> >
+> > diff --git a/tools/testing/selftests/mm/virtual_address_range.c b/tools/testing/selftests/mm/virtual_address_range.c
+> > index 4e4c1e311247..25f3eb304999 100644
+> > --- a/tools/testing/selftests/mm/virtual_address_range.c
+> > +++ b/tools/testing/selftests/mm/virtual_address_range.c
+> > @@ -64,6 +64,14 @@
+> >  #define NR_CHUNKS_HIGH  NR_CHUNKS_384TB
+> >  #endif
+> >
+> > +#if defined(__riscv) && (__riscv_xlen == 64)
+> > +static char *hind_addr(void)
+>
+> This is not a typo by you since this is the name of the original
+> function but this should be "hint_addr" right?
 
-On Wed, Sep 4, 2024 at 3:54=E2=80=AFPM zhaoyang.huang <zhaoyang.huang@uniso=
-c.com> wrote:
+Right, didn't notice this typo, let me fix it.
+
 >
-> From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+> > +{
+> > +     return NULL;
+> > +}
+> > +
+> > +static void validate_addr(char *ptr, int high_addr) { }
+> > +#else
 >
-> cma_alloc() keep failed in our system which thanks to a jh->bh->b_page
-> can not be migrated out of CMA area[1] as the jh has one cp_transaction
-> pending on it because of j_free > j_max_transaction_buffers[2][3][4][5][6=
-].
-> We temporarily solve this by launching jbd2_log_do_checkpoint forcefully
-> somewhere. Since journal is common mechanism to all JFSs and
-> cp_transaction has a little fewer opportunity to be launched, the
-> cma_alloc() could be affected under the same scenario. This patch
-> would like to have buffer_head of ext4 not use CMA pages when doing
-> sb_getblk.
+> This is something that I am trying to solve over at
+> https://lore.kernel.org/lkml/20240905-patches-below_hint_mmap-v3-0-3cd5564efbbb@rivosinc.com/
+> (the solution is still in flux). Since riscv doesn't currently have this
+> behavior of restricting the virtual address space, I think it is more
+> reasonable to disable this test entirely. After we have a longer-term
+> solution with the patch I have up we can adjust the test and re-enable
+> it. What do you think?
+
+That also makes sense, I will send another patch to do that.
+
+Thanks,
+Chunyan
+
 >
-> [1]
-> crash_arm64_v8.0.4++> kmem -p|grep ffffff808f0aa150(sb->s_bdev->bd_inode-=
->i_mapping)
-> fffffffe01a51c00  e9470000 ffffff808f0aa150        3  2 8000000008020 lru=
-,private
-> fffffffe03d189c0 174627000 ffffff808f0aa150        4  2 2004000000008020 =
-lru,private
-> fffffffe03d88e00 176238000 ffffff808f0aa150      3f9  2 2008000000008020 =
-lru,private
-> fffffffe03d88e40 176239000 ffffff808f0aa150        6  2 2008000000008020 =
-lru,private
-> fffffffe03d88e80 17623a000 ffffff808f0aa150        5  2 2008000000008020 =
-lru,private
-> fffffffe03d88ec0 17623b000 ffffff808f0aa150        1  2 2008000000008020 =
-lru,private
-> fffffffe03d88f00 17623c000 ffffff808f0aa150        0  2 2008000000008020 =
-lru,private
-> fffffffe040e6540 183995000 ffffff808f0aa150      3f4  2 2004000000008020 =
-lru,private
+> - Charlie
 >
-> [2] page -> buffer_head
-> crash_arm64_v8.0.4++> struct page.private fffffffe01a51c00 -x
->       private =3D 0xffffff802fca0c00
->
-> [3] buffer_head -> journal_head
-> crash_arm64_v8.0.4++> struct buffer_head.b_private 0xffffff802fca0c00
->   b_private =3D 0xffffff8041338e10,
->
-> [4] journal_head -> b_cp_transaction
-> crash_arm64_v8.0.4++> struct journal_head.b_cp_transaction 0xffffff804133=
-8e10 -x
->   b_cp_transaction =3D 0xffffff80410f1900,
->
-> [5] transaction_t -> journal
-> crash_arm64_v8.0.4++> struct transaction_t.t_journal 0xffffff80410f1900 -=
-x
->   t_journal =3D 0xffffff80e70f3000,
->
-> [6] j_free & j_max_transaction_buffers
-> crash_arm64_v8.0.4++> struct journal_t.j_free,j_max_transaction_buffers 0=
-xffffff80e70f3000 -x
->   j_free =3D 0x3f1,
->   j_max_transaction_buffers =3D 0x100,
->
-> Suggested-by: Theodore Ts'o <tytso@mit.edu>
-> Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> ---
-> v3: switch to use getblk_unmoveable as suggested by Theodore Ts'o
-> ---
-> ---
->  fs/ext4/inode.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 941c1c0d5c6e..a0f48840c5c1 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -869,7 +869,14 @@ struct buffer_head *ext4_getblk(handle_t *handle, st=
-ruct inode *inode,
->         if (nowait)
->                 return sb_find_get_block(inode->i_sb, map.m_pblk);
->
-> -       bh =3D sb_getblk(inode->i_sb, map.m_pblk);
-> +       /*
-> +        * Since bh could introduce extra ref count such as referred by
-> +        * journal_head etc. Try to avoid using __GFP_MOVABLE here
-> +        * as it may fail the migration when journal_head remains.
-> +        */
-> +       bh =3D getblk_unmovable(inode->i_sb->s_bdev, map.m_pblk,
-> +                               inode->i_sb->s_blocksize);
-> +
->         if (unlikely(!bh))
->                 return ERR_PTR(-ENOMEM);
->         if (map.m_flags & EXT4_MAP_NEW) {
-> --
-> 2.25.1
->
+> >  static char *hind_addr(void)
+> >  {
+> >       int bits = HIGH_ADDR_SHIFT + rand() % (63 - HIGH_ADDR_SHIFT);
+> > @@ -81,6 +89,7 @@ static void validate_addr(char *ptr, int high_addr)
+> >       if (addr > HIGH_ADDR_MARK)
+> >               ksft_exit_fail_msg("Bad address %lx\n", addr);
+> >  }
+> > +#endif
+> >
+> >  static int validate_lower_address_hint(void)
+> >  {
+> > --
+> > 2.34.1
+> >
+> >
+> > _______________________________________________
+> > linux-riscv mailing list
+> > linux-riscv@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-riscv
 
