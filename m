@@ -1,140 +1,140 @@
-Return-Path: <linux-kernel+bounces-328602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE22E97865E
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:04:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9FA0978661
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:06:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F86E281F8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:04:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FD381C2250C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB25824A0;
-	Fri, 13 Sep 2024 17:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941A34F20E;
+	Fri, 13 Sep 2024 17:06:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kxin2TFY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HJWi83pn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F0CC7DA64;
-	Fri, 13 Sep 2024 17:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F079E7DA95;
+	Fri, 13 Sep 2024 17:06:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726247062; cv=none; b=nr956Nvbbcc6+Y6SjilXfoGLWHleLsfBG+EnZzYDMHgptFi0AYx3u0H+odUuNoOC6WocrsBLFBoBUPjs4bE9PiVNjxAjmUO01WEY8zErzTdUc0O5k9fMmWWcZoz7y0col7R9lJJIQjzb7KDO7NBes8ONZYxFgpPbKGMhAEOea3w=
+	t=1726247170; cv=none; b=W1tKI4pCRfY/dNXh9e4VepFOkHGsOZy7vyTNbqi4XjSdqHHwgl1jTtEtoNEpXX21hvr12eZAos0Phq/0Ei9FSx+QKXwpbNWvnivZApRyioSK4lGV4DWhpeXATWfWXFWYDKbijnAo/M1K+ap4wj1vJXQGcgBrDSLh+tG/YtpKJN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726247062; c=relaxed/simple;
-	bh=Bimw3teACghVaYDGbMFiMeYLIhGUrCaX5bh5RjG58O0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KmQg5ut2GFL0eMz0DtXM8yT/LGdTwVOQ25HAHmWczRlbrav0ORRPIY7WNPpw9XYDVn2f+jaDJ60S6w/I5mJF8U9jf/k4TUM5RUOueZgrD7BEjDTr94yqE+EA7pz47jsx+1uwM1kLaByQWHawbyf+70kNRwInAaF4JVhX1gQlW2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kxin2TFY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A6ADC4CEC0;
-	Fri, 13 Sep 2024 17:04:18 +0000 (UTC)
+	s=arc-20240116; t=1726247170; c=relaxed/simple;
+	bh=V0FUE55moSUh/RiO6vVkhRqYzDmAkN+3dar5NwizwaE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JRNnZyTc+uZ5UNgF9OdH+e+czZ+TAyKg38eQyWubKWdX+IGzmx8KoCIeanJG6BIykm5V2eKcClkDKn8d8uL5hIoNsVAR8KRi8CvkvJNonx7FzGu2/GLCWoKJJoVg7cxbbC9gvNjDjhKH9UIy7DWYSQjppAby1NqfYtoHUaGPNlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HJWi83pn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6166C4CEC7;
+	Fri, 13 Sep 2024 17:06:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726247061;
-	bh=Bimw3teACghVaYDGbMFiMeYLIhGUrCaX5bh5RjG58O0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kxin2TFYdo2MpnoqN3/ru1HXkcRRgGB0aGiMC3+oI/dvsnotFUvxCMtQoPFpmLWvp
-	 42JQreaD/b26F7UepH93bp8GmZOfDc4wN7EZ3Bg+NTdgjnUOyaKulsSOlH5amgeWwX
-	 JJI3jHupE1s5neWUzhqNkYRCr0KAcI5V6nzAy71JqPFPEZvCtU6eXVYGTR2kMdC4sb
-	 1+zZ84ml2XFSO3tMSmzcs2os+2sX9Wd4HUTImpGtSXeQZzaKXuCGQ52O8ha2iM9/NW
-	 yW8ybh0rzwS1NZPOxcCNP+wTbin7+prMU7oAx1BiAK55l0smOaodlE6spWLfFPFxe4
-	 5evh8JodlF01Q==
-Date: Fri, 13 Sep 2024 18:04:17 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/4] dt-bindings: net: dsa: the adjacent DSA
- port must appear first in "link" property
-Message-ID: <20240913-estimate-badland-5ab577e69bab@spud>
-References: <20240913131507.2760966-1-vladimir.oltean@nxp.com>
- <20240913131507.2760966-3-vladimir.oltean@nxp.com>
+	s=k20201202; t=1726247169;
+	bh=V0FUE55moSUh/RiO6vVkhRqYzDmAkN+3dar5NwizwaE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=HJWi83pnWhkbqHjEYPZLYoeTLvRz5FQJkF7M/3SDaOQhUVVv4vtWuP6MJwOPM637D
+	 4re3H9T1f+4Aye4QAQhKvTmYqEOg6COKEXlJETNDtvPhLpOh00SGtQvAyBlm6mXjC8
+	 i5t+wen83dJw3bOzMKDGo24sX1OT09SpLOcP4V1Fno9vbNg197hC8xxKllDp4IQT6A
+	 0sBNjWH75F4waJhn7JSNlNvk8NAvkWwPMvISVs4BHiNXiS2ATVGRhaYvaBp5uikKXF
+	 qnVTWZBetkx9b0Vx8fecIENx57E33hiYgZPfgYjYw6oH1XBgDZxesc3gO6ih/x/Jah
+	 rz9DQDFG3k7qQ==
+From: Alexey Gladkov <legion@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-coco@lists.linux.dev
+Cc: "Alexey Gladkov (Intel)" <legion@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Yuan Yao <yuan.yao@intel.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Yuntao Wang <ytcoode@gmail.com>,
+	Kai Huang <kai.huang@intel.com>,
+	Baoquan He <bhe@redhat.com>,
+	Oleg Nesterov <oleg@redhat.com>,
+	cho@microsoft.com,
+	decui@microsoft.com,
+	John.Starks@microsoft.com
+Subject: [PATCH v7 0/6] x86/tdx: Allow MMIO instructions from userspace
+Date: Fri, 13 Sep 2024 19:05:55 +0200
+Message-ID: <cover.1726237595.git.legion@kernel.org>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <cover.1725622408.git.legion@kernel.org>
+References: <cover.1725622408.git.legion@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="erhZyKGbQwqN4Ufv"
-Content-Disposition: inline
-In-Reply-To: <20240913131507.2760966-3-vladimir.oltean@nxp.com>
+Content-Transfer-Encoding: 8bit
+
+From: "Alexey Gladkov (Intel)" <legion@kernel.org>
+
+Currently, MMIO inside the TDX guest is allowed from kernel space and access
+from userspace is denied. This becomes a problem when working with virtual
+devices in userspace.
+
+In TDX guest MMIO instructions are emulated in #VE. The kernel code uses special
+helpers to access MMIO memory to limit the number of instructions which are
+used.
+
+This patchset makes MMIO accessible from userspace. To do this additional checks
+were added to ensure that the emulated instruction will not be compromised.
 
 
---erhZyKGbQwqN4Ufv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+v7:
+- Use fault_in_kernel_space() instead of using your own function as
+  suggested by Dave Hansen.
+- Drop the unnecessary ifdef CONFIG_INTEL_TDX_GUEST from thread_struct.
 
-On Fri, Sep 13, 2024 at 04:15:05PM +0300, Vladimir Oltean wrote:
-> If we don't add something along these lines, it is absolutely impossible
-> to know, for trees with 3 or more switches, which links represent direct
-> connections and which don't.
->=20
-> I've studied existing mainline device trees, and it seems that the rule
-> has been respected thus far. I've actually tested such a 3-switch setup
-> with the Turris MOX.
+v6:
+- Reorder patches and change commit messages.
 
-What about out of tree (so in u-boot or the likes)? Are there other
-users that we need to care about?
+v5:
+- Improve commit messages and comments in commits as suggested by Kirill A. Shutemov.
+- To emulate MOVS, instead of storing the entire address, started using a flag.
 
-This doesn't really seem like an ABI change, if this is the established
-convention, but feels like a fixes tag and backports to stable etc are
-in order to me.
+v4:
+- Move patches to avoid crossing the page boundary to separate patchset. They
+  address separate issue.
+- Check the address only in user context and in case of nested exceptions.
+- Fix the check that the address does not point to private memory.
 
->=20
-> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-> ---
->  Documentation/devicetree/bindings/net/dsa/dsa-port.yaml | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/net/dsa/dsa-port.yaml b/Do=
-cumentation/devicetree/bindings/net/dsa/dsa-port.yaml
-> index 480120469953..307c61aadcbc 100644
-> --- a/Documentation/devicetree/bindings/net/dsa/dsa-port.yaml
-> +++ b/Documentation/devicetree/bindings/net/dsa/dsa-port.yaml
-> @@ -31,10 +31,11 @@ properties:
-> =20
->    link:
->      description:
-> -      Should be a list of phandles to other switch's DSA port. This
-> -      port is used as the outgoing port towards the phandle ports. The
-> -      full routing information must be given, not just the one hop
-> -      routes to neighbouring switches
-> +      Should be a list of phandles to other switch's DSA port. This port=
- is
-> +      used as the outgoing port towards the phandle ports. In case of tr=
-ees
-> +      with more than 2 switches, the full routing information must be gi=
-ven.
-> +      The first element of the list must be the directly connected DSA p=
-ort
-> +      of the adjacent switch.
->      $ref: /schemas/types.yaml#/definitions/phandle-array
->      items:
->        maxItems: 1
-> --=20
-> 2.34.1
->=20
+v3:
+- Add patches to avoid crossing the page boundary when the instruction is read
+  and decoded in the TDX, SEV, UMIP.
+- Forbid accessing userspace addresses from kernel space. The exception to this
+  is when emulating MOVS instructions.
+- Fix address validation during MOVS emulation.
 
---erhZyKGbQwqN4Ufv
-Content-Type: application/pgp-signature; name="signature.asc"
+v2:
+- Split into separate patches AMD helpers extraction and MOVS implementation
+  code for intel as suggested by Thomas Gleixner.
+- Fix coding style issues.
 
------BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZuRwkAAKCRB4tDGHoIJi
-0vfHAP9cFzroVB3GZuA91GabzA+2kn0YS6xgfGRCeLfS6kRX1QEA5gk62mEFp0mn
-yro855Nq9nioDWT9HBzDB0OgiW+rHAA=
-=W9Nn
------END PGP SIGNATURE-----
+Alexey Gladkov (Intel) (6):
+  x86/tdx: Fix "in-kernel MMIO" check
+  x86/tdx: Split MMIO read and write operations
+  x86/tdx: Add validation of userspace MMIO instructions
+  x86/tdx: Allow MMIO from userspace
+  x86/tdx: Move MMIO helpers to common library
+  x86/tdx: Implement MOVS for MMIO
 
---erhZyKGbQwqN4Ufv--
+ arch/x86/coco/sev/core.c         | 139 ++-----------
+ arch/x86/coco/tdx/tdx.c          | 334 ++++++++++++++++++++++++++-----
+ arch/x86/include/asm/io.h        |   3 +
+ arch/x86/include/asm/processor.h |   1 +
+ arch/x86/lib/iomem.c             | 115 +++++++++++
+ 5 files changed, 423 insertions(+), 169 deletions(-)
+
+-- 
+2.46.0
+
 
