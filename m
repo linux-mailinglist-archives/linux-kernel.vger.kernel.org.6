@@ -1,156 +1,93 @@
-Return-Path: <linux-kernel+bounces-327688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04CA49779B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:34:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2780A9779BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:34:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0CA41C22105
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:34:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E117A287CA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2ABC1BB6A2;
-	Fri, 13 Sep 2024 07:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4FA1BB6A7;
+	Fri, 13 Sep 2024 07:34:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="T8Xbao1b"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WTff5nla"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7580A77107
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 07:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0C81BB688
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 07:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726212840; cv=none; b=awUnKfOk9vsOyrHqz53W7+eNDBYIKJhKMXCvGpS+//MWroI3tKMl+EPHKnuXktMlqqCbW2VXq9OqTJQf7jpA9fsCteXbCLHx9jbJ8OhePPol0wpxXu84+i62MhSNK2COWGavAqFCFjxAdS0YOI3w2aIMkT35SEDhDdaljH0h/dc=
+	t=1726212879; cv=none; b=h7OX8ho0gixbQz+49OGMLefdVyrzvJL3Cg85ZTOVTNNMmie95N9eHW0x2AW+tZg86KUuv+XzQ0FYGlXcr8oDoYZ88u6U0/q+y2tBHrUX2CJCTxv+NzG4hIPBdolieVsY5+EkGSXsE/2/VrK90R6lJEp0iT8EtM5ll/a3gQ5KrcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726212840; c=relaxed/simple;
-	bh=4EhGCh5UlFLWv3yy5BWWhJnw5ZlhnXBRO0XFQzRSN9A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gumJ2MwDuzHMA+yCOauMFRAPjTY9Ff8Hq1f/9kx8wwrvessK2kkHD1knAJY0n6+E3m0K+us4W/lo0+H+jERUO+NzyNkkTJfiT90En1BSuTuw9FWh/SM3ZWfTFMF0XOfoDXbKO4TGMzyrcn4H+dzvAv8fL8mxeSX2opjkDb8+Xy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=T8Xbao1b; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37747c1d928so427843f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 00:33:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726212837; x=1726817637; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xX7GEgwmZmRNetD/mdSl0xv1Lugr1MnK89Dp0qjJIwY=;
-        b=T8Xbao1bqpUZgfLcdaHn1xtOSmoUWRAsNdy1tqnPyT7uny5e0tdo/WAPYbwHe6cyWb
-         QyOQzPJb0nOC+qXx9w0yd5dKhXmswisK0FOobNIpdgKVTO+UUdKVC+MI45Fpz+3Osa3t
-         +6zcu697BlZSp++4Rb9O3KPltFoF2I4FxHPA2VqSsFJ09YJkJL4vKBnWT/Nh0rI8R9WN
-         cPPWCexrgdeuVrk6B6QvtEZXvHElJWew9+54F2wUgpYOSx94GNOcI+ngvR+cWD2deKOX
-         4/xqQmv/LfB1bGq+r2E0QXL/rwSl0S5/agmKTenRPSOiFggBSFFgj03nUoCqP8J8JVu6
-         IdCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726212837; x=1726817637;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xX7GEgwmZmRNetD/mdSl0xv1Lugr1MnK89Dp0qjJIwY=;
-        b=UjiEHp2cbfFfTxHdbAwOlAT+yThN5Ku6B57i97qx7vEEeyunZSbC6dQGg0IgiFwBak
-         u+b0IQPcCAxp8KpucA4ZdLsBlomIyE87V8lEw1Gn0+YHkq7+Zsxu8j2VNDILt99m98xr
-         aEDCm1Rf28HkEs49vceyu04jhv5dPA/bfnf9JZU+Bvi1+NgnbLZDQIxTRlpOKljLi9du
-         IBSj14ku+UaR2tGg0KjcuAm2vbR5Lnow78LhrPl96GYgDmuK74gDaU/t4WZNOcsTLuej
-         fomqqEnca5afuh2BLaWf8M/+73rrmwmfpqJJB1WMcy8CcKdys8GlG0ZGUeoKXmDL0FD+
-         srBA==
-X-Forwarded-Encrypted: i=1; AJvYcCX2XkjIDCPrzenmb5uCi9YVyYdy9GyNQvsP51l/M3d2OSDVsKLcKsiR768Feg00WaOMb0flvNg+CJ/4SOg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx809zfF105BFs8idxZyfS3e0yebkjgHmtELoTPSOBOLIS2yhz3
-	PEGYh1TTQ3DbW00dbCpUddzvB6J5tYZGY9PpiYdohWeUi/dUcyUUW6Ko4dKgdrlXclWE9KhSJNl
-	F0l8Qbsnqrl4lzlpmloac+bzuO/1rRo0QPgxr
-X-Google-Smtp-Source: AGHT+IHnztr4jlB7m8lLsakxkOS0gIY/NRQK0skKLI3F9WO9LF5gVY0ClyYEHsr3Ab4nqjP6YJUKnyihOrotw9LgkDA=
-X-Received: by 2002:a05:6000:154d:b0:374:bcff:cfa6 with SMTP id
- ffacd0b85a97d-378d61e28camr961842f8f.18.1726212836453; Fri, 13 Sep 2024
- 00:33:56 -0700 (PDT)
+	s=arc-20240116; t=1726212879; c=relaxed/simple;
+	bh=cdRWemqJpHIqLsS9xCEnNIkKZp+DNmQ97TOumGXLBHs=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=Ozxifr6lnmTnUh9gISKrWd/gV0nLvMOEvaU1LfobUYeLQJdEqhDwJbotCMZz3HGn0QXLaF6mO2cHxz7sSHpy670yvP3GKJ1QjpcbXcz4ZWZnfLeclBqDuomlh2y/A3inAUgCbRsMmDXG9IAnhjQ5B4xImOLEICo9Bzi0hIsER+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WTff5nla; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1726212877;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cdRWemqJpHIqLsS9xCEnNIkKZp+DNmQ97TOumGXLBHs=;
+	b=WTff5nlaal75O7zT7mKq1rLK0Webmlas15jfSvpaV5RPdtCzQzjtH+P6v/jB9knaRX5g3O
+	JH56m4x87SvqDOMM0THS0g5eAFT9dXxudxNfRhuK/DuQJaorrmNV5H3I3XRLUZBu2ed5wC
+	6jsmEZmh3OUzi3IAsS4BQ7E8nYaL4pM=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-83-ymBn3kyFNNar0vBgZWSd3Q-1; Fri,
+ 13 Sep 2024 03:34:31 -0400
+X-MC-Unique: ymBn3kyFNNar0vBgZWSd3Q-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AC0BB19560A3;
+	Fri, 13 Sep 2024 07:34:30 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.67])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D0B8F19560A3;
+	Fri, 13 Sep 2024 07:34:27 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <BL1PR21MB3088765BBE2F16AD813917AFE4642@BL1PR21MB3088.namprd21.prod.outlook.com>
+References: <BL1PR21MB3088765BBE2F16AD813917AFE4642@BL1PR21MB3088.namprd21.prod.outlook.com> <20240913085945.40e7accf@canb.auug.org.au>
+To: Steven French <Steven.French@microsoft.com>
+Cc: dhowells@redhat.com, Stephen Rothwell <sfr@canb.auug.org.au>,
+    Christian Brauner <brauner@kernel.org>,
+    smfrench <smfrench@gmail.com>, CIFS <linux-cifs@vger.kernel.org>,
+    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+    Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: [EXTERNAL] linux-next: manual merge of the vfs-brauner tree with the cifs tree
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240912195649.227878-1-paddymills@proton.me>
-In-Reply-To: <20240912195649.227878-1-paddymills@proton.me>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 13 Sep 2024 09:33:42 +0200
-Message-ID: <CAH5fLghxvLoQp+G1oaaVfBx6DOh-GO0Wc=jboiwz9ZCoEtHVpA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] checkpatch: warn on known non-plural rust doc headers
-To: Patrick Miller <paddymills@proton.me>
-Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, apw@canonical.com, 
-	benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
-	dwaipayanray1@gmail.com, gary@garyguo.net, joe@perches.com, 
-	linux-kernel@vger.kernel.org, lukas.bulwahn@gmail.com, ojeda@kernel.org, 
-	rust-for-linux@vger.kernel.org, tmgross@umich.edu, wedsonaf@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1262053.1726212866.1@warthog.procyon.org.uk>
+Date: Fri, 13 Sep 2024 08:34:26 +0100
+Message-ID: <1262054.1726212866@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Thu, Sep 12, 2024 at 9:57=E2=80=AFPM Patrick Miller <paddymills@proton.m=
-e> wrote:
->
-> Adds a check for documentation in rust file. Warns if certain known
-> documentation headers are not plural.
->
-> The rust maintainers prefer document headers to be plural. This is to enf=
-orce
-> consistency among the documentation as well as to protect against errors =
-when
-> additions are made. For example, if the header said "Example" because the=
-re was
-> only 1 example, if a second example was added, making the header plural c=
-ould
-> easily be missed and the maintainers prefer to not have to remind people =
-to fix
-> their documentation.
->
-> Link: https://github.com/Rust-for-Linux/linux/issues/1110
->
-> v1: https://lore.kernel.org/rust-for-linux/2024090628-bankable-refusal-5f=
-20@gregkh/T/#t
-> v2: https://lore.kernel.org/rust-for-linux/92be0b48-cde9-4241-8ef9-7fe4d7=
-c42466@proton.me/T/#t
->   - fixed whitespace that was formatted due to editor settings
-> v3:
->   - move && to previous line and remove whitespace in WARN per Joe Perche=
-s
->   - reformat following C coding style
-> ---
->  scripts/checkpatch.pl | 7 ++++
-> +++
->  1 file changed, 7 insertions(+)
+Steven French <Steven.French@microsoft.com> wrote:
 
-This is missing your Signed-off-by and the changelog should be below
-the --- line so it doesn't get included in the changelog when applied.
+> Additional context: "cifs: Fix signature miscalculation" is fairly urgent
+> since fixes a regression so plan to send that one upstream ASAP
 
-The change itself looks good to me.
+The bug doesn't exist in Christian's vfs.netfs branch as the code was replaced
+and ITER_XARRAY is no longer used there.
 
-Alice
+David
 
->
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index 39032224d504..5b18246ad511 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -3900,6 +3900,13 @@ sub process {
->                              "Avoid using '.L' prefixed local symbol name=
-s for denoting a range of code via 'SYM_*_START/END' annotations; see Docum=
-entation/core-api/asm-annotations.rst\n" . $herecurr);
->                 }
->
-> +# check that document section headers are plural in rust files
-> +               if ($realfile =3D~ /\.rs$/ &&
-> +                   $rawline =3D~ /^\+\s*\/\/\/\s+#+\s+(Example|Invariant=
-|Guarantee|Panic)\s*$/) {
-> +                       WARN("RUST_DOC_HEADER",
-> +                            "Rust doc headers should be plural\n" . $her=
-ecurr);
-> +               }
-> +
->  # check we are in a valid source file C or perl if not then ignore this =
-hunk
->                 next if ($realfile !~ /\.(h|c|pl|dtsi|dts)$/);
->
-> --
-> 2.46.0
->
 
