@@ -1,112 +1,100 @@
-Return-Path: <linux-kernel+bounces-328702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EB8D97878B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:08:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A972697878F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:09:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 499561C21B2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:08:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E25391C21A42
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:08:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B65137776;
-	Fri, 13 Sep 2024 18:08:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126D112C522;
+	Fri, 13 Sep 2024 18:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXb2J3SE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mG/nKQ4A"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F9012EBE7;
-	Fri, 13 Sep 2024 18:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B3941EEE4;
+	Fri, 13 Sep 2024 18:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726250889; cv=none; b=hHN//Xt9DKyggklxDXLI9nwyFp1KhweOwDfDXsYY1hE99vqiRoDMHVlYdCxtt1kEB/8cHlPISqMh+YjAksPsavvtsxrhmFOt4cFZzCnFQbT8TmdbrDGsIqkPJ+il/AMMU/tBljzch1JzCM1eEWvH0AA7A3qrxrUU2PnDeIcnM0A=
+	t=1726250911; cv=none; b=Gg4K0av/CdEw2xYZ2II4P3LSF2wk1r90jYXUwrTFsslHuf1ML4+C6mGWyIEt/wdRln4xmOo3krB+txXLwhKs16mtHMNFKx+QGS+lJKDdF1ihB5QoKELkYnFBq0zWPo/BxGpSmSW63jOd2BX3sccCm9/lgfTFiEKltivGx9JmG84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726250889; c=relaxed/simple;
-	bh=pPgUGqSKrZW66jNavRtTicsXWsvkNovyg2p7zhV3gxU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=N6Q/OylH/aI8aNS53QIVRG2/P8fpOSTTQYye1QnOXKHbi3zvc6DTzR92vRmnz6W2zcdwe+dnalCq7s2GSUB4VRkVZ5yFeCfL7wVxJ6L4QjHbtKYDLSYuSLr6+Tc1MNzfGxs0iVSqYpUEXl8LyIArvHO4t0JNMYNJH425ZoWD7ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hXb2J3SE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DDBCC4CEC0;
-	Fri, 13 Sep 2024 18:08:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726250888;
-	bh=pPgUGqSKrZW66jNavRtTicsXWsvkNovyg2p7zhV3gxU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=hXb2J3SEji2GtVifTGFvnzD6IPBGSigN4Pq0+Qz4KCrZpRyZJER0bFvZiFqkNGlFH
-	 liFpZ+z3VUqFs96uPNIgWgQDxYpjQaz6wByUyym8mWE5DsR4S5/k7Pdi50ROqReK+m
-	 iAkGKCPvYCGryPPCEE6JdPWMNoeehgfujSHPFUQkgSEon27SftSpnnTc2zK7xmS7hF
-	 BRcncDSkZY8EaGKsuY7F1TXiupacTBggo3YoEbboRMJwYrdYwixpeIlmI2aRCgTxbY
-	 FQS9XPonpVOJeUskn/fg8IYSAsIFPRqQB1By6iidMvEL19YlUcHnbZDsJ0qZsuGqg5
-	 k5D6Z4kpwDd2Q==
-From: Mark Brown <broonie@kernel.org>
-To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>, 
- Tzung-Bi Shih <tzungbi@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
- Chen-Yu Tsai <wenst@chromium.org>
-Cc: chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Douglas Anderson <dianders@chromium.org>, 
- Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- linux-i2c@vger.kernel.org
-In-Reply-To: <20240911072751.365361-1-wenst@chromium.org>
-References: <20240911072751.365361-1-wenst@chromium.org>
-Subject: Re: (subset) [PATCH v7 00/10] platform/chrome: Introduce DT
- hardware prober
-Message-Id: <172625088498.70368.2332989625290315131.b4-ty@kernel.org>
-Date: Fri, 13 Sep 2024 19:08:04 +0100
+	s=arc-20240116; t=1726250911; c=relaxed/simple;
+	bh=O/vZ0cRpU9sWRzCbTdMKZVE1tsqhfpDq8AQgxRA0/R4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nSmvL9C8ZeyyUL8s6NV4+H99rOPPy6NHKzpmFqHFJN2WpwkWA1Le6u6lrcrZRbXSHhHBhk5fC3/GOvVzSDq04y6+oqpnfyhYBgyRXlric3YEW/A+hyloZ86m0WwAAZ/smr0HadEgtyOGsAh/jPm9C5iTn5NiEl3VUM6U00a8cA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mG/nKQ4A; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726250910; x=1757786910;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=O/vZ0cRpU9sWRzCbTdMKZVE1tsqhfpDq8AQgxRA0/R4=;
+  b=mG/nKQ4AK2Q+FEjdRY2AxCXWs8QuzC1PswGyENJ3TdXUm/yMZZdBHMaf
+   XY/VO69Bqw6OVkEnFQt2rRHteWfOaQuu3Q3PDUACUOxmI3ni90xkdnOjZ
+   S3B7sbfldr1eAVNGnF5TcSngt1zrZnxQEK5+v84FmLWH0zLkvIdXfU+/f
+   HH7G9UMp1/i76POqX2iwiu/uY+SPQxD4V+lTolk4VMbUREjjjc7s1ICWu
+   T3dglLet9nbFNVW1erGcJ4n8r/CaE8GDyIN8A07euWZSykB+5MJv7Dphq
+   YGrVKvMCo5DKTZmUU+KohWUx9FDk0i8hHjaMgoJ5iofpGtXAfUCKsv7nm
+   g==;
+X-CSE-ConnectionGUID: SgoAEyaETLGrlSh9QlMQUg==
+X-CSE-MsgGUID: SgKmoIcBTyKQMbYTOc7afQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="35737975"
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="35737975"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 11:08:30 -0700
+X-CSE-ConnectionGUID: nxJqhmyUSJGW4JuW6+khsw==
+X-CSE-MsgGUID: N4qcrbGxSKyG45FSdYJmxQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="68249324"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 11:08:27 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1spAiW-00000008NlC-40KI;
+	Fri, 13 Sep 2024 21:08:24 +0300
+Date: Fri, 13 Sep 2024 21:08:24 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Parker Newman <parker@finest.io>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	Parker Newman <pnewman@connecttech.com>
+Subject: Re: [PATCH v1 6/6] serial: 8250_exar: Add select EEPROM_93CX6 in
+ Kconfig
+Message-ID: <ZuR_mK5LBTOf8SiL@smile.fi.intel.com>
+References: <cover.1726237379.git.pnewman@connecttech.com>
+ <b6444935804fb0e745d7f374cf2a0c9116a2b3e9.1726237379.git.pnewman@connecttech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-99b12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b6444935804fb0e745d7f374cf2a0c9116a2b3e9.1726237379.git.pnewman@connecttech.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, 11 Sep 2024 15:27:38 +0800, Chen-Yu Tsai wrote:
-> This is v7 of my "of: Introduce hardware prober driver" [1] series.
-> v7 mainly refactors the code into a series of helpers. The scope of
-> supported components is also reduced to those with at most one regulator
-> supply and one GPIO pin. Also the helpers expect these to be named and
-> so the "bulk get" API changes have been dropped.
+On Fri, Sep 13, 2024 at 10:55:43AM -0400, Parker Newman wrote:
+> From: Parker Newman <pnewman@connecttech.com>
 > 
-> Also, a pull request to document the "fail-needs-probe" status has been
-> sent: https://github.com/devicetree-org/dt-schema/pull/141
-> 
-> [...]
+> Add "select EEPROM_93CX6" to config SERIAL_8250_EXAR to ensure
+> eeprom_93cx6 driver is also compiled when 8250_exar driver is selected.
 
-Applied to
+This should be done in the patch 4 when you started using the respective APIs.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Thanks!
-
-[03/10] regulator: Split up _regulator_get()
-        commit: 2a1de5678944147c2a41b6006127d2d0b618e83b
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
 
 
