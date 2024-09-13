@@ -1,147 +1,156 @@
-Return-Path: <linux-kernel+bounces-327687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C2EC9779AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:32:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04CA49779B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:34:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B623288574
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:32:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0CA41C22105
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412A9187355;
-	Fri, 13 Sep 2024 07:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2ABC1BB6A2;
+	Fri, 13 Sep 2024 07:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="kjlh8vBL"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="T8Xbao1b"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592911D52B
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 07:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7580A77107
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 07:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726212734; cv=none; b=CIiCXCOb+ksHEgaPKFhdFxC/I7kbNOGjd+Jx3+/PJRcGCYJNIeX2yn+cX7pJd0Z8rdpAJNQ5gF8cmhJfgTzsmtffWGhtiHpX5z1llwvh8i/FlRmRecLLSXxcJPVn9lq+pCkdjGN4TThsnT4jxfc+p1YX+gG/CnZtGjP6WXIIN9I=
+	t=1726212840; cv=none; b=awUnKfOk9vsOyrHqz53W7+eNDBYIKJhKMXCvGpS+//MWroI3tKMl+EPHKnuXktMlqqCbW2VXq9OqTJQf7jpA9fsCteXbCLHx9jbJ8OhePPol0wpxXu84+i62MhSNK2COWGavAqFCFjxAdS0YOI3w2aIMkT35SEDhDdaljH0h/dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726212734; c=relaxed/simple;
-	bh=zCD8LaN0kjsKdIM6ZRCopPXn4g4+foguZouvDF3CqkU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K+o9MR++suXS5eA3AvBfapSB+k2zkWs1zAHefpzNHfhhetTmBVsLiowniqIhj6a/6kLiGplyI5stwl36yRAOlTcrKEP4V3argZWnrn2G92lrHmWeh5k1LMunvaQCgMUgJCStkYUkcvuAYo6g9iegySqZhEcocrLB9LrIdAjVbdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=kjlh8vBL; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a8d0d82e76aso260337966b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 00:32:11 -0700 (PDT)
+	s=arc-20240116; t=1726212840; c=relaxed/simple;
+	bh=4EhGCh5UlFLWv3yy5BWWhJnw5ZlhnXBRO0XFQzRSN9A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gumJ2MwDuzHMA+yCOauMFRAPjTY9Ff8Hq1f/9kx8wwrvessK2kkHD1knAJY0n6+E3m0K+us4W/lo0+H+jERUO+NzyNkkTJfiT90En1BSuTuw9FWh/SM3ZWfTFMF0XOfoDXbKO4TGMzyrcn4H+dzvAv8fL8mxeSX2opjkDb8+Xy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=T8Xbao1b; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37747c1d928so427843f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 00:33:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726212730; x=1726817530; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zCD8LaN0kjsKdIM6ZRCopPXn4g4+foguZouvDF3CqkU=;
-        b=kjlh8vBLGDBORhkUtQS3p3feRa+rlSTrjIG23NsKkVA3lGaR1zQEbBPBqrETGMgXW8
-         jiaGWGkFmA3pA6Mu/pNupur2p4RZxWBObuhr7EXk1Q+sz/ZRL2lR73t0IYmaDoITyWvc
-         bzghjJ6SLUOOgYjQi13VvN1rGGih1dIFg4j3ZzL7bXyo6o8Y72Kfylh6XSLEK+OYUuem
-         eJpBQeroiwmajGHj47AhfpwdQ6c9fjTDOc7ypOu5mXGUo0GORXw+2Kw5+Rvl+Ow8UXgl
-         5GuSQAHetuAJ3lopfJS+MLQjzyxe4LYEE5ID5k/IOizZsok+OSRxm6sFRWNmAvDPeiFX
-         qeqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726212730; x=1726817530;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1726212837; x=1726817637; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zCD8LaN0kjsKdIM6ZRCopPXn4g4+foguZouvDF3CqkU=;
-        b=JE3VmxdUr28sB/HaIRATaw5fAn0LKnMwL22Sw9NiS0kZu6q+m7Vv+CIkR7aT7wGwko
-         WBQjcURsUwZoF3RAbP52eN7+791kBvOak8Zq4xMjs53XGgjFr+bHjGLVxjAn5CyLImNx
-         F+raIoV0goZTRiiHtjMZ7UmXb+B2iW7CHBZsIH1LmNAwMAyATpgNRI43AffvxE05eztI
-         g4dy0oQrPdwDFARMIcooO1BGt3RqkkjJbiHybG6znmdSc97HYIdXpbH5NantMO2hPxqg
-         q1pPCLafYmVSY75PgOIJFPo3XTROI7C3HGB22Y7LDAxoMYj4CGPQABqyGFlb3aXuVMl7
-         myDw==
-X-Forwarded-Encrypted: i=1; AJvYcCXRKSTY/RlvCALdDICXCiSIkI4Ef4urIdA4Q5rJXB9IhHk+4VQUuuy4254F4dqEqt0k2+fy8+GYvEUwEYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFdokyZzzmm5ZI9eWyPjVJSk+giLzCnYAAKrMWYd9C3m0OFQKS
-	3fHlAL1ZmmnXIL2N1IqewjX/aAJ8hN9/0Z4UFJnIAFyD4qG6SZ7f4k2EbcFonPM=
-X-Google-Smtp-Source: AGHT+IHssm2URqE1gS4gVcn6Nj0DllldqANqwzd6oBjRAAhdE80d1B5MN/NDiKEsCAH6AylUactzuQ==
-X-Received: by 2002:a17:906:fe47:b0:a7a:3928:3529 with SMTP id a640c23a62f3a-a90293b188cmr601509866b.13.1726212730074;
-        Fri, 13 Sep 2024 00:32:10 -0700 (PDT)
-Received: from localhost (p5dc68d3d.dip0.t-ipconnect.de. [93.198.141.61])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25cf371bsm842411966b.175.2024.09.13.00.32.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 00:32:09 -0700 (PDT)
-Date: Fri, 13 Sep 2024 09:32:07 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Devarsh Thakkar <devarsht@ti.com>, jyri.sarha@iki.fi, 
-	tomi.valkeinen@ideasonboard.com, airlied@gmail.com, daniel@ffwll.ch, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, praneeth@ti.com, nm@ti.com, 
-	vigneshr@ti.com, r-ravikumar@ti.com, j-choudhary@ti.com, grandmaster@al2klimov.de, 
-	caihuoqing@baidu.com, ahalaney@redhat.com, cai.huoqing@linux.dev, 
-	colin.i.king@gmail.com, javierm@redhat.com, dmitry.baryshkov@linaro.org, 
-	geert+renesas@glider.be, laurent.pinchart@ideasonboard.com, robh@kernel.org, 
-	sam@ravnborg.org, simona.vetter@ffwll.ch, ville.syrjala@linux.intel.com, 
-	wangxiaojun11@huawei.com, yuanjilin@cdjrlc.com, yuehaibing@huawei.com
-Subject: Re: [PATCH] drm/tidss: Add MIT license along with GPL-2.0
-Message-ID: <3y4pqlazkuofc37s6zlw7waqzmtdl5iydhm4i3i45n6d6pnflc@osyocv7wxtif>
-References: <20240912171142.3241719-1-devarsht@ti.com>
- <c501c5d3-d715-4ac5-98be-35d23ad1cfbe@kernel.org>
+        bh=xX7GEgwmZmRNetD/mdSl0xv1Lugr1MnK89Dp0qjJIwY=;
+        b=T8Xbao1bqpUZgfLcdaHn1xtOSmoUWRAsNdy1tqnPyT7uny5e0tdo/WAPYbwHe6cyWb
+         QyOQzPJb0nOC+qXx9w0yd5dKhXmswisK0FOobNIpdgKVTO+UUdKVC+MI45Fpz+3Osa3t
+         +6zcu697BlZSp++4Rb9O3KPltFoF2I4FxHPA2VqSsFJ09YJkJL4vKBnWT/Nh0rI8R9WN
+         cPPWCexrgdeuVrk6B6QvtEZXvHElJWew9+54F2wUgpYOSx94GNOcI+ngvR+cWD2deKOX
+         4/xqQmv/LfB1bGq+r2E0QXL/rwSl0S5/agmKTenRPSOiFggBSFFgj03nUoCqP8J8JVu6
+         IdCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726212837; x=1726817637;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xX7GEgwmZmRNetD/mdSl0xv1Lugr1MnK89Dp0qjJIwY=;
+        b=UjiEHp2cbfFfTxHdbAwOlAT+yThN5Ku6B57i97qx7vEEeyunZSbC6dQGg0IgiFwBak
+         u+b0IQPcCAxp8KpucA4ZdLsBlomIyE87V8lEw1Gn0+YHkq7+Zsxu8j2VNDILt99m98xr
+         aEDCm1Rf28HkEs49vceyu04jhv5dPA/bfnf9JZU+Bvi1+NgnbLZDQIxTRlpOKljLi9du
+         IBSj14ku+UaR2tGg0KjcuAm2vbR5Lnow78LhrPl96GYgDmuK74gDaU/t4WZNOcsTLuej
+         fomqqEnca5afuh2BLaWf8M/+73rrmwmfpqJJB1WMcy8CcKdys8GlG0ZGUeoKXmDL0FD+
+         srBA==
+X-Forwarded-Encrypted: i=1; AJvYcCX2XkjIDCPrzenmb5uCi9YVyYdy9GyNQvsP51l/M3d2OSDVsKLcKsiR768Feg00WaOMb0flvNg+CJ/4SOg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx809zfF105BFs8idxZyfS3e0yebkjgHmtELoTPSOBOLIS2yhz3
+	PEGYh1TTQ3DbW00dbCpUddzvB6J5tYZGY9PpiYdohWeUi/dUcyUUW6Ko4dKgdrlXclWE9KhSJNl
+	F0l8Qbsnqrl4lzlpmloac+bzuO/1rRo0QPgxr
+X-Google-Smtp-Source: AGHT+IHnztr4jlB7m8lLsakxkOS0gIY/NRQK0skKLI3F9WO9LF5gVY0ClyYEHsr3Ab4nqjP6YJUKnyihOrotw9LgkDA=
+X-Received: by 2002:a05:6000:154d:b0:374:bcff:cfa6 with SMTP id
+ ffacd0b85a97d-378d61e28camr961842f8f.18.1726212836453; Fri, 13 Sep 2024
+ 00:33:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="fwomuhf5lvybpujn"
-Content-Disposition: inline
-In-Reply-To: <c501c5d3-d715-4ac5-98be-35d23ad1cfbe@kernel.org>
-
-
---fwomuhf5lvybpujn
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+References: <20240912195649.227878-1-paddymills@proton.me>
+In-Reply-To: <20240912195649.227878-1-paddymills@proton.me>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 13 Sep 2024 09:33:42 +0200
+Message-ID: <CAH5fLghxvLoQp+G1oaaVfBx6DOh-GO0Wc=jboiwz9ZCoEtHVpA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] checkpatch: warn on known non-plural rust doc headers
+To: Patrick Miller <paddymills@proton.me>
+Cc: a.hindborg@samsung.com, alex.gaynor@gmail.com, apw@canonical.com, 
+	benno.lossin@proton.me, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, 
+	dwaipayanray1@gmail.com, gary@garyguo.net, joe@perches.com, 
+	linux-kernel@vger.kernel.org, lukas.bulwahn@gmail.com, ojeda@kernel.org, 
+	rust-for-linux@vger.kernel.org, tmgross@umich.edu, wedsonaf@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Sep 12, 2024 at 9:57=E2=80=AFPM Patrick Miller <paddymills@proton.m=
+e> wrote:
+>
+> Adds a check for documentation in rust file. Warns if certain known
+> documentation headers are not plural.
+>
+> The rust maintainers prefer document headers to be plural. This is to enf=
+orce
+> consistency among the documentation as well as to protect against errors =
+when
+> additions are made. For example, if the header said "Example" because the=
+re was
+> only 1 example, if a second example was added, making the header plural c=
+ould
+> easily be missed and the maintainers prefer to not have to remind people =
+to fix
+> their documentation.
+>
+> Link: https://github.com/Rust-for-Linux/linux/issues/1110
+>
+> v1: https://lore.kernel.org/rust-for-linux/2024090628-bankable-refusal-5f=
+20@gregkh/T/#t
+> v2: https://lore.kernel.org/rust-for-linux/92be0b48-cde9-4241-8ef9-7fe4d7=
+c42466@proton.me/T/#t
+>   - fixed whitespace that was formatted due to editor settings
+> v3:
+>   - move && to previous line and remove whitespace in WARN per Joe Perche=
+s
+>   - reformat following C coding style
+> ---
+>  scripts/checkpatch.pl | 7 ++++
+> +++
+>  1 file changed, 7 insertions(+)
 
-On Thu, Sep 12, 2024 at 10:47:31PM +0200, Danilo Krummrich wrote:
-> On 9/12/24 7:11 PM, Devarsh Thakkar wrote:
-> > Modify license to include dual licensing as GPL-2.0-only OR MIT license=
- for
-> > tidss display driver. This allows other operating system ecosystems suc=
-h as
-> > Zephyr and also the commercial firmwares to refer and derive code from =
-this
-> > display driver in a more permissive manner.
-> >=20
-> > Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
->=20
-> My only contribution to this driver was through DRM refactorings,
-> but anyways:
->=20
-> Acked-by: Danilo Krummrich <dakr@kernel.org>
+This is missing your Signed-off-by and the changelog should be below
+the --- line so it doesn't get included in the changelog when applied.
 
-Similar for me. I only touched one of the affected files with a
-refactoring change (34cdd1f691ade28abd36ce3cab8f9d442f43bf3f). I don't
-assume this gives me any copyright to that driver, but to simplify
-things:
+The change itself looks good to me.
 
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
+Alice
 
-Best regards
-Uwe
-
---fwomuhf5lvybpujn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmbj6nUACgkQj4D7WH0S
-/k6Vowf/SMe2WNrVNQ5D0QME7lNXR9gfCQBxgUOR1uEijmytgCZX6K8s8KmQRPd+
-m6GRlpvCWOkFDA/0l4cKexh7gkMG/K94hY0pBGlgCDgu0O+4Nhtx/XTo/MRBDZRx
-yDtWz3YS1LJyOmzt5ogOea1ZxANsYDVKnoLZ737p1oOTrXGqeOJiVxhl4qzpS2Dq
-jhIw+wntbT6Ea0SsGKoFaKFkbiYa8/Demkgd39Kpb/OEXgAnTDlgLhBPGi+PjlX2
-Jdo2G2TsHCuOLBe4J9OgcLSUkKM8STnGjX4tMMA4mjxXUZrxbwXZ+GSENcDNRJ/z
-BFLRA5gh7qOuYJsECveGW/1huoN3Tg==
-=BVdJ
------END PGP SIGNATURE-----
-
---fwomuhf5lvybpujn--
+>
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index 39032224d504..5b18246ad511 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -3900,6 +3900,13 @@ sub process {
+>                              "Avoid using '.L' prefixed local symbol name=
+s for denoting a range of code via 'SYM_*_START/END' annotations; see Docum=
+entation/core-api/asm-annotations.rst\n" . $herecurr);
+>                 }
+>
+> +# check that document section headers are plural in rust files
+> +               if ($realfile =3D~ /\.rs$/ &&
+> +                   $rawline =3D~ /^\+\s*\/\/\/\s+#+\s+(Example|Invariant=
+|Guarantee|Panic)\s*$/) {
+> +                       WARN("RUST_DOC_HEADER",
+> +                            "Rust doc headers should be plural\n" . $her=
+ecurr);
+> +               }
+> +
+>  # check we are in a valid source file C or perl if not then ignore this =
+hunk
+>                 next if ($realfile !~ /\.(h|c|pl|dtsi|dts)$/);
+>
+> --
+> 2.46.0
+>
 
