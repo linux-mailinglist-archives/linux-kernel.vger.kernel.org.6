@@ -1,236 +1,264 @@
-Return-Path: <linux-kernel+bounces-328929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2963978AE5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:54:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5101C978AE7
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:55:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 685F21F22EF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:54:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD055B2279F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6451714B6;
-	Fri, 13 Sep 2024 21:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EFCD17CA19;
+	Fri, 13 Sep 2024 21:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l+2wC8Fw"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kYclmCaD"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2CF1155A4F;
-	Fri, 13 Sep 2024 21:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507A5156222;
+	Fri, 13 Sep 2024 21:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726264477; cv=none; b=FK7KTDP6vyb97FHkh94i5K3dT0cRjCIx9qICezSqRaQXYpuJfnm0NwJovF6QApaK/0C3DwsZ6inL3vhPH/BdokEcAONTmotdd+xzeN8HSZNHZj+g5Fd9BCJ5lEP1wL2M8ja1dT48BpxSDb2TMTbpp81eXrgEAlRrqhfX8W1WUgk=
+	t=1726264478; cv=none; b=A4ey+Ndeo6r0/GnSBnYLNdnm2QCloei9Nu1wNvlLFJjYL/Gy9QtFZzw5VXqqKg0MabiaC3rB0gWuem79ottQ/JZ8dj/tvduG+YgBrG6o1tAiIyuics7SMLzqE4S4mE2872kY/86CNpkLhTB6iiVIg663FSnSSUzOLo71cg9LLqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726264477; c=relaxed/simple;
-	bh=zAwlk67tqKRq3ykb3Dq/lPmctb9a7uuG+dbiA68cadA=;
+	s=arc-20240116; t=1726264478; c=relaxed/simple;
+	bh=u2Ahxvhg/4cmIB2NS2TyIW6kyvQjVb+fS+f9vi5tKR4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tiZbuGrbEVKahl+GXjPF7I5wtZdJ+FP70CU4saB1NKtGTEBKvpMOtl1S5CGit9jCqbrTiLFTcuhUhWVgARIHyzPc9lTdRu/wbBhHEfbaDbgCv2zGatoKFR2p8g1/w4UAKXojxfp7jTJvCCIPLApYvkdVsQ0slMvjXJexoroaXb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l+2wC8Fw; arc=none smtp.client-ip=198.175.65.14
+	 Content-Type:Content-Disposition:In-Reply-To; b=ibyEZScWVOAH/xUQlfjhEzxpdL9KPK7cj0jQLOrevk+bDdoWi4Xcj8ipVZ+P+Teu2vZ1zB3RRLjUSCBiY3DfqliWZDQCizkCe85lH3PH/8PgeIYn6imIXI3Ss66ydN56yy/G9fHotxKr8hWoKUe5FQDErFTRa1istlKGFtO1EkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kYclmCaD; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726264476; x=1757800476;
+  t=1726264477; x=1757800477;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zAwlk67tqKRq3ykb3Dq/lPmctb9a7uuG+dbiA68cadA=;
-  b=l+2wC8FwoUf4jv/m9AM4NRcj4YUfouCYP0vBIl3Vt6x3Ia4u41tFL51g
-   YUxgyNQ6s2DlUIu7RyRMBwVa/2RZuBiTVSC1Ww8QTM5e8OIsgEkZG16YV
-   v7H7r4GUsGO3ODDcmzIpec5+c6isY/8vZX0rm1VcWxg9upnwqXGsU3gmF
-   b2NX8LJ5o7ky4lHqR2YBCTCwTts1ebn3RW0FfGEaYh5rCTSxy5TL/DzJt
-   A3FRBnwv4FzMp+7aW6c4qfCEBOKdn0+UbJSWnlYqdgprBeb56adDSDMiC
-   SOH2CY4YFfVm5n4R0mVrVwrmSxPVBTsgE3PM5L/46LoGAewjO6H+icqM4
-   A==;
-X-CSE-ConnectionGUID: gCbj0OLlQCGNBssXS9LvyQ==
-X-CSE-MsgGUID: 66RUN85vSOWmVDkg05o5sA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="28964284"
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=u2Ahxvhg/4cmIB2NS2TyIW6kyvQjVb+fS+f9vi5tKR4=;
+  b=kYclmCaDkg8wwTAqyezmBmwx20jg6fd6GL6g2+G/S85bXnYwpiZdylg2
+   T52JY+XWJemP1DP9XuNXDY/BJWYRrQV2DmsZdcw7ZgZ99nJUURK+LKkXe
+   q7k7PuEvBGXzDqHMazJyauDZFptkVRTMoXQM7HQDub3+KPlncuji7e+2Q
+   xKTScurlOBmEAkHhjD7sitRWgFyX+eVTsfyrtIq/TRmOW+Po+DxTopCda
+   WPATpICxZlrMYtYd9qbl2pXISy7TjorfxDIpjVfzzZNYX2YqGpFZqbGCf
+   9lmk4sjndfQyVbKkjIxjIVVXkzpsnwyzHiIWXiFsWWg1dYKhgfxsYp8qB
+   g==;
+X-CSE-ConnectionGUID: EM47GUURTRGLTPvjCHcIJg==
+X-CSE-MsgGUID: Q/99ioRgTo+9dc6lfd7i9w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="28964299"
 X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
-   d="scan'208";a="28964284"
+   d="scan'208";a="28964299"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 14:54:32 -0700
-X-CSE-ConnectionGUID: FOi80xTeS1Oe+X0B2eo2eQ==
-X-CSE-MsgGUID: XvYNeoeQRMufVwcHM+SBeA==
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 14:54:33 -0700
+X-CSE-ConnectionGUID: lco3PineQ0qLLO2xIY9tnw==
+X-CSE-MsgGUID: l+nYzBSmT9SL+8H7GUXq/g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,227,1719903600"; 
-   d="scan'208";a="72802514"
+   d="scan'208";a="72802512"
 Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
   by fmviesa004.fm.intel.com with ESMTP; 13 Sep 2024 14:54:28 -0700
 Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1spEFF-00074a-1x;
+	id 1spEFF-00074i-29;
 	Fri, 13 Sep 2024 21:54:25 +0000
-Date: Sat, 14 Sep 2024 05:53:55 +0800
+Date: Sat, 14 Sep 2024 05:53:57 +0800
 From: kernel test robot <lkp@intel.com>
-To: Jesper Dangaard Brouer <hawk@kernel.org>, tj@kernel.org,
-	cgroups@vger.kernel.org, yosryahmed@google.com,
-	shakeel.butt@linux.dev
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Jesper Dangaard Brouer <hawk@kernel.org>, hannes@cmpxchg.org,
-	lizefan.x@bytedance.com, longman@redhat.com,
-	kernel-team@cloudflare.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V11] cgroup/rstat: Avoid flushing if there is an ongoing
- root flush
-Message-ID: <202409140533.2vt8QPj8-lkp@intel.com>
-References: <172616070094.2055617.17676042522679701515.stgit@firesoul>
+To: =?iso-8859-1?Q?Adri=E1n?= Larumbe <adrian.larumbe@collabora.com>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: oe-kbuild-all@lists.linux.dev, kernel@collabora.com,
+	=?iso-8859-1?Q?Adri=E1n?= Larumbe <adrian.larumbe@collabora.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v6 1/5] drm/panthor: introduce job cycle and timestamp
+ accounting
+Message-ID: <202409140506.OBoqSiVk-lkp@intel.com>
+References: <20240913124857.389630-2-adrian.larumbe@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <172616070094.2055617.17676042522679701515.stgit@firesoul>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240913124857.389630-2-adrian.larumbe@collabora.com>
 
-Hi Jesper,
+Hi Adrián,
 
-kernel test robot noticed the following build errors:
+kernel test robot noticed the following build warnings:
 
-[auto build test ERROR on tj-cgroup/for-next]
-[also build test ERROR on axboe-block/for-next linus/master v6.11-rc7]
-[cannot apply to akpm-mm/mm-everything next-20240913]
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.11-rc7 next-20240913]
+[cannot apply to drm-misc/drm-misc-next]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jesper-Dangaard-Brouer/cgroup-rstat-Avoid-flushing-if-there-is-an-ongoing-root-flush/20240913-010800
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-next
-patch link:    https://lore.kernel.org/r/172616070094.2055617.17676042522679701515.stgit%40firesoul
-patch subject: [PATCH V11] cgroup/rstat: Avoid flushing if there is an ongoing root flush
-config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20240914/202409140533.2vt8QPj8-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409140533.2vt8QPj8-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Adri-n-Larumbe/drm-panthor-introduce-job-cycle-and-timestamp-accounting/20240913-205038
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20240913124857.389630-2-adrian.larumbe%40collabora.com
+patch subject: [PATCH v6 1/5] drm/panthor: introduce job cycle and timestamp accounting
+config: alpha-allyesconfig (https://download.01.org/0day-ci/archive/20240914/202409140506.OBoqSiVk-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 13.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240914/202409140506.OBoqSiVk-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409140533.2vt8QPj8-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409140506.OBoqSiVk-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+All warnings (new ones prefixed by >>):
 
->> mm/vmscan.c:2265:2: error: call to undeclared function 'mem_cgroup_flush_stats_relaxed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    2265 |         mem_cgroup_flush_stats_relaxed(sc->target_mem_cgroup);
-         |         ^
-   mm/vmscan.c:2265:2: note: did you mean 'mem_cgroup_flush_stats_ratelimited'?
-   include/linux/memcontrol.h:1429:20: note: 'mem_cgroup_flush_stats_ratelimited' declared here
-    1429 | static inline void mem_cgroup_flush_stats_ratelimited(struct mem_cgroup *memcg)
-         |                    ^
-   1 error generated.
+   drivers/gpu/drm/panthor/panthor_sched.c:322: warning: Excess struct member 'runnable' description in 'panthor_scheduler'
+   drivers/gpu/drm/panthor/panthor_sched.c:322: warning: Excess struct member 'idle' description in 'panthor_scheduler'
+   drivers/gpu/drm/panthor/panthor_sched.c:322: warning: Excess struct member 'waiting' description in 'panthor_scheduler'
+   drivers/gpu/drm/panthor/panthor_sched.c:322: warning: Excess struct member 'has_ref' description in 'panthor_scheduler'
+   drivers/gpu/drm/panthor/panthor_sched.c:322: warning: Excess struct member 'in_progress' description in 'panthor_scheduler'
+   drivers/gpu/drm/panthor/panthor_sched.c:322: warning: Excess struct member 'stopped_groups' description in 'panthor_scheduler'
+>> drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Function parameter or struct member 'profiling' not described in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'mem' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'input' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'output' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'input_fw_va' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'output_fw_va' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'gpu_va' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'ref' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'gt' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'sync64' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'bo' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'offset' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'kmap' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'lock' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'id' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'seqno' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'last_fence' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'in_flight_jobs' description in 'panthor_queue'
+>> drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'profiling_info' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'slots' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'slot_count' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:494: warning: Excess struct member 'profiling_seqno' description in 'panthor_queue'
+   drivers/gpu/drm/panthor/panthor_sched.c:813: warning: Excess struct member 'start' description in 'panthor_job'
+   drivers/gpu/drm/panthor/panthor_sched.c:813: warning: Excess struct member 'size' description in 'panthor_job'
+   drivers/gpu/drm/panthor/panthor_sched.c:813: warning: Excess struct member 'latest_flush' description in 'panthor_job'
+   drivers/gpu/drm/panthor/panthor_sched.c:813: warning: Excess struct member 'start' description in 'panthor_job'
+   drivers/gpu/drm/panthor/panthor_sched.c:813: warning: Excess struct member 'end' description in 'panthor_job'
+>> drivers/gpu/drm/panthor/panthor_sched.c:813: warning: Excess struct member 'mask' description in 'panthor_job'
+>> drivers/gpu/drm/panthor/panthor_sched.c:813: warning: Excess struct member 'slot' description in 'panthor_job'
+   drivers/gpu/drm/panthor/panthor_sched.c:1734: warning: Function parameter or struct member 'ptdev' not described in 'panthor_sched_report_fw_events'
+   drivers/gpu/drm/panthor/panthor_sched.c:1734: warning: Function parameter or struct member 'events' not described in 'panthor_sched_report_fw_events'
+   drivers/gpu/drm/panthor/panthor_sched.c:2626: warning: Function parameter or struct member 'ptdev' not described in 'panthor_sched_report_mmu_fault'
 
 
-vim +/mem_cgroup_flush_stats_relaxed +2265 mm/vmscan.c
+vim +494 drivers/gpu/drm/panthor/panthor_sched.c
 
-  2250	
-  2251	static void prepare_scan_control(pg_data_t *pgdat, struct scan_control *sc)
-  2252	{
-  2253		unsigned long file;
-  2254		struct lruvec *target_lruvec;
-  2255	
-  2256		if (lru_gen_enabled())
-  2257			return;
-  2258	
-  2259		target_lruvec = mem_cgroup_lruvec(sc->target_mem_cgroup, pgdat);
-  2260	
-  2261		/*
-  2262		 * Flush the memory cgroup stats, so that we read accurate per-memcg
-  2263		 * lruvec stats for heuristics.
-  2264		 */
-> 2265		mem_cgroup_flush_stats_relaxed(sc->target_mem_cgroup);
-  2266	
-  2267		/*
-  2268		 * Determine the scan balance between anon and file LRUs.
-  2269		 */
-  2270		spin_lock_irq(&target_lruvec->lru_lock);
-  2271		sc->anon_cost = target_lruvec->anon_cost;
-  2272		sc->file_cost = target_lruvec->file_cost;
-  2273		spin_unlock_irq(&target_lruvec->lru_lock);
-  2274	
-  2275		/*
-  2276		 * Target desirable inactive:active list ratios for the anon
-  2277		 * and file LRU lists.
-  2278		 */
-  2279		if (!sc->force_deactivate) {
-  2280			unsigned long refaults;
-  2281	
-  2282			/*
-  2283			 * When refaults are being observed, it means a new
-  2284			 * workingset is being established. Deactivate to get
-  2285			 * rid of any stale active pages quickly.
-  2286			 */
-  2287			refaults = lruvec_page_state(target_lruvec,
-  2288					WORKINGSET_ACTIVATE_ANON);
-  2289			if (refaults != target_lruvec->refaults[WORKINGSET_ANON] ||
-  2290				inactive_is_low(target_lruvec, LRU_INACTIVE_ANON))
-  2291				sc->may_deactivate |= DEACTIVATE_ANON;
-  2292			else
-  2293				sc->may_deactivate &= ~DEACTIVATE_ANON;
-  2294	
-  2295			refaults = lruvec_page_state(target_lruvec,
-  2296					WORKINGSET_ACTIVATE_FILE);
-  2297			if (refaults != target_lruvec->refaults[WORKINGSET_FILE] ||
-  2298			    inactive_is_low(target_lruvec, LRU_INACTIVE_FILE))
-  2299				sc->may_deactivate |= DEACTIVATE_FILE;
-  2300			else
-  2301				sc->may_deactivate &= ~DEACTIVATE_FILE;
-  2302		} else
-  2303			sc->may_deactivate = DEACTIVATE_ANON | DEACTIVATE_FILE;
-  2304	
-  2305		/*
-  2306		 * If we have plenty of inactive file pages that aren't
-  2307		 * thrashing, try to reclaim those first before touching
-  2308		 * anonymous pages.
-  2309		 */
-  2310		file = lruvec_page_state(target_lruvec, NR_INACTIVE_FILE);
-  2311		if (file >> sc->priority && !(sc->may_deactivate & DEACTIVATE_FILE) &&
-  2312		    !sc->no_cache_trim_mode)
-  2313			sc->cache_trim_mode = 1;
-  2314		else
-  2315			sc->cache_trim_mode = 0;
-  2316	
-  2317		/*
-  2318		 * Prevent the reclaimer from falling into the cache trap: as
-  2319		 * cache pages start out inactive, every cache fault will tip
-  2320		 * the scan balance towards the file LRU.  And as the file LRU
-  2321		 * shrinks, so does the window for rotation from references.
-  2322		 * This means we have a runaway feedback loop where a tiny
-  2323		 * thrashing file LRU becomes infinitely more attractive than
-  2324		 * anon pages.  Try to detect this based on file LRU size.
-  2325		 */
-  2326		if (!cgroup_reclaim(sc)) {
-  2327			unsigned long total_high_wmark = 0;
-  2328			unsigned long free, anon;
-  2329			int z;
-  2330	
-  2331			free = sum_zone_node_page_state(pgdat->node_id, NR_FREE_PAGES);
-  2332			file = node_page_state(pgdat, NR_ACTIVE_FILE) +
-  2333				   node_page_state(pgdat, NR_INACTIVE_FILE);
-  2334	
-  2335			for (z = 0; z < MAX_NR_ZONES; z++) {
-  2336				struct zone *zone = &pgdat->node_zones[z];
-  2337	
-  2338				if (!managed_zone(zone))
-  2339					continue;
-  2340	
-  2341				total_high_wmark += high_wmark_pages(zone);
-  2342			}
-  2343	
-  2344			/*
-  2345			 * Consider anon: if that's low too, this isn't a
-  2346			 * runaway file reclaim problem, but rather just
-  2347			 * extreme pressure. Reclaim as per usual then.
-  2348			 */
-  2349			anon = node_page_state(pgdat, NR_INACTIVE_ANON);
-  2350	
-  2351			sc->file_is_tiny =
-  2352				file + free <= total_high_wmark &&
-  2353				!(sc->may_deactivate & DEACTIVATE_ANON) &&
-  2354				anon >> sc->priority;
-  2355		}
-  2356	}
-  2357	
+de85488138247d Boris Brezillon 2024-02-29  397  
+de85488138247d Boris Brezillon 2024-02-29  398  	/** @ringbuf: Command stream ring-buffer. */
+de85488138247d Boris Brezillon 2024-02-29  399  	struct panthor_kernel_bo *ringbuf;
+de85488138247d Boris Brezillon 2024-02-29  400  
+de85488138247d Boris Brezillon 2024-02-29  401  	/** @iface: Firmware interface. */
+de85488138247d Boris Brezillon 2024-02-29  402  	struct {
+de85488138247d Boris Brezillon 2024-02-29  403  		/** @mem: FW memory allocated for this interface. */
+de85488138247d Boris Brezillon 2024-02-29  404  		struct panthor_kernel_bo *mem;
+de85488138247d Boris Brezillon 2024-02-29  405  
+de85488138247d Boris Brezillon 2024-02-29  406  		/** @input: Input interface. */
+de85488138247d Boris Brezillon 2024-02-29  407  		struct panthor_fw_ringbuf_input_iface *input;
+de85488138247d Boris Brezillon 2024-02-29  408  
+de85488138247d Boris Brezillon 2024-02-29  409  		/** @output: Output interface. */
+de85488138247d Boris Brezillon 2024-02-29  410  		const struct panthor_fw_ringbuf_output_iface *output;
+de85488138247d Boris Brezillon 2024-02-29  411  
+de85488138247d Boris Brezillon 2024-02-29  412  		/** @input_fw_va: FW virtual address of the input interface buffer. */
+de85488138247d Boris Brezillon 2024-02-29  413  		u32 input_fw_va;
+de85488138247d Boris Brezillon 2024-02-29  414  
+de85488138247d Boris Brezillon 2024-02-29  415  		/** @output_fw_va: FW virtual address of the output interface buffer. */
+de85488138247d Boris Brezillon 2024-02-29  416  		u32 output_fw_va;
+de85488138247d Boris Brezillon 2024-02-29  417  	} iface;
+de85488138247d Boris Brezillon 2024-02-29  418  
+de85488138247d Boris Brezillon 2024-02-29  419  	/**
+de85488138247d Boris Brezillon 2024-02-29  420  	 * @syncwait: Stores information about the synchronization object this
+de85488138247d Boris Brezillon 2024-02-29  421  	 * queue is waiting on.
+de85488138247d Boris Brezillon 2024-02-29  422  	 */
+de85488138247d Boris Brezillon 2024-02-29  423  	struct {
+de85488138247d Boris Brezillon 2024-02-29  424  		/** @gpu_va: GPU address of the synchronization object. */
+de85488138247d Boris Brezillon 2024-02-29  425  		u64 gpu_va;
+de85488138247d Boris Brezillon 2024-02-29  426  
+de85488138247d Boris Brezillon 2024-02-29  427  		/** @ref: Reference value to compare against. */
+de85488138247d Boris Brezillon 2024-02-29  428  		u64 ref;
+de85488138247d Boris Brezillon 2024-02-29  429  
+de85488138247d Boris Brezillon 2024-02-29  430  		/** @gt: True if this is a greater-than test. */
+de85488138247d Boris Brezillon 2024-02-29  431  		bool gt;
+de85488138247d Boris Brezillon 2024-02-29  432  
+de85488138247d Boris Brezillon 2024-02-29  433  		/** @sync64: True if this is a 64-bit sync object. */
+de85488138247d Boris Brezillon 2024-02-29  434  		bool sync64;
+de85488138247d Boris Brezillon 2024-02-29  435  
+de85488138247d Boris Brezillon 2024-02-29  436  		/** @bo: Buffer object holding the synchronization object. */
+de85488138247d Boris Brezillon 2024-02-29  437  		struct drm_gem_object *obj;
+de85488138247d Boris Brezillon 2024-02-29  438  
+de85488138247d Boris Brezillon 2024-02-29  439  		/** @offset: Offset of the synchronization object inside @bo. */
+de85488138247d Boris Brezillon 2024-02-29  440  		u64 offset;
+de85488138247d Boris Brezillon 2024-02-29  441  
+de85488138247d Boris Brezillon 2024-02-29  442  		/**
+de85488138247d Boris Brezillon 2024-02-29  443  		 * @kmap: Kernel mapping of the buffer object holding the
+de85488138247d Boris Brezillon 2024-02-29  444  		 * synchronization object.
+de85488138247d Boris Brezillon 2024-02-29  445  		 */
+de85488138247d Boris Brezillon 2024-02-29  446  		void *kmap;
+de85488138247d Boris Brezillon 2024-02-29  447  	} syncwait;
+de85488138247d Boris Brezillon 2024-02-29  448  
+de85488138247d Boris Brezillon 2024-02-29  449  	/** @fence_ctx: Fence context fields. */
+de85488138247d Boris Brezillon 2024-02-29  450  	struct {
+de85488138247d Boris Brezillon 2024-02-29  451  		/** @lock: Used to protect access to all fences allocated by this context. */
+de85488138247d Boris Brezillon 2024-02-29  452  		spinlock_t lock;
+de85488138247d Boris Brezillon 2024-02-29  453  
+de85488138247d Boris Brezillon 2024-02-29  454  		/**
+de85488138247d Boris Brezillon 2024-02-29  455  		 * @id: Fence context ID.
+de85488138247d Boris Brezillon 2024-02-29  456  		 *
+de85488138247d Boris Brezillon 2024-02-29  457  		 * Allocated with dma_fence_context_alloc().
+de85488138247d Boris Brezillon 2024-02-29  458  		 */
+de85488138247d Boris Brezillon 2024-02-29  459  		u64 id;
+de85488138247d Boris Brezillon 2024-02-29  460  
+de85488138247d Boris Brezillon 2024-02-29  461  		/** @seqno: Sequence number of the last initialized fence. */
+de85488138247d Boris Brezillon 2024-02-29  462  		atomic64_t seqno;
+de85488138247d Boris Brezillon 2024-02-29  463  
+7b6f9ec6ad5112 Boris Brezillon 2024-07-03  464  		/**
+7b6f9ec6ad5112 Boris Brezillon 2024-07-03  465  		 * @last_fence: Fence of the last submitted job.
+7b6f9ec6ad5112 Boris Brezillon 2024-07-03  466  		 *
+7b6f9ec6ad5112 Boris Brezillon 2024-07-03  467  		 * We return this fence when we get an empty command stream.
+7b6f9ec6ad5112 Boris Brezillon 2024-07-03  468  		 * This way, we are guaranteed that all earlier jobs have completed
+7b6f9ec6ad5112 Boris Brezillon 2024-07-03  469  		 * when drm_sched_job::s_fence::finished without having to feed
+7b6f9ec6ad5112 Boris Brezillon 2024-07-03  470  		 * the CS ring buffer with a dummy job that only signals the fence.
+7b6f9ec6ad5112 Boris Brezillon 2024-07-03  471  		 */
+7b6f9ec6ad5112 Boris Brezillon 2024-07-03  472  		struct dma_fence *last_fence;
+7b6f9ec6ad5112 Boris Brezillon 2024-07-03  473  
+de85488138247d Boris Brezillon 2024-02-29  474  		/**
+de85488138247d Boris Brezillon 2024-02-29  475  		 * @in_flight_jobs: List containing all in-flight jobs.
+de85488138247d Boris Brezillon 2024-02-29  476  		 *
+de85488138247d Boris Brezillon 2024-02-29  477  		 * Used to keep track and signal panthor_job::done_fence when the
+de85488138247d Boris Brezillon 2024-02-29  478  		 * synchronization object attached to the queue is signaled.
+de85488138247d Boris Brezillon 2024-02-29  479  		 */
+de85488138247d Boris Brezillon 2024-02-29  480  		struct list_head in_flight_jobs;
+de85488138247d Boris Brezillon 2024-02-29  481  	} fence_ctx;
+a706810cebb072 Adrián Larumbe  2024-09-13  482  
+a706810cebb072 Adrián Larumbe  2024-09-13  483  	/** @profiling_info: Job profiling data slots and access information. */
+a706810cebb072 Adrián Larumbe  2024-09-13  484  	struct {
+a706810cebb072 Adrián Larumbe  2024-09-13  485  		/** @slots: Kernel BO holding the slots. */
+a706810cebb072 Adrián Larumbe  2024-09-13  486  		struct panthor_kernel_bo *slots;
+a706810cebb072 Adrián Larumbe  2024-09-13  487  
+a706810cebb072 Adrián Larumbe  2024-09-13  488  		/** @slot_count: Number of jobs ringbuffer can hold at once. */
+a706810cebb072 Adrián Larumbe  2024-09-13  489  		u32 slot_count;
+a706810cebb072 Adrián Larumbe  2024-09-13  490  
+a706810cebb072 Adrián Larumbe  2024-09-13  491  		/** @profiling_seqno: Index of the next available profiling information slot. */
+a706810cebb072 Adrián Larumbe  2024-09-13  492  		u32 seqno;
+a706810cebb072 Adrián Larumbe  2024-09-13  493  	} profiling;
+de85488138247d Boris Brezillon 2024-02-29 @494  };
+de85488138247d Boris Brezillon 2024-02-29  495  
 
 -- 
 0-DAY CI Kernel Test Service
