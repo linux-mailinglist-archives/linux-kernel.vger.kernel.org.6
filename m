@@ -1,262 +1,121 @@
-Return-Path: <linux-kernel+bounces-328166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FC6C977FD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:28:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81C1A977FDC
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E6761F22046
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:28:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AEF71C21C2D
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F2A1D935C;
-	Fri, 13 Sep 2024 12:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE9A1D932F;
+	Fri, 13 Sep 2024 12:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RxqHzYTw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tUF+eQ0R"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9D321C2BF
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218FE1D9323
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726230490; cv=none; b=fNdYUyMQHfPz1CfgfSUfTKTDws7QYYZyX+F0le1sLz0sjA9Bf35VArCFjxbqJbrKiS5SiWAjzUH4DjbHSIl4IxNhfghvfxCsy+RCuslz0ZWsNcJeVJgvVjgxIcDYCs076dN6toRBExwwIJ2Rt6JXxhRV/Op529Qdd2RY4lQ+Jhg=
+	t=1726230526; cv=none; b=PP4xdjYyOEliN3jFwhr38ayO3r6EAQMBdeXZbvh70d61ApA3TgwV1Vt7g/3lYfk8AGzFuN+2rf6g5GvoyaWfSHrbmntnGWpEhm1E+QsWKOo7q3pL49VZHV9p4USw4S0HQnvCXJu1+qwiJaQtBA6pukv0PUWPs2nKHt5r1US3ixo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726230490; c=relaxed/simple;
-	bh=9u3ZTF5+yEOHijIR7MEcR87JGXlMqf2ETMW9omSZGkU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m/1lxyqACjWfqW4gDgauj9OLB503WAEn9vrPgo1TN2Zj/e8ct+49+PYeD+3N8vF8K/VQPllxWAvT8BwEVwm3ucb5t86Tk+3iaWptID4/9zl5nUVJtrb9nBiRMPziJfuskDD52v9JfuMAwLVoxUXyDaDgwgVID6S3sSfzvt31Aa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RxqHzYTw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726230487;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EOsEOZ442fZTnpwmIAalviKZpEy09FAoSuiqvRfcTP8=;
-	b=RxqHzYTwx+q+NvSjTPCbK5tUJH5MV865oH1OoGpgmqaI9CzZTtEMueChrWVgwN+T+YDvTc
-	lU4loqohcZ0yCjYCsK/NFDQqqEUAP6VfTs9rf65syeediged4O8Sa7y/QKNyCkvvm88XYd
-	3L/r6UdD8kK5/0Z7uJmdAek+jGDHvJU=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-447-ROWWXoTyMiiZS6zvxXwUCg-1; Fri, 13 Sep 2024 08:28:06 -0400
-X-MC-Unique: ROWWXoTyMiiZS6zvxXwUCg-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42cc4345561so13479705e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 05:28:06 -0700 (PDT)
+	s=arc-20240116; t=1726230526; c=relaxed/simple;
+	bh=PsWOLXYhGEPuJf8nwq+prRl7Dg+ag5UAqgxM272Ss1o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NDaAiXTTnT4zPFvem6EYGX2UXN5eIYpwtt/LO2az2XZlwqPRrf4G7pSMRwtY1HnUUoTH/O7lX9fCWvGIuu9h9O1OnjsT6qRahbeKtM6acGk9AP7tCtMuTiwi7m3mVO6w8my/qjvzIswcSkQN7AjAKFtfil0nVL4l78XOosqinm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tUF+eQ0R; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5365392cfafso929622e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 05:28:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726230523; x=1726835323; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3Ji4NYmFGGbt+gGev2Tj2lbi8IGg1JCceX+r4CZ9/dE=;
+        b=tUF+eQ0RUL1LwPTPRipqgzJIKZ655MO23yXNjlKlDF8O4fVY4qN/Hw1+UuvO95y7WS
+         zeGZMRcSNZcREhEB5jHwk6WRaI2Nlmwa9Q0XKkVbwhbRuO5x8Nm4de639XP+otuJ9FGE
+         vxwsOYENEdQogefpxOlHb+bZQoZNwD08ZiNKSMNW1xZ1PiDia9t/KzRGNFPhGpUTAYQB
+         ezG6wR5KAJJxRueRR91C+0VDDDSfOeQEcNlJCqEjPWMmN5xXj6eOAsq9bLbbEG35IxMG
+         92feOX6cQWIXAzy7KQyT3Qy6xastQwNVthJrHxq0oGmmVQDLTE3NL1FSkGreBD6xGBsU
+         lRKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726230485; x=1726835285;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EOsEOZ442fZTnpwmIAalviKZpEy09FAoSuiqvRfcTP8=;
-        b=LCe09QU4cZrlIhUNWNBFMORf7vE+QE/DGGCJOfpGfG6LzNLzOEHc73CFIyp69RLiZt
-         dpici1hsBYSWgaLpaCGPj2mBXQF+h05bNuRwWU9nVXY2sN4x90Lg6r8MQlhRqnw3G/Th
-         NwfyKQdAAhxYdQH8AF2HujG6pTVFTDDNshT0/rIm7g85kie2MfKLdLp0U9oUcfDOI+O+
-         JaJNnghcGJeXJp9EKCMNt3Boe4+tTX6zsx2gAHEtt3IZuj00X7o/4ViPpCPIpVnEVAfg
-         YGvEnf3OinJqLOnorZH6POoNULXQkX2cypvoFIWcl6HudPe5QgeXqB3UVAxVw5qTW7Rq
-         1HMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkVPFM/2XHxdaIREJdX/krqZKaYRPamu1BHsXrqflVNkYTgu7AtEyeDXKlAX7zjrYTy+qocsZZ/VdrTjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1xNVUGmdzncFEuwYJMieJW++MBKolJcBT5TymNVtbTWkQzkSh
-	WQK3dTwvEVygNuErTyg+5CS/1Qlv7RqP5n4HsvuDgTYFNzoa2gwPgiSrUDxinUHkebFUFMSDEQ+
-	fy1lV68PmI1v6V6E7dcoVpqCx0J8/2uXyTJDnxjneGcL/DNuF8jhqJejliGq29Q==
-X-Received: by 2002:a05:600c:198b:b0:426:593c:9361 with SMTP id 5b1f17b1804b1-42cdb5684damr49732105e9.26.1726230485133;
-        Fri, 13 Sep 2024 05:28:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHc4izhNNN/2PpM5puG50s26suMsJhcsCLKLFAgHCzd5V21SwKxQbv6VrgnOTQt5V2FINMK/A==
-X-Received: by 2002:a05:600c:198b:b0:426:593c:9361 with SMTP id 5b1f17b1804b1-42cdb5684damr49731645e9.26.1726230484047;
-        Fri, 13 Sep 2024 05:28:04 -0700 (PDT)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b05d6fcsm23251065e9.15.2024.09.13.05.28.03
+        d=1e100.net; s=20230601; t=1726230523; x=1726835323;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3Ji4NYmFGGbt+gGev2Tj2lbi8IGg1JCceX+r4CZ9/dE=;
+        b=ESJt+zumy1DkSxl2N9PCuO8VOOMEeTcZKvU1Jx0ZZ2zxTus9njKK+QMHxGioZF81o0
+         lqIBLXFQ5edm+tzdADJhRPdvGYeut/m3KZjM3V53iaNHYvVK1BviCosc1Nxoz0MfnqJr
+         iug6rvJRbl3fH2sh3c9j07ssfZdrnCHO2WedUd8FDSub07QbOX0GexW9U8qPL64PaPOf
+         OInuIl94DuHKlpeBzRDW9pZoBlcTJ0RkE5c6UpwzO1d9Mgziz9mMIsT7Ovo3Oug7ml9+
+         iv1OE9iTBZLzQvVWDKwvGNtxYKQX2YISe8bfCby7BawvAbooujBd/FaL3j2a0NYf/oYx
+         YnNA==
+X-Forwarded-Encrypted: i=1; AJvYcCX2V145zl9se1GFrdaTKH0mLTzT3bTg6CMAIr4r6N2jfUfctA5QmweWq45vVvsNSO1rbM3DzHiydz/t0Qw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVL2IGZd6OmZ4e3ZC1q5aXxuXYj0Z6QBmezZgZ+CiT1lNQNyBm
+	wlpmQYZb3uHUXE+iZJV3PXoTYOba57HSZxJ72QJZzv4Bjb3M/nNGswnwVf27dDU=
+X-Google-Smtp-Source: AGHT+IFjTOd+RrLVc1MSCX5go4WC8b4PHBCxtlwa/ercIrMyEGIaP2cttCmh5EftrPHHdbja2IAJsQ==
+X-Received: by 2002:a05:6512:3e0a:b0:52c:9e25:978d with SMTP id 2adb3069b0e04-5367ff24baemr1651346e87.45.1726230522693;
+        Fri, 13 Sep 2024 05:28:42 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5365f903ca4sm2262019e87.192.2024.09.13.05.28.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 05:28:03 -0700 (PDT)
-Date: Fri, 13 Sep 2024 14:28:02 +0200
-From: Igor Mammedov <imammedo@redhat.com>
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
- <linux-kernel@vger.kernel.org>, <qemu-arm@nongnu.org>,
- <qemu-devel@nongnu.org>
-Subject: Re: [PATCH v8 06/13] acpi/ghes: add support for generic error
- injection via QAPI
-Message-ID: <20240913142802.08571a15@imammedo.users.ipa.redhat.com>
-In-Reply-To: <20240913111300.00007a3c@Huawei.com>
-References: <cover.1723793768.git.mchehab+huawei@kernel.org>
-	<2c8970b5d54d17b601dc65d778cc8b5fb288984b.1723793768.git.mchehab+huawei@kernel.org>
-	<20240819145136.0452ff2b@imammedo.users.ipa.redhat.com>
-	<20240825052923.715f88bc@sal.lan>
-	<20240911152132.65a7a219@imammedo.users.ipa.redhat.com>
-	<20240911163436.00004738@Huawei.com>
-	<20240912144233.675d6b63@imammedo.users.ipa.redhat.com>
-	<20240913072025.76a329b0@foz.lan>
-	<20240913111300.00007a3c@Huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+        Fri, 13 Sep 2024 05:28:42 -0700 (PDT)
+Date: Fri, 13 Sep 2024 15:28:40 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Qiang Yu <quic_qianyu@quicinc.com>
+Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org, 
+	robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, abel.vesa@linaro.org, 
+	quic_msarkar@quicinc.com, quic_devipriy@quicinc.com, kw@linux.com, lpieralisi@kernel.org, 
+	neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] phy: qcom: qmp: Add phy register and clk setting
+ for x1e80100 PCIe3
+Message-ID: <tkt6ox75xsbqhbopgi2dkexvubpmuizuzeyy5hkdv7si7jljzq@x3tgbepgxeni>
+References: <20240913083724.1217691-1-quic_qianyu@quicinc.com>
+ <20240913083724.1217691-4-quic_qianyu@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240913083724.1217691-4-quic_qianyu@quicinc.com>
 
-On Fri, 13 Sep 2024 11:13:00 +0100
-Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
-
-> On Fri, 13 Sep 2024 07:20:25 +0200
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+On Fri, Sep 13, 2024 at 01:37:22AM GMT, Qiang Yu wrote:
+> Currently driver supports only x4 lane based functionality using tx/rx and
+> tx2/rx2 pair of register sets. To support 8 lane functionality with PCIe3,
+> PCIe3 related QMP PHY provides additional programming which are available
+> as txz and rxz based register set. Hence adds txz and rxz based registers
+> usage and programming sequences. Phy register setting for txz and rxz will
+> be applied to all 8 lanes. Some lanes may have different settings on
+> several registers than txz/rxz, these registers should be programmed after
+> txz/rxz programming sequences completing.
 > 
-> > Em Thu, 12 Sep 2024 14:42:33 +0200
-> > Igor Mammedov <imammedo@redhat.com> escreveu:
-> >   
-> > > On Wed, 11 Sep 2024 16:34:36 +0100
-> > > Jonathan Cameron <Jonathan.Cameron@Huawei.com> wrote:
-> > >     
-> > > > On Wed, 11 Sep 2024 15:21:32 +0200
-> > > > Igor Mammedov <imammedo@redhat.com> wrote:
-> > > >     
-> > > > > On Sun, 25 Aug 2024 05:29:23 +0200
-> > > > > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> > > > >       
-> > > > > > Em Mon, 19 Aug 2024 14:51:36 +0200
-> > > > > > Igor Mammedov <imammedo@redhat.com> escreveu:
-> > > > > >         
-> > > > > > > > +        read_ack = 1;
-> > > > > > > > +        cpu_physical_memory_write(read_ack_start_addr,
-> > > > > > > > +                                  &read_ack, (uint64_t));            
-> > > > > > > we don't do this for SEV so, why are you setting it to 1 here?        
-> > 
-> > The diffstat doesn't really help here. The full code is:
-> > 
-> >     /* zero means OSPM does not acknowledge the error */
-> >     if (!read_ack) {
-> >         error_setg(errp,
-> >                    "Last CPER record was not acknowledged yet");
-> >         read_ack = 1;
-> >         cpu_physical_memory_write(read_ack_start_addr,
-> >                                   &read_ack, sizeof(read_ack));
-> >         return;
-> >     }
-> >   
-> > > > > what you are doing here by setting read_ack = 1,
-> > > > > is making ack on behalf of OSPM when OSPM haven't handled existing error yet.
-> > > > > 
-> > > > > Essentially making HW/FW do the job of OSPM. That looks wrong to me.
-> > > > > From HW/FW side read_ack register should be thought as read-only.      
-> > > > 
-> > > > It's not read-only because HW/FW has to clear it so that HW/FW can detect
-> > > > when the OSPM next writes it.    
-> > > 
-> > > By readonly, I've meant that hw shall not do above mentioned write
-> > > (bad phrasing on my side).    
-> > 
-> > The above code is actually an error handling condition: if for some
-> > reason errors are triggered too fast, there's a bug on QEMU or there is
-> > a bug at the OSPM, an error message is raised and the logic resets the 
-> > record to a sane state. So, on a next error, OSPM will get it.
-> > 
-> > As described at https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html?highlight=asynchronous#generic-hardware-error-source:
-> > 
-> >    "Some platforms may describe multiple Generic Hardware Error Source
-> >     structures with different notification types, as defined in 
-> >     Table 18.10. For example, a platform may describe one error source
-> >     for the handling of synchronous errors (e.g. MCE or SEA), and a 
-> >     second source for handling asynchronous errors (e.g. SCI or
-> >     External Interrupt)."
-> > 
-> > Basically, the error logic there seems to fit for the asynchronous
-> > case, detecting if another error happened before OSPM handles the
-> > first one.  
+> Besides, x1e80100 SoC uses QMP phy with version v6.30 for PCIe Gen4 x8.
+> Add the new register offsets in a dedicated header file.
 > 
-> Agreed - the error logic to act as backpressure for the tool injecting
-> the error makes sense - it's just hardware acknowledging to paper
-> over slow software that is an issue.
-
-on top of that, read_ack is serving as sync primitive
-If one disregards it and starts overwriting error block regardless of
-ack value, One will be inducing race condition, where OSPM might be
-accessing error_block while HW is in process of overwriting it.
-
-> 
-> > 
-> > IMO, there are a couple of alternatives to handle such case:
-> > 
-> > 1. Keep the code as-is: if this ever happens, an error message will
-> >    be issued. If SEA/MCE gets implemented synchronously on HW/FW/OSPM,
-> >    the above code will never be called;
-> > 2. Change the logic to do that only for asynchronous sources
-> >    (currently, only if source ID is QMP);
-> > 3. Add a special QMP message to reset the notification ack. Probably
-> >    would use Notification type as an input parameter;
-> > 4. Have a much more complex code to implement asynchronous notifications,
-> >    with a queue to receive HEST errors and a separate thread to deliver
-> >    errors to OSPM asynchronously. If we go this way, QMP would be
-> >    returning the number of error messages queued, allowing error injection
-> >    code to know if OSPM has troubles delivering errors;  
-> 
-> Is this not better done in the injection code outside of qemu?
-> So detect the error in that and if it happens back off and try again
-> later?  Basically EBUSY done in an inelegant way.
-> 
-> > 5. Just return an error code without doing any resets. To me, this is 
-> >    the worse scenario.
-> > 
-> > I don't like (5), as if something bad happens, there's nothing to be
-> > done.  
-> 
-> If it happens on a real system nothing is done either. So I'm not sure
-> we need to handle that.  Or maybe real hardware reinjects the interrupt
-> if the OSPM hasn't done anything about it for a while.
-> 
-> > 
-> > For QMP error injection (4) seems is overkill. It may be needed in the
-> > future if we end implementing a logic where host OS informs guest about
-> > hardware problems, and such errors use asynchronous notifications.
-> > 
-> > I would also avoid implementing (3) at least for now, as reporting
-> > such error via QMP seems enough for the QMP usecase.
-> > 
-> > So, if ok for you, I'll change the code to (2).  
-> 
-> Whilst I don't feel strongly about it, I think 5 is unfortunately the
-> correct option if we aren't going to queue errors in qemu (so make it
-> an injection tool problem).
-
-+1 to option (5)
-
-> > 
-> >   
-> > > > Agreed this write to 1 looks wrong, but the one a few lines further down (to zero
-> > > > it) is correct.    
-> > > 
-> > > yep, hw should clear register.
-> > > It would be better to so on OSPM ACK, but alas we can't intercept that,
-> > > so the next option would be to do that at the time when we add a new error block
-> > >     
-> > > > 
-> > > > My bug a long time back I think.
-> > > > 
-> > > > Jonathan
-> > > >     
-> > > > >       
-> > > > > > 
-> > > > > > IMO, this is needed, independently of the notification mechanism.
-> > > > > > 
-> > > > > > Regards,
-> > > > > > Mauro
-> > > > > >         
-> > > > > 
-> > > > >       
-> > > >     
-> > >     
-> > 
-> > 
-> > 
-> > Thanks,
-> > Mauro  
+> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+> ---
+>  drivers/phy/qualcomm/phy-qcom-qmp-pcie.c      | 211 ++++++++++++++++++
+>  .../qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h    |  25 +++
+>  drivers/phy/qualcomm/phy-qcom-qmp-pcs-v6_30.h |  19 ++
+>  3 files changed, 255 insertions(+)
+>  create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h
+>  create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-v6_30.h
 > 
 
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+-- 
+With best wishes
+Dmitry
 
