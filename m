@@ -1,110 +1,126 @@
-Return-Path: <linux-kernel+bounces-327981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6327977D66
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:30:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F16F3977D6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 513BA1F21332
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:30:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C8691F229BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B571DA0E9;
-	Fri, 13 Sep 2024 10:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875AB1D86EC;
+	Fri, 13 Sep 2024 10:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WI5xJa3G"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="fWWJOR2M"
+Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927921D86D4;
-	Fri, 13 Sep 2024 10:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A0F1DA103;
+	Fri, 13 Sep 2024 10:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726223355; cv=none; b=LRD9EBTDdmKkkWeZzEnYWAjmU5g4dlPlKnDhDFFqmFg2XuJrsr9KmbtQMAxO6rWvdiD6J7R34Ij1VpdyEjnSzTC4/4RMOEkYcbXspPPU1vl4QNrBPSH8oNOabrTVtKtIQv4NjKmbO5bT84P+g8hcZrhhfLEv6UqmSMZXcp3d5gE=
+	t=1726223363; cv=none; b=RnScN5n3RK49dzfspVxSPSmU0Ya6QcbkzOgJxONWj6u0bo9I8WXjLYJrXTywRZUjiB7tvN4ueXEchQzFnGmW9DCE6JH+vbXPYjxNE9Zrax6OeM8EvrGZuSxH94MWx/g1OrfV0E6f96hJuiVaBwHnITb4fo67AD9mSeSvkrjQ2tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726223355; c=relaxed/simple;
-	bh=i6ULjdQFx3hSTUi2FClPl+Wv7jWBPBdc7fIJZO9A84g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K3aSvwlVMEMc1SVuW21aP+EJ2fYe+AA+tjtgPWtGAndiKjH3EmBXdFlPW9eKoBWKzgsz+8AGDInnR60kM/wA0jPMM2YJsJtQAHBTGFQIGWygGTI/3S9MvHZvQzF45XgR93HlGJcY/VmSMqhvADWiQT8WauQXw0/LlYO4eiDiqQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WI5xJa3G; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726223354; x=1757759354;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=i6ULjdQFx3hSTUi2FClPl+Wv7jWBPBdc7fIJZO9A84g=;
-  b=WI5xJa3GIm2KlkEQiwKe1gntB9pJOOrkxdt0yWV1xXnOnyHleR/Um+9w
-   W/ir2YY/biT9VD2VFwo9a/d8tQfWysyaOO6mWNIdM0sQr3qxv2kdDRABb
-   UqrU9zsaSTl4AUD44J0Ac+Gy919VzYFev8g1OaT46QxP2kpQ4KJ/D/Lrm
-   rREJAJ7WhtszC36OSuA1Lwz3QOrXhTgXTpoBDQqvOehO31Q8Y1xDNrT/r
-   qjv+mEK2J3/ncmBo5vqJlTBiknpiujFVIAe4DVmR7TAhwPS5ZFnyOR/II
-   QpuF+BbuD/bAlAQCBXf6NYxU03mN3I1TAMKe9tZHd8QovMB+/1VZXBE/m
-   A==;
-X-CSE-ConnectionGUID: sInzwkqYRrSQpWgtVf8hhQ==
-X-CSE-MsgGUID: jqWV+U2zQ9ScdxAvxHziog==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="25271986"
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="25271986"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 03:29:13 -0700
-X-CSE-ConnectionGUID: +ctQAAoLTYehwwW77k+SjQ==
-X-CSE-MsgGUID: eaMqxQcmT3O+2Qu47QihrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="67978143"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 03:29:08 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sp3Y1-00000008GGM-1jvO;
-	Fri, 13 Sep 2024 13:29:05 +0300
-Date: Fri, 13 Sep 2024 13:29:05 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Tyrone Ting <warp5tw@gmail.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
-	venture@google.com, yuenn@google.com, benjaminfair@google.com,
-	andi.shyti@kernel.org, wsa@kernel.org, rand.sec96@gmail.com,
-	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com,
-	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com,
-	KWLIU@nuvoton.com, JJLIU0@nuvoton.com, kfting@nuvoton.com,
-	openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Charles Boyer <Charles.Boyer@fii-usa.com>,
-	Vivekanand Veeracholan <vveerach@google.com>
-Subject: Re: [PATCH v3 6/6] i2c: npcm: Enable slave in eob interrupt
-Message-ID: <ZuQT8YfVetrkMotQ@smile.fi.intel.com>
-References: <20240913101532.16571-1-kfting@nuvoton.com>
+	s=arc-20240116; t=1726223363; c=relaxed/simple;
+	bh=hFBb0VdmwpJyB7HUscmrPYS3gZMBv/xx+DAEZyA6cH8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uBumnGo3mw2JuvliLocO9pI1W0gMSOksmskGm3nHXubUCWVtjN8qJ/eTzKxwHGgxRF5DXLdc6UJZGe8nC3j0ZJK+1CqHwuDYKmIwsHG9BO7RXq2UOKxdTXVyW1Arib/TetuwPMSpYd2fxkPiNmbgXHaIbg90GTjvXQNdoUIvcZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=fWWJOR2M; arc=none smtp.client-ip=188.40.30.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
+	s=default2211; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References; bh=oK/HdnIlMYRz/Dd4LIid7y8NEXVq1mgovfXdJqNrshs=; b=fW
+	WJOR2M6jE0e1y9xRVIT8HHABoYq7iUmCTMBNs15/tBoV7pKBIYVCimBxhtMT/K2l3j+mBFxUUPh06
+	GyvA+Zppwb97hYzwyu5skBQJMe4Xnb8yIEQme3LO9yCt5ceVvfB/rItfKwb0i19sueZE6IHNhrtuS
+	sHH4ZImdA4sbPjZNEtALPix2XtImc3F4BupJcuD4FufBvqKl80dHD+2o1ZkjDF2+x3g4oGjrmijif
+	o91KEaCteryM8n24YgZ7+mIzS6/jVQ+/eTlaoXBnnOIwAA3m2vkaW5I3lrzcShQmlWKdyNjH0kykY
+	DJPwp/qppekQVYX1jryKxh1CnKAJ7AoA==;
+Received: from sslproxy07.your-server.de ([78.47.199.104])
+	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <esben@geanix.com>)
+	id 1sp3YE-0006OE-0e; Fri, 13 Sep 2024 12:29:18 +0200
+Received: from [80.62.117.18] (helo=localhost)
+	by sslproxy07.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <esben@geanix.com>)
+	id 1sp3YD-0006ob-0h;
+	Fri, 13 Sep 2024 12:29:17 +0200
+From: Esben Haabendal <esben@geanix.com>
+Subject: [PATCH v2 0/3] rtc: isl12022: Add alarm support
+Date: Fri, 13 Sep 2024 12:29:11 +0200
+Message-Id: <20240913-rtc-isl12022-alarm-irq-v2-0-37309d939723@geanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240913101532.16571-1-kfting@nuvoton.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPcT5GYC/4WNTQqDMBBGryKz7pQkVmy66j2KixAnOuBPnUiwi
+ Hdv6gW6fA++9+0QSZgiPIodhBJHnqcM5lKA793UEXKbGYwyN2W1Qlk9chx0Fgbd4GRElgW1rSm
+ YslK+JMjjt1Dg7Qy/msw9x3WWz/mT9M/+TSaNCtt7XXlqvbV1eHbkJt6ufh6hOY7jC3RYicy9A
+ AAA
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Esben Haabendal <esben@geanix.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1726223356; l=1610;
+ i=esben@geanix.com; s=20240523; h=from:subject:message-id;
+ bh=hFBb0VdmwpJyB7HUscmrPYS3gZMBv/xx+DAEZyA6cH8=;
+ b=EgYQ0iVGlR68umIm1ocJWYEYw6hwjV2CKhufGELtBI5LencQoRpKo+esl5dvJx9c/LEzBhuUU
+ cxjFV3Xi/mNAefb25p2/bbvg7sL/2oaspvAbi53SM2INDwak6A2F6av
+X-Developer-Key: i=esben@geanix.com; a=ed25519;
+ pk=PbXoezm+CERhtgVeF/QAgXtEzSkDIahcWfC7RIXNdEk=
+X-Authenticated-Sender: esben@geanix.com
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27397/Fri Sep 13 10:48:01 2024)
 
-On Fri, Sep 13, 2024 at 06:15:32PM +0800, Tyrone Ting wrote:
-> From: Charles Boyer <Charles.Boyer@fii-usa.com>
-> 
-> Nuvoton slave enable was in user space API call master_xfer, so it is
-> subject to delays from the OS scheduler. If the BMC is not enabled for
-> slave mode in time for master to send response, then it will NAK the
-> address match. Then the PLDM request timeout occurs.
-> 
-> If the slave enable is moved to the EOB interrupt service routine, then
-> the BMC can be ready in slave mode by the time it needs to receive a
-> response.
+Extend the rtc-isl12022 driver with alarm IRQ support.
 
-Fixes tag?
+Signed-off-by: Esben Haabendal <esben@geanix.com>
+---
+Changes in v2:
+- Various coding style changes.
+- Remove const keyword from auto variable declaration.
+- Use u8 type instead of uint8_t.
+- Fixed bad return value in isl12022_rtc_read_alarm() error handling.
+- Change variable type from int to unsigned int for variable given to
+  regmap_read().
+- Drop unneeded variable initialization (ret) in
+  isl12022_rtc_set_alarm().
+- Extend use of DWA0 variable to avoid false alarm trigger also when
+  disabling alarm.
+- Clarify the use of !! operator in isl12022_rtc_alarm_irq_enable().
+- Change isl12022_setup_irq() prototype to avoid the need for storing
+  struct i2c_client in struct isl12022.
+- Use dev_err_probe() where appropriate.
+- Change dev_err messages reporting problems with register access into
+  dev_dbg.
+- Renamed ISL12022_ALARM_SECTION to ISL12022_ALARM for better use of
+  horizontal space.
+- Leave FOBATB bit untouched.
+- Link to v1: https://lore.kernel.org/r/20240910-rtc-isl12022-alarm-irq-v1-0-d875cedc997f@geanix.com
 
+---
+Esben Haabendal (3):
+      rtc: isl12022: Prepare for extending rtc device drvdata
+      rtc: isl12022: Add alarm support
+      rtc: isl12022: Replace uint8_t types with u8
+
+ drivers/rtc/rtc-isl12022.c | 269 ++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 253 insertions(+), 16 deletions(-)
+---
+base-commit: da3ea35007d0af457a0afc87e84fddaebc4e0b63
+change-id: 20240910-rtc-isl12022-alarm-irq-197ef2350c3e
+
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Esben Haabendal <esben@geanix.com>
 
 
