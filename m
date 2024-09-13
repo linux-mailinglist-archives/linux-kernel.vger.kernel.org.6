@@ -1,102 +1,155 @@
-Return-Path: <linux-kernel+bounces-327917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA9CF977C9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:55:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AC26977CD0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:03:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B06DF288A05
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 09:55:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F31FB1F288CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F881D79A6;
-	Fri, 13 Sep 2024 09:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UE+DQN/p"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78DD81D86C2;
+	Fri, 13 Sep 2024 10:02:50 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD151D6DB1;
-	Fri, 13 Sep 2024 09:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DF61D6C6E;
+	Fri, 13 Sep 2024 10:02:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726221308; cv=none; b=qSvgpchDfP1PMXglGbrpzwUj3LsXBdr9cpbn51A3B8EJpKnetW3o5CGVU1LP0nV/lq/KDb9oGkCTzw5yvGstb3/jdwgVHaP1b0vn0r/SI3zbPpyAtxXSNaGK1AibAgCPKL8i59XxjmdinQKpiJ0f8N1+vuZYNHaggOeeP+0VxBY=
+	t=1726221770; cv=none; b=VsPwcC5x22zBcuiOrVFbX5qEPDEE+gI5Z8whArZh+AtCR6R8ol8xS1CZdTKX6rOvG2jcJFdAsk07xeP/YWHRtTlIaW6hFPy4DeoShaH0mCTKTuglXfOYM8CrAFm6p++xjWm+dUwYHAjWj/FiMiGhyT40LVr7WWAMKO3kuUHIY1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726221308; c=relaxed/simple;
-	bh=7DGEWBjAfWkhNbt5jQHZrOkSIxaz2Tu237bLh6tN8O8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TQKZZSW90K9jl39HT9/9fVugvRW5xhkpI3ke86JtrvYYbNhkB+f1VtpI98ZIEtuRNDdALgQsdYxASS1d16rssUe6swY3QBMjUwtPS9x7v2UN2vww+V7R+5BxWg89PR/U7MOuAH/bnrWd/H4unzqLZAO51amg7qFtiKOwxYflkIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UE+DQN/p; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726221307; x=1757757307;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7DGEWBjAfWkhNbt5jQHZrOkSIxaz2Tu237bLh6tN8O8=;
-  b=UE+DQN/pf+YR/hLJRUgtsogBT/NlsgJ67isoj2yS2e6kB5s4a/vPzhWY
-   DrkNgKySn6/cTe9kcOgRH+6jg1PH20B5pdGUU8cmjhvU1RnE4spNVwOFM
-   IafINnbGsKJyoHaLCH41DDSM50aCF9J2P0sKLMvq+r1oPz6hwxDIWoJvs
-   1OqhoX70wmLG9BYLAkTGcGU0q01ipmW9Tm7IVzb/lrKV+oYXTx3IIitn/
-   kEGDRMjeKMxiKCOWBlPfImTWMquUJ8dig61DeMNM9Wem8olGWu7SyNHXy
-   4rVN/fTuZJIqKPLFPHfuBCrIQolK/muS+lP8h0EPlLUOqNV/zM2SEN+1K
-   A==;
-X-CSE-ConnectionGUID: F/pFF9lwSiq+ZymzXOZadA==
-X-CSE-MsgGUID: 31e/M6zsRDuFsYoR0pXudA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="36250966"
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="36250966"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 02:55:07 -0700
-X-CSE-ConnectionGUID: Phe9HHwZRZmetMAb9Xy8XA==
-X-CSE-MsgGUID: fewlj8mcQr2v4yh/3X2cUw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="67709659"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 02:55:02 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sp311-00000008FZv-2Kdb;
-	Fri, 13 Sep 2024 12:54:59 +0300
-Date: Fri, 13 Sep 2024 12:54:59 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, ang.iglesiasg@gmail.com,
-	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
-	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
-	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	christophe.jaillet@wanadoo.fr
-Subject: Re: [PATCH v6 0/4] pressure: bmp280: Minor cleanup and interrupt
- support
-Message-ID: <ZuQL845_lQhpNpSR@smile.fi.intel.com>
-References: <20240912233234.45519-1-vassilisamir@gmail.com>
+	s=arc-20240116; t=1726221770; c=relaxed/simple;
+	bh=89zysdWO9QHwVicNvFBVQwWlrUkig269PlzLhTNYCVU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TiaI0HxUgDELhMqjEw3xYFfHsP3sQR/Ztwrardb4XYn6IZssyruLbSeSdXntlWTpd59eE/t/ARfi0HWu78GpEWQjMhQQ6p8WNqs0zBoaNEVPD5H9AijXnVx35CKiPcCZgXvBZwJFBzzPA08hBn/CguWSCoB3auW5n3n1/Kd9tX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4X4qYm0L1vzfc6w;
+	Fri, 13 Sep 2024 18:00:28 +0800 (CST)
+Received: from kwepemm600005.china.huawei.com (unknown [7.193.23.191])
+	by mail.maildlp.com (Postfix) with ESMTPS id 820D4180106;
+	Fri, 13 Sep 2024 18:02:39 +0800 (CST)
+Received: from huawei.com (10.50.165.33) by kwepemm600005.china.huawei.com
+ (7.193.23.191) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 13 Sep
+ 2024 18:02:38 +0800
+From: Longfang Liu <liulongfang@huawei.com>
+To: <alex.williamson@redhat.com>, <jgg@nvidia.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <jonathan.cameron@huawei.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linuxarm@openeuler.org>, <liulongfang@huawei.com>
+Subject: [PATCH v9 2/4] hisi_acc_vfio_pci: create subfunction for data reading
+Date: Fri, 13 Sep 2024 17:55:00 +0800
+Message-ID: <20240913095502.22940-3-liulongfang@huawei.com>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20240913095502.22940-1-liulongfang@huawei.com>
+References: <20240913095502.22940-1-liulongfang@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240912233234.45519-1-vassilisamir@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemm600005.china.huawei.com (7.193.23.191)
 
-On Fri, Sep 13, 2024 at 01:32:30AM +0200, Vasileios Amoiridis wrote:
-> Depends on this: https://lore.kernel.org/linux-iio/20240823172017.9028-1-vassilisamir@gmail.com
+This patch generates the code for the operation of reading data from
+the device into a sub-function.
+Then, it can be called during the device status data saving phase of
+the live migration process and the device status data reading function
+in debugfs.
+Thereby reducing the redundant code of the driver.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-for patches 1 & 3.
-Dunno if a couple of nit-picks warrants the v7, so I leave it to Jonathan to
-decide.
+Signed-off-by: Longfang Liu <liulongfang@huawei.com>
+Reviewed-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+---
+ .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 54 +++++++++++--------
+ 1 file changed, 33 insertions(+), 21 deletions(-)
 
+diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+index 45351be8e270..a8c53952d82e 100644
+--- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
++++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+@@ -486,31 +486,11 @@ static int vf_qm_load_data(struct hisi_acc_vf_core_device *hisi_acc_vdev,
+ 	return 0;
+ }
+ 
+-static int vf_qm_state_save(struct hisi_acc_vf_core_device *hisi_acc_vdev,
+-			    struct hisi_acc_vf_migration_file *migf)
++static int vf_qm_read_data(struct hisi_qm *vf_qm, struct acc_vf_data *vf_data)
+ {
+-	struct acc_vf_data *vf_data = &migf->vf_data;
+-	struct hisi_qm *vf_qm = &hisi_acc_vdev->vf_qm;
+ 	struct device *dev = &vf_qm->pdev->dev;
+ 	int ret;
+ 
+-	if (unlikely(qm_wait_dev_not_ready(vf_qm))) {
+-		/* Update state and return with match data */
+-		vf_data->vf_qm_state = QM_NOT_READY;
+-		hisi_acc_vdev->vf_qm_state = vf_data->vf_qm_state;
+-		migf->total_length = QM_MATCH_SIZE;
+-		return 0;
+-	}
+-
+-	vf_data->vf_qm_state = QM_READY;
+-	hisi_acc_vdev->vf_qm_state = vf_data->vf_qm_state;
+-
+-	ret = vf_qm_cache_wb(vf_qm);
+-	if (ret) {
+-		dev_err(dev, "failed to writeback QM Cache!\n");
+-		return ret;
+-	}
+-
+ 	ret = qm_get_regs(vf_qm, vf_data);
+ 	if (ret)
+ 		return -EINVAL;
+@@ -536,6 +516,38 @@ static int vf_qm_state_save(struct hisi_acc_vf_core_device *hisi_acc_vdev,
+ 		return -EINVAL;
+ 	}
+ 
++	return 0;
++}
++
++static int vf_qm_state_save(struct hisi_acc_vf_core_device *hisi_acc_vdev,
++			    struct hisi_acc_vf_migration_file *migf)
++{
++	struct acc_vf_data *vf_data = &migf->vf_data;
++	struct hisi_qm *vf_qm = &hisi_acc_vdev->vf_qm;
++	struct device *dev = &vf_qm->pdev->dev;
++	int ret;
++
++	if (unlikely(qm_wait_dev_not_ready(vf_qm))) {
++		/* Update state and return with match data */
++		vf_data->vf_qm_state = QM_NOT_READY;
++		hisi_acc_vdev->vf_qm_state = vf_data->vf_qm_state;
++		migf->total_length = QM_MATCH_SIZE;
++		return 0;
++	}
++
++	vf_data->vf_qm_state = QM_READY;
++	hisi_acc_vdev->vf_qm_state = vf_data->vf_qm_state;
++
++	ret = vf_qm_cache_wb(vf_qm);
++	if (ret) {
++		dev_err(dev, "failed to writeback QM Cache!\n");
++		return ret;
++	}
++
++	ret = vf_qm_read_data(vf_qm, vf_data);
++	if (ret)
++		return -EINVAL;
++
+ 	migf->total_length = sizeof(struct acc_vf_data);
+ 	return 0;
+ }
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.24.0
 
 
