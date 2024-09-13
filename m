@@ -1,136 +1,224 @@
-Return-Path: <linux-kernel+bounces-328084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AE0B977EAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:41:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4395C977EB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:43:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16C59282E6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:41:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03985281BF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:43:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9601D88AA;
-	Fri, 13 Sep 2024 11:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1041865EC;
+	Fri, 13 Sep 2024 11:43:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GvNx1vE3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gvyT8Q1M"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 012FA1D86C3
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 11:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECD419C562
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 11:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726227704; cv=none; b=B6NNDvLDLiOLMluD0jQQ7JvNZgZZY1nwsOahETmTVfYyc0xD4gk1ialMII2B+CtQ/XaoY9LJAvZeOnvp0aQz4MVv3/WQ8Atztpaa92mePvAOqAe1Z/e0P9u2XmOuhpKpIlzzzY4qc0QGFvjLZyvHW2rT7RLGDvUv0/DPmontskE=
+	t=1726227790; cv=none; b=V4sFSDmt2/S6158V4ZcrUXttw8ukHBdKLWehz7lRh1h55f45asbQj8dEwNAxYZLTtNTXxgXSQ5hHmz9FxjFnvaNZQHocxUVu5xVRKvrcfqa/KjElgD56cNsDFbQTIprlxcVeuVLm6aApGmdsqiO5Iq9P4osYj0/AKGNZSqqdrKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726227704; c=relaxed/simple;
-	bh=JvvwYvhyetmEaxa4Ok6f8I1hR579EyKZ0zQapZDJJjE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XOjGBq9QQrUSJ2LpAc9j0kq4XVjQ0BRSCjo+y0EVFBgD7Vzq7hbLoLfywXxgwm7XeQMzGvDl5qV3PF7mwrmPj6vuZQ02oKBIkabRb7gWeRBBHBScFJATyqTxrVlG7kAOr3E3yupRrHgflq5oroVijDcN2ZvEVA80PTeX/VZvNRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GvNx1vE3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726227701;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bFl8pMgMCraS/0h8k8X7XF/1tEc21OrF7vh7Xgi/UvQ=;
-	b=GvNx1vE3BYAPZzP0/PAvSbYibtDZeTMjIsAjYgfqWomVasaC5pEGrvb5wwLKjrw6JWFflD
-	In/283KQ9lYwpBSPDbX4CAx5/S1l/4DoPswLdtrFZmFlxZuE0Qn/GfnGlutQLh0qb7S/eu
-	mWko4O7mrjnHY1nbyeXN6l/HDws2lWI=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-448-2lvjgl2yMiStlNola52Dyw-1; Fri,
- 13 Sep 2024 07:41:36 -0400
-X-MC-Unique: 2lvjgl2yMiStlNola52Dyw-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EB9AF196CDF5;
-	Fri, 13 Sep 2024 11:41:33 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.25])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 0DBA21956086;
-	Fri, 13 Sep 2024 11:41:27 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri, 13 Sep 2024 13:41:22 +0200 (CEST)
-Date: Fri, 13 Sep 2024 13:41:15 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCHv3 1/7] uprobe: Add support for session consumer
-Message-ID: <20240913114114.GD19305@redhat.com>
-References: <20240909074554.2339984-1-jolsa@kernel.org>
- <20240909074554.2339984-2-jolsa@kernel.org>
- <20240912162028.GD27648@redhat.com>
- <ZuP2YFruQDXTRi25@krava>
- <20240913105750.GC19305@redhat.com>
- <ZuQjPCdLkKnPQsu0@krava>
+	s=arc-20240116; t=1726227790; c=relaxed/simple;
+	bh=97YoPWO30aOmzmIGDrW8k0PQ1PFGfCeF0Ju6v6syArU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NBfX3YeBW+YcQhTORHsKG8F7BqOOGXMn8J0pHARc1iygjRouVZiQqHWsO5aQhoWDYu4jDJwvKekso/CG0gAmMIjWnFH9OsKNWSjnOGIMHRxB7ERyutMTEPBdZd3gB6YyyflfZO2KK2UCRACw9JRYyyRp7cHYWGuzwJhIam8U9u4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gvyT8Q1M; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e02b79c6f21so853817276.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 04:43:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1726227788; x=1726832588; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9UwhSpacqWbNrpzy9OkkjEtHbhA7k4WWF7GmkMMBnJM=;
+        b=gvyT8Q1MRV0KSAr1VAax5qpoJqKqtPzYNR7N8Lz65ABFbWCZkapCibKjWeVQPk7CDL
+         j4Q2j5zdEow7qKBwFdEksxcgcHHt4IuPUIoV8UwC5GNGdHiYISPlpJuwcCaFN+h0ELuf
+         B8cPowTmtw5vSFPrBfU429sh+zIlDV4ujLsJzzJJf6DL0fwnQz/QnIK1QVJSs7mYdMjD
+         zGp4/R5NVxHT+C/CEhPbYm07SDqvBCdk/HHPpJJrt5g+Yl9PKpwAXl76ts7KTnbL35nD
+         +/PpT75zbrhxOEsB6/QdQTlwPFBB1tI0BHlPgsAQsqdVUQkywm+4wajr0BDT6VscowhU
+         BMow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726227788; x=1726832588;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9UwhSpacqWbNrpzy9OkkjEtHbhA7k4WWF7GmkMMBnJM=;
+        b=gPTdFBCtebLEzunTLfh46W/gK9bNO+0KC8w3bTOcJByBZyAcJD0QIeMip6n3b/mUSC
+         koKqdbyRKZ/AezPfjh3nV15kK2yzhbMUUgnPKrSebvkeFCdtwAUWV9XG2m15s5me3QUG
+         BhXWaWrI59ys74rEcBSBfFNnuJUnstFbQmvLLkCz0bcRrffLLUNjFHm0nE2Oiku+dIqW
+         3zwh9ugvYtt5c5PCHvF7frpfE4flZ26p+l7iAusLPwFxQ0WxK7bvAPV7OLuUn0f/8Rjv
+         AJ2TWqCY/WfF9gUhzonQqItoYvm8VpVZeXObzk9P8zLndN+SlzZJn0kQF32EqEnOPzmO
+         6TXw==
+X-Forwarded-Encrypted: i=1; AJvYcCW8pLUKv90+33kpOQHz6/FD3u4sqCPtiUqoK44n+1yelLC9bejNAg0Xq5KA0DJ8i20krVYTSfpjvV8dr8E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmSHwf2iG3XgcAKkMRPDfjuz8aoAy+ZumhxHzryjb+O3VHsyhZ
+	ST+g0NKNtiega38mzfRmCmD/B4TOFEm+EnyU5ESgTtt8BrArr2Ulnjm7I8cqlft8ujqW7W6jUdx
+	QBYPeqqaxc4EPqdNAMTMQPfLuw1ysKgYQviZICw==
+X-Google-Smtp-Source: AGHT+IE1TLnxU5IuXLszG0sh4Cmeh/NG3k6A0NeL7GYbVv4i0eJleu/njbaWM0plHlg4dpg3DlaBntAGY4GvPCDnoFM=
+X-Received: by 2002:a05:690c:ec9:b0:632:5b24:c0c with SMTP id
+ 00721157ae682-6dbcc23000fmr21070177b3.5.1726227787870; Fri, 13 Sep 2024
+ 04:43:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZuQjPCdLkKnPQsu0@krava>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+References: <20240913103755.7290-1-quic_mukhopad@quicinc.com> <20240913103755.7290-3-quic_mukhopad@quicinc.com>
+In-Reply-To: <20240913103755.7290-3-quic_mukhopad@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 13 Sep 2024 14:42:56 +0300
+Message-ID: <CAA8EJppddLmzJ9WSkLLr-nwM-qe647Sm6jV8SpHdB=0vRQT-=Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] phy: qcom: edp: Introduce aux_cfg array for
+ version specific aux settings
+To: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, konradybcio@kernel.org, 
+	andersson@kernel.org, simona@ffwll.ch, abel.vesa@linaro.org, 
+	robdclark@gmail.com, quic_abhinavk@quicinc.com, sean@poorly.run, 
+	marijn.suijten@somainline.org, airlied@gmail.com, daniel@ffwll.ch, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	quic_khsieh@quicinc.com, konrad.dybcio@linaro.org, quic_parellan@quicinc.com, 
+	quic_bjorande@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, quic_riteshk@quicinc.com, 
+	quic_vproddut@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 09/13, Jiri Olsa wrote:
+On Fri, 13 Sept 2024 at 13:38, Soutrik Mukhopadhyay
+<quic_mukhopad@quicinc.com> wrote:
 >
-> On Fri, Sep 13, 2024 at 12:57:51PM +0200, Oleg Nesterov wrote:
+> In order to support different HW versions, introduce aux_cfg array
+> to move v4 specific aux configuration settings.
 >
-> > static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
-> > {
-> > 	...
-> > 	struct return_instance *ri = NULL;
-> > 	int push_idx = 0;
-> >
-> > 	list_for_each_entry_rcu(uc, &uprobe->consumers, cons_node, rcu_read_lock_trace_held()) {
-> > 		__u64 cookie = 0;
-> > 		int rc = 0;
-> >
-> > 		if (uc->handler)
-> > 			rc = uc->handler(uc, regs, &cookie);
-> >
-> > 		remove &= rc;
-> > 		has_consumers = true;
-> >
-> > 		if (!uc->ret_handler || rc == UPROBE_HANDLER_REMOVE || rc == 2)
-> > 			continue;
-> >
-> > 		if (!ri)
-> > 			ri = alloc_return_instance();
-> >
-> > 		// or, better if (rc = UPROBE_HANDLER_I_WANT_MY_COOKIE)
-> > 		if (uc->handler))
-> > 			ri = push_id_cookie(ri, push_idx++, uc->id, cookie);
-> > 	}
-> >
-> > 	if (!ZERO_OR_NULL_PTR(ri)) {
+> Signed-off-by: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+> ---
+> v2: Fixed review comments from Bjorn and Dmitry
+>         - Made aux_cfg array as const.
 >
-> should we rather bail out right after we fail to allocate ri above?
+> ---
+>  drivers/phy/qualcomm/phy-qcom-edp.c | 37 ++++++++++++++++++-----------
+>  1 file changed, 23 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/phy/qualcomm/phy-qcom-edp.c b/drivers/phy/qualcomm/phy-qcom-edp.c
+> index da2b32fb5b45..bcd5aced9e06 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-edp.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-edp.c
+> @@ -90,6 +90,7 @@ struct phy_ver_ops {
+>
+>  struct qcom_edp_phy_cfg {
+>         bool is_edp;
+> +       const u8 *aux_cfg;
+>         const struct qcom_edp_swing_pre_emph_cfg *swing_pre_emph_cfg;
+>         const struct phy_ver_ops *ver_ops;
+>  };
+> @@ -186,11 +187,15 @@ static const struct qcom_edp_swing_pre_emph_cfg edp_phy_swing_pre_emph_cfg = {
+>         .pre_emphasis_hbr3_hbr2 = &edp_pre_emp_hbr2_hbr3,
+>  };
+>
+> +static const u8 edp_phy_aux_cfg_v4[10] = {
+> +       0x00, 0x13, 0x24, 0x00, 0x0a, 0x26, 0x0a, 0x03, 0x37, 0x03
+> +};
+> +
+>  static int qcom_edp_phy_init(struct phy *phy)
+>  {
+>         struct qcom_edp *edp = phy_get_drvdata(phy);
+> +       u8 aux_cfg[10];
 
-I think handler_chain() should call all the ->handler's even if
-kzalloc/krealloc fails.
+Please define 10, so that there are no magic numbers (and less chance
+of damaging the stack if it gets changed in one place only.
 
-This is close to what the current code does, all the ->handler's are
-called even if then later prepare_uretprobe()->kmalloc() fails.
+>         int ret;
+> -       u8 cfg8;
+>
+>         ret = regulator_bulk_enable(ARRAY_SIZE(edp->supplies), edp->supplies);
+>         if (ret)
+> @@ -200,6 +205,8 @@ static int qcom_edp_phy_init(struct phy *phy)
+>         if (ret)
+>                 goto out_disable_supplies;
+>
+> +       memcpy(aux_cfg, edp->cfg->aux_cfg, sizeof(aux_cfg));
+> +
+>         writel(DP_PHY_PD_CTL_PWRDN | DP_PHY_PD_CTL_AUX_PWRDN |
+>                DP_PHY_PD_CTL_PLL_PWRDN | DP_PHY_PD_CTL_DP_CLAMP_EN,
+>                edp->edp + DP_PHY_PD_CTL);
+> @@ -222,22 +229,20 @@ static int qcom_edp_phy_init(struct phy *phy)
+>          * even needed.
+>          */
+>         if (edp->cfg->swing_pre_emph_cfg && !edp->is_edp)
+> -               cfg8 = 0xb7;
+> -       else
+> -               cfg8 = 0x37;
+> +               aux_cfg[8] = 0xb7;
+>
+>         writel(0xfc, edp->edp + DP_PHY_MODE);
+>
+> -       writel(0x00, edp->edp + DP_PHY_AUX_CFG0);
+> -       writel(0x13, edp->edp + DP_PHY_AUX_CFG1);
+> -       writel(0x24, edp->edp + DP_PHY_AUX_CFG2);
+> -       writel(0x00, edp->edp + DP_PHY_AUX_CFG3);
+> -       writel(0x0a, edp->edp + DP_PHY_AUX_CFG4);
+> -       writel(0x26, edp->edp + DP_PHY_AUX_CFG5);
+> -       writel(0x0a, edp->edp + DP_PHY_AUX_CFG6);
+> -       writel(0x03, edp->edp + DP_PHY_AUX_CFG7);
+> -       writel(cfg8, edp->edp + DP_PHY_AUX_CFG8);
+> -       writel(0x03, edp->edp + DP_PHY_AUX_CFG9);
+> +       writel(aux_cfg[0], edp->edp + DP_PHY_AUX_CFG0);
+> +       writel(aux_cfg[1], edp->edp + DP_PHY_AUX_CFG1);
+> +       writel(aux_cfg[2], edp->edp + DP_PHY_AUX_CFG2);
+> +       writel(aux_cfg[3], edp->edp + DP_PHY_AUX_CFG3);
+> +       writel(aux_cfg[4], edp->edp + DP_PHY_AUX_CFG4);
+> +       writel(aux_cfg[5], edp->edp + DP_PHY_AUX_CFG5);
+> +       writel(aux_cfg[6], edp->edp + DP_PHY_AUX_CFG6);
+> +       writel(aux_cfg[7], edp->edp + DP_PHY_AUX_CFG7);
+> +       writel(aux_cfg[8], edp->edp + DP_PHY_AUX_CFG8);
+> +       writel(aux_cfg[9], edp->edp + DP_PHY_AUX_CFG9);
 
-Oleg.
+Replace this with a loop?
 
+>
+>         writel(PHY_AUX_STOP_ERR_MASK | PHY_AUX_DEC_ERR_MASK |
+>                PHY_AUX_SYNC_ERR_MASK | PHY_AUX_ALIGN_ERR_MASK |
+> @@ -519,16 +524,19 @@ static const struct phy_ver_ops qcom_edp_phy_ops_v4 = {
+>  };
+>
+>  static const struct qcom_edp_phy_cfg sc7280_dp_phy_cfg = {
+> +       .aux_cfg = edp_phy_aux_cfg_v4,
+>         .ver_ops = &qcom_edp_phy_ops_v4,
+>  };
+>
+>  static const struct qcom_edp_phy_cfg sc8280xp_dp_phy_cfg = {
+> +       .aux_cfg = edp_phy_aux_cfg_v4,
+>         .swing_pre_emph_cfg = &dp_phy_swing_pre_emph_cfg,
+>         .ver_ops = &qcom_edp_phy_ops_v4,
+>  };
+>
+>  static const struct qcom_edp_phy_cfg sc8280xp_edp_phy_cfg = {
+>         .is_edp = true,
+> +       .aux_cfg = edp_phy_aux_cfg_v4,
+>         .swing_pre_emph_cfg = &edp_phy_swing_pre_emph_cfg,
+>         .ver_ops = &qcom_edp_phy_ops_v4,
+>  };
+> @@ -707,6 +715,7 @@ static const struct phy_ver_ops qcom_edp_phy_ops_v6 = {
+>  };
+>
+>  static struct qcom_edp_phy_cfg x1e80100_phy_cfg = {
+> +       .aux_cfg = edp_phy_aux_cfg_v4,
+>         .swing_pre_emph_cfg = &dp_phy_swing_pre_emph_cfg,
+>         .ver_ops = &qcom_edp_phy_ops_v6,
+>  };
+> --
+> 2.17.1
+>
+
+
+-- 
+With best wishes
+Dmitry
 
