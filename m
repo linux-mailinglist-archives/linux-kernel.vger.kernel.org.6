@@ -1,66 +1,78 @@
-Return-Path: <linux-kernel+bounces-328790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECD099788E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:24:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11C849788E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:25:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B20662842BA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:24:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 833BF2854ED
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED1F1482E3;
-	Fri, 13 Sep 2024 19:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64C6146D6E;
+	Fri, 13 Sep 2024 19:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Fz33angr"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VGWUeEDF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2D212C54D;
-	Fri, 13 Sep 2024 19:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A164712DD90;
+	Fri, 13 Sep 2024 19:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726255426; cv=none; b=Sxg2an8vQtvzHyNYEbj/D0SSWDQ+s61EuOlQ60vG7t44zglQRIt5i4HDJmc9qiGxs2t0C0Iuvz1/FZhj4UhPKknYOR1LZ01+APqGwR8m2t+rpisJ2WBwSUa6ZvzzBaw0QNIFBFJ3Xgf1i9HXJt4K8BEGxYjnjy79utBgNRCmavo=
+	t=1726255525; cv=none; b=Uje05k+TvtadV8q0F63jh8HV2CzEA3NGmmirbyX8hUiCj+gw2pY0p7U7kFjK7XdB8XuFYb3nnfVpdVjAUPDh9jQiXp81jBZ/IhmyXa4dlUmZYlEezhUFWii/h8U5wj7yfhTXcReQfbqRbQ+mrFOQl0YqmGCHKbCUK1Re4oWHoJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726255426; c=relaxed/simple;
-	bh=LcnOMbh1qvm3zhdrSHVO6mUT+Z0nOqKVjH3uiOQkS7A=;
+	s=arc-20240116; t=1726255525; c=relaxed/simple;
+	bh=W4ftxM+Vy1qddWPmypN190iO08AqZXZ9CP4mAk6M7Iw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t8hYUIFXX4v5Z2I2U+jvf71a/kRzk5SAnLztCS9BbpP4oa3roYzIxJxcrO3K0LuNMAlovdiEUSRhmJ413j7EbOij1Dx6+xu0Qaub5ECuJxbcowe4pcsOSmxrue+xHXFqAktaEDmcGQW7M73kQzVi2gvRJ++8GZAPaT5NJF+obXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Fz33angr; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=8ehW2zOOXQpeUuabw+vDK6zCAezWgQxAYBOm2PkG7Hw=; b=Fz33angrn1YqfFcW+PLQzRKCNH
-	/3P0nU3j8biXCd/jXjjJthouDUlgeTuK5A2HB+5magrNifjvDmlLWvfHqH8mv5Pf9PkWlhkDGGY7L
-	kNAEEs1UVIvorKQWbkbzJ43bP6LpMpkUrY8psWNScx3vjj1FqCdJbjvoX7fDTnlulARY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1spBtG-007Pzj-LJ; Fri, 13 Sep 2024 21:23:34 +0200
-Date: Fri, 13 Sep 2024 21:23:34 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Conor Dooley <conor@kernel.org>, netdev@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/4] dt-bindings: net: dsa: the adjacent DSA
- port must appear first in "link" property
-Message-ID: <695c4ffb-5a68-41b1-8fef-8a356dfd57b5@lunn.ch>
-References: <20240913131507.2760966-1-vladimir.oltean@nxp.com>
- <20240913131507.2760966-3-vladimir.oltean@nxp.com>
- <20240913-estimate-badland-5ab577e69bab@spud>
- <c2244d42-eda4-4bbc-9805-cc2c2ae38109@lunn.ch>
- <20240913185053.rr23ym5otprgiphb@skbuf>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lnaONMMdMPrvJHdfIAxvBo5bJgjUj7rOcjNoYko1u8IYbBE1YEdEKf2Ejq9F+k3kWjtP8ZHLcd9jc73gmfB8mvl1dk8khPT+7L9Bifw7DYlmCmOdlH/nKkeZ0Qf6zDeUENaZZIdFxSLdqpgs6w8qnXtFQoYUA4Y8PmZwpnQpm+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VGWUeEDF; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726255524; x=1757791524;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=W4ftxM+Vy1qddWPmypN190iO08AqZXZ9CP4mAk6M7Iw=;
+  b=VGWUeEDFjwnZ8h/TC9sj/pG0/ombDqEZVAEreei3eLAojc4vQpq2RsH2
+   PfQW1fGsYWl7uglf5Cu69RCQTmQw408f7nq6oXCUWFd3HAxFQ5hIBACsN
+   kFRQ5ICW8kBhuI6oBZjLs6F/Qwq1qX8trh3kKyJZbRNIkBV1DSijx++oD
+   NjsHiK3x2XFO51FZWiHkQOnVmsTRy2eRf8uuenLEFQYBu8l3Wt18+Zpfr
+   +2Myly/AhJpV3LqNSy8KPup9caeq5dSerzn8BIo1qby6coqxXtyiaojDO
+   sha+kCazRjMsWL+7sAbUs1NKL6jGo8hv/2tXzh2hpnLm8EEiJW47Zdf59
+   g==;
+X-CSE-ConnectionGUID: wG23mS7FSxOOO6oBplu8QQ==
+X-CSE-MsgGUID: e4EAsfp5Re2W3fV3iFbmfA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="28082863"
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="28082863"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 12:25:23 -0700
+X-CSE-ConnectionGUID: 3mkzHVNqQgCnJJDwKiI80g==
+X-CSE-MsgGUID: XlM6aTHIRxKkCrVDcwDPEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="72538028"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 12:25:21 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1spBuw-00000008PAs-45m2;
+	Fri, 13 Sep 2024 22:25:18 +0300
+Date: Fri, 13 Sep 2024 22:25:18 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v1 1/1] software node: Simplify swnode_register() a bit
+Message-ID: <ZuSRnoaUu-YCOX5L@smile.fi.intel.com>
+References: <20240913110523.3584749-1-andriy.shevchenko@linux.intel.com>
+ <2024091300-afford-tamper-1831@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,23 +81,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240913185053.rr23ym5otprgiphb@skbuf>
+In-Reply-To: <2024091300-afford-tamper-1831@gregkh>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-> I have unpublished downstream patches which even make all the rest of
-> the "link = <...>" elements optional. Bottom line, only the direct
-> connection between ports (first element) represents hardware description.
-> The other reachable ports (the routing table, practically speaking) can be*
-> computed based on breadth-first search at DSA probe time. They are
-> listed in the device tree for "convenience".
+On Fri, Sep 13, 2024 at 03:34:58PM +0200, Greg Kroah-Hartman wrote:
+> On Fri, Sep 13, 2024 at 02:05:23PM +0300, Andy Shevchenko wrote:
 
-If you have this code, then i would actually go for a new property,
-maybe 'direct-link = <...>;', which only lists the direct
-relationship. Keep the current property with its current meaning, an
-unordered list. If the new property is present, use it to compute the
-table. If both sets of properties are present, ensure they result in
-the same table, otherwise -EINVAL.
+...
 
-    Andrew
+> > +	struct kobject *kobj_parent = parent ? &parent->kobj : NULL;
+> 
+> I despise ?: use just so much, EXCEPT for when it's used in something
+> like this:
+
+> >  		ret = kobject_init_and_add(&swnode->kobj, &software_node_type,
+> > -					   parent ? &parent->kobj : NULL,
+> > -					   "%s", node->name);
+> > +					   kobj_parent, "%s", node->name);
+> 
+> Which really is the only valid way I'd put up with it :)
+
+I see your point!
+
+> So can you rewrite the change above to be just:
+> 
+> 	struct kobject *kobj_parent = NULL;
+> 
+> 	...
+> 
+> 	if (parent)
+> 		kobj_parent = &parent->kobj;
+> 
+> Which is much simpler to read, right?
+
+Yeah, but the point of the patch seems to be diminished. Let's just not
+continue with it for now. Maybe later it will make more sense.
+
+Thank you for the review!
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
 
