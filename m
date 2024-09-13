@@ -1,149 +1,122 @@
-Return-Path: <linux-kernel+bounces-328273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61E0B97814B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:36:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E98E997814C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:37:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A6181C21A90
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:36:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13A571C2137E
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715511DB555;
-	Fri, 13 Sep 2024 13:36:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28983186E5E;
+	Fri, 13 Sep 2024 13:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l/B65dM4"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vUAI5zHN"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CDA1B983E
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 13:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525321DB551;
+	Fri, 13 Sep 2024 13:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726234601; cv=none; b=mqZU8V1aQB+HUhwRIu4VhPa9cyA3LgOQaYCHAoB1VyjCskVeadKkoFPTHMExQijIGgAk0lC8F7kEV6rc7PstWUkgtvFSWQZc3Y3664XEiaE34Mp2LbCC8C7Ynaw9YiDImV+b+2d7UtoM7OaY4yhLzfFPHQILR+xcx+ULcO9p50A=
+	t=1726234606; cv=none; b=G/dS5CFy6Pclu4yv0NcGd8WHIMeL7Qz/DfyN9wMl/Xgn2k44A2/RmT5+reeTPsTrrbrDziq+3rCMUyGHW/BfeSKtsjIdzRNiAYH/9ZSdi8zeo/Fxku7JWGay869q+tdZ5iqngTlZkAbiLi3FAe3sWLACKBl0rnMOGZ80ea34Bt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726234601; c=relaxed/simple;
-	bh=gwqedYauqRzar7MyUCIVwmQgQHMRuUMD8QN6HVT/PRQ=;
+	s=arc-20240116; t=1726234606; c=relaxed/simple;
+	bh=RNYwhca/1IF4NlElv6dep4EUbyqhfbgtdN2sniBVXg4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UIsxOobrNRXZbI4HWAkk3NPFhDepEZxj4IUo/q7efaMtB9vs/tFbvZroSCFcNIom58ulVxb5xbTwubWx/l+JQFn9eTWZetFbPCrSGa/rihBA1HXHujwnmUwhcnivzzDwXC7BgVTGEXonBiM9nBjay3CAzIbtPeviCzSWXnKAY/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l/B65dM4; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-6c5bcb8e8edso706419a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 06:36:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1726234598; x=1726839398; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=yV+qXor6MhUiKRp/uAsEkmn8ZDHW0/20wv7wV43QfmY=;
-        b=l/B65dM4vZuyC+9GL++JH0LppWBKVS9zNSzpWPAHzpeXsdS4sjndbZzJWqdZYl/nLF
-         g2krccT986RqciDROT68bKmNfubBEypjv+LSwZO05PbyJ4eSHg/OacmJ4zwZhZoYqXSL
-         TSqwZ7M1w7TXosssXBlKWpKSCZOVPen5rwaeKwLmgVpMoLzKgsc9WflONsAfJQH9af88
-         ne/EbhoP7xis2jrQ4VsuInzxkwibaPr2JMyX7vrMVIrh4pPrLDrUp407TvxbyhjcHghV
-         pzOSTetUuITP4xQNxmRxefYaPTHHJShEE0C0bQg1oy1JKQl4ZZS5SE4FpfzvNYdu51nM
-         0Dqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726234598; x=1726839398;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yV+qXor6MhUiKRp/uAsEkmn8ZDHW0/20wv7wV43QfmY=;
-        b=MUDbiFnPM8VT1tLYt5UmkKysZjicx2fH8rPIyYWIZWJz4ygVSnJrxvyWZ8JJ6LkJCV
-         XJqFOlUACLFVjr/3TgDVtOXm46BTehdLa1hQTY1svEhprhrPgWEdBuXEXG8BcoylT4hC
-         cuwwCADHcEx+71SadtEhVBuc5jzCX4IHZADJSo7b0/xoRW63lG0/haHeYEjIlFiaB3P5
-         2VEcDeifNQiIfO+dkuf7O/lApv5yJ8qhIgBKfyXKeq9ioKG2fuWVn/CUWc8OS48IDBU6
-         Zn44XE8/BpBnT3HDxCozDOfwHtSPLSr+8NIoQMO+WTicUJ5mSQCPP/bx7YH6patnQcC6
-         Vt3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVd87Nd7uKj3jgI3enDUyq8IyaAI+ixvd71gjFfaoP89LFDQQS+QZleEeDuaZj4fkqqdcOw1ZsOSFsieQo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqXomPTS181s6HtcID2WeBYY3cEqOpbYlA/wEHyi8BAX00TC1G
-	k4PobG6tJNwH7K1rJDS9zuPF3c/qyyQLzO9aaiZiHOaf5FLYb9wm1pNdfbWPmw==
-X-Google-Smtp-Source: AGHT+IFcp2jTl5mrKJuFCPH6264r7HZB1RvFjZQoHrVr3k/nmvKN3GCesQlgt2QE0HCgz4564DsufA==
-X-Received: by 2002:a05:6a21:6481:b0:1cf:539c:56f0 with SMTP id adf61e73a8af0-1d112eaf2eemr4459577637.47.1726234598009;
-        Fri, 13 Sep 2024 06:36:38 -0700 (PDT)
-Received: from thinkpad ([120.60.66.60])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7190909226fsm6286989b3a.98.2024.09.13.06.36.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 06:36:37 -0700 (PDT)
-Date: Fri, 13 Sep 2024 19:06:19 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Qiang Yu <quic_qianyu@quicinc.com>, vkoul@kernel.org, kishon@kernel.org,
-	robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
-	sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
-	quic_devipriy@quicinc.com, kw@linux.com, lpieralisi@kernel.org,
-	neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] dt-bindings: PCI: qcom: Add OPP table for X1E80100
-Message-ID: <20240913133619.z7cc4whhpvs2uecb@thinkpad>
-References: <20240913083724.1217691-1-quic_qianyu@quicinc.com>
- <20240913083724.1217691-3-quic_qianyu@quicinc.com>
- <tf4z475uqjenohdgqj4ltoty3j3gopxnbdhrrn6zo3ug5yuvyq@us2nysv2ggxh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hbpEwkbEzqZvwek2A5oIORJsqB3a30jd8XSequ22F5hTHYr19nwzThUp5I+E1bL7xKjHDiqMKp9Lf1pE/zFB6UXa2tjjE30V1adCd4BNgEmet/NIPhRXxXd5uPc3XND3kOhgwn7aRRNpGVpdE3FZSUrUKMW0c7PgpzL7e48uGCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vUAI5zHN; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=9AUzwboFNem3uz+L4LcwPI63t2xBnVL+Me61B1AirfE=; b=vUAI5zHNVqR9Sk7RxfAzHuLxPy
+	FB/dLS6LShhX4YFcP2hR6w/xKlNbaJVqn9uwjAtaFl33PB/DqIBJu4ooxY/d3y8IQ28n0Qa/dsGuN
+	Y43fgakjz4usJAq/suWiFL3EgUXWzF81vohXnhMJ6XKKbBNxvxQ2DO2lpMSiVESmFWnzp0Z6Y1ikx
+	0tHNcussSJHPf3GFFwpslJz6vzSh936jnURUceFvrOP3L9MGtpbG9IGmY1o3mlSEhRZLZkRnEqFU1
+	1f5g0Nz8YmMS/QSpe46wI62uMQTrSdFTxhG8KM4/HNDdPz1RUTdpD/4LQY42i4aVfxeKIAkg14ifq
+	PnGW8CfA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1sp6TO-0000000GcWl-1piu;
+	Fri, 13 Sep 2024 13:36:30 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8AF913003E1; Fri, 13 Sep 2024 15:36:29 +0200 (CEST)
+Date: Fri, 13 Sep 2024 15:36:29 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org, x86@kernel.org,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	linux-toolchains@vger.kernel.org
+Subject: Re: [PATCH RFC 04/10] perf: Introduce deferred user callchains
+Message-ID: <20240913133629.GV4723@noisy.programming.kicks-ass.net>
+References: <cover.1699487758.git.jpoimboe@kernel.org>
+ <d5def69b0c88bcbe2a85d0e1fd6cfca62b472ed4.1699487758.git.jpoimboe@kernel.org>
+ <CAM9d7chZcqR8WCEYtjpP4KzUOeNdJ=kSvae0UrjsO8OgsepjDw@mail.gmail.com>
+ <20231111184908.ym4l6cwzwnkl7e6m@treble>
+ <CAM9d7chgoiwc3ZfQ8SzO7gV0oQOKMK3bJAdxa63Pzgcqo4i7tQ@mail.gmail.com>
+ <ZVTuK5VRQfY1JOEY@google.com>
+ <20231120140334.GW8262@noisy.programming.kicks-ass.net>
+ <20240913130834.hq4gj27fcklakkzb@treble>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <tf4z475uqjenohdgqj4ltoty3j3gopxnbdhrrn6zo3ug5yuvyq@us2nysv2ggxh>
+In-Reply-To: <20240913130834.hq4gj27fcklakkzb@treble>
 
-On Fri, Sep 13, 2024 at 03:30:59PM +0300, Dmitry Baryshkov wrote:
-> On Fri, Sep 13, 2024 at 01:37:21AM GMT, Qiang Yu wrote:
-> > Add OPP table so that PCIe is able to adjust power domain performance
-> > state and ICC peak bw according to PCIe gen speed and link width.
+On Fri, Sep 13, 2024 at 06:08:34AM -0700, Josh Poimboeuf wrote:
+> On Mon, Nov 20, 2023 at 03:03:34PM +0100, Peter Zijlstra wrote:
+> > On Wed, Nov 15, 2023 at 08:13:31AM -0800, Namhyung Kim wrote:
 > > 
-> > Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> > ---
-> >  Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml | 4 ++++
-> >  1 file changed, 4 insertions(+)
+> > > ---8<---
+> > > diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+> > > index 39c6a250dd1b..a3765ff59798 100644
+> > > --- a/include/uapi/linux/perf_event.h
+> > > +++ b/include/uapi/linux/perf_event.h
+> > > @@ -456,7 +456,8 @@ struct perf_event_attr {
+> > >  				inherit_thread :  1, /* children only inherit if cloned with CLONE_THREAD */
+> > >  				remove_on_exec :  1, /* event is removed from task on exec */
+> > >  				sigtrap        :  1, /* send synchronous SIGTRAP on event */
+> > > -				__reserved_1   : 26;
+> > > +				defer_callchain:  1, /* generate DEFERRED_CALLCHAINS records for userspace */
+> > > +				__reserved_1   : 25;
+> > >  
+> > >  	union {
+> > >  		__u32		wakeup_events;	  /* wakeup every n events */
+> > > @@ -1207,6 +1208,20 @@ enum perf_event_type {
+> > >  	 */
+> > >  	PERF_RECORD_AUX_OUTPUT_HW_ID		= 21,
+> > >  
+> > > +	/*
+> > > +	 * Deferred user stack callchains (for SFrame).  Previous samples would
 > > 
-> > diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
-> > index a9db0a231563..e2d6719ca54d 100644
-> > --- a/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
-> > +++ b/Documentation/devicetree/bindings/pci/qcom,pcie-x1e80100.yaml
-> > @@ -70,6 +70,10 @@ properties:
-> >        - const: pci # PCIe core reset
-> >        - const: link_down # PCIe link down reset
-> >  
-> > +  operating-points-v2: true
-> > +  opp-table:
-> > +    type: object
+> > Possibly also useful for ShadowStack based unwinders. And by virtue of
+> > it possibly saving work when multiple consecutive samples hit
+> > the same kernel section, for everything.
 > 
-> I think these properties are generic enough and we might want to have
-> them for most if not all platforms. Maybe we should move them to
-> qcom,pcie-common.yaml?
+> [ necroing old thread as I'm finally working on a v2 ]
 > 
-
-Agree. It should be moved to qcom,pcie-common.yaml.
-
-- Mani
-
-> Krzysztof, Mani, WDYT?
+> Peter, can you elaborate?  What did you mean by "same kernel section"?
 > 
-> > +
-> >  allOf:
-> >    - $ref: qcom,pcie-common.yaml#
-> >  
-> > -- 
-> > 2.34.1
-> > 
-> > 
-> > -- 
-> > linux-phy mailing list
-> > linux-phy@lists.infradead.org
-> > https://lists.infradead.org/mailman/listinfo/linux-phy
-> 
-> -- 
-> With best wishes
-> Dmitry
+> Like if there's a duplicate kernel callchain?  Or something else?
 
--- 
-மணிவண்ணன் சதாசிவம்
+Yeah, multiple samples hitting the same syscall invocation will, by
+necessity, have the same user callchain.
 
