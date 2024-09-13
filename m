@@ -1,120 +1,77 @@
-Return-Path: <linux-kernel+bounces-328043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 509DB977E2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:05:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC0E8977E2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2D9C1F26BFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:05:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B58C228988C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D934B1D86E1;
-	Fri, 13 Sep 2024 11:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347AC1D86EE;
+	Fri, 13 Sep 2024 11:05:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I5LvGTxz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="M0G79r/u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 868A11B983D;
-	Fri, 13 Sep 2024 11:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0BC1D7997;
+	Fri, 13 Sep 2024 11:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726225533; cv=none; b=mwZOPAJPDD0iYxBqSrX8UrJQJeqFIVhBZOe5p56Jwwv1nfPNG7akSvY7OiN5mvodcMGKknWHE5WT9Ea+g80zdmzU+7oQaEkllc/uNXOTNlHJoiyD986ZQfmGZSD4FX3WkKvHSbwMMndbqs5qZH3DurZstVIGpUC4MpCKxidRubw=
+	t=1726225556; cv=none; b=SxQKi25PMwAs4FpnMaQtaOvQml37KA4Lqo3x8ffHxbWX9yonzUACQtVNXO9tBCghQ2zpjL8jP+yg2k5sfyG/hgFEl4yfnWyMTDTCuHVHy0sJ+2gCBr5aPhKFvnkWWKf2/Wskyvw4PT02UmH39TgQuNHWrtuynvZSiEJXMStycMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726225533; c=relaxed/simple;
-	bh=ewzilHymwJkVYJD/EBs/SQy+YwQAnMiz205hV0F9T1M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KtHWkUCEmLnXOvkOImeDyLu3x3j8ay7/+LReQpMq+liBVmAK3UD/yVsidHUEEn//x9dbH1i0zMbhunlUnk7jI6HD78/F39EMsnQwn2iSTBUB1bIbB8zNGwVUDAAO38+2CmgABNUoQ2VyQzR7TWXOwKk+kUMPphZLVNNpmwx8ZEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I5LvGTxz; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726225531; x=1757761531;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ewzilHymwJkVYJD/EBs/SQy+YwQAnMiz205hV0F9T1M=;
-  b=I5LvGTxzva756Vv+tNQe2+gozIF/VZwT1CimGPld+4GAoLHrSnaFhkr7
-   Prv6dNzZVisqchAW4PGwftHw6zCvaO+qzy0glLBVZ06uaNs54JMWOr7DJ
-   gUgxm5FTQCwtndG5XwAbFATMJ3PpHOxYxSj4DohojO6dMvBiezsoHoNzC
-   7pLwdBnwsPs9iz2ExGmK8YcMQ7h3BIsccJpqp5cu1dVq+xrdMW1+Xc/KO
-   5aUlrTfYxhUom8DdHpFPbPP9YFIqohNRgCe4rswL0c1Wqwr6i1wLN7JMJ
-   ObTp5wLcJRHatvaE6qEcof4CabVWWRc5pwHI8Ua/9MDERDujFQkb6PgRu
-   A==;
-X-CSE-ConnectionGUID: vYChR0jrRN+UAeBU1WWX8g==
-X-CSE-MsgGUID: tQqqWM/cSXu0d2VV+A5v2A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="35787433"
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="35787433"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 04:05:30 -0700
-X-CSE-ConnectionGUID: +KILJ2epSlevX+/Je2ukLQ==
-X-CSE-MsgGUID: D22jCgLxQ2G/j+Z14qWaEQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="72384256"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa005.fm.intel.com with ESMTP; 13 Sep 2024 04:05:28 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 6E4F9387; Fri, 13 Sep 2024 14:05:27 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: [PATCH v1 1/1] software node: Simplify swnode_register() a bit
-Date: Fri, 13 Sep 2024 14:05:23 +0300
-Message-ID: <20240913110523.3584749-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1726225556; c=relaxed/simple;
+	bh=ACcQXKRjYnzAP9JEJdRpudHJbSASZscpZmCW3A6UtZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IpP7sFvMkeXnv/1Sjeknpn1VLca3/bdIJa+Ihn98xDx/mjJzau+oRlYdqfYw0tYKnyDwh3eIDzAyyPgABvggetPMIXZ0Pc90w7w35McC0bINccD4waPXJ5U4FW52Vxy7675hxGZF/NK5liDvOG0rqfo8AUwOGZ9IT/70Gv7YSGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=M0G79r/u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31883C4CEC6;
+	Fri, 13 Sep 2024 11:05:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1726225555;
+	bh=ACcQXKRjYnzAP9JEJdRpudHJbSASZscpZmCW3A6UtZE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M0G79r/uNZANRyyW6W60nsqjJ0bg9jmFJxwW5E78GvLSs+Todp5EqFGUryr54Rpwe
+	 SbacZWY/tt+4jtCULxv0qyMxfYb+sRGM+WBLYheYmSe1HxAG8TCBGlvgXR2pFqUS+4
+	 y6E13jpMNk6RY7D143XrmxgSMlRgH6MXmSpgAKnY=
+Date: Fri, 13 Sep 2024 13:05:52 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chester Lin <chester62515@gmail.com>,
+	Matthias Brugger <mbrugger@suse.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	NXP S32 Linux Team <s32@nxp.com>
+Subject: Re: [PATCH v2 4/4] MAINTAINERS: add MAINTAINER for S32G2 SIUL2 GPIO
+ driver
+Message-ID: <2024091327-revered-depletion-7388@gregkh>
+References: <20240913082937.444367-1-andrei.stefanescu@oss.nxp.com>
+ <20240913082937.444367-5-andrei.stefanescu@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240913082937.444367-5-andrei.stefanescu@oss.nxp.com>
 
-By introducing two temporary variables simplify swnode_register() a bit.
-No functional change intended.
+On Fri, Sep 13, 2024 at 11:29:35AM +0300, Andrei Stefanescu wrote:
+> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/base/swnode.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+For obvious reasons, we can't take patches without any changelog text,
+even for simple stuff.
 
-diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
-index b0be765b12da..810c27a8c9c1 100644
---- a/drivers/base/swnode.c
-+++ b/drivers/base/swnode.c
-@@ -908,6 +908,7 @@ static struct fwnode_handle *
- swnode_register(const struct software_node *node, struct swnode *parent,
- 		unsigned int allocated)
- {
-+	struct kobject *kobj_parent = parent ? &parent->kobj : NULL;
- 	struct swnode *swnode;
- 	int ret;
- 
-@@ -934,12 +935,10 @@ swnode_register(const struct software_node *node, struct swnode *parent,
- 
- 	if (node->name)
- 		ret = kobject_init_and_add(&swnode->kobj, &software_node_type,
--					   parent ? &parent->kobj : NULL,
--					   "%s", node->name);
-+					   kobj_parent, "%s", node->name);
- 	else
- 		ret = kobject_init_and_add(&swnode->kobj, &software_node_type,
--					   parent ? &parent->kobj : NULL,
--					   "node%d", swnode->id);
-+					   kobj_parent, "node%d", swnode->id);
- 	if (ret) {
- 		kobject_put(&swnode->kobj);
- 		return ERR_PTR(ret);
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+thanks,
 
+greg k-h
 
