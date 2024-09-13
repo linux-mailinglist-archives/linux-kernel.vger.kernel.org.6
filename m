@@ -1,117 +1,109 @@
-Return-Path: <linux-kernel+bounces-328496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 158A49784F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:34:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B308D9784F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:36:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B55621F22CCA
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:34:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC2DF1C2144F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4414086A;
-	Fri, 13 Sep 2024 15:34:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A42D39FD0;
+	Fri, 13 Sep 2024 15:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fvnRCFVH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WHugccHc"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D5FDF60;
-	Fri, 13 Sep 2024 15:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3A439FCF
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 15:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726241668; cv=none; b=tv92kbBO5NoPv7g7SXl08zfApDeU2Mmkxjes2jkkcS3maguYWcLeTNzdKmgCIiSnb0k0YfadbmKhA1u+MWCsjVxCaVzo4IFrtGI3XErLH/yK03WGa+FMrgUXm5/XHWAwUjCWG8wQBbZt3uheN9ZTfiRFvHAZkvX6D2JZZmKakHE=
+	t=1726241757; cv=none; b=CRhVjhkngMzo+a6gl9XiMEs86Q8LDy6O0KGQFGOUjxXRRHnCt0LXEpw4fDbab5UAC0C1WfKFYNYlfNSr3ij+u3JQrVm34wOs9hfxYxy8c5V99MaQyG7WYpSDjkWiGNX11c+ICRzhsrIriisxmXiFn/rvDcyelU9HQYgi3nlziAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726241668; c=relaxed/simple;
-	bh=aeBS/jexYN5ZGjpVm407B7hRMZZ4ukiBkzvptBAgJaU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K8whIktNnD9tMaYTkWysVxoYKQLMKsgEmchp91ZdWo896lf5WJWg4NTR9+L17QyptrJF1az+N4SDZ+QpQS1NkGxkzJmD8vTq/z56gBjpkzNfVEBZxSxFOW8YvD0fbYc3h5Gxni6vfxiJmSycdvG3l8oSw2YpEyMBgd+1VxCXCmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fvnRCFVH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58843C4CEC0;
-	Fri, 13 Sep 2024 15:34:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1726241667;
-	bh=aeBS/jexYN5ZGjpVm407B7hRMZZ4ukiBkzvptBAgJaU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fvnRCFVHGls2KVupkmqKoiiT6kDNtgpUr/OtlXRhNExNuQwj/1mVFgnCGu6RaHVN5
-	 yImCV0xqRqSYRTa9WEA+G6dyWs7hKhAnshmW04/6UdqvfI1ZyEPv6myYvbZIPgzbLg
-	 RaDUjFNXhcs8MG0e708PDLA25bqBQWChlPVii3HZYW72/c6lGzBGAJnxLSX/YMLpI8
-	 9k38k21KExHymnbg6c/H0/mlbkb7dvWpnkHsi09iQz2zpXi7IuX+PtRbZiAWZB1TtJ
-	 CqA4Q+iV2ZG0HIcpVu76xHsnZ2Jha/4JTDOnOOWMHG8pkc8Z/8DzdVi32zwqL8t5u6
-	 woBDZts1VdL6g==
-Date: Fri, 13 Sep 2024 08:34:26 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: David Miller <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>,
- Mina Almasry <almasrymina@google.com>, Networking <netdev@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- linuxppc-dev@lists.ozlabs.org
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Message-ID: <20240913083426.30aff7f4@kernel.org>
-In-Reply-To: <20240913204138.7cdb762c@canb.auug.org.au>
-References: <20240913125302.0a06b4c7@canb.auug.org.au>
-	<20240912200543.2d5ff757@kernel.org>
-	<20240913204138.7cdb762c@canb.auug.org.au>
+	s=arc-20240116; t=1726241757; c=relaxed/simple;
+	bh=JVb8KMCM6jHWePJ+WwVGJto+gZZqwG8xSOjy87G2/0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NYRkgRGN9R4JlTu0hRz4tXriGJGsMzXCKEdBp9q8Tp3hmq3cpHIGvWO3S1ZF/cEb6eUE1Ym1So2JTbdsJgQVJxGeI/GmyLIOXYIGgNhz/SWtnRlcHq9a/5NqXC0A/7AOnnTO1JMzHeeXQdZDe+zpGhPo3k4K3v7Ocb8eVqJLgm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WHugccHc; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5365b71a6bdso1365678e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 08:35:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1726241754; x=1726846554; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=z0JwKHRK3rl76CWQbkuUTWFIQpTK2A2oPr0BJFkbSag=;
+        b=WHugccHc98Vp3frffJstD5/mOGg3TvLh4yx+6AmbAcDzYUaySi8qBLkfwIsbmWSa67
+         3FHzeuhZFiXZTbxEXp/NYadjeqBmoYty5kEN2+ARkTMXVtjSE4u1BAENuULmgJXodRIY
+         PBtM0vxFVKxXmkewgu0iLAkg0i3MqrdXksY0msVddLhcm3oWmOGRcj5BaMwKWCkkPu0a
+         GYTohFea1yP3CnMqnWM8hydAkC0S3+WjtGcN9G/wXcV1prh+nhBvDl8mqFJc4HVRX+Cr
+         2PjLZiwIhdjHcBWwNWRWqlgCNR4tWKaX5d09iwVGXlI0W+T4KrtJx+t8mQh4tE/v3L0x
+         XEZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726241754; x=1726846554;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=z0JwKHRK3rl76CWQbkuUTWFIQpTK2A2oPr0BJFkbSag=;
+        b=ldLYwCJCmBzizdAt7opGc+kgX4iYijIvt/IU0GBp0Jmxneowi1ff+3vsu647wAPE21
+         /jGCVuYRmdFy5pIX85WI39gYTKqVqopKZxBLh7VFJMPpSUVVSrU49UKTr1E2t9LGL5K+
+         Oq9NxXRJv9Y2iAdcZDhWNTjs2XoQFW4DiA8Q4eOZYMeOjEap5NUQ6pp7+hxfM2pSxYiR
+         D/x2UpdwE/exxr7mgp19axRz+qJQDRG8jUF6GzsYhIrAVd26gNvxSmbNKLcoQ86bNGOe
+         xMaoAuq69PEO2Hqlu+bCHfQezzLUsNMS+zG2FmW0+bBN1aNllFmALR2JzX4FcRYvU6qN
+         N0GA==
+X-Forwarded-Encrypted: i=1; AJvYcCVXJhgv7noXBP4snD4yPgN3dNd1+zHpM7CcOAVXN/lxDisLrTiDDyv0PCmI9oU1sSppr1rGntuPcnvKOmo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRrjmyIAUHWJAwBz8xXhSUE4ste1kOJzk7KsjslUgaJGryjGrB
+	JXfvilSq2DYpjG7QOPSm3M+IllvVHfOP9ES6piIk0VJxUXZIRmvvmiEhlU2dz2Q=
+X-Google-Smtp-Source: AGHT+IGbQHDlO6Jy/xYSGiEtD0fGy9IlDo0xDLy8oCci62lxHIoe3G+0a1csHKqWGa38NhoeVuaDHw==
+X-Received: by 2002:a05:6512:1092:b0:52c:9468:c991 with SMTP id 2adb3069b0e04-5367fec5715mr1865133e87.14.1726241753647;
+        Fri, 13 Sep 2024 08:35:53 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8d25c6117asm881339766b.98.2024.09.13.08.35.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 08:35:53 -0700 (PDT)
+Date: Fri, 13 Sep 2024 17:35:51 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Raul E Rangel <rrangel@chromium.org>
+Cc: linux-serial@vger.kernel.org, rafael.j.wysocki@intel.com,
+	ribalda@chromium.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] earlycon: Print a notice when uartclk is unknown
+Message-ID: <ZuRb130167L8bW40@pathway.suse.cz>
+References: <20240912173901.3969597-1-rrangel@chromium.org>
+ <20240912113616.2.Id2235082fc6c2d238789dfc3ee923492e9ed7387@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240912113616.2.Id2235082fc6c2d238789dfc3ee923492e9ed7387@changeid>
 
-On Fri, 13 Sep 2024 20:41:38 +1000 Stephen Rothwell wrote:
-> I have bisected it (just using the net-next tree) to commit
+On Thu 2024-09-12 11:36:20, Raul E Rangel wrote:
+> When trying to construct an earlycon=uart parameter it's hard to debug
+> why it's not working.  In my specific case it was because the default
+> uartclk earlycon assumes doesn't match my hardware. This change adds a
+> notice so that the user is made aware of that this assumption is being
+> made. This should hopefully lead to them adding a <uartclk> option to
+> their earlycon parameter.
 > 
-> 8ab79ed50cf10f338465c296012500de1081646f is the first bad commit
-> commit 8ab79ed50cf10f338465c296012500de1081646f
-> Author: Mina Almasry <almasrymina@google.com>
-> Date:   Tue Sep 10 17:14:49 2024 +0000
+> Booting with `console=uart,mmio32,0xfedc9000,115200n8`:
+> [    0.000000] earlycon: uart: Unknown uartclk, assuming 1843200hz
+> [    0.000000] earlycon: uart0 at MMIO32 0x00000000fedc9000 (options '115200n8')
 > 
->     page_pool: devmem support
->     
-> 
-> And it may be pointing at arch/powerpc/include/asm/atomic.h line 200
-> which is this:
-> 
-> static __inline__ s64 arch_atomic64_read(const atomic64_t *v)
-> {
->         s64 t;
-> 
->         /* -mprefixed can generate offsets beyond range, fall back hack */
->         if (IS_ENABLED(CONFIG_PPC_KERNEL_PREFIXED))
->                 __asm__ __volatile__("ld %0,0(%1)" : "=r"(t) : "b"(&v->counter))
-> ;
->         else
->                 __asm__ __volatile__("ld%U1%X1 %0,%1" : "=r"(t) : "m<>"(v->counter));
-> 
->         return t;
-> }
-> 
-> The second "asm" above (CONFIG_PPC_KERNEL_PREFIXED is not set).  I am
-> guessing by searching for "39" in net/core/page_pool.s
-> 
-> This is maybe called from page_pool_unref_netmem()
+> Signed-off-by: Raul E Rangel <rrangel@chromium.org>
 
-Thanks! The compiler version helped, I can repro with GCC 14.
+Looks good to me:
 
-It's something special about compound page handling on powerpc64,
-AFAICT. I'm guessing that the assembler is mad that we're doing
-an unaligned read:
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-   3300         ld 8,39(8)       # MEM[(const struct atomic64_t *)_29].counter, t
-
-which does indeed look unaligned to a naked eye. If I replace
-virt_to_head_page() with virt_to_page() on line 867 in net/core/page_pool.c
-I get:
-
-   2982         ld 8,40(10)      # MEM[(const struct atomic64_t *)_94].counter, t
-
-and that's what we'd expect. It's reading pp_ref_count which is at
-offset 40 in struct net_iov. I'll try to take a closer look at 
-the compound page handling, with powerpc assembly book in hand, 
-but perhaps this rings a bell for someone?
+Best Regards,
+Petr
 
