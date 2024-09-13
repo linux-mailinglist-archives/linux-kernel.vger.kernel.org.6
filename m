@@ -1,137 +1,141 @@
-Return-Path: <linux-kernel+bounces-327472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F06E3977665
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:24:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2641977666
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 03:25:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EF4E1C23B99
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:24:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4DDE1C215D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 01:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9CBC4A2C;
-	Fri, 13 Sep 2024 01:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B395A4C96;
+	Fri, 13 Sep 2024 01:25:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LXRin4vE"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="BuTH+Cqm"
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7434C6C;
-	Fri, 13 Sep 2024 01:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39604A06;
+	Fri, 13 Sep 2024 01:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726190654; cv=none; b=WCsZgwlGBKI3jPYx+4FDh3K7cZ88ad03w3DpLTQ2M+xE0DyLRyDlZIO1MYmVswAE22bpeuMhIY1ZN5GUHoV0SSwYZnMtUx5WGLD97v9UTiIDXzakuTk+fYoTcajTRALkEkNMtt43rI35A39euk3QUscFYDXY9fr6WkblmIU72to=
+	t=1726190723; cv=none; b=l5YUuQfzAbK6Wx8PtwXBjJ9mrG/yg5jyxsag95/sg2oV0PAzPRcF0lqtyxAkvGvQ8Ia55xYAgbc61dCOThr+Zwq2A5KJSeDjTAMPZ1NSyeOC/3HeSEDaRiLm2cw+NfRvW6vQ3v25Zhdc01x5PSNT7x0Ukz+8BxoGal8nDnnMXMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726190654; c=relaxed/simple;
-	bh=RX99iHM3X+S45ILnyoYhKkBEinLaml5qshNtXrhGSjk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kKwOBbnOIvlvlscPaB7gTjgatTv4n2j94VeznxOP+1txEsdeXxmY+SwN79rzIUrwv0kb/pzUl52aKv6w9DaY9lNj05Qzya632NXuW7dnwcVCTpc44FK2oFvkqaZzZcaX+haLtgHUISoLYXM/VgwVT0TxRWommxRSdJrhxuVZ0nE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LXRin4vE; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2d877dab61fso328814a91.3;
-        Thu, 12 Sep 2024 18:24:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726190652; x=1726795452; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CN1N3iY6hg7sVtKbSfdbDShJpKBB5GtoR/npFtZ9dS0=;
-        b=LXRin4vEO8N92Tk6bgBXT4/7fuXjGS7nq5LJZ7oJ4gVr0xY10bKHaU+E2glKsjmKIV
-         KOfVIwk/KjVysU33woPfkr6hRRDNVMcTkV7OjP3+Iy9dMTQkuIuEBWwGhmk56p3Yw79k
-         M0Eqw/bG61NZiGhkPo7jw0xUi/HAwB2gVrsb6PlWX3PO9a6i+AVPxhekBwxUYBk1gOXC
-         fuPXgXyKS6FiNlE920eJAkIAZFWbxJPjSg/Fb+dEDfQKZexEAG0m2gvTop+Z4WS2UhuO
-         UDmdQp20TUT1ZWLy92TZ/hUR/RQglnq06DJ1+ydQ70EDhXJxRi7/5iGk7QerEqqifIXC
-         AC+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726190652; x=1726795452;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CN1N3iY6hg7sVtKbSfdbDShJpKBB5GtoR/npFtZ9dS0=;
-        b=PwE5vCkCtAZFLMh/HQYsoL8PdjydjCNqnXOTGZAAB3PFh1WuUE5/PUrqvqA/r/z3Vv
-         lAMgBhxbbStap3+voo+5OgPQNwqGDOMBP/8vk537I0+ga6+XIB69+e1U36DUKZ9G/SF/
-         S2SnbpM8iVAjc601CpMLDiLxOvrU7Plh2VcqKBl+0W+BdA7thAh5301dR75LbgKUbupP
-         QPGzeEdZw7gZCxNllTNwKYKAe8gG6YDL5TADGXVedU+kF74nbB3atU48mivi9DLcI1Qg
-         jOx2/jrXoGB5kWzaYnYCOJTqq0HYV2sLA86FAiz4Qq8CAwuHFvd8iORDo1/Y9n+w8B5X
-         +cQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/0AIf8KD76lyIWatqueMPxc8FEa0qKkX2ifUe3qDTaYZkZl/JecozIUIKuXcDFLDJZzF+OrX57dU=@vger.kernel.org, AJvYcCXkUTlKJ6Uv8YUo9HsucADOt3pev+mIJjkm32vzUm6FlEvxgfh8qvHF1G1UlgkO2SpgW+EOeIe0jT/TYL2S@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdUsrXMR/mtZ7zMzGS8bOsfMpRYQiddiDOWMZQzPuZ0j2z7a/u
-	+ziVr6RDxra/oG9Kju1YKIRHGurRHZt3FjAWcjl6VYl7jstJyeUH
-X-Google-Smtp-Source: AGHT+IGn54VC3I9qukbo6RWinzRhc4Fl8ZU0uPSZvawJkXQqN0jhftw4TvGM7XURRDz2D8PxJyRBFA==
-X-Received: by 2002:a17:90b:4b4e:b0:2d8:9040:d170 with SMTP id 98e67ed59e1d1-2dbb9edff0bmr1431284a91.31.1726190651765;
-        Thu, 12 Sep 2024 18:24:11 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2dbb9c4dd13sm382061a91.12.2024.09.12.18.24.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 18:24:11 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 5A07D4A19C6E; Fri, 13 Sep 2024 08:24:08 +0700 (WIB)
-Date: Fri, 13 Sep 2024 08:24:08 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Takahiro Itazuri <zulinx86@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Documentation: Unify format for vulnerability sysfs
-Message-ID: <ZuOUOIdLbSVDGfpI@archie.me>
-References: <20240912142542.590907-1-zulinx86@gmail.com>
+	s=arc-20240116; t=1726190723; c=relaxed/simple;
+	bh=eiUizTWYb3R75gtwRcaE685TMRMQQ3cX7DcC/rF1grI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MtUPfCxzcaqpeskLWgT0HbxgfVmNLTf84KJrWBzRjxSOitSr+AS5c8he/cjI6BjN/hwGvSr4IVYJleiVyAv11WbQrjvnp2puxpRTjwspnqFyMYvbCGiLp7kmZDY0MXTxSZyOVKzFh44rXLIvib7Bi4xQ/Q6I0j0TAZaCYuyhdtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=BuTH+Cqm; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1726190717; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=bT7Ehu308cTbhhm8mjO8oPSFI42XJ/7qjVWe+08lwuE=;
+	b=BuTH+CqmAS1JIJ6L5yWk9xZuGGiVEXnujN6va2twzgTmznANc8dHx9Y0wbV6sAI4UvBHO7T/XclVtC0XX4kkvOIzwn9l0L8mimFNH1FLznVNLUkItKyIoptjRRnqZ6Prv55+9B50pwjKkASlFngJ6qIOnSlZp1pMzgkIgIoco8s=
+Received: from 30.221.145.1(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WEsnkWg_1726190715)
+          by smtp.aliyun-inc.com;
+          Fri, 13 Sep 2024 09:25:16 +0800
+Message-ID: <67cdcde3-1095-41cc-9d99-a0b97274d7be@linux.alibaba.com>
+Date: Fri, 13 Sep 2024 09:25:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="UnAzdXWw3D8SrGPl"
-Content-Disposition: inline
-In-Reply-To: <20240912142542.590907-1-zulinx86@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [HELP] FUSE writeback performance bottleneck
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,
+ Bernd Schubert <bernd.schubert@fastmail.fm>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ lege.wang@jaguarmicro.com, "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>
+References: <495d2400-1d96-4924-99d3-8b2952e05fc3@linux.alibaba.com>
+ <67771830-977f-4fca-9d0b-0126abf120a5@fastmail.fm>
+ <CAJfpeguts=V9KkBsMJN_WfdkLHPzB6RswGvumVHUMJ87zOAbDQ@mail.gmail.com>
+ <bd49fcba-3eb6-4e84-a0f0-e73bce31ddb2@linux.alibaba.com>
+ <CAJfpegsfF77SV96wvaxn9VnRkNt5FKCnA4mJ0ieFsZtwFeRuYw@mail.gmail.com>
+ <ffca9534-cb75-4dc6-9830-fe8e84db2413@linux.alibaba.com>
+ <2f834b5c-d591-43c5-86ba-18509d77a865@fastmail.fm>
+ <CAJfpegt_mEYOeeTo2bWS3iJfC38t5bf29mzrxK68dhMptrgamg@mail.gmail.com>
+ <e7a54ce3-7905-4e70-a824-f48a112c1924@linux.alibaba.com>
+ <CAJnrk1bTt7r1hfkp6oA3-_x3ixEd_qKb8Kkxrugv8XOOJz7U4Q@mail.gmail.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <CAJnrk1bTt7r1hfkp6oA3-_x3ixEd_qKb8Kkxrugv8XOOJz7U4Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
 
---UnAzdXWw3D8SrGPl
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 12, 2024 at 02:25:42PM +0000, Takahiro Itazuri wrote:
-> The format for vulnerability sysfs files was diverge across pages.
->=20
-> Unifies the format as follows:
->=20
-> * Use list table for possible values for the sysfs files, because simple
->   table does not allow line breaks for the first column; otherwise
->   recognized as multiple different rows
->=20
-> * Insert 2-spaces indentation before a sysfs path
->=20
-> * Wrap each possible value with single quotes
->=20
-> * End description with a full stop
->=20
-> * Apply 80 columns rule
->=20
+On 9/13/24 8:00 AM, Joanne Koong wrote:
+> On Thu, Aug 22, 2024 at 8:34 PM Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
+>>
+>> On 6/4/24 6:02 PM, Miklos Szeredi wrote:
+>>> On Tue, 4 Jun 2024 at 11:32, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+>>>
+>>>> Back to the background for the copy, so it copies pages to avoid
+>>>> blocking on memory reclaim. With that allocation it in fact increases
+>>>> memory pressure even more. Isn't the right solution to mark those pages
+>>>> as not reclaimable and to avoid blocking on it? Which is what the tmp
+>>>> pages do, just not in beautiful way.
+>>>
+>>> Copying to the tmp page is the same as marking the pages as
+>>> non-reclaimable and non-syncable.
+>>>
+>>> Conceptually it would be nice to only copy when there's something
+>>> actually waiting for writeback on the page.
+>>>
+>>> Note: normally the WRITE request would be copied to userspace along
+>>> with the contents of the pages very soon after starting writeback.
+>>> After this the contents of the page no longer matter, and we can just
+>>> clear writeback without doing the copy.
+>>
+>> OK this really deviates from my previous understanding of the deadlock
+>> issue.  Previously I thought *after* the server has received the WRITE
+>> request, i.e. has copied the request and page content to userspace, the
+>> server needs to allocate some memory to handle the WRITE request, e.g.
+>> make the data persistent on disk, or send the data to the remote
+>> storage.  It is the memory allocation at this point that actually
+>> triggers a memory direct reclaim (on the FUSE dirty page) and causes a
+>> deadlock.  It seems that I misunderstand it.
+> 
+> I think your previous understanding is correct (or if not, then my
+> understanding of this is incorrect too lol).
+> The first write request makes it to userspace and when the server is
+> in the middle of handling it, a memory reclaim is triggered where
+> pages need to be written back. This leads to a SECOND write request
+> (eg writing back the pages that are reclaimed) but this second write
+> request will never be copied out to userspace because the server is
+> stuck handling the first write request and waiting for the page
+> reclaim bits of the reclaimed pages to be unset, but those reclaim
+> bits can only be unset when the pages have been copied out to
+> userspace, which only happens when the server reads /dev/fuse for the
+> next request.
 
-LGTM, thanks!
+Right, that's true.
 
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> 
+>>
+>> If that's true, we can clear PF_writeback as long as the whole request
+>> along with the page content has already been copied to userspace, and
+>> thus eliminate the tmp page copying.
+>>
+> 
+> I think the problem is that on a single-threaded server,  the pages
+> will not be copied out to userspace for the second request (aka
+> writing back the dirty reclaimed pages) since the server is stuck on
+> the first request.
 
---=20
-An old man doll... just what I always wanted! - Clara
+Agreed.
 
---UnAzdXWw3D8SrGPl
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZuOUOAAKCRD2uYlJVVFO
-oyIaAP4kAUOXLr5TBC13Iuu/WFVwkr/sL+5uJZA9rMHXZLOZWAEA9yhfsQJ4HNCw
-ispJNPTGu6Zi1pzmf530PCJAeKgNwwk=
-=UVit
------END PGP SIGNATURE-----
-
---UnAzdXWw3D8SrGPl--
+-- 
+Thanks,
+Jingbo
 
