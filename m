@@ -1,164 +1,140 @@
-Return-Path: <linux-kernel+bounces-327743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED4BE977A9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:06:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC683977A9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:06:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5E9428717A
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:06:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11CE01C2463B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495801BD4F6;
-	Fri, 13 Sep 2024 08:05:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4387D1BDA9A;
+	Fri, 13 Sep 2024 08:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="clI3M+cH";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pOBA17xi"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W4mSvIrk"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D5C15443F;
-	Fri, 13 Sep 2024 08:05:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3C81BC088;
+	Fri, 13 Sep 2024 08:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726214754; cv=none; b=CDCj15qIadDXo87qXkvtJ8NmCNj/U4hS9QqD/P/lO7dNqUa2lppyaux89Gwvod7z+ekIxldo8GvG5pkUhaAGKtbTOqPjYmdp/6K29tZN6NOV4SMepjLEWxSSLrqHc5LjQnGCy5Wx9lflaZ6VyBqnLKrr0TynLkUqd7e5ceA0iJg=
+	t=1726214765; cv=none; b=F9V0fcC7Cp8T4/ehbPv2ssFL1D1lEapDpfocN2qjJ3ZZmenvxFq2hpPDNuvlUhvGDJp8tgyOo+pWUOYJo3fO/1J/Q+yYHjsXbqgvaonmliOa4UQNXsyWhayVGBQCWI2clPLKG5ZqKO4RWNXg9VYU3ZCQVs04iutThBvi9RIjhJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726214754; c=relaxed/simple;
-	bh=LLn5E9J+PxLONJXmbsnj9w3ddIvlQBZYSeKCjZreX+A=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=TsI7Tgegh8Aht0PfO4SR/HAkl71ThK4h0TTuVBUnOX1FscIAEZDOgxQzbGTjXFWXE4z66Zxlqzy6XV8TfqaTRUsbmnZJ3DPVL/zu8xnvoe+tw+x4+aHcne/I3sSZfvlRixweWEyVYX65BwYXSPUgfAS4zjnvAN+a4AH3E6ZzGmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=clI3M+cH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=pOBA17xi; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 251661380301;
-	Fri, 13 Sep 2024 04:05:52 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 13 Sep 2024 04:05:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1726214752;
-	 x=1726301152; bh=rJJl7AEVEXkfFdfdgqNhXocXRXFkhcMCEDe5TyRtIaE=; b=
-	clI3M+cHMGVbjM0issp7aiohLJP9jLCTBaTJJ39+hUATbI5pWO4fYMFXWDCA0XYg
-	HBX9+oYpUp8RvBcOJZgoV7aHw8CEWKpVs27d0zfubvVnUZn59SaFWHWPHuD9OEBE
-	DDCgReAwAXc4Ozc3WSS4QliNPI7fCUaiCuJUqavoFV5XNxYpk9Oz50hONe22XLn7
-	KNlqyeXsnhzcvedDgNZPdAHqNBjKxKCTnJeUF3XPl7+V2XN8v83Y0hFI9iV3m9HD
-	ijYAcgDllc22XUuTBpJdd7atJXFqNrIUHrMf3H1AUE7iaAWi9MPQOLB0VP/FyE+g
-	qviiYM7U/XQrqvmI5Jk5ag==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1726214752; x=
-	1726301152; bh=rJJl7AEVEXkfFdfdgqNhXocXRXFkhcMCEDe5TyRtIaE=; b=p
-	OBA17xi47wHY5p3ig9NHZZl35IUh7T4bGs/SusFo1nodn+MAtFgvkJgFctUK/jwt
-	0rXHf9KYAtP2IFd65ZxEtuxc7vTjMeeO67Bo1PwYIV15eOZXk+/bIIkMiyzOu42w
-	IEzZKZRTEoBYQdG82CoHL2RsSVfPLwZPPSkLxwXy1lHYxD6q1VgaBULlnC5xuDhw
-	/OM82TOov8o2cBgK4FiD1L7qAFL7Wwihb3AyYfL7skScJoBlSRtGPJkRC5UeJ3fm
-	Q1dPp/c1xN6YnPi/56Ry8L3gVOEAHo0QHBiNo4N9QkC25xcsQD162toCXZNYhGrD
-	h8bMfpKwQY8/lmDxJxbrQ==
-X-ME-Sender: <xms:X_LjZjWBOmqr21j0I1BNAhOHQJHGAaGeMeW0SPOf5Dz65RBx_fGx_w>
-    <xme:X_LjZrm90CXV0PH64gQfJS9Axwejm-6vfmzX996xa_Omwmiv1Aj5s7mhyw88v8kI1
-    YYKPDYhgtLIZz690tY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejiedggeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvdek
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehuthhsrghvrdgrghgrrhifrghlse
-    grnhgrlhhoghdrtghomhdprhgtphhtthhopegrughsphdqlhhinhhugiesrghnrghlohhg
-    rdgtohhmpdhrtghpthhtoheprghrthhurhhsrdgrrhhtrghmohhnohhvshesrghnrghloh
-    hgrdgtohhmpdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdrtgho
-    mhdprhgtphhtthhopehmthhurhhquhgvthhtvgessggrhihlihgsrhgvrdgtohhmpdhrtg
-    hpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopegrnhguihdrshhhhiht
-    iheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlh
-    drohhrghdprhgtphhtthhopehjihhrihhslhgrsgihsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:X_LjZvZVQfA26BXmdinJ_DBWe2jr2tZMGDRlMGf_FWfJdeJB4BCAeg>
-    <xmx:X_LjZuUJuNZwiZGTBOPnM06so16dGui1VSuIrlyBty0tn158fZB5Ew>
-    <xmx:X_LjZtm4n7Z_4KGQpUrtZL955T9gMCzLthkqUfRSaElBbP0sPsG1Hw>
-    <xmx:X_LjZrdGB1mHS4FpK7FR6X3oOv9hpTsDcjmx6GZP8MrL-cPmP2XBaQ>
-    <xmx:YPLjZv0aXh4EGZoo8e7PHR9cghLoi32TVauR4_UC2o-teY4MX0Hiv66X>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id A1B05222006F; Fri, 13 Sep 2024 04:05:51 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1726214765; c=relaxed/simple;
+	bh=/OHZfeDKU0Zmhsk43vg+X1uyuNrME+HedLybJIinnkg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u16RBLerhYHEgw33GUMPV0QN21qQjlBHlYJ74/kNZPcfZzLLwUGxc8rXWHIQCnA82I2hs5CXqnZZtuY2yQzgnnlqa8fsGbQUp2ccJoeQLFA+w3o1p0s6Dh0sFxlYiNMCgsfDGVYfE6Wf953KR+EH5/i3qPc99yqc7XPczHLfKWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W4mSvIrk; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7d4fa972cbeso1528177a12.2;
+        Fri, 13 Sep 2024 01:06:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726214763; x=1726819563; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=zblplU9yow7GMYopy1E/IBLw2FDfeEv6pZ/jZLC49h0=;
+        b=W4mSvIrk+K6G640Vr0Dt9NrBVqqGEynP/ssSX4kktmjZmVApRwSktgmw1lbPAt4Oc3
+         ydnO29OrPhtV8YQG79UNkGZPMkIDGyFAhNk7atpYKexyo+F69Q69Q0w/Qa1hLXHb1PUf
+         y6PwXoFVL2ZgCvFql5PneEVmr14uVwFs4Go6sjPHN6ECjVwf69MvhKgsQXUB+0E7C7Ih
+         k2u16iNaKNUaMvUTni7B1Sd/BMC6jvoj5pjYdeOSATfpzhF30G4TH44mRHgrgWuzNutC
+         H/gvy9kftoWcQsXwp11PtkaAfP0G4n8MOVtWSWl4kX0K/gerMtLbBfhUC7v9nylwwOSo
+         wEKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726214763; x=1726819563;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zblplU9yow7GMYopy1E/IBLw2FDfeEv6pZ/jZLC49h0=;
+        b=A4yeRApT+qxY/1WkifGevt6KttU775hsCohhZdvMCejXYyBBCO8DyAYoDETgZLLjXe
+         lSI/YdSAnqMaORTyMy45v/A/lnLvbPsE49H/q2ANXfJVGlfkFdV3jM8Mhe+hbxkPtAYo
+         xZ18JkPTHZZjFb9eKnyr9dRA37eyIfFO/XPEO3vVT7DhwnWrJcWkbjz0owm+x487fXLv
+         ecpiPHeHuB+vnPrE9Fxz26F3YzqU+Y8pPXOXY+fbDHFh1pMR8Jx0n/DsX8dXBKMeaZz6
+         KtZxWRuOexJlqiyvsBDolFkUJXH+u7NkDX/SUpWfZ7kZg/ZTDzc9WFHyy+5QcHblR1FV
+         Vjaw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ7AXAlmMRM4iXeJ4LpOZwZZpNL5LBnKzkGWy0mEk/QFEw8Z4IO+SeVcRa5WpStYwYWf7mA31G1f/yLlzj@vger.kernel.org, AJvYcCUnm4mRk1x/fI1qTIQrJ6PYDY+ly2PRWa0WE49h1HhMptn3ZAT/2GtCPb8T+mZgWQ7xTVNu0kSl@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCuLSjyiabhsbmaOxswg4y4mZFIyRQ65zMIrOjq8JDsBK4ALJs
+	DV48mq2Z82WR1vDkNO/nzo2cWj2LknbVTHO3acmtJv2Sv3hXfpy6n8fCUqp+BDFmVu9VzPVEfVx
+	iLJA/f35b+ApthRNAfAUGTSQ8zPU=
+X-Google-Smtp-Source: AGHT+IHYLysGhGvGSCWMgEKAQslDaU+U3KUnr4CmtkyWsPOGe1CgIgN36TZphXJZQCjB2EDJUI11vidz1KiElaAKFpU=
+X-Received: by 2002:a17:90a:4b09:b0:2bd:7e38:798e with SMTP id
+ 98e67ed59e1d1-2dba0064f3dmr6016181a91.28.1726214763248; Fri, 13 Sep 2024
+ 01:06:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 13 Sep 2024 08:05:31 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: arturs.artamonovs@analog.com, "Catalin Marinas" <catalin.marinas@arm.com>,
- "Will Deacon" <will@kernel.org>, "Greg Malysa" <greg.malysa@timesys.com>,
- "Philipp Zabel" <p.zabel@pengutronix.de>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Utsav Agarwal" <Utsav.Agarwal@analog.com>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Andi Shyti" <andi.shyti@kernel.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Jiri Slaby" <jirislaby@kernel.org>, "Olof Johansson" <olof@lixom.net>,
- soc@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org,
- adsp-linux@analog.com,
- "Nathan Barrett-Morrison" <nathan.morrison@timesys.com>
-Message-Id: <00860eb3-8c88-45d3-84f5-5f8f0f03c28c@app.fastmail.com>
-In-Reply-To: <20240912-test-v1-19-458fa57c8ccf@analog.com>
-References: <20240912-test-v1-0-458fa57c8ccf@analog.com>
- <20240912-test-v1-19-458fa57c8ccf@analog.com>
-Subject: Re: [PATCH 19/21] arm64: dts: adi: sc598: add device tree
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20240830082244.156923-1-jingxiangzeng.cas@gmail.com> <e5k22kuavnli72v3lmeezrewut6hvhfdpteouj3ii6dmcdiiin@2e3dlbs4ahe2>
+In-Reply-To: <e5k22kuavnli72v3lmeezrewut6hvhfdpteouj3ii6dmcdiiin@2e3dlbs4ahe2>
+From: jingxiang zeng <jingxiangzeng.cas@gmail.com>
+Date: Fri, 13 Sep 2024 16:05:51 +0800
+Message-ID: <CAJqJ8ig2=UqSTemAEU_5Shtc_S=deEuHyq1fJ1QUi1PU=_8pCQ@mail.gmail.com>
+Subject: Re: [PATCH] mm/memcontrol: add per-memcg pgpgin/pswpin counter
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Jingxiang Zeng <linuszeng@tencent.com>, linux-mm@kvack.org, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
+	Andrew Morton <akpm@linux-foundation.org>, cgroups@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Sep 12, 2024, at 18:25, Arturs Artamonovs via B4 Relay wrote:
-> +/ {
-> +	chosen {
-> +		stdout-path = &uart1;
-> +		bootargs = "earlycon=adi_uart,0x31003000 console=ttySC0,115200 
-> mem=224M";
-> +	};
+On Tue, 10 Sept 2024 at 15:10, Shakeel Butt <shakeel.butt@linux.dev> wrote:
+>
+> On Fri, Aug 30, 2024 at 04:22:44PM GMT, Jingxiang Zeng wrote:
+> > From: Jingxiang Zeng <linuszeng@tencent.com>
+> >
+> > In proactive memory reclamation scenarios, it is necessary to
+> > estimate the pswpin and pswpout metrics of the cgroup to
+> > determine whether to continue reclaiming anonymous pages in
+> > the current batch. This patch will collect these metrics and
+> > expose them.
+>
+> Please explain a bit more on how these metrics will be used to make
+> a decision to continue to do proactive reclaim or not.
 
-You should not need the mem= and earlycon= arguments, as that data
-is already part of the stdout-path property and the memory node.
+Currently there is simply no way to know exactly how many anon page
+was faulted in through SWAP for each cgroup. One may use
+workingset refault as an indicator but it is inaccurate due to shadow reclaim.
 
-> +	aliases {
-> +		serial0 = &uart0;
-> +		serial2 = &uart2;
-> +		serial3 = &uart3;
-> +	};
+We have a proactive reclaim agent that sets a forced swappiness
+dynamically for each reclaim, so we can reclaim file or anon pages striclty.
+Knowing the anon page swapin status is a huge win for estimating the
+workload status.
 
-The aliases are board specific, please only list the ones
-that are actually enabled and wired on on a particular
-board, and make the aliases match the labels on the board
-rather than the internal components of hte chip.
+And the swapout info is also important for getting an idea of how much
+swapout is effective for a cgroup.
 
-> +	cpus {
-> +		#address-cells = <0x2>;
-> +		#size-cells = <0x0>;
-> +
-> +		cpu0: cpu@0 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a55";
-> +			reg = <0x0 0x0>;
-> +			enable-method = "spin-table";
-> +			cpu-release-addr = <0x0 0xdeadbeef>;
-
-Is that the actual address? It looks like some placeholder
-that should not have been here.
-
-       Arnd
+>
+> >
+> > Signed-off-by: Jingxiang Zeng <linuszeng@tencent.com>
+> > ---
+> >  mm/memcontrol-v1.c | 2 ++
+> >  mm/memcontrol.c    | 2 ++
+> >  mm/page_io.c       | 4 ++++
+> >  3 files changed, 8 insertions(+)
+> >
+> > diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
+> > index b37c0d870816..44803cbea38a 100644
+> > --- a/mm/memcontrol-v1.c
+> > +++ b/mm/memcontrol-v1.c
+> > @@ -2729,6 +2729,8 @@ static const char *const memcg1_stat_names[] = {
+> >  static const unsigned int memcg1_events[] = {
+> >       PGPGIN,
+> >       PGPGOUT,
+> > +     PSWPIN,
+> > +     PSWPOUT,
+> >       PGFAULT,
+> >       PGMAJFAULT,
+> >  };
+>
+> As Yosry said, no need to add these in v1.
+>
+> thanks,
+> Shakeel
+>
 
