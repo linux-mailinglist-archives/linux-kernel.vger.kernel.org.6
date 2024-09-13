@@ -1,258 +1,139 @@
-Return-Path: <linux-kernel+bounces-328251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEBCC978110
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:25:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66863978120
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:27:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25CD6B23F8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:25:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 123701F27C01
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420EA1DA630;
-	Fri, 13 Sep 2024 13:25:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F61D1D88CD;
+	Fri, 13 Sep 2024 13:27:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MTYMUUBt"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="neKkML90"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850E51E892
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 13:25:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E0E1DB552
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 13:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726233925; cv=none; b=vEnJF8mDJ0YcpkB+qK1bivJ9AGBRvMZIr9LGZUPejWUGFEm/oBVzJhFecmvVu44pgYpFAaWFFUAp50BK2f+Fa2AegO3UgFP+ETUdkVnoLnnMkk7aSeVQ41fRB/lEo6js+r3PDQRKtzugHiysKpxPzvjGewXG/XaZ9up/B1ZYURo=
+	t=1726234037; cv=none; b=LneK5hO4RH7ZNeijoEe3q6NkWX3qIHZ0ihdfIvp3jJM2IDTFgTj0DUz1QlgbdC9lYIIS5TOSX8uFqStur5SdZuK6sOF+6zxSQRj9TnquhSoictqAvDOvK/XOv9e4lqQBpDTNOJSJfSh546jpG+VYfuLZOGeM8WqeAxwDh+TF63A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726233925; c=relaxed/simple;
-	bh=Exl13x9XkciuAqStFfOqJeI0seOnAaEtkdjxyIhREjg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IzSRfvOA+BUf6Lx4XIKlTjIATxTjxHLBjRy/qUU6c3TfgC6thAPCzfABkxt1CXiDdozLEuL34Y+zf+VBqXLIS6gz86YTUsSokLRLIFA/Bu/hzFOG+RlDFf0UI6ThQyL86Q/b7MYUZlYHrcSJu5feNUmc7wzEl0qckgci5DCWSng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MTYMUUBt; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726233922;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NPe0SUBJEdHvLb4sF5N4GC0rJ9nP/aoSGOggzvDbl8g=;
-	b=MTYMUUBt8gTdtBLWs4ZyQoJNurPBbJJ+vcheT04PbZpLjvJi2lVxPjWOUE7HHGyiDQzd4a
-	2Y+CCVNSipDzOCpXF0A4MPE45XZ/CbEh8ZG8uGL7zfAlOIXaXfi51Vx+nnonqPX+ELfzw9
-	2rmUxlpX8mmC7yY0aFSLkOJGYNQS+Ik=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-677-6oGCK3ckOvaPSZKpTuHF7Q-1; Fri, 13 Sep 2024 09:25:21 -0400
-X-MC-Unique: 6oGCK3ckOvaPSZKpTuHF7Q-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42ca8037d9aso6813395e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 06:25:21 -0700 (PDT)
+	s=arc-20240116; t=1726234037; c=relaxed/simple;
+	bh=/dWHW16qX2DkRGWXpD+15atzONRgFU19ebFt8gO5Rx8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tlgj/nwEaue8kMdKXOD+2YMlc1iIWN0J31OawPhuP4doWstvJGb45jmiveTNiyQ3zzNKWWKWmZteNvmZzmv6h/rz6gmCVEWDOGZMsuJYEhTxHjBGV1UVttJaRijeKggxQHmYwAJFRSyejro9iP01X9krj2alukwlhdd5pGLHQDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=neKkML90; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cd46f3a26so8215185e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 06:27:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1726234034; x=1726838834; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/dWHW16qX2DkRGWXpD+15atzONRgFU19ebFt8gO5Rx8=;
+        b=neKkML90X6Eyfw4UbyRkjFquCcDYeKKp/xzUb7nP+56Lc4DloDo/ld7rxILTz887PI
+         oFU9ErZFy0o+WVK3vjxvw/c9d661GrdgJQgkGcGiM+Mxae9lsbEcymIktGNRRqwXYbfJ
+         P6ze9bW2lDMeXTov8+4ZhdkJy9c9LnWufVMHwU1HfrDdwnbc10gXR7dGv7yBGeqgA4U8
+         WRi5epNm7V+ZUldawTpsPi3fPuhC1t1qkWjcLlzij1OyGw+Zu6tjq+EKbd4v3KAMyA7g
+         yTwYcozB9pxjLFyXNKGSUuAYFkHzOQllv9zPPg3pG4OC2WQKlvqbMhEMo9NKt5ZvlGnu
+         XUKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726233920; x=1726838720;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1726234034; x=1726838834;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NPe0SUBJEdHvLb4sF5N4GC0rJ9nP/aoSGOggzvDbl8g=;
-        b=mbNerIkWYLiLU2V/sXo4pu4OrQ0fE1CqU86vvVIHr4cKR0jygHCaxJxrg4Px824HUj
-         RHe8f1S6kpLLBmqWEtDAECl1G7CfvWXUrH/SKjvCy8tWqOVd70RcvVwhUiu6Y/YT19aI
-         2Vbksc5Wo/tdweu7xgqGlzSH8PR2OFEER4i8R4KXnbnrEQ5y5k/5fT8zA7XwacVH3m2u
-         BTSLBCO6hRIRPjo5fGd5NIcPqytK9SdM27ja/m0rT+PrK/yd/m238Wg1aNu9dDZ970qx
-         mV4ob5BHhiI9cdXTK0Cc+dSv1vF9uRVkGCw9aqYRzK7urKEwgtYQ21VxfQ6wQwqNSWek
-         xiWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXLh/7Xxqm5zSycnUmrDSY9/a05geMMqSt2YuLdQXD4qo05DZngyD9pn3cA+BL2Ow8esuObP9buxk5cAo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP+ITRno56C6s1sNdK5QyTV3pOsmIJ58UG1ODH2Ig+yzXRiQTd
-	Gnw56tbtZTbn0syXx8V8NL41CwasorU4T7p+83hoheGY9jiFVqLyzxywXMMquBwC2WL0eIcAPK5
-	cjOzCxszTR3B24YawL6EI+P28JclPrCCFDrvh11J2Hl0LcW/j6GciPyy2rVPI/A==
-X-Received: by 2002:a5d:4cc6:0:b0:368:5a8c:580b with SMTP id ffacd0b85a97d-378d61e2b19mr1816919f8f.19.1726233919946;
-        Fri, 13 Sep 2024 06:25:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG0CWqp6VUNlYFtn66EgOGFI6WMHtPVYF+6fIDqre+6lLpa6ilT1SI2rwIcw8Qy8bM+8GJkNg==
-X-Received: by 2002:a5d:4cc6:0:b0:368:5a8c:580b with SMTP id ffacd0b85a97d-378d61e2b19mr1816895f8f.19.1726233919319;
-        Fri, 13 Sep 2024 06:25:19 -0700 (PDT)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-378956d35e5sm17032360f8f.76.2024.09.13.06.25.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 06:25:18 -0700 (PDT)
-Date: Fri, 13 Sep 2024 15:25:18 +0200
-From: Igor Mammedov <imammedo@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
- Dongjiu Geng <gengdongjiu1@gmail.com>, linux-kernel@vger.kernel.org,
- qemu-arm@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v9 01/12] acpi/ghes: add a firmware file with HEST
- address
-Message-ID: <20240913152518.2f80ab1e@imammedo.users.ipa.redhat.com>
-In-Reply-To: <20240913074435.0eea2552@foz.lan>
-References: <cover.1724556967.git.mchehab+huawei@kernel.org>
-	<34dd38395f29f57a19aef299bafdff9442830ed3.1724556967.git.mchehab+huawei@kernel.org>
-	<20240911155108.190f0fdf@imammedo.users.ipa.redhat.com>
-	<20240913074435.0eea2552@foz.lan>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+        bh=/dWHW16qX2DkRGWXpD+15atzONRgFU19ebFt8gO5Rx8=;
+        b=gxFgxnQ4Uhmw3kFCBpFPUwWJp4jnc+CyHktk6vsw2928bf8y/TtVIR2MT+4bWSn3vO
+         kv8s9z8e0kcp1/HR0sUQ9OadGJTXWWEcKCnRADpDJAlcJlJpva2dUIcrHYqKOnwxsMNP
+         WOpPFPh/htZkTC3Nhf4ZEJcub/vVZZ5ylm3JHLxRutT8T8j0ZsqRhg7+PQ9lf4KZy9yl
+         EheAoMHt+qLyl3OFJUyU7AQFGiqz82C6a7uKu/NGww+7vIkYjUxb1/b22iLlcwDmRA5L
+         D1F3HOu8PYhXEsKenhre/fkkauEvB7V9xbLThc5pddqzRDqVeaTk6xqIVOkxjjAljZv3
+         vMbw==
+X-Forwarded-Encrypted: i=1; AJvYcCXIVjHFj8/wC7zGf+XoEi9Zn1mpjVPrrt0o/xeJcqu4nArOy3GGeIHnZN33aMDbnzfi58eXpzxWQeHKUBE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySZ3Nqzfy5M04jFU3u1H2oHMHyADiYRJ3B0xdhLVupneDXV6yZ
+	Uhafjhen6hQJbYWEL07Iwf3AE+2i8k7ZiN+dKceGXfaDSZt/RY9gjVY/ZPGeSYvHQXz5uUMz2MH
+	/I/tsEN3wazonPS9Cg1QDo+XRJI53tQ==
+X-Google-Smtp-Source: AGHT+IECze5FuOLdpZqptn6lvbr71iYBCuyk7Xo54O53SFoEfeNUpJXM1nvOPEYA89clAzHMc9s2ERGAopoHd0CbbNw=
+X-Received: by 2002:a05:600c:1d05:b0:42c:c08e:c315 with SMTP id
+ 5b1f17b1804b1-42d90827159mr26429435e9.16.1726234032925; Fri, 13 Sep 2024
+ 06:27:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <CA+fCnZfFZCCq6ZQuVHoKY2tRJ3z1p0ftPW360-s=1JWd5Rv3JQ@mail.gmail.com>
+ <c71a884d-714f-4741-906f-4df162bde303@suse.cz>
+In-Reply-To: <c71a884d-714f-4741-906f-4df162bde303@suse.cz>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Fri, 13 Sep 2024 15:27:01 +0200
+Message-ID: <CA+fCnZfc5yhxkE+DQeOWcstH9P6g7T96eyCF4wzYXWNVfFrQ1A@mail.gmail.com>
+Subject: Re: Question about freeing of empty per-CPU partial slabs in SLUB
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Linux Memory Management List <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, 
+	David Rientjes <rientjes@google.com>, Christoph Lameter <cl@linux.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	Imran Khan <imran.f.khan@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 13 Sep 2024 07:44:35 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+On Thu, Sep 12, 2024 at 10:34=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> w=
+rote:
+>
+> > "If the partial slab becomes an empty slab after freeing up the
+> > object, it will be left in its current list if the number of partial
+> > slabs for the concerned node is within the limits (i.e < slab cache=E2=
+=80=99s
+> > min_partial). This applies to both slabs belonging to a per-cpu
+> > partial slab list and slabs belonging to a per-node partial slab list.
+> > If the number of partial slabs are outside the limit (i.e >=3D slab
+> > cache=E2=80=99s min partial) then the newly available empty slab is fre=
+ed and
+> > is removed from the corresponding partial slab list."
+> >
+> > The part that seems wrong to me here is the statement that this
+> > applies to the per-CPU partial list. Based on the code in __slab_free,
+> > it looks like it cannot reach the slab_empty label for a slab that is
+> > on the per-CPU partial list.
+> >
+> > (I know that an empty per-CPU partial slab can be freed when the list
+> > overflows or via shrinking, the question is about the slab being freed
+> > directly by __slab_free.)
+> >
+> > Is the article wrong with regards to this case? Or did this behavior
+> > change recently (I failed found any traces of this)?
+>
+> I don't think the behavior changed recently in this aspect, only in some
+> other details like tracking on_node_partial with a page flag for better
+> performance, and slabs on per-cpu partial list are no longer frozen.
+>
+> I think the paragraph you quoted can be interpreted together with this pa=
+rt
+> of the preceding one: "However while putting this partial slab on a per-c=
+pu
+> partial slab list if it is found that the per-cpu partial slab list is
+> already full, then all slabs from the per-cpu partial slab list are unfro=
+zen
+> i.e they are moved to a per-node partial slab list and this new partial s=
+lab
+> is put on the per-cpu partial slab list."
+>
+> So while flushing the per-cpu partial list, the per-cpu partial slabs are
+> moved to per-node partial list, and when __put_partials() finds some of t=
+hem
+> are empty, it applies the same s->min_partial threshold to decide whether=
+ to
+> keep them in node partial list or free them. So in that sense "This appli=
+es
+> to both..." part is correct, although as you say it cannot immediately
+> affect a slab on partial list we are freeing to.
 
-> Em Wed, 11 Sep 2024 15:51:08 +0200
-> Igor Mammedov <imammedo@redhat.com> escreveu:
-> 
-> > On Sun, 25 Aug 2024 05:45:56 +0200
-> > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> >   
-> > > Store HEST table address at GPA, placing its content at
-> > > hest_addr_le variable.
-> > > 
-> > > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>    
-> > 
-> > This looks good to me.
-> > 
-> > in addition to this, it needs a patch on top to make sure
-> > that we migrate hest_addr_le.
-> > See a08a64627b6b 'ACPI: Record the Generic Error Status Block address'
-> > and fixes on top of that for an example.  
-> 
-> Hmm... If I understood such change well, vmstate_ghes_state() will
-> use this structure as basis to do migration:
-> 
-> 	/* ghes.h */
-> 	typedef struct AcpiGhesState {
-> 	    uint64_t hest_addr_le;
-> 	    uint64_t ghes_addr_le;
-> 	    bool present; /* True if GHES is present at all on this board */
-> 	} AcpiGhesState;
-> 
-> 	/* generic_event_device.c */
-> 	static const VMStateDescription vmstate_ghes_state = {
-> 	    .name = "acpi-ged/ghes",
-> 	    .version_id = 1,
-> 	    .minimum_version_id = 1,
-> 	    .needed = ghes_needed,
-> 	    .fields      = (VMStateField[]) {
-> 	        VMSTATE_STRUCT(ghes_state, AcpiGedState, 1,
-> 	                       vmstate_ghes_state, AcpiGhesState),
-> 	        VMSTATE_END_OF_LIST()
-> 	    }
-> 	};
-
-current code looks like that:
-                                                                                 
-static const VMStateDescription vmstate_ghes = {                                 
-    .name = "acpi-ghes",                                                         
-    .version_id = 1,                                                             
-    .minimum_version_id = 1,                                                     
-    .fields = (const VMStateField[]) {                                           
-        VMSTATE_UINT64(ghes_addr_le, AcpiGhesState),   <<===                         
-        VMSTATE_END_OF_LIST()                                                    
-    },                                                                           
-};                                                                               
-                                                                                 
-static bool ghes_needed(void *opaque)                                            
-{                                                                                
-    AcpiGedState *s = opaque;                                                    
-    return s->ghes_state.ghes_addr_le;                                           
-}                                                                                
-                                                                                 
-static const VMStateDescription vmstate_ghes_state = {                           
-    .name = "acpi-ged/ghes",                                                     
-    .version_id = 1,                                                             
-    .minimum_version_id = 1,                                                     
-    .needed = ghes_needed,                                                       
-    .fields = (const VMStateField[]) {                                           
-        VMSTATE_STRUCT(ghes_state, AcpiGedState, 1,                              
-                       vmstate_ghes, AcpiGhesState),                             
-        VMSTATE_END_OF_LIST()                                                    
-    }                                                                            
-};  
-
-where 
-    VMSTATE_UINT64(ghes_addr_le, AcpiGhesState),
-explicitly defines field(s) within structure to be sent over wire.
-
-we need to add a conditional field for ghes_addr_le
-which will be sent only with new machine types, but not with old ones
-to avoid migration breakage.
-
-I don't know much about migration, but maybe we can get away with
-similar condition as in ghes_needed(), or enabling QMP error injection
-based on machine type version.
-
-Or maybe adding a CLI option to enable QMP error injection in which
-case the explicit option would serve as a trigger enable QMP command and
-to migrate hest_addr_le.
-It might be even better this way, since machine wouldn't need to
-carry extra error source that will be used only for testing
-and practically never in production VMs (aka reduced attack surface).
-
-You can easily test it locally:
-  new-qemu: with your patches
-  old-qemu: qemu-9.1
-
-and then try to do forth & back migration for following cases:
-  1. (ping-pong case with OLD firmware/ACPI tables)
-     start old-qemu with 9.1 machine type ->
-       migrate to file ->
-       start new-qemu with 9.1 machine type -> restore from file ->
-       migrate to file ->
-       start old-qemu with 9.1 machine type ->restore from file ->
-       
-  2.  (ping-pong case with NEW firmware/ACPI tables)
-      do the same as #1 but starting with new-qemu binary
-
-(from upstream pov #2 is optional, but not implementing it
-is pain for downstream so it's better to have it if it's not
-too much work)
-
-> 	/* hw/arm/virt-acpi-build.c */
-> 	void virt_acpi_setup(VirtMachineState *vms)
-> 	{
-> 	    ...
-> 	    if (vms->ras) {
-> 	        assert(vms->acpi_dev);
-> 	        acpi_ged_state = ACPI_GED(vms->acpi_dev);
-> 	        acpi_ghes_add_fw_cfg(&acpi_ged_state->ghes_state,
-> 	                             vms->fw_cfg, tables.hardware_errors);
-> 	    }
-> 
-> Which relies on acpi_ghes_add_fw_cfg() function to setup callbacks for
-> the migration:
-> 
-> 	/* ghes.c */
-> 	void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
-> 	                          GArray *hardware_error)
-> 	{
-> 	    /* Create a read-only fw_cfg file for GHES */
-> 	    fw_cfg_add_file(s, ACPI_HW_ERROR_FW_CFG_FILE, hardware_error->data,
-> 	                    hardware_error->len);
-> 
-> 	    /* Create a read-write fw_cfg file for Address */
-> 	    fw_cfg_add_file_callback(s, ACPI_HW_ERROR_ADDR_FW_CFG_FILE, NULL, NULL,
-> 	        NULL, &(ags->ghes_addr_le), sizeof(ags->ghes_addr_le), false);
-> 
-> 	    fw_cfg_add_file_callback(s, ACPI_HEST_ADDR_FW_CFG_FILE, NULL, NULL,
-> 	        NULL, &(ags->hest_addr_le), sizeof(ags->hest_addr_le), false);
-> 
-> 	    ags->present = true;
-> 	}
-> 
-> It sounds to me that both ghes_addr_le and hest_addr_le will be migrated
-> altogether.
-
-fwcfg callbacks are irrelevant to migration, they tell firmware what to do
-with specified addresses (in our case, write into ags->hest_addr_le address
-of HEST), so that HW (qemu) would know where firmware placed the table.
-But that's about all it does.
-
-> 
-> Did I miss something?
-> 
-> Thanks,
-> Mauro
-> 
-
+Ack, thank you for the response!
 
