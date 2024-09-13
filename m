@@ -1,135 +1,143 @@
-Return-Path: <linux-kernel+bounces-327568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 015BB9777BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:13:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FCD79777CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:17:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 322EA1C24719
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:13:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 368981F25999
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A7A1D31BD;
-	Fri, 13 Sep 2024 04:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24991D31B8;
+	Fri, 13 Sep 2024 04:17:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KmIMA84I"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YuABr6h6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7512F34;
-	Fri, 13 Sep 2024 04:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606D819CC2A
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 04:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726200804; cv=none; b=b6oAFfG6tBs0oIu6E9d1nCtQhWGKi48mF691n/9wq3ws1utaPjz3wOLQ3uIoxjOy3/QeHFW2zxqXXZ7girE8GpNyJHhDUAT2IK1+tIyFEe3QcQt1X1ITLWf65sDf4sgmc3E9o4bzxJTlxDO9IrVqV/ApYQunqwWczG7bhyPNjno=
+	t=1726201059; cv=none; b=DC98iBBufzcB3lQFyD+leSkEIVRFzYf0rVHM7Pi8u8B5So0pysEylUReDrM8QI21mr1Yq9x76/uX8vyKvxcx8/1BPRhRsj5t7x0KqytRBNGppduS4EXrWr09N9sZKc2rdgvF9hwss4wZD3GcZ1JU5hjPhxD7fvjbS74VP4hTkK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726200804; c=relaxed/simple;
-	bh=4XqDGGtz1dCKr7V/BZ88LjM75pJZcMSO9nE8I1H3svo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fW/PipalJVlTNvpdM7OMZ7h7lhrsFEKsL3WS8CwNOHuEnbr3ZA/EeAQ9/dRIfPwJHUBOIlKRDmJ/okXKZsYBjK4Kb/MLAhoQjW6tylvPidC41s8+sNNIAsgdg1qkxXY0qPWAHMjKuwq9N2orgok+1Qf9+4rDBrRQQUiBTb0NUzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=KmIMA84I; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726200799;
-	bh=X4PBrmZHLei+R69RRoCehgALDzSHVQBLSOFAUmTzQ3c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KmIMA84IY6t0WB+nrP6u2VJpWtSIdrP9reMzoaCOVR/OLay1GE88JfHNTzJPxnSNI
-	 16Xg+6eCQL3Sjh/DMZiJMIIb9VLF5cfHLo+ZVhTQp/LD9QxtK/wvh2cXj6peYSHFGy
-	 LXGvoUAhJPh9F1Zl4d+PbkRrny0qsUoCuKjm10Mli5FtFviHzyPYZm19QUgVZzJmJL
-	 4zUZ/c6G4Bun63II9FRsg1j6lI+2HKiC9CvYcDFcoiM1pucF9eqzhmZjJg+nrW0B9E
-	 tisGr87MOSvs0SpsEQJX1JUCjvcHQbDQIW4h4YtKdbv0fvGnlj+lQPFjw0cWZ1sa8U
-	 J7uE4okzSBMLQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X4gsB4FZXz4x8v;
-	Fri, 13 Sep 2024 14:13:18 +1000 (AEST)
-Date: Fri, 13 Sep 2024 14:13:17 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Mina Almasry <almasrymina@google.com>, David Miller
- <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>, Networking
- <netdev@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the net-next tree
-Message-ID: <20240913141317.3309f1c6@canb.auug.org.au>
-In-Reply-To: <20240912210008.35118a91@kernel.org>
-References: <20240913125302.0a06b4c7@canb.auug.org.au>
-	<20240912200543.2d5ff757@kernel.org>
-	<CAHS8izN0uCbZXqcfCRwL6is6tggt=KZCYyheka4CLBskqhAiog@mail.gmail.com>
-	<20240912210008.35118a91@kernel.org>
+	s=arc-20240116; t=1726201059; c=relaxed/simple;
+	bh=Iz/wKYFc07vTxmqWHCRim+ec7cDlBI3TIq+956XMZek=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HglG7VD/WwgcJ+Z5ZVYqM8bF3es5fPgdNh3jAe/qIaQKNiMByJrkOzWczj0jD229yvx8Q2CKZ5mbmDwacEaFtnTv6GapaVo2o5vsvY7B4qfkee5gkRpPPa8P0qQCZjiLsVbs6ZeARX3m8SY0C+RRJ8fMLqjYV/cbgU1CIN8VT2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YuABr6h6; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726201056; x=1757737056;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Iz/wKYFc07vTxmqWHCRim+ec7cDlBI3TIq+956XMZek=;
+  b=YuABr6h6AczbZDHlX+OmRC8K0KZInAm1UBP0uA2V7dtAzVR0wSMGt1jS
+   4YsDDZFcU+3TxFKk2By7RzIebUpYFpPOQF6Rrx8hZyF51SN2jfeDkWF6T
+   lHcpbnPBr8B1XAJYC2vmFP7ZNHFEk3VLyskEtmdU/uXCuofsSz7jkc68l
+   W3/weeW2Op+ERzgH5JW/U8Vjh33nNIEy/jz+WhZtiXiALMSJSaKh2FX4w
+   u87brFxbFsH6uLodiku9x/qQ3YeOdtcMC2msACB7tD/K3RgBjZZwjredb
+   xfWYG3rdeBWHdnnBeYQ46EpXsk2HqG2UZJtrw9koz1F3abd4Xf4xEwscF
+   A==;
+X-CSE-ConnectionGUID: W4nsLSl/TLmPHRHeeMqEDA==
+X-CSE-MsgGUID: XvzCMn2MTpGT0VD9/5smSg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="24963937"
+X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
+   d="scan'208";a="24963937"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 21:17:35 -0700
+X-CSE-ConnectionGUID: nhEQGOhHTF2nz3TyjNZmNQ==
+X-CSE-MsgGUID: LBdf0sc5TyK16MfzUhetkg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
+   d="scan'208";a="72730235"
+Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 12 Sep 2024 21:17:33 -0700
+Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1soxkR-0005zs-0U;
+	Fri, 13 Sep 2024 04:17:31 +0000
+Date: Fri, 13 Sep 2024 12:16:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	David Hildenbrand <david@redhat.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] mm: Drop unused set_pte_safe()
+Message-ID: <202409131220.CJ5MlGCG-lkp@intel.com>
+References: <20240910101026.428808-1-anshuman.khandual@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Y+XH_ig6bj5yTZruu/bMi=S";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240910101026.428808-1-anshuman.khandual@arm.com>
 
---Sig_/Y+XH_ig6bj5yTZruu/bMi=S
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Anshuman,
 
-Hi Jakub,
+kernel test robot noticed the following build errors:
 
-On Thu, 12 Sep 2024 21:00:08 -0700 Jakub Kicinski <kuba@kernel.org> wrote:
->
-> On Thu, 12 Sep 2024 20:14:06 -0700 Mina Almasry wrote:
-> > > On Fri, 13 Sep 2024 12:53:02 +1000 Stephen Rothwell wrote:   =20
-> > > > /home/sfr/next/tmp/ccuSzwiR.s: Assembler messages:
-> > > > /home/sfr/next/tmp/ccuSzwiR.s:2579: Error: operand out of domain (3=
-9 is not a multiple of 4)
-> > > > make[5]: *** [/home/sfr/next/next/scripts/Makefile.build:229: net/c=
-ore/page_pool.o] Error 1   =20
-> > >
-> > > Ugh, bad times for networking, I just "fixed" the HSR one a few hours
-> > > ago. Any idea what line of code this is? I'm dusting off my powerpc
-> > > build but the error is somewhat enigmatic.   =20
-> >=20
-> > FWIW I couldn't reproduce this with these steps on top of
-> > net-next/main (devmem TCP is there):
-> >=20
-> > make ARCH=3Dpowerpc CROSS_COMPILE=3Dpowerpc-linux-gnu- ppc64_defconfig
-> > make ARCH=3Dpowerpc CROSS_COMPILE=3Dpowerpc-linux-gnu- -j80
-> >=20
-> > (build succeeds)
-> >=20
-> > What am I doing wrong? =20
->=20
-> I don't see it either, gcc 11.1. Given the burst of powerpc build
-> failures that just hit the list I'm wondering if this is real.
+[auto build test ERROR on akpm-mm/mm-everything]
 
-$ gcc --version
-gcc (Debian 14.2.0-3) 14.2.0
-$ ld --version
-GNU ld (GNU Binutils for Debian) 2.43.1
-$ as --version
-GNU assembler (GNU Binutils for Debian) 2.43.1
+url:    https://github.com/intel-lab-lkp/linux/commits/Anshuman-Khandual/mm-Drop-unused-set_pte_safe/20240910-181151
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20240910101026.428808-1-anshuman.khandual%40arm.com
+patch subject: [PATCH V2] mm: Drop unused set_pte_safe()
+config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20240913/202409131220.CJ5MlGCG-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240913/202409131220.CJ5MlGCG-lkp@intel.com/reproduce)
 
-All on a Powerpc 64 LE host.
---=20
-Cheers,
-Stephen Rothwell
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409131220.CJ5MlGCG-lkp@intel.com/
 
---Sig_/Y+XH_ig6bj5yTZruu/bMi=S
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+All errors (new ones prefixed by >>):
 
------BEGIN PGP SIGNATURE-----
+>> arch/x86/mm/init_64.c:91:1: error: call to undeclared function 'set_pte_safe'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+      91 | DEFINE_ENTRY(pte, pte, init)
+         | ^
+   arch/x86/mm/init_64.c:83:3: note: expanded from macro 'DEFINE_ENTRY'
+      83 |                 set_##type1##_safe(arg1, arg2);                 \
+         |                 ^
+   <scratch space>:49:1: note: expanded from here
+      49 | set_pte_safe
+         | ^
+   arch/x86/mm/init_64.c:91:1: note: did you mean 'set_pte_range'?
+   arch/x86/mm/init_64.c:83:3: note: expanded from macro 'DEFINE_ENTRY'
+      83 |                 set_##type1##_safe(arg1, arg2);                 \
+         |                 ^
+   <scratch space>:49:1: note: expanded from here
+      49 | set_pte_safe
+         | ^
+   include/linux/mm.h:1331:6: note: 'set_pte_range' declared here
+    1331 | void set_pte_range(struct vm_fault *vmf, struct folio *folio,
+         |      ^
+   1 error generated.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbju90ACgkQAVBC80lX
-0GweJQf8Ca95bs0DiLRrvi+xGpDhhoYVs89TRHyQMR03NlBKZikWFmWOFrWyb/Ki
-NFCbTiep4nyWVzx5R8SqbTovHY4WeGgGDrrxUoy+r4UxZP7vwVz3hW8qxvyoBwi5
-dJyMQYZfG2CUSewluk5d89ch/TcFcx76J0qE/f1rTm03RI0KZfjJfQeU+vEar9Gw
-6d0rBVCRQt+MECIGyfa+nVowoz/TL69bwum4aS6oQMk9A7TaJE6Ba3I2MOIclvGy
-GLt77ZW9M3o//aQ3B8zug0rw4OmX2Jxv5WjY9tmJ0m7xf7cCWwSHxWZZsRgv0AWF
-OXk3svuX1SB3UsSwx6wCXXPHAza7aQ==
-=pvdE
------END PGP SIGNATURE-----
 
---Sig_/Y+XH_ig6bj5yTZruu/bMi=S--
+vim +/set_pte_safe +91 arch/x86/mm/init_64.c
+
+eccd906484d1cd Brijesh Singh 2019-04-17  87  
+eccd906484d1cd Brijesh Singh 2019-04-17  88  DEFINE_ENTRY(p4d, p4d, init)
+eccd906484d1cd Brijesh Singh 2019-04-17  89  DEFINE_ENTRY(pud, pud, init)
+eccd906484d1cd Brijesh Singh 2019-04-17  90  DEFINE_ENTRY(pmd, pmd, init)
+eccd906484d1cd Brijesh Singh 2019-04-17 @91  DEFINE_ENTRY(pte, pte, init)
+eccd906484d1cd Brijesh Singh 2019-04-17  92  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
