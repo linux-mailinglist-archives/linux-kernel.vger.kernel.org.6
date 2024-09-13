@@ -1,150 +1,136 @@
-Return-Path: <linux-kernel+bounces-328997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C77B978BDD
-	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 01:26:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBF1D978BDF
+	for <lists+linux-kernel@lfdr.de>; Sat, 14 Sep 2024 01:27:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF2281C25316
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:26:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B36E1C25422
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 23:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D6D178362;
-	Fri, 13 Sep 2024 23:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3999C17C9B2;
+	Fri, 13 Sep 2024 23:27:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bJEuCsu7"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OD7+SdTH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA23814B061
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 23:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EBA515575F;
+	Fri, 13 Sep 2024 23:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726269975; cv=none; b=AGQenD1AHYnTw7//YuKHgorKwXLv+hGcYU6ITcgosPdF6LtAbXOvthl42NjWW0RtOSbVzRCt86tJT4jUfK66pTevCTqJs3wWXpLhstxoLJ8H1bzxDMBELDaYkbv9GUy3A4F4oZQcwxd7yl4OEqg7YLuC65U859QTu48nq1P4rTA=
+	t=1726270043; cv=none; b=JJaw11v/gBi34wxI3hr9q7iAkSaXrWC8l6YZ+jdGxL/KDoua3zz/ngHYtdbA91/+M1ZTYnxthSpyy7HXr3h0kWXItolIMziA4c945fAwNaeh/QkxI6TZ4uyWG0cfd6OtfXmvRChl0O9EMb2tGqCjHoT/l+MMJvCV4g3mcIntX5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726269975; c=relaxed/simple;
-	bh=I5v3zvIhw3Z7idiG6BhkJY6AUPG52vciqLx7B4qZ+cs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kbr4NIpkhNbfV7FmNSodYrwEbXHGHOrjD0d12AzXnqvBiYDpbenj1/1TKiAggjx1MunT6A5dVY3EL1J+kFak/9IcFBOnouUcbjeiYRLjI7b/Q6PcETnpKVKKnrAdZc3UO4I/dVvneUqsUQVKCgUNAQBFYvv99xOvhqR8sJH9RwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bJEuCsu7; arc=none smtp.client-ip=209.85.160.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4582a5b495cso48911cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 16:26:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726269973; x=1726874773; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y/zSGPiOArXOzzX0HwJWO9XDkJRj9M2wk/pUWi0k/Ks=;
-        b=bJEuCsu7agNo+NU8wfKlF/xKZ/GGeUGJJEFFGvsa8H2mSTXs6zhNw8FapZo+JTbyEb
-         ly0cCQ2wdC0+BkR6LitfkibKWlGoo+wnAs9KYPIt42CfClJDmMstHc6FW84agEDUJqh8
-         8BDm5edjRTibZpWDMptktb1ANfyrNIUd3BfK31wxszaZGvgOjiw90cz9n8iOptr57gQG
-         jBAZfINbNqanv/HKAG3tVtLqM91xfuLMG/HX6CFHxoB0q+NXxrJ5LUGEjaF5J5I3hgMP
-         in8aXOWlL1ugOtC3C/z3GIAOei4BZh6ALoFC3qCyHKrQ3aVmQ08Xi2fMOi2GPE3Nibml
-         2vNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726269973; x=1726874773;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y/zSGPiOArXOzzX0HwJWO9XDkJRj9M2wk/pUWi0k/Ks=;
-        b=pq0JCSb41/JpwESCcpqDohkyOD2n2uuHp3rW2Z2Mi3d56HhVEOetT69QgcvY7ghaBJ
-         atBdjGi+bNXvHmkcslmq4XwdyWIzFYUMDD2fXvVQa3VgPRrEYUJBxE92ymMttBQBnNIJ
-         1RCh5hNyTib3WyWaKCtYSurZXDx6KCsC01jDVdra+me2jZSdObqPlG/4thwhcZsMywX5
-         h24PZmdCbR3yzEVnZ9lMH3YQwuagLhjZRpXHkzpKwHrYd3EmqcpPlnj1e34Ra6BUW2xS
-         jrbtrdKoQsUGSfxLpE2vAo9U3FjLExJEmIMT3Gdw42q5GnyM4ducfbnorOQovDCU9KgC
-         so2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUt9d2yACsH+P+fdhOIxebqBL55eRosazYE+lodj2G58xknxrr9VS8eFmCTjcJV5rjKTe6Itce5Z+CEHzE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzu8+FgitB0aZAB/Jo8BoOqR3zPHAuPBLD1mRQcz6PSzeTSdZqS
-	64B+JBJYip237H1H/XyyVuACKCXYwAXrmS4MRHNv3uxipzqLXp3DcYQI6ek8Wdy0OyUSQcvrXWQ
-	MP3VftL8xgCErfwp2kzngkGFZCWWTR1nFD89v
-X-Google-Smtp-Source: AGHT+IEXO5gvdbs+il7CDpTLc6xhdGle0XlSKxYKCooQsafNwkd1uFCAY64vKMmqs8XWP2QDEPY442O3slWn7LVJZhU=
-X-Received: by 2002:ac8:5a89:0:b0:456:7513:44ba with SMTP id
- d75a77b69052e-45860789e90mr8634561cf.4.1726269972348; Fri, 13 Sep 2024
- 16:26:12 -0700 (PDT)
+	s=arc-20240116; t=1726270043; c=relaxed/simple;
+	bh=afGcFBINdDDu7aR6dn6Z/IY+fQ1ixrLHuQDmeNf89R4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=L1BSNkGAyMbWZLyzva4cqatoZ/n3H8k0671AP8iZHSDeuVir0/5T10KxrjH6kFnc+mgA8GscTiUYQJsgQicO41eYfJadHaLSEMEnSeYpbRgB9lmAb0m/rRgwVdkrG5pDcv6VsFgGAN7maF97Vwra+xWN1jAJuK7iKG/F3/ky7OM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OD7+SdTH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85CA1C4CEC0;
+	Fri, 13 Sep 2024 23:27:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726270043;
+	bh=afGcFBINdDDu7aR6dn6Z/IY+fQ1ixrLHuQDmeNf89R4=;
+	h=From:Date:Subject:To:Cc:From;
+	b=OD7+SdTHbIVPrVUOS8ooB7KEv1KD3Agbn2iGe9LlEYXaf7s6CQA/jPst8P0zgrO7a
+	 Fjvbd6MkHNrjGXfgbuZcY3VnK5uDofSAKq3zFfeBhvyZ/BKXxNdut4ezuPofcfrirH
+	 sazT6sMnqR6YftBjrrpdABOvLdqNHkVjQfgQljgvTE6Y3q1VtZZpGSlnA0wRoiFt4F
+	 jDHSY8JGfpO7SDEVd4/Q4OpNDc4j1+7QpG2ivtZQplQSLpUaQ1ot+DslD2yoCjytoX
+	 MjvQBIDAX1C6gf42jzxlnkzm6aYMiAY8PIUkryXGFYbRC+wrm+vv5n9Mym3+kMMn4Y
+	 SXds8KX1zn3mA==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Fri, 13 Sep 2024 16:27:13 -0700
+Subject: [PATCH v2] x86/resctrl: Annotate get_mem_config functions as
+ __init
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240913213351.3537411-1-almasrymina@google.com>
- <ZuS0x5ZRCGyzvTBg@mini-arch> <ZuS1u8G6M9ch2tLC@casper.infradead.org> <ZuS8Zp_iiMfi0PX9@mini-arch>
-In-Reply-To: <ZuS8Zp_iiMfi0PX9@mini-arch>
-From: Mina Almasry <almasrymina@google.com>
-Date: Fri, 13 Sep 2024 16:26:00 -0700
-Message-ID: <CAHS8izMV48MeqcFB3QS_TkHNLWkQb1CjFrMk+XSS4dVqO66t2w@mail.gmail.com>
-Subject: Re: [PATCH net-next v2] page_pool: fix build on powerpc with GCC 14
-To: Stanislav Fomichev <stfomichev@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240913-x86-restctrl-get_mem_config_intel-init-v2-1-bf4b645f0246@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAFDK5GYC/5XNQQ6CMBCF4auQrh3TFsXGFfcwhBQcykRozbQhG
+ MLdrdzA5f8W79tERCaM4l5sgnGhSMHn0KdC9KP1DoGeuYWW+iKN1rCaChhj6hNP4DC1M85tH/x
+ AriWfcALylKC0g9T2qkrZWZHP3owDrQf0aHKPFFPgz+Eu6rf+TSwKFJhO2spYcyuVrV/IHqdzY
+ Ceafd+/1U+bC90AAAA=
+X-Change-ID: 20240822-x86-restctrl-get_mem_config_intel-init-3af02a5130ba
+To: Fenghua Yu <fenghua.yu@intel.com>, 
+ Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org, 
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+ patches@lists.linux.dev, Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2606; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=afGcFBINdDDu7aR6dn6Z/IY+fQ1ixrLHuQDmeNf89R4=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDGlPTkUdS9gQmy4iknqiIHyj+pQylxWOP06/DNYp4f/j6
+ 8T8+n1pRykLgxgXg6yYIkv1Y9XjhoZzzjLeODUJZg4rE8gQBi5OAZjIujkM/2xuh8W/OP3A04Cr
+ UvN/hucX/Yy5fZJbFd776hlPL1+YFcLwPzEv+t/x66vOm/XNP/OQ988XW8ETs5a9z3r4YdGFqQe
+ n8DABAA==
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-On Fri, Sep 13, 2024 at 3:27=E2=80=AFPM Stanislav Fomichev <stfomichev@gmai=
-l.com> wrote:
->
-> On 09/13, Matthew Wilcox wrote:
-> > On Fri, Sep 13, 2024 at 02:55:19PM -0700, Stanislav Fomichev wrote:
-> > > On 09/13, Mina Almasry wrote:
-> > > > Building net-next with powerpc with GCC 14 compiler results in this
-> > > > build error:
-> > > >
-> > > > /home/sfr/next/tmp/ccuSzwiR.s: Assembler messages:
-> > > > /home/sfr/next/tmp/ccuSzwiR.s:2579: Error: operand out of domain (3=
-9 is
-> > > > not a multiple of 4)
-> > > > make[5]: *** [/home/sfr/next/next/scripts/Makefile.build:229:
-> > > > net/core/page_pool.o] Error 1
-> > >
-> > > Are we sure this is the only place where we can hit by this?
-> >
-> > It's a compilation error, so yes, we're sure.
->
-> We also have netmem_compound_head() which does page_to_netmem(compound_he=
-ad()).
-> Wondering whether we'll eventually hit a similar issue over there.
+After a recent LLVM change [1] that deduces __cold on functions that
+only call cold code (such as __init functions), there is a section
+mismatch warning from __get_mem_config_intel(), which got moved to
+.text.unlikely. as a result of that optimization:
 
-A bit of a head scratcher why the compiler isn't running into the same
-issue for netmem_compound_head.
+  WARNING: modpost: vmlinux: section mismatch in reference: __get_mem_config_intel+0x77 (section: .text.unlikely.) -> thread_throttle_mode_init (section: .init.text)
 
-The callsites of netmem_compound_head are in net/core/skbuff.c, in
-skb_pp_frag_ref & napi_pp_put_page. Looking at the assembly generated,
-looks like somehow the compiler completely optimized out the call in
-napi_pp_put_page, and the call in skb_pp_frag_ref morphs into:
+Mark __get_mem_config_intel() as __init as well since it is only called
+from __init code, which clears up the warning.
 
- # net/core/skbuff.c:1047:      return
-napi_pp_put_page(page_to_netmem(virt_to_page(data)));
-        addis 9,2,.LC63@toc@ha   # tmp158,,
-        ld 10,.LC63@toc@l(9)     #, tmp140
- # ./arch/powerpc/include/asm/page.h:230:       return __pa(kaddr) >>
-PAGE_SHIFT;
-        rldicl 9,31,48,20        #, _17, head,
- # net/core/skbuff.c:1047:      return
-napi_pp_put_page(page_to_netmem(virt_to_page(data)));
-        sldi 9,9,6       #, _18, _17
- # net/core/skbuff.c:1047:      return
-napi_pp_put_page(page_to_netmem(virt_to_page(data)));
-        ld 3,0(10)       # vmemmap, vmemmap
- # net/core/skbuff.c:1047:      return
-napi_pp_put_page(page_to_netmem(virt_to_page(data)));
-        add 3,3,9        #, vmemmap, _18
+While __rdt_get_mem_config_amd() does not exhibit a warning because it
+does not call any __init code, it is a similar function that is only
+called from __init code like __get_mem_config_intel(), so mark it __init
+as well to keep the code symmetrical.
 
-Since it's page_to_netmem(virt_to_page(data)) (not virt_to_head_page),
-the we don't hit there right now. It's certainly possible to trigger
-this in the future.
+Link: https://github.com/llvm/llvm-project/commit/6b11573b8c5e3d36beee099dbe7347c2a007bf53 [1]
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+Changes in v2:
+- Move position of __init within definition of __get_mem_config_intel()
+  to better match coding style guidelines (Reinette).
+- Apply __init to __rdt_get_mem_config_amd(), as it has the same issue
+  by inspection (Reinette). Adjust commit message to reflect this
+  change.
+- Link to v1: https://lore.kernel.org/r/20240822-x86-restctrl-get_mem_config_intel-init-v1-1-8b0a68a8731a@kernel.org
+---
+ arch/x86/kernel/cpu/resctrl/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I think we could also READ_ONCE in netmem_compound_head for some
-future proofness.
+diff --git a/arch/x86/kernel/cpu/resctrl/core.c b/arch/x86/kernel/cpu/resctrl/core.c
+index 1930fce9dfe96d5c323cb9000fb06149916a5a3c..59961618a02374a5b1639baa7034d05867884640 100644
+--- a/arch/x86/kernel/cpu/resctrl/core.c
++++ b/arch/x86/kernel/cpu/resctrl/core.c
+@@ -199,7 +199,7 @@ static inline bool rdt_get_mb_table(struct rdt_resource *r)
+ 	return false;
+ }
+ 
+-static bool __get_mem_config_intel(struct rdt_resource *r)
++static __init bool __get_mem_config_intel(struct rdt_resource *r)
+ {
+ 	struct rdt_hw_resource *hw_res = resctrl_to_arch_res(r);
+ 	union cpuid_0x10_3_eax eax;
+@@ -233,7 +233,7 @@ static bool __get_mem_config_intel(struct rdt_resource *r)
+ 	return true;
+ }
+ 
+-static bool __rdt_get_mem_config_amd(struct rdt_resource *r)
++static __init bool __rdt_get_mem_config_amd(struct rdt_resource *r)
+ {
+ 	struct rdt_hw_resource *hw_res = resctrl_to_arch_res(r);
+ 	u32 eax, ebx, ecx, edx, subleaf;
 
---
-Thanks,
-Mina
+---
+base-commit: 7424fc6b86c8980a87169e005f5cd4438d18efe6
+change-id: 20240822-x86-restctrl-get_mem_config_intel-init-3af02a5130ba
+
+Best regards,
+-- 
+Nathan Chancellor <nathan@kernel.org>
+
 
