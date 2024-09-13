@@ -1,133 +1,110 @@
-Return-Path: <linux-kernel+bounces-327934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80152977CD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:03:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 379F8977CD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:04:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B96C61C2466C
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:03:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE2AE2816E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08461D7E52;
-	Fri, 13 Sep 2024 10:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="0IryVpN4"
-Received: from www530.your-server.de (www530.your-server.de [188.40.30.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 183A41D88A6;
+	Fri, 13 Sep 2024 10:03:25 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C239D1D6C6E;
-	Fri, 13 Sep 2024 10:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.30.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3610A1D86DB
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 10:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726221791; cv=none; b=L03OVaVwomuoVee6kU7cRT4Yj+srQG7XcWbMDCDHwqGr1Mgzg1QGpguzjwnF12cZn1C7reB9xLqiq0626W0KxeQYtbeU1ErFKrJLA9asI9cgcH9MfMQEQzX5QMZQmlAKY82ikJ54QT12TxD5pHEyVDGg7QxVBlzcA/m3orUrStw=
+	t=1726221804; cv=none; b=tvgg6tmL0kyHdylzOaueCj3sYwwgFNRJ9/eI3UOYscfAjEeDlqM07Gc7M+IYD7NJAFFYIAJaoqjM0+azbgg+VijvkyOUjLqnYHW3hCHEDRsvYr6zx4iGNtTDYCPGi2+W8Z/TvkvoDLS952RTdzRp/Txvo/mTJ46J7VEuvyjU+LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726221791; c=relaxed/simple;
-	bh=v77vG3R2aQwdctrT7b5cLJzwQds5ti5P3NnSbJlI2b8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FbQR/TlbtoUyKrHyeUkvtd9K+y2ukQ6mzkp6OQqDFjo5dLhSfu5IZvZ98Xw3ukToeN1XyJUIVAorX4QJA/Gogh/mWMGNxqgV95nkRqczhvPjKFnIaeY6ibaNGGeGDm+xOmgg/GL4Nu6KopSBbs2ZPnGflezTFUznSFa3h/4c5PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=0IryVpN4; arc=none smtp.client-ip=188.40.30.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=geanix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=geanix.com;
-	s=default2211; h=Content-Type:MIME-Version:Message-ID:Date:References:
-	In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=rlPvbEnZ5WQngyesq81myBzkHs5Lcelfd34b25m5ANQ=; b=0IryVpN4MTLdCo88llTCADA7Vx
-	RY2gmXVOOIupVG6SYex0ZlRMeQjiZkJxTu0WzU2/zcf0zWvVB88FY8MUJiAHN9nTFWHwgJl65EWvg
-	JZDD/tFkt8f6SgQ10z1FnwMP+c/v5tMLt6ZGakcSxQjllNzfFKLVv/spzS3rywxp5C/ZT+KVYgLIU
-	6jCTPsx/nUM0bAj+6HXmOkyJ9652ShqGf1FAuNHlTd8jQZaTkQ9VmEOqB7v+K0mfGxlepXw/I4GJ+
-	UBUpfiZmgkT7l16YnDq55gK0764gmm95gmLqZFgfbv1tcidEd2+NL7JIDo3dc6U9zo1x0E+OE5FV2
-	ZlGz7F8Q==;
-Received: from sslproxy03.your-server.de ([88.198.220.132])
-	by www530.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <esben@geanix.com>)
-	id 1sp38l-0001ta-BP; Fri, 13 Sep 2024 12:02:59 +0200
-Received: from [80.62.117.18] (helo=localhost)
-	by sslproxy03.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <esben@geanix.com>)
-	id 1sp38k-0009i8-05;
-	Fri, 13 Sep 2024 12:02:58 +0200
-From: Esben Haabendal <esben@geanix.com>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,  Jiri Slaby
- <jirislaby@kernel.org>,  Shawn Guo <shawnguo@kernel.org>,  Sascha Hauer
- <s.hauer@pengutronix.de>,  Pengutronix Kernel Team
- <kernel@pengutronix.de>,  Fabio Estevam <festevam@gmail.com>,  John Ogness
- <john.ogness@linuxtronix.de>,  linux-arm-kernel@lists.infradead.org,
-  linux-kernel@vger.kernel.org,  linux-serial@vger.kernel.org,
-  imx@lists.linux.dev
-Subject: Re: [PATCH 2/2] serial: imx: Add more comments on port lock status
-In-Reply-To: <2200890.irdbgypaU6@steina-w> (Alexander Stein's message of "Fri,
-	13 Sep 2024 11:17:04 +0200")
-References: <20240913-serial-imx-lockfix-v1-0-4d102746c89d@geanix.com>
-	<20240913-serial-imx-lockfix-v1-2-4d102746c89d@geanix.com>
-	<2200890.irdbgypaU6@steina-w>
-Date: Fri, 13 Sep 2024 12:02:57 +0200
-Message-ID: <87v7yz50ry.fsf@geanix.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1726221804; c=relaxed/simple;
+	bh=zYymGv12Tr78xYvb+Qs99O7J3EKDyeUWnGG27aGtl8M=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=coeiWEyy2mQArebEEuvpVYeonpWWPS75yeHEfxV5FewPPmZ+cNzVYHgl6e5PfYw0bwplYEnvnBmrem+Djgy+VAvbHyPcSEka3w8j7mLIXswSL0gPTs2CTVvRZFPxVPmUhwt5UfSCOhdS9jeF9YivLG1xUaPp4rXve3C1pty0RdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-82cd83f0b2eso252474239f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 03:03:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726221802; x=1726826602;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hTW7fffnT0NAUWKKmZ5rWaFaiySrf4ux2bUW8dDX0HQ=;
+        b=Vt1O9NOKxpiUevx37IH2fpESr0NEEcdZ94hd5/C3bUnLLdaC8EEO4U86KCboqUySND
+         0PP+ve4P4hkn537b8pYoepq7IPz0Lkbb3Asq7DFosCASpWlMZUuRUjvMsipMurMTtwwS
+         m04l46v4D8lMIaOTPdCMHO+oxyAcawVG3XNRhYV0V6BCaUfp6r4wczLdv0lNbOiu89L9
+         /OeoRRN3xIR5sqr1CPkjsFt76VauwKpRFe3DuzZEeNVjVPolsVhzZrgVPytWiWkCp1mE
+         4KLbFzik8QZFqsActnVmAQc9XrIqUzwXFMRYZyghUtj//6MQZoPTQ27xwSyTUyLV4JGt
+         LWYw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5a9DAqbdJx2vftZef2Y48EPR49o2Zo6un7/7fGLBAL2maX5QDe7AA2n2HlA95bG8oBl1dXMlhkfNbL8w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz513c6KRb4WVsZiRYLtrItCzhcpXL5LD07Hl7GYM42n50+DHW3
+	9R0eStDnUvDsR0AQFbpM3a3ERqgLkL7GD4Qx2xMRKLupJVtc9uiEEakXvpCX/plUP0wySsm7VyV
+	Z0hT8Z1vPTy1cSk86c0FgQbH4FIx5KkGsVeVtldL0mJLm7N2qyJVpmOs=
+X-Google-Smtp-Source: AGHT+IH2R+pS60StlaslZLR48bc2alPFnYOcBdqDHxhZY1GTuvoe2w2GtsVarKkEZdjwNzsufsDePd8rqNWP2DehEibd1gm+J5ts
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Authenticated-Sender: esben@geanix.com
-X-Virus-Scanned: Clear (ClamAV 0.103.10/27397/Fri Sep 13 10:48:01 2024)
+X-Received: by 2002:a05:6e02:13a2:b0:39f:6180:afca with SMTP id
+ e9e14a558f8ab-3a08491196bmr69740715ab.13.1726221802378; Fri, 13 Sep 2024
+ 03:03:22 -0700 (PDT)
+Date: Fri, 13 Sep 2024 03:03:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000055a86f0621fd552d@google.com>
+Subject: [syzbot] Monthly bcachefs report (Sep 2024)
+From: syzbot <syzbot+list670a74b4fb1089527ea1@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Alexander Stein <alexander.stein@ew.tq-group.com> writes:
+Hello bcachefs maintainers/developers,
 
-> Hi,
->
-> Am Freitag, 13. September 2024, 10:39:50 CEST schrieb Esben Haabendal:
->> Comments regarding status of port.lock on internal functions is useful when
->> reviewing correct handling of registers that must be protected by this
->> lock.
->> 
->> Signed-off-by: Esben Haabendal <esben@geanix.com>
->> ---
->>  drivers/tty/serial/imx.c | 10 ++++++++++
->>  1 file changed, 10 insertions(+)
->> 
->> diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
->> index efa3eb3a2c57..bea4510743ef 100644
->> --- a/drivers/tty/serial/imx.c
->> +++ b/drivers/tty/serial/imx.c
->> @@ -370,6 +370,7 @@ static void imx_uart_soft_reset(struct imx_port *sport)
->>  	sport->idle_counter = 0;
->>  }
->>  
->> +/* called with port.lock taken and irqs off */
->>  static void imx_uart_disable_loopback_rs485(struct imx_port *sport)
->>  {
->>  	unsigned int uts;
->
-> I think you are referring to sport.lock.
+This is a 31-day syzbot report for the bcachefs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/bcachefs
 
-Yes.
+During the period, 3 new issues were detected and 9 were fixed.
+In total, 34 issues are still open and 77 have been fixed so far.
 
-> On the other hand, instead of just adding comments, wouldn't it be
-> better to make it explicit?
-> Adding
->> lockdep_assert_held(&sport->port->lock);
-> and/or sparse annoations
->> __must_hold(&sport->port->lock)
->
-> seems more reasonable to me than adding non-enforcing comments.
+Some of the still happening issues:
 
-I fear that due to the way that legacy console works, assertations might
-trigger in special situations, such as printk during panic.
+Ref Crashes Repro Title
+<1> 2992    Yes   WARNING in bch2_trans_srcu_unlock
+                  https://syzkaller.appspot.com/bug?extid=1e515cab343dbe5aa38a
+<2> 2953    Yes   INFO: task hung in __closure_sync
+                  https://syzkaller.appspot.com/bug?extid=7bf808f7fe4a6549f36e
+<3> 224     No    WARNING in bch2_trans_put
+                  https://syzkaller.appspot.com/bug?extid=291aef749c5cbb9ca2fd
+<4> 84      Yes   WARNING in __bch2_truncate_folio
+                  https://syzkaller.appspot.com/bug?extid=3d11e35eeafe176a6c5b
+<5> 55      Yes   kernel BUG in vfs_get_tree
+                  https://syzkaller.appspot.com/bug?extid=c0360e8367d6d8d04a66
+<6> 18      Yes   WARNING in bch2_prt_printf
+                  https://syzkaller.appspot.com/bug?extid=4e41a25632658c77b441
+<7> 5       Yes   general protection fault in bch2_checksum
+                  https://syzkaller.appspot.com/bug?extid=dd3d9835055dacb66f35
+<8> 4       Yes   KASAN: slab-out-of-bounds Read in journal_entry_dev_usage_to_text
+                  https://syzkaller.appspot.com/bug?extid=05d7520be047c9be86e0
+<9> 2       Yes   BUG: unable to handle kernel paging request in bch2_dirent_to_text
+                  https://syzkaller.appspot.com/bug?extid=1a11884d9c9f1353942d
 
-Converting comments to assertations could definitely be a good idea, but
-I think it might be better to wait with that until the driver has been
-converted to NBCON (in progress, see
-https://lore.kernel.org/all/20240913-serial-imx-nbcon-v3-1-4c627302335b@geanix.com/),
-as that will change the code paths this code will be used in.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-/Esben
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
