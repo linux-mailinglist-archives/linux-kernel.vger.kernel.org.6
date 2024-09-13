@@ -1,86 +1,108 @@
-Return-Path: <linux-kernel+bounces-328787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B0879788D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:22:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45B2A9788E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:23:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42F371C22D72
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:22:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB7991F2897B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA73146A6C;
-	Fri, 13 Sep 2024 19:22:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BC7148FEC;
+	Fri, 13 Sep 2024 19:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="USrHQTI1"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="iqVaYpSF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838B481ACA;
-	Fri, 13 Sep 2024 19:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766731487DD;
+	Fri, 13 Sep 2024 19:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726255355; cv=none; b=aPDpt5vafuIt2lbqI6e5yCrFWdBRX/z60PfH1/y2Pc9vzC/Z1t/ibfkIqCzxACjtLAHVW2sJ/H7qLJyL32opi3WSUFN3ZEyzqt0XdGnjnJswugjKZ+ImlJOEpdFmZdrZVwS4xDHMhX5rZ3OWl7Y66TOxFO0UElZ2U40IDLabcPg=
+	t=1726255406; cv=none; b=XiWLj7N+LNw3KwgfyjGket7g6g7qzf1epCwrqFvimJxcWcC2HHF2d44bEPOC3VQ19wFoq9ebtnS2h2IukWkAlFkHV3m3f3Go2kyivk/0jJJPnsiJXmDyzKQe0Hp6h7wdcS0ShwxFrJ6zRb6X0UqrzYDScDMUmgC868G7fGULQA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726255355; c=relaxed/simple;
-	bh=UhC9Wx94GdMSP1xhxtHlYToL70sJ3oyaQWnk2b+eu4M=;
+	s=arc-20240116; t=1726255406; c=relaxed/simple;
+	bh=g+we6zXlRF0K6r7vmZ6GDKa/NiVEm5StyEJsa3ai1Q0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KMiJpRna/VFhqaK//lpOxn5UpVPRRK8nIL6ZX2el6vuNe07EAtW0CwnO+by0sgITrk2pjtfWkSXCNVJkSSXUGriGlJWPx9M/ByamFHHu9xVHF8IYi/jUmoE0olwXgzrgfxHOj7991SZUEjbkUg6uojGfeZHLlaRK4QjI6UAthdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=USrHQTI1; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Lj/20hT1fbEbqfuXUYTZnnoIn58aQxQZGwFa+ktq7nI=; b=USrHQTI1gAhLcewwZyHVEmvH+2
-	TNfnavn0WmWrViQukWcWKUEDmPzjkL0xEn1n8BhzZwM9T+pwhTzsxu91hYIN57ewocp9cvGn/UA9h
-	nDPIR2H17TcSfPO62NYQFrX+48iHo8fHvr6GrMEtD8iooOIvFUsMxuKi87bCzAB34fqozCVoNjSNC
-	cpOr1cYF4oyo7BePpJi8MDiU+JbLFkyunDgG7G5HXPIm3h1euuqWGrhgPNe7+s9uz06ECd2yN2e2B
-	aBqS8T/VdHWgpwDvegaDqeaa/dxE/40oEXpmQ0ir9IEHYYp5g05SJG4iHMwNc/A4JtR8h5YehcBCc
-	O4d4pjaA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1spBsC-0000000GuqH-2j63;
-	Fri, 13 Sep 2024 19:22:28 +0000
-Date: Fri, 13 Sep 2024 20:22:28 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Mina Almasry <almasrymina@google.com>
-Cc: netdev@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Simon Horman <horms@kernel.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Jakub Kicinski <kuba@kernel.org>,
-	David Miller <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-	LEROY Christophe <christophe.leroy2@cs-soprasteria.com>
-Subject: Re: [PATCH net-next v1] mm: fix build on powerpc with GCC 14
-Message-ID: <ZuSQ9BT9Vg7O2kXv@casper.infradead.org>
-References: <20240913192036.3289003-1-almasrymina@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uYg9a+889aUkGZ3I/GX7sJqn1yLGhlyspmt8HjoapXRLfUGwFVXwmQDJxlThyvRiLw6Q9Fcae+Ra+MaLd+5OifQNVXXYn4MFAShUXui9o79GNQ+aNnEUnqXaaSKSfn+OVRg8Bu398D3qieTMzsRQWnv7Ip/ny7I4LMfcZQuv5+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b=iqVaYpSF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8FF2C4CEC0;
+	Fri, 13 Sep 2024 19:23:24 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+	dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="iqVaYpSF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+	t=1726255403;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gRexsgTMh+myIiZRscYFbD1nR7aA5ysUH5XGp1Tlp7Y=;
+	b=iqVaYpSFmuqJS/EdM5oDqxY2LQzVTZFAYQulKseyvnZmHLVK/DE49vWb0PUK1vNuOI/a51
+	d6ZKtvRqOhSwajEr79L3BzwYkbTqqzx9h2HX+OcRVWHVcDbYGwYRM1VMRLtk7CUyZv2Xka
+	Nm9OEG0/yDyTZQCq/C3JhJMnu09M5Jo=
+Received: 
+	by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 745eb482 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Fri, 13 Sep 2024 19:23:22 +0000 (UTC)
+Date: Fri, 13 Sep 2024 21:23:20 +0200
+From: "Jason A. Donenfeld" <Jason@zx2c4.com>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Harald Freudenberger <freude@linux.ibm.com>,
+	Stefan Liebler <stli@linux.ibm.com>, linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-s390@vger.kernel.org
+Subject: Re: [PATCH 7/7] s390/vdso: Wire up getrandom() vdso implementation
+Message-ID: <ZuSRKLFdYI1gCHh9@zx2c4.com>
+References: <20240913130544.2398678-1-hca@linux.ibm.com>
+ <20240913130544.2398678-8-hca@linux.ibm.com>
+ <ZuRWmJTWqmD92D8d@zx2c4.com>
+ <ZuRYoVIrg28kBKqb@zx2c4.com>
+ <20240913173206.30385-C-hca@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240913192036.3289003-1-almasrymina@google.com>
+In-Reply-To: <20240913173206.30385-C-hca@linux.ibm.com>
 
-On Fri, Sep 13, 2024 at 07:20:36PM +0000, Mina Almasry wrote:
-> +++ b/include/linux/page-flags.h
-> @@ -239,8 +239,8 @@ static inline unsigned long _compound_head(const struct page *page)
->  {
->  	unsigned long head = READ_ONCE(page->compound_head);
->  
-> -	if (unlikely(head & 1))
-> -		return head - 1;
-> +	if (unlikely(head & 1UL))
-> +		return head & ~1UL;
->  	return (unsigned long)page_fixed_fake_head(page);
+On Fri, Sep 13, 2024 at 07:32:06PM +0200, Heiko Carstens wrote:
+> On Fri, Sep 13, 2024 at 05:22:09PM +0200, Jason A. Donenfeld wrote:
+> > On Fri, Sep 13, 2024 at 05:13:28PM +0200, Jason A. Donenfeld wrote:
+> > > On Fri, Sep 13, 2024 at 03:05:43PM +0200, Heiko Carstens wrote:
+> > > > The vdso testcases vdso_test_getrandom and vdso_test_chacha pass.
+> > > 
+> > > I'm trying to cross compile this but I'm getting:
+> > > 
+> > >   CC       vdso_test_chacha
+> > > /home/zx2c4/Projects/random-linux/tools/testing/selftests/../../../tools/arch/s390/vdso/vgetrandom-chacha.S: Assembler messages:
+> > > /home/zx2c4/Projects/random-linux/tools/testing/selftests/../../../tools/arch/s390/vdso/vgetrandom-chacha.S:147: Error: Unrecognized opcode: `alsih'
+> > > 
+> > > Any idea what's up?
+> > 
+> > Looks like I needed `-march=arch9`. I can potentially rebuild my
+> > toolchains to do this by default, though, if that's a normal thing to
+> > have and this is just my toolchain being crappy. Or, if it's not a
+> > normal thing to have, do we need to add it to the selftests Makefile?
+> 
+> That needs to be fixed differently, since the kernel build would also
+> fail when building for z10. Could you squash the below fix into this
+> patch, please?
 
-NAK, that pessimises compound_head().
+Done.
+
+> So for the kernel itself including the vdso code, everything is
+> correct now. But similar checks are missing within vdso_test_chacha.c.
+> I'll provide something for that, so that the test case will be skipped
+> if the required instructions are missing, but not today.
+
+Okay. I would assume no rush there, because it's unlikely there are
+those machines part of kselftest fleets anyway?
+
+Jason
 
