@@ -1,80 +1,91 @@
-Return-Path: <linux-kernel+bounces-327570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FCD79777CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:17:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A8809777D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:18:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 368981F25999
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:17:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E76AF28747B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 04:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24991D31B8;
-	Fri, 13 Sep 2024 04:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 617991D414D;
+	Fri, 13 Sep 2024 04:17:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YuABr6h6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cNH6pXjx"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606D819CC2A
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 04:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703FC1D3180;
+	Fri, 13 Sep 2024 04:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726201059; cv=none; b=DC98iBBufzcB3lQFyD+leSkEIVRFzYf0rVHM7Pi8u8B5So0pysEylUReDrM8QI21mr1Yq9x76/uX8vyKvxcx8/1BPRhRsj5t7x0KqytRBNGppduS4EXrWr09N9sZKc2rdgvF9hwss4wZD3GcZ1JU5hjPhxD7fvjbS74VP4hTkK4=
+	t=1726201060; cv=none; b=BvI5DSm66OkYMa46pRxXvFLRhUcGfte/uGqku+2fEw5Tuv1vtEciyv8CISJzDq6efpiHgghjLbzYQAqgtCFI+8T5SIVvbDuQJARnsr2oZR69LFE1GAT7DO/BIyT7PdCge0gb/yAsVMp5okX7+t2IySBSBN4RUiIRym9yslZhdwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726201059; c=relaxed/simple;
-	bh=Iz/wKYFc07vTxmqWHCRim+ec7cDlBI3TIq+956XMZek=;
+	s=arc-20240116; t=1726201060; c=relaxed/simple;
+	bh=S6IS0/dc6jPqT0X5YnU7M+Sh2Oaf4b+CDbvVMXZru6A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HglG7VD/WwgcJ+Z5ZVYqM8bF3es5fPgdNh3jAe/qIaQKNiMByJrkOzWczj0jD229yvx8Q2CKZ5mbmDwacEaFtnTv6GapaVo2o5vsvY7B4qfkee5gkRpPPa8P0qQCZjiLsVbs6ZeARX3m8SY0C+RRJ8fMLqjYV/cbgU1CIN8VT2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YuABr6h6; arc=none smtp.client-ip=192.198.163.17
+	 Content-Type:Content-Disposition:In-Reply-To; b=mi46wO6eFfIhSePvD4Rp1UxSl64qpjeBc/zG2plZhQAYK0lzMN4LpJ0IS5VxOujPprtQ8ldsKtDBKt++GF0mo0oOcDsErpoOEhWO5xYpn9dWX4T9nOmikGX0EMLMJWHc/RbtqN9PRS8BiPpMbghL6S7D6IDiWF1hag1KCi3ChGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cNH6pXjx; arc=none smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726201056; x=1757737056;
+  t=1726201059; x=1757737059;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=Iz/wKYFc07vTxmqWHCRim+ec7cDlBI3TIq+956XMZek=;
-  b=YuABr6h6AczbZDHlX+OmRC8K0KZInAm1UBP0uA2V7dtAzVR0wSMGt1jS
-   4YsDDZFcU+3TxFKk2By7RzIebUpYFpPOQF6Rrx8hZyF51SN2jfeDkWF6T
-   lHcpbnPBr8B1XAJYC2vmFP7ZNHFEk3VLyskEtmdU/uXCuofsSz7jkc68l
-   W3/weeW2Op+ERzgH5JW/U8Vjh33nNIEy/jz+WhZtiXiALMSJSaKh2FX4w
-   u87brFxbFsH6uLodiku9x/qQ3YeOdtcMC2msACB7tD/K3RgBjZZwjredb
-   xfWYG3rdeBWHdnnBeYQ46EpXsk2HqG2UZJtrw9koz1F3abd4Xf4xEwscF
-   A==;
-X-CSE-ConnectionGUID: W4nsLSl/TLmPHRHeeMqEDA==
-X-CSE-MsgGUID: XvzCMn2MTpGT0VD9/5smSg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="24963937"
+  bh=S6IS0/dc6jPqT0X5YnU7M+Sh2Oaf4b+CDbvVMXZru6A=;
+  b=cNH6pXjxOeUSm/aJ9bwzs8bpkVr7Ea5VQ0zXXila9pWqNBTv08GEampR
+   7fPJm/ypq4wJOew6Fum9fUQZ3I87UgTAndB3AbHySSyzSRBtVsqS2wXpN
+   FvBCGZ49MrezrHA3W0fXTnrv4F5xv8T7mM7T6xO6gRwBEi1pSSj7apsla
+   2AwkUclPH+MOcGEjTCfbO07hU7TzhOT6wRGaKowtklBiuqgYFCR9srhtH
+   7Z5lKL+aPxRo6jVBG7OzMnxfvTkdc3k0/Tko7fPxn3xzgUTkpSXdk5sSK
+   WT06JVdH+ojlFXnjSs2LnB2bMD3h3TjlwTrQRm9nKjlnkDkVnoom+cOxQ
+   g==;
+X-CSE-ConnectionGUID: Q+Nq14MFSo24YpydrBV9VA==
+X-CSE-MsgGUID: dlEK2mZ1RaGkUYh9YRAk1g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="42564412"
 X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
-   d="scan'208";a="24963937"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 21:17:35 -0700
-X-CSE-ConnectionGUID: nhEQGOhHTF2nz3TyjNZmNQ==
-X-CSE-MsgGUID: LBdf0sc5TyK16MfzUhetkg==
+   d="scan'208";a="42564412"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Sep 2024 21:17:38 -0700
+X-CSE-ConnectionGUID: jxIOVqy1Tom4J+bpPhXlWw==
+X-CSE-MsgGUID: w9GyVT6yRV+ITkp8Wm6aRw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,224,1719903600"; 
-   d="scan'208";a="72730235"
+   d="scan'208";a="67766196"
 Received: from lkp-server01.sh.intel.com (HELO 53e96f405c61) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 12 Sep 2024 21:17:33 -0700
+  by orviesa010.jf.intel.com with ESMTP; 12 Sep 2024 21:17:33 -0700
 Received: from kbuild by 53e96f405c61 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1soxkR-0005zs-0U;
+	id 1soxkR-0005zz-0g;
 	Fri, 13 Sep 2024 04:17:31 +0000
-Date: Fri, 13 Sep 2024 12:16:33 +0800
+Date: Fri, 13 Sep 2024 12:16:34 +0800
 From: kernel test robot <lkp@intel.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	David Hildenbrand <david@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] mm: Drop unused set_pte_safe()
-Message-ID: <202409131220.CJ5MlGCG-lkp@intel.com>
-References: <20240910101026.428808-1-anshuman.khandual@arm.com>
+To: Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Cosmin Tanislav <cosmin.tanislav@analog.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	Matteo Martelli <matteomartelli3@gmail.com>,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	Mike Looijmans <mike.looijmans@topic.nl>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v5 2/3] Documentation: ABI: added filter mode doc in
+ sysfs-bus-iio
+Message-ID: <202409131243.olYA3Qdt-lkp@intel.com>
+References: <20240912121609.13438-3-ramona.nechita@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,59 +94,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240910101026.428808-1-anshuman.khandual@arm.com>
+In-Reply-To: <20240912121609.13438-3-ramona.nechita@analog.com>
 
-Hi Anshuman,
+Hi Ramona,
 
-kernel test robot noticed the following build errors:
+kernel test robot noticed the following build warnings:
 
-[auto build test ERROR on akpm-mm/mm-everything]
+[auto build test WARNING on jic23-iio/togreg]
+[also build test WARNING on robh/for-next linus/master v6.11-rc7 next-20240912]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Anshuman-Khandual/mm-Drop-unused-set_pte_safe/20240910-181151
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20240910101026.428808-1-anshuman.khandual%40arm.com
-patch subject: [PATCH V2] mm: Drop unused set_pte_safe()
-config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20240913/202409131220.CJ5MlGCG-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240913/202409131220.CJ5MlGCG-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Ramona-Alexandra-Nechita/dt-bindings-iio-adc-add-a7779-doc/20240912-201936
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
+patch link:    https://lore.kernel.org/r/20240912121609.13438-3-ramona.nechita%40analog.com
+patch subject: [PATCH v5 2/3] Documentation: ABI: added filter mode doc in sysfs-bus-iio
+reproduce: (https://download.01.org/0day-ci/archive/20240913/202409131243.olYA3Qdt-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202409131220.CJ5MlGCG-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202409131243.olYA3Qdt-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+All warnings (new ones prefixed by >>):
 
->> arch/x86/mm/init_64.c:91:1: error: call to undeclared function 'set_pte_safe'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      91 | DEFINE_ENTRY(pte, pte, init)
-         | ^
-   arch/x86/mm/init_64.c:83:3: note: expanded from macro 'DEFINE_ENTRY'
-      83 |                 set_##type1##_safe(arg1, arg2);                 \
-         |                 ^
-   <scratch space>:49:1: note: expanded from here
-      49 | set_pte_safe
-         | ^
-   arch/x86/mm/init_64.c:91:1: note: did you mean 'set_pte_range'?
-   arch/x86/mm/init_64.c:83:3: note: expanded from macro 'DEFINE_ENTRY'
-      83 |                 set_##type1##_safe(arg1, arg2);                 \
-         |                 ^
-   <scratch space>:49:1: note: expanded from here
-      49 | set_pte_safe
-         | ^
-   include/linux/mm.h:1331:6: note: 'set_pte_range' declared here
-    1331 | void set_pte_range(struct vm_fault *vmf, struct folio *folio,
-         |      ^
-   1 error generated.
-
-
-vim +/set_pte_safe +91 arch/x86/mm/init_64.c
-
-eccd906484d1cd Brijesh Singh 2019-04-17  87  
-eccd906484d1cd Brijesh Singh 2019-04-17  88  DEFINE_ENTRY(p4d, p4d, init)
-eccd906484d1cd Brijesh Singh 2019-04-17  89  DEFINE_ENTRY(pud, pud, init)
-eccd906484d1cd Brijesh Singh 2019-04-17  90  DEFINE_ENTRY(pmd, pmd, init)
-eccd906484d1cd Brijesh Singh 2019-04-17 @91  DEFINE_ENTRY(pte, pte, init)
-eccd906484d1cd Brijesh Singh 2019-04-17  92  
+   Warning: Documentation/devicetree/bindings/power/wakeup-source.txt references a file that doesn't exist: Documentation/devicetree/bindings/input/qcom,pm8xxx-keypad.txt
+   Warning: Documentation/devicetree/bindings/regulator/siliconmitus,sm5703-regulator.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/siliconmitus,sm5703.yaml
+   Warning: Documentation/hwmon/g762.rst references a file that doesn't exist: Documentation/devicetree/bindings/hwmon/g762.txt
+>> Warning: MAINTAINERS references a file that doesn't exist: Documentation/ABI/testing/sysfs-bus-iio-adc-ad4130
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/reserved-memory/qcom
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/display/exynos/
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt
+   Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/nvmem/u-boot,env.yaml
+   Using alabaster theme
 
 -- 
 0-DAY CI Kernel Test Service
