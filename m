@@ -1,88 +1,129 @@
-Return-Path: <linux-kernel+bounces-328550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E51F9785A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:19:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 743649785AB
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:23:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 914271F25044
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:19:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 181B7281E39
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 16:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6916F067;
-	Fri, 13 Sep 2024 16:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042AD6F067;
+	Fri, 13 Sep 2024 16:23:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IICPfmg+"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I8JzeIf9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D6AD2FB
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 16:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22CA14A85;
+	Fri, 13 Sep 2024 16:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726244352; cv=none; b=peVsARPbhFJaJFkjfIaYBL43Czr9EeZ5RL5JDndi4jjEU2OP07Kb6DOxDD9tJl+B4FzjM/yWaSR5m4Pc+9+15qN0bflPoU2ikNmmVs2b3pWuEZmbIzgAIWWh/7SoXB0dVgrwby0NoyV+1wn0ms7qOCGwmdRwVv232VyUF0Yn+2U=
+	t=1726244598; cv=none; b=Mr+mnp1/kS45VeNQnxijzJ8i9ZsA05uyFBaMclECQavwRawSGBGx8D80+Lmw1xAzTf7t2ad7ivgdqfgKIDLcDh03JQHEfxBkF/ZINz/MqT3/ZJck4XUWGxildEcrJkpDQRHPhi5/mbW+CupPYdmTFR/GXcvj+Obq1SE6OJBiUHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726244352; c=relaxed/simple;
-	bh=ba9NAQQadx+oecoJZRUU7QU7IEo6/AwWd4/rRGZ8DX4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k+SXPVRxITIKrIEfD/zbuQrrPMLa1J+uQfT3R9E9maPC5yTKK+l+5OESOCvtAk1NY99MbQKKvt86IHTItK5/YlyZ3YDpjmbMdHEKUh+4c87yj1a+YHChvVSnD5QK+tM9/0P/IBUJH8WZbw09rAuFSRtPoNSjbLfCtiP97ULRSIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IICPfmg+; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <0735aa31-3fc0-4767-9372-23509df751df@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1726244348;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JzHB242tVGcnZIVMC2vH42EKkLNNcZB9RNcITbq4g8I=;
-	b=IICPfmg+44q75lKxAOccQGhjn640O1CxfRdLcOrkBfgr+GTn4RdyblNcCeraXhT4JfmQmy
-	mWT1SFmGnFV+4eTNvUl6DF975O5AUJZWR8keGpk0Z/xA9TNnHjlMYbIaVY1YmWreRjQ2H/
-	OeV7y4yhixrz6bQXZREDT42lzFrZ1Q4=
-Date: Fri, 13 Sep 2024 12:19:05 -0400
+	s=arc-20240116; t=1726244598; c=relaxed/simple;
+	bh=xPaBfHmiDOQqdl2HEej4im/bq3I5EDwYcwH4PiP9kR0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=l30kCxkkEb9V+wwU/FlyApkkTbnwmmbx+ZmMa8lY7ZG81K5yoqrWXGC7sJXo1n95RlGxY6XsoS+kQZ9ObexYTpAYMHkf8RgkyEEg5OqJ4Lt8Xn/haANTYrLP5F7ywpS0F7sVZ/f85c+m221WfCooWRK7L3H1A1FKFBMyayZR2V8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I8JzeIf9; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1726244597; x=1757780597;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=xPaBfHmiDOQqdl2HEej4im/bq3I5EDwYcwH4PiP9kR0=;
+  b=I8JzeIf9Agyid1FMd+/fABCXTpWK+6XwkJZ8HetdUiDLTR5FUJXVdHgS
+   z71opI5p7FlWeEWK50qQ9o0UY1JE0xia+E4yEfSt7VopsPb/3tRF9sdEa
+   qQgSFfAY14E5S1TWJVOqe2DOs9yrc+KfDK1NVd1re3zvJhnNKyf5kCB0M
+   OTaOQoR9bUcGFzxrZyjs8pRNUuVbaOddGrmUTZ20l736jf5T13KDYIde+
+   6f28LOvEejlr0UF+D8ppv7fAimdUX8PovBtLo22tUOatYXo4JRKM1RsiR
+   BPNZQ2thJ8RFSkYI0agqkqGnSqiRoO8oMwPB1yIAUsR8u8yUuhwMhPixm
+   g==;
+X-CSE-ConnectionGUID: SXtTqjU4QHqZ/lY3xKno5Q==
+X-CSE-MsgGUID: 1c/gGpLMR2SVWZHIDsDQeg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11194"; a="25350582"
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="25350582"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 09:23:15 -0700
+X-CSE-ConnectionGUID: J4PvnfFKQOmIn/+UrDwK8A==
+X-CSE-MsgGUID: 0Yi3hYBBSjWGNjktLeAm8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,226,1719903600"; 
+   d="scan'208";a="98958333"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by fmviesa001.fm.intel.com with ESMTP; 13 Sep 2024 09:23:14 -0700
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	linux-kernel@vger.kernel.org,
+	linux-next@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Cc: Kan Liang <kan.liang@linux.intel.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	kernel test robot <oliver.sang@intel.com>
+Subject: [PATCH] perf: Fix missing RCU reader protection in perf_event_clear_cpumask()
+Date: Fri, 13 Sep 2024 09:23:40 -0700
+Message-Id: <20240913162340.2142976-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] net: Handle threadirqs in __napi_schedule_irqoff
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
- Juri Lelli <juri.lelli@redhat.com>, Thomas Gleixner <tglx@linutronix.de>,
- linux-kernel@vger.kernel.org
-References: <20240913150954.2287196-1-sean.anderson@linux.dev>
- <20240913161446.NYZEvAi1@linutronix.de>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-In-Reply-To: <20240913161446.NYZEvAi1@linutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On 9/13/24 12:14, Sebastian Andrzej Siewior wrote:
-> On 2024-09-13 11:09:54 [-0400], Sean Anderson wrote:
->> The threadirqs kernel parameter can be used to force threaded IRQs even
->> on non-PREEMPT_RT kernels. Use force_irqthreads to determine if we can
->> skip disabling local interrupts. This defaults to false on regular
->> kernels, and is always true on PREEMPT_RT kernels.
-> 
-> Is this fixing a behaviour or is this from the clean up/ make it pretty
-> category?
+From: Kan Liang <kan.liang@linux.intel.com>
 
-It's in response to [1].
+Running rcutorture scenario TREE05, the below warning is triggered.
 
-[1] https://lore.kernel.org/netdev/20240912084322.148d7fb2@kernel.org/
+[   32.604594] WARNING: suspicious RCU usage
+[   32.605928] 6.11.0-rc5-00040-g4ba4f1afb6a9 #55238 Not tainted
+[   32.607812] -----------------------------
+[   32.609140] kernel/events/core.c:13946 RCU-list traversed in non-reader section!!
+[   32.611595] other info that might help us debug this:
+[   32.614247] rcu_scheduler_active = 2, debug_locks = 1
+[   32.616392] 3 locks held by cpuhp/4/35:
+[   32.617687]  #0: ffffffffb666a650 (cpu_hotplug_lock){++++}-{0:0}, at: cpuhp_thread_fun+0x4e/0x200
+[   32.620563]  #1: ffffffffb666cd20 (cpuhp_state-down){+.+.}-{0:0}, at: cpuhp_thread_fun+0x4e/0x200
+[   32.623412]  #2: ffffffffb677c288 (pmus_lock){+.+.}-{3:3}, at: perf_event_exit_cpu_context+0x32/0x2f0
 
-> The forced-threaded interrupts run with disabled interrupts on !RT so
-> this change should not fix anything.
+In perf_event_clear_cpumask(), uses list_for_each_entry_rcu() without an
+obvious RCU read-side critical section.
 
-OK, so maybe this isn't necessary at all?
+Either pmus_srcu or pmus_lock is good enough to protect the pmus list.
+In the current context, pmus_lock is already held. The
+list_for_each_entry_rcu() is not required.
 
---Sean
+Fixes: 4ba4f1afb6a9 ("perf: Generic hotplug support for a PMU with a scope")
+Reported-by: Paul E. McKenney <paulmck@kernel.org>
+Closes: https://lore.kernel.org/lkml/2b66dff8-b827-494b-b151-1ad8d56f13e6@paulmck-laptop/
+Tested-by: Paul E. McKenney <paulmck@kernel.org>
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202409131559.545634cc-oliver.sang@intel.com
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ kernel/events/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 20e97c1aa4d6..5ba9934b49df 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -13912,7 +13912,7 @@ static void perf_event_clear_cpumask(unsigned int cpu)
+ 	}
+ 
+ 	/* migrate */
+-	list_for_each_entry_rcu(pmu, &pmus, entry, lockdep_is_held(&pmus_srcu)) {
++	list_for_each_entry(pmu, &pmus, entry) {
+ 		if (pmu->scope == PERF_PMU_SCOPE_NONE ||
+ 		    WARN_ON_ONCE(pmu->scope >= PERF_PMU_MAX_SCOPE))
+ 			continue;
+-- 
+2.38.1
+
 
