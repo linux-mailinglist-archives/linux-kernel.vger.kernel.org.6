@@ -1,184 +1,109 @@
-Return-Path: <linux-kernel+bounces-328135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B6FF977F49
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:10:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35395977F48
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:10:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FB7E1F21587
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:10:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDCD1283672
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18EAF1D9324;
-	Fri, 13 Sep 2024 12:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F9B1D933E;
+	Fri, 13 Sep 2024 12:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DA79J4ew"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="dx6Z6IMn"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C631D88DD
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 841FD1C175F;
+	Fri, 13 Sep 2024 12:09:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726229404; cv=none; b=ppdQlBB7Mojr8OEyPibyEcxRII3QZ5cI3bHNlxLDUAjQV0cM4SC5p3EIWjrfdQGAz/jb4aQNB2+IqAZ8AA/XGUpvD85C7BzbYbfQGs2VHGjCpIwnntDVOySwSToOZgUcOVaAQV32o+dh+/Y5yrO1FVdRoFNpKQeXpTFDUslsz/M=
+	t=1726229384; cv=none; b=PcS+SU86yGEtC6+Rv7ABCnt4wgN6aIXZDRNAMkHwYhdq4BqENlXjIxRxX2gD6p+z81QqBxCgOaLI6KHrUkFgVygd2spo67nO+P+FJ2y5LwV8PUP2JZU48IDSqO+HNsiEsvs+6pri2Z3flXdqkbivtx35ziWZWjeciRZtPSxrNK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726229404; c=relaxed/simple;
-	bh=RVBFsKRHivW7wS0uIf4XmR++ZKHGlfVvI9BxxXs1Bkw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KYGXSPCDrdp/FskJ4BviXR9W8OJfpzhNBJhRHovPh1ELCRdHOXxA9xTpZ1O4UihWGUu5xSlTqUVWTkwvF4wmPW/vI9SsTdoC9La96L/HydCiazE7HMahV/9xX3O2ZVQphKjPXDgU2XrC2tJlmh0mHxh1eOOV5dRKmh/GCRF6bGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DA79J4ew; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7cd8803fe0aso1536805a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 05:10:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1726229402; x=1726834202; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=RVBFsKRHivW7wS0uIf4XmR++ZKHGlfVvI9BxxXs1Bkw=;
-        b=DA79J4ewoyNXuj0y09nb6SHeW2KLGXJ11QZlgstLdDOLdcTa0qhxvNGSLBpwwliDfN
-         68pTf4et1aSoqusv2Z4Z9966iCZSVAF6ZABjZv+WTQ2rrxEHennFc/3VuzX2I1JAubq7
-         z7PXWo3L1i/cWIyapHLpi4QOqfJ13tNFe64luR7MOFWHzaL359Z/4rePz2XvSMcmRrNv
-         5W8AhYpHEsikMDL0fBNWXK216UYvxw0gLKvjdDf1nUzrAvskvOMJGBotljMeErVB40BO
-         gOKVjzpOMAQGtUzdFOZeKcA2/FFm09eES5A/3wF3HkybzVqrNxyWflocgeu0NNM7kbiB
-         AW5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726229402; x=1726834202;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RVBFsKRHivW7wS0uIf4XmR++ZKHGlfVvI9BxxXs1Bkw=;
-        b=d2Qhyuz/O1WIHte32dZ364niGHWY1htWTfy2CabKUts7rdzCudIspfmj31a35uxVFC
-         MVXAj141g1Jb+iSzSm5gJpGMuSQgPWizBqX4Q2wqWU6JZYU1NpXbPfnBw07S9kw6JG8b
-         FdO+vEibhBAs8YSJKfI6crv/m3wHx2cRh9AsdxfgY14RYzaahI2VZFYkpwvO0G+YJch4
-         TqEhmUoPHM4/JAd4NkYMivrUIM5yRyS6cfojNqmCeXYyyNdJ4y/vv81KeqpXDxDZRdUx
-         Tjdl31HaY4vp1l/eaLDPtFhqGGwSw8+Bf8CksTfTDD8rK9CNnCoLrEkob2qtAxpO5UZ2
-         hQvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSxp3fzwUMrjX8uA2w7psEJ5o3GQT+gPLHAJmoJohhtSByEgp7Q0azHq2XznU1zmGy/5tKyY8z6aDmaVs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyb3d2JmF3clpfZ0JlN5iuEKmc3TOGnj+yV1yntVXDwB/vUaiLn
-	jIltcSE4+zvWXenv/l2iDEpw32H6XiJ01U61e7pprx/5RQ+uEGfh4E86xy7NZkhT7fxoeWbbtAD
-	0wNRSO+MZKJrmvODnL7y8YR7ETeIIBDpBo/Kc
-X-Google-Smtp-Source: AGHT+IEC73WGRbYNDi25kqGj4Gj8f6UkyfsTXwUWZe7ltTL9Tzoe7ToEYY/JQx/u7bcJ4ek+vcoFa9/so8xyi0qdIq4=
-X-Received: by 2002:a17:90a:8814:b0:2d8:94d6:3499 with SMTP id
- 98e67ed59e1d1-2dba0068106mr6358748a91.37.1726229401632; Fri, 13 Sep 2024
- 05:10:01 -0700 (PDT)
+	s=arc-20240116; t=1726229384; c=relaxed/simple;
+	bh=S8H6jPbmMZNantNVWPG0SCwOFatGJ6CawWw9Frt2PoI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Nt69/avCdTOa87/KuE/NZ1Vl8fwY4wBuGHgVy5cAfo/qk3/z14kTc1DSU6AyJtwIw+GDcG03VZnnG6dUD5HZjLQMUlcWR8zDKML9Jdi58Jwi+Hsjr7EjG9OlNl/4Rrhgd1Xjq9WxSzz6GcfUNU4EyjIPhvXcdDLtlWooNmm1Xps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=dx6Z6IMn; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=2FWF5Dq/3matU4oupKtZT7KL44HIaVi6C+3SXqNKXc0=; b=dx6Z6IMnRf3u1ptfPnpPqhLsFx
+	+w1bFwn6HoyUCcGRq6pq3v+SOshDBRAGp1aNWE5VdbuACTQ0KPZS+f82e4PjAhVz0/sKNEQ3Sv8du
+	pudssVcqIs9etPVBwpCCnI88oX8kRS3B6usMZxt2NNPeQiDOVWLGSn6Y9iWVyqa1Bxh9v0Z9W23mU
+	YGyewtGmRHbxPfuyJahBeBza3Jjg8uHX8r/chLJaIGG0VxFmOoYypX3+kusijEkcpuIMhxslWT4V5
+	M5pvckWGuuKPJKfQkc8tJoOPcZAUqBuLyTaEO5kzGfjmj3QDvmhIuGo5bo4tGJwbXlURpNcLX/Fvl
+	fm2UN5jw==;
+Date: Fri, 13 Sep 2024 14:09:34 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Reid Tonking <reidt@ti.com>, Tony Lindgren <tony@atomide.com>,
+ "Raghavendra, Vignesh" <vigneshr@ti.com>, Aaro Koskinen
+ <aaro.koskinen@iki.fi>, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+ Linux-OMAP <linux-omap@vger.kernel.org>, linux-i2c@vger.kernel.org, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] i2c: omap: Fix standard mode false ACK readings
+Message-ID: <20240913140934.29bb542b@akair>
+In-Reply-To: <664241E0-8D6B-4783-997B-2D8510ADAEA3@goldelico.com>
+References: <20230426194956.689756-1-reidt@ti.com>
+	<445b3cbf-ffbc-6f77-47db-c30fc599e88f@ti.com>
+	<20230428074330.GJ14287@atomide.com>
+	<20230428183037.wbhds54dz5l4v5xa@reidt-t5600.dhcp.ti.com>
+	<664241E0-8D6B-4783-997B-2D8510ADAEA3@goldelico.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240909211506.326648-1-mathieu.desnoyers@efficios.com>
- <20240909211506.326648-2-mathieu.desnoyers@efficios.com> <CANpmjNMjndyBAO3HKHkC+v7zNZv1XHvH5Fjd9S5q0Jj-sEkx-w@mail.gmail.com>
- <0edc398e-d193-4c2d-907e-f5db93143f79@efficios.com>
-In-Reply-To: <0edc398e-d193-4c2d-907e-f5db93143f79@efficios.com>
-From: Marco Elver <elver@google.com>
-Date: Fri, 13 Sep 2024 14:09:25 +0200
-Message-ID: <CANpmjNOPJm7nfzuF2VXLmixBZ0ygQ84AkxG8jH0E79XzWPu8xQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] sched: Improve cache locality of RSEQ concurrency
- IDs for intermittent workloads
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, 
-	Valentin Schneider <vschneid@redhat.com>, Mel Gorman <mgorman@suse.de>, 
-	Steven Rostedt <rostedt@goodmis.org>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>, 
-	Yury Norov <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Dmitry Vyukov <dvyukov@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, 12 Sept 2024 at 19:34, Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
->
-> On 2024-09-12 12:38, Marco Elver wrote:
-> > On Mon, 9 Sept 2024 at 23:15, Mathieu Desnoyers
-> > <mathieu.desnoyers@efficios.com> wrote:
-> >>
-> >> commit 223baf9d17f25 ("sched: Fix performance regression introduced by mm_cid")
-> >> introduced a per-mm/cpu current concurrency id (mm_cid), which keeps
-> >> a reference to the concurrency id allocated for each CPU. This reference
-> >> expires shortly after a 100ms delay.
-> >>
-> >> These per-CPU references keep the per-mm-cid data cache-local in
-> >> situations where threads are running at least once on each CPU within
-> >> each 100ms window, thus keeping the per-cpu reference alive.
-> >
-> > One orthogonal idea that I recall: If a thread from a different thread
-> > group (i.e. another process) was scheduled on that CPU, the CID can
-> > also be invalidated because the caches are likely polluted. Fixed
-> > values like 100ms seem rather arbitrary and it may work for one system
-> > but not another.
->
-> That depends on the cache usage pattern of the different thread group:
-> it's also possible that the other thread group does not perform that
-> many stores to memory before the original thread group is scheduled
-> back, thus keeping the cache content untouched.
->
-> The ideal metric there would probably be based on PMU counters, but
-> I doubt we want to go there.
->
-> [...]
-> >
-> > I like the simpler and more general approach vs. the NUMA-only
-> > approach! Attempting to reallocate the previously assigned CID seems
-> > to go a long way.
->
-> Indeed it does!
->
-> >
-> > However, this doesn't quite do L3-awareness as mentioned in [1], right?
-> > What I can tell is that this patch improves cache locality for threads
-> > scheduled back on the _same CPU_, but not if those threads are
-> > scheduled on a _set of CPUs_ sharing the _same L3_ cache. So if e.g. a
-> > thread is scheduled from CPU2 to CPU3, but those 2 CPUs share the same
-> > L3 cache, that thread will get a completely new CID and is unlikely to
-> > hit in the L3 cache when accessing the per-CPU data.
-> >
-> > [1] https://github.com/google/tcmalloc/issues/144#issuecomment-2307739715
-> >
-> > Maybe I missed it, or you are planning to add it in future?
->
-> In my benchmarks, I noticed that preserving cache-locality at the L1 and
-> L2 levels was important as well.
->
-> I would like to understand better the use-case you refer to for L3
-> locality. AFAIU, this implies a scenario where the scheduler migrates
-> a thread from CPU 2 to CPU 3 (both with the same L3), and you would
-> like to migrate the concurrency ID along.
+Am Wed, 11 Sep 2024 11:40:04 +0200
+schrieb "H. Nikolaus Schaller" <hns@goldelico.com>:
 
-Either migrate it along, _or_ pick a CID from a different thread that
-ran on a CPU that shares this L3. E.g. if T1 is migrated from CPU2 to
-CPU3, and T2 ran on CPU3 before, then it would be ok for T1 to get its
-previous CID or T2's CID from when it ran on CPU3. Or more simply,
-CIDs aren't tied to particular threads, but tied to a subset of CPUs
-based on topology. If the user could specify that topology / CID
-affinity would be nice.
+> Hi,
+> 
+> > Am 28.04.2023 um 20:30 schrieb Reid Tonking <reidt@ti.com>:
+> > 
+> > On 10:43-20230428, Tony Lindgren wrote:  
+> >> * Raghavendra, Vignesh <vigneshr@ti.com> [230427 13:18]:  
+> >>> On 4/27/2023 1:19 AM, Reid Tonking wrote:  
+> >>>> Using standard mode, rare false ACK responses were appearing with
+> >>>> i2cdetect tool. This was happening due to NACK interrupt
+> >>>> triggering ISR thread before register access interrupt was
+> >>>> ready. Removing the NACK interrupt's ability to trigger ISR
+> >>>> thread lets register access ready interrupt do this instead.  
+> >> 
+> >> So is it safe to leave NACK interrupt unhandled until we get the
+> >> next interrupt, does the ARDY always trigger after hitting this?
+> >> 
+> >> Regards,
+> >> 
+> >> Tony  
+> > 
+> > Yep, the ARDY always gets set after a new command when register
+> > access is ready so there's no need for NACK interrupt to control
+> > this.  
+> 
+> I have tested one GTA04A5 board where this patch breaks boot on
+> v4.19.283 or v6.11-rc7 (where it was inherited from some earlier -rc
+> series).
+> 
+> The device is either stuck with no signs of activity or reports RCU
+> stalls after a 20 second pause.
+> 
+cannot reproduce it here. I had a patch to disable 1Ghz on that
+device in my tree. Do you have anything strange in your
+tree?
 
-> When the number of threads is < number of mm allowed cpus, the
-> migrate hooks steal the concurrency ID from CPU 2 and moves it to
-> CPU 3 if there is only a single thread from that mm on CPU 2, which
-> does what you wish.
-
-Only if the next CPU shares the cache. What if it moves the thread to
-a CPU where that CPU's L3 cache != the previous CPU's L3 cache. In
-that case, it'd be preferable to pick a last-used CID from the set of
-CPUs that are grouped under that L3 cache.
-
-> When the number of threads is >= number of mm allowed cpus, the
-> migrate hook is skipped, and the concurrency ID from CPU 2 is
-> left in place, favoring cache locality at L1/L2 levels.
-
-... and any higher level caches, too, I'd assume.
-
-> In that
-> case it's the scheduler's decision to migrate the thread from
-> CPU 2 to CPU 3, so I would think improving the scheduler decisions
-> about migration and minimizing thread movement would be more
-> relevant than trying to optimize concurrency ID movement.
-
-From what I gather, if the CID is left in place on a CPU, and the next
-thread just grabs it, that's already optimal AFAIK.
-
-Thanks,
--- Marco
+Regards,
+Andreas
 
