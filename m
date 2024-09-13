@@ -1,195 +1,334 @@
-Return-Path: <linux-kernel+bounces-327662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A56D09778FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:53:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 033B2977901
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 08:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDBC11C24FA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:53:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B868428832B
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 06:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53BF1B12E7;
-	Fri, 13 Sep 2024 06:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1E0C1BAEE9;
+	Fri, 13 Sep 2024 06:53:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="T9rip408"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ymF+olb+";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CMTHBgrt";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xZ1vCzb4";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NC6VsYty"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF93E143C40
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 06:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B191B1429;
+	Fri, 13 Sep 2024 06:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726210410; cv=none; b=rv4FvMS6G8c48z7QxodpQKGjMlMsD495BcujSLmKXiSm3V609L0g0yV0Xi0Djt+QY8D9uYO3nYK6AynhehrzoX/QPIYDvZKX8Mh+9LRSvvwK9nLGxOfU/77z7WAWk9uaEk4ah3K/MMvM7W8+LPAWtzwiowdNRm9GE9q+1h+tmKA=
+	t=1726210430; cv=none; b=FAMwW2l9+PyuvCi7ij9WcNKLPgEoVRo777oD0ZBrNZ69PHWGVpsrlRQOMZ1psfl2LiwM6/jHCVwApX7qlD/HtGsmDfaD5eFVic1aVGlQDX9RUeLM+1OuSKu8rpfYallNJcSjgNp8ZhrWSVa5MdE/rb81e5Ifq/i0wMKxQW90tCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726210410; c=relaxed/simple;
-	bh=+kER8xitWJszH/a1OjrkxLTo9oWWQKr79yE3ek1aStw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZK/YrUMW7o07KlhLelgg8rhL9dr1rl/OslH9JrG6ljDPVGI4OD52aOjV7AidZ56qnJehCKETmH4VYxxG6oPCUEXv4dQcS4PJ2AYMsqDyBHm3ORKQ9sTduA6a1rHVBI4XXe827JYjbny+yOLLX5btxn3TCLpz4QtppJTKYjys3HA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=T9rip408; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5365aec6fc1so2054918e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Sep 2024 23:53:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1726210404; x=1726815204; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=D/JVmumvAmhH4T2M2SYhr9R81Y5mg2XZZPfgi7X4P4s=;
-        b=T9rip408P7+UozYJs5rQjf9iZG1thUe8raupKkABAcq0H6DKAqmYxC4N02wZyLiDV7
-         DOHOStNacepM4lqFhF54EewQVN0atvfTJfVv08cA+wW93zr7xZUExJodKTiFS3FCUUKN
-         iXuiD2wCFoKt5NwXNq+AVR4e6KhoGssV3GK4YYsGdZEHPYceKKWTJXZHWJ7kdnSbRTIs
-         /YTQcz5i3XnkWSRON/6PId9P3BpH78chPEbcjMWqHXSbaDzBP0AjzgExW7AZVU32qv7B
-         zfLdtN36Ui4yMl5UiY9Ra5BzPYZgxvhSIUdhlZXHflLb7YnBrS2QAavRbHSVOReILQDj
-         ln0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726210404; x=1726815204;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D/JVmumvAmhH4T2M2SYhr9R81Y5mg2XZZPfgi7X4P4s=;
-        b=VYEsaHHgBzAtLIEZTVXz+qDNgzXUa1tAKxCyYolyOeWfoEs4kKwOLAD47/w/8ZEzeJ
-         K0TMGkgu9svdt3jd7hLLtDSZf7DGhW3FErpr/zJNWKDdk0Ooj8fHp41nApH57aj11Muq
-         YVVd5iol59Y1RJwVaWyvofFM1aEwIxx8NMEBXQfcCzsCxZGOzaaPFG2RHqj7aQjVT/jx
-         ObiSTmkMHonajsYLsJn037Lwufqrq9kv1g02X7ZlBgqylroz3C0eNJ7UfO895DycAuoE
-         dqHbHOVC/KfMC5PzzW0al4j0VSaXlhAbTcGX3elyjWupwQMEHpuPx5fPzOZ1sPld18Pq
-         nxLw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvsyUxRbCWfUDpXGXIPEZ2QuZ/5OdqcO+YBOxD+fA4a+XyKXXwSYlM3+BTKWc/rRi7/3u8Doyed2IGV2s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcXTiwEgB0ccM9jng3Nuzu8UN3pCeqPuj7Tvw4wLh3D9ZXggKa
-	PcHEX6ygPuzJEjbfIqCVJekiT9UVqs2NMKMqalfM2tgXJZ/1taUAKJDnpfDU+bY=
-X-Google-Smtp-Source: AGHT+IHjjlfV76zJQFOUoO0v8dhF0Bl3CQ4RiUDYruhQ4SFj0zyKwm9aj2oXnuAxIJ6qQTQKV6bSlA==
-X-Received: by 2002:a05:6512:6ce:b0:534:36bf:b622 with SMTP id 2adb3069b0e04-53678ffa374mr2717302e87.61.1726210402875;
-        Thu, 12 Sep 2024 23:53:22 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:9766:a21e:6656:7a28])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42d9b05d5dbsm13450095e9.13.2024.09.12.23.53.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Sep 2024 23:53:22 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Stephen Boyd <sboyd@kernel.org>,  Neil Armstrong
- <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>,  Jiucheng Xu
- <jiucheng.xu@amlogic.com>,  linux-arm-kernel@lists.infradead.org,
-  linux-amlogic@lists.infradead.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 8/9] reset: amlogic: split the device core and
- platform probe
-In-Reply-To: <8cb81058c8f45e378675e078e296336a2cf74308.camel@pengutronix.de>
-	(Philipp Zabel's message of "Thu, 12 Sep 2024 10:12:14 +0200")
-References: <20240910-meson-rst-aux-v5-0-60be62635d3e@baylibre.com>
-	<20240910-meson-rst-aux-v5-8-60be62635d3e@baylibre.com>
-	<8cb81058c8f45e378675e078e296336a2cf74308.camel@pengutronix.de>
-Date: Fri, 13 Sep 2024 08:53:21 +0200
-Message-ID: <1jldzwkpsu.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1726210430; c=relaxed/simple;
+	bh=Y8202h8MHFIrX8LlWxrJXb8dz7AFIUYLGSutAr1fBR8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=igyNjCAMi1WGo0iQoma9xV2ZxyOlzGwXSEEkXpyHrQ4MCX5Oer2tDFCtY1q+N76xFkvMKkX128rZcSCm3IxSiD1cyPbigXZovQeUhfC9CWdDBuFIY2Pz5oPl9y9+Dxnwav+qO49oYNL01GpzpFPvDQMma62BO1u/8/iPcVb8To0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ymF+olb+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CMTHBgrt; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xZ1vCzb4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NC6VsYty; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C4B7B1F7C8;
+	Fri, 13 Sep 2024 06:53:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726210427; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=yodNtgpzY0RHuizbdjq7+LdG3DurlGyACVx8nEHLOGk=;
+	b=ymF+olb+t/h3K766R2TSotEHM+fPyH9YXSS88pZvotya0kG4QjwYSKLFwue1DLkn/62KHW
+	DH+cSOrj65nqxIxrscVFQ/r9F/m7sS39IY6ybtDAjEdtP3oseo08VYj87xhd57YjkKpK/e
+	IH54zRe+9OQJi3pPwN5oG5FCA+aJjCs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726210427;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=yodNtgpzY0RHuizbdjq7+LdG3DurlGyACVx8nEHLOGk=;
+	b=CMTHBgrtf0acS3lwMX1PkeFVW3uArXeW1MKv5EI3MTIPTwm3maz9x9Z9tK3K+Moth1xIKL
+	Q69CS6LH+hkPrHAw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=xZ1vCzb4;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=NC6VsYty
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1726210426; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=yodNtgpzY0RHuizbdjq7+LdG3DurlGyACVx8nEHLOGk=;
+	b=xZ1vCzb4WXdH1w4owimLUMwJay3dIUyUYNbp1xjjwlpWLB/xEnl0vwaxhOwEoCiW24LFYT
+	j1ICE//ZpN97Ok9Cs7+jHeDEy/hpk8fojWFPyXbzPU/rYhaO04Z0jBMOKAC81JGxVaUvEt
+	6SQROsq5kllpffdeG1Xrb8Vcg/Wg5YI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1726210426;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=yodNtgpzY0RHuizbdjq7+LdG3DurlGyACVx8nEHLOGk=;
+	b=NC6VsYtyvJTUa0jK9KyiqwnHc+fk8ZkYIg66wCiw/oEawU3CIwddsLRnHrqcXuSZIZ8HAV
+	tsYRtCv7hxs61aAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 43F3413A73;
+	Fri, 13 Sep 2024 06:53:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id VMA+D3rh42byHgAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Fri, 13 Sep 2024 06:53:46 +0000
+Message-ID: <6bf656e0-e0b6-4b97-b7a2-ff0bdc86b098@suse.de>
+Date: Fri, 13 Sep 2024 08:53:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [NOT A REGRESSION] firmware: framebuffer-coreboot: duplicate
+ device name "simple-framebuffer.0"
+To: Javier Martinez Canillas <javierm@redhat.com>,
+ Julius Werner <jwerner@chromium.org>
+Cc: Brian Norris <briannorris@chromium.org>, Borislav Petkov <bp@alien8.de>,
+ Hugues Bruant <hugues.bruant@gmail.com>, stable@vger.kernel.org,
+ regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Fenghua Yu <fenghua.yu@intel.com>,
+ Reinette Chatre <reinette.chatre@intel.com>, Tony Luck
+ <tony.luck@intel.com>, Tzung-Bi Shih <tzungbi@kernel.org>,
+ chrome-platform@lists.linux.dev, Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org
+References: <CALvjV29jozswRtmYxDur2TuEQ=1JSDrM+uWVHmghW3hG5Y9F+w@mail.gmail.com>
+ <20240909080200.GAZt6reI9c98c9S_Xc@fat_crate.local>
+ <ZuCGkjoxKxpnhEh6@google.com>
+ <87jzfhayul.fsf@minerva.mail-host-address-is-not-set>
+ <CAODwPW8P+jcF0erUph5XyWoyQgLFbZWxEM6Ygi_LFCCTLmH89Q@mail.gmail.com>
+ <87mskczv9l.fsf@minerva.mail-host-address-is-not-set>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <87mskczv9l.fsf@minerva.mail-host-address-is-not-set>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: C4B7B1F7C8
+X-Spam-Level: 
+X-Spamd-Result: default: False [-5.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCPT_COUNT_TWELVE(0.00)[19];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[chromium.org,alien8.de,gmail.com,vger.kernel.org,lists.linux.dev,intel.com,kernel.org,linux.intel.com,ursulin.net,lists.freedesktop.org];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -5.01
+X-Spam-Flag: NO
 
-On Thu 12 Sep 2024 at 10:12, Philipp Zabel <p.zabel@pengutronix.de> wrote:
+Hi Javier,
 
-> On Di, 2024-09-10 at 18:32 +0200, Jerome Brunet wrote:
->> To prepare the addition of the auxiliary device support, split
->> out the device coomon functions from the probe of the platform device.
->> 
->> The device core function will be common to both the platform and auxiliary
->> driver.
->> 
->> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->> ---
->>  drivers/reset/amlogic/Kconfig              |   7 +-
->>  drivers/reset/amlogic/Makefile             |   1 +
->>  drivers/reset/amlogic/reset-meson-common.c | 121 ++++++++++++++++++++++++++++
->>  drivers/reset/amlogic/reset-meson.c        | 122 ++++-------------------------
->>  drivers/reset/amlogic/reset-meson.h        |  24 ++++++
->>  5 files changed, 167 insertions(+), 108 deletions(-)
->> 
->> diff --git a/drivers/reset/amlogic/Kconfig b/drivers/reset/amlogic/Kconfig
->> index 532e6a4f7865..1d77987088f4 100644
->> --- a/drivers/reset/amlogic/Kconfig
->> +++ b/drivers/reset/amlogic/Kconfig
->> @@ -1,10 +1,15 @@
->> +config RESET_MESON_COMMON
->> +	tristate
->> +	select REGMAP
->> +
->>  config RESET_MESON
->>  	tristate "Meson Reset Driver"
->>  	depends on ARCH_MESON || COMPILE_TEST
->>  	default ARCH_MESON
->>  	select REGMAP_MMIO
->> +	select RESET_MESON_COMMON
->>  	help
->> -	  This enables the reset driver for Amlogic Meson SoCs.
->> +	  This enables the reset driver for Amlogic SoCs.
->>  
->>  config RESET_MESON_AUDIO_ARB
->>  	tristate "Meson Audio Memory Arbiter Reset Driver"
->> diff --git a/drivers/reset/amlogic/Makefile b/drivers/reset/amlogic/Makefile
->> index 55509fc78513..74aaa2fb5e13 100644
->> --- a/drivers/reset/amlogic/Makefile
->> +++ b/drivers/reset/amlogic/Makefile
->> @@ -1,2 +1,3 @@
->>  obj-$(CONFIG_RESET_MESON) += reset-meson.o
->> +obj-$(CONFIG_RESET_MESON_COMMON) += reset-meson-common.o
->>  obj-$(CONFIG_RESET_MESON_AUDIO_ARB) += reset-meson-audio-arb.o
->> diff --git a/drivers/reset/amlogic/reset-meson-common.c b/drivers/reset/amlogic/reset-meson-common.c
->> new file mode 100644
->> index 000000000000..d57544801ae9
->> --- /dev/null
->> +++ b/drivers/reset/amlogic/reset-meson-common.c
->> @@ -0,0 +1,121 @@
->> +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
->> +/*
->> + * Amlogic Meson Reset core functions
->> + *
->> + * Copyright (c) 2016-2024 BayLibre, SAS.
->> + * Authors: Neil Armstrong <narmstrong@baylibre.com>
->> + *          Jerome Brunet <jbrunet@baylibre.com>
->> + */
->> +
->> +#include <linux/device.h>
->> +#include <linux/module.h>
->> +#include <linux/regmap.h>
->> +#include <linux/reset-controller.h>
->> +
->> +#include "reset-meson.h"
->> +
->> +struct meson_reset {
->> +	const struct meson_reset_param *param;
->> +	struct reset_controller_dev rcdev;
->> +	struct regmap *map;
->> +};
->> +
->> +static void meson_reset_offset_and_bit(struct meson_reset *data,
->> +				       unsigned long id,
->> +				       unsigned int *offset,
->> +				       unsigned int *bit)
->> +{
->> +	unsigned int stride = regmap_get_reg_stride(data->map);
->> +
->> +	*offset = (id / (stride * BITS_PER_BYTE)) * stride;
->> +	*bit = id % (stride * BITS_PER_BYTE);
->> +}
->> +
->> +static int meson_reset_reset(struct reset_controller_dev *rcdev,
->> +			     unsigned long id)
+thanks for the patch.
+
+Am 12.09.24 um 18:33 schrieb Javier Martinez Canillas:
+> Julius Werner <jwerner@chromium.org> writes:
 >
-> checkpatch --strict complains about the alignment here.
-> I'll fix this up when applying, no need to resend.
-
-Thanks Philipp.
-
-FYI, those mis-alignement were already present in the original code and
-there has been comments when I re-indented code while moving it
-around so I did not touch it.
-
+> Hello Julius,
 >
-> regards
-> Philipp
+>>> On Coreboot platforms, a system framebuffer may be provided to the Linux
+>>> kernel by filling a LB_TAG_FRAMEBUFFER entry in the Coreboot table. But
+>>> it seems SeaBIOS payload can also provide a VGA mode in the boot params.
+>>>
+>>> [...]
+>>>
+>>> To prevent the issue, make the framebuffer_core driver to disable sysfb
+>>> if there is system framebuffer data in the Coreboot table. That way only
+>>> this driver will register a device and sysfb would not attempt to do it
+>>> (or remove its registered device if was already executed before).
+>> I wonder if the priority should be the other way around? coreboot's
+>> framebuffer is generally only valid when coreboot exits to the payload
+>> (e.g. SeaBIOS). Only if the payload doesn't touch the display
+>> controller or if there is no payload and coreboot directly hands off
+>> to a kernel does the kernel driver for LB_TAG_FRAMEBUFFER make sense.
+>> But if there is some other framebuffer information passed to the
+>> kernel from a firmware component running after coreboot, most likely
+>> that one is more up to date and the framebuffer described by the
+>> coreboot table doesn't work anymore (because the payload usually
+>> doesn't modify the coreboot tables again, even if it changes hardware
+>> state). So if there are two drivers fighting over which firmware
+>> framebuffer description is the correct one, the coreboot driver should
+>> probably give way.
+>>
+> That's a very good point. I'm actually not familiar with Coreboot and I
+> used an educated guess (in the case of DT for example, that's the main
+> source of truth and I didn't know if a Core table was in a similar vein).
+>
+> Maybe something like the following (untested) patch then?
+>
+>  From de1c32017006f4671d91b695f4d6b4e99c073ab2 Mon Sep 17 00:00:00 2001
+> From: Javier Martinez Canillas <javierm@redhat.com>
+> Date: Thu, 12 Sep 2024 18:31:55 +0200
+> Subject: [PATCH] firmware: coreboot: Don't register a pdev if screen_info data
+>   is available
+>
+> On Coreboot platforms, a system framebuffer may be provided to the Linux
+> kernel by filling a LB_TAG_FRAMEBUFFER entry in the Coreboot table. But
+> a Coreboot payload (e.g: SeaBIOS) could also provide this information to
+> the Linux kernel.
+>
+> If that the case, early arch x86 boot code will fill the global struct
+> screen_info data and that data used by the Generic System Framebuffers
+> (sysfb) framework to add a platform device with platform data about the
+> system framebuffer.
+>
+> But later then the framebuffer_coreboot driver will try to do the same
+> framebuffer (using the information from the Coreboot table), which will
+> lead to an error due a simple-framebuffer.0 device already registered:
+>
+>      sysfs: cannot create duplicate filename '/bus/platform/devices/simple-framebuffer.0'
+>      ...
+>      coreboot: could not register framebuffer
+>      framebuffer coreboot8: probe with driver framebuffer failed with error -17
+>
+> To prevent the issue, make the framebuffer_core driver to not register a
+> platform device if the global struct screen_info data has been filled.
+>
+> Reported-by: Brian Norris <briannorris@chromium.org>
+> Link: https://lore.kernel.org/all/ZuCG-DggNThuF4pj@b20ea791c01f/T/#ma7fb65acbc1a56042258adac910992bb225a20d2
+> Suggested-by: Julius Werner <jwerner@chromium.org>
+> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+> ---
+>   drivers/firmware/google/framebuffer-coreboot.c | 16 ++++++++++++++++
+>   1 file changed, 16 insertions(+)
+>
+> diff --git a/drivers/firmware/google/framebuffer-coreboot.c b/drivers/firmware/google/framebuffer-coreboot.c
+> index daadd71d8ddd..4e50da17cd7e 100644
+> --- a/drivers/firmware/google/framebuffer-coreboot.c
+> +++ b/drivers/firmware/google/framebuffer-coreboot.c
+> @@ -15,6 +15,7 @@
+>   #include <linux/module.h>
+>   #include <linux/platform_data/simplefb.h>
+>   #include <linux/platform_device.h>
+> +#include <linux/screen_info.h>
+>   
+>   #include "coreboot_table.h"
+>   
+> @@ -27,6 +28,7 @@ static int framebuffer_probe(struct coreboot_device *dev)
+>   	int i;
+>   	u32 length;
+>   	struct lb_framebuffer *fb = &dev->framebuffer;
+> +	struct screen_info *si = &screen_info;
+
+Probably 'const'.
+
+>   	struct platform_device *pdev;
+>   	struct resource res;
+>   	struct simplefb_platform_data pdata = {
+> @@ -36,6 +38,20 @@ static int framebuffer_probe(struct coreboot_device *dev)
+>   		.format = NULL,
+>   	};
+>   
+> +	/*
+> +	 * If the global screen_info data has been filled, the Generic
+> +	 * System Framebuffers (sysfb) will already register a platform
+> +	 * and pass the screen_info as platform_data to a driver that
+> +	 * could scan-out using the system provided framebuffer.
+> +	 *
+> +	 * On Coreboot systems, the advertise LB_TAG_FRAMEBUFFER entry
+> +	 * in the Coreboot table should only be used if the payload did
+> +	 * not set video mode info and passed it to the Linux kernel.
+> +	 */
+> +	if (si->orig_video_isVGA == VIDEO_TYPE_VLFB ||
+> +            si->orig_video_isVGA == VIDEO_TYPE_EFI)
+
+Rather call screen_info_video_type(si) [1] to get the type. If it 
+returns 0, the screen_info is unset and the corebios code can handle the 
+framebuffer. In any other case, the framebuffer went through a 
+bootloader, which might have modified it. This also handles awkward 
+cases, such as if the bootloader programs a VGA text mode.
+
+[1] 
+https://elixir.bootlin.com/linux/v6.10.10/source/include/linux/screen_info.h#L92
+
+With these changes:
+
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+Best regards
+Thomas
+
+> +		return -EINVAL;
+> +
+>   	if (!fb->physical_address)
+>   		return -ENODEV;
+>   
 
 -- 
-Jerome
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
+
 
