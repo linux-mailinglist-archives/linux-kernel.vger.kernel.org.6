@@ -1,158 +1,159 @@
-Return-Path: <linux-kernel+bounces-328482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EC309784D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:27:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4671F9784D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 17:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C88BD1C22AAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:27:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E34BC1F28D68
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 15:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAD3146450;
-	Fri, 13 Sep 2024 15:26:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6513B782;
+	Fri, 13 Sep 2024 15:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yVwjLDjf";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="POHN8jUU";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zj1xRwzn";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="c2V/VfpG"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QCUw7yzR"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD51239FD0;
-	Fri, 13 Sep 2024 15:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA752383A2
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 15:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726241209; cv=none; b=F3XJ6iKfxAkiFO+o6eSt/m9I2AU1aAEdS/h+JqduRjhTQjiAbQvZ6lzVnCtQYga8EJZuA5KixPwRdNLut+0CpPUmDmfotvVAAlM+W1Wa99E8BCMSDhwkT4hXG1xcmyPf6GbvamrJlpsUOvuMlvKgeAqkHeOnSY3Id6Ly1gZOz/0=
+	t=1726241338; cv=none; b=VV9R8MRbhHNV1Dt/VuB7KM+OF6r5FiyjgI29quxyuSAPVsbS1CR6ucHwIMmd/MI6ZePloEC5SHq0rR5xjljAb7oVmnTZLbnwmPfHgi0VqglYp4/+uRaHpo9yrwmnGbnbTOb60wYSjHJgPsbQv2qvxJvpiGbMfhMknz80GPAsxME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726241209; c=relaxed/simple;
-	bh=PF3fhLUrOAqqkJ+0HFZ9G85pt2ptVKQzNDwuxW49rgA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=PPAMJKPNXwF6q4tGt3oOfoS183FbRK/ZuNRlE9BTjBQkptbjMuhxpLNm5qIcvEdFwVMgKgbeo3HTDvP/G5BEysbpgOqVV/RQQtlTVN6VJGkMxVNhr7esmE9aOsWV+RAh68pQv3JtSb5uHK8YU4LvyMpPkaNoL0GEl0URCpLvk7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yVwjLDjf; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=POHN8jUU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zj1xRwzn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=c2V/VfpG; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 81B762195F;
-	Fri, 13 Sep 2024 15:26:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726241205; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+XPXj5EiF2w+e7qpWsO5Q2nBeq/fL4ElLZkLBqg7ujM=;
-	b=yVwjLDjfgBRZOMTRPvyFd/9Mc55asqx+6KfBcRD+8S0xmyjIIOcB7RAtuOpXx91pSzi5N8
-	MDBRpghKPulZBIBwZflLpOZbxluyafwtXChTr8eGyh0y5l91VEGLPZGM19VCSkU7b7fKJV
-	27VFCdMg7a+zgztyGFqfUcVWnJ3ZY7o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726241205;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+XPXj5EiF2w+e7qpWsO5Q2nBeq/fL4ElLZkLBqg7ujM=;
-	b=POHN8jUUUweHX897rXuh1TAkG5+rXFix5L3igL70FQKtBhmc+ZdvWztQBnmddIEtSuDH5l
-	VGKknpudRfREhvAQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=zj1xRwzn;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="c2V/VfpG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1726241204; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+XPXj5EiF2w+e7qpWsO5Q2nBeq/fL4ElLZkLBqg7ujM=;
-	b=zj1xRwznD8XAC27o8OHBNPcGN5NrmsmQ3zAlM++aP79EEkfbIdkYplu7RDTnwmvxBUymWw
-	BHH8H9hGjrz7+KQlWB2qfpR/rhYFNIaws5UdNPIwhs3PYkD4PaJxeNu6vw19G30Z+ZCMO4
-	TJ3hPH/WfajZ6zAL12vU5NCHGW3Hj3o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1726241204;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+XPXj5EiF2w+e7qpWsO5Q2nBeq/fL4ElLZkLBqg7ujM=;
-	b=c2V/VfpG4MabXswu/MWhHbJYufTN0+ZicvarKeEwia71AeBYqdb3BnalYqLqyIRJ9vRG98
-	A+UHF11iu38qSMCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4707813999;
-	Fri, 13 Sep 2024 15:26:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id iKtIC7RZ5GbbTAAAD6G6ig
-	(envelope-from <krisman@suse.de>); Fri, 13 Sep 2024 15:26:44 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: ganjie <ganjie182@gmail.com>
-Cc: krisman@suse.de,  linux-fsdevel@vger.kernel.org,  hch@lst.de,
-  linux-kernel@vger.kernel.org,  guoxuenan@huawei.com,
-  guoxuenan@huaweicloud.com
-Subject: Re: [PATCH v2] unicode: change the reference of database file
-In-Reply-To: <20240912031932.1161-1-ganjie182@gmail.com> (ganjie's message of
-	"Thu, 12 Sep 2024 11:19:32 +0800")
-Organization: SUSE
-References: <20240912031932.1161-1-ganjie182@gmail.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
-Date: Fri, 13 Sep 2024 11:26:42 -0400
-Message-ID: <8734m3k219.fsf@mailhost.krisman.be>
+	s=arc-20240116; t=1726241338; c=relaxed/simple;
+	bh=riN9yEBuNtNzONajYBwh6sAZPE4QqYH5QbyiGeLCaDg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TruuMmli8qRBS3Kp+Zb1T3ppIzybn+LrM06s7cMqfeeavlRUMFQGFbYILXKPsvZt47BjuqRJwQd41ow+dYlBQUuvPYyN9eKq2eJcpdddSfRbKZjWslAd9ZBmEJJrVhmSE11uwa5Z7P9AVJuwCzCxEIU2W2ZqIuJRZQS2JcUYwk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QCUw7yzR; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6db4b602e38so8598937b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 08:28:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1726241336; x=1726846136; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lk0Y3JO9bFT2rOSc+FQeYL2Qo4I6uDbO35BsUfq+tVI=;
+        b=QCUw7yzRDYLnhlzJEuusP8SLX9xw3tT0MjQElEQU4Z/aCgzTIxTZQIHqiwOxutOawl
+         qPX7fuuZli/QUpj8d0ccq2k4aRWw9zBJrZw91cXqRh4/sKAIJG7VMS5nLZLB54P4VVup
+         btuMqF/iKzEb1pBSBJZ12l56v4twl5y+VFmPb5dmSB6o2FDaHrxeeBV25oKiX6Vwq62F
+         dkWOqNDDJ+5PjTGfSqIfyxWTE5iZWxQLBLUiQpPZpRDQKu7d5dWVZQgz+y7Q1QKu2zHo
+         tcNpnV0gyWJ9fMLXhObVf2b6o2ygc1j+Gjv1JxcxIFDKFVsX2Sl4lQlHE3nfsOIcHUiW
+         zoDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726241336; x=1726846136;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lk0Y3JO9bFT2rOSc+FQeYL2Qo4I6uDbO35BsUfq+tVI=;
+        b=adC7HCidv7qwje98wmDWH7aYgK5+qE7wWnUiZ/iUL/y0AIDSq28LeGaijy/tqGvAVo
+         lzv5vuriKbR7EGK5qd/tNjWUDNis5XPUkgBmPU3TGo0RTBoN5OT5/3fkqNiq8c2fnN1I
+         GQXBN09O9HwAFaP7u9ASWXNAR2w2SMbQgXQ9Td4zqo0JqEENPAXZ1wk0Sv0M872JFFzG
+         cdgH3gMxmYEV5KQX3imh7fUI6fp4PgD3sLET86b9scyyktFBgCWMnzL3mNOITKGcmRHs
+         M5j143w1u7BM6fVWM8As+uKyr2b+KweEKBJzO0KvwHwiF/gKHV+3F8cIB7DSHr+URS9P
+         EfPA==
+X-Forwarded-Encrypted: i=1; AJvYcCWPU23+rhpGCVP9f7sXZWPCz07g9lf9Os0UJzjdNycHPDIdXwofYherFdqidhn3YA36n4vAaxZAZlyw4vw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbAXA0L0n6bGxHocwbBkEIriTEZQ44rnyjrNyqywbTaX4ChGG9
+	3wQ49aVAhkQhkDEqnUT7GxYs74dCGMR4LkJ+6oqFt1oqP4Cs9mqOCf3GvwEe2v6DLc7p4QbgdUH
+	ASvrwgS0TSTxifyvXpZ46MSj0Ge3Wl/XGuh6hcel0ZON091hKpQ==
+X-Google-Smtp-Source: AGHT+IHkyAZMhhI3xawaismvgjOH5IUCaVGq4I9wy4w7xrhz84JE2lvx2d6PCjxruhRMh0T6OScjZIHtazMnuY9ZfhM=
+X-Received: by 2002:a05:690c:60c2:b0:6ad:bf4f:1bc3 with SMTP id
+ 00721157ae682-6dbcc5805a9mr31430017b3.32.1726241335733; Fri, 13 Sep 2024
+ 08:28:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Rspamd-Queue-Id: 81B762195F
-X-Spam-Score: -6.50
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-6.50 / 50.00];
-	BAYES_HAM(-2.99)[99.94%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	HAS_ORG_HEADER(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_TO(0.00)[gmail.com];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,mailhost.krisman.be:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <d15ee1ccfb91bda67d248b3ec70f0475@paul-moore.com> <960e740f-e5d9-409b-bb2a-8bdceffaae95@I-love.SAKURA.ne.jp>
+In-Reply-To: <960e740f-e5d9-409b-bb2a-8bdceffaae95@I-love.SAKURA.ne.jp>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 13 Sep 2024 11:28:44 -0400
+Message-ID: <CAHC9VhRz4T+Ad6z1u+b+XJoXi7eORax-5KuAbH=O5BOTQAhA7w@mail.gmail.com>
+Subject: Re: [GIT PULL] lsm/lsm-pr-20240911
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-ganjie <ganjie182@gmail.com> writes:
-
-> From: Gan Jie <ganjie182@gmail.com>
+On Fri, Sep 13, 2024 at 8:28=E2=80=AFAM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> On 2024/09/13 10:29, Paul Moore wrote:
+> > Linus,
+> >
+> > We've got a reasonably large pull request for the LSM framework this
+> > time (at least it's large for us), here are the highlights:
+> >
+> > * Move the LSM framework to static calls
+> >
+> > Based on some of our exchanges over the summer, it sounds like you
+> > are already familiar with the effort to convert the LSM callbacks
+> > from function pointers to static calls.  This pull request includes
+> > that work and transitions the vast majority of the LSM callbacks into
+> > static calls.  Those callbacks which haven't been converted were
+> > left as-is due to the general ugliness of the changes required to
+> > support the static call conversion; we can revisit those callbacks
+> > at a future date.
+> >
+> > It is worth mentioning that Tetsuo Handa is opposed to the static call
+> > patches, some even carry his NACK, as they make it more difficult to
+> > dynamically load out-of-tree LSMs, or unsupported LSMs on distro kernel=
+s.
+> > Many of us have tried to explain that out-of-tree LSMs are not a
+> > concern for the upstream LSM framework, or the Linux kernel in general,
+> > and that decisions around what LSMs are enabled in distro kernels is
+> > a distro issue, not an upstream issue, but unfortunately Tetsuo
+> > continues to disregard these arguments.
 >
-> Commit 2b3d04787012 ("unicode: Add utf8-data module") changed
-> the database file from 'utf8data.h' to 'utf8data.c' to build
-> separate module, but it seems forgot to update README.utf8data
-> , which may causes confusion. Update the README.utf8data and
-> the default 'UTF8_NAME' in 'mkutf8data.c'.
->
-> Signed-off-by: Gan Jie <ganjie182@gmail.com>
+> No, this is not only a distro issue but also an upstream issue!
+> Because the upstream cannot afford accepting whatever proposed LSMs
+> ( https://lkml.kernel.org/r/8ac2731c-a1db-df7b-3690-dac2b371e431@I-love.S=
+AKURA.ne.jp ).
 
-Applied. thank you!
+I find it somewhat amusing that you are complaining about the LSM
+framework not accepting new LSMs in the same pull request where we are
+adding a new LSM (IPE).  As a reminder, we have documented guidelines
+regarding the addition of new LSMs:
 
--- 
-Gabriel Krisman Bertazi
+https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
+
+... these guidelines were discussed quite a bit on-list some time ago,
+and are essentially the same undocumented guidelines the LSM framework
+has been following for quite some time now (I will admit the doc and
+testing bullet points are likely new).
+
+[SIDE NOTE: Eventually this doc will move over into the kernel tree,
+but I still consider it too much of a work-in-progress/draft to merge
+into mainline.  We probably also need to do a bit of tidying up in the
+kernel doc area relating to LSMs.]
+
+> That is, out-of-tree LSMs cannot become in-tree and obtain stable LSM ID =
+...
+
+We've discussed this many times before, obtaining stable magic numbers
+(e.g. syscall numbers, LSM IDs, etc.) isn't possible until the
+associated code appears in a tagged released from Linus' tree.  Of
+course there are workarounds which we've discussed, and Kees even put
+together a toy LSM demonstrating these workarounds.
+
+You've heard my stance on this several times in the past, but I'll
+repeat myself one more time for the sake of the wider audience.  My
+focus is on the upstream Linux kernel and ensuring that the upstream,
+in-tree LSMs have the best framework possible to ensure their proper
+operation and ease of development/maintenance.  While I have no
+intention to negatively impact out-of-tree LSMs, I will not harm the
+upstream code base solely to support out-of-tree LSMs.  Further, if
+improvements to the upstream LSM framework are determined to harm
+out-of-tree LSMs, that shall be no reason to reject the upstream
+improvements.  I believe this policy is not only consistent with that
+of previous LSM maintainers, but of the general Linux kernel as well.
+
+--=20
+paul-moore.com
 
