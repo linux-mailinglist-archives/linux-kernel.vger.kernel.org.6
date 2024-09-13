@@ -1,76 +1,63 @@
-Return-Path: <linux-kernel+bounces-328051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A9A4977E5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:17:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60DCE977E65
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC3711C215A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:17:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E4161F27C85
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D071D86D8;
-	Fri, 13 Sep 2024 11:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA961D88A7;
+	Fri, 13 Sep 2024 11:17:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J1F2BcUZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="amSm8OHH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0C9187849;
-	Fri, 13 Sep 2024 11:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB56187849;
+	Fri, 13 Sep 2024 11:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726226222; cv=none; b=ruILOaGhmDxqeh1WG+PAV4J5s6qd0Aiw5/TeLybNvDPpMPkL+VSZuk3Kj7NJUm7qv/F/ArtdgKbfxVout6tdd6T5z7FDUPpyMSYHTTSVjI8f0kSUlTeP23QWjEN0QIHI1tUxY7IwYjn30+TZhcPMFjdq5EWRJZj1AdRYS5iGreg=
+	t=1726226257; cv=none; b=dh+41aGd94teP+KrbuY22ODLuj+9WNcHZqqSejS+i2G76pQi1/DrJ8y+UpunryCM3FZnDggQW+Qynjx3mgT14FWTkOmP4cu9oZV3oePwXBKgn0Dknnlne0TJA7IS87yz4tgFdMUGfMpjdngEP1zfqzHNkkpA2hMsU4k+fw1VLVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726226222; c=relaxed/simple;
-	bh=a6tY+mabemuCCnIb81MOFt4TNk7E2HSftu4W8h9pJYI=;
+	s=arc-20240116; t=1726226257; c=relaxed/simple;
+	bh=68sScwS5SIib1G11p6Hu/7v3V+LPBdR0qoLi2atvoIk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kQRokFqsH/gJEkvpfIC8xJUsDUJ+z2Cicf1OCFqoEFKrYAJkRJZCfbEA9CE0TEEuCaNTQWA3Fre9EfHfL37fpXIxO84Fpn3s63fm8RyPd/aMGJMoAmGUPABvKrQYZfYuhLW7Zd+Ta4clUrmQTbCWV8yi5mvJrTv+OVb6MB8hgCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J1F2BcUZ; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1726226220; x=1757762220;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=a6tY+mabemuCCnIb81MOFt4TNk7E2HSftu4W8h9pJYI=;
-  b=J1F2BcUZKJF2ElLPYdvc+MBy1TU7njDbRhiIHSpTRq47J8bsTkYbcjQU
-   xkEZlG08mbzFmP6TI1mqVBkvOXPC+R58VsuxiuAiD/uPrEu4Qhmq056Wq
-   u60FiTFKqZZPHJ2/lUDuDTxba7XQqyXQBabMLdemXbK1K+/yS8YTqPsC7
-   zbBN26DSnTgWy+bn7XicncUqwQymhK65SZCLlimsMPfEbEoTHnt43WPkQ
-   Xi3BBcM3e3klPyji30K3ItMUkit55IZiumoE+zRrGv1kkIJP7muijueyi
-   TfIXhczrINPHpcReNHQghCHWS95PpmcesynbdyND6lmQGdT5TpHcOyoQI
-   g==;
-X-CSE-ConnectionGUID: mKF31263QJSTEOXvAPF1bg==
-X-CSE-MsgGUID: P/13Tfd0TxujX0KjSqmW9A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11193"; a="35707339"
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="35707339"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 04:16:59 -0700
-X-CSE-ConnectionGUID: flF4DfJ4SWq3qG5RM3QdbQ==
-X-CSE-MsgGUID: gr36VhiBRECtxXOdc/UhnA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,225,1719903600"; 
-   d="scan'208";a="98713555"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2024 04:16:57 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id C799211F9D4;
-	Fri, 13 Sep 2024 14:16:54 +0300 (EEST)
-Date: Fri, 13 Sep 2024 11:16:54 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v1 1/1] software node: Simplify swnode_register() a bit
-Message-ID: <ZuQfJifD_ZClXGpf@kekkonen.localdomain>
-References: <20240913110523.3584749-1-andriy.shevchenko@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XF8GjSYQJd6huP5QRv3HPVixeYTMJCDABfhhSSNYAvB1tQWHMprG3TZIkk4P/irDv9Mai1L5yW+HCTZM0GglvkthbsdszAX9v1LGP30xde4HUZryMGWIGyZdzHH6uf7j2dF4ikmgyAXAB/nHfp4lgYgZDUrixQ7eKwaF3/pN1FM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=amSm8OHH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B20DC4CEC0;
+	Fri, 13 Sep 2024 11:17:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726226257;
+	bh=68sScwS5SIib1G11p6Hu/7v3V+LPBdR0qoLi2atvoIk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=amSm8OHHk+ZZCy+kx4/gf8t7jUfsLnkxhQlFtLTDaCKn+QzykUnNG+XJB9rBtuZds
+	 X8bSX10FjTrLNrsbwqvjo7co4kImG/ZuMW+Di4dxeywgBZhPeU19cDCp6R7ikPSVX7
+	 apgaBHrguVmIbc7fu4VB4L4kElXaYwav9vknxzAOMMT7rUQ82cBT+mIqhGROeTK2kx
+	 k7WXCdd7nDv3NTTrlGAh5YoJ4qWY+TXVfwMPqDX0K7x0WNx5jNQ1XHbcCIz/S6v1c3
+	 AHFWXFnKoeENM6P4pEh6/bckzbJT2otXItn+RUPyvMphWwUlKCe+Sa2MMsrjgA50y5
+	 bAAWqNThLGWuQ==
+Date: Fri, 13 Sep 2024 12:17:32 +0100
+From: Simon Horman <horms@kernel.org>
+To: Justin Stitt <justinstitt@google.com>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	Roopa Prabhu <roopa@nvidia.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+	bridge@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+	Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH] netfilter: nf_tables: replace deprecated strncpy with
+ strscpy_pad
+Message-ID: <20240913111732.GV572255@kernel.org>
+References: <20240909-strncpy-net-bridge-netfilter-nft_meta_bridge-c-v1-1-946180aa7909@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,16 +66,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240913110523.3584749-1-andriy.shevchenko@linux.intel.com>
+In-Reply-To: <20240909-strncpy-net-bridge-netfilter-nft_meta_bridge-c-v1-1-946180aa7909@google.com>
 
-On Fri, Sep 13, 2024 at 02:05:23PM +0300, Andy Shevchenko wrote:
-> By introducing two temporary variables simplify swnode_register() a bit.
-> No functional change intended.
+On Mon, Sep 09, 2024 at 03:48:39PM -0700, Justin Stitt wrote:
+> strncpy() is deprecated for use on NUL-terminated destination strings [1] and
+> as such we should prefer more robust and less ambiguous string interfaces.
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> In this particular instance, the usage of strncpy() is fine and works as
+> expected. However, towards the goal of [2], we should consider replacing
+> it with an alternative as many instances of strncpy() are bug-prone. Its
+> removal from the kernel promotes better long term health for the
+> codebase.
+> 
+> The current usage of strncpy() likely just wants the NUL-padding
+> behavior offered by strncpy() and doesn't care about the
+> NUL-termination. Since the compiler doesn't know the size of @dest, we
+> can't use strtomem_pad(). Instead, use strscpy_pad() which behaves
+> functionally the same as strncpy() in this context -- as we expect
+> br_dev->name to be NUL-terminated itself.
+> 
+> Link: https://www.kernel.org/doc/html/latest/process/deprecated.html#strncpy-on-nul-terminated-strings [1]
+> Link: https://github.com/KSPP/linux/issues/90 [2]
+> Link: https://manpages.debian.org/testing/linux-manual-4.8/strscpy.9.en.html
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: linux-hardening@vger.kernel.org
+> Signed-off-by: Justin Stitt <justinstitt@google.com>
+> ---
+> Note: build-tested only.
 
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-
--- 
-Sakari Ailus
+Reviewed-by: Simon Horman <horms@kernel.org>
 
