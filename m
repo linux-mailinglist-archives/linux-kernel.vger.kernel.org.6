@@ -1,121 +1,244 @@
-Return-Path: <linux-kernel+bounces-328156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC3D0977FAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:18:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 733F6977FB3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 14:19:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BCDB1C215B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:18:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB4CBB20C85
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:19:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC8B1D9355;
-	Fri, 13 Sep 2024 12:16:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A501E1D9329;
+	Fri, 13 Sep 2024 12:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CbHOZ0kb"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=vignesh.raman@collabora.com header.b="DpDYps18"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B5B1D88D3;
-	Fri, 13 Sep 2024 12:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726229811; cv=none; b=l/T/HE16DVD0qw1RZx6c73fAgASKsPlZOOtpitAVDIIC/HwNytVBDnTEArKoMfDU3PF4NjOPYDGifWWy88hNDt0icXhLGYAqNW7LhaqfF9u5K79bYzbrM3h+og0izfVMfvYMNsQH4cHcc+ra2ubDVC0/XWKNEBZrxBNCbRZqX5A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726229811; c=relaxed/simple;
-	bh=O0hIV/6nB2rRddlD11VmsyTXzTX0q92fiXgW3yR8Qfo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EQ3/rM5IApzvZ84v2ZVnSFO30NujQp5MJ7VkJLIvNHlWqOhzMKXEqlJOOUfCQ469IfEBWqHc2NGfKtjXzrRukqBgLiHgbrQ7tGgnwXXdoXybJJpxmYnzKOkln8PRTdrIOoC7FfdBIryF34h/UoR+W8g5zUxEMwoeywQQeeqzE18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CbHOZ0kb; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7178df70f28so1618454b3a.2;
-        Fri, 13 Sep 2024 05:16:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1726229809; x=1726834609; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cbCGTiN11FXVDbAkkViGrjdz04Y2hBtYS4VFXBmy4tQ=;
-        b=CbHOZ0kbAkcxJIxpXVJjsFqukNKI3KuIGXH+F2yEgjfQI/pjY83hRqmj3wJ9p2v+1Y
-         F2XAy9YaUvTLaurhaRG9BoIRi6TYrXjafPq4UA9rdNaWa+FYPvq/w+Vo7bG8dd6HH7IK
-         we1YgnRCbNY58FuJ/5O4NPvvoLTqyyxuadcRuZRQ17b+D+mVQNSk1TZzr+JwmWWUHCeK
-         h3+sLJqrOPKSqoeb+Cr21DGepnhKOeYH3Q2AOLHM6U/CbFuZ5jPT3BsR7tQhqyZ4KhhW
-         SO0rGjBNkHlyo2wV5q9nlQOwH//OlYE8zN3q+iv7uZJQYsrn2yvXT+EXjrExNURlDyeK
-         Ydww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726229809; x=1726834609;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cbCGTiN11FXVDbAkkViGrjdz04Y2hBtYS4VFXBmy4tQ=;
-        b=SHov920XHjseYxbm88XMIHdvuAElXmDSxH1pUIz2Govo0SCFsNr8ne/2FfaT9Gua2M
-         IZgMd0ITbqRssYG0moiI4tk8yhnuPnjVQnFTf3HWJjb8PMKAfrjKZ5eysz3V3OnekYtW
-         0v+y/eLPVbbmIE201BaRtSpLW5r0XLK8MQ1bTRBDeeIU5LCEVL+83DYxf4UFNsu0Hki4
-         agK5nZqJY2TazIls34dtGdEfGY42KC4O6F6QAmY8s721hCYcZEpyPpEsbxz/d4Ij0ZA+
-         7Ll0dzxJCA+OSrHzVxcNjKwEnIuC9i6u0bVT9KHwmQcSL0jPNGYLGVmcmJZEXkG7AumC
-         OPPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUohlnkzPwf+xywZCEpVvJERHdC6JegmN+x5X0kfxYRlaUTggaolN0aeCkzY5M9dXE9Chik0ettPDsT0/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVN/Fwqx6Zawki9UdAeDYGNEsvIlomJcAGkQQdrDpjM61atRip
-	JIMFeaUd+jtMSaD3sMM+N41y2XopAT45vyvfNF14R/ODKeHhNx6r
-X-Google-Smtp-Source: AGHT+IGEntuO0AfIyn2/27Csp9RurnaARnS88M+fUAOsKJoNa02/MLOdAFJCt2QX9JfbWN6i+OsKzg==
-X-Received: by 2002:a05:6a00:2daa:b0:717:9154:b5b6 with SMTP id d2e1a72fcca58-7192606ce9emr9929623b3a.7.1726229808646;
-        Fri, 13 Sep 2024 05:16:48 -0700 (PDT)
-Received: from localhost ([116.198.225.81])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7190909252esm5986331b3a.124.2024.09.13.05.16.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2024 05:16:48 -0700 (PDT)
-From: Tao Chen <chen.dylane@gmail.com>
-To: Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tao Chen <chen.dylane@gmail.com>
-Subject: [PATCH bpf-next] libbpf: Fix expected_attach_type set when kernel not support
-Date: Fri, 13 Sep 2024 20:16:27 +0800
-Message-Id: <20240913121627.153898-1-chen.dylane@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420A01D7E2D
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 12:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726229960; cv=pass; b=hSkwfMK/1RVFxoNl7mlAv31teQdQhecki84EwOIbFpLYqohPSmuBv9QGRg2eiXwQoN3JMQdlmS1mUiNNnRQo9Kys5bYy1pB16ILC6bnsdT53NKPDlF4kLISySGZSEO1uNx/MrqaYNRTza3ALvUq5aAVNBXh3Q8pnbr5xjJHde5c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726229960; c=relaxed/simple;
+	bh=7qFV8ouhOjYdPEBwkN+qQKOmsuOahD/KhIPUm+HNUnY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pu0atKGeXibrGCYZeph1YodpxS+0Rf7ahb5+mBVoMUeygE6cAztymYT8oJA/EU9VOv4EYCNLlyi10RZnYgxmVT/1YsYp3l4xxYw4SEY5GSA/r+AQCxXBE1QXJsvi6PDic7H2YSDajCP2Ce/vAmV8TcAPLy5relgk6aLbHAiogdQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=vignesh.raman@collabora.com header.b=DpDYps18; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1726229954; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=AA0OWO+k8gJ6Wg9omSdFa5q1lTJY5LDIZnPSjAEbBkT6fTyytaw1FwtwPebjtyz5WdSP4g0pE+IYPsy/q2vQx5XmtuHR8VuSb4T8p89pQvp6QI0VfhV13ftcYEFDZ1GdCYzCzc4vkqy6UQqzh3K2yp+umTD41dShkNBHDpzQWeE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1726229954; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=cVUFU5KIUA6rufOpcTvDgHhdvtoTT7WEsa6cwDCimqs=; 
+	b=X5AyFhZqmTjs+4vGcb0orUaK96tdfG/mNh1GM3fhhPI9tdpUKkituHJZTPuW3knoDJCKdHLY4a3hiTQfQE++pk2c+qL6d5aomODLlqFfp4G/BrcYctJRSXyka045knMUA8DV6w2Y5pjNCHW95pfKWhbAKsSawW9mSo4jR5T/jpg=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=vignesh.raman@collabora.com;
+	dmarc=pass header.from=<vignesh.raman@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726229954;
+	s=zohomail; d=collabora.com; i=vignesh.raman@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=cVUFU5KIUA6rufOpcTvDgHhdvtoTT7WEsa6cwDCimqs=;
+	b=DpDYps18x7sGxBrgRJyK1xEF5Kso6NMelwumV6vr05WMPd3yrovcEWiXZVWTPdzZ
+	JnBDMWzCvu74n98k71VgN9Ft/nluh8EpLcL5390Xluj1uUarcjy3u7/oL/SDFjBg61+
+	VbFNxBYq6QH42k0kKnzacxXzTPcUCnPKH/RcO12Y=
+Received: by mx.zohomail.com with SMTPS id 1726229952619949.3254555456753;
+	Fri, 13 Sep 2024 05:19:12 -0700 (PDT)
+Message-ID: <a81d8d9d-8aa6-4b59-976e-5bca7c8fdaa9@collabora.com>
+Date: Fri, 13 Sep 2024 17:49:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] drm/ci: enable lockdep detection
+To: Rob Clark <robdclark@gmail.com>
+Cc: Helen Mae Koike Fornazier <helen.koike@collabora.com>,
+ dri-devel <dri-devel@lists.freedesktop.org>, daniels
+ <daniels@collabora.com>, airlied <airlied@gmail.com>,
+ daniel <daniel@ffwll.ch>, "guilherme.gallo" <guilherme.gallo@collabora.com>,
+ "sergi.blanch.torne" <sergi.blanch.torne@collabora.com>,
+ "deborah.brouwer" <deborah.brouwer@collabora.com>,
+ linux-kernel <linux-kernel@vger.kernel.org>
+References: <20240812112030.81774-1-vignesh.raman@collabora.com>
+ <191483d05a3.129198f97500814.8001634600010504645@collabora.com>
+ <0a3db7dc-4533-4111-bec9-35cc68e35d83@collabora.com>
+ <1914d612d8e.f2d5101b916106.3138016556910118397@collabora.com>
+ <42753719-9619-45f1-b76a-8ff8d19cec22@collabora.com>
+ <CAF6AEGuWHER=k-xGad-aAtOfS10R55W37FcU45phNnJpOwFhWw@mail.gmail.com>
+Content-Language: en-US
+From: Vignesh Raman <vignesh.raman@collabora.com>
+In-Reply-To: <CAF6AEGuWHER=k-xGad-aAtOfS10R55W37FcU45phNnJpOwFhWw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-The commit "5902da6d8a52" set expected_attach_type again with
-filed of bpf_program after libpf_prepare_prog_load, which makes
-expected_attach_type = 0 no sense when kenrel not support the
-attach_type feature, so fix it.
+Hi Rob, Helen,
 
-Fixes: 5902da6d8a52 ("libbpf: Add uprobe multi link support to bpf_program__attach_usdt")
-Signed-off-by: Tao Chen <chen.dylane@gmail.com>
----
- tools/lib/bpf/libbpf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 14/08/24 23:11, Rob Clark wrote:
+> On Wed, Aug 14, 2024 at 2:42 AM Vignesh Raman
+> <vignesh.raman@collabora.com> wrote:
+>>
+>> Hi Helen,
+>>
+>> On 14/08/24 01:44, Helen Mae Koike Fornazier wrote:
+>>>
+>>>
+>>>
+>>>
+>>> ---- On Tue, 13 Aug 2024 02:26:48 -0300 Vignesh Raman  wrote ---
+>>>
+>>>    > Hi Helen,
+>>>    >
+>>>    > On 13/08/24 01:47, Helen Mae Koike Fornazier wrote:
+>>>    > >
+>>>    > > Hi Vignesh,
+>>>    > >
+>>>    > > Thanks for your patch.
+>>>    > >
+>>>    > >
+>>>    > > ---- On Mon, 12 Aug 2024 08:20:28 -0300 Vignesh Raman  wrote ---
+>>>    > >
+>>>    > >   > We have enabled PROVE_LOCKING (which enables LOCKDEP) in drm-ci.
+>>>    > >   > This will output warnings when kernel locking errors are encountered
+>>>    > >   > and will continue executing tests. To detect if lockdep has been
+>>>    > >   > triggered, check the debug_locks value in /proc/lockdep_stats after
+>>>    > >   > the tests have run. When debug_locks is 0, it indicates that lockdep
+>>>    > >   > has detected issues and turned itself off. So check this value and
+>>>    > >   > exit with an error if lockdep is detected.
+>>>    > >
+>>>    > > Should we exit with an error? Or with a warning? (GitLab-CI supports that).
+>>>    > > Well, I guess it is serious enough.
+>>>    >
+>>>    > I think we can exit with an error since we check the status at the end
+>>>    > of the tests.
+>>>
+>>> I mean, we can exit with a specific error and configure this specific error in gitlab-ci to be a warning,
+>>> so the job will be yellow and not red.
+>>>
+>>> But maybe the lockdep issue should be a strong error.
+>>
+>> Yes agree. We can exit with an error for lockdep issue instead of a warning.
+> 
+> I think that is too strong, lockdep can warn about things which can
+> never happen in practice.  (We've never completely solved some of the
+> things that lockdep complains about in runpm vs shrinker reclaim.)
+> 
+> Surfacing it as a warning is fine.
 
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index 219facd0e66e..9035edf763a3 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -7343,7 +7343,7 @@ static int libbpf_prepare_prog_load(struct bpf_program *prog,
- 
- 	/* old kernels might not support specifying expected_attach_type */
- 	if ((def & SEC_EXP_ATTACH_OPT) && !kernel_supports(prog->obj, FEAT_EXP_ATTACH_TYPE))
--		opts->expected_attach_type = 0;
-+		prog->expected_attach_type = 0;
- 
- 	if (def & SEC_SLEEPABLE)
- 		opts->prog_flags |= BPF_F_SLEEPABLE;
--- 
-2.25.1
+Will send another patch which will exit with an error if lockdep is 
+detected and configure it as a warning in GitLab CI.
 
+Regards,
+Vignesh
+
+> 
+> BR,
+> -R
+> 
+>>>
+>>>    >
+>>>    > >
+>>>    > > Should we also track on the xfail folder? So we can annotate those errors as well?
+>>>    >
+>>>    > Do you mean reporting this error in expectation files?
+>>>
+>>> I wonder if there will be cases were we are getting this error and we should ignore it, so in the code
+>>> we should check the xfail files to see if we should exit with an error or ignore it.
+>>>
+>>> For instance, if we have a case where we are having this error, and it is flaky, we might want to add it
+>>> to the flakes file list.
+>>>
+>>> Maybe this is not the case, I'm just wondering.
+>>
+>>
+>> The tests are passing but log shows lockdep warning
+>> (https://gitlab.freedesktop.org/vigneshraman/linux/-/jobs/62177711).
+>>
+>> Moreover if the lockdep warning is emitted, lockdep will not continue to
+>> run and there is no need to check this warning for each tests.
+>> So added the check at the end of the tests.
+>>
+>>>
+>>>
+>>>    >
+>>>    > > Did you have an entire pipeline with this? To see if everything is still green?
+>>>    >
+>>>    > Yes. https://gitlab.freedesktop.org/vigneshraman/linux/-/jobs/62177711
+>>>    >
+>>>    > This is a test branch in which I reverted a fix for the lockdep issue.
+>>>    > We see 'WARNING: bad unlock balance detected!' in logs and pipeline is
+>>>    > still green.
+>>>
+>>> But with your patch, it would red right?
+>>
+>> Yes it would fail and the pipeline will be red.
+>>
+>>> With the current patch, is the pipeline still all green?
+>>
+>> With this current patch, it will fail.
+>> Pipeline link to show lockdep_stats before and after tests,
+>> https://gitlab.freedesktop.org/vigneshraman/linux/-/pipelines/1246721
+>>
+>> Regards,
+>> Vignesh
+>>
+>>>
+>>> Regards,
+>>> Helen
+>>>
+>>>    >
+>>>    > Regards,
+>>>    > Vignesh
+>>>    >
+>>>    > >
+>>>    > > Helen
+>>>    > >
+>>>    > >   >
+>>>    > >   > Signed-off-by: Vignesh Raman vignesh.raman@collabora.com>
+>>>    > >   > ---
+>>>    > >   >
+>>>    > >   > v1:
+>>>    > >   >  - Pipeline link to show lockdep_stats before and after tests,
+>>>    > >   > https://gitlab.freedesktop.org/vigneshraman/linux/-/pipelines/1246721
+>>>    > >   >
+>>>    > >   > ---
+>>>    > >   >  drivers/gpu/drm/ci/igt_runner.sh | 11 +++++++++++
+>>>    > >   >  1 file changed, 11 insertions(+)
+>>>    > >   >
+>>>    > >   > diff --git a/drivers/gpu/drm/ci/igt_runner.sh b/drivers/gpu/drm/ci/igt_runner.sh
+>>>    > >   > index f38836ec837c..d2c043cd8c6a 100755
+>>>    > >   > --- a/drivers/gpu/drm/ci/igt_runner.sh
+>>>    > >   > +++ b/drivers/gpu/drm/ci/igt_runner.sh
+>>>    > >   > @@ -85,6 +85,17 @@ deqp-runner junit \
+>>>    > >   >  --limit 50 \
+>>>    > >   >  --template "See https://$CI_PROJECT_ROOT_NAMESPACE.pages.freedesktop.org/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts/results/{{testcase}}.xml"
+>>>    > >   >
+>>>    > >   > +# Check if /proc/lockdep_stats exists
+>>>    > >   > +if [ -f /proc/lockdep_stats ]; then
+>>>    > >   > +    # If debug_locks is 0, it indicates lockdep is detected and it turns itself off.
+>>>    > >   > +    debug_locks=$(grep 'debug_locks:' /proc/lockdep_stats | awk '{print $2}')
+>>>    > >   > +    if [ "$debug_locks" -eq 0 ]; then
+>>>    > >   > +        echo "LOCKDEP issue detected. Please check dmesg logs for more information."
+>>>    > >   > +        cat /proc/lockdep_stats
+>>>    > >   > +        ret=1
+>>>    > >   > +    fi
+>>>    > >   > +fi
+>>>    > >   > +
+>>>    > >   >  # Store the results also in the simpler format used by the runner in ChromeOS CI
+>>>    > >   >  #sed -r 's/(dmesg-warn|pass)/success/g' /results/results.txt > /results/results_simple.txt
+>>>    > >   >
+>>>    > >   > --
+>>>    > >   > 2.43.0
+>>>    > >   >
+>>>    > >   >
+>>>    >
 
