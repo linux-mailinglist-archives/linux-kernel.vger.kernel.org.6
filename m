@@ -1,113 +1,146 @@
-Return-Path: <linux-kernel+bounces-327624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-327623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FAD8977876
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:44:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25791977873
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 07:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A5551C23A38
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:44:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F6D31C243E0
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 05:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A3D154BE9;
-	Fri, 13 Sep 2024 05:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6375818734B;
+	Fri, 13 Sep 2024 05:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Tb7m+Zsz"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hf/KJz4j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA92D1D52B;
-	Fri, 13 Sep 2024 05:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2ECD154BE9
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 05:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726206283; cv=none; b=lvsydUZkhad+su4Rr9i39BV6y92ACXj2BhoLmlPa65nu0xcXdhYrF87mEJ5/lHdwwUSE4Y5qEpj4D+EYK0MOHBRyoVVhRXHgNrMjW7Ce9nFOHlEFfi4CJpufsHyLhaYSyDxwdq3QiIQ+VmMsrmbkcvtdvLoDQSZIDPCwTFt2Vfo=
+	t=1726206280; cv=none; b=W+livkJzenhYiRH5N+nOVVDAi8ACLD687UjrOLfFylKGryvto98ZZ94bAhFI12Ri4wHXaaudja0mwNVM45Ao7UU9pxY+sNMjJdVZG8fhRkNtYIKcUhIHCvr3t1VxSY2c+fGdspAmBYFD1uY034V242aMsiE1vPt6D1d4RGtr23k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726206283; c=relaxed/simple;
-	bh=y0vunahOwbyq+pBN+DnwkZltqno78Hmh2YHmyIimOM0=;
+	s=arc-20240116; t=1726206280; c=relaxed/simple;
+	bh=iKzgzGmY8jMu1CwEhb0AyXIHtqm8tqncg+1CM1dtqwg=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IV2fRxIIIC3liP5npox/y8Wo1/UpLn4uTCVrPa/sx2+6NYtv+qiJWmYImaaFdiRTy5OCPk3AP6A3hoNRbWk9CFQM/raPcVC3OWDleTd3Q+gaOkIPFoNqAMxa9lZFwyJrUvgSoAfE5sopdeFKlfZZFUiTsCVZoW5kNAFQ1P3odF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Tb7m+Zsz; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1726206275;
-	bh=Oc4UPSV+MqwV3Yrw5FWaiaSkA/TSezeDNS9FcjUTgUc=;
+	 MIME-Version:Content-Type; b=LcVYygzcPNx2pjwfRNfduzrcPrq3lxpoOlMxYgqdwEx5ZW8J0S9oS0Q2gQWMq2s3aM4OGa4ebz0YKrxEKRCD2kFXPuIU/7GIqi3Kdp5oqhjxjUfFaoa+LuhbUxxMMh1K+VAzYIAmkHUv4vsaPKre01xm36nzCqTyf0W2qMX6gJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hf/KJz4j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96B3CC4CEC0;
+	Fri, 13 Sep 2024 05:44:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1726206280;
+	bh=iKzgzGmY8jMu1CwEhb0AyXIHtqm8tqncg+1CM1dtqwg=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Tb7m+ZszdoEXPKnaJ9JIsqfvbHF9xNPnDl0gx1hf1jShOUwXCEuvqOl9GrZ/k80zx
-	 OptFT6GldNQDd9hWOmuudoB2W0KVPoAGomDSXZApHFQgO6UEwO3XSzT9B6TE5NMZPn
-	 7IoPqbVLLPW97vKAbHVEr1qWdxNKp9n+LOdCQj3jCB9LlrDKwGu4LXP31v1g13gKso
-	 SL64syuwE8HBdfUSCBUUa39/LIxYcd9alkr6a5HhE3/fpN2+t7HGONsWk0oIIC1QvU
-	 i1zOXnzLyzTQ/1O/PhGyGi7s7SSzRygzbPcdJhLtDHIAG7udKfrbOi0nvWcL8cDQD3
-	 uwkLX3RFW2cMg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4X4jtT08Nhz4wnw;
-	Fri, 13 Sep 2024 15:44:32 +1000 (AEST)
-Date: Fri, 13 Sep 2024 15:44:31 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: Guenter Roeck <linux@roeck-us.net>, Lad Prabhakar
- <prabhakar.mahadev-lad.rj@bp.renesas.com>, Wim Van Sebroeck
- <wim@linux-watchdog.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the watchdog tree
-Message-ID: <20240913154431.14297f94@canb.auug.org.au>
-In-Reply-To: <20240911145543.270c9c9c@canb.auug.org.au>
-References: <20240911145543.270c9c9c@canb.auug.org.au>
+	b=Hf/KJz4j4hKC4Ja9D5/QgWhMDl+fvOcuTW8qYX2IvPuOdV3iWrWsawOr8ieUV8Om8
+	 ZKVjyr8PRMhjrlBWfM9nTkh/nFK+30c4ImxN6q6K/nDO0pNMdBp1dUalkvbAqczSRr
+	 2l20CCMxapyaSBMd0OkstE+RNnTWnFnCYp0RiAJZ3VsMLZ4cYIGV15yWOg2m8OzRXS
+	 EH6GP57tA5xXrNc5CnCDqf/Qp3rjbyFHH2oLaF9IZRUYlkJDAHR5GUFK8B1o1u38q0
+	 ha5jFXHG5MrODCBqPH7vpMDR7xbXrO6QpVo7HpRS3xhX7fnfO5Q/VPB12eHhrWF6S5
+	 +3wAQ4ymJLUxQ==
+Date: Fri, 13 Sep 2024 07:44:35 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>,
+ Dongjiu Geng <gengdongjiu1@gmail.com>, linux-kernel@vger.kernel.org,
+ qemu-arm@nongnu.org, qemu-devel@nongnu.org
+Subject: Re: [PATCH v9 01/12] acpi/ghes: add a firmware file with HEST
+ address
+Message-ID: <20240913074435.0eea2552@foz.lan>
+In-Reply-To: <20240911155108.190f0fdf@imammedo.users.ipa.redhat.com>
+References: <cover.1724556967.git.mchehab+huawei@kernel.org>
+	<34dd38395f29f57a19aef299bafdff9442830ed3.1724556967.git.mchehab+huawei@kernel.org>
+	<20240911155108.190f0fdf@imammedo.users.ipa.redhat.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/98JP5/tzIjANEHTM=pcyrQf";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/98JP5/tzIjANEHTM=pcyrQf
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+Em Wed, 11 Sep 2024 15:51:08 +0200
+Igor Mammedov <imammedo@redhat.com> escreveu:
 
-On Wed, 11 Sep 2024 14:55:43 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the watchdog tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
->=20
-> ERROR: modpost: missing MODULE_LICENSE() in drivers/watchdog/rzv2h_wdt.o
->=20
-> Caused by commit
->=20
->   f6febd0a30b6 ("watchdog: Add Watchdog Timer driver for RZ/V2H(P)")
->=20
-> I have used the watchdog tree from next-20240910 for today.
+> On Sun, 25 Aug 2024 05:45:56 +0200
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> 
+> > Store HEST table address at GPA, placing its content at
+> > hest_addr_le variable.
+> > 
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>  
+> 
+> This looks good to me.
+> 
+> in addition to this, it needs a patch on top to make sure
+> that we migrate hest_addr_le.
+> See a08a64627b6b 'ACPI: Record the Generic Error Status Block address'
+> and fixes on top of that for an example.
 
-I am still seeing this failure.
+Hmm... If I understood such change well, vmstate_ghes_state() will
+use this structure as basis to do migration:
 
---=20
-Cheers,
-Stephen Rothwell
+	/* ghes.h */
+	typedef struct AcpiGhesState {
+	    uint64_t hest_addr_le;
+	    uint64_t ghes_addr_le;
+	    bool present; /* True if GHES is present at all on this board */
+	} AcpiGhesState;
 
---Sig_/98JP5/tzIjANEHTM=pcyrQf
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+	/* generic_event_device.c */
+	static const VMStateDescription vmstate_ghes_state = {
+	    .name = "acpi-ged/ghes",
+	    .version_id = 1,
+	    .minimum_version_id = 1,
+	    .needed = ghes_needed,
+	    .fields      = (VMStateField[]) {
+	        VMSTATE_STRUCT(ghes_state, AcpiGedState, 1,
+	                       vmstate_ghes_state, AcpiGhesState),
+	        VMSTATE_END_OF_LIST()
+	    }
+	};
 
------BEGIN PGP SIGNATURE-----
+	/* hw/arm/virt-acpi-build.c */
+	void virt_acpi_setup(VirtMachineState *vms)
+	{
+	    ...
+	    if (vms->ras) {
+	        assert(vms->acpi_dev);
+	        acpi_ged_state = ACPI_GED(vms->acpi_dev);
+	        acpi_ghes_add_fw_cfg(&acpi_ged_state->ghes_state,
+	                             vms->fw_cfg, tables.hardware_errors);
+	    }
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmbj0T8ACgkQAVBC80lX
-0GwASAf/aLMZ+UhTHD5f4f2nlakMPAF8mxdx1uTmdEH+83iKxhTF3KWsrRpnqcEf
-Any3a24IkXHp3GJRFc/qiymqW9fpb4csi0pQRrBf4tqd7c4FZV18403U9rvWAtbq
-g/ZO61I8JpxilzRcduDrfCYUA5/GoL1a37qsIUgZOenyhF/qr/QlMGj4HPaZcWRM
-KmUaHZldi7mXJU9kKbgpTIx8BZru9c8Iej/h8I6Ftc7BdEqmVSgHlEZKrOrgEppb
-Z1cgAaqUnErEvuJkozumFtgRu/aVAq2jUljiH6EwdvPSr2ILgXlheB8OnduEVa0n
-mQCBznphSoAlFA9XOLHsbN9Dg0eljA==
-=vWLj
------END PGP SIGNATURE-----
+Which relies on acpi_ghes_add_fw_cfg() function to setup callbacks for
+the migration:
 
---Sig_/98JP5/tzIjANEHTM=pcyrQf--
+	/* ghes.c */
+	void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
+	                          GArray *hardware_error)
+	{
+	    /* Create a read-only fw_cfg file for GHES */
+	    fw_cfg_add_file(s, ACPI_HW_ERROR_FW_CFG_FILE, hardware_error->data,
+	                    hardware_error->len);
+
+	    /* Create a read-write fw_cfg file for Address */
+	    fw_cfg_add_file_callback(s, ACPI_HW_ERROR_ADDR_FW_CFG_FILE, NULL, NULL,
+	        NULL, &(ags->ghes_addr_le), sizeof(ags->ghes_addr_le), false);
+
+	    fw_cfg_add_file_callback(s, ACPI_HEST_ADDR_FW_CFG_FILE, NULL, NULL,
+	        NULL, &(ags->hest_addr_le), sizeof(ags->hest_addr_le), false);
+
+	    ags->present = true;
+	}
+
+It sounds to me that both ghes_addr_le and hest_addr_le will be migrated
+altogether.
+
+Did I miss something?
+
+Thanks,
+Mauro
 
