@@ -1,129 +1,139 @@
-Return-Path: <linux-kernel+bounces-328027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36625977DEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:47:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1623977DF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:48:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22780285A15
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:47:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8CC71F260A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:48:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92AF81D88AD;
-	Fri, 13 Sep 2024 10:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FB71D86C2;
+	Fri, 13 Sep 2024 10:48:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="nwEksSen"
-Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IBfUeyqm"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33C91D7E39;
-	Fri, 13 Sep 2024 10:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10432C80;
+	Fri, 13 Sep 2024 10:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726224416; cv=none; b=kIGr0MQ5DrCIQArgW+dkJfsyHPwy8dnLzRvdLQu1pQMSb6nMorsTVYGOczSTyPSGJfLTX96DVDqao8KRCmhsY/Nsbdwl4WMb7OIRpnVtQGCTuekcnVAIHD/Y2wZq4QCnX6h4B9g3N5ZPdwhX19GNYpCkaF1lZHncDFUHssrXAfA=
+	t=1726224491; cv=none; b=RXYW5Xvdm2pRP3B/7DKr42UijAMvq9u3W6L9cdPp5B3bJ5Ns9semmHkEnS1zm3ins6/waGz324FYeG/gSMDRbfjOl2bxrYAVt8VbKQD3MSuTd15FhCdtxfmaDp04ukcpjI+mtgPwsydN9DkgiCLFw4uOC7p4EUSTLZPwMd5Sd7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726224416; c=relaxed/simple;
-	bh=CQZu3v5gvm75PQs5vyLOAEm7VvML+OftnXxyPMpnbe8=;
+	s=arc-20240116; t=1726224491; c=relaxed/simple;
+	bh=uyXk2wl0oIMrGI35p0JiaNvUYXkyuKxh0QgHHyUWTBk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m9eyDn9jPwH2QkvACwOFSUZ3qz/EfikggLI+1edbQSwLm5XykQHd3HYMLJ6B7Yg9xSzh6WHP2PRZAhL4UGGuGXTCOybE1n91APo3ubeMV5Md7+rJ78vEagFMHVEMdLl4qdD1nIp8EPy6mfpegCrI/DQTNV1+br+DT1cZvQBT/XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=nwEksSen; arc=none smtp.client-ip=83.166.143.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X4rb70BmvzDmL;
-	Fri, 13 Sep 2024 12:46:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1726224402;
-	bh=G9D1DK7YBO4iWpZr7m77+lcDnYO5RE/cbvabg3+xvwg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nwEksSen0+/SgVAo+wzgbzMqGaKB4flMPYuYmosXhqkd4yQ/nPePQCEDCCWdVwcxD
-	 3nlSY2ez9YAL0Qq5yQwCLiyHSAsu4iUNA3HDyAsch2DtWHhCJcBi7euBHv2IoMbzbh
-	 Ctdnn53zQW9e2OmIPVPi19JkZ8MzNq4XQHf741zQ=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4X4rb54836zgMC;
-	Fri, 13 Sep 2024 12:46:41 +0200 (CEST)
-Date: Fri, 13 Sep 2024 12:46:34 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tahera Fahimi <fahimitahera@gmail.com>, linux-api@vger.kernel.org
-Cc: outreachy@lists.linux.dev, gnoack@google.com, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bjorn3_gh@protonmail.com, jannh@google.com, 
-	netdev@vger.kernel.org, Alejandro Colomar <alx@kernel.org>
-Subject: Re: [PATCH v11 1/8] Landlock: Add abstract UNIX socket restriction
-Message-ID: <20240913.nuu9Eevo2Pha@digikod.net>
-References: <cover.1725494372.git.fahimitahera@gmail.com>
- <5f7ad85243b78427242275b93481cfc7c127764b.1725494372.git.fahimitahera@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=I6hcRClC5umgFD4SM9EcWR5HO0gUvEVaxIam1y0bMMszlxAWlyYHJrWsXSc9I6Gt8c7mvtLtpM93VdH8TwT8Omt0pDVzZzmPa8VY10FfggcewzAcoCqlDhivJug5MNdDZO2TKRFGtaZfQv/buZr73Az+uV6YbB1rUQiHk0OoZzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IBfUeyqm; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=qExJ1eSAIG6uS9RKXYfNI+ldhnokTO3+3L9xVG0mHwI=; b=IBfUeyqmy7otonnkWjM0yC42zG
+	O+d/EyOr/n9+iQrz1ApQcHk7rYpMhuVQVMAuP172YBQeLRGanJ57RVd1YVrvw6eZI+nh5cwGwtgA9
+	IZXPwdan9yA3FAIWIE+jr/2Ewq+G0qElVnx2PPQFEtybcwEPpELj+i3p8SvR0VQeYgg0jtHfA2JbK
+	R2KEB+aJlxtm7HQ2d1mz7EXkGtfNpb4Ikbt4rbFqW0ZGKsWpH4X9UUnvmA432pohKS3u6+LeDAb4a
+	V1jffnxaeYHS4ERxXMDPJxQQvvxchUAtF5C/fsuQ8wdtRWbEOjCB53IVKkZsmjFGxFaRP3tWLYgxn
+	XRfVhttw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1sp3qD-0000000GT5k-11dF;
+	Fri, 13 Sep 2024 10:47:53 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 310163003E1; Fri, 13 Sep 2024 12:47:52 +0200 (CEST)
+Date: Fri, 13 Sep 2024 12:47:52 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	kan.liang@linux.intel.com, mingo@redhat.com, acme@kernel.org,
+	namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com
+Subject: Re: [BUG BISECTED] Missing RCU reader in perf_event_setup_cpumask()
+Message-ID: <20240913104752.GU4723@noisy.programming.kicks-ass.net>
+References: <2b66dff8-b827-494b-b151-1ad8d56f13e6@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5f7ad85243b78427242275b93481cfc7c127764b.1725494372.git.fahimitahera@gmail.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <2b66dff8-b827-494b-b151-1ad8d56f13e6@paulmck-laptop>
 
-On Wed, Sep 04, 2024 at 06:13:55PM -0600, Tahera Fahimi wrote:
-> This patch introduces a new "scoped" attribute to the
-> landlock_ruleset_attr that can specify
-> "LANDLOCK_SCOPED_ABSTRACT_UNIX_SOCKET" to scope abstract UNIX sockets
-> from connecting to a process outside of the same Landlock domain. It
-> implements two hooks, unix_stream_connect and unix_may_send to enforce
-> this restriction.
+On Fri, Sep 13, 2024 at 01:00:44AM -0700, Paul E. McKenney wrote:
+> Hello!
 > 
-> Closes: https://github.com/landlock-lsm/linux/issues/7
-> Signed-off-by: Tahera Fahimi <fahimitahera@gmail.com>
+> On next-20240912 running rcutorture scenario TREE05, I see this
+> deterministically:
+> 
+> [   32.603233] =============================
+> [   32.604594] WARNING: suspicious RCU usage
+> [   32.605928] 6.11.0-rc5-00040-g4ba4f1afb6a9 #55238 Not tainted
+> [   32.607812] -----------------------------
+> [   32.609140] kernel/events/core.c:13946 RCU-list traversed in non-reader section!!
+> [   32.611595]
+> [   32.611595] other info that might help us debug this:
+> [   32.611595]
+> [   32.614247]
+> [   32.614247] rcu_scheduler_active = 2, debug_locks = 1
+> [   32.616392] 3 locks held by cpuhp/4/35:
+> [   32.617687]  #0: ffffffffb666a650 (cpu_hotplug_lock){++++}-{0:0}, at: cpuhp_thread_fun+0x4e/0x200
+> [   32.620563]  #1: ffffffffb666cd20 (cpuhp_state-down){+.+.}-{0:0}, at: cpuhp_thread_fun+0x4e/0x200
+> [   32.623412]  #2: ffffffffb677c288 (pmus_lock){+.+.}-{3:3}, at: perf_event_exit_cpu_context+0x32/0x2f0
+> [   32.626399]
+> [   32.626399] stack backtrace:
+> [   32.627848] CPU: 4 UID: 0 PID: 35 Comm: cpuhp/4 Not tainted 6.11.0-rc5-00040-g4ba4f1afb6a9 #55238
+> [   32.628832] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
+> [   32.628832] Call Trace:
+> [   32.628832]  <TASK>
+> [   32.628832]  dump_stack_lvl+0x83/0xa0
+> [   32.628832]  lockdep_rcu_suspicious+0x143/0x1a0
+> [   32.628832]  perf_event_exit_cpu_context+0x2e5/0x2f0
+> [   32.628832]  ? __pfx_perf_event_exit_cpu+0x10/0x10
+> [   32.628832]  perf_event_exit_cpu+0x9/0x10
+> [   32.628832]  cpuhp_invoke_callback+0x130/0x2a0
+> [   32.628832]  ? lock_release+0xc7/0x290
+> [   32.628832]  ? cpuhp_thread_fun+0x4e/0x200
+> [   32.628832]  cpuhp_thread_fun+0x183/0x200
+> [   32.628832]  smpboot_thread_fn+0xd8/0x1d0
+> [   32.628832]  ? __pfx_smpboot_thread_fn+0x10/0x10
+> [   32.628832]  kthread+0xd4/0x100
+> [   32.628832]  ? __pfx_kthread+0x10/0x10
+> [   32.628832]  ret_from_fork+0x2f/0x50
+> [   32.628832]  ? __pfx_kthread+0x10/0x10
+> [   32.628832]  ret_from_fork_asm+0x1a/0x30
+> [   32.628832]  </TASK>
+> 
+> I bisected this to:
+> 
+> 4ba4f1afb6a9 ("perf: Generic hotplug support for a PMU with a scope")
+> 
+> This adds a perf_event_setup_cpumask() function that uses
+> list_for_each_entry_rcu() without an obvious RCU read-side critical
+> section, so the fix might be as simple as adding rcu_read_lock() and
+> rcu_read_unlock().  In the proper places, of course.  ;-)
 
-> diff --git a/security/landlock/task.c b/security/landlock/task.c
-> index 849f5123610b..b9390445d242 100644
-> --- a/security/landlock/task.c
-> +++ b/security/landlock/task.c
+IIRC that condition should be:
 
-> +static int hook_unix_stream_connect(struct sock *const sock,
-> +				    struct sock *const other,
-> +				    struct sock *const newsk)
-> +{
-> +	const struct landlock_ruleset *const dom =
-> +		landlock_get_current_domain();
-> +
-> +	/* quick return for non-sandboxed processes */
-> +	if (!dom)
-> +		return 0;
-> +
-> +	if (is_abstract_socket(other) && sock_is_scoped(other, dom))
-> +		return -EPERM;
+  lockdep_is_held(&pmus_srcu) || lockdep_is_held(&pmus_lock)
 
-I was wondering if it would make more sense to return -EACCES here.
-EACCES is usually related to file permission, but send(2)/sendto(2)
-don't return EPERM according to man pages.  Well, according to the
-kernel code they can return EPERM so I think we are good with EPERM.
+And at this pooint we actually do hold pmus_lock.
 
-It looks like other LSMs always use EACCES though...
+But that all begs the question why we're using RCU iteration here to
+begin with, as this code seems to be only called from this context.
 
-> +
-> +	return 0;
-> +}
-> +
-> +static int hook_unix_may_send(struct socket *const sock,
-> +			      struct socket *const other)
-> +{
-> +	const struct landlock_ruleset *const dom =
-> +		landlock_get_current_domain();
-> +
-> +	if (!dom)
-> +		return 0;
-> +
-> +	if (is_abstract_socket(other->sk)) {
-> +		/*
-> +		 * Checks if this datagram socket was already allowed to
-> +		 * be connected to other.
-> +		 */
-> +		if (unix_peer(sock->sk) == other->sk)
-> +			return 0;
-> +
-> +		if (sock_is_scoped(other->sk, dom))
-> +			return -EPERM;
+Kan, is the simple fix to do:
 
-ditto
+-	list_for_each_entry_rcu(pmu, &pmus, entry, lockdep_is_held(&pmus_srcu)) {
++	list_for_each_entry(pmu, &pmus, entry) {
+
+?
+  
 
