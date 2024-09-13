@@ -1,139 +1,112 @@
-Return-Path: <linux-kernel+bounces-328028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1623977DF1
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:48:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98771977DF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 12:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8CC71F260A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:48:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46C811F27350
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 10:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FB71D86C2;
-	Fri, 13 Sep 2024 10:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272E71D88AF;
+	Fri, 13 Sep 2024 10:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IBfUeyqm"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="qZtLeqwm"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10432C80;
-	Fri, 13 Sep 2024 10:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726224491; cv=none; b=RXYW5Xvdm2pRP3B/7DKr42UijAMvq9u3W6L9cdPp5B3bJ5Ns9semmHkEnS1zm3ins6/waGz324FYeG/gSMDRbfjOl2bxrYAVt8VbKQD3MSuTd15FhCdtxfmaDp04ukcpjI+mtgPwsydN9DkgiCLFw4uOC7p4EUSTLZPwMd5Sd7o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726224491; c=relaxed/simple;
-	bh=uyXk2wl0oIMrGI35p0JiaNvUYXkyuKxh0QgHHyUWTBk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I6hcRClC5umgFD4SM9EcWR5HO0gUvEVaxIam1y0bMMszlxAWlyYHJrWsXSc9I6Gt8c7mvtLtpM93VdH8TwT8Omt0pDVzZzmPa8VY10FfggcewzAcoCqlDhivJug5MNdDZO2TKRFGtaZfQv/buZr73Az+uV6YbB1rUQiHk0OoZzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IBfUeyqm; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=qExJ1eSAIG6uS9RKXYfNI+ldhnokTO3+3L9xVG0mHwI=; b=IBfUeyqmy7otonnkWjM0yC42zG
-	O+d/EyOr/n9+iQrz1ApQcHk7rYpMhuVQVMAuP172YBQeLRGanJ57RVd1YVrvw6eZI+nh5cwGwtgA9
-	IZXPwdan9yA3FAIWIE+jr/2Ewq+G0qElVnx2PPQFEtybcwEPpELj+i3p8SvR0VQeYgg0jtHfA2JbK
-	R2KEB+aJlxtm7HQ2d1mz7EXkGtfNpb4Ikbt4rbFqW0ZGKsWpH4X9UUnvmA432pohKS3u6+LeDAb4a
-	V1jffnxaeYHS4ERxXMDPJxQQvvxchUAtF5C/fsuQ8wdtRWbEOjCB53IVKkZsmjFGxFaRP3tWLYgxn
-	XRfVhttw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1sp3qD-0000000GT5k-11dF;
-	Fri, 13 Sep 2024 10:47:53 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 310163003E1; Fri, 13 Sep 2024 12:47:52 +0200 (CEST)
-Date: Fri, 13 Sep 2024 12:47:52 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	kan.liang@linux.intel.com, mingo@redhat.com, acme@kernel.org,
-	namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com
-Subject: Re: [BUG BISECTED] Missing RCU reader in perf_event_setup_cpumask()
-Message-ID: <20240913104752.GU4723@noisy.programming.kicks-ass.net>
-References: <2b66dff8-b827-494b-b151-1ad8d56f13e6@paulmck-laptop>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0D61D58A8;
+	Fri, 13 Sep 2024 10:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1726224561; cv=pass; b=lHjDRKbgtB0Zci61JpiMVH06aJfNQM5T6QJCkNKCWGWwUu5+bDnaydo3/OrnKYixRoDsVPHqKxGRxomZ1rtorSlkAhb5DH8ox89LkD+rWexIbS8NfEYrfppUkIH3NoQYFP+QMdzVYwAHaIaR8UIl9jolyesdpIuHO+mUPr657pg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1726224561; c=relaxed/simple;
+	bh=rrqHstqaOoJH0oNf7w9RLAC65EvHqF+QEqg7yXEXkXk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AoiRDZnlX1jOzT65JrN/ei6rT2fgqWYyYFLIpTcx/wIClE33kDY/v6YB5eHp0RFTME6Yzyr0GGbWFCxY38SiSzHxSe6omxKTrRazcTmQqX/o0/whvtrAt34S9dzJ5Ikp/gaoNkiZXM+Oi0n05WfifQcF1Ns/in2d9I8VLkh5itc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=qZtLeqwm; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1726224544; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=JgCHy26J5RTuZfALei11p0LhFB2xQIpGjsbqbvN9xv7ak/7OkkOAcXpS7EI5ZITdMYpf/oM3Xj/hui9a07q6BtSa1OYcb0b/n3BubOu93V8x/hD3BVGVfDnnO+DzLm8R7iFz//EBM77fiWXTIlwEtM52wHmIXMzZbXUUA7xoF1M=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1726224544; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=JgVVClL/nl81iGMgJH6Or+qEABIgBR2m9kRyKGMQOxs=; 
+	b=EkrO2d2Y0f9JOBlm+Ef1G5O9iV7x7U9rPwWWjsqLr9iKX1Fymcx8NjQyoGuCMG2vu+tsX1A5Hw8yAK7fR6fLEZ67HetLbHSdtsXvWUIgCbbrJLf5py2GqtsQ2iep+CQAKDMsVu9C/Sasw26mKNS8EchPsicMz7A07znK1f4cY5M=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1726224544;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=JgVVClL/nl81iGMgJH6Or+qEABIgBR2m9kRyKGMQOxs=;
+	b=qZtLeqwmL+sYAKut+OP6DssmODsfmsiVnRMD5/zrlLlQ6dL0H4LVkD5rBelNi6/R
+	vGjHGyRed5k1EaXuUVf1y9gcGrCmCdE0uetObtqmH5rluSOXFvMe0vv4RfmNh8CBeDU
+	QBgpmV8D0WOFEk1ETLqsCHzifCyD/pjijuy3L1QB3Fon4t0Miv0vEvh9Z3/655n8BmK
+	liAle6a9bdd9PM0kbns3EzfvfEvCVLnzvJ3iP+4Mo++vOE2OjmXmoAeRwh08Q7pnbfd
+	zClLtfNicvVWgNjPM29aKSxdw4Lfq6y3CjTjLmSPfnFQxgGQXPv/kboF4wcCqHObGqm
+	80xC5+IgwA==
+Received: by mx.zohomail.com with SMTPS id 1726224543413872.8186395558075;
+	Fri, 13 Sep 2024 03:49:03 -0700 (PDT)
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Andre Przywara <andre.przywara@arm.com>,
+	Maxime Ripard <mripard@kernel.org>
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Icenowy Zheng <uwu@icenowy.me>
+Subject: [PATCH 1/2] dt-bindings: arm: sunxi: document RerVision A33-Vstar board
+Date: Fri, 13 Sep 2024 18:48:44 +0800
+Message-ID: <20240913104845.4112986-1-uwu@icenowy.me>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2b66dff8-b827-494b-b151-1ad8d56f13e6@paulmck-laptop>
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Fri, Sep 13, 2024 at 01:00:44AM -0700, Paul E. McKenney wrote:
-> Hello!
-> 
-> On next-20240912 running rcutorture scenario TREE05, I see this
-> deterministically:
-> 
-> [   32.603233] =============================
-> [   32.604594] WARNING: suspicious RCU usage
-> [   32.605928] 6.11.0-rc5-00040-g4ba4f1afb6a9 #55238 Not tainted
-> [   32.607812] -----------------------------
-> [   32.609140] kernel/events/core.c:13946 RCU-list traversed in non-reader section!!
-> [   32.611595]
-> [   32.611595] other info that might help us debug this:
-> [   32.611595]
-> [   32.614247]
-> [   32.614247] rcu_scheduler_active = 2, debug_locks = 1
-> [   32.616392] 3 locks held by cpuhp/4/35:
-> [   32.617687]  #0: ffffffffb666a650 (cpu_hotplug_lock){++++}-{0:0}, at: cpuhp_thread_fun+0x4e/0x200
-> [   32.620563]  #1: ffffffffb666cd20 (cpuhp_state-down){+.+.}-{0:0}, at: cpuhp_thread_fun+0x4e/0x200
-> [   32.623412]  #2: ffffffffb677c288 (pmus_lock){+.+.}-{3:3}, at: perf_event_exit_cpu_context+0x32/0x2f0
-> [   32.626399]
-> [   32.626399] stack backtrace:
-> [   32.627848] CPU: 4 UID: 0 PID: 35 Comm: cpuhp/4 Not tainted 6.11.0-rc5-00040-g4ba4f1afb6a9 #55238
-> [   32.628832] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
-> [   32.628832] Call Trace:
-> [   32.628832]  <TASK>
-> [   32.628832]  dump_stack_lvl+0x83/0xa0
-> [   32.628832]  lockdep_rcu_suspicious+0x143/0x1a0
-> [   32.628832]  perf_event_exit_cpu_context+0x2e5/0x2f0
-> [   32.628832]  ? __pfx_perf_event_exit_cpu+0x10/0x10
-> [   32.628832]  perf_event_exit_cpu+0x9/0x10
-> [   32.628832]  cpuhp_invoke_callback+0x130/0x2a0
-> [   32.628832]  ? lock_release+0xc7/0x290
-> [   32.628832]  ? cpuhp_thread_fun+0x4e/0x200
-> [   32.628832]  cpuhp_thread_fun+0x183/0x200
-> [   32.628832]  smpboot_thread_fn+0xd8/0x1d0
-> [   32.628832]  ? __pfx_smpboot_thread_fn+0x10/0x10
-> [   32.628832]  kthread+0xd4/0x100
-> [   32.628832]  ? __pfx_kthread+0x10/0x10
-> [   32.628832]  ret_from_fork+0x2f/0x50
-> [   32.628832]  ? __pfx_kthread+0x10/0x10
-> [   32.628832]  ret_from_fork_asm+0x1a/0x30
-> [   32.628832]  </TASK>
-> 
-> I bisected this to:
-> 
-> 4ba4f1afb6a9 ("perf: Generic hotplug support for a PMU with a scope")
-> 
-> This adds a perf_event_setup_cpumask() function that uses
-> list_for_each_entry_rcu() without an obvious RCU read-side critical
-> section, so the fix might be as simple as adding rcu_read_lock() and
-> rcu_read_unlock().  In the proper places, of course.  ;-)
+RerVision A33-Vstar is an evaluation board of their A33-Core1 SoM.
 
-IIRC that condition should be:
+Add its compatible (with the SoM compatible) to the sunxi board DT
+binding file.
 
-  lockdep_is_held(&pmus_srcu) || lockdep_is_held(&pmus_lock)
+Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+---
+ Documentation/devicetree/bindings/arm/sunxi.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-And at this pooint we actually do hold pmus_lock.
+diff --git a/Documentation/devicetree/bindings/arm/sunxi.yaml b/Documentation/devicetree/bindings/arm/sunxi.yaml
+index 09dc6f4249866..6e56530d02439 100644
+--- a/Documentation/devicetree/bindings/arm/sunxi.yaml
++++ b/Documentation/devicetree/bindings/arm/sunxi.yaml
+@@ -841,6 +841,12 @@ properties:
+           - const: allwinner,sun50i-h64
+           - const: allwinner,sun50i-a64
+ 
++      - description: RerVision A33-Vstar (with A33-Core1 SoM)
++        items:
++          - const: rervision,a33-vstar
++          - const: rervision,a33-core1
++          - const: allwinner,sun8i-a33
++
+       - description: RerVision H3-DVK
+         items:
+           - const: rervision,h3-dvk
+-- 
+2.46.0
 
-But that all begs the question why we're using RCU iteration here to
-begin with, as this code seems to be only called from this context.
-
-Kan, is the simple fix to do:
-
--	list_for_each_entry_rcu(pmu, &pmus, entry, lockdep_is_held(&pmus_srcu)) {
-+	list_for_each_entry(pmu, &pmus, entry) {
-
-?
-  
 
