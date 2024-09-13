@@ -1,127 +1,119 @@
-Return-Path: <linux-kernel+bounces-328104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 830D5977EE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:53:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0B9A977EF3
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48E2F284FB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:53:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAA7D1C22330
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E551D88BC;
-	Fri, 13 Sep 2024 11:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DvcZhikQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0103E2C80
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 11:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0B811D88BB;
+	Fri, 13 Sep 2024 11:54:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DFC22C80;
+	Fri, 13 Sep 2024 11:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726228376; cv=none; b=cCdWQN+dO20l6l0JfJQzYdp2ApdxRjrf5OSEOuV5UZteguGZCj8DeaWl4bc33ojAnCaLGOaq/Dve9kNvLE/jT8joEis4PZ+nNkz6BxrsE/s65akqaHA0A2PB6iSt86jZp6QMl3A0leZC35ftjpcBg/Y7i7y6cOPm5WfYE0yjgok=
+	t=1726228456; cv=none; b=NlN9dWI+RELeQRlxVvCBaTGMHdKNhscJkgJw0USTYrDTWbT941TonGS7xTfz02LQRkm3zHzXKNSCDHf8ygVfBR9oGgelgP1DYtJ3s6woEOH0cFsz01hH4ow1xrltad3nXgRXYE5mUc49mG5WNl6sld6luZ7Fmd9AMK6ixnE7yEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726228376; c=relaxed/simple;
-	bh=pMCipnQS2GEzxtn5f/uJ+jzhSgUq2j2uXgI3jBB5eCI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CH6Ki+P6USKBRpLUEgYy+M30qSDCsPmNKeQHXHJbvt3IjPz9kyu04QdBjWb5+Gw7RUjxA2svIy6A4OQZ9o9I4CwtFkR0CxfuOB0SZcfBkgo3bwwaxtoNFB8dBD+s05UC70Li6ibL+LqXZSRBv3ZrkG9lSGWCucNuCMFLsli+9YE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DvcZhikQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726228374;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kjWhGkYRLL4AoRfx/SSMTKGWIse43z4bAnG3BFGqR34=;
-	b=DvcZhikQ0I/oSeStepD2bgto/U/7KWCHWUxjdjXmA88fNqqOo1FtX5uYhiTvy94iJJu52T
-	FY6a+dAwGwcW/ttX8NJ+9KA44/ig33NaTgi7MBXaSaA+x1gi/TytQnchungMcsFJ2QPr+K
-	F9ZsotFNeS1dRYibEtrzH1zA4pr16NA=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-549-rBokVC_iPJ6RNTN59bqzpw-1; Fri,
- 13 Sep 2024 07:52:50 -0400
-X-MC-Unique: rBokVC_iPJ6RNTN59bqzpw-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 995611955F07;
-	Fri, 13 Sep 2024 11:52:47 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.25])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 9F46519560AB;
-	Fri, 13 Sep 2024 11:52:41 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri, 13 Sep 2024 13:52:35 +0200 (CEST)
-Date: Fri, 13 Sep 2024 13:52:28 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCHv3 1/7] uprobe: Add support for session consumer
-Message-ID: <20240913115228.GE19305@redhat.com>
-References: <20240909074554.2339984-1-jolsa@kernel.org>
- <20240909074554.2339984-2-jolsa@kernel.org>
+	s=arc-20240116; t=1726228456; c=relaxed/simple;
+	bh=iG2P9hX1ns9KNbqKRkEhqBui87XiWao5+qPYO4jvhyU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qvksMKpjHDJ2n+WPgh1mkYVycqICRZSDACinu8KCrfIG7zpdY2XzF9GDD/7/NT5Mu1daoa/ZmDQsLAXQoq275/fRqV/ddncFk8qbt0M1kUPnctokXgHQeQ39tdC/odDc3FLVhJRrZlddt5g14okdYYtydjMY9BXIPHrBxZevNvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8352413D5;
+	Fri, 13 Sep 2024 04:54:42 -0700 (PDT)
+Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 366E53F64C;
+	Fri, 13 Sep 2024 04:54:10 -0700 (PDT)
+Message-ID: <cfad80e4-3ee8-4a55-9dee-41d0d0256c04@arm.com>
+Date: Fri, 13 Sep 2024 12:54:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240909074554.2339984-2-jolsa@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/7] perf cs-etm: Use new OpenCSD consistency checks
+To: James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org,
+ gankulkarni@os.amperecomputing.com, coresight@lists.linaro.org,
+ scclevenger@os.amperecomputing.com
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, John Garry <john.g.garry@oracle.com>,
+ Will Deacon <will@kernel.org>, Leo Yan <leo.yan@linux.dev>,
+ Ben Gainey <ben.gainey@arm.com>, Ruidong Tian
+ <tianruidong@linux.alibaba.com>, Benjamin Gray <bgray@linux.ibm.com>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240912151143.1264483-1-james.clark@linaro.org>
+ <20240912151143.1264483-3-james.clark@linaro.org>
+Content-Language: en-US
+From: Leo Yan <leo.yan@arm.com>
+In-Reply-To: <20240912151143.1264483-3-james.clark@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 09/09, Jiri Olsa wrote:
->
-> @@ -37,13 +37,16 @@ struct uprobe_consumer {
->  	 * for the current process. If filter() is omitted or returns true,
->  	 * UPROBE_HANDLER_REMOVE is effectively ignored.
->  	 */
-> -	int (*handler)(struct uprobe_consumer *self, struct pt_regs *regs);
-> +	int (*handler)(struct uprobe_consumer *self, struct pt_regs *regs, __u64 *data);
->  	int (*ret_handler)(struct uprobe_consumer *self,
->  				unsigned long func,
-> -				struct pt_regs *regs);
-> +				struct pt_regs *regs, __u64 *data);
+On 9/12/24 16:11, James Clark wrote:> 
+> 
+> Previously when the incorrect binary was used for decode, Perf would
+> silently continue to generate incorrect samples. With OpenCSD 1.5.4 we
+> can enable consistency checks that do a best effort to detect a mismatch
+> in the image. When one is detected a warning is printed and sample
+> generation stops until the trace resynchronizes with a good part of the
+> image.
+> 
+> Reported-by: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+> Closes: https://lore.kernel.org/all/20240719092619.274730-1-gankulkarni@os.amperecomputing.com/
+> Signed-off-by: James Clark <james.clark@linaro.org>
+> ---
+>   tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 7 ++++++-
+>   1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> index b78ef0262135..b85a8837bddc 100644
+> --- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> +++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+> @@ -685,9 +685,14 @@ cs_etm_decoder__create_etm_decoder(struct cs_etm_decoder_params *d_params,
+>          }
+> 
+>          if (d_params->operation == CS_ETM_OPERATION_DECODE) {
+> +               int decode_flags = OCSD_CREATE_FLG_FULL_DECODER;
+> +#ifdef OCSD_OPFLG_N_UNCOND_DIR_BR_CHK
+> +               decode_flags |= OCSD_OPFLG_N_UNCOND_DIR_BR_CHK | OCSD_OPFLG_CHK_RANGE_CONTINUE |
+> +                               ETM4_OPFLG_PKTDEC_AA64_OPCODE_CHK;
+> +#endif
 
-And... I won't insist, but I'd suggest to do this in a separate patch
-which should also update the current users in bpf_trace.c, trace_uprobe.c
-and bpf_testmod.c.
+Looks good to me.
 
-Then it would be easier to review the next "functional" change. But this
-is minor, feel free to ignore.
+Just one question: should the flag ETM4_OPFLG_PKTDEC_AA64_OPCODE_CHK be set
+according to ETM version? E.g. it should be only set for ETMv4 or this is
+fine for ETE as well.
 
+Thanks,
+Leo
 
-Finally, imo this documentation in handler_chain()
-
-		/*
-		 * The handler can return following values:
-		 * 0 - execute ret_handler (if it's defined)
-		 * 1 - remove uprobe
-		 * 2 - do nothing (ignore ret_handler)
-		 */
-
-should be moved to uprobes.h and explain UPROBE_HANDLER_REMOVE/IGNORE there.
-
-And note that "remove uprobe" is misleading, it should say something
-like "remove the breakpoint from current->mm".
-
-Oleg.
-
+>                  if (ocsd_dt_create_decoder(decoder->dcd_tree,
+>                                             decoder->decoder_name,
+> -                                          OCSD_CREATE_FLG_FULL_DECODER,
+> +                                          decode_flags,
+>                                             trace_config, &csid))
+>                          return -1;
+> 
+> --
+> 2.34.1
+> 
 
