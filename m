@@ -1,128 +1,108 @@
-Return-Path: <linux-kernel+bounces-328062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EE7B977E79
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:31:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1A14977E7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 13:32:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D98F286FED
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:31:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73E56286F1F
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 11:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD771D86DC;
-	Fri, 13 Sep 2024 11:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBF91D86EC;
+	Fri, 13 Sep 2024 11:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="XKXZ8DDC"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="G6g0Oh3s"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0BED19C57E;
-	Fri, 13 Sep 2024 11:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F4E1D7E2D
+	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 11:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726227068; cv=none; b=Cetr7DA60kuECg4pKiqtdwlWm4HQkGXoj5iBv9s+mOcxM1g8RWXJ8kJFJ4M4cD/QmNr2J5P+bg6je9Keen2HsY6LPio7TMsN7VTgz5VJW5HonWVGrdx6gn3GVDeWuVJziNerGt/cQ8qtPhlHnhU3h1M30g2NTTMXiin3FqxWdu0=
+	t=1726227148; cv=none; b=i3LAC3XKzVzeg0DC/7HNDcDAFFTIhc1Hd5nKTSjU85WzjLwgDsnj/84TtptYqMIO1Di+kg3k91loEXB1dPB3t+XVu0fZw9sNkSkq4DHDadSJ5l1dQ/zI4Ay8aAWo9MTqpk0+00Bx+vxboXDJhPM0IiXNYchsQVtb6jYfNbsfcDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726227068; c=relaxed/simple;
-	bh=PBiyvnFxb3gq0sSh6looQHeFgt+o5fyRNAGt4jP8Das=;
-	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZuZzm3wvr+1nHT6zpAMmv/gkOcu4ShBGuso8SL7Z3LrCJGfSWBODLrycNAQrJISeOKgmz+jt/OTh/kEUMmgKl8Daj7Tw6HgBX0yAMZYXyloG9cGEiNmziIJ5niHPt0AyoVUP9WqBLhZ8cDAtOTU4jSjjDkxgJFywLSQKRrmNxRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=XKXZ8DDC; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=rd35sziulreebakooj7htuyhta.protonmail; t=1726227064; x=1726486264;
-	bh=qud21Kk3XyEwvYAeTcmW9H0401PiuN9myDU9jIykWFk=;
-	h=Date:To:From:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=XKXZ8DDCG2+sYvepf1usAAXc0kIIhrXEbPuZl8WzKACvwSxViDFUPjiV0fAhBxpoz
-	 5mTD4QqHeKf/oThmqAruKm8WXMv2W1RkvgCxVifqt9Pm4N7PWHObtLmVRJekVGk01P
-	 ALuizn2fDpCKI8uGbt0jkI65YuNT4R6KG1wLz5wOmzziGqNetg3lWqsYAG90DIkGv1
-	 cO69/M0CqxO18OoLvokGpGGjD5ubrfIL3EyZYkBTL5r+H7E09GQWA6fkW0wJ+3e0bG
-	 VBpJPTfdcdBnGWWbLe3xvp09LL/cHly3pp7WT3WstKyhcC4Z2SGPVitfnbxnMdZDKo
-	 tzcQBdJ9rgSEg==
-Date: Fri, 13 Sep 2024 11:30:58 +0000
-To: Patrick Miller <paddymills@proton.me>, a.hindborg@samsung.com, alex.gaynor@gmail.com, aliceryhl@google.com, apw@canonical.com, bjorn3_gh@protonmail.com, boqun.feng@gmail.com, dwaipayanray1@gmail.com, gary@garyguo.net, joe@perches.com, linux-kernel@vger.kernel.org, lukas.bulwahn@gmail.com, ojeda@kernel.org, rust-for-linux@vger.kernel.org, tmgross@umich.edu, wedsonaf@gmail.com
-From: Benno Lossin <benno.lossin@proton.me>
-Subject: Re: [PATCH v3 2/2] checkpatch: warn on known non-plural rust doc headers
-Message-ID: <da34f89c-f94c-43aa-946c-57fec3597974@proton.me>
-In-Reply-To: <20240912195649.227878-1-paddymills@proton.me>
-References: <20240912195649.227878-1-paddymills@proton.me>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 17aa4962786633573ca30a74d31b385608d19a9e
+	s=arc-20240116; t=1726227148; c=relaxed/simple;
+	bh=5v4NdqbYPDiRqhfNWq3dTnXzPLJsQvlk6g+gl0hStGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W5ek0g1CXncWjJDIgHWTD8rdodk6AkAEklK/z1BQKcvhLKUOCY9JpJjRgzWS80UqNa+ZygtW1s3SBBfsBMNRYJ91EV8kF86izYxIeAJ3j9zn5GVhzqeNJCWTbt78CB7Tr/xmjwscazy0Vp4WZkyeWvcbZpnMUo//CU/OjkNGORI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=G6g0Oh3s; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c3ca32974fso2251232a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 04:32:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1726227142; x=1726831942; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2XvQ+WPCgnw5TpCVTyzWv4NUFhv6UE6SYFp22sYw7Dw=;
+        b=G6g0Oh3sKOOyDgcml47ep+d7Wfupj3bJwl1LN2PCkQbTaBHTboxRsxWHql3264n1k1
+         zkaLes/BUnvQjnjjdxno0mDBeidG8VZ36Vg/07RmzphVIhzMfBVtKT5E6qs0jK/nhzeH
+         4ZELunmkv2FaRa+DW/nxHeuhnD1tnZYRXS9kTGa57uO4o89vKFk5/2JKYMrNauhFNQzI
+         PpeWJkuhv4Q2DCMpAR2KeTPfeo3SLWt5UE3erwh3tQPxd+1IvxhdMQ/iNz9wXBYfV+mm
+         ePzg6mfv1eFKQqbBDfuy9k9ywuaTNhZqKKp8mXk6J1E44xfbp9N+Kcqsa01fUIjtunl2
+         JeFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1726227142; x=1726831942;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2XvQ+WPCgnw5TpCVTyzWv4NUFhv6UE6SYFp22sYw7Dw=;
+        b=C3vrKQiVO6KAG3XpA4TF/nfkNwvuF4UBijpShz+wk15wQGaQ1JYw+ToZEcZm/G/qwi
+         ISBC413PjmuAliLY0bgFAhpRCFJmqmoFMYqmnHpRGX5Ingybq29QKM1D4JYvWI+KPETP
+         eYARZohWmCB3PGPWbQl4r23RSl6bT7A8DxBwU0RpTCl6VMQ7H5AGAgocL5AY4HRgCqXJ
+         Qg6O5+rg61gFl6Kl5Ono+YObVVUHurMf5NG4Cbmy3WXR0t9gAJjxSFG2FUdEs/QM7qhk
+         2++USeawzlT8eCzSCxChaUsC4xUI91PCv6H+RUIUDjAZT4x/HmjE+GtXZ9T7pLzN5Rnc
+         h8Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCW2CSxDjV3Sc3Y5uXXD4o8tCxT2337I49HUw7OVUZPWswne37iw9G3MO/kww1fLSBrIRmJyKNX97bCKI40=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2TZ/92kvtZB1D0+5znzVddhkdSyysRSkq1sWF2VOBYcrPloQ3
+	Nb5RO1Imo7f5D8MFNL6KQM/meKTCCvDEjKm1egnq9eTHCrX+aX03FbPau3VG18k=
+X-Google-Smtp-Source: AGHT+IFk2He77TP2kioeSwXBmwlMwi0GakIdhMDY2pNCObI2N0QZNysVa9OynBPm0mzSWIm+r0ei1g==
+X-Received: by 2002:a05:6402:234e:b0:5c0:a8d0:8782 with SMTP id 4fb4d7f45d1cf-5c413e4c56fmr4214176a12.28.1726227142107;
+        Fri, 13 Sep 2024 04:32:22 -0700 (PDT)
+Received: from localhost (109-81-84-13.rct.o2.cz. [109.81.84.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c3ebd424dasm7600339a12.9.2024.09.13.04.32.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2024 04:32:21 -0700 (PDT)
+Date: Fri, 13 Sep 2024 13:32:20 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	viro@zeniv.linux.org.uk, brauner@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: Re: [PATCH -next] fs/inode: Modify mismatched function name
+Message-ID: <ZuQixMvfcoI1Kg0-@tiehlicka>
+References: <20240913011004.128859-1-jiapeng.chong@linux.alibaba.com>
+ <20240913102935.maz3vf42jkmcvfcn@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240913102935.maz3vf42jkmcvfcn@quack3>
 
-On 12.09.24 21:56, Patrick Miller wrote:
-> Adds a check for documentation in rust file. Warns if certain known
-> documentation headers are not plural.
->=20
-> The rust maintainers prefer document headers to be plural. This is to enf=
-orce
-> consistency among the documentation as well as to protect against errors =
-when
-> additions are made. For example, if the header said "Example" because the=
-re was
-> only 1 example, if a second example was added, making the header plural c=
-ould
-> easily be missed and the maintainers prefer to not have to remind people =
-to fix
-> their documentation.
+On Fri 13-09-24 12:29:35, Jan Kara wrote:
+> On Fri 13-09-24 09:10:04, Jiapeng Chong wrote:
+> > No functional modification involved.
+> > 
+> > fs/inode.c:242: warning: expecting prototype for inode_init_always(). Prototype was for inode_init_always_gfp() instead.
+> > 
+> > Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> > Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=10845
+> > Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> 
+> I think this is a fallout from Michal's patch [1] which will be respinned
+> anyway AFAIU. Michal, can you please fixup the kernel doc when sending new
+> version of the patch? Thanks!
 
-Nit: this is wrapped to 80 chars, but a maximum of 75 columns is
-preferred. I usually use 72.
+Yes, I will. Thanks for heads up.
 
----
-Cheers,
-Benno
-
-> Link: https://github.com/Rust-for-Linux/linux/issues/1110
->=20
-> v1: https://lore.kernel.org/rust-for-linux/2024090628-bankable-refusal-5f=
-20@gregkh/T/#t
-> v2: https://lore.kernel.org/rust-for-linux/92be0b48-cde9-4241-8ef9-7fe4d7=
-c42466@proton.me/T/#t
->   - fixed whitespace that was formatted due to editor settings
-> v3:
->   - move && to previous line and remove whitespace in WARN per Joe Perche=
-s
->   - reformat following C coding style
-> ---
->  scripts/checkpatch.pl | 7 ++++
-> +++
->  1 file changed, 7 insertions(+)
->=20
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> index 39032224d504..5b18246ad511 100755
-> --- a/scripts/checkpatch.pl
-> +++ b/scripts/checkpatch.pl
-> @@ -3900,6 +3900,13 @@ sub process {
->  =09=09=09     "Avoid using '.L' prefixed local symbol names for denoting=
- a range of code via 'SYM_*_START/END' annotations; see Documentation/core-=
-api/asm-annotations.rst\n" . $herecurr);
->  =09=09}
->=20
-> +# check that document section headers are plural in rust files
-> +=09=09if ($realfile =3D~ /\.rs$/ &&
-> +=09=09    $rawline =3D~ /^\+\s*\/\/\/\s+#+\s+(Example|Invariant|Guarante=
-e|Panic)\s*$/) {
-> +=09=09=09WARN("RUST_DOC_HEADER",
-> +=09=09=09     "Rust doc headers should be plural\n" . $herecurr);
-> +=09=09}
-> +
->  # check we are in a valid source file C or perl if not then ignore this =
-hunk
->  =09=09next if ($realfile !~ /\.(h|c|pl|dtsi|dts)$/);
->=20
-> --
-> 2.46.0
->=20
-
+-- 
+Michal Hocko
+SUSE Labs
 
