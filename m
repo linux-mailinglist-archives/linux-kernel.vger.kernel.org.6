@@ -1,140 +1,101 @@
-Return-Path: <linux-kernel+bounces-328758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-328705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38D0C97885F
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 21:02:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54738978793
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 20:09:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAF9E1F284EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 19:02:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3A73B2572A
+	for <lists+linux-kernel@lfdr.de>; Fri, 13 Sep 2024 18:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34CDD4A2C;
-	Fri, 13 Sep 2024 19:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70BD38F6A;
+	Fri, 13 Sep 2024 18:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E7XlTsIB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b="gGMBvjRN"
+Received: from smtp-out3.simply.com (smtp-out3.simply.com [94.231.106.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0203813C8EA
-	for <linux-kernel@vger.kernel.org>; Fri, 13 Sep 2024 19:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B59D126BE6;
+	Fri, 13 Sep 2024 18:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.231.106.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726254096; cv=none; b=kxBKQ56EPaUAc3qLiurtCykH1PFYDL+OEaUfPvIelIPp9RbZTl3wA3iYV2uBhhXITGdESZtWS6KteYbLNcJYx8CwptUh2uEhuxlEK3iTTGC6mwBbCo08shsX4gbiBoPTWGbp+xn5/v0LgRsC4JKRQw4jkK65jonM9t3lMJU252c=
+	t=1726250964; cv=none; b=pofDGi+D23y4PRtG3vRVkCoqJrMdqJFhkSPGeIt04ofo1QONx8C8lF0/n+4u/N/4B3EiILNH7aBUcF6LUrS5JJssa632OfuufggQ9fGzwlttPlLwn6YKVSgOtcJxduNJMMq/EbbJhATs/YhL54Z21AEqlJwi1Rc3A8/JISRgoRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726254096; c=relaxed/simple;
-	bh=t7VhkvLXibw3ixPa5G4bQdOz2MuylOZhl3wA/pLMDmA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cb2SvT+jkG91MNNycKX4vakWl3l5s4fVK1t1BLJjkybJKtrx6x3e94kKaVfZL5iFa2CFBOztplZw4MXq8lEl7qpoGO3aN3xZ0pn9wyeaeeXou0jEMy0T0prSQxyORxbCabIiBxJAaByA8JFrgkw+oCMg4gnFFqI4JbpD05048D8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E7XlTsIB; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1726254093;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5WUawk6UeQz1fgAqAjCjADByI3bac24dG1c8uUPGGkU=;
-	b=E7XlTsIBZWr4y1cHJzbuGJBEJNcOwj9OMOCGva/mM5Uliv/vbyMm0s+ZpQgAPD26FYM3lY
-	IspL25kvvPghS0i5+U+wG01tp2ijFoF2konPmNJ3POkgFOijpbbQwaTci5m1ZIwmkSxJOk
-	M/CyYGg6rRVr7kYY+WmNlz2eLqxkSN4=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-230-hceF7FbvMV6F0nIyfMopfw-1; Fri,
- 13 Sep 2024 15:01:32 -0400
-X-MC-Unique: hceF7FbvMV6F0nIyfMopfw-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	s=arc-20240116; t=1726250964; c=relaxed/simple;
+	bh=CYsnOF3mg7HRqKjs8+zohjNJM8L3/gkDXeAgSnJOS/8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=JHVRuZhqoSaC4pjo3Ow2BYo57hGCN2lskFBXU8bceFpEtjVz8MHScBFIU0apR7Xa2onhYTW9fYP9t8Ca6praBttu412Y0zXH2CQ5Z5s3QfY0Tm4fkinW02CSUwb0gX6AnUO2XJHruSnP3etWbUnYh9Zm5/tfBZLuTmhkSmZfsZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com; spf=pass smtp.mailfrom=gaisler.com; dkim=pass (1024-bit key) header.d=gaisler.com header.i=@gaisler.com header.b=gGMBvjRN; arc=none smtp.client-ip=94.231.106.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gaisler.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gaisler.com
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.simply.com (Simply.com) with ESMTP id 4X52C92QGHz1FXSC;
+	Fri, 13 Sep 2024 20:00:05 +0200 (CEST)
+Received: from [10.10.15.13] (h-98-128-223-123.NA.cust.bahnhof.se [98.128.223.123])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 36B081955F2C;
-	Fri, 13 Sep 2024 19:01:31 +0000 (UTC)
-Received: from tpad.localdomain (unknown [10.96.133.5])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4C2EA1956088;
-	Fri, 13 Sep 2024 19:01:30 +0000 (UTC)
-Received: by tpad.localdomain (Postfix, from userid 1000)
-	id 610B7400E52F5; Wed, 11 Sep 2024 00:04:46 -0300 (-03)
-Date: Wed, 11 Sep 2024 00:04:46 -0300
-From: Marcelo Tosatti <mtosatti@redhat.com>
-To: Hillf Danton <hdanton@sina.com>
-Cc: Leonardo Bras <leobras@redhat.com>, Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v1 0/4] Introduce QPW for per-cpu operations
-Message-ID: <ZuEIzngSx36Gx8l/@tpad>
-References: <Zp/k+rJuVV+EcXqL@tpad>
- <20240905221908.1960-1-hdanton@sina.com>
+	(Client did not present a certificate)
+	by smtp.simply.com (Simply.com) with ESMTPSA id 4X52C90KsQz1DPl0;
+	Fri, 13 Sep 2024 20:00:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gaisler.com;
+	s=unoeuro; t=1726250405;
+	bh=SWvXRVsmJjaa9ejRemRSz9PHWcu0seHqqpEBo4CbFBs=;
+	h=Date:Subject:To:References:From:In-Reply-To;
+	b=gGMBvjRNvr61acm1rTtvWLXKfCX18UDdEju1gTxvBk7OYtXkmLWmhm/bMNAbheuyR
+	 bKzb/VFlaZBuWaJgM/6m+8h02Qu603llsCKr/Xy54epP+F30LjbsFZDhE+LrfXTTiK
+	 w+j9RdsLXmyqut7g2fNULu8dDjPfiQyy7e3KB1JM=
+Message-ID: <59d604b6-8672-4c90-ab10-b3b74e79f9b1@gaisler.com>
+Date: Fri, 13 Sep 2024 20:00:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240905221908.1960-1-hdanton@sina.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arch/sparc: remove unused varible paddrbase in function
+ leon_swprobe()
+To: alexs@kernel.org, "David S . Miller" <davem@davemloft.net>,
+ Christian Brauner <brauner@kernel.org>, sparclinux@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240729064926.3126528-1-alexs@kernel.org>
+Content-Language: en-US
+From: Andreas Larsson <andreas@gaisler.com>
+In-Reply-To: <20240729064926.3126528-1-alexs@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Sep 06, 2024 at 06:19:08AM +0800, Hillf Danton wrote:
-> On Tue, 23 Jul 2024 14:14:34 -0300 Marcelo Tosatti <mtosatti@redhat.com>
-> > On Sat, Jun 22, 2024 at 12:58:08AM -0300, Leonardo Bras wrote:
-> > > The problem:
-> > > Some places in the kernel implement a parallel programming strategy
-> > > consisting on local_locks() for most of the work, and some rare remote
-> > > operations are scheduled on target cpu. This keeps cache bouncing low since
-> > > cacheline tends to be mostly local, and avoids the cost of locks in non-RT
-> > > kernels, even though the very few remote operations will be expensive due
-> > > to scheduling overhead.
-> > > 
-> > > On the other hand, for RT workloads this can represent a problem: getting
-> > > an important workload scheduled out to deal with remote requests is
-> > > sure to introduce unexpected deadline misses.
-> > 
-> > Another hang with a busy polling workload (kernel update hangs on
-> > grub2-probe):
-> > 
-> > [342431.665417] INFO: task grub2-probe:24484 blocked for more than 622 seconds.
-> > [342431.665458]       Tainted: G        W      X  -------  ---  5.14.0-438.el9s.x86_64+rt #1
-> > [342431.665488] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> > [342431.665515] task:grub2-probe     state:D stack:0     pid:24484 ppid:24455  flags:0x00004002
-> > [342431.665523] Call Trace:
-> > [342431.665525]  <TASK>
-> > [342431.665527]  __schedule+0x22a/0x580
-> > [342431.665537]  schedule+0x30/0x80
-> > [342431.665539]  schedule_timeout+0x153/0x190
-> > [342431.665543]  ? preempt_schedule_thunk+0x16/0x30
-> > [342431.665548]  ? preempt_count_add+0x70/0xa0
-> > [342431.665554]  __wait_for_common+0x8b/0x1c0
-> > [342431.665557]  ? __pfx_schedule_timeout+0x10/0x10
-> > [342431.665560]  __flush_work.isra.0+0x15b/0x220
+On 2024-07-29 08:49, alexs@kernel.org wrote:
+> From: Alex Shi <alexs@kernel.org>
 > 
-> The fresh new flush_percpu_work() is nop with CONFIG_PREEMPT_RT enabled, why
-> are you testing it with 5.14.0-438.el9s.x86_64+rt instead of mainline? Or what
-> are you testing?
-
-I am demonstrating a type of bug that can happen without Leo's patch.
-
-> BTW the hang fails to show the unexpected deadline misses.
-
-Yes, because in this case the realtime app with FIFO priority never
-stops running, therefore grub2-probe hangs and is unable to execute:
-
-> > [342431.665417] INFO: task grub2-probe:24484 blocked for more than 622 seconds
+> commit f22ed71cd602 ("sparc32,leon: SRMMU MMU Table probe fix") change
+> return value from paddrbase to 'pte', but left the varible here.
+> That causes a build warning for this varible, so we may remove it.
 > 
-> > [342431.665565]  ? __pfx_wq_barrier_func+0x10/0x10
-> > [342431.665570]  __lru_add_drain_all+0x17d/0x220
-> > [342431.665576]  invalidate_bdev+0x28/0x40
-> > [342431.665583]  blkdev_common_ioctl+0x714/0xa30
-> > [342431.665588]  ? bucket_table_alloc.isra.0+0x1/0x150
-> > [342431.665593]  ? cp_new_stat+0xbb/0x180
-> > [342431.665599]  blkdev_ioctl+0x112/0x270
-> > [342431.665603]  ? security_file_ioctl+0x2f/0x50
-> > [342431.665609]  __x64_sys_ioctl+0x87/0xc0
+> make --keep-going CROSS_COMPILE=/home/alexs/0day/gcc-14.1.0-nolibc/sparc-linux/bin/sparc-linux- --jobs=16 KCFLAGS= -Wtautological-compare -Wno-error=return-type -Wreturn-type -Wcast-function-type -funsigned-char -Wundef -fstrict-flex-arrays=3 -Wformat-overflow -Wformat-truncation -Wrestrict -Wenum-conversion W=1 O=sparc ARCH=sparc defconfig SHELL=/bin/bash arch/sparc/mm/ mm/ -s
+> <stdin>:1519:2: warning: #warning syscall clone3 not implemented [-Wcpp]
+> ../arch/sparc/mm/leon_mm.c: In function 'leon_swprobe':
+> ../arch/sparc/mm/leon_mm.c:42:32: warning: variable 'paddrbase' set but not used [-Wunused-but-set-variable]
+>    42 |         unsigned int lvl, pte, paddrbase;
+>       |                                ^~~~~~~~~
+> 
+> Signed-off-by: Alex Shi <alexs@kernel.org>
+> To: linux-kernel@vger.kernel.org
+> To: sparclinux@vger.kernel.org
+> To: Christian Brauner <brauner@kernel.org>
+> To: Andreas Larsson <andreas@gaisler.com>
+> To: David S. Miller <davem@davemloft.net>
+> ---
+>  arch/sparc/mm/leon_mm.c | 8 +-------
+>  1 file changed, 1 insertion(+), 7 deletions(-)
 
-Does that make sense now?
+Reviewed-by: Andreas Larsson <andreas@gaisler.com>
+Tested-by: Andreas Larsson <andreas@gaisler.com>
 
-Thanks!
+Picking this up to my for-next.
 
+Thanks,
+Andreas
 
